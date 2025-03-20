@@ -1,251 +1,215 @@
-Return-Path: <linux-kernel+bounces-570104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CA3A6AC1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:34:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DF6A6AC1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C1218874A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC3746722F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877A2253A7;
-	Thu, 20 Mar 2025 17:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E870D2253A7;
+	Thu, 20 Mar 2025 17:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ml6rbWjd"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xy+OOc46"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74033223336;
-	Thu, 20 Mar 2025 17:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD9B1EEA35
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742492016; cv=none; b=rmOxZhqCSx5pAnywomHUAtwhcPlz5C6cewthEWLHAw5hhVSjC5L9CLDzlbK0uLCGFuyxpQxXjzM5XTMbHR5DkDydcaba2ej6sod69RlNncaVtzpjxrmSWu1StJdi+uZzXig/Jg2rhj9cEoB4qoBg3vAQijV8YnDjBrfec5PGes8=
+	t=1742492069; cv=none; b=Qg9XWOWfRe+YDteNEaJn9tOBCvy10ZG5YTLmKsFWN5/oH06BniRIl+FzcE1f8SAcSL1eyvZ1ogHM/w0pCBgKcgnmynfEOHINTJponDB6u3S0OARA8rCUV7bHN+VlL4UBNwrEBB5hAUNzSdlRQ/fat4N8A26DHxd4uQQsCGk932k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742492016; c=relaxed/simple;
-	bh=PagMdvtg5KTGSUdqloqmzmN+2CHEwsXpUsFu5h9EYiI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Z5vNSuh1b4zbUo+oWLnkWQ3BkXhXeQK15PMvvq8TDEiRv5Vr2Ok844+qVghiUzX7/jIZi//1VWoGPVYx/qSuLK7EGakaWCwDiLTEbRdBO9kem6zFYVoAfwY7g0+WAJ0o0ocr1JICGO22OKaKomTYKUqXflprwxRGzgrKxqsdjcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ml6rbWjd; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2254e0b4b79so31240085ad.2;
-        Thu, 20 Mar 2025 10:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742492014; x=1743096814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4IA8tCZYJI9t5hg42P7F7sSH+jw28GDy2AHdYlBsWo8=;
-        b=Ml6rbWjdJb5NdddaIH506HJo9aBC64newd8LOaV80FMb6o0IrOwKpooimpvL8y/l5q
-         /mx4AD06tgD+a0Xn6Dk7epw30Zzh5c3hexTRUdMKcOOGxGVtfVMlFt1RhIZ6k55tEEdw
-         mL/CfPvsyZQlHAqoq9aSl3puU2cajYPLEBPyovLwnG1i8N/nFOQ1Q6LLlxZBjqJdcbyD
-         dOjznhziZJVzsRyAnY9daP8f0EzxVj+xfAfepcOycbSbf/t+jHioDZQpyQ8517m1GMdr
-         in7/tKNr6NaDsgfoYfcS3OizfU0rdd59fnHKNfSXI1QMrWBOlnQgtmlaRekSzNn2qaMk
-         r0kQ==
+	s=arc-20240116; t=1742492069; c=relaxed/simple;
+	bh=ya3r5Y6SCRZPS6zantYDYhM3T+z2E2D+0eUveodGqwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mEuovx5sI/Bs4f+e+HYuH7LvXUT4nPvlCyq+k3jDvAODzMuoDXEiSToCoGShorbGtbBP7g8SZ6duntgOo8KoAT6f3dR2Tc0Zn+C070XwT4PV6P0wHdhAjWqRS/opZkqmWvXGlG/wH7bV+dIjcxSQTXetEE/TtehjbxRha3GDmm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xy+OOc46; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742492066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vYX2M6/2zKOpQJ6SwtSXKJMLCmPtRFZ3mltXSXoF2CU=;
+	b=Xy+OOc46ISgrQjHOYtlRoX4IrLkoEREe50EJSftMiiv5oChMfW1ujj6R042Gz0JCjnMOWB
+	NFSYrjgMDIYAXVOOvQVkoeQk4mYZxdEZX+MAUkNxf16P+nafa7MsBzj7d1g2a6ijX8CSDE
+	8fzsEJ4ex9HECIyk+k4Br1sAGquNUPQ=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-511-GvoycA4aMZKe2z3hGfjx5g-1; Thu, 20 Mar 2025 13:34:25 -0400
+X-MC-Unique: GvoycA4aMZKe2z3hGfjx5g-1
+X-Mimecast-MFC-AGG-ID: GvoycA4aMZKe2z3hGfjx5g_1742492064
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e64124940abso1376326276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:34:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742492014; x=1743096814;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4IA8tCZYJI9t5hg42P7F7sSH+jw28GDy2AHdYlBsWo8=;
-        b=ggOLRRHQ58jWQoQslz1b25+78shZx4jg1uxLwb1djG7fd+QhegRlIRVHWJidPG5whd
-         E3HppSLna6Zu199JMeimf796xSArqh6mm3ff7woneTd3EQr8jiI7RR0FjQ0aL/p9rMuB
-         1lYRxtNjW80IOJejNTHaZzU0YvVzOzZuYg8qgoxxo6j79+dnsnFhR9trbA14s0c8eosf
-         wsBQ54r81cGP4O+pYjl/Hns7FzuY6QbsP8g5l1oWw/O1S4sLlzPPTTMWoy9UeqpKpQzB
-         w1WYYhBxd3ymb+J4qOYktJSo2/z+hz1qhAV2KVAEGe+Dq44hMDEep3GhHGGrnaF5J/J+
-         AKYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2YFMRA2zf9uexQnYVMRoHd7iTfUKtC6U9GGwLwwi1GfNaNTlDs8F9F+aNLezXZav7VXPytLtB81A=@vger.kernel.org, AJvYcCUFjhZNJ4D1mZwDi1vJWpUBAYIQxOWYNe3abBL5lNrgz1JR99kxGsnY/MLlqTJgspCbAx6QZVy78OsFva/D@vger.kernel.org, AJvYcCVFzrOeJhoHsMwCX13b09+7lmlt0zrQzviIe5nC8kIXToz/fb66qAlDk2qZMZcWEgjDQbuHVu2uqms=@vger.kernel.org, AJvYcCVg35dQ23TeIXlkhy07B+X25B28c4NSK/j9gxtdH66X2To9+Rq5hlhqZn2PAW7Z3OyHW/lljttfd7yg9IRn6m8//eYIew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVabTqt2zWsIwAj8Yx0kdZnGZw17zZRVlaesSFA1PjRdMCnNbu
-	VXAxJWUgsgPex+49OqY+gk3FwBZsnh4qCHdu54sRFHeoY4YMnhUj
-X-Gm-Gg: ASbGncs5ygA7sCFgoP/SbA+yCmVTGwPOQYtn+/oj+MAqrBr04KIoX3w/GHRsLcE6QEF
-	qoht/ayo7zE5UAv914uUHBeStigoarIXwk+XCAXcv7QViNHONbr1AYoNfGA9+h5blhIWNL9uxdN
-	HRuqx/RigPuXeHPTSui5DMXOIRi1LT8oq9PSoyA8Qg3Y7aE1S/V5f47g040WmVmUiVQXRZttmQy
-	Ua8oKTTtgwj6h/s7ywomC04crycslHlhFctqKEOv7AKbBu1YrJGKegbkl1Ig+k19fDTcMqJKQyB
-	q2OYFVo9nu5AF1PtC3gVyjcCFKsJEmvYqLZqHtQojiIV5eO7oqe7Lg==
-X-Google-Smtp-Source: AGHT+IFthf2CpWZEJwnTLLJ3fvyLbU3lQKkDNvBnaDnU0oy5qNCojO0XZ/7VGrr1w5tBksnrck+Yhg==
-X-Received: by 2002:a17:902:e74c:b0:224:76f:9e45 with SMTP id d9443c01a7336-22780d7fd37mr3693615ad.21.1742492013424;
-        Thu, 20 Mar 2025 10:33:33 -0700 (PDT)
-Received: from ?IPv6:::1? ([2607:fb91:1bec:5896:ac39:c338:6b1e:14b4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f459fbsm598185ad.78.2025.03.20.10.33.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 10:33:33 -0700 (PDT)
-Date: Thu, 20 Mar 2025 07:33:28 -1000
-From: "Derek J. Clark" <derekjohn.clark@gmail.com>
-To: Antheas Kapenekakis <lkml@antheas.dev>, platform-driver-x86@vger.kernel.org
-CC: linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-pm@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
- Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Joaquin Ignacio Aramendia <samsagax@gmail.com>,
- Kevin Greenberg <kdgreenberg234@protonmail.com>,
- Joshua Tam <csinaction@pm.me>, Parth Menon <parthasarathymenon@gmail.com>,
- Eileen <eileen@one-netbook.com>, linux-kernel@vger.kernel.org,
- sre@kernel.org, linux@weissschuh.net, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, mario.limonciello@amd.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_00/14=5D_hwmon=3A_=28oxpsensors=29_Add_dev?=
- =?US-ASCII?Q?ices=2C_features=2C_fix_ABI_and_move_to_platform/x86?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20250319175512.27059-1-lkml@antheas.dev>
-References: <20250319175512.27059-1-lkml@antheas.dev>
-Message-ID: <41DE9E62-7BE6-4E65-BCFF-98DB243BB527@gmail.com>
+        d=1e100.net; s=20230601; t=1742492063; x=1743096863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vYX2M6/2zKOpQJ6SwtSXKJMLCmPtRFZ3mltXSXoF2CU=;
+        b=BdGcIiiHZPGVEn6pQc3pkj2Xd4qeSiDf37Hpw6nImzNi/KtTWg6c3DL97o1QbX5dFm
+         sHSQOfg9eOFHNhvFPFMUGcVwTGtvY5ryryN7YPL00c3nLi0FFi0TkL9Mvah5mNOtSKR7
+         9m2sExe6IzTmrd2Cn+csAL1fIn1cy1SYCWWQNm8+Uxw38LNpbCHi41JCNuHErPClp/Ul
+         rkOMXkfvgsrg6HpSqm2p6zJWxvQVzB9AOZ/MX+0sY6skjuxuXsxM6B3G1p0QWmtBlrpI
+         LNG8W8iGv5RFbXnasRaNowek4cxY5ZdPRbiwanusKKnQkdJc4MLdtqRado5EQvPS6r+c
+         mdgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkhLgliAnI6zVliOdLq9mKTkJU+ZvL+bTyXZJMscD3CcaSwZtdBarCIUx0lqJR2tADdOzY5+t8QUp6vdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw24obnSjmgw0tDzDOfWxPrAGyGRLbVZd86egXV+weClztaZGc
+	CeL8bGAA1njT0+cNbkJ47k/xRvfNBCu5SOKtDpfV6HLyfHcaRA7n5DGCbMTi4KRDMDsSVoT/i9E
+	aw1nLccfGvrTKlfmaSr0bb9i4iihiXnMLdMXeeqQljsj3mDvfVWiyK0JnmN8HysBdc8iRIJCZIA
+	4JNT6Pqk8uk79IvxwGwgtQbprJhBNZ+b5iL6Te
+X-Gm-Gg: ASbGnctyuqbco2u54hAbRRpQ168ZMsd87SywO2210R+yTAhH8IpISZcDcF1ci7nwoql
+	cFMn83/7QzdgJsPCG7Ks5PFXtTPUN2uSRuLcN4eCXmQ6OzF0OB9a/3CqM9E/ir8mJaD/DPgOkHM
+	gPhw2GunwTZO0=
+X-Received: by 2002:a05:6902:2004:b0:e64:4082:85fd with SMTP id 3f1490d57ef6-e6691fcbe0dmr5244693276.7.1742492063542;
+        Thu, 20 Mar 2025 10:34:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1kwV9KUIkDrSfNgg0aIxmfOfiVAxVKdNTNJaQSadYwEDJirpIaPlQrsdWB2Zg0Z1ERJqJTCIhPZiXTCBsUzQ=
+X-Received: by 2002:a05:6902:2004:b0:e64:4082:85fd with SMTP id
+ 3f1490d57ef6-e6691fcbe0dmr5244645276.7.1742492063069; Thu, 20 Mar 2025
+ 10:34:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250319230539.140869-1-npache@redhat.com> <CAA1CXcD2g=sRRwgLSudiOAqWXq3sCj+NPuE1ju7B2gFXXefjXA@mail.gmail.com>
+ <d8fc1f66-f220-42fb-b58f-f5f9c7d30100@opensource.cirrus.com>
+In-Reply-To: <d8fc1f66-f220-42fb-b58f-f5f9c7d30100@opensource.cirrus.com>
+From: Nico Pache <npache@redhat.com>
+Date: Thu, 20 Mar 2025 11:33:54 -0600
+X-Gm-Features: AQ5f1Jp06BXpfspSGNPLI-SadeSrcVhX--job0ADTdJn-pHdUw3d6mGqkxkKb3A
+Message-ID: <CAA1CXcA460xfy48JMNeX5rNTfUqsahER8SDF6tWu82V35ripLg@mail.gmail.com>
+Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling it
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: broonie@kernel.org, patches@opensource.cirrus.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, simont@opensource.cirrus.com, 
+	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev, davidgow@google.com, 
+	rmoar@google.com, johannes.berg@intel.com, sj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Thu, Mar 20, 2025 at 6:21=E2=80=AFAM Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
+>
+> On 19/3/25 23:11, Nico Pache wrote:
+> > On Wed, Mar 19, 2025 at 5:05=E2=80=AFPM Nico Pache <npache@redhat.com> =
+wrote:
+> >>
+> >> FW_CS_DSP gets enabled if KUNIT is enabled. The test should rather
+> >> depend on if the feature is enabled. Fix this by moving FW_CS_DSP to t=
+he
+> >> depends on clause, and set CONFIG_FW_CS_DSP=3Dy in the kunit tooling.
+> >
+> > A further note here:
+> >
+> > This test is failing and panicing across multiple arches, and
+> > triggering kasan slats on debug kernels. I think this test needs more
+> > testing ;P
+> >
+>
+> Please supply details of failures or links to bug reports.
+> "is failing" and "panicing" doesn't tell me enough to fix anything.
+> Failing how? Panicking how? On what architectures?
+> I tested it on the architectures I have available, and the kunit um
+> architecture. Unfortunately not everyone has hardware for every
+> architecture supported by Linux so we have to trust somewhat that
+> other architectures don't do anything unexpectedly different from
+> what we _can_ test it on.
 
+Some of the runs return not ok on a bunch of tests, debug kernels
+print splats, and some seem to brick the system, leading to a reboot.
+Below are all the failures per arch/variant.
 
-On March 19, 2025 7:54:55 AM HST, Antheas Kapenekakis <lkml@antheas=2Edev>=
- wrote:
->This four part series updates the oxpsensors module to bring it in line
->with its Windows OneXPlayer counterpart=2E First, it adds support for all
->2024, 2025 OneXPlayer handhelds and their special variants=2E Then, it mo=
-ves
->the module to platform/x86 to allow for including more EC features=2E
->
->Then, it adds the new charge limiting and bypass features that were first
->introduced in the X1 and retrofit to older OneXFly variants and for
->controlling the turbo led found in the X1 models=2E For Bypass, it adds a=
- new
->charge_behaviour variant called inhibit-charge-s0=2E
->
->Finally, it performs a minor refactor by moving around switch statements
->into their own functions, in order to allow for fixing the pwm1_enable AB=
-I
->in the final patch=2E Currently, pwm1_enable sets the fan to auto with th=
-e
->value 0 and allows manual control with the value 1=2E This patch makes it
->so 0 sets the fan to full speed, 1 sets the fan to manual control, and
->2 sets the fan to auto=2E This requires both setting enable and the fan
->speed when the enable sysfs is written to as 0, hence the refactor=2E
->
->As this is a minor ABI break and there is userspace software relying
->on this previous behavior, the last patch also changes the /name of the
->hwmon endpoint to "oxp_ec" from "oxpec" (mirroring WMI module conventions=
-)
->such that userspace software that relied on the previous behavior can be
->retrofit to the new kernel while enabling correct functionality on old
->and new kernels=2E Failing that, software that is not updated will just
->stop controlling the fans, ensuring no malignant behavior=2E
->
->---
->V5: https://lore=2Ekernel=2Eorg/all/20250317155349=2E1236188-1-lkml@anthe=
-as=2Edev/
->V4: https://lore=2Ekernel=2Eorg/all/20250311165406=2E331046-1-lkml@anthea=
-s=2Edev/
->V3: https://lore=2Ekernel=2Eorg/all/20250309112114=2E1177361-1-lkml@anthe=
-as=2Edev/
->
->Changes since V5:
->    - Separate doc entries with Fixes as by Mario
->    - Add sysfs file name to subject as per Thomas
->    - Make tt_led and tt_turbo const as per Thomas
->    - Align a couple of structs as per Thomas
->    - Remove excess battery check as per Thomas
->    - For Thomas: devices without a BIOS update battery control is a NOOP
->      OXP is a boutique manufacturer for now, so gathering information
->      about old devices to add BIOS checks is not practical unfortunately
+Failing on
+---------------------
+X86_64 : https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-ar=
+tifacts/1723153780/test_x86_64/9451298630/artifacts/run.done.01/job.01/reci=
+pes/18353773/tasks/7/results/1742341634/logs/resultoutputfile.log
+X86_64 (debug) :
+https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/1=
+717840829/test_x86_64/9419724200/artifacts/run.done.01/results_0001/console=
+.log
 
-Antheas,
-This sort of begs the question on how this feature was tested on those dev=
-ices? That question includes whether or not it is really a no-op in unsuppo=
-rted BIOS=2E My old contacts at OXP are no longer employed there, are you i=
-n contact with anyone at OXP currently that can potentially provide the dat=
-a?
+aarch64 : https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-a=
+rtifacts/1723153780/test_aarch64/9451298664/artifacts/run.done.01/job.01/re=
+cipes/18352965/tasks/7/results/1742330044/logs/resultoutputfile.log
+aarch64(debug):
+https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/1=
+717840829/test_aarch64/9419724214/artifacts/run.done.01/results_0001/consol=
+e.log
+aarch64-64kpagesize:
+https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/1=
+723154540/test_aarch64/9451303359/artifacts/run.done.01/job.01/recipes/1835=
+2963/tasks/7/results/1742331192/logs/resultoutputfile.log
+aarch64-64kpagesize (debug):
+https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/1=
+723154644/test_aarch64/9451304808/artifacts/run.done.01/job.01/recipes/1835=
+4911/tasks/6/results/1742356729/logs/resultoutputfile.log
 
-I'm still of the opinion that the attribute should be explicitly enabled o=
-nly on a known supported BIOS=2E  IMO there is a general assumption that a =
-driver exposed attribute fd will work and having a no-op will confuse users=
- and lead to spurious bug reports=2E We shouldn't be exposing a no-op in th=
-e sysfs for a driver if we can avoid it=2E If we add the BIOS checks we can=
- also print to dmesg if a BIOS is too low a version so they will know why i=
-t isn't there=2E
+ppc64le: https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-ar=
+tifacts/1723153780/test_ppc64le/9451298644/artifacts/run.done.01/results_00=
+01/console.log
+ppc64le(debug):
+https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/1=
+717840829/test_ppc64le/9419724210/artifacts/run.done.01/results_0001/consol=
+e.log
 
-That being said, it does seem likely low risk, so I'm not nacking the feat=
-ure as is if the subsystem maintainers are okay with it=2E=20
+>
+> Also, are any of these failures the unterminated string bug that someone
+> fixed recently?
+Not sure. That fix doesn't seem to have been merged yet.
+>
+> >>
+> >> Fixes: dd0b6b1f29b9 ("firmware: cs_dsp: Add KUnit testing of bin file =
+download")
+> >> Signed-off-by: Nico Pache <npache@redhat.com>
+> >> ---
+> >>   drivers/firmware/cirrus/Kconfig              | 3 +--
+> >>   tools/testing/kunit/configs/all_tests.config | 2 ++
+> >>   2 files changed, 3 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/firmware/cirrus/Kconfig b/drivers/firmware/cirrus=
+/Kconfig
+> >> index 0a883091259a..989568ab5712 100644
+> >> --- a/drivers/firmware/cirrus/Kconfig
+> >> +++ b/drivers/firmware/cirrus/Kconfig
+> >> @@ -11,9 +11,8 @@ config FW_CS_DSP_KUNIT_TEST_UTILS
+> >>
+> >>   config FW_CS_DSP_KUNIT_TEST
+> >>          tristate "KUnit tests for Cirrus Logic cs_dsp" if !KUNIT_ALL_=
+TESTS
+> >> -       depends on KUNIT && REGMAP
+> >> +       depends on KUNIT && REGMAP && FW_CS_DSP
+> >>          default KUNIT_ALL_TESTS
+> >> -       select FW_CS_DSP
+> >>          select FW_CS_DSP_KUNIT_TEST_UTILS
+> >>          help
+> >>            This builds KUnit tests for cs_dsp.
+> >> diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/test=
+ing/kunit/configs/all_tests.config
+> >> index b0049be00c70..96c6b4aca87d 100644
+> >> --- a/tools/testing/kunit/configs/all_tests.config
+> >> +++ b/tools/testing/kunit/configs/all_tests.config
+> >> @@ -49,3 +49,5 @@ CONFIG_SOUND=3Dy
+> >>   CONFIG_SND=3Dy
+> >>   CONFIG_SND_SOC=3Dy
+> >>   CONFIG_SND_SOC_TOPOLOGY_BUILD=3Dy
+> >> +
+> >> +CONFIG_FW_CS_DSP=3Dy
+> >> \ No newline at end of file
+> >> --
+> >> 2.48.1
+> >>
+> >
+>
 
-- Derek
-
->Changes since V4:
->    - Fix nits by Hans
->    - change inhibit-charge-s0 to inhibit-charge-awake
->    - use devm_battery_hook_register and power_supply_unregister_extensio=
-n
->      (based on cros driver)
->    - move charge behavior patches to the end to make the rest of the ser=
-ies
->      easier to merge
->    - CC platform-x86 and power maintainers
->
->Changes since V3:
->    - Fix nits by Derek
->    - Remove the hwmon documentation as it is not required for platform
->      drivers (suggested by Guenter)
->    - Add ACPI_BATTERY and HWMON depends to Kconfig
->      (reported by kernel robot)
->    - Homogenize driver into following reverse xmas convention
->
->Changes since V2:
->    - Add ack by Guenter, move platform move patch to be third (not first
->      to allow for device support backport to lts kernels)
->    - Rework patch text, especially in the refactor patches as per Derek
->    - Change bypass to use charge_behaviour instead of charge_type, as th=
-at
->      ABI supports capability detection and is more appropriate
->    - Move battery attach to probe instead of init
->    - Fix bug where reading tt_led would instead use the turbo register
->
->Changes since V1:
->    - Add X1 Pro, F1 Pro variants
->    - Fix minor typo in initial patches
->    - Convert oxp-sensors into a platform driver, as it is no longer
->      considered a hwmon driver=2E
->    - Add sysfs documentation and myself to the MAINTAINERS file
->    - Update documentation to state that this is the OneXPlayer/AOKZOE
->      platform driver, and that support for Ayaneo/OPI is provided until
->      they gain their own platform driver=2E
->
->Antheas Kapenekakis (14):
->  hwmon: (oxp-sensors) Distinguish the X1 variants
->  hwmon: (oxp-sensors) Add all OneXFly variants
->  platform/x86: oxpec: Move hwmon/oxp-sensors to platform/x86
->  ABI: testing: sysfs-class-oxp: add missing documentation
->  ABI: testing: sysfs-class-oxp: add tt_led attribute documentation
->  platform/x86: oxpec: Rename ec group to tt_toggle
->  platform/x86: oxpec: Add turbo led support to X1 devices
->  platform/x86: oxpec: Move pwm_enable read to its own function
->  platform/x86: oxpec: Move pwm value read/write to separate functions
->  platform/x86: oxpec: Move fan speed read to separate function
->  platform/x86: oxpec: Adhere to sysfs-class-hwmon and enable pwm on 2
->  platform/x86: oxpec: Follow reverse xmas convention for tt_toggle
->  power: supply: add inhibit-charge-awake to charge_behaviour
->  platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer
->
-> Documentation/ABI/testing/sysfs-class-power   |  11 +-
-> Documentation/ABI/testing/sysfs-platform-oxp  |  25 +
-> Documentation/hwmon/index=2Erst                 |   2 +-
-> Documentation/hwmon/oxp-sensors=2Erst           |  89 ---
-> MAINTAINERS                                   |   7 +-
-> drivers/hwmon/Kconfig                         |  11 -
-> drivers/hwmon/Makefile                        |   1 -
-> drivers/platform/x86/Kconfig                  |  13 +
-> drivers/platform/x86/Makefile                 |   3 +
-> =2E=2E=2E/oxp-sensors=2Ec =3D> platform/x86/oxpec=2Ec}    | 624 ++++++++=
-++++++----
-> drivers/power/supply/power_supply_sysfs=2Ec     |   7 +-
-> drivers/power/supply/test_power=2Ec             |   1 +
-> include/linux/power_supply=2Eh                  |   1 +
-> 13 files changed, 540 insertions(+), 255 deletions(-)
-> create mode 100644 Documentation/ABI/testing/sysfs-platform-oxp
-> delete mode 100644 Documentation/hwmon/oxp-sensors=2Erst
-> rename drivers/{hwmon/oxp-sensors=2Ec =3D> platform/x86/oxpec=2Ec} (52%)
->
->
->base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
 
