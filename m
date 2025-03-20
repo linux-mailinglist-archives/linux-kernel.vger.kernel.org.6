@@ -1,191 +1,142 @@
-Return-Path: <linux-kernel+bounces-570456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9DFA6B092
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:17:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1DEA6B09A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4786C882B56
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D6917BAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B82722CBC6;
-	Thu, 20 Mar 2025 22:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B9D22A7FC;
+	Thu, 20 Mar 2025 22:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BefyprBK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZSTVI8e"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8929222B8CF;
-	Thu, 20 Mar 2025 22:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9866B22A4E1;
+	Thu, 20 Mar 2025 22:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508725; cv=none; b=K9Tn20YKjAXifbiNmpAjNd6ck8uibESNuQd6VE6NIMgoan16Qb9KL4pkPfzSgav25GlAk+6LW0pQ3IM8RiGXZtPuaaDlTZN7vd4mCQECH51Pnkhhn8ICeO31whR7lM2OjJt0//NRb4T8OGyictyF2BlI4FUsjvhagVTmZdCMuzc=
+	t=1742508810; cv=none; b=ntaY1OOJQjkCfByqlRo+IknrnVDR5gjEq5HFpecajVfjEwz3ZIySFoc3anIaX/5L0RNKA/VrPx/3fFF2xAPbUR4PjrAY5tdyQd0rW9PVob1q7g5QWSLjsbb74161G0FV8/GUU+DA5zzyHxPgvbeUOEQx5N4zMCDm96hLmR7mMLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508725; c=relaxed/simple;
-	bh=g5WhN1kaJc3DZrVUcAVFbCSMm/AF4jRsxs4A6kF4qyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Uwv18nQZ9fta0pSQziGO6z66VVf8vmzu0OuUxq5K/owkT4p3zW6m0PszQLBL+476xbY8JbnrbE5a76jpCz9exYAf7wd771Fhb8ObguOOxiV/OgvbwTjBzkZGpbzwDf/XBbSLswKiUJoMregoQ8teDwcGjZRpJLM4u10o15WaYe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BefyprBK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742508713;
-	bh=OOMeDXo90kI2nkrrwrVdw5XdOncRSe/tkf1VEuf51PM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BefyprBKB0OtCuRaXhK29kCKYtgDdkb89Ya+XllMfxmbXleuwb0sTBE3jmNtiOUY/
-	 Uc+EGKaMaSg9wwc/PNwM63Dv9hjXWaRQPyMYgRXI1hohrr4SmTi7OkGdALy1Cc1QWD
-	 3w4Jz4wz9Dn7zrN/EAxQe5NtnETJH7oLWiWcNrPrIBHSlQKTDhEFm5XpzdNcs9326R
-	 1pj09DfY+jQSXmUHgsvO6DRGU3WNMY9osi+RzRHhwSymi9KLk8B8yw39bLdZgFwwck
-	 FrCuwOr9Rz8t7/AEgQrEKaexeRtnEIqqxice21KvSQjE4qYiAcO4CuSCkJl3CwcFDs
-	 dwT4zy/EmzMQw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJftx1nNmz4x5k;
-	Fri, 21 Mar 2025 09:11:53 +1100 (AEDT)
-Date: Fri, 21 Mar 2025 09:11:51 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust
- <trondmy@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Trond Myklebust
- <trond.myklebust@hammerspace.com>
-Subject: linux-next: manual merge of the nfsd tree with the nfs tree
-Message-ID: <20250321091151.2fd07db3@canb.auug.org.au>
+	s=arc-20240116; t=1742508810; c=relaxed/simple;
+	bh=KgiuVskFuqPodQ88jiuald1cK0Yq6BI+rekg6RVxwKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qx1ujgKZA50D7Ldwk+ExgrsioDGDUparTfDiTXC2dwr9LaF74heXnn6uuRvxrQ9/wo4IvHsh7du6NGLzU0xIr91S7oo+9YzvxFVFqnVJAsMNPO2P1i4C02bnDH7gQYOfO3h8OAc8bfO56G/hG4mN6zbohyuUY3Ugdp3S5oLYBjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZSTVI8e; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bfc79ad97so24335101fa.1;
+        Thu, 20 Mar 2025 15:13:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742508806; x=1743113606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uAFxENMZn4QcPzJ1M/33TjyaxDestwUuk1FF0bJ1mGE=;
+        b=CZSTVI8euG0YebS6ltK8hDAFffK9qHMstckbVds8rApHyT6EDzDBF572IKJSuhUE9a
+         +SLBgU6Zapk61v3u6kGNkrvlg70RUricp8Nw7MkclRHXocJ2IaxiXo/I+H4NpCT+8P8l
+         6OcBotdDRo2gFvRKnCOf2Zm9tErkzFnFJw/dfxyg6DMOCDd/1vK0HdaPDt+PWpPP0dTl
+         ferQkLfajmnKLpDQVWFq/rrqWy7kzf4qic27I+JCstgq1jnm89zmu75eU1GdbflHWM5E
+         IM0QfDlKN9+rdmdHhwtVO/ZQbB9nhoQqKizkqcj165ptquaCUqd5Hfj/NUqwnhKg+CIJ
+         3Oeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742508806; x=1743113606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uAFxENMZn4QcPzJ1M/33TjyaxDestwUuk1FF0bJ1mGE=;
+        b=VcMlZ0qfuMn7MwK0TAUM/N4kNXLSVK6FPB4UptWkiB8H/DExtg2Juoj/V9sKrPwGCN
+         6Ju1PvKAH5nzNsVg3A9Aj23xavJtxkeYvtmyoQZ/u/ltLMulHnkMs+6wvgj7bSq2dwUb
+         BeVXweGckcYPxFzJnLTR3pA59ItsRfoLXqIhPE50zo3Q2Sz4UiK6MbmdM2pIsq2ACc+Y
+         vBwka/kfEcHk/sQ+EChoBMJhxh00r8jVxUzkZPlM4S7frmomlJKyS/EOrQ8QuCN9/9F+
+         h0OEIegT5QBaMICDREqTLLZdW3rf+rCOXF+kK8twjLSPWNNJ/yr8NOR7Zxu77IjtyVne
+         BWug==
+X-Forwarded-Encrypted: i=1; AJvYcCV79AYLQL5JWQrUxW/+E5Ohxi4aix/cvEW58+RYSw6Q952wzU+dXrqUn3vzV/oukPZqooUJqX7pELUEgCU=@vger.kernel.org, AJvYcCXzaUucxkBdO5pUMRUs1cq/lhHaUDMRMyagIdiDOqsekUWvrFDvgIQIKjcNNDnSqfSdmFybsi4cCfvm+/xWq5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy32+piIDcnZzR1sE8rAhfEC1IxMFt4LnUQc9aKJ1N6yz1iGlWL
+	JDUq0OUCD9x7kkWfTX4xDOabQzO/T55JRC9DcS5uo6zGcJSeU/Vv8GIJaSiVo3vM+oOdnV/ekhC
+	LIgwtY4q0JpVA3THlWKZvd2BdRso=
+X-Gm-Gg: ASbGnctaZBlCtRG52qj3Kum5D/CZ3jwR5gPBaSd0dGolLCrPwm7hWt7cYI/QAtFCa+v
+	8U/ZG947RBNDXTu9O3l4zVP49A2ejvLNpnnH+HxMPlP6nyVY76Bymq9DElcKskj8cFcczL5rZGY
+	WtElS/krwaaO3/vgW+Y/3XmfNahhpCHXfPPG2OfXsKPw==
+X-Google-Smtp-Source: AGHT+IEfRLZm/iAzfrGhRw3gUEIzjK7pWZsGSEejyzKMWKCzaLSHBcDKlDg9oPvyH1jxAjXznCm+yWylqqY5IPu/dyc=
+X-Received: by 2002:a2e:6817:0:b0:30b:f599:d78f with SMTP id
+ 38308e7fff4ca-30d727317a3mr21754151fa.7.1742508806373; Thu, 20 Mar 2025
+ 15:13:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pt/SlpRsCD7HOeNW+SSr8SO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/pt/SlpRsCD7HOeNW+SSr8SO
-Content-Type: text/plain; charset=US-ASCII
+References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-4-7dff5cf25fe8@google.com>
+In-Reply-To: <20250320-vec-methods-v1-4-7dff5cf25fe8@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 20 Mar 2025 18:12:50 -0400
+X-Gm-Features: AQ5f1Jr2DYB_Zdwm3HARPJ4W1U2NuURVVPm9kt-h-3RHgSrYd1T_64m_bOS-Fbo
+Message-ID: <CAJ-ks9mM6cb_b0G_ZZh+tnijOPo1imWv-bzhgrLpGcNXMsMjBA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] rust: alloc: add Vec::drain_all
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Mar 20, 2025 at 9:56=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> This is like the stdlib method drain, except that it's hard-coded to use
+> the entire vector's range. Rust Binder uses it in the range allocator to
+> take ownership of everything in a vector in a case where reusing the
+> vector is desirable.
+>
+> Implementing `DrainAll` in terms of `slice::IterMut` lets us reuse some
+> nice optimizations in core for the case where T is a ZST.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/alloc/kvec.rs | 57 +++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 57 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index df930ff0d0b85b8b03c9b7932a2b31dfb62612ed..303198509885f5e24b74da5a9=
+2382b518de3e1c0 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -564,6 +564,30 @@ pub fn truncate(&mut self, len: usize) {
+>          //   len, therefore we have exclusive access to [`new_len`, `old=
+_len`)
+>          unsafe { ptr::drop_in_place(ptr) };
+>      }
+> +
+> +    /// Takes ownership of all items in this vector without consuming th=
+e allocation.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D kernel::kvec![0, 1, 2, 3]?;
+> +    ///
+> +    /// for (i, j) in v.drain_all().enumerate() {
+> +    ///     assert_eq!(i, j);
+> +    /// }
+> +    ///
+> +    /// assert!(v.capacity() >=3D 4);
+> +    /// ```
+> +    pub fn drain_all(&mut self) -> DrainAll<'_, T> {
+> +        let len =3D self.len();
+> +        // INVARIANT: The first 0 elements are valid.
+> +        self.len =3D 0;
 
-Today's linux-next merge of the nfsd tree got a conflict in:
+Could you use `self.dec_len(self.len)` here? Then you'd have a &mut
+[T] rather than `MaybeUninit`. Provided you agree `dec_len` is sound,
+of course.
 
-  fs/nfsd/nfs4callback.c
-
-between commit:
-
-  11a149e09d58 ("sunrpc: make rpc_restart_call() and rpc_restart_call_prepa=
-re() void return")
-
-from the nfs tree and commits:
-
-  6c1cefb84b3d ("nfsd: lift NFSv4.0 handling out of nfsd4_cb_sequence_done(=
-)")
-  f049911b5b98 ("nfsd: only check RPC_SIGNALLED() when restarting rpc_task")
-
-from the nfsd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/nfsd/nfs4callback.c
-index 654bee80acef,ec6539cec0fe..000000000000
---- a/fs/nfsd/nfs4callback.c
-+++ b/fs/nfsd/nfs4callback.c
-@@@ -1381,41 -1384,42 +1384,43 @@@ static bool nfsd4_cb_sequence_done(stru
-  		fallthrough;
-  	case -NFS4ERR_BADSESSION:
-  		nfsd4_mark_cb_fault(cb->cb_clp);
-- 		ret =3D false;
-- 		goto need_restart;
-+ 		goto requeue;
-  	case -NFS4ERR_DELAY:
-  		cb->cb_seq_status =3D 1;
- -		if (RPC_SIGNALLED(task) || !rpc_restart_call(task))
- +		rpc_restart_call(task);
-++		if (RPC_SIGNALLED(task))
-+ 			goto requeue;
-  		rpc_delay(task, 2 * HZ);
-  		return false;
-- 	case -NFS4ERR_BADSLOT:
-- 		goto retry_nowait;
-  	case -NFS4ERR_SEQ_MISORDERED:
-- 		if (session->se_cb_seq_nr[cb->cb_held_slot] !=3D 1) {
-- 			session->se_cb_seq_nr[cb->cb_held_slot] =3D 1;
-- 			goto retry_nowait;
-- 		}
-- 		break;
-+ 	case -NFS4ERR_BADSLOT:
-+ 		/*
-+ 		 * A SEQ_MISORDERED or BADSLOT error means that the client and
-+ 		 * server are out of sync as to the backchannel parameters. Mark
-+ 		 * the backchannel faulty and restart the RPC, but leak the slot
-+ 		 * so that it's no longer used.
-+ 		 */
-+ 		nfsd4_mark_cb_fault(cb->cb_clp);
-+ 		cb->cb_held_slot =3D -1;
-+ 		goto retry_nowait;
-  	default:
-  		nfsd4_mark_cb_fault(cb->cb_clp);
-  	}
-  	trace_nfsd_cb_free_slot(task, cb);
-  	nfsd41_cb_release_slot(cb);
--=20
-- 	if (RPC_SIGNALLED(task))
-- 		goto need_restart;
-- out:
-  	return ret;
-  retry_nowait:
-- 	rpc_restart_call_prepare(task);
-- 	ret =3D false;
-- 	goto out;
-- need_restart:
-- 	if (!test_bit(NFSD4_CLIENT_CB_KILL, &clp->cl_flags)) {
-- 		trace_nfsd_cb_restart(clp, cb);
-- 		task->tk_status =3D 0;
-- 		cb->cb_need_restart =3D true;
-+ 	/*
-+ 	 * RPC_SIGNALLED() means that the rpc_client is being torn down and
-+ 	 * (possibly) recreated. Requeue the call in that case.
-+ 	 */
-+ 	if (!RPC_SIGNALLED(task)) {
- -		if (rpc_restart_call_prepare(task))
- -			return false;
-++		rpc_restart_call_prepare(task);
-++		return false;
-  	}
-+ requeue:
-+ 	nfsd41_cb_release_slot(cb);
-+ 	nfsd4_requeue_cb(task, cb);
-  	return false;
-  }
- =20
-
---Sig_/pt/SlpRsCD7HOeNW+SSr8SO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfckqcACgkQAVBC80lX
-0GyHsQf/a82OdNJhslNGCmWKz0sdUJknuoSrNbCxI3HEpKyHez/TKE8LhDp4WIrQ
-9gY18K7KBWKAzLnlLXng+4yLUX9BBderkWBn57wZ5mgceue0uzv4j27RS9c4oeN4
-qpHVs19SBSOPOQMtLbDaxzLqZH51qSnCW/sK4pDBVrQmc7cOvRnpye4/ouNzp+jJ
-l0aG4Brt4gN5D2donK7I2cy/DA7RiAiHRYNbfJ/+qqPb2AmRPaZuLCyxZIvM7ru1
-j/Nb+rDr1DG5tt4tQ/GhKToVy76c9DhCwnWUdDq8zGFUsTAtGcq2jSJESn/oksHf
-5ECloZ3tiTXTZuAb+zIoP7o9ZXJCHA==
-=gBQ5
------END PGP SIGNATURE-----
-
---Sig_/pt/SlpRsCD7HOeNW+SSr8SO--
+Link: https://lore.kernel.org/rust-for-linux/20250318-vec-set-len-v2-2-293d=
+55f82d18@gmail.com/
 
