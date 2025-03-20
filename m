@@ -1,136 +1,134 @@
-Return-Path: <linux-kernel+bounces-570306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1381A6AE99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:35:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923D3A6AE97
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67F13BB14E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAA21890B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBB0227EAE;
-	Thu, 20 Mar 2025 19:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563C522837F;
+	Thu, 20 Mar 2025 19:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dyE0zpdC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jo57SlfX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOgqCeh/"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12431E3DDB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C14E227BB6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499202; cv=none; b=mrJ1JX+TPTbcTp3b9w1duVSLJAga8lNkqmoBNxHOgeU1ke+QTm4/kuIgUlJYWEWQS7EmoRHYman2/LNWx1MjHWHw7pL08oH4r2KtyGMZOPAso1OKnS37nhEe+Frdjyo5qjipOSShLY3yikr8MA0TP0z0yXkgwKflINbEyXZ2vJI=
+	t=1742499230; cv=none; b=JiaUYMRSDiwvNtkTq+M6dSQqt07+B1MWQJZTEm2h1sxpYB/DM6rcUPx9eQN1rRJ0+F4m7XA5aXuuWGt+53nJ7EOfxFtLvDOfYDsH1/UGDkSqQvEnIIWmwxg+nvObCMDClatyDV7OwJ60n8r4/JT4CfevXLxSRgz6S+nlSDvgEaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499202; c=relaxed/simple;
-	bh=n2WuDKUJehig2OqByicj1g7VjYrq/PTeP2s0UY6W1go=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=b3U4EZCr6sTuTD+3FD/SaRuHelgDp9aHqdsyeJ8eWvqOvWEjRKR6XVgINXp1aUwY8p4M0lZDOCpVdVHWnzO0qnV1csB0WpTQzI/QDAvTFMroj24O/fxMZHgRYetd8Y2vX2oSzMx/7qkq1G91TGGqGBCC4H3TWhDt8JzUS+XaHHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dyE0zpdC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jo57SlfX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Mar 2025 20:33:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742499198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=Dl7nJorMTIUh6c864KG5H8S26ZyKWP2DgtImU18sjfM=;
-	b=dyE0zpdCHp5FK1SSzbFFEpGygaozMaQD7LQDWSLbb7S85V3Gh3LN0/B3+q/WduCVMxFit3
-	8HDHvNG2IMdJXloapeANKKnecSkAH+zfcKnOVdxgjtJDzWBCQHh5kS1cEMXYVL8tQt1y7a
-	sXEM07LWjsfdHMMAgD3nXkYDXVDSklT1RNtsWClx6sz7H5Tw6XSrQSGjEdvA+Wyb57iuF4
-	SbNqmkzLuHMyuvrDQ5P6tIvNVtly2bY/X65JNELietnuREYsK9pxbhEdyQ9lrJb/XHmrYC
-	y7qoUK2BD1gbrZfAjKx2Q8KJ2jLoGvsCVNFYhcFAgU2TKknwEHSnNz7NNO+RIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742499198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=Dl7nJorMTIUh6c864KG5H8S26ZyKWP2DgtImU18sjfM=;
-	b=Jo57SlfXu6hChPbC2fmm2psLr3kMlPM9nbkL0S0q++GJoXugCTApih6jNdBY5lh5+lB7vc
-	jmKO1twCqs1KxYAQ==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: [x86/cpuid] Question regarding historic leaf 0x80000000 code
-Message-ID: <Z9xtfC5pL-g4LYvK@lx-t490>
+	s=arc-20240116; t=1742499230; c=relaxed/simple;
+	bh=H69w/dK6lBZzFe8CtNTVmt/q4w+i93j6i7vyJs8q3/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ay5GG5zgu+O1cajc9lRqVLvgDCiabzLMshFE5w7Y1zt7qWo+nOhWcinX+XpbGdFROE5kZ1aXG+aoDQsP3yu/bUGTo271lWhMLf4Uy5r3HMU8p64tphFYeVfVuN4vkj/zxQf2jRdxy2oYy5q/id8OltOj03/pAKVjBU2wBCUaL8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOgqCeh/; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so1974387a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742499227; x=1743104027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CJ3CjqPxZOLFj5zkXxGtp5z65slUkGX4/8QoAE4cz8U=;
+        b=KOgqCeh/4izAzVy66E5NU1yjvu6C6vhBo2MdaiAVAC9iu0TEyZ/v2fYj79dmvwsKYS
+         OxAKqP8lkwXkmi98mM/DyCweONGZ+PYlyxL7NYDMzaGP0GaKcltsWprvmNE77udQvidq
+         lQlhXnHfLnkvYq+PrLTNDeKGGiWCdip+lBFaJB/rm3+38fB8zpQeIi6ZDf3LFQOM7q5r
+         S5H8XzJlQOzM9xyA/N7vWtiMONUOFDHFxwnI9CFHTH/5kmOCTXlyS55ijxuCyX0lzJkf
+         5/HZKccCRLeirEAGfgmSYTxKqwxWyVpaTuGQK9eSZadSQxPr5IVmh2yCIu7n7jeoEfuC
+         S7rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742499227; x=1743104027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CJ3CjqPxZOLFj5zkXxGtp5z65slUkGX4/8QoAE4cz8U=;
+        b=rEJaqzzuGZnp5amVEekliMB94+Ol8CaC+Gr0RV/7D9cH2bClRTr6sZKq00OOTnQ7um
+         lBlLng61qn96yPqf8Ub4hAQyuuEG4+S0kVpnqC2mqJn1LsVKpupyV8GBmNK4iZhZKMU0
+         WhqxopK3qlcViqO6a9T/VCUF06eNEMg9r5yWGI7nXP/cNSh6RhhiXcIwGqhRE0SyNblD
+         o5xiU8lKvF20tHaUablNpyJ7eEUHpNb6Sx3eM8oTDEi9UjAzEshPdOTpryEh/t+JoWjq
+         aOJ2cd2AKqz/QnVHyILo5pNLi0Ja9/Ga0b2wI+eAfpk9pe0SGIND/K1yF+L+Xz/NHlMA
+         NB3g==
+X-Forwarded-Encrypted: i=1; AJvYcCULTXAIlFc1/RqEnpRRdhLcn0qc5MR5k+1jtmX7x0fEYd7YmoeIE0cMLzdasU8YV5K0UqlE/dEtEdNv20w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkWxwPwYh5txeNR/sH+yB/nLJkXovlJc8a9Qt/mrRVq3o0maAx
+	ndUMlz5GgDYWLfrqpBm8RrUSxrNne7997pMli1NmFUlwK/ULZnSmNPmv5UWqdjm23yTYX/ndtvf
+	M6b3ssmWoVnYkDOhB0meRR0wixbg=
+X-Gm-Gg: ASbGncvv0xUIF1PNDBlNMYMxeoOoGy+zKfnZK7YU0fOcY3gMGGoEuu0LvqR27Hdg5Q3
+	0y4kkUiGIMN5U6xus/5DkKQyM+V1qdUeeHIIuWha5f+sffxMHat9DvwVaJ8Hdv3wpFru42kjcr0
+	55iJwT2axAAqhF49ZWhCtPFpCxmg==
+X-Google-Smtp-Source: AGHT+IEoJtGHaGXt+B/1W9/TKMjxX1iVOTmidDFYTjagaxFy7ZJ6FaE2l5M0hsf4bNLxMN72pe/e8OPbQXK+TjG+1UE=
+X-Received: by 2002:a05:6402:5190:b0:5de:cbed:c955 with SMTP id
+ 4fb4d7f45d1cf-5ebcd45f681mr512243a12.17.1742499227040; Thu, 20 Mar 2025
+ 12:33:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250320190514.1961144-1-mjguzik@gmail.com> <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
+In-Reply-To: <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 20 Mar 2025 20:33:35 +0100
+X-Gm-Features: AQ5f1JqhDFREplKa8qDUGcWjvE2bSGMP6M86i3aXdjpcYdtx6Ut3SNBGSOGtnu4
+Message-ID: <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
+ overlapping store
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86@kernel.org, hkrzesin@redhat.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com, 
+	atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi hpa,
+On Thu, Mar 20, 2025 at 8:23=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, 20 Mar 2025 at 12:06, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > Sizes ranged <8,64> are copied 8 bytes at a time with a jump out to a
+> > 1 byte at a time loop to handle the tail.
+>
+> I definitely do not mind this patch, but I think it doesn't go far enough=
+.
+>
+> It gets rid of the byte-at-a-time loop at the end, but only for the
+> short-copy case of 8-63 bytes.
+>
 
-As you probably know by now, we're working on a centralized "CPUID table"
-data model, on top of the cleanups at:
+This bit I can vouch for.
 
-    https://lore.kernel.org/x86-cpuid/20250304085152.51092-1-darwi@linutronix.de
-    https://lore.kernel.org/x86-cpuid/20250319122137.4004-1-darwi@linutronix.de
-    https://lore.kernel.org/x86-cpuid/20250312143738.458507-1-darwi@linutronix.de
+> The .Llarge_movsq ends up still doing
+>
+>         testl %ecx,%ecx
+>         jne .Lcopy_user_tail
+>         RET
+>
+> and while that is only triggered by the non-ERMS case, that's what
+> most older AMD CPU's will trigger, afaik.
+>
 
-The idea is to remove all the direct CPUID queries from the x86 code, and
-access a pre-filled table instead (with caveats outside the scope of this
-question.)
+This bit I can't.
 
-While changing the CPUID queries one by one, I've stumbled with:
+Per my other e-mail it has been several years since I was seriously
+digging in the area (around 7 by now I think) and details are rather
+fuzzy.
 
-    => arch/x86/kernel/cpu/common.c
-    void get_cpu_cap(struct cpuinfo_x86 *c)
-    {
-	...
-	/* AMD-defined flags: level 0x80000001 */
-	eax = cpuid_eax(0x80000000);
-	c->extended_cpuid_level = eax;
+I have a recollection that handling the tail after rep movsq with an
+overlapping store was suffering a penalty big enough to warrant a
+"normal" copy instead, avoiding the just written to area. I see my old
+routine $elsewhere makes sure to do it. I don't have sensible hw to
+bench this on either at the moment.
 
-	if ((eax & 0xffff0000) == 0x80000000) {
-		if (eax >= 0x80000001) {
-			cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
-
-			c->x86_capability[CPUID_8000_0001_ECX] = ecx;
-			c->x86_capability[CPUID_8000_0001_EDX] = edx;
-		}
-	}
-	...
-    }
-
-You've contributed that snippet here:
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?h=2.4.0-test11pre5&id=67ad24e6d39c3
-
-Do you remember what was the rationale for the "if (eax & 0xffff0000) ==
-0x80000000" check?
-
-You've also contriubted a similar check to head_32.S:
-
-    https://lore.kernel.org/r/1258154897-6770-2-git-send-email-hpa@zytor.com
-
-    /* Check if extended functions are implemented */
-    movl $0x80000000, %eax
-    cpuid
-    /* Value must be in the range 0x80000001 to 0x8000ffff */
-    subl $0x80000001, %eax
-    cmpl $(0x8000ffff-0x80000001), %eax
-    ja .Lenable_paging
-
-So I would assume, it would be safe to have a similar check in our
-centralized "system CPUID table" scanner.
-
-In all cases, if you know more details, it would be great to know, so
-that I add it in the centralized CPUID table patch queue changelog (in a
-separate patch.)
-
-Thanks a lot!
-
---
-Ahmed S. Darwish
-Linutronix GmbH
+That said, if you insist on it, I'll repost v2 with the change (I'm
+going to *test* it of course, just not bench. :>)
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
