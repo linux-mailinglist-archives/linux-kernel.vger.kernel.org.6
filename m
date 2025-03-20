@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-569220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BCCA6A02F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:11:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A375A6A033
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF328A5298
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC5D8A54B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476EC1EE7A3;
-	Thu, 20 Mar 2025 07:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA6F1EE7CB;
+	Thu, 20 Mar 2025 07:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPT2nCmZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aD9hkPNj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929192744D;
-	Thu, 20 Mar 2025 07:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F481E32C6;
+	Thu, 20 Mar 2025 07:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742454654; cv=none; b=iZlAqQhpW+Ez0NAbBO8RmU3H7XcU+zY5ce8dV1L5hNLmFqCH97aTg68CjO4QK9urDy/fd8XOA4l7OjCB+YgzTRgJ2xy2oBegdsmP7dLNFNgWpEQj8oANs93Tgpg71DQWGGAYoWJMAoIBr4G6cs57CEvCwsKKhUo50jlhTEz50sM=
+	t=1742454668; cv=none; b=EJSg2EKH4dL1BV1Qn1irwOPqx7gmlBAGdPRHTqo6EZGXV3L8cZ3rOTuRgGy0QOSDQZg0K9c4fJJK43VlrjMtdPG+tlTW3KHXjD8yBkxvvyaZQ7hJJUsnB44+0PPxx2t8zUgxYffh9vEhslUpfqT+5ziR1Y57iHWwwiNRiXPfsYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742454654; c=relaxed/simple;
-	bh=7plPKqx81avtzFveE1j64iGTt+fd3g0+7dE0AJIyv/Q=;
+	s=arc-20240116; t=1742454668; c=relaxed/simple;
+	bh=ofKcg6Jw4XQiuJNA+UQgX1XP/VvJ056b5xfgIenWamA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fOQCM4Mtv/Cir5YoYWgr2ftMSyYd3xkdTPzxJdTIh2fNqo/4vrpt18AWIkdK9n1pojpV/R8cwvwuisqzUVpan743kHCXMVWWwcpi/01EZYjLUC3bKaPzZgu/TPde/FGAPCh9Ecc8MI4GYk3k6G4OoiZBYwNoC+J29JA0s/otTO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPT2nCmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E5D1C4CEDD;
-	Thu, 20 Mar 2025 07:10:40 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uP3LeNEXIbCOhiexC6cdvEdpqdyPHI0UahSlfohDN7MaufbtUMMkG3BIpuXO89mbm4dJSlnBfPvAiwFKKXNtQ4/BTUDy+LKw6JLY2Kr4dGc/PNgrSF4DT/kYAkivSw36MmHjdxQ0+UmskTBPGKOgmEhXDDr3nzDA7HK6xw62Shw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aD9hkPNj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238BEC4CEE7;
+	Thu, 20 Mar 2025 07:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742454654;
-	bh=7plPKqx81avtzFveE1j64iGTt+fd3g0+7dE0AJIyv/Q=;
+	s=k20201202; t=1742454668;
+	bh=ofKcg6Jw4XQiuJNA+UQgX1XP/VvJ056b5xfgIenWamA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QPT2nCmZHczibCXuIz3DWc12CGF6vij5ny2ZxI4QWAElJANdlhrUKRRHhm8/qRMJx
-	 LGUe2Lewg76oc9S8zwRgDos2/spq+SlFnrwGvvFsiYObhiYDAaiAeAehEiDYgkttZz
-	 bt5V6wk1QAn4jsH7OaiU81jc4aPN/HL4dUnWvp8f+EeX16UaWCS+LFDDgp3vEdDlxH
-	 zw8yilSBK4QIAhvzuCldg84HbrC4idOIivSysmk5HyYoiHppwsSut3FIT0CusQ1SNL
-	 zJq0S7F6YoV/jxRyveQDHXNEOSZl9r9cA7qb9GfOrydXl2n3sf+mJTCoF5f8VCtHnL
-	 1f5c6A6g4MlSw==
-Message-ID: <d5f7379c-c66b-47f5-bc97-eab90ab34346@kernel.org>
-Date: Thu, 20 Mar 2025 08:10:37 +0100
+	b=aD9hkPNjqy15EuSIzjKCpaOfe6I1L3lv0AbIOUbPp5nVXl0tUm+BWVx5TDgmhj/AE
+	 l79BcGv+F+x/NdW2kUUn/+Eyy6Ipe5/H9/deo1xVyTiVpwmDwfM9HH5+ESmr1B4JSS
+	 qVmPv+0MSBYEdjmWyAw17klsP31h1guQE25x6w4Q/UnxVGtGTeoCObHAqzjWhgaOad
+	 X9D2kBU7LDfZSIeBHG4nhGgW9LQMOECFcqfa4kIsouOKUK2Zs8/+PflABiOf2lCSt8
+	 d22KIax95MOK5mrReAyhevdgCgVA38lbW0XNmM0Je4iqUwU83nVIWmHH3YJrdlvr/y
+	 Q1PbQMW+zyPHA==
+Message-ID: <16b14662-d69b-478a-9e2f-a05c56f2c4ce@kernel.org>
+Date: Thu, 20 Mar 2025 08:10:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
+Subject: Re: [PATCH v5 02/16] mm/mm_init: rename init_reserved_page to
+ init_deferred_page
 To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
 Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
  anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
@@ -64,9 +65,9 @@ Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
  kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
 References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-12-changyuanl@google.com>
-Content-Language: en-US
+ <20250320015551.2157511-3-changyuanl@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -110,24 +111,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250320015551.2157511-12-changyuanl@google.com>
+In-Reply-To: <20250320015551.2157511-3-changyuanl@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 20/03/2025 02:55, Changyuan Lyu wrote:
-> From: Alexander Graf <graf@amazon.com>
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> We have all generic code in place now to support Kexec with KHO. This
-> patch adds a config option that depends on architecture support to
-> enable KHO support.
+> When CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, init_reserved_page()
+> function performs initialization of a struct page that would have been
+> deferred normally.
 > 
-> Signed-off-by: Alexander Graf <graf@amazon.com>
-> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Rename it to init_deferred_page() to better reflect what the function does.
+> 
 > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-What did you exactly co-develop here? Few changes does not mean you are
-a co-developer.
+
+Incorrect DCO chain.
 
 Best regards,
 Krzysztof
