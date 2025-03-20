@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-569052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA23A69E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:08:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 691A7A69E0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E8176241
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAFD16ADA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF161D7989;
-	Thu, 20 Mar 2025 02:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CE070807;
+	Thu, 20 Mar 2025 02:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="UFjO01R8"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="XtwHGobO"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798FC1C5F39
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48D1DE2CE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742436484; cv=none; b=SF1S5Un5Msf438iTWQpMyc34Qzw2tV6/10pVw8vkXh/pIFdaZETntKG20PJql9XLv3wJYLDBs3p7yCdE8hzXuCfwwd+H4UaY5W7KHXH4OslK52dxrr/Hny1fUiIHzsxZAh6jaPSX8kJwdj5t9Ldq89xVxa+Yc5wrEWp2LjdMfcQ=
+	t=1742436487; cv=none; b=l879s+j4Iyg+MC4i2JTOE8PaKJH8MJ/lCckYJqntCVWbKxtNkv0CF5omj3NgXPOeR29wxJYiEFv1BsSWj/ulRyQEe1PSZWTE7Z9/zGKhuux41Yp7u/y8RdrsLAbsTgeA8oHeROwl3O0eEJmrURJybsFNtGNhM71vnlMMl+/9x4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742436484; c=relaxed/simple;
-	bh=m42DtURYMZCXyWHkUzDgb3x5mmA/f+mhAyyGrxqczQo=;
+	s=arc-20240116; t=1742436487; c=relaxed/simple;
+	bh=nmTx/Uf67oypYQVl7Qq4I9TqxsY77W5DplonEcfyvYs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HEa+jigDIMMTO8Q3uH5iIa7seaQs0d/TjcH+Q9w57HqxuVTJb9nW+GHZSSF0Y9V5yasbR5pa6yHM3kuujFuhIqixPK71pDvSiq/2gZNFSgUFbe0fRBm0uQJoeYGYZ/2yriwZSwVtTMyXgZ2WRGmK4Jww7Za42xA/jx2gI0pRk5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=UFjO01R8; arc=none smtp.client-ip=209.85.219.180
+	 MIME-Version; b=TeiotRKC9wGUQrYHpUamMY/ON3WGxVG/9Kh+q4Hm5AV3ifOcElIt/IPc/Ra8uElWwLGdiCIvO6gENppuYGbP7uxUaNtOfdzlzN1i0irjszBHROYSbYltUraOKEVD2xe5uAQQGTI3lTbsYBVJfkzVn78IFlkQMqK3pS2BYhkpjm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=XtwHGobO; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e46ebe19368so213581276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:08:02 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fedf6aaed2so2837307b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742436481; x=1743041281; darn=vger.kernel.org;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742436485; x=1743041285; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wYfvvRu1GHzIQ/b+4BIBn6FA6Z0KJrVipVcw92I95Mo=;
-        b=UFjO01R82Phi/zsptuvfQSn/vE7R8p+3ZHT+VM7PZml6YajaixBZq6427VCHKWAEr8
-         Hwl3FyfNnZ0MqYP55JVL/ZlP1tEcHr7nRI1M/1RuJo0UhgtJRQkWVQSGhHYGZeTxCL9b
-         /uhSvSzb2XwEzu44MgzIxVRVyzDlxi0rrtSJXtJYY9cqx5LXnwC7F2KRZyHuCMjzebPg
-         /X/+cK13kTiL5Jbu303EXMpJaGhR77Yri1hKjCZJOJF0c4z3Omk+PhJBmaZhfLwwg6J6
-         f8KcR5rEtkT3oTY8PWkVGb2dXKvkFAPflJT+nZt8KmNGVZKQuWSluSd8J5vBnGLNvmEf
-         KCCw==
+        bh=bc6kiMgjZCCReYjE/YP6lEkO7MfvY9pzB7oZNf0Wsp4=;
+        b=XtwHGobOuvOlDPuvVbfggTfM5tRs4E1TWHo0DKq4v7GIW9leCaUwWCdfFpMmM+z7QQ
+         59oDIeksEvAxVHxTrXHPW1woF7FmT3oQn66FI4mDtBYR1noytlXfU4Hu2rcSAqThgMKH
+         7SqXZ4RtxYn0t3lf4gePVK10nux2jHhBHaRTbs4qmbEpvBISnjBMx8+RGZSU7JAPVZ6l
+         V1x3uTXz6s/hncdHbfKwFOPKYGRnW9RGvZ1StSkuubhE+DeFDJA8qB87XjeQGZ/KyidV
+         OTov/dZZ/9P58dOzW4ZV8t0StlBHgaIblNkzGFSc++koK5ae2s4ijtC75AswXYTkV5tu
+         g7/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742436481; x=1743041281;
+        d=1e100.net; s=20230601; t=1742436485; x=1743041285;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wYfvvRu1GHzIQ/b+4BIBn6FA6Z0KJrVipVcw92I95Mo=;
-        b=W30RBnUI3B3qQanJQWK43f9IZuKsjxBEaKZ5R4uPOy3M0yh1Q3ZjLfD9WXmXtHxugV
-         vMPz9rgoXLwf95by0aNZ6aOYaSeSRkefhYIAPrHA2x9T3VfiwLe3M+LSWDOddnfamJRa
-         zS/Za/hYl1MBgJln5LaY+HSezMsecjTYWFmkVJ7UPnhMU6mIfqpY7u6v864y920hZR93
-         CktK3uf/BehIRYCGouTYimqKxp7n3id3v2p7zW47B5ucztLgSxWcJYmINRaOjMa4LXzs
-         MJqBBEh4NVCsrc1uY5/bf3Kpctr61u1E7pNqgZ94nDLiyAWRstO8gOKzhxEdDglkGgN3
-         AVxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBxnuzfBi01QbuwekmTfBuE4qgzH0wdTIY9u4V11GSJ1E5cIhJrYhhY8eMgyG4ZQkLqyZIg9UTFwshh9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBNZKBckIquX4w1bliuV+xlCCkBqE3YgqBQjHoFsmhC2hrvF3k
-	o+lhc3YV3UfxuoEDdL9nPo1pL122Bo5u67T1uhPNNaswslVYpood3gLlZg69cGw=
-X-Gm-Gg: ASbGncvKRR8nFS1EAdC70nsV+RWH0sKo/WWCgj2VNx3+Ct1y1+j31flh3rX87Fles1u
-	5gw+9f87+0DkVpI/cJybU9lmrMx0P1VE9FdTWtPXOwAEhKyRPdNui2S4PSzraX6mp27p+TY8CaY
-	HL4Fk830QHb5uTL1THRhOUrpi4r7EQrhnC7VabOx0hxGcES1vTcAzCPLm3GfNA6pzzxIsLN8+z/
-	gRwYJVM7Fx5Bb/SXEwDYqhSwYvCDReqtVW6cC8BPEJm95ItW1fTiXQg2WB4BoY3ZEoHge2buMUG
-	3lgm8E8in3Y+35D7Z86bGFybuYz9qZvER8dyvQUx15a/yt2lBUsCn7XoGhW7BOIQM0HkEV1bpDf
-	OrvKAxlm+p271g3TQXaOZ818XQX6H1Q==
-X-Google-Smtp-Source: AGHT+IFDVdDbb9X/ieVCAhVOJq33/2ZkRWOn2SMlUCHTT1LWFdTkxTojsuUWjAEuoUU3PICEQ5tJdw==
-X-Received: by 2002:a05:690c:2093:b0:700:a63c:641a with SMTP id 00721157ae682-700a63c6433mr37471867b3.0.1742436481396;
-        Wed, 19 Mar 2025 19:08:01 -0700 (PDT)
+        bh=bc6kiMgjZCCReYjE/YP6lEkO7MfvY9pzB7oZNf0Wsp4=;
+        b=rfgRAvpZG5cnNfIo8DzgptsSFYmFoPcwajNKHV5EaXb/roPU6o6qUJ9xWj5NePdKip
+         XgOGppwEmfzyRvTaiy6NpdT1m0bhZ+wDUm9eFZbtmlu6/K138VQMmsRd93xLZSFVgtIL
+         KpwmSfFC6j8gepPug16Pvs2L4QxIVGydbnAFk4esIAq1EwKmcuJF5BQZiIPlKcyB8rio
+         KwGn7+SuUmiDp1J5hcEwuSGjLFTvheXx72xaj0ZB0IMIi12XfrkVz0uvXCSbEkBKYQLW
+         TuptMukiEufJ0WKXVgpCfp8RUN9AzwyvyL1IPhztQV2UecKfeu8Qqr3Q0K/gN3+oreFP
+         f7Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuAaprUH6d1Cb9/QKotkj99L84Fm+OB4Rss/JB+GtHimJnDmtVz5cXcQhOEYvdE9G3o2Qd3suxl1KqRb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUNup4WiUG4n5xfPqpxhCWzkmAtym1Za6/d9x55S2BzIi+Os97
+	BtgCraAh3LWvBCtL8FhbXSjUAm5h/PEtX4tvYzH0a2A8l6qQOlLvwgyWbKA1YYg=
+X-Gm-Gg: ASbGncucXFtSwf0Xm2/msqLjkFsxjGkA/HQ+Wz0gcz/aYVxbbrWBK8Cy/G8eCQaH5NV
+	d3j9j3FDGIcX2XB7hJ35/cgisQk3vbBc3aLtsf+IsKx0VnImdp8n3gKeWjijibO+q1CZz/XbxJf
+	CH6Q6pBUKww8zAFEVPrvUTrzwBzr0pbp5XDzXygQ2I0Tj1dWUJCnhgz9gSKJLQ1ivzqRODU9V17
+	ym+aRclju0HhmtNgWECE438N5TNc675GGhVX8T1Tc2yP7ZlsSUM2vX64CSxPBe8hQIuMw6i4LhW
+	Mi1bV5DymMQ99mnFZTdXqInwX0VQIBHfs2Auac6hcU4JecOThglwtpmAhqGT9DZlQ979I2KwWav
+	rMTrGjFl7fquSOZs9qqVtTPj8iS2Y5cLQLWK5H0XU
+X-Google-Smtp-Source: AGHT+IGxpoLsP2uWVbCe4opF/xV8ySkEoE5qrdUUC95SwDsqC6/Loa8GFB/JIWAVQQ5noXA0a7ovRA==
+X-Received: by 2002:a05:690c:6c11:b0:6fd:a183:f6eb with SMTP id 00721157ae682-700ab2eabffmr26939607b3.15.1742436484665;
+        Wed, 19 Mar 2025 19:08:04 -0700 (PDT)
 Received: from Machine.lan (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff32cb598asm32826357b3.111.2025.03.19.19.08.00
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff32cb598asm32826357b3.111.2025.03.19.19.08.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 19:08:01 -0700 (PDT)
+        Wed, 19 Mar 2025 19:08:04 -0700 (PDT)
 From: Antonio Hickey <contact@antoniohickey.com>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -82,17 +82,13 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
+	Danilo Krummrich <dakr@kernel.org>
 Cc: Antonio Hickey <contact@antoniohickey.com>,
 	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 01/17] rust: enable `raw_ref_op` feature
-Date: Wed, 19 Mar 2025 22:07:20 -0400
-Message-ID: <20250320020740.1631171-2-contact@antoniohickey.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 02/17] rust: init: refactor to use `&raw [const|mut]`
+Date: Wed, 19 Mar 2025 22:07:21 -0400
+Message-ID: <20250320020740.1631171-3-contact@antoniohickey.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250320020740.1631171-1-contact@antoniohickey.com>
 References: <20250320020740.1631171-1-contact@antoniohickey.com>
@@ -104,52 +100,170 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since Rust 1.82.0 the `raw_ref_op` feature is stable.
+Replacing all occurrences of `addr_of_mut!(place)`
+with `&raw mut place`.
 
-By enabling this feature we can use `&raw const place` and
-`&raw mut place` instead of using `addr_of!(place)` and
-`addr_of_mut!(place)` macros.
-
-Allowing us to reduce macro complexity, and improve consistency
-with existing reference syntax as `&raw const`, `&raw mut` are
-similar to `&`, `&mut` making it fit more naturally with other
-existing code.
+This will allow us to reduce macro complexity, and improve consistency
+with existing reference syntax as `&raw mut` is similar to `&mut`
+making it fit more naturally with other existing code.
 
 Suggested-by: Benno Lossin <benno.lossin@proton.me>
 Link: https://github.com/Rust-for-Linux/linux/issues/1148
 Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
 ---
- rust/kernel/lib.rs     | 2 ++
- scripts/Makefile.build | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ rust/kernel/init.rs        |  8 ++++----
+ rust/kernel/init/macros.rs | 28 ++++++++++++++--------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 398242f92a96..1d078f69bb19 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -19,6 +19,8 @@
- #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
- #![feature(inline_const)]
- #![feature(lint_reasons)]
-+// Stable in Rust 1.82
-+#![feature(raw_ref_op)]
- // Stable in Rust 1.83
- #![feature(const_maybe_uninit_as_mut_ptr)]
- #![feature(const_mut_refs)]
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 993708d11874..a73aaa028e34 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -224,9 +224,9 @@ $(obj)/%.lst: $(obj)/%.c FORCE
- 	$(call if_changed_dep,cc_lst_c)
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index 7fd1ea8265a5..53dd39f9a550 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -122,7 +122,7 @@
+ //! ```rust
+ //! # #![expect(unreachable_pub, clippy::disallowed_names)]
+ //! use kernel::{init, types::Opaque};
+-//! use core::{ptr::addr_of_mut, marker::PhantomPinned, pin::Pin};
++//! use core::{marker::PhantomPinned, pin::Pin};
+ //! # mod bindings {
+ //! #     #![expect(non_camel_case_types)]
+ //! #     #![expect(clippy::missing_safety_doc)]
+@@ -159,7 +159,7 @@
+ //!         unsafe {
+ //!             init::pin_init_from_closure(move |slot: *mut Self| {
+ //!                 // `slot` contains uninit memory, avoid creating a reference.
+-//!                 let foo = addr_of_mut!((*slot).foo);
++//!                 let foo = &raw mut (*slot).foo;
+ //!
+ //!                 // Initialize the `foo`
+ //!                 bindings::init_foo(Opaque::raw_get(foo));
+@@ -541,7 +541,7 @@ macro_rules! stack_try_pin_init {
+ ///
+ /// ```rust
+ /// # use kernel::{macros::{Zeroable, pin_data}, pin_init};
+-/// # use core::{ptr::addr_of_mut, marker::PhantomPinned};
++/// # use core::marker::PhantomPinned;
+ /// #[pin_data]
+ /// #[derive(Zeroable)]
+ /// struct Buf {
+@@ -554,7 +554,7 @@ macro_rules! stack_try_pin_init {
+ /// pin_init!(&this in Buf {
+ ///     buf: [0; 64],
+ ///     // SAFETY: TODO.
+-///     ptr: unsafe { addr_of_mut!((*this.as_ptr()).buf).cast() },
++///     ptr: unsafe { (&raw mut ((*this.as_ptr()).buf)).cast() },
+ ///     pin: PhantomPinned,
+ /// });
+ /// pin_init!(Buf {
+diff --git a/rust/kernel/init/macros.rs b/rust/kernel/init/macros.rs
+index 1fd146a83241..af525fbb2f01 100644
+--- a/rust/kernel/init/macros.rs
++++ b/rust/kernel/init/macros.rs
+@@ -244,25 +244,25 @@
+ //!                     struct __InitOk;
+ //!                     // This is the expansion of `t,`, which is syntactic sugar for `t: t,`.
+ //!                     {
+-//!                         unsafe { ::core::ptr::write(::core::addr_of_mut!((*slot).t), t) };
++//!                         unsafe { ::core::ptr::write(&raw mut (*slot).t, t) };
+ //!                     }
+ //!                     // Since initialization could fail later (not in this case, since the
+ //!                     // error type is `Infallible`) we will need to drop this field if there
+ //!                     // is an error later. This `DropGuard` will drop the field when it gets
+ //!                     // dropped and has not yet been forgotten.
+ //!                     let __t_guard = unsafe {
+-//!                         ::pinned_init::__internal::DropGuard::new(::core::addr_of_mut!((*slot).t))
++//!                         ::pinned_init::__internal::DropGuard::new(&raw mut (*slot).t)
+ //!                     };
+ //!                     // Expansion of `x: 0,`:
+ //!                     // Since this can be an arbitrary expression we cannot place it inside
+ //!                     // of the `unsafe` block, so we bind it here.
+ //!                     {
+ //!                         let x = 0;
+-//!                         unsafe { ::core::ptr::write(::core::addr_of_mut!((*slot).x), x) };
++//!                         unsafe { ::core::ptr::write(&raw mut (*slot).x, x) };
+ //!                     }
+ //!                     // We again create a `DropGuard`.
+ //!                     let __x_guard = unsafe {
+-//!                         ::kernel::init::__internal::DropGuard::new(::core::addr_of_mut!((*slot).x))
++//!                         ::kernel::init::__internal::DropGuard::new(&raw mut (*slot).x)
+ //!                     };
+ //!                     // Since initialization has successfully completed, we can now forget
+ //!                     // the guards. This is not `mem::forget`, since we only have
+@@ -459,15 +459,15 @@
+ //!         {
+ //!             struct __InitOk;
+ //!             {
+-//!                 unsafe { ::core::ptr::write(::core::addr_of_mut!((*slot).a), a) };
++//!                 unsafe { ::core::ptr::write(&raw mut (*slot).a, a) };
+ //!             }
+ //!             let __a_guard = unsafe {
+-//!                 ::kernel::init::__internal::DropGuard::new(::core::addr_of_mut!((*slot).a))
++//!                 ::kernel::init::__internal::DropGuard::new(&raw mut (*slot).a)
+ //!             };
+ //!             let init = Bar::new(36);
+-//!             unsafe { data.b(::core::addr_of_mut!((*slot).b), b)? };
++//!             unsafe { data.b(&raw mut (*slot).b, b)? };
+ //!             let __b_guard = unsafe {
+-//!                 ::kernel::init::__internal::DropGuard::new(::core::addr_of_mut!((*slot).b))
++//!                 ::kernel::init::__internal::DropGuard::new(&raw mut (*slot).b)
+ //!             };
+ //!             ::core::mem::forget(__b_guard);
+ //!             ::core::mem::forget(__a_guard);
+@@ -1210,7 +1210,7 @@ fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+         // SAFETY: `slot` is valid, because we are inside of an initializer closure, we
+         // return when an error/panic occurs.
+         // We also use the `data` to require the correct trait (`Init` or `PinInit`) for `$field`.
+-        unsafe { $data.$field(::core::ptr::addr_of_mut!((*$slot).$field), init)? };
++        unsafe { $data.$field(&raw mut (*$slot).$field, init)? };
+         // Create the drop guard:
+         //
+         // We rely on macro hygiene to make it impossible for users to access this local variable.
+@@ -1218,7 +1218,7 @@ fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+         ::kernel::macros::paste! {
+             // SAFETY: We forget the guard later when initialization has succeeded.
+             let [< __ $field _guard >] = unsafe {
+-                $crate::init::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
++                $crate::init::__internal::DropGuard::new(&raw mut (*$slot).$field)
+             };
  
- # Compile Rust sources (.rs)
--# ---------------------------------------------------------------------------
-+# --------------------------------------------------------------------------------------
+             $crate::__init_internal!(init_slot($use_data):
+@@ -1241,7 +1241,7 @@ fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+         //
+         // SAFETY: `slot` is valid, because we are inside of an initializer closure, we
+         // return when an error/panic occurs.
+-        unsafe { $crate::init::Init::__init(init, ::core::ptr::addr_of_mut!((*$slot).$field))? };
++        unsafe { $crate::init::Init::__init(init, &raw mut (*$slot).$field)? };
+         // Create the drop guard:
+         //
+         // We rely on macro hygiene to make it impossible for users to access this local variable.
+@@ -1249,7 +1249,7 @@ fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+         ::kernel::macros::paste! {
+             // SAFETY: We forget the guard later when initialization has succeeded.
+             let [< __ $field _guard >] = unsafe {
+-                $crate::init::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
++                $crate::init::__internal::DropGuard::new(&raw mut (*$slot).$field)
+             };
  
--rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons
-+rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons,raw_ref_op
+             $crate::__init_internal!(init_slot():
+@@ -1272,7 +1272,7 @@ fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+             // Initialize the field.
+             //
+             // SAFETY: The memory at `slot` is uninitialized.
+-            unsafe { ::core::ptr::write(::core::ptr::addr_of_mut!((*$slot).$field), $field) };
++            unsafe { ::core::ptr::write(&raw mut (*$slot).$field, $field) };
+         }
+         // Create the drop guard:
+         //
+@@ -1281,7 +1281,7 @@ fn assert_zeroable<T: $crate::init::Zeroable>(_: *mut T) {}
+         ::kernel::macros::paste! {
+             // SAFETY: We forget the guard later when initialization has succeeded.
+             let [< __ $field _guard >] = unsafe {
+-                $crate::init::__internal::DropGuard::new(::core::ptr::addr_of_mut!((*$slot).$field))
++                $crate::init::__internal::DropGuard::new(&raw mut (*$slot).$field)
+             };
  
- # `--out-dir` is required to avoid temporaries being created by `rustc` in the
- # current working directory, which may be not accessible in the out-of-tree
+             $crate::__init_internal!(init_slot($($use_data)?):
+-- 
+2.48.1
+
 
