@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-569660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15012A6A5B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:03:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576EEA6A5FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:12:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921EB4600D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:01:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64DA16AAD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565CA221723;
-	Thu, 20 Mar 2025 12:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cx6I5r0d"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF730221DB3;
+	Thu, 20 Mar 2025 12:12:10 +0000 (UTC)
+Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BDB21E0BE;
-	Thu, 20 Mar 2025 12:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A9321E0A2;
+	Thu, 20 Mar 2025 12:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472050; cv=none; b=EzXkxW8fRAXrwJRSFIhXpNuGd5EsCL2/TNq8S73brGc9EkVo4V/vkzLs9fxijk3Yv7emGePJUrzshxkh/TAaqsc/4kZz8noqynawgLBUfWW/YlUYHPxdUb0po8DC/L/kI/Uj34HFOwL1+isAG0d9EWgZi6ZAFPJUJrH2LfkvBFo=
+	t=1742472730; cv=none; b=JFhE2S/o4g/p57tyJJPHkX7xaDt/HgFZGNw/5u1K/1msbCdmn+fAMJWor6JPZX9ijDYajosfCGe9V264jYRz8rsV68+i2O/wEyVAtE8/og0FXQbLqdfWEuGq99s2zu057f7c/qoF9ZDB1bFFHKqVII/BUmtjoQs+6puxGNRaIqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472050; c=relaxed/simple;
-	bh=wS5cHZp7JA1DSasgtzQi4XEUw6dEkOHf7U4/ZFqB8FU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K5J1qIvGBEp4QqTDosGfGt3Zc+JRNpHAKS3yq6FM4pEYaJETMFjjvKk2nJep/tFKd3rxqILTjHnlqLdzqYw0zIf7cB2pBqJjkLoB2CH/XLiGx9SI1/0O9+e3OUpWEATJIycs6kHKJjetZkPgIGsflDMCp5uGaEEKbAiMEbE9ee0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cx6I5r0d; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e56b229d60so3222954a12.0;
-        Thu, 20 Mar 2025 05:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742472047; x=1743076847; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=psZ28iWY4ce3nMVQ77aT2Xshn46cO5+w4xjAt4YRxQI=;
-        b=cx6I5r0dU1Uzcb8lz8iYUFzXZM6TDpm1MomElLGsVoMtv8hgT/Dp7L6vuUvqDjMmxn
-         3JGOW0mKRr0EFi5bJJybtV9DIpS0o1WYHBYvEI8w0o0IsMrmE1BI5TRI5ULv7Sz6/ztx
-         kj3jEgRKzJTAlVny/h/GgsW0gO73GawLR6sUaM1bVXGkj/dnhPTpg5omvq3Uuy/us8PJ
-         Jzho9XzeieCUMsY0d1FPdkygI6Or21GkQlZfwKcoYcp2kLApDNH07virjiwv9dKXKP3p
-         /OUzhShokrhsGQikOnBJZ+pst7q95y+/EiYy/Ba5htz61hSgS3PNuA/HZAQCc4Kqh3s+
-         +JnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742472047; x=1743076847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=psZ28iWY4ce3nMVQ77aT2Xshn46cO5+w4xjAt4YRxQI=;
-        b=Z2ovDWRm8HJuldjHg5DsHDDY53o+QtVUcWZjSe8CuYTICt3aAEhitK9cGjATUbKPTh
-         Z7XNniSk0iOl0gjOGUvQcCoU+0qgdt20IsRqByowBHG/44D/6dl2hp/0WSaQYGuHBIT6
-         EACyGxWY8DHB9im6vJ6qoK+tpEjmo8puWx7jYMzg9d1al2BCHA1eozPW7A3mqb6Ytjta
-         zeNVtIiH4TLSv9Xk+LG3Bk+BWSU2Sou/fyuo8egtuSvIRoII/YwnoxtmsQGKobEwcFTY
-         CR3EWdUhdwgfI+clQ1G0P3mnp+aX1ZBArgiWzBBSxfXpPU7teBxYQUf4qIlIaPWzrQIz
-         c5Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa8+7MvZmBeHh3waZ+rdbHNmhMZlZ/oVdlDuS5pkWWKOgok+Y1XhrxXQ14geT3E3/P1W9Ak03Udw==@vger.kernel.org, AJvYcCXn8dr68AvzPhXQkATY5O2hdq90M5dy+1+TTnZ5fobbh52EtUlyxW4z2sSzRSmT/0s8G3guhUchEtf1ICLk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVNt/IhEdSM7/50NgrI3U65xcRa00jpmrH0LZQdeTeoy4li5x6
-	q4kgmFFnQUnB7WZjdReeKQcebvUMUnKgjKJ/SXLwHeDcdMdGEWhJ
-X-Gm-Gg: ASbGnctQhJjDpj4Ax/od/opc9Ap3mFbfTuGoHO99AyTcaB2GzRNBmeZa/bav2g+oJ9V
-	LIiJGRUcYT47iWPHfQiuLBHOaAcCfKwX5+KqF4nwuJtZflDTJpiYBqSly3zxqi/XPh9gDkrxk19
-	Ax5bv2OrGLOJfwYYSSm5MTClRVamPb+U7/E7b4ECbZagKScfMMadw9TmuWsK7Q4mpQsexT5lZOA
-	VTXI3K/haWd944awLzTTU1nUA+aRMFYXFvas647AqXqJ0ar89MuRXw2qFdNtBB+Q6X82y6LvJep
-	CzLV0TlEQc3K6d1oEwyHFFK+zRmK7IvyPv17wUquF/hFdu20L5JXq8wGQ70ies9W10j2hICYCl2
-	Oxg==
-X-Google-Smtp-Source: AGHT+IH9kFnjgyrXu8gDQxf7ywNmvrwutO6K+fCnFZNjcw6cZ3Ga9Tjep9mQxKHstZ3wrK4j+kKl/w==
-X-Received: by 2002:a05:6402:40cb:b0:5e7:87ea:b18c with SMTP id 4fb4d7f45d1cf-5eb9a11ef67mr3052412a12.15.1742472046742;
-        Thu, 20 Mar 2025 05:00:46 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5148])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e8169b04dasm10665154a12.37.2025.03.20.05.00.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 05:00:45 -0700 (PDT)
-Message-ID: <14f5b4bc-e189-4b18-9fe6-a98c91e96d3d@gmail.com>
-Date: Thu, 20 Mar 2025 12:01:42 +0000
+	s=arc-20240116; t=1742472730; c=relaxed/simple;
+	bh=2hjKwq6kk1hx+A8wkZwRF9MYGKvwTO1wp6RDC9xD8Kw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ses+iMPv8LnCJecMK/F1QYSbNYNbZCTlN2/I46PqL4K0wv3399wXsPtgsaoMcPoItXaTU4xXR7qiwoVu5oNFLrcDBgQSRIWzXVrtx+7rTlQ0Cng2Q8XhLbdFi0EdiwI/9Tygm6VHuqQ9pQqpCw9xum9fzRA5C0MTGNrCpbF5ptQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
+Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
+	by gardel.0pointer.net (Postfix) with ESMTP id D02F4E801C3;
+	Thu, 20 Mar 2025 13:02:13 +0100 (CET)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+	id 6C4FF160206; Thu, 20 Mar 2025 13:02:13 +0100 (CET)
+Date: Thu, 20 Mar 2025 13:02:13 +0100
+From: Lennart Poettering <mzxreary@0pointer.de>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Subject: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure boot
+ be disabled"
+Message-ID: <Z9wDxeRQPhTi1EIS@gardel-login>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v5 5/5] btrfs: ioctl: introduce
- btrfs_uring_import_iovec()
-To: Sidong Yang <sidong.yang@furiosa.ai>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
- <20250319061251.21452-6-sidong.yang@furiosa.ai>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250319061251.21452-6-sidong.yang@furiosa.ai>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 3/19/25 06:12, Sidong Yang wrote:
-> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
-> with uring cmd, it uses import_iovec without supporting fixed buffer.
-> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
-> IORING_URING_CMD_FIXED.
+This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
 
-Looks fine to me. The only comment, it appears btrfs silently ignored
-IORING_URING_CMD_FIXED before, so theoretically it changes the uapi.
-It should be fine, but maybe we should sneak in and backport a patch
-refusing the flag for older kernels?
+This original commit this reverts creates a strange situation: it
+ensures more restrictive behaviour if SecureBoot is off then when it
+is on, which is the opposite of what one would expect.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Typically, one would expect that if SB is off the validation of
+resources during the pre-kernel and kernel initialization is less
+restrictive, not more restrictive. But this check turned the world on
+its head.
 
-> 
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> ---
->   fs/btrfs/ioctl.c | 34 +++++++++++++++++++++++++---------
->   1 file changed, 25 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index 6c18bad53cd3..e5b4af41ca6b 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -4802,7 +4802,29 @@ struct btrfs_uring_encoded_data {
->   	struct iov_iter iter;
->   };
->   
-> -static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> +static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
-> +				    unsigned int issue_flags, int rw)
-> +{
-> +	struct btrfs_uring_encoded_data *data =
-> +		io_uring_cmd_get_async_data(cmd)->op_data;
-> +	int ret;
-> +
-> +	if (cmd->flags & IORING_URING_CMD_FIXED) {
-> +		data->iov = NULL;
-> +		ret = io_uring_cmd_import_fixed_vec(cmd, data->args.iov,
-> +						    data->args.iovcnt, rw,
-> +						    &data->iter, issue_flags);
-> +	} else {
-> +		data->iov = data->iovstack;
-> +		ret = import_iovec(rw, data->args.iov, data->args.iovcnt,
-> +				   ARRAY_SIZE(data->iovstack), &data->iov,
-> +				   &data->iter);
-> +	}
-> +	return ret;
-> +}
-> +
-> +static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd,
-> +				    unsigned int issue_flags)
->   {
->   	size_t copy_end_kernel = offsetofend(struct btrfs_ioctl_encoded_io_args, flags);
->   	size_t copy_end;
-> @@ -4874,10 +4896,7 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
->   			goto out_acct;
->   		}
->   
-> -		data->iov = data->iovstack;
-> -		ret = import_iovec(ITER_DEST, data->args.iov, data->args.iovcnt,
-> -				   ARRAY_SIZE(data->iovstack), &data->iov,
-> -				   &data->iter);
-> +		ret = btrfs_uring_import_iovec(cmd, issue_flags, ITER_DEST);
->   		if (ret < 0)
->   			goto out_acct;
->   
-> @@ -5022,10 +5041,7 @@ static int btrfs_uring_encoded_write(struct io_uring_cmd *cmd, unsigned int issu
->   		if (data->args.len > data->args.unencoded_len - data->args.unencoded_offset)
->   			goto out_acct;
->   
-> -		data->iov = data->iovstack;
-> -		ret = import_iovec(ITER_SOURCE, data->args.iov, data->args.iovcnt,
-> -				   ARRAY_SIZE(data->iovstack), &data->iov,
-> -				   &data->iter);
-> +		ret = btrfs_uring_import_iovec(cmd, issue_flags, ITER_SOURCE);
->   		if (ret < 0)
->   			goto out_acct;
->   
+I'd like to ask for this commit to be reverted. If SB is on all bets are
+off regarding integrity of boot loaders and stuff, hence it makes no
+sense to be restrictive here: you cannot regain integrity once you gave
+it up once, hence if all bets are off anyway we might as well import any
+Mok keys passed to us into the kernel keyring.
 
--- 
-Pavel Begunkov
+Or to say this differently: if an attacker got control of the pre-kernel
+boot phase they might as well patch around in the firmware apis to make
+the kernel believe it is in SB mode even if it is not. Hence the check
+carries no value. It doesn't protect anything in any effective way.
 
+The reason i'd like this check to go is that I'd like a nice way to
+insert keys from pre-boot into into the kernel keyring for use with
+signed dm-verity, without requiring recompilation of the kernel, and
+without SB database games. i.e. i'd like to use a regular, signed
+distro kernel, and pass to it additional keys to insert into the
+kernel keyring in a reasonable way. The mok stuff would be great for that,
+except it all falls apart once SB is off.
+
+You might wonder what signed dm-verity gives me if I have SB off. If
+we authenticate the boot phase up to Linux userspace via TPM-based PCR
+policies (i.e. measured boot) we can be sure of the boot integrity
+without having to rely on SB. But then we'd still like to use
+dm-verity based code signing for userspace.
+---
+ security/integrity/platform_certs/load_uefi.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+index d1fdd113450a..7783bcacd26c 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -7,7 +7,6 @@
+ #include <linux/err.h>
+ #include <linux/efi.h>
+ #include <linux/slab.h>
+-#include <linux/ima.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include "../integrity.h"
+@@ -211,10 +210,6 @@ static int __init load_uefi_certs(void)
+ 		kfree(dbx);
+ 	}
+
+-	/* the MOK/MOKx can not be trusted when secure boot is disabled */
+-	if (!arch_ima_get_secureboot())
+-		return 0;
+-
+ 	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
+ 	if (!mokx) {
+ 		if (status == EFI_NOT_FOUND)
+--
+2.48.1
+
+
+Lennart
+
+--
+Lennart Poettering, Berlin
 
