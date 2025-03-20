@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-569539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B309A6A44C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:57:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AE0A6A44D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E67467AEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:57:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03D507B279F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5034226D00;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BDD226D07;
 	Thu, 20 Mar 2025 10:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b="cPcvcTdi"
+	dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b="FfLsEbwr"
 Received: from naesa04.arrow.com (naesa04.arrow.com [216.150.161.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536212253FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FFD22541B;
 	Thu, 20 Mar 2025 10:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.150.161.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742468165; cv=none; b=GX+HgYn3WCKzEFIMX1ON7qhye2G770E9zV97JCDTjEYah7iymDJJik+lQdn0Zhwi5RM11TK/yfacLteZp59J9lBOMAIse84t2D5NBPbpIZSIlr5PRTc72NGzwDCIuTGb+AvEHleD1ySNe02lW0qY1XyOa+Whf0roVcN1KP0lxPs=
+	t=1742468165; cv=none; b=Ip6QtxqUld/mwFvxgBSE01uU88W+1jopZTi49fHhHe6z7LM9+1RruuSa77vv6p3C7ZFdc3FdYtpo9A/aUmmchfAoeuduS6xs4hZsGM3oDSrmNw5rQMXoRAf6bQ3YPaj9trehziyw7xgHxdC2ObApVq3vaW7/Lu+YQuxLM6/cbvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742468165; c=relaxed/simple;
-	bh=nz4TSR/yeylSySeEwBwXH8XYkLvFxfEvkT0aa/4zgd0=;
+	bh=eS3MaGonIoU9nAIFGQh9EPnwWnxVAYDNEq2SAR0mRpQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ffd3XXruhNMdqS+92eD9wMG9l8FMY6GorTyKKE1Xh9/En5LYcqX/ohxG3pM37Gc/yPzk0nO4SuKX96c6SIJjJlXXtEq9BCM4aF18IsIZ/DYCE0/ldNMIuv++tG9oFYOaDixtfA9Wu4YTFwjybmW+QI5OJfCiAuEZeVl8B6dIJk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=einfochips.com; spf=pass smtp.mailfrom=einfochips.com; dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b=cPcvcTdi; arc=none smtp.client-ip=216.150.161.24
+	 MIME-Version; b=fcxuRj2sAIozOjUzvUVuoiF/nbDOCsBjHDbTMcb1ODQuQlsO1eD9HjXeP59VKjTsP2QJleYzK1nI7hneMCTC4ycPHWkF9yfCxyblmxxTiU/Mq5UvJ+ugnMz+JbZC4uR/2O2agPL3GXVKc8cSFYkEwHo6xlXJjyUOs6mutDWO6CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=einfochips.com; spf=pass smtp.mailfrom=einfochips.com; dkim=pass (2048-bit key) header.d=einfochips.com header.i=@einfochips.com header.b=FfLsEbwr; arc=none smtp.client-ip=216.150.161.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=einfochips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=einfochips.com
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=einfochips.com; i=@einfochips.com; l=1173; q=dns/txt;
+  d=einfochips.com; i=@einfochips.com; l=2124; q=dns/txt;
   s=NAESA-Selector1; t=1742468163; x=1774004163;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nz4TSR/yeylSySeEwBwXH8XYkLvFxfEvkT0aa/4zgd0=;
-  b=cPcvcTdivCjzI6STrYZcG6PXMijU8B/w7PmQNDnn0fMNhsxcEAt2DoMC
-   duAyFEpUHRzncmKixyjOHOuNP2rzhhWvkfz8hL3tbH5yHJJy8YuD5nq4l
-   8D3Ex9bny4j7wurGGc5aNiEoFRpJTuV+XkFdKRzbA8QoI96nqok95N+Hr
-   FG/xLfq2oLTzGATnjWQI4F1jLCfXuhFMDyWDEG3+lD3pwb5iMR19rQMzw
-   GOVSZb2/1KA6BtK8iE5Q3HhAml0dcfzPK3sg5suYhsLZ1L+GLga9e9ufV
-   smVNOBgB4DDIZ/fLQV53inFbDWBDShd7QbfosX0HsKsAo6XR8AOibBSSz
-   g==;
-X-CSE-ConnectionGUID: J/nZqdQVQX+P34auv1ZPrg==
-X-CSE-MsgGUID: YU+HKEo6Svmxpdr4xPWa4w==
+  bh=eS3MaGonIoU9nAIFGQh9EPnwWnxVAYDNEq2SAR0mRpQ=;
+  b=FfLsEbwruaypYfw0Ryhn+uowQa+nbREG9SFjQEEn3afF5f0x5xP3p3/F
+   BwxbanEUhP6QPnKTyC6OhXIpD88r0BFlAn46tKp/EHp+jnTNNAzM5DWbK
+   rWQrJZuKgCH0Ulb6qp1sny3jetZ4LGH/HoF5aLqNOy48hI2acHGlKJjcY
+   vDRb/3sPV58yqGXNO9QzchQk0wSpPfC6sYE77M3OlEm+Siz7OJa6CuMpk
+   ANJdDejSmJ5r8R8EiDlO7s61r53+eazO8Nb9nCXrzf+zI+yKDwRZ6nfKj
+   0/fgNAp/0PPa9lO/+BedVsTGwdmjqWs3HZcI+DYEzSwUN19qLBenRVYSB
+   A==;
+X-CSE-ConnectionGUID: Pr/umfDXSQ+TrwdZ1Id4Hg==
+X-CSE-MsgGUID: fmZ4pZN4TXmNx7DKPsL2HQ==
 X-IronPort-AV: E=Sophos;i="6.14,261,1736838000"; 
-   d="scan'208";a="80263099"
+   d="scan'208";a="80263103"
 Received: from unknown (HELO eicahmirelay01.einfochips.com) ([10.100.49.50])
-  by naesa04out.arrow.com with ESMTP; 20 Mar 2025 04:54:54 -0600
+  by naesa04out.arrow.com with ESMTP; 20 Mar 2025 04:54:56 -0600
 Received: from AHMCPU1888.ap.corp.arrow.com ([172.25.5.100]) by eicahmirelay01.einfochips.com with Microsoft SMTPSVC(10.0.14393.4169);
 	 Thu, 20 Mar 2025 16:24:49 +0530
 From: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
@@ -78,9 +78,9 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/10] dt-bindings: vendor-prefixes: add eswin
-Date: Thu, 20 Mar 2025 16:24:42 +0530
-Message-Id: <20250320105449.2094192-4-pinkesh.vaghela@einfochips.com>
+Subject: [PATCH v2 04/10] dt-bindings: riscv: Add SiFive HiFive Premier P550 board
+Date: Thu, 20 Mar 2025 16:24:43 +0530
+Message-Id: <20250320105449.2094192-5-pinkesh.vaghela@einfochips.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250320105449.2094192-1-pinkesh.vaghela@einfochips.com>
 References: <20250320105449.2094192-1-pinkesh.vaghela@einfochips.com>
@@ -91,37 +91,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 20 Mar 2025 10:54:49.0819 (UTC) FILETIME=[80815AB0:01DB9986]
+X-OriginalArrivalTime: 20 Mar 2025 10:54:49.0835 (UTC) FILETIME=[8083CBB0:01DB9986]
 
 From: Pritesh Patel <pritesh.patel@einfochips.com>
 
-Add new vendor string to dt bindings.
-This new vendor string is used by
-- ESWIN EIC770X SoC
-- HiFive Premier P550 board which uses EIC7700 SoC.
+Add DT binding documentation for the ESWIN EIC7700 SoC and
+HiFive Premier P550 Board
 
-Link: https://www.eswin.com/en/
 Signed-off-by: Pritesh Patel <pritesh.patel@einfochips.com>
 Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 Signed-off-by: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Matthias Brugger <matthias.bgg@kernel.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/riscv/eswin.yaml      | 29 +++++++++++++++++++
+ MAINTAINERS                                   |  7 +++++
+ 2 files changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/riscv/eswin.yaml
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 5079ca6ce1d1..07ff140e67dc 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -490,6 +490,8 @@ patternProperties:
-     description: Espressif Systems Co. Ltd.
-   "^est,.*":
-     description: ESTeem Wireless Modems
-+  "^eswin,.*":
-+    description: Beijing ESWIN Technology Group Co. Ltd.
-   "^ettus,.*":
-     description: NI Ettus Research
-   "^eukrea,.*":
+diff --git a/Documentation/devicetree/bindings/riscv/eswin.yaml b/Documentation/devicetree/bindings/riscv/eswin.yaml
+new file mode 100644
+index 000000000000..c603c45eef22
+--- /dev/null
++++ b/Documentation/devicetree/bindings/riscv/eswin.yaml
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/riscv/eswin.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ESWIN SoC-based boards
++
++maintainers:
++  - Min Lin <linmin@eswincomputing.com>
++  - Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
++  - Pritesh Patel <pritesh.patel@einfochips.com>
++
++description:
++  ESWIN SoC-based boards
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - sifive,hifive-premier-p550
++          - const: eswin,eic7700
++
++additionalProperties: true
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 25c86f47353d..fc3c9191b00f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8572,6 +8572,13 @@ L:	linux-can@vger.kernel.org
+ S:	Maintained
+ F:	drivers/net/can/usb/esd_usb.c
+ 
++ESWIN DEVICETREES
++M:	Min Lin <linmin@eswincomputing.com>
++M:	Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
++M:	Pritesh Patel <pritesh.patel@einfochips.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/riscv/eswin.yaml
++
+ ET131X NETWORK DRIVER
+ M:	Mark Einon <mark.einon@gmail.com>
+ S:	Odd Fixes
 -- 
 2.25.1
 
