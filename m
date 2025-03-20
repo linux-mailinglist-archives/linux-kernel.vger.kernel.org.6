@@ -1,218 +1,195 @@
-Return-Path: <linux-kernel+bounces-570168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE75A6AD0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:24:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FDCA6AD14
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CA21899495
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:24:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A03468181
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910FF227E80;
-	Thu, 20 Mar 2025 18:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F311B227BA9;
+	Thu, 20 Mar 2025 18:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="WwBCTEms"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYloGAYR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4081E224B13
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EF41F5F6;
+	Thu, 20 Mar 2025 18:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742495043; cv=none; b=kJ+5FHkncquDO+8jy9VwzvG6L3bungleFG+2vhViBRmJuC0idWYeoBYNRONf2FpS/fqJqOOmTyvVziADT0SybtwqDOUa9G6/ecFfS29zpivzz+SoLwIA6PAkrBL9Rud3azWPbGCD6zaScmnm6nPk7k8GQr4hW1MZoM8XJBEoG4E=
+	t=1742495176; cv=none; b=BMGePlvlwFAsY8a89k8Px2G7RPY4D8OiaEuq36Gznx6LU7LBczxA4yfbtBIN307eFHN04aXMzwGPmQZE87YjrqMKGyH9xv/kdCsOwi6sxS5XHrI++NGfFe+O/CVjQ2uluAW5FaEk9sQE7p8vL1z87z/BbUr3164QEl9X8B4d0NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742495043; c=relaxed/simple;
-	bh=p5C7au6pn1wBtzZYZ4qP8jufg2hjU9r8Y3dB0+e4uZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEtq5kIGAgUxg/GEt0Kr7/v/pWAFCUabCppZBhXywuFp6ontzxOKZ1JK3AqWLlx15OL1WKQiLK/IJZCw23l8PgcVg5dd8fY5Fa7DqxKL/Wg7TV+V7Wq7t71JFq3dIu53dkOEJ+0vw95X9Suxq+4SaUSgJWn9pB7/E8j1OsHKeac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=WwBCTEms; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22401f4d35aso24210355ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742495041; x=1743099841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u4hqLDLaMuKQjfJXNLqiy/5jqelv39CVb9y2B7DStAE=;
-        b=WwBCTEmsZsE0u14w5+lel9PAQUo60ea3JFr9XutPnHRtSOArkey5lZs8L4WVD6XJsN
-         H6cqTFbJQcbGEOWQZsJOsnuUviSYfA1qIVQNWfltM+2DamzufJB+olTsVkz/pBdrznhA
-         ork0WIN/gbD1s4W2PsgM6+6+c4H/gbspynRv0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742495041; x=1743099841;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4hqLDLaMuKQjfJXNLqiy/5jqelv39CVb9y2B7DStAE=;
-        b=QBDfXT/w4tPTnje2B/x/5Iz1tB9F2AXGI+IFAHOiSjdjU9TNBEST0++URunIQYAN7j
-         VhAr9w5s4LGqn60Rr42OynmDYJg6BoBA68FB0OPJof73MoycrY8bKK8JpVQoHcg1YIAc
-         S8Qk+RlXwTsFdhlpr/e5iXy7I+FRAq9IuzQQRvyQ3eHbhP3wKN31+1qV2PFBhwkfxtfA
-         B8r7o1yVSetEic3DQ3Qbn2WBPEbYqE+AHBf2FsacrJcPctdigeNOKuoj8/maWEJ9iBXr
-         WIBcfCZrZdbrL9jbDn97BrrC0LBczU4WbToxanVFfuvoXUzBLkSn6ZXBsYHLrX2IgRM8
-         IuUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUB28iVxkqwE340JV/ueg6mzwe+SFm+WH6yaQyturypyQg5e6viFnwnLXaD3DceJ2ga64j8wpljnAOcP2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkqxcJg6gpqukW+/fmCspZhGv5/ZM+cyhvAzNIkgNQBtMCBcce
-	2iqLI3l0bPprQt8cc6V/4FSv2Va1DQGR8xDUu9C2OGimyuWWpgtRHz8oXPna/7/35VLFLVktF0L
-	4
-X-Gm-Gg: ASbGnct8kWhi3rx6yubG+y9TSLEoifXGpDsbwYMjsTjqpxqlGVrpt4V8ZF5v2YFVmjG
-	QjGd6jr9aRjGXLk/fTxCJDbqPTi+S76VnJevF2mcZ3DTBtM07MvnyXwGODvU/gc6wElhRlhT1HQ
-	QBSqdBlo3nNzU/8XwgSrmBJTleEnbYTLhay+yYaWcj3SD2w5/vgw2WCuYj8PvZ6niGLeoWmGazx
-	2u/wESYxjIKqb1IGl7FCyuhQcVxgv8tuOeCO9iV3BDNAxXamN0FHctWB+6OuTObbGnZZozlwWuR
-	zxrMm+cZ0Fhb1b+oxKY0WxhoEqpBDgKXDsZc0HDqrgoBd8T2Mc8HcAtZ95JquWdsftHbXnhG+4u
-	Ak2B4nNR/jEn3b157
-X-Google-Smtp-Source: AGHT+IFjGyoj26a+mfA5sPrt2XYRA48FDA00r7QAzbLWG2KYNvo58GwB3aOzyQT77qllSS0qHLvptA==
-X-Received: by 2002:a17:90b:2fc7:b0:2f9:bcd8:da33 with SMTP id 98e67ed59e1d1-3030feaa56fmr348796a91.21.1742495041407;
-        Thu, 20 Mar 2025 11:24:01 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f5d4e46sm180311a91.14.2025.03.20.11.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 11:24:00 -0700 (PDT)
-Date: Thu, 20 Mar 2025 11:23:57 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z9xdPVQeLBrB-Anu@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org>
- <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <Z9uuSQ7SrigAsLmt@infradead.org>
+	s=arc-20240116; t=1742495176; c=relaxed/simple;
+	bh=WqjD83gS59KXnxcWN0xrv2Qy66XqwIZlhcsvnHNzlD0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WF6TKdFX9CryfeLy1CMFVUYBYwPpsvSxHSRBX0s3yDcptrL7cw+HCw+d0r7iS7mDHCXg/d95EM44Y/oQDIU84zlI3Sps8rfjXmnJp+V3oDDBOfsUM5fedii6frWLxJ8f7AcTcc2dC8BK57xPdFPOx/saOOCgzf1/V1GYNY1qdEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYloGAYR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691C4C4CEDD;
+	Thu, 20 Mar 2025 18:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742495174;
+	bh=WqjD83gS59KXnxcWN0xrv2Qy66XqwIZlhcsvnHNzlD0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=JYloGAYRUHZ9s4ndZMNiZ/YXTnxxxYiyDHj0Hp2VzGq3o+btOYbamd9ZiuFhWFMet
+	 ie3338Y/XRLdUCpjJyC3jborHQ/CXIIcVuOUVVK9U/rgIm5/VFx7Y1YS4wkFLVCDtw
+	 NxtFT5PZepI7IN/DrIOQSmiiHzyZN6y4L/goZn/FeHhICSNh+acqedzYpPcX+zCvRz
+	 zhiyJ8Z6cpsyttti+B/CqOcRvhgWw3QnIpYjK0Go3Z+AU3KMHdGzRyH2j6HzO8MXH/
+	 AjBZ8JDhSha0K3F92CqtjR4pU4dQ8OkZTVExZRrdd4MLrd7BZtl3cpcRusyzQ7ISi7
+	 Mu66NbJSYYULA==
+Date: Thu, 20 Mar 2025 13:26:13 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9uuSQ7SrigAsLmt@infradead.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Yangyu Chen <cyy@cyyself.name>, Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Felix Fietkau <nbd@nbd.name>, devicetree@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, 
+ linux-arm-kernel@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+ linux-clk@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>, 
+ upstream@airoha.com, linux-mediatek@lists.infradead.org, 
+ Ben Hutchings <ben@decadent.org.uk>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Daniel Danzberger <dd@embedd.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-usb@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-phy@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>, 
+ linux-kernel@vger.kernel.org
+To: Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20250320130054.4804-1-ansuelsmth@gmail.com>
+References: <20250320130054.4804-1-ansuelsmth@gmail.com>
+Message-Id: <174249492019.658064.14719387276656076364.robh@kernel.org>
+Subject: Re: [PATCH v2 00/11] airoha: en7581: clk cleanup + USB support
 
-On Wed, Mar 19, 2025 at 10:57:29PM -0700, Christoph Hellwig wrote:
-> On Wed, Mar 19, 2025 at 10:45:22AM -0700, Joe Damato wrote:
-> > I don't disagree; I just don't know if app developers:
-> >   a.) know that this is possible to do, and
-> >   b.) know how to do it
+
+On Thu, 20 Mar 2025 14:00:23 +0100, Christian Marangi wrote:
+> This series implement all the changes required to correctly handle
+> USB support for the Airoha EN7581 SoC.
 > 
-> So if you don't know that why do you even do the work?
-
-I am doing the work because I use splice and sendfile and it seems
-relatively straightforward to make them safer using an existing
-mechanism, at least for network sockets.
-
-After dropping the sendfile2 patches completely, it looks like in my
-new set all of the code is within CONFIG_NET defines in fs/splice.c.
- 
-> > In general: it does seem a bit odd to me that there isn't a safe
-> > sendfile syscall in Linux that uses existing completion notification
-> > mechanisms.
+> The first few patch are cleanup for the clock driver and the
+> introduction of the SCU SSR SoC driver.
 > 
-> Agreed.  Where the existing notification mechanism is called io_uring.
-
-Sure. As I mentioned to Jens: I agree that any new system call
-should be built differently.
-
-But does that mean we should leave splice and sendfile as-is when
-there is a way to potentially make them safer?
-
-In my other message to Jens I proposed:
-  - SPLICE_F_ZC for splice to generate zc completion notifications
-    to the error queue
-  - Modifying sendfile so that if SO_ZEROCOPY (which already exists)
-    is set on a network socket, zc completion notifications are
-    generated.
-
-In both cases no new system call is needed and both splice and
-sendfile become safer to use. 
-
-At some point in the future a mechanism built on top of iouring
-introduced as new system calls (sendmsg2, sendfile2, splice2, etc)
-can be built.
-
-> > Of course, I certainly agree that the error queue is a work around.
-> > But it works, app use it, and its fairly well known. I don't see any
-> > reason, other than historical context, why sendmsg can use this
-> > mechanism, splice can, but sendfile shouldn't?
+> The SoC always support USB 2.0 but for USB 3.0 it needs additional
+> configuration for the Serdes port. Such port can be either configured
+> for USB usage or for PCIe lines or HSGMII and these are configured
+> in the SCU space.
 > 
-> Because sendmsg should never have done that it certainly should not
-> spread beyond purely socket specific syscalls.
-
-I don't know the entire historical context, but I presume sendmsg
-did that because there was no other mechanism at the time.
-
-I will explain it more clearly in the next cover letter, but the way
-I see the situation is:
-  - There are existing system calls which operate on network sockets
-    (splice and sendfile) that avoid copies
-  - There is a mechanism already in the kernel in the networking
-    stack for generating completion notifications
-  - Both splice and sendfile could be extended to support this for
-    network sockets so they can be used more safely, without
-    introducing a new system call
-
-> > If you feel very strongly that this cannot be merged without
-> > dropping sendfile2 and only plumbing this through for splice, then
-> > I'll drop the sendfile2 syscall when I submit officially (probably
-> > next week?).
+> The xHCI USB is based on the Mediatek implementation but the PHY
+> handling although conceptually similar, is indded different compared
+> to Mediatek due to SSR checks and different port power up.
 > 
-> Splice should also not do "error queue notifications".  Nothing
-> new and certainly nothing outside of net/ should.
-
-It seems like Jens suggested that plumbing this through for splice
-was a possibility, but sounds like you disagree.
-
-Not really sure how to proceed here?
-
-If code I am modifying is within CONFIG_NET defines, but lives in
-fs/splice.c ... is that within the realm of net or fs ?
-
-I am asking because I genuinely don't know.
-
-As mentioned above and in other messages, it seems like it is
-possible to improve the networking parts of splice (and therefore
-sendfile) to make them safer to use without introducing a new system
-call.
-
-Are you saying that you are against doing that, even if the code is
-network specific (but lives in fs/)?
-
-> > I do feel pretty strongly that it's more likely apps would use
-> > sendfile2 and we'd have safer apps out in the wild. But, I could be
-> > wrong.
+> The SSR driver expose an API to poll the current status of the Serdes
+> port and the USB PHY driver validates it. Refer to the specific commit
+> for additional info.
 > 
-> A purely synchronous sendfile that is safe is a good thing.  Spreading
-> non-standard out of band notifications is not.  How to build that
-> safe sendmsg is a good question, and a sendmsg2 might be a sane
-> option for that.  The important thing is that the underlying code
-> should use iocbs and ki_complete to notify I/O completion so that
-> all the existing infrastucture like io_uring and in-kernel callers
-> can reuse this.
+> Consider that there is currently an inconsistency as AN7581 and
+> EN7581 refer to the same thing. This is due to the fact that
+> the SoC born under EcoNet but then was acquired by Airoha.
+> 
+> Changes v2:
+> - Drop changes for simple-mfd
+> - Rework PHY node structure to single node
+> - Drop port-id property in favor of serdes-port and
+>   usb2-monitor-clock-sel
+> - Make the SSR driver probe from the clock driver
+> 
+> Christian Marangi (11):
+>   clk: en7523: convert driver to regmap API
+>   clk: en7523: generalize register clocks function
+>   dt-bindings: clock: en7523: add Documentation for Airoha AN7581 SCU
+>     SSR
+>   soc: airoha: add support for configuring SCU SSR Serdes port
+>   clk: en7523: define and register SoC SCU SSR driver for EN7581
+>   soc: airoha: scu-ssr: expose API to read current Serdes Port mode
+>   dt-bindings: phy: Add documentation for Airoha AN7581 USB PHY
+>   phy: move Airoha PCIe PHY driver to dedicated directory
+>   phy: airoha: Add support for Airoha AN7581 USB PHY
+>   usb: host: add ARCH_AIROHA in XHCI MTK dependency
+>   arm64: dts: airoha: en7581: add USB nodes
+> 
+>  .../bindings/clock/airoha,en7523-scu.yaml     |  101 +-
+>  .../bindings/phy/airoha,an7581-usb-phy.yaml   |   83 ++
+>  MAINTAINERS                                   |   21 +-
+>  arch/arm64/boot/dts/airoha/en7581.dtsi        |   49 +
+>  drivers/clk/clk-en7523.c                      |  340 +++--
+>  drivers/phy/Kconfig                           |   11 +-
+>  drivers/phy/Makefile                          |    5 +-
+>  drivers/phy/airoha/Kconfig                    |   23 +
+>  drivers/phy/airoha/Makefile                   |    4 +
+>  drivers/phy/airoha/phy-airoha-pcie-regs.h     |  494 +++++++
+>  drivers/phy/airoha/phy-airoha-pcie.c          | 1290 +++++++++++++++++
+>  drivers/phy/airoha/phy-airoha-usb.c           |  571 ++++++++
+>  drivers/soc/Kconfig                           |    1 +
+>  drivers/soc/Makefile                          |    1 +
+>  drivers/soc/airoha/Kconfig                    |   18 +
+>  drivers/soc/airoha/Makefile                   |    3 +
+>  drivers/soc/airoha/airoha-scu-ssr.c           |  271 ++++
+>  drivers/usb/host/Kconfig                      |    2 +-
+>  .../dt-bindings/phy/airoha,an7581-usb-phy.h   |   11 +
+>  include/dt-bindings/soc/airoha,scu-ssr.h      |   11 +
+>  include/linux/clk/clk-en7523.h                |   10 +
+>  include/linux/soc/airoha/airoha-scu-ssr.h     |   34 +
+>  22 files changed, 3202 insertions(+), 152 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+>  create mode 100644 drivers/phy/airoha/Kconfig
+>  create mode 100644 drivers/phy/airoha/Makefile
+>  create mode 100644 drivers/phy/airoha/phy-airoha-pcie-regs.h
+>  create mode 100644 drivers/phy/airoha/phy-airoha-pcie.c
+>  create mode 100644 drivers/phy/airoha/phy-airoha-usb.c
+>  create mode 100644 drivers/soc/airoha/Kconfig
+>  create mode 100644 drivers/soc/airoha/Makefile
+>  create mode 100644 drivers/soc/airoha/airoha-scu-ssr.c
+>  create mode 100644 include/dt-bindings/phy/airoha,an7581-usb-phy.h
+>  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
+>  create mode 100644 include/linux/clk/clk-en7523.h
+>  create mode 100644 include/linux/soc/airoha/airoha-scu-ssr.h
+> 
+> --
+> 2.48.1
+> 
+> 
+> 
 
-I'm not currently planning to build sendmsg2 (and I've already
-mentioned to Jens and above I will drop sendfile2), but if I have the time
-it sounds like an interesting project.
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/airoha/' for 20250320130054.4804-1-ansuelsmth@gmail.com:
+
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fab0000: compatible:0: 'mediatek,mtk-xhci' is not one of ['mediatek,mt2701-xhci', 'mediatek,mt2712-xhci', 'mediatek,mt7622-xhci', 'mediatek,mt7623-xhci', 'mediatek,mt7629-xhci', 'mediatek,mt7986-xhci', 'mediatek,mt7988-xhci', 'mediatek,mt8173-xhci', 'mediatek,mt8183-xhci', 'mediatek,mt8186-xhci', 'mediatek,mt8188-xhci', 'mediatek,mt8192-xhci', 'mediatek,mt8195-xhci', 'mediatek,mt8365-xhci']
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fab0000: compatible: ['mediatek,mtk-xhci'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fad0000: compatible:0: 'mediatek,mtk-xhci' is not one of ['mediatek,mt2701-xhci', 'mediatek,mt2712-xhci', 'mediatek,mt7622-xhci', 'mediatek,mt7623-xhci', 'mediatek,mt7629-xhci', 'mediatek,mt7986-xhci', 'mediatek,mt7988-xhci', 'mediatek,mt8173-xhci', 'mediatek,mt8183-xhci', 'mediatek,mt8186-xhci', 'mediatek,mt8188-xhci', 'mediatek,mt8192-xhci', 'mediatek,mt8195-xhci', 'mediatek,mt8365-xhci']
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fad0000: compatible: ['mediatek,mtk-xhci'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
+
+
+
+
+
 
