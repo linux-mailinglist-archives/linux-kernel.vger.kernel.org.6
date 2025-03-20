@@ -1,143 +1,333 @@
-Return-Path: <linux-kernel+bounces-569029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B4BA69DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:48:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBEBA69DC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:51:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C2C3BBAD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B80919C1D7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F6B1CEEB2;
-	Thu, 20 Mar 2025 01:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84331DE3BA;
+	Thu, 20 Mar 2025 01:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="TK3PNrbc"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TaJKF5tg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746C41A5BA4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7021C07F6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742435279; cv=none; b=FnLNiwTdWRtbmt0Pki/RUV6Gh5juForExpTVIzwErcmVVBuvAuDlLLeSTOhwIxLplRm/WpcZJa96aYqezo8Ujr2xCAbR6lBQ2U1YSaWHP9r2+g4j7whtdGPlCRw1iT7qFlhi6zwpsnOtL0ZQpAYKhPM1dDYmCAsdyVpik5TX+60=
+	t=1742435462; cv=none; b=mp/cgl6UxCxdmhf7ij0xhNScAI5tB5ti2dkLOxE+JJP0CA6YIk6hXTb8ZuDjwWn+ynlPS7ZCe0Xc/wbp5MuAl4lK3wl8wrmqSKCpBVzEZLKqyydZJZd5eeKvvZB4JoZIdPNjpJ1sp7OL4LayQIum6Oeb4Pek/7x86jrDuWXTlKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742435279; c=relaxed/simple;
-	bh=8vd93+qClvT7Jmn/2fjitb9N8zbtZJSVzHQ/sb/MSvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXHqjBzQ2h8jOmt4nj8BaVjyowXd2VKXJ6nNYA/naZvqqdpftvGsADDvaR58n/nWJJWdDO7soosI5OpM1fAkdcHeoV+38Djyt3KvUQHaBEwqIy1QOMZEj7wZlPBBwaV5wkeblRCVgAvMVM2QzJPz9vV22jK/5wcMwkOLYkO7rfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=TK3PNrbc; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-224100e9a5cso2971825ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1742435278; x=1743040078; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9dN+i2AzDUfkPkdVFhgTMlxb4u3ArQIL7V+3H4EdIc=;
-        b=TK3PNrbchWhUgvSI65oeS5fc4fFkbRpkO/Dn3pC9UIN81mP9SlyYHM8VhVky7V4XTL
-         zEnJnKFxj568lbZKhNjUsbWaNLssmUxadLKEPhmWkZMuCgRlLmg4ZMqyE2HFy28LrXp3
-         KfzhqBtwV8Rbb4oFIIN3VXy7f0sUqyIvKy8JA=
+	s=arc-20240116; t=1742435462; c=relaxed/simple;
+	bh=Wl6WYrAucD7W3yWclox3lkCN4CXnwwOMoZMBTjORzQA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VDcCMfVAlf1L7cf67Jshf/rTwB5JMZK/v7FClzepZmvwzW2rxeQp9bG6VBgRPQyhuKMDPjQYDki7KW62PQLMPTrPWnYSZR89tJkStPmZ/MqBQCAWKywRGY3sSN5URsd3TWSTypQoVzSnEzjJlGlSIS5SApt9ZWK0n46CFWbXD1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TaJKF5tg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742435458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wIVnYU3ZVuH1OuWSd8k2TRkobMDqbNTuCddNx2dlzbo=;
+	b=TaJKF5tgU7NWRTGbtA1kgwGRkfHd5yCFXWXAoEQA47ODDy3Fm2QaklXP6KKDIVUZpw4Qeo
+	UMoWV774SyhNvfGjcJfgcwwSOklyhtzRLUC77mZOC3GayrQRJVaO490tHS0amFS1RxskFh
+	IzeCUzc0khwpwNNlEODpNNpYPjve07w=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-630-E_Z6aj6KNo24IA2wnEZcdg-1; Wed, 19 Mar 2025 21:50:57 -0400
+X-MC-Unique: E_Z6aj6KNo24IA2wnEZcdg-1
+X-Mimecast-MFC-AGG-ID: E_Z6aj6KNo24IA2wnEZcdg_1742435456
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff799be8f5so475429a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:50:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742435278; x=1743040078;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+9dN+i2AzDUfkPkdVFhgTMlxb4u3ArQIL7V+3H4EdIc=;
-        b=t+UQl6DlpW4n00qiLaj6zw5jGgnj28FIpD1TgURE8b7Du9V9/sa+pYKjcQip0oUKvp
-         6TLlggDTN9l2aHHFcNBhx5wn8wTfWLhBb/R+uJeTdMS/Mz6AtkjaZrkUC1lfBjymvd8Q
-         mEUuUzn8UBA2iAqPyN2sPJVLLBRpvNlhE57wlapKn5dPzcSWa22x7eNvYmPQTjJCOdBJ
-         +QEoZKWWE6pWSJf1+Q7NZ73mzeGKeTy3QAo+ZDTIwkKu6Mb0sGzWDjK1lw/iLVjYoZ+K
-         98ej4jmSANi/Z6fueVw1MpvWFloGyYtovIMvBSVGXXS5wn1rLtCcGhUI/zqSR1SjzYba
-         /3Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsO9baPGh4wGRbJvr3VznPRcPtaQjHLEFSHboxo9q8oM3iNe4VDCocpc+v6fjJ6PeTxSHZ6AcoYwFCfn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT/fk1zJJqVqqyLSS8v90OQbc0hZ5QH8YBLlhd0VkM5KRXeQ9f
-	IknYCqQYKldArbZHGhDT2CB6blajXTjW5FPe+o1EiybmKdkdBqw46MuptkAhtG4=
-X-Gm-Gg: ASbGncvMPe3wKJWaqP0tMCde4rDjfarGwfuZgGWy8y6psaIYqusBbhjLMz1nZh9Z7g7
-	kXTB17UEqooz1xtr/s7ubYTqRPanDV6IZGIvk6bhMRHhAAovBdO7uZh08sxtfGYU/k1Yv4vBYY/
-	Vt1lU/wyTrFTT/dJFhLTB1z103rVNovD/KJJpaGJW5007Qi9HVLV45VRrsep4ToGFzHzDdyS+em
-	9QWmfst+WpUfh/i3YtQdoSrvE3anQoe7f+NXqGNCVx3/xFo8l3GxILfvhtxfewQS1Oi/DAi5TW4
-	IwvHf53z0jjvxPcUQglyvi0dY4z8sj9W52DaEQTYegYwRc2A8GbvXEtRH35fxQf8aLfPh2A7Z1L
-	z
-X-Google-Smtp-Source: AGHT+IEnL5zS2NVHMqd/Y2yTk6lYwUWXQfuMKAs4klVP0D5Ix1QzfZttlHpANYf8RWDNJxVQfzHybA==
-X-Received: by 2002:a17:902:c944:b0:223:4d7e:e523 with SMTP id d9443c01a7336-2265ee93b4cmr19116065ad.50.1742435277699;
-        Wed, 19 Mar 2025 18:47:57 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371152931bsm12453091b3a.3.2025.03.19.18.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 18:47:57 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:47:43 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: dsterba@suse.cz, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
- io_uring_cmd_import_fixed_vec
-Message-ID: <Z9tzvz_4IDzMUOFb@sidongui-MacBookPro.local>
-References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
- <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
- <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
- <20250319170710.GK32661@suse.cz>
- <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
+        d=1e100.net; s=20230601; t=1742435456; x=1743040256;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIVnYU3ZVuH1OuWSd8k2TRkobMDqbNTuCddNx2dlzbo=;
+        b=ZUFRR8Oj1JhIG/n0ojspkyVB6vYpPONJZQyLi62uTQzwgovoTuWs6f/XFSMsD7kVwt
+         V5hxlDvWcY+2R/nCq+f54DCMxS0PN/E6mpD/BZ1x7ZIzrKu+5HswTYGYcingryoW6Knb
+         ZupE+ZSf8D9zcvB5DVRk0SP+kqmrDcvtlXyYxMb+1Ayl5YnmyoGXQw9U3zcf3NMdFmfm
+         bY78Ckr9fd47MkeMUq7vT1WB4NkNXSyVydsWMIyUle6tYx2m4IIb2A6t2mczcTTXZ0Gd
+         oEGTwZphMRwCIMHy2NfoqASQeqczehUTQO2HXvxu5EsFsvaIdzjkE12ksSOlPRwpLWK5
+         o6Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+aMmBmsk4QtVJz7nDhlpmZlh/DBi5jHREX9Cd1nhDuTZsreFLuHKzaJ4UTg6uSsxSnBElG/KqNi5b8EU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy4qo2MIm/nEsBOE1CL/sUyrS9pF7J1m9gb8EU5U4xQ4wtw/xs
+	nC5j2Dj8vK39VZqSWkhdVxEC7jVDivAtMAGetpM20mMGYmvT0LEmQsSo47QXCLTF8D3P34BJFQJ
+	Z9KsiY05HlmtIgpNoVsCCzTtAifsx1KpdfECjQPm8xyiZO6esg7/S9L5/CKaXsLgR/EXKPuj4Yu
+	+ReQONg/egz/1vhBhEyAks9oqi6orMyFqD1/3W
+X-Gm-Gg: ASbGncu8wJKb0TyZvYNiR7a9/qJeyw/05UizwvhrMz5I+OyI2PWS8P2PNaY5nDRL1T3
+	XyXnhZsMIbrX/xM0hM93meBl1EEE8X+vzIV2XFpfaXa2CeCBlfzX3B7F1wCL7Qy3labjpftFqYw
+	==
+X-Received: by 2002:a17:90b:4c89:b0:2fc:ec7c:d371 with SMTP id 98e67ed59e1d1-301d507faacmr1855202a91.3.1742435456142;
+        Wed, 19 Mar 2025 18:50:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeMawCeyRWO9aE478Dl2xOAMybWcnnwqOWuqUyYDaUX4HK6mIJKwahNmjZp3Myy0p+ZYF1QHaFTeMTmkg2jwY=
+X-Received: by 2002:a17:90b:4c89:b0:2fc:ec7c:d371 with SMTP id
+ 98e67ed59e1d1-301d507faacmr1855173a91.3.1742435455741; Wed, 19 Mar 2025
+ 18:50:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
+References: <20250318-virtio-v1-0-344caf336ddd@daynix.com> <20250318-virtio-v1-3-344caf336ddd@daynix.com>
+ <CACGkMEv1TTXHd_JGb_vyN8pfTAMLbsTE6oU9_phrdpaZBrE97Q@mail.gmail.com> <b6eec81d-618f-4a59-8680-8e22f1a798bf@daynix.com>
+In-Reply-To: <b6eec81d-618f-4a59-8680-8e22f1a798bf@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 20 Mar 2025 09:50:43 +0800
+X-Gm-Features: AQ5f1JomCMJvdUcszXcgY4iLGGC6Jyj4ZoBaN-XVk0bTIneaqZ04DVXXMxPvRmg
+Message-ID: <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/4] virtio_net: Use new RSS config structs
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>, 
+	Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 11:10:07AM -0600, Jens Axboe wrote:
-> On 3/19/25 11:07 AM, David Sterba wrote:
-> > On Wed, Mar 19, 2025 at 09:27:37AM -0600, Jens Axboe wrote:
-> >> On 3/19/25 9:26 AM, Jens Axboe wrote:
-> >>>
-> >>> On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
-> >>>> This patche series introduce io_uring_cmd_import_vec. With this function,
-> >>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
-> >>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
-> >>>> for new api for encoded read/write in btrfs by using uring cmd.
-> >>>>
-> >>>> There was approximately 10 percent of performance improvements through benchmark.
-> >>>> The benchmark code is in
-> >>>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
-> >>>>
-> >>>> [...]
-> >>>
-> >>> Applied, thanks!
-> >>>
-> >>> [1/5] io_uring: rename the data cmd cache
-> >>>       commit: 575e7b0629d4bd485517c40ff20676180476f5f9
-> >>> [2/5] io_uring/cmd: don't expose entire cmd async data
-> >>>       commit: 5f14404bfa245a156915ee44c827edc56655b067
-> >>> [3/5] io_uring/cmd: add iovec cache for commands
-> >>>       commit: fe549edab6c3b7995b58450e31232566b383a249
-> >>> [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
-> >>>       commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+On Wed, Mar 19, 2025 at 12:48=E2=80=AFPM Akihiko Odaki <akihiko.odaki@dayni=
+x.com> wrote:
+>
+> On 2025/03/19 10:43, Jason Wang wrote:
+> > On Tue, Mar 18, 2025 at 5:57=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
+ynix.com> wrote:
 > >>
-> >> 1-4 look pretty straight forward to me - I'll be happy to queue the
-> >> btrfs one as well if the btrfs people are happy with it, just didn't
-> >> want to assume anything here.
-> > 
-> > For 6.15 is too late so it makes more sense to take it through the btrfs
-> > patches targetting 6.16.
-> 
-> No problem - Sidong, guessing you probably want to resend patch 5/5 once
-> btrfs has a next branch based on 6.15-rc1 or later.
+> >> The new RSS configuration structures allow easily constructing data fo=
+r
+> >> VIRTIO_NET_CTRL_MQ_RSS_CONFIG as they strictly follow the order of dat=
+a
+> >> for the command.
+> >>
+> >> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >> ---
+> >>   drivers/net/virtio_net.c | 117 +++++++++++++++++--------------------=
+----------
+> >>   1 file changed, 43 insertions(+), 74 deletions(-)
+> >>
+> >> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> >> index d1ed544ba03a..4153a0a5f278 100644
+> >> --- a/drivers/net/virtio_net.c
+> >> +++ b/drivers/net/virtio_net.c
+> >> @@ -360,24 +360,7 @@ struct receive_queue {
+> >>          struct xdp_buff **xsk_buffs;
+> >>   };
+> >>
+> >> -/* This structure can contain rss message with maximum settings for i=
+ndirection table and keysize
+> >> - * Note, that default structure that describes RSS configuration virt=
+io_net_rss_config
+> >> - * contains same info but can't handle table values.
+> >> - * In any case, structure would be passed to virtio hw through sg_buf=
+ split by parts
+> >> - * because table sizes may be differ according to the device configur=
+ation.
+> >> - */
+> >>   #define VIRTIO_NET_RSS_MAX_KEY_SIZE     40
+> >> -struct virtio_net_ctrl_rss {
+> >> -       __le32 hash_types;
+> >> -       __le16 indirection_table_mask;
+> >> -       __le16 unclassified_queue;
+> >> -       __le16 hash_cfg_reserved; /* for HASH_CONFIG (see virtio_net_h=
+ash_config for details) */
+> >> -       __le16 max_tx_vq;
+> >> -       u8 hash_key_length;
+> >> -       u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+> >> -
+> >> -       __le16 *indirection_table;
+> >> -};
+> >>
+> >>   /* Control VQ buffers: protected by the rtnl lock */
+> >>   struct control_buf {
+> >> @@ -421,7 +404,9 @@ struct virtnet_info {
+> >>          u16 rss_indir_table_size;
+> >>          u32 rss_hash_types_supported;
+> >>          u32 rss_hash_types_saved;
+> >> -       struct virtio_net_ctrl_rss rss;
+> >> +       struct virtio_net_rss_config_hdr *rss_hdr;
+> >> +       struct virtio_net_rss_config_trailer rss_trailer;
+> >> +       u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+> >>
+> >>          /* Has control virtqueue */
+> >>          bool has_cvq;
+> >> @@ -523,23 +508,16 @@ enum virtnet_xmit_type {
+> >>          VIRTNET_XMIT_TYPE_XSK,
+> >>   };
+> >>
+> >> -static int rss_indirection_table_alloc(struct virtio_net_ctrl_rss *rs=
+s, u16 indir_table_size)
+> >> +static size_t virtnet_rss_hdr_size(const struct virtnet_info *vi)
+> >>   {
+> >> -       if (!indir_table_size) {
+> >> -               rss->indirection_table =3D NULL;
+> >> -               return 0;
+> >> -       }
+> >> +       u16 indir_table_size =3D vi->has_rss ? vi->rss_indir_table_siz=
+e : 1;
+> >>
+> >> -       rss->indirection_table =3D kmalloc_array(indir_table_size, siz=
+eof(u16), GFP_KERNEL);
+> >> -       if (!rss->indirection_table)
+> >> -               return -ENOMEM;
+> >> -
+> >> -       return 0;
+> >> +       return struct_size(vi->rss_hdr, indirection_table, indir_table=
+_size);
+> >>   }
+> >>
+> >> -static void rss_indirection_table_free(struct virtio_net_ctrl_rss *rs=
+s)
+> >> +static size_t virtnet_rss_trailer_size(const struct virtnet_info *vi)
+> >>   {
+> >> -       kfree(rss->indirection_table);
+> >> +       return struct_size(&vi->rss_trailer, hash_key_data, vi->rss_ke=
+y_size);
+> >>   }
+> >>
+> >>   /* We use the last two bits of the pointer to distinguish the xmit t=
+ype. */
+> >> @@ -3576,15 +3554,16 @@ static void virtnet_rss_update_by_qpairs(struc=
+t virtnet_info *vi, u16 queue_pair
+> >>
+> >>          for (; i < vi->rss_indir_table_size; ++i) {
+> >>                  indir_val =3D ethtool_rxfh_indir_default(i, queue_pai=
+rs);
+> >> -               vi->rss.indirection_table[i] =3D cpu_to_le16(indir_val=
+);
+> >> +               vi->rss_hdr->indirection_table[i] =3D cpu_to_le16(indi=
+r_val);
+> >>          }
+> >> -       vi->rss.max_tx_vq =3D cpu_to_le16(queue_pairs);
+> >> +       vi->rss_trailer.max_tx_vq =3D cpu_to_le16(queue_pairs);
+> >>   }
+> >>
+> >>   static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pai=
+rs)
+> >>   {
+> >>          struct virtio_net_ctrl_mq *mq __free(kfree) =3D NULL;
+> >> -       struct virtio_net_ctrl_rss old_rss;
+> >> +       struct virtio_net_rss_config_hdr *old_rss_hdr;
+> >> +       struct virtio_net_rss_config_trailer old_rss_trailer;
+> >>          struct net_device *dev =3D vi->dev;
+> >>          struct scatterlist sg;
+> >>
+> >> @@ -3599,24 +3578,28 @@ static int virtnet_set_queues(struct virtnet_i=
+nfo *vi, u16 queue_pairs)
+> >>           * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return =
+directly.
+> >>           */
+> >>          if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+> >> -               memcpy(&old_rss, &vi->rss, sizeof(old_rss));
+> >> -               if (rss_indirection_table_alloc(&vi->rss, vi->rss_indi=
+r_table_size)) {
+> >> -                       vi->rss.indirection_table =3D old_rss.indirect=
+ion_table;
+> >> +               old_rss_hdr =3D vi->rss_hdr;
+> >> +               old_rss_trailer =3D vi->rss_trailer;
+> >> +               vi->rss_hdr =3D kmalloc(virtnet_rss_hdr_size(vi), GFP_=
+KERNEL);
+> >> +               if (!vi->rss_hdr) {
+> >> +                       vi->rss_hdr =3D old_rss_hdr;
+> >>                          return -ENOMEM;
+> >>                  }
+> >>
+> >> +               *vi->rss_hdr =3D *old_rss_hdr;
+> >>                  virtnet_rss_update_by_qpairs(vi, queue_pairs);
+> >>
+> >>                  if (!virtnet_commit_rss_command(vi)) {
+> >>                          /* restore ctrl_rss if commit_rss_command fai=
+led */
+> >> -                       rss_indirection_table_free(&vi->rss);
+> >> -                       memcpy(&vi->rss, &old_rss, sizeof(old_rss));
+> >> +                       kfree(vi->rss_hdr);
+> >> +                       vi->rss_hdr =3D old_rss_hdr;
+> >> +                       vi->rss_trailer =3D old_rss_trailer;
+> >>
+> >>                          dev_warn(&dev->dev, "Fail to set num of queue=
+ pairs to %d, because committing RSS failed\n",
+> >>                                   queue_pairs);
+> >>                          return -EINVAL;
+> >>                  }
+> >> -               rss_indirection_table_free(&old_rss);
+> >> +               kfree(old_rss_hdr);
+> >>                  goto succ;
+> >>          }
+> >>
+> >> @@ -4059,28 +4042,12 @@ static int virtnet_set_ringparam(struct net_de=
+vice *dev,
+> >>   static bool virtnet_commit_rss_command(struct virtnet_info *vi)
+> >>   {
+> >>          struct net_device *dev =3D vi->dev;
+> >> -       struct scatterlist sgs[4];
+> >> -       unsigned int sg_buf_size;
+> >> +       struct scatterlist sgs[2];
+> >>
+> >>          /* prepare sgs */
+> >> -       sg_init_table(sgs, 4);
+> >> -
+> >> -       sg_buf_size =3D offsetof(struct virtio_net_ctrl_rss, hash_cfg_=
+reserved);
+> >> -       sg_set_buf(&sgs[0], &vi->rss, sg_buf_size);
+> >> -
+> >> -       if (vi->has_rss) {
+> >> -               sg_buf_size =3D sizeof(uint16_t) * vi->rss_indir_table=
+_size;
+> >> -               sg_set_buf(&sgs[1], vi->rss.indirection_table, sg_buf_=
+size);
+> >> -       } else {
+> >> -               sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved, sizeof=
+(uint16_t));
+> >> -       }
+> >> -
+> >> -       sg_buf_size =3D offsetof(struct virtio_net_ctrl_rss, key)
+> >> -                       - offsetof(struct virtio_net_ctrl_rss, max_tx_=
+vq);
+> >> -       sg_set_buf(&sgs[2], &vi->rss.max_tx_vq, sg_buf_size);
+> >> -
+> >> -       sg_buf_size =3D vi->rss_key_size;
+> >> -       sg_set_buf(&sgs[3], vi->rss.key, sg_buf_size);
+> >> +       sg_init_table(sgs, 2);
+> >> +       sg_set_buf(&sgs[0], vi->rss_hdr, virtnet_rss_hdr_size(vi));
+> >> +       sg_set_buf(&sgs[1], &vi->rss_trailer, virtnet_rss_trailer_size=
+(vi));
+> >
+> > So I still see this:
+> >
+> >          if (vi->has_rss || vi->has_rss_hash_report) {
+> >                  if (!virtnet_commit_rss_command(vi)) {
+> >
+> > Should we introduce a hash config helper instead?
+>
+> I think it's fine to use virtnet_commit_rss_command() for hash
+> reporting. struct virtio_net_hash_config and struct
+> virtio_net_rss_config are defined to have a common layout to allow
+> sharing this kind of logic.
 
-Thanks, I'll resend only patch 5/5 then.
+Well, this trick won't work if the reserved field in hash_config is
+used in the future.
 
-Thanks,
-Sidong
-> 
-> -- 
-> Jens Axboe
-> 
+Thanks
+
+>
+> Regards,
+> Akihiko Odaki
+>
+> >
+> > Thanks
+> >
+>
+
 
