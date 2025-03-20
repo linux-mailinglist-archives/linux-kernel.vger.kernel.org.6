@@ -1,145 +1,378 @@
-Return-Path: <linux-kernel+bounces-569760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCC5A6A72B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:29:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80F3A6A736
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168B6983798
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07963B33AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617AF21CA00;
-	Thu, 20 Mar 2025 13:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1516210192;
+	Thu, 20 Mar 2025 13:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cDGH4RWN"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TsmNuXGS"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8584690
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9CC322E;
+	Thu, 20 Mar 2025 13:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742477332; cv=none; b=jsigFOad7UbkaPH1mYbZAwRLvq5Qt5CMh5gtCFBBKY7+/iPKSRFyDiHu2QgMAYEPGeyUJWHFXCJrT0xxMMKep/CbpIXyrn9FpMAdvUl3Jxma//JxELoGzN7B40MoX/djq5E/ABPWrYGezIY6M+MjkFf8QaC+7NoYBcT7V1WcEyQ=
+	t=1742477519; cv=none; b=OYUuVKRPFFCjiajop0PJJ7ZC0l7wfjga5qhDO/N7Fvqo0j2htxFJDj5rtx6V9Oh6jPTtYnL+D8o4K0MAC/4wCC0rDd/ciKJn1OJYaKzriwdE1PZbabV6J5ghHgcAUQPYODBFPSKZ4UX1N9INJ0AmZgsNOqiD7g88vcUtKKcqN9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742477332; c=relaxed/simple;
-	bh=h9AZOQS8pRvMAZnOSvwy/yZgh/0nzwC4JH9V8norXgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0tLAPJAR7LJwraMM+14pLqRiqWQtIV5ic2Q+5VH34MRc325BSX/sF7XF9K7zF0vQSUyNSLemi/tCXCrRSUFpVjzWtp+7xKQVPvPhCowbenJ9jbyyssdpqcKGl1Hez0KaiEbKWEvYwu/DddrGYlXXAyLW+u8emKWrHH+6JQuV1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cDGH4RWN; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b4f19dc0-6eee-4085-998f-b2739e15ba01@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742477328;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5bb2XlEIK7JJf1DCVVVr1W6LODizNqsLWPbdHJ5V49Y=;
-	b=cDGH4RWNIQBZLYpHXzO0Go/+rwObMOpRs1SXfN5vQOukYPLzuIPvvHg5W7RRnkY9I7sCxz
-	WXRN90oh16u4MeZP18CkOrifuqrJu/ML5zdcuS/w4rPKiDwAjJdO5ASMznZ34AahwugWSF
-	HIGR1rs/dP+c5Af7VRzARNccqRs8rk4=
-Date: Thu, 20 Mar 2025 18:57:53 +0530
+	s=arc-20240116; t=1742477519; c=relaxed/simple;
+	bh=/ARGXQ16wIbFIjef7OkNJ2isEjOpUmbsV4llJElMt3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UZazUgo6umN51DUQQMB1/UCqW2NumVSPJzYsNc+mx8PEegja39eiaNCuRLDU8+0wVFM39PNwZuPg281Ddlgx58YW4jFYcdtpUn5KcQZqc7kg6aZixkRnEMOtWTkWiAWF2YIDnOPTpelYLhby+HURfJAaZgkjLrGgk0nedUr7nlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TsmNuXGS; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K8qApU025723;
+	Thu, 20 Mar 2025 14:31:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	2GhEP0iObycxxgMfhvUnZ9ov+e48SKG/yYCAdiHKKuU=; b=TsmNuXGS/snz4UFE
+	P68BI2sd+ASVIYb5eUGJ/71BUzcbD56/h2Vr21LC+gOz2McBMXUSk+7EG/uh9q0d
+	eE8Q3bMrLLrUDa2f6sax/g9rS1QpWmjQ/815M0P3VLasNkomG2Mb1FKaV5DHVDFK
+	OS3cxR5G59cP5IVsaVfe6kORjbjGpT3/oF0vRhViLSomzt1DdpRToVn7f78kyUH6
+	B+i0QpMNkF+jdBWi8aruybvG3I4DEe7/jjZxsMJvSM1yRQFSyYMs1qaSFV8TarQf
+	c3f5OIaNwIgElO5psBEBSqeCMD/cBFNurkh/iPbBcn7SXSbf4/wTRGLfyeDWOr/6
+	IItEXA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45fuc8p0ke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 14:31:21 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D1FF640045;
+	Thu, 20 Mar 2025 14:29:59 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7496A8095E1;
+	Thu, 20 Mar 2025 14:28:53 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
+ 2025 14:28:52 +0100
+Message-ID: <1e3498a2-9279-4363-a0d9-8187933f6691@foss.st.com>
+Date: Thu, 20 Mar 2025 14:28:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 3/3] drm/tidss: Add OLDI bridge support
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>,
- "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "jyri.sarha@iki.fi"
- <jyri.sarha@iki.fi>,
- "tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
- "robh@kernel.org" <robh@kernel.org>, "airlied@gmail.com"
- <airlied@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "mripard@kernel.org" <mripard@kernel.org>
-Cc: "j-choudhary@ti.com" <j-choudhary@ti.com>,
- "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
- "u-kumar1@ti.com" <u-kumar1@ti.com>,
- "max.oss.09@gmail.com" <max.oss.09@gmail.com>,
- "francesco@dolcini.it" <francesco@dolcini.it>,
- "devarsht@ti.com" <devarsht@ti.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "nm@ti.com" <nm@ti.com>, "vigneshr@ti.com" <vigneshr@ti.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "praneeth@ti.com" <praneeth@ti.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
- <20241124143649.686995-4-aradhya.bhatia@linux.dev>
- <4155a886b3b3027d4ca8bb7a13801852ef8754e7.camel@siemens.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/8] memory: Add STM32 Octo Memory Manager driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <christophe.kerello@foss.st.com>
+References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
+ <20250219080059.367045-5-patrice.chotard@foss.st.com>
+ <eaf1ecca-4fde-4128-8590-6013c3a13a04@kernel.org>
+ <8b1b7df5-07f4-4f95-88e7-4e95ee909ffd@foss.st.com>
+ <ac119dba-6e73-496c-97e1-d59ac0fe4a27@kernel.org>
+ <06244bfb-1bd0-4a07-a928-3d2e68a89259@foss.st.com>
+ <f508b96e-81c8-41bd-baca-ebd1b4419904@kernel.org>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <4155a886b3b3027d4ca8bb7a13801852ef8754e7.camel@siemens.com>
-Content-Type: text/plain; charset=UTF-8
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <f508b96e-81c8-41bd-baca-ebd1b4419904@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_03,2025-03-20_01,2024-11-22_01
 
-Hi,
 
-On 18/03/25 19:05, Sverdlin, Alexander wrote:
-> Hi Aradhya!
-> 
-> On Sun, 2024-11-24 at 20:06 +0530, Aradhya Bhatia wrote:
->> From: Aradhya Bhatia <a-bhatia1@ti.com>
+
+On 3/19/25 08:37, Krzysztof Kozlowski wrote:
+> On 18/03/2025 14:40, Patrice CHOTARD wrote:
 >>
->> The AM62x and AM62Px SoCs feature 2 OLDI TXes each, which makes it
->> possible to connect them in dual-link or cloned single-link OLDI display
->> modes. The current OLDI support in tidss_dispc.c can only support for
->> a single OLDI TX, connected to a VP and doesn't really support
->> configuration of OLDIs in the other modes. The current OLDI support in
->> tidss_dispc.c also works on the principle that the OLDI output can only
->> be served by one, and only one, DSS video-port. This isn't the case in
->> the AM62Px SoC, where there are 2 DSS controllers present that share the
->> OLDI TXes.
 >>
->> Having their own devicetree and their own bridge entity will help
->> support the various display modes and sharing possiblilities of the OLDI
->> hardware.
+>> On 3/13/25 08:33, Krzysztof Kozlowski wrote:
+>>> On 12/03/2025 15:23, Patrice CHOTARD wrote:
+>>>>>> +static int stm32_omm_disable_child(struct device *dev)
+>>>>>> +{
+>>>>>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
+>>>>>> +	struct reset_control *reset;
+>>>>>> +	int ret;
+>>>>>> +	u8 i;
+>>>>>> +
+>>>>>> +	for (i = 0; i < omm->nb_child; i++) {
+>>>>>> +		ret = clk_prepare_enable(omm->child[i].clk);
+>>>>>> +		if (ret) {
+>>>>>> +			dev_err(dev, "Can not enable clock\n");
+>>>>>> +			return ret;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		reset = of_reset_control_get_exclusive(omm->child[i].node, 0);
+>>>>>> +		if (IS_ERR(reset)) {
+>>>>>> +			dev_err(dev, "Can't get child reset\n");
+>>>>>
+>>>>> Why do you get reset of child? Parent is not suppposed to poke there.
+>>>>> You might not have the reset there in the first place and it would not
+>>>>> be an error.
+>>>>
+>>>> By ressetting child (OSPI), we ensure they are disabled and in a known state.
+>>>> See the comment below.
+>>>>
+>>>>>
+>>>>>
+>>>>>> +			return PTR_ERR(reset);
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
+>>>>>> +		reset_control_assert(reset);
+>>>>>> +		udelay(2);
+>>>>>> +		reset_control_deassert(reset);
+>>>>>
+>>>>> No, the child should handle this, not parent.
+>>>>
+>>>> Octo Memory Manager can only be configured if both child are disabled.
+>>>> That's why here, parent handles this.
+>>>
+>>> So if device by any chance started and is doing some useful work, then
+>>> you cancel that work and reset it?
 >>
->> For all these reasons, add support for the OLDI TXes as DRM bridges.
+>> stm32_omm_configure() is only called if we get access granted on both children.
+>> That means we are authorized to use these devices, so we can reset them.
+>>
+>>>
+>>> And what if child does not have reset line? Your binding allows that, so
+>>> how is it supposed to work then?
+>>
+>> Ah yes, you are right, the OSPI bindings need to be updated
+>> by requiring reset lines and the driver spi-stm32-ospi.c as well.
+>> I will send a fix for that.
+>>
+>> Thanks for pointing this.
+>>
+>>>
+>>> This also leads me to questions about bindings - if you need to assert
+>>> some reset, doesn't it mean that these resets are also coming through
+>>> this device so they are part of this device node?
+>>
+>> As we are able to retrieve children's reset from their respective node,
+>> if you don't mind, OMM bindings can be kept as it's currently.
 > 
-> ...
+> But that is what the entire discussion is about - I do mind. I said it
+> already - you are not supposed to poke into child's node.
 > 
->> +int tidss_oldi_init(struct tidss_device *tidss)
->> +{
->> +	struct tidss_oldi *oldi;
->> +	struct device_node *child;
->> +	struct drm_bridge *bridge;
->> +	u32 parent_vp, oldi_instance, companion_instance;
->> +	enum tidss_oldi_link_type link_type = OLDI_MODE_UNSUPPORTED;
->> +	struct device_node *oldi_parent;
->> +	int ret = 0;
->> +
->> +	tidss->num_oldis = 0;
->> +
->> +	oldi_parent = of_get_child_by_name(tidss->dev->of_node, "oldi-transmitters");
->> +	if (!oldi_parent)
->> +		/* Return gracefully */
->> +		return 0;
->> +
->> +	for_each_child_of_node(oldi_parent, child) {
+> If you need to toggle child's resources, then I claim these are your
+> resources as well.
+
+Hi Krzysztof 
+
+Ok i will update both OMM driver and bindings accordingly.
+
 > 
-> Would for_each_available_child_of_node() make sense here so that
-> k3-am62-main.dtsi would have both ports with status = "disabled" and
-> the users will enable one or another?
+>>
+>> And another information, on some MP2 SoCs family, there is only one 
+>> OSPI instance. So for these SoCs, there is no Octo Memory Manager.
+>>
+>>>
+>>>>
+>>>>>
+>>>>>> +
+>>>>>> +		reset_control_put(reset);
+>>>>>> +		clk_disable_unprepare(omm->child[i].clk);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static int stm32_omm_probe(struct platform_device *pdev)
+>>>>>> +{
+>>>>>> +	struct platform_device *vdev;
+>>>>>> +	struct device *dev = &pdev->dev;
+>>>>>> +	struct stm32_omm *omm;
+>>>>>> +	struct clk *clk;
+>>>>>> +	int ret;
+>>>>>> +	u8 child_access_granted = 0;
+>>>>>
+>>>>> Keep inits/assignments together
+>>>>
+>>>> ok
+>>>>
+>>>>>
+>>>>>> +	u8 i, j;
+>>>>>> +	bool child_access[OMM_CHILD_NB];
+>>>>>> +
+>>>>>> +	omm = devm_kzalloc(dev, sizeof(*omm), GFP_KERNEL);
+>>>>>> +	if (!omm)
+>>>>>> +		return -ENOMEM;
+>>>>>> +
+>>>>>> +	omm->io_base = devm_platform_ioremap_resource_byname(pdev, "regs");
+>>>>>> +	if (IS_ERR(omm->io_base))
+>>>>>> +		return PTR_ERR(omm->io_base);
+>>>>>> +
+>>>>>> +	omm->mm_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "memory_map");
+>>>>>> +	if (IS_ERR(omm->mm_res))
+>>>>>> +		return PTR_ERR(omm->mm_res);
+>>>>>> +
+>>>>>> +	/* check child's access */
+>>>>>> +	for_each_child_of_node_scoped(dev->of_node, child) {
+>>>>>> +		if (omm->nb_child >= OMM_CHILD_NB) {
+>>>>>> +			dev_err(dev, "Bad DT, found too much children\n");
+>>>>>> +			ret = -E2BIG;
+>>>>>> +			goto err_clk_release;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		if (!of_device_is_compatible(child, "st,stm32mp25-ospi")) {
+>>>>>> +			ret = -EINVAL;
+>>>>>> +			goto err_clk_release;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		ret = stm32_omm_check_access(dev, child);
+>>>>>> +		if (ret < 0 && ret != -EACCES)
+>>>>>> +			goto err_clk_release;
+>>>>>> +
+>>>>>> +		child_access[omm->nb_child] = false;
+>>>>>> +		if (!ret) {
+>>>>>> +			child_access_granted++;
+>>>>>> +			child_access[omm->nb_child] = true;
+>>>>>> +		}
+>>>>>> +
+>>>>>> +		omm->child[omm->nb_child].node = child;
+>>>>>> +
+>>>>>> +		clk = of_clk_get(child, 0);
+>>>>>
+>>>>> Why are you taking children clock? And why with this API, not clk_get?
+>>>>
+>>>> I need children's clock to reset them.
+>>>
+>>>
+>>> The device driver should reset its device. It is not a discoverable bus,
+>>> that would explain power sequencing from the parent.
+>>>
+>>>> Why of_clk_get() usage is a problem here ? i can't get your point ?
+>>>
+>>> Because it is not the API which device drivers should use. You should
+>>> use clk_get or devm_clk_get.
+>>
+>>
+>> ok, i will update this part using clk_get().
+>>
+>>>
+>>>
+>>>>
+>>>>> This looks like mixing clock provider in the clock consumer.
+>>>>>
+>>>>>> +		if (IS_ERR(clk)) {
+>>>>>> +			dev_err(dev, "Can't get child clock\n");
+>>>>>
+>>>>> Syntax is always return dev_err_probe (or ret = dev_err_probe).
+>>>>
+>>>> ok
+>>>>
+>>>>>
+>>>>>> +			ret = PTR_ERR(clk);
+>>>>>> +			goto err_clk_release;
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		omm->child[omm->nb_child].clk = clk;
+>>>>>> +		omm->nb_child++;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	if (omm->nb_child != OMM_CHILD_NB) {
+>>>>>> +		ret = -EINVAL;
+>>>>>> +		goto err_clk_release;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	platform_set_drvdata(pdev, omm);
+>>>>>> +
+>>>>>> +	pm_runtime_enable(dev);
+>>>>>> +
+>>>>>> +	/* check if OMM's resource access is granted */
+>>>>>> +	ret = stm32_omm_check_access(dev, dev->of_node);
+>>>>>> +	if (ret < 0 && ret != -EACCES)
+>>>>>> +		goto err_clk_release;
+>>>>>> +
+>>>>>> +	if (!ret && child_access_granted == OMM_CHILD_NB) {
+>>>>>> +		/* Ensure both OSPI instance are disabled before configuring OMM */
+>>>>>> +		ret = stm32_omm_disable_child(dev);
+>>>>>> +		if (ret)
+>>>>>> +			goto err_clk_release;
+>>>>>> +
+>>>>>> +		ret = stm32_omm_configure(dev);
+>>>>>> +		if (ret)
+>>>>>> +			goto err_clk_release;
+>>>>>> +	} else {
+>>>>>> +		dev_dbg(dev, "Octo Memory Manager resource's access not granted\n");
+>>>>>> +		/*
+>>>>>> +		 * AMCR can't be set, so check if current value is coherent
+>>>>>> +		 * with memory-map areas defined in DT
+>>>>>> +		 */
+>>>>>> +		ret = stm32_omm_set_amcr(dev, false);
+>>>>>> +		if (ret)
+>>>>>> +			goto err_clk_release;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	/* for each child, if resource access is granted and status "okay", probe it */
+>>>>>> +	for (i = 0; i < omm->nb_child; i++) {
+>>>>>> +		if (!child_access[i] || !of_device_is_available(omm->child[i].node))
+>>>>>
+>>>>> If you have a device available, why do you create one more platform device?
+>>>>>
+>>>>>> +			continue;
+>>>>>> +
+>>>>>> +		vdev = of_platform_device_create(omm->child[i].node, NULL, NULL);
+>>>>>
+>>>>> Why you cannot just populate the children?
+>>>>
+>>>> I can't use of_platform_populate(), by default it will populate all OMM's child.
+>>>> Whereas here, we want to probe only the OMM's child which match our criteria.  
+>>>
+>>>
+>>> Why wouldn't you populate everyone? The task of bus driver is not to
+>>> filter out DT. If you got such DT - with all device nodes - you are
+>>> expected to populate all of them. Otherwise, if you do not want all of
+>>> them, it is expected that firmware or bootloader will give you DT
+>>> without these nodes.
+>>
+>> We don't want to populate every child by default because we can get 
+>> cases where one child is shared between Cortex A and Cortex M.
 > 
+> But in such case DTB would not have that child enabled.
+> 
+>> That's why we must check if access is granted which ensure that 
+>> firewall semaphore is available (RIFSC semaphore in our case).
+> 
+> If you do not have access, means child is assigned to other processor,
+> right? In that case that child would not have been enabled in your DTB.
+> 
+> Fix your DTB instead of creating another layer of handling children
+> inside drivers.
 
-Thank you for the suggestion!
+In fact, initially, we wanted to avoid to trigger Illegal Access in case user 
+didn't use correct DT, that's why, here, double checks have been implemented.
+But Ok, i will clean this part and simply populate children.
 
-for_each_available_child_of_node() does seem to be the better option.
-I will send another revision.
+Thanks
+Patrice.
 
-
--- 
-Regards
-Aradhya
-
+> 
+> 
+> Best regards,
+> Krzysztof
 
