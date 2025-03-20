@@ -1,177 +1,194 @@
-Return-Path: <linux-kernel+bounces-569840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAFAA6A862
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:23:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D10DA6A825
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97BE18839D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:15:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF6154852A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F822258E;
-	Thu, 20 Mar 2025 14:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5722236F6;
+	Thu, 20 Mar 2025 14:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF8NrnC8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mEWDKUOq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0B211C;
-	Thu, 20 Mar 2025 14:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC687FBD6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480138; cv=none; b=GxkqWLTRslVgY6pvdl1zoUB5ejlADBsXyEbNfykj0uTClal9Y1zPOxK4nDQqXLmPvxC4sp+epT/SEftsRyw5DU0l6WZKzgEtmvDEFRYjekTUCfJ7KVpzJ4iiJDYiQt5SwwOl1no8bJTm6t0Hr0qf/Nf9P+dMZjfLkDLJEEUgIDg=
+	t=1742480145; cv=none; b=V+3K4mLKIOCm3KLwRaifWWJtenDQK6hpUC3Q3BM1t+NH8ACiDni0t/rRZ6bzi/V3a/gW9DHtiwF1vFqUItCktF3SxIcpGFRbZjUK4D7TEW/2v9ZK+D6SlX4vNWFxs7n5lFaJia+SWu12XlwKP/fUcQYBUpiTtG5OPuuwqzH+Oas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480138; c=relaxed/simple;
-	bh=Cz+zxwlHWKS5x56xzygGWm2d2rVex5Tzua/p3TZygNA=;
+	s=arc-20240116; t=1742480145; c=relaxed/simple;
+	bh=5ronVJq9UU0bG8QY1CBNRyXP7cs7CbWkOrSQ2Epye3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atGH1x2jN6qkcwUSgKFItvateoCMMmzEMuOcE+iN3tcHuWGMb0hZ/KxTmry2DzBG8om1+VvgS1htvKofqTLoRsh6Hf4RzTN/3Rj7AJiSqiyJcvFzjKREpQLgeuJ+7ZkZZ5GXuc4KzT0Jx+xX3GHAf0cVbmJL9K2eGVvcTNH0v6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF8NrnC8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68183C4CEE3;
-	Thu, 20 Mar 2025 14:15:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742480137;
-	bh=Cz+zxwlHWKS5x56xzygGWm2d2rVex5Tzua/p3TZygNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mF8NrnC8NFk3YtJg+vy1xQfu5P1ZC5ZX5LrYIbZapDTHlVIHgZnyOIwtJkygagqYY
-	 OKOPgk80Kh9K6mZQEpciByoqdWp/hGIDIt+Vw9NsrMmFZ3aMUqpHcUAS8j1SUY4xBX
-	 sPoEHo21JBwuvhZhFrfr7Tugb8sY3UgL+T4DWGXiKHCPkI9dUR7+q6Cj4085H2GwML
-	 plsSnPA6YKSp2CPOGdfoHFS1DxzGa0yQECpCW2d963EaWEmut6Zm3BhbsoLlCjkiLo
-	 jTldBcg9Gp56d8O9fttzz2FnGLECk8cBOC/bMdkqsYrq883hbviaFqygBDzUiWm/BA
-	 tjWaSB5csaeeQ==
-Date: Thu, 20 Mar 2025 15:15:33 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 1/2] rcu: Comment on the extraneous delta test on
- rcu_seq_done_exact()
-Message-ID: <Z9wjBT3RQDUrFdbE@p200300d06f3e9880e1f174d4afcc9316.dip0.t-ipconnect.de>
-References: <20250318135619.4300-1-frederic@kernel.org>
- <20250318135619.4300-2-frederic@kernel.org>
- <322b052d-0f1f-45a3-bfef-226b15f3a8fd@paulmck-laptop>
- <20250319193831.GA3791727@joelnvbox>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cik32gk6tkWcd0ia6AG0xiJ9yYfIhrDcgkgf7lftd89n0zx9euPamTYv4W8kxxTXAp73R+O0vcADHSvxDnSBAeMGDhG9ZCoCn3hkT/OwCDWuCRO7QOdl5onnGJlGyc2pW31oub0ZwL91zlAomR7twg4EHBqMUKqQmt2E8Co/z2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mEWDKUOq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDT6IK025032
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:15:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=8aBcQrbNTmhrIz1gphJsGN9i
+	CmDPwX8fWpWm652biE8=; b=mEWDKUOqGxp05cdXm3S6yhSf8ONNGMBYxDsDK3sU
+	MVdPOQ/6Gqjga9+mP69soGUeqKvkc38Ln2Qm0tYUrQcB3kOG6uVAugysIaGkDBWN
+	jg6R3HpHiiYvEGTjuiB2m5dgQ6Vf8Y3jk2QCG8fpWXtMvwVY43gTeaxVfbUkAC5j
+	Pj+sqBQBBBQ693Zsi9+rNRCHsVtUoDGTM1+aRjfdSjZrEdNjq2g0m8i/PG0Xanpg
+	GLMpcQ/6UbOvp+SrD9feYs0iUXrTkYoDNoEfCrlVonI/zgY9HxZItctrSsM7vbbK
+	GSx5xfrn5YhAAj6PUBDrhrwZgxu7ePAzUyA+q9+5LPa8Yg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gbnghsef-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:15:41 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c0a3ff7e81so162423485a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:15:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742480140; x=1743084940;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8aBcQrbNTmhrIz1gphJsGN9iCmDPwX8fWpWm652biE8=;
+        b=VMfT9t2wty27Lk3neEAnj5bp85qyzE78np6W11dX88tv4Md2J9+EssjKE0lHAgX66L
+         YTEI/MLuuAkSV4G3mtDEod7Jer3TKm+3pDcxWNyMG3nPNSNVqS8e/wJ6v/wEgqrJArxt
+         RaJa+OA9Vts4aKA9g+3sUvwRHXm9HxMJ6Yp+d7RaDBzPqhCLyi9qlcMaKTPXlDKCTWCY
+         6w2QNDC41MZiGvFQkuRsXoLyUreiXl4+/IW9JFDpLOHAsNfjgos4aYSRAFFwn9WtwRFW
+         JxUovp9UfxNQj6ma76AiqmNkjdu1Um+H1B+IJ/bYFIycExp4IRNmGJco1AXsXG1wKAcB
+         aNnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl/lHDqFpXcWHB//WQjsXQMKAJ+6f0SL+YHJPO/oqpWA6R/sU9OlGSO5uLXCEmKlUX8jd3sJvKCj5lYKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8bdZS1rYq85rVlg4jpNzrHSHx4mmoC4IQt/9kB863fITEXsBM
+	C8jxyiTxXymUNrh7TwB+bIUXqplnuHc6jQIkZNbQpHi41lxdoAhPgeegNBGdaNTrUqhvRKdM42V
+	vJ8Wswlico2R6hYav8bllnDq+mM6ZPQ/VOI0k9kMtbZXSXTDzQxkWZxuvjMrEGvU=
+X-Gm-Gg: ASbGncsaPlLhuQ265FxN1pteI1+OVW7CCRadSv8AVz9oRWTbGAq8D+qQ01xlBn4ZeT7
+	ADFfwyYEnmJCJyKeGTIecBQ20YEI52OGF+sgP/Ctx8bHyNq72dpY3Ztu625pRd139pDSekYF7G0
+	Z/1ohDq1SAwEJGZ2Blj9EYJyIRIjYOY5ZyqzEJOKLtFYWTbZ9fZb7K3rKMlgV0N6cvYz3AT508c
+	JnJfVKCBqHN0yNNRYexp5MbItu0eciDEM47xg+eEjTZntib1BeqOF4e7KQm5AUr9NmEnbS2h6OU
+	MUqB7KzWCXcKnTy/ilnjLXcMQsXi3gdTLUr6iq+p6YtGFpTf0VapLOochzpyKuGYO1ncY125oMG
+	tN/o=
+X-Received: by 2002:a05:620a:1707:b0:7c5:4eee:5405 with SMTP id af79cd13be357-7c5b0d07bc3mr500716985a.35.1742480140593;
+        Thu, 20 Mar 2025 07:15:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF48Z8OdEGRPlkLUazNGK2qg1AZCI2lznykkVH1S8wwNrf4UsdJLlA4Yst7O0bQCuVa+zPlpA==
+X-Received: by 2002:a05:620a:1707:b0:7c5:4eee:5405 with SMTP id af79cd13be357-7c5b0d07bc3mr500709485a.35.1742480139998;
+        Thu, 20 Mar 2025 07:15:39 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7c07b0sm2209494e87.79.2025.03.20.07.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 07:15:39 -0700 (PDT)
+Date: Thu, 20 Mar 2025 16:15:36 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+        dri-devel@lists.freedesktop.org, arnd@arndb.de
+Subject: Re: [PATCH v2 4/5] misc: fastrpc: Add polling mode support for
+ fastRPC driver
+Message-ID: <2k6573yrw3dyn3rpwqz4asdpx3nlmj4ornm7kmxv3f4jlc6hzg@qkwn7gqduwri>
+References: <20250127044239.578540-1-quic_ekangupt@quicinc.com>
+ <20250127044239.578540-5-quic_ekangupt@quicinc.com>
+ <hgox77a7e6zzriltwhzzciau6u2pmil4y3rl5o2l6zkp4fmlmp@q2dai5fxcvtq>
+ <49295da9-82d4-45a0-a2a4-fdaa6600c70d@quicinc.com>
+ <an4cvztdkqmrt7w2iaziihlxf4tbox65ze362v2lmycjnqg26y@jizjmh2ki34z>
+ <939fcff6-fb93-487b-995b-88e3ff020784@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250319193831.GA3791727@joelnvbox>
+In-Reply-To: <939fcff6-fb93-487b-995b-88e3ff020784@oss.qualcomm.com>
+X-Proofpoint-GUID: vjpY8r_2PjL1ZILm-4dq6uPlTyw4Q6j2
+X-Authority-Analysis: v=2.4 cv=MJ5gmNZl c=1 sm=1 tr=0 ts=67dc230d cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=I9Tj63J92sXnRp7HOM8A:9 a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: vjpY8r_2PjL1ZILm-4dq6uPlTyw4Q6j2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_03,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ spamscore=0 priorityscore=1501 mlxscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200088
 
-Le Wed, Mar 19, 2025 at 03:38:31PM -0400, Joel Fernandes a écrit :
-> On Tue, Mar 18, 2025 at 11:37:38AM -0700, Paul E. McKenney wrote:
-> > On Tue, Mar 18, 2025 at 02:56:18PM +0100, Frederic Weisbecker wrote:
-> > > The numbers used in rcu_seq_done_exact() lack some explanation behind
-> > > their magic. Especially after the commit:
-> > > 
-> > >     85aad7cc4178 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
-> > > 
-> > > which reported a subtle issue where a new GP sequence snapshot was taken
-> > > on the root node state while a grace period had already been started and
-> > > reflected on the global state sequence but not yet on the root node
-> > > sequence, making a polling user waiting on a wrong already started grace
-> > > period that would ignore freshly online CPUs.
-> > > 
-> > > The fix involved taking the snaphot on the global state sequence and
-> > > waiting on the root node sequence. And since a grace period is first
-> > > started on the global state and only afterward reflected on the root
-> > > node, a snapshot taken on the global state sequence might be two full
-> > > grace periods ahead of the root node as in the following example:
-> > > 
-> > > rnp->gp_seq = rcu_state.gp_seq = 0
-> > > 
-> > >     CPU 0                                           CPU 1
-> > >     -----                                           -----
-> > >     // rcu_state.gp_seq = 1
-> > >     rcu_seq_start(&rcu_state.gp_seq)
-> > >                                                     // snap = 8
-> > >                                                     snap = rcu_seq_snap(&rcu_state.gp_seq)
-> > >                                                     // Two full GP differences
-> > >                                                     rcu_seq_done_exact(&rnp->gp_seq, snap)
-> > >     // rnp->gp_seq = 1
-> > >     WRITE_ONCE(rnp->gp_seq, rcu_state.gp_seq);
-> > > 
-> > > Add a comment about those expectations and to clarify the magic within
-> > > the relevant function.
-> > > 
-> > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > 
-> > Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-> > 
-> > But it would of course be good to get reviews from the others.
+On Thu, Mar 20, 2025 at 07:19:31PM +0530, Ekansh Gupta wrote:
 > 
-> I actually don't agree that the magic in the rcu_seq_done_exact() function about the
-> ~2 GPs is related to the lag between rcu_state.gp_seq and root rnp->gp_seq,
-> because the small lag can just as well survive with the rcu_seq_done()
-> function in the above sequence right?
 > 
-> The rcu_seq_done_exact() function on the other hand is more about not being
-> stuck in the ULONG_MAX/2 guard band, but to actually get to that, you need a
-> wrap around to happen and the delta between "rnp->gp_seq" and "snap" to be at
-> least ULONG_MAX/2 AFAIU.
+> On 1/29/2025 4:10 PM, Dmitry Baryshkov wrote:
+> > On Wed, Jan 29, 2025 at 11:12:16AM +0530, Ekansh Gupta wrote:
+> >>
+> >>
+> >> On 1/29/2025 4:59 AM, Dmitry Baryshkov wrote:
+> >>> On Mon, Jan 27, 2025 at 10:12:38AM +0530, Ekansh Gupta wrote:
+> >>>> For any remote call to DSP, after sending an invocation message,
+> >>>> fastRPC driver waits for glink response and during this time the
+> >>>> CPU can go into low power modes. Adding a polling mode support
+> >>>> with which fastRPC driver will poll continuously on a memory
+> >>>> after sending a message to remote subsystem which will eliminate
+> >>>> CPU wakeup and scheduling latencies and reduce fastRPC overhead.
+> >>>> With this change, DSP always sends a glink response which will
+> >>>> get ignored if polling mode didn't time out.
+> >>> Is there a chance to implement actual async I/O protocol with the help
+> >>> of the poll() call instead of hiding the polling / wait inside the
+> >>> invoke2?
+> >> This design is based on the implementation on DSP firmware as of today:
+> >> Call flow: https://github.com/quic-ekangupt/fastrpc/blob/invokev2/Docs/invoke_v2.md#5-polling-mode
+> >>
+> >> Can you please give some reference to the async I/O protocol that you've
+> >> suggested? I can check if it can be implemented here.
+> > As with the typical poll() call implementation:
+> > - write some data using ioctl
+> > - call poll() / select() to wait for the data to be processed
+> > - read data using another ioctl
+> >
+> > Getting back to your patch. from you commit message it is not clear,
+> > which SoCs support this feature. Reminding you that we are supporting
+> > all kinds of platforms, including the ones that are EoLed by Qualcomm.
+> >
+> > Next, you wrote that in-driver polling eliminates CPU wakeup and
+> > scheduling. However this should also increase power consumption. Is
+> > there any measurable difference in the latencies, granted that you
+> > already use ioctl() syscall, as such there will be two context switches.
+> > What is the actual impact?
 > 
-> So the only time this magic will matter is if you have a huge delta between
-> what is being compared, not just 2 GPs.
+> Hi Dmitry,
+> 
+> Thank you for your feedback.
+> 
+> I'm currently reworking this change and adding testing details. Regarding the SoC
+> support, I'll add all the necessary information.
 
-You're right, and perhaps I should have made it more specific that my comment
-only explains the magic "3" number here, in that if it were "2" instead, there
-could be accidents with 2 full GPs difference (which is possible) spuriously
-accounted as a wrap around.
+Please make sure that both the kernel and the userspace can handle the
+'non-supported' case properly.
 
-Thanks.
+> For now, with in-driver
+> polling, we are seeing significant performance improvements for calls
+> with different sized buffers. On polling supporting platform, I've observed an
+> ~80us improvement in latency. You can find more details in the test
+> results here: 
+> https://github.com/quic/fastrpc/pull/134/files#diff-7dbc6537cd3ade7fea5766229cf585db585704e02730efd72e7afc9b148e28ed
 
+Does the improvement come from the CPU not goint to idle or from the
+glink response processing?
+
+> Regarding your concerns about power consumption, while in-driver polling
+> eliminates CPU wakeup and scheduling, it does increase power consumption.
+> However, the performance gains seem to outweigh this increase.
 > 
-> Or, did I miss something?
-> 
-> (Also sorry about slow email responses this week as I had my presentation
-> today and was busy preparing this week and attending other presentations at
-> OSPM, I'll provide an update on that soon!).
-> 
-> thanks,
-> 
->  - Joel
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> > 
-> > > ---
-> > >  kernel/rcu/rcu.h | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> > > index eed2951a4962..7acf1f36dd6c 100644
-> > > --- a/kernel/rcu/rcu.h
-> > > +++ b/kernel/rcu/rcu.h
-> > > @@ -157,6 +157,13 @@ static inline bool rcu_seq_done(unsigned long *sp, unsigned long s)
-> > >   * Given a snapshot from rcu_seq_snap(), determine whether or not a
-> > >   * full update-side operation has occurred, but do not allow the
-> > >   * (ULONG_MAX / 2) safety-factor/guard-band.
-> > > + *
-> > > + * The token returned by get_state_synchronize_rcu_full() is based on
-> > > + * rcu_state.gp_seq but it is tested in poll_state_synchronize_rcu_full()
-> > > + * against the root rnp->gp_seq. Since rcu_seq_start() is first called
-> > > + * on rcu_state.gp_seq and only later reflected on the root rnp->gp_seq,
-> > > + * it is possible that rcu_seq_snap(rcu_state.gp_seq) returns 2 full grace
-> > > + * periods ahead of the root rnp->gp_seq.
-> > >   */
-> > >  static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
-> > >  {
-> > > -- 
-> > > 2.48.1
-> > > 
+> Do you think the poll implementation that you suggested above could provide similar
+> improvements?
+
+No, I agree here. I was more concentrated on userspace polling rather
+than hw polling.
+
+-- 
+With best wishes
+Dmitry
 
