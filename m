@@ -1,206 +1,195 @@
-Return-Path: <linux-kernel+bounces-569518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630E6A6A414
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:49:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9910EA6A418
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037D53BD9C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:49:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246F27B1782
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4740D224885;
-	Thu, 20 Mar 2025 10:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD16224B10;
+	Thu, 20 Mar 2025 10:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="ogp739E6"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vV7fER2g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8JMKr31";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vV7fER2g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c8JMKr31"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F022080D9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F87F215783
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467787; cv=none; b=C6240YBvKSMTlFl7qU5iLGhRB16xtUcL3F4RuMEAQK5+3cUVq5yRtV0Igyu5x6ixO9ZkWncTixf8Zeajjg26HfYjpkCBu7pmrKD29aSi3tiBg9mmDK/yhVqWZgo5tu4iubD/Q2WrePEEHWGkP2pg8pL4nW1mweUBZWDAarR2Zlg=
+	t=1742467789; cv=none; b=h0Wj2mZ2p2Ij9RqZEAg66/m5PsEB0FA6rAT4QnpD4ZlZbtqcvNe6ubuEGvLqrLqTJhXdbs2t2ac5jLxi2Dg0LRNOCpzNu1HvOD9RUSg8lyzeR/45IPwLWgFLl1xsbMB7EGQDz3qtgbTeO4P0DnXH1+3jOqpT574wotGazkDbaE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467787; c=relaxed/simple;
-	bh=Y6/yzZwSwrYy+AHACk9EwPjH71vlojFvnvdFM/cDRBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YTiU0MHVtS06ph8POQ2NoPNpMdUtclK/9yQgTIY4uh4cfCJhsLRHZp5UkJX09kWO7FJPpUXV7fQDhRpHgK8BMPPXiLHoRwJsOnj5n4Fh9Jje+N3xluMMIuf/woVqfak1iJ45OIuXE3+V93Rv+fBlb7B2Ka7pIHPqN13e3LWGl80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=ogp739E6; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3912e96c8e8so339023f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1742467783; x=1743072583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RbL7ptMHboU5raC7wJPf694evtUl0i0LartgtD6KB7M=;
-        b=ogp739E6qWBc7XxBbABEhfQWUHQoL2d/9bwAhJDOMuknEOMgibu+11XggkCytzhR4p
-         JntJtu3AOHEo0VazmwOQUvBUtBbh2OOBX8/GeXicqHkETVND0aqe/k2rUU3ObKGvahas
-         BZD0/zLJGNvLGRbr4JrH7TF12BGZOPH0JQM9txtKBv1pNzTa8cp32noTAyVhgXgqSZ/L
-         VMlaukKmByNFPG8GXA0KDQMIIaHnyuBzbForVfuNg/Vp2X96K9yZDvGd38Ovb6DJ1HLD
-         XNkzhAKr+04R1o8xF8FF4w1s+iiBHOYgZ/9tk9vEaSRALQhRMsnf22LjbjvAicpoehS+
-         NViQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742467783; x=1743072583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbL7ptMHboU5raC7wJPf694evtUl0i0LartgtD6KB7M=;
-        b=VVUZCfUCMDCsqPHtkMQHZqWyyWJE2Be1YT6N9g/wHtVmghmW5/nz8HDgoXrAI5ZwCz
-         7hQDpODbDl7avruCS0UDU2sj/ttI5W3mU2VT6gDNUMSC28yMs5NXMK4JrqmD2v6p7R5x
-         x2zgAKP4aeNsPgRTzFjFcEqTmREXV5AlEPcC5dPTeX1dZUT74B2l0mnMhSmbalzzHjvH
-         zuZkkvslBvAKZsZyyxf5Bzy6gKqTQvnbiK10GyC4nqEhLA0dTylUm5WyC2ssBqY8YkGm
-         UQ/hjW0ZWUzEdkBu08GtGyNqMmvTOWaf5B4mdxIYgKTw9xod3JcUbbpjWm7tzvwP7u2e
-         685A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzCPR+jS7x5KIlrP2/0geAwW/UQV3HYOspeUrJ+JKlWC9FhoVfkyYuScUR7ruCXZC5dY8GPpj75nACv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Zbcu/pDaYT5PbgCzlZfjJm4nR/yKh6/7LX0NFbl6juKgW3x0
-	C30KaO3BcszPJD1c5bFknjEDxFxTPQzpnFCons02TkmHi8UZZSvqJtdazFAgFsc=
-X-Gm-Gg: ASbGnct8PYIX+505F7ZDV79JZr6xhggTTS9tAI464w/82xFzWT43eAAxpCLCixbZz6i
-	IwMvh27xo6pB0C6OnIAMUFRMBDDSwo5QdBWTJTm1dtb8TEvIjHaByCGmRqSddIBZzW0KHcnUIpG
-	Sw7WOigL+0BDgT/1MC66zijHrIXqMlWyeosbUQciEl/wxNl+wCFZBSHeEdKMOtz6VymXXTyRceS
-	J+ntO8R8g65gbBPdt4KLA25rXh1qP5Q0ho6Ob3taPJYaKsAjJWbko1oGCCMnxlwWNsGh6elVUop
-	uvL3FLYGvLXqEJBEzF7gjTRic+zrwWeBBL4uOr8G/exSyU0j1puBWHN2K1s2
-X-Google-Smtp-Source: AGHT+IEnd/XYyPpHLCbPZRoXCgp4GXYzB0emXATpl/Q2SPWPwd/46wT5KAZg21WIOJ+niGjQcFthDw==
-X-Received: by 2002:a5d:5982:0:b0:399:71d4:a2 with SMTP id ffacd0b85a97d-399739c1524mr6566540f8f.14.1742467782662;
-        Thu, 20 Mar 2025 03:49:42 -0700 (PDT)
-Received: from [192.168.0.101] ([90.241.98.187])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb40cdafsm23605824f8f.62.2025.03.20.03.49.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 03:49:42 -0700 (PDT)
-Message-ID: <c6d5c64b-11ea-453a-b7fe-4071dd11d7ea@ursulin.net>
-Date: Thu, 20 Mar 2025 10:49:41 +0000
+	s=arc-20240116; t=1742467789; c=relaxed/simple;
+	bh=RzAR1IJlCnHxIuB98N0gtcuvjQ9p7bI7dHHHaaG7zNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwlHMIaI1emrwRpzxMFZwrAs9BGnuiaOdhbmeKPSWNsk4GoaRqA+fP1oe5bLrCOlIZCaVbWSvbpI4JveH8llPhiWqr0IX+DKt0HHKd8g0xaZxl8jt3LtOxlMfvAa4sM0bO5k+laRzpVWVohoIrTBsm/q017aR2weQ7qxwB52K0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vV7fER2g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8JMKr31; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vV7fER2g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c8JMKr31; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9BAEB1F388;
+	Thu, 20 Mar 2025 10:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742467785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v2DmHC7F3sN4OwliEcqrh0UYzSuJDsxOkaBKgJEfhto=;
+	b=vV7fER2gWVx4BggQhW2dwtkXaHKPg29f5Wy9T2BIZyGFbHNE03sTV3m+5G7iDks7RgOaps
+	cF4bxMto3W7gh4jNptVDUzRjRfV9qgeCDMiIZBt3B345aLWZp/AeO8hcPXbNv0LIo38I5D
+	YH127RVLCtWraA07ie2mW2hdinB0++s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742467785;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v2DmHC7F3sN4OwliEcqrh0UYzSuJDsxOkaBKgJEfhto=;
+	b=c8JMKr31s2qoigrS1nniEwp5qlclpSI7APOtghJyfqG2LbWYvwix+s4HN/Z0+06E1TOKvc
+	meg7jfz8DgCLtmDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vV7fER2g;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=c8JMKr31
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742467785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v2DmHC7F3sN4OwliEcqrh0UYzSuJDsxOkaBKgJEfhto=;
+	b=vV7fER2gWVx4BggQhW2dwtkXaHKPg29f5Wy9T2BIZyGFbHNE03sTV3m+5G7iDks7RgOaps
+	cF4bxMto3W7gh4jNptVDUzRjRfV9qgeCDMiIZBt3B345aLWZp/AeO8hcPXbNv0LIo38I5D
+	YH127RVLCtWraA07ie2mW2hdinB0++s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742467785;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v2DmHC7F3sN4OwliEcqrh0UYzSuJDsxOkaBKgJEfhto=;
+	b=c8JMKr31s2qoigrS1nniEwp5qlclpSI7APOtghJyfqG2LbWYvwix+s4HN/Z0+06E1TOKvc
+	meg7jfz8DgCLtmDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90C7F13A66;
+	Thu, 20 Mar 2025 10:49:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8wNUI8ny22dXEwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 20 Mar 2025 10:49:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 45F41A07B2; Thu, 20 Mar 2025 11:49:45 +0100 (CET)
+Date: Thu, 20 Mar 2025 11:49:45 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: tidy up do_sys_openat2() with likely/unlikely
+Message-ID: <6w5kjzcpt7le4cz7iernbqawqgx6nfhipce4cvvu4qwssaeu2o@azv3x2c7bbkv>
+References: <20250320092331.1921700-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 07/10] drm/sched: cleanup event names
-To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Philipp Stanner <phasta@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250320095818.40622-1-pierre-eric.pelloux-prayer@amd.com>
- <20250320095818.40622-8-pierre-eric.pelloux-prayer@amd.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20250320095818.40622-8-pierre-eric.pelloux-prayer@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320092331.1921700-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: 9BAEB1F388
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Thu 20-03-25 10:23:31, Mateusz Guzik wrote:
+> Otherwise gcc 13 generates conditional forward jumps (aka branch
+> mispredict by default) for build_open_flags() being succesfull.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-On 20/03/2025 09:58, Pierre-Eric Pelloux-Prayer wrote:
-> All events now start with the same prefix (drm_sched_job_).
-> 
-> drm_sched_job_wait_dep was misleading because it wasn't waiting
-> at all. It's now replaced by trace_drm_sched_job_unschedulable,
-> which is only traced if the job cannot be scheduled.
-> For moot dependencies, nothing is traced.
-> 
-> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->   drivers/gpu/drm/scheduler/gpu_scheduler_trace.h | 8 ++++----
->   drivers/gpu/drm/scheduler/sched_entity.c        | 8 ++++----
->   drivers/gpu/drm/scheduler/sched_main.c          | 4 ++--
->   3 files changed, 10 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> index 38cdd659a286..4ce53e493fef 100644
-> --- a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> @@ -63,17 +63,17 @@ DECLARE_EVENT_CLASS(drm_sched_job,
->   		      __entry->job_count, __entry->hw_job_count, __entry->client_id)
->   );
->   
-> -DEFINE_EVENT(drm_sched_job, drm_sched_job,
-> +DEFINE_EVENT(drm_sched_job, drm_sched_job_queue,
->   	    TP_PROTO(struct drm_sched_job *sched_job, struct drm_sched_entity *entity),
->   	    TP_ARGS(sched_job, entity)
->   );
->   
-> -DEFINE_EVENT(drm_sched_job, drm_run_job,
-> +DEFINE_EVENT(drm_sched_job, drm_sched_job_run,
->   	    TP_PROTO(struct drm_sched_job *sched_job, struct drm_sched_entity *entity),
->   	    TP_ARGS(sched_job, entity)
->   );
->   
-> -TRACE_EVENT(drm_sched_process_job,
-> +TRACE_EVENT(drm_sched_job_done,
->   	    TP_PROTO(struct drm_sched_fence *fence),
->   	    TP_ARGS(fence),
->   	    TP_STRUCT__entry(
-> @@ -112,7 +112,7 @@ TRACE_EVENT(drm_sched_job_add_dep,
->   		  __entry->ctx, __entry->seqno)
->   );
->   
-> -TRACE_EVENT(drm_sched_job_wait_dep,
-> +TRACE_EVENT(drm_sched_job_unschedulable,
->   	    TP_PROTO(struct drm_sched_job *sched_job, struct dma_fence *fence),
->   	    TP_ARGS(sched_job, fence),
->   	    TP_STRUCT__entry(
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-> index 047e42cfb129..0bad247f783e 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -470,10 +470,10 @@ struct drm_sched_job *drm_sched_entity_pop_job(struct drm_sched_entity *entity)
->   
->   	while ((entity->dependency =
->   			drm_sched_job_dependency(sched_job, entity))) {
-> -		trace_drm_sched_job_wait_dep(sched_job, entity->dependency);
-> -
-> -		if (drm_sched_entity_add_dependency_cb(entity))
-> +		if (drm_sched_entity_add_dependency_cb(entity)) {
-> +			trace_drm_sched_job_unschedulable(sched_job, entity->dependency);
->   			return NULL;
-> +		}
->   	}
->   
->   	/* skip jobs from entity that marked guilty */
-> @@ -579,7 +579,7 @@ void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
->   	bool first;
->   	ktime_t submit_ts;
->   
-> -	trace_drm_sched_job(sched_job, entity);
-> +	trace_drm_sched_job_queue(sched_job, entity);
->   
->   	if (trace_drm_sched_job_add_dep_enabled()) {
->   		struct dma_fence *entry;
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 501eae13acb3..85c2111e5500 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -401,7 +401,7 @@ static void drm_sched_job_done(struct drm_sched_job *s_job, int result)
->   	atomic_sub(s_job->credits, &sched->credit_count);
->   	atomic_dec(sched->score);
->   
-> -	trace_drm_sched_process_job(s_fence);
-> +	trace_drm_sched_job_done(s_fence);
->   
->   	dma_fence_get(&s_fence->finished);
->   	drm_sched_fence_finished(s_fence, result);
-> @@ -1221,7 +1221,7 @@ static void drm_sched_run_job_work(struct work_struct *w)
->   	atomic_add(sched_job->credits, &sched->credit_count);
->   	drm_sched_job_begin(sched_job);
->   
-> -	trace_drm_run_job(sched_job, entity);
-> +	trace_drm_sched_job_run(sched_job, entity);
->   	fence = sched->ops->run_job(sched_job);
->   	complete_all(&entity->entity_idle);
->   	drm_sched_fence_scheduled(s_fence, fence);
-
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-
-Regards,
-
-Tvrtko
-
+> maybe i'll get around to do it a full pass instead of sending byte-sized
+> patchen. someone(tm) should definitely do it.
+> 
+>  fs/open.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index bdbf03f799a1..a9063cca9911 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1413,18 +1413,19 @@ static int do_sys_openat2(int dfd, const char __user *filename,
+>  			  struct open_how *how)
+>  {
+>  	struct open_flags op;
+> -	int fd = build_open_flags(how, &op);
+>  	struct filename *tmp;
+> +	int err, fd;
+>  
+> -	if (fd)
+> -		return fd;
+> +	err = build_open_flags(how, &op);
+> +	if (unlikely(err))
+> +		return err;
+>  
+>  	tmp = getname(filename);
+>  	if (IS_ERR(tmp))
+>  		return PTR_ERR(tmp);
+>  
+>  	fd = get_unused_fd_flags(how->flags);
+> -	if (fd >= 0) {
+> +	if (likely(fd >= 0)) {
+>  		struct file *f = do_filp_open(dfd, tmp, &op);
+>  		if (IS_ERR(f)) {
+>  			put_unused_fd(fd);
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
