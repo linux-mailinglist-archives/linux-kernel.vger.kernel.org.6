@@ -1,47 +1,96 @@
-Return-Path: <linux-kernel+bounces-569221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A375A6A033
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:11:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B2BA6A035
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC5D8A54B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8388A53D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA6F1EE7CB;
-	Thu, 20 Mar 2025 07:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3802744D;
+	Thu, 20 Mar 2025 07:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aD9hkPNj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="zU7bBz6y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l6dwD4jH"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F481E32C6;
-	Thu, 20 Mar 2025 07:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A041E2613;
+	Thu, 20 Mar 2025 07:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742454668; cv=none; b=EJSg2EKH4dL1BV1Qn1irwOPqx7gmlBAGdPRHTqo6EZGXV3L8cZ3rOTuRgGy0QOSDQZg0K9c4fJJK43VlrjMtdPG+tlTW3KHXjD8yBkxvvyaZQ7hJJUsnB44+0PPxx2t8zUgxYffh9vEhslUpfqT+5ziR1Y57iHWwwiNRiXPfsYg=
+	t=1742454669; cv=none; b=OShqTqhBHLb9h4bvGGmtcLHWA5Ze9R1vQh++a4jyIKwJL461lFfKKeA4uJzoARTlWP2bjO7IDGrfxRHwTH20C7/0+6DPiR/rvAb1HvALnBb7OINb+6qpR+zfFAbDW5znLVewzB1ZqpuoXYR2acJQfdT8flpQQ2rf16YcXGc2Ol8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742454668; c=relaxed/simple;
-	bh=ofKcg6Jw4XQiuJNA+UQgX1XP/VvJ056b5xfgIenWamA=;
+	s=arc-20240116; t=1742454669; c=relaxed/simple;
+	bh=Xi0X8Fd9ACjm+tmfsTSI7pJ5BONPXN51TssS66JBaUU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uP3LeNEXIbCOhiexC6cdvEdpqdyPHI0UahSlfohDN7MaufbtUMMkG3BIpuXO89mbm4dJSlnBfPvAiwFKKXNtQ4/BTUDy+LKw6JLY2Kr4dGc/PNgrSF4DT/kYAkivSw36MmHjdxQ0+UmskTBPGKOgmEhXDDr3nzDA7HK6xw62Shw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aD9hkPNj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238BEC4CEE7;
-	Thu, 20 Mar 2025 07:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742454668;
-	bh=ofKcg6Jw4XQiuJNA+UQgX1XP/VvJ056b5xfgIenWamA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aD9hkPNjqy15EuSIzjKCpaOfe6I1L3lv0AbIOUbPp5nVXl0tUm+BWVx5TDgmhj/AE
-	 l79BcGv+F+x/NdW2kUUn/+Eyy6Ipe5/H9/deo1xVyTiVpwmDwfM9HH5+ESmr1B4JSS
-	 qVmPv+0MSBYEdjmWyAw17klsP31h1guQE25x6w4Q/UnxVGtGTeoCObHAqzjWhgaOad
-	 X9D2kBU7LDfZSIeBHG4nhGgW9LQMOECFcqfa4kIsouOKUK2Zs8/+PflABiOf2lCSt8
-	 d22KIax95MOK5mrReAyhevdgCgVA38lbW0XNmM0Je4iqUwU83nVIWmHH3YJrdlvr/y
-	 Q1PbQMW+zyPHA==
-Message-ID: <16b14662-d69b-478a-9e2f-a05c56f2c4ce@kernel.org>
-Date: Thu, 20 Mar 2025 08:10:48 +0100
+	 In-Reply-To:Content-Type; b=p83e6PYXtqozAlsPrhwpjajlJj/y9u1n24wGq8eNZ6I6EkFbMxNneIJXIjmFfcGvEAxL2rPU++SsrvAiIBBEmt/exJEzNd2K962lcyaJ9KuDpAacxT+01lv32cUzdltSCMcVdklSdNB8CftYuoUNi0ru1fErfHOzCbB/oMfw1+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=zU7bBz6y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l6dwD4jH; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 69E9211401AE;
+	Thu, 20 Mar 2025 03:11:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 20 Mar 2025 03:11:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1742454666;
+	 x=1742541066; bh=tjjIYe5KJakbRzF9kyZSLy2U+I/YDadXEl6G0mZ0sg0=; b=
+	zU7bBz6yiB/JEJFQfau/SBmZhSIjxjxAbtPA8rN2uQ2J4w8hLIdIhBU7qBTLiRas
+	beCQGwLj/+aAZ+VO/mOJsHzzalagnIbIAngvLmTn6zBzxNjAelJ2dTpM1x+E9Ibm
+	PvnXzv1WW9glbmV+gppwUumzDqkjfPZQ1P2j0AQylgQz56xCT/k/x+q+eXbALP8x
+	ldGim1nzMPSEhMe2lJNB5XDFUea2ECG/+nSf+PeXbKOtItZzinSWI2BDGE2pY9J0
+	MJSijNJx5Dle4+/pAyRDdlr5jX609zdPzxxk1laOyrHr6SS0oPghvIYRL/XTpYQF
+	fWyM+U58de/6hjtNjXYg4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742454666; x=
+	1742541066; bh=tjjIYe5KJakbRzF9kyZSLy2U+I/YDadXEl6G0mZ0sg0=; b=l
+	6dwD4jH0dtytRF9ctmst0E5wdMOzvwc7SyF0rC4ycqAYcbW8qQ4gogKe24N7h/47
+	JC552oXloHvCgGhYPyuj9B9XW5Obv5A98/xRWDMSNbNZ0gLZehxR0L8ZyCJfXaIa
+	CXbMqEH3wERVRdH5P/xFrfjCT9ymYAOF7tILgIKHXDEPT7ZiJPjoBP5r5dVgIzUR
+	InUgkQPxe7Me6ifEDdJ+gtrww+EJ7wHbvtXADBcp23idszTdsArWyGEOgYWtLIhS
+	coCOKccLOCNPw38lwvgC5shsxVmK6poqUNSe0sWheXWpMjR2JfFiLeLJiNr9ez9R
+	7wDH7B+ylHY5I+M/HguqA==
+X-ME-Sender: <xms:ib_bZ9ykVLsWRlp7GMdIR1ROah3iND-L5bi1nimN1nm08hgpRjqcIA>
+    <xme:ib_bZ9T17dmSxQfCxRzjdgfkk2G1vgyOC_LHAj_qO9znLxAALNiLr7RWzMFVdcZ7f
+    8ZB2eMsUzj6TiH7JVM>
+X-ME-Received: <xmr:ib_bZ3V7_gOfMUekRcVxXxI1hUSgYf1EbrCfwHhhbGGtC_AhndnEEz9ZcdMMS2Ob1htF0WJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejheejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
+    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
+    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
+    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
+    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
+    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:ib_bZ_gaBeEkA1lyeELg9haQPciT8I1877PICTw7OgV9yugAxE3yhg>
+    <xmx:ib_bZ_APS45rJRzDkCE4XmHEc7WnTkrgouIWmoiKeqj2BYsOXWxryA>
+    <xmx:ib_bZ4IFblhQupEVs6bKJbKf6dOj8in4MAG9ICjI1W49WC_vPhoVxA>
+    <xmx:ib_bZ-C1QMIVFxsgrTItfAX6gDpsOgLyww_Aote-OolFNzpB0LMW8w>
+    <xmx:ir_bZz0rRwllV_qgMn4Ld3FfrmY3ztz0hyeT1CE_zUTBVuC0s_7iSpvH>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Mar 2025 03:11:00 -0400 (EDT)
+Message-ID: <2341cca8-4f3e-48dc-a97c-aec2a27e3f05@ljones.dev>
+Date: Thu, 20 Mar 2025 20:10:58 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +98,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/16] mm/mm_init: rename init_reserved_page to
- init_deferred_page
-To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
-Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
- anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
- benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
- dave.hansen@linux.intel.com, dwmw2@infradead.org, ebiederm@xmission.com,
- mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, rppt@kernel.org,
- mark.rutland@arm.com, pbonzini@redhat.com, pasha.tatashin@soleen.com,
- hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org,
- robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com,
- rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
- usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org,
- kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-3-changyuanl@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250320015551.2157511-3-changyuanl@google.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 09/11] platform/x86: asus-wmi: remove unused keyboard
+ backlight quirk
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <20250319191320.10092-10-lkml@antheas.dev>
+Content-Language: en-NZ
+From: "Luke D. Jones" <luke@ljones.dev>
+In-Reply-To: <20250319191320.10092-10-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/03/2025 02:55, Changyuan Lyu wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On 20/03/25 08:13, Antheas Kapenekakis wrote:
+> The quirk for selecting whether keyboard backlight should be controlled
+> by HID or WMI is not needed anymore, so remove it.
 > 
-> When CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled, init_reserved_page()
-> function performs initialization of a struct page that would have been
-> deferred normally.
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   include/linux/platform_data/x86/asus-wmi.h | 40 ----------------------
+>   1 file changed, 40 deletions(-)
 > 
-> Rename it to init_deferred_page() to better reflect what the function does.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 42e963b70acdb..add04524031d8 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -183,44 +183,4 @@ static inline void asus_brt_unregister_listener(struct asus_brt_listener *bdev)
+>   }
+>   #endif
+>   
+> -/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+> -static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
+> -		},
+> -	},
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
+> -		},
+> -	},
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
+> -		},
+> -	},
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ProArt P16"),
+> -		},
+> -	},
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
+> -		},
+> -	},
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
+> -		},
+> -	},
+> -	{
+> -		.matches = {
+> -			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> -		},
+> -	},
+> -	{ },
+> -};
+> -
+>   #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
 
-Incorrect DCO chain.
+I think this can be squashed in to patch 8 as it looks likely to cause 
+an "unused" warning or error? I'll defer to others though.
 
-Best regards,
-Krzysztof
+Cheers,
+Luke.
+
 
