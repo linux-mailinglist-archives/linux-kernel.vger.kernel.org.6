@@ -1,141 +1,203 @@
-Return-Path: <linux-kernel+bounces-569508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFC4A6A3E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:44:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0452A6A3EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1768A4DEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED62C423787
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74899224258;
-	Thu, 20 Mar 2025 10:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342E3224890;
+	Thu, 20 Mar 2025 10:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpF866/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kdj3JpaA"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3CA1EE7B7;
-	Thu, 20 Mar 2025 10:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB0F223300
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467453; cv=none; b=ejtnIhIFFfVmTntEo/yBCokOYgOBeRhQA6kyqyIkftIF6yHO49hhyazmPEGIlAlUCALZEpckhmOiHa9YhLd0/H0l7NpB1x03rHMic9VNilFUfeWuce9mDyxeP962Lj6vd+R9IOwrZsExeLDzbzyLajzFtlDdsEQPB5OML/VaKc4=
+	t=1742467485; cv=none; b=sDUHRr6wDuFeRI3y/H1twV74s5bo2UzE5wvfF0Xj22SCBPq+NglKy6kHykteuzfodg+UF9LoD7RkhvChEUnCfXV4eZ2f/QQNeQFlY14v1VtMhwk/gGUMo/Bi/CDovAMZeimfCgmOOc03qD9fJxpeg59scirjewU1TI2QiZSyLa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467453; c=relaxed/simple;
-	bh=Y9b+mSHTwsKdUGdmjh8TjyWYyihJZEsdMgomT69U1WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMjtcSMf/2DMEUrpm9en53p1RIPDvJo/BakpeXtuP6w9ebUaUXBcq05VpssbqODcNsKbBi17Uzy5YUE6ptvdXip8TCPGYFDByD4x9UY5ttp6vj7FFEVRDpe3/yAZl3hCigqt4LD8SoOYPq7f5KGARb6yKkf4vuzxQ4+3vdZI6ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpF866/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB98C4CEDD;
-	Thu, 20 Mar 2025 10:44:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742467453;
-	bh=Y9b+mSHTwsKdUGdmjh8TjyWYyihJZEsdMgomT69U1WE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mpF866/S2QRFGOp8XVWwnVYZpxOIXxXbrIRB9zQaRYwn56r5mVjAGSgXNsC7D1Err
-	 Jvj66DGpwo4QM+Ul1JF7P2A2oM0ElUyo96QmGGhZpOw0fOPkLR9RdL4L7hg3pSlCl7
-	 5sTzFGLB0aWTIpnZEWfN00fQrRGyrVvUr2iiJ6qXo0GAWoxFPNDzk53ZFAGrdh2kP6
-	 oLZio8LRo/bBfUycmCdU3N+dotwyJxCgFXJdu7cdQQO1EU3Yw4O3QAqUTb2JUvS+i3
-	 zT3+P4jpPecTjG66ot3xW7vSlQ0RLUoq2+NFtEuSGa0VhcV0Lr/SMQ0O9cJgylWur9
-	 blAvU+SL2zRyQ==
-Date: Thu, 20 Mar 2025 11:44:08 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Ben Zong-You Xie <ben717@andestech.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 2/2] i2c: atciic100: add Andes I2C driver support
-Message-ID: <neeqqifb3urhtchaqowa6pkq3s3v3xwzlz4bujmiuq7tsvhz4i@a3v4vbxqozgr>
-References: <20250207021923.2912373-1-ben717@andestech.com>
- <20250207021923.2912373-3-ben717@andestech.com>
+	s=arc-20240116; t=1742467485; c=relaxed/simple;
+	bh=O8zyyL1p84aMCSSYT842uw6SFy2rTfsgAblLzeFkCR0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=N0+X74Zu+SI+fksYt0sDMezki4xZg/osUhykjCICLsQSxQTSTa9SNHmGIKew1jgDdy7BcuGW2aHVBEKOUiK1ADfvIQm1DkU4MoySBUGTB0pjcMdOqxYFQc5oO3XD1i5mVa+AW6zRnAOkHWUym/LfqR7zKhuezlqruj9TsYqCcn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kdj3JpaA; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d22c304adso7494445e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742467480; x=1743072280; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j11DFSETqOLtc+vMOz1k4rHgXFA118EedepjEdU8Zqw=;
+        b=Kdj3JpaAcTMsJX0fWv0whfnlnrjaZjQkUoIxaVNNWymywgQ1lxYjwO8r7iq1JNp6QM
+         Ojbu13PJrvGpih/A3lZ8h//bm+lQo87tlhkP9QV9OC12v7CPJ6kEgjQXJce0C5ni+hLc
+         WK8hRYGR3L0Fg1Ms6LVwx4HmFLLx967l5J71fKJh2+DS8uT7oCIJlhzicsDfSOQYSkWF
+         sHWVXfORZG9aTGDrruW97o37vT+nFRgMDzAibG+h4BCecMAJVWL9zR8i+Q2//u9V8cvF
+         qTDTgtuLxb6b7EYFGNlNI/IdDW+67sG2wCaCd7GvxlgTKp/aIF7rCtp1mbYDuCw4iql2
+         FLfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742467480; x=1743072280;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j11DFSETqOLtc+vMOz1k4rHgXFA118EedepjEdU8Zqw=;
+        b=OdHOnJkzfiiu+yrRqp62bRagpBP4ISR/JgHkrPikKsWhLPSEAU6fuwtoYTbK/S5lwX
+         hrmELEWgYLI+JjQ/L5cxRc0DZOjq8qWM9jpqHx6zmZui+JeM8cdRA7Ebbu8yrFaKJATD
+         Igv6p3Vz38omJrmaF0DsXk7dGYEGO7Yf9cs0RkxMZKTGzITkn8ieIAEGvyCIrqHZxllv
+         Ow4yoXWcU8j0lWraVZE9QsGkQfFhfo6tjhf9hwTqDmnqtiObbNEduHks48NqDCQ9MGlA
+         fnIJm/YNInuza/sYf33IVdIJ1oOktn7jIEmT+gzb6BQgn/i9sBo6k7yYXNaWbAKQNX8i
+         QYNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhVR8+X0f/Hh6t8pgV/xEzjmYiIN/jT6jShZXXCdhgybRALoUr8iP9J/rie0VLBl0DwMn7TJGAd8epqrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqXOa6Kypi6hXlc26ixWJfDNeWMstnrFEjrjmcR2fmjfi+VNCq
+	ksCjx38o5zuWU1ehWgZiUedOOU5/QfGM8CEbN1ng6OUtTV4Zz9HzxT67kpn5xIQGZBLICOpzjoo
+	5kI1Lbkuyxg==
+X-Google-Smtp-Source: AGHT+IHmhdHTuCMOMffmpvyIMCzJObzjHJotMPvb7/CKZriBN1WJ2Qe2CHVhTxdEuiWThlixsbw8H9oOiShQMA==
+X-Received: from wmgg15.prod.google.com ([2002:a05:600d:f:b0:43b:c450:ea70])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1da2:b0:439:5f04:4f8d with SMTP id 5b1f17b1804b1-43d49187ba9mr20806165e9.12.1742467480075;
+ Thu, 20 Mar 2025 03:44:40 -0700 (PDT)
+Date: Thu, 20 Mar 2025 10:44:38 +0000
+In-Reply-To: <Z9sRQ0cK0rupEiT-@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250207021923.2912373-3-ben717@andestech.com>
+Mime-Version: 1.0
+References: <20250110-asi-rfc-v2-v2-0-8419288bc805@google.com>
+ <20250110-asi-rfc-v2-v2-4-8419288bc805@google.com> <20250319172935.GMZ9r-_zzXhyhHBLfj@fat_crate.local>
+ <Z9sRQ0cK0rupEiT-@google.com>
+X-Mailer: aerc 0.18.2
+Message-ID: <D8L164U8HBTB.G5MS86AIISLM@google.com>
+Subject: Re: [PATCH RFC v2 04/29] mm: asi: Add infrastructure for boot-time enablement
+From: Brendan Jackman <jackmanb@google.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>, Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<linux-alpha@vger.kernel.org>, <linux-snps-arc@lists.infradead.org>, 
+	<linux-arm-kernel@lists.infradead.org>, <linux-csky@vger.kernel.org>, 
+	<linux-hexagon@vger.kernel.org>, <loongarch@lists.linux.dev>, 
+	<linux-m68k@lists.linux-m68k.org>, <linux-mips@vger.kernel.org>, 
+	<linux-openrisc@vger.kernel.org>, <linux-parisc@vger.kernel.org>, 
+	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>, 
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>, 
+	<sparclinux@vger.kernel.org>, <linux-um@lists.infradead.org>, 
+	<linux-arch@vger.kernel.org>, <linux-mm@kvack.org>, 
+	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>, 
+	<kvm@vger.kernel.org>, <linux-efi@vger.kernel.org>, 
+	Junaid Shahid <junaids@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ben,
+On Wed Mar 19, 2025 at 6:47 PM UTC, Yosry Ahmed wrote:
+> On Wed, Mar 19, 2025 at 06:29:35PM +0100, Borislav Petkov wrote:
+> > On Fri, Jan 10, 2025 at 06:40:30PM +0000, Brendan Jackman wrote:
+> > > Add a boot time parameter to control the newly added X86_FEATURE_ASI.
+> > > "asi=on" or "asi=off" can be used in the kernel command line to enable
+> > > or disable ASI at boot time. If not specified, ASI enablement depends
+> > > on CONFIG_ADDRESS_SPACE_ISOLATION_DEFAULT_ON, which is off by default.
+> > 
+> > I don't know yet why we need this default-on thing...
+>
+> It's a convenience to avoid needing to set asi=on if you want ASI to be
+> on by default. It's similar to HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
+> or ZSWAP_DEFAULT_ON.
+>
+> [..]
+> > > @@ -175,7 +184,11 @@ static __always_inline bool asi_is_restricted(void)
+> > >  	return (bool)asi_get_current();
+> > >  }
+> > >  
+> > > -/* If we exit/have exited, can we stay that way until the next asi_enter? */
+> > > +/*
+> > > + * If we exit/have exited, can we stay that way until the next asi_enter?
+> > 
+> > What is that supposed to mean here?
+>
+> asi_is_relaxed() checks if the thread is outside an ASI critical
+> section.
+>
+> I say "the thread" because it will also return true if we are executing
+> an interrupt that arrived during the critical section, even though the
+> interrupt handler is not technically part of the critical section.
+>
+> Now the reason it says "if we exit we stay that way" is probably
+> referring to the fact that an asi_exit() when interrupting a critical
+> section will be undone in the interrupt epilogue by re-entering ASI.
+>
+> I agree the wording here is confusing. We should probably describe this
+> more explicitly and probably rename the function after the API
+> discussions you had in the previous patch.
 
-I glanced throught the patch and looks OK, just few things with
-little importance. Please, do not forget to run checkpatch.pl
-before sendint the patch.
+Yeah, this is confusing. It's trying to very concisely define the
+concept of "relaxed" but now I see it through Boris' eyes I realise
+it's really unhelpful to try and do that. And yeah we should probably
+just rework the terminology/API.
 
-Once you send a v2, I will read it more carefully.
+To re-iterate what Yosry said, aside from my too-clever comment style
+the more fundamental thing that's confusing here is that, using the
+terminology currently in the code there are two concepts at play:
 
-...
+- The critical section: this is the path from asi_enter() to
+  asi_relax(). The critical section can be interrupted, and code
+  running in those interupts is not said to be "in the critical
+  section".
 
-> +	if (status & ATCIIC100_STATUS_CMPL) {
-> +		/* Write 1 to clear all status */
-> +		writel(ATCIIC100_STATUS_W1C, i2c->base + ATCIIC100_STATUS_REG);
-> +
-> +		i2c->xfer_done = true;
-> +		if (status & ATCIIC100_STATUS_ADDR_HIT)
-> +			i2c->addr_hit = true;
-> +
-> +		/* For the last read, retrieve all remaining data in FIFO. */
-> +		while (i2c->buf_len--)
-> +			*i2c->buf++ = readl(i2c->base + ATCIIC100_DATA_REG);
-> +
+- Being "tense" vs "relaxed". Being "tense" means the _task_ is in a
+  critical section, but the current code might not be.
 
-please, remove this blank space here
+This distinction is theoretically relevant because e.g. it's a bug to
+access sensitive data in a critical section, but it's OK to access it
+while in the tense state (we will switch to the restricted address
+space, but this is OK because we will have a chance to asi_enter()
+again before we get back to the untrusted code). 
 
-> +	}
-> +
-> +	spin_unlock_irqrestore(&i2c->lock, flags);
-> +}
+BTW, just to be clear:
 
-...
+1. Both of these are only relevant to code that's pretty deeply aware
+   of ASI. (TLB flushing code, entry code, stuff like that).
 
-> +static int atciic100_xfer_wait(struct atciic100 *i2c, struct i2c_msg *msg)
-> +{
-> +	u32 val;
-> +
-> +	/*
-> +	 * Set the data count.
-> +	 * If there are 256 bytes to be transmitted/received, write 0 to the
-> +	 * data count field.
-> +	 */
-> +	val = readl(i2c->base + ATCIIC100_CTRL_REG) |
-> +	      (i2c->buf_len & ATCIIC100_CTRL_DATA_CNT);
+2. To be honest whenever you write:
 
-please checkt the alignment here.
+     if (asi_in_critical_section())
 
-> +	/* Set the transaction direction */
-> +	if (msg->flags & I2C_M_RD)
-> +		val |= ATCIIC100_CTRL_DIR;
-> +	else
-> +		val &= ~ATCIIC100_CTRL_DIR;
+   You probably mean:
 
-...
+     if (WARN_ON(asi_in_critical_section()))
 
-> +/* I2C may be needed to bring up other drivers */
-> +static int __init atciic100_init_driver(void)
-> +{
-> +	return platform_driver_register(&atciic100_platform_driver);
-> +}
-> +subsys_initcall(atciic100_init_driver);
-> +
-> +static void __exit atciic100_exit_driver(void)
-> +{
-> +	platform_driver_unregister(&atciic100_platform_driver);
-> +}
-> +module_exit(atciic100_exit_driver);
+   For example if we try to flush the TLB in the critical section,
+   there's a thing we can do to handle it. But that really shouldn't
+   be necessary.  We want the critical section code to be very small
+   and straight-line code.
 
-can you please use module_platform_driver()?
+   And indeed in the present code we don't use
+   asi_in_critical_section() for anything bur WARNing.
 
-Andi
+> asi_is_relaxed() checks if the thread is outside an ASI critical
+> section.
 
-> +
-> +MODULE_AUTHOR("Ben Zong-You Xie <ben717@andestech.com>");
-> +MODULE_DESCRIPTION("Andes ATCIIC100 I2C bus adapter");
-> +MODULE_LICENSE("GPL");
-> +
-> -- 
-> 2.34.1
-> 
+Now I see it written this way, this is probably the best way to
+conceptualise it. Instead of having two concepts "tense/relaxed" vs
+"ASI critical section" we could just say "the task is in a critical
+section" vs "the CPU is in a critical section". So we could have
+something like:
+
+bool asi_task_critical(void);
+bool asi_cpu_critical(void);
+
+(They could also accept an argument for the task/CPU, but I can't see
+any reason why you'd peek at another context like that).
+
+--
+
+For everything else, Ack to Boris or +1 to Yosry respectively.
 
