@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-569260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1EC2A6A0A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:43:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C172A6A0AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A06F3B7609
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27DA716B460
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48B51F8BC5;
-	Thu, 20 Mar 2025 07:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD9B1F8BB0;
+	Thu, 20 Mar 2025 07:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/1Fu0DN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gHExq4YE"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD961C3BF1;
-	Thu, 20 Mar 2025 07:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF4A1E3769
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742456602; cv=none; b=h9nj0ziLViqkHEMn/IOb1uH/b4dCIJmuad104FpFl18mEFRnD6Pfa+vOV2qCTEE2sPHwcxVQAn5WXj++f4FSp0Iy7wThsgNqrw0B382EbFEHvsrExcnShsxqi6oA2Uzovhqd0W0RMFp64RpCQGzstTXNg0BvYy/i+aaXDyS4XDw=
+	t=1742456696; cv=none; b=XXATWy9mhFwWA8tNXu1KEe8YQuSt5K6J3HQjc04Pt1wsN08/D/fnZU04NJcGx1qnjbpQWdPK/G6nqkFXydYLGpYwNTEdvP/9ydNnCcbrrOxkS1t0B5VYnT/Eis1Yt1wOg1IT7GMs9G61l1nVhVCyyFi5aPh0qD+U15jiW6b6A1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742456602; c=relaxed/simple;
-	bh=3lhO2km3yhcGSETOKtDVVVI/E/SbtDk4dNbH6wGgta8=;
+	s=arc-20240116; t=1742456696; c=relaxed/simple;
+	bh=q/xlOhVYsK2JnBqcc2XOI5YqPOVf8LSnYWWwr4A6Qug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pd1pcQ/EKrKoVlkLI59KEZtN83UBu1PpiJ99DVDnKenTXdmzHJbPBNMfTf3SRQHx4NancK8QtJdgYrAJYZCrR0k4/gQB92n0uzRMT7esRqHgdHyMB/R2Yj4Z0eoIBsoOKrBg7i4wJB1HjEbHtcZqHLqqsHmI52lHSBgZHyYu/WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/1Fu0DN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9130DC4CEDD;
-	Thu, 20 Mar 2025 07:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742456601;
-	bh=3lhO2km3yhcGSETOKtDVVVI/E/SbtDk4dNbH6wGgta8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F/1Fu0DNTO+aUXRxtvQqDJNt41yR39mSH4xCP+YjAHBACAaH5T6UnI+j8FSs5TdVN
-	 cJauPdKvFY9B1URplLoJ+EnZbtDwTF1MvVgQc6rsIMagDBbjipA9vdZ0hmmRJe39K1
-	 XV0dxV2BtqjjTF0TuStum2rmo1jCmFe2wUlDRkemh4d3I950avsIkuw41JEqGAbK+7
-	 WaWC9xV+EW4asyhno2NKeAGHfP/qOEX4swMrf0ZNeeLN+Kt61GPTSbWRZq6OwdLLr/
-	 KVeaaJP9oxt7lSsmyGDRBfBMbFnriefdhHewcbrOLPePpdrY3Gw75dA717kHuoJ4Zk
-	 rthG+rixVVsVw==
-Message-ID: <8665e99f-8d04-42fe-a81a-dfadf494cf6e@kernel.org>
-Date: Thu, 20 Mar 2025 08:43:14 +0100
+	 In-Reply-To:Content-Type; b=pXWknUSxM66R2zmk8ki4KnSyqvWLfuD7nuGVxBb5VVjfpvKs5q+MoZCx2mIoHy42tT0xeeMJbHiLnwnqSWy8CRw/Wd4T00wktVzOmACShXIlyKuJSWFkapWZH6Y2J8DC196TL3U++rY6H+H+/Ig5wzXyWXFqb1yYyA8s0HYpOdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gHExq4YE; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso354013f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 00:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742456693; x=1743061493; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1pLKp0KuUULXpNQKbhtYOlVvX9flILaYFnqix3IbtK8=;
+        b=gHExq4YEAYISlDBRzJ95QXrPPN2SGrxKnpP6oyVS9svagFewkPYrMM3/eOw2gkzsXz
+         I93XYim+IX+y5EN3918NvP/xUSoqmChkyz2w/2nosALaZKpzK05pClNZ85irYbd2Y5R5
+         wVDkQqe6cEUlbN7oe8SOrfgusFmywVErdEzn5Azqm6WcBxUjYo/YxZPdI5DhTD8N77FP
+         85N5NcC+huisOJmobKXFhK1nG6smzP3E8twr09/3yjfnBFYTNEUFdli09SFSYH6fiPMp
+         j8/vwUJaLxSy1ChFQovgC4pyKcIERgeP6aITO/rlbJEyP5YdbGLFS09g48HjwuoRtazC
+         P4Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742456693; x=1743061493;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1pLKp0KuUULXpNQKbhtYOlVvX9flILaYFnqix3IbtK8=;
+        b=Eh617A4rkACVjiAvbNrE9cUqXB32WsAYKemTsmQKshyKe/gHp7w33B2MY0XZoNGgU2
+         u1T10DwWyL9eSAMLgfsXLUHAINUp/ogXHDbwtFP5AvljG3nAduHh00BWT0WI6zsL7e8Y
+         AFXD497VJI1MbtR4ggx8k0zgQoHYmG+TIS6PHrCzbMYXsV45dP5KXMe5FjHtAeiQcUdg
+         ANi8f/g4sIENkuGB3VLvpJ5gPD8DfqA7oDqexXoiHVMCNgsZEZPGC53gGtYqOHufiwd+
+         xko1CGikpkvRH5NQbkZqWVgwn1bmnzOqJIV0dj2/rtmqlov7+t7ZysJVV+mmmKSn+3cV
+         gmXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKUh9eVbNX7fLziCs09IcyjBWBkspanqd+AaijcEEDfha0REaSsrzzeBSwwuunEXttAtfAc3EBlxDQTdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxub6SGNFHK3lNadzlQX7hwKl3az8c+vOe6kooEE5epochREjlE
+	bx8waAQgad66SeiqeN/AyEZuTLzQYMV1E1vbMje2CW2hK/Krmr/cg315T1LTBzQ=
+X-Gm-Gg: ASbGncuqZeOimXaCBTdnULby98efnGwsGC55pJ0HnPccg6NUqwew7iY+dPRb3qx65cm
+	ygpEApVCGpqMcfDuCV4/UwIDypPvXzLgcKSanpyXr5g82H5/ddNeR5qv4c4XgPL9gpjAdMXOQKT
+	AbkS6q1Ck0zmmMTLod7/B58gIUBBDcK7aysZHUEcUe2vFhRT9MkCCkg7TG2z1uNVclKjLNYS8Zz
+	BaSIHFFDnX8syDLdxhvmNfJ9IbOtCiEmbnE0WjsIYsIzv8Ca8C6jsa2Os97swrHMFVaRMiV8mlO
+	CQGGhmrBi8UcuTAYgYmatEou01no/M4oj5OO6cKdIKJ91ojT22sjLA==
+X-Google-Smtp-Source: AGHT+IHqeQBbdHWajuit2mZUKUaW9kFxy01VDCOZtxai2FLtHLHiDpa7uJvn5G+eANZwcsM0bpL9Eg==
+X-Received: by 2002:a05:6000:400a:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-399739bc4ecmr7109168f8f.13.1742456693290;
+        Thu, 20 Mar 2025 00:44:53 -0700 (PDT)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6b43sm23253313f8f.35.2025.03.20.00.44.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 00:44:52 -0700 (PDT)
+Message-ID: <a3818477-5a67-43ad-8961-88fa02916968@linaro.org>
+Date: Thu, 20 Mar 2025 07:44:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,151 +80,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-tuxedo-14: add sound support
-To: srinivas.kandagatla@linaro.org, andersson@kernel.org,
- konradybcio@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, ggo@tuxedocomputers.com,
- ettore.chimenti@linaro.org
-References: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/3] mtd: spi-nor: use rdid-dummy-ncycles DT property
+To: Rob Herring <robh@kernel.org>, Takahiro Kuwano <tkuw584924@gmail.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bacem Daassi <Bacem.Daassi@infineon.com>,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+References: <20250319-snor-rdid-dummy-ncycles-v1-0-fbf64e4c226a@infineon.com>
+ <20250319-snor-rdid-dummy-ncycles-v1-2-fbf64e4c226a@infineon.com>
+ <20250319233024.GA2625856-robh@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250319233024.GA2625856-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 15:36, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hi, Rob,
+
+On 3/19/25 11:30 PM, Rob Herring wrote:
+> On Wed, Mar 19, 2025 at 06:47:44PM +0900, Takahiro Kuwano wrote:
+>> There are infineon flashes [1] that require 8 dummy cycles for the
+>> 1-1-1 Read ID command. Since the command is not covered by JESD216
+>> or any other standard, get the number of dummy cycles from DT and use
+>> them to correctly identify the flash.
 > 
-> This patch adds sound support for this platform,
-> support includes
-> 	- 2x Speakers.
-> 	- 2x dmic
-> 	- Headset
+> If Read ID fails, then couldn't you just retry with dummy cycles? Or 
+
+I think Read ID won't fail when the op requires 8 dummy cycles, it
+probably just reads garbage on the first 8 cycles, so we risk to wrongly
+match other flash IDs.
+
+> would unconditionally adding dummy cycles adversely affect other chips?
+
+Adding 8 dummy cycles to chips that don't need it, would mean ignoring
+the first byte of the flash ID, thus we again risk to wrongly match
+against other flash IDs.
+
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> 
-> This patch depends on
-> "arm64: dts: qcom: Add device tree for TUXEDO Elite 14 Gen1" patch
->  https://lkml.org/lkml/2025/3/6/867
-> 
-> ucm changes:
-> https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/x1e80100-tuxedo
-> 
-> tplg changes:
-> https://github.com/Srinivas-Kandagatla/audioreach-topology/tree/tuxedo-elite-14
-> 
->  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> index 86bdec4a2dd8..465221b8a3fa 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> @@ -20,6 +20,34 @@ aliases {
->  		serial0 = &uart21;
->  	};
->  
-> +
+> Otherwise, add a specific compatible to imply this requirement. Adding 
+> quirk properties doesn't scale.
 
-No need for blank line
+Do you mean a flash name compatible, like "cyrs17b512,spi-nor"? The
+problem that I see with that is that we no longer bind against the
+generic jedec,spi-nor compatible, so people need to update their DT in
+case they use/plug-in a different flash on their board.
 
-> +	wcd938x: audio-codec {
-> +		compatible = "qcom,wcd9385-codec";
-> +
-> +		pinctrl-0 = <&wcd_default>;
-> +		pinctrl-names = "default";
-> +
-> +		qcom,micbias1-microvolt = <1800000>;
-> +		qcom,micbias2-microvolt = <1800000>;
-> +		qcom,micbias3-microvolt = <1800000>;
-> +		qcom,micbias4-microvolt = <1800000>;
-> +		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-> +		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-> +		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-> +		qcom,rx-device = <&wcd_rx>;
-> +		qcom,tx-device = <&wcd_tx>;
-> +
-> +		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-> +
-> +		vdd-buck-supply = <&vreg_l15b_1p8>;
-> +		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-> +		vdd-io-supply = <&vreg_l15b_1p8>;
-> +		vdd-mic-bias-supply = <&vreg_bob1>;
-> +
-> +
-
-Here only one as well
-
-> +		#sound-dai-cells = <1>;
-> +	};
-> +
-
-...
-
-> +&swr0 {
-> +	status = "okay";
-> +
-> +	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-> +	pinctrl-names = "default";
-> +
-> +	/* WSA8845, Left Speaker */
-> +	left_spkr: speaker@0,0 {
-> +		compatible = "sdw20217020400";
-> +		reg = <0 0>;
-> +		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-Interesting that on X1E even two-speaker configurations share the reset
-GPIO. Typical two-speaker setups like MTP and QRD use two different GPIOs.
-
-Assuming this is not a copy-paste and with blank line fixes:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Thanks,
+ta
 
