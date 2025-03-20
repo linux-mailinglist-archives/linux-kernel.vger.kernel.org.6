@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-569031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CA6A69DC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:51:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593E1A69DCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:55:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A00619C1D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808538A5107
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA351D88BE;
-	Thu, 20 Mar 2025 01:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4471DE3D2;
+	Thu, 20 Mar 2025 01:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ihjY/1Gi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SGpI18+q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92EB1CAA8F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6501F1B81DC;
+	Thu, 20 Mar 2025 01:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742435481; cv=none; b=MluGDiot1uxsuQEF1vGQjcSyS7NTzI/OPxGpiqOpoqFcRwjU+UmbD5IYzK7uCJUgDO5l1Z1i407U56cTWl6oYuhH4oqzVVJXwsO5hBT64SWDuW9q+XCwdDds5YYdcPrG8Sb0bArF3VoElZujbXztxZKofVXR7GuAYPm/gmdHeZc=
+	t=1742435719; cv=none; b=DwKyL3tEzi+2J220jdWExncKdi/+zSkOiLJhdewNQCpcXRwI6KoNeVoncYWiLUZhbzPUS+uq0a0aCQMnYdT8tlyOHGNeBblhB3Tj6U1q7AkCS1pkbvl8j1tb5Vq8PasH9YltDet3aXrz/iptIjYFuZtPaA+JLZRc8mGA2pvS8CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742435481; c=relaxed/simple;
-	bh=hjk2Nb3FjeafKz0D7B3gcTDOlRasQKBiOuKgfkeZR1o=;
+	s=arc-20240116; t=1742435719; c=relaxed/simple;
+	bh=bhkj2LY+NFVBJwqfQ11YjE5f4cXbFEAgE+iqrONhw3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOtl+itaPujTprV8Z9Q/YHe5rmubqWj3hBWti5jgtZAbhxErYtPmC6vzjcpj3N73NZT5JWf3APgDiMyOZa12IYXE6Vi3p2JLCBtVoX7h+BUcOIuBJEzLQkcSSW1OyycJb0iBA2l+/rpVmwcLkoSYKacoiqEN1HCKy5l89N/h6k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ihjY/1Gi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742435479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=00VnZr9jO8VuByi8MLDHm6KsHvC5R2pokiPIwqQJpHQ=;
-	b=ihjY/1GiG77reT5r89iSWRTRitC6EhAt0BbqftJFSiuxQbclmt9V9Uk+lOdXvVEJSw3fP6
-	j2BZOgWknEk4uuhAOi6B7dFXAc55nsTgVDUpxVBT/85AgOhAsFQhbmhrT6I8+AZC+IzGdS
-	jMU0s15wvp5szYaH/OP9yDnrmiX+meM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-85-us51ET_TOn6wmhx3h5TLRQ-1; Wed,
- 19 Mar 2025 21:51:13 -0400
-X-MC-Unique: us51ET_TOn6wmhx3h5TLRQ-1
-X-Mimecast-MFC-AGG-ID: us51ET_TOn6wmhx3h5TLRQ_1742435471
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5CACE1956046;
-	Thu, 20 Mar 2025 01:51:10 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3DD51955DCD;
-	Thu, 20 Mar 2025 01:51:07 +0000 (UTC)
-Date: Thu, 20 Mar 2025 09:51:03 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 2/8] ima: define and call ima_alloc_kexec_file_buf()
-Message-ID: <Z9t0h5vvxP+meMkO@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-3-chenste@linux.microsoft.com>
- <Z9p7rwXqjB3vjCpj@MiWiFi-R3L-srv>
- <447b1bf7b31e936ab959b8ba13f09a9c25bb3977.camel@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KEIfPei02rDpE0uFfkDEo9kCmvJI5CO73JuLYW4mXYLluyuMeGUHy/7ay9RsZw85KPnWZ80+ykwInt2JBZrn1SvCpDzbKVV37aoZQHsgFP1cK9EI2p7JM5ZBeye/Sh8rjrgvSSUY9toZ9ieM1rnSeRaNuXyQ0lHmXyi3fe53GXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SGpI18+q; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742435716; x=1773971716;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bhkj2LY+NFVBJwqfQ11YjE5f4cXbFEAgE+iqrONhw3w=;
+  b=SGpI18+qhj4Jgor13fvqstf3AWztJS/HT2Ivl99pmBYJ8ldlHbDfi8y/
+   xTraiHTjjTp9F0RgLSnGzXTTA2AFkRLd80jpja/IcvwgNKzde5WOxwWgd
+   pstfkEzYyRQT47NYv6XJu8vp1L/Ainbat3Bt3WIDugK6u4ZtTjgvgL3Dc
+   0qSRO317zoCO6lPEYKON+/C82CXUKAtz99GyqmNlSi8Mra1p7j3wltK1k
+   H+pJbS8b/oRw7oBV33sy99WONQwJ580qrPpPAstMxthD4Mjz6WOjZKnzt
+   NEX8z6f100Z08IuMNLl5/aqhzI8UAbxd+28A+Y86l3ECU5kohJXWX68WH
+   Q==;
+X-CSE-ConnectionGUID: DNGhSbz9RxqsQ23LtKJVQA==
+X-CSE-MsgGUID: pEIhymEGR+uPLZ95jVGiRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43665301"
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="43665301"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 18:55:15 -0700
+X-CSE-ConnectionGUID: tZO+WAlaRcScjbsPOBPWaA==
+X-CSE-MsgGUID: JGReu0G3Q+SI0MZqGMcJfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="127967853"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 19 Mar 2025 18:55:10 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tv57k-00005b-2W;
+	Thu, 20 Mar 2025 01:55:08 +0000
+Date: Thu, 20 Mar 2025 09:54:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@airoha.com
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha
+ SoC
+Message-ID: <202503200928.j6AEMrdf-lkp@intel.com>
+References: <20250318235850.6411-6-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,173 +89,196 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <447b1bf7b31e936ab959b8ba13f09a9c25bb3977.camel@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250318235850.6411-6-ansuelsmth@gmail.com>
 
-On 03/19/25 at 12:27pm, Mimi Zohar wrote:
-> On Wed, 2025-03-19 at 16:09 +0800, Baoquan He wrote:
-> > On 03/17/25 at 06:04pm, steven chen wrote:
-> > > Carrying the IMA measurement list across kexec requires allocating a
-> > > buffer and copying the measurement records.  Separate allocating the
-> > > buffer and copying the measurement records into separate functions in
-> > > order to allocate the buffer at kexec 'load' and copy the measurements
-> > > at kexec 'execute'.
-> > > 
-> > > This patch includes the following changes:
-> > >  - Refactor ima_dump_measurement_list() to move the memory allocation
-> > >    to a separate function ima_alloc_kexec_file_buf() which allocates
-> > >    buffer of size 'kexec_segment_size' at kexec 'load'.
-> > >  - Make the local variable ima_kexec_file in ima_dump_measurement_list()
-> > >    a local static to the file, so that it can be accessed from 
-> > >    ima_alloc_kexec_file_buf().
-> > >  - Make necessary changes to the function ima_add_kexec_buffer() to call
-> > >    the above two functions.
-> > 
-> > We may not need above details about code change because it's not so
-> > difficult to get them from patch.
-> 
-> Agreed.  The changes don't even reflect the current patch.  Please remove the
-> entire section.
-> 
-> > 
-> > > 
-> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> > > ---
-> > >  security/integrity/ima/ima_kexec.c | 67 +++++++++++++++++++++++++-----
-> > >  1 file changed, 56 insertions(+), 11 deletions(-)
-> > > 
-> > > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> > > index 8567619889d1..45170e283272 100644
-> > > --- a/security/integrity/ima/ima_kexec.c
-> > > +++ b/security/integrity/ima/ima_kexec.c
-> > > @@ -15,6 +15,48 @@
-> > >  #include "ima.h"
-> > >  
-> > >  #ifdef CONFIG_IMA_KEXEC
-> > > +static struct seq_file ima_kexec_file;
-> > > +
-> > > +static void ima_reset_kexec_file(struct seq_file *sf)
-> > > +{
-> > > +	sf->buf = NULL;
-> > > +	sf->size = 0;
-> > > +	sf->read_pos = 0;
-> > > +	sf->count = 0;
-> > > +}
-> > > +
-> > > +static void ima_free_kexec_file_buf(struct seq_file *sf)
-> > > +{
-> > > +	vfree(sf->buf);
-> > > +	ima_reset_kexec_file(sf);
-> > > +}
-> > > +
-> > > +static int ima_alloc_kexec_file_buf(size_t segment_size)
-> > > +{
-> > > +	/*
-> > > +	 * kexec 'load' may be called multiple times.
-> > > +	 * Free and realloc the buffer only if the segment_size is
-> > > +	 * changed from the previous kexec 'load' call.
-> > > +	 */
-> > > +	if (ima_kexec_file.buf && ima_kexec_file.size == segment_size)
-> > > +		goto out;
-> 
-> The call to ima_reset_kexec_file() in ima_add_kexec_buffer() resets
-> ima_kexec_file.buf() hiding the fact that the above test always fails and falls
-> through.  As a result, 'buf' is always being re-allocated.
-> 
-> > > +
-> > > +	ima_free_kexec_file_buf(&ima_kexec_file);
-> > > +
-> > > +	/* segment size can't change between kexec load and execute */
-> > > +	ima_kexec_file.buf = vmalloc(segment_size);
-> > > +	if (!ima_kexec_file.buf)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ima_kexec_file.size = segment_size;
-> > > +
-> > > +out:
-> > > +	ima_kexec_file.read_pos = 0;
-> > > +	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  /*
-> > >   * Copy the measurement list to the allocated memory
-> > >   * compare the size of IMA measurement list with the size of the allocated memory
-> > > @@ -26,23 +68,16 @@
-> > >  static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
-> > >  				     unsigned long segment_size)
-> > >  {
-> > > -	struct seq_file ima_kexec_file;
-> > >  	struct ima_queue_entry *qe;
-> > >  	struct ima_kexec_hdr khdr;
-> > >  	int ret = 0;
-> > >  
-> > >  	/* segment size can't change between kexec load and execute */
-> > > -	ima_kexec_file.buf = vmalloc(segment_size);
-> > >  	if (!ima_kexec_file.buf) {
-> > > -		ret = -ENOMEM;
-> > > -		goto out;
-> > > +		pr_err("Kexec file buf not allocated\n");
-> > > +		return -EINVAL;
-> > >  	}
-> > >  
-> > > -	ima_kexec_file.file = NULL;
-> > > -	ima_kexec_file.size = segment_size;
-> > > -	ima_kexec_file.read_pos = 0;
-> > > -	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
-> > > -
-> > >  	memset(&khdr, 0, sizeof(khdr));
-> > >  	khdr.version = 1;
-> > >  	/* This is an append-only list, no need to hold the RCU read lock */
-> > > @@ -79,8 +114,6 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
-> > >  	*buffer_size = ima_kexec_file.count;
-> > >  	*buffer = ima_kexec_file.buf;
-> > >  out:
-> > > -	if (ret == -EINVAL)
-> > > -		vfree(ima_kexec_file.buf);
-> > >  	return ret;
-> > >  }
-> > >  
-> > > @@ -119,6 +152,12 @@ void ima_add_kexec_buffer(struct kimage *image)
-> > >  		return;
-> > >  	}
-> > >  
-> > > +	ret = ima_alloc_kexec_file_buf(kexec_segment_size);
-> > > +	if (ret < 0) {
-> > > +		pr_err("Not enough memory for the kexec measurement buffer.\n");
-> > > +		return;
-> > > +	}
-> > > +
-> > >  	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
-> > >  				  kexec_segment_size);
-> > >  	if (!kexec_buffer) {
-> > > @@ -140,6 +179,12 @@ void ima_add_kexec_buffer(struct kimage *image)
-> > >  	image->ima_buffer_size = kexec_segment_size;
-> > >  	image->ima_buffer = kexec_buffer;
-> > >  
-> > > +	/*
-> > > +	 * kexec owns kexec_buffer after kexec_add_buffer() is called
-> > > +	 * and it will vfree() that buffer.
-> > > +	 */
-> > > +	ima_reset_kexec_file(&ima_kexec_file);
-> > 
-> > I can't see why we need call ima_reset_kexec_file() here. If we need
-> > reuse the buffer, we will reset the needed fields at the end of
-> > ima_alloc_kexec_file_buf(). Not sure if I miss anything.
-> 
-> Without ima_reset_kexec_file(), calling 'kexec load' consecutively without
-> "kexec -s -e" in between fails.
-> 
-> # kexec -s -l /boot/vmlinuz-`uname -r` --initrd=/boot/initramfs-`uname -r`.img --reuse-cmdline
-> # kexec -s -l /boot/vmlinuz-`uname -r` --initrd=/boot/initramfs-`uname -r`.img --reuse-cmdline
-> Killed
-> 
-> As mentioned above, the call to ima_reset_kexec_file() resets
-> ima_kexec_file.buf, so the segment size test always fails and the memory is
-> being allocated.
+Hi Christian,
 
-Indeed, I didn't realize this.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/net-phylink-reset-PCS-Phylink-double-reference-on-phylink_stop/20250319-080303
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250318235850.6411-6-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha SoC
+config: arm64-randconfig-r132-20250320 (https://download.01.org/0day-ci/archive/20250320/202503200928.j6AEMrdf-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 87916f8c32ebd8e284091db9b70339df57fd1e90)
+reproduce: (https://download.01.org/0day-ci/archive/20250320/202503200928.j6AEMrdf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503200928.j6AEMrdf-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/pcs/pcs-airoha.c:2723:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2723:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2723:14: sparse:     got void [noderef] __iomem *
+>> drivers/net/pcs/pcs-airoha.c:2728:25: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2728:25: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2728:25: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2732:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2732:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2732:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2737:27: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2737:27: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2737:27: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2741:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2741:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2741:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2746:28: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2746:28: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2746:28: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2750:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2750:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2750:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2755:33: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2755:33: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2755:33: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2759:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2759:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2759:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2764:29: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2764:29: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2764:29: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2768:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2768:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2768:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2773:29: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2773:29: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2773:29: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2777:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2777:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2777:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2782:25: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2782:25: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2782:25: sparse:     got void *base
+   drivers/net/pcs/pcs-airoha.c:2786:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/net/pcs/pcs-airoha.c:2786:14: sparse:     expected void *base
+   drivers/net/pcs/pcs-airoha.c:2786:14: sparse:     got void [noderef] __iomem *
+   drivers/net/pcs/pcs-airoha.c:2791:25: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void [noderef] __iomem *regs @@     got void *base @@
+   drivers/net/pcs/pcs-airoha.c:2791:25: sparse:     expected void [noderef] __iomem *regs
+   drivers/net/pcs/pcs-airoha.c:2791:25: sparse:     got void *base
+
+vim +2723 drivers/net/pcs/pcs-airoha.c
+
+  2707	
+  2708	static int airoha_pcs_probe(struct platform_device *pdev)
+  2709	{
+  2710		struct regmap_config syscon_config = airoha_pcs_regmap_config;
+  2711		struct device *dev = &pdev->dev;
+  2712		struct airoha_pcs_priv *priv;
+  2713		void *base;
+  2714		int ret;
+  2715	
+  2716		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+  2717		if (!priv)
+  2718			return -ENOMEM;
+  2719	
+  2720		priv->dev = dev;
+  2721		priv->data = of_device_get_match_data(dev);
+  2722	
+> 2723		base = devm_platform_ioremap_resource_byname(pdev, "xfi_mac");
+  2724		if (IS_ERR(base))
+  2725			return PTR_ERR(base);
+  2726	
+  2727		syscon_config.name = "xfi_mac";
+> 2728		priv->xfi_mac = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2729		if (IS_ERR(priv->xfi_mac))
+  2730			return PTR_ERR(priv->xfi_mac);
+  2731	
+  2732		base = devm_platform_ioremap_resource_byname(pdev, "hsgmii_an");
+  2733		if (IS_ERR(base))
+  2734			return PTR_ERR(base);
+  2735	
+  2736		syscon_config.name = "hsgmii_an";
+  2737		priv->hsgmii_an = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2738		if (IS_ERR(priv->hsgmii_an))
+  2739			return PTR_ERR(priv->hsgmii_an);
+  2740	
+  2741		base = devm_platform_ioremap_resource_byname(pdev, "hsgmii_pcs");
+  2742		if (IS_ERR(base))
+  2743			return PTR_ERR(base);
+  2744	
+  2745		syscon_config.name = "hsgmii_pcs";
+  2746		priv->hsgmii_pcs = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2747		if (IS_ERR(priv->hsgmii_pcs))
+  2748			return PTR_ERR(priv->hsgmii_pcs);
+  2749	
+  2750		base = devm_platform_ioremap_resource_byname(pdev, "hsgmii_rate_adp");
+  2751		if (IS_ERR(base))
+  2752			return PTR_ERR(base);
+  2753	
+  2754		syscon_config.name = "hsgmii_rate_adp";
+  2755		priv->hsgmii_rate_adp = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2756		if (IS_ERR(priv->hsgmii_rate_adp))
+  2757			return PTR_ERR(priv->hsgmii_rate_adp);
+  2758	
+  2759		base = devm_platform_ioremap_resource_byname(pdev, "multi_sgmii");
+  2760		if (IS_ERR(base))
+  2761			return PTR_ERR(base);
+  2762	
+  2763		syscon_config.name = "multi_sgmii";
+  2764		priv->multi_sgmii = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2765		if (IS_ERR(priv->multi_sgmii))
+  2766			return PTR_ERR(priv->multi_sgmii);
+  2767	
+  2768		base = devm_platform_ioremap_resource_byname(pdev, "usxgmii");
+  2769		if (IS_ERR(base) && PTR_ERR(base) != -ENOENT)
+  2770			return PTR_ERR(base);
+  2771	
+  2772		syscon_config.name = "usxgmii";
+  2773		priv->usxgmii_pcs = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2774		if (IS_ERR(priv->usxgmii_pcs))
+  2775			return PTR_ERR(priv->usxgmii_pcs);
+  2776	
+  2777		base = devm_platform_ioremap_resource_byname(pdev, "xfi_pma");
+  2778		if (IS_ERR(base) && PTR_ERR(base) != -ENOENT)
+  2779			return PTR_ERR(base);
+  2780	
+  2781		syscon_config.name = "xfi_pma";
+  2782		priv->xfi_pma = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2783		if (IS_ERR(priv->xfi_pma))
+  2784			return PTR_ERR(priv->xfi_pma);
+  2785	
+  2786		base = devm_platform_ioremap_resource_byname(pdev, "xfi_ana");
+  2787		if (IS_ERR(base) && PTR_ERR(base) != -ENOENT)
+  2788			return PTR_ERR(base);
+  2789	
+  2790		syscon_config.name = "xfi_ana";
+  2791		priv->xfi_ana = devm_regmap_init_mmio(dev, base, &syscon_config);
+  2792		if (IS_ERR(priv->xfi_ana))
+  2793			return PTR_ERR(priv->xfi_ana);
+  2794	
+  2795		/* SCU is used to toggle XFI or HSGMII in global SoC registers */
+  2796		priv->scu = syscon_regmap_lookup_by_compatible("airoha,en7581-scu");
+  2797		if (IS_ERR(priv->scu))
+  2798			return PTR_ERR(priv->scu);
+  2799	
+  2800		priv->rsts[0].id = "mac";
+  2801		priv->rsts[1].id = "phy";
+  2802		ret = devm_reset_control_bulk_get_exclusive(dev, ARRAY_SIZE(priv->rsts),
+  2803							    priv->rsts);
+  2804		if (ret)
+  2805			return dev_err_probe(dev, ret, "failed to get bulk reset lines\n");
+  2806	
+  2807		platform_set_drvdata(pdev, priv);
+  2808	
+  2809		priv->pcs.ops = &airoha_pcs_ops;
+  2810		priv->pcs.poll = true;
+  2811	
+  2812		__set_bit(PHY_INTERFACE_MODE_SGMII, priv->pcs.supported_interfaces);
+  2813		__set_bit(PHY_INTERFACE_MODE_1000BASEX, priv->pcs.supported_interfaces);
+  2814		__set_bit(PHY_INTERFACE_MODE_2500BASEX, priv->pcs.supported_interfaces);
+  2815		__set_bit(PHY_INTERFACE_MODE_10GBASER, priv->pcs.supported_interfaces);
+  2816		__set_bit(PHY_INTERFACE_MODE_USXGMII, priv->pcs.supported_interfaces);
+  2817	
+  2818		return of_pcs_add_provider(dev->of_node, of_pcs_simple_get,
+  2819					   &priv->pcs);
+  2820	}
+  2821	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
