@@ -1,220 +1,147 @@
-Return-Path: <linux-kernel+bounces-569761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2777AA6A730
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:31:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B12A6A74D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A103AEB72
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1A7188E17C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862991DF755;
-	Thu, 20 Mar 2025 13:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33420204F85;
+	Thu, 20 Mar 2025 13:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="MZwUfFzc"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011068.outbound.protection.outlook.com [52.101.70.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJtOL2eT"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A782023C9;
-	Thu, 20 Mar 2025 13:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742477467; cv=fail; b=KeDvCuUDP32j9XzwwXzobZWbefD2AeQ34+LnNIGmlJjzpXlzDHMzYGjj06TH3cXztPuaDTk475TtwG8JlO/m3oVUvx5FTsQoJsIobLM7/m8BD0nOcx9+5toE27QjRSItzqNFjabxpE6K6mU3MY4TZ3DVRZzdyaTybi6mjW8s+D4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742477467; c=relaxed/simple;
-	bh=m441S4ODcjbiwg/4tIkwr07DIAxH2cmtAxlnT/9FkZ4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=l6nLu4BStKZMXMehr8JFnj+d6ZfI5b+T31V42AJwvgkAgKdFa2fF/KQRqp+xuFCGDxBCK1sNQ8claqEnLmOgW4sdoGmpMwwyptBzOQN7N0G0crHftpUYvMMeld/4LxfosqyBlM3g1QK2XaHBZ/ZOjSdaiuJU0KQjByFWX01soWo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=MZwUfFzc; arc=fail smtp.client-ip=52.101.70.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y0cjB9qB48GA+KfiSlXcyNh+9GJB7+DksMaFsC8/vd+r6PLtIpYAAslDkIGhNh+g3TnPsPOsCCD6FS20E4Hc4rXz81mJs6Bj72tPtQTmG8442LIt0wPFVdvnK5lI0+/olMsSgsW2zW5d7rTe6a3EI5QR8G80A3BoH/i+YT33H0tcyVaZvfjL/ngWWazwD9JOW8txBHsg3PSKfjhi4+Z/BiA2XMFF8UOlvEmgn35UzgjJP9XUtO2gT4Eq2r2Nunwjia+qz82TQidi25drACkSTt+j96kFZMJ/wZ1o1vfPmRbg7pxqVKp3trQiRiW0REc8MPT1iV2uJpBlabLs7gF81g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m441S4ODcjbiwg/4tIkwr07DIAxH2cmtAxlnT/9FkZ4=;
- b=oA4QiF3eFUQ1ZdhVJ48l+8N8KODjKyKBLy69ufR9I0dza1RlrRKX0+1qqTF5vazxLR0Cn192y4wYd2RnFr3AeZkma1M78D4LYho1CRLl4LDHjUa4U+Q8HzZG74XqF6uwAZ65581TwQNGHQJhlQBSZfdNB8GwG44F+8xqCjmpt87kj/DMiTfEEGY8/1azs7AsScMotmtonMbpQYAHBPYlRqAufEToZYa9IICYM94cr9MASHu5FCHa46zAVEPua9LK5F4owVU/PcS3Ai1GaGs1oJIofLiL4PR2AqOXenATAuH4QKIkWh1HQCyHl84XXzzKtzCqxQmqQd4pIoobza4SZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m441S4ODcjbiwg/4tIkwr07DIAxH2cmtAxlnT/9FkZ4=;
- b=MZwUfFzc1cPuePZ5x9vAWNui7cznQgdp7KV96GDcxoNDxOucTdA9S3oefgCCqnZAtuWtOlJ+ocQhMQ+dNOCRsZYf4ahe3OxdBfn41AWjHdaUHMZoqx6ZDVBVR82IAs+81Zn7nonaFtZCP4WzU/8yIYUemXMCVsm9E4VLBwBs5qgq522kxDs1gy9sbFr1lmB6N0olHjoAKYrOWTIzxg300MGj2qJl3lgWNhQBreuTYE4kdYMcMAQCIcsLVEJ9iL0iTZgtJ5TsLXtwLnUTbN5fHU2jV9e8+zpDtX5mfKWt6ub+Tt8Q0p25wy2zNVxlYSctYfc0Pc5ZySaawIZk7UaBPQ==
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
- by PA2PR10MB8941.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:421::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.35; Thu, 20 Mar
- 2025 13:31:00 +0000
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::baa6:3ada:fbe6:98f4]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::baa6:3ada:fbe6:98f4%7]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 13:31:00 +0000
-From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-To: "aradhya.bhatia@linux.dev" <aradhya.bhatia@linux.dev>
-CC: "j-choudhary@ti.com" <j-choudhary@ti.com>, "u-kumar1@ti.com"
-	<u-kumar1@ti.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "devarsht@ti.com" <devarsht@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nm@ti.com"
-	<nm@ti.com>, "vigneshr@ti.com" <vigneshr@ti.com>, "praneeth@ti.com"
-	<praneeth@ti.com>
-Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
-Thread-Topic: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
-Thread-Index: AQHbPn5WIr4uDRt/y0KwBpNmDAlljrN7dJOAgAFFJICAAAHtAA==
-Date: Thu, 20 Mar 2025 13:30:59 +0000
-Message-ID: <3a88fd3d0b34b049c4b6fbe10925b449f7f73043.camel@siemens.com>
-References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
-	 <8366a3d736f9937667aab024895a59e5947dd4a5.camel@siemens.com>
-	 <2c0b49a2-7cf3-4432-bab0-1eb110e8e8c2@linux.dev>
-In-Reply-To: <2c0b49a2-7cf3-4432-bab0-1eb110e8e8c2@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.4 (3.52.4-2.fc40) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|PA2PR10MB8941:EE_
-x-ms-office365-filtering-correlation-id: c9be0c04-9af2-4357-1f0b-08dd67b37404
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018|7053199007;
-x-microsoft-antispam-message-info:
- =?utf-8?B?S3phMEM2Q2tjRjFVcFNjcFNsMU1TVzBiYVMwREtHS0gzN1BxSWlLVWZ0Rzdp?=
- =?utf-8?B?ZjJVNnhvYzBnODN2TmJsWFlrNEd4OWF6THAyZnlpeE85SXpXUE9vTEFQYnVk?=
- =?utf-8?B?anRUUDdaOWQ4R1c3RjJVVE16ZDNtRjRIendqakV2VDZNRXltR1REU3dJalBk?=
- =?utf-8?B?Kys5VjNLWlQ2aWc2KzNiQzdDUEtPdFZFY09uVzBYeksvdnUvVk4xcjZFWjFs?=
- =?utf-8?B?ZzlEOGFxUkE4NkJYa3NCaXk3WUQ1eW1NVmtDL1RESkcyN2xBTjBDS2lTSDJX?=
- =?utf-8?B?UDZubjg5WlRqNmRud3Jqc21kaFpiQlI3Q2VZRWhNSWtQZTFnNUlHMGUxY2p6?=
- =?utf-8?B?SlRoMHFOUW9iNUxVdlJyV1R4TitZejdqcC9WNEtmbEdqdzVvYTVlbExWV2Rq?=
- =?utf-8?B?SzB5dm1vcUw2d3h6WElDRFVjNnFGYnk0NDFTWEpwdEZBT2pNa3FjQlgvVXVI?=
- =?utf-8?B?Qm5RWUNTa1BpNzNlU0pGWnZYcTl3S2Q2OTNLQ1hRTStuaFhrWFFzRDVGVmx0?=
- =?utf-8?B?VnhxTGJCNUQrcURXczRuU0tZQnAvaG5OWDFNMWcyTkdUN1M5ZEZTbVNoZFJB?=
- =?utf-8?B?dytyRXU1cFFjRzhEV1ZMeC91dGx2dStPMnJtcExEN2ZvUDZMMGhmTklaamtO?=
- =?utf-8?B?eWZBVnJaam10Nmk3SkVnYW9kRGZjM1BIeTdYUWV5VU93MER3aGQrclVyaXFh?=
- =?utf-8?B?a3hMdEVFeDBTd2hSM0NoSzB5bkJJZUR0OFZqbC83YW5OblI5N051Q1d0MytR?=
- =?utf-8?B?SS9JeHpaRHVjc01UZ3BUbjhud0Z3djhqZk1uTkhBOEJRb0VPalprWUFWU00z?=
- =?utf-8?B?YUVvai9wOXNPSmRiZWlFRzlMQk84ZkI0U3pURmJzdCtiM25BVGo2b1lJS05N?=
- =?utf-8?B?NTk3cUhNeGQ1b2UwazNDMU50UXpsZG9WMnd6aDdNOFVJOW4zZHg3Z0grOGEy?=
- =?utf-8?B?YUhiRFVIWFRJRjRSNkljdmxKSFAzMU1SS1lUNnFadW1DdDFPSWtRcFRibTd1?=
- =?utf-8?B?TFdQUXBLeXordTFLUURCMTFZTi81a0E2QnV5WlkwRGk0S1BlSzQ0VEIwYzNk?=
- =?utf-8?B?SnNsR1B3TGdEcnR1bFhGbktWYVNrdUg0SFE5bnBtQU5ZaCtFM3BTd1o2M3ZE?=
- =?utf-8?B?NHhXVlJDT1VXUmtLS0JCY2lnN0RKQzVDcE5NeXpsR3JiVWZVeEhUeDU3enhv?=
- =?utf-8?B?MFYzbXlQcHNDOEJOKzJ3UE5oeTNSRlprUmxNN0prTVVPS3U0VVRSdkNFOG9v?=
- =?utf-8?B?SjlZT2o5UVo0NGxVRmpRd092MGZENlA5VjFsV3g5M1ppSXVZVGUxOWZOUlBG?=
- =?utf-8?B?MGE3aUk5L2ltcVZzbkErdHJSeHR5YnF1eUh0V0RINmF2cE9SdUpGcWpVOEpU?=
- =?utf-8?B?ZnVLM3MrWGFRa3JJemE4RlpBOHY0SGRwcVYvaGlXeE1lbEhBeDNUSUV5OStr?=
- =?utf-8?B?akg5UHpHSWpHWjRBRXF3cEdXTTRlWXpWejBTamxvTlVFNGgxeVRmTzZBYm9m?=
- =?utf-8?B?Q3NsSmJKVktyRGVjOEtDcCsrRzVwa0xBRVRUWnYyVUE1dVFyWDh2V1JESlI5?=
- =?utf-8?B?MWwvZVUrczFwSHROY1RLTm90TEt1ZG1PVC9WdU9ZVWNaeGhGTDd0TUxMamUx?=
- =?utf-8?B?aDAzUlFrSUgyam5URmtjaHJVZ3lGSDhzVGpZZ1B3SEE5cWsxd0N6UmVzUkRw?=
- =?utf-8?B?SUhBVWpIRnNPMGs4TkdGMTFxQVRxWENFaTViWFN2d2V6S0FuTlRoWmJNNTJt?=
- =?utf-8?B?NzFKSVc1ZWJrZC83ZXFjZzBBNFNpY3pEYUZwdXl5Mlk0MkJ3d3IxZjJsNVlB?=
- =?utf-8?B?ZUx2MUNIL3AwT3gyZEYweGVPNGx6M1NuN2dGcFMvdWdiUFdNQ3p2cnQ4Q1Yy?=
- =?utf-8?B?THhOcDEwVFRnQnozOG5oNStra2VLKzNraHFFdFdlcTJRUHc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?czV4VEtjY2Z1ZE8wbTdLNEM5Ri81alhPb1VKRW5jUGVTZmIzRTh5WHFNT1Vp?=
- =?utf-8?B?TWxZc2NTME1xUEl5U2tmUkF6ZnRBdXdPaGYxNXNUY2gwQU16Rk45MEZzbnAw?=
- =?utf-8?B?aHowcDNGSGQxTWFjc3hCeCsvcDdObGhqYmZJUTJ6QlJaY2dId2MwOTM1TW5Q?=
- =?utf-8?B?YWdEYUtkMWM3SWQvd0dnQlZjVHN2T0dnOFJRMVNGam1mdnQ2UTBhTWo5TTNm?=
- =?utf-8?B?R2F1S2J2MTZBM1J0dGFWVjBteEFyZ0FHbXhEazJzSUtrSEFqYkt5R0E1cjBH?=
- =?utf-8?B?U0Uwc3pBeGNkYTBZbWR4US9sWE5LV2lOS2c2c2M5MVdIaWpKOTZNVklZUW80?=
- =?utf-8?B?K2YzK3JyaEoxdzJIVnBKWEZXVkEzNmk1WWVNaXliQ0NKWC9TSUVBd1g4ckJC?=
- =?utf-8?B?MHd1RXhYQ1BTRzdROGtXUVIwajV0Y2xSS21ySnhyWjc2cFFlYnF3Y2dYM1Nt?=
- =?utf-8?B?Qjc1ZUpZS0Rva3d5SzExV2ZJVjJkL2pQZzEvVy9qekdVNk54b2xMMjRMaFd5?=
- =?utf-8?B?QlliYUJNd0FaV0p6VzlOQzA0N3dvVHIyQlZmTVN1UTVnOWJHWlpXcnlZWmoy?=
- =?utf-8?B?ZTU1azYxOFBQNGNrYlZZQ0MrZ3k4UUNHcXNsbWNmV2JaQlRZYmdvaDZBMHIy?=
- =?utf-8?B?c2VGazJ1bUMyWHhKcUo4ektvRnNqQi9yRWh4WVcvYmRsZ2dqVU9lNVdaNzdX?=
- =?utf-8?B?VGFuT20vL1JmbnZxa04xZVZvNzJiUEwzUjJqTE05bVJ4WnVRWDF5T0UwZW5N?=
- =?utf-8?B?c3J4R1QybnhYMFZKNXE1NWFYd2d1TWVGYkcrbjk2N1JLTlNZTWtkQ1ZlSFR2?=
- =?utf-8?B?S1ErZ2lZNm5FRm5MQ3BQVFpmckZqM01KOW91aVJQSEJyYVRZWjNBTi8xOU5p?=
- =?utf-8?B?THpEL1lGdlF5bXgyWVphTE9FVlVRTFJsOVdqNm1oRGtGQkg4OElCOGhmd2hm?=
- =?utf-8?B?bkdLcVZGcEVrSWloaHl3Y2RwQUtOZmt6OS9xUkE0Q3dlcGt6d3dDVWtTNnNY?=
- =?utf-8?B?Zno0alhSYlltYnNZc1R6UXJXUDIxNkU2RW93ZkVTT2VmMEFRNm0yVUdoK3NF?=
- =?utf-8?B?dmYwRGViZGdPNExxazlLYTRyNUo0SlY1SXVyQ2wrdDdnSEh0WENucGNlVXFY?=
- =?utf-8?B?L2tmMmltSnhTcHkreG9DVE9JdFpPREUvOFVoVnVua25xRFE3MXlhcE9uVVFR?=
- =?utf-8?B?UVd0RFZaRmJOTGVYT1RTTnRsYno0TG9nWWpTMVlua3JZSGFSQ09Sa25GNC9t?=
- =?utf-8?B?NkhzN3VjSjA3MnpYRTNGVGsvSkUvZkFwNjhFSkNlbjdGbFFrV0VGR29LQkVh?=
- =?utf-8?B?YktSOEdsZG5sVXRIQ3c5Q0xoT1YyU1dnN1dHSUY2SEJNTjNDNGFPUGl6NjBw?=
- =?utf-8?B?V0pWZjdkTDVPZU83aklLVUgwa1JjdkZxaTVyZGVtR1VKZlNFYi80ZHhNSnFB?=
- =?utf-8?B?YzJJUm9nK1Z6NXJPN1Nwb0FqbzBXOXBhUzVIR2Q2a1c1MmJ1MDFacXJMTXNP?=
- =?utf-8?B?cHlaRlkwd1hUTmxxdjUwSDc2NCs3dlIrcFc3amtmdk0vSUdBdjhkaVA3Q0ZJ?=
- =?utf-8?B?cThYVEllbDdBRDRpNUlVb3RNalIvV3E1VmZpMEV0aHg2NG9MWTJadHNWVVUw?=
- =?utf-8?B?MnR6eHZEK1hJazMwVG5yZWc4MitpazlsMzIyVVV6NVpwSDJhM3BzTmszRmlj?=
- =?utf-8?B?a3l0SkFzZzc2UGQ3SkVjYmNaYXdMTjRnbC9xOWFWall5ZElFRFpaQnNiKzhS?=
- =?utf-8?B?R2YyUnBaamtBV0tsVU4veG1tMzc2SldzbGxMRHVhbVM2bTg5citlSDVMaE5Z?=
- =?utf-8?B?VWxhdytMZ08zazNRNnNJaFN0a2lLUUNXSE1xTGJFZklpNW54djd0SUFRbGMr?=
- =?utf-8?B?Ykl5MG00WHYwcE5SK0tBajJqc1h1cFZQc1gzUklYR1VMb2hoOUhDRzNOZ2U2?=
- =?utf-8?B?WEFDMGVua2RqV2JOeUdGdnRuZ0lHQWRFOS9qalRUWHhMc2tKeVRzSG0vUFI0?=
- =?utf-8?B?ZDkva1ZYNFB4bGhxY2RoVmMwWEJacEc2WWpVelNaS1NNMitnV1o5U1BYcGJL?=
- =?utf-8?B?TUkySzkrTmRweUNBYXU1WkdKa21QdG1mS21mYi9sRGY1UCtjeDBQRjhLZ1Q2?=
- =?utf-8?B?bVZISTlzTmNjUkZmMnlEcEh3QnRiM2ZmSkpnYjlzQ1pTdEpnVTFsZnFNMWM3?=
- =?utf-8?Q?OvmQt988DQLEosCvyeB1Ax4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2053016DE64EF74985BD4CC3243C3010@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78B717543;
+	Thu, 20 Mar 2025 13:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742477501; cv=none; b=VLyRCbJ+qVHxu7/7srPZg9Rp8WjhkXTVR/fjGfvRL9+MVo3pT7xRCQAZoCQmZ/1XP33j4/uHCP51ldEWe9oXhM0qh3kDKZvdJa8Niw5llVfOMNhnAttqJCnZd6CXzDwLUVVORlJTN73ZlmFwwnMh31yy6GXfbZEoaUHA3lCPtuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742477501; c=relaxed/simple;
+	bh=gtXhXyULZcdNfwfXPHD0AkWQWHSaf4vHDVcx19mRCWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l2PRPyct5zze8+nYP5ZR6VX7TnMqW2wuNuZg6tdADZ0/pKEBGt66N2c0kA11XyXuYu3ApR922Nakat67/rNCE2Sc8TpmzgAV5TaLMl8K0JM0SkEkM842nafJ37kSfgO7BhzLvkdp1mqugqN9bu9uq3Gf2mLwSW2/h5Cv6Mhl8/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJtOL2eT; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf8632052so8366921fa.0;
+        Thu, 20 Mar 2025 06:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742477498; x=1743082298; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V8B1upTZtbZECZMaoYCcCvx8y6/lnMq3mL5DnwECOj0=;
+        b=EJtOL2eTgfS5Oy6u0GrdmInYEl9Hhz7QAUmwDNN4pANFE1hjA/l3yNK9M5RK68uw5k
+         ngIKH+RBAzb3bPcVsbdyTSsLMH45bXUhNreOLYmW0ZhzpUQgoasVCCXNMiS6TsIJilln
+         wzcg6LTt8BeNgdpaUUcSP2zr/06/G5dRhDnTEV8jqVegBCc8Pml+sxnRs6loMi3Udulp
+         JKOWSkY+fj64ecOLLEKgVmm1+KCNXMzmWUFnDEgTtmlZCIlatta0dhqEJux/fPYS6J8s
+         nm4AZu4idmpohQP0iJRwTPa6LAVo/GKYiOdbQtaOMVGKDaTlrntgjv0afU9bfvP6St/O
+         0qfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742477498; x=1743082298;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V8B1upTZtbZECZMaoYCcCvx8y6/lnMq3mL5DnwECOj0=;
+        b=tKF0XhqxsvVqj1qX2CqZPbHlkF2vrrb+uw9ORKCEttMExVu+cKPVIIPjfKHNjAXde9
+         1SuGd6SEN6bQs+iC6GrVKn1Lxt9DGAwfaRcnL94iMjbBbMlaCLn7QiB1a9iKEs4gzaAt
+         DysClRg+REbSRwkZh7z/M9QPg5jdLlk1oi6xVIGF7eGP1F+LT3UsKALurvld104excf/
+         HKKAngRWt8JbYfyW09aXraTKEwsbnsXcfq+ADrUq//3ybQUFsLlhHpiefv92xhuKTTsH
+         LuiAbjdYLW7Q3gzAvN2JCJ6tnntgQVnRM6o3VvKE3Iy9tiVKdqWtZ9jkoe0POt26Z12e
+         AjkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaXoPwh+x8c+cBtyxI+gpzgP/FDZRwpjGn2I5oL5Vve9LqirA7ZmFlmT51kEwVDdtAGb7HxOnFvFo9bI5iu9M=@vger.kernel.org, AJvYcCWiSYqRbARjkmdIZWJKfapVkblP+3U2ED0LkxqBciNBiRZSPFeYB1lVsuQ5Yb2Q3Gyrfqh+9qIRpp1VX5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj7cvnSXirevTRe3EmNk4IOGPYoE2HeZjVzVekTTLZiS7pfutZ
+	z/dcCINofQDfKWtIOCcXaX+/RqhHMJ8yp0Y4EqUU+s16onmqMWu+xd6zI9WYt5CvQCngv5dnVJF
+	BIIlG3i+xyhofU8B87k3CYTZ4V7o=
+X-Gm-Gg: ASbGncsOhJHlZ+h7VHEseP12k4kRsliOmHYf5bgMHrEZLY/0Q3A3aB0du1IJNsuY+6X
+	0EmFR17rdH80VEwCKSh7zHpRgdMSpmYVAtnrNqKRCL2KNQjd8TmyA0GidkVUA3JKb04u6QUlSnn
+	2S1FEYYvx5eSNpNRrWY0U7xMC77u6yaMv1oRNpxYkTvg==
+X-Google-Smtp-Source: AGHT+IF+nv2K/2zpOUwEE/QxhzuHy89uvxth4nsbd7sfFLeDXUvQfc5p78zdPOpVheofgfwsUmDyCbpbOTQYWOP+aIE=
+X-Received: by 2002:a05:651c:399:b0:302:48fd:6922 with SMTP id
+ 38308e7fff4ca-30d72b64652mr11931211fa.37.1742477497597; Thu, 20 Mar 2025
+ 06:31:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9be0c04-9af2-4357-1f0b-08dd67b37404
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 13:30:59.9599
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YDpTc88NCnlrhGYRK5lNBhsurmzpEmUG7LSvdlAmkb8GkVCXT1Qbd9m3+WmacfMZn2OVDH7xiqqxHp7eQhq/KDArhT1IEbnN/upsBUDkOVo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8941
+References: <20250319-pin-init-internal-quote-v1-1-19de6a33a257@gmail.com> <D8L34IUZGXWX.D2LSS2S2NAN7@proton.me>
+In-Reply-To: <D8L34IUZGXWX.D2LSS2S2NAN7@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 20 Mar 2025 09:31:00 -0400
+X-Gm-Features: AQ5f1JrA7WGJHD7z0A-iUxRx5DO_fTCLp3uXTL872ztgyNau-yPu2V8hUCdS64k
+Message-ID: <CAJ-ks9nTmno12ZC4DnLxV_b0NLUK5Kn5K+cRi4BEvKtveQzJjg@mail.gmail.com>
+Subject: Re: [PATCH] rust: pin_init_internal: fix rust-analyzer `mod quote`
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQXJhZGh5YSENCg0KT24gVGh1LCAyMDI1LTAzLTIwIGF0IDE4OjU0ICswNTMwLCBBcmFkaHlh
-IEJoYXRpYSB3cm90ZToNCj4gV2hpbGUgeW91IGhhdmUgbWVudGlvbmVkIHRoYXQgeW91IGRpZCBh
-ZGQgdGhlIHByZXJlcXVpc2l0ZXMsIGNvdWxkIHlvdQ0KPiBjb25maXJtIHRoYXQgeW91IGFwcGxp
-ZWQgdGhlIChub3cgb2xkZXIpIGRlcGVuZGVuY3kgcGF0Y2ggbWVudGlvbmVkIGluDQo+IHRoZSB2
-NCBjb3Zlci1sZXR0ZXJbMV0/DQo+IElkZWFsbHksIHlvdSBzaG91bGQgbm90IG9ic2VydmUgdGhl
-c2UgY29uY2VybnMgaWYgWzFdIHdlcmUgc3VjY2Vzc2Z1bGx5DQo+IGFwcGxpZWQuDQoNClNlZW1z
-IHRoYXQgSSd2ZSBpbmRlZWQgbWlzc2VkIG1vc3Qgb2YgdGhlIGRlcGVuZGVuY2llcyBhbmQgb25s
-eSBoYWQNCiJkcm0vYnJpZGdlOiBJbnRyb2R1Y2UgZWFybHlfZW5hYmxlIGFuZCBsYXRlIGRpc2Fi
-bGUiIHNvIHRoYXQgaXQgYnVpbGRzIDstKQ0KDQo+IE1vcmUgaW1wb3J0YW50bHksIGlmIHlvdSBh
-cmUgYWxyZWFkeSBvbiBsYXRlc3QgbGludXgtbmV4dCwgSSB3b3VsZA0KPiByZXF1ZXN0IHlvdSB0
-byB1c2UgdjYgb2YgdGhpcyBPTERJIHNlcmllc1syXSwgYWxvbmcgd2l0aCB0aGUgbGF0ZXN0DQo+
-IGRlcGVuZGVuY3kgcGF0Y2hlc1swXSwgYXMgdGhlIG9sZGVyIGRlcGVuZGVuY3kgcGF0Y2ggaXMg
-c2ltcGx5IG5vdA0KPiBhcHBsaWNhYmxlIG9uIGxhdGVzdCBrZXJuZWwgYW55bW9yZSEgPSkNCj4g
-DQo+IEknZCBhcHByZWNpYXRlIGl0IGlmIHlvdSBhcmUgYWJsZSB0byB0ZXN0IHRoZSBsYXRlc3Qg
-cmV2aXNpb25zIG9uIHlvdXINCj4gc2luZ2xlLWxpbmsgc2V0dXAsIGFuZCByZXBvcnQgYmFjayBh
-bnkgaXNzdWUgeW91IHNlZSEgVGhhbmsgeW91ISA9KQ0KDQpUaGFua3MgZm9yIHRoZSByZWZlcmVu
-Y2VzIQ0KSSdsbCB1cGRhdGUsIHRlc3QgYW5kIGdldCBiYWNrIHRvIHlvdSENCg0KPiBbMF06IFBy
-ZSBSZXF1aXNpdGUgcGF0Y2hlcyB0aGF0IHJlLW9yZGVyIGNydGMvZW5jb2Rlci9icmlkZ2Ugc2Vx
-dWVuY2VzDQo+IChsYXRlc3QgcmV2aXNpb24pLg0KPiANCj4gYS4gKCJkcm0vYXRvbWljLWhlbHBl
-cjogUmVmYWN0b3IgY3J0YyAmIGVuY29kZXItYnJpZGdlIG9wIGxvb3BzIGludG8NCj4gc2VwYXJh
-dGUgZnVuY3Rpb25zIikNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwMjI2MTU1
-NzM3LjU2NTkzMS0zLWFyYWRoeWEuYmhhdGlhQGxpbnV4LmRldi8NCj4gDQo+IGIuICgiZHJtL2F0
-b21pYy1oZWxwZXI6IFNlcGFyYXRlIG91dCBicmlkZ2UgcHJlX2VuYWJsZS9wb3N0X2Rpc2FibGUg
-ZnJvbQ0KPiBlbmFibGUvZGlzYWJsZSIpDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8y
-MDI1MDIyNjE1NTczNy41NjU5MzEtNC1hcmFkaHlhLmJoYXRpYUBsaW51eC5kZXYvDQo+IA0KPiBj
-LiAoImRybS9hdG9taWMtaGVscGVyOiBSZS1vcmRlciBicmlkZ2UgY2hhaW4gcHJlLWVuYWJsZSBh
-bmQgcG9zdC1kaXNhYmxlIikNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwMjI2
-MTU1NzM3LjU2NTkzMS01LWFyYWRoeWEuYmhhdGlhQGxpbnV4LmRldi8NCj4gDQo+IA0KPiBbMV06
-IERlcGVuZGVuY3kgcGF0Y2ggbWVudGlvbmVkIGluIHY0IE9MREkgc2VyaWVzLg0KPiAoImRybS9h
-dG9taWMtaGVscGVyOiBSZS1vcmRlciBicmlkZ2UgY2hhaW4gcHJlLWVuYWJsZSBhbmQgcG9zdC1k
-aXNhYmxlIikNCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwNjIyMTEwOTI5LjMx
-MTU3MTQtMTEtYS1iaGF0aWExQHRpLmNvbS8NCj4gDQo+IA0KPiBbMl06IExhdGVzdCBPTERJIHNl
-cmllcyAodjYpDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDIyNjE4MTMwMC43
-NTY2MTAtMS1hcmFkaHlhLmJoYXRpYUBsaW51eC5kZXYvDQoNCi0tIA0KQWxleGFuZGVyIFN2ZXJk
-bGluDQpTaWVtZW5zIEFHDQp3d3cuc2llbWVucy5jb20NCg==
+On Thu, Mar 20, 2025 at 8:16=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Thu Mar 20, 2025 at 2:35 AM CET, Tamir Duberstein wrote:
+> > Replace the `#[path]` attribute with a symlink to work around a
+> > limitation in rust-analyzer that requires all modules to belong to the
+> > same "source root". This allows code navigation from `pin_init_internal=
+`
+> > to `quote` to work properly.
+> >
+> > Link: https://github.com/rust-lang/rust-analyzer/issues/3898
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  rust/pin-init/internal/src/lib.rs   | 1 -
+> >  rust/pin-init/internal/src/quote.rs | 1 +
+> >  2 files changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/rust/pin-init/internal/src/lib.rs b/rust/pin-init/internal=
+/src/lib.rs
+> > index babe5e878550..fdd95afe3864 100644
+> > --- a/rust/pin-init/internal/src/lib.rs
+> > +++ b/rust/pin-init/internal/src/lib.rs
+> > @@ -20,7 +20,6 @@
+> >  use proc_macro::TokenStream;
+> >
+> >  #[cfg(kernel)]
+> > -#[path =3D "../../../macros/quote.rs"]
+> >  #[macro_use]
+> >  mod quote;
+> >  #[cfg(not(kernel))]
+> > diff --git a/rust/pin-init/internal/src/quote.rs b/rust/pin-init/intern=
+al/src/quote.rs
+> > new file mode 120000
+> > index 000000000000..27a213d1a6ba
+> > --- /dev/null
+> > +++ b/rust/pin-init/internal/src/quote.rs
+> > @@ -0,0 +1 @@
+> > +../../../macros/quote.rs
+> > \ No newline at end of file
+> >
+> > ---
+> > base-commit: ff7f9b199e3f4cc7d61df5a9a26a7cbb5c1492e6
+> > change-id: 20250319-pin-init-internal-quote-b7e15e9e8233
+> >
+> > Best regards,
+>
+> I'd rather not have this change, since this will introduce a dangling
+> symlink upstream [1].
+>
+> [1]: https://github.com/rust-for-Linux/pin-init
+
+I agree it's aesthetically displeasing. I'm not aware of any
+alternative that fixes the development workflow of this crate in the
+kernel.
 
