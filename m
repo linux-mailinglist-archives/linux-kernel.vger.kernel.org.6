@@ -1,84 +1,157 @@
-Return-Path: <linux-kernel+bounces-569394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55737A6A267
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:18:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2966A6A26A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:19:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8879460236
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E7C188D519
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23008221DA5;
-	Thu, 20 Mar 2025 09:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A8A221DBC;
+	Thu, 20 Mar 2025 09:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7Ld2mfP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9tP5OaB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0791F09B7;
-	Thu, 20 Mar 2025 09:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0497F20E32B;
+	Thu, 20 Mar 2025 09:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742462276; cv=none; b=Dqo0Y62HWOM41oDQmcdJLZCvwYccLHez5d84qgM9kNPs5P8kWeMgaiFl9MOpoMdXoHRuwdHFDQyTrWW39TjbY9A8JyNkApADEzrlp9Sfv751W7uIRfwYoAajtLt9RQn61Zt9ViyujvvJGDchtpl6ShqGYYZLw4HzpPM0Jhpou+Q=
+	t=1742462347; cv=none; b=A6BWWrJmeCODcGo/7y/YdqmVizJ1GdDIh53OKsUe2sYc+c+kGNk7hWgXyZZUx/wUu9e8ZVUsr2RUht2zxUr/KtOTorOv1e8uA8iam74XCXraWPJH2OyM261LCriH2SkiuFpcRRebNtOlEVSPGD0p+Tl9PLK3jXeaoz4oVHER9UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742462276; c=relaxed/simple;
-	bh=Xyyzo6Gh+WL9fAi6N9VIMoxuKZ3LoEgaFXhaVGBrGiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdGLgaDSD0dtxw1ZsdE1ix8RXb+foVttTha6XBVq7soQpRyPpKrHdbicZhc/341CDwZ9D8tId7/1REa4lZ+EMuLVp39ZPo2v+ChGt+cn9CmdX6uuSQMEtbpUqJziC5t82w3Zo53UBrUWF3RnnoTBpiX3pPAsaG5JPTM57vbvSlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7Ld2mfP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60584C4CEDD;
-	Thu, 20 Mar 2025 09:17:55 +0000 (UTC)
+	s=arc-20240116; t=1742462347; c=relaxed/simple;
+	bh=DyYZu43SCOG8idqcMJJdyHd71H6vj85HgtLk8md7IhI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SD0Sc4mOx0fhnmaTujHuOdr/x55hTjJaHEqgYxbNCT1Frf2w/rE4LZlyeXxBpIsArkFuwhAcnYYsWHDTouB7q0Wv4W7pDHlDqdYJbGcHcDSXlv9zieeC6VrO9JuC/AbwdZrAE4AzUA9GrNDQOlnnTU8szvTbkGO8UmrU9yjrIGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9tP5OaB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77B2AC4CEDD;
+	Thu, 20 Mar 2025 09:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742462276;
-	bh=Xyyzo6Gh+WL9fAi6N9VIMoxuKZ3LoEgaFXhaVGBrGiQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G7Ld2mfPq2TcfkZ8HvmvRBw807rLtv69ZuFCKYqF4xI9BwCUNSGXRSspx1lb7GreD
-	 A+kgBB+EIf0rFa4uVJAyk93Rxn3XIRuykhXzS6OuY1tgimInFtDdOewPsnOe+ncxOL
-	 iOaw1Bm6Ma2dDxB6q/4BarmcWpsCYAAlWeTv8mR+QidzvIlc1+JN7+UYuZE/TlI7Wn
-	 E9WBCsgDaEEdag+PHhDHwN0rripWdZEGKid5LN2cZumNnmDBdWjyXiKtHUIiELo5Ig
-	 3pLyc4GBcz1p72XCq+h+L/9yT500RLt1YkwIRa5gDqEQXU3dWUnv7MrtvvzPm8Fheu
-	 YwgrV8s/ItTeQ==
-Date: Thu, 20 Mar 2025 11:17:51 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
-Message-ID: <Z9vdP7vgv-Z4RahU@kernel.org>
-References: <20250318081743.32c72c1c@canb.auug.org.au>
+	s=k20201202; t=1742462345;
+	bh=DyYZu43SCOG8idqcMJJdyHd71H6vj85HgtLk8md7IhI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=g9tP5OaBBniNVKx/1th/Dn6r/KXDHr1v6Sn6QKGJfwbuaAnPrH/sIJd6ryyHFW6mD
+	 lXKRAgqhmTQjoin2lcilrtZUBL9zKTtRk4iaOVENNvWYxIXK+eql7BUsnZn3sYnWVX
+	 vwT92yDgc2KsrgfDENuN7Dk+7hezHcQ23+TYgVrYsA5tEI7lmDMp1+l5t1WJu2tTSg
+	 ZGJ3p8kSQHSMdfishJWD0TmTcnopLzmaLi3ElnS1BE0NAifgAVTiKAPf1WnAQSHpRk
+	 GEMHsL5OQMsMuubI5BMr1STWNZ7/rV6ykx4u12zT48FNl7CbYIMjfVl8j9M78Ps8Co
+	 dQiHRgwllnVng==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tvC3K-00FMaU-U3;
+	Thu, 20 Mar 2025 09:19:03 +0000
+Date: Thu, 20 Mar 2025 09:19:02 +0000
+Message-ID: <86h63om54p.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Akihiko Odaki <akihiko.odaki@daynix.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	devel@daynix.com
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+In-Reply-To: <Z9sSMJAlf7cQ5viu@linux.dev>
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+	<Z9pze3J2_zrTk_yC@linux.dev>
+	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+	<86plidmjwh.wl-maz@kernel.org>
+	<bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
+	<86o6xxmg87.wl-maz@kernel.org>
+	<aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
+	<86msdhmemw.wl-maz@kernel.org>
+	<cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
+	<86ldt0n9w1.wl-maz@kernel.org>
+	<Z9sSMJAlf7cQ5viu@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318081743.32c72c1c@canb.auug.org.au>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, akihiko.odaki@daynix.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Mar 18, 2025 at 08:17:43AM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 19 Mar 2025 18:51:28 +0000,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
-> Commits
+> On Wed, Mar 19, 2025 at 06:38:38PM +0000, Marc Zyngier wrote:
+> > On Wed, 19 Mar 2025 11:51:21 +0000, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> > > What about setting the flag automatically when a user fails to pin
+> > > vCPUs to CPUs that are covered by one PMU? There would be no change if
+> > > a user correctly pins vCPUs as it is. Otherwise, they will see a
+> > > correct feature set advertised to the guest and the cycle counter
+> > > working.
+> > 
+> > How do you know that the affinity is "correct"? VCPU affinity can be
+> > changed at any time. I, for one, do not want my VMs to change
+> > behaviour because I let the vcpus bounce around as the scheduler sees
+> > fit.
+> > 
+> > Honestly, this is not a can of worm I want to open. We already have a
+> > pretty terrible userspace API for the PMU, let's not add to the
+> > confusion. *If* we are going down the road of presenting a dumbed-down
+> > PMU to the guest, it has to be an explicit buy-in from userspace.
 > 
->   04c72b01f618 ("Documentation: tpm: Add documentation for the CRB FF-A interface")
->   cebcb37cc882 ("tpm_crb: Add support for the ARM FF-A start method")
->   1cfb6e10a755 ("ACPICA: Add start method for ARM FF-A")
->   abf6e84648dd ("tpm_crb: ffa_tpm: Implement driver compliant to CRB over FF-A")
+> I also have a very strong distaste for the crappy UAPI we have around a
+> 'default' PMU. At the same time I do recognize this hurts practical
+> usecases since some VMMs can't be bothered to configure the vPMU / vCPU
+> pinning correctly.
 > 
-> are missing a Signed-off-by from their committers.
+> I'm at least willing to plug my nose and do the following:
+> 
+>  1) When the VMM does not specify a vPMU type:
+> 
+>    - We continue to present the 'default' PMU (including event counters)
+>      to the VM
+> 
+>    - KVM ensures that the fixed CPU cycle counter works on any PMUv3
+>      implementation in the system, even if it is different from the
+>      default
+> 
+>    - Otherwise, event counters will only count on the default
+>      implementation and will not count on different PMUs
 
-Sorry, something must have gone wrong when I rebased and updated the
-commit messages. 
-
-I think they should be good now.
+I think this is confusing. The CC is counting, but nothing else, and
+people using the cycle counters in conjunction with other events (a
+very common use case) will not be able to correlate things correctly.
+The current behaviour is, for all its sins, at least consistent.
 
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
+>  2) Implement your suggestion of a UAPI where the VMM can select a PMU
+>     that only has the CPU cycle counter and works on any PMUv3
+>     implementation.
+> 
+> Either way KVM will need to have some special case handling of the fixed
+> CPU cycle counter. That'd allow users to actually run Windows *now* and
+> provide a clear mechanism for userspace to present a less-broken vPMU if
+> it cares.
 
-BR, Jarkko
+Honestly, I don't care about one guest or another. My point is that if
+we are changing the behaviour of the PMU to deal with this sort of
+things, then it has to be a userspace buy-in.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
