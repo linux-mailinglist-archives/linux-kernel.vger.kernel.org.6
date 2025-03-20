@@ -1,149 +1,472 @@
-Return-Path: <linux-kernel+bounces-569458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF26A6A342
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:03:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F69A6A33F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF0D466913
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2CA43A908A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A63224254;
-	Thu, 20 Mar 2025 10:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D36E222596;
+	Thu, 20 Mar 2025 10:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdXykzDW"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cr+X8r6O"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D2D22259E;
-	Thu, 20 Mar 2025 10:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742464903; cv=none; b=OIicpOk7zobi+DLAGDT0ryom1dGMXijBk9BSZb6f/bFoCeV/QLsvMErhGN7xCi8BHdQvlOUwyUVgfclxhwVUXNoMp7JOXaApDG6rPqHIYag74gmVEsHi/HoJWEH8ka5XgN0f4cPcvpfXWSIN4JbuJzSQQu6g+B+GpKyeqKtIzHo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742464903; c=relaxed/simple;
-	bh=3uEhFvWgTZ3qE+HGzh3HTAH18SIHho193NXFHIRXPSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kfrj2ufM75izW7VYWKyXHI+Cfao2G9Nua8LniYQ+Y5Notm2ExVDFpBlq1Ftt9g5XhnrDRKT1wYq07Wxi6khVm6uN3AnluQyZ0bMPycjb4n1kgQnGY9Augxv2voeE5/AxZ8ACJo93A6R+yKpWSf7H/QnZ4lBTfSJWm8iUfAz/vis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mdXykzDW; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5242f137a1eso282817e0c.1;
-        Thu, 20 Mar 2025 03:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742464900; x=1743069700; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VkOqX1hHmiQ4/Ww30LXv9z0S90BxKz274f5FP6A6x7o=;
-        b=mdXykzDWiepnGY4YOctmeanonRAn+jIl6jhtB/lgIVfPfVoJHYXxVuGc430NxmEhHj
-         urSAu6zONRESSof+EZJ0o7rFK5J9ZUyQvsfHUFBObKzBdqfKMTMCLVxTFfWq6mZ9u3ZV
-         040N0Dmnr7q5GG2gU7X+qjogZh0Z9FWJOKCAz6hWvh0UkTAlBYwmHyRKERSaj/Zn5k3t
-         XfYNId+8k570f1YODSUMcqcJvo2sqq2XNfm2zgh8e5QRlYD5SeZQCZP62wuCOGUoA/A/
-         Q7w2y21ao4SEcvPb1Uch9SJWgDz+aJ5YdWzPABaGBA/zZdrb4+0g+4x77P0cUWYVpCvj
-         flVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742464900; x=1743069700;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VkOqX1hHmiQ4/Ww30LXv9z0S90BxKz274f5FP6A6x7o=;
-        b=qEYOijJ018sWrhJdpFKCDC1kywwjMGZDvJFRBu/FdhYjX+off4YFWGCrQpQ6HqpNtH
-         Iv3LbXEautgQKRuUp0n/sQMBi0UwmFQ8fZ/SfxpfcVUE3KBfSL9s4cAsuvx5shpeARdf
-         V7sC3xZvEO0FMvgYOeUIExGM1MIY4j5cT5Jx8/zXVSazb+BdCyDVdt16BcodVl7K43ty
-         B9rRbUIqGVdIxEpmij668+6gL8M4dLz92shLQycDAyjd8WKL/Sc1T3iNFkh9YFlyWzSJ
-         deYKZ+QfheuohrE9D9CMhCMErXE8P2uHEOQ/McwsH1wugo8TKy8994EPx3DS8qmKYlCY
-         lQnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE0OnH4bFhWm97z0oESC15b8sasokxxWmVTMQZpZmB3Q43V1pXVcRtd6lSFJ9OMVO8pecqrPY/@vger.kernel.org, AJvYcCVA2rkLaTLGEugpOmOhAAFV4rRK6wXn85J9FzT4pyV2Adxd+jSOEjz+VTEOy0fXjbgJPhlg3T8OEAu6A7lZ7HbQTHs=@vger.kernel.org, AJvYcCXjFjyZLEoSnSmSK1Ala5vs/fSVU2WW4aEjNNJwaWShYuyt75zfP0N4k2jVZdAecbsSrMc2xkUg2FSI@vger.kernel.org, AJvYcCXrDHvkWY/055khguTo1A9dA05twSMEJesSSUxKmo7vAW1mLhq2UXc9DcWAQEqFneBZDTZI3GREB3zVTO0X@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+4/xLlkHBGJD/EBsFbMPg0Cyc0dl5uI9vXppf6VD3v9hXFGvS
-	EBlS6RgH5M+8JC+5Bvjdgu+9jBBNeuItw4rsCZx3hHEVYDQOtFdOvGDsJivCfIK61l3bsEju08X
-	/axnyBY2JOAYAaLoTNRGTq45447E=
-X-Gm-Gg: ASbGncseYFUVOXtHKl324huv+2CPwN9+Nh1ZAHsDhMNJsbVkHGlvqs/vh3QdBHMLf2F
-	B6APp1FDa4Mw9jJkhdn+3D84HMqhK1h8JOsbx3RJqmXFbnwDFcI7DMzc6GYdHXlJbnEJ4Vf2zrG
-	Gfn06TQuFxH608mI0AGl+Z1aFbcA==
-X-Google-Smtp-Source: AGHT+IFYV5TnCzk+c53bzke6nPS2rmsXWIkLBB61jOeJkZU/pepHxMCueeeEqgu0mBt8iULwpOf2mSKf5NdE5ODHOPs=
-X-Received: by 2002:a05:6122:4312:b0:520:6773:e5c5 with SMTP id
- 71dfb90a1353d-5258926463bmr4862359e0c.7.1742464900176; Thu, 20 Mar 2025
- 03:01:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843C320A5F5;
+	Thu, 20 Mar 2025 10:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742464947; cv=fail; b=DSqab+1ofHljJp977Q1COY2p4FQotJPFh5sGnLcIMZ1Rr9rmdQ9tQKJZiy33TI2G1LRMfxt5/lqhp4OzLZmfdNAVROe8K+lcHu9qmw6n86VE6NSNNq6naw7V9Z5stAdcZRYoGfo8+NpieUWH1hdb81jeRyfsZf6YduSu5U17BRg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742464947; c=relaxed/simple;
+	bh=t/4fK5IIbLjhKngnrUhlLYhe+qZ+14sohGnLwJ76hAA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h/jP8VL8uApzRFmPeqprD5H6bpyeopPKjiwJ67Qk4TsaYooReSvDWXMvn39DbfT2q1hbiJ+hPPr2AF0bRdadvZnUEuunUepRUo3We4d+cbHRqqcC30/zXqbdKgVj7lF68M2y4k7qHUsoz0uAO4KF6tGUmO6ghLe6MYa2BIsYoNU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cr+X8r6O; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mF+/e7cCyz2MGK+iGidbgbKfcqPK+Xjrmn0Eotm3+VY2/zxoUs5xdW+n8WHge8IVUxKjdsY9MrP9zhmgKqeeszyb780YCmSSZj2ik6vn54whVUXdJgseNuBNwl0ByuYds6XWx5c3/a74s9LOLgOHfEPeGwSxykmyhSOQtt8F3y2ypktN+mxWd1oh8IpHjS8hvnjifj8rjQRKUJCyRNWDGwWGaT1pr320kvUsPszQj8khOuXQ0bLDcne3M7FSYO2ev9552+XWlXMNVGKjXnrFLS1erQ9/jMTW/J6YT9GGgOR82Fa2+XOtImHMXItqQn4RkwhVMztPcHCv6lxZp1c5BQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zbRpJ3y6B6rTVrUyO18rstw36AStAveqH6zWGaFaKaQ=;
+ b=Yv5O+u5JPN9xeRfzp37wvV93DitoSNLUoWbLJW37fByaJM1XRcRXmeWfUYv+ZEUoeeCrI3LZQ/XDyqNTf3q4sFQrGeRVc/k2xdmutCI6nN7aZlG6oXrF1Mp04E6+TCHGMDFDQERniiU5UwRIDowOWPKcdfYaSZSbHRFtwChgnCZwBWBd+PQbR7UVmu1ePbsK7LDyGIuEx5zhu0waT3mmC6oLq9Y3GmwFz3AU1QFLjD0ay78rPhExRSZ0WWRTviv1I3GInu51/V+EnYo7KqvLC7FP7XxKyJnSFnroIHgjP+avCBbxVxUlGLhnHtmh2X7OeTlLp8EOeJ8uw2bLlRaCug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zbRpJ3y6B6rTVrUyO18rstw36AStAveqH6zWGaFaKaQ=;
+ b=cr+X8r6Oe6e3cQwxMGUA/D0E1C1vSyLBNjmqhKVvXActPn8uk4AavyZDOfRk0idRVd5xVxuyRQeBRzbaun/hCjIygANojYL2UrchHx0B6SqIDzgqNOiXjSk2hrfOuLJlbLGmq1vHXyI7RyKxHneBmdeOsBVZEuzUB2+BzMN8HkOmxsDRif5PtedJWc4lr7StA6OGYuqpuJC98VTXvz82lQEgGLUcUmply/C+I3rar20J9bF/PUh9sMj70t6+k9sf0VfXTEsZcAG8eSDliCqXNNazxHdCxOBnSCpSbd6XyMmvZJjGbK4y2GskD4vdc5/hGNEmFV4Txqfn8jekTjNQ7w==
+Received: from BYAPR05CA0019.namprd05.prod.outlook.com (2603:10b6:a03:c0::32)
+ by SJ2PR12MB8035.namprd12.prod.outlook.com (2603:10b6:a03:4d3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
+ 2025 10:02:18 +0000
+Received: from SJ1PEPF00002310.namprd03.prod.outlook.com
+ (2603:10b6:a03:c0:cafe::9d) by BYAPR05CA0019.outlook.office365.com
+ (2603:10b6:a03:c0::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Thu,
+ 20 Mar 2025 10:02:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ1PEPF00002310.mail.protection.outlook.com (10.167.242.164) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 10:02:18 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Mar
+ 2025 03:02:03 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 20 Mar 2025 03:02:02 -0700
+Received: from willie-obmc-builder.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 20 Mar 2025 03:02:02 -0700
+From: Willie Thai <wthai@nvidia.com>
+To: <robh@kernel.org>
+CC: <andrew@codeconstruct.com.au>, <andrew@lunn.ch>, <conor+dt@kernel.org>,
+	<devicetree@vger.kernel.org>, <dkodihalli@nvidia.com>, <gpiccoli@igalia.com>,
+	<joel@jms.id.au>, <kees@kernel.org>, <krzk+dt@kernel.org>, <krzk@kernel.org>,
+	<leohu@nvidia.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-hardening@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <maryang@nvidia.com>,
+	<openbmc@lists.ozlabs.org>, <pmenzel@molgen.mpg.de>, <tingkaic@nvidia.com>,
+	<tony.luck@intel.com>, <wthai@nvidia.com>
+Subject: [PATCH v2] ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BMC
+Date: Thu, 20 Mar 2025 10:02:02 +0000
+Message-ID: <20250320100202.56205-1-wthai@nvidia.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <174178473498.434308.6316925758588470688.robh@kernel.org>
+References: <174178473498.434308.6316925758588470688.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318205735.122590-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <202503200755.DoMipQnf-lkp@intel.com>
-In-Reply-To: <202503200755.DoMipQnf-lkp@intel.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 20 Mar 2025 10:01:14 +0000
-X-Gm-Features: AQ5f1Jrf1Dd0xKJnFdvTZS6D8krk5Rik-xKFXlxkwAiuooKI5_9kmPU6SYIxyac
-Message-ID: <CA+V-a8us=RbApdSJ7SLchrQLSbch8jkP3uOCC8TVFiVe4yULnw@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 3/3] net: stmmac: Add DWMAC glue layer for
- Renesas GBETH
-To: kernel test robot <lkp@intel.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002310:EE_|SJ2PR12MB8035:EE_
+X-MS-Office365-Filtering-Correlation-Id: f865392f-f1f8-4b7d-0509-08dd67964caa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026|30052699003|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PkzZRsT7q+9z92Yyl8n6fxPcHr/EXTkxI6Am/JzdLOB99rNwCqIKeXJNqqEn?=
+ =?us-ascii?Q?/PMtkWVOAHCbHsR3PApLIlxozN7sVAASLYcDDLRYQcM2ZGEbxmM/SsL/vXxp?=
+ =?us-ascii?Q?ZfEAVc5emQTjTVirFf4Bijv9NGXenMiubkl7j5GnRsVZk5dRh4puQtT5Ic4N?=
+ =?us-ascii?Q?PkUxXe7bxtGAKr49wYrzvNrrbzaqCkVD66XnGSBqb67ndEcKqTF1FTsPlQP7?=
+ =?us-ascii?Q?9v89QBdhlyAH0IAH1o9boLcZSbzMcRyJQIhJ1oZp1jLZit5CeJ/tbePm88cP?=
+ =?us-ascii?Q?MraJYbtl+th5yu8AtvoRjImiHwUAQMtoPWVrKPd4qNZytFJFUMK2D+AdCo/I?=
+ =?us-ascii?Q?SuY7jtZP9WpnRfA6lot/UZjxLMWdUMpK6k6J7ECNN7gGN0aS5MYBE6RsMQ9/?=
+ =?us-ascii?Q?U9b7IO+okXZgdG3bnvBjtWzm6ornFHBiz+SrXp8TYdp+vRSAq3J3fnyfEkCg?=
+ =?us-ascii?Q?DhvNBZnz/qC1CRz6pAMP1lcVxixE0DbHCVys3eMdPoI2Y2orq8eYQnS/C91q?=
+ =?us-ascii?Q?KUA8tcTAYPcPpgfdRTVOgbwdvPhCzsx+Vn+oVWv5kVVcma70kWowUjhor7Ue?=
+ =?us-ascii?Q?QuuxC3GgsoIWKbxuhPMF1WFwvCd5KP5IOKv4WsLdizQLQpR8wc6souEWfsrZ?=
+ =?us-ascii?Q?YL7XZeL2ZNR4q45XWSzQnLwxn8xGydpnH+Q1sB7jOvaqd3mqP74/I6MJ5pl/?=
+ =?us-ascii?Q?cEPcrI5tEYgxG+xHVcAMW1eHInabxuOh4eOAFvy1xJH5XuIHRKSLJ+r3NQIa?=
+ =?us-ascii?Q?tFuHYEKy44dWieJld3IQFITHKLCRO82CD5VJc6sLqyffVOaxCdlMpFen1Msi?=
+ =?us-ascii?Q?rMNFdPIZ3bdFGzj0UtbeEfml1G0X/YEzo19onoiZ1YcxZ2oLLeO6s0nkJ+5i?=
+ =?us-ascii?Q?MAv0ZThhh/dU7mYbuBZmcbYO31wLIT37o95P6HCZUweYjFkEXtYMW57sWgcg?=
+ =?us-ascii?Q?mTKPc14U2u1KYdDTK/fLOM0cZnG0bCFDSHP59YB9vlJR9rXxNBOb4Tvr4eu1?=
+ =?us-ascii?Q?y+apgNPwLUVg0vYGoyOzRx2vZZXYbsB9cdWJUXarezRayvemLPrEuQgNE1kB?=
+ =?us-ascii?Q?+hNTbA2mGq5TetuDMjGaSrpx+/IoBQ/fC79Lup1zc4i2Ilaz8eOWnLhD+NPv?=
+ =?us-ascii?Q?XMhum89GvaMUZIBq6P58sgyQBlruJ/a7R+OiHIBwPWjgVfYd5xk9fHPk5OWu?=
+ =?us-ascii?Q?RTCtHOv416fz31c7K0YDyuFUHHu2jwrnL6jR7w09MMuRQyMQi9rD7EFt6AYE?=
+ =?us-ascii?Q?HhbNYnSw8vEGgh5UOuJX1pAwLCib3eXeubh74e0rUO0AiBPOiN3O6X192SSz?=
+ =?us-ascii?Q?91VeHQbWIWBcd+3ryRa2PqEK9IH1EuiVcxpEJ7XMe6wRBjSbaUf+iIdNZSMt?=
+ =?us-ascii?Q?2IKe1bH4UlgIJst9k+iYQX14y8NucytiW0w96YeoyiO7huN7KwHGYCAKCgYS?=
+ =?us-ascii?Q?K9mOl35S+cc3adyk68c361bpOScghJLRwaBqvRfPvvg3r2OQQCttk1vGRFiI?=
+ =?us-ascii?Q?xiTI1pl7QxYpq6c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026)(30052699003)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 10:02:18.5132
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f865392f-f1f8-4b7d-0509-08dd67964caa
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002310.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8035
 
-Hi,
+Hi Rob,
 
-On Thu, Mar 20, 2025 at 12:29=E2=80=AFAM kernel test robot <lkp@intel.com> =
-wrote:
->
-> Hi Prabhakar,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on net-next/main]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/dt-bindi=
-ngs-net-dwmac-Increase-maxItems-for-interrupts-and-interrupt-names/20250319=
--050021
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/20250318205735.122590-4-prabhaka=
-r.mahadev-lad.rj%40bp.renesas.com
-> patch subject: [PATCH net-next v4 3/3] net: stmmac: Add DWMAC glue layer =
-for Renesas GBETH
-> config: s390-allmodconfig (https://download.01.org/0day-ci/archive/202503=
-20/202503200755.DoMipQnf-lkp@intel.com/config)
-> compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b=
-5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20250320/202503200755.DoMipQnf-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202503200755.DoMipQnf-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-> >> drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:125:7: error=
-: use of undeclared identifier 'STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP'
->      125 |                            STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP |
->          |                            ^
->    1 error generated.
->
-The dependent patch [0] has now merged into net-next, with this we
-shouldn't be able to see this build issue.
+Thanks for your comment.
 
-[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git=
-/commit/?id=3D0c1f1eb65425
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>=20
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>=20
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>=20
+>   pip3 install dtschema --upgrade
+>=20
+>=20
+> New warnings running 'make CHECK_DTBS=3Dy for arch/arm/boot/dts/aspeed/' =
+for 20250312045802.4115029-1-wthai@nvidia.com:
+>=20
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /: compatibl=
+e: 'oneOf' conditional failed, one must be fixed:
+> 	'nvidia,gb200nvl-bmc' is not one of ['delta,ahe50dc-bmc', 'facebook,gala=
+xy100-bmc', 'facebook,wedge100-bmc', 'facebook,wedge40-bmc', 'microsoft,oly=
+mpus-bmc', 'quanta,q71l-bmc', 'tyan,palmetto-bmc', 'yadro,vesnin-bmc']
+> 	'nvidia,gb200nvl-bmc' is not one of ['amd,daytonax-bmc', 'amd,ethanolx-b=
+mc', 'ampere,mtjade-bmc', 'aspeed,ast2500-evb', 'asrock,e3c246d4i-bmc', 'as=
+rock,e3c256d4i-bmc', 'asrock,romed8hm3-bmc', 'asrock,spc621d8hm3-bmc', 'asr=
+ock,x570d4u-bmc', 'bytedance,g220a-bmc', 'facebook,cmm-bmc', 'facebook,mini=
+pack-bmc', 'facebook,tiogapass-bmc', 'facebook,yamp-bmc', 'facebook,yosemit=
+ev2-bmc', 'facebook,wedge400-bmc', 'hxt,stardragon4800-rep2-bmc', 'ibm,miha=
+wk-bmc', 'ibm,mowgli-bmc', 'ibm,romulus-bmc', 'ibm,swift-bmc', 'ibm,withers=
+poon-bmc', 'ingrasys,zaius-bmc', 'inspur,fp5280g2-bmc', 'inspur,nf5280m6-bm=
+c', 'inspur,on5263m5-bmc', 'intel,s2600wf-bmc', 'inventec,lanyang-bmc', 'le=
+novo,hr630-bmc', 'lenovo,hr855xg2-bmc', 'portwell,neptune-bmc', 'qcom,centr=
+iq2400-rep-bmc', 'supermicro,x11spi-bmc', 'tyan,s7106-bmc', 'tyan,s8036-bmc=
+', 'yadro,nicole-bmc', 'yadro,vegman-n110-bmc', 'yadro,vegman-rx20-bmc', 'y=
+adro,vegman-sx20-bmc']
+> 	'nvidia,gb200nvl-bmc' is not one of ['ampere,mtjefferson-bmc', 'ampere,m=
+tmitchell-bmc', 'aspeed,ast2600-evb', 'aspeed,ast2600-evb-a1', 'asus,x4tf-b=
+mc', 'facebook,bletchley-bmc', 'facebook,catalina-bmc', 'facebook,cloudripp=
+er-bmc', 'facebook,elbert-bmc', 'facebook,fuji-bmc', 'facebook,greatlakes-b=
+mc', 'facebook,harma-bmc', 'facebook,minerva-cmc', 'facebook,yosemite4-bmc'=
+, 'ibm,blueridge-bmc', 'ibm,everest-bmc', 'ibm,fuji-bmc', 'ibm,rainier-bmc'=
+, 'ibm,sbp1-bmc', 'ibm,system1-bmc', 'ibm,tacoma-bmc', 'inventec,starscream=
+-bmc', 'inventec,transformer-bmc', 'jabil,rbp-bmc', 'qcom,dc-scm-v1-bmc', '=
+quanta,s6q-bmc', 'ufispace,ncplite-bmc']
+> 	'aspeed,ast2400' was expected
+> 	'aspeed,ast2500' was expected
+> 	from schema $id: http://devicetree.org/schemas/arm/aspeed/aspeed.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /: failed to=
+ match any schema with compatible: ['nvidia,gb200nvl-bmc', 'aspeed,ast2600']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: timer: 'cloc=
+ks' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /sdram@1e6e0=
+000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-eda=
+c', 'syscon']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: bus@1e600000=
+: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+> 	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.y=
+aml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: syscon@1e6e2=
+000: 'smp-memram@180' does not match any of the regexes: '^interrupt-contro=
+ller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^si=
+licon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.ya=
+ml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pinctrl: emm=
+cg5_default:groups:0: 'EMMCG5' is not one of ['ADC0', 'ADC1', 'ADC10', 'ADC=
+11', 'ADC12', 'ADC13', 'ADC14', 'ADC15', 'ADC2', 'ADC3', 'ADC4', 'ADC5', 'A=
+DC6', 'ADC7', 'ADC8', 'ADC9', 'BMCINT', 'EMMCG1', 'EMMCG4', 'EMMCG8', 'ESPI=
+', 'ESPIALT', 'FSI1', 'FSI2', 'FWQSPI', 'FWSPIABR', 'FWSPID', 'FWSPIWP', 'G=
+PIT0', 'GPIT1', 'GPIT2', 'GPIT3', 'GPIT4', 'GPIT5', 'GPIT6', 'GPIT7', 'GPIU=
+0', 'GPIU1', 'GPIU2', 'GPIU3', 'GPIU4', 'GPIU5', 'GPIU6', 'GPIU7', 'HVI3C3'=
+, 'HVI3C4', 'I2C1', 'I2C10', 'I2C11', 'I2C12', 'I2C13', 'I2C14', 'I2C15', '=
+I2C16', 'I2C2', 'I2C3', 'I2C4', 'I2C5', 'I2C6', 'I2C7', 'I2C8', 'I2C9', 'I3=
+C1', 'I3C2', 'I3C3', 'I3C4', 'I3C5', 'I3C6', 'JTAGM', 'LHPD', 'LHSIRQ', 'LP=
+C', 'LPCHC', 'LPCPD', 'LPCPME', 'LPCSMI', 'LSIRQ', 'MACLINK1', 'MACLINK2', =
+'MACLINK3', 'MACLINK4', 'MDIO1', 'MDIO2', 'MDIO3', 'MDIO4', 'NCSI3', 'NCSI4=
+', 'NCTS1', 'NCTS2', 'NCTS3', 'NCTS4', 'NDCD1', 'NDCD2', 'NDCD3', 'NDCD4', =
+'NDSR1', 'NDSR2', 'NDSR3'
+>  , 'NDSR4', 'NDTR1', 'NDTR2', 'NDTR3', 'NDTR4', 'NRI1', 'NRI2', 'NRI3', '=
+NRI4', 'NRTS1', 'NRTS2', 'NRTS3', 'NRTS4', 'OSCCLK', 'PEWAKE', 'PWM0', 'PWM=
+1', 'PWM10G0', 'PWM10G1', 'PWM11G0', 'PWM11G1', 'PWM12G0', 'PWM12G1', 'PWM1=
+3G0', 'PWM13G1', 'PWM14G0', 'PWM14G1', 'PWM15G0', 'PWM15G1', 'PWM2', 'PWM3'=
+, 'PWM4', 'PWM5', 'PWM6', 'PWM7', 'PWM8G0', 'PWM8G1', 'PWM9G0', 'PWM9G1', '=
+QSPI1', 'QSPI2', 'RGMII1', 'RGMII2', 'RGMII3', 'RGMII4', 'RMII1', 'RMII2', =
+'RMII3', 'RMII4', 'RXD1', 'RXD2', 'RXD3', 'RXD4', 'SALT1', 'SALT10G0', 'SAL=
+T10G1', 'SALT11G0', 'SALT11G1', 'SALT12G0', 'SALT12G1', 'SALT13G0', 'SALT13=
+G1', 'SALT14G0', 'SALT14G1', 'SALT15G0', 'SALT15G1', 'SALT16G0', 'SALT16G1'=
+, 'SALT2', 'SALT3', 'SALT4', 'SALT5', 'SALT6', 'SALT7', 'SALT8', 'SALT9G0',=
+ 'SALT9G1', 'SD1', 'SD2', 'SD3', 'SGPM1', 'SGPM2', 'SGPS1', 'SGPS2', 'SIOON=
+CTRL', 'SIOPBI', 'SIOPBO', 'SIOPWREQ', 'SIOPWRGD', 'SIOS3', 'SIOS5', 'SIOSC=
+I', 'SPI1', 'SPI1ABR', 'SPI1CS1', 'SPI1WP', 'SPI2', 'SPI2CS1', 'SPI2CS2', '=
+TACH0', 'TACH1', 'TACH10'
+>  , 'TACH11', 'TACH12', 'TACH13', 'TACH14', 'TACH15', 'TACH2', 'TACH3', 'T=
+ACH4', 'TACH5', 'TACH6', 'TACH7', 'TACH8', 'TACH9', 'THRU0', 'THRU1', 'THRU=
+2', 'THRU3', 'TXD1', 'TXD2', 'TXD3', 'TXD4', 'UART10', 'UART11', 'UART12G0'=
+, 'UART12G1', 'UART13G0', 'UART13G1', 'UART6', 'UART7', 'UART8', 'UART9', '=
+USBA', 'USBB', 'VB', 'VGAHS', 'VGAVS', 'WDTRST1', 'WDTRST2', 'WDTRST3', 'WD=
+TRST4']
+> 	from schema $id: http://devicetree.org/schemas/pinctrl/aspeed,ast2600-pi=
+nctrl.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/sys=
+con@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['=
+aspeed,ast2600-smpmem']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/sys=
+con@1e6e2000/interrupt-controller@560: failed to match any schema with comp=
+atible: ['aspeed,ast2600-scu-ic0']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/sys=
+con@1e6e2000/interrupt-controller@570: failed to match any schema with comp=
+atible: ['aspeed,ast2600-scu-ic1']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/dis=
+play@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600=
+-gfx', 'syscon']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: adc@1e6e9000=
+: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-ad=
+c.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: adc@1e6e9100=
+: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-ad=
+c.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: crypto@1e6fa=
+000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acr=
+y.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/tim=
+er@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-t=
+imer']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: lpc@1e789000=
+: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: lpc@1e789000=
+: reg-io-width: 4 is not of type 'object'
+> 	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@24: 'clo=
+cks' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
+mc.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@28: 'clo=
+cks' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
+mc.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@2c: 'clo=
+cks' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
+mc.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: kcs@114: 'cl=
+ocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
+mc.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/lpc=
+@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2=
+600-lhc']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/lpc=
+@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast=
+2600-ibt-bmc']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: sdc@1e740000=
+: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+> 	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: sdc@1e740000=
+: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+> 	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/sdc=
+@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['asp=
+eed,ast2600-sdhci', 'sdhci']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/sdc=
+@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['asp=
+eed,ast2600-sdhci', 'sdhci']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c@80: Unev=
+aluated properties are not allowed ('disable-master' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/aspeed,i2c.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@21: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+1: $nodename:0: 'i2c-switch@71' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+1: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+4: $nodename:0: 'i2c-switch@74' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+4: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+2: $nodename:0: 'i2c-switch@72' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+2: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@21: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+3: $nodename:0: 'i2c-switch@73' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+3: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+0: $nodename:0: 'i2c-switch@70' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+0: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+5: $nodename:0: 'i2c-switch@75' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+5: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+4: $nodename:0: 'i2c-switch@74' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+4: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+6: $nodename:0: 'i2c-switch@76' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+6: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@21: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+7: $nodename:0: 'i2c-switch@77' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+7: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: max31790@20:=
+ '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-=
+9]+$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: max31790@23:=
+ '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-=
+9]+$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: max31790@2c:=
+ '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-=
+9]+$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: max31790@2f:=
+ '#address-cells', '#size-cells' do not match any of the regexes: '^fan-[0-=
+9]+$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@20: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@21: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@27: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: pca9555@74: =
+'#address-cells', '#size-cells' do not match any of the regexes: '^(hog-[0-=
+9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+7: $nodename:0: 'i2c-switch@77' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+7: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+7: $nodename:0: 'i2c-switch@77' does not match '^(i2c-?)?mux'
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: i2c-switch@7=
+7: Unevaluated properties are not allowed ('#address-cells', '#size-cells',=
+ 'i2c@0', 'i2c@1', 'i2c@2', 'i2c@3' were unexpected)
+> 	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: fsi@1e79b000=
+: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+> 	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-ma=
+ster.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/fsi=
+@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi=
+-master', 'fsi-master']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: fsi@1e79b100=
+: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+> 	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-ma=
+ster.yaml#
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/fsi=
+@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi=
+-master', 'fsi-master']
+> arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dtb: /ahb/apb/dma=
+-controller@1e79e000: failed to match any schema with compatible: ['aspeed,=
+ast2600-udma']
 
-Cheers,
-Prabhakar
+
+Will add the binding into the yaml file in the next version.
+
+The other warnings are coming from the dtsi itself.=
 
