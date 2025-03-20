@@ -1,322 +1,253 @@
-Return-Path: <linux-kernel+bounces-569070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36107A69E26
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:14:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2B8A69E29
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED4F1898066
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB5A46058C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B331D79B4;
-	Thu, 20 Mar 2025 02:14:10 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABBE1DEFFC;
+	Thu, 20 Mar 2025 02:14:15 +0000 (UTC)
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2107.outbound.protection.outlook.com [40.107.255.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D622CCA5;
-	Thu, 20 Mar 2025 02:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7651DDC0F;
+	Thu, 20 Mar 2025 02:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.107
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742436849; cv=fail; b=WS2lmcrqqurZC5MqkAWLB/isaBYcYRaTetCxRZ7mmROzdUsZkK4tC/jva/3/ZBPGVsFJAAG+qELBVzNYtocumU85TS1G1/fbofe6lqfymy/fmE7yolTvE/NKADKcfbtXdjM1NAYlD9Fidl7hedZJwL9Mrf4G+Y8N7iTttHYdsak=
+	t=1742436854; cv=fail; b=XIHwFOIamFZ1OKAcIKH7XKfHXUbPpfdp7m6nP+UmUO7/Resk6jVWYz7Npc0fzlf2MBgw2xFd4F6ic9X66H1iWvRG7iLQBVJrkZBiRiIY7tghnpF5ZS6hYvyoKj3c7jDAcHNV3asduIfGsakqZyUccE1jR7BntkfjlAHQkBZTWJU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742436849; c=relaxed/simple;
-	bh=w0/tOr5y/X3UXx4OodEQdbTBVk7WqvGMfmkHBDqGtWc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WQPlkzjluayvp4t5o1nywBrxGoQmuTqIJ+fIkkcs36wySQjZ/gsI+x5czSVCLAo+oRBYT0JfkoalVdGjk/6bu810KTsLWjxtUjPzTkIdvD95rdFP5cPcEnorQeoZfE2/HL/4rUWztQ47SpDcBz+9PhcWia0eUQAg4mm6RsPvXqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K1tbbq010162;
-	Thu, 20 Mar 2025 02:13:11 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45d0h95buv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 02:13:11 +0000 (GMT)
+	s=arc-20240116; t=1742436854; c=relaxed/simple;
+	bh=mGa40P14z87q9UhinjwTTzefgdX4h+CpXVvtj4KtKSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P46z5DeFzsHSQIcZ3tubAZjT9j/Khd9ald/KZq0zxQuLpFhepabyqFwi2t62psqDVOagIt07EJjsw/lgKLhi2+VUCPC7nMmnGH6BQwQTT6kiqmJRLVGW2hdnv1+F78gDGjfhcysdjFuUZzKiwVGG2WtnIBNJvuFeVAqrmAkdB2c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.255.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hmD73+l9FywHVHQhpT6Dj9h0EyrUYwrHCQ3iOAqPGzxzDuAKWRwaxSZsrCvuv2vOrjOXOJHOw+jUXyULitoManfziOHUDUf2MGqEHVG4YY1ZG1AQ3eJwZ4ZEVa+w39htyyMQpCQxZdJaD1/LmubqOq+yOXNmz7dI+aaT6lpiRMSxBtNMKt3ezQm6yGbk1E2nUL0RSg7NJc3oHRYjJqfhW1xac6p6HONy6F7aagTzB5YYCqgO0S0SSFc8Wg7Cdk0JUaXunjEh3jJyvLg/rEZElRoTNVR0AWnjqF//59YKyZzso0kV59TInALYP7CjBwEIVJkoq1OW/R6NPwlSf9ILww==
+ b=QPgrQHdo2dbK7fLMrNqXarrIjU85hGMmbnHK4JFcPW7DsjOzuOOmv6LcIHBPzg8vVsinKqRgZ87kWNVlsBN11UVz1KzBpBpzXVrA3ohTLo+rm6VozFo5Z/8v2Vs8xmFV9weWo6Mmxor1sDxIARfX9kJqhmlx/ICzU1uaGg57s9U/aBXnoqX0iRNJBTkxvX9ZL3C2XajHaCgfqpv7m9vuYejL529eM4j+1mvwVnatuPAtE6zSdib4oDxGefP+c8GlDrOPNeLlxAfHZpHai+F0nmfx4dwUp6ULrDTgYdKEBTEVXsT6takkRw0nV6gu/fFhJE4fqS+0NUEzDOD09Ypozg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rcb6L2L31bHJR9+BiGl5DrnxJ1oxtEyRKoRrB+FfJtU=;
- b=doEPt4dSEuRW5rKQ5pCml9M92JZ2js9IXn9MmuT4QlIUbn4Ww5BK5xdlO7PR+7miYnzzyVuj74OBUVLvR6XUi7u1rs/3bMaDUCS4beF+HX9K6wYeLp5NWgRaK7uWkyEF6DjN1s23siwJbo8TW1BV4Y6EGNIPWwhqnEKzpi4Hy9Jvm10H1WWR4pjGJttuUTJbRFy/dF6P8tmdG7ssbgCmQco9R7rYHXrJg0ky2DkDB0XjN0ffSAITgP8++O04kN1AiAbYwFbhtXGky+KSMRyIdNknudLf8BFRUskriUxBoESpql89TWF5IIGKZbRd9cvzVQmE/DBYyG16PMkPtZvrgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from CY8PR11MB7012.namprd11.prod.outlook.com (2603:10b6:930:54::6)
- by CO1PR11MB5076.namprd11.prod.outlook.com (2603:10b6:303:90::7) with
+ bh=HO8uAZnfu0nzvmrRg0SbaV0AmWMoDGkZFQkPpU7xqAY=;
+ b=RO3SxeYXP3JbW6omGSxxf/LRN0CtyK1KdZigqwnzk0HLbq8QmL5AHPpsgDjD+FysplQuYp8JrVq3WhQd3EHxcsizx8AgfwMREx8UavDtfZltKehx6veAxyH4IK00g3CUiIfvdAOALfdbcWb/9JR29oimfQZbNW85E3qy7NzvZQIT0/SAEvuQfsvQ/+uovgnkzg+io1do69tRb+HjfH4Zl4MYmSs8pQhXJqhpcXp0U8zrKuadzj3N+Zw1llU9YgklDAC9IUIf0icItll1iUAizLvcRXT+11T+roIzJAJ8FgjzEbeJOTU4X5/S7fMY6rnydqRDPyIUlJnlDRI/T7fuSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=bootlin.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from PS2PR02CA0012.apcprd02.prod.outlook.com (2603:1096:300:41::24)
+ by JH0PR06MB7055.apcprd06.prod.outlook.com (2603:1096:990:6e::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 20 Mar
- 2025 02:13:07 +0000
-Received: from CY8PR11MB7012.namprd11.prod.outlook.com
- ([fe80::83d5:946f:3692:8c0d]) by CY8PR11MB7012.namprd11.prod.outlook.com
- ([fe80::83d5:946f:3692:8c0d%4]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
- 02:13:07 +0000
-Message-ID: <4a248d5e-fb81-4f45-aaec-79c36f93e14b@windriver.com>
-Date: Thu, 20 Mar 2025 10:12:54 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1.y] smb: prevent use-after-free due to open_cached_dir
- error paths
-To: Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
-        stable@vger.kernel.org
-Cc: sfrench@samba.org, pc@cjr.nz, lsahlber@redhat.com, sprasad@microsoft.com,
-        tom@talpey.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        paul@darkrain42.org, Zhe.He@windriver.com
-References: <20250319090839.3631424-1-donghua.liu@windriver.com>
- <2025031913-unclaimed-ocean-06f5@gregkh>
-Content-Language: en-US
-From: Cliff Liu <donghua.liu@windriver.com>
-In-Reply-To: <2025031913-unclaimed-ocean-06f5@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0276.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c9::13) To CY8PR11MB7012.namprd11.prod.outlook.com
- (2603:10b6:930:54::6)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
+ 2025 02:14:05 +0000
+Received: from OSA0EPF000000C9.apcprd02.prod.outlook.com
+ (2603:1096:300:41:cafe::51) by PS2PR02CA0012.outlook.office365.com
+ (2603:1096:300:41::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.35 via Frontend Transport; Thu,
+ 20 Mar 2025 02:14:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ OSA0EPF000000C9.mail.protection.outlook.com (10.167.240.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 02:14:04 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 6A5354160CA0;
+	Thu, 20 Mar 2025 10:14:03 +0800 (CST)
+Message-ID: <a8966792-fa0e-4e8e-aceb-427819ae4ef5@cixtech.com>
+Date: Thu, 20 Mar 2025 10:14:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Loadable Module support for PCIe Cadence and J721E
+To: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ Peter Chen <peter.chen@cixtech.com>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "vigneshr@ti.com" <vigneshr@ti.com>, "kishon@kernel.org"
+ <kishon@kernel.org>, "cassel@kernel.org" <cassel@kernel.org>,
+ "wojciech.jasko-EXT@continental-corporation.com"
+ <wojciech.jasko-EXT@continental-corporation.com>,
+ "thomas.richard@bootlin.com" <thomas.richard@bootlin.com>,
+ "bwawrzyn@cisco.com" <bwawrzyn@cisco.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "srk@ti.com" <srk@ti.com>
+References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+ <Z9pffxeXHVOsoi4O@nchen-desktop> <20250319062534.ollh3s5t7znf5zqs@uda0492258>
+ <Z9qO1f5MgNcwO5A4@nchen-desktop> <20250319095511.hf3y2c6vbbnm3ien@thinkpad>
+Content-Language: en-US
+From: "hans.zhang" <hans.zhang@cixtech.com>
+In-Reply-To: <20250319095511.hf3y2c6vbbnm3ien@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7012:EE_|CO1PR11MB5076:EE_
-X-MS-Office365-Filtering-Correlation-Id: f243f18f-0a2b-472c-97e1-08dd6754c111
+X-MS-TrafficTypeDiagnostic: OSA0EPF000000C9:EE_|JH0PR06MB7055:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0d0263f-7156-4daa-d885-08dd6754e353
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014;
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TUF3WEJtamZjRWZ2WDhDcFhIditxWlUrY2dvMlcvQlBOQUNtUDN5OG9lR1Rl?=
- =?utf-8?B?WXphT2pMLzdUbEZlNVJ2T3NIeWVPaGZjK0c1VHM1Y1VMMTRDc3BhUUthZzVO?=
- =?utf-8?B?MlVtd3pMSXltU21yTkFvU0k4bCtWVWNSanRsYlNpVy9jZ3ozNDViNHRCVWgx?=
- =?utf-8?B?T1ZUaG5uWVloZ0dvTFA3MG9yS2lpbE42bFhkc0dzeVFneG8xYlZzTHBINUJU?=
- =?utf-8?B?cThOTEN1UEZmSEJ3cUFua2c5SFVvYlE2THlzcThFc1I0dk9EeFhCNkM5Z080?=
- =?utf-8?B?VXZJQ25KRStCa0FVWmJEai9tMEI2UmhweldKdit6VUlkS051WUwxdVJWdVFZ?=
- =?utf-8?B?UHFHRCt1dWJBNkNoSWI3WnVaQ1Bwa1lueUZ4UFRnSVFMQStSRG4xdFNnenYv?=
- =?utf-8?B?VTdjanpvM3Jwck1ac2ZlSDR5ZWw3dGZkbVF6bGYxaWNXRER3ZTJtOUN1MWN5?=
- =?utf-8?B?Z0Jjc0x0aGt6dm9iV0NNZDNDbld4VGJSTnE1aVJNbFFMMXpiVzZNc09wckFv?=
- =?utf-8?B?Y014S2d6VUFUZzRjWisrS1RZNHNxUXZ3NjJZcEtsSnZUN2NsMXVjOHJtRU8r?=
- =?utf-8?B?UHpTdENEdzhMWmJaT21PVXByMFlrQ09MbHBZL3JvOUNxME5iRjlnQTluNU9G?=
- =?utf-8?B?bHBYSUZkbHdmL3Z5bUFGMEpkQ1QxN3BaaU5GN1lOdEQ2VDVnUkVlU1NkNUFO?=
- =?utf-8?B?MENXcllTbTdla1ZpcUczejFBMjU4RFJZR1ZMa3k2R0xYSklBNTNrdE9kMkhv?=
- =?utf-8?B?UWRmNFBQZjBKMWJ5ZFg2dDAwWTFaQWhPaHZPR3JHbW1TNFVacnk2a0Q2RFU0?=
- =?utf-8?B?LzlHZnNMYzZ5N3B1OEJwV2hsTnVoam9BbzlPY3ZyQ1MzZ2RsTDRpTzB3M0Jm?=
- =?utf-8?B?TmhIWHlQWFhiS1g2RitmejErbEdrVS9nalZpNDFLeGt5ZkJ5bjQvaGlMR1g2?=
- =?utf-8?B?MG5jbVdXKzRDNE9XQVhOV1g1WXFtMnZ1UXFqMnFQWWpIT2w3dFRQbE0zY1E1?=
- =?utf-8?B?SkNtUEFOUENFOVZMZlRkTTI3aWltbGNCVEt6OFF2USt6RGRCWWJXai84L0hp?=
- =?utf-8?B?NXY5OVZUNGpoc0Urb2ZvWW0zT3JOdE16My9HdEp0WDVGOUo5TnhHeGZuQTIv?=
- =?utf-8?B?UVFVdnkwbXh6Ykc3bk1pam41YWJVU1NMdHpIRTUrV2xrUEFtZVh3TEtaVjZE?=
- =?utf-8?B?OXo5RTNUSmtSbkFUVFFSaXRoVEpPbDh1cnJMRHBtek9QOGhIMUY5TUZDS3g0?=
- =?utf-8?B?ZlZOWkpVWmd0cS9Zb1dyazdSS050d05UU1RiTUZjcDRKY0hkKzZpWVdHd2FZ?=
- =?utf-8?B?T1NtTy9TS2JTNy9WTGg1ZEV4TVpDNnJjYk5sRElWdFRNK2IvdkUxV2tEeEpM?=
- =?utf-8?B?enNuVmRIdXYvb2hwOTNseHpCZVNOT3g2VmZpcjFnWlZBaE5LS1E4QTMrdjdU?=
- =?utf-8?B?UDNuTFFtYkZ3bWkvVytCQnF2a1lYREJaMVVMNWpkaVZFMUxiQkdlaE0rbnQr?=
- =?utf-8?B?Z2dvQzAxQWFyVmJjTjRlRitNRHNVditLM2Z3WGhta2J3ell2QWZXa3VyWUQw?=
- =?utf-8?B?cTUrSE1CRVNyOE1UZjVYbTloQWVWcTlRUGpSUWI0QUNPVzZGOHdXcFJXTXl2?=
- =?utf-8?B?M3FlSG45UjBrNVZlckQyYjR2Qm9yZGVJdkJmN3BRSjU4d2FaWjNUUWhvejFx?=
- =?utf-8?B?YU9TWmRkNFBjbVQwMUpHaExpY29SUkNoNStPbm9yV1UySnRCUnh6eDRUV0l3?=
- =?utf-8?B?QmRpUFJQN2JnK0JURHJhOW53WUpIK1lzdmpsYnROdE91NitlTGR3dFp0RWR2?=
- =?utf-8?B?ejJJZlo3STlDeW5GMnpsenU5TGpKZWttYkNWUjB0bE9VOExZeVdPZnJSVWdW?=
- =?utf-8?B?QzMwWXUzdVpTbUE2N0lXQzUrcDdwUVJJY0dWU2VvaFFmL0s4Z2kyaFBsQ29X?=
- =?utf-8?Q?9LVv/yE/1urHvxr1J0SgQNVHBjiPl5L5?=
+	=?utf-8?B?RWR3VmNZUDhpYUtwVE45Z3JHaXNjNGhQT0tUM2RwRm8rTnZFOUNoa1ZCV1Mw?=
+ =?utf-8?B?RnA5SEkxWlpXSlcxcDJVem1IRjNJL3pRaGZOM0pabVpRWDB2OElibW82dmIz?=
+ =?utf-8?B?QXpiV1Vvd0FuRDVIU2VWaEtIZ0x5VHU5MjNtUzQvbE5ZdmJUYXhWOHBXNndT?=
+ =?utf-8?B?UEIvREpaMThYZU5Obkd5ck56SXg2VVhkYVF0NkZNc3NBbDI2S2pEa1RYT0dI?=
+ =?utf-8?B?VnRFVUh3aFZ3Z09rZWwvY3lKV2xGckg5TWxRd3M1MEhRVE9jeUlpaGpRdG9p?=
+ =?utf-8?B?NE14YWhiekMrOEN3dDdYb0NsMDh5NWxxSFFDRGdzYkQxTk5nWC9oY29SSWRI?=
+ =?utf-8?B?SThRa2FNWDV5M3lnbStHMFU5Nnl2aTRNakpRdDFBWjZEV1EydDNPU1NseFBw?=
+ =?utf-8?B?d2JrS2ZYaEZRWnVlb2JxY05kTVREcjdzQ2ZEYmhVcHF0YzBRdW1aSXA5TTFw?=
+ =?utf-8?B?SExKNjhhWVFRbnhjck5nWjJuZ2QwMVkwVFAxNXhPQ2VwTHQwQ2NpWksvcGRM?=
+ =?utf-8?B?L1RGRG1JekUyWjU5c3N2UFVxYjFwazVvS044ajh1TVZIYkhkc0c1SXdMVE9x?=
+ =?utf-8?B?RTFITERTUkVjVEx3ZE0zYllUYlMzSERVQzBEV3F5enI3Q3U3Zm5TNjIyTGYz?=
+ =?utf-8?B?ejdNbTA1MGh0NnRZZWdQMzMvSjR5aEN4Zm9qQUlHNkhlYTk2Y0swblpMcERj?=
+ =?utf-8?B?aThnWlQrcVgwbDkySVd2Y2NTUk90YjlOcnRKYUx6bWxqN1pMRkJQQ3dLRmJP?=
+ =?utf-8?B?ejcvMTdiVXJrSlNURjlEQWtTRUJWM1NWU3dHMFRvOVFNRWpkR3FNZDd2VVUv?=
+ =?utf-8?B?MW1PTGd2NHVuektEc0Y1M3JJY3gxeUhwZm9ORzM2bGR4VzcvcEVUcURTWFk4?=
+ =?utf-8?B?U0VLMGpsRlp0TjY1SHdYS0xkdENnVXJDRUlTQzFnM1h2eHgyclNVWVd3SDlw?=
+ =?utf-8?B?NDEyVGtZVjRjZVJCRG10aHkxdU0rU2N2UFlUQm9CZzE3UlptendoZjNyUVFl?=
+ =?utf-8?B?ZjNoaHQxUzNqUFlVT2FZT0dya05rNGtMeHM3Uk96cDVBTXljdEd5SFlWVzda?=
+ =?utf-8?B?MElvdEdvNDJMYjV3V0M5d3VkRkk5NCsxYmNKSVVscGtoWGx4V0NvNzByUEsv?=
+ =?utf-8?B?T2kyUVV2a0VuSUVsNC8ybjhwc0ZNWVhBMjUrSVJueHpUdFBBNFltSUF4dVdQ?=
+ =?utf-8?B?K0JXZ2djTHpnSEVya2l1T21teWQrMmg1SkFLZ0FSSEFJU0RPQW9GMlJuMFRL?=
+ =?utf-8?B?aWt5TXFIODJiaEZyc2ZLZUdPelpUZ3hUQmRaemFMVE84YzdFbkJZTzY3d3dx?=
+ =?utf-8?B?VEhzRFRGZEpyVmF0T29EZHJsYkFxU3o2Yll5UXhKZDlkT1hGbktueDBPWU5G?=
+ =?utf-8?B?ZjAwNHQ2cWRQanA1eW1yYkxjNzNBREI3a0Ixb0xRaU5LQjFxQWN5Z011UmRu?=
+ =?utf-8?B?Qi9vTnJzd3NnQnlvR3dHRHo0NUNWWnUxc0krcmpybDhQTS9MeXNqVmhMc2Z1?=
+ =?utf-8?B?ZHB5Qlg4UVQrSDcrNnA2SjNsWis5Mmp5WmJjSHJLNHVTNC9yWk5UNFA5azVY?=
+ =?utf-8?B?K3AzL05YZ0hxa0NxS3ljMmRpOGZSMnh6aXFBNHR0d3hBck03THRSQ3MwY2dW?=
+ =?utf-8?B?cnNFMjdrSDVybUtoUEFNd3JrWnVxTTNvL0IybGNCWno2Y2FNSVZCTkk2QlUx?=
+ =?utf-8?B?amRqS1FicFFaR0tNQ2RuYVl0bS9QZXA4bzdKUHRRL2xLaTNzTm11ZzdXRU5S?=
+ =?utf-8?B?VDRaZm5UQndoVUtzSzBjQ1liU0VRY281c1RrZE5FQ3QrZDVWTXN2clJCRmZI?=
+ =?utf-8?B?enJoYlpmcExvR1hrMjB2YU5IOFJ1eGtMYnJmb0F4S1VpeGRQVi96TDFlcWVp?=
+ =?utf-8?B?V0FpS1NRVzlHQXA4SVF4SUovZERjakprTzJWZHJBamlja0h1Mm01S2FPcDI1?=
+ =?utf-8?B?ZmJxSDlGdXk0Q2M3bGROODBiMGh4VEhWUVhRNHE0OG9YdmkvQkltRVl5Y3BH?=
+ =?utf-8?Q?g2iHpJPHbt8c92txD5AMR5pZD6g2Kg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7012.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RUwyNzBxRzZ6YlIyK1FsS0k0RTZkR250b1NGenBxNVlxNnNvOVV4SGtqYmNL?=
- =?utf-8?B?TldTSXEySk1DMFJzWDV6R2JucFZwVE1SNjlvRlFXYUJ6SlRqTGgzMTIyUVR0?=
- =?utf-8?B?dDRrb1dyRW1oR3EvYmFQM0M2dkQvbGdjdzNSeXEvRjFYd2ROdDVoaVdDaUlt?=
- =?utf-8?B?a1lPWjdmWWhpTllwZmxsOTNOaFdGTnpCN3hTdHhOYjFiM1dYMFBRYXUxZ1dy?=
- =?utf-8?B?TVJkNnVUY1V1UzF2V2JJUmF4M0p4eXJxSE9WMjk0NGcwSExEd3loSzBuZ2ZC?=
- =?utf-8?B?WmdaamljdTB6WjgrajQycFhFZUZkalcrTFdkbEV1TWhwbEZKSFNYdGUrTmFa?=
- =?utf-8?B?UDFHTVJwZVlXYTBiQkRibURrR3RVK3ZXeGdleW1CTS9SU2JwaUhDMkIwOWxT?=
- =?utf-8?B?RWs4MVFkcWdnUVl3VnNHcTVyUkdIbkNyQjh5MWx3bFgwUEZRajRwWXBCcm1Y?=
- =?utf-8?B?aGR6MmNhWnFsVFBhdFMrcHppc0tRUm84TC91K09KT1Jtb2xqL1F6YlRkdzJT?=
- =?utf-8?B?MVJ5WTcrVng3d1hZRHV3MUI0S2gxZFptRE5ra3Bxb1BZQkhYVUJ3bEYwRjVS?=
- =?utf-8?B?bFRIQ0tGckxtL25wbk9VOEcrNFRqenV3L0hoUFFjRnNEZWFPTEJXVjVDczZw?=
- =?utf-8?B?T2tndHdnVEc4R25jNkZ1ZUNnVkNxOVhaVVhlZlFSK0Y5YlNtS2laSTBHbWNh?=
- =?utf-8?B?OUltaVE4QTQ0dGxEMys0c0VwaVI3c2FWRTdQUHh2RE1uZUR3T3VjTlgwOWIr?=
- =?utf-8?B?YlY2ZTArTTFWc2VEWEJ3eXZ5aGltM2h4WUVjQnNzZWgwS0V5UHlZN2crMHBG?=
- =?utf-8?B?cTBwOGZPNEp5R2svZ0IyZXpRc05aQVlHQ2tBbjhBbXJub3hIL2V2T1IyMENy?=
- =?utf-8?B?NUxoS1hlRkwyVmtpYUNxYUEzenhxRndST3pzTWZmUzVvYm42SlY0MzU4aTY1?=
- =?utf-8?B?WGt0eXcweE9yek5SbWV6QjVUa1VLVnp2TXhiQ0k0YnFhaklKMXZ6ZU4yUE5D?=
- =?utf-8?B?MlU2SlR1RW0ycVE3ZEY1enhySFlOVG9lNDJYMEdQb2pKMmRNSHJSNkNLSG90?=
- =?utf-8?B?SDhHOU5uRjl6UEI4TDRRUVRKSGVKZlIwOGJzaXRMdXZJTHcrQThKaEVKdEZC?=
- =?utf-8?B?bWI1Tno2dzFQWE9sMUZML2pwbXV1b3hscFk0akxCVVdwVWxvbTBac3J0dWpX?=
- =?utf-8?B?MXBKcWM1ZlAwWlVyRk5YOE53bEZsWElzdWh1ZFdCTEo1NVNvL3NHMTROZG5H?=
- =?utf-8?B?NXBXVGQxS0t3VUkwOWRKcmNlMlNSNUlUUkhhem1FWmtZV1daVXJjeS9GeHVy?=
- =?utf-8?B?K0pHRWFZeXo4Z2Z2SUlGY0R1MXNlT3BGZDhUVEljZkNUNmZodVpIRXBZcUxn?=
- =?utf-8?B?ME4rRUloeEp3SXBtZGNMbDdySTYwUTl3Sm1sOXg5NlNsSndMWHpCTDNEOUti?=
- =?utf-8?B?bk9PYXl2ZXh3QTRrV0tCZHYrbzd1NGN6VDRNbHRQYkxYVUZkdFJhcUNCcDNZ?=
- =?utf-8?B?emUxYkNNU0NaakxSYzNxU2pGYk1ka0ZFMlA5V0pWejFzNTdrV1BqcDRNMHJ0?=
- =?utf-8?B?OGFXeTJSMytCRUtjdTU4c1J0S1dSNjlkYUFzQXpLd0VBTW8wUVFDbGhja2ZO?=
- =?utf-8?B?L09wVWk2eVVwOGRRVzZpY010a01sb1diUHRKczBuWHZBbmtBTGZLL0dtN21M?=
- =?utf-8?B?NGlCeER0SWtEaDhaakVuTWpxWjRHcjV6a0dXbndJbTd6MU5nZmNCOGNlR293?=
- =?utf-8?B?bDV4RFdWVDIrOFlPVUtVS3NySE8xenJCVUFOZnVvbVRqaW02ZkpSYlJ4VnZU?=
- =?utf-8?B?YWxhRkxNcUE0OGJ6OEV6bmhOYXpaeXcyM2pHelFGTVRNV1hROEkxSnV3MVRG?=
- =?utf-8?B?eDRPYzhpWkxCMzZ2cW9JZTEyQTFBQklDNFJHSURSanhkdGxQbEVkWnZrNyt3?=
- =?utf-8?B?MGtBSDlnTFVwaVU2UENrS3NrVW5jdXRpZ2QwckJaOFFkM2FDVVdkKzBJQTRQ?=
- =?utf-8?B?VXg3NE16NTBEcmVITWNlUjlNK0p0TnRzTityZTIvL3NNbXNLSWU3ZWQ4ODdv?=
- =?utf-8?B?OUVWU0ZJOEMwazBsRk9xYi9ENk9GSTEzTTBweGxwSDRvQVNLYVpaMEI3Zktl?=
- =?utf-8?B?anRjZkRGak9LOTAybVdPYzJxWDlrVjd0TlFMQ2ltU3FXcEpIQk5EZ2NWUHI3?=
- =?utf-8?B?Nmc9PQ==?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f243f18f-0a2b-472c-97e1-08dd6754c111
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7012.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 02:13:07.3000
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 02:14:04.3126
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W47F7jIJjF8qoPZ7KNsLxgJWNzsjIOn8CWxdiRoSo6ljVqeub9ZOl4D4g0bVz6DdcR7mjwlchwBEMSxJTvx+G7XxZhZG6Nsb6zp++tfw0cg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5076
-X-Proofpoint-ORIG-GUID: j7cotVgDdEibsTaA9s43C8zu706fdBBX
-X-Authority-Analysis: v=2.4 cv=ROOzH5i+ c=1 sm=1 tr=0 ts=67db79b7 cx=c_pps a=TJva2t+EO/r6NhP7QVz7tA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=tDSLDpQlAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=TANXYQ9qgNq1aNLOGB0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=jQiStcyIZl8z1Bz5rpD2:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: j7cotVgDdEibsTaA9s43C8zu706fdBBX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_01,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 adultscore=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 malwarescore=0 impostorscore=0 phishscore=0 clxscore=1011
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2503200013
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0d0263f-7156-4daa-d885-08dd6754e353
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: OSA0EPF000000C9.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7055
 
-Hi,
 
-There is upstream id in my local patch, but it is discarded by 'git 
-shend-mail'.
 
-Please ignore this patch. I'll check the reason and send it later.
+On 2025/3/19 17:55, manivannan.sadhasivam@linaro.org wrote:
+> EXTERNAL EMAIL
+> 
+> On Wed, Mar 19, 2025 at 05:31:01PM +0800, Peter Chen wrote:
+>> On 25-03-19 14:25:34, Siddharth Vadapalli wrote:
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> This series enables support to build the PCIe Cadence Controller drivers
+>>>>> and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
+>>>>> Modules. The motivation for this series is that PCIe is not a necessity
+>>>>> for booting the SoC, due to which it doesn't have to be a built-in
+>>>>> module. Additionally, the defconfig doesn't enable the PCIe Cadence
+>>>>> Controller drivers and the PCI J721E driver, due to which PCIe is not
+>>>>> supported by default. Enabling the configs as of now (i.e. without this
+>>>>> series) will result in built-in drivers i.e. a bloated Linux Image for
+>>>>> everyone who doesn't have the PCIe Controller.
+>>>>
+>>>> If the user doesn't enable PCIe controller device through DTS/ACPI,
+>>>> that's doesn't matter.
+>>>
+>>> The Linux Image for arm64 systems built using:
+>>> arch/arm64/configs/defconfig
+>>> will not have support for the Cadence PCIe Controller and the PCIe J721e
+>>> driver, because these configs aren't enabled.
+>>>
+>>>>
+>>>>> @@ -209,6 +209,12 @@ CONFIG_NFC=m
+>>>>>   CONFIG_NFC_NCI=m
+>>>>>   CONFIG_NFC_S3FWRN5_I2C=m
+>>>>>   CONFIG_PCI=y
+>>>>> +CONFIG_PCI_J721E=m
+>>>>> +CONFIG_PCI_J721E_HOST=m
+>>>>> +CONFIG_PCI_J721E_EP=m
+>>>>> +CONFIG_PCIE_CADENCE=m
+>>>>> +CONFIG_PCIE_CADENCE_HOST=m
+>>>>> +CONFIG_PCIE_CADENCE_EP=m
+>>>>
+>>>> The common Cadence configuration will be select if the glue layer's
+>>>> configuration is select according to Kconfig.
+>>>>
+>>>> Please do not set common configuration as module, some user may need
+>>>> it as build-in like dw's. Considering the situation, the rootfs is at
+>>>> NVMe.
+>>>
+>>> The common configuration at the moment is "DISABLED" i.e. no support for
+>>> the Cadence Controller at all. Which "user" are you referring to? This
+>>> series was introduced since having the drivers built-in was pushed back at:
+>>
+>> We are using Cadence controller, and prepare upstream radxa-o6 board
+>> whose rootfs is at PCIe NVMe.
+>>
+> 
+> It doesn't matter. Only criteria AFAIK to build the driver as built-in in
+> defconfig is that it should be a depedency for console. For some time, storage
+> was also a dependency, but for sure PCIe is not.
+> 
+> Moreover, CONFIG_BLK_DEV_NVME is built as a module in ARM64 defconfig. So it
+> doesn't matter if you build PCIe controller driver as a built-in or not. You
+> need to load the NVMe driver somehow.
+> 
+> So please use initramfs.
+> 
+>> You could build driver as module for TI glue layer, but don't force
+>> other vendors using module as well, see dwc as an example please.
+>>
+> 
+> DWC is a bad example here. Only reason the DWC drivers are not loadable is due
+> to the in-built MSI controller implementation as irqchip. People tend to build
+> the irqchip controllers as always built-in for some known issues. Even then some
+> driver developers prefer to built them as loadable module but suppress unbind to
+> avoid rmmoding the module.
+Hi Mani,
 
-So sorry for my mistake.
+I think the MSI RTL module provided by Synopsys PCIe controller IP is 
+not a standard operation. The reason for this MSI module is probably to 
+be used by some cpus that do not have ITS(LPI interrupt) designed. Or 
+RISC-V SOC, etc. MSI is defined as an MSI/MSIX interrupt that starts 
+with a direct write memory access.
 
-Thanks,
+There are also SOC vendors that do not use the built-in MSI RTL module. 
+Instead, MSI/MSIX interrupts are transmitted directly to the GIC's ITS 
+module via the GIC V3/V4 interface. For example, RK3588, they do not use 
+the PCIe controller built-in MSI module. Some Qualcomm platforms also 
+modify the PCIe controller's built-in MSI modules to connect each of 
+them to 32 SPI interrupts to the GIC. I was under the impression that 
+the SDM845 was designed that way. The only explanation is that SPI 
+interrupts are faster than LPI interrupts without having to look up some 
+tables.
 
-   Cliff
+So the dwc driver can also compile to ko?
 
-On 2025/3/19 22:03, Greg KH wrote:
-> CAUTION: This email comes from a non Wind River email account!
-> Do not click links or open attachments unless you recognize the sender and know the content is safe.
->
-> On Wed, Mar 19, 2025 at 05:08:39PM +0800, Cliff Liu wrote:
->> From: Paul Aurich <paul@darkrain42.org>
->>
->> If open_cached_dir() encounters an error parsing the lease from the
->> server, the error handling may race with receiving a lease break,
->> resulting in open_cached_dir() freeing the cfid while the queued work is
->> pending.
->>
->> Update open_cached_dir() to drop refs rather than directly freeing the
->> cfid.
->>
->> Have cached_dir_lease_break(), cfids_laundromat_worker(), and
->> invalidate_all_cached_dirs() clear has_lease immediately while still
->> holding cfids->cfid_list_lock, and then use this to also simplify the
->> reference counting in cfids_laundromat_worker() and
->> invalidate_all_cached_dirs().
->>
->> Fixes this KASAN splat (which manually injects an error and lease break
->> in open_cached_dir()):
->>
->> ==================================================================
->> BUG: KASAN: slab-use-after-free in smb2_cached_lease_break+0x27/0xb0
->> Read of size 8 at addr ffff88811cc24c10 by task kworker/3:1/65
->>
->> CPU: 3 UID: 0 PID: 65 Comm: kworker/3:1 Not tainted 6.12.0-rc6-g255cf264e6e5-dirty #87
->> Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
->> Workqueue: cifsiod smb2_cached_lease_break
->> Call Trace:
->>   <TASK>
->>   dump_stack_lvl+0x77/0xb0
->>   print_report+0xce/0x660
->>   kasan_report+0xd3/0x110
->>   smb2_cached_lease_break+0x27/0xb0
->>   process_one_work+0x50a/0xc50
->>   worker_thread+0x2ba/0x530
->>   kthread+0x17c/0x1c0
->>   ret_from_fork+0x34/0x60
->>   ret_from_fork_asm+0x1a/0x30
->>   </TASK>
->>
->> Allocated by task 2464:
->>   kasan_save_stack+0x33/0x60
->>   kasan_save_track+0x14/0x30
->>   __kasan_kmalloc+0xaa/0xb0
->>   open_cached_dir+0xa7d/0x1fb0
->>   smb2_query_path_info+0x43c/0x6e0
->>   cifs_get_fattr+0x346/0xf10
->>   cifs_get_inode_info+0x157/0x210
->>   cifs_revalidate_dentry_attr+0x2d1/0x460
->>   cifs_getattr+0x173/0x470
->>   vfs_statx_path+0x10f/0x160
->>   vfs_statx+0xe9/0x150
->>   vfs_fstatat+0x5e/0xc0
->>   __do_sys_newfstatat+0x91/0xf0
->>   do_syscall_64+0x95/0x1a0
->>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>
->> Freed by task 2464:
->>   kasan_save_stack+0x33/0x60
->>   kasan_save_track+0x14/0x30
->>   kasan_save_free_info+0x3b/0x60
->>   __kasan_slab_free+0x51/0x70
->>   kfree+0x174/0x520
->>   open_cached_dir+0x97f/0x1fb0
->>   smb2_query_path_info+0x43c/0x6e0
->>   cifs_get_fattr+0x346/0xf10
->>   cifs_get_inode_info+0x157/0x210
->>   cifs_revalidate_dentry_attr+0x2d1/0x460
->>   cifs_getattr+0x173/0x470
->>   vfs_statx_path+0x10f/0x160
->>   vfs_statx+0xe9/0x150
->>   vfs_fstatat+0x5e/0xc0
->>   __do_sys_newfstatat+0x91/0xf0
->>   do_syscall_64+0x95/0x1a0
->>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>
->> Last potentially related work creation:
->>   kasan_save_stack+0x33/0x60
->>   __kasan_record_aux_stack+0xad/0xc0
->>   insert_work+0x32/0x100
->>   __queue_work+0x5c9/0x870
->>   queue_work_on+0x82/0x90
->>   open_cached_dir+0x1369/0x1fb0
->>   smb2_query_path_info+0x43c/0x6e0
->>   cifs_get_fattr+0x346/0xf10
->>   cifs_get_inode_info+0x157/0x210
->>   cifs_revalidate_dentry_attr+0x2d1/0x460
->>   cifs_getattr+0x173/0x470
->>   vfs_statx_path+0x10f/0x160
->>   vfs_statx+0xe9/0x150
->>   vfs_fstatat+0x5e/0xc0
->>   __do_sys_newfstatat+0x91/0xf0
->>   do_syscall_64+0x95/0x1a0
->>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>
->> The buggy address belongs to the object at ffff88811cc24c00
->>   which belongs to the cache kmalloc-1k of size 1024
->> The buggy address is located 16 bytes inside of
->>   freed 1024-byte region [ffff88811cc24c00, ffff88811cc25000)
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Paul Aurich <paul@darkrain42.org>
->> Signed-off-by: Steve French <stfrench@microsoft.com>
->> [ Do not apply the change for cfids_laundromat_worker() since there is no
->>    this function and related feature on 6.1.y. Update open_cached_dir()
->>    according to method of upstream patch. ]
->> Signed-off-by: Cliff Liu <donghua.liu@windriver.com>
->> Signed-off-by: He Zhe <Zhe.He@windriver.com>
->> ---
->> Verified the build test.
->> ---
->>   fs/smb/client/cached_dir.c | 39 ++++++++++++++++----------------------
->>   1 file changed, 16 insertions(+), 23 deletions(-)
-> No upstream git id :(
+Best regards,
+Hans
+
 
