@@ -1,105 +1,57 @@
-Return-Path: <linux-kernel+bounces-570367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDCDA6AF6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:55:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A59A6AF73
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F6C189052F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFEC188EE36
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FD622A4EA;
-	Thu, 20 Mar 2025 20:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E25522A4E0;
+	Thu, 20 Mar 2025 20:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLEjFnIN"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OK6kFbdZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52611229B02;
-	Thu, 20 Mar 2025 20:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A8B45027;
+	Thu, 20 Mar 2025 20:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504098; cv=none; b=FkeVkqRvCMRZt4EeiV+H21OfI6ZawemTDp48uydU3+ASZ2TPqAzL9gjGKhNfbdITY55V/G9palfkMf2xSipD8KIqJZ87aDui0ne7YWM7jLqVe0K2pmAR8tyKW/GnAX00aKIbqFhQot9KSAFmpTyvqX99/BX6LMrdPbkEyqS/9UQ=
+	t=1742504216; cv=none; b=gLjK4WtS7mrrB2GQNDInDRx7e6nX6vHze/i22sQmh8E2xgERNhPSnEHKX5Erxb7bKhiPwdHzXCgj+wKUMgpPkbv7JFQH97p12uUDOoL3WA3QMLag1L0ZR7SQDD/XTLUqz8WGOAkDGs6lTgbW2vZ80M18JpLHas0UdfoKAmZQY+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504098; c=relaxed/simple;
-	bh=iXQ18XPUgoYJiSFSxjhg3L0CNHDwv1VsQkAjlNWUKpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUnMqBlsQXYvuil6E+AqtE+OEZnbHCnw8b+3P8MDGEYT+eahfvrwCF+jY0519TL4XsebbiTXwtRiP16/WMLohuZq6+LS82Qx4Y7Qol7BRTFYriPpPF1yXg1dm7Tj1ioVdwVN/W1zoArOQR8nZfRVZs6zzzX1bGVeJAgNL6EeNJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLEjFnIN; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-225fbdfc17dso21156205ad.3;
-        Thu, 20 Mar 2025 13:54:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742504096; x=1743108896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MmBASaW+GqNY/UJNZ84+vFK6yD9rkYMUDyMz4fd0U0A=;
-        b=DLEjFnINDmgSC+TQ7Mi/xe/NWdwJrurCOwPsQHo9DwJSwEbIndYD59AoFxTw/0j4aJ
-         xNVAFZOGCqa/kvfXmzzY3sRRqKtEr+SX+Jm/UlP9pv+n+/ZYcvNcG86KefqFTEkb/qC0
-         scyq6kvA6EDqIlVuAnqlUCi9jkbEgBssC0/bsngU015mfc5+cH1i3HVDQVYtfi+Qjap8
-         xcPo5HlEFBi5f8zP/Mep8XMTesdPy9/0voCEVeKkJG1Q3vmOBNOjFulSV4ajqOboLmxq
-         nLo5z5hZTaAp9s6oIrfhrLb2xSnMoLuGBENITPEFDjAD5GiZnCFibjhHnwSjVSYJ6spl
-         oyYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742504096; x=1743108896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MmBASaW+GqNY/UJNZ84+vFK6yD9rkYMUDyMz4fd0U0A=;
-        b=o2sK+53lENmd+G9YqEhP2sJYteLqzu6jLWc7eU0q5AT5OaskCzoXzVVNZcoxnLEuUY
-         QW96iLhAO3g3t0e+Ihk/LUHqMyIPBwhjXEpkJyXVXHUZK0uCaH7Z8kEVkoWoJNof6ofF
-         haPI9ZDm0LQ6GXQ0MbMJ8x0cXrZi2+C5QXmleccHow8aMMxkQyv2mgFtW38wIxlwKQFp
-         GO9d48tbVLQICZsLiLdGGaKiRT9Yx+xSVtMB/btvCaxJ7s11xQ7jU1ynGgD/D5hsulDu
-         M6/jSblaq654lZuBg5LFyPv0tsZogyKoK3NIi2MiMb+YeLXL/8rlPi1yFQs2+ijburHz
-         nGJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe/FGdNQHOP0L+zI3dXVz6opYzBpLsGXRJEKBvqQfV2hjEZ44b1FprA18lh2zPD8r8VH1cLzK2tJiE4vPY4TcV@vger.kernel.org, AJvYcCUqHLKFr7XrgaaNYBBnJv09qu/UZsKfGMGGMaBFOClwgrPoVZ82Zrm5gSegQEmh7VZGhYE=@vger.kernel.org, AJvYcCVDDoOMD3s0QFbOk59XgbT/+t3hBDYdX1NBSRKvf38Ndkg2VRrJIn0sHiKOf8mJDZfAG1pfownV@vger.kernel.org, AJvYcCWLr7uCceM2Elj+AneH0Vcf2Hab7kKyH3SSFR0u5bVj596UFTVpMnzfSX2rmizNNL5xbxOy4GGIAaH5d0js@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiDzS4Zkm1FugLguwbXfzd6S2UF4XwTaV6gqw8TNCyZkYazQ8W
-	7FKhL0KX05AWuiiJa3UDPGlFDSi0ru4XckBCbQPL6uXnXCNvMUnc
-X-Gm-Gg: ASbGncuPX/yTL6dMWhsJQhi/O9BsWaw0xfW9bY1HGLj8MslRgdy2U6AkB5UXrcHqmTP
-	vOSf1MqKKvo4n8j1KyJ+6D1mTvDI5ZWlfTJuNksySHH36eeffszNrxpSS7rcrdHCoABdyRl+j6J
-	gXGINeYiQPJqTIxwD0bqPB30tXHTiU2m4BssIZb8pIo5ANAFMDD4tUSxEWWyL44nKWdfBt5iMhA
-	wDJDinOOd27jfmzMgd2NWfzpo6Dr6tmOHG+4Ttb8pxVxYQSOZtVHJ/1tNEVVaQBnAakpm+KTKLh
-	cdOtjxEq7A7Hekm0Oa64IoJKDdachDwXZBiBw5BisZzGsc74
-X-Google-Smtp-Source: AGHT+IGVYYQZcFd57VZXj1o+MK4h5npJo8HOGu2ixgfY4o0AjAyD4std72Wt6w9yNTxK+u0HMfnPJQ==
-X-Received: by 2002:a17:902:cec4:b0:219:e4b0:4286 with SMTP id d9443c01a7336-22780db462fmr12039995ad.29.1742504096349;
-        Thu, 20 Mar 2025 13:54:56 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a24410sm340304a12.56.2025.03.20.13.54.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 13:54:55 -0700 (PDT)
-Date: Thu, 20 Mar 2025 13:54:54 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Bobby Eshleman <bobby.eshleman@bytedance.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	bpf@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net v4 3/3] vsock/bpf: Fix bpf recvmsg() racing transport
- reassignment
-Message-ID: <Z9yAnhMsupaaVCII@pop-os.localdomain>
-References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
- <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
- <Z9tCnq0rBw+nETfW@pop-os.localdomain>
- <4de119d5-c9c7-4f66-9e31-91c44a92c773@rbox.co>
+	s=arc-20240116; t=1742504216; c=relaxed/simple;
+	bh=KzYuCbF/0WoU7lS07M4U1UqMt3uKsndEKoSXWbsCoGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZSSAE2UZx6TRl3kGmNY/T+KsbeHnijC0nVyaeJ3789WJJwXCQ9cOE+uLaIGgZB/8Xz/5wYA/hZFVni2hE0hJSZuR1YVjEh/q8v4uAmcXp2yrcG7TKNEC+/ef3RWu+rJ8P7t0k4Jw9F4ohX3Xa74e3F/xQZ+ClLCNmG+U4rX/XyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OK6kFbdZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD6CC4CEDD;
+	Thu, 20 Mar 2025 20:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742504216;
+	bh=KzYuCbF/0WoU7lS07M4U1UqMt3uKsndEKoSXWbsCoGQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OK6kFbdZx/S49999jDk1V8ruCLuzxKDjAEjyVAp1JTxfvTeZAS4EyHpxu7xM69LyA
+	 GHZjHgAoRY+e+5P4Hdjcy9KpPnie14+HSGSfE+DgG0/gzbHFYwLKKZbqKyNRGPMgae
+	 HeGhiRyN5lWM7lk/TiPh2R+Y/e00G3OLKUSeqpK0oAvV3lqU9H2XxqBbcoIAPfmR48
+	 In5BtHvG0o3QYVg3LQEnfC1Yp0hIAj6L5QDyqMrsNU32UOgf5P9SAq9kil7yito9E1
+	 5naolHxPe4uUgTOgv3rm/GJfat+E/k22WdUHpHnY5voURUXR+cAnrkatoEzjSuJeBC
+	 oQjuiNu17/eGg==
+Date: Thu, 20 Mar 2025 15:56:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
+ and clean up intel_pcie_cpu_addr_fixup()
+Message-ID: <20250320205654.GA1098970@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,77 +60,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4de119d5-c9c7-4f66-9e31-91c44a92c773@rbox.co>
+In-Reply-To: <20250305-intel-v1-1-40db3a685490@nxp.com>
 
-On Thu, Mar 20, 2025 at 01:05:27PM +0100, Michal Luczaj wrote:
-> On 3/19/25 23:18, Cong Wang wrote:
-> > On Mon, Mar 17, 2025 at 10:52:25AM +0100, Michal Luczaj wrote:
-> >> Signal delivery during connect() may lead to a disconnect of an already
-> >> established socket. That involves removing socket from any sockmap and
-> >> resetting state to SS_UNCONNECTED. While it correctly restores socket's
-> >> proto, a call to vsock_bpf_recvmsg() might have been already under way in
-> >> another thread. If the connect()ing thread reassigns the vsock transport to
-> >> NULL, the recvmsg()ing thread may trigger a WARN_ON_ONCE.
-> >>
+On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
+> Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should provide correct
+> address translation. Set use_parent_dt_ranges to allow the DWC core driver to
+> fetch address translation from the device tree.
 > 
->    *THREAD 1*                      *THREAD 2*
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+Applied to pci/controller/dwc-cpu-addr-fixup for v6.15, thanks!
+
+There is a minor dts change required, but Lei Chuan Hua has confirmed
+that all users are internal to Maxlinear and will update:
+
+https://lore.kernel.org/r/BY3PR19MB507667CE7531D863E1E5F8AEBDD82@BY3PR19MB5076.namprd19.prod.outlook.com
+
+> ---
+> This patches basic on
+> https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
 > 
-> >> connect
-> >>   / state = SS_CONNECTED /
-> >>                                 sock_map_update_elem
-> >>                                 vsock_bpf_recvmsg
-> >>                                   psock = sk_psock_get()
-> >>   lock sk
-> >>   if signal_pending
-> >>     unhash
-> >>       sock_map_remove_links
-> > 
-> > So vsock's ->recvmsg() should be restored after this, right? Then how is
-> > vsock_bpf_recvmsg() called afterward?
+> I have not hardware to test and there are not intel,lgm-pcie in kernel
+> tree.
 > 
-> I'm not sure I understand the question, so I've added a header above: those
-> are 2 parallel flows of execution. vsock_bpf_recvmsg() wasn't called
-> afterwards. It was called before sock_map_remove_links(). Note that at the
-> time of sock_map_remove_links() (in T1), vsock_bpf_recvmsg() is still
-> executing (in T2).
-
-I thought the above vsock_bpf_recvmsg() on the right side completed
-before sock_map_remove_links(), sorry for the confusion.
-
+> Your dts should correct reflect hardware behavor, ref:
+> https://lore.kernel.org/linux-pci/Z8huvkENIBxyPKJv@axis.com/T/#mb7ae78c3a22324b37567d24ecc1c810c1b3f55c5
 > 
-> >>     state = SS_UNCONNECTED
-> >>   release sk
-> >>
-> >> connect
-> >>   transport = NULL
-> >>                                   lock sk
-> >>                                   WARN_ON_ONCE(!vsk->transport)
-> >>
-> > 
-> > And I am wondering why we need to WARN here since we can handle this error
-> > case correctly?
+> According to your intel_pcie_cpu_addr_fixup()
 > 
-> The WARN and transport check are here for defensive measures, and to state
-> a contract.
+> Basically, config space/io/mem space need minus SZ_256. parent bus range
+> convert it to original value.
 > 
-> But I think I get your point. If we accept for a fact of life that BPF code
-> should be able to handle transport disappearing - then WARN can be removed
-> (while keeping the check) and this patch can be dropped.
-
-I am thinking whether we have more elegant way to handle this case,
-WARN looks not pretty.
-
+> Look for driver owner, who help test this and start move forward to remove
+> cpu_addr_fixup() work.
+> ---
+> Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 > 
-> My aim, instead, was to keep things consistent. By which I mean sticking to
-> the conditions expressed in vsock_bpf_update_proto() as invariants; so that
-> vsock with a psock is guaranteed to have transport assigned.
-
-Other than the WARN, I am also concerned about locking vsock_bpf_recvmsg()
-because for example UDP is (almost) lockless, so enforcing the sock lock
-for all vsock types looks not flexible and may hurt performance.
-
-Maybe it is time to let vsock_bpf_rebuild_protos() build different hooks
-for different struct proto (as we did for TCP/UDP)?
-
-Thanks.
+> diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> index 9b53b8f6f268e..c21906eced618 100644
+> --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> @@ -57,7 +57,6 @@
+>  	PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
+>  	PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
+>  
+> -#define BUS_IATU_OFFSET			SZ_256M
+>  #define RESET_INTERVAL_MS		100
+>  
+>  struct intel_pcie {
+> @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct dw_pcie_rp *pp)
+>  	return intel_pcie_host_setup(pcie);
+>  }
+>  
+> -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
+> -{
+> -	return cpu_addr + BUS_IATU_OFFSET;
+> -}
+> -
+>  static const struct dw_pcie_ops intel_pcie_ops = {
+> -	.cpu_addr_fixup = intel_pcie_cpu_addr,
+>  };
+>  
+>  static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
+> @@ -409,6 +402,7 @@ static int intel_pcie_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, pcie);
+>  	pci = &pcie->pci;
+>  	pci->dev = dev;
+> +	pci->use_parent_dt_ranges = true;
+>  	pp = &pci->pp;
+>  
+>  	ret = intel_pcie_get_resources(pdev);
+> 
+> ---
+> base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
+> change-id: 20250305-intel-7c25bfb498b1
+> 
+> Best regards,
+> 
 
