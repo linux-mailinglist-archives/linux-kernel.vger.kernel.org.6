@@ -1,264 +1,134 @@
-Return-Path: <linux-kernel+bounces-569739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB25A6A6E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:10:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4F4A6A6E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696C8980357
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E159460ACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384821DF247;
-	Thu, 20 Mar 2025 13:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654011DF27C;
+	Thu, 20 Mar 2025 13:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OlyTizJ4"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bJynYEbo"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDDD33CA;
-	Thu, 20 Mar 2025 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF02AE99
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742476192; cv=none; b=L2w9TD4qeeZcSo2BT64n+dkFsP8nHxAOohu5ZAEIgaveGTa5UFqy8MjzWWKqfCygU09wNBpUHsm33Ushb7/IOprPaLP0CbdUJzWrCcbaYzhS49QXGnDxU/G34ZMXQvn4+xiK7XiQ5EgHMHWOrTvN91eIVjoaT4R/RrNKGAtgV7I=
+	t=1742476403; cv=none; b=kVbp4iVgrF5KzReVaFxY/5v++pj5pPg5IPOGWNZaHzxBJK115T5VYtjiqcE5ak7A7eXA56WJJdy12+pM2HWRVAxeUkFaSMhDM3Ma/HyYse1/SwoEEcAvBP7pmW9azLdz/NvViVSBHOu9q8Ft7t3m/sRxUaUv1a5FDgTjJbM375Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742476192; c=relaxed/simple;
-	bh=PdiIGraiOw9bwMuvO4i566zHRLO1u+vsTi/k2RXBFuE=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PCyoICQy/63mb9OJqZOPQt6PmUhgpQv1easgR6NhF1Y/WOcAxXtu5PkSyfbmMp8Ijdq2K0+J7Qyg211MAxDnHgBVVjs6DRwXgNdiJS06CGnfZxo7v0eUSMldRQySbZwVszUWVt1dg+z5AeeymM0kj8zKIHQEmPW2wksPUAoJxds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OlyTizJ4; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742476186; x=1742735386;
-	bh=LaY6eOWwORdgVYlhLSu6IdjkgHcpxvIHee+V/Mwu5u0=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=OlyTizJ4/TXOzOotZGgTW8t0gHrAEiTQyGKf2wGwfxzrSAHCejmG+scYn/57Fv2wx
-	 3xLaJcyFf2kEG6y8ucHc+mWRAELG+NV1ML5ysDwst0hev9x4B8iQCCLnQepVI7k7Oz
-	 HSfVTnw0+ZYLbGb4WZVslCrpQF5WUapEUljmyPO5ivZZGviefbx9UqiF+H3x5+cLAn
-	 KRUv0qu6zL/yFfcg8AucX0VnWsq5wdrJSM5WkTOP68co8xmuqSR4MzSG53QO/KxS6M
-	 SOEvA3XNmuRDB4bbbwn61kR1Wp/HKiC2KTZj8bdQpucfOvSJ8aBucIasE9DTo6+Mw8
-	 JIbEySafUCbug==
-Date: Thu, 20 Mar 2025 13:09:40 +0000
-To: "Christian S. Lima" <christiansantoslima21@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, ~lkcamp/patches@lists.sr.ht, richard120310@gmail.com
-From: Benno Lossin <benno.lossin@proton.me>
-Subject: Re: [PATCH v5] rust: transmute: Add methods for FromBytes trait
-Message-ID: <D8L494ONWVO6.1V6NNJIPG7UU9@proton.me>
-In-Reply-To: <20250320014041.101470-1-christiansantoslima21@gmail.com>
-References: <20250320014041.101470-1-christiansantoslima21@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: f1776b1ee974b5e000843123a1461454cfe5f998
+	s=arc-20240116; t=1742476403; c=relaxed/simple;
+	bh=XZm5F3XNZhIwlOrdjUlExuCp7zU1bFU/Qi3fHM4Ybu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eVYaeCdCqgwFeRxh3S42+U6kj3YfBjtFMkWI0DCLPz+/fK/uKnQfkTzPEh2UHm+WpKIsLq8zXaCa37IArh2Hz1JcMOcN8doic5auR9cLPjp6iK/7863S8ij2Nb+xMJPpQZ+JVTPmBYS/tpoQlUxlXEpEjFIVPBOheQrl7MO7CMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bJynYEbo; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-391342fc1f6so551700f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1742476399; x=1743081199; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v48XcGCXr1VN5yM2ip52zsfw94KneamZu91HpkgNdOA=;
+        b=bJynYEborPNxyyxkfAcZegZLTX6DSa2gAahRl0TW9qp4p05vedyj7FA7GHPSQjHiyK
+         JzBU7eEZlcgCco7hScEnFP8UpRO6K4/yCCNtIuBEMbIWODv4Cb6yDBViWaGsUvBrr2/w
+         iv0pQloteQEUtiS8Ee0YDiGRCsrjZhepVMN8aR6cuh3PXI+BcKaUqq3pQztvT1esqJNv
+         T7qVkmn4cm2UbzigvDULTp5TYpTr8L7pQol5ZPVAjIoneuRU28XXObra+QK1EtK0akmz
+         Kx+NSHb0Uz/VxJpe9QsmYRaHMLDYSLVOVHlVNXGPspLI2cL0oXrYL8aio10M2ATwRx31
+         +mDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742476399; x=1743081199;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v48XcGCXr1VN5yM2ip52zsfw94KneamZu91HpkgNdOA=;
+        b=Aj+/F0+dSGC4m7kcgffV6/jfF56VYRSj6q92pV2y7BktbHAxQIPqbsoBzsz7eIjWFH
+         NixyCvkATT2L8qoD/6aBemR5YABnUo34RiBsz+UPAwxT4VnEoc5DJFXhrLbOTzu5DMOR
+         Nlu5DaES0DfqljPz0AfqS77WmV4pGEb1Icb9aGsCFUcWLOSbz0o1OG7dDSbGdbY62Dqg
+         aW0sbQVJJXu7/KbP2XPeEwNOcm1lvi+E6HT1Z53IYlXxJUeVmZuMtBISYl8kAeijdFWk
+         X4QF06yPHc540st5N1fz6hZQoRXUum0x4L92Eu8aT5jOq61cqq9b/YeepB09Jqw59Ra0
+         Ig8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgOBQDFjz+wl81QMEOqW+Ey3ZVfrxK/av/yVKjRV6fF6fQJldNF/K6qdXxAVGlSB8yBPyyrYO+bcUfRk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOrXFaYsP0BMA3O73IJ5PUSHD/XlxxazzLIN42z0M/3rUseWUd
+	HAvCIsyhPvhwaYodVkVR93ZdNYUddV0fC3or7KhvUwMBckMtSMDyWRt4yR4wa9o=
+X-Gm-Gg: ASbGncuSBYYslMRdGtbwDjjnh3C0q8XNUlxaGziDwdZYL7HxxmJvjsA93l7FsY8m1Iv
+	7/4qIcJQ7iewnakjtxLPXzYZpo5lMxpJcRgRPiXtUncaLdKgXY8v/GKIYFIteyEyMUCPr39w1Bm
+	UQtw7SnLFWtQtJwtE6KUAmuPwA3xTCQ8qq5slmkEIL3raRt7CnCbziZq8Dg/5evrpaxJsd70zTF
+	sb8WQCaBjnYqEsrr9g/79+aBTlj08o+MbuUPC9zJeYXitPJQRBPGP7uFvoXmOoWzl5kcRC96sA1
+	DskVxY4kOkd3635URQ5K4mhl+sV0oOqU8X/b360/eW0j+wpPPYMd2w==
+X-Google-Smtp-Source: AGHT+IEl5veUunthB+o/ItpiVJl8NBc233c3fSE4ra0y5VSm79bnxcvguGhe+n8pCn3Yf22GVAAyvw==
+X-Received: by 2002:a5d:59ae:0:b0:398:9e96:e798 with SMTP id ffacd0b85a97d-399795a8cb5mr4010723f8f.13.1742476398470;
+        Thu, 20 Mar 2025 06:13:18 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.160])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3978ef9a23bsm19575491f8f.15.2025.03.20.06.13.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 06:13:17 -0700 (PDT)
+Message-ID: <d55ed22b-7a13-4037-9a11-1a65040f8a7c@tuxon.dev>
+Date: Thu, 20 Mar 2025 15:13:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On Thu Mar 20, 2025 at 2:40 AM CET, Christian S. Lima wrote:
-> Methods receive a slice and perform size check to add
-> a valid way to make conversion safe.
-> In this patch, I use an Option, in error case just
-> return `None` instead of an Error and
-> removed some commentaries.
->
-> The conversion between slices `[T]`
-> is separated from others, because I couldn't implement it
-> in the same way as the other conversions.
-
-Why is this commit message wrapped like this?
-
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/1119
-> Signed-off-by: Christian S. Lima <christiansantoslima21@gmail.com>
-> ---
-> Changes in v2:
-> - Rollback the implementation for the macro in the repository
-> and implement methods in trai
-> - Link to v2: https://lore.kernel.org/rust-for-linux/20241012193657.290cc=
-79c@eugeo/T/#t
->
-> Changes in v3:
-> - Fix grammar errors
-> - Remove repeated tests
-> - Fix alignment errors
-> - Fix tests not building
-> - Link to v3: https://lore.kernel.org/rust-for-linux/20241109055442.85190=
--1-christiansantoslima21@gmail.com/
->
-> Changes in v4:
-> - Removed core::simd::ToBytes
-> - Changed trait and methods to safe
-> - Add Result<&Self, Error> in order to make safe methods
-> - Link to v4: https://lore.kernel.org/rust-for-linux/20250314034910.13446=
-3-1-christiansantoslima21@gmail.com/
->
-> - Link to v1: https://lore.kernel.org/rust-for-linux/20241009014810.23279=
--1-christiansantoslima21@gmail.com/
-
-What changed in version 5? Or does "Changes in v4" mean "Changes done to
-v4"?
-
-> ---
->  rust/kernel/transmute.rs | 74 +++++++++++++++++++++++++++++++++++++---
->  1 file changed, 69 insertions(+), 5 deletions(-)
->
-> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-> index 1c7d43771a37..5f2cf66187ad 100644
-> --- a/rust/kernel/transmute.rs
-> +++ b/rust/kernel/transmute.rs
-> @@ -9,15 +9,53 @@
->  ///
->  /// It's okay for the type to have padding, as initializing those bytes =
-has no effect.
->  ///
-> +/// # Example
-> +/// ```
-> +/// let foo =3D &[1, 2, 3, 4];
-> +///
-> +/// let result =3D u8::from_bytes(foo);
-> +///
-> +/// assert_eq!(*result, 0x40300201);
-
-AFAIU this relies on the endianess of the architecture, I would check
-the endianess in the test and then change the assertion based on that.
-
-> +/// ```
-> +///
->  /// # Safety
->  ///
->  /// All bit-patterns must be valid for this type. This type must not hav=
-e interior mutability.
-> -pub unsafe trait FromBytes {}
-> +pub unsafe trait FromBytes {
-> +    /// Receives a slice of bytes and converts to a valid reference of S=
-elf when it's possible.
-
-/// Converts a slice of bytes to a reference to `Self` when possible.
-
-> +    fn from_bytes(bytes: &[u8]) -> Option<&Self>;
-> +
-> +    /// Receives a mutable slice of bytes and converts to a valid refere=
-nce of Self when it's possible.
-
-Similarly here.
-
-> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
-> +    where
-> +        Self: AsBytes;
-> +}
-> =20
->  macro_rules! impl_frombytes {
->      ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
->          // SAFETY: Safety comments written in the macro invocation.
-> -        $(unsafe impl$($($generics)*)? FromBytes for $t {})*
-> +        $(unsafe impl$($($generics)*)? FromBytes for $t {
-> +            fn from_bytes(bytes: &[u8]) -> Option<&$t> {
-> +                if bytes.len() =3D=3D core::mem::size_of::<$t>() {
-> +                    let slice_ptr =3D bytes.as_ptr() as *const $t;
-
-Please use `.cast::<$t>()` instead of `as`.
-
-> +                    unsafe { Some(&*slice_ptr) }
-
-Missing safety comment.
-
-> +                } else {
-> +                    None
-> +                }
-> +            }
-> +
-> +            fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut $t>
-> +            where
-> +                Self: AsBytes,
-> +            {
-> +                if bytes.len() =3D=3D core::mem::size_of::<$t>() {
-> +                    let slice_ptr =3D bytes.as_mut_ptr() as *mut $t;
-
-Please use `cast`.
-
-> +                    unsafe { Some(&mut *slice_ptr) }
-
-Missing safety comment.
-
-> +                } else {
-> +                    None
-> +                }
-> +            }
-> +        })*
->      };
->  }
-> =20
-> @@ -26,12 +64,38 @@ macro_rules! impl_frombytes {
->      u8, u16, u32, u64, usize,
->      i8, i16, i32, i64, isize,
-> =20
-> -    // SAFETY: If all bit patterns are acceptable for individual values =
-in an array, then all bit
-> -    // patterns are also acceptable for arrays of that type.
-> -    {<T: FromBytes>} [T],
->      {<T: FromBytes, const N: usize>} [T; N],
-
-Missing SAFETY comment (the one that you remove above should still be
-there).
-
->  }
-> =20
-> +unsafe impl<T: FromBytes> FromBytes for [T] {
-
-Missing SAFETY comment, you should copy the one from above.
-
-> +    fn from_bytes(bytes: &[u8]) -> Option<&Self> {
-> +        let slice_ptr =3D bytes.as_ptr() as *const T;
-> +        if bytes.len() % core::mem::size_of::<T>() =3D=3D 0 {
-> +            let slice_len =3D bytes.len() / core::mem::size_of::<T>();
-> +            // SAFETY: If all bit patterns are acceptable for individual=
- values in an array, then all bit
-> +            // patterns are also acceptable for arrays of that type.
-
-This safety comment doesn't match the called function below.
-
-> +            unsafe { Some(core::slice::from_raw_parts(slice_ptr, slice_l=
-en)) }
-> +        } else {
-> +            None
-> +        }
-> +    }
-> +
-> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
-> +    where
-> +        Self: AsBytes,
-> +    {
-> +        let slice_ptr =3D bytes.as_mut_ptr() as *mut T;
-> +        if bytes.len() % core::mem::size_of::<T>() =3D=3D 0 {
-> +            let slice_len =3D bytes.len() / core::mem::size_of::<T>();
-> +            // SAFETY: If all bit patterns are acceptable for individual=
- values in an array, then all bit
-> +            // patterns are also acceptable for arrays of that type.
-
-Ditto.
-
----
-Cheers,
-Benno
-
-> +            unsafe { Some(core::slice::from_raw_parts_mut(slice_ptr, sli=
-ce_len)) }
-> +        } else {
-> +            None
-> +        }
-> +    }
-> +}
-> +
->  /// Types that can be viewed as an immutable slice of initialized bytes.
->  ///
->  /// If a struct implements this trait, then it is okay to copy it byte-f=
-or-byte to userspace. This
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/8] iio: adc: rzg2l_adc: Use adc-helpers
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <cover.1742457420.git.mazziesaccount@gmail.com>
+ <9a3a11561dbd3d5023da2da05cf2190793738242.1742457420.git.mazziesaccount@gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <9a3a11561dbd3d5023da2da05cf2190793738242.1742457420.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+
+On 20.03.2025 10:21, Matti Vaittinen wrote:
+> The new devm_iio_adc_device_alloc_chaninfo_se() -helper is intended to
+> help drivers avoid open-coding the for_each_node -loop for getting the
+> channel IDs. The helper provides standard way to detect the ADC channel
+> nodes (by the node name), and a standard way to convert the "reg"
+> -properties to channel identification numbers, used in the struct
+> iio_chan_spec. Furthermore, the helper can optionally check the found
+> channel IDs are smaller than given maximum. This is useful for callers
+> which later use the IDs for example for indexing a channel data array.
+> 
+> The original driver treated all found child nodes as channel nodes. The
+> new helper requires channel nodes to be named channel[@N]. This should
+> help avoid problems with devices which may contain also other but ADC
+> child nodes. Quick grep from arch/* with the rzg2l_adc's compatible
+> string didn't reveal any in-tree .dts with channel nodes named
+> otherwise. Also, same grep shows all the .dts seem to have channel IDs
+> between 0..num of channels.
+> 
+> Use the new helper.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
