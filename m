@@ -1,180 +1,274 @@
-Return-Path: <linux-kernel+bounces-570505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C26EA6B180
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:17:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDC0A6B185
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:18:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD8117D91A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6033B792F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A880221F13;
-	Thu, 20 Mar 2025 23:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829AB22A7E8;
+	Thu, 20 Mar 2025 23:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sWPOnz3k"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2084.outbound.protection.outlook.com [40.107.94.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBRO045p"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA681F5F6
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742512628; cv=fail; b=BZ6g+Dh8AUJDXbLopXoZ4s2alubnq47IuRaGkveq+lE209RLPB/RdYvNuEVGuQJvRDFzPkROJErXrxv9zLmjSB9AGNpmAcNF5GtHFjP/iRd1rTckvAfj76SnePQ31021Y3ISb31r909SGljxvRzAv+bFfnCxhbfVWnPBN96E2G0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742512628; c=relaxed/simple;
-	bh=kbz1RhNcnt2K6Jyes4+r37baDd9RS7oeof/7cVLAyaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hZx1Y7AMjPTlR92bjvaJCnPh2iHM+svOMGpwA2R0FeYIGOBInXlLKxkAjO0VUTjy0geG15v65VmogxM3M9t7Im1CCJqmsR9Dbvic+sQmRuGVpSD/1huCV2c5i52wM7L1ZHg2aeZFNfb3kxTD7bsLT4u7bUHxVZAXDPKN06J+hL8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sWPOnz3k; arc=fail smtp.client-ip=40.107.94.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TxTJZJcEdkQnHp73Zj94ZjtUzRdV/OStRMc5A4q/fpzuvRWAzultYgZ124y1l3zN2rXe55iiapW1zNreSW6YV85qYT1Fj+TG9K0hBWUnJUWFS5TbDHH3GCVgrPvs6FRho2NXM5FVgzzr+L/KkAu78GoDb/L0C4w6HRh+1TztAPn1ZzHxQpNcqgo1o8wvwEMaCdtYjbXhiQgtxO5rtXrPk5HxcxGhmr49lP07j3Ug4agYNZ3AVOra/TrNN/P46tgffr7SrGcLv5uSj84B4Tb57vUDD2NQlvKe0MxjJVbsQGP2Lq0OhLCNaL637cxAvUntEmucrZwlYCZcr7oljjOimQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BgDAsc5okhbMdFpNp+E5PgL6CVkRRpFPlKm4iavJiKE=;
- b=C/P7FM/FkMcBTKQBMgBnWZYSsXnE7MKPYW4oinmQqk0J/mK52My+cAk8R94bXYmjsS7ySVcwxgAA4+q3sdAtA1OjqNfMgYbxVMFwnLYVkSp2dFQqj1KLDokPdcoUeB1IitoXNUNznXbAFFPCs4EyLtDFo7o+GkhVSpMLDlm1JTns8n9DacY/aKaHtz9YUGZjrnb0ZZ1tUOa9/cIdf+Favx3FhNNuRZCWqp7RO5vHhz6wBHf7kjm98YB+ID6NEJiYEUWL5UdqbJd2NsAT4qGRWBUEwmy4CyqbnAOqPdwNFA4CW9cnK7e5DZ1azcL05ag+2y4HKvqLkjovYNWTUewqKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BgDAsc5okhbMdFpNp+E5PgL6CVkRRpFPlKm4iavJiKE=;
- b=sWPOnz3ksNe30GQ9bIcaFIZieljYuF9aY1ifvQH8yRa/E7zyUXHaOR3eKLciztBwMFWTGQKn0wuUU2M1UYKXoZ9CdSW5D8Cyx4s/onTTEcZvmqSSgIobWw3/4bESdctr9BT3tKg9h5ronBUQvzabC/Q/fKWgdo3faSYUflt0//dHgAGy5VWCAmscUB3AWuqxNV0OoSmLqmEYXisJWOfk+aKLlZyDzVCayEICforg3pTOONkWA71zhiXSjYurcc3sgcLva6kuP5Q/+t7r6IOaPEQNTOCF80/fjJclB2bs7nrbgr96TIt5xj9fsLgfdyuOGvOPOixVfORyy+uyLAq/zg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH8PR12MB8607.namprd12.prod.outlook.com (2603:10b6:510:1cf::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 23:17:03 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.036; Thu, 20 Mar 2025
- 23:17:01 +0000
-Date: Thu, 20 Mar 2025 20:16:59 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, robin.murphy@arm.com, joro@8bytes.org,
-	will@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] iommu: Clean up cookie and sw_msi in struct
- iommu_domain
-Message-ID: <20250320231659.GM206770@nvidia.com>
-References: <cover.1741294235.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1741294235.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BN0PR03CA0018.namprd03.prod.outlook.com
- (2603:10b6:408:e6::23) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DBF1F5F6;
+	Thu, 20 Mar 2025 23:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742512689; cv=none; b=gXcME0HuBsOssK9Fxvl98Y9yMvmB8p/3NVjO+fMcE5PfyMcJ6v0v6cQbSlV9oHZjxCj69WF7wr/ibv4qTSCrkDviqv62S9kiJMuOCu02SQxPRXGzyRMELSrBmMicRdKPp1LFfkYWIrwe1K1EsSxUvV863w/yUXT7fOZhysEpQqI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742512689; c=relaxed/simple;
+	bh=Shct0J1ZfLdiyYTPiJs/NDiX5WgQ987PjZ8Sz0X5RvE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lsUYRb6cNn4n3sbOZUSppDRM3N+rrQCtPdZsvsLa8ocIMsyuaujZNGCIj7Fdfw3GA1vvU0hrxxc6P7EE5PAKO/ZcUBlcdx3Dl2tz31ul6HmENi5zCSlPr4buteJS1QvPutz1w2yUr4YmlDa6y4r3f0oreJ9VhL0UbcOWT9QfwEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBRO045p; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so8291195e9.2;
+        Thu, 20 Mar 2025 16:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742512686; x=1743117486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DeQb6JD+b4uxVzrEwo0wfvjSmHJVE4hCfjBEIgdDhpo=;
+        b=mBRO045p6hg6GFiuvm89fhmlENsTMK/E7H6TvTl6tOer6M0RbWAVHnxK0ml1FW2/bF
+         aCvNVK6ffHkPXLC6rtpBIus6iS6ZevRboeJcUDfETH0lypMgCILj2ntKI1T6/Hl5ciqA
+         cKjckBC44DPcdQmo9ObgMwPul5qxtZdm9Ubm5q7bXrWrjgQWl9JvUraO3hQGQ7Za4BSj
+         zf7+cGOy3SWg4M2aQ2ueBASbSK7hWN69MLaDJTbyaV/h2HDcIMTZ7uX09V7frnVlt0rx
+         MqqNqA1IDCcg1R0Wj7C/D2l0g8u4PQwtnqh8bpcOOVp+ifEOSbPbkNoOAVdwmehddURn
+         stsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742512686; x=1743117486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DeQb6JD+b4uxVzrEwo0wfvjSmHJVE4hCfjBEIgdDhpo=;
+        b=awZVgQ1gNJuyDfja1ucYeSXTKRUOC1Bv+kRvXs63Cn0PbvdiXYp93zCylMfs9aD6cN
+         ySP3wD3QScft2/bp77m+nbvm4bRBJtZKoFFShP9L1XFQmtt4J5XuPpi9jpn1rJuBUAdD
+         kFgskhLSWKRyy7bTGDBaWfCbo3oFZv4ilZpDww7aTvR25wUIclSE32mBg2dCi8r4qvgm
+         VoyftGudYSTSPdz6scmAesaIqAACwCiiqc0ZVdqB0AnLSFAc9tX3JmjDaX0l2hdk7CjY
+         vqbemcSLbsuxXprV5kKTQwK198riRoj1ugCI6PzWPtDQGWbAakhgeSW//TZzkS5MYbE4
+         GYGg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8t7se4ZUeGUmPsaPUhk1NYNX7F8QtKbXCHHT9uwvAZOXrrNb78A1xhzPWiPE4DV1H6WE=@vger.kernel.org, AJvYcCV5vmodkSlbCtD/TRGqKV4gNPBoW8kLQuRKAmkqjrCj/FQ28ZKm3jI31B5fT7e4wWFvIiigdQnS08czeg==@vger.kernel.org, AJvYcCVn7X1q7GFzlY9BrAUKPOAVFmptbQ6TefevDvto23R5LM3gjCc0O/IPk++gKV/4tlW+ZEsgQQg7@vger.kernel.org, AJvYcCVtoV9XmwtcS66JHDB4208PBXUmez48rs6bmJUdxRiYutlSgSSPa+HgQ8/4c13n99oCZQRVymre8y0zqHCN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3tPGm6gIHECbm1mwkW8DU3n4H+G/c7i89xhN5c1aKnq3E0wwR
+	4JHuMb0HBFj8KHeBRubauSsDKsVI0ZQon62Q6mbuWutjS4Wvi0gPWBy0N7EcJOBOkoy8FQLI3tR
+	ie54pYOgv4+ojS8lwVfHyuO0Cxz4=
+X-Gm-Gg: ASbGncuL7lp3IhUB/31WY6XRX2ZepNiWrMCGwHV1vEAdhM4E9jigZkSXq4AQ02byo3U
+	ZhfklMbbQoIBKA0LC0glk0lZ9dCnZkZG5slkjqbz6oioH5Wi76D+cv1vgXOrZI239/DRj6RnPjO
+	vjIZYIQxW4HeUmE/Irpg5O/smgZuoJNk991JKY4aOqPqAzmW9Z4Hm9YMUTFw==
+X-Google-Smtp-Source: AGHT+IFO9Zrkw1uCcybgYfUsNWbsOgMRahB84uq7DpwdoQTVjaz+k8iO2DulmaUISDMPlEsjobMJV3tr1Ilr4HheGEA=
+X-Received: by 2002:a05:600c:468a:b0:43c:fe15:41d4 with SMTP id
+ 5b1f17b1804b1-43d509f4d2fmr8630675e9.18.1742512685640; Thu, 20 Mar 2025
+ 16:18:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH8PR12MB8607:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8aca956-f855-4b3b-525b-08dd6805518d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gu3vwRl6BdjTsMRDtfn0zqWNQ5uauOud+r24SxdnDunwFnvnOJsHfl2v0fsf?=
- =?us-ascii?Q?ri3ABZ0Gt+MPTeazs0rbMlgGRdpBLRBqsG+fk0FMu5zTaCHkmSLTDTLsafYR?=
- =?us-ascii?Q?ByzhWAZjnWlZCplNJyEVCNDeGi/pd8yw51TzRk7g3+1MucsjMM7XJ6p4AzcY?=
- =?us-ascii?Q?6EqWFEs/uwFWIrHHilcIJO8eABLLNLhQzO0ffGkl3ELoMGslY8rH4uZT2FnW?=
- =?us-ascii?Q?1rnQYPgvTYEAMj2mttQ0g+rLlmAAniYaHEXqf5VD2EJioz90UNaC6XewiJ6p?=
- =?us-ascii?Q?hfgMJuELNFBZLG3XjvGaDWeHT+KzSjXzcwQbtmb1CeoEBtZCGCw/nqaFU3Vn?=
- =?us-ascii?Q?m7faDOXFYrv9Afb27aCEmKla0Uqytq1T6A/41MlGbbPonHOMcJTw1iaVCp8p?=
- =?us-ascii?Q?mDpi70rmiRzJ6B6/+V8r7SdOemROIi/0iGYRgX/Ws3SGeiPpvM8iD+zYNYz3?=
- =?us-ascii?Q?uC+msaA2c+Um6dj/gOMl4ljUaMVktYSzGQRZAP7DppGNQIwfS8zf7nXupCI/?=
- =?us-ascii?Q?3Vwyq7PKbh3sA3B248S2Og76eW5Lw0/Y7VKoNUblCzGgdndIHUHsKJR7U6pY?=
- =?us-ascii?Q?LlRhnPOy83zzCbjaoGLLQv4v+PuuGpTKA3ToLET/fYqhhsR1cUYiyFOadzr7?=
- =?us-ascii?Q?7KwR44QqIgXMxeMPPbUVBwUPm7P0mkQsMmu5SIWKMDw+LKIZoMxi8XxItbQQ?=
- =?us-ascii?Q?l6pNH/xX9BbMKFXyVL1zSOGDEOsVuDbcM+FpdeRCwgd4GLV0BwkiZmnrnKbP?=
- =?us-ascii?Q?VeDuIrdTUhAKEXaI8liq3vM4AAIAYoqt9Fy/KPaXV/Jd3NXnP3FSVhM1FzTd?=
- =?us-ascii?Q?E0QUf/tJKVDBITt6Lauvk48bXUYBBZ+NMcgs9a4xsY5BYlusv14H+GP5kvWB?=
- =?us-ascii?Q?uXc6H6p1/3F4t/FBTqekgTEwmFSjK1uVMIO+iyE+QISm3v1ggRNzYjc7H17z?=
- =?us-ascii?Q?h+1AJtSaDfBtDhp6TCg7POWSp7UxU/NJgNVSZUyPuBXRY+g5ZsLCS+k4Z/3Q?=
- =?us-ascii?Q?62YpoAxvgR84t5+ilbROUKc3Kyk3bs9K4q8grF1ipYmcaA55H77VIxIiT1dJ?=
- =?us-ascii?Q?q2FVgOd5ggBj9w+6uvrCP/EOQ7g6MsFO9mJ+9l38j5CTiMgvVHSfebHXdxBK?=
- =?us-ascii?Q?Td0KykbeZ6s42KKud4DPc3S5QEdFLoAFKGtf4YLg+A+zMdOzZuvlF9gZs7wM?=
- =?us-ascii?Q?N7POr6zOwtgDBys0C5fMSJNfFctqol4i41+yWvNz8Wtr3PY1JKWndlhq6LTt?=
- =?us-ascii?Q?BORgo12ZwcaC1uoB+yDq2LUPVEsxXTGIQHFetXUUlD/jSQ+paVziJXI9G1SF?=
- =?us-ascii?Q?sQajE7FNCeV2OwsSIEPYxKiHEjRNYa5OLL10tKJ+4022Vy9V03dEn4X1JHHS?=
- =?us-ascii?Q?LWjto+wpBCjLf0UESwEJ8PBDZSrO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Faoioflcf0JDJ97caUVvW10Q8LiR+hi9o69vH2CKgGx2K9MIo3/bCSJdKFQy?=
- =?us-ascii?Q?khqe6fIpmE9eMSCvELhr2cBdZF1gP5/F3TpRzks/LYkoXP/JOEL9v3rABw/V?=
- =?us-ascii?Q?dkYLGdh8B/n51DKF5dQYkOg8gSGjr95SnkkvK4Qg+9UVjUaf0P07Y0G8ZgAV?=
- =?us-ascii?Q?oSc+N0PHGG0V+9xh+NkkOHIPqxUWoYPq3NgfwdsGbRigG5v6gCKBGsspsFA9?=
- =?us-ascii?Q?ax825Fpp/DIT9vWC8pSVyUvBM9LCSGSd+YJlHpmccDiDXdZAf1PoYWdJ/2gf?=
- =?us-ascii?Q?hOx5YYafU55Y72eoi88BnMmZIedkONNfzXumBTE4F4FPQo70RN2Nmci4ZIv7?=
- =?us-ascii?Q?4KgDIvfiySfUyaTWS8IUnnsqg9hncjf7eDUcE1RlQV43VSKqtqlICG1Y9wOV?=
- =?us-ascii?Q?a7GfiREjU1AyqzR5q9Jf7JRkCaAdM7QHjCYSeNp9vfItaqgQ2e6smqDXwfSr?=
- =?us-ascii?Q?iezZZWMnU8F1eos8mG0Orz6sQV1w0VSXf2Wez8vhPnazBCz2fvfBRtezdxhn?=
- =?us-ascii?Q?WRQ1WdOe3sHIPn6WnsNeZziUoj5ctVYjm+DMN7DI83pgFJkp/Sd20Tsznuh2?=
- =?us-ascii?Q?yKGgZEPqypXivOY4eLhO4LhWB9fsly3CGEQKQthgBdjtnRh+I4u807G19HJx?=
- =?us-ascii?Q?5jXZeSnMIu3DLemPKZmHUYTwVD74LInuH5QjXnlMLjVV1kjnEEJCZIOHHxk/?=
- =?us-ascii?Q?yW0E5/uIEtRpDT0MEO+u3eWneN8rZYp9M3cfik1GP6R8eG7O2pKO4lwv/Kx2?=
- =?us-ascii?Q?EC6uNwNrA+RrZPtZU2CQwXnNM16v1I9QMD+9ge8AsX6QcV+B+LLLvzeEbXxr?=
- =?us-ascii?Q?fta/Cw+pu6H5LRtG9cu/mt61ywBfImMwcAQUUmkrasd+3wKZ5+gDTq6HuW/K?=
- =?us-ascii?Q?Mkmg0JDCNVnNOr7Df0DKOYDRJPDmlJ5l8hrbX57u2z+A3eF9Ew6Ft8/GqUfP?=
- =?us-ascii?Q?Q9yrI++7wqdalNkgCE/5HgmIMbhKidzmTNWY55BnN4cK2ozSvtcOWwE0x24F?=
- =?us-ascii?Q?xXvo55mYLrKd6874oX5EHb+sCaQjy7QGQ9rZ/U2+G96NZdyccdg1Y7951sRH?=
- =?us-ascii?Q?z/atL673A44r05WG92gLaSaamBp5gPD9IS2VzbF25DZwMbRtvaSL1NGTrHIr?=
- =?us-ascii?Q?Ml7/nPS00/HtsMjAS0cGUMLYif5NgGy8BOTTQZOCA5sZJ6iRryAgHVMRiChB?=
- =?us-ascii?Q?bM8wMaOb8VX9ohDsJwQORf1KB2f1zkyHCQ69uZRKjrPGRAnc6ozQfDjZK58H?=
- =?us-ascii?Q?yWEOT7LEMKi00rv3CJVoUCEFt21V3QGjIMh+yYtPUOfpRutQS1kTkGPIO72b?=
- =?us-ascii?Q?RP/1bjFwLhDME9//RpctY0wEbKj/xbxz8m/LNjYBhYI6CaM4nAr6kYWaJoQs?=
- =?us-ascii?Q?A5zJRHpx6GB/Ca21aT6fCsfkBOSwEWHHkjgWg0athdr4RuLLIMPgTqgUPXyJ?=
- =?us-ascii?Q?/WuQtCjoMMFZRV93M1odIlpk/Tf6p069CPbX15Xpqov8WogGOe5V6xsef3+1?=
- =?us-ascii?Q?tS+WCJ026JLE3MFvh29XdawrpuIQSxpEzWjZ3bo6Muw1zGRROcIUzAifIU88?=
- =?us-ascii?Q?vgdZwBPqjd3E0sMdTyfx6+HuIRdTtUOQ556eemWC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8aca956-f855-4b3b-525b-08dd6805518d
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 23:17:01.1994
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JGv9QEMjbdg/534PAAfSl/PTlHImsqiys5TxdbBJg3OhJP6XgL2tIg22oVAzmw3/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8607
+References: <20250319133309.6fce6404@canb.auug.org.au> <CAADnVQKotSrp8CkVpFw-y800NJ_R7An-iw-twrQZaOdYUeRtqQ@mail.gmail.com>
+ <CAP01T76CqOxzEiMLKJ2y_YD=qDgWq+Fq5Zy-fnKP4AAyS30Dwg@mail.gmail.com>
+ <CAP01T77_qMiMmyeyizud=-sbBH5q1jvY_Jkj-QLZqM1zh0a2hg@mail.gmail.com>
+ <CAP01T77St7cpkvJ7w+5d3Ji-ULdz04QhZDxQWdNSBX9W7vXJCw@mail.gmail.com>
+ <CAADnVQ+8apdQtyvMO=SKXCE_HWpQEo3CaTUwd39ekYEj-D4TQA@mail.gmail.com>
+ <CAFULd4brsMuNX3-jJ44JyyRZqN1PO9FwJX7N3mvMwRzi8XYLag@mail.gmail.com>
+ <CAADnVQ+7GTN0Tn_5XSZKGDwrjW=v3R6MyGrcDnos2QpkNSidAw@mail.gmail.com>
+ <CAFULd4aHiEaJkJANNGwv1ae7T0oLd+r9_4+tozgAq0EZhS16Tw@mail.gmail.com>
+ <CAADnVQJ56-W--rdeRyRSXVjy5beQpt5scuRuTK9nDUPqdjMQ=w@mail.gmail.com> <CAFULd4bv+j8qomULWzcU_SV8zPtvxefFN6NgPu-WQiHaTR8HCg@mail.gmail.com>
+In-Reply-To: <CAFULd4bv+j8qomULWzcU_SV8zPtvxefFN6NgPu-WQiHaTR8HCg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 20 Mar 2025 16:17:53 -0700
+X-Gm-Features: AQ5f1JpnjSNktuEaUMFlnP7r4sXuDi2tnnP4ZbzUHz3HLqaxRxdVpU4R4sNm5DM
+Message-ID: <CAADnVQ+Aq85fJJGkurLopdAwjyTEnXAb8=u-ni6mjm-swpEYjQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 01:00:46PM -0800, Nicolin Chen wrote:
+On Thu, Mar 20, 2025 at 12:49=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wr=
+ote:
+>
+> On Thu, Mar 20, 2025 at 12:17=E2=80=AFAM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Wed, Mar 19, 2025 at 12:44=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com=
+> wrote:
+> > >
+> > > On Wed, Mar 19, 2025 at 7:56=E2=80=AFPM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > >
+> > > > On Wed, Mar 19, 2025 at 9:06=E2=80=AFAM Uros Bizjak <ubizjak@gmail.=
+com> wrote:
+> > > > >
+> > > > > On Wed, Mar 19, 2025 at 3:55=E2=80=AFPM Alexei Starovoitov
+> > > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > > >
+> > > > > > On Wed, Mar 19, 2025 at 7:36=E2=80=AFAM Kumar Kartikeya Dwivedi
+> > > > > > <memxor@gmail.com> wrote:
+> > > > > > >
+> > > > > > > > >
+> > > > > > > > > I've sent a fix [0], but unfortunately I was unable to re=
+produce the
+> > > > > > > > > problem with an LLVM >=3D 19 build, idk why. I will try w=
+ith GCC >=3D 14
+> > > > > > > > > as the patches require to confirm, but based on the error=
+ I am 99%
+> > > > > > > > > sure it will fix the problem.
+> > > > > > > >
+> > > > > > > > Probably because __seg_gs has CC_HAS_NAMED_AS depends on CC=
+_IS_GCC.
+> > > > > > > > Let me give it a go with GCC.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Can confirm now that this fixes it, I just did a build with G=
+CC 14
+> > > > > > > where Uros's __percpu checks kick in.
+> > > > > >
+> > > > > > Great. Thanks for checking and quick fix.
+> > > > > >
+> > > > > > btw clang supports it with __attribute__((address_space(256))),
+> > > > > > so CC_IS_GCC probably should be relaxed.
+> > > > >
+> > > > > https://github.com/llvm/llvm-project/issues/93449
+> > > > >
+> > > > > needs to be fixed first. Also, the feature has to be thoroughly t=
+ested
+> > > > > (preferably by someone having a deep knowledge of clang) before i=
+t is
+> > > > > enabled by default.
+> > > >
+> > > > clang error makes sense to me.
+> > >
+> > > It is not an error, but an internal compiler error. This should never=
+ happen.
+> >
+> > Not quite. llvm backends don't have a good way to explain the error,
+> > but this is invalid condition.
+> > Arguably llvm should do a better job in such cases instead of
+> > printing stack trace.
+> >
+> > >
+> > > > What does it even mean to do addr space cast from percpu to normal =
+address:
+> > > >
+> > > > __typeof__(int __seg_gs) const_pcpu_hot;
+> > > > void *__attribute____UNIQUE_ID___addressable_const_pcpu_hot612 =3D
+> > > >     (void *)(long)&const_pcpu_hot;
+> > >
+> > > Please see [1] for an explanation.
+> > >
+> > > [1] https://gcc.gnu.org/onlinedocs/gcc/Named-Address-Spaces.html#x86-=
+Named-Address-Spaces
+> >
+> > You didn't answer my question.
+>
+> Actually, the above link explains and documents the issue:
+>
+> "... these address spaces are not considered to be subspaces of the
+> generic (flat) address space. This means that explicit casts are
+> required to convert pointers between these address spaces and the
+> generic address space. In practice the application should cast to
+> uintptr_t and apply the segment base offset that it installed
+> previously."
+>
+> IOW, for __seg_gs address space, there exists no (known) offset that
+> would define it as a subspace of the generic space. It is gs: prefix
+> that results in segment override that "switches" to __seg_gs address
+> space. So, to convert the pointer from __seg_gs to (nonsensical!)
+> generic address space, GCC allows explicit (void *)(uintptr_t) cast
+> that in effect just strips gs: prefix from the address. You can then
+> use the pointer as a pointer to a generic space, but you can't use it
+> to dereference data from __seg_gs address space - this would be
+> nonsensical, so (__seg_gs void *)(uintptr_t) cast is needed to convert
+> pointer back to __seg_gs AS.
 
-> Nicolin Chen (2):
->   iommufd: Move iommufd_sw_msi and related functions to driver.c
->   iommu: Drop sw_msi from iommu_domain
-> 
-> Robin Murphy (1):
->   iommu: Sort out domain user data
-> 
->  drivers/iommu/dma-iommu.h               |  14 ++
->  drivers/iommu/iommu-priv.h              |  13 ++
->  drivers/iommu/iommufd/iommufd_private.h |   7 +-
->  include/linux/iommu.h                   |  35 ++--
->  drivers/iommu/dma-iommu.c               | 208 ++++++++++++------------
->  drivers/iommu/iommu-sva.c               |   1 +
->  drivers/iommu/iommu.c                   |  35 +++-
->  drivers/iommu/iommufd/device.c          | 131 +--------------
->  drivers/iommu/iommufd/driver.c          | 125 ++++++++++++++
->  drivers/iommu/iommufd/hw_pagetable.c    |   6 +-
->  10 files changed, 320 insertions(+), 255 deletions(-)
+tbh, I don't see how the above doc sentence means "just strip gs:".
+But ok, if that's what gcc folks clarified as true intent and it's
+not going to change.
+btw both compilers disallow automatic variables with address space
+qualifier and that makes sense, but if "just strip gs:" would be
+the rule then auto var with gs should have meant "just strip" too.
+Weird.
 
-Applied 
+> > As suspected, gcc is producing garbage code.
+>
+> Nope, this is expected and well documented behavior.
+>
+> > See:
+> > https://godbolt.org/z/ozozYY3nv
+> >
+> > For
+> > void *ptr =3D (void *)(long)&pcpu_hot;
+> >
+> > gcc emits
+> > .quad pcpu_hot
+> > which is nonsensical, while clang refuses to produce garbage
+> > and dumps stack.
+> >
+> > Sadly, both compilers produce garbage for ret_addr()
+>
+> No, they are correct. The pointer is explicitly cast to generic
+> address space and this is what you get.
+>
+> > and both compilers produce correct code for ret_value().
+> > At least something.
+> >
+> > Uros,
+> > your percpu code is broken.
+> > you shouldn't rely on gcc producing garbage.
+> > Sooner or later gcc will start erroring on it just as clang.
+>
+> It won't. It is well documented behavior, as documented in [1].
+> Regarding linux code, you "should not" pass a pointer to generic
+> address space to dereference percpu data. Currently,
+> __verify_percpu_ptr() only triggers a warning when sparse checking is
+> used, but my patchset will now enforce this as a compile-time error
+> (this was a much sought feature, and it was possible to implement only
+> recently by using the newly introduced typeof_unqual() operator).
 
-Thanks,
-Jason
+That value proposition of the patch is clear. It's a good check,
+no doubt. My point that compilers could have done it just fine
+without using this "just strip gs:" rule for global percpu variables.
+I suspect it should be possible to craft the macro
+without assigning (void *)(long)&pcpu_hot into global var.
+And both compilers would have worked.
+
+> Rest
+> assured, before enabling this feature in linux, plenty of people
+> unsuccessfully tried to poke a hole in this functionality and long
+> threads are archived where address space functionality was discussed
+> to death. ;)
+>
+> BTW: You can use:
+>
+> --cut here--
+> diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.=
+h
+> index 474d648bca9a..e6a7525c9db9 100644
+> --- a/arch/x86/include/asm/percpu.h
+> +++ b/arch/x86/include/asm/percpu.h
+> @@ -105,6 +105,10 @@
+>  # define __my_cpu_type(var)    typeof(var) __percpu_seg_override
+>  # define __my_cpu_ptr(ptr)    (__my_cpu_type(*(ptr))*)(__force uintptr_t=
+)(ptr)
+>  # define __my_cpu_var(var)    (*__my_cpu_ptr(&(var)))
+> +
+> +# if __has_attribute(address_space) && defined(USE_TYPEOF_UNQUAL)
+> +#  define __percpu_qual        __attribute__((address_space(3)))
+
+I see, so for undefined addr spaces clang x86 just ignores it.
+Weird. But ok.
 
