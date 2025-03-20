@@ -1,366 +1,210 @@
-Return-Path: <linux-kernel+bounces-569925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14788A6A9A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:22:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819B5A6A9AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DC94841EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:22:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1381886484
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EEE1E5B69;
-	Thu, 20 Mar 2025 15:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAE81E9B06;
+	Thu, 20 Mar 2025 15:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DMGOWAqY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TLEQ1kwy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28E14B08A;
-	Thu, 20 Mar 2025 15:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5E1E47A5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742484164; cv=none; b=JimXHVzEmsDHYkejCkziTy1TWVlb6iln45G8ytFz1XT2nsaP4Xq+gXcuk3vaM9je+awR2kjE+CwIOVwn5UMZwHgkVo8RgbR6cBlrUbJ8jZztTxO8T5DVoOrWrcmHbAIzNawG87t8gYsaHbfMbTXi7fRN3Tg59JHX5u9V5X0PgqQ=
+	t=1742484175; cv=none; b=nluqGOfBH9ZgLwjx0+JI2U6fTjv/vDKbMmWfK9nlos6tgvESjnZf0Dot1hJKCewaTFQDrR5C+Fzows6Ek3h+Q1mV+vBZMR2isucGzP/8ybDnL+sCp8PNC6wR2fFR9pp1PFIRo628hhU1W6BX0mO1TAo+OKHQi2QUPq88WQTt1p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742484164; c=relaxed/simple;
-	bh=f25INGyCJY8UcVjC17OBdzMS7cvAdf0J4z2Qw+0j+UA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U3BXaLf87Dhge3o9aQmKD8ipZqyR66EzI95ufgtdVanhbJo1ZckHMmrjPLB6vM8vwpxPRnYrBtraNvsH867HnqKRvdEXrZgJdjh1hICUrmykItkPT6DhZEhMdpr4WNvQSmWNsywq6ijCdyYS97GC3BEC+oAsfavn0VxSAayLm+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DMGOWAqY; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742484162; x=1774020162;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=f25INGyCJY8UcVjC17OBdzMS7cvAdf0J4z2Qw+0j+UA=;
-  b=DMGOWAqYY9BxNd8sleLk/w6ri0INHzy6HfWZ2tm0bQzP6GtyTdom3Y0v
-   RMS5zr0Tl5TOmQMKjt1ciadhhL+n+8DwHbFGxdOwDzv9RddxzqICAG04X
-   GV3gySNMX0WwnG58jm7RsbyQcIEzzzM2ZIUIHdVrqQZgN8AaFPQSGzfOI
-   FtGuZH0827FgPDE6agpgtZtv09rc3UpMcUvorXOUAMqYJRi+3Ev0AZsNd
-   PmPog9RUtKq2UWyb6jlqK4zd8OJ0QfVz9CssgGtyRs5S76WHSvS8w2Hb0
-   lGQX7b1GOzxEF7JzMhMU1jRbvpjJgGM8L2XTdu85KyAWYlc6MWIm89wH4
-   g==;
-X-CSE-ConnectionGUID: T/aS0PwqTh6v5Mmh1M9sHw==
-X-CSE-MsgGUID: FA79GDeeQE+JwRv1tO3QXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="42970754"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="42970754"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 08:22:40 -0700
-X-CSE-ConnectionGUID: I6eL56F9Qk6L3GAx/LeXMg==
-X-CSE-MsgGUID: 65mLGYXWSsq6P9hlHmr6sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="122852413"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.110.123]) ([10.125.110.123])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 08:22:40 -0700
-Message-ID: <1ca7b324-9de2-41b8-8c5a-a823c861c692@intel.com>
-Date: Thu, 20 Mar 2025 08:22:39 -0700
+	s=arc-20240116; t=1742484175; c=relaxed/simple;
+	bh=dN0PedVSuX7QXaHpTR0F3DmJyYmt/gOm5NeJEuK58N0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=nwsmCXgUdaJu0BcPWVGT4ct0uPN1VINcAGvaSjj00OLetEZEJ3xmTnzTAwJSBFgEY2NL8r9uz9Gge+3ZsywenTA3c/S+9BCV9iBLa6Cdyi7Xe5exSFH+R6lwUVkxp6+9UJZvCegyujXf1k4tdbAWFL3QeBmN577PRq//07vxyVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TLEQ1kwy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742484172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WQ12SBS+xaGKl0p+tVquQxEaQenYHJNZyAI7USNHD6U=;
+	b=TLEQ1kwyiwg6qkcN97NteosfRuuPFeVJ5UdVn7IgSxAjIyMzBivq9OsTyZA26GYek7d14U
+	7ae5Q4zg/7wXtYRKgOBBm9/XuC3dyGTedzCVggxt6knAn878gfAQPCX1/6ZSrympzIsSCS
+	VQt6vhPIRK7Nb8uVsF9e7NBNlHmezmc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-13-BWj7Ce4kPMmRnlhAhS4IhA-1; Thu,
+ 20 Mar 2025 11:22:47 -0400
+X-MC-Unique: BWj7Ce4kPMmRnlhAhS4IhA-1
+X-Mimecast-MFC-AGG-ID: BWj7Ce4kPMmRnlhAhS4IhA_1742484165
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 228D9180025C;
+	Thu, 20 Mar 2025 15:22:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B6EE11828A93;
+	Thu, 20 Mar 2025 15:22:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <dd76239caf5ae7ea8f681fd778e6028cb41bbc43.camel@ibm.com>
+References: <dd76239caf5ae7ea8f681fd778e6028cb41bbc43.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-29-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 28/35] netfs: Adjust group handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma/idxd: Remove __packed from structures
-To: Yi Sun <yi.sun@intel.com>, anil.s.keshavamurthy@intel.com,
- vkoul@kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gordon.jin@intel.com, andriy.shevchenko@intel.com, yi.sun@linux.intel.com
-References: <20250320081807.3688123-1-yi.sun@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250320081807.3688123-1-yi.sun@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3173667.1742484160.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 20 Mar 2025 15:22:40 +0000
+Message-ID: <3173668.1742484160@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
+> >  		if (unlikely(group !=3D netfs_group) &&
+> > -		    group !=3D NETFS_FOLIO_COPY_TO_CACHE)
+> > +		    group !=3D NETFS_FOLIO_COPY_TO_CACHE &&
+> > +		    (group || folio_test_dirty(folio)))
+> =
 
-On 3/20/25 1:18 AM, Yi Sun wrote:
-> The __packed attribute introduces potential unaligned memory accesses
-> and endianness portability issues. Instead of relying on compiler-specific
-> packing, it's much better to explicitly fill structure gaps using padding
-> fields, ensuring natural alignment.
-> 
-> Since all previously __packed structures already enforce proper alignment
-> through manual padding, the __packed qualifiers are unnecessary and can be
-> safely removed.
-> 
-> Signed-off-by: Yi Sun <yi.sun@intel.com>
+> I am trying to follow to this complex condition. Is it possible case tha=
+t
+> folio is dirty but we don't flush the content?
 
-Although endian portability is probably not a concern given this driver is only for an Intel platform device.
+It's slightly complicated by fscache.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+The way I have made local caching work for things that use netfslib fully =
+is
+that the writeback code copies the data to the cache.  We achieve this by
+marking the pages dirty when we read them from the server.
 
-> 
-> diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-> index 006ba206ab1b..9c1c546fe443 100644
-> --- a/drivers/dma/idxd/registers.h
-> +++ b/drivers/dma/idxd/registers.h
-> @@ -45,7 +45,7 @@ union gen_cap_reg {
->  		u64 rsvd3:32;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  #define IDXD_GENCAP_OFFSET		0x10
->  
->  union wq_cap_reg {
-> @@ -65,7 +65,7 @@ union wq_cap_reg {
->  		u64 rsvd4:8;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  #define IDXD_WQCAP_OFFSET		0x20
->  #define IDXD_WQCFG_MIN			5
->  
-> @@ -79,7 +79,7 @@ union group_cap_reg {
->  		u64 rsvd:45;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  #define IDXD_GRPCAP_OFFSET		0x30
->  
->  union engine_cap_reg {
-> @@ -88,7 +88,7 @@ union engine_cap_reg {
->  		u64 rsvd:56;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  
->  #define IDXD_ENGCAP_OFFSET		0x38
->  
-> @@ -114,7 +114,7 @@ union offsets_reg {
->  		u64 rsvd:48;
->  	};
->  	u64 bits[2];
-> -} __packed;
-> +};
->  
->  #define IDXD_TABLE_MULT			0x100
->  
-> @@ -128,7 +128,7 @@ union gencfg_reg {
->  		u32 rsvd2:18;
->  	};
->  	u32 bits;
-> -} __packed;
-> +};
->  
->  #define IDXD_GENCTRL_OFFSET		0x88
->  union genctrl_reg {
-> @@ -139,7 +139,7 @@ union genctrl_reg {
->  		u32 rsvd:29;
->  	};
->  	u32 bits;
-> -} __packed;
-> +};
->  
->  #define IDXD_GENSTATS_OFFSET		0x90
->  union gensts_reg {
-> @@ -149,7 +149,7 @@ union gensts_reg {
->  		u32 rsvd:28;
->  	};
->  	u32 bits;
-> -} __packed;
-> +};
->  
->  enum idxd_device_status_state {
->  	IDXD_DEVICE_STATE_DISABLED = 0,
-> @@ -183,7 +183,7 @@ union idxd_command_reg {
->  		u32 int_req:1;
->  	};
->  	u32 bits;
-> -} __packed;
-> +};
->  
->  enum idxd_cmd {
->  	IDXD_CMD_ENABLE_DEVICE = 1,
-> @@ -213,7 +213,7 @@ union cmdsts_reg {
->  		u8 active:1;
->  	};
->  	u32 bits;
-> -} __packed;
-> +};
->  #define IDXD_CMDSTS_ACTIVE		0x80000000
->  #define IDXD_CMDSTS_ERR_MASK		0xff
->  #define IDXD_CMDSTS_RES_SHIFT		8
-> @@ -284,7 +284,7 @@ union sw_err_reg {
->  		u64 rsvd5;
->  	};
->  	u64 bits[4];
-> -} __packed;
-> +};
->  
->  union iaa_cap_reg {
->  	struct {
-> @@ -303,7 +303,7 @@ union iaa_cap_reg {
->  		u64 rsvd:52;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  
->  #define IDXD_IAACAP_OFFSET	0x180
->  
-> @@ -320,7 +320,7 @@ union evlcfg_reg {
->  		u64 rsvd2:28;
->  	};
->  	u64 bits[2];
-> -} __packed;
-> +};
->  
->  #define IDXD_EVL_SIZE_MIN	0x0040
->  #define IDXD_EVL_SIZE_MAX	0xffff
-> @@ -334,7 +334,7 @@ union msix_perm {
->  		u32 pasid:20;
->  	};
->  	u32 bits;
-> -} __packed;
-> +};
->  
->  union group_flags {
->  	struct {
-> @@ -352,13 +352,13 @@ union group_flags {
->  		u64 rsvd5:26;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  
->  struct grpcfg {
->  	u64 wqs[4];
->  	u64 engines;
->  	union group_flags flags;
-> -} __packed;
-> +};
->  
->  union wqcfg {
->  	struct {
-> @@ -410,7 +410,7 @@ union wqcfg {
->  		u64 op_config[4];
->  	};
->  	u32 bits[16];
-> -} __packed;
-> +};
->  
->  #define WQCFG_PASID_IDX                2
->  #define WQCFG_PRIVL_IDX		2
-> @@ -474,7 +474,7 @@ union idxd_perfcap {
->  		u64 rsvd3:8;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  
->  #define IDXD_EVNTCAP_OFFSET		0x80
->  union idxd_evntcap {
-> @@ -483,7 +483,7 @@ union idxd_evntcap {
->  		u64 rsvd:36;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  
->  struct idxd_event {
->  	union {
-> @@ -493,7 +493,7 @@ struct idxd_event {
->  		};
->  		u32 val;
->  	};
-> -} __packed;
-> +};
->  
->  #define IDXD_CNTRCAP_OFFSET		0x800
->  struct idxd_cntrcap {
-> @@ -506,7 +506,7 @@ struct idxd_cntrcap {
->  		u32 val;
->  	};
->  	struct idxd_event events[];
-> -} __packed;
-> +};
->  
->  #define IDXD_PERFRST_OFFSET		0x10
->  union idxd_perfrst {
-> @@ -516,7 +516,7 @@ union idxd_perfrst {
->  		u32 rsvd:30;
->  	};
->  	u32 val;
-> -} __packed;
-> +};
->  
->  #define IDXD_OVFSTATUS_OFFSET		0x30
->  #define IDXD_PERFFRZ_OFFSET		0x20
-> @@ -533,7 +533,7 @@ union idxd_cntrcfg {
->  		u64 rsvd3:4;
->  	};
->  	u64 val;
-> -} __packed;
-> +};
->  
->  #define IDXD_FLTCFG_OFFSET		0x300
->  
-> @@ -543,7 +543,7 @@ union idxd_cntrdata {
->  		u64 event_count_value;
->  	};
->  	u64 val;
-> -} __packed;
-> +};
->  
->  union event_cfg {
->  	struct {
-> @@ -551,7 +551,7 @@ union event_cfg {
->  		u64 event_enc:28;
->  	};
->  	u64 val;
-> -} __packed;
-> +};
->  
->  union filter_cfg {
->  	struct {
-> @@ -562,7 +562,7 @@ union filter_cfg {
->  		u64 eng:8;
->  	};
->  	u64 val;
-> -} __packed;
-> +};
->  
->  #define IDXD_EVLSTATUS_OFFSET		0xf0
->  
-> @@ -580,7 +580,7 @@ union evl_status_reg {
->  		u32 bits_upper32;
->  	};
->  	u64 bits;
-> -} __packed;
-> +};
->  
->  #define IDXD_MAX_BATCH_IDENT	256
->  
-> @@ -620,17 +620,17 @@ struct __evl_entry {
->  	};
->  	u64 fault_addr;
->  	u64 rsvd5;
-> -} __packed;
-> +};
->  
->  struct dsa_evl_entry {
->  	struct __evl_entry e;
->  	struct dsa_completion_record cr;
-> -} __packed;
-> +};
->  
->  struct iax_evl_entry {
->  	struct __evl_entry e;
->  	u64 rsvd[4];
->  	struct iax_completion_record cr;
-> -} __packed;
-> +};
->  
->  #endif
+However, so that we don't *also* write the clean data back to the server, =
+the
+writeback group[*] field is set to a special value (NETFS_FOLIO_COPY_TO_CA=
+CHE)
+and we make the assumption that the writeback group is only actually going=
+ to
+be used by the filesystem if the page is actually modified - in which case=
+ the
+writeback group field is overwritten.
+
+[*] This is either folio->private or in a netfs_folio struct attached to
+folio->private.  Note that folio->private is set to be removed in the futu=
+re.
+
+In the event that a page is modified it will be written back to the server=
+(s)
+and the cache, assuming there is a cache.  Also note the netfs_io_stream
+struct.  There are two in the netfs_io_request struct and these are used t=
+o
+separately manage and divide up the writes to a server and to the cache.  =
+I've
+also left the possibility open that we can have more than two streams in t=
+he
+event that we need to write the data to multiple servers.
+
+Further, another reason for making writeback write the data to both the ca=
+che
+and the server is that if you are using content encryption, the data is
+encrypted and then the ciphertext is written to both the server and the ca=
+che.
+
+> Is it possible case that folio is dirty but we don't flush the content?
+
+Anyway, to answer the question more specifically, yes.  If the folio is di=
+rty
+and in the same writeback group (e.g. most recent ceph snap context), then=
+ we
+can presumably keep modifying it.
+
+And if the folio is marked dirty and is marked NETFS_FOLIO_COPY_TO_CACHE, =
+then
+we can just overwrite it, replace or clear the NETFS_FOLIO_COPY_TO_CACHE m=
+ark
+and then it just becomes a regular dirty page.  It will get written to fsc=
+ache
+either way.
+
+> > +		if ((++flush_counter & 0xf) =3D=3D 0xf)
+> > +			msleep(10);
+> =
+
+> Do we really need to use sleep? And why is it 10 ms? And even if we woul=
+d
+> like to use sleep, then it is better to introduce the named constant. An=
+d
+> what is teh justification for 10 ms?
+
+At the moment, debugging and stopping it from running wild in a tight loop
+when a mistake is made.  Remember: at this point, this is a WIP.
+
+But in reality, we might see this if we're indulging in cache ping-pong
+between two clients.  I'm not sure how this might be mitigated in the ceph
+environment - if that's not already done.
+
+> > -		kdebug("wrong group");
+> > +		kdebug("wrong group %px !=3D %px", fgroup, wreq->group);
+> =
+
+> I believe to use the %px is not very good practice. Do we really need to=
+ show
+> the real pointer?
+
+At some point I need to test interference from someone cranking the snaps =
+and
+I'll probably need this then - though it might be better to make a tracepo=
+int
+for it.
+
+> > +/*
+> > + * Get a ref on a netfs group attached to a dirty page (e.g. a ceph s=
+nap).
+> > + */
+> > +static inline struct netfs_group *netfs_get_group(struct netfs_group =
+*netfs_group)
+> > +{
+> > +	if (netfs_group && netfs_group !=3D NETFS_FOLIO_COPY_TO_CACHE)
+> =
+
+> The netfs_group is a pointer. Is it correct comparison of pointer with t=
+he
+> NETFS_FOLIO_COPY_TO_CACHE constant?
+
+This constant?
+
+#define NETFS_FOLIO_COPY_TO_CACHE ((struct netfs_group *)0x356UL) /* Write=
+ to the cache only */
+
+Yes.  See explanation above.
+
+David
 
 
