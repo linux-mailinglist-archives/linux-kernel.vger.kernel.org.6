@@ -1,231 +1,284 @@
-Return-Path: <linux-kernel+bounces-570526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6D4A6B1BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:44:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA90A6B1BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A26887A990F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB3E4882C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E5222B8C2;
-	Thu, 20 Mar 2025 23:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5338C22256A;
+	Thu, 20 Mar 2025 23:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fS0oJQKY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PB3Gox4x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB96322B59C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742514192; cv=fail; b=Of/q/bCbr4xuO/ezGe9wj17LGbwuzXsgwmnJGHqRxBIDsdCl0mMfEBJ1jKRuFLqGFaEnE94a9idintfShCAHcle4ccpGnMpUTT57FXZYgJHKDNvK/1sdRTNr4vqGmubQo6o/aSPMOZtGXpGf7+Ro0zgdgHPRzRRSXeGOsEsdc9I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742514192; c=relaxed/simple;
-	bh=NxzRfW2zVX0amIAvvy0X/yYMvLneQv3YqmYluknLgIk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rfMkqdW3iBOa4AFlH1yp/0SvisXqwgaYJcxegEAlk0Iaqp2RNn8G7w90vaVUDHGn02BZVYN3R+4xD3kimiVsq7NrPJWmev8iHgoPzy7YvzjyCT6MWouypOIn7BBkWU+Ssq9TpJvQVoT5j7aMSNMpcIGWAGR6ZTUEoApXqx/tFoo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fS0oJQKY; arc=fail smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ABF21C9E5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742514187; cv=none; b=ZPCXRQn8mom470sh+1w+2l10+vkBeANK7oDFSHnRXAXUlt8MH7z4q+Pg8nIuIXiXVbX82142kdk5bR1QTS7Jt6KWX8aGfNJZn+DFwD8WbeDISoWqHpZrkBlYwLHMAv4GC5GiY09bmlcvab5as9vJrWojUlAR/YjW15rGsHFhOnY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742514187; c=relaxed/simple;
+	bh=yTvo8FT/aWVw+Dudl0WD0tAqUlScIIyX7s+7XsL9gDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z6ObbyKdZsSBt9IIvGRaLGhHMCtfCbttl6Dsmmp1NI8bpbp+/qEUgD9fxVsUi66+B+mZuyMgBrFbPpCK9wzUVI7g0Vi2kiNPieo2uk9z9DNVxfCihfLGM8c9ZnmglXeSzUXXmrRPuZ7udUMX50JaV6SjB5NzkqdJa6Ma4HqMEBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PB3Gox4x; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742514190; x=1774050190;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=NxzRfW2zVX0amIAvvy0X/yYMvLneQv3YqmYluknLgIk=;
-  b=fS0oJQKYN3CAABQAkvj64wscMQdw5whP95iwKQFfizCY2s5CZKVCnOKp
-   9G1MIgkBnhq8qLPz26RIm+C8r0xZe8tye7ZYOBkmXpC2mkLvjS0eUSJW+
-   N1kcvl1URDIO05AaAuxbxwSn5qilgOtIvJ8BmpmbMXxIE/CCR3c4N5dGK
-   qVdYE+tq9wQVA0Ksg9TY9uflWgiYJpvJL5KnUywEklF2A54qxXnQ3pUt8
-   FIcIlBtT/UX96JK5WihjqIymHtJhGNy72JPodDRpchj2WEo3J6hg2zzlJ
-   36EPouxuykVh8rxCrezfuwMkaFSB85umO9ehhxRH8M9X1y3BzbuI7UZqY
-   w==;
-X-CSE-ConnectionGUID: lKLpYtv9RlCmR4oQD9CxQA==
-X-CSE-MsgGUID: f3D3act/SSuPZ8EdmvweZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="55154442"
+  t=1742514185; x=1774050185;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yTvo8FT/aWVw+Dudl0WD0tAqUlScIIyX7s+7XsL9gDI=;
+  b=PB3Gox4xaiemEZvA84SNV87roC8rVVEgKJtTYoOYJ3/9lH8bPTQbNgxk
+   RltZ5qJkpp41bhKvFyvanREahUB+HRUPm5k0I+O0SkdYVNy5I9kk2KiyS
+   05f0+4scMYJbOdf89FoKpekQL1t7M0LC3uObL4RZf3qzqHeVsOoT0Z4C9
+   t+zBcSXS0+81BBY0/r75GcJ5I+HXgOT4ywJ0TQHzPHdEjoI8t/+2cM0Lf
+   ee6Pokke6bXvuWIevQhaSttqXOpMJr/dtpVuP0uYzgh3kCSSYNxfJOk02
+   7XrMWzX59djDXkxEGgw+96em05u2Jr0cw9b2x8rUc1VJJ7u+kG78KIoKV
+   A==;
+X-CSE-ConnectionGUID: WHyFQePbQouJCQwPmAuJrw==
+X-CSE-MsgGUID: JHCJfOghRv+vsDFQJJP/Gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43502575"
 X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="55154442"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:43:10 -0700
-X-CSE-ConnectionGUID: owDcERVeSOCMuF9d0cvAJQ==
-X-CSE-MsgGUID: 4//3CXCxS6yu2tDwwqQeSg==
+   d="scan'208";a="43502575"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:43:05 -0700
+X-CSE-ConnectionGUID: XBOJxtfFRgGJH1q0/80q+g==
+X-CSE-MsgGUID: 7EwS3jXbSyiRaVqu6OpoCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="128355354"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Mar 2025 16:43:10 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 20 Mar 2025 16:43:09 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 20 Mar 2025 16:43:09 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.45) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 20 Mar 2025 16:43:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U/8YWkrkwtBhwuWcu7LxEEk40LqCYakVT/vyEdgwqvImOhz5cO/gNi9t8biKxRh5dp3gyXgcLAVme5HX6347iFEX0D8PC9pr+gaK6OkHsrNgC8SAggom25nR+SRwzmlzcvDvjmFXAAd/5O0S87z0d/mP+uuZfRvuxLJKcwCOkd4uRtYjmZj/8dL4DpT6MTBuaMvSOzSjm+LACHeTE1KqM1Ld83mKmzrNlf1ZQGc7qALjJgfXPGh2KnGSKhvWYSxhCGu+LIZu5df917eSnzyTf2LyZbGDGrHM1EzWKoT39NaKsZvGhz/Y/9766jPxSOhKnNDgCxx6Buy/VoDfhn1ZZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1l7Jo/QSiNkejuT+3HnOBkxt0iAwZn8Pn+pJcp4qYgQ=;
- b=xlbRu8fOQZwOs51RF3Nx6yAOMlq1CMClNNCIHdvau9jA6jCO/ASoC58VskmJy6IYbmJQsASnFFeRShIZz8GRB1+jnpEPz6HBReq4xNy1v7McOg6Cmxb2hOUI/1xtFL59fWcafb8CLtRVco3uJV7Ix8yAG0+O2I3RJeumsn9ZuxyuYZ+6q5LvBTO4DEupfLhIbuHiDUu7rrBLwcnUGZ6gJ9kjCwUpxo/APRAvlyqqshlTadeGeTtbbTAgbFAjtX9HE1FJC0ibmOSCCjV9oX5FdzJvKB7cFpUTllOqRny+9cbd/+HLF+4juhHQg/nWxnjNSzGyoAumGoo5E07I7Xp3rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7925.namprd11.prod.outlook.com (2603:10b6:8:f8::18) by
- SN7PR11MB6798.namprd11.prod.outlook.com (2603:10b6:806:262::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 23:42:39 +0000
-Received: from DS0PR11MB7925.namprd11.prod.outlook.com
- ([fe80::b1ef:c95b:554d:19c9]) by DS0PR11MB7925.namprd11.prod.outlook.com
- ([fe80::b1ef:c95b:554d:19c9%6]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 23:42:39 +0000
-Message-ID: <99fe30bc-47cf-4910-bd80-3eb743ef0548@intel.com>
-Date: Thu, 20 Mar 2025 16:42:37 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] x86/microcode/intel_staging: Support mailbox data
- transfer
-To: Dave Hansen <dave.hansen@intel.com>, <linux-kernel@vger.kernel.org>
-CC: <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>
-References: <20241001161042.465584-1-chang.seok.bae@intel.com>
- <20241211014213.3671-1-chang.seok.bae@intel.com>
- <20241211014213.3671-6-chang.seok.bae@intel.com>
- <fac46937-e0a5-42c1-96ee-65fec4e17551@intel.com>
-Content-Language: en-US
+   d="scan'208";a="122962929"
+Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.161.68])
+  by orviesa009.jf.intel.com with ESMTP; 20 Mar 2025 16:43:04 -0700
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
-In-Reply-To: <fac46937-e0a5-42c1-96ee-65fec4e17551@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR07CA0032.namprd07.prod.outlook.com
- (2603:10b6:a02:bc::45) To DS0PR11MB7925.namprd11.prod.outlook.com
- (2603:10b6:8:f8::18)
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	chang.seok.bae@intel.com
+Subject: [PATCH RFC v2 0/9] x86: Support Intel Advanced Performance Extensions
+Date: Thu, 20 Mar 2025 16:42:51 -0700
+Message-ID: <20250320234301.8342-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250227184502.10288-1-chang.seok.bae@intel.com>
+References: <20250227184502.10288-1-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7925:EE_|SN7PR11MB6798:EE_
-X-MS-Office365-Filtering-Correlation-Id: 643b0bef-7e6c-45b9-faba-08dd6808e647
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RHA4L0tXenV4bWc1eDFXUkw5QVpCU3c5UmtZWjhwOE4yai9BVEJ5VnE4N1c0?=
- =?utf-8?B?cEx0UlRWNU5HNE1HWi9wQUFVVnJMallLN0RMOVBhUUdSUWZ3QTR0NkJZbW5y?=
- =?utf-8?B?SW9vUlhhMG9EbDU5MXltR3pKcTZkVjF4Zmw4VTgwTm9NOWYrUDVQbVZDcWVO?=
- =?utf-8?B?SHdhZGJyMnM5RXBVM2ltbW9TZ2xFS0MvV1VRT2d4blBqQVdsd2FtcWNsc2hD?=
- =?utf-8?B?a3l2U1hNd2QzNWdtcWk0M1VyZVhGNS9pd210dDlGYnFrNXVmcGFJQXZibnBw?=
- =?utf-8?B?QWxSYlN5M1plKzh0ZWdjRFF3WTFHaGZNMDJqTGlPSWR2Z01rdnBEL3hDNWE0?=
- =?utf-8?B?SGFQdXBLU3EzNVBmQUpycjVRNDA2NlE5aUFoa1J3UGtzdUJCQmhwUGw0bVZt?=
- =?utf-8?B?QmljTWtxcWJrV2RPQ1BtQmRDVzhsTUlhTStMUWZHWTRlVGZVTytyZ0JwNS9l?=
- =?utf-8?B?ZkY4YWlkMHQ1Qm5ZR3BOZ1VMcGdESnRqbFF6dktzRFFHNHhwTlJzRHA0clp5?=
- =?utf-8?B?aGlKZStBa1lrME9yc1kxaHo1TWpaWi8ydWpqNE9xeFRtUGIwYVhEZFRWRG03?=
- =?utf-8?B?d3F0OGpiVVNHdEZBS2ZLSzZUL2w5d2RoK0dsQ3Q3QXlTekhZai9CNWErMHAv?=
- =?utf-8?B?ZmxzVGtSU1dYazFJN2lkSVNCY0NhR3dxQkRTbmhydTZlaUJaWVBQTkhuM0hU?=
- =?utf-8?B?dnlEMXdySDNKM1A0RHZURzNwL0JHcWZSNkdiOWEzdHZHWXl1WGxVMjlyMTNM?=
- =?utf-8?B?ZUE0MTlkdmFsbDdvMjh4MFgva3FJOWNtR2VoalFhUXc2UXBkZFhPU0pxeU9B?=
- =?utf-8?B?RTB6QlJPNEllM3lUajNIckp5aFBFalFud1dXZ0xHUjZWTXl0ZFJNNUQ5K1NE?=
- =?utf-8?B?SHZxYXJKWW00TEtUNHpBdjllSjR4SEdtdGZObjdQNjBWL0lBRisrSnhHdEhu?=
- =?utf-8?B?OThEV0hLdm0zK3lOK0pvN3NVb0grK0dMamdHV0gwaTAyc2VwZnBBMCthQVFj?=
- =?utf-8?B?R1l0NXRXRWxPQzRLRjRjdlRTeHkrOU0vUkxTbGc3S3liV3RKSldIZFlqY1NG?=
- =?utf-8?B?YmZONWl5Zkw2SW9FbWg5NktBMFh5Z1U3TnU0SVUyNGw3d2dxak91bTNsTnJX?=
- =?utf-8?B?RnZyTUhZQmpTRWVSQ3grTkE2MmxmR0dmMXRzSGJwZTZmSXk5TkpqbFZGeGcw?=
- =?utf-8?B?Q1ZJOTluWTcrYjJ0aWwraldZOG9yQXlXRUF1M3l6RHZKOUlQWkp3NFlETERS?=
- =?utf-8?B?SlpDSTJ1WUdBVlM1c1U3LzFubXlKV3l5WmhRbUZLUzNLeGdIcnY0MHFnMWI5?=
- =?utf-8?B?RFVJZlpGOTZGZ2hUSXFqTWpMalNudGNYbm04d3FLUFBwdk9EVTdoSGsxbWVh?=
- =?utf-8?B?bzNkT1dSbnh5ZnhkZ3lQNG1zUlU4L1JrQTg0ckNkcU42aUFDWDVJY3lvZUw0?=
- =?utf-8?B?TFVFaWE3U29tbVdqeHVqdit3QzRVUytLOWJoU3Z2RmdZeWRBMDBTYkowWTls?=
- =?utf-8?B?TzRWSGhuQUNGSHo5SXAvaGJBOWNrcXpEVVJIcFcvMUwyQUtJMWFQVjlDNzRE?=
- =?utf-8?B?V2JuNEZYZG5jbzl5akEzSWxZMXhCUWp6RFZpQTYrZG5ldmJsbjk5SkZGY3Rs?=
- =?utf-8?B?VUVYYmVEUWtRZkFwWXNIREpLZGdFaDY3a2hOOGNZbk84TDVTMWYzeFpYSWVl?=
- =?utf-8?B?UURqcFpiLzJFeGg4VWN5ckZpSzdmR3ZoRTJuS1lPamhZVXk3TDRxZTRzTko4?=
- =?utf-8?B?N25yb0luMjNnNXJkNERtaVJpRnhmMk1tb2E5WHpmWXppNHUvUGpuWHl0Qzh3?=
- =?utf-8?B?Yk42VVlUczVCZmExQ2ZpUnY1YzllRDdkQVFnU1BleVJMbUxab1RSVWNOYk5Z?=
- =?utf-8?Q?J5lGylZDUcgZB?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7925.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UTI2VDE0dXgrbnl5M1J2THdhWXBkUGNHeTNPN1AzQ09RNVpYZTdjdHZqVWNa?=
- =?utf-8?B?b0pWL0xGZE5UL1pHVmU4eU5EczlqQzJyL2dVWUxZMkprcXJBWjBSdXNURHA5?=
- =?utf-8?B?amRacERDZzUwM0NYY0NEYXMraG8vVHJHRnZmMTE5SzFKRGhZT1pqbE1ZSGZ5?=
- =?utf-8?B?L2p0RVl5Y2pDNkJQakdXUW5ydDU5WWp1TG8yS3AvS0h6Y2dCYnkvKzVrOGFS?=
- =?utf-8?B?ZzA3Yko5RWEvd0w1MlZvdjZHcVV6SjdERWZBcXZhVHBlcDhoR29MZ1pHRTIz?=
- =?utf-8?B?L3RFWjNiSWdIOWUzQnFMSXJTc3o1OG9KdVNqZDJ4ell6VVpLUDUyMXlGSUJl?=
- =?utf-8?B?T3RFWUVJa3ZjZXVDN1dnQlRkMURLVlJmckJ1WCtJTVhRMUNWRm1DM0QwWWhO?=
- =?utf-8?B?bFl3UE1ncFpwb0FYSHNjYjlvRFJnRnBZRmNVNFJnbnJYM1k0UEhOWHMvOUkr?=
- =?utf-8?B?cUo5ckE2SFlvUEZkNC8xWFprMHVERnJwZTdkb3VDZE4xS3JNU2lWdE5vUHI2?=
- =?utf-8?B?MDBkT1p0NkRVUXliYSswajZKRnQ3cHRHUENOTHljd0taMEtSb2tzRlY1VTls?=
- =?utf-8?B?MzhJMVRNdC9vTmR5Tm83bHdZcHJnYnhkVzVEYytxRWVWZGxZSVhDVCtzZldl?=
- =?utf-8?B?Z2V5QlRjak5KdUdpa0pRY05kT3N2S2NIemM0ZVorcGhJb1g2Skp1Z0RoaEV0?=
- =?utf-8?B?dzlOMTN5eWMvNW8rSE9LWS82YTBFNTVaai93K2RJU01nR3BsUHM5dmh6Nm1t?=
- =?utf-8?B?Y0J6MThFekUyWThUWmwvWXRCOGxNRVcxQ244cVlvTFBSblJyblhidzRuWmVw?=
- =?utf-8?B?ZGxDTkR6alFFQWd4Z0RSb2FaTkZQc2h2QnE1TGh0c0JtNUVxWWVNMXZLV3Mw?=
- =?utf-8?B?ZGFwRzJpZnU4dUZUcVFqT2QyYUVBVEpyVW9zellPdndiZW12ZGZ3TnBJYWNM?=
- =?utf-8?B?T0dpUlBSYnJZb3Q0VHlldlFwcXFRQXRna2RPNWlmbVJHSm9jQUFmN1NDUnBM?=
- =?utf-8?B?VENRTUpGOEliWjNUbHNmMHR5ODFLYmgrS1BGZ2UyMnAyWUc2aXhOczJNNWNQ?=
- =?utf-8?B?UG1kaXl3UGdRZ0tUQ3drSnBZZU1kNmFHOTBZMEtaZFF1YTNycmlwQUUzeVdj?=
- =?utf-8?B?Y2wwVlVTdkhqaEQ0YWdTbnZwNkMyTXlQdy91WWRqYzRsYWVCVmFkVXNQcmxx?=
- =?utf-8?B?cnVWbUV4THVuN3cydllIbGY1ZmhxYnZGc042SkdyeXduVUFKQ0hvNk9DVlBT?=
- =?utf-8?B?U0llaU00Y09lMWh4SHRNYkh0Zm1ydDJCQWlNQnl0a1BxNXFUbWFSdVZWNmtr?=
- =?utf-8?B?QXdrbDFRbzNxcThZaGdsMlUvWTJjbmNqRUUwdUFwRk9HZExXSTUwMHZxYWpT?=
- =?utf-8?B?VFpjQnpURlc2enlvd3pacVh0UlVxQ1JxWTZzajg4MGc1SUF1TFB5SGViNkRY?=
- =?utf-8?B?dGtnSXJ0RStnbkVlZnpzb0xPdk1CdUhaZlVLQlRLMUN0SzNEZ1J2SDQzcU10?=
- =?utf-8?B?aVRTa3NNQlhuLzZJMnNkT0E4NmVGOWx6aHpubVltSzZpUkdqZ044dXJwS2lM?=
- =?utf-8?B?cG9WRVNteEJwSEFQeXlkajZKYkVKUkJOYVdiWDlaMUU3UFF2UjI1Tk9qeGFp?=
- =?utf-8?B?Q0FKU1dxRzZKemxlZnkvUnQ2MzduZ1hpVVk2OTRsTi9XYU4xeThOcVBxbUJK?=
- =?utf-8?B?RXkxdU94N3VrdGdETXMvbUNDR1dzYzlWUkRPcmxxQ0dHNkp0b2RnVU8vVGZz?=
- =?utf-8?B?dDJ4dDlhWWwzQXg2emNLN3l3TXZPVTkyTGMvRWNRVDNNNUhxNG8wTlFja1I2?=
- =?utf-8?B?cm05N2EzakVrM0pDNThmNGFlcFk1SnowMnZlTFdoYkRBc2VGY3hGOTVhSzFs?=
- =?utf-8?B?OG5EcUtLZjJKUWZWa0tmMERsSnNOemMwTlN3QVBSclNmcllXOVozSDZycng4?=
- =?utf-8?B?Lzh3K3FPbTl3dGx2bWZjYmNCQUZ1S0ZrY0UvMlJ0UjJ1VmJaNWhJcWE1OGhn?=
- =?utf-8?B?RTdmNXVoSEFYVTdwT1N6Rm5XbFlLdzlqdVJCdXB6UXZjeVUwcmJTeVNnckxP?=
- =?utf-8?B?N2doODhIaXJpa3E3WU12MmJXRFVKVDhtaGhDN01UbUU3NkwwYk9sK0JwR0l1?=
- =?utf-8?B?U0RUUUlFNjM0QUFGS2EwRzJBVVV2d0NSWldSV1hiUWduRWNhSzhYclJWaktN?=
- =?utf-8?B?K3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 643b0bef-7e6c-45b9-faba-08dd6808e647
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7925.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 23:42:39.0690
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MtD9+CdgCil++DazzFSkptg0okIi4hDJKQQbleFgfXHqtMUofzQOELYOH9hQT3rkBa4rO+rhqjJrudOpD1V5QPeQNxF2NH4cTyrQ6l0xej0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6798
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2/18/2025 12:54 PM, Dave Hansen wrote:
-> 
-> BTW, is this kind of read/write normal for MMIO reads? It looks really
-> goofy to me, but I don't deal with devices much.
+Hi all,
 
-Yeah, looking at some device code, functions like memcpy_toio() and 
-__iowrite*_copy() seem to assume sufficient MMIO space to copy data from 
-kernel memory. I also noticed that some other mailbox code calls back 
-one of these functions.
+This is a revision of the previous posting [1]. The primary goal at this
+stage is to present the scope of the code changes and still gather early
+feedback on the approach to enabling this feature for userspace.
 
-So, I think your assessment is correct:
+== Changes in this revision ==
 
-   > To me, it's much more akin to talking over a serial port than how I
-   > think of devices attached via MMIO.
+A major update in this version is that the xstate ordering table is now
+dynamically populated at boot time, thanks to Dave’s suggestion. Each
+system will now generate its own table based on the available xfeature
+set.
 
-Certainly, this staging mailbox looks somewhat similar to a serial port. 
-I suspect the staging portion is quite resource-limited. That appears to 
-be one of key characteristics of this interface, which I should 
-highlight more comprehensively.
+As a result, the MPX removal patch has been dropped from this series.
+Previously, a conflict arose when listing both MPX and APX in a static
+table. With the new dynamic approach, each feature can be enabled
+exclusively without conflict. Patch 7 ensures their mutual exclusivity,
+meaning the table will now reflect either one or neither of them.
+
+Removing MPX entirely also seemed premature, given previous discussions
+on the list [4]. For guest compatibility, setting MPX bits in XCR0 is
+still expected on older systems.
+
+Additional changes since the last posting:
+*  Complete MPX feature bits for enforcing APX exclusivity (Dave).
+*  Remove the first patch, as merged into the tip tree:
+   69a2fdf44604 ("x86/fpu/xstate: Simplify print_xstate_features()")
+
+Below is the original cover letter with minor updates:
+
+== Introduction ==
+
+APX introduces a new set of general-purpose registers designed to improve
+performance. More details on its use cases can be found in the published
+documentation [2].
+
+This series primarily assumes the userspace usage only, though in-kernel
+use cases may remain open for considerations.
+
+== Points to Consider ==
+
+Considering APX enabling by the kernel,
+
+* New Register State
+
+  APX register state is managed by the XSAVE instruction set, with its
+  state component number assigned to 19, following XTILEDATA.
+
+* XSAVE Buffer Offset
+
+  - In the compacted format used (for the in-kernel buffer), the APX
+    state will appear at a later position in the buffer.
+
+  - In the non-compacted format (used for signal, ptrace, and KVM ABIs),
+    APX is assigned a lower offset, occupying the space previously
+    reserved for the deprecated MPX state.
+
+    This should not bring any ABI changes. In the extended register state
+    area, each state's size and offset are determined dynamically via
+    CPUID.
+
+* Kernel Assumptions:
+
+  The kernel generally assumes that higher-numbered components have
+  higher offsets, as discussed in the following section.
+
+== Areas for Adjustment ==
+
+With that in mind, here are a few key areas that need to be addressed to
+properly handle the APX state. While these are thought to be pretty much
+at this stage, I'd say it is still open to discover possible hindsights
+in other areas.
+
+1. Feature Conflict
+
+   While a valid CPU should not expose both MPX and APX, a broken or
+   misconfigured CPU could erroneously expose support for both. This hard
+   conflict should be avoided up front.
+
+2. XSAVE Format Conversion
+
+   APX introduces an offset anomaly that requires special handling when
+   converting between compacted and non-compacted layouts. The kernel
+   relies on XSAVE instructions for context switching and signal
+   handling. However, xstate copy functions must correctly translate the
+   XSAVE format while ensuring sequential memory access, as enforced by
+   struct membuf.
+
+3. XSAVE Size Calculation
+
+   The kernel calculates XSAVE buffer sizes based on the assumption that
+   the highest-numbered feature appears at the end. If APX is the last
+   bit set in the feature mask, the existing logic in
+   xstate_calculate_size() miscalculates the buffer size.
+
+4. Offset Sanity Check
+
+   The kernel's boot-time sanity check in setup_xstate_cache() assumes
+   offsets increase with feature numbers. The APX state will conflict
+   with this assumption.
+
+== Approaches ==
+
+These two approaches are considerable:
+
+Option 1, Consider APX as a one-off exception
+
+  Initially, I thought this approach would result in fewer changes to the
+  xstate code. However, it makes the code less comprehensive (or more
+  complicated) and introduces a risk. If another feature similar to APX
+  comes up, adding another exception seems to be inefficient and messy.
+
+Option 2, Handle out-of-order offsets in general
+
+  Rather than treating APX as an exception, this approach adapts the
+  kernel to accommodate out-of-order offsets. By introducing a feature
+  order table and an accompanying macro, the traversal logic is
+  encapsulated cleanly, simplifying related code. This makes the kernel
+  more resilient to future features with non-sequential offsets.
+
+== Series Summary ==
+
+This patch set addresses the above issues before enabling APX support
+The chosen approach (Option 2) adjusts the kernel to handle out-of-order
+offsets. Here’s a breakdown of the patches:
+
+* PART1: XSTATE Code Adjustment
+
+  - PATCH1:  Remove the offset sanity check.
+  - PATCH2:  Introduce the feature order table.
+  - PATCH3:  Adjust XSAVE size calculation.
+  - PATCH4:  Modify the xstate copy function.
+
+* PART2: APX Enabling
+
+  - PATCH5:  Enumerate the APX CPUID feature bit.
+  - PATCH6:  Update xstate definitions to include APX.
+  - PATCH7:  Ensure MPX and APX are mutually exclusive.
+  - PATCH8:  Register APX in the supported xstate list.
+  - PATCH9:  Add a self-test case for APX.
+
+== Testing ==
+
+The first part is agnostic to APX and should preserve the same
+functionality for the currently supported features. The xstate tests --
+covering context switching and ABI compatibility for signal and ptrace --
+were executed to ensure there is no regression.
+
+Now, with dynamic population of the ordering table, MPX and APX states
+can be separately enabled in different systems:
+
+* APX: PATCH9 applies to the same test set and builds on the xstate
+  selftest rework [3]. Since no hardware implementation is available at
+  this time, an internal Intel emulator was primarily used to verify the
+  test cases.
+
+* MPX exposure in KVM guest was also validated from a Skylake machine.
+
+---
+
+The patches are based on the tip/master branch. The series can be found
+here:
+    git://github.com/intel/apx.git apx_rfc-v2
 
 Thanks,
 Chang
+
+[1] https://lore.kernel.org/lkml/20250227184502.10288-1-chang.seok.bae@intel.com/
+[2] https://www.intel.com/content/www/us/en/developer/articles/technical/advanced-performance-extensions-apx.html
+[3] https://lore.kernel.org/lkml/20250226010731.2456-1-chang.seok.bae@intel.com/
+[4] https://lore.kernel.org/lkml/547a1203-0339-7ad2-9505-eab027046298@intel.com/
+
+Chang S. Bae (9):
+  x86/fpu/xstate: Remove xstate offset check
+  x86/fpu/xstate: Introduce xfeature order table and accessor macro
+  x86/fpu/xstate: Adjust XSAVE buffer size calculation
+  x86/fpu/xstate: Adjust xstate copying logic for user ABI
+  x86/cpufeatures: Add X86_FEATURE_APX
+  x86/fpu/apx: Define APX state component
+  x86/fpu/apx: Disallow conflicting MPX presence
+  x86/fpu/apx: Enable APX state support
+  selftests/x86/apx: Add APX test
+
+ arch/x86/include/asm/cpufeatures.h   |   1 +
+ arch/x86/include/asm/fpu/types.h     |   9 +++
+ arch/x86/include/asm/fpu/xstate.h    |   3 +-
+ arch/x86/kernel/cpu/cpuid-deps.c     |   1 +
+ arch/x86/kernel/cpu/scattered.c      |   1 +
+ arch/x86/kernel/fpu/xstate.c         | 115 +++++++++++++++++++--------
+ tools/testing/selftests/x86/Makefile |   3 +-
+ tools/testing/selftests/x86/apx.c    |  10 +++
+ tools/testing/selftests/x86/xstate.c |   3 +-
+ tools/testing/selftests/x86/xstate.h |   2 +
+ 10 files changed, 113 insertions(+), 35 deletions(-)
+ create mode 100644 tools/testing/selftests/x86/apx.c
+
+
+base-commit: 758ea9705c51865858c612f591c6e6950dcafccf
+-- 
+2.45.2
+
 
