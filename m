@@ -1,568 +1,135 @@
-Return-Path: <linux-kernel+bounces-569646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24831A6A59E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:00:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF86EA6A593
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6EC1882F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A1A3BEDCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2684223311;
-	Thu, 20 Mar 2025 11:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925CB221D9E;
+	Thu, 20 Mar 2025 11:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R5GlhjY+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GslEGAVS"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B282222D7;
-	Thu, 20 Mar 2025 11:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D9822173D;
+	Thu, 20 Mar 2025 11:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742471588; cv=none; b=t+/ufxmGNc0sBgZW6F2w0rfgvPTqIoja8Xs56PuA2f0P90uPSsYQ+gChOh/qwwI+uN85QU74GdyovH02SxoebDWJtyeAjm9uZ1rvFBQ3SHOSBB+PZD7XTFqmPkh17dNN9xdkqWchAYgbGMdEcFzoch4INu14S5cPhZZTwwJ6OwA=
+	t=1742471561; cv=none; b=mNIKANs0+9OSvwp8UIhY8QdWRfp2kXwXSsVoUkb2hdYp/7AlO73VbwkLpJ+ZSRWdWhGbIZkCFqy7UztdVHN3nnDCeFmBT7Z+Layp7EcJApfq7tM/QMXdfujCxi8+W8ipR2iXXi383/x70+18a78ZA4YVyBib79OT7dNxVA5XdvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742471588; c=relaxed/simple;
-	bh=DFmnp1QXbp1zbNyOMComr+3s6U/bXRD/s4yTBs1ypYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l65fUjXVWXYIZ4DvA3/+txBAcEUbu/dcJcUJqq4HvodCTVzFEwa7iGIshR7OUzQfuDrWyg9F7KiIwn5Wpfxcj762quyc9kmYQoEw+oGJZwX5dkrORr2LHVhz0YHJdrc7uI+oKL7ba1+gcu6AgyNsWQO66nIgykvyihM72ISy9C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R5GlhjY+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742471584;
-	bh=DFmnp1QXbp1zbNyOMComr+3s6U/bXRD/s4yTBs1ypYc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=R5GlhjY+u51qyjEOA6bkO0AHVE5C3U61OEgOqFcm8Dsf/4GLoP+DdkoICRcu7dese
-	 N40VkYjRidSNb/DYxkRXDPnRaIvhKzLH7/hD2Vui+SVqSoelC7n5L9pQBoPJ7UlJ0/
-	 GVz1ZjPfn3x/FcrIg9aC8PSNCFT69meE2YHWhUErSh4VRzXKdVGfqvE0NwchbXpqAL
-	 5xmxlK5Y37C5tCDjZKccNoIndYvqj2Loih9kFhiUD/PHq6Ak/0ZTEaGKKFUHugrrrj
-	 tg0D5PJM6Er2ogsxcJj60gkaOTqwJJ23cLj+qZiwd+l3+Ldfog8zOtsdOpkaJQkitB
-	 1C2NUEiUOAPfg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBC6D17E017D;
-	Thu, 20 Mar 2025 12:53:02 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: lgirdwood@gmail.com
-Cc: peter.ujfalusi@linux.intel.com,
-	yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com,
-	daniel.baluta@nxp.com,
-	kai.vehmanen@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	christophe.jaillet@wanadoo.fr,
-	gregkh@linuxfoundation.org,
-	peterz@infradead.org,
-	krzk@kernel.org,
-	lee.lockhey@gmail.com,
-	u.kleine-koenig@baylibre.com,
-	cujomalainey@chromium.org,
-	jakiela@google.com,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH] ASoC: SOF: mediatek: Commonize duplicated functions
-Date: Thu, 20 Mar 2025 12:53:00 +0100
-Message-ID: <20250320115300.137410-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742471561; c=relaxed/simple;
+	bh=wwYMwFQRAEv66kogG7c9e6lDrkYHDgxQuvQmvun4+Ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BFBMbkFRenJjjT74xQ03W7P1tEG5TsiO9zi9+8j2oQQXSsPBL9HOZwRcq7fEgpM2SXCEez+nIK9lJ5r21dQSGk2b4VPYcZEAAMyiY6O7AYGyPjzyvHQIzHHhPBU9nUKthxwzpMaQGy3c5NDVXFBIrOj3EWDdQEcNC8YqJAhzSwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GslEGAVS; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abbb12bea54so153277566b.0;
+        Thu, 20 Mar 2025 04:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742471557; x=1743076357; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MYeHXyTh3fhxrKqIA00QWEYQrk6Uzb2lupwN2gVVWFc=;
+        b=GslEGAVSXVwCHjVTKG/s8RpBGuaQz9k4UdPahQ7i59NJcxHC4B30dmDwD2SWmYn+vZ
+         01t1c0rKV9VFNZoVV1PKJyX3WBHkc42tcPW3fusHHQkMIPUmshO+tA4rvk2c+ZTQeVgx
+         6/yjleMpgj+aLdYtBR1QQCQuE3MqY07rpZ2b9cLqOm9xInr4zQOQwAdVi5ZaFEe6U1Zo
+         OYe1DcdQEK9AdcWf29C5bLSn4RytnNPYwX7WOd2Xvhc9Vi75nPn+F5ZcWnJGVtl3gZnE
+         HVi925RG0OYeMXIwTXh2Juzua65TDPqaixHrDRXamfsc+FmnmN13l0TwkXnARkaWKJ7R
+         C+pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742471557; x=1743076357;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MYeHXyTh3fhxrKqIA00QWEYQrk6Uzb2lupwN2gVVWFc=;
+        b=aZ3PLYesiP7CsSnaDTB8ElMOR6h0kprVxJRkrMm0BQkkff28gkRwl294oXClMlZXNW
+         3YJ7LlhZvJ00jKoyWfuzGg3d/tWwxmPpTJ8wscWLpAHGtcaacWwXf8Qc0p8TG8Y2JU/V
+         oxaVp0iwGtGuQXOaB+AudQOGMdEKbuQi7EyfVqgy+CykekDLBvlCezyxL3TtFhJhQje8
+         csiwSwaMUpAn1hUDHUsJYQ4AA/+5DF1Kr8G/PUwhjUgW0mzXEBAuzQ9wq9xHYo66ByRW
+         gymtYs11ma6RMm3kacp4BLrhgtHWG3oxPtrU9jSR1vJ33jL8cYpE1kB0fh+FaJnFbNqe
+         N6LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULSul1qiVLDVSZxWrASFqJzfX905s9yeunemeX/dISvuNUAnDmDcJAIpWiGul1CvxZDBIONYjDHtCB/FEB@vger.kernel.org, AJvYcCWmSESgK/AgknT7cSCMluc2+B7A6MKJ1rZ+pL3b4D16pOdKMAUFyHmeTUpl1FRcIoSOfL/+/+NDUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmw99M1dXUsKZsD2ju1IfcOgoxS1WKZrjv4jX15kozo+D4jIJX
+	DpQ/l4ZK9MCvMJeHJMu9/dLpOHDwTaQAQkma4vsqiPqmKuZd8KKfU5RAOA==
+X-Gm-Gg: ASbGncu0wb/snjP23JSUZ8ex2KRWnFjapyNAaZWoqWupiYYUPs/95zk+PUAAc6Mw29r
+	AFqBkvssLz5wFLJBtYadMlWun5sTibxCSTmiHPo3osEwUoEu1Naka2PD5zzDJK6Ru0LUo8K6po2
+	jloaBOzgIse7hip4sbhfhPHOLxk4j1NAYLVjZZVWKGjrTH76cUZG3IdXXfu/Haw3cGkpQazelSn
+	iw307xEdAwo3o+A1Qkkad8uM59pjZ+rVYS1YqNbJQPONzunA4/iv/6M/H+KJlPO3HWcLdYgYxl2
+	JQg2uOpttF+cU4gK7RWPlb9LLQsyyJxKdfwJpR8PqDrLbwFrJfkLLkd/p2GuqoWSegIYGchOgTy
+	cfw==
+X-Google-Smtp-Source: AGHT+IFAUXWnNkmvXfc46o6a6NN7i+IHxmpDda+DxlLiRENhdKAiO6iDWb3G4KeIpahPY+tfnLzJig==
+X-Received: by 2002:a17:907:bd0d:b0:abf:3cb2:1c04 with SMTP id a640c23a62f3a-ac3b7c49f43mr798684366b.9.1742471557171;
+        Thu, 20 Mar 2025 04:52:37 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5148])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0f5dsm1173437166b.63.2025.03.20.04.52.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 04:52:36 -0700 (PDT)
+Message-ID: <457194e1-409d-455c-a863-4877934006a0@gmail.com>
+Date: Thu, 20 Mar 2025 11:53:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
+ io_uring_cmd_import_fixed_vec
+To: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Sidong Yang <sidong.yang@furiosa.ai>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
+ <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
+ <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In order to reduce duplication, move the ADSP mailbox callbacks
-handle_reply(), handle_request(), and other common SOF callbacks
-send_msg(), get_bar_index(), pcm_hw_params() and pcm_pointer()
-to the mtk-adsp-common.c file.
+On 3/19/25 15:27, Jens Axboe wrote:
+> On 3/19/25 9:26 AM, Jens Axboe wrote:
+>>
+>> On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
+>>> This patche series introduce io_uring_cmd_import_vec. With this function,
+>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
+>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+>>> for new api for encoded read/write in btrfs by using uring cmd.
+>>>
+>>> There was approximately 10 percent of performance improvements through benchmark.
+>>> The benchmark code is in
+>>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
+>>>
+>>> [...]
+>>
+>> Applied, thanks!
+>>
+>> [1/5] io_uring: rename the data cmd cache
+>>        commit: 575e7b0629d4bd485517c40ff20676180476f5f9
+>> [2/5] io_uring/cmd: don't expose entire cmd async data
+>>        commit: 5f14404bfa245a156915ee44c827edc56655b067
+>> [3/5] io_uring/cmd: add iovec cache for commands
+>>        commit: fe549edab6c3b7995b58450e31232566b383a249
+>> [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+>>        commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+> 
+> 1-4 look pretty straight forward to me - I'll be happy to queue the
+> btrfs one as well if the btrfs people are happy with it, just didn't
+> want to assume anything here.
 
-This cleanup brings no functional differences.
+fwiw, finally got time to wire a hacky test with a separate cmd,
+works fine, but I'll need to setup btrfs to test the last patch.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- sound/soc/sof/mediatek/mt8186/mt8186.c   | 105 ++----------------
- sound/soc/sof/mediatek/mt8195/mt8195.c   | 105 ++----------------
- sound/soc/sof/mediatek/mtk-adsp-common.c | 130 +++++++++++++++++++++++
- sound/soc/sof/mediatek/mtk-adsp-common.h |  10 ++
- 4 files changed, 152 insertions(+), 198 deletions(-)
-
-diff --git a/sound/soc/sof/mediatek/mt8186/mt8186.c b/sound/soc/sof/mediatek/mt8186/mt8186.c
-index 31437fdd4e92..a5291099493e 100644
---- a/sound/soc/sof/mediatek/mt8186/mt8186.c
-+++ b/sound/soc/sof/mediatek/mt8186/mt8186.c
-@@ -22,7 +22,6 @@
- #include <sound/sof/xtensa.h>
- #include "../../ops.h"
- #include "../../sof-of-dev.h"
--#include "../../sof-audio.h"
- #include "../adsp_helper.h"
- #include "../mtk-adsp-common.h"
- #include "mt8186.h"
-@@ -38,53 +37,9 @@ static int mt8186_get_window_offset(struct snd_sof_dev *sdev, u32 id)
- 	return MBOX_OFFSET;
- }
- 
--static int mt8186_send_msg(struct snd_sof_dev *sdev,
--			   struct snd_sof_ipc_msg *msg)
--{
--	struct adsp_priv *priv = sdev->pdata->hw_pdata;
--
--	sof_mailbox_write(sdev, sdev->host_box.offset, msg->msg_data,
--			  msg->msg_size);
--
--	return mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_REQ, MTK_ADSP_IPC_OP_REQ);
--}
--
--static void mt8186_dsp_handle_reply(struct mtk_adsp_ipc *ipc)
--{
--	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
--	unsigned long flags;
--
--	spin_lock_irqsave(&priv->sdev->ipc_lock, flags);
--	snd_sof_ipc_process_reply(priv->sdev, 0);
--	spin_unlock_irqrestore(&priv->sdev->ipc_lock, flags);
--}
--
--static void mt8186_dsp_handle_request(struct mtk_adsp_ipc *ipc)
--{
--	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
--	u32 p; /* panic code */
--	int ret;
--
--	/* Read the message from the debug box. */
--	sof_mailbox_read(priv->sdev, priv->sdev->debug_box.offset + 4,
--			 &p, sizeof(p));
--
--	/* Check to see if the message is a panic code 0x0dead*** */
--	if ((p & SOF_IPC_PANIC_MAGIC_MASK) == SOF_IPC_PANIC_MAGIC) {
--		snd_sof_dsp_panic(priv->sdev, p, true);
--	} else {
--		snd_sof_ipc_msgs_rx(priv->sdev);
--
--		/* tell DSP cmd is done */
--		ret = mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_RSP, MTK_ADSP_IPC_OP_RSP);
--		if (ret)
--			dev_err(priv->dev, "request send ipc failed");
--	}
--}
--
- static const struct mtk_adsp_ipc_ops dsp_ops = {
--	.handle_reply		= mt8186_dsp_handle_reply,
--	.handle_request		= mt8186_dsp_handle_request,
-+	.handle_reply		= mtk_adsp_handle_reply,
-+	.handle_request		= mtk_adsp_handle_request,
- };
- 
- static int platform_parse_resource(struct platform_device *pdev, void *data)
-@@ -381,54 +336,6 @@ static int mt8186_dsp_resume(struct snd_sof_dev *sdev)
- 	return ret;
- }
- 
--/* on mt8186 there is 1 to 1 match between type and BAR idx */
--static int mt8186_get_bar_index(struct snd_sof_dev *sdev, u32 type)
--{
--	return type;
--}
--
--static int mt8186_pcm_hw_params(struct snd_sof_dev *sdev,
--				struct snd_pcm_substream *substream,
--				struct snd_pcm_hw_params *params,
--				struct snd_sof_platform_stream_params *platform_params)
--{
--	platform_params->cont_update_posn = 1;
--
--	return 0;
--}
--
--static snd_pcm_uframes_t mt8186_pcm_pointer(struct snd_sof_dev *sdev,
--					    struct snd_pcm_substream *substream)
--{
--	int ret;
--	snd_pcm_uframes_t pos;
--	struct snd_sof_pcm *spcm;
--	struct sof_ipc_stream_posn posn;
--	struct snd_sof_pcm_stream *stream;
--	struct snd_soc_component *scomp = sdev->component;
--	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
--
--	spcm = snd_sof_find_spcm_dai(scomp, rtd);
--	if (!spcm) {
--		dev_warn_ratelimited(sdev->dev, "warn: can't find PCM with DAI ID %d\n",
--				     rtd->dai_link->id);
--		return 0;
--	}
--
--	stream = &spcm->stream[substream->stream];
--	ret = snd_sof_ipc_msg_data(sdev, stream, &posn, sizeof(posn));
--	if (ret < 0) {
--		dev_warn(sdev->dev, "failed to read stream position: %d\n", ret);
--		return 0;
--	}
--
--	memcpy(&stream->posn, &posn, sizeof(posn));
--	pos = spcm->stream[substream->stream].posn.host_posn;
--	pos = bytes_to_frames(substream->runtime, pos);
--
--	return pos;
--}
--
- static void mt8186_adsp_dump(struct snd_sof_dev *sdev, u32 flags)
- {
- 	u32 dbg_pc, dbg_data, dbg_inst, dbg_ls0stat, dbg_status, faultinfo;
-@@ -505,19 +412,19 @@ static const struct snd_sof_dsp_ops sof_mt8186_ops = {
- 	.read64		= sof_io_read64,
- 
- 	/* ipc */
--	.send_msg		= mt8186_send_msg,
-+	.send_msg		= mtk_adsp_send_msg,
- 	.get_mailbox_offset	= mt8186_get_mailbox_offset,
- 	.get_window_offset	= mt8186_get_window_offset,
- 	.ipc_msg_data		= sof_ipc_msg_data,
- 	.set_stream_data_offset = sof_set_stream_data_offset,
- 
- 	/* misc */
--	.get_bar_index	= mt8186_get_bar_index,
-+	.get_bar_index	= mtk_adsp_get_bar_index,
- 
- 	/* stream callbacks */
- 	.pcm_open	= sof_stream_pcm_open,
--	.pcm_hw_params	= mt8186_pcm_hw_params,
--	.pcm_pointer	= mt8186_pcm_pointer,
-+	.pcm_hw_params	= mtk_adsp_stream_pcm_hw_params,
-+	.pcm_pointer	= mtk_adsp_stream_pcm_pointer,
- 	.pcm_close	= sof_stream_pcm_close,
- 
- 	/* firmware loading */
-diff --git a/sound/soc/sof/mediatek/mt8195/mt8195.c b/sound/soc/sof/mediatek/mt8195/mt8195.c
-index 371563d7ce79..498d417e2829 100644
---- a/sound/soc/sof/mediatek/mt8195/mt8195.c
-+++ b/sound/soc/sof/mediatek/mt8195/mt8195.c
-@@ -22,7 +22,6 @@
- #include <sound/sof/xtensa.h>
- #include "../../ops.h"
- #include "../../sof-of-dev.h"
--#include "../../sof-audio.h"
- #include "../adsp_helper.h"
- #include "../mtk-adsp-common.h"
- #include "mt8195.h"
-@@ -38,53 +37,9 @@ static int mt8195_get_window_offset(struct snd_sof_dev *sdev, u32 id)
- 	return MBOX_OFFSET;
- }
- 
--static int mt8195_send_msg(struct snd_sof_dev *sdev,
--			   struct snd_sof_ipc_msg *msg)
--{
--	struct adsp_priv *priv = sdev->pdata->hw_pdata;
--
--	sof_mailbox_write(sdev, sdev->host_box.offset, msg->msg_data,
--			  msg->msg_size);
--
--	return mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_REQ, MTK_ADSP_IPC_OP_REQ);
--}
--
--static void mt8195_dsp_handle_reply(struct mtk_adsp_ipc *ipc)
--{
--	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
--	unsigned long flags;
--
--	spin_lock_irqsave(&priv->sdev->ipc_lock, flags);
--	snd_sof_ipc_process_reply(priv->sdev, 0);
--	spin_unlock_irqrestore(&priv->sdev->ipc_lock, flags);
--}
--
--static void mt8195_dsp_handle_request(struct mtk_adsp_ipc *ipc)
--{
--	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
--	u32 p; /* panic code */
--	int ret;
--
--	/* Read the message from the debug box. */
--	sof_mailbox_read(priv->sdev, priv->sdev->debug_box.offset + 4,
--			 &p, sizeof(p));
--
--	/* Check to see if the message is a panic code 0x0dead*** */
--	if ((p & SOF_IPC_PANIC_MAGIC_MASK) == SOF_IPC_PANIC_MAGIC) {
--		snd_sof_dsp_panic(priv->sdev, p, true);
--	} else {
--		snd_sof_ipc_msgs_rx(priv->sdev);
--
--		/* tell DSP cmd is done */
--		ret = mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_RSP, MTK_ADSP_IPC_OP_RSP);
--		if (ret)
--			dev_err(priv->dev, "request send ipc failed");
--	}
--}
--
- static const struct mtk_adsp_ipc_ops dsp_ops = {
--	.handle_reply		= mt8195_dsp_handle_reply,
--	.handle_request		= mt8195_dsp_handle_request,
-+	.handle_reply		= mtk_adsp_handle_reply,
-+	.handle_request		= mtk_adsp_handle_request,
- };
- 
- static int platform_parse_resource(struct platform_device *pdev, void *data)
-@@ -400,54 +355,6 @@ static int mt8195_dsp_resume(struct snd_sof_dev *sdev)
- 	return ret;
- }
- 
--/* on mt8195 there is 1 to 1 match between type and BAR idx */
--static int mt8195_get_bar_index(struct snd_sof_dev *sdev, u32 type)
--{
--	return type;
--}
--
--static int mt8195_pcm_hw_params(struct snd_sof_dev *sdev,
--				struct snd_pcm_substream *substream,
--				struct snd_pcm_hw_params *params,
--				struct snd_sof_platform_stream_params *platform_params)
--{
--	platform_params->cont_update_posn = 1;
--
--	return 0;
--}
--
--static snd_pcm_uframes_t mt8195_pcm_pointer(struct snd_sof_dev *sdev,
--					    struct snd_pcm_substream *substream)
--{
--	int ret;
--	snd_pcm_uframes_t pos;
--	struct snd_sof_pcm *spcm;
--	struct sof_ipc_stream_posn posn;
--	struct snd_sof_pcm_stream *stream;
--	struct snd_soc_component *scomp = sdev->component;
--	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
--
--	spcm = snd_sof_find_spcm_dai(scomp, rtd);
--	if (!spcm) {
--		dev_warn_ratelimited(sdev->dev, "warn: can't find PCM with DAI ID %d\n",
--				     rtd->dai_link->id);
--		return 0;
--	}
--
--	stream = &spcm->stream[substream->stream];
--	ret = snd_sof_ipc_msg_data(sdev, stream, &posn, sizeof(posn));
--	if (ret < 0) {
--		dev_warn(sdev->dev, "failed to read stream position: %d\n", ret);
--		return 0;
--	}
--
--	memcpy(&stream->posn, &posn, sizeof(posn));
--	pos = spcm->stream[substream->stream].posn.host_posn;
--	pos = bytes_to_frames(substream->runtime, pos);
--
--	return pos;
--}
--
- static void mt8195_adsp_dump(struct snd_sof_dev *sdev, u32 flags)
- {
- 	u32 dbg_pc, dbg_data, dbg_bus0, dbg_bus1, dbg_inst;
-@@ -529,19 +436,19 @@ static const struct snd_sof_dsp_ops sof_mt8195_ops = {
- 	.read64		= sof_io_read64,
- 
- 	/* ipc */
--	.send_msg		= mt8195_send_msg,
-+	.send_msg		= mtk_adsp_send_msg,
- 	.get_mailbox_offset	= mt8195_get_mailbox_offset,
- 	.get_window_offset	= mt8195_get_window_offset,
- 	.ipc_msg_data		= sof_ipc_msg_data,
- 	.set_stream_data_offset = sof_set_stream_data_offset,
- 
- 	/* misc */
--	.get_bar_index	= mt8195_get_bar_index,
-+	.get_bar_index	= mtk_adsp_get_bar_index,
- 
- 	/* stream callbacks */
- 	.pcm_open	= sof_stream_pcm_open,
--	.pcm_hw_params	= mt8195_pcm_hw_params,
--	.pcm_pointer	= mt8195_pcm_pointer,
-+	.pcm_hw_params	= mtk_adsp_stream_pcm_hw_params,
-+	.pcm_pointer	= mtk_adsp_stream_pcm_pointer,
- 	.pcm_close	= sof_stream_pcm_close,
- 
- 	/* firmware loading */
-diff --git a/sound/soc/sof/mediatek/mtk-adsp-common.c b/sound/soc/sof/mediatek/mtk-adsp-common.c
-index 20bcf5590eb8..01bbadb160ff 100644
---- a/sound/soc/sof/mediatek/mtk-adsp-common.c
-+++ b/sound/soc/sof/mediatek/mtk-adsp-common.c
-@@ -12,8 +12,11 @@
-  */
- 
- #include <linux/module.h>
-+#include <sound/asound.h>
- #include <sound/sof/xtensa.h>
- #include "../ops.h"
-+#include "../sof-audio.h"
-+#include "adsp_helper.h"
- #include "mtk-adsp-common.h"
- 
- /**
-@@ -81,5 +84,132 @@ void mtk_adsp_dump(struct snd_sof_dev *sdev, u32 flags)
- }
- EXPORT_SYMBOL(mtk_adsp_dump);
- 
-+/**
-+ * mtk_adsp_send_msg - Send message to Audio DSP
-+ * @sdev: SOF device
-+ * @msg: SOF IPC Message to send
-+ */
-+int mtk_adsp_send_msg(struct snd_sof_dev *sdev, struct snd_sof_ipc_msg *msg)
-+{
-+	struct adsp_priv *priv = sdev->pdata->hw_pdata;
-+
-+	sof_mailbox_write(sdev, sdev->host_box.offset, msg->msg_data,
-+			  msg->msg_size);
-+
-+	return mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_REQ, MTK_ADSP_IPC_OP_REQ);
-+}
-+EXPORT_SYMBOL(mtk_adsp_send_msg);
-+
-+/**
-+ * mtk_adsp_handle_reply - Handle reply from the Audio DSP through Mailbox
-+ * @ipc: ADSP IPC handle
-+ */
-+void mtk_adsp_handle_reply(struct mtk_adsp_ipc *ipc)
-+{
-+	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&priv->sdev->ipc_lock, flags);
-+	snd_sof_ipc_process_reply(priv->sdev, 0);
-+	spin_unlock_irqrestore(&priv->sdev->ipc_lock, flags);
-+}
-+EXPORT_SYMBOL(mtk_adsp_handle_reply);
-+
-+/**
-+ * mtk_adsp_handle_request - Handle request from the Audio DSP through Mailbox
-+ * @ipc: ADSP IPC handle
-+ */
-+void mtk_adsp_handle_request(struct mtk_adsp_ipc *ipc)
-+{
-+	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
-+	u32 panic_code;
-+	int ret;
-+
-+	/* Read the message from the debug box. */
-+	sof_mailbox_read(priv->sdev, priv->sdev->debug_box.offset + 4,
-+			 &panic_code, sizeof(panic_code));
-+
-+	/* Check to see if the message is a panic code 0x0dead*** */
-+	if ((panic_code & SOF_IPC_PANIC_MAGIC_MASK) == SOF_IPC_PANIC_MAGIC) {
-+		snd_sof_dsp_panic(priv->sdev, panic_code, true);
-+	} else {
-+		snd_sof_ipc_msgs_rx(priv->sdev);
-+
-+		/* Tell DSP cmd is done */
-+		ret = mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_RSP, MTK_ADSP_IPC_OP_RSP);
-+		if (ret)
-+			dev_err(priv->dev, "request send ipc failed");
-+	}
-+}
-+EXPORT_SYMBOL(mtk_adsp_handle_request);
-+
-+/**
-+ * mtk_adsp_get_bar_index - Map section type with BAR idx
-+ * @sdev: SOF device
-+ * @type: Section type as described by snd_sof_fw_blk_type
-+ *
-+ * MediaTek Audio DSPs have a 1:1 match between type and BAR idx
-+ */
-+int mtk_adsp_get_bar_index(struct snd_sof_dev *sdev, u32 type)
-+{
-+	return type;
-+}
-+EXPORT_SYMBOL(mtk_adsp_get_bar_index);
-+
-+/**
-+ * mtk_adsp_stream_pcm_hw_params - Platform specific host stream hw params
-+ * @sdev: SOF device
-+ * @substream: PCM Substream
-+ * @params: hw params
-+ * @platform_params: Platform specific SOF stream parameters
-+ */
-+int mtk_adsp_stream_pcm_hw_params(struct snd_sof_dev *sdev,
-+				  struct snd_pcm_substream *substream,
-+				  struct snd_pcm_hw_params *params,
-+				  struct snd_sof_platform_stream_params *platform_params)
-+{
-+	platform_params->cont_update_posn = 1;
-+	return 0;
-+}
-+EXPORT_SYMBOL(mtk_adsp_stream_pcm_hw_params);
-+
-+/**
-+ * mtk_adsp_stream_pcm_pointer - Get host stream pointer
-+ * @sdev: SOF device
-+ * @substream: PCM substream
-+ */
-+snd_pcm_uframes_t mtk_adsp_stream_pcm_pointer(struct snd_sof_dev *sdev,
-+					      struct snd_pcm_substream *substream)
-+{
-+	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
-+	struct snd_soc_component *scomp = sdev->component;
-+	struct snd_sof_pcm_stream *stream;
-+	struct sof_ipc_stream_posn posn;
-+	struct snd_sof_pcm *spcm;
-+	snd_pcm_uframes_t pos;
-+	int ret;
-+
-+	spcm = snd_sof_find_spcm_dai(scomp, rtd);
-+	if (!spcm) {
-+		dev_warn_ratelimited(sdev->dev, "warn: can't find PCM with DAI ID %d\n",
-+				     rtd->dai_link->id);
-+		return 0;
-+	}
-+
-+	stream = &spcm->stream[substream->stream];
-+	ret = snd_sof_ipc_msg_data(sdev, stream, &posn, sizeof(posn));
-+	if (ret < 0) {
-+		dev_warn(sdev->dev, "failed to read stream position: %d\n", ret);
-+		return 0;
-+	}
-+
-+	memcpy(&stream->posn, &posn, sizeof(posn));
-+	pos = spcm->stream[substream->stream].posn.host_posn;
-+	pos = bytes_to_frames(substream->runtime, pos);
-+
-+	return pos;
-+}
-+EXPORT_SYMBOL(mtk_adsp_stream_pcm_pointer);
-+
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_DESCRIPTION("SOF helpers for MTK ADSP platforms");
-diff --git a/sound/soc/sof/mediatek/mtk-adsp-common.h b/sound/soc/sof/mediatek/mtk-adsp-common.h
-index 612cff1f38f7..dc36b91d6779 100644
---- a/sound/soc/sof/mediatek/mtk-adsp-common.h
-+++ b/sound/soc/sof/mediatek/mtk-adsp-common.h
-@@ -7,4 +7,14 @@
- #define MTK_ADSP_STACK_DUMP_SIZE 32
- 
- void mtk_adsp_dump(struct snd_sof_dev *sdev, u32 flags);
-+int mtk_adsp_send_msg(struct snd_sof_dev *sdev, struct snd_sof_ipc_msg *msg);
-+void mtk_adsp_handle_reply(struct mtk_adsp_ipc *ipc);
-+void mtk_adsp_handle_request(struct mtk_adsp_ipc *ipc);
-+int mtk_adsp_get_bar_index(struct snd_sof_dev *sdev, u32 type);
-+int mtk_adsp_stream_pcm_hw_params(struct snd_sof_dev *sdev,
-+				  struct snd_pcm_substream *substream,
-+				  struct snd_pcm_hw_params *params,
-+				  struct snd_sof_platform_stream_params *platform_params);
-+snd_pcm_uframes_t mtk_adsp_stream_pcm_pointer(struct snd_sof_dev *sdev,
-+					      struct snd_pcm_substream *substream);
- #endif
 -- 
-2.48.1
+Pavel Begunkov
 
 
