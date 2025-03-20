@@ -1,142 +1,129 @@
-Return-Path: <linux-kernel+bounces-569139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BB0A69EFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:19:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C968A69EFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC87B463F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0608A0455
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02421DD9D1;
-	Thu, 20 Mar 2025 04:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jct7BLI7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A0AA926
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 04:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFB61C1F22;
+	Thu, 20 Mar 2025 04:18:28 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3655AA926;
+	Thu, 20 Mar 2025 04:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742444333; cv=none; b=Hr8S/Ot4vk9QRZO5NmW4iCdLxYqq6t00/mptQza5J/f1taIAL+40j2RLiEgIZCaiADcqf+gKXsJOhtDw+JmjhhGB5f/HtmXiD5s6PQlkVSPuO3gE/I16Qx4uBPzy5rH2CENZd+azNThMAz5JgLHZAN/aegra97JCPpCCQOKks58=
+	t=1742444308; cv=none; b=LZo0iZwKbNPj6hQVvgRrAvw1VGJsWiRzQN26eS/apn+kmdrzY2tCYPc/KA3P3g51Z3tOTaJ0Tp811K0Cdpz/klOpLgXQlFdeMcjR5MJwiUnbaTHEbpDxFRGkHA5Z35Nyss5L+Gq+09gw19SeICpRJbCl4VQUSDo+2ZEOfWCsYXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742444333; c=relaxed/simple;
-	bh=bDg/TFsSsAergY8F8yNJGYdHaRnohAoosdRef+WJbFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z+i65GKAFzQGas73YAbvXvgo9l8KvRWTN5LTbCfiIjqiyaiOtbDbnfw5vFGYga3YLkJ+X5eMNInZCucYwPi4uXTaLcShtatS+wOCOsW7nN7xGi0ZKJ3lgmr2YLBXWbJgEc3s9PpjDXNDSWZZzIRD2J8qhFkPvDbAdMtXWLjnrsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jct7BLI7; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742444332; x=1773980332;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=bDg/TFsSsAergY8F8yNJGYdHaRnohAoosdRef+WJbFg=;
-  b=Jct7BLI71oKQUVtvpvveUmLmwJZ7flOZdWErtGlCHC39BByDX3YfllAl
-   l+AZTlBsoFfmUuVG3lMzhfXypgfqgpRmL5F/tTI4SOxXw4ySR8EZdI8Ky
-   QtEUJamIoB1/ob0bghDpS8kcx8XrvhPMhIwnqXtrTPpoHA11Fv81cW7Bi
-   kitAsVrXWUhg7P0bLhHdhEuOy0iZtxO9f1WTRPrHjLT7GxOm16e4hnALX
-   VOpYGosO6MMxrQgF6ZdBBtV/woPUCDFnOn5Fw/vIx7DZ2UJ7Ya3PDdSbH
-   s7zF4S9Zg+O9DaqHYFhljzvXYgwQ46wQNUrmrTkMfpkNT3gEYQ0FT9rdG
-   Q==;
-X-CSE-ConnectionGUID: Qs9aBRTERDm+0x3oxSsrQQ==
-X-CSE-MsgGUID: r/XWrgC7TKy3tNRaDrDx9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43547934"
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="43547934"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 21:18:51 -0700
-X-CSE-ConnectionGUID: C9joRENzQP647RLxm5+5jA==
-X-CSE-MsgGUID: iSI/6MiYR2mON2nFJzAi2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="160143874"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 19 Mar 2025 21:18:49 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tv7MN-0000C9-2Z;
-	Thu, 20 Mar 2025 04:18:25 +0000
-Date: Thu, 20 Mar 2025 12:16:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huang Ying <ying.huang@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: include/linux/minmax.h:93:30: warning: large integer implicitly
- truncated to unsigned type
-Message-ID: <202503201231.VrUIFcq2-lkp@intel.com>
+	s=arc-20240116; t=1742444308; c=relaxed/simple;
+	bh=FPbR/DP+L1yR3sywDhC/tWZmkgjAgkz5vfDZao5Rrr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m2P+PH+utFc2EQKqoYXAWB9/Erb+mXHJDx0bobdXu5/vo/1edjNMvLjQ53azYqxZs7VQAGw+k0yOzuwx6KXyYDBWA4Lvl+iMoFE6ZTBvB5PUC9Dfh9QyEi8qjzhe067DtwEadvHeCyWD3oEuTDSSO3RU5clKM8hXBY2tLQnL48E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-39-67db9705e331
+From: Rakie Kim <rakie.kim@sk.com>
+To: gourry@gourry.net
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	rakie.kim@sk.com
+Subject: [PATCH v3 0/3] Enhance sysfs handling for memory hotplug in weighted interleave
+Date: Thu, 20 Mar 2025 13:17:45 +0900
+Message-ID: <20250320041749.881-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsXC9ZZnoS7r9NvpBg+mKFnMWb+GzWL61AuM
+	Fl/X/2K2+Hn3OLvFqoXX2CyOb53HbnF+1ikWi8u75rBZ3Fvzn9Vi9ZoMBy6PnbPusnt0t11m
+	92g58pbVY/Gel0wemz5NYvc4MeM3i8fOh5Ye7/ddZfP4vEkugDOKyyYlNSezLLVI3y6BK2PZ
+	jCbmgk7hisNbJ7A1MN7j72Lk5JAQMJE4830TG4y9/tJnpi5GDg42ASWJY3tjQMIiAqIS847O
+	Zuli5OJgFrjGJHHg800WkISwQITEz7+XwHpZBFQlDj/vBLN5BYwlPi+6xAwxU1Oi4dI9Joi4
+	oMTJmU/AepkF5CWat85mBhkqIXCZTeJZZzM7RIOkxMEVN1gmMPLOQtIzC0nPAkamVYxCmXll
+	uYmZOSZ6GZV5mRV6yfm5mxiBAbys9k/0DsZPF4IPMQpwMCrx8L64citdiDWxrLgy9xCjBAez
+	kgivSMftdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNTUwtSi2CyTBycUg2M
+	7YsdUtpm+Vl8Md133VM+W9c9ZPMjH/brwcKHWDYsU3LIbjm57EqEW9NfqVczm0td0rkfr6iZ
+	1/tQboJcxq/NPFPs5P5d3LDA921hgselZexLUhZYnHqfOHuJgA+fiWJVvditOL/Efdzz/9Zu
+	uFZ3gz39lMrkjlMPM83mO6iXFBg53r+uIb5EiaU4I9FQi7moOBEAzlTsYlwCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsXCNUNNS5d1+u10g+WbhCzmrF/DZjF96gVG
+	i6/rfzFb/Lx7nN3i87PXzBarFl5jszi+dR67xeG5J1ktzs86xWJxedccNot7a/6zWhy69pzV
+	YvWaDIvf21awOfB57Jx1l92ju+0yu0fLkbesHov3vGTy2PRpErvHiRm/WTx2PrT0eL/vKpvH
+	t9seHotffGDy+LxJLoA7issmJTUnsyy1SN8ugStj2Ywm5oJO4YrDWyewNTDe4+9i5OSQEDCR
+	WH/pM1MXIwcHm4CSxLG9MSBhEQFRiXlHZ7N0MXJxMAtcY5I48PkmC0hCWCBC4uffS2wgNouA
+	qsTh551gNq+AscTnRZeYIWZqSjRcuscEEReUODnzCVgvs4C8RPPW2cwTGLlmIUnNQpJawMi0
+	ilEkM68sNzEzx1SvODujMi+zQi85P3cTIzBol9X+mbiD8ctl90OMAhyMSjy8L67cShdiTSwr
+	rsw9xCjBwawkwivScTtdiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9XeGqCkEB6YklqdmpqQWoR
+	TJaJg1OqgfEhh98qxtCjVhPWekTeCjgQP1Ftd8019U13OLnOZD/9UX9Kp7hohnNfg4DF0vNf
+	XdatXnwh5frEtKf2KSVlWyNMKu3y1+qXzJ9uInjC49qqRyvM1vJM1n6kJvCiRHaKtNfHvJ4V
+	hetF9G9q7t0R1dt8PcGtb0mc+bx3Gut/3QmNPj4/cuUj5wdKLMUZiYZazEXFiQDQhcXKVgIA
+	AA==
+X-CFilter-Loop: Reflected
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
-commit: 99185c10d5d9214d0d0c8b7866660203e344ee3b resource, kunit: add test case for region_intersects()
-date:   6 months ago
-config: arm-randconfig-r063-20250320 (https://download.01.org/0day-ci/archive/20250320/202503201231.VrUIFcq2-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503201231.VrUIFcq2-lkp@intel.com/reproduce)
+The following patch series enhances the weighted interleave policy in the
+memory management subsystem by improving sysfs handling, fixing memory leaks,
+and introducing dynamic sysfs updates for memory hotplug support.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503201231.VrUIFcq2-lkp@intel.com/
+### Background
+The weighted interleave policy distributes memory allocations across multiple
+NUMA nodes based on their performance weight, thereby optimizing memory
+bandwidth utilization. The weight values are configured through sysfs.
 
-All warnings (new ones prefixed by >>):
+Previously, sysfs entries for weighted interleave were managed statically
+at initialization. This led to several issues:
+- Memory Leaks: Improper `kobject` deallocation caused memory leaks
+  when initialization failed or when nodes were removed.
+- Lack of Dynamic Updates: Sysfs attributes were created only during
+  initialization, preventing nodes added at runtime from being recognized.
+- Handling of Unusable Nodes: Sysfs entries were generated for all
+  possible nodes (`N_POSSIBLE`), including memoryless or unavailable nodes,
+  leading to unnecessary sysfs attributes and misconfiguration issues.
 
-   In file included from include/linux/ioport.h:15:0,
-                    from kernel/resource.c:15:
-   kernel/resource.c: In function 'gfr_start':
->> include/linux/minmax.h:93:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-     ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-                                 ^
-   include/linux/minmax.h:96:2: note: in expansion of macro '__cmp_once_unique'
-     __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-     ^~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:213:27: note: in expansion of macro '__cmp_once'
-    #define min_t(type, x, y) __cmp_once(min, type, x, y)
-                              ^~~~~~~~~~
-   kernel/resource.c:1838:9: note: in expansion of macro 'min_t'
-      end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-            ^~~~~
-   kernel/resource.c: In function 'gfr_continue':
->> include/linux/minmax.h:93:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-     ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-                                 ^
-   include/linux/minmax.h:96:2: note: in expansion of macro '__cmp_once_unique'
-     __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-     ^~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:213:27: note: in expansion of macro '__cmp_once'
-    #define min_t(type, x, y) __cmp_once(min, type, x, y)
-                              ^~~~~~~~~~
-   kernel/resource.c:1855:11: note: in expansion of macro 'min_t'
-      addr <= min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-              ^~~~~
+### Patch Overview
+1. [PATCH 1/3] Fix memory leaks in weighted interleave sysfs
+   - Ensures proper cleanup of `kobject` allocations.
+   - Replaces unnecessary `kfree()` calls with `kobject_put()`, preventing
+     memory leaks and improving system stability.
+
+2. [PATCH 2/3] Enable dynamic updates for weighted interleave sysfs
+   - Restructures sysfs handling to allow runtime updates.
+   - The sysfs attributes are now globally accessible, enabling external
+     modules to manage interleave settings dynamically.
+
+3. [PATCH 3/3] Support memory hotplug in weighted interleave
+   - Modifies sysfs creation logic to restrict entries to nodes that are
+     online and have memory, excluding unusable nodes.
+   - Introduces a memory hotplug mechanism to dynamically add and remove
+     sysfs attributes when nodes transition into or out of the `N_MEMORY` set.
+   - Ensures that sysfs attributes are properly removed when nodes go offline,
+     preventing stale or redundant entries from persisting.
+
+These patches have been tested under CXL-based memory configurations,
+including hotplug scenarios, to ensure proper behavior and stability.
+
+ mm/mempolicy.c | 191 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 123 insertions(+), 68 deletions(-)
 
 
-vim +93 include/linux/minmax.h
-
-d03eba99f5bf7c David Laight   2023-09-18  91  
-017fa3e8918784 Linus Torvalds 2024-07-28  92  #define __cmp_once_unique(op, type, x, y, ux, uy) \
-017fa3e8918784 Linus Torvalds 2024-07-28 @93  	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-017fa3e8918784 Linus Torvalds 2024-07-28  94  
-
-:::::: The code at line 93 was first introduced by commit
-:::::: 017fa3e89187848fd056af757769c9e66ac3e93d minmax: simplify and clarify min_t()/max_t() implementation
-
-:::::: TO: Linus Torvalds <torvalds@linux-foundation.org>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
