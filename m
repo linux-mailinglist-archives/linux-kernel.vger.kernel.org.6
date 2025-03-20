@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-570516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63122A6B1B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BE6A6B1B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89611895816
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13282188BAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E642521C19E;
-	Thu, 20 Mar 2025 23:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B655121D3DD;
+	Thu, 20 Mar 2025 23:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZlEwUZn"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8iSdQK2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CA1E49F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179EF215770
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742513512; cv=none; b=NUCW5+Rh8h0G3jEyS1iyUh7qRirmj34RbWAMpDWWwZAUZdfzWonhy0XIsJp73fmwUavlZo/ZY4YabsvIObiPTWKDLARKcrfFp5tP/YOxmVMeEEOngw1J8qRhl9p7h4y/Bq0wciDLoTjsGoxwfXDBKoN0xEEfte2Ym63Y3PTvv1A=
+	t=1742514074; cv=none; b=rL4aanq43hVEOP0NqT0nc79ypy5jpw2F68IuQ2wTfuK+3i8Nk5pNQsrFioAlLDStt8o+EWUoybRAYY8eSEXFKxz7wIEBeP2/fY5fBa4Gp8XzagpeFAe1nDRTt7BN36spm/BdSTHtECD6G1/hvhERJP6jv21JiUexmlGub03tcHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742513512; c=relaxed/simple;
-	bh=vKXN5UOu4nWZzb32BFy60N2WeM5d3u++GK/V72jPFjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FF6Wcvpm0cBogpL90PY6CQ/MlSwEzGuhq7fWhyHnJHi6t+Dfh+TMA2KQYh/3lWF4IsIm7czG9MBeo26nADZUo3MMX8frkUX1QSyjYWBeJkIA15gWTZ4O5L/Y/8k1ALbZ/F8YnqTXt528CPrw6r51iu1Nmz6W1EpPWxI9VG8OCwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZlEwUZn; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4394a823036so13744515e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742513509; x=1743118309; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WmZrqAL4xXFu8/5k2CHCeb0s0dZai7wR4qe/FXL6bLA=;
-        b=VZlEwUZn7oGCCUaWvKa84naR5mLi++ocxF0zSpYW16kxMyL/loGiqeb5idn/XvKhzU
-         lETrM+Bzo9jm8SAnza7RJiDo6L2jq7DUoowTaNe+AzsnBf19bBDI3ctKncKuN5mrNHSd
-         mxNZPuL8Ygk1gPAi6HwUmF5ak8KPtTIbre5IRmlymfe4/bTg7wCSdiCkHydA1g/XMAc3
-         ZfH2ndOIcHEeaG1IoyYAaE5OdS1Rtjnjoads3s1UHqCh8Oz8JhoWU5c5Etr1Rhf5tCH5
-         BwDJB4LHm5LSB3PGOQgNh40eHvEzlJDj1xj8jbTfgpm25px4I1S1OO9s1tkm7W+oP8Gh
-         8CUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742513509; x=1743118309;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WmZrqAL4xXFu8/5k2CHCeb0s0dZai7wR4qe/FXL6bLA=;
-        b=W9NLL4NtkrgSVTBg4siImdr8TEomVhFsLORT19g+tuBxCGdJyClnRd6V1nVNHXG6to
-         FKj+g8LkWdWpZNteL8Nmg+php7X8N92wkU8r12xvOIQF9FWrtItjQ9GS1wyWo/8QK3Qn
-         WyUgS2TEE4Bp9KqlJXYAe7h/TzITxjOfjcyIgWFovowtDaSmvdIGlLHXEaxt7vz9ejMb
-         XBwXkYQYJsD346bHkhFiwPNNzcg5bcyEoTEGpK6yY13/MrRCTMdoToLi8lplqjhv+YLW
-         +RQWIUE1ZlP2OBQJbUwC/Rd44OFnDkD22EWBQtYHalL7JmAbxljRA8s5xBQqCHOgUmmS
-         vfZg==
-X-Gm-Message-State: AOJu0YyYzCWRAqZY40uGX+XyqLp5bXAiK9o9F+bspTLS6M9tZYtV4YOM
-	J5ZcyLgBE5MtJ3H6mEMuIEqPot7c76m6a2k+oOQiW3VywIYzrWq82Lf3sw==
-X-Gm-Gg: ASbGncvBcPJaQI/727Lsm6PL1X9q3CiGo/IOMZFGKRPT0YMbBtgH4cab/kEL/RuJHEx
-	FdwnF29cfmba3IL3i1v2Mez5gpCPklB4KzR0dz7WpFJOq67TSRjaRR5IFWMFU6DtG2RgD0SdshH
-	F1jTWejpjIm3rkjbBAatLQADMFvGe9nkMgpHHvFRa63ObEsUl8vYrmskmz7HQYPobwMnePRmhzE
-	4xK4po63h9CIbcHfLV9dCCiZtfO1t548/mHer1R2tODBWs/CrEXWrWg1XOfBcSOsKynp+NyExx8
-	bW4nh1FVWe28jQkGRp8w6BJRZ0Irm+9zZxs1XcurMLs=
-X-Google-Smtp-Source: AGHT+IHJrHem4FobSHcVfvs5f0EyAlA3E9QfDSbIpbfNOyenxfb0kRQ/tWcHDAuH7gOloKYmWmymiw==
-X-Received: by 2002:a05:600c:1d92:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-43d509e3facmr8636545e9.4.1742513508625;
-        Thu, 20 Mar 2025 16:31:48 -0700 (PDT)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:5ae8:21:3c41:b954])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4453227dsm63194995e9.40.2025.03.20.16.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 16:31:48 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: jpoimboe@kernel.org,
-	peterz@infradead.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] objtool: fix resource leak in copy_file()
-Date: Thu, 20 Mar 2025 23:31:31 +0000
-Message-Id: <20250320233131.9555-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742514074; c=relaxed/simple;
+	bh=WT6Dt8NzbDjMwPOQ+0uBv5tX6x5jEDfLCYjbb4O9HKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TP6au8P9Y4YsmevXTUnmjrgoW/R7HYOpQ4ygzbfiuxopfWOQC47tsJyC1eol3Wmrw3ymf27PqWuTWgu0ody79xRPpxNMaAycMfnRrUPEtqp0J8RAsfkIZKrTipIYDiUfTyPvT/KzcgsQGUw059KjlwiCsigJlfaREKHtVT61NcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8iSdQK2; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742514071; x=1774050071;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WT6Dt8NzbDjMwPOQ+0uBv5tX6x5jEDfLCYjbb4O9HKo=;
+  b=E8iSdQK253ToWvpErC6b9a5CHO79uQSsC4SZMa0vvcfY1pLTT8G9axez
+   ISnVVfwaEg47EZak0aW/k+73Dr6XEAZo4myHv+zN1NQHl8vg4lZ+/JSmS
+   7aq+4LDeoMc5ycL5R+FSw+8QlONB8nr3H0J92yRQhZuFAjmuA1rCYA4Gu
+   LHgOuFI2clWvSUaNp8fN5AeEkfuy1bMLzZT2g8etHMhygJ9VCaWVU2QRT
+   JxDUVbwLBUNEbedJBRuwuwnQIoqL+AEBDq7tK6dXE1Ardkp/ungkx9OI2
+   45g1C5LONWZTnb7yIKXiIT6K4a6o4BrWhhfmMIKyvdPe2V58j13wQG5hx
+   A==;
+X-CSE-ConnectionGUID: yYR4430mT4yVqpx4JIEHXw==
+X-CSE-MsgGUID: z5/wcdDNS2K8k+9GkB2I7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="54439121"
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="54439121"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:41:10 -0700
+X-CSE-ConnectionGUID: 1NPY9ezlQU67RaASDCWQrA==
+X-CSE-MsgGUID: rvReTJVFSXOFFFFyk+bi/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="123417974"
+Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.161.68])
+  by fmviesa008.fm.intel.com with ESMTP; 20 Mar 2025 16:41:10 -0700
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	colinmitchell@google.com,
+	chang.seok.bae@intel.com
+Subject: [PATCH v2 0/6] x86: Support for Intel Microcode Staging Feature
+Date: Thu, 20 Mar 2025 16:40:52 -0700
+Message-ID: <20250320234104.8288-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Close open file descriptors on error paths in copy_file() to prevent
-resource leaks when open(), fstat(), fchmod(), or sendfile() fail.
+Hi all,
 
-Fixes: 5a406031d071 ("objtool: Add --output option")
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
- tools/objtool/builtin-check.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Here is a revision following up feedbacks from this posting [1]:
 
-diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index 5f761f420b8c..3357049d840f 100644
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -201,16 +201,21 @@ static int copy_file(const char *src, const char *dst)
- 	dst_fd = open(dst, O_WRONLY | O_CREAT | O_TRUNC, 0400);
- 	if (dst_fd == -1) {
- 		ERROR("can't open '%s' for writing", dst);
-+		close(src_fd);
- 		return 1;
- 	}
- 
- 	if (fstat(src_fd, &stat) == -1) {
- 		perror("fstat");
-+		close(src_fd);
-+		close(dst_fd);
- 		return 1;
- 	}
- 
- 	if (fchmod(dst_fd, stat.st_mode) == -1) {
- 		perror("fchmod");
-+		close(src_fd);
-+		close(dst_fd);
- 		return 1;
- 	}
- 
-@@ -218,6 +223,8 @@ static int copy_file(const char *src, const char *dst)
- 		copied = sendfile(dst_fd, src_fd, &offset, to_copy);
- 		if (copied == -1) {
- 			perror("sendfile");
-+			close(src_fd);
-+			close(dst_fd);
- 			return 1;
- 		}
- 	}
+  *  Instead of embedding staging logic directly into load_late_locked(),
+     it was suggested [3] to place it within load_late_stop_cpus(). This
+     change ensures that staging is treated as a preparatory step
+     before CPUs are stopped.
+
+  *  Rather than introducing a separate .c file only for staging, the
+     recommendation was to consolidate all staging-related code within
+     intel.c [4].
+
+  *  The previous implementation lacks clarity in explaining key aspects
+     of the mailbox and staging handler. Improving documentation and
+     readability in these areas was suggested as a necessary refinement
+     [5,6], as I understood.
+
+  *  It was also requested to fold MSR definitions into their usage
+     patches [7].
+
+In addition to addressing these points, I’ve considered a unified staging
+state struct (patch 2), primarily to simplify the staging handler loop
+while also improving overall code organization.
+
+This series is based on the tip/master branch. You can also find it from
+this repo:
+    git://github.com/intel-staging/microcode.git staging_v2
+
+I suspect the maintainers could afford another look at least after the
+upcoming merge window. In the meantime, I would appreciate any additional
+feedback from those interested in this feature.
+
+The original cover letter, which provides some background on this feature
+enabling and its initial integration considerations, can be found in the
+previous postings [1,2]. The relevant specification has also been posted
+[8].
+
+Thanks,
+Chang
+
+[1] Last posting: https://lore.kernel.org/lkml/20241211014213.3671-1-chang.seok.bae@intel.com/
+[2] RFC: https://lore.kernel.org/lkml/20241001161042.465584-1-chang.seok.bae@intel.com/
+[3] https://lore.kernel.org/lkml/20250218113634.GGZ7RwwkrrXADX0eRo@fat_crate.local/
+[4] https://lore.kernel.org/lkml/20250226175642.GOZ79V2jWQTH5rbuXo@fat_crate.local/
+[5] https://lore.kernel.org/lkml/fac46937-e0a5-42c1-96ee-65fec4e17551@intel.com/
+[6] https://lore.kernel.org/lkml/1aee0888-b87b-443c-84fa-3bc000cbebcf@intel.com/
+[7] https://lore.kernel.org/lkml/20250226171923.GMZ79NG_8wDtZ8vyWH@fat_crate.local/
+[8] Staging Spec: https://cdrdv2.intel.com/v1/dl/getContent/782715
+
+Chang S. Bae (6):
+  x86/microcode: Introduce staging step to reduce late-loading time
+  x86/microcode/intel: Define staging state struct
+  x86/microcode/intel: Establish staging control logic
+  x86/microcode/intel: Implement staging handler
+  x86/microcode/intel: Support mailbox transfer
+  x86/microcode/intel: Enable staging when available
+
+ arch/x86/include/asm/msr-index.h         |   9 +
+ arch/x86/kernel/cpu/microcode/core.c     |  11 +
+ arch/x86/kernel/cpu/microcode/intel.c    | 341 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/microcode/internal.h |   4 +-
+ 4 files changed, 364 insertions(+), 1 deletion(-)
+
+
+base-commit: 758ea9705c51865858c612f591c6e6950dcafccf
 -- 
-2.39.5
+2.45.2
 
 
