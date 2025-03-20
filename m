@@ -1,151 +1,102 @@
-Return-Path: <linux-kernel+bounces-569474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38351A6A378
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:21:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83583A6A35A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8790466EBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D8442220E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2DA223324;
-	Thu, 20 Mar 2025 10:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F53223326;
+	Thu, 20 Mar 2025 10:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="kGM6LjAQ"
-Received: from master.debian.org (master.debian.org [82.195.75.110])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BcftOn3a"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258CD213E78;
-	Thu, 20 Mar 2025 10:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615431A238C;
+	Thu, 20 Mar 2025 10:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466043; cv=none; b=F44kmRPju1KarI6qHfUXePJGB1TQTva1Rev5P2NjEvHdAUNfIf2C3HbARlc5ejge68SCh8J56lQg4Qb+60UC2dXMBE4ipWmgoFhJofZ3NfXBMFxXBXDDHx81JnXc5JFw3mB3jsdNXTHTo1urXessfMKIPHgVK7Elh9BaEdsNLic=
+	t=1742465516; cv=none; b=ql3ca/FBzNswTBZ8VspFXo9A1PMLlzb6nnWWEB4pgwNu7uxAkWNfoFJAijhaD+5SoI4flicMm1uugCU9csehSWgamyaZBC/1FawvTgcCXcgc3aWcxbYcWO4bQLZUBbLtSD3hDt92vHHDfJbMBvFiypYtlNrp0HangIfviAWYpAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466043; c=relaxed/simple;
-	bh=yBCsYOVE7AT2oYGlWBsDG7Zxgx+jh1YRne+Nj/HKJwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b19c1m/slQiWUiixijUNVqSjthw9dWeT8h1HA9/cri+IdjQxk7KNp5Q9Yb7GCRf9nKlJO+g87tf9UpQYfz+rC6HZ6Vtyd/fFi1XJfoCFVQsLvKfZE5hMiclXAy6NE/BNFG4fqL3yEWigYFolvXDviIUst27soR8SE3XSqZX7cRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=master.debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=kGM6LjAQ; arc=none smtp.client-ip=82.195.75.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=master.debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.master; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description;
-	bh=DqDIP5URxHBbU7xo7G+yo2Ah9fSiO+S3KlhCrFB+gWM=; b=kGM6LjAQHidYvv+RmkeYAMZQXA
-	bWJ3stQJHTvQ+5FzkDeLLedfYg50wvVs7zJcDxUu3xnhQnXl7fLEy6sh4KSetsxlLK34dAQ5TGSbo
-	p1uB6teVnGc082ro/KvQrJy10MvbkJphUfs8UFLb/7o91IAD0Za6GGlterEQ4lZWovjwTo44exwJq
-	DkbTO9A18Z/Ykqg+v80KKGWtHH3JDsG7+E1Rh6RJxNC0gVJT+HpQNyz8pPpWGCJbYlaOjkPKyImbY
-	egb/yNu8Y2PeW6Zp/g1VB/YF9Bl1YPgINQKSYuZfyXd8gzN9Y10bGH0T43yCLzMiUWKYLNZ0vnZbg
-	ssj/7hTw==;
-Received: from ukleinek by master.debian.org with local (Exim 4.94.2)
-	(envelope-from <ukleinek@master.debian.org>)
-	id 1tvCrQ-00BNjk-NZ; Thu, 20 Mar 2025 10:10:48 +0000
-Date: Thu, 20 Mar 2025 11:10:47 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@debian.org>
-To: Lee Jones <lee@kernel.org>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Mark Brown <broonie@kernel.org>, 
-	Wolfram Sang <wsa@the-dreams.de>
-Cc: Dmitrii Osipenko <dmitry.osipenko@collabora.com>, Urja <urja@urja.dev>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@collabora.com, stable@vger.kernel.org
-Subject: SPI transfers in atomic context [Was: Re: [PATCH v1 1/1] mfd: rk8xx:
- Fix shutdown handler]
-Message-ID: <sg5kgo5qjqyzfyk5nyjbkpgvbx6sfb7agc67ch6wsdq3etrsbf@h6xbtfs45k4w>
-References: <20240730180903.81688-1-sebastian.reichel@collabora.com>
- <20240801131823.GB1019230@google.com>
- <ih7hiojzuvqzpyipj66mgu5pmcderltabim7s5dnfzm6qpztbh@jqkst5tfw5ra>
+	s=arc-20240116; t=1742465516; c=relaxed/simple;
+	bh=TRB5BlQU4Cp6zal6foWk6PzkRwn6zrit+sIUxqzqbsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LFO1StfpkrnWhBWLbdPFwLb9fEz1I3exFyJDaDofUf1Bb9eNNhEY7GWkf2AK0yGCLXHIRE0YAWal2nPkMr5U3uLcpe15cMmAuhoV0vZKF2IG3MTuZNoe8qjya+IfXiIw9viYrOL+Jmx/0xaP61X9gxxskrYRZjU1BFR4cqjBeB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BcftOn3a; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742465511;
+	bh=rlyafHr7D94ajSyM6b5t9bMDuqDoPoOjsklUoBRviXo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BcftOn3aCYpMCCo1TeAZtiCvB2x7YtS0MvHB0K8T+g5vQmt1ZoG6wRaHyYPBBXdJv
+	 GkLl2n/X/B8afTwPbKVf5tmNGjLkQQowZGneg0RivVrIV5DQyr0uBMJ4GbmFs1hHKu
+	 BsPgkZHcSg4TPHK91fuHB2cESZ5LHFGQ/XZ2j/EqpSlkzeS5W1gV4Ix6y5rq6UcYGf
+	 YRcavZuRNdE+RYUjfJo4wDjXHTJ+2ruZOzsr8l8EbLhgfglC9btbQAi/39XARHGQ5L
+	 lHbeK39mo3DwZINzfaA4KIwYulOqBRwwKgFISfU5xZMuGKJycwrLHsqQCXe1Cn3Cyq
+	 0FxGUxaQZE0yA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJLw744tjz4wcd;
+	Thu, 20 Mar 2025 21:11:51 +1100 (AEDT)
+Date: Thu, 20 Mar 2025 21:11:50 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kevin Hilman <khilman@baylibre.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the amlogic tree
+Message-ID: <20250320211150.3d09eb46@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="whhetjwkeqmqacim"
-Content-Disposition: inline
-In-Reply-To: <ih7hiojzuvqzpyipj66mgu5pmcderltabim7s5dnfzm6qpztbh@jqkst5tfw5ra>
+Content-Type: multipart/signed; boundary="Sig_/heoi6zxF/ZHbBm0dPgthFTT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-
---whhetjwkeqmqacim
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+--Sig_/heoi6zxF/ZHbBm0dPgthFTT
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Subject: SPI transfers in atomic context [Was: Re: [PATCH v1 1/1] mfd: rk8xx:
- Fix shutdown handler]
-MIME-Version: 1.0
 
-Hi,
+Hi all,
 
-On Thu, Aug 01, 2024 at 05:22:24PM +0200, Sebastian Reichel wrote:
-> On Thu, Aug 01, 2024 at 02:18:23PM GMT, Lee Jones wrote:
-> > > +	/*
-> > > +	 * Currently the Rockchip SPI driver always sleeps when doing SPI
-> > > +	 * transfers. This is not allowed in the SYS_OFF_MODE_POWER_OFF
-> > > +	 * handler, so we are using the prepare handler as a workaround.
-> > > +	 * This should be removed once the Rockchip SPI driver has been
-> > > +	 * adapted.
-> > > +	 */
-> >=20
-> > So why not just adapt the SPI driver now?
->=20
-> This patch is simple and thus can easily be backported, so that the
-> Acer Chromebook shutdown is fixed in the stable kernels. SPI based
-> rkxx has been using SYS_OFF_MODE_POWER_OFF_PREPARE from the start,
-> so it's not a regression.
->=20
-> As far as I could see the SPI framework does not have something
-> comparable to the I2C .xfer_atomic handler. So fixing up the
-> Rockchip SPI driver probably involves creating some SPI core
-> helpers. I'm not yet sure about the best way to deal with this.
-> But I guess it will be better not having to backport all of the
-> requires changes to stable.
->=20
-> In any case I think the next step in this direction is discussing
-> how to handle this in general for SPI.
->=20
-> > What's the bet that if accepted, this hack is still here in 5 years tim=
-e?
->=20
-> Even if I don't work on this now, I would expect somebody to have
-> issues with broken shutdown on RK3588 boards before 5 years are
-> over :)
+Commits
 
-I'd like to have power-off working on Qnap TS-433 in the next Debian
-stable. With my Debian Kernel hat on I'd say cherry-picking such a
-commit (if it's in mainline) is acceptable. Backporting a major
-extension to the spi framework isn't.
+  5ed591a0d5dd ("MAINTAINERS: Add an entry for Amlogic pinctrl driver")
+  7c17ddbb050e ("pinctrl: Add driver support for Amlogic SoCs")
+  793d454f91e7 ("pinctrl: pinconf-generic: Add API for pinmux propertity in=
+ DTS file")
+  f2ecac49778e ("dt-bindings: pinctrl: Add support for Amlogic A4 SoC")
 
-So: Expectation confirmed! And while I agree that hacks are not nice,
-I prefer a hack now over a machine that doesn't shut down properly over
-the next five years (if Lee's expectation is also correct).
+are missing a Signed-off-by from their committers.
 
-Can we maybe go forward and do both? Accept this hack patch now and work
-on spi to make atomic xfers possible?
+--=20
+Cheers,
+Stephen Rothwell
 
-Mark, are there concerns from your side?=20
-Wolfram, are there things you would recommend to do differently in spi
-than what you have in i2c?
-
-Best regards
-Uwe
-
---whhetjwkeqmqacim
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/heoi6zxF/ZHbBm0dPgthFTT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfb6aQACgkQj4D7WH0S
-/k4lVAgApKR/SmJy+eGu8P1FQH4+6mX1fHsmZUxzeXY41MV39695K+4iGZFvDggc
-knS/G5Vv8Q2nVucvZFCWY7HejNsG8Z7VdMijGpxl/cfVccwXHeJZy8Pwzo8+lmtn
-TXNTVYAhO5tEP/90mkx4sZLWn2rtrkniRGQEEb1XGBfRZi1WFwY8zVrTSY7GPPST
-QyC0tju6/9IC/vWvCMIirPXdj1dfPR9hBVdZc26roBQ/mrcUgqN7FhV8g9hbNuAB
-U38RZbhrm6lqfCyzl6nwO0BUgigcEdVxNi3DAbNdIeXCEBL1MFb++bDrq3Ep6BDQ
-kSSQoR/oxxHxoviZhQkceHHsh8SHdw==
-=hNBd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfb6ecACgkQAVBC80lX
+0GzhXAf/cVSd+tK7wq1IOwrWv4w3GD3LUHTpUVqtBerk03XsdvZxwmn+10s2Cpgl
+xfSsxTXocWPpbGSvfWsbxYrkLy8OMKtuFFLBry36ZE94KW4wXo4l0GoIQUIl4vbA
+PF3epuhPOKrfXc3stGx6OjAoW6vV5BTw5j+q/lyzQzKkvbNnmqU7TF7PZynPHSbc
+AM0EbFyCFe72L6y4ATgAP5p1ccagH77E1+eD9SlnzKnLWGnb2VMBA28kM+SdeFHr
+6r6YFaFb/+OUx3KdU2q4RRe5EGlQrH4EU1r6fI255IyH6nIh48b8trpPPZoYHHkN
+/nRNtxrQFJl9sbvO+uOmoTG0a7Fo9A==
+=6Ha4
 -----END PGP SIGNATURE-----
 
---whhetjwkeqmqacim--
+--Sig_/heoi6zxF/ZHbBm0dPgthFTT--
 
