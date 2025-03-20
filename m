@@ -1,128 +1,155 @@
-Return-Path: <linux-kernel+bounces-569051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC152A69E07
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA23A69E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F03D175E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:07:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E8176241
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCD61C5F39;
-	Thu, 20 Mar 2025 02:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF161D7989;
+	Thu, 20 Mar 2025 02:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EVct+XeA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="UFjO01R8"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257632CCA5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798FC1C5F39
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742436418; cv=none; b=EXL5nmzFbcCcUSON3VuKm8YdDel23wC024lj8CgNAxl428G3W6DaqlzLKg5ooG9Hkyiu11MFWN/TpA6mbk/8gG9xqnL1Rx15S2GjuvrQ9Oj0gYMxaoQMnBnuenGUpPYxc58lSxSHQqLylsW/DpL707534kC77iKNBzyWzYk+bEA=
+	t=1742436484; cv=none; b=SF1S5Un5Msf438iTWQpMyc34Qzw2tV6/10pVw8vkXh/pIFdaZETntKG20PJql9XLv3wJYLDBs3p7yCdE8hzXuCfwwd+H4UaY5W7KHXH4OslK52dxrr/Hny1fUiIHzsxZAh6jaPSX8kJwdj5t9Ldq89xVxa+Yc5wrEWp2LjdMfcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742436418; c=relaxed/simple;
-	bh=Bbcm5ljaoVPeW/+Ua5xqsem3RVsmM40OrHRDG1Y8/EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPMZzHzZa6Bv9XGqp7zgbBzYLZSA+VA063q3/lhjFWaEAhxHroJcudk6p6ssA+y16QPL+X4OBN9h8fFgK4OQ8lquWL4RePOGkQUgrLEDI8pTv9YVKnmqpdLWwuv9L3NVn9L0F/q5MSZKpRKGH620gHsA4JoflTjriCRiY643j70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EVct+XeA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742436415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BbqEoX14ORu2/rmOhU9xIw+MPDfsbKLRu6ORYCqCp6E=;
-	b=EVct+XeATys/3dwhIX7VcdA0oRJ/VqcFRFkhqciLj5Rkb0D+cD4qOc2mHr+YTTq7YIXajO
-	NVciTD1OJRYnjm+by7nsWiv+cget5WTw+Te9XAaQoOgu6IOhYN3xNqYVf4wBbpYD8AHOLj
-	W3uvbxX/56XyAYJaJnaZeB1ZDkYx7KQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-312-Xn7FA1hGMWW8Z-MHK8mlEQ-1; Wed,
- 19 Mar 2025 22:06:52 -0400
-X-MC-Unique: Xn7FA1hGMWW8Z-MHK8mlEQ-1
-X-Mimecast-MFC-AGG-ID: Xn7FA1hGMWW8Z-MHK8mlEQ_1742436410
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7653D19560B4;
-	Thu, 20 Mar 2025 02:06:49 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.30])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C00918001D4;
-	Thu, 20 Mar 2025 02:06:41 +0000 (UTC)
-Date: Thu, 20 Mar 2025 10:06:37 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
- execute
-Message-ID: <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-7-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1742436484; c=relaxed/simple;
+	bh=m42DtURYMZCXyWHkUzDgb3x5mmA/f+mhAyyGrxqczQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HEa+jigDIMMTO8Q3uH5iIa7seaQs0d/TjcH+Q9w57HqxuVTJb9nW+GHZSSF0Y9V5yasbR5pa6yHM3kuujFuhIqixPK71pDvSiq/2gZNFSgUFbe0fRBm0uQJoeYGYZ/2yriwZSwVtTMyXgZ2WRGmK4Jww7Za42xA/jx2gI0pRk5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=UFjO01R8; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e46ebe19368so213581276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742436481; x=1743041281; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wYfvvRu1GHzIQ/b+4BIBn6FA6Z0KJrVipVcw92I95Mo=;
+        b=UFjO01R82Phi/zsptuvfQSn/vE7R8p+3ZHT+VM7PZml6YajaixBZq6427VCHKWAEr8
+         Hwl3FyfNnZ0MqYP55JVL/ZlP1tEcHr7nRI1M/1RuJo0UhgtJRQkWVQSGhHYGZeTxCL9b
+         /uhSvSzb2XwEzu44MgzIxVRVyzDlxi0rrtSJXtJYY9cqx5LXnwC7F2KRZyHuCMjzebPg
+         /X/+cK13kTiL5Jbu303EXMpJaGhR77Yri1hKjCZJOJF0c4z3Omk+PhJBmaZhfLwwg6J6
+         f8KcR5rEtkT3oTY8PWkVGb2dXKvkFAPflJT+nZt8KmNGVZKQuWSluSd8J5vBnGLNvmEf
+         KCCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742436481; x=1743041281;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wYfvvRu1GHzIQ/b+4BIBn6FA6Z0KJrVipVcw92I95Mo=;
+        b=W30RBnUI3B3qQanJQWK43f9IZuKsjxBEaKZ5R4uPOy3M0yh1Q3ZjLfD9WXmXtHxugV
+         vMPz9rgoXLwf95by0aNZ6aOYaSeSRkefhYIAPrHA2x9T3VfiwLe3M+LSWDOddnfamJRa
+         zS/Za/hYl1MBgJln5LaY+HSezMsecjTYWFmkVJ7UPnhMU6mIfqpY7u6v864y920hZR93
+         CktK3uf/BehIRYCGouTYimqKxp7n3id3v2p7zW47B5ucztLgSxWcJYmINRaOjMa4LXzs
+         MJqBBEh4NVCsrc1uY5/bf3Kpctr61u1E7pNqgZ94nDLiyAWRstO8gOKzhxEdDglkGgN3
+         AVxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBxnuzfBi01QbuwekmTfBuE4qgzH0wdTIY9u4V11GSJ1E5cIhJrYhhY8eMgyG4ZQkLqyZIg9UTFwshh9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBNZKBckIquX4w1bliuV+xlCCkBqE3YgqBQjHoFsmhC2hrvF3k
+	o+lhc3YV3UfxuoEDdL9nPo1pL122Bo5u67T1uhPNNaswslVYpood3gLlZg69cGw=
+X-Gm-Gg: ASbGncvKRR8nFS1EAdC70nsV+RWH0sKo/WWCgj2VNx3+Ct1y1+j31flh3rX87Fles1u
+	5gw+9f87+0DkVpI/cJybU9lmrMx0P1VE9FdTWtPXOwAEhKyRPdNui2S4PSzraX6mp27p+TY8CaY
+	HL4Fk830QHb5uTL1THRhOUrpi4r7EQrhnC7VabOx0hxGcES1vTcAzCPLm3GfNA6pzzxIsLN8+z/
+	gRwYJVM7Fx5Bb/SXEwDYqhSwYvCDReqtVW6cC8BPEJm95ItW1fTiXQg2WB4BoY3ZEoHge2buMUG
+	3lgm8E8in3Y+35D7Z86bGFybuYz9qZvER8dyvQUx15a/yt2lBUsCn7XoGhW7BOIQM0HkEV1bpDf
+	OrvKAxlm+p271g3TQXaOZ818XQX6H1Q==
+X-Google-Smtp-Source: AGHT+IFDVdDbb9X/ieVCAhVOJq33/2ZkRWOn2SMlUCHTT1LWFdTkxTojsuUWjAEuoUU3PICEQ5tJdw==
+X-Received: by 2002:a05:690c:2093:b0:700:a63c:641a with SMTP id 00721157ae682-700a63c6433mr37471867b3.0.1742436481396;
+        Wed, 19 Mar 2025 19:08:01 -0700 (PDT)
+Received: from Machine.lan (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ff32cb598asm32826357b3.111.2025.03.19.19.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 19:08:01 -0700 (PDT)
+From: Antonio Hickey <contact@antoniohickey.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Cc: Antonio Hickey <contact@antoniohickey.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH v5 01/17] rust: enable `raw_ref_op` feature
+Date: Wed, 19 Mar 2025 22:07:20 -0400
+Message-ID: <20250320020740.1631171-2-contact@antoniohickey.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250320020740.1631171-1-contact@antoniohickey.com>
+References: <20250320020740.1631171-1-contact@antoniohickey.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318010448.954-7-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-On 03/17/25 at 06:04pm, steven chen wrote:
-...snip...
-> ---
->  kernel/kexec_file.c                | 10 ++++++
->  security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
->  2 files changed, 40 insertions(+), 21 deletions(-)
-> 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 606132253c79..ab449b43aaee 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
->  }
->  #endif
->  
-> +static void kimage_file_post_load(struct kimage *image)
-> +{
-> +#ifdef CONFIG_IMA_KEXEC
-> +	ima_kexec_post_load(image);
-> +#endif
-> +}
-> +
->  /*
->   * In file mode list of segments is prepared by kernel. Copy relevant
->   * data from user space, do error checking, prepare segment list
-> @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
->  
->  	kimage_terminate(image);
->  
-> +	if (!(flags & KEXEC_FILE_ON_CRASH))
-> +		kimage_file_post_load(image);
+Since Rust 1.82.0 the `raw_ref_op` feature is stable.
 
-machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
-we should use it to do things post load, but not introducing another
-kimage_file_post_load(). 
+By enabling this feature we can use `&raw const place` and
+`&raw mut place` instead of using `addr_of!(place)` and
+`addr_of_mut!(place)` macros.
 
-> +
->  	ret = machine_kexec_post_load(image);
->  	if (ret)
->  		goto out;
-...snip...
+Allowing us to reduce macro complexity, and improve consistency
+with existing reference syntax as `&raw const`, `&raw mut` are
+similar to `&`, `&mut` making it fit more naturally with other
+existing code.
 
+Suggested-by: Benno Lossin <benno.lossin@proton.me>
+Link: https://github.com/Rust-for-Linux/linux/issues/1148
+Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+---
+ rust/kernel/lib.rs     | 2 ++
+ scripts/Makefile.build | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 398242f92a96..1d078f69bb19 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -19,6 +19,8 @@
+ #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
+ #![feature(inline_const)]
+ #![feature(lint_reasons)]
++// Stable in Rust 1.82
++#![feature(raw_ref_op)]
+ // Stable in Rust 1.83
+ #![feature(const_maybe_uninit_as_mut_ptr)]
+ #![feature(const_mut_refs)]
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 993708d11874..a73aaa028e34 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -224,9 +224,9 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ 	$(call if_changed_dep,cc_lst_c)
+ 
+ # Compile Rust sources (.rs)
+-# ---------------------------------------------------------------------------
++# --------------------------------------------------------------------------------------
+ 
+-rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons
++rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons,raw_ref_op
+ 
+ # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+ # current working directory, which may be not accessible in the out-of-tree
 
