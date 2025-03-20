@@ -1,81 +1,113 @@
-Return-Path: <linux-kernel+bounces-570386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CD8A6AFB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:16:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F8AAA6AFBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6D118943C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAAD48822C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A77227E9F;
-	Thu, 20 Mar 2025 21:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A648920A5C4;
+	Thu, 20 Mar 2025 21:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRWwqTTw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LOYGvOMi"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058F08F6E;
-	Thu, 20 Mar 2025 21:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60DB8F6E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742505356; cv=none; b=IWmpWtawQ42+0A2qK4ITbsODDN5fh/sbuiUgwWWNFYKCOLHQpl93WdM8dLXTJHbSdkvdvWGUmZ4M3AbQwXpSA68k4v/pSL2H0vjbzJSPIpXpxSy3rozhS6BO0CGOcDhdc32OHXJbkNT21bVcgLrweRBk5U+dp0YlcgGrQBv1j1o=
+	t=1742505459; cv=none; b=cIVR/RrlBBdIW8YCBGL+YwCJKUGuyJxitAOydBGRVZYHfvKufgw07sbDnLrb9qifXiLSFhcygbqOZJq+7QiARawxOH8jIonW43uP9QspYVaeQ8QbQZE/YO/3Tq6myGcu+Mp7dwWz2Xo6kRKJ2JCwAtdZKYWr+ntnAv5hYi4eDic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742505356; c=relaxed/simple;
-	bh=PoXIbn2fn8/ey+YtojroXlXe2OOZVXk/kLQFFkXv94I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQsgxyXN3uJ18fja6+AGrKrF1GpqOFCftlNXa9frplRhWRlAeLn1fxMWvu9w+mUtRjf3QNosspDmHVlNNlGDJPi2JRulUSvp0nJpwlQJr8f/q7i/8O8VYeMZ9oCgSU8XVD7GOWemwpHmIseBrwupJMjg7rB6owVu1OkRYdybM3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRWwqTTw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22A10C4CEDD;
-	Thu, 20 Mar 2025 21:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742505355;
-	bh=PoXIbn2fn8/ey+YtojroXlXe2OOZVXk/kLQFFkXv94I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iRWwqTTwq9zAOQ421NJq07q58gHkM1ZM29x2jRwFUD5qCvEEQF1QYk5SnSYqBG4J5
-	 rE9E5h30DzhL/lkKVxk9+qR2ewxU4x/0/dq5aP0r3bLXqLNDJvaYevBLkWHmPXk6b0
-	 Ab1bfEj7xwblTJdcgEtF1m3UvcBBsJnDApMBV1BzWgEF8TLDThZpBWBfAHhh+cT/HS
-	 wQxCHURXL5Gg8o0iENEwuAItYGPNVQrJtl6HnrS00DzdQ/dC1cX/52UtULfCgi86r3
-	 tnMo/PV/whnEFjxMc5cjqkDDF+haAZ69DGM4RsZ2NXe+MiHpEXgvc/vQHLcnhMI3t+
-	 3/BuQ9ySN3R1A==
-Date: Thu, 20 Mar 2025 22:15:51 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: qcom-geni: Update i2c frequency table to match
- hardware guidance
-Message-ID: <ngap6z7lr4vebvdnadpl4f7jjp2b6agkjqglrayrx44r2aet6g@aghomyb4qyqy>
-References: <20250122064634.2864432-1-quic_msavaliy@quicinc.com>
+	s=arc-20240116; t=1742505459; c=relaxed/simple;
+	bh=BzH/S4FqA82HJo+ciJuAPbxGd6hiA1rpZmdgxXUWuO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EnTBVcVHNGBOultKSI20Ljh//DfFXZns8ZWfidikdrpb/vUnOgMfVZ+X6qWbTqcJc1p6BoWKUCDeR8JJnWYPOS0hjOC9AXSfp4/TbbjOFNbcS0feg4dW4G93siZ0nVnhexnV3I41PyGCaiua/TPWALUlDvw0LQ5uZmeQvppIuBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LOYGvOMi; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so205221966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1742505455; x=1743110255; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ocm4Iixnlvf/PhQHaxpMXyWMKgJoCTvlBlRAbJwnpc=;
+        b=LOYGvOMiib2mEkRS8ayYWgeS3OVFSFSy2CImhDDC3rBW2DVG9oPe5XTWI/LscVkigB
+         U9k2HHelvNBR5w7zPemPwHfnVBItan0Weshn/fph0WTRyT60ttFbWJo3xZLAtAwvaPs6
+         I4oSOlnNNgJxOYzpwfu0/Yk6ZKqlgSwZXKEPQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742505455; x=1743110255;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ocm4Iixnlvf/PhQHaxpMXyWMKgJoCTvlBlRAbJwnpc=;
+        b=N5t0fZUaqWycVFnkT1Ns57f5Vdfec88QtgF71T1I+hyKmxJiWhQI93b3xwcsk5v086
+         jGnl2h/872A0ONFEXwAbM/+OQ34WV2F3EXJeKSUiiGMeJFmw28AFW+IEuw5gndMI9T6O
+         yDsr7138Voy4/GoX04IqN3e/6yOvVi/81sXs6u/Bskk+LZpGy2ScdeeiD39kGS+qr4R8
+         4g0j2n3RNDG6j/xqV5aueuZAejTGQ7dANIQKUTsxZU4lzdYivXoJrWhj7d4F5GLrbEIC
+         n//BbohA/fqoUq0EcWAbREakrihWIX5PV5GWUvt0lBj0BJBh30WpAYuc8QHhfx2tZLI8
+         g1fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVka94vqXaJDaG+nAghlI7tp1/WzqTTcnqUUq4wUlctJJnrVZX02PkpRmCCif+zAaaApi3UgTpg52z2ruY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTYkjvdxvwgZC67TZccxk5wyDJRIqz2ILvjgPR0juvz2hqpf7t
+	CSZTUNAntRElaNtu8fVokY0DGQCDA6fza816kbSSSXQDyZ3xoTA+fklx0AC4tHsZ3Jtw/3LRzVX
+	yKDM=
+X-Gm-Gg: ASbGncsLN00/l760l3DWleOPt45WVly4VeN8fh/EI3LEN7mZJKgzKzI81N0hl2TrLYv
+	BnTeBIDv5kYqt035pKjjbtMNRAjBVIrMJ1e1jxuTQB9Nb18XOdHjqxklec4aF9fcvLDIBEPjEjf
+	Pm+EZMTXEpE/d/GsW2HAfksc/Y16ZL7rtytoWeezCDOPtMvDNBMSC8+/JeGQSAOmT6618v4Gzh9
+	kWiLzihljUIYPnCDYV4mGoz2X3DtH0iqxYrbAcVJkDDDhKd2uoDQtnGTnTPq3KRwlGV7p37oDRh
+	65amDzdNOTINAtY0pCnhg8FFL+f74NqyNuBIxz8yZ9cJzFwOonbsKzUHgG15S2RydiEdxf+rBaJ
+	xXg2gXToEuByLUyjmu5cokMNGA6th+w==
+X-Google-Smtp-Source: AGHT+IEs19hEixbySqNUTWM5MZVSjyxRklffoc2DHNgEde9R9z95W26bInilCRYOHSF/1CdtUNw3wg==
+X-Received: by 2002:a17:907:95a4:b0:aaf:103a:e6e3 with SMTP id a640c23a62f3a-ac3f26addbemr75468966b.43.1742505454926;
+        Thu, 20 Mar 2025 14:17:34 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e532asm35917266b.56.2025.03.20.14.17.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 14:17:33 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2963dc379so220474266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:17:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvQTwN8ADiKAMOqduL1ZLguvikvK1TWibJj+82zS+HRqRO33UBCRC1l62urZfsr/pECpFBjoaVhGiinys=@vger.kernel.org
+X-Received: by 2002:a17:907:2d0e:b0:abf:7636:3cab with SMTP id
+ a640c23a62f3a-ac3f24fca13mr62083866b.29.1742505453491; Thu, 20 Mar 2025
+ 14:17:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250122064634.2864432-1-quic_msavaliy@quicinc.com>
+References: <20250320190514.1961144-1-mjguzik@gmail.com> <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
+ <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
+In-Reply-To: <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 20 Mar 2025 14:17:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com>
+X-Gm-Features: AQ5f1JqP7gG7Echr-TuoJlqUay7SS30vYXYq6MLQs0dyblkHABDG-F9h7nYMVl8
+Message-ID: <CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com>
+Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
+ overlapping store
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: x86@kernel.org, hkrzesin@redhat.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com, 
+	atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mukesh,
+On Thu, 20 Mar 2025 at 12:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> I have a recollection that handling the tail after rep movsq with an
+> overlapping store was suffering a penalty big enough to warrant a
+> "normal" copy instead, avoiding the just written to area.
 
-On Wed, Jan 22, 2025 at 12:16:34PM +0530, Mukesh Kumar Savaliya wrote:
-> With the current settings, the I2C buses are achieving around 370KHz
-> instead of the expected 400KHz. For 100KHz and 1MHz, the settings are
-> now more compliant and adhere to the Qualcomm’s internal programming
-> guide.
-> 
-> Update the I2C frequency table to align with the recommended values
-> outlined in the I2C hardware programming guide, ensuring proper
-> communication and performance.
-> 
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Ahh. Good point. The rep movsq might indeed end up having odd effects
+with subsequent aliasing memory operations.
 
-merged to i2c/i2c-host.
+Consider myself convinced.
 
-Thanks,
-Andi
+           Linus
 
