@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-570452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A787A6B080
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:13:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC6AA6B084
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A95D19C0364
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C6119C2B70
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A9722DF81;
-	Thu, 20 Mar 2025 22:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E439522E418;
+	Thu, 20 Mar 2025 22:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="YVDWKalC"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KcvExi1p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FF422D78F;
-	Thu, 20 Mar 2025 22:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC0B22E403;
+	Thu, 20 Mar 2025 22:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508593; cv=none; b=ILvMEUc61BuJP748kJFwyOf52q/K17i1FTDqNuF+cYdERnsDruLDDxx5OG48Z1zy1Q6XiYi1CUWBAguWI2k5sX04oDKAxiO5xx3w3JFRu3jaoaXItS1raaxboV5ikL5WwuXFBqs51osWiJsVWlIztu5iFb0oZx6gY4FzQRoW2Oo=
+	t=1742508597; cv=none; b=CHddM26EzeXYo2vWZpilUYhXs3Fzrx2OSucCJud4ZMJHbr1unXyGWZamaq0+RvZS+m760GZkCLL+JqXKcJgtI+rnQzOGcWElJ+JuJa26Ac8J9vu1ojCfYTDgg+osGBrDJFv+9ZUm+gOv/yoQZThKKXuklPivWJTNacKeR7kySso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508593; c=relaxed/simple;
-	bh=7/2JFSR4zJ4SPxD4xXv49X3v2uGAhaM8bENTpkFtEz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eLBb6ncCdcc8QOc2CzhOk+PxvDLMAlwjoSmhZ+rsBc9wrBtgt6db/IBjh4XIUHNRmSudPn04nbX4yh/wR8jgSRnePFKOPugbJOf4oI0zQfN6u6HDFIiPxkymHt7nbTvz6NDvXjBD/Z3ymYem8Rw9vony9PA8QuuiJ5nVyyR8+4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=YVDWKalC; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:cbc0:999f:73ad:33bd])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 2ECC92E09730;
-	Fri, 21 Mar 2025 00:09:48 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742508589;
-	bh=esTMu4OEu1aEzzdqqoWSJs3L2nJEmlgFz6s+BqjABi0=; h=From:To:Subject;
-	b=YVDWKalC7HGnRBAagNCb2DKhQWdvGoIfVPQUI3ZsCbPeKS505MZ0bvCdTQIMjTqDI
-	 xxhgMZHIDwUSJuh/o850oQ14eCcPnknwLfYHbtdg6odTww+p6y1C0aY1DYA/RAk7HA
-	 KPXhmjTdguQXpZnOyrYz2Y6Jg4FZ9yXF0A2fPQ4c=
-Authentication-Results: linux1587.grserver.gr;
-	spf=pass (sender IP is 2a05:f6c2:511b:0:cbc0:999f:73ad:33bd) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH 11/11] HID: asus: add RGB support to the ROG Ally units
-Date: Thu, 20 Mar 2025 23:09:24 +0100
-Message-ID: <20250320220924.5023-12-lkml@antheas.dev>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250320220924.5023-1-lkml@antheas.dev>
-References: <20250320220924.5023-1-lkml@antheas.dev>
+	s=arc-20240116; t=1742508597; c=relaxed/simple;
+	bh=6f7orNFdsm9t4VeuOI8mJFl42v9q6nq7Ds/4R+jUFTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nw/FKejxT9K9jmMi6WYdGoqZl6cIG5cWC6/u6O+lRWT9Xw6VDCyJLCkMU0m4TUo7GJZtpK6DCfjxsrDzIbR7UGWUwb3bhputc9RE6eYI05LWHck5oYTSXTnATm0V/bDleQcc+qkdnlT2TUwCw12EQx6MKqOJI/rNhIg6yIgx1Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KcvExi1p; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742508595; x=1774044595;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6f7orNFdsm9t4VeuOI8mJFl42v9q6nq7Ds/4R+jUFTs=;
+  b=KcvExi1pnybTeGxdFxA8CYAspZWHHG6Af7I1nLYJuZhTagJvqcQEYboO
+   /sekhph/0g5Vha0FMHutAWg1zplph4ootpEbYYjUkKsLq5w+8xRwd6WQm
+   PgubQlBrwQrHt6S6iDcedoZcH1fc01YLavDeLjG7roZZH4byjsho4yOaQ
+   OtLCbGDahg1Cq5Rnl/KAfNO5p90jIFF34JqD/HWXguPx2wyLDYZjDGfRK
+   ndAY9lLEcua2X6MwpZ+dBGVvW7gyLD/VXWN0WLsFuF0xJ7i61HIOlz7DQ
+   wciDkkmdKU3Lz719aqtct+ABckKcgqpbYTis2p7yrAgBuB5W7FqKdpUvQ
+   g==;
+X-CSE-ConnectionGUID: feHvyByhS5uNdSOxYW+PBw==
+X-CSE-MsgGUID: DQa51wPQQX6XwVMTB3XfcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="66229623"
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="66229623"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 15:09:55 -0700
+X-CSE-ConnectionGUID: 3QlSYfosQDO2XPTeFkrQAg==
+X-CSE-MsgGUID: T6Ln0k3TQi6U5DziJqh8jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="154113566"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.110.123]) ([10.125.110.123])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 15:09:55 -0700
+Message-ID: <68826571-44cf-4abb-9be6-00b64d5ab54d@intel.com>
+Date: Thu, 20 Mar 2025 15:09:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <174250858921.27283.14758763861585580672@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] cxl/region: Fix the first aliased address
+ miscalculation
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250317070124.815028-1-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250317070124.815028-1-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Apply the RGB quirk to the QOG Ally units to enable basic RGB support.
 
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/hid/hid-asus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 5e87923b35520..589b32b508bbf 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -1449,10 +1449,10 @@ static const struct hid_device_id asus_devices[] = {
- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
- 	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
--- 
-2.48.1
+On 3/17/25 12:01 AM, Li Ming wrote:
+> In extended linear cache(ELC) case, cxl_port_get_spa_cache_alias() helps
+> to get the aliased address of a SPA, it considers the first address in
+> CXL memory range is "region start + region cache size + 1", but it
+> should be "region start + region cache size".
+> 
+> So if a SPA is equal to "region start + region cache size", its aliased
+> address should be "SPA - region cache size".
+> 
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+
+Applied to cxl/next
+
+> ---
+>  drivers/cxl/core/region.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 6d8bdb53f258..c3f4dc244df7 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3460,7 +3460,7 @@ u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
+>  			if (!p->cache_size)
+>  				return ~0ULL;
+>  
+> -			if (spa > p->res->start + p->cache_size)
+> +			if (spa >= p->res->start + p->cache_size)
+>  				return spa - p->cache_size;
+>  
+>  			return spa + p->cache_size;
 
 
