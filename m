@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-570492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F46A6B135
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:46:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF33A6B139
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728E948746F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E28C982168
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F1C22CBFE;
-	Thu, 20 Mar 2025 22:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04D7221F02;
+	Thu, 20 Mar 2025 22:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kpdT7ZmQ"
-Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaRfZqOV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC2922A4F6;
-	Thu, 20 Mar 2025 22:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599AD1B4138;
+	Thu, 20 Mar 2025 22:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742510689; cv=none; b=kvouCobETHc7tR6w7ZG3Oc2fgmOAuUmjJwY0HUk5T+LiFyXfHK1oVtLTMB52vqnLpYu4ho43fIvTBOF+87Qu/V6HRRXyRRw50cj+QrRQ4aks9Uy9ttZM2YYsBlOokmqew1UmsWCUrZESwMVXhqrqJG6oEXlQY+texBs4rRBQsIU=
+	t=1742510942; cv=none; b=VuelaXZM5qT0xfm3SQ1RLuf7k3lKmf8d7FoRMaLYgpXpgZrxMKimgcLyETw/85DOZdApTCwuSM4sS5PzD1TaRaLBqVPOsIov0oqki7ejHaEnkZy/vFHnekVF1ze0U9ViPldR1ASGoaeidLNVBU8OuHB8xSw3n7xdg/g8SFDx0bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742510689; c=relaxed/simple;
-	bh=40BW+We2nULTEHa6DHwaIs9HCvCGKiHZ63/cMV/sFtU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cYPLLBF/y3+d0uLurSpS1LOEmEbZxRL1p4P3VBpDFFVJ87wzQFqz4bTxywwpPmeLyTURJmy23dXNaBdUdxobwy1z8GN7A07uSx8pDuEQNgpVHr/4AIKQdyAxKKkXSSfunOESUBPVVomXBD56jZfC9p+mH/Wj+unj5Oxo65yjtm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kpdT7ZmQ; arc=none smtp.client-ip=79.135.106.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742510685; x=1742769885;
-	bh=eMIKFH+4BplOMHp9sw3+b1wsh6xUXS4OrypEx48ZjbU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=kpdT7ZmQBc9eoxhepvNEsgAPULs7gXD17lG/vdx0DnLMFWS+0/mGVdd+qG44+YVHm
-	 a6nbZv0fYJpl5E5D4sbTE+iePpwz5o0TcmdolpvuZVxPw+kieC2V3U5TcEnhxJzDbF
-	 ushyIkH7rCrNIkq4tR4uiMDQgP1Es8tOjfm8KqXoAoHaLKSUGo1gmQNxn90lMeZmyo
-	 cm28nLPpDvfBzuncMRo1M62368QzKy19hl7Vtlu2qEvYWshsX4gfXalrUPi+mfYegj
-	 9hKFX5eWuKXvyR7+5fx02Z6L7WzsHyq1zTDlxSN+i1iLm5V0sUvowF8hSC2X58EJYt
-	 HzfOenKN3Rm5g==
-Date: Thu, 20 Mar 2025 22:44:38 +0000
-To: Danilo Krummrich <dakr@kernel.org>, bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] rust: device: implement Device::parent()
-Message-ID: <D8LGHC6DMPIW.29Y3XD1X6Q1L3@proton.me>
-In-Reply-To: <20250320222823.16509-2-dakr@kernel.org>
-References: <20250320222823.16509-1-dakr@kernel.org> <20250320222823.16509-2-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 2dfcc79fa82cd5cd9ae2ba0513cb32c715df3875
+	s=arc-20240116; t=1742510942; c=relaxed/simple;
+	bh=mOksHU5qf4Adi6HtLZv4BnIl+JJRYljJuuqvM4c8BAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kep1sX0sPmmGmj0FMe/Ey7FQUfniINLrQ1YI05BAvcNolpcSBoQeKr6P69KUbd/dRfrn1BDRY9c0SujzpSizd7yTD+SOhpqGS6udjGPuV4B6urXaOLg8dToNi+1eE63W8zBIv96hMCLkW92D6sd4iJOYuUWhDCg7PDFWrCVEoWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JaRfZqOV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3512DC4CEDD;
+	Thu, 20 Mar 2025 22:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742510941;
+	bh=mOksHU5qf4Adi6HtLZv4BnIl+JJRYljJuuqvM4c8BAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JaRfZqOVIR58sZKmuHYI6UKg+1VjaCB3F5GOWLViBwLMRFhwdjZRXlAbugCN0hbmV
+	 ENvtEUrHQ07Kj3fcCeu1euZ1RpHDl0+ZNJVpdOAwTyH2EKGHsKwVWRq7knxU1iLY8T
+	 VfjOGPHsAjJtwHKEoa34Til1iETexXzYOF7tfDd/FMaRFH+xLEn2t4oBEd2KnjDwst
+	 XK2sCJV+lkKuZ13h0hf4IgD2YL2LwZzIe9rSidPFGpCa5kH114rpE992D+VkA1+q+j
+	 AamZaDHsyGCwhCHNYg2xo6jtUJCagR8KRByOG5OjLYq1BK9gGoGbKyHc55dhfP3RFS
+	 SxhCUvvsQEGxQ==
+Date: Thu, 20 Mar 2025 22:48:56 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Nico Pache <npache@redhat.com>
+Cc: rf@opensource.cirrus.com, patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, simont@opensource.cirrus.com,
+	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev,
+	davidgow@google.com, rmoar@google.com, johannes.berg@intel.com,
+	sj@kernel.org
+Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling
+ it
+Message-ID: <a0fdd818-a4be-446e-b18e-0c655bc94c9a@sirena.org.uk>
+References: <20250319230539.140869-1-npache@redhat.com>
+ <618b8578-1897-45e4-83eb-b725102ab27d@sirena.org.uk>
+ <CAA1CXcD4dOUWOXp0ODSEo4+g9_QQkJe1tmX3bVdcs3N_PPdSHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lvX71JSmq6TgqUlb"
+Content-Disposition: inline
+In-Reply-To: <CAA1CXcD4dOUWOXp0ODSEo4+g9_QQkJe1tmX3bVdcs3N_PPdSHQ@mail.gmail.com>
+X-Cookie: Do not fold, spindle or mutilate.
+
+
+--lvX71JSmq6TgqUlb
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu Mar 20, 2025 at 11:27 PM CET, Danilo Krummrich wrote:
-> Device::parent() returns a reference to the device' parent device, if
-> any.
->
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/device.rs | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> index 21b343a1dc4d..f6bdc2646028 100644
-> --- a/rust/kernel/device.rs
-> +++ b/rust/kernel/device.rs
-> @@ -65,6 +65,21 @@ pub(crate) fn as_raw(&self) -> *mut bindings::device {
->          self.0.get()
->      }
-> =20
-> +    /// Returns a reference to the parent device, if any.
-> +    pub fn parent<'a>(&self) -> Option<&'a Self> {
-> +        // SAFETY:
-> +        // - By the type invariant `self.as_raw()` is always valid.
-> +        // - The parent device is only ever set at device creation.
-> +        let parent =3D unsafe { (*self.as_raw()).parent };
-> +
-> +        if parent.is_null() {
-> +            None
-> +        } else {
-> +            // SAFETY: Since `parent` is not NULL, it must be a valid po=
-inter to a `struct device`.
-> +            Some(unsafe { Self::as_ref(parent) })
+On Thu, Mar 20, 2025 at 04:21:16PM -0600, Nico Pache wrote:
+> On Thu, Mar 20, 2025 at 1:14=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
+rote:
+> > On Wed, Mar 19, 2025 at 05:05:39PM -0600, Nico Pache wrote:
 
-Why is this valid for `'static`? Since you declare the lifetime `'a`
-independently from the elided one on `&self`, the user can set it to
-`'static`.
+> > >  config FW_CS_DSP_KUNIT_TEST
+> > >       tristate "KUnit tests for Cirrus Logic cs_dsp" if !KUNIT_ALL_TE=
+STS
+> > > -     depends on KUNIT && REGMAP
+> > > +     depends on KUNIT && REGMAP && FW_CS_DSP
+> > >       default KUNIT_ALL_TESTS
+> > > -     select FW_CS_DSP
 
----
-Cheers,
-Benno
+> > This makes no sense to me, the select statement is forcing on the code
+> > it's testing which is a library and so is selected by it's users, this
 
-> +        }
-> +    }
-> +
->      /// Convert a raw C `struct device` pointer to a `&'a Device`.
->      ///
->      /// # Safety
+> Similarly to eb5c79828cfa ("firmware: cs_dsp: FW_CS_DSP_KUNIT_TEST
+> should not select REGMAP"), We shouldnt force a feature on when using
+> KUNIT_ALL_TESTS.
 
+This feature is not user selectable, at an absolute minimum you would
+need to make the library available in KUnit test builds.
 
+> > change will just stop the tests being run unless someone does the dance
+> > to enable a driver which relies on the library.  That is something that
+
+> My config also sets the UML wrapper to enable this FW_CS_DSP config so
+> it will continue to work in that environment.
+
+Simply adding it to the all_tests.config will just result in it getting
+turned off by Kconfig during the build since it's not a visible option
+so that's not accomplishing anything.  all_tests.config is not UML
+specific, it's for enabling all the KUnit tests that could run in UML no
+matter how you're running them.
+
+> > seems unlikely to change the outcome of the tests when run from KUnit
+> > which is independent of any hardware.
+
+> KUNIT is supported outside the UML environment, and some distros (like
+> fedora, and downstream flavors), use KUNIT as modules, with
+> KUNIT_ALL_TESTS=3Dm. We only want the tests that are supported by our
+> config to be available, we dont want KUNIT going and enabling other
+> features so the test works.
+
+The point is not that KUnit is frequently run in UML (personally I
+mostly run it with emulated hardware instead) but rather that this is a
+library which can be tested independently of having a relevant DSP.
+
+--lvX71JSmq6TgqUlb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcm1cACgkQJNaLcl1U
+h9BSyggAgOtuJ1v1/Q/s4ZEvVO91zrjG9GfdNmdYBv9p2+e8fKXDGPhvUx6x93l6
+W5EvzGvJvjPS78WG5AxHNAzpePofF+Otl18WYv1yssm5RlgBxE7U+/b/wixLAyy3
+veZH6iFjT6bJPfN9iL6y7Hrg30YKsRv7/mM0Eg3utQEiT2FQFIGsOlPIwTMrXRrT
+5wWfy4OZMlhWeBB39TdheXOC7q2zAQCReFaxbWR8XQpNcX+7XoF4omVkSVUf7li9
+PR5SQPNGyto6USKmY8wpL5odAwqZ3BAm9xpqfZNs6TcqYQT0cV5TjI+WUuEtS1Lo
+JDqkvn8GtxUccXG55P+4TPYdARuP1A==
+=i1OI
+-----END PGP SIGNATURE-----
+
+--lvX71JSmq6TgqUlb--
 
