@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-569327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D27A6A186
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:37:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE50A6A188
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89BA19C1880
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54DDF465365
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087AB219312;
-	Thu, 20 Mar 2025 08:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A17214227;
+	Thu, 20 Mar 2025 08:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n9t8kuQk"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X0Dc/mcE"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C9C20FA98
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD4C20B7F9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742459800; cv=none; b=Bgcq+mOGlY19CBMWTi65s4GFQk9ELPHJibpplxYidt01uPAVYeM+OSJJqUneukvHXJ5tgLj122EUEfc2dUxzDZw4XXoKCQaBkus3QyFWk8WPE8a6WogSQg2612/3Wh2H/YEzDXkvabXs58N8Ppn7lO6s6ZfXf/A7FnJEqWJ62jE=
+	t=1742459837; cv=none; b=fPvXbT8B/656echcWy7VtRVkkOiUO32RF7tqbwXkP+uPG1Bxc88hcffEwXQEp/J5r6uksWRgJJc6r2w18q4QWI8aYRDK4ssfg5a4kf/HRl3iLAIVMmJRX+WJt0rqb0MOWqx6iB4auRuBNaTOjC+XRUQUuT/H5tG/zqXI9DAMoI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742459800; c=relaxed/simple;
-	bh=uUdtpvZVON7BlCg8C1bUw4EGV+nvS6TOedE2ZoM7ztE=;
+	s=arc-20240116; t=1742459837; c=relaxed/simple;
+	bh=7TetEMynBoINrTYyjJw5+oI6pd6od3UUHaaz7qU6eMA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=A3RJBRnGFUkWdS+Cd2G+YVnvgCaVd7b5gXEnj/agNhRvt3s/g/v+i6F57n2mkTBbyHmOdfBvfOEFhZqPyi1WxKEgKK3ontI7tuNq5WU73n4AxKtLOd6C2q/W9HIEdjeir80fF9Ffl235BPUoOSQW4o2bYoBOi1TkSY6lTEAhmwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n9t8kuQk; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=DxXosJ7ES2oYYD//EplbqQ4rDOXvOCD633EohtZ4fZSIMzCvHZwWW6IHsszubzYIVvskjSi51C59LObn6GyNwagVixg+J00K/qWunoSDLzDrwXkfBFGR+PRW9/HlzVHIFDN3/uRRE84aFkFC6ShbIAVxgl9FZYK4CcLv58e9CIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X0Dc/mcE; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso5406995e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:36:38 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3913aea90b4so214939f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:37:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742459797; x=1743064597; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742459834; x=1743064634; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFIMGOYH7y3C8PhwT9bCF8sIzwdxvGBAVhS2YrPnTd8=;
-        b=n9t8kuQkldPD5aZJBYEi3nljPAqSmMWjMEbPdojFDyw7mJkR3hibQmo13Zf53sHF5M
-         mQ6SVLlhy6RaOR8zMh+M6SmukmV/SLF64nJnzvkHcFCe0+esbf0OR1hVLZEi9/a8pY6b
-         aMK1VDxcq5hTWXJG2G3jWJsGcX3LELl/8RBdwjzcAtYLKh/MP1koracNSsubPj8ukuMP
-         s7D2KFnvmZInzXQ25ieeEh7Z9J/5ZXGCPulDT2pXuloT+e7VDlDRYOfAmZLM0YUcBs26
-         Au5QJulgqrSJTFI60ka1OtmsxRTuazY9SygtCS4g3WlmXTKtTSWQ7twSBMFqGsq3kixa
-         z6Yw==
+        bh=GPIWUDVih1Sb5uTelU2ivnCNtpHKvDoc/ZssNjFyHts=;
+        b=X0Dc/mcEQl8ue/o3pMYoVVjEzFC2BhNhu5yo3IgcHidLsvJiCh/mMvbQ+oBtdNnd6y
+         HULE1fqeS68FZeNLPfymdKpqZeIDI6nq2xFjxrdaRoz+ZPvAgyzwCRMkmS1dJbj8twxP
+         u4qfzTV54TbJRQyJTBpV5Hw/dr7/RcX9rOHSyD/W22GeJqOfGcZ/+7GmtQDb+mS7bq83
+         Qr8HxKlayAt/BLuKMyR8YQHbNFaNPVZ4Pw1xFewuAk9pa48jTRtaDeEVziCx3Jlre/oW
+         mfWPT4wrrwu7PZatTcbYCFlHARsA/IpyYcPEy2llulqvwryzm6q7qc1y0JdcK+U2Ktvf
+         y8XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742459797; x=1743064597;
+        d=1e100.net; s=20230601; t=1742459834; x=1743064634;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFIMGOYH7y3C8PhwT9bCF8sIzwdxvGBAVhS2YrPnTd8=;
-        b=G8oMR8CQurKjGRvVtiENmWrLskQxloGLK5CWckgP/I9XCt6UbI4XhQsVGz4KatXDfx
-         rA3lcl9oFuKOSb/GLKXnQq0/Re5xA4pxdfJe03YuTWZkkCRCwj3kbzasGRU73jg15tFi
-         ZwQlcJe+YEkk+eZvyj0UPMSy+4HudQwSQ/AhkqC+pcjLwZONA77ZxEl7aqB4Z/qWrreQ
-         x/G4nEfSqJAhqH3qGmfUwi3FqanE/s7fx/9VJTRMJ/rjzEbcEkBbw0MmneUikSmrcJT1
-         OdzqIJvXUXcKKiC0Kzb5JLA5n8fdFPdvbjsQF4scNUgkDlUfJ+OWYnkNS7umbiIEiEej
-         Rt5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFJtjKqbYzSHhpYOLXWNa2ndRZrCjIMigpCVeCihn9j8MsNCljY3+7IIQbJDaSHbKMQ+rmzuFuQG8ZALY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBN8MucxEb+rshW8iGEV/c3PkipGG2VhbDIQLclBAI+ae1DB0N
-	UrfkLOv3yVa0MYIyDu4CoNMJoKwbOZ8cgCKZdScB1M3la9cQwFwIYS+JHH8jVHGeyw5vGOYWney
-	9+lm1fQ3SvPE4Yg==
-X-Google-Smtp-Source: AGHT+IFH1QXeB5i9lept2S6Sa6wweQ1pkpeU06zZ96I7u2P4VrMZC3n7NvYipzi71RDjJd6MGyhA3Ey4WFom9Xw=
-X-Received: from wmbgz10.prod.google.com ([2002:a05:600c:888a:b0:43b:c9cc:b9b3])
+        bh=GPIWUDVih1Sb5uTelU2ivnCNtpHKvDoc/ZssNjFyHts=;
+        b=c+IVfm847NWZ3SngC4gSFdrCP7gDn3qV/MA6J1TwmPydubTZ0DXNBbVhyYf7y+O9cV
+         D6GovJOLmsCIoflIIZ9B1aReVgBngEglLJBf8szxSiM3OKO8xBpNBqmjaIv0palL3IMv
+         oz4h16g03/jiXi/+NV0aKtcsKovm/AbjkcOL/Bp6nNQFoYF3b2h+rBEESBwv3RcDiarI
+         TNzdw4OBkZ6JQ2VcgNNK4ejuydjhj+HN/7nCt2mONJTRDg9+jQVZvs61MRauq3b4rEqu
+         YhqW7ovsjJfIaZE3qwrDac+0oOpGj39Y9ibjLGLsa5Ap5oY/DcbwCmsaXbtuy2IEcC2a
+         Ombg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsB0MccKTvq6Lh3b5oFjYtJlpzXE2KvQTHSgRx3X+PkrO2VFZajX4PdWCMCSvslzLO3433dw9dlozVFk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN9Yi3EXuAYFquMB6jFo573zm4pADmd4Ka0WPGE4mjfQOTmvwy
+	gkV2YmQsJexBeI3C3+dLCQARXooeZLdu3P/Ld0Mx7V9cyE70SMLxhmKtqxU5cyOrfZxo9ZyHTM0
+	J1+ZgB+WZISzJig==
+X-Google-Smtp-Source: AGHT+IHuZ/wR4qWvGQ7/uSH0SsJWVQsfNb9EAzn/4o40D7wBbbwOean1AjWxFD4wZ1ijuUOd9CO33V3YtiCdOBg=
+X-Received: from wmbgx13.prod.google.com ([2002:a05:600c:858d:b0:43d:8f:dd29])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:ccb:b0:43c:fbbf:7bf1 with SMTP id 5b1f17b1804b1-43d495b084bmr19680055e9.30.1742459797197;
- Thu, 20 Mar 2025 01:36:37 -0700 (PDT)
-Date: Thu, 20 Mar 2025 08:36:35 +0000
-In-Reply-To: <20250319203112.131959-4-dakr@kernel.org>
+ 2002:a05:6000:4025:b0:399:7916:a164 with SMTP id ffacd0b85a97d-3997916a1a7mr2988222f8f.31.1742459833932;
+ Thu, 20 Mar 2025 01:37:13 -0700 (PDT)
+Date: Thu, 20 Mar 2025 08:37:11 +0000
+In-Reply-To: <20250319203112.131959-5-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250319203112.131959-1-dakr@kernel.org> <20250319203112.131959-4-dakr@kernel.org>
-Message-ID: <Z9vTk5aUB8Y5TASG@google.com>
-Subject: Re: [PATCH 3/4] rust: pci: impl TryFrom<&Device> for &pci::Device
+References: <20250319203112.131959-1-dakr@kernel.org> <20250319203112.131959-5-dakr@kernel.org>
+Message-ID: <Z9vTt2A3eiecQx4e@google.com>
+Subject: Re: [PATCH 4/4] rust: platform: impl TryFrom<&Device> for &platform::Device
 From: Alice Ryhl <aliceryhl@google.com>
 To: Danilo Krummrich <dakr@kernel.org>
 Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
@@ -83,12 +83,12 @@ Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
 	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Wed, Mar 19, 2025 at 09:30:27PM +0100, Danilo Krummrich wrote:
+On Wed, Mar 19, 2025 at 09:30:28PM +0100, Danilo Krummrich wrote:
 > Implement TryFrom<&device::Device> for &Device.
 > 
-> This allows us to get a &pci::Device from a generic &Device in a safe
+> This allows us to get a &platform::Device from a generic &Device in a safe
 > way; the conversion fails if the device' bus type does not match with
-> the PCI bus type.
+> the platform bus type.
 > 
 > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
