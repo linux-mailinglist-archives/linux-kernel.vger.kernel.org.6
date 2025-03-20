@@ -1,98 +1,174 @@
-Return-Path: <linux-kernel+bounces-570431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D2FA6B043
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:05:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AF3A6B044
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68333483B0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE8E189F2C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43719221F03;
-	Thu, 20 Mar 2025 22:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7A42222DD;
+	Thu, 20 Mar 2025 22:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBDLMaDu"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="QGoU8YQa"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C86C1F7074;
-	Thu, 20 Mar 2025 22:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DEC22256C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508317; cv=none; b=GdmjgOQ/PnOfd+lFoNGWtpJbC6vXzb2LJIoxCAeilLHNpqYnWFsrUGQZ9OoD3NORIF5fBe2iVrIc9nQnuceaV9J2k3DAqitcZ21q07SiuG0GUXov4yw2Zr4nt5x5s+AFyz3HkDaRZS61RV5IKUIEn2UKnl8t79yIXNNbZQWkdYM=
+	t=1742508392; cv=none; b=RL4WkMi88m5zLyzWpeRDkic9CfAS8bpP29aVsBiPHgeI8pPXnWN2RYON1n/JdLctkBgeVrdDVeU12DUkxgZ8HR+DvAlsOBgMZaQM4/ZJ445smvS1KWex1a2U5Ppg6UuDYn+dqBc1DlmTb1FVrvatBcueZ5USwOA2Sp6SaBjvLIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508317; c=relaxed/simple;
-	bh=p1RASg2XHKczACQM/FXb7ShSCTSi7hvrsyoDrMPtTCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cV8Tiip8lYoi63tCeQ+D82E7c5UmewXlJ6VkwJoqrZBVHY7Zd7yMNZwaUdx118odEbFelbba+8InQjGOIYsX3jrM00WbzIdYnvGoMGzjOdVOg1j/UEJRI/Lgai/4wEoyAQhes925gEYbyRLTj7LItVJpNK6mpmS/gw/PZJsXKs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBDLMaDu; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30beedb99c9so13226611fa.3;
-        Thu, 20 Mar 2025 15:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742508314; x=1743113114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p1RASg2XHKczACQM/FXb7ShSCTSi7hvrsyoDrMPtTCc=;
-        b=cBDLMaDuBufYo8lB9rDE2y+aAR4fo2rbUyvbtqIuPv9LA6wxvgdsD+R2tTuqW5Bg5c
-         o/9P0SY9u4yPlpcfXzCe0RJNSCV6OD/PZkH2iYqRDpeekJTjHlooy2O+uEp8lE3/afdW
-         G7KKuV519YqGcf8RWm7og7+gSh81jSbzOE0H2OlyFaXmaBJlr1d2Zw1HLU3V50xx1Nt/
-         bCVpoVa+gXyBYb7ipZoQTfvUBB3hiPNbkOcgbDonSPsG3Ng/chHYzVeDv21/4wi3wYFS
-         5lVNNQCbh3gS2giBkfAQg674wAtyLeHZ4ZNB97saIHCwabAk4dft1GGPZ1Ua0QX0wLOn
-         Shqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742508314; x=1743113114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p1RASg2XHKczACQM/FXb7ShSCTSi7hvrsyoDrMPtTCc=;
-        b=TSRVzYKmMI/ouzXoIWRDUfvjvbLxpSFJUr2exTNqmSuYPvviTiwfjNFmIqwJybeOOR
-         jcCMDVURgg3U1+NhUnowGN+vYx6Boqy590G9dEbSJR4eDRYFh/S+m+KbR+suQfwlvjI0
-         iebMiUOdZQ45XLP6Qh+tyBAZvrxgjkYf6TGD1hY+ZdpHbtZAsITnzxWnV7U50Q3YkwX0
-         dDnj4LgC6QT4zJJ/eNAFn4DUqDGVXN178DTYmZfQ7bgx9FUF2IAsPOWy2ySkoKB22r2b
-         zGiH6J3zhS+ft93dMiSL0lcrMRLT/TuYs2Ii5Y4kR3E5fuMMjCfGX1nUMmsLNw9McVFX
-         DRYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXj+T8C57WKoDQLnoEP0+XQV9KNw3s5MuXlk0+YsYpHu7vNjiELknGvq0eD4lzRZ9K+cTBqKpEEWFeV4R86jSk=@vger.kernel.org, AJvYcCXktsl12AVhSAEHcxurAonLmp3B0trQ0OBEItx1YZXRc0VA0eN4ZCQPg2kvW800i/SY2wOJ/LtW+d+7CSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHbWgkt9RxhuDDcss+mGooatcUVc51h7JeYsuwRBGhOgFZZ9r5
-	2+BvAdbi0efxDP4QXEAYJqh6qr3aNFqQ7wT2bwKjNQUPxwwM2wngHw0Zux9tSMZRn5CgKN0psLm
-	96u2/M/AQRJerZPXjLpZW/YDOVFs=
-X-Gm-Gg: ASbGncsafpn7O4u6AflFEh3X+b7MVbGOwA4MNR98JduF5WWOBotv2dfyVpdplW/2/ox
-	HAym7UOZbefbAxVxhWx3Ntupe9aYbBkoMfsRXgAjROScG1mgRa4+GhF0h3cPNTVHT+kyf+uFRX3
-	joy7NzsII9mgDmOQAuRNsZR/VZfYUjpr+ixJ1eM+BGpA==
-X-Google-Smtp-Source: AGHT+IFbDrbgapsx0x5jQolKztjF8xOTEPBIpHmIn1P9NZeF4PPEYJKKlawUnSbtvBVcJl1s1tGB8s2tnca3JePpHWw=
-X-Received: by 2002:a05:651c:4cb:b0:307:deea:f576 with SMTP id
- 38308e7fff4ca-30d7e2d98e9mr3683461fa.34.1742508313804; Thu, 20 Mar 2025
- 15:05:13 -0700 (PDT)
+	s=arc-20240116; t=1742508392; c=relaxed/simple;
+	bh=lwhRW9LZfC6DDfNgBikPXiasdzWyMPP7AL4zVb4J/i0=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BtO1VLaU79yBp5HRmIs7lG5azL/Gul1hPH0l7J1eV/egbLlBp44DQ+vleSN+VtW7mHPnohkLxg86x2GUEVihGKU/XgkbWYBiqB1r8btK3kR9WZqYfq1KCthyrsDdiadb/zPqJebmFAEdoJ9ljeipAvRmWkeguifgKwPWmZy823I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=QGoU8YQa; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=7kezcdiusrdpdbs7lcg6czolh4.protonmail; t=1742508382; x=1742767582;
+	bh=L9EFWfM29ztfK7aUGDd3jp1hf7p6SmSSDAbBTO0mD9Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=QGoU8YQaw5n2OFiD6TyAqSwJQx858n8VIpZkaEmso53mroIF8U6m6b3O2oK9HfWcB
+	 gecEGbhjl2uf6kCt4D8XmCa6lD7L6iNp/JHa12PbqiYXPD8blt6hlEotDhTpG68Db0
+	 YnsGf9iUE6NNi1CBZ0J+S2NqrQUc04Mwza48Mbt4i/GX16LOiuLLK/sIGs+K+JENnM
+	 /3VANvme743vLkgQIABwh/8UQHx/+TcgP7cZ9Wx29rBVUu4Ua9x7R++ydHXbcI340P
+	 jq0d07+pHLizVby2lKJ/O9c01iiR8u1ytEHU5u1apSXDJlS1I04FfHjpoNNuOeZW/X
+	 sY8YHCfN0CcyQ==
+Date: Thu, 20 Mar 2025 22:06:18 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] rust: alloc: add Vec::drain_all
+Message-ID: <D8LFO0LQOPQJ.30AC77E0BOH3@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: f2678cb660883584f780a54e3b83c4de3f123652
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-1-7dff5cf25fe8@google.com>
-In-Reply-To: <20250320-vec-methods-v1-1-7dff5cf25fe8@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 20 Mar 2025 18:04:37 -0400
-X-Gm-Features: AQ5f1JrCJGPMLCdNoFj9SS9bSNS_H9ODe9oTnHfTk7nN88NcmsnMvbYT3n-xXXw
-Message-ID: <CAJ-ks9mVTCH954G_HvT6MoxpguEm5NWXtjmNmFBZKENZ0UzZpQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] rust: alloc: add Vec::clear
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 10:06=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Our custom Vec type is missing the stdlib method `clear`, thus add it.
-> It will be used in the miscdevice sample.
+On Thu Mar 20, 2025 at 2:52 PM CET, Alice Ryhl wrote:
+> This is like the stdlib method drain, except that it's hard-coded to use
+> the entire vector's range. Rust Binder uses it in the range allocator to
+> take ownership of everything in a vector in a case where reusing the
+> vector is desirable.
+
+Is the reason for not implementing `drain` complexity?
+
+> Implementing `DrainAll` in terms of `slice::IterMut` lets us reuse some
+> nice optimizations in core for the case where T is a ZST.
 >
 > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+The code is good, but I'd like to know the answer to the above question
+before giving my RB.
+
+> ---
+>  rust/kernel/alloc/kvec.rs | 57 +++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 57 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index df930ff0d0b85b8b03c9b7932a2b31dfb62612ed..303198509885f5e24b74da5a9=
+2382b518de3e1c0 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -564,6 +564,30 @@ pub fn truncate(&mut self, len: usize) {
+>          //   len, therefore we have exclusive access to [`new_len`, `old=
+_len`)
+>          unsafe { ptr::drop_in_place(ptr) };
+>      }
+> +
+> +    /// Takes ownership of all items in this vector without consuming th=
+e allocation.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D kernel::kvec![0, 1, 2, 3]?;
+> +    ///
+> +    /// for (i, j) in v.drain_all().enumerate() {
+> +    ///     assert_eq!(i, j);
+> +    /// }
+> +    ///
+> +    /// assert!(v.capacity() >=3D 4);
+> +    /// ```
+> +    pub fn drain_all(&mut self) -> DrainAll<'_, T> {
+> +        let len =3D self.len();
+> +        // INVARIANT: The first 0 elements are valid.
+> +        self.len =3D 0;
+
+Why not `set_len`?
+
+> +        // INVARIANT: The first `len` elements of the spare capacity are=
+ valid values, and as we
+> +        // just set the length to zero, we may transfer ownership to the=
+ `DrainAll` object.
+> +        DrainAll {
+> +            elements: self.spare_capacity_mut()[..len].iter_mut(),
+> +        }
+> +    }
+>  }
+> =20
+>  impl<T: Clone, A: Allocator> Vec<T, A> {
+> @@ -1049,3 +1073,36 @@ fn into_iter(self) -> Self::IntoIter {
+>          }
+>      }
+>  }
+> +
+> +/// An iterator that owns all items in a vector, but does not own its al=
+location.
+> +///
+> +/// # Invariants
+> +///
+> +/// Every `&mut MaybeUninit<T>` returned by the iterator contains a vali=
+d `T` owned by this
+> +/// `DrainAll`.
+> +pub struct DrainAll<'vec, T> {
+> +    elements: slice::IterMut<'vec, MaybeUninit<T>>,
+> +}
+> +
+> +impl<'vec, T> Iterator for DrainAll<'vec, T> {
+> +    type Item =3D T;
+> +
+> +    fn next(&mut self) -> Option<T> {
+> +        let elem =3D self.elements.next()?;
+> +        // SAFETY: By the type invariants, we may take ownership of the =
+value in this
+> +        // `MaybeUninit<T>`.
+> +        Some(unsafe { elem.assume_init_read() })
+> +    }
+> +
+> +    fn size_hint(&self) -> (usize, Option<usize>) {
+> +        self.elements.size_hint()
+> +    }
+> +}
+> +
+> +impl<'vec, T> Drop for DrainAll<'vec, T> {
+> +    fn drop(&mut self) {
+> +        if core::mem::needs_drop::<T>() {
+
+This is neat!
+
+---
+Cheers,
+Benno
+
+> +            while self.next().is_some() {}
+> +        }
+> +    }
+> +}
+
+
 
