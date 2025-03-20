@@ -1,86 +1,197 @@
-Return-Path: <linux-kernel+bounces-569295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE7CA6A10B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:19:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E272A6A11C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F63188C514
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10555461A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F78205E3E;
-	Thu, 20 Mar 2025 08:19:09 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31632215162;
+	Thu, 20 Mar 2025 08:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xebot/+8"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D841E832E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E587F1F03F2;
+	Thu, 20 Mar 2025 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742458749; cv=none; b=ovydlyU0ovqD4ykAw6dNk8jPrrTOj+5D1PSbwg6WDALbbJDVuW7MSotHGRCQZynRzCStAgjhhXJt7NTtxsAVQSzwf4AjXMh97l8gmcv9fPd5g3dIZ+vf3KyzfwZNe4UxpCGt4DH0YdZC4u3gHQNtuqV+B+8geCTBj+Ub8cZIrZE=
+	t=1742458867; cv=none; b=eOxDIKFArb9sPJ7n9YnijCcCVCLASLMGdCnksUUBCaINREXLWLson2fTLzcTL8Ylhwfco8NsU3yqamkD7NoyMVUWyks4T5T7M1930K6Y4eCsLo0o+iYDyWV8K2FxVunRMncMrIZ5Jw4HES4pltw7tf6V251letkci+tlC120LC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742458749; c=relaxed/simple;
-	bh=dQSLooTmN2HIWPJybpTzymcE+nUlDPqrg9LSn3p/eek=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HQrPRnIf1tfv8OFlmfuJrfwc6rvL/Jr9ku6ORx+W0qaAzQXAlvP8odUb+ocQxchI+JV3Cb00UqJCLoUt9nGoNw0saNVcLT8JM4yB/YaiHvpCfX4z5Vq7Ot+k8sx/FmiG2X2oSGrzOpI7E66oeqNv/EYb5tbuR74eGdw+iSn/u50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d434c328dbso9160755ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:19:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742458747; x=1743063547;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0FkZsC+86W3g9jPGh3loS/ZM0dl7YZEVEqLlCHTRhnY=;
-        b=qpNaHwCeArfM5iCF5mzMK4ObIXihx9x7uCeGsslMEjHP8nZOVHCyFtrS2jOIY02su3
-         9aD31GtSp5owL2dW9Wg9tpbUC8LGasegLK9xbXXr3W16yvG7rmBRcW3E2MP4eontk4hJ
-         LN60WZ8PVi9gWx7dQeWgzK4S+oOrSeL+dFs8H6tN9kWsC/g07YEMMWo8KXt5mr6qPZ03
-         so/pofRFpKWfSPReZe3drQTNmm37noR4+/IlSz5DurCiUOKYI8w3bdimGXybNOeBsECB
-         Yi3q+b//A8/rekSiOqVLgdlDFjsMUSH0HowSi77ImvQhdXaEdlIIR05Zv/EI6PYg1il2
-         b2/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXBR2TzuPHCuk7g5Eqhq5t+qrHsUBqsiwuba52/IroufRMWHz29hknrL+V9rT70KNQXGQKq7I0QI1TLEHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoXFjzZhgDhbjDz4CmCoOQ96bYMPyEp/TA9mZWnQQGZFtJa0Mw
-	W5O0yBCHRNDkv5yRoc7C+u7U8jDOCr49sp1+v6iMLhVZsGpnenfi2UGBlZQpaiVvH11yg9Wbtht
-	mo5diO/ee2WSwMc9DjajT/RVkKSttKcrR2tLNX5KvEcDD5FKFsVFrRJ0=
-X-Google-Smtp-Source: AGHT+IHBHBHfCd1wdHWYTZ2r9LRa3Dj2LKb/16m3v+HxIa4TFf7nb/73CAlga1yPkZgEzbIT4nhHKljQF9D1QArJKYTQaL7Nj9CK
+	s=arc-20240116; t=1742458867; c=relaxed/simple;
+	bh=9jVOE5DG0El/OsB+pqGYbr940r5MPTlxNv0abE4J8XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eG6GpZEJ4WpHOplcaNO6Xv4crHXh/Xq4g8Q3pEOkmcjrvJcwZkVDXka+KguJ53qtAaSFXFhsyrced1bny3ym8J1v5Zp/Fskd3/tiHvIrt7EAoIUsyJmRa+9p+U5CV5l8VEAhJS8FFEit/KTMcPeLwX6t/S2R8LFCnyu6041MB5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xebot/+8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K3kF6A030483;
+	Thu, 20 Mar 2025 08:20:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SxBx6A
+	aVQMU5kwkXSwRaRr0kAHgIW2x2jaGLw6CxjIs=; b=Xebot/+8ITMZHWcmOSFpet
+	VnwhSIzeRVFCMRGrAwnjRpnIJKWuSROm7WLFpn+lTCKQBT2eKghO2hkvBznyNff0
+	ojJw3HGUUEq2rReMlM+2vW/2YzxJxnFvpcKVmSzs4JVviLRbNnBodoBSo1VlaT51
+	kzlvP0eqZFf9QISaNZ4lNpU9m73RuAjxX4G5AL7tipikosTHEyNC4kmlvGCT99S/
+	tJiEDARt/4rbxW3Fgl+9KT4XeUR3bEtfMquDz5bN1AHAiMjPv9Muhp2aw1swxRjS
+	ODBITC+JYRNxY2nViGUblZD5HfWEWIe51ijz2CWG9ugxVCsmNifdHw5ql8Kot8ig
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gbd9h51v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 08:20:42 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52K8IkSo022645;
+	Thu, 20 Mar 2025 08:20:41 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gbd9h51q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 08:20:41 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52K6XmTp005721;
+	Thu, 20 Mar 2025 08:20:40 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dpk2pfvc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 08:20:40 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52K8Kb3f57278776
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 08:20:37 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 28F6320049;
+	Thu, 20 Mar 2025 08:20:37 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 43A2A2004E;
+	Thu, 20 Mar 2025 08:20:33 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.109.219.153])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Mar 2025 08:20:33 +0000 (GMT)
+Date: Thu, 20 Mar 2025 13:50:30 +0530
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: aleksander.lobakin@intel.com
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
+        daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org,
+        hawk@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+        song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+        kpsingh@kernel.org, venkat88@linux.ibm.com
+Subject: Re: [PATCH v2 0/2] Fix xdp_adjust_frags_tail_grow selftest on powerpc
+Message-ID: <Z9vPzpfMlKE+D8kx@linux.ibm.com>
+References: <cover.1741188826.git.skb99@linux.ibm.com>
+ <96a959ec-c6a6-4740-a560-34134b2af7f7@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1549:b0:3d3:e3fc:d5e1 with SMTP id
- e9e14a558f8ab-3d586b1b246mr57152235ab.1.1742458747107; Thu, 20 Mar 2025
- 01:19:07 -0700 (PDT)
-Date: Thu, 20 Mar 2025 01:19:07 -0700
-In-Reply-To: <CAMj1kXGxmGwJieicpgOcErBGaMm2=CZz9Ra6G203AobexUCyhQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dbcf7b.050a0220.31a16b.0009.GAE@google.com>
-Subject: Re: [syzbot] linux-next build error (20)
-From: syzbot <syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com>
-To: ardb@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <96a959ec-c6a6-4740-a560-34134b2af7f7@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: -zPmiBqpxt79rPkJ35Rjh__UWc9xdsBB
+X-Proofpoint-GUID: R9T0fej3nwi7dxupY1mldgeegiMu11wN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_02,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503200046
 
-Hello,
+Gentle Ping...
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi Alexander and other net bpf guys, it would be great if you could share your
+feedback whenever you have a moment. Please do let me know if there's any
+additional change needed.
 
-Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-Tested-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Thanks,
+Saket
 
-Tested on:
-
-commit:         ff7f9b19 Add linux-next specific files for 20250319
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4bdd42b70d1ca0a
-dashboard link: https://syzkaller.appspot.com/bug?extid=06fd1a3613c50d36129e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=174fe004580000
-
-Note: testing is done by a robot and is best-effort only.
+On Fri, Mar 07, 2025 at 08:54:00PM +0530, Venkat Rao Bagalkote wrote:
+> 
+> On 05/03/25 10:43 pm, Saket Kumar Bhaskar wrote:
+> > For platforms on powerpc architecture with a default page size greater
+> > than 4096, there was an inconsistency in fragment size calculation.
+> > This caused the BPF selftest xdp_adjust_tail/xdp_adjust_frags_tail_grow
+> > to fail on powerpc.
+> > 
+> > The issue occurred because the fragment buffer size in
+> > bpf_prog_test_run_xdp() was set to 4096, while the actual data size in
+> > the fragment within the shared skb was checked against PAGE_SIZE
+> > (65536 on powerpc) in min_t, causing it to exceed 4096 and be set
+> > accordingly. This discrepancy led to an overflow when
+> > bpf_xdp_frags_increase_tail() checked for tailroom, as skb_frag_size(frag)
+> > could be greater than rxq->frag_size (when PAGE_SIZE > 4096).
+> > 
+> > This change fixes:
+> > 
+> > 1. test_run by getting the correct arch dependent PAGE_SIZE.
+> > 2. selftest by caculating tailroom and getting correct PAGE_SIZE.
+> > 
+> > Changes:
+> > v1 -> v2:
+> >     * Address comments from Alexander
+> >        * Use dynamic page size, cacheline size and size of
+> >          struct skb_shared_info to calculate parameters.
+> >        * Fixed both test_run and selftest.
+> > 
+> > v1: https://lore.kernel.org/all/20250122183720.1411176-1-skb99@linux.ibm.com/
+> > 
+> > Saket Kumar Bhaskar (2):
+> >    bpf, test_run: Replace hardcoded page size with dynamic PAGE_SIZE in
+> >      test_run
+> >    selftests/bpf: Refactor xdp_adjust_tail selftest with dynamic sizing
+> > 
+> >   .../bpf/prog_tests/xdp_adjust_tail.c          | 160 +++++++++++++-----
+> >   .../bpf/progs/test_xdp_adjust_tail_grow.c     |  41 +++--
+> >   2 files changed, 149 insertions(+), 52 deletions(-)
+> > 
+> Applied the patch series on the bpf-next and patch works as expected.
+> 
+> 
+> With Out the Patch:
+> 
+> test_xdp_adjust_frags_tail_grow:PASS:9Kb+10b 0 nsec
+> test_xdp_adjust_frags_tail_grow:FAIL:9Kb+10b retval unexpected 9Kb+10b
+> retval: actual 3 != expected 1
+> test_xdp_adjust_frags_tail_grow:FAIL:9Kb+10b size unexpected 9Kb+10b size:
+> actual 13097 != expected 9001
+> #583/5   xdp_adjust_tail/xdp_adjust_frags_tail_grow:FAIL
+> #583     xdp_adjust_tail:FAIL
+> Summary: 0/4 PASSED, 0 SKIPPED, 1 FAILED
+> 
+> 
+> With Patch:
+> 
+> # ./test_progs -t xdp_adjust_tail
+> #583/1   xdp_adjust_tail/xdp_adjust_tail_shrink:OK
+> #583/2   xdp_adjust_tail/xdp_adjust_tail_grow:OK
+> #583/3   xdp_adjust_tail/xdp_adjust_tail_grow2:OK
+> #583/4   xdp_adjust_tail/xdp_adjust_frags_tail_shrink:OK
+> #583/5   xdp_adjust_tail/xdp_adjust_frags_tail_grow:OK
+> #583     xdp_adjust_tail:OK
+> Summary: 1/5 PASSED, 0 SKIPPED, 0 FAILED
+> 
+> 
+> Please add below tag to all the patches in series.
+> 
+> Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> 
+> 
+> Regards,
+> 
+> Venkat.
+> 
 
