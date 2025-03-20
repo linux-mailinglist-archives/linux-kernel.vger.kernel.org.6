@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-570307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923D3A6AE97
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:33:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B5CA6AE98
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAA21890B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:34:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE8717352A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563C522837F;
-	Thu, 20 Mar 2025 19:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56D72288D2;
+	Thu, 20 Mar 2025 19:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOgqCeh/"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAHO5Ahm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C14E227BB6
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FCB86355;
+	Thu, 20 Mar 2025 19:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499230; cv=none; b=JiaUYMRSDiwvNtkTq+M6dSQqt07+B1MWQJZTEm2h1sxpYB/DM6rcUPx9eQN1rRJ0+F4m7XA5aXuuWGt+53nJ7EOfxFtLvDOfYDsH1/UGDkSqQvEnIIWmwxg+nvObCMDClatyDV7OwJ60n8r4/JT4CfevXLxSRgz6S+nlSDvgEaI=
+	t=1742499258; cv=none; b=K8JUPikgQLaNYlBh2fLu/lXLOVdNw6JX2OS0ufGYUFU2Yw8fYL8Vg2IsI5hs1LH9SvHeo8VBG0S8sEHwp/zRWTyaHYFiLQX9CK1xmXtro9UFg9SIAu3xvpFlKBN9Hgel7XeXJpY5AHiBceC2MbtpCOxvBncftgag37c5IUUbJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499230; c=relaxed/simple;
-	bh=H69w/dK6lBZzFe8CtNTVmt/q4w+i93j6i7vyJs8q3/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ay5GG5zgu+O1cajc9lRqVLvgDCiabzLMshFE5w7Y1zt7qWo+nOhWcinX+XpbGdFROE5kZ1aXG+aoDQsP3yu/bUGTo271lWhMLf4Uy5r3HMU8p64tphFYeVfVuN4vkj/zxQf2jRdxy2oYy5q/id8OltOj03/pAKVjBU2wBCUaL8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOgqCeh/; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so1974387a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742499227; x=1743104027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJ3CjqPxZOLFj5zkXxGtp5z65slUkGX4/8QoAE4cz8U=;
-        b=KOgqCeh/4izAzVy66E5NU1yjvu6C6vhBo2MdaiAVAC9iu0TEyZ/v2fYj79dmvwsKYS
-         OxAKqP8lkwXkmi98mM/DyCweONGZ+PYlyxL7NYDMzaGP0GaKcltsWprvmNE77udQvidq
-         lQlhXnHfLnkvYq+PrLTNDeKGGiWCdip+lBFaJB/rm3+38fB8zpQeIi6ZDf3LFQOM7q5r
-         S5H8XzJlQOzM9xyA/N7vWtiMONUOFDHFxwnI9CFHTH/5kmOCTXlyS55ijxuCyX0lzJkf
-         5/HZKccCRLeirEAGfgmSYTxKqwxWyVpaTuGQK9eSZadSQxPr5IVmh2yCIu7n7jeoEfuC
-         S7rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742499227; x=1743104027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CJ3CjqPxZOLFj5zkXxGtp5z65slUkGX4/8QoAE4cz8U=;
-        b=rEJaqzzuGZnp5amVEekliMB94+Ol8CaC+Gr0RV/7D9cH2bClRTr6sZKq00OOTnQ7um
-         lBlLng61qn96yPqf8Ub4hAQyuuEG4+S0kVpnqC2mqJn1LsVKpupyV8GBmNK4iZhZKMU0
-         WhqxopK3qlcViqO6a9T/VCUF06eNEMg9r5yWGI7nXP/cNSh6RhhiXcIwGqhRE0SyNblD
-         o5xiU8lKvF20tHaUablNpyJ7eEUHpNb6Sx3eM8oTDEi9UjAzEshPdOTpryEh/t+JoWjq
-         aOJ2cd2AKqz/QnVHyILo5pNLi0Ja9/Ga0b2wI+eAfpk9pe0SGIND/K1yF+L+Xz/NHlMA
-         NB3g==
-X-Forwarded-Encrypted: i=1; AJvYcCULTXAIlFc1/RqEnpRRdhLcn0qc5MR5k+1jtmX7x0fEYd7YmoeIE0cMLzdasU8YV5K0UqlE/dEtEdNv20w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkWxwPwYh5txeNR/sH+yB/nLJkXovlJc8a9Qt/mrRVq3o0maAx
-	ndUMlz5GgDYWLfrqpBm8RrUSxrNne7997pMli1NmFUlwK/ULZnSmNPmv5UWqdjm23yTYX/ndtvf
-	M6b3ssmWoVnYkDOhB0meRR0wixbg=
-X-Gm-Gg: ASbGncvv0xUIF1PNDBlNMYMxeoOoGy+zKfnZK7YU0fOcY3gMGGoEuu0LvqR27Hdg5Q3
-	0y4kkUiGIMN5U6xus/5DkKQyM+V1qdUeeHIIuWha5f+sffxMHat9DvwVaJ8Hdv3wpFru42kjcr0
-	55iJwT2axAAqhF49ZWhCtPFpCxmg==
-X-Google-Smtp-Source: AGHT+IEoJtGHaGXt+B/1W9/TKMjxX1iVOTmidDFYTjagaxFy7ZJ6FaE2l5M0hsf4bNLxMN72pe/e8OPbQXK+TjG+1UE=
-X-Received: by 2002:a05:6402:5190:b0:5de:cbed:c955 with SMTP id
- 4fb4d7f45d1cf-5ebcd45f681mr512243a12.17.1742499227040; Thu, 20 Mar 2025
- 12:33:47 -0700 (PDT)
+	s=arc-20240116; t=1742499258; c=relaxed/simple;
+	bh=JQ9Z0ApuZ1Vvy4/5Qv2+rvakyfM7rmvGaKi76+GvZTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lYG43gBrhbm+6rqRzZ9sI/HJzA7VJQ5UE18c2qLaC50k7tvxdjGhnrGzf69cS8ihRyrkEKRNQRcdPJyWK3veMpE29Qryqpte1Y2ZP+C/XbJhrsWKkJg4ODPTf+DojTs7eldzHOoUWrtv/qDi1XkbC2p0hMXc8yAgWk8XoRtPoDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAHO5Ahm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7213DC4CEDD;
+	Thu, 20 Mar 2025 19:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742499254;
+	bh=JQ9Z0ApuZ1Vvy4/5Qv2+rvakyfM7rmvGaKi76+GvZTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UAHO5Ahm33cnMGeNTzsiXfrr7mxvC9SBP87umUQlBAD4Ll3yP1jaQwWHVsfB4GcHY
+	 58tt5c9ByaCZO+trwteQ/xDF5eLer0t7el1A+vtQDAB4BgGzO7ACYiQOgTVTh7JSfo
+	 /a/Abl4jclTYDlnDcK2C39Yjs6lbtbR+L7ZoryNZpu8xBH/XsjO3OC3LU9/wtA3Nw0
+	 ruMy/jp82JFE9ew8p9nu/XNG4MEhaPOjkdGMRvkZuUdmzIXuBwS4JnhHFzE9KFkTAl
+	 yqZOZ3oFMfcYveTJIBptAmp1pyc9zrHUZaFPw4S9HUJgb4Rw+jHkMJ8WUYJ1IKe3rU
+	 31gn0vKk9XkjA==
+Date: Thu, 20 Mar 2025 14:34:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org,
+	bp@alien8.de, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: agilex: Update eccmgr in DTSI to reflect
+ hw/yaml
+Message-ID: <20250320193413.GB750632-robh@kernel.org>
+References: <20250320164622.6971-1-matthew.gerlach@altera.com>
+ <20250320164622.6971-4-matthew.gerlach@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320190514.1961144-1-mjguzik@gmail.com> <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
-In-Reply-To: <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 20 Mar 2025 20:33:35 +0100
-X-Gm-Features: AQ5f1JqhDFREplKa8qDUGcWjvE2bSGMP6M86i3aXdjpcYdtx6Ut3SNBGSOGtnu4
-Message-ID: <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
- overlapping store
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86@kernel.org, hkrzesin@redhat.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com, 
-	atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320164622.6971-4-matthew.gerlach@altera.com>
 
-On Thu, Mar 20, 2025 at 8:23=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 20 Mar 2025 at 12:06, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > Sizes ranged <8,64> are copied 8 bytes at a time with a jump out to a
-> > 1 byte at a time loop to handle the tail.
->
-> I definitely do not mind this patch, but I think it doesn't go far enough=
-.
->
-> It gets rid of the byte-at-a-time loop at the end, but only for the
-> short-copy case of 8-63 bytes.
->
+On Thu, Mar 20, 2025 at 09:46:21AM -0700, Matthew Gerlach wrote:
+> Update socfpga_agilex.dtsi to track the actual hardware description
+> provided in altr,socfpga-s10-ecc-manager.yaml.
+> 
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> ---
+>  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> index 1235ba5a9865..708cb8e762b6 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> @@ -602,8 +602,7 @@ sdr: sdr@f8011100 {
+>  		};
+>  
+>  		eccmgr {
+> -			compatible = "altr,socfpga-s10-ecc-manager",
+> -				     "altr,socfpga-a10-ecc-manager";
+> +			compatible = "altr,socfpga-s10-ecc-manager";
 
-This bit I can vouch for.
+You are breaking the ABI here. Before this series, the driver required 
+altr,socfpga-a10-ecc-manager.
 
-> The .Llarge_movsq ends up still doing
->
->         testl %ecx,%ecx
->         jne .Lcopy_user_tail
->         RET
->
-> and while that is only triggered by the non-ERMS case, that's what
-> most older AMD CPU's will trigger, afaik.
->
+>  			altr,sysmgr-syscon = <&sysmgr>;
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+> @@ -619,40 +618,35 @@ sdramedac {
+>  			};
+>  
+>  			ocram-ecc@ff8cc000 {
+> -				compatible = "altr,socfpga-s10-ocram-ecc",
+> -					     "altr,socfpga-a10-ocram-ecc";
+> +				compatible = "altr,socfpga-a10-ocram-ecc";
 
-This bit I can't.
+AIUI, nothing used altr,socfpga-s10-ocram-ecc, so this change is okay I 
+guess. Normally, we'd require both because there might be some 
+difference you find later on, but here you could just look at the parent 
+node compatible.
 
-Per my other e-mail it has been several years since I was seriously
-digging in the area (around 7 by now I think) and details are rather
-fuzzy.
+If it were me, I'd just add the compatible string in the schema and 
+avoid the .dts change. That would have been less work...
 
-I have a recollection that handling the tail after rep movsq with an
-overlapping store was suffering a penalty big enough to warrant a
-"normal" copy instead, avoiding the just written to area. I see my old
-routine $elsewhere makes sure to do it. I don't have sensible hw to
-bench this on either at the moment.
-
-That said, if you insist on it, I'll repost v2 with the change (I'm
-going to *test* it of course, just not bench. :>)
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Rob
 
