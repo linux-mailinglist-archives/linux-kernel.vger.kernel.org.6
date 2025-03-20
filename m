@@ -1,115 +1,148 @@
-Return-Path: <linux-kernel+bounces-570453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC6AA6B084
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:13:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4701A6B087
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C6119C2B70
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2E019C3056
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E439522E418;
-	Thu, 20 Mar 2025 22:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E508822A7FE;
+	Thu, 20 Mar 2025 22:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KcvExi1p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SQyL5yoc"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC0B22E403;
-	Thu, 20 Mar 2025 22:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B5322A808
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508597; cv=none; b=CHddM26EzeXYo2vWZpilUYhXs3Fzrx2OSucCJud4ZMJHbr1unXyGWZamaq0+RvZS+m760GZkCLL+JqXKcJgtI+rnQzOGcWElJ+JuJa26Ac8J9vu1ojCfYTDgg+osGBrDJFv+9ZUm+gOv/yoQZThKKXuklPivWJTNacKeR7kySso=
+	t=1742508615; cv=none; b=BSIjmt8RDNSXICb3+qtf6f4l8AsvtEtP9Izlscggjorz3cbomJk3gWia/3VogY6ZT+vpu2pizPmyCIZ+9B1BgKe1jbypdngXBdpUTTdkB7E7SN/J+zLe8qFnV4qZ5J/3FeaY9mYLKDqSUBMqJIotbnsT+wNKD54Hz6Ix+PdCFoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508597; c=relaxed/simple;
-	bh=6f7orNFdsm9t4VeuOI8mJFl42v9q6nq7Ds/4R+jUFTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nw/FKejxT9K9jmMi6WYdGoqZl6cIG5cWC6/u6O+lRWT9Xw6VDCyJLCkMU0m4TUo7GJZtpK6DCfjxsrDzIbR7UGWUwb3bhputc9RE6eYI05LWHck5oYTSXTnATm0V/bDleQcc+qkdnlT2TUwCw12EQx6MKqOJI/rNhIg6yIgx1Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KcvExi1p; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742508595; x=1774044595;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6f7orNFdsm9t4VeuOI8mJFl42v9q6nq7Ds/4R+jUFTs=;
-  b=KcvExi1pnybTeGxdFxA8CYAspZWHHG6Af7I1nLYJuZhTagJvqcQEYboO
-   /sekhph/0g5Vha0FMHutAWg1zplph4ootpEbYYjUkKsLq5w+8xRwd6WQm
-   PgubQlBrwQrHt6S6iDcedoZcH1fc01YLavDeLjG7roZZH4byjsho4yOaQ
-   OtLCbGDahg1Cq5Rnl/KAfNO5p90jIFF34JqD/HWXguPx2wyLDYZjDGfRK
-   ndAY9lLEcua2X6MwpZ+dBGVvW7gyLD/VXWN0WLsFuF0xJ7i61HIOlz7DQ
-   wciDkkmdKU3Lz719aqtct+ABckKcgqpbYTis2p7yrAgBuB5W7FqKdpUvQ
-   g==;
-X-CSE-ConnectionGUID: feHvyByhS5uNdSOxYW+PBw==
-X-CSE-MsgGUID: DQa51wPQQX6XwVMTB3XfcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="66229623"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="66229623"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 15:09:55 -0700
-X-CSE-ConnectionGUID: 3QlSYfosQDO2XPTeFkrQAg==
-X-CSE-MsgGUID: T6Ln0k3TQi6U5DziJqh8jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="154113566"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.110.123]) ([10.125.110.123])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 15:09:55 -0700
-Message-ID: <68826571-44cf-4abb-9be6-00b64d5ab54d@intel.com>
-Date: Thu, 20 Mar 2025 15:09:53 -0700
+	s=arc-20240116; t=1742508615; c=relaxed/simple;
+	bh=WUircD2gMunYayRFEsupwySC2IZlWNKmBLpSeBOKDuk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=dcY/SNsgUUmMBezH42AXhSThIU77bZHneA3WwLucGW7mybL/khyUzXiaIU3GuiLA8ek780q1qDLdhFhoCZDYtidynOVHg+P6Tw/QyVAS3IyksyRCww7D6EkQ4JMoLbR3CD5mgO4e8uZy3x09VIBtjfIK11+Z4j7ih/CClsk5rlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SQyL5yoc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf7c2c351so949495e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:10:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742508611; x=1743113411; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ewXqUeA7RBIygwSLbMlGfEG1GVvVQPFVPFBcsvVuklE=;
+        b=SQyL5yoctpMIiYraB/AyPJVy5DTn1JNM7nuDEIwNOlvDwmTGaE9QarnzBNwRDAf9Yr
+         S6lWelZYnyG13MGjY2aFEn46naiKYS1xGah6DovppVBMq+DDhC342JRPMjGWevaGDi5D
+         P38+EiLB1ojzvFt5wwQFvpnLxSbZuIRTVsaZQMg27u8bgMpy60iVeHb9rDYaq9Ch1DoL
+         n7VygtUNpF09YivzwCyYIE5D9NYt11cY5TEpv7Rmqd0MetiT4IISrsvho8/QptOahGnW
+         HSodB+AOHO/NZGq3BhnhMnt67qgbmBRCOsz5KNU9y7+Ek/5TWWnpf2wajHBWkLWd3rAk
+         KQIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742508611; x=1743113411;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ewXqUeA7RBIygwSLbMlGfEG1GVvVQPFVPFBcsvVuklE=;
+        b=ZMNB7oRl9NOvZ/PmFlbE+i+AnM7pTFL0/Jt7qBPs4uRrC5pLDLgvvahpgbMhhVnr6b
+         rdLJSMLJqS+HyZdjaiaGPc13/vqVnhkDM+2gNm4I/diQFw4dOwFi2bDamgStBZSs7/pD
+         rV7QDK32MR8Slt2PpGl5gRR7JrxZqocxZDWtrCcETP5ONRTfE37WlShl4Sk4jbAOPQbo
+         Cg/q0G4OD3NaHXaRljYRdDlApW6U/FOLXrxzVQpoOZQEHp8wPc5b7mVrRc14z7ln3aoh
+         wXzM04auWv6u6ydmR21ECrHfYJwyUK+IiXLFFKUagqZ6GWz26GWctmS698dxSH43ulqO
+         BHDw==
+X-Gm-Message-State: AOJu0YyFZiIaA13uDgDxaIVkPBtiISPVkW+hQ8Zw3xeRkD9TPqsJ3s5w
+	4ZqF0wvGpG07hH49vIlyAWJXKRu8mC0NfzwHHljr0bKy7aAPzqxx9lanl5c+W0Y=
+X-Gm-Gg: ASbGncvTK4x12HbiKMuicU2pNYgKY7iemBB6QzXbNM5n72x9G8UHZoifcKBKDFycp6B
+	MU2zOD3hS1FcyFyZ9H/lKVHkCb3IZuTfd0r3PhF2M9gizLbU6vkpZIrFMnu+F/uJdKLasbXEl8r
+	qcHEs+rpvrxY7mVWXqfiWmYRohtqc0SNpTDMuMpW2oaY9s1Qga5aYVM4cnDSqWF8VrC+ENoMSae
+	RwCbvD+z+ZD+s5PFsBAudAOOQrbVLdSRhwQD+4yLwVu2g4kEtDiEdDqi0B/3OLaw9104ww+jyKu
+	2T7vV3n4JafiXloAvxMT1e0zsAoHyH4CKLsRmKCNF3s0gDT1tCZpF1o31f9of0NAigHAX37V4mw
+	1xEDAWOm6C6xCXTE=
+X-Google-Smtp-Source: AGHT+IG3iOdJG0QpOBXcV58Rkg48UtcOBUQNUhvPAa+an4gh1o0G7FLaaJ5j+6uFEW3mo9uctUtXkw==
+X-Received: by 2002:a05:600c:5252:b0:439:9909:c785 with SMTP id 5b1f17b1804b1-43d5171da80mr576165e9.7.1742508611223;
+        Thu, 20 Mar 2025 15:10:11 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9eef37sm655138f8f.85.2025.03.20.15.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 15:10:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] cxl/region: Fix the first aliased address
- miscalculation
-To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250317070124.815028-1-ming.li@zohomail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250317070124.815028-1-ming.li@zohomail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 20 Mar 2025 23:10:06 +0100
+Message-Id: <D8LFQYX4EHF8.2AJ01XL34WK0W@ventanamicro.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
+ <zong.li@sifive.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>, "Thomas Gleixner"
+ <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov"
+ <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>,
+ <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Arnd Bergmann"
+ <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>, "Eric Biederman"
+ <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>, "Jonathan Corbet"
+ <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann Horn"
+ <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH v12 22/28] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
 
+2025-03-14T14:39:41-07:00, Deepak Gupta <debug@rivosinc.com>:
+> Kernel will have to perform shadow stack operations on user shadow stack.
+> Like during signal delivery and sigreturn, shadow stack token must be
+> created and validated respectively. Thus shadow stack access for kernel
+> must be enabled.
 
+Why can't kernel access the user shadow stack through an aliased WR
+mapping?
 
-On 3/17/25 12:01 AM, Li Ming wrote:
-> In extended linear cache(ELC) case, cxl_port_get_spa_cache_alias() helps
-> to get the aliased address of a SPA, it considers the first address in
-> CXL memory range is "region start + region cache size + 1", but it
-> should be "region start + region cache size".
-> 
-> So if a SPA is equal to "region start + region cache size", its aliased
-> address should be "SPA - region cache size".
-> 
-> Signed-off-by: Li Ming <ming.li@zohomail.com>
-
-Applied to cxl/next
-
+> In future when kernel shadow stacks are enabled for linux kernel, it must
+> be enabled as early as possible for better coverage and prevent imbalance
+> between regular stack and shadow stack. After `relocate_enable_mmu` has
+> been done, this is as early as possible it can enabled.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 > ---
->  drivers/cxl/core/region.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6d8bdb53f258..c3f4dc244df7 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3460,7 +3460,7 @@ u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
->  			if (!p->cache_size)
->  				return ~0ULL;
->  
-> -			if (spa > p->res->start + p->cache_size)
-> +			if (spa >= p->res->start + p->cache_size)
->  				return spa - p->cache_size;
->  
->  			return spa + p->cache_size;
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+>  	la tp, init_task
+>  	la sp, init_thread_union + THREAD_SIZE
+>  	addi sp, sp, -PT_SIZE_ON_STACK
+> +	li a7, SBI_EXT_FWFT
+> +	li a6, SBI_EXT_FWFT_SET
+> +	li a0, SBI_FWFT_SHADOW_STACK
+> +	li a1, 1 /* enable supervisor to access shadow stack access */
+> +	li a2, SBI_FWFT_SET_FLAG_LOCK
+> +	ecall
 
+I think the ecall can fail even on machines that have Zicfiss, so it
+would be good to disable user shadow stack if that happens.
 
