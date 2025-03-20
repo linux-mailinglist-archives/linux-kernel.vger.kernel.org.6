@@ -1,136 +1,197 @@
-Return-Path: <linux-kernel+bounces-569590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAECA6A514
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:37:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED95BA6A51D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25C1189602A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2B118995D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026601E5B6A;
-	Thu, 20 Mar 2025 11:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E158E21D3D2;
+	Thu, 20 Mar 2025 11:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0ay9JnN"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0wskPf2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A800279C4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A97A27701;
+	Thu, 20 Mar 2025 11:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742470624; cv=none; b=Z84tkLJcIbK5iGhUsG/DPIK0FDGMCtgbNt1bjtKIGrvmXuLMgDQ/wBBLc34jUxH3QGIdaxBak53nFWpqJgeNApSrIfMWpsYu9ixwPRlAui9qe0arox1d+/u5wcbVG59PckUM6uDeD39ZGhAyBJaz4UbWdYpjOdcggydEhiYoVmI=
+	t=1742470927; cv=none; b=tJcdi/rc0R3EK7qXJZBDOB2NLahOXJV2Ye78L400yLrevJc9ffK1qF1mxmAuXSxyaUAtE4HLhO2tbLoMKfxBVm9HSL/8npQvV9fUR2SjnxRbD+++eUtbuOFR58nd+TE2BEFM03HxPMz/PY01P+H1Wn3brylGZH0a09yLeuht5KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742470624; c=relaxed/simple;
-	bh=1C7bpo2rWiO9yyTZV75L7Qmv/xob9QKLrD1DGIBJC/o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=l1jzc2c1Zt1x19rtMAu0LybEu7VuCBb1wi/nODk0Ij5zwEgvcj/s/phfh5+dSF/kCZd7g4hUZcp0x7n1sECu/4rDhVKG+hyaWlT8c6FiwntBMkWVyEiRrKSbX4WLgPAuWGP92zg5DjnO5icrZKmOWLQoCdMlfsWlfFEV2/pFvmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f0ay9JnN; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso6601995e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 04:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742470621; x=1743075421; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mjlcvKGTiShc7ATMQRzCYdMBBkwojrXBnj0x7+vUXZY=;
-        b=f0ay9JnNbhbdoynyNW0sCykyB9xB2NdKqvJxTe3lzNBRR8Dp0VnXuxf6fQ/mT4w3VC
-         X8RlXxN9PByIXLP6X6xZFYEBWG3U5pDArTG4Uck67wNJarc2CGO2mP8951hIPmUMW0KG
-         tLvzGTCFSbodOk3gTGKRLWfL7cOM1Iq1FlRV5PFS2eW3D8JVaMBzD0zvQWSGTV2+hx4W
-         NS+pcVP3ZUmPP5SXdYa9+NpdE7GsvhJNnEXgstY11WUrCwIlGgU2x4jhiBXS8mgaYk7x
-         BIWeU8SHQTCCKwtRu7fzothWEocveCa42nT9fdmc+uJ7RRtSZ3aWGXqNGGdGGW//m7TR
-         jtiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742470621; x=1743075421;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mjlcvKGTiShc7ATMQRzCYdMBBkwojrXBnj0x7+vUXZY=;
-        b=mbTSon+8aftn3SqhSyaz7XYsjbTLEDJwwdzciphCSyGHbMt+ERBOf1cMTvPNCd3H5S
-         GRrYF33L6yHVTyc9ufKkGY8/Qt8aUZ/nyZJO51wKJImvcRCs3E2MaZ7rMyqfOev2hcC/
-         j8F42yM+Vfc8vzdzitydN14UztOrQO7MoHFj6h2glh+vxMOWoMBYo+JzEWjPMPMJwem6
-         3J9LzmcJUtL49FQ2aKsqX2Fg4y/yjHb43tpJVBJojftQv2eMrEk7wtHE9h635UFmI6So
-         6UByuq+oUjkGXi1zgZWwrzVJaivNVUvOSFFxt7w+8HiK4jVtr8zl/tJ5byz4RkW8eZlU
-         dxlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtNqFowxSmgijuS4diaQNUdcn/nf0eJNSOpdirZkBPOI+iGpAmB8cFToOuvi2gPlZk5gG09VCnsnLFvJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQX8G4FjlUs4rcRCQTC1oLbF55WA6isilPzBmyLIFd49kpVOby
-	4dmjbDjajyLf4mplPk9XNYrnhKrQTueLaWroVSh2QUViahXYjga/fzcONLVdzEI=
-X-Gm-Gg: ASbGncvppiECd83H/AVC0XtmqnMOXH8TgCyXASsUj1u0YqWRxzRntTls6xj6v7v8KdT
-	czqymK+WITyjQI065l2VEoLX2fwWdGeOSga0/rrXJQPecIxGruW7u8WInUWDKD1eYKPBvdJjOUt
-	j+suSz3vYt4QXrcPXozS+gMbI/wCIk1lhAHKaAT99XmCUuOneXvFraAnnxCJYvzjbSvwc884Lar
-	IRmCk8j8zGom5dro2ihk04ScS1kjMflJxHBA878tXQhaMXMKKOE3gTTTAdiYgqcXcRgL+saFi8l
-	PvbJ8t+1v5Hsn0G0EnnvU1uvd5+iqGki1h/+A5lX5+N0Cqln2thkKw==
-X-Google-Smtp-Source: AGHT+IEBnVrt5yF+/dpxCYgBqldTqyVcsJrb9G0+k1EV5oFyXfWLLDcJYgmLaYOt7HhudBU9kooqig==
-X-Received: by 2002:a05:600c:1e07:b0:43c:fcb1:528a with SMTP id 5b1f17b1804b1-43d4950e6b4mr25679875e9.6.1742470620859;
-        Thu, 20 Mar 2025 04:37:00 -0700 (PDT)
-Received: from [192.168.1.247] ([145.224.67.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4453227dsm47249775e9.40.2025.03.20.04.36.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 04:37:00 -0700 (PDT)
-Message-ID: <4bd59d1f-bbb6-4712-a60f-b47e3ca6a8a9@linaro.org>
-Date: Thu, 20 Mar 2025 11:36:59 +0000
+	s=arc-20240116; t=1742470927; c=relaxed/simple;
+	bh=HMRR1e3vegCWtPNgWb/evYFL7zXfhK3xc62fYep7GTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=it5Goph02HafD7ieZa+Irbgy/uUgfcZF0EN4TprX0oGIPUDhKDggKkZ4UStT788assY4pj1h4P/2Yhso9HMm/CsA0/FoD+T2vvyPzpl8iYTaj3VwUcAtHpMB4rcE7Q7QJ1h5Gp0O0iwUOTU/ymZAAruCdBZCfKzronLOdAVgksk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0wskPf2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EA4C4CEDD;
+	Thu, 20 Mar 2025 11:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742470926;
+	bh=HMRR1e3vegCWtPNgWb/evYFL7zXfhK3xc62fYep7GTA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=j0wskPf2nXkswNfKuvs7Wj/jv9Ox9vLIBfdoRid56LnX9zSCo+g0I/zIUxSLaQnwK
+	 zsJo7/RfZ8FT+DiqE/L9P7vkwsiVNdEkbuPeCodtJ5lCxdBW96sZikfumkbdhaGrKp
+	 aYSk/b5WYMLUa1OGXri5GtJvjnZwdBc5ZFPB4eKEe0t4EeswpDscHD/h10Zf5x/Yh/
+	 cKgB3iW4o3vVJjkmXROXplBG5Th3cmnzKYw32+IVOc6iO3PXf7UTYSAHE003sv/pUA
+	 Dz4w3bQ28lltzsSSyxGj3HHfSb0Sqo64E/G+6R3kjtbHhzltnnM9mIsIT4dLF7Cc8D
+	 MjDPuujalt0Hw==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Eyal Birger <eyal.birger@gmail.com>,
+	kees@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Subject: [PATCH RFCv3 00/23] uprobes: Add support to optimize usdt probes on x86_64
+Date: Thu, 20 Mar 2025 12:41:35 +0100
+Message-ID: <20250320114200.14377-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf build: Restore {0} initializer since GCC-15
-From: James Clark <james.clark@linaro.org>
-To: Leo Yan <leo.yan@arm.com>, Ian Rogers <irogers@google.com>,
- Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250319110454.3230687-1-leo.yan@arm.com>
- <16b146f7-7568-437d-8ee5-f26bfb0354bd@linaro.org>
-Content-Language: en-US
-In-Reply-To: <16b146f7-7568-437d-8ee5-f26bfb0354bd@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+hi,
+this patchset adds support to optimize usdt probes on top of 5-byte
+nop instruction.
+
+The generic approach (optimize all uprobes) is hard due to emulating
+possible multiple original instructions and its related issues. The
+usdt case, which stores 5-byte nop seems much easier, so starting
+with that.
+
+The basic idea is to replace breakpoint exception with syscall which
+is faster on x86_64. For more details please see changelog of patch 8.
+
+The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
+original instructions) in a loop and counts how many of those happened
+per second (the unit below is million loops).
+
+There's big speed up if you consider current usdt implementation
+(uprobe-nop) compared to proposed usdt (uprobe-nop5):
+
+current:
+        usermode-count :  152.604 ± 0.044M/s
+        syscall-count  :   13.359 ± 0.042M/s
+-->     uprobe-nop     :    3.229 ± 0.002M/s
+        uprobe-push    :    3.086 ± 0.004M/s
+        uprobe-ret     :    1.114 ± 0.004M/s
+        uprobe-nop5    :    1.121 ± 0.005M/s
+        uretprobe-nop  :    2.145 ± 0.002M/s
+        uretprobe-push :    2.070 ± 0.001M/s
+        uretprobe-ret  :    0.931 ± 0.001M/s
+        uretprobe-nop5 :    0.957 ± 0.001M/s
+
+after the change:
+        usermode-count :  152.448 ± 0.244M/s
+        syscall-count  :   14.321 ± 0.059M/s
+        uprobe-nop     :    3.148 ± 0.007M/s
+        uprobe-push    :    2.976 ± 0.004M/s
+        uprobe-ret     :    1.068 ± 0.003M/s
+-->     uprobe-nop5    :    7.038 ± 0.007M/s
+        uretprobe-nop  :    2.109 ± 0.004M/s
+        uretprobe-push :    2.035 ± 0.001M/s
+        uretprobe-ret  :    0.908 ± 0.001M/s
+        uretprobe-nop5 :    3.377 ± 0.009M/s
+
+I see bit more speed up on Intel (above) compared to AMD. The big nop5
+speed up is partly due to emulating nop5 and partly due to optimization.
+
+The key speed up we do this for is the USDT switch from nop to nop5:
+        uprobe-nop     :    3.148 ± 0.007M/s
+        uprobe-nop5    :    7.038 ± 0.007M/s
 
 
-On 19/03/2025 11:19 am, James Clark wrote:
-> 
-> 
-> On 19/03/2025 11:04 am, Leo Yan wrote:
->> GCC-15 release claims [1]:
->>
->>   {0} initializer in C or C++ for unions no longer guarantees clearing
->>   of the whole union (except for static storage duration initialization),
->>   it just initializes the first union member to zero. If initialization
->>   of the whole union including padding bits is desirable, use {} (valid
->>   in C23 or C++) or use -fzero-init-padding-bits=unions option to
->>   restore old GCC behavior.
->>
->> This new behaviour might cause stale and unexpected data we defined in
->> Perf.  Add the -fzero-init-padding-bits=unions option for entirely
->> zeroing union structures.
->>
-> 
-> Do we need this? I don't see any unions initialized in that way. In fact 
-> there is only one struct initialized with {0}, the other handful are 
-> char*s but I don't think either are affected.
-> 
-> Adding options that allow people to add more non standard code doesn't 
-> feel very portable or in the spirit of doing it the right way. Maybe 
-> there's an argument that it guards against future mistakes, but it's not 
-> mentioned in the commit message.
-> 
+rfc v3 changes:
+- I tried to have just single syscall for both entry and return uprobe,
+  but it turned out to be slower than having two separated syscalls,
+  probably due to extra save/restore processing we have to do for
+  argument reg, I see differences like:
+
+    2 syscalls:      uprobe-nop5    :    7.038 ± 0.007M/s
+    1 syscall:       uprobe-nop5    :    6.943 ± 0.003M/s
+
+- use instructions (nop5/int3/call) to determine the state of the
+  uprobe update in the process
+- removed endbr instruction from uprobe trampoline
+- seccomp changes
+
+pending todo (or follow ups):
+- shadow stack fails for uprobe session setup, will fix it in next version
+- use PROCMAP_QUERY in tests
+- alloc 'struct uprobes_state' for mm_struct only when needed [Andrii]
+
+thanks,
+jirka
 
 
-After reading in a bit more detail and seeing all the extra 
-inconsistencies between compilers/versions/syntaxes etc I retract this 
-and agree that -fzero-init-padding-bits=all would be harmless and only 
-make things better.
+Cc: Eyal Birger <eyal.birger@gmail.com>
+Cc: kees@kernel.org
+---
+Jiri Olsa (23):
+      uprobes: Rename arch_uretprobe_trampoline function
+      uprobes: Make copy_from_page global
+      uprobes: Move ref_ctr_offset update out of uprobe_write_opcode
+      uprobes: Add uprobe_write function
+      uprobes: Add nbytes argument to uprobe_write_opcode
+      uprobes: Add orig argument to uprobe_write and uprobe_write_opcode
+      uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+      uprobes/x86: Add uprobe syscall to speed up uprobe
+      uprobes/x86: Add mapping for optimized uprobe trampolines
+      uprobes/x86: Add support to emulate nop5 instruction
+      uprobes/x86: Add support to optimize uprobes
+      selftests/bpf: Use 5-byte nop for x86 usdt probes
+      selftests/bpf: Reorg the uprobe_syscall test function
+      selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
+      selftests/bpf: Add uprobe/usdt syscall tests
+      selftests/bpf: Add hit/attach/detach race optimized uprobe test
+      selftests/bpf: Add uprobe syscall sigill signal test
+      selftests/bpf: Add optimized usdt variant for basic usdt test
+      selftests/bpf: Add uprobe_regs_equal test
+      selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
+      selftests/bpf: Add 5-byte nop uprobe trigger bench
+      seccomp: passthrough uprobe systemcall without filtering
+      selftests/seccomp: validate uprobe syscall passes through seccomp
 
+ arch/arm/probes/uprobes/core.c                              |   2 +-
+ arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
+ arch/x86/include/asm/uprobes.h                              |   7 ++
+ arch/x86/kernel/uprobes.c                                   | 540 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/syscalls.h                                    |   2 +
+ include/linux/uprobes.h                                     |  19 +++-
+ kernel/events/uprobes.c                                     | 141 +++++++++++++++++-------
+ kernel/fork.c                                               |   1 +
+ kernel/seccomp.c                                            |  32 ++++--
+ kernel/sys_ni.c                                             |   1 +
+ tools/testing/selftests/bpf/bench.c                         |  12 +++
+ tools/testing/selftests/bpf/benchs/bench_trigger.c          |  42 ++++++++
+ tools/testing/selftests/bpf/benchs/run_bench_uprobes.sh     |   2 +-
+ tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 453 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ tools/testing/selftests/bpf/prog_tests/usdt.c               |  38 ++++---
+ tools/testing/selftests/bpf/progs/uprobe_syscall.c          |   4 +-
+ tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  41 ++++++-
+ tools/testing/selftests/bpf/sdt.h                           |   9 +-
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c        |  11 +-
+ tools/testing/selftests/seccomp/seccomp_bpf.c               | 107 ++++++++++++++----
+ 20 files changed, 1338 insertions(+), 127 deletions(-)
 
