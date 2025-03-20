@@ -1,107 +1,180 @@
-Return-Path: <linux-kernel+bounces-570009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AC0A6AAB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:11:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420DAA6AABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8643AE0FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:08:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B60F16C3DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFB01E9B29;
-	Thu, 20 Mar 2025 16:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE07F1EB9F6;
+	Thu, 20 Mar 2025 16:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hu8NO9Ax"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="I15WQL+z"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509931DED6F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F9821C187
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742486926; cv=none; b=fWNn3buKgSjduCbjCYR+RcrURnlxyVDZA9XEuUVLCcWWgxT/Cxb8XdjQenPgOKx+F+PYKAGSSz/Q9F4ksUg8bvoBpG+SeDxKEkqEl6ZDzyW78ZyeTEcGL9E2+s546dJXGOx+qelxk06xi3DqDfwra0bgyXvf5Oi1gBe4z586Gjw=
+	t=1742486933; cv=none; b=r4NQ4DpG/VSBgPbJ64bDEy3EEVJZEUPsNKqpSmuiSqOb26MNRtduRl68twBd63N+ALsO/h3u9AU7dWi6uzxL+nZzKjU5GMyDEZO2F+kiIPMLO/vgEwocbpcRZ/OxKaesPN0jmCyR05l+s21lzG/szgtl20LwNTTJRwKH0HXO2Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742486926; c=relaxed/simple;
-	bh=vgTVWZExgzh2bDuvAIpu+5f+q3zFr/HZLt45hek77bw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NMUhq3WfHh5r7C1BSnAf06CxWO0y/zwFXZmqcBKakoQbz8SFGSIvNSFo/EcAFpJ4HF/h46c/8f3QInziN6NOqHNBr6J6OooiLT7/efSyOB2iltCe7HgIF2//Kz87HxuAPtt1vpY9HKlX/qaGJ0/a6pmQRxK4SLQRniCdsMZBvtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hu8NO9Ax; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so12607a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:08:43 -0700 (PDT)
+	s=arc-20240116; t=1742486933; c=relaxed/simple;
+	bh=z84sso7f3UfJQQ/31OsOx2FNEB5xtG36UftFfRP7B8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mXy+O26kGSEnKSWfQDDglvlo6CyOEaUFtfPUT9rsgBroVyzzBsfUltKOLwJ3fTsIXwAnzkroUmVC9+lfVwkvf6uzpbyQwIFUhpcGKXv7ojXFLkMI8M0TlUH7XUIADJDhlCsZhAs32SFT3SaYay7e4qnyG+puxgrnPEkFqH6fV1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=I15WQL+z; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3996683dd7bso129750f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:08:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742486922; x=1743091722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=suse.com; s=google; t=1742486929; x=1743091729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qRVFPk38Y5kn7eWiVNM8nEIsgCgvVcbpOFN7/4VSFsU=;
-        b=Hu8NO9AxsnTpysHEZJ+BstYXvxfcMq6QExTO7zCa3enjXwVAh0dhcMp+GlT1tkD0ED
-         7Qq64sRiI7oXajksQU7pKemR1uq3f9x3nuD7tqPthSvcq9nNPUSIweh4yQttHYQfXnMI
-         PqhA3RTWpwRM1TCNTvaW1AFRNOfSNY2pqu/NVng2VHSEIbR2GUSphcZseFJ1DRKUu9l7
-         pvk8dCesJCwdR852GvUh4k/0EeOiFwKHRILkV4LC1CPBcK6CIdTOMgm6SuYmegRzQZ1r
-         Bw5JIZZCWe3Zkg6D3d1sCFuTcWcPLaOzDK2SULorLWsQCqSEzL7ZpEoeSrOv5WATiIDT
-         iHWw==
+        bh=6kHa60JIYKX9PlEg/V64hxswvAVtVGYMyVrVKFBfiB0=;
+        b=I15WQL+z42+lJ28g7mTs90ZQWyiHemkkhySDP86hqkOMQ2Qf1VVS4tjPMAy75GZ9Jb
+         pVkHf3i6lylfZCr17gZKr/qgWy2tAzVCyT1PPHWqdUlgDj4iqxnY6LwLFiixX3Rc72P0
+         VCvayJee/TwqtAs7rQt99KsGCCpSQQzFvTtThMOg25PlYM65wzjryNBvFNKZ+eDSX774
+         xr4X/e+6xDrBfYDEsgUjrzTm019nLNHeAZn8AvqfPN4CrY8CAXwTlJc4fOdDXVOpbiKL
+         PnJBh8WqfD+bs00oCPjeO65aihd1yiVU0hsnkK7d24+JbXN391wxIF2GK1dcLvdXOZ/F
+         BacQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742486922; x=1743091722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742486929; x=1743091729;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qRVFPk38Y5kn7eWiVNM8nEIsgCgvVcbpOFN7/4VSFsU=;
-        b=qRnwMmohhrFuTLm++1iqBXNKg+N13FX0s9kvUn215VHq+GzqhQuM1mM7DwRJDbW+Oi
-         /qegwObM5Lboy96XbH5xXIOhTWpALlInz1od/vMG4zfPBiN6I9TIth85WhMxCEcwllTn
-         XzclnUcFtGPQB3AuPsX9EdaelkEImoRQLEPpVQZ8t7Ja+MSAyZlyzj/e6Lcm4GOFj5Db
-         pRZ7KXo4ZcJBXtpNhlNsiAQdmJooFOlkAFDg8DxJZs4L6Uu5HHUpZPGocTVCmNLQvpuG
-         NDcANmiwDtqUWrY3YQZntBax9E+UsgjL7ULeBIVqtEhQrXXneQy3j0vN4xpVcV2CaJFk
-         iwxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWw+IjCsgVKzslcvoUf6TeD7iwe1lYELdKbMFqLXEO7FsMRyancnXBEG8BbhVrPSJZWo1OehOLpYM8yTN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCAls/hV27eG+ddxoIhxOz2ezp94JMp6zdjJYUalwbzVfVx+/+
-	Lp0BjeIkaVFmtPe30U4x1/3anqV+Q3Dbd8QmmtuPtqpXE1AZZPQDmc4hhnF8anNRqQ5PPTFDMiN
-	0/Df6SrDYSTVE/mEgY1AG8ml+GlJnP5ErSqT2
-X-Gm-Gg: ASbGncvkMFhd+bpth+TXIMdWXoBYVr2jdhOGCR7NcFtCa6JLhGhIISrwhGAWWljmJrL
-	NF/cmTgIquDWJWuyYzkHXm2jvUzsF+ZjgDi2mHqN5ti+eFnfirf2U7FiOZ3yAdOdZzeH5TCsoCt
-	y64GeNfDlwj0Cp1NyQ9ZPWgn3a4A==
-X-Google-Smtp-Source: AGHT+IE2aF5ixYpsQmX8/liYervWjAj9+pCyKD1dnGB+hzETkfkk5YMebmJT6OByqdUKnt9rJeWGSoBC9gxDw952qN8=
-X-Received: by 2002:aa7:de95:0:b0:5eb:5d50:4fec with SMTP id
- 4fb4d7f45d1cf-5eba06cb25cmr128016a12.0.1742486922293; Thu, 20 Mar 2025
- 09:08:42 -0700 (PDT)
+        bh=6kHa60JIYKX9PlEg/V64hxswvAVtVGYMyVrVKFBfiB0=;
+        b=WZD+iFK4OP+QZzDZ/UNMYViyqsEFOlk0yOhNnQWk+a2bZd5Pk3ekTsn2EXUwo7ji2W
+         Ja4/QLQtU8t7JlJqe0JQs4JVoNHsmSMAtHJ2Y9qMQKnRz+YleLyHLBVmr6g8GUXPjiNZ
+         SPKwMCRSbVeP1ZosXn4QnAbDWHOK7l22+923QPMX+h0g7lsmrTx5OaYYRCxjUpugpaTa
+         foPf2nW8ne3g3YurVfpaq2+6BOyhHD5S6LwqRmWPkHtLBNIIO5iPdIrQZnUp1b9eEXNv
+         ezQeOMHqs0L1ozGRts9Bt/3LS9DromMa2ureOXNBoj83funC1TvtwrK1P3kQWC3CXoWT
+         t4Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYlUNjihEBuNCU9Cu4J8pea0lABMgQvxnuj0SeqDt4ZFBa+GIZDrSERtVzTXvSPxM1YVKlm3nvQRbgrl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7rU2WAgw58h3yoQDOV2JGm/nvjQZyrVi8dDttIj9GXHm3J9fe
+	2+e/7dmmcoYsdV8BlHFKMaSRvCcbwVsS3kELm6te849nIab5NBxE8iZgjgJ8Y9E=
+X-Gm-Gg: ASbGncuVDggM1Sn6VX12fQQkzqRVNh/SzCDfwuTRTCszHm+z+17KhS1GbEfWk8Y6ToP
+	0Sy6E61eQzLtnPq3OJfzpQSRD4ls1eo09g+hQQ/v1LjlMEa8YyXsdLMgQ64cXCybBNdKTNbKb9q
+	ZJNM3vxHsQ9avspmqBwG53GLqtbhuqOimxyrrRpFLIY9C1e03ypi2s7ETy4dPsIwoenZKcUTdpG
+	GND1JoiwH3jJyleRn+/3NvWfLwi6PsLp8GuBg8tnwB3Mmpk7dlt/U6ucOCdko6ivWcCBbasRnrq
+	7KLnelPMvxL9x4zwOeET/2b8YS6ijXrx297fNOivJz1KU4XNyLf5tvQEhgO2Exj8QHW8PjZUwD1
+	8lw1WEDLJ5msCmiWfvNLK/s+QkEuen2aEy2U3rOKWt7WHLpXEWA==
+X-Google-Smtp-Source: AGHT+IF+n4/125DWwRd4QO/E8Ib23KmYraVt8CqKURPcw7uagoIh6m4BUkg4QsmBHaueqHPBc4Swww==
+X-Received: by 2002:a5d:6da1:0:b0:38d:d371:e03d with SMTP id ffacd0b85a97d-3997f8ee224mr36284f8f.3.1742486928898;
+        Thu, 20 Mar 2025 09:08:48 -0700 (PDT)
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3f81sm9920f8f.35.2025.03.20.09.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 09:08:48 -0700 (PDT)
+Date: Thu, 20 Mar 2025 17:08:46 +0100
+From: Petr Tesarik <ptesarik@suse.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@secretlab.ca>,
+ linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Robin Murphy
+ <robin.murphy@arm.com>
+Subject: Re: [PATCH] spi: Ensure memory used for spi_write_then_read() is
+ DMA safe
+Message-ID: <20250320170846.64db4a4d@mordecai.tesarici.cz>
+In-Reply-To: <9ac953ec-fba3-41a7-8e5d-b867abc1566f@sirena.org.uk>
+References: <1359268504-24937-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	<20130205142128.2E28D3E1265@localhost>
+	<20250320124330.480d652d@mordecai.tesarici.cz>
+	<ca70e24d-57b6-4250-bd0d-7f5c72e1d282@sirena.org.uk>
+	<b37480a4-5344-4cf4-8fd1-400e2588fc28@app.fastmail.com>
+	<20250320153536.44774a74@mordecai.tesarici.cz>
+	<9ac953ec-fba3-41a7-8e5d-b867abc1566f@sirena.org.uk>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320142022.766201-1-seanjc@google.com> <20250320142022.766201-3-seanjc@google.com>
-In-Reply-To: <20250320142022.766201-3-seanjc@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 20 Mar 2025 09:08:30 -0700
-X-Gm-Features: AQ5f1JraSCplyBobxoJA5D_xbOTr5CidJpGQNxGU8uqxS7nrp3COJ0vxcJBnlLg
-Message-ID: <CALMp9eTQovt83qgB1pM3NTYaNNRU+wrRhNA9NfsRO4RDnbVU3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] KVM: SVM: Don't update IRTEs if APICv/AVIC is disable
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 20, 2025 at 7:31=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Skip IRTE updates if AVIC is disabled/unsupported, as forcing the IRTE
-> into remapped mode (kvm_vcpu_apicv_active() will never be true) is
-> unnecessary and wasteful.  The IOMMU driver is responsible for putting
-> IRTEs into remapped mode when an IRQ is allocated by a device, long befor=
-e
-> that device is assigned to a VM.  I.e. the kernel as a whole has major
-> issues if the IRTE isn't already in remapped mode.
->
-> Opportunsitically kvm_arch_has_irq_bypass() to query for APICv/AVIC, so
-> so that all checks in KVM x86 incorporate the same information.
->
-> Cc: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Thu, 20 Mar 2025 15:34:42 +0000
+Mark Brown <broonie@kernel.org> wrote:
 
-Nit: "disable" -> "disabled" in the shortlog.
+> On Thu, Mar 20, 2025 at 03:35:36PM +0100, Petr Tesarik wrote:
+> 
+> > CC'ing Robin Murphy, because there seem to be some doubts about DMA API
+> > efficiency.  
+> 
+> Or possibly just documentation, the number of memory types we have to
+> deal with and disjoint interfaces makes all this stuff pretty miserable.
+
+I have to agree here. Plus the existing documentation is confusing, as
+it introduces some opaque terms: streaming, consistent, coherent ...
+what next?
+
+I volunteer to clean it up a bit. Or at least to give it a try.
+
+> > > > The whole goal there is to try to avoid triggering another copy to do
+> > > > the DMA so just reverting rather than replacing with some other
+> > > > construct that achieves the same goal doesn't seem great.  I think
+> > > > possibly we should just not do the copy at all any more and trust the
+> > > > core to DTRT with any buffers that are passed in, I think we've got
+> > > > enough stuff in the core though I can't remember if it'll copy with
+> > > > things allocated on the stack well.  I'd need to page the status back
+> > > > in.    
+> 
+> > No, I'm afraid kernel stack addresses (and many other types of
+> > addresses) cannot be used for DMA:  
+> 
+> > https://docs.kernel.org/core-api/dma-api-howto.html#what-memory-is-dma-able  
+> 
+> Right, that's what I thought.  Part of what spi_write_then_read() is
+> doing is taking the edge off that particular sharp edge for users, on
+> the off chance that the controller wants to DMA.
+
+Thanks for explaining the goal. It seems that most subsystems pass this
+complexity down to individual device drivers, and I agree that it is
+not the best approach.
+
+If we want to make life easier for authors who don't need to squeeze
+the last bit of performance from their driver, the core DMA API could be
+extended with a wrapper function that checks DMA-ability of a buffer
+address and takes the appropriate action. I kind of like the idea, but
+I'm not a subsystem maintainer, so my opinion doesn't mean much. ;-)
+
+> > > From what I found, there are two scenarios that may depend on
+> > > GFP_DMA today:  
+> 
+> > >  a) a performance optimization where allocating from GFP_DMA avoids
+> > >     the swiotlb bounce buffering. This would be the normal case on
+> > >     any 64-bit machine with more than 4GB of RAM and an SPI
+> > >     controller with a 32-bit DMA mask.  
+> 
+> > I must be missing something. How is a memcpy() in spi_write_then_read()
+> > faster than a memcpy() by swiotlb?  
+> 
+> spi_write_then_read() is just a convenience API, a good proportion of
+> users will be using spi_sync() directly.
+
+Got it.
+
+> > I still believe the SPI subsystem should not try to be clever. The
+> > DMA API already avoids unnecessary copying as much as possible.  
+> 
+> It's not particularly trying to be clever here?
+
+Well, it tries to guess whether the lower layer will have to make a
+copy, but it does not always get it right (e.g. memory encryption).
+
+Besides, txbuf and rxbuf might be used without any copying at all, e.g.
+if they point to direct-mapped virtual addresses (e.g. returned by
+kmalloc).
+
+At the end of the day, it's no big deal, because SPI transfers are
+usually small and not performance-critical. I wouldn't be bothered
+myself if it wasn't part of a larger project (getting rid of DMA zones).
+
+Petr T
 
