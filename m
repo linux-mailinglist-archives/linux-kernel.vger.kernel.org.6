@@ -1,107 +1,240 @@
-Return-Path: <linux-kernel+bounces-570042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37099A6AB4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:44:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30501A6AB53
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05EAC483DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5891486E90
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0092321D3E2;
-	Thu, 20 Mar 2025 16:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE28222560;
+	Thu, 20 Mar 2025 16:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIvhV0b5"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbmNHR6V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBB217591
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42F61D7E41;
+	Thu, 20 Mar 2025 16:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742489074; cv=none; b=B/lTGSy1CIHW9Q+XpNEX/iIQZ8UNzVFsrIqz5XNeDqFfnsw8nfE7fzRdw5PCHS5RhwljqM9f4YztAnznlNp8dO9xewrpGv8CKb6uUZThkLy/JVlO8bXXuUmCeU+kdN9kpqXpONfPVbhE5PuDNjgc3AVBxKZq+yHia6PgoA5JBto=
+	t=1742489129; cv=none; b=EzwWEvEamEkSKpTElCuO56wcQsR5EfTIkVYkL8UeSXM3RQg0semDLHcNajwL0WjasoG8OUTHnXea6za9W4GCkqHOo9bxPwiZuixd6hhjA+FuxatUkEsOBD3XiSCzyFK9skf1e4bcFWGolZfi0bW/4Wsxjyx9+1VicEixG+PFiWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742489074; c=relaxed/simple;
-	bh=Sl+Q3tAbqojV0VFuCPLFXyH+mpVFTX55Wv7F6O0y5c8=;
+	s=arc-20240116; t=1742489129; c=relaxed/simple;
+	bh=95hM7WSs+2jk1ALyvUvZARhBGWcyDbfmG+wj8MfcaPE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JrqiTyIJ2Seu/OsetrTyNAMu0Wep8vdou4y/zT9y55xDlx4rXCjvhpZFQlKFKfr7HqsCyAwQ9daLrSJ69SwFT5UOFsyUWmuhp7aOJvCSef9DqVRwzpyCAoO/8hKQvG6i1wsMT50e46F4Pk41uXLoovz/XYIVJrJDtKfbWd2N3RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIvhV0b5; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3996683dd7bso132782f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742489071; x=1743093871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sl+Q3tAbqojV0VFuCPLFXyH+mpVFTX55Wv7F6O0y5c8=;
-        b=nIvhV0b5pAk7RR4N7Y1Wj4rXFuc8lKj56FGfQXnZuSQc5d6wB3v5008/cg8k4MTQgC
-         Saran7I4bza5cWVETP6yTnpy0dPdPjisM0QZQoH5bUU8SzjXcishCoy+0Mj3eXNyBmco
-         ALvLxV7zKEQIc2iN3adfAkbRKBtvE61bChPIk/q1mvirs6Y6tlKdKGdwXPFtRno6JKxY
-         a2R01738ru44JyvRPRKIoMXtFre24k1KMd3jXxO5fgHRUgNSmxNwpjo3GGn9OX9dsJVJ
-         EkgAZjggB2JzE9rMkhTVfiD4X+rc81GmTmAP3xIRJ/e2pj0g/Me9BuiCeY57053BA74r
-         maQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742489071; x=1743093871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sl+Q3tAbqojV0VFuCPLFXyH+mpVFTX55Wv7F6O0y5c8=;
-        b=a6rJL1BV7zR7vTaNcAbZekJdEI6eEs9J8UZSEmFjSAuUYgmDnxd0FwM2mTrNWCBLcl
-         nDmTNdTIvKkp3sLLrrLzQlHYqSk9Hv0+2d9LuGaGTevAHlOMlGjFm9t83zsQZcBs4Gs7
-         5+uBOJuOLkOoiZICFENYqKsPg9OGUODTblh2Xpi0lEotUS08IY3iyMsnAxWgFfDnoQ0/
-         s7ZMdC+pgEQ34fGk/x88G7jRO9ECk3wuIyeCUODTIxrtGBFIyd4NbEyijeEJYxbPRVsf
-         cW9et4UKLo6kC9853zLhtIov2XSfYwF0uNh81GdZCULAcl+pDDnJ/pBPo4FatQtiCzlY
-         wl5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWpgTFc+gsZ61SZjWdnZtk0o9dpbSxReknVtReZjRZJMVmtRTZ8IsoTB7bBSrkvkoQu0Pu4AFX+J1Dp9jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5PLhX7SruDd0Eob78BcVtTWqzaxZwDW1afo3il0L0uK2YYd0k
-	PgjXTVwsFXmJbpgnu/TBAueg/Vdtzl0nsNW3fuMSUk2f4T8q9ciA10DkfGN1BN8kidccfbpkyv1
-	aQtYdrEZmh/febG7KJ214M1wcFUI=
-X-Gm-Gg: ASbGnctC3cFEKZo2UP26bQHNhuc0npwlU/y23xuz1LAzLzbRQ2Z3mGHBsI/Y9EoUTSR
-	e2yQ6H3U6OiTTumpwrN11EqQlK9EAFfO8qj3gjHYhlXX81sfDTcA9PkkLXDYg86tq8vl9aBkEBE
-	ld74HIpVH0Gudc3I03SUVbrYAZXG/GoMWHUWyij/l1bbtjStUc1cNVc9SY2Lz9NN906+I=
-X-Google-Smtp-Source: AGHT+IFZKHpYsKH5wHL76fHPVWZbMWOpx+QtGI6GB8lz4cUAk5M6cNdY7pR3ndrTN39JCHBJ7oIVLGdJhU6rQSsqLpU=
-X-Received: by 2002:a5d:6da1:0:b0:38d:d371:e03d with SMTP id
- ffacd0b85a97d-3997f8ee224mr80691f8f.3.1742489070959; Thu, 20 Mar 2025
- 09:44:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=qCsPl0OHqC2dqtryGhaa52Ei4spX3lPB2du2/OAZ7niJwQMcBBeNzDv1dXIx7ugS4XTFHc8FqEli/YMOz5+H0QdsUFHibwWtcP2GMiXF37F8G2MmMh7MDdNTDPJPMWmGp+pqMuRh/hAe8CdpYLCDikswUWQxJAgZotx6j4IQ6Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbmNHR6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F700C4CEF2;
+	Thu, 20 Mar 2025 16:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742489129;
+	bh=95hM7WSs+2jk1ALyvUvZARhBGWcyDbfmG+wj8MfcaPE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sbmNHR6VYM641yRYToxqUQuweYoo9rmvh4y+rn74wPnnhc9EoxHAzsKHOIQt1uh42
+	 YaN2tlsYhSRb2GYsh06rYF8oH7Lv8km2DQ16wYYZHT0pAlA4L4fygLdEY7oshf54Bk
+	 +BNUEPw21GnUeOZF11v3ADU6LQjsnhw0S3BQ7/x7DGOSD7WliaG2ipOTr28/TX9oEm
+	 JuUUUPp5UmS1nZRumHiKvhkc1mc1ZG79K1GXlUZuMHkHf8vPSsFBsD6x7cYS/dKufA
+	 yW0GCpjqNchN3Ic5ugNil8MH7eqK9SlFGLUQ5j93OYDgJR9zP792rxr5qJhykn9IL2
+	 85nsGxzY79A/A==
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3d3db3b68a7so10960245ab.0;
+        Thu, 20 Mar 2025 09:45:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyFLu3Fsax76BqOrwcFlsbo3Euify75d0nHuJHCe8QJPRIPOFCp781sMTM7xczlPCBhYqjFULkfUwL0bcX@vger.kernel.org, AJvYcCWJ7PW88afbH4zdsoNpsJ9t5zn9gCtzcsT/UtfMN3F7usBemvEBfMBTg088SZqlDb+YBtM=@vger.kernel.org, AJvYcCXEuKJtvOlJiw7ltrkJzvWPRAeEOnSaUcRK1bsj64tFg/iLIEaMK6dJbJTUQBIpnn5S6hdWZc+1G+RmgcBCgmBFf3RB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT8BWU/R1srET1HWrWCcSUhEc8PEo+UVpM5GLr9bSOgVlF2NN3
+	By9vUPeSC9iZEDO2Av8bxhUC7LK2EgZ8bbqFoO/V+FwN6mOf3sDRXbO0uYoK2plyPGP+24DdZqO
+	jUMR9B0IbIfdmvVuHtS4WksMEgCU=
+X-Google-Smtp-Source: AGHT+IHbw5Q8tz48eCSuApTbb36iOXnOyyNyFuQkeEw0WIffr0bdaSDuoStOjaZnL721aj2EXpDhICW9Nsw55qGLDSo=
+X-Received: by 2002:a05:6e02:12cd:b0:3d4:6f37:3748 with SMTP id
+ e9e14a558f8ab-3d59617722bmr863675ab.16.1742489128376; Thu, 20 Mar 2025
+ 09:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318015926.1629748-1-harry.yoo@oracle.com>
-In-Reply-To: <20250318015926.1629748-1-harry.yoo@oracle.com>
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Date: Thu, 20 Mar 2025 17:44:06 +0100
-X-Gm-Features: AQ5f1Jo9CZLQDM2kpJQ_9WPJBbin-yAHC_Ppwb9Qyz7cZjnJt1uQNfIhmTJ0Fcw
-Message-ID: <CAPAsAGxdD04nOz35TERJi0aPs+9TBEytrqNVq8h4EA819PA9pg@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable] mm/kasan: use SLAB_NO_MERGE flag instead of
- an empty constructor
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <20250320032258.116156-1-yangfeng59949@163.com>
+In-Reply-To: <20250320032258.116156-1-yangfeng59949@163.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 20 Mar 2025 09:45:17 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4iVUdwhgDsnwy0oeiPhdfMSrRfEcXSFHw7bqXtBVzPyQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr7GhwsS_gIT73WOYJdPv9bvQ8qKip01B1xk64Yv2z7FjJ9Gg8Gdm5HI3I
+Message-ID: <CAPhsuW4iVUdwhgDsnwy0oeiPhdfMSrRfEcXSFHw7bqXtBVzPyQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Remove duplicate judgments
+To: Feng Yang <yangfeng59949@163.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, mattbobrowski@google.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 2:59=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
+On Wed, Mar 19, 2025 at 8:23=E2=80=AFPM Feng Yang <yangfeng59949@163.com> w=
+rote:
 >
-> Use SLAB_NO_MERGE flag to prevent merging instead of providing an
-> empty constructor. Using an empty constructor in this manner is an abuse
-> of slab interface.
+> From: Feng Yang <yangfeng@kylinos.cn>
 >
-> The SLAB_NO_MERGE flag should be used with caution, but in this case,
-> it is acceptable as the cache is intended solely for debugging purposes.
->
-> No functional changes intended.
->
-> Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
+> Most of the judgments also exist in bpf_base_func_deto, remove them.
 
-Acked-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+"Most" of them also exist is not enough. Please make sure that this does
+not introduce any behavior change. For example, we should not remove
+return of bpf_perf_event_read_value_proto.
+
+For future patches, please read Documentation/bpf/bpf_devel_QA.rst
+and follow rules for email subject, etc. For example, this patch should
+have a subject like "[PATCH bpf-next] xxx".
+
+Thanks,
+Song
+
+
+>
+> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+> ---
+>  kernel/trace/bpf_trace.c | 72 ----------------------------------------
+>  1 file changed, 72 deletions(-)
+>
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 6b07fa7081d9..c89b25344422 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -1443,56 +1443,14 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, =
+const struct bpf_prog *prog)
+>         const struct bpf_func_proto *func_proto;
+>
+>         switch (func_id) {
+> -       case BPF_FUNC_map_lookup_elem:
+> -               return &bpf_map_lookup_elem_proto;
+> -       case BPF_FUNC_map_update_elem:
+> -               return &bpf_map_update_elem_proto;
+> -       case BPF_FUNC_map_delete_elem:
+> -               return &bpf_map_delete_elem_proto;
+> -       case BPF_FUNC_map_push_elem:
+> -               return &bpf_map_push_elem_proto;
+> -       case BPF_FUNC_map_pop_elem:
+> -               return &bpf_map_pop_elem_proto;
+> -       case BPF_FUNC_map_peek_elem:
+> -               return &bpf_map_peek_elem_proto;
+> -       case BPF_FUNC_map_lookup_percpu_elem:
+> -               return &bpf_map_lookup_percpu_elem_proto;
+> -       case BPF_FUNC_ktime_get_ns:
+> -               return &bpf_ktime_get_ns_proto;
+> -       case BPF_FUNC_ktime_get_boot_ns:
+> -               return &bpf_ktime_get_boot_ns_proto;
+> -       case BPF_FUNC_tail_call:
+> -               return &bpf_tail_call_proto;
+> -       case BPF_FUNC_get_current_task:
+> -               return &bpf_get_current_task_proto;
+> -       case BPF_FUNC_get_current_task_btf:
+> -               return &bpf_get_current_task_btf_proto;
+> -       case BPF_FUNC_task_pt_regs:
+> -               return &bpf_task_pt_regs_proto;
+>         case BPF_FUNC_get_current_uid_gid:
+>                 return &bpf_get_current_uid_gid_proto;
+>         case BPF_FUNC_get_current_comm:
+>                 return &bpf_get_current_comm_proto;
+> -       case BPF_FUNC_trace_printk:
+> -               return bpf_get_trace_printk_proto();
+>         case BPF_FUNC_get_smp_processor_id:
+>                 return &bpf_get_smp_processor_id_proto;
+> -       case BPF_FUNC_get_numa_node_id:
+> -               return &bpf_get_numa_node_id_proto;
+>         case BPF_FUNC_perf_event_read:
+>                 return &bpf_perf_event_read_proto;
+> -       case BPF_FUNC_get_prandom_u32:
+> -               return &bpf_get_prandom_u32_proto;
+> -       case BPF_FUNC_probe_read_user:
+> -               return &bpf_probe_read_user_proto;
+> -       case BPF_FUNC_probe_read_kernel:
+> -               return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0=
+ ?
+> -                      NULL : &bpf_probe_read_kernel_proto;
+> -       case BPF_FUNC_probe_read_user_str:
+> -               return &bpf_probe_read_user_str_proto;
+> -       case BPF_FUNC_probe_read_kernel_str:
+> -               return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0=
+ ?
+> -                      NULL : &bpf_probe_read_kernel_str_proto;
+>  #ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+>         case BPF_FUNC_probe_read:
+>                 return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0=
+ ?
+> @@ -1502,10 +1460,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, c=
+onst struct bpf_prog *prog)
+>                        NULL : &bpf_probe_read_compat_str_proto;
+>  #endif
+>  #ifdef CONFIG_CGROUPS
+> -       case BPF_FUNC_cgrp_storage_get:
+> -               return &bpf_cgrp_storage_get_proto;
+> -       case BPF_FUNC_cgrp_storage_delete:
+> -               return &bpf_cgrp_storage_delete_proto;
+>         case BPF_FUNC_current_task_under_cgroup:
+>                 return &bpf_current_task_under_cgroup_proto;
+>  #endif
+> @@ -1513,20 +1467,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, c=
+onst struct bpf_prog *prog)
+>                 return &bpf_send_signal_proto;
+>         case BPF_FUNC_send_signal_thread:
+>                 return &bpf_send_signal_thread_proto;
+> -       case BPF_FUNC_perf_event_read_value:
+> -               return &bpf_perf_event_read_value_proto;
+> -       case BPF_FUNC_ringbuf_output:
+> -               return &bpf_ringbuf_output_proto;
+> -       case BPF_FUNC_ringbuf_reserve:
+> -               return &bpf_ringbuf_reserve_proto;
+> -       case BPF_FUNC_ringbuf_submit:
+> -               return &bpf_ringbuf_submit_proto;
+> -       case BPF_FUNC_ringbuf_discard:
+> -               return &bpf_ringbuf_discard_proto;
+> -       case BPF_FUNC_ringbuf_query:
+> -               return &bpf_ringbuf_query_proto;
+> -       case BPF_FUNC_jiffies64:
+> -               return &bpf_jiffies64_proto;
+>         case BPF_FUNC_get_task_stack:
+>                 return prog->sleepable ? &bpf_get_task_stack_sleepable_pr=
+oto
+>                                        : &bpf_get_task_stack_proto;
+> @@ -1534,12 +1474,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, c=
+onst struct bpf_prog *prog)
+>                 return &bpf_copy_from_user_proto;
+>         case BPF_FUNC_copy_from_user_task:
+>                 return &bpf_copy_from_user_task_proto;
+> -       case BPF_FUNC_snprintf_btf:
+> -               return &bpf_snprintf_btf_proto;
+> -       case BPF_FUNC_per_cpu_ptr:
+> -               return &bpf_per_cpu_ptr_proto;
+> -       case BPF_FUNC_this_cpu_ptr:
+> -               return &bpf_this_cpu_ptr_proto;
+>         case BPF_FUNC_task_storage_get:
+>                 if (bpf_prog_check_recur(prog))
+>                         return &bpf_task_storage_get_recur_proto;
+> @@ -1548,18 +1482,12 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, =
+const struct bpf_prog *prog)
+>                 if (bpf_prog_check_recur(prog))
+>                         return &bpf_task_storage_delete_recur_proto;
+>                 return &bpf_task_storage_delete_proto;
+> -       case BPF_FUNC_for_each_map_elem:
+> -               return &bpf_for_each_map_elem_proto;
+> -       case BPF_FUNC_snprintf:
+> -               return &bpf_snprintf_proto;
+>         case BPF_FUNC_get_func_ip:
+>                 return &bpf_get_func_ip_proto_tracing;
+>         case BPF_FUNC_get_branch_snapshot:
+>                 return &bpf_get_branch_snapshot_proto;
+>         case BPF_FUNC_find_vma:
+>                 return &bpf_find_vma_proto;
+> -       case BPF_FUNC_trace_vprintk:
+> -               return bpf_get_trace_vprintk_proto();
+>         default:
+>                 break;
+>         }
+> --
+> 2.43.0
+>
 
