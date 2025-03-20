@@ -1,239 +1,131 @@
-Return-Path: <linux-kernel+bounces-569172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CACA69F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:41:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC54DA69F77
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EE33BADD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4945F189DF06
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7211E3DFE;
-	Thu, 20 Mar 2025 05:40:28 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950941A3152;
-	Thu, 20 Mar 2025 05:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D41E47B0;
+	Thu, 20 Mar 2025 05:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aiQ23o1f"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2B1E3769;
+	Thu, 20 Mar 2025 05:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742449227; cv=none; b=Gh20z42ZXktWVd4cg9E5YC2/FWKXpuHzcabrWy92DC9uzkCmlD+ast7BEGI7xgAFwmb8GW3W1jONOTlCbvhPwvi5KVA0bJI0PYKvNRsAHTiqaX/MjsBZiGkRYSVDHFUdyj9Mi6FiFt2oaRdqb4TE7jW+Fx+RKlR28LcnyFWdLKQ=
+	t=1742449276; cv=none; b=BL8hL0ito0UwGA3PzTAg3REFpxPOLjciamMLjxWOJDgWPe2GqwNbQ/6nTiouQsaRum+W2DZQeMusDI9kTa15Sq2NzJG5vlc4T0MCvSziZfHlkuVxt1dCDz4WKrXftv3UeB6KuJG83rHYolSpFlvGJ8k5wHco2+5adQRg39PGyOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742449227; c=relaxed/simple;
-	bh=Upjw/yWb4OlnCEBwTmspWkyp0uJZb1mknb6860OYb5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QLw+zzKv2oAFIw/GpUMrriKN9kZVslWHQ/W0rgu3XDyHufrinVJddz/zAzORsO7dY6HC7PnuIHyMYMPNYBzpkRhb4P9LTlFyF5E7KGLDk38v8RvHZkU2NrM6E4UmXJwJUryGjGq1M9ok1tP2Uj5JPWZJJc8l6ZqSSFjg9avwxH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-6e-67dbaa401ae0
-From: Rakie Kim <rakie.kim@sk.com>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	david@redhat.com,
-	Jonathan.Cameron@huawei.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	gourry@gourry.net
-Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted interleave sysfs
-Date: Thu, 20 Mar 2025 14:40:01 +0900
-Message-ID: <20250320054010.914-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <20250320041749.881-2-rakie.kim@sk.com>
-References: 
+	s=arc-20240116; t=1742449276; c=relaxed/simple;
+	bh=FSRjntSQhWPLa02TONDY5WM1kzyi51yjXA8O7KZ11d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lkwK9ULb2wEyhOc1rR/nRUhR8hLNExtuFF9UhD5izO7M9BB8XnZkqw8nOWdtkmWAA8EJMPmPaJM5XuUJysdS5fL7scrhkmODnyo5KJnzi9amWQz4gNALY0cjfJevbEC9Ykpg+1Mudl6gADqmLyMqXGCtu+3VSNRnykDzLlpXMRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aiQ23o1f; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742449268;
+	bh=om4SfL+rs7yXAMjmCpcR7Chi7f9L0ieNUX8zveSiNcQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aiQ23o1f+jZrqOsK2pg03xEcAhexQrbvHbm3HUgYj7l+LlE6ZOfzdUbfwwztm8TGE
+	 cln+WZ2uosC9oABcBCbBl32zhvcJhawyyi/dQD6CAY02MXTR9OyVXoRMRCQGPdQOW6
+	 LqorLZX+qwHZGFSTy7M+CFBFLmv9ATwg8N50EMHPoD/Qn/ugqqRIZQmvhGTN+uBoz8
+	 Y16cINFUXtgHEBOdiMxHHvzyxTZJE9nQ52KmWfACuFrfuWoeKqM06NA1Yvc0CeCZcK
+	 KyR2knlBwjyPHsPJvThV2JzOqo7n5ZXWIrZ8pUS1w5mMHopbIUkWRp3k8/SJDe3jdg
+	 qvXJWoWXmm0vw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJDvl6Bbhz4wnp;
+	Thu, 20 Mar 2025 16:41:07 +1100 (AEDT)
+Date: Thu, 20 Mar 2025 16:41:07 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Greg KH <greg@kroah.com>, Dave Airlie <airlied@redhat.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Message-ID: <20250320164107.51f7737e@canb.auug.org.au>
+In-Reply-To: <Z9qnl2bxFZ-Q5Al4@pollux>
+References: <20250319180556.4475584f@canb.auug.org.au>
+	<Z9qnl2bxFZ-Q5Al4@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsXC9ZZnoa7DqtvpBrOvqFnMWb+GzWL61AuM
-	Fl/X/2K2+Hn3OLvFqoXX2CyOb53HbnF+1ikWi8u75rBZ3Fvzn9Vi9ZoMBy6PnbPusnt0t11m
-	92g58pbVY/Gel0wemz5NYvc4MeM3i8fOh5Ye7/ddZfP4vEkugDOKyyYlNSezLLVI3y6BK2P7
-	iR2sBWeUKy5t7WVsYJwi08XIySEhYCKx+eleti5GDjC7+5gBiMkmoCRxbG8MiCkioCBx6F90
-	FyMXB7PAdSaJsw8Ws4PEhQXCJVpniIIMYRFQlbiwfiM7iM0rYCwx7dthVojhmhINl+4xgdic
-	QMNv9fxmA7GFBHgkXm3YzwhRLyhxcuYTFhCbWUBeonnrbGaI3tdsEvfPB0DYkhIHV9xgmcDI
-	PwtJyywkLQsYmVYxCmXmleUmZuaY6GVU5mVW6CXn525iBAb6sto/0TsYP10IPsQowMGoxMP7
-	4sqtdCHWxLLiytxDjBIczEoivCIdt9OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xp9K08REkhP
-	LEnNTk0tSC2CyTJxcEo1MMau/qS39tH3Beb9+3Pm992MUq8NWsS4YvvhkNAddwXfCC4XuJuY
-	3yLZOqWuhdv+cPWS0IafdtMCjK8u6m868JqFXfruyzJlrwqnOZaCTsfufnYxTeo4UF1b5cy+
-	jmFWpcHV0HwxY0bOXS7FCb8CtHNcg/boTmrk+ftAU9dzzhmVoIvdr2qclFiKMxINtZiLihMB
-	pzuOM3ACAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsXCNUNNS9dh1e10g0OfZC3mrF/DZjF96gVG
-	i6/rfzFb/Lx7nN3i87PXzBarFl5jszi+dR67xeG5J1ktzs86xWJxedccNot7a/6zWhy69pzV
-	YvWaDIvf21awOfB57Jx1l92ju+0yu0fLkbesHov3vGTy2PRpErvHiRm/WTx2PrT0eL/vKpvH
-	t9seHotffGDy+LxJLoA7issmJTUnsyy1SN8ugStj+4kdrAVnlCsube1lbGCcItPFyMEhIWAi
-	0X3MAMRkE1CSOLY3BsQUEVCQOPQvuouRi4NZ4DqTxNkHi9lB4sIC4RKtM0S7GDk5WARUJS6s
-	38gOYvMKGEtM+3aYFcSWENCUaLh0jwnE5gQafqvnNxuILSTAI/Fqw35GiHpBiZMzn7CA2MwC
-	8hLNW2czT2DkmYUkNQtJagEj0ypGkcy8stzEzBxTveLsjMq8zAq95PzcTYzA8F5W+2fiDsYv
-	l90PMQpwMCrx8L64citdiDWxrLgy9xCjBAezkgivSMftdCHelMTKqtSi/Pii0pzU4kOM0hws
-	SuK8XuGpCUIC6YklqdmpqQWpRTBZJg5OqQbGmrpN29YWG5x5N+WatN2C2zefqjZNF7gb+7yr
-	TCfr7kq+BI89LE6v3nAzmapVTZ4gFyJauYzfx5Xr4QH+f1NlXe0MffLdNnz7ILswUVvPICii
-	6wnv7ove5nvk3EyvKVxjWpGwnN1ruf6Xd0YMT7eLN5WmJnjnL5dfnjB5Ql/zBtcfahc7dwsr
-	sRRnJBpqMRcVJwIAooshrGsCAAA=
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/o2tDcpD+dduaO+xh.g0XoJL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, 20 Mar 2025 13:17:46 +0900 Rakie Kim <rakie.kim@sk.com> wrote:
+--Sig_/o2tDcpD+dduaO+xh.g0XoJL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Gregory
+Hi Danilo,
 
-I initially planned to separate this patch from the hotplug-related patch
-series as an independent update. However, after reviewing the code following
-Jonathan's suggestion to consolidate `kobject` and `node_attrs` into a single
-struct, I realized that most of the intended functionality for Patch 2 was
-already incorporated.
+On Wed, 19 Mar 2025 12:16:39 +0100 Danilo Krummrich <dakr@kernel.org> wrote:
+>
+> The following diff should fix the below conflict.
+>=20
+> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driv=
+er.rs
+> index 63c19f140fbd..a08fb6599267 100644
+> --- a/drivers/gpu/nova-core/driver.rs
+> +++ b/drivers/gpu/nova-core/driver.rs
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> =20
+> -use kernel::{bindings, c_str, pci, prelude::*};
+> +use kernel::{bindings, c_str, device::Core, pci, prelude::*};
+> =20
+>  use crate::gpu::Gpu;
+> =20
+> @@ -27,7 +27,7 @@ impl pci::Driver for NovaCore {
+>      type IdInfo =3D ();
+>      const ID_TABLE: pci::IdTable<Self::IdInfo> =3D &PCI_TABLE;
+> =20
+> -    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin=
+<KBox<Self>>> {
+> +    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<P=
+in<KBox<Self>>> {
+>          dev_dbg!(pdev.as_ref(), "Probe Nova Core GPU driver.\n");
+> =20
+>          pdev.enable_device_mem()?;
+>=20
 
-As a result, Patch 1 now only contains the `kobject_put` fix, while the
-struct consolidation work has been included in Patch 2. Given the current
-design, it seems more natural to keep Patch 1 and Patch 2 together as part
-of the same patch series rather than separating them.
+I have added that to the merge resolution for the merge of the
+driver-core tree today and it works for me.  Thanks.
 
-Rakie
+--=20
+Cheers,
+Stephen Rothwell
 
-> Memory leaks occurred when removing sysfs attributes for weighted
-> interleave. Improper kobject deallocation led to unreleased memory
-> when initialization failed or when nodes were removed.
-> 
-> This patch resolves the issue by replacing unnecessary `kfree()`
-> calls with `kobject_put()`, ensuring proper cleanup and preventing
-> memory leaks.
-> 
-> By correctly using `kobject_put()`, the release function now
-> properly deallocates memory without causing resource leaks,
-> thereby improving system stability.
-> 
-> Fixes: dce41f5ae253 ("mm/mempolicy: implement the sysfs-based weighted_interleave interface")
-> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
-> ---
->  mm/mempolicy.c | 61 +++++++++++++++++++++++++-------------------------
->  1 file changed, 31 insertions(+), 30 deletions(-)
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index bbaadbeeb291..5950d5d5b85e 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3448,7 +3448,9 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
->  
->  	for (i = 0; i < nr_node_ids; i++)
->  		sysfs_wi_node_release(node_attrs[i], wi_kobj);
-> -	kobject_put(wi_kobj);
-> +
-> +	kfree(node_attrs);
-> +	kfree(wi_kobj);
->  }
->  
->  static const struct kobj_type wi_ktype = {
-> @@ -3494,15 +3496,22 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
->  	struct kobject *wi_kobj;
->  	int nid, err;
->  
-> -	wi_kobj = kzalloc(sizeof(struct kobject), GFP_KERNEL);
-> -	if (!wi_kobj)
-> +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-> +			     GFP_KERNEL);
-> +	if (!node_attrs)
->  		return -ENOMEM;
->  
-> +	wi_kobj = kzalloc(sizeof(struct kobject), GFP_KERNEL);
-> +	if (!wi_kobj) {
-> +		err = -ENOMEM;
-> +		goto node_out;
-> +	}
-> +
->  	err = kobject_init_and_add(wi_kobj, &wi_ktype, root_kobj,
->  				   "weighted_interleave");
->  	if (err) {
-> -		kfree(wi_kobj);
-> -		return err;
-> +		kobject_put(wi_kobj);
-> +		goto err_out;
->  	}
->  
->  	for_each_node_state(nid, N_POSSIBLE) {
-> @@ -3512,9 +3521,17 @@ static int add_weighted_interleave_group(struct kobject *root_kobj)
->  			break;
->  		}
->  	}
-> -	if (err)
-> +	if (err) {
->  		kobject_put(wi_kobj);
-> +		goto err_out;
-> +	}
-> +
->  	return 0;
-> +
-> +node_out:
-> +	kfree(node_attrs);
-> +err_out:
-> +	return err;
->  }
->  
->  static void mempolicy_kobj_release(struct kobject *kobj)
-> @@ -3528,7 +3545,6 @@ static void mempolicy_kobj_release(struct kobject *kobj)
->  	mutex_unlock(&iw_table_lock);
->  	synchronize_rcu();
->  	kfree(old);
-> -	kfree(node_attrs);
->  	kfree(kobj);
->  }
->  
-> @@ -3542,37 +3558,22 @@ static int __init mempolicy_sysfs_init(void)
->  	static struct kobject *mempolicy_kobj;
->  
->  	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-> -	if (!mempolicy_kobj) {
-> -		err = -ENOMEM;
-> -		goto err_out;
-> -	}
-> -
-> -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-> -			     GFP_KERNEL);
-> -	if (!node_attrs) {
-> -		err = -ENOMEM;
-> -		goto mempol_out;
-> -	}
-> +	if (!mempolicy_kobj)
-> +		return -ENOMEM;
->  
->  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
->  				   "mempolicy");
->  	if (err)
-> -		goto node_out;
-> +		goto err_out;
->  
->  	err = add_weighted_interleave_group(mempolicy_kobj);
-> -	if (err) {
-> -		pr_err("mempolicy sysfs structure failed to initialize\n");
-> -		kobject_put(mempolicy_kobj);
-> -		return err;
-> -	}
-> +	if (err)
-> +		goto err_out;
-> +
-> +	return 0;
->  
-> -	return err;
-> -node_out:
-> -	kfree(node_attrs);
-> -mempol_out:
-> -	kfree(mempolicy_kobj);
->  err_out:
-> -	pr_err("failed to add mempolicy kobject to the system\n");
-> +	kobject_put(mempolicy_kobj);
->  	return err;
->  }
->  
-> 
-> base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
-> -- 
-> 2.34.1
-> 
+--Sig_/o2tDcpD+dduaO+xh.g0XoJL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfbqnMACgkQAVBC80lX
+0Gw0mAf/a/d3kTac8y5zs/ehujge70tzHze+CLi6NpUOXIoVn2FcDV9uHVsskx23
+1UaWfCsH+OBjy4u+Dl6CJ+Ch/Wse6C3wAZDR5ORxxIV0AdKKFXgMxlE8uYwAVMrL
+QlsEiYNFjmcZMkvFA80EUCY/k7HGyEwapC7ZL8wzGZy7VViDq5wCr5gNxqOYeQQZ
+WfOvPqKlNQYXTOVqnGb3XCRNKWyLb58CRNfCtPB17fDvwLNhDua1ohTCh59oJDTf
+MZESYCy+d3suDDB81/PDsFpxZBfOwugE3GWAFniRoiH6cF4F9g6CoQ+Yy3nUt76o
+RGgE6xGTwuiqfPUONIgkkw4qUXNpAg==
+=RqmF
+-----END PGP SIGNATURE-----
+
+--Sig_/o2tDcpD+dduaO+xh.g0XoJL--
 
