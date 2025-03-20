@@ -1,135 +1,146 @@
-Return-Path: <linux-kernel+bounces-569644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF86EA6A593
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:59:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C5BA6A59D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A1A3BEDCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:54:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C111998463D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925CB221D9E;
-	Thu, 20 Mar 2025 11:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5252236ED;
+	Thu, 20 Mar 2025 11:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GslEGAVS"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FMpVk4FE"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D9822173D;
-	Thu, 20 Mar 2025 11:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC1021C184
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742471561; cv=none; b=mNIKANs0+9OSvwp8UIhY8QdWRfp2kXwXSsVoUkb2hdYp/7AlO73VbwkLpJ+ZSRWdWhGbIZkCFqy7UztdVHN3nnDCeFmBT7Z+Layp7EcJApfq7tM/QMXdfujCxi8+W8ipR2iXXi383/x70+18a78ZA4YVyBib79OT7dNxVA5XdvU=
+	t=1742471647; cv=none; b=DTdNMoPyg5Q3JxNrJ3AwvnXWt0d7DKvDa3PTvbW6PIfnDd63XVdmmTFiq9LpgnhBiJ13tVOuUh45XzecdDTG803QLKK12gT8jFyEDMaUvf4z8XPdl+axKFLJAQimNPlCunvMayVcsiERycej51pd1wO1Q0N/JZjiRrZIMXE3nnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742471561; c=relaxed/simple;
-	bh=wwYMwFQRAEv66kogG7c9e6lDrkYHDgxQuvQmvun4+Ic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BFBMbkFRenJjjT74xQ03W7P1tEG5TsiO9zi9+8j2oQQXSsPBL9HOZwRcq7fEgpM2SXCEez+nIK9lJ5r21dQSGk2b4VPYcZEAAMyiY6O7AYGyPjzyvHQIzHHhPBU9nUKthxwzpMaQGy3c5NDVXFBIrOj3EWDdQEcNC8YqJAhzSwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GslEGAVS; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abbb12bea54so153277566b.0;
-        Thu, 20 Mar 2025 04:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742471557; x=1743076357; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MYeHXyTh3fhxrKqIA00QWEYQrk6Uzb2lupwN2gVVWFc=;
-        b=GslEGAVSXVwCHjVTKG/s8RpBGuaQz9k4UdPahQ7i59NJcxHC4B30dmDwD2SWmYn+vZ
-         01t1c0rKV9VFNZoVV1PKJyX3WBHkc42tcPW3fusHHQkMIPUmshO+tA4rvk2c+ZTQeVgx
-         6/yjleMpgj+aLdYtBR1QQCQuE3MqY07rpZ2b9cLqOm9xInr4zQOQwAdVi5ZaFEe6U1Zo
-         OYe1DcdQEK9AdcWf29C5bLSn4RytnNPYwX7WOd2Xvhc9Vi75nPn+F5ZcWnJGVtl3gZnE
-         HVi925RG0OYeMXIwTXh2Juzua65TDPqaixHrDRXamfsc+FmnmN13l0TwkXnARkaWKJ7R
-         C+pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742471557; x=1743076357;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MYeHXyTh3fhxrKqIA00QWEYQrk6Uzb2lupwN2gVVWFc=;
-        b=aZ3PLYesiP7CsSnaDTB8ElMOR6h0kprVxJRkrMm0BQkkff28gkRwl294oXClMlZXNW
-         3YJ7LlhZvJ00jKoyWfuzGg3d/tWwxmPpTJ8wscWLpAHGtcaacWwXf8Qc0p8TG8Y2JU/V
-         oxaVp0iwGtGuQXOaB+AudQOGMdEKbuQi7EyfVqgy+CykekDLBvlCezyxL3TtFhJhQje8
-         csiwSwaMUpAn1hUDHUsJYQ4AA/+5DF1Kr8G/PUwhjUgW0mzXEBAuzQ9wq9xHYo66ByRW
-         gymtYs11ma6RMm3kacp4BLrhgtHWG3oxPtrU9jSR1vJ33jL8cYpE1kB0fh+FaJnFbNqe
-         N6LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULSul1qiVLDVSZxWrASFqJzfX905s9yeunemeX/dISvuNUAnDmDcJAIpWiGul1CvxZDBIONYjDHtCB/FEB@vger.kernel.org, AJvYcCWmSESgK/AgknT7cSCMluc2+B7A6MKJ1rZ+pL3b4D16pOdKMAUFyHmeTUpl1FRcIoSOfL/+/+NDUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmw99M1dXUsKZsD2ju1IfcOgoxS1WKZrjv4jX15kozo+D4jIJX
-	DpQ/l4ZK9MCvMJeHJMu9/dLpOHDwTaQAQkma4vsqiPqmKuZd8KKfU5RAOA==
-X-Gm-Gg: ASbGncu0wb/snjP23JSUZ8ex2KRWnFjapyNAaZWoqWupiYYUPs/95zk+PUAAc6Mw29r
-	AFqBkvssLz5wFLJBtYadMlWun5sTibxCSTmiHPo3osEwUoEu1Naka2PD5zzDJK6Ru0LUo8K6po2
-	jloaBOzgIse7hip4sbhfhPHOLxk4j1NAYLVjZZVWKGjrTH76cUZG3IdXXfu/Haw3cGkpQazelSn
-	iw307xEdAwo3o+A1Qkkad8uM59pjZ+rVYS1YqNbJQPONzunA4/iv/6M/H+KJlPO3HWcLdYgYxl2
-	JQg2uOpttF+cU4gK7RWPlb9LLQsyyJxKdfwJpR8PqDrLbwFrJfkLLkd/p2GuqoWSegIYGchOgTy
-	cfw==
-X-Google-Smtp-Source: AGHT+IFAUXWnNkmvXfc46o6a6NN7i+IHxmpDda+DxlLiRENhdKAiO6iDWb3G4KeIpahPY+tfnLzJig==
-X-Received: by 2002:a17:907:bd0d:b0:abf:3cb2:1c04 with SMTP id a640c23a62f3a-ac3b7c49f43mr798684366b.9.1742471557171;
-        Thu, 20 Mar 2025 04:52:37 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0f5dsm1173437166b.63.2025.03.20.04.52.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 04:52:36 -0700 (PDT)
-Message-ID: <457194e1-409d-455c-a863-4877934006a0@gmail.com>
-Date: Thu, 20 Mar 2025 11:53:33 +0000
+	s=arc-20240116; t=1742471647; c=relaxed/simple;
+	bh=C6wy5pOoxyLzqkI8j2GkdeuxaiPU5QU+49cf+4/SKsU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qn+txYJl3xuzjTYdGzzSSr5tUBWnrQOPUT28OlhBjpqmgXqEOju8qXy3uYzTlfvtCSE9SYn8/5EJ/WIGw0930ALnQ0rovfEQWYLE3O3Wmx0Lb3xWv6OItk65tY4V47F3DTZJSYCVwPe+wZpITn2GTZpSQNdeHNZxv/Y6I5e/WJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FMpVk4FE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K93sAT030169;
+	Thu, 20 Mar 2025 11:53:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=C6wy5p
+	OoxyLzqkI8j2GkdeuxaiPU5QU+49cf+4/SKsU=; b=FMpVk4FEYy0g8o6MLEbEyK
+	mBHtGuK6FBorBXxiDR+4aDOoMVDECKszm8hulpOAlnhEEWz9QwZc+hrRaxXYWfrM
+	ClCnK+45Bta1GbPKuRLIXI4hzxEcWcDp22anzuSpW0ceXpdWZKoIl2MRqQCKvKUD
+	jn4D4wLs5dZMoWb26VRXtiiAYEaCW4E3iXwtpG61rmRnG+wy+jzpKEnOHCLT5oId
+	mWXu1CAyeU6HDL/6vSwX3SFZGg37x4S3J3NK1oxX7Q6sFQVpsTlJZOag7SXgOogf
+	Iv5Cc4w6jkzXYWbPw9ppiZ23bwL7+OjdMU+I/zQ3nqqOTclDTgc0SsYLWVCZa0Ew
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g53qbtr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 11:53:57 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KARD3G023197;
+	Thu, 20 Mar 2025 11:53:56 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3kykfh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 11:53:56 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KBrrqm41877772
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 11:53:53 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1B4AF20040;
+	Thu, 20 Mar 2025 11:53:53 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0FCF520043;
+	Thu, 20 Mar 2025 11:53:44 +0000 (GMT)
+Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com (unknown [9.171.33.254])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Mar 2025 11:53:43 +0000 (GMT)
+Message-ID: <dedc20f946d50bc2b45c1f974554001495657f37.camel@linux.ibm.com>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Amit Shah <amit@kernel.org>,
+        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+        arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
+        schnelle@linux.ibm.com
+Date: Thu, 20 Mar 2025 12:53:43 +0100
+In-Reply-To: <20250320114120.383a706f.pasic@linux.ibm.com>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+	 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+	 <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+	 <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+	 <dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
+	 <20250319105852-mutt-send-email-mst@kernel.org>
+	 <20250319181308.365ee0ea.pasic@linux.ibm.com>
+	 <fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
+	 <20250320114120.383a706f.pasic@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
- io_uring_cmd_import_fixed_vec
-To: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Sidong Yang <sidong.yang@furiosa.ai>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
- <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
- <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GNKRPBlS20SRDTVo-kcaDjfkKcOduWjH
+X-Proofpoint-ORIG-GUID: GNKRPBlS20SRDTVo-kcaDjfkKcOduWjH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_03,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=926
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200070
 
-On 3/19/25 15:27, Jens Axboe wrote:
-> On 3/19/25 9:26 AM, Jens Axboe wrote:
->>
->> On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
->>> This patche series introduce io_uring_cmd_import_vec. With this function,
->>> Multiple fixed buffer could be used in uring cmd. It's vectored version
->>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
->>> for new api for encoded read/write in btrfs by using uring cmd.
->>>
->>> There was approximately 10 percent of performance improvements through benchmark.
->>> The benchmark code is in
->>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/5] io_uring: rename the data cmd cache
->>        commit: 575e7b0629d4bd485517c40ff20676180476f5f9
->> [2/5] io_uring/cmd: don't expose entire cmd async data
->>        commit: 5f14404bfa245a156915ee44c827edc56655b067
->> [3/5] io_uring/cmd: add iovec cache for commands
->>        commit: fe549edab6c3b7995b58450e31232566b383a249
->> [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
->>        commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
-> 
-> 1-4 look pretty straight forward to me - I'll be happy to queue the
-> btrfs one as well if the btrfs people are happy with it, just didn't
-> want to assume anything here.
+On Thu, 2025-03-20 at 11:41 +0100, Halil Pasic wrote:
+> On Thu, 20 Mar 2025 08:12:23 +0100
+> Maximilian Immanuel Brandtner <maxbr@linux.ibm.com> wrote:
+>=20
+> > > Another thing I noticed during looking at this. AFAICT Linux does
+> > > not
+> > > seem to handle endiannes here. And AFAIU the message is supposed
+> > > to
+> > > hold
+> > > le16 that is little endian u16! Maximilian, is this in your
+> > > opinion
+> > > something we need to fix as well? Or am I just missing the
+> > > conversion?
+> > >=20
+> > > Regards,
+> > > Halil=C2=A0=20
+> >=20
+> > Thanks, I didn't notice that, as I only tested this feature on x86.
+> > I
+> > double checked struct virtio_console_config as it also defines cols
+> > before rows, but there the kernel follows the spec (including
+> > endianness).
+> > I'll send a patch v2 shortly.
+>=20
+> I can send a fix for the endiannes issue. It should be a separate
+> patch anyway.
+>=20
+> Regards,
+> Halil
 
-fwiw, finally got time to wire a hacky test with a separate cmd,
-works fine, but I'll need to setup btrfs to test the last patch.
-
--- 
-Pavel Begunkov
+I already implemented it in my patch v2 (just waiting for Amit to
+confirm the new commit message). But if you want to split it you can
+create a seperate patch for it as well (I don't really mind either
+way).
 
 
