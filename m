@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-569797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB10CA6A7A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E0CA6A7A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D59A17AD9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:51:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3FC16EDC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94022222D4;
-	Thu, 20 Mar 2025 13:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD482AD16;
+	Thu, 20 Mar 2025 13:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CnhWvbyi"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ai+9J+4c"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CC22AD16;
-	Thu, 20 Mar 2025 13:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44858221D86
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742478690; cv=none; b=TbGuznrU9M+3InA56m4Iy+zoGc7G5zHrOHggNrcD5cXgnf4lOcFkmakhVTms1nLfN/ymDDcHYV9fssfAHtmc/dhMKzCbALSq+lD2WCmfkHAsHVWzNzxOeSfxbU5Tjd93xhqyXcHJ4euYKbYinxeCkp1WoM1rtmG9h+ulil8ZlTE=
+	t=1742478707; cv=none; b=WvDUJRWmx1ZYAHA9pLZLtl+7qWBxnqxvoGtdQu03wOzHptIR334IfFZwexTgKRmdArgf4KKJA2frCiaky3prhTkMZInc3TnIlgTJK6x44AjRCUtNQLVFtRoFM/h8TASeyeTvxBNkbz4BxA1oyMpQgCIMynB6/kJIa15h56deLsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742478690; c=relaxed/simple;
-	bh=Yt9hy15zEGNBpO91IHCS6p/xqj9mzRbON/1OE2Kyl1A=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fCbRrtWC02es8rg/XJtE+qfB0I1vBR9g4jvoAaFCaO8Nm5+ubq3LRLYZosDwjuBlS2EQV5Z18Cq5vWNT2ThCvT26mFVnxFgTxGvINLiq0wcZ2WvtPGFPzL2VisVIpEfgMtHjpT7Hft1J2kKDxBSvRIw39CPSAPv/PvrDvRe9vWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CnhWvbyi; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1742478707; c=relaxed/simple;
+	bh=S7JHhr8dXjkvKlG1RIAyMU/gRIFQULOthVPd0AKDFNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jDof1PAqe/n0O1l/DdcxHlncaYAvmjnzI9a5vmVH9PI9nLtFWnxC/Drsy1c/IfXDAR9OoL7kEm9ybMW/mRGkOtthObkZbHjEdBLD2Nv8Z+cv6Rookc4/tgZEBZJe9ZLmPJZgE57idNfkY/BSgeEWpdu9indSuriJXbz4PgrG6+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ai+9J+4c; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390f5f48eafso442502f8f.0;
-        Thu, 20 Mar 2025 06:51:28 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so218628a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742478687; x=1743083487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vn81ISR0yNm/qr0HtNJu+EHioxH/WEZq3aEC2iTSvKM=;
-        b=CnhWvbyiXz3E1hWW9io39Dr391S8jtSftqxqHhhECAqXxYItUXlzsCEtOMUIjR1u4o
-         ds8Z/d2zjWiMVSDLmYcgCxWpvuGHTL7COZvmSJ4IO0bspq01KueooOkWJLFkEaCXnGmG
-         8bpdWJVWfvrjGxfqgDtfNa4ZDeMYQSbQVz+Y7mdmagybogbs/i8E5r9AICssADC00qX/
-         vP/2JQmhEBSgOEv6qxaTPfcUAWDgQhI1B0r/xEANQ5AMLafqpkUFLWr/6QAdiMYKJyXs
-         Jj5VpSzT9Qavx9ohvvyt/ZK+iXd5yZ9S66sfCljJVv5MVFmZQDeEneouEVgsriyjbrmu
-         VuWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742478687; x=1743083487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742478704; x=1743083504; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vn81ISR0yNm/qr0HtNJu+EHioxH/WEZq3aEC2iTSvKM=;
-        b=L71v5zBW+ZoLUXAC4ghCss+9BhN06zlX6O83xxlqkYkEjnqeJdG7dgHK3w+YqhaMIH
-         m8Is9EtnexTt0k5pIqnCjdF2+0f1ZV0kac3JMUh+o2DcOchC7D06kBkn1lC9Pb5n9Trv
-         oh1dBs7CjNo0tJ/G5mORwRensbKkN+Z523whuqRYTBWPTLYR9w+xcHd/hqgUyP0d23aI
-         hSTWiqCfcsOKFZ+cwdQmpgVYGY5i08uoNTin5nDgYewPXXSW+SnGYR8cnFVve+afdC7+
-         +LZdFLb+1vgqbcqTYsEpbiCERTrPErRT6Sd7Aoii9OfLzM1q/5I9y4odZ2RDvF89S4xd
-         tOTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEIaWkeGilbOMR5gN6YHEZ4Yr3JqYQSokyzdfGV30KviFvobL/Esr1qZq+KcvaCTqLLKGqbP+MZudf8k+F@vger.kernel.org, AJvYcCUkotWcd9qkRiUxmrjB7nKi83qGx9phqXFvWhZd2OtkeMU6EO83BeSg6OmEOr0swMUATHOPnNbUC6OCW6nd7G8mf5NU@vger.kernel.org, AJvYcCXq/fOHQ4bPZs8fWVJUFs3xupPLzPAntn92v2mI2weXNvWiONvbXPsLXmwNeujfWbJ7bT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlFIIBYd4eKn3Bmp0N1Ykl+1E12DtMpQBGp/dUVNLbXdcvof8t
-	N3GXL5DuZqK+Rne8EzRHBfMyFU12+KsNuqZR/NrFpw4xKogVQqEeUPQsqNK3U+wHqg==
-X-Gm-Gg: ASbGncuQ8mAADK0rYcn18MvoD/GQY4UnUDdPMP/u0z6RH7U0lCFwoZAkXuLxmzqyKT0
-	CJvwSYLz3uCveCU9vHAgGe/w55Oza6GT7tt0iLzODXDd3wrV1R0IdIVKqBsML0zrWvxHLcLhJ4e
-	cnBonzSJbJ7dImWKSOnLlKCk5rpFALRxPTf3wmIa9jxlWtGcDWHAbdYiHSXWIxJl596scIvbydm
-	xWVfO3N35hwKtY5tI81ZB22+ahwrIfkBNWMCZ6F+t6mT8WgS9FtHJiB4crULBPbGqBaP7Pww8F/
-	mfpfKSjg+27266X+2pHHyWidZzc4UuA=
-X-Google-Smtp-Source: AGHT+IGymzs6LfRQCvzU5rTf+/HAxuRgWUZMl/ALUIWJKPpY2mXkpe5eZLLZXzrJE4QHfY7Txg/Big==
-X-Received: by 2002:a5d:6d07:0:b0:38d:d9bd:18a6 with SMTP id ffacd0b85a97d-39973b32cf5mr5934125f8f.42.1742478686566;
-        Thu, 20 Mar 2025 06:51:26 -0700 (PDT)
-Received: from krava ([173.38.220.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881544sm23401269f8f.43.2025.03.20.06.51.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 06:51:26 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 20 Mar 2025 14:51:24 +0100
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eyal Birger <eyal.birger@gmail.com>, kees@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH RFCv3 00/23] uprobes: Add support to optimize usdt probes
- on x86_64
-Message-ID: <Z9wdXPtElYOpObld@krava>
-References: <20250320114200.14377-1-jolsa@kernel.org>
- <20250320122343.GC11256@redhat.com>
+        bh=b7erTFxl9qbF0cki4kWlzFBXfpGMesZ1fGg6yms+cYk=;
+        b=Ai+9J+4cwR6/Y5HSNMdCAmoEnjJB7FNbn5D4fqVGdokgLq8pGsuOGin0odGh2KD+97
+         H7BPVZuIzvVhfZjgGEeRF5m0aH4DOtR+4cQ97YhDBEr8F4NzzPT8QMCxo4ZixdoGEKk6
+         Sx3vE7ZGTAXB3qEL5jJdbJ36yhE2DvsUHWlAIsRwjb/g36PZLroOMnod2hglmWcKEloW
+         Vj3M4pXovP8pC60DECWbo7f614m4F0INIM2pdbR9Z3fQJ5SQAoXvfJ9X3A7k3D/kFNH8
+         Sk6YgipgnxG1tvyS6qJml7W0m/sDBkynv/mjvMO9rejQIqvmi5JN437GxT7sVvwZFGlY
+         nd9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742478704; x=1743083504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b7erTFxl9qbF0cki4kWlzFBXfpGMesZ1fGg6yms+cYk=;
+        b=ZcW312+GxrqT+HlW8SopEseiC+stViPqDjEBAQGFiFmSE9lRDxiDtGZ5LMOMwDXifa
+         er0d5x2pCDmUCB8kwlyAeEjffnTNmvrJAb0xBSTUOALuRpc7jIE/kwq5SkZ5QgajShu7
+         3oHmZRtWC3gqp9PiMA9gcP8Swk+OmCf5SlvEtm7mzCDdvvCzy8zxX27iydHnnNptorv/
+         G140FYrRY/VDP8OG+SPRU2zE5+YXXzB2IeuSE7PKGogxGqhzhrJ32QY+3duHJCmnIWbm
+         6cP3ltgoBs0EnvaoaXp3Ggj9EuLa9JAB98O3S4vLeVohoYNNaLVEJXxCjs/awb7E5NbJ
+         NiSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWX34ACENd8AHeVmShk+PlvRELpllq6v873Gt6Y6C8N+4jk6uV99DA9XlsHpJ7unjGOZzHbE1zUqLcKKLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRfYK0ki4MWLJRY8X3ja6drtbMJFfOF4xmqyUmnk4A8m6/b1+t
+	j0cT/nCOXINQNkSxqKSmq8m1uqHHoLR6QC7gbMGki4H8c+wqSw9SSB7gg4QKBJojybKnJAHPLIp
+	5pgl86Vjp1O9dc1vToNl+wdRKYo4=
+X-Gm-Gg: ASbGncvRCFsEK1cM/Yn1hOYer+6t7b8uFezl7Zk0B4vA1MmsNKkm3n0R42ymjUVXOly
+	1PhOKjdRkMHoH6M+Mc2fD+gfXAltotq5ix5004SVZRNq70FdD1vQPRPEzaFbmKDG8RhW4+wMTfZ
+	/qhwAEtQdZ3/WdIV2OcZDHxagJ5g==
+X-Google-Smtp-Source: AGHT+IGZ29ppi8Q/aHl9D3R4X6WxrguirTGL8EmINroDy/P9gN71N9O3DW5RQlxvvWM4c3ickYedZNAqyE1REFlIFYk=
+X-Received: by 2002:a17:90b:3e84:b0:2ff:7970:d2bd with SMTP id
+ 98e67ed59e1d1-301bfc8e80cmr3858419a91.5.1742478704558; Thu, 20 Mar 2025
+ 06:51:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320122343.GC11256@redhat.com>
+References: <20250320093517.5247-1-arefev@swemel.ru>
+In-Reply-To: <20250320093517.5247-1-arefev@swemel.ru>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 20 Mar 2025 09:51:32 -0400
+X-Gm-Features: AQ5f1Jqe4I4M1h-_f5WGteQV-BugVutwvAg74TEnxpanzpsPBBbz6fU0OuNFIlY
+Message-ID: <CADnq5_O+TMVD0B28Q6CgzhAi1aDR5ofjogE18HDXrJOJ1XwbDQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/pm/smu11: Prevent division by zero
+To: Denis Arefev <arefev@swemel.ru>
+Cc: Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Lijo Lazar <lijo.lazar@amd.com>, 
+	Ma Jun <Jun.Ma2@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Yang Wang <kevinyang.wang@amd.com>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 01:23:44PM +0100, Oleg Nesterov wrote:
-> On 03/20, Jiri Olsa wrote:
-> >
-> > hi,
-> > this patchset adds support to optimize usdt probes on top of 5-byte
-> > nop instruction.
-> 
-> Just in case... This series conflicts with (imo very important) changes
-> from David,
-> 
-> 	[PATCH v2 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
-> 	https://lore.kernel.org/all/20250318221457.3055598-1-david@redhat.com/
-> 
-> I think they should be merged first.
+On Thu, Mar 20, 2025 at 9:11=E2=80=AFAM Denis Arefev <arefev@swemel.ru> wro=
+te:
+>
+> The user can set any speed value.
+> If speed is greater than UINT_MAX/8, division by zero is possible.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Fixes: 1e866f1fe528 ("drm/amd/pm: Prevent divide by zero")
+> Signed-off-by: Denis Arefev <arefev@swemel.ru>
 
-ok, I'll check on those
+Thanks.  While you are at it, can you fix up all of the other fan
+speed cases?  I quick grep shows:
+drivers/gpu/drm/amd/pm/legacy-dpm/si_dpm.c:    tach_period =3D 60 * xclk
+* 10000 / (8 * speed);
+drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_thermal.c:    tach_period
+=3D 60 * crystal_clock_freq * 10000 / (8 * speed);
+drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega20_thermal.c:
+tach_period =3D 60 * crystal_clock_freq * 10000 / (8 * speed);
+drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_thermal.c:
+tach_period =3D 60 * crystal_clock_freq * 10000 / (8 * speed);
+drivers/gpu/drm/amd/pm/swsmu/smu11/arcturus_ppt.c:    tach_period =3D 60
+* crystal_clock_freq * 10000 / (8 * speed);
+drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c:    tach_period =3D 60 *
+crystal_clock_freq * 10000 / (8 * speed);
+drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c:    tach_period =3D 60 *
+crystal_clock_freq * 10000 / (8 * speed);
 
-thanks,
-jirka
+Thanks,
 
-> 
-> (and I am not sure yet, but it seems that we should cleanup (fix?) the
->  update_ref_ctr() logic before other changes).
-> 
-> Oleg.
-> 
+Alex
+
+> ---
+>  drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c b/drivers/gpu=
+/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+> index 189c6a32b6bd..54229b991858 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+> @@ -1200,7 +1200,7 @@ int smu_v11_0_set_fan_speed_rpm(struct smu_context =
+*smu,
+>         uint32_t crystal_clock_freq =3D 2500;
+>         uint32_t tach_period;
+>
+> -       if (speed =3D=3D 0)
+> +       if (!speed || speed > UINT_MAX/8)
+>                 return -EINVAL;
+>         /*
+>          * To prevent from possible overheat, some ASICs may have require=
+ment
+> --
+> 2.43.0
+>
 
