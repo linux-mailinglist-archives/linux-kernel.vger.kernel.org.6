@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-569002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C98A69D4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:30:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0AAA69D50
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEE598150D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C0218984D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C85612CDAE;
-	Thu, 20 Mar 2025 00:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370F21BD9E3;
+	Thu, 20 Mar 2025 00:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XMUKBxk1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WgGfDUd3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA031805A;
-	Thu, 20 Mar 2025 00:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C892F28;
+	Thu, 20 Mar 2025 00:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742430582; cv=none; b=tZBg9JZ/qXAQJTSZ7HBht/GZemwqMnfYz1Y3TW14RiMmzk3rKVir7mRFtSdNzl0TXtrQ6cOGd8C7MoOolCzp+G453Ogno9pXhVg73qMzDPS3qo0jWAKShDW0EWfxpWNUtrHdUnLMeejo3uONCXhluC9tm8KrisXsUlSVUkGx6QM=
+	t=1742430651; cv=none; b=TLRur3lNbyy62xiTkxGBWODUitUiayj+9YPOKD/maWkNRuJ72rNzUQw4fKfUf7VQgY7copxg3RDdbg8FCm3wXK6SO3Fo6ffq6rqqfexhGxHz+Sr61shI0B0542ETuE4rbYAokxWtN9wq6PpJzFjbpvJMHtQfYTV5tY9HIRiNKq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742430582; c=relaxed/simple;
-	bh=LNg3FuImW/a7lgC1J6rZG2OE2yMgC1aJK3hPWVQtzRg=;
+	s=arc-20240116; t=1742430651; c=relaxed/simple;
+	bh=TSqTPn2zV1wuz0UVtcBTLSVgBIk87jiVeuZ75T61nSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DV+e+ZIbU+C+B0REBcT/2oSbc4Y0tF2/Pt4WdZgbNrKCH34mM6y0JKezIioMItLQU2+DwT/9zghWG1I75WjaDCpVQ7Ll6UnqpYPV4hTHcLJHcx7qZ5cUbVWAhUZFzHDN9rpGYSbiCuAaNtlw/5IKdq3JEyrQGha9StPbCsFdGhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XMUKBxk1; arc=none smtp.client-ip=198.175.65.21
+	 Content-Type:Content-Disposition:In-Reply-To; b=PECoeFlvr6CCLBP02g14CBSCFbj6fkZhXdtveHD8Rr/765aoVDoQmFwEp9+G08iR22SewWIRbRvYheSBvssDNafoTyF+iEZTITDtR8hdu7yNx4X6qw55FY+4vOxO689nzCtW0FR4c6978/TDOKYRFbZDFutAOHrb6BJTvvVKtCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WgGfDUd3; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742430580; x=1773966580;
+  t=1742430650; x=1773966650;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=LNg3FuImW/a7lgC1J6rZG2OE2yMgC1aJK3hPWVQtzRg=;
-  b=XMUKBxk1AWUBWkrKx9yLqN8UlS2iu6S8Vrxgx1bED4W5mHOUL//PteFM
-   +T6WFMyWvv8MuFZ2PAvhs7SHLxO4aiXw8ZHc7gcrA4twnXdg+ikPCm8ta
-   neEYO1DPHSjHqryL4E1dwD/OAzcEqMgqjNuys0D/1QC4OJwX4d3R+orr2
-   NRkHp4+IHkba/7paZtX357MN9gcfgQfByZpHBiEECNqru5r4RmKPGQMJh
-   ieQllvW3cCLF+OHkxLmvwKRTh2Xs4lIInCRUb5zAL5vSySPVGIVJZmGOg
-   SL0C/VXU4dDKslf+uALYgEJOYT004ASV8J2JyDU7U5qqEhWVbH91FCwdu
+  bh=TSqTPn2zV1wuz0UVtcBTLSVgBIk87jiVeuZ75T61nSk=;
+  b=WgGfDUd3mxoOB84Hxo1YUUtsyENNXYfA41cD2evZVLUAnmj/rRKP4ouc
+   IXDNkU1WnBOiyJioq3XRFGFwv6eMBb5aBEnujnBCo4Q6ByK+HYoAsAWck
+   lb7eu/eT/A5WoeJutDaDiYkud4VLMgcir+C4/jz3AEA6J+ltSYqvT1e3t
+   4gOkN+CoQ7iqn8iDrIpd4d3Lt7Zy/sI3XQhAiKLuSE52kQ1Ic6glCm7rq
+   +Q+1nY5snukH/jjZDRBiv5TsJtJ2S4v5CKNZQDQz5gxNd+DDeeMOCDwVR
+   IArAqI2LHOjGvNG5PJIqm00EHEVAerCkyE/CHGNfWp1uIxtJCAULYMgDf
    A==;
-X-CSE-ConnectionGUID: thqequHjQlud5c0lP23p7A==
-X-CSE-MsgGUID: O7EW+ZfgQD2Cqjnic+IZEA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43566573"
+X-CSE-ConnectionGUID: o8G/qV94RdGU5nyYwVF2Kg==
+X-CSE-MsgGUID: H/4opU1TTHeFh9+I0po/6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="69001052"
 X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="43566573"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 17:29:40 -0700
-X-CSE-ConnectionGUID: QWUz/D9bQUKqCoXzZ6hy+g==
-X-CSE-MsgGUID: lGCtt5pGRimkcoWvqE4D8A==
+   d="scan'208";a="69001052"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 17:30:49 -0700
+X-CSE-ConnectionGUID: lFtDldXFTw+3zJ3w4kc1Zw==
+X-CSE-MsgGUID: TSp3a5+uSDmlYvDyRsFznQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="128079837"
+   d="scan'208";a="123044914"
 Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 19 Mar 2025 17:29:33 -0700
+  by fmviesa008.fm.intel.com with ESMTP; 19 Mar 2025 17:30:43 -0700
 Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tv3mp-00002V-01;
-	Thu, 20 Mar 2025 00:29:27 +0000
-Date: Thu, 20 Mar 2025 08:29:23 +0800
+	id 1tv3nr-00002Z-0X;
+	Thu, 20 Mar 2025 00:30:33 +0000
+Date: Thu, 20 Mar 2025 08:29:26 +0800
 From: kernel test robot <lkp@intel.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v4 3/3] net: stmmac: Add DWMAC glue layer for
- Renesas GBETH
-Message-ID: <202503200755.DoMipQnf-lkp@intel.com>
-References: <20250318205735.122590-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v5 10/11] input: misc: Add support for MAX7360 rotary
+Message-ID: <202503200825.rmtamLkh-lkp@intel.com>
+References: <20250318-mdb-max7360-support-v5-10-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,104 +96,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318205735.122590-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250318-mdb-max7360-support-v5-10-fb20baf97da0@bootlin.com>
 
-Hi Prabhakar,
+Hi Mathieu,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on net-next/main]
+[auto build test WARNING on a64dcfb451e254085a7daee5fe51bf22959d52d3]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/dt-bindings-net-dwmac-Increase-maxItems-for-interrupts-and-interrupt-names/20250319-050021
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250318205735.122590-4-prabhakar.mahadev-lad.rj%40bp.renesas.com
-patch subject: [PATCH net-next v4 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250320/202503200755.DoMipQnf-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503200755.DoMipQnf-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
+base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
+patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-10-fb20baf97da0%40bootlin.com
+patch subject: [PATCH v5 10/11] input: misc: Add support for MAX7360 rotary
+config: nios2-kismet-CONFIG_PINCTRL_MAX7360-CONFIG_INPUT_MAX7360_ROTARY-0-0 (https://download.01.org/0day-ci/archive/20250320/202503200825.rmtamLkh-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250320/202503200825.rmtamLkh-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503200755.DoMipQnf-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503200825.rmtamLkh-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
-
->> drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:125:7: error: use of undeclared identifier 'STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP'
-     125 |                            STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP |
-         |                            ^
-   1 error generated.
-
-
-vim +/STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP +125 drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
-
-    72	
-    73	static int renesas_gbeth_probe(struct platform_device *pdev)
-    74	{
-    75		struct plat_stmmacenet_data *plat_dat;
-    76		struct stmmac_resources stmmac_res;
-    77		struct device *dev = &pdev->dev;
-    78		struct renesas_gbeth *gbeth;
-    79		unsigned int i;
-    80		int err;
-    81	
-    82		err = stmmac_get_platform_resources(pdev, &stmmac_res);
-    83		if (err)
-    84			return dev_err_probe(dev, err,
-    85					     "failed to get resources\n");
-    86	
-    87		plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-    88		if (IS_ERR(plat_dat))
-    89			return dev_err_probe(dev, PTR_ERR(plat_dat),
-    90					     "dt configuration failed\n");
-    91	
-    92		gbeth = devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
-    93		if (!gbeth)
-    94			return -ENOMEM;
-    95	
-    96		plat_dat->num_clks = ARRAY_SIZE(renesas_gbeth_clks);
-    97		plat_dat->clks = devm_kcalloc(dev, plat_dat->num_clks,
-    98					      sizeof(*plat_dat->clks), GFP_KERNEL);
-    99		if (!plat_dat->clks)
-   100			return -ENOMEM;
-   101	
-   102		for (i = 0; i < plat_dat->num_clks; i++)
-   103			plat_dat->clks[i].id = renesas_gbeth_clks[i];
-   104	
-   105		err = devm_clk_bulk_get(dev, plat_dat->num_clks, plat_dat->clks);
-   106		if (err < 0)
-   107			return err;
-   108	
-   109		plat_dat->clk_tx_i = renesas_gbeth_find_clk(plat_dat, "tx");
-   110		if (!plat_dat->clk_tx_i)
-   111			return dev_err_probe(dev, -EINVAL,
-   112					     "error finding tx clock\n");
-   113	
-   114		gbeth->rstc = devm_reset_control_get_exclusive(dev, NULL);
-   115		if (IS_ERR(gbeth->rstc))
-   116			return PTR_ERR(gbeth->rstc);
-   117	
-   118		gbeth->dev = dev;
-   119		gbeth->regs = stmmac_res.addr;
-   120		gbeth->plat_dat = plat_dat;
-   121		plat_dat->bsp_priv = gbeth;
-   122		plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
-   123		plat_dat->clks_config = renesas_gbeth_clks_config;
-   124		plat_dat->flags |= STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
- > 125				   STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP |
-   126				   STMMAC_FLAG_SPH_DISABLE;
-   127	
-   128		err = renesas_gbeth_clks_config(gbeth, true);
-   129		if (err)
-   130			return err;
-   131	
-   132		err = stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
-   133		if (err)
-   134			renesas_gbeth_clks_config(gbeth, false);
-   135	
-   136		return err;
-   137	}
-   138	
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for PINCTRL_MAX7360 when selected by INPUT_MAX7360_ROTARY
+   WARNING: unmet direct dependencies detected for PINCTRL_MAX7360
+     Depends on [n]: PINCTRL [=n] && MFD_MAX7360 [=y]
+     Selected by [y]:
+     - INPUT_MAX7360_ROTARY [=y] && INPUT [=y] && INPUT_MISC [=y] && MFD_MAX7360 [=y]
 
 -- 
 0-DAY CI Kernel Test Service
