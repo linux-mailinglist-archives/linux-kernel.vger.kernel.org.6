@@ -1,169 +1,139 @@
-Return-Path: <linux-kernel+bounces-570377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC0FA6AF92
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:06:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD53A6AF9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190851889ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5719F3B9358
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304BB22A4FC;
-	Thu, 20 Mar 2025 21:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F3D22A4ED;
+	Thu, 20 Mar 2025 21:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FE1P8bHf"
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XMT0udc+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5B2288CB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C474B2288CB;
+	Thu, 20 Mar 2025 21:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504776; cv=none; b=j/ZA7EFOw3roWZf2zXbCqgMYClxoy8oqVEwY8r8gwgLMt8D/FsoU3WdYo4lxYqMPLVkBzaBnYXn8Zf6/1C5vHINjylk+HRtdZ8GvFR+VkM7WWU+ZC/GFYV+kjotNnDxEPICfpfJOpRwdyKAdPGfE27Z8Af5oIL7EanoHs1L+Bck=
+	t=1742504814; cv=none; b=fmvWw0ERNhk+u3LNFEksoylxTzZ8ZBA5n3tRn4W0P8QY5bUw1XW26+q83t4u6Avx3eT1ny2OCkFdNqWBW9UjzWNptDSJSSsFLhrPgxMRW4n39v4lD9H5dMbLI0ZDfHUjjhaF56u4dMvQJMIHr2Y7MlqTJVyZxGJ+lmsmNC93F5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504776; c=relaxed/simple;
-	bh=8YK8gEtI06y+pQqv1+lAtw4gYDT6ElW3udJy3zGarU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQEuSQag4iHrSPx6MJpY6K+BDYkCvBVMZ8QWt/j1VcjPgNr2Q1xLHG9LGZtYtAPAh+eDB3VxwmL+u0GDFMT49jwEsWal6AGpbN1vmuvFQQErnirfVZ3+flhY4VhN4LE4l3l7/Rkql1ru9DHpTbXdg8OvFH9BaqSpWrRyCzgsxG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FE1P8bHf; arc=none smtp.client-ip=83.166.143.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJdR54jhVzSDT;
-	Thu, 20 Mar 2025 22:06:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742504769;
-	bh=x7Mh94NSn2KPNj8EF1RUEY7NFZ+qiXAJyN6mSl93rjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FE1P8bHfxN0R5WczBQNWdcS8S+Ok+e58SMwG1H0UderYlXfoRXdlIQehwexs3+1wh
-	 tX9zfF8Odwc2AoJgNnCjkqo53zjpJgZGXN3gk+NJHQLCDlKOM1SKryzizP8xtuOoGn
-	 GKclc3thjvIBJslQeAY9vyH8Qnak6OnCnHOPL2Qo=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJdR43X8DzYZl;
-	Thu, 20 Mar 2025 22:06:08 +0100 (CET)
-Date: Thu, 20 Mar 2025 22:06:07 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Kees Cook <kees@kernel.org>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] landlock: Always allow signals between threads of
- the same process
-Message-ID: <20250320.zahqueisoeT6@digikod.net>
-References: <20250318161443.279194-1-mic@digikod.net>
- <20250318161443.279194-6-mic@digikod.net>
+	s=arc-20240116; t=1742504814; c=relaxed/simple;
+	bh=4G6jaGIe+WTEP6vhII0aJ8aoUDhMttJ01WvXI8zyJV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Tsgb0+b5u5hHZPOIDBAYt3kx1Jg0EJ/QeEOFbCAY8syR6NOuEvCGXOK2Anv1dXo3zfGqj7xXD319XvkTxgyYN+bHKXKnhafPVVHr8fbWPLy3vyJoTJ91du9KrD70aakIT+Igcmv/sgXpA/9zwRl7eO3NNOLADaWszcqTEFwD7Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XMT0udc+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KEIJpE005901;
+	Thu, 20 Mar 2025 21:06:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tATHTglTJM9UOHXhCrFGkpEE6lgCWEeNaBCm00pblL0=; b=XMT0udc+TIuEWqJx
+	yewPmloMniiWPcvzNVhkFVDg+EwZHjSoBI13rEbe5Pe8DxwBCMBXmHdEHJYISWrx
+	G+le01FJ6BWWm3IQcz+nKOvCWenvn4eD81pzHTdZzMR3rtgAcMZcjp9Mkyy6Fnvt
+	4SpyCVSHDs15ALaK8eK2CQ7CEZsNMNtwSQoET0BHyPz74HQ2ZHn5FmTe6tcTP7eB
+	3JsXu3XVSbBSzV0sXJSh9Oo8NeN684hfsD3SqnOg1T0UsmEA3swp1YOqYSfmM7nq
+	s7ioLAoU+NWrFe0+1VH20mr/kyGofHZQaIZ4O9SrEtP6ORkDEJwCgHlb2mW99r6C
+	OoD7PQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmc313e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 21:06:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52KL6Zl6003583
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 21:06:35 GMT
+Received: from [10.216.3.194] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Mar
+ 2025 14:06:25 -0700
+Message-ID: <3abefb09-c1b6-4339-8cd9-cd86652c35d6@quicinc.com>
+Date: Fri, 21 Mar 2025 02:36:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250318161443.279194-6-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/10] drm/bridge: anx7625: enable HPD interrupts
+To: Dmitry Baryshkov <lumag@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-9-quic_amakhija@quicinc.com>
+ <5hvpacx3qeqhjqemhqizws4esdhwg7reli77qey2nin2fggljp@ykgyayj2v3e6>
+Content-Language: en-US
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <5hvpacx3qeqhjqemhqizws4esdhwg7reli77qey2nin2fggljp@ykgyayj2v3e6>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tRozAjq0hfhDi8U9-fjhIm8fjK2Givoe
+X-Proofpoint-GUID: tRozAjq0hfhDi8U9-fjhIm8fjK2Givoe
+X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67dc835c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VNkCFBYSnlPScTfBtzoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_07,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=997 bulkscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200136
 
-On Tue, Mar 18, 2025 at 05:14:40PM +0100, Mickaël Salaün wrote:
-> Because Linux credentials are managed per thread, user space relies on
-> some hack to synchronize credential update across threads from the same
-> process.  This is required by the Native POSIX Threads Library and
-> implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
-> synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
-> runtimes like Go do not enable developers to have control over threads
-> [1].
+On 3/11/2025 9:09 PM, Dmitry Baryshkov wrote:
+> On Tue, Mar 11, 2025 at 05:54:43PM +0530, Ayushi Makhija wrote:
+>> When device enters the suspend state, it prevents
+>> HPD interrupts from occurring. To address this,
+>> add an additional PM runtime vote in hpd_enable().
+>> This vote is removed in hpd_disable().
 > 
-> To avoid potential issues, and because threads are not security
-> boundaries, let's relax the Landlock (optional) signal scoping to always
-> allow signals sent between threads of the same process.  This exception
-> is similar to the __ptrace_may_access() one.
+> Is it really enough to toggle the HPD interrupts? Is there any kind of
+> programming that should be moved to .hpd_enable() too (so that by
+> default the bridge doesn't generate HPD interrupts)?
 > 
-> hook_file_set_fowner() now checks if the target task is part of the same
-> process as the caller.  If this is the case, then the related signal
-> triggered by the socket will always be allowed.
-> 
-> Scoping of abstract UNIX sockets is not changed because kernel objects
-> (e.g. sockets) should be tied to their creator's domain at creation
-> time.
-> 
-> Note that creating one Landlock domain per thread puts each of these
-> threads (and their future children) in their own scope, which is
-> probably not what users expect, especially in Go where we do not control
-> threads.  However, being able to drop permissions on all threads should
-> not be restricted by signal scoping.  We are working on a way to make it
-> possible to atomically restrict all threads of a process with the same
-> domain [2].
-> 
-> Add erratum for signal scoping.
-> 
-> Closes: https://github.com/landlock-lsm/go-landlock/issues/36
-> Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
-> Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-> Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
-> Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
-> Link: https://github.com/landlock-lsm/linux/issues/2 [2]
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> Cc: stable@vger.kernel.org
-> Acked-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20250318161443.279194-6-mic@digikod.net
 
-> index 71b9dc331aae..47c862fe14e4 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -27,7 +27,9 @@
->  #include <linux/mount.h>
->  #include <linux/namei.h>
->  #include <linux/path.h>
-> +#include <linux/pid.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/sched/signal.h>
->  #include <linux/spinlock.h>
->  #include <linux/stat.h>
->  #include <linux/types.h>
-> @@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
->  
->  static void hook_file_set_fowner(struct file *file)
->  {
-> -	struct landlock_ruleset *new_dom, *prev_dom;
-> +	struct fown_struct *fown = file_f_owner(file);
-> +	struct landlock_ruleset *new_dom = NULL;
-> +	struct landlock_ruleset *prev_dom;
-> +	struct task_struct *p;
->  
->  	/*
->  	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
->  	 * file_set_fowner LSM hook inconsistencies").
->  	 */
-> -	lockdep_assert_held(&file_f_owner(file)->lock);
-> -	new_dom = landlock_get_current_domain();
-> -	landlock_get_ruleset(new_dom);
-> +	lockdep_assert_held(&fown->lock);
-> +
-> +	/*
-> +	 * Always allow sending signals between threads of the same process.  This
-> +	 * ensures consistency with hook_task_kill().
-> +	 */
-> +	p = pid_task(fown->pid, fown->pid_type);
-> +	if (!same_thread_group(p, current)) {
+Hi Dmirty,
 
-There is a missing pointer check.  I'll apply this:
+I couldn't find the ANX7625 bridge driver datasheet, where all the registers information are present.
 
--       if (!same_thread_group(p, current)) {
-+       if (!p || !same_thread_group(p, current)) {
+As per my understanding, we have anx7625_hpd_timer_config(), where debounce timer registers are getting set, which help to manage the detection and stability of the HPD signal.
 
-> +		new_dom = landlock_get_current_domain();
-> +		landlock_get_ruleset(new_dom);
-> +	}
-> +
->  	prev_dom = landlock_file(file)->fown_domain;
->  	landlock_file(file)->fown_domain = new_dom;
->  
+anx7625_hpd_timer_config() is getting called from anx7625_runtime_pm_resume().
+
+anx7625_runtime_pm_resume
+   anx7625_power_on_init
+       anx7625_ocm_loading_check
+           anx7625_disable_pd_protocol
+              anx7625_hpd_timer_config
+
+So, I think HPD programming is already taken care in anx7625_hpd_timer_config(). anx7625_runtime_pm_resume() is getting called for both eDP and DP configuration. 
+
+If you suggest then, I can move the anx7625_hpd_timer_config() from anx7625_disable_pd_protocol() to anx7625_bridge_hpd_enable().
+
+Thanks,
+Ayushi
+
 
