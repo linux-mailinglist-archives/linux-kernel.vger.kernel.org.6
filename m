@@ -1,219 +1,182 @@
-Return-Path: <linux-kernel+bounces-569124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A432A69ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:33:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBB7A69EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4DF7A3C66
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70EF19802B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FB91D88A4;
-	Thu, 20 Mar 2025 03:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880E31EDA38;
+	Thu, 20 Mar 2025 03:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKGfn2eJ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="VZxhZJKS"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FE32EAE4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4C32F5E;
+	Thu, 20 Mar 2025 03:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742441592; cv=none; b=BWSxMsG0FZO3hyT/lQHJ4whqOXcRf68mGH5WKRcPQOUqjDC/bqegdCnPcOSVe/tMpr3YSIOvyqx9uP6zOHHs854EjZ2iA/yyExjgSegfLyTKBLV3NdcrEdCpr7gqi013Bk0sBYHrAKhzsFyxefhxdU3iFCFW3hFOhSq8HAATomM=
+	t=1742442303; cv=none; b=uxBleLeaDKodme7CkltOsfvQE2Gyis7FaKsd2p8tzClfVJoAx2ftQJSFKB08x8oMdK5Xab+45SnPVMdz5OOLxQi3wKVknyxNz69KOB0SxrQpHaXvZtM3PuV0K80Jmy1698pMH3wH39VYeeuvJ3wY3u+27eKDn9dNKyFSiZMX/yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742441592; c=relaxed/simple;
-	bh=YLH+He/C4urGLLNQm670ASoPl8z54Esn0XQBDVvdyXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n3qm57o5rMo1FGZMqrI9t+ajpN9lfVh4+jHyEbHSs3InupOeGkLj8CJsGy1pWlLSJMN7R2H8evy7dZ4Pmn4GkvvhZMPzUe0468PCxtVaH5shhq5L0fXCdXRDqtkPqAgcIs0DKRbR2n9vJGJplg2iVK/dQbwPS1uOiFOSnDZ2zVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKGfn2eJ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39973c72e8cso50983f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 20:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742441588; x=1743046388; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wAHNeXDKHyLVzzq0rwOTQsewoGoPfVxW3U1+mtmUEUk=;
-        b=jKGfn2eJhwXwCIA3CMS/T7SF7QXti40kn4fhL4jyCU24k8RqDtbQe4bsi9xxGIh8pM
-         uDTfTBJieMJSo3xZOgZPWBbsYoqRCj09sEISutH85fIQVWULjQPAuailp4Qi6ERIzWoW
-         kWBDWY1ZjiEJdB++vzq/zbRgDRBFlHS8rIYDY5r6dI75xh3JxlhAyUv76cFM5+7VbxQg
-         7+h/K8yQl+TITtIPNBF3LAa7dcZvUS/onXbC+MlbS97MKlwaW2cBPPb7qa//7Lp1DQJv
-         1D4/pVxgM6LUSUs21+WIcQmgZm+eJ3Il3NRmAOdepqAPknAz4O/0NNBmGmUdOfqlGtvc
-         uOvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742441588; x=1743046388;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wAHNeXDKHyLVzzq0rwOTQsewoGoPfVxW3U1+mtmUEUk=;
-        b=xAxU0c2X+xXgT7GerpzA9xTHU8+xVok2+cmB26VF4GeYxj2PFojEovPvZsiuAb2BjE
-         RjixnIrVLkRPI2Dq3mZb1dWR2OIKdYA7SFpbvNkuhwooAtqEngeA+ebufPVl0PqTMZ6c
-         jclIwxAjNgGtu8HpLIWUWB0P2mF1N1FrmbWa5GISN/KOINLdbgYh817WH5Bpv2wKeydX
-         W/y0yOttrr40QzkCxcvtIAdV7cRa5qtqdYvlg5ivAdjwUqtwWl7qwHgBFYAyx02/u+5d
-         FmkcBoX7rr7QfXCW+JHgbGoxDF0CaEhnA2mZ/qEPPQ8fl008/Kcf9afZlao3idvUvXxT
-         O0Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUa01+TZprGYJXZeMHIRxTOBbiqEfNuq/MEP4ODx1FwDDp3mD+JRLh8fwmbrSbDNTD8vUo+Xrv3+7ujTbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw78LXaEDy6fByJpiwgieVorb/p+LJvGkuuwcGJtUbjRhxy2LMe
-	HweXF2EZgvTznw3UIHxDnJzetYAZY+9wSlHVzRx3ntJQNk68zmVjBcciUNVez1FtIvD1PCd/uod
-	zI7O2352X+LE7gSY9EY4v/w2Dq2A=
-X-Gm-Gg: ASbGnctXgMA6X+Bdn3TtyCt3+p5lJI8Jt6gooFP3VcTZTjtNTo72kcfXPB+YvbYU/6w
-	QljE/i/RkGiDvu6ArMjrJXq1RAYW4hzs4OZQD8qq8Bg3XxCobLtzSG4OeJ+ghPEtWNq0oWcUxli
-	iTf+q/UMbP/4zb+8uCnfxc/Co5HE8=
-X-Google-Smtp-Source: AGHT+IHEXNhJPFoziNZC1UXWkFDZ5g6z1JFopiu3vc9Q/LvecS+G6l7WSQf1W3Z/XhrusCBoW5rnkRD9RpvZB4oxqf4=
-X-Received: by 2002:a5d:6d8a:0:b0:38d:d743:7d36 with SMTP id
- ffacd0b85a97d-39973afe524mr1531554f8f.10.1742441588158; Wed, 19 Mar 2025
- 20:33:08 -0700 (PDT)
+	s=arc-20240116; t=1742442303; c=relaxed/simple;
+	bh=OdAbk2LOFtDHMerSPge0nhSNgZt523e54gQmN39dbFg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cwcPDjDNBfeoAZV0DdDybTqOcaN2jo+Vi+tZx6YDvo8uAKMObqc+KCEVGizzD5MGELg1Hut1I7Ycs4jWXfBbcdZwq8lZxqMUzbolB2HlXsGJ7uDwbFujRhMOBu6MtvXQC7orxbJ0tZ1kKJW6Eij82uDZh2TIUL5XEk2paFqEWR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=VZxhZJKS; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52K3iXZQ11779596, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1742442273; bh=OdAbk2LOFtDHMerSPge0nhSNgZt523e54gQmN39dbFg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=VZxhZJKSp0QsZptwFc5eeXoPN2JOq5Zksctao1Pugl1zae2zemo2G1AV5x+XETme0
+	 EgLi7fmZlfINGkQTF41tYz/MCxbvCd5XWeft6bLLj2b7DfwGPku0Lp3FJecXbwWCKn
+	 iwQJiCNWUz99UWPE7C8O9yrtHLcxTxVezrkewyVwusLLBILDoytgXa8eaugkBJbJgd
+	 yEU4MZCyKb+prro+UvCCcA+3wUfKw8giUvjCl5NfBAheh7zT7n9xOSCbQf5eQ49u/v
+	 Ra0PW+fHQ/71ipOGos1uLVJXj+BC68zWtYQveJmnLZfbOdp+EMVe/5Zgx9QFPEEB01
+	 6HFrlo9UaUpYA==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52K3iXZQ11779596
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 11:44:33 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 20 Mar 2025 11:44:33 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 20 Mar 2025 11:44:33 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
+ RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
+ 15.01.2507.035; Thu, 20 Mar 2025 11:44:33 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Simon Horman <horms@kernel.org>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Chiu
+	<larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next] rtase: Add ndo_setup_tc support for CBS offload in traffic control setup
+Thread-Topic: [PATCH net-next] rtase: Add ndo_setup_tc support for CBS offload
+ in traffic control setup
+Thread-Index: AQHblMVgEp2xobAex0KxC/GYOCg1TLN55sKAgAF+ZWA=
+Date: Thu, 20 Mar 2025 03:44:33 +0000
+Message-ID: <6824bd62f05644ec8d301457449eae19@realtek.com>
+References: <20250314094021.10120-1-justinlai0215@realtek.com>
+ <20250319123407.GC280585@kernel.org>
+In-Reply-To: <20250319123407.GC280585@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320022230.1938110-1-chao@kernel.org>
-In-Reply-To: <20250320022230.1938110-1-chao@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Thu, 20 Mar 2025 11:32:57 +0800
-X-Gm-Features: AQ5f1JrS67VyAWqmg1qZYDDqtRgmbZBRzQk_sAgUFWj5Ju4NfXDkFsmP1V7ZhT8
-Message-ID: <CAHJ8P3+Z+LEJysum4ZLO0HGkdYP_JDUfWoTfBiLPcDuHFeBNRw@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: add a proc entry show inject stats
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-=E4=BA=8E2025=E5=B9=B43=E6=9C=8820=E6=97=A5=E5=91=A8=E5=9B=9B 10:27=E5=86=
-=99=E9=81=93=EF=BC=9A
->
-> This patch adds a proc entry named inject_stats to show total injected
-> count for each fault type.
->
-> cat /proc/fs/f2fs/<dev>/inject_stats
-> fault_type              injected_count
-> kmalloc                 0
-> kvmalloc                0
-> page alloc              0
-> page get                0
-> alloc bio(obsolete)     0
-> alloc nid               0
-> orphan                  0
-> no more block           0
-> too big dir depth       0
-> evict_inode fail        0
-> truncate fail           0
-> read IO error           0
-> checkpoint error        0
-> discard error           0
-> write IO error          0
-> slab alloc              0
-> dquot initialize        0
-> lock_op                 0
-> invalid blkaddr         0
-> inconsistent blkaddr    0
-> no free segment         0
-> inconsistent footer     0
->
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> On Fri, Mar 14, 2025 at 05:40:21PM +0800, Justin Lai wrote:
+> > Add support for ndo_setup_tc to enable CBS offload functionality as
+> > part of traffic control configuration for network devices.
+> >
+> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+>=20
+> ...
+>=20
+> > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > index 2aacc1996796..2a61cd192026 100644
+> > --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > @@ -1661,6 +1661,54 @@ static void rtase_get_stats64(struct net_device
+> *dev,
+> >       stats->rx_length_errors =3D tp->stats.rx_length_errors;  }
+> >
+> > +static void rtase_set_hw_cbs(const struct rtase_private *tp, u32
+> > +queue) {
+> > +     u32 idle =3D tp->tx_qos[queue].idleslope * RTASE_1T_CLOCK;
+> > +     u32 val, i;
+> > +
+> > +     val =3D u32_encode_bits(idle / RTASE_1T_POWER,
+> RTASE_IDLESLOPE_INT_MASK);
+> > +     idle %=3D RTASE_1T_POWER;
+> > +
+> > +     for (i =3D 1; i <=3D RTASE_IDLESLOPE_INT_SHIFT; i++) {
+> > +             idle *=3D 2;
+> > +             if ((idle / RTASE_1T_POWER) =3D=3D 1)
+> > +                     val |=3D BIT(RTASE_IDLESLOPE_INT_SHIFT - i);
+> > +
+> > +             idle %=3D RTASE_1T_POWER;
+> > +     }
+> > +
+> > +     rtase_w32(tp, RTASE_TXQCRDT_0 + queue * 4, val); }
+> > +
+> > +static void rtase_setup_tc_cbs(struct rtase_private *tp,
+> > +                            const struct tc_cbs_qopt_offload *qopt) {
+> > +     u32 queue =3D qopt->queue;
+>=20
+> Hi Justin,
+>=20
+> Does queue need to be checked somewhere to make sure it is in range?
 
-Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-thanks=EF=BC=81
+Hi Simon,
 
-> ---
-> v2:
-> - add missing CONFIG_F2FS_FAULT_INJECTION
->  fs/f2fs/f2fs.h  |  3 +++
->  fs/f2fs/super.c |  1 +
->  fs/f2fs/sysfs.c | 22 ++++++++++++++++++++++
->  3 files changed, 26 insertions(+)
->
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f1576dc6ec67..986ee5b9326d 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -73,6 +73,8 @@ struct f2fs_fault_info {
->         atomic_t inject_ops;
->         int inject_rate;
->         unsigned int inject_type;
-> +       /* Used to account total count of injection for each type */
-> +       unsigned int inject_count[FAULT_MAX];
->  };
->
->  extern const char *f2fs_fault_name[FAULT_MAX];
-> @@ -1902,6 +1904,7 @@ static inline bool __time_to_inject(struct f2fs_sb_=
-info *sbi, int type,
->         atomic_inc(&ffi->inject_ops);
->         if (atomic_read(&ffi->inject_ops) >=3D ffi->inject_rate) {
->                 atomic_set(&ffi->inject_ops, 0);
-> +               ffi->inject_count[type]++;
->                 f2fs_info_ratelimited(sbi, "inject %s in %s of %pS",
->                                 f2fs_fault_name[type], func, parent_func)=
-;
->                 return true;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index f087b2b71c89..dfe0604ab558 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -47,6 +47,7 @@ const char *f2fs_fault_name[FAULT_MAX] =3D {
->         [FAULT_KVMALLOC]                =3D "kvmalloc",
->         [FAULT_PAGE_ALLOC]              =3D "page alloc",
->         [FAULT_PAGE_GET]                =3D "page get",
-> +       [FAULT_ALLOC_BIO]               =3D "alloc bio(obsolete)",
->         [FAULT_ALLOC_NID]               =3D "alloc nid",
->         [FAULT_ORPHAN]                  =3D "orphan",
->         [FAULT_BLOCK]                   =3D "no more block",
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index c69161366467..46fa94db08a8 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -1679,6 +1679,24 @@ static int __maybe_unused disk_map_seq_show(struct=
- seq_file *seq,
->         return 0;
->  }
->
-> +#ifdef CONFIG_F2FS_FAULT_INJECTION
-> +static int __maybe_unused inject_stats_seq_show(struct seq_file *seq,
-> +                                               void *offset)
-> +{
-> +       struct super_block *sb =3D seq->private;
-> +       struct f2fs_sb_info *sbi =3D F2FS_SB(sb);
-> +       struct f2fs_fault_info *ffi =3D &F2FS_OPTION(sbi).fault_info;
-> +       int i;
-> +
-> +       seq_puts(seq, "fault_type               injected_count\n");
-> +
-> +       for (i =3D 0; i < FAULT_MAX; i++)
-> +               seq_printf(seq, "%-24s%-10u\n", f2fs_fault_name[i],
-> +                                               ffi->inject_count[i]);
-> +       return 0;
-> +}
-> +#endif
-> +
->  int __init f2fs_init_sysfs(void)
->  {
->         int ret;
-> @@ -1770,6 +1788,10 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
->                                 discard_plist_seq_show, sb);
->         proc_create_single_data("disk_map", 0444, sbi->s_proc,
->                                 disk_map_seq_show, sb);
-> +#ifdef CONFIG_F2FS_FAULT_INJECTION
-> +       proc_create_single_data("inject_stats", 0444, sbi->s_proc,
-> +                               inject_stats_seq_show, sb);
-> +#endif
->         return 0;
->  put_feature_list_kobj:
->         kobject_put(&sbi->s_feature_list_kobj);
-> --
-> 2.48.1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Thank you for your response. I will add a check to ensure that the
+queue is within the specified range.
+>=20
+> > +
+> > +     tp->tx_qos[queue].hicredit =3D qopt->hicredit;
+> > +     tp->tx_qos[queue].locredit =3D qopt->locredit;
+> > +     tp->tx_qos[queue].idleslope =3D qopt->idleslope;
+> > +     tp->tx_qos[queue].sendslope =3D qopt->sendslope;
+>=20
+> Does qopt->enable need to be honoured in order to allow the offload to be
+> both enabled and disabled?
+>=20
+Thank you for your suggestion. I will add a check for qopt->enable and
+handle it appropriately.
+
+> > +
+> > +     rtase_set_hw_cbs(tp, queue);
+> > +}
+> > +
+> > +static int rtase_setup_tc(struct net_device *dev, enum tc_setup_type t=
+ype,
+> > +                       void *type_data) {
+> > +     struct rtase_private *tp =3D netdev_priv(dev);
+> > +
+> > +     switch (type) {
+> > +     case TC_SETUP_QDISC_CBS:
+> > +             rtase_setup_tc_cbs(tp, type_data);
+> > +             break;
+> > +     default:
+> > +             return -EOPNOTSUPP;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  static netdev_features_t rtase_fix_features(struct net_device *dev,
+> >                                           netdev_features_t
+> features)
+> > {
+>=20
+> ...
 
