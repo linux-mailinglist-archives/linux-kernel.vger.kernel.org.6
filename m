@@ -1,157 +1,110 @@
-Return-Path: <linux-kernel+bounces-569395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2966A6A26A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:19:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5EEA6A2A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E7C188D519
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A851460494
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A8A221DBC;
-	Thu, 20 Mar 2025 09:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9tP5OaB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F60821A45D;
+	Thu, 20 Mar 2025 09:31:25 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0497F20E32B;
-	Thu, 20 Mar 2025 09:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE07C1A5BBA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742462347; cv=none; b=A6BWWrJmeCODcGo/7y/YdqmVizJ1GdDIh53OKsUe2sYc+c+kGNk7hWgXyZZUx/wUu9e8ZVUsr2RUht2zxUr/KtOTorOv1e8uA8iam74XCXraWPJH2OyM261LCriH2SkiuFpcRRebNtOlEVSPGD0p+Tl9PLK3jXeaoz4oVHER9UM=
+	t=1742463085; cv=none; b=FmXkO13ZJtSkrUbYFwajPDbcw5B0IytOKb0TiOdYQiRMi/In0GrLLIMiwgp8XRWdG0QdhnRtfRHnX3HXqrfeHiEvf21seedH5fsMrXJ52nvulmdnJ8vI2hDtTMBwQkDrogwEylsVsjQ6Ap6hx2XuRvSKsFn53GLL82QHFW/4r7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742462347; c=relaxed/simple;
-	bh=DyYZu43SCOG8idqcMJJdyHd71H6vj85HgtLk8md7IhI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SD0Sc4mOx0fhnmaTujHuOdr/x55hTjJaHEqgYxbNCT1Frf2w/rE4LZlyeXxBpIsArkFuwhAcnYYsWHDTouB7q0Wv4W7pDHlDqdYJbGcHcDSXlv9zieeC6VrO9JuC/AbwdZrAE4AzUA9GrNDQOlnnTU8szvTbkGO8UmrU9yjrIGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9tP5OaB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77B2AC4CEDD;
-	Thu, 20 Mar 2025 09:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742462345;
-	bh=DyYZu43SCOG8idqcMJJdyHd71H6vj85HgtLk8md7IhI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=g9tP5OaBBniNVKx/1th/Dn6r/KXDHr1v6Sn6QKGJfwbuaAnPrH/sIJd6ryyHFW6mD
-	 lXKRAgqhmTQjoin2lcilrtZUBL9zKTtRk4iaOVENNvWYxIXK+eql7BUsnZn3sYnWVX
-	 vwT92yDgc2KsrgfDENuN7Dk+7hezHcQ23+TYgVrYsA5tEI7lmDMp1+l5t1WJu2tTSg
-	 ZGJ3p8kSQHSMdfishJWD0TmTcnopLzmaLi3ElnS1BE0NAifgAVTiKAPf1WnAQSHpRk
-	 GEMHsL5OQMsMuubI5BMr1STWNZ7/rV6ykx4u12zT48FNl7CbYIMjfVl8j9M78Ps8Co
-	 dQiHRgwllnVng==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tvC3K-00FMaU-U3;
-	Thu, 20 Mar 2025 09:19:03 +0000
-Date: Thu, 20 Mar 2025 09:19:02 +0000
-Message-ID: <86h63om54p.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Akihiko Odaki <akihiko.odaki@daynix.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	devel@daynix.com
-Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
-In-Reply-To: <Z9sSMJAlf7cQ5viu@linux.dev>
-References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
-	<Z9pze3J2_zrTk_yC@linux.dev>
-	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
-	<86plidmjwh.wl-maz@kernel.org>
-	<bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
-	<86o6xxmg87.wl-maz@kernel.org>
-	<aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
-	<86msdhmemw.wl-maz@kernel.org>
-	<cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
-	<86ldt0n9w1.wl-maz@kernel.org>
-	<Z9sSMJAlf7cQ5viu@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742463085; c=relaxed/simple;
+	bh=Fq7N5XhzkBZZ2U7tumyB/nILV22NxS/iDWf9NYICOTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dNDjTjdrodeUrnYhHrlUoAQkLmKfxK7vKKMYdZKqplXCKFTXnIFeN2ikaMQzxQxwCpUzxEocDMHgMu4zfl1NmqeBrM0rp2jax2kjjXMcdN4O/1v5Og5fv5mP1KJJ/U83xdAO+jHP8eh057GWXlP7Ma0TUJmNCA4/nTlBciEcSdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id BC3445F9AD;
+	Thu, 20 Mar 2025 10:31:10 +0100 (CET)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Robin Murphy <robin.murphy@arm.com>, linux-arm-kernel@lists.infradead.org
+Subject:
+ [PATCH 5/6] iommu: make inclusion of arm/arm-smmu-v3 directory conditional
+Date: Thu, 20 Mar 2025 10:19:12 +0100
+Message-ID: <6164975.lOV4Wx5bFT@devpool47.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <12652899.O9o76ZdvQC@devpool47.emlix.com>
+References: <12652899.O9o76ZdvQC@devpool47.emlix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, akihiko.odaki@daynix.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 19 Mar 2025 18:51:28 +0000,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> On Wed, Mar 19, 2025 at 06:38:38PM +0000, Marc Zyngier wrote:
-> > On Wed, 19 Mar 2025 11:51:21 +0000, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> > > What about setting the flag automatically when a user fails to pin
-> > > vCPUs to CPUs that are covered by one PMU? There would be no change if
-> > > a user correctly pins vCPUs as it is. Otherwise, they will see a
-> > > correct feature set advertised to the guest and the cycle counter
-> > > working.
-> > 
-> > How do you know that the affinity is "correct"? VCPU affinity can be
-> > changed at any time. I, for one, do not want my VMs to change
-> > behaviour because I let the vcpus bounce around as the scheduler sees
-> > fit.
-> > 
-> > Honestly, this is not a can of worm I want to open. We already have a
-> > pretty terrible userspace API for the PMU, let's not add to the
-> > confusion. *If* we are going down the road of presenting a dumbed-down
-> > PMU to the guest, it has to be an explicit buy-in from userspace.
-> 
-> I also have a very strong distaste for the crappy UAPI we have around a
-> 'default' PMU. At the same time I do recognize this hurts practical
-> usecases since some VMMs can't be bothered to configure the vPMU / vCPU
-> pinning correctly.
-> 
-> I'm at least willing to plug my nose and do the following:
-> 
->  1) When the VMM does not specify a vPMU type:
-> 
->    - We continue to present the 'default' PMU (including event counters)
->      to the VM
-> 
->    - KVM ensures that the fixed CPU cycle counter works on any PMUv3
->      implementation in the system, even if it is different from the
->      default
-> 
->    - Otherwise, event counters will only count on the default
->      implementation and will not count on different PMUs
+Nothing in there is active if CONFIG_ARM_SMMU_V3 is not enabled, so the who=
+le
+directory can depend on that switch as well.
 
-I think this is confusing. The CC is counting, but nothing else, and
-people using the cycle counters in conjunction with other events (a
-very common use case) will not be able to correlate things correctly.
-The current behaviour is, for all its sins, at least consistent.
+=46ixes: e86d1aa8b60f ("iommu/arm-smmu: Move Arm SMMU drivers into their ow=
+n subdirectory")
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+=2D--
+ drivers/iommu/arm/Makefile             | 3 ++-
+ drivers/iommu/arm/arm-smmu-v3/Makefile | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-> 
->  2) Implement your suggestion of a UAPI where the VMM can select a PMU
->     that only has the CPU cycle counter and works on any PMUv3
->     implementation.
-> 
-> Either way KVM will need to have some special case handling of the fixed
-> CPU cycle counter. That'd allow users to actually run Windows *now* and
-> provide a clear mechanism for userspace to present a less-broken vPMU if
-> it cares.
+diff --git a/drivers/iommu/arm/Makefile b/drivers/iommu/arm/Makefile
+index 0f9efeab709f..35a7e13eef34 100644
+=2D-- a/drivers/iommu/arm/Makefile
++++ b/drivers/iommu/arm/Makefile
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+=2Dobj-y +=3D arm-smmu/ arm-smmu-v3/
++obj-y +=3D arm-smmu/
++obj-$(CONFIG_ARM_SMMU_V3) +=3D arm-smmu-v3/
+diff --git a/drivers/iommu/arm/arm-smmu-v3/Makefile b/drivers/iommu/arm/arm=
+=2Dsmmu-v3/Makefile
+index 493a659cc66b..6cc7c8557b9e 100644
+=2D-- a/drivers/iommu/arm/arm-smmu-v3/Makefile
++++ b/drivers/iommu/arm/arm-smmu-v3/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+=2Dobj-$(CONFIG_ARM_SMMU_V3) +=3D arm_smmu_v3.o
++obj-y +=3D arm_smmu_v3.o
+ arm_smmu_v3-y :=3D arm-smmu-v3.o
+ arm_smmu_v3-$(CONFIG_ARM_SMMU_V3_IOMMUFD) +=3D arm-smmu-v3-iommufd.o
+ arm_smmu_v3-$(CONFIG_ARM_SMMU_V3_SVA) +=3D arm-smmu-v3-sva.o
+=2D-=20
+2.49.0
 
-Honestly, I don't care about one guest or another. My point is that if
-we are changing the behaviour of the PMU to deal with this sort of
-things, then it has to be a userspace buy-in.
 
-	M.
 
--- 
-Without deviation from the norm, progress is not possible.
+=2D-=20
+Rolf Eike Beer
+
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
+
+emlix - your embedded Linux partner
+
+
 
