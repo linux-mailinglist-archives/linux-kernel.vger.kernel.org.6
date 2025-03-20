@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-569418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2187EA6A2B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:32:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD00A6A258
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765EE189AF18
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0011887A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67ED6222574;
-	Thu, 20 Mar 2025 09:31:42 +0000 (UTC)
-Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFC72222B0;
+	Thu, 20 Mar 2025 09:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pzAg36N0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986262222CD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920A222595;
+	Thu, 20 Mar 2025 09:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742463102; cv=none; b=bgnmXLMiAkDOTpVBwZ6rvKDVVGs1hCmcOUZUYNaS72a5Ztkj7Gu39Gurgouq5NAEEzLhd3rsxyOjPNI7Q3H+PTKlpUPxnTy8LQySJ+cHIveYRxEVFZvIT5ErMZ0FRqorsHb4Ku+JaaPrvMFIKBpEvP4FNEouXn7ILbPSj3kx24c=
+	t=1742462125; cv=none; b=Aqoqvqv1xMx3Njb5sLn9/FQwErf3gBUGQobRJJ448Dt4vghjXY2Cm44FFFIFIMDIshVi0DXF7P7iiF7jQuJThvPe6FCbObDp7Fj5HoBbK8Ka1K6mWJHmRoIZek2UJnCiRYJbzrFXV8dlEghg0qi4ba3CKk0t8yjgrhIeoFJ6L58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742463102; c=relaxed/simple;
-	bh=10Xzpfxhb3jedp2+7OzV3d9Sa+CRTIgs+auGCBtAp3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eevxk73Nh5Qf2FM747Xr/D87Q4Q4aeVCU4DTbaHYqlPisypR1Mmuqr+tAkca/n7t7ikEBKQei0nXVxKCCaz5ys2l16MuiHDly8FGcQcaKUWllWr+it20yXXOHQL0s99VNmDwppR8wVUF+2/KCEKQ+zrbapcB2Vqo04kULt77pY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
-Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.emlix.com (Postfix) with ESMTPS id 8B3A25FC89;
-	Thu, 20 Mar 2025 10:31:11 +0100 (CET)
-From: Rolf Eike Beer <eb@emlix.com>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH 3/6] iommu: make inclusion of amd directory conditional
-Date: Thu, 20 Mar 2025 10:14:45 +0100
-Message-ID: <5895641.DvuYhMxLoT@devpool47.emlix.com>
-Organization: emlix GmbH
-In-Reply-To: <12652899.O9o76ZdvQC@devpool47.emlix.com>
-References: <12652899.O9o76ZdvQC@devpool47.emlix.com>
+	s=arc-20240116; t=1742462125; c=relaxed/simple;
+	bh=bt/QlS9MUCTVnYG5Qt5kQebBbYT9d0vBbtcynXxPxdo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IglNzoQpCy0r0fPuKTXasujqnfg3+AOuEfBrPgp6EATy1l/gYH0HMavyKARNz83VJm4MwtRWt+yy/6VyS6Nz3FRxQq1TqQ/JpfUaKrgWVD4qc+6U2hc1OsNASjeyTtyXl540w6t7blnxN/BriBu7foXnZTNWBasezLpQrKolIzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pzAg36N0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K6Z30s022777;
+	Thu, 20 Mar 2025 09:15:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4DMrcRhBZxFov8R1IRcw6LaKy4e/Inn9+UBfzvphyqc=; b=pzAg36N01bF+xFAr
+	lLkKEys98+GXqFjhSUTWleFTvtKGvpDGYrEfvN2xK4iGrsDrg9H/e3sIU8hLyIPS
+	QVs3Py8ls6Ca/av3xEWKOkwr8Nezo7ZvwoqngTSAqMFyxq3bEz36iYhSVDRYHiuM
+	CgeA1Zfz7Phu1x8dEc/GEj9GPFuwOiGnf0jINgV5erQ3w6zqYBtjhZgXSqC7AWfV
+	K4TaJi0TJsjuze7orLaAjR/A8fuP+T3as9V+x+vcBmqUNm8PxS4o4LBJXCDNArKD
+	e5he30LoaveUOr0KWDUkLYf6UkGXfm88R7PweiERVIY2Vj49qi3DMdpXqKn68bk0
+	PPA2XQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fdmwwmh1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 09:15:17 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52K9FGQG026856
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 09:15:16 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Mar 2025 02:15:13 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <srinivas.kandagatla@linaro.org>, <amahesh@qti.qualcomm.com>,
+        <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC: <quic_kuiw@quicinc.com>, <quic_ekangupt@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        Ling Xu
+	<quic_lxu5@quicinc.com>
+Subject: [PATCH v2 3/3] dt-bindings: misc: qcom,fastrpc: Add GPDSPs label
+Date: Thu, 20 Mar 2025 14:44:46 +0530
+Message-ID: <20250320091446.3647918-4-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250320091446.3647918-1-quic_lxu5@quicinc.com>
+References: <20250320091446.3647918-1-quic_lxu5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2IjHzuQWnqRgn0XgSY4e43iPtdu-NbJK
+X-Authority-Analysis: v=2.4 cv=ReKQC0tv c=1 sm=1 tr=0 ts=67dbdca5 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=kTgza7yqfwyK_oyxLbMA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 2IjHzuQWnqRgn0XgSY4e43iPtdu-NbJK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_03,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200055
 
-Nothing in there is active if CONFIG_AMD_IOMMU is not enabled, so the whole
-directory can depend on that switch as well.
+Add "gdsp0" and "gdsp1" as the new supported labels for GPDSPs fastrpc
+domains.
 
-=46ixes: cbe94c6e1a7d ("iommu/amd: Move Kconfig and Makefile bits down into=
- amd directory")
-Signed-off-by: Rolf Eike Beer <eb@emlix.com>
-=2D--
- drivers/iommu/Makefile     | 3 ++-
- drivers/iommu/amd/Makefile | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+---
+ Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-index ed673c8fd056..41b00cdc8621 100644
-=2D-- a/drivers/iommu/Makefile
-+++ b/drivers/iommu/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
-=2Dobj-y +=3D amd/ arm/ iommufd/ riscv/
-+obj-y +=3D arm/ iommufd/ riscv/
-+obj-$(CONFIG_AMD_IOMMU) +=3D amd/
- obj-$(CONFIG_INTEL_IOMMU) +=3D intel/
- obj-$(CONFIG_IOMMU_API) +=3D iommu.o
- obj-$(CONFIG_IOMMU_API) +=3D iommu-traces.o
-diff --git a/drivers/iommu/amd/Makefile b/drivers/iommu/amd/Makefile
-index 9de33b2d42f5..59c04a67f398 100644
-=2D-- a/drivers/iommu/amd/Makefile
-+++ b/drivers/iommu/amd/Makefile
-@@ -1,3 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
-=2Dobj-$(CONFIG_AMD_IOMMU) +=3D iommu.o init.o quirks.o io_pgtable.o io_pgt=
-able_v2.o ppr.o pasid.o
-+obj-y +=3D iommu.o init.o quirks.o io_pgtable.o io_pgtable_v2.o ppr.o pasi=
-d.o
- obj-$(CONFIG_AMD_IOMMU_DEBUGFS) +=3D debugfs.o
-=2D-=20
-2.49.0
-
-
-=2D-=20
-Rolf Eike Beer
-
-emlix GmbH
-Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
-Phone +49 (0)551 30664-0, e-mail info@emlix.com
-District Court of G=C3=B6ttingen, Registry Number HR B 3160
-Managing Directors: Heike Jordan, Dr. Uwe Kracke
-VAT ID No. DE 205 198 055
-Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
-Office Bonn: Bachstr. 6, 53115 Bonn, Germany
-http://www.emlix.com
-
-emlix - your embedded Linux partner
-
-
+diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+index 0840a3d92513..3f6199fc9ae6 100644
+--- a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
++++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+@@ -27,6 +27,8 @@ properties:
+       - sdsp
+       - cdsp
+       - cdsp1
++      - gdsp0
++      - gdsp1
+ 
+   memory-region:
+     maxItems: 1
+-- 
+2.34.1
 
 
