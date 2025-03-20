@@ -1,178 +1,366 @@
-Return-Path: <linux-kernel+bounces-569941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80D2A6A9F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:31:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14788A6A9A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8194C189A2DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:27:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DC94841EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31962226CE7;
-	Thu, 20 Mar 2025 15:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EEE1E5B69;
+	Thu, 20 Mar 2025 15:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2kJLj8W"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DMGOWAqY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFCD225A5B;
-	Thu, 20 Mar 2025 15:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28E14B08A;
+	Thu, 20 Mar 2025 15:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742484298; cv=none; b=IkCsCONSFEJxzH+Wed7z4ZAdeiAB0CPqc2zF2BQd02bvmPyvI9j0PCtoGYxoaOs8zvBMZ3f2ZcCGvChFR2cXQgnMKl0x886tsosXRbuHqMSptJT9ZvbngaRx7O1fDwi1kz5OauTfC+mivQydS3iU/lbqUstZEEk5GxL2KXKAwyk=
+	t=1742484164; cv=none; b=JimXHVzEmsDHYkejCkziTy1TWVlb6iln45G8ytFz1XT2nsaP4Xq+gXcuk3vaM9je+awR2kjE+CwIOVwn5UMZwHgkVo8RgbR6cBlrUbJ8jZztTxO8T5DVoOrWrcmHbAIzNawG87t8gYsaHbfMbTXi7fRN3Tg59JHX5u9V5X0PgqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742484298; c=relaxed/simple;
-	bh=mctbch+3SZnEdii4zFZGF0Iv2O1sUwEaKoFRoL6RcjM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=T5on0R4id2X8ZrhNJIkcaNiEB1yhvUHD/WZrYzhCQCgy5k1rojzqFzA773Pv7fvgPcng75/l2NP14kcBY3No1ktO0fYVnyyyu/hf+E21Mib32k+ORiaBUAJdOIr1ekDuTL8KvjmS47dFRC0uMSqG34rXhj+O/WKPHVJokpwxThI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2kJLj8W; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2235189adaeso18919635ad.0;
-        Thu, 20 Mar 2025 08:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742484295; x=1743089095; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=778YCnhGu8OwS5VD6l1aN21sioD9+bOBBeqngUJxkTg=;
-        b=h2kJLj8WBtK+rWlNrvtPRqfMf46aH96vE7FsiSElHc0d+5W5CWJKYJfBhge47LWZ8X
-         6hd7RT2azyCmltaAKUQL4o8Gj6n3LGDNjwJxcDUZ8Zjl/zxfmqgt7ZCkzhAa3kTwRBZG
-         F8N+srk+L3Ya6wOSbEuOtuPHV7LndpNha7Hi0oCp6O9N8opHoijbXQnyhL+JQnyXnUXP
-         K7E1cgRJSBTOTN6keN100TSIX0cVaZtvKmEoXYRHlBSxgBgqueB6fAb6iDJ4TZRzPGAn
-         clf5T/9Iw6ATrQ2XegiyVn+1pcJURkyQP8oWbAwwHGf9Zj42jd6rPyBEzZ10tnAmIYCT
-         xBHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742484295; x=1743089095;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=778YCnhGu8OwS5VD6l1aN21sioD9+bOBBeqngUJxkTg=;
-        b=gmoL1yt4dO2nP4XqnBQbhrSkhc0ydHa8Ghwh9BUhJ0ZfKYroYctqlv0sBVYCmCbEGT
-         YWUCq/+I6JET+iw4ZdgCoc8cTl+uV4D6WmeJRMccWAJqYz3fqiPhRI8pwb2WhzoGsutj
-         ColZfbDuMTIciqOdc7fqpk3XvWla3cVFZ6wT0OPP5X+9slYbpENmwWaXNFYMMggSJYKt
-         Kkd9EwZLjiWPaA5a2r9NnNQ5sxUkhTgby85s2ZMlqA5NRDd6Oao+IDZ0if8pCPAEII/8
-         KWsgZysqf5q+hETE4Vod1zsqDCwcO+VU6sdLBS3BJnRP6Amn7NE7rtKukAsNFI/jeU2C
-         0Rsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVV0N6HeYfmVAIXxUDzzw89Wi0rVbOnQfbgJTKMNpn/5iw639Lnlq3tU1NRFIkQmB8Qq/UcXURQ6guGjYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRKorMdyBfEXELgMplOa1XSWviQA09eVKWQsyrAe28CUsV1dDe
-	t50tB6Wc97fBcacqyP1coaK7mkM2l4F7AauOXZFnPRECzIFFav5NYPpqsQ==
-X-Gm-Gg: ASbGncv44fitfv0fEdq8f1gjNEj1Fow7CJzLduJ5ojmHA+Zg+67Z/Q4miFfRkLYWBAx
-	eGun4RgOCkNDWRsMJuQWo6QcxLi2yh5ShA87ezinIqruR3efNdInHK/BQJ4rzpLYrEpgHHDIN4Y
-	4qEfPWVk0A1hyo51hbQGAqJ8X9berjls35MEBvRbZH5gF9gYHjQ6dNf7fKXOUFuIiSM522Iu/Xh
-	T1ibGJBX2xK/eBhBoFiRPnR8MRGhRNtkNAjw4+jj8Em3E+8oc7PJ0ey6ryk5j3rli/gIQhDviEb
-	U77GTXkOraTea+AY8S/8BlieES1Z200jILIsp6UJrgHHAabPyWH0rO9FeKEDd1Fu7mGkFV+aMa6
-	0sMPPtS20u7CoTmruhCxAhw==
-X-Google-Smtp-Source: AGHT+IEm0o3IjdN4CK7bI1ZR5Cl6pbpHzpKB84eZ6aOsv2wGsYmuyJSpIXKgRxVZphiibOVU45xSMQ==
-X-Received: by 2002:a17:903:228d:b0:220:ff82:1c60 with SMTP id d9443c01a7336-2265e6d467bmr56146505ad.14.1742484295352;
-        Thu, 20 Mar 2025 08:24:55 -0700 (PDT)
-Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4a8fsm136905515ad.234.2025.03.20.08.24.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 08:24:54 -0700 (PDT)
-From: Potin Lai <potin.lai.pt@gmail.com>
-Date: Thu, 20 Mar 2025 23:22:00 +0800
-Subject: [PATCH v5 10/10] ARM: dts: aspeed: catalina: Enable MCTP support
- for NIC management
+	s=arc-20240116; t=1742484164; c=relaxed/simple;
+	bh=f25INGyCJY8UcVjC17OBdzMS7cvAdf0J4z2Qw+0j+UA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3BXaLf87Dhge3o9aQmKD8ipZqyR66EzI95ufgtdVanhbJo1ZckHMmrjPLB6vM8vwpxPRnYrBtraNvsH867HnqKRvdEXrZgJdjh1hICUrmykItkPT6DhZEhMdpr4WNvQSmWNsywq6ijCdyYS97GC3BEC+oAsfavn0VxSAayLm+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DMGOWAqY; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742484162; x=1774020162;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=f25INGyCJY8UcVjC17OBdzMS7cvAdf0J4z2Qw+0j+UA=;
+  b=DMGOWAqYY9BxNd8sleLk/w6ri0INHzy6HfWZ2tm0bQzP6GtyTdom3Y0v
+   RMS5zr0Tl5TOmQMKjt1ciadhhL+n+8DwHbFGxdOwDzv9RddxzqICAG04X
+   GV3gySNMX0WwnG58jm7RsbyQcIEzzzM2ZIUIHdVrqQZgN8AaFPQSGzfOI
+   FtGuZH0827FgPDE6agpgtZtv09rc3UpMcUvorXOUAMqYJRi+3Ev0AZsNd
+   PmPog9RUtKq2UWyb6jlqK4zd8OJ0QfVz9CssgGtyRs5S76WHSvS8w2Hb0
+   lGQX7b1GOzxEF7JzMhMU1jRbvpjJgGM8L2XTdu85KyAWYlc6MWIm89wH4
+   g==;
+X-CSE-ConnectionGUID: T/aS0PwqTh6v5Mmh1M9sHw==
+X-CSE-MsgGUID: FA79GDeeQE+JwRv1tO3QXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="42970754"
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="42970754"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 08:22:40 -0700
+X-CSE-ConnectionGUID: I6eL56F9Qk6L3GAx/LeXMg==
+X-CSE-MsgGUID: 65mLGYXWSsq6P9hlHmr6sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="122852413"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.110.123]) ([10.125.110.123])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 08:22:40 -0700
+Message-ID: <1ca7b324-9de2-41b8-8c5a-a823c861c692@intel.com>
+Date: Thu, 20 Mar 2025 08:22:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma/idxd: Remove __packed from structures
+To: Yi Sun <yi.sun@intel.com>, anil.s.keshavamurthy@intel.com,
+ vkoul@kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: gordon.jin@intel.com, andriy.shevchenko@intel.com, yi.sun@linux.intel.com
+References: <20250320081807.3688123-1-yi.sun@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250320081807.3688123-1-yi.sun@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-potin-catalina-dts-update-20250102-v5-10-e161be6583a7@gmail.com>
-References: <20250320-potin-catalina-dts-update-20250102-v5-0-e161be6583a7@gmail.com>
-In-Reply-To: <20250320-potin-catalina-dts-update-20250102-v5-0-e161be6583a7@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Patrick Williams <patrick@stwcx.xyz>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
- Potin Lai <potin.lai.pt@gmail.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742484265; l=1803;
- i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
- bh=mctbch+3SZnEdii4zFZGF0Iv2O1sUwEaKoFRoL6RcjM=;
- b=sqz6o+Uq8neZCbmc+XIXb5EqpCCu/Sv7ukNsWuZdglpzn1ESmULH+w516OO76HCLaZ4morgBT
- FpcXpZ2i6XdARxIH0ltRokrlXGjzJ9Dyv/tnxJ3kxTdAhSEYff8vmD+
-X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
- pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
 
-Add the `mctp-controller` property and MCTP nodes to enable support for
-backend NIC management via PLDM over MCTP.
 
-Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-index 653afacc7af4..6eb6c5889113 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-@@ -186,18 +186,23 @@ flash@1 {
- 
- &i2c0 {
- 	status = "okay";
-+	multi-master;
-+	mctp@10 {
-+		compatible = "mctp-i2c-controller";
-+		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-+	};
- 
- 	i2c-mux@71 {
- 		compatible = "nxp,pca9546";
- 		reg = <0x71>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		i2c-mux-idle-disconnect;
- 
- 		i2c0mux0ch0: i2c@0 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0>;
-+			mctp-controller;
- 
- 			// IOB0 NIC0 TEMP
- 			temperature-sensor@1f {
-@@ -214,6 +219,7 @@ i2c0mux0ch2: i2c@2 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <2>;
-+			mctp-controller;
- 
- 			// IOB0 NIC1 TEMP
- 			temperature-sensor@1f {
-@@ -305,12 +311,12 @@ i2c-mux@75 {
- 		reg = <0x75>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		i2c-mux-idle-disconnect;
- 
- 		i2c0mux3ch0: i2c@0 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0>;
-+			mctp-controller;
- 
- 			// IOB1 NIC0 TEMP
- 			temperature-sensor@1f {
-@@ -327,6 +333,7 @@ i2c0mux3ch2: i2c@2 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <2>;
-+			mctp-controller;
- 
- 			// IOB1 NIC1 TEMP
- 			temperature-sensor@1f {
+On 3/20/25 1:18 AM, Yi Sun wrote:
+> The __packed attribute introduces potential unaligned memory accesses
+> and endianness portability issues. Instead of relying on compiler-specific
+> packing, it's much better to explicitly fill structure gaps using padding
+> fields, ensuring natural alignment.
+> 
+> Since all previously __packed structures already enforce proper alignment
+> through manual padding, the __packed qualifiers are unnecessary and can be
+> safely removed.
+> 
+> Signed-off-by: Yi Sun <yi.sun@intel.com>
 
--- 
-2.31.1
+Although endian portability is probably not a concern given this driver is only for an Intel platform device.
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> 
+> diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
+> index 006ba206ab1b..9c1c546fe443 100644
+> --- a/drivers/dma/idxd/registers.h
+> +++ b/drivers/dma/idxd/registers.h
+> @@ -45,7 +45,7 @@ union gen_cap_reg {
+>  		u64 rsvd3:32;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  #define IDXD_GENCAP_OFFSET		0x10
+>  
+>  union wq_cap_reg {
+> @@ -65,7 +65,7 @@ union wq_cap_reg {
+>  		u64 rsvd4:8;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  #define IDXD_WQCAP_OFFSET		0x20
+>  #define IDXD_WQCFG_MIN			5
+>  
+> @@ -79,7 +79,7 @@ union group_cap_reg {
+>  		u64 rsvd:45;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  #define IDXD_GRPCAP_OFFSET		0x30
+>  
+>  union engine_cap_reg {
+> @@ -88,7 +88,7 @@ union engine_cap_reg {
+>  		u64 rsvd:56;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_ENGCAP_OFFSET		0x38
+>  
+> @@ -114,7 +114,7 @@ union offsets_reg {
+>  		u64 rsvd:48;
+>  	};
+>  	u64 bits[2];
+> -} __packed;
+> +};
+>  
+>  #define IDXD_TABLE_MULT			0x100
+>  
+> @@ -128,7 +128,7 @@ union gencfg_reg {
+>  		u32 rsvd2:18;
+>  	};
+>  	u32 bits;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_GENCTRL_OFFSET		0x88
+>  union genctrl_reg {
+> @@ -139,7 +139,7 @@ union genctrl_reg {
+>  		u32 rsvd:29;
+>  	};
+>  	u32 bits;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_GENSTATS_OFFSET		0x90
+>  union gensts_reg {
+> @@ -149,7 +149,7 @@ union gensts_reg {
+>  		u32 rsvd:28;
+>  	};
+>  	u32 bits;
+> -} __packed;
+> +};
+>  
+>  enum idxd_device_status_state {
+>  	IDXD_DEVICE_STATE_DISABLED = 0,
+> @@ -183,7 +183,7 @@ union idxd_command_reg {
+>  		u32 int_req:1;
+>  	};
+>  	u32 bits;
+> -} __packed;
+> +};
+>  
+>  enum idxd_cmd {
+>  	IDXD_CMD_ENABLE_DEVICE = 1,
+> @@ -213,7 +213,7 @@ union cmdsts_reg {
+>  		u8 active:1;
+>  	};
+>  	u32 bits;
+> -} __packed;
+> +};
+>  #define IDXD_CMDSTS_ACTIVE		0x80000000
+>  #define IDXD_CMDSTS_ERR_MASK		0xff
+>  #define IDXD_CMDSTS_RES_SHIFT		8
+> @@ -284,7 +284,7 @@ union sw_err_reg {
+>  		u64 rsvd5;
+>  	};
+>  	u64 bits[4];
+> -} __packed;
+> +};
+>  
+>  union iaa_cap_reg {
+>  	struct {
+> @@ -303,7 +303,7 @@ union iaa_cap_reg {
+>  		u64 rsvd:52;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_IAACAP_OFFSET	0x180
+>  
+> @@ -320,7 +320,7 @@ union evlcfg_reg {
+>  		u64 rsvd2:28;
+>  	};
+>  	u64 bits[2];
+> -} __packed;
+> +};
+>  
+>  #define IDXD_EVL_SIZE_MIN	0x0040
+>  #define IDXD_EVL_SIZE_MAX	0xffff
+> @@ -334,7 +334,7 @@ union msix_perm {
+>  		u32 pasid:20;
+>  	};
+>  	u32 bits;
+> -} __packed;
+> +};
+>  
+>  union group_flags {
+>  	struct {
+> @@ -352,13 +352,13 @@ union group_flags {
+>  		u64 rsvd5:26;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  
+>  struct grpcfg {
+>  	u64 wqs[4];
+>  	u64 engines;
+>  	union group_flags flags;
+> -} __packed;
+> +};
+>  
+>  union wqcfg {
+>  	struct {
+> @@ -410,7 +410,7 @@ union wqcfg {
+>  		u64 op_config[4];
+>  	};
+>  	u32 bits[16];
+> -} __packed;
+> +};
+>  
+>  #define WQCFG_PASID_IDX                2
+>  #define WQCFG_PRIVL_IDX		2
+> @@ -474,7 +474,7 @@ union idxd_perfcap {
+>  		u64 rsvd3:8;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_EVNTCAP_OFFSET		0x80
+>  union idxd_evntcap {
+> @@ -483,7 +483,7 @@ union idxd_evntcap {
+>  		u64 rsvd:36;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  
+>  struct idxd_event {
+>  	union {
+> @@ -493,7 +493,7 @@ struct idxd_event {
+>  		};
+>  		u32 val;
+>  	};
+> -} __packed;
+> +};
+>  
+>  #define IDXD_CNTRCAP_OFFSET		0x800
+>  struct idxd_cntrcap {
+> @@ -506,7 +506,7 @@ struct idxd_cntrcap {
+>  		u32 val;
+>  	};
+>  	struct idxd_event events[];
+> -} __packed;
+> +};
+>  
+>  #define IDXD_PERFRST_OFFSET		0x10
+>  union idxd_perfrst {
+> @@ -516,7 +516,7 @@ union idxd_perfrst {
+>  		u32 rsvd:30;
+>  	};
+>  	u32 val;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_OVFSTATUS_OFFSET		0x30
+>  #define IDXD_PERFFRZ_OFFSET		0x20
+> @@ -533,7 +533,7 @@ union idxd_cntrcfg {
+>  		u64 rsvd3:4;
+>  	};
+>  	u64 val;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_FLTCFG_OFFSET		0x300
+>  
+> @@ -543,7 +543,7 @@ union idxd_cntrdata {
+>  		u64 event_count_value;
+>  	};
+>  	u64 val;
+> -} __packed;
+> +};
+>  
+>  union event_cfg {
+>  	struct {
+> @@ -551,7 +551,7 @@ union event_cfg {
+>  		u64 event_enc:28;
+>  	};
+>  	u64 val;
+> -} __packed;
+> +};
+>  
+>  union filter_cfg {
+>  	struct {
+> @@ -562,7 +562,7 @@ union filter_cfg {
+>  		u64 eng:8;
+>  	};
+>  	u64 val;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_EVLSTATUS_OFFSET		0xf0
+>  
+> @@ -580,7 +580,7 @@ union evl_status_reg {
+>  		u32 bits_upper32;
+>  	};
+>  	u64 bits;
+> -} __packed;
+> +};
+>  
+>  #define IDXD_MAX_BATCH_IDENT	256
+>  
+> @@ -620,17 +620,17 @@ struct __evl_entry {
+>  	};
+>  	u64 fault_addr;
+>  	u64 rsvd5;
+> -} __packed;
+> +};
+>  
+>  struct dsa_evl_entry {
+>  	struct __evl_entry e;
+>  	struct dsa_completion_record cr;
+> -} __packed;
+> +};
+>  
+>  struct iax_evl_entry {
+>  	struct __evl_entry e;
+>  	u64 rsvd[4];
+>  	struct iax_completion_record cr;
+> -} __packed;
+> +};
+>  
+>  #endif
 
 
