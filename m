@@ -1,140 +1,129 @@
-Return-Path: <linux-kernel+bounces-569271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1D7A6A0D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:53:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8EBA6A0D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CE1B7A4109
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A59165DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA65E1F8737;
-	Thu, 20 Mar 2025 07:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB4A1F8739;
+	Thu, 20 Mar 2025 07:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AnuH8ztO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6zLvkd8"
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA121DE2C2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1963C1E3769
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742457197; cv=none; b=BFkIzhAolP+evblVsbxvpkRHFc+50cyu8P9mJDx/o8aim7PATf8qxFp/ybq9h1+OrYZ9Jb2zaNe18T0Qmg5U3MF+7xExybj5KMXEzk00xQ6CkGtABXcRGqVnTiH7AAm4i1sEMjum+3pgSuyfDtnUPgg6zEYIavBJFYrxKUnFwRk=
+	t=1742457334; cv=none; b=lGURJeqoaUmby17phCD5BzjVSpqNhGoEFaHETxDmBWRsl1GkJAQGKJNJDUlxw/kDx/4yS9hP22vgtxaXmRSFl/rbzj1uhjVt1gAx1oEbB36zXDJ5IV5A68Ye4uAsjbvnwx8BgYBFnMGpy4Udk8CIrgZ5Tq+5XLa0o3607+BQ2Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742457197; c=relaxed/simple;
-	bh=VhbF6ZtYEqGBOiwoaOVEj9aGmLZOUW++9yFtPjjR3sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tkeTppLaNyh1jxMIJvEx2tl2YVeMTixcEWLGlbLZY7ESUccKplE5mOp9aSGXJk4xlphKpbc7YsP95HkyIah7Fbwt4OJppTyPDTw/8Q4BZnypVfyE7KExy6UDFzhrX1vppodkjy8AUotgYK4ENUWNm1pClLyrBNi0HPf1a5+kIbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AnuH8ztO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742457193;
-	bh=VhbF6ZtYEqGBOiwoaOVEj9aGmLZOUW++9yFtPjjR3sY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AnuH8ztOU+Us9eO+xpcEWA9p8bFnMWhaomhHGRwL+utffwumwSh/s/c8nuUBpIA4g
-	 iChtv0F7s1GW2i3pmdkMwW8dbInDBvm88xPFa0ROl4Tcgv2ZsGLEHGSCoYwIwhweRj
-	 qJjUs6eRriOyVlAzWc+H5rJW5rXFnN4GR6PApaGGANtRROusEdN8/bPDlL/W6nhIR7
-	 eEIiC2Fk2zwIV3d53lsDyiqf0M8K3xukUKA4+BUUy3m+uOxqSeNGFXIltYrTn35tuF
-	 zaEjKzheK3fXJlbeEEH1r94xjMUWiHFheO3nW/oLCqeuuryHfYmF+OeZtICe4xzh0A
-	 XozbA05VQTFvQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B6D317E0147;
-	Thu, 20 Mar 2025 08:53:12 +0100 (CET)
-Date: Thu, 20 Mar 2025 08:53:03 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Adrian Larumbe <adrian.larumbe@collabora.com>
-Cc: Ashley Smith <ashley.smith@collabora.com>, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Heiko Stuebner
- <heiko@sntech.de>, kernel@collabora.com, Daniel Stone
- <daniels@collabora.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/panthor: Make the timeout per-queue instead of
- per-job
-Message-ID: <20250320085303.71803639@collabora.com>
-In-Reply-To: <7xwg4gflszioaqizpu5k22ulswlninpkuiyptfalscgic2aqsu@w23h66cahlrz>
-References: <20250310133050.280614-1-ashley.smith@collabora.com>
-	<7xwg4gflszioaqizpu5k22ulswlninpkuiyptfalscgic2aqsu@w23h66cahlrz>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742457334; c=relaxed/simple;
+	bh=V4Y5u3gvvflW3tto1M8laeE9HJ8srAnk7prGLbQ7wNY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=CJPnHyIjGpvjIMMCpTWOCTWcmToIOQABHEvYnxuw6lzBsfq8Ot1F37xjQ+dw20B6/hICveHas1UU3soSVjN1dlyKfCaV37+y4PoToiwVgi75bLTwO4uKdybulAc74VwE5//SmdUSB/bIblqmNNXV2KObZbwLXECFRVTJVHQ2FKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6zLvkd8; arc=none smtp.client-ip=209.85.128.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6f7031ea11cso5324337b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 00:55:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742457332; x=1743062132; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MQK46mr1Fopo8fXsP8vC86iX9tHxR/GGUG2zvBU2nqU=;
+        b=K6zLvkd8745tSyYtGryr+eL3BGTk4oiB02BNH2TkEIQ8eh0wWG9KCqk/BidU1ufT0K
+         S5/L6uJpuE87+mJqAfzzWIn1qeBNdWVndLk2uW0UrOJVlKQSa+XsR2gYJaEfZe5NyBMX
+         O70M7gJ6NuIsqnqgZJpri2Yvrw12tMHVJM07Dy0vEewaMrIjBcRpCnPQ4/4XbtXok/LC
+         qIH6EUAcfZJqsqjucdQe/ESYYpmL+PP1OqNRB2yMxIEMSJ6TVg7kSXa1+k3SzaxFAXur
+         1ZgOg97f5YhngcbcIelvu93xbcMPPzxgyuNZcGRQfvSq+hBznlFfwBsX2FnZFbZ86r78
+         LbwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742457332; x=1743062132;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MQK46mr1Fopo8fXsP8vC86iX9tHxR/GGUG2zvBU2nqU=;
+        b=VeBxtG1aVfuQjLU+ghOSwzphIJzbXNUgWO9e5E9liJDxii2cDC7z0gOV4Ay+6HEi3+
+         QbPLHELfmF8D19jQt+BX7OPihPiGFmJTvcgpbgAa6brp1S3g8p5zi1JwHdNkUM5K3o2f
+         Bcsg4tRDh4lasngXo9gYvrQMsVOx1eO3Uk1AJ01HJ4oen+LYDrjiOfDGaEcT0yaKGi45
+         0X2MUeO0nJOcWq7ULZ+GcECVY+thj/80ARDY3cAy84cSWJ3rtMYzJz3bpCGl42VITcVG
+         GPKgNhCjDfMr1TojuIeWwgjxBo7T6aLnkCjRpLeXAkhoj27Iqt7thfacnHWEqGI/JEAJ
+         J2tw==
+X-Gm-Message-State: AOJu0YzETDxU6AiQrUyuVdGjBE57ieA6yLpZdKiMDbv8EG45ot2yD/qN
+	bXDp8JnskNpoM6uf1PzCHobPcvvlTf7MUFo94WBS8tXou+srv/p+gnxesUFlaN6GNvpnYBrj5qs
+	C5dleILMEUtrwvVGKWRz1B+QiagKrWijHFO+Xtw==
+X-Gm-Gg: ASbGnctxMtNoEe1Ojp6R21NwQlZIVbHkKPaOX7CY6WIKzFK2MNspUvyDvFhuAFbd4GO
+	YMRoFRc3Qt2ZO1KjxGts/RsrMELYEXxJD5iiJSeMhnk13OhOTkiHw2mYjOc92Lz7+Y91MRUN2ea
+	QJWUpqmF6l0gXqx0NUF4qkSNcEA5cK6B0xis7oxXbVAzswH9JWn41TCqYhnpeq
+X-Google-Smtp-Source: AGHT+IEhL7aUxQKalfQ7ammgbhKNOiCqh9QDmDzptyBpQjkIDzOy7gcagshIJtnLwX2Tx8jJ/Cl5LLPeXm3KWCBKBbY=
+X-Received: by 2002:a05:690c:4c0f:b0:6fe:c040:8eda with SMTP id
+ 00721157ae682-700ac594697mr26412407b3.4.1742457331810; Thu, 20 Mar 2025
+ 00:55:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Thu, 20 Mar 2025 13:25:20 +0530
+X-Gm-Features: AQ5f1JoHJeR5B2mGg184_qzPqkak2tjHtauc7LmocHEEHlEzd8M7_61kjJbifzY
+Message-ID: <CAFf+5zjHS_xA46PMJ_XgyV_dsXaX3yAfz3JtB_DggFVPyGaXLg@mail.gmail.com>
+Subject: ".desktop" file example on Debian Linux.
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 19 Mar 2025 19:51:47 +0000
-Adrian Larumbe <adrian.larumbe@collabora.com> wrote:
+The following gives an example of a .desktop file on Debian Linux that can be
+used to open any arbitrary binary file (but not executable files) in "gedit".
 
-> On 10.03.2025 13:30, Ashley Smith wrote:
-> > The timeout logic provided by drm_sched leads to races when we try
-> > to suspend it while the drm_sched workqueue queues more jobs. Let's
-> > overhaul the timeout handling in panthor to have our own delayed work
-> > that's resumed/suspended when a group is resumed/suspended. When an
-> > actual timeout occurs, we call drm_sched_fault() to report it
-> > through drm_sched, still. But otherwise, the drm_sched timeout is
-> > disabled (set to MAX_SCHEDULE_TIMEOUT), which leaves us in control of
-> > how we protect modifications on the timer.
-> >
-> > One issue seems to be when we call drm_sched_suspend_timeout() from
-> > both queue_run_job() and tick_work() which could lead to races due to
-> > drm_sched_suspend_timeout() not having a lock. Another issue seems to
-> > be in queue_run_job() if the group is not scheduled, we suspend the
-> > timeout again which undoes what drm_sched_job_begin() did when calling
-> > drm_sched_start_timeout(). So the timeout does not reset when a job
-> > is finished.
-> >
-> > Co-developed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Tested-by: Daniel Stone <daniels@collabora.com>
-> > Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
-> > Signed-off-by: Ashley Smith <ashley.smith@collabora.com> =20
->=20
-> Reviewed-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
->=20
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_sched.c | 233 +++++++++++++++++-------
-> >  1 file changed, 167 insertions(+), 66 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/=
-panthor/panthor_sched.c
-> > index 4d31d1967716..5f02d2ec28f9 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> > @@ -360,17 +360,20 @@ struct panthor_queue {
-> >  	/** @entity: DRM scheduling entity used for this queue. */
-> >  	struct drm_sched_entity entity;
-> >
-> > -	/**
-> > -	 * @remaining_time: Time remaining before the job timeout expires.
-> > -	 *
-> > -	 * The job timeout is suspended when the queue is not scheduled by the
-> > -	 * FW. Every time we suspend the timer, we need to save the remaining
-> > -	 * time so we can restore it later on.
-> > -	 */
-> > -	unsigned long remaining_time;
-> > +	/** @timeout: Queue timeout related fields. */
-> > +	struct {
-> > +		/** @timeout.work: Work executed when a queue timeout occurs. */
-> > +		struct delayed_work work; =20
->=20
-> Nit: Maybe for the sake of sticking to the convention of naming already
-> existing delayed_work structs in a way that reflects their goal, call
-> this one 'timeout_work'.
+Below the contents of the file "binary.file.desktop", steps are given for how to
+use this file.
 
-It's already under the timeout struct, and naming it timeout_work would
-be redundant IMHO (timeout.timeout_work vs timeout.work).
 
+-------------------
+binary.file.desktop
+-------------------
+
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Type=Application
+Exec=gedit %F
+MimeType=application/octet-stream
+Name=Open_Binary_Files_With_gedit
+StartupNotify=true
+
+
+
+The steps to use this file are given below:
+
+Step 1: Copy the lines given above (from "[Desktop Entry]" to
+        "StartupNotify=true") in a file and name it as "binary.file.desktop".
+        You can give any other name also to this file but keep the extension of
+        the file as ".desktop". The first line of this file should be
+        "[Desktop Entry]".
+
+Step 2: Now, copy/move this file to the directory "/usr/share/applications/" so
+        that all users can open binary files in "gedit". If you want to do this
+        only for yourself then you can copy/move this file to
+        "~/.local/share/applications/" (However, I haven't tested this).
+
+Step 3: Now, run the command "sudo update-desktop-database".
+
+Step 4: Now, right click any binary file (not an executable) and then click
+        "Open With..." menu entry. Now, a window will open and it will list the
+        applications which you can use to open the binary file. Now, select
+        (with single click) the entry in the list that says
+        "Open_Binary_Files_With_gedit" and then turn on the option
+        "Always use for this file type" (this option is shown at the bottom of
+        the window). Now, double-click the selected entry
+        ("Open_Binary_Files_With_gedit") and it is done. The current binary file
+        will open in "gedit". And from now on, you can simply double-click any
+        binary file and it will open in "gedit".
+
+----
 
