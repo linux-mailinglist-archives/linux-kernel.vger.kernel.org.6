@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-569543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D58A6A461
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2E7A6A467
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DABB716E573
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C7DB7A8404
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ED821CA04;
-	Thu, 20 Mar 2025 11:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF06216392;
+	Thu, 20 Mar 2025 11:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQ7imm+i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="Y/wumE1i"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F67A189F36;
-	Thu, 20 Mar 2025 11:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C337D1581F0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742468435; cv=none; b=uj2ztI0WvnyXsCHvvibXP0ydXfjF03fXh6SxUNw8iiJEzz8nufczoGvvUQMwZhGRXqBmUGSn+YAQ2c1GvrioMNbwOnjT3yHTvBu/4in/trqWQZMxStu0FXr/dFwOQQaD+UZ+vImsnohs6Sm/rUyPdMZWonKnxqoUYtULnOqCxc0=
+	t=1742468651; cv=none; b=LIUgCiv6EBxvOuEbmItqnsEka+pEKT4b0vZrob6xpJEO16tpJItzEts0FK/IuKjBt0tg6ftM9C7oaDVld1Y+xXwbKc42F8Jf1FW1Pi0Lu9K+gK/yZtpbRAe7T9ewJBH0RGQUNKVxw+JTJSoMyx+9UdRfhzxgvealZ7X3yM4Jit0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742468435; c=relaxed/simple;
-	bh=pytbhIXjEFHAnDiwulusN7h7v73l0xTTWwiGzlNUBd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmDo/sMVGYbGKEEwdZdhNnu3zJRfkjBW84U5dUCbUBG3qCH1ioVaNwPxSSNzP96dR88E5uLHKk/DzJfNWOtjzs7IoHNLIIHlrxlo9rVCpQ56pCJc3rIhfazbk/iIa9gCbRVeljvqh6+VYwRFpWgHPABODOtAHGDv+wu7DJLUZtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQ7imm+i; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742468434; x=1774004434;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pytbhIXjEFHAnDiwulusN7h7v73l0xTTWwiGzlNUBd8=;
-  b=eQ7imm+io70Ff92wMrpdKXnEWG4/ZllLcacoHd7l2lPIqFMiziOPeQMH
-   mg0BGG+CMj/cBkiSwwbwsVLJNgS6AzCnKPzIf5529iT/FCP+Zo3fmKWSJ
-   hig2z5tmR/e687N6BRqCuneWZZd9SVrTv81O+zgWDoOVrCl0dJc3GgWrW
-   ERbyF/ys/US6mxim9W+/FpfHLHEgr0Yhf7Zeba+gIFtFiBoec+lES5RZg
-   omGEbnSkSXH6PwSszOXBovHRd5a7pS+sz3NLoCmGrEBYzm6xuYQ7vlP8Q
-   WcxlKhOdiZrEBDdM8A3tJsECI/rRjUDDByDgSqG3v7ncwHC8JtLU7EeyJ
-   w==;
-X-CSE-ConnectionGUID: ftmqGHLyReKSL2J6HbZ2HQ==
-X-CSE-MsgGUID: HsoabV1PSAOdayVE9I9zpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="43880447"
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="43880447"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 04:00:33 -0700
-X-CSE-ConnectionGUID: LDhWGPEFQz+2B5q+bGisIw==
-X-CSE-MsgGUID: sXOUIabQTCmzAwDbh6otPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="123817586"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 04:00:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tvDdR-00000004CWA-3noH;
-	Thu, 20 Mar 2025 13:00:25 +0200
-Date: Thu, 20 Mar 2025 13:00:25 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 05/11] regmap: irq: Add support for chips without
- separate IRQ status
-Message-ID: <Z9v1Sd0nrUobA9Mc@smile.fi.intel.com>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-5-fb20baf97da0@bootlin.com>
- <Z9mh0ENc1kDFrJlQ@smile.fi.intel.com>
- <D8KYMWA0B1AD.3J83HQJAXF929@bootlin.com>
+	s=arc-20240116; t=1742468651; c=relaxed/simple;
+	bh=ucJYb/gc6ZLSiwQSHzfHTQR1htqpfXlcCBjssluhfnY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To:
+	 References:In-Reply-To; b=LJTOaa6Ou6RietDsKCCzvOFt6dzz36Eq+Gx+bzX2PtuebBMh7GZzmGvw5BYaguRtBv5Letl96IzneP7mQYqkLlCK4LxKqW1t2DQ2ADbFSi9fMbi6huQTCdtgNrO+4CEsSgWosrl1z6gNULLRy2yLEKul0rjEYGbi8lxFcx6AUsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=Y/wumE1i; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8KYMWA0B1AD.3J83HQJAXF929@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1742468646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GvO6U5e3ou7cohuaaLtiVKLu/0FNfSOPql7f4CQNZ20=;
+	b=Y/wumE1iWwGTzwcOYHCaxujevsLP2sVF0WD0JCoz2y6HfR5rRs0AGGm47M+kkVy047HPVX
+	WugwszOrVFVU9ySFiHnHRQz1EZsIz5gNxS63sDEH6qyenzgbEQj6WuCqqacEKHM26sRpSo
+	RmcAb8zo+DJtS3dtY0/S0h4g6jayJlpU7mt/fU1/vpj8EWA+M1UvFXy4oW91TwJtWH/bdi
+	s080GE/cSXSw2J9UENTHlmLfLtDKOYBLVF4acbnbuL/PGcHrSabeMDBK4V+rDhBIGIBqGW
+	VWcRzLT/7q7secuqVx0Whe2UUvZVQSmGK5rGspeTCAKiE7lX3EiWgChPDnhINA==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 20 Mar 2025 11:03:38 +0000
+Message-Id: <D8L1KOJC0NJD.3QJBLQ0Z1FI62@postmarketos.org>
+Subject: Re: [PATCH v5 2/2] arm64: dts: amlogic: add support for
+ xiaomi-aquaman/Mi TV Stick
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Ferass El Hafidi" <funderscore@postmarketos.org>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>, "Kevin Hilman"
+ <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <~postmarketos/upstreaming@lists.sr.ht>,
+ "Artur Weber" <aweber.kernel@gmail.com>, "Karl Chan"
+ <exxxxkc@getgoogleoff.me>, "Christian Hewitt" <christianshewitt@gmail.com>
+To: "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
+References: <20250319190150.31529-2-funderscore@postmarketos.org>
+ <20250319190150.31529-4-funderscore@postmarketos.org>
+ <CAFBinCArRO-F59tOv9m27f+DV+qhy69OGUunGOAbDdfOdd5_Xg@mail.gmail.com>
+In-Reply-To: <CAFBinCArRO-F59tOv9m27f+DV+qhy69OGUunGOAbDdfOdd5_Xg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 20, 2025 at 09:45:28AM +0100, Mathieu Dubois-Briand wrote:
-> On Tue Mar 18, 2025 at 5:39 PM CET, Andy Shevchenko wrote:
-> > On Tue, Mar 18, 2025 at 05:26:21PM +0100, Mathieu Dubois-Briand wrote:
+On Wed Mar 19, 2025 at 10:36 PM UTC, Martin Blumenstingl wrote:
+> Hello,
+>
+> thanks for your contribution and sorry for the late reply!
+>
+> On Wed, Mar 19, 2025 at 8:02=E2=80=AFPM Ferass El Hafidi
+> <funderscore@postmarketos.org> wrote:
+> [...]
+> > +       au2: analog-amplifier {
+> > +               compatible =3D "simple-audio-amplifier";
+> > +               sound-name-prefix =3D "AU2";
+> > +               VCC-supply =3D <&vcc_5v>;
+> > +               enable-gpios =3D <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
+> > +       };
+> I couldn't find any pictures online that show an analog audio output
+> (typically a 3.5mm socket).
+> Can you confirm that this is really present?
+>
+> [...]
+> > +       sound {
+> > +               compatible =3D "amlogic,gx-sound-card";
+> > +               model =3D "XIAOMI-AQUAMAN";
+> > +               audio-aux-devs =3D <&au2>;
+> > +               audio-widgets =3D "Line", "Lineout";
+> > +               audio-routing =3D "AU2 INL", "ACODEC LOLN",
+> > +                               "AU2 INR", "ACODEC LORN",
+> > +                               "Lineout", "AU2 OUTL",
+> > +                               "Lineout", "AU2 OUTR";
+> If there's no analog audio in/out then this section can be cleaned up
+> as well - together with the references to acodec in the dai-links
+> below.
 
-...
+Oops, completely overlooked those.  Will fix in v6.  There indeed is no=20
+analog audio output.
 
-> > >  			default:
-> > >  				BUG();
-> > > -				goto exit;
-> > > +				return ret;
-> >
-> > Hmm... BUG() implies unreachable, perhaps just a precursor patch to drop this
-> > goto completely?
-> 
-> Ok, I will add a separate patch to remove the goto.
+>
+> [...]
+> > +/* Wireless SDIO Module (Amlogic W155S1 / Realtek RTL8821CS) */
+> > +&sd_emmc_b {
+> question to Neil: since we know that there's two board variants out
+> there (with different wifi chipsets) - are dt overlays down the road
+> enough (to enable Bluetooth / wifi - depending on the chipset or board
+> revision) or do we need to split the whole .dts?
+>
 
-I just browsed the code for the similar and there are handful that do this.
-At least one commit (from 2011) refers to GCC 4.3.3 that complains, but our
-minimum requirement AFAIR is 5.1 nowadays. In any case it's up to you. I am
-totally fine if you leave this as is.
+So far W155S1 and RTL8821CS are the *known* chipsets used, but there may=20
+be others.  Right now it's not my main concern, as W155S1 is not
+supported in Mainline, as far as I know, and I can't test RTL8821CS
+because my variant seems to have the former.
 
--- 
-With Best Regards,
-Andy Shevchenko
+>
+> Best regards,
+> Martin
 
-
+Regards.
 
