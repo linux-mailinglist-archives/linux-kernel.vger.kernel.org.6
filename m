@@ -1,208 +1,139 @@
-Return-Path: <linux-kernel+bounces-569344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2113A6A1AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:45:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1A1A6A1AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42C3F188EA49
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 546CA3BC496
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29DA2163BD;
-	Thu, 20 Mar 2025 08:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EF521ADA0;
+	Thu, 20 Mar 2025 08:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JmyWlDin"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L/6eYEZ2"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC004209F4E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281E9130A73;
+	Thu, 20 Mar 2025 08:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742460301; cv=none; b=bcO0w8kkggdz+KYhJYjOP0MRxTmmphfiBreGTtoHk3WBzYo6/zLqy7TK8YuBXEysq3CSjwpXjw1yff9ItF/GZ+IdoXkMGvkrcTXoyxt6mlo8iVZDYDP7SHlDCkJ82oGNqY/5NWN4gfW1JQA+YtsBRJkdVUyJMn5mLjjcR5p7aQk=
+	t=1742460335; cv=none; b=ZzMTlwqiKvri3q6XGHfOoypJkYLHhEMshCucb9mCd239z9D48XlLMgxqD05NlcQL687Iid7HjaRBQhcrC2K+9Bxh4XSEdRzs9L67/9xcxHCb0P0CE2kWF5TjXApZ0Z/FgU+5BRKwtVqMMxhsrzIehDURy3ynnxD9zQe8qOBuqBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742460301; c=relaxed/simple;
-	bh=PUAkcOa6Bl0G2QNTNtI62sTIpXifvuTK+UqRlpvFa3E=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=DF26Rr0iMzOIaDzBdYaZi8hS9ww8fKf0DFNSLpJtAtA9zemagf4Q51chPGryMBCZgkc98cVavaj72S6aMBB97fNlkwtil9Jpk6D2sI/roBIHQ04+qm6uevZUo5KjLFj9a4HfVy98JXMbAkR1GwRNS4p50T8iJNkjwc8+4PPPHyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JmyWlDin; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2243803b776so11444635ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742460298; x=1743065098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ge+2Zy4b/aVKYNPvh9+f0g34JnK38AaqDpbfA611Vw=;
-        b=JmyWlDinY9MZNABP1Y4QqLaUgaFWEVf14C210YtFaQLuHExOJyUtJhDzZm+Xix8NZ7
-         J/whYnTUVinK72VnwRQwWs5dDzKZYCN6OHhKKAoyWIMF3VdlW6m/o4lT2hVceINwej9/
-         kyWjy0ktMf8z5Rj57Fnmaw/xpKB8g67TozbxDnNpkhRgKtMbLBOdcSK6kVdJNcmjHXwg
-         uWYdTtfz4WDRPlYtHoofU3A7xQu/8+axEiVFrySKzpeqsGI1cBmiu51JHJabZBY1YToN
-         ZsaL4cByQUkkVSwNt1MvZ0E5WREmfK7mhfqxT1VTBQEmt2f6KIj7F2BiFCxzr4XUF7tf
-         C93g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742460298; x=1743065098;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ge+2Zy4b/aVKYNPvh9+f0g34JnK38AaqDpbfA611Vw=;
-        b=LRmYyJxcUSdH7U5orvDfkmDfUM35GBOhLC7HkuDu8jiv4VX7t+jKgEFSMthtGje24k
-         QCz1+V8qnd6jW8ezaMWGWvRYYOQpEu77FOAV5YJz4O9y8mY8GiViNyKns1mSD8YuvhiZ
-         36NNJtwYfy8mIaDXJr/AUn2N/CJ9ZsLwzjfWSmfHQNjS22/1fjiwHURCTzo4O/s24s9S
-         Zp+tMWTapZBDlJftlyUEwlp8D29ygKtvliTQge5I20AL5iYB4myZvGBW16KXJIxR/wfa
-         zp1bq6q66Zd7gdLkzMZTuVbZ/c0GOXj68pWFqSoPKHvP+LzqzhOkZX8WgpUDGqawsupD
-         ksBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnbdbjhG9NvvBYPD3WUNzfg5PT/kEyQQXtFI2d2SjeY+H8/ha225jfmwpj0Fxg4DrzVqyEtbtXizI6nMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4WjwDH0F9kuJhNL1fMeovpfKZsO3D2qkhnXrG9FIyu51xRBMV
-	tUB87H8pINbMAkY0IrfbgYqd34FIW/aih/meKQ2ms3D930+Z6iixhGMantTIspE=
-X-Gm-Gg: ASbGncsHJHL1lxdU13z7ckdBcHjqatcNt1A1RNa7W4LpvcgTzWkPaFb0j1/vNejHmel
-	k6hk6YzqgoZcu1+nIr+nV5EWnmRfQx/BS8t0SrMzn7SB4RAdm9hsnSnnjD92Zne7/HP+dUQdeXN
-	b/digBt9fBxtfDzbwqnQQnZYJsAfGoHkXpU/FDfC0ad3IYvE4CaPZfBHCahD+SBDWDGtZI3XS2K
-	wXC2WP4n0vAR1XEK6LGT2/TyNSqv4/cnkdoL2RbhWd3IIlkd5eibj6q/Fj2PWXAgvnrbtZ+GZ1R
-	NFqScbuGoHaOf93dWMdMd+HXxc0slPjpKzp3xZiYyn4tTzzOAEx1VFYeXltRGbE9UQYi65TfJcB
-	SzjU=
-X-Google-Smtp-Source: AGHT+IGpZnMUz3aNkSz4lCZ4lxTHMzea8UwmPxzl9b/dm1grVRgitblsPBXeHqLKUTHra0EyfaksNA==
-X-Received: by 2002:a17:903:2281:b0:223:635d:3e38 with SMTP id d9443c01a7336-2264993225bmr75908705ad.15.1742460297818;
-        Thu, 20 Mar 2025 01:44:57 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.248])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4af3sm129719715ad.236.2025.03.20.01.44.50
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 20 Mar 2025 01:44:57 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	anshuman.khandual@arm.com,
-	akpm@linux-foundation.org,
-	mingo@kernel.org,
-	cuiyunhui@bytedance.com,
-	catalin.marinas@arm.com,
-	ryan.roberts@arm.com,
-	kirill.shutemov@linux.intel.com,
-	namcao@linutronix.de,
-	bjorn@rivosinc.com,
-	arnd@arndb.de,
-	stuart.menefy@codasip.com,
-	luxu.kernel@bytedance.com,
-	vincenzo.frascino@arm.com,
-	samuel.holland@sifive.com,
-	christophe.leroy@csgroup.eu,
-	dawei.li@shingroup.cn,
-	rppt@kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: introduce the ioremap_prot() function
-Date: Thu, 20 Mar 2025 16:44:28 +0800
-Message-Id: <20250320084428.51151-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1742460335; c=relaxed/simple;
+	bh=uRy9sQef2mfIzmTtKIHoT2rO8SzOJ8M3K5MCAVMCx9U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
+	 References:In-Reply-To; b=oz9snywhOk9EqdW9ke0bJMILuKKacztMDUuvfxsHpgFtRO+pmlGdTQeTPBNovNM+1XwbKGwiHpt9Xvv+SU+YYWFn9JVV0/z+UGT25GApMmPJK1cAE9mGkWZ7XDcgYLXUrq2bxPd3GrHNRRzOOH08qmE9Cg6hKXXxd598OscRIuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L/6eYEZ2; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3ED652057A;
+	Thu, 20 Mar 2025 08:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742460330;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3/MOKCaazGQ+7IgrYNdLGkngEevazyJ/NSGVFcYF2io=;
+	b=L/6eYEZ2aYVxXq4zrN7XHtnzbAllroxK4oze2qe3b1OOdHCIHcQx+yGnY+ZUx6lBEM2TOH
+	VY75xAIJfhiOp9aNUgi9p5t0v/zZvQkFtLu66leRIsxq3FN9GnYIsuPrRuGDq6nEk2qcdo
+	SmWQBA6wloJupAELJAWdCigv8+UrApjzP3Cqjr/Oj7RqO+iOIP83JINZodO6m0SHgBTmw2
+	ltnu5DBQxX1c9KML7m4taTloVkL8/Q8CCZazm5/fUrpJVMLLvJMVkxzj/4bf9k/zEuxBHM
+	cgo3F5SGccuPchuTsIap5tgZFzhQTEKEcWmu9s5uJT5dmAT5ItN069P11Z/Uxw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 20 Mar 2025 09:45:28 +0100
+Message-Id: <D8KYMWA0B1AD.3J83HQJAXF929@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v5 05/11] regmap: irq: Add support for chips without
+ separate IRQ status
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-5-fb20baf97da0@bootlin.com>
+ <Z9mh0ENc1kDFrJlQ@smile.fi.intel.com>
+In-Reply-To: <Z9mh0ENc1kDFrJlQ@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejjeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvffuvefhofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeethfeiheehheegheekueeigfekffdvheegfeeivefgkeeftdehhfdthfehueejfeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegrieeimeefudektdemtgdtsggvmegslegrkeemvgehledvmeeirgeffhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemrgeiieemfedukedtmegttdgsvgemsgelrgekmegvheelvdemiegrfehfpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvr
+ hhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-It's advisable to avoid mapping memory with the non-cache attribute.
-This is because issues may arise when the same physical address is
-mapped as both cacheable and non-cacheable simultaneously, such as
-in the case of hardware prefetching.
+On Tue Mar 18, 2025 at 5:39 PM CET, Andy Shevchenko wrote:
+> On Tue, Mar 18, 2025 at 05:26:21PM +0100, Mathieu Dubois-Briand wrote:
+> > Some GPIO chips allow to rise an IRQ on GPIO level changes but do not
+> > provide an IRQ status for each separate line: only the current gpio
+> > level can be retrieved.
+> >=20
+> > Add support for these chips, emulating IRQ status by comparing GPIO
+> > levels with the levels during the previous interrupt.
+>
+>
+> Some nit-picks below, but either way
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> ...
+>
+> >  			default:
+> >  				BUG();
+> > -				goto exit;
+> > +				return ret;
+>
+> Hmm... BUG() implies unreachable, perhaps just a precursor patch to drop =
+this
+> goto completely?
+>
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/riscv/include/asm/io.h   |  2 ++
- arch/riscv/include/asm/page.h |  2 ++
- arch/riscv/mm/Makefile        |  1 +
- arch/riscv/mm/init.c          | 12 ++++++++++++
- arch/riscv/mm/ioremap.c       | 15 +++++++++++++++
- 5 files changed, 32 insertions(+)
- create mode 100644 arch/riscv/mm/ioremap.c
+Ok, I will add a separate patch to remove the goto.
 
-diff --git a/arch/riscv/include/asm/io.h b/arch/riscv/include/asm/io.h
-index a0e51840b9db..736c5557bd06 100644
---- a/arch/riscv/include/asm/io.h
-+++ b/arch/riscv/include/asm/io.h
-@@ -133,6 +133,8 @@ __io_writes_outs(outs, u64, q, __io_pbr(), __io_paw())
- #define outsq(addr, buffer, count) __outsq(PCI_IOBASE + (addr), buffer, count)
- #endif
- 
-+#define ioremap_prot ioremap_prot
-+
- #include <asm-generic/io.h>
- 
- #ifdef CONFIG_MMU
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 125f5ecd9565..181d2d3a0922 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -202,6 +202,8 @@ static __always_inline void *pfn_to_kaddr(unsigned long pfn)
- 	return __va(pfn << PAGE_SHIFT);
- }
- 
-+int pfn_is_map_memory(unsigned long pfn);
-+
- #endif /* __ASSEMBLY__ */
- 
- #define virt_addr_valid(vaddr)	({						\
-diff --git a/arch/riscv/mm/Makefile b/arch/riscv/mm/Makefile
-index b916a68d324a..58a75f7d66e9 100644
---- a/arch/riscv/mm/Makefile
-+++ b/arch/riscv/mm/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_MMU) += extable.o fault.o pageattr.o pgtable.o tlbflush.o
- obj-y += cacheflush.o
- obj-y += context.o
- obj-y += pmem.o
-+obj-y += ioremap.o
- 
- obj-$(CONFIG_HUGETLB_PAGE) += hugetlbpage.o
- obj-$(CONFIG_PTDUMP) += ptdump.o
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 3ec9bfaa088a..74ad96e973a4 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -92,6 +92,18 @@ static void __init zone_sizes_init(void)
- 	free_area_init(max_zone_pfns);
- }
- 
-+int pfn_is_map_memory(unsigned long pfn)
-+{
-+	phys_addr_t addr = PFN_PHYS(pfn);
-+
-+	/* avoid false positives for bogus PFNs, see comment in pfn_valid() */
-+	if (PHYS_PFN(addr) != pfn)
-+		return 0;
-+
-+	return memblock_is_map_memory(addr);
-+}
-+EXPORT_SYMBOL(pfn_is_map_memory);
-+
- #if defined(CONFIG_MMU) && defined(CONFIG_DEBUG_VM)
- 
- #define LOG2_SZ_1K  ilog2(SZ_1K)
-diff --git a/arch/riscv/mm/ioremap.c b/arch/riscv/mm/ioremap.c
-new file mode 100644
-index 000000000000..037f87dfe88d
---- /dev/null
-+++ b/arch/riscv/mm/ioremap.c
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/mm.h>
-+#include <linux/io.h>
-+
-+void __iomem *ioremap_prot(phys_addr_t phys_addr, size_t size,
-+			   pgprot_t pgprot)
-+{
-+	/* Don't allow RAM to be mapped. */
-+	if (WARN_ON(pfn_is_map_memory(__phys_to_pfn(phys_addr))))
-+		return NULL;
-+
-+	return generic_ioremap_prot(phys_addr, size, pgprot);
-+}
-+EXPORT_SYMBOL(ioremap_prot);
--- 
-2.39.2
+> ...
+>
+> > +	/* Store current levels */
+> > +	if (chip->status_is_level) {
+> > +		ret =3D read_irq_data(d);
+> > +		if (ret < 0)
+> > +			goto err_alloc;
+> > +
+> > +		memcpy(d->prev_status_buf, d->status_buf,
+> > +		       d->chip->num_regs * sizeof(d->prev_status_buf[0]));
+>
+> Perhaps array_size()?
+>
+
+OK
+
+> > +	}
+
+Thanks for your review, and thanks for the tag.
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
