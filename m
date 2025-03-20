@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-570468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1DFA6B0B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:24:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3411A6B0B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071401891CCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3919821C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918C8229B23;
-	Thu, 20 Mar 2025 22:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7951722A1EF;
+	Thu, 20 Mar 2025 22:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XIIKRNEU"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYhcrtN2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39B41F4CAC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CEB1B422A;
+	Thu, 20 Mar 2025 22:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742509486; cv=none; b=qC+z6SiYPSd0TtKz1ZU5urpVNk0B8b43jV3l8ijWUcOscDsdTaSX5y6085Htdpksjtge45svIGFpf8HhykVPhdYE+69M1XenK6yVsR1HV+NOhNbPiAeTUpMR5TvPZ6Zp2Qytxtba+mPlukk4507DRdHITBnfuu6uT6QoGh/ec8c=
+	t=1742509709; cv=none; b=F1q+Ka3UC7nUL+q+PgfbZ/iy9Bp4N5N3nxWsyqhJl5+xVYeqXtkVD8dV9Skvb5KUn3L+2aGClGDemDfMCvXB22gjHAfFoQDu8X4PUcykwBesdU1bbm/kRsBpFnwGcW/LIU4mQbLlIaIoj3ijxJPzNCU8FLM01n6MIR/XteTgBwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742509486; c=relaxed/simple;
-	bh=EBdmawavNviZH8o3V/8jqcpc3z8WzfTUJCXeSVJiEPE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PW6p35yRPUjpMUacHFMOWYTJJ//tToh45QruUolCzpjTA7rNT/62C5zpnSrYoYw0RRO6kJo7grllfAfwwpKskifwyyAB/uYzCH3vXu+7j019BLpmLLDubbIfo7lYJqc819i0WRX3Ih8R8jY7I83UMZEAaNlCKFBzY0S12HhARhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XIIKRNEU; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff69646218so3073306a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742509484; x=1743114284; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TTgK7Ngx2/T507+YgbCUhV8aPPXABYoFmzp+GmQKcz8=;
-        b=XIIKRNEU/oNg4IQBqKQaUKfwWf5rITOVCQPZ61lEIG1krPuChMjE8zv1PrCtPp7S3a
-         3nQioT9uqO1lr+PDnQqPcx3SNG27iQZ8ZqNDVBhh9dzN6uLAcvvdCtpIs+ybLX5SXe4x
-         8t0XlnNXsnk75wzW2OC0Jhl5Ma/5mHIrfXCE1ZC34M2l0Cj3PPJmW3QLSSXr54b2T5pS
-         /28bt+w3/msXqqjAeqp/coPzbJVmTAyfLMGGrNAkjzhDJkYMr28AigsodD7V5a1jQFf1
-         XYwQLG9Ql3H5eaaf6TcPfHEYEMKeelAuA8iN/JG3bG0GiyiOyJA8QrH+wDL6VfYGtjc+
-         4epQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742509484; x=1743114284;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TTgK7Ngx2/T507+YgbCUhV8aPPXABYoFmzp+GmQKcz8=;
-        b=AgJkHhMtZY7L6iqcZBUkCFgKc9csdOY+Xz1zB/QzMljKx3aiQXP0TzdBTtMwLWItx9
-         eTsXqv9EaccE70W3dy7MNn8mkz/allY1YdkjzEqUxC0qEuAxEs+kb5GGpLjGbMOR59/6
-         6gX1OPQrCh3cws3E9xVzG0GY+ZFhHU81rLx3Mf9yPmfliSiBMMHYd6C+0tsClIaHsn7/
-         Tl2L39zowh526C7G2cYXNucDdloyrDj7mx4AYscw3+CO+cVbIJkxxUrHSA9tr5xZQg4V
-         m+12cyEhkdkSAy5cUFCZSNrOIUPMC0mmpYTet+hd11rYoDnlcwt0UWUCAHUlItdpt19l
-         12HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOf6T/reNiGMgtT+UJvv4pjKGCUU/CcmpAnWGSFoPEd1+NG47XH6xz9RbHhWMm7Sow9EVLLvzrEpkHsms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycRI4fjZYmgYoEio/MtTMkfbaOdoUjVBQly9Yj82/a83h8qetG
-	C5tIlSoPIS+hdBDg+ZSHx2ajbBcvHpa/gFdjtk9/wrMqF3JpqZat8pr18pFru3nqyC0679J5NNS
-	2C41+AA==
-X-Google-Smtp-Source: AGHT+IE2Jm4eS4T9Ui9y1qLLey9xGKitHGZaGhB/U0tacIUCSXohkHLUjaUgny8wWNfuAFeHFkAz7vMEVaA/
-X-Received: from pjk16.prod.google.com ([2002:a17:90b:5590:b0:2ea:29de:af10])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f81:b0:2ee:b8ac:73b0
- with SMTP id 98e67ed59e1d1-3030fe6df0amr1565280a91.2.1742509483864; Thu, 20
- Mar 2025 15:24:43 -0700 (PDT)
-Date: Thu, 20 Mar 2025 15:24:39 -0700
+	s=arc-20240116; t=1742509709; c=relaxed/simple;
+	bh=/eDF6C2JflWG+9e9o4PLQ+zXIJKnOxeTv4ZNaiuzPc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QOwDqzhYfMAdapAxD4cGcLQhYJMKFR9m2SRcv7BEyu3TmGd9pXatD/5o+dmvksk/x11JVY1+pPjq7NUev4wAbWzDM0f8lL2FbCTrooi11uZDTrjmU7oX5FR8W8Mxy/rV04gqsGG12MAWYX6dOm8ABVmbM1OSngQCAA7DPNu7FrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYhcrtN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F257AC4CEDD;
+	Thu, 20 Mar 2025 22:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742509709;
+	bh=/eDF6C2JflWG+9e9o4PLQ+zXIJKnOxeTv4ZNaiuzPc0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WYhcrtN2N0wRNwHd6ATYSuo0sFbvF/YKHSOAbppAWtbKpmpAnSeo2RYbgmJcfOBEG
+	 eqThoGFvlnjvvD0k8Iiu2ZDCbC20+/seNa3QIOykMofN5liwtODQ/BLjhAjOcFp6EV
+	 R//JVxNLAi5YCCnBve4Cu6DtjTbk7Xu6lTcIKhjTbIej9BkbcFmqeZElaWPaATbm2u
+	 8KK8qw5+XGOwNaSy9KSvl6eTdnVBPlOepDxvoRSIC4YILT6hodxvLNIIN5Awa3mruO
+	 gXRn61ASGLzNeFwMF7Fi1yV+WXSg/BL8jYOdJB7jhGSQjYcAP7DbRjwkZyMkT/CWUH
+	 56DMNYb4btB/g==
+From: Danilo Krummrich <dakr@kernel.org>
+To: bhelgaas@google.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2 0/4] Implement TryFrom<&Device> for bus specific devices
+Date: Thu, 20 Mar 2025 23:27:42 +0100
+Message-ID: <20250320222823.16509-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250320222439.1350187-1-irogers@google.com>
-Subject: [PATCH v2] libbpf: Add namespace for errstr making it libbpf_errstr
-From: Ian Rogers <irogers@google.com>
-To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykyta Yatsenko <yatsenko@meta.com>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-When statically linking symbols can be replaced with those from other
-statically linked libraries depending on the link order and the hoped
-for "multiple definition" error may not appear. To avoid conflicts it
-is good practice to namespace symbols, this change renames errstr to
-libbpf_errstr. To avoid churn a #define is used to turn use of
-errstr(err) to libbpf_errstr(err).
+This series provides a mechanism to safely convert a struct device into its
+corresponding bus specific device instance, if any.
 
-Fixes: 1633a83bf993 ("libbpf: Introduce errstr() for stringifying errno")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
-v2: Use #define to avoid churn renaming errstr as suggested by Andrii
-    Nakryiko <andrii@kernel.org>.
+In C a generic struct device is typically converted to a specific bus device
+with container_of(). This requires the caller to know whether the generic struct
+device is indeed embedded within the expected bus specific device type.
 
-v1: I feel like this patch shouldn't be strictly necessary, it turned
-    out for a use-case it was and people who know better than me say
-    the linker is working as intended. The conflicting errstr was
-    from: https://sourceforge.net/projects/linuxquota/ The fixes tag
-    may not be strictly necessary.
----
- tools/lib/bpf/str_error.c | 2 +-
- tools/lib/bpf/str_error.h | 7 +++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+In Rust we can do the same thing by implementing the TryFrom trait, e.g.
 
-diff --git a/tools/lib/bpf/str_error.c b/tools/lib/bpf/str_error.c
-index 8743049e32b7..9a541762f54c 100644
---- a/tools/lib/bpf/str_error.c
-+++ b/tools/lib/bpf/str_error.c
-@@ -36,7 +36,7 @@ char *libbpf_strerror_r(int err, char *dst, int len)
- 	return dst;
- }
- 
--const char *errstr(int err)
-+const char *libbpf_errstr(int err)
- {
- 	static __thread char buf[12];
- 
-diff --git a/tools/lib/bpf/str_error.h b/tools/lib/bpf/str_error.h
-index 66ffebde0684..53e7fbffc13e 100644
---- a/tools/lib/bpf/str_error.h
-+++ b/tools/lib/bpf/str_error.h
-@@ -7,10 +7,13 @@
- char *libbpf_strerror_r(int err, char *dst, int len);
- 
- /**
-- * @brief **errstr()** returns string corresponding to numeric errno
-+ * @brief **libbpf_errstr()** returns string corresponding to numeric errno
-  * @param err negative numeric errno
-  * @return pointer to string representation of the errno, that is invalidated
-  * upon the next call.
-  */
--const char *errstr(int err);
-+const char *libbpf_errstr(int err);
-+
-+#define errstr(err) libbpf_errstr(err)
-+
- #endif /* __LIBBPF_STR_ERROR_H */
+        impl TryFrom<&Device> for pci::Device
+
+This is a safe operation, since we can check whether dev->bus equals the the
+expected struct bus_type.
+
+Additionally, provide an accessor for a device' parent.
+
+A branch containing the patches can be found in [1].
+
+This is needed for the auxiliary bus abstractions and connecting nova-core with
+nova-drm. [2]
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+[2] https://gitlab.freedesktop.org/drm/nova/-/tree/staging/nova-drm
+
+Changes in v2:
+  - s/unsafe { *self.as_raw() }.parent/unsafe { (*self.as_raw()).parent }/
+  - expand safety comment on Device::bus_type_raw()
+
+Danilo Krummrich (4):
+  rust: device: implement Device::parent()
+  rust: device: implement bus_type_raw()
+  rust: pci: impl TryFrom<&Device> for &pci::Device
+  rust: platform: impl TryFrom<&Device> for &platform::Device
+
+ rust/kernel/device.rs   | 24 ++++++++++++++++++++++++
+ rust/kernel/pci.rs      | 21 +++++++++++++++++++--
+ rust/kernel/platform.rs | 22 ++++++++++++++++++++--
+ 3 files changed, 63 insertions(+), 4 deletions(-)
+
+
+base-commit: 51d0de7596a458096756c895cfed6bc4a7ecac10
 -- 
-2.49.0.395.g12beb8f557-goog
+2.48.1
 
 
