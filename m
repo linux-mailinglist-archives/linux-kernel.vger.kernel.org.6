@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-569352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00337A6A1C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:49:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C2BA6A1CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:49:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D936466EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE6A467233
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F57721ADCC;
-	Thu, 20 Mar 2025 08:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679B0220696;
+	Thu, 20 Mar 2025 08:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iKdIO1XF"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Xn9Ht6ra"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8C8205E1C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D334D2066C8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742460558; cv=none; b=m/5Zdj6JqAezc0/sZZDnXt+70SR5qg7T+VY3SMlIYn2dmILKuGYAIpqsIA2Dj2t4gS8BghyjOc98d3zmmu17DaZVT7Fj47F9r4wxNRQbsFXraSmoulYTEzrxIzR7NnW+HJNSnm13joPASPMpd+yO4/FzPO4+bO2dgtaP4VZYkK0=
+	t=1742460558; cv=none; b=aJ15YtJBv592Eix7hKjVAY1txcnI7KoINZ9aqB0SE9FtCp76ywSzLJPitlmX5pyJ8hrny7bxh8jS8xrMBu6mt1hX0ei9Mk6n7a6M9Nw7PT25+Bc8tI456Gf/G9tA0JGII2qdpepuJfg0+5DGiyNQKqXyGp/knJOTBtiQmFaHODY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742460558; c=relaxed/simple;
-	bh=ZusPf2YtjBEtNve2Icxs25V5Tl/ibrpsGhWI+A0KSgU=;
+	bh=gHl0LdUTqSzXFqfH/bwqt0Qp3EzE+6UWudOR8k0D9wo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nNV124P5cTuru/AivjTa/4Jb8iKPCf7G1Fqernzh5W/8fLyNIz+XhegkxqKE+MJNhR3bjiukqUkF4B93d0ZNgmuVsZWEidfBiMM1ukR4YCV7h20ZRzAlNA52okumJY0XfNvkJnikjprntRSS15HhjZAu+2gjdSa8nUIGejQ6/1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iKdIO1XF; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:To:Cc; b=kcnVk9Fqtu22SpUwA4af1udOCm1w4rB7pUpekaW/qSqO07KJfr0X63lvyEw5uV59hFgVJ6mM6Pu6TenlJpO1mF4ZAUoILyN8cEyZySDYbJrighcEWGlfSQhiJJQs9rRGR1DjtGU+609yDCoWJb5V8Et2wcJrYQ96dADGCpw/n1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Xn9Ht6ra; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so5349545e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:49:15 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso2961425e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742460554; x=1743065354; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742460555; x=1743065355; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gQeXTV1LA9vLFyUSPTOWos3fw/hNZwIQ/slXSCfXZO8=;
-        b=iKdIO1XFjRvxltGSjtjx9gEGbEoFRRabreLH6m57b3po8Ck6K+oi0IRZwyeg/vc52A
-         eYHnmExA7fY80RuIbOfZBw8WPkV3kEK6lVwLYGSMjfO709GOtLQ5yvZtJIrb5QXqfhKk
-         ga6eWDJCaiUQe6BJlR0kNMHRg6MPDYNfWPzOZz6hPxxSJS0jxB23/cKri77+GqUrOV+N
-         rycbVGjeyQLxnwxZDekccndrL5KRPVX4dJJqT2x4iXrQtpU0taO3E+o21yesQU7+6Yt0
-         XDbTzTz0RJE278r/ohJ4M/mLMBa0r09GUGMCqR+G9yT+r5ubTrlakJSeOpsdeNL3jD5U
-         asfA==
+        bh=YJV9USVZmsP9ZdAAuuoldoMM46JkHDHsnIzVnX7GtUI=;
+        b=Xn9Ht6ra+BtScPoyBSPbPiUyir+F6kd+sL/DRYI6PPFm1B7WHVxKROM9gOQ+jPtfW7
+         CtNr4Z8Gn+SEwvPasnyvCDEbU01jvldB9Qk5v9FCG+It7JDurlUJFzlAsAwNIbSD/tju
+         JZq4uSVRACsdFu4OQylxBharPTfiO9DTXH0j1/ex+4cGqIoL273hV7rXsdyIp4eyKmUB
+         zzNekqlhc9GH0qf3o7gVY1Alp8hKuceBI2dEkJE4dhlo+VIw/DJjFc1S0Rrix0y56jof
+         B+Nd+kCbqXR653mk6m9STLjAcBsrkbdMpP/5kkc7L0xvu/FuTN/aMFr/JLHVN3iqGEHV
+         GbYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742460554; x=1743065354;
+        d=1e100.net; s=20230601; t=1742460555; x=1743065355;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gQeXTV1LA9vLFyUSPTOWos3fw/hNZwIQ/slXSCfXZO8=;
-        b=OepSbrvcYE7ikHoZ48Pr6A0cIRm8Re4VNET4WuOKCSFGINNsoHM/Ly0Bf2hwJEwyHI
-         bGCs68+v6KBF23xwQQZnmj+pkTtzWulRSfh9sbxE9Z/wkP4OB/Vyb9RzScqqItMtN5vB
-         eyJ5MxwG4f0d/XLZgE3mZ24d7ErhmgNydLXc1IwaoDPCzTMOMPCJMz995YyS9Uowpt1R
-         x6GfFwSu8qHuLSva3IG228DPFkQe+ALNnFoReVgCWboUx2mMdmOaU0Opv/KNP1h85sYB
-         /fRnAkEg/hEGGWW/RiFXCfPZcRp/btn7DnZrG0MXOuM6UBdXxahqtf8m4nHJt2olyrc1
-         VBIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHY8t0XFGUAwwQJKpnAfcqhpAoejx04OWd3FyZ9Z3/RT29gvvfyEUNdNRstw8/2QJOm4GBRFouvDarcdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkoV6YMhFAJ3B6w5CaD7YqIcuFL4Qb8vNqS1EK72CC8EXfaKN5
-	eW3LfkBhlRKSPc/Hi4Qp8QsrVx6vnJLQ4Y5A5nkVTbLJtLvhTXCuw0Ri3EsJPH0=
-X-Gm-Gg: ASbGncuDiKLW4WCOeV78jNRsKBVplx+aL/Uh8v/E6wwCEIHg0u9uYbvG5ZvfOoQdwaJ
-	Kvr3VEiX5Y3KFUAIeNjfULtnVdyfKqhzPyy/5/vrM/V9Fod0HDo2tkzyuv9yGUSmoXin9I29VE6
-	t8fLraxVPZFo+NzA8tn3MZEEz6aMtqZa2wxZ0ewZGu24EOHZV1WiXz34PcskXmgPpAuDohBOdim
-	KlC78qkdsGVidWkbAIZq7+JcHcv2c5VkhPw+3nxHWTOkRlvV+0hUE4/PlRYZTHS/5Eflo0qjUO5
-	iT+BbTJBvxO8J8e14rKk+UTxGaWE32b6cfZcoGe2KdWnL1xh
-X-Google-Smtp-Source: AGHT+IH58YmM+Ar3OIBnrYDz72JB09Ne3XzaCC0yavAlSFgbWvLySke1g9L5Z6waa+wCIlyWCNTAWg==
-X-Received: by 2002:a05:600c:5248:b0:43d:aed:f7d0 with SMTP id 5b1f17b1804b1-43d495aba92mr15463345e9.28.1742460554194;
-        Thu, 20 Mar 2025 01:49:14 -0700 (PDT)
+        bh=YJV9USVZmsP9ZdAAuuoldoMM46JkHDHsnIzVnX7GtUI=;
+        b=km/gBt+cLe4Hho1/+MzBhcTjNiGy2AaZVMSwGt5eIB268x2xBGM+0z3HqSKk9LPuyZ
+         1hxjDb3Pn5H+36hFXj1/M96cjOqoXvyvG7EsT5Bw8gk9pADrPS1n1FQWSiuGQf0mpfB7
+         7ejCNUc9IKRUDHctse0aYTAVLnCi9Pbq5VlETPjNGcKbNTwu8FqurhRXWOcws1ynk4pj
+         B6XrI4okhnADLsRCxOjA8/dxMhrR+oIWJmFT1toBos7sA32CUi3DFy8fdwX4cM0L7QTq
+         LIZ2Hv1AZbsgrBowReSw9p+ftLE9nQl4CGCVeGTcIHugU9J46H0t6yBfjHOiU/BZPOk7
+         pmHA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5LWFep70VPvlQCQIiQtnz9UsWReby4A3+UFUIEEGZ07+pDRkM11UTdDIrwcVIu8sHiZRzxRDnQ0jU+Ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoQS5jHkJAil7AIi1hZ5Igs95aIlbJBAE5uxGP1Re5Yw+0mLzQ
+	ugq0buAHfrBUocbLbyaaoiRU7y83olqR7CPBeIqHT0p9vaXgVI8N2o5zBSHu4R4=
+X-Gm-Gg: ASbGncs+ko6SqWxkcStY/tCw+OUytJzRwuw0mFKWaRR+nt64ZImvQuyZYJ8B/U+MI/K
+	LJRXXsFPoJ/psYwcmj032rLHhZ4dZFxsymjWHdboAlLAwbH68afuYOQxwa8hZMN0CluZeirtjMP
+	juPnKqmm//0juA1GRkGUR+GVceaw7FfhCyLt+AX+pRMADyjr2f9jHn1A6THt8jjeFwxs+Txmgdr
+	jzUMCzAduEmj7qGFJEiUnyXknr0GvqHiTqXK6EvkTDB3rH+juZANVNAb4zeWxhMGO1AwQ3xic8w
+	QnGJP4DKhKvSbCjHKp0quk3Z8ruemPcrATfdUMildwZh/6SzYWpDZvVpU6I=
+X-Google-Smtp-Source: AGHT+IGvyzObe3HUgUPIOkcUmHLI+6xANcIGJKxeOg9jouXNulvNZlxlIH6nFdT6PpdEkn3OcgskSQ==
+X-Received: by 2002:a05:600c:138d:b0:43b:4829:8067 with SMTP id 5b1f17b1804b1-43d4ac2b356mr13977715e9.6.1742460555324;
+        Thu, 20 Mar 2025 01:49:15 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:e0a:5ee:79d0:c11c:487d:c821:54a0])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d43fdac9dsm41381655e9.30.2025.03.20.01.49.13
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d43fdac9dsm41381655e9.30.2025.03.20.01.49.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 01:49:13 -0700 (PDT)
+        Thu, 20 Mar 2025 01:49:14 -0700 (PDT)
 From: Alexandre Mergnat <amergnat@baylibre.com>
-Date: Thu, 20 Mar 2025 09:48:45 +0100
-Subject: [PATCH v8 1/3] arm64: defconfig: enable display support for
- mt8365-evk
+Date: Thu, 20 Mar 2025 09:48:46 +0100
+Subject: [PATCH v8 2/3] drm/panel: startek-kd070fhfid015: add another init
+ step
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231023-display-support-v8-1-c2dd7b0fb2bd@baylibre.com>
+Message-Id: <20231023-display-support-v8-2-c2dd7b0fb2bd@baylibre.com>
 References: <20231023-display-support-v8-0-c2dd7b0fb2bd@baylibre.com>
 In-Reply-To: <20231023-display-support-v8-0-c2dd7b0fb2bd@baylibre.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -98,52 +98,95 @@ To: Catalin Marinas <catalin.marinas@arm.com>,
  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Alexandre Mergnat <amergnat@baylibre.com>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1094; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=ZusPf2YtjBEtNve2Icxs25V5Tl/ibrpsGhWI+A0KSgU=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBn29aH6usGfN2/1gaTh9wKj+TSHgkhwQ2e617HVo3A
- T2nrw+uJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZ9vWhwAKCRArRkmdfjHURarMD/
- kBEjarCQjoLriCSN2ub60j2k/Jqp4G5LTX4M3crHIEvT/AJ1/D0ShmhMqlAGFJqzIuOD/uTzvBCH4C
- bvY4jxUtPHFP/4FqhTFtCiB4ieeiipBTC4gDQ3iDwnQtJ3egvFXIU+TYQICa3/lds2dwg3LPfI8lYW
- kTmBMlwM/FxFnUZA//Onw6iJsbRzaKrvCZaHfmhIkKN8cXdO73g41J5uiws/LV9OioWmTwxioi3sfT
- yeQC0vJB+q0EmE5vnp499CedQpZWTJvw5dAGVOr6zP8fJIYS/LyWObKhn5t+mJCHol1lJ+Ty3dDXoD
- 5tfUCbkzfXmiZK8Y+pzH2Yl+YSxgeZUyF5g4yS3gNaLO4/LHIsyfFPzqrN8Nu2/T+Vu8xf57gtRiTN
- yvlzEAOgC2gFD6lEdCls5eBIHksYK0ntvzYD7ykbnM9YJ9zI1amHZHpVw3tJ9lJn/Ko1hm9sgXLuKn
- OvS7nxXk6ABvpHrHXIHTttwaqOrMN2+kAxT8Si3Tr+A//FpFpOx+BNJs6CBZ1kaB9CuFFvYHJtvNwA
- GLfDzh1Kdf659ylFdqcCdiT0kjaEmujM+W2KwrWgohbdkT8f5pSvPl2HTVwIrxStU8MXgya8H0ksA3
- Rrn6wVEmTr6rmJmD3UfNG4LkSVcvwzH8JGPe3ChKA7ZNLm2ZbW0s1XUAoDZg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2311; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=gHl0LdUTqSzXFqfH/bwqt0Qp3EzE+6UWudOR8k0D9wo=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBn29aHBpzXiGFeZYZjQ2WV79w2etmusdRumeCDA2/j
+ En4xIveJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZ9vWhwAKCRArRkmdfjHURUS3D/
+ 9vN0KMVYZZKmprhPA5LN7rawwuTGP/uyEhk9jFV0/j6JL6U4PVd0nArK1OQLjxBSyc8nUS1QhpHFhL
+ GNVR07l6xuu0efimjhIgzKpfapyc0xJDcsSLokHgtrFYnnFsxhYNegLt2qFhQnAzfhs6CkD8JQRe7j
+ K5ZiuZbQaE9rSuPU9dMg9/Nc9+eO8HpPVfckzLWretHlNh7yz42U0FAUp9KvfnDilzIcxzydGuuNzy
+ Jd/N0DstuCiy80SPtbL4cE8FVcQZpZe5jPrx+mMVIUtyaVPTkJwyP++ureQvWDzAQ334cDPfrwy2Ei
+ Oeh0VnncqzOktXqxToMmHFzuFwKfoDr0/6LV+dlVtsI2RP/3/bW67t8xKV0I6eMGMGESBck72W9vwD
+ ca1+TzhnFFesumJlEkaj/XnlS6mvr4PPLAaqauBwaKTiAXgZT/btqNWTVJBx+sYj3/dyd+1Sy0NtJ2
+ lpmstf0PEKIOMLotSfh7vkJ/+71UqXjgjVbmV6k0f1lgMLHIpGEEqNz/Us0zURzuYQEVwsj6cFRsyw
+ W6Lz1Pgec4nQ9wjY5aeCuLQPAkLl9D87UWlEs4SeCgePB7fs9v/PogO0y5kTxHItyjqRqV2XGGIAxe
+ Lu9b+dTaPTCrjNEDXVF5nGl/HyIMiJ8yrA1aWPFooOUtSOMg18/vt4NOuirQ==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-Enable the DRM HDMI connector support and the MIPI-DSI display
-Startek KD070FHFID015 panel to have HDMI and DSI display working
-on the mt8365-evk board.
+Currently, the panel set power, set gpio and enable the display link
+in stk_panel_prepare, pointed by drm_panel_funcs.prepare, called by
+panel_bridge_atomic_pre_enable, pointed by
+drm_bridge_funcs.atomic_pre_enable. According to the drm_bridge.h,
+atomic_pre_enable must not enable the display link
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Since the DSI driver is properly inited by the DRM, the panel try to
+communicate with the panel before DSI is powered on.
+
+To solve that, use stk_panel_enable to enable the display link because
+it's called after the mtk_dsi_bridge_atomic_pre_enable which is power
+on the DSI.
+
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ .../gpu/drm/panel/panel-startek-kd070fhfid015.c    | 25 +++++++++++++---------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c62831e615863..1e2963a13500b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -897,9 +897,11 @@ CONFIG_DRM_PANEL_NOVATEK_NT36672E=m
- CONFIG_DRM_PANEL_RAYDIUM_RM67191=m
- CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20=m
- CONFIG_DRM_PANEL_SITRONIX_ST7703=m
-+CONFIG_DRM_PANEL_STARTEK_KD070FHFID015=m
- CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
- CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
- CONFIG_DRM_FSL_LDB=m
-+CONFIG_DRM_DISPLAY_CONNECTOR=m
- CONFIG_DRM_LONTIUM_LT8912B=m
- CONFIG_DRM_LONTIUM_LT9611=m
- CONFIG_DRM_LONTIUM_LT9611UXC=m
+diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+index c0c95355b7435..bc3c4038bf4f5 100644
+--- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
++++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+@@ -135,19 +135,9 @@ static int stk_panel_prepare(struct drm_panel *panel)
+ 	gpiod_set_value(stk->enable_gpio, 1);
+ 	mdelay(20);
+ 	gpiod_set_value(stk->reset_gpio, 1);
+-	mdelay(10);
+-	ret = stk_panel_init(stk);
+-	if (ret < 0)
+-		goto poweroff;
+-
+-	ret = stk_panel_on(stk);
+-	if (ret < 0)
+-		goto poweroff;
+ 
+ 	return 0;
+ 
+-poweroff:
+-	regulator_disable(stk->supplies[POWER].consumer);
+ iovccoff:
+ 	regulator_disable(stk->supplies[IOVCC].consumer);
+ 	gpiod_set_value(stk->reset_gpio, 0);
+@@ -156,6 +146,20 @@ static int stk_panel_prepare(struct drm_panel *panel)
+ 	return ret;
+ }
+ 
++static int stk_panel_enable(struct drm_panel *panel)
++{
++	struct stk_panel *stk = to_stk_panel(panel);
++	int ret;
++
++	ret = stk_panel_init(stk);
++	if (ret < 0)
++		return ret;
++
++	ret = stk_panel_on(stk);
++
++	return ret;
++}
++
+ static const struct drm_display_mode default_mode = {
+ 		.clock = 163204,
+ 		.hdisplay = 1200,
+@@ -239,6 +243,7 @@ drm_panel_create_dsi_backlight(struct mipi_dsi_device *dsi)
+ }
+ 
+ static const struct drm_panel_funcs stk_panel_funcs = {
++	.enable = stk_panel_enable,
+ 	.unprepare = stk_panel_unprepare,
+ 	.prepare = stk_panel_prepare,
+ 	.get_modes = stk_panel_get_modes,
 
 -- 
 2.25.1
