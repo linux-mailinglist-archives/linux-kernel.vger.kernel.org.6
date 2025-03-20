@@ -1,144 +1,169 @@
-Return-Path: <linux-kernel+bounces-570376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93968A6AF8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:05:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC0FA6AF92
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1563A981AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190851889ED8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5C822A4FD;
-	Thu, 20 Mar 2025 21:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304BB22A4FC;
+	Thu, 20 Mar 2025 21:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4hQz/hC"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FE1P8bHf"
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB621BD01D;
-	Thu, 20 Mar 2025 21:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5B2288CB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504744; cv=none; b=B5UzY11c3DFs4O8rpVva3l8p+Z1gVpFYZkQxHJIGl6Ou7HXqmQZBKTs96eQVQfUYu4bl/Yj0iLoKZI0hzno3X94so3IiVUNMfsTuoWYLuEOPvENqocD9Zw57xnJiMyMMWntxAEEbmmcymiuzDMguh1HCHeqfLemcr1SXgr8o234=
+	t=1742504776; cv=none; b=j/ZA7EFOw3roWZf2zXbCqgMYClxoy8oqVEwY8r8gwgLMt8D/FsoU3WdYo4lxYqMPLVkBzaBnYXn8Zf6/1C5vHINjylk+HRtdZ8GvFR+VkM7WWU+ZC/GFYV+kjotNnDxEPICfpfJOpRwdyKAdPGfE27Z8Af5oIL7EanoHs1L+Bck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504744; c=relaxed/simple;
-	bh=YgdpRvORfQrJXyGjouHiXsPKxSh1pKbm6IQi0Z4fEqc=;
+	s=arc-20240116; t=1742504776; c=relaxed/simple;
+	bh=8YK8gEtI06y+pQqv1+lAtw4gYDT6ElW3udJy3zGarU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUk2qYyZJ7mlvIrLD99CUFjnA9huYt8WKC+h4M4vj+WhrqOn4quQtLkC7WumW6GcBTHYopPOyIwUd0hJtweSt4BIum1ZJ8K1vr+PxT4OS4HSHwhSnIVxNNQSnLYoUJ3iFdmQJV6lo76RB3O96jBbVetGC88rlGQk6qFADMKgrxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4hQz/hC; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fb0f619dso26686065ad.1;
-        Thu, 20 Mar 2025 14:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742504741; x=1743109541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jPDdAZsU2RRMMAuFebBCueBYeGg/JKuNefmjD9nyKY=;
-        b=f4hQz/hCoDzmcVqX69VzFkchC9WiShFUEsaTUZoSlXwWS2Cgi7rDvgzKeFY6vkAK1J
-         eSI9eb7+VlQzuxFEZ9KXV4aZj0lo96pMTTzyKr8oysl+B6sa1IwnotwTvki80bGvmKUQ
-         6QsKaqYfMNTJalmlfEqW+d6fwDHynj1VW3Qc+FCpQFr3br79eGkLGvw4WwPx55XFyaUX
-         Y7PrsrF2CVyjmmC1k7UsaORhOy/PXO/V0iYPhwTB4lmGVHKgT/fTJIeRUjDanvygbtS6
-         q5HZLqJPtRuVwzCaEXMM3I0XQ+zHsU0Gsh3WVdiY/xp6O+PFyK6llhfotXSodICrNpCE
-         BGTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742504741; x=1743109541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3jPDdAZsU2RRMMAuFebBCueBYeGg/JKuNefmjD9nyKY=;
-        b=T9+Se1v/TXMjkDn+dgaokaxf2eY6PRKKWlyo+YWP4TPf8PngOi2QxTJRe9f/Dht22f
-         OMyGluEvRc/IKP9DWQILpZz40pHaCivGtNrdmudXXbx3tfTSG6h2S0jlbKIdZ9WweI1G
-         /YWz7eEvzStj72hKRVvVuBkofyGaOTGHA+2H5/BNWicCMa27Gc8O9dxwmsr4n/K6SMdx
-         43RYYWDdBZ+g3yzWD7laXiTA3PJuUcifU4E4rOgDxhe8aeXUoFbyr9XBbXmqa2zKqr+p
-         ebz5gN9Cy/8HprXBDvcXUs6HFPP+8aZas2Tha7J6juZQvL4A0QCq5ijexqGfDHXe47/T
-         DMJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg/8t8XZBWS4RRRzPWxUubAL6PbGIIwbsyZQ7wTYYoGpWSQTxtuekFBd1BX4lWCaNzIHOowlyL@vger.kernel.org, AJvYcCVPuGR2HOTnttZz/iSvDg5OhODi9hSmsUGpyy/0dpsmUQrj0RUreVLJ8pJox9s7PtYRe8V62Gu81mjBHAf5@vger.kernel.org, AJvYcCVVdxJSR+YV6ugk70K+6HiL4KgULCfxUBrr62Cl4dvKU4n8H2iRsd6Phs4qMSIdyJgOP9g=@vger.kernel.org, AJvYcCWhRis8wexgLlWAMuKtce7lFZTHM98OZJaUxAhtE3fNPuV7AgCv/by1M8hepHEx8boSvs/Q5zRLPHKJK38r@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL9RdsZjQ3geDm7+7Xap9RjKxF0EVm5VB8/J/YawUZWp33x+Z4
-	2eCKv2MgonsmHQh2IMgHx4rVAs24rhCVOf2B819kUFZmzZVtLsdc
-X-Gm-Gg: ASbGnctKQmgAnIyYMyi/ezzmnuqwML+jB6z7cVNo1/uNJV7UiMeTc5o+x03P7u1Shmo
-	ngu7aFjFchGvF+edZWVPYEDYvVKB3sI8shNcPmJrOPxpgZuvwNM1OpQ4VyHogv2YC28ma8wi8a3
-	z39fkMnFnXSE7nSYIV1KpNqKvDLv0rrfE5kN28ONFiiJ9jEoxho4LPTKBbYJjwOkMIGCnxmIRmR
-	1xk+B5cqH5xDqzBhUpFn6te4jM3iLiIp3yX9Mrd9i2kZ8vUZi45pGqZW19MF7Hsnf4jEvSRV2Zd
-	FiDeXL+FRAKihhGFXboFnd8cktZ0FNHqq9Sq7d1ZaUb/lmfWkeQXJwYPL0JGkcxQCQ==
-X-Google-Smtp-Source: AGHT+IGByHBrbBgXXk1MNKK8PoOJzGBZqACnvtAZVXwzJ5Mt98hUmINKtxNrRQVVmQU2iZkin8qKTA==
-X-Received: by 2002:a17:903:182:b0:223:653e:eb09 with SMTP id d9443c01a7336-22780c50a59mr11694335ad.7.1742504740770;
-        Thu, 20 Mar 2025 14:05:40 -0700 (PDT)
-Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:7::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2278120981fsm2458075ad.250.2025.03.20.14.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 14:05:40 -0700 (PDT)
-Date: Thu, 20 Mar 2025 14:05:38 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] vhost/vsock: use netns of process that opens the
- vhost-vsock-netns device
-Message-ID: <Z9yDIl8taTAmG873@devvm6277.cco0.facebook.com>
-References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
- <20250312-vsock-netns-v2-3-84bffa1aa97a@gmail.com>
- <09c84a94-85f3-4e28-8e7d-bdc227bf99ab@redhat.com>
- <nwksousz7f4pkzwefvrpbgmmq6bt5kimv4icdkvm7n2nlom6yu@e62c5gdzmamg>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQEuSQag4iHrSPx6MJpY6K+BDYkCvBVMZ8QWt/j1VcjPgNr2Q1xLHG9LGZtYtAPAh+eDB3VxwmL+u0GDFMT49jwEsWal6AGpbN1vmuvFQQErnirfVZ3+flhY4VhN4LE4l3l7/Rkql1ru9DHpTbXdg8OvFH9BaqSpWrRyCzgsxG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FE1P8bHf; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJdR54jhVzSDT;
+	Thu, 20 Mar 2025 22:06:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1742504769;
+	bh=x7Mh94NSn2KPNj8EF1RUEY7NFZ+qiXAJyN6mSl93rjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FE1P8bHfxN0R5WczBQNWdcS8S+Ok+e58SMwG1H0UderYlXfoRXdlIQehwexs3+1wh
+	 tX9zfF8Odwc2AoJgNnCjkqo53zjpJgZGXN3gk+NJHQLCDlKOM1SKryzizP8xtuOoGn
+	 GKclc3thjvIBJslQeAY9vyH8Qnak6OnCnHOPL2Qo=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJdR43X8DzYZl;
+	Thu, 20 Mar 2025 22:06:08 +0100 (CET)
+Date: Thu, 20 Mar 2025 22:06:07 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Kees Cook <kees@kernel.org>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] landlock: Always allow signals between threads of
+ the same process
+Message-ID: <20250320.zahqueisoeT6@digikod.net>
+References: <20250318161443.279194-1-mic@digikod.net>
+ <20250318161443.279194-6-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <nwksousz7f4pkzwefvrpbgmmq6bt5kimv4icdkvm7n2nlom6yu@e62c5gdzmamg>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318161443.279194-6-mic@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Thu, Mar 20, 2025 at 10:08:02AM +0100, Stefano Garzarella wrote:
-> On Wed, Mar 19, 2025 at 10:09:44PM +0100, Paolo Abeni wrote:
-> > On 3/12/25 9:59 PM, Bobby Eshleman wrote:
-> > > @@ -753,6 +783,8 @@ static int vhost_vsock_dev_release(struct inode *inode, struct file *file)
-> > >  	virtio_vsock_skb_queue_purge(&vsock->send_pkt_queue);
-> > > 
-> > >  	vhost_dev_cleanup(&vsock->dev);
-> > > +	if (vsock->net)
-> > > +		put_net(vsock->net);
-> > 
-> > put_net() is a deprecated API, you should use put_net_track() instead.
-> > 
-> > >  	kfree(vsock->dev.vqs);
-> > >  	vhost_vsock_free(vsock);
-> > >  	return 0;
-> > 
-> > Also series introducing new features should also include the related
-> > self-tests.
+On Tue, Mar 18, 2025 at 05:14:40PM +0100, Mickaël Salaün wrote:
+> Because Linux credentials are managed per thread, user space relies on
+> some hack to synchronize credential update across threads from the same
+> process.  This is required by the Native POSIX Threads Library and
+> implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
+> synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
+> runtimes like Go do not enable developers to have control over threads
+> [1].
 > 
-> Yes, I was thinking about testing as well, but to test this I think we need
-> to run QEMU with Linux in it, is this feasible in self-tests?
+> To avoid potential issues, and because threads are not security
+> boundaries, let's relax the Landlock (optional) signal scoping to always
+> allow signals sent between threads of the same process.  This exception
+> is similar to the __ptrace_may_access() one.
 > 
-> We should start looking at that, because for now I have my own ansible
-> script that runs tests (tools/testing/vsock/vsock_test) in nested VMs to
-> test both host (vhost-vsock) and guest (virtio-vsock).
+> hook_file_set_fowner() now checks if the target task is part of the same
+> process as the caller.  If this is the case, then the related signal
+> triggered by the socket will always be allowed.
 > 
+> Scoping of abstract UNIX sockets is not changed because kernel objects
+> (e.g. sockets) should be tied to their creator's domain at creation
+> time.
+> 
+> Note that creating one Landlock domain per thread puts each of these
+> threads (and their future children) in their own scope, which is
+> probably not what users expect, especially in Go where we do not control
+> threads.  However, being able to drop permissions on all threads should
+> not be restricted by signal scoping.  We are working on a way to make it
+> possible to atomically restrict all threads of a process with the same
+> domain [2].
+> 
+> Add erratum for signal scoping.
+> 
+> Closes: https://github.com/landlock-lsm/go-landlock/issues/36
+> Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
+> Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
+> Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
+> Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
+> Link: https://github.com/landlock-lsm/linux/issues/2 [2]
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: Tahera Fahimi <fahimitahera@gmail.com>
+> Cc: stable@vger.kernel.org
+> Acked-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20250318161443.279194-6-mic@digikod.net
 
-Maybe as a baseline we could follow the model of
-tools/testing/selftests/bpf/vmtest.sh and start by reusing your
-vsock_test parameters from your Ansible script?
+> index 71b9dc331aae..47c862fe14e4 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -27,7 +27,9 @@
+>  #include <linux/mount.h>
+>  #include <linux/namei.h>
+>  #include <linux/path.h>
+> +#include <linux/pid.h>
+>  #include <linux/rcupdate.h>
+> +#include <linux/sched/signal.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/stat.h>
+>  #include <linux/types.h>
+> @@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+>  
+>  static void hook_file_set_fowner(struct file *file)
+>  {
+> -	struct landlock_ruleset *new_dom, *prev_dom;
+> +	struct fown_struct *fown = file_f_owner(file);
+> +	struct landlock_ruleset *new_dom = NULL;
+> +	struct landlock_ruleset *prev_dom;
+> +	struct task_struct *p;
+>  
+>  	/*
+>  	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
+>  	 * file_set_fowner LSM hook inconsistencies").
+>  	 */
+> -	lockdep_assert_held(&file_f_owner(file)->lock);
+> -	new_dom = landlock_get_current_domain();
+> -	landlock_get_ruleset(new_dom);
+> +	lockdep_assert_held(&fown->lock);
+> +
+> +	/*
+> +	 * Always allow sending signals between threads of the same process.  This
+> +	 * ensures consistency with hook_task_kill().
+> +	 */
+> +	p = pid_task(fown->pid, fown->pid_type);
+> +	if (!same_thread_group(p, current)) {
 
-I don't mind writing the patches.
+There is a missing pointer check.  I'll apply this:
 
-Best,
-Bobby
+-       if (!same_thread_group(p, current)) {
++       if (!p || !same_thread_group(p, current)) {
+
+> +		new_dom = landlock_get_current_domain();
+> +		landlock_get_ruleset(new_dom);
+> +	}
+> +
+>  	prev_dom = landlock_file(file)->fown_domain;
+>  	landlock_file(file)->fown_domain = new_dom;
+>  
 
