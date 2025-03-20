@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-569507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D12A6A3E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:41:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A781BA6A3F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9212B7AF89D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3D48189D5E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01394224257;
-	Thu, 20 Mar 2025 10:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="k9NZ+iou"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6872147ED
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B64822423E;
+	Thu, 20 Mar 2025 10:44:33 +0000 (UTC)
+Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 24494222560
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467303; cv=none; b=EmRlltjOJMSdGkvyUIS8I6NfZ1cNBahfOQBVkp1BGYpzQfp1jliyo/ZPCvlo0avX5sF3xHuuXbcHfoyY6MJExc2m9K3lhvWhFrFMnf1QzrKfGd/T82wNuI/I0nqQ+N/3jhOZPspoitj4BwhUnmXTPdPMNyh7csJH1evsakORhyI=
+	t=1742467472; cv=none; b=mn+di7zviIlleWeB16W+5p7PyjlReAZ2OrmTDXsvIuyLfpKbxdv2LX17QXjwW1zjSAF4JHv1LtVeq/E6C5a6uehMfT4rvjq3CmH76OD1PUa9EhGwmcRDYapP6QWx8lIWCuqoh2WvgvjWJ1utCVRDOGwDFn61vQy6WddiOU3pslc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467303; c=relaxed/simple;
-	bh=91z6EV/QxcFRkZHyq9xOk4pUc30+MtQy/mfod8WuAhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V3L7OwJsN8XLmy+3+FmfAZ+5nxmfe5didoEflKRoQO5c1gXXA6mwG3IilxTe01F4KsH+Dej1WFkgGa7vmk90aRtsBrfJYQmyWAm4w9UWN77fM3TPLfxEb4HihPDT54A6iTEKXWhgUYSJQbfSPN9hZ2QwJdHo186dlm+IAVhzptU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=k9NZ+iou; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K8fIiq001170;
-	Thu, 20 Mar 2025 10:41:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=AhhnvF
-	ZlQus8DDjKhr6iLJMS0RiI0PtumR74+NTL6mE=; b=k9NZ+ioupRpc7hgZNQV3Cu
-	tgplUOUDfItC2SZ0VGaC2m01REnPb1xomL/I4UdpNdHWu7qw0q7laskb9dtKkQ7H
-	IBHUcmE4ipNLeBBVrC/N1N2rQbdY0ttqztf/HNLUtBS5SfhTWsuyOXgxqJvhQElU
-	pH6Plt0IAHRvNvTNzBHr6tXs1kWWZltum8yDilMcWLuUoc2y5lVqbSEX2QkWyFtX
-	wsxddM1+/Z6+lOYqVCA+F4YlIpAvAEonyA9eLFdKbQ/yuOtdtmZAm3icwm3GhM8f
-	Nb98AKULQd6JS76wNtuK2fSJ570dTLYJfJJQW1fCvawg7bv5rAy/hW1ffGLqd6Yg
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g5503es2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 10:41:27 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52K8RPUb012481;
-	Thu, 20 Mar 2025 10:41:26 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvp7f48-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 10:41:26 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KAfN0Q54133108
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 10:41:23 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 016FE20040;
-	Thu, 20 Mar 2025 10:41:23 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5CD762004B;
-	Thu, 20 Mar 2025 10:41:22 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.78.15])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 20 Mar 2025 10:41:22 +0000 (GMT)
-Date: Thu, 20 Mar 2025 11:41:20 +0100
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Amit Shah <amit@kernel.org>,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
-        schnelle@linux.ibm.com, Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
- spec
-Message-ID: <20250320114120.383a706f.pasic@linux.ibm.com>
-In-Reply-To: <fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
-References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
-	<f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
-	<649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
-	<f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
-	<dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
-	<20250319105852-mutt-send-email-mst@kernel.org>
-	<20250319181308.365ee0ea.pasic@linux.ibm.com>
-	<fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742467472; c=relaxed/simple;
+	bh=6UpC/AlAbCMADa5Z6W2003FMP+6UZTc5/GXucY3oe60=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MOkYthS0GK1hTSUgPN4Y1qxR0aPsGqF5AS0aZ6wIueEsaLuHFSa6zCs5rmW06/ACYlUzVvKlIB7cZop2F1cB3unBAch7Wxh/UnGzyhsTrHcQebO0aWVog5ugL7ydTrle8b4EQBjmVV5RxlyZyZFF4/JRipXp5dKYDL1eOtm5GsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; arc=none smtp.client-ip=111.202.70.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
+Received: from mail.didiglobal.com (unknown [10.79.65.20])
+	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 45D951873ABDCF;
+	Thu, 20 Mar 2025 18:43:43 +0800 (CST)
+Received: from BJ03-ACTMBX-07.didichuxing.com (10.79.71.34) by
+ BJ02-ACTMBX-02.didichuxing.com (10.79.65.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 20 Mar 2025 18:44:02 +0800
+Received: from OneApple (10.79.64.102) by BJ03-ACTMBX-07.didichuxing.com
+ (10.79.71.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.11; Thu, 20 Mar
+ 2025 18:44:01 +0800
+Date: Thu, 20 Mar 2025 18:44:00 +0800
+X-MD-Sfrom: chentaotao@didiglobal.com
+X-MD-SrcIP: 10.79.65.20
+From: Taotao Chen <chentaotao@didiglobal.com>
+To: <sj@kernel.org>
+CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] mm/damon/core: simplify control flow in damon_register_ops()
+Message-ID: <Z9vxcPCw8tDsjKw1@OneApple>
+Mail-Followup-To: sj@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: VsRLRUz6LmUIlubWdKR4HuFQ-SUxorZI
-X-Proofpoint-ORIG-GUID: VsRLRUz6LmUIlubWdKR4HuFQ-SUxorZI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=881 spamscore=0 clxscore=1015
- phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503200064
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: BJ01-PUBMBX-01.didichuxing.com (10.79.64.22) To
+ BJ03-ACTMBX-07.didichuxing.com (10.79.71.34)
 
-On Thu, 20 Mar 2025 08:12:23 +0100
-Maximilian Immanuel Brandtner <maxbr@linux.ibm.com> wrote:
+The function logic is not complex, so using goto is unnecessary.
+Replace it with a straightforward if-else to simplify control flow
+and improve readability.
 
-> > Another thing I noticed during looking at this. AFAICT Linux does not
-> > seem to handle endiannes here. And AFAIU the message is supposed to
-> > hold
-> > le16 that is little endian u16! Maximilian, is this in your opinion
-> > something we need to fix as well? Or am I just missing the
-> > conversion?
-> > 
-> > Regards,
-> > Halil  
-> 
-> Thanks, I didn't notice that, as I only tested this feature on x86. I
-> double checked struct virtio_console_config as it also defines cols
-> before rows, but there the kernel follows the spec (including
-> endianness).
-> I'll send a patch v2 shortly.
+Signed-off-by: Taotao Chen <chentaotao@didiglobal.com>
+---
+ mm/damon/core.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-I can send a fix for the endiannes issue. It should be a separate
-patch anyway.
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 384935ef4e65..a3bdc09d38fe 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -76,14 +76,13 @@ int damon_register_ops(struct damon_operations *ops)
+ 
+ 	if (ops->id >= NR_DAMON_OPS)
+ 		return -EINVAL;
++
+ 	mutex_lock(&damon_ops_lock);
+ 	/* Fail for already registered ops */
+-	if (__damon_is_registered_ops(ops->id)) {
++	if (__damon_is_registered_ops(ops->id))
+ 		err = -EINVAL;
+-		goto out;
+-	}
+-	damon_registered_ops[ops->id] = *ops;
+-out:
++	else
++		damon_registered_ops[ops->id] = *ops;
+ 	mutex_unlock(&damon_ops_lock);
+ 	return err;
+ }
+-- 
+2.34.1
 
-Regards,
-Halil
 
