@@ -1,92 +1,194 @@
-Return-Path: <linux-kernel+bounces-568999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E91A69D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:27:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24A6A69D41
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD66A9004C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CBCD463B7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4429D7081E;
-	Thu, 20 Mar 2025 00:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2592E6F30C;
+	Thu, 20 Mar 2025 00:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqqwMNDO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tA8adVxN"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900432F28;
-	Thu, 20 Mar 2025 00:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C5179BC;
+	Thu, 20 Mar 2025 00:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742430420; cv=none; b=je0ZAS/+Hprj0CyQ/m4lZjdRtAHZXLoB4SGic3+84K856nQnsAm0BEcU7AZMSR24ZucKOGSmOhx9HuXfLW2SFCZSxXvOKHMDu7O+XV2bt7asTc6c5x9hXjvGZ+hdI4l2MUbodTFCch0VxgKKy3ttKoBBTG2bf1gE6fd2Nsd6Qis=
+	t=1742430456; cv=none; b=k4sRwnsEQwgtugHAWYa720dPMZmXQMkz81Ay0VoYgALV5Qflr6MwZbqr2FQeg6kGUNUZR/edcC8lTAmYoIufLvS9mLL+ReBvsciUUt3he5ACaqoumRSBb03eac62ATN6W4ZKhlbU1pVwyqoGVJFGSjxtPjChqPRGi+diRKq8xvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742430420; c=relaxed/simple;
-	bh=IzJC/y24HF2nc/AgwvbD+AJQstykALpjbfnse7+w71M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLM+wpC+r1vmgoUkX3KYHIrmkSfzTp71q9OIiJlXHrpUNLxI0J0FW00tr/RpphbBmjbifnStEtlabeHhphpR8dcMDS5Xg3jcbUV+yYXbgISaenUn1IEz1yYKpCFHjUrBJRDiph4trJM9arpMvb+w2S72VV2huRf6LBf0uL5/UWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqqwMNDO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 756E0C4CEE4;
-	Thu, 20 Mar 2025 00:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742430420;
-	bh=IzJC/y24HF2nc/AgwvbD+AJQstykALpjbfnse7+w71M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BqqwMNDOmTR/QbEME0HxaXTn4E2RWoLaUNqJ0W+IjXF1YNNBV1+eHKbROgOH9Emew
-	 pIEwi2ZKKUad8pDyBYIp0/KWrLK9Wc8GwxAU3BI4SF6BdvkfbxUU9EDVuHxAl1jEAR
-	 bcRgDbXQo2kS3Vr0YdybuovvHeKZqo320MjI2fAuXl1TmlLj2QZwKVSir+2J2btmEb
-	 j4ZgaETZILgdPowAIWff/KhFJ3fImx7sRFnECxFvu4hmpobVhSwLTubUz7GC0upOUx
-	 0eT2TP1ieLlk1kx6k2sKWubH/yJRXB84tlyEAoy/TBdSEcTLH++yF4aL+/X0mBs36Q
-	 WnCLNqrr9Oe/g==
-Date: Thu, 20 Mar 2025 01:26:57 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com, 
-	quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v5 RESEND 1/2] dmaengine: qcom: gpi: Add GPI Block event
- interrupt support
-Message-ID: <sni4bawucwkeyy7lh45p364ngv6bjomv7wxq3qjek2mjd7ucal@tfoeom2qohj2>
-References: <20250212120536.28879-1-quic_jseerapu@quicinc.com>
- <20250212120536.28879-2-quic_jseerapu@quicinc.com>
+	s=arc-20240116; t=1742430456; c=relaxed/simple;
+	bh=dBFihtx+aUosS11KVtMSGBCfwqH+7BZSM3YMPE3xRcc=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=ZGqL2t9dyJaY7uE32TSJvTm7KMtKxP0chRBNuyvMQCJeQO6x8K1nmq1t2jKpo2GSiUR1Edk6SSMeX3AJ5ieE6zbePiGbauJjT+TB0NnWSSQ1w93xt6E4VTL/4NFQul6wmhEricG5/GxddVOv42xKDTTIiPf/kxE3/7nbcTBbyFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tA8adVxN; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212120536.28879-2-quic_jseerapu@quicinc.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742430442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YrzwlcOYjgAKtwASEPU+B3fs6Fqo8r091yuueSJ3aqU=;
+	b=tA8adVxNRTq5KjV/4GxyipP/cqREMQ43TJ0WeVQeM+7CCy7ReVlPboTAeNGTSdY/10Ud1I
+	lSIMEq80JvnyRjeWeCHMvU5XMY2dfS1F1zTwK3J4FUil0iJ2grL2xu3awqrlEZjarb1gMM
+	zR0FjFhJVU8+8A94dbz7NI3kXWhwsYU=
+Date: Thu, 20 Mar 2025 00:27:16 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <635aadb281fa68964c943026096610501434f674@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf-next v3 1/3] bpf, sockmap: avoid using sk_socket
+ after free when sending
+To: "Cong Wang" <xiyou.wangcong@gmail.com>
+Cc: john.fastabend@gmail.com, jakub@cloudflare.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com,
+ ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ mhal@rbox.co, sgarzare@redhat.com, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+In-Reply-To: <Z9tb+Y+w/gcqSnCo@pop-os.localdomain>
+References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
+ <20250317092257.68760-2-jiayuan.chen@linux.dev>
+ <Z9tNAhMV1Y5znONo@pop-os.localdomain>
+ <48068a86ea99dffe1e7849fb544eac1746364afb@linux.dev>
+ <Z9tb+Y+w/gcqSnCo@pop-os.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+March 20, 2025 at 08:06, "Cong Wang" <xiyou.wangcong@gmail.com> wrote:
 
-On Wed, Feb 12, 2025 at 05:35:35PM +0530, Jyothi Kumar Seerapu wrote:
-> GSI hardware generates an interrupt for each transfer completion.
-> For multiple messages within a single transfer, this results in
-> N interrupts for N messages, leading to significant software
-> interrupt latency.
-> 
-> To mitigate this latency, utilize Block Event Interrupt (BEI) mechanism.
-> Enabling BEI instructs the GSI hardware to prevent interrupt generation
-> and BEI is disabled when an interrupt is necessary.
-> 
-> When using BEI, consider splitting a single multi-message transfer into
-> chunks of 8 messages internally and so interrupts are not expected for
-> the first 7 message completions, only the last message triggers
-> an interrupt, indicating the completion of 8 messages.
-> 
-> This BEI mechanism enhances overall transfer efficiency.
-> 
-> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+>=20
+>=20On Wed, Mar 19, 2025 at 11:36:13PM +0000, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> 2025/3/20 07:02, "Cong Wang" <xiyou.wangcong@gmail.com> wrote:
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>=20=20
+>=20>=20
+>=20>  On Mon, Mar 17, 2025 at 05:22:54PM +0800, Jiayuan Chen wrote:
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  >=20
+>=20>=20
+>=20>  > The sk->sk_socket is not locked or referenced, and during the ca=
+ll to
+> >=20
+>=20>  >=20
+>=20>=20
+>=20>=20=20
+>=20>=20
+>=20>  Hm? We should have a reference in socket map, whether directly or
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  indirectly, right? When we add a socket to a socket map, we do cal=
+l
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  sock_map_psock_get_checked() to obtain a reference.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>=20=20
+>=20>=20
+>=20>  Yes, but we remove psock from sockmap when sock_map_close() was ca=
+lled
+> >=20
+>=20>  '''
+> >=20
+>=20>  sock_map_close
+> >=20
+>=20>  lock_sock(sk);
+> >=20
+>=20>  rcu_read_lock();
+> >=20
+>=20>  psock =3D sk_psock(sk);
+> >=20
+>=20>  // here we remove psock and the reference of psock become 0
+> >=20
+>=20>  sock_map_remove_links(sk, psock)
+> >=20
+>=20
+> sk_psock_drop() also calls cancel_delayed_work_sync(&psock->work),
+>=20
+>=20althrough in yet another work. Is this also a contribution to this bu=
+g?
+>
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+Maybe it's related. Calling cancel_delayed_work_sync() in sk_psock_drop()
+is too late for our scenario.
 
-Vinod any chance you can check this patch, please?
+To be more precise, the core goal of this patch is to prevent sock_map_cl=
+ose()
+from executing until the backlog work completes. This is because sock_map=
+_close()
+resides in the close(fd) path, once it finishes, subsequent steps will re=
+lease
+the sk_socket. Therefore, performing cancellation in sk_psock_drop() is t=
+oo late.
 
-Andi
+Upon reviewing historical commits, I found that the backlog work original=
+ly held
+lock_sk, which naturally synchronized with lock_sk in sock_map_close. How=
+ever,
+when the backlog work later removed lock_sk, an alternative synchronizati=
+on
+mechanism(just hold psock reference like this patch) became necessary.
+> >=20
+>=20> psock =3D sk_psock_get(sk);
+> >=20
+>=20>  if (unlikely(!psock))
+> >=20
+>=20>  goto no_psock; <=3D=3D=3D jmp to no_psock
+> >=20
+>=20>  rcu_read_unlock();
+> >=20
+>=20>  release_sock(sk);
+> >=20
+>=20>  cancel_delayed_work_sync(&psock->work); <=3D=3D no chance to run c=
+ancel
+> >=20
+>=20>  '''
+> >=20
+>=20
+> I have to say sock_map_close() becomes harder and harder to understand
+>=20
+>=20now. And I am feeling we may have more bugs since we have two flying
+>=20
+>=20work's here: psock->rwork and psock->work.
+>=20
+>=20Thanks.
+
+Yes, this patch prevent sock_map_close() from executing
+until the backlog work completes. This likely makes the
+cancel_delayed_work in sk_psock_destroy redundant.
+
+The code has undergone too many iterations. While sk_psock_destroy certai=
+nly
+contains redundant operations, we should retain it for now. There may be
+hidden dependencies we haven't fully untangled.
+
+Thanks.
 
