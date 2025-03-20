@@ -1,129 +1,244 @@
-Return-Path: <linux-kernel+bounces-569475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5CDA6A37C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:22:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE2EA6A3A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D3C19C1390
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE882170E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AAF22257E;
-	Thu, 20 Mar 2025 10:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F94224253;
+	Thu, 20 Mar 2025 10:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="F8ejs6uY"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YkSD8vcU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1554F213E78
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DE6215783;
+	Thu, 20 Mar 2025 10:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466149; cv=none; b=ERxs4wPPxjs/md2rTaer6C1qoH4+yWvtN5DBH3iK7oo2Mskg9PPc0oHJtFD4v4ff/XVKel42NHa6f30tJSJEO195thZfxR5VyjCnyBx6CwZMaNO+c6pBIp/EPlTjRHdmwPlwoMDIcXbhNdpl+qHySvaxkZRXQD8i12X+zpta1Ko=
+	t=1742466502; cv=none; b=G+mTZ9WMNEpB44iINEDDHkTtaDZdp1EmAjpsov4ZujEvC8jRSw7fzHKqCA3W51ydf7F83DQJ64yM0VCm6CiHJ8LFBLwF0meBbaPdopLUKKFDI3gAQiyZw0ydMU5GcA+ExQ9nlEhYq2yjyCvsNNP0vv1kROa8ELZH7HahposT/4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466149; c=relaxed/simple;
-	bh=CZH8qRZ+aLhOTBwGExOsduZsgEMvMqe1mAKbAMcfpDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WElO+777n2BLSvAa4ycAOxbnTPNHdf50W4ciBd2GaZ4AJdorEjjUKyHV3YdQ+E9flVJzafgKvHod2rMAmG98UyVN4+fJTK8BMhgwAiAMa9wge6d6Lu2EJ9RB5+uhX6s7D5qvpaKOVb7svlhTG3hu76OHKGtpPz+krWwW3H+nYwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=F8ejs6uY; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
-	by cmsmtp with ESMTPS
-	id v2OJt9vXvWuHKvD2atBspD; Thu, 20 Mar 2025 10:22:20 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id vD2ZtzrKsliBXvD2atbXAV; Thu, 20 Mar 2025 10:22:20 +0000
-X-Authority-Analysis: v=2.4 cv=bOXdI++Z c=1 sm=1 tr=0 ts=67dbec5c
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=reHiijyVQGdWo19NHnG5Kjmh7PXe0ltjvIFYByZcWWY=; b=F8ejs6uYZv4A7dU7KdYbr31j3v
-	d0ZI6S8yTNiZoiy5pAJ/FvfjjkT7r4S03F0+yyjSNLrEXNidBbKkpK+sEeaaOfiBdo1Hd/4ffZNOW
-	E/qn0qoeaZn2/OAyvVQ6pZnzg22kWTeOpYS3ALIilV4TdV9a9Xu0B45jup7JCY+ptOy8QPxAW4bJC
-	GQnNpjabwYeZMzdwb8aYhgoaMInLBMj7r48ji77ceRKBbMJYv8EGPxS6bnlwN98LrqQn8pYinqVNN
-	QKhjWW4muGM1Xx4FAjR0kVwBdxV3lXfrpR0OWNbfdKAnvpnqBaA1Iq4OFtHV9xoCseUBuULj+9ffD
-	WBpnrSPQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:49616 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1tvD2X-00000003M1R-3dTK;
-	Thu, 20 Mar 2025 04:22:17 -0600
-Message-ID: <bb37eb99-26d3-4a4d-a8d5-a71a21bca2ac@w6rz.net>
-Date: Thu, 20 Mar 2025 03:22:14 -0700
+	s=arc-20240116; t=1742466502; c=relaxed/simple;
+	bh=Vdb13DtJiXnZxDAs4aDGQFXm6vfhoua21VF7YNCZ5CI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gfw1Ya1PvfZrWG1pa2vm9zcmcIdCXNJRaszMTE4upz/exQywy5X4AB77TlR2mefvEJX9tLUwZRAsv200/siN0ph9K6GDc6/rppDfk8u+eiU3rCFwR8YZgp79/wW+VJ+ByVCSszDgbB9vJHV5fkqa4Vd543FMbtsaT7lej4k1kfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YkSD8vcU; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742466499; x=1774002499;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Vdb13DtJiXnZxDAs4aDGQFXm6vfhoua21VF7YNCZ5CI=;
+  b=YkSD8vcUcFlFln4lcR47GmsOfI2Ql5fErdAyMmr4RSpI6EbIYmWu/yi1
+   nhd1Rn6L/ahNfaHNZXKYsTmf9FN2GedqvKjhHwIaMOYwlBAqTyVZfQ58N
+   C56zYe8/jfUmeGppHPIAC8U/FjN/7VjF5Ypg5+u+QML7wntiOObQw+NLo
+   AmySEhMh1jGWZ0kgwtGVzNd/1kgBavXGzA6CpTOyT1Qwuac8z/x5xlQRa
+   ExKASMvqxlfNpDFYRR/R+1Gwc28DgKWr0ZjO/Le2Z1zuw0m/MQ0CRfed+
+   AiLiqDl0OpZ8AiaA9gKMXQNr8nvldnnKg18mCBMRyT8L4j7Z0RKlXKmcr
+   w==;
+X-CSE-ConnectionGUID: HbhJpT7fTP+yFKCBrOTWhw==
+X-CSE-MsgGUID: gyzVUdg/Rw20E/dZijnosA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47465134"
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="47465134"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:28:18 -0700
+X-CSE-ConnectionGUID: Dlzr80dPSyeHdt7kQLuJig==
+X-CSE-MsgGUID: fwTtqrPESt+LDjzEQfj5pQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="146256653"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa002.fm.intel.com with ESMTP; 20 Mar 2025 03:28:14 -0700
+Received: from vecna.igk.intel.com (vecna.igk.intel.com [10.123.220.17])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 7E48233E91;
+	Thu, 20 Mar 2025 10:28:12 +0000 (GMT)
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Pierre Riteau <pierre@stackhpc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH] xarray: make xa_alloc_cyclic() return 0 on all success cases
+Date: Thu, 20 Mar 2025 11:22:19 +0100
+Message-Id: <20250320102219.8101-1-przemyslaw.kitszel@intel.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/231] 6.12.20-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250319143026.865956961@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250319143026.865956961@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tvD2X-00000003M1R-3dTK
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:49616
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 35
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJ1Yue4GH0pFvfU5ETJJrR/M1fecoupL8Zsl48ykcY1kxrnz5utQ2ARWcDM/tpaLQ2n5QNMgFHCmFZBUpFxaKCUEbQlowPLwYbp1qqx3tgRQbaV12fo2
- +we2eEWorUlyUVy9EIa7NDqz2x8cDgB4qlzKZCio11+Vt0VupNu7aDf78zrseycplT69O56584XUWAyfC3Cqf0N6/GLPmgmfRNE=
+Content-Transfer-Encoding: 8bit
 
-On 3/19/25 07:28, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.20 release.
-> There are 231 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.20-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Change xa_alloc_cyclic() to return 0 even on wrap-around.
+Do the same for xa_alloc_cyclic_irq() and xa_alloc_cyclic_bh().
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This will prevent any future bug of treating return of 1 as an error:
+	int ret = xa_alloc_cyclic(...)
+	if (ret) // currently mishandles ret==1
+		goto failure;
 
-Tested-by: Ron Economos <re@w6rz.net>
+If there will be someone interested in when wrap-around occurs,
+there is still __xa_alloc_cyclic() that behaves as before.
+For now there is no such user.
+
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Link: https://lore.kernel.org/netdev/Z9gUd-5t8b5NX2wE@casper.infradead.org
+Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+---
+CC: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+CC: Pierre Riteau <pierre@stackhpc.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: linux-fsdevel@vger.kernel.org
+CC: linux-mm@kvack.org
+CC: linux-kernel@vger.kernel.org
+Thanks to Andy and Dave for internal review feedback
+CC: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: Dave Hansen <dave.hansen@intel.com>
+---
+ include/linux/xarray.h | 24 +++++++++++++++---------
+ lib/test_xarray.c      | 17 +++++++++++++++--
+ 2 files changed, 30 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 0b618ec04115..46eb751fd5df 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -965,10 +965,12 @@ static inline int __must_check xa_alloc_irq(struct xarray *xa, u32 *id,
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
++ * Note that callers interested in whether wrapping has occurred should
++ * use __xa_alloc_cyclic() instead.
++ *
+  * Context: Any context.  Takes and releases the xa_lock.  May sleep if
+  * the @gfp flags permit.
+- * Return: 0 if the allocation succeeded without wrapping.  1 if the
+- * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * Return: 0 if the allocation succeeded, -ENOMEM if memory could not be
+  * allocated or -EBUSY if there are no free entries in @limit.
+  */
+ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+@@ -981,7 +983,7 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+ 	xa_unlock(xa);
+ 
+-	return err;
++	return err < 0 ? err : 0;
+ }
+ 
+ /**
+@@ -1002,10 +1004,12 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
++ * Note that callers interested in whether wrapping has occurred should
++ * use __xa_alloc_cyclic() instead.
++ *
+  * Context: Any context.  Takes and releases the xa_lock while
+  * disabling softirqs.  May sleep if the @gfp flags permit.
+- * Return: 0 if the allocation succeeded without wrapping.  1 if the
+- * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * Return: 0 if the allocation succeeded, -ENOMEM if memory could not be
+  * allocated or -EBUSY if there are no free entries in @limit.
+  */
+ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+@@ -1018,7 +1022,7 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+ 	xa_unlock_bh(xa);
+ 
+-	return err;
++	return err < 0 ? err : 0;
+ }
+ 
+ /**
+@@ -1039,10 +1043,12 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
++ * Note that callers interested in whether wrapping has occurred should
++ * use __xa_alloc_cyclic() instead.
++ *
+  * Context: Process context.  Takes and releases the xa_lock while
+  * disabling interrupts.  May sleep if the @gfp flags permit.
+- * Return: 0 if the allocation succeeded without wrapping.  1 if the
+- * allocation succeeded after wrapping, -ENOMEM if memory could not be
++ * Return: 0 if the allocation succeeded, -ENOMEM if memory could not be
+  * allocated or -EBUSY if there are no free entries in @limit.
+  */
+ static inline int xa_alloc_cyclic_irq(struct xarray *xa, u32 *id, void *entry,
+@@ -1055,7 +1061,7 @@ static inline int xa_alloc_cyclic_irq(struct xarray *xa, u32 *id, void *entry,
+ 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
+ 	xa_unlock_irq(xa);
+ 
+-	return err;
++	return err < 0 ? err : 0;
+ }
+ 
+ /**
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index 0e865bab4a10..393ffaaf090c 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -1040,6 +1040,7 @@ static noinline void check_xa_alloc_3(struct xarray *xa, unsigned int base)
+ 	unsigned int i, id;
+ 	unsigned long index;
+ 	void *entry;
++	int ret;
+ 
+ 	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(1), limit,
+ 				&next, GFP_KERNEL) != 0);
+@@ -1059,7 +1060,7 @@ static noinline void check_xa_alloc_3(struct xarray *xa, unsigned int base)
+ 		else
+ 			entry = xa_mk_index(i - 0x3fff);
+ 		XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, entry, limit,
+-					&next, GFP_KERNEL) != (id == 1));
++					&next, GFP_KERNEL) != 0);
+ 		XA_BUG_ON(xa, xa_mk_index(id) != entry);
+ 	}
+ 
+@@ -1072,15 +1073,27 @@ static noinline void check_xa_alloc_3(struct xarray *xa, unsigned int base)
+ 				xa_limit_32b, &next, GFP_KERNEL) != 0);
+ 	XA_BUG_ON(xa, id != UINT_MAX);
+ 	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(base),
+-				xa_limit_32b, &next, GFP_KERNEL) != 1);
++				xa_limit_32b, &next, GFP_KERNEL) != 0);
+ 	XA_BUG_ON(xa, id != base);
+ 	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(base + 1),
+ 				xa_limit_32b, &next, GFP_KERNEL) != 0);
+ 	XA_BUG_ON(xa, id != base + 1);
+ 
+ 	xa_for_each(xa, index, entry)
+ 		xa_erase_index(xa, index);
++	XA_BUG_ON(xa, !xa_empty(xa));
+ 
++	/* check wrap-around return of __xa_alloc_cyclic() */
++	next = UINT_MAX;
++	XA_BUG_ON(xa, xa_alloc_cyclic(xa, &id, xa_mk_index(UINT_MAX),
++				      xa_limit_32b, &next, GFP_KERNEL) != 0);
++	xa_lock(xa);
++	ret = __xa_alloc_cyclic(xa, &id, xa_mk_index(base), xa_limit_32b,
++				&next, GFP_KERNEL);
++	xa_unlock(xa);
++	XA_BUG_ON(xa, ret != 1);
++	xa_for_each(xa, index, entry)
++		xa_erase_index(xa, index);
+ 	XA_BUG_ON(xa, !xa_empty(xa));
+ }
+ 
+-- 
+2.39.3
 
 
