@@ -1,100 +1,112 @@
-Return-Path: <linux-kernel+bounces-569250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C896A6A08A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:37:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A59DBA6A09B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B091897803
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06C53B9CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA71F874E;
-	Thu, 20 Mar 2025 07:37:36 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A447204F85;
+	Thu, 20 Mar 2025 07:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1lAK67G"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677FD1F4C81;
-	Thu, 20 Mar 2025 07:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2B31E3769;
+	Thu, 20 Mar 2025 07:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742456256; cv=none; b=u+AzE+D9pGhX213ypIH0zt3E7kae5C38cBdjcil2vi8SNEJaOAiPPwXc+MnzXAq8wXAndKM1FgnZPKAQ/1uFgXuGxGlureo9FdmEh3Zwso4pCRSfH6AARiKBQNzeWcxav1HN8mZ/25TTFtidaOHX4KwYF3HXSKSHA2U0Pp0o80s=
+	t=1742456466; cv=none; b=m2MUr1xshysFlle4cpT61ggrDuQ1JaUGyPj/0aGVZhhj+cAuAYM6O5Tr3yFDo6Y+bjzAxFr6cD4H5xxrA6FW45rXsNzZOEgEtAnzLRNN9jwqwiwA+ujiYaAuUgOZM/do6VFdwc95ZzvwaYDXkqEqLN9NtZQO16V/sTQSxZYyw8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742456256; c=relaxed/simple;
-	bh=khWE9cX70xPph8s7rn9jBXuJtbTTleSYbDejswZO7ds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jNNQrWgI+T41oM8m50hbOChncESEc3GK6tNllKlAb7TFi6+40pHvM3X2kntfGNTW3b0nMiz/r1Uucq6kA/grmX4WQ61F3UtyMq5bWmJhSnN835LtiIAaEG6hkqnmunxD6qVnnZ2dvk4XeaULzlCQZ94W/BdxHjaAT3UKXusPZzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAAXHNCrxdtntmrdFg--.44953S2;
-	Thu, 20 Mar 2025 15:37:19 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: s.nawrocki@samsung.com,
-	mchehab@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] media: platform: Add hardware sync wait to fimc_is_hw_change_mode()
-Date: Thu, 20 Mar 2025 15:36:57 +0800
-Message-ID: <20250320073658.1005-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1742456466; c=relaxed/simple;
+	bh=4sXeiqOIXgRkPqJvfQ595TU3AC9+kIhH7Vxw4P7Zfvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sX7KNn0wONRtOGkNFn403xLFs2ahdG750TtQX7r0ngQWOUGeT8v0U/F8LrCwkL0jjkQWmCDHahrsfCsHUCKjFOPjFJm5eYyGrbFYuiupWZ5sbo648yz1sQAlXdLXAonJOc8EL4enE1eHBs2dnk4zwmFBWthMeLXYIrUMUBuaVMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1lAK67G; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2241053582dso8498275ad.1;
+        Thu, 20 Mar 2025 00:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742456464; x=1743061264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S+9rATyUbEgbSLtbUz3EQuHc/4v8uBGhvmxcbw9HTp0=;
+        b=V1lAK67GLhO5Cc0s/AuYQwjUGy6jq3PH463TwhvlHQ4RseSMXzpZXphof5KUGwsLo3
+         ABLBBw1drKrTQZk1OyHNFVjJxPd43DsQ+xPpv55M62MxnSXf51+lqq+jktIOlKCDIHxQ
+         rPgp+3ipSZz44mfEsygM5rc5+knBXWOAhp32ptr/JKFQSKf4vnRCpIyhf6cL8eTPOsmT
+         KLcBxfa7kPDtY1q9RguvEqXxurgDlqL+ycImga7gUdHBN9LwoW7O+CD1nvSkczVhSD6W
+         O3icatngjJ4wqqakF0FzY6oSYKtHW66zbEbx/vEAs7/4UBSe6buYPdozfCBoK+CGRMSP
+         qvxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742456464; x=1743061264;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S+9rATyUbEgbSLtbUz3EQuHc/4v8uBGhvmxcbw9HTp0=;
+        b=B4FbfVX8reW64mac7JUsnB3ofCBhvtZLhAMee7eeSrON7QNUawnc1oKWj73oDUMbfD
+         FwOUDzECeGhX6xip5s9nCJBmjF/g4aJMxRvwi1Y8nArrj8/YvjmDj17zxLeWbg5hYm8U
+         A8rJFqedaZT2efDrSpU9Wk9qdkNUGutFPZUXB9VwmxFdS5ws9UySQw6M6/UvSk5udB9x
+         dM8NT/G5VAskue01VKPoVsPklCCSOUkurEbKm322YvUsxRoRBWC2d5rT20FFqZlM70i4
+         FrEEvjj4T/sgBtUG712UGQEvKUfsITbq9exaUjfGeE6bPKzK8jRIQ2tu6wP14nj5mkOW
+         EVjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVTSaunyd2Ul5aoOVu5Uq1wkgXX37jm0N9wIx13KH04rWmB2VudGTUHhS3W+8Yvo1Dx4T+f4eFIIwZH+U4@vger.kernel.org, AJvYcCVhYsmF4ATnzEWhTRnV/9AhsfZvQ7o2UVT4PoN/MkBO0Wgb+b6llw72NwlUTkcLpIkuxmPTqXkc8P+AblxDSFck@vger.kernel.org, AJvYcCVqV8Tk6ap6L/xJ19Ba0+p6+gxYHojBh/65CapSRxq/sQ4xBsODoOa4/CGTWXKyp3Gu26A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXTDvEo3b1yQL6DxvlX3EP8FDqAzeI4buQn/DXXBi4aFuYNEjk
+	37iqmxO8y94Prt+YnQz8HDxpV/5HavnBqvMp4yLsDhXMDtypOOiR
+X-Gm-Gg: ASbGncvNMyFuvN7f+NR6SpyqQOr0ipd9ox5SUtBLPjm3uWkyr9jdqeRYcYh4qpIuY/v
+	Kogs7RacltjovyMa0pDyZz/ZIR00i8V89EBY4x4r8ylMCq9VCqo7phXNRzmel8FCyj5st+ptOqP
+	RqgNl8yxqn1k8xZuhe6nFf4ARXCYqHj6DlV8t6wvlkQwp4iMYQyp0bWU85wwrwUfyVqUkezI4RH
+	dDhKPoSW24pflBTHtiJEI6996m4SCJGvYquuGAy6Irors9JjcIzA8Z4iNKVcZRsnwyj1aE4x/Wa
+	yPpJObM0UD7irPZ7rwMik8wzR82K2dzQlY9x/rEPsh4/KI5oQ0waHAYiiaHxeeErIw==
+X-Google-Smtp-Source: AGHT+IFEvvOq/4NLQ23MHF6FNa/FiH21cHYco1EVNW+1BRuvD/pJTZLz+96cxRxci0zjnwX0L+gRcQ==
+X-Received: by 2002:a05:6a21:3a4a:b0:1f3:47d6:aa05 with SMTP id adf61e73a8af0-1fbe87272d0mr11208399637.0.1742456463841;
+        Thu, 20 Mar 2025 00:41:03 -0700 (PDT)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9fe51asm12244697a12.36.2025.03.20.00.40.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 00:41:03 -0700 (PDT)
+Date: Thu, 20 Mar 2025 07:40:56 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Phil Sutter <phil@nwl.cc>,
+	Florian Westphal <fw@strlen.de>, Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 RESEND net-next 0/2] selftests: wireguards: use
+ nftables for testing
+Message-ID: <Z9vGiL1KkO5x8I-j@fedora>
+References: <20250106081043.2073169-1-liuhangbin@gmail.com>
+ <Z9lJ6PXHeL7tfhUf@fedora>
+ <Z9rso2MXYBFGnJYl@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXHNCrxdtntmrdFg--.44953S2
-X-Coremail-Antispam: 1UD129KBjvPXoW8tF43KF17AFyUtr4rWr45p5X_Gr13JoW8JF
-	yaka1xtr4UXwnIgrnru3yfAwsrurW3KrWF9FZ0gryqq3W3A3W5W393Xr4agF1YkFn5Xry5
-	Gw13AF4xJa4xn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3AaLa
-	J3UjIYCTnIWjp_UUUYT7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_
-	Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M2
-	8EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWx
-	JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
-	W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	tVW8ZwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjfUYhL0DUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAUHA2fbxEAF+AAAsI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9rso2MXYBFGnJYl@zx2c4.com>
 
-In fimc_is_hw_change_mode(), the function changes camera modes without
-waiting for hardware completion, risking corrupted data or system hangs
-if subsequent operations proceed before the hardware is ready.
+On Wed, Mar 19, 2025 at 05:11:15PM +0100, Jason A. Donenfeld wrote:
+> On Tue, Mar 18, 2025 at 10:24:40AM +0000, Hangbin Liu wrote:
+> > I saw the patch status[1] is still "Awaiting Upstream".
+> > Is there anything I need to do?
+> 
+> I'm looking at it now, but the subject line of your series says,
+> "selftests: wireguards: " which is really not the same as all the other
+> patches that touch these files.
 
-Add fimc_is_hw_wait_intmsr0_intmsd0() after mode configuration, ensuring
-hardware state synchronization and stable interrupt handling.
+Oh, I will fix the name in next patch.
 
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-index 366e6393817d..5f9c44e825a5 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-regs.c
-@@ -164,6 +164,7 @@ int fimc_is_hw_change_mode(struct fimc_is *is)
- 	if (WARN_ON(is->config_index >= ARRAY_SIZE(cmd)))
- 		return -EINVAL;
- 
-+	fimc_is_hw_wait_intmsr0_intmsd0(is);
- 	mcuctl_write(cmd[is->config_index], is, MCUCTL_REG_ISSR(0));
- 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
- 	mcuctl_write(is->setfile.sub_index, is, MCUCTL_REG_ISSR(2));
--- 
-2.42.0.windows.2
-
+Hangbin
 
