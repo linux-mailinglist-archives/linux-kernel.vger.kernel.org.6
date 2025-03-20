@@ -1,183 +1,179 @@
-Return-Path: <linux-kernel+bounces-569222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B2BA6A035
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:11:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E640FA6A039
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8388A53D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540D146441D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3802744D;
-	Thu, 20 Mar 2025 07:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D9C1EE7AB;
+	Thu, 20 Mar 2025 07:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="zU7bBz6y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l6dwD4jH"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jzzPPV3Y"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A041E2613;
-	Thu, 20 Mar 2025 07:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD951EE01F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742454669; cv=none; b=OShqTqhBHLb9h4bvGGmtcLHWA5Ze9R1vQh++a4jyIKwJL461lFfKKeA4uJzoARTlWP2bjO7IDGrfxRHwTH20C7/0+6DPiR/rvAb1HvALnBb7OINb+6qpR+zfFAbDW5znLVewzB1ZqpuoXYR2acJQfdT8flpQQ2rf16YcXGc2Ol8=
+	t=1742454758; cv=none; b=QDmMGeNdU5RSKb6jPyFheucKxK6tb3K2BvxCPO3Q+N7edCUO0OXC+oTe+VvbdWZ4eebKHUseJBEw5moOSV7944BCUUhn466dQtz89KVPwZx/FjNfpuF+tBI3TB9L14wgUZ3sGrDT751IzUTSXO/yb0FjDekmPnAjpjgampOIF4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742454669; c=relaxed/simple;
-	bh=Xi0X8Fd9ACjm+tmfsTSI7pJ5BONPXN51TssS66JBaUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p83e6PYXtqozAlsPrhwpjajlJj/y9u1n24wGq8eNZ6I6EkFbMxNneIJXIjmFfcGvEAxL2rPU++SsrvAiIBBEmt/exJEzNd2K962lcyaJ9KuDpAacxT+01lv32cUzdltSCMcVdklSdNB8CftYuoUNi0ru1fErfHOzCbB/oMfw1+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=zU7bBz6y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l6dwD4jH; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 69E9211401AE;
-	Thu, 20 Mar 2025 03:11:06 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 20 Mar 2025 03:11:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742454666;
-	 x=1742541066; bh=tjjIYe5KJakbRzF9kyZSLy2U+I/YDadXEl6G0mZ0sg0=; b=
-	zU7bBz6yiB/JEJFQfau/SBmZhSIjxjxAbtPA8rN2uQ2J4w8hLIdIhBU7qBTLiRas
-	beCQGwLj/+aAZ+VO/mOJsHzzalagnIbIAngvLmTn6zBzxNjAelJ2dTpM1x+E9Ibm
-	PvnXzv1WW9glbmV+gppwUumzDqkjfPZQ1P2j0AQylgQz56xCT/k/x+q+eXbALP8x
-	ldGim1nzMPSEhMe2lJNB5XDFUea2ECG/+nSf+PeXbKOtItZzinSWI2BDGE2pY9J0
-	MJSijNJx5Dle4+/pAyRDdlr5jX609zdPzxxk1laOyrHr6SS0oPghvIYRL/XTpYQF
-	fWyM+U58de/6hjtNjXYg4Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742454666; x=
-	1742541066; bh=tjjIYe5KJakbRzF9kyZSLy2U+I/YDadXEl6G0mZ0sg0=; b=l
-	6dwD4jH0dtytRF9ctmst0E5wdMOzvwc7SyF0rC4ycqAYcbW8qQ4gogKe24N7h/47
-	JC552oXloHvCgGhYPyuj9B9XW5Obv5A98/xRWDMSNbNZ0gLZehxR0L8ZyCJfXaIa
-	CXbMqEH3wERVRdH5P/xFrfjCT9ymYAOF7tILgIKHXDEPT7ZiJPjoBP5r5dVgIzUR
-	InUgkQPxe7Me6ifEDdJ+gtrww+EJ7wHbvtXADBcp23idszTdsArWyGEOgYWtLIhS
-	coCOKccLOCNPw38lwvgC5shsxVmK6poqUNSe0sWheXWpMjR2JfFiLeLJiNr9ez9R
-	7wDH7B+ylHY5I+M/HguqA==
-X-ME-Sender: <xms:ib_bZ9ykVLsWRlp7GMdIR1ROah3iND-L5bi1nimN1nm08hgpRjqcIA>
-    <xme:ib_bZ9T17dmSxQfCxRzjdgfkk2G1vgyOC_LHAj_qO9znLxAALNiLr7RWzMFVdcZ7f
-    8ZB2eMsUzj6TiH7JVM>
-X-ME-Received: <xmr:ib_bZ3V7_gOfMUekRcVxXxI1hUSgYf1EbrCfwHhhbGGtC_AhndnEEz9ZcdMMS2Ob1htF0WJQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejheejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
-    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
-    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
-    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:ib_bZ_gaBeEkA1lyeELg9haQPciT8I1877PICTw7OgV9yugAxE3yhg>
-    <xmx:ib_bZ_APS45rJRzDkCE4XmHEc7WnTkrgouIWmoiKeqj2BYsOXWxryA>
-    <xmx:ib_bZ4IFblhQupEVs6bKJbKf6dOj8in4MAG9ICjI1W49WC_vPhoVxA>
-    <xmx:ib_bZ-C1QMIVFxsgrTItfAX6gDpsOgLyww_Aote-OolFNzpB0LMW8w>
-    <xmx:ir_bZz0rRwllV_qgMn4Ld3FfrmY3ztz0hyeT1CE_zUTBVuC0s_7iSpvH>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Mar 2025 03:11:00 -0400 (EDT)
-Message-ID: <2341cca8-4f3e-48dc-a97c-aec2a27e3f05@ljones.dev>
-Date: Thu, 20 Mar 2025 20:10:58 +1300
+	s=arc-20240116; t=1742454758; c=relaxed/simple;
+	bh=KZouUQ5SRA9OqBiLEQJ6o7UW/hD/GQMmK4rNL4LSd88=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Jyotjsw7QwHbXyj3iARj+LQUoLrDJEbaNHG2RRmo4NCDfl6MSl6nOB/DdLgW3HJ24fdvKl18ws37hFkI6HIYvzKtS5aONHrQRJcET46mYX/a20v/VQ9tn7i6WiWtbT8JZ50ThJalKt5UO3QQI+BCdtOYNtnExOvrPREVYiNEF/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jzzPPV3Y; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K6IF8H031578;
+	Thu, 20 Mar 2025 07:12:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=KZouUQ
+	5SRA9OqBiLEQJ6o7UW/hD/GQMmK4rNL4LSd88=; b=jzzPPV3Y7RN42O8MDNvAtO
+	Y1xb1+RQNLe8cq7k6gY6GI72r6NljzNbGZuTEMyuoycIBuh9hsneD4ig4bOIWbt7
+	kjRLoHAwRY4sKnALX8lsC1XLLHruVaBSojsgsaxkfpfTun7PR70qHJFmK3aa0ac9
+	wXdqvW3gr3GByucwDQTp3OO/1kZh1wnOxNJ23qSCxwvhdQ1pEWDBs+IPQv7ruMEs
+	CVLqxpPpMH71+0bZoJZLRfAOfpurpw9czpNDar9HM0ydSJmBgxco0EIzbNL4sbXq
+	Rx0Rnxh5QBKehpxq+xEg+GuIbJYq2bcE9DBF2sH1d7Ctha1z1X3nxXrO07MzNAKA
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g5502hxy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 07:12:28 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52K3vHdh005642;
+	Thu, 20 Mar 2025 07:12:27 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm906ra9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 07:12:27 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52K7CNWe39059718
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 07:12:23 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A74DA20040;
+	Thu, 20 Mar 2025 07:12:23 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 726C320043;
+	Thu, 20 Mar 2025 07:12:23 +0000 (GMT)
+Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.boeblingen.de.ibm.com (unknown [9.155.199.15])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Mar 2025 07:12:23 +0000 (GMT)
+Message-ID: <fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Amit Shah <amit@kernel.org>, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux.dev, arnd@arndb.de,
+        gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
+        schnelle@linux.ibm.com
+Date: Thu, 20 Mar 2025 08:12:23 +0100
+In-Reply-To: <20250319181308.365ee0ea.pasic@linux.ibm.com>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+	 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+	 <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+	 <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+	 <dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
+	 <20250319105852-mutt-send-email-mst@kernel.org>
+	 <20250319181308.365ee0ea.pasic@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/11] platform/x86: asus-wmi: remove unused keyboard
- backlight quirk
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <20250319191320.10092-10-lkml@antheas.dev>
-Content-Language: en-NZ
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <20250319191320.10092-10-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: svZ-QXaf7tbrdIwMpWby_IWuy8LTCZJx
+X-Proofpoint-ORIG-GUID: svZ-QXaf7tbrdIwMpWby_IWuy8LTCZJx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_02,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 clxscore=1015
+ phishscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503200042
 
-On 20/03/25 08:13, Antheas Kapenekakis wrote:
-> The quirk for selecting whether keyboard backlight should be controlled
-> by HID or WMI is not needed anymore, so remove it.
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   include/linux/platform_data/x86/asus-wmi.h | 40 ----------------------
->   1 file changed, 40 deletions(-)
-> 
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 42e963b70acdb..add04524031d8 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -183,44 +183,4 @@ static inline void asus_brt_unregister_listener(struct asus_brt_listener *bdev)
->   }
->   #endif
->   
-> -/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
-> -static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
-> -		},
-> -	},
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
-> -		},
-> -	},
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
-> -		},
-> -	},
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_PRODUCT_FAMILY, "ProArt P16"),
-> -		},
-> -	},
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
-> -		},
-> -	},
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
-> -		},
-> -	},
-> -	{
-> -		.matches = {
-> -			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-> -		},
-> -	},
-> -	{ },
-> -};
-> -
->   #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
+On Wed, 2025-03-19 at 18:13 +0100, Halil Pasic wrote:
+> On Wed, 19 Mar 2025 11:00:06 -0400
+> "Michael S. Tsirkin" <mst@redhat.com> wrote:
+>=20
+> > > > I was mistaken in my earlier reply - I had missed this
+> > > > virtio_console_resize definition in the spec.=C2=A0 So indeed
+> > > > there's a
+> > > > discrepancy in Linux kernel and the spec's ordering for the
+> > > > control
+> > > > message.
+> > > >=20
+> > > > OK, that needs fixing someplace.=C2=A0 Perhaps in the kernel (like
+> > > > your
+> > > > orig. patch), but with an accurate commit message.=C2=A0=20
+> > >=20
+> > > So should I send a patch v2 or should the spec be changed
+> > > instead? Or
+> > > would you like to first await the opinion of the spec
+> > > maintainers?
+> > >=20
+> > > The mail I initially sent to the virtio mailing list seems to
+> > > have
+> > > fallen on deaf ears. I now added Michael Tsirkin to this thread
+> > > so that
+> > > things might get going.=C2=A0=20
+> >=20
+> >=20
+> > If we can fix the driver to fit the spec, that's best.
+> > We generally try to avoid changing the spec just because
+> > drivers are buggy.
+>=20
+> I think the call if fixing the driver is possible needs to be made by
+> the maintainers of the driver. Fixing the driver IMHO implies that
+> if this is seeing any usage in the wild where it properly works a
+> fix on the driver side would imply a function regression. But any
+> implementers should have complained. So IMHO it is not unreasonable
+> to
+> assume that this is not seeing any usage in the wild.
+>=20
+> And people would still have the opportunity to catch the regression
+> during testing and complain about it.
+>=20
+> I agree with Michael, changing the spec because of a buggy
+> implementation should rather be the exception than the rule. And
+> AFAIK
+> it is not like we have declared something a reference implementation,
+> so in that sense the implementation in Linux is just one
+> implementation.
+>=20
+> I suppose making it runtime configurable via module parameter is an
+> overkill at this point.
+>=20
+> So based no what we know I'm slightly in favor of let us just fix it
+> in Linux and see if anybody complains.
+>=20
+> Another thing I noticed during looking at this. AFAICT Linux does not
+> seem to handle endiannes here. And AFAIU the message is supposed to
+> hold
+> le16 that is little endian u16! Maximilian, is this in your opinion
+> something we need to fix as well? Or am I just missing the
+> conversion?
+>=20
+> Regards,
+> Halil
 
-I think this can be squashed in to patch 8 as it looks likely to cause 
-an "unused" warning or error? I'll defer to others though.
-
-Cheers,
-Luke.
-
+Thanks, I didn't notice that, as I only tested this feature on x86. I
+double checked struct virtio_console_config as it also defines cols
+before rows, but there the kernel follows the spec (including
+endianness).
+I'll send a patch v2 shortly.
 
