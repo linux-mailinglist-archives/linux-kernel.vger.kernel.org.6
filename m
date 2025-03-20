@@ -1,145 +1,119 @@
-Return-Path: <linux-kernel+bounces-570338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2ADA6AF0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:20:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B35A6AF12
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C69189E1B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183104669A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9018B2288EA;
-	Thu, 20 Mar 2025 20:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2635229B0D;
+	Thu, 20 Mar 2025 20:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPxA/42d"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPxKrVSp"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626CB2248BE;
-	Thu, 20 Mar 2025 20:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26692A1A4;
+	Thu, 20 Mar 2025 20:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742501993; cv=none; b=PM/DIWVDE3+lB+ZG0lEPm/NUGlj5pS+dvW12FBkJ3ijV2lL3EjlL+0uAxDl5bfWHmzEOhxmKKocpec5/v/q/XlLNhrY0Q8qKr/CVQ5R0o3PuIXZbT6M0BWnnP+dbonAyu0LzjCluK9g5dCepKtlfRLibf0UGCWgSAIuBjdDxaNM=
+	t=1742502114; cv=none; b=ncuhcBUVd4O7TcVqHlEczZHvzXwVMbEWMBa6L9E5rdCV8NRXUp1dnI2mwrUTHr9ICUjj+YG3dk5adsHVcZachc3o7mMMEdno3a/pJ0fh6yjE3iX7y5395eN0TlqfpPYaep6xGE1OnAJVpgn9y2G30DRT7UBbinVPqWurMD3L5P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742501993; c=relaxed/simple;
-	bh=NCcf7Blmaus57gScMFkNJhhaDKWWFy/KV3mEnna1L1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LWT3VRYWt9E3fWcr3xXt7HIiLsaweta8yXyP/C7qVFqVWoKmpQuwbedaNoVHy+l3MGu3iNr43V1PCoud0Ozze9n6uD4rlv8NlW6df3d2A/9rOSLg0FxNTKn6H+uFtxu0QmKDCMCSzOpMkRzGC4LYsLIaIzzPt9q7zpeWgGBB2C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPxA/42d; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1742502114; c=relaxed/simple;
+	bh=P5DePDaFaNYcmCmVtIiaeGKEzygWPc1oyekgDR1gbLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L2lzJJonRzx9g44R/k8S3gvxF/6/D0iQlg6r8y4lObMeql7c2JKlu7kSLXP84lGMbe3bWiYR/hv2ODoniN42PzIn1kSheK4TWsjmwcRWBPYSoB6MxpuFj3RrcCoqHMT6+CchMym+LtShgFvGWm7NCen+QAVJkUNK8hXHml4ZGwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPxKrVSp; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390f5f48eafso713834f8f.0;
-        Thu, 20 Mar 2025 13:19:51 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224104a9230so3300145ad.1;
+        Thu, 20 Mar 2025 13:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742501989; x=1743106789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dhyguxhy3QF6ssQ6N4HmtB46ru/Kl2lPpRXSHmaJ/rA=;
-        b=BPxA/42dqYQcwDXwjSt/jgPEYDQ3/4RStpN+WDJr8D8O9NHLc/ouS91uHLORGcAtWc
-         Pv5cY94u2ufeg+pu0i48HMIi4hQXvz0erbTI6688zhqWDHmSRXWjP0hnYRtmnpCTmA2m
-         O8oR3/txqh1PFxmoe2Tya9NOyVM2P/3dsTZKfeVTj4WwLS0+Y6e7UvN5Ro3q2RTH9SRK
-         vO+zgwZYVPOiMWLgxu9YDEHB7djUBsv+PcHfgftIt5NoT3EMeZ7LLg3DxnSLpAlPt4Er
-         55D/a4moQY+64DiKBWRP4njD8dVyp0JFJ9xy9iYmQlBctgJTByHCkl8YnVHMySCTe2TX
-         P3vw==
+        d=gmail.com; s=20230601; t=1742502112; x=1743106912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ghMmqyEsNey8h9uPANFS5l6mT/T528d7V08nzimupro=;
+        b=jPxKrVSp+sBlJcqpEqCVAgWETUJmKWRJLCOJ6DrA/rk0GMOp9++NK/c4/nc0W699MH
+         WjlKxGz6uPE5xBWf24uSoDsqZQuNB8f6+bYlwaHxx93UoRs02n32zQ49prNnv6jgUjFq
+         LlItuz9Q3eh4XiPYEUbjT6vwLCdUz1Ojfv31zJ+fMT9PMyN8gfwfZPx9bFsO6KVGHolW
+         1mOu8WFT57KdxP21qB7AAo0+aAgFS1CizminA30UCZkm71JK8aYfpUpbp09GlTzt1A5i
+         haRW0VW6+wJJYOR5DU6QPu/0YyMMUiK/W66qyTJIMX9zY9uU5MA/GT7n23m6GwPw1kxV
+         1sBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742501989; x=1743106789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dhyguxhy3QF6ssQ6N4HmtB46ru/Kl2lPpRXSHmaJ/rA=;
-        b=nkb/WuO7N5MoMzssCLNjEgPAOs2UlbT2MNQ71s0q6VpeEYTlRbFaqlBJeX/gJiG9zo
-         Vt6t/+lyNhQSHK+KZXx+Gu1ILWrdjI68TH3DYexSP3Dx5paW09eO2aCpCKvVEDcX9stF
-         hUA668oM10ywBXtrVd2Es+qWoABkjcZWop4ZmPanzWWc0gibN9lMDHNJ+6OZh5KfGv2L
-         lD8U1FgDnPQI1k3OtDtLuR5MW/qmbLgN3EULT/WSrdLN3pjwzT0cBk1oj4tEPM5cQ9JF
-         GJIBDThWzqiaUOHptV2++azatiVTCOzgcL5xgG448jHSmA9yPsBMNkh6mO8z+x4KZJ24
-         Mw4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWqg3R3WzwcaOLbOBhuytMUTjpgD9xnNLGFXeYKqXDUCbIuaksospjEgWLllYI8DdrFsxW+8MpVZn17reY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7mn0oo6oj26lbFDEZZzEC9KUfplTkAqRQxJ6YsnYNjAUXpKiI
-	xF+/dywRY1BF/vfY5y8mVCnOni+E5WMY4BqT4ErqLiB/ECv8JZm+
-X-Gm-Gg: ASbGncvIUUlx4dWJnL2GDRbQkmYAxtKSSaz0NGkAdFrixW2XNYaBbitxUDxLutvg64X
-	GFI1JGjThN8NkQbzwTnwx5gGXVnpoK8Hg9SsdbRwUBOl7a5D6wHBERZHuF9rgotFvUSIaZrLgCJ
-	qXWOmgBy+bIbCqFgAPwOBH6QyQ+RlSEH8Fyut1y2YVAajA9A0aUTiIIuo8JZpd9or6vJC5A6piH
-	1sirZize81Ikk0CD7yCCW4s7bwlJzmdfYZURQs8n6p97CyWHkp3lHFA2vvylRA7iYZxRTpNdMCu
-	R8vgsYHJrDKAJujgJA4CAW7UhB5Tqv6IUn1PjO7lpKRXLw==
-X-Google-Smtp-Source: AGHT+IE/btzueE8JU/eAqEkp1q9M1cbr7FO2mpWZMkpMLSmIZhDdqe7dSjJh7OehvrSNgBvLJbC84A==
-X-Received: by 2002:a05:6000:1566:b0:38f:451b:653c with SMTP id ffacd0b85a97d-3997f8edadamr632159f8f.7.1742501989262;
-        Thu, 20 Mar 2025 13:19:49 -0700 (PDT)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:a534:f4c9:f77d:6a2e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbd1c7sm6948465e9.40.2025.03.20.13.19.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 13:19:48 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	chui-hao.chiu@mediatek.com,
-	Bo.Jiao@mediatek.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Qasim Ijaz <qasdev00@gmail.com>
-Subject: [PATCH] wifi: mt76: mt7996: prevent uninit return in mt7996_mac_sta_add_links
-Date: Thu, 20 Mar 2025 20:19:14 +0000
-Message-Id: <20250320201914.48159-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1742502112; x=1743106912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ghMmqyEsNey8h9uPANFS5l6mT/T528d7V08nzimupro=;
+        b=jgrZUGxanVlqo49Mr0t8E4uEuISHaQy7u4yAC8f88eIzuFSGIUDOem0BO0Ujh5C5wJ
+         QjlmudngK0/RBoGW3Ee4UfuG8pGLLJop805RNLcaGklzyuCNyXGx1gsQmKygHhTWJK8V
+         I2TEpc1pCmHfqX9hpG2bNzC1LN/UDLxVoGIaqg3Z6ZkYL7H4HMEDOnMsEgSAXJPiQNYp
+         WuD3NDAkWlY9vICRkKcY6eAQjN5U1Cay1vk2gE6Tp58rqndKIXdTNJaZEqR3gK8fVKCY
+         Gq0MIFie1PCPwvBgKIhYpR6XgxVrf5V0j53wV1uKrsGNOudc9aMg5fD0nepKoSi1p5wB
+         Bd5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Vq1wVz8ddW3hx6KbmlvROOojRfX2Wdo2vp1IH1Ir0A0D7By3FnN+WXVJgOlGmKHAQZL9RxL1oS0BibU=@vger.kernel.org, AJvYcCU9ZeOiAhgIRr/b8B2nYkfwpiM8VjoLUX0mKBRWLB9wsUs4xy5NIepSSdphGZnpqkcLfL4mlc7Ahk3bjdjy@vger.kernel.org, AJvYcCWiEenKqQ3lfCEz1355Zo73eCxhPEykKCv+N2W5unmuypZjRJw47Zd11P4nRnUbBhUNTT8KNlrkmRrIK4amG7Q=@vger.kernel.org, AJvYcCWvD/LYYgpeSY/SV2muNC8o4Ei6uDJ6DK+0vfIru0sjhvoJdCFz0BSF6h3RMnKzm2nKWu/AMZR5+KgXQOoZEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpiafL71QE03KXqEtpKC0Px5Ku6Llo5l2AcTdsaiaj2ifGD1Wv
+	pUJszoINH8uJ7cubg+h+0gE7FIOHvL8ObEu2lo1lcErj1OCCF+Mlmfb4o+GGXmgpNNKRZLK7g/0
+	FLqlI75t/xK9EXTYkwYW4QcF+80o=
+X-Gm-Gg: ASbGnct76GM6fNDGazqgxR/ghNCI0t3ritOAqpeVYisBI7XN7/8E4/ZKkZKdBVSxKbv
+	FbNIo/FQ1du6vG/ozyLwnUxGEoYqNq+4C452chT3Xx/S8npdyElanZNucm0YT5kfeohDkOOXiJ0
+	nXoJ1OROoznwYaa1Y9+Ehk11bofw==
+X-Google-Smtp-Source: AGHT+IFHJmgf4jBxMNmrXn7Ub5lSsoBMIS5NnJWFQIb2lG7JavHQT1RlOCL48M2GyUh556YEEQBRazGNSLi5NEg8GeA=
+X-Received: by 2002:a17:902:dad0:b0:223:f9a4:dc25 with SMTP id
+ d9443c01a7336-22780e359acmr4042725ad.14.1742502112120; Thu, 20 Mar 2025
+ 13:21:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org> <20250227-module-params-v3-v8-5-ceeee85d9347@kernel.org>
+In-Reply-To: <20250227-module-params-v3-v8-5-ceeee85d9347@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 20 Mar 2025 21:21:39 +0100
+X-Gm-Features: AQ5f1Jo4O5s2MBqh_XLGvRCYvhod2ITUxJyYm57Tsmfb5Nvy__-4KyEcsCyexBo
+Message-ID: <CANiq72kGzB2CdGMcaftfg2eYvu_rBtH2_gxqVt7KE7RQxCgz8Q@mail.gmail.com>
+Subject: Re: [PATCH v8 5/7] rust: str: add radix prefixed integer parsing functions
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Luis Chamberlain <mcgrof@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
+	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If link_conf_dereference_protected() or mt7996_vif_link() 
-or link_sta_dereference_protected() fail the code jumps to
-the error_unlink label and returns ret which is uninitialised.
+On Thu, Feb 27, 2025 at 3:39=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> +                    // SAFETY: We checked that `val` will fit in `Self` =
+above.
+> +                    let val: Self =3D unsafe { val.try_into().unwrap_unc=
+hecked() };
 
-Fix this by setting err before jumping to error_unlink.
+This is wrong -- `val` can be the maximum, and thus it does not fit
+since it is 2's complement, even if later the complement would.
 
-Fixes: c7e4fc362443 ("wifi: mt76: mt7996: Update mt7996_mcu_add_sta to MLO support")
-Fixes: dd82a9e02c05 ("wifi: mt76: mt7996: Rely on mt7996_sta_link in sta_add/sta_remove callbacks")
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
- drivers/net/wireless/mediatek/mt76/mt7996/main.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+In fact, it is caught by the doctest when run with debug assertions enabled=
+:
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-index 91c64e3a0860..78f7f1fc867e 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-@@ -998,16 +998,22 @@ mt7996_mac_sta_add_links(struct mt7996_dev *dev, struct ieee80211_vif *vif,
- 			continue;
- 
- 		link_conf = link_conf_dereference_protected(vif, link_id);
--		if (!link_conf)
-+		if (!link_conf) {
-+			err = -EINVAL;
- 			goto error_unlink;
-+		}
- 
- 		link = mt7996_vif_link(dev, vif, link_id);
--		if (!link)
-+		if (!link) {
-+			err = -EINVAL;
- 			goto error_unlink;
-+		}
- 
- 		link_sta = link_sta_dereference_protected(sta, link_id);
--		if (!link_sta)
-+		if (!link_sta) {
-+			err = -EINVAL
- 			goto error_unlink;
-+		}
- 
- 		err = mt7996_mac_sta_init_link(dev, link_conf, link_sta, link,
- 					       link_id);
--- 
-2.39.5
+   /// assert_eq!(Ok(-128), i8::from_str(b_str!("-128")));
 
+We try to put 128 into `i8`, which of course does not work...
+
+Cheers,
+Miguel
 
