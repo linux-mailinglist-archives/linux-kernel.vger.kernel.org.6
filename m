@@ -1,85 +1,75 @@
-Return-Path: <linux-kernel+bounces-570461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5F3A6B096
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:17:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA5AA6B09B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0233A1899126
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550CB188AD55
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B233229B2C;
-	Thu, 20 Mar 2025 22:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC96229B23;
+	Thu, 20 Mar 2025 22:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dgsqi3U0"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mn+ulCet"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C4015D5B6;
-	Thu, 20 Mar 2025 22:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C7C15D5B6;
+	Thu, 20 Mar 2025 22:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742509044; cv=none; b=g5zkIK4EFyXhhS4uEtggHnmIv7paQ1kTekLABwUtx0+4uiQaxvjUBvA0O/znVM9VuiDkSUmGIjomRCZDDyxSfPDcbgVTGTwO8BnbuiTwQFrFSohrEseqTexuOZpqVJMuPSL0vzfmxKGkUvb7Ec10CpqPPyN/9YnexCHN0ABcE+8=
+	t=1742509103; cv=none; b=k0nVQr7N/H1mbV2JBuBPnbAE9clCwH+lM07Y3cK+FYfgqh/N7ubG962G+Fo1OMXrNym9fKsT271/x2RsXZqm5O17yN5Fvp9qpRf06D/ONmWuZPXzQey2QRNVPvZkbIvTLhKHsHW2oJgmHkw177x4IHz2+SjzBI3ABj4Mqa3Mcmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742509044; c=relaxed/simple;
-	bh=xFlc6Q6TzfQb0wCt8sKQnHij0eKpqLd8jx0a8TNgiwk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iLjelvFJRNX10iOmMQwh913X3mjEQ4usSDVwfi9stCuWIB1wiUtF4BQJIX1Uhr9RGzSNAk2FoH2C9TwjErKi+apr10iFvxhHLTYpDMEf8x2O8U2XV+eeWH2lkV1fbh0ue5/uTKZAQoL78viqhPkTeiU39nExK/50A0JRpP/AWNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dgsqi3U0; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742509034; x=1742768234;
-	bh=UIuScVKVgPXJsm/Noly02l3epcZR+EAf8OYgOgJU3IE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=dgsqi3U0Qcm1zneJzI3+tlfm/GxVyVh4sA88fMDuAkWJtZdeAjKaD7Kt8BTJKWFC2
-	 Pg0YFdT70aMr3EvzHQKUPUhB2uoVrJaYf6Kr6K993WEICJPXxoD4J4bmbhgcM/OVRl
-	 mm2zWmtCem41qVX4S6xBRw6XKjETi77zDq7ndQWOVtwJoXYJ573W+kimPZf0rXeJDT
-	 5TE1cZoHTjZ/24GEpSpGO18hoQXQC90zf+O/nT6TTCCblMjIpU9BLyXADM5kj6VvDB
-	 CZQn/+Mjfs2uP+59EU6ghjs+IbZTU4Sl7TJmZRP4GVILcjPN8+dRteK3cJyTna2g83
-	 N8N8nV6Id2//Q==
-Date: Thu, 20 Mar 2025 22:17:10 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] rust: alloc: add Vec::push_within_capacity
-Message-ID: <D8LFWBYIFHSP.ZR8DMPGGM9SE@proton.me>
-In-Reply-To: <20250320-vec-methods-v1-3-7dff5cf25fe8@google.com>
-References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-3-7dff5cf25fe8@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 05417ab6c002c265e99ee01e8fae7d84f5937dca
+	s=arc-20240116; t=1742509103; c=relaxed/simple;
+	bh=9O3RydOB0ZVkYcXG0exlOsEH1A3gmr9V7HhCFrKPCOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huM0zhy6589XK5jxHloYg1AQZRZdZHRvGWvTelXz6KmzQ2b5kLQmCbnCi0DltUfsYnUczqLpBOCGFdV5oYF7mz2MTYS8I3HFOC2TEVF+xThjV3+4Ok3iobEHCOVijcHxEPzZ0ephaG2El4YJgh7S50ZtkB/X95AlzfxMr4Pzd/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mn+ulCet; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79299C4CEDD;
+	Thu, 20 Mar 2025 22:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742509102;
+	bh=9O3RydOB0ZVkYcXG0exlOsEH1A3gmr9V7HhCFrKPCOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mn+ulCetMTCG/4qlZQDzsJJ76CiHhF7e65TYAlrI3mDPFud0vAmTpVdCb7ysQT4ty
+	 EipVvGI55DH1LqgdhCekIm/e+uose39lI9y7t8pjUjhyKeQtr8+YgYv1JRUas7mbgv
+	 MeZb58JTBta1WtCD8N1RO3jxAn4PqepAnXCHvGVFfWGZrSl1so86czajaryIsZaUUc
+	 Z4Dm1UPlPQ/+pv7sOy/Rz5yPNERuWeutubxfMq5pOFlKIw9fRutQcIqdzYfBSHfUNY
+	 gvtA3qZX9G21P3GfnnrZYDa0Sy+/T21l5wEOZH6b4GVeT7+hypJoIQcJ/bYXjiTRoM
+	 bBBuLTYPXhkMw==
+Date: Thu, 20 Mar 2025 23:18:17 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+	ludovic.desroches@microchip.com, andrew@sanpeople.com, mhoffman@lightlink.com, khali@linux-fr.org, 
+	wsa@kernel.org, peda@axentia.se
+Subject: Re: [RESEND 0/3] i2c: at91: Fixes and updates
+Message-ID: <odbnk4zvjprs4ipdtxjeurdrubx3eu7zcmxkpwodlz6idnw3t7@6d2a4hl4dpe2>
+References: <20220614101347.16910-1-codrin.ciubotariu@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220614101347.16910-1-codrin.ciubotariu@microchip.com>
 
-On Thu Mar 20, 2025 at 2:52 PM CET, Alice Ryhl wrote:
-> This introduces a new method called `push_within_capacity` for appending
-> to a vector without attempting to allocate if the capacity is full. Rust
-> Binder will use this in various places to safely push to a vector while
-> holding a spinlock.
->
-> The existing Vec::push method is reimplemented in terms of the new
-> method.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Hi Codrin,
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Codrin Ciubotariu (3):
+>   i2c: at91: move i2c_recover_bus() outside of at91_do_twi_transfer()
+>   i2c: at91: keep the controller disabled when it is not used
+>   i2c: at91: add advanced digital filtering support for SAMA5D4
 
----
-Cheers,
-Benno
+if you still have interest in applying this patch, may I please
+ask you to resend it?
 
-> ---
->  rust/kernel/alloc/kvec.rs | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-
+Thanks,
+Andi
 
