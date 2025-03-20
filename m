@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-569656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558DEA6A5B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:04:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6D0A6A5B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6BC1887C1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F917AE13
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB3021D5A6;
-	Thu, 20 Mar 2025 12:00:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8519F21D581
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4687221738;
+	Thu, 20 Mar 2025 12:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jjBrpQx0"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0238F22172B;
+	Thu, 20 Mar 2025 12:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472003; cv=none; b=aNE3VHGR/0JXaxC5Sb2IfHnRLkHA+yVMTPTKhAnM6xf7aCO7sdsULUn2tbFD7lzc3Z8Qd+T+5rMqk6sf4OOojpbutXIhNF3EsVlmuUyzN341sdB4Xxd6979qHB/pVScxcJ1CWti1aSW3YlsRuaBxVJS2TPHBQkrh9cCk+Rp/IAQ=
+	t=1742472033; cv=none; b=jS0qvvEBhABI6YeZqDV88JRFcsRMIfA8H8PvL1gH7V5QHlFU2m4OMZXnUmhR2S2C3n2DHVoC3ltWGYKeLozo/T5O6y+LKJKYzOd84DEQBq6TYJXgO96fT+hx3Sy6fcFU1Lhlool9tXwkXUPkbmgkmHEixeQdmPq3FdN98kSiA3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472003; c=relaxed/simple;
-	bh=PStqZjhIP7YBTl7FChlnJ2YLpQT/+dBrheYhiEeXbaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzLbKjs1Pvr5EqByfKzyhxSjiVtmRVmsVGrQINh/VHVqVCa4YLf5mbM8v5HGdCvc5QtkF6ej7LHDwg6pUdxOZa9KpSTf9MmYyS1iXkFQxMHaVh9327Hxan30Lg35Jtb9ovXs4m8iexHj7SE6Qi51DlvMiNgnLBK7EHvsJIwLmkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70BA4106F;
-	Thu, 20 Mar 2025 05:00:08 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C3943F673;
-	Thu, 20 Mar 2025 04:59:59 -0700 (PDT)
-Date: Thu, 20 Mar 2025 11:59:54 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	lkft-triage@lists.linaro.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Aishwarya TCV <Aishwarya.TCV@arm.com>
-Subject: Re: stable-rc: Fast model boot fail Internal error Oops BTI -
- kernfs_iop_permission
-Message-ID: <Z9wDOguDLJ17juz2@J2N7QTR9R3.cambridge.arm.com>
-References: <CA+G9fYtucEt8Hp6RsV0o+OWSz1E=hXBvhHa-P9C-bPnb7cyGaQ@mail.gmail.com>
+	s=arc-20240116; t=1742472033; c=relaxed/simple;
+	bh=+JpqTZlUDUYwRI2Af2UJVSssidKLH53a8o68argLTeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HHJZA5/kWUZFLg6XXv/NTOYcGh79wtJG3AjsPu+nX9ANFRB2P0c9CZEiXhI/S8xGI5mQF67f9guVgyQyM4T1TQlGVhpAN2OIqOi+G17Fl0Bo2Uh1yuks4wFZsliLO7ikK6faW9Hq8u8MLx9REwYeh/KoNzRl0VEXpId54j6qs7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jjBrpQx0; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30144a72db9so165559a91.1;
+        Thu, 20 Mar 2025 05:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742472031; x=1743076831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+JpqTZlUDUYwRI2Af2UJVSssidKLH53a8o68argLTeo=;
+        b=jjBrpQx0XwE4t13JwPSpuKEQ+CWt8ARiWNUyWj24H0JhGmtVZ7R1Tcuzkym03laZ19
+         NGwV6zIkxySIsccdbm/uOofp2tM3Cj0hdIBc2HqXsgMoECXYkWUbVfq7UFd6Q72vvHPa
+         RypwT7+98nIlmN15rXAaQeM+/zQugZuYXpaMMlDswzI1vb2aDFhAcQSTebD8xOuMfmp+
+         7FtrRraTqS0tXBCqSI91COVdOXC8yneITQnH52scu2iWi7rQY1BmHiGp76ApfX9/yGZU
+         OqccOwtskBOusqwEB0Y/HegA4Eb4QxoufBjhgFmNoqJpdCeW/d7ERXqIFMwkg392gX9/
+         NUkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742472031; x=1743076831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+JpqTZlUDUYwRI2Af2UJVSssidKLH53a8o68argLTeo=;
+        b=DYhRBXIZN8lQeyQ/hqIUd0N7XxjlJJQ4yoWmXOPh6wh8/NTXosgkGSNAanZDnUqqsA
+         SAsZBA8PCBtEvUTEUIdfXcdA4IQjMaxpbs3k4Mg8EzRlrOArs6K5X/GyxuPY8S2JZuC8
+         OpohG/pFFV3g0JB5nMeZBgYzoTO9WMSB507WJNcV9A58S05IY8jpf9krkPaLC90XDzZn
+         pl97k/uM5Ns+fYrHOc+U68a+EM9AjTezDr/mRbTFZGkUrIGGdmFePXy5L5ZB/o72G4AS
+         KRDrCWKVMN++xrBdUJtkShv4BiVhNtuw9WPxAZDJU8FQ/1kffB84wuPsvhUGmHxuiYDB
+         jToQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZjn9NgStZxV/BdmP6oCjwCeYU3lfM+wtxjyhc3NvMiIasTqZey1HnKI1NGXEqjrhr9NdfxR1IMcYrbeFhMg==@vger.kernel.org, AJvYcCVN8M7etE/Cv3GHbTTlkwLQ4262774Db6OOMj3Ruvdx7eM3LoKhZibVj+TMgLS4iIe+pV9UF1VofQUQCqw=@vger.kernel.org, AJvYcCWV4/Gvnbx22P8aOMGVftQ/5pGfjmE7lIT2XICGUYTYtCeNf53jC1jFUzNOx2w+QpY5zKlo/XyDe6MoDpVD/KI=@vger.kernel.org, AJvYcCWippg9bRZ/yuBGHx7uJBnmm7BszaJC8KZNEpKBf5GwOT+IVVFlnhZP+5qdHKieBh351rNuOS048VqF3Ls6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc5OJzcB7SESW8M9RTO7wI9uyuuGipsZEsXNEQUutiygnx5Zns
+	19j+s4BdtQU0h8RUpBdsp6F2Hzlc8hkQG/+Vnlf4P12edV1QEWFQWf9C/BlODlW5K+fo16lN5rb
+	WS20aavDSCuaVQ7OBsmVRZCOT928=
+X-Gm-Gg: ASbGnctSw8QT8P/ya7o5RVD/q5QXrp15yMswBSNZfbMMJstOSOWUj991VbK8MQeraR3
+	/tLXShSujVbRe/WDWEYpYFcatFd9bbmPoECM+ZWZFU/mLdYGOvkltE/roL6pfmiiqjVUePoNuQ3
+	9x23VYLiSn5Ko4a9IdO/KvROgN6A==
+X-Google-Smtp-Source: AGHT+IGLnHem81pSy849Xj5e5pWE83gWruoVX126M+G8/5J8tR1iaCU2Org4jEG9DcYNth8MQP8v31q+vtP6uB3x6JE=
+X-Received: by 2002:a17:90b:4a03:b0:2ff:682b:b754 with SMTP id
+ 98e67ed59e1d1-301bfbd457fmr3463081a91.2.1742472031169; Thu, 20 Mar 2025
+ 05:00:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtucEt8Hp6RsV0o+OWSz1E=hXBvhHa-P9C-bPnb7cyGaQ@mail.gmail.com>
+References: <20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org>
+ <Q_mSCTsSMDQ6DylWZTrkH1Wru3fQ1LFIiuk1pHElSsTc12fDdaCrgzWvEEQRE2_WBxOBzPuCE-qBJjw7LhHbjQ==@protonmail.internalid>
+ <nh23cbbpf5yk6mafn7gz7urlau22egilideytnnh7paagusaih@t7y7q7jha4fz> <87frj8dmlb.fsf@kernel.org>
+In-Reply-To: <87frj8dmlb.fsf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 20 Mar 2025 13:00:19 +0100
+X-Gm-Features: AQ5f1JqT0bJ1nCq6lcjr_QnPneXhQ7sT5zkUrLM9y47BNLBzjIHnH9YbYE6UIy0
+Message-ID: <CANiq72kyAx=wbvYWBTmPb4eppfvGuFsjVMa49nZBrXGbLEDiCw@mail.gmail.com>
+Subject: Re: [PATCH v8 0/7] rust: extend `module!` macro with integer
+ parameter support
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Daniel Gomez <da.gomez@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Luis Chamberlain <mcgrof@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Greg KH <gregkh@linuxfoundation.org>, 
+	Fiona Behrens <me@kloenk.dev>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 04:05:14PM +0530, Naresh Kamboju wrote:
-> Regressions on arm64 Fast model (FVP-aemva) boot failed with stable-rc 6.13.
-> 
-> First seen on the stable-rc 6.13.8-rc1
->  Good: v6.13.8
->  Bad:  6.13.8-rc1 (v6.13.7-242-g14de9a7d510f)
+On Thu, Mar 20, 2025 at 11:26=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>
+> As far as I understand, Miguel would take patch 1-5 for v6.15 and
+> modules would take patch 6-7 for v6.16. At least that is my
+> understanding from [1], @Petr and @Miguel please correct me if I am
+> wrong.
 
-That "Good" tag doesn't look right. Is that meant to be v6.13.7?
+So I offered that as an option -- I assume it is OK since nobody said
+anything (please correct me if I am wrong), and it would help get
+things moving.
 
-AFAICT there is no v6.13.8 tag yet.
+So I will take 1-5 later today or tomorrow unless someone shouts.
 
-> Regressions found on FVP:
->  - boot
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducible? Yes
+Thanks!
 
-Can you bisect this?
-
-> Boot regression: Fast model boot fail Internal error Oops BTI
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> NOTE:
->   LKFT is currently running FVP Fast Models version 11.24.
->   Planned upgrade to the Fast Models version 11.28 in this sprint.
-> 
-> ## Boot log
-> [   12.812790] Internal error: Oops - BTI: 0000000036000002 [#1] PREEMPT SMP
-> [   12.812886] Modules linked in: drm fuse backlight ip_tables x_tables
-> [   12.813120] CPU: 6 UID: 0 PID: 136 Comm: udevadm Not tainted 6.13.8-rc1 #1
-> [   12.813245] Hardware name: FVP Base RevC (DT)
-> [   12.813317] pstate: 163402809 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=-c)
-> [   12.813450] pc : kernfs_iop_permission+0x4/0xe4
-> [   12.813585] lr : inode_permission+0xb8/0x174
-
-This is one instruction into kernfs_iop_permission(), which suggests
-that either the caller has branched to a corrupted address, or somehow
-the model has skipped the BTI.
-
-> [   12.813728] sp : ffff800080d63bb0
-> [   12.813796] x29: ffff800080d63bc0 x28: 0000000000002e2e x27: 00000000fffffff6
-> [   12.813978] x26: 0000000000000030 x25: 2f2f2f2f2f2f2f2f x24: 61c8864680b583eb
-> [   12.814161] x23: 0000000000000000 x22: fefefefefefefeff x21: ffffa991682c84b8
-> [   12.814344] x20: ffff0008006704d0 x19: 0000000000000001 x18: 00000000fffffffb
-> [   12.814525] x17: ffff000801bf8021 x16: e0acaabd2f000000 x15: ffffffffff000000
-> [   12.814711] x14: 0000000000000002 x13: ffffffffffffffff x12: 0000002e00000000
-> [   12.814893] x11: 0000002d00000000 x10: 0000002d00000000 x9 : ffff0008006704d0
-> [   12.815076] x8 : ffffa991665f0ff8 x7 : 0000000000000000 x6 : 0000000000000000
-> [   12.815253] x5 : 0000000000000000 x4 : 0000000000004050 x3 : 2f7375622f737973
-> [   12.815432] x2 : 0000000000000001 x1 : ffff0008006704d0 x0 : ffffa991682c84b8
-> [   12.815613] Call trace:
-> [   12.815670]  kernfs_iop_permission+0x4/0xe4 (P)
-> [   12.815830]  link_path_walk+0x2b8/0x388
-> [   12.815962]  path_lookupat+0x68/0x120
-> [   12.816073]  filename_lookup+0xe0/0x1e0
-> [   12.816196]  do_readlinkat+0x6c/0x1d8
-> [   12.816337]  __arm64_sys_readlinkat+0x20/0x30
-> [   12.816481]  invoke_syscall+0x40/0xf8
-> [   12.816623]  el0_svc_common+0xa8/0xd8
-> [   12.816765]  do_el0_svc+0x1c/0x28
-> [   12.816904]  el0_svc+0x38/0x68
-> [   12.817050]  el0t_64_sync_handler+0x78/0x108
-> [   12.817203]  el0t_64_sync+0x198/0x19c
-> [   12.817359] Code: a8c27bfd d50323bf d65f03c0 d503245f (373806c2)
-                                                  ^^^^^^^^
-						  BTI C
-
-As we can see here, there's a BTI C immediately beafore the instruction
-that triggers the BTI exception, so as above either the call has branch
-to a bogus address or the model has somehow skipepd the BTI.
-
-Assuming there isn't a model bug, this is likely to be either a bug in
-inode_permission(), or some sort of memory corruption.
-
-Mark.
-
-> [   12.817444] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> ## Source
-> * Kernel version: 6.13.8-rc1
-> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> * Git sha: 14de9a7d510fcfb3bd35e275eda09724bda4d440
-> * Git describe: v6.13.7-242-g14de9a7d510f
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/
-> 
-> ## Build
-> * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27684866/suite/boot/test/clang-20-lkftconfig-no-kselftest-frag/log
-> * Build history:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27684866/suite/boot/test/clang-20-lkftconfig-no-kselftest-frag/history/
-> * Build details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27684866/suite/boot/test/clang-20-lkftconfig-no-kselftest-frag/
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZoz8Lc7Ue3i4mVWAM8Y800oz/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZoz8Lc7Ue3i4mVWAM8Y800oz/config
-> 
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+Cheers,
+Miguel
 
