@@ -1,119 +1,96 @@
-Return-Path: <linux-kernel+bounces-569328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE837A6A187
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:37:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF933A6A18A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79729189262B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4539B1891353
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40AD21420B;
-	Thu, 20 Mar 2025 08:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CC421420B;
+	Thu, 20 Mar 2025 08:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EmorYNF5"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwZoD52B"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1454C20B7F9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9255E17A30D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742459828; cv=none; b=Ktn2NPXUiMWEyg12SD4OADGmxaMMQZfo+b+VOwREq5BCOBrLXgIvQ0XpT5oZirtBG0Q5OnSoxsmLhT047Crv3rh4b4sbHLbKrK94nmuV487MxOWC77yLiRq8zzIVUkrP6ihDa4xYga+Xd4bPDOrTWOQ66nvCZKlRpj58PlRBHZI=
+	t=1742459860; cv=none; b=J8Yu7rEMalC/V3vBhALDLeg0e3hZ+BrN+MUZHSKuwgZoSXDDVfCKm8L/mBEnA0JMSuoFC2FRQ7z3OBiPkyGpzr6BJ16Zo0vQVog4MCkeDqv7uSZks6XxzsO/3mL73w7a4gHXpE6Y3ngNbvmEa8yb+MUTK5t0vg+YxF512q83iig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742459828; c=relaxed/simple;
-	bh=hmUcDbDQE5/qhB7rH9uJRIBaGhkE8xeNL8a0ANCqzoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PFTyMMbSd+yB0bNhDM3qUGQ4GAhqU8a2BQScAnAe3IjIuWvTCFzgaUioAD6cGkXv77j7N67BmdwI5NbtCylxtPUYuJ/FAOqdwXun9SdQt0FRrgpnRGth5CcJETP5j+bRtMC7vf5819Gh0445sF0HkEROadU+FZ7i0xfqEtGN4WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EmorYNF5; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549b159c84cso630232e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:37:04 -0700 (PDT)
+	s=arc-20240116; t=1742459860; c=relaxed/simple;
+	bh=z9r8meh0NzbtC/Ll1jEvPOwu0hkTD9rkCIvmFvhQZ2w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=p/iBB+ndfnLEvpivQCyAG6ZizrfwdxAKJIsbsxQd15iCb++D4LSyq0rxtQ9vdQ6/QPvmM4TUC3M4HpgoH+CGX7kyci3NFw/u9PJfRbQ0QQXTBrSDEIm1QUEmCuMYQPBFp3TP5qB3Ykpl7pVwyMlY/qMv+exNVg0g6m52K8kDey8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwZoD52B; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d0a037f97so2488925e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742459823; x=1743064623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmUcDbDQE5/qhB7rH9uJRIBaGhkE8xeNL8a0ANCqzoQ=;
-        b=EmorYNF5kFZKr2odU1VCRdH4nipyx93A0rxIrVH86+rRox5GKKCkUi0lMhwWXUejlh
-         wqKzjZniLUhZzkQUE+hdvCnCga3X5TaQxIziEX4TceVybS3Wt+1u7LPNWRUSjH86sSTp
-         5YHEhN+4bzAw2HSUhcct1D7MPoUCiGyM+cDXcHixaJVYmFCmYA8T3Mz5dCpq0q5Lg49H
-         OOXHWYBkmPedzFhd+YNPLm5ihh3gwL1QFwDS+R+HzJUpHnlDtw2wjHYF+AITvnvLdd6g
-         9kaTywEuinvvWKJA0DVII3pwn1dB4ukqcH+47JpGqnVNR8KoPvQUhrUkCa3S+pO+bSJx
-         DiSQ==
+        d=google.com; s=20230601; t=1742459857; x=1743064657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3IvFwJiPLPPnFezSv+6PLZb4l+UlMIDvs7uHWAbnitM=;
+        b=MwZoD52BkyPHwciKwDjpc3FprRrAroNmikrhvBsGxeZOrKQUt8Cus/Esz+/U5j2M3e
+         viPz4EQ9Ecb6TnyCb/b3uCVFp4mvqw3Io3f1XTTTNrFToGIu5wVMsW5S86dvPwQnRl47
+         x9uCsBlZifEq3hGuaTOrWiQFWZ3f/jnWw8bPM0BMPrVzr62pDO52QqRGYmxyePhbthYO
+         /jsEaQKuL7aaG6D4PWIJR0sIzqQXl8agw924pvuE+gy+cjt6ahue16SF1S5AaFZzj82v
+         WIR9TnsTVBEBJ9zTZIzsxZkowbTsPsb97YqAn/fy5E1n0bvzb/FQSK6ltU+Zkqjn97lT
+         7NTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742459823; x=1743064623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hmUcDbDQE5/qhB7rH9uJRIBaGhkE8xeNL8a0ANCqzoQ=;
-        b=HOLJTlc+Vfur1A/UqrgDzQpAiC9e8E/bGarmJRwPGXDAVVPGyLu1IQfA6IabrsVXD2
-         PXpaw/n58qZfqkheqfsA7/h9XxczvY03laxuoSD5bEMRlq+jPW3zuhPTX3eLgYhZIJAZ
-         xusbdIFoiDBmZ5/upmCwOVA30xQkjLbfExowdrrmDeF2MTc2BWEfS44juEMEWURLvDtK
-         CAF5XzaT0pDP2aOq3eniFMU3ENRjHTQvuhkZDZVpze7trDa5xemA3akaawdrLxxKLsMU
-         8u29Xr1rT1e04q2BZ7sBz5KOWImVE0O1T2EDTaObITcG4N+4xs5YNDeYeimTVMxm6cC6
-         /LDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ/SBY/yAwdiTIjM1Itr351skpkKr1fujx9CRqFOa8yssUpr/nYBrakSwT7PzUjAjTIBfDlTvkT87V+gI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxczPA/bDFxo7zbm75jWbsqFHgXGcsvnNiZFCMraG34Xf5sfASD
-	q7eE/HI9An5sdKtxG/Cv37/izGnkOiB/UN33yTJd6jYZx7ibmuUNcnAN18DaTyP1EPdgUvIi4kK
-	sANbyleydWPbFRUDVaoI9/V/fmwdHwnrBjurgXg==
-X-Gm-Gg: ASbGncts+qUOalw5c8CewbIqxh3uk1/zGZHTu/jJxxPsQ9wnyx4l8EVLwsbuf+0Fk27
-	bBsYRfy1M8stZIy4Ezmeof2/yqUa/7BW9MH8+5uwspmc3BbDNoZ2MtmzA+xtZpSpw4+y+daaHeU
-	DtCBnkW8TEo6CqkKFZ/aoo61n7n1ecYnws9g==
-X-Google-Smtp-Source: AGHT+IGsqlhVahQRSkG7TbLmF/njFBK4TQEE/FxA+ei/ZkOhKqP25xKFQdLZXuNAuoQDmy6F4aIS+teAw64uIFaJ5P8=
-X-Received: by 2002:a05:6512:3d8b:b0:542:213f:78fd with SMTP id
- 2adb3069b0e04-54acb21ab86mr1803850e87.40.1742459823013; Thu, 20 Mar 2025
- 01:37:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742459857; x=1743064657;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3IvFwJiPLPPnFezSv+6PLZb4l+UlMIDvs7uHWAbnitM=;
+        b=UlKlUvy+XE6k7bQjZNcnVBqE6c5iJPYR7L9hH6tHpphSxl4OaXdxfJbzmdkoAf4UlB
+         5lnTAez4itnKQ0eU7hjXHXmxO7IqZXKql+++MW1JfLZgH4Us99vjMKbvTesJCs7/qwmQ
+         aTJVugSgNikVa2+a+KoX9aGHlI7zNr80Tr6UykitKGKKNkcEN8wnlqETCKvkhIlvkJOh
+         nEaAH2KCE+HBiv0puR/FBS1sBF0EU9BLe9PDdDh/m2jOZRNd2Aez6AW6QhjSbHA/0kD9
+         7fxoQi2ZXswxSvbhRaCqh9hCmKQnyReds9+VQ0NEMQjgl2txRY34CtzS4eIiH5DzzTU/
+         Hjww==
+X-Forwarded-Encrypted: i=1; AJvYcCWg3eO4PtpqL6VmsEO6rcIeMr8lM7ORRSCc7Nk9+kLBVmtMcKzTM/ISFuvh1heS5MgQ+TWIzUG5QPYsgHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpW+Zru7lYFm9DC22vD7unPMLwsm5QK1d0KtaiPpmT+P8FL2e3
+	tZWBDEDtizipkDK3+WjPwYNnuWPl7iS8naKTdtaQCR50KrccUVuxWlmx9YPR9BSWwUu2OH06PyA
+	dOQEOkhXX29Ze/g==
+X-Google-Smtp-Source: AGHT+IEA9JIfP9CQWSGhyoB3BjdlQ0FArnJ2ndDNSq2WykCFcYDd0LfhBm9kmYyl0NNA5bn5glJhDKHgKPpYGPo=
+X-Received: from wmbed10.prod.google.com ([2002:a05:600c:614a:b0:43d:7e5:30f0])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4fc6:b0:43d:677:3a8a with SMTP id 5b1f17b1804b1-43d4378d082mr61128705e9.10.1742459856970;
+ Thu, 20 Mar 2025 01:37:36 -0700 (PDT)
+Date: Thu, 20 Mar 2025 08:37:35 +0000
+In-Reply-To: <20250319203455.132539-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250319092951.37667-1-jirislaby@kernel.org> <20250319092951.37667-31-jirislaby@kernel.org>
-In-Reply-To: <20250319092951.37667-31-jirislaby@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 20 Mar 2025 09:37:12 +0100
-X-Gm-Features: AQ5f1JrZtQ5rI7bFzzliGItNqbfzqd08CVSHd4xCDa6EbYGurwkXp17lVO1F46s
-Message-ID: <CACRpkdYYyrD1qiSj3=F5yqxxoTTJn+rKovpotCk+UZq4TMCraQ@mail.gmail.com>
-Subject: Re: [PATCH v2 30/57] irqdomain: pinctrl: Switch to irq_domain_create_*()
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250319203455.132539-1-dakr@kernel.org> <20250319203455.132539-2-dakr@kernel.org>
+Message-ID: <Z9vTzya716bkk4bt@google.com>
+Subject: Re: [PATCH v3 1/5] rust: types: add `Opaque::zeroed`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org, 
+	tmgross@umich.edu, airlied@gmail.com, acourbot@nvidia.com, 
+	jhubbard@nvidia.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Mar 19, 2025 at 10:32=E2=80=AFAM Jiri Slaby (SUSE) <jirislaby@kerne=
-l.org> wrote:
+On Wed, Mar 19, 2025 at 09:33:53PM +0100, Danilo Krummrich wrote:
+> Analogous to `Opaque::uninit` add `Opaque::zeroed`, which sets the
+> corresponding memory to zero. In contrast to `Opaque::uninit`, the
+> corresponding value, depending on its type, may be initialized.
+> 
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-> irq_domain_add_*() interfaces are going away as being obsolete now.
-> Switch to the preferred irq_domain_create_*() ones. Those differ in the
-> node parameter: They take more generic struct fwnode_handle instead of
-> struct device_node. Therefore, of_fwnode_handle() is added around the
-> original parameter.
->
-> Note some of the users can likely use dev->fwnode directly instead of
-> indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
-> guaranteed to be set for all, so this has to be investigated on case to
-> case basis (by people who can actually test with the HW).
->
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-I assume there are dependencies in the series, if this is something
-I should just apply to the pinctrl tree, tell me.
-
-Yours,
-Linus Walleij
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
