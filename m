@@ -1,74 +1,95 @@
-Return-Path: <linux-kernel+bounces-569827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF6EA6A7FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:10:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29518A6A80A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:11:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D4BE7AEB7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00AAC8A6946
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBF222258E;
-	Thu, 20 Mar 2025 14:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4601224229;
+	Thu, 20 Mar 2025 14:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RnjYKOkT"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZbVideOz"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959B6EEBA;
-	Thu, 20 Mar 2025 14:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C9322371E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479792; cv=none; b=uNrBhCDEcwVdRg3FKrjE5P576O5OxTDcazAMNjyzqC0w2y1tU5ABkmRTaIAxQgPjWbR7+s7EXT9OGBSPt0MbBrHWFB196mYRrvOtS4ngN54ZHchL1FIyNgT60SD0bQCPsevgCmb3HKTF+W2xupZamPapptjPKjJSAdAxVwb04Zw=
+	t=1742479816; cv=none; b=ch2fVcsUl9QMFKQ0Tgn6sLjBXiYYGjpUE4OL3pNv8TTO2Km7PDi7LxoRGXkQZCHNg0C/wQGkBh1x0UZoLL+2K6Jk9psIjGLe/iMWuxw+it1/H6IJIJOHd+xvsVfalolOIMDmqJGHLv/i+S8KQb8XIUmxRy63FpidYY6gWFb+LOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479792; c=relaxed/simple;
-	bh=3gUsqaE7mUufKOG+8Ij0UulGdSKP7dyRB6jukOjry5w=;
+	s=arc-20240116; t=1742479816; c=relaxed/simple;
+	bh=PilF8uXnEgKDLE3lIVx9AaEvUZ7IMCyNJL1wiptCT+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j4dK9tmiBtTp6InsfuPnLSryiHUlotFM1WFhkHhRSC1+XK2pRWOntJpWyaWUiS7X1mSxOchuZvfnFjhJbSPHukt4SMLZ3LxWPc0yqnZrGrwcx0S8+z5HHJ+K6smazNI1EfoI0xxdixi5c2v/KZ9jKEQm83Y9WtQnDxiMmAH7ybY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RnjYKOkT; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9A3AB444F5;
-	Thu, 20 Mar 2025 14:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742479787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+k1WKBS8wmBGYzs9sr3LXVqLTZJWa/ILl+XBNscDrbY=;
-	b=RnjYKOkToOruA8gtWMfVJQ2lVzosiERg2s/F0lfOMsW+ruPaTOwSBxJrVEsbEBOUHf/zsi
-	Taf0zisRRm7yXvuh9Y9N/mcLcRLWcp9ghxNIIYxEdy4JgNKmvIzry06R7k4pdux4r+kp3/
-	Jc8HCqJe+bRnGbNoYJ7/HbDSLXy8gId8hxT7K3adtc9V9+q7l8sWWqbpXywAuhYgDoFbLW
-	XxgGGb4+afw6A+479MukdQiPptRg7ekdm1cE33XeQWAMLG2GpfHYuROX5G5njn2M6xixjx
-	uCjG68LJ3GXjQQhXjXUpVGe1Yppmn19/s3b/4tpGVIw1gaJFCZLHvOOs+TeVfw==
-Date: Thu, 20 Mar 2025 15:09:44 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 03/12] net: pse-pd: tps23881: Add support
- for PSE events and interrupts
-Message-ID: <20250320150944.6ee054c3@kmaincent-XPS-13-7390>
-In-Reply-To: <Z9fu3u34K3-OeDis@pengutronix.de>
-References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
-	<20250304-feature_poe_port_prio-v6-3-3dc0c5ebaf32@bootlin.com>
-	<Z9fu3u34K3-OeDis@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=YSBaLm4CYc/SI6xH0vv+3R8Ce8Fb9WZWjEUBijaYrSK+p6Ewsx5erz4JybHq2IEAJT4kf4clrzhB5C8zNAjLsxEEeqH4qne9pc9o6PyBU/PU0wzBM+4OPHFOM5EkgGSmuTl1CSzENTx0+XAjQgFgZii6rVMpLG+BqFLTfHXlz7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZbVideOz; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDQlss020835;
+	Thu, 20 Mar 2025 14:10:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NDRzyP
+	APHrDYgi76Sv3SMz9AWHRNF/cGpZzkbsSh504=; b=ZbVideOzW0op9zkZGi0QNW
+	3Olbr/R13ScQ8SmitczcDNjEIVHkJ6bL8p5i4a9Kr2pcZSKXJF1XCIoRYkcSdTx+
+	Znq+YyLpXYpdBMpW2fKiKyz4556B5pFBlFvNSE4fnmVIzd9E479tP7NQ3VTt1e8+
+	17MGyUCsPDD+opLoxukqcV0dIwNf0+2+tAtEt5MYWnCZTBD2W++WKlQlxmaOgodF
+	6rV3IIyBm7hjffu0kytM6i4x63hkM6tDfrP0T4jk6AFq+L2yftY3uA9PVpf+hhqp
+	Za74oPT21n9Ks0mqdHT7zO/hzo9BKByhEHE/bHUxNLedXL4RbGnb9aABq6W1d/rA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g23vdkm5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 14:10:03 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KCp2Mw005752;
+	Thu, 20 Mar 2025 14:10:02 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dpk2qyh4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 14:10:02 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KE9xVm50594214
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 14:09:59 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3116220040;
+	Thu, 20 Mar 2025 14:09:59 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E6AB82004B;
+	Thu, 20 Mar 2025 14:09:58 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Mar 2025 14:09:58 +0000 (GMT)
+Date: Thu, 20 Mar 2025 15:09:57 +0100
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Amit Shah <amit@kernel.org>,
+        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+        arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
+        schnelle@linux.ibm.com, Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+Message-ID: <20250320150957.0507abb5.pasic@linux.ibm.com>
+In-Reply-To: <dedc20f946d50bc2b45c1f974554001495657f37.camel@linux.ibm.com>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+	<f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+	<649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+	<f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+	<dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
+	<20250319105852-mutt-send-email-mst@kernel.org>
+	<20250319181308.365ee0ea.pasic@linux.ibm.com>
+	<fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
+	<20250320114120.383a706f.pasic@linux.ibm.com>
+	<dedc20f946d50bc2b45c1f974554001495657f37.camel@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,56 +97,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehku
- hgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1XUZiz0f-N1UrD0K28atwDcA_EkhIo3n
+X-Proofpoint-GUID: 1XUZiz0f-N1UrD0K28atwDcA_EkhIo3n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_03,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ clxscore=1015 bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200087
 
-On Mon, 17 Mar 2025 10:43:58 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+On Thu, 20 Mar 2025 12:53:43 +0100
+Maximilian Immanuel Brandtner <maxbr@linux.ibm.com> wrote:
 
-> On Tue, Mar 04, 2025 at 11:18:52AM +0100, Kory Maincent wrote:
-> > +static int tps23881_irq_handler(int irq, struct pse_controller_dev *pc=
-dev,
-> > +				unsigned long *notifs,
-> > +				unsigned long *notifs_mask)
-> > +{
-> > +	struct tps23881_priv *priv =3D to_tps23881_priv(pcdev);
-> > +	struct i2c_client *client =3D priv->client;
-> > +	int ret, it_mask;
-> > +
-> > +	/* Get interruption mask */
-> > +	ret =3D i2c_smbus_read_word_data(client, TPS23881_REG_IT_MASK);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	it_mask =3D ret;
-> > +
-> > +	/* Read interrupt register until it frees the interruption pin. */
-> > +	while (true) { =20
->=20
-> If the hardware has a stuck interrupt, this could result in an infinite
-> loop. max_retries with some sane value would be good.
+> On Thu, 2025-03-20 at 11:41 +0100, Halil Pasic wrote:
+> > On Thu, 20 Mar 2025 08:12:23 +0100
+> > Maximilian Immanuel Brandtner <maxbr@linux.ibm.com> wrote:
+> >   
+> > > > Another thing I noticed during looking at this. AFAICT Linux does
+> > > > not
+> > > > seem to handle endiannes here. And AFAIU the message is supposed
+> > > > to
+> > > > hold
+> > > > le16 that is little endian u16! Maximilian, is this in your
+> > > > opinion
+> > > > something we need to fix as well? Or am I just missing the
+> > > > conversion?
+> > > > 
+> > > > Regards,
+> > > > Halil    
+> > > 
+> > > Thanks, I didn't notice that, as I only tested this feature on x86.
+> > > I
+> > > double checked struct virtio_console_config as it also defines cols
+> > > before rows, but there the kernel follows the spec (including
+> > > endianness).
+> > > I'll send a patch v2 shortly.  
+> > 
+> > I can send a fix for the endiannes issue. It should be a separate
+> > patch anyway.
+> > 
+> > Regards,
+> > Halil  
+> 
+> I already implemented it in my patch v2 (just waiting for Amit to
+> confirm the new commit message). But if you want to split it you can
+> create a seperate patch for it as well (I don't really mind either
+> way).
+> 
 
-Ack I will. Do you have a value in mind as a sane value?
-
-> > +
-> > +static int tps23881_setup_irq(struct tps23881_priv *priv, int irq)
-> > +{
-> > +	struct i2c_client *client =3D priv->client;
-> > +	struct pse_irq_desc irq_desc =3D {
-> > +		.name =3D "tps23881-irq", =20
->=20
-> here or in devm_pse_irq_helper() it would be good to add intex suffix to
-> the irq handler name.
-
-You mean index? Like the PSE index?
-So I will need to add back the support of the PSE index in the series.
+It is conceptually a different bug and warrants a patch and a commit
+message of its own. At least IMHO.
 
 Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Halil
 
