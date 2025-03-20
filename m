@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-570295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E82A6AE72
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DC3A6AE66
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D93C3BD22A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213569A14AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64BB229B3C;
-	Thu, 20 Mar 2025 19:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AC5230996;
+	Thu, 20 Mar 2025 19:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jpNaEG5V"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="khZGcTxg"
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2447D227EBB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004D61DED4B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742498116; cv=none; b=hBJt7jJzrFmY+lq6V48FsbJClB/+L+4tm13dMrFF8Zq0zAHjueJQqWKPDVvRnmeYCgiVushXw2JhErghhVWOdNHNZv0MGjUWJbem4Tbout+tSbLOx+nTFTydUAWqrOaR/n3kVF3ZCHQTAC8HA4Y4EEtwjui5UIRCPYBXQbkXtOo=
+	t=1742497688; cv=none; b=qqRBXJk62dAmVPyQhk+1O37Sbk8dzStsm2BoSmRjNDtWBJ2NwzOHE4o62AxXmJQirPYz9oa636tmus3mfUIW1tpspa0LM+raKJZfwD84VIeqe7fDEIXjNKIQIr2O7kc1sEwN6JvVGuRk3moM0+0CpfeL9RBvTZ8E7JRQJY5hBnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742498116; c=relaxed/simple;
-	bh=72bSzaF/WAyhB2+cT35s56a62hawTZ8Sl1A2BYgdIqY=;
+	s=arc-20240116; t=1742497688; c=relaxed/simple;
+	bh=WCiYi6/5YPW6GYBH6rdc3JFd7Vug8oKUjJEUZ0zOPiI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UTvLbQDJQs2zIGn1q2l5A+2QI0F7o+sNuMX56iXA48fTVTm64lcWrlO+IDhW1RHpXJb6w5mmQM30iow6TjKkJnt3L1XMUVuuO9sNUxwWVvdsdCg4gvp2raDOVFkheIuXrML6kawvL4LqVhZmKq/suVYtRjH2xIAyWyTxqyjxttU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jpNaEG5V; arc=none smtp.client-ip=185.125.25.8
+	 MIME-Version:Content-Type; b=pSpY22A2q/SBALC/5YGX6kXgzAzuyCXkuNxuAGMO84iWen6EqPiKSRL/f4yLSp9rvxZRGwEzlDNschmuGFqum40hJlj4QgrOSwS/NELYXMWwfQkGTnLMqX76IcpUvIS87L5so8yxCtoOGzmwETJrNI6dpQ6DJ52JZhY6BHLsXTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=khZGcTxg; arc=none smtp.client-ip=83.166.143.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJZpp57sdzxll;
-	Thu, 20 Mar 2025 20:08:02 +0100 (CET)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJZpr1pnhzwdD;
+	Thu, 20 Mar 2025 20:08:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742497682;
-	bh=VBbvjZjOvkXxWgsTKZSVby+Do+mkG3vl/fpWp5738dQ=;
+	s=20191114; t=1742497684;
+	bh=48tyc0VLiY0MDywwnAC06mW/SWXf4hBircunrYD3qQI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jpNaEG5VgYPZsjLWHAR8KA08XvnE36oSH3sIm8IL7FAXh3H9Wps2wbNc0jgLmbwFA
-	 jRe1V5lXzv2dixF1CTrv7X35JeGQ4ChDDWmrAcNBP/V6lkde/nde9jhNeNgo1RKfC+
-	 QqJ3564S5BryolPK1oIn7E3gI3aAT8j8mEXiSFks=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJZpn4lpDzQSy;
-	Thu, 20 Mar 2025 20:08:01 +0100 (CET)
+	b=khZGcTxgm4DGoD8LH5ia1NkEw+chcr2cBa8sEWOa7fN+SWYFxDEXV842UjMgr/r4d
+	 UXlZelzL6u/LO4BOjZW3ZHpX2xP/lgr3SzOXgPxUaPn0PukJkinVr8zB9u25cowSqg
+	 Q0VBGsWERkiIxlK1rY9eb8h/3FuijgLPq2ihr9LI=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJZpq2xyJzBht;
+	Thu, 20 Mar 2025 20:08:03 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -73,9 +73,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v7 24/28] selftests/landlock: Add audit tests for ptrace
-Date: Thu, 20 Mar 2025 20:07:13 +0100
-Message-ID: <20250320190717.2287696-25-mic@digikod.net>
+Subject: [PATCH v7 25/28] selftests/landlock: Add audit tests for abstract UNIX socket scoping
+Date: Thu, 20 Mar 2025 20:07:14 +0100
+Message-ID: <20250320190717.2287696-26-mic@digikod.net>
 In-Reply-To: <20250320190717.2287696-1-mic@digikod.net>
 References: <20250320190717.2287696-1-mic@digikod.net>
 Precedence: bulk
@@ -88,12 +88,8 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add tests for all ptrace actions checking "blockers=ptrace" records.
-
-This also improves PTRACE_TRACEME and PTRACE_ATTACH tests by making sure
-that the restrictions comes from Landlock, and with the expected
-process.  These extended tests are like enhanced errno checks that make
-sure Landlock enforcement is consistent.
+Add a new scoped_audit.connect_to_child test to check the abstract UNIX
+socket blocker.
 
 Cc: Günther Noack <gnoack@google.com>
 Cc: Paul Moore <paul@paul-moore.com>
@@ -102,92 +98,69 @@ Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
 Changes since v6:
 - Check audit_count_records() calls for audit errors.
-- Update and fix PTRACE_TRACEME test to reflect kernel change.
+- Simplify tests.
 
 Changes since v5:
-- Move all audit tests to a new audit.trace test suite.
-- Simplify tests by only checking PTRACE_TRACEME and PTRACE_ATTACH with
-  one scenario.  This is preferable to not impact existing tests.
-- Make sure there is no unknown Landlock audit record.
-
-Changes since v3:
-- Update test coverage.
-
-Changes since v2:
 - New patch.
 ---
- .../testing/selftests/landlock/ptrace_test.c  | 140 ++++++++++++++++++
- 1 file changed, 140 insertions(+)
+ .../landlock/scoped_abstract_unix_test.c      | 111 ++++++++++++++++++
+ 1 file changed, 111 insertions(+)
 
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index 8f31b673ff2d..4e356334ecb7 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-  * Copyright © 2019-2020 ANSSI
-+ * Copyright © 2024-2025 Microsoft Corporation
-  */
- 
- #define _GNU_SOURCE
-@@ -17,6 +18,7 @@
+diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+index a6b59d2ab1b4..6825082c079c 100644
+--- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
++++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+@@ -20,6 +20,7 @@
  #include <sys/wait.h>
  #include <unistd.h>
  
 +#include "audit.h"
  #include "common.h"
+ #include "scoped_common.h"
  
- /* Copied from security/yama/yama_lsm.c */
-@@ -434,4 +436,142 @@ TEST_F(hierarchy, trace)
+@@ -267,6 +268,116 @@ TEST_F(scoped_domains, connect_to_child)
  		_metadata->exit_code = KSFT_FAIL;
  }
  
-+static int matches_log_ptrace(struct __test_metadata *const _metadata,
-+			      int audit_fd, const pid_t opid)
++FIXTURE(scoped_audit)
 +{
-+	static const char log_template[] = REGEX_LANDLOCK_PREFIX
-+		" blockers=ptrace opid=%d ocomm=\"ptrace_test\"$";
-+	char log_match[sizeof(log_template) + 10];
-+	int log_match_len;
-+
-+	log_match_len =
-+		snprintf(log_match, sizeof(log_match), log_template, opid);
-+	if (log_match_len > sizeof(log_match))
-+		return -E2BIG;
-+
-+	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-+				  NULL);
-+}
-+
-+FIXTURE(audit)
-+{
++	struct service_fixture dgram_address;
 +	struct audit_filter audit_filter;
 +	int audit_fd;
 +};
 +
-+FIXTURE_SETUP(audit)
++FIXTURE_SETUP(scoped_audit)
 +{
 +	disable_caps(_metadata);
++
++	memset(&self->dgram_address, 0, sizeof(self->dgram_address));
++	set_unix_address(&self->dgram_address, 1);
++
 +	set_cap(_metadata, CAP_AUDIT_CONTROL);
 +	self->audit_fd = audit_init_with_exe_filter(&self->audit_filter);
 +	EXPECT_LE(0, self->audit_fd);
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
++	drop_caps(_metadata);
 +}
 +
-+FIXTURE_TEARDOWN_PARENT(audit)
++FIXTURE_TEARDOWN_PARENT(scoped_audit)
 +{
 +	EXPECT_EQ(0, audit_cleanup(-1, NULL));
 +}
 +
-+/* Test PTRACE_TRACEME and PTRACE_ATTACH for parent and child. */
-+TEST_F(audit, trace)
++/* python -c 'print(b"\0selftests-landlock-abstract-unix-".hex().upper())' */
++#define ABSTRACT_SOCKET_PATH_PREFIX \
++	"0073656C6674657374732D6C616E646C6F636B2D61627374726163742D756E69782D"
++
++/*
++ * Simpler version of scoped_domains.connect_to_child, but with audit tests.
++ */
++TEST_F(scoped_audit, connect_to_child)
 +{
 +	pid_t child;
-+	int status;
++	int err_dgram, status;
 +	int pipe_child[2], pipe_parent[2];
-+	int yama_ptrace_scope;
-+	char buf_parent;
++	char buf;
++	int dgram_client;
 +	struct audit_records records;
 +
 +	/* Makes sure there is no superfluous logged records. */
@@ -195,93 +168,73 @@ index 8f31b673ff2d..4e356334ecb7 100644
 +	EXPECT_EQ(0, records.access);
 +	EXPECT_EQ(0, records.domain);
 +
-+	yama_ptrace_scope = get_yama_ptrace_scope();
-+	ASSERT_LE(0, yama_ptrace_scope);
-+
-+	if (yama_ptrace_scope > YAMA_SCOPE_DISABLED)
-+		TH_LOG("Incomplete tests due to Yama restrictions (scope %d)",
-+		       yama_ptrace_scope);
-+
-+	/*
-+	 * Removes all effective and permitted capabilities to not interfere
-+	 * with cap_ptrace_access_check() in case of PTRACE_MODE_FSCREDS.
-+	 */
-+	drop_caps(_metadata);
-+
 +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
 +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
 +
 +	child = fork();
 +	ASSERT_LE(0, child);
 +	if (child == 0) {
-+		char buf_child;
++		int dgram_server;
 +
-+		ASSERT_EQ(0, close(pipe_parent[1]));
-+		ASSERT_EQ(0, close(pipe_child[0]));
++		EXPECT_EQ(0, close(pipe_parent[1]));
++		EXPECT_EQ(0, close(pipe_child[0]));
 +
-+		/* Waits for the parent to be in a domain, if any. */
-+		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
++		/* Waits for the parent to be in a domain. */
++		ASSERT_EQ(1, read(pipe_parent[0], &buf, 1));
 +
-+		/* Tests child PTRACE_TRACEME. */
-+		EXPECT_EQ(-1, ptrace(PTRACE_TRACEME));
-+		EXPECT_EQ(EPERM, errno);
-+		/* We should see the child process. */
-+		EXPECT_EQ(0, matches_log_ptrace(_metadata, self->audit_fd,
-+						getpid()));
++		dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
++		ASSERT_LE(0, dgram_server);
++		ASSERT_EQ(0, bind(dgram_server, &self->dgram_address.unix_addr,
++				  self->dgram_address.unix_addr_len));
 +
-+		EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+		EXPECT_EQ(0, records.access);
-+		/* Checks for a domain creation. */
-+		EXPECT_EQ(1, records.domain);
-+
-+		/*
-+		 * Signals that the PTRACE_ATTACH test is done and the
-+		 * PTRACE_TRACEME test is ongoing.
-+		 */
++		/* Signals to the parent that child is listening. */
 +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
 +
-+		/* Waits for the parent PTRACE_ATTACH test. */
-+		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
++		/* Waits to connect. */
++		ASSERT_EQ(1, read(pipe_parent[0], &buf, 1));
++		EXPECT_EQ(0, close(dgram_server));
 +		_exit(_metadata->exit_code);
 +		return;
 +	}
++	EXPECT_EQ(0, close(pipe_child[1]));
++	EXPECT_EQ(0, close(pipe_parent[0]));
 +
-+	ASSERT_EQ(0, close(pipe_child[1]));
-+	ASSERT_EQ(0, close(pipe_parent[0]));
-+	create_domain(_metadata);
++	create_scoped_domain(_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
 +
-+	/* Signals that the parent is in a domain. */
++	/* Signals that the parent is in a domain, if any. */
 +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
 +
-+	/*
-+	 * Waits for the child to test PTRACE_ATTACH on the parent and start
-+	 * testing PTRACE_TRACEME.
-+	 */
-+	ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
++	dgram_client = socket(AF_UNIX, SOCK_DGRAM, 0);
++	ASSERT_LE(0, dgram_client);
 +
-+	/* The child should not be traced by the parent. */
-+	EXPECT_EQ(-1, ptrace(PTRACE_DETACH, child, NULL, 0));
-+	EXPECT_EQ(ESRCH, errno);
-+
-+	/* Tests PTRACE_ATTACH on the child. */
-+	EXPECT_EQ(-1, ptrace(PTRACE_ATTACH, child, NULL, 0));
++	/* Waits for the child to listen */
++	ASSERT_EQ(1, read(pipe_child[0], &buf, 1));
++	err_dgram = connect(dgram_client, &self->dgram_address.unix_addr,
++			    self->dgram_address.unix_addr_len);
++	EXPECT_EQ(-1, err_dgram);
 +	EXPECT_EQ(EPERM, errno);
-+	EXPECT_EQ(0, matches_log_ptrace(_metadata, self->audit_fd, child));
 +
-+	/* Signals that the parent PTRACE_ATTACH test is done. */
++	EXPECT_EQ(
++		0,
++		audit_match_record(
++			self->audit_fd, AUDIT_LANDLOCK_ACCESS,
++			REGEX_LANDLOCK_PREFIX
++			" blockers=scope\\.abstract_unix_socket path=" ABSTRACT_SOCKET_PATH_PREFIX
++			"[0-9A-F]\\+$",
++			NULL));
++
 +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
++	EXPECT_EQ(0, close(dgram_client));
++
 +	ASSERT_EQ(child, waitpid(child, &status, 0));
 +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
 +	    WEXITSTATUS(status) != EXIT_SUCCESS)
 +		_metadata->exit_code = KSFT_FAIL;
-+
-+	/* Makes sure there is no superfluous logged records. */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(0, records.domain);
 +}
 +
- TEST_HARNESS_MAIN
+ FIXTURE(scoped_vs_unscoped)
+ {
+ 	struct service_fixture parent_stream_address, parent_dgram_address,
 -- 
 2.49.0
 
