@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-570186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887E6A6AD3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:46:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09335A6AD42
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E2F884EB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745D0466AE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3609226520;
-	Thu, 20 Mar 2025 18:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1510A227E80;
+	Thu, 20 Mar 2025 18:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elKX58B6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUi9HQt8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19622839A;
-	Thu, 20 Mar 2025 18:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681E61E47C5;
+	Thu, 20 Mar 2025 18:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742496351; cv=none; b=ZBCcvF5ZiMZ9GCuH0tkQ1zYiAsPLZ/buVJvcLoODxnIx6FJDeQPoyAvdkh+QMcpPOH6/1rSqRjJuVOQXJ9h+mXVg2t9OcI3c3baDHlcqR6Ns+JHpVPD/sy68sQc0xb723wZto9UdUSc+mR5Y8IDG9gJXuBSsDBhIWnqE7hmCAXQ=
+	t=1742496401; cv=none; b=EU1SbbiGQrptgUBiJwm9I85fN96pS+mORBKRLYY3hjNdXxe/C1+ihlXkxw9wXMjNQHnbe3bGz8esa2vmh4MZ9fhq39kSJmke8fixivZdL7qimSgcpmFOeY5vhq1bBzKDZoui6xOJSEBFOnw2MX80OhKt2+yavz4e/WRxn1DD9MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742496351; c=relaxed/simple;
-	bh=9GgqdaYLKd7dmzLN4hNOYA1FFmBech8VPXpJw8W5XXw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YeLXBeyadPNK2yHwoi4p9k8G4YFaIDjfu7hG8mjJfO7ECxMvvvAbWw8flDHdiG7K89nGl8YQyjBF/R4P92780LfjzZgy0kVbfQk3MLTiZEyYxVHIuVKZADTnxXU4Zso+W6XVbY74F+iApv0Yxd96qrDZQdsrK1iytupPEo8Dx1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elKX58B6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36370C4CEEC;
-	Thu, 20 Mar 2025 18:45:48 +0000 (UTC)
+	s=arc-20240116; t=1742496401; c=relaxed/simple;
+	bh=ZRmVkviGr2SMUpx3X9P264GBbzsua9ORauvN0D6d+8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCkziyP1kRRvkZbGL5gPb0lpKxM1fmh1JjLXdWxpXGS+Zg48c4tBJ+tN7Li1FTXJfs2PL5NYAHDd9o9Qk/Gh1RKbgGHhumP/LoTNA0M0hsKleqPaUP1xEJvejVlX8pBVzC5MB6fS30NrHYQ7AvgPW29cB9MXF357JqlJsPtmPoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUi9HQt8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8BB5C4CEDD;
+	Thu, 20 Mar 2025 18:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742496350;
-	bh=9GgqdaYLKd7dmzLN4hNOYA1FFmBech8VPXpJw8W5XXw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=elKX58B6TYNLG5yRXK6frhwOhw+PbUVW47rpa+Uw0/X/McE81x2xa7zqWyLK+uRye
-	 3w/SAmqk77qKQaRNs+ny6SawrO6GafiHBaNBZecnsWJuT5495VNkEAkcafE68k1esj
-	 kQblPueB7Im9Oc1jUFS6B61DMEhQjqr/CS31OjydqAxTa+GlDKCOSMf8xE5c7SIITG
-	 6atnbqq3Ps2KfnzFyZCprcGWecR8lqi7eRYS/Spj+zPz09SpoS4FBhVOSXloPdE2hB
-	 fLZVDTSql2Tvpk7DsJkMDQJnuiYZg/zZmi8ttE4SE58pKVlxA6S+tKRbCD2OsPZdGn
-	 6LSK9yd1zWepQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- patches@opensource.cirrus.com, Francesco Dolcini <francesco@dolcini.it>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250319142059.46692-1-francesco@dolcini.it>
-References: <20250319142059.46692-1-francesco@dolcini.it>
-Subject: Re: [PATCH v4 0/5] ASoC: wm8904: Add DMIC and DRC support
-Message-Id: <174249634796.174081.9833862895994881364.b4-ty@kernel.org>
-Date: Thu, 20 Mar 2025 18:45:47 +0000
+	s=k20201202; t=1742496401;
+	bh=ZRmVkviGr2SMUpx3X9P264GBbzsua9ORauvN0D6d+8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VUi9HQt82htf0+Go+nOSGUoK3TFvNWzMRETLul/r89c1w4SQVyAD0iNA6CoYZ5t+t
+	 cEwdc9NJZsiEXj+6LBKpAADTNBJdyZFxZjvh69KFZKE3Sl1GrEaNIcb37hNoHIZY5p
+	 Fc6S4a11G9UTKFMF6kWmEGclPLOi2I27zh+ZkvXc3rgwkfRJ4BkORLK9Q1n1qb8Z/l
+	 Vq6aJuWuw3BgknUbNAIIJFypXC6YrAhuuR+fnGRLYkf3GMQHbhR9w5Sbabq7LenNSR
+	 De+jzqOYGdM/ssOKs7v0AF0vdeScftNv1mdt4GzuNrkW5g9DLrhgq4ym8psCPFP8ZN
+	 c8IGuVjPRHmOA==
+Date: Thu, 20 Mar 2025 20:46:37 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <kees@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Josh Drake <josh@delphoslabs.com>,
+	Suraj Sonawane <surajsonawane0215@gmail.com>,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	security@kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] keys: Fix UAF in key_put()
+Message-ID: <Z9xijTBHY93HCsLW@kernel.org>
+References: <Z9w-10St-WYpSnKC@kernel.org>
+ <2874581.1742399866@warthog.procyon.org.uk>
+ <3176471.1742488751@warthog.procyon.org.uk>
+ <Z9xQP0uhBEr3B890@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9xQP0uhBEr3B890@kernel.org>
 
-On Wed, 19 Mar 2025 15:20:54 +0100, Francesco Dolcini wrote:
-> This patch series adds DMIC and DRC support to the WM8904 driver, a new
-> of_ helper is added to simplify the driver code.
+On Thu, Mar 20, 2025 at 07:28:36PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Mar 20, 2025 at 04:39:11PM +0000, David Howells wrote:
+> > Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > 
+> > > > +		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
+> > > > +			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
+> > > 
+> > > test_bit() is already atomic.
+> > 
+> > Atomiticity doesn't apply to test_bit() - it only matters when it does two (or
+> > more) accesses that must be perceptually indivisible (e.g. set_bit doing RMW).
+> > 
+> > But atomiticity isn't the issue here, hence the barrier.  You need to be
+> > looking at memory-barriers.txt, not atomic_bitops.txt.
+> > 
+> > We have two things to correctly order and set_bit() does not imply sufficient
+> > barriering; test_and_set_bit() does, but not set_bit(), hence Linus's comment
+> > about really wanting a set_bit_release().
 > 
-> DRC functionality is added in the same patch series to provide the
-> necessary dynamic range control to make DMIC support useful.
+> Oops, I was hallucinating here. And yeah, test_and_set_bit() does
+> imply full mb as you said.
 > 
-> The WM8904 supports digital microphones on two of its inputs:
-> IN1L/DMICDAT1 and IN1R/DMICDAT2. These two inputs can either be
-> connected to an ADC or to the DMIC system. There is an ADC for each
-> line, and only one DMIC block. This DMIC block is either connected to
-> DMICDAT1 or to DMICDAT2. One DMIC data line supports two digital
-> microphones via time multiplexing.
+> I was somehow remembering what I did in SGX driver incorrectly and
+> that led me into misconclusions, sorry.
 > 
-> [...]
+> if (test_and_set_bit(SGX_ENCL_IOCTL, &encl->flags))
+> 	return -EBUSY;
+> 
+> > 
+> > > > +			smp_mb(); /* key->user before FINAL_PUT set. */
+> > > > +			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
+> > > 
+> > > Ditto.
+> > 
+> > Ditto. ;-)
+> 
+> Duh, no need poke with the stick further (or deeper) ;-)
+> 
+> > 
+> > > Nit: I'm just thinking should the name imply more like that "now
+> > > key_put() is actually done". E.g., even something like KEY_FLAG_PUT_DONE
+> > > would be more self-descriptive.
+> > 
+> > KEY_FLAG_PUT_DONE isn't right.  There can be lots of puts on a single key -
+> > only the one that reduces it to 0 matters for this.  You could call it
+> > KEY_FLAG_CAN_NOW_GC or KEY_FLAG_GC_ABLE.
+> 
+> Well all alternatives are fine but my thinking was that one that finally
+> zeros the refcount, "finalizes put" (pick whatever you want anyway).
 
-Applied to
+I'll pick this one up tomorrow and put a PR out within this week.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/5] of: Add of_property_read_u16_index
-      commit: fd9582998b9a82ef53a34756de8a1fb86abac972
-[2/5] ASoC: wm8904: Don't touch GPIO configs set to 0xFFFF
-      commit: 2aa853248b6b6c76b9dd82353e45a4283f9c53ec
-[3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC and EQ support
-      commit: bd552e937fc80faa70007f7a4cbbf7edd5a6629a
-[4/5] ASoC: wm8904: get platform data from DT
-      commit: afe66ef965317381fd2894c2eba144b38b791910
-[5/5] ASoC: wm8904: add DMIC support
-      commit: b6612c8fc3a2c279196050ecc13c77a7863d83eb
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+BR, Jarkko
 
