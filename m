@@ -1,263 +1,249 @@
-Return-Path: <linux-kernel+bounces-569437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10436A6A2F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:51:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3D1A6A2F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:50:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C59219C0357
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06CF4636C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7402222C8;
-	Thu, 20 Mar 2025 09:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15932220687;
+	Thu, 20 Mar 2025 09:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="irNdlRjc";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="t9PfAWA9"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3KPZWg5"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAD323A0;
-	Thu, 20 Mar 2025 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742464205; cv=fail; b=sJ+XQFnd+p6/hOskhHmA4IvI3PaQcaxpN5U+/2GoNnXeLs7BCz1U33DnFO8CQ74jRpiEHDhQPvFZ6Y/DhCttr+v+j0rMhx1nm+TJJ2w53+ruZ8qYKitCiQlNS4spfPPaRJ75amUHtfSkOGmL/qrNAOLrSG4ilX7ur62d5VxMUDg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742464205; c=relaxed/simple;
-	bh=1Q8phdaobbj+4sXODW7FK/hC+vAlwl9QMuMnrKzV3+4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H93QmbwmhgLFhTEjA47bDE7msm3i78YqMi2NEBCPO0M9mWbfewmJ32zRWs1mWzRK3uhYZdkNwYqmg7Y6qGjQMYuvDmpJ+WL7qNcnzfuF4aP5tgzUxnMxslkrpTR8Ged4iwc/qLPHwGCtvwyXeqivoRpc+2pABAHs2JNyPlKPqpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=irNdlRjc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=t9PfAWA9; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K8BtUS030528;
-	Thu, 20 Mar 2025 09:49:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=MXj60ck1TQvzMLISdEAfYd84r2crN4c5bkdyz5ubdfY=; b=
-	irNdlRjczPszI6z8qHYPxSwCPX0bU8SCgHcfPBRO0LDfTxv8w9rdTtilOVxKBdr3
-	A+r+4TkJ7AYfP8h89AguWpWoWl3xeOWL+Givv/B4cv/TwdTLuVoRj/2nEaq+0HXS
-	0y+Hne53aPWQ7ogLae5vV5BP7hQPzGetsc0+VggfLi7/065jbG/lEoogx//9pBJQ
-	zUCv5ZJMJH+1SfH8Ixs2Xn4h9iATkidsjkHW7PF3unCzhsXmtfdYMLkD0MMxU/Go
-	FYZLfIFthuqq82kx2tQ9AYEyp7/Q5DEGLnrjTQQCIytFiLPaTxcZaRSteu/9ly3D
-	nn2lTrlgoEGO42WKDXQUvw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d23s5q5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 09:49:51 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52K89Aiu022430;
-	Thu, 20 Mar 2025 09:49:51 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2042.outbound.protection.outlook.com [104.47.70.42])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45dxej3708-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 09:49:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MEPL2+BOEx1rkXVJ++JOsSSWbgBEDtboGtDT0Gtnnzl8C/endl3daTvkkKP4q/kL4BIDXeImn75HMUhelsgp3JXPESoZcW6jam6xT8jBOYN1LRYznUu79/SwFPC5ZmPiWb8q46rwkkeddhn9k0CrKFs46FFTdy/VYzrr5GEL/YQINU9IKWoi/lskBZT9sQADuWkFlL8F561kwKkwPlVbiJ08JgSwBwp4cS1hYBUPZvSNpelDdLeqvNlZ6jg9oeEWK/3Wb14FfLB6vuPM8CTrJjdV/Stl533CNGypCMA0al0AobaiU/lt/t2qqstKg6E77XKwp6nb1vRYpNPomhnNVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MXj60ck1TQvzMLISdEAfYd84r2crN4c5bkdyz5ubdfY=;
- b=tn1vVxCkR5AlWBlDoKbN9AQNz1PwN2seEDi75+jOsIaBe4XYgx/+9gYPhaj+lS22UJ7sUcCsm2n8Dn5lt7bGngIA69grPny3NoIQ8lzJ6ini4NSObgOjbSvozBmXGRwfvWtK4RrhtTtA2nWm20I4foaUyOlPgEUUAcZLpjBedyblMDKGznbxH9+EroEf6r7as4zNjG2EgJjhQNw7ycwGBX1lf21M0NOJEKyGUkf5U2B+tt2GnxAy7EPf42716n9BwuZDzP/dhg9cLrSZTjEBQLEDEOzjcxppZNExgxv8NA/OKAohrRJa7QdGV2exZJ6s7PIVBxe7T5W1cvDjLxg/Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722A88F6D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742464230; cv=none; b=gQvyzdnLIgiJ3F2skUVBpdv3HZ3BXXDs027D7ZLUOn8Kge9nshISaxWMtFbc02znhuaE93sJtL0zdQQZMdN/X7ipoqYk1/hixSIrw0cbKO0BcSD20O7SUeCQzAHdNc8xavvlUjon0LM807zC/orlszZMXfjE71IY7b0oeJ2SSoI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742464230; c=relaxed/simple;
+	bh=jK8zPyn51ibZC2k1KcWCTfFdjiIJfQV0B+TLE+OYZtk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=n+MO/Z0LxXa1NF8jsKlLWmcd1Ek5yJzwAw693lsJ54Kyw0cd79j2AdnHwKsorBUJv1R51871o7Q3awOUy3P25Eu5wyZUmzYBklLVBPvzh1O4kJdEaTtkk10zMshIRPVaXEZ+JC3zkZIl4EQtJ95TM7fzjP0bjK+orMy3HhWE+qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3KPZWg5; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86dddba7e0eso214095241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:50:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MXj60ck1TQvzMLISdEAfYd84r2crN4c5bkdyz5ubdfY=;
- b=t9PfAWA9iDLvyQkJGGr2vJZgVJSVEh0kYO2jw83N3DOEy2bSMAYwcevXL+IT8isVRa7y+JuFvwYfastfDt/FxRhbUwxeaw/jTWlQrwy7NeDJqnHhdX3STYD1c7Ff1DuEdzgEHyHpDlgNFVHLP8bQCZguWvkULB1fIbIckaoZzwA=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DM4PR10MB6838.namprd10.prod.outlook.com (2603:10b6:8:106::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
- 2025 09:49:48 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
- 09:49:48 +0000
-Message-ID: <f8cdd6b1-fcd5-4783-9fdf-bcb6e7c3e992@oracle.com>
-Date: Thu, 20 Mar 2025 09:49:44 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 10/13] xfs: iomap COW-based atomic write support
-To: Christoph Hellwig <hch@lst.de>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-        ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-        linux-ext4@vger.kernel.org
-References: <20250313171310.1886394-1-john.g.garry@oracle.com>
- <20250313171310.1886394-11-john.g.garry@oracle.com>
- <Z9fOoE3LxcLNcddh@infradead.org>
- <eb7a6175-5637-4ea6-a08c-14776aa67d8b@oracle.com>
- <20250318053906.GD14470@lst.de>
- <eff45548-df5a-469b-a4ee-6d09845c86e2@oracle.com>
- <20250318083203.GA18902@lst.de>
- <de3f6e25-851a-4ed7-9511-397270785794@oracle.com>
- <20250319073045.GA25373@lst.de>
- <ef315f4e-d7e9-48ee-b975-e0a014d10ba2@oracle.com>
- <20250320052929.GA12560@lst.de>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20250320052929.GA12560@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LNXP123CA0011.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:d2::23) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=linaro.org; s=google; t=1742464227; x=1743069027; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=91+1pwQNQl8kPf/HghWNvlhI7XTd07SABpnZUQWDpHw=;
+        b=o3KPZWg5mKeTbu5B39ocqslu0U3DAB7T3fDRXtQ/kzcxPWNhJolZb+hmNKGOCZ6xcX
+         dpa50Acn+M63avVFXQzpSxWZPSZMfYFc24WEf3sDJvrxmidb26e1cHXrgUdnvGFIMsfQ
+         BiErJ3hL6xl5iHqlxNzdigMTJvviYYjVR4bFMyVYJaCOnPMBMcNGeZEuLqtv8Ca2zD65
+         BS4+xvMe7M9iYPDp88WbGEhSdzLciA9Hpx3f2Y1PNXQCtkQsCqH5+F78OJtk4YLOu0lH
+         vXM73WGyvCNvaHQUg5al5UnCdJetCIXdEFcuqbf9pOcDsyC+WTISoKrWAiWXbm9/CO4l
+         nS5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742464227; x=1743069027;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=91+1pwQNQl8kPf/HghWNvlhI7XTd07SABpnZUQWDpHw=;
+        b=QKOOmFLYDCWAmvm/ktTf0HCMz4GLix1OZRM9kslehtnWJWnvMUb/hYkUOWDbmv6FDm
+         EJGCV5SrI0PfeY7XEqkoaY55m42kbHw2n7qDveRHvBKb2fp/uY0w7M14ucmnZSY4BVs2
+         RBgeQpk/F8L9TCG8jHM6CrnrmLkz+V+b4W+oYTEsswoDW69rrX6OnxOZw/B4xaIzhA4o
+         NxB6ugngjFuWAFz2eF5agCP1XHvqOCt+d37c5x1+PuYGdkgxeMMwnY5VIIgeS/GACKYj
+         7dv0Q+bKIsDS8fSd+GwKXgABUUjqwJWI79uv3MnAwuNte4CLqgzxETFiIL7JQGgAlO8v
+         hx9w==
+X-Gm-Message-State: AOJu0Yz1RGnOxYjgvQ0TcL0fEyowHx/JE9z2PjN/4JfY442x0LOX2GvE
+	7ARARO/UgTRtQbAkGym4NYYgNPIthvgl+N7r4s4mFLREh41IBWNVmS2YzEGOJ19PTs6Sor0GSpw
+	I02raqw4F5D4LwR8BqoYAVFmD9o+4m/R7+csAYZwI3o8mkLFW
+X-Gm-Gg: ASbGnctOfPpzwKP7IF0zWzOypIiViihctq6R4wahYprm2yyq8Tcpi1x5Jk2e6lyQfvv
+	zt7bcImtWvzOjeiFx4sRrX6Tkmb9OlhCRqsmXKK4b74n3KqOP95sRvPS/paHG9okRK3u8Xauhdq
+	BBH2QGMKddrE2B9NPfR1Nn17olTY5E2F8W8vij3OX6MwPUUf3yKoOAWt17Zf3626mK4g==
+X-Google-Smtp-Source: AGHT+IHjmhKILTPy96D1p7uyvSzcXS9MF1P55nhqY0CxmjDVATtPXvEPQ7Fj/CrEydFvSGXmwvuFSqL93NyDDBFF3jo=
+X-Received: by 2002:a05:6102:549f:b0:4c1:8b8e:e9f7 with SMTP id
+ ada2fe7eead31-4c4ec63a201mr5023131137.8.1742464226618; Thu, 20 Mar 2025
+ 02:50:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DM4PR10MB6838:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37dd895b-98b9-4043-0bff-08dd67948d8c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bFZyM2xWU3puYmw4WUR2Y1NIOFl4K3NXNXh6b2hJMWhYSEJoWjVXZlYvODJO?=
- =?utf-8?B?dkVhcERGR0JtWHJiY1dpTUlJZnlEUmxtUUpseDNHN2ZLSmFYVHVKWXN5dG5O?=
- =?utf-8?B?Wk4zeG5TZFRxZ051UGlNeHpBTGE0elZhaCtLQVJCdjNtNkpuNDR5VGcwYjlF?=
- =?utf-8?B?QmxXcGV2WXVmOHhvVEtYMUFkSENoUnpDeVdvOUVXdlBsNzBQZWpEZDMxa0k0?=
- =?utf-8?B?S3RjVTRPNGw2UEpZcExaLzZnLzVzemxQSlV3Q2V4R0pQb2hPMU1LQVNxSWg5?=
- =?utf-8?B?bDg3UUVGR3BQZW9WcVNoQUhIY2oxRm5LZStSM1pPQVIwVkRlUmZyeG9NV01p?=
- =?utf-8?B?TFRHSnFBSVpISEJPVVdLL3pGa0ZtbURoVmg5cmNsbysyWWQxTzc2Y3d5dWNC?=
- =?utf-8?B?ZEJjNmRMaDhLVUJxVk5xQVNLVVhrWTdZeG9BZ2FkZGc4SDVKY3c0Mk5PT1Nn?=
- =?utf-8?B?T29oMHZNUHg1VkJvZjR1L3ZXbko1cGpubkdwLzlIUnZzcytqVnpPbVUvTFp2?=
- =?utf-8?B?QUVDTzVKZUlnQ0wxOXFGVVBJMjNEYmVjYThpUjBXSWdpbjF3V3A1Ni9sYXBp?=
- =?utf-8?B?bDVWQitXL3RwZGs3dkZNam9Tdm50UVJsclFyQjV0OU5wdlYyRm84T1Rkbldj?=
- =?utf-8?B?Y3JaODBqUTNablkrdFNBQXFod2pXUTRDa29IVVRBeHdCTUVDRm94VllpV29l?=
- =?utf-8?B?d2hldGxBb2pEbFZic3RqcytkQ0svRlpPNUY3M0I3TnFGVGxsc0hBeWJndDFy?=
- =?utf-8?B?MDZHakgxUllSL25VY3l2Q08reXhVaGthWU9sblNSMmtNSVA4S2NNTVVuV2g5?=
- =?utf-8?B?OWg0VEZ2WXFLS3ZkbWJiZXlpdFJWV3VWK3p1YXovdk9TelZUUlNTYy9uMU01?=
- =?utf-8?B?clFJdklCQlF5M3NZQ2xvdG5Saml5VnBTZHc0clFhWTVmUTFlZzZxWnhaMlA5?=
- =?utf-8?B?L21XUm5maG5sMEhFLzBpY0tvem8yRzlUZjBnbjRDUkdzK05TZnFmWVBweHhN?=
- =?utf-8?B?Sk1rNFhBWDFvT2J2KzhkMTY5ajM3R0dTOE5tTnYrQnMwNTIrQk1DMys1b3NU?=
- =?utf-8?B?ZHk2S3F0Ym5xQmNnY1BlRU1vclhucjlGVnNQaU1Na2plL29Kb3c0TEx5dkdB?=
- =?utf-8?B?bWRVRk5FMC80ODNYeXdtNkdSNW04dCtZM205L0hDK0NPQmhSV2NpZkM1Y1Qz?=
- =?utf-8?B?c2EwL0hWQUZ1ZWttbWgwVnpMWmJkcEd0enpPZ3gyci9LQjYzY09vSW04RjZR?=
- =?utf-8?B?M1EwTUdZajhmd3ZmczNQeUlxWDFnL3hwNE1udkZ2ejRlMWxadzF6Qkw4ekQ1?=
- =?utf-8?B?NFR6QUFIT0twajNhKzI0WktwTnJFSWY1b2h1R3JkMGFVeVlxQ3ZweXM4VFBE?=
- =?utf-8?B?SDNSM1JoRVJyTGJ1dHFRYWpnRXBWUEpmRlNHWGM5NXRFc1JHa2h2akV5S1dG?=
- =?utf-8?B?bVovRkpiWVI1QkQ4TmlhOWhPL2haVkQ0d0xSWlZmREh4MytQSUpFeGx5T1VF?=
- =?utf-8?B?a29iU1FCVGU5VXE1bXdEUHN5SGNnOVBkelAxU1ZFb0lTVGs2eXdTM3FZUFZK?=
- =?utf-8?B?RExVbDVJTDZIbDVlNmNDU1hhZzFkNytCUXRRcGVvb2c5dHQ1T25iTmo4Ulh1?=
- =?utf-8?B?Z0RNNVQ5Vy96OXhxTzMveWpOYXFDNDZuR1VaMFZPeE0yazFXdWZKc1hsMDJV?=
- =?utf-8?B?QXpkNjNnSW9wQ21HcE8xL2I3TDN3SzlWU1hnMlEvMUYxMGlBZ2QycVRWYTVy?=
- =?utf-8?B?SDc4YjhKc2ZLbERKaW1kcnBNWlNSM09TSTZkUEo0QW1WNkM0dnVUUWJNWS9J?=
- =?utf-8?B?ckVQMlRHbHNUa0c3clU0bXgzRmR4NmszS3pjWGQyQWtGcTgwVm1iZ1VxclJJ?=
- =?utf-8?Q?CTWyURuPx/yvK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NE90WHdQbXM4cHE4M3U2S0FhY1FWTTlWZ2duTmtlUGMyY3Y1QzhXN3Z3NG9q?=
- =?utf-8?B?ZjRQemw1aFdjYTdCaUtjWEFsd1NhY01FZHRxRnFWVHFSTWJFRitITWhteXNt?=
- =?utf-8?B?d3IxZjdpemIwcVRwa2ZJelhZQmFWckd3SlRFMTlUQnU3MTZaRkZ0RVZvSmJN?=
- =?utf-8?B?R1BBWTlBODVqbVFDallqZUMrSERWWUVNNDZGLzV0bzRWR0IrclFWNkUvWS95?=
- =?utf-8?B?UGJMS2RMRGEwK0VjbDZETXFWb0FqUysyREt2Q0dKdGRUNkYzekJNNGtJNTF0?=
- =?utf-8?B?NEJEZFNhT2p6K056ZDd5WStqQ2hGVmx5dytydTJpUDJ5YnUyc2VSUktCK1dY?=
- =?utf-8?B?cXpGb1F1d296bTluY2w4cjdRTGl4VWprRXJrSGprajljMytpQjg1Vkw5bndq?=
- =?utf-8?B?dUZ5RGZFR0h4RHRxUzY1SFZUVDY0TnR0NkxRY0MwcHJjNVYveXpmL3JDelFu?=
- =?utf-8?B?OEQzdmRpeklUbWNNU0RjSzRUeFdTcHg0WXJGcy9sT2JxYld0TnRRWWhOVzRx?=
- =?utf-8?B?YW53R1pFaGZ4QnFRWVhadklLTG10ajZXaUlsQUprTmFGOXpGcm1nd0dqTHBE?=
- =?utf-8?B?bUNiL1JBUnBBTk5kY3NhVUFDeDBQK1dubWdzWDVUbGdBRVBDNHZFdE1zUlJX?=
- =?utf-8?B?dWovVlI4WjlVVjNvSjFkTkpOSFNTS1o3SXhNSUZBdGZSZGIyVVkvcjJ1cDBy?=
- =?utf-8?B?Z09oUzlMWDYvSnhvUHhKZWtyOHdsdmE0SnBHUnFTazNLTEtCTFRTMkNjVUFT?=
- =?utf-8?B?Z0FCWlR2ZU93R0dudXExUHdWWTVkVkxMNDR4UHRpRzBkdnp4K3ZHT216L3Va?=
- =?utf-8?B?VnFGcWRpWWRVbmRuYi8xYXpXVmpZMWlCYVpGK0VGNi9ONXc5MitzeTlWWmJn?=
- =?utf-8?B?TXNrS3NmTm9nalRuZ3g5TC9nVlVIOVlFbHhPS0x3MmhuTFpUVWRwMEZXczdy?=
- =?utf-8?B?eHlLVzlJTTM2Yk9tRXJvTDEvVW9VM3lTL2pGYjVXSHp1b2ZEU2tEVTJFZE11?=
- =?utf-8?B?MEcyQTkvUmVYQzFvcDBDNm1DRnp1S3NockxKYXBsUlJFTkNHeFAyOTNZVVVn?=
- =?utf-8?B?SGJWSEFobDhVZjJHVTI2ekx0djlValo2NlM1OUtyaVp1bTV3NWpJRDJkczYz?=
- =?utf-8?B?SkdRY0ZIeXhLRFVuckcxTU9heFhGbDZrdHAwa3l2ZVBmWDhtZ2FtL0JkY2Rn?=
- =?utf-8?B?U1ZOZjJkbnFzb3M1RVFJU25RZjRMRUc2SjB4UlR1UmpsNnJ1eDMwOUY1T0U0?=
- =?utf-8?B?UkFjOGtjS1lXZEZRZ0VMb1lrYjE4L0trenA0Y25wOGdyenhleGE1anlhM2NZ?=
- =?utf-8?B?cDZXYm4yMk1KOTRvSVhwOUhRdENaWE5KOFZMNDQ2QnNqR29tNS9kSDZZeW1H?=
- =?utf-8?B?RXQ5eEdmZVYrQUhxQzJDYXNUenM4a0ZOd0VLL0JBTklHQzRwL3JOKytCKzNQ?=
- =?utf-8?B?ZmpHd3NETTBJc2dsV1o2VnFvSVpFRFVVRjJMYy8zMGlhYXIvMXc1SE1Ec0RP?=
- =?utf-8?B?QVE3SDgwOVM4blcyRGlyeitLVFh2c1k3MmxmTFJaZ29rWm9YM1l6VWFGWEtJ?=
- =?utf-8?B?OVYzakFVazB4dHVwSDhtUG5vTmpBbmNPNDFuODJ2YVhFQ1Y4UkZUT3gzOXVw?=
- =?utf-8?B?emd4b0ZScnA0UzZUNFU1WkJRUzYwTFpPampBRHVTOGtkMk9PakhGVE5jSnNT?=
- =?utf-8?B?Y2Y2OXlXN2l4RDljZ0htRUlhSG4zc3BNbXhhc3VMa0RUZG84YUNDMVVXLzJz?=
- =?utf-8?B?TTJ5aXUrQ0g1NWdDeU5nWCtsbkZ4TktGZ0loZVcydXBUZDZJR2FnZE5YQmN3?=
- =?utf-8?B?ZmxnZWxoQWdsQUgyT0p5c0FOano3U1V2aFppckZJUHdKajVsQ0hrbXE0SXl2?=
- =?utf-8?B?S2FJT0FWbUR5ZXV4ZFlzZkthYWgwT0pYTWFmMmVLUU9kTmJvOW5Ya2pmcEJo?=
- =?utf-8?B?S29sTDk1QW1aWFVFeHQycjZlNkNnWlp6N2Q5dndiZ1R1SGFqRFNlMFo3bk1k?=
- =?utf-8?B?ODBaRjB1ZTZJTkRvc1FHS3NLbTlkSkNVNnJwcDdON1NXZWZSSU41a0o1ZjhT?=
- =?utf-8?B?TGJobVB5ejN6ZXFIMkdLanplVjIyanAvRWpUdUxZWG9adEhuRUhVTTltdkFH?=
- =?utf-8?B?M3BZeExXVDFIaXVkRnNLUW0zRGZETG0vME4wY29jZ1ZzVkExWHEycmNzTmcz?=
- =?utf-8?B?amc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	q98imaXUTjFZd2pJDgXnQG7NN8XniV+b8KjWYL3AZPL+M3nRmV8gewJW7BqiPgVhXjag395BI6RlnDz8k3WevoxoMtiz3XsDgYb5irDA6DM1AydMGe/G8o614d9O1Xn5Md/+Q6mZjdUxsSL09o7BpRoFXSENa862pKRAfPjYV8hVmOSvT3v0HPZMAUw1tU2a2cKfL1eauxOrbcAsCCDeqQO2YRRUHiuDZJr1oN7e1e1njcJPkWC3Czk+4zxyUfyncxuHMpi02RyU5mI3tbzuMr7UTeqoM/h9hPwdVN5YVlwfroULsVbcpw5AstDhxD3OXRLoSValYXyt6Am6J853Vsg5jBnAY8pfyfjrkpuEcxDwnpm8NpB11ne0rmAooh3RhtblnSlSq9HIe6VQD/w3xJkFMZYkrOpo41CSbnWu4Ma1yWiYta5LFLoPOBv83CwXQHYnWyu+TfgIIiINazP3fHpFiW8QI1VxF6m++iy8noEwIkeY7bXguEBV/EYruOYI6UVLXbwCl1JHJMbreDyeOOBfHG6PDDuL6KbHHqZ3N5IXtm6oAxfbReZFEBpUidvYYH9XO2rpzrugBmqTy4vumTAaL3S0Qos5RUsNiDh19f0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37dd895b-98b9-4043-0bff-08dd67948d8c
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 09:49:48.6252
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 03XHxsOipJRqleiwi8LPGKAwxHM2cop6qlX2lOpGvBX1ef0CqdKpzo6LDnnOCFyQffFs4BtxTGV3leSjNMhUWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6838
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 mlxscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2503200059
-X-Proofpoint-GUID: 8NQG6iDC4fRiPTBYKOAh3CtCThowzCN7
-X-Proofpoint-ORIG-GUID: 8NQG6iDC4fRiPTBYKOAh3CtCThowzCN7
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 20 Mar 2025 15:20:14 +0530
+X-Gm-Features: AQ5f1Jql1-DJ_kcAW7zxPA6HFZrFt_2BSzusITPrABo17flcdRcAdXkCTahAxI8
+Message-ID: <CA+G9fYuquxGrt81z4FBSEDuvAMpu2qYAoFXwYKpfSuw2YYNS0w@mail.gmail.com>
+Subject: stable-rc-6.13.8-rc1: Dragonboard 845c: kernel NULL pointer
+ dereference - camss_find_sensor
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux Media Mailing List <linux-media@vger.kernel.org>, lkft-triage@lists.linaro.org
+Cc: rfoss@kernel.org, Todor Tomov <todor.too@gmail.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 20/03/2025 05:29, Christoph Hellwig wrote:
-> On Wed, Mar 19, 2025 at 10:24:55AM +0000, John Garry wrote:
->> it seems to work ok, cheers
-> 
-> Better test it very well, this was really just intended as a sketch..
+Regressions on arm64 Dragonboard 845c boot failed with stable-rc 6.13.8-rc1
 
-Sure, I have been testing a lot so far.
+Regressions found on Dragonboard 845c :
+ - boot (debug Kconfigs)
 
-I had been using fio in verify mode as a method to check racing threads 
-reading and atomically writing the same file range, so I need to ensure 
-that it covers the various paths in this function.
+Regression Analysis:
+ - New regression? Not sure. But the crash looks new.
+ - Reproducible? Intermittent
 
-> 
->>> +	count_fsb = end_fsb - offset_fsb;
->>> +	resaligned = xfs_aligned_fsb_count(offset_fsb, count_fsb,
->>> +			xfs_get_cowextsz_hint(ip));
->>> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
->>> +
->>> +	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_write,
->>> +			XFS_DIOSTRAT_SPACE_RES(mp, resaligned), 0, false, &tp);
->>>    	if (error)
->>>    		return error;
->>>    -	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
->>> -			&nimaps, 0);
->>> -	if (error)
->>> -		goto out_unlock;
->>> +	if (!xfs_iext_lookup_extent(ip, ip->i_cowfp, offset_fsb, &icur, &cmap))
->>> +		cmap.br_startoff = end_fsb;
->>
->> Do we really need this logic?
->>
->> offset_fsb does not change, and logically cmap.br_startoff == end_fsb
->> already, right?
-> 
-> Afte unlocking and relocking the ilock the extent layout could have
-> changed.
+Since it is not easy to reproduce this crash, it is hard to bisect.
 
-ok, understood. Maybe a comment will help understanding that.
+Boot regression: Dragonboard 845c kernel NULL pointer dereference
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> 
+## Boot log
+[    7.871211] xhci-pci-renesas 0000:01:00.0: failed to load firmware
+renesas_usb_fw.mem, fallback to ROM
+[    7.877652] CAN device driver interface
+[    7.879182] Bluetooth: hci0: setting up wcn399x
+[    7.884439] Bluetooth: HCI UART protocol Marvell registered
+[    7.890767] xhci-pci-renesas 0000:01:00.0: xHCI Host Controller
+[    7.938433] xhci-pci-renesas 0000:01:00.0: new USB bus registered,
+assigned bus number 3
+[    7.941274] spi_master spi0: will run message pump with realtime priority
+[    7.946642] xhci-pci-renesas 0000:01:00.0: Zeroing 64bit base
+registers, expecting fault
+[    7.969396] ath10k_snoc 18800000.wifi: Adding to iommu group 16
+[    7.983424] mcp251xfd spi0.0 can0: MCP2517FD rev0.0 (-RX_INT -PLL
++MAB_NO_WARN +CRC_REG +CRC_RX +CRC_TX +ECC -HD o:40.00MHz c:40.00MHz
+m:10.00MHz rs:10.00MHz es:0.00MHz rf:10.00MHz ef:0.00MHz) successfully
+initialized.
+[    7.987793] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000030
+[    8.001412] ath10k_snoc 18800000.wifi: supply vdd-3.3-ch1 not
+found, using dummy regulator
+[    8.004533] Bluetooth: hci0: QCA Product ID   :0x0000000a
+[    8.015039] Mem abort info:
+[    8.020189] Bluetooth: hci0: QCA SOC Version  :0x40010214
+[    8.020197] Bluetooth: hci0: QCA ROM Version  :0x00000201
+[    8.020204] Bluetooth: hci0: QCA Patch Version:0x00000001
+[    8.025657]   ESR = 0x0000000096000006
+[    8.039667] Bluetooth: hci0: QCA controller version 0x02140201
+[    8.044983]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    8.044988]   SET = 0, FnV = 0
+[    8.044990]   EA = 0, S1PTW = 0
+[    8.044992]   FSC = 0x06: level 2 translation fault
+[    8.044995] Data abort info:
+[    8.044997]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[    8.044999]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    8.045002]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    8.045004] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010cbec000
+[    8.045007] [0000000000000030] pgd=080000010cbf4403,
+p4d=080000010cbf4403, pud=080000010cbf5403, pmd=0000000000000000
+[    8.045019] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+[    8.045022] Modules linked in: venus_enc venus_dec ath10k_snoc
+mcp251xfd videobuf2_dma_contig ath10k_core lontium_lt9611(+)
+xhci_pci_renesas(+) can_dev ath msm leds_qcom_lpg mac80211 qcom_pbs
+hci_uart ocmem rtc_pm8xxx btqca drm_exec led_class_multicolor
+gpu_sched snd_soc_sdm845 qcom_pon qcom_spmi_temp_alarm drm_dp_aux_bus
+snd_soc_rt5663 drm_display_helper qcom_spmi_adc5 btbcm
+snd_soc_qcom_sdw drm_client_lib qcom_camss camcc_sdm845
+qcom_vadc_common snd_soc_qcom_common snd_soc_rl6231 videobuf2_dma_sg
+qcom_stats crct10dif_ce coresight_stm soundwire_bus videobuf2_memops
+reset_qcom_pdc cfg80211 venus_core phy_qcom_qmp_combo bluetooth
+aux_bridge v4l2_mem2mem videobuf2_v4l2 i2c_qcom_geni pwrseq_core
+spi_geni_qcom videobuf2_common typec qcom_rng gpi phy_qcom_qmp_usb
+qcom_q6v5_mss stm_core qcrypto icc_osm_l3 ufs_qcom phy_qcom_qmp_ufs
+phy_qcom_qmp_pcie lmh rfkill slim_qcom_ngd_ctrl qrtr slimbus
+pdr_interface qcom_pdr_msg qcom_wdt llcc_qcom qcom_q6v5_pas icc_bwmon
+qcom_pil_info qcom_q6v5 display_connector qcom_sysmon qcom_common
+[    8.045106]  drm_kms_helper qcom_glink_smem mdt_loader qmi_helpers
+drm backlight socinfo rmtfs_mem
+[    8.045116] CPU: 7 UID: 0 PID: 430 Comm: v4l_id Not tainted 6.13.8-rc1 #1
+[    8.045119] Hardware name: Thundercomm Dragonboard 845c (DT)
+[    8.045121] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    8.045123] pc : camss_find_sensor+0x24/0x80 qcom_camss
+[    8.045141] lr : camss_get_pixel_clock+0x20/0x70 qcom_camss
+[    8.045152] sp : ffff80008177b8b0
+[    8.045153] x29: ffff80008177b8b0 x28: ffff80008177bc30 x27: ffff6d63004043c0
+[    8.045157] x26: 0000000000000000 x25: 0000000000000000 x24: ffff80008177b908
+[    8.045161] x23: ffff6d630d1f5e48 x22: ffff6d630d1f7a98 x21: ffff80008177b920
+[    8.045164] x20: 0000000000000003 x19: 0000000000020001 x18: 0000000000000000
+[    8.045167] x17: 0000000000000000 x16: ffffceec8fe80380 x15: 0000000000000000
+[    8.045170] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000001
+[    8.045173] x11: ffff6d6301abd000 x10: 0000000000000c80 x9 : ffffceec20623b90
+[    8.045177] x8 : ffff80008177b7b8 x7 : 0000000000000000 x6 : 0000000000000001
+[    8.045179] x5 : ffff6d630d1f7158 x4 : 000000000fffffff x3 : ffff6d630d1f7028
+[    8.045183] x2 : ffff6d630d1f6568 x1 : ffff80008177b920 x0 : 0000000000000000
+[    8.045186] Call trace:
+[    8.045188] camss_find_sensor+0x24/0x80 qcom_camss (P)
+[    8.045200] camss_get_pixel_clock+0x20/0x70 qcom_camss
+[    8.045210] vfe_get+0xcc/0x530 qcom_camss
+[    8.049208] Bluetooth: hci0: QCA Downloading qca/crbtfw21.tlv
+[    8.054874] vfe_set_power+0x38/0x68 qcom_camss
+[    8.054886] pipeline_pm_power_one
+(drivers/media/v4l2-core/v4l2-mc.c:492 (discriminator 12))
+[    8.054894] pipeline_pm_power (drivers/media/v4l2-core/v4l2-mc.c:529)
+[    8.054896] v4l2_pipeline_pm_use (drivers/media/v4l2-core/v4l2-mc.c:557)
+[    8.054899] v4l2_pipeline_pm_get (drivers/media/v4l2-core/v4l2-mc.c:569)
+[    8.054902] video_open+0x7c/0x100 qcom_camss
+[    8.054913] v4l2_open (drivers/media/v4l2-core/v4l2-dev.c:434)
+[    8.054918] chrdev_open (fs/char_dev.c:414)
+[    8.054924] do_dentry_open (fs/open.c:945)
+[    8.054928] vfs_open (fs/open.c:1075)
+[    8.054932] path_openat (fs/namei.c:3828 fs/namei.c:3987)
+[    8.054935] do_filp_open (fs/namei.c:4014)
+[    8.054938] do_sys_openat2 (fs/open.c:1402)
+[    8.054941] __arm64_sys_openat (fs/open.c:1428)
+[    8.054945] invoke_syscall (arch/arm64/include/asm/current.h:19
+arch/arm64/kernel/syscall.c:54)
+[    8.054950] el0_svc_common.constprop.0
+(include/linux/thread_info.h:135 (discriminator 2)
+arch/arm64/kernel/syscall.c:140 (discriminator 2))
+[    8.054954] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+[    8.054957] el0_svc (arch/arm64/include/asm/irqflags.h:82
+(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+arch/arm64/kernel/entry-common.c:165 (discriminator 1)
+arch/arm64/kernel/entry-common.c:178 (discriminator 1)
+arch/arm64/kernel/entry-common.c:745 (discriminator 1))
+[    8.054962] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:763)
+[    8.054965] el0t_64_sync (arch/arm64/kernel/entry.S:600)
+[ 8.054969] Code: f9000bf3 52800033 72a00053 f9402400 (f9401801)
+All code
+========
+   0: f9000bf3 str x19, [sp, #16]
+   4: 52800033 mov w19, #0x1                    // #1
+   8: 72a00053 movk w19, #0x2, lsl #16
+   c: f9402400 ldr x0, [x0, #72]
+  10:* f9401801 ldr x1, [x0, #48] <-- trapping instruction
 
+Code starting with the faulting instruction
+===========================================
+   0: f9401801 ldr x1, [x0, #48]
+[    8.054972] ---[ end trace 0000000000000000 ]---
+[    8.062891] xhci-pci-renesas 0000:01:00.0: hcc params 0x014051cf
+hci version 0x100 quirks 0x0000000100000010
+[    8.063966] bluetooth hci0: Direct firmware load for
+qca/crbtfw21.tlv failed with error -2
+
+## Source
+* Kernel version: 6.13.8-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git sha: 14de9a7d510fcfb3bd35e275eda09724bda4d440
+* Git describe: v6.13.7-242-g14de9a7d510f
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27687746/suite/boot/test/gcc-13-lkftconfig-debug/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27687746/suite/boot/test/gcc-13-lkftconfig-debug/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27687746/suite/boot/test/gcc-13-lkftconfig-debug/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZp3X2U4uKizZrPK3SAiZuzXS/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZp3X2U4uKizZrPK3SAiZuzXS/config
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
