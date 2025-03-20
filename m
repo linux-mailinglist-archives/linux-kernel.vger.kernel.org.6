@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-570462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA5AA6B09B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:18:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453A1A6B0A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550CB188AD55
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65ACE486C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC96229B23;
-	Thu, 20 Mar 2025 22:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9B322A1D5;
+	Thu, 20 Mar 2025 22:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mn+ulCet"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="SNQbir0r"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C7C15D5B6;
-	Thu, 20 Mar 2025 22:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53AE1EB1AE;
+	Thu, 20 Mar 2025 22:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742509103; cv=none; b=k0nVQr7N/H1mbV2JBuBPnbAE9clCwH+lM07Y3cK+FYfgqh/N7ubG962G+Fo1OMXrNym9fKsT271/x2RsXZqm5O17yN5Fvp9qpRf06D/ONmWuZPXzQey2QRNVPvZkbIvTLhKHsHW2oJgmHkw177x4IHz2+SjzBI3ABj4Mqa3Mcmk=
+	t=1742509232; cv=none; b=WY3MeUvVYNFqnYIIH+qPR4MNIUav+zjI45ff55I9Ltskb684z+islRPcdAfkmf5JuLztC2CWK07zuOLTKR+7OwmXWPxltZW5Dh6O65lKtSmvKpugoHOvCpQjHVxf6zH5RWBorLwiPgrgw0fuutJTBaA9/DzDxsqDLHViiguiiOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742509103; c=relaxed/simple;
-	bh=9O3RydOB0ZVkYcXG0exlOsEH1A3gmr9V7HhCFrKPCOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huM0zhy6589XK5jxHloYg1AQZRZdZHRvGWvTelXz6KmzQ2b5kLQmCbnCi0DltUfsYnUczqLpBOCGFdV5oYF7mz2MTYS8I3HFOC2TEVF+xThjV3+4Ok3iobEHCOVijcHxEPzZ0ephaG2El4YJgh7S50ZtkB/X95AlzfxMr4Pzd/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mn+ulCet; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79299C4CEDD;
-	Thu, 20 Mar 2025 22:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742509102;
-	bh=9O3RydOB0ZVkYcXG0exlOsEH1A3gmr9V7HhCFrKPCOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mn+ulCetMTCG/4qlZQDzsJJ76CiHhF7e65TYAlrI3mDPFud0vAmTpVdCb7ysQT4ty
-	 EipVvGI55DH1LqgdhCekIm/e+uose39lI9y7t8pjUjhyKeQtr8+YgYv1JRUas7mbgv
-	 MeZb58JTBta1WtCD8N1RO3jxAn4PqepAnXCHvGVFfWGZrSl1so86czajaryIsZaUUc
-	 Z4Dm1UPlPQ/+pv7sOy/Rz5yPNERuWeutubxfMq5pOFlKIw9fRutQcIqdzYfBSHfUNY
-	 gvtA3qZX9G21P3GfnnrZYDa0Sy+/T21l5wEOZH6b4GVeT7+hypJoIQcJ/bYXjiTRoM
-	 bBBuLTYPXhkMw==
-Date: Thu, 20 Mar 2025 23:18:17 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	ludovic.desroches@microchip.com, andrew@sanpeople.com, mhoffman@lightlink.com, khali@linux-fr.org, 
-	wsa@kernel.org, peda@axentia.se
-Subject: Re: [RESEND 0/3] i2c: at91: Fixes and updates
-Message-ID: <odbnk4zvjprs4ipdtxjeurdrubx3eu7zcmxkpwodlz6idnw3t7@6d2a4hl4dpe2>
-References: <20220614101347.16910-1-codrin.ciubotariu@microchip.com>
+	s=arc-20240116; t=1742509232; c=relaxed/simple;
+	bh=zXWfsQ7w6RPGYtfvywhwGPrHWxal0Yxkm5TUZ/A0Q7Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JeiVyYXGanCOIwjG6aWIdABUXeLJlKl7Tb5jHdihOgqg8LsLapW4oWIawtpXdAb291Ogz6bb63jQkWLXA2mXO/781A/Fma8ELFkXtCysDN3EIU1me1zsOaKjbHT0/Ge1Tjg8LZ6tXXhPRIOB6HYUS6Fb8lcXssKppSWRVO9nvbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=SNQbir0r; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
+	s=protonmail2; t=1742509219; x=1742768419;
+	bh=3uBgC8qpb6edc0IEFRvLrRXPcCwLkb9JVdD1lmnVRhk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=SNQbir0rlqFTkOfQON6BjuSXyDFTybv2lNFUzVSCDUxYeQ4ntElJHhnLcd+aTNZ6u
+	 qz90htRQhDLwXQqzYH3JzYl/S8OGnrceuisZ+vEsDHsLBNHFLrup+aGnLBbv6Low4j
+	 hSXMEpff+diIOM+p3+T+pxODtxwIyT9Ak8JOMVKwVSIgEyn5Zmx0TVT8htgc3MZPGt
+	 ymwOmEpoT6DTwZRY0Xnpv12vAQzww/0cYiDSS5kXpZCNlm8UeLoFbcpGG4t2o26rYx
+	 uC1FtMkagsZqvcVuGdxwxbyCYkLX9xrSM82dh37JaLViLYDohp4dxwuBqJZAWIrZep
+	 xcaNbutK/PGBQ==
+Date: Thu, 20 Mar 2025 22:20:14 +0000
+To: Juerg Haefliger <juerg.haefliger@canonical.com>, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+From: Bryan O'Donoghue <bod.linux@nxsw.ie>
+Cc: linux-kernel@vger.kernel.org, jens.glathe@oldschoolsolutions.biz
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-hp-omnibook-x14: Enable SMB2360 0 and 1
+Message-ID: <d1b6657c-9da4-4435-81ae-857c27d18beb@nxsw.ie>
+In-Reply-To: <20250319160509.1812805-1-juerg.haefliger@canonical.com>
+References: <20250319160509.1812805-1-juerg.haefliger@canonical.com>
+Feedback-ID: 136405006:user:proton
+X-Pm-Message-ID: 2ed17bbce085e05ce1083d357f40fe78e0e77fef
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220614101347.16910-1-codrin.ciubotariu@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Codrin,
+On 19/03/2025 16:05, Juerg Haefliger wrote:
+> Commit d37e2646c8a5 ("arm64: dts: qcom: x1e80100-pmics: Enable all SMB236=
+0
+> separately") disables all SMB2360s and let the board DTS explicitly enabl=
+e
+> them. The HP OmniBook DTS is from before this change and is missing the
+> explicit enabling. Add that to get all USB root ports.
+>=20
+> Fixes: 6f18b8d4142c ("arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibo=
+ok X Laptop 14")
+> Cc: stable@vger.kernel.org      # 6.14
+> Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
+> ---
+>   arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts b/arch=
+/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+> index cd860a246c45..c4ac0aaa6f65 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+> @@ -1352,18 +1352,22 @@ &remoteproc_cdsp {
+>   =09status =3D "okay";
+>   };
+>=20
+> +&smb2360_0 {
+> +=09status =3D "okay";
+> +};
+> +
+>   &smb2360_0_eusb2_repeater {
+>   =09vdd18-supply =3D <&vreg_l3d_1p8>;
+>   =09vdd3-supply =3D <&vreg_l2b_3p0>;
+> +};
+>=20
+> +&smb2360_1 {
+>   =09status =3D "okay";
+>   };
+>=20
+>   &smb2360_1_eusb2_repeater {
+>   =09vdd18-supply =3D <&vreg_l3d_1p8>;
+>   =09vdd3-supply =3D <&vreg_l14b_3p0>;
+> -
+> -=09status =3D "okay";
+>   };
+>=20
+>   &swr0 {
+> --
+> 2.43.0
+>=20
+>=20
 
-> Codrin Ciubotariu (3):
->   i2c: at91: move i2c_recover_bus() outside of at91_do_twi_transfer()
->   i2c: at91: keep the controller disabled when it is not used
->   i2c: at91: add advanced digital filtering support for SAMA5D4
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-if you still have interest in applying this patch, may I please
-ask you to resend it?
-
-Thanks,
-Andi
 
