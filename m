@@ -1,84 +1,131 @@
-Return-Path: <linux-kernel+bounces-570335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222CBA6AF05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:15:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DF5A6AF0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C8C8A52C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D23D464339
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8229222425B;
-	Thu, 20 Mar 2025 20:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01E822A1D5;
+	Thu, 20 Mar 2025 20:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftQosuKT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PzlsD9ka";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6sblkTx9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02431465B4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809E922A1CB;
+	Thu, 20 Mar 2025 20:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742501722; cv=none; b=Kn1OsYQ/NKOCVx3kmwyGOu75Z1qksc59ItWye3GiTbGq2EeHbGOBNPPT4r5iQ8z6/Nr2CD8go3dl0L7EzOdBYFmGXsSkltKDgIX97gPfX+XqrJONfm6wCXBwe4nbnoI4fzP0GIkC7uV856/x5XCr+sSihd6DIQUj7B8AMdoOoJE=
+	t=1742501761; cv=none; b=t+wLoqOfmtDfUlK8JTjB7pOAV+aJrukbKO+VZH0drsu2sbddYmJi0KKRrluNesGoDYHpYyYJCIpX1BPYQbnz7q0dhx/AXT1xctUndj7p+8HK4rM2xppgToVwnwJNWpClNFUUUTTLkzfQI1wyokqAGfjoN/Lr1AHfo/MYeZy6jkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742501722; c=relaxed/simple;
-	bh=WDbvPSqBjTg7wYfVhWLiaIXXqOk4KLK0lv+0872ZAFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oN2kKftU8Jsrudt6exL31auYIjklaZ98rd+EZBKVy0gBIZmdracCY9NmZM88LLLdTyCYGBc/Twl8+8HR8lpjPLAWMq2LGWGEzyAueR6Ez1q/XQG5aqvSZoX5FG4iDr9Ur7qW1p872T++gSczHwg/nKNnsFRkUvPkL670zvHYGs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftQosuKT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8FDC4CEDD;
-	Thu, 20 Mar 2025 20:15:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742501721;
-	bh=WDbvPSqBjTg7wYfVhWLiaIXXqOk4KLK0lv+0872ZAFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftQosuKTgM76TyOQYBZ/KsAh7vIyb9Zx2X6EqH5Lpyparu8AEOF3uflOm/CrUKEaf
-	 9JG5e362bwVtFtRgy2JtLKEZDeL4fB1DZOxQE4RUN+I/fEmclGtLba8PvGt7wgEJWK
-	 CDMzhMUPYNN/Ymu4pSB6UwNy4+eNb0Mb1Y/AwS1jyEuEo3d1/VtAynV/DV+VyDNsmK
-	 H5lsvGxNh7914G+Ewpm2HCFZvVVkWIXKBpf1pqS4C7uW5xMaUL1VpnqZYzTYnvmkzR
-	 Eqt1Wop94OINiRiHN4N3cgUSigLbUil7twsBKA8kE7uUGg/FkLlQNiUaYOrWlHs2NM
-	 AthmzkeRfj7gw==
-Date: Thu, 20 Mar 2025 14:15:19 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: shaopeijie@cestc.cn
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	zhang.guanghui@cestc.cn, gechangzhong@cestc.cn
-Subject: Re: [PATCH] nvme-tcp: fix selinux denied when calling sock_sendmsg
-Message-ID: <Z9x3V_mp4VcZgJOD@kbusch-mbp.dhcp.thefacebook.com>
-References: <20250320063523.2201926-1-shaopeijie@cestc.cn>
+	s=arc-20240116; t=1742501761; c=relaxed/simple;
+	bh=aYFGXfMi2XYKkbxPZlAvLSb99LF5Dfig+IiAoIjUTcA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=VCCVgSKk8s5rTXo61vQp+mDCH9mTASMkdaONenwGaR+4hPPS2SUMDyY6dY1RrbnsNgonXUJtb9iPuxwdkPFj5geP2ckhjuX2vEc1GGiBroC+h4xa9KuN7FyhM8Hrq0kx1LfjZPeB0y5zuX0FDLsxnTStB+VPBvIL3wvIOAns1dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PzlsD9ka; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6sblkTx9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 20 Mar 2025 20:15:48 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742501757;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bFx/2PXlmDo2ekF/EGr6kEACutZG7vER+SaxgstOcn4=;
+	b=PzlsD9kamGlGG9JkyM4g56wa04M+USUzCfoL9kt4Y+aNDHYj+ZhLpb/oPY8Htr1BZPM75g
+	x/S+gLTC4Mt9WDrB69QlsL3DrK2p2PRRzDDw+gRIKHQxcUIAekzkLR3hXINitbZ6geJPws
+	2btKsQ5GLcAQ+QN8ihVC12OPzvTx8Y2ko1E2ZhvNjXqtU8ae1aJNWu9z1w1DwfbyZMtdKa
+	7vbaWy7CrKTtwFTXiMvehZrrege2FY76u3lAGsujonHjB8+s1NCCoM7fuqP6BVut66dWOG
+	AH9UB5kh7gP6Gzx1kzc15CoTqGnYXVXte3YIcZtzTY6/+FP6NGVCJ5zLzp2NyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742501757;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bFx/2PXlmDo2ekF/EGr6kEACutZG7vER+SaxgstOcn4=;
+	b=6sblkTx998c6clqy+GS7jEUWuBzwMJDqVgoOl2WQhE8Qq3dzvJgUKsaOBAimsUdydzpTqV
+	feHPGhk7wQDk8LCw==
+From: "tip-bot2 for Dhananjay Ugwekar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/urgent] perf/x86/rapl: Fix error handling in init_rapl_pmus()
+Cc: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250320100617.4480-1-dhananjay.ugwekar@amd.com>
+References: <20250320100617.4480-1-dhananjay.ugwekar@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320063523.2201926-1-shaopeijie@cestc.cn>
+Message-ID: <174250174933.14745.3144777458054823623.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 20, 2025 at 02:35:23PM +0800, shaopeijie@cestc.cn wrote:
-> From: Peijie Shao <shaopeijie@cestc.cn>
-> 
-> In a SELinux enabled kernel, socket_create() initializes the
-> security label of the socket using the security label of the
-> calling process, this typically works well.
-> 
-> However, in a containerized environment like Kubernetes,
-> problem arises when a privileged container(domain spc_t)
-> connects to an NVMe target and mounts the NVMe as persistent
-> storage for unprivileged containers(domain container_t).
-> 
-> This is because the container_t domain cannot access
-> resources labeled with spc_t, resulting in socket_sendmsg
-> returning -EACCES.
-> 
-> The solution is to use socket_create_kern() instead of
-> socket_create(), which labels the socket context to kernel_t.
-> Access control will then be handled by the VFS layer rather
-> than the socket itself.
+The following commit has been merged into the perf/urgent branch of tip:
 
-Thanks, applied to nvme-6.15.
+Commit-ID:     7e512f5ad24458e2c930b5be5d96ddf9e176e05d
+Gitweb:        https://git.kernel.org/tip/7e512f5ad24458e2c930b5be5d96ddf9e176e05d
+Author:        Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+AuthorDate:    Thu, 20 Mar 2025 10:06:19 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 20 Mar 2025 21:03:55 +01:00
+
+perf/x86/rapl: Fix error handling in init_rapl_pmus()
+
+If init_rapl_pmu() fails while allocating memory for "rapl_pmu" objects,
+we miss freeing the "rapl_pmus" object in the error path. Fix that.
+
+Fixes: 9b99d65c0bb4 ("perf/x86/rapl: Move the pmu allocation out of CPU hotplug")
+Signed-off-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250320100617.4480-1-dhananjay.ugwekar@amd.com
+---
+ arch/x86/events/rapl.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index 6941f48..043f0a0 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -730,6 +730,7 @@ static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_
+ {
+ 	int nr_rapl_pmu = topology_max_packages();
+ 	struct rapl_pmus *rapl_pmus;
++	int ret;
+ 
+ 	/*
+ 	 * rapl_pmu_scope must be either PKG, DIE or CORE
+@@ -761,7 +762,11 @@ static int __init init_rapl_pmus(struct rapl_pmus **rapl_pmus_ptr, int rapl_pmu_
+ 	rapl_pmus->pmu.module		= THIS_MODULE;
+ 	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
+ 
+-	return init_rapl_pmu(rapl_pmus);
++	ret = init_rapl_pmu(rapl_pmus);
++	if (ret)
++		kfree(rapl_pmus);
++
++	return ret;
+ }
+ 
+ static struct rapl_model model_snb = {
 
