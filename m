@@ -1,257 +1,293 @@
-Return-Path: <linux-kernel+bounces-570327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223A8A6AEEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:02:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C81FA6AEED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8033B423C10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:02:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E360B1891D67
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5C8227E98;
-	Thu, 20 Mar 2025 20:02:41 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDB42288E3;
+	Thu, 20 Mar 2025 20:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M2Q095qh"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9BC2F28
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F05229B0D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742500960; cv=none; b=uEsuYlr+Ygzlhc9CNux+PxgLpRjC8qrSMe2eD+ifxBEHp7JnBN4zK/PZI70omavRDk1mfL2YTY5QW6FqGTOWRblxKUsjtoeUv0TndDEDDwX1ZFDtKwsjyXpIl1oFcJBGbg9vkTX4Lgr4VBnMUEAuJ6ZSbaEruKYA6F+jYJBg7No=
+	t=1742500992; cv=none; b=CDvp/EBHjxS3GNJSjl6uQA/nk1rf0QwNPgwmWLdugCc/CZ4jc3YgBsH0ZjHnd7kMrPCb6MUpQwwL6nONPkGb5mEp04CkwRd6Kwpxo7VeXRC0kKPonSRmKrRDIffnk3ddmxI/rcndAcixR8lhi/XGGgmorZYamwFVpDbjSXTOmpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742500960; c=relaxed/simple;
-	bh=QDHM/qW/ewyrGXiWD/jJ1i7Mvl7H5JMMT/cNGKSf2jY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=suC9smVcy34DFlXeQuhAYj3Ed9q4AKrd4gSBOFtEBOzeVv/5kbCx5dOCORRQhAyogN/SuwB4JGUGLlWNxhBa641gva6JYJkTZEB5s+uC4MelhFU6kyeKYWagFRKd61m1WIxdClBnYX0whZRdmHjNjfcET7R7vA7rJImNRQytXLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso24322335ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:02:38 -0700 (PDT)
+	s=arc-20240116; t=1742500992; c=relaxed/simple;
+	bh=IAwIAxxG8p4iEqmmxlYf8o3Ykua428QNXsNS7e2jxOQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jfG/nJsBsOsto9hL3bGpac59SPU5NG99094dv6hAnl0Zi3HjiE6/G5HIa2icyTF35mibhsRLkzcld05wjNe5MtdaCekMDxthohlFYatPyyVPycpaHOTVfi3u06dZBZwiXXdo35N0KPZgOJjv7PhV9mtLxikwAWgxMMTRLmGYh4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M2Q095qh; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6af1e264so3304455a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742500990; x=1743105790; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Kh/xQ9fv8FpIbfWlmJMxeApDHDonFtfV58rPyR5rKeI=;
+        b=M2Q095qh6armokD8ezcgm2+dJ7HzFKC9YPQC1c/n+Rzoz1Z0O0St5KPMd3mSdtEv1j
+         AqGqL/Qd7kHVmVPBdLNb3VWqfLFreTh4cowoulednnuXxPPLvro05dcrO8S4vbVDRyxX
+         GU6+ZN/DNfIytDiMrSSap+1r72RBMc1LAbTkerkh6fe3U8zJNDm5mWOeGRxaUXllTyyM
+         FVGwv/qmHynmvhh9LDcZRmexvZ+0BtMycAkChFnvJXfyVslppafU7mjNIaViti82j6F7
+         TW0Htojuj7dpjjk03qAUPL5y7ivAohCS1kM/bmITmr4JrYKz3OiKFX69MF0JeZ1EL3jM
+         pOyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742500958; x=1743105758;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Etq5TP2xoNJQvFgoQupyFkxy1Uppzb4mI/ZsT/Ut4k=;
-        b=ESJ9ziyQGYtOHpQQsUzEJYTXp80LC0GAEZuIc3SJLc9STT3L6ihMlJrkkXDC+kci4q
-         GITrLEVwcrA2/5VHtrZZzdYJSr0zlcRqPHNRebUG3Jkn1kaVXpm2J4unNwzMcYD/Q79g
-         +DX4TX1VAbAZwkKxQ4nThONadlCC5BoaVl24XzaQjr0OGTtULGJvBVSeVW1pkJj7AI6E
-         3VoNCMWNwdFN1nlS4oPFFzeEa2iQly2Q9K1MwEwCLrF2NYZm7J+D912vjg5hFVjh6grr
-         rFdgK0HMg0bzIj69f1zHl6fYdZUWs+pAtmui6kDKa+DQFus4nXkSP1/VWVnIDXsC1HyJ
-         8UHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhC8bqXWFmI28N4cFX/Dwd0gMWvViOr0jsff1Tx8bw9BWPvhKAXbMY5kvVDy2IaPLnR8eLTo68dbqc/D4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztqO0B1B4vDMR4Fq6TondUrON378prTvVKUAvC1j80uvSPLUjx
-	P5C32Y9/8VfTYWjM6SQN/cK0N2lGSzYvsjwCAqamCpA2/yiKjjIgshEzUF91GJXtl3++wiXYHQQ
-	6WCukjz+LDdv7Ns8A44mV9fo8rW4P8De6TAO/FdnP1sEZydbwrJai2UE=
-X-Google-Smtp-Source: AGHT+IHLspIAzV44BAI8Ovzlbju+v6rgPBHVMr5AWSt7r4q9isy3D8BlOOJMZf1z0WPYpRsLkFiKSmOnbCnpdkAcgZEogl+xdZIN
+        d=1e100.net; s=20230601; t=1742500990; x=1743105790;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Kh/xQ9fv8FpIbfWlmJMxeApDHDonFtfV58rPyR5rKeI=;
+        b=nCHoi8/AQ0qMWY97Py6ANcu2F135MiEX0tjut/iT4/ZpsyXjU5RHEzq42UveFiWdtt
+         yUuKMlBRrNf4eIV5Gt3ncMx7eTAiYZxfNe0z/29dz/fgiPxMpEjvQlonZ2W3E9iAg6s9
+         PJAZ7cpQE0w8IcUhHPFMPaeaN7cHK0Dg8mPsLYisOAfpsJgfshOO8vFl2sOZSRuSXq2+
+         Kf690XS16Db6R7hBDaMIQumxGqa8oYrLAyA4UqfQuLEvZbRneniWsvFTAjXgzBZ8PInv
+         AeaGPvQu+7zvl2VasTEwoJqvYaRTh+u8tH2SVccxxSKRjlkgP3IDlaXTmZeD3IkEnLWp
+         p3UA==
+X-Gm-Message-State: AOJu0YwI+rqjdJQjD1bbIwHiHo0nob6tuXv5KTn+8kn9jiUhVoNuYr7u
+	rpmCOB3SUAYmx34fjX7bk+uHkyKbdawSQ9GxIS86Ob8Lb0odj6E7tgc+VfT3+C4BPUqZ43odkIX
+	E5R3k+ri/xqAKkS9r/AeSyXN3uXq5fZe2lAMbAnIgjXRxzSxbiu7iH4vMRRilQLWjUIbkRMEM5j
+	bXku3iR+aTbDIg0C2wv30r9xyH/N6h2rbPvMFA1O552OzE
+X-Google-Smtp-Source: AGHT+IFfmIe8hY7j98W04pDpd89yWI1PHIh/o7e/RuYoGRB/sB83B78OHDmeQdOKl3N7Eg1AlHp4CnvjoEhX
+X-Received: from pgje2.prod.google.com ([2002:a63:d942:0:b0:af5:fb69:84d2])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:7011:b0:1f5:8655:3287
+ with SMTP id adf61e73a8af0-1fe434562bcmr1359484637.40.1742500990149; Thu, 20
+ Mar 2025 13:03:10 -0700 (PDT)
+Date: Thu, 20 Mar 2025 13:03:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cb:b0:3d3:d344:2a1a with SMTP id
- e9e14a558f8ab-3d595dfea7amr12787455ab.0.1742500958149; Thu, 20 Mar 2025
- 13:02:38 -0700 (PDT)
-Date: Thu, 20 Mar 2025 13:02:38 -0700
-In-Reply-To: <qn7ncujf5gkfmohf5qp3fdakrymhoapkscafqp5t2gulmgdqai@tuhu2igx33k4>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dc745e.050a0220.25ae54.0023.GAE@google.com>
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in vma_merge_existing_range
-From: syzbot <syzbot+20ed41006cf9d842c2b5@syzkaller.appspotmail.com>
-To: pfalcato@suse.de
-Cc: akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250320200306.1712599-1-jstultz@google.com>
+Subject: [PATCH v2 1/2] time/timekeeping: Fix possible inconsistencies in
+ _COARSE clockids
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Miroslav Lichvar <mlichvar@redhat.com>, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
 Content-Type: text/plain; charset="UTF-8"
 
-> On Thu, Mar 20, 2025 at 12:09:36PM -0700, syzbot wrote:
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    eb88e6bfbc0a Merge tag 'fsnotify_for_v6.14-rc7' of git://g..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=11e6c83f980000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=77423669c2b8fa9
->> dashboard link: https://syzkaller.appspot.com/bug?extid=20ed41006cf9d842c2b5
->> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->> userspace arch: i386
->> 
->> Unfortunately, I don't have any reproducer for this issue yet.
->> 
->> Downloadable assets:
->> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-eb88e6bf.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/ded0ce69669f/vmlinux-eb88e6bf.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/6e6fa3c719e7/bzImage-eb88e6bf.xz
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+20ed41006cf9d842c2b5@syzkaller.appspotmail.com
->> 
->> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
->> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->>  </TASK>
->> BUG: unable to handle page fault for address: fffffffffffffff4
->> #PF: supervisor read access in kernel mode
->> #PF: error_code(0x0000) - not-present page
->> PGD df84067 P4D df84067 PUD df86067 PMD 0 
->> Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
->> CPU: 1 UID: 0 PID: 17805 Comm: syz.8.3237 Not tainted 6.14.0-rc6-syzkaller-00212-geb88e6bfbc0a #0
->> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
->> RIP: 0010:vma_merge_existing_range+0x266/0x2070 mm/vma.c:734
->> Code: e8 5f 25 ad ff 48 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 1c 19 00 00 48 8b 04 24 48 8b 74 24 08 <4c> 8b 38 4c 89 ff e8 9f 1f ad ff 48 8b 44 24 08 49 39 c7 0f 83 db
->> RSP: 0000:ffffc9000319f988 EFLAGS: 00010246
->> RAX: fffffffffffffff4 RBX: ffffc9000319fae8 RCX: ffffffff820cd3e5
->> RDX: 1ffffffffffffffe RSI: 0000000080c2a000 RDI: 0000000000000005
->> RBP: 0000000080ce2000 R08: 0000000000000005 R09: 0000000000000000
->> R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
->> R13: ffffc9000319fb08 R14: ffff888025eddc98 R15: ffff88804eec0a00
->> FS:  0000000000000000(0000) GS:ffff88802b500000(0063) knlGS:00000000f5106b40
->> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
->> CR2: fffffffffffffff4 CR3: 00000000614d6000 CR4: 0000000000352ef0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  <TASK>
->>  vma_modify.constprop.0+0x87/0x410 mm/vma.c:1517
->>  vma_modify_flags_uffd+0x241/0x2e0 mm/vma.c:1598
->>  userfaultfd_clear_vma+0x91/0x130 mm/userfaultfd.c:1906
->>  userfaultfd_release_all+0x2ae/0x4c0 mm/userfaultfd.c:2024
->>  userfaultfd_release+0xf4/0x1c0 fs/userfaultfd.c:865
->>  __fput+0x3ff/0xb70 fs/file_table.c:464
->>  task_work_run+0x14e/0x250 kernel/task_work.c:227
->>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->>  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->>  syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
->>  __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:390
->>  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:412
->>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->> RIP: 0023:0xf7fe6579
->> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
->> RSP: 002b:00000000f510655c EFLAGS: 00000296 ORIG_RAX: 0000000000000135
->> RAX: 0000000000000001 RBX: 0000000080000180 RCX: 0000000000000001
->> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
->> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
->> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->>  </TASK>
->> Modules linked in:
->> CR2: fffffffffffffff4
->> ---[ end trace 0000000000000000 ]---
->> RIP: 0010:vma_merge_existing_range+0x266/0x2070 mm/vma.c:734
->> Code: e8 5f 25 ad ff 48 8b 14 24 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 1c 19 00 00 48 8b 04 24 48 8b 74 24 08 <4c> 8b 38 4c 89 ff e8 9f 1f ad ff 48 8b 44 24 08 49 39 c7 0f 83 db
->> RSP: 0000:ffffc9000319f988 EFLAGS: 00010246
->> RAX: fffffffffffffff4 RBX: ffffc9000319fae8 RCX: ffffffff820cd3e5
->> RDX: 1ffffffffffffffe RSI: 0000000080c2a000 RDI: 0000000000000005
->> RBP: 0000000080ce2000 R08: 0000000000000005 R09: 0000000000000000
->> R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
->> R13: ffffc9000319fb08 R14: ffff888025eddc98 R15: ffff88804eec0a00
->> FS:  0000000000000000(0000) GS:ffff88802b500000(0063) knlGS:00000000f5106b40
->> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
->> CR2: fffffffffffffff4 CR3: 00000000614d6000 CR4: 0000000000352ef0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> ----------------
->> Code disassembly (best guess):
->>    0:	e8 5f 25 ad ff       	call   0xffad2564
->>    5:	48 8b 14 24          	mov    (%rsp),%rdx
->>    9:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
->>   10:	fc ff df
->>   13:	48 c1 ea 03          	shr    $0x3,%rdx
->>   17:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
->>   1b:	0f 85 1c 19 00 00    	jne    0x193d
->>   21:	48 8b 04 24          	mov    (%rsp),%rax
->>   25:	48 8b 74 24 08       	mov    0x8(%rsp),%rsi
->> * 2a:	4c 8b 38             	mov    (%rax),%r15 <-- trapping instruction
->>   2d:	4c 89 ff             	mov    %r15,%rdi
->>   30:	e8 9f 1f ad ff       	call   0xffad1fd4
->>   35:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
->>   3a:	49 39 c7             	cmp    %rax,%r15
->>   3d:	0f                   	.byte 0xf
->>   3e:	83                   	.byte 0x83
->>   3f:	db                   	.byte 0xdb
->
-> Ahh, fun bug. This *seems* to be the bug:
->
-> First, in vma_modify:
->
-> 	merged = vma_merge_existing_range(vmg);
-> 	if (merged)
-> 		return merged;
-> 	if (vmg_nomem(vmg))
-> 		return ERR_PTR(-ENOMEM);
->
-> then, all the way up to userfaultfd_release_all (the return value propagates
-> vma_modify -> vma_modify_flags_uffd -> userfaultfd_clear_vma):
->
-> 	prev = NULL;
-> 	for_each_vma(vmi, vma) {
-> 		cond_resched();
-> 		BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
-> 		       !!(vma->vm_flags & __VM_UFFD_FLAGS));
-> 		if (vma->vm_userfaultfd_ctx.ctx != ctx) {
-> 			prev = vma;
-> 			continue;
-> 		}
->
-> 		vma = userfaultfd_clear_vma(&vmi, prev, vma,
-> 					    vma->vm_start, vma->vm_end);
-> 		prev = vma;
-> 	}
->
-> So, if uffd gets an IS_ERR(vma), it keeps going and takes that vma as the prev value,
-> which leads to that ERR_PTR(-ENOMEM) deref crash (-12 = -ENOMEM = 0xffffff4).
-> This situation is kind of awkward because ->release() errors don't mean a thing.
-> So, I have another idea (pasting for syzbot) which might just be cromulent.
-> Untested, but thoughts?
->
-> #syz test
+Lei Chen raised an issue with CLOCK_MONOTONIC_COARSE seeing
+time inconsistencies.
 
-This crash does not have a reproducer. I cannot test it.
+Lei tracked down that this was being caused by the adjustment
+  tk->tkr_mono.xtime_nsec -= offset;
 
->
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index d06453fa8aba..fb835d82eb84 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -2023,6 +2023,8 @@ void userfaultfd_release_all(struct mm_struct *mm,
->
->                 vma = userfaultfd_clear_vma(&vmi, prev, vma,
->                                             vma->vm_start, vma->vm_end);
-> +               if (WARN_ON(IS_ERR(vma)))
-> +                       break;
->                 prev = vma;
->         }
->         mmap_write_unlock(mm);
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 71ca012c616c..b2167b7dc27d 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -1517,8 +1517,16 @@ static struct vm_area_struct *vma_modify(struct vma_merge_struct *vmg)
->         merged = vma_merge_existing_range(vmg);
->         if (merged)
->                 return merged;
-> -       if (vmg_nomem(vmg))
-> +       if (vmg_nomem(vmg)) {
-> +               /* If we can avoid failing the whole modification
-> +                * due to a merge OOM and validly keep going
-> +                * (we're modifying the whole VMA), return vma intact.
-> +                * It won't get merged, but such is life - we're avoiding
-> +                * OOM conditions in other parts of mm/ this way */
-> +               if (start <= vma->vm_start && end >= vma->vm_end)
-> +                       return vma;
->                 return ERR_PTR(-ENOMEM);
-> +       }
->
->         /* Split any preceding portion of the VMA. */
->         if (vma->vm_start < start) {
->
-> -- 
-> Pedro
+which is made to compensate for the unaccumulated cycles in
+offset when the mult value is adjusted forward, so that
+the non-_COARSE clockids don't see inconsistencies.
+
+However, the _COARSE clockids don't use the mult*offset value
+in their calculations, so this subtraction can cause the
+_COARSE clock ids to jump back a bit.
+
+Now, by design, this negative adjustment should be fine, because
+the logic run from timekeeping_adjust() is done after we
+accumulate approx mult*interval_cycles into xtime_nsec.
+The accumulated (mult*interval_cycles) will be larger then the
+(mult_adj*offset) value subtracted from xtime_nsec, and both
+operations are done together under the tk_core.lock, so the net
+change to xtime_nsec should always be positive.
+
+However, do_adjtimex() calls into timekeeping_advance() as well,
+since we want to apply the ntp freq adjustment immediately.
+In this case, we don't return early when the offset is smaller
+then interval_cycles, so we don't end up accumulating any time
+into xtime_nsec. But we do go on to call timekeeping_adjust(),
+which modifies the mult value, and subtracts from xtime_nsec
+to correct for the new mult value.
+
+Here because we did not accumulate anything, we have a window
+where the _COARSE clockids that don't utilize the mult*offset
+value, can see an inconsistency.
+
+So to fix this, rework the timekeeping_advance() logic a bit
+so that when we are called from do_adjtimex(), we call
+timekeeping_forward(), to first accumulate the sub-interval
+time into xtime_nsec. Then with no unaccumulated cycles in
+offset, we can do the mult adjustment without worry of the
+subtraction having an impact.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: Lei Chen <lei.chen@smartx.com>
+Fixes: da15cfdae033 ("time: Introduce CLOCK_REALTIME_COARSE")
+Reported-by: Lei Chen <lei.chen@smartx.com>
+Closes: https://lore.kernel.org/lkml/20250310030004.3705801-1-lei.chen@smartx.com/
+Diagnosed-by: Thomas Gleixner <tglx@linutronix.de>
+Additional-fixes-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+v2: Include fixes from Thomas, dropping the unnecessary clock_set
+    setting, and instead clearing ntp_error, along with some other
+    minor tweaks.
+---
+ kernel/time/timekeeping.c | 94 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 69 insertions(+), 25 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 1e67d076f1955..929846b8b45ab 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -682,20 +682,19 @@ static void timekeeping_update_from_shadow(struct tk_data *tkd, unsigned int act
+ }
+ 
+ /**
+- * timekeeping_forward_now - update clock to the current time
++ * timekeeping_forward - update clock to given cycle now value
+  * @tk:		Pointer to the timekeeper to update
++ * @cycle_now:  Current clocksource read value
+  *
+  * Forward the current clock to update its state since the last call to
+  * update_wall_time(). This is useful before significant clock changes,
+  * as it avoids having to deal with this time offset explicitly.
+  */
+-static void timekeeping_forward_now(struct timekeeper *tk)
++static void timekeeping_forward(struct timekeeper *tk, u64 cycle_now)
+ {
+-	u64 cycle_now, delta;
++	u64 delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
++				      tk->tkr_mono.clock->max_raw_delta);
+ 
+-	cycle_now = tk_clock_read(&tk->tkr_mono);
+-	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
+-				  tk->tkr_mono.clock->max_raw_delta);
+ 	tk->tkr_mono.cycle_last = cycle_now;
+ 	tk->tkr_raw.cycle_last  = cycle_now;
+ 
+@@ -710,6 +709,21 @@ static void timekeeping_forward_now(struct timekeeper *tk)
+ 	}
+ }
+ 
++/**
++ * timekeeping_forward_now - update clock to the current time
++ * @tk:		Pointer to the timekeeper to update
++ *
++ * Forward the current clock to update its state since the last call to
++ * update_wall_time(). This is useful before significant clock changes,
++ * as it avoids having to deal with this time offset explicitly.
++ */
++static void timekeeping_forward_now(struct timekeeper *tk)
++{
++	u64 cycle_now = tk_clock_read(&tk->tkr_mono);
++
++	timekeeping_forward(tk, cycle_now);
++}
++
+ /**
+  * ktime_get_real_ts64 - Returns the time of day in a timespec64.
+  * @ts:		pointer to the timespec to be set
+@@ -2151,6 +2165,54 @@ static u64 logarithmic_accumulation(struct timekeeper *tk, u64 offset,
+ 	return offset;
+ }
+ 
++static u64 timekeeping_accumulate(struct timekeeper *tk, u64 offset,
++				  enum timekeeping_adv_mode mode,
++				  unsigned int *clock_set)
++{
++	int shift = 0, maxshift;
++
++	/*
++	 * TK_ADV_FREQ indicates that adjtimex(2) directly set the
++	 * frequency or the tick length.
++	 *
++	 * Accumulate the offset, so that the new multiplier starts from
++	 * now. This is required as otherwise for offsets, which are
++	 * smaller than tk::cycle_interval, timekeeping_adjust() could set
++	 * xtime_nsec backwards, which subsequently causes time going
++	 * backwards in the coarse time getters. But even for the case
++	 * where offset is greater than tk::cycle_interval the periodic
++	 * accumulation does not have much value.
++	 *
++	 * Also reset tk::ntp_error as it does not make sense to keep the
++	 * old accumulated error around in this case.
++	 */
++	if (mode == TK_ADV_FREQ) {
++		timekeeping_forward(tk, tk->tkr_mono.cycle_last + offset);
++		tk->ntp_error = 0;
++		return 0;
++	}
++
++	/*
++	 * With NO_HZ we may have to accumulate many cycle_intervals
++	 * (think "ticks") worth of time at once. To do this efficiently,
++	 * we calculate the largest doubling multiple of cycle_intervals
++	 * that is smaller than the offset.  We then accumulate that
++	 * chunk in one go, and then try to consume the next smaller
++	 * doubled multiple.
++	 */
++	shift = ilog2(offset) - ilog2(tk->cycle_interval);
++	shift = max(0, shift);
++	/* Bound shift to one less than what overflows tick_length */
++	maxshift = (64 - (ilog2(ntp_tick_length()) + 1)) - 1;
++	shift = min(shift, maxshift);
++	while (offset >= tk->cycle_interval) {
++		offset = logarithmic_accumulation(tk, offset, shift, clock_set);
++		if (offset < tk->cycle_interval << shift)
++			shift--;
++	}
++	return offset;
++}
++
+ /*
+  * timekeeping_advance - Updates the timekeeper to the current time and
+  * current NTP tick length
+@@ -2160,7 +2222,6 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	struct timekeeper *tk = &tk_core.shadow_timekeeper;
+ 	struct timekeeper *real_tk = &tk_core.timekeeper;
+ 	unsigned int clock_set = 0;
+-	int shift = 0, maxshift;
+ 	u64 offset;
+ 
+ 	guard(raw_spinlock_irqsave)(&tk_core.lock);
+@@ -2177,24 +2238,7 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+ 		return false;
+ 
+-	/*
+-	 * With NO_HZ we may have to accumulate many cycle_intervals
+-	 * (think "ticks") worth of time at once. To do this efficiently,
+-	 * we calculate the largest doubling multiple of cycle_intervals
+-	 * that is smaller than the offset.  We then accumulate that
+-	 * chunk in one go, and then try to consume the next smaller
+-	 * doubled multiple.
+-	 */
+-	shift = ilog2(offset) - ilog2(tk->cycle_interval);
+-	shift = max(0, shift);
+-	/* Bound shift to one less than what overflows tick_length */
+-	maxshift = (64 - (ilog2(ntp_tick_length())+1)) - 1;
+-	shift = min(shift, maxshift);
+-	while (offset >= tk->cycle_interval) {
+-		offset = logarithmic_accumulation(tk, offset, shift, &clock_set);
+-		if (offset < tk->cycle_interval<<shift)
+-			shift--;
+-	}
++	offset = timekeeping_accumulate(tk, offset, mode, &clock_set);
+ 
+ 	/* Adjust the multiplier to correct NTP error */
+ 	timekeeping_adjust(tk, offset);
+-- 
+2.49.0.395.g12beb8f557-goog
+
 
