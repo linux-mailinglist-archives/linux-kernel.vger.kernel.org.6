@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-569895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D14FA6A8E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:45:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F7EA6A927
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079133BCD5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD4B19C0684
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1150D1E32D7;
-	Thu, 20 Mar 2025 14:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7BC1DEFE4;
+	Thu, 20 Mar 2025 14:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="islBIcnP"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWa1zvwd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF8616D32A;
-	Thu, 20 Mar 2025 14:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1056978F5B;
+	Thu, 20 Mar 2025 14:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742481908; cv=none; b=O4szitWigpWBpZKdfXO95dPYr/CPFm/+PnQjMEm8S07Q6QaLu20EXNkoxjd80Ywu87spgsO9Q+PkSf3lFXR8NG83o+i2zGjcExgiz7KPHSger0KQso+FzQWI6Tu1XBYgvcjTfOWX+5Gz0zI3IoZrcD+ZE+Wzy8G0grXxaCvnJJo=
+	t=1742481927; cv=none; b=il3vDKRkS1+qOMkTae2FpUgOSgUVdhzlKC25S+QN4jVEFNq2UX3YsfVPNIfwDJiWAx/OkbBB+J2RSPF0MxZgEpInXlrCHU/x1dtYHyeCg9sv2XPCL7/MPQalqPaObP0jzCKaHYGuQymvpu74U+SzLfzn1mV86RXbhvVlDPWm7tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742481908; c=relaxed/simple;
-	bh=kvFDZZfubpKqfDarf88i3jdXBTPwFlTbnMmYGlzeAK0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fskSpV+iVsAnypHQiP4tz5umBDfaGQ1dZHRSyI2QGYG6AvCNTovSCKTC3cpqWMW6cWBJBlsoUuP/qBHBbu5+HAAIR+ohECCkxmNizY8jE7D04n54Du8Gz2V5TKorEE4tbTWhBCFcX0swbHJH7OYQMUveHIYHvbcFMLtep+39u1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=islBIcnP; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6D2FF41067
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1742481904; bh=CoF70uKeI5oxzSiOPNjzHWGikLf7hCVkYp2xH2dZwr8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=islBIcnPKt8uW5hA3T3PPSmSCAiYqTkWFBEgj6iGu0PWPhW3yjcXFHgamlCxP1MrS
-	 /Lj+fUKxr5XHpTVprLUBgUismDvPS5CB5J1IUUz2odXEXKxobBdvyGKp74eASDg1b7
-	 3NcoQjKXG2u/38NTpV85yQL2oGjhpBevYaOfsEqQNZYT3+llSNJ46De0it7L6QHik5
-	 4OCNYQKMEJTCOOJW9yd4iQ9bGRG/5GewfSs/+M1vFeCmQII3N0M93VIhTR33fzTGT2
-	 XjQTWkJpZniQrdJpagKpy1B+EeTb8h9XOtTFnPpNxPzbj/PPuetJF6/iR/xdwKAoCn
-	 7GVrkwxcSB9Ag==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 6D2FF41067;
-	Thu, 20 Mar 2025 14:45:04 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
-Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
- anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
- benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
- dave.hansen@linux.intel.com, dwmw2@infradead.org, ebiederm@xmission.com,
- mingo@redhat.com, jgowans@amazon.com, krzk@kernel.org, rppt@kernel.org,
- mark.rutland@arm.com, pbonzini@redhat.com, pasha.tatashin@soleen.com,
- hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de,
- robh+dt@kernel.org, robh@kernel.org, saravanak@google.com,
- skinsburskii@linux.microsoft.com, rostedt@goodmis.org, tglx@linutronix.de,
- thomas.lendacky@amd.com, usama.arif@bytedance.com, will@kernel.org,
- devicetree@vger.kernel.org, kexec@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-mm@kvack.org, x86@kernel.org, Changyuan Lyu <changyuanl@google.com>
-Subject: Re: [PATCH v5 16/16] Documentation: add documentation for KHO
-In-Reply-To: <20250320015551.2157511-17-changyuanl@google.com>
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-17-changyuanl@google.com>
-Date: Thu, 20 Mar 2025 08:45:03 -0600
-Message-ID: <87wmcj69sg.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1742481927; c=relaxed/simple;
+	bh=mFTONBur+13F+uY2kS+NldAEhsm33/yBF8Gvhz/9VI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KSlaNwcYpex2PrFo3KWykAFf17rxWt+dmJANRwAF4dxFajsyIh/GOFAxHg2c7VOn9SsKqYYj5RZcJORzJTajg2KbGejbppLVYe9MoYMF99MwkRRC2Go2XYTyvDwpSS9Hhrj3ZC435dtVBjVPRPbUIcnSNWFPibMrOWEszmDp6Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWa1zvwd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821BCC4CEED;
+	Thu, 20 Mar 2025 14:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742481926;
+	bh=mFTONBur+13F+uY2kS+NldAEhsm33/yBF8Gvhz/9VI0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oWa1zvwdX03b861YpeQo7bWkNd9aZXYjBdXFtNS5bpLwb4dx8Z+bBDzUsgE6MNBmr
+	 wtaQEPIS9xhovtfwxLp5DGqFUQmjrBCQXeZwI6BwLkV3QRXxpNWltn5MeGsq6rZUWv
+	 iVMIysmjL/mN7nl/WquAIUS/dimuSYapsuNAAGAH5vS33oqXUbDngrO14Zd1cnNTOl
+	 ROyNj+xi07lAg3Cw2u69Q94YKAnGr0LybsrZCSj3JD5cfU55YWGVh3D1AePUePHYpY
+	 7sUHuFU95zBM9CgHaz8xI6VUqa1Ua2gAHb8MigGwPiZYneHhZkMHTrUd/trHJ4zKsE
+	 WgO1eHk2WoPGQ==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30613802a6bso9101101fa.1;
+        Thu, 20 Mar 2025 07:45:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUV9NBGDV5LVCmyoZk6A/nRsFkru+JDP2VEWbe6Ct7lynxI9Y0d0+Vl9d0xJxHhNBOtJndr2jWp8V8SR8o=@vger.kernel.org, AJvYcCWlyAkQmxsTi9dL9tHrj4xDAOP6aYgI53qJVfrPGftNHPoKNJyA8VS+jqHPCgXO4Ch696NLL/48UI73S4c/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8nwCL83skDcA1QguS60umoD9utI1uMA28NW9Ex7Hx6z13epmE
+	lIRHgg8zvf8+uskCH1PJz5lIxnkHAImbDsNn/BNAoii3c07oKLJ/XUUpT6cdaoY/JI9yUxt60rs
+	7L9YvZ2jwTDkBx2Lnh4Wb0Yoek+o=
+X-Google-Smtp-Source: AGHT+IHRtXdnLD8pUfqFi3hNor1VULqyvxiUBeS9XF8+MMG8aoaeBpY9PZBo60bd6p0fXyUA0Ud5ySCOZahuCtQOfAg=
+X-Received: by 2002:a05:6512:39d2:b0:549:5769:6ad8 with SMTP id
+ 2adb3069b0e04-54acb195c01mr2552380e87.4.1742481924873; Thu, 20 Mar 2025
+ 07:45:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250320070746.101552-2-ardb+git@google.com> <CAK7LNARR+LZEUuYSe-TaWwsvA_knwUOoDxZsbucK8GkwBJxgmA@mail.gmail.com>
+In-Reply-To: <CAK7LNARR+LZEUuYSe-TaWwsvA_knwUOoDxZsbucK8GkwBJxgmA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 20 Mar 2025 15:45:13 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXE1jVp+3aoyWEKNUOg3VWJ14xtyFGE0n3-UScEPA402Jg@mail.gmail.com>
+X-Gm-Features: AQ5f1JqptoXNZA92Dzm9aR9FxjvzL1RCem2adm9WQ8n0JxNa-D4vxCArZR9uRlA
+Message-ID: <CAMj1kXE1jVp+3aoyWEKNUOg3VWJ14xtyFGE0n3-UScEPA402Jg@mail.gmail.com>
+Subject: Re: [PATCH] gendwarfksyms: define __GENKSYMS__ when processing asm-protoypes.h
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kbuild@vger.kernel.org, brgerst@gmail.com, 
+	x86@kernel.org, nathan@kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, Sami Tolvanen <samitolvanen@google.com>, 
+	syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Changyuan Lyu <changyuanl@google.com> writes:
-
-> From: Alexander Graf <graf@amazon.com>
+On Thu, 20 Mar 2025 at 15:40, Masahiro Yamada <masahiroy@kernel.org> wrote:
 >
-> With KHO in place, let's add documentation that describes what it is and
-> how to use it.
+> On Thu, Mar 20, 2025 at 4:08=E2=80=AFPM Ard Biesheuvel <ardb+git@google.c=
+om> wrote:
+> >
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Ensure that __GENKSYMS__ is #define'd when passing asm/asm-prototypes.h
+> > through the compiler to capture the exported symbols. This ensures that
+> > exported symbols such as __ref_stack_chk_guard on x86, which is declare=
+d
+> > conditionally, is visible to the tool.
 >
-> Signed-off-by: Alexander Graf <graf@amazon.com>
-> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  25 ++++
->  Documentation/kho/concepts.rst                |  70 +++++++++++
->  Documentation/kho/fdt.rst                     |  62 +++++++++
->  Documentation/kho/index.rst                   |  14 +++
->  Documentation/kho/usage.rst                   | 118 ++++++++++++++++++
->  Documentation/subsystem-apis.rst              |   1 +
->  MAINTAINERS                                   |   1 +
->  7 files changed, 291 insertions(+)
->  create mode 100644 Documentation/kho/concepts.rst
->  create mode 100644 Documentation/kho/fdt.rst
->  create mode 100644 Documentation/kho/index.rst
->  create mode 100644 Documentation/kho/usage.rst
+>
+> Why don't you make it unconditional, then?
+>
 
-I will ask again: please let's not create another top-level docs
-directory for this...?  It looks like it belongs in the admin guide to
-me.
+Because this symbol is being hidden from the compiler.
 
-Thanks,
-
-jon
+Commit 577c134d311b9b has the details.
 
