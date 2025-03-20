@@ -1,179 +1,111 @@
-Return-Path: <linux-kernel+bounces-569120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC26A69EC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:27:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047F8A69ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 854581896880
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:27:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62D17A1949
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C691EB1B2;
-	Thu, 20 Mar 2025 03:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="T7hkPuyh"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E41F09AC;
+	Thu, 20 Mar 2025 03:28:24 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E793A1EB9F9;
-	Thu, 20 Mar 2025 03:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742441254; cv=pass; b=FMYsliuTWy5jgiOOsAQWsKGbErKserTSvgH2wHRtB0INF9Z2Y4M23zUKlK34tFjrsBUwBWC02GzCeejOTqulPYvHqYyyGG/ery0JHAU/Bp+8uBEmwf2D4ysrGMFqEMWImeTDpV8hu/jpiYJgy+sR1LU0Wummk/QpUMHh+Rtn50U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742441254; c=relaxed/simple;
-	bh=IudflqImdm+ZwbpvNjpoNoGi2CoQwHJjQFVz8r3/Sj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=myFIrJapjIs2Sw5NKj57Sb/XvgPOVVK5gsoCvaEoO++FA9M410qJzoOcChQvWHK7dYwzcfuAHRDfBkJ+Zeh70cc6P1cN5D5CtJx7Fa7JVMVnBqvV9g05Z17fRLD20cD2qtZdkF/eupaxysvUxpZfP0R9xQV3pSiV4cRI2pBGEtY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=T7hkPuyh; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742441208; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=M91RKGSr9GXPeJUclI97wDiY6yuewKNBZJ/uQcEt3B0fjCpYT7eQe68tVQ62r3cVgFecF21+BVLY3Kck0U8OxhbQ+2nUBrawqrYFf+PDO3RFLC5+pGIbRAuwjyUwCeTTSSQSkTnzWm/i+ZbCfH7FzBByJc6MA6MgSPougyovLzk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742441208; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EPlebBCWRgSBAYpdwC7xAZIbyevkA4TQGmd5kkCqttQ=; 
-	b=lRSRF0hZo71iCETweHM3XeI6qDZFQux317+c0IvYaOJ6NBLvH7u86bbz7aasmWGDB7bJSYdHJkziwDbuvSjlAh9o9XOkDX+OV9igot+srQBrA40U+xNLYR9b5S8x3RkrIvHyjc3cJnTF+HA/DLSNnBPLoNfaF6ah2jBkem65sK4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742441208;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Feedback-ID:Reply-To;
-	bh=EPlebBCWRgSBAYpdwC7xAZIbyevkA4TQGmd5kkCqttQ=;
-	b=T7hkPuyhJzgvyBBmI2oBTHhWxzKiwaZT0hYPLlrG+Haac5wc7QRs7Db8a8lZ74Wk
-	0Ueh8MHyaIz1RHnlU+hHoJLdMdsIpY/c2iPOMQZd+ErRe4iNExeSxO+r/fv1MeKR4vY
-	Cf9qOZjbyKW+4hEb3RUzTLtEX9MKftoyQAs/PZ7k=
-Received: by mx.zohomail.com with SMTPS id 1742441205785629.6303235866446;
-	Wed, 19 Mar 2025 20:26:45 -0700 (PDT)
-From: Xukai Wang <kingxukai@zohomail.com>
-Date: Thu, 20 Mar 2025 11:25:37 +0800
-Subject: [PATCH RESEND v5 3/3] riscv: dts: canaan: Add clock definition for
- K230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8F51EB1BA;
+	Thu, 20 Mar 2025 03:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742441304; cv=none; b=m3IWlVmEYDhYa77ErvxWJN2WpHs+l7A9iimXHw8MCNTbmkF65hi6PD+SSR/qYjRzxEjqcHHVxrtnswwZj5pLI7WKIb/28ePCykLxyhO91qKRH1n6Jkx8dZKqYkNjaZ4sb86Lwt2ksOWiHiXjrBoFSgdkZ4fElEl1WdGxqW9Vqm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742441304; c=relaxed/simple;
+	bh=Od8mvvwhZf7jotgMZev/0nztJzu/1McG9g8XbgDFPmU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o6qsBSbBM3V4KZS7JtwDov4IDJOKpmwh8d+dMtog1LRskbz1uoIvU4Pg0nfgW0AgQuzcHb1oXcE8boGR1mM4FuOzVxGKrB+aDxFzE8/8r8ltkG39CxEtj2S29t5K9nN4kakU+nSAwawc+ufDcuQ2qyIZEny0hkDgEmsGvVmvNPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAC3vQ1Ai9tniwnXFg--.12911S2;
+	Thu, 20 Mar 2025 11:28:05 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/amd/display: Add dp_decide_lane_settings() to ensure compatibility
+Date: Thu, 20 Mar 2025 11:27:25 +0800
+Message-ID: <20250320032725.909-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-b4-k230-clk-v5-3-0e9d089c5488@zohomail.com>
-References: <20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com>
-In-Reply-To: <20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Troy Mitchell <TroyMitchell988@gmail.com>
-X-Mailer: b4 0.14.2
-Feedback-ID: rr0801122750c07efbc0a0d500ba86f7f700009de018deec3b634dd7bbbbc91f3130829b1bda353269100654:zu08011227a8c7ad2a9b20f474ba12b64a00003f8a2c278a596cfb77449d647b6335dee01f06aa7350edb7cb:rf0801122c1a6d4852bdbff4e658c1f51d00003571b754f5174b768c1ac33936a8c1ed0c6331da4e991fd4a7d03d7d25ed:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3vQ1Ai9tniwnXFg--.12911S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4UGr1DuryxWr4UAr1xGrg_yoW8ur4Dpa
+	18KFyDJF1UtrW0qa98tF1I9rW5Wa18C3y7Ar9rGasYyry5AF1Ik3y5Cr9Fkr9rGFWkA3yY
+	q3W8Ca1Duwn0kFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+	Yx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r48MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb7DG7UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4HA2fbeH5JuwAAsL
 
-This patch describes the clock controller integrated in K230 SoC
-and replace dummy clocks with the real ones for UARTs.
+The dp_perform_128b_132b_channel_eq_done_sequence() calls
+dp_get_lane_status_and_lane_adjust() but lacks dp_decide_lane_settings().
+The dp_get_lane_status_and_lane_adjust() and dp_decide_lane_settings()
+functions are essential for DisplayPort link training in the Linux kernel,
+with the former retrieving lane status and adjustment needs, and the
+latter determining optimal lane configurations. This omission risks
+compatibility issues, particularly with lower-quality cables or displays,
+as the system cannot dynamically adjust to hardware limitations,
+potentially leading to failed connections. Add dp_decide_lane_settings()
+to enable adaptive lane configuration.
 
-Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+Fixes: 630168a97314 ("drm/amd/display: move dp link training logic to link_dp_training")
+Cc: stable@vger.kernel.org # 6.3+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- arch/riscv/boot/dts/canaan/k230.dtsi | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ .../amd/display/dc/link/protocols/link_dp_training_128b_132b.c  | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
-index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..e688633acbbf2cee36354220c557252111f56ff5 100644
---- a/arch/riscv/boot/dts/canaan/k230.dtsi
-+++ b/arch/riscv/boot/dts/canaan/k230.dtsi
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-  */
- 
-+#include <dt-bindings/clock/canaan,k230-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
- /dts-v1/;
-@@ -58,10 +59,10 @@ l2_cache: l2-cache {
- 		};
- 	};
- 
--	apb_clk: apb-clk-clock {
-+	osc24m: clock-24m {
- 		compatible = "fixed-clock";
--		clock-frequency = <50000000>;
--		clock-output-names = "apb_clk";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24m";
- 		#clock-cells = <0>;
- 	};
- 
-@@ -89,10 +90,18 @@ clint: timer@f04000000 {
- 			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
- 		};
- 
-+		sysclk: clock-controller@91102000 {
-+			compatible = "canaan,k230-clk";
-+			reg = <0x0 0x91102000 0x0 0x1000>,
-+			      <0x0 0x91100000 0x0 0x1000>;
-+			clocks = <&osc24m>;
-+			#clock-cells = <1>;
-+		};
-+
- 		uart0: serial@91400000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91400000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART0>;
- 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -102,7 +111,7 @@ uart0: serial@91400000 {
- 		uart1: serial@91401000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91401000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART1>;
- 			interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -112,7 +121,7 @@ uart1: serial@91401000 {
- 		uart2: serial@91402000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91402000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART2>;
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -122,7 +131,7 @@ uart2: serial@91402000 {
- 		uart3: serial@91403000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91403000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART3>;
- 			interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -132,7 +141,7 @@ uart3: serial@91403000 {
- 		uart4: serial@91404000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91404000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART4>;
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-
+diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training_128b_132b.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training_128b_132b.c
+index db87cfe37b5c..99aae3e43106 100644
+--- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training_128b_132b.c
++++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_training_128b_132b.c
+@@ -176,6 +176,8 @@ static enum link_training_result dp_perform_128b_132b_cds_done_sequence(
+ 		wait_time += lt_settings->cds_pattern_time;
+ 		status = dp_get_lane_status_and_lane_adjust(link, lt_settings, dpcd_lane_status,
+ 						&dpcd_lane_status_updated, dpcd_lane_adjust, DPRX);
++		dp_decide_lane_settings(lt_settings, dpcd_lane_adjust,
++				lt_settings->hw_lane_settings, lt_settings->dpcd_lane_settings);
+ 		if (status != DC_OK) {
+ 			result = LINK_TRAINING_ABORT;
+ 		} else if (dp_is_symbol_locked(lt_settings->link_settings.lane_count, dpcd_lane_status) &&
 -- 
-2.34.1
+2.42.0.windows.2
 
 
