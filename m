@@ -1,130 +1,208 @@
-Return-Path: <linux-kernel+bounces-569014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B088EA69D6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:08:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5ABFA69D6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612D84603C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639008A3FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0031C3F34;
-	Thu, 20 Mar 2025 01:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a5jOGAGI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F86C1C2DB2;
+	Thu, 20 Mar 2025 01:11:06 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50917364BA;
-	Thu, 20 Mar 2025 01:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4415042A87
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742432924; cv=none; b=Ih7aRiAyvR+4/REC5fAzBM98llOuEezN3BnrlPKbDcWPpKp+pigoIL1/OsknBkyNj8I7rSd1IaQwNlDjkP6e3B/tBL13cGjcDpPbbEwvQiAB6hffp0PigwO0rKETfN9mbqlj2iRgmY/YU2zcmL4pVa2QF6S38IxlXgT1W11WMz0=
+	t=1742433065; cv=none; b=eI0scWc41NObKvQ2AI2RN7kKHUzpxxcuFY1g3dEC+NgIP3B1CJJibT+xyoJs1WakesQquiRcJrHw7x/FlB9XgVfc1AnqhiEZuse1cCC9d3sdsuxGTKhlQ7ETl2H0ziZ7NYN1TO1CUz2FOKQou9KP+uikc1QLNw1A2R7QGS0kT9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742432924; c=relaxed/simple;
-	bh=2P0oUNGgoxvTERPv4EJPPNLwaGpMZYUdb4zhumuj/iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PLud7/1qKb0cpwUk0E+eiIT+G9+4gUCktMUwpBlF+rhJ+Z35mMOw6l2a1OPJgyGoS7j94K3pbTuuE0Blo1D1KOwOfPkkIXR42i3oMUAriRF812hggdqwYOPnaqpXKARL0ApRjBEbv6oYTYyMQ/c9pGCVglx+nzXvwcMsGl4Bwk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=a5jOGAGI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742432917;
-	bh=efrnytF367kiPZRgINjQu550CYOZ2gdDHrFIduCyoTU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=a5jOGAGIfOx3HFHB60tk6/vIPBwrpZ/k/Ja+HYWdsr9hAnmcHQoGzM8XF5IcQox6Q
-	 TB2kfnUrQ7Y04HN3PMJCC1pXPbjmClV9Os9/iuBRMLIqZxNgJIuFJ8mp87tSI3yXJ4
-	 Vv0wLuTxNQXdIV/Y1TBs7IICODvFX9tqeqvUMuiHLCEoY0ye9Sst3R6e8QXsqqOPaj
-	 fxu6S64MFPvzQmh7ws3IXLrCbkkZJo30AeuEaMDLkujWcAc4kustXFrUvwz//M+j4J
-	 QbBfnRVN08kv8sEtBFcuTdB9QGQhMcs4uL/e845pACMnWtNYmYPpOcuTh0n4bgTLYG
-	 l7KGXdRrwyusw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJ6sK0Jpwz4wyl;
-	Thu, 20 Mar 2025 12:08:36 +1100 (AEDT)
-Date: Thu, 20 Mar 2025 12:08:23 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Michael Guralnik <michaelgur@nvidia.com>,
- Yishai Hadas <yishaih@nvidia.com>
-Subject: linux-next: manual merge of the rdma tree with Linus' tree
-Message-ID: <20250320120823.588aa58e@canb.auug.org.au>
+	s=arc-20240116; t=1742433065; c=relaxed/simple;
+	bh=65Kp05Vd5BJyZiZeqRsE2HC7BVjCXl+Bt/pIjX3HYAA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J66gk730/+0HkGcXilYDAAQsaetL9o9sWGFh2egnVEx5SCOOfpdnZcvjMXRHq7tBcThe8Xof2cysLyfrVKjYOyXPhMNhNL082u0PXw3udnTaexCTwqZwMR4aEkbrLoDNySkcB96x4GaLeREnaFNeJShp6xk5EPIBZ7rWZbiH1Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZJ6vc5sbvz4f3mK0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:10:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 7F4FA1A1948
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:10:59 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP3 (Coremail) with SMTP id _Ch0CgC3CMMia9tndWifGw--.9018S2;
+	Thu, 20 Mar 2025 09:10:59 +0800 (CST)
+Subject: Re: [PATCH v2 2/8] mm: swap: remove unneeded VM_BUG_ON(*map !=
+ SWAP_HAS_CACHE) in swap_entry_range_free()
+To: Kairui Song <ryncsn@gmail.com>
+Cc: akpm@linux-foundation.org, tim.c.chen@linux.intel.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250318150614.6415-1-shikemeng@huaweicloud.com>
+ <20250318150614.6415-3-shikemeng@huaweicloud.com>
+ <CAMgjq7BR5afYGvKqLXdp7kHB-n+JRxgcsmX-rn+Y9YKY1ZXtTA@mail.gmail.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <0d7af7aa-70e4-3757-ff13-9fc640fdae9b@huaweicloud.com>
+Date: Thu, 20 Mar 2025 09:10:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/R6r_SbyeC.rl5kkz1bgf4oE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <CAMgjq7BR5afYGvKqLXdp7kHB-n+JRxgcsmX-rn+Y9YKY1ZXtTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgC3CMMia9tndWifGw--.9018S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr15Kr13Xr4DCryfCFW5Awb_yoW7JF43pF
+	9Igrn8KFs7XF17Gw47Xa1qq3ySv3yxWF18GFnrG3WfZ3ZxJryvqFyDArWjkryDAr1kuas0
+	y3WUt3sxCa1YyFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UtR6
+	wUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
---Sig_/R6r_SbyeC.rl5kkz1bgf4oE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the rdma tree got a conflict in:
+on 3/19/2025 1:18 PM, Kairui Song wrote:
+> On Tue, Mar 18, 2025 at 2:10 PM Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+>>
+>> As all callers of swap_entry_range_free() have already ensured slots to
+>> be freed are marked as SWAP_HAS_CACHE while holding the cluster lock,
+>> the BUG_ON check can be safely removed. After this, the function
+>> swap_entry_range_free() could drop any kind of last flag, rename it to
+>> swap_entries_free() and update it's comment accordingly.
+>>
+>> This is a preparation to use swap_entries_free() to drop last ref count
+>> and SWAP_MAP_SHMEM flag.
+>>
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> ---
+>>  mm/swapfile.c | 27 +++++++++++++--------------
+>>  1 file changed, 13 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> index 5a775456e26c..0aa7ce82c013 100644
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -52,9 +52,9 @@
+>>  static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
+>>                                  unsigned char);
+>>  static void free_swap_count_continuations(struct swap_info_struct *);
+>> -static void swap_entry_range_free(struct swap_info_struct *si,
+>> -                                 struct swap_cluster_info *ci,
+>> -                                 swp_entry_t entry, unsigned int nr_pages);
+>> +static void swap_entries_free(struct swap_info_struct *si,
+>> +                             struct swap_cluster_info *ci,
+>> +                             swp_entry_t entry, unsigned int nr_pages);
+>>  static void swap_range_alloc(struct swap_info_struct *si,
+>>                              unsigned int nr_entries);
+>>  static bool folio_swapcache_freeable(struct folio *folio);
+>> @@ -1463,7 +1463,7 @@ static unsigned char swap_entry_put(struct swap_info_struct *si,
+>>         ci = lock_cluster(si, offset);
+>>         usage = swap_entry_put_locked(si, offset, 1);
+>>         if (!usage)
+>> -               swap_entry_range_free(si, ci, swp_entry(si->type, offset), 1);
+>> +               swap_entries_free(si, ci, swp_entry(si->type, offset), 1);
+>>         unlock_cluster(ci);
+>>
+>>         return usage;
+>> @@ -1493,7 +1493,7 @@ static bool swap_entries_put_nr(struct swap_info_struct *si,
+>>         for (i = 0; i < nr; i++)
+>>                 WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
+>>         if (!has_cache)
+>> -               swap_entry_range_free(si, ci, entry, nr);
+>> +               swap_entries_free(si, ci, entry, nr);
+>>         unlock_cluster(ci);
+>>
+>>         return has_cache;
+>> @@ -1512,12 +1512,12 @@ static bool swap_entries_put_nr(struct swap_info_struct *si,
+>>  }
+>>
+>>  /*
+>> - * Drop the last HAS_CACHE flag of swap entries, caller have to
+>> - * ensure all entries belong to the same cgroup.
+>> + * Drop the last flag(1, SWAP_HAS_CACHE or SWAP_MAP_SHMEM) of swap entries,
+>> + * caller have to ensure all entries belong to the same cgroup and cluster.
+>>   */
+>> -static void swap_entry_range_free(struct swap_info_struct *si,
+>> -                                 struct swap_cluster_info *ci,
+>> -                                 swp_entry_t entry, unsigned int nr_pages)
+>> +static void swap_entries_free(struct swap_info_struct *si,
+>> +                             struct swap_cluster_info *ci,
+>> +                             swp_entry_t entry, unsigned int nr_pages)
+>>  {
+>>         unsigned long offset = swp_offset(entry);
+>>         unsigned char *map = si->swap_map + offset;
+>> @@ -1530,7 +1530,6 @@ static void swap_entry_range_free(struct swap_info_struct *si,
+>>
+>>         ci->count -= nr_pages;
+>>         do {
+>> -               VM_BUG_ON(*map != SWAP_HAS_CACHE);
+> 
+> Hi Kemeng
+> 
+> Instead of just dropping this check, maybe it's better to change it to
+> something like VM_BUG_ON(!*map); to catch potential SWAP double free?
+> I've found this check very helpful for debugging, especially for
+> catching concurrency problems.
+Sure, will keep VM_BUG_ON as it's useful.
+> 
+> Or more strictly: VM_BUG_ON(*map !=  SWAP_HAS_CACHE && *map != 1 &&
+> *map != SWAP_MAP_SHMEM);, you may introduce a helper to check if a
+> entry is the "last map" like this and use it somewhere else too.
+I'd add VM_BUG_ON in this way to catch unexpected freeing.
 
-  drivers/infiniband/hw/mlx5/mr.c
+Thanks,
+Kemeng
+> 
+> 
+>>                 *map = 0;
+>>         } while (++map < map_end);
+>>
+>> @@ -1553,7 +1552,7 @@ static void cluster_swap_free_nr(struct swap_info_struct *si,
+>>         ci = lock_cluster(si, offset);
+>>         do {
+>>                 if (!swap_entry_put_locked(si, offset, usage))
+>> -                       swap_entry_range_free(si, ci, swp_entry(si->type, offset), 1);
+>> +                       swap_entries_free(si, ci, swp_entry(si->type, offset), 1);
+>>         } while (++offset < end);
+>>         unlock_cluster(ci);
+>>  }
+>> @@ -1596,11 +1595,11 @@ void put_swap_folio(struct folio *folio, swp_entry_t entry)
+>>
+>>         ci = lock_cluster(si, offset);
+>>         if (swap_only_has_cache(si, offset, size))
+>> -               swap_entry_range_free(si, ci, entry, size);
+>> +               swap_entries_free(si, ci, entry, size);
+>>         else {
+>>                 for (int i = 0; i < size; i++, entry.val++) {
+>>                         if (!swap_entry_put_locked(si, offset + i, SWAP_HAS_CACHE))
+>> -                               swap_entry_range_free(si, ci, entry, 1);
+>> +                               swap_entries_free(si, ci, entry, 1);
+>>                 }
+>>         }
+>>         unlock_cluster(ci);
+>> --
+>> 2.30.0
+>>
+> 
 
-between commit:
-
-  cc668a11e6ac ("RDMA/mlx5: Fix a race for DMABUF MR which can lead to CQE =
-with error")
-
-from Linus' tree and commit:
-
-  24d693cf6c89 ("RDMA/mlx5: Fix cache entry update on dereg error")
-
-from the rdma tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/infiniband/hw/mlx5/mr.c
-index 753faa9ad06a,2080458cabd1..000000000000
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@@ -2023,8 -2031,7 +2032,9 @@@ static int mlx5_revoke_mr(struct mlx5_i
-  	struct mlx5_ib_dev *dev =3D to_mdev(mr->ibmr.device);
-  	struct mlx5_cache_ent *ent =3D mr->mmkey.cache_ent;
-  	bool is_odp =3D is_odp_mr(mr);
- +	bool is_odp_dma_buf =3D is_dmabuf_mr(mr) &&
- +			!to_ib_umem_dmabuf(mr->umem)->pinned;
-+ 	bool from_cache =3D !!ent;
-  	int ret =3D 0;
- =20
-  	if (is_odp)
-
---Sig_/R6r_SbyeC.rl5kkz1bgf4oE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfbaocACgkQAVBC80lX
-0GzxWAf/bPOCtIoK+tKlvPx2MpXfu2uKyS5LJFIAMf3JiUH4/IHxN4Fr4sFh9unQ
-azxkk6TeaNHERIJS43HyReMdve8FikQyQOITJZPa1zNyQmFqwnKQyOjySssbSXl+
-a9PYDoLA3FCTlWRJ9A6YqNw0trvYRK/CuzhLnBvBYgPgb3yEb9oXUcajpo/hgx3k
-3hIKxn0gq7NwysIi7vIexS1Y8D0nZE4YBT0KU/PF3USTgla60V7c4eWPrj1nJMQM
-NLg/nhVnObyOMfPAA0tENQ8sLTfWs4LAh6kujG7JtioqhNVs6VVP7Q5VE8G5XkFx
-PX6suAKDhkGsSnEWFalZ2gf8d7G2XA==
-=BmZ0
------END PGP SIGNATURE-----
-
---Sig_/R6r_SbyeC.rl5kkz1bgf4oE--
 
