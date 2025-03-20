@@ -1,173 +1,123 @@
-Return-Path: <linux-kernel+bounces-569908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344FFA6A961
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:06:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3671AA6A96B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047F21888E04
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243BB1898CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409E71E47A6;
-	Thu, 20 Mar 2025 14:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9011E9919;
+	Thu, 20 Mar 2025 15:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lquIPGPn"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuUHWUep"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9683C2F;
-	Thu, 20 Mar 2025 14:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11191E8323;
+	Thu, 20 Mar 2025 15:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482754; cv=none; b=ce628IwdBlwuaDMGuqAe2BzkpQJesX7rALx7tCJ8KYd01nqpsQUlqMKF8R/Ta9lVCqYdebsB2xpbwIrsMaEjPwy5nV8xadgehh4/NrLmBxztyUDBxVC4z7gtNnaCTjN0NUa87bT567HfQYtjkOJaPk29EpTOlVe0QBD0Pe0TDDk=
+	t=1742482854; cv=none; b=e8P25HYlOwLDDbYb/htInloYNihPmyBNDiMAcKzmxpXZ7UBICItjsFkBnQZRb1EqEVwOGMixpGb+rKxFGbaHdYtiOQ5m38d4HV4FUDyKty1Vc8nYcSgov5Zpm62Jh2zypeYkQ7riRNE3JVWuWnNaHdUn3bMHbQCE8YfpwRr73q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482754; c=relaxed/simple;
-	bh=gvvve4bfA2xN7CqM1D0GuF35FojJxC50q/W6Ep0Q37Q=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nowkeJ0uMqb6KgwCwhWHym14otzUtATGJTcJe77AnKDmK1dOEJnuFzRsXQQ2Ac2xqr8LejwaN9p9pPYQkpT2hMHYHBZav6ex6IjYOzkup2N0I9Lh5HWdXoSKAKMHDfV1kIZG2HV8X6tC2g9JZOOkUrfOJ4yi8mIspGwIlF2mD8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lquIPGPn; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1742482854; c=relaxed/simple;
+	bh=9pTLdxAtgrJsqFdcgdMTfhCiZPwpbClW40GE8//9L6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mYGVbL4Hyn/qe1Nr4nHvQ+4eWGidql7SVDUtuAUmqOZBGIw2lbqHGHIo1cj65lJYtoSZgU0UOqPmrfihSi/ye/5hJk/LBPJYn1xi4dFOkqvQRyEh6FjvM3ysajglmY0wxLB2QiuMXSfL5JX4DmZz74xL1TEuWTcpU6LaULa7piM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuUHWUep; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so13832675e9.1;
-        Thu, 20 Mar 2025 07:59:12 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30795988ebeso8839061fa.3;
+        Thu, 20 Mar 2025 08:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742482751; x=1743087551; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9MXWVPiHsl/ybfeX0fVWWFkRY/xYzUHOKzudQkSQFpg=;
-        b=lquIPGPnXBWgHdFe147D9WAdZXoPrrDtO6qzwdY7Y21oNbiTX2KyDscgaHSP/1k6p5
-         F3p2srZ7kaViz7/fR9PLw8F2zEtsLseaDx2hVpfrpFH8EPGeypztdl9SfpibPFnbkuKV
-         DRxkHk4MfyDkQcjPoRgsPtPPxd4pbAclbjOjTscw/en1CaO3h8KFrW8SgJQUjbdY3DEW
-         tGdCTHFcVGq5ONMKhl8eUHL3QohTD1HEZO9w+6QXLZdsdZ4qr3mUlLEn09o5UyKqLH1R
-         vkuf5kDc5hOqUJA9OFRQuoLs32b+z05WZn93WDGkf5ychbezCuvQGIxj2SYXGT2urwWA
-         P+tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742482751; x=1743087551;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742482851; x=1743087651; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9MXWVPiHsl/ybfeX0fVWWFkRY/xYzUHOKzudQkSQFpg=;
-        b=PM89XItoHs6OZeXybrmfR2aCHHNNr0WG+uajCj2AtBdMFA/NFlyVW+eyoK2w6Jb1QH
-         Wxk+eJIUKJZh/Ubq6VQ2Oe/pKlxDNQ9GBmikefvMR3TOQEFrUfsTvXKug8xnSSZ3gaf8
-         D4vmcNIMcOB/Wmg0k0d+I0lcfY4a8YOzrcOT4/Vl0bCw/QEuCDpQ5c+QLQpNyoZ5IqsL
-         2wDMAKIpr98EjqAssQIR3t8iomvzjAr7McJu3XVdK2wGUtFXQ5977zuXnH1R1UZb4wHf
-         uNTBibg3S3WgO331tKtme3PUyP83+XwJEozpQYmHqIv6QBY9E9E/a7/IXGjZecizE/Jz
-         6TjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIcVicuJU7hVd2F4QqvqxpA9T8uJaDNSHweGelYKcdU/1iJj4fQ3JkFqXSyyJLLP793vpdsBnZcAk8@vger.kernel.org, AJvYcCULsoB8P8BYNWyGANJtryZWO/Iwj2Em3zFuwgYPTfhZTXSzK9bHdcfi2vxHAu5N99PUN6Z3GKKsWN7OEqaB@vger.kernel.org, AJvYcCUwj+y6qDVYQ08fdS8wyRx4Wl8GlUV+sfBKejcsOnKp/46i+VvX04FTwa9A0QB9WMn71b1CM2+dDqhs@vger.kernel.org, AJvYcCWJpVSZp7RnY37oIN92NhVU8/6j/GEKcH4apVgAVsmmG5uWoO53d6GE6nc4r+2fo0uKKZHWJ0ANAk07@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpaJMzheb7FsAbCBjR1idPViZiqx8eKTi8s8wIMbdNMJ9Fd8bv
-	nz0cJx6ElKuLwONxyQYTR+H+8d4GNmOKhUKRFLi8limErM3ded1+
-X-Gm-Gg: ASbGnct9J0LOLl60xg+1FlqL5hyVAmeuOYxRuKQubdCd1su9Od9BbD9DdKhNvtMmeuS
-	RvWk4qTi3UzKTl2Wyz2ySXcW+igwc4OycTFzWuefrIm5q8DpgFLetnUV4HPqJesMRaJ8zj+A0mX
-	YWhMu19XVkFqEqd+7oT6E73jSIXBgTfcGh2jcbDB672NMYAeZ+jkKQMqq9wek9w7At3M9iGQkEM
-	iv48HzaoaHGdIStG2dcaCFDDq1/4ynmz3HZaPKQLLSeak7QGAX30qP7mAD2Pjtjp2HtQ7jRvvCJ
-	0olN4KYeOETP1ld6enXBgQ0QJEdRyX4x45ysdNrwwX/YJ6es+iovmLPifEGWaxU+jn5cxGZelPx
-	N
-X-Google-Smtp-Source: AGHT+IFSmo8fFuEqajq9aZA55RF0/kNYRGkGPQelDDCd7p8x/2z2TYhPjj6gPq4JZPeYBBnh3Gq1Ag==
-X-Received: by 2002:a5d:64a8:0:b0:390:ff84:532b with SMTP id ffacd0b85a97d-3997955cc22mr2933292f8f.7.1742482750791;
-        Thu, 20 Mar 2025 07:59:10 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f43e35sm51134405e9.14.2025.03.20.07.59.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 07:59:10 -0700 (PDT)
-Message-ID: <67dc2d3e.050a0220.2e39a4.c3f0@mx.google.com>
-X-Google-Original-Message-ID: <Z9wtOv-ttPCY-Lpg@Ansuel-XPS.>
-Date: Thu, 20 Mar 2025 15:59:06 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Daniel Danzberger <dd@embedd.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v2 04/11] soc: airoha: add support for configuring SCU
- SSR Serdes port
-References: <20250320130054.4804-1-ansuelsmth@gmail.com>
- <20250320130054.4804-5-ansuelsmth@gmail.com>
- <d6e27266-dc5b-4ef8-b708-21cedd06621e@app.fastmail.com>
+        bh=9pTLdxAtgrJsqFdcgdMTfhCiZPwpbClW40GE8//9L6o=;
+        b=PuUHWUepED9IFf4mw0eBbK/Ios14FJVZg/pHj5A36O2sRcS5fpZJljLyWkECCucp6R
+         w2tS1JugIQGKVM95WujlfWDVVQUABQjwhwdSumCdnpP2la0gFSlE0a9SQVW8EDqTC2WZ
+         QhYYBncTP1WTVis9ydOBdC2cAFG8mieYxXoK+TtNJaqd5GhcWcz/vUt6FOnqbBxvoceL
+         CrVvdxQdhjcgBdaw5SZrZuWyXBCfC0lx98MlBjlI3PztwmrowU4dGSnS/aeL6LKgRUSs
+         kJ2Nip67beGXQEtjX78JYQBsBJKCQ9ouBsLp7KxbtoIGYCUGsvlgamUG+XJiA3umXIfy
+         wjUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742482851; x=1743087651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9pTLdxAtgrJsqFdcgdMTfhCiZPwpbClW40GE8//9L6o=;
+        b=Ffc+P55rVCcygawq4V04pf54tmTHQf4uROMOCB+l3bkoDdB8U7gJKumXRc2F//BB+e
+         zBchw1ybIlfwdKNTRyak1RK9ORRkIzOtMe1iNDpQllmi4jYBxczZ45uGC1deYc2LUwjj
+         b6LnY8NjRSlm6XPn6QL3zy53b/LDKqJ+wF5kxNsQAXAjUnf9+aBEU80ahWqQgMitwX8M
+         Uek52ROJlibSUJBVhw0TKEW+H5d68GdnVa6LTqxE/mdRXKWXWwYI55nfwLrqTTT8BbEU
+         JoCfFSADv5nO/ViaJ8k77JbX646PQ4dsxHPEZp0KKdL0CoVOwYq8d22XW4IEKUiCYYFI
+         fUpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsyezeIU+Qmn2mqoMy6DU/64OSt5KQjlgIL0wwaWxiheD26ZLyHUoblYXTLZx8S8lpbVFWbEXVMgc=@vger.kernel.org, AJvYcCWCSAy7tC1V2QLI1TQfRRk00EzutjRl2N96PWTRybCwJmzMsJP50hXv8UKRjp89kujE6b8yyNTgUkxPgUMxpA==@vger.kernel.org, AJvYcCXjZGWcsvUIy3xxPRfhX4X+ZSOxs6sQbLl7ErHvWgWc1dy+8fKku24SG6E3mtkgHBPACqZUycfjfgMgM/sh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3bYjxvPtbPPZD5zGM6/LZTWeDCSP+RXblRFe96Rzxp6ElXuES
+	bYMHQzBf2d0I4JKqxTfqudNLtLhN4a6ECHpSw1zn8B1mjUhJweVvE4PduIJ13/+ectrgE1okOPD
+	0beiWk0jRiyB3maJHlXWAZd4pe0A=
+X-Gm-Gg: ASbGncsN94x7kjLvAhk6K2525JflYWTQ76LG8821UM5KWQfAAfSfV4MhPSNp7iNTSTm
+	JooY5PuJo62RYHNEf/cZn9AprNWAxxx0Zm9egPccdjeh5MbKCHLh85Oqx1c3QyA/vPU7cc2CVi5
+	Y/JXfBtvKkKchDtgXhJj22o8Jpf9Q=
+X-Google-Smtp-Source: AGHT+IFcAQGu4dcHPMMMTDjZXD39ScyoZicDpJAPf3QODoX1p8n5ve681VrqpR7cohfc9ZYH79+ER6ZKnoyA9ZodQdk=
+X-Received: by 2002:a05:651c:2211:b0:30a:44ca:7e74 with SMTP id
+ 38308e7fff4ca-30d6a3e4308mr30581311fa.12.1742482850475; Thu, 20 Mar 2025
+ 08:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6e27266-dc5b-4ef8-b708-21cedd06621e@app.fastmail.com>
+References: <20250320063903.2685882-1-avagin@google.com> <24d6f7a9-82db-4240-a8d6-2c8b58861521@lucifer.local>
+In-Reply-To: <24d6f7a9-82db-4240-a8d6-2c8b58861521@lucifer.local>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Thu, 20 Mar 2025 08:00:36 -0700
+X-Gm-Features: AQ5f1JrXudWuepBjRLzmdl2-9SJu1uWlfvYIgvYvJPd4oC0rVqDvyy0YLbrWIvs
+Message-ID: <CANaxB-xuND3OoUqDrFQfN+xLwiWzY0SMRJ_RvF1+-emTuqNZkA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fs/proc: extend the PAGEMAP_SCAN ioctl to report
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrei Vagin <avagin@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	criu@lists.linux.dev, 
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, Pavel Tikhomirov <snorcht@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 03:49:08PM +0100, Arnd Bergmann wrote:
-> On Thu, Mar 20, 2025, at 14:00, Christian Marangi wrote:
-> > Add support for configuring SCU SSR Serdes port. Airoha AN7581 SoC can
-> > configure the different Serdes port by toggling bits in the SCU register
-> > space.
-> >
-> > Port Serdes mode are mutually exclusive, force example the USB2 Serdes port
-> > can either used for USB 3.0 or PCIe 2 port. Enabling USB 3.0 makes the
-> > PCIe 2 to not work.
-> >
-> > The current supported Serdes port are:
-> > - WiFi 1 and defaults to PCIe0 1 line mode
-> > - Wifi 2 and defaults to PCIe1 1 line mode
-> > - USB 1 and defaults to USB 3.0 mode
-> > - USB 2 and defaults to USB 3.0 mode
-> >
-> > WiFi 1, WiFi 2 and USB 1 also support a particular Ethernet mode that
-> > can toggle between USXGMII or HSGMII mode (USB 1 only to HSGMII)
-> > Such mode doesn't configure bits as specific Ethernet PCS driver will
-> > take care of configuring the Serdes mode based on what is required.
-> >
-> > This driver is to correctly setup these bits.
-> > Single driver can't independently set the Serdes port mode as that
-> > would cause a conflict if someone declare, for example, in DT
-> > (and enable) PCIe 2 port and USB2 3.0 port.
-> >
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> 
-> I think serdes drivers are usually implement in the drivers/phy
-> layer, and I see there is already a drivers/phy/phy-airoha-pcie.c,
-> which may or may not overlap with this one (I have not looked at
-> the details).
-> 
-> Have you tried to use the phy subsystem interface here instead
-> of creating a custom in-kernel interface?
+On Thu, Mar 20, 2025 at 4:04=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
+> Well I guess it couldn't wait ;) we're (very!) late in the cycle and
+> immediately pre-LSF (will you be there btw?) so this is 6.16 for sure.
+>
+> Kinda wish you'd mentioned you wanted to do it as I'd rearranged my
+> schedule to tackle this as a priority post-LSF, but you've done a good jo=
+b
+> so we're all good! Just a little heads up would have been nice ;)
+>
+> Some nits and you need to fix the test header thing but otherwise good.
 
-These really set 1-2 bit and I think PHY can't describe PCIe in x2 mode
-or in x1. Also I think PHY is used for more advanced stuff and usually
-have dedicated register/maps. This is really to configure 1-2 bit and
-provide the mode, nothing else... no enable, no power up.
+I wasn't rushing these changes. Just trying to help and save you some
+time:). We'd like to backport this to older releases, but that's a separate
+task. I'll submit backport requests to the stable branches and hope
+(fingers crossed) the maintainers approve them. Sorry I didn't let you know
+I could help with this.
 
-Do you think a it's possible to implement a ""read-only"" PHY driver?
+Thanks for the review.
 
-The PCIe x2 mode maybe can be modelled with
-phy-cells = <2> and adding a extra entry to enforce x2 line mode?
+P.S. I don't think I made the CRIU urgency clear enough earlier. We're not
+in panic mode, and we do have time to handle this. The lightweight guard
+regions are in glibc, but aren't in any distro releases yet. We found the
+problem when CRIU tests started failing on Fedora Rawhide. We probably have
+a few months before the new glibc hits official distros and becomes a real
+issue for CRIU users.
 
-But I feel it would be wrong to say that the SCU expose PHY as it won't
-be true.
-
-Honestly we should really consider starting to implement a generic
-provider for these stuff... it's not the first time we have bit that
-configure part of the entire system.
-
-For example this is very common for QCOM with TCSR and also for Mediatek
-with the TPHY. (but TPHY is at least more realistic as it can enable and
-disable serdes port... here it's just 1 bit)
-
--- 
-	Ansuel
+Thanks,
+Andrei
 
