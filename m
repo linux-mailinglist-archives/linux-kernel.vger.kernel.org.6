@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-569013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF57A69D69
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:06:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B088EA69D6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:08:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148673AAF50
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:06:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612D84603C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3E81C3C1D;
-	Thu, 20 Mar 2025 01:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0031C3F34;
+	Thu, 20 Mar 2025 01:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A0OUcfQj"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a5jOGAGI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D575364BA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50917364BA;
+	Thu, 20 Mar 2025 01:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742432814; cv=none; b=m1nAAow6/Dv3YOAM6nH+VXQUm4kYJ3L6a/EoOdgrf6cRnaN+Uq6vHh96t3ZiphP2nG+PGiElbGM9qSoVXt31MdAPzAe3CQ5rbGvxiHod9M1MxlAKvsu/zf5oEOHHNsHw3P9NdH6u21jySqUVi74ENPa5UL/Umo5o2x8ymiZcS4M=
+	t=1742432924; cv=none; b=Ih7aRiAyvR+4/REC5fAzBM98llOuEezN3BnrlPKbDcWPpKp+pigoIL1/OsknBkyNj8I7rSd1IaQwNlDjkP6e3B/tBL13cGjcDpPbbEwvQiAB6hffp0PigwO0rKETfN9mbqlj2iRgmY/YU2zcmL4pVa2QF6S38IxlXgT1W11WMz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742432814; c=relaxed/simple;
-	bh=7JYKDXqcMjmmbby7HW7oqoB53lPZnHUBH0My4mzE0NM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ahjkg7ACMf9o51SFIwq3X4EApJtpsJc8jpsQPno12ax/NvY3LJgq1fhsLDDzDXfgQD1X0RXqiGIcb+vUuOZQmkLpLvG0ixBpf+NutYk2JM4THGVNI88QtkrvukLFsptVv4MnKguFthjoNK9GKHLaB7H1w+AOgMp27eOHoX4HBWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A0OUcfQj; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47681dba807so69841cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742432812; x=1743037612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7JYKDXqcMjmmbby7HW7oqoB53lPZnHUBH0My4mzE0NM=;
-        b=A0OUcfQjDPnDl4GIPFSigy/AdQ6/29TQDImlSA3vGWav1pDmttuywvEqHa41E+L98O
-         RNgaHulcerxBbIVgx5/yqTrLPhBmUpvLPFn1INYG7ix0j9KC97JI1gvptf7dS1VD08Pw
-         yPlKEIhjidYOPKeHf5mmRcDnPvq3HEV/dLpz9CWWpmtui4W9rRD4qml31VkNOPoJvAMf
-         BGCUmlGAQ4qGRt7u7hn/4wfacYoFfsJI8qqOiEA/K/GWLr57ZtNuZKywnw+pfCNUepWI
-         k6cQr7gPK8RGxfNEkZ4J00vDDOKk/84ZYIbQ19/i/0k9GwB8IZPiqYZTRWL+ZfxNaZ/Z
-         juDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742432812; x=1743037612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7JYKDXqcMjmmbby7HW7oqoB53lPZnHUBH0My4mzE0NM=;
-        b=wppJDpU3IkBmf+QIJuW0nHnYTHnYwTbWAGQ/SMijxutahaSWqL0pw6M8p4LaxrI2Oo
-         zkhaJRC2yu6axkG7kRaVvFGliSPZn5XNoCqZzxBnKcNUNlb4X+KyHveZWRSX+Rod1/Xp
-         1PI9i85IVybY0JX2SNL6ZUjxe6Pybry0QdL+uGhcWAz+ILZwrAJkMmqCSJU/DJR2+kAy
-         ur6cKmWaZ6mjMXsulpgx0IAf1RIc2++22NOxks7Ong8drXSaVrjLqGrFWXOKV5pNGjfL
-         dirBRPjUdh4DvGFOb0VCGzAz1MPX2fQjn4pPOV1sUZjaDKhPS9NkRDrNAWrgMB9D/v3N
-         vDSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX87kcQhpM8n8FUp3PN0YRKASXpRteGx2Kp40IYE4uWgcdIDVRXqvXZFzCGR8+q+KFX9CXKxhOPJw2yTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylOWnyXEUCiLNTz5bqvhbhgXokixTQTPL3oXI0ddwNfJ/OTr9I
-	PGEIGvCTZhLsJAZEE6JyTlGZ1uFOS3s8woS3wPAVTND2J6gCGSmo6PpFULBUyw2/RTJETINB7dU
-	F3eOxEFQFQK+pLu54gQSmw7TcWc4FGBAH4R5D
-X-Gm-Gg: ASbGncupODRTve/ec6l3b2OvKxXPQjQtBfjfRuz7hLXeyA7Ypp9snBKxRb5sZv00zE6
-	PkfeGgIgDl2vw69rupXEkgkfn1g6nNrad1NPNUSTnEfYK32WhBrseKIzMyjUoDSHqM7820dbyWZ
-	5zOtScDtd9gF51bVp8Gxq7KUumSTQBX1bkXfTqx1u8eR4QS9UQpQAGhw==
-X-Google-Smtp-Source: AGHT+IHIFC27Tk88Yi3YUGNZ+k8FKhRjCX/JtoA3qeNIsqcz98TsyFMxX7OmB6lwatepNjm6g4SKE8rpEapaduydeyo=
-X-Received: by 2002:a05:622a:2b43:b0:46c:7cf2:d7b2 with SMTP id
- d75a77b69052e-4771162a1b7mr2073731cf.18.1742432811909; Wed, 19 Mar 2025
- 18:06:51 -0700 (PDT)
+	s=arc-20240116; t=1742432924; c=relaxed/simple;
+	bh=2P0oUNGgoxvTERPv4EJPPNLwaGpMZYUdb4zhumuj/iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PLud7/1qKb0cpwUk0E+eiIT+G9+4gUCktMUwpBlF+rhJ+Z35mMOw6l2a1OPJgyGoS7j94K3pbTuuE0Blo1D1KOwOfPkkIXR42i3oMUAriRF812hggdqwYOPnaqpXKARL0ApRjBEbv6oYTYyMQ/c9pGCVglx+nzXvwcMsGl4Bwk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=a5jOGAGI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742432917;
+	bh=efrnytF367kiPZRgINjQu550CYOZ2gdDHrFIduCyoTU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=a5jOGAGIfOx3HFHB60tk6/vIPBwrpZ/k/Ja+HYWdsr9hAnmcHQoGzM8XF5IcQox6Q
+	 TB2kfnUrQ7Y04HN3PMJCC1pXPbjmClV9Os9/iuBRMLIqZxNgJIuFJ8mp87tSI3yXJ4
+	 Vv0wLuTxNQXdIV/Y1TBs7IICODvFX9tqeqvUMuiHLCEoY0ye9Sst3R6e8QXsqqOPaj
+	 fxu6S64MFPvzQmh7ws3IXLrCbkkZJo30AeuEaMDLkujWcAc4kustXFrUvwz//M+j4J
+	 QbBfnRVN08kv8sEtBFcuTdB9QGQhMcs4uL/e845pACMnWtNYmYPpOcuTh0n4bgTLYG
+	 l7KGXdRrwyusw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJ6sK0Jpwz4wyl;
+	Thu, 20 Mar 2025 12:08:36 +1100 (AEDT)
+Date: Thu, 20 Mar 2025 12:08:23 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Michael Guralnik <michaelgur@nvidia.com>,
+ Yishai Hadas <yishaih@nvidia.com>
+Subject: linux-next: manual merge of the rdma tree with Linus' tree
+Message-ID: <20250320120823.588aa58e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
- <CABk29Nuuq6s1+FBftOPAcMkYU+F1n2nebcP5tDK9dH4_KXA2cw@mail.gmail.com> <20250319134257.GA1428417@bytedance>
-In-Reply-To: <20250319134257.GA1428417@bytedance>
-From: Josh Don <joshdon@google.com>
-Date: Wed, 19 Mar 2025 18:06:39 -0700
-X-Gm-Features: AQ5f1Jo0AelVf46M3Uv3ZN0LlsyqlPkTeUawbJFwips3q1mOL8lHZqHPY4GtHm4
-Message-ID: <CABk29Nv0Rh4L7h+XEjWwcMixSqtaCBh9U-Ajm4eKaYwvsRsjLw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based throttle
-To: Aaron Lu <ziqianlu@bytedance.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Xi Wang <xii@google.com>
-Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Chuyi Zhou <zhouchuyi@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/R6r_SbyeC.rl5kkz1bgf4oE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/R6r_SbyeC.rl5kkz1bgf4oE
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 6:43=E2=80=AFAM Aaron Lu <ziqianlu@bytedance.com> w=
-rote:
-[snip]
-> > track of the number of threads within a cgroup hierarchy currently in
-> > kernel mode (similar to h_nr_runnable), and thus simplify down the
-> > throttling code here.
->
-> My initial feeling is the implementation looks pretty complex. If it can
-> be simplified somehow, that would be great.
+Hi all,
 
-Xi (attached to this message) spoke about this at LPC last year; Xi
-can you describe your approach in a little bit more concrete detail?
+Today's linux-next merge of the rdma tree got a conflict in:
 
-Best,
-Josh
+  drivers/infiniband/hw/mlx5/mr.c
+
+between commit:
+
+  cc668a11e6ac ("RDMA/mlx5: Fix a race for DMABUF MR which can lead to CQE =
+with error")
+
+from Linus' tree and commit:
+
+  24d693cf6c89 ("RDMA/mlx5: Fix cache entry update on dereg error")
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/infiniband/hw/mlx5/mr.c
+index 753faa9ad06a,2080458cabd1..000000000000
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@@ -2023,8 -2031,7 +2032,9 @@@ static int mlx5_revoke_mr(struct mlx5_i
+  	struct mlx5_ib_dev *dev =3D to_mdev(mr->ibmr.device);
+  	struct mlx5_cache_ent *ent =3D mr->mmkey.cache_ent;
+  	bool is_odp =3D is_odp_mr(mr);
+ +	bool is_odp_dma_buf =3D is_dmabuf_mr(mr) &&
+ +			!to_ib_umem_dmabuf(mr->umem)->pinned;
++ 	bool from_cache =3D !!ent;
+  	int ret =3D 0;
+ =20
+  	if (is_odp)
+
+--Sig_/R6r_SbyeC.rl5kkz1bgf4oE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfbaocACgkQAVBC80lX
+0GzxWAf/bPOCtIoK+tKlvPx2MpXfu2uKyS5LJFIAMf3JiUH4/IHxN4Fr4sFh9unQ
+azxkk6TeaNHERIJS43HyReMdve8FikQyQOITJZPa1zNyQmFqwnKQyOjySssbSXl+
+a9PYDoLA3FCTlWRJ9A6YqNw0trvYRK/CuzhLnBvBYgPgb3yEb9oXUcajpo/hgx3k
+3hIKxn0gq7NwysIi7vIexS1Y8D0nZE4YBT0KU/PF3USTgla60V7c4eWPrj1nJMQM
+NLg/nhVnObyOMfPAA0tENQ8sLTfWs4LAh6kujG7JtioqhNVs6VVP7Q5VE8G5XkFx
+PX6suAKDhkGsSnEWFalZ2gf8d7G2XA==
+=BmZ0
+-----END PGP SIGNATURE-----
+
+--Sig_/R6r_SbyeC.rl5kkz1bgf4oE--
 
