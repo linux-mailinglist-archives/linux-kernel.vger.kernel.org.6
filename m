@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-568981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-568982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1FCA69D0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:08:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3C4A69D0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D9D465485
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351579819B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127C2282F5;
-	Thu, 20 Mar 2025 00:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AF92D023;
+	Thu, 20 Mar 2025 00:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y10SCJ6e"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrcQHDqH"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A3E1E87B;
-	Thu, 20 Mar 2025 00:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13B42746D;
+	Thu, 20 Mar 2025 00:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742429249; cv=none; b=HXKgYQK5MMBiVf6kT13UY2Fp99m5kcq3bKUZhmj9y2qi91qqMs7BeshFcq3zG8PVy4ipTIXWgkts5AccByKlgIKtAt758OFn+Y1fy9R8I+Y2qnq9+j7OHI0sj/OVekUP94zlp3v5Q/4qgSuzI1UO77EjK9tpnHQcB9hQl63wZtU=
+	t=1742429251; cv=none; b=a8jCRAiGuRGvDUQJlVt+mjUJo12pYAM2K6h7TJALZZAtRsP6kYl+zmMcaJZyv8wzx/XeMnlKGejKo0Qqj3aWtlRVkW6Tu24p+m7AjoNsTwbA7LL075N9lSiTnGOle7WCRjqU4J+qrpv68geKNWIfC+04hTFKEwtNYjiyewcbzyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742429249; c=relaxed/simple;
-	bh=+gfaBr0cvuia1lqZHH3v6pzlDrS6h4TAK+d5tJ7V8Kk=;
+	s=arc-20240116; t=1742429251; c=relaxed/simple;
+	bh=FBxTtZFW3hnfmV1C2faDwaZce5xiCpM6iYPbXPLQVu0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gyoybv+kQJ5hTEIcWa6Y3fZ0kL4pGkj9J+8wP3hpEWpAQhAlxIWwXHxm9OKn8qtRt5ETc/tarvDEJ4w58YaDLuOG7PPFoZkYubRM/IUwOBqpkwVwy0g52NVXi1tAVa+6y+gtii20M3mWK/r/m5OTrYmQvsuPP/AhaRBrtN4oJA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y10SCJ6e; arc=none smtp.client-ip=209.85.222.171
+	 In-Reply-To:To:Cc; b=J3aUcdPdq1z/52/V/7ptaJBSkmljOyPucShiFYnb8bGX/DbEBdS9ArKvnQ7UxCvIuaifcMi1Je7MHyYl3nYxY5FKY3UX4Ly/x/FC0lcaz+97vbGukbAe2RwdMlIiffnHk4aPT6vb8izSIKH5cvAweKiHiBSuVNjMyurthLbueuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JrcQHDqH; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c54f67db99so117101385a.1;
-        Wed, 19 Mar 2025 17:07:27 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7be49f6b331so31294485a.1;
+        Wed, 19 Mar 2025 17:07:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742429247; x=1743034047; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742429249; x=1743034049; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zlyTaHIAWGAAzL1/7e7BfZlkyKveDUKQV/GQUWtfP5g=;
-        b=Y10SCJ6eEQzsnzW/5eqz9RjmPnL0kM5pTPCaLdQKMwTlg6ATJktLaTO6D2fG3ibvxi
-         jOdKqIKCyt6h9/S2nmZDVwOYc2MpxOU7gsoDU9RlVNekgN2xoT4PG2suCZiIy1F/E1PL
-         wXaATEsny+RjgzKTz3SSeec7Z9vY2cTPxzixvc5FPdZS/t3TuRlgM8BRz2k0BToB5d+p
-         bnmxoxus8ESazmXG2b/3hGfEsoNwxzPNvCenXUP8tgO8y6F4nHv1yT1i8EGMf6lHZlIz
-         5CeGatOP+z9jW45a2EVTrRIcEqy1IpNNoa7TAfS4ptvsFOjGr1PU/81AlvrDxyMq7CAX
-         0fPQ==
+        bh=FHldQUDM00I2wpKSXVz5wINhGZ3fVuD/p194QdoLPOc=;
+        b=JrcQHDqHxvgcmSVkZxluKqHGBl1uZ+NGcwbPluvHIwQHSwKaxsPGIY9dl0fn3U3ZVN
+         uOzzvlQdWks4DxBI5j8w4/ECg5UwSprWa9w/2yVLqMYFChJUfzZWYCBEWC0d6f/GY4Z0
+         xx1zAomP9K41unMd+Nrz2FRxqune5M1+d7VSduOvulS7+kpeBgAQu6bJ7IERKqQzVKc1
+         mT21S4rc9LUI63voth1RVQY5jbyFz6WPTaBX4JwWyQcTLLI5Lzb6/3MEGbY8F0GRNguI
+         YCR5YmLxm1YAO3AdE4MRt1bp4VU9VJD4JEJEwgPc2EZw60f3uzcM5rr+ArdWLPRguuVr
+         G+ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742429247; x=1743034047;
+        d=1e100.net; s=20230601; t=1742429249; x=1743034049;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zlyTaHIAWGAAzL1/7e7BfZlkyKveDUKQV/GQUWtfP5g=;
-        b=B+saiDLInsTgpVPFQiHIVIgfjs6QP8iAmdNyYddl+fyStJwJ2tPS+oveu8l4Fax49O
-         2l4nFX2afhwey3d3nkpq/MthL6B1cpSBXMACGTiTvuL4Lx7WEIebP84dIESfqw0zCL4R
-         qrtjI8eloS72gL3v2YWT+wv7zRJxOwEwZcx2nBOl1tIOJnHeoPNCMq2boRTIgJxug0Aq
-         +i1ZY/RRAkq9Q4pYcgpo7JKmM7s20GCBrHhhGWk1mg8yUS2zG4rbE2joiPAwBIxFS8AV
-         3Epu6zvlXLHUL2cXpYZsq/b3j3hbsUa70AAOTueapgNZ8kWizLh8vcrcPde5iESNjnvE
-         0f5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwWfroA0T3AyHekRGeZ++eHcCYcJTnRD0QX9fFjUEbpJ+s2xB5vLhmBnGMLas/jo56XavttqUgqD827eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytL0u/AXdKMy1+GdaSbLFJ0LtkiRa4VFCqdh5cRlTsaQXatPOr
-	mDcfmdSyZXp6C9Q/396U6ay5LiLEem2QO+iL45eff/TY6QK79mi8
-X-Gm-Gg: ASbGnctXai4LktErcOEY8QC/TzObI+No14nw4e6rYQLdLW4b3EnnU783U/VqD38gRvf
-	8bC59L7ueb6YQTPhLFQpT/X2B0OJgIS9gzCUd4T6xH8sGq3gbTk5ZjtZMDusJoUdY5P1mm7Hk6I
-	s3BvxtxVrtrXv3I3lpgkzTkjjWHkkXALetOIN+lX1bax4Ed/48RxeZvY//zD+gTWbfqhuv1zxrx
-	Tp+stfj/yBhxw0CY5Ob2gFgHduf5K5fVtKbJG8NBzbldGPSVefMlHNbejDNAtmH4WM3e0a0Kf0D
-	AMT4lrBtprZJzLNxGVJ44O6L0tdxwCvtxlHkbkx07RYS+DZ3sTY3e6GMwonkReR8qlJMWj+7ugz
-	BN4V4hRkXuYA=
-X-Google-Smtp-Source: AGHT+IEuxEfGRUjYQk5zrlqyTlW04e1NtEAjbnqE6SETPVAYjVVGWLTghJSO8k4sZJVcMbO3QKcdMA==
-X-Received: by 2002:a05:620a:2697:b0:7b6:d273:9b4f with SMTP id af79cd13be357-7c5b051a702mr239990785a.11.1742429246704;
-        Wed, 19 Mar 2025 17:07:26 -0700 (PDT)
+        bh=FHldQUDM00I2wpKSXVz5wINhGZ3fVuD/p194QdoLPOc=;
+        b=f0anctSqL9sn6p+ZdUuHx427XvNv6ogCCLcwpYRx3PlfeUGrIPcNGMIYlVgCrz+Jfl
+         pgo5GIf7uD08OiCcTFT+Agu0GO11jjkLiTJQov2AbfTIo9m64q4H7FMe0PxN047A7piL
+         TndRAZddhCIFpRFly7ZOMDZUtJ0sgZC54kIaKDcxGHzWklR/Mf/GRrVp7K2/Tnj5vIWD
+         NPGx89BaUOmOJgGu/2z6z1aeAc/Lk9RNDlSIQx296T5uuT+HWuo7fsnygckoAMklqQht
+         H6wVQlu5OGDJc47Yq4EHoRLbdS3yfCw60HKHF/9BAAIg/MHqZc7c8O3npfmBo7a/IBym
+         55YA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSOwRPECbADqLzdkybiizR4nPdIxPYlzIJv96JYW5YCH66iKPuUFBjszktUbi+Dx7s7Pj8vdEKo+P2cFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoE/PZs4MeSGoTwcL1LeeYuCGNoOt1umqy+Jh76ACUVPdulM5z
+	blaZGDUMm3DS7vpkjP0r3Pk4CYemjTnFLZyAotHkB/q24kbis9yS
+X-Gm-Gg: ASbGncuSkXZtm5oLByTZM+jZ1AB1LDSGs/+lPG/xUzGLd8uos/UJgHiY1V45noBDsYb
+	CLmHuB+8QVUaQW1EguMicP3xXvv6vCR37IbfeOdKLXhN3ME6T7PbL01ZECqmzeyFcB1qpAa6msQ
+	zoAu0voXWXnHEOozBNgYnwnY67N+5QeVEq1w8mYKPh6gXdW3NUdtOoWIQXo9sHVCtDrB4ThoeN5
+	bJAKGtytia/8KB6Z2ABKmi9EfrTL9jHMPAhd1YAPVJW2wds1fkJYnqsoskrtP3QpON9hZ1EePzs
+	paGKNZ6lC85oDefHa8rgKa+fg+LfLDgg2OvRu5m8cuyvuRgg/OoHXOd8LZDSXcReAgScDLUZb/c
+	Eql15Yk8UIOR+qFrXq/KkwA==
+X-Google-Smtp-Source: AGHT+IFXJgxWh9cBY0AAuS/tYGb7JJx7FEptDVvadgjj9OK5yszD7/oOSDn0VEWA3hPXNhxFh7nT0w==
+X-Received: by 2002:a05:620a:2943:b0:7c5:3c0a:ab7a with SMTP id af79cd13be357-7c5a839812dmr580387385a.3.1742429248679;
+        Wed, 19 Mar 2025 17:07:28 -0700 (PDT)
 Received: from 159.1.168.192.in-addr.arpa ([2600:4041:5be7:7c00:1098:764b:3230:64c5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c98225sm921389885a.49.2025.03.19.17.07.23
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c98225sm921389885a.49.2025.03.19.17.07.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 17:07:25 -0700 (PDT)
+        Wed, 19 Mar 2025 17:07:27 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 19 Mar 2025 20:07:19 -0400
-Subject: [PATCH v3 3/7] scripts: generate_rust_analyzer.py: add trailing
- comma
+Date: Wed, 19 Mar 2025 20:07:20 -0400
+Subject: [PATCH v3 4/7] scripts: generate_rust_analyzer.py: add type hints
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250319-rust-analyzer-host-v3-3-311644ee23d2@gmail.com>
+Message-Id: <20250319-rust-analyzer-host-v3-4-311644ee23d2@gmail.com>
 References: <20250319-rust-analyzer-host-v3-0-311644ee23d2@gmail.com>
 In-Reply-To: <20250319-rust-analyzer-host-v3-0-311644ee23d2@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -100,34 +99,283 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
 
-Add missing trailing comma on multi-line function call as suggested by
-PEP-8:
+Python type hints allow static analysis tools like mypy to detect type
+errors during development, improving the developer experience.
 
-> The pattern is to put each value (etc.) on a line by itself, always
-> adding a trailing comma, and add the close parenthesis/bracket/brace
-> on the next line.
+Python type hints have been present in the kernel since 2019 at the
+latest; see commit 6ebf5866f2e8 ("kunit: tool: add Python wrappers for
+running KUnit tests").
 
-This change was made by a code formatting tool.
+Run `mypy --strict scripts/generate_rust_analyzer.py --python-version
+3.8` to verify. Note that `mypy` no longer supports python < 3.8.
 
-Reviewed-by: Fiona Behrens <me@kloenk.dev>
+This removes `"is_proc_macro": false` from `rust-project.json` in
+exchange for stricter types. This field is interpreted as false if
+absent[1] so this doesn't change the behavior of rust-analyzer.
+
+Link: https://github.com/rust-lang/rust-analyzer/blob/8d01570b5e812a49daa1f08404269f6ea5dd73a1/crates/project-model/src/project_json.rs#L372-L373 [1]
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- scripts/generate_rust_analyzer.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/generate_rust_analyzer.py | 165 ++++++++++++++++++++++++++++----------
+ 1 file changed, 121 insertions(+), 44 deletions(-)
 
 diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index e2bc4a717f87..e997d923268d 100755
+index e997d923268d..c6f8ed9a5bdb 100755
 --- a/scripts/generate_rust_analyzer.py
 +++ b/scripts/generate_rust_analyzer.py
-@@ -180,7 +180,7 @@ def main():
+@@ -10,8 +10,10 @@ import os
+ import pathlib
+ import subprocess
+ import sys
++from typing import Dict, Iterable, List, Literal, Optional, TypedDict
  
-     logging.basicConfig(
-         format="[%(asctime)s] [%(levelname)s] %(message)s",
--        level=logging.INFO if args.verbose else logging.WARNING
-+        level=logging.INFO if args.verbose else logging.WARNING,
+-def args_crates_cfgs(cfgs):
++
++def args_crates_cfgs(cfgs: Iterable[str]) -> Dict[str, List[str]]:
+     crates_cfgs = {}
+     for cfg in cfgs:
+         crate, vals = cfg.split("=", 1)
+@@ -19,7 +21,45 @@ def args_crates_cfgs(cfgs):
+ 
+     return crates_cfgs
+ 
+-def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
++
++class Dependency(TypedDict):
++    crate: int
++    name: str
++
++
++class Source(TypedDict):
++    include_dirs: List[str]
++    exclude_dirs: List[str]
++
++
++class Crate(TypedDict):
++    display_name: str
++    root_module: str
++    is_workspace_member: bool
++    deps: List[Dependency]
++    cfg: List[str]
++    edition: Literal["2021"]
++    env: Dict[str, str]
++
++
++# `NotRequired` fields on `Crate` would be better but `NotRequired` was added in 3.11.
++class ProcMacroCrate(Crate):
++    is_proc_macro: Literal[True]
++    proc_macro_dylib_path: Optional[str]  # `pathlib.Path` is not JSON serializable.
++
++
++# `NotRequired` fields on `Crate` would be better but `NotRequired` was added in 3.11.
++class CrateWithGenerated(Crate):
++    source: Optional[Source]
++
++
++def generate_crates(
++    srctree: pathlib.Path,
++    objtree: pathlib.Path,
++    sysroot_src: pathlib.Path,
++    external_src: pathlib.Path,
++    cfgs: List[str],
++) -> List[Crate]:
+     # Generate the configuration list.
+     cfg = []
+     with open(objtree / "include" / "generated" / "rustc_cfg") as fd:
+@@ -31,43 +71,75 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     # Now fill the crates list -- dependencies need to come first.
+     #
+     # Avoid O(n^2) iterations by keeping a map of indexes.
+-    crates = []
+-    crates_indexes = {}
++    crates: List[Crate] = []
++    crates_indexes: Dict[str, int] = {}
+     crates_cfgs = args_crates_cfgs(cfgs)
+ 
+-    def append_crate(display_name, root_module, deps, cfg=[], is_workspace_member=True, is_proc_macro=False):
+-        crate = {
++    def register_crate(crate: Crate) -> None:
++        crates_indexes[crate["display_name"]] = len(crates)
++        crates.append(crate)
++
++    def build_crate(
++        display_name: str,
++        root_module: pathlib.Path,
++        deps: List[str],
++        cfg: List[str] = [],
++        is_workspace_member: bool = True,
++    ) -> Crate:
++        return {
+             "display_name": display_name,
+             "root_module": str(root_module),
+             "is_workspace_member": is_workspace_member,
+-            "is_proc_macro": is_proc_macro,
+             "deps": [{"crate": crates_indexes[dep], "name": dep} for dep in deps],
+             "cfg": cfg,
+             "edition": "2021",
+             "env": {
+                 "RUST_MODFILE": "This is only for rust-analyzer"
+-            }
++            },
+         }
+-        if is_proc_macro:
+-            proc_macro_dylib_name = subprocess.check_output(
+-                [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
+-                stdin=subprocess.DEVNULL,
+-            ).decode('utf-8').strip()
+-            crate["proc_macro_dylib_path"] = f"{objtree}/rust/{proc_macro_dylib_name}"
+-        crates_indexes[display_name] = len(crates)
+-        crates.append(crate)
++
++    def append_crate(
++        display_name: str,
++        root_module: pathlib.Path,
++        deps: List[str],
++        cfg: List[str] = [],
++        is_workspace_member: bool = True,
++    ) -> None:
++        register_crate(
++            build_crate(display_name, root_module, deps, cfg, is_workspace_member)
++        )
++
++    def append_proc_macro_crate(
++        display_name: str,
++        root_module: pathlib.Path,
++        deps: List[str],
++        cfg: List[str] = [],
++    ) -> None:
++        crate = build_crate(display_name, root_module, deps, cfg)
++        proc_macro_dylib_name = subprocess.check_output(
++            [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
++            stdin=subprocess.DEVNULL,
++        ).decode('utf-8').strip()
++        proc_macro_crate: ProcMacroCrate = {
++            **crate,
++            "is_proc_macro": True,
++            "proc_macro_dylib_path": f"{objtree}/rust/{proc_macro_dylib_name}",
++        }
++        register_crate(proc_macro_crate)
+ 
+     def append_sysroot_crate(
+-        display_name,
+-        deps,
+-        cfg=[],
+-    ):
+-        append_crate(
+-            display_name,
+-            sysroot_src / display_name / "src" / "lib.rs",
+-            deps,
+-            cfg,
+-            is_workspace_member=False,
++        display_name: str,
++        deps: List[str],
++        cfg: List[str] = [],
++    ) -> None:
++        register_crate(
++            build_crate(
++                display_name,
++                sysroot_src / display_name / "src" / "lib.rs",
++                deps,
++                cfg,
++                is_workspace_member=False,
++            )
+         )
+ 
+     # NB: sysroot crates reexport items from one another so setting up our transitive dependencies
+@@ -84,11 +156,10 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+         [],
      )
  
-     # Making sure that the `sysroot` and `sysroot_src` belong to the same toolchain.
+-    append_crate(
++    append_proc_macro_crate(
+         "macros",
+         srctree / "rust" / "macros" / "lib.rs",
+         ["std", "proc_macro"],
+-        is_proc_macro=True,
+     )
+ 
+     append_crate(
+@@ -97,12 +168,11 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+         ["core", "compiler_builtins"],
+     )
+ 
+-    append_crate(
++    append_proc_macro_crate(
+         "pin_init_internal",
+         srctree / "rust" / "pin-init" / "internal" / "src" / "lib.rs",
+         [],
+         cfg=["kernel"],
+-        is_proc_macro=True,
+     )
+ 
+     append_crate(
+@@ -113,29 +183,33 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     )
+ 
+     def append_crate_with_generated(
+-        display_name,
+-        deps,
+-    ):
+-        append_crate(
++        display_name: str,
++        deps: List[str],
++    ) -> None:
++        crate = build_crate(
+             display_name,
+             srctree / "rust" / display_name / "lib.rs",
+             deps,
+             cfg=cfg,
+         )
+-        crates[-1]["env"]["OBJTREE"] = str(objtree.resolve(True))
+-        crates[-1]["source"] = {
+-            "include_dirs": [
+-                str(srctree / "rust" / display_name),
+-                str(objtree / "rust")
+-            ],
+-            "exclude_dirs": [],
++        crate["env"]["OBJTREE"] = str(objtree.resolve(True))
++        crate_with_generate: CrateWithGenerated = {
++            **crate,
++            "source": {
++                "include_dirs": [
++                    str(srctree / "rust" / display_name),
++                    str(objtree / "rust")
++                ],
++                "exclude_dirs": [],
++            }
+         }
++        register_crate(crate_with_generate)
+ 
+     append_crate_with_generated("bindings", ["core"])
+     append_crate_with_generated("uapi", ["core"])
+     append_crate_with_generated("kernel", ["core", "macros", "build_error", "bindings", "pin_init", "uapi"])
+ 
+-    def is_root_crate(build_file, target):
++    def is_root_crate(build_file: pathlib.Path, target: str) -> bool:
+         try:
+             return f"{target}.o" in open(build_file).read()
+         except FileNotFoundError:
+@@ -144,7 +218,9 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     # Then, the rest outside of `rust/`.
+     #
+     # We explicitly mention the top-level folders we want to cover.
+-    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers"))
++    extra_dirs: Iterable[pathlib.Path] = map(
++        lambda dir: srctree / dir, ("samples", "drivers")
++    )
+     if external_src is not None:
+         extra_dirs = [external_src]
+     for folder in extra_dirs:
+@@ -167,7 +243,8 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+ 
+     return crates
+ 
+-def main():
++
++def main() -> None:
+     parser = argparse.ArgumentParser()
+     parser.add_argument("--verbose", "-v", action="store_true")
+     parser.add_argument("--cfgs", action="append", default=[])
 
 -- 
 2.48.1
