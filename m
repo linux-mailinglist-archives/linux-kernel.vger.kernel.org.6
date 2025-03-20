@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-570033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F91A6AB1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:31:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13319A6AB1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3699F189145B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:31:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D64D7B21AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299351EF394;
-	Thu, 20 Mar 2025 16:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1984E219A67;
+	Thu, 20 Mar 2025 16:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kOLYCVlv"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2EB1B422A;
-	Thu, 20 Mar 2025 16:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NI/UKGMa"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13421E3761;
+	Thu, 20 Mar 2025 16:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742488299; cv=none; b=LmObYG6gw50YpV0zWmzraAF2clGGsynlDZMvkN6SfnxMvEhe9md2dnSg3Xjvh3Z2c4jHcfSuKSxs2ylrpkC0+OUkzjUHpPN1+Qz+S/2shF7KUhczokrKU4FjMOaV7yFxAGzeMEt1PLsPDB+V4KYoSbhZbetmWmLKbqx35s3OPFE=
+	t=1742488323; cv=none; b=FdBaXzqVNWxIPr4Lweigr9V1h97v6THsySXXyMJyzVxZ1S6jgEq6bww+buzgEetmMTR+/thgCYGQi3m6OLKZahaPj3FIgvaYrpA4V08u6kMg2sSIijVuVsUO6KB4DvnlQH0mBXLLmVWhcrHhGYCxKKyBvF8BfBkDlDXALTmEm18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742488299; c=relaxed/simple;
-	bh=fwCJ8UJLOopH3XD3q/NiXqeMDiwELoEkMT8DTYo/Y3o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=OtgwCHGZMYqZjwMou7q0SAx9RXZHLssH8f2Ww8Jbw//7NBw1sa1cZkAKcBjZbV1tXyPKfTN1r7LHT0q5JX1Sy2UHJPbut5GZ4Y3klqx4IdK5mHOLUKaTeqcKH8+9xr1uzp7fBS1jhFWEMgrIV3Vo+FhsjDqaw2HwgmED/uVbc2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kOLYCVlv; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 16DAB2116B5F; Thu, 20 Mar 2025 09:31:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 16DAB2116B5F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742488298;
-	bh=O4TdvvsuswOKm2h5fe2nqFWjK0nbWozaugS8JT+X8xg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kOLYCVlv384lUIA22vgrncEZwqCB8lJ86DY5WH0yPJ1WQPx8I9GwgIgkguljystsj
-	 hdxCxISNxzxcjrXkSSTLex8mf/m8khm6/V3oCHp1nTfoD8cZkef0WxTSJDl+9LoOjI
-	 /PNA3U3GHo/yF4+Y2qsFKfmvWxx6sgiIWO6MgMds=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.13 000/241] 6.13.8-rc1 review
-Date: Thu, 20 Mar 2025 09:31:38 -0700
-Message-Id: <1742488298-6035-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20250319143027.685727358@linuxfoundation.org>
-References: <20250319143027.685727358@linuxfoundation.org>
+	s=arc-20240116; t=1742488323; c=relaxed/simple;
+	bh=7QIQt67dFnk4LfBRaQPs3oTOyzM6wp4K58w/lk+tz78=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=syDBWmxWGFi+hXM0wxkTwfB1Jtcgdd8RijLN3Z37EF7SH2ajoY+2PJ7OJEmo6Z4m12h796KaHsUOt9AUzM31lpQq+zfvOtawdZ0nVwzw7cQ13QCvSJNOLvv10yjn89KdNUsmH7v5jUhfcdVEqtIov7nVhyHvR6CyXRGosMkTknM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NI/UKGMa; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C0A52048A;
+	Thu, 20 Mar 2025 16:31:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742488313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IJNUHg58A8IzCz3yY8NhVwvy7UG5mwQu4dYKEqkdPVc=;
+	b=NI/UKGMaKhqxUFsKcpg4V5nvSrCI/FZDIkkppD5Bf6N3xO60upR52Mi2eZ2p5NAEhVk/Lf
+	MWdSVlk2fouqaukEdu1t92DCbyL/95rdoeavGG8faeuIidkTP14It6DvStrvalUEdgW4ME
+	bdyWOoWL+OohPYrTbknbZZo+IiIKvDiYg1k27LXZR6ugS4A0bwPp8+LtueEaWHBhV/+hyD
+	Yxnl8voiEyMDt61imxhi3ovm2JuiJkgNIT83DsxKMh4RTztWxcZgK78M+lK9jtrPN+bqtp
+	MdOuC0VDb6fd4dTaw39oupKAgcS2gbVoe56sxx6C5I6jM5GB8UB7oq25jnTHNA==
+Date: Thu, 20 Mar 2025 17:31:50 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [RFC PATCH 0/3] i2c: Introduce i2c bus extensions
+Message-ID: <20250320173150.2c823635@booty>
+In-Reply-To: <Z9wO8SIy1CcfO0bZ@shikoro>
+References: <20250205173918.600037-1-herve.codina@bootlin.com>
+	<Z9wO8SIy1CcfO0bZ@shikoro>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekieelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfekieegtefhgeelieehhefgtdekffevgfegvdeggeelkeehjeetteethfevudfgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrt
+ ghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-The kernel, bpf tool, perf tool, and kselftest builds fine for v6.13.8-rc1 on x86 and arm64 Azure VM.
+Hi Wolfram,
 
-Kernel binary size for x86 build:
-text      data      bss      dec       hex      filename
-29937944  17838882  6316032  54092858  339643a  vmlinux
+On Thu, 20 Mar 2025 13:49:53 +0100
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Kernel binary size for arm64 build:
-text      data      bss      dec       hex      filename
-36685282  15081125  1054416  52820823  325fb57  vmlinux
+> Hi Herve,
+>=20
+> > The related big picture has been already presented in
+> >   - the 'Add support for GE SUNH hot-pluggable connector' series [0]
+> >   - the 'Runtime hotplug on non-discoverable busses with device tree
+> >     overlays' talk at Linux Plumbers Conference 2024 [1]. =20
+>=20
+> Any outcome of the Plumbers meetup? Was this "double-link" solution
+> agreed on or so?
 
+The i2c-parent was proposed by Rob [0]. The need for the double link
+is what you, Herv=C3=A9 and I had agreed during our discussion after LPC,
+based on having realized that the forward link is insufficient for some
+cases (see "Second case" in the cover letter).
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+> I mean the code is the easy part here, but I would like
+> to have an agreed approach for handling all kinds of non-probable
+> busses. I really don't want an island solution for I2C. So, the key
+> question here is what do DT maintainers think?
+>=20
+> You sent code without bindings, but I'd think the other way around would
+> be better for the discussion.
 
+[0] https://lore.kernel.org/lkml/20240510163625.GA336987-robh@kernel.org/
 
+Luca
 
-
-Thanks,
-Hardik
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
