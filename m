@@ -1,254 +1,214 @@
-Return-Path: <linux-kernel+bounces-569912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE7EA6A950
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:03:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F70A6A953
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B87048571F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ACB43B7315
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AED1E7C27;
-	Thu, 20 Mar 2025 15:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4EA1E3DF7;
+	Thu, 20 Mar 2025 15:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="qNBgKfSB"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011000.outbound.protection.outlook.com [52.101.125.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M4PearK3"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A798F6E;
-	Thu, 20 Mar 2025 15:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482850; cv=fail; b=pkF+drn8dP8jRN29SkgvDILVL2HIRRGafsV4nmRRg40ML5Z/9BfynA2Qfwd4qbvzYR19C3s3R5WbA3SDUlOksab4q3dI2EclIGnlwRkMRAzGe7djXcYj5R/V4MKi25SDbFPwm4BnIIZWbm25GMSS3w7Pzg3QYq+caS45oOX03BU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482850; c=relaxed/simple;
-	bh=aTQJn+4p+shCL3cxWjuHi8uhv0haABtJcd9YSB3iQzo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MXdZM8FoySlxGpB14fhMpJfSmGA4WNB5IbTDJAqgBXZkgcTWU6y0RgamAKhhaU6xDbue2nudSM4xXhZ2sBHLgyXuPBfKGFgPR15xaBzsNuiz13VUzjtOp7n4UCsMUKxkqOnYKSzKT7oYjlFNHLA+ap0X0fkL8vYJBzfdD9CcQos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=qNBgKfSB; arc=fail smtp.client-ip=52.101.125.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YhpmacBAI+XLfQMojkzJrbvQLuupEzt+YgFMGZEBmdQOSwgk/Bo2Lx5Wj22pE0NM9Z5n9Vk001QUca0sfjTgFalxsPXJqJ51mh9ukd5hiJJK3Qtz66+WcQ6j1ISqVeH6auZuMRyxRJiLHaotg4WwBcIOJE8Ph3idlBghSq6dDIdBv/HQyQGRHtpXfnJKqtU482ZWNADvGLn5amcRz7g72MlPiKCxfrTk4aAhEncyugUNhmiok3J3e0rjjIgCuKHHnXtDKaQ14jjzNR9XIJiYYbHgPGpSGeDXSbsJ/EIOyOA3s7Q8POs2SAVIh3j6yJ8R4SBKKJx1ZbI45g/lwmhgqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3bOZUuyf3pBFM1v47AnSQFp5zJYIGockVI9hBDFhzIQ=;
- b=Lri8r6n9+KSgEcjxt0kGIAOxRQj0SfzFMku8L2jdj4/QmIXh6rntY4SPTGIOCMEHQKUJphlyaOCk4r3tr0s6rbwOmzMt8Lsb+aA3IkQoydOWU/0zeS4byxMtGbbJlcHXU5SKdQnxyHEQ54ag7JJme/Zsk8V9ZJKfyngC52IgpI0u/EpGNHwy/8Lyd33gFktI6s2/CI1TpUgeCNsWIlK912viOUDI8Ce4ThKTeN7A3jTLkj+4Pfj0YYkBguwl//B+0r7pVWN0zGOz0f2i+9nOpN6OCPWOo6uOuj8sOGvWZk7QMXN+J+4orkHxDNh7ggHeL6Z8TNqsC64r93enpbQRDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3bOZUuyf3pBFM1v47AnSQFp5zJYIGockVI9hBDFhzIQ=;
- b=qNBgKfSB61QhDFUJsZe2DD9zTdD5Nx0salYzrEuVjw1+gPRXWW/GAICRMUrXRUo/YDl+itGTDLDOjOubq7yzf0adrN9bLx3vrb52gNYA6P96smG2WZVtg/14BMBZuW7UkxKAs+J646H9NqTIeQ0Iev0kGSsEZ2irvQrqJT0e0BI=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSCPR01MB15451.jpnprd01.prod.outlook.com (2603:1096:604:3b3::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
- 2025 15:00:44 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 15:00:44 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, "Rob@rox.of.borg"
-	<Rob@rox.of.borg>, "Herring@rox.of.borg" <Herring@rox.of.borg>, Marc
- Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, Peter Rosin <peda@axentia.se>, Aswath
- Govindraju <a-govindraju@ti.com>
-CC: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] phy: can-transceiver: Re-instate "mux-states" property
- presence check
-Thread-Topic: [PATCH] phy: can-transceiver: Re-instate "mux-states" property
- presence check
-Thread-Index: AQHbmNKAXe+gsZEblUuBeV4i5gwYsrN8H2MQ
-Date: Thu, 20 Mar 2025 15:00:44 +0000
-Message-ID:
- <TY3PR01MB11346DC86A84518D92789A3A886D82@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References:
- <6bcfde63b3a6b25640a56be2e24a357e41f8400f.1742390569.git.geert+renesas@glider.be>
-In-Reply-To:
- <6bcfde63b3a6b25640a56be2e24a357e41f8400f.1742390569.git.geert+renesas@glider.be>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSCPR01MB15451:EE_
-x-ms-office365-filtering-correlation-id: 65a0e445-f0f8-4cc5-42e7-08dd67bffd7e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?9aznLYYVb2Vr9iCcX9S5+NfOkO1CMr9Qzaat4eP0AA0JUtG5LBsYVlZOV2fQ?=
- =?us-ascii?Q?2bTPn/XwkJg5fW9lRb7lOMrPx+aMCQJlkdP5A1Z8N6F1B5t66BCe1ZwQRpx9?=
- =?us-ascii?Q?A+YeT0i6NYgQFZjZhXOtu2iUwbcL6qhU1bF1qvf6/Qp8zE7gxbzM2LoaExq+?=
- =?us-ascii?Q?LEjv86DGIBHYJQ80aerEAu6GR6m67zqYabS6ok3tvbhzyp2k88z/vlRwncdL?=
- =?us-ascii?Q?icjAZa//vFRZ2dlM/KY+hdHHuBAet6pXlIWErVNpJmuUpQpAEMrpc6ihDfH3?=
- =?us-ascii?Q?Sg0PUzEOBOlegzp+Bwh0iQZ4NH3/x8mR3l3gREh4ZhqAkAR6wKy15HM1Ne3m?=
- =?us-ascii?Q?U8XrdjXF36LpBIlynTEACxQYWxrVP1rWkS+bavwCKnUF9jLPx2TPkXeQBR3k?=
- =?us-ascii?Q?UkRml1UXZLgI6d8W8cwGzoTp0xMTZGyoYCs1iRc0tM7N5X4l9VnzN9AXScCg?=
- =?us-ascii?Q?ptuety/qIId9ouC9koeKx7VgINZPso2bvLL4LVyX+OVoslqdlljNZqLT0ocu?=
- =?us-ascii?Q?XmPwfjEM7sn5XYRNATwG9TBf9jddJ3h8T0URG52O7f5CIeKsRCG97szZMGCz?=
- =?us-ascii?Q?FcI/zx5rk6amxWRiuDsX9w/TtciKdlNd1Hn5/2hn47coRq23hI6NqgMG/ubQ?=
- =?us-ascii?Q?5K5Fl/pXn08a0YWivXhkAbTI23tQdmWT+r0Kz9ejeyNq3G4Df3yhfyWuTnkA?=
- =?us-ascii?Q?JlsRk2q44lT9YNi7iVMeDHjEpCRJly/a/JS20hD6PujRLiDFxRVr8U4hdZvg?=
- =?us-ascii?Q?LtLw+D6zjUOJFoeLV98yzK5ix675okmfDB1d6If8E1YcRs6PdZSfvEk4jFzY?=
- =?us-ascii?Q?ZjQAQov/T4DAMImPA7ETepfX0QsVBLsPxm+0N5lUsWOt0+w4N/atrFDhGg5C?=
- =?us-ascii?Q?DtPvOLdmabpwDnhaOLG4bVA8Mhv4I5Ri/or+LIVWKdjug8UNwIq6F5uCjtv3?=
- =?us-ascii?Q?PCUp4R8Tzd5RuzhjbJvbCbFMtEiUARYk/GNcWdClei9j2HDxOyn2y98js3G9?=
- =?us-ascii?Q?YvPrYw46q3hd8/73v2qkiBrQG6jlBbMw8/ecx2OIXIZmUxawdPOdaqTeaUsz?=
- =?us-ascii?Q?zgg8oZNU2i5/cjuGVfuxvlQ54ChobU6M9l0CGk/Z2nK9NKQI5PFZXG0bJ5gy?=
- =?us-ascii?Q?WWkZQXjhxqVVnmZTdx5ihW7hCgHYUiQuO0b/UfatZy4gtbaxQi5vVHjgmEhf?=
- =?us-ascii?Q?aH0fQZjY0TzUpa2y+bJr/OIEWlT4bxUq7uMNJX80Vn3IaZqGChQF/ykI9Nvr?=
- =?us-ascii?Q?Ed+54zEI47POXGJgw/lMX5VcG+/8YG/MdHEHASYH7RlfqGAj9Frmi6Wtqdv3?=
- =?us-ascii?Q?Z96dzrTBYvheAShxbNH6THr7meEI0jqK8gEh4oNe+Od+gq5QNjIEhSPhZuJv?=
- =?us-ascii?Q?v5B2rRleu52KlSbNXuZwM7olFPnpLOj9PIO7+lYi8mrujXMjPxBlbZF/gzQo?=
- =?us-ascii?Q?mFeOkGNGK2IzTJbAZo8+zXkgwEu5Bpas?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?u9VSPbdxlt0SRvszeCEP5IEdiGibR6d1qJztBxFZWT7A2/4gpIcTfFBUUBK2?=
- =?us-ascii?Q?C5CCjGIsc9TXJLFeg758z8tPMsqssExXzriJPcdDipYL4d6vNsaU+YOAtK16?=
- =?us-ascii?Q?25zfA4d8ogDXuFu0FyiHKsyfBhK/Vbbp65+khCW/miU4oJd644koNP7eoR2f?=
- =?us-ascii?Q?v3f2rCfHU7eBiaGMfeC7Ejp8TRaIniHSg2kG2Rt1k53p9xLfRtF8/vLGHRR9?=
- =?us-ascii?Q?e1RCgAziqmR2upgI9d+kTUflGEdyVr7Y1tlRw+/ntAVI3kRXQbUj5th3yqQd?=
- =?us-ascii?Q?tftncXFTorwHXPtQrhnn3EUeTvLC+ygge5T4FpA+aZXJRre5xyTcnBXdbZv+?=
- =?us-ascii?Q?WSIHO5tsBB4oTCxwcAeaVYakoL6+jcavUAkB6gUWVsljj5xZF2WlN2d58Bxl?=
- =?us-ascii?Q?XQEbBDOLdV/c0hnKE1OAUapjoLfCmArbYrD8c++xPTHLUjbw/q7/+38Y7V5z?=
- =?us-ascii?Q?4tGSY6+4RNWObjr6OE1BuGRm6v9x759bHFJgLo54jBUew1XQetvBQjbVAPb9?=
- =?us-ascii?Q?m8zEzBa0uCT53sfq1zuNFtnwtMnpV2G6tZFySVq+2GZ+vedGwPTic9HjWztn?=
- =?us-ascii?Q?oTrP7YkkOb9BwjipTC2vbqy2wFPn38Wz8bb7Va/j9ssg8za3su4+kXh4jxSr?=
- =?us-ascii?Q?QBPOTruNRwaDc7wz7fEpmUGqFwyCCMqGQ9omFytOHjggp7T7a3/3Jc+pcAj2?=
- =?us-ascii?Q?7TODwnHyHN+2j6r7M9yePX4rEi8FxIs8lQ9clj/stOZwDV1S9Sxt8L8kLfVm?=
- =?us-ascii?Q?SFIWrqakeBt7HhMWk7vnzP2ps/3ljVD6oPKZhxXXZp1BaJ1bAo/ElAM7m1pD?=
- =?us-ascii?Q?dsxOhRTRQ1b3s5H2KHXCGK5jlbAHJPmPOK6n0w8Oh7brg5kJx/VxMfNKa74A?=
- =?us-ascii?Q?NsDzGUUgtxyM1Y1NsMoG2oiiVtUM59qNtQ9egOJDQbb7njv/gTShs7jdeLeX?=
- =?us-ascii?Q?0giG3Z44EKe2kkTwzNR/nLXx7e25I+Xz/vYOnq9gKxVvOMyn+6I9/yPWUX0H?=
- =?us-ascii?Q?7a1vxX+GmU5DgNwBiRdsMFOOoNzMgNWFeTDYclcGM5UsD0qjglDN5x8OPJRw?=
- =?us-ascii?Q?gqIcKJcZxTnQCSmQ3tkZX7BzHEPcRBA2cwHTUKwu75xCsQHe16Ou3TKSUY4F?=
- =?us-ascii?Q?g93TEtWldhHx2Mokij2PzY4kgXhVr5XSoxM55/vrUXA0AHK03Lxp3ZGi9Mn9?=
- =?us-ascii?Q?ktNnrszVB9OeE/AvBXhb2maEh1mEvBqh/rGNxRkKXWDJcqoJmVHfLrHht2Nf?=
- =?us-ascii?Q?xgn/jNFzF6gHM0914J51WQLvrLjob7E2t9zgoy5vJkBJstZIfFFsPU4fMyBl?=
- =?us-ascii?Q?06PZYVbg+KNUjC9fqQc4V0QAGIEN/LWjNzfxdSID2VhM/BCaB51A3HcJTxhH?=
- =?us-ascii?Q?8V+azCuX+vYtIy+73kCIeokmhPLVWfk9P1xBw4X38kFnvIN9INVsBly8b6oE?=
- =?us-ascii?Q?pYbydyRATykZwzMnmp+ikl5B9yEuRpUaxrZkXfJYks+Gktz8enX1uhRLwc4f?=
- =?us-ascii?Q?ZsDkM2UmCtP2SYovLbxZmC5vInh0U0tF8Upwu+bckcJX2MQaJRdPtRPyl0iD?=
- =?us-ascii?Q?bqdE8NbpEJoM/QwDxKZRke58V7sKh3u6EEQmE2bl4Vhx9KFboLlj5k6BW8G6?=
- =?us-ascii?Q?7g=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAA61D516C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742482962; cv=none; b=jq57wqZ6vslEZyI4PdfRIoVn5ZcWO3u0weThg0JYO4WzSJ7rUo08TNv58gCufDLcsAcxhkcvcAnF/my770EB1NUNvd+79auc1BOZrVAoqE7pCurL5lMnDkiyNUNrZN7r6wbQyIda41M59mFPMMgJlb4vAN8dFBIkF7+wg6j+bs0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742482962; c=relaxed/simple;
+	bh=0cgnDgdNzVW36FA9PDsbGMmk5rxfx1Eu6N9mxulMwrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EWcuWWakOduuIFAE6iox0ST/AJefm6TjJ4nLP1GmBXjYaeEJntE8xgThZ+z3v2od7OOAHs3vJ4H9qynWvV6QkIX9LJPuHLcNCaz4QxqzvhHpFEa0pKoUK9ZkIx9x2JdkQEdKvh3QIFaaE600ELMOQEbx6fNv0m2VIUbWfcTiK3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M4PearK3; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-391342fc0b5so792470f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:02:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742482959; x=1743087759; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9sehYKzuHhP4cHDSTPPw63jIQFVIC/gPZCdP7Ex2olE=;
+        b=M4PearK3AXWvZOg7aTNGGdjuEYJ1xZp7rKZ890Xra6N5Cw3tlXuwJHEPrjXEEmjT9M
+         4C2hOLRWJJJkcsqQFf3/3lVU+x8UTpQRLGD2ocAQHSe2GUao/lrzjsbYlTsAg9ajN8cU
+         /9sH2ppNA0tSp3XY2MjJWF8uhV1+uqLCEPQ1FMlpYQMykazCE/Z2MjJG/fU5zuU2xflK
+         sNSDH9/tDZhgfZonqlntC53KizODSpIst6xKKXTEx28jzixdfyKJDhK3UeoWZmSk1x9X
+         ttN96EoDgw47SHy3JpYtAEodtznhX+euou2rX7fXhu/Wc14clA6rftT1rsjXg1/Z8R/y
+         k1eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742482959; x=1743087759;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9sehYKzuHhP4cHDSTPPw63jIQFVIC/gPZCdP7Ex2olE=;
+        b=WS8dKob2B2T0CdX5mCJodBpndHpOC/CW3rD5qTaAdCEKaWl9yVs2H3qRA4TrCvuMNt
+         qgliKl/QLTuAwCLjATYhOHqq8eO6yDpnTJTe1Sab0b3HOQXQWR7qdI3V1D67JAPYZ16U
+         WU5ofoq4qSAFZ5IFN5B/zqlhQsliMkBAcsokFKyGhadaEKCrK81LD8WFW6YIwMXHYtNR
+         ZEipPjQVn2Nxv+oREZ4zrmZBnMM/b/+E/eP6fUXx++4tUTqtWpXTOJjWeDE8NxkziA1c
+         3teQGfnSajjHs5JSXTLEJJKJjN7YJjGLtw8tLlqzlvH41iG8wm4PaB1pIOIGRznbvnk1
+         aERQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHQR5vzJgNHKwTmzFVLM29VXZ+/GDc2ngVadvtpAba8A74qsJA7PO+Vspvf99pGsMf0wE3c+l3EJ0NZWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgsgEIITn+az+bH00dwPwMaRQbNEu6Xd/hr3Bq17+eUxd3S3vM
+	i4sbcxLDIP8hwVE9EYYKacD4d1Kl6hkBJyEuPH/42uUO35u4O+1oxIVCM88vT4zRNm/gtVKJIph
+	VVXkEA5j4HCmeOFTKaQ5DMW+eaGd3Y1i6rwtuxw==
+X-Gm-Gg: ASbGncu9H5xM24XL9jXZwQdGVC9uqbnu+69hTclJEi+3RsTUx3TeVUDVfNArsF5n34N
+	P9xGB313K0xY1mWDZ+06nEllIwEX58vsM644FTODPTa0ueoUYGZ2bwveQDDvjt8DlK8/MLsoaFk
+	wGcg9aOsM339XfyPaognLdDDUDNqOg6mQ3+w1Zer+09c6a3CbdfOYp1x6Q87s=
+X-Google-Smtp-Source: AGHT+IGLy2W/hhzQpQkvhVEEFt6eBc/L+uTy5kS3QUwNT6NyACApSJCXQFCTQQeF1TAwP9QEm0Un31S+ZrQDHRbkqHs=
+X-Received: by 2002:a05:6000:1787:b0:390:de33:b0ef with SMTP id
+ ffacd0b85a97d-399739d3dbcmr5247560f8f.30.1742482957077; Thu, 20 Mar 2025
+ 08:02:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65a0e445-f0f8-4cc5-42e7-08dd67bffd7e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 15:00:44.5257
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iBn2/t21yH5XW4VEdiltizSaiXbGLOyKhZ7l83BKmqCJPCKWXGqsFbzZHH3C+lIE5hAC3wTVQLzxn9Jl5wWoR4XiHsuGZ3Ik62yx3HsYi6s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB15451
+References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org> <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Thu, 20 Mar 2025 15:02:26 +0000
+X-Gm-Features: AQ5f1JqX1AbEBgRZ7qH0d-U0vmoh9b57-Gri1YjGtvQ8vBotPCbRFlHhbhRg0oY
+Message-ID: <CACr-zFB+mAFTPGpT2ihwB43yY_aBmKfb0wYf7PxpYbULh5PfXw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] ASoC: codecs: wcd938x: add mux control support for
+ hp audio mux
+To: srinivas.kandagatla@linaro.org
+Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org, 
+	krzk+dt@kernel.org, ivprusov@salutedevices.com, luca.ceresoli@bootlin.com, 
+	zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com, 
+	robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz, 
+	tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com, 
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	johan+linaro@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Geert,
+Hi Srini,
 
-> -----Original Message-----
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> Sent: 19 March 2025 13:26
-> Subject: [PATCH] phy: can-transceiver: Re-instate "mux-states" property p=
-resence check
->=20
-> On the Renesas Gray Hawk Single development board:
->=20
->     can-transceiver-phy can-phy0: /can-phy0: failed to get mux-state (0)
->=20
-> "mux-states" is an optional property for CAN transceivers.  However,
-> mux_get() always prints an error message in case of an error, including w=
-hen the property is not
-> present, confusing the user.
->=20
-> Fix this by re-instating the property presence check.
->=20
-> This is bascially a revert of commit d02dfd4ceb2e9f34 ("phy:
-> can-transceiver: Drop unnecessary "mux-states" property presence check"),=
- with two changes:
->   1. Use the proper API for checking whether a property is present,
->   2. Do not print an error message, as the mux core already takes care
->      of that.
->=20
-> Fixes: d02dfd4ceb2e9f34 ("phy: can-transceiver: Drop unnecessary "mux-sta=
-tes" property presence
-> check")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, 20 Mar 2025 at 12:03, <srinivas.kandagatla@linaro.org> wrote:
+>
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>
+> On some platforms to minimise pop and click during switching between
+> CTIA and OMTP headset an additional HiFi mux is used. Most common
+> case is that this switch is switched on by default, but on some
+> platforms this needs a regulator enable.
+>
+> move to using mux control to enable both regulator and handle gpios,
+> deprecate the usage of gpio.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Tested on RZ/G3E SMARC EVK that has tcan1046v-q1 that is modelled as two
-instances of tcan1042.
-
-Cheers,
-Biju
+Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
 
 > ---
-> Alternatively, the multiplexer subsystem needs to gain support for gettin=
-g an optional mux...
-> ---
->  drivers/phy/phy-can-transceiver.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-tran=
-sceiver.c
-> index 2bec70615449f94d..539b3446b9c33eed 100644
-> --- a/drivers/phy/phy-can-transceiver.c
-> +++ b/drivers/phy/phy-can-transceiver.c
-> @@ -103,7 +103,6 @@ static int can_transceiver_phy_probe(struct platform_=
-device *pdev)
->  	struct phy *phy;
->  	struct gpio_desc *standby_gpio;
->  	struct gpio_desc *enable_gpio;
-> -	struct mux_state *mux_state;
->  	u32 max_bitrate =3D 0;
->  	int err;
->=20
-> @@ -114,11 +113,13 @@ static int can_transceiver_phy_probe(struct platfor=
-m_device *pdev)
->  	match =3D of_match_node(can_transceiver_phy_ids, pdev->dev.of_node);
->  	drvdata =3D match->data;
->=20
-> -	mux_state =3D devm_mux_state_get(dev, NULL);
-> -	if (IS_ERR(mux_state)) {
-> -		if (PTR_ERR(mux_state) =3D=3D -EPROBE_DEFER)
-> +	if (of_property_present(dev->of_node, "mux-states")) {
-> +		struct mux_state *mux_state;
+>  sound/soc/codecs/Kconfig   |  2 ++
+>  sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
+>  2 files changed, 32 insertions(+), 8 deletions(-)
+>
+> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> index ee35f3aa5521..b04076282c8b 100644
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -2226,6 +2226,8 @@ config SND_SOC_WCD938X
+>         tristate
+>         depends on SOUNDWIRE || !SOUNDWIRE
+>         select SND_SOC_WCD_CLASSH
+> +       select MULTIPLEXER
+> +       imply MUX_GPIO
+>
+>  config SND_SOC_WCD938X_SDW
+>         tristate "WCD9380/WCD9385 Codec - SDW"
+> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+> index f2a4f3262bdb..b7a235eef6ba 100644
+> --- a/sound/soc/codecs/wcd938x.c
+> +++ b/sound/soc/codecs/wcd938x.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/regmap.h>
+>  #include <sound/soc.h>
+>  #include <sound/soc-dapm.h>
+> +#include <linux/mux/consumer.h>
+>  #include <linux/regulator/consumer.h>
+>
+>  #include "wcd-clsh-v2.h"
+> @@ -178,6 +179,8 @@ struct wcd938x_priv {
+>         int variant;
+>         int reset_gpio;
+>         struct gpio_desc *us_euro_gpio;
+> +       struct mux_control *us_euro_mux;
+> +       u32 mux_state;
+>         u32 micb1_mv;
+>         u32 micb2_mv;
+>         u32 micb3_mv;
+> @@ -3243,9 +3246,16 @@ static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component, bool activ
+>
+>         wcd938x = snd_soc_component_get_drvdata(component);
+>
+> -       value = gpiod_get_value(wcd938x->us_euro_gpio);
+> +       if (!wcd938x->us_euro_mux) {
+> +               value = gpiod_get_value(wcd938x->us_euro_gpio);
+>
+> -       gpiod_set_value(wcd938x->us_euro_gpio, !value);
+> +               gpiod_set_value(wcd938x->us_euro_gpio, !value);
+> +       } else {
+> +               mux_control_deselect(wcd938x->us_euro_mux);
+> +               wcd938x->mux_state = !wcd938x->mux_state;
+> +               if (mux_control_select(wcd938x->us_euro_mux, wcd938x->mux_state))
+> +                       dev_err(component->dev, "Unable to select us/euro mux state\n");
+> +       }
+>
+>         return true;
+>  }
+> @@ -3261,14 +3271,23 @@ static int wcd938x_populate_dt_data(struct wcd938x_priv *wcd938x, struct device
+>                 return dev_err_probe(dev, wcd938x->reset_gpio,
+>                                      "Failed to get reset gpio\n");
+>
+> -       wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro",
+> -                                               GPIOD_OUT_LOW);
+> -       if (IS_ERR(wcd938x->us_euro_gpio))
+> -               return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
+> -                                    "us-euro swap Control GPIO not found\n");
+> +       wcd938x->us_euro_mux = devm_mux_control_get(dev, NULL);
+> +       if (IS_ERR(wcd938x->us_euro_mux)) {
+> +               if (PTR_ERR(wcd938x->us_euro_mux) == -EPROBE_DEFER)
+> +                       return -EPROBE_DEFER;
 > +
-> +		mux_state =3D devm_mux_state_get(dev, NULL);
-> +		if (IS_ERR(mux_state))
->  			return PTR_ERR(mux_state);
-> -	} else {
+> +               /* mux is optional and now fallback to using gpio */
+> +               wcd938x->us_euro_mux = NULL;
+> +               wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro", GPIOD_OUT_LOW);
+> +               if (IS_ERR(wcd938x->us_euro_gpio))
+> +                       return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
+> +                                            "us-euro swap Control GPIO not found\n");
+> +       } else {
+> +               if (mux_control_select(wcd938x->us_euro_mux, wcd938x->mux_state))
+> +                       dev_err(dev, "Unable to select us/euro mux state\n");
+> +       }
+>
+>         cfg->swap_gnd_mic = wcd938x_swap_gnd_mic;
+> -
+>         wcd938x->supplies[0].supply = "vdd-rxtx";
+>         wcd938x->supplies[1].supply = "vdd-io";
+>         wcd938x->supplies[2].supply = "vdd-buck";
+> @@ -3581,6 +3600,9 @@ static void wcd938x_remove(struct platform_device *pdev)
+>         pm_runtime_set_suspended(dev);
+>         pm_runtime_dont_use_autosuspend(dev);
+>
+> +       if (wcd938x->us_euro_mux)
+> +               mux_control_deselect(wcd938x->us_euro_mux);
 > +
->  		can_transceiver_phy->mux_state =3D mux_state;
->  	}
->=20
+>         regulator_bulk_disable(WCD938X_MAX_SUPPLY, wcd938x->supplies);
+>         regulator_bulk_free(WCD938X_MAX_SUPPLY, wcd938x->supplies);
+>  }
 > --
-> 2.43.0
->=20
-
+> 2.39.5
+>
+>
 
