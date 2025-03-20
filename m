@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-569147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615A0A69F1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:41:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A2AA69F24
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C351898E98
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1406F887B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D0F1DE2CD;
-	Thu, 20 Mar 2025 04:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC021E0E08;
+	Thu, 20 Mar 2025 04:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tmtmkfEr"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GQ0BaJS2"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9B733E1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 04:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0182F5E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 04:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742445688; cv=none; b=oqkqUtOLSUPawYe6wqXFOp6aJdo9+6spwGHw9VrvPyMZodjf1SlcC/D9VBMa9biVDJ0IJIc8pSPedxXL1T621xUxPkuM2CFLdb95i424MG4uoWB5JlUCzRpScmRirsqQRW/i/n8Jqt0JpMxrJd2D2jRpvv4dPoZBXtLTcfg0nsM=
+	t=1742446725; cv=none; b=BSIgWjXrIXKMcsYrNBQbsVEDn1v2tHI1l4w/1xdaeouWGs9RRTyjpde0EeC4Hww8ANYAxcGE5TlwsY+N0xeNMWo/9NLAzpT9oLSvMlS1MCQJT2soamT0JN7DO2vKNBkfh3TMTVxwO7UWSCGhmhY46OdwZ9+Lz/1u3tBPIoEyif4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742445688; c=relaxed/simple;
-	bh=iu2sOwFKvHsAyw6rkzDBUlqOQj32aHgAVhlKggBWESo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KrAAk0S+5owD/ExV1DrKwlSVy80zetLCybtPyLXz3gXbtUGTxgr9cnM6qzm3zIpZirZB+OqJcldRNGosrIo1DnGi0LbAwoDH/Zc11c5qqbfqJ+axQRDVOEe0XEPdsjnr4jyZDm57z115fREREH3Qtw7D9OAC0SIgUH/CCRkbXbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tmtmkfEr; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JNZKZL027546;
-	Thu, 20 Mar 2025 04:41:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=249j2d
-	nUvuAhHakwr4avBEP0g5cFzhcQ0fJYm46dmCA=; b=tmtmkfErnoDJPh0ib93cfV
-	uNJ58G7SbxQIvrSLr/o85rhNa9k4mV9bVDs7zyFZ4qhT2O4C++vCkZf7WaZMsjrO
-	mrhkeqE5OiDoe9LGrn3AuRBCeOKitU6pdrhONUEXQU/Fm7GorBDA1ah0HnOvecxJ
-	kJMgqIVd6d8MTipkWbMdX2AVaxnX5YgE64jmYjEhWsM22W3DP6rWdOPBEO5vOb+E
-	4AHM2LTOxNSjS5/bO2D6mHG5MW4ZtopttJ11TQ9t0TiKgtTMK2wvi7VjWBJTH0XV
-	OjQEm3VfEZuzbMHustnNxP8QxiCSIHjTjVQpbjFAPVUkaw/PXRznerWQKRql20jg
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fybpv34u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 04:41:06 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52K1Nh0l012351;
-	Thu, 20 Mar 2025 04:41:05 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvp5x95-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 04:41:05 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52K4f3IT35717436
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 04:41:03 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 004E02004E;
-	Thu, 20 Mar 2025 04:41:03 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3048720043;
-	Thu, 20 Mar 2025 04:41:01 +0000 (GMT)
-Received: from [9.109.215.252] (unknown [9.109.215.252])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Mar 2025 04:41:01 +0000 (GMT)
-Message-ID: <2ea3687e-b5a9-4de3-99d2-261bccb06c0b@linux.ibm.com>
-Date: Thu, 20 Mar 2025 10:11:00 +0530
+	s=arc-20240116; t=1742446725; c=relaxed/simple;
+	bh=/h8djwy6EnI+Il466BA2OX1O62oAIYaC/Xcp12suwQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MwySgNr90KDbcGfgdI6DvBV8e8Lpu4W727RUnKWbTK+xdevHumSbfPllTQOKhKZFDawGpL+EkTDG5GBAP1KNlqD2yEGMG/2NAP0LiLs3t2HdgplWdQ64CenRu4Vya3AXserZows4/PLipxsst0WSrhgjKGGYslfUJQkW6On+qgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GQ0BaJS2; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52K4wa5C3135152
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 19 Mar 2025 23:58:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742446716;
+	bh=qnXnan2xmfHTVg81CV9ypXPZYrqoyXi0sRePOxOJPKA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=GQ0BaJS2K0iCCaUY51VSYYh5rzLK10PF70JufEmJuuNGgrUnXxztrfQBmkI/HPQQ0
+	 BDZEYwY2ZMlZhm7iJ0BVhGtPu3+yCKFh51E9HmYMBFbJh+Xzg4/CD3amNCAKWC/0v2
+	 ++Romjos/ang1ZTl++Ch2wdOk+mJF7v8QambZNyI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52K4wa7L084784;
+	Wed, 19 Mar 2025 23:58:36 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Mar 2025 23:58:36 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Mar 2025 23:58:36 -0500
+Received: from [172.24.227.40] (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52K4wXnC110445;
+	Wed, 19 Mar 2025 23:58:34 -0500
+Message-ID: <7647126a-5986-4a2c-9bb0-9efb0ff9c131@ti.com>
+Date: Thu, 20 Mar 2025 10:28:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,104 +64,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] sched: Make CONFIG_SCHED_DEBUG features unconditional
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Dietmar Eggemann
- <dietmar.eggemann@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-References: <20250317104257.3496611-1-mingo@kernel.org>
- <83c3bd7f-3ff9-4d3c-ab3e-981b73b95141@linux.ibm.com>
- <Z9szt3MpQmQ56TRd@gmail.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH] lib: scatterlist: Fix sg_split_phys to preserve original
+ scatterlist offsets
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: Jens Axboe <axboe@kernel.dk>, Robert Jarzmik <robert.jarzmik@free.fr>,
+        Kamlesh Gurudasani <kamlesh@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri <praneeth@ti.com>, <linux-kernel@vger.kernel.org>
+References: <20250319111437.1969903-1-t-pratham@ti.com>
+ <20250319184605.809fc9ce3b169478102b9313@linux-foundation.org>
 Content-Language: en-US
-In-Reply-To: <Z9szt3MpQmQ56TRd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <20250319184605.809fc9ce3b169478102b9313@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: SNqInFPAy9Es7wewUvTo29yIw4tqvX3s
-X-Proofpoint-GUID: SNqInFPAy9Es7wewUvTo29yIw4tqvX3s
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_01,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 impostorscore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503200026
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
+On 20/03/25 07:16, Andrew Morton wrote:
+> On Wed, 19 Mar 2025 16:44:38 +0530 T Pratham <t-pratham@ti.com> wrote:
+>
+>> The split_sg_phys function was incorrectly setting the offsets of all
+>> scatterlist entries (except the first) to 0. Only the first scatterlist
+>> entry's offset and length needs to be modified to account for the skip.
+>> Setting the rest entries' offsets to 0 could lead to incorrect data
+>> access.
+>>
+>> This patch removes the offending code, ensuring that the page offsets
+>> in the input scatterlist are preserved in the output scatterlist.
+> Is this merely from code inspection, or is this issues known to have
+> observable runtime effects?
+>
+> If the latter, please provide a complete description.
 
-On 3/20/25 02:44, Ingo Molnar wrote:
-> 
-> * Shrikanth Hegde <sshegde@linux.ibm.com> wrote:
-> 
->>
->>
->> On 3/17/25 16:12, Ingo Molnar wrote:
->>> For more than a decade, CONFIG_SCHED_DEBUG=y has been enabled
->>> in all the major Linux distributions:
->>>
->>>      /boot/config-6.11.0-19-generic:CONFIG_SCHED_DEBUG=y
->>>
->>> The reason is that while originally CONFIG_SCHED_DEBUG started
->>> out as a debugging feature, over the years (decades ...) it has
->>> grown various bits of statistics, instrumentation and
->>> control knobs that are useful for sysadmin and general software
->>> development purposes as well.
->>
->> A tunable like base_slice which is the only tunable available for EEVDF is under the debug.
->> So an option is to get rid of CONFIG_SCHED_DEBUG and make it available to all.
->>
->> We had seen performance regression when domains folder was built with cpu hotplug.
->> Later that was moved iff verbose was enabled. Maybe something like that can be done
->> if something is hurting performance.
->>
->>>
->>> But within the kernel we still pretend that there's a choice,
->>> and sometimes code that is seemingly 'debug only' creates overhead
->>> that should be optimized in reality.
->>>
->>> So make it all official and make CONFIG_SCHED_DEBUG unconditional.
->>> This gets rid of a large amount of #ifdefs, so good riddance ...
->>>
->>
->> There are some references in selftest like these, maybe remove them as well?
->>
->> tools/testing/selftests/sched_ext/config:CONFIG_SCHED_DEBUG=y
->> tools/testing/selftests/sched/config:CONFIG_SCHED_DEBUG=y
->> tools/testing/selftests/wireguard/qemu/debug.config:CONFIG_SCHED_DEBUG=y
-> 
-> Indeed - fixed.
-> 
-> I left out all the defconfigs from the patches, because there's a lot
-> of them (~79 reference CONFIG_SCHED_DEBUG ...) and they get refreshed
-> naturally in any case.
-> 
->> Also ran unixbench and hackbench on 80 CPU system (1NUMA) with and
->> without CONFIG_SCHED_DEBUG. hackbench numbers are almost the same.
->>
->> for unixbench, process creation/Context Switching show 1-2%
->> improvement with CONFIG_SCHED_DEBUG=n
-> 
-> Thank you for the testing! I'll add:
-> 
->    Tested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-> 
-> to the series if you don't mind.
+Hi,
 
-It was minimal testing. If that suffices i am okay with the tag.
+I am using this function in a crypto driver that I'm currently
+developing (not yet sent to mailing list). During testing, it was
+observed that the output scatterlists (except the first one) contained
+incorrect garbage data.
 
-> 
-> And irrespectively of this series we should probably look at that 1-2%
-> overhead in unixbench context switching overhead, maybe there's a few
-> low hanging fruits in the debug code.
-> 
-> 	Ingo
+I narrowed this issue down to the call of sg_split(). Upon debugging
+inside this function, I found that this resetting of offset is the cause
+of the problem, causing the subsequent scatterlists to point to
+incorrect memory locations in a page. By removing this code, I am
+obtaining expected data in all the split output scatterlists. Thus, this
+was indeed causing observable runtime effects!
 
-ok. Let me see perf record and see what shows up.
+Regards
+T Pratham <t-pratham@ti.com>
+
+>> ...
+>>
+>> --- a/lib/sg_split.c
+>> +++ b/lib/sg_split.c
+>> @@ -88,8 +88,6 @@ static void sg_split_phys(struct sg_splitter *splitters, const int nb_splits)
+>>  			if (!j) {
+>>  				out_sg->offset += split->skip_sg0;
+>>  				out_sg->length -= split->skip_sg0;
+>> -			} else {
+>> -				out_sg->offset = 0;
+>>  			}
+>>  			sg_dma_address(out_sg) = 0;
+>>  			sg_dma_len(out_sg) = 0;
+>> -- 
+>> 2.34.1
 
