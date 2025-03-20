@@ -1,226 +1,135 @@
-Return-Path: <linux-kernel+bounces-569501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F9AA6A3C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:35:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061CFA6A3CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC6A176538
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:34:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2CD1898423
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31BA224256;
-	Thu, 20 Mar 2025 10:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D64B2248AB;
+	Thu, 20 Mar 2025 10:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SvBHbFHK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3i33QIYP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SvBHbFHK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3i33QIYP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ldQ15eiJ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BDB4A1D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED5A224258;
+	Thu, 20 Mar 2025 10:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466838; cv=none; b=kmlziQAmEALP6NnLor96tENq88ic0HLdjHhFHGxdcaSxY2yXytIGHDMWtbtopW0IPN6fOtQqloWHQNvjDzqy2bpxJaDO5xJ6WJlr29ed37trV3oh8m5poAV5oSeqJWV4+Ubd5YuE9aWQ+SxWO2ryQRy1OE853XZ8kY/M3wnxTlQ=
+	t=1742466830; cv=none; b=QwqdYNbvaUF2rwkx1h9Mzy9maQ7hPIhHtXVEj9VOf0+COQg6SvlUBxBO3ehuqzfTz+QoSHMP1o8KGqxLSdHYDH7aDTc3XJvQXVy5DGd+c8y2/BFSm1IOLvgLQXDeeq45jTQwZDjko4m1cD/DPb2r9SBjNYl/T1tFUANjH/NSY00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466838; c=relaxed/simple;
-	bh=V5fHsl1+Wsx3gjE3TgqFspHEn2UUrGzi/Yhkoj0AhaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FstEIr+TIsELbBzEvsgRKfyDin07kJZcYyf5hunTjirTqQgkGMFaDc2eE6EHPMumtoYQB6Sm9DF1lgqaV6U50KFi9Cxw9y0UDAmOggaIpSCN8qDwyKAZUxxTxa2bCrBZAOmZkoUZPkBZa1pogL9kCd8e5jHuPJtV9kjT07ruNk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SvBHbFHK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3i33QIYP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SvBHbFHK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3i33QIYP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1742466830; c=relaxed/simple;
+	bh=B9Ki//9iYq86oCfYqOWVMz9KXkrveoc2XfDUrCHNllQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EohmotPBIVRtpLA7yY2PQpZqxOPsZU+lZo1MVN2PUVTy8ByH348SSwJ+XVqXMgIXorg5WSMmtDGjqj6kTGdIWWY7EmPcqLNKBGXCbmXM8OgOaRXQvezebgY6Jd4mx2ybOfp2cbZB+meeQWs12vO8bgZYCkbpdkaPjTUMkrX3mys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ldQ15eiJ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742466826;
+	bh=B9Ki//9iYq86oCfYqOWVMz9KXkrveoc2XfDUrCHNllQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ldQ15eiJXcEsRMalSLnsahQv69s8e8pN3qsq9WHFWXn19xqHqaQ3fCQTdDdFoz737
+	 qMRwdWerbkjoOoE40e9hXTQ3K1+Uzl65qR4VnM4E7HSyn5aDWa5yp650QohTGcWdLe
+	 u8bt0u7X01Etjfy4J9PHJRNMjcMJjqhcET0tiJ+BOMm3RLKoFXm52ZiDZ28v61OdY9
+	 FnHShgeoRUWg0hK1jLLhSqL0CqNbmzf+zTsOqMfjpevqI2NAbHlNmRMG1PQpPzhnPe
+	 i1j/ApT8t8C5Vs5ScJMi2chBF85OW5PBtr7VvOdjuQZ0kw7d6X7zZ936PoTJddgQxL
+	 YuPJig8zspprA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 73FD41F388;
-	Thu, 20 Mar 2025 10:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742466828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Hu5aG5Dj52/fX0bzhf5E053C69/7rKazk3pehl0bsI=;
-	b=SvBHbFHKX5pV3WWp0/53KvNTKwUpZPZch8I0A5qjihfcn+CRJuobb4iioITV+qruZkbcND
-	pFLOtdBVKMLjatNxNn2ETw7D/OcjtvARFDW+/yI23NQIv9+vHUbcZXUFqCZe0mORX7BWq5
-	//xgz0CEGFqTa/Jvy2VDNGyW33GoleA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742466828;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Hu5aG5Dj52/fX0bzhf5E053C69/7rKazk3pehl0bsI=;
-	b=3i33QIYPSwPXzdQGSbYm+AlxO7B7k3dTl3pEPvaTq1jRchDeq4fW6Hgh3ciuwRVwjsm5N8
-	NONl3lRYZIELf9Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SvBHbFHK;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3i33QIYP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742466828; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Hu5aG5Dj52/fX0bzhf5E053C69/7rKazk3pehl0bsI=;
-	b=SvBHbFHKX5pV3WWp0/53KvNTKwUpZPZch8I0A5qjihfcn+CRJuobb4iioITV+qruZkbcND
-	pFLOtdBVKMLjatNxNn2ETw7D/OcjtvARFDW+/yI23NQIv9+vHUbcZXUFqCZe0mORX7BWq5
-	//xgz0CEGFqTa/Jvy2VDNGyW33GoleA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742466828;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Hu5aG5Dj52/fX0bzhf5E053C69/7rKazk3pehl0bsI=;
-	b=3i33QIYPSwPXzdQGSbYm+AlxO7B7k3dTl3pEPvaTq1jRchDeq4fW6Hgh3ciuwRVwjsm5N8
-	NONl3lRYZIELf9Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66F02139D2;
-	Thu, 20 Mar 2025 10:33:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8+24GAzv22fgDQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 20 Mar 2025 10:33:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id ED1A6A07B2; Thu, 20 Mar 2025 11:33:43 +0100 (CET)
-Date: Thu, 20 Mar 2025 11:33:43 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: reduce work in fdget_pos()
-Message-ID: <7trrmztdpoyqcbarrhir4kiayc7yrqfznfyrrt5f5flyfmgu6u@5sx3yapl7bcv>
-References: <20250319215801.1870660-1-mjguzik@gmail.com>
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 011D917E0D66;
+	Thu, 20 Mar 2025 11:33:45 +0100 (CET)
+Message-ID: <be4af783-3b98-439b-be3d-30d6ff520d2e@collabora.com>
+Date: Thu, 20 Mar 2025 11:33:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319215801.1870660-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: 73FD41F388
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: remoteproc: mediatek: Remove l1tcm for
+ dual-core MT8188 SCP
+To: =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "andersson@kernel.org" <andersson@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ =?UTF-8?B?VGluZ0hhbiBTaGVuICjmsojlu7fnv7Ap?= <TingHan.Shen@mediatek.com>,
+ "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ Nicolas Prado <nfraprado@collabora.com>,
+ =?UTF-8?B?T2xpdmlhIFdlbiAo5rip5YCp6IuTKQ==?= <Olivia.Wen@mediatek.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>
+References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
+ <20250318-scp-dual-core-mt8390-v1-2-8733e192cc73@collabora.com>
+ <70c10764-121b-43f5-931e-84ffd666c594@collabora.com>
+ <b0872ee008c3c6a2731f949d8c2be77aa49341f7.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <b0872ee008c3c6a2731f949d8c2be77aa49341f7.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed 19-03-25 22:58:01, Mateusz Guzik wrote:
-> 1. predict the file was found
-> 2. explicitly compare the ref to "one", ignoring the dead zone
+Il 20/03/25 02:28, Moudy Ho (何宗原) ha scritto:
+> On Wed, 2025-03-19 at 10:34 +0100, AngeloGioacchino Del Regno wrote:
+>>
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> Il 18/03/25 23:22, Nícolas F. R. A. Prado ha scritto:
+>>> The SCP present on MT8188 does not have an L1TCM memory region, but
+>>> the
+>>> binding incorrectly requires one for the dual-core description of
+>>> the
+>>> MT8188 SCP. Remove that requirement. Also update the minimum number
+>>> of
+>>> reg and reg-names to 1, since as this is a multi-core SCP with no
+>>> L1TCM memory, only the CFG memory region is present in the parent
+>>> node.
+>>>
+>>> Fixes: 91e0d560b9fd ("dt-bindings: remoteproc: mediatek: Support
+>>> MT8188 dual-core SCP")
+>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>
+>> As far as I know, the L1TCM is present on MT8188, and it's at
+>> 0x1070000 len 0x8000
+>> exactly like MT8195.
+>>
+>> Moudy, are you able to please confirm or deny that?
+>>
+>> Cheers,
+>> Angelo
+>>
+>>
 > 
-> The latter arguably improves the behavior to begin with. Suppose the
-> count turned bad -- the previously used ref routine is going to check
-> for it and return 0, indicating the count does not necessitate taking
-> ->f_pos_lock. But there very well may be several users.
+> Hi Angelo,
 > 
-> i.e. not paying for special-casing the dead zone improves semantics.
+> Unfortunately, during the transition from MT8195 to MT8188, the SCP
+> removed the L1TCM, retaining only the SRAM and config register.
+> For detailed hardware changes, you can refer to Tinghan's previous
+> description at the following link.
 > 
-> While here spell out each condition in a dedicated if statement. This
-> has no effect on generated code.
+> ref:
+> https://lore.kernel.org/all/20220715051821.30707-3-tinghan.shen@mediatek.com/
 > 
-> Sizes are as follows (in bytes; gcc 13, x86-64):
-> stock:		321
-> likely(): 	298
-> likely()+ref:	280
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Thanks Moudy!
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> diff --git a/fs/file.c b/fs/file.c
-> index ddefb5c80398..0e919bed6058 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -1192,8 +1192,13 @@ struct fd fdget_raw(unsigned int fd)
->   */
->  static inline bool file_needs_f_pos_lock(struct file *file)
->  {
-> -	return (file->f_mode & FMODE_ATOMIC_POS) &&
-> -		(file_count(file) > 1 || file->f_op->iterate_shared);
-> +	if (!(file->f_mode & FMODE_ATOMIC_POS))
-> +		return false;
-> +	if (__file_ref_read_raw(&file->f_ref) != FILE_REF_ONEREF)
-> +		return true;
-> +	if (file->f_op->iterate_shared)
-> +		return true;
-> +	return false;
->  }
->  
->  bool file_seek_cur_needs_f_lock(struct file *file)
-> @@ -1211,7 +1216,7 @@ struct fd fdget_pos(unsigned int fd)
->  	struct fd f = fdget(fd);
->  	struct file *file = fd_file(f);
->  
-> -	if (file && file_needs_f_pos_lock(file)) {
-> +	if (likely(file) && file_needs_f_pos_lock(file)) {
->  		f.word |= FDPUT_POS_UNLOCK;
->  		mutex_lock(&file->f_pos_lock);
->  	}
-> diff --git a/include/linux/file_ref.h b/include/linux/file_ref.h
-> index 6ef92d765a66..7db62fbc0500 100644
-> --- a/include/linux/file_ref.h
-> +++ b/include/linux/file_ref.h
-> @@ -208,4 +208,18 @@ static inline unsigned long file_ref_read(file_ref_t *ref)
->  	return c >= FILE_REF_RELEASED ? 0 : c + 1;
->  }
->  
-> +/*
-> + * __file_ref_read_raw - Return the value stored in ref->refcnt
-> + * @ref: Pointer to the reference count
-> + *
-> + * Return: The raw value found in the counter
-> + *
-> + * A hack for file_needs_f_pos_lock(), you probably want to use
-> + * file_ref_read() instead.
-> + */
-> +static inline unsigned long __file_ref_read_raw(file_ref_t *ref)
-> +{
-> +	return atomic_long_read(&ref->refcnt);
-> +}
-> +
->  #endif
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
