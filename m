@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-570084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE70A6ABD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:18:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD712A6ABD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3349189B872
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425204648D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043E62236F6;
-	Thu, 20 Mar 2025 17:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ACC2236F6;
+	Thu, 20 Mar 2025 17:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YHgsKRfP"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bgQ037eh"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121F31E883A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B29522155C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742491098; cv=none; b=USAtP1Zwvb1pPkWdP9N6/1MQkAsak2QG9aMDrT+UnTFAZfK09KNs9gGwwUaZ9Ps0XSYoKoiNNoxH28X0CZ88CeWhYB9yux2zudVsfduJGujfo86PSbbYIZBfQN7O7O0CR+8RGzmvRU/e/JqHJ7F+wWSkOOon0l0fnan/zg5IPu4=
+	t=1742491195; cv=none; b=LGh+OB5aooaX8ANXMcghWthBQ/UFJ22e8Tm48qFJuYHy7sVV66J0EzKzKwuuWH06m1m58wETwvPktSMXZEZXeE7dZ4qA66LMGLoSjIfYYon2b+ppIjK4eXCCcqztyDvAvWxJsho1O6RsKOC1nwYYgiH3ySLMp+Pf2TqHYUxj3CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742491098; c=relaxed/simple;
-	bh=88p1w7uEcFSCHYKOCDuBHPZGg/x3AAPkfIOOrr6qmRE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LP3vVndu6WDu3H6+x+86pXn262G58PLLnVIC0blsKXKraZtuPjxvWCA53SP9wQjqQ07amP69c1yr5tslv08cUpBXsriTmDvn+sKZhudG8vqBfQECpPtct4FAZylqid5bKiW25chytxJBopRiITeeGaxSIHivroTNRKf8K6Ud+ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YHgsKRfP; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff7aecba07so1480167a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742491096; x=1743095896; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=88p1w7uEcFSCHYKOCDuBHPZGg/x3AAPkfIOOrr6qmRE=;
-        b=YHgsKRfPf2/nBiD260ANuo5qn3IAPdiMNnoxnuLCprv9Owqxk5Kkyo2SoDWa0RKRol
-         iYMIEdX4+eG2ZvmRhzvtBhrl1gmZYGhSpNf/vEAUhBK0Tw7zHng1MqpbWWQ0gFfi6pxi
-         /6OJkbLTti8JDeCXHBxE836tbZjU8J1WurYsSEKnCUV0dGmm1dVrsuvEAQw/0gsT1rHz
-         xrqNSOY/MDRaul1Gi2uPBL8SH+zeyMa1J8KqHa1PZTKTN8WJTaIwUXHk4Wlz++7DyqQD
-         1YSBxXLUNKdZdpp4Vm319W5pi7CadEuoygSUsLKjeq2reBB4BwSGpKokHYshcLLJ2fzE
-         jeXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742491096; x=1743095896;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=88p1w7uEcFSCHYKOCDuBHPZGg/x3AAPkfIOOrr6qmRE=;
-        b=uKh6hwsSxkMakrE/IUQ3yGZmIMtlDGdSSH76ggTwOAP6rXP3jlJ90fzWQ9UWhf2nOG
-         iftE9nHLv1vJPoNTPrI5YDNOf8FBeZ2bfV8vvy7NHY3wibV16XDkLb8Zd9t6wBY7g1l5
-         L3HjIycoAF+uVIK49uQ5Lq6Vb3IPRBS9MQNv3ePnK1yN+IpFBo2ktO74dATzkB0gF9NT
-         tkwpULJRAgr3M3EwClfHkC19BZHn695ycMDkgWdft6k0HYu++jpVMN1myg4g2q8Kz6kR
-         iKSJ1IbImtiDUmCkCgI6g2mykJU61xNsy3umW5CVyc/5exgy+ZE26C4fYkyqanGAfwrC
-         2GUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV100Vx/TydzQ8e8Buf/V8jiNOIsLzfgL5lNQqV7Ltms/EqMVnfOAeOwDP/VJaAvjSndUwLbSaoCYrmM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYZsvOECIKJeOKXpiTy9sN6+VrHVVWraEse6OK79S1KcrR2j5h
-	Ib3oP/uQ4Uz/nK08zCIc7BOualjejPNAUUX1l6cpGinO114EEk9x1mCM2YDhMmVJxmHDmiIBVCP
-	vCHSP1e/r8K85qNI3Lg==
-X-Google-Smtp-Source: AGHT+IGpaoCewgRhvYW5fa+HpkkDxI6GYIKVShvL+72MGW8IdbGecEsEYFRFVCnEraF7VtF/dPJ/f4MPXZFrOdbn
-X-Received: from pjbpq9.prod.google.com ([2002:a17:90b:3d89:b0:2fa:a101:755])
- (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2707:b0:2ff:6488:e01c with SMTP id 98e67ed59e1d1-3030fefe3e4mr5163a91.29.1742491096376;
- Thu, 20 Mar 2025 10:18:16 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:18:02 -0700
-In-Reply-To: <d5f7379c-c66b-47f5-bc97-eab90ab34346@kernel.org>
+	s=arc-20240116; t=1742491195; c=relaxed/simple;
+	bh=/I8SEdyVFZRskuVLg+DN/P8lsx/XNNJjnQvHLLb4DEg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CWt+nKQA6Oyi9M3mrS2qLxdViMk3VnKQgT+nvsCpGeGGfQm9GrcA+JKm6dlEi5vC9DyLADgzuOyGwFGm+J8JPQVxzhE1RX2KUQ1xmGYl8M/jM2aAe+V98EobUrksB0NTHr2hgb7rMYK8dIh/hqopWvY7Z9XW4YlwHV42hlf6Iy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bgQ037eh; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDU4WZ029673;
+	Thu, 20 Mar 2025 17:19:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/I8SEd
+	yVFZRskuVLg+DN/P8lsx/XNNJjnQvHLLb4DEg=; b=bgQ037ehBIv63YI4n7dzFK
+	6o8J4F+QicTdH3EgDEcykhgCLV7ake7NvimjJMnAlD941VvgZ0Fko6zH4x5gmRZH
+	xp2ek3I2HjmSK9m2Mj7Trio8zfmdcuX9sCGpBJBSi2MiTcepeb8JmHhKqUATMTdS
+	2iqVfOpK+wtD0bgTBWGuSSOY/cOuCG1rFQJxEAozWIPSgPyUwmdX/yuHTb/18xSB
+	Z//h/Cu1qtXjYKw1FVsiGCKa9+XIMlElw64+qMCDs2OYrKQT22efgGZV2WtcDIj1
+	8SA6ZttgmQR+qvH04PFe+toEmfqcMVDTxq9U6evKGT7VAw39R5o+r0fDWpUBVZKA
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gbd9m22r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 17:19:45 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDnI2h005664;
+	Thu, 20 Mar 2025 17:19:44 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm9098u7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 17:19:44 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KHJePL46858710
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 17:19:40 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 56C7820043;
+	Thu, 20 Mar 2025 17:19:40 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 28E7520040;
+	Thu, 20 Mar 2025 17:19:39 +0000 (GMT)
+Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com (unknown [9.171.57.148])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 20 Mar 2025 17:19:39 +0000 (GMT)
+Message-ID: <3e28dc9eb03e2269e2c4613d415291cbda99dfad.camel@linux.ibm.com>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Amit Shah <amit@kernel.org>,
+        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+        arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
+        schnelle@linux.ibm.com
+Date: Thu, 20 Mar 2025 18:19:38 +0100
+In-Reply-To: <20250320151901.4906e2a9.pasic@linux.ibm.com>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+	 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+	 <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+	 <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+	 <dc3ff60fd16e5b5f94c12cf6a5a7893b94f705a8.camel@linux.ibm.com>
+	 <20250319105852-mutt-send-email-mst@kernel.org>
+	 <20250319181308.365ee0ea.pasic@linux.ibm.com>
+	 <fe72c90a59354f2507c1d528c4e5b8562b20a3e8.camel@linux.ibm.com>
+	 <20250320114120.383a706f.pasic@linux.ibm.com>
+	 <dedc20f946d50bc2b45c1f974554001495657f37.camel@linux.ibm.com>
+	 <20250320150957.0507abb5.pasic@linux.ibm.com>
+	 <20250320151901.4906e2a9.pasic@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <d5f7379c-c66b-47f5-bc97-eab90ab34346@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250320171802.2325561-1-changyuanl@google.com>
-Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
-From: Changyuan Lyu <changyuanl@google.com>
-To: krzk@kernel.org
-Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, changyuanl@google.com, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, devicetree@vger.kernel.org, dwmw2@infradead.org, 
-	ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, 
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	luto@kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
-	pasha.tatashin@soleen.com, pbonzini@redhat.com, peterz@infradead.org, 
-	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
-	rppt@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: iMVS08fHSZSnOGMIUynwNE83jQwRamW_
+X-Proofpoint-GUID: iMVS08fHSZSnOGMIUynwNE83jQwRamW_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_04,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=937 lowpriorityscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503200107
 
-Hi Krzysztof,
+On Thu, 2025-03-20 at 15:19 +0100, Halil Pasic wrote:
+> On Thu, 20 Mar 2025 15:09:57 +0100
+> Halil Pasic <pasic@linux.ibm.com> wrote:
+>=20
+> > > I already implemented it in my patch v2 (just waiting for Amit to
+> > > confirm the new commit message). But if you want to split it you
+> > > can
+> > > create a seperate patch for it as well (I don't really mind
+> > > either
+> > > way).
+> > > =C2=A0=20
+>=20
+> Your v2 has not been posted yet, or? I can't find it in my Inbox.
+>=20
+> I understand that you have confirmed that the byte order handling is
+> needed but missing, right?
 
-On Thu, Mar 20, 2025 at 08:10:37 +0100, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 20/03/2025 02:55, Changyuan Lyu wrote:
-> > From: Alexander Graf <graf@amazon.com>
-> >
-> > We have all generic code in place now to support Kexec with KHO. This
-> > patch adds a config option that depends on architecture support to
-> > enable KHO support.
-> >
-> > Signed-off-by: Alexander Graf <graf@amazon.com>
-> > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> > Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> What did you exactly co-develop here? Few changes does not mean you are
-> a co-developer.
+Yes, I wanted to first hear back from Amit whether he liked the new
+commit message, but seeing as he hasn't yet replied I'll just post it
+now. I've confirmed that the endianness handling is necessary, but not
+implementated. I've looked all the way down into hvc_console() up until
+tty_do_resize(), but there are no endianess adjustments up until that
+point aka I'm pretty certain the endianness is broken.
 
-I proposed and implemented the hashtable-based state tree API in the
-previous patch "kexec: add Kexec HandOver (KHO) generation helpers" [1]
-and then added `select XXHASH` here. If one line of change is not
-qualified for "Co-developed-by", I will remove it from the commit message
-in the next version.
+I'll post my v2 without the endianness fix then
 
-[1] https://lore.kernel.org/all/20250320015551.2157511-8-changyuanl@google.com/
+>=20
+> >=20
+> > It is conceptually a different bug and warrants a patch and a
+> > commit
+> > message of its own. At least IMHO.
 
-Best,
-Changyuan
 
