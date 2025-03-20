@@ -1,249 +1,317 @@
-Return-Path: <linux-kernel+bounces-569438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3D1A6A2F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:50:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67254A6A2FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06CF4636C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F81887CF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15932220687;
-	Thu, 20 Mar 2025 09:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5B71F7074;
+	Thu, 20 Mar 2025 09:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3KPZWg5"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="GqCvCWpW"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722A88F6D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ED42222CD;
+	Thu, 20 Mar 2025 09:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742464230; cv=none; b=gQvyzdnLIgiJ3F2skUVBpdv3HZ3BXXDs027D7ZLUOn8Kge9nshISaxWMtFbc02znhuaE93sJtL0zdQQZMdN/X7ipoqYk1/hixSIrw0cbKO0BcSD20O7SUeCQzAHdNc8xavvlUjon0LM807zC/orlszZMXfjE71IY7b0oeJ2SSoI=
+	t=1742464267; cv=none; b=ZvVfbhxVu/GUzQn1glN8en4MGNkaXKhiqeMs49tUOgyN6odvRYCkpRW+K2Du+Albs/+8HP40F0whpPuO7f6qj1xW0R/+1Shwegtlo4XWHoEw7Jxr3mpiJofMwyYzvuKaLZ1cu3HpQtSEpTMAjVZOTP6iTeei+Wff16toeJOtpno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742464230; c=relaxed/simple;
-	bh=jK8zPyn51ibZC2k1KcWCTfFdjiIJfQV0B+TLE+OYZtk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=n+MO/Z0LxXa1NF8jsKlLWmcd1Ek5yJzwAw693lsJ54Kyw0cd79j2AdnHwKsorBUJv1R51871o7Q3awOUy3P25Eu5wyZUmzYBklLVBPvzh1O4kJdEaTtkk10zMshIRPVaXEZ+JC3zkZIl4EQtJ95TM7fzjP0bjK+orMy3HhWE+qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3KPZWg5; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86dddba7e0eso214095241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742464227; x=1743069027; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=91+1pwQNQl8kPf/HghWNvlhI7XTd07SABpnZUQWDpHw=;
-        b=o3KPZWg5mKeTbu5B39ocqslu0U3DAB7T3fDRXtQ/kzcxPWNhJolZb+hmNKGOCZ6xcX
-         dpa50Acn+M63avVFXQzpSxWZPSZMfYFc24WEf3sDJvrxmidb26e1cHXrgUdnvGFIMsfQ
-         BiErJ3hL6xl5iHqlxNzdigMTJvviYYjVR4bFMyVYJaCOnPMBMcNGeZEuLqtv8Ca2zD65
-         BS4+xvMe7M9iYPDp88WbGEhSdzLciA9Hpx3f2Y1PNXQCtkQsCqH5+F78OJtk4YLOu0lH
-         vXM73WGyvCNvaHQUg5al5UnCdJetCIXdEFcuqbf9pOcDsyC+WTISoKrWAiWXbm9/CO4l
-         nS5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742464227; x=1743069027;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=91+1pwQNQl8kPf/HghWNvlhI7XTd07SABpnZUQWDpHw=;
-        b=QKOOmFLYDCWAmvm/ktTf0HCMz4GLix1OZRM9kslehtnWJWnvMUb/hYkUOWDbmv6FDm
-         EJGCV5SrI0PfeY7XEqkoaY55m42kbHw2n7qDveRHvBKb2fp/uY0w7M14ucmnZSY4BVs2
-         RBgeQpk/F8L9TCG8jHM6CrnrmLkz+V+b4W+oYTEsswoDW69rrX6OnxOZw/B4xaIzhA4o
-         NxB6ugngjFuWAFz2eF5agCP1XHvqOCt+d37c5x1+PuYGdkgxeMMwnY5VIIgeS/GACKYj
-         7dv0Q+bKIsDS8fSd+GwKXgABUUjqwJWI79uv3MnAwuNte4CLqgzxETFiIL7JQGgAlO8v
-         hx9w==
-X-Gm-Message-State: AOJu0Yz1RGnOxYjgvQ0TcL0fEyowHx/JE9z2PjN/4JfY442x0LOX2GvE
-	7ARARO/UgTRtQbAkGym4NYYgNPIthvgl+N7r4s4mFLREh41IBWNVmS2YzEGOJ19PTs6Sor0GSpw
-	I02raqw4F5D4LwR8BqoYAVFmD9o+4m/R7+csAYZwI3o8mkLFW
-X-Gm-Gg: ASbGnctOfPpzwKP7IF0zWzOypIiViihctq6R4wahYprm2yyq8Tcpi1x5Jk2e6lyQfvv
-	zt7bcImtWvzOjeiFx4sRrX6Tkmb9OlhCRqsmXKK4b74n3KqOP95sRvPS/paHG9okRK3u8Xauhdq
-	BBH2QGMKddrE2B9NPfR1Nn17olTY5E2F8W8vij3OX6MwPUUf3yKoOAWt17Zf3626mK4g==
-X-Google-Smtp-Source: AGHT+IHjmhKILTPy96D1p7uyvSzcXS9MF1P55nhqY0CxmjDVATtPXvEPQ7Fj/CrEydFvSGXmwvuFSqL93NyDDBFF3jo=
-X-Received: by 2002:a05:6102:549f:b0:4c1:8b8e:e9f7 with SMTP id
- ada2fe7eead31-4c4ec63a201mr5023131137.8.1742464226618; Thu, 20 Mar 2025
- 02:50:26 -0700 (PDT)
+	s=arc-20240116; t=1742464267; c=relaxed/simple;
+	bh=V5pdiDmIiaTInS4DzWKdY2WwroRMhueqxusiSOWo+b0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FRP0ol8/yZFoCcUg6YPCyJP1sVtaNXkIw/B0KP7Imsv9aOPoflYjJnvhe6VnQs4tQPlfAxf4c/TG04GfxRuXW7F8C/+GsfqkyGd70dA8uf2yBSff0U8F1p+MZ9v09jnOtYdAiBftMu3znAsxGELR13rEvHhMdo/KmMmyVCZGTTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=GqCvCWpW; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 02E192E088E2;
+	Thu, 20 Mar 2025 11:50:58 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742464259;
+	bh=F64ph2xi8UAAfC5J+KyB7cwoJd/pe10eALeTB2Q/Gws=;
+	h=Received:From:Subject:To;
+	b=GqCvCWpWKvd11syYBC/ADzx3y+MbBLnBS1yGdmx9hD8Et0+hjJWziGx7qSwxGXaDh
+	 QziKiAaHZKDdlmjAV8VULKNT19vFvC9N1LmG30lGgAu1i+LN4d+WpGBhA2PVzE4kAe
+	 Pl0+j6MBH6qbchGBXVMRRG7U/x009M99KTsAE0Ww=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.174) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f174.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-30bfd4d4c63so6320651fa.2;
+        Thu, 20 Mar 2025 02:50:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVt/d/cdyJe9rcjFWs4Fo+Yg8xWA9SOfPZGLakHYeg+Y2ZQsBHi7n94+79fv/g2qRYMTI6hfS/dh1CVGA==@vger.kernel.org,
+ AJvYcCW6hw+KUMX1I96yRFgdt4eEfdd7rkCkJSwxcaJKc9XTVXfwBmUZVV8nV5C1bqA/P6/0S/o1c/qcGLgnBJyb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBK0n2uFI37ipdI1r78wQIliiXWcNv/oLUR276VhdzR66Epxsn
+	uVUSG6klREbfSvoDvQqHSonH3X0ZzpxZGubaYGw00uxZgRrrcBXMDnW8iYl8sTxqARsb3D6NVNw
+	zRfCpViM3vIwnCFIQtwoZqh2XKaw=
+X-Google-Smtp-Source: 
+ AGHT+IGhE9bp10SF3Gq0RdQyK+lzDrA5IHwYnQHSQIYNAhsRYq8ZylmbEznKRJjlmshyTR6XHjqIzN3eeoiQ48/joE8=
+X-Received: by 2002:a05:6512:2344:b0:549:916b:f6eb with SMTP id
+ 2adb3069b0e04-54acb1a387emr1886642e87.1.1742464258231; Thu, 20 Mar 2025
+ 02:50:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 20 Mar 2025 15:20:14 +0530
-X-Gm-Features: AQ5f1Jql1-DJ_kcAW7zxPA6HFZrFt_2BSzusITPrABo17flcdRcAdXkCTahAxI8
-Message-ID: <CA+G9fYuquxGrt81z4FBSEDuvAMpu2qYAoFXwYKpfSuw2YYNS0w@mail.gmail.com>
-Subject: stable-rc-6.13.8-rc1: Dragonboard 845c: kernel NULL pointer
- dereference - camss_find_sensor
-To: open list <linux-kernel@vger.kernel.org>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, lkft-triage@lists.linaro.org
-Cc: rfoss@kernel.org, Todor Tomov <todor.too@gmail.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <20250319191320.10092-2-lkml@antheas.dev>
+ <567b2056-8687-4f92-b4d2-7f289321275e@ljones.dev>
+In-Reply-To: <567b2056-8687-4f92-b4d2-7f289321275e@ljones.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 20 Mar 2025 10:50:46 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGB69__pYzeTOmKnJrx1M8X4mgnDeRXE-dyFy9p495sBQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr_Sh1-0LXBCSN2rSlO5DGocWbkIr-wRaP_jF8FR5LwpCnSxuXLEqu6skU
+Message-ID: 
+ <CAGwozwGB69__pYzeTOmKnJrx1M8X4mgnDeRXE-dyFy9p495sBQ@mail.gmail.com>
+Subject: Re: [PATCH 01/11] HID: asus: refactor init sequence per spec
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174246425947.4164.12178216220255030923@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Regressions on arm64 Dragonboard 845c boot failed with stable-rc 6.13.8-rc1
+On Thu, 20 Mar 2025 at 08:19, Luke D. Jones <luke@ljones.dev> wrote:
+>
+>
+> On 20/03/25 08:13, Antheas Kapenekakis wrote:
+> > Currently, asus_kbd_init() uses a reverse engineered init sequence
+> > from Windows, which contains the handshakes from multiple programs.
+> > Keep the main one, which is 0x5a (meant for drivers).
+>
+> 0x5A is also used for Ally setup commands, used from userspace in
+> Windows. Only a nit but I don't think stating it's only for drivers is
+> accurate but then again asus kind of blurs the line a bit.
 
-Regressions found on Dragonboard 845c :
- - boot (debug Kconfigs)
+ROG devices contain a HID USB endpoint that exposes multiple
+applications. On my Z13, that is 4 hiddev devices.
 
-Regression Analysis:
- - New regression? Not sure. But the crash looks new.
- - Reproducible? Intermittent
+However, we only care about two. Those are:
 
-Since it is not easy to reproduce this crash, it is hard to bisect.
+Application / Report ID:
+0xff310076 / 0x5a meant for Asus drivers
+0xff310079 / 0x5d meant for Asus applications
 
-Boot regression: Dragonboard 845c kernel NULL pointer dereference
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Both require the same handshake when they start. Well, in theory. But
+as you say in some of the Anime stuff requires it in practice too.
 
-## Boot log
-[    7.871211] xhci-pci-renesas 0000:01:00.0: failed to load firmware
-renesas_usb_fw.mem, fallback to ROM
-[    7.877652] CAN device driver interface
-[    7.879182] Bluetooth: hci0: setting up wcn399x
-[    7.884439] Bluetooth: HCI UART protocol Marvell registered
-[    7.890767] xhci-pci-renesas 0000:01:00.0: xHCI Host Controller
-[    7.938433] xhci-pci-renesas 0000:01:00.0: new USB bus registered,
-assigned bus number 3
-[    7.941274] spi_master spi0: will run message pump with realtime priority
-[    7.946642] xhci-pci-renesas 0000:01:00.0: Zeroing 64bit base
-registers, expecting fault
-[    7.969396] ath10k_snoc 18800000.wifi: Adding to iommu group 16
-[    7.983424] mcp251xfd spi0.0 can0: MCP2517FD rev0.0 (-RX_INT -PLL
-+MAB_NO_WARN +CRC_REG +CRC_RX +CRC_TX +ECC -HD o:40.00MHz c:40.00MHz
-m:10.00MHz rs:10.00MHz es:0.00MHz rf:10.00MHz ef:0.00MHz) successfully
-initialized.
-[    7.987793] Unable to handle kernel NULL pointer dereference at
-virtual address 0000000000000030
-[    8.001412] ath10k_snoc 18800000.wifi: supply vdd-3.3-ch1 not
-found, using dummy regulator
-[    8.004533] Bluetooth: hci0: QCA Product ID   :0x0000000a
-[    8.015039] Mem abort info:
-[    8.020189] Bluetooth: hci0: QCA SOC Version  :0x40010214
-[    8.020197] Bluetooth: hci0: QCA ROM Version  :0x00000201
-[    8.020204] Bluetooth: hci0: QCA Patch Version:0x00000001
-[    8.025657]   ESR = 0x0000000096000006
-[    8.039667] Bluetooth: hci0: QCA controller version 0x02140201
-[    8.044983]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    8.044988]   SET = 0, FnV = 0
-[    8.044990]   EA = 0, S1PTW = 0
-[    8.044992]   FSC = 0x06: level 2 translation fault
-[    8.044995] Data abort info:
-[    8.044997]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[    8.044999]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[    8.045002]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[    8.045004] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010cbec000
-[    8.045007] [0000000000000030] pgd=080000010cbf4403,
-p4d=080000010cbf4403, pud=080000010cbf5403, pmd=0000000000000000
-[    8.045019] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
-[    8.045022] Modules linked in: venus_enc venus_dec ath10k_snoc
-mcp251xfd videobuf2_dma_contig ath10k_core lontium_lt9611(+)
-xhci_pci_renesas(+) can_dev ath msm leds_qcom_lpg mac80211 qcom_pbs
-hci_uart ocmem rtc_pm8xxx btqca drm_exec led_class_multicolor
-gpu_sched snd_soc_sdm845 qcom_pon qcom_spmi_temp_alarm drm_dp_aux_bus
-snd_soc_rt5663 drm_display_helper qcom_spmi_adc5 btbcm
-snd_soc_qcom_sdw drm_client_lib qcom_camss camcc_sdm845
-qcom_vadc_common snd_soc_qcom_common snd_soc_rl6231 videobuf2_dma_sg
-qcom_stats crct10dif_ce coresight_stm soundwire_bus videobuf2_memops
-reset_qcom_pdc cfg80211 venus_core phy_qcom_qmp_combo bluetooth
-aux_bridge v4l2_mem2mem videobuf2_v4l2 i2c_qcom_geni pwrseq_core
-spi_geni_qcom videobuf2_common typec qcom_rng gpi phy_qcom_qmp_usb
-qcom_q6v5_mss stm_core qcrypto icc_osm_l3 ufs_qcom phy_qcom_qmp_ufs
-phy_qcom_qmp_pcie lmh rfkill slim_qcom_ngd_ctrl qrtr slimbus
-pdr_interface qcom_pdr_msg qcom_wdt llcc_qcom qcom_q6v5_pas icc_bwmon
-qcom_pil_info qcom_q6v5 display_connector qcom_sysmon qcom_common
-[    8.045106]  drm_kms_helper qcom_glink_smem mdt_loader qmi_helpers
-drm backlight socinfo rmtfs_mem
-[    8.045116] CPU: 7 UID: 0 PID: 430 Comm: v4l_id Not tainted 6.13.8-rc1 #1
-[    8.045119] Hardware name: Thundercomm Dragonboard 845c (DT)
-[    8.045121] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    8.045123] pc : camss_find_sensor+0x24/0x80 qcom_camss
-[    8.045141] lr : camss_get_pixel_clock+0x20/0x70 qcom_camss
-[    8.045152] sp : ffff80008177b8b0
-[    8.045153] x29: ffff80008177b8b0 x28: ffff80008177bc30 x27: ffff6d63004043c0
-[    8.045157] x26: 0000000000000000 x25: 0000000000000000 x24: ffff80008177b908
-[    8.045161] x23: ffff6d630d1f5e48 x22: ffff6d630d1f7a98 x21: ffff80008177b920
-[    8.045164] x20: 0000000000000003 x19: 0000000000020001 x18: 0000000000000000
-[    8.045167] x17: 0000000000000000 x16: ffffceec8fe80380 x15: 0000000000000000
-[    8.045170] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000001
-[    8.045173] x11: ffff6d6301abd000 x10: 0000000000000c80 x9 : ffffceec20623b90
-[    8.045177] x8 : ffff80008177b7b8 x7 : 0000000000000000 x6 : 0000000000000001
-[    8.045179] x5 : ffff6d630d1f7158 x4 : 000000000fffffff x3 : ffff6d630d1f7028
-[    8.045183] x2 : ffff6d630d1f6568 x1 : ffff80008177b920 x0 : 0000000000000000
-[    8.045186] Call trace:
-[    8.045188] camss_find_sensor+0x24/0x80 qcom_camss (P)
-[    8.045200] camss_get_pixel_clock+0x20/0x70 qcom_camss
-[    8.045210] vfe_get+0xcc/0x530 qcom_camss
-[    8.049208] Bluetooth: hci0: QCA Downloading qca/crbtfw21.tlv
-[    8.054874] vfe_set_power+0x38/0x68 qcom_camss
-[    8.054886] pipeline_pm_power_one
-(drivers/media/v4l2-core/v4l2-mc.c:492 (discriminator 12))
-[    8.054894] pipeline_pm_power (drivers/media/v4l2-core/v4l2-mc.c:529)
-[    8.054896] v4l2_pipeline_pm_use (drivers/media/v4l2-core/v4l2-mc.c:557)
-[    8.054899] v4l2_pipeline_pm_get (drivers/media/v4l2-core/v4l2-mc.c:569)
-[    8.054902] video_open+0x7c/0x100 qcom_camss
-[    8.054913] v4l2_open (drivers/media/v4l2-core/v4l2-dev.c:434)
-[    8.054918] chrdev_open (fs/char_dev.c:414)
-[    8.054924] do_dentry_open (fs/open.c:945)
-[    8.054928] vfs_open (fs/open.c:1075)
-[    8.054932] path_openat (fs/namei.c:3828 fs/namei.c:3987)
-[    8.054935] do_filp_open (fs/namei.c:4014)
-[    8.054938] do_sys_openat2 (fs/open.c:1402)
-[    8.054941] __arm64_sys_openat (fs/open.c:1428)
-[    8.054945] invoke_syscall (arch/arm64/include/asm/current.h:19
-arch/arm64/kernel/syscall.c:54)
-[    8.054950] el0_svc_common.constprop.0
-(include/linux/thread_info.h:135 (discriminator 2)
-arch/arm64/kernel/syscall.c:140 (discriminator 2))
-[    8.054954] do_el0_svc (arch/arm64/kernel/syscall.c:152)
-[    8.054957] el0_svc (arch/arm64/include/asm/irqflags.h:82
-(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
-1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
-arch/arm64/kernel/entry-common.c:165 (discriminator 1)
-arch/arm64/kernel/entry-common.c:178 (discriminator 1)
-arch/arm64/kernel/entry-common.c:745 (discriminator 1))
-[    8.054962] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:763)
-[    8.054965] el0t_64_sync (arch/arm64/kernel/entry.S:600)
-[ 8.054969] Code: f9000bf3 52800033 72a00053 f9402400 (f9401801)
-All code
-========
-   0: f9000bf3 str x19, [sp, #16]
-   4: 52800033 mov w19, #0x1                    // #1
-   8: 72a00053 movk w19, #0x2, lsl #16
-   c: f9402400 ldr x0, [x0, #72]
-  10:* f9401801 ldr x1, [x0, #48] <-- trapping instruction
+The handshake is set_report 0x5X + "Asus...", then get_report with the
+same ID which should return the asus string.
 
-Code starting with the faulting instruction
-===========================================
-   0: f9401801 ldr x1, [x0, #48]
-[    8.054972] ---[ end trace 0000000000000000 ]---
-[    8.062891] xhci-pci-renesas 0000:01:00.0: hcc params 0x014051cf
-hci version 0x100 quirks 0x0000000100000010
-[    8.063966] bluetooth hci0: Direct firmware load for
-qca/crbtfw21.tlv failed with error -2
+In hiddraw, they appear under the same endpoint, both on the Ally and
+the Z13. But in hiddev (with hid-asus disabled or with this series),
+they appear as separate.
 
-## Source
-* Kernel version: 6.13.8-rc1
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: 14de9a7d510fcfb3bd35e275eda09724bda4d440
-* Git describe: v6.13.7-242-g14de9a7d510f
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/
+I cannot comment on the Aura protocol, because I don't know, but for
+the basic sticky RGB mode that supports set and apply, they _should_
+behave identically. I use 0x5d in my userspace software for everything
+now [1]. Previously, I used 0x5a but I am not a driver.
 
-## Build
-* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27687746/suite/boot/test/gcc-13-lkftconfig-debug/log
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27687746/suite/boot/test/gcc-13-lkftconfig-debug/history/
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27687746/suite/boot/test/gcc-13-lkftconfig-debug/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZp3X2U4uKizZrPK3SAiZuzXS/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZp3X2U4uKizZrPK3SAiZuzXS/config
+They do behave identically on the Ally X and the Z13 2025 though.
 
+I do not know about 0x5e. Perhaps Asus made a special endpoint for
+their Anime creation app.
 
---
-Linaro LKFT
-https://lkft.linaro.org
+> > In addition, perform a get_response and check if the response is the
+> > same. To avoid regressions, print an error if the response does not
+> > match instead of rejecting device.
+> >
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >   drivers/hid/hid-asus.c | 82 +++++++++++++++++++++++-------------------
+> >   1 file changed, 46 insertions(+), 36 deletions(-)
+> >
+> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> > index 46e3e42f9eb5f..aa4a481dc4f27 100644
+> > --- a/drivers/hid/hid-asus.c
+> > +++ b/drivers/hid/hid-asus.c
+> > @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+> >   #define FEATURE_REPORT_ID 0x0d
+> >   #define INPUT_REPORT_ID 0x5d
+> >   #define FEATURE_KBD_REPORT_ID 0x5a
+> > -#define FEATURE_KBD_REPORT_SIZE 16
+> > +#define FEATURE_KBD_REPORT_SIZE 64
+> >   #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+> >   #define FEATURE_KBD_LED_REPORT_ID2 0x5e
+> >
+> > @@ -386,16 +386,43 @@ static int asus_kbd_set_report(struct hid_device *hdev, const u8 *buf, size_t bu
+> >       return ret;
+> >   }
+> >
+> > -static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
+> > +static int asus_kbd_init(struct hid_device *hdev)
+> >   {
+> > -     const u8 buf[] = { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0x54,
+> > -                  0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
+> > +     /*
+> > +      * Asus handshake identifying us as a driver (0x5A)
+> > +      * 0x5A then ASCII for "ASUS Tech.Inc."
+> > +      * 0x5D is for userspace Windows applications.
+>
+> 0x5D is the report ID used for commands such as RGB modes. Probably
+> don't need to mention it here, and only where it is used.
+
+Yep, see above. Not required for basic RGB. Maybe it is for Aura, but
+I'd leave that to userspace.
+
+> > +      * The handshake is first sent as a set_report, then retrieved
+> > +      * from a get_report to verify the response.
+> > +      */
+> > +     const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0x41, 0x53, 0x55, 0x53, 0x20,
+> > +             0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
+> > +     u8 *readbuf;
+> >       int ret;
+> >
+> >       ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
+> > -     if (ret < 0)
+> > -             hid_err(hdev, "Asus failed to send init command: %d\n", ret);
+> > +     if (ret < 0) {
+> > +             hid_err(hdev, "Asus failed to send handshake: %d\n", ret);
+> > +             return ret;
+> > +     }
+> >
+> > +     readbuf = kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
+> > +     if (!readbuf)
+> > +             return -ENOMEM;
+> > +
+> > +     ret = hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf,
+> > +                              FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REPORT,
+> > +                              HID_REQ_GET_REPORT);
+> > +     if (ret < 0) {
+> > +             hid_err(hdev, "Asus failed to receive handshake ack: %d\n", ret);
+> > +     } else if (memcmp(readbuf, buf, sizeof(buf)) != 0) {
+> > +             hid_err(hdev, "Asus handshake returned invalid response: %*ph\n",
+> > +                     FEATURE_KBD_REPORT_SIZE, readbuf);
+> > +             // Do not return error if handshake is wrong to avoid regressions
+>
+> I'll have to test this on the oldest model I have. Hopefully it's a
+> non-issue and this can return error instead.
+>
+> Side-note: I notice you're using a msleep to try and work around an
+> issue in a later patch - it might be worth trying replacing that with a
+> retry/count loop with an inner of small msleep + a call to this init,
+> see if it still responds to this during that critical period.
+
+The call did not fail. I was thinking it was because the device needs
+some time to warm up (it happens with certain devices).
+
+Turns out it was hid-multitouch not attaching.
+
+> > +     }
+> > +
+> > +     kfree(readbuf);
+> >       return ret;
+> >   }
+> >
+> > @@ -540,42 +567,25 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+> >       unsigned char kbd_func;
+> >       int ret;
+> >
+> > -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> > -             /* Initialize keyboard */
+> > -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> > -             if (ret < 0)
+> > -                     return ret;
+> > -
+> > -             /* The LED endpoint is initialised in two HID */
+> > -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+> > -             if (ret < 0)
+> > -                     return ret;
+> > -
+> > -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+> > -             if (ret < 0)
+> > -                     return ret;
+>
+> Ah, I recall now. Some devices like the Slash or AniMe Matrix required
+> the 0x5E and 0x5D report ID (device dependent) however these are
+> currently being done via userspace due to not being HID devices.
+>
+> There *are* some older laptops still in use that require init on 0x5E or
+> 0x5D for RGB to be usable, from memory. It's been over 5 years so I'll
+> pull out the laptop I have with 0x1866 PID MCU and see if that is
+> actually true and not just my imagination.
+
+Hopefully you handshake with these devices over userspace, so they
+will not be affected.
+
+> > +     ret = asus_kbd_init(hdev);
+> > +     if (ret < 0)
+> > +             return ret;
+> >
+> > -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> > -                     ret = asus_kbd_disable_oobe(hdev);
+> > -                     if (ret < 0)
+> > -                             return ret;
+> > -             }
+> > -     } else {
+> > -             /* Initialize keyboard */
+> > -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> > -             if (ret < 0)
+> > -                     return ret;
+> > +     /* Get keyboard functions */
+> > +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> > +     if (ret < 0)
+> > +             return ret;
+> >
+> > -             /* Get keyboard functions */
+> > -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> > +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> > +             ret = asus_kbd_disable_oobe(hdev);
+> >               if (ret < 0)
+> >                       return ret;
+> > -
+> > -             /* Check for backlight support */
+> > -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> > -                     return -ENODEV;
+> >       }
+> >
+> > +     /* Check for backlight support */
+> > +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> > +             return -ENODEV;
+> > +
+> >       drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+> >                                             sizeof(struct asus_kbd_leds),
+> >                                             GFP_KERNEL);
+>
+> I've left only small comments on a few patches for now. I'll review in
+> full after I get testing done on a variety of devices whcih I'm aiming
+> for this weekend. Overall impression so far is everything looks good and
+> this is a nice improvement. Thank you for taking the time to implement it.
+>
+> Cheers,
+> Luke.
+
+I'll try to have V2 out today. I finished it yesterday and fixed all
+the lockups and the hid-multitouch issue. Just needs a good
+lookthrough.
+
+Perhaps I will also do a small multi-intensity endpoint that works
+with KDE and only applies the colors when asked. This way our programs
+are not affected and normal laptop users get basic RGB OOTB.
+
+If I do that, I will make the quirk for the Ally in a separate patch,
+so that you can nack it if you'd rather introduce RGB support with
+your driver, so that it does not need to be reverted.
+
+Antheas
+
+[1] https://github.com/hhd-dev/hhd/blob/d3bbd7fa25fe9a4838896a2c5cfda460abe48dc6/src/hhd/device/rog_ally/const.py#L5-L8
 
