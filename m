@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-569393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1657EA6A263
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:16:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55737A6A267
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:18:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 526AF7B18AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8879460236
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D20221DB7;
-	Thu, 20 Mar 2025 09:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23008221DA5;
+	Thu, 20 Mar 2025 09:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmeO5pc5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7Ld2mfP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07B52139C9;
-	Thu, 20 Mar 2025 09:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0791F09B7;
+	Thu, 20 Mar 2025 09:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742462179; cv=none; b=q7uTTAFRu88IDo0Is0/6+UEXSXlZ+ZsNUpLoIUPX06DSw6s7Q/FpBozskk1SU2QwRqxiSwJK1sahtPy5znE/lmViHvGEdz3kKW0ZfxYYV2dXuE6qVd4cRV4s6tZc/NXbOf1bMKLTxJ3NJz3oAYSzzSb7/4l2gWWBbsDGyWOUF20=
+	t=1742462276; cv=none; b=Dqo0Y62HWOM41oDQmcdJLZCvwYccLHez5d84qgM9kNPs5P8kWeMgaiFl9MOpoMdXoHRuwdHFDQyTrWW39TjbY9A8JyNkApADEzrlp9Sfv751W7uIRfwYoAajtLt9RQn61Zt9ViyujvvJGDchtpl6ShqGYYZLw4HzpPM0Jhpou+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742462179; c=relaxed/simple;
-	bh=FP5Msvwyil2Nnjhp7rcbhlKSlb1db3EzW/5fWUt/Ogc=;
+	s=arc-20240116; t=1742462276; c=relaxed/simple;
+	bh=Xyyzo6Gh+WL9fAi6N9VIMoxuKZ3LoEgaFXhaVGBrGiQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmV10NH/CofetlLzUl+KejZhBKLvUMtuwBsq34es26X+gjzrxdBolmcWxJZknSTUJXHfmIlpwvAscF3fNHJpoZlJfy4zAux/bQYuyYlSaBN9NCThesY3xPDc0sVI8S8k2BjSebspllTt8d6mGpHwkoMzUTwquV8jWqjq1BAFll4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmeO5pc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E6BEC4CEDD;
-	Thu, 20 Mar 2025 09:16:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdGLgaDSD0dtxw1ZsdE1ix8RXb+foVttTha6XBVq7soQpRyPpKrHdbicZhc/341CDwZ9D8tId7/1REa4lZ+EMuLVp39ZPo2v+ChGt+cn9CmdX6uuSQMEtbpUqJziC5t82w3Zo53UBrUWF3RnnoTBpiX3pPAsaG5JPTM57vbvSlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7Ld2mfP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60584C4CEDD;
+	Thu, 20 Mar 2025 09:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742462179;
-	bh=FP5Msvwyil2Nnjhp7rcbhlKSlb1db3EzW/5fWUt/Ogc=;
+	s=k20201202; t=1742462276;
+	bh=Xyyzo6Gh+WL9fAi6N9VIMoxuKZ3LoEgaFXhaVGBrGiQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AmeO5pc5BrxaK3AvQZIemzhloqfKrspC2y11iBrqWxtxQlz8F5BiW0h2RlXiz5+VP
-	 bBnx40Fq33A+ZdJ6nYM2sAtcuTm0+OV2KxagbDYKWIixF09p2V2NyjQTugKdRb/DOm
-	 +avZGDObrs0Jn/kaq0Kpgp5dgtH3LO1//xCBCtXlkW0+bToA6+OJjAhOSwwEDyiEHr
-	 kTBMnVx9fuz2dPgKfQ7RRjh4iPz+g324OtTNiFsF4WW4LP3xJ/F9Us5s/QmiGt40hy
-	 ol9qXti56JidYZxico76YXHi6WnPVe32Kq43yFTDOlMd2kdwf6lkyOmJs9eqH1QO77
-	 QUbgkW4OjPF0A==
-Date: Thu, 20 Mar 2025 10:16:14 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Khalil Blaiech <kblaiech@nvidia.com>, Asmaa Mnebhi <asmaa@nvidia.com>
-Subject: Re: [PATCH v1 1/1] i2c: mlxbf: Use readl_poll_timeout_atomic() for
- polling
-Message-ID: <qvgk4wlbyp2mbyusexx3zvjshsocmdiq42yru6gfpj7hd26afe@7q5j6dwatwz7>
-References: <20250212165128.2413430-1-andriy.shevchenko@linux.intel.com>
+	b=G7Ld2mfPq2TcfkZ8HvmvRBw807rLtv69ZuFCKYqF4xI9BwCUNSGXRSspx1lb7GreD
+	 A+kgBB+EIf0rFa4uVJAyk93Rxn3XIRuykhXzS6OuY1tgimInFtDdOewPsnOe+ncxOL
+	 iOaw1Bm6Ma2dDxB6q/4BarmcWpsCYAAlWeTv8mR+QidzvIlc1+JN7+UYuZE/TlI7Wn
+	 E9WBCsgDaEEdag+PHhDHwN0rripWdZEGKid5LN2cZumNnmDBdWjyXiKtHUIiELo5Ig
+	 3pLyc4GBcz1p72XCq+h+L/9yT500RLt1YkwIRa5gDqEQXU3dWUnv7MrtvvzPm8Fheu
+	 YwgrV8s/ItTeQ==
+Date: Thu, 20 Mar 2025 11:17:51 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
+Message-ID: <Z9vdP7vgv-Z4RahU@kernel.org>
+References: <20250318081743.32c72c1c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,17 +56,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250212165128.2413430-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250318081743.32c72c1c@canb.auug.org.au>
 
-Hi Andy,
-
-On Wed, Feb 12, 2025 at 06:51:28PM +0200, Andy Shevchenko wrote:
-> Convert the usage of an open-coded custom tight poll while loop
-> with the provided readl_poll_timeout_atomic() macro.
+On Tue, Mar 18, 2025 at 08:17:43AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Commits
+> 
+>   04c72b01f618 ("Documentation: tpm: Add documentation for the CRB FF-A interface")
+>   cebcb37cc882 ("tpm_crb: Add support for the ARM FF-A start method")
+>   1cfb6e10a755 ("ACPICA: Add start method for ARM FF-A")
+>   abf6e84648dd ("tpm_crb: ffa_tpm: Implement driver compliant to CRB over FF-A")
+> 
+> are missing a Signed-off-by from their committers.
 
-nice cleanup, thanks! Merged to i2c/i2c-host.
+Sorry, something must have gone wrong when I rebased and updated the
+commit messages. 
 
-Andi
+I think they should be good now.
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+BR, Jarkko
 
