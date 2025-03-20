@@ -1,145 +1,153 @@
-Return-Path: <linux-kernel+bounces-570011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4928EA6AAC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:13:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFADA6AACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF22716F8B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:09:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625C1189440E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452EB1EDA05;
-	Thu, 20 Mar 2025 16:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649993597C;
+	Thu, 20 Mar 2025 16:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9cPQxK1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="k8+7Yl+L"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2D03597C;
-	Thu, 20 Mar 2025 16:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBA6157A72
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742486947; cv=none; b=u7rzBkw/H0HnVG9v8gRs4QU+54Bq2fc1IYnHYjIfOKzGQ5ioJdrHdJoco06VNu66L36nix226E2JO3h5dYGDqP0qSWJbc0EeRIj9FDoTFnKWNr8UmCyGAOzouyjRhK2trOmRp7DURrh/yDK/mmSzXreUT13/CLtVZyX8AovDh4Q=
+	t=1742487008; cv=none; b=BA4+tVtsrElG4NRSz/bM4omFXYF8TQxjZXaFXeFiIh7VSGM/M3TBlmXU520U/h0qfIMSriL4Cmuf1BSi4XOxHpQGp9CSiV11ctItgte83ioEENojT7GzaIMOrPtCbFlRSqj6Qy8XUfwx7j6uW9FMyGjytTBhPWXuc4jap9MvMyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742486947; c=relaxed/simple;
-	bh=uI4VSOLj9MtMvYDm8+wUvuFnpvZ6CLxib6WZy45R0Js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LO3neYPM5SXF7P6q/Q0u9KhiVcWe36mawsOhhBVJhLKMlk6vDsalPetee5fYifWWcj1GQHkFdLU+v9u/qamvWAYBj18riTzJ5gCn7+FKDhnZxkR07ndxdUo8tTfijHKZM56F9raYNy0pLTtgwtDwUj0sMD6uhyXgsHAMdqfOfBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9cPQxK1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1E0C4CEED;
-	Thu, 20 Mar 2025 16:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742486947;
-	bh=uI4VSOLj9MtMvYDm8+wUvuFnpvZ6CLxib6WZy45R0Js=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F9cPQxK1GTiw+iiJ5B2S4bqmFEC7HfD5Q7Byn26J3hORuvSEdxmoy4V5RFP92W4C/
-	 McC54IzVsruR4Y6OZlt2xU4d8gk2mfgaYpZn2RY6947KdgXBm+jOVAtW2En/Go/9I5
-	 yNaJU6oF01bKSeOVcR7HRtnXhc8aBIhGKi/r5a19w9TuHFR9ltCaT24q79YGNNqQ2Z
-	 xxIUwKJic7n9bgAdftjVwUdp2HRxW9N5TMlBZd7jJ8BsFTfQ7T1+bRJ0M4Q9WvdWf1
-	 XEMDRb5g4fTHX168XyVZSsprND/JIMOOqiQna4WCjXXHEIzIpQ+HpFfDVAB/wLgeOJ
-	 w1IZ+FZueSJrg==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30c091b54aaso9610211fa.3;
-        Thu, 20 Mar 2025 09:09:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUszZAi+vXzROojs9MDlBTtyUEyvyKsj3sXCWwM2pGnf/gfVbv2a+yP1nwZ05ms1LvCLUMQ2YnzHT6vFBLS@vger.kernel.org, AJvYcCVBsMKssTqe3vIOXXVQbcyAsY8YbA2/fJa6FSeZrKfLS1amh84CX6X+fNh2iXB+XGfmmaydhV/E9pC/pys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVZslLFgciavOtVZ6B53t6/VuEBubZoL4HNcpsUGACYZA92FCX
-	FpBsTDGCyLkG5x7zsZuGV6KMnewmKEbJd68ADOIbMrTaoJ7KEYZ6EhqwOAakH0qrf2iMIrco9Gd
-	08ayAbixKKkr8D+AslyDyYUGv8JY=
-X-Google-Smtp-Source: AGHT+IG4Bm89LTILz6LgN5z3NeH5i23YID+hPbWTAbPiQMHlhoRRfUAo1GILf2ziWNb/H7wKhrDUj/FP8/pv/BoGagQ=
-X-Received: by 2002:a05:6512:130c:b0:545:576:cbd2 with SMTP id
- 2adb3069b0e04-54acb195bebmr2405191e87.10.1742486945246; Thu, 20 Mar 2025
- 09:09:05 -0700 (PDT)
+	s=arc-20240116; t=1742487008; c=relaxed/simple;
+	bh=8Cl+MQIg4WHzzZNmEIM+eK5se2qBbKPb4qs91E7rNPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cD8lieo5YdKQ2tuhiZzMSVtPyqz9f8QVLWMeZ3vLQ8WW8DYgMHwQ5aI/MnxsQYXvBkGP/ur8C+BjB29NqdvqHjP2I16CFOMAyjB/kbs/CrbyMza7QjWf8ycQDmQPxRh7fzGPxzQEst5MmtMdJzXsb59w2gQbOd5qL65t8H/8iRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=k8+7Yl+L; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2264aefc45dso28592305ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1742487005; x=1743091805; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qUdUXUFCvJW9zFlXHHcD9YlzbUxFoXXptuBKlu8C0TQ=;
+        b=k8+7Yl+LqTgMT6WTJjdwz172vALflx6HRGI+If0ejAcNYQ+dFZodwOldCn+BHITq+p
+         7RBfva/6k+MwGGGn8U0HTHrZRC5DJPf5ud14TycLmCX73bXOnCQIvwoY8Yk2o/Nzh7/4
+         s/F1Dlak1WisYFHIRvuLYbzZ6QhjtlKZABR78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742487005; x=1743091805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qUdUXUFCvJW9zFlXHHcD9YlzbUxFoXXptuBKlu8C0TQ=;
+        b=lvM9AJ6s0uvo1BzKxQ//g2NV3yBSQw6abjNvhO/6ujJ+TKic9k+1OjbjKwfaSQi7sx
+         EKgIif9r2erjIOwJdjGxEn6rdbPkgg/uBS3Jdx/U5FWRTobZ8rVqkaXMD8ATiXe1A5mo
+         qRACfyT7GNPVkpO+GI2R2UUgX5XXat2GvVkzQj6plOAZoXPDRP9H+5PjKEZ9C5Zt9PV5
+         a6Iqga47ZPylBRtFNrfXVPt2mHrNIAHguIfigbT4aTyJIt4aoJw0EebnKxruWsuuHsZZ
+         XZd6GKo7Z9ZjkPj7cArZ1IJkLPxjll9ojPItjonqrsPW1d7WtNeoT5DrHX2Q/ZSiBauB
+         u1hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkAV6QOO+UkjqFzA/r+Wa9WVckue04ZkSE0rv6AASOgAwKQv9pgCeKx3MwqxncLM1VHXZJENahkQqTi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGeJZOSgP56AwnsXVhL292S/O11vO5++7Vr5TBXUBDQU6IITal
+	paEfucIXj+XxiwVYOw1dAes0nRM51TJiQNY96NQ7tmYgctxqmjE0jd5fXJ4xw/0=
+X-Gm-Gg: ASbGncusKzvu5fXpkKgV0b50WX2fpK/MlMdCuF2gSSTkCFFGQeWCA8c5+QCMMKAvjPS
+	50X/JXadgIUsC8be1TQS4OlM7tuG1Vqwemw5t4XhWUE8KxI1ksbxSmvdy+pysjpn+XWB6bdm1Eg
+	1k1ba98dmPzEGgd5JCrOTNfr+S+6/3IFekwuWASAAOW23S10RvcyiUZuj/JY2XszyuM0nCn69st
+	wFCc/TTjr7YT5R+vUN7ePvbN5oDgmqyFbvJo9xDOuyK/E8va1OrHKKqYaDM+m1EeClUKNzK4+E/
+	V/9ckzscs5NM+J+X2bhcIoSIysd5M87K4kZvVcAYtCNgJ5iu64LI+hlMrqQGR303h+VE5SFnpLq
+	8
+X-Google-Smtp-Source: AGHT+IFkwpk2JEQYn31dAuhvUrxsa+7Xm/Ntb/s0UDsg6lyyXCycmlVUTKPqIReWtnBspXfiHRADZw==
+X-Received: by 2002:a05:6a00:22d2:b0:737:6fdf:bb69 with SMTP id d2e1a72fcca58-739059b4d2cmr113077b3a.13.1742487005393;
+        Thu, 20 Mar 2025 09:10:05 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73730ca057csm10750423b3a.48.2025.03.20.09.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 09:10:04 -0700 (PDT)
+Date: Fri, 21 Mar 2025 01:10:00 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, dsterba@suse.cz,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
+ io_uring_cmd_import_fixed_vec
+Message-ID: <Z9w92CmC51cLN3PD@sidongui-MacBookPro.local>
+References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
+ <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
+ <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
+ <20250319170710.GK32661@suse.cz>
+ <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
+ <Z9tzvz_4IDzMUOFb@sidongui-MacBookPro.local>
+ <27ae3273-f861-4581-afb9-96064be449a4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320070746.101552-2-ardb+git@google.com> <CABCJKuc3zZOG4qgoFca_g80GMkzviVRemGLJB8GaA88u27Mt8A@mail.gmail.com>
-In-Reply-To: <CABCJKuc3zZOG4qgoFca_g80GMkzviVRemGLJB8GaA88u27Mt8A@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 20 Mar 2025 17:08:54 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFZFgYp40xD72s0oMThgxK7J-yyCYUQkkBQjh3xR+fNeQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JoWETJ2AGs312xqs1dK1sh23S7Ihg-k_EK5ANtMiDkCf0PmCDuy49WbCbM
-Message-ID: <CAMj1kXFZFgYp40xD72s0oMThgxK7J-yyCYUQkkBQjh3xR+fNeQ@mail.gmail.com>
-Subject: Re: [PATCH] gendwarfksyms: define __GENKSYMS__ when processing asm-protoypes.h
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kbuild@vger.kernel.org, brgerst@gmail.com, 
-	x86@kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
-	linux-kernel@vger.kernel.org, nogikh@google.com, 
-	syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27ae3273-f861-4581-afb9-96064be449a4@gmail.com>
 
-On Thu, 20 Mar 2025 at 15:48, Sami Tolvanen <samitolvanen@google.com> wrote=
-:
->
-> Hi Ard,
->
-> On Thu, Mar 20, 2025 at 12:07=E2=80=AFAM Ard Biesheuvel <ardb+git@google.=
-com> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Ensure that __GENKSYMS__ is #define'd when passing asm/asm-prototypes.h
-> > through the compiler to capture the exported symbols. This ensures that
-> > exported symbols such as __ref_stack_chk_guard on x86, which is declare=
-d
-> > conditionally, is visible to the tool.
-> >
-> > Otherwise, an error such as the below may be raised, breaking the build
-> > when CONFIG_GENDWARFKSYMS=3Dy
-> >
-> >   <stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_gu=
-ard'
-> >
-> > Cc: Sami Tolvanen <samitolvanen@google.com>
-> > Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  scripts/Makefile.build | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > index 993708d11874..7855cdc4e763 100644
-> > --- a/scripts/Makefile.build
-> > +++ b/scripts/Makefile.build
-> > @@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
-> >  getasmexports =3D                                                     =
-           \
-> >     { echo "\#include <linux/kernel.h>" ;                              =
- \
-> >       echo "\#include <linux/string.h>" ;                              =
- \
-> > +     echo "\#define  __GENKSYMS__" ;                                  =
- \
-> >       echo "\#include <asm/asm-prototypes.h>" ;                        =
- \
-> >       $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
->
-> This works with gendwarfksyms since __GENKSYMS__ is defined after the
-> EXPORT_SYMBOL() definition, but I'm now getting warnings with
-> genksyms:
->
->   AS      arch/x86/lib/clear_page_64.o
-> <stdin>:3:10: warning: "__GENKSYMS__" redefined
-> <command-line>: note: this is the location of the previous definition
->
+On Thu, Mar 20, 2025 at 12:04:33PM +0000, Pavel Begunkov wrote:
+> On 3/20/25 01:47, Sidong Yang wrote:
+> > On Wed, Mar 19, 2025 at 11:10:07AM -0600, Jens Axboe wrote:
+> > > On 3/19/25 11:07 AM, David Sterba wrote:
+> > > > On Wed, Mar 19, 2025 at 09:27:37AM -0600, Jens Axboe wrote:
+> > > > > On 3/19/25 9:26 AM, Jens Axboe wrote:
+> > > > > > 
+> > > > > > On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
+> > > > > > > This patche series introduce io_uring_cmd_import_vec. With this function,
+> > > > > > > Multiple fixed buffer could be used in uring cmd. It's vectored version
+> > > > > > > for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+> > > > > > > for new api for encoded read/write in btrfs by using uring cmd.
+> > > > > > > 
+> > > > > > > There was approximately 10 percent of performance improvements through benchmark.
+> > > > > > > The benchmark code is in
+> > > > > > > https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
+> > > > > > > 
+> > > > > > > [...]
+> > > > > > 
+> > > > > > Applied, thanks!
+> > > > > > 
+> > > > > > [1/5] io_uring: rename the data cmd cache
+> > > > > >        commit: 575e7b0629d4bd485517c40ff20676180476f5f9
+> > > > > > [2/5] io_uring/cmd: don't expose entire cmd async data
+> > > > > >        commit: 5f14404bfa245a156915ee44c827edc56655b067
+> > > > > > [3/5] io_uring/cmd: add iovec cache for commands
+> > > > > >        commit: fe549edab6c3b7995b58450e31232566b383a249
+> > > > > > [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+> > > > > >        commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+> > > > > 
+> > > > > 1-4 look pretty straight forward to me - I'll be happy to queue the
+> > > > > btrfs one as well if the btrfs people are happy with it, just didn't
+> > > > > want to assume anything here.
+> > > > 
+> > > > For 6.15 is too late so it makes more sense to take it through the btrfs
+> > > > patches targetting 6.16.
+> > > 
+> > > No problem - Sidong, guessing you probably want to resend patch 5/5 once
+> > > btrfs has a next branch based on 6.15-rc1 or later.
+> > 
+> > Thanks, I'll resend only patch 5/5 then.
+> 
+> And please do send the fix, that should always be done first,
+> especially if it conflicts with the current patch as they usually
+> go to different trees and the fix might need to be backported.
 
-Oops.
+Sorry to forget to cc you Pavel.
+https://lore.kernel.org/linux-btrfs/20250319180416.GL32661@twin.jikos.cz/T/#t
 
-Do you think the fix below should be sufficient?
-
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -314,7 +314,7 @@
- else
- cmd_gensymtypes_S =3D                                                    \
-        $(getasmexports) |                                              \
--       $(CPP) -D__GENKSYMS__ $(c_flags) -xc - | $(genksyms)
-+       $(CPP) $(c_flags) -xc - | $(genksyms)
- endif # CONFIG_GENDWARFKSYMS
-
- quiet_cmd_cpp_s_S =3D CPP $(quiet_modtag) $@
+Thanks,
+Sidong
+> 
+> -- 
+> Pavel Begunkov
+> 
 
