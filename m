@@ -1,128 +1,190 @@
-Return-Path: <linux-kernel+bounces-569005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9CFA69D55
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:35:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBF3A69D56
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19AFC480A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495AB1898429
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 00:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BA31C3C1D;
-	Thu, 20 Mar 2025 00:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8651B6D06;
+	Thu, 20 Mar 2025 00:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vy1/LmFW"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyceVXVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602EA2F28;
-	Thu, 20 Mar 2025 00:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348792F28;
+	Thu, 20 Mar 2025 00:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742430893; cv=none; b=mSsGqAua5uySasBsAX/gyCWD0QTuqDsEpaXgrtRxRCDtY2V731vEOTMJknjhxMiwMKo78XurEvS93ghgDILH/boLokyWoD+EKEnWU27xdsUG7lV6MtKzvO1mehnRJ8iaK+ND5A9KCYfgOPmLTk4CWK0euTEb6kKsBMbXQwFXYuM=
+	t=1742431020; cv=none; b=m0DAnF4/TfdYWoiVT4ifHcqTRacirTFoZAKu1lZb7bJmmfdv1EJOeTzWdb84Yfjq+S65YbPHA5Ny44W9qOmSNIRKdjR5D5vSfYTht+B7nijGc0EeW9nseGn2AdvqxzN9yTG3H+7nXa6jgxffT68rMWhiHFyzz6rDodciRreDkQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742430893; c=relaxed/simple;
-	bh=3D0vNnFkQr3KweKAbyrZUGalhQAJd+us/V/1YG9Eqvs=;
+	s=arc-20240116; t=1742431020; c=relaxed/simple;
+	bh=YmwdLxB17tyBbP89p2h7IFyWsr1r6biPOCtAj6c7WYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+x7Oh8kSg+8tQU+lxKyrJlUlzbQmCGZ11RuAKM7PAEKcoiIXgPZGZs5cv0jSCocdVFGBa/kO6hPOqgZjRPFO8MKAzaVkuVHl9MmBFuu7q+9qthJd+6GjyFY3sJdC22EK1KuPbngVkkNrE1Wcal2TzFvo9mzm9PSo0AjWqzL8n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vy1/LmFW; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225e3002dffso1697215ad.1;
-        Wed, 19 Mar 2025 17:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742430891; x=1743035691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho/T0CVeL8ZM68pRmPpG9+4hTy87II3noiU7TiMadwk=;
-        b=Vy1/LmFW+9ywLGA1EOqZ69zdfFSBPL82lklg01wP3XnMRw10WEI+XMP5mQK3LVo7ay
-         NFXiFtW07+6UWLWG8ZUpLc8sjrLULagkfq4red0p90QVVDL9hSw2Af6Yn9N2djNPubS9
-         UTlyvjnbXAJ7T3KMMtinoBSY3SUk0p78dVjrWLGvS/1ndUMzaJboWUpzeQfPzvQIuGzm
-         HkLpiU3BtNYYx2XyLd9+w1JnEbdFaOZQ/oVNwrN85j+tAVAq3zVu4PvWa+MDR/WQC24A
-         p24c2fMQ79pZvhta4lNsnLMHZ+b08VITdqFKxIpoKDTEO5toRR55oyEoNf38gKoEMPSA
-         ZRIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742430891; x=1743035691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ho/T0CVeL8ZM68pRmPpG9+4hTy87II3noiU7TiMadwk=;
-        b=AXPIo8v0wZWXvktHvsrtgqn5Pn1Hu1Ppp2g1QmDnXPFNgQ4DcX6+2FiubZzgboX5X0
-         h9wSLEsNM56YQUiMuG0sFDT4hE5n+G66RWepdaNwQFDcOJdTO5wS7lng81QCLJbQT1W9
-         eF1NcymjiU4W+P1vGSJoE0DemIl1zCsRVV9i7CdxMdYd8PB1StHPaqZ3jza9v3iHk8oq
-         cNqgh4lWVnN0peaACHKVBv8urp+QY2rkgA7Ux8TA6Tx2j50/XlE8BN9I6bFhGHlm1FYG
-         zSkhB1h8GQ4SiVzS7JlWRhsVPuc6z4RwsJYULKPGUCG8lM2Fknhj6K8uVf+J9wScCVMZ
-         MVZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT2BWRUA+jS9CtmsnnuOzlrDdzXZoLZ1unadcNmg+jiVubMAsa3lei+pxJEZMhlp7/geFvpouOqUNwx2COoOfN@vger.kernel.org, AJvYcCUr2SJftWL3L3RRd4dus+JqGM7m+I3h8zMhf2URCfTqnZv+KfvYcPX9zfnnqtnbRiaN/CQ=@vger.kernel.org, AJvYcCWouVMHW7o3aYuYs0d+jol67Ew5dSl3oAanNIcI0elMrY09g6bV5tk1UMXg02aDeUszEMU+LTJSoyx6dzha@vger.kernel.org, AJvYcCXKzlWXgRrPtUQHkk+aFyhXVwChBJ4i14viiZ7zLmbAj21rfGaeuW9WLKaR8Beh3QWCRMSjjIAe@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhJJFhKiUU+e2AuRQyXOmkUJnHAs9oL4WEI2pubHljZRxU6zBC
-	Hlh6MBRekwbQH5CcC9tKVNmK0TEpTIJuay2P69rgz/LanJZeC1uy
-X-Gm-Gg: ASbGnctRB8aVlybCvB77BlGR/nPZ5Aw2IRWHATZp6m9rykiHMu7Q/EZx+lE9XgPMuWA
-	frDQOyyk7gNGy5U2WemfXFqT1cyrl1Kc0TWcOVjSRI9VMswRayEwoMreOkRro0vEi04+cfO7XXZ
-	eWoBmBUwqkfgJ4gfkQd/CD0U481rFxhVhdcnrAiPU4qBNDuYJBpVF9QuRlK5D8qGO4UsjNIe1o+
-	XsA6pbz/U2gQfukauOKCO6yMtilKv5ubz9ozTKAS6+X38bVP6Ib/OAdEct6TirafIP0p8Kh2dYv
-	2KFj0y1ufKsuKl9Q7kT/adxQXx1QpBHiiydvn7Mpxzg3CoKn
-X-Google-Smtp-Source: AGHT+IH8FuO2OjmmIFlBtn9MK6Q+GMM8K5UIOGZ6rCzLihUzDMMv/Z0zo1At6QBi42VHOJK0q/ntkg==
-X-Received: by 2002:a17:902:d4c7:b0:21f:522b:690f with SMTP id d9443c01a7336-22649a57d5emr71081205ad.46.1742430891576;
-        Wed, 19 Mar 2025 17:34:51 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe7ccsm121537115ad.174.2025.03.19.17.34.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 17:34:51 -0700 (PDT)
-Date: Wed, 19 Mar 2025 17:34:50 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: john.fastabend@gmail.com, jakub@cloudflare.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
-	mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, shuah@kernel.org, mhal@rbox.co,
-	sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
-Subject: Re: [PATCH bpf-next v3 2/3] bpf, sockmap: avoid using sk_socket
- after free when reading
-Message-ID: <Z9tiqkSOH9vuOOJL@pop-os.localdomain>
-References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
- <20250317092257.68760-3-jiayuan.chen@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Asd59HZ0mgm7I3A2AK7lvg9dqR7W/303leMMt6yWM3HSgbcFr7yWpYq+FgqISkyk/tm/y6+TRsf7/tD1amAO+XF323cqkbkJXubjZMR3Mi42tBFji35LT6wfQ2D5hyG9vjh/PhIv8IY73nbeMFoO/G8aUEovg7p1u2wltZfbrPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyceVXVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF1BC4CEE4;
+	Thu, 20 Mar 2025 00:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742431019;
+	bh=YmwdLxB17tyBbP89p2h7IFyWsr1r6biPOCtAj6c7WYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TyceVXVmicIhEkiQaL3P71twrZ6TXeJTQktEc5t5TBEkm5x86VfnW+SZVA/2qTVbP
+	 awIozhk2qspphtSvJXhDgs7pryOGT7QTC63fc615+mjJLNabfn2JDGnN5N8zoN50R0
+	 C+dSvXGdG24Mbo2tBJ4TKyRWP9zw2lfvT67wqk2cqakDBumsJzYTokR8eMkp/y6Y1N
+	 jyo3zfeOJDZ8a1ZnJw2T4fsH4qvVMMhpgY1+GB9dQyDDV7S4+5VEWlqY/gpn08/cLW
+	 l/WRFU2EBwvm32XDqtyvO7BpES9+EhyxZyzjlrtch60ikat7yoGkN3C4yLOkrA24kK
+	 933uI0QJTSFEA==
+Date: Wed, 19 Mar 2025 17:36:57 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 1/3] perf sort: Keep output fields in the same level
+Message-ID: <Z9tjKcKvjYgbR6hb@google.com>
+References: <20250307080829.354947-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250317092257.68760-3-jiayuan.chen@linux.dev>
+In-Reply-To: <20250307080829.354947-1-namhyung@kernel.org>
 
-On Mon, Mar 17, 2025 at 05:22:55PM +0800, Jiayuan Chen wrote:
-> There are potential concurrency issues, as shown below.
-> '''
-> CPU0                               CPU1
-> sk_psock_verdict_data_ready:
->   socket *sock = sk->sk_socket
->   if (!sock) return
->                                    close(fd):
->                                      ...
->                                      ops->release()
->   if (!sock->ops) return
->                                      sock->ops = NULL
->                                      rcu_call(sock)
->                                      free(sock)
->   READ_ONCE(sock->ops)
->   ^
->   use 'sock' after free
-> '''
+On Fri, Mar 07, 2025 at 12:08:27AM -0800, Namhyung Kim wrote:
+> This is useful for hierarchy output mode where the first level is
+> considered as output fields.  We want them in the same level so that it
+> can show only the remaining groups in the hierarchy.
 > 
-> RCU is not applicable to Unix sockets read path, because the Unix socket
-> implementation itself assumes it's always in process context and heavily
-> uses mutex_lock, so, we can't call read_skb within rcu lock.
+> Before:
+>   $ perf report -s overhead,sample,period,comm,dso -H --stdio
+>   ...
+>   #          Overhead  Samples / Period / Command / Shared Object
+>   # .................  ..........................................
+>   #
+>      100.00%           4035
+>         100.00%           3835883066
+>            100.00%           perf
+>                99.37%           perf
+>                 0.50%           ld-linux-x86-64.so.2
+>                 0.06%           [unknown]
+>                 0.04%           libc.so.6
+>                 0.02%           libLLVM-16.so.1
+> 
+> After:
+>   $ perf report -s overhead,sample,period,comm,dso -H --stdio
+>   ...
+>   #    Overhead       Samples        Period  Command / Shared Object
+>   # .......................................  .......................
+>   #
+>      100.00%          4035    3835883066     perf
+>          99.37%          4005    3811826223     perf
+>           0.50%            19      19210014     ld-linux-x86-64.so.2
+>           0.06%             8       2367089     [unknown]
+>           0.04%             2       1720336     libc.so.6
+>           0.02%             1        759404     libLLVM-16.so.1
+> 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-Hm, I guess the RCU work in sk_psock_drop() does not work for Unix
-domain sockets either?
+Ping!  Anybody interested in this change? :)
 
-Thanks.
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/util/sort.c | 44 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> index f08fbc4bf0a2ce29..6b49d64854f5f986 100644
+> --- a/tools/perf/util/sort.c
+> +++ b/tools/perf/util/sort.c
+> @@ -3720,6 +3720,34 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
+>  	return -ESRCH;
+>  }
+>  
+> +/* This should match with sort_dimension__add() above */
+> +static bool is_hpp_sort_key(const char *key)
+> +{
+> +	unsigned i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(arch_specific_sort_keys); i++) {
+> +		if (!strcmp(arch_specific_sort_keys[i], key) &&
+> +		    !arch_support_sort_key(key)) {
+> +			return false;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(common_sort_dimensions); i++) {
+> +		struct sort_dimension *sd = &common_sort_dimensions[i];
+> +
+> +		if (sd->name && !strncasecmp(key, sd->name, strlen(key)))
+> +			return false;
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(hpp_sort_dimensions); i++) {
+> +		struct hpp_dimension *hd = &hpp_sort_dimensions[i];
+> +
+> +		if (!strncasecmp(key, hd->name, strlen(key)))
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  static int setup_sort_list(struct perf_hpp_list *list, char *str,
+>  			   struct evlist *evlist)
+>  {
+> @@ -3727,7 +3755,9 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+>  	int ret = 0;
+>  	int level = 0;
+>  	int next_level = 1;
+> +	int prev_level = 0;
+>  	bool in_group = false;
+> +	bool prev_was_hpp = false;
+>  
+>  	do {
+>  		tok = str;
+> @@ -3748,6 +3778,19 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+>  		}
+>  
+>  		if (*tok) {
+> +			if (is_hpp_sort_key(tok)) {
+> +				/* keep output (hpp) sort keys in the same level */
+> +				if (prev_was_hpp) {
+> +					bool next_same = (level == next_level);
+> +
+> +					level = prev_level;
+> +					next_level = next_same ? level : level+1;
+> +				}
+> +				prev_was_hpp = true;
+> +			} else {
+> +				prev_was_hpp = false;
+> +			}
+> +
+>  			ret = sort_dimension__add(list, tok, evlist, level);
+>  			if (ret == -EINVAL) {
+>  				if (!cacheline_size() && !strncasecmp(tok, "dcacheline", strlen(tok)))
+> @@ -3759,6 +3802,7 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+>  				ui__error("Unknown --sort key: `%s'", tok);
+>  				break;
+>  			}
+> +			prev_level = level;
+>  		}
+>  
+>  		level = next_level;
+> -- 
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+> 
 
