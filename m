@@ -1,325 +1,220 @@
-Return-Path: <linux-kernel+bounces-569364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DD1A6A1EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:56:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7045A6A1B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D0F1890D94
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948DF3AFCD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08FC21E0B7;
-	Thu, 20 Mar 2025 08:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F215215171;
+	Thu, 20 Mar 2025 08:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="UlpFhDn9"
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="V8i9susw"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C172063E3;
-	Thu, 20 Mar 2025 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FFE207A0F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742460991; cv=none; b=N/zPKflhGlDX0D4UaMUo/8iP+n7qI8ER9lEkLtywd7wqhDjrPGCPI2nBoLE/AbZ+OlfyDMq4o+4z7AXZsCsKrYKKzyaY/9PcWAAFaqjRzU7VQWFcookChT/oGFrC17WfpryK0CIRzlEqBuAAivmPN4eWrxpMNbnPCXMeakWC0Uc=
+	t=1742460400; cv=none; b=mZ4/CuYkITNo5JSqVPFJZKVw2wC+dyx4g7DLzc3WmSyI7nH3Wo/vMOA/FUevOICDGn9MnFsoJvb2IV/ieWg+BJGLLJiGAoP0sO8kDqxb+FdvHXUefHHFaaf9e4iCE7zjBHWErioDf9u+nwq5uCRbvbusRfSbfYpyrBLb00JpDOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742460991; c=relaxed/simple;
-	bh=gdZAjknnz0YrskMZ0It43wYj0bd38CLDxpFwA9E+gMM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=cEnVRbEkPE8enoNiBBBKX+ohhnWZ0uLHDOM6cgKAzW52gHTuCErcUG+ZueqmROUqoRsT3Y/OxweRcesoG7Fl/w/4sHwIUkiKFvNbxnZPl5th0nSTGFyGPbBAeF+1FJ6o9E2gtRTni/fHqhjYok3sHQXRip6kehjR2hxxtqf/iVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=UlpFhDn9; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id B90A48D;
-	Thu, 20 Mar 2025 09:46:42 +0100 (CET)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id TFMQh25sqaFy; Thu, 20 Mar 2025 09:46:37 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 0E08C11
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1742460397; bh=YpuTsNOqDkHSttTmOREnJkZMDGhY5t61giUH4vTHhWg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UlpFhDn9nC7w2d8mBrrActVNmd/8ceRFJja60t7Ra37sm4t9xjpjXajnC1AlfucQl
-	 MITIBg3RPO6wmbUmu1UrhyDVMPQmzDiPwje52/lZMkmgTQXTIulainpgHHYbZ1NT4+
-	 2+XbSGZkhp78t5gKpKpkHMvjwjsOyEcTScP13HshtWcy2+qnTyNKVvde65dgmqrblz
-	 MMbF4ii7oUOcwZLZLAeGFJ3etAcoYRswyRfTIIM2yHjswXkJKch6Bp9rrYurRa0qXP
-	 Hh0UUgBJNvA9/esTMyVPQlQDXkS6Tq7hUhEDvoFy9VYxchtQS14vApzFiD7DEp8jvQ
-	 Y62jRGtNnXBdQ==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id 0E08C11;
-	Thu, 20 Mar 2025 09:46:37 +0100 (CET)
+	s=arc-20240116; t=1742460400; c=relaxed/simple;
+	bh=jx2e6DSoT90IewT4q/0d/COQs4LVEYMYiIPzr0ZRhi0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BhneBX1GVnTPCEm9/xy53hmNzIwbG34ZIPJbx6v9pqtqNrEr2ntDe7Q+Mw5wpzMB3dLoJ7zqhJy/QKs2Y9Wa7AC1ydxu/1jXAUYEtuXjcy7w1PUJNeNuNzadBYCXYuC6Cod/4MlkmCQmcG6rPIwnNBgujNG5/Q3HyQQ4BpgEhsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=V8i9susw; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so2385445e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:46:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742460397; x=1743065197; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O3QH3qUlNH/gqSM8rGalO1GesljsIqna87D8tGVSkJw=;
+        b=V8i9suswyIDMZGYzXRPSOvmAdpelFB8GcebKr1nJvQc1sV/NsH8JMC0OP4WlbY2AOD
+         0Ixyh3iRh1LZwHYMEOiioTvQTeVGbC2PthEDqGb8V9PBa7fi8Ws3NieOTrHVl0p6ubqD
+         vCejr6kPQD2b7eD1ogvWyQ0C0YUNS1hmm7UmUmh7COMyLYlJWi7BrEOIC5E1JmQAxdn6
+         p//hpigwDGvpN+rXzXtCvdAhzwzgbmfjo3mEXjo7cIYTP/mly92RLbXue2D2leKPEZNl
+         wFmfO88M8uJHCombhWI4eutoDV07l05650VRVs/aAlKDvQDiGVkn02wehkVgicQWlEEu
+         sDlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742460397; x=1743065197;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O3QH3qUlNH/gqSM8rGalO1GesljsIqna87D8tGVSkJw=;
+        b=lws969zePKaLBPtpsXy5QvY8Z9LcxY/Q7rchZP/vHk5f4fNTi2WF2m6xnynxooxqoH
+         i/M+jflWQXy/YrdsqfR99gGh0NHDCkDWrwblQYiJWT9uJ9xZActJOMjSJUtfMB1r47wQ
+         YQa1MAG6D3OmrG+Q/W3zz2HBlCcf+Q5zbWcnHLJ46Xwx5BT3ZS8NQ6ZfpSOYwWN8uMHv
+         0KpoudmfCmQoyw1IrqZrfzqSu4hohUAbjxiWdncr2CLuHccIkuv3kx3bTLhuBTo5KFAl
+         yOoiZNaHckHpvYimXDwReY5ir3+vmTqxcLuEmm6VIb5eJJ9ynQLd3KRfZ0BL+DQjH/H2
+         A2nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq4hf7PXnOamzFsgVBn0/43s0yREhFaneNzr+fHVqRusMqXlX82cO0IQXCRkBSBTPqmFjE0SiGRLIPJNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrqQymDqS2UDHDK8x7m+F1G49pyjwDzhPxpdeOMYZYM3QefjDW
+	yFZ7jv8SUN4I5vt1sZ/fMZ9EP3rEfj39cb47ajFXEal6cdkXJhBF7UQSrwsg6k8=
+X-Gm-Gg: ASbGnctxyqC1BubYMycBadKbKZEDTPUzgumBjuJNPTKNjGgvG1RGX5icMK2on8JbjNs
+	EZbOlyBVuEw/WCJe9cP09bNHre4TcM77PAc1O25xDf7oURX36/4vRbgV3ma5m0Z5YuduH6G2oWN
+	yK3UiHWJ8mCwDcZMZ9ZCceA4YKF5fieA/cG0i/6YNJmfx48i1y8UllUPWP3OpOvCHZ7nGVT6gX2
+	6bVc6mbQjHNy0FOyZZMMYLO0kF1Mzu7Q367/lIgKJ90rtC2LHkH0kQyB+xTxIKV7bYD0Sjm3wkt
+	pSskMQCXIk5j2aEJOUSKZsMN+6cZxZicbAAZ60Wmi6OT
+X-Google-Smtp-Source: AGHT+IHQm6xIAgW16c9rSJQfuwSOkpxhl2OJe1D/zAy21xgweiekDmWGRfU5wzJOyEV/LHZraSbP0g==
+X-Received: by 2002:a05:600c:3b20:b0:43c:fd1b:d6d6 with SMTP id 5b1f17b1804b1-43d43842e8bmr48409055e9.31.1742460396893;
+        Thu, 20 Mar 2025 01:46:36 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:e0ba:db2b:7cf4:d967])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb318afbsm23804353f8f.72.2025.03.20.01.46.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 01:46:36 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  jiebing.chen@amlogic.com,  linux-sound@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  jian.xu@amlogic.com,  shuai.li@amlogic.com,
+  zhe.wang@amlogic.com
+Subject: Re: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
+In-Reply-To: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com> (jiebing
+	chen via's message of "Wed, 19 Mar 2025 15:04:47 +0800")
+References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+	<20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Thu, 20 Mar 2025 09:46:36 +0100
+Message-ID: <1jfrj82ioj.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 20 Mar 2025 09:46:36 +0100
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: David Howells <dhowells@redhat.com>, Steve French <smfrench@gmail.com>,
- Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>,
- netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [Linux 6.14 - netfs/cifs] loop on file cat + file copy
-In-Reply-To: <Z3v3-LNGff6OxObh@infradead.org>
-References: <fedd8a40d54b2969097ffa4507979858@3xo.fr>
- <669f22fc89e45dd4e56d75876dc8f2bf@3xo.fr>
- <286638.1736163444@warthog.procyon.org.uk> <Z3v3-LNGff6OxObh@infradead.org>
-Message-ID: <a6515315ba0d24b0568ebd756e147795@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On Wed 19 Mar 2025 at 15:04, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
 
-Hi Christoph
+> From: jiebing chen <jiebing.chen@amlogic.com>
+>
+> S4 tocodec support 8 lane to input, It need to enable
+> bclk and mclk control bit when work
+>
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  sound/soc/meson/g12a-toacodec.c | 46 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>
+> diff --git a/sound/soc/meson/g12a-toacodec.c b/sound/soc/meson/g12a-toacodec.c
+> index 531bb8707a3ec4c47814d6a0676d5c62c705da75..88f9adabb3b5d7d8881fa110f1d0d51e9ac9c60e 100644
+> --- a/sound/soc/meson/g12a-toacodec.c
+> +++ b/sound/soc/meson/g12a-toacodec.c
+> @@ -41,6 +41,9 @@
+>  #define  CTRL0_BCLK_SEL_LSB		4
+>  #define  CTRL0_MCLK_SEL			GENMASK(2, 0)
+>  
+> +#define CTRL0_BCLK_ENABLE_SHIFT		30
+> +#define CTRL0_MCLK_ENABLE_SHIFT		29
+> +
+>  #define TOACODEC_OUT_CHMAX		2
+>  
+>  struct g12a_toacodec {
+> @@ -129,6 +132,10 @@ static const struct snd_kcontrol_new g12a_toacodec_out_enable =
+>  	SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOACODEC_CTRL0,
+>  				    CTRL0_ENABLE_SHIFT, 1, 0);
+>  
+> +static const struct snd_kcontrol_new s4_toacodec_clk_enable =
+> +	SOC_DAPM_DOUBLE("Switch", TOACODEC_CTRL0,
+> +			CTRL0_BCLK_ENABLE_SHIFT, CTRL0_MCLK_ENABLE_SHIFT, 1, 0);
+> +
 
-Sorry to contact you again but last time you and David H. help me a lot 
-with 'kernel async DIO' / 'Losetup Direct I/O breaks BACK-FILE 
-filesystem on CIFS share (Appears in Linux 6.10 and reproduced on 
-mainline)'
+I think I remember commenting on this already.
 
-I don't know if it had already been reported but after building Linux 
-6.14-rc1 I constat the following behaviour:
+>  static const struct snd_soc_dapm_widget g12a_toacodec_widgets[] = {
+>  	SND_SOC_DAPM_MUX("SRC", SND_SOC_NOPM, 0, 0,
+>  			 &g12a_toacodec_mux),
+> @@ -143,6 +150,19 @@ static const struct snd_soc_dapm_widget sm1_toacodec_widgets[] = {
+>  			    &g12a_toacodec_out_enable),
+>  };
+>  
+> +/*
+> + * FIXME:
+> + * On this soc, tocodec need enable mclk and bclk control
+> + * just enable it when dapm power widget power on.
+> + */
+> +
+> +static const struct snd_soc_dapm_widget s4_toacodec_widgets[] = {
+> +	SND_SOC_DAPM_MUX("SRC", TOACODEC_CTRL0, CTRL0_BCLK_ENABLE_SHIFT, 0,
+> +			 &sm1_toacodec_mux),
+> +	SND_SOC_DAPM_SWITCH("OUT EN", TOACODEC_CTRL0, CTRL0_MCLK_ENABLE_SHIFT, 0,
+> +			    &g12a_toacodec_out_enable),
+> +};
+> +
+>  static int g12a_toacodec_input_hw_params(struct snd_pcm_substream *substream,
+>  					 struct snd_pcm_hw_params *params,
+>  					 struct snd_soc_dai *dai)
+> @@ -236,6 +256,10 @@ static const struct snd_kcontrol_new sm1_toacodec_controls[] = {
+>  	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 3, 0),
+>  };
+>  
+> +static const struct snd_kcontrol_new s4_toacodec_controls[] = {
+> +	SOC_SINGLE("Lane Select", TOACODEC_CTRL0, CTRL0_LANE_SEL_SM1, 7, 0),
+> +};
+> +
+>  static const struct snd_soc_component_driver g12a_toacodec_component_drv = {
+>  	.probe			= g12a_toacodec_component_probe,
+>  	.controls		= g12a_toacodec_controls,
+> @@ -258,6 +282,17 @@ static const struct snd_soc_component_driver sm1_toacodec_component_drv = {
+>  	.endianness		= 1,
+>  };
+>  
+> +static const struct snd_soc_component_driver s4_toacodec_component_drv = {
+> +	.probe			= sm1_toacodec_component_probe,
+> +	.controls		= s4_toacodec_controls,
+> +	.num_controls		= ARRAY_SIZE(s4_toacodec_controls),
+> +	.dapm_widgets		= s4_toacodec_widgets,
+> +	.num_dapm_widgets	= ARRAY_SIZE(s4_toacodec_widgets),
+> +	.dapm_routes		= g12a_toacodec_routes,
+> +	.num_dapm_routes	= ARRAY_SIZE(g12a_toacodec_routes),
+> +	.endianness		= 1,
+> +};
+> +
+>  static const struct regmap_config g12a_toacodec_regmap_cfg = {
+>  	.reg_bits	= 32,
+>  	.val_bits	= 32,
+> @@ -278,6 +313,13 @@ static const struct g12a_toacodec_match_data sm1_toacodec_match_data = {
+>  	.field_bclk_sel	= REG_FIELD(TOACODEC_CTRL0, 4, 6),
+>  };
+>  
+> +static const struct g12a_toacodec_match_data s4_toacodec_match_data = {
+> +	.component_drv	= &s4_toacodec_component_drv,
+> +	.field_dat_sel	= REG_FIELD(TOACODEC_CTRL0, 19, 20),
+> +	.field_lrclk_sel = REG_FIELD(TOACODEC_CTRL0, 12, 14),
+> +	.field_bclk_sel	= REG_FIELD(TOACODEC_CTRL0, 4, 6),
+> +};
+> +
+>  static const struct of_device_id g12a_toacodec_of_match[] = {
+>  	{
+>  		.compatible = "amlogic,g12a-toacodec",
+> @@ -287,6 +329,10 @@ static const struct of_device_id g12a_toacodec_of_match[] = {
+>  		.compatible = "amlogic,sm1-toacodec",
+>  		.data = &sm1_toacodec_match_data,
+>  	},
+> +	{
+> +		.compatible = "amlogic,s4-toacodec",
+> +		.data = &s4_toacodec_match_data,
+> +	},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, g12a_toacodec_of_match);
 
-'cat' command is going on a loop when I cat a file which reside on cifs 
-share
-
-And so 'cp' command does the same: it copy the content of a file on cifs 
-share and loop writing it to the destination
-I did test with a file named 'toto' and containing only ascii string 
-'toto'.
-
-When I started copying it from cifs share to local filesystem, I had to 
-CTRL+C the copy of this 5 bytes file after some time because the 
-destination file was using all the filesystem free space and containing 
-billions of 'toto' lines
-
-Here is an example with cat:
-
-CIFS SHARE is mounted as /mnt/fbx/FBX-24T
-
-CIFS mount options:
-grep cifs /proc/mounts
-//10.0.10.100/FBX24T /mnt/fbx/FBX-24T cifs 
-rw,nosuid,nodev,noexec,relatime,vers=3.1.1,cache=none,upcall_target=app,username=fbx,domain=HOMELAN,uid=0,noforceuid,gid=0,noforcegid,addr=10.0.10.100,file_mode=0666,dir_mode=0755,iocharset=utf8,soft,nounix,serverino,mapposix,mfsymlinks,reparse=nfs,nativesocket,symlink=mfsymlinks,rsize=65536,wsize=65536,bsize=16777216,retrans=1,echo_interval=60,actimeo=1,closetimeo=1 
-0 0
-
-KERNEL: uname -a
-Linux 14RV-SERVER.14rv.lan 6.14.0.1-ast-rc2-amd64 #0 SMP PREEMPT_DYNAMIC 
-Wed Feb 12 18:23:00 CET 2025 x86_64 GNU/Linux
-
-
-To be reproduced:
-echo toto >/mnt/fbx/FBX-24T/toto
-
-ls -l /mnt/fbx/FBX-24T/toto
--rw-rw-rw- 1 root root 5 20 mars  09:20 /mnt/fbx/FBX-24T/toto
-
-cat /mnt/fbx/FBX-24T/toto
-toto
-toto
-toto
-toto
-toto
-toto
-toto
-^C
-
-strace cat /mnt/fbx/FBX-24T/toto
-execve("/usr/bin/cat", ["cat", "/mnt/fbx/FBX-24T/toto"], 0x7ffc39b41848 
-/* 19 vars */) = 0
-brk(NULL)                               = 0x55755b1c1000
-mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) 
-= 0x7f55f95d6000
-access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (Aucun fichier ou 
-dossier de ce type)
-openat(AT_FDCWD, "glibc-hwcaps/x86-64-v3/libc.so.6", O_RDONLY|O_CLOEXEC) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "glibc-hwcaps/x86-64-v2/libc.so.6", O_RDONLY|O_CLOEXEC) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/haswell/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = 
--1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/haswell/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-(Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun 
-fichier ou dossier de ce type)
-openat(AT_FDCWD, "haswell/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 
-ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "haswell/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-(Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT 
-(Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun 
-fichier ou dossier de ce type)
-openat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v3/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v3", 0x7fff25937800, 0) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v2/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/glibc-hwcaps/x86-64-v2", 0x7fff25937800, 0) 
-= -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, 
-"/usr/local/cuda-12.6/lib64/tls/haswell/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/haswell", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/tls", 0x7fff25937800, 
-0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/haswell", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/x86_64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/x86_64", 
-0x7fff25937800, 0) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-openat(AT_FDCWD, "/usr/local/cuda-12.6/lib64/libc.so.6", 
-O_RDONLY|O_CLOEXEC) = -1 ENOENT (Aucun fichier ou dossier de ce type)
-newfstatat(AT_FDCWD, "/usr/local/cuda-12.6/lib64", 
-{st_mode=S_IFDIR|S_ISGID|0755, st_size=4570, ...}, 0) = 0
-openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=148466, ...}, 
-AT_EMPTY_PATH) = 0
-mmap(NULL, 148466, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f55f95b1000
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) 
-= 3
-read(3, 
-"\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\20t\2\0\0\0\0\0"..., 
-832) = 832
-pread64(3, 
-"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 
-64) = 784
-newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=1922136, ...}, 
-AT_EMPTY_PATH) = 0
-pread64(3, 
-"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 
-64) = 784
-mmap(NULL, 1970000, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 
-0x7f55f93d0000
-mmap(0x7f55f93f6000, 1396736, PROT_READ|PROT_EXEC, 
-MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x26000) = 0x7f55f93f6000
-mmap(0x7f55f954b000, 339968, PROT_READ, 
-MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x17b000) = 0x7f55f954b000
-mmap(0x7f55f959e000, 24576, PROT_READ|PROT_WRITE, 
-MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1ce000) = 0x7f55f959e000
-mmap(0x7f55f95a4000, 53072, PROT_READ|PROT_WRITE, 
-MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f55f95a4000
-close(3)                                = 0
-mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 
-0) = 0x7f55f93cd000
-arch_prctl(ARCH_SET_FS, 0x7f55f93cd740) = 0
-set_tid_address(0x7f55f93cda10)         = 38427
-set_robust_list(0x7f55f93cda20, 24)     = 0
-rseq(0x7f55f93ce060, 0x20, 0, 0x53053053) = 0
-mprotect(0x7f55f959e000, 16384, PROT_READ) = 0
-mprotect(0x55754475e000, 4096, PROT_READ) = 0
-mprotect(0x7f55f960e000, 8192, PROT_READ) = 0
-prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, 
-rlim_max=RLIM64_INFINITY}) = 0
-munmap(0x7f55f95b1000, 148466)          = 0
-getrandom("\x19\x6b\x9e\x55\x7e\x09\x74\x5f", 8, GRND_NONBLOCK) = 8
-brk(NULL)                               = 0x55755b1c1000
-brk(0x55755b1e2000)                     = 0x55755b1e2000
-openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 
-3
-newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=3048928, ...}, 
-AT_EMPTY_PATH) = 0
-mmap(NULL, 3048928, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f55f9000000
-close(3)                                = 0
-newfstatat(1, "", {st_mode=S_IFCHR|0600, st_rdev=makedev(0x88, 0), ...}, 
-AT_EMPTY_PATH) = 0
-openat(AT_FDCWD, "/mnt/fbx/FBX-24T/toto", O_RDONLY) = 3
-newfstatat(3, "", {st_mode=S_IFREG|0666, st_size=5, ...}, AT_EMPTY_PATH) 
-= 0
-fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
-mmap(NULL, 16785408, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 
--1, 0) = 0x7f55f7ffe000
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-) = 16711680
-read(3, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16777216) = 16711680
-write(1, 
-"toto\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 
-16711680toto
-^Cstrace: Process 38427 detached
-  <detached ...>
-
-
-Please let me know if it had already been fixed or reported and if 
-you're able to reproduce this issue.
-
-Thanks for help
-
-Kind regards
-Nicolas Baranger
+-- 
+Jerome
 
