@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-570220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33F2A6ADF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:59:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5550A6ADEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC474A21C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6395189DB8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E4D230BFA;
-	Thu, 20 Mar 2025 18:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3FD22A1D5;
+	Thu, 20 Mar 2025 18:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TV84ojIv"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2t0OrND"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7105422F160
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC556230BE7
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742496819; cv=none; b=JsGYT7aFnfMbwu05SXXAWiZV9Vdq5uW7ayz2DQtaJ66WML6ZbxIuiLq8/gdHAzWOPtN6FIXwuZGbjaNlp/iADqyBWQy3S2XRngYjd6gyav8xIWNoqhAiQ8aqcgm2KZOBpHrafz5PzH1z2NAn8xpv4crBBXKaOh7XxzaLw//P0fo=
+	t=1742496820; cv=none; b=QjzBQz2nTHRa9hkTPApf+Ay3OMna1dbsEbEfa7DT47UHg4eFbIWflkXPxqLgq9rfZxMmjlkHC6NGQsGVajD/xb9jbtQoxhJ3GRg7CaGW/SHoh0d4OskpQD04oafX8KrlQAOQS77cJpvDtg25YVH7V8hzsNWpIFA0rP18tC7ql1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742496819; c=relaxed/simple;
-	bh=XnYFPjBXkniGXAmm7wMWDWt6i8BfXNBL/ITGQx1xuUw=;
+	s=arc-20240116; t=1742496820; c=relaxed/simple;
+	bh=36NWAficZDHpEm26W8XaIeLJzui4w8rAyDxigzWGwww=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YoLS5aPFcu7dWmbd3QYFUZdR6AZF2yzcG1XTfU1ed0zwLZx7hnRyaQb1gJYnxyLt+XUQH7g1D8txar/RERpDRd2MMaodKfTWaCs3XKq9/FTmH9FX35ckTNt9h7b+p3Fe/d6MZ4D4N6oCPB4sB9kt77zZPnoWlHC49yrpEQllJN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TV84ojIv; arc=none smtp.client-ip=209.85.166.54
+	 MIME-Version; b=Rqlu0Djdxhul3EOIIH6Od0HbtK8GsRQ/KDNV+er8c6baI5c96wPTzrpNHr4I+ANrOio+gEOzDvWjXTP7udsTBSUESWyPWEk7IE9xn6sBRNhJ/7iy9KnxJ8MnnRm2rvTa7THJkdh6pj66SwBWMGBy/n5+SNoUb4aftmdrb6FJtmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2t0OrND; arc=none smtp.client-ip=209.85.166.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-85b43b60b6bso41405639f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:53:37 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso13778239f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742496816; x=1743101616; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742496817; x=1743101617; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A97O7SqLaZSxvMXU0joWzVIjgf8LaQ5hosLUzwNwu64=;
-        b=TV84ojIvVcQQ7O0jcXgryvwPBzv331Y1ONP1T4bLaa4fwkebqgiiMF73hwB5lOqh/L
-         7iFe/dne/lZjs+t0yWFFnLNYupdJpeV465Ey9aW74hAhrI540xI5omoPCy7A0lnC523b
-         W9DnSY1rsJMBZFlM7vjRgDkA8f0NK+DMpuc4MN+md/f44qr5Qn/3GHAKwTMcTpVpETdO
-         ZoLi1iNKcqQ4K7eWy5MMAv9Qc3eqwlEJJJnnIGT1AtFSatODTlqPewU/V1oE82wY4u+q
-         niwVcZGR6w0QQPKEZ8YwkFILQE83kkaC005gx5MJBn/gdIwL3bwZkLfU4YsqsXAK4pwA
-         PXVA==
+        bh=HpbhRZZt9AFd87SNc1x+tRriKokTIY/B2ItoxXJziSE=;
+        b=m2t0OrNDPpF2YIrnZnxQv0GN5TLHMi+WIGp1ToFTGzbcsDPQ5E36/38k2zBo6aITip
+         SZST88jKzgcJJscEFDBHaDKvP6jRee9R7rxBrIQrBXxtZr2GbhBg6u2lchfuNVJ38rFs
+         z0God3ua9WGbkCxwzmzwgoZhaG513s2zaXL4NvChs0MWpgRMS+eO69YBHoDC4qwUeNTK
+         WEgtrFVPygmDUT2jW7Kn5U6ItFoYULXztiBBDlxDGCu7ExkiiI9eSDv3VthSyqSBkWsN
+         z4nAyB81cpnraoA7w5sDAZwXS3JF5nah+AZX2Xm4Uu8NNRG6ZF4eoN5BZLcE99EZJqED
+         Rybw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742496816; x=1743101616;
+        d=1e100.net; s=20230601; t=1742496817; x=1743101617;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A97O7SqLaZSxvMXU0joWzVIjgf8LaQ5hosLUzwNwu64=;
-        b=c/peqt0PmZiGxXGvl9SSCx8z+GFk3vvgYm3FzdKt9rB+QnEsYwnqedUWGJKPGzrxRL
-         qRPjKlujU1Py3WMmqeE/USs2laq72UjswOb/f8nN+R7DqdijfzjE/2pyzdIjJSXUXmjq
-         9rQaaQp279LTKJiziif2afQCQd+6DjekiaS4QeJhc/RyiiDknW89qkgwiITR9lGdr6MN
-         LbEWDo+V1z8mnMJSR/TuPyLUvB+wIXjMrJzZpNIBz61bY3cK0m1fs1ThF0SAJ0EQ3jIL
-         3z5KTaIxu/NUiKEFO5qENsy2RIiVTXJkk4xOA8irq7AM1rz0r30/vTm8jfLrAXf94j+m
-         XrkA==
-X-Gm-Message-State: AOJu0Ywt1g7r1xX2oUQtZAfhQctVIjKtloCSjVGVM+/ijFVWkZlvNrAw
-	KRiP9ouzKcA71NWwDHnW89Tf08S0WwxhJoqhI63UHoBqGQ61ESp3P6kv9FmQ
-X-Gm-Gg: ASbGncsmCAAn+3bmZs/oixroFNyu5pJidrHVkUm1fYwENtNJ0hW/Xuy38xudoZguPxx
-	Le9iqF7a+L0swJu8JwJMaXZBQaRXBNQjc+5wPTtmE7O/xAV7i3wSyxd1Qh5w4iL+0m5U98MQFh0
-	OMYZfYU0UzZtqp852K16ycytWQGiTgkDURhlq9ZRlEjq8uhu/8jJFlSrp25tRR8aQabhdVhA+1X
-	/U+CFJOJ96yasnFoiTXm5xFr1x57i8ERRxx6TOAzgaC2gVxgs8FrE+JKQia9/UOhsBunxZrc+zB
-	AoS9FZzM3XUufAV2yE+zjoIg8TuVOIURqFrPq+tURhV2k1WvVU6SxWf5hdnPNXML/FRq25N8s4e
-	ISw==
-X-Google-Smtp-Source: AGHT+IEBYa+5JQp3odGDvBn5sd+cspLcMtd4IINkheV1kDJq50GiYDaoG3E/JZw5HEYKr6Z/40xHfw==
-X-Received: by 2002:a05:6602:6a89:b0:85b:4cb9:5cf6 with SMTP id ca18e2360f4ac-85e2bc71838mr79684139f.0.1742496816493;
-        Thu, 20 Mar 2025 11:53:36 -0700 (PDT)
+        bh=HpbhRZZt9AFd87SNc1x+tRriKokTIY/B2ItoxXJziSE=;
+        b=tT15SGqWqTX2eSX0YP7DlCdOhOY4v5DhSGG4bwOSMnmKE4EjR4acftHkFuf3gcxi+Z
+         2ip/agIgy6XvzlmpBCM0IWokSLL3+z+LRIAZGiY5IHNHDBhWOKTi5dOHAWTg7Ef8AJRW
+         /4EZuS9j5KxatmIxX9CFtDxmYNV9/ECULvZuG0iXB7O0YQa3AGj8P3Oyj8DMETa+P7im
+         3o1uoZm2Y5ag+9OKTZaFOIihbWBBPt+M/BL1URHyljVYvvEhdxzNyukBESa9Dd5AkeJU
+         ok016vz+iKafWTedfeytBxGz9XfjYZkdV6wf+mGVcCvs2iopScYJW2dusAdH/Z74V+nR
+         Ovfg==
+X-Gm-Message-State: AOJu0YxqVY41iwnh7e3KQktRe1zVmp9SGB/pNHUrHmj5HR736jeFwUXQ
+	Ph0QniFHFhiLhweFlfxmmE58v3x+ibOkPfju9BW057uuReVRCi01KV6a5wqL
+X-Gm-Gg: ASbGncvWdaNlXM8N9dPWo7Pn2P+xhzCvp4Fjlto0Om9RETLJpLZHtW25f9tpBgw5XDj
+	pjfBS5ExW9ibGaR3ZJqITiWbJvlpLbLOoV6mHLUxN3n3/D6PEX0kc3xgw/5BgPYt+ecnUC1vlIG
+	EW9FQwxxiV2qp3ttdZCpsIy3SKWS3KDAXkFSv4wZjFn/FRXi1yfsbAWm90kOq2Qd9mjdWaCjCSE
+	WrFGb3sNWuyIAe320cClOyNgQK06v9TzG3EQHM/EcfWNssoy8BNv7PCU3EGFcGr4BeYiJOkkYjW
+	4ed1rqnp4huGY79B0UUIr9sX9leVoBn09PZB0ryTV4G2IwTz09lj2rCdKMdXoz7uIvnqC2WsgWl
+	eyg==
+X-Google-Smtp-Source: AGHT+IFuMQEbeQUc6coivxGrnHYjElXfmW7jKz6VfBVmZjpWHuswcV+q2LjK12WbmEyPhHwatFPU1g==
+X-Received: by 2002:a05:6602:c8b:b0:85b:4ad2:16ef with SMTP id ca18e2360f4ac-85e2cb0e8d8mr39024439f.9.1742496817484;
+        Thu, 20 Mar 2025 11:53:37 -0700 (PDT)
 Received: from gandalf.. (c-67-165-245-5.hsd1.co.comcast.net. [67.165.245.5])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-85e2bc273e7sm7078039f.17.2025.03.20.11.53.35
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-85e2bc273e7sm7078039f.17.2025.03.20.11.53.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 11:53:36 -0700 (PDT)
+        Thu, 20 Mar 2025 11:53:37 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
@@ -87,9 +87,9 @@ Cc: jbaron@akamai.com,
 	jani.nikula@intel.com,
 	ville.syrjala@linux.intel.com,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v2 29/59] dyndbg: change __dynamic_func_call_cls* macros into expressions
-Date: Thu, 20 Mar 2025 12:52:07 -0600
-Message-ID: <20250320185238.447458-30-jim.cromie@gmail.com>
+Subject: [PATCH v2 30/59] dyndbg: drop "protection" of class'd pr_debugs from legacy queries
+Date: Thu, 20 Mar 2025 12:52:08 -0600
+Message-ID: <20250320185238.447458-31-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250320185238.447458-1-jim.cromie@gmail.com>
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
@@ -101,58 +101,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Xe driver's XE_IOCTL_DBG macro calls drm_dbg() from inside an if
-(expression).  This breaks when CONFIG_DRM_USE_DYNAMIC_DEBUG=y because
-the invoked macro has a do-while-0 wrapper.
+Current classmap code protects class'd pr_debugs from unintended
+changes by "legacy" unclassed queries:
 
-   if (cond && (drm_dbg("expr-form"),1)) {
-      ... do some more stuff
-   }
+  # this doesn't disable all of DRM_UT_* categories
+  echo "-p" > /proc/dynamic_debug/control
 
-Fix for this usage by changing __dynamic_func_call_cls{,_no_desc}
-macros into expressions, by replacing the do-while-0s with a ({ })
-wrapper.  In the common usage, the trailing ';' converts the
-expression into a statement.
+  # name the class to change it - protective but tedious
+  echo "class DRM_UT_CORE +p" > /proc/dynamic_debug/control
 
-   drm_dbg("statement form");
+  # or do it the subsystem way
+  echo 1 > /sys/module/drm/parameters/debug
 
+This "name the class to change it" behavior gave a modicum of
+protection to classmap users (ie DRM) so their debug settings aren't
+trivially and unintentionally altered underneath them.
+
+But this made the class keyword special in some sense; the other
+keywords skip only on explicit mismatch, otherwize the code falls thru
+to adjust the pr-debug site.
+
+So Jason Baron didn't like this special case when I 1st proposed it;
+I argued 2 points:
+- "protection gives stable-debug, improving utility"
+- __drm_debug is authoritative w/o dyndbg under it.
+
+I thought I'd convinced him back then, (and the patchset got merged),
+but he noted it again when he reviewed this series.  So this commit
+names the "special case": ddebug_client_module_protects_classes(), and
+reverts it to Jason's preference.
+
+If a class mismatch is seen, code distinguishes whether the class was
+explicitly given (and always skips/continue), or the DFLT was assumed
+because no class was given.  Here we test
+ddebug_client_module_protects_classes(), skip if so.
+
+Later, if any user/module wants to protect its classes, we could add a
+flag to ddebug_table, a means to set it from CLASSMAP_DEFINE, and
+check it when applying a classless query/cmd.
+
+CC: jbaron@akamai.com
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
----
- include/linux/dynamic_debug.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ lib/dynamic_debug.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 8043966a0fd6..80bcaad03400 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -339,20 +339,20 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
-  * (|_cls):	adds in _DPRINT_CLASS_DFLT as needed
-  * (|_no_desc):	former gets callsite descriptor as 1st arg (for prdbgs)
-  */
--#define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {	\
--	DEFINE_DYNAMIC_DEBUG_METADATA_CLS((id), cls, fmt);	\
-+#define __dynamic_func_call_cls(id, cls, fmt, func, ...) ({	\
-+	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);	\
- 	if (DYNAMIC_DEBUG_BRANCH(id))				\
--		func(&id, ##__VA_ARGS__);			\
--} while (0)
-+		func(&(id), ##__VA_ARGS__);			\
-+})
- #define __dynamic_func_call(id, fmt, func, ...)				\
- 	__dynamic_func_call_cls(id, _DPRINTK_CLASS_DFLT, fmt,		\
- 				func, ##__VA_ARGS__)
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index c44502787c2b..13de0dd3a4ad 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -193,6 +193,17 @@ static int ddebug_find_valid_class(struct ddebug_table const *dt, const char *cl
+ 	return -ENOENT;
+ }
  
--#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) do {	\
-+#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) ({	\
- 	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);		\
- 	if (DYNAMIC_DEBUG_BRANCH(id))					\
- 		func(__VA_ARGS__);					\
--} while (0)
-+})
- #define __dynamic_func_call_no_desc(id, fmt, func, ...)			\
- 	__dynamic_func_call_cls_no_desc(id, _DPRINTK_CLASS_DFLT,	\
- 					fmt, func, ##__VA_ARGS__)
++/*
++ * classmaps-v1 protected classes from changes by legacy commands
++ * (those selecting _DPRINTK_CLASS_DFLT by omission), v2 undoes that
++ * special treatment.  State so explicitly.  Later we could give
++ * modules the choice to protect their classes or to keep v2 behavior.
++ */
++static inline bool ddebug_client_module_protects_classes(const struct ddebug_table *dt)
++{
++	return false;
++}
++
+ /*
+  * Search the tables for _ddebug's which match the given `query' and
+  * apply the `flags' and `mask' to them.  Returns number of matching
+@@ -206,7 +217,7 @@ static int ddebug_change(const struct ddebug_query *query, struct flag_settings
+ 	unsigned int newflags;
+ 	unsigned int nfound = 0;
+ 	struct flagsbuf fbuf, nbuf;
+-	int valid_class;
++	int slctd_class;
+ 
+ 	/* search for matching ddebugs */
+ 	mutex_lock(&ddebug_lock);
+@@ -218,21 +229,26 @@ static int ddebug_change(const struct ddebug_query *query, struct flag_settings
+ 			continue;
+ 
+ 		if (query->class_string) {
+-			valid_class = ddebug_find_valid_class(dt, query->class_string);
+-			if (valid_class < 0)
++			slctd_class = ddebug_find_valid_class(dt, query->class_string);
++			if (slctd_class < 0)
++				/* skip/reject classes unknown by module */
+ 				continue;
+ 		} else {
+-			/* constrain query, do not touch class'd callsites */
+-			valid_class = _DPRINTK_CLASS_DFLT;
++			slctd_class = _DPRINTK_CLASS_DFLT;
+ 		}
+ 
+ 		for (i = 0; i < dt->info.descs.len; i++) {
+ 			struct _ddebug *dp = &dt->info.descs.start[i];
+ 
+-			/* match site against query-class */
+-			if (dp->class_id != valid_class)
+-				continue;
+-
++			if (dp->class_id != slctd_class) {
++				if (query->class_string)
++					/* site.class != given class */
++					continue;
++				/* legacy query, class'd site */
++				else if (ddebug_client_module_protects_classes(dt))
++					continue;
++				/* allow change on class'd pr_debug */
++			}
+ 			/* match against the source filename */
+ 			if (query->filename &&
+ 			    !match_wildcard(query->filename, dp->filename) &&
 -- 
 2.49.0
 
