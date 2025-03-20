@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-569203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE5DA69FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:42:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121F8A69FDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C77346151D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61993AD250
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0751DF972;
-	Thu, 20 Mar 2025 06:42:11 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10AB29A0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEA51EDA1A;
+	Thu, 20 Mar 2025 06:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hriKurFW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEB279C4
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742452931; cv=none; b=lRjpWGXMu8b0rn9BaYAJ3r2a5Yw+d5chk7igvkAht4BzgD8OzdBooUwb81hR7bJ69ctFED2Mq6ZieacIShlkDgPaq+tRhQ5cLLKWpowntcf5MCKDA0hDSW8FkXy7qmPJNYLbJc6OabN6v7vzaTuOjIr0fZvkkyhpMCtx9Iv0t2o=
+	t=1742452555; cv=none; b=MyVwi/T9fdrrGmVP/aGw7McWkPR6qdogTJNAkuHUQkv4jTVb6F9q0jSvnmexAQOP1J7DIDq1IuSA7gYVIrKCpulpgJJBX9UIaAulnloJokm5G3FERrC9z/M3E1pAEOFxlPJBv0vDZ0GKtctu7357wdHHxmE6WCllY02L6t0fJZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742452931; c=relaxed/simple;
-	bh=FUzJ9jmM6F97ERSY8jwNCIx2978t1zJTWOPpNILMHjo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rdwRfWGcKsRdVJLfn7AwQieE+wReujPsApu69SkzT4rO5ag4fRvPch8dRfYIgrs7pziSivE1OXH5iyGj7lMfPYG5MxtzZVDplgPFFGBfRG8sdQ6QbS+Ma7DaGHwAyPvqDb7zP7WKrFwwLDTSWPQPgJdmOt8+EpyuqGZ2ki+xsDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id A16057C0115;
-	Thu, 20 Mar 2025 14:36:35 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain (unknown [111.48.58.12])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1609374T281456747934064S1742452594471158_;
-	Thu, 20 Mar 2025 14:36:35 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:shaopeijie@cestc.cn
-X-SENDER:shaopeijie@cestc.cn
-X-LOGIN-NAME:shaopeijie@cestc.cn
-X-FST-TO:kbusch@kernel.org
-X-RCPT-COUNT:9
-X-LOCAL-RCPT-COUNT:3
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.58.12
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<ba8584b988ac8f78fbffabd1439a33d6>
-X-System-Flag:0
-From: shaopeijie@cestc.cn
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	zhang.guanghui@cestc.cn,
-	gechangzhong@cestc.cn,
-	Peijie Shao <shaopeijie@cestc.cn>
-Subject: [PATCH] nvme-tcp: fix selinux denied when calling sock_sendmsg
-Date: Thu, 20 Mar 2025 14:35:23 +0800
-Message-ID: <20250320063523.2201926-1-shaopeijie@cestc.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742452555; c=relaxed/simple;
+	bh=szwn4Bj/PLXzPNZdH0y+zZEVHCkEJQZXEyGBSUkWYuU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BPbpjrVMWWai1GlGepDcuTTN8bCJicizUcjAIe+UvguYQsUBruF9hYlW0npfRHxVCwac4ZDj4RPDyoLd3MfPzQG8n+LX3B0BzG0nwkJIqKNZGDIjH0RxHBniymEPTq/xM8vVRyhNALS/Cz41kCdykLvNeyamEgm9oKrGVtH4HLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hriKurFW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAE5C4CEEC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742452554;
+	bh=szwn4Bj/PLXzPNZdH0y+zZEVHCkEJQZXEyGBSUkWYuU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=hriKurFWsfSomsK7L1cARccJyhdGUfqrdimlzk3C8I3tyYuf9crM/vgwdkhKQoNKA
+	 u+JBuiKLUxxLGadIAeEcyVBPJdrXE0sJogbBbsCKT0Z+BOMWJy+bnnxtQzptTDMgzO
+	 SDS5ZBI+9wZ/lWw2tp/wHDPW1Qv7b8pxYr/cwGFVZVvgsXvoqMnJqi6fOeAmmvwzun
+	 4Sxl2x9umSirtAC8jIFDGAoA9lSCGz6mDVTdlfZdvJwofQuWxEtT9O/giycs4476r1
+	 fAxDxNtyS+/FhYU1FGenbAdbAuddrRM1HIvkb2HWOkAlawsCKiwY8SnlVblTr7EN8a
+	 hmleDNSQbm1Ag==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id D13121200068;
+	Thu, 20 Mar 2025 02:35:53 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-10.internal (MEProxy); Thu, 20 Mar 2025 02:35:53 -0400
+X-ME-Sender: <xms:SbfbZ9E0Mffxbs1zs9rFEMFzbL2njv02GbVegGupSQVdcTzzCeSu8A>
+    <xme:SbfbZyVfCaxE29fd88NMBjDmjPUdWHT9SP7_YiqJdzvX5vjHSiRswyORp4BCW_6Z5
+    4sP25dPey9Y2OQ9h_E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejhedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedfnfgvohhnucftohhmrghnohhvshhkhidfuceolhgvohhnsehkvg
+    hrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeevffelgfelvdfgvedvteelhefh
+    vdffheegffekveelieevfeejteeileeuuedvnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheplhgvohhnodhmvghsmhhtphgruhhthhhpvghrshho
+    nhgrlhhithihqdduvdeftdehfeelkeegqddvjeejleejjedvkedqlhgvohhnpeepkhgvrh
+    hnvghlrdhorhhgsehlvghonhdrnhhupdhnsggprhgtphhtthhopeejpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprh
+    gtphhtthhopehjghhgsehnvhhiughirgdrtghomhdprhgtphhtthhopehlvghonhhrohes
+    nhhvihguihgrrdgtohhmpdhrtghpthhtohepmhhitghhrggvlhhguhhrsehnvhhiughirg
+    drtghomhdprhgtphhtthhopeihihhshhgrihhhsehnvhhiughirgdrtghomhdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:SbfbZ_IY9W6f_dGfzwoi3HrXpdvBzfF-MIBCX0DbK0tsOqmwyU3_Jw>
+    <xmx:SbfbZzF3wJKgf7tx7bMVRIJNOh1fGMUVlBIH33-vS-aMk8sCyP9fLQ>
+    <xmx:SbfbZzWKeAJe5hMaI-C6h9aG0RjHJ1VoMFjSEIEbsU1acv8ssTFLUg>
+    <xmx:SbfbZ-MSQTlxdYEjZPtDfhxq0yci9ablpL5-4M8_1MDdhVLoRlQhpA>
+    <xmx:SbfbZy2Ojo1tiqsp6lKI0waiBE7_CdYarsraM9sTFbswRWGd1DbCKdt8>
+Feedback-ID: i927946fb:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A85A11C20066; Thu, 20 Mar 2025 02:35:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-From: Peijie Shao <shaopeijie@cestc.cn>
-
-In a SELinux enabled kernel, socket_create() initializes the
-security label of the socket using the security label of the
-calling process, this typically works well.
-
-However, in a containerized environment like Kubernetes,
-problem arises when a privileged container(domain spc_t)
-connects to an NVMe target and mounts the NVMe as persistent
-storage for unprivileged containers(domain container_t).
-
-This is because the container_t domain cannot access
-resources labeled with spc_t, resulting in socket_sendmsg
-returning -EACCES.
-
-The solution is to use socket_create_kern() instead of
-socket_create(), which labels the socket context to kernel_t.
-Access control will then be handled by the VFS layer rather
-than the socket itself.
-
-Signed-off-by: Peijie Shao <shaopeijie@cestc.cn>
----
- drivers/nvme/host/tcp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 327f3f2f5399..71f7045881eb 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1790,7 +1790,8 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
- 		queue->cmnd_capsule_len = sizeof(struct nvme_command) +
- 						NVME_TCP_ADMIN_CCSZ;
- 
--	ret = sock_create(ctrl->addr.ss_family, SOCK_STREAM,
-+	ret = sock_create_kern(current->nsproxy->net_ns,
-+			ctrl->addr.ss_family, SOCK_STREAM,
- 			IPPROTO_TCP, &queue->sock);
- 	if (ret) {
- 		dev_err(nctrl->device,
--- 
-2.43.0
+X-ThreadId: T206c77f1cb322050
+Date: Thu, 20 Mar 2025 08:35:32 +0200
+From: "Leon Romanovsky" <leon@kernel.org>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Jason Gunthorpe" <jgg@nvidia.com>, "Leon Romanovsky" <leonro@nvidia.com>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Next Mailing List" <linux-next@vger.kernel.org>,
+ "Michael Guralnik" <michaelgur@nvidia.com>,
+ "Yishai Hadas" <yishaih@nvidia.com>
+Message-Id: <64f58e2e-3081-4523-af37-b6c344ea301d@app.fastmail.com>
+In-Reply-To: <20250320120823.588aa58e@canb.auug.org.au>
+References: <20250320120823.588aa58e@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the rdma tree with Linus' tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
 
+On Thu, Mar 20, 2025, at 03:08, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the rdma tree got a conflict in:
+>
+>   drivers/infiniband/hw/mlx5/mr.c
+>
+> between commit:
+>
+>   cc668a11e6ac ("RDMA/mlx5: Fix a race for DMABUF MR which can lead to 
+> CQE with error")
+>
+> from Linus' tree and commit:
+>
+>   24d693cf6c89 ("RDMA/mlx5: Fix cache entry update on dereg error")
+>
+> from the rdma tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> -- 
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/infiniband/hw/mlx5/mr.c
+> index 753faa9ad06a,2080458cabd1..000000000000
+> --- a/drivers/infiniband/hw/mlx5/mr.c
+> +++ b/drivers/infiniband/hw/mlx5/mr.c
+> @@@ -2023,8 -2031,7 +2032,9 @@@ static int mlx5_revoke_mr(struct mlx5_i
+>   	struct mlx5_ib_dev *dev = to_mdev(mr->ibmr.device);
+>   	struct mlx5_cache_ent *ent = mr->mmkey.cache_ent;
+>   	bool is_odp = is_odp_mr(mr);
+>  +	bool is_odp_dma_buf = is_dmabuf_mr(mr) &&
+>  +			!to_ib_umem_dmabuf(mr->umem)->pinned;
+> + 	bool from_cache = !!ent;
+>   	int ret = 0;
+
+LGTM, Thanks a lot.
+
+>  
+>   	if (is_odp)
 
