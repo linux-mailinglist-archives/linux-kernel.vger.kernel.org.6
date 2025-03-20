@@ -1,117 +1,146 @@
-Return-Path: <linux-kernel+bounces-569842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BEDA6A868
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:25:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A84A6A836
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EEF41888B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2624C8A7700
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA47224248;
-	Thu, 20 Mar 2025 14:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E57F22157F;
+	Thu, 20 Mar 2025 14:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5HAxdiy"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WIZ82fuy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA397FBD6;
-	Thu, 20 Mar 2025 14:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ADB22259C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480152; cv=none; b=R9GaASNUAV/JK3Wi+ZQh2mPGKeCTLxD28nDak52PEbbNEI+A7i6dUn4k4rJLNoeVl1RcVLTwqltN5C9nWT9qMd86yFD64gEOUqbowqOnkTlFgSP+YNsO2N2qdlpAzB6NUVioPkS4XJYy4GgsiEVfCcSJtJ4BY+EyN8U00X/qPJk=
+	t=1742480205; cv=none; b=ioF0k+sEdj+zxr3viEqsXeExvTvWgekvjiXkqFmR7/GO5T5a5CMJ88q20pAUPuOHS9WGWES8XSDov9NYkVhEOBLzf0UEhmwRK7rd9fOYB/5AYThcxLbbX3lTVKeNRgmjg/+xWiCyOUSEWDsogX1/83p18uw+riLgLtUZDw/utXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480152; c=relaxed/simple;
-	bh=jdSpzcpFMSxD+yHrtxtYUj7JjrIBKbvo4JpzpwSGQ0o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pCeBxRobevqkcAz8iVx8AGQBfXm5FqW/8yCYBJtnZJA/BEZkKOyndWCTB6JqfdypkE8jdtw81GC+AhdYivLWd6YyD74irHpYTwnjzCuPwyUqZW9CBfZ5PlG6WbPmt8C5SVE4XdXAJBm6enFQTaHD4deIgs9NBlSI4s7/T8TfSwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5HAxdiy; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30c461a45f8so9176361fa.1;
-        Thu, 20 Mar 2025 07:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742480148; x=1743084948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jdSpzcpFMSxD+yHrtxtYUj7JjrIBKbvo4JpzpwSGQ0o=;
-        b=X5HAxdiyMyGD5HhpMA0Q4ZzG/ZKbfDnPglF7/lgkf6zGHJOGsoRA1w6nSQG3BaAeWZ
-         O/Xik50J4KXMxn+rlzS7/ZmX5Cg30O796pWmAI+F7qZihAR+JcwJX8boisVGdg8+B+Qd
-         RuL1F+5yc4z56Qf+XY0aORzaW+kBAglHJ7BEUzWecekJuHtG4uqKGTqQUuE6YKKUmBLW
-         XzGEEblmhkE6ltjWsygwN80LOK7c4YL5o/MwEFEXT0diXzcrSnbheVwixFfPiJCFsntx
-         ET54D5dKx9Tt4eDLXUC0nGU7Jya2SKqC06whKv5Zz0vcreq+8whjk3DH5sF708vkbIFa
-         cUxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742480148; x=1743084948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jdSpzcpFMSxD+yHrtxtYUj7JjrIBKbvo4JpzpwSGQ0o=;
-        b=WgdeYpaoFq5qzAAONH28isy0a6tr4k6omk606Kv55DL82WZWaHDum56wdtPm4HM2Wg
-         1dWr0fU5h5dgG5LARyVKjFJI6Uf1Z4aEpDrs0P13uSaX3ZoCWgAn1nYk9fJ6rYZf2ih2
-         rdwXuIv1cjsFqm0VMZnu27maiTOwUsPz/q1x4gOQV3V+K+6AGtAtbmzn/prRbq53IKTq
-         1Dc6XI59KseUQ5xtFZys2MW55GYqi5yIVRzygqsIqQCXdINAV4xdbqXypdAV51sQDzC6
-         ImLKzomVIO/Lovnn24jCILJvR6TEK9XnxEP/7CIJCeHsQCidWJEomIDzsxFlRGXcHr9e
-         7r5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUCfhmXY8BRT2aQWUZQ5hGb9EZC1KITt3QTqH8HHxE/T9SnUe0o4u6gCTwDAvsdYzpVSrySGCthc/i8wGk70rs=@vger.kernel.org, AJvYcCXyZCk+Xqho4Uw2HbNl/LnS/bd0zmUJKWYuctVD7D2fMJCWMC0eE66CoenijonZujeW7KDbDS9wL8WGJ+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrY/gy9rFyrNdfTUKxTlnWyhYDYCetHFJ52/MR5OrsdDNwdnWJ
-	45aWPwcv4WAMrP2FEDcb9uBJFMBFJawzWdn2Qk6F2VdOtQn6mDY8pf0ncJwqAVdGtsQh6GqFcjf
-	SMFsVd5Okk2X7xuGngAw4onYCZ68=
-X-Gm-Gg: ASbGnctSaDym91m1bkRgeL+8ZMmPhKun4zF4Y2BQneFYbavd8ZRd7oGI/fy5rftEri2
-	0ZD2Zc9QzXpj/KthWrr+MU1on1Xx3mi849lxqQ3wfGmhZJGkBQMwVOfvAKndNqJqd8M801lhYl9
-	URiFyQRiQSRBw/6sbkNH7Qt+Dv4n6jaNwMssuh7+zEzw==
-X-Google-Smtp-Source: AGHT+IEFnvDpyUhpQ0aq5SjcgsYomornya+aah0zvslRXJWqXW8zpVnOjTwNC1PWjWbtDIKQA9FXGFP+BM6hudsprBc=
-X-Received: by 2002:a2e:b88b:0:b0:30d:7c13:8a88 with SMTP id
- 38308e7fff4ca-30d7c138ae1mr1309301fa.7.1742480148246; Thu, 20 Mar 2025
- 07:15:48 -0700 (PDT)
+	s=arc-20240116; t=1742480205; c=relaxed/simple;
+	bh=J8LnsHeJmO0fVH7avVIr14dMWf0HIdoxRIKRn5jvHL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvJbCRv+gyiemPtSlvP3HHmwjSqdI0IUjj7rxj6A/3Cr7x1pLVLDwogepmPBQxs4gXIgjqwl4seV8hvvMLw9cTINR4P48kKwLWsv6A9TPHEcxsyfDVlu6pjp3I0x0Lhf3Zbrjl4x7O3G2zQ6M3qCAw2w91YoOkWdffpiSaCyumI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WIZ82fuy; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742480204; x=1774016204;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J8LnsHeJmO0fVH7avVIr14dMWf0HIdoxRIKRn5jvHL8=;
+  b=WIZ82fuyLFuYw5K1JPBiuBHE23OthkK0Zq6J+6oga77OYU1oDsUhu1OE
+   8ZXCqQvP7ros5RI/xMm+ABVzyhGurOClOPwaYG+d4+YIz+sVcthaNSYDx
+   ePlxKv4qaEZDqYNKF02Rclv8hBFNls7OM/y0woCmHRKduo11dTZNrnn8U
+   9Horq+CyXbS9wrqmgHO9+9fWFVpovTG4jlU0N3MEUFRje9ukr+dg5d2qF
+   y4osLnW0xyO3x8Fty6XgBOccW8dhi5Szm1M0cC6rTKlOMbMrVfq8wE9UC
+   8f1gVsP5ri320YyQQub3L6PMs9ktpC375ve5vA5Xn1PcQexhQCrBjr6j0
+   Q==;
+X-CSE-ConnectionGUID: cLmJeSvgSDeFdCm4CtJB4A==
+X-CSE-MsgGUID: IMcebxQHQVSBx5DADtEN4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="61104402"
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="61104402"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 07:16:43 -0700
+X-CSE-ConnectionGUID: IBkT1U8LS3GJrfbOkn8yJw==
+X-CSE-MsgGUID: QsazBzbgTKyjCXEAhTHS4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="127942854"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 20 Mar 2025 07:16:37 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tvGhF-0000UR-2H;
+	Thu, 20 Mar 2025 14:16:33 +0000
+Date: Thu, 20 Mar 2025 22:15:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, graf@amazon.com,
+	akpm@linux-foundation.org, luto@kernel.org,
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, dwmw2@infradead.org,
+	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
+	corbet@lwn.net, krzk@kernel.org, rppt@kernel.org,
+	mark.rutland@arm.com, pbonzini@redhat.com,
+	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org,
+	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org,
+	saravanak@google.com, skinsburskii@linux.microsoft.com,
+	rostedt@goodmis.org, tglx@linutronix.de
+Subject: Re: [PATCH v5 01/16] kexec: define functions to map and unmap
+ segments
+Message-ID: <202503202151.vHOV0UKU-lkp@intel.com>
+References: <20250320015551.2157511-2-changyuanl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319-pin-init-internal-quote-v1-1-19de6a33a257@gmail.com>
- <D8L34IUZGXWX.D2LSS2S2NAN7@proton.me> <CAJ-ks9nTmno12ZC4DnLxV_b0NLUK5Kn5K+cRi4BEvKtveQzJjg@mail.gmail.com>
- <D8L5JXRXHX0N.UIFZ5M15FB3S@proton.me>
-In-Reply-To: <D8L5JXRXHX0N.UIFZ5M15FB3S@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 20 Mar 2025 10:15:12 -0400
-X-Gm-Features: AQ5f1JqlJFQi6BV6NIpZvwrqkCi2Dgkd4NnCLQajuoYyZ5aMPFD7lL3SZi06-xY
-Message-ID: <CAJ-ks9mwNiJbr4MN5jfr7KCJc8j=B5=MUfX9XfhPg6yeRiFK=g@mail.gmail.com>
-Subject: Re: [PATCH] rust: pin_init_internal: fix rust-analyzer `mod quote`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320015551.2157511-2-changyuanl@google.com>
 
-On Thu, Mar 20, 2025 at 10:10=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> On Thu Mar 20, 2025 at 2:31 PM CET, Tamir Duberstein wrote:
-> > On Thu, Mar 20, 2025 at 8:16=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >> I'd rather not have this change, since this will introduce a dangling
-> >> symlink upstream [1].
-> >>
-> >> [1]: https://github.com/rust-for-Linux/pin-init
-> >
-> > I agree it's aesthetically displeasing. I'm not aware of any
-> > alternative that fixes the development workflow of this crate in the
-> > kernel.
->
-> I don't think it's too bad, and this code is going away soon-ish
-> anyways.
+Hi Changyuan,
 
-What would Andreas say? :)
+kernel test robot noticed the following build warnings:
 
-I don't think the going away soon argument is relevant in this case -
-the same applies to the dangling symlink.
+[auto build test WARNING on a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Changyuan-Lyu/kexec-define-functions-to-map-and-unmap-segments/20250320-095900
+base:   a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
+patch link:    https://lore.kernel.org/r/20250320015551.2157511-2-changyuanl%40google.com
+patch subject: [PATCH v5 01/16] kexec: define functions to map and unmap segments
+config: i386-buildonly-randconfig-002-20250320 (https://download.01.org/0day-ci/archive/20250320/202503202151.vHOV0UKU-lkp@intel.com/config)
+compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503202151.vHOV0UKU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503202151.vHOV0UKU-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from kernel/reboot.c:13:
+>> include/linux/kexec.h:479:47: warning: declaration of 'struct kimage' will not be visible outside of this function [-Wvisibility]
+     479 | static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+         |                                               ^
+   1 warning generated.
+
+
+vim +479 include/linux/kexec.h
+
+   466	
+   467	#define kexec_dprintk(fmt, arg...) \
+   468	        do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+   469	
+   470	void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
+   471	void kimage_unmap_segment(void *buffer);
+   472	#else /* !CONFIG_KEXEC_CORE */
+   473	struct pt_regs;
+   474	struct task_struct;
+   475	static inline void __crash_kexec(struct pt_regs *regs) { }
+   476	static inline void crash_kexec(struct pt_regs *regs) { }
+   477	static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+   478	static inline int kexec_crash_loaded(void) { return 0; }
+ > 479	static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+   480	{ return NULL; }
+   481	static inline void kimage_unmap_segment(void *buffer) { }
+   482	#define kexec_in_progress false
+   483	#endif /* CONFIG_KEXEC_CORE */
+   484	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
