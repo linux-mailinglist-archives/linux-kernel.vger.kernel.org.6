@@ -1,121 +1,211 @@
-Return-Path: <linux-kernel+bounces-570420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496C5A6B023
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:47:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61038A6B01D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323DF3BE929
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA1517B2C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAFF22A4F8;
-	Thu, 20 Mar 2025 21:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C5F22A7E8;
+	Thu, 20 Mar 2025 21:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHJklZCd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q2/XNyZf"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C307B21D59B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742507193; cv=none; b=NqTDNyG2yLC6vH0dKSp/bBf2N/9eTdkQXhBm6//ZdOMQEd+KkRA5bUYu5y6snRNAkuQ77ok/vKXJE3Z1z8rxW0O44AjPnPSkzjukTvNEKHjRmK8Sik4zeUVg8l85BboqeRUnDSRkC2RsipSB3hh26/eYGXjldedoUFMKAghcY1M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742507193; c=relaxed/simple;
-	bh=fG6ALNWknG0HB6n9+duDH0Qkh+TNCnyz7MyjxbEtwuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fsVQMQjs4sxeZKtSoQIP2tUOkm9qpn7u6oGHTa7Glq+XS4Xu0/MQ3MrjZD9uLLoIA9BpRQ0WEPyGU9DhKHQHlQy8IQNj90E33V6Wis5w22cre7fCifCilZbxXtWn3XjbWkOm+s8alswSbR6CczTAZlDtXDbD6Gqy9hrrCsg6+5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHJklZCd; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742507192; x=1774043192;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=fG6ALNWknG0HB6n9+duDH0Qkh+TNCnyz7MyjxbEtwuw=;
-  b=FHJklZCd807Q6toCVqkM8uiWnO6H06JiErGhfn3MN3O/3NdW06JNSM+q
-   yDAg5vGKaliOVYhVd1ktn8x6qbMu9TJ2rbeHoti2w24XKr2lPwi6Td6c8
-   6OBt/trOQ1tqYLBrmuYXdBCf2kATpOE/KsbxNp93MCC01f4HMdjyEtAGh
-   n6tVX5GCofrks71rZ0oFzsp+v61jvhUNttdzaU4cFz8Lgw/l6r/n/g9Ne
-   dcFJWhRhKfR5BTkLGd+VBuLusYK83NfM8D9/3alI8Lqil/tFoQGZySKiw
-   Yr7hPR6m92B5ve3wshKAkm+DDJCHVjItrUUkWzt4pPxomwnpoAdVkEyYL
-   w==;
-X-CSE-ConnectionGUID: W8piFuBcSXe/9daxE6/0sQ==
-X-CSE-MsgGUID: PIru6bTTSWOXbYvrR0jQUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="46517514"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="46517514"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 14:46:31 -0700
-X-CSE-ConnectionGUID: OsqT4JVtQGqk2/ZBqE/ETg==
-X-CSE-MsgGUID: aCil67QeQCu+MRqe8eUexg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="160449884"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 20 Mar 2025 14:46:29 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvNid-0000nP-09;
-	Thu, 20 Mar 2025 21:46:27 +0000
-Date: Fri, 21 Mar 2025 05:45:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Stafford Horne <shorne@gmail.com>, Rong Xu <xur@google.com>
-Subject: (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26
- against `no symbol'
-Message-ID: <202503210518.c0mKdawI-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151AD22A1F1;
+	Thu, 20 Mar 2025 21:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742507180; cv=fail; b=kSUvwUOaGI6Git8XolvgQ6FAJUHPKQaoqJYyISCLtMpsKcFY/gkxs9vaJgr6d3sZz4P3n63dTJ6hvEkkKVY0xuxO0rblZBDmqoSz7UoVp68+Lj2S91ydoIRg+PBn6sKWG9QmtTKdUVaEvLQejOiAQQcPgpYNTMi58+bpDmnhBfA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742507180; c=relaxed/simple;
+	bh=k1zpudFlRRy5AErHv1BwBk6rRrlfNlpVde+HofJgiww=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ht+rooZf/K+wBUu6chQN/2y/Wu/Fb7mopM+NvPY45x+RO3OBxF8OG0F8QmtgANc9zGol/ABSgpuJCLvjV1Sgd766+iZ6TsgXslgwT2edPOpBFgnMl0Gal8LvtxSCUnsTD1wlfUdRVhEvgRNjjA2V6jnXJwVQc60NKyagJmNcsp8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q2/XNyZf; arc=fail smtp.client-ip=40.107.220.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gmbMrl0o7au0AzWa0Zl2rEozDO7mra+Iv0Nc6OqlKmrKc/reMnfIDtZgHmhSKDLy95u7RhYybv1PWoCUP896qZnXq94iMhspzi23DwYR4NHhrj3sOhi2EmiqE1Q/70U0lfdKisZzRx2M8agCud8TsBnwxRn2tkyyxOqD79AoejEY1SxdAsegbnzscTbIZRiudHmmihziSv/UM6+yviZH3Z3gU/YhOVXROzgL0DN5sdM0HDbOs7ydo6GKBKAOAEiHca+MNSOa0ua/hco3zTV+Z9TCw/pFn3b0DKklk+8WamxZe91pyVdwMPN9+2o2N5SABmnZ6PcvjUdZdRMIpgbroA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IhRwWkR1USp5++bNSwfD03w8OFFI+KV/toY7h+an+qc=;
+ b=cjFt3QD8dI3Wl6Tg4ul7KqTm7TOJzGkxCtqXQua0JuP16s2gOUikN/80MV/gBCUH/AStJ7qM80Agn2TvGAvOhWBy/YmaBE1vai2lXTAjOHf+SGC1dIY7UhSZuezKZvxbt2mM66lkoH/e+Pk1p08OGVrZhZGI16o7goMlPSZe91o/utqoFyiavtpsu4paonkUlJcIpNmc8mMRmaydHBgK3A6eaR9B4raCEIommrbJYkrEadL4fgfHv205yXu5jvlRKyYkPjjdDFduEtDBRB5uD3vt9S6HsSOXRtbObvWQbdyddC170Gqn2V4E8eLUeiKn+A2Fn6IGaqLenjhlDJsNxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IhRwWkR1USp5++bNSwfD03w8OFFI+KV/toY7h+an+qc=;
+ b=Q2/XNyZfmH5WpKr40UIFreX8bLdFpnvlwIOCupg+B1yCGZEqeEF1qHUj6iLt2ntMhOm3ETx0zOU+xKO6sMAOWzjqgDVNsRjbjIr3C9GidmM78qvxAr7g7KuGJRP0WCc7P3zUw46XLoBcaZJ3BcrZmXus7GUZeNKKdBqVi1l1cmU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ2PR12MB8689.namprd12.prod.outlook.com (2603:10b6:a03:53d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
+ 2025 21:46:15 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
+ 21:46:14 +0000
+Message-ID: <c7cbd33f-ec02-48f1-89f3-64182c19d89c@amd.com>
+Date: Thu, 20 Mar 2025 16:46:13 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 6/8] platform/x86: asus-armoury: add screen
+ auto-brightness toggle
+To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org
+References: <20250319065827.53478-1-luke@ljones.dev>
+ <20250319065827.53478-7-luke@ljones.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250319065827.53478-7-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN4PR0501CA0066.namprd05.prod.outlook.com
+ (2603:10b6:803:41::43) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ2PR12MB8689:EE_
+X-MS-Office365-Filtering-Correlation-Id: 394385dc-35c8-4932-6ab8-08dd67f8a36e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eUx1M2xEVkQ2U0VPTjA4U3dDb2Z6OGxrTFJWMVZxRGpmZE5zOW9UYkp2aUww?=
+ =?utf-8?B?NGZ4d3lhOC9VbjJsWDdHeWpudkI3cmt3KzNJSmVLSEhkWUk3eFJUb2lxSVFh?=
+ =?utf-8?B?SURYazJRV0ZMS1dqWkU3K3AwcUlwREowWFJNZlczMTRTWWgyd3BVd3g1OVZR?=
+ =?utf-8?B?SkNzWnU0YXkvMDdqQUVaME9FTTBsYWErZXpKbnpCSW4rWFk4Y1l3Ujg4ZTJw?=
+ =?utf-8?B?enZRQXl4QjlkNzlLYlh0L3M5NkVpR0hVeUZSTFdnc05YNUdKYkQrNUxneTBL?=
+ =?utf-8?B?dnBEWUtHaFV2K1lNVlg5RXg5QXZkQXRSU1N2Z1BuUXhTMmlkQzF0VGZXTXhF?=
+ =?utf-8?B?V3hwbzVBMzEwdXduNnlWK21kNjZQNnVnZDYraitCaUs3VzdUYXVvajBuUmRn?=
+ =?utf-8?B?UHF1NStONjQyYXVQKzV6cENveTFvTjhyYjRBNEtlMGdRODdtUmpHSnVWcFR3?=
+ =?utf-8?B?aS9pb1d5Rm1qNzJyWEdPSSsrK08xUmFlYXI3MjYzTCtOSTUwMEZFdklhc0lj?=
+ =?utf-8?B?T2l6NEdJalB0M1JwNEdYL21WSFlkdC9BcGt4NGlCUnFwOWdOaVR3WGtwckx1?=
+ =?utf-8?B?STYxa3JSQWJML3FuWXZoT2FYVWljcVRCRVpIMmZNdTM2RVdaMHRBTE9vdk5F?=
+ =?utf-8?B?Y0RNTlExcVN4SkxidDFnV0J4RS9TOURGTi92TkhyY1NYVGpldFVRa1JMMkV3?=
+ =?utf-8?B?MjFObjBYTTdDSE1tSHhLWXEwalp6RWRRZ0hFL0JOM3N1MXoySEd5MFhENkZB?=
+ =?utf-8?B?eDZHQUxnNVY5cFFKbUZtMEdlc2VQTVlMVTlWUlVJVzJTenlQNzFGN2tCVzNj?=
+ =?utf-8?B?T0lEbE11L0pIcDBiWGNuSWg2RVpiejg0bTZFY21sTWVvYWIraTYyanA5T21a?=
+ =?utf-8?B?ZmxCbjljU3pEbGdkU0hGc3RQUDZEdk94R0hlaTUvc0ZhVERHbGw5QW40clp1?=
+ =?utf-8?B?R095UE42R2IvZW5uUDhETUZWenVmMGJQV2xodldpVVhXRWZLOGRWN2VjZWxl?=
+ =?utf-8?B?eFlUdllnMkNMeXVTNTl2bUhiMVVmK2gvZFZlUUpsWkJNRk1LL3ZPMUpCL1hy?=
+ =?utf-8?B?eEl3REMzaXBkZ01tUmFmWU10di9ZSGp5VlJLV1RPeXY0RDhIbmFzVUo4TXNy?=
+ =?utf-8?B?T1NQcS8xc0xnTVp4MmN0ZUcyOWxocjFjTTJVVHczdHpiUEtRdlFPVkgxQjlm?=
+ =?utf-8?B?Zm5waGVtSzVSZWZYSWQvZjV5cWo4aVJEdExOTU5kWTVGWW12aVZBWnBYNW05?=
+ =?utf-8?B?RGljSU9GcWVqclBGQ2d2djZwNHVuZnRpZjlQMndhcnRHN2d2UkFGQ2FrbFRR?=
+ =?utf-8?B?ZS9yZXpkaEIySWlsNzNtdkRodnYxWFpnUW5UVkZ2TmdOREtsTGZkem1USG1O?=
+ =?utf-8?B?aW9Oem80MmlOUGFnUDhKalIyN29wTjkrS1FNSlUwQk5OaThHeXNtRlJVZXNz?=
+ =?utf-8?B?MGg5UEhGMHE2TisyWjB0bnhNUjRlK29ZQlBvM2J6YXdnOFljekdnZFFWMjhz?=
+ =?utf-8?B?RytPazB6WmU2TTZ1eU5DVXlrNWJOOHNqL3IvT002K2prT2Q3VDZhaUJnL2xa?=
+ =?utf-8?B?dFN1TE1xZTV0U29aZ0h0NUFhcDdtM3laTkZiekxXOTlHNExmNStTczcxWkFn?=
+ =?utf-8?B?aVJEcjB0OXRwT1A4MnBXekFTOWsvbkhlbmRMMWFVaXNVNGR4K0J3VTRBZWNp?=
+ =?utf-8?B?WStwTEZLekJFWEVhWVBRM0FZZUFaVDJuRGdLdXhYRTJEUVpsaWFnYmpSL3R5?=
+ =?utf-8?B?MFVsbjdqZVFXR2RXRE8veXdYQmMyNnU5OG1Bbno3TXFVMnlyZ2pZSU1tby9p?=
+ =?utf-8?B?aEpaRkZzK0ZsVmRxbXMzTmhoOEF4TjROdS85QnVFV2lZZjlsU0YreFRvS1R2?=
+ =?utf-8?Q?i1FCj9FkMJ/yg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MlZMT0l4VmJXRW41MDBsVHNya3IzSmR4MlFCTHlvbG9SKzFERFBKT0VLQVVH?=
+ =?utf-8?B?NzkvZjltZmJnaThpTU5sUVpvUklxMWlOVE51czYvZ1hGbUJJQ0MwWDRxNnZT?=
+ =?utf-8?B?NGJLUVBJTjhCM2NpcG9GQkN2ZjlwMVNXUVNzNHRlT2pEQjZWVmUvLysxV05n?=
+ =?utf-8?B?bGNKd1I5R1FuTTY1aDZDL0pEaWN4eHdZZFl0MVdMUFY3T1MyOE9aWWRlQkRs?=
+ =?utf-8?B?YkFIekVra0p5aGo0NzZtNkYwVkk5clEwUnQ5dkduMTNEWDNJNFdCSysxTTBq?=
+ =?utf-8?B?UXlMMUoxdjhqazk1Tmd5MzRkZU9HUTV0Q09rY2lTcDZsTXlDdFBwYXNMeVRp?=
+ =?utf-8?B?WDZXWlBvM04yUmtOT1hiakkwMlpGQzArU3lsMUtXNnlqNUNBTW9hTkFHdkNl?=
+ =?utf-8?B?ZHZ2NkEzRkR3eGVRd0JiNktQM01EZzFxMjF5UytNRXlxOEJGcWZPVnZYRnhZ?=
+ =?utf-8?B?QnNVMW9BcSt2WlZ4OXBod1d2Qy9rNFRsOWpVZXF5Z2JCdGUyL3FJdHNOZ3N2?=
+ =?utf-8?B?K3hQK3ZmTlVpQ2xXS05CRFBuUU5HMHExVnRkSSt6dXkxcWcyQjc4SVcrMUpn?=
+ =?utf-8?B?K3ZvSmtaZGdMZ3hJaVQ1WWtBSktQQUY3b0NTTTQyQ01DRlJwTDdlSEhmbjlP?=
+ =?utf-8?B?SnJOczI1S00vMUNKTGM1ZkwyY3RJMWs1M2NySDhJeDVEeEs4bFNKYnNKRHhE?=
+ =?utf-8?B?SDNjUkRpZk5YUzFNbUNBMlUzWDZZeFB4VXZ0OVhxUWpxYTBId2J6ZlR0bUNJ?=
+ =?utf-8?B?Y3pTMXVDNzNLZGhLMFlXTElXSGZ1a1Y5RURZdHRzVHpvR1dKUkJlQTErYi9H?=
+ =?utf-8?B?cTNVbTdERzhsanpSVmltSERpNVdGQ0J3Uzl1TlBDdmZmMENoT0M2MW16SUJ4?=
+ =?utf-8?B?TjZ5cE1IRExKTldiRlg1UCtTT1FERVMxM09qdEpvWWo0bnkxYlJYaGVzZVIx?=
+ =?utf-8?B?VDhKN3k3VVhwWUJWeVJ4RnAwYlFhcGVwQ0dLZjh2MC82OXpDUm9FTVBHaVFq?=
+ =?utf-8?B?RWIzUDRhbURVWkxvNEpYSXo5ZkovWDc1WFFEUHQzSVJ3aWQyNzl1U1hYd1R5?=
+ =?utf-8?B?UXJDTzhiNVJQZU9PTkhKTTBvYXUvczFtcHN6Wjk0aE1NVkJNL2NNdHpPZ2h1?=
+ =?utf-8?B?b0l0ZG8rVXI2ZmJhRlJHMUFuUWxweFdqYW5rZjQwUDJLRWhwNHBhVE5ZeENa?=
+ =?utf-8?B?dzBzbFpEMXVmYVBpTzNPYk12SG5WclJYR25TVDBZRVVQZWdUd2x4dUVKSGVj?=
+ =?utf-8?B?aU5wZzk5YXZNYVFsempPS0xVQ1BmYzFtRTJYaG9nZmo5YW1pSHlpZk96WHBz?=
+ =?utf-8?B?aHpzbGI5b0R3TUxoVTRjTjBrb0Z4V3FkWlJHZTQ3WHRJVWg2dGlXdHltajR3?=
+ =?utf-8?B?VVVZRFNUWXBKSVJERFE3aGt3ZDF4V0lWclMwNElKa3dFcC9uVitpSnZZWk9o?=
+ =?utf-8?B?dG05WEVpczY0Ylg2cHFWR2dpNFhyV0o2b1oyTGljUkdrL0JjckdRaFd3WldF?=
+ =?utf-8?B?R0FqdkV2Zk95Yk1STWJxbGNld1M3aUo0Y292QmtjbTltM2Z2NlJiZUQ5MTlq?=
+ =?utf-8?B?aXo1dWxYREw2bElTR2ZsSnpucDRzWWJZaFVVZEFSdDQzWGZFeU82QTRMbVBM?=
+ =?utf-8?B?dWdoSFIzZTJDcGx5cklxdHgwbGIxQ2ZLUk1uR0k0b0xvdUpsdGp3OVZ6K0Vx?=
+ =?utf-8?B?aXZOUUtWaC9MdkFZQ0ZQMEJJWGRzdWNHR0pLUEdHb1p4b3pha1BvbkxzYWFG?=
+ =?utf-8?B?VHBuT3l2RVhZbEFpeVpsejIyeUpFbm5wT1NFNldOR2xkZUp1VXc4L3lRRnkv?=
+ =?utf-8?B?Y1VRQ29wZGo4WXJPclY2ckpTYnR3bW54TWNZQkVtSldGM3YrU3lQb1hUYmg2?=
+ =?utf-8?B?ZHhyZUlUQjFWemZvQmVjUC90SzlobGh2MXhrZEQwMFBlOEltSis2WktrWGpv?=
+ =?utf-8?B?cXFEZEY1b215MnVsVFhiK01aVGlTODJwNGVVeHIrOU9Ta3NaUVpMRHRTYXRs?=
+ =?utf-8?B?YnpUQXp1dDVWMmc0czkwWUxUajBUUmdKbHpGUTcrSEZIWHpXYWFTS1N5Q2Zs?=
+ =?utf-8?B?VitST25kWlNMUTY5cmxmNzRZcENmbjhLQ09BaE80WFBnbHpRbEtXNExOZUxK?=
+ =?utf-8?Q?8dZYuL6HdaCque7N5/mhQ293K?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 394385dc-35c8-4932-6ab8-08dd67f8a36e
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 21:46:14.9266
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UE/cWTQ4SwsAqf+czvoV5pKel0IBF9jn1JTGVCZFTggtRg02K7exZouxuXaVV1b/KuiRzZNoDpPXdexsyJKQXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8689
 
-Hi Masahiro,
+On 3/19/2025 01:58, Luke Jones wrote:
+> Add screen_auto_brightness toggle supported on some laptops.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-FYI, the error/warning still remains.
+> ---
+>   drivers/platform/x86/asus-armoury.c        | 3 +++
+>   include/linux/platform_data/x86/asus-wmi.h | 1 +
+>   2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+> index b36e19b9d2bf..802c304e2ebc 100644
+> --- a/drivers/platform/x86/asus-armoury.c
+> +++ b/drivers/platform/x86/asus-armoury.c
+> @@ -752,6 +752,9 @@ ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
+>   		   "Set the panel refresh overdrive");
+>   ATTR_GROUP_BOOL_RW(panel_hd_mode, "panel_hd_mode", ASUS_WMI_DEVID_PANEL_HD,
+>   		   "Set the panel HD mode to UHD<0> or FHD<1>");
+> +ATTR_GROUP_BOOL_RW(screen_auto_brightness, "screen_auto_brightness",
+> +		   ASUS_WMI_DEVID_SCREEN_AUTO_BRIGHTNESS,
+> +		   "Set the panel brightness to Off<0> or On<1>");
+>   ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
+>   		   "Show the eGPU connection status");
+>   
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index e735f35b423c..92fea0710ada 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -83,6 +83,7 @@
+>   #define ASUS_WMI_DEVID_LID_FLIP_ROG	0x00060077
+>   #define ASUS_WMI_DEVID_MINI_LED_MODE	0x0005001E
+>   #define ASUS_WMI_DEVID_MINI_LED_MODE2	0x0005002E
+> +#define ASUS_WMI_DEVID_SCREEN_AUTO_BRIGHTNESS	0x0005002A
+>   
+>   /* Storage */
+>   #define ASUS_WMI_DEVID_CARDREADER	0x00080013
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5fc31936081919a8572a3d644f3fbb258038f337
-commit: a412f04070e52e6d6b5f6f964b9d9644de16bb81 openrisc: place exception table at the head of vmlinux
-date:   3 months ago
-config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20250321/202503210518.c0mKdawI-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250321/202503210518.c0mKdawI-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503210518.c0mKdawI-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/openrisc/kernel/head.o: in function `_dispatch_do_ipage_fault':
->> (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   (.head.text+0xa00): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   arch/openrisc/kernel/head.o: in function `exit_with_no_dtranslation':
->> (.init.text+0x21bc): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   arch/openrisc/kernel/head.o: in function `exit_with_no_itranslation':
-   (.init.text+0x2264): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   init/main.o: in function `trace_event_raw_event_initcall_level':
-   main.c:(.text+0x28c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strlen' defined in .text section in lib/string.o
-   init/main.o: in function `initcall_blacklisted':
-   main.c:(.text+0x6f4): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strcmp' defined in .text section in lib/string.o
-   init/main.o: in function `trace_initcall_finish_cb':
-   main.c:(.text+0x818): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
-   main.c:(.text+0x83c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
-   main.c:(.text+0x87c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
-   main.c:(.text+0x8a8): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/14.2.0/libgcc.a(_muldi3.o)
-   init/main.o: in function `do_one_initcall':
-   main.c:(.text+0xec0): additional relocation overflows omitted from the output
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
