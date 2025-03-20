@@ -1,101 +1,158 @@
-Return-Path: <linux-kernel+bounces-569416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633F8A6A2AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:32:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEC0A6A2BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:34:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AED8A5465
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76508A6164
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF5322256E;
-	Thu, 20 Mar 2025 09:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A68224240;
+	Thu, 20 Mar 2025 09:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXeUXtPE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bimXV2Oz"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5748C222560;
-	Thu, 20 Mar 2025 09:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41C5224251;
+	Thu, 20 Mar 2025 09:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742463089; cv=none; b=FoygxjMugPCSY/9E/WTv7Rq7w3WyRM59q7JcUwdcmgzegRY6orzHqDU0aQDEcvKFqRPsbx4uz7Hto91VPvI29c5/jA1nimPdyssG/XhzTtzfEtiZIKDEP8L02YVjulM0gEqikO297nThIK1U7liFXCfebNRXCEkUuqBd/w3W7JY=
+	t=1742463131; cv=none; b=Eam8y2qjyOyFuVrWlWC3MsnMbTiRbjGqjWhK0lsJi350ZZlyARQCgrt8/98T/JzhyPpPQAizjYtTfopTFUsgyDyRl/x16qm3XNnWKwZsaZmJcOIgBTJfXNeDHDFAsOwGdmcpFrOYDQd8IrkkQm+lQYRPprH3Zz7559Dmp69ZW4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742463089; c=relaxed/simple;
-	bh=l9eem7WJGYypfrHFJiimr1YXth3+uzyUvblKHYU1JeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3zmHsa//l6z+1/+1pjQuoX2Cz0exkSHTe7lcwuyc2JKPvJ6Jp382M2nPeLIepOSdQC4C1TiuokRU8Vmp+9/cKolMXDYSkFXLj4R8ZPs2N1jKhhcZJphv0AZCAHbUhrVRCRTP1W9FO1vtMbV5hIAYiHwjZ/Qv6YxQKlvf32G8gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXeUXtPE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77A8C4CEDD;
-	Thu, 20 Mar 2025 09:31:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742463088;
-	bh=l9eem7WJGYypfrHFJiimr1YXth3+uzyUvblKHYU1JeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NXeUXtPE6JVonW5rDIhp1JZVyg4q+rxLeJkeWKwRxe0N3QetCZ+WNlsU8VVZ8ZI8W
-	 JPjdtUfgOMSEMgRmrl/8igSZ1rNl197VPSAbTgmMY2u51EqM76RE2GSzRQKDLS22eH
-	 7gsBzF9uVsFRCtO7D1Xq7jvZO39EM6EDqmNjUyt4q3cxN43kEsXtoj60QVHZ972kDH
-	 Du5T1LPvNDr8gN4CzWteepf6bxtlxKCCwvoQMKAHzlSEnkeG9FLDtLColrpatXMzhg
-	 oPRV6+B9ZGqU3r4XeHCdL4S6/OLQtIt3W3ORZAg5ziDaYiIH7uLWZ0FO0iR+Qq8ixX
-	 Uo6tSWhp9yQFQ==
-Date: Thu, 20 Mar 2025 10:31:25 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, andersson@kernel.org, lgirdwood@gmail.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz, 
-	tiwai@suse.com, dmitry.baryshkov@linaro.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	johan+linaro@kernel.org
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: wcd93xx: add bindings for audio
- switch controlling hp
-Message-ID: <20250320-feathered-super-walrus-8eeef8@krzk-bin>
-References: <20250319091637.4505-1-srinivas.kandagatla@linaro.org>
- <20250319091637.4505-2-srinivas.kandagatla@linaro.org>
- <4ie22uuz5tpg77jto3c3hec6lhonr44hrjda7jk655axlaxvba@u3atd4gcyghn>
- <660115f1-d1fb-4fd7-a453-e8c177be9eed@linaro.org>
- <51dd7cb2-0c22-4043-b3a1-fa8410903cbd@sirena.org.uk>
- <938cb09f-3fb1-4daf-802d-2d95222f30db@linaro.org>
+	s=arc-20240116; t=1742463131; c=relaxed/simple;
+	bh=tHuvJnP4uRK63orzy6zArkuxjyWYWccb/DmPEXCqXuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ECDbMPL4KhWrlxnGnYHDGL+qg6eTdDwAVLvgAQpFAC8tF+ypPsbF5VfiQ2OBODDViEFlcFTPr8jsx9oBUEBsBwPweAQMJf+5fcfiqhJ+SvR70cX7GqmpV3ximYCSSN6RjA0kXEUrVMvxQWTlXTqh0htS9Et5dFVjW4Rr9iaaD88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bimXV2Oz; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742463125;
+	bh=8uxhXqcFzCfeFQ8k22+d/lRU0NYGv1JJCI64sK3b1sY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bimXV2Oz/et+qpkp60c153GCGITWCqyp7W96swbvTLvv3SeK3fXRCuFM2mRAgQaIR
+	 V1QClx42tVLdzp+WxpfwZLxkCwVuGsvVwgSbSCo9P2N8Zc0FpC55za7dmAJs0O3TmM
+	 gHQnpN9rcUgOhRa7m7ZFpol2C7kpEnedCLkVQ89INQ/X00o3Ggh3rCfcifw7gxTfqq
+	 8vITmqNBOZER1QZTkMV99zPkF9HHAddnHLar0iODi2BqHcbIehtzpmcmosXBqRxPrj
+	 /4CV5zdxv8AruO7EuaYh519gBeZEiCxPHgwY6oYI+vAAWBRmNMP2c/g/vFu2g5smYf
+	 AX1n+qMgHH8lw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJL2F0Vwkz4wj2;
+	Thu, 20 Mar 2025 20:32:04 +1100 (AEDT)
+Date: Thu, 20 Mar 2025 20:32:03 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kvm-arm tree
+Message-ID: <20250320203203.1de92b98@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <938cb09f-3fb1-4daf-802d-2d95222f30db@linaro.org>
+Content-Type: multipart/signed; boundary="Sig_//o_m+Z2CJp8xH/O=gM6kZ0E";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Mar 19, 2025 at 06:00:51PM +0000, Srinivas Kandagatla wrote:
-> 
-> 
-> On 19/03/2025 16:03, Mark Brown wrote:
-> > On Wed, Mar 19, 2025 at 03:59:23PM +0000, Srinivas Kandagatla wrote:
-> > > On 19/03/2025 10:01, Dmitry Baryshkov wrote:
-> > 
-> > > > Is this regulator supplying the codec or some external component? In the
-> > > > latter case it's likely that it should not be a part of WCD bindings.
-> > 
-> > > This is regulator powering a mux that is driven by gpio which is part of
-> > > codec binding. So I would assume this will fall into the codec.
-> > 
-> > > Where would we fit this if not part of codec?
-> > 
-> > > Unless we mark this regulator as always on.
-> > 
-> > I would expect that the mux would appear in the DT and consume both the
-> > GPIO and the regulator.
-> Yes, its doable, so we would endup with a mux driver consuming regulator and
-> gpio and move the gpio handling in codec to move to use mux control.
-> 
-> Let met try that and see how it looks like.
+--Sig_//o_m+Z2CJp8xH/O=gM6kZ0E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looking at schematics this is clearly not a supply of a codec, but as
-Dmitry said, separate switch. Actually two switches.
+Hi all,
 
-Best regards,
-Krzysztof
+After merging the kvm-arm tree, today's linux-next build (arm64 defconfig)
+failed like this:
 
+arch/arm64/kernel/cpu_errata.c: In function 'has_impdef_pmuv3':
+arch/arm64/kernel/cpu_errata.c:279:38: error: passing argument 1 of 'is_mid=
+r_in_range_list' makes pointer from integer without a cast [-Wint-conversio=
+n]
+  279 |         return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_=
+cpus);
+      |                                      ^~~~~~~~~~~~~~~
+      |                                      |
+      |                                      u32 {aka unsigned int}
+arch/arm64/kernel/cpu_errata.c:47:53: note: expected 'const struct midr_ran=
+ge *' but argument is of type 'u32' {aka 'unsigned int'}
+   47 | bool is_midr_in_range_list(struct midr_range const *ranges)
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+arch/arm64/kernel/cpu_errata.c:279:16: error: too many arguments to functio=
+n 'is_midr_in_range_list'
+  279 |         return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_=
+cpus);
+      |                ^~~~~~~~~~~~~~~~~~~~~
+arch/arm64/kernel/cpu_errata.c:47:6: note: declared here
+   47 | bool is_midr_in_range_list(struct midr_range const *ranges)
+      |      ^~~~~~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  1f561ad4b8f5 ("Merge branch 'kvm-arm64/pv-cpuid' into new-next")
+
+The merge missed fixing up this instance from commit
+
+  e1231aacb065 ("arm64: Enable IMP DEF PMUv3 traps on Apple M*")
+
+I have applied the following patch for today (but this should go into
+the kvm-arm tree (perhaps squashed into the above merge).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 20 Mar 2025 20:24:04 +1100
+Subject: [PATCH] fix up for "Merge branch 'kvm-arm64/pv-cpuid' into new-nex=
+t"
+
+interacting with "arm64: Enable IMP DEF PMUv3 traps on Apple M*"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm64/kernel/cpu_errata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index caac9e10a5bb..b55f5f705750 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -276,7 +276,7 @@ static bool has_impdef_pmuv3(const struct arm64_cpu_cap=
+abilities *entry, int sco
+ 	if (pmuver !=3D ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
+ 		return false;
+=20
+-	return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_cpus);
++	return is_midr_in_range_list(impdef_pmuv3_cpus);
+ }
+=20
+ static void cpu_enable_impdef_pmuv3_traps(const struct arm64_cpu_capabilit=
+ies *__unused)
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//o_m+Z2CJp8xH/O=gM6kZ0E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfb4JMACgkQAVBC80lX
+0GxKiQf/RRuXAMkWtwGPAX+9PZUo3jkIm6O1I/mDrWFBkDJoRclHtCVkWIBE5ZJ8
+8SMXolqy+tjPajY6pkdBQnB8Lgs8AOSpDRBa6zUmhgrGMtbyzwUxF5Cxz90qaW5z
+njfwCgJwFJYei6dRfPVytGnJvmNZx1pgCNVwIjTKTV9/QMudPgCn8z0NIRIB0qG6
+uqYhhE+a/di8rEODjJlcjJ3V45p1U0XGkiAX5HM9D/gQlnHMvBcT9TfcMyFl4vDD
+f3MExx9srYsPl6xroMiNsH//23g0guLZD3OQg2ETsz3N4PNjU5ooqDXJw6fGyW1U
+orCIy20EEpamtKSkefVn1ynP4LD0Sg==
+=6dJ7
+-----END PGP SIGNATURE-----
+
+--Sig_//o_m+Z2CJp8xH/O=gM6kZ0E--
 
