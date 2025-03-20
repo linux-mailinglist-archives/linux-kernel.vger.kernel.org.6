@@ -1,165 +1,317 @@
-Return-Path: <linux-kernel+bounces-569705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE04A6A65B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:40:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E102BA6A65E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A30E189453F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A853B4617
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0207A1DEFC5;
-	Thu, 20 Mar 2025 12:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7E14A0C;
+	Thu, 20 Mar 2025 12:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cDZSPhtQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="TpnsNzUk"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CE54A0C;
-	Thu, 20 Mar 2025 12:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC84F78F52
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742474412; cv=none; b=IT0UIv1RwympUkMlSuzmCHwtzDR1e3B3Z2gkWBPyasbxUqEBEr+ufvzIjnQHG0iv7euwI4xALmI+l7T4Waw84KEpS5NbYEn+iXafIQ+yqLafZDDP2D/eMi8gv/Y/hhG3yrNk+8OuPPYvU8SOSTALJXiEmcjYSO1V2Wvpoo/zig4=
+	t=1742474490; cv=none; b=JeZZ2RuwdJo0nb6uAhi9UhlpyO4og/RiCzhbIudyra2IXTzKtoNdl3kYsTCRS8JDfuIfuvrjxKyfFK2Z+PwEPhvlrIP9YwgSFn4FhUMB4u2X1l/+ABsRLOCytP1L0zHLesnOhFTAPauP+JC7muOf8ciBJfdIez1EMmDkNzW8kO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742474412; c=relaxed/simple;
-	bh=dSb1rGkUWH+O9PKTS5kcXjpzSzAoMTGvjKFlYsZAbIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q375/fEo8rUrj1Ze4bBcnmjmpdzAV728Wz+oqyehg0BI+YieuRUw1PL5ag5tzYKm6i6Km5Ad69xUms0DqbIOcRs9zT1p1xai4nX1H7QGdc3eFfOF+Amz+kMPJbwC+HWJldSoJ7NvmV2yEn7IDRdQkFkMOe233EYGFM643haopXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cDZSPhtQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742474408;
-	bh=dSb1rGkUWH+O9PKTS5kcXjpzSzAoMTGvjKFlYsZAbIU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cDZSPhtQdKCk9SSLCW0czIQ9yP7K095pjew+9ZpZDJDKONmX5x2jONkHAlQJtx4uQ
-	 o9rfqITPbXCkGRMBj5CPsl9zPbzVAFNf5J51mFB6gXfQEC7CsBSJuzqDFEJ1eG7/zc
-	 S2UrL16vN+bnhKwO8Aw19KtICy+DvbAixpJV9bTxx8MhMn94/lGhyKUIybjqBfXAbM
-	 sS1tXxCwunamUN2EYuHcvT8TPTAauxN+LIoRdkFVi3h+NPOdSoivheZMvA6k0lveEF
-	 3oQp00h1eyvJ+wXw689tq3XyK7UJ5xcEqhMUpk9X3o7m2R78dQEG8NfaGj3znYDaSb
-	 n+wIi0IOQ2rRg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4A62B17E0607;
-	Thu, 20 Mar 2025 13:40:07 +0100 (CET)
-Message-ID: <204c40d5-de0f-42d0-bc86-d17606c4929f@collabora.com>
-Date: Thu, 20 Mar 2025 13:40:06 +0100
+	s=arc-20240116; t=1742474490; c=relaxed/simple;
+	bh=uJNgNdZDQ/2PC9hcIrOpRPEGx0wzupEKlnOR05eG9pg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2lf2sCc1kGy4wvwMpPoc5pV0E0epCgVtIz5h3ADVMJv72DkgdyouOQe6Lk0VonndGCWhPpvf8uUNj2yx0v21hl/jFksWhfy/gdXYC8FwpFyREksAQRZRTefpYSsya+0eN2DeAAI3rqk6bmHrJxkTRxqmB8uBiF+vHl/uCxg9K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=TpnsNzUk; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250320124121319592d57188779388
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 20 Mar 2025 13:41:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=c0r9K1Oai3gyP+GjxoUNl2fOIbRrTnrWaZYsOLsZDrA=;
+ b=TpnsNzUkkIAoVd4x7s9CvjzuD+tAhg7LpBA6ux7k6lj+suGNGWIl12pyXTS2uV057EwtB3
+ XakJO5HyqgzA9UhHGivAMY8rgVLRECLGUN9ZXVGCK8RJ1oTbRqahVh1wOO/i2RX+Xpt5l7wQ
+ ZKmaMWFgzrQ7PTTB6iTtV9dsn3myv7FCq/x5E05tmxTtUwskJaMnN2I6/2hLFvKDh7lz3gqL
+ lBSvRwa/sLgTaS+d7hcu1Ii5PucocJPxzYebjo0oJ3V5YlBjeu29BYLsQLk2NTuxuQfTYeFJ
+ 1oWoMHqZIpKXRqp4fG8vAIjxjj30lAj56X5DPSDS1ntKUEFgGl5fbKgQ==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: stable@vger.kernel.org
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	williams@redhat.com,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	fw@strlen.de,
+	jan.kiszka@siemens.com,
+	netfilter-devel@vger.kernel.org,
+	linux-rt-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH 6.1.y 6.6.y 1/1] netfilter: nft_counter: Use u64_stats_t for statistic.
+Date: Thu, 20 Mar 2025 13:41:08 +0100
+Message-ID: <20250320124108.338412-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: SOF: MediaTek: Add mt8196 hardware support
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- "hailong.fan" <hailong.fan@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, sound-open-firmware@alsa-project.org,
- linux-sound@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, Jjian.Zhou@mediatek.com,
- Xiangzhi.Tang@mediatek.com
-References: <20250320031753.13669-1-hailong.fan@mediatek.com>
- <20250320031753.13669-2-hailong.fan@mediatek.com>
- <20250320-cocky-adventurous-rooster-be2abd@krzk-bin>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250320-cocky-adventurous-rooster-be2abd@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-Il 20/03/25 08:52, Krzysztof Kozlowski ha scritto:
-> On Thu, Mar 20, 2025 at 11:17:24AM +0800, hailong.fan wrote:
->> +
->> +void mt8196_sof_hifixdsp_shutdown(struct snd_sof_dev *sdev)
->> +{
->> +	/* set RUNSTALL to stop core */
->> +	snd_sof_dsp_update_bits(sdev, DSP_REG_BAR, ADSP_HIFI_RUNSTALL,
->> +				RUNSTALL, RUNSTALL);
->> +
->> +	/* assert core reset */
->> +	snd_sof_dsp_update_bits(sdev, DSP_REG_BAR, ADSP_CFGREG_SW_RSTN,
->> +				SW_RSTN_C0 | SW_DBG_RSTN_C0,
->> +				SW_RSTN_C0 | SW_DBG_RSTN_C0);
->> +}
->> +
-> 
-> Drop stray blank line.
-> 
->> diff --git a/sound/soc/sof/mediatek/mt8196/mt8196.c b/sound/soc/sof/mediatek/mt8196/mt8196.c
->> new file mode 100644
->> index 000000000000..364069ce9954
->> --- /dev/null
->> +++ b/sound/soc/sof/mediatek/mt8196/mt8196.c
->> @@ -0,0 +1,650 @@
->> +// SPDX-License-Identifier: GPL-2.0
-> 
-> Look here
-> 
->> +/*
->> + * Copyright (c) 2025 MediaTek Inc.
->> + * Author: Hailong Fan <hailong.fan@mediatek.com>
->> + */
-> 
-> ...
-> 
->> +
->> +static const struct of_device_id sof_of_mt8196_ids[] = {
->> +	{ .compatible = "mediatek,mt8196-dsp", .data = &sof_of_mt8196_desc},
-> 
-> Bindings are before users.
-> 
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, sof_of_mt8196_ids);
->> +
->> +/* DT driver definition */
->> +static struct platform_driver snd_sof_of_mt8196_driver = {
->> +	.probe = sof_of_probe,
->> +	.remove = sof_of_remove,
->> +	.shutdown = sof_of_shutdown,
->> +	.driver = {
->> +	.name = "sof-audio-of-mt8196",
->> +		.pm = &sof_of_pm,
->> +		.of_match_table = sof_of_mt8196_ids,
->> +	},
->> +};
->> +module_platform_driver(snd_sof_of_mt8196_driver);
->> +
->> +MODULE_LICENSE("Dual BSD/GPL");
-> 
-> And here Hm? Don't fake the licensing.
-> 
->> +MODULE_DESCRIPTION("SOF support for MT8196 platforms");
->> +MODULE_IMPORT_NS("SND_SOC_SOF_XTENSA");
-> 
-> Is this correct?
-> 
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-The import namespace you mean? yes, that's for sof_xtensa_arch_ops :-)
+commit 4a1d3acd6ea86075e77fcc1188c3fc372833ba73 upstream.
 
-Cheers
+The nft_counter uses two s64 counters for statistics. Those two are
+protected by a seqcount to ensure that the 64bit variable is always
+properly seen during updates even on 32bit architectures where the store
+is performed by two writes. A side effect is that the two counter (bytes
+and packet) are written and read together in the same window.
 
-> 
-> Best regards,
-> Krzysztof
-> 
+This can be replaced with u64_stats_t. write_seqcount_begin()/ end() is
+replaced with u64_stats_update_begin()/ end() and behaves the same way
+as with seqcount_t on 32bit architectures. Additionally there is a
+preempt_disable on PREEMPT_RT to ensure that a reader does not preempt a
+writer.
+On 64bit architectures the macros are removed and the reads happen
+without any retries. This also means that the reader can observe one
+counter (bytes) from before the update and the other counter (packets)
+but that is okay since there is no requirement to have both counter from
+the same update window.
 
+Convert the statistic to u64_stats_t. There is one optimisation:
+nft_counter_do_init() and nft_counter_clone() allocate a new per-CPU
+counter and assign a value to it. During this assignment preemption is
+disabled which is not needed because the counter is not yet exposed to
+the system so there can not be another writer or reader. Therefore
+disabling preemption is omitted and raw_cpu_ptr() is used to obtain a
+pointer to a counter for the assignment.
+
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+---
+I propose the backport, as this is a performance improvement. Note,
+that this is a bugfix on RT kernels.
+
+ net/netfilter/nft_counter.c | 90 +++++++++++++++++++------------------
+ 1 file changed, 46 insertions(+), 44 deletions(-)
+
+diff --git a/net/netfilter/nft_counter.c b/net/netfilter/nft_counter.c
+index 781d3a26f5df..8d19bd001277 100644
+--- a/net/netfilter/nft_counter.c
++++ b/net/netfilter/nft_counter.c
+@@ -8,7 +8,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+-#include <linux/seqlock.h>
++#include <linux/u64_stats_sync.h>
+ #include <linux/netlink.h>
+ #include <linux/netfilter.h>
+ #include <linux/netfilter/nf_tables.h>
+@@ -17,6 +17,11 @@
+ #include <net/netfilter/nf_tables_offload.h>
+ 
+ struct nft_counter {
++	u64_stats_t	bytes;
++	u64_stats_t	packets;
++};
++
++struct nft_counter_tot {
+ 	s64		bytes;
+ 	s64		packets;
+ };
+@@ -25,25 +30,24 @@ struct nft_counter_percpu_priv {
+ 	struct nft_counter __percpu *counter;
+ };
+ 
+-static DEFINE_PER_CPU(seqcount_t, nft_counter_seq);
++static DEFINE_PER_CPU(struct u64_stats_sync, nft_counter_sync);
+ 
+ static inline void nft_counter_do_eval(struct nft_counter_percpu_priv *priv,
+ 				       struct nft_regs *regs,
+ 				       const struct nft_pktinfo *pkt)
+ {
++	struct u64_stats_sync *nft_sync;
+ 	struct nft_counter *this_cpu;
+-	seqcount_t *myseq;
+ 
+ 	local_bh_disable();
+ 	this_cpu = this_cpu_ptr(priv->counter);
+-	myseq = this_cpu_ptr(&nft_counter_seq);
+-
+-	write_seqcount_begin(myseq);
++	nft_sync = this_cpu_ptr(&nft_counter_sync);
+ 
+-	this_cpu->bytes += pkt->skb->len;
+-	this_cpu->packets++;
++	u64_stats_update_begin(nft_sync);
++	u64_stats_add(&this_cpu->bytes, pkt->skb->len);
++	u64_stats_inc(&this_cpu->packets);
++	u64_stats_update_end(nft_sync);
+ 
+-	write_seqcount_end(myseq);
+ 	local_bh_enable();
+ }
+ 
+@@ -66,17 +70,16 @@ static int nft_counter_do_init(const struct nlattr * const tb[],
+ 	if (cpu_stats == NULL)
+ 		return -ENOMEM;
+ 
+-	preempt_disable();
+-	this_cpu = this_cpu_ptr(cpu_stats);
++	this_cpu = raw_cpu_ptr(cpu_stats);
+ 	if (tb[NFTA_COUNTER_PACKETS]) {
+-	        this_cpu->packets =
+-			be64_to_cpu(nla_get_be64(tb[NFTA_COUNTER_PACKETS]));
++		u64_stats_set(&this_cpu->packets,
++			      be64_to_cpu(nla_get_be64(tb[NFTA_COUNTER_PACKETS])));
+ 	}
+ 	if (tb[NFTA_COUNTER_BYTES]) {
+-		this_cpu->bytes =
+-			be64_to_cpu(nla_get_be64(tb[NFTA_COUNTER_BYTES]));
++		u64_stats_set(&this_cpu->bytes,
++			      be64_to_cpu(nla_get_be64(tb[NFTA_COUNTER_BYTES])));
+ 	}
+-	preempt_enable();
++
+ 	priv->counter = cpu_stats;
+ 	return 0;
+ }
+@@ -104,40 +107,41 @@ static void nft_counter_obj_destroy(const struct nft_ctx *ctx,
+ }
+ 
+ static void nft_counter_reset(struct nft_counter_percpu_priv *priv,
+-			      struct nft_counter *total)
++			      struct nft_counter_tot *total)
+ {
++	struct u64_stats_sync *nft_sync;
+ 	struct nft_counter *this_cpu;
+-	seqcount_t *myseq;
+ 
+ 	local_bh_disable();
+ 	this_cpu = this_cpu_ptr(priv->counter);
+-	myseq = this_cpu_ptr(&nft_counter_seq);
++	nft_sync = this_cpu_ptr(&nft_counter_sync);
++
++	u64_stats_update_begin(nft_sync);
++	u64_stats_add(&this_cpu->packets, -total->packets);
++	u64_stats_add(&this_cpu->bytes, -total->bytes);
++	u64_stats_update_end(nft_sync);
+ 
+-	write_seqcount_begin(myseq);
+-	this_cpu->packets -= total->packets;
+-	this_cpu->bytes -= total->bytes;
+-	write_seqcount_end(myseq);
+ 	local_bh_enable();
+ }
+ 
+ static void nft_counter_fetch(struct nft_counter_percpu_priv *priv,
+-			      struct nft_counter *total)
++			      struct nft_counter_tot *total)
+ {
+ 	struct nft_counter *this_cpu;
+-	const seqcount_t *myseq;
+ 	u64 bytes, packets;
+ 	unsigned int seq;
+ 	int cpu;
+ 
+ 	memset(total, 0, sizeof(*total));
+ 	for_each_possible_cpu(cpu) {
+-		myseq = per_cpu_ptr(&nft_counter_seq, cpu);
++		struct u64_stats_sync *nft_sync = per_cpu_ptr(&nft_counter_sync, cpu);
++
+ 		this_cpu = per_cpu_ptr(priv->counter, cpu);
+ 		do {
+-			seq	= read_seqcount_begin(myseq);
+-			bytes	= this_cpu->bytes;
+-			packets	= this_cpu->packets;
+-		} while (read_seqcount_retry(myseq, seq));
++			seq	= u64_stats_fetch_begin(nft_sync);
++			bytes	= u64_stats_read(&this_cpu->bytes);
++			packets	= u64_stats_read(&this_cpu->packets);
++		} while (u64_stats_fetch_retry(nft_sync, seq));
+ 
+ 		total->bytes	+= bytes;
+ 		total->packets	+= packets;
+@@ -148,7 +152,7 @@ static int nft_counter_do_dump(struct sk_buff *skb,
+ 			       struct nft_counter_percpu_priv *priv,
+ 			       bool reset)
+ {
+-	struct nft_counter total;
++	struct nft_counter_tot total;
+ 
+ 	nft_counter_fetch(priv, &total);
+ 
+@@ -236,7 +240,7 @@ static int nft_counter_clone(struct nft_expr *dst, const struct nft_expr *src, g
+ 	struct nft_counter_percpu_priv *priv_clone = nft_expr_priv(dst);
+ 	struct nft_counter __percpu *cpu_stats;
+ 	struct nft_counter *this_cpu;
+-	struct nft_counter total;
++	struct nft_counter_tot total;
+ 
+ 	nft_counter_fetch(priv, &total);
+ 
+@@ -244,11 +248,9 @@ static int nft_counter_clone(struct nft_expr *dst, const struct nft_expr *src, g
+ 	if (cpu_stats == NULL)
+ 		return -ENOMEM;
+ 
+-	preempt_disable();
+-	this_cpu = this_cpu_ptr(cpu_stats);
+-	this_cpu->packets = total.packets;
+-	this_cpu->bytes = total.bytes;
+-	preempt_enable();
++	this_cpu = raw_cpu_ptr(cpu_stats);
++	u64_stats_set(&this_cpu->packets, total.packets);
++	u64_stats_set(&this_cpu->bytes, total.bytes);
+ 
+ 	priv_clone->counter = cpu_stats;
+ 	return 0;
+@@ -266,17 +268,17 @@ static void nft_counter_offload_stats(struct nft_expr *expr,
+ 				      const struct flow_stats *stats)
+ {
+ 	struct nft_counter_percpu_priv *priv = nft_expr_priv(expr);
++	struct u64_stats_sync *nft_sync;
+ 	struct nft_counter *this_cpu;
+-	seqcount_t *myseq;
+ 
+ 	local_bh_disable();
+ 	this_cpu = this_cpu_ptr(priv->counter);
+-	myseq = this_cpu_ptr(&nft_counter_seq);
++	nft_sync = this_cpu_ptr(&nft_counter_sync);
+ 
+-	write_seqcount_begin(myseq);
+-	this_cpu->packets += stats->pkts;
+-	this_cpu->bytes += stats->bytes;
+-	write_seqcount_end(myseq);
++	u64_stats_update_begin(nft_sync);
++	u64_stats_add(&this_cpu->packets, stats->pkts);
++	u64_stats_add(&this_cpu->bytes, stats->bytes);
++	u64_stats_update_end(nft_sync);
+ 	local_bh_enable();
+ }
+ 
+@@ -285,7 +287,7 @@ void nft_counter_init_seqcount(void)
+ 	int cpu;
+ 
+ 	for_each_possible_cpu(cpu)
+-		seqcount_init(per_cpu_ptr(&nft_counter_seq, cpu));
++		u64_stats_init(per_cpu_ptr(&nft_counter_sync, cpu));
+ }
+ 
+ struct nft_expr_type nft_counter_type;
+-- 
+2.49.0
 
 
