@@ -1,203 +1,299 @@
-Return-Path: <linux-kernel+bounces-569469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E2EA6A363
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:15:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF37FA6A38F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:24:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DAE17E9AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F7BB7AAD17
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C63224236;
-	Thu, 20 Mar 2025 10:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fv71Bc/F"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D38225A31;
+	Thu, 20 Mar 2025 10:23:00 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1A3221F13
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEE32253FE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742465698; cv=none; b=eyUb5WB+CcxArWw4nlcGWaI4PQOdRshD5S9HQV8lZBTm2fUWu9HmHMjce5y7iFgG3bHgjL+6iZFGvyydTe7ssAfk8Fv+zyiqagl/s4/+EzE/VmKwoOcCfi3XQp8e3NkG3hGuR0URw22+NhBVQnCM8YN1n9gzb5JOBTDScD9e5CE=
+	t=1742466179; cv=none; b=cV14kHzJQk2az1wLVKUWxE90kt2UKCI6LjYeKMPLBPIt3dTLdZv3ddVpevYz0z55Bg0g3897Wiz77SzdgZ4pBpzLHcbVmQe6T3EemnNK6Byw83D4QJGzqOPpA4SVGrge+LvAaeKelCSCOh3imtfTVxBrYOKXbY1Jm3KsnGlSZEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742465698; c=relaxed/simple;
-	bh=mad9TF6HWlzgsDYW0Xw2B9cirt0EV2aKRdW2jLlXXxQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lbP4yDNceNeM1epaX02f/5InaZ4H3t7s98ER5aY9JsXvXeXG3xnAsP8v8CWtS3kqOKOBFQJEh/WuD3UqNI3FGESnV4PHWbhs77H15+A883zI10vKDTHwkMbLdSeAQsb9JDZ4c+WV+AuuGEZycyEYb3oVovFykKADKDO7sIIJUDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fv71Bc/F; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so6038125e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742465694; x=1743070494; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KsTKzQd+0EkTWpAX3OmSlSj7NCNCv0EtzNWUjH+/fWo=;
-        b=Fv71Bc/FD3d6wsQD+D34W5hZ+qkWPMI92bhpQx4fOqmzLWzQBv75oEX1O/XOWhLOiv
-         QNKA1uHtgThbFPCNI+6XbpiwgFh7ZGY6xnkGjBBP2tApKYaugGJCLK2pMob6GwxkdPT9
-         3LvdMJPKS9YSAroLlyqNnlPaGySd3HRVy0DMyjahz012dyGPD2zsd9rH4I9qeU5vdg0C
-         yrLtINAhO7VZicm9UtY4dfZW3+dC7LsS9oUJqBRwlG8e3EEjMIuRfekOeaT8DiqEEVdT
-         95Y3epCUDLz+Sf5s2xFppVlgSZlQpOXtM7RbflYw4L7h80J5dnZ9OTvVs2H8vHpTlAce
-         x+rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742465694; x=1743070494;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KsTKzQd+0EkTWpAX3OmSlSj7NCNCv0EtzNWUjH+/fWo=;
-        b=Da40EyJc1q2shsDoYDDc8m5eMrW6F5GBfrYVq9pWpyFhYL2NsaVqh2nG0R47lDPVOB
-         6/UJqaZI15KTMw1AdD384tt2lwKJH4/tToG6ZAoFbUeGJ5y2rPTYrGd30Xjyhe/cn50u
-         MtBiayt8470EEGHY9w9emIfheki/JX08VdQjn3ITYKbMzERGR6QO4ACTlDoB1tLt0PBG
-         8z9wBsg+wk3ddAhu1Sb05WWLEneKTHQkDkHbu15mhwKmkLIgKbn34MPdI+CGjE/0YF6H
-         h5c2brwP690lRhOJbU+auk3mD7q04iNlCMkegEycIOZlkBeBmh/sPWiKiW29uKRfUzIP
-         MzoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNilVpjBP/6qclQThfH6+qPry2iI8TE/fbh5479nQ7e+ACmQmpOV0zu0h/EwHZZjeATqz6K/vqHUHtaP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU7wzZb4eyzzqFmZicKyTqWsyyLOkhcvHsX6dp/pp8k4OkfoEs
-	vCgxdg/cH6RBbohQEFuYpxvIRpi8VEcfwgB+pu2E/hGKjKqELEqh9lR8ew6saBo=
-X-Gm-Gg: ASbGncsUv0wsc4oJgv+PLT2jAIqJj6ASkaaAxLxj4SaMEkfa7vrnlqwGcIUdmDAmcbv
-	60gcTHmzWB6xHsNkw0IYSRaSg34f03no1ZyvC9gpEIZoJR+/D8Y6XV2m2ydMC1upWqIWG4BRl/O
-	TVByepyARZfwUbQaMln4Ercpx2BqrrrvFu3LiDNfmnlxm4p0LDYmY/m9XFBpyEX3A5cUqMoOUrk
-	C+2kP/QtSmNoYq3XbIu/nIIQ/i79OM86a35S1eqZID92HKKm9UY5uYF1HHQhr43pm9ZUE7KMlcb
-	PezIjv+/TZyCShSozXzvivC5QIuQe6rvc9rxM+dHkj+lEkyHaGDx4Ox+GveyBOvD3u5DYfv11eL
-	a4bThJ2DYqPAppRlP
-X-Google-Smtp-Source: AGHT+IFim8WXF4Bw641hmtsIGi/r9529B0IxX/j4bUMRvtVtznNxhRUIgBVI1Lkw4lHn3sf2W9z0JA==
-X-Received: by 2002:a5d:59ae:0:b0:398:9e96:e798 with SMTP id ffacd0b85a97d-399795a8cb5mr3197534f8f.13.1742465694455;
-        Thu, 20 Mar 2025 03:14:54 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3bd:568:f697:d1a2? ([2a01:e0a:3d9:2080:3bd:568:f697:d1a2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b7656sm22861868f8f.40.2025.03.20.03.14.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 03:14:54 -0700 (PDT)
-Message-ID: <2fafed58-4959-41ca-b0e1-c10a8da60aa1@linaro.org>
-Date: Thu, 20 Mar 2025 11:14:53 +0100
+	s=arc-20240116; t=1742466179; c=relaxed/simple;
+	bh=plOGrk+tDF06nBo8RoKy7gvPM/OBNE0Z8VwTEhhjRnI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rz1bjwdZWnkvXKW+SPqhO0mCO2vxZjVK/crq76eV6LM9WZh2Ve/LMI6Hm/yDOsvi0a65W6lLXtvZ1tTEJaYTzffbALmNmZirLXQ/tFeO+7vVc0Lut51qObiUl0/KPk+DesBnDBSeVlh9StCNhWQMx1HB+11YWR5EhANPq9Pky1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZJM4J1CDHzvWrX;
+	Thu, 20 Mar 2025 18:18:56 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 49C49140202;
+	Thu, 20 Mar 2025 18:22:50 +0800 (CST)
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 20 Mar 2025 18:22:48 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 drm-dp 7/9] drm/hisilicon/hibmc: Enable this hot plug detect of irq feature
+Date: Thu, 20 Mar 2025 18:14:53 +0800
+Message-ID: <20250320101455.2538835-8-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20250320101455.2538835-1-shiyongbang@huawei.com>
+References: <20250320101455.2538835-1-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
- true in ath12k_core_alloc()
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
- Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
- <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
- <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
- <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
- <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
- <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
- <770daf27-ae9c-4ed5-87d0-aadcc3b74bbd@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <770daf27-ae9c-4ed5-87d0-aadcc3b74bbd@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-Hi Jeff,
+From: Baihan Li <libaihan@huawei.com>
 
-On 19/03/2025 19:32, Jeff Johnson wrote:
-> On 3/19/2025 3:27 AM, Krzysztof Kozlowski wrote:
->> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
->>>>>> ---
->>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
->>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
->>>>>>
->>>>>> Best regards,
->>>>>
->>>>> NAK since this will break QCN
->>>>> There is a series under internal review to address MLO issues for WCN chipsets
->>>>
->>>> ???
->>>>
->>>> The original commit is wrong, this fixes the conversion, nothing else.
->>>
->>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
->>> Setting the mlo capability flag without having required driver changes
->>> for WCN chipset will likely result in firmware crash. So the recommendation
->>> is to enable MLO (in WCN) only when all the necessary driver changes
->>> (in development, public posting in near future) are in place.
->> Really, these are your answers? There is regression and first reply is
->> upstream should wait for whatever you do internally. Second answer is
->> the same - public posting in near future?
->>
->> Can you start working with the upstream instead?
-> 
-> There is a lot going on in this thread. I want to address the big picture. It
-> is no secret that Qualcomm has historically focused on downstream drivers, and
-> upstream was mostly an afterthought. But that mindset has changed. Qualcomm is
-> fully embracing upstream kernel development, and has actively recruited (and
-> is still recruiting!) experienced upstream Linux Kernel engineers. And in
-> places where there are shortcoming, Qualcomm has partnered with companies like
-> Linaro to bring in needed support. So Qualcomm is very much "working with the
-> upstream." We may not be working well sometimes, but many of us are still
-> inexperienced with working with the upstream. We are coming up to speed.
-> Specifically for Wi-Fi, we have a large number of engineers who have primarily
-> worked on downstream code who are now working on upstream (including me!). And
-> we still have the issue that many of the products we are shipping now still
-> have a lot of downstream DNA, especially when it comes to firmware interfaces.
-> So please bear with us as we learn and evolve.
-> 
-> Please keep the constructive feedback coming. And remember, the more detailed
-> the feedback, the easier it is to incorporate the feedback.
+Add HPD interrupt enable functions in drm framework, and also add
+detect_ctx functions. Because of the debouncing when HPD pulled out,
+add 200 ms delay in detect. Add link reset process to reset link status
+when a new connector pulgged in.
 
-Thanks for all the feedback, all this escalated mainly because the 46d16f7e1d14
-commit doesn't do what is written in the commit message, and there were no clear
-sign MLO support with WCN firmares would be removed shortly and redeveloped later.
+Signed-off-by: Baihan Li <libaihan@huawei.com>
+Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ChangeLog:
+v5 -> v6:
+  - add detect_ctx with 200ms delay, suggested by Dmitry Baryshkov.
+v4 -> v5:
+  - separate the vga part commit, suggested by Dmitry Baryshkov.
+v3 -> v4:
+  - add link reset of rates and lanes in pre link training process, suggested by Dmitry Baryshkov.
+  - add vdac detect and connected/disconnected status to enable HPD process, suggested by Dmitry Baryshkov.
+  - remove a drm_client, suggested by Dmitry Baryshkov.
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202502231304.BCzV4Y8D-lkp@intel.com/
+v2 -> v3:
+  - remove mdelay(100) hpd function in ISR, suggested by Dmitry Baryshkov.
+  - remove enble_display in ISR, suggested by Dmitry Baryshkov.
+  - change drm_kms_helper_connector_hotplug_event() to
+    drm_connector_helper_hpd_irq_event(), suggested by Dmitry Baryshkov.
+  - move macros to dp_reg.h, suggested by Dmitry Baryshkov.
+  - remove struct irqs, suggested by Dmitry Baryshkov.
+  - split this patch into two parts, suggested by Dmitry Baryshkov.
+  - add a drm client dev to handle HPD event.
+v1 -> v2:
+  - optimizing the description in commit message, suggested by Dmitry Baryshkov.
+  - add mdelay(100) comments, suggested by Dmitry Baryshkov.
+  - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
+---
+ .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 36 ++++++++++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  5 +++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 42 +++++++++++++++++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  2 +
+ 5 files changed, 86 insertions(+)
 
-As final note for this patch, do you have any timeline for when MLO would be enabled
-again on WCN chips ?
-
-I'm happy Qualcomm is embracing mainline development, but Qualcomm still ships
-hundreds of different incompatible firmware and downstream drivers variant in the
-field, and this makes system integration very hard.
-
-And as you mention the partnership with Linaro, we are very happy to help
-and support your mainline development over time by reviewing, testing and
-reporting.
-
-Thanks,
-Neil
-
-> 
-> Thanks!
-> /jeff
-> 
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+index c5feef8dc27d..08f9e1caf7fc 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
++++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+@@ -16,5 +16,6 @@
+ #define HIBMC_DP_SYNC_EN_MASK		0x3
+ #define HIBMC_DP_LINK_RATE_CAL		27
+ #define HIBMC_DP_SYNC_DELAY(lanes)	((lanes) == 0x2 ? 86 : 46)
++#define HIBMC_DP_INT_ENABLE		0xc
+ 
+ #endif
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+index ce7cb07815b2..8f0daec7d174 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+@@ -189,6 +189,36 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+ 	return 0;
+ }
+ 
++void hibmc_dp_enable_int(struct hibmc_dp *dp)
++{
++	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
++
++	writel(HIBMC_DP_INT_ENABLE, dp_dev->base + HIBMC_DP_INTR_ENABLE);
++}
++
++void hibmc_dp_disable_int(struct hibmc_dp *dp)
++{
++	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
++
++	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
++	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
++}
++
++void hibmc_dp_hpd_cfg(struct hibmc_dp *dp)
++{
++	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
++
++	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
++	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
++	hibmc_dp_reg_write_field(dp->dp_dev, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_MIN_PULSE_NUM, 0x9);
++	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
++	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
++	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
++	writel(HIBMC_DP_INT_ENABLE, dp_dev->base + HIBMC_DP_INTR_ENABLE);
++	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
++	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
++}
++
+ void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
+ {
+ 	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
+@@ -227,6 +257,12 @@ int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
+ 	return 0;
+ }
+ 
++void hibmc_dp_reset_link(struct hibmc_dp *dp)
++{
++	dp->dp_dev->link.status.clock_recovered = false;
++	dp->dp_dev->link.status.channel_equalized = false;
++}
++
+ static const struct hibmc_dp_color_raw g_rgb_raw[] = {
+ 	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
+ 	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+index 83a53dae8012..665f5b166dfb 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
++++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+@@ -49,11 +49,16 @@ struct hibmc_dp {
+ 	void __iomem *mmio;
+ 	struct drm_dp_aux aux;
+ 	struct hibmc_dp_cbar_cfg cfg;
++	u32 irq_status;
+ };
+ 
+ int hibmc_dp_hw_init(struct hibmc_dp *dp);
+ int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
+ void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
+ void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
++void hibmc_dp_reset_link(struct hibmc_dp *dp);
++void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
++void hibmc_dp_enable_int(struct hibmc_dp *dp);
++void hibmc_dp_disable_int(struct hibmc_dp *dp);
+ 
+ #endif
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+index a86ecce4b3c1..d06832e62e96 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+@@ -13,6 +13,8 @@
+ #include "hibmc_drm_drv.h"
+ #include "dp/dp_hw.h"
+ 
++#define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
++
+ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+ {
+ 	const struct drm_edid *drm_edid;
+@@ -29,14 +31,25 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+ 	return count;
+ }
+ 
++static int hibmc_dp_detect(struct drm_connector *connector,
++			   struct drm_modeset_acquire_ctx *ctx, bool force)
++{
++	mdelay(200);
++
++	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
++}
++
+ static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+ 	.get_modes = hibmc_dp_connector_get_modes,
++	.detect_ctx = hibmc_dp_detect,
+ };
+ 
+ static int hibmc_dp_late_register(struct drm_connector *connector)
+ {
+ 	struct hibmc_dp *dp = to_hibmc_dp(connector);
+ 
++	hibmc_dp_enable_int(dp);
++
+ 	return drm_dp_aux_register(&dp->aux);
+ }
+ 
+@@ -45,6 +58,8 @@ static void hibmc_dp_early_unregister(struct drm_connector *connector)
+ 	struct hibmc_dp *dp = to_hibmc_dp(connector);
+ 
+ 	drm_dp_aux_unregister(&dp->aux);
++
++	hibmc_dp_disable_int(dp);
+ }
+ 
+ static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
+@@ -96,6 +111,31 @@ static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
+ 	.atomic_disable = hibmc_dp_encoder_disable,
+ };
+ 
++irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
++{
++	struct drm_device *dev = (struct drm_device *)arg;
++	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
++	int idx;
++
++	if (!drm_dev_enter(dev, &idx))
++		return -ENODEV;
++
++	if (priv->dp.irq_status & DP_MASKED_SINK_HPD_PLUG_INT) {
++		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
++		hibmc_dp_hpd_cfg(&priv->dp);
++	} else {
++		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
++		hibmc_dp_reset_link(&priv->dp);
++	}
++
++	if (dev->registered)
++		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
++
++	drm_dev_exit(idx);
++
++	return IRQ_HANDLED;
++}
++
+ int hibmc_dp_init(struct hibmc_drm_private *priv)
+ {
+ 	struct drm_device *dev = &priv->dev;
+@@ -136,5 +176,7 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
+ 
+ 	drm_connector_attach_encoder(connector, encoder);
+ 
++	connector->polled = DRM_CONNECTOR_POLL_HPD;
++
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+index bc89e4b9f4e3..daed1330b961 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+@@ -71,4 +71,6 @@ int hibmc_dp_init(struct hibmc_drm_private *priv);
+ 
+ void hibmc_debugfs_init(struct drm_connector *connector, struct dentry *root);
+ 
++irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg);
++
+ #endif
+-- 
+2.33.0
 
 
