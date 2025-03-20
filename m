@@ -1,146 +1,177 @@
-Return-Path: <linux-kernel+bounces-569845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A84A6A836
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:17:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAFAA6A862
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2624C8A7700
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97BE18839D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E57F22157F;
-	Thu, 20 Mar 2025 14:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F822258E;
+	Thu, 20 Mar 2025 14:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WIZ82fuy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF8NrnC8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ADB22259C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0B211C;
+	Thu, 20 Mar 2025 14:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480205; cv=none; b=ioF0k+sEdj+zxr3viEqsXeExvTvWgekvjiXkqFmR7/GO5T5a5CMJ88q20pAUPuOHS9WGWES8XSDov9NYkVhEOBLzf0UEhmwRK7rd9fOYB/5AYThcxLbbX3lTVKeNRgmjg/+xWiCyOUSEWDsogX1/83p18uw+riLgLtUZDw/utXc=
+	t=1742480138; cv=none; b=GxkqWLTRslVgY6pvdl1zoUB5ejlADBsXyEbNfykj0uTClal9Y1zPOxK4nDQqXLmPvxC4sp+epT/SEftsRyw5DU0l6WZKzgEtmvDEFRYjekTUCfJ7KVpzJ4iiJDYiQt5SwwOl1no8bJTm6t0Hr0qf/Nf9P+dMZjfLkDLJEEUgIDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480205; c=relaxed/simple;
-	bh=J8LnsHeJmO0fVH7avVIr14dMWf0HIdoxRIKRn5jvHL8=;
+	s=arc-20240116; t=1742480138; c=relaxed/simple;
+	bh=Cz+zxwlHWKS5x56xzygGWm2d2rVex5Tzua/p3TZygNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvJbCRv+gyiemPtSlvP3HHmwjSqdI0IUjj7rxj6A/3Cr7x1pLVLDwogepmPBQxs4gXIgjqwl4seV8hvvMLw9cTINR4P48kKwLWsv6A9TPHEcxsyfDVlu6pjp3I0x0Lhf3Zbrjl4x7O3G2zQ6M3qCAw2w91YoOkWdffpiSaCyumI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WIZ82fuy; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742480204; x=1774016204;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J8LnsHeJmO0fVH7avVIr14dMWf0HIdoxRIKRn5jvHL8=;
-  b=WIZ82fuyLFuYw5K1JPBiuBHE23OthkK0Zq6J+6oga77OYU1oDsUhu1OE
-   8ZXCqQvP7ros5RI/xMm+ABVzyhGurOClOPwaYG+d4+YIz+sVcthaNSYDx
-   ePlxKv4qaEZDqYNKF02Rclv8hBFNls7OM/y0woCmHRKduo11dTZNrnn8U
-   9Horq+CyXbS9wrqmgHO9+9fWFVpovTG4jlU0N3MEUFRje9ukr+dg5d2qF
-   y4osLnW0xyO3x8Fty6XgBOccW8dhi5Szm1M0cC6rTKlOMbMrVfq8wE9UC
-   8f1gVsP5ri320YyQQub3L6PMs9ktpC375ve5vA5Xn1PcQexhQCrBjr6j0
-   Q==;
-X-CSE-ConnectionGUID: cLmJeSvgSDeFdCm4CtJB4A==
-X-CSE-MsgGUID: IMcebxQHQVSBx5DADtEN4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="61104402"
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="61104402"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 07:16:43 -0700
-X-CSE-ConnectionGUID: IBkT1U8LS3GJrfbOkn8yJw==
-X-CSE-MsgGUID: QsazBzbgTKyjCXEAhTHS4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="127942854"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 20 Mar 2025 07:16:37 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvGhF-0000UR-2H;
-	Thu, 20 Mar 2025 14:16:33 +0000
-Date: Thu, 20 Mar 2025 22:15:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, graf@amazon.com,
-	akpm@linux-foundation.org, luto@kernel.org,
-	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
-	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com, dwmw2@infradead.org,
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
-	corbet@lwn.net, krzk@kernel.org, rppt@kernel.org,
-	mark.rutland@arm.com, pbonzini@redhat.com,
-	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org,
-	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org,
-	saravanak@google.com, skinsburskii@linux.microsoft.com,
-	rostedt@goodmis.org, tglx@linutronix.de
-Subject: Re: [PATCH v5 01/16] kexec: define functions to map and unmap
- segments
-Message-ID: <202503202151.vHOV0UKU-lkp@intel.com>
-References: <20250320015551.2157511-2-changyuanl@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=atGH1x2jN6qkcwUSgKFItvateoCMMmzEMuOcE+iN3tcHuWGMb0hZ/KxTmry2DzBG8om1+VvgS1htvKofqTLoRsh6Hf4RzTN/3Rj7AJiSqiyJcvFzjKREpQLgeuJ+7ZkZZ5GXuc4KzT0Jx+xX3GHAf0cVbmJL9K2eGVvcTNH0v6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF8NrnC8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68183C4CEE3;
+	Thu, 20 Mar 2025 14:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742480137;
+	bh=Cz+zxwlHWKS5x56xzygGWm2d2rVex5Tzua/p3TZygNA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mF8NrnC8NFk3YtJg+vy1xQfu5P1ZC5ZX5LrYIbZapDTHlVIHgZnyOIwtJkygagqYY
+	 OKOPgk80Kh9K6mZQEpciByoqdWp/hGIDIt+Vw9NsrMmFZ3aMUqpHcUAS8j1SUY4xBX
+	 sPoEHo21JBwuvhZhFrfr7Tugb8sY3UgL+T4DWGXiKHCPkI9dUR7+q6Cj4085H2GwML
+	 plsSnPA6YKSp2CPOGdfoHFS1DxzGa0yQECpCW2d963EaWEmut6Zm3BhbsoLlCjkiLo
+	 jTldBcg9Gp56d8O9fttzz2FnGLECk8cBOC/bMdkqsYrq883hbviaFqygBDzUiWm/BA
+	 tjWaSB5csaeeQ==
+Date: Thu, 20 Mar 2025 15:15:33 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/2] rcu: Comment on the extraneous delta test on
+ rcu_seq_done_exact()
+Message-ID: <Z9wjBT3RQDUrFdbE@p200300d06f3e9880e1f174d4afcc9316.dip0.t-ipconnect.de>
+References: <20250318135619.4300-1-frederic@kernel.org>
+ <20250318135619.4300-2-frederic@kernel.org>
+ <322b052d-0f1f-45a3-bfef-226b15f3a8fd@paulmck-laptop>
+ <20250319193831.GA3791727@joelnvbox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250320015551.2157511-2-changyuanl@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250319193831.GA3791727@joelnvbox>
 
-Hi Changyuan,
+Le Wed, Mar 19, 2025 at 03:38:31PM -0400, Joel Fernandes a écrit :
+> On Tue, Mar 18, 2025 at 11:37:38AM -0700, Paul E. McKenney wrote:
+> > On Tue, Mar 18, 2025 at 02:56:18PM +0100, Frederic Weisbecker wrote:
+> > > The numbers used in rcu_seq_done_exact() lack some explanation behind
+> > > their magic. Especially after the commit:
+> > > 
+> > >     85aad7cc4178 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+> > > 
+> > > which reported a subtle issue where a new GP sequence snapshot was taken
+> > > on the root node state while a grace period had already been started and
+> > > reflected on the global state sequence but not yet on the root node
+> > > sequence, making a polling user waiting on a wrong already started grace
+> > > period that would ignore freshly online CPUs.
+> > > 
+> > > The fix involved taking the snaphot on the global state sequence and
+> > > waiting on the root node sequence. And since a grace period is first
+> > > started on the global state and only afterward reflected on the root
+> > > node, a snapshot taken on the global state sequence might be two full
+> > > grace periods ahead of the root node as in the following example:
+> > > 
+> > > rnp->gp_seq = rcu_state.gp_seq = 0
+> > > 
+> > >     CPU 0                                           CPU 1
+> > >     -----                                           -----
+> > >     // rcu_state.gp_seq = 1
+> > >     rcu_seq_start(&rcu_state.gp_seq)
+> > >                                                     // snap = 8
+> > >                                                     snap = rcu_seq_snap(&rcu_state.gp_seq)
+> > >                                                     // Two full GP differences
+> > >                                                     rcu_seq_done_exact(&rnp->gp_seq, snap)
+> > >     // rnp->gp_seq = 1
+> > >     WRITE_ONCE(rnp->gp_seq, rcu_state.gp_seq);
+> > > 
+> > > Add a comment about those expectations and to clarify the magic within
+> > > the relevant function.
+> > > 
+> > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > 
+> > Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> > 
+> > But it would of course be good to get reviews from the others.
+> 
+> I actually don't agree that the magic in the rcu_seq_done_exact() function about the
+> ~2 GPs is related to the lag between rcu_state.gp_seq and root rnp->gp_seq,
+> because the small lag can just as well survive with the rcu_seq_done()
+> function in the above sequence right?
+> 
+> The rcu_seq_done_exact() function on the other hand is more about not being
+> stuck in the ULONG_MAX/2 guard band, but to actually get to that, you need a
+> wrap around to happen and the delta between "rnp->gp_seq" and "snap" to be at
+> least ULONG_MAX/2 AFAIU.
+> 
+> So the only time this magic will matter is if you have a huge delta between
+> what is being compared, not just 2 GPs.
 
-kernel test robot noticed the following build warnings:
+You're right, and perhaps I should have made it more specific that my comment
+only explains the magic "3" number here, in that if it were "2" instead, there
+could be accidents with 2 full GPs difference (which is possible) spuriously
+accounted as a wrap around.
 
-[auto build test WARNING on a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47]
+Thanks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Changyuan-Lyu/kexec-define-functions-to-map-and-unmap-segments/20250320-095900
-base:   a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
-patch link:    https://lore.kernel.org/r/20250320015551.2157511-2-changyuanl%40google.com
-patch subject: [PATCH v5 01/16] kexec: define functions to map and unmap segments
-config: i386-buildonly-randconfig-002-20250320 (https://download.01.org/0day-ci/archive/20250320/202503202151.vHOV0UKU-lkp@intel.com/config)
-compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503202151.vHOV0UKU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503202151.vHOV0UKU-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from kernel/reboot.c:13:
->> include/linux/kexec.h:479:47: warning: declaration of 'struct kimage' will not be visible outside of this function [-Wvisibility]
-     479 | static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
-         |                                               ^
-   1 warning generated.
-
-
-vim +479 include/linux/kexec.h
-
-   466	
-   467	#define kexec_dprintk(fmt, arg...) \
-   468	        do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
-   469	
-   470	void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
-   471	void kimage_unmap_segment(void *buffer);
-   472	#else /* !CONFIG_KEXEC_CORE */
-   473	struct pt_regs;
-   474	struct task_struct;
-   475	static inline void __crash_kexec(struct pt_regs *regs) { }
-   476	static inline void crash_kexec(struct pt_regs *regs) { }
-   477	static inline int kexec_should_crash(struct task_struct *p) { return 0; }
-   478	static inline int kexec_crash_loaded(void) { return 0; }
- > 479	static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
-   480	{ return NULL; }
-   481	static inline void kimage_unmap_segment(void *buffer) { }
-   482	#define kexec_in_progress false
-   483	#endif /* CONFIG_KEXEC_CORE */
-   484	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Or, did I miss something?
+> 
+> (Also sorry about slow email responses this week as I had my presentation
+> today and was busy preparing this week and attending other presentations at
+> OSPM, I'll provide an update on that soon!).
+> 
+> thanks,
+> 
+>  - Joel
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> > 
+> > > ---
+> > >  kernel/rcu/rcu.h | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> > > index eed2951a4962..7acf1f36dd6c 100644
+> > > --- a/kernel/rcu/rcu.h
+> > > +++ b/kernel/rcu/rcu.h
+> > > @@ -157,6 +157,13 @@ static inline bool rcu_seq_done(unsigned long *sp, unsigned long s)
+> > >   * Given a snapshot from rcu_seq_snap(), determine whether or not a
+> > >   * full update-side operation has occurred, but do not allow the
+> > >   * (ULONG_MAX / 2) safety-factor/guard-band.
+> > > + *
+> > > + * The token returned by get_state_synchronize_rcu_full() is based on
+> > > + * rcu_state.gp_seq but it is tested in poll_state_synchronize_rcu_full()
+> > > + * against the root rnp->gp_seq. Since rcu_seq_start() is first called
+> > > + * on rcu_state.gp_seq and only later reflected on the root rnp->gp_seq,
+> > > + * it is possible that rcu_seq_snap(rcu_state.gp_seq) returns 2 full grace
+> > > + * periods ahead of the root rnp->gp_seq.
+> > >   */
+> > >  static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
+> > >  {
+> > > -- 
+> > > 2.48.1
+> > > 
 
