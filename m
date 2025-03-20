@@ -1,166 +1,258 @@
-Return-Path: <linux-kernel+bounces-569901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A1EA6A90F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:51:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DEA6A93C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93555465408
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE21F19C031E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE581E0DEA;
-	Thu, 20 Mar 2025 14:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AE1E3DF7;
+	Thu, 20 Mar 2025 14:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bw3lXaOm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y0x9aWYb"
-Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRPpkYlD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994AF2628C;
-	Thu, 20 Mar 2025 14:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AA01876;
+	Thu, 20 Mar 2025 14:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482175; cv=none; b=uleGfuZ0E0kp+XvbpTY0CluRjmgm8JdC8t2YHhLesekpZuyrAXNtktsCILKBQQtk7nPlAuEPWd0arWgoLSXm2R/Npbq3CgdpzaT0knqwNPlBhmrFkjhffEYHGGT1B2RCfK5NRAXKueIgxA0mXKEo3uA/jOLVeik5+iBa9+H4ho0=
+	t=1742482250; cv=none; b=up2lDjrIAJCtLBoWZ8e0GjNAfPgFQCQ4m+q4jitmx3YciWFDai+tyqZAlhq2EX2IOG1kLMB9I9JTkjFxV2Ria+gc34VMxfF/QYxvFeOymYsw90T/XJoHdAT1Zcypt8gCRZyyer1MsQkcW/JUi/JWWvRQSgpf8e6G8z5sMISixqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482175; c=relaxed/simple;
-	bh=bIeQ1Wu8a+Mrkgz5vApJf9zp6gXA5Aohfycah7Q3lIA=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=DowYgKgmj2Ieaj+Sc+ZM4Dfa3Xa4lTUcZMRez/Pjsd6hAC864evDLgPQg1cjbTvAHxF4yoJJSd+RkCjpmNiL85gDJ8teGkqaP19WFkKBqiIhKXGp3poE99Kb0CNcFzBVEZd88vJtOkZPYxq4TNJ+kNLZl2nmb2v40FY7n4VCof0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bw3lXaOm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y0x9aWYb; arc=none smtp.client-ip=202.12.124.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailflow.stl.internal (Postfix) with ESMTP id AEE401D416BB;
-	Thu, 20 Mar 2025 10:49:30 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Thu, 20 Mar 2025 10:49:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742482170;
-	 x=1742489370; bh=9DLyOHmoAVb5Kjp+6FlYdojTGuwaxjtqiw9xkYFjrks=; b=
-	Bw3lXaOmvk9EdHs1fHI4ePb/4my5fKxj/IMehz35ln/GbxTb2yfCvVNDmPag0Iyc
-	6U4DAcH8l8GGqWTL/f+oEJeQwE2vg9NLGJjKJA56zHtY+rLW7mwDSGbyr5+p5XM9
-	JCCrRvfUg8U9Ay9Equz57Dwz1WcN465IOEnw52kZ1BygBzU2OSdFKNAmAlWz1mAa
-	FCAYffC5LmTTVMZFFSQLceuZN0f5ZPmPgd+JE4ytjReoN4stZJTs7zhSBTdzr9V3
-	pPny3DzuG5icuFEqINH8fHGHXQ9PJLpj9cpXsRhS8AcpIVTbUyPQVl3J30MBzF1n
-	X7rb7bbbVqo5z/rdkGcDTg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1742482170; x=1742489370; bh=9
-	DLyOHmoAVb5Kjp+6FlYdojTGuwaxjtqiw9xkYFjrks=; b=Y0x9aWYb2wIAQmaSl
-	Pq6kfxvFZ+vMSk4mUZVMwOCYQXFhwo4FJthV1YOsfpEAc5r56MQs00MWNWQ0JNDX
-	BeT2gaYmcUUtXFUpth1PV9wPGsIz06xj9QEOolTvT2f3WnwVVP1ZBCYav2jRKaKv
-	JGphU67eMFJd/qbRt0RbNP2aPRcqsGRMK+PLas0r1J3nRoQ21uqRPpGUL1iI2NVS
-	FebfzaJxE+l3slXKq9Zx6IGVg+a9jxn/YDtEIn7PDb/xAnScxQ2sczmw0mug+qgD
-	84PKh+sqX8mlDjlR5HIzegh2buZJErBnJqLHFtImfWvmvwlvJbFl2pDGiPe7CEeT
-	1YNkQ==
-X-ME-Sender: <xms:-CrcZyd9GW8HoH0R3IH91GtQzQt0CEr8OyRwG1O-nnJkeMuRCvK6Zg>
-    <xme:-CrcZ8NvNa45BKatbeA4B1wgGCMT93ZcGxk0DSOqDPRgKGUn0zpZUmNESobrm7HKP
-    to6wCniosQHayzwSCo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekgeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvffkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhkeeltdfffefhgffhteetheeuhffgteeghfdt
-    ueefudeuleetgfehtdejieffhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhhpshhtrhgvrghmsegrihhroh
-    hhrgdrtghomhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgt
-    ohhmpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnoh
-    estgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopegthiihsegthiihshgvlhhfrdhn
-    rghmvgdprhgtphhtthhopegsvghnseguvggtrgguvghnthdrohhrghdruhhkpdhrtghpth
-    htohepuggusegvmhgsvgguugdrtghomhdprhgtphhtthhopegrlhgvgigrnhguvghrrdhs
-    vhgvrhgulhhinhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhsuhgvlhhsmhhthh
-    esghhmrghilhdrtghomhdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghi
-    lhdrtghomh
-X-ME-Proxy: <xmx:-CrcZzggTkjaKKMcIlgevkAvwlYjG5PkKJgdClNOo099WbN16OSVsA>
-    <xmx:-CrcZ_9zuYJuN_HLg3rJNKPuHPA9shltG7CLzwdMTeYtvKj7bZxlGA>
-    <xmx:-CrcZ-tBhZRJUgt6KbRsVeBxevJWA7uQVq4pldXImlnOXd_tXaUkew>
-    <xmx:-CrcZ2HPgAWXYC_-FTq__I9R22-H0xsP9vJ2kl_t3HMh2-otp4xiig>
-    <xmx:-ircZzt99E-ok_aWCfAWKBZl4vRai5AHEGnkM81fK97NzSmAflzBFw3S>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 660AA2220073; Thu, 20 Mar 2025 10:49:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742482250; c=relaxed/simple;
+	bh=VgHP2YZFJFqQDq6X1Enrko29eUy4PpuSIOCuvJw0JKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JU23vf56yCSeynELKQGf7YpeU/z+eYk3tketxRSKHr/rVPQhhaaOyr5KVUbQpdEzCyu1PJDjdBs2QwpO8pEKOxmRlNvq4F7CffqBwP6Ib8lB3SFVBxktwzv0dQ444X/CS7n+3M00yR4ais1xB5Hm0dBmxLaMNZK0+nc0Ov51FKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRPpkYlD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE15C4CEDD;
+	Thu, 20 Mar 2025 14:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742482250;
+	bh=VgHP2YZFJFqQDq6X1Enrko29eUy4PpuSIOCuvJw0JKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nRPpkYlDUBw1gjGtXjQDSei78Js5SiMhGUtyttvW9CgAqns2tTOPY8/wNVO3igUrp
+	 d9zHAHmBrA+CESjTE8Vd+xoH+NF8JxkVjkUXZY2rGxmW3pfhS8VkKdGG8xyARuj0FL
+	 gQHgAnh715xQCL8AM6m35smLKWm66L881RKbWs2YrcLzTdo+SZBv0gIAnBp529LrWk
+	 2TpFQUzC/HZ9ygyk+1qefsxhF1q9kjA4qEWPS0OL1ov41GqjdVgXiAkgQNedHqDO0I
+	 4AydkziQDb1uW2b3VKIQ3E28ix5DltoIbnT+ryX4BT5beobsVaihxlLPX0QJow5foT
+	 821ydGI3nYYkQ==
+Date: Thu, 20 Mar 2025 14:50:42 +0000
+From: Lee Jones <lee@kernel.org>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+	andi.shyti@kernel.org, mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
+	jdelvare@suse.com, alexandre.belloni@bootlin.com,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
+Message-ID: <20250320145042.GS3890718@google.com>
+References: <20250225081644.3524915-1-a0282524688@gmail.com>
+ <20250225081644.3524915-2-a0282524688@gmail.com>
+ <20250307011542.GE8350@google.com>
+ <CAOoeyxUgiTqtSksfHopEDhZHwNkUq9+d-ojo8ma3PX2dosuwyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0b2bddcaf378cae8
-Date: Thu, 20 Mar 2025 15:49:08 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christian Marangi" <ansuelsmth@gmail.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Lorenzo Bianconi" <lorenzo@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Daniel Danzberger" <dd@embedd.com>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Yangyu Chen" <cyy@cyyself.name>, "Ben Hutchings" <ben@decadent.org.uk>,
- "Felix Fietkau" <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
- upstream@airoha.com
-Message-Id: <d6e27266-dc5b-4ef8-b708-21cedd06621e@app.fastmail.com>
-In-Reply-To: <20250320130054.4804-5-ansuelsmth@gmail.com>
-References: <20250320130054.4804-1-ansuelsmth@gmail.com>
- <20250320130054.4804-5-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v2 04/11] soc: airoha: add support for configuring SCU SSR Serdes
- port
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOoeyxUgiTqtSksfHopEDhZHwNkUq9+d-ojo8ma3PX2dosuwyQ@mail.gmail.com>
 
-On Thu, Mar 20, 2025, at 14:00, Christian Marangi wrote:
-> Add support for configuring SCU SSR Serdes port. Airoha AN7581 SoC can
-> configure the different Serdes port by toggling bits in the SCU register
-> space.
->
-> Port Serdes mode are mutually exclusive, force example the USB2 Serdes port
-> can either used for USB 3.0 or PCIe 2 port. Enabling USB 3.0 makes the
-> PCIe 2 to not work.
->
-> The current supported Serdes port are:
-> - WiFi 1 and defaults to PCIe0 1 line mode
-> - Wifi 2 and defaults to PCIe1 1 line mode
-> - USB 1 and defaults to USB 3.0 mode
-> - USB 2 and defaults to USB 3.0 mode
->
-> WiFi 1, WiFi 2 and USB 1 also support a particular Ethernet mode that
-> can toggle between USXGMII or HSGMII mode (USB 1 only to HSGMII)
-> Such mode doesn't configure bits as specific Ethernet PCS driver will
-> take care of configuring the Serdes mode based on what is required.
->
-> This driver is to correctly setup these bits.
-> Single driver can't independently set the Serdes port mode as that
-> would cause a conflict if someone declare, for example, in DT
-> (and enable) PCIe 2 port and USB2 3.0 port.
->
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+On Mon, 17 Mar 2025, Ming Yu wrote:
 
-I think serdes drivers are usually implement in the drivers/phy
-layer, and I see there is already a drivers/phy/phy-airoha-pcie.c,
-which may or may not overlap with this one (I have not looked at
-the details).
+> Dear Lee,
+> 
+> Thank you for reviewing,
+> 
+> Lee Jones <lee@kernel.org> 於 2025年3月7日 週五 上午9:15寫道：
+> >
+> > On Tue, 25 Feb 2025, Ming Yu wrote:
+> >
+> > > The Nuvoton NCT6694 is a peripheral expander with 16 GPIO chips,
+> > > 6 I2C controllers, 2 CANfd controllers, 2 Watchdog timers, ADC,
+> > > PWM, and RTC.
+> >
+> > This needs to go into the Kconfig help passage.
+> >
+> 
+> Okay, I will move these to Kconfig in the next patch.
+> 
+> > > This driver implements USB device functionality and shares the
+> > > chip's peripherals as a child device.
+> >
+> > This driver doesn't implement USB functionality.
+> >
+> 
+> Fix it in v9.
+> 
+> > > Each child device can use the USB functions nct6694_read_msg()
+> > > and nct6694_write_msg() to issue a command. They can also request
+> > > interrupt that will be called when the USB device receives its
+> > > interrupt pipe.
+> > >
+> > > Signed-off-by: Ming Yu <a0282524688@gmail.com>
+> >
+> > Why aren't you signing off with your work address?
+> >
+> 
+> Fix it in v9.
+> 
+> > > ---
+> > >  MAINTAINERS                 |   7 +
+> > >  drivers/mfd/Kconfig         |  18 ++
+> > >  drivers/mfd/Makefile        |   2 +
+> > >  drivers/mfd/nct6694.c       | 378 ++++++++++++++++++++++++++++++++++++
+> > >  include/linux/mfd/nct6694.h | 102 ++++++++++
+> > >  5 files changed, 507 insertions(+)
+> > >  create mode 100644 drivers/mfd/nct6694.c
+> > >  create mode 100644 include/linux/mfd/nct6694.h
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 873aa2cce4d7..c700a0b96960 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -16918,6 +16918,13 @@ F:   drivers/nubus/
+> > >  F:   include/linux/nubus.h
+> > >  F:   include/uapi/linux/nubus.h
+> > >
+> > > +NUVOTON NCT6694 MFD DRIVER
+> > > +M:   Ming Yu <tmyu0@nuvoton.com>
+> > > +L:   linux-kernel@vger.kernel.org
+> >
+> > This is the default list.  You shouldn't need to add that here.
+> 
+> Remove it in v9.
 
-Have you tried to use the phy subsystem interface here instead
-of creating a custom in-kernel interface?
+Please snip everything that you agree with.
 
-      Arnd
+> > > +S:   Supported
+> > > +F:   drivers/mfd/nct6694.c
+> > > +F:   include/linux/mfd/nct6694.h
+> > > +
+> > >  NVIDIA (rivafb and nvidiafb) FRAMEBUFFER DRIVER
+> > >  M:   Antonino Daplas <adaplas@gmail.com>
+> > >  L:   linux-fbdev@vger.kernel.org
+
+[...]
+
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x1),
+> >
+> > IDs are usually given in base-10.
+> >
+> 
+> Fix it in v9.
+> 
+> > Why are you manually adding the device IDs?
+> >
+> > PLATFORM_DEVID_AUTO doesn't work for you?
+> >
+> 
+> I need to manage these IDs to ensure that child devices can be
+> properly utilized within their respective modules.
+
+How?  Please explain.
+
+This numbering looks sequential and arbitrary.
+
+What does PLATFORM_DEVID_AUTO do differently such that it is not useful?
+
+> 
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x2),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x3),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x4),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x5),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x6),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x7),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x8),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x9),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xA),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xB),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xC),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xD),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xE),
+> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xF),
+
+> > > +
+> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x0),
+> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x1),
+> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x2),
+> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x3),
+> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x4),
+> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x5),
+> > > +
+> > > +     MFD_CELL_BASIC("nct6694_canfd", NULL, NULL, 0, 0x0),
+> >
+> > Why has the naming convention changed here?
+> >
+> 
+> I originally expected the child devices name to directly match its
+> driver name. Do you think it would be better to standardize the naming
+> as "nct6694-xxx" ?
+
+Yes, that is the usual procedure.
+
+> > > +     MFD_CELL_BASIC("nct6694_canfd", NULL, NULL, 0, 0x1),
+> > > +
+> > > +     MFD_CELL_BASIC("nct6694_wdt", NULL, NULL, 0, 0x0),
+> > > +     MFD_CELL_BASIC("nct6694_wdt", NULL, NULL, 0, 0x1),
+> > > +
+> > > +     MFD_CELL_NAME("nct6694-hwmon"),
+> > > +     MFD_CELL_NAME("rtc-nct6694"),
+> >
+> > There doesn't seem to be any consistency here.
+> >
+> 
+> Do you think these two should be changed to use MFD_CELL_BASIC()?
+
+No.  I mean with the device nomenclature.
+
+[...]
+
+> > > +static void usb_int_callback(struct urb *urb)
+> > > +{
+> > > +     struct nct6694 *nct6694 = urb->context;
+> > > +     unsigned int *int_status = urb->transfer_buffer;
+> > > +     int ret;
+> > > +
+> > > +     switch (urb->status) {
+> > > +     case 0:
+> > > +             break;
+> > > +     case -ECONNRESET:
+> > > +     case -ENOENT:
+> > > +     case -ESHUTDOWN:
+> > > +             return;
+> > > +     default:
+> > > +             generic_handle_irq_safe(irq_find_mapping(nct6694->domain, irq));
+> > > +             *int_status &= ~BIT(irq);
+> > > +     }
+> > > +
+> > > +resubmit:
+> > > +     ret = usb_submit_urb(urb, GFP_ATOMIC);
+> > > +     if (ret)
+> > > +             dev_dbg(nct6694->dev, "%s: Failed to resubmit urb, status %pe",
+> >
+> > Why debug?
+> >
+> 
+> Excuse me, do you think it should change to dev_err()?
+
+Probably a dev_warn() since you are not propagating the error.
+
+Is this okay by the way?  Is it okay to fail?
+
+-- 
+Lee Jones [李琼斯]
 
