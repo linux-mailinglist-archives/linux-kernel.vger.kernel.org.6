@@ -1,146 +1,106 @@
-Return-Path: <linux-kernel+bounces-569198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121F8A69FDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:36:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAB8A69FE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:39:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61993AD250
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2211895229
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEA51EDA1A;
-	Thu, 20 Mar 2025 06:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C991EDA3B;
+	Thu, 20 Mar 2025 06:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hriKurFW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3UHfLraX"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEB279C4
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255691A316D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742452555; cv=none; b=MyVwi/T9fdrrGmVP/aGw7McWkPR6qdogTJNAkuHUQkv4jTVb6F9q0jSvnmexAQOP1J7DIDq1IuSA7gYVIrKCpulpgJJBX9UIaAulnloJokm5G3FERrC9z/M3E1pAEOFxlPJBv0vDZ0GKtctu7357wdHHxmE6WCllY02L6t0fJZg=
+	t=1742452788; cv=none; b=LYK5lYz4n84Ew//drZ445LRR7qJE1kkEToB5ZMfTERYHgDJKC1w8DKZv4Z1CLa9qALHSL4ySqVWa6vMkXoAjayp0pFURn1QY0cEcva/3wjF//t1qiIf5tWMh8e5sLIvnR0ansft+DUK7eSTjv4nlvB6Y+WCKXXBb94uf1kcruAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742452555; c=relaxed/simple;
-	bh=szwn4Bj/PLXzPNZdH0y+zZEVHCkEJQZXEyGBSUkWYuU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BPbpjrVMWWai1GlGepDcuTTN8bCJicizUcjAIe+UvguYQsUBruF9hYlW0npfRHxVCwac4ZDj4RPDyoLd3MfPzQG8n+LX3B0BzG0nwkJIqKNZGDIjH0RxHBniymEPTq/xM8vVRyhNALS/Cz41kCdykLvNeyamEgm9oKrGVtH4HLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hriKurFW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAE5C4CEEC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742452554;
-	bh=szwn4Bj/PLXzPNZdH0y+zZEVHCkEJQZXEyGBSUkWYuU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=hriKurFWsfSomsK7L1cARccJyhdGUfqrdimlzk3C8I3tyYuf9crM/vgwdkhKQoNKA
-	 u+JBuiKLUxxLGadIAeEcyVBPJdrXE0sJogbBbsCKT0Z+BOMWJy+bnnxtQzptTDMgzO
-	 SDS5ZBI+9wZ/lWw2tp/wHDPW1Qv7b8pxYr/cwGFVZVvgsXvoqMnJqi6fOeAmmvwzun
-	 4Sxl2x9umSirtAC8jIFDGAoA9lSCGz6mDVTdlfZdvJwofQuWxEtT9O/giycs4476r1
-	 fAxDxNtyS+/FhYU1FGenbAdbAuddrRM1HIvkb2HWOkAlawsCKiwY8SnlVblTr7EN8a
-	 hmleDNSQbm1Ag==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D13121200068;
-	Thu, 20 Mar 2025 02:35:53 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-10.internal (MEProxy); Thu, 20 Mar 2025 02:35:53 -0400
-X-ME-Sender: <xms:SbfbZ9E0Mffxbs1zs9rFEMFzbL2njv02GbVegGupSQVdcTzzCeSu8A>
-    <xme:SbfbZyVfCaxE29fd88NMBjDmjPUdWHT9SP7_YiqJdzvX5vjHSiRswyORp4BCW_6Z5
-    4sP25dPey9Y2OQ9h_E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejhedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedfnfgvohhnucftohhmrghnohhvshhkhidfuceolhgvohhnsehkvg
-    hrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeevffelgfelvdfgvedvteelhefh
-    vdffheegffekveelieevfeejteeileeuuedvnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheplhgvohhnodhmvghsmhhtphgruhhthhhpvghrshho
-    nhgrlhhithihqdduvdeftdehfeelkeegqddvjeejleejjedvkedqlhgvohhnpeepkhgvrh
-    hnvghlrdhorhhgsehlvghonhdrnhhupdhnsggprhgtphhtthhopeejpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprh
-    gtphhtthhopehjghhgsehnvhhiughirgdrtghomhdprhgtphhtthhopehlvghonhhrohes
-    nhhvihguihgrrdgtohhmpdhrtghpthhtohepmhhitghhrggvlhhguhhrsehnvhhiughirg
-    drtghomhdprhgtphhtthhopeihihhshhgrihhhsehnvhhiughirgdrtghomhdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:SbfbZ_IY9W6f_dGfzwoi3HrXpdvBzfF-MIBCX0DbK0tsOqmwyU3_Jw>
-    <xmx:SbfbZzF3wJKgf7tx7bMVRIJNOh1fGMUVlBIH33-vS-aMk8sCyP9fLQ>
-    <xmx:SbfbZzWKeAJe5hMaI-C6h9aG0RjHJ1VoMFjSEIEbsU1acv8ssTFLUg>
-    <xmx:SbfbZ-MSQTlxdYEjZPtDfhxq0yci9ablpL5-4M8_1MDdhVLoRlQhpA>
-    <xmx:SbfbZy2Ojo1tiqsp6lKI0waiBE7_CdYarsraM9sTFbswRWGd1DbCKdt8>
-Feedback-ID: i927946fb:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A85A11C20066; Thu, 20 Mar 2025 02:35:53 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742452788; c=relaxed/simple;
+	bh=lvHr0xBduL12ILHUgkyvTDkRAIc5TEt9QlLTMcKApCg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GR8+PvpOGqMet4GGH8WIdHcu2ciUsdyUPh3JZYSBKLD9arxx/iGjFSROYCowTsqrFB+8l2F8PmC7prO8zmkYnfVvmHhgvAJg+50HnUwQWWCqNflyXzNmmveA1kowd6kEvOaiXuLjY0r5oGvtfy/rvrMdXg26VqfF+7mbhrcjTFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3UHfLraX; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-85b402f6a1bso140300839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:39:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742452785; x=1743057585; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3ZuKkdmfZDR1C+3icFeF962+7yJcOI589wOKKi/iF/w=;
+        b=3UHfLraXEmNQRRJt+dSZjFQV+eZuZ3VyBV7NOM6LCKhmbBX9kfV592MnsT4SYRCx1/
+         WTfPD4xzrTqOpQ0tLjKJ0wmwEFuWuE1hKvGwgdqr97NhxslNcuOMG0z2efLc2bthmkBN
+         l03p2o3fb6k9evSwAGwo37tVLQIJyGH1aaoALs2iIwv6poYJpRo6kCfkaaks+5tWdM+Y
+         4PlCYDJxTmxHTNamrDg9LEaBJBxcetn1mHT5P+aAs91iNoYjT5tew5AkZw11Yy9oBQ62
+         j1RFcRPRtuYymtj+pGHozitDCaKWy14ObPGugGx88l6B2Ag+BQmafET3yKLOSYa9kbeG
+         57cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742452785; x=1743057585;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ZuKkdmfZDR1C+3icFeF962+7yJcOI589wOKKi/iF/w=;
+        b=AmPv4iAO7r0/jSFlT1jLD1jfhi1Bjq0L+kscJVZVusgLr1PyY+Mo8mwEFbsLzRlm9v
+         Pn2Zn3KvbWYiYmBMI3hN2+UzFsZpRaLLVNqAQYwex/wFLBFxS+s+nlzeoeTwnurOjvJw
+         PAiIWYY+zE11FNaKdyws581kZ3sXEwcnpKplokNEAqowpxnCv5Cd0IQzaXl4rbosU7Jz
+         VUO4A4p3443eU6b2QZppOJEds/ot4RM+5H48IbgyfwuoER+ZihK17DONz4RnCzuskmN0
+         I8Qzoc/C6Bt2MTgRpqU+JeKwMqC+uP39baDn6masoF3gFsKiWgUTVs2ASBsuDImwj50L
+         u/8w==
+X-Gm-Message-State: AOJu0YwWzjTRwNfIN5JW4FX3ZBWrLZR/7c8xPcyiVHmoCEvx6IcGJkub
+	DCnRaB5FKRCM/TAwR+KIvewWZzDbwXIqeLumegi5tayAzcX4Mqg0ZTC8pWMlHFVxgenRp9zKJwJ
+	Wrw==
+X-Google-Smtp-Source: AGHT+IHWqodOqFQvUCGpVWIEl082LJUg7feyjPoyDn+FcJqgqu/vvy3kAQRePZCxSlpgiFrJVjN7q7Ot0j4=
+X-Received: from ilbck17.prod.google.com ([2002:a05:6e02:3711:b0:3d5:8368:8284])
+ (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1c0f:b0:3d0:237e:c29c
+ with SMTP id e9e14a558f8ab-3d586b45206mr71026475ab.12.1742452785209; Wed, 19
+ Mar 2025 23:39:45 -0700 (PDT)
+Date: Thu, 20 Mar 2025 06:39:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: T206c77f1cb322050
-Date: Thu, 20 Mar 2025 08:35:32 +0200
-From: "Leon Romanovsky" <leon@kernel.org>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Jason Gunthorpe" <jgg@nvidia.com>, "Leon Romanovsky" <leonro@nvidia.com>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linux Next Mailing List" <linux-next@vger.kernel.org>,
- "Michael Guralnik" <michaelgur@nvidia.com>,
- "Yishai Hadas" <yishaih@nvidia.com>
-Message-Id: <64f58e2e-3081-4523-af37-b6c344ea301d@app.fastmail.com>
-In-Reply-To: <20250320120823.588aa58e@canb.auug.org.au>
-References: <20250320120823.588aa58e@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rdma tree with Linus' tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250320063903.2685882-1-avagin@google.com>
+Subject: [PATCH 0/2] fs/proc: extend the PAGEMAP_SCAN ioctl to report
+From: Andrei Vagin <avagin@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrei Vagin <avagin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Introduce the PAGE_IS_GUARD flag in the PAGEMAP_SCAN ioctl to expose
+information about guard regions. This allows userspace tools, such as
+CRIU, to detect and handle guard regions.
 
+This series should be applied on top of "[PATCH 0/2] fs/proc/task_mmu:
+add guard region bit to pagemap":
+https://lore.kernel.org/all/2025031926-engraved-footer-3e9b@gregkh/T/
 
-On Thu, Mar 20, 2025, at 03:08, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the rdma tree got a conflict in:
->
->   drivers/infiniband/hw/mlx5/mr.c
->
-> between commit:
->
->   cc668a11e6ac ("RDMA/mlx5: Fix a race for DMABUF MR which can lead to 
-> CQE with error")
->
-> from Linus' tree and commit:
->
->   24d693cf6c89 ("RDMA/mlx5: Fix cache entry update on dereg error")
->
-> from the rdma tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> -- 
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/infiniband/hw/mlx5/mr.c
-> index 753faa9ad06a,2080458cabd1..000000000000
-> --- a/drivers/infiniband/hw/mlx5/mr.c
-> +++ b/drivers/infiniband/hw/mlx5/mr.c
-> @@@ -2023,8 -2031,7 +2032,9 @@@ static int mlx5_revoke_mr(struct mlx5_i
->   	struct mlx5_ib_dev *dev = to_mdev(mr->ibmr.device);
->   	struct mlx5_cache_ent *ent = mr->mmkey.cache_ent;
->   	bool is_odp = is_odp_mr(mr);
->  +	bool is_odp_dma_buf = is_dmabuf_mr(mr) &&
->  +			!to_ib_umem_dmabuf(mr->umem)->pinned;
-> + 	bool from_cache = !!ent;
->   	int ret = 0;
+The series includes updates to the documentation and selftests to
+reflect the new functionality.
 
-LGTM, Thanks a lot.
+Andrei Vagin (2):
+  fs/proc: extend the PAGEMAP_SCAN ioctl to report guard regions
+  selftests/mm: add PAGEMAP_SCAN guard region test
 
->  
->   	if (is_odp)
+ Documentation/admin-guide/mm/pagemap.rst   |  1 +
+ fs/proc/task_mmu.c                         |  8 +++-
+ include/uapi/linux/fs.h                    |  1 +
+ tools/testing/selftests/mm/guard-regions.c | 53 ++++++++++++++++++++++
+ 4 files changed, 61 insertions(+), 2 deletions(-)
+
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
+
 
