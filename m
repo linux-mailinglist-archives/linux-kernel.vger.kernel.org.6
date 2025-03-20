@@ -1,117 +1,103 @@
-Return-Path: <linux-kernel+bounces-569910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E1FA6A940
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:01:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75B6A6A94C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7037E8A7436
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0366217E335
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68BA1E5B65;
-	Thu, 20 Mar 2025 14:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B60F1E520B;
+	Thu, 20 Mar 2025 15:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5jLTKTS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCNV95CY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11BA1E520A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9491E261F;
+	Thu, 20 Mar 2025 15:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482798; cv=none; b=nNIUyZH2F+BlViYQ+9qyOa+tfHKn4o/7sb02JAaLiP6yC6TlHRuJnGzaeuhi25aGQFgOTeHC9vl8ensdXdPiV8F1AFeNE75rApPKNBpewRW2nTCFUpTPz8hfQNP/gqK18V2aW0yUWZw4VDNoL6Yh8DiiAEXA1gcFVZIPHSyk8Zg=
+	t=1742482847; cv=none; b=Nn4jHyfcwgH777v4xHGx/6y4CHpM/9hkvPYOjD2sxowT2cuvwgyqztPLYOGaLdGb8CcO0VdALI+QaspvfwkublZNbqoESupq+XIuSW2BLWbfS8WgpnsekVrxY8zFeSbhff6y/OReErN5LdssK/MbRW1sPzSoh9ke6+sTaRFsRKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482798; c=relaxed/simple;
-	bh=2rOGlMmtdQ4Ksoad5RSTtLyZgwyZ5X/mRZl26DRqT94=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=U+933uUrjC/M4o8RshvYcufql1oV6YfpxgTIM6PaHRKxMBN6pJUnlZFhV5C34nJSzGdHh4320O4IjNE3VFBqA4pNPuJXlrEzlXzRt7Y2djoBVpKTbpGKoHY1mqFeFxXeaxtsoXkUh3gfSFilKf9JfiKiv++zorRvkdT90koHTj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5jLTKTS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742482795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nRe2APlP+3rualAe+YEcPMiZ23dWUMdOZf0dy04wvzQ=;
-	b=g5jLTKTSLcrPhcbC6X0vam2MfMtBX37aCT9h9n7RXCCcKZ5juL8UDQf/TrpdP8Wc9xzxrl
-	i20UVdUZqxTeg8RhSwrWNeprlHIU/BPInicj9SsunvcsIHTy13VjlQVd7qimKiIcvc4WNC
-	AZp5ZY5Fx2Aw0kA5oAFrPs2ABfzAj8w=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-327-XPbzXm-7PjWIQos2Ykpyrw-1; Thu,
- 20 Mar 2025 10:59:52 -0400
-X-MC-Unique: XPbzXm-7PjWIQos2Ykpyrw-1
-X-Mimecast-MFC-AGG-ID: XPbzXm-7PjWIQos2Ykpyrw_1742482791
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F635196D2E0;
-	Thu, 20 Mar 2025 14:59:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 163253001D16;
-	Thu, 20 Mar 2025 14:59:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <749dc130afd32accfd156b06f297585a56af47f3.camel@ibm.com>
-References: <749dc130afd32accfd156b06f297585a56af47f3.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-24-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-    Ilya Dryomov <idryomov@gmail.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Why use plain numbers and totals rather than predef'd constants for RPC sizes?
+	s=arc-20240116; t=1742482847; c=relaxed/simple;
+	bh=Be//gNDiDHACoFa8CWsun5REmHLhpSALE5TV1KvhaHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjL6KgInsu2N7NclX+yRZcKU36/wGasX3xhgEYMyuuzbtsZabIUIW7YHckv75i8rAjQYTObzy/wIYX6KKNNCpzU4WAHS+ZB3CabfUNupK45AOkusSSLF5iA3guwgjzpYcWEGhzzqs+u+D3Oow03FnU3wbdRB0XAbkMTznJSbiBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCNV95CY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD67C4CEDD;
+	Thu, 20 Mar 2025 15:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742482847;
+	bh=Be//gNDiDHACoFa8CWsun5REmHLhpSALE5TV1KvhaHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCNV95CYJB6Bg57IXbd3x/o8K32MRTrCsSeQZ87G+Z0JbyrSdLDz1kJxPaLcgu9RS
+	 btR0xNYoSH2hgn3ffBq9S1otafi7fqLQr/ZmEbGod7EHRn0pG4hk+JfXcN25qtqTxn
+	 oYSy89HuRit52h7YhA3gO9JSaW/ByPAZU3i3UJoDhogGSrMdmE/2TRA+DkIhIQMel+
+	 4DS2S7ZtIMsoz96N+fF6+937WUu48obBsW0xGD2KAOrPIFcAxY8RBkWiRhIlgJcqBY
+	 DKJtks/22C7BK6I7KTVGtaNAMIuM67psLSD3dATtQglklvVgdEivc6TbsGnzaZOUPF
+	 qq7zdvPDO4tgQ==
+Date: Thu, 20 Mar 2025 17:00:42 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+	linux-integrity@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v3 3/4] tpm: add SNP SVSM vTPM driver
+Message-ID: <Z9wtmqGkqPPkXWqP@kernel.org>
+References: <20250311094225.35129-1-sgarzare@redhat.com>
+ <20250311094225.35129-4-sgarzare@redhat.com>
+ <e4eeaead-2277-1f6f-86eb-f80deae2135b@amd.com>
+ <Z9gm9iWhk5Zs2NvI@kernel.org>
+ <CAGxU2F7fdAi148rB-4c==-qCOW1SJjwf4AzC2=TUhfPXMhR5pQ@mail.gmail.com>
+ <1262fa5b-0822-b8d4-26c5-426ffa4e0265@amd.com>
+ <qne5fm44dhkbnwc6ldgff76ljt7ecd3cvtf3b3lhos56yyx2ez@qbcv45zbxlhp>
+ <20250319234422.GG126678@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3172945.1742482785.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 20 Mar 2025 14:59:45 +0000
-Message-ID: <3172946.1742482785@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319234422.GG126678@ziepe.ca>
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On Wed, Mar 19, 2025 at 08:44:22PM -0300, Jason Gunthorpe wrote:
+> On Tue, Mar 18, 2025 at 05:18:53PM +0100, Stefano Garzarella wrote:
+> 
+> > I see, thanks for the clarification!
+> > I saw that with devm_get_free_pages() I can easily allocate a
+> > resource-managed page, so I'll do that in v4.
+> 
+> As a general note you should just use kmalloc these days, even for
+> PAGE_SIZE. It is efficient and OK.
+> 
+> Having a struct that is PAGE_SIZE+1 is not efficient and will waste
+> a page of memory. That should be avoided ..
 
-> > -	dbuf =3D ceph_databuf_reply_alloc(1, 8 + sizeof(struct ceph_timespec=
-), GFP_NOIO);
-> > -	if (!dbuf)
-> > +	request =3D ceph_databuf_reply_alloc(1, 8 + sizeof(struct ceph_times=
-pec), GFP_NOIO);
-> =
+Yeah, kzalloc() takes care of this magic. As said, kzalloc() vs
+alloc_page() is not an existential question for this patch set :-)
 
-> Ditto. Why do we have 8 + sizeof(struct ceph_timespec) here?
+I just would personally use alloc_page(). If nothing else, it does
+have some super cosmetic benefits e.g., thinner call stack (when
+needing to debug deep, which sometimes happens).
 
-Because that's the size of the composite protocol element.
+> 
+> Jason
+> 
 
-As to why it's using a total of plain integers and sizeofs rather than
-constant macros, Ilya is the person to ask according to git blame;-).
-
-I would probably prefer sizeof(__le64) here over 8, but I didn't want to
-change it too far from the existing code.
-
-If you want macro constants for these sorts of things, someone else who kn=
-ows
-the protocol better needs to do that.  You could probably write something =
-to
-generate them (akin to rpcgen).
-
-David
-
+BR, Jarkko
 
