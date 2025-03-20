@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-569666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD340A6A5D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86133A6A5DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40101888D62
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:04:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2A01889478
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ACD22371B;
-	Thu, 20 Mar 2025 12:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DA9224890;
+	Thu, 20 Mar 2025 12:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFdAT1Bw"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nL0fH3Kt"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ACA221546
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48E42206B8;
+	Thu, 20 Mar 2025 12:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472220; cv=none; b=LROyJYlvNaaTOByvWpnCzpQBnGszhnpWThmgkrGa1rH/KGKsCIRxVKt5JcHXhZ8b1fRsatNBF2z3Nr5I1J+a6zDFCE5pOA5Z4itlJcYP4i5xpBqpw8an5m9hvymY221s/RoyQ7HcED4uAZ7EgfRIgBMG8uKpFHq6VMgTWUbYuQo=
+	t=1742472221; cv=none; b=hxHEt8o0+N8SAxXxs8NU1FcEKgH/4m2kf87giElzWJITeix4nkWC2mpuTQoRwKqGcA4mgQlG2vTG/PdD24MymuCtYWsBaRNc+tsyq1RykzB4a3g0hOd5+bHeiMWhlReLEN86KN63FVmTg4LWxZ+twY1PgfRYQj0NjXtXSpnSqNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472220; c=relaxed/simple;
-	bh=92z/B3k0LvkLtTwHzbNic9BJKlpRVe7yNxElqbPm4Fc=;
+	s=arc-20240116; t=1742472221; c=relaxed/simple;
+	bh=21vwweFK2F6TfCSCu35zl7LS6xGibp24XH2IwzpROc4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VALDfd+x0vCwCYRmc3NyTSevglqeZHdxKn9tEUaeTlq54Fwc5HJhDTyMNBdLX+4jbJy8m4rANsQ4cJBdrkEzuwbS9byV/f9V4mjVAwbPrNNJVNtBjC7VlCq9F8siKu8ZAyhxtPtJ7U4n9SvP04KFMWspijLeIuhHUDSpy7q0DhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YFdAT1Bw; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39130ee05b0so634272f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:03:37 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=tNDZAfmh7fp1V0ThLV9VQ8DiUlaqSv4x2+L1ZjFPViVv08YUI0OwMDIpgSv6bV0iNbyBsBFSWAjCYigLXU0aIOQhX0fW24Z/EEqKEtebThZM0HcqGVfKiXOibe+GF5aH7fNJ5zJC9iafmS51pj4qnMcep5XDG0d1G8Y+TveHUDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nL0fH3Kt; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so1274794a12.0;
+        Thu, 20 Mar 2025 05:03:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742472216; x=1743077016; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742472218; x=1743077018; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EQDLeTVQO60i129NwHZhgyuH4YLDfE0eRqlKn+9+84M=;
-        b=YFdAT1BwFgjqCCng/IZVf43Xe7UKa6Yr63ncNOia/dyx5oqkSW/pIK89R7FtZxhfBB
-         A1gZOTbRBf4tQf+REATdlexspNGA4b3eXlGw8r889GcdiY3ybfnNQi2LNShqxbXS2FsH
-         DWLeN+bwPnwobTGOVdxGaq4tYJSDArHWVLnDmEPTgLT2cJf3dUGy9YY7xnoazutdbmeE
-         pXa1hPwy1fjicCsljgwJXCyOY6LCICpRRRMnNAd6VyROZbIE4kvnw2Bp8eJVWigtmtlP
-         8LQTrwP2TNGoxOwlN14DxNx6z1mPa7odO+ecuKJHvQBxUZw6dkl2x+mCX6Wsq7icSgRd
-         lNlA==
+        bh=/4HC6wo6cnKpwf6RkJrvN6AC0UGaCa4F1leVOf8hXaw=;
+        b=nL0fH3KtCsxX1Ao9DuR1kv6PGkWalw8ry++wa5Eb2q6+up9GZnEidqvPiYhs7zWijh
+         PW6CrxfH+LkiclV5r/RTEanIbMRFRLjjbi1Xdy7jLavSPMQENsb4csR5hIqyPcYln8hq
+         Q+yp6K3+vkazWBUoJQxItDWzWaDGBt8v8hQstVMKy9kOmbGBQMARAuvHBQncnDNbkhFr
+         BBolNsGGy5UAiDt7hgNbEZs2xEeuQiufJkbA1rc5SD9miTXNBMcmScFagvbLiKvC0Jvq
+         vq/2B6YZjhoN1Gp8YrX12qFvdtXsUXuRuOGLA9PG1whOvBOm/97I1k3SBrYTquPxveHY
+         tF2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742472216; x=1743077016;
+        d=1e100.net; s=20230601; t=1742472218; x=1743077018;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EQDLeTVQO60i129NwHZhgyuH4YLDfE0eRqlKn+9+84M=;
-        b=Xzs9WH5JmFnWVf4AVHPR4JB85nvttrstLLWXcZJUX4Jcm4yUaWgflht/RaDoQtvO86
-         ksApp/V/dkwzAGcvI+49q0kpjIcKv6V/VWkGWZOzeVdTT4vhTMzj4T+N5CYh5EP/tyB7
-         TF8PbEeSp1hgumVNg7a8Wnld+AtI7SKbG0EGtuDfSheyutYSaB2iWIC6i1uu/2hhZg4M
-         vjKSXh9olziWWHA2qiN62od9y0O20Au+kxu7JiNT59VJoixXW/oUawGfC2b6OmtrSrq5
-         4AxI+Ia2DIshRe/HziemXxlub9eLCkV5oNnvlu9atdOicyWl1u6qXw+/k6ctnmhpVpjU
-         oIDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJk4vcXSibGqFm7aYBTu19Fya7OYFwsOkRyjPlEdcTe4zpeTbC8V6iJVHcpOR7aAfNczB0l7a027gWj3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYd32sKWldW5ZI82Bco9Zf4StawjNxw2F5XbyShBOWAa2S2sYy
-	dTzPk8nkx556uZeOmDJzIQZfscwc5Ck91GvHiF4fvReFk4hpBQf2PIm4HYNo9Ws=
-X-Gm-Gg: ASbGncsVWDSS5SrNqedCuL8jSGvc9Rpwt9qn/btjqiebShcbAn+OLSDsJ3tZJYK2Vfb
-	3Iy92L/vE/UcHrDay04AifVzS8EUAJgEPFmCXB3y8C9+xIXjnGrTk9vjpahsSPwbwVno9yN/FIU
-	bm0+BCd/jbzkgzYkkmPz4a8DBNJBGpzcE3yMVy0bj2WW9KbPGBRAEX1TW3jJ0Y1xdBBZITaQ2VN
-	jgDyP+2gSHmdBgyUq+wLR6zMu6iEX93B7E1oiMillmORUSle+TvDV1/N5Gm1gWxaVKlJyE3TQXz
-	L6+UAdz9MLfFn0Oko7kxbxD7JwDFedAoW4Wovuui6j66LbP6f24hDw==
-X-Google-Smtp-Source: AGHT+IEK+xwmyzpLH4fUFYAK8pkY/PJG3xFWTRmMVVaoYGY6Hu+ouzrAyy9TiUC/EdmpUdoPxqvXIQ==
-X-Received: by 2002:a05:6000:1fac:b0:391:4835:d8a8 with SMTP id ffacd0b85a97d-399795a7e4cmr3253293f8f.1.1742472216356;
-        Thu, 20 Mar 2025 05:03:36 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df402esm23250656f8f.1.2025.03.20.05.03.34
+        bh=/4HC6wo6cnKpwf6RkJrvN6AC0UGaCa4F1leVOf8hXaw=;
+        b=IYLkx+O2UkPAn47F2O8AdKiU28bn5k6CdConu/qIGtcezJ3Ty0o0xnwnldH1kcjhyc
+         zUobmfA0If7ncA89kAvliEbxSg5Cf+nzUsfmXQkq8ynbBon3JkMIh0goGedY3iTqPrHg
+         +BvfZizBcL7fBjV7jftN7ecFXf0UqY5zAHfA5cC6NQFxc99HNFd/A3cyDWj2pKTpr4BI
+         pGDp+TImvQooXRQn+4eRly54jGfbt4Bv+UL9xfOf4NLBwIcRz7rB9uzEfL3KKbMXy/Kh
+         QEPx1dBuhh24renRAk1TQoTLdgZlBt5StZCuy9RKjh7MpePDMNL9dU8d2xWNKtuVp58K
+         tjtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1n328Uxx3/YHU8730NGNHKaUMeEr0ZcGCa4aqLETtk8DRuZ7Rw1pq2zPvrPQl4i0iO+dqwwaUUQ==@vger.kernel.org, AJvYcCX1koZjY+ERTrezwMFfNdO+bLliwHzMqmWZ0TLJhhUkc2XNX79tHwhTP3kWVpwdUB/HfOj1VW67YyqdxT8=@vger.kernel.org, AJvYcCXkYiOpeuFM7+dEJ37G4LckH/2uIVN9KrQ2PEA1dNXTCILlMU1n/yCbHQpXs3fQNPfFJU9c3FKDs1AMIWL+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuI2/+nhYEj+CduSyIrAq/D+ewQyR2Ox5U7ql8e8zQkdsvGYp/
+	E3QcwPZwQ4BbQiFQkdGKEv/tDUcD2LqZ5cciVp0a8LKAogr+aNjh
+X-Gm-Gg: ASbGncujq4uQ8vGhfQyMr9gGD70XGV4WfCrM+BmIVc9/s+K7ecyiDvBZsnoL5xShoI2
+	VbN7QsbvyJedP0a7q9ovhJrvK35CeMrLG7owIrWboYGEk4B/TCFlj8ZpMJsHiN4TmHu9YEksnLU
+	oRSXAWZDHMGlbvi6JpHHj1Zj45qvg+ghCjLAg8DoXfTRpgrtUFZzU1xu8ZBnyHqqNGkUPYNOrGL
+	IAMicYz7qu3IYZnVQJ5YEgOCSjnhjgdiiiweBRVdW4R9kTI46DlcrHgvms2udAmNpwzc0tEIOph
+	K0z1SRKQonS83X8fW9kHcCdeB165hhul5NMoJmsbe+/nizXT9IEum49ddDTxt0+wn6/5UrlehJA
+	CQN+FRJKFeyyR
+X-Google-Smtp-Source: AGHT+IFRhFpukk54KqJz8QtnZPdPwrY7CEKukPrAMpsTs5CSWpsMsefxxFsE29fpi/KgKVDQ1FDJew==
+X-Received: by 2002:a05:6402:5204:b0:5e5:e090:7b62 with SMTP id 4fb4d7f45d1cf-5eb80fa43afmr6933161a12.24.1742472217508;
+        Thu, 20 Mar 2025 05:03:37 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:5148])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afe22esm10265582a12.79.2025.03.20.05.03.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 05:03:35 -0700 (PDT)
-Message-ID: <4d36e51f-323c-451c-afeb-a6e378e3ed53@linaro.org>
-Date: Thu, 20 Mar 2025 12:03:33 +0000
+        Thu, 20 Mar 2025 05:03:36 -0700 (PDT)
+Message-ID: <27ae3273-f861-4581-afb9-96064be449a4@gmail.com>
+Date: Thu, 20 Mar 2025 12:04:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,96 +81,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/21] mtd: spinand: Use more specific naming for the
- reset op
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Santhosh Kumar K <s-k6@ti.com>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
- <20250307-winbond-6-14-rc1-octal-v1-1-45c1e074ad74@bootlin.com>
- <9004166e-5535-4024-8114-9fdb217407bb@linaro.org>
- <87v7skrgjl.fsf@bootlin.com>
- <f1111d1b-a111-4171-9467-450d90a14c0a@linaro.org>
- <87iko50vvb.fsf@bootlin.com>
- <ba99ef52-0c98-45a9-91e0-4fd205649e00@linaro.org>
- <87msdgvsyc.fsf@bootlin.com>
+Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
+ io_uring_cmd_import_fixed_vec
+To: Sidong Yang <sidong.yang@furiosa.ai>, Jens Axboe <axboe@kernel.dk>
+Cc: dsterba@suse.cz, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
+ <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
+ <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
+ <20250319170710.GK32661@suse.cz>
+ <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
+ <Z9tzvz_4IDzMUOFb@sidongui-MacBookPro.local>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <87msdgvsyc.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <Z9tzvz_4IDzMUOFb@sidongui-MacBookPro.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 3/20/25 11:31 AM, Miquel Raynal wrote:
-> 
->>>> How do you feel about a OP-An-Bn-Cn-transaction-format,
->>>> 	where A, B, C is {1, 2, 4, 8}
->>>> 	n is {S, D}
->>>> 	transaction format is {0,1,2,3}{A,B,C,...}
+On 3/20/25 01:47, Sidong Yang wrote:
+> On Wed, Mar 19, 2025 at 11:10:07AM -0600, Jens Axboe wrote:
+>> On 3/19/25 11:07 AM, David Sterba wrote:
+>>> On Wed, Mar 19, 2025 at 09:27:37AM -0600, Jens Axboe wrote:
+>>>> On 3/19/25 9:26 AM, Jens Axboe wrote:
+>>>>>
+>>>>> On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
+>>>>>> This patche series introduce io_uring_cmd_import_vec. With this function,
+>>>>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
+>>>>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+>>>>>> for new api for encoded read/write in btrfs by using uring cmd.
+>>>>>>
+>>>>>> There was approximately 10 percent of performance improvements through benchmark.
+>>>>>> The benchmark code is in
+>>>>>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
+>>>>>>
+>>>>>> [...]
+>>>>>
+>>>>> Applied, thanks!
+>>>>>
+>>>>> [1/5] io_uring: rename the data cmd cache
+>>>>>        commit: 575e7b0629d4bd485517c40ff20676180476f5f9
+>>>>> [2/5] io_uring/cmd: don't expose entire cmd async data
+>>>>>        commit: 5f14404bfa245a156915ee44c827edc56655b067
+>>>>> [3/5] io_uring/cmd: add iovec cache for commands
+>>>>>        commit: fe549edab6c3b7995b58450e31232566b383a249
+>>>>> [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+>>>>>        commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
 >>>>
->>>> Care must be taken care of at the transaction format, as I see there are
->>>> a few, depending on the xSPI profile and protocol mode.
+>>>> 1-4 look pretty straight forward to me - I'll be happy to queue the
+>>>> btrfs one as well if the btrfs people are happy with it, just didn't
+>>>> want to assume anything here.
 >>>
->>> I must admit I really dislike the transaction format abbreviation because
+>>> For 6.15 is too late so it makes more sense to take it through the btrfs
+>>> patches targetting 6.16.
 >>
->> I'm not in love with the "transaction format" either.
->>
->>> it is specific to a spec we do not follow and is not explicit. I have a
->>> strong preference towards keeping just "An-Bn-Cn", like I did in this
->>
->> Okay.
->>
->>> series. If people are in doubt, they can check what is in the op, it is
->>> self explanatory. I chose this in the first place because it is more
->>> explicit than just "An" which may feel like a cropped
->>> acronym. Furthermore, most octal capable datasheets I've looked at seem
->>> to use the "An-Bn-Cn" format, even for single opcodes.
->>
->> So for RESET, WREN, WRDI and other opcodes that don't require address
->> and data, are those datasheets referring to these opcodes as 1-1-1 commands?
->> Can you point me to one of these datasheets, please?
+>> No problem - Sidong, guessing you probably want to resend patch 5/5 once
+>> btrfs has a next branch based on 6.15-rc1 or later.
 > 
-> All Winbond datasheets use this convention:
-> https://www.winbond.com/export/sites/winbond/datasheet/W35N01JW_Datasheet_Brief.pdf
-> See 7.1.2 Instruction Set Table p.25.
-> 
+> Thanks, I'll resend only patch 5/5 then.
 
-Nice, thanks!
+And please do send the fix, that should always be done first,
+especially if it conflicts with the current patch as they usually
+go to different trees and the fix might need to be backported.
 
-> I checked Macronix and Gigadevice datasheets, they simply never "name"
-> these opcodes clearly.
+-- 
+Pavel Begunkov
 
-okay
-
-> 
->> In SPI NOR, WREN is just WREN, regardless of the number of lines it is
->> sent on, 1, 4, or 8. How would you model it here, 1-0-0, 4-0-0, 8-0-0
->> using the same opcode?
-> 
-> I guess, yes.
-> 
->>> So unless there are strong arguments against, I'd prefer to keep the
->>> current formatting. TBH, it is not set in stone and can still evolve
->>> later if that's needed.
->>
->> I find the naming scheme An-Bn-Cn good, I'm arguing that it's not needed
->> everywhere, opcode only commands are better off with it, I think.
-> 
-> Ok, I can drop the -0-0 in this case if you prefer.
-
-Not needed. Just wanted to make sure we have a unified way of dealing
-with the protocol modes. Having WREN-1-0-0 and WREN-8d-0-0 is not that
-bad after all, it allows you to specify the number of lines directly,
-without mangling the op afterwards.
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-Thanks for the patience. I'll check the other patches next week.
-Cheers,
-ta
 
