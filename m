@@ -1,151 +1,161 @@
-Return-Path: <linux-kernel+bounces-570251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB01A6AE10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:04:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12346A6AF4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08EE3189ECCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6809C483121
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B8C228CA5;
-	Thu, 20 Mar 2025 18:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367EE22A4E4;
+	Thu, 20 Mar 2025 20:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3lHK5vH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlp2Pook"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB4A1C69D;
-	Thu, 20 Mar 2025 18:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937B322A1E1;
+	Thu, 20 Mar 2025 20:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742496954; cv=none; b=g02BRJ5Qi+JE1HkaTTjcJJR7oaWYkluCnfeD9Rp1cHrDdBJo7srDYx/z1qTs/aiaPorPqhc62fRUdKyazU1UzpET06N54dEVdeK+hyVP4xvHmdBRp9NXbmcDtpDlLTTunXAkixQQ2UOInghpxhdqID1EcAK9UdHXMgfhVPkodOQ=
+	t=1742503307; cv=none; b=TbjgIIS0+N+nGPH4vnYP+IF3xWtBUJcCHUlXLD4NdHToOLTu9bYq0jJhHvU12RaJsi1M+fvb2q/8FGRilFg3USQZ+E2jRmL2gu2tf9y8lFcZwkqJ+hGa14Z16w7bnaFdcANwzExAy6XER/5N+gD/tcu3utPmWfXyco2mMoEi+QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742496954; c=relaxed/simple;
-	bh=bpN/85K3GQ3AlOPx5AI0LjvEzJfDvNGW47DH3s5PiEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZ7aLiIaaVZYSaYw4lnAdlBRYz5jUIx3PfKQ+j5oNfX7z4W598vvgppoQPR+AELNStySN8xueI0PucXjFu94/Omz+eKjGXECAI7Rvzs/gEmR4kZA1MVVpPxdVf45vW9/APEObfzUyoF4PvaULfEdG6tDgb0C+SPkmQP31YHRork=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3lHK5vH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B057EC4CEDD;
-	Thu, 20 Mar 2025 18:55:52 +0000 (UTC)
+	s=arc-20240116; t=1742503307; c=relaxed/simple;
+	bh=we7z1WwNJDJljOB6Mz7Zq0uh+GzR+JX7NMU010ZfZsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YTY2ofIdXH3wLd3aVyOvCIl5rF6ei6bOvA96ujWYHvrN2b0vSds8PpPJBVcVfcUT67MubjtmH7PPAzhSOjYcybxSNzNP1fJfvL/cYMpnGkh4QSbHDX1rk656cE+/4VJxgrr0SNcCaQjHvaKgX5D/D/c4MSzlaXrkfoVo0mkwHgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlp2Pook; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A85C4CEE8;
+	Thu, 20 Mar 2025 20:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742496954;
-	bh=bpN/85K3GQ3AlOPx5AI0LjvEzJfDvNGW47DH3s5PiEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n3lHK5vHOqpFKN1p3oJ3mUrEoqQ81FB0P7fbPDe1YezSmZV6wSL52DcI+X4wO8oTu
-	 y8sPDVBbPi7g5gRrk4g2PCEtvi5oWabcgJGE3EkQvU1+LcpS28Prpuv/rVjT39iptx
-	 Bw7aJ1dU6fHji1x7v+0LykFg5SrJu2VLPo1QvXf4s4rErZgG3YKnwUySAij60V7RA5
-	 iNBVL3ANuGxWyCHYPpoYL5Bt/vz+iQtubTo9f+6+sd0Td6eJj7LZZkS5hfy+UAlhvA
-	 wzEJUZo+AxUGx5bSABIwep3bniIGzEHLZMVDfjzd9LxzlqLoIM9qR22vZhpP8siwYk
-	 m5QV5kkAEww2A==
-Date: Thu, 20 Mar 2025 18:55:49 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@secretlab.ca>,
-	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH] spi: Ensure memory used for spi_write_then_read() is DMA
- safe
-Message-ID: <c46aa694-d804-47d6-a2d0-990ca6fbebb2@sirena.org.uk>
-References: <1359268504-24937-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <20130205142128.2E28D3E1265@localhost>
- <20250320124330.480d652d@mordecai.tesarici.cz>
- <ca70e24d-57b6-4250-bd0d-7f5c72e1d282@sirena.org.uk>
- <b37480a4-5344-4cf4-8fd1-400e2588fc28@app.fastmail.com>
- <20250320153536.44774a74@mordecai.tesarici.cz>
- <9ac953ec-fba3-41a7-8e5d-b867abc1566f@sirena.org.uk>
- <20250320170846.64db4a4d@mordecai.tesarici.cz>
+	s=k20201202; t=1742503307;
+	bh=we7z1WwNJDJljOB6Mz7Zq0uh+GzR+JX7NMU010ZfZsA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dlp2PooktNvBiG1iuY/0+3hesVXOmP7KadLXiWARDz41nyC5snhjr/ETbsSe2uLMr
+	 XCj1c9Pu540hLOvjFcB32/A53PvVxNyGvxQoyDiAzXJWTUowVnXM2bFIcYm0UQljN6
+	 qQm8jG/OGWYqWUyIjw//sVyAKb2x/WL1jXPXHMqHadmquFs7AmDCJdWJFuGoIktvcd
+	 F4C44bbUV9AFhv3TWI48GYFVqsVBOaNlybwyDsRZY4q3qKdpSAbmEuQin3LVuQxK3L
+	 7LaMW12caf+y0lJxKBZx6cvCpb23U2DIMslPh2te8EgYpIei9yhjvZ3rPfjAabIw4R
+	 /Zz8YyQ4V9Pcw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Thu, 20 Mar 2025 16:22:48 +0100
+Message-ID: <20250320-vfs-fixes-35ad42f81f73@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gFCt+t73yFgTihPX"
-Content-Disposition: inline
-In-Reply-To: <20250320170846.64db4a4d@mordecai.tesarici.cz>
-X-Cookie: Do not fold, spindle or mutilate.
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2928; i=brauner@kernel.org; h=from:subject:message-id; bh=we7z1WwNJDJljOB6Mz7Zq0uh+GzR+JX7NMU010ZfZsA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfMTrLa/Zzu8onbp7T5alTDxtrrQ6u0Wt8wVjG9nBvq 82xuU3hHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPJsGX4p/n31wG260E290qq PV2s+rVuZ0dqrX241bDD5sgMi4VHBRj+u1WfO3+EtyA3L9rXc2t3wqvbkvuy7ycJ2vzPvbJ3js0 dRgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+/* Summary */
 
---gFCt+t73yFgTihPX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This contains a final set of fixes for this cycle:
 
-On Thu, Mar 20, 2025 at 05:08:46PM +0100, Petr Tesarik wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Thu, Mar 20, 2025 at 03:35:36PM +0100, Petr Tesarik wrote:
+VFS:
 
-> > > CC'ing Robin Murphy, because there seem to be some doubts about DMA A=
-PI
-> > > efficiency. =20
+- Ensure that the stable offset api doesn't return duplicate directory
+  entries when userspace has to perform the getdents call multiple times
+  on large directories.
 
-> > Or possibly just documentation, the number of memory types we have to
-> > deal with and disjoint interfaces makes all this stuff pretty miserable.
+afs:
 
-> I have to agree here. Plus the existing documentation is confusing, as
-> it introduces some opaque terms: streaming, consistent, coherent ...
-> what next?
+- Prevent invalid pointer dereference during get_link RCU pathwalk.
 
-> I volunteer to clean it up a bit. Or at least to give it a try.
+fuse:
 
-That would be amazing.
+- Fix deadlock caused by uninitialized rings when using io_uring with fuse.
 
-> If we want to make life easier for authors who don't need to squeeze
-> the last bit of performance from their driver, the core DMA API could be
-> extended with a wrapper function that checks DMA-ability of a buffer
-> address and takes the appropriate action. I kind of like the idea, but
-> I'm not a subsystem maintainer, so my opinion doesn't mean much. ;-)
+- Handle race condition when using io_uring with fuse to prevent NULL dereference.
 
-That sounds sensible.  There's the dance that spi_{map,unmap}_buf() is
-doing which feels like it should be more generic, a general "I have this
-buffer, make it DMAable" which sounds like the same sort of ballpark and
-I always thought could be usefully factored out but never got round to
-finding a home for.
+libnetfs:
 
-> > > I still believe the SPI subsystem should not try to be clever. The
-> > > DMA API already avoids unnecessary copying as much as possible. =20
+- Ensure that invalidate_cache is only called if implemented.
 
-> > It's not particularly trying to be clever here?
+- Fix collection of results during pause when collection is offloaded.
 
-> Well, it tries to guess whether the lower layer will have to make a
-> copy, but it does not always get it right (e.g. memory encryption).
+- Ensure rolling_buffer_load_from_ra() doesn't clear mark bits.
 
-> Besides, txbuf and rxbuf might be used without any copying at all, e.g.
-> if they point to direct-mapped virtual addresses (e.g. returned by
-> kmalloc).
+- Make netfs_unbuffered_read() return ssize_t rather than int.
 
-> At the end of the day, it's no big deal, because SPI transfers are
-> usually small and not performance-critical. I wouldn't be bothered
-> myself if it wasn't part of a larger project (getting rid of DMA zones).
+/* Testing */
 
-Some of the IIO users might beg to differ about performance criticality
-and transfer sizes there, and there's things like firmware download and
-SPI flashes too.  A lot of the performance work on the subsystem came
-=66rom people with CAN controllers they're trying to saturate, some of
-which was large messages.  It's not the same situation as block devices
-or networking but it's an area where anything we can do to eliminate
-dead time on the bus can be really noticable to applications.  It gets
-used a lot with mixed signal applications where implementing digital
-logic is expensive but you might want to get a lot of data in or out.
+gcc version (Debian 14.2.0-8) 14.2.0
+Debian clang version 19.1.4 (1)
 
---gFCt+t73yFgTihPX
-Content-Type: application/pgp-signature; name="signature.asc"
+No build failures or warnings were observed.
 
------BEGIN PGP SIGNATURE-----
+/* Conflicts */
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcZLUACgkQJNaLcl1U
-h9DOIwgAgPEw0mfje+6KbfDLvx2eO3UqUQ8cGQZ1eq97+oAVr5FhPdfZbvtEylBu
-jRGSiB6i2jFxAFcEUHFNDmBEXIHO97CDjoe8bcqui5OaEisPaQpugFbpFKPAiwSa
-6rXpZmIXPeHxJ5gBFE1c2zsGPSnoZVPSowlX1d77aR/eqHP3VcxDMfLmJkufu+4O
-L+e2LFCXnf+88o79K3ZVrartGpNQ5zRVL2/jLFzsWYzlZJaxla/NLm2WoyBkbaVk
-8mbnpdGXs2D03zXIUAYAEgFbFiiz7AQ5997bWAUidbzThMtq0bKmh5odjwI5hq4g
-+PY0lhtuYrNr8wmyqmTPzm4OEbgehg==
-=cWMq
------END PGP SIGNATURE-----
+Merge conflicts with mainline
+=============================
 
---gFCt+t73yFgTihPX--
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
+
+  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-final.fixes
+
+for you to fetch changes up to f70681e9e6066ab7b102e6b46a336a8ed67812ae:
+
+  libfs: Fix duplicate directory entry in offset_dir_lookup (2025-03-20 14:28:18 +0100)
+
+Please consider pulling these changes from the signed vfs-6.14-final.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.14-final.fixes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "netfs: Miscellaneous fixes"
+
+David Howells (4):
+      afs: Fix afs_atcell_get_link() to check if ws_cell is unset first
+      netfs: Fix collection of results during pause when collection offloaded
+      netfs: Fix rolling_buffer_load_from_ra() to not clear mark bits
+      netfs: Fix netfs_unbuffered_read() to return ssize_t rather than int
+
+Joanne Koong (1):
+      fuse: fix uring race condition for null dereference of fc
+
+Luis Henriques (1):
+      fuse: fix possible deadlock if rings are never initialized
+
+Max Kellermann (1):
+      netfs: Call `invalidate_cache` only if implemented
+
+Yongjian Sun (1):
+      libfs: Fix duplicate directory entry in offset_dir_lookup
+
+ fs/afs/dynroot.c          |  6 +++---
+ fs/fuse/dev.c             |  2 +-
+ fs/fuse/dev_uring.c       |  4 ++--
+ fs/libfs.c                |  2 +-
+ fs/netfs/direct_read.c    |  6 +++---
+ fs/netfs/read_collect.c   | 18 ++++++++++--------
+ fs/netfs/rolling_buffer.c |  4 ----
+ fs/netfs/write_collect.c  |  3 ++-
+ 8 files changed, 22 insertions(+), 23 deletions(-)
 
