@@ -1,158 +1,226 @@
-Return-Path: <linux-kernel+bounces-569422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEC0A6A2BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:34:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48FDA6A2B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76508A6164
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3625118963B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A68224240;
-	Thu, 20 Mar 2025 09:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C8810E0;
+	Thu, 20 Mar 2025 09:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bimXV2Oz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KsOyYFXx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41C5224251;
-	Thu, 20 Mar 2025 09:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDC521A45D;
+	Thu, 20 Mar 2025 09:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742463131; cv=none; b=Eam8y2qjyOyFuVrWlWC3MsnMbTiRbjGqjWhK0lsJi350ZZlyARQCgrt8/98T/JzhyPpPQAizjYtTfopTFUsgyDyRl/x16qm3XNnWKwZsaZmJcOIgBTJfXNeDHDFAsOwGdmcpFrOYDQd8IrkkQm+lQYRPprH3Zz7559Dmp69ZW4Y=
+	t=1742463164; cv=none; b=KZmBvugyHAOYe7aNX3QmWSK6JF/x+oP+BAWi9rheUAa6pq8sQFc1pJindF3LQKibx8AfdLqIcnHNvruKC1vZtkMFZFFNiNDuqwdw2AbpxPS3tvNjrRiXP6IfE+P7VXXHOC3VEJcXPWyfKTpaC7yL+WJMdnCAdryi3oHHEEHccpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742463131; c=relaxed/simple;
-	bh=tHuvJnP4uRK63orzy6zArkuxjyWYWccb/DmPEXCqXuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ECDbMPL4KhWrlxnGnYHDGL+qg6eTdDwAVLvgAQpFAC8tF+ypPsbF5VfiQ2OBODDViEFlcFTPr8jsx9oBUEBsBwPweAQMJf+5fcfiqhJ+SvR70cX7GqmpV3ximYCSSN6RjA0kXEUrVMvxQWTlXTqh0htS9Et5dFVjW4Rr9iaaD88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bimXV2Oz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742463125;
-	bh=8uxhXqcFzCfeFQ8k22+d/lRU0NYGv1JJCI64sK3b1sY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bimXV2Oz/et+qpkp60c153GCGITWCqyp7W96swbvTLvv3SeK3fXRCuFM2mRAgQaIR
-	 V1QClx42tVLdzp+WxpfwZLxkCwVuGsvVwgSbSCo9P2N8Zc0FpC55za7dmAJs0O3TmM
-	 gHQnpN9rcUgOhRa7m7ZFpol2C7kpEnedCLkVQ89INQ/X00o3Ggh3rCfcifw7gxTfqq
-	 8vITmqNBOZER1QZTkMV99zPkF9HHAddnHLar0iODi2BqHcbIehtzpmcmosXBqRxPrj
-	 /4CV5zdxv8AruO7EuaYh519gBeZEiCxPHgwY6oYI+vAAWBRmNMP2c/g/vFu2g5smYf
-	 AX1n+qMgHH8lw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJL2F0Vwkz4wj2;
-	Thu, 20 Mar 2025 20:32:04 +1100 (AEDT)
-Date: Thu, 20 Mar 2025 20:32:03 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kvm-arm tree
-Message-ID: <20250320203203.1de92b98@canb.auug.org.au>
+	s=arc-20240116; t=1742463164; c=relaxed/simple;
+	bh=K70P253ZuNPbc5P+9WHqbMvbW4leGH37gLYRTFdQAtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mKl9yRGAfSNPM5DIGPAb8N70jWP1DkWvhtjI7zs1R+tblO0yDryVD74pxGfG16C0ZMWTgUv26gcwyaYCCQ9ziag3HhFenqoN6Hy1jq10S/cu55Dl12tmYY6+xsDCxO6iYFCjfexMy96fjPYqvSftbpOrPeTZk8ciuifwezai1NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KsOyYFXx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92340C4CEDD;
+	Thu, 20 Mar 2025 09:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742463164;
+	bh=K70P253ZuNPbc5P+9WHqbMvbW4leGH37gLYRTFdQAtI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KsOyYFXxuKq6b1hc6Zmxr0Gjqy3AesdsYisTUUCe3Va/VljwRAShmYWyafoHrxDPw
+	 nEWbAe70IIszSd92wieSH0/HbpAuZ/29k+dw95k/qES7a2TmMLyvQgUJ/ADdVB7pUa
+	 DFWrhpQuf3bq91ykWWajQA5yL82rJ+HOT/sjgZPv7UkheezfVmIYjdj57fKWiQ/4i5
+	 24HvlcRUV2BDhH+c5yV0ywcHq+SDvdoASRdFYy+/Tp0aPITpR3aBGPLun+WcV5jqic
+	 V90gq08y+48yd6gs0/4C0SIKZiekkFsDEZ1Plq9yjFp6RpZ142YdIpfWcSlASeOs08
+	 uevyPq55GCFBA==
+Date: Thu, 20 Mar 2025 10:32:39 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 1/3] perf sort: Keep output fields in the same level
+Message-ID: <Z9vgt1pjiNbDBDbM@gmail.com>
+References: <20250307080829.354947-1-namhyung@kernel.org>
+ <Z9tjKcKvjYgbR6hb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//o_m+Z2CJp8xH/O=gM6kZ0E";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9tjKcKvjYgbR6hb@google.com>
 
---Sig_//o_m+Z2CJp8xH/O=gM6kZ0E
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Namhyung Kim <namhyung@kernel.org> wrote:
 
-After merging the kvm-arm tree, today's linux-next build (arm64 defconfig)
-failed like this:
+> On Fri, Mar 07, 2025 at 12:08:27AM -0800, Namhyung Kim wrote:
+> > This is useful for hierarchy output mode where the first level is
+> > considered as output fields.  We want them in the same level so that it
+> > can show only the remaining groups in the hierarchy.
+> > 
+> > Before:
+> >   $ perf report -s overhead,sample,period,comm,dso -H --stdio
+> >   ...
+> >   #          Overhead  Samples / Period / Command / Shared Object
+> >   # .................  ..........................................
+> >   #
+> >      100.00%           4035
+> >         100.00%           3835883066
+> >            100.00%           perf
+> >                99.37%           perf
+> >                 0.50%           ld-linux-x86-64.so.2
+> >                 0.06%           [unknown]
+> >                 0.04%           libc.so.6
+> >                 0.02%           libLLVM-16.so.1
+> > 
+> > After:
+> >   $ perf report -s overhead,sample,period,comm,dso -H --stdio
+> >   ...
+> >   #    Overhead       Samples        Period  Command / Shared Object
+> >   # .......................................  .......................
+> >   #
+> >      100.00%          4035    3835883066     perf
+> >          99.37%          4005    3811826223     perf
+> >           0.50%            19      19210014     ld-linux-x86-64.so.2
+> >           0.06%             8       2367089     [unknown]
+> >           0.04%             2       1720336     libc.so.6
+> >           0.02%             1        759404     libLLVM-16.so.1
+> > 
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> 
+> Ping!  Anybody interested in this change? :)
 
-arch/arm64/kernel/cpu_errata.c: In function 'has_impdef_pmuv3':
-arch/arm64/kernel/cpu_errata.c:279:38: error: passing argument 1 of 'is_mid=
-r_in_range_list' makes pointer from integer without a cast [-Wint-conversio=
-n]
-  279 |         return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_=
-cpus);
-      |                                      ^~~~~~~~~~~~~~~
-      |                                      |
-      |                                      u32 {aka unsigned int}
-arch/arm64/kernel/cpu_errata.c:47:53: note: expected 'const struct midr_ran=
-ge *' but argument is of type 'u32' {aka 'unsigned int'}
-   47 | bool is_midr_in_range_list(struct midr_range const *ranges)
-      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-arch/arm64/kernel/cpu_errata.c:279:16: error: too many arguments to functio=
-n 'is_midr_in_range_list'
-  279 |         return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_=
-cpus);
-      |                ^~~~~~~~~~~~~~~~~~~~~
-arch/arm64/kernel/cpu_errata.c:47:6: note: declared here
-   47 | bool is_midr_in_range_list(struct midr_range const *ranges)
-      |      ^~~~~~~~~~~~~~~~~~~~~
+Oh yes, all such pieces of intelligent organization of textual output 
+of profiling data are worth their weight in gold in my book. :-)
 
-Caused by commit
+  Acked-by: Ingo Molnar <mingo@kernel.org>
 
-  1f561ad4b8f5 ("Merge branch 'kvm-arm64/pv-cpuid' into new-next")
+1)
 
-The merge missed fixing up this instance from commit
+On a related note, does anyone know why perf stat output alignment 
+sucks so much these days:
 
-  e1231aacb065 ("arm64: Enable IMP DEF PMUv3 traps on Apple M*")
+  starship:~/tip> perf stat --null --repeat 20 perf stat --null --repeat 3 perf bench sched messaging 2>&1 | grep elapsed
+           0.11620 +- 0.00327 seconds time elapsed  ( +-  2.81% )
+          0.120813 +- 0.000570 seconds time elapsed  ( +-  0.47% )
+          0.122280 +- 0.000443 seconds time elapsed  ( +-  0.36% )
+          0.119813 +- 0.000752 seconds time elapsed  ( +-  0.63% )
+           0.12190 +- 0.00134 seconds time elapsed  ( +-  1.10% )
+          0.119862 +- 0.000542 seconds time elapsed  ( +-  0.45% )
+          0.120075 +- 0.000608 seconds time elapsed  ( +-  0.51% )
+          0.120350 +- 0.000273 seconds time elapsed  ( +-  0.23% )
+           0.12203 +- 0.00114 seconds time elapsed  ( +-  0.93% )
+           0.12229 +- 0.00114 seconds time elapsed  ( +-  0.93% )
+           0.12032 +- 0.00115 seconds time elapsed  ( +-  0.95% )
+          0.121241 +- 0.000463 seconds time elapsed  ( +-  0.38% )
+          0.119404 +- 0.000333 seconds time elapsed  ( +-  0.28% )
+          0.119945 +- 0.000766 seconds time elapsed  ( +-  0.64% )
+          0.121215 +- 0.000879 seconds time elapsed  ( +-  0.72% )
+           0.12001 +- 0.00109 seconds time elapsed  ( +-  0.91% )
+           0.12193 +- 0.00182 seconds time elapsed  ( +-  1.49% )
+          0.119184 +- 0.000794 seconds time elapsed  ( +-  0.67% )
+          0.120062 +- 0.000439 seconds time elapsed  ( +-  0.37% )
+          0.120834 +- 0.000760 seconds time elapsed  ( +-  0.63% )
+          0.369473 +- 0.000992 seconds time elapsed  ( +-  0.27% )
 
-I have applied the following patch for today (but this should go into
-the kvm-arm tree (perhaps squashed into the above merge).
+... see how the vertical alignment of the output goes randomly wacko - 
+I presume because there's a trailing zero in the output number and the 
+code for some inexplicable reason decides to shorten it to make the 
+life of developers harder? ;-)
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 20 Mar 2025 20:24:04 +1100
-Subject: [PATCH] fix up for "Merge branch 'kvm-arm64/pv-cpuid' into new-nex=
-t"
+2)
 
-interacting with "arm64: Enable IMP DEF PMUv3 traps on Apple M*"
+It's also incredibly hard to Ctrl-C a 'perf stat --repeat' instance:
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm64/kernel/cpu_errata.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ starship:~/tip> perf stat --null --repeat 20 perf stat --null --repeat 3 perf bench sched messaging
+ # Running 'sched/messaging' benchmark:
+ # 20 sender and receiver processes per group
+ # 10 groups == 400 processes run
 
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index caac9e10a5bb..b55f5f705750 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -276,7 +276,7 @@ static bool has_impdef_pmuv3(const struct arm64_cpu_cap=
-abilities *entry, int sco
- 	if (pmuver !=3D ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
- 		return false;
-=20
--	return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_cpus);
-+	return is_midr_in_range_list(impdef_pmuv3_cpus);
- }
-=20
- static void cpu_enable_impdef_pmuv3_traps(const struct arm64_cpu_capabilit=
-ies *__unused)
---=20
-2.45.2
+ ...
+ Ctrl-C
 
---=20
-Cheers,
-Stephen Rothwell
+ # Running 'sched/messaging' benchmark:
+ perf: pollperf: perf: pollperf: pollpollperf: pollperf: pollperf: : Interrupted system call
+ : Interrupted system call
+ poll: Interrupted system call
+ perf: pollperf: : Interrupted system call
+ perf: pollperf: pollpollperf: : Interrupted system call
+ pollperf: pollperf: perf: perf: pollpollpollperf: : Interrupted system call
+ pollperf: poll: Interrupted system call
+ : Interrupted system call
+ : Interrupted system call
+ : Interrupted system call
+ perf: poll: Interrupted system call
+ perf: perf: pollpoll: Interrupted system call
+ : Interrupted system call
+ perf: perf: perf: perf: perf: perf: : Interrupted system call
+ pollpollpollpollpollpoll: Interrupted system call
+ : Interrupted system call
+ : Interrupted system call
+ perf: perf: pollperf: perf: perf: perf: perf: perf: pollperf: : Interrupted system call
+ pollpollpoll: Interrupted system call
 
---Sig_//o_m+Z2CJp8xH/O=gM6kZ0E
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Note how the perf stat instance actually *hangs*. I have to Ctrl-Z it, 
+and kill -9 %1 it the hard way to clean up:
 
------BEGIN PGP SIGNATURE-----
+ pollpollpoll: Interrupted system call
+ �
+ [1]+  Stopped                 perf stat --null --repeat 20 perf stat --null --repeat 3 perf bench sched messaging
+ starship:~/tip> kill -9 %1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfb4JMACgkQAVBC80lX
-0GxKiQf/RRuXAMkWtwGPAX+9PZUo3jkIm6O1I/mDrWFBkDJoRclHtCVkWIBE5ZJ8
-8SMXolqy+tjPajY6pkdBQnB8Lgs8AOSpDRBa6zUmhgrGMtbyzwUxF5Cxz90qaW5z
-njfwCgJwFJYei6dRfPVytGnJvmNZx1pgCNVwIjTKTV9/QMudPgCn8z0NIRIB0qG6
-uqYhhE+a/di8rEODjJlcjJ3V45p1U0XGkiAX5HM9D/gQlnHMvBcT9TfcMyFl4vDD
-f3MExx9srYsPl6xroMiNsH//23g0guLZD3OQg2ETsz3N4PNjU5ooqDXJw6fGyW1U
-orCIy20EEpamtKSkefVn1ynP4LD0Sg==
-=6dJ7
------END PGP SIGNATURE-----
+ [1]+  Stopped                 perf stat --null --repeat 20 perf stat --null --repeat 3 perf bench sched messaging
+ starship:~/tip> kill -9 %1
 
---Sig_//o_m+Z2CJp8xH/O=gM6kZ0E--
+Does anyone use this thing for actual benchmarking work? ;-)
+
+3)
+
+It would also be nice to be able to Ctrl-C out of a 'perf top' instance 
+that freezes the output or so. Or prints a snapshot in ASCII. Anything 
+but what it does currently: it just exits and clears the xterm screen 
+of all useful information...
+
+I have to use 'f' (how many people know about that feature?) and copy & 
+paste anything interesting from the screen the hard way.
+
+4)
+
+It would also be nice to have an export function to save current 'perf 
+top' profiling data and have it available for 'perf report' et al 
+analysis. Ie. frequently I just see an interesting snapshot and decide 
+that it's good for further analysis, freeze the screen and are left 
+with very few options to keep it for further look and reference.
+
+5)
+
+Would anyone be interested in an OpenGL-ish version of perf top, with 
+its own low level shader for font-atlas based text output and vertex 
+based polygon graphics, double buffering, full screen support with very 
+little Xorg interaction for the GX pathway, etc? It should be *far* 
+faster and lower overhead than the current ncurses->xterm->Wayland 
+levels of indirection... and it could open up a new world of on-screen 
+profiling information as well. Basically a very simple self-sustained 
+OpenGL game engine for the key low level graphics primitives of modern 
+GFX hardware. I could whip up a prototype if there's interest.
+
+Thanks,
+
+	Ingo
 
