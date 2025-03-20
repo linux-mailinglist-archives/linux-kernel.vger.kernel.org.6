@@ -1,112 +1,263 @@
-Return-Path: <linux-kernel+bounces-569258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59DBA6A09B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:41:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D26A6A09D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06C53B9CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E697189D258
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A447204F85;
-	Thu, 20 Mar 2025 07:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0EA1F8739;
+	Thu, 20 Mar 2025 07:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1lAK67G"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fajab6of"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2B31E3769;
-	Thu, 20 Mar 2025 07:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C9F1F4CB8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742456466; cv=none; b=m2MUr1xshysFlle4cpT61ggrDuQ1JaUGyPj/0aGVZhhj+cAuAYM6O5Tr3yFDo6Y+bjzAxFr6cD4H5xxrA6FW45rXsNzZOEgEtAnzLRNN9jwqwiwA+ujiYaAuUgOZM/do6VFdwc95ZzvwaYDXkqEqLN9NtZQO16V/sTQSxZYyw8o=
+	t=1742456496; cv=none; b=SmusfH5MK2LUfYmAtC+EIyM9Cs+zmdh1a6o2YXK1w37DwFS2yb9dHx+pFo18H+AFNoAuHrUu9c1kvMhW5hRWDDAyiPr+9PGnGK04H1oeRJnXRgBHG9l/Xfav+V8WpwT2e7TSxeNP2PP/MpFVlrl/TjmVpQvzT5n7atsuRMxO6sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742456466; c=relaxed/simple;
-	bh=4sXeiqOIXgRkPqJvfQ595TU3AC9+kIhH7Vxw4P7Zfvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sX7KNn0wONRtOGkNFn403xLFs2ahdG750TtQX7r0ngQWOUGeT8v0U/F8LrCwkL0jjkQWmCDHahrsfCsHUCKjFOPjFJm5eYyGrbFYuiupWZ5sbo648yz1sQAlXdLXAonJOc8EL4enE1eHBs2dnk4zwmFBWthMeLXYIrUMUBuaVMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1lAK67G; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2241053582dso8498275ad.1;
-        Thu, 20 Mar 2025 00:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742456464; x=1743061264; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+9rATyUbEgbSLtbUz3EQuHc/4v8uBGhvmxcbw9HTp0=;
-        b=V1lAK67GLhO5Cc0s/AuYQwjUGy6jq3PH463TwhvlHQ4RseSMXzpZXphof5KUGwsLo3
-         ABLBBw1drKrTQZk1OyHNFVjJxPd43DsQ+xPpv55M62MxnSXf51+lqq+jktIOlKCDIHxQ
-         rPgp+3ipSZz44mfEsygM5rc5+knBXWOAhp32ptr/JKFQSKf4vnRCpIyhf6cL8eTPOsmT
-         KLcBxfa7kPDtY1q9RguvEqXxurgDlqL+ycImga7gUdHBN9LwoW7O+CD1nvSkczVhSD6W
-         O3icatngjJ4wqqakF0FzY6oSYKtHW66zbEbx/vEAs7/4UBSe6buYPdozfCBoK+CGRMSP
-         qvxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742456464; x=1743061264;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S+9rATyUbEgbSLtbUz3EQuHc/4v8uBGhvmxcbw9HTp0=;
-        b=B4FbfVX8reW64mac7JUsnB3ofCBhvtZLhAMee7eeSrON7QNUawnc1oKWj73oDUMbfD
-         FwOUDzECeGhX6xip5s9nCJBmjF/g4aJMxRvwi1Y8nArrj8/YvjmDj17zxLeWbg5hYm8U
-         A8rJFqedaZT2efDrSpU9Wk9qdkNUGutFPZUXB9VwmxFdS5ws9UySQw6M6/UvSk5udB9x
-         dM8NT/G5VAskue01VKPoVsPklCCSOUkurEbKm322YvUsxRoRBWC2d5rT20FFqZlM70i4
-         FrEEvjj4T/sgBtUG712UGQEvKUfsITbq9exaUjfGeE6bPKzK8jRIQ2tu6wP14nj5mkOW
-         EVjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVTSaunyd2Ul5aoOVu5Uq1wkgXX37jm0N9wIx13KH04rWmB2VudGTUHhS3W+8Yvo1Dx4T+f4eFIIwZH+U4@vger.kernel.org, AJvYcCVhYsmF4ATnzEWhTRnV/9AhsfZvQ7o2UVT4PoN/MkBO0Wgb+b6llw72NwlUTkcLpIkuxmPTqXkc8P+AblxDSFck@vger.kernel.org, AJvYcCVqV8Tk6ap6L/xJ19Ba0+p6+gxYHojBh/65CapSRxq/sQ4xBsODoOa4/CGTWXKyp3Gu26A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXTDvEo3b1yQL6DxvlX3EP8FDqAzeI4buQn/DXXBi4aFuYNEjk
-	37iqmxO8y94Prt+YnQz8HDxpV/5HavnBqvMp4yLsDhXMDtypOOiR
-X-Gm-Gg: ASbGncvNMyFuvN7f+NR6SpyqQOr0ipd9ox5SUtBLPjm3uWkyr9jdqeRYcYh4qpIuY/v
-	Kogs7RacltjovyMa0pDyZz/ZIR00i8V89EBY4x4r8ylMCq9VCqo7phXNRzmel8FCyj5st+ptOqP
-	RqgNl8yxqn1k8xZuhe6nFf4ARXCYqHj6DlV8t6wvlkQwp4iMYQyp0bWU85wwrwUfyVqUkezI4RH
-	dDhKPoSW24pflBTHtiJEI6996m4SCJGvYquuGAy6Irors9JjcIzA8Z4iNKVcZRsnwyj1aE4x/Wa
-	yPpJObM0UD7irPZ7rwMik8wzR82K2dzQlY9x/rEPsh4/KI5oQ0waHAYiiaHxeeErIw==
-X-Google-Smtp-Source: AGHT+IFEvvOq/4NLQ23MHF6FNa/FiH21cHYco1EVNW+1BRuvD/pJTZLz+96cxRxci0zjnwX0L+gRcQ==
-X-Received: by 2002:a05:6a21:3a4a:b0:1f3:47d6:aa05 with SMTP id adf61e73a8af0-1fbe87272d0mr11208399637.0.1742456463841;
-        Thu, 20 Mar 2025 00:41:03 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9fe51asm12244697a12.36.2025.03.20.00.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 00:41:03 -0700 (PDT)
-Date: Thu, 20 Mar 2025 07:40:56 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Phil Sutter <phil@nwl.cc>,
-	Florian Westphal <fw@strlen.de>, Petr Mladek <pmladek@suse.com>,
-	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 RESEND net-next 0/2] selftests: wireguards: use
- nftables for testing
-Message-ID: <Z9vGiL1KkO5x8I-j@fedora>
-References: <20250106081043.2073169-1-liuhangbin@gmail.com>
- <Z9lJ6PXHeL7tfhUf@fedora>
- <Z9rso2MXYBFGnJYl@zx2c4.com>
+	s=arc-20240116; t=1742456496; c=relaxed/simple;
+	bh=I6G/d5/C2EXxfscctBySxlIviUB0BPm6oXNQZcB57Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lPT3lWLWtLcP+TyxUCVcygh+7r4MaTtPN4T/Dxy02PPSwhNZFevsscpw4CSeRm2hdwSVgHAsJNrjf8srQT7BoACyIYSRNHcRjVcHU2vyktnGrd3POfJdpg9mQJcVJJicitJMGKPDg2xoV1WgfKbAMeK5xh1XCt+gCxQY5SvReP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fajab6of; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2E3C84436F;
+	Thu, 20 Mar 2025 07:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742456486;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fmPdfR67O2wcc6/RI+Tc9AyY4rjn6JD2dOIfEvFlJnQ=;
+	b=Fajab6ofQy9GQKOL1lDcWQfm/0zyroqQRlF4ltPWxT9DK3Kz2DXP4fiTBAuRaWBovUj2Cq
+	7Xs65a44MCIogTqhY9yE+Pbjp+uATyM3uGz8ZXBovdasbw4nY74FcibRBPw15cVC5B//HL
+	HoE79L729ZJJC2p0S2zTI6MKh5g6VFJAR5pV3gUeTNOpVL9Bk7zrb72rG67qGTRwhtUEmP
+	doGblm+y8jR0MsywXUhEFuv1zt7JHUkmCFEJPi/JlSYAhD2EBPzsvfS9haVYm4wtkorHyP
+	nZ64j9pnqZIyUM2/BSBuYi5mvWIKq1K7tmjyz/E7reZ1jTkV0dPNeOZ858B90w==
+Date: Thu, 20 Mar 2025 08:41:18 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, Stefan Agner
+ <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, Jagan
+ Teki <jagan@amarulasolutions.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Anusha Srivatsa <asrivats@redhat.com>, Paul
+ Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
+ =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
+ bridge refcount
+Message-ID: <20250320084118.347bafc9@booty>
+In-Reply-To: <20250319-stylish-lime-mongoose-0a18ad@houat>
+References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
+	<20250314-daft-woodoo-cheetah-e029c5@houat>
+	<20250317155607.68cff522@booty>
+	<20250319-stylish-lime-mongoose-0a18ad@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9rso2MXYBFGnJYl@zx2c4.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejieegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrr
+ hhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Wed, Mar 19, 2025 at 05:11:15PM +0100, Jason A. Donenfeld wrote:
-> On Tue, Mar 18, 2025 at 10:24:40AM +0000, Hangbin Liu wrote:
-> > I saw the patch status[1] is still "Awaiting Upstream".
-> > Is there anything I need to do?
+Hello Mazime,
+
+On Wed, 19 Mar 2025 17:16:53 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
+
+> On Mon, Mar 17, 2025 at 03:56:07PM +0100, Luca Ceresoli wrote:
+> > Hello Maxime,
+> > 
+> > On Fri, 14 Mar 2025 19:21:01 +0100
+> > Maxime Ripard <mripard@kernel.org> wrote:
+> >   
+> > > Hi,
+> > > 
+> > > On Fri, Mar 14, 2025 at 11:31:13AM +0100, Luca Ceresoli wrote:  
+> > > > This series improves the way DRM bridges are allocated and
+> > > > initialized and makes them reference-counted. The goal of reference
+> > > > counting is to avoid use-after-free by drivers which got a pointer
+> > > > to a bridge and keep it stored and used even after the bridge has
+> > > > been deallocated.
+> > > > 
+> > > > The overall goal is supporting Linux devices with a DRM pipeline
+> > > > whose final components can be hot-plugged and hot-unplugged,
+> > > > including one or more bridges. For more details see the big picture
+> > > > [0].
+> > > > 
+> > > > DRM bridge drivers will have to be adapted to the new API, which is
+> > > > pretty simple for most cases. Refcounting will have to be adopted
+> > > > on the two sides: all functions returning a bridge pointer and all
+> > > > code obtaining such a pointer. This series has just an overview of
+> > > > some of those conversions, because for now the main goal is to
+> > > > agree on the API.
+> > > > 
+> > > > Series layout:
+> > > > 
+> > > >  1. Add the new API and refcounting:
+> > > > 
+> > > >     drm/bridge: add devm_drm_bridge_alloc()
+> > > >     drm/bridge: add support for refcounting
+> > > > 
+> > > >  2. get/put the reference in basic operations in the bridge core:
+> > > > 
+> > > >     drm/bridge: get/put the bridge reference in
+> > > > drm_bridge_add/remove() drm/bridge: get/put the bridge reference in
+> > > > drm_bridge_attach/detach()
+> > > > 
+> > > >  3. as an example of changes for bridge consumers, get a reference
+> > > > for the bridge returned by drm_bridge_chain_get_first_bridge(),
+> > > > have it put by all callers (all users will be covered later on
+> > > > separately):
+> > > > 
+> > > >     drm/bridge: add a cleanup action for scope-based
+> > > > drm_bridge_put() invocation drm/bridge: get the bridge returned by
+> > > > drm_bridge_chain_get_first_bridge() drm/mxsfb: put the bridge
+> > > > returned by drm_bridge_chain_get_first_bridge() drm/atomic-helper:
+> > > > put the bridge returned by drm_bridge_chain_get_first_bridge()
+> > > > drm/probe-helper: put the bridge returned by
+> > > > drm_bridge_chain_get_first_bridge()
+> > > > 
+> > > >  4. convert a few bridge drivers (bridge providers) to the new API:
+> > > > 
+> > > >     drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+> > > >     drm/bridge: samsung-dsim: use dynamic lifetime management
+> > > > 
+> > > > This work was formerly a part of my v6 DRM bridge hotplug
+> > > > series[0], now split as a standalone series with many improvements,
+> > > > hence the "v7" version number.    
+> > > 
+> > > Except for one patch where I had comments, I think the series is in
+> > > excellent shape. We're still missing a couple of things to close this
+> > > topic though:
+> > > 
+> > >   - Converting the other bridge iterators/accessors to take / put the
+> > > references  
+> > 
+> > I sent a couple in this series as you had asked, to show how conversion
+> > looks like. But I have a large part of this conversion partially done
+> > already, and it is the largest part of the refcounting work in terms of
+> > touched files due to the large number of drivers using the iterators
+> > and accessors. Here are the functions to convert:
+> > 
+> >  A) drm_bridge_chain_get_first_bridge
+> >  B) drm_bridge_get_prev_bridge
+> >  C) drm_bridge_get_next_bridge
+> >  D) drm_for_each_bridge_in_chain
+> >  E) drm_bridge_connector_init
+> >  F) of_drm_find_bridge
+> > 
+> > A) is present in this series as an example but I don't think it should
+> > be applied until all bridge drivers are converted to
+> > drm_bridge_alloc(). Otherwise for not-yet-converted bridge drivers we'd
+> > have drm_bridge_get/put() operating on an uninitialized kref, and
+> > __drm_bridge_free() called on non-refcounted bridges, so I think we'd
+> > see fireworks.
+> > 
+> > In the previous iteration I used drm_bridge_is_refcounted() in
+> > drm_bridge_get/put() to allow a progressive migration, but if we want
+> > to convert everything in a single run we need to first convert all
+> > bridges to drm_bridge_alloc() and then convert all accessors.
+> > 
+> > The same reasoning applies to patches 3-4 which add get/put to
+> > drm_bridge_add/remove() and _attach/detach().  
 > 
-> I'm looking at it now, but the subject line of your series says,
-> "selftests: wireguards: " which is really not the same as all the other
-> patches that touch these files.
+> Agreed.
+> 
+> > B) to E) are ready in my work branch, about 20 patches in total.
+> > Indeed item E) is a special case but it is handled there too.
+> > 
+> > Item F) is the beast, because of the reverse call graph of
+> > of_drm_find_bridge() which includes drm_of_find_panel_or_bridge() and
+> > then *_of_get_bridge(), each having a few dozen callers, and leading
+> > to the panel_bridge topic. I have converted maybe half of the users of
+> > accessors in F), it's 35 patches but it's the easy half and I still need
+> > to tackle to hardest ones.  
+> 
+> One thing to keep in mind is that, while it's not correct, if the bridge
+> has been allocated with devm_drm_bridge_alloc, it's not worse either. If
+> you're not getting a reference to your pointer, the point is buggy,
+> sure, but it's just as buggy as before, and in the same situations.
+> 
+> So we can make that gradually if it's more convenient.
 
-Oh, I will fix the name in next patch.
+I see your point, right. And definitely doing it in gradually will help.
 
-Hangbin
+> One way to solve it would be that, for example, of_drm_find_bridge is
+> oddly named according to our convention and it would make more sense to
+> be called drm_of_find_bridge().
+> 
+> So maybe we can just create drm_of_find_bridge() that takes a reference,
+> make of_drm_find_bridge() deprecated in favour of drm_of_find_bridge(),
+> add a TODO, and call it a day. People will gradually switch to the new
+> API over time.
+
+Thanks for the suggestion, I will certainly try this way when I get
+back to the accessor conversion work. While increasing the number of
+deprecated functions is not great, I'm starting to suspect a conversion
+of _all_ the of_drm_find_bridge() users at once is not realistic.
+
+> > >   - Documenting somewhere (possibly in drm_bridge_init?) that it
+> > > really shouldn't be used anymore  
+> > 
+> > I'm afraid there is no drm_bridge_init(), bridge drivers just do
+> > [devm_]kzalloc and set fields explicitly. So I don't think there is a
+> > place to document this.  
+> 
+> Oh, right.
+> 
+> Then, drm_bridge_add() would be a good candidate too to mention that
+> bridges must be allocated using devm_drm_bridge_alloc().
+
+Sure. I'll add such a comment.
+
+> > Overall, I think this could be the path forward, let me know if
+> > youthink it should be done differently:
+> > 
+> >  A. have patches 1 and 2 of this series applied
+> >     (why not, even patches 10-11)  
+> 
+> I had some comments on patch 2, but it's ok for me on principle.
+
+Sorry, my wording was not clear. I really meant "have patches 1 and 2 of
+this series applied after the improvements proposed". So hopefully the
+v8 I'm sending today-ish. I'm going to send only patches 1, 2, 10 and
+11. The other patches are not meant to be merged now, so I'm resending
+them when appropriate.
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
