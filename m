@@ -1,224 +1,264 @@
-Return-Path: <linux-kernel+bounces-569738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE7DA6A6D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB25A6A6E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EFB3BC3CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696C8980357
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4C1C3C18;
-	Thu, 20 Mar 2025 13:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384821DF247;
+	Thu, 20 Mar 2025 13:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ckpo6gGm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOp6FQHF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ckpo6gGm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOp6FQHF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OlyTizJ4"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70855F9EC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDDD33CA;
+	Thu, 20 Mar 2025 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742476013; cv=none; b=ior0qwhyrRtsKL+sOWnoXWPsO/2pjA0ML4A8YYFjkVrUnNnVoXJTUuZZIASox3LM53K9XS4nY98bFbT7FpztFXF9lvN7yXXxhAqqw8vn31uy5MNzzzM2jomtY8a5sL+S1Ho5wPGMQfnmc+jgVoV2udCf3HqUd7k8ew7AT7r3hyM=
+	t=1742476192; cv=none; b=L2w9TD4qeeZcSo2BT64n+dkFsP8nHxAOohu5ZAEIgaveGTa5UFqy8MjzWWKqfCygU09wNBpUHsm33Ushb7/IOprPaLP0CbdUJzWrCcbaYzhS49QXGnDxU/G34ZMXQvn4+xiK7XiQ5EgHMHWOrTvN91eIVjoaT4R/RrNKGAtgV7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742476013; c=relaxed/simple;
-	bh=TpUMnvL90k+sp8B1Gje0xvXKn3ZcYg/Zz4GVYCjOvGA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=KHJu+8cq4quNRG5FYjG+bQnONphcq+/3kezj/cBq9UChKzqrQaw+sEOv+YmEo3pY9t05k1UqYqun5nC6AvG0rqWyUA9bIGVeM5ODg7FQapxrhzw9u4GhWN+N4PwDow8m+QSSxpUUsDZ2muuAIJ43sG35dcjlUH/Lv+V+Xl+OkBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ckpo6gGm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOp6FQHF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ckpo6gGm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOp6FQHF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B5D9E21AE1;
-	Thu, 20 Mar 2025 13:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742476002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
-	b=ckpo6gGmjY1fqVsM7bTC6gCJ2Z6PMrmHiculLuJILQeiip8+Rqzi8b+/lFl6eyuM/wIgIL
-	ZMtHoDbzOOluoHKAg+eXTeXs2ahx4nFY0YauBJIg2i+DTz8du2M6+OS+Ucl3b7WEBdfuLv
-	S1REuAk2rBIjUchE4r2tT3UCR8z1l7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742476002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
-	b=hOp6FQHFyT0ayDmccMjHq6PmlJo7IdaIVT0/kQ8tCYZheo8NE02RQ/NrtHSIdffu1lfCCi
-	EBNoP2pHU3u7iHCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ckpo6gGm;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hOp6FQHF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742476002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
-	b=ckpo6gGmjY1fqVsM7bTC6gCJ2Z6PMrmHiculLuJILQeiip8+Rqzi8b+/lFl6eyuM/wIgIL
-	ZMtHoDbzOOluoHKAg+eXTeXs2ahx4nFY0YauBJIg2i+DTz8du2M6+OS+Ucl3b7WEBdfuLv
-	S1REuAk2rBIjUchE4r2tT3UCR8z1l7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742476002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
-	b=hOp6FQHFyT0ayDmccMjHq6PmlJo7IdaIVT0/kQ8tCYZheo8NE02RQ/NrtHSIdffu1lfCCi
-	EBNoP2pHU3u7iHCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9ABE6139D2;
-	Thu, 20 Mar 2025 13:06:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IiIsJeIS3GdrQgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 20 Mar 2025 13:06:42 +0000
-Message-ID: <2f7985a8-0460-42de-9af0-4f966b937695@suse.cz>
-Date: Thu, 20 Mar 2025 14:06:42 +0100
+	s=arc-20240116; t=1742476192; c=relaxed/simple;
+	bh=PdiIGraiOw9bwMuvO4i566zHRLO1u+vsTi/k2RXBFuE=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PCyoICQy/63mb9OJqZOPQt6PmUhgpQv1easgR6NhF1Y/WOcAxXtu5PkSyfbmMp8Ijdq2K0+J7Qyg211MAxDnHgBVVjs6DRwXgNdiJS06CGnfZxo7v0eUSMldRQySbZwVszUWVt1dg+z5AeeymM0kj8zKIHQEmPW2wksPUAoJxds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OlyTizJ4; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742476186; x=1742735386;
+	bh=LaY6eOWwORdgVYlhLSu6IdjkgHcpxvIHee+V/Mwu5u0=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=OlyTizJ4/TXOzOotZGgTW8t0gHrAEiTQyGKf2wGwfxzrSAHCejmG+scYn/57Fv2wx
+	 3xLaJcyFf2kEG6y8ucHc+mWRAELG+NV1ML5ysDwst0hev9x4B8iQCCLnQepVI7k7Oz
+	 HSfVTnw0+ZYLbGb4WZVslCrpQF5WUapEUljmyPO5ivZZGviefbx9UqiF+H3x5+cLAn
+	 KRUv0qu6zL/yFfcg8AucX0VnWsq5wdrJSM5WkTOP68co8xmuqSR4MzSG53QO/KxS6M
+	 SOEvA3XNmuRDB4bbbwn61kR1Wp/HKiC2KTZj8bdQpucfOvSJ8aBucIasE9DTo6+Mw8
+	 JIbEySafUCbug==
+Date: Thu, 20 Mar 2025 13:09:40 +0000
+To: "Christian S. Lima" <christiansantoslima21@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, ~lkcamp/patches@lists.sr.ht, richard120310@gmail.com
+From: Benno Lossin <benno.lossin@proton.me>
+Subject: Re: [PATCH v5] rust: transmute: Add methods for FromBytes trait
+Message-ID: <D8L494ONWVO6.1V6NNJIPG7UU9@proton.me>
+In-Reply-To: <20250320014041.101470-1-christiansantoslima21@gmail.com>
+References: <20250320014041.101470-1-christiansantoslima21@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: f1776b1ee974b5e000843123a1461454cfe5f998
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab updates for 6.15
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: B5D9E21AE1
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Thu Mar 20, 2025 at 2:40 AM CET, Christian S. Lima wrote:
+> Methods receive a slice and perform size check to add
+> a valid way to make conversion safe.
+> In this patch, I use an Option, in error case just
+> return `None` instead of an Error and
+> removed some commentaries.
+>
+> The conversion between slices `[T]`
+> is separated from others, because I couldn't implement it
+> in the same way as the other conversions.
 
-please pull the latest slab updates from:
+Why is this commit message wrapped like this?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.15
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1119
+> Signed-off-by: Christian S. Lima <christiansantoslima21@gmail.com>
+> ---
+> Changes in v2:
+> - Rollback the implementation for the macro in the repository
+> and implement methods in trai
+> - Link to v2: https://lore.kernel.org/rust-for-linux/20241012193657.290cc=
+79c@eugeo/T/#t
+>
+> Changes in v3:
+> - Fix grammar errors
+> - Remove repeated tests
+> - Fix alignment errors
+> - Fix tests not building
+> - Link to v3: https://lore.kernel.org/rust-for-linux/20241109055442.85190=
+-1-christiansantoslima21@gmail.com/
+>
+> Changes in v4:
+> - Removed core::simd::ToBytes
+> - Changed trait and methods to safe
+> - Add Result<&Self, Error> in order to make safe methods
+> - Link to v4: https://lore.kernel.org/rust-for-linux/20250314034910.13446=
+3-1-christiansantoslima21@gmail.com/
+>
+> - Link to v1: https://lore.kernel.org/rust-for-linux/20241009014810.23279=
+-1-christiansantoslima21@gmail.com/
 
-There's a small conflict with the rcu tree:
-https://lore.kernel.org/all/20250212150941.5e4fa1c9@canb.auug.org.au/
+What changed in version 5? Or does "Changes in v4" mean "Changes done to
+v4"?
 
-Thanks,
-Vlastimil
+> ---
+>  rust/kernel/transmute.rs | 74 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 69 insertions(+), 5 deletions(-)
+>
+> diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
+> index 1c7d43771a37..5f2cf66187ad 100644
+> --- a/rust/kernel/transmute.rs
+> +++ b/rust/kernel/transmute.rs
+> @@ -9,15 +9,53 @@
+>  ///
+>  /// It's okay for the type to have padding, as initializing those bytes =
+has no effect.
+>  ///
+> +/// # Example
+> +/// ```
+> +/// let foo =3D &[1, 2, 3, 4];
+> +///
+> +/// let result =3D u8::from_bytes(foo);
+> +///
+> +/// assert_eq!(*result, 0x40300201);
 
-======================================
+AFAIU this relies on the endianess of the architecture, I would check
+the endianess in the test and then change the assertion based on that.
 
-* Move the TINY_RCU kvfree_rcu() implementation from RCU to SLAB
-  subsystem and cleanup its integration (Vlastimil Babka)
+> +/// ```
+> +///
+>  /// # Safety
+>  ///
+>  /// All bit-patterns must be valid for this type. This type must not hav=
+e interior mutability.
+> -pub unsafe trait FromBytes {}
+> +pub unsafe trait FromBytes {
+> +    /// Receives a slice of bytes and converts to a valid reference of S=
+elf when it's possible.
 
-  Following the move of the TREE_RCU batching kvfree_rcu() implementation in
-  6.14, move also the simpler TINY_RCU variant. Refactor the #ifdef guards
-  so that the simple implementation is also used with SLUB_TINY. Remove the
-  need for RCU to recognize fake callback function pointers
-  (__is_kvfree_rcu_offset()) when handling call_rcu() by implementing a
-  callback that calculates the object's address from the embedded rcu_head
-  address without knowing its offset.
+/// Converts a slice of bytes to a reference to `Self` when possible.
 
-* Improve kmalloc cache randomization in kvmalloc (GONG Ruiqi)
+> +    fn from_bytes(bytes: &[u8]) -> Option<&Self>;
+> +
+> +    /// Receives a mutable slice of bytes and converts to a valid refere=
+nce of Self when it's possible.
 
-  Due to an extra layer of function call, all kvmalloc() allocations used the
-  same set of random caches. Thanks to moving the kvmalloc() implementation to
-  slub.c, this is improved and randomization now works for kvmalloc.
+Similarly here.
 
-* Various improvements to debugging, testing and other cleanups (Hyesoo Yu,
-  Lilith Gkini, Uladzislau Rezki, Matthew Wilcox, Kevin Brodsky, Ye Bin)
+> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+> +    where
+> +        Self: AsBytes;
+> +}
+> =20
+>  macro_rules! impl_frombytes {
+>      ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
+>          // SAFETY: Safety comments written in the macro invocation.
+> -        $(unsafe impl$($($generics)*)? FromBytes for $t {})*
+> +        $(unsafe impl$($($generics)*)? FromBytes for $t {
+> +            fn from_bytes(bytes: &[u8]) -> Option<&$t> {
+> +                if bytes.len() =3D=3D core::mem::size_of::<$t>() {
+> +                    let slice_ptr =3D bytes.as_ptr() as *const $t;
 
-----------------------------------------------------------------
-GONG Ruiqi (2):
-      slab: Adjust placement of __kvmalloc_node_noprof
-      slab: Achieve better kmalloc caches randomization in kvmalloc
+Please use `.cast::<$t>()` instead of `as`.
 
-Hyesoo Yu (2):
-      mm: slub: Print the broken data before restoring them
-      mm: slub: call WARN() when detecting a slab corruption
+> +                    unsafe { Some(&*slice_ptr) }
 
-Kevin Brodsky (1):
-      mm/slab: simplify SLAB_* flag handling
+Missing safety comment.
 
-Lilith Gkini (1):
-      slub: Handle freelist cycle in on_freelist()
+> +                } else {
+> +                    None
+> +                }
+> +            }
+> +
+> +            fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut $t>
+> +            where
+> +                Self: AsBytes,
+> +            {
+> +                if bytes.len() =3D=3D core::mem::size_of::<$t>() {
+> +                    let slice_ptr =3D bytes.as_mut_ptr() as *mut $t;
 
-Matthew Wilcox (Oracle) (1):
-      slab: Mark large folios for debugging purposes
+Please use `cast`.
 
-Uladzislau Rezki (Sony) (1):
-      kunit, slub: Add test_kfree_rcu_wq_destroy use case
+> +                    unsafe { Some(&mut *slice_ptr) }
 
-Vlastimil Babka (6):
-      slab, rcu: move TINY_RCU variant of kvfree_rcu() to SLAB
-      rcu: remove trace_rcu_kvfree_callback
-      rcu, slab: use a regular callback function for kvfree_rcu
-      slab: don't batch kvfree_rcu() with SLUB_TINY
-      mm, slab: cleanup slab_bug() parameters
-      Merge branch 'slab/for-6.15/kfree_rcu_tiny' into slab/for-next
+Missing safety comment.
 
-Ye Bin (1):
-      mm/slab: call kmalloc_noprof() unconditionally in kmalloc_array_noprof()
+> +                } else {
+> +                    None
+> +                }
+> +            }
+> +        })*
+>      };
+>  }
+> =20
+> @@ -26,12 +64,38 @@ macro_rules! impl_frombytes {
+>      u8, u16, u32, u64, usize,
+>      i8, i16, i32, i64, isize,
+> =20
+> -    // SAFETY: If all bit patterns are acceptable for individual values =
+in an array, then all bit
+> -    // patterns are also acceptable for arrays of that type.
+> -    {<T: FromBytes>} [T],
+>      {<T: FromBytes, const N: usize>} [T; N],
 
- include/linux/page-flags.h |  18 +--
- include/linux/rcupdate.h   |  33 +++--
- include/linux/rcutiny.h    |  36 -----
- include/linux/rcutree.h    |   3 -
- include/linux/slab.h       |  16 ++-
- include/trace/events/rcu.h |  34 -----
- kernel/rcu/tiny.c          |  25 ----
- kernel/rcu/tree.c          |   9 +-
- lib/slub_kunit.c           |  59 ++++++++
- mm/Kconfig                 |   4 +
- mm/slab.h                  |  34 +----
- mm/slab_common.c           |  44 ++++--
- mm/slub.c                  | 336 ++++++++++++++++++++++++++++++++++++++-------
- mm/util.c                  | 162 ----------------------
- 14 files changed, 430 insertions(+), 383 deletions(-)
+Missing SAFETY comment (the one that you remove above should still be
+there).
+
+>  }
+> =20
+> +unsafe impl<T: FromBytes> FromBytes for [T] {
+
+Missing SAFETY comment, you should copy the one from above.
+
+> +    fn from_bytes(bytes: &[u8]) -> Option<&Self> {
+> +        let slice_ptr =3D bytes.as_ptr() as *const T;
+> +        if bytes.len() % core::mem::size_of::<T>() =3D=3D 0 {
+> +            let slice_len =3D bytes.len() / core::mem::size_of::<T>();
+> +            // SAFETY: If all bit patterns are acceptable for individual=
+ values in an array, then all bit
+> +            // patterns are also acceptable for arrays of that type.
+
+This safety comment doesn't match the called function below.
+
+> +            unsafe { Some(core::slice::from_raw_parts(slice_ptr, slice_l=
+en)) }
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +
+> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
+> +    where
+> +        Self: AsBytes,
+> +    {
+> +        let slice_ptr =3D bytes.as_mut_ptr() as *mut T;
+> +        if bytes.len() % core::mem::size_of::<T>() =3D=3D 0 {
+> +            let slice_len =3D bytes.len() / core::mem::size_of::<T>();
+> +            // SAFETY: If all bit patterns are acceptable for individual=
+ values in an array, then all bit
+> +            // patterns are also acceptable for arrays of that type.
+
+Ditto.
+
+---
+Cheers,
+Benno
+
+> +            unsafe { Some(core::slice::from_raw_parts_mut(slice_ptr, sli=
+ce_len)) }
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +}
+> +
+>  /// Types that can be viewed as an immutable slice of initialized bytes.
+>  ///
+>  /// If a struct implements this trait, then it is okay to copy it byte-f=
+or-byte to userspace. This
+
+
 
