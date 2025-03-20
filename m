@@ -1,164 +1,191 @@
-Return-Path: <linux-kernel+bounces-569487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087B7A6A398
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:26:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0CAA6A39B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01C28827A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D1E16EE72
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77B2224254;
-	Thu, 20 Mar 2025 10:25:47 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36C6224248;
+	Thu, 20 Mar 2025 10:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fftmflob"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86A6223324;
-	Thu, 20 Mar 2025 10:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E76622257E;
+	Thu, 20 Mar 2025 10:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466347; cv=none; b=Ph9SS/WMawa593ym5tndbjS+ywwZEhKZLbgRc5/eOg9JKpaF9q3SHY7glZknZZIWruNRZT7ZRrATFtKQeIQGyBt//BMleqPeputS6Cb6AHpfn+qZmDSebVwpzZYheP1zOOYxxfRpEdIygPJsPAH3HOLsGxUYqI9uyAimvAnCo1k=
+	t=1742466413; cv=none; b=IEIk7bH4bdP0dvypYp1t7suBFXb3l+hhfhvqZM8umd4QA0wysUi7RAuqM9x8SLp4783G314VGB6z8Z/Gv4scjPZ3ZfuFmT2oDEv2SdnQJpS7m8FbXDEcUDBUoWD9LYRmlC4XbAcQDFni3MwoeslMOW8itxeBEJonm/fb4k7kwQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466347; c=relaxed/simple;
-	bh=UiTlIWwnmkS8UNUn8U/axQWnOpvGTCPWWAjOMvnQnSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t4rHUeehi5mOtAdktwa4ftQj3rIpCHLcjAG7my935waNrrrc/7NJiwmSx7TOHN49hKCsOFt/4myZ/5H3iGw0+xCyoCeg8HK8/BtMvWobX+9EAkYKF6+5vi30JzaQXNzBmYJOZEXoUWlQyZVaLuBLVBTCQ4bZ2mxbqIAO6kj+JE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1742466413; c=relaxed/simple;
+	bh=73L4QBgZ4jztQ2zh5cGBFktxWTlIrzq9SkbAh4q8vTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZ+caQ3KSLpb5WRGsQzs8+LAr2gSx3v3Cnmbklt2Av3Zip4dE1yArh7nN0z6m9A0+hTgWCH9zmYxc9MMqnRSi4CCvbkvztL8S7gm92L+pq3AOfleoSkxfYKk6wd3lkECxt3hatVtOPTuTw2/O8YMIJTzM06EI1t6Xey222C9/O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fftmflob; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso789772e0c.1;
-        Thu, 20 Mar 2025 03:25:44 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0618746bso3738485e9.2;
+        Thu, 20 Mar 2025 03:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742466409; x=1743071209; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HawgxxVZ0VP8h2ZK240Xc42v4xINhqqYB2/a1ZVpyOw=;
+        b=fftmflobxg8zJXVTO9Qpz6sauv6ASQ2I0JCdWfSVsH8K5wAQ8zOdhny8PJNPrnTIhe
+         fInq4obLLsaX1zBw4R1ZWzgXf44LirSsdkDSmWegT5tPWRFv9VMUPtc6cvmzmv9A/e7s
+         tzPL+oO4FiI7gPjtbaoq5KaseqiLqD6juog8+84BDQnHMgBnSbCFomsORtx1TnvKszSD
+         /Q+ttLQhjPI/nWBmpJfdb08+nD1eIFMdZBuc1bVRbgaCl3vPbYmV1oBUBApDc1Ze6JeV
+         8s6ipUVyFA2+gRdobD73BJlkPbzKg2VjEvpKKS2UQD6u5mXdz0IzE1/TqYOhJif59Da1
+         HyNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742466342; x=1743071142;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1742466409; x=1743071209;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=d9Vl8stWRp4XCmhjIQ4x29/EadE6k2Y0g/CcM3o/k34=;
-        b=pUsXxm1OeUIBWclFYFlyP8gEjO6/s0MBFiErVBUnWtaHlZBSec8QR7YaYfmMa6zBtW
-         vlDzvMRoBA5K1JQUApIV3DxrBlulZtOR7gUQ8p9qPI16pDfOxdExALuclsVD2jHFNuUS
-         JPS6hMmcZ87UdDv8tLhNiOowVuOiWFoJ+5sY96WqToF9I5LpHQT2XfQjIlyf6Y3mRbYQ
-         RC8vG8NyZvI6iGSptkEzgPn9pqwcgdQFDKq+W922+idTVDWus3i9RemQ2w4KHHqlwItR
-         U1IzoLNLOV8i57V0LTQUbPLVMKmQLuMSucBAFBmp8NZhg7awM/LtSXcRILteZ76TyB+6
-         1ayw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Fh6fi+aJ2hGI0gcwmlRNBTGfL+8DsktNJyj1HrbFC+PSct3zSal+V0ChyFrIq/BxexoRfPCaaZIanaA=@vger.kernel.org, AJvYcCWZJe4Xsg9LuAECwCqggTr9+lXPONr9Z+pSGHarXIwQkWL/TsmRYWLuRfDFP7M78ofe8Pt6i8QLHiPkd99Wp0Xj/NQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyByJ+DJNgfOpIRXqsegxiXUx3u1gaM9LH+7baO2tHYRoGg29h
-	qSAIaVYRRMjxMOVQKCRUsp9jb20MadKxoa76NSWTdqfFKPS6EyJvq0hpAz5/
-X-Gm-Gg: ASbGncvr9N3nByqVZqHS3WK3h1j9NC9PSpoNfe2MI95azveS+wVJnkxc8nwWf13gUT0
-	W3qhfYnQFWwmidFNH12TXBKilVEQ7CO7Yekh7A9owLdvF/DrO+Pq+TjPKnzVsG+adbTTdAJ+PDs
-	3ygGZUzK3WqDU4VYiPonsRVspv5mmoPRkVqvbb08arO6lmCFzLQ35kQArUymsjEKXqmI95GcGzo
-	/4qroWxQ/rcVLaVZRdJs+hYNGxaoJ2naFFAesLg8KYHsHR0xaN0+NuaGd8EIPRLVRJXeT89cZqg
-	fueCcDYzBG1OXoQhAk2s/A66PHJzeldlgC0QbJE6AfrE72Uohu20X1WVeqIfzv7dbTvEUni7on8
-	26/NDf9s=
-X-Google-Smtp-Source: AGHT+IFy7Zhn68cvWA99JWFfpq886W8gABfyhO9r2skkuBqc+KXl3gL5kos/bRPaW1Ml4crPx/CPxQ==
-X-Received: by 2002:a05:6122:400d:b0:520:4996:7cf2 with SMTP id 71dfb90a1353d-525963ba3f1mr1730742e0c.10.1742466342602;
-        Thu, 20 Mar 2025 03:25:42 -0700 (PDT)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5258b0a93d8sm639072e0c.14.2025.03.20.03.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 03:25:41 -0700 (PDT)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86d5e42c924so599557241.3;
-        Thu, 20 Mar 2025 03:25:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDntN0pigaW3fLPfvYONAahtnS24EO1oVktrmDJ7wQSMVSXexaP0b170WRZ8Hz1u36RK7RxoQSJ9SMISDY4zqoBIw=@vger.kernel.org, AJvYcCXyozqZ8a+sYUh4fEEhFS+urit/4FCCEp8mEzSzU0uOFsG4lRghuNXgNUQaGMqO+Vb9shDms4lXJitUJ2Y=@vger.kernel.org
-X-Received: by 2002:a05:6102:5e8b:b0:4c4:e451:6f24 with SMTP id
- ada2fe7eead31-4c4fce5a0b8mr1981078137.22.1742466340794; Thu, 20 Mar 2025
- 03:25:40 -0700 (PDT)
+        bh=HawgxxVZ0VP8h2ZK240Xc42v4xINhqqYB2/a1ZVpyOw=;
+        b=wzq+/4kiWFjLgg7XL+NUik2j9LXRRuBR3Nvyo4uuNdJ9QAHSVD7t8wJMn1M9CoS/Uw
+         4hnxo+lQYLb6aod1zsBDXQn/IHoiJAbEobiCKvN30fPT2kVuL7Xm5o3mlUM0A2XSu+69
+         hdjg3YcCyW6uMTsP2PH9AGH/pP/UpNO3zEtIIesn5HY6/vyZOXdIVe9+bBPuirpc4Lv3
+         rPOgSxN/P7SrQ6bP8rDj42XZqKcA1JyPxjYEdkKf393aLPAgMSt/6hTfTnTm5cibrthF
+         NsI1WbiVBtCp3CjHUJXIncnpgtNj/vnOCle+fxhr24yCsZjX49EWNeg8eQJqWpeUCS/3
+         D1ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV/BlmzfnNiSUcfwN6/n431XHPFb9TyD6Dars8pcFalxUPhlD6TvGDfVYgkA0RPZDif4ixAn9JuIQFpffMA@vger.kernel.org, AJvYcCV7qL57SYwmpqIBHY1WtpeKD9DrtZrbt/lxGksuRSSG2Ida1OOn0vujJdhKELP5404jhfc8QgQAFA7nvGWH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+kEqdLodUzbR3hitSzg/KcjxlyTZA9dQpkx6f4q1XIFny7WQX
+	cNbGeWUfC0TDFuj4cUNJIml1XIsS9/Knoz0EjN4I9HbmMoA7LCM0I2ci/kxp
+X-Gm-Gg: ASbGncuPs4Ac7oRdCZ9pNVXN5Agu3u+uSB5Tv55qCrAjd4QhtoWR9qgWFA+IFr++Tqp
+	f7eo+bgTk83K+6Coc6l9RSumJsRYcJL2nOXTPEvUrhwbtw3++4AE62sbqf1nzK3F85lM0Ai9NS7
+	oTVBZt53mR5e59Zs0o4M0tzEHzEbsU7qWBO4G6sPMWEAujk1ml+2u4IBQuDa+GK/2fwlkS8+B3m
+	AcVHaxX+/Kjtx0Uy24hftukvThmj42okNml8q3IpAXP5+5D+E751gHmcnVgZ1fUgJf7dtI6ij8S
+	kCdxFYU+ljxM4bGj6uOigWzaWcyg3Xf2vDWTVuP9H3sfm7FSQYel39DbMY3IEc8=
+X-Google-Smtp-Source: AGHT+IER7SuPJjUH4lCqbM3lr3kLMorlti4mSw5CTuqTLrDqbZrUCdAJITZOqS3QHiYfvHUKS8WCRA==
+X-Received: by 2002:a05:600c:1f83:b0:43c:ef13:7e5e with SMTP id 5b1f17b1804b1-43d4383d55bmr49947075e9.26.1742466409117;
+        Thu, 20 Mar 2025 03:26:49 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed786sm43752145e9.38.2025.03.20.03.26.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 03:26:48 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: sort out fd allocation vs dup2 race commentary, take 2
+Date: Thu, 20 Mar 2025 11:26:37 +0100
+Message-ID: <20250320102637.1924183-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6bcfde63b3a6b25640a56be2e24a357e41f8400f.1742390569.git.geert+renesas@glider.be>
- <9875d99a-4e16-4f0e-9249-69f0acc4c890@wanadoo.fr>
-In-Reply-To: <9875d99a-4e16-4f0e-9249-69f0acc4c890@wanadoo.fr>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Mar 2025 11:25:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVCmchuN1LyHGoE6A0TEpc9R1unXi2KNYO94cmT1WwOHA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoPHL7qu1sdjzScQ0pkORkgvrvYYtjHhU4AbcOVfFrVPVM4tJGLITEYQz0
-Message-ID: <CAMuHMdVCmchuN1LyHGoE6A0TEpc9R1unXi2KNYO94cmT1WwOHA@mail.gmail.com>
-Subject: Re: [PATCH] phy: can-transceiver: Re-instate "mux-states" property
- presence check
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: linux-can@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Peter Rosin <peda@axentia.se>, 
-	Aswath Govindraju <a-govindraju@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Vincent,
+fd_install() has a questionable comment above it.
 
-On Wed, 19 Mar 2025 at 15:07, Vincent Mailhol
-<mailhol.vincent@wanadoo.fr> wrote:
-> For some reasons, I received your message twice (with a two minutes
-> interval between both messages). These look identical. I am answering
-
-My scripting didn't handle the comment in Rob's address correctly,
-so I resent the patch with the fixed address.
-
-> the most recent. :)
-
-Good ;-)
-
-> On 19/03/2025 at 22:27, Geert Uytterhoeven wrote:
-> > On the Renesas Gray Hawk Single development board:
-> >
-> >     can-transceiver-phy can-phy0: /can-phy0: failed to get mux-state (0)
-> >
-> > "mux-states" is an optional property for CAN transceivers.  However,
-> > mux_get() always prints an error message in case of an error, including
-> > when the property is not present, confusing the user.
+While it correctly points out a possible race against dup2(), it states:
+> We need to detect this and fput() the struct file we are about to
+> overwrite in this case.
 >
-> Hmmm, I understand why you are doing this patch. But on the long term,
-> wouldn't it make more sense to have a devm_mux_state_get_optional()? Or
-> maybe add a property somewhere to inform devm_mux_state_get() that this
-> is optional?
->
-> Regardless, just see this as an open question. I am OK with the approach
-> of your patch.
+> It should never happen - if we allow dup2() do it, _really_ bad things
+> will follow.
 
-Alternatively, we can be proactive and add a temporary local wrapper:
+I have difficulty parsing the above. The first sentence would suggest
+fd_install() tries to detect and recover from the race (it does not),
+the next one claims the race needs to be dealt with (it is, by dup2()).
 
-    /* Dummy wrapper until optional muxes are supported */
-    static inline struct mux_state *
-    devm_mux_state_get_optional(struct device *dev, const char *mux_name)
-    {
-            if (!of_property_present(dev->of_node, "mux-states"))
-                    return NULL;
+Given that fd_install() does not suffer the burden, this patch removes
+the above and instead expands on the race in dup2() commentary instead.
 
-            return devm_mux_state_get(dev, mux_name);
-    }
+While here tidy up the docs around fd_install().
 
-and call that instead?  Then the probe function needs no future changes
-when the real devm_mux_state_get_optional() arrives.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> > Fix this by re-instating the property presence check.
-> >
-> > This is bascially a revert of commit d02dfd4ceb2e9f34 ("phy:
-> > can-transceiver: Drop unnecessary "mux-states" property presence
-> > check"), with two changes:
-> >   1. Use the proper API for checking whether a property is present,
-> >   2. Do not print an error message, as the mux core already takes care
-> >      of that.
-> >
-> > Fixes: d02dfd4ceb2e9f34 ("phy: can-transceiver: Drop unnecessary "mux-states" property presence check")> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Notwithstanding of above comment:
->
-> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+I have this commit in -next (*not* in master):
 
-Thanks!
+commit ec052fae814d467d6aa7e591b4b24531b87e65ec
+Author: Mateusz Guzik <mjguzik@gmail.com>
+Date:   Thu Dec 5 16:47:43 2024 +0100
 
-Gr{oetje,eeting}s,
+    fs: sort out a stale comment about races between fd alloc and dup2
 
-                        Geert
+It may make sense to combine these two into one. If you want it that way
+I'll submit a combined v2.
 
+ fs/file.c | 40 ++++++++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 0e919bed6058..dc3f7e120e3e 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -626,22 +626,14 @@ void put_unused_fd(unsigned int fd)
+ 
+ EXPORT_SYMBOL(put_unused_fd);
+ 
+-/*
+- * Install a file pointer in the fd array.
+- *
+- * The VFS is full of places where we drop the files lock between
+- * setting the open_fds bitmap and installing the file in the file
+- * array.  At any such point, we are vulnerable to a dup2() race
+- * installing a file in the array before us.  We need to detect this and
+- * fput() the struct file we are about to overwrite in this case.
+- *
+- * It should never happen - if we allow dup2() do it, _really_ bad things
+- * will follow.
++/**
++ * fd_install - install a file pointer in the fd array
++ * @fd: file descriptor to install the file in
++ * @file: the file to install
+  *
+  * This consumes the "file" refcount, so callers should treat it
+  * as if they had called fput(file).
+  */
+-
+ void fd_install(unsigned int fd, struct file *file)
+ {
+ 	struct files_struct *files = current->files;
+@@ -1259,8 +1251,28 @@ __releases(&files->file_lock)
+ 	struct fdtable *fdt;
+ 
+ 	/*
+-	 * We need to detect attempts to do dup2() over allocated but still
+-	 * not finished descriptor.
++	 * dup2() is expected to close the file installed in the target fd slot
++	 * (if any). However, userspace hand-picking a fd may be racing against
++	 * its own threads which happened to allocate it in open() et al but did
++	 * not populate it yet.
++	 *
++	 * Broadly speaking we may be racing against the following:
++	 * fd = get_unused_fd_flags();     // fd slot reserved, ->fd[fd] == NULL
++	 * file = hard_work_goes_here();
++	 * fd_install(fd, file);           // only now ->fd[fd] == file
++	 *
++	 * It is an invariant that a successfully allocated fd has a NULL entry
++	 * in the array until the matching fd_install().
++	 *
++	 * If we fit the window, we have the fd to populate, yet no target file
++	 * to close. Trying to ignore it and install our new file would violate
++	 * the invariant and make fd_install() overwrite our file.
++	 *
++	 * Things can be done(tm) to handle this. However, the issue does not
++	 * concern legitimate programs and we only need to make sure the kernel
++	 * does not trip over it.
++	 *
++	 * The simplest way out is to return an error if we find ourselves here.
+ 	 *
+ 	 * POSIX is silent on the issue, we return -EBUSY.
+ 	 */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
