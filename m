@@ -1,139 +1,141 @@
-Return-Path: <linux-kernel+bounces-570378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD53A6AF9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:07:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF749A6AF9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5719F3B9358
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:06:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C30188D0A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F3D22A4ED;
-	Thu, 20 Mar 2025 21:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C29222A7FD;
+	Thu, 20 Mar 2025 21:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XMT0udc+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cf3sZD96"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C474B2288CB;
-	Thu, 20 Mar 2025 21:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95DC22687B;
+	Thu, 20 Mar 2025 21:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504814; cv=none; b=fmvWw0ERNhk+u3LNFEksoylxTzZ8ZBA5n3tRn4W0P8QY5bUw1XW26+q83t4u6Avx3eT1ny2OCkFdNqWBW9UjzWNptDSJSSsFLhrPgxMRW4n39v4lD9H5dMbLI0ZDfHUjjhaF56u4dMvQJMIHr2Y7MlqTJVyZxGJ+lmsmNC93F5Q=
+	t=1742504819; cv=none; b=TBBMYeoklDcfpFS2c1Fx0I+zuiLfSstxOsjLwMtNS2S+NTVsIFtaC/G6JF7hPmkKNitwwfh1wX6u5owU/3/iuQJqSTOHEYHSmsmQp+mPviUTn/xiNtnodnihfCpvv5S2t7ZzJZr/LjHzlxI5eAp1nT6InJBxDVfxQ50t/HXTyZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504814; c=relaxed/simple;
-	bh=4G6jaGIe+WTEP6vhII0aJ8aoUDhMttJ01WvXI8zyJV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Tsgb0+b5u5hHZPOIDBAYt3kx1Jg0EJ/QeEOFbCAY8syR6NOuEvCGXOK2Anv1dXo3zfGqj7xXD319XvkTxgyYN+bHKXKnhafPVVHr8fbWPLy3vyJoTJ91du9KrD70aakIT+Igcmv/sgXpA/9zwRl7eO3NNOLADaWszcqTEFwD7Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XMT0udc+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KEIJpE005901;
-	Thu, 20 Mar 2025 21:06:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tATHTglTJM9UOHXhCrFGkpEE6lgCWEeNaBCm00pblL0=; b=XMT0udc+TIuEWqJx
-	yewPmloMniiWPcvzNVhkFVDg+EwZHjSoBI13rEbe5Pe8DxwBCMBXmHdEHJYISWrx
-	G+le01FJ6BWWm3IQcz+nKOvCWenvn4eD81pzHTdZzMR3rtgAcMZcjp9Mkyy6Fnvt
-	4SpyCVSHDs15ALaK8eK2CQ7CEZsNMNtwSQoET0BHyPz74HQ2ZHn5FmTe6tcTP7eB
-	3JsXu3XVSbBSzV0sXJSh9Oo8NeN684hfsD3SqnOg1T0UsmEA3swp1YOqYSfmM7nq
-	s7ioLAoU+NWrFe0+1VH20mr/kyGofHZQaIZ4O9SrEtP6ORkDEJwCgHlb2mW99r6C
-	OoD7PQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmc313e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 21:06:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52KL6Zl6003583
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 21:06:35 GMT
-Received: from [10.216.3.194] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Mar
- 2025 14:06:25 -0700
-Message-ID: <3abefb09-c1b6-4339-8cd9-cd86652c35d6@quicinc.com>
-Date: Fri, 21 Mar 2025 02:36:21 +0530
+	s=arc-20240116; t=1742504819; c=relaxed/simple;
+	bh=HJwmsuBl4GXsCQaTwFacbejN4+pW0Ti4oR/v22e/4ZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ioyHTXaUbrKDZ2/ooYYf4MloHZlwlFF9LzXnnaN26zlBQcoXygRYd8OmyaSJmPGh5+kbmpcIQl6FUzwzjF/EsmJt9NLfJBcopKq3Yzt5tm8SbFbkNSbg2n9lBaJkkvIoFkB4qNjJPxsAWmBvznyBGbsr1u3HrXqbqZv4xNFSTjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cf3sZD96; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E3DC4CEDD;
+	Thu, 20 Mar 2025 21:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742504819;
+	bh=HJwmsuBl4GXsCQaTwFacbejN4+pW0Ti4oR/v22e/4ZY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=cf3sZD96OvC1io70X3978viKdgFIwJoj1vBnbZvWwXaz+Q3yxvcE4qwgMPEA9tqwA
+	 NwX14JIWitf/STv86rzIW2Y4ulqHCAIJoysCRoaNq7GZwcMoxoxR8PPdEqLstK9g5p
+	 tgzHfymTSJZ9K0mddPgC731UpiRo212EkyMtnKAHXJmF6RWHzUqWmHAMaxCALWY/KB
+	 SgW4Bjdk3W2zN7Pw72+bl/0B887JFrYKqOHmpWum7CNflwj0hFPItGJckd9I1So/oX
+	 NU6vEMSFRQWqujdjFvbi/0+hXONOdkul2aLYo6XSafsmyWfwb+W6dVcS3dnpuO6txk
+	 kJ6HN4vUTJLyQ==
+Date: Thu, 20 Mar 2025 16:06:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Roger Pau Monne <roger.pau@citrix.com>
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	linux-pci@vger.kernel.org,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v3 2/3] PCI: vmd: Disable MSI remapping bypass under Xen
+Message-ID: <20250320210657.GA1099656@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/10] drm/bridge: anx7625: enable HPD interrupts
-To: Dmitry Baryshkov <lumag@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
-        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
-References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
- <20250311122445.3597100-9-quic_amakhija@quicinc.com>
- <5hvpacx3qeqhjqemhqizws4esdhwg7reli77qey2nin2fggljp@ykgyayj2v3e6>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <5hvpacx3qeqhjqemhqizws4esdhwg7reli77qey2nin2fggljp@ykgyayj2v3e6>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tRozAjq0hfhDi8U9-fjhIm8fjK2Givoe
-X-Proofpoint-GUID: tRozAjq0hfhDi8U9-fjhIm8fjK2Givoe
-X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67dc835c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VNkCFBYSnlPScTfBtzoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_07,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=997 bulkscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503200136
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250219092059.90850-3-roger.pau@citrix.com>
 
-On 3/11/2025 9:09 PM, Dmitry Baryshkov wrote:
-> On Tue, Mar 11, 2025 at 05:54:43PM +0530, Ayushi Makhija wrote:
->> When device enters the suspend state, it prevents
->> HPD interrupts from occurring. To address this,
->> add an additional PM runtime vote in hpd_enable().
->> This vote is removed in hpd_disable().
+On Wed, Feb 19, 2025 at 10:20:56AM +0100, Roger Pau Monne wrote:
+> MSI remapping bypass (directly configuring MSI entries for devices on the
+> VMD bus) won't work under Xen, as Xen is not aware of devices in such bus,
+> and hence cannot configure the entries using the pIRQ interface in the PV
+> case, and in the PVH case traps won't be setup for MSI entries for such
+> devices.
 > 
-> Is it really enough to toggle the HPD interrupts? Is there any kind of
-> programming that should be moved to .hpd_enable() too (so that by
-> default the bridge doesn't generate HPD interrupts)?
+> Until Xen is aware of devices in the VMD bus prevent the
+> VMD_FEAT_CAN_BYPASS_MSI_REMAP capability from being used when running as
+> any kind of Xen guest.
 > 
+> The MSI remapping bypass is an optional feature of VMD bridges, and hence
+> when running under Xen it will be masked and devices will be forced to
+> redirect its interrupts from the VMD bridge.  That mode of operation must
+> always be supported by VMD bridges and works when Xen is not aware of
+> devices behind the VMD bridge.
+> 
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 
-Hi Dmirty,
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-I couldn't find the ANX7625 bridge driver datasheet, where all the registers information are present.
-
-As per my understanding, we have anx7625_hpd_timer_config(), where debounce timer registers are getting set, which help to manage the detection and stability of the HPD signal.
-
-anx7625_hpd_timer_config() is getting called from anx7625_runtime_pm_resume().
-
-anx7625_runtime_pm_resume
-   anx7625_power_on_init
-       anx7625_ocm_loading_check
-           anx7625_disable_pd_protocol
-              anx7625_hpd_timer_config
-
-So, I think HPD programming is already taken care in anx7625_hpd_timer_config(). anx7625_runtime_pm_resume() is getting called for both eDP and DP configuration. 
-
-If you suggest then, I can move the anx7625_hpd_timer_config() from anx7625_disable_pd_protocol() to anx7625_bridge_hpd_enable().
-
-Thanks,
-Ayushi
-
+> ---
+> Changes since v2:
+>  - Adjust patch subject.
+>  - Adjust code comment.
+> 
+> Changes since v1:
+>  - Add xen header.
+>  - Expand comment.
+> ---
+>  drivers/pci/controller/vmd.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index 9d9596947350..e619accca49d 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -17,6 +17,8 @@
+>  #include <linux/rculist.h>
+>  #include <linux/rcupdate.h>
+>  
+> +#include <xen/xen.h>
+> +
+>  #include <asm/irqdomain.h>
+>  
+>  #define VMD_CFGBAR	0
+> @@ -970,6 +972,24 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  	struct vmd_dev *vmd;
+>  	int err;
+>  
+> +	if (xen_domain()) {
+> +		/*
+> +		 * Xen doesn't have knowledge about devices in the VMD bus
+> +		 * because the config space of devices behind the VMD bridge is
+> +		 * not known to Xen, and hence Xen cannot discover or configure
+> +		 * them in any way.
+> +		 *
+> +		 * Bypass of MSI remapping won't work in that case as direct
+> +		 * write by Linux to the MSI entries won't result in functional
+> +		 * interrupts, as Xen is the entity that manages the host
+> +		 * interrupt controller and must configure interrupts.  However
+> +		 * multiplexing of interrupts by the VMD bridge will work under
+> +		 * Xen, so force the usage of that mode which must always be
+> +		 * supported by VMD bridges.
+> +		 */
+> +		features &= ~VMD_FEAT_CAN_BYPASS_MSI_REMAP;
+> +	}
+> +
+>  	if (resource_size(&dev->resource[VMD_CFGBAR]) < (1 << 20))
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.46.0
+> 
 
