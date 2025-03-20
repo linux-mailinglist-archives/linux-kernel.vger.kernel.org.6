@@ -1,163 +1,247 @@
-Return-Path: <linux-kernel+bounces-570132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88261A6ACA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:02:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCD9A6ACAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5CC0488522
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DDF3AB3D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D621EB184;
-	Thu, 20 Mar 2025 18:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959741E5734;
+	Thu, 20 Mar 2025 18:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S3B8WMO2"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FExZuvSg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26542AD20
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369F1E5702;
+	Thu, 20 Mar 2025 18:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742493734; cv=none; b=uDaGtbpw0JZxpt0vNsnQ5YUlL1gjwc6EuVRPdGw8D5RJP7GNzn35gcaHkvkkTEyfpp5RLsPxbRbN3vbqI5mm7bOdhDFb200n8qAdi1M1zYjB53RKC3S4s2vOGM+0BymUEgLfR5uSrloL6WIC7fLW6VxVnGYraDEH7gtlSb0lUW8=
+	t=1742493744; cv=none; b=O8pIEU/+JYc2AWEi4gKAVz/JqXUPjoXvg9CFNAsxXCgJUmwBQ+u3ztfhZansq3pX13FWunI9sC+xTq72IhAplhMHWfnsJJ5lmiQExGNjAXhF1PFZmj0t2sxmsZipALA9AXxxeWpZpUcLlLEfDx2HDoh+w+e9xnYqszkLkYkBua8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742493734; c=relaxed/simple;
-	bh=NfLD+aV7WNHzuinaGLIv2qHDV06LYHAPAPx1TEPG8F0=;
+	s=arc-20240116; t=1742493744; c=relaxed/simple;
+	bh=y9R11PCeG0aC7T4yQOMfIHSqYCQ5IC3utAoKlffVDss=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=otANJchztsYbn7GLI+gFyiFomQcgCT/uQjpC0ahXkUL+gn07kDMjIKptNACiqIVQ67dQSTHNn3zi1AjWr9nXzUdkvBF7jxgsCo4vDNoSelq6PyJP0cS8VDXjzXHO4ffEG2ZX7pbZBt7KXQBusepw5vtCl84XeshFe7+p6FQwsZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S3B8WMO2; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bd11bfec6so11586231fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742493731; x=1743098531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ps3xvTXiP2Q8pdSunqpw5GFrj/GawShWO6ob0r/ZRIQ=;
-        b=S3B8WMO23PcnJgq4TzO9aovzF779qltA+uJ+cXzb8A+I63T8onhGwDsk1H5VBQrdQo
-         yufQ7cMfdkg8Hj7I8JbnX1aTsb+H5jJ9fGMfhyUYBrSgdBuuusT2a7p2JiX93A7Xl+tF
-         f48WO/6VbqNxPUfZ1phhVbbaZ/L+Tk+Zvp7BOxL64MJZzwB8iu7q4rhvODNJwgueQ86Z
-         mwDUbFKgTmkUaIOkRioUg/AnKe7IhNn2ydg84CPCmiq4hSlPTtw0j8F4/k/IoCtOTMFP
-         4J4Hbt8XV0kGts5adeGDpircAR2S7SMeE1B4MpYx7oRemsdpEreSgkELjEkBtK7UkJ0n
-         M4Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742493731; x=1743098531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ps3xvTXiP2Q8pdSunqpw5GFrj/GawShWO6ob0r/ZRIQ=;
-        b=W1zlAPe4cpYVxUUesYICVhGWMEGmEsyNQ0BxGSBEt112mB90GwJPutloOj0KsLeppE
-         CLJFiGLGNWUjntEm6w72HC+y7oic1dxoHmmGcB1UwUbYpylE41c8wglaC9XO27wc9HPh
-         YDw2ysHiCllWUNDrWf8+1fdumNtbeXd7xnTu37OHORaDMm3d19HNJ6T3PHnjliOGSxuN
-         6BaT5qvOEFmJLa8MNXXP8zX7J0pRuIECa5Icsdr85ybapUEvKi1J2iRLMCSCYHFMz0h0
-         Am4Glgyv9DtcbW63m96eadONz+Br2541Jq1LS9keX8BgiqbFI85/wlaghaN/R6TB2/A2
-         Efww==
-X-Gm-Message-State: AOJu0Yx4TM2Vm7BiUEsHN0Ccjd4R9rIBkae1+0zzwCPOPAeSJTZcypNy
-	flCT9S1iF2Efchspv87xNijQSoNe2FycAEvYcQUBoOJSPej4NgPwm/3EcHxYtjQ0aEy3y4DdRoz
-	bJ5dkl/qSSPO9UetNijCoLM7/UJTXmWXOgVg=
-X-Gm-Gg: ASbGncvOBBwgkIXLr7/m21O+fdqUkoh1naxZyEf+58pABqQW9P+tjrEqdqs07amVHNr
-	7y4ieAysBXrB0CT9+oWh2VYwf9phmSWnZSSvUil4XPpfiYIxXB153+Yl9sXpWsk1OrnJkWQsdou
-	2asETWriDfczbTWEg3hMmq0bE=
-X-Google-Smtp-Source: AGHT+IH1A2I3Q1xGxbrMuizjqlCPaL31QjjbRJF6QKnc6Zy2IZIs5ODnCMKnVFffDS6lMZ1Fo0I28c4wrpqW8Vm6Bqc=
-X-Received: by 2002:a2e:bc04:0:b0:30c:201a:149a with SMTP id
- 38308e7fff4ca-30d7e2aab8bmr549001fa.25.1742493730651; Thu, 20 Mar 2025
- 11:02:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=fOhUeJIrJT9aR+HMYK2KC94vdPIdwRupXTGWygMtl86eBn7nqW3DI8WjOpfY+FRsHzEbtTmnRjc40EUfYYfbD9RTranfwQA6IqIgpVu7fRApKdDKyB8oESdjcXFr6vCNh5kxfsCljfCt4/p+pqG0GcqaAf1D5681japx93cJEBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FExZuvSg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA3FC4AF0B;
+	Thu, 20 Mar 2025 18:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742493744;
+	bh=y9R11PCeG0aC7T4yQOMfIHSqYCQ5IC3utAoKlffVDss=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FExZuvSgG7lQ0nphnU46uCB3BITIfCUTFx/gRRNQECKgcsiWtNME41GgHctBairTj
+	 L2E4xjss89M+TnVQmJP3gNRjnUYvu3j22ltM8HOhpjuVYuimADN8rrVXMdfbsEwg/o
+	 FedshALdXFQlmmCNDqhhTbjSuJm60rHbMJpBjvugGcJ75Z77+vWHqHsj1ileqG8Pb/
+	 WqFwlWO8YJmUHunQSgj7i4OOkw4X//d/uscB7e10Kegh3pry9R0esBPLI1F4sswS9F
+	 qyRVrIrrc1RN+zEOhuXNUCBBuH9upKVbOG96on8DouTIArXT0b80FQXG77FldV3Nth
+	 1Bvi4yL9YGukA==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso1759377a12.1;
+        Thu, 20 Mar 2025 11:02:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVVpH5sA2wEbcB13Cto88FlUplJ7M1Ec0dHoaugJ/nM6M5ZzybEDTa+HVnFRRPygOVj1g+vfCeNjgtup5P7M8Thvg==@vger.kernel.org, AJvYcCVvobix/lWW9/zjL0xlteV0CHldEuvm02mz5y6Px4Byj/rcuhkOYjFKYm5bOsmQk4axEhMpaJWeMejj@vger.kernel.org, AJvYcCXDQXBl10fZhdfJhcMFYVWnCI6xyoPGsJGaId2tR8CNbQ4dAcZixfnqcqYc0PovJ9XF+2ZRn11Fu4aF2VyIkw==@vger.kernel.org, AJvYcCXmdJATqwmBCH1z4yipDMsDBOOptEz72S+Ahn4M/VnzJVbFfo+Q/Xn3j0R5MxOdnN1LM70ra2gzcPk+qw2y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+GPyQChxriQT5LAmUgwxq89OVAglPQaPup22TOOqbyxc62DLu
+	yOAoXOy43GoGX2MmM/3nsyRiPdnB8OwY1gKLAWIp4oh4gzbRnIWxp7sAks70cXL8j2m4EWvplBq
+	jbgC47SOgSW6uKysvKbr6ZB2/9A==
+X-Google-Smtp-Source: AGHT+IHQN97QVgyFz09nfrYtWbO3Ru8zTNvSZPoniI5opPgH/pEzb20TQeGjO3i0k0wm7am1Inl8y3sD3mZZgGtCBU4=
+X-Received: by 2002:a05:6402:13d6:b0:5de:aa54:dc30 with SMTP id
+ 4fb4d7f45d1cf-5ebcd40b7d9mr238445a12.5.1742493742665; Thu, 20 Mar 2025
+ 11:02:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANDhNCoueki=keYNcNr4eXqgLFPh3VupDJC0hFqxm4FNKfGzYg@mail.gmail.com>
- <20250315003800.3054684-1-jstultz@google.com> <877c4q5c9i.ffs@tglx>
- <CANDhNCqzHYJfaap5-TYPmtbaPm6AkS85hKdeSnprhEqMCAYcPw@mail.gmail.com> <874izs66el.ffs@tglx>
-In-Reply-To: <874izs66el.ffs@tglx>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 20 Mar 2025 19:01:56 +0100
-X-Gm-Features: AQ5f1JouIpJsV-mk1ERtzhjPq3fo0yhyI84VjLLwlZBdX-L63aW0sE4ga6uFi3s
-Message-ID: <CANDhNCrxmoK98pmL-ynPVu9tMpyrjMXZ_L7-R0nV2r=YGMg0OA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] time/timekeeping: Fix possible inconsistencies in
- _COARSE clockids
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, Miroslav Lichvar <mlichvar@redhat.com>, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
+References: <20250317232426.952188-1-robh@kernel.org> <20250317232426.952188-4-robh@kernel.org>
+ <26e72cb2-c355-4c40-bb98-fc0ff267bf4f@foss.st.com> <CAL_Jsq+7ZhMWgbFDvPB+3BG7YfiS9PweybOGNY3r=d40RbGHJA@mail.gmail.com>
+ <130d61a8-6f03-46dc-94ca-f098bc09babc@foss.st.com>
+In-Reply-To: <130d61a8-6f03-46dc-94ca-f098bc09babc@foss.st.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 20 Mar 2025 13:02:11 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJZkEpx26=ro_y8hHA2x1Zm6z_SFOQHjQ-WzUa-gy+s0w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr2DWg_p_3pOGaFM-d8b9OA-WiVr1l9JRvSP10bkvbhKAdr3MGldt734ck
+Message-ID: <CAL_JsqJZkEpx26=ro_y8hHA2x1Zm6z_SFOQHjQ-WzUa-gy+s0w@mail.gmail.com>
+Subject: Re: [Linux-stm32] [PATCH 3/3] remoteproc: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Saravana Kannan <saravanak@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 16, 2025 at 9:56=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
-> On Sat, Mar 15 2025 at 16:22, John Stultz wrote:
-> > On Sat, Mar 15, 2025 at 12:23=E2=80=AFPM Thomas Gleixner <tglx@linutron=
-ix.de> wrote:
-> >> > So to fix this, rework the timekeeping_advance() logic a bit
-> >> > so that when we are called from do_adjtimex() and the offset
-> >> > is smaller then cycle_interval, that we call
-> >> > timekeeping_forward(), to first accumulate the sub-interval
-> >> > time into xtime_nsec. Then with no unaccumulated cycles in
-> >> > offset, we can do the mult adjustment without worry of the
-> >> > subtraction having an impact.
+On Thu, Mar 20, 2025 at 4:23=E2=80=AFAM Arnaud POULIQUEN
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+>
+>
+> On 3/20/25 00:04, Rob Herring wrote:
+> > On Wed, Mar 19, 2025 at 10:26=E2=80=AFAM Arnaud POULIQUEN
+> > <arnaud.pouliquen@foss.st.com> wrote:
 > >>
-> >> It's a smart solution. I briefly pondered something similar, but I'm n=
-ot
-> >> really fond of the fact, that it causes a clock_was_set() event for no
-> >> good reason.
+> >> Hello Rob,
 > >>
-> >> clock_was_set() means that there is a time jump. But that's absolutely
-> >> not the case with do_adjtimex() changing the frequency for quick
-> >> adjustments. That does not affect continuity at all.
+> >> On 3/18/25 00:24, Rob Herring (Arm) wrote:
+> >>> Use the newly added of_reserved_mem_region_to_resource() and
+> >>> of_reserved_mem_region_count() functions to handle "memory-region"
+> >>> properties.
+> >>>
+> >>> The error handling is a bit different in some cases. Often
+> >>> "memory-region" is optional, so failed lookup is not an error. But th=
+en
+> >>> an error in of_reserved_mem_lookup() is treated as an error. However,
+> >>> that distinction is not really important. Either the region is availa=
+ble
+> >>> and usable or it is not. So now, it is just
+> >>> of_reserved_mem_region_to_resource() which is checked for an error.
+> >>>
+> >>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> >>> ---
+> >>> For v6.16
+> >>>
 > >
-> > Oh, good point.  I wasn't thinking clearly about the semantics, and
-> > was being a little paranoid there (as most calls to
-> > timekeeping_forward_now() have clock_was_set() calls that follow). I
-> > suspect I can do away with that bit and avoid it.  I'll respin later
-> > this week.
+> > [...]
+> >
+> >>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/st=
+m32_rproc.c
+> >>> index b02b36a3f515..9d2bd8904c49 100644
+> >>> --- a/drivers/remoteproc/stm32_rproc.c
+> >>> +++ b/drivers/remoteproc/stm32_rproc.c
+> >>> @@ -213,52 +213,46 @@ static int stm32_rproc_prepare(struct rproc *rp=
+roc)
+> >>>  {
+> >>>       struct device *dev =3D rproc->dev.parent;
+> >>>       struct device_node *np =3D dev->of_node;
+> >>> -     struct of_phandle_iterator it;
+> >>>       struct rproc_mem_entry *mem;
+> >>> -     struct reserved_mem *rmem;
+> >>>       u64 da;
+> >>> -     int index =3D 0;
+> >>> +     int index =3D 0, mr =3D 0;
+> >>>
+> >>>       /* Register associated reserved memory regions */
+> >>> -     of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+> >>> -     while (of_phandle_iterator_next(&it) =3D=3D 0) {
+> >>> -             rmem =3D of_reserved_mem_lookup(it.node);
+> >>> -             if (!rmem) {
+> >>> -                     of_node_put(it.node);
+> >>> -                     dev_err(dev, "unable to acquire memory-region\n=
+");
+> >>> -                     return -EINVAL;
+> >>> -             }
+> >>> +     while (1) {
+> >>> +             struct resource res;
+> >>> +             int ret;
+> >>> +
+> >>> +             ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
+es);
+> >>> +             if (ret)
+> >>> +                     return 0;
+> >>>
+> >>> -             if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
+> >>> -                     of_node_put(it.node);
+> >>> -                     dev_err(dev, "memory region not valid %pa\n",
+> >>> -                             &rmem->base);
+> >>> +             if (stm32_rproc_pa_to_da(rproc, res.start, &da) < 0) {
+> >>> +                     dev_err(dev, "memory region not valid %pR\n", &=
+res);
+> >>>                       return -EINVAL;
+> >>>               }
+> >>>
+> >>>               /*  No need to map vdev buffer */
+> >>> -             if (strcmp(it.node->name, "vdev0buffer")) {
+> >>> +             if (strcmp(res.name, "vdev0buffer")) {
+> >>
+> >> I tested your patches
+> >
+> > Thank you.
+> >
+> >> The update introduces a regression here. The strcmp function never ret=
+urns 0.
+> >> Indeed, it.node->name stores the memory region label "vdev0buffer," wh=
+ile
+> >> res.name stores the memory region name "vdev0buffer@10042000."
+> >>
+> >> Several remoteproc drivers may face the same issue as they embed simil=
+ar code.
+> >
+> > Indeed. I confused myself because node 'name' is without the
+> > unit-address, but this is using the full name. I've replaced the
+> > strcmp's with strstarts() to address this. I've updated my branch with
+> > the changes.
 >
-> Actually your patch is not even emitting a clock_was_set() event:
+> This is not enough as the remoteproc core function rproc_find_carveout_by=
+_name()
+> also compares the memory names. With the following additional fix, it is =
+working
+> on my STM32MP15-DK board.
 >
-> > +     if (offset < real_tk->cycle_interval) {
-> > +             timekeeping_forward(tk, now);
-> > +             *clock_set =3D 1;
-> > +             return 0;
-> > +     }
+> @@ -309,11 +309,11 @@ rproc_find_carveout_by_name(struct rproc *rproc, co=
+nst
+> char *name, ...)
+>         vsnprintf(_name, sizeof(_name), name, args);
+>         va_end(args);
 >
-> #define TK_CLEAR_NTP            (1 << 0)
-> #define TK_CLOCK_WAS_SET        (1 << 1)
+>         list_for_each_entry(carveout, &rproc->carveouts, node) {
+>                 /* Compare carveout and requested names */
+> -               if (!strcmp(carveout->name, _name)) {
+> +               if (strstarts(carveout->name, _name)) {
+>                         mem =3D carveout;
+>                         break;
+>                 }
+>         }
 >
-> So it clears NTP instead. Not really what you want either. :)
+> I just wonder if would not be more suitable to address this using the
+> "memory-region-names" field.
 
-Hey Thomas,
-   Sorry for the slow reply here.   So I agree with you that we don't
-want to set clock_set above, that was my mistake. But this last bit I
-don't think is right, as timekeeping advance() just returns a bool
-(return !!clock_set;), which is used to decide to call clock_was_set()
-or not  - not the argument passed to clock_was_set().
+That would be better as you shouldn't really care what a provider node
+name is where-as "memory-region-names" is meaningful to the driver.
 
-
-> But yes, it simply can forward the clock without side effects.
 >
-> I think that this should be done for all TICK_ADV_FREQ adjustments. In
-> case of such asynchronous adjustments it does not make any sense to take
-> the old ntp_error value into account and accumlate some more. In fact
-> this simply should clear ntp_error so the new value goes into effect as
-> provided by NTP and not skewed by ntp_error.
->
-> These async adjustments (usually very small ones) happen when the
-> current source degrades and chronyd/ntpd switches over to a new server.
->
-> Something like the below.
+> The drawback is that we would break compatibility with legacy boards...
 
-So I finally got a chance to look at the diff between your change and
-mine, and your changes look good to me. Thanks again for catching the
-clock_set thinko, and I agree clearing ntp_error looks like the right
-thing to do.  I'm going to do some testing here with them and resubmit
-shortly.
+So not an option.
 
-thanks
--john
+I think I'll have to fix this within the reserved mem code storing the
+name or do something like the diff below. I'd like to avoid the
+former. Using the original device_node.name is also problematic
+because I want to get rid of it. We redundantly store the node name
+with and without the unit-address. There's a lot of places like this
+one where we hand out the pointer with no lifetime.
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rp=
+roc.c
+index 1e949694d365..cdee87c6ffe0 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -239,7 +239,7 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+                                                   resource_size(&res), da,
+                                                   stm32_rproc_mem_alloc,
+                                                   stm32_rproc_mem_release,
+-                                                  res.name);
++                                                  "%.*s",
+strchrnul(res.name, '@') - res.name, res.name);
+
+                        if (mem)
+                                rproc_coredump_add_segment(rproc, da,
+@@ -249,7 +249,7 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+                        mem =3D rproc_of_resm_mem_entry_init(dev, index,
+                                                           resource_size(&r=
+es),
+                                                           res.start,
+-                                                          res.name);
++                                                          "vdev0buffer");
+                }
+
+                if (!mem) {
 
