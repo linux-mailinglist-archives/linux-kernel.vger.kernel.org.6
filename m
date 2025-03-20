@@ -1,175 +1,173 @@
-Return-Path: <linux-kernel+bounces-570258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D5EA6AE16
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:05:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A87A6AE1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C0817AF30A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF84318875DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773061E5203;
-	Thu, 20 Mar 2025 19:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1CB227B8E;
+	Thu, 20 Mar 2025 19:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGY7EJDh"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8w8P+Bf"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4951B227BB9;
-	Thu, 20 Mar 2025 19:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D78E1EC006
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742497501; cv=none; b=Egiyd+NKnoN4/B+siqsGBLdhWp4VVDFU3Zouq4yMdwGW3CER2EqqPcM77fsRMwRNGQeHOFlpGR4Dr91cFOxw37qODf8uULscSPoceTTY+lppC69ZmxP5SF0iWJJryvmLxT5rpf2GKx13VEVb2qWlHwGzIGoYAEu6iA0oqljdd/w=
+	t=1742497581; cv=none; b=aSeIN1MxY0eLU5GQirI2pSVF/jylTWRfSJc5RNXXWYT5AF/lGJERboTvx+cFhX8AyutDkaFDgxmTE8j/KriZHiZ0ITwIlfmhf8cAT5OQ3whlzNa+UjjlJGa73PifpyiOZEd4PLgC2IXDrTdwxY7eXPXsonG03vyoDDFFZNPinDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742497501; c=relaxed/simple;
-	bh=CVbbd+cYujo/HQFTA+yCNZUnKEdWS7yOFoI9/resuns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3w7Qkz7vaNbyEinhCzXA/74chXk7a6+FlFQRI8jGVHbJRjRcgUEw8AAPDSb+JYmfabPMCxnDLE3qMm3YeAJx5OZ/4IZQfSBfv4mHqQB8fp1+jz0jz3P0PlryIonOQs7Uds7CPYhUpGAe9eiGzzKUd12urJBkfxcWMxsXP2aIYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGY7EJDh; arc=none smtp.client-ip=209.85.219.54
+	s=arc-20240116; t=1742497581; c=relaxed/simple;
+	bh=CVdwQRwpIJt58hAeEva9DszeJTQsrm/DOSXoQITYRMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bl4XeLX9w/L/MiSt/pJlz+/9qC4uOvlAXEq62AUvgoNL9r+oTnwpwu0LELFjTgvMDPHfWozBbrElKsrzOhcrsVK32Q0O39Z2+J7D+MC1LB/b4D1LJD4Cdrz/rwbJDWvnYanzGPuEDFNOME2uEz0Ybcpl6sKt3s524z1Jk20heiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8w8P+Bf; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e41e17645dso10830796d6.2;
-        Thu, 20 Mar 2025 12:04:59 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso8079625e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:06:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742497499; x=1743102299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W6236jTl6DuIp7A1JdgVx90Xr9cNxSpV50bUQ02Q8PM=;
-        b=jGY7EJDh6Sw5fplFYgCi+NvAkSu0pL7QyvGCVE3SLKtQqlvpTYoA2UN5fvs0NmaJYa
-         nbJk54Sqn3h1lg1/vHga0gSlazbVaBW88ThUzMV8KPAahxWqMxz26YSC1NDMhMPFi6TD
-         UfMi8pfYd8t4WkxFFqkNil8gWsnAhy5Iao81Rsa1HcZaxvprhzy7k3J8yBt358ntiX09
-         wBmmGl7yOXyY9UNW1JO4tHcSHdYXfPb1At4Fgmr3Eoon+Z0YHjStZFs65sfR21+M86pA
-         VVEYctZfuL49oiBhiEnlp/lvYEsf+JFkSeQRfa7gvRvwEaS53G5oTRzs0PnBHlqdCb3s
-         2oqQ==
+        d=gmail.com; s=20230601; t=1742497577; x=1743102377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8lSnLMJAAQW3qdhDrBNq0M5ItBc5KdjP8sEy/s0lY0c=;
+        b=U8w8P+BfyhF/qk/Zf3SIzWBAj/F6OFP6BORQotS3wwkEst+2bmlH7CpGinbAw0Crcs
+         pr2FhgEc70U7cB2ZAvRlwQG10+3CSOR/Enj+7nq0AXBWzGymZs7WzHvE6cjnZwN1v9c7
+         3BhPpRF8yRSPvw/reR9OARQ2ghOvxSUT/N2jiZymL5okO5htePUZwOk4nYlfahKbU3cn
+         XynLgVeklhkRUMQAGpcyI7iYaZpU1yNiQHyZcrMbh3bFpAi5Tp37khAmqLGbi3gNGuPI
+         RfFSOfbpydy08QTi0wyC90/lq1+FYRE22Hg28kGpEiCWJPmHMGhqQomUu0OCU+VsPV81
+         lpxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742497499; x=1743102299;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W6236jTl6DuIp7A1JdgVx90Xr9cNxSpV50bUQ02Q8PM=;
-        b=nVNHov/Kpwh6WHnerDIpLnxlMZLccm4hY8yioIOLYZq8XrxTq0zvMFom8ieB0nAzvW
-         OakgLIwTDPsBM/M50s/oosZkoSFpdpnHI4+y2kuTD/0sNQj91r4tdZiSfcRqr41gkTBW
-         5A+AfH2v3//rlHOsfTUIVgiOgAmbdFbr7bEml9unaEk3yTwSvHzFuyD4/k/OhNMquv5k
-         NOP/W8PNDx1lslm1VIiWIF4v7UwedI3Zw4bEt2Ti7hDakVVl2H260K0Qb9SN6KqU4dMD
-         X7M7FEiHI/rrZ2sPhiizWR0x7mKAXRKOBKw1zvibZX294RT45fq7+nFXUD7S2r3VUVkf
-         Xn0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWvZBTb5g4Xpn/Vj7m9hDlHn4OxAr7ZXQyDKIudvn9uF+BZsG4Jfr6P3/0m0DZkaf9fSQTp6/KP24nCKeke1DY=@vger.kernel.org, AJvYcCXwktwPpOnvmKnTCjhnJojUZ/RL64vfwo+CHzA0PtlC2oNBFPeZoKhEJnvf9VhtkrEO2QtVS5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZp7151FlOYSQ7Y6afxDH1kdKUQ/HlHmbqUaCzYrhwp9cEiD0Z
-	TEbi+ZKyQ9f4jOayGHv5yhOrLzPHxW0fooAvUECPywHBUY3GJ1C2
-X-Gm-Gg: ASbGncvpCgvO1skc5GNekCZIF/lDZmenh4q03idFc+vqIy03Hg79stXB/N+M8VrSCOY
-	yJGWzDSXid7WABJsL9/a5v/aF2kDjEPozyGgglfAN+JSnGgCBvqVLIRVuTp7yoLyY15yAJRRCIl
-	ZsTtnwV/b1yhtOfxQo8+KdnuY7QUBG7oINTSREI4vhR/G17EtIKFGJu2Qk0tKQb1Qz4HBESq6Qo
-	JTorq7rsgRqwZJb3DVlzEmuLu/WwEAB8lrwNHeYt4cA1O6pIJw+K5cbayMaCISQHCotOds32cRW
-	AX7+/MeO072rKWz3AOfjA1EFp39HEowjLlDSh5m6x8Ime0zmp7B9tXNmpBmZlngwpUTjr1SFfPJ
-	OdBoxGpPWkKgoZrzvBeeD6jLQ0SNA8S3oBC8=
-X-Google-Smtp-Source: AGHT+IG4hDMaXvGrwZrlWKwMWBhVv38rTo7D7ZJoPKycn9E2N9eBslynixjxVjpdJwjV2gah2WLLLg==
-X-Received: by 2002:a05:6214:258f:b0:6e6:6a6e:7596 with SMTP id 6a1803df08f44-6eb3f34eda5mr5594226d6.39.1742497498824;
-        Thu, 20 Mar 2025 12:04:58 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3f0005a1sm1600756d6.121.2025.03.20.12.04.57
+        d=1e100.net; s=20230601; t=1742497577; x=1743102377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8lSnLMJAAQW3qdhDrBNq0M5ItBc5KdjP8sEy/s0lY0c=;
+        b=E3EQ3Qfp8r8nsi4ZU9qAFoAwCvlzksPHqmDqnEwxapDXxnYXkjxEhttdryzAZHfuJC
+         WcZlfws7MXR3mq8qMygr2dTwr2kT2jcyDgKEI98vAmCDekToUsr7OC5GxE8PoBz/BwBb
+         dN3uOeSRKHZYFtZPM6inwcQIEQoVNDdtM6hHi35odNQuA4m5KI9T7toMJzlhbww2I6XL
+         UQATPTq8JxjzBcitO3G/9zvCIvNzu9MmFbhtpb1S1bUi3lzg7gvSqmQWGFRsLIr/04SA
+         UY3vGT7PUikaSLDPmIOccREu1TFpODnjcHBmOhpmoa+ob5Y8l42jvGVT01Kknulc/vDP
+         W7jA==
+X-Forwarded-Encrypted: i=1; AJvYcCXasUHpZnXrUlE63alP81Ag2QOW+DIOeozVxXQBUiKEgoyx3z9C0KhhH9GBkeflxbkCxqo7LvkChsoFf9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV2tUPKjp33TlQjZbwSegXsKR3VplzLnm1sdjMsxfNHot0sjep
+	SLQ8exBFIfWeraxD6wtbNhk3U0fiWcaN7nwAKZRQeT4iPFb8WIk9
+X-Gm-Gg: ASbGncsMNmI1omNjo+/tS60x94kEIrz4m1HGIe+QzJMepB8wa5WJITFrpbU2P95Hhnw
+	RCItaaq0RiPd6viFcJsLx2YrWPAaMEXTuphQr+/52OWhl/4Ujq0jy+KlxdHMOP0K8fGpH9AHxLX
+	dHWSIbDSBxXMs48sxg52NNSCD5jOUnUs7xYEiPMjEFAJOrFeA0H9Lr/6xZ6SAPbS6uxcKVCJ3O3
+	QJg7e/eJ28YtBJSDGcFwtEuQTWeNasHW/XCNsjMiMUulE/tEC5sHSRpN6Ija+pGFulZ93hjbN68
+	UiRY/3AsB70e6uSC/YPkeXFYWqRRn7+GF6o1C4sNzX8D/Q444abJEuelEHVmpnAuyDdAFvw5ZQ=
+	=
+X-Google-Smtp-Source: AGHT+IFw+dgtyCKPZWyNw61eZQmtqhvfaa6INsUTXDhhy225m/6x0MHjdx6ANj8V2/hmibGCruVpIA==
+X-Received: by 2002:a05:600c:3586:b0:43d:1bf6:15e1 with SMTP id 5b1f17b1804b1-43d502d87a0mr6171965e9.1.1742497577175;
+        Thu, 20 Mar 2025 12:06:17 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f332adsm56954255e9.3.2025.03.20.12.06.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 12:04:58 -0700 (PDT)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 93F251200068;
-	Thu, 20 Mar 2025 15:04:57 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Thu, 20 Mar 2025 15:04:57 -0400
-X-ME-Sender: <xms:2WbcZ0ZXOC43MKEYfKHh6xaI7C7xr_CuFQpX9BUzYd3-zBWdthT31g>
-    <xme:2WbcZ_Yo5LwwJnJJO6ZnAdvrFPrUiMvAbtIP1LuX3a7QtmIBxV8W1OVuTXsN5a91Z
-    VbM8r1CEORW8uyVyA>
-X-ME-Received: <xmr:2WbcZ-_MGngpsMCQ4eExE7gJ3MNBYqduxoKQrC3iLuCIMUooYq7wkg69zh8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeeltddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
-    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfeefpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhise
-    hgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpth
-    htohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepthhmghhr
-    ohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:2WbcZ-pnv6pYGsXx5ihY_wDmEJ752y-25l9eK0CXZo2O_jXauBJqnw>
-    <xmx:2WbcZ_o-1543d9PaUSfUbT1c-VX-udKPclBpubA5xRwF0cCTuHTOYA>
-    <xmx:2WbcZ8QImV8nCPlxX-4MzszRX_nEXC5xirF-VomC5x0l6WIyrOdR_Q>
-    <xmx:2WbcZ_pkVrGyWODqYW3bsoc3gkkZFnmyVCQo_xGaARLoRHhMRQAEUA>
-    <xmx:2WbcZ05nqgub6RWDluvSHPh2pOZqytAXWRCS6003FVJdCm3Fk2D-EYzM>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Mar 2025 15:04:56 -0400 (EDT)
-Date: Thu, 20 Mar 2025 12:04:30 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
-	david.laight.linux@gmail.com
-Subject: Re: [PATCH v11 0/8] rust: Add IO polling
-Message-ID: <Z9xmvjIZgkYUAU1a@boqun-archlinux>
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+        Thu, 20 Mar 2025 12:06:16 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: torvalds@linux-foundation.org,
+	x86@kernel.org
+Cc: hkrzesin@redhat.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	olichtne@redhat.com,
+	atomasov@redhat.com,
+	aokuliar@redhat.com,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] x86: handle the tail in rep_movs_alternative() with an overlapping store
+Date: Thu, 20 Mar 2025 20:05:14 +0100
+Message-ID: <20250320190514.1961144-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 04:06:02PM +0900, FUJITA Tomonori wrote:
-> Add a helper function to poll periodically until a condition is met or
-> a timeout is reached. By using the function, the 8th patch fixes
-> QT2025 PHY driver to sleep until the hardware becomes ready.
-> 
-> The first patch is for sched/core, which adds
-> __might_sleep_precision(), rust friendly version of __might_sleep(),
-> which takes a pointer to a string with the length instead of a
-> null-terminated string. Rust's core::panic::Location::file(), which
-> gives the file name of a caller, doesn't provide a null-terminated
-> string. __might_sleep_precision() uses a precision specifier in the
-> printk format, which specifies the length of a string; a string
-> doesn't need to be a null-terminated.
-> 
-> The remaining patches are for the Rust portion and updates to the
-> MAINTAINERS file.
-> 
-> This introduces two new types, Instant and Delta, which represent a
-> specific point in time and a span of time, respectively.
-> 
+Sizes ranged <8,64> are copied 8 bytes at a time with a jump out to a
+1 byte at a time loop to handle the tail.
 
-I propose we should make forward-progress by merging patch #2 to #6 in
-mainline first. These are relatively trivial and only affect Rust side,
-and the whole patchest does show that they have potential users.
+This is trivially avoidable with overlapping stores, which is the
+standard technique for these kind of routines (in fact memcpy() is
+already using it in a more extensive form).
 
-Thomas, John, Stephen, Anna-Maria and Frederic, does this sound good to
-you? If so, could any of you provide Acked-by/Reviewed-by and suggest
-how should we route these patches? Thanks a lot!
+I traced calls in this range during a kernel build and found that 65% of
+all of them had tail to take care of.
 
-Regards,
-Boqun
+Distribution of size & 7 in that range is as follows:
+@:
+[0, 1)           3282178 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[1, 2)            949627 |@@@@@@@@@@@@@@@                                     |
+[2, 3)           1078842 |@@@@@@@@@@@@@@@@@                                   |
+[3, 4)            998995 |@@@@@@@@@@@@@@@                                     |
+[4, 5)            744515 |@@@@@@@@@@@                                         |
+[5, 6)            925437 |@@@@@@@@@@@@@@                                      |
+[6, 7)            663305 |@@@@@@@@@@                                          |
+[7, ...)          786007 |@@@@@@@@@@@@                                        |
 
-> Unlike the old rust branch, This adds a wrapper for fsleep() instead
-> of msleep(). fsleep() automatically chooses the best sleep method
-> based on a duration.
+@stats[notail]: 3282178
+@stats[tail]: 6146728
 
-[...]
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I added a call to a custom copy_user_probe() routine to
+copy_user_generic so that I can attach to it with bpftrace. Available
+upon request. The one-liner is:
+
+bpftrace -e 'kprobe:copy_user_probe /arg2 >= 8 && arg2 <= 64/ \
+{ @ = lhist(arg2 & 7, 0, 7, 1); @stats[arg2 & 7 ? "tail" : "notail"] = count(); }'
+
+Anyhow, I don't have any means to benchmark this at the moment as the
+only hw I have access to is in fact a little too modern (FSRM), but this
+being the standard technique I think wont require much convincing. If
+anything the question is why this differs from memcpy which *does* use
+overlapping stores.
+
+Tested by forcing the kernel to use the routine, did the kernel build
+just fine with the change.
+
+That said, absent own bench results I'm not going to strongly argue for
+the change but I do think it is an ok tidy-up until someone(tm) puts
+more effort here.
+
+ arch/x86/lib/copy_user_64.S | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/lib/copy_user_64.S b/arch/x86/lib/copy_user_64.S
+index aa8c341b2441..2d5f42c521b5 100644
+--- a/arch/x86/lib/copy_user_64.S
++++ b/arch/x86/lib/copy_user_64.S
+@@ -65,10 +65,15 @@ SYM_FUNC_START(rep_movs_alternative)
+ 	je .Lexit
+ 	cmp $8,%ecx
+ 	jae .Lword
+-	jmp .Lcopy_user_tail
++4:	movq -8(%rsi,%rcx),%rax
++5:	movq %rax,-8(%rdi,%rcx)
++	xorl %ecx,%ecx
++	RET
+ 
+ 	_ASM_EXTABLE_UA( 2b, .Lcopy_user_tail)
+ 	_ASM_EXTABLE_UA( 3b, .Lcopy_user_tail)
++	_ASM_EXTABLE_UA( 4b, .Lcopy_user_tail)
++	_ASM_EXTABLE_UA( 5b, .Lcopy_user_tail)
+ 
+ .Llarge:
+ 0:	ALTERNATIVE "jmp .Llarge_movsq", "rep movsb", X86_FEATURE_ERMS
+-- 
+2.43.0
+
 
