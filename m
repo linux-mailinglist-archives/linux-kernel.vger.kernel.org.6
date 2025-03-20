@@ -1,201 +1,148 @@
-Return-Path: <linux-kernel+bounces-569693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC34CA6A63A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:24:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAAAA6A63B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DE121890C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB3E887752
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6B4221F30;
-	Thu, 20 Mar 2025 12:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA0222578;
+	Thu, 20 Mar 2025 12:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAW0TabX"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUJOgP+u"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB37221DA2;
-	Thu, 20 Mar 2025 12:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B3E2222B5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742473401; cv=none; b=ewy7NBA6zEsNCKqknPvzarGpXgt9Oy2jB1N5f3wcDZo+1itjQIq9BglE4SfHGAGwpsfATjBHjMyPQhbrlmJtbLxgmJdJjBtbh+hTbfeAZH3k8j5OTNrhLux5gI+k4Iy16lFkFx9XPEm5QaclLw+EO9hDbFvRGRFHCTg2IxuijZc=
+	t=1742473411; cv=none; b=lazaX21K2DlrKG8T1fE9COxDAqMhGT1KNZzdVP9d3egl0+ScFl/NoPTucDafBC6GrYQ++ofsV++IO9v/azfsOIc98ssJU9KNsnwzV+OaFABRF2XiS9soOpcuwi8zgVo1ep0gxJI4M86dOnKThN1Yz8DE2F4fX9wLhUtgz+X3VR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742473401; c=relaxed/simple;
-	bh=f4KhCY7bcfBrkhnTkOOzVY+RsDfGSFIQqsamnbA2WB4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SmW9q/ziKpbQ3VbFnKtBMEk+SvXCtMSY+LVNzfcUSj/ao3EWKE+V/P+G1/4+Vv281szYOJeYS3AseZ64ZKqX7GlF3nmR6UJ0a0lAlemZArauUiLOXHetCtCv9d27lBh6+7Wwdu+YlY0kP2OsZ4uCk+7/o5mAVZ+cWAG8D2hOe6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAW0TabX; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so117001866b.0;
-        Thu, 20 Mar 2025 05:23:17 -0700 (PDT)
+	s=arc-20240116; t=1742473411; c=relaxed/simple;
+	bh=CXYfkFhDMRdE7zi+DztlxCluS3zYROA1G3X4Ay+BqEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HCbqfuw2d8tBtRkGQTpdq8lK+HEB/ns9ZsdcPuVliGT2KRzs8/6NK5IkYsS2GH4WThDV6xbXVprnObZMsfV/ox5A7Ab+xw8lTsVgstdio30m5loTE/STN3hByARs8pJoWu/p6H2OwiHi+UJ3Hk9D86cBFAIDJy8VAq6UsiDnctg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUJOgP+u; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2aeada833so145091566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742473396; x=1743078196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JTcHUPBi4RdnLMm/SKiBQfh0LKxbXErOyxRh8CzLSYw=;
-        b=WAW0TabXGDAZc38arFMChNvuLik1CDkDFEbkQIhURgRA6xvAS+m/WgL3yMeHPonG4g
-         wD4eODykn0U/fn1YmMANqw1uTVJsKuli5v+xGsEh2S2N1OEEafZGjtF6YyC7pa1XeUNS
-         9LTNphiOL1eHcGG74ASinZmXEz3Bs/bQD38cJZaI9em8hsRamwY88WiPA6n+XsgP1psW
-         1Tj9GUaRfNyuagMrKJyRUuRxXiR9dWPuY2c0t57es2yxoTiYO56Khtn6fhLyB19DdrZ+
-         4Hsuc9xrqb6h/8W+XPshJtGJKwHX0+StPRmSmMtN7SPqK6kcRXf584VvdDUmcwyS/EY0
-         Ds2Q==
+        d=linaro.org; s=google; t=1742473408; x=1743078208; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d4L0wtp4vAfj99xNR7JACQ5fBXNp5AHv/RHN+M6rMMI=;
+        b=WUJOgP+uTulStjXHUj4BMW6WKPzWsb+rDA7omGvnT+2yp4usaJLvC+z+zzVM1k0b/r
+         EW5GChq4tRNA+/CXZ99ngz4Es5k0V7CqrNE87/Yx7dHJZdK7AX38IlxvC1h1e1wtt4I0
+         k6w/PkOtdsPHk35I6oyTYTK2dTcMg7RlJrxpuvTb4iRBksUM+5w2MWwldWIyaCsx1+FR
+         eLcoqbvj24rOW2LUo2W9jtOOXvOwRHpbM3WqqOtqU9MFqgX1ct/+y5X8VB8OQXTsAaks
+         9Ia2MapwHuYqXsMO+TXg9GKetw23GzXvXkE0Wt/83Zazgy6dnkZA//xDHqB2TrTIwG37
+         +aFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742473396; x=1743078196;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JTcHUPBi4RdnLMm/SKiBQfh0LKxbXErOyxRh8CzLSYw=;
-        b=dbHiHmeDiIUt7PbsREWwcwwRb1wjAWM2o87HooCnlIsVoHsoUTyWhiISeV/yjgH0oa
-         t46TmaJAGIO45Y/XCwo+lXMIVxqO/s/9QUgo1yIwzswG6WlkuXsx4M6ny3TShuB7Cgoj
-         jnL77b1EyDBEqOlnawBeM+IkPTGptmJRzkLSGvQwkX3slKRpBJEWUCdkzwpAk9m37XV/
-         XoNkqLhZ6dCfFeMQ0z6GylbKIUInb0mojn5dMurUnqe99nWN6Xn+AFgxLpvja5EOPn49
-         0UkvvhuoUZZaA432gSUyaEm+of4IaUUF8bSbE0UMON4hdYAaCCLsNuMwu3w2SHpH0lhh
-         4XWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnSAhjvHiAvj5aE/COemczX9r7V9j0gDml/u0qxlBbbzrtszYsBQWLL7ocRhauo9fU9mx9q2KxGZE7@vger.kernel.org, AJvYcCVF2Iz2H7m+OewQo5xmx86jgdbl824f6nbes2xavZ8iGxNEH4FHC/DLaFHX2N4GRNa01KaGiLkRNsIETjiD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAudgy3nfvkn8/U5H9L3kNgP3a4QkgfLYULfce7nCvV7W4PzFG
-	/iFI5dnrpOgnVyoj6+MZR+zwht5Lk9UMcwcarkA9mVCc3bIxLS6e
-X-Gm-Gg: ASbGncv+zuMNwEqbUX9hVNOfbFl4k29tP06tHpGJ5XBc/jYSF9rStqcxnnxe/mMGbae
-	fP+uZ9kPUbQWrNxrW4qMFj3RYcZEaZr0qNHPMcY+QUeFRLEVV3dP8QIXEbGABGv4MAeiKy7dQoY
-	pHurfCZjTiWsKsB+68g+ZCVtKGWkGQ9/W/ttwlGFfLubyp6SNGgJnJQ6h0/dE60OSa0X0Hl3j/T
-	xEuzB1dsAlnVVCErvUAk0BbgbVRw0sPyIAMYjacRPjk6O0OsQlFS5aPW2Zzw+BOzraM9T9LjwNl
-	Ln70NqClzyDyPPkEwBkraWOohu8Od140MEkTy6KHqMGTzyJMcMsJ/h4zC+fcWknKNl2fHLUtrr+
-	uJ2Qa34Pbauc7cM61WeN4A/krqqo=
-X-Google-Smtp-Source: AGHT+IHZMteGa3S1nkmn4PeuohC1rXzkLQoqtOFH7dp6eE3wLhlL4YTQF8Nz3QxqVr/GwwINnhAUaQ==
-X-Received: by 2002:a17:907:3d94:b0:ac3:3f13:98aa with SMTP id a640c23a62f3a-ac3ce0736fbmr333129766b.32.1742473396168;
-        Thu, 20 Mar 2025 05:23:16 -0700 (PDT)
-Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ed1e4sm1169211366b.66.2025.03.20.05.23.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 05:23:15 -0700 (PDT)
-From: Parth Pancholi <parth105105@gmail.com>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] arm64: dts: ti: k3-j784s4-main: Enable ACSPCIE outputs for PCIe interfaces
-Date: Thu, 20 Mar 2025 13:22:59 +0100
-Message-Id: <20250320122259.525613-1-parth105105@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1742473408; x=1743078208;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d4L0wtp4vAfj99xNR7JACQ5fBXNp5AHv/RHN+M6rMMI=;
+        b=oQBkRjq2tJr/qxOpFrKmGru33Xl5NK15AnzX3uM9YICUF3pIuADXKLhczD0ggwbS0d
+         LG/ZGTYesTH6PWH0ywWAbszS83u4rUiclPO2IOrP7sfbzn+wZQVVRW8qKKUHbZGR5y25
+         4gm/eB1ixbvSBb8GIEn5v4qkyqZlQPqd+P/8u94+uinkAazomHI9zxszHDqbn1nIiila
+         BuaA23u9wZgf0GjhkCGfvY1DF/AcBIK5T9Kna+HXu9eVTkrAADWNROoGU/4kAAL4gLEn
+         if/umPncYTu0tmi0NL5BbkzVhiPzUFe0W1MogQPujfXr3k9q0ezJsueir0iP70Fc/25m
+         jhbg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0TzT6w0pvKrO+JvCTl3eipd2nhOayJaJIjAmz4Tj+MzUWJHnnT2R7qEAylcm+XJD1/WW0OdI2IaVlyOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6rAjE6JhriTxTEmKFkANv615P0Ss1dLy2UgPYgKz0iAfrDkSU
+	DwpXmksY0sVEYrezf+TX47hXI3sUCIiVFYFCM8rJAV81KNNATYvrH08/MF1fXVw=
+X-Gm-Gg: ASbGncvQvy+v2IkquFVqDBqnafCbsiRR/opu5DZ7ubk2Y6CNsywDbUVAtXvZXvMQxDo
+	kIKdiWBKMJdSp4pABOAuIDlr8ZcAAjRzLL/d51U+XZMOhz3LCnH39Njfyh+ZdZNBAtDdDrZoikl
+	LelZohlsPBfIKWtSSjs+0WaT+cIjyMKZWrl15kyOwCT698Rc0oc7Xha0TR1bDsHuJ5uphZijxnd
+	8YaM3w5TIJEgA6J8LQ1tzCPIXF0DJBFyX9om17r6QJNsH8odA6Y3+fHLjwpnPdZOl6SntTGeIq6
+	YxPJ64EUxN01TmrYjHvJ61Pz08m9wou5bcM6tG7hyPUOeQTnBaQRVg==
+X-Google-Smtp-Source: AGHT+IFy4ujO0Rlctp5VuJNnxmLa2FTdTGd/kenok8V6y6/ECSHPNsDf3e3bTkQH3sfVrQUIU8/JFg==
+X-Received: by 2002:a17:907:94c6:b0:ac3:8537:9042 with SMTP id a640c23a62f3a-ac3cdc8e455mr321840566b.30.1742473407716;
+        Thu, 20 Mar 2025 05:23:27 -0700 (PDT)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3da7e00dcsm96386066b.56.2025.03.20.05.23.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 05:23:27 -0700 (PDT)
+Message-ID: <5db8f280-8f1a-43e0-a2d3-baf694eb81d2@linaro.org>
+Date: Thu, 20 Mar 2025 12:23:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/21] mtd: spinand: Use more specific naming for the
+ erase op
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Santhosh Kumar K <s-k6@ti.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
+ <20250307-winbond-6-14-rc1-octal-v1-5-45c1e074ad74@bootlin.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-5-45c1e074ad74@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Parth Pancholi <parth.pancholi@toradex.com>
 
-TI J784S4-based devices, such as the AM69 SoC, provide PCIE_REFCLK outputs
-from the SoC, which can be used to clock external PCIe endpoint devices.
-Each PCIE_REFCLK output is enabled via the corresponding ACSPCIE clock buffer,
-with each buffer supporting two PADs to provide reference clocks for two
-associated PCIe instances. The mappings are as follows:
-        - PCIe0 -> ACSPCIE1 PAD0
-        - PCIe1 -> ACSPCIE0 PAD0
-        - PCIe2 -> ACSPCIE1 PAD1
-        - PCIe3 -> ACSPCIE0 PAD1
 
-This patch enables each ACSPCIE module and its corresponding PADs to ensure
-that all PCIE_REFCLK outputs are functional.
+On 3/7/25 3:08 PM, Miquel Raynal wrote:
+> SPI operations have been initially described through macros implicitly
+> implying the use of a single SPI SDR bus. Macros for supporting dual and
+> quad I/O transfers have been added on top, generally inspired by vendor
+> naming, followed by DTR operations. Soon we might see octal
+> and even octal DTR operations as well (including the opcode byte).
+> 
+> Let's clarify what the macro really means by describing the expected bus
+> topology in the erase macro name.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-This change have been tested on an AM69-based custom hardware platform,
-where all four PCIe instances (PCIe0, PCIe1, PCIe2, and PCIe3) with the
-internal PCIE_REFCLK are utilized with various endpoint devices such as
-a WiFi card, NVMe SSD, and PCIe-to-USB bridge.
-
-Link: https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1484211/am69-pcie-refclk-out-and-acspcie-mappings
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
----
-This change depends on https://lore.kernel.org/all/20241209085157.1203168-1-s-vadapalli@ti.com/
----
- .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi      | 10 ++++++++--
- arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi             | 10 ++++++----
- 2 files changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 591609f3194c..854fdf7b771e 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -132,6 +132,11 @@ acspcie0_proxy_ctrl: clock-controller@1a090 {
- 			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
- 			reg = <0x1a090 0x4>;
- 		};
-+
-+		acspcie1_proxy_ctrl: clock-controller@1a094 {
-+			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
-+			reg = <0x1a094 0x4>;
-+		};
- 	};
- 
- 	main_ehrpwm0: pwm@3000000 {
-@@ -1067,11 +1072,12 @@ pcie0_rc: pcie@2900000 {
- 		interrupts = <GIC_SPI 318 IRQ_TYPE_EDGE_RISING>;
- 		device_type = "pci";
- 		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
-+		ti,syscon-acspcie-proxy-ctrl = <&acspcie1_proxy_ctrl 0x1>;
- 		max-link-speed = <3>;
- 		num-lanes = <4>;
- 		power-domains = <&k3_pds 332 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 332 0>;
--		clock-names = "fck";
-+		clocks = <&k3_clks 332 0>, <&serdes1 CDNS_TORRENT_REFCLK_DRIVER>;
-+		clock-names = "fck", "pcie_refclk";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		bus-range = <0x0 0xff>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-index 0160fe0da983..ebbc315649d0 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-@@ -34,8 +34,8 @@ pcie2_rc: pcie@2920000 {
- 		max-link-speed = <3>;
- 		num-lanes = <2>;
- 		power-domains = <&k3_pds 334 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 334 0>;
--		clock-names = "fck";
-+		clocks = <&k3_clks 334 0>, <&serdes1 CDNS_TORRENT_REFCLK_DRIVER>;
-+		clock-names = "fck", "pcie_refclk";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		bus-range = <0x0 0xff>;
-@@ -45,6 +45,7 @@ pcie2_rc: pcie@2920000 {
- 		dma-coherent;
- 		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
- 		ti,syscon-pcie-ctrl = <&pcie2_ctrl 0x0>;
-+		ti,syscon-acspcie-proxy-ctrl = <&acspcie1_proxy_ctrl 0x3>;
- 		status = "disabled";
- 	};
- 
-@@ -63,8 +64,8 @@ pcie3_rc: pcie@2930000 {
- 		max-link-speed = <3>;
- 		num-lanes = <2>;
- 		power-domains = <&k3_pds 335 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 335 0>;
--		clock-names = "fck";
-+		clocks = <&k3_clks 335 0>, <&serdes0 CDNS_TORRENT_REFCLK_DRIVER>;
-+		clock-names = "fck", "pcie_refclk";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		bus-range = <0x0 0xff>;
-@@ -74,6 +75,7 @@ pcie3_rc: pcie@2930000 {
- 		dma-coherent;
- 		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
- 		ti,syscon-pcie-ctrl = <&pcie3_ctrl 0x0>;
-+		ti,syscon-acspcie-proxy-ctrl = <&acspcie0_proxy_ctrl 0x3>;
- 		status = "disabled";
- 	};
- 
--- 
-2.34.1
+> ---
+>  drivers/mtd/nand/spi/core.c | 2 +-
+>  include/linux/mtd/spinand.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> index b6c0993206ebab1dcee715ea6de33efe7d5af3a2..1959e8d9c64be004c71a0d6ac6454fde08e708fa 100644
+> --- a/drivers/mtd/nand/spi/core.c
+> +++ b/drivers/mtd/nand/spi/core.c
+> @@ -529,7 +529,7 @@ static int spinand_erase_op(struct spinand_device *spinand,
+>  {
+>  	struct nand_device *nand = spinand_to_nand(spinand);
+>  	unsigned int row = nanddev_pos_to_row(nand, pos);
+> -	struct spi_mem_op op = SPINAND_BLK_ERASE_OP(row);
+> +	struct spi_mem_op op = SPINAND_BLK_ERASE_1S_1S_0_OP(row);
+>  
+>  	return spi_mem_exec_op(spinand->spimem, &op);
+>  }
+> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+> index d041b1cc18de6add45800eaa7605bda1c64ca257..545531afe2dac593d112065483afd180226cc533 100644
+> --- a/include/linux/mtd/spinand.h
+> +++ b/include/linux/mtd/spinand.h
+> @@ -50,7 +50,7 @@
+>  		   SPI_MEM_OP_NO_DUMMY,					\
+>  		   SPI_MEM_OP_DATA_IN(1, valptr, 1))
+>  
+> -#define SPINAND_BLK_ERASE_OP(addr)					\
+> +#define SPINAND_BLK_ERASE_1S_1S_0_OP(addr)				\
+>  	SPI_MEM_OP(SPI_MEM_OP_CMD(0xd8, 1),				\
+>  		   SPI_MEM_OP_ADDR(3, addr, 1),				\
+>  		   SPI_MEM_OP_NO_DUMMY,					\
+> 
 
 
