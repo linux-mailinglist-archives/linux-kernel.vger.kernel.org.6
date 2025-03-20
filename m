@@ -1,226 +1,165 @@
-Return-Path: <linux-kernel+bounces-570015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B26A6AAD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA050A6AADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58C8B481716
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75BFE482A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B598C1F03F2;
-	Thu, 20 Mar 2025 16:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC9174BED;
+	Thu, 20 Mar 2025 16:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WirxAWXH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O/Md76Sy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A70974BED;
-	Thu, 20 Mar 2025 16:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4931EB18F;
+	Thu, 20 Mar 2025 16:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742487237; cv=none; b=E8QYZf5zg4GCbwuEdR0lxukFVOVozDu30DH9tJUAfHMjjFwmaKupLYQcXqcylposOa9xzCsaPscozRIqKaBcCe5XeWPnl4lglvsMp3uDVeBsrnhcfIeuV55akPYGyEVKpABoLKdiww5d9KWJyfxzTXjA2+yu9332PHaKv1shDTg=
+	t=1742487252; cv=none; b=YrFb4N7JXCuky7Vg1t/lY6vfUWuUmfYOvB2IIqwb956Ka/JfgwzISpJVcPtUYPOUl1HvPNiiJFqBOYhYBELaosi8PsbUzJEMohbhRrDPOJWIFvEG2pu8b1djqlXHxYj862uolugAdFstcG3sS/9rW9Ue2lDO7blaRFDArYa+0Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742487237; c=relaxed/simple;
-	bh=A03YcV29Mgcr2rKaPyzWSsbf12vj49Zgz++G2QQuW64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dm2dWGyUGJ4BqcHoI6nJ0lYzCY0sUj+hjgHggzymqbC+UmV9JsymVXyk0qp0Sh4liJ15DjXsfhsxmSZk5GU/tT51ul6MD73sfdyIzowuknvtirIqObvC8TmzsTkM2BRPy8x8tm0giForM+hvSf1DacW9LzxazxmvEonIuAOwAxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WirxAWXH; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742487235; x=1774023235;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A03YcV29Mgcr2rKaPyzWSsbf12vj49Zgz++G2QQuW64=;
-  b=WirxAWXHmaRzm//l9h6LcpMFRzr0OBveb9CdkVYiEeWf1LXc0WvM8qtM
-   sL9OKZg3ElGB6np96k0MBYV+ZB5wyWWLxDxCUIClNe1kD0rRWb1/tvlPP
-   KGcbG2aKJ+cspnA7bASGzhFzxrJWU0dlpt9fY3H4z6ZUaurGNfYmSvaHJ
-   IcUn3K0NAxyzo/VqAA1kvI68TG4n/urZi9kWsNQJs2PW9BkFpH+6LERhi
-   ne/cy62mTdNDZloppFPbHB2nAXaRTJ/0+yq1ws2wtCa10YtIisQ9nlcCq
-   NC2Pi9cefle25C3/47m7m3fHy2wthZyFJPicyP5H0UBEePMaNYkbrfHIN
-   g==;
-X-CSE-ConnectionGUID: hV6j0USwSSSkQdnTvb9bBQ==
-X-CSE-MsgGUID: oRURXpzAT22E7ooUeuqPCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43899522"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="43899522"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 09:13:55 -0700
-X-CSE-ConnectionGUID: 9IoHnd4OQY+7JNpuWNeaCg==
-X-CSE-MsgGUID: ToR0l3G2R/iGOBy74YyI3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="123155500"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 20 Mar 2025 09:13:51 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvIWj-0000aV-2C;
-	Thu, 20 Mar 2025 16:13:49 +0000
-Date: Fri, 21 Mar 2025 00:12:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/max3440): add support adpm12160
-Message-ID: <202503202311.5PZH0XKm-lkp@intel.com>
-References: <20250320-dev_adpm12160-v1-2-8f7b975eac75@analog.com>
+	s=arc-20240116; t=1742487252; c=relaxed/simple;
+	bh=vgaIguiX+8mfmotKHJZawzHyEbawqy9HaHTw0BWIyeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oqz8tvdmrHUQf3BeFkHJiCL08AmttFWwEhqXISsXbN2a2CwDSdFgyJ0ww6EqoxEMprVBRns2EFfgSgQiw2AZldxkUugRnz0K1KixlyEBxCOWO+/Cnbi1++9eRvYseAtkEccSYkVDaCTwN2Un+Aoiguju3bjgUOMM3haHYR59IMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O/Md76Sy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F2AC4CEDD;
+	Thu, 20 Mar 2025 16:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742487251;
+	bh=vgaIguiX+8mfmotKHJZawzHyEbawqy9HaHTw0BWIyeU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O/Md76SyX5IdKhHlxP+E+7XqI5xSFx2UV0w/ny/PzrIZlGDyIh4FMXQdGyyOqDWj+
+	 M9/VHeoR2WUsMSeRi3qych7vcDklXT92jdWVUj5V+8qT/QKv5+Xxw5du156xUw1paM
+	 6roLq1BdfG9yuirzwNL6Au1msqpDNmxXWwlNsE9QMfDqwjgxIWizPOxboz3yJ2UBPq
+	 3qghDW+06aAvM1OLAQA7s1zI9MlFRH+sDdmh39H4uENTRBDtuQddMsK4nJ5R+H8w39
+	 Gd3km1yyuzFxVvFHuTf9yF4txz/nMhBfJbl51JavRoT+GGBoqysclYqc2s3WmZ7Cll
+	 SZAWp28r0Xi9w==
+Message-ID: <2e6948e3-76f4-4257-b421-db9afb192bbf@kernel.org>
+Date: Thu, 20 Mar 2025 17:14:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320-dev_adpm12160-v1-2-8f7b975eac75@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Immutable branch between MFD, Input, LEDs and Power
+ due for the v6.15 merge window
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250123-starqltechn_integration_upstream-v17-0-8b06685b6612@gmail.com>
+ <20250221160322.GE824852@google.com>
+ <CAL_Jsq+f23KniKZuTHkOq5a7WL=pBy6PwuQwXmbPXMjq3Qax4A@mail.gmail.com>
+ <20250320155510.GU3890718@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250320155510.GU3890718@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Alexis,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on c812cc42f92d3d0b17c01b5db9a1dee5793a1491]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexis-Czezar-Torreno/hwmon-pmbus-max34440-Fix-support-for-max34451/20250320-115905
-base:   c812cc42f92d3d0b17c01b5db9a1dee5793a1491
-patch link:    https://lore.kernel.org/r/20250320-dev_adpm12160-v1-2-8f7b975eac75%40analog.com
-patch subject: [PATCH 2/2] hwmon: (pmbus/max3440): add support adpm12160
-config: i386-buildonly-randconfig-005-20250320 (https://download.01.org/0day-ci/archive/20250320/202503202311.5PZH0XKm-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503202311.5PZH0XKm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503202311.5PZH0XKm-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/hwmon/pmbus/max34440.c: In function 'max34440_read_word_data':
->> drivers/hwmon/pmbus/max34440.c:97:71: error: expected statement before ')' token
-      97 |                     data->id != max34451_na6 && data->id != adpm12160))
-         |                                                                       ^
-   drivers/hwmon/pmbus/max34440.c: At top level:
-   drivers/hwmon/pmbus/max34440.c:483:37: error: expected expression before ',' token
-     483 |                 MAX34451_COMMON_INFO,
-         |                                     ^
-   drivers/hwmon/pmbus/max34440.c:486:37: error: expected expression before ',' token
-     486 |                 MAX34451_COMMON_INFO,
-         |                                     ^
-   In file included from include/linux/module.h:22,
-                    from drivers/hwmon/pmbus/max34440.c:11:
-   drivers/hwmon/pmbus/max34440.c:603:18: error: expected ',' or ';' before 'PMBUS'
-     603 | MODULE_IMPORT_NS(PMBUS);
-         |                  ^~~~~
-   include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
-      26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
-         |                                                             ^~~~
-   include/linux/module.h:299:33: note: in expansion of macro 'MODULE_INFO'
-     299 | #define MODULE_IMPORT_NS(ns)    MODULE_INFO(import_ns, ns)
-         |                                 ^~~~~~~~~~~
-   drivers/hwmon/pmbus/max34440.c:603:1: note: in expansion of macro 'MODULE_IMPORT_NS'
-     603 | MODULE_IMPORT_NS(PMBUS);
-         | ^~~~~~~~~~~~~~~~
+On 20/03/2025 16:55, Lee Jones wrote:
+> On Mon, 17 Mar 2025, Rob Herring wrote:
+> 
+>> On Fri, Feb 21, 2025 at 10:03 AM Lee Jones <lee@kernel.org> wrote:
+>>>
+>>> Enjoy!
+>>>
+>>> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+>>>
+>>>   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+>>>
+>>> are available in the Git repository at:
+>>>
+>>>   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-input-leds-power-v6.15
+>>>
+>>> for you to fetch changes up to aebb5fc9a0d87916133b911e1ef2cc04a7996335:
+>>>
+>>>   leds: max77705: Add LEDs support (2025-02-20 16:38:37 +0000)
+>>>
+>>> ----------------------------------------------------------------
+>>> Immutable branch between MFD, Input, LEDs and Power due for the v6.15 merge window
+>>>
+>>> ----------------------------------------------------------------
+>>> Dzmitry Sankouski (7):
+>>>       dt-bindings: power: supply: add maxim,max77705 charger
+>>>       dt-bindings: mfd: Add maxim,max77705
+>>>       power: supply: max77705: Add charger driver for Maxim 77705
+>>>       mfd: simple-mfd-i2c: Add MAX77705 support
+>>>       mfd: Add new driver for MAX77705 PMIC
+>>>       Input: max77693 - add max77705 haptic support
+>>>       leds: max77705: Add LEDs support
+>>
+>> None of this seems to be in linux-next, but now we have users in .dts files.
+> 
+> None of what is in -next?  All of these patches are applied and pushed.
 
 
-vim +97 drivers/hwmon/pmbus/max34440.c
+Next from 17th March has them. Next from 14th Match did not have them,
+even though you sent this pull request on 21st Feb.
 
-    62	
-    63	static int max34440_read_word_data(struct i2c_client *client, int page,
-    64					   int phase, int reg)
-    65	{
-    66		int ret;
-    67		const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
-    68		const struct max34440_data *data = to_max34440_data(info);
-    69	
-    70		switch (reg) {
-    71		case PMBUS_IOUT_OC_FAULT_LIMIT:
-    72			if (data->id == max34451_na6 || data->id == adpm12160)
-    73				ret = pmbus_read_word_data(client, page, phase,
-    74							   PMBUS_IOUT_OC_FAULT_LIMIT);
-    75			else
-    76				ret = pmbus_read_word_data(client, page, phase,
-    77							   MAX34440_IOUT_OC_FAULT_LIMIT);
-    78			break;
-    79		case PMBUS_IOUT_OC_WARN_LIMIT:
-    80			if (data->id == max34451_na6 || data->id == adpm12160)
-    81				ret = pmbus_read_word_data(client, page, phase,
-    82							   PMBUS_IOUT_OC_WARN_LIMIT);
-    83			else
-    84				ret = pmbus_read_word_data(client, page, phase,
-    85							   MAX34440_IOUT_OC_WARN_LIMIT);
-    86			break;
-    87		case PMBUS_VIRT_READ_VOUT_MIN:
-    88			ret = pmbus_read_word_data(client, page, phase,
-    89						   MAX34440_MFR_VOUT_MIN);
-    90			break;
-    91		case PMBUS_VIRT_READ_VOUT_MAX:
-    92			ret = pmbus_read_word_data(client, page, phase,
-    93						   MAX34440_MFR_VOUT_PEAK);
-    94			break;
-    95		case PMBUS_VIRT_READ_IOUT_AVG:
-    96			if (data->id != max34446 && data->id != max34451 &&
-  > 97			    data->id != max34451_na6 && data->id != adpm12160))
-    98				return -ENXIO;
-    99			ret = pmbus_read_word_data(client, page, phase,
-   100						   MAX34446_MFR_IOUT_AVG);
-   101			break;
-   102		case PMBUS_VIRT_READ_IOUT_MAX:
-   103			ret = pmbus_read_word_data(client, page, phase,
-   104						   MAX34440_MFR_IOUT_PEAK);
-   105			break;
-   106		case PMBUS_VIRT_READ_POUT_AVG:
-   107			if (data->id != max34446)
-   108				return -ENXIO;
-   109			ret = pmbus_read_word_data(client, page, phase,
-   110						   MAX34446_MFR_POUT_AVG);
-   111			break;
-   112		case PMBUS_VIRT_READ_POUT_MAX:
-   113			if (data->id != max34446)
-   114				return -ENXIO;
-   115			ret = pmbus_read_word_data(client, page, phase,
-   116						   MAX34446_MFR_POUT_PEAK);
-   117			break;
-   118		case PMBUS_VIRT_READ_TEMP_AVG:
-   119			if (data->id != max34446 && data->id != max34460 &&
-   120			    data->id != max34461)
-   121				return -ENXIO;
-   122			ret = pmbus_read_word_data(client, page, phase,
-   123						   MAX34446_MFR_TEMPERATURE_AVG);
-   124			break;
-   125		case PMBUS_VIRT_READ_TEMP_MAX:
-   126			ret = pmbus_read_word_data(client, page, phase,
-   127						   MAX34440_MFR_TEMPERATURE_PEAK);
-   128			break;
-   129		case PMBUS_VIRT_RESET_POUT_HISTORY:
-   130			if (data->id != max34446)
-   131				return -ENXIO;
-   132			ret = 0;
-   133			break;
-   134		case PMBUS_VIRT_RESET_VOUT_HISTORY:
-   135		case PMBUS_VIRT_RESET_IOUT_HISTORY:
-   136		case PMBUS_VIRT_RESET_TEMP_HISTORY:
-   137			ret = 0;
-   138			break;
-   139		default:
-   140			ret = -ENODATA;
-   141			break;
-   142		}
-   143		return ret;
-   144	}
-   145	
+So report was correct - you did not update for-next that time.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+Best regards,
+Krzysztof
 
