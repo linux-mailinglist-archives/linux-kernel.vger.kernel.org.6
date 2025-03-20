@@ -1,258 +1,139 @@
-Return-Path: <linux-kernel+bounces-569902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DEA6A93C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:00:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31337A6A919
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE21F19C031E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:51:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE494675BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AE1E3DF7;
-	Thu, 20 Mar 2025 14:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D151E0E13;
+	Thu, 20 Mar 2025 14:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRPpkYlD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EO/dktcO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AA01876;
-	Thu, 20 Mar 2025 14:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31F01DED47;
+	Thu, 20 Mar 2025 14:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482250; cv=none; b=up2lDjrIAJCtLBoWZ8e0GjNAfPgFQCQ4m+q4jitmx3YciWFDai+tyqZAlhq2EX2IOG1kLMB9I9JTkjFxV2Ria+gc34VMxfF/QYxvFeOymYsw90T/XJoHdAT1Zcypt8gCRZyyer1MsQkcW/JUi/JWWvRQSgpf8e6G8z5sMISixqM=
+	t=1742482334; cv=none; b=pv0dnjgbp6BDF+K6VXrmVMxEotVpT4AIKG0BribvEsD2IHK4HjsQj8T8Uc1BU5jC0fPwYzCMT7D6GHcfENrKWowllvssz6l4KxJBdlMLYWRAE/Ddba2xt3ZBvwjyzJ/KTs87KK5EFKnlBafSpmrLwoVCw3dhGCrkgXsyHMUiQw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482250; c=relaxed/simple;
-	bh=VgHP2YZFJFqQDq6X1Enrko29eUy4PpuSIOCuvJw0JKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JU23vf56yCSeynELKQGf7YpeU/z+eYk3tketxRSKHr/rVPQhhaaOyr5KVUbQpdEzCyu1PJDjdBs2QwpO8pEKOxmRlNvq4F7CffqBwP6Ib8lB3SFVBxktwzv0dQ444X/CS7n+3M00yR4ais1xB5Hm0dBmxLaMNZK0+nc0Ov51FKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRPpkYlD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE15C4CEDD;
-	Thu, 20 Mar 2025 14:50:45 +0000 (UTC)
+	s=arc-20240116; t=1742482334; c=relaxed/simple;
+	bh=GICyxcRx3/pVhs6pTz7UKNZiPZK/RiZuJgS7cozIW34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nsJWNnopOdwXAC4VhTwpv7MAFamm52dKsOrrCUHFOU0d3FrcQumgco1Fqjv/pbOvvEBY3FLzM0BUf/pc7ycUFLc8Gc+PefEPbinew+uINuqIYlITDmkyTefiL4sj6+4W6dZNQC8hndpgW7qr+v7Z9OHKRo1r1kXZydT7sqYxxVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EO/dktcO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54052C4CEDD;
+	Thu, 20 Mar 2025 14:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742482250;
-	bh=VgHP2YZFJFqQDq6X1Enrko29eUy4PpuSIOCuvJw0JKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nRPpkYlDUBw1gjGtXjQDSei78Js5SiMhGUtyttvW9CgAqns2tTOPY8/wNVO3igUrp
-	 d9zHAHmBrA+CESjTE8Vd+xoH+NF8JxkVjkUXZY2rGxmW3pfhS8VkKdGG8xyARuj0FL
-	 gQHgAnh715xQCL8AM6m35smLKWm66L881RKbWs2YrcLzTdo+SZBv0gIAnBp529LrWk
-	 2TpFQUzC/HZ9ygyk+1qefsxhF1q9kjA4qEWPS0OL1ov41GqjdVgXiAkgQNedHqDO0I
-	 4AydkziQDb1uW2b3VKIQ3E28ix5DltoIbnT+ryX4BT5beobsVaihxlLPX0QJow5foT
-	 821ydGI3nYYkQ==
-Date: Thu, 20 Mar 2025 14:50:42 +0000
-From: Lee Jones <lee@kernel.org>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
-	andi.shyti@kernel.org, mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
-	jdelvare@suse.com, alexandre.belloni@bootlin.com,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20250320145042.GS3890718@google.com>
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-2-a0282524688@gmail.com>
- <20250307011542.GE8350@google.com>
- <CAOoeyxUgiTqtSksfHopEDhZHwNkUq9+d-ojo8ma3PX2dosuwyQ@mail.gmail.com>
+	s=k20201202; t=1742482334;
+	bh=GICyxcRx3/pVhs6pTz7UKNZiPZK/RiZuJgS7cozIW34=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EO/dktcORDSeTi3XS7WwUI0rnCkuZcDhAgCzt1WJwEEnsjZDW7WAUfFmNI1bsvM97
+	 d9oI+1nn5RNeWziBr6fRX5IShI52KZ3jLOnkmTBxbyR3svdgDmJhS+4yxPXhI189kR
+	 fC4urMnUdvv7KCQblrzJD0RMFRq4ZN4MvAEZagi1kHD14M/4h+efmTqjHj1NAg3I69
+	 CEjR+nSHIQcz79EXk/60HXdQZw4Tqh3mYxQc+/1feoLXcFHJ8vUSP505iy9odYQOcX
+	 qqJDY6d055qKfEp3HsZoKbdj3Q9xCYizSAhz44LZ+EPMdQpDr87pBPVk+nQQZRK8Ud
+	 y0oKerTIIRwVg==
+From: Sasha Levin <sashal@kernel.org>
+To: ericvh@kernel.org,
+	lucho@ionkov.net,
+	asmadeus@codewreck.org
+Cc: linux_oss@crudebyte.com,
+	v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] 9p: Use hashtable.h for hash_errmap
+Date: Thu, 20 Mar 2025 10:52:00 -0400
+Message-Id: <20250320145200.3124863-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOoeyxUgiTqtSksfHopEDhZHwNkUq9+d-ojo8ma3PX2dosuwyQ@mail.gmail.com>
 
-On Mon, 17 Mar 2025, Ming Yu wrote:
+Convert hash_errmap in error.c to use the generic hashtable
+implementation from hashtable.h instead of the manual hlist_head array
+implementation.
 
-> Dear Lee,
-> 
-> Thank you for reviewing,
-> 
-> Lee Jones <lee@kernel.org> 於 2025年3月7日 週五 上午9:15寫道：
-> >
-> > On Tue, 25 Feb 2025, Ming Yu wrote:
-> >
-> > > The Nuvoton NCT6694 is a peripheral expander with 16 GPIO chips,
-> > > 6 I2C controllers, 2 CANfd controllers, 2 Watchdog timers, ADC,
-> > > PWM, and RTC.
-> >
-> > This needs to go into the Kconfig help passage.
-> >
-> 
-> Okay, I will move these to Kconfig in the next patch.
-> 
-> > > This driver implements USB device functionality and shares the
-> > > chip's peripherals as a child device.
-> >
-> > This driver doesn't implement USB functionality.
-> >
-> 
-> Fix it in v9.
-> 
-> > > Each child device can use the USB functions nct6694_read_msg()
-> > > and nct6694_write_msg() to issue a command. They can also request
-> > > interrupt that will be called when the USB device receives its
-> > > interrupt pipe.
-> > >
-> > > Signed-off-by: Ming Yu <a0282524688@gmail.com>
-> >
-> > Why aren't you signing off with your work address?
-> >
-> 
-> Fix it in v9.
-> 
-> > > ---
-> > >  MAINTAINERS                 |   7 +
-> > >  drivers/mfd/Kconfig         |  18 ++
-> > >  drivers/mfd/Makefile        |   2 +
-> > >  drivers/mfd/nct6694.c       | 378 ++++++++++++++++++++++++++++++++++++
-> > >  include/linux/mfd/nct6694.h | 102 ++++++++++
-> > >  5 files changed, 507 insertions(+)
-> > >  create mode 100644 drivers/mfd/nct6694.c
-> > >  create mode 100644 include/linux/mfd/nct6694.h
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 873aa2cce4d7..c700a0b96960 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -16918,6 +16918,13 @@ F:   drivers/nubus/
-> > >  F:   include/linux/nubus.h
-> > >  F:   include/uapi/linux/nubus.h
-> > >
-> > > +NUVOTON NCT6694 MFD DRIVER
-> > > +M:   Ming Yu <tmyu0@nuvoton.com>
-> > > +L:   linux-kernel@vger.kernel.org
-> >
-> > This is the default list.  You shouldn't need to add that here.
-> 
-> Remove it in v9.
+This simplifies the code and makes it more maintainable by using the
+standard hashtable API and removes the need for manual hash table
+management.
 
-Please snip everything that you agree with.
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/9p/error.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-> > > +S:   Supported
-> > > +F:   drivers/mfd/nct6694.c
-> > > +F:   include/linux/mfd/nct6694.h
-> > > +
-> > >  NVIDIA (rivafb and nvidiafb) FRAMEBUFFER DRIVER
-> > >  M:   Antonino Daplas <adaplas@gmail.com>
-> > >  L:   linux-fbdev@vger.kernel.org
-
-[...]
-
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x1),
-> >
-> > IDs are usually given in base-10.
-> >
-> 
-> Fix it in v9.
-> 
-> > Why are you manually adding the device IDs?
-> >
-> > PLATFORM_DEVID_AUTO doesn't work for you?
-> >
-> 
-> I need to manage these IDs to ensure that child devices can be
-> properly utilized within their respective modules.
-
-How?  Please explain.
-
-This numbering looks sequential and arbitrary.
-
-What does PLATFORM_DEVID_AUTO do differently such that it is not useful?
-
-> 
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x2),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x3),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x4),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x5),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x6),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x7),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x8),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x9),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xA),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xB),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xC),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xD),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xE),
-> > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xF),
-
-> > > +
-> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x0),
-> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x1),
-> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x2),
-> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x3),
-> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x4),
-> > > +     MFD_CELL_BASIC("i2c-nct6694", NULL, NULL, 0, 0x5),
-> > > +
-> > > +     MFD_CELL_BASIC("nct6694_canfd", NULL, NULL, 0, 0x0),
-> >
-> > Why has the naming convention changed here?
-> >
-> 
-> I originally expected the child devices name to directly match its
-> driver name. Do you think it would be better to standardize the naming
-> as "nct6694-xxx" ?
-
-Yes, that is the usual procedure.
-
-> > > +     MFD_CELL_BASIC("nct6694_canfd", NULL, NULL, 0, 0x1),
-> > > +
-> > > +     MFD_CELL_BASIC("nct6694_wdt", NULL, NULL, 0, 0x0),
-> > > +     MFD_CELL_BASIC("nct6694_wdt", NULL, NULL, 0, 0x1),
-> > > +
-> > > +     MFD_CELL_NAME("nct6694-hwmon"),
-> > > +     MFD_CELL_NAME("rtc-nct6694"),
-> >
-> > There doesn't seem to be any consistency here.
-> >
-> 
-> Do you think these two should be changed to use MFD_CELL_BASIC()?
-
-No.  I mean with the device nomenclature.
-
-[...]
-
-> > > +static void usb_int_callback(struct urb *urb)
-> > > +{
-> > > +     struct nct6694 *nct6694 = urb->context;
-> > > +     unsigned int *int_status = urb->transfer_buffer;
-> > > +     int ret;
-> > > +
-> > > +     switch (urb->status) {
-> > > +     case 0:
-> > > +             break;
-> > > +     case -ECONNRESET:
-> > > +     case -ENOENT:
-> > > +     case -ESHUTDOWN:
-> > > +             return;
-> > > +     default:
-> > > +             generic_handle_irq_safe(irq_find_mapping(nct6694->domain, irq));
-> > > +             *int_status &= ~BIT(irq);
-> > > +     }
-> > > +
-> > > +resubmit:
-> > > +     ret = usb_submit_urb(urb, GFP_ATOMIC);
-> > > +     if (ret)
-> > > +             dev_dbg(nct6694->dev, "%s: Failed to resubmit urb, status %pe",
-> >
-> > Why debug?
-> >
-> 
-> Excuse me, do you think it should change to dev_err()?
-
-Probably a dev_warn() since you are not propagating the error.
-
-Is this okay by the way?  Is it okay to fail?
-
+diff --git a/net/9p/error.c b/net/9p/error.c
+index 8da744494b683..8ba8afc91482d 100644
+--- a/net/9p/error.c
++++ b/net/9p/error.c
+@@ -16,6 +16,7 @@
+ #include <linux/list.h>
+ #include <linux/jhash.h>
+ #include <linux/errno.h>
++#include <linux/hashtable.h>
+ #include <net/9p/9p.h>
+ 
+ /**
+@@ -33,8 +34,8 @@ struct errormap {
+ 	struct hlist_node list;
+ };
+ 
+-#define ERRHASHSZ		32
+-static struct hlist_head hash_errmap[ERRHASHSZ];
++#define ERRHASH_BITS 5
++static DEFINE_HASHTABLE(hash_errmap, ERRHASH_BITS);
+ 
+ /* FixMe - reduce to a reasonable size */
+ static struct errormap errmap[] = {
+@@ -176,18 +177,14 @@ static struct errormap errmap[] = {
+ int p9_error_init(void)
+ {
+ 	struct errormap *c;
+-	int bucket;
+-
+-	/* initialize hash table */
+-	for (bucket = 0; bucket < ERRHASHSZ; bucket++)
+-		INIT_HLIST_HEAD(&hash_errmap[bucket]);
++	u32 hash;
+ 
+ 	/* load initial error map into hash table */
+ 	for (c = errmap; c->name; c++) {
+ 		c->namelen = strlen(c->name);
+-		bucket = jhash(c->name, c->namelen, 0) % ERRHASHSZ;
++		hash = jhash(c->name, c->namelen, 0);
+ 		INIT_HLIST_NODE(&c->list);
+-		hlist_add_head(&c->list, &hash_errmap[bucket]);
++		hash_add(hash_errmap, &c->list, hash);
+ 	}
+ 
+ 	return 1;
+@@ -205,12 +202,12 @@ int p9_errstr2errno(char *errstr, int len)
+ {
+ 	int errno;
+ 	struct errormap *c;
+-	int bucket;
++	u32 hash;
+ 
+ 	errno = 0;
+ 	c = NULL;
+-	bucket = jhash(errstr, len, 0) % ERRHASHSZ;
+-	hlist_for_each_entry(c, &hash_errmap[bucket], list) {
++	hash = jhash(errstr, len, 0);
++	hash_for_each_possible(hash_errmap, c, list, hash) {
+ 		if (c->namelen == len && !memcmp(c->name, errstr, len)) {
+ 			errno = c->val;
+ 			break;
 -- 
-Lee Jones [李琼斯]
+2.39.5
+
 
