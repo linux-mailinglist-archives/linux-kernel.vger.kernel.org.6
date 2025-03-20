@@ -1,164 +1,204 @@
-Return-Path: <linux-kernel+bounces-569821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDEE1A6A80D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:11:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7440A6A819
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFEEE1B61803
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6A01B62870
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE43221F12;
-	Thu, 20 Mar 2025 14:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE81E2222B5;
+	Thu, 20 Mar 2025 14:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLgmo79V"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SVy4NEZ9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B97F15C158;
-	Thu, 20 Mar 2025 14:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBCC1DF26A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479420; cv=none; b=MldUCWpk/xBPmbWMOzgpWgT73ESf7JIMLJOKcpdB/LTolN5YksqMqLtrfpmO4DhdUnH9TdhqKTLX2cC0INe60yvUqBLUcj80VXIpoYn4Eo9A0uIyYiZBEiHz1mZuKMI8bAUgOKU1cymKlGUFTvjJJ2hgEEhQ3a5GcutGyNfyySo=
+	t=1742479446; cv=none; b=YcAK6sYOddEZLEs6AZFsP6P06ynIZQo8fOCEpMDNVKLuZ+nv8U3guF0GdH1m+mPww+wQg+84PTBaJR6/VwSfNGVzPlTJw1GHbaeO+6YhJXulUbpGjn6vxTRKcLjeZb6eW1OD48AIbKdCnOd2hVvNh26KOOML5br8lqZc2VBkKiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479420; c=relaxed/simple;
-	bh=3CtXUOiV6YbzdJsdrwscdlDgW4tNQasHXRzZgigycQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M9XqOIoCc+4JuKwYPBSawnYIzUjP/RNXKoQY+tQ3Z22YokZMbgvlyCdMwpgo6IJef7vDzPGQ+i+o1LtshnutJgYiB94fRqjyKIa6WSON2UIxc8V1vyUS+/9x3PeFe0ChrqJPGS1VCJiPXv3jObn9dk1eJSNtGuHlhomqjqjbfBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLgmo79V; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so1507487a12.2;
-        Thu, 20 Mar 2025 07:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742479416; x=1743084216; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3CtXUOiV6YbzdJsdrwscdlDgW4tNQasHXRzZgigycQQ=;
-        b=dLgmo79VicFTMWNJmSVc5aThCEafu7+DWd6CCUlU9P3KRe29VgXaI7Osd2klwc15JO
-         tM+g9TUmf2MFry7bJGgj/02tK7MYAz0WYJNVdH31cV3B6VyUCo/YmZ4V+vdhJk3MGr/c
-         H5g6cDtUSLbe3Ft7/yKCTvzR2+WO1G/5jvidvxVAVQJQxQ0Zt6ZkuNxloPE+JqLUXxf2
-         DVklcd0NDoDZSIDXGFmFntAwL8rfIt4bcjYTjF5vUux6s9hYiatSLJofwtMfpv0gaYiD
-         dC3Ima4b1JzSpWjfzZNlxV100ueSsKWNnXkXx9d9UEeXJgDFVm/iOD4JqiNTUtD1vp2B
-         IiTA==
+	s=arc-20240116; t=1742479446; c=relaxed/simple;
+	bh=58JkKNNJ4DFi2Sc9wU2rMgtgN5ne21L0pN3nrl/8cW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MX1N6qih6q0GHBbB07Sgox5AyBtxdv8d+kaidCDhJt64yWErSM2+1+xQCU3W9EIs0+GIXEzwa/1+LB92guV8sZYaXm3LKJlN0iLOyrfVgPVgibuSeBqDUSlSd6sIFgNrxDkY0jjVY3gkw2LvZY204vxudMX8pZ3HxbFoKinPXXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SVy4NEZ9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KE2kta023829
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:04:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=aZG69Gb8Rg4wqYE5Zlnz4YPU
+	9LD6EgYlhsjK/lMjlgo=; b=SVy4NEZ9sglsWOcMgSjQOoDZr1kZCTmEYcdSMVgl
+	PSB+nu41uaoDbBenDYAAkjg0oImG36nv24uaZkWiE0oytIgh1hmqSmgzfUA5218Y
+	MUQ+CLkd628ynOqoj42fH6uagIizLUl3qKlHvSMqXizlRaI66h/ikZsM10SJLEhU
+	lnLM8azmFFlH4vQ/HJTVP2RtPtOUTd5yo6hb1vNEpL6LF9ItzjWJZr1G0DYXRv5Y
+	ROVJeoeiVI4BvwhEpzaeSvwi8YSc/+JP6fbBTDQbc014GrJJ06t+s1T7/y2ufq9Z
+	cA7abPgq2USRDPAHSVGuDmgzlaz1wdsDgHJMJr9CrEn+wQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45fdmwxmg9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:04:03 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5ac559cbaso161603885a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:04:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742479416; x=1743084216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3CtXUOiV6YbzdJsdrwscdlDgW4tNQasHXRzZgigycQQ=;
-        b=gazmRrEBd5/TSzjl95g4K85gAPYy5XOVdzQrHABIdcnAeCpfA/wboFv428/bteDdkJ
-         jCQEYppjxpq3YQssv4kow/vwFgMIvPO5CEv+QINidrKKAMnrA6flkj7S76mZZs28c5Cu
-         ATnsb7AhiwKu/rG8QXORXEv4rJD+TmVBZc3MnNvRiJkp7N23QhE+FKDSYlMU6Ehk9B29
-         eqkf77Z3wL64wsJ5MdqBEz8E6bXB+KGNT+ByXBZ6lRCHtCMdla5+QGf+SA/Cv9w/xYS3
-         Eq7iMl8hQWmamh9ZuTFfRT6RCLUqzQ1bOgDCQNrAfAg3rrQRysZ+sPtN6rnJpw3v6fZ+
-         cMTA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Oatkmh65LN/7V6oiLiXbGOZCoPrab1jyuzt8VohL8XdQfc8UFbD9Zrvxz3GAiKklZZ997T/ZC6a34A21@vger.kernel.org, AJvYcCVCfDuvUSD/Liq7uncchCW/TTsHbR6o4LA/wVlnvgrp2/eR2M/Ym6ohh/g7et0SwbOtt3UfbCWh/CpsLlUz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5CTFHZ5o8TC/oqm3nP8IPQ4NHksvuJlB4q6WD+gkluB442zl2
-	xRXjY62ISFsUNUaUGw/Jkl5kahrIz4DMwutrIuKIBXlqZX9fbed3Dj7L5jVvEepjoMiFcWYNAgi
-	VYaS1tYoEGg3OaZ2eW+00RmU3df8=
-X-Gm-Gg: ASbGncs/HI//mttfo9Q74wdxvqQXWEdjs8xB4n8xS18q3T399sv/QVbpqqGLFvops1X
-	X1pqC9EB2/wO8InnvSPCRel45jdAqyLce54UbJ9XgP9tkKb670/ES5fKivWHNV75e666Mlmi8V4
-	zd4LXysnhmFbJ8ZOM7TTapXNsWfA==
-X-Google-Smtp-Source: AGHT+IGALGMMu/YsqXe9xpFG1Zvsg+H81RlB3W+6FQpYQ+mku3Is44qbw54dvJZeoZYVIfpMg1lheo128uDYemPpZsg=
-X-Received: by 2002:a05:6402:51d4:b0:5e0:8c55:501 with SMTP id
- 4fb4d7f45d1cf-5eb80cddff8mr6754185a12.7.1742479415865; Thu, 20 Mar 2025
- 07:03:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742479442; x=1743084242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aZG69Gb8Rg4wqYE5Zlnz4YPU9LD6EgYlhsjK/lMjlgo=;
+        b=mR7oR4tNeDrGHaGybDvtnqKNp8M1/UqHh9GOcm/YyNZulKKRdmgw7atAGd/i1PFUtm
+         G8TVzsb26AkydFxRFbYOYDCZwdZyFrURJPjEdakem7KmDNnXQZvzGm1bCduASDSgPDpj
+         JbFy0N32U5COyLxzIZK4rq+kn4VPhX2U1rfSC148c8gUaTFv3xu+Tg3D+zJmVKyagsNo
+         QJw67iCz/F0+pmOx/XyaGglWY8mpK4XNZA6s88ZiBv6CpUzxXq4DK7oUH2Iz3/49VTau
+         TdCFysxgKUX1aP2+yX5AkjS+8HcDy4GUklG4WlNDjXMcmKUQkDav3PBKiwsI0g223wU1
+         T1FA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Rx8vFOp7yetZwMdwsLGFPuWxZAb1RGo4A8k2eCkw3E9JJNbCtMmUW5HfBkSM8Ky7IjfqtZuTaToCx7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWemc1uAxcbY6qSovQhuUdYcvwMtK/KvnIpUaNpyQCHpmoEja+
+	1yF830t3tlL9W2VpNLox/OY5fBajdJViPB1L56VoWnKoSvo3LdFGteQ5NzGlRkoCUKsN0yhtR5+
+	7E/X4cZyildsaWEvMfmKJ0R2UsdsUzsNbwIUqU7m4kuirIHo2jQtDucZRw7NrJXY=
+X-Gm-Gg: ASbGncsQWRKNISuLyqIrr81REDAKnZzWo19g8z9InuOysqrnp91RBaBTE5DvS7OM7Kh
+	G5diV8Zk6+5UP7ksEMgEXrVKqa8JlVH65qxARo3VqRe2HpBQpsTYcj72hgl/kmIshOuIQXvELo+
+	XKhNR1zw7/T3Px5iaXkOVmeYn7B5uWLVPEgUX+97gKBOKZ6GSmqOcxJWnv7L4A3DGitMLZfR7uU
+	VXRzrBxjc69xJD7BOzdNlfxrO1Z85blxdF9blOOoDl6XeXPX9tTAzOY00yEik1Q4Ga+3+9EIgic
+	JcrqvzotaCUc6Yz1pNNVusIi5PWZsJWbigLwMJ61I3YBVyLH/+aT4FU9Cbn5oZjs+JrEqWSAHmu
+	Q0Ek=
+X-Received: by 2002:a05:620a:40d2:b0:7c5:79c6:645d with SMTP id af79cd13be357-7c5a8397faemr886719485a.11.1742479442410;
+        Thu, 20 Mar 2025 07:04:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxrSjeqF6bvbl3He9tiF4dKDPJLyxqjGi9lLtRwtFa5vJGHE/F4XSyDTZNU+YV9hEc4s90iw==
+X-Received: by 2002:a05:620a:40d2:b0:7c5:79c6:645d with SMTP id af79cd13be357-7c5a8397faemr886713285a.11.1742479441855;
+        Thu, 20 Mar 2025 07:04:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8853bbsm2208705e87.204.2025.03.20.07.03.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 07:04:01 -0700 (PDT)
+Date: Thu, 20 Mar 2025 16:03:57 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: srinivas.kandagatla@linaro.org
+Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
+        krzk+dt@kernel.org, ivprusov@salutedevices.com,
+        luca.ceresoli@bootlin.com, zhoubinbin@loongson.cn,
+        paulha@opensource.cirrus.com, lgirdwood@gmail.com, robh@kernel.org,
+        conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz,
+        tiwai@suse.com, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, johan+linaro@kernel.org
+Subject: Re: [PATCH v2 4/5] ASoC: codecs: wcd938x: add mux control support
+ for hp audio mux
+Message-ID: <rdvsnxuc6by6sci56sh7thzpxo5cqi7q24fnmc7hi5yrfszwrg@kqjpiilko3xo>
+References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
+ <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320104922.1925198-1-mjguzik@gmail.com> <20250320-befund-wegnehmen-048d8b9cd252@brauner>
-In-Reply-To: <20250320-befund-wegnehmen-048d8b9cd252@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 20 Mar 2025 15:03:24 +0100
-X-Gm-Features: AQ5f1JqJ7R3DUhsz9KRRtGc6eQ78lXIxPUtWVUrtvfctVT0DbH7Gz3NwTZ5hUzY
-Message-ID: <CAGudoHFpfJ_m3HTJntxKt-ZF2x1eQ4A4Pjjp6trf6Y5fnY6rhQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: sort out stale commentary about races between fd
- alloc and dup2()
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
+X-Proofpoint-ORIG-GUID: 8ZJjuSc9juIXNbg4T9n5dssBUzrNeQTG
+X-Authority-Analysis: v=2.4 cv=ReKQC0tv c=1 sm=1 tr=0 ts=67dc2053 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=O8kJzBLDCMT3sX5uReoA:9 a=CjuIK1q_8ugA:10 a=Toojp5lMUUUTO6xlXwhV:22
+ a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 8ZJjuSc9juIXNbg4T9n5dssBUzrNeQTG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_03,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200087
 
-On Thu, Mar 20, 2025 at 2:58=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Mar 20, 2025 at 11:49:22AM +0100, Mateusz Guzik wrote:
-> > Userspace may be trying to dup2() over a fd which is allocated but not
-> > yet populated.
-> >
-> > Commentary about it is split in 2 parts (and both warrant changes):
-> >
-> > 1. in dup2()
-> >
-> > It claims the issue is only relevant for shared descriptor tables which
-> > is of no concern for POSIX (but then is POSIX of concern to anyone
-> > today?), which I presume predates standarized threading.
-> >
-> > The comment also mentions the following systems:
-> > - OpenBSD installing a larval file -- they moved away from it, file is
-> > installed late and EBUSY is returned on conflict
-> > - FreeBSD returning EBADF -- reworked to install the file early like
-> > OpenBSD used to do
-> > - NetBSD "deadlocks in amusing ways" -- their solution looks
-> > Solaris-inspired (not a compliment) and I would not be particularly
-> > surprised if it indeed deadlocked, in amusing ways or otherwise
-> >
-> > I don't believe mentioning any of these adds anything and the statement
-> > about the issue not being POSIX-relevant is outdated.
-> >
-> > dup2 description in POSIX still does not mention the problem.
-> >
-> > 2. above fd_install()
-> >
-> > <quote>
-> > > We need to detect this and fput() the struct file we are about to
-> > > overwrite in this case.
-> > >
-> > > It should never happen - if we allow dup2() do it, _really_ bad thing=
-s
-> > > will follow.
-> > </quote>
-> >
-> > I have difficulty parsing it. The first sentence would suggest
-> > fd_install() tries to detect and recover from the race (it does not),
-> > the next one claims the race needs to be dealt with (it is, by dup2()).
-> >
-> > Given that fd_install() does not suffer the burden, this patch removes
-> > the above and instead expands on the race in dup2() commentary.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > This contains the new commentary from:
-> > https://lore.kernel.org/linux-fsdevel/20250320102637.1924183-1-mjguzik@=
-gmail.com/T/#u
-> >
-> > and obsoletes this guy hanging out in -next:
-> > ommit ec052fae814d467d6aa7e591b4b24531b87e65ec
->
-> This is already upstream as of v6.14-rc1. So please make it a diff on
-> top. ;)
+On Thu, Mar 20, 2025 at 11:56:32AM +0000, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> On some platforms to minimise pop and click during switching between
+> CTIA and OMTP headset an additional HiFi mux is used. Most common
+> case is that this switch is switched on by default, but on some
+> platforms this needs a regulator enable.
+> 
+> move to using mux control to enable both regulator and handle gpios,
+> deprecate the usage of gpio.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  sound/soc/codecs/Kconfig   |  2 ++
+>  sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
+>  2 files changed, 32 insertions(+), 8 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> index ee35f3aa5521..b04076282c8b 100644
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -2226,6 +2226,8 @@ config SND_SOC_WCD938X
+>  	tristate
+>  	depends on SOUNDWIRE || !SOUNDWIRE
+>  	select SND_SOC_WCD_CLASSH
+> +	select MULTIPLEXER
+> +	imply MUX_GPIO
 
-oops.
+Why? This is true for a particular platform, isn't it?
 
-Well in that case the previously sent variant applies:
-https://lore.kernel.org/linux-fsdevel/20250320102637.1924183-1-mjguzik@gmai=
-l.com/T/#u
+>  
+>  config SND_SOC_WCD938X_SDW
+>  	tristate "WCD9380/WCD9385 Codec - SDW"
+> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+> index f2a4f3262bdb..b7a235eef6ba 100644
+> --- a/sound/soc/codecs/wcd938x.c
+> +++ b/sound/soc/codecs/wcd938x.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/regmap.h>
+>  #include <sound/soc.h>
+>  #include <sound/soc-dapm.h>
+> +#include <linux/mux/consumer.h>
+>  #include <linux/regulator/consumer.h>
+>  
+>  #include "wcd-clsh-v2.h"
+> @@ -178,6 +179,8 @@ struct wcd938x_priv {
+>  	int variant;
+>  	int reset_gpio;
+>  	struct gpio_desc *us_euro_gpio;
+> +	struct mux_control *us_euro_mux;
+> +	u32 mux_state;
+>  	u32 micb1_mv;
+>  	u32 micb2_mv;
+>  	u32 micb3_mv;
+> @@ -3243,9 +3246,16 @@ static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component, bool activ
+>  
+>  	wcd938x = snd_soc_component_get_drvdata(component);
+>  
+> -	value = gpiod_get_value(wcd938x->us_euro_gpio);
+> +	if (!wcd938x->us_euro_mux) {
+> +		value = gpiod_get_value(wcd938x->us_euro_gpio);
+>  
+> -	gpiod_set_value(wcd938x->us_euro_gpio, !value);
+> +		gpiod_set_value(wcd938x->us_euro_gpio, !value);
 
-Although I see the commit message would use a small tweak:
-> Given that fd_install() does not suffer the burden, this patch removes
-> the above and instead expands on the race in dup2() commentary instead.
+This looks like a separate topic, but why is 'active' being ignored?
 
-s/ instead././
+> +	} else {
+> +		mux_control_deselect(wcd938x->us_euro_mux);
+> +		wcd938x->mux_state = !wcd938x->mux_state;
+> +		if (mux_control_select(wcd938x->us_euro_mux, wcd938x->mux_state))
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Can't it just be 'mux_control_select(wcd938x->us_euro_mux, active)' ?
+
+> +			dev_err(component->dev, "Unable to select us/euro mux state\n");
+> +	}
+>  
+>  	return true;
+>  }
+
+-- 
+With best wishes
+Dmitry
 
