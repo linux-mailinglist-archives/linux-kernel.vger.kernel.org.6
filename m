@@ -1,148 +1,110 @@
-Return-Path: <linux-kernel+bounces-569694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAAAA6A63B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:24:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8265BA6A63C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB3E887752
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6568A49AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DA0222578;
-	Thu, 20 Mar 2025 12:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45208221DA2;
+	Thu, 20 Mar 2025 12:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUJOgP+u"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="diH5hrVo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B3E2222B5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF8A20A5C2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742473411; cv=none; b=lazaX21K2DlrKG8T1fE9COxDAqMhGT1KNZzdVP9d3egl0+ScFl/NoPTucDafBC6GrYQ++ofsV++IO9v/azfsOIc98ssJU9KNsnwzV+OaFABRF2XiS9soOpcuwi8zgVo1ep0gxJI4M86dOnKThN1Yz8DE2F4fX9wLhUtgz+X3VR0=
+	t=1742473473; cv=none; b=IoAmjveGa8dFlWKXT6d6kHyjR6cDP+k/zD4RsAfqBcOFgtlXyP6xpKw4y2Oc4ioYNS84UQuXfdEM59X5NlWmyFm8MTBpWHD3M7SuIrtSkEX3ykOzrLNE5sAWzSyR0CaR2BuLrWs3ZKe2nBHdAg0hWtEeGvrXTNCgZ7K9N+q4Jxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742473411; c=relaxed/simple;
-	bh=CXYfkFhDMRdE7zi+DztlxCluS3zYROA1G3X4Ay+BqEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HCbqfuw2d8tBtRkGQTpdq8lK+HEB/ns9ZsdcPuVliGT2KRzs8/6NK5IkYsS2GH4WThDV6xbXVprnObZMsfV/ox5A7Ab+xw8lTsVgstdio30m5loTE/STN3hByARs8pJoWu/p6H2OwiHi+UJ3Hk9D86cBFAIDJy8VAq6UsiDnctg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUJOgP+u; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2aeada833so145091566b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742473408; x=1743078208; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d4L0wtp4vAfj99xNR7JACQ5fBXNp5AHv/RHN+M6rMMI=;
-        b=WUJOgP+uTulStjXHUj4BMW6WKPzWsb+rDA7omGvnT+2yp4usaJLvC+z+zzVM1k0b/r
-         EW5GChq4tRNA+/CXZ99ngz4Es5k0V7CqrNE87/Yx7dHJZdK7AX38IlxvC1h1e1wtt4I0
-         k6w/PkOtdsPHk35I6oyTYTK2dTcMg7RlJrxpuvTb4iRBksUM+5w2MWwldWIyaCsx1+FR
-         eLcoqbvj24rOW2LUo2W9jtOOXvOwRHpbM3WqqOtqU9MFqgX1ct/+y5X8VB8OQXTsAaks
-         9Ia2MapwHuYqXsMO+TXg9GKetw23GzXvXkE0Wt/83Zazgy6dnkZA//xDHqB2TrTIwG37
-         +aFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742473408; x=1743078208;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d4L0wtp4vAfj99xNR7JACQ5fBXNp5AHv/RHN+M6rMMI=;
-        b=oQBkRjq2tJr/qxOpFrKmGru33Xl5NK15AnzX3uM9YICUF3pIuADXKLhczD0ggwbS0d
-         LG/ZGTYesTH6PWH0ywWAbszS83u4rUiclPO2IOrP7sfbzn+wZQVVRW8qKKUHbZGR5y25
-         4gm/eB1ixbvSBb8GIEn5v4qkyqZlQPqd+P/8u94+uinkAazomHI9zxszHDqbn1nIiila
-         BuaA23u9wZgf0GjhkCGfvY1DF/AcBIK5T9Kna+HXu9eVTkrAADWNROoGU/4kAAL4gLEn
-         if/umPncYTu0tmi0NL5BbkzVhiPzUFe0W1MogQPujfXr3k9q0ezJsueir0iP70Fc/25m
-         jhbg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0TzT6w0pvKrO+JvCTl3eipd2nhOayJaJIjAmz4Tj+MzUWJHnnT2R7qEAylcm+XJD1/WW0OdI2IaVlyOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6rAjE6JhriTxTEmKFkANv615P0Ss1dLy2UgPYgKz0iAfrDkSU
-	DwpXmksY0sVEYrezf+TX47hXI3sUCIiVFYFCM8rJAV81KNNATYvrH08/MF1fXVw=
-X-Gm-Gg: ASbGncvQvy+v2IkquFVqDBqnafCbsiRR/opu5DZ7ubk2Y6CNsywDbUVAtXvZXvMQxDo
-	kIKdiWBKMJdSp4pABOAuIDlr8ZcAAjRzLL/d51U+XZMOhz3LCnH39Njfyh+ZdZNBAtDdDrZoikl
-	LelZohlsPBfIKWtSSjs+0WaT+cIjyMKZWrl15kyOwCT698Rc0oc7Xha0TR1bDsHuJ5uphZijxnd
-	8YaM3w5TIJEgA6J8LQ1tzCPIXF0DJBFyX9om17r6QJNsH8odA6Y3+fHLjwpnPdZOl6SntTGeIq6
-	YxPJ64EUxN01TmrYjHvJ61Pz08m9wou5bcM6tG7hyPUOeQTnBaQRVg==
-X-Google-Smtp-Source: AGHT+IFy4ujO0Rlctp5VuJNnxmLa2FTdTGd/kenok8V6y6/ECSHPNsDf3e3bTkQH3sfVrQUIU8/JFg==
-X-Received: by 2002:a17:907:94c6:b0:ac3:8537:9042 with SMTP id a640c23a62f3a-ac3cdc8e455mr321840566b.30.1742473407716;
-        Thu, 20 Mar 2025 05:23:27 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3da7e00dcsm96386066b.56.2025.03.20.05.23.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 05:23:27 -0700 (PDT)
-Message-ID: <5db8f280-8f1a-43e0-a2d3-baf694eb81d2@linaro.org>
-Date: Thu, 20 Mar 2025 12:23:24 +0000
+	s=arc-20240116; t=1742473473; c=relaxed/simple;
+	bh=dpO6ubdCV4Jcojf4GwweKX78np6EMp++yJkz2nXW+U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXLRYvDsjjeIVAR71vWNu8XZwpPaAm6gt+RhZr51J0cSuNAPlbVz7Pn/qAJw43hGTDg62znMjiulMwgnZKblnOPKRUGZJ4/Dl8QpQ9bWp9hrPAAaN1Q+oV2WK3RYyUykLnVYJ+8Mb0JqJtyssb0VK//XosDmROq5S3D39YN2idQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=diH5hrVo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742473471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4uGZqzYjztCp2uORK/QZb2BhLpTrU8dIV38xdYBgzA8=;
+	b=diH5hrVoIQn3Jr/Cl8X5KWoYDiXesrCkxTloAQ8PQ3M6MrWQtL3vys0xX9cDvTwjcgDnyj
+	3qUFaLX0moPKed50bNhFHOMBGtGrG6sHnhLsOL7mOAAGw4JuSI8/wrT3dNI/YXVD9Q+G3Q
+	NJwHWUKjV+bguZ4ofnFyw/0lAvI1hgk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-440-oED42QQlNRmQAD0mRp2UNQ-1; Thu,
+ 20 Mar 2025 08:24:27 -0400
+X-MC-Unique: oED42QQlNRmQAD0mRp2UNQ-1
+X-Mimecast-MFC-AGG-ID: oED42QQlNRmQAD0mRp2UNQ_1742473465
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EADB01933B41;
+	Thu, 20 Mar 2025 12:24:24 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.12])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1B77C1800370;
+	Thu, 20 Mar 2025 12:24:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 20 Mar 2025 13:23:52 +0100 (CET)
+Date: Thu, 20 Mar 2025 13:23:44 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>, David Hildenbrand <david@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>, kees@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Subject: Re: [PATCH RFCv3 00/23] uprobes: Add support to optimize usdt probes
+ on x86_64
+Message-ID: <20250320122343.GC11256@redhat.com>
+References: <20250320114200.14377-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/21] mtd: spinand: Use more specific naming for the
- erase op
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Santhosh Kumar K <s-k6@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
- <20250307-winbond-6-14-rc1-octal-v1-5-45c1e074ad74@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-5-45c1e074ad74@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320114200.14377-1-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+On 03/20, Jiri Olsa wrote:
+>
+> hi,
+> this patchset adds support to optimize usdt probes on top of 5-byte
+> nop instruction.
 
+Just in case... This series conflicts with (imo very important) changes
+from David,
 
-On 3/7/25 3:08 PM, Miquel Raynal wrote:
-> SPI operations have been initially described through macros implicitly
-> implying the use of a single SPI SDR bus. Macros for supporting dual and
-> quad I/O transfers have been added on top, generally inspired by vendor
-> naming, followed by DTR operations. Soon we might see octal
-> and even octal DTR operations as well (including the opcode byte).
-> 
-> Let's clarify what the macro really means by describing the expected bus
-> topology in the erase macro name.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+	[PATCH v2 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
+	https://lore.kernel.org/all/20250318221457.3055598-1-david@redhat.com/
 
-> ---
->  drivers/mtd/nand/spi/core.c | 2 +-
->  include/linux/mtd/spinand.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> index b6c0993206ebab1dcee715ea6de33efe7d5af3a2..1959e8d9c64be004c71a0d6ac6454fde08e708fa 100644
-> --- a/drivers/mtd/nand/spi/core.c
-> +++ b/drivers/mtd/nand/spi/core.c
-> @@ -529,7 +529,7 @@ static int spinand_erase_op(struct spinand_device *spinand,
->  {
->  	struct nand_device *nand = spinand_to_nand(spinand);
->  	unsigned int row = nanddev_pos_to_row(nand, pos);
-> -	struct spi_mem_op op = SPINAND_BLK_ERASE_OP(row);
-> +	struct spi_mem_op op = SPINAND_BLK_ERASE_1S_1S_0_OP(row);
->  
->  	return spi_mem_exec_op(spinand->spimem, &op);
->  }
-> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-> index d041b1cc18de6add45800eaa7605bda1c64ca257..545531afe2dac593d112065483afd180226cc533 100644
-> --- a/include/linux/mtd/spinand.h
-> +++ b/include/linux/mtd/spinand.h
-> @@ -50,7 +50,7 @@
->  		   SPI_MEM_OP_NO_DUMMY,					\
->  		   SPI_MEM_OP_DATA_IN(1, valptr, 1))
->  
-> -#define SPINAND_BLK_ERASE_OP(addr)					\
-> +#define SPINAND_BLK_ERASE_1S_1S_0_OP(addr)				\
->  	SPI_MEM_OP(SPI_MEM_OP_CMD(0xd8, 1),				\
->  		   SPI_MEM_OP_ADDR(3, addr, 1),				\
->  		   SPI_MEM_OP_NO_DUMMY,					\
-> 
+I think they should be merged first.
+
+(and I am not sure yet, but it seems that we should cleanup (fix?) the
+ update_ref_ctr() logic before other changes).
+
+Oleg.
 
 
