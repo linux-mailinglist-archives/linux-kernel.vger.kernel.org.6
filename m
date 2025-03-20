@@ -1,57 +1,101 @@
-Return-Path: <linux-kernel+bounces-570369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A59A6AF73
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C0EA6AF78
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFEC188EE36
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2EA1892E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E25522A4E0;
-	Thu, 20 Mar 2025 20:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8637C22A80F;
+	Thu, 20 Mar 2025 20:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OK6kFbdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kw4+33ct"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A8B45027;
-	Thu, 20 Mar 2025 20:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9308622A4FC;
+	Thu, 20 Mar 2025 20:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504216; cv=none; b=gLjK4WtS7mrrB2GQNDInDRx7e6nX6vHze/i22sQmh8E2xgERNhPSnEHKX5Erxb7bKhiPwdHzXCgj+wKUMgpPkbv7JFQH97p12uUDOoL3WA3QMLag1L0ZR7SQDD/XTLUqz8WGOAkDGs6lTgbW2vZ80M18JpLHas0UdfoKAmZQY+I=
+	t=1742504220; cv=none; b=sR2HZFgIB8xl8fizzXbag6Ce23wMINDdVCOb1Azaa2T8lOpzeIGiKrmKi9XqLioEjZGRXpE+zQXVKNJnKsDmthEM8mbe5WwKKSXffqiWQQMbDUmAqaORTAhE3fHnaA4xGX0Lk6NmEK7tlsAH6Cmk+QaYvpG1FHDeb0As9ALE0GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504216; c=relaxed/simple;
-	bh=KzYuCbF/0WoU7lS07M4U1UqMt3uKsndEKoSXWbsCoGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZSSAE2UZx6TRl3kGmNY/T+KsbeHnijC0nVyaeJ3789WJJwXCQ9cOE+uLaIGgZB/8Xz/5wYA/hZFVni2hE0hJSZuR1YVjEh/q8v4uAmcXp2yrcG7TKNEC+/ef3RWu+rJ8P7t0k4Jw9F4ohX3Xa74e3F/xQZ+ClLCNmG+U4rX/XyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OK6kFbdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD6CC4CEDD;
-	Thu, 20 Mar 2025 20:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742504216;
-	bh=KzYuCbF/0WoU7lS07M4U1UqMt3uKsndEKoSXWbsCoGQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OK6kFbdZx/S49999jDk1V8ruCLuzxKDjAEjyVAp1JTxfvTeZAS4EyHpxu7xM69LyA
-	 GHZjHgAoRY+e+5P4Hdjcy9KpPnie14+HSGSfE+DgG0/gzbHFYwLKKZbqKyNRGPMgae
-	 HeGhiRyN5lWM7lk/TiPh2R+Y/e00G3OLKUSeqpK0oAvV3lqU9H2XxqBbcoIAPfmR48
-	 In5BtHvG0o3QYVg3LQEnfC1Yp0hIAj6L5QDyqMrsNU32UOgf5P9SAq9kil7yito9E1
-	 5naolHxPe4uUgTOgv3rm/GJfat+E/k22WdUHpHnY5voURUXR+cAnrkatoEzjSuJeBC
-	 oQjuiNu17/eGg==
-Date: Thu, 20 Mar 2025 15:56:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
- and clean up intel_pcie_cpu_addr_fixup()
-Message-ID: <20250320205654.GA1098970@bhelgaas>
+	s=arc-20240116; t=1742504220; c=relaxed/simple;
+	bh=YbkcEp08crIyVSJNAbnRj22WAOqP2FQy1uoUXoMkAOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFxZjPQKHQKd+xHdOXHAy9ATPqpgWUfr+l72Gl9k4TRZ4QdXzUhnyOa99E34jcxSRl5yREodsAx1gdilUJM/1am2gEA1tFndri8qN6HF0MEirDqiH1UDFr3+nN45X8tN0l+495D2PEw9NWVUfE7dk2/ms6MSwO21cmecdwr9za8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kw4+33ct; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224191d92e4so25755745ad.3;
+        Thu, 20 Mar 2025 13:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742504218; x=1743109018; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHYP+FzwYtTkT6zfxoUjmlhsBz/CXrX0uDvDDrwF0V0=;
+        b=kw4+33ct51EfPlJhCcKqO5g922PQ7DCcJE+qjcHH4XADKRxFO8mmv7Tbmx2GJ1Hk7t
+         90KNXfrL9yhX7Ksp3/ttuF7Ej5bQYQGSj2Bvfiip3hjlPIjFPzS7KojPb/PsrTggpmNW
+         GIvC1NvulLYHaCa0jv2EZlBw6MWwn9cPShSAmq5MuEtUeGUEymEasjERCIu8HUt4s/27
+         vPQIMFBNgLnqMa7FJplHci4uT4/zuhQjP+QSwIxk2VDgFcH48D1UwzkoSdKw1vxr1iQL
+         ZTfTN9MO657w5eUTKrXffwzR66TL9xzyTcYCFlGU/8DJ/3cYj+AOVjnlnlj56HbojR+F
+         Y6bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742504218; x=1743109018;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eHYP+FzwYtTkT6zfxoUjmlhsBz/CXrX0uDvDDrwF0V0=;
+        b=VORLGq+yuwGGmDr8EFgFh/vDbD6F3vOVaU9y5APoFFdhrHWEln4ctJ7dISyhhkbbGR
+         ZeWLxEOqL++13SyJKq+EUJxAytmeSsZmFq8WamiRtBNLLqrbMOGCRTMOd6/e9nixX7PI
+         K58NaCJXaWP+0Ni+CJ7pul9c09QAVGrTyj0phWoU/hsy40AyJQSJWmdzXUmdktmDy8Vd
+         n9SYEKbywHsSH0aos9j6oElQg9mrOokXQ/7JgttjxTjgaNzqAmhm8zZwSgrE+0I9yjtj
+         xYTRU17DUoOB6Wf7ABi8JbHPzeCCO5hMW4xyDwJUgpoX+7EwVseqtEOTT2kCoj8rZWFQ
+         ca+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCgYmK3atSICMkxV8B2YAAJsJk6l2TTJzgF7clsk5Vx7irE4V+6ZJhceGsh2ZwuPgDOdHpIBXj+/0lZVLJ@vger.kernel.org, AJvYcCUem1CM3RchU9EBYR3NrOOvTJW4g4oi5Xmxm2pCGGzNqtbeuEXjDa6F+OjpMuvPFFQ+ExSFrF6RvswgnLki@vger.kernel.org, AJvYcCVTWwrI2MSd8XwiaAmsT5+uPNkg1Ap/qg8nVY7yr7GleWVVFLuq4QAi0V7+3jSRiBwiKsw=@vger.kernel.org, AJvYcCXVUzcJCrjQFBt+ATAT9sBIDmP3s/oDKML5mVG7xlwjWYxPut3qDQMVX5ZMIS/4efaVdAZW79MH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQq1lcGs/yASX9JIUYDs86sPx8rHLXBgWmRt0iOeOdbsY2P2SD
+	QYHwoPccITu53LmctBKlJ4/6z2dcKSh4iru+fNX1G700iGzmrxzA
+X-Gm-Gg: ASbGncsK2LmMuJYEVUvpNR4qf/Vf9G1N9HqdfFPwPOMirnG+M0TFGdgHaY1EtOktMh3
+	wbheGtW6ZFMnTy1wdybOyV7tdPdpD1oPKiHCck8DK5r6qoQ9CJQ0ZTGp+7aUDj8klA3QbQOkhO1
+	xAc+MTT8EGXYjv17+fpc/BV18lkVJYuMI0z+9sgJDcMnuEsr0PadxMvc9+dJwgiom6qslUlomqW
+	tBvTstnJi4y6jFnwcOazplv0WiuyACn13hi4oHcGRyCdx2ZydvYCsLnD1l9bQJE3moI7HBr+eJF
+	/OB5++oOSLALxznMJ2Nlx/7I2UGC74kSgWtCbwjI8OXE2w3QR4Ao+j5mmrr50b0pQA==
+X-Google-Smtp-Source: AGHT+IFObV1UYBWVHJijbUkAFQ5WtUBQhMfiBb9p0afEFRGISPI3ams4CTR87ewzq5lhgqlJcABDfw==
+X-Received: by 2002:a17:902:d48a:b0:223:2cae:4a96 with SMTP id d9443c01a7336-22780e3fb29mr9391595ad.42.1742504217670;
+        Thu, 20 Mar 2025 13:56:57 -0700 (PDT)
+Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:3::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2278120981fsm2384085ad.250.2025.03.20.13.56.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 13:56:56 -0700 (PDT)
+Date: Thu, 20 Mar 2025 13:56:54 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] vsock: add network namespace support
+Message-ID: <Z9yBFrmGLdKzfgBd@devvm6277.cco0.facebook.com>
+References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
+ <20250312-vsock-netns-v2-1-84bffa1aa97a@gmail.com>
+ <sqvqvlovlxpfo2tlkazugkocwmlhc7iay2kvq7b75bgwk7vhfw@tvgfe5fj3mw6>
+ <Z9sUVs1Tq3SN83MQ@devvm6277.cco0.facebook.com>
+ <sarbzv7tqaljonkuerlmirulq25ouk6mwyfbr4oaqfzfry2kcm@efbhpxgpxikk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,84 +104,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305-intel-v1-1-40db3a685490@nxp.com>
+In-Reply-To: <sarbzv7tqaljonkuerlmirulq25ouk6mwyfbr4oaqfzfry2kcm@efbhpxgpxikk>
 
-On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
-> Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should provide correct
-> address translation. Set use_parent_dt_ranges to allow the DWC core driver to
-> fetch address translation from the device tree.
+On Thu, Mar 20, 2025 at 09:57:57AM +0100, Stefano Garzarella wrote:
+> On Wed, Mar 19, 2025 at 12:00:38PM -0700, Bobby Eshleman wrote:
+> > On Wed, Mar 19, 2025 at 02:02:32PM +0100, Stefano Garzarella wrote:
+> > > On Wed, Mar 12, 2025 at 01:59:35PM -0700, Bobby Eshleman wrote:
+> > > > From: Stefano Garzarella <sgarzare@redhat.com>
+> > 
+> > BTW, I was unsure about just making NULL a macro (e.g.,
+> > VIRTIO_VSOCK_GLOBAL_NET?) instead of a function. I just used a function
+> > because A) I noticed in the prior rev that the default net was a
+> > function instead of some macro to &init_net, and B) the function seemed
+> > a little more flexible for future changes. What are your thoughts here?
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Inline function in the header should be fine IMHO.
+> 
+> Thanks,
+> Stefano
+> 
 
-Applied to pci/controller/dwc-cpu-addr-fixup for v6.15, thanks!
+Got it, thanks!
 
-There is a minor dts change required, but Lei Chuan Hua has confirmed
-that all users are internal to Maxlinear and will update:
-
-https://lore.kernel.org/r/BY3PR19MB507667CE7531D863E1E5F8AEBDD82@BY3PR19MB5076.namprd19.prod.outlook.com
-
-> ---
-> This patches basic on
-> https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
-> 
-> I have not hardware to test and there are not intel,lgm-pcie in kernel
-> tree.
-> 
-> Your dts should correct reflect hardware behavor, ref:
-> https://lore.kernel.org/linux-pci/Z8huvkENIBxyPKJv@axis.com/T/#mb7ae78c3a22324b37567d24ecc1c810c1b3f55c5
-> 
-> According to your intel_pcie_cpu_addr_fixup()
-> 
-> Basically, config space/io/mem space need minus SZ_256. parent bus range
-> convert it to original value.
-> 
-> Look for driver owner, who help test this and start move forward to remove
-> cpu_addr_fixup() work.
-> ---
-> Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> index 9b53b8f6f268e..c21906eced618 100644
-> --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-> +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> @@ -57,7 +57,6 @@
->  	PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
->  	PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
->  
-> -#define BUS_IATU_OFFSET			SZ_256M
->  #define RESET_INTERVAL_MS		100
->  
->  struct intel_pcie {
-> @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct dw_pcie_rp *pp)
->  	return intel_pcie_host_setup(pcie);
->  }
->  
-> -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
-> -{
-> -	return cpu_addr + BUS_IATU_OFFSET;
-> -}
-> -
->  static const struct dw_pcie_ops intel_pcie_ops = {
-> -	.cpu_addr_fixup = intel_pcie_cpu_addr,
->  };
->  
->  static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
-> @@ -409,6 +402,7 @@ static int intel_pcie_probe(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, pcie);
->  	pci = &pcie->pci;
->  	pci->dev = dev;
-> +	pci->use_parent_dt_ranges = true;
->  	pp = &pci->pp;
->  
->  	ret = intel_pcie_get_resources(pdev);
-> 
-> ---
-> base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
-> change-id: 20250305-intel-7c25bfb498b1
-> 
-> Best regards,
-> 
+Best,
+Bobby
 
