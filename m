@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-569187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD6FA69FAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:10:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DF4A69FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 255DF189CF1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E39178402
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34B21EBFFF;
-	Thu, 20 Mar 2025 06:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B8C1E5B81;
+	Thu, 20 Mar 2025 06:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fxv0Z96L"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjsrycH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30A71DE3C8;
-	Thu, 20 Mar 2025 06:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333641DE4FB;
+	Thu, 20 Mar 2025 06:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742451045; cv=none; b=ju1ZsoMY9KAhbscA9s3dcS8AmAfl1C83TOMyGWfZEuSG8ob2EmUa6dPmWuyl1rCKhVQ54WghLYewwo198RlwyoldzzupetsnGyOOO01pRoVnUf5tm4lYEi15a9G7f/obnAfjWU/n4klplsQebIcUG7AbzPZsEFNdOehAKAVNvJ8=
+	t=1742451086; cv=none; b=XNgXIBOcl1z31gCfIGUQQConHBTeePmL/YtJ713BMZHbBNCD56H2kRynZ3LrURRnGVGspBdxndWysxWM/dANMOJFi7NCUKKq7Srh2yD77ovn32rsVx0oqU3kqVCSSWhGpyOfVQFMmTxPslPZmicHaZ84fLZdWbh5xoniWtLFaDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742451045; c=relaxed/simple;
-	bh=cRvXadQhTIbI/HCZTrRb2irH8HzK+S9QjjRBXGbrNho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AvaY18njRwZF9Md4dYTENJ7BUb5X4EpwppFxDi9bVpa2YqKn/WbsZpdaruJXdKwYQQHhm++3f6CludxW4a3/Z0+K68jFzhWk6UMBmC2Ro1MswE3Me8opwWEt/kaqC9vuOs6kvcRfhLL1DSeGB9NV8nWnpQHOS8PUR23NSyBJ+5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fxv0Z96L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JG7ScR031123;
-	Thu, 20 Mar 2025 06:10:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dhvEbu/B7DlqECBAv+uD+Fcyi6AFMHzfPm0rMbXagJ4=; b=Fxv0Z96LCoP9szKQ
-	0XyJeFpDVRBBQvO4w+PdFwZNaskhMpLuW//0KdgTLAWjYhjQeTeO+FvjXAx1kl6A
-	Lv4mNmmwTT0dHaDcXb4k6n6aCcGmzf27YaHRROGD3QJEOCHSdcjNjU/VLgYlol/O
-	rp5xDU6wzzMOJ65BbjWXvHH9L1BQFP1LiYSjYPKzyFDy1Ajs02u1Si2LVEq3kPc7
-	Wa+3B+TqbZdSv5l/wgT3Hco/Qnlmn/+RT/1f2IraSMxZi1/uvBN5K/3Hl0REYpPJ
-	pmNIllqm315GtuiuAD5lai0vyxT4EHlaSbWLsJgcHYFKAuwcgzrvDKORAplbEHvM
-	1NRbTg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g15y1sy3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 06:10:32 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52K6AVHf027244
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 06:10:31 GMT
-Received: from [10.152.201.53] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 23:10:27 -0700
-Message-ID: <22ebf40e-a9ff-32ef-2d45-8077c915d2e8@quicinc.com>
-Date: Thu, 20 Mar 2025 11:40:23 +0530
+	s=arc-20240116; t=1742451086; c=relaxed/simple;
+	bh=B9pxkTyS8FCwcEXwhuG9eptnAHpaChigopqI6GfQ8pc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WHFpymOK/dsRypiHtf1uSlQ2d9PSvEPN6ECLvRIw3uX9Ioi2VYZfKVgMY4BRe3HyesoibaaJgnqHoY9MGB6UCkR0qEVltKUZC8oqgAkoTsqUPynI5c5shx6AFr+lCMyP7s1s+cLoaa6U+7wTgJZaBxvkPQpZp7j0ntQKaG3j/ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjsrycH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3610C4CEDD;
+	Thu, 20 Mar 2025 06:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742451085;
+	bh=B9pxkTyS8FCwcEXwhuG9eptnAHpaChigopqI6GfQ8pc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QjsrycH9dIa4zdhzJ7pW98BzIFliJkxnLmvIemvDdzliRnpB3lVYOFspjj+wRbSNF
+	 KIw8Xz/RrPnVTjfoNdi2w1ItHr1N4qnh4CBpwUW6zXvbEHVH0XHVWtd/v3R5/8VDVD
+	 WtBcPf7XJELH7Kx2qgHHbAB4C7v6bx2bel86idhasEgIbwLedXjNorrfa5Uzvkn6sj
+	 jRwPKl8Z1NSLyU3arh2DKt0/Yi1aEUlNoVz9w46S6IJWnwKtzNhmq9OweN1/ie6iSs
+	 2pCW/Ai55Xb4Yahl7PVjW4NkaQAq7vf+EoZ7sITho5vBrBANjU4wJwefaxacgWpI5U
+	 s8oVKunDV0u7g==
+Message-ID: <62e44051-1c53-4a3b-995e-8ad7f9e86f01@kernel.org>
+Date: Thu, 20 Mar 2025 07:11:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 4/4] spi: spi-qpic-snand: set nandc_offset for ipq9574
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 17/57] irqdomain: gpio: Switch to irq_domain_create_*()
+To: Andy Shevchenko <andy@kernel.org>
+Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org,
+ Doug Berger <opendmb@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Keerthy <j-keerthy@ti.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>,
+ Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+ <20250319092951.37667-18-jirislaby@kernel.org>
+ <Z9qfIQ2TEhkgLT2Q@smile.fi.intel.com>
 Content-Language: en-US
-To: Gabor Juhos <j4g8y7@gmail.com>, <manivannan.sadhasivam@linaro.org>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <broonie@kernel.org>, <bbrezillon@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>
-References: <20250310120906.1577292-1-quic_mdalam@quicinc.com>
- <20250310120906.1577292-5-quic_mdalam@quicinc.com>
- <a72f0db0-fd49-4cff-bffe-671fc757a219@gmail.com>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <a72f0db0-fd49-4cff-bffe-671fc757a219@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h-yF-uVW3wrLsLZDyljNUNKUnWF8Klm5
-X-Proofpoint-ORIG-GUID: h-yF-uVW3wrLsLZDyljNUNKUnWF8Klm5
-X-Authority-Analysis: v=2.4 cv=VaD3PEp9 c=1 sm=1 tr=0 ts=67dbb158 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=YrGrCH_7GMspvEpCFK4A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_01,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- bulkscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999 phishscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503200037
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <Z9qfIQ2TEhkgLT2Q@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 19. 03. 25, 11:40, Andy Shevchenko wrote:
+> On Wed, Mar 19, 2025 at 10:29:10AM +0100, Jiri Slaby (SUSE) wrote:
+>> irq_domain_add_*() interfaces are going away as being obsolete now.
+>> Switch to the preferred irq_domain_create_*() ones. Those differ in the
+>> node parameter: They take more generic struct fwnode_handle instead of
+>> struct device_node. Therefore, of_fwnode_handle() is added around the
+>> original parameter.
+>>
+>> Note some of the users can likely use dev->fwnode directly instead of
+>> indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
+>> guaranteed to be set for all, so this has to be investigated on case to
+>> case basis (by people who can actually test with the HW).
+> 
+> ...
+> 
+>>   	/**
+>>   	 * @first:
+>>   	 *
+>> -	 * Required for static IRQ allocation. If set, irq_domain_add_simple()
+> 
+>> -	 * will allocate and map all IRQs during initialization.
+> 
+> Can we leave this untouched? The new name will make the string 81 characters
+> long and I don't think we care about that, on the pros side it will reduce
+> a churn in this patch.
 
+Sure -- fixed.
 
-On 3/18/2025 8:28 PM, Gabor Juhos wrote:
-> 2025. 03. 10. 13:09 keltezéssel, Md Sadre Alam írta:
->> The BAM block expects NAND register addresses to be computed based on
->> the NAND register offset from QPIC base. This value is 0x30000 for
->> ipq9574. Update the 'nandc_offset' value in the qcom_nandc_props
->> appropriately.
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
->>
->> Change in [v3]
->>
->> * Added nand_offset for proper address calculation
->>    for newer Socs
->>
->> Change in [v2]
->>
->> * This patch was not part of v2
->>
->> Change in [v1]
->>
->> * This patch was not part of v1
->>
->>   drivers/spi/spi-qpic-snand.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
->> index 8c413a6a5152..85a742e21cf9 100644
->> --- a/drivers/spi/spi-qpic-snand.c
->> +++ b/drivers/spi/spi-qpic-snand.c
->> @@ -1604,6 +1604,7 @@ static void qcom_spi_remove(struct platform_device *pdev)
->>   static const struct qcom_nandc_props ipq9574_snandc_props = {
->>   	.dev_cmd_reg_start = 0x7000,
->>   	.supports_bam = true,
->> +	.nandc_offset = 0x30000,
->>   };
-> 
-> Applying the first patch alone results in the following error on IPQ9574:
-> 
-> [    3.596403] qcom_snand 79b0000.spi: failure in submitting cmd descriptor
-> [    3.596490] spi-nand spi0.0: probe with driver spi-nand failed with error -110
-> 
-> So this change should be integrated into the first patch. Otherwise, SPI NAND
-> support would be broken on IPQ9574 temporarily between the first and the
-> current patch.
-Ok, will integrate this in first patch in next revision.
-> 
-> Regards,
-> Gabor
+thanks,
+-- 
+js
+suse labs
 
