@@ -1,108 +1,127 @@
-Return-Path: <linux-kernel+bounces-570291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB226A6AE69
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BADAEA6AE71
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237834A0111
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32068463A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A3227BA9;
-	Thu, 20 Mar 2025 19:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77352227B8E;
+	Thu, 20 Mar 2025 19:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SryMWsN/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXu3DYpo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415B120297C;
-	Thu, 20 Mar 2025 19:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3FE555
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742498044; cv=none; b=FpTQJWREDZsenyngGIzqdsa1dBCVGjyChHThbvS1Lrl273ZYTxAPeqVej5ff3MWBHzgPL4oZZyS5CxKLDf+jHFNyVaaS3qN+JK9snRIWB34GtYoCDPuXwvYnl3HHuTDn+ilSQW8XAK4QjDu8IwqRRq9O0Xvz6zEts4+1oNpF9MY=
+	t=1742498399; cv=none; b=C6zJSwJNTNFaED4zVg+o3URyWIbu+RIEs+7ZOvSEE1A26Ku1r/Lg0hTli5Q/ZbQpy4rwr67f9FJ41onaRSnJDM/uzBzDVG29Mkvbhr4kMDNceFfghRGJm+McwV2rXv/QOi6aucmpH6inEt6t7WH5I2L5tu0rrLGZfpB7Pk302Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742498044; c=relaxed/simple;
-	bh=GMKQ+IsWksG+8EFLNZfKP/T07o9pwNrkxZF5rQ7ya3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXUZjftTNvPHbGKjH0iReTFt7yXx/OdQXBQJE7mUcq/FPwE7XSKsOgEaa31UTUnspH6Oehl11/+5pcKNUmdQh2zRG2/CEQ0cRJOEAuv2B9H0xzZLo/+oTOaPuq8HeT19aD4fv+6pAYf2lDw3umfmKlanIM4za/iGq5tRyq6ar2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SryMWsN/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04768C4CEDD;
-	Thu, 20 Mar 2025 19:14:00 +0000 (UTC)
+	s=arc-20240116; t=1742498399; c=relaxed/simple;
+	bh=18p1g7p7G+WKSCR/Qx7WOfz7URI7QNEFAgdaVdJ298A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LXfn0xYXRHQLu4ee6QY/xepUS2CRO3zSMJYF2O6hH3iYmMRmGJDOdrChxW/bv5r90pJVH3518X9e5LvayXY9RM/9V+HBqzvwWDyRSBUoqKcpzcaE1H//TxvB/ogXUuQe5CUd2m9BKs+Ir1f6xR2c4eQuSY3uu10rgyZDK16vSWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXu3DYpo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56420C4CEEC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742498043;
-	bh=GMKQ+IsWksG+8EFLNZfKP/T07o9pwNrkxZF5rQ7ya3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SryMWsN/ZDyqRfkm+Ild3Ogufm4HIPsfW1YToRbRWN8e0fDnBEUX9M54kQRMbXyIy
-	 Hbh/ZHIvepdBZ+aRyLEOtSKoisSwkcimysMyLm2mX6E1HNpSN2D81GLRFre2kBbOh8
-	 U6PIX4ftGtZ7fS6x0qOPsieRA+vTNcHW9rMKtBKxPpvbC481kqWasaSoyFUenSZhMa
-	 SRaetseswCRcNjN/iGAoIyRePmNYP3ElOs5FWrDeCKUJBH29CgvfLRK5Mn0pdOEwcF
-	 eWyBayJJmPqa2dcWuFCyukPFE1ShiNxH61CLGYGVMxH1O2EjMtzvxXGW7OC3hcQuGF
-	 22DQb3tzsmRGQ==
-Date: Thu, 20 Mar 2025 19:13:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Nico Pache <npache@redhat.com>
-Cc: rf@opensource.cirrus.com, patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, simont@opensource.cirrus.com,
-	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev,
-	davidgow@google.com, rmoar@google.com, johannes.berg@intel.com,
-	sj@kernel.org
-Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling
- it
-Message-ID: <618b8578-1897-45e4-83eb-b725102ab27d@sirena.org.uk>
-References: <20250319230539.140869-1-npache@redhat.com>
+	s=k20201202; t=1742498399;
+	bh=18p1g7p7G+WKSCR/Qx7WOfz7URI7QNEFAgdaVdJ298A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZXu3DYpot12xIosUsDGsQEawKQ/ZHXEh2gPkhxa3naMlou/8MKX1Dq31zYGKuRV5N
+	 cSNnnPHAfu8Hj7zNuV5mAsPsV2dVv3G8dJFFFXo/aoJEe6tSmrRpUjjB4EEyNbrOeW
+	 8qTfBa2HdODIKEBr6ctEMj6JMuxSGXWPMtfwJ8O5tWNQBqMd4wsJpJN1gQ8bM2WYgW
+	 1BFbhYrDHsTgWTjgVvf7UF7qK1hlTfG77FF4wmyAm1zhnjgVF/TTZnhMyXevMxg5IO
+	 C+ZAqYhrSScmbDp4nv0MEwO0c8AnmUpOkrhe7xKVIkhNK2m9MXrLLnqAAd0OSGAbnw
+	 72iUa79dN1/tg==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30beedb99c9so11960531fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:19:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWf5eqsigUtoEOgIaJ///QTtUdcyDoSrwXFAIcTGx3v9SOhcuZ+/yL2KkNbtUPK9EEPeW2sBSPk+rppfow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYYXe9WantxO6kdBeM0Z348G16DmLtKXyX/OAbumesRXEANJoE
+	kzC/hPeQhldhjUpB0YzGmsw7q4Yo6l5StKCEMpaqPAj+TiiGZ7Oc1ZQ9vYd4D4BfJu+QFgk0I3k
+	3W2+3rMCro80fXV2emiV032RUaPM=
+X-Google-Smtp-Source: AGHT+IFv6qp9ZC3REaL6pqtdJRcVeHiw0hqk4WEaMMyj3aa+lTrEnhzZ4agUq0zoyXipvH8hAe5e45n4ydKb3Rnfc88=
+X-Received: by 2002:a2e:bc04:0:b0:30c:201a:149a with SMTP id
+ 38308e7fff4ca-30d7e2aab8bmr1729101fa.25.1742498397674; Thu, 20 Mar 2025
+ 12:19:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yj/ZQFCSnYoR7wNF"
-Content-Disposition: inline
-In-Reply-To: <20250319230539.140869-1-npache@redhat.com>
-X-Cookie: Do not fold, spindle or mutilate.
+References: <SN6PR02MB415723FBCD79365E8D72CA5FD4D82@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To: <SN6PR02MB415723FBCD79365E8D72CA5FD4D82@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 20 Mar 2025 20:19:45 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXH-awwT99FTaBJqyEbgBoxc20h4LfbzXMP00NQHBs03+A@mail.gmail.com>
+X-Gm-Features: AQ5f1JpmsC5AWna36uVwzk7RFc0W8oqX3rhKRXxe5GLuxfgWLI07lDcdjZDXf7U
+Message-ID: <CAMj1kXH-awwT99FTaBJqyEbgBoxc20h4LfbzXMP00NQHBs03+A@mail.gmail.com>
+Subject: Re: Compile problems w/gcc 9.4.0 in linux-next
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "brgerst@gmail.com" <brgerst@gmail.com>, "mingo@kernel.org" <mingo@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Michael,
 
---yj/ZQFCSnYoR7wNF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, 20 Mar 2025 at 19:29, Michael Kelley <mhklinux@outlook.com> wrote:
+>
+> Brian/Ingo/Ard -
+>
+> I'm seeing a compile problem in linux-next-20250319 with gcc 9.4.0. I've bisected
+> to a group of 6 commits that you authored:
+>
+> a9a76b38aaf5 x86/boot: Disable stack protector for early boot code
+> f58b63857ae3 x86/pvh: Use fixed_percpu_data for early boot GSBASE
+> cb7927fda002 x86/relocs: Handle R_X86_64_REX_GOTPCRELX relocations
+> 78c4374ef8b8 x86/module: Deal with GOT based stack cookie load on Clang < 17
+> 80d47defddc0 x86/stackprotector/64: Convert to normal per-CPU variable
+> 9d7de2aa8b41 x86/percpu/64: Use relative percpu offsets
+>
+> As of a9a76b38aaf5, everything compiles correctly.
+>
+> For f58b63857ae3 thru 80d47defddc0, this error occurs:
+>
+>     arch/x86/platform/pvh/head.S: Assembler messages:
+>     arch/x86/platform/pvh/head.S:183: Error: operand size mismatch for `movq'
+>
 
-On Wed, Mar 19, 2025 at 05:05:39PM -0600, Nico Pache wrote:
-> FW_CS_DSP gets enabled if KUNIT is enabled. The test should rather
-> depend on if the feature is enabled. Fix this by moving FW_CS_DSP to the
-> depends on clause, and set CONFIG_FW_CS_DSP=y in the kunit tooling.
+This is simply a bug in patch f58b63857ae3, which uses movq on
+EDX/EAX. This breaks bisection (as you've noticed), annoyingly, and
+I'll leave it to the tip maintainers to decide whether this warrants a
+rebase (given that the fix is already queued up as well)
 
->  config FW_CS_DSP_KUNIT_TEST
->  	tristate "KUnit tests for Cirrus Logic cs_dsp" if !KUNIT_ALL_TESTS
-> -	depends on KUNIT && REGMAP
-> +	depends on KUNIT && REGMAP && FW_CS_DSP
->  	default KUNIT_ALL_TESTS
-> -	select FW_CS_DSP
+> As of 9d7de2aa8b41 and later, the head.S error goes away, and this
+> error occurs:
+>
+>     lib/zstd/compress/huf_compress.c:1033:1: internal compiler error: Segmentation fault
+>      1033 | {
+>           | ^
+>     Please submit a full bug report,
+>     with preprocessed source if appropriate.
+>     See <file:///usr/share/doc/gcc-9/README.Bugs> for instructions.
+>
+> Interestingly, if DYNAMIC_BMI2 in lib/zstd/common/portability_macros.h
+> is changed on line 61 to always be defined as 0, the compile problem in
+> huf_compress.c goes away.
+>
 
-This makes no sense to me, the select statement is forcing on the code
-it's testing which is a library and so is selected by it's users, this
-change will just stop the tests being run unless someone does the dance
-to enable a driver which relies on the library.  That is something that
-seems unlikely to change the outcome of the tests when run from KUnit
-which is independent of any hardware.
+Without having looked at the crashing code, I suspect that the only
+meaningful course of action here is to tweak the conditional logic
+that defines DYNAMIC_BMI2 to only enable it for GCC >= 10.1 (assuming
+those are unaffected) In any case, GCC 9.4 is not going to get fixed
+in the field, so even if this gets fixed on the GCC side, we will have
+to deal with it here.
 
---yj/ZQFCSnYoR7wNF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcaPUACgkQJNaLcl1U
-h9AIRgf/ccGrIBHTcdZaATYWPh0Ma2trtMpDz+zzZLn/Darau6fPQVOZYxw57Jfm
-XVQ4la3YkHtK6A2p12YD84pcpE2VzE3GN3xyhjoaBoO+h9cESs4foUWvRLhy1QbU
-oQXGUDgFR5Fs8bix/z1cEGbexaE5n1TwruWvrkFJUKbrKcmKXlB8qZQCq7iX/qOU
-8qSksIDnzq4YU/c4sWxMw7TdJriDX6h0adQlgDZb+lAZS2XK3Gd4Tsb/bRMK14nA
-iRdnQji3tW5WJH2FOTt7hoOMNu2hECfbFDYzHUVhpQM0zJG4plgHi3syp8/AlSSU
-cobYnJ2yCJMhMHU+us8jRNV3leRrcg==
-=bWLQ
------END PGP SIGNATURE-----
-
---yj/ZQFCSnYoR7wNF--
+> I'm using gcc 9.4.0 in an Ubuntu 20.04 install as it's the standard compiler
+> for that version of Ubuntu. I'm guessing that getting a fix for that
+> relatively old version of gcc isn't likely. I have not tested with other
+> gcc versions.
 
