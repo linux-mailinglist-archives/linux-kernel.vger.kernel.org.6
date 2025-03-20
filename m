@@ -1,92 +1,84 @@
-Return-Path: <linux-kernel+bounces-570388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D474AA6AFBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:19:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BC2A6AFC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:21:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8515C189739D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951FB4A057E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3B0228C9D;
-	Thu, 20 Mar 2025 21:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDC922A7EA;
+	Thu, 20 Mar 2025 21:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3Ksx6nB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aA516Z88"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17EE1DE3CA;
-	Thu, 20 Mar 2025 21:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014AC1EA7DE;
+	Thu, 20 Mar 2025 21:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742505567; cv=none; b=UmmWoHK7Aur0cPQgZziE5qhsSHqjXXpcFfCuckQsswz9IyekKZr6vELzTGzmq8KMa7o0vM6SBpD2AreXaNTVvhP2o+BnO/SDz8S0RqOXHGhLc+blls/UZpNEzHV4/GIUgbXr9NLuv1Ocu/shrlNS/j6s6SaC0ZZ0v0L/cHidxUU=
+	t=1742505654; cv=none; b=O7KnIzxZRtv0quyBwP/vydFkkabXmK1qJrXsQYE2LPtTYT2aRd5Bw5kgJOuctzF6ptE9x633Cg6mJ0G403whaA0aNX53wbs19kQCbwlAFjGNy7OTD9QDsCNbimh6LwYbmwZYuIJ/Vcap/YWFh8w1QSgv+009jr3lzYb8K9Ix3Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742505567; c=relaxed/simple;
-	bh=otPRo7MmZtMEwZMgORvrMe6BrsQxTxxInq8ef2QgTbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DS/TMBcD0Cip9Z0M5QPYTQO0llZ61TdaMo+zfIlD07T4DEvkp8bFL+80Buba84eIrdCkVQ3Wx+VxkfCi+24T8dfGJw4oMrF/Ni6A9nFIgvFvTMP1r5xTVCNDShJ2OEOWJlJEOoh2aKfKk7QM6UoiR7Y5ip42iDVgHb9jLntoDac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3Ksx6nB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBE3C4CEDD;
-	Thu, 20 Mar 2025 21:19:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742505566;
-	bh=otPRo7MmZtMEwZMgORvrMe6BrsQxTxxInq8ef2QgTbU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X3Ksx6nBkLL4MQtRy0ldgQlodlZ4OcV9FPmmlmjvRuHMLjiURRJYfrp+vk7Bv/10v
-	 xM2wmURnunFDqT64Kh5MPMYwPA7Q11fPNOlQRAGtTjAjAlPr4Ck17zCvE1zihc9Rx+
-	 vq1+VvBRkTJbjyUO9k1UlnDqwYFI/BzYW7R0QNip/thXFiWcmHPwoWotyzr+hzTRTY
-	 h+kuvrw8KO137npE/AcKudn5gGmfjoccgTbVgSnLrOX54Y+QN51Mo2X69m7x1Rgd5o
-	 Sw3eiE5p+FfIWD0GNEyaumWPpH3jko6uSxpRJbrRNt9ORL+F0imzx1dObmXH3+VS0k
-	 EAcarm/H+DfRQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1742505654; c=relaxed/simple;
+	bh=+s7ZB5CBM9CcGb7PpCJcK4Lr37jqrpaUHbWPFDVwTgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bf1Y1Qzl9iu4tnZE5/j5kVp6inuv1GvHFPrMei2k04Dma3p5u6BMkNpzi9JtxH6nh7N6lEHIr2AIl09NCDra7PPoSyrwK5A0AvqItbt6JCY8s6Q3bYf8bUyu6U0aksA4hH1z4Q8KcRiL1mzA5vIVBxwpkoeAI5XAKTJylHf3pTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aA516Z88; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+UI5/kSNnDWvxYjcQDDBW5iFQFnCG/NBqKa7zfzLaO8=; b=aA516Z88ocJ1ZbpR5Vx88VqxFq
+	xq+NNe2hLJZz8N1TJ7TN86HC+bA32PanbhdX0HOqUYLPcmFuMQJMiY2QCJV6ymLJvSajp5aW3LJoC
+	EdX/5TvdyKyLJLVMFUxZuyw3whhMoamPljYS62YTDS3JLejwZKmpWQqUFzawHMw1MI5g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tvNJe-006W48-U2; Thu, 20 Mar 2025 22:20:38 +0100
+Date: Thu, 20 Mar 2025 22:20:38 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: hfdevel@gmx.net
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: mmc: Remove redundant sdhci.txt
-Date: Thu, 20 Mar 2025 16:19:21 -0500
-Message-ID: <20250320211922.1135669-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+Subject: Re: [PATCH net-next v6 4/7] net: phy: aquantia: add essential
+ functions to aqr105 driver
+Message-ID: <075283ba-ced1-4aa8-b9ec-7bb456d1d82a@lunn.ch>
+References: <20250318-tn9510-v3a-v6-0-808a9089d24b@gmx.net>
+ <20250318-tn9510-v3a-v6-4-808a9089d24b@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-tn9510-v3a-v6-4-808a9089d24b@gmx.net>
 
-The properties in sdhci.txt are documented in sdhci-common.yaml, too.
-Remove the txt binding.
+> +static int aqr105_config_speed(struct phy_device *phydev)
+> +{
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+This is used when autoneg is disabled. Generally the name would be
+_setup_forced, e.g. genphy_setup_forced(). Sticking to that naming
+convention makes is simpler to understand if you know other PHY
+drivers.
+
+Once you have changed this, you can add my Reviewed-by:
+
+    Andrew
+
 ---
- Documentation/devicetree/bindings/mmc/sdhci.txt | 13 -------------
- 1 file changed, 13 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mmc/sdhci.txt
-
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci.txt b/Documentation/devicetree/bindings/mmc/sdhci.txt
-deleted file mode 100644
-index 0e9923a64024..000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci.txt
-+++ /dev/null
-@@ -1,13 +0,0 @@
--The properties specific for SD host controllers. For properties shared by MMC
--host controllers refer to the mmc[1] bindings.
--
--  [1] Documentation/devicetree/bindings/mmc/mmc.txt
--
--Optional properties:
--- sdhci-caps-mask: The sdhci capabilities register is incorrect. This 64bit
--  property corresponds to the bits in the sdhci capability register. If the bit
--  is on in the mask then the bit is incorrect in the register and should be
--  turned off, before applying sdhci-caps.
--- sdhci-caps: The sdhci capabilities register is incorrect. This 64bit
--  property corresponds to the bits in the sdhci capability register. If the
--  bit is on in the property then the bit should be turned on.
--- 
-2.47.2
-
+pw-bot: cr
 
