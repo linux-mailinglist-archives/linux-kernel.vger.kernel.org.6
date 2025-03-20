@@ -1,609 +1,101 @@
-Return-Path: <linux-kernel+bounces-569971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467ACA6AA51
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:51:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0003A6AA4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F2C5189A0D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E989981083
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA2F1EDA18;
-	Thu, 20 Mar 2025 15:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472701EB1AC;
+	Thu, 20 Mar 2025 15:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CAbNY+ug"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUT6uO7d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43AF1E25F2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C36C1E5201;
+	Thu, 20 Mar 2025 15:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742485819; cv=none; b=Zg9y7TIGroTHsrT8NLwNeEW8lahH/BjWe+LOc1U6j4zxhUlTwmjQra7+7Y8Y/LSEdjKd0VdqorQFK49wJxJMnLGbIOcQ5cSyURPEUj900TAEvu8oOszPPLivihjsf7YbmXMYlrRELayFvLbPCyIeViIM2KQQgm3Gefs8THDdVmw=
+	t=1742485817; cv=none; b=HjTWKUvRRZJxewMGj7wEFvw9lDwpL/tFE7NT1lNYCzITps0Q8I1dBVkGCozUQwX4gYwHPvxgUnMER1g0/b+sjHdNFIWJGljq7jzwnNsoKSVFgjgAkVAc4QzO82RBPTQh4IhYiGS5+CfHz9Q6EFMfol1LEq8XxitG5SmL/48seFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742485819; c=relaxed/simple;
-	bh=MD923ETrfGNkwtBQ5Cc/qfTHEY4et7lO4KUdx0xtL4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jYGUSnneHssPMFXgRxF8T3C3SKzRUZ5fhhC1qzwT9gRR7vBuqnIjvoaxougeXZwg7eqGug/ZGjaY9tJCCQE0Iu1EK4OySQ2bGTmAps7MPJq9B3LgK6iGnyciofi7u6yWW2tknbVKKJ8+nper8ReGelercpTwKK6MHHgtxpyVWVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CAbNY+ug; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476693c2cc2so383911cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742485816; x=1743090616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LJR1TIVVvTn578naWfOFfrvhntkzNIdqhtCPD5htUrY=;
-        b=CAbNY+ughpsCqFj66pO+UfNKRhD2Cb7e3Xyi2WiycdTg4JV5rl/pgRtlqeYp+fqP7A
-         YAKwmiusIHRkFmP9o7Sz0fIVv5NV/wKPxQd5VpOtWf4bzLS+2/JDMRe39RIhZJWMbJNL
-         O0vMpjudZG1GuM5VDRyLrF41+nr3TirtX+d/Eka65zQJtxiSU+5PembxDP0316FalZUS
-         drYj9IGCLwmwBIgtCdGm3yi2aNuc4mnagQhDFjIl5HPuJZgtpMxz1pgWgYXsZ267kfE8
-         p9vmq4bVwdltmjtXR+0t+lI6fspSbSXq1gzuvjR+PWEPlku3r9IzCuyVG7R9tSdZXAwA
-         r+Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742485816; x=1743090616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LJR1TIVVvTn578naWfOFfrvhntkzNIdqhtCPD5htUrY=;
-        b=Pl5CjZvIxchVJDnftFcDSxrHbYfZnX8icu7eStNXMCvf1Om8zBlRSred5XYIWoFh+9
-         sRnAoOmyc8nHVnBjVujuQO/yX3QA6P4ABXAYnvDQThd+5V/Ctqs1YdH/0+1yCpqV61nE
-         SC6HllZjx/f2hMlQKNtp+H3nASZnh/qbaG6Rv7QU7lN0zgGBDsK+404K1pEg2XAZLNGR
-         iHh7h0DCTvsF1/S2XnHv6oURYlI8+aypyupcq7wGO7Cyl8HFM0b7j1l45ltZCAv+V34h
-         B/cvdAFIWv9qrcxQuZY5KubB8Rcsvn9+tKgxKjK061dWOmVdvVtu3F5mMaXqjdlc3IzR
-         /iVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzQpKsL3vmEUNtEaG66JcgrOPbROuDVTs4MtxaWQTYnBKLPMuV2ek0WC/9sY2KX3qzHJcbR6bXQhLdHC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyFRCKMh8IEzaI8a9YjGP4z6i39fBUy7S0dHQ+WGtopghHj2G6
-	P9Tfqw9Az1zTr2xwzte1tE6BnMsv1pd0syE3kUt0YdCA/UU1a+YhR/HULHUQfkoZqCABJB1mGg/
-	312RDaPkY39CEZqdjCPe3HYIa0WmSfgA9WDcF/Qnm4SuzLVZ3gqT4
-X-Gm-Gg: ASbGncvY0H+bV68O9P+3bkaFIacHwdWmkc9Pt5AIJNEYnCPlIyxn+LLc8sSSb7HkyXZ
-	GuZNhvYQAlm+SlmqeRspJpraDjF3GUr1pCU+lmzUN7gqcNYvrkxMJMbTi0i9tiWTSuFN/6dDTMV
-	7L6gU6NDcOIU0tmKQjFFAEilKIPCFa2KWef/eZOSLfNru6n03+PZ3Ohgml
-X-Google-Smtp-Source: AGHT+IG6fAJcDDHg+PLZXwTzgCSYZGoSylptNZVqM1MUG2yRD7/J0OXUbe4MwVWLdJRpwzGSJiXz6S5GGTmuk4J0KnM=
-X-Received: by 2002:a05:622a:1f86:b0:476:f1a6:d8e8 with SMTP id
- d75a77b69052e-47712ba3267mr3875601cf.11.1742485815361; Thu, 20 Mar 2025
- 08:50:15 -0700 (PDT)
+	s=arc-20240116; t=1742485817; c=relaxed/simple;
+	bh=pyAJ9pTMRfAZijv4b+LgLfdzavNILKNsBgVkyl/TfU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7hxYHpWiFOpt+8vILtJhl7G7+iu5QWVpXpJuwbrD4q67XveKHSw82Xj5qpAuBwvWkmb9jWb39iIwrRY+iux52qmvFospkS4uoaqtlM1EUXu9PHZI37CdQmS3ky57Kz93XcuKVFC+UcheTpcBc8uFLB4QDf3KygML0ncXUgRo5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUT6uO7d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E14C4CEDD;
+	Thu, 20 Mar 2025 15:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742485817;
+	bh=pyAJ9pTMRfAZijv4b+LgLfdzavNILKNsBgVkyl/TfU8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FUT6uO7d+E+EbjUhPjhUvxl1mK288J+YHWF5YEAgeHdcT+mk+FpA39s3fLwcotEV8
+	 otjDqPlKZ8NBq17P5ETmKkV4zEWjSkaO1+/Z8N5vxbZfBEqMk91I0TBfHoad8sf8oZ
+	 fQb52G4oaiUSMcSbGT0ZANhf8IcZ4YU4HWzNLiZdQ020oF7kdutrWKp+YOb7cN35aj
+	 MQiNZ1Akm2pc+TF4WrRvb//mtkZn0ZYjtSXr7A+nq2PAX7CNlmozVroQ76tGC0HMmz
+	 eN/oEZ+0wKHLYtnXFzIfsQIakvIU5ZlSqjKlG524z9ICOcsX4DFlVbcdTWDOozEaDg
+	 TovGf/lWmzHuw==
+Date: Thu, 20 Mar 2025 15:50:12 +0000
+From: Lee Jones <lee@kernel.org>
+To: Nam Tran <trannamatk@gmail.com>
+Cc: krzk+dt@kernel.org, pavel@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
+Message-ID: <20250320155012.GT3890718@google.com>
+References: <20250306172126.24667-4-trannamatk@gmail.com>
+ <20250318133508.4531-1-trannamatk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <VI2PR04MB11147C17A467F501A333073F4E8D82@VI2PR04MB11147.eurprd04.prod.outlook.com>
- <x5bdxqmy7wkb4telwzotyyzgaohx5duez6xhmgy6ykxlgwpyx2@rsu2epndnvy3>
-In-Reply-To: <x5bdxqmy7wkb4telwzotyyzgaohx5duez6xhmgy6ykxlgwpyx2@rsu2epndnvy3>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 20 Mar 2025 08:50:04 -0700
-X-Gm-Features: AQ5f1JrzqQe95iHFrWYdcG3JQVK_OMm648b8ZmU7db74dAXXkb2jCxtPKQECet8
-Message-ID: <CAJuCfpGajtAP8-kw5B5mKmhfyq6Pn67+PJgMjBeozW-qzjQMkw@mail.gmail.com>
-Subject: Re: Ask help about this patch b951aaff5035 " mm: enable page
- allocation tagging"
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Carlos Song <carlos.song@nxp.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "willy@infradead.org" <willy@infradead.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318133508.4531-1-trannamatk@gmail.com>
 
-On Thu, Mar 20, 2025 at 4:24=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Thu, Mar 20, 2025 at 11:07:41AM +0000, Carlos Song wrote:
-> > Hi, all
-> >
-> > I found a 300ms~600ms IRQ off when writing 1Gb data to mmc device at I.=
-MX7d SDB board at Linux-kernel-v6.14.
-> > But I test the same case at Linux-kernel-v6.7, this longest IRQ off tim=
-e is only 1ms~2ms. So the issue is introduced from v6.7~v6.14.
-> >
-> > Run this cmd to test:
-> > dd if=3D/dev/zero of=3D/dev/mmcblk2p4 bs=3D4096 seek=3D12500 count=3D25=
-6000 conv=3Dfsync
-> >
-> > This issue looks from blkdev_buffered_write() function. Because when I =
-run this cmd with "oflag=3Ddirect" to use
-> > blkdev_direct_write(), I can not see any long time IRQ off.
-> >
-> > Then I use Ftrace irqoff tracer to trace the longest IRQ off event, I f=
-ound some differences between v6.7 and v6.14:
-> > In iomap_file_buffered_write(), __folio_alloc (in v6.7) is replaced by =
-_folio_alloc_noprof (in v6.14) by this patch.
-> > The spinlock disabled IRQ ~300ms+. It looks there are some fixes for th=
-is patch, but I still can see IRQ off 300ms+ at 6.14.0-rc7-next-20250319.
+On Tue, 18 Mar 2025, Nam Tran wrote:
 
-Do you have CONFIG_MEM_ALLOC_PROFILING enabled and if so, does the
-issue disappear if you disable CONFIG_MEM_ALLOC_PROFILING?
+> From: Nam Tran <trannamatk@gmail.com>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org> Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+> 
+> I sincerely apologize for not addressing all of your previous comments earlier. That was not my intention, and I truly appreciate the time and effort you have put into reviewing my patch. Below, I would like to properly address your concerns.
+> 
+> On Fri, Mar 07, 2025 at 12:21:26AM +0700, Nam Tran wrote:
+> > The chip can drive LED matrix 4x3.
+> > This driver enables LED control via I2C.
+> 
+> You still did not respond to comments from v1. I don't see it being addressed.
+> 
+> Nam: I am sorry. This is my mistake. I think that I just need to update source code based on your comments and submit a new patch. This is the first time I try to update a new thing to the Linux Kernel. I will give answer inline your message for tracing easily.
 
-> >
-> > Do I trigger one bug? I know little about mem so I have to report it an=
-d hope I can get some help or guide.
-> > I put my ftrace log at the mail tail to help trace and explain.
->
-> Did you track down which spinlock?
->
-> >
-> > commit b951aaff503502a7fe066eeed2744ba8a6413c89
-> > Author: Suren Baghdasaryan surenb@google.com<mailto:surenb@google.com>
-> > Date:   Thu Mar 21 09:36:40 2024 -0700
-> >
-> >     mm: enable page allocation tagging
-> >
-> >     Redefine page allocators to record allocation tags upon their invoc=
-ation.
-> >     Instrument post_alloc_hook and free_pages_prepare to modify current
-> >     allocation tag.
-> >
-> >     [surenb@google.com: undo _noprof additions in the documentation]
-> >       Link: https://lkml.kernel.org/r/20240326231453.1206227-3-surenb@g=
-oogle.com
-> >     Link: https://lkml.kernel.org/r/20240321163705.3067592-19-surenb@go=
-ogle.com
-> >     Signed-off-by: Suren Baghdasaryan surenb@google.com<mailto:surenb@g=
-oogle.com>
-> >     Co-developed-by: Kent Overstreet kent.overstreet@linux.dev<mailto:k=
-ent.overstreet@linux.dev>
-> >     Signed-off-by: Kent Overstreet kent.overstreet@linux.dev<mailto:ken=
-t.overstreet@linux.dev>
-> >     Reviewed-by: Kees Cook keescook@chromium.org<mailto:keescook@chromi=
-um.org>
-> >     Tested-by: Kees Cook keescook@chromium.org<mailto:keescook@chromium=
-.org>
-> >     Cc: Alexander Viro viro@zeniv.linux.org.uk<mailto:viro@zeniv.linux.=
-org.uk>
-> >     Cc: Alex Gaynor alex.gaynor@gmail.com<mailto:alex.gaynor@gmail.com>
-> >     Cc: Alice Ryhl aliceryhl@google.com<mailto:aliceryhl@google.com>
-> >     Cc: Andreas Hindborg a.hindborg@samsung.com<mailto:a.hindborg@samsu=
-ng.com>
-> >     Cc: Benno Lossin benno.lossin@proton.me<mailto:benno.lossin@proton.=
-me>
-> >     Cc: "Bj=C3=B6rn Roy Baron" bjorn3_gh@protonmail.com<mailto:bjorn3_g=
-h@protonmail.com>
-> >     Cc: Boqun Feng boqun.feng@gmail.com<mailto:boqun.feng@gmail.com>
-> >     Cc: Christoph Lameter cl@linux.com<mailto:cl@linux.com>
-> >     Cc: Dennis Zhou dennis@kernel.org<mailto:dennis@kernel.org>
-> >     Cc: Gary Guo gary@garyguo.net<mailto:gary@garyguo.net>
-> >     Cc: Miguel Ojeda ojeda@kernel.org<mailto:ojeda@kernel.org>
-> >     Cc: Pasha Tatashin pasha.tatashin@soleen.com<mailto:pasha.tatashin@=
-soleen.com>
-> >     Cc: Peter Zijlstra peterz@infradead.org<mailto:peterz@infradead.org=
->
-> >     Cc: Tejun Heo tj@kernel.org<mailto:tj@kernel.org>
-> >     Cc: Vlastimil Babka vbabka@suse.cz<mailto:vbabka@suse.cz>
-> >     Cc: Wedson Almeida Filho wedsonaf@gmail.com<mailto:wedsonaf@gmail.c=
-om>
-> >     Signed-off-by: Andrew Morton akpm@linux-foundation.org<mailto:akpm@=
-linux-foundation.org>
-> >
-> >
-> > Ftrace irqoff tracer shows detail:
-> > At v6.14:
-> > # tracer: irqsoff
-> > #
-> > # irqsoff latency trace v1.1.5 on 6.14.0-rc7-next-20250319
-> > # --------------------------------------------------------------------
-> > # latency: 279663 us, #21352/21352, CPU#0 | (M:NONE VP:0, KP:0, SP:0 HP=
-:0 #P:2)
-> > #    -----------------
-> > #    | task: dd-805 (uid:0 nice:0 policy:0 rt_prio:0)
-> > #    -----------------
-> > #  =3D> started at: __rmqueue_pcplist
-> > #  =3D> ended at:   _raw_spin_unlock_irqrestore
-> > #
-> > #
-> > #                    _------=3D> CPU#
-> > #                   / _-----=3D> irqs-off/BH-disabled
-> > #                  | / _----=3D> need-resched
-> > #                  || / _---=3D> hardirq/softirq
-> > #                  ||| / _--=3D> preempt-depth
-> > #                  |||| / _-=3D> migrate-disable
-> > #                  ||||| /     delay
-> > #  cmd     pid     |||||| time  |   caller
-> > #     \   /        ||||||  \    |    /
-> >       dd-805       0d....    1us : __rmqueue_pcplist
-> >       dd-805       0d....    3us : _raw_spin_trylock <-__rmqueue_pcplis=
-t
-> >       dd-805       0d....    7us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >       dd-805       0d....   10us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >       dd-805       0d....   12us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >       dd-805       0d....   15us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >       dd-805       0d....   17us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >       dd-805       0d....   19us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >    ...
-> >       dd-805       0d.... 1535us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1538us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1539us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1542us+: try_to_claim_block <-__rmqueue_pcpli=
-st
-> >       dd-805       0d.... 1597us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1599us+: try_to_claim_block <-__rmqueue_pcpli=
-st
-> >       dd-805       0d.... 1674us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1676us+: try_to_claim_block <-__rmqueue_pcpli=
-st
-> >       dd-805       0d.... 1716us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1718us+: try_to_claim_block <-__rmqueue_pcpli=
-st
-> >       dd-805       0d.... 1801us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-805       0d.... 1803us+: try_to_claim_block <-__rmqueue_pcpli=
-st
-> > ...
-> >      dd-805       0d.... 279555us : find_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-805       0d.... 279556us : find_suitable_fallback <-__rmqueue=
-_pcplist
-> >       dd-805       0d.... 279558us : find_suitable_fallback <-__rmqueue=
-_pcplist
-> >       dd-805       0d.... 279560us+: try_to_claim_block <-__rmqueue_pcp=
-list
-> >       dd-805       0d.... 279616us : find_suitable_fallback <-__rmqueue=
-_pcplist
-> >       dd-805       0d.... 279618us : __mod_zone_page_state <-__rmqueue_=
-pcplist
-> >       dd-805       0d.... 279620us : find_suitable_fallback <-__rmqueue=
-_pcplist
-> > ...
-> >       dd-805       0d.... 279658us : find_suitable_fallback <-__rmqueue=
-_pcplist
-> >       dd-805       0d.... 279660us : _raw_spin_unlock_irqrestore <-__rm=
-queue_pcplist
-> >       dd-805       0d.... 279662us : _raw_spin_unlock_irqrestore
-> >       dd-805       0d.... 279666us+: trace_hardirqs_on <-_raw_spin_unlo=
-ck_irqrestore
-> >       dd-805       0d.... 279712us : <stack trace>
-> > =3D> get_page_from_freelist
-> > =3D> __alloc_frozen_pages_noprof
-> > =3D> __folio_alloc_noprof
-> > =3D> __filemap_get_folio
-> > =3D> iomap_write_begin
-> > =3D> iomap_file_buffered_write
-> > =3D> blkdev_write_iter
-> > =3D> vfs_write
-> > =3D> ksys_write
-> > =3D> ret_fast_syscall
-> >
-> > At v6.7:
-> > # tracer: irqsoff
-> > #
-> > # irqsoff latency trace v1.1.5 on 6.7.0
-> > # --------------------------------------------------------------------
-> > # latency: 2477 us, #146/146, CPU#0 | (M:server VP:0, KP:0, SP:0 HP:0 #=
-P:2)
-> > #    -----------------
-> > #    | task: dd-808 (uid:0 nice:0 policy:0 rt_prio:0)
-> > #    -----------------
-> > #  =3D> started at: _raw_spin_lock_irqsave
-> > #  =3D> ended at:   _raw_spin_unlock_irqrestore
-> > #
-> > #
-> > #                    _------=3D> CPU#
-> > #                   / _-----=3D> irqs-off/BH-disabled
-> > #                  | / _----=3D> need-resched
-> > #                  || / _---=3D> hardirq/softirq
-> > #                  ||| / _--=3D> preempt-depth
-> > #                  |||| / _-=3D> migrate-disable
-> > #                  ||||| /     delay
-> > #  cmd     pid     |||||| time  |   caller
-> > #     \   /        ||||||  \    |    /
-> >       dd-808       0d....    1us!: _raw_spin_lock_irqsave
-> >       dd-808       0d....  186us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  189us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  191us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  192us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  194us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  196us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  199us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d....  203us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d....  330us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  332us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  334us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  336us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  338us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  339us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  341us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d....  343us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d....  479us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  481us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  483us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  485us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  486us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  488us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  490us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d....  492us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d....  630us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  632us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  634us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  636us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  638us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  640us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  642us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d....  644us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d....  771us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  773us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  775us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  777us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  778us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  780us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  782us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d....  784us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d....  911us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  913us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  915us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  916us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  918us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  920us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d....  922us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d....  924us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1055us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1058us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1059us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1061us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1063us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1065us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1066us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1068us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1194us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1196us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1198us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1200us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1202us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1203us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1205us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1208us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1333us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1335us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1337us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1339us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1341us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1342us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1344us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1346us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1480us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1482us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1484us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1486us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1488us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1490us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1492us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1494us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1621us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1623us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1625us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1627us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1629us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1630us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1632us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1634us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1761us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1763us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1765us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1766us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1768us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1770us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1772us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1774us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 1900us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1902us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1903us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1905us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1907us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1909us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 1911us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 1913us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 2038us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2040us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2042us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2044us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2046us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2047us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2049us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2051us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2053us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 2055us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 2175us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2176us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2178us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2180us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2182us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2183us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2185us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2187us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2189us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2191us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2192us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2194us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 2196us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 2323us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2325us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2327us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2328us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2330us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2332us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2334us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2335us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2337us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2339us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2341us : find_suitable_fallback <-__rmqueue_p=
-cplist
-> >       dd-808       0d.... 2343us : steal_suitable_fallback <-__rmqueue_=
-pcplist
-> >       dd-808       0d.... 2345us!: move_freepages_block <-steal_suitabl=
-e_fallback
-> >       dd-808       0d.... 2470us : __mod_zone_page_state <-__rmqueue_pc=
-plist
-> >       dd-808       0d.... 2473us : _raw_spin_unlock_irqrestore <-__rmqu=
-eue_pcplist
-> >       dd-808       0d.... 2476us : _raw_spin_unlock_irqrestore
-> >       dd-808       0d.... 2479us+: tracer_hardirqs_on <-_raw_spin_unloc=
-k_irqrestore
-> >       dd-808       0d.... 2520us : <stack trace>
-> > =3D> get_page_from_freelist
-> > =3D> __alloc_pages
-> > =3D> __folio_alloc
-> > =3D> __filemap_get_folio
-> > =3D> iomap_write_begin
-> > =3D> iomap_file_buffered_write
-> > =3D> blkdev_write_iter
-> > =3D> vfs_write
-> > =3D> ksys_write
-> > =3D> ret_fast_syscall
-> >
-> > Best Regard
-> > Carlos Song
-> >
+For the record, I find this format pretty unreadable.
+
+Please reply directly to the email you are responding to.  This response
+looks as though you're replying to the patch itself.
+
+Configure your mailer to refrain from placing header information (To:
+Cc: From: etc) in the body of the mail.
+
+If your mailer conducts quoting correctly, there should be no need for
+"Nam:" comments.  For me it looks as though you authored both the review
+comment and the response, since your mailer currently does not handle
+quoting correctly.
+
+It would help everyone out if you could configure your mailer correctly.
+
+Maybe this document has additional hints for you particular mailer:
+
+  Documentation/process/email-clients.rst
+
+-- 
+Lee Jones [李琼斯]
 
