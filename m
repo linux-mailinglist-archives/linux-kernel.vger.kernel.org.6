@@ -1,157 +1,136 @@
-Return-Path: <linux-kernel+bounces-569319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E29A6A164
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:30:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66D8A6A167
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5E18A6E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B610746624B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE67C215F49;
-	Thu, 20 Mar 2025 08:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8E214226;
+	Thu, 20 Mar 2025 08:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5JDsh8q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="OJs07coR"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581FE17A30D;
-	Thu, 20 Mar 2025 08:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EC01487E9;
+	Thu, 20 Mar 2025 08:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742459439; cv=none; b=hl+ZkIxVd2z3+ndvaBm6sxwlSeRSTQAXX6RFX4tmIW6R9q8Ev8THZriZ+iSb1YfYg0pCI6rXAFYO3Ylrs/rU0ljX7J/AfSqaaqUiwSUpIqvjQgu3Xc8Ps/Z4QXj+mpf5bh5wZ7n0Gnv3f+FBYEPkLCrap/yMvM/e92/JuvD1hnk=
+	t=1742459423; cv=none; b=rLyaI5H0DLRiff431x/M7+wNad0oKVNOmHjXhHcu3qBnQeA1LZQnpo+3O1ht4jR6P8f2uDkJCb5+nSIwdjA4K0Wl7fxs0do+eoKLN+mOwUHv28YMr26oQ/rH3Os6wijwOKUhqrwC6Ia8Ib8zh7ojrqDr1EHsIiHkQEXAXurYrNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742459439; c=relaxed/simple;
-	bh=2i1Q07byf32WTdPpCVWmD1WwQ9vrhVP60iBQr1OWOto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASE5Mkdz+gBP4RdIA53lX7uOpRbuIXwFEX9gkvEsHv5IYJnVNuLY7xPoVLgAjzEEz0fAXPfM7K5e25ObjzoQeylwJiJEhDM+OZDRTWotkgGMl5zcOjyXwfr9e99Wwq/QI4F+RFtY7U1A/SKnCC+N0iQZbnbsMfl/ETapXI3A4fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5JDsh8q; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742459436; x=1773995436;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2i1Q07byf32WTdPpCVWmD1WwQ9vrhVP60iBQr1OWOto=;
-  b=j5JDsh8qYpjPqrYZJi2jTBmofgPePwzxYWwolkQ2OuSNVLNOezZxtzV0
-   YdGdPUQN7b1ym2ah8f0BvkUELYQxDXPMyEhE/UWCTbuKRcfGqY8t9Tn2E
-   VOcyBEZZYRgUAVPSKRKQlmwLsvF32c9SsGsxX3rL9wIYTsZwnqtzvknhx
-   E+frREOfcxbLYPa9se/5Hlrv1wHVD0Fu9qaYLff8xtCSdJ8qcYMtjFJaB
-   0Bg8C7qWP2Hm+i9Bfvxd9bOIZtsuG43K6nPQEal5oVD1qnyyLDoCzUohg
-   5UHwgTRqvWHhkFegPSjH/7KF6Ypojv1GlaveL1hMhV6C4824id2vNWdVI
-   w==;
-X-CSE-ConnectionGUID: O3csakSSRS2v4VKEZlUeng==
-X-CSE-MsgGUID: jKr/sIKaR0+n+q6m7qkVcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31264195"
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="31264195"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 01:30:35 -0700
-X-CSE-ConnectionGUID: y1wTRDJWSvqu5O+/2S+L3Q==
-X-CSE-MsgGUID: fro6DZG5Qb+wS2jO1ntJwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="122961957"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 20 Mar 2025 01:30:30 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvBIJ-0000Is-2T;
-	Thu, 20 Mar 2025 08:30:27 +0000
-Date: Thu, 20 Mar 2025 16:29:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com,
-	jiebing chen <jiebing.chen@amlogic.com>
-Subject: Re: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
-Message-ID: <202503201641.wf8Oe0aR-lkp@intel.com>
-References: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
+	s=arc-20240116; t=1742459423; c=relaxed/simple;
+	bh=lM8uEMqGloIIhxK8we3YSOHTRitLpbY76DwJKVqm0E8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i+kxfVzV2pn5vg91Ek8xAFRILwqpAIydaqEDkIUMEkxgHOS0aVJJVJPr2cbJqGUEpX9FphhIR3CXvrJ4T5Pxf4xKlrkfcgyWtiicTrSc83OpVEp+B087edQLwoVlVrk1hWTqu0XlNX+Dhd/tO3S9PPOvJwW6tX5GGWMzKGvHvTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=OJs07coR; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 9F4992E08704;
+	Thu, 20 Mar 2025 10:30:18 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742459419;
+	bh=ziUOA57vt7GRj6E5P8yVSLpiyhos2lGfmA35dWw4RKQ=;
+	h=Received:From:Subject:To;
+	b=OJs07coRP0qkVVQWNT+V/uyICgTESo9ryX6o8hzD48IwSJBTfwTKXyhJbRe6PgUL6
+	 OzJRZJ16TbAdMISN0p7vzZ9of+t16BvrzgqzFlGpD6CVgiroqya/h4kAPML9bKyJjV
+	 isDIGLDHCeX7xKZ9sq1v796pTLUGHUrtDE70cvj8=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-307c13298eeso6138621fa.0;
+        Thu, 20 Mar 2025 01:30:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVMPS17GIVeRw8VdBAfbjzRwT8te04H0sjaC7051Q4Zbp4BjJr5SAH/0J9ZDMj1mnBwDgxy2t1BwI/lrw==@vger.kernel.org,
+ AJvYcCXTpMetBctO0T4jCGdEO4NCaef1QQBtzsR7Vou38mgWCPUnjrxweRhPq1I4FLgJteX69yVO/tDnmyLcHuDC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4EjdUbK+aQbt68CZNzqTlkbzzp12D5L/Llpvo1eUTgE0fNtUa
+	3mm3ylRsxeKq1Adiz20fdDmlDMEq2ng1feOkFjSp20qAmMZnzEztgP3o0t5SHimuIdRxPdXNABt
+	Op5Bn9076KRXUkVdst1wXe7E25to=
+X-Google-Smtp-Source: 
+ AGHT+IG09r4aPlZS9FtR6xYfWQ819/Rg9PKjIpTRksh0LUYjkf/MLyEpy6CnX91Ix7+RKHE2FaX+3aOiS9tE6pQnZFc=
+X-Received: by 2002:a05:651c:547:b0:308:ee65:7f44 with SMTP id
+ 38308e7fff4ca-30d72789e95mr8912211fa.8.1742459417875; Thu, 20 Mar 2025
+ 01:30:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319-audio_drvier-v4-4-686867fad719@amlogic.com>
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <20250319191320.10092-7-lkml@antheas.dev>
+ <51c78ba6-9518-4259-85da-d761b031df7f@ljones.dev>
+In-Reply-To: <51c78ba6-9518-4259-85da-d761b031df7f@ljones.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 20 Mar 2025 09:30:06 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGsB4UjsHa=CWT2zzbpHx5yPEOtTA9RmVqR1jqMB4_C6Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JouLn7odMmdLAzBP_cRIF3KVlpUpTATrLGK3AEzwIsAOS-pTxSfQUzL9PY
+Message-ID: 
+ <CAGwozwGsB4UjsHa=CWT2zzbpHx5yPEOtTA9RmVqR1jqMB4_C6Q@mail.gmail.com>
+Subject: Re: [PATCH 06/11] HID: asus: introduce small delay on Asus Z13 RGB
+ init
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174245941904.26145.17944018537723476768@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Hi jiebing,
+On Thu, 20 Mar 2025 at 08:12, Luke D. Jones <luke@ljones.dev> wrote:
+>
+> On 20/03/25 08:13, Antheas Kapenekakis wrote:
+> > The folio keyboard of the Z13 can get stuck in its BIOS mode, where the
+> > touchpad behaves like a mouse and the keyboard start button is not
+> > reliable if we perform the initialization too quickly. This mostly
+> > happens during boot, and can be verified to be caused by hid-asus
+> > through simple blacklisting. A small delay fixes it.
+> >
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >   drivers/hid/hid-asus.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> > index 85ae75478b796..5b75ee83ae290 100644
+> > --- a/drivers/hid/hid-asus.c
+> > +++ b/drivers/hid/hid-asus.c
+> > @@ -571,6 +571,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+> >       unsigned char kbd_func;
+> >       int ret;
+> >
+> > +     /* Wait a bit before init to prevent locking the keyboard */
+> > +     if (dmi_match(DMI_PRODUCT_FAMILY, "ROG Flow Z13"))
+> > +             msleep(500);
+> > +
+> >       ret = asus_kbd_init(hdev);
+> >       if (ret < 0)
+> >               return ret;
+>
+> See my comment on patch 1 about trying a loop with the init
+> request/response as a hopeful way to test readiness.
+>
+> Cheers,
+> Luke.
 
-kernel test robot noticed the following build warnings:
+Turns out there isn't an init problem. I have removed this patch from V2.
 
-[auto build test WARNING on 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab]
+It was hid-asus taking control of the touchpad from hid-multitouch. So
+adding HID_GROUP_GENERIC fixes this. I replaced it with that and
+squashed the rename patch alongside it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/jiebing-chen-via-B4-Relay/dt-bindings-clock-meson-Add-audio-power-domain-for-s4-soc/20250319-151110
-base:   6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
-patch link:    https://lore.kernel.org/r/20250319-audio_drvier-v4-4-686867fad719%40amlogic.com
-patch subject: [PATCH v4 4/6] ASoC: meson: g12a-toacodec: Add s4 tocodec driver
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250320/202503201641.wf8Oe0aR-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503201641.wf8Oe0aR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503201641.wf8Oe0aR-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> sound/soc/meson/g12a-toacodec.c:135:38: warning: unused variable 's4_toacodec_clk_enable' [-Wunused-const-variable]
-     135 | static const struct snd_kcontrol_new s4_toacodec_clk_enable =
-         |                                      ^~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +/s4_toacodec_clk_enable +135 sound/soc/meson/g12a-toacodec.c
-
-   112	
-   113	static SOC_ENUM_SINGLE_DECL(g12a_toacodec_mux_enum, TOACODEC_CTRL0,
-   114				    CTRL0_DAT_SEL_LSB,
-   115				    g12a_toacodec_mux_texts);
-   116	
-   117	static SOC_ENUM_SINGLE_DECL(sm1_toacodec_mux_enum, TOACODEC_CTRL0,
-   118				    CTRL0_DAT_SEL_SM1_LSB,
-   119				    g12a_toacodec_mux_texts);
-   120	
-   121	static const struct snd_kcontrol_new g12a_toacodec_mux =
-   122		SOC_DAPM_ENUM_EXT("Source", g12a_toacodec_mux_enum,
-   123				  snd_soc_dapm_get_enum_double,
-   124				  g12a_toacodec_mux_put_enum);
-   125	
-   126	static const struct snd_kcontrol_new sm1_toacodec_mux =
-   127		SOC_DAPM_ENUM_EXT("Source", sm1_toacodec_mux_enum,
-   128				  snd_soc_dapm_get_enum_double,
-   129				  g12a_toacodec_mux_put_enum);
-   130	
-   131	static const struct snd_kcontrol_new g12a_toacodec_out_enable =
-   132		SOC_DAPM_SINGLE_AUTODISABLE("Switch", TOACODEC_CTRL0,
-   133					    CTRL0_ENABLE_SHIFT, 1, 0);
-   134	
- > 135	static const struct snd_kcontrol_new s4_toacodec_clk_enable =
-   136		SOC_DAPM_DOUBLE("Switch", TOACODEC_CTRL0,
-   137				CTRL0_BCLK_ENABLE_SHIFT, CTRL0_MCLK_ENABLE_SHIFT, 1, 0);
-   138	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Antheas
 
