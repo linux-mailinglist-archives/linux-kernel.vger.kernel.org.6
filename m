@@ -1,148 +1,200 @@
-Return-Path: <linux-kernel+bounces-569578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40422A6A4D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:22:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1515AA6A4DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241193A920B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CCF1188EC29
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3559D21CC40;
-	Thu, 20 Mar 2025 11:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7E11D5144;
+	Thu, 20 Mar 2025 11:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAExXYuQ"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hLxoDFdD"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4721C1F2F;
-	Thu, 20 Mar 2025 11:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742469719; cv=none; b=LheY4GZDf3WWHivv8Uu5tQhH8H3V2TEbwmdVuiSc33jfa7dwdHJsxYdW00wHWiEPd/DL3EPePdChcaHUAels5nH+03rOE+gnFOKAa1YpWv+G5b80vvO2Y4G8qNTwikl7JyT1VgIRLmbI2g6m2qAJya4UhFV1eQvKwDkJT1MpHdM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742469719; c=relaxed/simple;
-	bh=k3mrXD+OZ3IUnCcb5OnLyDwzPqKGoZTi9oVugUiEAVM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ttyr9puFXakZAVmOH0nU4msRSVFykEx83nP4NLApRR1tHCplZWH+micgepstn3PodN5sRihWe19c9xoI9dZ+GJ+K5/GNHXlVS4PqOCRhNiMn04Wu0SBRO0x6kpwvbzj89dj+IvXfhdDr5tp0BauTQviJaPWjUZyE9cwEiO3tgZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAExXYuQ; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224104a9230so1415335ad.1;
-        Thu, 20 Mar 2025 04:21:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742469717; x=1743074517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iFB3BqXH2e8TxvxT6l759Ym4N0OaYQbHqoLpgW4lhNg=;
-        b=GAExXYuQ+uvLtKTGENbOzAlDUdsf+QEtiLIZ7Ukz2l9r8mzV9f3MR+srOgbzjvudNW
-         W1c9pJCK81cuWPFKhKZyU4R+KF69TwIW8uuornruPS6RKDn8bn9L8QiOVZWeq0wYawtK
-         CxiW9hfBSpcD508uwMsE92QKazijAQeIKlEQAbXMJHoIw5/t4KfkQ5A+IYZNLtcR1tr/
-         JJ1638KO4DLaJMvEi2moZtImDdniw/fuJJa48MWSVoKiT9PWvl03LLj2tnMElplP8UKx
-         SWju0CTD0xUhzwMpNa30G3fMgySG38jGRKFQadjBroBQRZf44P0401TPD0HzLidrDYAy
-         xLmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742469717; x=1743074517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iFB3BqXH2e8TxvxT6l759Ym4N0OaYQbHqoLpgW4lhNg=;
-        b=kxguiyqiv9UV3q/KGIey0G6WoZNX+EF1jsPNEVR/6+8c7rnjP/BKJPCzRllnIoTc7/
-         6ZDYzsQOqI7BiI+I4qaZr8fTNGDthDtWqM35Lhqft0aPOz5ICl2/sIpAHHDGd1npSG02
-         ldphY5BQZ0a9dBk/Z7eq3GGLa56yltGQMVOOSbSGYflB3EpermOwIvOuTrZyIxywoSEn
-         XhsRAFvFRfsLd23xLS4A6SYc0CTP0sxxnFlgHYGGtCbBTSJbrNwSPYHUmLKjwWIxOYTq
-         6RB9EDuhDYujA0Jk+D24LNhB5aYEPLHUMAadIp6jveMUOvVvEZ//ZTLMHeKCbIIIeLJP
-         3uTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsLeLR0Q55R/gJvYP7YlEs+EmDAOteJOBoFiD3p72FQj4TCiWxoo7afjzLfUMnnACOC0i9xkeDHHwlseB808M=@vger.kernel.org, AJvYcCWJOoEtXoFTcGAPLKTZOKCOCd7v/0+oO/sLI3CS6T6wALAc9JyfEGmJCHV5Y0ZivamJKnD48ehsVHpL/wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjjIcmVvaL4+9qsni4pzsurdo9N/tSCCkBe2SCWr39+/pIBR2v
-	NyaWQ87O4qHOfCCRFbi0uk92wmjM6Sr5h8MtTn4ViLAHmXfP6UmzUnhQTZu4houQgienifJqrVb
-	4ut4Eyg6cLmBKYMvtV6NFAdLJHpE=
-X-Gm-Gg: ASbGncuJTiMe0qSCPTFMLJ9PYw4MZjz87oCUmgkcsQ4J8WEZVzUbWjZOerhOAWR2crZ
-	YzvUBGncSUW+A25rKe3K+Sl/oj7E6xumzp/BWHFchy3EsmQaTkIGCAhLNg4SWHFuq9lL6QerLv6
-	oOKKCYi2eJ1L2LtXuOhPmTrwJp6w==
-X-Google-Smtp-Source: AGHT+IGASnHt9kNdq4d2lMO0TzafwSvDobso+TMwUI77RRq+dwIZX0mnFiZmhKy1QI2Pzn9arbywzIffrQpEHdWmdiU=
-X-Received: by 2002:a17:903:8c7:b0:221:7854:7618 with SMTP id
- d9443c01a7336-2264c6053e1mr35338755ad.8.1742469717435; Thu, 20 Mar 2025
- 04:21:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E090279C4;
+	Thu, 20 Mar 2025 11:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742469764; cv=fail; b=ArVr6knpkYvyQa+A8vDJJ4suK7AQ2xFy9h0yiDaaRww3Jq9wn6jo1xf9g8jvuextnM7OUgqwbB+lBPVjFQnn2Nut1Qs/n8x9gfShFwwQXfoIoA7ypLt5wEv/B+RM1wvypDmly/KRkt9tv0AanpHjWTsAa2vTHI/26WYyt3J4Itg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742469764; c=relaxed/simple;
+	bh=Km1LncM0+4Ui7FNmLwv3fSi3RA0UI1OMWEMh1F9nYEo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sipTnFniqzIElK+0MTxcFNkZ0pvW90TT70+NFHZSwUQ7NizXx1wr4fFZeAX5z8xkISnvuKdRNI14ySsxqEVShnLR+YrLqPyz+8XS/6uakFyrd57SxIhFvTlcuvBcUr4zsFi3K+PTnzctsyU3GJxkDoUwhAzU8hE/PtGOwZOPvP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hLxoDFdD; arc=fail smtp.client-ip=40.107.94.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IOOdK4AO4q6aTh1PzKzvWYb+H3d3823U4J8SPF/rqzA7/b8tij+hi8G/frvIXBLzX2kHHFERuavv/pa0NgRDSlvtWIu/EX/QL3pdZbLf7CnrzEnTbv+QPvVjZx+vA2IEzu4axF6y1DNyD4PraVGRP3pz5ElhghNr6xAp+ZPotwyithjJhD9GVE7F3RbtUP/7IKP53IeqrAJXbyC0ZfUO+M4cdoyAMEuPE1ohNvcN9JsLi5sutwF0OBObgyudsK9dobzvkxLFwYWSrECG6kDj7P2M8QZMy8dsG3dM7IzyuznImwbP2hg8cd+7puuFXaRC3Rtrb737pYnYm5ksp3TXTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QP1ZzqNrLwtYyNmyyrVc6yukQK6DnxNqv7HSo/xGRYk=;
+ b=bC0gKZ5eZEQBzp1PikaOaT/3krWyVHMtCJnxZr9elmvZVibV9mGgyVnLYlJm9cBzGlaufHzL8zvG3Me22/wkbU8P4wOd0K5VlWP+lQWxzLjaJD1VU65CByPlOToyd1iUakkWZf5BytS2F9xSFrXkMivWY+yo/R3NnwXC8WHoCdWQNsSlEcT+riBe3gGnn4yto3wLD6n5Pg4tofk2k8cqyPukZkSnim/5BNpfEmOSVsXZhpia3+Yq2HI9sSLK1HsiDN7KGadB4llnWZj215y0ch4WGLkEQi0/r42Mb0Z/qV2Zye3GigB0gdbJB6UX/ISWEJ5nLhO583wLhSW/VcIWyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QP1ZzqNrLwtYyNmyyrVc6yukQK6DnxNqv7HSo/xGRYk=;
+ b=hLxoDFdDwVVXwj1V8DaqGgs7jQAmtYTZ4ua/BEPGwZS00Gs0Dzjdesyw+DrypP5TPNLtVVKj9JVWpg6xPfC46vKDv6uP9eddPbZTlzjo2+3ZFsDNvy6a+IAJ2FAeZp5olrsmKDgQ7LbF9aT9hjBIGYqZ8esALJc4bm+7F80FHGg=
+Received: from BYAPR21CA0005.namprd21.prod.outlook.com (2603:10b6:a03:114::15)
+ by MW4PR12MB6780.namprd12.prod.outlook.com (2603:10b6:303:20e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
+ 2025 11:22:39 +0000
+Received: from SJ1PEPF00001CEB.namprd03.prod.outlook.com
+ (2603:10b6:a03:114:cafe::ca) by BYAPR21CA0005.outlook.office365.com
+ (2603:10b6:a03:114::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8583.9 via Frontend Transport; Thu,
+ 20 Mar 2025 11:22:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CEB.mail.protection.outlook.com (10.167.242.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 11:22:39 +0000
+Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
+ 2025 06:22:36 -0500
+From: Robert Richter <rrichter@amd.com>
+To: Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Gregory
+ Price" <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>, "Robert
+ Richter" <rrichter@amd.com>, Pankaj Gupta <pankaj.gupta@amd.com>,
+	<nvdimm@lists.linux.dev>
+Subject: [PATCH v2] libnvdimm/labels: Fix divide error in nd_label_data_init()
+Date: Thu, 20 Mar 2025 12:22:22 +0100
+Message-ID: <20250320112223.608320-1-rrichter@amd.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208-rust-kunit-v1-0-94a026be6d72@weissschuh.net>
-In-Reply-To: <20250208-rust-kunit-v1-0-94a026be6d72@weissschuh.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 20 Mar 2025 12:21:44 +0100
-X-Gm-Features: AQ5f1JpS94wTwKsmexWFYTQXZEkTRXemKuXOU31dkuRuFGtc1-F5e7wOCbLzIPk
-Message-ID: <CANiq72=UKxv9EeV1Ozg5bcOtuoaFwCkm=7Yi+kBihoR7XzqHpQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] rust: two small improvements for kunit
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CEB:EE_|MW4PR12MB6780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31734f59-9c0c-44b8-d652-08dd67a18652
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bSPy4SAevFeZMtdAJAu8TRzL59sAxt55Iyd0Unl40LBiJkZIQ3BpKk5C2VbA?=
+ =?us-ascii?Q?8iCCC5uxSYeffpUKUyr1MCQyCBQRKkCuJ/dpG8btyVHaHnCbjmlVK6OJohFt?=
+ =?us-ascii?Q?doNBgUYzP887fTt3Dtl4ahJUC++1aLvDes8Ei3NrPjwd5X55OVthba7ywn2G?=
+ =?us-ascii?Q?Scvzz4GtWrOFCyQgtXb23sPfLaW8gZz8VyTE7ryw789nExFXTE/OIMEgbfhW?=
+ =?us-ascii?Q?Jl2/m/XpCj7J1bSe9NvePYU37PP8RiZxFyemgEwfXG9gg8MrenXmHckr7RDZ?=
+ =?us-ascii?Q?fUIw3tSHrUxr+yqu7neqGjn1tLsJZmC5qm3Du8xBbCK66CRg2wEDunU7TD7D?=
+ =?us-ascii?Q?ofo+dKCeQ96JLk9wlMsi5TBHCUSMiAhKufyU57CUkGp/ZlvoG//VUW/J1jWt?=
+ =?us-ascii?Q?NU2pjij1y9IpfKf+qwWXlzodM+aAvxp1kaQ+l469vAxJjwQ+yRh5wYJ2yPDB?=
+ =?us-ascii?Q?f3AkRlRGdvq4H69aDqFV3wn2090tQ2U4yLu1hK3FK3DRhZk7RSGz4+ePjC07?=
+ =?us-ascii?Q?ElPnnZyDoeKq6o8Z4vr+TBjh0Zfu2I6voU6sDpbb+e0mUXXw/41mx49NwQPQ?=
+ =?us-ascii?Q?DlJITPLMCvvVILhldf88AeVlyZ8zeexfz5Re1n4151EcOROQWkKR8k08fT7k?=
+ =?us-ascii?Q?/se6b51v4StvQgAXLy7e8L98ZRYBKE3Mt2VNosjKlY7WBtNJScwbkB4j7oBZ?=
+ =?us-ascii?Q?xIAxf2+UV1yk2cKZ23EyY67shotsfn4fxwjkcM57b2njkkNSRYlevOwExMuE?=
+ =?us-ascii?Q?iLVJkH1aD6gTi6IV5C1iUs9xEhcB1DGkNxLjQDMmczf1uZTItF+1CVsQf4p1?=
+ =?us-ascii?Q?aYIra7ZMSSaDkoytc1B9/VpUe94OU7iR28OaOLeuzLVErs9P0xHSCjFRy+FV?=
+ =?us-ascii?Q?ukTT/GxSkxCz6T9FdhmnJ1PElBbK9QeD427x3nD5+FhuKmMOI9ETMRlslruc?=
+ =?us-ascii?Q?bqaS4kq9h61Y+pdsltF8bJOwc83NLw0drFYOp36JcoZFls9FgAUeqAaMUGoy?=
+ =?us-ascii?Q?RYy/+/L+Mhr7cAnnX5eAJqPwn5Jl8JcO1L221/J6IoC/gXqQjdMyiKrL3uSB?=
+ =?us-ascii?Q?Rk7yrgX12Pd8dXgvlk+CE3UZU0kuvHoFuuQV3i2P3cqMwGPQ64KoaiBD3XpN?=
+ =?us-ascii?Q?QmtYHPNuA5zPJpbxUi9zYlgKjJ4AAqY8/5YYdY204tsjuxPipPAkzaKN1Etg?=
+ =?us-ascii?Q?p2/3EyUiRYF0V3KTjp244fDx09d8yB9n+6zxrdf8um+tYvI0HmL1XXoQwaLh?=
+ =?us-ascii?Q?Gj34EN2xRYYsbBov7qkMkFVjwFwXEcUyRDi/MVU5ZuV/2jTCjNnWaHSk4LqS?=
+ =?us-ascii?Q?gS6LoPBS1oMQgU5srkWHS8g2EjOD/jn/GT4Naq+JLIfOcnm95d2GRphimQU1?=
+ =?us-ascii?Q?CypqTf5sDjV+bb7rgPST1amJY/yv76fZJ5lpEMucI4mo4BCRaTXsnNfp9/6D?=
+ =?us-ascii?Q?qIuhwlZZ8Spl3gXBhoMM1Wyig2FQW9b05EPFsqObYk+jvLbCrZxi7Q/8UwTG?=
+ =?us-ascii?Q?q57xEevc2gYRO7Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 11:22:39.6199
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31734f59-9c0c-44b8-d652-08dd67a18652
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CEB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6780
 
-On Sat, Feb 8, 2025 at 2:32=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> Two quality of live improvements for running kunit tests for rust/.
-> While today there are only the doctests, more are coming [0].
->
->         $ ./tools/testing/kunit/kunit.py run --kunitconfig rust/
->         [14:25:48] Configuring KUnit Kernel ...
->         [14:25:48] Building KUnit Kernel ...
->         Populating config with:
->         $ make ARCH=3Dum O=3D.kunit olddefconfig
->         Building with:
->         $ make all compile_commands.json ARCH=3Dum O=3D.kunit --jobs=3D16
->         [14:25:53] Starting KUnit Kernel (1/1)...
->         [14:25:53] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->         Running tests with:
->         $ .kunit/linux kunit.enable=3D1 mem=3D1G console=3Dtty kunit_shut=
-down=3Dhalt
->         [14:25:53] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D rust_doctests_kernel=
- (135 subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->         [14:25:53] [PASSED] rust_doctest_kernel_alloc_kbox_rs_0
->
->         ...
->
->         [14:25:53] [PASSED] rust_doctest_kernel_workqueue_rs_3
->         [14:25:53] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] ru=
-st_doctests_kernel =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->         [14:25:53] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->         [14:25:53] Testing complete. Ran 135 tests: passed: 135
->         [14:25:53] Elapsed time: 5.431s total, 0.001s configuring, 5.314s=
- building, 0.086s running
->
-> [0] https://lore.kernel.org/rust-for-linux/20241213081035.2069066-1-david=
-gow@google.com/
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+If a faulty CXL memory device returns a broken zero LSA size in its
+memory device information (Identify Memory Device (Opcode 4000h), CXL
+spec. 3.1, 8.2.9.9.1.1), a divide error occurs in the libnvdimm
+driver:
 
-Applied to `rust-next` -- thanks everyone!
+ Oops: divide error: 0000 [#1] PREEMPT SMP NOPTI
+ RIP: 0010:nd_label_data_init+0x10e/0x800 [libnvdimm]
 
-    [ David says:
+Code and flow:
 
-          (...) this is enough to get Rust-for-Linux working with gcc under
-          64-bit UML on my system.
+1) CXL Command 4000h returns LSA size = 0
+2) config_size is assigned to zero LSA size (CXL pmem driver):
 
-        - Miguel ]
+drivers/cxl/pmem.c:             .config_size = mds->lsa_size,
 
-Cheers,
-Miguel
+3) max_xfer is set to zero (nvdimm driver):
+
+drivers/nvdimm/label.c: max_xfer = min_t(size_t, ndd->nsarea.max_xfer, config_size);
+
+4) A subsequent DIV_ROUND_UP() causes a division by zero:
+
+drivers/nvdimm/label.c: /* Make our initial read size a multiple of max_xfer size */
+drivers/nvdimm/label.c: read_size = min(DIV_ROUND_UP(read_size, max_xfer) * max_xfer,
+drivers/nvdimm/label.c-                 config_size);
+
+Fix this by checking the config size parameter by extending an
+existing check.
+
+Signed-off-by: Robert Richter <rrichter@amd.com>
+Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+---
+v2:
+ * modified description to correct the instruction that is causing
+   the div by zero (Ira)
+ * updated tags
+---
+ drivers/nvdimm/label.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index 082253a3a956..04f4a049599a 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -442,7 +442,8 @@ int nd_label_data_init(struct nvdimm_drvdata *ndd)
+ 	if (ndd->data)
+ 		return 0;
+ 
+-	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0) {
++	if (ndd->nsarea.status || ndd->nsarea.max_xfer == 0 ||
++	    ndd->nsarea.config_size == 0) {
+ 		dev_dbg(ndd->dev, "failed to init config data area: (%u:%u)\n",
+ 			ndd->nsarea.max_xfer, ndd->nsarea.config_size);
+ 		return -ENXIO;
+-- 
+2.39.5
+
 
