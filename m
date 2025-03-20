@@ -1,175 +1,149 @@
-Return-Path: <linux-kernel+bounces-570162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F69DA6ACF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:14:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89ADDA6ACD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0549D3B6A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1540488BB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0DD227599;
-	Thu, 20 Mar 2025 18:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597B7227EA3;
+	Thu, 20 Mar 2025 18:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T+tbcdjN"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gzu//wCC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA37226520
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CF41EB5D9;
+	Thu, 20 Mar 2025 18:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742494445; cv=none; b=NifE0YmFgKR189x5qkOhs/4VtjYb3Au14sTTx+i7T8/G20uvpJcbje3t6CgswBzSiUHxj5gKOhepEQK2btjh+Aoy9CBRdQ5yPS2K+1b9uxjBvpfBRghz0UdsF2SlomF3Pg2Sv6ZvqYpcGnbZYqZgS6xwyspsK7utX1XNxvgps0c=
+	t=1742494063; cv=none; b=u5PR1QzTF0XmjLYSsbdix1yp9veN+WwRJJ2Fs/yWGKfkSozKzxAfQUoL2DuG6Bhix8ScdKjv2SPV3DpZDLAvKEM2HlffWHKHMCbmchvFGmjI663L0OAy+JIq+G3Wetc8zwjC2Xwwt62iNmfDo8OHKtP5jBMVK4wy5+2YV4SMmtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742494445; c=relaxed/simple;
-	bh=dIq2rFVsMRPfjTTzICdGo2oAsZfoxmPnshpJze5uM1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UGmxRQkz80M9yeg/kPjTU/Pu/fF6zF5/6/WPosiRq/oNrGcMHtGeHWvAuYeRCYrk+WgCuBoIaD2pvaMbfs+fAtphCnrn9Ozf7qI5h086T8hiccTJ91LCfnrJCsE/y+26tWx43/QqoXTBqLPYO3wYb6WYudJNE/BmCPVVp5+73f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T+tbcdjN; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2243803b776so30624505ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:14:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742494443; x=1743099243; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIkGguZ4dnQIKNQIeCLR9up0U6ko09Dl8rkZeShLSI0=;
-        b=T+tbcdjNddLmsN3DILHgadqwkuTyfN64mDLQya5sHqvr4Ya2UlcHDtS3/d6mrhl/gq
-         d4aeEsNKs3xox9BFp6jDFXwKMbpmmK+1z/GlLFQZHfz0MQm0mpCYUj5k0PQhza/FvwiT
-         OCBhtuVyk3Qb6ibBfts3uSZiWgH8H/dpmUQHs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742494443; x=1743099243;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jIkGguZ4dnQIKNQIeCLR9up0U6ko09Dl8rkZeShLSI0=;
-        b=Q2rlvhAlrh7DTPgnZHS/M2zbXHrV6KNktMVg+k7Yyatn7GrMPWjpHZm54T526/QNKr
-         4D6otkOGVQiIGVI1XYH+jyBJ9XYnUXdaJy8oAVASrs3MWV9Cl22+JuzoChwE+oAB+9QO
-         nRcog90ZOs8aenOkIu81jbMx/k5IBQofVpsvi0FzrtCNsAWCPQne/1DnvEh+NqjIHc0k
-         8sWV21Uk4r1nKBGfIxo4WqJ5W3bmSI0P2gMwprX05OLPrjvuugl7ST15Ci1pUgzY4CMN
-         3uz133By9UVGhFBSYTM58bJhQkG0asboTGd5lihuHQ+VpPBuH1IAtNjBbvpMOnaRmUTn
-         NcAA==
-X-Gm-Message-State: AOJu0YxNEACsS2jz5cQlw6n7+uSchfix/9o2BcRNoxY+Jwx8HOk2gTMu
-	lJtMAX0ssPP5JytOA05TmAxm20Y45GLwEWoGL2JHa9qcKJC9UD5z2XdPXvUs3kJiznl19UWbHKc
-	=
-X-Gm-Gg: ASbGncu+jAizC3ZbtSpvLzc+Zrz4xgP4rEDn1MSr0J4YLk/FR7NcrG/W5SjWD8QU7xN
-	Ife2vw2wHWizboF4ObR6N6QRX3urBL3kI9SicGUdpZeGT+EQjO0DxzTwf8pYaW6FeIe/lwtMwuA
-	KIdN5hhQ0vaKxxSAoOGtfXOmlw0ab6df4mBe0kMZp+CvSglfFBIzI7GLLZ2fswqD0TMtdhlVVJt
-	X41kF0+XRWX/x7DHWH2u5wAd9Dq+b+QqbWYNG4ZI8StiVL9nUJgHzGgtnnQ0kqkTRuRVlZoJYs5
-	2l2+LANP6Lv6eQySxuYGQMfGZjE4zi+4P1w2htLCEYx4wqDx0EBa10c0UUuVfz7AVujzDZARSwe
-	iuDV2xK4=
-X-Google-Smtp-Source: AGHT+IFKNeA0nv8K4qQWl3UeJBhgwTr+2rWreG0zcMznfH4QEcK/AEsy8WvwIEoY2DqRAuKaZ2Dhgw==
-X-Received: by 2002:a05:6a00:3927:b0:736:4644:86ee with SMTP id d2e1a72fcca58-739059d0a99mr743410b3a.14.1742494442872;
-        Thu, 20 Mar 2025 11:14:02 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:9e6b:24df:389d:f71b])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7390611d580sm98101b3a.119.2025.03.20.11.14.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 11:14:02 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Hsin-Yi Wang <hsinyi@chromium.org>,
-	lukas@wunner.de,
-	mika.westerberg@linux.intel.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v6] PCI: Allow PCI bridges to go to D3Hot on all non-x86
-Date: Thu, 20 Mar 2025 11:06:04 -0700
-Message-ID: <20250320110604.v6.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+	s=arc-20240116; t=1742494063; c=relaxed/simple;
+	bh=QV8L3eVu7WzhPo4f9l+/FZnZO++yXN6ZtUYKcJzPTjU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=GbrUMnHu3FynYj9ggM2olyoTqK7v2SvDz+Prll6kksdx4i700BwcL1Xa50VUQXLXUgn/gP3Axse2N/v4UwjRtEylKS4Q5MwXFuBdBnwbVWRuX92hA3iR2xaSIhRRCe7nXG5Ix2Uyp/NweENBBAyKxrufc8fKEcr7cScNnqBDvx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gzu//wCC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDl50c016217;
+	Thu, 20 Mar 2025 18:07:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=tadcaHxvBRJlFagk5nf3Zh
+	Q7Wvcdf0zs7Bhe9EIYvoc=; b=Gzu//wCCDKo9L+fF10Ijhr0H1dC8qdPMcldMCn
+	D+ZsSb+oAkpR/mh1uLxJuPk43MaTchVDP1+U/WNcsHakr8OqUVBKL0aLzIke4wBk
+	mtAYIeCVM3X6rAkCDo171Ysu/dvm4Uf3e+O6w9ja7yN8T/G1hfps2uNXYrH/Cqzq
+	z4NliqhmeFqi+kl8U+sLfWPu+w2Gt0u3jMe/d8l6+mvY2bcbRIwv/Paohoq/Q7Np
+	afvV9F30S2iwkfx28tQ3gVdC+CTJ/sL7meACwvYA5IITkC4y+cdykQPOKEh2Yzu9
+	LzJMXXDHxsLpxvYT7Vpgv3EtUmJcFil0eTaFCk/O8exiXL6g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g4t43cgh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 18:07:38 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52KI7bGP014994
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 18:07:37 GMT
+Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Mar 2025 11:07:33 -0700
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [PATCH v3 0/3] media: qcom: iris: add support for SA8775P
+Date: Thu, 20 Mar 2025 23:36:49 +0530
+Message-ID: <20250320-dtbinding-v3-0-2a16fced51d5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADlZ3GcC/1WOzQ6CMBAGX4X0bE1/RIon38N4KNsF9mDBFhsN4
+ d0tJCZ4nC87k51ZxEAY2aWYWcBEkQafQR8KBr31HXJymZkSqhRaCu6mhrwj33FTK9m0IEuJNcv
+ 3Y8CW3lvrds/cU5yG8NnSSa7rryJ3lSS54CUYUTmt28ri9fkiIA9HGB5s7SS1c9X+g6Sya5xBa
+ 09YnQH+3WVZvhuprHDgAAAA
+X-Change-ID: 20250310-dtbinding-8921bfc151e9
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sumit.garg@oss.qualcomm.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742494052; l=1153;
+ i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
+ bh=QV8L3eVu7WzhPo4f9l+/FZnZO++yXN6ZtUYKcJzPTjU=;
+ b=uJbnqkjfGzk4h+QepT29doFi3uOF7Sb+ut5M00khKcDnoIxs0k7dfSZ/AtkTVAy9ao1yO+LWa
+ PXBuVodK3+5A7RcDepLd3E5YKZDWANZMg+XXy0dBYwP0xjs7qXEdwEQ
+X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=HMPDFptv c=1 sm=1 tr=0 ts=67dc596a cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=uUO1Guatd2edvWoe2zcA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: lWW2PVSU77sp1TjwE-GVwLAA2WlwpfgQ
+X-Proofpoint-ORIG-GUID: lWW2PVSU77sp1TjwE-GVwLAA2WlwpfgQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_05,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ mlxlogscore=989 malwarescore=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503200117
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+add support for video hardware acceleration on SA8775P platform.
 
-Currently, pci_bridge_d3_possible() encodes a variety of decision
-factors when deciding whether a given bridge can be put into D3. A
-particular one of note is for "recent enough PCIe ports." Per Rafael [0]:
-
-  "There were hardware issues related to PM on x86 platforms predating
-   the introduction of Connected Standby in Windows.  For instance,
-   programming a port into D3hot by writing to its PMCSR might cause the
-   PCIe link behind it to go down and the only way to revive it was to
-   power cycle the Root Complex.  And similar."
-
-Thus, this function contains a DMI-based check for post-2015 BIOS.
-
-The above factors (Windows, x86) don't really apply to non-x86 systems,
-and also, many such systems don't have BIOS or DMI. However, we'd like
-to be able to suspend bridges on non-x86 systems too.
-
-Restrict the "recent enough" check to x86. If we find further
-incompatibilities, it probably makes sense to expand on the deny-list
-approach (i.e., bridge_d3_blacklist or similar).
-
-Link: https://lore.kernel.org/linux-pci/CAJZ5v0j_6jeMAQ7eFkZBe5Yi+USGzysxAgfemYh=-zq4h5W+Qg@mail.gmail.com/ [0]
-Link: https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/ [1]
-Link: https://lore.kernel.org/linux-pci/20240828210705.GA37859@bhelgaas/ [2]
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-[Brian: rewrite to !X86 based on Rafael's suggestions]
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 ---
-Based on prior work by Manivannan Sadhasivam that was part of a bigger
-series that stalled:
+Changes in v3:
+- Fix nit review comments.
+- Link to v2: https://lore.kernel.org/r/20250320-dtbinding-v2-0-8d8eaa4e76cc@quicinc.com
 
-[PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
-https://lore.kernel.org/linux-pci/20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org/
+Changes in v2:
+- Drop 01/04 patch as it was not needed.
+- Introduce sa8775p as fallback compatible to sm8550.
+- Move firmware files to board DT
+- Link to v1: https://lore.kernel.org/r/20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com
 
-I'm resubmitting this single patch, since it's useful and seemingly had
-agreement.
+---
+Vikash Garodia (3):
+      dt-bindings: media: qcom,sm8550-iris: document SA8775p IRIS accelerator
+      arm64: dts: qcom: sa8775p: add support for video node
+      arm64: dts: qcom: sa8775p-ride: enable video
 
-Changes in v6:
-- Include more background lore (thanks Rafael)
-- Switch to "non-x86" instead of "uses Device Tree" condition
+ .../bindings/media/qcom,sm8550-iris.yaml           |  7 ++-
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |  6 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 71 ++++++++++++++++++++++
+ 3 files changed, 83 insertions(+), 1 deletion(-)
+---
+base-commit: f2151613e040973c868d28c8b00885dfab69eb75
+change-id: 20250310-dtbinding-8921bfc151e9
 
-Changes in v5:
-- Pulled out of the larger series, as there were more controversial
-  changes in there, while this one had agreement (Link [1][2]).
-- Rewritten with a relaxed set of rules, because the above patch
-  required us to modify many device trees to add bridge nodes.
-
- drivers/pci/pci.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index ff69f3d653ce..4d7c9f64ea24 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3031,7 +3031,7 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
-  * @bridge: Bridge to check
-  *
-  * This function checks if it is possible to move the bridge to D3.
-- * Currently we only allow D3 for recent enough PCIe ports and Thunderbolt.
-+ * Currently we only allow D3 for some PCIe ports and for Thunderbolt.
-  */
- bool pci_bridge_d3_possible(struct pci_dev *bridge)
- {
-@@ -3075,10 +3075,10 @@ bool pci_bridge_d3_possible(struct pci_dev *bridge)
- 			return false;
- 
- 		/*
--		 * It should be safe to put PCIe ports from 2015 or newer
--		 * to D3.
-+		 * Out of caution, we only allow PCIe ports from 2015 or newer
-+		 * into D3 on x86.
- 		 */
--		if (dmi_get_bios_year() >= 2015)
-+		if (!IS_ENABLED(CONFIG_X86) || dmi_get_bios_year() >= 2015)
- 			return true;
- 		break;
- 	}
+Best regards,
 -- 
-2.49.0.395.g12beb8f557-goog
+Vikash Garodia <quic_vgarodia@quicinc.com>
 
 
