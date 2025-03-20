@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-570058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A96A6AB83
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:55:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5ADA6AB87
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4897B8A7488
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6363B48B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC1922257D;
-	Thu, 20 Mar 2025 16:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2093C22259C;
+	Thu, 20 Mar 2025 16:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiENWtni"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MlEEVOai"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF81F1E9B02;
-	Thu, 20 Mar 2025 16:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65D81E9B02;
+	Thu, 20 Mar 2025 16:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742489619; cv=none; b=tpy+gXPNpjjo2DduVz97gOeHYRJz5YbJSXOxC0Rz9Z4Er8RXQoah7saLxxwCs5+qBaSiDLHSsTEzz6Xt4tHKPtnOBmuPAz2juorXuxGs6FUrBs75acJYqBGN6dFrJa6GsMZyetIkHHwhZ4KCpfD4SdL4Tufl7vNVQYEqDjnu6kQ=
+	t=1742489729; cv=none; b=hn2UR3iT43vEHa3oCBWeWKS3m2ZB4g7tim7VmmbxBKmzLxqCRXBDFq2hbUY871PfWl7TkV/xy4PNM8OAD4zuYE/ddZkhn/qs9yASKiY6UH7vqdefuGCK6KUdCeJ6olUy6/a7zzekcZbV2I1eTBIwiyybDePoAS0aiBcY1bzyjmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742489619; c=relaxed/simple;
-	bh=KjmCKp/NJf3R2sO9/vCh37J/TX7XxEOqD+tQzob08mE=;
+	s=arc-20240116; t=1742489729; c=relaxed/simple;
+	bh=h830iovzs+H85c6/sS1xXv46lXYYa2W1ibIND2/XF0k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ja/mLlLGbTgmNg8FI/SLfVUzvXLvbiNRh1LRp7eJspfDGZOUGwC0ObLhoYtZLBffrw0gT6s2siSJ9JKtBEYOd25U3qhDXAOsrmi9WLDkWq8tCMejZwsS+ol2FfMDC1lZAq9RDJ70gWwAkBRIxKATj8Pg0w64UxjJeHOOvQDWXc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiENWtni; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385F0C4CEDD;
-	Thu, 20 Mar 2025 16:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742489619;
-	bh=KjmCKp/NJf3R2sO9/vCh37J/TX7XxEOqD+tQzob08mE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QiENWtniDLagGjucMoGsLCdBIczU0VtB2Ls6tUsGSB/uStLw1aievd/4/uZAW4OAn
-	 gQ3x741HkyLwTE7qzq8NPUpLiJOPFU9JQrsw1t+uyL2d3bw08jJMBpwi8l5ydvDDbL
-	 pptMDHy6Mj7DCkVR5J2uzV4nLr7WJe7nMsBEPMbM+vcOdIdpkZbcqA6bCF1mwyAadO
-	 p201rVWLoc4r8gphb2+g5xqxv4dyMuRkAjkw9V+gnV7rTvRAq/ik5LjZQItQpzwIg/
-	 dKh8V/csYA/FEdu9are4nMBLXrUe5s1bLBHa4P/vIv+NvwUMYFQk2m7YzvdXPb0Jt3
-	 rWOOvp8o1jD3w==
-Date: Thu, 20 Mar 2025 06:53:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Greg Thelen <gthelen@google.com>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH cgroup/for-6.15] cgroup: rstat: Cleanup flushing
- functions and locking
-Message-ID: <Z9xIEgxoGfZIfSkz@slm.duckdns.org>
-References: <20250319210013.3572360-1-yosry.ahmed@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJV4W8DDF8vPViqR7i7BQtwx1StScD5lVQqZ1ULOXYEY3o3Gkj1drMXqnPWztGq+7f2/4LHZZTblsQkfjH8f+DRoDKG0DtZ9wf/IFckkJDmV8hcIyuAMnD8pHM8Ad5XQA/HrvGCm6n72YLgWoM7h1fJdvjl/iSHblRz+g7O3s8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MlEEVOai; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=P0Ivq67bbotH4ADjJAlFztdw/IUYFM+eBRURP7U+L1E=; b=MlEEVOaiCDs90bRztnCdRaJ8ow
+	OK0zmlKkUw3+EaeajJmdoGHTn6Kq3ENk0vEmbsBu+0tX/1xvNzVUS4OfrbQ/lz1HOWHzvSZG+q1oq
+	mDXmR2Jb9BJrw+qDVUbZqkMolVWFZq7SpGAwiRLh7lfbtwfMzApi/DHu41/+eiJ3NXxY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tvJAZ-006V1c-OP; Thu, 20 Mar 2025 17:54:59 +0100
+Date: Thu, 20 Mar 2025 17:54:59 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Willie Thai <wthai@nvidia.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au, kees@kernel.org,
+	tony.luck@intel.com, gpiccoli@igalia.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, openbmc@lists.ozlabs.org,
+	leohu@nvidia.com, tingkaic@nvidia.com, dkodihalli@nvidia.com,
+	Mars Yang <maryang@nvidia.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: [PATCH v3 1/2] ARM: dts: aspeed: Add device tree for Nvidia's
+ GB200NVL BMC
+Message-ID: <fbf6a89b-80c4-47f3-9dad-2725c040e041@lunn.ch>
+References: <20250320164633.101331-1-wthai@nvidia.com>
+ <20250320164633.101331-2-wthai@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,31 +67,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319210013.3572360-1-yosry.ahmed@linux.dev>
+In-Reply-To: <20250320164633.101331-2-wthai@nvidia.com>
 
-On Wed, Mar 19, 2025 at 09:00:13PM +0000, Yosry Ahmed wrote:
-> Now that the rstat lock is being re-acquired on every CPU iteration in
-> cgroup_rstat_flush_locked(), having the initially acquire the lock is
-> unnecessary and unclear.
-> 
-> Inline cgroup_rstat_flush_locked() into cgroup_rstat_flush() and move
-> the lock/unlock calls to the beginning and ending of the loop body to
-> make the critical section obvious.
-> 
-> cgroup_rstat_flush_hold/release() do not make much sense with the lock
-> being dropped and reacquired internally. Since it has no external
-> callers, remove it and explicitly acquire the lock in
-> cgroup_base_stat_cputime_show() instead.
-> 
-> This leaves the code with a single flushing function,
-> cgroup_rstat_flush().
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+>   - Skip mac setting and wait till the delay issue in phy-mode fix from Aspeed SOC vendor side [Andrew]
 
-Applied to cgroup/for-6.15.
+For this part only:
 
-Thanks.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
--- 
-tejun
+    Andrew
 
