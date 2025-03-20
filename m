@@ -1,203 +1,172 @@
-Return-Path: <linux-kernel+bounces-569510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0452A6A3EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:45:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EF7A6A406
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED62C423787
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:44:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C428189FDD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342E3224890;
-	Thu, 20 Mar 2025 10:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kdj3JpaA"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A09224B09;
+	Thu, 20 Mar 2025 10:46:34 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB0F223300
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFEE7482;
+	Thu, 20 Mar 2025 10:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467485; cv=none; b=sDUHRr6wDuFeRI3y/H1twV74s5bo2UzE5wvfF0Xj22SCBPq+NglKy6kHykteuzfodg+UF9LoD7RkhvChEUnCfXV4eZ2f/QQNeQFlY14v1VtMhwk/gGUMo/Bi/CDovAMZeimfCgmOOc03qD9fJxpeg59scirjewU1TI2QiZSyLa4=
+	t=1742467594; cv=none; b=CgQ56aeTwW2SuCb04bUOpRHWdAAKulVSNi/l/TJ4aDUxVJ/IoAZCQIspmDOH9ltiKm1IXIO7n8LAOccY/8Aoo8IakCvkm8qi9yYqeh59Xk1lVEp1EXdnAlPNLR8AYjaboDaKJYXfziGP5RHd6ArpzMr3g1PRez+4mUTCQxfnvjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467485; c=relaxed/simple;
-	bh=O8zyyL1p84aMCSSYT842uw6SFy2rTfsgAblLzeFkCR0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N0+X74Zu+SI+fksYt0sDMezki4xZg/osUhykjCICLsQSxQTSTa9SNHmGIKew1jgDdy7BcuGW2aHVBEKOUiK1ADfvIQm1DkU4MoySBUGTB0pjcMdOqxYFQc5oO3XD1i5mVa+AW6zRnAOkHWUym/LfqR7zKhuezlqruj9TsYqCcn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kdj3JpaA; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d22c304adso7494445e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742467480; x=1743072280; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j11DFSETqOLtc+vMOz1k4rHgXFA118EedepjEdU8Zqw=;
-        b=Kdj3JpaAcTMsJX0fWv0whfnlnrjaZjQkUoIxaVNNWymywgQ1lxYjwO8r7iq1JNp6QM
-         Ojbu13PJrvGpih/A3lZ8h//bm+lQo87tlhkP9QV9OC12v7CPJ6kEgjQXJce0C5ni+hLc
-         WK8hRYGR3L0Fg1Ms6LVwx4HmFLLx967l5J71fKJh2+DS8uT7oCIJlhzicsDfSOQYSkWF
-         sHWVXfORZG9aTGDrruW97o37vT+nFRgMDzAibG+h4BCecMAJVWL9zR8i+Q2//u9V8cvF
-         qTDTgtuLxb6b7EYFGNlNI/IdDW+67sG2wCaCd7GvxlgTKp/aIF7rCtp1mbYDuCw4iql2
-         FLfw==
+	s=arc-20240116; t=1742467594; c=relaxed/simple;
+	bh=qo3bx4y1OgFeBHPu7HD6Z1utr2SwL7M4yO/d4FkV4V8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mpEnFbSAQNpYCJA4g3dNcCDyeMvW8ZxiTDXsVMCmaoLuHq4ndSXpLOPziKNIryL0ps4VB18ipaiIo2sXswLqEmyafMbmBFricWZ1sppjWzwkgvGniJnoIZcGS7No4yAgSwC4NXpsYZ5fCy1IawnmcC8YW1Alxk7kPQAPIVEKs9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-523de5611a3so287938e0c.1;
+        Thu, 20 Mar 2025 03:46:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742467480; x=1743072280;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j11DFSETqOLtc+vMOz1k4rHgXFA118EedepjEdU8Zqw=;
-        b=OdHOnJkzfiiu+yrRqp62bRagpBP4ISR/JgHkrPikKsWhLPSEAU6fuwtoYTbK/S5lwX
-         hrmELEWgYLI+JjQ/L5cxRc0DZOjq8qWM9jpqHx6zmZui+JeM8cdRA7Ebbu8yrFaKJATD
-         Igv6p3Vz38omJrmaF0DsXk7dGYEGO7Yf9cs0RkxMZKTGzITkn8ieIAEGvyCIrqHZxllv
-         Ow4yoXWcU8j0lWraVZE9QsGkQfFhfo6tjhf9hwTqDmnqtiObbNEduHks48NqDCQ9MGlA
-         fnIJm/YNInuza/sYf33IVdIJ1oOktn7jIEmT+gzb6BQgn/i9sBo6k7yYXNaWbAKQNX8i
-         QYNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhVR8+X0f/Hh6t8pgV/xEzjmYiIN/jT6jShZXXCdhgybRALoUr8iP9J/rie0VLBl0DwMn7TJGAd8epqrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqXOa6Kypi6hXlc26ixWJfDNeWMstnrFEjrjmcR2fmjfi+VNCq
-	ksCjx38o5zuWU1ehWgZiUedOOU5/QfGM8CEbN1ng6OUtTV4Zz9HzxT67kpn5xIQGZBLICOpzjoo
-	5kI1Lbkuyxg==
-X-Google-Smtp-Source: AGHT+IHmhdHTuCMOMffmpvyIMCzJObzjHJotMPvb7/CKZriBN1WJ2Qe2CHVhTxdEuiWThlixsbw8H9oOiShQMA==
-X-Received: from wmgg15.prod.google.com ([2002:a05:600d:f:b0:43b:c450:ea70])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1da2:b0:439:5f04:4f8d with SMTP id 5b1f17b1804b1-43d49187ba9mr20806165e9.12.1742467480075;
- Thu, 20 Mar 2025 03:44:40 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:44:38 +0000
-In-Reply-To: <Z9sRQ0cK0rupEiT-@google.com>
+        d=1e100.net; s=20230601; t=1742467591; x=1743072391;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BcUl7AglmAhanLKGRDwml74U0DwMqoxNAsyIj9YcrII=;
+        b=f3W5c9kXHuEzeG3uRSWbPSBeCmEtNA43NOQDtjeIeIp/zSP1PfzTG5BX3djPdLNa15
+         rm3kBcsD2mrNUfAo6Z6lhM5HKdf7LdyqJyzhx/2tmIXVbper6SJE9kBCCf4H4D/GFjy+
+         OO3Jwi3WQT/Cmh4NONOEUK5cbp9NHoTh7m3c2cVpRJpKIaandQjr4fhnxp8G/uSYqLNB
+         pFg3siOEHdokESCMHjjw/pRymPkt2e2dNKm3DtJOjsG+YBBQkLCmWPXxut+WRgrr2+Yp
+         8tO5E9t8yAzUhO6BDDvcSK286m6vhY1GPwCFq5LPff3/L372uXtnjKfErEJagYXMXXq5
+         9DWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDbUyRt9DZ4P0vR7Cw/rOVG9scUQnrop1aNZwAQ898/jb8md8pcAVWwkb70tgWjyy1ZxnUWLbPvRh5ovpo@vger.kernel.org, AJvYcCWCHiUFBSKD7VGLQLo8sc1AHTqgWk1CH56DB656/O1GZ/lvepPmqNL2Crq+ZBE2AsKhXRlFiW/E7t1Q0NXZ@vger.kernel.org, AJvYcCWsp8AAfJ2BFMFUJYp29O0eT2Ixrcx/yck5xvLN0UWW/CYLosRfA2c9GiM4c+IcuN5IeBqeB8TVX8EYQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoE2xSVwhlK/dlWeLcxrv39nEcLdg5g7xedbGGsmJcEnY2K4b6
+	AalLGOopkKVKD2jQ52c9b6vRC4uruwtm5bSFsEZnQCGOiZ2L5qmO7G2wIpC7
+X-Gm-Gg: ASbGnctDjMUpz9nF5S2jHCSRfTv5saki21kNJ0ZzGMQ+7GUu98bZEup+FyCzBIRww5t
+	yNHA6O7dlbc9HR1JzALq3BPEGhP/fpmTI75ykgoY6rA7/1R72Pu7SNYmLb6PUf8ea7sVScnQRt7
+	b7b8Ovs9cV4cDF63t76+HL6zhUlOyf5Yj/pZsD3zhEOHKiD46fg93wxb4lFXm8tmFQzOpk0EDy+
+	H51+ZVJYf91A4VvvrtJsJ/RCK0n4k7oRxCA48uOYY9M8RFzd8qIqMIAdezLkmN73rOsp7xD3Rev
+	gqgM+NONEbhCWK15FMmHqPXnnWMi5S6gVqrdMAiutG/H3qKaQ/1sSBJA+dJUsYlu6DhDqX8OZE1
+	QnuLWtx4=
+X-Google-Smtp-Source: AGHT+IHTEbg99abufsBEGzV6hCoID1T6Ynpb+0RFpqlvO3I+qTNl1JXWBwKqJAdUJKM0FgFbhCRUEw==
+X-Received: by 2002:a05:6122:4312:b0:520:420a:a07a with SMTP id 71dfb90a1353d-5258926a30dmr4476426e0c.8.1742467590832;
+        Thu, 20 Mar 2025 03:46:30 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5243a715293sm2841004e0c.43.2025.03.20.03.46.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 03:46:30 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86b9d1f729eso240013241.3;
+        Thu, 20 Mar 2025 03:46:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/rzzCTPaVK4yqttMSii+GnP+V2o0Zs2Fb08EtB5OdNK1E9IzT+Z1ztdrsBCdov/FlNmJEIQOW5t4lhh20@vger.kernel.org, AJvYcCUxlg8v+N3rieYeygyS/rJCunOUmxU5Jt3p+QvObwZ1kg/x3Jb9wExmT+VyLARy6mxQ0B8vx96y3Z0U0Q==@vger.kernel.org, AJvYcCVfG8/BAD1fc279IlxDyzeN8xxaIfDLkKOsQmcjgk4wyJGXgDPMN+lY+H+MlItFHZIRr0Pu/ztE7qFmFeAM@vger.kernel.org
+X-Received: by 2002:a05:6102:3e89:b0:4bb:e511:15a3 with SMTP id
+ ada2fe7eead31-4c4ec64ca04mr5179605137.8.1742467590396; Thu, 20 Mar 2025
+ 03:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250110-asi-rfc-v2-v2-0-8419288bc805@google.com>
- <20250110-asi-rfc-v2-v2-4-8419288bc805@google.com> <20250319172935.GMZ9r-_zzXhyhHBLfj@fat_crate.local>
- <Z9sRQ0cK0rupEiT-@google.com>
-X-Mailer: aerc 0.18.2
-Message-ID: <D8L164U8HBTB.G5MS86AIISLM@google.com>
-Subject: Re: [PATCH RFC v2 04/29] mm: asi: Add infrastructure for boot-time enablement
-From: Brendan Jackman <jackmanb@google.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-alpha@vger.kernel.org>, <linux-snps-arc@lists.infradead.org>, 
-	<linux-arm-kernel@lists.infradead.org>, <linux-csky@vger.kernel.org>, 
-	<linux-hexagon@vger.kernel.org>, <loongarch@lists.linux.dev>, 
-	<linux-m68k@lists.linux-m68k.org>, <linux-mips@vger.kernel.org>, 
-	<linux-openrisc@vger.kernel.org>, <linux-parisc@vger.kernel.org>, 
-	<linuxppc-dev@lists.ozlabs.org>, <linux-riscv@lists.infradead.org>, 
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>, 
-	<sparclinux@vger.kernel.org>, <linux-um@lists.infradead.org>, 
-	<linux-arch@vger.kernel.org>, <linux-mm@kvack.org>, 
-	<linux-trace-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>, 
-	<kvm@vger.kernel.org>, <linux-efi@vger.kernel.org>, 
-	Junaid Shahid <junaids@google.com>
+MIME-Version: 1.0
+References: <SN6PR02MB4157227300E59ACB3B0DABD0D4DE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <303572c2-4839-4dae-a249-9967fcc9cf03@gmx.de> <BN7PR02MB4148157E5307E306FD9D093ED4D92@BN7PR02MB4148.namprd02.prod.outlook.com>
+In-Reply-To: <BN7PR02MB4148157E5307E306FD9D093ED4D92@BN7PR02MB4148.namprd02.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Mar 2025 11:46:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVvuPr454jcVExGpHX_94_=y0GfVPJu1YLO1-H0OkBTdQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqSJaAlYE2RSivsmsHWzNr0rgT1XY8eXSxtnUbzAmsz9cOYCVmAaJLksWc
+Message-ID: <CAMuHMdVvuPr454jcVExGpHX_94_=y0GfVPJu1YLO1-H0OkBTdQ@mail.gmail.com>
+Subject: Re: fbdev deferred I/O broken in some scenarios
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Helge Deller <deller@gmx.de>, 
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed Mar 19, 2025 at 6:47 PM UTC, Yosry Ahmed wrote:
-> On Wed, Mar 19, 2025 at 06:29:35PM +0100, Borislav Petkov wrote:
-> > On Fri, Jan 10, 2025 at 06:40:30PM +0000, Brendan Jackman wrote:
-> > > Add a boot time parameter to control the newly added X86_FEATURE_ASI.
-> > > "asi=on" or "asi=off" can be used in the kernel command line to enable
-> > > or disable ASI at boot time. If not specified, ASI enablement depends
-> > > on CONFIG_ADDRESS_SPACE_ISOLATION_DEFAULT_ON, which is off by default.
-> > 
-> > I don't know yet why we need this default-on thing...
+Hi Michael,
+
+On Wed, 19 Mar 2025 at 21:29, Michael Kelley <mhklinux@outlook.com> wrote:
+> From: Helge Deller <deller@gmx.de> Sent: Tuesday, March 18, 2025 1:16 AM
+> > On 3/18/25 03:05, Michael Kelley wrote:
+> > > I've been trying to get mmap() working with the hyperv_fb.c fbdev driver, which
+> > > is for Linux guests running on Microsoft's Hyper-V hypervisor. The hyperv_fb driver
+> > > uses fbdev deferred I/O for performance reasons. But it looks to me like fbdev
+> > > deferred I/O is fundamentally broken when the underlying framebuffer memory
+> > > is allocated from kernel memory (alloc_pages or dma_alloc_coherent).
+> > >
+> > > The hyperv_fb.c driver may allocate the framebuffer memory in several ways,
+> > > depending on the size of the framebuffer specified by the Hyper-V host and the VM
+> > > "Generation".  For a Generation 2 VM, the framebuffer memory is allocated by the
+> > > Hyper-V host and is assigned to guest MMIO space. The hyperv_fb driver does a
+> > > vmalloc() allocation for deferred I/O to work against. This combination handles mmap()
+> > > of /dev/fb<n> correctly and the performance benefits of deferred I/O are substantial.
+> > >
+> > > But for a Generation 1 VM, the hyperv_fb driver allocates the framebuffer memory in
+> > > contiguous guest physical memory using alloc_pages() or dma_alloc_coherent(), and
+> > > informs the Hyper-V host of the location. In this case, mmap() with deferred I/O does
+> > > not work. The mmap() succeeds, and user space updates to the mmap'ed memory are
+> > > correctly reflected to the framebuffer. But when the user space program does munmap()
+> > > or terminates, the Linux kernel free lists become scrambled and the kernel eventually
+> > > panics. The problem is that when munmap() is done, the PTEs in the VMA are cleaned
+> > > up, and the corresponding struct page refcounts are decremented. If the refcount goes
+> > > to zero (which it typically will), the page is immediately freed. In this way, some or all
+> > > of the framebuffer memory gets erroneously freed. From what I see, the VMA should
+> > > be marked VM_PFNMAP when allocated memory kernel is being used as the
+> > > framebuffer with deferred I/O, but that's not happening. The handling of deferred I/O
+> > > page faults would also need updating to make this work.
+
+I assume this is triggered by running any fbdev userspace that uses
+mmap(), e.g. fbtest?
+
+> > > The fbdev deferred I/O support was originally added to the hyperv_fb driver in the
+> > > 5.6 kernel, and based on my recent experiments, it has never worked correctly when
+> > > the framebuffer is allocated from kernel memory. fbdev deferred I/O support for using
+> > > kernel memory as the framebuffer was originally added in commit 37b4837959cb9
+> > > back in 2008 in Linux 2.6.29. But I don't see how it ever worked properly, unless
+> > > changes in generic memory management somehow broke it in the intervening years.
+> > >
+> > > I think I know how to fix all this. But before working on a patch, I wanted to check
+> > > with the fbdev community to see if this might be a known issue and whether there
+> > > is any additional insight someone might offer. Thanks for any comments or help.
+> >
+> > I haven't heard of any major deferred-i/o issues since I've jumped into fbdev
+> > maintenance. But you might be right, as I haven't looked much into it yet and
+> > there are just a few drivers using it.
 >
-> It's a convenience to avoid needing to set asi=on if you want ASI to be
-> on by default. It's similar to HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
-> or ZSWAP_DEFAULT_ON.
+> Thanks for the input. In the fbdev directory, there are 9 drivers using deferred I/O.
+> Of those, 6 use vmalloc() to allocate the framebuffer, and that path works just fine.
+> The other 3 use alloc_pages(), dma_alloc_coherent(), or __get_free_pages(), all of
+> which manifest the underlying problem when munmap()'ed.  Those 3 drivers are:
 >
-> [..]
-> > > @@ -175,7 +184,11 @@ static __always_inline bool asi_is_restricted(void)
-> > >  	return (bool)asi_get_current();
-> > >  }
-> > >  
-> > > -/* If we exit/have exited, can we stay that way until the next asi_enter? */
-> > > +/*
-> > > + * If we exit/have exited, can we stay that way until the next asi_enter?
-> > 
-> > What is that supposed to mean here?
->
-> asi_is_relaxed() checks if the thread is outside an ASI critical
-> section.
->
-> I say "the thread" because it will also return true if we are executing
-> an interrupt that arrived during the critical section, even though the
-> interrupt handler is not technically part of the critical section.
->
-> Now the reason it says "if we exit we stay that way" is probably
-> referring to the fact that an asi_exit() when interrupting a critical
-> section will be undone in the interrupt epilogue by re-entering ASI.
->
-> I agree the wording here is confusing. We should probably describe this
-> more explicitly and probably rename the function after the API
-> discussions you had in the previous patch.
+> * hyperv_fb.c, which I'm working with
+> * sh_mobile_lcdcfb.c
+> * ssd1307fb.c
 
-Yeah, this is confusing. It's trying to very concisely define the
-concept of "relaxed" but now I see it through Boris' eyes I realise
-it's really unhelpful to try and do that. And yeah we should probably
-just rework the terminology/API.
+Nowadays sh_mobile_lcdcfb is used only on various SuperH boards
+(I have no hardware to test).
 
-To re-iterate what Yosry said, aside from my too-clever comment style
-the more fundamental thing that's confusing here is that, using the
-terminology currently in the code there are two concepts at play:
+sh_mobile_lcdcfb was used on ARM-based SH/R-Mobile SoCs until DT
+support was added to the DRM driver for the corresponding hardware.
+The platform using it was migrated to DRM in commit 138588e9fa237f97
+("ARM: dts: renesas: r8a7740: Add LCDC nodes") in v6.8). At the time
+of the conversion, fbtest worked fine with sh_mobile_lcdcfb.
 
-- The critical section: this is the path from asi_enter() to
-  asi_relax(). The critical section can be interrupted, and code
-  running in those interupts is not said to be "in the critical
-  section".
+Deferred I/O is also used in DRM drivers for displays that are connected
+using I2C or SPI.  Last time I tried the st7735r driver, it worked fine
+with fbtest.  That was also on arm32, though.
 
-- Being "tense" vs "relaxed". Being "tense" means the _task_ is in a
-  critical section, but the current code might not be.
+Gr{oetje,eeting}s,
 
-This distinction is theoretically relevant because e.g. it's a bug to
-access sensitive data in a critical section, but it's OK to access it
-while in the tense state (we will switch to the restricted address
-space, but this is OK because we will have a chance to asi_enter()
-again before we get back to the untrusted code). 
+                        Geert
 
-BTW, just to be clear:
-
-1. Both of these are only relevant to code that's pretty deeply aware
-   of ASI. (TLB flushing code, entry code, stuff like that).
-
-2. To be honest whenever you write:
-
-     if (asi_in_critical_section())
-
-   You probably mean:
-
-     if (WARN_ON(asi_in_critical_section()))
-
-   For example if we try to flush the TLB in the critical section,
-   there's a thing we can do to handle it. But that really shouldn't
-   be necessary.  We want the critical section code to be very small
-   and straight-line code.
-
-   And indeed in the present code we don't use
-   asi_in_critical_section() for anything bur WARNing.
-
-> asi_is_relaxed() checks if the thread is outside an ASI critical
-> section.
-
-Now I see it written this way, this is probably the best way to
-conceptualise it. Instead of having two concepts "tense/relaxed" vs
-"ASI critical section" we could just say "the task is in a critical
-section" vs "the CPU is in a critical section". So we could have
-something like:
-
-bool asi_task_critical(void);
-bool asi_cpu_critical(void);
-
-(They could also accept an argument for the task/CPU, but I can't see
-any reason why you'd peek at another context like that).
 
 --
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-For everything else, Ack to Boris or +1 to Yosry respectively.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
