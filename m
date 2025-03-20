@@ -1,311 +1,303 @@
-Return-Path: <linux-kernel+bounces-569336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A82A6A199
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:41:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCD3A6A19C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2054188E028
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B15A7B1D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08AE214A84;
-	Thu, 20 Mar 2025 08:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967E32163BD;
+	Thu, 20 Mar 2025 08:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Iz7Oyd/1"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqMMwdvq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40CD2063DF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB8721420B;
+	Thu, 20 Mar 2025 08:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742460092; cv=none; b=kGdT/cFgfcj64qaYH2sBLxF4b5VC11PufBmUyW3iz4k3gMQ1ZHctQhZMUVhV3A2iphDgPPqrjDA3U07NlKnks/WVPSlPn+2pYoecoRssRppqdLC14Oa76cf2xd5xis+HRwBp/WccK2zPmbY0DIgYfODF33+rdGBLjArC3fcFDME=
+	t=1742460121; cv=none; b=JmdpL/xrOdu20Vi0P2DImq0xRKATGjtEcQSVT8f1a8p+FAuidHrvN1KfqYcCSRrjaHL9Yj714Ke2RH+OPhW9H+9mZkSaEa5w6eubq3jiaZRhzbTqPfmCett30I9xixRNQavpF7+0DZAt+uVF3+LaGjXTRBKxfHB0WYhVwjdgNqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742460092; c=relaxed/simple;
-	bh=Xl0sN9nXKyD7XwlQ3LKCTHRWE2oPfn/jUJqZWIlcH54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ax34MBlB4prFqHHDMa0redDVlKuhXMB4b2VeToxvNYZ6R76XU2NsFOQ5RWxEOhijsOo3zh27s3t2FfiEF0K19L3T0XyRQBekoVRjXkhkgkqPplobW5lWg9cboNCCNxHQa4vTapEaCtwz6rLU317egxZwcxvdPYCmwqaQf/BWoMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Iz7Oyd/1; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c7ddbc01-f526-44dd-a7bd-69b9a38a040a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742460086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zi1iaGlhfR+TaozLS52j8nqEXg7xPT6xox5yrHMs700=;
-	b=Iz7Oyd/1BoO3jnxOu5a4VU/oU80VEa69kyjdz+fDWsaZOYsSJid6vUfpZIfqofRCpWLXjs
-	MfOYBeRe9eyVJRSoMYCDpO+GHnnWaXC7GcdlNErLtJdiQU9TiCtJCKZDecCE1W/yj9tDHT
-	O1HpJKx9AU1ZNZKltrGbA7FL+/C8rxE=
-Date: Thu, 20 Mar 2025 09:41:23 +0100
+	s=arc-20240116; t=1742460121; c=relaxed/simple;
+	bh=Pxon9jKBOoPJ78jE3zH31/v+sYZJ+86XYVNJMZpkgjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMmCB3DjI/kcv2tyCX9NWK2Yo3DewtrapfKkjI7SNK8SpLf8X9gZSOqgygEM67249q65JzKEbwV0Yygd/z/zF4+bg+AeWmZKCM9K9fVpkqtqHO9LHjESJD0Ezkb94qXYUqWojK51AudMrI6xJRCm9QHAE0x9x1yOBw1uRANeJAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqMMwdvq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6718C4CEDD;
+	Thu, 20 Mar 2025 08:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742460121;
+	bh=Pxon9jKBOoPJ78jE3zH31/v+sYZJ+86XYVNJMZpkgjM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XqMMwdvqwyDoSHFGxlmdqW0hUzbCJMMBqnmVo6QnikM6BNYX90vCjvr4a0Zzk1ulD
+	 ReI5YOpesCG7T9HtIF0RV8v0fXxTn2pXVwUBw/bmTtkuybx4c93fZfMs6z1ihm4tdM
+	 5YQF68j7tyNguPx7Kw9NNmUSnN6dJkJGMMrkCKd+KHWNNHWIuDN9RVKYi/u7AWRbGD
+	 9bnVlhqvqFO+FEZVWwAhPTwBbjZ8hrGHmlCSgUiYU5k9BThyNz8OLVVt21/Oor1NHG
+	 zZDL8q/s6TgjyOm8LgevmCTSLwyFlikjNB2HobaL+nX1B5nwS+Eaunb1uxh+WvtQ2F
+	 QPSP0XBRpLpsQ==
+Date: Thu, 20 Mar 2025 09:41:58 +0100
+From: Daniel Gomez <da.gomez@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Adam Bratschi-Kaye <ark.email@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Greg KH <gregkh@linuxfoundation.org>, 
+	Fiona Behrens <me@kloenk.dev>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v8 0/7] rust: extend `module!` macro with integer
+ parameter support
+Message-ID: <nh23cbbpf5yk6mafn7gz7urlau22egilideytnnh7paagusaih@t7y7q7jha4fz>
+References: <20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in
- ib_device_uevent (2)
-To: syzbot <syzbot+17fb1664c4f5a2eeb36f@syzkaller.appspotmail.com>,
- jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <67b25ec8.050a0220.54b41.000d.GAE@google.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <67b25ec8.050a0220.54b41.000d.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org>
 
-On 16.02.25 22:55, syzbot wrote:
-> Hello,
+Hi, 
+On Thu, Feb 27, 2025 at 03:38:06PM +0100, Andreas Hindborg wrote:
+> Extend the `module!` macro with support module parameters. Also add some string
+> to integer parsing functions and updates `BStr` with a method to strip a string
+> prefix.
 > 
-> syzbot found the following issue on:
+> Based on code by Adam Bratschi-Kaye lifted from the original `rust` branch [1].
 > 
-> HEAD commit:    09fbf3d50205 Merge tag 'tomoyo-pr-20250211' of git://git.c..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=140563f8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=641fe3e3cfee64bb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=17fb1664c4f5a2eeb36f
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-09fbf3d5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/31b409a4b675/vmlinux-09fbf3d5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/27f349d4d8cb/bzImage-09fbf3d5.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+17fb1664c4f5a2eeb36f@syzkaller.appspotmail.com
+> Link: https://github.com/Rust-for-Linux/linux/tree/bc22545f38d74473cfef3e9fd65432733435b79f [1]
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-To this problem, I just looked through this problem which occurred on 
-iwarp. I remember a similar problem which occurred on rxe.
-To the problem on rxe, the solution 
-https://patchwork.kernel.org/project/linux-rdma/patch/20250313092421.944658-1-wangliang74@huawei.com/ 
-seems to be able to fix it.
+I've tested this series including the following patches from Andreas' tree [1]
+as dependency for module testing parameters with the Rust Null Block driver:
 
-I am not sure if this problem can also be fixed by the above solution or 
-not.
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git/log/?h=rnull-v6.14-rc1
 
-Best Regards,
-Zhu Yanjun
+51d304103b7f rust: refactor: rename `RawWriter` to `BufferWriter`
+544811b24574 LIST: [PATCH v2 1/3] rust: sync: change `<Arc<T> as ForeignOwnable>::PointedTo` to `T`
+3f097abd58de LIST: [PATCH v15 1/3] rust: types: add `ForeignOwnable::PointedTo`
+0525eda0ff8d LIST: [PATCH v7 3/14] rust: sync: add `Arc::as_ptr`
+ce7343b48e63 LIST: [PATCH v2 2/3] rust: configfs: introduce rust support for configfs
+6efae1a9a226 rust: rnull: add module parameter support
+b6545e0eaf94 rust: rnull: enable configuration via `configfs`
+6a3bc0dc31d0 rust: rnull: move driver to separate directory
 
+* modinfo
+sudo modinfo rnull_mod
+filename:       /lib/modules/6.14.0-rc6-00015-g51d304103b7f/kernel/drivers/block/rnull/rnull_mod.ko
+author:         Andreas Hindborg
+description:    Rust implementation of the C null block driver
+license:        GPL v2
+name:           rnull_mod
+intree:         Y
+depends:
+vermagic:       6.14.0-rc6-00015-g51d304103b7f mod_unload modversions
+parm:           nr_devices:Number of devices to register (u64)
+parm:           bs:Block size (in bytes) (u32)
+parm:           rotational:Set the rotational feature for the device (0 for false, 1 for true). Default: 0 (u8)
+parm:           gb:Device capacity in MiB (u64)
+
+* Testing nr_devices parameter:
+sudo modprobe rnull_mod nr_devices=100
+
+sudo ls /dev/rnullb* | wc -l
+100
+
+* Testing block size and capacity parameters:
+sudo rmmod rnull_mod
+sudo modprobe rnull_mod nr_devices=1 bs=512 gb=1024
+
+sudo fdisk -l /dev/rnullb0
+Disk /dev/rnullb0: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+* Testing block size with fio and blkalgn [1] (tool for validating driver block
+size):
+
+[1] blkalgn is an eBPF-based tool for tracing block operations that also reports
+block granularity and alignment histograms:
+https://github.com/dkruces/bcc/tree/blkalgn
+
+Install:
+https://github.com/dkruces/bcc/releases/latest/download/blkalgn-$(uname -m) \
+--output /usr/sbin/blkalgn \
+&& sudo chmod +x /usr/sbin/blkalgn
+
+sudo modprobe rnull_mod nr_devices=1 bs=1024 gb=1024
+sudo curl --location \
+
+sudo blkalgn --disk=rnullb0 --ops=Write
+sudo fio --name=test --direct=1 --rw=write --bs=1024 --size=512k \
+--filename=/dev/rnullb0 --loop=1000
+
+I/O Granularity Histogram for Device rnullb0 (lbads: 10 - 1024 bytes)
+Total I/Os: 10748
+     Bytes         : count    distribution
+        1024       : 10748    |****************************************|
+
+I/O Alignment Histogram for Device rnullb0
+     Bytes               : count    distribution
+         0 -> 1          : 0        |                                        |
+         2 -> 3          : 0        |                                        |
+         4 -> 7          : 0        |                                        |
+         8 -> 15         : 0        |                                        |
+        16 -> 31         : 0        |                                        |
+        32 -> 63         : 0        |                                        |
+        64 -> 127        : 0        |                                        |
+       128 -> 255        : 0        |                                        |
+       256 -> 511        : 0        |                                        |
+       512 -> 1023       : 0        |                                        |
+      1024 -> 2047       : 10748    |****************************************|
+
+Tested-by: Daniel Gomez <da.gomez@samsung.com>
+
+
+Andreas, Petr, Miguel,
+
+Based on the discussion in v7, it seems that all these patches will go through
+the Rust tree. Is that correct? What would be missing from the module's side?
+
+I agree with Petr in that thread that if the changes are mostly limited to
+rust-module files, they can go through the module's tree. However, that is not
+the case yet.
+
+Daniel
+
+> ---
+> Changes in v8:
+> - Change print statement in sample to better communicate parameter name.
+> - Use imperative mode in commit messages.
+> - Remove prefix path from `EINVAL`.
+> - Change `try_from_param_arg` to accept `&BStr` rather than `&[u8]`.
+> - Parse integers without 128 bit integer types.
+> - Seal trait `FromStrRadix`.
+> - Strengthen safety requirement of `set_param`.
+> - Remove comment about Display and `PAGE_SIZE`.
+> - Add note describing why `ModuleParamAccess` is pub.
+> - Typo and grammar fixes for documentation.
+> - Update MAINTAINERS with rust module files.
+> - Link to v7: https://lore.kernel.org/r/20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org
 > 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in string_nocheck lib/vsprintf.c:632 [inline]
-> BUG: KASAN: slab-use-after-free in string+0x4a6/0x4f0 lib/vsprintf.c:714
-> Read of size 1 at addr ffff88803e895ea0 by task udevd/6903
+> Changes in v7:
+> - Remove dependency on `pr_warn_once` patches, replace with TODO.
+> - Rework `ParseInt::from_str` to avoid allocating.
+> - Add a comment explaining how we parse "0".
+> - Change trait bound on `Index` impl for `BStr` to match std library approach.
+> - Link to v6: https://lore.kernel.org/r/20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org
 > 
-> CPU: 1 UID: 0 PID: 6903 Comm: udevd Not tainted 6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:94 [inline]
->   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->   print_address_description mm/kasan/report.c:378 [inline]
->   print_report+0xc3/0x620 mm/kasan/report.c:489
->   kasan_report+0xd9/0x110 mm/kasan/report.c:602
->   string_nocheck lib/vsprintf.c:632 [inline]
->   string+0x4a6/0x4f0 lib/vsprintf.c:714
->   vsnprintf+0x4c8/0x1180 lib/vsprintf.c:2843
->   add_uevent_var+0x17c/0x3a0 lib/kobject_uevent.c:679
->   ib_device_uevent+0x4e/0xb0 drivers/infiniband/core/device.c:502
->   dev_uevent+0x28b/0x770 drivers/base/core.c:2673
->   uevent_show+0x1d8/0x3b0 drivers/base/core.c:2731
->   dev_attr_show+0x53/0xe0 drivers/base/core.c:2423
->   sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
->   seq_read_iter+0x4f4/0x12b0 fs/seq_file.c:230
->   kernfs_fop_read_iter+0x414/0x580 fs/kernfs/file.c:279
->   new_sync_read fs/read_write.c:484 [inline]
->   vfs_read+0x886/0xbf0 fs/read_write.c:565
->   ksys_read+0x12b/0x250 fs/read_write.c:708
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f7681378b6a
-> Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
-> RSP: 002b:00007ffcbdf9d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 000055efbec7de20 RCX: 00007f7681378b6a
-> RDX: 0000000000001000 RSI: 000055efbeca9490 RDI: 0000000000000008
-> RBP: 000055efbec7de20 R08: 0000000000000008 R09: 0000000000020000
-> R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000003fff R14: 00007ffcbdf9d518 R15: 000000000000000a
->   </TASK>
+> Changes in v6:
+> - Fix a bug that prevented parsing of negative default values for
+>   parameters in the `module!` macro.
+> - Fix a bug that prevented parsing zero in `strip_radix`. Also add a
+>   test case for this.
+> - Add `AsRef<BStr>` for `[u8]` and `BStr`.
+> - Use `impl AsRef<BStr>` as type of prefix in `BStr::strip_prefix`.
+> - Link to v5: https://lore.kernel.org/r/20250204-module-params-v3-v5-0-bf5ec2041625@kernel.org
 > 
-> Allocated by task 12483:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->   kasan_kmalloc include/linux/kasan.h:260 [inline]
->   __do_kmalloc_node mm/slub.c:4294 [inline]
->   __kmalloc_node_track_caller_noprof+0x222/0x510 mm/slub.c:4313
->   __kmemdup_nul mm/util.c:61 [inline]
->   kstrdup+0x53/0x100 mm/util.c:81
->   kstrdup_const+0x63/0x80 mm/util.c:101
->   kvasprintf_const+0x164/0x1a0 lib/kasprintf.c:46
->   kobject_set_name_vargs+0x5a/0x140 lib/kobject.c:274
->   dev_set_name+0xc8/0x100 drivers/base/core.c:3468
->   assign_name drivers/infiniband/core/device.c:1202 [inline]
->   ib_register_device+0x7e0/0xdf0 drivers/infiniband/core/device.c:1384
->   siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
->   siw_newlink drivers/infiniband/sw/siw/siw_main.c:431 [inline]
->   siw_newlink+0xb60/0xd70 drivers/infiniband/sw/siw/siw_main.c:413
->   nldev_newlink+0x38e/0x660 drivers/infiniband/core/nldev.c:1795
->   rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
->   rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
->   netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
->   netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1348
->   netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1892
->   sock_sendmsg_nosec net/socket.c:718 [inline]
->   __sock_sendmsg net/socket.c:733 [inline]
->   ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
->   ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
->   __sys_sendmsg+0x16e/0x220 net/socket.c:2659
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Changes in v5:
+> - Fix a typo in a safety comment in `set_param`.
+> - Use a match statement in `parse_int::strip_radix`.
+> - Add an implementation of `Index` for `BStr`.
+> - Fix a logic inversion bug where parameters would not be parsed.
+> - Use `kernel::ffi::c_char` in `set_param` rather than the one in `core`.
+> - Use `kernel::c_str!` rather than `c"..."` literal in module macro.
+> - Rebase on v6.14-rc1.
+> - Link to v4: https://lore.kernel.org/r/20250109-module-params-v3-v4-0-c208bcfbe11f@kernel.org
 > 
-> Freed by task 12485:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
->   poison_slab_object mm/kasan/common.c:247 [inline]
->   __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->   kasan_slab_free include/linux/kasan.h:233 [inline]
->   slab_free_hook mm/slub.c:2353 [inline]
->   slab_free mm/slub.c:4609 [inline]
->   kfree+0x2c4/0x4d0 mm/slub.c:4757
->   kfree_const+0x55/0x60 mm/util.c:43
->   kobject_rename+0x179/0x260 lib/kobject.c:524
->   device_rename+0x130/0x230 drivers/base/core.c:4525
->   ib_device_rename+0x114/0x5c0 drivers/infiniband/core/device.c:402
->   nldev_set_doit+0x3be/0x4c0 drivers/infiniband/core/nldev.c:1146
->   rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
->   rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
->   netlink_unicast_kernel net/netlink/af_netlink.c:1322 [inline]
->   netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1348
->   netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1892
->   sock_sendmsg_nosec net/socket.c:718 [inline]
->   __sock_sendmsg net/socket.c:733 [inline]
->   ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
->   ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
->   __sys_sendmsg+0x16e/0x220 net/socket.c:2659
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Changes in v4:
+> - Add module maintainers to Cc list (sorry)
+> - Add a few missing [`doc_links`]
+> - Add panic section to `expect_string_field`
+> - Fix a typo in safety requirement of `module_params::free`
+> - Change `assert!` to `pr_warn_once!` in `module_params::set_param`
+> - Remove `module_params::get_param` and install null pointer instead
+> - Remove use of the unstable feature `sync_unsafe_cell`
+> - Link to v3: https://lore.kernel.org/r/20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org
 > 
-> The buggy address belongs to the object at ffff88803e895ea0
->   which belongs to the cache kmalloc-8 of size 8
-> The buggy address is located 0 bytes inside of
->   freed 8-byte region [ffff88803e895ea0, ffff88803e895ea8)
+> Changes in v3:
+> - use `SyncUnsafeCell` rather than `static mut` and simplify parameter access
+> - remove `Display` bound from `ModuleParam`
+> - automatically generate documentation for `PARAM_OPS_.*`
+> - remove `as *const _ as *mut_` phrasing
+> - inline parameter name in struct instantiation in  `emit_params`
+> - move `RacyKernelParam` out of macro template
+> - use C string literals rather than byte string literals with explicit null
+> - template out `__{name}_{param_name}` in `emit_param`
+> - indent template in `emit_params`
+> - use let-else expression in `emit_params` to get rid of an indentation level
+> - document `expect_string_field`
+> - move invication of `impl_int_module_param` to be closer to macro def
+> - move attributes after docs in `make_param_ops`
+> - rename `impl_module_param` to impl_int_module_param`
+> - use `ty` instead of `ident` in `impl_parse_int`
+> - use `BStr` instead of `&str` for string manipulation
+> - move string parsing functions to seperate patch and add examples, fix bugs
+> - degrade comment about future support from doc comment to regular comment
+> - remove std lib path from `Sized` marker
+> - update documentation for `trait ModuleParam`
+> - Link to v2: https://lore.kernel.org/all/20240819133345.3438739-1-nmi@metaspace.dk/
 > 
-> The buggy address belongs to the physical page:
-> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3e895
-> flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-> page_type: f5(slab)
-> raw: 00fff00000000000 ffff88801b042500 ffffea0000a05a00 dead000000000002
-> raw: 0000000000000000 0000000000800080 00000000f5000000 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 11986, tgid 11985 (syz.1.1513), ts 150711065425, free_ts 150704805794
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
->   prep_new_page mm/page_alloc.c:1559 [inline]
->   get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
->   __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
->   alloc_pages_mpol+0x1fc/0x540 mm/mempolicy.c:2270
->   alloc_slab_page mm/slub.c:2423 [inline]
->   allocate_slab mm/slub.c:2587 [inline]
->   new_slab+0x23d/0x330 mm/slub.c:2640
->   ___slab_alloc+0xc5d/0x1720 mm/slub.c:3826
->   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3916
->   __slab_alloc_node mm/slub.c:3991 [inline]
->   slab_alloc_node mm/slub.c:4152 [inline]
->   __do_kmalloc_node mm/slub.c:4293 [inline]
->   __kmalloc_node_noprof+0x2f0/0x510 mm/slub.c:4300
->   __kvmalloc_node_noprof+0xad/0x1a0 mm/util.c:662
->   kvmalloc_array_node_noprof include/linux/slab.h:1063 [inline]
->   __ptr_ring_init_queue_alloc_noprof include/linux/ptr_ring.h:471 [inline]
->   ptr_ring_resize_multiple_bh_noprof include/linux/ptr_ring.h:634 [inline]
->   skb_array_resize_multiple_bh_noprof include/linux/skb_array.h:208 [inline]
->   pfifo_fast_change_tx_queue_len+0x157/0xbb0 net/sched/sch_generic.c:909
->   qdisc_change_tx_queue_len net/sched/sch_generic.c:1410 [inline]
->   dev_qdisc_change_tx_queue_len+0x166/0x380 net/sched/sch_generic.c:1457
->   dev_change_tx_queue_len+0x1a3/0x1e0 net/core/dev.c:9362
->   dev_ifsioc+0xdfe/0x10d0 net/core/dev_ioctl.c:608
->   dev_ioctl+0x224/0x10c0 net/core/dev_ioctl.c:826
->   sock_do_ioctl+0x19e/0x280 net/socket.c:1213
->   sock_ioctl+0x228/0x6c0 net/socket.c:1318
-> page last free pid 11986 tgid 11985 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1127 [inline]
->   free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
->   __put_partials+0x14c/0x170 mm/slub.c:3153
->   qlink_free mm/kasan/quarantine.c:163 [inline]
->   qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
->   kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
->   __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
->   kasan_slab_alloc include/linux/kasan.h:250 [inline]
->   slab_post_alloc_hook mm/slub.c:4115 [inline]
->   slab_alloc_node mm/slub.c:4164 [inline]
->   __kmalloc_cache_noprof+0x243/0x410 mm/slub.c:4320
->   kmalloc_noprof include/linux/slab.h:901 [inline]
->   kmalloc_array_noprof include/linux/slab.h:945 [inline]
->   ptr_ring_resize_multiple_bh_noprof include/linux/ptr_ring.h:629 [inline]
->   skb_array_resize_multiple_bh_noprof include/linux/skb_array.h:208 [inline]
->   pfifo_fast_change_tx_queue_len+0xe1/0xbb0 net/sched/sch_generic.c:909
->   qdisc_change_tx_queue_len net/sched/sch_generic.c:1410 [inline]
->   dev_qdisc_change_tx_queue_len+0x166/0x380 net/sched/sch_generic.c:1457
->   dev_change_tx_queue_len+0x1a3/0x1e0 net/core/dev.c:9362
->   dev_ifsioc+0xdfe/0x10d0 net/core/dev_ioctl.c:608
->   dev_ioctl+0x224/0x10c0 net/core/dev_ioctl.c:826
->   sock_do_ioctl+0x19e/0x280 net/socket.c:1213
->   sock_ioctl+0x228/0x6c0 net/socket.c:1318
->   vfs_ioctl fs/ioctl.c:51 [inline]
->   __do_sys_ioctl fs/ioctl.c:906 [inline]
->   __se_sys_ioctl fs/ioctl.c:892 [inline]
->   __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Memory state around the buggy address:
->   ffff88803e895d80: 05 fc fc fc fa fc fc fc 05 fc fc fc fa fc fc fc
->   ffff88803e895e00: 05 fc fc fc 00 fc fc fc 05 fc fc fc fa fc fc fc
->> ffff88803e895e80: 05 fc fc fc fa fc fc fc 05 fc fc fc 00 fc fc fc
->                                 ^
->   ffff88803e895f00: 05 fc fc fc 05 fc fc fc 05 fc fc fc fa fc fc fc
->   ffff88803e895f80: 05 fc fc fc 00 fc fc fc 05 fc fc fc fa fc fc fc
-> ==================================================================
-> 
+> Changes in v2:
+> - Remove support for params without values (`NOARG_ALLOWED`).
+> - Improve documentation for `try_from_param_arg`.
+> - Use prelude import.
+> - Refactor `try_from_param_arg` to return `Result`.
+> - Refactor `ParseInt::from_str` to return `Result`.
+> - Move C callable functions out of `ModuleParam` trait.
+> - Rename literal string field parser to `expect_string_field`.
+> - Move parameter parsing from generation to parsing stage.
+> - Use absolute type paths in macro code.
+> - Inline `kparam`and `read_func` values.
+> - Resolve TODO regarding alignment attributes.
+> - Remove unnecessary unsafe blocks in macro code.
+> - Improve error message for unrecognized parameter types.
+> - Do not use `self` receiver when reading parameter value.
+> - Add parameter documentation to `module!` macro.
+> - Use empty `enum` for parameter type.
+> - Use `addr_of_mut` to get address of parameter value variable.
+> - Enabled building of docs for for `module_param` module.
+> - Link to v1: https://lore.kernel.org/rust-for-linux/20240705111455.142790-1-nmi@metaspace.dk/
 > 
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Andreas Hindborg (7):
+>       rust: str: implement `PartialEq` for `BStr`
+>       rust: str: implement `Index` for `BStr`
+>       rust: str: implement `AsRef<BStr>` for `[u8]` and `BStr`
+>       rust: str: implement `strip_prefix` for `BStr`
+>       rust: str: add radix prefixed integer parsing functions
+>       rust: add parameter support to the `module!` macro
+>       modules: add rust modules files to MAINTAINERS
 > 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>  MAINTAINERS                  |   2 +
+>  rust/kernel/lib.rs           |   1 +
+>  rust/kernel/module_param.rs  | 221 +++++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/str.rs           | 200 +++++++++++++++++++++++++++++++++++++++
+>  rust/macros/helpers.rs       |  25 +++++
+>  rust/macros/lib.rs           |  31 ++++++
+>  rust/macros/module.rs        | 191 +++++++++++++++++++++++++++++++++----
+>  samples/rust/rust_minimal.rs |  10 ++
+>  8 files changed, 663 insertions(+), 18 deletions(-)
+> ---
+> base-commit: 379487e17ca406b47392e7ab6cf35d1c3bacb371
+> change-id: 20241211-module-params-v3-ae7e5c8d8b5a
 > 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
+> Best regards,
+> -- 
+> Andreas Hindborg <a.hindborg@kernel.org>
 > 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
 > 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-
 
