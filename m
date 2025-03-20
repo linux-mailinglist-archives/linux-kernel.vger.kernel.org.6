@@ -1,91 +1,146 @@
-Return-Path: <linux-kernel+bounces-570483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFA8A6B127
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:43:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E53A6B12D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:44:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04D7886C52
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567E1189D77E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8331E22A81D;
-	Thu, 20 Mar 2025 22:43:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5F1B664;
-	Thu, 20 Mar 2025 22:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB8E227E9B;
+	Thu, 20 Mar 2025 22:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="F+17PrB9"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72FBB664
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742510581; cv=none; b=cBB/1rRxKjsiJ6bMXv3QxeJE2smBIj0U5Xums8dsuct1FbJu1Vp1PLSoX2HX9s6EHGk01qzExBfexIxRQIwaeYTbLTFJFgKOPp0JZ6F1+dyWUGxsI3IcqCHro9trMKp3/niZCoAsP0lEJfpK4l/RuooMY6l2JRsB37mKGC0+ycE=
+	t=1742510668; cv=none; b=uPNSqMaBuJACWMFeZjvCL4LoVxj2L45jIiT1qFJr23jVXgbe1YBEURne1Ub3Gg8eXxsBLeiW5tIsdCEbRGAq34ITk8rXLM6oy+K0u3tc5YrTuZJ1F4wMtKZ0T2JMcUg/jDgsz/d3xU9ofHXe3UAkoxhq1wGJkTaTZydPAzbAwbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742510581; c=relaxed/simple;
-	bh=9HnISz5Xm24XDuQV6I5n9bGkpRqy9DBw/a8/hH26MVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fTgNLvVoYrLJiiJLDxjkB2OQhFBej0hSCvUlam0UdnDzJhRC1a0cY4sREwa55vnAr0mlj2VYPa231C55bNz2CFTGZsUvgWBQnWOklIjoKIU4fXnCAvbpQKs2mtPnE+7Zj1gAK2jXPPyBDbHbmCxrPriaAzdejN91KzljP0mvjDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFE30113E;
-	Thu, 20 Mar 2025 15:43:05 -0700 (PDT)
-Received: from [10.57.15.35] (unknown [10.57.15.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA8193F673;
-	Thu, 20 Mar 2025 15:42:52 -0700 (PDT)
-Message-ID: <6332a08a-8c80-41e8-b36a-96f358f4ea2c@arm.com>
-Date: Thu, 20 Mar 2025 22:42:47 +0000
+	s=arc-20240116; t=1742510668; c=relaxed/simple;
+	bh=K5bNxzT+yW5E8QX8elpSAyd8FsJ83FmM98vDGXUMYSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WCZtKxAVXSL/4ICPuY6HPLtXUxBXUy0ZnKlkxHEkOSeqf3QPU8fvCyjcZnXJtv5rgIrzFGXbzSLI8ivQW3Ti2lGfqWOngSnHEy09Mdf3QBfk9eExb+c3dbhwueVq/kZPI7nFM8Pdw05QpiRWorHTTNX6JtmjqS4SXspF3mX6mRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=F+17PrB9; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3feaedb39e9so391000b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1742510665; x=1743115465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8SFfZ8SQ++q1U43zBVQpg0YMcuwUtwU9gjCvKh1RgaY=;
+        b=F+17PrB9X98oa+SXJCbz3dK/v173WgukTr+ywiR4tfKNWMfZlmdr6ibrXvaX8JwCe6
+         lN1QlSuUxdwcDhc3AVpd1ER4TvF7lZYaU5GYDIlcYNyL7EReyZF+rWqKD4uYtCDU2g6K
+         mOVmPcS1fnAx/EFPTyvUVJvj+td6opabDbfdaaiBYMCxKpV+0Vs4QknNR2dMvHpwfaWT
+         v8ivFn58HSjw3gSJ0vzri/LqoUr58Yk234LoXKgErrmoTsRiIrPWxmne/QyMKv5cpZq7
+         DE+pEY8bKyIK876JhiI9/TO+okIXBwdzqnWsHqBS+rQHzg76q9CsDdd+kWqrDuB8+TWB
+         3nDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742510665; x=1743115465;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8SFfZ8SQ++q1U43zBVQpg0YMcuwUtwU9gjCvKh1RgaY=;
+        b=PuxxSYQWb+mnP8OVHi5kQ+WHKBY41wVrOZx3+gbkNU3nb+euM5mD33bkiU/+zBY72a
+         p0tRPESXia0ecEqczvsz6i1mg3Ii73WgJxhbzbeRezVxabwLFC+omRJUCynbz2PQ3ErB
+         p5021xoGTGZyTZ6FI6bu0fBa0RCeIdJj4qiaWhKcB03KiOfQm7FLP30E1sYiOkFkcxDC
+         SUBEj0RoBrwdgMYESH4dEG8+EqaQzKJluc/bEdUUULtRqTCkd7p/HsGwIp2PhV6u+ONZ
+         6fNV+LLcKUk+yFMsFq8ZnD1279n6dOiADAHCR/zX4MMDBFOm7jVEmQP2xQMIHMDT/r0O
+         4e3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWOoXInagf9e0verC3pkYpTmvZRdRH+PbB2WLIXxXu2iEQskk3L4QWOVd+bW/aZz2hXsYduVE71lDXF6MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+VHS8Tg2u376Q7hKyi3k2IzzfpO1YsXOWPjnBB+WTES3osfvY
+	jYyhytXTWQB2tRXYKORE9aMDd8SC00voAzgumv0Tx/nzoKXWD0bhQdq9Ppy5fg==
+X-Gm-Gg: ASbGncsFWbXeW5KD2zOd3n+gpt/H2cOAm2wQwXM13xnTZynyDsJ885rcpRJgNseoJZt
+	MwpzHOhcWd+HUNhDg+7r6jYemixRWHXirMjAPYqH2RtiL/2IAcp1vHQ/whdKmdW3uBcytv1/+DP
+	NzrY5LtmBPD4W/wdE8F9zwGSoZJwab1tUB1Idm5V1Oil05T7HpM4xHaEaPJUSmtcFEOmklE5LEz
+	05ELMLn/z8EnmPNLcPFCrF/pgV/gOGWwoQPiDYxbzHj19Odza5kM2lL+JsBvur9MQZe/iAulkDB
+	rPVZfn0JxOsQXud4YggNCqfQFjaJvWmnMuzqS7uYRNEDWUCVwc5yUTn0qV+xjhs=
+X-Google-Smtp-Source: AGHT+IGD26THZoSitvwX/Ku6LnvKO2hX/XV09PCTifQuKV3OygKNloEFk1j02pnAYxFav3zAgUrsvg==
+X-Received: by 2002:a05:6808:2396:b0:3fc:1f7b:c3c7 with SMTP id 5614622812f47-3febf714101mr614720b6e.15.1742510665572;
+        Thu, 20 Mar 2025 15:44:25 -0700 (PDT)
+Received: from aus-ird.tenstorrent.com ([38.104.49.66])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3febf6dcc09sm103524b6e.12.2025.03.20.15.44.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 15:44:24 -0700 (PDT)
+From: Cyril Bur <cyrilbur@tenstorrent.com>
+To: palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	paul.walmsley@sifive.com,
+	charlie@rivosinc.com,
+	jrtc27@jrtc27.com,
+	ben.dooks@codethink.co.uk,
+	alex@ghiti.fr
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jszhang@kernel.org
+Subject: [PATCH v5 0/5] riscv: uaccess: optimizations
+Date: Thu, 20 Mar 2025 22:44:18 +0000
+Message-Id: <20250320224423.1838493-1-cyrilbur@tenstorrent.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/13] Add support for AMD hardware feedback interface
-To: Mario Limonciello <superm1@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
- Huang Rui <ray.huang@amd.com>, "Gautham R . Shenoy"
- <gautham.shenoy@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
-References: <20250218190822.1039982-1-superm1@kernel.org>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250218190822.1039982-1-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/18/25 19:08, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
-> provide behavioral classification and a dynamically updated ranking table
-> for the scheduler to use when choosing cores for tasks.
-> 
-> Threads are classified during runtime into enumerated classes.
-> Currently, the driver supports 3 classes (0 through 2). These classes
-> represent thread performance/power characteristics that may benefit from
-> special scheduling behaviors. The real-time thread classification is
-> consumed by the operating system and is used to inform the scheduler of
-> where the thread should be placed for optimal performance or energy efficiency.
-> 
-> The thread classification helps to select CPU from a ranking table that describes
-> an efficiency and performance ranking for each classification from two dimensions.
+This series tries to optimize riscv uaccess by allowing the use of
+user_access_begin() and user_access_end() which permits grouping user accesses
+and avoiding the CSR write penalty for each access.
 
-Where is that happening in the series? (Using the per-thread classification
-for task placement.)
-Am I missing something?
+The error path can also be optimised using asm goto which patches 3 and 4
+achieve. This will speed up jumping to labels by avoiding the need of an
+intermediary error type variable within the uaccess macros
+
+I did read the discussion this series generated. It isn't clear to me
+which direction to take the patches, if any.
+
+V2:
+I've taken on this series as there isn't any response from Jisheng. No
+significant changes other than build fixes.
+- Fixes build breakage in patch 3 to do with not having used 'goto' keyword.
+- Fixes build breakage in patch 4 on 32bit not having delcared __ptr in the
+  macro.
+
+V3:
+Significant commit message rewrites.
+ - Corrected the justification for patch 2
+ - Better explained/justified patches 3 and 4
+Minor code changes for legibility and more comments
+
+V4:
+Fixed checkpatch errors
+Added a unsafe_copy_from_user()
+Added patch from Ben Dooks to save SR_SUM bit on switch
+
+V5:
+Fixed mistakes in adding unsafe_copy_from_user()
+ - Sorry about the noise
+
+Ben Dooks (1):
+  riscv: save the SR_SUM status over switches
+
+Jisheng Zhang (4):
+  riscv: implement user_access_begin() and families
+  riscv: uaccess: use input constraints for ptr of __put_user()
+  riscv: uaccess: use 'asm goto' for put_user()
+  riscv: uaccess: use 'asm_goto_output' for get_user()
+
+ arch/riscv/include/asm/processor.h |   1 +
+ arch/riscv/include/asm/uaccess.h   | 218 ++++++++++++++++++++++-------
+ arch/riscv/kernel/asm-offsets.c    |   5 +
+ arch/riscv/kernel/entry.S          |   8 ++
+ 4 files changed, 179 insertions(+), 53 deletions(-)
+
+-- 
+2.34.1
 
 
