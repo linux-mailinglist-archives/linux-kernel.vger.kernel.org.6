@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-569164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA84A69F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:36:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067BFA69F6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B683A8228
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B543BAA6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750241AAE01;
-	Thu, 20 Mar 2025 05:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CED81E0DD9;
+	Thu, 20 Mar 2025 05:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="ELsMzPGe"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TX3QX7Kc"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF818DB24
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7ED2AEE2;
+	Thu, 20 Mar 2025 05:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742448973; cv=none; b=VHfxe+ut2AfcmPVt71Kqpa6eMEH3MgvfKLYBTIQ61EZ4dnn9bIQbXF08Z0u+1z7lE7p2M4UIWIx6qKtlVWtJFogR11vGar0vGYPuLqV3DiE+EpRPG8WQj+eOtJE/UmVdBsOWRCpltYBXvTsFp6kyXV9bAO6m8+/AqZlU4PMuE98=
+	t=1742449142; cv=none; b=EnnkWk6B8JOKT6dXakX7cgz6IWmv1gaEz2xWAfRwlFdLuMS9oyMlvS/lGSIaDb81Bt08Tv05sXXxnKBxnZHMzKigGveP7+Cc+ewtE3qwR5WimeyGg3+rPobBNlX5qUHAJjz7FZcuNcr5od5TU/MzRf+LxHsxzN8EDazy+W3vvMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742448973; c=relaxed/simple;
-	bh=pykQWiiCufg9UKjHIJTQCkNZCnZqG7otAUgzUYRGDng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFGPw81dvq6CC2drGh/1k2f8+wkDetyVbyDDaus5ggzJvFJcViefUplJrF3ODotJMeLFE01czctt3qUakK3mxf5Vq0o4DEivJjR7xfmV8QCFCZIte99kQE0DvLqOcxxxOHLs92ZmT1tEk3KaXDCVgxLl68JIhiPaj/SJOT6pwCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=ELsMzPGe; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-225a28a511eso5720665ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:36:11 -0700 (PDT)
+	s=arc-20240116; t=1742449142; c=relaxed/simple;
+	bh=aqAfScZNafJ2YuAEWLsGSFTZyifN7Y4Ioe0h1fXDprQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:Cc:To:Content-Type; b=DM0ZVRP2Nx4gkt8aXEVo1tZ+86MxdJnS4YuCX7q/E90Y6dk8C00WBT/e1e+7Vh8e5rQTxSaS+OattzSBkf/nMauE1dO3pypFE6T0ib22OpHhNKuYVpoXxB9ig1orb9exNANetaD8+5SaiRgZhaBaAcFppu//pLuHnw6Em5D0Puw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TX3QX7Kc; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4769f3e19a9so2705631cf.0;
+        Wed, 19 Mar 2025 22:39:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742448971; x=1743053771; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RbGnsTCcev6pYDQx9u/sGBjWd1vcflm1xvB7Aplfx1U=;
-        b=ELsMzPGelMHj6/3W0OmjnVamtZoCueZhxniH/FycdsvGNvtMacSkxtIvLcxcvpWU7u
-         9g6H0AQjfHgkobaIAS4L9OoQGbl/4wOilBT/4hGQZzY2M2S6J5pGcCW/sHJb3Ea564kd
-         AY8vM1k4MpgRCZIl5enUsvH5No2C/IrAkaaMbK8kRqRwzTafydcYPPcxEt2JDP66psVQ
-         fyLq2LwlRXX/c0fpxqu7Yj3/QlI788wiKjJ/1dMugi6N3K0+kv9+zkx+ux92k6JdfFvF
-         0vzJKRIEVDGdBwFFT3Dka8Hvi2N3wtfA96KtruB/AB0XUoHLJ/WqwkKzqLi0BH/OABZL
-         DtNQ==
+        d=gmail.com; s=20230601; t=1742449137; x=1743053937; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:cc:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XnnCAk1bM3a/Ji5x3FEZTFGouGduUgtZCKxXqfSHDBM=;
+        b=TX3QX7KcqqWnJMTAjo0AJ3veGNW9iPROuBDqC6vrEV0Zv7+4PaccyTjG6zrpUHXp1q
+         lBE6MJ4FTvjboh1d+XKdB37VDSh7RXu1jdBhA64GNuWq/dEibIzNo3idq1hIyhmrC0/t
+         uNwX9KLoozE7pG3wUqfUN2kDiWAGtkjd/3fLDhaaSSzTzSUt8q2IrwgfPs4hc3ShqZ9g
+         d6+PV21frcJpbS7ebQmG3LNH05vi5UvPnH/Ul7ILgn4txCC8ny3r+X2KOPucIhHUF/3f
+         uf2ZvNMTzwb88a9EgP+Ns89bPETbzyPz+RPKLVDShDpVFsSsISLF/5og45nanj5yh+3q
+         Kt0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742448971; x=1743053771;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbGnsTCcev6pYDQx9u/sGBjWd1vcflm1xvB7Aplfx1U=;
-        b=WiSY8SuZtMuKGSx4k8GuVpdKa9a9hvIcd+zNk1Gjk4o1R383UwwJg1ywBxsP01yich
-         aGkAjRbYc/x4cyr9l4+lO5LeBbpoplKOQl8HwSuNZW6U5n4lZqw2zgPKqm/d4e6WKLW7
-         ibbxBNMGktPEzD+D8Cq4HQo2YXe9S4jCARyzMMNdUDFzWbP8iQm14Cr22YHsh8PecaBw
-         issiM+dcYQpeTA4XZxEqqpMwwnsDyM0nz+jRTNS8aRoe60iKtsnJD5Mkijnp3+PLhMLL
-         NQ4vkSOqyjE2Rdcfgd1bxuZqtEDYhBkXbBL6AeubW6m5AOHN56KNe/EX+rnsHccUUneJ
-         XpNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKJJ/H7md99QUkoWMv16JPCZCxBx3f+f0ZI7Cr22LnerCujI8uTtASCrSS6Kv3TCgV7zE0D52KzVv87zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLN8f4KSuBDE7v1ku5mP8p7J31zKfLJlyXLrl33OihBAI7iAqn
-	6uQno+qX4EHAthw4CVFq/99yJ5oRJNkYplgCDX5/WHU16y7GCMXsWFYq83+OIsE=
-X-Gm-Gg: ASbGncuNsYBoDMwTyPX1XSJc1EYrWYzB8eyFFlMvRhJJRcdxQ3IRzNG4s0qcLPNqU8K
-	6mIjzc1SzsRNus8knV5JWKxIJB7WWnWV2sHBQImd4l7xUxtYyuu0ieqBRjiLk9VisTfQL9aWYBm
-	/2f8Mvy9NhYWyqUHgC5BXtBZ0fErknLZy2uHdrIDPFNDWCf1DXW1wfu35/K5dr9S8CEHOTWa8xq
-	/p5qfccajQTNfTHgi3zhIdVdC8bDjgu7K2RJpKMUkgvhosbhNUlF87VRlfAjO2L+XZovDsH5VdN
-	qCmAS4JV2Nh33FaoB0TU+vIYentaBgOHX+xNYpnQ8Iljwvx7/2bthTr6oA==
-X-Google-Smtp-Source: AGHT+IErhQqYwyVfjSSFE49cyYQSwTfv6bxLT2Cv1e2uEHao33rhRGfa+oAbBrQwdclN/m7vUf+GeA==
-X-Received: by 2002:a17:902:ce0d:b0:224:1eab:97b2 with SMTP id d9443c01a7336-22649ccca04mr93156685ad.53.1742448971138;
-        Wed, 19 Mar 2025 22:36:11 -0700 (PDT)
-Received: from [157.82.207.107] ([157.82.207.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba721esm125565465ad.149.2025.03.19.22.36.07
+        d=1e100.net; s=20230601; t=1742449137; x=1743053937;
+        h=content-transfer-encoding:to:cc:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XnnCAk1bM3a/Ji5x3FEZTFGouGduUgtZCKxXqfSHDBM=;
+        b=Ai2Xfps5FT9qI6qfgMWaMJ9Vdjrml2JLUS2Cyway/TXGvTkbtEI0bl44iow2w7xN4w
+         qLtsyU9w2fJo3joeMEiU4wAGfmkSr+MqAE817u60Vg3phHiAO7ZgX+VluDKZZcFoc2Hg
+         VADlMli6tIO5Eh2uRGthi7m8fnLa88fmZ4qNQVdSNNMrA2DMoyzDDjq6bU9jS7nkysQW
+         QlaZqBvdnzomaey8BEjfrPDsuTItxGKtD0cch+foexVfhdxVJVripmcdFiq7F+CD1inH
+         5lvHjSezg5iKF0slK8tP9dnGVDoRh3YZx+l1DehicywMS7/j+ew8DGwdzvHIUK71j7rx
+         DkAg==
+X-Gm-Message-State: AOJu0YywbMAn48YdhXxjUOcgs/E+nLKOhzjXXSNozeqiSwC6tXnfnmtH
+	GYvJZPNTIGHUSjKRdloh9IH7mpIph2gjgoZAC/nECPKPF0RMC+XPoO9y9g==
+X-Gm-Gg: ASbGncttgwumld8Ysjy4fNCfvNwbwqLe4c4rOd1p8P6swttzle4E6MnG9+1HqQaecs4
+	0etUSgsJKkmgsKQSZTXmRsAHg1ZpD9JXHZ7Yk4UoH4Ng9iauONor4TR1M/hftHl3eMNy1FRV4ms
+	1auc9FQ1qdNAbsvlLtn/jyk98ZoIqXAJWTg3TGhSlYr+/YE1kW5/Ms0spnLRI4HJwHbWDdWcuQJ
+	jTu7Hr+z/AW52fpTBkKYd0dEgz+YKomY/0tHjlM0dMdTrep23XnAQBXX5seFZVMmzI75D0yD2Sb
+	Ub7QoCcCMMeYo1S4FEaAH1WgobwPyFN/eFDHyCnCbORfKTcXbTJJBugZsHR26gx1HHSI7XHtI+M
+	qxl8kYIGFiCknsvwvVD+/
+X-Google-Smtp-Source: AGHT+IG5yOPynP8w8g7NbFtS3J7WPKjna9g/bpevYlYkOKoeZeoUE1nlkhW7DrLsklnNmt94yImQUA==
+X-Received: by 2002:a05:620a:2990:b0:7c5:5e5b:2fdb with SMTP id af79cd13be357-7c5b0d06e96mr217664685a.41.1742449137486;
+        Wed, 19 Mar 2025 22:38:57 -0700 (PDT)
+Received: from [10.139.221.89] (c-174-160-16-133.hsd1.ca.comcast.net. [174.160.16.133])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c714c0sm958440285a.40.2025.03.19.22.38.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Mar 2025 22:36:10 -0700 (PDT)
-Message-ID: <83a5ab7b-7b29-413e-a854-31c7893f3c4a@daynix.com>
-Date: Thu, 20 Mar 2025 14:36:06 +0900
+        Wed, 19 Mar 2025 22:38:56 -0700 (PDT)
+Message-ID: <facda6e2-3655-4f2c-9013-ebb18d0e6972@gmail.com>
+Date: Wed, 19 Mar 2025 22:38:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,229 +79,434 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 3/4] virtio_net: Use new RSS config structs
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>,
- Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
-References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
- <20250318-virtio-v1-3-344caf336ddd@daynix.com>
- <CACGkMEv1TTXHd_JGb_vyN8pfTAMLbsTE6oU9_phrdpaZBrE97Q@mail.gmail.com>
- <b6eec81d-618f-4a59-8680-8e22f1a798bf@daynix.com>
- <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
 Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
+From: Ming Lin <minggr@gmail.com>
+Subject: pvclock time drifting backward
+Cc: linux-kernel@vger.kernel.org, minggr@gmail.com
+To: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025/03/20 10:50, Jason Wang wrote:
-> On Wed, Mar 19, 2025 at 12:48 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>
->> On 2025/03/19 10:43, Jason Wang wrote:
->>> On Tue, Mar 18, 2025 at 5:57 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>
->>>> The new RSS configuration structures allow easily constructing data for
->>>> VIRTIO_NET_CTRL_MQ_RSS_CONFIG as they strictly follow the order of data
->>>> for the command.
->>>>
->>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->>>> ---
->>>>    drivers/net/virtio_net.c | 117 +++++++++++++++++------------------------------
->>>>    1 file changed, 43 insertions(+), 74 deletions(-)
->>>>
->>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>>> index d1ed544ba03a..4153a0a5f278 100644
->>>> --- a/drivers/net/virtio_net.c
->>>> +++ b/drivers/net/virtio_net.c
->>>> @@ -360,24 +360,7 @@ struct receive_queue {
->>>>           struct xdp_buff **xsk_buffs;
->>>>    };
->>>>
->>>> -/* This structure can contain rss message with maximum settings for indirection table and keysize
->>>> - * Note, that default structure that describes RSS configuration virtio_net_rss_config
->>>> - * contains same info but can't handle table values.
->>>> - * In any case, structure would be passed to virtio hw through sg_buf split by parts
->>>> - * because table sizes may be differ according to the device configuration.
->>>> - */
->>>>    #define VIRTIO_NET_RSS_MAX_KEY_SIZE     40
->>>> -struct virtio_net_ctrl_rss {
->>>> -       __le32 hash_types;
->>>> -       __le16 indirection_table_mask;
->>>> -       __le16 unclassified_queue;
->>>> -       __le16 hash_cfg_reserved; /* for HASH_CONFIG (see virtio_net_hash_config for details) */
->>>> -       __le16 max_tx_vq;
->>>> -       u8 hash_key_length;
->>>> -       u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
->>>> -
->>>> -       __le16 *indirection_table;
->>>> -};
->>>>
->>>>    /* Control VQ buffers: protected by the rtnl lock */
->>>>    struct control_buf {
->>>> @@ -421,7 +404,9 @@ struct virtnet_info {
->>>>           u16 rss_indir_table_size;
->>>>           u32 rss_hash_types_supported;
->>>>           u32 rss_hash_types_saved;
->>>> -       struct virtio_net_ctrl_rss rss;
->>>> +       struct virtio_net_rss_config_hdr *rss_hdr;
->>>> +       struct virtio_net_rss_config_trailer rss_trailer;
->>>> +       u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
->>>>
->>>>           /* Has control virtqueue */
->>>>           bool has_cvq;
->>>> @@ -523,23 +508,16 @@ enum virtnet_xmit_type {
->>>>           VIRTNET_XMIT_TYPE_XSK,
->>>>    };
->>>>
->>>> -static int rss_indirection_table_alloc(struct virtio_net_ctrl_rss *rss, u16 indir_table_size)
->>>> +static size_t virtnet_rss_hdr_size(const struct virtnet_info *vi)
->>>>    {
->>>> -       if (!indir_table_size) {
->>>> -               rss->indirection_table = NULL;
->>>> -               return 0;
->>>> -       }
->>>> +       u16 indir_table_size = vi->has_rss ? vi->rss_indir_table_size : 1;
->>>>
->>>> -       rss->indirection_table = kmalloc_array(indir_table_size, sizeof(u16), GFP_KERNEL);
->>>> -       if (!rss->indirection_table)
->>>> -               return -ENOMEM;
->>>> -
->>>> -       return 0;
->>>> +       return struct_size(vi->rss_hdr, indirection_table, indir_table_size);
->>>>    }
->>>>
->>>> -static void rss_indirection_table_free(struct virtio_net_ctrl_rss *rss)
->>>> +static size_t virtnet_rss_trailer_size(const struct virtnet_info *vi)
->>>>    {
->>>> -       kfree(rss->indirection_table);
->>>> +       return struct_size(&vi->rss_trailer, hash_key_data, vi->rss_key_size);
->>>>    }
->>>>
->>>>    /* We use the last two bits of the pointer to distinguish the xmit type. */
->>>> @@ -3576,15 +3554,16 @@ static void virtnet_rss_update_by_qpairs(struct virtnet_info *vi, u16 queue_pair
->>>>
->>>>           for (; i < vi->rss_indir_table_size; ++i) {
->>>>                   indir_val = ethtool_rxfh_indir_default(i, queue_pairs);
->>>> -               vi->rss.indirection_table[i] = cpu_to_le16(indir_val);
->>>> +               vi->rss_hdr->indirection_table[i] = cpu_to_le16(indir_val);
->>>>           }
->>>> -       vi->rss.max_tx_vq = cpu_to_le16(queue_pairs);
->>>> +       vi->rss_trailer.max_tx_vq = cpu_to_le16(queue_pairs);
->>>>    }
->>>>
->>>>    static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
->>>>    {
->>>>           struct virtio_net_ctrl_mq *mq __free(kfree) = NULL;
->>>> -       struct virtio_net_ctrl_rss old_rss;
->>>> +       struct virtio_net_rss_config_hdr *old_rss_hdr;
->>>> +       struct virtio_net_rss_config_trailer old_rss_trailer;
->>>>           struct net_device *dev = vi->dev;
->>>>           struct scatterlist sg;
->>>>
->>>> @@ -3599,24 +3578,28 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
->>>>            * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
->>>>            */
->>>>           if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
->>>> -               memcpy(&old_rss, &vi->rss, sizeof(old_rss));
->>>> -               if (rss_indirection_table_alloc(&vi->rss, vi->rss_indir_table_size)) {
->>>> -                       vi->rss.indirection_table = old_rss.indirection_table;
->>>> +               old_rss_hdr = vi->rss_hdr;
->>>> +               old_rss_trailer = vi->rss_trailer;
->>>> +               vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
->>>> +               if (!vi->rss_hdr) {
->>>> +                       vi->rss_hdr = old_rss_hdr;
->>>>                           return -ENOMEM;
->>>>                   }
->>>>
->>>> +               *vi->rss_hdr = *old_rss_hdr;
->>>>                   virtnet_rss_update_by_qpairs(vi, queue_pairs);
->>>>
->>>>                   if (!virtnet_commit_rss_command(vi)) {
->>>>                           /* restore ctrl_rss if commit_rss_command failed */
->>>> -                       rss_indirection_table_free(&vi->rss);
->>>> -                       memcpy(&vi->rss, &old_rss, sizeof(old_rss));
->>>> +                       kfree(vi->rss_hdr);
->>>> +                       vi->rss_hdr = old_rss_hdr;
->>>> +                       vi->rss_trailer = old_rss_trailer;
->>>>
->>>>                           dev_warn(&dev->dev, "Fail to set num of queue pairs to %d, because committing RSS failed\n",
->>>>                                    queue_pairs);
->>>>                           return -EINVAL;
->>>>                   }
->>>> -               rss_indirection_table_free(&old_rss);
->>>> +               kfree(old_rss_hdr);
->>>>                   goto succ;
->>>>           }
->>>>
->>>> @@ -4059,28 +4042,12 @@ static int virtnet_set_ringparam(struct net_device *dev,
->>>>    static bool virtnet_commit_rss_command(struct virtnet_info *vi)
->>>>    {
->>>>           struct net_device *dev = vi->dev;
->>>> -       struct scatterlist sgs[4];
->>>> -       unsigned int sg_buf_size;
->>>> +       struct scatterlist sgs[2];
->>>>
->>>>           /* prepare sgs */
->>>> -       sg_init_table(sgs, 4);
->>>> -
->>>> -       sg_buf_size = offsetof(struct virtio_net_ctrl_rss, hash_cfg_reserved);
->>>> -       sg_set_buf(&sgs[0], &vi->rss, sg_buf_size);
->>>> -
->>>> -       if (vi->has_rss) {
->>>> -               sg_buf_size = sizeof(uint16_t) * vi->rss_indir_table_size;
->>>> -               sg_set_buf(&sgs[1], vi->rss.indirection_table, sg_buf_size);
->>>> -       } else {
->>>> -               sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved, sizeof(uint16_t));
->>>> -       }
->>>> -
->>>> -       sg_buf_size = offsetof(struct virtio_net_ctrl_rss, key)
->>>> -                       - offsetof(struct virtio_net_ctrl_rss, max_tx_vq);
->>>> -       sg_set_buf(&sgs[2], &vi->rss.max_tx_vq, sg_buf_size);
->>>> -
->>>> -       sg_buf_size = vi->rss_key_size;
->>>> -       sg_set_buf(&sgs[3], vi->rss.key, sg_buf_size);
->>>> +       sg_init_table(sgs, 2);
->>>> +       sg_set_buf(&sgs[0], vi->rss_hdr, virtnet_rss_hdr_size(vi));
->>>> +       sg_set_buf(&sgs[1], &vi->rss_trailer, virtnet_rss_trailer_size(vi));
->>>
->>> So I still see this:
->>>
->>>           if (vi->has_rss || vi->has_rss_hash_report) {
->>>                   if (!virtnet_commit_rss_command(vi)) {
->>>
->>> Should we introduce a hash config helper instead?
->>
->> I think it's fine to use virtnet_commit_rss_command() for hash
->> reporting. struct virtio_net_hash_config and struct
->> virtio_net_rss_config are defined to have a common layout to allow
->> sharing this kind of logic.
-> 
-> Well, this trick won't work if the reserved field in hash_config is
-> used in the future.
+Hi,
 
-Right, but we can add a hash config helper when that happens. It will 
-only result in a duplication of logic for now.
+After performing a live migration on a QEMU guest OS that had been running for over 30 days,
+we noticed that the guest OS time was more than 2 seconds behind the actual time.
 
-Regards,
-Akihiko Odaki
+After extensive debugging, we found that this issue is related to master_kernel_ns and master_cycle_now.
 
-> 
-> Thanks
-> 
->>
->> Regards,
->> Akihiko Odaki
->>
->>>
->>> Thanks
->>>
->>
-> 
+When the guest OS starts, the host initializes a pair of master_kernel_ns and master_cycle_now values.
+After live migration, the host updates these values.
+
+Our debugging showed that if the host does not update master_kernel_ns/master_cycle_now,
+the guest OS time remains correct.
+
+To illustrate how updating master_kernel_ns/master_cycle_now leads to the guest OS time drifting backward,
+we applied the following debug patch:
+
+The patch adds a KVM debugfs entry to trigger time calculations and print the results.
+The patch runs on the host side, but we use __pvclock_read_cycles() to simulate the guest OS updating its time.
+
+Example Output:
+
+# cat /sys/kernel/debug/kvm/946-13/pvclock
+old: master_kernel_ns: 15119778316
+old: master_cycle_now: 37225912658
+old: ns: 1893199569691
+new: master_kernel_ns: 1908210098649
+new: master_cycle_now: 4391329912268
+new: ns: 1893199548401
+
+tsc 4391329912368
+kvmclock_offset -15010550291
+diff: ns: 21290
+
+Explanation of Parameters:
+
+Input:
+"old: master_kernel_ns:" The master_kernel_ns value recorded when the guest OS started (remains unchanged during testing).
+"old: master_cycle_now:" The master_cycle_now value recorded when the guest OS started (remains unchanged during testing).
+"new: master_kernel_ns:" The latest master_kernel_ns value at the time of reading.
+"new: master_cycle_now:" The latest master_cycle_now value at the time of reading.
+tsc: The rdtsc() value at the time of reading.
+kvmclock_offset: The offset recorded by KVM_SET_CLOCK when the guest OS started (remains unchanged during testing).
+
+Output:
+"old: ns:" Time in nanoseconds calculated using the old master_kernel_ns/master_cycle_now.
+"new: ns:" Time in nanoseconds calculated using the new master_kernel_ns/master_cycle_now.
+"diff: ns:" (old ns - new ns), representing the time drift relative to the guest OS start time.
+
+Test Script:
+#!/bin/bash
+
+qemu_pid=$(pidof qemu-system-x86_64)
+
+while [ 1 ] ; do
+     echo "====================================="
+     echo "Guest OS running time: $(ps -p $qemu_pid -o etime= | awk '{print $1}')"
+     cat /sys/kernel/debug/kvm/*/pvclock
+     echo
+     sleep 10
+done
+
+Test Results:
+Below are the first and last parts of a >2-hour test run.
+As time progresses, the time drift calculated using the latest master_kernel_ns/master_cycle_now increases monotonically.
+
+After 2 hours and 18 minutes, the guest OS time drifted by approximately 93 milliseconds.
+
+I have uploaded an image for a more intuitive visualization of the time drift:
+https://postimg.cc/crCDWtD7
+
+Is this a real problem?
+
+If there is any fix patch, I’d be happy to test it. Thanks!
+
+
+     1 =====================================
+     2 guest os running time: 00:50
+     3 old: master_kernel_ns: 15119778316
+     4 old: master_cycle_now: 37225912658
+     5 old: ns: 48092694964
+     6 new: master_kernel_ns: 63103244699
+     7 new: master_cycle_now: 147587790614
+     8 new: ns: 48092694425
+     9
+    10 tsc 147587790654
+    11 kvmclock_offset -15010550291
+    12 diff: ns: 539
+    13
+    14 =====================================
+    15 guest os running time: 01:00
+    16 old: master_kernel_ns: 15119778316
+    17 old: master_cycle_now: 37225912658
+    18 old: ns: 58139026532
+    19 new: master_kernel_ns: 73149576143
+    20 new: master_cycle_now: 170694333104
+    21 new: ns: 58139025879
+    22
+    23 tsc 170694333168
+    24 kvmclock_offset -15010550291
+    25 diff: ns: 653
+    26
+    27 =====================================
+    28 guest os running time: 01:10
+    29 old: master_kernel_ns: 15119778316
+    30 old: master_cycle_now: 37225912658
+    31 old: ns: 68183772122
+    32 new: master_kernel_ns: 83194321616
+    33 new: master_cycle_now: 193797227862
+    34 new: ns: 68183771357
+    35
+    36 tsc 193797227936
+    37 kvmclock_offset -15010550291
+    38 diff: ns: 765
+    39
+    40 =====================================
+    41 guest os running time: 01:20
+    42 old: master_kernel_ns: 15119778316
+    43 old: master_cycle_now: 37225912658
+    44 old: ns: 78225289157
+    45 new: master_kernel_ns: 93235838545
+    46 new: master_cycle_now: 216892696976
+    47 new: ns: 78225288279
+    48
+    49 tsc 216892697034
+    50 kvmclock_offset -15010550291
+    51 diff: ns: 878
+    52
+    53 =====================================
+    54 guest os running time: 01:30
+    55 old: master_kernel_ns: 15119778316
+    56 old: master_cycle_now: 37225912658
+    57 old: ns: 88268955340
+    58 new: master_kernel_ns: 103279504612
+    59 new: master_cycle_now: 239993109102
+    60 new: ns: 88268954349
+    61
+    62 tsc 239993109168
+    63 kvmclock_offset -15010550291
+    64 diff: ns: 991
+    65
+    66 =====================================
+    67 guest os running time: 01:40
+    68 old: master_kernel_ns: 15119778316
+    69 old: master_cycle_now: 37225912658
+    70 old: ns: 98313212581
+    71 new: master_kernel_ns: 113323761740
+    72 new: master_cycle_now: 263094880668
+    73 new: ns: 98313211476
+    74
+    75 tsc 263094880732
+    76 kvmclock_offset -15010550291
+    77 diff: ns: 1105
+.....
+.....
+10160 =====================================
+10161 guest os running time: 02:17:11
+10162 old: master_kernel_ns: 15119778316
+10163 old: master_cycle_now: 37225912658
+10164 old: ns: 8229817213297
+10165 new: master_kernel_ns: 8244827670997
+10166 new: master_cycle_now: 18965537819524
+10167 new: ns: 8229817120748
+10168
+10169 tsc 18965537819622
+10170 kvmclock_offset -15010550291
+10171 diff: ns: 92549
+10172 =====================================
+10173 guest os running time: 02:17:21
+10174 old: master_kernel_ns: 15119778316
+10175 old: master_cycle_now: 37225912658
+10176 old: ns: 8239861074959
+10177 new: master_kernel_ns: 8254871532564
+10178 new: master_cycle_now: 18988638681302
+10179 new: ns: 8239860982297
+10180
+10181 tsc 18988638681358
+10182 kvmclock_offset -15010550291
+10183 diff: ns: 92662
+10184 =====================================
+10185 guest os running time: 02:17:31
+10186 old: master_kernel_ns: 15119778316
+10187 old: master_cycle_now: 37225912658
+10188 old: ns: 8249904622988
+10189 new: master_kernel_ns: 8264915080459
+10190 new: master_cycle_now: 19011738821632
+10191 new: ns: 8249904530213
+10192
+10193 tsc 19011738821736
+10194 kvmclock_offset -15010550291
+10195 diff: ns: 92775^@
+10196 =====================================
+10197 guest os running time: 02:17:41
+10198 old: master_kernel_ns: 15119778316
+10199 old: master_cycle_now: 37225912658
+10200 old: ns: 8259949369203
+10201 new: master_kernel_ns: 8274959826576
+10202 new: master_cycle_now: 19034841717872
+10203 new: ns: 8259949276315
+10204
+10205 tsc 19034841717942
+10206 kvmclock_offset -15010550291
+10207 diff: ns: 92888
+10208 =====================================
+10209 guest os running time: 02:17:51
+10210 old: master_kernel_ns: 15119778316
+10211 old: master_cycle_now: 37225912658
+10212 old: ns: 8269996849598
+10213 new: master_kernel_ns: 8285007306846
+10214 new: master_cycle_now: 19057950902658
+10215 new: ns: 8269996756597
+10216
+10217 tsc 19057950902756
+10218 kvmclock_offset -15010550291
+10219 diff: ns: 93001^@
+10220 =====================================
+10221 guest os running time: 02:18:02
+10222 old: master_kernel_ns: 15119778316
+10223 old: master_cycle_now: 37225912658
+10224 old: ns: 8280039094317
+10225 new: master_kernel_ns: 8295049551453
+10226 new: master_cycle_now: 19081048045430
+10227 new: ns: 8280039001203
+10228
+10229 tsc 19081048045526
+10230 kvmclock_offset -15010550291
+10231 diff: ns: 93114^@
+
+
+
+     pvclock debugfs patch
+---
+  arch/x86/include/asm/kvm_host.h |  4 +++
+  arch/x86/kvm/x86.c              | 29 +++++++++++++++-
+  b.sh                            |  1 +
+  virt/kvm/kvm_main.c             | 75 +++++++++++++++++++++++++++++++++++++++++
+  4 files changed, 108 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 32ae3aa50c7e..5a82a69bfe7a 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1411,6 +1411,10 @@ struct kvm_arch {
+      struct delayed_work kvmclock_update_work;
+      struct delayed_work kvmclock_sync_work;
+  
++    u64 old_master_kernel_ns;
++    u64 old_master_cycle_now;
++    s64 old_kvmclock_offset;
++
+      struct kvm_xen_hvm_config xen_hvm_config;
+  
+      /* reads protected by irq_srcu, writes by irq_lock */
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 4b64ab350bcd..a56511ed8c5b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2819,7 +2819,7 @@ static inline u64 vgettsc(struct pvclock_clock *clock, u64 *tsc_timestamp,
+   * As with get_kvmclock_base_ns(), this counts from boot time, at the
+   * frequency of CLOCK_MONOTONIC_RAW (hence adding gtos->offs_boot).
+   */
+-static int do_kvmclock_base(s64 *t, u64 *tsc_timestamp)
++int do_kvmclock_base(s64 *t, u64 *tsc_timestamp)
+  {
+      struct pvclock_gtod_data *gtod = &pvclock_gtod_data;
+      unsigned long seq;
+@@ -2861,6 +2861,27 @@ static int do_monotonic(s64 *t, u64 *tsc_timestamp)
+      return mode;
+  }
+  
++u64 mydebug_get_kvmclock_ns(u64 master_kernel_ns, u64 master_cycle_now, s64 kvmclock_offset, u64 tsc)
++{
++        struct pvclock_vcpu_time_info hv_clock;
++        u64 ret;
++
++        hv_clock.tsc_timestamp = master_cycle_now;
++        hv_clock.system_time = master_kernel_ns + kvmclock_offset;
++
++        /* both __this_cpu_read() and rdtsc() should be on the same cpu */
++        get_cpu();
++
++        kvm_get_time_scale(NSEC_PER_SEC, __this_cpu_read(cpu_tsc_khz) * 1000LL,
++                                   &hv_clock.tsc_shift,
++                                   &hv_clock.tsc_to_system_mul);
++        ret = __pvclock_read_cycles(&hv_clock, tsc);
++
++        put_cpu();
++
++        return ret;
++}
++
+  static int do_realtime(struct timespec64 *ts, u64 *tsc_timestamp)
+  {
+      struct pvclock_gtod_data *gtod = &pvclock_gtod_data;
+@@ -2988,6 +3009,10 @@ static void pvclock_update_vm_gtod_copy(struct kvm *kvm)
+      host_tsc_clocksource = kvm_get_time_and_clockread(
+                      &ka->master_kernel_ns,
+                      &ka->master_cycle_now);
++    ka->old_master_kernel_ns = ka->master_kernel_ns;
++    ka->old_master_cycle_now = ka->master_cycle_now;
++    printk("MYDEBUG: old_master_kernel_ns = %llu, old_master_cycle_now = %llu\n",
++            ka->old_master_kernel_ns, ka->old_master_cycle_now);
+  
+      ka->use_master_clock = host_tsc_clocksource && vcpus_matched
+                  && !ka->backwards_tsc_observed
+@@ -6989,6 +7014,8 @@ static int kvm_vm_ioctl_set_clock(struct kvm *kvm, void __user *argp)
+      else
+          now_raw_ns = get_kvmclock_base_ns();
+      ka->kvmclock_offset = data.clock - now_raw_ns;
++    ka->old_kvmclock_offset = ka->kvmclock_offset;
++    printk("MYDEBUG: old_kvmclock_offset = %lld\n", ka->old_kvmclock_offset);
+      kvm_end_pvclock_update(kvm);
+      return 0;
+  }
+diff --git a/b.sh b/b.sh
+new file mode 120000
+index 000000000000..0ff9a93fd53f
+--- /dev/null
++++ b/b.sh
+@@ -0,0 +1 @@
++/home/mlin/build.upstream/b.sh
+\ No newline at end of file
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index ba0327e2d0d3..d6b9a6e7275e 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -399,6 +399,7 @@ int __kvm_mmu_topup_memory_cache(struct kvm_mmu_memory_cache *mc, int capacity,
+              return mc->nobjs >= min ? 0 : -ENOMEM;
+          mc->objects[mc->nobjs++] = obj;
+      }
++
+      return 0;
+  }
+  
+@@ -998,6 +999,78 @@ static void kvm_destroy_vm_debugfs(struct kvm *kvm)
+      }
+  }
+  
++extern int do_kvmclock_base(s64 *t, u64 *tsc_timestamp);
++extern u64 mydebug_get_kvmclock_ns(u64 master_kernel_ns, u64 master_cycle_now, s64 kvmclock_offset, u64 tsc);
++
++static ssize_t kvm_mydebug_pvclock_read(struct file *file, char __user *buf,
++                                size_t len, loff_t *ppos)
++{
++    struct kvm *kvm = file->private_data;
++    struct kvm_arch *ka;
++    char buffer[256];
++    ssize_t ret, copied;
++    u64 new_master_kernel_ns;
++    u64 new_master_cycle_now;
++    u64 old_ns, new_ns;
++    u64 tsc;
++
++    if (!kvm) {
++        pr_err("file->private_data is NULL\n");
++        return -EINVAL;
++    }
++
++    ka = &kvm->arch;
++
++    do_kvmclock_base(&new_master_kernel_ns, &new_master_cycle_now);
++
++    tsc = rdtsc();
++
++    old_ns = mydebug_get_kvmclock_ns(ka->old_master_kernel_ns, ka->old_master_cycle_now, ka->old_kvmclock_offset, tsc);
++    new_ns = mydebug_get_kvmclock_ns(new_master_kernel_ns, new_master_cycle_now, ka->old_kvmclock_offset, tsc);
++
++    ret = snprintf(buffer, sizeof(buffer),
++                   "old: master_kernel_ns: %llu\n"
++                   "old: master_cycle_now: %llu\n"
++                   "old: ns: %llu\n"
++                   "new: master_kernel_ns: %llu\n"
++                   "new: master_cycle_now: %llu\n"
++                   "new: ns: %llu\n\n"
++                   "tsc %llu\n"
++                   "kvmclock_offset %lld\n"
++                   "diff: ns: %lld\n",
++                   ka->old_master_kernel_ns, ka->old_master_cycle_now, old_ns,
++                   new_master_kernel_ns, new_master_cycle_now, new_ns,
++                   tsc, ka->old_kvmclock_offset,
++                  old_ns - new_ns
++                  );
++
++    if (ret < 0)
++        return ret;
++
++    if ((size_t)ret > sizeof(buffer))
++        ret = sizeof(buffer);
++
++    if (*ppos >= ret)
++        return 0; /* EOF */
++
++    copied = min(len, (size_t)(ret - *ppos));
++
++    if (copy_to_user(buf, buffer + *ppos, copied)) {
++        pr_err("copy_to_user failed\n");
++        return -EFAULT;
++    }
++
++    *ppos += copied;
++
++    return copied;
++}
++
++static const struct file_operations kvm_pvclock_fops = {
++    .owner = THIS_MODULE,
++    .read = kvm_mydebug_pvclock_read,
++    .open = simple_open,
++};
++
+  static int kvm_create_vm_debugfs(struct kvm *kvm, const char *fdname)
+  {
+      static DEFINE_MUTEX(kvm_debugfs_lock);
+@@ -1063,6 +1136,8 @@ static int kvm_create_vm_debugfs(struct kvm *kvm, const char *fdname)
+                      &stat_fops_per_vm);
+      }
+  
++    debugfs_create_file("pvclock", 0444, kvm->debugfs_dentry, kvm, &kvm_pvclock_fops);
++
+      kvm_arch_create_vm_debugfs(kvm);
+      return 0;
+  out_err:
 
 
