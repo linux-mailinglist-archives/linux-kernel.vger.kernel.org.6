@@ -1,188 +1,141 @@
-Return-Path: <linux-kernel+bounces-569385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA40BA6A22E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:11:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB613A6A220
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2753B427AA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE928A66EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D63214A74;
-	Thu, 20 Mar 2025 09:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDCC21ADCC;
+	Thu, 20 Mar 2025 09:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgHIWwOB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="In1g4rUi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97627213245
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447C8213245;
+	Thu, 20 Mar 2025 09:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742461821; cv=none; b=qS2E6IGHu3J2dkEM1UiNnN7bEfGXn7dJIBHLS6UCtPObmdWD2SaI7Osa2nTVZ4euEmZbhTIdOpDwbLy6GKQdzGU+pvh9mpsyb4EmWQfj43M3adJvtjgwZhC7MS+NEaEymOrB38xJ803QmgpLV2E/6oTZ4vLjGW94T+husO8ZJyY=
+	t=1742461862; cv=none; b=uNiGawy0n9OMDihUe/BLyFGQp/6R1oJvAyY1TsY2ECMXSezSSsmDZaZfyx1GSqAfbtKvieDrP5eO+NRS9N3jxt1fKbDWfodWvcFYRxqFrmGz5W3HE0q6124fHQlNu5AUC+cza8LTgNQR2TXuVT8BwSvAMvALxz32R54dmem2Xrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742461821; c=relaxed/simple;
-	bh=uHn4xfjqexMZEjTqz5MffRM+J5kHAkfgJsVmCYt8McY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvrYSNrCaz9F6Q3EqGC/lG2P88X+Sev8Kbs2MyCPc/3nuL7fkAVC8FwEPvcJH/hkdpg68oomIN2nCVtiJhmnUBGAoAylTTd2mZwiOqG8/ztlXpUI+8yfGXGnGuiXj6MEa/w/Q8ojTUQg99vpZIJ2HSbHjqrILYT68HVOIY5Y5fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgHIWwOB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B65C4CEDD;
-	Thu, 20 Mar 2025 09:10:19 +0000 (UTC)
+	s=arc-20240116; t=1742461862; c=relaxed/simple;
+	bh=15a5VxRJS8V9l6kVXtwQdjDgviqb/vy7Z07smrfa5V0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nc5RAcyGR7vBNTIq9SVmrspmzmuloDqKY66uFz7ursO/IAaa36lG4izIAhjB2vefhUu2/RwOrj9EZ+xIPTeW03enFfq9IybyA7NQuwx0lyscTfU6y1rGEyNIBIAM9qZ1GOVhfNSqI4TkWszw2JwwtYDmxxttZjJjZIo9jVbpxRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=In1g4rUi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D944C4CEDD;
+	Thu, 20 Mar 2025 09:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742461821;
-	bh=uHn4xfjqexMZEjTqz5MffRM+J5kHAkfgJsVmCYt8McY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MgHIWwOBKAgLUEhhRFDpG/FV4RFxhMYa0wWmK+a5WXm9HpEScO+RWNFcUa8PWC9VK
-	 PNiZFZFJoY0spPLiSzX7eyL2HrdhJosP3ASwrfZmtCf15iFSHEqOVOL5yIBVE3Kfc1
-	 GROUXEjBkL9xm1IDBFkrXF+iwb+Y1FqEf29ft9DNhJFlEn/Ke4dPeuRj02T17qUcsZ
-	 dWyBTuAPOL9cbauCBfROZitGBHtr2KYdGMkWCEOfk6CceeW8OKKm1C7Jx0OGDrJEV4
-	 6m8jSmPnSu2UTJmaLFRsVwr9Jj0mHfqqPMtSS0UTCCbFhtczUsJ1ra8Z17r2cq+Qxe
-	 AFFFUrM7uoBjg==
-Date: Thu, 20 Mar 2025 10:10:17 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Yujun Dong <yujundong@pascal-lab.net>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
-	vincent.guittot@linaro.org, vschneid@redhat.com
-Subject: Re: [PATCH] cpuidle, sched: Use smp_mb__after_atomic() in
- current_clr_polling()
-Message-ID: <Z9vbeZjG1H2WgKcv@gmail.com>
-References: <Z740eIZcK31DQETq@gmail.com>
- <20250306164217.3028977-1-yujundong@pascal-lab.net>
+	s=k20201202; t=1742461862;
+	bh=15a5VxRJS8V9l6kVXtwQdjDgviqb/vy7Z07smrfa5V0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=In1g4rUiolC6SIkmnEALCTEXDYVMLz5EFWLWj36oPyKIcgjFEHaTZuNatgG2DhL+1
+	 Mzvun4IotKG63Ip76H8ynAUYaBMRTZdwMjcb3XKYdJSU8UrZPc74fnMsnfJNc2pc1M
+	 xMZdIDOyppa8ka4pwHgmwX4CTQd0GR1wSxhCDPwMb9VPds4sbGY5OFmBvZuzXkUDBZ
+	 F+Qh8HLG7IYqoTb/jzbN3wYx/XVugVsY4ragG1iYScTkhzJpHAASddNDx0xxGgfKA1
+	 jo7Z7EQY3rGzzc1i8eGLq3pWRFbzbNeKrHJJ2SQeLfi7DBuQvFfdlZtIGI+Qr70ahK
+	 N9wpoIB7Yk6Fg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tvBvX-00FMTh-OY;
+	Thu, 20 Mar 2025 09:10:59 +0000
+Date: Thu, 20 Mar 2025 09:10:59 +0000
+Message-ID: <86iko4m5i4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose
+ <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	devel@daynix.com
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+In-Reply-To: <0d84bc94-1c65-4737-a2eb-aa7f96a7d1e0@daynix.com>
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+	<Z9pze3J2_zrTk_yC@linux.dev>
+	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+	<86plidmjwh.wl-maz@kernel.org>
+	<bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
+	<86o6xxmg87.wl-maz@kernel.org>
+	<aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
+	<86msdhmemw.wl-maz@kernel.org>
+	<cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
+	<86ldt0n9w1.wl-maz@kernel.org>
+	<Z9sSMJAlf7cQ5viu@linux.dev>
+	<0d84bc94-1c65-4737-a2eb-aa7f96a7d1e0@daynix.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306164217.3028977-1-yujundong@pascal-lab.net>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-* Yujun Dong <yujundong@pascal-lab.net> wrote:
-
-> Hi Ingo, 
+On Thu, 20 Mar 2025 06:03:35 +0000,
+Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
 > 
-> * Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > [ Sorry about the belated reply, found this in my TODO pile ... ]
-> >
-> > * Yujun Dong <yujundong@pascal-lab.net> wrote:
-> >
-> >> In architectures that use the polling bit, current_clr_polling() employs
-> >> smp_mb() to ensure that the clearing of the polling bit is visible to
-> >> other cores before checking TIF_NEED_RESCHED.
-> >>
-> >> However, smp_mb() can be costly. Given that clear_bit() is an atomic
-> >> operation, replacing smp_mb() with smp_mb__after_atomic() is appropriate.
-> >>
-> >> Many architectures implement smp_mb__after_atomic() as a lighter-weight
-> >> barrier compared to smp_mb(), leading to performance improvements.
-> >> For instance, on x86, smp_mb__after_atomic() is a no-op. This change
-> >> eliminates a smp_mb() instruction in the cpuidle wake-up path, saving
-> >> several CPU cycles and thereby reducing wake-up latency.
-> >>
-> >> Architectures that do not use the polling bit will retain the original
-> >> smp_mb() behavior to ensure that existing dependencies remain unaffected.
-> >>
-> >> Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
-> >> ---
-> >>  include/linux/sched/idle.h | 23 ++++++++++++++++-------
-> >>  1 file changed, 16 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/include/linux/sched/idle.h b/include/linux/sched/idle.h
-> >> index e670ac282333..439f6029d3b9 100644
-> >> --- a/include/linux/sched/idle.h
-> >> +++ b/include/linux/sched/idle.h
-> >> @@ -79,6 +79,21 @@ static __always_inline bool __must_check current_clr_polling_and_test(void)
-> >>  	return unlikely(tif_need_resched());
-> >>  }
-> >>  
-> >> +static __always_inline void current_clr_polling(void)
-> >> +{
-> >> +	__current_clr_polling();
-> >> +
-> >> +	/*
-> >> +	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
-> >> +	 * Once the bit is cleared, we'll get IPIs with every new
-> >> +	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
-> >> +	 * fold.
-> >> +	 */
-> >> +	smp_mb__after_atomic(); /* paired with resched_curr() */
-> >> +
-> >> +	preempt_fold_need_resched();
-> >> +}
-> >> +
-> >>  #else
-> >>  static inline void __current_set_polling(void) { }
-> >>  static inline void __current_clr_polling(void) { }
-> >> @@ -91,21 +106,15 @@ static inline bool __must_check current_clr_polling_and_test(void)
-> >>  {
-> >>  	return unlikely(tif_need_resched());
-> >>  }
-> >> -#endif
-> >>  
-> >>  static __always_inline void current_clr_polling(void)
-> >>  {
-> >>  	__current_clr_polling();
-> >>  
-> >> -	/*
-> >> -	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
-> >> -	 * Once the bit is cleared, we'll get IPIs with every new
-> >> -	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
-> >> -	 * fold.
-> >> -	 */
-> >>  	smp_mb(); /* paired with resched_curr() */
-> >
-> > So this part is weird: you remove the comment that justifies the 
-> > smp_mb(), but you leave the smp_mb() in place. Why?
-> >
-> > Thanks,
-> >
-> > 	Ingo
+> On 2025/03/20 3:51, Oliver Upton wrote:
+> > On Wed, Mar 19, 2025 at 06:38:38PM +0000, Marc Zyngier wrote:
+> >> On Wed, 19 Mar 2025 11:51:21 +0000, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> >>> What about setting the flag automatically when a user fails to pin
+> >>> vCPUs to CPUs that are covered by one PMU? There would be no change if
+> >>> a user correctly pins vCPUs as it is. Otherwise, they will see a
+> >>> correct feature set advertised to the guest and the cycle counter
+> >>> working.
+> >> 
+> >> How do you know that the affinity is "correct"? VCPU affinity can be
+> >> changed at any time. I, for one, do not want my VMs to change
+> >> behaviour because I let the vcpus bounce around as the scheduler sees
+> >> fit.
 > 
-> Thanks for pointing that out. The comment removal in the non-polling
-> branch was intentional, but my original explanation was unclear. Let
-> me rephrase:
-> 
-> Polling architectures (with the TIF_POLLING flag):
-> 1. __current_clr_polling() performs atomic ops -> 
-> Use smp_mb__after_atomic()
-> 2. Keep original "clear polling bit" comment as it directly explains
-> the barrier's purpose.
-> 
-> Non-polling architectures (#else branch):
-> 1. __current_clr_polling() is a no-op -> Original comment about
-> "clearing the bit" becomes misleading.
-> 2. However, the smp_mb() must remain to preserve pre-existing memory
-> ordering guarantees. And explicitly documenting it requires new
-> wording to avoid confusion.
+> Checking the affinity when picking the default PMU; the vCPU affinity
+> is the only thing that rules the choice of the default PMU even now.
+>
+> Perhaps we may model the API as follows: introduce another "composite"
+> PMU that works on any core but only exposes the cycle counter. Robust
+> VMMs will choose it or one of hardware PMUs with
+> KVM_ARM_VCPU_PMU_V3_SET_PMU. KVM will choose the default PMU according
+> to the vCPU affinity at the point of KVM_ARM_VCPU_INIT otherwise. If
+> the affinity is covered by one hardware PMU, that PMU will be chosen
+> as the default. The "composite" PMU will be the default otherwise.
 
-Thanks for the explanation, on a second reading that makes a lot of 
-sense.
+This makes no sense to me. A VCPU is always affine to a PMU, because
+we do not support configurations where only some CPUs have a PMU. This
+is an all-or-nothing situation.
 
-> Proposed approaches:
-> Option A: Add a comment for non-polling smp_mb() like "Paired with
-> resched_curr(), as per pre-existing memory ordering guarantees"
-> Option B: Leave code as-is (no comment) and elaborate in the commit
-> message: "For non-polling architectures, retain smp_mb() to avoid
-> subtle regressions, while intentionally omitting the bit-specific
-> comment that no longer applies."
-> 
-> Which direction would you consider most maintainable? Your insight
-> would be greatly appreciated.
+More importantly, you keep suggesting the same "new default", and I
+keep saying NO.
 
-No action needed on your side, because it was really just me being 
-dense and not understanding that the comment was moved as it didn't 
-apply to the original place, it was not eliminated. The 'paired with 
-resched_curr()' comment of smp_mb() is operative and remained intact.
+My position is clear: if you want a *new* behaviour, you *must* add a
+new flag that the VMM explicitly provides to enable this CC-only PMU.
+No change in default behaviour at all.
 
-I applied your optimization to the scheduler tree and it should go 
-upstream in the v6.15 merge window if all goes well in testing.
+I'm not going to move from that.
 
-Thanks,
+	M.
 
-	Ingo
+-- 
+Without deviation from the norm, progress is not possible.
 
