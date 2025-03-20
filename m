@@ -1,97 +1,160 @@
-Return-Path: <linux-kernel+bounces-570325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09E5A6AEE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:56:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D542A6AEE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D324231B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:56:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F643886CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD8F227EBE;
-	Thu, 20 Mar 2025 19:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD1E229B12;
+	Thu, 20 Mar 2025 20:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mX6OPokz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nSMr3UaN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1Qsj5N9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDA0221579
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C52288E3;
+	Thu, 20 Mar 2025 20:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742500568; cv=none; b=W7t6jXeTeeLPyAALNINe2UE1gQOx0Tgyo3wg+F1VuqPtumEd+1DNDESaqJqyzPXiiuNXE74VVOQvylb5Jh6nFJUuewfJQQmVyuv5V7sBkB8OUe5a940dttKXTyIWclsKEE4KIrZlxNKYLbYcF0Bz1s27waVVi6uvJSO4E71q6U0=
+	t=1742500807; cv=none; b=dr/Ds6osCuvkAQVTWNU1kgmDnGklGpWa/+uzqQrhBlOvSN+kZ/SmJVVtPtinq+pSSs4tNfAqBPiCKX17l7DRPlIGgY8o9c9RUrYPRbmXm2/D/x7LmQyLvxPH8rgv8WxWJxLumxHI1GqtzWuYpN995XQNmZf9rQ/Y426hmX6npTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742500568; c=relaxed/simple;
-	bh=jB8nKIZepojlgR210ZZ91lH3AgazjD4Izczc9q0NSC0=;
+	s=arc-20240116; t=1742500807; c=relaxed/simple;
+	bh=B2+84pr0As28UqPgTHxbMJThWkwRS5HQW3sICoYcfYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IbnVOKVTQkZakwk+EHeKz0+GesQEZcqotNhlyl7YC40s3+ddKtmQLsg85wegxTRthld50An8QP7OWgcK0lSOcraiDezrdK7BtJXG03QPo0JHElbUYwDd4VDcBHwRIffQobsQ8n/IP57yJY7p+fmOhmgrZB5Naxb8D4NK1cCb+1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mX6OPokz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nSMr3UaN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Mar 2025 20:56:03 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742500565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jB8nKIZepojlgR210ZZ91lH3AgazjD4Izczc9q0NSC0=;
-	b=mX6OPokz5w/4bGcXyVy1l8sSdmrcuLLkwz39pQCvNgbdvYO8uG5A+xhuQRDjSnlEwi5oku
-	Z2c0dipPEManlUykBah0toKWz6HWnvbB2JwexK3FGVFY7wpdCiBzfUmD1VExcBVOO7XRno
-	5CSYJ99v/ZaDzsHW4iLizKJLPjgPNq9xdiDRv4A0h9Z52e/+6aqVpu4oghZRMPH8Sg2wan
-	/ZqsAYib8qde7Sb7miQdSJ0S9sqe8ge60r0bmfV8e1jy/0tU48K4GkAg0Lhh0ZyluYoab9
-	liQZRPGW8V/rX6T0rpl1v5Z3/UUerrqiqz52jAfEtbbrwLLPZkS90ehoipBOPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742500565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jB8nKIZepojlgR210ZZ91lH3AgazjD4Izczc9q0NSC0=;
-	b=nSMr3UaNtwp/HjkFpQa2ZLBF2+nbUaEUR2cqqFCPGValGTluILCP25SZthTtjmJxoJBL2E
-	WxdoRCrLVu4nEkCg==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [x86/cpuid] Question regarding historic leaf 0x80000000 code
-Message-ID: <Z9xy04RL3Uww9DYy@lx-t490>
-References: <Z9xtfC5pL-g4LYvK@lx-t490>
- <d4fcfd91-cc92-4b3c-9dd2-56ecd754cecc@citrix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUY9ouIQWhuwE71U5HxOwzsKNGOgxzBC5gcZD5FQizu1oGOWyD4C1jed2fB4MnuoT+VjC+mPj8Zt0tPywE5hgzPJKFMWKy3EQCn/Ket8Grk6Ns+CQejQ8UubHXRImMUjPimM9f7JsKtkSSBunCr4F06l8STOmntc2nvPiWxh1OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1Qsj5N9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C020C4CEDD;
+	Thu, 20 Mar 2025 20:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742500807;
+	bh=B2+84pr0As28UqPgTHxbMJThWkwRS5HQW3sICoYcfYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1Qsj5N99wE2VbpsSwiJ3x6D+9w6jlOdnAGH0jvdz/+UslpTe/VvvWXmpSVb78x0R
+	 85+88DAgn4DSVInCEJWIPEEpbpNh3fi6+RDkwxFXpjyaG1SUS2DBfkQufpe384nKT0
+	 rQCKrm1k4bCfbn8V2J3nfxi3Efdgk2JhxNgCqsrBo+RPklH24SMVc8teg76FJlso+K
+	 U164jPyITezwZu4JWbLl513Ks1nRROAeTzFrNGJ7ybrXkBST3GmzT5ZudnrZ3dpF07
+	 nD3bVNNwVkbsfPlI1W8UgbAor5WxvYugNjAdQbo93I41517vg4bvy+DDi1wHy6B6Xo
+	 ZuY6F7gIlo+5w==
+Date: Thu, 20 Mar 2025 21:00:02 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Ard Biesheuvel <ardb+git@google.com>, linux-kbuild@vger.kernel.org,
+	brgerst@gmail.com, x86@kernel.org, masahiroy@kernel.org,
+	nathan@kernel.org, linux-kernel@vger.kernel.org, nogikh@google.com,
+	syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Subject: Re: [PATCH] gendwarfksyms: define __GENKSYMS__ when processing
+ asm-protoypes.h
+Message-ID: <Z9xzwpBiIEJGQk0g@gmail.com>
+References: <20250320070746.101552-2-ardb+git@google.com>
+ <CABCJKuc3zZOG4qgoFca_g80GMkzviVRemGLJB8GaA88u27Mt8A@mail.gmail.com>
+ <CAMj1kXFZFgYp40xD72s0oMThgxK7J-yyCYUQkkBQjh3xR+fNeQ@mail.gmail.com>
+ <CABCJKueFujwW_=JMZHTf+Y3qN9=uvQYSoDcg_6v=9svUYTsMGQ@mail.gmail.com>
+ <CAMj1kXHCX9oinqQ6xSMgKHdVqp16svPrs9bZu0tX_iD6h76NtA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d4fcfd91-cc92-4b3c-9dd2-56ecd754cecc@citrix.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMj1kXHCX9oinqQ6xSMgKHdVqp16svPrs9bZu0tX_iD6h76NtA@mail.gmail.com>
 
-On Thu, 20 Mar 2025, Andrew Cooper wrote:
->
-> The problem is that for an out-of-range leaf, Intel returns the data
-> from the maximum in-range leaf, rather than zeroes.
->
-> On pre-AMD64-capable Intel CPUs, you'll get what amounts to junk in a
-> query for leaf 0x80000000, where it's probably leaf 5 or so.
->
-> Checking for the upper half of the output matching the input is a way of
-> distinguishing Intel behaviour from all the other vendors.
->
 
-Thanks a lot Andrew for all your help!
+* Ard Biesheuvel <ardb@kernel.org> wrote:
 
-Then I'll mention that, in a comment, on top of the new CPUID scanner's
-leaf 0x8000000 code.
+> On Thu, 20 Mar 2025 at 17:22, Sami Tolvanen <samitolvanen@google.com> wrote:
+> >
+> > On Thu, Mar 20, 2025 at 9:09 AM Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > On Thu, 20 Mar 2025 at 15:48, Sami Tolvanen <samitolvanen@google.com> wrote:
+> > > >
+> > > > Hi Ard,
+> > > >
+> > > > On Thu, Mar 20, 2025 at 12:07 AM Ard Biesheuvel <ardb+git@google.com> wrote:
+> > > > >
+> > > > > From: Ard Biesheuvel <ardb@kernel.org>
+> > > > >
+> > > > > Ensure that __GENKSYMS__ is #define'd when passing asm/asm-prototypes.h
+> > > > > through the compiler to capture the exported symbols. This ensures that
+> > > > > exported symbols such as __ref_stack_chk_guard on x86, which is declared
+> > > > > conditionally, is visible to the tool.
+> > > > >
+> > > > > Otherwise, an error such as the below may be raised, breaking the build
+> > > > > when CONFIG_GENDWARFKSYMS=y
+> > > > >
+> > > > >   <stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_guard'
+> > > > >
+> > > > > Cc: Sami Tolvanen <samitolvanen@google.com>
+> > > > > Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+> > > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > > > ---
+> > > > >  scripts/Makefile.build | 1 +
+> > > > >  1 file changed, 1 insertion(+)
+> > > > >
+> > > > > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> > > > > index 993708d11874..7855cdc4e763 100644
+> > > > > --- a/scripts/Makefile.build
+> > > > > +++ b/scripts/Makefile.build
+> > > > > @@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
+> > > > >  getasmexports =                                                                \
+> > > > >     { echo "\#include <linux/kernel.h>" ;                               \
+> > > > >       echo "\#include <linux/string.h>" ;                               \
+> > > > > +     echo "\#define  __GENKSYMS__" ;                                   \
+> > > > >       echo "\#include <asm/asm-prototypes.h>" ;                         \
+> > > > >       $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
+> > > >
+> > > > This works with gendwarfksyms since __GENKSYMS__ is defined after the
+> > > > EXPORT_SYMBOL() definition, but I'm now getting warnings with
+> > > > genksyms:
+> > > >
+> > > >   AS      arch/x86/lib/clear_page_64.o
+> > > > <stdin>:3:10: warning: "__GENKSYMS__" redefined
+> > > > <command-line>: note: this is the location of the previous definition
+> > > >
+> > >
+> > > Oops.
+> > >
+> > > Do you think the fix below should be sufficient?
+> > >
+> > > --- a/scripts/Makefile.build
+> > > +++ b/scripts/Makefile.build
+> > > @@ -314,7 +314,7 @@
+> > >  else
+> > >  cmd_gensymtypes_S =                                                    \
+> > >         $(getasmexports) |                                              \
+> > > -       $(CPP) -D__GENKSYMS__ $(c_flags) -xc - | $(genksyms)
+> > > +       $(CPP) $(c_flags) -xc - | $(genksyms)
+> > >  endif # CONFIG_GENDWARFKSYMS
+> > >
+> > >  quiet_cmd_cpp_s_S = CPP $(quiet_modtag) $@
+> >
+> > EXPORT_SYMBOL() has a different definition when __GENKSYMS__ is
+> > defined, so I think with genksyms we actually do need this on the
+> > command line. I suppose you could wrap the getasmexports definition in
+> > #ifndef __GENKSYMS__ to avoid the warning, or just use
+> > __GENDWARFKSYMS__ like you suggested earlier.
+> >
+> 
+> Yeah, on second thought, we could just do what Masahiro suggested, and
+> drop the conditional from asm/asm-prototypes.h
+> 
+> The issue in question only affects definitions, not declarations, and
+> so having the declaration visible shouldn't be a problem.
+> 
+> Ingo, mind dropping this patch again? We'll do the below instead (I'll
+> send out the patch in a minute)
 
-Kind regards,
+Yeah, done & thanks!
 
---
-Ahmed S. Darwish
-Linutronix GmbH
+	Ingo
+
+
 
