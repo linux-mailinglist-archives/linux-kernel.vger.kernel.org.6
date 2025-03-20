@@ -1,250 +1,219 @@
-Return-Path: <linux-kernel+bounces-569981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EE5A6AA6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:56:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E8CA6AAEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10C604846CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDEE18834B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E141EB1A8;
-	Thu, 20 Mar 2025 15:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UkFNKTiT"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A5E1EB195
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB631EBFFD;
+	Thu, 20 Mar 2025 16:20:12 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815A51E3DD3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742486195; cv=none; b=sdlIDLL5DDaevM3SMysvFnLEIyYWvotvXXTcSmKPabDXbEfHL3gRq0BnGVM9/0/r3WmqoL8Otla1AlwfdfcDsnUQquYPVO8BArQvm9Wcl92JRwda9wMqJe4qhZYWAMAKWDzzRRvEsPlRQc1TiJgQzs1BV1L+R6TRRpfr+YPASt4=
+	t=1742487611; cv=none; b=sFtikRmoCoK8d/3Iwp/oS8pgGbxuOAkqEqCSeD1/yYfDcJwYggSfr3w3n4B1VN7yq02q7RhZFJcSonGufUtGBcTAAGo6sJGDn/wPooGoBvMjM89APsSDofNxqcX/SsfX0h7owtRQpORNJwXWsAXBRRqbY8GJQ11CxVhXA8u4zlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742486195; c=relaxed/simple;
-	bh=Pg+8432XIY1RmD3o7Gs+WGJlVnBjwftYIj/Xx29MjkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oic8Qzjw36635ANoE/E2GwkOzYMnKGphiwXgoYjsNQ9EfdxP2k2/yVjEFEm44u07N5c+Cse9nec/uYeH95ph7drsqHqW563RTp/ufmyYxi+zIZc24+ph/bcLq1TSQiGAj7tMhrrJ5xbTQO7a2b7VRJcHmYkbN094ijh5Gmoc/9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UkFNKTiT; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30613802a6bso9989631fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742486192; x=1743090992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8n8TNAgQeXDINcAz9ek7HcTAkZoaBTVAa+vhgGh7zC8=;
-        b=UkFNKTiTk2jcOiBYGxDE9VX2UvjeBF8GiKO6NUAylRBDnP0mLMC86FkXN2uKPke7gV
-         Q40snUHHAMqDQGeupeqw0sPFHt+A7Xw0xiPWsn4mgDCeZ3Oc3FlZEsdXDgBXoEe96HJ+
-         21aoEGr9sUc2j742dizqI8m9gkdMTgrv39bkqNoNo9Fb+b3ye9RljZtQTvySh1/HYvXs
-         fCdxISB+cAKyL5nl6DWmcPEEJ+oTdoXWbqoB5xxFK1ZmtANwIHiN8jaN+J/vhWb4g4Yj
-         cWnzh+j1HJxAgphKj4gByYlrywmbgJ0FGaFflM2mvj/FHEf0cTEnnAKnDgO5V58ZXHuR
-         Uvhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742486192; x=1743090992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8n8TNAgQeXDINcAz9ek7HcTAkZoaBTVAa+vhgGh7zC8=;
-        b=s4aYrMoWfde3wwU8/PV1gs4JF9VawHo+vLNorQs23UsjqxagZPu2z4YUDIAWdg2OEf
-         O9hPY3Afnm82+uk0AGw6/sau6PsK1BdgtAt0BdZFOOV/SzCW+c/UpoH6BRRh2FXckyNm
-         tdj3TSe+8td24ZHLCTlYnhntHjQ7mJUt3FID+1PBA4R15n+4S0ubjPsZ98GHAg1w7Bgu
-         jgRHnER629E7bxCQyKKOnT7uiDclFcBVxeB/2mpu8grH0lDgIybruUUDkkLJ1kUCW04R
-         MwI2DhISiOqPBIwBnh5CVHBIm9956Dn/idVxdSCJVl/dJtqvUuPSKGgmgRHhvRAtejkb
-         t/xA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf5TOx94uJYkSdLx4G1SpiCrQmK5shFH4yAB/5vrprbeWiYaDfjj4PR/lv4JEwjxrHZ9J/KWk4raDf7dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrxioLqlkzuACz237wR2Tgl5IN9ceK1jdjIi6ze3tGeDVtTMEv
-	48lqVO3j4H/VtWkkL+JOj+AcxDLZl4o7J0ZOstaMl8bEpwUfH3eucVfAjAXiRnJB09dlQaZd1XE
-	pUs6Ij/reRp4bDJdK+AfX/M/HI8MbOEf+8t0csw==
-X-Gm-Gg: ASbGncvH3CAHmVPgLMhO3NESi+qVYeNbkN5S4gRi2lPV89FRKISKoH+JrrBoUHY1rCZ
-	hfRX9Msp7KctPahQ/wOFPqG07tuJYfaVeXVhdBsCgvoA8wtNB9yL1Hm2ldG9fQacGG7NZbqSpED
-	glbPsfl5bH2fO9tmOrs8l0HjbRSgmqw8lrB4p7onf87Sg9RP59C9JivUAdUaqMhBkB2DSB
-X-Google-Smtp-Source: AGHT+IGTwvnzBedelgYeIG2XIlrHeQ96Vy3zCeIi71ifL5+oZNFvcJoCUD0BJMTuIVRe2FGR3+BTabWjimKS/VvsbXc=
-X-Received: by 2002:a2e:b8d6:0:b0:30b:edfc:5d8a with SMTP id
- 38308e7fff4ca-30d6a1efadbmr34464451fa.0.1742486191822; Thu, 20 Mar 2025
- 08:56:31 -0700 (PDT)
+	s=arc-20240116; t=1742487611; c=relaxed/simple;
+	bh=kGpBLhOeNbMipzXgZdQHWX+9QizRGxv66IZDvFRfIFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mGjvF54W13bUfV85FiuXoeHo16XQi9uvms26A8xF3671LwJ+wUe1ybsiXygF0RbmpSMgf5H0IwmmLKO/uWJl5LpVMK1M0A9fKMakgy9/6xb/lMGICrKDTjgcu2xCdni7hLUyumbb4M7BbfeaZe33xqD/Gmq59pzC9HK3LzTViRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZJVZy5GhBz9sRr;
+	Thu, 20 Mar 2025 16:57:30 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id lpSF7WRgoDNQ; Thu, 20 Mar 2025 16:57:30 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJVZy4Fbyz9sPd;
+	Thu, 20 Mar 2025 16:57:30 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E13A8B799;
+	Thu, 20 Mar 2025 16:57:30 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id g0xQPgVyxzkg; Thu, 20 Mar 2025 16:57:30 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E8D5B8B763;
+	Thu, 20 Mar 2025 16:57:29 +0100 (CET)
+Message-ID: <f79c2e97-2d50-467d-9852-c64971f11370@csgroup.eu>
+Date: Thu, 20 Mar 2025 16:57:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315164123.1855142-1-koichiro.den@canonical.com>
-In-Reply-To: <20250315164123.1855142-1-koichiro.den@canonical.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Mar 2025 16:56:20 +0100
-X-Gm-Features: AQ5f1JowFng81dq75UDfEEYlHxIDBQIW-PBU1W4Hva1SRz22XpNprkVHqgRNKUc
-Message-ID: <CAMRc=Me=um+=uAKxP8enVPQ4gZvKgtsmaT5m0tM_=7-xGRVY3w@mail.gmail.com>
-Subject: Re: [PATCH v6 0/9] Introduce configfs-based interface for gpio-aggregator
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
+To: linux@treblig.org, ioana.ciornei@nxp.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ stuyoder@gmail.com, linux-kernel@vger.kernel.org
+References: <20241115152055.279732-1-linux@treblig.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241115152055.279732-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 15, 2025 at 5:41=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
-l.com> wrote:
->
-> This patch series introduces a configfs-based interface to gpio-aggregato=
-r
-> to address limitations in the existing 'new_device' interface.
->
-> The existing 'new_device' interface has several limitations:
->
->   Issue#1. No way to determine when GPIO aggregator creation is complete.
->   Issue#2. No way to retrieve errors when creating a GPIO aggregator.
->   Issue#3. No way to trace a GPIO line of an aggregator back to its
->            corresponding physical device.
->   Issue#4. The 'new_device' echo does not indicate which virtual
->            gpiochip<N> was created.
->   Issue#5. No way to assign names to GPIO lines exported through an
->            aggregator.
->
-> Although Issue#1 to #3 could technically be resolved easily without
-> configfs, using configfs offers a streamlined, modern, and extensible
-> approach, especially since gpio-sim and gpio-virtuser already utilize
-> configfs.
->
-> This v6 patch series includes 9 patches:
->
->   Patch#1: Fix an issue that was spotted during v3 preparation.
->            (Not present in gpio/for-next, so retained in v6.)
->   Patch#2: Reorder functions to prepare for configfs introduction.
->   Patch#3: Add aggr_alloc() to reduce code duplication.
->   Patch#4: Introduce basic configfs interface. Address Issue#1 to #5.
->   Patch#5: Prepare for Patch#6.
->   Patch#6: Expose devices created with sysfs to configfs.
->   Patch#7: Suppress deferred probe for purely configfs-based aggregators.
->   Patch#8: Documentation for the new configfs interface.
->   Patch#9: Selftest for gpio-aggregator.
->
-> N.B. This submission is targeting at gpio/for-next and is based on:
->      commit 21c853ad9309 ("gpio: adnp: use new line value setter callback=
-s")
->
-> v5->v6 changes:
->   - Addressed feedback from Bartosz:
->     * Resolved issues spotted with lockdep and kasan.
->     * Added kselftest for gpio-aggregator.
->   - Fixed a memory leak in aggr_free_line() (missing kfree(line->name)).
->   - Fixed a bug I mistakenly added in aggr_parse() (misplaced scnprintf()=
-).
->   - Eliminated a potential lock inversion deadlock by removing
->     gpio_aggregator_lock acquisition in gpio_aggregator_remove_all(), whi=
-ch
->     became unnecessary after the upstream commit 12f65d120350 ("gpio:
->     aggregator: protect driver attr handlers against module unload").
->
-> v4->v5 changes:
->   - Rebased off of the latest gpio/for-next, that includes the patch seri=
-es:
->     "Add synchronous fake device creation utility for GPIO drivers"
->     (https://lore.kernel.org/all/20250221133501.2203897-1-koichiro.den@ca=
-nonical.com/)
->
-> v3->v4 changes:
->   - Split off the introduction of gpio-pseudo.[ch] and conversions.
->   - Reordered commits to place a fix commit first.
->   - Squashed the trivial update for gpio-aggregator's conversion to gpio-=
-pseudo
->     into the primary commit "gpio: aggregator: introduce basic configfs i=
-nterface"
->     as it is only meaningful when combined.
->
-> v2->v3 changes:
->   - Addressed feedback from Bartosz:
->     * Factored out the common mechanism for synchronizing platform device
->       probe by adding gpio-pseudo.[ch].
->     * Renamed "_auto." prefix to "_sysfs." for auto-generated
->       configfs entries corresponding to sysfs-created devices.
->     * Squashed v2 Patch#3 into its predecessor.
->   - Addressed feedback from Geert:
->     * Factored out duplicate code in struct gpio_aggregator initializatio=
-n
->       by adding gpio_alloc()/gpio_free() functions. Note that v2 Patch#7
->       was dropped for other reasons as mentioned below, so aggr_free() in
->       v3 is unrelated to the same-named function in v2.
->     * Removed redundant parsing of gpio-line-names and unnecessary
->       chip->names assignments; squashed v2 Patch#4 + v2 Patch#5 into v3
->       Patch#9.
->     * Updated to use sysfs_emit().
->     * Updated Kconfig (select CONFIGFS_FS).
->     * Fixed typos, coding style issues, missing const qualifiers, and oth=
-er
->       minor issues.
->   - Resolved an issue that was spotted during v3 preparation. See Patch#2=
-.
->   - Reordered resource initialization order in gpio_aggregator_init() to
->     both eliminate a potential race condition (as noted in the source cod=
-e
->     comment) and simplify the code. See Patch#8. This enabled:
->     * Removal of v2 Patch#7.
->     * Merging of aggr_unregister_lines() and aggr_free_lines() into a
->       unified function.
->   - Disabled 'delete_device' functionality for devices created via config=
-fs
->     for simplicity. It was mistakenly allowed in v2 and proved buggy. See
->     Patch #8.
->
-> RFC->v2 changes:
->   - Addressed feedback from Bartosz:
->     * Expose devices created with sysfs to configfs.
->     * Drop 'num_lines' attribute.
->     * Fix bugs and crashes.
->     * Organize internal symbol prefixes more cleanly.
->   - Split diffs for improved reviewability.
->   - Update kernel doc to reflect the changes.
->
-> v5: https://lore.kernel.org/all/20250224143134.3024598-1-koichiro.den@can=
-onical.com/
-> v4: https://lore.kernel.org/all/20250217143531.541185-1-koichiro.den@cano=
-nical.com/
-> v3: https://lore.kernel.org/all/20250216125816.14430-1-koichiro.den@canon=
-ical.com/
-> v2: https://lore.kernel.org/all/20250203031213.399914-1-koichiro.den@cano=
-nical.com/
-> RFC (v1): https://lore.kernel.org/linux-gpio/20250129155525.663780-1-koic=
-hiro.den@canonical.com/T/#u
->
->
-> Koichiro Den (9):
->   gpio: aggregator: protect driver attr handlers against module unload
->   gpio: aggregator: reorder functions to prepare for configfs
->     introduction
->   gpio: aggregator: add aggr_alloc()/aggr_free()
->   gpio: aggregator: introduce basic configfs interface
->   gpio: aggregator: rename 'name' to 'key' in aggr_parse()
->   gpio: aggregator: expose aggregator created via legacy sysfs to
->     configfs
->   gpio: aggregator: cancel deferred probe for devices created via
->     configfs
->   Documentation: gpio: document configfs interface for gpio-aggregator
->   selftests: gpio: add test cases for gpio-aggregator
->
->  .../admin-guide/gpio/gpio-aggregator.rst      |  107 ++
->  drivers/gpio/Kconfig                          |    2 +
->  drivers/gpio/gpio-aggregator.c                | 1155 ++++++++++++++---
->  tools/testing/selftests/gpio/Makefile         |    2 +-
->  tools/testing/selftests/gpio/config           |    1 +
->  .../testing/selftests/gpio/gpio-aggregator.sh |  723 +++++++++++
->  6 files changed, 1800 insertions(+), 190 deletions(-)
->  create mode 100755 tools/testing/selftests/gpio/gpio-aggregator.sh
->
+Ioana,
+
+Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
+> [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> fsl_mc_allocator_driver_exit() was added explicitly by
+> commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
+> but was never used.
+> 
+> Remove it.
+> 
+> fsl_mc_portal_reset() was added in 2015 by
+> commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
+> but was never used.
+> 
+> Remove it.
+> 
+> fsl_mc_portal_reset() was the only caller of dpmcp_reset().
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+Can you ack this patch ?
+
+Thanks
+Christophe
+
+> ---
+>   drivers/bus/fsl-mc/dpmcp.c            | 22 ----------------------
+>   drivers/bus/fsl-mc/fsl-mc-allocator.c |  5 -----
+>   drivers/bus/fsl-mc/fsl-mc-private.h   |  6 ------
+>   drivers/bus/fsl-mc/mc-io.c            | 20 --------------------
+>   include/linux/fsl/mc.h                |  2 --
+>   5 files changed, 55 deletions(-)
+> 
+> diff --git a/drivers/bus/fsl-mc/dpmcp.c b/drivers/bus/fsl-mc/dpmcp.c
+> index 5fbd0dbde24a..7816c0a728ef 100644
+> --- a/drivers/bus/fsl-mc/dpmcp.c
+> +++ b/drivers/bus/fsl-mc/dpmcp.c
+> @@ -75,25 +75,3 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
+>          /* send command to mc*/
+>          return mc_send_command(mc_io, &cmd);
+>   }
+> -
+> -/**
+> - * dpmcp_reset() - Reset the DPMCP, returns the object to initial state.
+> - * @mc_io:     Pointer to MC portal's I/O object
+> - * @cmd_flags: Command flags; one or more of 'MC_CMD_FLAG_'
+> - * @token:     Token of DPMCP object
+> - *
+> - * Return:     '0' on Success; Error code otherwise.
+> - */
+> -int dpmcp_reset(struct fsl_mc_io *mc_io,
+> -               u32 cmd_flags,
+> -               u16 token)
+> -{
+> -       struct fsl_mc_command cmd = { 0 };
+> -
+> -       /* prepare command */
+> -       cmd.header = mc_encode_cmd_header(DPMCP_CMDID_RESET,
+> -                                         cmd_flags, token);
+> -
+> -       /* send command to mc*/
+> -       return mc_send_command(mc_io, &cmd);
+> -}
+> diff --git a/drivers/bus/fsl-mc/fsl-mc-allocator.c b/drivers/bus/fsl-mc/fsl-mc-allocator.c
+> index b5e8c021fa1f..6c3beb82dd1b 100644
+> --- a/drivers/bus/fsl-mc/fsl-mc-allocator.c
+> +++ b/drivers/bus/fsl-mc/fsl-mc-allocator.c
+> @@ -656,8 +656,3 @@ int __init fsl_mc_allocator_driver_init(void)
+>   {
+>          return fsl_mc_driver_register(&fsl_mc_allocator_driver);
+>   }
+> -
+> -void fsl_mc_allocator_driver_exit(void)
+> -{
+> -       fsl_mc_driver_unregister(&fsl_mc_allocator_driver);
+> -}
+> diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-mc-private.h
+> index b3520ea1b9f4..e1b7ec3ed1a7 100644
+> --- a/drivers/bus/fsl-mc/fsl-mc-private.h
+> +++ b/drivers/bus/fsl-mc/fsl-mc-private.h
+> @@ -66,10 +66,6 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
+>                  u32 cmd_flags,
+>                  u16 token);
+> 
+> -int dpmcp_reset(struct fsl_mc_io *mc_io,
+> -               u32 cmd_flags,
+> -               u16 token);
+> -
+>   /*
+>    * Data Path Resource Container (DPRC) API
+>    */
+> @@ -631,8 +627,6 @@ int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
+> 
+>   int __init fsl_mc_allocator_driver_init(void);
+> 
+> -void fsl_mc_allocator_driver_exit(void);
+> -
+>   void fsl_mc_init_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
+> 
+>   void fsl_mc_cleanup_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
+> diff --git a/drivers/bus/fsl-mc/mc-io.c b/drivers/bus/fsl-mc/mc-io.c
+> index 95b10a6cf307..a0ad7866cbfc 100644
+> --- a/drivers/bus/fsl-mc/mc-io.c
+> +++ b/drivers/bus/fsl-mc/mc-io.c
+> @@ -263,23 +263,3 @@ void fsl_mc_portal_free(struct fsl_mc_io *mc_io)
+>          dpmcp_dev->consumer_link = NULL;
+>   }
+>   EXPORT_SYMBOL_GPL(fsl_mc_portal_free);
+> -
+> -/**
+> - * fsl_mc_portal_reset - Resets the dpmcp object for a given fsl_mc_io object
+> - *
+> - * @mc_io: Pointer to the fsl_mc_io object that wraps the MC portal to free
+> - */
+> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io)
+> -{
+> -       int error;
+> -       struct fsl_mc_device *dpmcp_dev = mc_io->dpmcp_dev;
+> -
+> -       error = dpmcp_reset(mc_io, 0, dpmcp_dev->mc_handle);
+> -       if (error < 0) {
+> -               dev_err(&dpmcp_dev->dev, "dpmcp_reset() failed: %d\n", error);
+> -               return error;
+> -       }
+> -
+> -       return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(fsl_mc_portal_reset);
+> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
+> index c90ec889bfc2..37316a58d2ed 100644
+> --- a/include/linux/fsl/mc.h
+> +++ b/include/linux/fsl/mc.h
+> @@ -417,8 +417,6 @@ int __must_check fsl_mc_portal_allocate(struct fsl_mc_device *mc_dev,
+> 
+>   void fsl_mc_portal_free(struct fsl_mc_io *mc_io);
+> 
+> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io);
+> -
+>   int __must_check fsl_mc_object_allocate(struct fsl_mc_device *mc_dev,
+>                                          enum fsl_mc_pool_type pool_type,
+>                                          struct fsl_mc_device **new_mc_adev);
 > --
-> 2.45.2
->
+> 2.47.0
+> 
 
-It's too late in the cycle for this to make v6.15, let's try again
-once v6.15-rc1 is tagged. I've tested it and it now seems to work
-well, I've been unable to trigger any issues even with corner cases.
-
-I still see some nits I'd like to see fixed but I think we're close to
-getting it into the tree.
-
-Bart
 
