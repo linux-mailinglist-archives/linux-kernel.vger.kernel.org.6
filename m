@@ -1,144 +1,145 @@
-Return-Path: <linux-kernel+bounces-569698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7348EA6A645
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:30:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123D7A6A64F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E75FC7ACDC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:29:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953C03B356C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6D6221DBD;
-	Thu, 20 Mar 2025 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17041F5F6;
+	Thu, 20 Mar 2025 12:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqOY3rH5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="IYJDlksZ"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ADC212FB3;
-	Thu, 20 Mar 2025 12:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD46139E;
+	Thu, 20 Mar 2025 12:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742473796; cv=none; b=u3v4vGg9ZemQRDVM3dUUz4/2ajo0BU0UAcds2sRwgh/ATCQmAJ3yvzk+V4F4tbX8VJYqJ0m+3vP189rw6mdSFMUroeeK6vlAVnOhfzh5m0E7NUZmjwv3Q4GrQRjtxs85j9pK8HKl7Ee9S5WdrLyNOCyrKdKhAhcapeXIs9HdVvM=
+	t=1742474016; cv=none; b=EZAxwajng6bOgyWkNURPBCV0kMKWclUfjI7W4QMnQv0r7ERgfDv/70D6PkCvhxWwKOGwBU/jOUn2Ye9S3iCWwikzs1B9RySRwNOWYUQjhOfiIn8QCkj/bsOSqvZHxzPMESa9MYdmfmxq6G4vpy+EzYZn4IHVvq7yatvbHabOZCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742473796; c=relaxed/simple;
-	bh=nd/erHLbMJLcow57EhIHLUTaFJYObNTLwgDvjqx+U2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZZiQd7JJ88SUk3BdxhQPC/KWP0Uq50ABz0k2opKsuQbKRg9Or+RPU8XZ8zoCP5vhnROhaDsb/QgN0+ZQQL0uUXdA6PzpGh2jXW8xGqSanLhAbOoXvefMhDU9CMSnCtt1Dm/IRpKyaccrEUW06eN31KbDwJF/TngklxWK4Fz/kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqOY3rH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3481AC4CEDD;
-	Thu, 20 Mar 2025 12:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742473796;
-	bh=nd/erHLbMJLcow57EhIHLUTaFJYObNTLwgDvjqx+U2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sqOY3rH5X+ScE4ema1O9tJ2LzHxeneHsUuqIqwQWuCKK2h+6y9BLYSPKyA9g6S5rG
-	 YGC/c6aLZP/ri3DnzoGxhr/bHLglCHLHi1NpvS1AO2L8WQRAx1J79aKiNahD+gfg/+
-	 nGo35cJcEksRDqikXjSZQjo3cL0wrzSodhkE/bT8oNHivmz6+yHtXEVUl/VuA08+5Y
-	 tLJArJY/2DurGFu9sKmKOHOml7tUBPpO2U/yIBIVA71k57FgLaZLFA6uMo4nhSWYjp
-	 IxLQV3FHLr5zkWAa6RPOTOIw2+yA2QTpLc6JZeKKjVNNVsw027TodpUEKFiMsm/aJn
-	 dNZmVgDgnOutQ==
-Date: Thu, 20 Mar 2025 12:29:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org, arnd@arndb.de
-Subject: Re: [PATCH] spi: Ensure memory used for spi_write_then_read() is DMA
- safe
-Message-ID: <ca70e24d-57b6-4250-bd0d-7f5c72e1d282@sirena.org.uk>
-References: <1359268504-24937-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <20130205142128.2E28D3E1265@localhost>
- <20250320124330.480d652d@mordecai.tesarici.cz>
+	s=arc-20240116; t=1742474016; c=relaxed/simple;
+	bh=m9r0AbXxI3hD3b/IDRiy8UewvP2qrBQybEza6MCZe80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLTvdxmj1US6bJ5b4keQlQkCAUyFgG5DeNNkGCA32Gqy5klS2/7yG9Gdv1ETRhvI4K8k5C86/hEWwfaeGms2IzfqGgmwMy5tXNNiJitH4AEaMNjUtauK3jgKqHj44oahW+KlWGfkKmyekp5cE9Wo+pt1Pq54UsTIEycC1If7UVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=IYJDlksZ; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1tvF5N-006bbm-Ui; Thu, 20 Mar 2025 13:33:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=yXhMsCE0agUhqpYyGmOJUSGwpFIxlvTbhSiqHGBblFw=; b=IYJDlksZnXDwSzUWEpVLM0T2xz
+	amE/duVv1f4Vdb5t54txFNX9uGSb7XxG1cWw/Xiqe+t3pxffQ0gJJm/sfgdA661+bbSYqEhAR5SWh
+	jvL1xOqNj2zQIYacwkqUW+V6FpkeDqWrKoyChxTMgfX7QnEuHOzKmWWQXffZ1XcpqSESraZyBVq0x
+	8ygPZSFYH7BPHUuoO4PhoU51X6nH2Q8QhLT+ySJb/5VZk/x3fpq20gKnLRbt8CJ237TuK83U5IvUQ
+	FRT2uV2689hYsvXt94TQ47rulbG2nABYpf9QmW4DYAjmBAktoCjOoqB4jhV5fZvFlG2ga74lO3LPf
+	YRfAXJkQ==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1tvF5H-0006Hf-NK; Thu, 20 Mar 2025 13:33:15 +0100
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1tvF4x-00HH1a-O0; Thu, 20 Mar 2025 13:32:55 +0100
+Message-ID: <1e8c8e7a-23d9-4ed3-902a-8a4ba06f1f69@rbox.co>
+Date: Thu, 20 Mar 2025 13:32:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="08tU5mLquA0dUnfy"
-Content-Disposition: inline
-In-Reply-To: <20250320124330.480d652d@mordecai.tesarici.cz>
-X-Cookie: Do not fold, spindle or mutilate.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 1/3] bpf, sockmap: avoid using sk_socket after
+ free when sending
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, xiyou.wangcong@gmail.com,
+ john.fastabend@gmail.com, jakub@cloudflare.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
+ mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
+ <20250317092257.68760-2-jiayuan.chen@linux.dev>
+From: Michal Luczaj <mhal@rbox.co>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <20250317092257.68760-2-jiayuan.chen@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 3/17/25 10:22, Jiayuan Chen wrote:
+> The sk->sk_socket is not locked or referenced, and during the call to
+> skb_send_sock(), there is a race condition with the release of sk_socket.
+> All types of sockets(tcp/udp/unix/vsock) will be affected.
+> ...
+> Some approach I tried
+> ...
+> 2. Increased the reference of sk_socket->file:
+>    - If the user calls close(fd), we will do nothing because the reference
+>      count is not set to 0. It's unexpected.
 
---08tU5mLquA0dUnfy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Have you considered bumping file's refcnt only for the time of
+send/callback? Along the lines of:
 
-On Thu, Mar 20, 2025 at 12:43:30PM +0100, Petr Tesarik wrote:
-> Grant Likely <grant.likely@secretlab.ca> wrote:
-> > On Sun, 27 Jan 2013 14:35:04 +0800, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
+static struct file *sock_get_file(struct sock *sk)
+{
+	struct file *file = NULL;
+	struct socket *sock;
 
-> > > Use GFP_DMA in order to ensure that the memory we allocate for transfers
-> > > in spi_write_then_read() can be DMAed. On most platforms this will have
-> > > no effect.
+	rcu_read_lock();
+	sock = sk->sk_socket;
+	if (sock)
+		file = get_file_active(&sock->file);
+	rcu_read_unlock();
 
-> > Applied, thanks.
+	return file;
+}
 
-> I'm sorry to revive such an old thread, but I'm trying to clean up DMA
-> zone use in preparation of killing the need for that zone entirely, and
-> this use looks fishy to me. I'm curious if it solves a real-world issue.
+static int sk_psock_handle_skb(struct sk_psock *psock, struct sk_buff *skb,
+			       u32 off, u32 len, bool ingress)
+{
+	int err;
 
-Copying in Arnd who was muttering about this stuff the other day.  Since
-the original patch was over a decade ago I have absolutely no
-recollection of the circumstances around the change.  I imagine I was
-running into issues on some customer platform.
+	if (!ingress) {
+		struct sock *sk = psock->sk;
+		struct file *file;
+		...
 
-> First, the semantics of GFP_DMA can be confusing. FWIW allocating with
-> GFP_DMA does *not* mean you get a buffer that can be directly passed to
-> a DMA controller (think of cache coherency on arm, or memory encryption
-> with confidential computing).
+		file = sock_get_file(sk);
+		if (!file)
+			return -EIO;
 
-I'm not sure what you're thinking of with cache coherency there?  The
-usual issues are around the DMA controller not being able to address the
-memory.
+		err = skb_send_sock(sk, skb, off, len);
+		fput(file);
+		return err;
+	}
+	...
+}
 
-> Second, this code path is taken only if transfer size is greater than
-> SPI_BUFSIZ, or if there is contention over the pre-allocated buffer,
-> which is initialized in spi_init() without GFP_DMA:
+static void sk_psock_verdict_data_ready(struct sock *sk)
+{
+	struct file *file;
+	...
 
-> 	buf = kmalloc(SPI_BUFSIZ, GFP_KERNEL);
+	file = sock_get_file(sk);
+	if (!file)
+		return;
 
-> IIUC most transfers use this buffer, and they have apparently worked
-> fine for the last 10+ years...
+	copied = sk->sk_socket->ops->read_skb(sk, sk_psock_verdict_recv);
+	fput(file);
+	...
+}
 
-On a lot of systems most transfers are short and won't be DMAed at all
-since PIO ends up being more efficient, and most hardware is perfectly
-happy to DMA to/from wherever so *shrug*.  SPI_BUFSIZ is a maximum of 32
-bytes which is going to be under the copybreak limit for quite a few
-controllers, though admittedly 16 is also a popular number, so a lot of
-the time we don't actually DMA out of it at all.
-
-> What about reverting commit 2cd94c8a1b41 ("spi: Ensure memory used for
-> spi_write_then_read() is DMA safe"), unless you have strong evidence
-> that it is needed?
-
-The whole goal there is to try to avoid triggering another copy to do
-the DMA so just reverting rather than replacing with some other
-construct that achieves the same goal doesn't seem great.  I think
-possibly we should just not do the copy at all any more and trust the
-core to DTRT with any buffers that are passed in, I think we've got
-enough stuff in the core though I can't remember if it'll copy with
-things allocated on the stack well.  I'd need to page the status back
-in.
-
---08tU5mLquA0dUnfy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcCj8ACgkQJNaLcl1U
-h9AzjQf+Iuj6dcmYWT5G7FoLOAsHbT2rH2g5VTJ0JmMLJjODhH2BH32FOZccRs8V
-1Adt22moAaIpMvFSZ2ZMbFtvwT/p+KorBss+SOdYSF0tm22838AUO+9+BKUHq7o5
-JchWUxMvz0AoEwXdH/kFdwNV0re7L3HW6xA/MOd+olrLx4d55R90UtfxYhTvNbds
-rhEzopVVTm4nZ2gSYF2QXakLXHAvDrJY/+Alnx8/3WeO0HAC1+3+XFjO9wbbv71L
-PDI3nHZJ6arU29oTV3b2Ygu7qPfcRIG+OW7+TdmO0JNmjMqHp1MsQs2g2qh2pIGG
-VjuPntM6hY8yN0RvrkcjJT+hquQa4w==
-=ADoM
------END PGP SIGNATURE-----
-
---08tU5mLquA0dUnfy--
 
