@@ -1,233 +1,129 @@
-Return-Path: <linux-kernel+bounces-569075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E368AA69E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0531A69E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781103BE6DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB658A6677
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E2C1EB182;
-	Thu, 20 Mar 2025 02:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A09E1EB184;
+	Thu, 20 Mar 2025 02:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keVJ3O1x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7u3UbIY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A1E1E9B2A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BA91E98FC;
+	Thu, 20 Mar 2025 02:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742437367; cv=none; b=uwOO4EMBrKy8vn5Fqltu1DLOSwpWkEFlwAH1YN+UWIWOIuX7BrPJeiZy6yftVzJV8VqP9/6Szwwxl8ovTPAeHlEA5T2iXWemqiAPShPzdACrXE8iDO8fmajCqloFYgyZhhpXAYBB7kBijAu6xeZWune33tkU1lv4ZirihUKuK6Y=
+	t=1742437582; cv=none; b=PGPVCrlP65uL7OxL4bnY+YL0oo+k057OfHSJxssUYuScKhOacOHGXgaA7hU7mToYpYMJ4G49tIqKk3Ov/rqvzHdbpLeZikZKzVpSZqKMOwpRSzBWuocW0Yz/paxEcBAROkAZQP1V2JKgCToMJKE0cJz3C1lhKOyvQZ9Ky0ak+kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742437367; c=relaxed/simple;
-	bh=7+Yts5LeHOxEOmhtkUAzJyFa7c2XWV7zaUXjWc0iIys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VKdEEf648VnX5SZ/tCuWcjc74A5C2HtE6vxGm/VQQesbrEmZAKLioIvpC0DE10X0GDtidt5pkbIdtF27KAaOZnZax70TgLUhyqnVuUlFVD1MHHyru19SAQtRuuv61QL06h+lJG+JnaUmvd6Rl2tcj+ImUIOUKDAjVM7Jy6/779k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keVJ3O1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00BDC4CEE8;
-	Thu, 20 Mar 2025 02:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742437366;
-	bh=7+Yts5LeHOxEOmhtkUAzJyFa7c2XWV7zaUXjWc0iIys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=keVJ3O1xNqwhqCBcZqW6EL+MgA/8ihCfTSSHVEXzvWr4LqmEC2FukSJtwyAshe4Sp
-	 CSAQRRPpSn3kQXiw68iAjeGkaArinWIXG/r8dJs4cYoJ2AYiJkzjWknynLmcz3RiEL
-	 4Mv2LAjtbM6jS6mkaND29O6a0gB+O09od9YVd8yvrl7AfaiYh1CJnfIOT0Ct0vYYFa
-	 rnaDimRlj4aZNPNDPkg9KYomRiz60G/3K5gqTZFGPSYlWwdj3eQft84NQ1ST6lOZ5z
-	 Y66tJArcOhBH7ATz0hq4UDq1BO8MaBcqrW8LdgeHU9r83uKWzHJW26PGf4yIBPku/Z
-	 HrbSy4+6dfiXg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 2/2] f2fs: fix to update injection attrs according to fault_option
-Date: Thu, 20 Mar 2025 10:22:30 +0800
-Message-ID: <20250320022230.1938110-2-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250320022230.1938110-1-chao@kernel.org>
-References: <20250320022230.1938110-1-chao@kernel.org>
+	s=arc-20240116; t=1742437582; c=relaxed/simple;
+	bh=291HTSj4fCLUSrxd6oGcWY8dOfOz8/d+lx/A+WebZc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jhmDk02ZeUs/1EfpR5KQa0W+3HZntcGCC2KQ9BzVfRMKWWOK1r794RLGWl3t4bETTNiaeU+KNC0Ht2eKOrY2qnHsHSnuBcKVGFhobF6YRVkZU6YQn3dZbo5yj+xP4yg1ERdlwHI1Vug2T9JCl9Sxca3vA7DIzPAHi8k6bhD/E1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7u3UbIY; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742437581; x=1773973581;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=291HTSj4fCLUSrxd6oGcWY8dOfOz8/d+lx/A+WebZc0=;
+  b=H7u3UbIYyRVKflPJct5l7/4T19frxGMi15/ZMpeefuoOeVO4lpumzy4A
+   d/phdLpk40kyILZA4JF6VgjEbagaXW196Zx1X8xOQiedlh71qIwsI4wFb
+   QLYNLHppcExdCKsKUVNWEhacvOiwkR+pmNmVovz8sa/Kj+1afZHHgLwom
+   z0760gaZy7XjE7KiiMZKC839hjkKNazLdjQnKF2LV32toaf+IvLdLS3a0
+   TjuucwDYwVQNILQDMBVcY2Cu0+XRlXVWO4quypdgntIYMMi7WNSBEjjSb
+   suJSsipn0hzJxCNXUtRH5IL0r7MJhPI0h8ErLdmSZxrqIySr0kaaow9tc
+   w==;
+X-CSE-ConnectionGUID: TM/wO+W7Q8uMnUk8thqmpQ==
+X-CSE-MsgGUID: sWYVrA2mQne8qotXCmJUWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31234046"
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="31234046"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 19:26:20 -0700
+X-CSE-ConnectionGUID: WQ1ooowkQ3Otx7abhDKtlw==
+X-CSE-MsgGUID: lazrnhHSRHew6gtn2nXdWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
+   d="scan'208";a="128129700"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 19 Mar 2025 19:26:14 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tv5bn-00007r-1J;
+	Thu, 20 Mar 2025 02:26:11 +0000
+Date: Thu, 20 Mar 2025 10:25:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: mathieu.dubois-briand@bootlin.com, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+Message-ID: <202503201022.7smCPVZj-lkp@intel.com>
+References: <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
 
-When we update inject type via sysfs, it shows wrong rate value as
-below, there is a same problem when we update inject rate, fix it.
+Hi,
 
-Before:
-F2FS-fs (vdd): build fault injection attr: rate: 0, type: 0xffff
-F2FS-fs (vdd): build fault injection attr: rate: 1, type: 0x0
+kernel test robot noticed the following build warnings:
 
-After:
-F2FS-fs (vdd): build fault injection type: 0x1
-F2FS-fs (vdd): build fault injection rate: 1
+[auto build test WARNING on a64dcfb451e254085a7daee5fe51bf22959d52d3]
 
-Meanwhile, let's avoid turning on all fault types when we enable fault
-injection via fault_injection mount option, it will lead to shutdown
-filesystem or fail the mount() easily.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
+base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
+patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-4-fb20baf97da0%40bootlin.com
+patch subject: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+config: nios2-kismet-CONFIG_PINCTRL_MAX7360-CONFIG_PWM_MAX7360-0-0 (https://download.01.org/0day-ci/archive/20250320/202503201022.7smCPVZj-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250320/202503201022.7smCPVZj-lkp@intel.com/reproduce)
 
-mount -o fault_injection=4 /dev/vdd /mnt/f2fs
-F2FS-fs (vdd): build fault injection attr: rate: 4, type: 0x7fffff
-F2FS-fs (vdd): inject kmalloc in f2fs_kmalloc of f2fs_fill_super+0xbdf/0x27c0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503201022.7smCPVZj-lkp@intel.com/
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2
-- no changes
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/f2fs.h       | 14 ++++++++++----
- fs/f2fs/super.c      | 26 +++++++++++++-------------
- fs/f2fs/sysfs.c      |  4 ++--
- 4 files changed, 26 insertions(+), 20 deletions(-)
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for PINCTRL_MAX7360 when selected by PWM_MAX7360
+   WARNING: unmet direct dependencies detected for PINCTRL_MAX7360
+     Depends on [n]: PINCTRL [=n] && MFD_MAX7360 [=y]
+     Selected by [y]:
+     - PWM_MAX7360 [=y] && PWM [=y] && MFD_MAX7360 [=y]
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index cf77987d0698..85b7141f0d89 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -29,7 +29,7 @@ struct kmem_cache *f2fs_inode_entry_slab;
- void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io,
- 						unsigned char reason)
- {
--	f2fs_build_fault_attr(sbi, 0, 0);
-+	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
- 	if (!end_io)
- 		f2fs_flush_merged_writes(sbi);
- 	f2fs_handle_critical_error(sbi, reason);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 986ee5b9326d..ca884e39a5ff 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -66,9 +66,14 @@ enum {
- 	FAULT_MAX,
- };
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
--#define F2FS_ALL_FAULT_TYPE		(GENMASK(FAULT_MAX - 1, 0))
-+/* indicate which option to update */
-+enum fault_option {
-+	FAULT_RATE	= 1,	/* only update fault rate */
-+	FAULT_TYPE	= 2,	/* only update fault type */
-+	FAULT_ALL	= 4,	/* reset all fault injection options/stats */
-+};
- 
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
- struct f2fs_fault_info {
- 	atomic_t inject_ops;
- 	int inject_rate;
-@@ -4765,10 +4770,11 @@ static inline bool f2fs_need_verity(const struct inode *inode, pgoff_t idx)
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- extern int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
--							unsigned long type);
-+					unsigned long type, enum fault_option fo);
- #else
- static inline int f2fs_build_fault_attr(struct f2fs_sb_info *sbi,
--					unsigned long rate, unsigned long type)
-+					unsigned long rate, unsigned long type,
-+					enum fault_option fo)
- {
- 	return 0;
- }
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dfe0604ab558..011925ee54f8 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -68,29 +68,30 @@ const char *f2fs_fault_name[FAULT_MAX] = {
- };
- 
- int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
--							unsigned long type)
-+				unsigned long type, enum fault_option fo)
- {
- 	struct f2fs_fault_info *ffi = &F2FS_OPTION(sbi).fault_info;
- 
--	if (rate) {
-+	if (fo & FAULT_ALL) {
-+		memset(ffi, 0, sizeof(struct f2fs_fault_info));
-+		return 0;
-+	}
-+
-+	if (fo & FAULT_RATE) {
- 		if (rate > INT_MAX)
- 			return -EINVAL;
- 		atomic_set(&ffi->inject_ops, 0);
- 		ffi->inject_rate = (int)rate;
-+		f2fs_info(sbi, "build fault injection rate: %lu", rate);
- 	}
- 
--	if (type) {
-+	if (fo & FAULT_TYPE) {
- 		if (type >= BIT(FAULT_MAX))
- 			return -EINVAL;
- 		ffi->inject_type = (unsigned int)type;
-+		f2fs_info(sbi, "build fault injection type: 0x%lx", type);
- 	}
- 
--	if (!rate && !type)
--		memset(ffi, 0, sizeof(struct f2fs_fault_info));
--	else
--		f2fs_info(sbi,
--			"build fault injection attr: rate: %lu, type: 0x%lx",
--								rate, type);
- 	return 0;
- }
- #endif
-@@ -897,8 +898,7 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
- 		case Opt_fault_injection:
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
--			if (f2fs_build_fault_attr(sbi, arg,
--					F2FS_ALL_FAULT_TYPE))
-+			if (f2fs_build_fault_attr(sbi, arg, 0, FAULT_RATE))
- 				return -EINVAL;
- 			set_opt(sbi, FAULT_INJECTION);
- 			break;
-@@ -906,7 +906,7 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
- 		case Opt_fault_type:
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
--			if (f2fs_build_fault_attr(sbi, 0, arg))
-+			if (f2fs_build_fault_attr(sbi, 0, arg, FAULT_TYPE))
- 				return -EINVAL;
- 			set_opt(sbi, FAULT_INJECTION);
- 			break;
-@@ -2209,7 +2209,7 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
- 	set_opt(sbi, POSIX_ACL);
- #endif
- 
--	f2fs_build_fault_attr(sbi, 0, 0);
-+	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
- }
- 
- #ifdef CONFIG_QUOTA
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 46fa94db08a8..3a3485622691 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -494,12 +494,12 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return ret;
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (a->struct_type == FAULT_INFO_TYPE) {
--		if (f2fs_build_fault_attr(sbi, 0, t))
-+		if (f2fs_build_fault_attr(sbi, 0, t, FAULT_TYPE))
- 			return -EINVAL;
- 		return count;
- 	}
- 	if (a->struct_type == FAULT_INFO_RATE) {
--		if (f2fs_build_fault_attr(sbi, t, 0))
-+		if (f2fs_build_fault_attr(sbi, t, 0, FAULT_RATE))
- 			return -EINVAL;
- 		return count;
- 	}
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
