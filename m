@@ -1,159 +1,128 @@
-Return-Path: <linux-kernel+bounces-569109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEEEA69E99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:01:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD926A69E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EA0172A85
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D99188EC12
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539371CC8B0;
-	Thu, 20 Mar 2025 03:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCOywEWC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CF91C1AD4;
+	Thu, 20 Mar 2025 02:52:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B3C4690;
-	Thu, 20 Mar 2025 03:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C907228EA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742439705; cv=none; b=e5whHvIunyqYNZsZ151zA0J7gFHmWFNx+3LM1xkofi4vHeVqHXXrsV1ov+N2IpKPEyVcTBdWLuHH3b4v6uM3bJLvuVkFxj32x8YMpeY57OjlFJORg9NZUfyEuWa8DF0bhlbomPz9SA2dgvNspB+75CpDE4AMsUjNaWYT4iO6CQk=
+	t=1742439175; cv=none; b=VdlfI30Lnv9rK/SxOC4D13GwQaZlCHAkattBBCDA4lne82C/ZUkAaKPW2FRJKWTJ/WSkRGwKeHkeU08gcYJrrPlSE/lOcr6/3kSTALIBNdD04BaFad/XpXVKqUvd27OnbsL7nEzlOxfY3uDcsVGPhgg5b1pIE3wY6oyYG7byHWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742439705; c=relaxed/simple;
-	bh=c0OVR0nfnZkRWysIpPR89Iqk1G7jQnsqPpst6EHgn+E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BLZtoiY4TiFBPBquIfHGiLgCk5+P4pXWvc9W5+BT/EA5hBxeQpEbE97LZbG7oUz5U7iEVebBoxcXcRi9HN/xQ0iGAGNqoz6PpdTZw3u5e+Myw7lOhavo2hw7nmlAnAcD4Upj3i0gnB3tX4gvoNI0+KIqzkrS7M96HxcgaipVx7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCOywEWC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FFBC4CEE4;
-	Thu, 20 Mar 2025 03:01:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742439705;
-	bh=c0OVR0nfnZkRWysIpPR89Iqk1G7jQnsqPpst6EHgn+E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fCOywEWC8hsTk1aoRHzQ52l8BWo7neTLdqYqX3JJYjXLHwB6sDYKlPTzyyizODc5k
-	 2Y/ihlh8w4EOz7t7Bqe68tTBu6wYl4WCvhfbmyv30wR8JwNEh5I3ABHC33BAXJHOjX
-	 B/WrlIhZceIXIlRSvvBFbfyA0qclpy1BMWNluIbk86wkLs6YUzQbDWge5a68tJM5PS
-	 FUth/Z+nf04nkO65CCwcfFtPK4FVFXDij/aTM/JI/WXzK/G4zKgqQwesJXM8iC8/h0
-	 VpPM52Ax7ghnGeWClj1ch86NpW5g9DG7jTmh+RVEVzala+qDaoBrf6LgokG6WN+IQk
-	 G7SEQHBelOOhw==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so601713a12.2;
-        Wed, 19 Mar 2025 20:01:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV02CBN2boRXKBe76dsVwDEUhfLw8+PTJDH7mJZzo6Rbwxp58GX1BaHhNNVES9YszrwlMGyn1nq@vger.kernel.org, AJvYcCVbzAsDFNfi3S1iGKd/Vh/B/Wk6gJz1A7R/N+WqdYeJsbO0z/I2j/Hp/5SIMyZcOTq8TB1ARrFGUCRhzkb0@vger.kernel.org, AJvYcCXKtM5G6MaT6vFCDXRyuL5F+wKyFET38rxP59ogIE9FOZxoUpgwVqhKRP5LXjtE22Y7asfQJbzItA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLRtuFlieBOL3LZ3BHbYkxScuKAxHXq8mJ510/4Q+ycJkXf1sD
-	QJfl6fAl1f7t3b5S68UCcbZeHw2ZauC3NkjWcQAeGw1QatoIKcCd67DvSWAizn9Q/P+L5dgC2xW
-	BlMZ7uxnvxE15DrkduJQn8nIpgU0=
-X-Google-Smtp-Source: AGHT+IHqWokcgREOirPHE31mMWzf5yAqDBsDiehm2ro+I/2WbRrfdrFc22+YmYMAdH+fNLU8SlaD6kHofdbWyes0A54=
-X-Received: by 2002:a05:6402:1d54:b0:5e5:49af:411d with SMTP id
- 4fb4d7f45d1cf-5eb80d487b5mr5702524a12.17.1742439703352; Wed, 19 Mar 2025
- 20:01:43 -0700 (PDT)
+	s=arc-20240116; t=1742439175; c=relaxed/simple;
+	bh=Om7rubbuR8fJ9FLnreh+anuCSEnghxm8vYWcuW9FmAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ebBG26b6IGFrYQQEOs7jWcaDRzSbA+cNaakZhcd/VZ7I2JFFFDBaNPcnWmAyXkb2U6eQkPvsbLe+Ji+yR4AmZCmiam54UGdRUEh7DLexDhuN5k08d/UFsKPZKFfrUoDTiC//cfNEuQI2Sh2QrJbLDu3es6y1Xk/rf4zEuDh/5mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZJ9963G85z4f3jcl
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:52:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 2414E1A13D1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:52:49 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHW8X_gttnYGGmGw--.42197S2;
+	Thu, 20 Mar 2025 10:52:48 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org
+Cc: kasong@tencent.com,
+	tim.c.chen@linux.intel.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/8] Minor cleanups and improvements to swap freeing code
+Date: Thu, 20 Mar 2025 19:48:21 +0800
+Message-Id: <20250320114829.25751-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319064031.2971073-1-chenhuacai@loongson.cn>
- <20250319064031.2971073-4-chenhuacai@loongson.cn> <2025031943-disparity-dash-cfa3@gregkh>
- <Z9rYQy3l5V5cvW7W@t14s> <2025031942-portside-finite-34a9@gregkh> <CAASaF6zNsiwUOcSD177aORwfBu4kaq8EKh1XdZkO13kgedcOPA@mail.gmail.com>
-In-Reply-To: <CAASaF6zNsiwUOcSD177aORwfBu4kaq8EKh1XdZkO13kgedcOPA@mail.gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 20 Mar 2025 11:01:32 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4-GnvqJrnJu_Z6EBKBH5WBTiZ9xRh1vGhBmuoYNw=r9w@mail.gmail.com>
-X-Gm-Features: AQ5f1JpRALxCtqgxc8zE1UNEpDT5tsnLLr1ILnleluG0qpKgmpr6B4OtD1rd5lQ
-Message-ID: <CAAhV-H4-GnvqJrnJu_Z6EBKBH5WBTiZ9xRh1vGhBmuoYNw=r9w@mail.gmail.com>
-Subject: Re: [PATCH 6.1&6.6 V3 3/3] sign-file,extract-cert: use pkcs11
- provider for OPENSSL MAJOR >= 3
-To: Jan Stancek <jstancek@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huacai Chen <chenhuacai@loongson.cn>, 
-	Sasha Levin <sashal@kernel.org>, Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, R Nageswara Sastry <rnsastry@linux.ibm.com>, 
-	Neal Gompa <neal@gompa.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAHW8X_gttnYGGmGw--.42197S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CrW3ury8Kw4DZFykuF15Jwb_yoW8uw4kpF
+	W3urnxGF18Jr1SywsxAw10q34rX3yrKF15J3W7ur1rZa43uF10qry0krZ5uFyDZ395ArWq
+	qF40gryUuF4YvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
+	8lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_
+	tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r
+	xl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv
+	0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z2
+	80aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0E
+	n4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	AVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU0A9N3UUUUU==
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Hi, all,
+v2->v3:
+-Extent VM_BUG_ON instead of remove it
+-Keep bracket for more readability
+-Collect RVG from Tim for rest part
 
-On Thu, Mar 20, 2025 at 12:53=E2=80=AFAM Jan Stancek <jstancek@redhat.com> =
-wrote:
->
-> On Wed, Mar 19, 2025 at 5:26=E2=80=AFPM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Mar 19, 2025 at 03:44:19PM +0100, Jan Stancek wrote:
-> > > On Wed, Mar 19, 2025 at 07:13:13AM -0700, Greg Kroah-Hartman wrote:
-> > > > On Wed, Mar 19, 2025 at 02:40:31PM +0800, Huacai Chen wrote:
-> > > > > From: Jan Stancek <jstancek@redhat.com>
-> > > > >
-> > > > > commit 558bdc45dfb2669e1741384a0c80be9c82fa052c upstream.
-> > > > >
-> > > > > ENGINE API has been deprecated since OpenSSL version 3.0 [1].
-> > > > > Distros have started dropping support from headers and in future
-> > > > > it will likely disappear also from library.
-> > > > >
-> > > > > It has been superseded by the PROVIDER API, so use it instead
-> > > > > for OPENSSL MAJOR >=3D 3.
-> > > > >
-> > > > > [1] https://github.com/openssl/openssl/blob/master/README-ENGINES=
-.md
-> > > > >
-> > > > > [jarkko: fixed up alignment issues reported by checkpatch.pl --st=
-rict]
-> > > > >
-> > > > > Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > > Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
-> > > > > Reviewed-by: Neal Gompa <neal@gompa.dev>
-> > > > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > > > ---
-> > > > >  certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------=
-------
-> > > > >  scripts/sign-file.c  |  93 ++++++++++++++++++++++++++-----------=
--
-> > > > >  2 files changed, 138 insertions(+), 58 deletions(-)
-> > > >
-> > > > This seems to differ from what is upstream by a lot, please documen=
-t
-> > > > what you changed from it and why when you resend this series again.
-> > >
-> > > Hunks are arranged differently, but code appears to be identical.
-> > > When I apply the series to v6.6.83 and compare with upstream I get:
-> >
-> > If so, why is the diffstat different?  Also why are the hunks arranged
-> > differently,
->
-> He appears to be using "--diff-algorithm=3Dminimal", while you probably
-> patience or histogram.
->
-> $ git format-patch -1 --stdout --diff-algorithm=3Dminimal 558bdc45dfb2 |
-> grep -A3 -m1 -- "---"
-> ---
->  certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------------
->  scripts/sign-file.c  |  93 ++++++++++++++++++++++++++------------
->  2 files changed, 138 insertions(+), 58 deletions(-)
->
-> Should be easy to regenerate with different diff-alg for v4.
-I use the default configuration to generate patches, and since the
-code is identical, should I really send a V4?
+v1->v2:
+-Collect RVB from Tim
+-Drop patch to factor out __swap_entry_free()
+-Improve changelog and add more comment.
+-Avoid unneeded lock re-aquire
 
-Huacai
+Hi All,
+This series contains some cleanups and improvements which are made
+during learning swapfile. Here is a summary of the changes:
+1. Function nameing improvments.
+-Use "put" instead of "free" to name functions which only do actual free
+when count drops to zero.
+-Use "entry" to name function only frees one swap slot. Use "entries" to
+name function could may free multi swap slots within one cluster. Use
+"_nr" suffix to name function which could free multi swap slots spanning
+cross multi clusters.
+2. Eliminate the need to set swap slot to intermediate SWAP_HAS_CACHE
+value before do actual free by using swap_entry_range_free()
+3. Add helpers swap_entries_put_map() and swap_entries_put_cache() as a
+general-purpose routine to free swap entries within a single cluster
+which will try batch-remove first and fallback to put eatch entry
+indvidually with cluster lock acquired/released only once. By using 
+these helpers, we could remove repeated code, levarage batch-remove in
+more cases and aoivd to acquire/release cluster lock for each single
+swap entry.
 
->
-> Regards,
-> Jan
->
-> > that's a hint to me that something went wrong and I can't
-> > trust the patch at all.
-> >
-> > thanks,
-> >
-> > greg k-h
-> >
->
+Kemeng Shi (8):
+  mm: swap: rename __swap_[entry/entries]_free[_locked] to
+    swap_[entry/entries]_put[_locked]
+  mm: swap: enable swap_entry_range_free() to drop any kind of last ref
+  mm: swap: use swap_entries_free() to free swap entry in
+    swap_entry_put_locked()
+  mm: swap: use swap_entries_free() drop last ref count in
+    swap_entries_put_nr()
+  mm: swap: drop last SWAP_MAP_SHMEM flag in batch in
+    swap_entries_put_nr()
+  mm: swap: free each cluster individually in swap_entries_put_map_nr()
+  mm: swap: factor out helper to drop cache of entries within a single
+    cluster
+  mm: swap: replace cluster_swap_free_nr() with
+    swap_entries_put_[map/cache]()
+
+ mm/swapfile.c | 165 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 83 insertions(+), 82 deletions(-)
+
+-- 
+2.30.0
+
 
