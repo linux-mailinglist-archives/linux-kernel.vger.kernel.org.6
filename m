@@ -1,172 +1,224 @@
-Return-Path: <linux-kernel+bounces-569737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C32A6A6D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:06:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE7DA6A6D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431C13A666C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EFB3BC3CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936FC1DF25D;
-	Thu, 20 Mar 2025 13:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4C1C3C18;
+	Thu, 20 Mar 2025 13:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XIXSk8Ai"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ckpo6gGm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOp6FQHF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ckpo6gGm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hOp6FQHF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5198C29A1;
-	Thu, 20 Mar 2025 13:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70855F9EC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742476001; cv=none; b=AbEabnpOWtSC5ozN4Dv//ZkqvaaxWiZfYFDXx21XURYkLuNnJDGoEIFNez+xsskdSiKyiH8JublNPigYjFMTqNOoB2lg3WJgvCx/hgTOcXFhvm+pqXc1jxHb178xvnKv/yFF9TGH7iWJ/KKujkVqndcIH/dVyfVIqDSdcFUcNRs=
+	t=1742476013; cv=none; b=ior0qwhyrRtsKL+sOWnoXWPsO/2pjA0ML4A8YYFjkVrUnNnVoXJTUuZZIASox3LM53K9XS4nY98bFbT7FpztFXF9lvN7yXXxhAqqw8vn31uy5MNzzzM2jomtY8a5sL+S1Ho5wPGMQfnmc+jgVoV2udCf3HqUd7k8ew7AT7r3hyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742476001; c=relaxed/simple;
-	bh=zjp3pQUhSVuMmZ6Sst6AT+0qgO4plzHIpE0hhREy3I0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jlrBT2mo24DHDnUSeNj/iHBMlJbxePoFN+WkCp9U99IwF7zp1GwRvqwtRfYNiuMGDJxtGOFtUgSFa/Z/KpDUf1eIFF4UoKKjR9wt+yj2gjVoSwmGtpa0ACpWJfCWLSjopz77u59IexMa6dANE8N0VyHxx+AYI9/Jxgz7TQKkHvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XIXSk8Ai; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K7gpHg030809;
-	Thu, 20 Mar 2025 13:06:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=8mFVcq
-	FA1C6pWd8bYYrSIaZl/JCsBhWrZXtha/PnkrI=; b=XIXSk8AijIN/BUxZkkingD
-	FfD51MOdZPzJhKy2MqmDm4PPzuTpx75PcVsadZGSxxPTjKA0ZgzjsIpwdlvfS11P
-	0rwPzHbobNC0ce+DhMW29rir5mVgF30UEpuN3KTX21HPg04GgVb0h5XtFlj7f6yE
-	73dHeT9HK4cTYPn8OihB10RHPV+cT4IIAy1rU/kf+A90mymEvHxiD1H73XewgFgw
-	UU0TAjoO0wSb0S4UGMQg1CpqN3pGE8UQbda2atCVGR1Fc8HcuZsERonSJmy7LAcW
-	EWEFIETKDJBDM/oFr6WsCzdUDd89Pk959Iq9taunZV5BioLNo13HUWKJhy5Y+h9g
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45g53qc5sk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 13:06:16 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KAqeNP032041;
-	Thu, 20 Mar 2025 13:06:15 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dkvtrbbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 13:06:15 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KD6Eu118612764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Mar 2025 13:06:15 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C0FE75805A;
-	Thu, 20 Mar 2025 13:06:14 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8919E58062;
-	Thu, 20 Mar 2025 13:06:13 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.21.227])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Mar 2025 13:06:13 +0000 (GMT)
-Message-ID: <a8368f2402e1145c134e445d015c434140874e06.camel@linux.ibm.com>
-Subject: Re: [PATCH v10 2/8] ima: define and call ima_alloc_kexec_file_buf()
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-        dyoung@redhat.com
-Date: Thu, 20 Mar 2025 09:06:13 -0400
-In-Reply-To: <Z9t0h5vvxP+meMkO@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
-	 <20250318010448.954-3-chenste@linux.microsoft.com>
-	 <Z9p7rwXqjB3vjCpj@MiWiFi-R3L-srv>
-	 <447b1bf7b31e936ab959b8ba13f09a9c25bb3977.camel@linux.ibm.com>
-	 <Z9t0h5vvxP+meMkO@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1742476013; c=relaxed/simple;
+	bh=TpUMnvL90k+sp8B1Gje0xvXKn3ZcYg/Zz4GVYCjOvGA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=KHJu+8cq4quNRG5FYjG+bQnONphcq+/3kezj/cBq9UChKzqrQaw+sEOv+YmEo3pY9t05k1UqYqun5nC6AvG0rqWyUA9bIGVeM5ODg7FQapxrhzw9u4GhWN+N4PwDow8m+QSSxpUUsDZ2muuAIJ43sG35dcjlUH/Lv+V+Xl+OkBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ckpo6gGm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOp6FQHF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ckpo6gGm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hOp6FQHF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B5D9E21AE1;
+	Thu, 20 Mar 2025 13:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742476002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
+	b=ckpo6gGmjY1fqVsM7bTC6gCJ2Z6PMrmHiculLuJILQeiip8+Rqzi8b+/lFl6eyuM/wIgIL
+	ZMtHoDbzOOluoHKAg+eXTeXs2ahx4nFY0YauBJIg2i+DTz8du2M6+OS+Ucl3b7WEBdfuLv
+	S1REuAk2rBIjUchE4r2tT3UCR8z1l7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742476002;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
+	b=hOp6FQHFyT0ayDmccMjHq6PmlJo7IdaIVT0/kQ8tCYZheo8NE02RQ/NrtHSIdffu1lfCCi
+	EBNoP2pHU3u7iHCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ckpo6gGm;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hOp6FQHF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742476002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
+	b=ckpo6gGmjY1fqVsM7bTC6gCJ2Z6PMrmHiculLuJILQeiip8+Rqzi8b+/lFl6eyuM/wIgIL
+	ZMtHoDbzOOluoHKAg+eXTeXs2ahx4nFY0YauBJIg2i+DTz8du2M6+OS+Ucl3b7WEBdfuLv
+	S1REuAk2rBIjUchE4r2tT3UCR8z1l7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742476002;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DVM0zWMbQyxQGTtaw+uEZlRi+uUw4hPbnR8TPmrRoJg=;
+	b=hOp6FQHFyT0ayDmccMjHq6PmlJo7IdaIVT0/kQ8tCYZheo8NE02RQ/NrtHSIdffu1lfCCi
+	EBNoP2pHU3u7iHCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9ABE6139D2;
+	Thu, 20 Mar 2025 13:06:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IiIsJeIS3GdrQgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 20 Mar 2025 13:06:42 +0000
+Message-ID: <2f7985a8-0460-42de-9af0-4f966b937695@suse.cz>
+Date: Thu, 20 Mar 2025 14:06:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: VxlXgarFD0AYjfhnl5T_btcofPGxYlna
-X-Proofpoint-ORIG-GUID: VxlXgarFD0AYjfhnl5T_btcofPGxYlna
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_03,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503200080
+User-Agent: Mozilla Thunderbird
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [GIT PULL] slab updates for 6.15
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B5D9E21AE1
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, 2025-03-20 at 09:51 +0800, Baoquan He wrote:
-> > > > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrit=
-y/ima/ima_kexec.c
-> > > > index 8567619889d1..45170e283272 100644
-> > > > --- a/security/integrity/ima/ima_kexec.c
-> > > > +++ b/security/integrity/ima/ima_kexec.c
-> > > > @@ -15,6 +15,48 @@
-> > > > =C2=A0 #include "ima.h"
-> > > > =C2=A0=20
-> > > > =C2=A0 #ifdef CONFIG_IMA_KEXEC
-> > > > +static struct seq_file ima_kexec_file;
-> > > > +
-> > > > +static void ima_reset_kexec_file(struct seq_file *sf)
-> > > > +{
-> > > > +	sf->buf =3D NULL;
-> > > > +	sf->size =3D 0;
-> > > > +	sf->read_pos =3D 0;
-> > > > +	sf->count =3D 0;
-> > > > +}
-> > > > +
-> > > > +static void ima_free_kexec_file_buf(struct seq_file *sf)
-> > > > +{
-> > > > +	vfree(sf->buf);
-> > > > +	ima_reset_kexec_file(sf);
-> > > > +}
-> > > > +
-> > > > +static int ima_alloc_kexec_file_buf(size_t segment_size)
-> > > > +{
-> > > > +	/*
-> > > > +	 * kexec 'load' may be called multiple times.
-> > > > +	 * Free and realloc the buffer only if the segment_size is
-> > > > +	 * changed from the previous kexec 'load' call.
-> > > > +	 */
-> > > > +	if (ima_kexec_file.buf && ima_kexec_file.size =3D=3D segment_size=
-)
-> > > > +		goto out;
-> >=20
-> > The call to ima_reset_kexec_file() in ima_add_kexec_buffer() resets
-> > ima_kexec_file.buf() hiding the fact that the above test always fails a=
-nd falls
-> > through.=C2=A0 As a result, 'buf' is always being re-allocated.
+Hi Linus,
 
-Hi Steven,
+please pull the latest slab updates from:
 
-[Reiterating the comment in the "ima: kexec: move IMA log copy from kexec l=
-oad
-to execute" thread, here, for completeness.]
+  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.15
 
-Instead of adding and then removing the ima_reset_kexec_file() call from
-ima_add_kexec_buffer(), defer adding the segment size test to when it is
-actually possible for the segment size to change. Please make the segment s=
-ize
-test as a separate patch.
+There's a small conflict with the rcu tree:
+https://lore.kernel.org/all/20250212150941.5e4fa1c9@canb.auug.org.au/
 
-ima_reset_kexec_file() will then only be called by ima_free_kexec_file_buf(=
-).=20
-Inline the ima_reset_kexec_file() code in ima_free_kexec_file_buf().
+Thanks,
+Vlastimil
 
-thanks,
+======================================
 
-Mimi
+* Move the TINY_RCU kvfree_rcu() implementation from RCU to SLAB
+  subsystem and cleanup its integration (Vlastimil Babka)
+
+  Following the move of the TREE_RCU batching kvfree_rcu() implementation in
+  6.14, move also the simpler TINY_RCU variant. Refactor the #ifdef guards
+  so that the simple implementation is also used with SLUB_TINY. Remove the
+  need for RCU to recognize fake callback function pointers
+  (__is_kvfree_rcu_offset()) when handling call_rcu() by implementing a
+  callback that calculates the object's address from the embedded rcu_head
+  address without knowing its offset.
+
+* Improve kmalloc cache randomization in kvmalloc (GONG Ruiqi)
+
+  Due to an extra layer of function call, all kvmalloc() allocations used the
+  same set of random caches. Thanks to moving the kvmalloc() implementation to
+  slub.c, this is improved and randomization now works for kvmalloc.
+
+* Various improvements to debugging, testing and other cleanups (Hyesoo Yu,
+  Lilith Gkini, Uladzislau Rezki, Matthew Wilcox, Kevin Brodsky, Ye Bin)
+
+----------------------------------------------------------------
+GONG Ruiqi (2):
+      slab: Adjust placement of __kvmalloc_node_noprof
+      slab: Achieve better kmalloc caches randomization in kvmalloc
+
+Hyesoo Yu (2):
+      mm: slub: Print the broken data before restoring them
+      mm: slub: call WARN() when detecting a slab corruption
+
+Kevin Brodsky (1):
+      mm/slab: simplify SLAB_* flag handling
+
+Lilith Gkini (1):
+      slub: Handle freelist cycle in on_freelist()
+
+Matthew Wilcox (Oracle) (1):
+      slab: Mark large folios for debugging purposes
+
+Uladzislau Rezki (Sony) (1):
+      kunit, slub: Add test_kfree_rcu_wq_destroy use case
+
+Vlastimil Babka (6):
+      slab, rcu: move TINY_RCU variant of kvfree_rcu() to SLAB
+      rcu: remove trace_rcu_kvfree_callback
+      rcu, slab: use a regular callback function for kvfree_rcu
+      slab: don't batch kvfree_rcu() with SLUB_TINY
+      mm, slab: cleanup slab_bug() parameters
+      Merge branch 'slab/for-6.15/kfree_rcu_tiny' into slab/for-next
+
+Ye Bin (1):
+      mm/slab: call kmalloc_noprof() unconditionally in kmalloc_array_noprof()
+
+ include/linux/page-flags.h |  18 +--
+ include/linux/rcupdate.h   |  33 +++--
+ include/linux/rcutiny.h    |  36 -----
+ include/linux/rcutree.h    |   3 -
+ include/linux/slab.h       |  16 ++-
+ include/trace/events/rcu.h |  34 -----
+ kernel/rcu/tiny.c          |  25 ----
+ kernel/rcu/tree.c          |   9 +-
+ lib/slub_kunit.c           |  59 ++++++++
+ mm/Kconfig                 |   4 +
+ mm/slab.h                  |  34 +----
+ mm/slab_common.c           |  44 ++++--
+ mm/slub.c                  | 336 ++++++++++++++++++++++++++++++++++++++-------
+ mm/util.c                  | 162 ----------------------
+ 14 files changed, 430 insertions(+), 383 deletions(-)
 
