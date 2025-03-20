@@ -1,133 +1,162 @@
-Return-Path: <linux-kernel+bounces-569655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE37A6A5A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:01:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558DEA6A5B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE050166A52
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6BC1887C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3FA21D581;
-	Thu, 20 Mar 2025 11:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZX3rt8d"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E271F4C87
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB3021D5A6;
+	Thu, 20 Mar 2025 12:00:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8519F21D581
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742471918; cv=none; b=J+IsyrJv8+YcGwVX/C8uuwK8D5aDsPgCe9ftMCnZLnTLLBg87exV+jG/S+uUvwL1QpMs9R7w7DXH+Ic8eMmAjvbpW8U6hUxT6WWV6j5LfTIXgMLODwxHLT5FoowkVfVONWlhIFZX01lCWfW+jfpic/EcOEFMumgla19E5yDQqgs=
+	t=1742472003; cv=none; b=aNE3VHGR/0JXaxC5Sb2IfHnRLkHA+yVMTPTKhAnM6xf7aCO7sdsULUn2tbFD7lzc3Z8Qd+T+5rMqk6sf4OOojpbutXIhNF3EsVlmuUyzN341sdB4Xxd6979qHB/pVScxcJ1CWti1aSW3YlsRuaBxVJS2TPHBQkrh9cCk+Rp/IAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742471918; c=relaxed/simple;
-	bh=mwlF3B/nLOyLIkcW2MlX2r6IQeH3QSoZS9UaHknKT7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BRzSf/0H4eRPvEa9iqu8AwDJUNCDQXQ38R2JOyFJX2n2Yj+REy5y0K8U3QFO1e81PBX42VqlCT6Dgl/oLG5EbV1u/TiWjKlW2HEQoQ08gj7stKFYOp4kRZX2zVbr848a6skUTp7Z7cVeJbkXAVQBiATKJPe2CG2zM61fFYm453s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZX3rt8d; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bef9b04adso8289931fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 04:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742471915; x=1743076715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mwlF3B/nLOyLIkcW2MlX2r6IQeH3QSoZS9UaHknKT7w=;
-        b=fZX3rt8dKtT1Yk8hlwaKaeQDgfv1AN1eZWyURi5o/b9Ra7WQBncbelJYMzUxdF86bb
-         AXPUzfmgHTAPOkLfl3AoDHu/kuGch769+2LIcpWW3kUUuPdKQXdKBxR3unMnlh9eCFqW
-         23AO/e9u0w40bAeJOjfFFrzYMpWowImlRIANjyzesXleD6K5FXHja5mNTPaxjqcyvukP
-         j/8FPJXfAT5HJnD5HAqr5JccbmEBRsMywYbr+DFo0laOzH2J71U2MaS71N4hjyHdPq2n
-         gQs/ipHks38y50QNI6QQM911KqkV08a7r5P8Da18ZqDkcBquFOLudX9l0aGZZ6BaermK
-         AZ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742471915; x=1743076715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mwlF3B/nLOyLIkcW2MlX2r6IQeH3QSoZS9UaHknKT7w=;
-        b=UzAThsgk3vmcT2dPCc69YdiVP66MeHTQ1lwgdJKzrDJXf9wxITKhftOy6r4OQa6Aty
-         kaOFeBnUuCfh4SqNX+n8uYBC32FhsbniU5Tzb52ZRdinJ8T6/Q8oqnA7klvVupmbcbHe
-         d2t/UeDrnLi9SbaQWb8APOruaXNvYr+DsvdGWbHy5fwUdW+fMusHgs+aHGKubrKy/nwp
-         OZzuntoDbec+AhmkhP72K3oB3qwPCX1JTn9EbqKyWs+INeQxP2sHIGNfSaVvLPYOYrPo
-         yh1nPlvYjyMIURpaY/9usI7+TDMlb7U/2OkesKl4yjIgLxQDM80j3PDI0qcGg1wUEZgv
-         JLXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUKDQPBo7vZs9is+yBpxHBUvend4Rqd/I+AgrP5dc3s7CTtMbx+ktv+4L9OHcHXXY09egyX4QUhkvkzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUdzMIHNPr7LRIB9T1iQvO4UXlHKYbpm7D2gl/3usegrcaDALF
-	EZhmvFJWTSlz9KP94iJ9QOGBhW3MrhlWCiv8G7jVZG/J4JCQX1MuNUIIlH9GXr7WAs1uaZ9O0Rb
-	5ybiakXecU8ZLdlpV9Zfsb4EOtnE=
-X-Gm-Gg: ASbGnctlzH0PZiGnlUAqFjYCFDzHqGroj59wi149Xct3KXNtHp+7XZabxFiWjxc2peQ
-	kCPudE3EJWuZoFOWq/dQ89WXSF3wtC2J7YCsmN+MArVVP14oCANzBvWtTiws4PBw//PY2+W45p/
-	dIgkzGIJ3m7EIUoARKDh7G97kN7hYCNfJzSHt8
-X-Google-Smtp-Source: AGHT+IFMd8XYVT9oaVi2FJ2Wms47aZtFzdPsqP7afy29RCwL/Dbbx6vRb0MF3HY3z6hNb7HmSRBTs/GV07MFSjzh3Ew=
-X-Received: by 2002:a2e:be8b:0:b0:30b:c91d:35cd with SMTP id
- 38308e7fff4ca-30d6a3e446emr27020471fa.11.1742471914695; Thu, 20 Mar 2025
- 04:58:34 -0700 (PDT)
+	s=arc-20240116; t=1742472003; c=relaxed/simple;
+	bh=PStqZjhIP7YBTl7FChlnJ2YLpQT/+dBrheYhiEeXbaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzLbKjs1Pvr5EqByfKzyhxSjiVtmRVmsVGrQINh/VHVqVCa4YLf5mbM8v5HGdCvc5QtkF6ej7LHDwg6pUdxOZa9KpSTf9MmYyS1iXkFQxMHaVh9327Hxan30Lg35Jtb9ovXs4m8iexHj7SE6Qi51DlvMiNgnLBK7EHvsJIwLmkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70BA4106F;
+	Thu, 20 Mar 2025 05:00:08 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C3943F673;
+	Thu, 20 Mar 2025 04:59:59 -0700 (PDT)
+Date: Thu, 20 Mar 2025 11:59:54 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	lkft-triage@lists.linaro.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: stable-rc: Fast model boot fail Internal error Oops BTI -
+ kernfs_iop_permission
+Message-ID: <Z9wDOguDLJ17juz2@J2N7QTR9R3.cambridge.arm.com>
+References: <CA+G9fYtucEt8Hp6RsV0o+OWSz1E=hXBvhHa-P9C-bPnb7cyGaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317221824.3738853-1-mingo@kernel.org> <5A417EE0-8DF3-4C6E-A7E9-9EE6705282F1@zytor.com>
- <Z9m1rtmlk1PxGIQA@gmail.com> <CAHk-=whAUHyXM29_9w_T26=15D1KZnuR3R+f4MT9f-C89oukvA@mail.gmail.com>
- <Z9m_kUqxqMPfU8Fl@gmail.com> <Z9nTfFiPv0-Lxm-_@gmail.com> <CAFULd4aFUun7+1izxbDM8nTEEta5PApysyTGsn1hjvQND=2UtQ@mail.gmail.com>
- <Z9tGh0Fa96gACmpQ@gmail.com> <CAFULd4bxUOiPLQ9aaZFx2jsLUwEPH0h=XiCOtxYn+Z8JEAeHUw@mail.gmail.com>
- <Z9vY8Bm1Wv1vkqNO@gmail.com> <CAFULd4ZZ6rjG=LTQX6hsrqp6BQ5XcRW7kQ_rzHKrOxKCu51=sw@mail.gmail.com>
-In-Reply-To: <CAFULd4ZZ6rjG=LTQX6hsrqp6BQ5XcRW7kQ_rzHKrOxKCu51=sw@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 20 Mar 2025 12:58:22 +0100
-X-Gm-Features: AQ5f1JrTsiLJrQOD9V8t8pWHAqIUyd4p3FWmnkQS7VdHpYgBnjfB7ESlPUlLnbo
-Message-ID: <CAFULd4ZBvv+HeHwH_0br+_jdJ4sgpjdNGtqAxL4=c629kBaQbw@mail.gmail.com>
-Subject: Re: [PATCH] compiler/gcc: Make asm() templates asm __inline__() by default
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>, 
-	Stefano Stabellini <sstabellini@kernel.org>, "Ahmed S . Darwish" <darwi@linutronix.de>, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, John Ogness <john.ogness@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Josh Poimboeuf <jpoimboe@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtucEt8Hp6RsV0o+OWSz1E=hXBvhHa-P9C-bPnb7cyGaQ@mail.gmail.com>
 
-On Thu, Mar 20, 2025 at 11:30=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wr=
-ote:
+On Thu, Mar 20, 2025 at 04:05:14PM +0530, Naresh Kamboju wrote:
+> Regressions on arm64 Fast model (FVP-aemva) boot failed with stable-rc 6.13.
+> 
+> First seen on the stable-rc 6.13.8-rc1
+>  Good: v6.13.8
+>  Bad:  6.13.8-rc1 (v6.13.7-242-g14de9a7d510f)
 
-> > > Interestingly, I got *many* more changes just from converting atomic
-> > > locking functions to asm_inline, as reported in [1].
-> > >
-> > > [1] https://lore.kernel.org/lkml/CAFULd4YBcG45bigHBox2pu+To+Y5BzbRxG+=
-pUr42AVOWSnfKsg@mail.gmail.com/
-> >
-> > Have you used a pristine x86-64 defconfig for your build tests?
->
-> Yes, it was vanilla x86-64 defconfig, but in -tip tree.
->
-> > Could you perhaps check my patch against your patch in your build
-> > environment and figure out why there's such unexpected differences?
-> >
-> > As you noted my patch should be a blunt-instrument superset of your
-> > changes so if then it should affect *more* functions, not fewer.
->
-> Yes, I'll try this experiment.
+That "Good" tag doesn't look right. Is that meant to be v6.13.7?
 
-So, trying your patch on vanilla mainline kernel with gcc-14.2.1
-resulted in (approx) the list you reported. However, adding my patch
-that converted locking instructions [1] over your patch resulted in
-(expected) hundreds (~1700) of changed functions.
+AFAICT there is no v6.13.8 tag yet.
 
-[1] https://lore.kernel.org/lkml/20250309170955.48919-1-ubizjak@gmail.com/
+> Regressions found on FVP:
+>  - boot
+> 
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducible? Yes
 
-The takeout from the experiment is that your proposed change is not
-enough to convert "everything" and misses many cases (at least locking
-instructions, as confirmed by my experiment). We should use a more
-precise instrument and use it case-by-case. This will be some more
-work, but on the first look, there are relatively few interesting
-cases remaining.
+Can you bisect this?
 
-Uros.
+> Boot regression: Fast model boot fail Internal error Oops BTI
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> NOTE:
+>   LKFT is currently running FVP Fast Models version 11.24.
+>   Planned upgrade to the Fast Models version 11.28 in this sprint.
+> 
+> ## Boot log
+> [   12.812790] Internal error: Oops - BTI: 0000000036000002 [#1] PREEMPT SMP
+> [   12.812886] Modules linked in: drm fuse backlight ip_tables x_tables
+> [   12.813120] CPU: 6 UID: 0 PID: 136 Comm: udevadm Not tainted 6.13.8-rc1 #1
+> [   12.813245] Hardware name: FVP Base RevC (DT)
+> [   12.813317] pstate: 163402809 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=-c)
+> [   12.813450] pc : kernfs_iop_permission+0x4/0xe4
+> [   12.813585] lr : inode_permission+0xb8/0x174
+
+This is one instruction into kernfs_iop_permission(), which suggests
+that either the caller has branched to a corrupted address, or somehow
+the model has skipped the BTI.
+
+> [   12.813728] sp : ffff800080d63bb0
+> [   12.813796] x29: ffff800080d63bc0 x28: 0000000000002e2e x27: 00000000fffffff6
+> [   12.813978] x26: 0000000000000030 x25: 2f2f2f2f2f2f2f2f x24: 61c8864680b583eb
+> [   12.814161] x23: 0000000000000000 x22: fefefefefefefeff x21: ffffa991682c84b8
+> [   12.814344] x20: ffff0008006704d0 x19: 0000000000000001 x18: 00000000fffffffb
+> [   12.814525] x17: ffff000801bf8021 x16: e0acaabd2f000000 x15: ffffffffff000000
+> [   12.814711] x14: 0000000000000002 x13: ffffffffffffffff x12: 0000002e00000000
+> [   12.814893] x11: 0000002d00000000 x10: 0000002d00000000 x9 : ffff0008006704d0
+> [   12.815076] x8 : ffffa991665f0ff8 x7 : 0000000000000000 x6 : 0000000000000000
+> [   12.815253] x5 : 0000000000000000 x4 : 0000000000004050 x3 : 2f7375622f737973
+> [   12.815432] x2 : 0000000000000001 x1 : ffff0008006704d0 x0 : ffffa991682c84b8
+> [   12.815613] Call trace:
+> [   12.815670]  kernfs_iop_permission+0x4/0xe4 (P)
+> [   12.815830]  link_path_walk+0x2b8/0x388
+> [   12.815962]  path_lookupat+0x68/0x120
+> [   12.816073]  filename_lookup+0xe0/0x1e0
+> [   12.816196]  do_readlinkat+0x6c/0x1d8
+> [   12.816337]  __arm64_sys_readlinkat+0x20/0x30
+> [   12.816481]  invoke_syscall+0x40/0xf8
+> [   12.816623]  el0_svc_common+0xa8/0xd8
+> [   12.816765]  do_el0_svc+0x1c/0x28
+> [   12.816904]  el0_svc+0x38/0x68
+> [   12.817050]  el0t_64_sync_handler+0x78/0x108
+> [   12.817203]  el0t_64_sync+0x198/0x19c
+> [   12.817359] Code: a8c27bfd d50323bf d65f03c0 d503245f (373806c2)
+                                                  ^^^^^^^^
+						  BTI C
+
+As we can see here, there's a BTI C immediately beafore the instruction
+that triggers the BTI exception, so as above either the call has branch
+to a bogus address or the model has somehow skipepd the BTI.
+
+Assuming there isn't a model bug, this is likely to be either a bug in
+inode_permission(), or some sort of memory corruption.
+
+Mark.
+
+> [   12.817444] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> ## Source
+> * Kernel version: 6.13.8-rc1
+> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * Git sha: 14de9a7d510fcfb3bd35e275eda09724bda4d440
+> * Git describe: v6.13.7-242-g14de9a7d510f
+> * Project details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/
+> 
+> ## Build
+> * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27684866/suite/boot/test/clang-20-lkftconfig-no-kselftest-frag/log
+> * Build history:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27684866/suite/boot/test/clang-20-lkftconfig-no-kselftest-frag/history/
+> * Build details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.7-242-g14de9a7d510f/testrun/27684866/suite/boot/test/clang-20-lkftconfig-no-kselftest-frag/
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZoz8Lc7Ue3i4mVWAM8Y800oz/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uXZoz8Lc7Ue3i4mVWAM8Y800oz/config
+> 
+> 
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
