@@ -1,233 +1,452 @@
-Return-Path: <linux-kernel+bounces-569088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF06FA69E6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:44:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEF6A69E6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF3F884B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B5B8A53EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A883A1EB9FF;
-	Thu, 20 Mar 2025 02:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADC21EB9E3;
+	Thu, 20 Mar 2025 02:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="oQwHVYPf"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2114.outbound.protection.outlook.com [40.107.215.114])
+	dkim=pass (1024-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b="eFeLCMeW"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614E52F5E;
-	Thu, 20 Mar 2025 02:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F041CAA8A;
+	Thu, 20 Mar 2025 02:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.85
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742438623; cv=fail; b=HhK9I3uqM5MFSTaYxSzlfWXwC8ym+tpxVc4JY+G8EMTKNp0BLjbBe4/7ZfDoN3Nk1vb01ukh+UwJEAh+h7xlG/9SNgSNplrOvOheVv78nRoccC5JcKUJa9kvH0MRD/VMjGgRp1fosPLo1wUaaRuVOQOPp6hFgIG726baEl+goNk=
+	t=1742438662; cv=fail; b=P7hu0PVBld7NyQXEK3LLXTYZ0GKuK13BKmwgE6qkT+ChJfJEpE5tiwGh/G/9X4zYUMmaktpdeEcueRcuVd3CAehDaVctuZQbcC5e4V/vJKtSdjS6jaS4aEJifVR++fan78Thv7HXcfe85zFfJzPsgJYFw/Hoz/T8G9S2sLyYiM4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742438623; c=relaxed/simple;
-	bh=JWQ+lTxit52X41WE6WnLe1zS66kQSZkve4gtBD4hAOk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=txHkz5wuFBG5fIfDzuHJ7zdK8l/a2AFhqyjW21oGovIUxLNwHzuTGx8TLdiwiy9k9AAlEdREloo7wzMLCZarc8bio44wDlvPBhZUYSntHglmA5yXCluRjLmXgtz/tBzcfHPTuPprmxPtr1+p8UZ3//esx/T+e4VUFQRlJN6hENw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=oQwHVYPf; arc=fail smtp.client-ip=40.107.215.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	s=arc-20240116; t=1742438662; c=relaxed/simple;
+	bh=0FuwfgQVX1gc9uLtVLEZzs+QDzMMUEt9lR69KPcnYks=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sIu7iWS2u0PlDvSokPiiLm2WrRH0kVqccqpzt8ZEw6GAA03/iPaCp8/DQ+XXJvVgSVlIvhubMROSxRCiMd8v5RR9lZ2uWGvEU1yKdYnSzlH/n7E6pD4al09A/fk0t8FBdsenwH8BwXVl2+RLrraimJRWRfE0XBzliaofYv/bJOY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com; spf=pass smtp.mailfrom=maxlinear.com; dkim=pass (1024-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b=eFeLCMeW; arc=fail smtp.client-ip=40.107.237.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxlinear.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aZ2jKK6kG8pdSF4wtTzmif/rsGgGKBeiarRijnJU2lAHrey57aK2W7kGiJXm+wEpSHL/dCVrEEqpO15f5Va88OaC341zniewwaNR9a+OcJUOeHS5rDwccA7A29EKxKybd96mhIsGE5sCg26ibqCS8Dzggb5ok4bmIYGRNV1XxcIbNRZxCR99Vy/sy7sA1n8NKGEarGcJ7dM8sllvfz/93AoUF0UXnmDVfGq4xLjKC5d/ZKrzemgJMTGSTcASWXjSyPOVFF3bnCNj5DmIAzp2GDrW7/QkSuSStADl2/f0N0pQ1B9WOhDSSzd7I7n0PSbqkk35HslrC/uS9WQF9l8aLQ==
+ b=Gki9D7lrXGTZpMKMHvc8OfJgTfl6L316nBJ539zoL6976RoUBx8tWdSRP2MoMrneIFy2PGKZnsvTgaCgIpcTE3g+a+XSPtC2szrXQNxngFeaO6FQM7RsrHIAcjbFkURAb0hr8IoTXmeRl3U2SK5LyybgFF6yOlcAT+mJygaELQVJ6V9KJCUWVWo8WswJbwipUrtaOJ0/EbVUF1R7wRvSMbdQBxTexQyKLrSYDb6lK5Q299MRCWKA+VnBcEsa4dCk2MdmloeHUFcjAYqM8tKSNvl4C+ZiGnu6dl6ybcacQ+lipX5qpOTWe8TsY19A5PayXQCQDJo1z520gEsnLjt63A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RcowaodG4m5sz8r4xTOUPgByaEuCqr6mDC1Dk0QBjmE=;
- b=tCWA+YP9ZYbohItiYkXlfecKO4m1FcWquUaU5IOEwUxD1D1219FRNC7rdsI5OIKrqFBInityvc2C9h9a2dkravWarAEtIBvyqTbRwQSWK+xgECNDkIWtuai3b57Ob6rImxQyBJVLBtN0pAtQY1N8jroWvp33SzwVIogmiRPr0qTTQWrzzBHhB3UvkGCSpbIvFXOLZmpMvwDYnxY/I/l0oqXUpSqILE3QOATAPTvROj9MJtSppBg1CfU7nj8J3/Cm9ZP/w5fsP/ym4tNUjeu1UUojSI3e603X/IMKjGYD/VLKlrr8hxBekcsd5Xeq+7gSCYualfminwqjLxTmlSN7BA==
+ bh=ayNvYunQCDVZL2QbFcQ1eC5pP/qtmyXg0CEIzpr7vUo=;
+ b=TM4DDS3CMVk9jrYyISxlGcKg4sfEz2Rlc9TrUUeBEYgdjVqAgJSGxQLapd+fj7zAWW4DUBzj/dT/9CC6OIFvdrDNV5Hxq0DiDcB7qiktiZSs08zrvwIbCSDSJ9/5ArvTVpqeObnfrBaH49hR5wcBQuIXZOCH7shaYWgTvQL4JwWq1GV9VKRvh+JwW1SLC15sH5nysK7o76xdKse9MUFhUSeZ7I4lijH6/2FJsHczYa2UqrMSDevCf9BIrUE2fRrJbTt8tHiK5dVcCIHVxxqM/xayjQv7ATmA26PdvYo3YCI7+HC0D3tDOpPm9Fg0kSfSmnlrs7DcpFmflzOqDpJe7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ smtp.mailfrom=maxlinear.com; dmarc=pass action=none
+ header.from=maxlinear.com; dkim=pass header.d=maxlinear.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RcowaodG4m5sz8r4xTOUPgByaEuCqr6mDC1Dk0QBjmE=;
- b=oQwHVYPfjkvpiez14jzLcTZ9k7MPRH2ThW1ZlssnNA+SZNijgJIS8vinvf/KQhkK+UYMvv1VuhlTLqWUMwVMOEXH7wEMequ/qPUGKDDeqTANNt4V4oW71AD1Szvyp1Kd0QiKMkMZxGtnF/8CMNvUYp2AsCs2X3MMLhQMF2isEEfOvQfrifWfKYiYZlThy/9uYzQHuP0yA03M20fCT4ZshfzyI76v2F+bvlK4z8a9mO0UJXnL6eJT8lJGtjgsgxunTQF7xc9Ry+dE+9afqSXJRjDFpHvSmjQ+wEf+QYRJi/R725kp25RHljxpEi2equzmXFqSu0Rcs1nP462pJM0lSA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
- by TYUPR03MB7180.apcprd03.prod.outlook.com (2603:1096:400:355::12) with
+ bh=ayNvYunQCDVZL2QbFcQ1eC5pP/qtmyXg0CEIzpr7vUo=;
+ b=eFeLCMeWlsBD9cHp4U2P5mfI+G3KQtuldjX58+OzytuX7iswwC0ZjUERHE3Oqxn2BaUPj6KWkenZjo0p0H+MvgPOT35GXNlsL+6c++qeliKavmUosPHG+NVcXGb6xtb63aWopAspTyCqShPcQKT4hSMH2Ib3ILw8c36Uaa+JtmA=
+Received: from BY3PR19MB5076.namprd19.prod.outlook.com (2603:10b6:a03:36f::11)
+ by SN4PR19MB5373.namprd19.prod.outlook.com (2603:10b6:806:204::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 02:43:36 +0000
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d%7]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 02:43:34 +0000
-Message-ID: <0096ba23-3433-4f98-92ee-321c3461dff0@amlogic.com>
-Date: Thu, 20 Mar 2025 10:43:30 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: clock: meson: Add audio power domain
- for s4 soc
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: shuai.li@amlogic.com, devicetree@vger.kernel.org,
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-amlogic@lists.infradead.org, Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- linux-kernel@vger.kernel.org, zhe.wang@amlogic.com,
- Jerome Brunet <jbrunet@baylibre.com>, Mark Brown <broonie@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jian.xu@amlogic.com,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-1-686867fad719@amlogic.com>
- <174237350819.971004.1098115771430334211.robh@kernel.org>
-From: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <174237350819.971004.1098115771430334211.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0191.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:382::16) To PUZPR03MB7135.apcprd03.prod.outlook.com
- (2603:1096:301:113::15)
+ 2025 02:44:16 +0000
+Received: from BY3PR19MB5076.namprd19.prod.outlook.com
+ ([fe80::2e7e:d389:dd5f:adf4]) by BY3PR19MB5076.namprd19.prod.outlook.com
+ ([fe80::2e7e:d389:dd5f:adf4%4]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
+ 02:44:16 +0000
+From: Lei Chuan Hua <lchuanhua@maxlinear.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Frank Li <Frank.Li@nxp.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
+ and clean up intel_pcie_cpu_addr_fixup()
+Thread-Topic: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
+ and clean up intel_pcie_cpu_addr_fixup()
+Thread-Index:
+ AQHbjfEyD/mpI4A5j0GKiUa0Y1kJFLN3sKUAgACC+EyAAOY6AIAA8srAgADgEACAAHpu0A==
+Date: Thu, 20 Mar 2025 02:44:15 +0000
+Message-ID:
+ <BY3PR19MB507667CE7531D863E1E5F8AEBDD82@BY3PR19MB5076.namprd19.prod.outlook.com>
+References:
+ <BY3PR19MB5076ADD0AC135D455D10B5CEBDD92@BY3PR19MB5076.namprd19.prod.outlook.com>
+ <20250319192244.GA1053712@bhelgaas>
+In-Reply-To: <20250319192244.GA1053712@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=maxlinear.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR19MB5076:EE_|SN4PR19MB5373:EE_
+x-ms-office365-filtering-correlation-id: 7ce7de5f-b0d2-4c27-38ed-08dd67591aaf
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|13003099007|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?6CKR7oHP62Fn4gkTZGLjlah+b/V2M6qxifJBmeum/NverrmAw96rzT7Bzm?=
+ =?iso-8859-2?Q?DnytyXR23nuM1mLTGHmh5QS6qPmAXrtYi15qRaPtzVcZsiwGvPmPbF59Ez?=
+ =?iso-8859-2?Q?M+tmYTaYEOaSeUI0ozad6RAkFCiyZWEIuWVfn4UEAqSuW/lGF7lin9oZcw?=
+ =?iso-8859-2?Q?BK8rWDhvKT2EK4ruC1+DEUKnMAELdQaOHWottaLUcLenn8wvRLiBwxg2vL?=
+ =?iso-8859-2?Q?fhoKjQB2JvycdkMnjfTTJ+yveC92g1bufeIUA8A3kW3fd/bD3xyzTafxQL?=
+ =?iso-8859-2?Q?tBB0ikbwNNOWqeZBzKIaajpSxAzTePaK1tBIXC4Lt0dNgX44BrJOHmKcBf?=
+ =?iso-8859-2?Q?8kZ25AX5MwN0K6+9YWx/7t0FBzGLJ0HDLnuThqChlgH3TFi2exchwCDbbX?=
+ =?iso-8859-2?Q?6QEA8VUZSiBueYmcvyDJebtPWnsww1C4Cw2ON9HQmqtkan9KNTGDVlX3WG?=
+ =?iso-8859-2?Q?rTYeAg8CMP6p1oVIAHPdczwE4I9LHxqYBu2IpWfQGP4cMm52WXL/3/VcKR?=
+ =?iso-8859-2?Q?8LgN1EYuQUewGMm38xJN1jy8Zw4PJMDxeQFObrOjmhOw+cQffRDQnz3ViK?=
+ =?iso-8859-2?Q?xrUcjOyCFR4GIGOVwIBm6t92LrDs/6zDv8yqDl4IRuna3+LkH38lvxyy3h?=
+ =?iso-8859-2?Q?84AbHzT7WOzk/UfHVEpdnM3WGXqzarNGi4g6wykAFbIJMuUBGVhK7VRPvK?=
+ =?iso-8859-2?Q?awInji7abUJY0xRx4QnIFOl2c8JTuZo8TJT0pf0EZtV//w4egRVSjUH7hO?=
+ =?iso-8859-2?Q?s364/okQWoT7Xahq4nf0N9iHfeopBX+HpwlftrvDsKZ9TGQXy4aYWDvlV3?=
+ =?iso-8859-2?Q?05BQ+H+q3rjSPDMwHIWzbLyg20Uy5Y7RCrR9JgNzGIElz5fuPINH4NwhpU?=
+ =?iso-8859-2?Q?sXBOpersTx+XLYTMZ0j6LduF0RC2VgaHPbwDmvuGZToIBMFvXsuOoHqoyr?=
+ =?iso-8859-2?Q?8R7BQ3yOrOs4Bwmv86HgthmSiJOOXTvoXjyDbPuUKtI3npK0NHMPTuxmqI?=
+ =?iso-8859-2?Q?I4tCoq67CCMe80nDqBRFjQrgN12KdslctdUfpNPhUnNI8XItCXpC1TihE+?=
+ =?iso-8859-2?Q?tI0bh2hayZSqeKx2URwiYE5OW1haOn/6JuVrmYCYYG3ZedInn5GwqY1rTz?=
+ =?iso-8859-2?Q?rTu/6F0msO879WlQ216Uffji401aAiz4USat2elK50FoU6Ohb4Th8MXcQj?=
+ =?iso-8859-2?Q?GbBKUi9v0yRkjinYq2r0nWq+iyN73zvYlXv67IPfI03kD0CHNewxNAogFR?=
+ =?iso-8859-2?Q?eGWnKFYHn9QuNtZ8aHob2cejXLp7oo99MJEMoVS/7jr+wSl9vdHsua2EQg?=
+ =?iso-8859-2?Q?f6rf+gWm217dYzPLgU8T7eO+qHGZAf6cwaOoEyNU4l/5j9RiG5VPPPhRfJ?=
+ =?iso-8859-2?Q?/Zrb49QluB4BPTjFpykZ1Cu6gMW860k+++D7gNPVwolFTaaTnJ6rO1zrLJ?=
+ =?iso-8859-2?Q?MEj5WYPb/v1bB7EuI0bOMAgTPwJtWgzH5bSS3w=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR19MB5076.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(13003099007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?7s/w8P5axzgTUJMbbfyGE+ICgu21Cj7YEbARhN9q196cS2AfHg5jTzwIvk?=
+ =?iso-8859-2?Q?xI/tOHElTkJ2enJyIBBc4F+dcViinkXtjVtyuEfGAexP+eenyg+Beq/LjG?=
+ =?iso-8859-2?Q?+tRNW65Aid/IZ2TroE4OtLvZNSTodNFmskiwc5hdAVqE/GFusUtiFo5xJq?=
+ =?iso-8859-2?Q?4pX/zPh6U20o4gXOhUYwGM/woGqzRjyptKBOR164rDpDOtQFp5mZOx7oyw?=
+ =?iso-8859-2?Q?KFpP5rbcCGgQm1OeGsod5ZUvsCVkVtyKflcvedqF1UMKHO9EWAKiIhpuim?=
+ =?iso-8859-2?Q?Qd2MchpOomfGart3pOXT59Ub4Lb+B7XbY3LSuMrx8/Ut4I37cSKzdQPdaW?=
+ =?iso-8859-2?Q?0x/BDVVrtIWA+PB86gx4wHgrbeuFhA4Cdwssmw4Rm1aZPk+JHalFyXxMx6?=
+ =?iso-8859-2?Q?m0O2XYKaF8/ZyX2NUthldb+JrUaTafuU/7Hv6+13ImLIX1/FPXyl+ZaMIo?=
+ =?iso-8859-2?Q?gJzzqKXklcEvVPsKVTzxm9SuPeLS8Yz9Z5tiH6p8mAx217OLYWLHXXqJNi?=
+ =?iso-8859-2?Q?H4zWsKT0/q7hKXkpJFGEJdgbzRFbqFaed89IYGLvK76/TajM31w0m5wCrv?=
+ =?iso-8859-2?Q?r/XSMtQ4ZSnFrMebo9lvjzbYH2xuUsEU7gzMmfzrLJnEXO8bmaXq0rJj/T?=
+ =?iso-8859-2?Q?tjWgKtJW+HmKemsRdQfuCiEaTikJtCTNqkKIojDNs5P6B9+YcQywlhSYjo?=
+ =?iso-8859-2?Q?wak4Hf1TV2G0J2kM335wfvzrYjtu5nDBxw8GSH19a2x/XGQS2hy3IJSLsZ?=
+ =?iso-8859-2?Q?4qg/sA8AobK1+O4WR5pRYTdUOZmN1ymn27ihZXN+dKga3B+ijryNMel7xa?=
+ =?iso-8859-2?Q?DojQayLqjEF3OAJOHr2NmHBD6QHL/5wFX3m7fFQA0eiudWcrWRf2iUOP8Z?=
+ =?iso-8859-2?Q?aZm2t1WSoinNy7PSSlp9pHbyu/HN8JYuRLbopzgF63Df2jH3P/3nTT9uac?=
+ =?iso-8859-2?Q?vLicQAzvJARsyljshNPZ0eHKsjOFiriol6a1COGyRi034OdRmphssyp+97?=
+ =?iso-8859-2?Q?tPNxlAYzYeeeTNxGpTQNU8+HhYsFNCIHeey3a6DTX0b92gnT0Cm+jD1gbh?=
+ =?iso-8859-2?Q?krnULePnAH/4FgWTFamgYNbnD7ro4CmuXUbyBSCHuYQDYExotNUENuTfRf?=
+ =?iso-8859-2?Q?VNDfPPpQ0vtu0jtbOWrgJSQLmgBO6kU9ayEvw/oUUk5AZffvHc7FcK0mL7?=
+ =?iso-8859-2?Q?Fdts/DchvrSfNBTNQLZwD0gukhlZqhgJUmEXnKs7BIsZIlsbx5iVB/5Tda?=
+ =?iso-8859-2?Q?luggc/Yb5fEssJzYUtTP8i46hLDXLpST0qyUvx7fa8nij/s52RMWvLXr1c?=
+ =?iso-8859-2?Q?ZaRtO7iolU+Tyq2Hbm3OwksGG9SBpvOs58zS0zSSgBJjj3yKPPJjWKGIL+?=
+ =?iso-8859-2?Q?4t0vKU8G0+LEHdUfalEYBLsY/D+Y9UxccQg5SRY2Ke+MJbCTMHOqXcLH6W?=
+ =?iso-8859-2?Q?oIUqjwwDuSnoHiMvPwJ38Xg9TDnmT4LoeWZJVDmIso7jk6F2/kyLAk+0Dp?=
+ =?iso-8859-2?Q?6jWACDrA0OJqdF4qSSQxBJsvS2XmD1G1tKOa9CKdXf/vworeIfREcG8d1i?=
+ =?iso-8859-2?Q?MN9LxN81T44XyvvAK28LQMNp5VfwudXj2kQJ2mV+PEGWOoTMuM4bBG7P3E?=
+ =?iso-8859-2?Q?CewPDhK8TMl2bHl2QmwP4xLvdmhbOqRUw9?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|TYUPR03MB7180:EE_
-X-MS-Office365-Filtering-Correlation-Id: 694738ff-2d51-47e4-9cc1-08dd6759022f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1R6clZlYW9SMU5aNzJIRjY0bUlneG1PZkNHakxpQ1NJR0Y3blBPUUdlM2Mv?=
- =?utf-8?B?RDdPQ1JLcmR4QzgwOTJTQUs4VGhqdVAydSt2NEZ2UnNmU3Mya0x3YUh0TkZo?=
- =?utf-8?B?TjVTWDhQUHplZCtkZXdybnd6YmdrYTJpSUhyaWFhZ0YvNFVZbGVGcXF5azVX?=
- =?utf-8?B?RmJ1U0xxbUl0SWRHb0o5dnhlTEF6c1RncG5PWTZHUkhhVXNXWHcwbUk2Z29q?=
- =?utf-8?B?T3d3VWlyUDh1OFNtMWpwKzJKNUEyOUErV1FuWVRNNFBrdzh5SWNBZTFYTzNr?=
- =?utf-8?B?bnBWa1kwaDVEV1hyQ1FPVGZmRFV0M2JlVTNQVDZFc21ObFNIZWhMWWtPMXpw?=
- =?utf-8?B?NHd4eWJHVlhHM0tscUhXODdUWXhHczhXYkxxcHd4Q1FWdllDSnZhRlhDVXVm?=
- =?utf-8?B?ZXRnMGllRFVDT2JobmpuN3dEUXNHWUxic2Z1Q1hndmhGZ2gyQUlHMnoxVk5h?=
- =?utf-8?B?LzAvS1ZaTDVFVS9qVGVOWXkyeENtb0g1MVd2ZDQxN3Vuc0wwdDVLNjZmVytR?=
- =?utf-8?B?WWRPNzU4a0phckJEbW5HTmxyYm9hZEthM1E0TzFSU09hazZFK3luSjd6ampF?=
- =?utf-8?B?cnpMQzlmdVQ1djg0ZnJhNFlka0VtSHU1c0ZUZCtDdHVOOUlKUUZyNXRMbzlC?=
- =?utf-8?B?eU5PSW1TdkpOVlUyQnl5QkVxUy9GT2toZlJ6VHNzRENKNEtOTTBHTlF3WHJp?=
- =?utf-8?B?bjRKeFVIcm5LODl4V3JjeVJ6VnhPNEtXTkN0Z0hyREpqUG1HVWRDOUJoZk0w?=
- =?utf-8?B?bHczTGJQeWhmdlpUdGhtM2pHMThvOUsrTHc3dEd2YWZmWnZNNUl0ZGhjWk84?=
- =?utf-8?B?QTJndElWSEpxWjVpMEhFUklWdjBWbXprdXFiNC8xam41d2RWMUR1Vi95Y3J6?=
- =?utf-8?B?Y2JSb1VnMWMwNUJ3dEVmVWVTKzUzWUR4cXJCZGcrTUVsN211cFpiQmZvRGsz?=
- =?utf-8?B?VFMzek1zY0Z0YW5xa0FpYUZxZ3RjeURvbXRRNUNkRXpnTmh2aW1JcVdudkt2?=
- =?utf-8?B?MUUzaStpcmxSWFl6WVVyL3E1Z1V4dlpubmdZYkZsMW9hN2t5eGpUa0FmTndN?=
- =?utf-8?B?T1lnMXhrUldOU1BLWFc1NEhFaDBEc2FxV2VDQVc4UXU2blVkMTg0cWVHdEU2?=
- =?utf-8?B?Z2FMUm9BSXVQdHZ3TTRZbWV2eDJsa0I5ckU1VStYZTFOb08zam41R2RXeHZp?=
- =?utf-8?B?TmJEUm0ycXpaWG5xTEo5NGw5azNwZ0E1cENWd0pkWDc4MjBpcGhHVnVMeEdP?=
- =?utf-8?B?aklySkw5dC82NmFvaDNqbTFJblRPVVRpTXQ4b2xDMU9QdHBDemNwVEl3cVpo?=
- =?utf-8?B?TlFFWHNBR1Y5RDNSeUxWV1Z2dTE3VnhBR1RYRTJUdXpBOEVZOEhOajA5TTc5?=
- =?utf-8?B?ZXlZYlY1eVhJdmd6UTdrYjhDaEFpMlZmdXNEek1VcW1hOTRwL2ludHYycWR2?=
- =?utf-8?B?Yjl5aU5qK3dmNEQ5UHphaGxsamJOMWgvZ3FwSGQvVGVZcjB3ajBjdDBjcmVI?=
- =?utf-8?B?ZldEREtZbUs5QTZRdldnMHg5a2g3RlorUmcrcXhKUzNnNm1xdHN4Z1hGb1pL?=
- =?utf-8?B?WTJPUmZITWZZRHV1eUFQNU1FaXErOG5iR3BSZ1dtcE1kU1dURmp3empWbmlt?=
- =?utf-8?B?enBUZXNjaCtGWVpuY05EQ1FZMkd5b3VKeSs3aGF5MzEzNTVNL29mdStCWk1Q?=
- =?utf-8?B?eXIzWHQ0VXhjazhBd045RWZ0THp4b3J2amdZeEs0dk8wbmpmN1d2d3pyaFFC?=
- =?utf-8?B?bzArUFNucmFtUFdlMzdFenlmL1MzVGhlZXdTczh5RVlxUThkR2t2ZEVxbFpI?=
- =?utf-8?Q?fTECxQYwZr3vB0zBq5854K864ZwwB1cRMz9aA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGt4US91T29hN0VDckJCTFllNkxJSVk1dHJmVjJ6dTRZa1gzOVZlN0YyYnRN?=
- =?utf-8?B?Si9lVWQ0bjh6V0llTTIyb212Ung0d3Y2b29yTURleG9xOGpHallSZENaaXBG?=
- =?utf-8?B?Znd0TnpkNTQvRjA0dTF6N1praTdvclhyZ2N0ZE1BYTg1ajcrNWJLamorcjlu?=
- =?utf-8?B?VG52K25WRkMxbkJObjBEMTNMQURCYTFpZzVIK2o4akNLUWk5cUtVbS85MFlR?=
- =?utf-8?B?NE9zRkE1djl6V1NLYURFMzBaZUR3MUNlWi9EcU85K21EcW10NFM1STgvU3B0?=
- =?utf-8?B?bVZOakphQkZ0aXd1RlFkSmNRMG16QzRKS1ZqY2lOdjY4eWFINExDYUFZQnpJ?=
- =?utf-8?B?UzRkandkdjEwaGhoZTV0SXZSMHdWcVRKQVozb0xxMnJHbmkxQmR1eGU1UUlP?=
- =?utf-8?B?aThKVXJIRDlyVTlZb3VNdGxqN0ttY3FPMFlKYVlZSUJ3dkdjRWZNYTFUcHhM?=
- =?utf-8?B?bk1HQ3NWSjNTR2lTRGtob3RwanNHQi90QWR2TU9SdU1ia243anZnZCt6TEFQ?=
- =?utf-8?B?SmZ0cEhHQnFEMUx1cTFleXgrWjB4THNDcHlzRzFZUGN3TGpFWTBGeTZjeHJ0?=
- =?utf-8?B?cGQ4SnQzcjZlS0lSRFBCcndWdWtpOWRHclIwemNTZGtud3I4UzRuR0lwWktW?=
- =?utf-8?B?NnRkYkF1ZDRMYUo4bjRtYlA4d0k4a0RaQ2dVVmpaM0E2NkpoVnFWeTJ6MzZO?=
- =?utf-8?B?UWp4a1RUV0tRdlcxVkZsRWV4cUM2bkNxQzV1ay9XeVpHMzdIaTJGZGJkS1NI?=
- =?utf-8?B?QXlFeEJ6VCtEbnlJQ3o4V3VwdzVZMWw1VHh1aEVXV2tDMVFtMS9ZY3JjT3RN?=
- =?utf-8?B?SEk2Wi91U0lKN3g3dzhKakE0WCtHb0JxU3dzVnoxRUE4NVVyRmN4T0hpazVl?=
- =?utf-8?B?TVdoa2dvUUJtTjRvRDVtYUQrVTdQa0VFaVJxMHR2MVZvL2FQcVFELzRaNUpo?=
- =?utf-8?B?ZkhNbXl0QzdVUDFUazZGZ3FQcEROblVjVmI4emtNaWVHSnRxMHYydm1SVVJv?=
- =?utf-8?B?dGdBUWhFNEk2SVpmaUNuOHFKWFlhRmluNWFOUUw2WWhMMVJoaDZ3d2ZkZkZT?=
- =?utf-8?B?M2w2UUttRTMwU2pkMkpXWHFqOU1tWUF4NFBHNWxzVG5rTWl6Z1Q1NEpZbGg5?=
- =?utf-8?B?RjdldXRtWFIrQVpXbzlzUWJCOW4yRW1zbVNHaDVER0p5dnNxenhDTW5taDRC?=
- =?utf-8?B?N0R0TGNFY3VTbGxUb2pKRWFvY2NkSDU4ZXRScDNpUmRXM29GVldwdW0vUXhJ?=
- =?utf-8?B?ajMxQ1FzaWU4T0JsTURCTEZjNTk3Nm5nK21xekJlSmpIMHp0dWYxSjZBWDRZ?=
- =?utf-8?B?UVNDRzN2M010Z2Nxc2JiRy96QmFFdmI3U0h6Z0gwRnB3WDI4MDVBN2Z0UXgv?=
- =?utf-8?B?MXp2aHBZZ1hPV1dqT1cvaHZyOVVlRkNUTXBJTmw3QkFwU0xMZk1nWDdJbllL?=
- =?utf-8?B?ejRjaFpoYkNITlErbDVWVlc3VkIydW9WNGZ2bWpFMUJ6bDlJb0RXS28rNXVQ?=
- =?utf-8?B?WTJEYzVuRmRCSEpMT21Lb3N1a3JXREFCT3VOaS9EbTRqWFFsNWxkbm9IWDNB?=
- =?utf-8?B?Umo2eVVTcGN4Ymp4akdTUHAxenNzcjlEY0llcGxiWEtoOXA3cnh6VU5Kc2NE?=
- =?utf-8?B?aGpKTnEyTkRZL1hUMWl4RTJUSXhoWFc4MW9hZzMyNnRmVk13c254U0s3U1Fk?=
- =?utf-8?B?aUx0cXBlOFQwR0R1Y29rQjF0SDVTUy9BcWNNODNWdlBDaTBJRFRCNTNncnF1?=
- =?utf-8?B?RHFRR093RWpKcXhIOFlXYnR5QTFjOHRzSVhRcnVwOXJDeml4WWYyUE5wM3RW?=
- =?utf-8?B?Ti9xK0ozVVR5ejVaV1dtRVVyNW1jOWh5ZWVrUUF6L3hxYTd0UXJyeEpWOGpT?=
- =?utf-8?B?dDMrUHk1eEo1d1VzeTdsbHMza3lNZ003a2tiZk9NSGdER0RIejF3N1NyMnU0?=
- =?utf-8?B?aXlqQVBtWS8vbFd0ZmlQbE9sVjIzVnVZZnYxWFRIc0E4SW4vUTY3b1BsVmJp?=
- =?utf-8?B?NFlRak5YemxEZ3cvbEwzS3l1a1JQOWhtOHQzK1orU09LUGoyNU0rQWZwZ2l0?=
- =?utf-8?B?bmdhOWVMaE8vNzJGTnY1dVZEd1FjZ3Q1ajYxYStTS1UxMmRreXkwNFE1cTlq?=
- =?utf-8?B?elJsUDBQb3k1Q0plYjZlL0hzRXdtSGt2VmpaNDg3MGYzdXlpeTYxaktlQ3o3?=
- =?utf-8?B?M2c9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 694738ff-2d51-47e4-9cc1-08dd6759022f
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
+X-OriginatorOrg: maxlinear.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 02:43:34.4387
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR19MB5076.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ce7de5f-b0d2-4c27-38ed-08dd67591aaf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 02:44:15.3818
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l3PlMVyLD5X/26ExFOECm55MEbCPBImMskQ3i2CNKaJU8ehiPB7JKQsz6gX8G/4wM4lV3T0DY2rmWrRva6dHPBwAkkbXWcNgxrL/sS5+qiw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR03MB7180
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: dac28005-13e0-41b8-8280-7663835f2b1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QZVZXXQQ6VLioHLgRKiiiT+WyoyTUlB/U66hQEhzfOX41lKsOT7vPpCo5osU4nl0zPny7yGIgjgruFkKqPnVwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR19MB5373
 
 
-在 2025/3/19 16:38, Rob Herring (Arm) 写道:
-> [ EXTERNAL EMAIL ]
->
-> On Wed, 19 Mar 2025 15:04:44 +0800, jiebing chen wrote:
->> Audio power domain found on S4 device.it need to enable before audio work.
->>
->> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
->> ---
->>   .../bindings/clock/amlogic,axg-audio-clkc.yaml       | 20 +++++++++++++++++++-
->>   1 file changed, 19 insertions(+), 1 deletion(-)
->>
-> My bot found errors running 'make dt_binding_check' on your patch:
 
-thanks for review, sorry , I missed your previous email, the mail was 
-accidentally intercepted
+> -----Original Message-----
+> From: Bjorn Helgaas <helgaas@kernel.org>
+> Sent: Thursday, 20 March 2025 3:23 am
+> To: Lei Chuan Hua <lchuanhua@maxlinear.com>
+> Cc: Frank Li <Frank.Li@nxp.com>; Lorenzo Pieralisi
+> <lpieralisi@kernel.org>; Krzysztof Wilczy=F1ski <kw@linux.com>; Manivanna=
+n
+> Sadhasivam <manivannan.sadhasivam@linaro.org>; Rob Herring
+> <robh@kernel.org>; Bjorn Helgaas <bhelgaas@google.com>; linux-
+> pci@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use
+> use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
+> =20
+>=20
+> On Wed, Mar 19, 2025 at 06:10:57AM +0000, Lei Chuan Hua wrote:
+> > > -----Original Message-----
+> > > From: Bjorn Helgaas <helgaas@kernel.org>
+> > > Sent: Tuesday, 18 March 2025 11:32 pm
+> > > To: Lei Chuan Hua <lchuanhua@maxlinear.com>
+> > > Cc: Frank Li <Frank.Li@nxp.com>; Lorenzo Pieralisi
+> > > <lpieralisi@kernel.org>; Krzysztof Wilczy=F1ski <kw@linux.com>;
+> > > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>; Rob
+> > > Herring <robh@kernel.org>; Bjorn Helgaas <bhelgaas@google.com>;
+> > > linux- pci@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use
+> > > use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
+> > >
+> > > This email was sent from outside of MaxLinear.
+> > >
+> > > On Tue, Mar 18, 2025 at 01:49:46AM +0000, Lei Chuan Hua wrote:
+> > > > Hi Bjorn,
+> > > >
+> > > > I did a quick test with necessary change in dts. It worked, please
+> > > > move on.
+> > >
+> > > What does this mean?  By "move on", do you mean that I should merge
+> > > the patch below (the removal of intel_pcie_cpu_addr())?
+> >
+> >   I mean you can merge the patch with removal of intel_pcie_cpu_addr()
+> >
+> > > I do not want to merge a change that will break any existing
+> > > intel-gw platform.  When you say "with necessary change in dts", it
+> > > makes me think the removal of intel_pcie_cpu_addr() forces a change
+> > > to dts, which would not be acceptable.  We can't force users to
+> > > upgrade the dts just to run a newer kernel.
+> >
+> >   Actually, intel_pcie_cpu_addr() did the address translation, so in
+> our case,
+> >   Dts has to adapt to this change.
+> >
+> > > I assume 250318 linux-next, which includes Frank's v12 series,
+> > > should work with no change to dts required.  (It would be awesome if
+> > > you can verify that.)
+> >
+> >   I will try 250318 linux-next and let you know the result once it is
+> done.
+> >
+> > > If you apply this patch to remove intel_pcie_cpu_addr() on top of
+> > > 250318 linux-next, does it still work with no changes to dts?
+> >
+> >   I think we need to adapt dts change. Even this series patch has dts
+> >   adaption part.
+> >
+> > > If you have to make a dts change for it to work after removing
+> > > intel_pcie_cpu_addr(), then we have a problem.
+> >
+> >   We can update the dts yaml file.
+> >
+> > > I do not see a .dts file in the upstream tree that contains
+> > > "intel,lgm- pcie", so I don't know what the .dts contains or how it
+> is distributed.
+> > >
+> > > I do see the binding at
+> > > Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml,
+> > > but the example there does not include anything about address
+> > > translation between the CPU and the PCI controller, so my guess is
+> > > that there are .dts files in the field that will not work if we
+> > > remove intel_pcie_cpu_addr().
+> >
+> >   This driver is for x86 atom platform, no upstream dts file even in
+> >   arch/x86/boot Since upstream x86 platforms use acpi, even several
+> >   platforms use dts, but never create dts directory in
+> >   arch/x86/boot.
+> >
+> >   As I mentioned earlier, dts needs a minor change.
+>=20
+> If there are end users that have a dts that must be changed before
+> intel_pcie_cpu_addr() can be removed, we can't remove it because we
+> can't force those users to upgrade their dts.
+>=20
+> If this driver is only used internally to Intel, or if the hardware has
+> never been shipped to end users, it's OK to remove
+> intel_pcie_cpu_addr() and assume those internal users will update dts.
 
-pip3 install yamllint
-
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml 
-DT_CHECKER_FLAGS=-m make W=1 dt_binding_check
-
-we can see these warnings, and fix it in next verison, thanks again
-
->
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml:105:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.example.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
->          from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
->
-> doc reference errors (make refcheckdocs):
->
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250319-audio_drvier-v4-1-686867fad719@amlogic.com
->
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
->
+This driver is only used for internally to Maxlinear. Internal users will u=
+pdate dts
+Accordingly. Anyway, we will take linux-next-20250318 to run the test with =
+dts adaptation
+Internally on the hardware board.
+>=20
+> > > > ________________________________________
+> > > > From: Bjorn Helgaas <mailto:helgaas@kernel.org>
+> > > > Sent: Tuesday, March 18, 2025 1:59 AM
+> > > > To: Frank Li <mailto:Frank.Li@nxp.com>
+> > > > Cc: Lei Chuan Hua <mailto:lchuanhua@maxlinear.com>; Lorenzo
+> > > > Pieralisi <mailto:lpieralisi@kernel.org>; Krzysztof Wilczy=F1ski
+> > > > <mailto:kw@linux.com>; Manivannan Sadhasivam
+> > > > <mailto:manivannan.sadhasivam@linaro.org>; Rob Herring
+> > > > <mailto:robh@kernel.org>; Bjorn Helgaas
+> > > > <mailto:bhelgaas@google.com>; mailto:linux-pci@vger.kernel.org
+> > > > <mailto:linux-pci@vger.kernel.org>;
+> > > > mailto:linux-kernel@vger.kernel.org
+> > > > <mailto:linux-kernel@vger.kernel.org>
+> > > > Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use
+> > > > use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
+> > > >
+> > > >
+> > > >
+> > > > On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
+> > > > > Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should
+> > > > > provide correct address translation. Set use_parent_dt_ranges to
+> > > > > allow the DWC core driver to fetch address translation from the
+> > > device tree.
+> > > > >
+> > > > > Signed-off-by: Frank Li <mailto:Frank.Li@nxp.com>
+> > > >
+> > > > Any update on this, Chuanhua?
+> > > >
+> > > > I plan to merge v12 of Frank's series [1] for v6.15.  We need to
+> > > > know ASAP if that would break intel-gw.
+> > > >
+> > > > If we knew that it was safe to also apply this patch to remove
+> > > > intel_pcie_cpu_addr(), that would be even better.
+> > > >
+> > > > I will plan to apply the patch below on top of Frank's series [1]
+> > > > for
+> > > > v6.15 unless I hear that it would break something.
+> > > >
+> > > > Bjorn
+> > > >
+> > > > [1]
+> > > > https://nam12.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2=
+F
+> > > > lore%2F&data=3D05%7C02%7Clchuanhua%40maxlinear.com%7C1c7a4180ddc340=
+f
+> > > > 2399308dd671b6e6a%7Cdac2800513e041b882807663835f2b1d%7C0%7C0%7C638
+> > > > 780089712963723%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIl
+> > > > YiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D
+> > > > %7C0%7C%7C%7C&sdata=3DESUTIdyb342xMYwUhzwj%2BXsKoNQzth86rV3dfis5dn0=
+%
+> > > > 3D&reserved=3D0
+> > > > .kernel.org%2Fr%2F20250315201548.858189-1-helgaas%40kernel.org&dat
+> > > > a=3D05
+> > > > %7C02%7Clchuanhua%40maxlinear.com%7C1612d73ded5741bbd37508dd663201
+> > > > 00%7
+> > > > Cdac2800513e041b882807663835f2b1d%7C0%7C0%7C638779087153570342%7CU
+> > > > nkno
+> > > > wn%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiO
+> > > > iJXa
+> > > > W4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DaIuZWz=
+w
+> > > > Fy2r
+> > > > rzsJ5KfbxWKMx%2BPn1WHx2KvpSR0nxsl8%3D&reserved=3D0
+> > > >
+> > > > > ---
+> > > > > This patches basic on
+> > > > > https://nam12.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F=
+%
+> > > > > 2Flo%2F&data=3D05%7C02%7Clchuanhua%40maxlinear.com%7C1c7a4180ddc3=
+4
+> > > > > 0f2399308dd671b6e6a%7Cdac2800513e041b882807663835f2b1d%7C0%7C0%7
+> > > > > C638780089712987168%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRy
+> > > > > dWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoy
+> > > > > fQ%3D%3D%7C0%7C%7C%7C&sdata=3DPguxNdlqlw4e%2FqmgY4aM67UarmNDwx7RC=
+V
+> > > > > 69x0myXJc%3D&reserved=3D0
+> > > > > re.kernel.org%2Fimx%2F20250128-pci_fixup_addr-v9-0-3c4bb506f665%
+> > > > > 40nx
+> > > > > p.com%2F&data=3D05%7C02%7Clchuanhua%40maxlinear.com%7C1612d73ded5=
+7
+> > > > > 41bb
+> > > > > d37508dd66320100%7Cdac2800513e041b882807663835f2b1d%7C0%7C0%7C63
+> > > > > 8779
+> > > > > 087153596851%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlY
+> > > > > iOiI
+> > > > > wLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C
+> > > > > 0%7C
+> > > > > %7C%7C&sdata=3Dmht19VSB24Znpvtz1pOlmtHYec%2BDBDH70zuLOZmwlSI%3D&r=
+e
+> > > > > serv
+> > > > > ed=3D0
+> > > > >
+> > > > > I have not hardware to test and there are not intel,lgm-pcie in
+> > > > > kernel tree.
+> > > > >
+> > > > > Your dts should correct reflect hardware behavor, ref:
+> > > > > https://nam12.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F=
+%
+> > > > > 2Flo%2F&data=3D05%7C02%7Clchuanhua%40maxlinear.com%7C1c7a4180ddc3=
+4
+> > > > > 0f2399308dd671b6e6a%7Cdac2800513e041b882807663835f2b1d%7C0%7C0%7
+> > > > > C638780089713001616%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRy
+> > > > > dWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoy
+> > > > > fQ%3D%3D%7C0%7C%7C%7C&sdata=3DDyXeezC8qsW2cdRg37sKVq2AH82vCV7L7YJ=
+%
+> > > > > 2FtgH6jU0%3D&reserved=3D0
+> > > > > re.kernel.org%2Flinux-pci%2FZ8huvkENIBxyPKJv%40axis.com%2FT%2F%2
+> > > > > 3mb7
+> > > > > ae78c3a22324b37567d24ecc1c810c1b3f55c5&data=3D05%7C02%7Clchuanhua=
+%
+> > > > > 40ma
+> > > > > xlinear.com%7C1612d73ded5741bbd37508dd66320100%7Cdac2800513e041b
+> > > > > 8828
+> > > > > 07663835f2b1d%7C0%7C0%7C638779087153612764%7CUnknown%7CTWFpbGZsb
+> > > > > 3d8e
+> > > > > yJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOI
+> > > > > joiT
+> > > > > WFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DDUsGCW%2FZpvx4whLteo=
+I
+> > > > > jYqw
+> > > > > d6oOk9rXks%2BV40i5sovI%3D&reserved=3D0
+> > > > >
+> > > > > According to your intel_pcie_cpu_addr_fixup()
+> > > > >
+> > > > > Basically, config space/io/mem space need minus SZ_256. parent
+> > > > > bus range convert it to original value.
+> > > > >
+> > > > > Look for driver owner, who help test this and start move forward
+> > > > > to remove
+> > > > > cpu_addr_fixup() work.
+> > > > > ---
+> > > > > Frank Li <mailto:Frank.Li@nxp.com>
+> > > > > ---
+> > > > >  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
+> > > > >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > > > b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > > > index 9b53b8f6f268e..c21906eced618 100644
+> > > > > --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > > > +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+> > > > > @@ -57,7 +57,6 @@
+> > > > >       PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
+> > > > >       PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
+> > > > >
+> > > > > -#define BUS_IATU_OFFSET                      SZ_256M
+> > > > >  #define RESET_INTERVAL_MS            100
+> > > > >
+> > > > >  struct intel_pcie {
+> > > > > @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct
+> > > > > dw_pcie_rp
+> > > *pp)
+> > > > >       return intel_pcie_host_setup(pcie);  }
+> > > > >
+> > > > > -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64
+> > > > > cpu_addr) -{
+> > > > > -     return cpu_addr + BUS_IATU_OFFSET;
+> > > > > -}
+> > > > > -
+> > > > >  static const struct dw_pcie_ops intel_pcie_ops =3D {
+> > > > > -     .cpu_addr_fixup =3D intel_pcie_cpu_addr,
+> > > > >  };
+> > > > >
+> > > > >  static const struct dw_pcie_host_ops intel_pcie_dw_ops =3D { @@
+> > > > > -409,6 +402,7 @@ static int intel_pcie_probe(struct
+> > > > > platform_device
+> > > *pdev)
+> > > > >       platform_set_drvdata(pdev, pcie);
+> > > > >       pci =3D &pcie->pci;
+> > > > >       pci->dev =3D dev;
+> > > > > +     pci->use_parent_dt_ranges =3D true;
+> > > > >       pp =3D &pci->pp;
+> > > > >
+> > > > >       ret =3D intel_pcie_get_resources(pdev);
+> > > > >
+> > > > > ---
+> > > > > base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
+> > > > > change-id: 20250305-intel-7c25bfb498b1
+> > > > >
+> > > > > Best regards,
+> > > > >
 
