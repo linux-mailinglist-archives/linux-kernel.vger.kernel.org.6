@@ -1,240 +1,122 @@
-Return-Path: <linux-kernel+bounces-569898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4257A6A92E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:57:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBD2A6A92F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:58:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B044189029C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0B7188C671
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CE61DFE26;
-	Thu, 20 Mar 2025 14:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7DD1E51FA;
+	Thu, 20 Mar 2025 14:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EnkjezDc"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sDKs5kIF"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9051D5CCD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19C71DEFE4;
+	Thu, 20 Mar 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482101; cv=none; b=g+hwhGpara+9kvCRpSboOMKlViqut/Nd2w0klwmpg7noKoqEoC6cGhyn/T2EM8luO9+8S36cjBGXrj0X12991uoePmZuRzT/3wfIIRo4NUDwbPVKCsPCMpf9UFq2xJNNl3bAiLwlDSp6BvQqGWXjQ9ShKb/VpFjUt0Z/RkCCM7Y=
+	t=1742482104; cv=none; b=Nav6zE5IrWEgj2FU+fAsKx22Lb9AjRJZl+kls1up1QaeXMIEEyPoKQz6qWWLWdsz3CB29u6NvrtpeR/4+g9kW6W41TDBehMvkCNk5GVomw2/AHMu+PEqDMRWzijRBh3DgCFzFR8lTBV93SPnHMc/xGUoXncWIk5TXVI2IUPkob4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482101; c=relaxed/simple;
-	bh=WJ070vkc9pvl3EedyR6k/ajws5zd59U5a2Diu/Qubms=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=FXhsSznpHAV1JpuAOrDXNhv87r4YFZmiZkN7gK+5OZhzf3Cjooy6aetKTDKcN26E60xtvFsRFHNxlLH/1k4nAE2TO11IGZjD8wwBZSO9pJM1PNnzyzMYNSFdKUK6/nyqg81j6zNdt93Ybht90HwFcdmU3fzUxodDqS5oY30Lkz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EnkjezDc; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1742482104; c=relaxed/simple;
+	bh=zPezT8El2e4h3o7yjH4jTAgyKaMCD49/Uzh6Mq5DaW0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=E9Pj88s3v1LPePbUlRhpBc0zH+foD2uu5Ha7Qe+AvPS0SfSBbAk4q1ELtLMqqmwxII9cRr8aCMX1HV2hhiaKKJtWBsDqFH67Pt1+vMPGeK1eEqKz9WXWqadCDskKT78+DmU8q9XmwRIJMMkar0I+e6M6M3j/ip6U9gPxrXqnNk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sDKs5kIF; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742482098; x=1743086898; i=markus.elfring@web.de;
+	bh=DfZoeGXnC8fbARD3b+igjeNU0yxDHdtiopyfZfd2L6Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sDKs5kIF7lvFISqdnWdsUo7Q19Yr3e3giqX4Kd+Ny2reakJb+vVULaV1qaWhI0Tu
+	 RthkGZsbijtxlJyDdcrASbATnReAjT7dABuZhywMvK889TElkz+foEn6rk+MzO4AO
+	 wn46oY30nC4acPUJNKZcA1w63FPWEkkqpeGgIy2ATA4SbqrKY5dkjkQtrNa7c9Ihp
+	 KY35BD7uHZFWIhpplbziBQEDe0bya28G09Lk8tvPMTS1Af77c8H0PWfeSsTDT21BM
+	 BYM5P5XLEgrTEUXaXK9SHyMBIv7FcKVCacBhBYvUIk3bsK4pzqgpUUVB1lFeNYuvS
+	 byEsLCO9Rtr8/BF3ug==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.46]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbTH3-1tKHcJ17hB-00aFwu; Thu, 20
+ Mar 2025 15:48:18 +0100
+Message-ID: <79b776fe-7fcf-4cf8-9d3f-bd5f4e66344e@web.de>
+Date: Thu, 20 Mar 2025 15:48:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742482087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AGPSkGX7UwV9BGhBv1TQ2kKav1LFAHSe1DoGva65c3k=;
-	b=EnkjezDcXHj/gATbfqdkfs25Bqrpm0w00SWpQzToKkB4R+pmXe62IEvrSERDZmi86mUHUn
-	exFoKK55wTEgBC9iRtE+ze8P7M5xQ/FhZ5y5dqCt//NBP3oFTc6utcbXDLwd96IpNU1M5h
-	Ky06AvtFqzAiTwt7e2uGvczUcIgMSVg=
-Date: Thu, 20 Mar 2025 14:48:05 +0000
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Ludovic Desroches <ludovic.desroches@microchip.com>
+References: <20250318030717.781-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] pinctrl: at91: Add error handling for
+ pinctrl_utils_add_map_mux()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250318030717.781-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <f2bd7e45b327d7b190edef4916d5b9e6dc83e87a@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH bpf-next v3 1/3] bpf, sockmap: avoid using sk_socket
- after free when sending
-To: "Michal Luczaj" <mhal@rbox.co>, xiyou.wangcong@gmail.com,
- john.fastabend@gmail.com, jakub@cloudflare.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrii@kernel.org,
- eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- shuah@kernel.org, sgarzare@redhat.com, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-In-Reply-To: <1e8c8e7a-23d9-4ed3-902a-8a4ba06f1f69@rbox.co>
-References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
- <20250317092257.68760-2-jiayuan.chen@linux.dev>
- <1e8c8e7a-23d9-4ed3-902a-8a4ba06f1f69@rbox.co>
-X-Migadu-Flow: FLOW_OUT
+X-Provags-ID: V03:K1:Jv9YEG5A6IYdFMMjFJhbkMP4K6fj4hm+m/+jMG29jkDhR3DufXP
+ fao5en0fLSRCMR/fTiyIrAEvL8JhX541DSKF9jUFjNoK+7fP9sLOI7F2fCxmPCo8nYt5rLb
+ iN9GLL1Ll05eZG3hwdD3wOxiUXLVxNkujPeWB9TGvh4fTtdkQBtuEnqm4VSKt9umtB8GKit
+ in295Z82kqqeJ5fjvZj8g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Icd6NZo/SxA=;bXndP2xuCTpikrk/MEyGXGzNVW0
+ CneKGLPmvCp6YnKQTW2CXUHE16pLlTKUg3wFdKTaF8Z3ad0k1JzsvcvO0tAvi94y3CM91YiUs
+ lK/2Fy0NI0ptapr73mJQ0y0mRC1MdZnRialJiLDXXBKUnRlMcqij8IA6pGlyM+hzf6q3dO6vM
+ 9ZAXV8X13Yg+7hKYqYkrc4/C8L68hxwxqbyGF2Kwln+Sb4OQppKMyL8Zib89wd3IW4Fzv58HA
+ J4Erb+2POAnlvkpSzT2V1RuRoomtXdOE0Z5rL5lvkI2zEHQ4e5sF/mVEn7YCggfeLRKhhib7a
+ LLIsQjd5NBLmbijxxGkVJbQGhkpVkjNANLSIHq361VEo0F4teKl4BMI0Va83HP/rjcgZvxo/U
+ WJCWDAYxmf2r9rLkMmlvE0YbkGMPvFMY4OErCdPFpaNNrA4hqXIjS9vB3TZ+Nexd4+cyNkqp1
+ s39zVmBlH16WDMlSRtf2IjC4LUsBTvxjQSNF722xGl2YoIbLEV0WKEhe0l3auvgf1Witqg3CQ
+ T6MT1CcWRm1NmzNtbkvt297hCvbcu0Sx5d7Y9daEDCk4HjZUG+3i6DrKXGobkszQQR660AhMj
+ WZoT5g8jv7IAr6aFGMDRPQUlW23nYY7eKupqLgGtozNOcTSWGdLyCfx/KLKK+hITqKdWKMeB7
+ BbLQm4jPPpAYXpQkicl8qGGWhnmYw9gk5aq+/cDx/aTYluAsRVbdt+8iEHe3tbYHr8Ci+Qq9N
+ pCcLelwn3AVIm6mPbi+uXbz8wluwHAbghf3KSVBs0sS3+IWLijJp17C8jOcfkZ8qLV1h9U9KM
+ 5Ypm+gcjjk3Wc1VWC/vG0aq6vXmTezAgkZ3Oa901yYMcVWUj86+nA0RwS6keXPYX9vqTyh0I3
+ Gd028Egn4Y9Js810uzZ5k969hYGBZhd3NgV493D0XYtancDR/mrL+wXhMzvlC19S+8sr4DLBw
+ WefoueVnGwekTd8C47aoqsSP/HiIv+a8v1rmvk4R6XWkzwUaEYdZA2Oo4MkBCn0q7GosHgdxs
+ tJumdQKOPJzhfpfeeK95D/uKlpO0ol78aIi9UWrKJVmvNEveutmqiD2QG5/uxMwGO/bmE5/mP
+ +yoj84Ol8yJYQ1LzXDaVY7b9mS0H7+8aM9TSHDtahKeKdn8F6yGsEtWdx4VIfxSvm+t1nW+J3
+ JX1szufteAnz4358o5q7S+NoTeVMOfiJI4wqVgLZCz7bpZfb87lA/9BkunFFSGL8tzDPmok6/
+ EiDMsn/5i5rLZAK1b4E1GfZ1w2L62yWh3wOeh33Kqa2aKCQBHsoDrQkV6NUnNNSjJcnbJOH0s
+ lfWAJNQXZicbOvQR6bBzqJfB+kjjcxEwHABsLw87/mpBUP2zQiMoourAFq16A4aPxZ4IpDnmB
+ UiKTN5mMnK1E+q4RnBFohs9XuBRwmaTCjaawqH/DBNimwgeSAY2NkO0B7G46ponZUBvt7rvCV
+ lgWqrJ9HkKa5o7CtgnGOpwnGUqzZtOkDpWzjJHGv6xsTJPT1XB7KdTeNHei5u9QPy/hVqhQ==
 
-March 20, 2025 at 20:32, "Michal Luczaj" <mhal@rbox.co> wrote:
+> In atmel_pctl_dt_subnode_to_map(), the return value of
+> pinctrl_utils_add_map_mux() needs to be checked, for the function
+> will fail to associate group when the group map is full. =E2=80=A6
 
->=20
->=20On 3/17/25 10:22, Jiayuan Chen wrote:
->=20
->=20>=20
->=20> The sk->sk_socket is not locked or referenced, and during the call =
-to
-> >=20
->=20>  skb_send_sock(), there is a race condition with the release of sk_=
-socket.
-> >=20
->=20>  All types of sockets(tcp/udp/unix/vsock) will be affected.
-> >=20
->=20>  ...
-> >=20
->=20>  Some approach I tried
-> >=20
->=20>  ...
-> >=20
->=20>  2. Increased the reference of sk_socket->file:
-> >=20
->=20>  - If the user calls close(fd), we will do nothing because the refe=
-rence
-> >=20
->=20>  count is not set to 0. It's unexpected.
-> >=20
->=20
-> Have you considered bumping file's refcnt only for the time of
->=20
->=20send/callback? Along the lines of:
->=20
->=20static struct file *sock_get_file(struct sock *sk)
->=20
->=20{
->=20
->=20 struct file *file =3D NULL;
->=20
->=20 struct socket *sock;
->=20
->=20 rcu_read_lock();
->=20
->=20 sock =3D sk->sk_socket;
->=20
->=20 if (sock)
->=20
->=20 file =3D get_file_active(&sock->file);
->=20
->=20 rcu_read_unlock();
->=20
->=20 return file;
->=20
->=20}
->=20
->=20static int sk_psock_handle_skb(struct sk_psock *psock, struct sk_buff=
- *skb,
->=20
->=20 u32 off, u32 len, bool ingress)
->=20
->=20{
->=20
->=20 int err;
->=20
->=20 if (!ingress) {
->=20
->=20 struct sock *sk =3D psock->sk;
->=20
->=20 struct file *file;
->=20
->=20 ...
->=20
->=20 file =3D sock_get_file(sk);
->=20
->=20 if (!file)
->=20
->=20 return -EIO;
->=20
->=20 err =3D skb_send_sock(sk, skb, off, len);
->=20
->=20 fput(file);
->=20
->=20 return err;
->=20
->=20 }
->=20
->=20 ...
->=20
->=20}
->=20
->=20static void sk_psock_verdict_data_ready(struct sock *sk)
->=20
->=20{
->=20
->=20 struct file *file;
->=20
->=20 ...
->=20
->=20 file =3D sock_get_file(sk);
->=20
->=20 if (!file)
->=20
->=20 return;
->=20
->=20 copied =3D sk->sk_socket->ops->read_skb(sk, sk_psock_verdict_recv);
->=20
->=20 fput(file);
->=20
->=20 ...
->=20
->=20}
->
+Please improve such a change description another bit.
 
-Thank you for your suggestions.
 
-I previously attempted a similar approach in another version, but
-felt that manipulating the file layer within sockmap was quite odd.
+> propagate the error code to caller function when the function fails.
 
-Moreover, the actual process flow is more complex than we initially
-imagined.
+                                                                call faile=
+d?
 
-The current overall close process looks roughly like this:
-'''
-close(fd):
-    file_ref_put(file):
-        __sock_release(sock)
-            sock_map_close()
-            saved_close()
-               sk->sk_socket =3D NULL
-            sock->ops =3D NULL
-            sock->file =3D NULL
-'''
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc7#n145
 
-We can observe that while sk->sk_socket might not be NULL, it doesn=E2=80=
-=99t
-guarantee that sock->file is not NULL. This means the following code
-is problematic:
-'''
-sock =3D sk->sk_socket;
-if (sock)
-    sock->file->xx <=3D=3D sock->file may be set to NULL
-'''
-
-Of course, we might try something like:
-'''
-try_hold_sock() {
-    rcu_read_lock();
-=20=20=20=20
-=20   sock =3D sk->sk_socket;
-    if (!sock)
-        unlock_return;
-=20=20=20=20
-=20   file =3D sock->file;
-    if (!file)
-        unlock_return;
-=20=20=20=20
-=20   file =3D get_file_active(&file);
-    rcu_read_unlock();
-    return file;
-}
-'''
-
-Acquiring the socket's reference count requires significant effort,
-and we need to pay special attention to the socket's own release
-process to ensure correctness. Ultimately, this led me to decide to
-operate on psock instead of directly manipulating the file layer to
-avoid this issue.
+Regards,
+Markus
 
