@@ -1,84 +1,78 @@
-Return-Path: <linux-kernel+bounces-570391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BC2A6AFC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:21:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37645A6AFC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951FB4A057E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A35594A03F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDC922A7EA;
-	Thu, 20 Mar 2025 21:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51024228CA9;
+	Thu, 20 Mar 2025 21:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aA516Z88"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHMZxz50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014AC1EA7DE;
-	Thu, 20 Mar 2025 21:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7391EA7DE;
+	Thu, 20 Mar 2025 21:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742505654; cv=none; b=O7KnIzxZRtv0quyBwP/vydFkkabXmK1qJrXsQYE2LPtTYT2aRd5Bw5kgJOuctzF6ptE9x633Cg6mJ0G403whaA0aNX53wbs19kQCbwlAFjGNy7OTD9QDsCNbimh6LwYbmwZYuIJ/Vcap/YWFh8w1QSgv+009jr3lzYb8K9Ix3Wk=
+	t=1742505648; cv=none; b=XOFuwK/Z+hk2qKU8Vq8QseKxMw5qLtn1BkkgC4vPkPXLj4pmgiNTTO8f5Mg/AK04ojN0LefGtgEN4E/J97pJkfMPSZCQcSJvLqR9o+BqU/tCk7+wEO0NFL+e516bDfjWJ687ahf9NTfVSDVqQURFIF/mKTzkcp2qFvEaXmQ6iog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742505654; c=relaxed/simple;
-	bh=+s7ZB5CBM9CcGb7PpCJcK4Lr37jqrpaUHbWPFDVwTgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bf1Y1Qzl9iu4tnZE5/j5kVp6inuv1GvHFPrMei2k04Dma3p5u6BMkNpzi9JtxH6nh7N6lEHIr2AIl09NCDra7PPoSyrwK5A0AvqItbt6JCY8s6Q3bYf8bUyu6U0aksA4hH1z4Q8KcRiL1mzA5vIVBxwpkoeAI5XAKTJylHf3pTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aA516Z88; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+UI5/kSNnDWvxYjcQDDBW5iFQFnCG/NBqKa7zfzLaO8=; b=aA516Z88ocJ1ZbpR5Vx88VqxFq
-	xq+NNe2hLJZz8N1TJ7TN86HC+bA32PanbhdX0HOqUYLPcmFuMQJMiY2QCJV6ymLJvSajp5aW3LJoC
-	EdX/5TvdyKyLJLVMFUxZuyw3whhMoamPljYS62YTDS3JLejwZKmpWQqUFzawHMw1MI5g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tvNJe-006W48-U2; Thu, 20 Mar 2025 22:20:38 +0100
-Date: Thu, 20 Mar 2025 22:20:38 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: hfdevel@gmx.net
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 4/7] net: phy: aquantia: add essential
- functions to aqr105 driver
-Message-ID: <075283ba-ced1-4aa8-b9ec-7bb456d1d82a@lunn.ch>
-References: <20250318-tn9510-v3a-v6-0-808a9089d24b@gmx.net>
- <20250318-tn9510-v3a-v6-4-808a9089d24b@gmx.net>
+	s=arc-20240116; t=1742505648; c=relaxed/simple;
+	bh=2pxp6U9YrsIurnP7Uxe5+BtRYINx9aJ985g/tR1aY+E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZcNElsAIR+J4Evaeo9CnKYYCSsIoX8I066zmaCVxQYPiUKv+sjudUBW8MQSkZ8QzhhlRLwVB/KIEjzHRh87OyRVHg8z2bkG4hHafTbmg2kcTo29U3QwQdRgg/yGGh7j6hUUftg8Q2L6OsHrjj82JfPOHwacdujLGPjs8MG9GxOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHMZxz50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE4FC4CEE3;
+	Thu, 20 Mar 2025 21:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742505648;
+	bh=2pxp6U9YrsIurnP7Uxe5+BtRYINx9aJ985g/tR1aY+E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=jHMZxz50/Pt0/khH/bTqwHSt5aQW0qiS6tnjoGpS9oCUPGAIgMEjtcLURu/gCZjXR
+	 SMrNZvcV2DmqAX2QkymHrsnxebj3oxBXInHW6IbaRmDCXGvCicSWdHqQ0eL48G35dU
+	 3oq/BPcKqyR3JnTwSS7mMGX6W1coyM7CGtUP7G9sTJHdVRQeDimGsErYTIKMgyrqXE
+	 BXZjkoTMlrtm1anvbaqrEC0o1WqTJGPsSZKLtgBAlQjUyLR4oyMjgQSvzoeYN2AFIp
+	 35kqDrR2bZtMRqH5Yv18S54nh0eMUU6TunB0mwQ/1piabLYWLYJ6oOfu3wFBGjAuHD
+	 vrQVzE8jdeuGA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE01C3806654;
+	Thu, 20 Mar 2025 21:21:25 +0000 (UTC)
+Subject: Re: [GIT PULL] KVM fix for Linux 6.14 final
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250320180522.155371-1-pbonzini@redhat.com>
+References: <20250320180522.155371-1-pbonzini@redhat.com>
+X-PR-Tracked-List-Id: <kvm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250320180522.155371-1-pbonzini@redhat.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+X-PR-Tracked-Commit-Id: abab683b972cb99378e0a1426c8f9db835fa43b4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f45f8f0ed4c6d3a9be27ff27347408e1c1bbb364
+Message-Id: <174250568438.1915575.18231063226845575643.pr-tracker-bot@kernel.org>
+Date: Thu, 20 Mar 2025 21:21:24 +0000
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-tn9510-v3a-v6-4-808a9089d24b@gmx.net>
 
-> +static int aqr105_config_speed(struct phy_device *phydev)
-> +{
+The pull request you sent on Thu, 20 Mar 2025 14:05:22 -0400:
 
-This is used when autoneg is disabled. Generally the name would be
-_setup_forced, e.g. genphy_setup_forced(). Sticking to that naming
-convention makes is simpler to understand if you know other PHY
-drivers.
+> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
-Once you have changed this, you can add my Reviewed-by:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f45f8f0ed4c6d3a9be27ff27347408e1c1bbb364
 
-    Andrew
+Thank you!
 
----
-pw-bot: cr
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
