@@ -1,164 +1,137 @@
-Return-Path: <linux-kernel+bounces-570426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F9EA6B039
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:01:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEA5A6B03C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:02:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8341E884C13
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:01:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7191C7B346A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576B1214223;
-	Thu, 20 Mar 2025 22:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD76228C9C;
+	Thu, 20 Mar 2025 22:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eoX0mlxd"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LnuqufDd"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26F51EB1AE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7945D224220
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508098; cv=none; b=BzHb07B5Y7IXHMfh6zX6n3cTZs2W2TEqOkkQvKYHYxsC8I+fdbul37s6zCBd6onpgJF7YruIbAxRndW/c6Cr0sr4GbIweWwfq/sgqx7ZVMCn7Wd5hAAeMo00UswlJrPbkSvclgnSddX74jPZ8Dp4xQlyS5ga6a2arT6uYEoT9z4=
+	t=1742508104; cv=none; b=gUOwlodGCJUC8F1g27Nyp2KjDoqD/qfb7GPTCDyakHQTd1UOk5MgJDwQKhxZRhCYYEIUABXC4pR+SXM6WE+2+hNc2FeK1PdkyQ5u34L2VgAMexinunOeniZYRKWHhfWxphMl4/3ciQY6PxAwXGfEGV4LMUh6iYUBFPsOjCH93iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508098; c=relaxed/simple;
-	bh=Yg6H4vxZ/ypZ9QWZ72i/Vu4mvqZmQtAU3zw/DO+b4U0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPMj44PQq4WFgfDzt2UTjDTF/XaoVlO4c59Coyza2MUSAHQvuWLTMwtCOCX6v0MKHW3dgjIIhllfV2HISZjaddMtZgiswWln6xqux9Q1zvxdfiGH7ZTnMFyw237xvUtpNiNtqvJsfQIMdgoT0QJVglaQ8qKqASbKY6xokbXmcW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eoX0mlxd; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D3C6420487;
-	Thu, 20 Mar 2025 22:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742508093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XaCKPJlwcuwqGD/thqS4n6Nbplq365BJsUtRQbhpno8=;
-	b=eoX0mlxdGPblU6qH1a3qTEhGU4jwNb+QkTTYzYytDQWWmCNogODfRMqL+vHZFVT4jK87uW
-	vJUs9/ZXA0OqBUfcNoCaZdeA0GD9Ph7DhZS7k91w3SUn2n4LQsOWeW3b3pDEI/iQuGSpL5
-	5+jYV7TAJSckeks092rjv786izvGIqIT1enOtNsQ3ddxJXyYlnqKftaOjnOCh78dv8Q9GC
-	ic2OufvNArgmAd53jFkM3dr6OksezBOIyXP0VbPI/H5b5vtNCpxentbk+OIEMYYyNgmdX6
-	cZ6rbEfv+IAG3scall1p1wSSPVv/ddKMNmakw7N+64G06hmBOIh+yDrKOyviOw==
-Date: Thu, 20 Mar 2025 23:01:31 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Qasim Ijaz <qasdev00@gmail.com>, miquel.raynal@bootlin.com,
-	linux-i3c@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: master: svc: fix signed/unsigned mismatch in
- dynamic address assignment
-Message-ID: <2025032022013134061aaa@mail.local>
-References: <20250317101516.19157-1-qasdev00@gmail.com>
- <Z9l3waI5EdrWmYC3@lizhi-Precision-Tower-5810>
- <Z9mGK0x8fsWvbTvo@qasdev.system>
- <Z9rEPLAmxrqP61sz@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1742508104; c=relaxed/simple;
+	bh=UBLaD4Nq5xNwf400rlM/sUNn9F560QUZ1XyT2uZZub8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tN++enEhzB3Y8pauIKM4eD3IJ3Pnxn3U8j7dJkIS17iywlRKpgiO1D+jMd3Y54ihJknoUfyqoGgCeeopw+6dVXgiyYXBVmLBIvTs2FrrHJPgLcTmZ9C0tOWEtrKEsYhw/g06eXT4mKSY8CLPw/dwJUTYl2I7CToXBimmcuJ9xdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LnuqufDd; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso8848825e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742508100; x=1743112900; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=w8yT7bxx+POTQPmMty55njjk/M6SEwDhRgh0uxWleRk=;
+        b=LnuqufDdNc0xgPOLrTPivBZCBviALYxIZERpaM9Wc3DDGtpUVHQDAh4XsT+IbtW3/e
+         fHzLQJ3CXVL5RAg9OTwLtY0oAh5yCT80jgy4PUlJYlp0mZ4lKqCm2zuVIq7CcCkno3/r
+         rbAO+yVYYQsRFRTumBiOiw/AYR8UVgj6Oz7F53O5I4SvD/EjB9iag3Xvvt3WAF/3wubF
+         BDfA/BjEcAr1fsrknqDXoOoI3cKuMhnu3ipzglTJuxET2WWCgeQk6n6VMLjRG6TB/bYV
+         8Uu+Z1tPleNrFM8Ev/Yrj3Usnr0vKb9qR0OKtx0mXIsht0DpmkRC2LvFchuetfihg8Vq
+         OqBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742508100; x=1743112900;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8yT7bxx+POTQPmMty55njjk/M6SEwDhRgh0uxWleRk=;
+        b=SbIJwUYYcLWLgEYQRe0qUbnDWBe5ciawLMdi/C5SzHj3pJCFCGmoLDrB5l1Ufw+v9M
+         9fth4pRLoSIyGWIdWBb7+B42EY+GiAd0zZQDHDMxHMqk/5hgnhqSwbiP15jX6WePeL1z
+         pTuYHE4HxNZZB7A0kAIf9Of8seymy8SmN3kMEg8y4g5STcZFSH5kDsoAlNpkpBvgLAjF
+         HdGsK9W5AZ1zIGm+jIdXkaRcTXANAEmmNlcT+mQr4r0tUvUCs1AboaCBLq707FLk/ZHm
+         mbtl0L8Gq0zgqu3L8xMUk+kZSJW4IK11gMFvSJAQQ2Vebpjq+afXuDJTuAM5Bp2PeiFK
+         td2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUAXT5Xy+mi4fi511tI0T6wZhYzuRWIjOclYk6TIN2dlwfrtEBTo0zPADWpZadYFwTp0zAEGy9g3epBOfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZoiMnS0uWsygIhq4Wmhu+//WcE8UkZvlqe7kk64I1sjAjkreo
+	S7Rqi93BlPOtKp3BoKIeap8VoqFXLQaDg37AxtSh2X3QzSl7UwrMea+FNjOm/Cs=
+X-Gm-Gg: ASbGnctnWCIXRf3uy75t2w9jLdMoJqTgGfEbQRkLdox0ZLcychG0ouwxdo/ORuymU4h
+	PkhZYCBkwC/vQ2g9HA2mIGDsh0AcY1RNpXX1kD3QuxoWdy+Az6ttHiwt6GDf/1aXRuu1h7UWsaI
+	tiuWWfWQiOUT/0BIXKA1i/IwLBTfKYssVKC3DOCx84mMW4vY9rgEtDwxMgWTAbYaoVdEbaWA340
+	4Qq7ra5USH5Qx/uox0m/rGKlerGuKXUS7dKo+hLbLqQSHdoak8R64aOnHhVLg+4cmhCSCNnXykj
+	8bqZwKQwXv5VQgoYKICDlw1oWyxRUPk6A8c9PwVNJvwKnWvwrY2FnZnJNUcAhyKfEIK+k/vS8de
+	HnP1reevm1g==
+X-Google-Smtp-Source: AGHT+IGz8sDCfiUcMrh3ZaHqynp/YtvdJQNLTBk+X4KzsimZeV2pCXU70QJKuqlDD/aS804bEebyZA==
+X-Received: by 2002:a05:600c:1e8f:b0:43b:c7f0:6173 with SMTP id 5b1f17b1804b1-43d502e4332mr11888305e9.4.1742508099644;
+        Thu, 20 Mar 2025 15:01:39 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbd1c7sm8939025e9.40.2025.03.20.15.01.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 15:01:39 -0700 (PDT)
+Message-ID: <fff943a6-4322-43d0-9821-08375bc5376c@linaro.org>
+Date: Thu, 20 Mar 2025 22:01:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9rEPLAmxrqP61sz@lizhi-Precision-Tower-5810>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeelfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhgfdvffdviefhtdfgffehleekieffjeetieevtdeuheeivdeujeelffehjeeiveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhinhhfrhgruggvrggurdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepiedprhgtphhtthhopefhrhgrnhhkrdhlihesnhigphdrtghomhdprhgtphhtthhopehqrghsuggvvhdttdesghhmrghilhdrt
- ghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqiheftgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] arm64: defconfig: enable PCI Power Control for
+ PCIe3
+To: Wenbin Yao <quic_wenbyao@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, quic_qianyu@quicinc.com,
+ sfr@canb.auug.org.au, linux-arm-kernel@lists.infradead.org
+References: <20250320055502.274849-1-quic_wenbyao@quicinc.com>
+ <zqBb_94gbwLzHgbAiLqgbuGg9wmeV1jUxHOsMXDdZToeTtRrtUimm8ra7GB48DXWU-ZOvC5mO8EY0uvxz46ISg==@protonmail.internalid>
+ <20250320055502.274849-2-quic_wenbyao@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250320055502.274849-2-quic_wenbyao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 09:18:52-0400, Frank Li wrote:
-> On Tue, Mar 18, 2025 at 02:41:47PM +0000, Qasim Ijaz wrote:
-> > On Tue, Mar 18, 2025 at 09:40:17AM -0400, Frank Li wrote:
-> > > On Mon, Mar 17, 2025 at 10:15:16AM +0000, Qasim Ijaz wrote:
-> > > > svc_i3c_master_do_daa_locked() declares dyn_addr as an unsigned int
-> > > > however it initialises it with i3c_master_get_free_addr() which
-> > > > returns a signed int type and then attempts to check if dyn_addr is
-> > > > less than 0. Unsigned integers cannot be less than 0, so the check
-> > > > is essentially redundant. Furthermore i3c_master_get_free_addr()
-> > > > could return -ENOMEM which an unsigned int cannot store.
-> > > >
-> > > > Fix this by capturing the return value of i3c_master_get_free_addr()
-> > > > in a signed int ‘dyn_addr_ret’. If that value is negative, return
-> > > > an error. Otherwise, assign it to the unsigned int ‘dyn_addr’ once
-> > > > we know it’s valid.
-> > > >
-> > > > Fixes: 4008a74e0f9b ("i3c: master: svc: Fix npcm845 FIFO empty issue")
-> > > > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> > > > ---
-> > >
-> > > Thank you for your patch, but similar one was already applied
-> > > https://lore.kernel.org/linux-i3c/174225158210.1593610.10018812780731849409.b4-ty@bootlin.com/T/#m5120e1c362e7e57f4cab139a45410fde421c2f37
-> > >
-> >
-> > Hi Frank
-> >
-> > I sent a fix for this issue on the 9th March, which is before the patch
-> > you linked which was sent on the 10th March.
+On 20/03/2025 05:55, Wenbin Yao wrote:
+> From: Qiang Yu <quic_qianyu@quicinc.com>
 > 
-> Yes, but perfer original owner to fix this type minor fix.
+> Enable the pwrctrl driver, which is utilized to manage the power supplies
+> of the devices connected to the PCI slots. This ensures that the voltage
+> rails of the x8 PCI slots on the X1E80100 - QCP can be correctly turned
+> on/off if they are described under PCIe port device tree node.
+> 
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> ---
+>   arch/arm64/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 85ec2fba1..de86d1121 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -245,6 +245,7 @@ CONFIG_PCIE_LAYERSCAPE_GEN4=y
+>   CONFIG_PCI_ENDPOINT=y
+>   CONFIG_PCI_ENDPOINT_CONFIGFS=y
+>   CONFIG_PCI_EPF_TEST=m
+> +CONFIG_PCI_PWRCTL_SLOT=y
+>   CONFIG_DEVTMPFS=y
+>   CONFIG_DEVTMPFS_MOUNT=y
+>   CONFIG_FW_LOADER_USER_HELPER=y
+> --
+> 2.34.1
+> 
 > 
 
-This is absolutely not what I said, the first one that is sent and is
-applicable should be applied.
+PCI_PWRCTL_SLOT is a tristate symbol why be a "y" instead of an "m" i.e. 
+compile this into the kernel instead of having it be a module ?
 
-See how you didn't fix this trivial issue:
-
-https://lore.kernel.org/linux-i3c/20250319-i3c-fix-clang-fallthrough-v1-1-d8e02be1ef5c@kernel.org/T/#u
-
-> https://lore.kernel.org/linux-i3c/174129444617.1163689.11942276093411687387.b4-ty@bootlin.com/T/#t
-> 
-> Frank
-> >
-> > You can view my orignal patch here:
-> >
-> > https://lore.kernel.org/all/20250309164314.15039-1-qasdev00@gmail.com/
-> >
-> > Thanks
-> > Qasim
-> > > Frank
-> > > >  drivers/i3c/master/svc-i3c-master.c | 5 +++--
-> > > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-> > > > index f22fb9e75142..eea08f00d7ce 100644
-> > > > --- a/drivers/i3c/master/svc-i3c-master.c
-> > > > +++ b/drivers/i3c/master/svc-i3c-master.c
-> > > > @@ -998,9 +998,10 @@ static int svc_i3c_master_do_daa_locked(struct svc_i3c_master *master,
-> > > >  			 * filling within a few hundred nanoseconds, which is significantly
-> > > >  			 * faster compared to the 64 SCL clock cycles.
-> > > >  			 */
-> > > > -			dyn_addr = i3c_master_get_free_addr(&master->base, last_addr + 1);
-> > > > -			if (dyn_addr < 0)
-> > > > +			int dyn_addr_ret = i3c_master_get_free_addr(&master->base, last_addr + 1);
-> > > > +			if (dyn_addr_ret < 0)
-> > > >  				return -ENOSPC;
-> > > > +			dyn_addr = dyn_addr_ret;
-> > > >
-> > > >  			writel(dyn_addr, master->regs + SVC_I3C_MWDATAB);
-> > > >
-> > > > --
-> > > > 2.39.5
-> > > >
-> >
-> > --
-> > linux-i3c mailing list
-> > linux-i3c@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-i3c
-> 
-> -- 
-> linux-i3c mailing list
-> linux-i3c@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-i3c
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+---
+bod
 
