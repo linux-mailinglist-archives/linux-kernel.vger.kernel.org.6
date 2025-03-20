@@ -1,155 +1,264 @@
-Return-Path: <linux-kernel+bounces-569313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F110A6A14D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:27:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B01A6A14F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABC78A6634
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9ED416BA4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3296220FA90;
-	Thu, 20 Mar 2025 08:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF55C20F070;
+	Thu, 20 Mar 2025 08:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PpVyZMeW"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="INUCbk5q"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5A41E3769
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0257920D519;
+	Thu, 20 Mar 2025 08:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742459132; cv=none; b=OadCvQK8WdcQLTOsrzLlgFxWKn2V0bN4wM5bPY7vZge1y9Zxbm4+2s2P0Occ2ib2JI7PfG/ERUaz0oa6FwKwqWYNQlocMYWhGu3OE2/ezBW11AUNB8wtU2E6ZNv8RTc+sg0iolQFiwUrSItp01aJmLA6tB6HfLcQxgZ1TlmqFR4=
+	t=1742459230; cv=none; b=ugCH1nPSf0GsOvCEIrTTozECq6uWIFrW9UxLRrbGqu3XIhbsiuDjftczWgJmjauvQrEriHkanfGcAwDBy+fnwR2vZt0cIvC4A/MQP02+Ri71igGb0B9c3GWlR97FWvM5SdhQS2Nh5HpD4a/wyZrXuJ1Y5Tbd687Gx+c1RrudZgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742459132; c=relaxed/simple;
-	bh=4NlU39TF+0+mtsb+gKpldCCyeU5hR5tN2aSvcVkaIAw=;
+	s=arc-20240116; t=1742459230; c=relaxed/simple;
+	bh=UphgpuAPMf3tf7KQM2Boilb2G7jKlAXNIWMYx3DdvMM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FBfvboWq0wTXhInsSmU4IVDnRYLiNScftvygbFQ1jab9/x+0QIKbcS2k6BjO7pR8gwu36kbqd9ZoKIxYTCsgHs8qIrLfA/1Sc+IN/cRXYoXjAJFbsaiP+NTD+Uy4OjfwCXUH7J7HLC8jTtP+1dKZzNx94XUsrszEq6gvnv8Ls7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PpVyZMeW; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54991d85f99so1788290e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742459129; x=1743063929; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=16qP0iKOeuObwS+re3QhKbw386nMle6gGJlfNm8BBkU=;
-        b=PpVyZMeWoL1fR/yzQXaBcv/d8L7+fBr75uPRuUs1nH6e9WlFCu0NWcqiXalaQ+eR9r
-         LiHz1IVfx4gaRuFBeDIPgNgqSOwdzKWgz4+j875xKo5/YIDCGFBKRCqVkLzR7T3zuCXt
-         f4KOmAHKXsWJRSIWpnMaL3eawd2ofMqw1iFjUaNCd6Jg1VC/r2p5hH2f4wwbIaa4QYKG
-         ftIufdYBfg7nEyrKPEaBojA5alvM09cWiigiFsLyblg/D+aInJtXatwASyBvmM3hPoy6
-         0Kq/mxrgFVbxBc+eNqSR+DmdOvG26wRSDI5LofYKq4OGOoH4KM5jVRtN3gUAObFHqJh5
-         Ihgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742459129; x=1743063929;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=16qP0iKOeuObwS+re3QhKbw386nMle6gGJlfNm8BBkU=;
-        b=ae2WYA78GOHa/Tyx9wSBZgQ131qg1SAMmkVFAQlLCkrz3J238IYwPJz6i6m0ueYfY3
-         GbYPpPf0iuVQpuqXxePJKhHcNOPDqCicaND7VTvn/PkWE3OAyyJEyFdBDLzqMPpQkU3E
-         Q8WwGXfRQi/jhdX0Zn/P6tClNdKGeLiYJNuaS4NkOWOJFoDpMHdEThWiyUXT9w6xizXy
-         9j/ri2b6MATQ9y4Hc7LZ5o8kiEu6A7KL0Kg0bxsdGq074dXzca3g7XGCFKd7+TZbTCHN
-         w1eTyoQcrQsG0i1LGDyKjGgoVmkoZochBX+87iZ7Otb+slLH+Y85cllBK8zAyk11R0yH
-         Adhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnRF0mav7eq6eST59typfiWyR5/lBke/KLrtp9XtjzV9zR5ztUtonem12f8gzh0H4v7R6JPFKocqEWeGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTc4KIIvk1M/2btVHajkvQI7rWNx33lfRwosLyxcIerMVRuJ1o
-	TnWZVzg2dz1OJa1ivWEMERP8/aQcbDFkqBSg2ASsUmR/giXW/Vy7VZXxc3MYJWXfrYExLQJ3sbR
-	gibt6vjj5QjyZdUFgx6aNvK/oKE/7btgIT80tbw==
-X-Gm-Gg: ASbGncvXMb0owDrOoXvRgJRGGrGQLrEUWOmGg0JzEqhThC+w8zAlHhhYpzfUK8Ui1eR
-	jx84fpXxo9HK1nDteiWbAWw1+F/QQBECKQtZSm+CglsCyZ1G7Tbgy4VpjtkvDzlNfwu3BFlAC0R
-	oCismXiaRoZ+7ljunRwuSya9nqsQe4cVygVw==
-X-Google-Smtp-Source: AGHT+IHq0Q0yXnXqGtKHv9Bke5vXrikGDXl7DhMoVGtfC4QNO2PuMG89WTST+1v0HStjzStbDE96t7XIg8axUieQKWQ=
-X-Received: by 2002:a05:6512:340d:b0:549:9813:3e6b with SMTP id
- 2adb3069b0e04-54acfa0baebmr1261731e87.0.1742459128532; Thu, 20 Mar 2025
- 01:25:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=YJBSGJmV/m2ZfGf/CGwRDMoH2RQYucZ7/lNAN1WFJVHUnHjQYFAJ43eoBmDoOJIJ3Tv0sq85xzvxCh/KAsBjpK5y6eQfKyj32+lgHF/EjLPbbe4k/skV5J/hdsn1HWEa/FJJGtAkatrFKHUgvwBglpPSqnteJORXBFGH65XFDZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=INUCbk5q; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 30ECD2E086E4;
+	Thu, 20 Mar 2025 10:27:01 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742459223;
+	bh=cGT8Npx0AQvi1FCK0MCkuVQ1ID1zQgypm7GeoNfZDgI=;
+	h=Received:From:Subject:To;
+	b=INUCbk5qzlJs4QgOMoKRR+7FwiRboPDHDHeMAGmLyU8fTkoe02rht/wwAPCLMxFAD
+	 Ze6ZRbPuXLhPqL8HHfc3i/iUSVhZVnPqmLb2LQnWhl5mvQV4mKMQTvKob52wW3rusn
+	 RTHYLd39RoxJ6wW6GIXC+B+cyffg+dfo+0+xLVYU=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.173) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f173.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f173.google.com with SMTP id
+ 38308e7fff4ca-307c13298eeso6110181fa.0;
+        Thu, 20 Mar 2025 01:27:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVcrjy0zHsROE85x3P0YH6JUnBx7kOLaWXH9mroUM+yhujwkEN6IHb4u4eXtZ6+S2HwOCScP0dpvPg9Ng==@vger.kernel.org,
+ AJvYcCX0ao4ITCod0ffrsFsFpU4ThEH7fpFUtVe45XEuoRvpGadQHXr+pV8ojA8NEocIVA3VmjdYkJAyMBNJKzfd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJOgL3r1e0y7ba9xlQJYiHkBaotYgCmgZlCna/L4EDr6A6InYi
+	xh0KOajAJbjSoLffF3B0fWBwapkB5NB4ceF7bX/+f5//sZwoxtSqnZGZR6yDXZN7PJt4XozIj7Q
+	2EFb5eN7uwuFap0KVaeS4PAL1myc=
+X-Google-Smtp-Source: 
+ AGHT+IFb6NXzWVly1BTXf5EamfZpu1xsr1fWnjr2cAli/V2e3+3qw/aVgKYYNiacfad7jo2065ylnm070JzKFec3PlQ=
+X-Received: by 2002:a2e:b8cb:0:b0:30c:1aa6:5565 with SMTP id
+ 38308e7fff4ca-30d727d4064mr9007151fa.20.1742459220412; Thu, 20 Mar 2025
+ 01:27:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319092951.37667-1-jirislaby@kernel.org> <20250319092951.37667-22-jirislaby@kernel.org>
-In-Reply-To: <20250319092951.37667-22-jirislaby@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 20 Mar 2025 09:25:37 +0100
-X-Gm-Features: AQ5f1Jq80nLsRvZqzWNrpZV1254RJBUNEI94hRUGI-9keKpvk6uaZ6w6cZ8gkIo
-Message-ID: <CACRpkdZ95MdKgmjqzL_68BLsqpF+gOgbq3qSuEc_JG=x-=RvQg@mail.gmail.com>
-Subject: Re: [PATCH v2 21/57] irqdomain: irqchip: Switch to irq_domain_create_*()
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Talel Shenhar <talel@amazon.com>, Antoine Tenart <atenart@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ryan Chen <ryan_chen@aspeedtech.com>, 
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Eddie James <eajames@linux.ibm.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Guo Ren <guoren@kernel.org>, 
-	Baruch Siach <baruch@tkos.co.il>, Miodrag Dinic <miodrag.dinic@mips.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Mark-PK Tsai <mark-pk.tsai@mediatek.com>, 
-	Daniel Palmer <daniel@thingy.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Qin Jian <qinjian@cqplus1.com>, 
-	Changhuang Liang <changhuang.liang@starfivetech.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Michal Simek <michal.simek@amd.com>, Chris Zankel <chris@zankel.net>, 
-	Max Filippov <jcmvbkbc@gmail.com>
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <bbc18a3d-fd01-420c-b616-4a1757d4e8ed@app.fastmail.com>
+In-Reply-To: <bbc18a3d-fd01-420c-b616-4a1757d4e8ed@app.fastmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 20 Mar 2025 09:26:48 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwF1agMaBdxNjc8uox0GfH1D4wtiFPF6QiibMsTaeeYf_g@mail.gmail.com>
+X-Gm-Features: AQ5f1Jpv3uklShMQoOBKUA46PXrDKs26BnmQHdtXh2sndA444q0vhOug4rTOans
+Message-ID: 
+ <CAGwozwF1agMaBdxNjc8uox0GfH1D4wtiFPF6QiibMsTaeeYf_g@mail.gmail.com>
+Subject: Re: [PATCH 00/11] HID: asus: hid-asus and asus-wmi backlight
+ unification, Z13 QOL improvements
+To: Luke Jones <luke@ljones.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <174245922164.8458.8395070378525584835@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Wed, Mar 19, 2025 at 10:31=E2=80=AFAM Jiri Slaby (SUSE) <jirislaby@kerne=
-l.org> wrote:
-
-> irq_domain_add_*() interfaces are going away as being obsolete now.
-> Switch to the preferred irq_domain_create_*() ones. Those differ in the
-> node parameter: They take more generic struct fwnode_handle instead of
-> struct device_node. Therefore, of_fwnode_handle() is added around the
-> original parameter.
+On Thu, 20 Mar 2025 at 07:10, Luke Jones <luke@ljones.dev> wrote:
 >
-> Note some of the users can likely use dev->fwnode directly instead of
-> indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
-> guaranteed to be set for all, so this has to be investigated on case to
-> case basis (by people who can actually test with the HW).
+> Hi Antheas,
 >
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> On Thu, 20 Mar 2025, at 8:13 AM, Antheas Kapenekakis wrote:
+> > This is a three part series that does the following: first, it cleans u=
+p
+> > the hid-asus driver initialization, preventing excess renames and dmesg
+> > errors on ROG devices. Then, it adds support for the Z13 2025 keyboard,
+> > by fixing its keyboard to not be stuck in BIOS mode and enabling its fa=
+n
+> > key. Finally, the bigger piece of this series is the unification of the
+> > backlight controls between hid-asus and asus-wmi.
+> >
+> > This requires some context. First, some ROG devices expose both WMI and
+> > HID controls for RGB. In addition, some ROG devices (such as the Z13)
+> > have two AURA devices where both have backlight controls (lightbar and
+> > keyboard). Under Windows, Armoury Crate exposes a single brightness con=
+trol
+> > for all Aura devices.
+> >
+> > However, currently in the linux kernel this is not the case, with asus-=
+wmi
+> > and hid-asus relying on a quirk system to figure out which should contr=
+ol
+> > the backlight. But what about the other one? There might be silent
+> > regressions such as part of the RGB of the device not responding proper=
+ly.
+> >
+> > In the Z13, this is the case, with a race condition causing the lightba=
+r
+> > to control the asus::kbd_backlight device most of the time, with the
+> > keyboard being renamed to asus::kbd_backlight_1 and not doing anything
+> > under KDE controls.
+> >
+> > Here, we should note that most backlight handlers are hardcoded to chec=
+k
+> > for backlight once, and for one backlight, during boot, so any other
+> > solution would require a large rewrite of userspace.
+>
+> This makes me wish there was better standardization. Maybe filing some re=
+ports upstream to those various projects could get the ball rolling?
 
-There are some stray whitespace changes which are distracting,
-but as things are, there is
-Documentation/process/4.Coding.rst
-saying:
+I think KDE has some improvements for it for multi-device support. But
+specifically for brightness, it seems that all currently supported
+manufacturers work fine with this so it would be a lot of work just
+for asus to do this through userspace.
 
-  It is natural to fix the style of a piece of code while working
-  on it for other reasons, but coding style changes should not be made for
-  their own sake.
+> > Even when brightness controls are fixed, we still have the problem of t=
+he
+> > backlight key being on/off when controlled by KDE and 0/33/66/100 when
+> > the device has a WMI keyboard. Ideally, we would like the 0/33/66/100 t=
+o
+> > be done under hid as well, regardless of whether the backlight of the
+> > device is controlled by WMI or HID.
+> >
+> > Therefore, this is what the third part of this series does. It sets up
+> > asus-wmi to expose accepting listeners for the asus::kbd_backlight devi=
+ce
+> > and being the one that sets it up. Then, it makes hid-asus devices
+> > register a listener there, so that all of them are controlled by
+> > asus::kbd_backlight. Finally, it adds an event handler for keyboard key=
+s,
+> > so that HID led controls are handled by the kernel instead of userspace=
+.
+> > This way, even when userspace is not active the key works, and we get t=
+he
+> > desired behavior of 0/33/66/100 across all Aura devices (currently, tha=
+t
+> > is keyboards, and embedded devices such as lightbars). This results
+> > removing the quirk system as well, eliminating a point of failure.
+>
+> Nice, I'd been looking at doing something similar but unfortunately hadn'=
+t the time for it, nor the device appropriate for testing (keyboard, detach=
+able, lightbar). TBH I wish there was a much better way in kernel to handle=
+ these sorts of lighting situations, especially given that we have laptops =
+across vendors and models with different modes, zones, per-key, MCU mode vs=
+ software mode etc etc. There is a *very* long thread on lkml bikeshedding =
+it all too - see https://lore.kernel.org/lkml/20231011190017.1230898-1-wse@=
+tuxedocomputers.com/
+>
+> The LampArray thing is out of scope for this, but I thought maybe worth m=
+entioning in case you weren't aware. The major pitfall of it is that per-ke=
+y devices update per-row and when you do a single key update to update a wh=
+ole keyboard it sends N-Key amounts of packets..
+>
+> Off-topic though. But if you have some ideas please email me.
 
-...and you are working on the code for other reasons so I
-read it like this is actually OK.
+For me, I think when it comes to Asus, getting the brightness to work
+is 90% of the way. Then, getting simple RGB that works with KDE but if
+the KDE option is ticked off it defers to other userspace programs
+such as your own is the other 10%.
 
-(Written mostly to forestall any similar comments.)
+And for that, I think having hid-asus create its own handlers in
+addition to the one for backlight in WMI would be appropriate
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+> > I tested this on an Asus Z13 2025, and testing by other devices would b=
+e
+> > appreciated for sure. This series is designed to be transparent to
+> > userspace behavior-wise compared previous kernels, with all existing
+> > laptops either having the same behavior or being better.
+>
+> I have a handful of laptops I can test, including my old GA501, I'll get =
+on it.
+>
+> > The Z13 keyboard folio RGB controls work beautifully, with KDE led
+> > notifications working and doing 0/33/66/100 as expected. This also happ=
+ens
+> > with hotplugging, as the lightbar is always available and keeps the
+> > endpoint alive from boot, even if the folio is not connected (a quirk
+> > can be added later if there is a device where this is not the case).
+>
+> Very good. This will make a lot of folks happy, I suspect the Z13 is goin=
+g to be a very popular device.
+>
+> > The first two parts of the series can also be merged independently of t=
+he
+> > third part, so we can iterate on that more. Perhaps there is a better w=
+ay
+> > to handle this cohesion,
+>
+> After a quick cursory look, this looks good so far. Perhaps after review =
+and iteration you could submit as an independent series to get those parts =
+in quicker - but hey we can cross that when we get to it.
+>
+> > Oh, by the way Luke, I developed this series with a variant of
+> > your Armoury series merged, and only switched to 6.14-v7 for this
+> > submission. You will be happy to know that there are no conflicts :)
+> > (at least with that version from ~January). Also, please factcheck
+> > my initialization sequence is correct in the 0x5d and 0x5e devices
+> > you added when you made that refactor last year. Are those handshakes
+> > needed?
+>
+> I would hope the armoury driver stays out of the way of most things, I tr=
+ied to make it independent. The handshakes are needed for sure, depending o=
+n device it may be partial or more, but it's always been the same ASCII rig=
+ht back to when I first started on this with a 2018 laptop - we never bothe=
+red with the response check though. I do forget what required the 0x5e init=
+, I'll need to check through some old notes.
+>
+> I'll apologize in advance for the time it might take me to review - I'll =
+attempt some now for the smaller patches, but hopefully I can get some time=
+ in this weekend and we can work together to make asus stuff even better.
+>
+> Cheers,
+> Luke.
+>
+> > Antheas Kapenekakis (11):
+> >   HID: asus: refactor init sequence per spec
+> >   HID: asus: cleanup keyboard backlight check
+> >   HID: asus: prevent binding to all HID devices on ROG
+> >   HID: asus: rename keyboard3 to Z13_FOLIO
+> >   HID: asus: add Asus Z13 2025 Fan key
+> >   HID: asus: introduce small delay on Asus Z13 RGB init
+> >   platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+> >   HID: asus: listen to the asus-wmi brightness device instead of
+> >     creating one
+> >   platform/x86: asus-wmi: remove unused keyboard backlight quirk
+> >   platform/x86: asus-wmi: add keyboard brightness event handler
+> >   HID: asus: add support for the asus-wmi brightness handler
+> >
+> >  drivers/hid/hid-asus.c                     | 220 ++++++++++++---------
+> >  drivers/hid/hid-ids.h                      |   2 +-
+> >  drivers/platform/x86/asus-wmi.c            | 137 +++++++++++--
+> >  include/linux/platform_data/x86/asus-wmi.h |  66 +++----
+> >  4 files changed, 279 insertions(+), 146 deletions(-)
+> >
+> >
+> > base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+> > --
+> > 2.48.1
 
