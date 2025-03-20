@@ -1,53 +1,86 @@
-Return-Path: <linux-kernel+bounces-570020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E8CA6AAEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:20:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2056DA6AA71
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDEE18834B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28213B2E7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB631EBFFD;
-	Thu, 20 Mar 2025 16:20:12 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815A51E3DD3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BCD1EDA05;
+	Thu, 20 Mar 2025 15:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NthndX+4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79BE1DE3B1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742487611; cv=none; b=sFtikRmoCoK8d/3Iwp/oS8pgGbxuOAkqEqCSeD1/yYfDcJwYggSfr3w3n4B1VN7yq02q7RhZFJcSonGufUtGBcTAAGo6sJGDn/wPooGoBvMjM89APsSDofNxqcX/SsfX0h7owtRQpORNJwXWsAXBRRqbY8GJQ11CxVhXA8u4zlQ=
+	t=1742486280; cv=none; b=XZv2jE3TLIAzN6TcdYTOM54Lo/nxkqh+F8d8w+3oVxInjI+tTvEoUZ3g1YowQB0SUJ2FZa7cueyQbuTyZxYA6ngyl4iM/FFWYPI7e+WofKW8qHilnzaBEfBWMx5N734Pmn02XmOqG2mFavFhXQPqPpOoL0YvLjuqF7XZMXkx1/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742487611; c=relaxed/simple;
-	bh=kGpBLhOeNbMipzXgZdQHWX+9QizRGxv66IZDvFRfIFg=;
+	s=arc-20240116; t=1742486280; c=relaxed/simple;
+	bh=1HG1R5pgnE3jTOBFHjrcrx5hNP55t9mVMYMylghCRyY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mGjvF54W13bUfV85FiuXoeHo16XQi9uvms26A8xF3671LwJ+wUe1ybsiXygF0RbmpSMgf5H0IwmmLKO/uWJl5LpVMK1M0A9fKMakgy9/6xb/lMGICrKDTjgcu2xCdni7hLUyumbb4M7BbfeaZe33xqD/Gmq59pzC9HK3LzTViRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZJVZy5GhBz9sRr;
-	Thu, 20 Mar 2025 16:57:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lpSF7WRgoDNQ; Thu, 20 Mar 2025 16:57:30 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJVZy4Fbyz9sPd;
-	Thu, 20 Mar 2025 16:57:30 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E13A8B799;
-	Thu, 20 Mar 2025 16:57:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id g0xQPgVyxzkg; Thu, 20 Mar 2025 16:57:30 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E8D5B8B763;
-	Thu, 20 Mar 2025 16:57:29 +0100 (CET)
-Message-ID: <f79c2e97-2d50-467d-9852-c64971f11370@csgroup.eu>
-Date: Thu, 20 Mar 2025 16:57:29 +0100
+	 In-Reply-To:Content-Type; b=HQJ4EdzWEQ/wBgeGdKjOjQHNCGtCk9OyKsQ/0WQsrw89jGcUbwOAGSz14JsYqv/fS6EG1J+8cBlLmV39dzDsAY+puVKXPYCdlY+kVI5rxjVdrli7B46mf3VzTYI4B4+CFit+dsPh20BC6zkQzE4/vYyYd/eNfAzLy8pLhYnCqGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NthndX+4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDoS5a005934
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:57:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7EAFxyWTIXD2IGnfq82GcLshDDFop+FScfu6PliKyoE=; b=NthndX+41AkrKXLN
+	gpUbr94ve4On6PUCVFGcAM3MJROe6ttkTe/PXJ8HkV0A02OLjHwqfCXx1mbUPM1F
+	RQ1XMQGAi/fdziCTqePEOP5AyIZXlXeAue1a41M9hB7iF3pc72Ceh3pS1Au0ON1B
+	g7g/LTKZneQ//e+yvUdNbI6Mqe+986IJ32+085KLp4yuTT69TyqBOZyYmzbx4euK
+	S4+HS5I4pnGkEH7Mgd7jg5P6BBfI9VSXqJG5FKfkqDzyq+uE+CVMiYxl+VKHG4TV
+	xQjM8bJ4f2Vave56zP4SSwKR3ceB/ni+Bx4Tk0ml3HZw2tmQPnDwbTa6UwHva9AW
+	08h+lA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmc282a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:57:57 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22403329f9eso12034245ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:57:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742486276; x=1743091076;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7EAFxyWTIXD2IGnfq82GcLshDDFop+FScfu6PliKyoE=;
+        b=AdgoufjPPyeM894kaTqQwsdCk+MYxno4GjIhulYvLLG++7quFFgcVekl3awERT6URU
+         +wzxkRhW94UXHB8LyLxe3ApRhMbPOLrL2cpDbzaPIqgseJGV7FahEY3X+O9LuEr9HmAt
+         7DKUwtm6IDL/+VtA2GDGkecXZzyDxJa5qj/VzbGTYMaFvAFmVwBZ6nu75P0OwPZN8pw7
+         WSrSZt1MS34jl3ouZyMSjePHTYWhB5xusA3lfU2hsoj96IHqMtDkRdaemDeYnXLpqeP2
+         O4zZVbh8deuGUNhm4Qnftu24t9tmXEpkOBI0fNUIRtnLDC4a+27vLnEcuaHK3g9+WbHC
+         DcPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCjxlvtyIn8+B1RlGlmV7KRBEs9tUZQsfGtmOie5YqH9ekYZPUunjzn4dDzJP+fCYYgyJcDXQAZBoXzj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdctF6/5bEP1TDz0a3OwO0gvY3nt3trtwoiGuvjf+eP99sm+54
+	rXVJvmdeAUDNKyAL++H3Aj9pDVR4BmMbwOCrCxKHpOTFdBxqWxTrvWEhpumR3x6nVCpSXpOQEHL
+	KYMtzzgO5O/b6C9wTp6MRxjZE7sNbtJggdbffae7uv6WSsZKhCatfKCLDmVz9Yco=
+X-Gm-Gg: ASbGncvsEMvi+9crm0dm5v9Ta3hv7mESs4WgGjQkP0KBBip7L5fT+7D6gb9DKUJSsxk
+	nsZa9bF7qyCRPHClylGcio8P4cGl+2jnNIH2ohM8lYZaE67anDyJnTsImzPhZUCFAU7tczh17Mw
+	nDUDHQxexSVBDmtqk6Sjme35OPqLo0k/jJR++mhWM+yyMu113hbZgZ67FUOoDwz4L/z+SEQvvsI
+	wFau7l24YpM26iUDusZDLhXgi4nEE6IXTpbdjxIPLC6C51W2PmXU2ErUDUN/5L0PnFf6KL2GF97
+	r2MFs63PAPy0//EwWlKevl1aUuWfmPgEFqrzxhPbHA==
+X-Received: by 2002:a17:903:2ac6:b0:220:e362:9b1a with SMTP id d9443c01a7336-2265edee4b7mr69582595ad.25.1742486275690;
+        Thu, 20 Mar 2025 08:57:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGi8XbhLs92+ZkMltC891+1rpGELh9oFO3sgLfdR5Hc5Ego4ssiojy48Xlws9pVR6ouyP0mhg==
+X-Received: by 2002:a17:903:2ac6:b0:220:e362:9b1a with SMTP id d9443c01a7336-2265edee4b7mr69582035ad.25.1742486275268;
+        Thu, 20 Mar 2025 08:57:55 -0700 (PDT)
+Received: from [192.168.1.5] ([122.164.167.76])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68884ecsm137243495ad.5.2025.03.20.08.57.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 08:57:54 -0700 (PDT)
+Message-ID: <e46be95c-ca8d-48ce-a616-5f068bd28ebc@oss.qualcomm.com>
+Date: Thu, 20 Mar 2025 21:27:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,165 +88,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
-To: linux@treblig.org, ioana.ciornei@nxp.com
-Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- stuyoder@gmail.com, linux-kernel@vger.kernel.org
-References: <20241115152055.279732-1-linux@treblig.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241115152055.279732-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 4/5] misc: fastrpc: Add polling mode support for
+ fastRPC driver
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+        gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+        dri-devel@lists.freedesktop.org, arnd@arndb.de
+References: <20250127044239.578540-1-quic_ekangupt@quicinc.com>
+ <20250127044239.578540-5-quic_ekangupt@quicinc.com>
+ <hgox77a7e6zzriltwhzzciau6u2pmil4y3rl5o2l6zkp4fmlmp@q2dai5fxcvtq>
+ <49295da9-82d4-45a0-a2a4-fdaa6600c70d@quicinc.com>
+ <an4cvztdkqmrt7w2iaziihlxf4tbox65ze362v2lmycjnqg26y@jizjmh2ki34z>
+ <939fcff6-fb93-487b-995b-88e3ff020784@oss.qualcomm.com>
+ <2k6573yrw3dyn3rpwqz4asdpx3nlmj4ornm7kmxv3f4jlc6hzg@qkwn7gqduwri>
+Content-Language: en-US
+From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+In-Reply-To: <2k6573yrw3dyn3rpwqz4asdpx3nlmj4ornm7kmxv3f4jlc6hzg@qkwn7gqduwri>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: ajISmRU-gDyW9816RfhzCfoPXe5UK5-9
+X-Proofpoint-GUID: ajISmRU-gDyW9816RfhzCfoPXe5UK5-9
+X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67dc3b05 cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=rQ4PyoImJZNyGwpw8nHSHQ==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=iVoIhCtSH5cMpfonS4MA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_04,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200101
 
-Ioana,
 
-Le 15/11/2024 à 16:20, linux@treblig.org a écrit :
-> [Vous ne recevez pas souvent de courriers de linux@treblig.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> fsl_mc_allocator_driver_exit() was added explicitly by
-> commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
-> but was never used.
-> 
-> Remove it.
-> 
-> fsl_mc_portal_reset() was added in 2015 by
-> commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
-> but was never used.
-> 
-> Remove it.
-> 
-> fsl_mc_portal_reset() was the only caller of dpmcp_reset().
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Can you ack this patch ?
+On 3/20/2025 7:45 PM, Dmitry Baryshkov wrote:
+> On Thu, Mar 20, 2025 at 07:19:31PM +0530, Ekansh Gupta wrote:
+>>
+>> On 1/29/2025 4:10 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Jan 29, 2025 at 11:12:16AM +0530, Ekansh Gupta wrote:
+>>>>
+>>>> On 1/29/2025 4:59 AM, Dmitry Baryshkov wrote:
+>>>>> On Mon, Jan 27, 2025 at 10:12:38AM +0530, Ekansh Gupta wrote:
+>>>>>> For any remote call to DSP, after sending an invocation message,
+>>>>>> fastRPC driver waits for glink response and during this time the
+>>>>>> CPU can go into low power modes. Adding a polling mode support
+>>>>>> with which fastRPC driver will poll continuously on a memory
+>>>>>> after sending a message to remote subsystem which will eliminate
+>>>>>> CPU wakeup and scheduling latencies and reduce fastRPC overhead.
+>>>>>> With this change, DSP always sends a glink response which will
+>>>>>> get ignored if polling mode didn't time out.
+>>>>> Is there a chance to implement actual async I/O protocol with the help
+>>>>> of the poll() call instead of hiding the polling / wait inside the
+>>>>> invoke2?
+>>>> This design is based on the implementation on DSP firmware as of today:
+>>>> Call flow: https://github.com/quic-ekangupt/fastrpc/blob/invokev2/Docs/invoke_v2.md#5-polling-mode
+>>>>
+>>>> Can you please give some reference to the async I/O protocol that you've
+>>>> suggested? I can check if it can be implemented here.
+>>> As with the typical poll() call implementation:
+>>> - write some data using ioctl
+>>> - call poll() / select() to wait for the data to be processed
+>>> - read data using another ioctl
+>>>
+>>> Getting back to your patch. from you commit message it is not clear,
+>>> which SoCs support this feature. Reminding you that we are supporting
+>>> all kinds of platforms, including the ones that are EoLed by Qualcomm.
+>>>
+>>> Next, you wrote that in-driver polling eliminates CPU wakeup and
+>>> scheduling. However this should also increase power consumption. Is
+>>> there any measurable difference in the latencies, granted that you
+>>> already use ioctl() syscall, as such there will be two context switches.
+>>> What is the actual impact?
+>> Hi Dmitry,
+>>
+>> Thank you for your feedback.
+>>
+>> I'm currently reworking this change and adding testing details. Regarding the SoC
+>> support, I'll add all the necessary information.
+> Please make sure that both the kernel and the userspace can handle the
+> 'non-supported' case properly.
 
-Thanks
-Christophe
+Yes, I will include changes to handle in both userspace and kernel.
 
-> ---
->   drivers/bus/fsl-mc/dpmcp.c            | 22 ----------------------
->   drivers/bus/fsl-mc/fsl-mc-allocator.c |  5 -----
->   drivers/bus/fsl-mc/fsl-mc-private.h   |  6 ------
->   drivers/bus/fsl-mc/mc-io.c            | 20 --------------------
->   include/linux/fsl/mc.h                |  2 --
->   5 files changed, 55 deletions(-)
-> 
-> diff --git a/drivers/bus/fsl-mc/dpmcp.c b/drivers/bus/fsl-mc/dpmcp.c
-> index 5fbd0dbde24a..7816c0a728ef 100644
-> --- a/drivers/bus/fsl-mc/dpmcp.c
-> +++ b/drivers/bus/fsl-mc/dpmcp.c
-> @@ -75,25 +75,3 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
->          /* send command to mc*/
->          return mc_send_command(mc_io, &cmd);
->   }
-> -
-> -/**
-> - * dpmcp_reset() - Reset the DPMCP, returns the object to initial state.
-> - * @mc_io:     Pointer to MC portal's I/O object
-> - * @cmd_flags: Command flags; one or more of 'MC_CMD_FLAG_'
-> - * @token:     Token of DPMCP object
-> - *
-> - * Return:     '0' on Success; Error code otherwise.
-> - */
-> -int dpmcp_reset(struct fsl_mc_io *mc_io,
-> -               u32 cmd_flags,
-> -               u16 token)
-> -{
-> -       struct fsl_mc_command cmd = { 0 };
-> -
-> -       /* prepare command */
-> -       cmd.header = mc_encode_cmd_header(DPMCP_CMDID_RESET,
-> -                                         cmd_flags, token);
-> -
-> -       /* send command to mc*/
-> -       return mc_send_command(mc_io, &cmd);
-> -}
-> diff --git a/drivers/bus/fsl-mc/fsl-mc-allocator.c b/drivers/bus/fsl-mc/fsl-mc-allocator.c
-> index b5e8c021fa1f..6c3beb82dd1b 100644
-> --- a/drivers/bus/fsl-mc/fsl-mc-allocator.c
-> +++ b/drivers/bus/fsl-mc/fsl-mc-allocator.c
-> @@ -656,8 +656,3 @@ int __init fsl_mc_allocator_driver_init(void)
->   {
->          return fsl_mc_driver_register(&fsl_mc_allocator_driver);
->   }
-> -
-> -void fsl_mc_allocator_driver_exit(void)
-> -{
-> -       fsl_mc_driver_unregister(&fsl_mc_allocator_driver);
-> -}
-> diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-mc-private.h
-> index b3520ea1b9f4..e1b7ec3ed1a7 100644
-> --- a/drivers/bus/fsl-mc/fsl-mc-private.h
-> +++ b/drivers/bus/fsl-mc/fsl-mc-private.h
-> @@ -66,10 +66,6 @@ int dpmcp_close(struct fsl_mc_io *mc_io,
->                  u32 cmd_flags,
->                  u16 token);
-> 
-> -int dpmcp_reset(struct fsl_mc_io *mc_io,
-> -               u32 cmd_flags,
-> -               u16 token);
-> -
->   /*
->    * Data Path Resource Container (DPRC) API
->    */
-> @@ -631,8 +627,6 @@ int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
-> 
->   int __init fsl_mc_allocator_driver_init(void);
-> 
-> -void fsl_mc_allocator_driver_exit(void);
-> -
->   void fsl_mc_init_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
-> 
->   void fsl_mc_cleanup_all_resource_pools(struct fsl_mc_device *mc_bus_dev);
-> diff --git a/drivers/bus/fsl-mc/mc-io.c b/drivers/bus/fsl-mc/mc-io.c
-> index 95b10a6cf307..a0ad7866cbfc 100644
-> --- a/drivers/bus/fsl-mc/mc-io.c
-> +++ b/drivers/bus/fsl-mc/mc-io.c
-> @@ -263,23 +263,3 @@ void fsl_mc_portal_free(struct fsl_mc_io *mc_io)
->          dpmcp_dev->consumer_link = NULL;
->   }
->   EXPORT_SYMBOL_GPL(fsl_mc_portal_free);
-> -
-> -/**
-> - * fsl_mc_portal_reset - Resets the dpmcp object for a given fsl_mc_io object
-> - *
-> - * @mc_io: Pointer to the fsl_mc_io object that wraps the MC portal to free
-> - */
-> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io)
-> -{
-> -       int error;
-> -       struct fsl_mc_device *dpmcp_dev = mc_io->dpmcp_dev;
-> -
-> -       error = dpmcp_reset(mc_io, 0, dpmcp_dev->mc_handle);
-> -       if (error < 0) {
-> -               dev_err(&dpmcp_dev->dev, "dpmcp_reset() failed: %d\n", error);
-> -               return error;
-> -       }
-> -
-> -       return 0;
-> -}
-> -EXPORT_SYMBOL_GPL(fsl_mc_portal_reset);
-> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-> index c90ec889bfc2..37316a58d2ed 100644
-> --- a/include/linux/fsl/mc.h
-> +++ b/include/linux/fsl/mc.h
-> @@ -417,8 +417,6 @@ int __must_check fsl_mc_portal_allocate(struct fsl_mc_device *mc_dev,
-> 
->   void fsl_mc_portal_free(struct fsl_mc_io *mc_io);
-> 
-> -int fsl_mc_portal_reset(struct fsl_mc_io *mc_io);
-> -
->   int __must_check fsl_mc_object_allocate(struct fsl_mc_device *mc_dev,
->                                          enum fsl_mc_pool_type pool_type,
->                                          struct fsl_mc_device **new_mc_adev);
-> --
-> 2.47.0
-> 
+>
+>> For now, with in-driver
+>> polling, we are seeing significant performance improvements for calls
+>> with different sized buffers. On polling supporting platform, I've observed an
+>> ~80us improvement in latency. You can find more details in the test
+>> results here: 
+>> https://github.com/quic/fastrpc/pull/134/files#diff-7dbc6537cd3ade7fea5766229cf585db585704e02730efd72e7afc9b148e28ed
+> Does the improvement come from the CPU not goint to idle or from the
+> glink response processing?
+
+Although both are contributing to performance improvement, the major
+improvement is coming from CPU not going to idle state.
+
+Thanks,
+Ekansh
+
+>
+>> Regarding your concerns about power consumption, while in-driver polling
+>> eliminates CPU wakeup and scheduling, it does increase power consumption.
+>> However, the performance gains seem to outweigh this increase.
+>>
+>> Do you think the poll implementation that you suggested above could provide similar
+>> improvements?
+> No, I agree here. I was more concentrated on userspace polling rather
+> than hw polling.
+>
 
 
