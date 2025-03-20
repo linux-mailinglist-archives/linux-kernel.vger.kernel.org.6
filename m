@@ -1,110 +1,174 @@
-Return-Path: <linux-kernel+bounces-569090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC94A69E6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:50:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EADFA69E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:53:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353F2464D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8851795A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB791B4145;
-	Thu, 20 Mar 2025 02:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CDC28EA;
+	Thu, 20 Mar 2025 02:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MNc2KZDW"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N3ccJmrU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BA528EA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB017A2E3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742439011; cv=none; b=P90J/nAYrv3/kjFfvqI4txo2nz8eD2C3MxYfpOi7xO1XqhNh7AGMpNiOz9uPGcBeKeNuQXvWUrFXAhjsA/ODR/jeFfWFaZh0bVQb2cYRVxg2Y2l5IYyfHuLiaSxKZf8Q5VINRPlZLum/dtd9n3G8g8u1dEoGiqh+t1tcG2jaCdU=
+	t=1742439176; cv=none; b=XxGlAl7vtlJ9HwvWzYaieY4ej9BcIHDZh5VZxA7bN2JUWgYiFmMXXPWo+0xzB7JvsKTuLYwg/s2Sz8fFFD7vX/0Glg6tifnf4r/RwENdzd07TQKtDZvADHiMSaL0WylRcf1zDNDSJgsjLCZIhnnuTMpDAt4GxBWmcjevdywxqzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742439011; c=relaxed/simple;
-	bh=P3SiIqeVRj8iaEhNM+RBJmR1hKc8A4iDN9+dTEaaRcY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=A92hsQpwXW/mCJg0xr3KU/5/UPD+f/M6x6xGMxy3GUwH9aahbEeoHMv4tjglJYqeIK4cUOKBkDajbOgFU7o5ywtwfqGK94EwU1MOwPwFMuT0YMcQClWDKOZvz2CRqSsevaJQaOrErSEEqvh1PH3U2GQrGVx1lDOY7IQZBZM45gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MNc2KZDW; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	s=arc-20240116; t=1742439176; c=relaxed/simple;
+	bh=vg4+ggxmuzeKTljMhEG1Oo/JmSE8/6fLfiQV1X3qNsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJ2CtmcCQJPxuyG5OyvjiWto02OwcYNtDCLIFgoGwWg6lbNkka3qBOdApTx8VYQlcy8IJ7S1lHr9gZDUX18VPgVWtxeQM8LXW2Tj1P9sOlpH4ASfLky/rnwf9K2ZbAsn3St9YMBS8lLcBURR7lfEAlMacNROFk/gxG7BXRwh76c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N3ccJmrU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742439173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=llxsDGyF5OTS0kLxtrZq1xxBUU0ow8OofIklAK3fpNU=;
+	b=N3ccJmrUh2Qv6PDYr1LkgrCeJNaj+nfS8IbXJVZV8WJczUgHZmvarH0oeF5hyU0gP8Bgjh
+	YUdWeycoMUthhT7ppotbZ3XqXjWDZR5s+5LdktA+xs3xlkcEA9/v7PmAXKM3Gt6K/tUGiH
+	mr18kvPDfpIaTdKRkzeRjQvF0B5ETMA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-121-BuMgurEROi-9O3Ip2yolXw-1; Wed,
+ 19 Mar 2025 22:52:49 -0400
+X-MC-Unique: BuMgurEROi-9O3Ip2yolXw-1
+X-Mimecast-MFC-AGG-ID: BuMgurEROi-9O3Ip2yolXw_1742439167
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4178D3F59F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742439006;
-	bh=B6K+THwXySxBQJQOsWXD4oxCuQIyOq0AdqsbklaeKoI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type;
-	b=MNc2KZDWkNTrQrKEU4WEFt0aQkhudHoRADEFdl4WXt+gO77ygT6rd6oKSrAw2RSkN
-	 s9nkqo+q3AbPH8tpyx9ZDJa9vMitKgIYqoGcbrH78lsTEdSQ0GJoyXswdYURiPExLW
-	 A+RDTpqgCdPgFP6EmkNxzOquFTD+j+xeoxSg0zq9EIBgfeEr37pxiU/BeaILn32Oyt
-	 /ZC0nVUUny6Ny4qtByq+OsPu6Yr/A4aFolK0mi/YIXSMKrvg8ypeCr2dNBhlNfJpyL
-	 QhglWQSH91RrRYSiq2+z8FhnAe7lt7ZB9N8BglMRIHqV5hYi/FX4ylIV7rG7deS3sn
-	 ETnAGZarGU+ww==
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac27d8ac365so21893166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:50:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742439004; x=1743043804;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B6K+THwXySxBQJQOsWXD4oxCuQIyOq0AdqsbklaeKoI=;
-        b=bKu/071R0F/cHZ8OjEu2mulb5OVvp2nKZISn54WMJ3B2N7Ih14iscIT3K1LB7EC/Yq
-         uV0JcoJQ1dwP9L01QbkDgCSYbyr/726am7HasE2Tt3vagqGXWs47X1ofutQjjqCMabYM
-         52dad1sQNhSO+WH0udUlchuY5flG8PE9MZIK9yolWkzDkQ15rhanZJEvAZpB+SczbpYZ
-         q2YE0Udls9Mr5vdIEuSw9hD2Gxe5vmZtMKjulJu8Vvwwh30KwUZa5fJYXhA29GVwGGUw
-         bLQWlUi6DGqF0sSKD5Qd6yoNoj+rY6GGnALuDJ8yTGKIms4S7n9MDBCSvoJLtRW9bg6D
-         1Uww==
-X-Forwarded-Encrypted: i=1; AJvYcCX7qIbv/st3NeIJsJdmdbLupIsE3GlN5mBbIVRxKpuCsZkM/3QDy1LwHX6b6D+5O+55iX+JTNEzKSKOj2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrUkWdRtR9BzePU0P/lSmRPj7+G2n7ohZ87RVFivrPmiMIYVjD
-	L1c9IDWTnp0VtpBeBgBTzrjblZ2pwSrOB2EGHEWsXrYSuBY/g4kuoha+e6uDgryJ8IUQ3aszwrK
-	e4kX89HOOvFHKZ6QwwKBkkqE6U3ZHN87+UscwzedrY3TTk7PZgmnVmi8lnAFmmE026KSA0jVB86
-	+NlYlXwEfLc8fDC2Ii9+vAjZ2oUnlWuXgfYRNTmIh1r7ch3FFv3KeQbpbS1T3c5hFy+A==
-X-Gm-Gg: ASbGncvEUAfSzsVqOMdUaPbgRhHEALkm6ilhy4fwAyYCoyaq82gGCr8eORxXBdg8OZT
-	CjTZequhaNTTgB6eydv/w/r0m6ML8KTTsSdWN7aP02TnPxpyxYPMW0wnpKmK1LkKuzC0WPN1Hht
-	KSAg6t9AgCs4qsEn1j
-X-Received: by 2002:a17:907:e841:b0:ac3:c7c6:3c97 with SMTP id a640c23a62f3a-ac3c7c63e02mr312151966b.0.1742439004259;
-        Wed, 19 Mar 2025 19:50:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxwS+F32m6Dcu78HgQNZGqxJlY3fybv+AmFOl0HtP3didoMbVm/KSAg3G+rEAHFJesanYJAO0wJ6h7PYuGw58=
-X-Received: by 2002:a17:907:e841:b0:ac3:c7c6:3c97 with SMTP id
- a640c23a62f3a-ac3c7c63e02mr312150166b.0.1742439003877; Wed, 19 Mar 2025
- 19:50:03 -0700 (PDT)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74EC41800875;
+	Thu, 20 Mar 2025 02:52:46 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.30])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66BA180174E;
+	Thu, 20 Mar 2025 02:52:42 +0000 (UTC)
+Date: Thu, 20 Mar 2025 10:52:38 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v10 7/8] ima: make the kexec extra memory configurable
+Message-ID: <Z9uC9g+UaVAA/0tY@MiWiFi-R3L-srv>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-8-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Thu, 20 Mar 2025 10:49:52 +0800
-X-Gm-Features: AQ5f1JqrpuKUwPyaCxlP-DpgVkJ4Rtp6uFAR420KNM7iPB4x68hQryVObfFPATM
-Message-ID: <CAFv23QnqgTVoB-XRe5yNndRz4-Z_3y38+QpKRxQMeZ2xQTg=gw@mail.gmail.com>
-Subject: Regression found in memory stress test with stress-ng
-To: linux-block@vger.kernel.org, axboe@kernel.dk, 
-	Christoph Hellwig <hch@infradead.org>, 
-	"Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, yangerkun@huawei.com, houtao1@huawei.com, 
-	yukuai3@huawei.com, libaokun1@huawei.com, Dirk Su <dirk.su@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318010448.954-8-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi all,
+On 03/17/25 at 06:04pm, steven chen wrote:
+> The extra memory allocated for carrying the IMA measurement list across
+> kexec is hard-coded as half a PAGE.  Make it configurable.
+> 
+> Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
+> extra memory (in kb) to be allocated for IMA measurements added during
+> kexec soft reboot.  Ensure the default value of the option is set such
+> that extra half a page of memory for additional measurements is allocated
+> for the additional measurements.
+> 
+> Update ima_add_kexec_buffer() function to allocate memory based on the
+> Kconfig option value, rather than the currently hard-coded one.
+> 
+> Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/ima/Kconfig     | 10 ++++++++++
+>  security/integrity/ima/ima_kexec.c | 16 +++++++++++-----
+>  2 files changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 475c32615006..d73c96c3c1c9 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
+>  	help
+>  	   This option disables htable to allow measurement of duplicate records.
+>  
+> +config IMA_KEXEC_EXTRA_MEMORY_KB
+> +	int "Extra memory for IMA measurements added during kexec soft reboot"
+> +	depends on IMA_KEXEC
+> +	default 0
 
-We have found a regression while doing a memory stress test using
-stress-ng with the following command
-   sudo stress-ng --aggressive --verify --timeout 300 --mmapmany 0
+Is there range for this memory, e.g [0, max] and max will be a value
+according to our current perception?
 
-This issue occurs on recent kernel versions, and we have found that
-the following commit leads to the issue
-   4e63aeb5d010 ("blk-wbt: don't throttle swap writes in direct reclaim")
+> +	help
+> +	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
+> +	  allocated (in kb) for IMA measurements added during kexec soft reboot.
+> +	  If set to the default value of 0, an extra half page of memory for those
+> +	  additional measurements will be allocated.
+> +
+>  endif
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index c390c745f882..0f214e41dd33 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -131,6 +131,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  				  .buf_min = 0, .buf_max = ULONG_MAX,
+>  				  .top_down = true };
+>  	unsigned long binary_runtime_size;
+> +	unsigned long extra_memory;
+>  
+>  	/* use more understandable variable names than defined in kbuf */
+>  	size_t kexec_buffer_size = 0;
+> @@ -138,15 +139,20 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	int ret;
+>  
+>  	/*
+> -	 * Reserve an extra half page of memory for additional measurements
+> -	 * added during the kexec load.
+> +	 * Reserve extra memory for measurements added during kexec.
+>  	 */
+> -	binary_runtime_size = ima_get_binary_runtime_size();
+> +	if (CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB <= 0)
+> +		extra_memory = PAGE_SIZE / 2;
+> +	else
+> +		extra_memory = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
+> +
+> +	binary_runtime_size = ima_get_binary_runtime_size() + extra_memory;
+> +
+>  	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
+>  		kexec_segment_size = ULONG_MAX;
+>  	else
+> -		kexec_segment_size = ALIGN(ima_get_binary_runtime_size() +
+> -					   PAGE_SIZE / 2, PAGE_SIZE);
+> +		kexec_segment_size = ALIGN(binary_runtime_size, PAGE_SIZE);
+> +
+>  	if ((kexec_segment_size == ULONG_MAX) ||
+>  	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
+>  		pr_err("Binary measurement list too large.\n");
+> -- 
+> 2.25.1
+> 
+> 
 
-Before reverting the commit directly, I wonder if we can identify the
-issue and implement a solution quickly.
-Currently, I'm unable to provide logs, as the system becomes
-unresponsive during testing. If you have any idea to capture logs,
-please let me know, I'm willing to help.
-
-Best regards,
-AceLan Kao.
 
