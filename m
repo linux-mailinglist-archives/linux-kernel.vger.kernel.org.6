@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-570494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E1EA6B146
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:54:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FADCA6B149
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A24C8A35B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C0618944C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2A6224251;
-	Thu, 20 Mar 2025 22:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43609229B12;
+	Thu, 20 Mar 2025 22:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moz9M5eq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CDgK8GhM"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA915574E;
-	Thu, 20 Mar 2025 22:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A4515574E;
+	Thu, 20 Mar 2025 22:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742511291; cv=none; b=IcyB7CsKLMdy8/7YcGZnMm1f5GbYjVM5zNk6r/RZu+Ifw1uM8BeYM1XEOvtZ1EOCViMMCWsapr4Ry+ClYJ+5kXrNtO6KpAfEdqFLQD0yTbMygAiHW8fAF6wlHbwn2TucWCz+4wvFQvpq+Y/UHcSpOrukyl9sXg2xe0tFmknWFY8=
+	t=1742511365; cv=none; b=ErUlC3Ax5bOemdf3t2yhn8Gqd7uQSvz6MFSREDul4IKpNTMa9LtK1jKWwVibOIpT3A/0ET4k+dZZzs/6JLVx6H/K7j98mj1yj8o8qbjtmH2EhNE4tx/I3YYy7CZchrwt4NEBwjk7REobz1o5lbwZjebF8X6X7f87wyHNjhuS9U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742511291; c=relaxed/simple;
-	bh=nZPLQ3D+uW+IN0lKkOGwBecX1CKPNktsCOLGMTU1uys=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kBjNxI0DIUoVfUb+QW1JB8J2vDQqVrtOZaMLlMeGhnqffnlukSd/pqovyb4BH/KS+G8krImLgn/TUaXwgyRISf5n5eSgpK2tfnYCOqtC4N7qsgGPf1kI+20xxXJuKp2gCIiYSN0Eg47EBni5iim3w01KGn0yKCirXeP/mPH9GRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moz9M5eq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6FAC4CEEC;
-	Thu, 20 Mar 2025 22:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742511290;
-	bh=nZPLQ3D+uW+IN0lKkOGwBecX1CKPNktsCOLGMTU1uys=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=moz9M5eqGvtHwYSNUow+2yVsDJyG/hiOjsC9y3M4VqmHk4NAhe6dQSuejPIUYSAvY
-	 xSaFVmqHjgKt8XylZ1OKLexMGAHguQqo4UaVYIgrGqQRzqQp+lU185cGmDAjBG04r5
-	 DNPM9canzRvHmeTPl20Io6QZcq6Ds47b0YCp5oXa2Jt1WEtayA/2BdboKrh1bRYsuz
-	 KwrHBun9AgpnoFG3YQXc0AqaeC6vQU1rNspK1r7V91uKfhzrZIe0dcoIFU5hLf5T7p
-	 TLbfp+K1BvAo7W26TuFXrwaVWFFBz8V5g39wahTyBgMQ3Qz/k3k/BWoRGzJbG+124Q
-	 65T5X7xuOQcJg==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com, 
- ranjani.sridharan@linux.intel.com, daniel.baluta@nxp.com, 
- kai.vehmanen@linux.intel.com, pierre-louis.bossart@linux.dev, 
- perex@perex.cz, tiwai@suse.com, matthias.bgg@gmail.com, 
- christophe.jaillet@wanadoo.fr, gregkh@linuxfoundation.org, 
- peterz@infradead.org, krzk@kernel.org, lee.lockhey@gmail.com, 
- u.kleine-koenig@baylibre.com, cujomalainey@chromium.org, jakiela@google.com, 
- sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-In-Reply-To: <20250320115300.137410-1-angelogioacchino.delregno@collabora.com>
-References: <20250320115300.137410-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] ASoC: SOF: mediatek: Commonize duplicated functions
-Message-Id: <174251128562.367646.10336285275014385543.b4-ty@kernel.org>
-Date: Thu, 20 Mar 2025 22:54:45 +0000
+	s=arc-20240116; t=1742511365; c=relaxed/simple;
+	bh=ma8MNS39u0Sxa1/Tgus3sjjGzSbvJGwyPTv7J+m5aaw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iGEMvf/zOdDBrSZUrbLiKq4HYIf+Mge1uu9oLT4/dLAnziTvZk0bvh81BHp1ic3clXI6o3CAgVEoCych5kIaDr7f1iHum8LAt7z8hF7UM8LYEK4+YqiXfrfdKuEShh3zHKWVbsvPuf8OmD+TbXZlpwdaRZoV0FCyUWpziN1Xcrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CDgK8GhM; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742511361; x=1742770561;
+	bh=ddBTulHymzLE55DHUMDCG5+higdRgLgEM8VGyZIKU+k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=CDgK8GhMm66yUJBY8ooaRmHDp6u0E+BKtOc+2H2PqraEfrgccjK6HrbD+jcjjOd3w
+	 RYCEZooOhMPyN8K8mYqtdntPoqf3uNSQPZ1iRR20Hb+I8V3V+/nigGDviJQAyiWxj1
+	 kPmJLFlTKcj1KWquYwuMvKkMGVkAqTVjbrFuhejZuDNpIdZA7Cmp3pxCVCt8ayR942
+	 F/ePN2RfSTb5b8StFFj6l5fyQEIWUb8dHQ+4Lk3glr9OGm+/KZEc9W+36eh2cbf/xe
+	 Q7txswYslCxWylftCvxAEsMiFAOYE0bTnEKLR95PZnmHoAAvZukGLiGuxKkqyG6JpG
+	 hMcdr6VhdSkZw==
+Date: Thu, 20 Mar 2025 22:55:56 +0000
+To: Danilo Krummrich <dakr@kernel.org>, bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] rust: device: implement bus_type_raw()
+Message-ID: <D8LGQ1BTPFBR.1P5LGD0LWP32W@proton.me>
+In-Reply-To: <20250320222823.16509-3-dakr@kernel.org>
+References: <20250320222823.16509-1-dakr@kernel.org> <20250320222823.16509-3-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: ccff88a94d296e77877278f3b8e6a9ada1123fb4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Mar 2025 12:53:00 +0100, AngeloGioacchino Del Regno wrote:
-> In order to reduce duplication, move the ADSP mailbox callbacks
-> handle_reply(), handle_request(), and other common SOF callbacks
-> send_msg(), get_bar_index(), pcm_hw_params() and pcm_pointer()
-> to the mtk-adsp-common.c file.
-> 
-> This cleanup brings no functional differences.
-> 
-> [...]
+On Thu Mar 20, 2025 at 11:27 PM CET, Danilo Krummrich wrote:
+> Implement bus_type_raw(), which returns a raw pointer to the device'
+> struct bus_type.
+>
+> This is useful for bus devices, to implement the following trait.
+>
+> =09impl TryFrom<&Device> for &pci::Device
+>
+> With this a caller can try to get the bus specific device from a generic
+> device in a safe way. try_from() will only succeed if the generic
+> device' bus type pointer matches the pointer of the bus' type.
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Applied to
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+---
+Cheers,
+Benno
 
-Thanks!
+> ---
+>  rust/kernel/device.rs | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index f6bdc2646028..1b554fdd93e9 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -80,6 +80,16 @@ pub fn parent<'a>(&self) -> Option<&'a Self> {
+>          }
+>      }
+> =20
+> +    /// Returns a raw pointer to the device' bus type.
+> +    #[expect(unused)]
+> +    pub(crate) fn bus_type_raw(&self) -> *const bindings::bus_type {
+> +        // SAFETY:
+> +        // - By the type invariants, `self.as_raw()` is a valid pointer =
+to a `struct device`.
+> +        // - `dev->bus` is a pointer to a `const struct bus_type`, which=
+ is only ever set at device
+> +        //    creation.
+> +        unsafe { (*self.as_raw()).bus }
+> +    }
+> +
+>      /// Convert a raw C `struct device` pointer to a `&'a Device`.
+>      ///
+>      /// # Safety
 
-[1/1] ASoC: SOF: mediatek: Commonize duplicated functions
-      commit: 24489150c5d9afea54c6909ba05c4dbdd8846dc0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
 
