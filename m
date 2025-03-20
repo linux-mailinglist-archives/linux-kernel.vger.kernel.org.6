@@ -1,298 +1,99 @@
-Return-Path: <linux-kernel+bounces-569751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1293A6A715
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:25:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C18A6A72E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08154848FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F249419C0B45
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B48021CA0E;
-	Thu, 20 Mar 2025 13:24:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4152AE99;
-	Thu, 20 Mar 2025 13:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E95A21CA18;
+	Thu, 20 Mar 2025 13:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VfGBYS6u"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6421DFE00
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742477073; cv=none; b=m3YIqkP/U14ZFX/CxWJgcsO47ssOPsjvoznECzCc2pEB7naXKwm04gLWMsiX64HEqsLKbtuGmUvJE6glB3OTLHiR4Js8Tuj7d9BB++/iWYrsOgM8Xc8UQu+F+WUsPRpk38cgxZM4dlvCjPCS5Kz4d1MQWhda8GuNThoq86vYgrc=
+	t=1742477126; cv=none; b=ozfjfsGuhAadMc1WEzZcK/kG0rknzCeSoSCVChxPWH745umK2aRGK5XJ/JMKyqJdmzAXdFgca15QOhvqxxRj2bRWpe3fuXihG8ao1zm227eKz8KvDUERvjiHNav5/YC/P8U5SXk29BZkztk2/xOeJkAM3wxHyGGUiMpSMWAliLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742477073; c=relaxed/simple;
-	bh=CE4N6jRoeEj6N1mdza1452J1YYtyUgbjf7fDXEZjpMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=umNNsxMqolILTRXW1/fvLJzQEtod+EdTRecmvVKYdFXlczeM0uUBcCgXygrRvk17GfhY02ZKM/cajp3jt1xEU9qcRECAvlMcX2pudGOwybSbEHuv+02MCbf4tmZPWFugyv6kVupnkPWT4mw74Htyk40H+PVn9yW3SpVzjU9X/9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90492113E;
-	Thu, 20 Mar 2025 06:24:38 -0700 (PDT)
-Received: from [10.57.69.2] (unknown [10.57.69.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 901E43F63F;
-	Thu, 20 Mar 2025 06:24:26 -0700 (PDT)
-Message-ID: <f9c5839e-5d55-497e-9df3-ab778c4eae72@arm.com>
-Date: Thu, 20 Mar 2025 13:24:25 +0000
+	s=arc-20240116; t=1742477126; c=relaxed/simple;
+	bh=CrAvtI+KqPJLCyH+EGcOWM8qTU28nSUxFfDHQusAqr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sC7AVD2eYoa2CGRplFuBkJ1IWnlLRBFghxnVWaBNJzB1HxcY50Oi5qmUyN8caEW1Y0i6nIA40Hyo+4xIf4777IFb4R2/Piqgvi33484P4u0WZqDFvoxa1uQo+qJEmx09HlukuE1V+uFV56QyTzqrAklsWV4m3SEPWkzXt0jFZ6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VfGBYS6u; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3268140E021E;
+	Thu, 20 Mar 2025 13:25:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PeTxtJwwvYry; Thu, 20 Mar 2025 13:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742477115; bh=3aa+wS37o38K92WJhVN/aqRy0B/qXAhUuUTdFXoVlf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfGBYS6uuXebLXBqF378GrTbYGNoCHQZnd/KGXDNXdOZmknAFXVGubXnh75iVrR7Y
+	 sskwPeY8yElZef++/YMkclvBwR8qSIg1Hq6ehXhLQOYVh6ODBgiTXME28MkZuI5Q4Z
+	 gYmv3Ah098dvGfQMRepBgZHYD2ZwxH6ja3FtFADVPSsgNY1nUrxzEYcnJsZV9AN7op
+	 1S18ZTarWq0pXGqZPt0w9rZXl0G38IJh9uBDZHVBlKyX0v+NoNKL46TjawHsIJBoip
+	 JYYdpgzv9PScMAqMxgQB4toO29Z4nTxUzcvXz2WkVgXg594qpDRJVzgfw2cg+6P2uk
+	 te129dtV7xAgGRfyweMHCgmPBz+lA2Z6vjBJkhlFjCaykjm1zYmp/lyhszMy0+JRZl
+	 uReWJcn2oAIciWKec4wkQt2x1hhnZuiut3S14DjxKvjNYkZDzQ/nA1EUdWE2bmHV3t
+	 CiFuWYJp/F9VsynjU+GsJLnmqL7P7z3LkJCxGGC+93vtSo4MWdUDJQpNij+X1i61bC
+	 tBXOBO2I0wFSMt4ur0b00TCxiBUrrH6HPpOxSCsLKKYo8CLQgKzLIj8D5/avam+lOF
+	 0wqi6Rc3fKgXCmDwdT0HHSkQ8QkJUgfpn85pFOPDZtMOchxZJpl+jrzOZTUFs1X5jn
+	 AWt1ryg9hIxF9S50AfmpURX0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 17BEA40E0215;
+	Thu, 20 Mar 2025 13:25:11 +0000 (UTC)
+Date: Thu, 20 Mar 2025 14:25:05 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nick Terrell <terrelln@meta.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, x86-ml <x86@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: lib/zstd/compress/huf_compress.c:1033:1: internal compiler
+ error: Segmentation fault
+Message-ID: <20250320132505.GAZ9wXMd9_6LB6OKKW@fat_crate.local>
+References: <20250317135539.GDZ9gp24DhTKBGmkd8@fat_crate.local>
+ <4C937266-6136-4103-A53C-C313B5DBC676@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] arm64: Add BBM Level 2 cpu feature
-Content-Language: en-GB
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- ryan.roberts@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
- robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
- ardb@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
- james.morse@arm.com, broonie@kernel.org, oliver.upton@linux.dev,
- baohua@kernel.org, david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev
-References: <20250319150533.37440-2-miko.lenczewski@arm.com>
- <20250319150533.37440-3-miko.lenczewski@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250319150533.37440-3-miko.lenczewski@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4C937266-6136-4103-A53C-C313B5DBC676@meta.com>
 
-On 19/03/2025 15:05, Mikołaj Lenczewski wrote:
-> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
-> and this commit adds a dedicated BBML2 cpufeature to test against
-> support for, as well as a kernel commandline parameter to optionally
-> disable BBML2 altogether.
+On Wed, Mar 19, 2025 at 05:10:01PM +0000, Nick Terrell wrote:
+> Zstd hasn't changed in that duration, but I'm preparing an update now.
+> You could check to see if this branch fixes your issue:
 > 
-> This is a system feature as we might have a big.LITTLE architecture
-> where some cores support BBML2 and some don't, but we want all cores to
-> be available and BBM to default to level 0 (as opposed to having cores
-> without BBML2 not coming online).
-> 
-> To support BBML2 in as wide a range of contexts as we can, we want not
-> only the architectural guarantees that BBML2 makes, but additionally
-> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
-> us having to prove that no recursive faults can be induced in any path
-> that uses BBML2, allowing its use for arbitrary kernel mappings.
-> Support detection of such CPUs.
-> 
-> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
-> ---
->   .../admin-guide/kernel-parameters.txt         |  3 +
->   arch/arm64/Kconfig                            | 11 +++
->   arch/arm64/include/asm/cpucaps.h              |  2 +
->   arch/arm64/include/asm/cpufeature.h           |  5 ++
->   arch/arm64/kernel/cpufeature.c                | 68 +++++++++++++++++++
->   arch/arm64/kernel/pi/idreg-override.c         |  2 +
->   arch/arm64/tools/cpucaps                      |  1 +
->   7 files changed, 92 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index fb8752b42ec8..3e4cc917a07e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -453,6 +453,9 @@
->   	arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
->   			32 bit applications.
->   
-> +	arm64.nobbml2	[ARM64] Unconditionally disable Break-Before-Make Level
-> +			2 support
-> +
->   	arm64.nobti	[ARM64] Unconditionally disable Branch Target
->   			Identification support
->   
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 940343beb3d4..49deda2b22ae 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -2057,6 +2057,17 @@ config ARM64_TLB_RANGE
->   	  The feature introduces new assembly instructions, and they were
->   	  support when binutils >= 2.30.
->   
-> +config ARM64_BBML2_NOABORT
-> +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
-> +	default y
-> +	help
-> +	  FEAT_BBM provides detection of support levels for break-before-make
-> +	  sequences. If BBM level 2 is supported, some TLB maintenance requirements
-> +	  can be relaxed to improve performance. We additonally require the
-> +	  property that the implementation cannot ever raise TLB Conflict Aborts.
-> +	  Selecting N causes the kernel to fallback to BBM level 0 behaviour
-> +	  even if the system supports BBM level 2.
+>  https://github.com/terrelln/linux.git tags/2025-03-13-zstd-v1.5.7-v1
 
-minor nit: Should we mention that the feature can be disabled at runtime 
-using a kernel parameter ?
+Nah, that didn't but updating the toolchain did.
 
-> +
->   endmenu # "ARMv8.4 architectural features"
->   
->   menu "ARMv8.5 architectural features"
-> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> index 0b5ca6e0eb09..2d6db33d4e45 100644
-> --- a/arch/arm64/include/asm/cpucaps.h
-> +++ b/arch/arm64/include/asm/cpucaps.h
-> @@ -23,6 +23,8 @@ cpucap_is_possible(const unsigned int cap)
->   		return IS_ENABLED(CONFIG_ARM64_PAN);
->   	case ARM64_HAS_EPAN:
->   		return IS_ENABLED(CONFIG_ARM64_EPAN);
-> +	case ARM64_HAS_BBML2_NOABORT:
-> +		return IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT);
->   	case ARM64_SVE:
->   		return IS_ENABLED(CONFIG_ARM64_SVE);
->   	case ARM64_SME:
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index e0e4478f5fb5..108ef3fbbc00 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -866,6 +866,11 @@ static __always_inline bool system_supports_mpam_hcr(void)
->   	return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
->   }
->   
-> +static inline bool system_supports_bbml2_noabort(void)
-> +{
-> +	return alternative_has_cap_unlikely(ARM64_HAS_BBML2_NOABORT);
-> +}
-> +
->   int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
->   bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
->   
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index d561cf3b8ac7..1a4adcda267b 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2176,6 +2176,67 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
->   	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
->   }
->   
-> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
-> +{
-> +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
-> +	 * as possible. This list is therefore an allow-list of known-good
-> +	 * implementations that both support bbml2 and additionally, fulfill the
-> +	 * extra constraint of never generating TLB conflict aborts when using
-> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
-> +	 * kernel contexts difficult to prove safe against recursive aborts).
-> +	 *
-> +	 * Note that implementations can only be considered "known-good" if their
-> +	 * implementors attest to the fact that the implementation never raises
-> +	 * TLBI conflict aborts for bbml2 mapping granularity changes.
-> +	 */
-> +	static const struct midr_range supports_bbml2_noabort_list[] = {
-> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
-> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
-> +		{}
-> +	};
-> +
-> +	return is_midr_in_range_list(cpu_midr, supports_bbml2_noabort_list);
-> +}
-> +
-> +static inline unsigned int cpu_read_midr(int cpu)
-> +{
-> +	WARN_ON_ONCE(!cpu_online(cpu));
-> +
-> +	return per_cpu(cpu_data, cpu).reg_midr;
-> +}
-> +
-> +static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int scope)
-> +{
-> +	if (!IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT))
-> +		return false;
-> +
-> +	if (scope & SCOPE_SYSTEM) {
-> +		int cpu;
-> +
-> +		/* We are a boot CPU, and must verify that all enumerated boot
+Perhaps some artifact of using debian testing...
 
-minor nit: See Documentation/process/coding-style.rst,
-Section 8 Commenting.
+Thx.
 
-		/*
-		 * <multi-line comment>
-		 */
+-- 
+Regards/Gruss,
+    Boris.
 
-> +		 * CPUs have MIDR values within our allowlist. Otherwise, we do
-> +		 * not allow the BBML2 feature to avoid potential faults when
-> +		 * the insufficient CPUs access memory regions using BBML2
-> +		 * semantics.
-> +		 */
-> +		for_each_online_cpu(cpu) {
-> +			if (!cpu_has_bbml2_noabort(cpu_read_midr(cpu)))
-> +				return false;
-> +		}
-> +	} else if (scope & SCOPE_LOCAL_CPU) {
-> +		/* We are a hot-plugged CPU, so must only check our MIDR.
-
-minot nit: same as above
-
-Rest looks good to me.
-
-Suzuki
-
-
-
-> +		 * If we have the correct MIDR, but the kernel booted on an
-> +		 * insufficient CPU, we will not use BBML2 (this is safe). If
-> +		 * we have an incorrect MIDR, but the kernel booted on a
-> +		 * sufficient CPU, we will not bring up this CPU.
-> +		 */
-> +		if (!cpu_has_bbml2_noabort(read_cpuid_id()))
-> +			return false;
-> +	}
-> +
-> +	return has_cpuid_feature(caps, scope);
-> +}
-> +
->   #ifdef CONFIG_ARM64_PAN
->   static void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
->   {
-> @@ -2926,6 +2987,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->   		.matches = has_cpuid_feature,
->   		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
->   	},
-> +	{
-> +		.desc = "BBM Level 2 without conflict abort",
-> +		.capability = ARM64_HAS_BBML2_NOABORT,
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches = has_bbml2_noabort,
-> +		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, BBM, 2)
-> +	},
->   	{
->   		.desc = "52-bit Virtual Addressing for KVM (LPA2)",
->   		.capability = ARM64_HAS_LPA2,
-> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
-> index c6b185b885f7..803a0c99f7b4 100644
-> --- a/arch/arm64/kernel/pi/idreg-override.c
-> +++ b/arch/arm64/kernel/pi/idreg-override.c
-> @@ -102,6 +102,7 @@ static const struct ftr_set_desc mmfr2 __prel64_initconst = {
->   	.override	= &id_aa64mmfr2_override,
->   	.fields		= {
->   		FIELD("varange", ID_AA64MMFR2_EL1_VARange_SHIFT, mmfr2_varange_filter),
-> +		FIELD("bbm", ID_AA64MMFR2_EL1_BBM_SHIFT, NULL),
->   		{}
->   	},
->   };
-> @@ -246,6 +247,7 @@ static const struct {
->   	{ "rodata=off",			"arm64_sw.rodataoff=1" },
->   	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
->   	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
-> +	{ "arm64.nobbml2",		"id_aa64mmfr2.bbm=0" },
->   };
->   
->   static int __init parse_hexdigit(const char *p, u64 *v)
-> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-> index 1e65f2fb45bd..b03a375e5507 100644
-> --- a/arch/arm64/tools/cpucaps
-> +++ b/arch/arm64/tools/cpucaps
-> @@ -14,6 +14,7 @@ HAS_ADDRESS_AUTH_ARCH_QARMA5
->   HAS_ADDRESS_AUTH_IMP_DEF
->   HAS_AMU_EXTN
->   HAS_ARMv8_4_TTL
-> +HAS_BBML2_NOABORT
->   HAS_CACHE_DIC
->   HAS_CACHE_IDC
->   HAS_CNP
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
