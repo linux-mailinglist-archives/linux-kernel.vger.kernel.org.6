@@ -1,96 +1,137 @@
-Return-Path: <linux-kernel+bounces-569850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FDDA6A849
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:21:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8D3A6A87D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2091716C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272951B62A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DA922258E;
-	Thu, 20 Mar 2025 14:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C9B22259C;
+	Thu, 20 Mar 2025 14:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBeojsTi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNGP6xM2"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA767FBD6;
-	Thu, 20 Mar 2025 14:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7BB2222DA;
+	Thu, 20 Mar 2025 14:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480352; cv=none; b=WffuCy1oOSJ1tTvyUKDNpzMwAitLN0zXBhPFoqJu3+HEEzT9wcbCjz/9Cb52DgMQ2sR2N7Uu6VcZTtrzJfHtJgs4KOF/rcqPSTF+5OcDQ1i56B0bI+L6w79WdIkWGbBierPbeHFCEX2Rdo3O0rTMWtzvuHVYc38RR+pC2tY83/M=
+	t=1742480409; cv=none; b=M+e9Q5IMHHcRTVx8coJulTYyAE3ZGjmNesTsXi6PlhrSth+MLj2O8OGHQSwcyjaMN6MQ+2bzzLU2OeMmE6XFAMmVE0GLP0gnYQjWLWVYAW//3Ed4MEv5Ogp7aHXDwvJ9kcfDhkdUXzLqtpNZVss6GuTNuy+1J41E20IdTwep/Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480352; c=relaxed/simple;
-	bh=ykMiPvcTwQMVIvfcRVO0FVXDV8aKd7Cnvgwwftoy0Ew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TGMnyb0H1FDE6nTtUfguI6sTt7G0IFGFy7Pq0UQ6c+AKjYRajOxwrYvVgXsgZRPx794T955uxF0Fi2Jbz4HxNQu73Hqph37aFRZ7dw0NNzCWtGWvHZiZAGSb7O/Snt8oQVwLihEsP+XDnW3Lv52q6muqIbDC2a2DOCuBWAdKy3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBeojsTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908BFC4CEDD;
-	Thu, 20 Mar 2025 14:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742480352;
-	bh=ykMiPvcTwQMVIvfcRVO0FVXDV8aKd7Cnvgwwftoy0Ew=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZBeojsTi8VAKDev+l82UocdghtoV0RcrCHY2iNl+/4OYj7NrCjyeMxGJcFoEnlX+3
-	 Q1rJwsOCJ0MyJNhd6xHkkAuTI/BQ06ljhebXaJC1ZCatxIEKnIYqypifRgNFR+QvRQ
-	 l7oMYrpY0DhgZEruwNYYaRw3DAiFsDonVGSpbDH3bxbTG7Vl27XgmBXkB9e8vGNk9V
-	 lMmFFqUBRMgS7MxpLcwm2YZW3rhb7bpMYWIDUhBnwF5YuUHfI7G+E5IkeElgZ2dYTk
-	 dLO8dDe3Zmxy6ai8P8yqmE3NZaGyazvCsT2sCHICIwkS6pZeP4f8wVBKlpl1Yeon76
-	 GsChH/oB1W+uw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: sort out fd allocation vs dup2 race commentary, take 2
-Date: Thu, 20 Mar 2025 15:19:06 +0100
-Message-ID: <20250320-glitzer-losung-a9d47764b766@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250320102637.1924183-1-mjguzik@gmail.com>
-References: <20250320102637.1924183-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1742480409; c=relaxed/simple;
+	bh=dH8kqMOzYKRkO8AFezYTvcfiSExxo1tsEVf2jq0pJzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=G8PkiuKYxtsidrBa72H3upd0FiE2uerwL4I0wp7hdsJCGa7hzaqeWjoJXunETQFLZ8YYyKoS/8VuIrRBpb9Njl5wekB05iVgUy2uZ8m+XIKXUlLS3MmCAoofuzFgAiIKFYmUB+BuziIRovU9ChSYKWIo9BKSOKx+dKckSKhnybY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mNGP6xM2; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so13397355e9.1;
+        Thu, 20 Mar 2025 07:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742480406; x=1743085206; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d++5qthA5Opum/cYe1SfT054ozKie7YLEL3LQBhRUG8=;
+        b=mNGP6xM2koKQldqH36fmkyRMAG5dQO8dXeUwXLXw+L4IkJq6l0qnWpmRRWgzR5S3SS
+         oEb44Jy3J+bgRyFBVVgjyIQSgLuC0oAn4U6h0wFrlbHBD4SaWKc3z3x/rwoyPAYsD8Ux
+         2MK86wA5Jm6TjgqNBh1dsxhmBZvRm1cM1J1RBLs/l3CLYMiAXhNNww4egNPWTJCsBU5C
+         JLA8pkTmV9OSDYPFgOALqhZDEEoBSNLzbDu5CSUtwqYVXmgXj1Bmk47DDZsmfvrkw3kV
+         HS2I6Bm02hKXRpOCVgpIi9CoxuRkKMPcs8d23GI5eigLmurbpk2va1jMiG1us9Ih6FYR
+         f6Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742480406; x=1743085206;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d++5qthA5Opum/cYe1SfT054ozKie7YLEL3LQBhRUG8=;
+        b=v8wtR0l3NbUbzFDGyCTyYfzOAUk+zVgiBAZraSZwtwtqhH477T8k7nHge0Nda+pflw
+         665eyEH3bpzBPWr90Qu9vKrWsS4iLllfCGxREUHAd7mVt/jnzezCSEaURqNnqduh7XtG
+         KgsrwAy/aArZR0JjDBWU08dOqa49O20H0pXj8NYZCMHa6gY3bxKQUBzGMn0uNkRw+Rkr
+         uVXLJ48NP0/dWntRNG+BQVZekNHVt/zTBRnPvzwl5zConDfK1+rVAY5328vA9IkgYYhN
+         6idZu6MVW9eh/Ycd9hZVpd7G0GN8Jqkyxo7vS/g1g5Ro5FyDw2Js3fhgTbSkTIX5D4TX
+         zD/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX19fX+fuKoZI+oX8Ui2tTJDMvI/sJ7wZoypnd0roiGglOxN267EYfaLT73apIaPerkEOdLYQh8DHfCR7/DU8YnTdmL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrdDktBoNMK6tLueMzIjkpLhFtrQRN8fIfOKN9H+VlWyokRpQH
+	L9IHoHziEBGpMQpGcKcOcKXExcXtgVfVNMweB+01euYJd1xp3MgQ
+X-Gm-Gg: ASbGnctkRjY3IO2agiWh5qr+00F/zZr7xNexfc2BDYHwPpAnRwbvkWtZkOUmDu5Zneq
+	3vtdcbCFhZRkkNsraSGgVhRmW7m/qtjqC8Xufi4WejDVZur3JhnnhCtujQ7Zhqi/uab4oMWNjMl
+	XxtlLuipq1nNuPen4OUKX5H0WRUBsnl08XAEFKws3VIfALFn/cM4hjLnEgsQP2trVIFeLAlALrx
+	napjisSNxwC3y/lt6WhEhMUFZSIIFSX9HnM3QaY1KdSzrSoELV+4k+NXKtJaAs+DoP3OlzFQFWR
+	Rg01dVyZJvd9LcEiys/oo0a4Xq9gkSbs9bGs99TWNr74kya2if7h/fSF2KwbrcHMwg==
+X-Google-Smtp-Source: AGHT+IF3l+WLY4jkAz298OXh4bWEj10Qycnuga65VLJ+RBNkbb+Ywo27cb98HEL3SOAtb+0m5yIeLw==
+X-Received: by 2002:a05:600c:ac6:b0:439:91c7:895a with SMTP id 5b1f17b1804b1-43d49172281mr32751085e9.7.1742480405391;
+        Thu, 20 Mar 2025 07:20:05 -0700 (PDT)
+Received: from pop-os.fkkt.uni-lj.si ([2001:1470:ffef:fe01:4c36:e005:5f88:7d9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f556a4sm50352695e9.22.2025.03.20.07.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 07:20:04 -0700 (PDT)
+From: =?UTF-8?q?Ga=C5=A1per=20Nemgar?= <gasper.nemgar@gmail.com>
+To: ike.pan@canonical.com
+Cc: linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	=?UTF-8?q?Ga=C5=A1per=20Nemgar?= <gasper.nemgar@gmail.com>
+Subject: [PATCH] platform/x86: ideapad-laptop: Add a few new keymap entries
+Date: Thu, 20 Mar 2025 15:19:42 +0100
+Message-Id: <20250320141942.67391-1-gasper.nemgar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1188; i=brauner@kernel.org; h=from:subject:message-id; bh=ykMiPvcTwQMVIvfcRVO0FVXDV8aKd7Cnvgwwftoy0Ew=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfUb6VUC7Sq7/TnTtW/Tj789xvnlNefoya8bcmKuJHf tuRGfNfdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkYjDDP02Xbu270/O1K6pE BXfFx7A7nXmdu6jjjGFrz6vQj2uaFjH84Zq0wcZ59vvEwuOX7ioLZV5/uqQqZ4tYcOvMpxekG3R 6mAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Mar 2025 11:26:37 +0100, Mateusz Guzik wrote:
-> fd_install() has a questionable comment above it.
-> 
-> While it correctly points out a possible race against dup2(), it states:
-> > We need to detect this and fput() the struct file we are about to
-> > overwrite in this case.
-> >
-> > It should never happen - if we allow dup2() do it, _really_ bad things
-> > will follow.
-> 
-> [...]
+Added entries to unsuported wmi codes in ideapad_keymap[]
+and one check in wmi_nofify in order to get wmi code 0x13d to trigger platform_profile_cycle
 
-Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+Signed-off-by: Gašper Nemgar <gasper.nemgar@gmail.com>"
+---
+ drivers/platform/x86/ideapad-laptop.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 30bd366d7..624889703 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -1308,7 +1308,17 @@ static const struct key_entry ideapad_keymap[] = {
+ 	/* Specific to some newer models */
+ 	{ KE_KEY,	0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
+ 	{ KE_KEY,	0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
+-
++	/* Star- (User Asignable Key) */
++	{ KE_KEY,	0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
++	/* Eye */
++	{ KE_KEY,	0x45 | IDEAPAD_WMI_KEY, { KEY_BRIGHTNESS_CYCLE } },
++	/* Performance toggle also Fn+Q */
++	{ KE_KEY,	0x3d | IDEAPAD_WMI_KEY, { KEY_PROG4 } },
++	/* shift + prtsc */
++	{ KE_KEY,   0x2d | IDEAPAD_WMI_KEY, { KEY_CUT } },
++	{ KE_KEY,   0x29 | IDEAPAD_WMI_KEY, { KEY_TOUCHPAD_TOGGLE } },
++	{ KE_KEY,   0x2a | IDEAPAD_WMI_KEY, { KEY_ROOT_MENU } },
++	
+ 	{ KE_END },
+ };
+ 
+@@ -2093,6 +2103,12 @@ static void ideapad_wmi_notify(struct wmi_device *wdev, union acpi_object *data)
+ 
+ 		dev_dbg(&wdev->dev, "WMI fn-key event: 0x%llx\n",
+ 			data->integer.value);
++		
++		/* performance button triggered by  ...  */
++		if ((data->integer.value | IDEAPAD_WMI_KEY) == 0x13d ) {
++			platform_profile_cycle();
++			break;
++		}
+ 
+ 		/* 0x02 FnLock, 0x03 Esc */
+ 		if (data->integer.value == 0x02 || data->integer.value == 0x03)
+-- 
+2.34.1
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.misc
-
-[1/1] fs: sort out fd allocation vs dup2 race commentary, take 2
-      https://git.kernel.org/vfs/vfs/c/4dec4f91359c
 
