@@ -1,169 +1,206 @@
-Return-Path: <linux-kernel+bounces-570331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48AEA6AEF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:09:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51920A6AEFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D15D8A24AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052DE189247D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67786229B0C;
-	Thu, 20 Mar 2025 20:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9F7229B0C;
+	Thu, 20 Mar 2025 20:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCQR0lzD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Ws0sw74k"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2098.outbound.protection.outlook.com [40.107.93.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C353F21CA00;
-	Thu, 20 Mar 2025 20:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742501383; cv=none; b=M1pFyqXUpiVgOzxDM++WNuGwrMx4h1Hk4Me/5LesVpPg5zkAUNV2wrhE+kt8A5gw4LuDfTnOOEY9yf6VkJfXaIJ8j8nNRD6A2cdm34Zmu5rU3tMkVXCc6vuFZEwIBWcpqRBpFBtzT2tv0geFpF96RNWfiBy1Tb6/p2Q7H5kp684=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742501383; c=relaxed/simple;
-	bh=IXvse+cPAOPI+1A/p8odtSxPd7pf1eSfCqgYQkxrS5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qk5+ZZABOPCUd4vPx1gZc1S9kzwsYMkhls4MdPxFJY8LCpfpv333M2ucyaNxJR75ZA7xOAqWPd2bHVHDkWH4f4AhiAgrWLi6k80ijwm1qkw16OJRs1dXlFoJIYPVBFRGqrNaeW7sTMBXJV+ARGDkIGb+tAioSAXj6/c3jWV66/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCQR0lzD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279A7C4CEDD;
-	Thu, 20 Mar 2025 20:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742501382;
-	bh=IXvse+cPAOPI+1A/p8odtSxPd7pf1eSfCqgYQkxrS5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UCQR0lzDuAIiEy/tA38KqCCM+VStvYEx9jAE3vPLr3wopNeo4XTajhm4MYNcbPNmG
-	 vvLLZFuo5tnuoMpQVOeosbZoPFFFy4Ic3wND4JXKvh0eQRbIgEs/xbStBon3JSQsqu
-	 0MYcR+XA+Eu+8cQnaAimhpLHdQiWCGXJvEviJ7VwWwnt/FtvSpNOSIno+/rnoF/0AL
-	 ThUX2y+6wE5sSETTDE1dZxvO43sF0Rn7U/0LHf9P8XM6kF1BC2k6M0pZtTJHGOBMVD
-	 iwq0kR3sA3YpeGiKLkbEHKTmFQJaPSLR4A/pEctjO64+aZNtb52XUwT/UNMcBZqtJe
-	 iWXpSFaiBgYCA==
-Date: Thu, 20 Mar 2025 13:09:38 -0700
-From: Kees Cook <kees@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>, brauner@kernel.org
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
- (4)
-Message-ID: <202503201225.92C5F5FB1@keescook>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9C021CA00;
+	Thu, 20 Mar 2025 20:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742501421; cv=fail; b=B8/zBibWwe7wkvq1xSTRxCWnj5LWmn3cw1vT0ztTmYHuNHVbOt723QHJopsRtGlKxOUiJzXqZgfj23dePgLBR638/Uj/tUL+BCWL6JWsyJT7p3TJhgtfZzIugrYNjUTh1a9gm9ZBxGIY4NybdzfUGXTrzKGsRwW+rsYJaEo3u4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742501421; c=relaxed/simple;
+	bh=z1AlpR80411EqjXcuf9s1M1d5cbF3ukdpdwBM+ajUdU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=LIIYPUTJl9yW1sIvTBL/Y9ymexNX+ot4YcozkAvbAVux5A/T7zh0FT1/j7jDGsNfM5K3BfuN4ozdENc+Vqialu5OkafvihwmNnJBQjZols/eLsW8G0/ZoEU4Hsz30UqorzSs65D5rdV53jY1aQg85RNWLG0uzqHjij1WYBFIAdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Ws0sw74k; arc=fail smtp.client-ip=40.107.93.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hETXRcnny9av2xMnoD47YxglQFjfmiRYHPyFXgmtiEcJuCgNM0eL0vVW36Wbld0JPMyyvW04/AkE5087MUbrPsRW+6K2TysqICFod1npthXc6zHRGUBcNSOijQXoZ8AhYS2ZHozKoGdgxP44xncQi6g6jZGnwi8LPZsiGGvLx6WdXdhPYgZL14UW1SoRRYmecF3nx1G10yNxnDF9mdrDIBwE5+c4qpriBkf62uG2JiD0505sw0Th0sXMzXDBDyjckTRiYIA/vFNVSVLvsnr7kuG9+t7wqxE+WFrAb6thcm/hN/qppExWqnxhFnu43B4SQq0fUGEAKFkj4Fqh4BN3nA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DOKtfZePp8Y2S127TiF/SWn31UOfb+CCeRKZgPvKb5U=;
+ b=dkWKMKNxo2Od795Ly9S1AziKqxyMSfeXlJ6df7w4nvEbuFwDTzxD4ZUPKXCcOPBRuWUW/qFDLEeq/fYW5yXXEM2bZ/ZDPTxhuFT+/GGQwyhZHKfeFUFVXqV+qGIfCXrS7rzcKr+3uyjJTJarEJUJXua22tPbW4Fr7s/EgyUhcf/dVMO/ggchNuVXU8xhOfQCqkbJY7bVNPGwqo31jrZ9Rzg9lKZrF1hCjyz2vY6OKO32TP3UeVwR0fKPpxYjmg7SNhe31eP2dQ1/T074sBez5+sX5yc7UONnosf0SU9C4bSB3cUw6z7dQ4g3CODT+ffUlhU1Y/lH4uUVGo6suGHcUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DOKtfZePp8Y2S127TiF/SWn31UOfb+CCeRKZgPvKb5U=;
+ b=Ws0sw74kAN5YIHjSoriNGLwErivgd2ebwSHBI4f2FUAvekxCWgiSbUWz3OThk1Q5WZbKVrmLzhG4yZilxQuXH+k2dKZ7zEg2gJgPrYEzzzhtSbnu6uK81x1C2+iCf9aMrPiWucJ5fXakIw/fJNjsn1vtzK81eHTnvWb2zY8JDn0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ CY1PR01MB9340.prod.exchangelabs.com (2603:10b6:930:108::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.34; Thu, 20 Mar 2025 20:10:16 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
+ 20:10:15 +0000
+Date: Thu, 20 Mar 2025 13:10:09 -0700 (PDT)
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: James Clark <james.clark@linaro.org>
+cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
+    linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>, 
+    Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Ian Rogers <irogers@google.com>, John Garry <john.g.garry@oracle.com>, 
+    Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, 
+    Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+    Ingo Molnar <mingo@redhat.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+    "Liang, Kan" <kan.liang@linux.intel.com>, 
+    Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] perf vendor events arm64: AmpereOne/AmpereOneX: Mark
+ LD_RETIRED impacted by errata
+In-Reply-To: <9fe071f9-27bb-4694-ace5-f23eb0d0e50d@linaro.org>
+Message-ID: <6a88e749-51e1-fe61-5122-f4c046dd3485@os.amperecomputing.com>
+References: <20250313201559.11332-1-ilkka@os.amperecomputing.com> <20250313201559.11332-2-ilkka@os.amperecomputing.com> <9fe071f9-27bb-4694-ace5-f23eb0d0e50d@linaro.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-ClientProxiedBy: CH5PR05CA0008.namprd05.prod.outlook.com
+ (2603:10b6:610:1f0::17) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CY1PR01MB9340:EE_
+X-MS-Office365-Filtering-Correlation-Id: f86b7f84-19ec-4f8e-1106-08dd67eb3a9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VmEeQLToA8Y6Lzb4QYAD0Ay3Oq1zHI7bbnak2WEw6E+kMHB0IaTSm4ARtkYW?=
+ =?us-ascii?Q?IDFxtUfHD9zTIL1IWKcu6fNSQG4RkJIutEbM57KoIwStPOkmh3Q2Qow7z0I4?=
+ =?us-ascii?Q?/mZyFzQfLRncbr6b0Pe9ktneIuzw+a1KTnnAQlPKaBg7hP6DHXehb1l69m0L?=
+ =?us-ascii?Q?Pu2K9VBgY15TGjvwZ/ubNWp4OJnEgw+7y3mSO6V/qJT11mE0O2Iixp47hchW?=
+ =?us-ascii?Q?QpoF1JcUm6r5Nb9W92BrFjcmPh8au/a718i6PzlPsuK4OF9FDD64xArK5Pzb?=
+ =?us-ascii?Q?csAPWrjfuWVOJtOosJa7jqQLn8cF40LCpUWdSZgEiC/nSIUjY2bp1woIctnL?=
+ =?us-ascii?Q?e0AkrdG9gVicZaGirVEl3YC2Dq0oYZeKjMBvEiLHcV24NPs9frOCYrln8vp+?=
+ =?us-ascii?Q?8VVLB3O03ZCg0x8KpOD+/S3hUf+CSYPiL9FDh+2KsSvGYl68vFWDJqyvqhPj?=
+ =?us-ascii?Q?pUOQkOkdMMQMJ0is5jarC25vBX4hNLJic6BalUwJ7PLdPKNG5pLX81iZPHsS?=
+ =?us-ascii?Q?8oPDh2xTba122Qaamuf2VXNFHBtPkS6v6rs6xveyF74MPDgEvKpCPoqQn8oo?=
+ =?us-ascii?Q?W+0+YNnpmnEnfgLsSb6B4kduD2J8sqwDjLhUMtAIlvCN8m7mEsDHjjJH0/Kq?=
+ =?us-ascii?Q?FzifUKpBquS1PIqJo++lZjGvNwvVDy2w0zb++tBDzu+ORDoN5uMYP83X1Y2k?=
+ =?us-ascii?Q?5ddUGksvWIcq5RgySU9o7LBUQI71EJHTSuc7g4Uxc64nYJUdjrx4cS86RSmc?=
+ =?us-ascii?Q?Ub3nfa+MRSMSzklaCDO/kc5G7zFW3Hceoad+O9b49MdPFj4128Gw/5eTtsFd?=
+ =?us-ascii?Q?ffuVA7abvUMOqyguvpjgnDNaU95M7zkuDqaCHpl/PvmO79yMmA/oQcIovsbz?=
+ =?us-ascii?Q?ybhIbu8aU8k4/cxxiD3ZXPkgxRwgjmbbfit5yp3gTWp+PjL9IGdGk99rHHBT?=
+ =?us-ascii?Q?NX29hFULj8hqgyUwQEKmh5cHS0QHc+AphGd7zNECEGZWD3aRPMKlWtpzl2MF?=
+ =?us-ascii?Q?GxGbKX8GNUtovX4Yruc2EhjOAeZdmoXJ9OxSLLSDtBxZZKbnjBVaygMJTTqM?=
+ =?us-ascii?Q?CCawrbHb+OoEwpgIjbJiGAbK/HHlJ6NDW3FV8M3se1ddlGjF4Fzd0/Pvtfdm?=
+ =?us-ascii?Q?guIKG7uQ+YEcjM1DPjEuFgJ+RsjO6iL7jEPixWjn9DedD4Opb0mEEcJQ1D4R?=
+ =?us-ascii?Q?VjDfYVR95F8Znn7nMFWkKrTQmL6GTgznuL/e4hMaq2vvKZ1J17sQ+a/tXDOi?=
+ =?us-ascii?Q?VhWQS1Fbu0sMJ1dSe1o17ksNMTHWCIXpmhvpPLxrEpXl7OspQE0q/lR82YKf?=
+ =?us-ascii?Q?/XZ+4nz0JPCZWb+1yGi8TxlcgZeTdJKp/QUA38552q0j9Es2Pzkff+LKPNGq?=
+ =?us-ascii?Q?1cbeXcAr8Mjcqs7qnTxGmo5Bgcup0pFOf2jLLZOdvAyCS/qwQaWMhG0Dh3SQ?=
+ =?us-ascii?Q?QnwvVLkpyiypajpVVWvmNeEfp+xcaHCG?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Qm8wrf38WumiDwKooQ9mncxnb9trwiezs3gC1f9SuqKCk/eNaVRo5qGochNS?=
+ =?us-ascii?Q?VVImQz7AAJIjCns0ztMcaZDccjwFlLGo9vtvtcu8IVWJKWKJ5Dw9u/TvSSD+?=
+ =?us-ascii?Q?jnitTVcQKp5ReCUYq2n/scyRV+/CaMmH6fNs7lj5FcIEjX/pOVY0fEb355mz?=
+ =?us-ascii?Q?TcjVmt5HMwu3FLnP4Gi238M3gbqUmZUqPerdLpLYSXOwl1U30pAgRV8TYE4b?=
+ =?us-ascii?Q?DkXhPAxeNXHmWiikmSrB0belgG5mWvkNxCJmy8JtFqCbiyu1xaqmdawdFaAq?=
+ =?us-ascii?Q?i4bX7aFNB1cx2xLbFiaoLFjMMZQxp0Y8MwULQsXOGnAgEuXzG5qZyCFXdPXq?=
+ =?us-ascii?Q?ZjDuZOR8yJ74791CgZJc5wac6TMonYMu73C58MphQfGm3OrK2ClZDUBfA3Eh?=
+ =?us-ascii?Q?5wc15urE/PuNfAx5GtR+WVUjEYxc9+3vX2C2pTflPRnBIR9DktQ/uP8TQ/gt?=
+ =?us-ascii?Q?ja0AV3uj1hlWFE92J6qjPgN+KuPM6QVSRdWEDLrW2YmaJoMibrAm4YTe0dad?=
+ =?us-ascii?Q?cPBRCC6ppvlGShskPNaL+4lOcBVOt68/ciBQ7Wp8ef0R/Ey8fCxajZGyCAbU?=
+ =?us-ascii?Q?y/yYQeAHvj7yevMgwofBaUK+/kzuM5R0CPJ3I+5ksKxFrBgZaYJL1IIjB4sD?=
+ =?us-ascii?Q?qkqFRP22p21uT+UTHQUiGRTm3r3ZUPVJ/xIf019ZxAqtG+FXquGKD3CMU/mi?=
+ =?us-ascii?Q?uIWuHFwavt0oxWbz1RbCnR1cN73XSnpAjlFwXNXrJ6b6U4QZriVX7ETXLNyP?=
+ =?us-ascii?Q?592hbTNCeN+LN/q07shXUe2UGVNHTffc0yMcy+UvBWtBh6sfAkbnH5M07m1E?=
+ =?us-ascii?Q?G/lwaMbrBy2e90nqRrzqY3wVy1/3fSlDBvQsQhY6a4MYUIEBCCH/u+e3bwzF?=
+ =?us-ascii?Q?oWZR9TQFpWbAhkx9hqI2q/CVwH4WU/rXMurZwv72n4J5TGF6V6VcgeQakxti?=
+ =?us-ascii?Q?L59YDLcToZRM5gILF3S53DCPFwwKmmayuXb/UFlUdviHi3RXnP+YbDePctos?=
+ =?us-ascii?Q?QQsyrnZZDn6EECleg2zaqZCmKms5+j116DjC1PANKXtRDK7dw8sYDD00/hde?=
+ =?us-ascii?Q?0POTirKiCYhfgBCDj44aP5RpgcSROozWhThMXYbDuYYZqf6/HM2t83sokWuP?=
+ =?us-ascii?Q?RHZs2kIcrEklm+oWLdmsJcBFc2VipDJ9CBKk0/Z1SYuVNDKBOVpyC0Sxz9Ed?=
+ =?us-ascii?Q?USLpHacy8JsGmG3Oq/RAHSQ9YzkRsJLr/mrSCbZehPnQp75YW2oMTJfwY9aZ?=
+ =?us-ascii?Q?dRi8rRW3D5ZXJf5McusdDVBdDfnypkvRlz0dYW5Viv5RB8QxDrZK1SbxdxvK?=
+ =?us-ascii?Q?v2xL1BTSG96aOeWtbGj54bB49733IPQ9h+f9u59ZvpF8fXDbe5zmd1vkxsUd?=
+ =?us-ascii?Q?zr3MPuXP2QWNLTnQ5kjwOSSUGTJ2WjFK6WP+rnBAn/BmA1xtG4R6rM4u2plL?=
+ =?us-ascii?Q?ppUKVQdsryVt+gqE4wL4owz854xgarhESwKIpqguG/1qkRI5huBxLFzMRwBs?=
+ =?us-ascii?Q?GGpl4XhZd97Qs9xOXjcXxNq9m9pAd3he04mq2AupXzLFToTLnK0L4qbAiBZW?=
+ =?us-ascii?Q?SpbMIcKOGIc/YLPehlIdThbkc9tqjZBMlBOcMPd/48MQZSDqqa26pjlOVZxW?=
+ =?us-ascii?Q?rb1if+gN9oKDm47kjwa9gI8=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f86b7f84-19ec-4f8e-1106-08dd67eb3a9d
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 20:10:15.7086
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EOa9dofjw7kaIVjGZrKU0l0dUZQHpUMvj37kPxftC3aIchgW5SY/HNvfYT2XKkUnXqq06rvpYpQCSdpLt6Pa53dCp06YEcJpZz1k9OupmkifZrKLOxGoDxZ7jmS5sm2+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR01MB9340
 
-Hey look another threaded exec bug. :|
 
-On Thu, Mar 20, 2025 at 12:09:36PM -0700, syzbot wrote:
-> ==================================================================
-> BUG: KCSAN: data-race in bprm_execve / copy_fs
-> 
-> write to 0xffff8881044f8250 of 4 bytes by task 13692 on cpu 0:
->  bprm_execve+0x748/0x9c0 fs/exec.c:1884
+Hi James,
 
-This is:
+On Tue, 18 Mar 2025, James Clark wrote:
+> On 13/03/2025 8:15 pm, Ilkka Koskinen wrote:
+>> Atomic instructions are both memory-reading and memory-writing
+>> instructions and so should be counted by both LD_RETIRED and ST_RETIRED
+>> performance monitoring events. However LD_RETIRED does not count atomic
+>> instructions.
+>> 
+>> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>> ---
+>>   tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json | 4 +++-
+>>   .../perf/pmu-events/arch/arm64/ampere/ampereonex/memory.json  | 4 +++-
+>>   2 files changed, 6 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json 
+>> b/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json
+>> index 0711782bfa6b..13382d29b25f 100644
+>> --- a/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json
+>> +++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereone/memory.json
+>> @@ -1,6 +1,8 @@
+>>   [
+>>       {
+>> -        "ArchStdEvent": "LD_RETIRED"
+>> +        "ArchStdEvent": "LD_RETIRED",
+>> +        "Errata": "Errata AC03_CPU_52",
+>> +        "BriefDescription": "Instruction architecturally executed, 
+>> condition code check pass, load. Impacted by errata -"
+>
+> I think this could also have a 'Fixes:' tag, either way:
+>
+> Reviewed-by: James Clark <james.clark@linaro.org>
 
-        current->fs->in_exec = 0;
+Yeah, that's true. I guess, I was thinking about using 'Fixes' more on 
+broken patches rather than when adding a patch dealing with a new hw 
+errata. Well, given you're find with this, I don't think I'll resubmit it
+with a Fixes tag this time.
 
-And is part of the execve failure path:
-
-out:
-	...
-        if (bprm->point_of_no_return && !fatal_signal_pending(current))
-                force_fatal_sig(SIGSEGV);
-
-        sched_mm_cid_after_execve(current);
-        current->fs->in_exec = 0;
-        current->in_execve = 0;
-
-        return retval;
-}
-
->  do_execveat_common+0x769/0x7e0 fs/exec.c:1966
->  do_execveat fs/exec.c:2051 [inline]
->  __do_sys_execveat fs/exec.c:2125 [inline]
->  __se_sys_execveat fs/exec.c:2119 [inline]
->  __x64_sys_execveat+0x75/0x90 fs/exec.c:2119
->  x64_sys_call+0x291e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:323
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> read to 0xffff8881044f8250 of 4 bytes by task 13686 on cpu 1:
->  copy_fs+0x95/0xf0 kernel/fork.c:1770
-
-This is:
-
-                if (fs->in_exec) {
-
-Which is under lock:
-
-        struct fs_struct *fs = current->fs;
-        if (clone_flags & CLONE_FS) {
-                /* tsk->fs is already what we want */
-                spin_lock(&fs->lock);
-                /* "users" and "in_exec" locked for check_unsafe_exec() * */
-                if (fs->in_exec) {
-                        spin_unlock(&fs->lock);
-                        return -EAGAIN;
-                }
-                fs->users++;
-                spin_unlock(&fs->lock);
-
-
-Does execve need to be taking this lock? The other thing touching it is
-check_unsafe_exec(), which takes the lock. It looks like the bprm_execve()
-lock was removed in commit 8c652f96d385 ("do_execve() must not clear
-fs->in_exec if it was set by another thread") which used the return
-value from check_unsafe_exec():
-
-    When do_execve() succeeds, it is safe to clear ->in_exec unconditionally.
-    It can be set only if we don't share ->fs with another process, and since
-    we already killed all sub-threads either ->in_exec == 0 or we are the
-    only user of this ->fs.
-
-    Also, we do not need fs->lock to clear fs->in_exec.
-
-This logic was updated in commit 9e00cdb091b0 ("exec:check_unsafe_exec:
-kill the dead -EAGAIN and clear_in_exec logic"), which includes this
-rationale:
-
-            2. "out_unmark:" in do_execve_common() is either called
-               under ->cred_guard_mutex, or after de_thread() which
-               kills other threads, so we can't race with sub-thread
-               which could set ->in_exec. And if ->fs is shared with
-               another process ->in_exec should be false anyway.
-
-The de_thread() is part of the "point of no return" in exec_binprm(),
-called via exec_binprm(). But the bprm_execve() error path is reachable
-from many paths prior to the point of no return.
-
-What I can imagine here is two failing execs racing a fork:
-
-	A start execve
-	B fork with CLONE_FS
-	C start execve, reach check_unsafe_exec(), set fs->in_exec
-	A bprm_execve() failure, clear fs->in_exec
-	B copy_fs() increment fs->users.
-	C bprm_execve() failure, clear fs->in_exec
-
-But I don't think this is a "real" flaw, though, since the locking is to
-protect a _successful_ execve from a fork (i.e. getting the user count
-right). A successful execve will de_thread, and I don't see any wrong
-counting of fs->users with regard to thread lifetime.
-
-Did I miss something in the analysis? Should we perform locking anyway,
-or add data race annotations, or something else?
-
--- 
-Kees Cook
+Cheers, Ilkka
 
