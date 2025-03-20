@@ -1,195 +1,151 @@
-Return-Path: <linux-kernel+bounces-570090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998CEA6ABEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:27:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DF8A6ABE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4070984688
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2C2188D65F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9D225797;
-	Thu, 20 Mar 2025 17:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B7224B09;
+	Thu, 20 Mar 2025 17:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XV1vnlxc"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="qkbRn6Dh"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987F0223706;
-	Thu, 20 Mar 2025 17:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EFC2248B8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742491519; cv=none; b=LgP2mGo3yWZbHDEs6xK60t+kWNtyu2DitrXWM6jmWTjIZgmQ8m3DDawAT9wZS287vgmnTGIb9N1OEhyx9niVqKv326XZqJSW5c2xIzmw1nIxiTblNEaSvoHHP9iMWDq9Kp4W4MVxFemLkXPnIComWZ5JitVfiJk1LKeEqdYSgI8=
+	t=1742491511; cv=none; b=rXxhns7tu34cMueUTdGRifmgS4tQq0qR+vsJs6uqvB6i8520Tfv8kq7iqVkQNk/EzDJQcqwaFl1O0xP/xmyjuubupZxNVAlGJ2rwDWAfYIHRR//+9g+xGwkaX9igA5mGfaDB3LzKGLlRfICiWKoOUELp4w4/OCr9x4hDy8wg7tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742491519; c=relaxed/simple;
-	bh=4zqqM/obyW2E0BuqiJ/Nxhmg3i/+8Sb12y9pHFBqpXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RdzvEN1CpubXyrSxADbxTqn6OP2UwantdZ/BTdZ4GFazkYiQnqwhG0lX13hfVJASDGsrPRWhz1WNZPtAoPRJy9nJL5vmAnuoipC4UjPj/3Om9wvHntOuxkAW0oWoIzwqHJbfpuCoOZx0RBb+1xzQmtF8e97jDhExE+VegBj6vSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XV1vnlxc; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3997205e43eso856179f8f.0;
-        Thu, 20 Mar 2025 10:25:17 -0700 (PDT)
+	s=arc-20240116; t=1742491511; c=relaxed/simple;
+	bh=fzQUX0TFLfebdWmZqTcvsgkqfZ3xX/aDgewmGQBJNIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7bmZidvM1bB0WRIr+hB1RbyFekOzzTzsFacT6nU3OulXFeiZUs0zPzit4Ih0fmCCs9hBeCDha5yaKBtYtZsnvC+oyG2grEmDvBqXljSu/wQZ6pPfAOTRLePB6Nm4agKafvp5QBw0jm9dCXgpo5KBtcVhTz+tAMfZaqOe3eO6IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=qkbRn6Dh; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e8efefec89so9257976d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742491516; x=1743096316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Srr0VBZQwN4yXqvwN4Xth0EZBYASL+7tLcIViL1r650=;
-        b=XV1vnlxcopTo0M+QJMUADjcOqKg4eddLqrJ26Jrcx/CnmaqvEI9jLQtEU5hngR0Jw3
-         ZkLRaz50+jeLB4Bei0OhCpO+d92hbibOgDwy+uaXpq/NK3BI3m5hDYftjuhSo7W4IoR9
-         QfyRYcZWso6g8J1Tvks8NNC7+NAcyKZjn3nrWM/we1frAe1HVDTegCS3MyZj8PQDqcy/
-         duc6qwCV42gy1g4XHsKwrqcemMksItFCF+HpswP12puoB9Fuo84+NhlHrpiCf9gKjfYV
-         MALyfs9LrQWH2Wh5k3zPBlv4qkoT7U0sgwjp4BC5C2GW8SDcH2YwAD/wu87F4VYRnCrV
-         Pmgw==
+        d=rowland.harvard.edu; s=google; t=1742491509; x=1743096309; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rL6DebdLzScpxUUXc1Xt4tJ87WZ47vTIBhRO5NkDR0k=;
+        b=qkbRn6Dh1rwGxMQnmmMYO2yYtosiMaoo2b+GAl067EsMQpqokDV2cpJDZfANaJnAYp
+         I8bI+Dv1VRblY+vQyGoiReTtbsxeaYApRdcfzs5KMZ2vWlL2D3XglvGtXNo0JV0zDKbU
+         cEMnSGYvBXcgrwKR0wTbQWAFm8Tcij1GdvXNYN7xynShfpiwlRcKh6hXvjs9jlGlbudC
+         YhJkPtt/h+56lD08WjjwUA/AYSVkDnvfsjyOLi4K6g4V8F8ggo6/aQS+sQ7n3KLMJVwr
+         08ILmdrjgIz74lByPwK8CkZLA0uG+mKFCoiSbPcV4t6iiXxiDkrQEnOQJCtESKmY7+0g
+         +gAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742491516; x=1743096316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Srr0VBZQwN4yXqvwN4Xth0EZBYASL+7tLcIViL1r650=;
-        b=MYMcz+QT3x996vvKJNral6nnaoSlgKiSQrxdBxExLxkzbZMXNct2/IIgGg9c8dAOYq
-         bCwWHeRCtVPI2XSJBmZIFWwEhX0hlRP+v2JN/wN3I3stDw48GL2tY1tnHyYrIpLDw1uf
-         hPTCIeivOUeY01a5UAO/DqxQ7/2skkgZ6016BdXSTXil87hjNC7gV2Ano17Tn5/FnSKV
-         Qv4f1ObufpdaEte42tHMMTgUOxDoTnGl24YWvfDYsQ/1vyUtONiJbps9m1+zCqJSSXVh
-         5i9RfYMxtLVugEShn/IWsfXjqwgwfCnyBSYy5R7u/8H/5fln2+GgkvMWUBWRnLUqjrwJ
-         Vs8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUK6N+N0Vx3xGY9CMNU7N9Ox8lQLMc0y6oRfrLS7VAtMTTJFfPiAPHvSye7ihBXdqzt4Ecn14AZ2D9Cew9z@vger.kernel.org, AJvYcCWIz1yk+ozHqQ6FCgZyHZk/+yWRfT/qa4GgmgVwqUr6RGggJNMkMvHr/oIrRjQSWoEpQLs3iJ7ha5q2MxsW@vger.kernel.org, AJvYcCXyHZagZTVYnX00o1wn0YVaTAhhCIHvxrW06f4N8GdRK6QOLpuD9XtFePp4SG/uIHrp/T6/XXT/K9Lh92AnEHwX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5G4zYJrIb880pvWuEhTrMraPveMalCA0lyAXECDYU+Bv7Zlnj
-	sDYvCNQJJtMkc8HhJhqj0bEg+l8031UngNWOmSL5JWDiBjABCAo5VZCw7d5MV+k3S4MaNxBeSf0
-	hMpl1ZQXGexoo0PzfbfyjaH39OrU=
-X-Gm-Gg: ASbGncuS2cbJCvMqwG0F2PcPO3hprfRN51NfQQfKevUkbfEx8ym8piQw+atitOMGUqb
-	5neLKplmp04a7LclYQEAyks0+mK5m3gogSiPx739P4q8FxNcyeute/bzrQRqcvrcg92NmwwFbjT
-	OdiodBmREOHdTBzYBAui6FBloUlfc=
-X-Google-Smtp-Source: AGHT+IHbGxKbQYCFuWIhUZcVJczLm09+fIRHtWAIdQXRdJS6TuroZiuhT9dXX9oyzczviIbaRcswg6Yl68ThvI97uCA=
-X-Received: by 2002:a05:6000:21c6:b0:385:d7f9:f157 with SMTP id
- ffacd0b85a97d-3997f9375admr249521f8f.36.1742491515474; Thu, 20 Mar 2025
- 10:25:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742491509; x=1743096309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rL6DebdLzScpxUUXc1Xt4tJ87WZ47vTIBhRO5NkDR0k=;
+        b=r1PX/9kj0JnkjVBMsl+7ELP4ph+a3hkn9NGV6fjHbwkSWaVTX39NhYXVm7LG5RrSFk
+         hkD77QhfcGDl4/nmqXUACdWNDHePnF53AtbSh5uJgq1kadJ2Zl4+bX7sOPCN/BhU1aIt
+         Yf7Cfk2Khy1gfA7Te5XSDsVFpIi5C0T5es3BeWSVRx2Jh7/PcdjDSMdlVUtKdcfQn88d
+         rmQRC4nfmzsSGGe6aKSZop918JQevrZdPO6GHOuS/AVnyyFChUwBONEPPgg/7ROIQOF3
+         9ghoDfr4HInz0CflGXPW5BcE3y8d4Kb3NAQnuNaW+SMggft3iLCGDiCPmqLxS1dwCCgR
+         k3cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHmqOEzNEdYjk33vbnuDvhY/4wbAUUa8uLT3sViSLcBydVz1hKm9kAEUq1B9yt5df56hyWLp3qoKgBurQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwItv3Pi1xY1Oc6tXuiK6WdXgVSCZ85mG4SP8z69AHO1B/IH8Au
+	agsV4P+qah1Iy0J1Xct8vQy/bALOO5eNRVmKTjL+fJbW43fThZAVTjIOZDyEgw==
+X-Gm-Gg: ASbGncuC9SPRTHVfFGTESm4NyNAr0Zi1wQ0srJpWn7ft3aCnioTYRmLAVAiAQDICO9k
+	LiGSTx8OYTiW9uO3QRLVSWkA461qcWr27YG0qyNWLG8r7GSaiz5DjIajB4slhI5PZBI8M4uyRzN
+	MBfBChOQwKPPCxxIGe8lbsP6EXiu3nTNq5mFyClntWiESmbqbpwTEovwCkY+U9T4/qe8M2oZEX4
+	9CUUm/yYOmoyzVmdk3MoERXS5avr3xY6K+vU9uwIQDi/tnZpV6I/+0oVmKfhN2SUrZRzN3NFlOG
+	N4QphwcdxXKofTI0qEysMuGNSFQH6q8vGY5c76dDYA3glqhzKPpWDMco6fHx+Ki36FDry8jaHXP
+	LIShPuWrcXy4bHpCv44sew0QtRGZNyb7ZN30x9g==
+X-Google-Smtp-Source: AGHT+IHgyRoJU+sQRfaKBvGkDtBulGCQxmx3ELr3PVJnr/FpuA7LHLyshb2Ty3ZfruL2JeE7d0BUVg==
+X-Received: by 2002:a05:6214:1c0e:b0:6d8:af66:6344 with SMTP id 6a1803df08f44-6eb3f27f541mr4060236d6.2.1742491509066;
+        Thu, 20 Mar 2025 10:25:09 -0700 (PDT)
+Received: from rowland.harvard.edu (nat-65-112-8-24.harvard-secure.wrls.harvard.edu. [65.112.8.24])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efc6018sm820456d6.86.2025.03.20.10.25.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 10:25:08 -0700 (PDT)
+Date: Thu, 20 Mar 2025 13:25:05 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: =?utf-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.edu.cn>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, syzkaller@googlegroups.com
+Subject: Re: WARNING in cm109_urb_irq_callback/usb_submit_urb
+Message-ID: <07f2ec1a-0363-4734-97ff-a129699b1907@rowland.harvard.edu>
+References: <559eddf1.5c68.195b1d950ef.Coremail.baishuoran@hrbeu.edu.cn>
+ <62d91b68-2137-4a3a-a78a-c765402edd35@suse.com>
+ <a3f66f2e-a99e-47f2-a3ef-742b6903cc5d@rowland.harvard.edu>
+ <7be81186-2d18-4d0e-8a93-d2dda20b02b2@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318214035.481950-1-pcc@google.com> <20250318214035.481950-3-pcc@google.com>
-In-Reply-To: <20250318214035.481950-3-pcc@google.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 20 Mar 2025 18:25:04 +0100
-X-Gm-Features: AQ5f1Jokd8HHitZidj6J_qrj1ibwtVddlmZs6GFQ40Nq--4p2Wt3mzW0XeogKWQ
-Message-ID: <CA+fCnZfG79JmGG9rj7KbE=9yX-EM4e8CXDSm5F9=YEmgyX5v3w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] kasan: Add strscpy() test to trigger tag fault on arm64
-To: Peter Collingbourne <pcc@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7be81186-2d18-4d0e-8a93-d2dda20b02b2@suse.com>
 
-On Tue, Mar 18, 2025 at 10:41=E2=80=AFPM Peter Collingbourne <pcc@google.co=
-m> wrote:
->
-> From: Vincenzo Frascino <vincenzo.frascino@arm.com>
->
-> When we invoke strscpy() with a maximum size of N bytes, it assumes
-> that:
-> - It can always read N bytes from the source.
-> - It always write N bytes (zero-padded) to the destination.
->
-> On aarch64 with Memory Tagging Extension enabled if we pass an N that is
-> bigger then the source buffer, it triggers an MTE fault.
->
-> Implement a KASAN KUnit test that triggers the issue with the current
-> implementation of read_word_at_a_time() on aarch64 with MTE enabled.
->
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> Co-developed-by: Peter Collingbourne <pcc@google.com>
-> Signed-off-by: Peter Collingbourne <pcc@google.com>
-> Link: https://linux-review.googlesource.com/id/If88e396b9e7c058c1a4b5a252=
-274120e77b1898a
-> ---
-> v2:
-> - rebased
-> - fixed test failure
->
->  mm/kasan/kasan_test_c.c | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index 59d673400085f..c4bb3ee497b54 100644
-> --- a/mm/kasan/kasan_test_c.c
-> +++ b/mm/kasan/kasan_test_c.c
-> @@ -1570,7 +1570,9 @@ static void kasan_memcmp(struct kunit *test)
->  static void kasan_strings(struct kunit *test)
->  {
->         char *ptr;
-> -       size_t size =3D 24;
-> +       char *src, *src2;
-> +       u8 tag;
-> +       size_t size =3D 2 * KASAN_GRANULE_SIZE;
->
+On Thu, Mar 20, 2025 at 04:42:33PM +0100, Oliver Neukum wrote:
+> On 20.03.25 15:25, Alan Stern wrote:
+> 
+> > This test must itself be subject to the same race, right?  There needs
+> > to be some kind of synchronization between the two tasks (i.e., a mutex,
+> > spinlock, or something similar).
+> 
+> Hi,
+> 
+> there is:
+> 
+> static void cm109_stop_traffic(struct cm109_dev *dev)
+> {
+>         dev->shutdown = 1;
 >         /*
->          * str* functions are not instrumented with CONFIG_AMD_MEM_ENCRYP=
-T.
-> @@ -1581,6 +1583,33 @@ static void kasan_strings(struct kunit *test)
->         ptr =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
->         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->
-> +       src =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
-> +       strscpy(src, "f0cacc1a00000000f0cacc1a00000000", size);
-> +
-> +       tag =3D get_tag(src);
-> +
-> +       src2 =3D src + KASAN_GRANULE_SIZE;
-> +
-> +       /*
-> +        * Shorten string and poison the granule after it so that the una=
-ligned
-> +        * read in strscpy() triggers a tag mismatch.
-> +        */
-> +       src[KASAN_GRANULE_SIZE - 1] =3D '\0';
-> +       kasan_poison(src2, KASAN_GRANULE_SIZE, tag + 1, false);
-> +
-> +       /*
-> +        * The expected size does not include the terminator '\0'
-> +        * so it is (KASAN_GRANULE_SIZE - 2) =3D=3D
-> +        * KASAN_GRANULE_SIZE - ("initial removed character" + "\0").
-> +        */
-> +       KUNIT_EXPECT_EQ(test, KASAN_GRANULE_SIZE - 2,
-> +                       strscpy(ptr, src + 1, size));
-> +
-> +       /* Undo operations above. */
-> +       src[KASAN_GRANULE_SIZE - 1] =3D '0';
-> +       kasan_poison(src2, KASAN_GRANULE_SIZE, tag, false);
-> +
-> +       kfree(src);
+>          * Make sure other CPUs see this
+>          */
+>         smp_wmb();
+>         usb_kill_urb(dev->urb_ctl);
+>         usb_kill_urb(dev->urb_irq);
+>         cm109_toggle_buzzer_sync(dev, 0);
+>         dev->shutdown = 0;
+>         smp_wmb();
 
-I have trouble understanding what this code is doing...
+I don't know anything about this driver, but the placement of the second 
+smp_wmb() looks odd.  Should it really come before the line that sets 
+dev->shutdown to 0?  In general, smp_wmb() is used to separate two sets 
+of stores; if it comes after all the relevant stores have been performed 
+then it won't accomplish anything.
 
-So the goal is to call strcpy with such an address, that the first 8
-bytes (partially) cover 2 granules, one accessible and the other is
-not?
+> }
+> 
+> This driver has a tough job as the two completion
+> handlers submitted each other's as well as their own
+> URBs based on the data they get.
+> That scheme is rather complex, but as far as I can tell correct,
+> but you need to test that flag everywhere.
 
-If so, can we not do something like:
+However, it's quite noticeable that the code you want to change in 
+cm109_submit_buzz_toggle() doesn't have any memory barriers to pair with 
+the smb_wmb()'s above.  Shouldn't there at least be an smp_rmb() after 
+you read dev->shutdown?
 
-src =3D kmalloc(KASAN_GRANULE_SIZE, GFP_KERNEL | __GFP_ZERO);
-strscpy(src, "aabbcceeddeeffg\0", size);
-strscpy(ptr, src + KASAN_GRANULE_SIZE - 2, sizeof(unsigned long));
+As long you're updating the synchronization, it might be a good idea to 
+also improve the comment describing the memory barriers.  "Make sure 
+other CPUs see this" doesn't mean anything -- of course all the other 
+CPUs will eventually see the changes made here.  The point is that they 
+should see the new value of dev->shutdown before seeing the final 
+completion of the two URBs.  Also, the comment should say which other 
+memory barriers pair with the ones here.
 
-Otherwise, this code needs more explanatory comments and it's probably
-better to move it out to a helper function.
-
->         kfree(ptr);
->
->         /*
-> --
-> 2.49.0.395.g12beb8f557-goog
->
+Alan Stern
 
