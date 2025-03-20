@@ -1,136 +1,101 @@
-Return-Path: <linux-kernel+bounces-569317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66D8A6A167
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:31:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44072A6A16C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B610746624B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D5B188BE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8E214226;
-	Thu, 20 Mar 2025 08:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79321215F7F;
+	Thu, 20 Mar 2025 08:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="OJs07coR"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEkJKg+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EC01487E9;
-	Thu, 20 Mar 2025 08:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AC41E32D3;
+	Thu, 20 Mar 2025 08:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742459423; cv=none; b=rLyaI5H0DLRiff431x/M7+wNad0oKVNOmHjXhHcu3qBnQeA1LZQnpo+3O1ht4jR6P8f2uDkJCb5+nSIwdjA4K0Wl7fxs0do+eoKLN+mOwUHv28YMr26oQ/rH3Os6wijwOKUhqrwC6Ia8Ib8zh7ojrqDr1EHsIiHkQEXAXurYrNk=
+	t=1742459450; cv=none; b=nvOq6unqoJpHM5T7CNLfTnqJI0Lrseth8WzDuqA0Nr+Watsdgl7xbj0kZqRuX2dGazB0mZM6n6R+CGVw4+q8YHTAH6P0xp8eW016tb3TWc3U1vrqJ7OpjSjwVx+IVur6yD1mPN1XU+Q+ypFHy+MQBmp8dM/qtRrErEfjz+fBAH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742459423; c=relaxed/simple;
-	bh=lM8uEMqGloIIhxK8we3YSOHTRitLpbY76DwJKVqm0E8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i+kxfVzV2pn5vg91Ek8xAFRILwqpAIydaqEDkIUMEkxgHOS0aVJJVJPr2cbJqGUEpX9FphhIR3CXvrJ4T5Pxf4xKlrkfcgyWtiicTrSc83OpVEp+B087edQLwoVlVrk1hWTqu0XlNX+Dhd/tO3S9PPOvJwW6tX5GGWMzKGvHvTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=OJs07coR; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 9F4992E08704;
-	Thu, 20 Mar 2025 10:30:18 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742459419;
-	bh=ziUOA57vt7GRj6E5P8yVSLpiyhos2lGfmA35dWw4RKQ=;
-	h=Received:From:Subject:To;
-	b=OJs07coRP0qkVVQWNT+V/uyICgTESo9ryX6o8hzD48IwSJBTfwTKXyhJbRe6PgUL6
-	 OzJRZJ16TbAdMISN0p7vzZ9of+t16BvrzgqzFlGpD6CVgiroqya/h4kAPML9bKyJjV
-	 isDIGLDHCeX7xKZ9sq1v796pTLUGHUrtDE70cvj8=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-307c13298eeso6138621fa.0;
-        Thu, 20 Mar 2025 01:30:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVMPS17GIVeRw8VdBAfbjzRwT8te04H0sjaC7051Q4Zbp4BjJr5SAH/0J9ZDMj1mnBwDgxy2t1BwI/lrw==@vger.kernel.org,
- AJvYcCXTpMetBctO0T4jCGdEO4NCaef1QQBtzsR7Vou38mgWCPUnjrxweRhPq1I4FLgJteX69yVO/tDnmyLcHuDC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4EjdUbK+aQbt68CZNzqTlkbzzp12D5L/Llpvo1eUTgE0fNtUa
-	3mm3ylRsxeKq1Adiz20fdDmlDMEq2ng1feOkFjSp20qAmMZnzEztgP3o0t5SHimuIdRxPdXNABt
-	Op5Bn9076KRXUkVdst1wXe7E25to=
-X-Google-Smtp-Source: 
- AGHT+IG09r4aPlZS9FtR6xYfWQ819/Rg9PKjIpTRksh0LUYjkf/MLyEpy6CnX91Ix7+RKHE2FaX+3aOiS9tE6pQnZFc=
-X-Received: by 2002:a05:651c:547:b0:308:ee65:7f44 with SMTP id
- 38308e7fff4ca-30d72789e95mr8912211fa.8.1742459417875; Thu, 20 Mar 2025
- 01:30:17 -0700 (PDT)
+	s=arc-20240116; t=1742459450; c=relaxed/simple;
+	bh=v+FOAUR/wqoAqHaoplhVPRBHIikWSf8V1laXOuxnNfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbkh1NNoyXigaEacVgsZbDhXfXpIoGSMq8NgdVQ8etgKHcEoTpNo14RLxmeIjVCkd4d3dtopH0nymDZ2Ith5rObd7wqLPdJ1kXSAtb0zeQF2/+8N0ES+wPRhDbkYTDSA73wGSl1sYmC46vNdxTJp7kqU4XykgVkNTXsSX480XgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEkJKg+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EF6C4CEDD;
+	Thu, 20 Mar 2025 08:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742459450;
+	bh=v+FOAUR/wqoAqHaoplhVPRBHIikWSf8V1laXOuxnNfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LEkJKg+eJogLP7TusVxf7b7P/d9nFvPAwJ5TKX+AvnXMsyoNB9Uf9tgOI6jR88QCM
+	 JkYvO2jo5I7eAB1u9/xJZpDu+Oopr3mT2NVSZ/EvU3R7jh6dZlhAZ16GVDmlTvpffq
+	 iiSDgZBbF1JkdErKodK9X7EiWFC3Yg13LAnitCwjXwRjzEy8zMTLp1Wq3sscrIIWeM
+	 FgmpDRVRnJ37VPZfmcEgw3YliLJJdIJCmGuvzrskhLpVCAdq6HYTXmRZnTX/wOuHDY
+	 YyGVPP0jB0PQbEJ3m2aeUQfqftuMQ8nfawOMqXiDaJiTxOpnJPFcSB1Wf3yRH0h/Eg
+	 AMVe5byYQWq0Q==
+Date: Thu, 20 Mar 2025 09:30:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
+Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org, 
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, 
+	bp@alien8.de, catalin.marinas@arm.com, dave.hansen@linux.intel.com, 
+	dwmw2@infradead.org, ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, 
+	corbet@lwn.net, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
+	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, 
+	robh+dt@kernel.org, robh@kernel.org, saravanak@google.com, 
+	skinsburskii@linux.microsoft.com, rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v5 12/16] arm64: add KHO support
+Message-ID: <20250320-muscular-cougar-of-apotheosis-e4c80b@krzk-bin>
+References: <20250320015551.2157511-1-changyuanl@google.com>
+ <20250320015551.2157511-13-changyuanl@google.com>
+ <55a5e3f3-1b3f-469b-bde0-69abfff826e4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <20250319191320.10092-7-lkml@antheas.dev>
- <51c78ba6-9518-4259-85da-d761b031df7f@ljones.dev>
-In-Reply-To: <51c78ba6-9518-4259-85da-d761b031df7f@ljones.dev>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 20 Mar 2025 09:30:06 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwGsB4UjsHa=CWT2zzbpHx5yPEOtTA9RmVqR1jqMB4_C6Q@mail.gmail.com>
-X-Gm-Features: AQ5f1JouLn7odMmdLAzBP_cRIF3KVlpUpTATrLGK3AEzwIsAOS-pTxSfQUzL9PY
-Message-ID: 
- <CAGwozwGsB4UjsHa=CWT2zzbpHx5yPEOtTA9RmVqR1jqMB4_C6Q@mail.gmail.com>
-Subject: Re: [PATCH 06/11] HID: asus: introduce small delay on Asus Z13 RGB
- init
-To: "Luke D. Jones" <luke@ljones.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174245941904.26145.17944018537723476768@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <55a5e3f3-1b3f-469b-bde0-69abfff826e4@kernel.org>
 
-On Thu, 20 Mar 2025 at 08:12, Luke D. Jones <luke@ljones.dev> wrote:
->
-> On 20/03/25 08:13, Antheas Kapenekakis wrote:
-> > The folio keyboard of the Z13 can get stuck in its BIOS mode, where the
-> > touchpad behaves like a mouse and the keyboard start button is not
-> > reliable if we perform the initialization too quickly. This mostly
-> > happens during boot, and can be verified to be caused by hid-asus
-> > through simple blacklisting. A small delay fixes it.
-> >
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >   drivers/hid/hid-asus.c | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index 85ae75478b796..5b75ee83ae290 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -571,6 +571,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
-> >       unsigned char kbd_func;
-> >       int ret;
-> >
-> > +     /* Wait a bit before init to prevent locking the keyboard */
-> > +     if (dmi_match(DMI_PRODUCT_FAMILY, "ROG Flow Z13"))
-> > +             msleep(500);
+On Thu, Mar 20, 2025 at 08:13:24AM +0100, Krzysztof Kozlowski wrote:
+> On 20/03/2025 02:55, Changyuan Lyu wrote:
+> >  
+> > +/**
+> > + * early_init_dt_check_kho - Decode info required for kexec handover from DT
+> > + */
+> > +static void __init early_init_dt_check_kho(void)
+> > +{
+> > +	unsigned long node = chosen_node_offset;
+> > +	u64 kho_start, scratch_start, scratch_size;
+> > +	const __be32 *p;
+> > +	int l;
 > > +
-> >       ret = asus_kbd_init(hdev);
-> >       if (ret < 0)
-> >               return ret;
->
-> See my comment on patch 1 about trying a loop with the init
-> request/response as a hopeful way to test readiness.
->
-> Cheers,
-> Luke.
+> > +	if (!IS_ENABLED(CONFIG_KEXEC_HANDOVER) || (long)node < 0)
+> > +		return;
+> > +
+> > +	p = of_get_flat_dt_prop(node, "linux,kho-fdt", &l);
+> 
+> 
+> You are adding undocumented ABI for OF properties. That's not what was
+> explained last time.
+> 
+> NAK.
 
-Turns out there isn't an init problem. I have removed this patch from V2.
+Also there are checkpatch warnings :/
 
-It was hid-asus taking control of the touchpad from hid-multitouch. So
-adding HID_GROUP_GENERIC fixes this. I replaced it with that and
-squashed the rename patch alongside it.
+Best regards,
+Krzysztof
 
-Antheas
 
