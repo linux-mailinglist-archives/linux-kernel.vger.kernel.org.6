@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-569728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A36A6A6B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:03:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4C5A6A6BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20F2468809
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4AA19C1402
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36F22333B;
-	Thu, 20 Mar 2025 13:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0BC215078;
+	Thu, 20 Mar 2025 13:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObNATAyA"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4FLI1S9"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBDA1EF394;
-	Thu, 20 Mar 2025 13:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA9E221579;
+	Thu, 20 Mar 2025 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742475699; cv=none; b=hYQItSsEffN3H/YdvNsdZk7RQnsV53ArsHt7kTYLZlBHadSF78fM5LSyT8GPR6Nrfr1ezbmBrHVikAG26drJQe5/ppfOD2O1MLBJ7D2hJenkswnbBnTqF0t/76T5zKGjFlnFNJFvhZX33f8IximTB6xJ7q/Q9QerU93O2iqskFk=
+	t=1742475703; cv=none; b=We6hc6LUDTqygWi3YLT/b3ethRKep+pnjdZnCPJMGP5RfqeyMPckeIqtmpz63gsFF/1ceOS0zi3Ito8x+sJlKEjMeUqZyktmmygYQ+ZV9LDmzR1m7lGQgV/lRXUv7ahVImAcpky9gCuXbWAfSUF0RWZS7Nze7sQcQyTjda7sutA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742475699; c=relaxed/simple;
-	bh=0EZqnwaI95aFbRnl2/HUehmQ5Ei/YcL3ym12ODksvCg=;
+	s=arc-20240116; t=1742475703; c=relaxed/simple;
+	bh=d0tHzSSFj28HQip87onzpIuXRBqASmUnGwfA6/BzQCw=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m6KJjwrFFF599SrqHH7U7REtuiveLz/DFfOWu+ncheEBs1ElHT7mzqawM6x3MJEqoZ/46wwq+22lJL1yuagCzBFeYk9pGi7bkuxE+kdfH05l7I/Xzrv4MAkORPgueb36tQfMNzvPhBx3AhztZJbGpQyRADSnMPwPZTXOmRpSR3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ObNATAyA; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=AnS2Ee+dCnzqESjLpwnJbLpEXGHSQaeALqtiFPVZR8QMuWZnsQ4AT7NemnmChGvMWOBJkuG31bjWAXx+wknIje2MVgbcuNP0e72wexHdRiY/YwboR3hyJq/5XfvhR+Ksdi8kH+HPScU54oqQSCPoCol/jkemwMTDg/NiQv8tb38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4FLI1S9; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0782d787so5289735e9.0;
-        Thu, 20 Mar 2025 06:01:36 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-391342fc148so442343f8f.2;
+        Thu, 20 Mar 2025 06:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742475695; x=1743080495; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742475699; x=1743080499; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wn2/hmuc3pnGhw1oNI9gcjxThAXzwvaMI5eUiGxYDOA=;
-        b=ObNATAyAA+M7fSkttXcM1IRpcTrBRzxJOhicNwQ/S7hy0E+3Cllj0acqbloJEutXUH
-         cKkbaRzli7PemZ0Wa3c0hnrD7j00HPm6zqWwNWxW8pFw8ge61qX8C2yxadxzUuizTk77
-         D09rqmwHAWSI5JVGmINW3T9HSemjMHpmNyNO7zgYCz1DDNsHG3xDP/JtbppfKBnFWWjg
-         tCD5Y5jEnUHx0Ryacntiwud+mBY+dH7PVPfwUqXMNNhhm+0r4ZpAyb5hs4AGjLFGFt1T
-         pXVVFvSn/FM4y62ZEHjBpOF6yDaZ3AbuKpIhgjtKcQRwqOHVNggAyNsdPvMcOZCre0U8
-         e/4w==
+        bh=GjXZXNCMR7AMS8CMSFsXOaQrfC4KYnxI7xnrEz3bVbs=;
+        b=F4FLI1S9/pD2+yxcgFPI8olC4ABnTbxO/gxcUnhy7vbdoujW0q8qV1MsRwkrl7jq9J
+         EcBj2hP0x1/6m8AcG7VfjaIoTT3NvUTccu8zU1atP7SnEyRzx/e4ukgBUb1ShJXcmsMJ
+         YNArmJ0uziqhO2zgQCAbaGVLHB+D0ljRKATddX+L09QEN9sYfaJBxXM9Ra7u2mGZWvhN
+         2itjDVegxIcd70JbWo4dabLcLbGIt6l5Y5CfkjgBSTWI4h39xDW65Aib9CQe5KB0gG90
+         /ofRuzbwJF85rMUMrnqH2lK4i+oVshsS+T7nwxzOgI72/bfD1aUNvhm/OW9eQXIkzYlg
+         T7Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742475695; x=1743080495;
+        d=1e100.net; s=20230601; t=1742475699; x=1743080499;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wn2/hmuc3pnGhw1oNI9gcjxThAXzwvaMI5eUiGxYDOA=;
-        b=nm649JGZPS1RgoBi/K5ORaGG0Rz/GKscEFBgWQ2s2I1JzlwGlWPUHZdYxBgNPk/srp
-         JKEoO6KCe7Yw+9bVgDATnD+oUpUl9c2UfKz8X60lgSoRuEwAjH8fJBfPmaZsQj2XtCH3
-         GYOJ4tgM8mveaXz9EN3bAiBeGkzmJqKt+xopxLgw8+mz8ukKFs4OIsYtQObx/Eb7szzR
-         BlcuUkkYQKv2EpovuxncVxltUFiHwODHwjYuaXirIdqyipX9JiD9VI+DtWWjuiJT6KKw
-         BMRUquiiu6Q2nYY2U8ZQ7aaD2hugTL7rFWD95YuMTkjvsYOjwLObDZukTB6xaomgZYW1
-         lWgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwBtMYeiYTPedMSJj8XnKUjY/UQZlKJ+Gs4Xh8uCe9KaZhUJJIe0cebMFisz4GU2uiJXZY07PhO35M@vger.kernel.org, AJvYcCX00tOcynDWADYvL4T1s4xzIWw7O6GPR7orJhgnKNMOGwV7y8OkN1yX2U8igyVYJ8xf2fRDgMces6sPvsCR@vger.kernel.org, AJvYcCXuwkPSLeY0GlzcXNisA2EAGf3/blolFsSg4cBhEPuMvQdu2NoItKPTqiMr6uc/pqjIry6UK6P+PDgm@vger.kernel.org, AJvYcCXydeNOMGHXQd94Sq/npgVdjpvuWzjJ6pNmR9mPPYaozt1sS2Z7TRE2Ik/cy/4zGBsoCpeGkjzRf+Qu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVYZ/9n+HZTBMR2YujzXZ2+0837tjC5idfArX1xXOlX63GdHKg
-	RF/ih3vz+RF7qStEfbpcYvwWMMLlHLIlEZShHMcF4jy5eLjFNG5h
-X-Gm-Gg: ASbGncstMxvON8V8PAN6dDxLVMPAvc3Cks9ai94ygIuB3HvDGaJpghrLLhQ3521whyz
-	KM8IROUaSPqlc7xUOJ4IgzLa0zS3MbfJzjv8wWUq4nuIae7V+XPZ2paAPB8S/x37sxhdNJ0utY6
-	kJhSZI4tFGjjrnaXWTbE8i+LM0WBkdgdy7sWS6xaJTtOFHsLIun1fd/m5IFPDp8DXw6nDvQfM0j
-	LaMGbis63DRT4n6jXa/kl1FrIx2tyHAANee9C2mQ4RbdBVyLForhvrOEkdzu8MaOhVzBX/oUVJp
-	FfHbXELlMuy90SST8Y5QIyjpu9K0d6cBDdByT9GkV95D9KGjIYMw1ji+l7IekMT0ow8grF23T69
-	n662sGPOFbuYpE1z/M0vh9Cx2
-X-Google-Smtp-Source: AGHT+IGi5vCdtEa2LCRHJP2raJyvd24trrbEgKD5KtNz8cQAFgw+tCXFVtwNUxD1X7czDtnEosU6xQ==
-X-Received: by 2002:a5d:5f4b:0:b0:391:12a5:3cb3 with SMTP id ffacd0b85a97d-399795a4fc2mr2851317f8f.3.1742475694722;
-        Thu, 20 Mar 2025 06:01:34 -0700 (PDT)
+        bh=GjXZXNCMR7AMS8CMSFsXOaQrfC4KYnxI7xnrEz3bVbs=;
+        b=kzYupTkSr/+PTxVhGDKsgdfB8plZgJomWgtJ0hPS0hFhBzFbvCDMDrJwxKKGNdPReM
+         AZqgZoZMfEtu4V8rn96iLY//ZWT0KvuV2i6TVXzmhvfy3FMBBcbVg+sgPLiprwlZOyvD
+         Q4r/ApTzqDklhWRhF9kWZ6zKOW+xFtfNtyLC/jfFg+xyKcqpIEvFdGuiM1Zz65TE4RAF
+         hO2+ol2iszgLwRjU/1UDBqvgO+xVh1sNwDjcLU/OvS96zmYIlySReNZKJB8kD2WBsj6D
+         qZRBHIvEgvrE+Dk4mcEmZaa0ksn1Sl98Ktg7L42AU35w5D2/nIgBetxy3tHwsUhoGwzP
+         w1vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCV2RyudyEPCdzZNE+NOo7bqbT7eTIyKf+VwHE9IMKXk2dqnAKVHiprbTGNyHpBPFbXIW33eJmD5hq@vger.kernel.org, AJvYcCWrxvpduNsITsn+kb4K3P0+fqDNbyA+zUlwuMa0uN8eTDYH0n6Xc1TTZZu62D0CZO1ws59PSx7IXmg/@vger.kernel.org, AJvYcCX1QVnqwnX3jbc956PPAdEzCJ4UHTDuAPC1/WgbSgYSvOayq6S5F/5B3tlMoMdXV6AXUtxfC91vu0nP@vger.kernel.org, AJvYcCXHq7QxSKoo2aR4XkWJsxrRurHRo8EwBixz3qufWVR+4xzABTNdB0ONSij5pPosQWXSIU+m8JQB4aGAweYw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx29WmpNojPi000usUDyeDqbCcckDmG641PTe9PqB8m0+sPEdky
+	Or56PXM7wfP+XXVnpS9XUDz+LAgTswYhSwadeZ3fF/c2iBoKCphx
+X-Gm-Gg: ASbGncvsrmzK2m+dHc0vWWhH8aAnqRm8EJsufDrbKfl5zkujEqdRpy++2Ba+vIc69tl
+	23ySDyDTDgg+HIP8LYP1KrIeUHskSfSAzP+rnPg1D30c0RTtvnH9EMJ5WvWKEQQ1a2Fn2jOqNrJ
+	ZohdfXHsZUP9PoudTkiii1ZLxfxKtXrLd3MTSATKlJ9If0aVPUlNv1/F5nqLyZ6Hu6ejYLxMgfK
+	hKzzr543J4sy9C5fESuQUUoJMi/ZihrEgfuOipnlVXeHVpV4ach/ZkBRiJPCZNYI4LuY5+pTKOG
+	4fd7gnw4/pKKl8/z0z6+hWM6GA1Ojd/+iRiUhcfr4PF+715EWJNLelO8mtKiHW8JGZdvq3aoXLu
+	3c/Mo7+kFIn49czI4QonrEjvk
+X-Google-Smtp-Source: AGHT+IGmkDnnkoASLNKc7beCB36KTynfhE5+lNlk/tMYqhdW/dQRvuIWvPUsIp9fafc4LTtsm02Xxg==
+X-Received: by 2002:a05:6000:186b:b0:391:2a9f:2fcb with SMTP id ffacd0b85a97d-39973b028a9mr4710707f8f.36.1742475697214;
+        Thu, 20 Mar 2025 06:01:37 -0700 (PDT)
 Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-397f2837e61sm18492328f8f.97.2025.03.20.06.01.32
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-397f2837e61sm18492328f8f.97.2025.03.20.06.01.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 06:01:33 -0700 (PDT)
+        Thu, 20 Mar 2025 06:01:36 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -101,9 +101,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-mediatek@lists.infradead.org,
 	linux-usb@vger.kernel.org,
 	upstream@airoha.com
-Subject: [PATCH v2 04/11] soc: airoha: add support for configuring SCU SSR Serdes port
-Date: Thu, 20 Mar 2025 14:00:27 +0100
-Message-ID: <20250320130054.4804-5-ansuelsmth@gmail.com>
+Subject: [PATCH v2 05/11] clk: en7523: define and register SoC SCU SSR driver for EN7581
+Date: Thu, 20 Mar 2025 14:00:28 +0100
+Message-ID: <20250320130054.4804-6-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250320130054.4804-1-ansuelsmth@gmail.com>
 References: <20250320130054.4804-1-ansuelsmth@gmail.com>
@@ -115,369 +115,215 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for configuring SCU SSR Serdes port. Airoha AN7581 SoC can
-configure the different Serdes port by toggling bits in the SCU register
-space.
+Define all the possible interface modes and register the SoC SCU SSR
+platform driver for EN7581.
 
-Port Serdes mode are mutually exclusive, force example the USB2 Serdes port
-can either used for USB 3.0 or PCIe 2 port. Enabling USB 3.0 makes the
-PCIe 2 to not work.
+Failing to register the SCU SSR driver is not a critical error (example
+the SoC driver is not enable) but will prevent PCIe or USB port to
+function correctly.
 
-The current supported Serdes port are:
-- WiFi 1 and defaults to PCIe0 1 line mode
-- Wifi 2 and defaults to PCIe1 1 line mode
-- USB 1 and defaults to USB 3.0 mode
-- USB 2 and defaults to USB 3.0 mode
-
-WiFi 1, WiFi 2 and USB 1 also support a particular Ethernet mode that
-can toggle between USXGMII or HSGMII mode (USB 1 only to HSGMII)
-Such mode doesn't configure bits as specific Ethernet PCS driver will
-take care of configuring the Serdes mode based on what is required.
-
-This driver is to correctly setup these bits.
-Single driver can't independently set the Serdes port mode as that
-would cause a conflict if someone declare, for example, in DT
-(and enable) PCIe 2 port and USB2 3.0 port.
+Reference to the SSR pdev are stored in the new en7523 priv struct.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- MAINTAINERS                               |   2 +
- drivers/soc/Kconfig                       |   1 +
- drivers/soc/Makefile                      |   1 +
- drivers/soc/airoha/Kconfig                |  18 ++
- drivers/soc/airoha/Makefile               |   3 +
- drivers/soc/airoha/airoha-scu-ssr.c       | 221 ++++++++++++++++++++++
- include/linux/soc/airoha/airoha-scu-ssr.h |  23 +++
- 7 files changed, 269 insertions(+)
- create mode 100644 drivers/soc/airoha/Kconfig
- create mode 100644 drivers/soc/airoha/Makefile
- create mode 100644 drivers/soc/airoha/airoha-scu-ssr.c
- create mode 100644 include/linux/soc/airoha/airoha-scu-ssr.h
+ drivers/clk/clk-en7523.c       | 99 ++++++++++++++++++++++++++++++++--
+ include/linux/clk/clk-en7523.h | 10 ++++
+ 2 files changed, 106 insertions(+), 3 deletions(-)
+ create mode 100644 include/linux/clk/clk-en7523.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9944845ae9f5..7cd54c70aeed 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -741,7 +741,9 @@ M:	Christian Marangi <ansuelsmth@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
-+F:	drivers/soc/airoha/airoha-scu-ssr.c
- F:	include/dt-bindings/soc/airoha,scu-ssr.h
-+F:	include/linux/soc/airoha/airoha-scu-ssr.h
- 
- AIROHA SPI SNFI DRIVER
- M:	Lorenzo Bianconi <lorenzo@kernel.org>
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index 6a8daeb8c4b9..21bacefd2e06 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- menu "SOC (System On Chip) specific Drivers"
- 
-+source "drivers/soc/airoha/Kconfig"
- source "drivers/soc/amlogic/Kconfig"
- source "drivers/soc/apple/Kconfig"
- source "drivers/soc/aspeed/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 2037a8695cb2..2b4027837d60 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -3,6 +3,7 @@
- # Makefile for the Linux Kernel SOC specific device drivers.
- #
- 
-+obj-y				+= airoha/
- obj-y				+= apple/
- obj-y				+= aspeed/
- obj-$(CONFIG_ARCH_AT91)		+= atmel/
-diff --git a/drivers/soc/airoha/Kconfig b/drivers/soc/airoha/Kconfig
-new file mode 100644
-index 000000000000..56c677f8238d
---- /dev/null
-+++ b/drivers/soc/airoha/Kconfig
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config AIROHA_SCU_SSR
-+	tristate "Airoha SCU SSR Driver"
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	depends on OF
-+	help
-+	  Say 'Y' here to add support for Airoha SCU SSR driver.
-+
-+	  Airoha SoC pheriperal (like USB/PCIe/Ethernet port) are
-+	  selected by toggling specific bit. Serdes Port line
-+	  are mutually exclusive such as selecting PCIe port 2
-+	  disable support for USB port 2 3.0 mode.
-+
-+	  This driver is used to configure such bit and expose
-+	  an API to read the current status from a user of such
-+	  Serdes lines.
-+
-diff --git a/drivers/soc/airoha/Makefile b/drivers/soc/airoha/Makefile
-new file mode 100644
-index 000000000000..530825251ae9
---- /dev/null
-+++ b/drivers/soc/airoha/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-$(CONFIG_AIROHA_SCU_SSR)		+= airoha-scu-ssr.o
-diff --git a/drivers/soc/airoha/airoha-scu-ssr.c b/drivers/soc/airoha/airoha-scu-ssr.c
-new file mode 100644
-index 000000000000..29e17577e9a4
---- /dev/null
-+++ b/drivers/soc/airoha/airoha-scu-ssr.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Author: Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <dt-bindings/soc/airoha,scu-ssr.h>
-+#include <linux/bitfield.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 2a74bc8fed24..1f11fa769090 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -3,14 +3,17 @@
+ #include <linux/bitfield.h>
+ #include <linux/delay.h>
+ #include <linux/clk-provider.h>
++#include <linux/clk/clk-en7523.h>
+ #include <linux/io.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+ #include <linux/reset-controller.h>
 +#include <linux/soc/airoha/airoha-scu-ssr.h>
-+
-+#define AIROHA_SCU_PCIC			0x88
-+#define   AIROHA_SCU_PCIE_2LANE_MODE	BIT(14)
-+
-+#define AIROHA_SCU_SSR3			0x94
-+#define   AIROHA_SCU_SSUSB_HSGMII_SEL	BIT(29)
-+
-+#define AIROHA_SCU_SSTR			0x9c
-+#define   AIROHA_SCU_PCIE_XSI0_SEL	GENMASK(14, 13)
-+#define   AIROHA_SCU_PCIE_XSI0_SEL_PCIE	FIELD_PREP_CONST(AIROHA_SCU_PCIE_XSI0_SEL, 0x0)
-+#define   AIROHA_SCU_PCIE_XSI1_SEL	GENMASK(12, 11)
-+#define   AIROHA_SCU_PCIE_XSI1_SEL_PCIE	FIELD_PREP_CONST(AIROHA_SCU_PCIE_XSI0_SEL, 0x0)
-+#define   AIROHA_SCU_USB_PCIE_SEL	BIT(3)
-+
-+#define AIROHA_SCU_MAX_SERDES_PORT	4
-+
-+struct airoha_scu_ssr_priv {
-+	struct device *dev;
-+	struct regmap *regmap;
-+
-+	unsigned int serdes_port[AIROHA_SCU_MAX_SERDES_PORT];
-+};
-+
-+static const char * const airoha_scu_serdes_mode_to_str[] = {
-+	[AIROHA_SCU_SERDES_MODE_PCIE0_X1] = "pcie0_x1",
-+	[AIROHA_SCU_SERDES_MODE_PCIE0_X2] = "pcie0_x2",
-+	[AIROHA_SCU_SERDES_MODE_PCIE1_X1] = "pcie1_x1",
-+	[AIROHA_SCU_SERDES_MODE_PCIE2_X1] = "pcie2_x1",
-+	[AIROHA_SCU_SERDES_MODE_USB3] = "usb3",
-+	[AIROHA_SCU_SERDES_MODE_ETHERNET] = "ethernet",
-+};
-+
-+static int airoha_scu_serdes_str_to_mode(const char *serdes_str)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(airoha_scu_serdes_mode_to_str); i++)
-+		if (!strncmp(serdes_str, airoha_scu_serdes_mode_to_str[i],
-+			     strlen(airoha_scu_serdes_mode_to_str[i])))
-+			return i;
-+
-+	return -EINVAL;
-+}
-+
-+static int airoha_scu_ssr_apply_modes(struct airoha_scu_ssr_priv *priv)
-+{
-+	int ret;
-+
-+	/*
-+	 * This is a very bad scenario and needs to be correctly warned
-+	 * as it cause PCIe malfunction.
-+	 */
-+	if ((priv->serdes_port[AIROHA_SCU_SERDES_WIFI1] == AIROHA_SCU_SERDES_MODE_PCIE0_X2 &&
-+	     priv->serdes_port[AIROHA_SCU_SERDES_WIFI2] != AIROHA_SCU_SERDES_MODE_PCIE0_X2) ||
-+	    (priv->serdes_port[AIROHA_SCU_SERDES_WIFI1] != AIROHA_SCU_SERDES_MODE_PCIE0_X2 &&
-+	     priv->serdes_port[AIROHA_SCU_SERDES_WIFI2] == AIROHA_SCU_SERDES_MODE_PCIE0_X2)) {
-+		WARN(true, "Wrong Serdes configuration for PCIe0 2 Line mode. Please check DT.\n");
-+		return -EINVAL;
-+	}
-+
-+	/* PCS driver takes care of setting the SCU bit for HSGMII or USXGMII */
-+	if (priv->serdes_port[AIROHA_SCU_SERDES_WIFI1] == AIROHA_SCU_SERDES_MODE_PCIE0_X1 ||
-+	    priv->serdes_port[AIROHA_SCU_SERDES_WIFI1] == AIROHA_SCU_SERDES_MODE_PCIE0_X2) {
-+		ret = regmap_update_bits(priv->regmap, AIROHA_SCU_SSTR,
-+					 AIROHA_SCU_PCIE_XSI0_SEL,
-+					 AIROHA_SCU_PCIE_XSI0_SEL_PCIE);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* PCS driver takes care of setting the SCU bit for HSGMII or USXGMII */
-+	if (priv->serdes_port[AIROHA_SCU_SERDES_WIFI2] == AIROHA_SCU_SERDES_MODE_PCIE1_X1 ||
-+	    priv->serdes_port[AIROHA_SCU_SERDES_WIFI2] == AIROHA_SCU_SERDES_MODE_PCIE0_X2) {
-+		ret = regmap_update_bits(priv->regmap, AIROHA_SCU_SSTR,
-+					 AIROHA_SCU_PCIE_XSI1_SEL,
-+					 AIROHA_SCU_PCIE_XSI1_SEL_PCIE);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Toggle PCIe0 2 Line mode if enabled or not */
-+	if (priv->serdes_port[AIROHA_SCU_SERDES_WIFI1] == AIROHA_SCU_SERDES_MODE_PCIE0_X2)
-+		ret = regmap_set_bits(priv->regmap, AIROHA_SCU_PCIC,
-+				      AIROHA_SCU_PCIE_2LANE_MODE);
-+	else
-+		ret = regmap_clear_bits(priv->regmap, AIROHA_SCU_PCIC,
-+					AIROHA_SCU_PCIE_2LANE_MODE);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->serdes_port[AIROHA_SCU_SERDES_USB1] == AIROHA_SCU_SERDES_MODE_ETHERNET)
-+		ret = regmap_clear_bits(priv->regmap, AIROHA_SCU_SSR3,
-+					AIROHA_SCU_SSUSB_HSGMII_SEL);
-+	else
-+		ret = regmap_set_bits(priv->regmap, AIROHA_SCU_SSR3,
-+				      AIROHA_SCU_SSUSB_HSGMII_SEL);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->serdes_port[AIROHA_SCU_SERDES_USB2] == AIROHA_SCU_SERDES_MODE_PCIE2_X1)
-+		ret = regmap_clear_bits(priv->regmap, AIROHA_SCU_SSTR,
-+					AIROHA_SCU_USB_PCIE_SEL);
-+	else
-+		ret = regmap_set_bits(priv->regmap, AIROHA_SCU_SSTR,
-+				      AIROHA_SCU_USB_PCIE_SEL);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int airoha_scu_ssr_parse_mode(struct device *dev,
-+				     struct airoha_scu_ssr_priv *priv,
-+				     const char *property_name, unsigned int port,
-+				     unsigned int default_mode)
-+{
-+	const struct airoha_scu_ssr_serdes_info *port_info;
-+	const struct airoha_scu_ssr_data *pdata;
-+	const char *serdes_mode;
-+	int mode, i;
-+
-+	pdata = dev->platform_data;
-+
-+	if (of_property_read_string(dev->of_node, property_name,
-+				    &serdes_mode)) {
-+		priv->serdes_port[port] = default_mode;
-+		return 0;
-+	}
-+
-+	mode = airoha_scu_serdes_str_to_mode(serdes_mode);
-+	if (mode) {
-+		dev_err(dev, "invalid mode %s for %s\n", serdes_mode, property_name);
-+		return mode;
-+	}
-+
-+	port_info = &pdata->ports_info[port];
-+	for (i = 0; i < port_info->num_modes; i++) {
-+		if (port_info->possible_modes[i] == mode) {
-+			priv->serdes_port[port] = mode;
-+			return 0;
-+		}
-+	}
-+
-+	dev_err(dev, "mode %s not supported for %s", serdes_mode, property_name);
-+	return -EINVAL;
-+}
-+
-+static int airoha_scu_ssr_probe(struct platform_device *pdev)
-+{
-+	struct airoha_scu_ssr_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+
-+	/* Get regmap from MFD */
-+	priv->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!priv->regmap)
-+		return -EINVAL;
-+
-+	ret = airoha_scu_ssr_parse_mode(dev, priv, "airoha,serdes-wifi1",
-+					AIROHA_SCU_SERDES_WIFI1,
-+					AIROHA_SCU_SERDES_MODE_PCIE0_X1);
-+	if (ret)
-+		return ret;
-+
-+	ret = airoha_scu_ssr_parse_mode(dev, priv, "airoha,serdes-wifi2",
-+					AIROHA_SCU_SERDES_WIFI2,
-+					AIROHA_SCU_SERDES_MODE_PCIE1_X1);
-+	if (ret)
-+		return ret;
-+
-+	ret = airoha_scu_ssr_parse_mode(dev, priv, "airoha,serdes-usb1",
-+					AIROHA_SCU_SERDES_USB1,
-+					AIROHA_SCU_SERDES_MODE_USB3);
-+	if (ret)
-+		return ret;
-+
-+	ret = airoha_scu_ssr_parse_mode(dev, priv, "airoha,serdes-usb2",
-+					AIROHA_SCU_SERDES_USB2,
-+					AIROHA_SCU_SERDES_MODE_USB3);
-+	if (ret)
-+		return ret;
-+
-+	ret = airoha_scu_ssr_apply_modes(priv);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver airoha_scu_ssr_driver = {
-+	.probe		= airoha_scu_ssr_probe,
-+	.driver		= {
-+		.name	= "airoha-scu-ssr",
-+	},
-+};
-+
-+module_platform_driver(airoha_scu_ssr_driver);
-+
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Airoha SCU SSR/STR driver");
-diff --git a/include/linux/soc/airoha/airoha-scu-ssr.h b/include/linux/soc/airoha/airoha-scu-ssr.h
-new file mode 100644
-index 000000000000..0224c0340b6d
---- /dev/null
-+++ b/include/linux/soc/airoha/airoha-scu-ssr.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __AIROHA_SCU_SSR__
-+#define __AIROHA_SCU_SSR__
-+
-+enum airoha_scu_serdes_modes {
+ #include <dt-bindings/clock/en7523-clk.h>
+ #include <dt-bindings/reset/airoha,en7581-reset.h>
++#include <dt-bindings/soc/airoha,scu-ssr.h>
+ 
+ #define RST_NR_PER_BANK			32
+ 
+@@ -81,6 +84,7 @@ struct en_clk_soc_data {
+ 	const struct en_clk_desc *base_clks;
+ 	const struct clk_ops pcie_ops;
+ 	int (*hw_init)(struct platform_device *pdev,
++		       struct en_clk_priv *priv,
+ 		       const struct en_clk_soc_data *soc_data,
+ 		       struct clk_hw_onecell_data *clk_data);
+ };
+@@ -361,6 +365,51 @@ static const u16 en7581_rst_map[] = {
+ 	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+ };
+ 
++static unsigned int an7581_serdes_wifi1_possible_modes[] = {
 +	AIROHA_SCU_SERDES_MODE_PCIE0_X1,
 +	AIROHA_SCU_SERDES_MODE_PCIE0_X2,
++	AIROHA_SCU_SERDES_MODE_ETHERNET,
++};
++
++static unsigned int an7581_serdes_wifi2_possible_modes[] = {
 +	AIROHA_SCU_SERDES_MODE_PCIE1_X1,
-+	AIROHA_SCU_SERDES_MODE_PCIE2_X1,
++	AIROHA_SCU_SERDES_MODE_PCIE0_X2,
++	AIROHA_SCU_SERDES_MODE_ETHERNET,
++};
++
++static unsigned int an7581_serdes_usb1_possible_modes[] = {
 +	AIROHA_SCU_SERDES_MODE_USB3,
 +	AIROHA_SCU_SERDES_MODE_ETHERNET,
 +};
 +
-+struct airoha_scu_ssr_serdes_info {
-+	unsigned int *possible_modes;
-+	unsigned int num_modes;
++static unsigned int an7581_serdes_usb2_possible_modes[] = {
++	AIROHA_SCU_SERDES_MODE_PCIE2_X1,
++	AIROHA_SCU_SERDES_MODE_ETHERNET,
 +};
 +
-+struct airoha_scu_ssr_data {
-+	const struct airoha_scu_ssr_serdes_info *ports_info;
++static const struct airoha_scu_ssr_serdes_info an7581_ports_info[] = {
++	[AIROHA_SCU_SERDES_WIFI1] = {
++		.possible_modes = an7581_serdes_wifi1_possible_modes,
++		.num_modes = ARRAY_SIZE(an7581_serdes_wifi1_possible_modes),
++	},
++	[AIROHA_SCU_SERDES_WIFI2] = {
++		.possible_modes = an7581_serdes_wifi2_possible_modes,
++		.num_modes = ARRAY_SIZE(an7581_serdes_wifi2_possible_modes),
++	},
++	[AIROHA_SCU_SERDES_USB1] = {
++		.possible_modes = an7581_serdes_usb1_possible_modes,
++		.num_modes = ARRAY_SIZE(an7581_serdes_usb1_possible_modes),
++	},
++	[AIROHA_SCU_SERDES_USB2] = {
++		.possible_modes = an7581_serdes_usb2_possible_modes,
++		.num_modes = ARRAY_SIZE(an7581_serdes_usb2_possible_modes),
++	},
++};
++
++static const struct airoha_scu_ssr_data an7581_scu_ssr_data = {
++	.ports_info = an7581_ports_info,
++};
++
+ static u32 en7523_get_base_rate(const struct en_clk_desc *desc, u32 val)
+ {
+ 	if (!desc->base_bits)
+@@ -557,6 +606,7 @@ static const struct regmap_config en7523_clk_regmap_config = {
+ };
+ 
+ static int en7523_clk_hw_init(struct platform_device *pdev,
++			      struct en_clk_priv *priv,
+ 			      const struct en_clk_soc_data *soc_data,
+ 			      struct clk_hw_onecell_data *clk_data)
+ {
+@@ -661,12 +711,38 @@ static int en7581_reset_register(struct device *dev, struct regmap *map)
+ 	return devm_reset_controller_register(dev, &rst_data->rcdev);
+ }
+ 
++static void en7581_clk_register_ssr(struct platform_device *pdev,
++				    struct en_clk_priv *priv)
++{
++	struct platform_device_info pinfo = { };
++	struct platform_device *ssr_pdev;
++
++	pinfo.name = "airoha-scu-ssr";
++	pinfo.parent = &pdev->dev;
++	pinfo.id = PLATFORM_DEVID_AUTO;
++	pinfo.fwnode = of_fwnode_handle(pdev->dev.of_node);
++	pinfo.of_node_reused = true;
++	pinfo.data = &an7581_scu_ssr_data;
++	pinfo.size_data = sizeof(an7581_scu_ssr_data);
++
++	ssr_pdev = platform_device_register_data(&pdev->dev, "airoha-scu-ssr",
++						 PLATFORM_DEVID_AUTO,
++						 &an7581_scu_ssr_data,
++						 sizeof(an7581_scu_ssr_data));
++	if (IS_ERR(ssr_pdev))
++		dev_warn_probe(&pdev->dev, PTR_ERR(ssr_pdev), "failed to register SCU SSR driver.\n");
++
++	priv->ssr_pdev = ssr_pdev;
++}
++
+ static int en7581_clk_hw_init(struct platform_device *pdev,
++			      struct en_clk_priv *priv,
+ 			      const struct en_clk_soc_data *soc_data,
+ 			      struct clk_hw_onecell_data *clk_data)
+ {
+ 	struct regmap *map, *clk_map;
+ 	void __iomem *base;
++	int ret;
+ 
+ 	map = syscon_regmap_lookup_by_compatible("airoha,en7581-chip-scu");
+ 	if (IS_ERR(map))
+@@ -687,7 +763,13 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 	regmap_update_bits(clk_map, REG_NP_SCU_PCIC, REG_PCIE_CTRL,
+ 			   FIELD_PREP(REG_PCIE_CTRL, 3));
+ 
+-	return en7581_reset_register(&pdev->dev, clk_map);
++	ret = en7581_reset_register(&pdev->dev, clk_map);
++	if (ret)
++		return ret;
++
++	en7581_clk_register_ssr(pdev, priv);
++
++	return 0;
+ }
+ 
+ static int en7523_clk_probe(struct platform_device *pdev)
+@@ -695,10 +777,15 @@ static int en7523_clk_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	const struct en_clk_soc_data *soc_data;
+ 	struct clk_hw_onecell_data *clk_data;
++	struct en_clk_priv *priv;
+ 	int r;
+ 
+ 	soc_data = device_get_match_data(&pdev->dev);
+ 
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
+ 	clk_data = devm_kzalloc(&pdev->dev,
+ 				struct_size(clk_data, hws, soc_data->num_clocks),
+ 				GFP_KERNEL);
+@@ -706,11 +793,17 @@ static int en7523_clk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	clk_data->num = soc_data->num_clocks;
+-	r = soc_data->hw_init(pdev, soc_data, clk_data);
++	r = soc_data->hw_init(pdev, priv, soc_data, clk_data);
+ 	if (r)
+ 		return r;
+ 
+-	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++	if (r)
++		return r;
++
++	platform_set_drvdata(pdev, priv);
++
++	return 0;
+ }
+ 
+ static const struct en_clk_soc_data en7523_data = {
+diff --git a/include/linux/clk/clk-en7523.h b/include/linux/clk/clk-en7523.h
+new file mode 100644
+index 000000000000..fc3b320dc7e9
+--- /dev/null
++++ b/include/linux/clk/clk-en7523.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++#ifndef __LINUX_CLK_EN7523_H_
++#define __LINUX_CLK_EN7523_H_
++
++struct en_clk_priv {
++	struct platform_device *ssr_pdev;
 +};
 +
 +#endif
