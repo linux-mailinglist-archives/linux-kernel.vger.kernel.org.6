@@ -1,177 +1,97 @@
-Return-Path: <linux-kernel+bounces-570324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9BAA6AEDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:50:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09E5A6AEE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9D53BD89D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D324231B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B762288C3;
-	Thu, 20 Mar 2025 19:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD8F227EBE;
+	Thu, 20 Mar 2025 19:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V+qHwmxS"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mX6OPokz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nSMr3UaN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6911E47C5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDA0221579
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742500155; cv=none; b=SWHkRHfPhgxzbS1EutNNtdqr1hogbMXIjC3VxsmOQ9jWMesF+Yy+oUY7U02XYugECXSdnq3fh1rtPx4l+/1/64eC6pdmFFtDqtdeD5RaYXlwYuvF1r+eyALHFaL51oassH6YoEam5Arb3PoK1gqANwWXmImsMSIkhyPLe4Z5TCY=
+	t=1742500568; cv=none; b=W7t6jXeTeeLPyAALNINe2UE1gQOx0Tgyo3wg+F1VuqPtumEd+1DNDESaqJqyzPXiiuNXE74VVOQvylb5Jh6nFJUuewfJQQmVyuv5V7sBkB8OUe5a940dttKXTyIWclsKEE4KIrZlxNKYLbYcF0Bz1s27waVVi6uvJSO4E71q6U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742500155; c=relaxed/simple;
-	bh=KFQpkAFiRwi5JvgaGkgUS3XMJL1ly4AUO7zYJrorCgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KgY+/QJphbnWdsEs2unK7GmqRATmvHso0CGhzs++ftZRoU/pUjYq27r+1w47ZF4bEbA16ueXzhUUrQF7xlXTHIjoqiZ23YCvt4zkRLW10f738gGP3JSwDgzVSV9x6wqaSQqLtLM4ztDuzbbKtAcTf8CaVJC05j1+sme4dl6lxUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V+qHwmxS; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22401f4d35aso25748995ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:49:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742500154; x=1743104954; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pMRUp5Qyehm/UHkEF8vmSOmZ085ovglSkPUzMHQiUvE=;
-        b=V+qHwmxSsRylMh683u3emKvxWHIoiCfzb0J94EAEEx6slNleLpoQOa0wGz8bnfQFiW
-         533g0RUXQ+d02JJehu12OU3dPX5/BzcU0gOovi75YSPHGhuxRTbu0NEsR85EYRWYi6Gb
-         s1tc4FRq32rncn5rnYyrIbij2DWdtAnqUIPixMhf7LkaViRD2+33exE2AbA6Xi8/6Rvp
-         KAJvDrFVwEq/hfHb8FWHz1mwmwfPWLqejW86PsHBkCuR7sGB+0S40tJxX0FGILYhXCCQ
-         BnQe+Opx0+bD3g3ip6zx8UsPdSc5L7/+mHDGVzk+z+H8m/EyGZISyB0kYOlWFGBCrHLO
-         UT0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742500154; x=1743104954;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMRUp5Qyehm/UHkEF8vmSOmZ085ovglSkPUzMHQiUvE=;
-        b=vkHOQ5wC0JY2vRem6JGmAJtDJKG90AbDcIMbSYVyoalDBB4UcvjSlw1xg1azP+FACK
-         GpNORqAw1ifc2rFIVjjYGGbDh4+ZnDhLRdk6Zry9uvng2BfGKNF0mZ/kiqR2YVOIwO7P
-         l/i+HP4lT5+8shdsHg4vIwmRDnUyAojGE2QDcgJONmkbzzjByLYl3N4Av0IhvLvxJjfb
-         iSFY/McE4VXf8Smn1/jrpwtQKt/7SEL2AG47c+BqGcfqXSbz/mhuExa3YlgW5tgu9B5y
-         Dj1760uU0dQGEt4McTnrp7KkZqFDlGCHqGDCc57teVr8YnjL+Pi+Q532zi7SlxNCFXAs
-         otdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVH5IxHYDbqk77xewS9LdmPnx78e3kiJ9Oh96+3Z1Ghijw7ZgkKDqc5I1Y+LDi1k/zj51FUGBT2TRUYGlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9KUv5Dgp8tTpx6jGbK2YsSEcpMXcCkR5Ktnh14FbEdJd1rLO5
-	cPy7mlOJugcvCoLUSDkD3xZTe+6A1NGSZqghUTmw5UIOp72zGWKM17pK42sxHA==
-X-Gm-Gg: ASbGncu24q7dzdcf11OB/uWjODcYEv71EdRjmUkIstdYZ4m/Bhe8enlLYi0voCN33iO
-	ZbVMCXHhAS0xV4a9Puoiho9E4FTdkrdEjsxTu75dGVTTgatAYYCCOKERz+KRHumax5Nlin+ig8b
-	VbJseCiqooN41zY0X8yYnGE66jnUN68tPJfSq3Np8c4rdZKc9UJcxuPgTfvOwGx/G/9ArSYXJmH
-	kdZQ5kXcrCMT682UX9WrMmsGpgiTkcGqtePOTDuUD7/p4y2jUtFRF0KVaeqjEIhvXZ6DTC+o0+9
-	6f5AynEM07DmP2G6ov6CW0PxtNg9GAfpyyhbM2ptC07SptozOEeBzAz5ctQVxABTGDN4qgOSzU2
-	uUnHZI4NZb+MNH+crFbL19PSttV2wG16lDpg4MjlmyQY=
-X-Google-Smtp-Source: AGHT+IHyrk2bDjkLhMnhglpF2WvxGIuU+CuD3iaUBnBbz39xc/6Rxc5vq7lRwV1BiFP3IbQR23VrGQ==
-X-Received: by 2002:a05:6a00:4b12:b0:736:755b:8317 with SMTP id d2e1a72fcca58-73905a501e4mr1105162b3a.21.1742500153484;
-        Thu, 20 Mar 2025 12:49:13 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:c50a:4138:6122:653a? ([2a00:79e0:2e14:7:c50a:4138:6122:653a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611d1dasm210916b3a.106.2025.03.20.12.49.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 12:49:12 -0700 (PDT)
-Message-ID: <747d9492-b3be-46b0-9e26-5ba45f2e6662@google.com>
-Date: Thu, 20 Mar 2025 12:49:11 -0700
+	s=arc-20240116; t=1742500568; c=relaxed/simple;
+	bh=jB8nKIZepojlgR210ZZ91lH3AgazjD4Izczc9q0NSC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbnVOKVTQkZakwk+EHeKz0+GesQEZcqotNhlyl7YC40s3+ddKtmQLsg85wegxTRthld50An8QP7OWgcK0lSOcraiDezrdK7BtJXG03QPo0JHElbUYwDd4VDcBHwRIffQobsQ8n/IP57yJY7p+fmOhmgrZB5Naxb8D4NK1cCb+1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mX6OPokz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nSMr3UaN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 20 Mar 2025 20:56:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742500565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jB8nKIZepojlgR210ZZ91lH3AgazjD4Izczc9q0NSC0=;
+	b=mX6OPokz5w/4bGcXyVy1l8sSdmrcuLLkwz39pQCvNgbdvYO8uG5A+xhuQRDjSnlEwi5oku
+	Z2c0dipPEManlUykBah0toKWz6HWnvbB2JwexK3FGVFY7wpdCiBzfUmD1VExcBVOO7XRno
+	5CSYJ99v/ZaDzsHW4iLizKJLPjgPNq9xdiDRv4A0h9Z52e/+6aqVpu4oghZRMPH8Sg2wan
+	/ZqsAYib8qde7Sb7miQdSJ0S9sqe8ge60r0bmfV8e1jy/0tU48K4GkAg0Lhh0ZyluYoab9
+	liQZRPGW8V/rX6T0rpl1v5Z3/UUerrqiqz52jAfEtbbrwLLPZkS90ehoipBOPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742500565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jB8nKIZepojlgR210ZZ91lH3AgazjD4Izczc9q0NSC0=;
+	b=nSMr3UaNtwp/HjkFpQa2ZLBF2+nbUaEUR2cqqFCPGValGTluILCP25SZthTtjmJxoJBL2E
+	WxdoRCrLVu4nEkCg==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [x86/cpuid] Question regarding historic leaf 0x80000000 code
+Message-ID: <Z9xy04RL3Uww9DYy@lx-t490>
+References: <Z9xtfC5pL-g4LYvK@lx-t490>
+ <d4fcfd91-cc92-4b3c-9dd2-56ecd754cecc@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: connector: add fixed-batteries property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Sebastian Reichel <sre@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
- <20250312-batt_ops-v1-1-88e0bb3129fd@google.com>
- <20250313-tidy-kakapo-of-abundance-eebf91@krzk-bin>
- <85c6de6a-f8b4-4e4e-8fa2-da53816abc89@google.com>
- <3a33dab7-87b2-4b74-b138-e368d4cbc358@kernel.org>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <3a33dab7-87b2-4b74-b138-e368d4cbc358@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4fcfd91-cc92-4b3c-9dd2-56ecd754cecc@citrix.com>
 
-Hi Krzysztof,
-
-On 3/16/25 9:49 AM, Krzysztof Kozlowski wrote:
-> On 15/03/2025 01:56, Amit Sunil Dhamne wrote:
->> Hi Krzysztof,
->>
->> On 3/13/25 1:48 AM, Krzysztof Kozlowski wrote:
->>> On Wed, Mar 12, 2025 at 04:42:01PM -0700, Amit Sunil Dhamne wrote:
->>>> Add a new "fixed-batteries" DT property to connector class. This
->>>> property is populated with nodes associated with battery type power
->>>> supplies powering the USB PD connector. This is needed by the Type-C
->>>> Port Manager (TCPM) to query psy properties which are used to feed
->>> What is "psy" in terms of bindings?
->> In terms of bindings this should be a phandle to a device that
->> owns/manages the battery (whose driver will eventually call
->> devm_power_supply_register to register the battery). This could be a
-> So a charger? Please rephrain from putting Linux names into the bindings
-> description.
-Noted, thanks!
->> fuel-guage ("sprd,sc2731-fgu", say), charger ("ti,bq24190") or a
->> platform device ("cw2015") containing "monitored-battery" property to
->> manage the simple battery.
+On Thu, 20 Mar 2025, Andrew Cooper wrote:
 >
->>>> Battery_Status & Battery_Capacity AMS.
->>>>
->>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/connector/usb-connector.yaml | 8 ++++++++
->>>>    Documentation/devicetree/bindings/usb/maxim,max33359.yaml      | 1 +
->>>>    2 files changed, 9 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>> index 11e40d225b9f3a0d0aeea7bf764f1c00a719d615..5e15bc060f5a2cfce842f83de738f1e8bae3ce2d 100644
->>>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
->>>> @@ -300,6 +300,14 @@ properties:
->>>>        $ref: /schemas/types.yaml#/definitions/uint8-array
->>>>        maxItems: 4
->>>>    
->>>> +  fixed-batteries:
->>>> +    description: Contains references to nodes associated with battery type power
->>>> +      supplies powering the USB PD device. These batteries are fixed type and
->>> What is a "battery type power supply"? If you just link here batteries,
->>> then we have type for it - monitored-battery - but I doubt connector has
->>> direct connection to the battery.
->> Regarding "nodes associated with battery type power supplies", I meant
->> something like a fuel guage or a charger OR platform device with
->> "monitored-battery" that will manage the battery lifecycle. If I use
->> monitored-battery for this, I will be restricted to only querying 1
->> simple battery. Also, I don't mean PD connector device to be a fuel
->> guage or charger that manages a specific battery. It should just be able
->> to query any FG/Chg for the battery status to relay that info to the
->> connector's port partner.
->>
->> The intent of the patchset & this change is for the USB Type C protocol
->> manager module (that consumes these bindings) to be able to get info
-> The intent should be rather to accurately describe hardware and maybe
-> that's the problem - you focus how to bend it for your drivers.
-
-Acknowledged!
-
-Thanks,
-
-Amit
-
+> The problem is that for an out-of-range leaf, Intel returns the data
+> from the maximum in-range leaf, rather than zeroes.
 >
+> On pre-AMD64-capable Intel CPUs, you'll get what amounts to junk in a
+> query for leaf 0x80000000, where it's probably leaf 5 or so.
 >
-> Best regards,
-> Krzysztof
+> Checking for the upper half of the output matching the input is a way of
+> distinguishing Intel behaviour from all the other vendors.
+>
+
+Thanks a lot Andrew for all your help!
+
+Then I'll mention that, in a comment, on top of the new CPUID scanner's
+leaf 0x8000000 code.
+
+Kind regards,
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
