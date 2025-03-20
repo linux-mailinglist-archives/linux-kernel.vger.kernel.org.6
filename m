@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-569913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3671AA6A96B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D96A6A973
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243BB1898CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7F6188E2F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9011E9919;
-	Thu, 20 Mar 2025 15:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD5F1E231E;
+	Thu, 20 Mar 2025 15:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuUHWUep"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCF7UO8O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11191E8323;
-	Thu, 20 Mar 2025 15:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0406B8F6E;
+	Thu, 20 Mar 2025 15:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482854; cv=none; b=e8P25HYlOwLDDbYb/htInloYNihPmyBNDiMAcKzmxpXZ7UBICItjsFkBnQZRb1EqEVwOGMixpGb+rKxFGbaHdYtiOQ5m38d4HV4FUDyKty1Vc8nYcSgov5Zpm62Jh2zypeYkQ7riRNE3JVWuWnNaHdUn3bMHbQCE8YfpwRr73q0=
+	t=1742482934; cv=none; b=C9yfLnqVW9/maKUGg6Lt9kBQ08H9a3zG2GvDMwJeVs7ToWK7Es3PneN19xD1urq24X2Y/RzZcwPLECvYp4PdUK2+TZMi38pbIWRlaZ4DEMPKznwveHyKD6Xpl1T5qUBmMcFGgvZJaX8bcYD1ImvBHjBCHPVkR1EP5Rq3tNHYGMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482854; c=relaxed/simple;
-	bh=9pTLdxAtgrJsqFdcgdMTfhCiZPwpbClW40GE8//9L6o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mYGVbL4Hyn/qe1Nr4nHvQ+4eWGidql7SVDUtuAUmqOZBGIw2lbqHGHIo1cj65lJYtoSZgU0UOqPmrfihSi/ye/5hJk/LBPJYn1xi4dFOkqvQRyEh6FjvM3ysajglmY0wxLB2QiuMXSfL5JX4DmZz74xL1TEuWTcpU6LaULa7piM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuUHWUep; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30795988ebeso8839061fa.3;
-        Thu, 20 Mar 2025 08:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742482851; x=1743087651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9pTLdxAtgrJsqFdcgdMTfhCiZPwpbClW40GE8//9L6o=;
-        b=PuUHWUepED9IFf4mw0eBbK/Ios14FJVZg/pHj5A36O2sRcS5fpZJljLyWkECCucp6R
-         w2tS1JugIQGKVM95WujlfWDVVQUABQjwhwdSumCdnpP2la0gFSlE0a9SQVW8EDqTC2WZ
-         QhYYBncTP1WTVis9ydOBdC2cAFG8mieYxXoK+TtNJaqd5GhcWcz/vUt6FOnqbBxvoceL
-         CrVvdxQdhjcgBdaw5SZrZuWyXBCfC0lx98MlBjlI3PztwmrowU4dGSnS/aeL6LKgRUSs
-         kJ2Nip67beGXQEtjX78JYQBsBJKCQ9ouBsLp7KxbtoIGYCUGsvlgamUG+XJiA3umXIfy
-         wjUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742482851; x=1743087651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9pTLdxAtgrJsqFdcgdMTfhCiZPwpbClW40GE8//9L6o=;
-        b=Ffc+P55rVCcygawq4V04pf54tmTHQf4uROMOCB+l3bkoDdB8U7gJKumXRc2F//BB+e
-         zBchw1ybIlfwdKNTRyak1RK9ORRkIzOtMe1iNDpQllmi4jYBxczZ45uGC1deYc2LUwjj
-         b6LnY8NjRSlm6XPn6QL3zy53b/LDKqJ+wF5kxNsQAXAjUnf9+aBEU80ahWqQgMitwX8M
-         Uek52ROJlibSUJBVhw0TKEW+H5d68GdnVa6LTqxE/mdRXKWXWwYI55nfwLrqTTT8BbEU
-         JoCfFSADv5nO/ViaJ8k77JbX646PQ4dsxHPEZp0KKdL0CoVOwYq8d22XW4IEKUiCYYFI
-         fUpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsyezeIU+Qmn2mqoMy6DU/64OSt5KQjlgIL0wwaWxiheD26ZLyHUoblYXTLZx8S8lpbVFWbEXVMgc=@vger.kernel.org, AJvYcCWCSAy7tC1V2QLI1TQfRRk00EzutjRl2N96PWTRybCwJmzMsJP50hXv8UKRjp89kujE6b8yyNTgUkxPgUMxpA==@vger.kernel.org, AJvYcCXjZGWcsvUIy3xxPRfhX4X+ZSOxs6sQbLl7ErHvWgWc1dy+8fKku24SG6E3mtkgHBPACqZUycfjfgMgM/sh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3bYjxvPtbPPZD5zGM6/LZTWeDCSP+RXblRFe96Rzxp6ElXuES
-	bYMHQzBf2d0I4JKqxTfqudNLtLhN4a6ECHpSw1zn8B1mjUhJweVvE4PduIJ13/+ectrgE1okOPD
-	0beiWk0jRiyB3maJHlXWAZd4pe0A=
-X-Gm-Gg: ASbGncsN94x7kjLvAhk6K2525JflYWTQ76LG8821UM5KWQfAAfSfV4MhPSNp7iNTSTm
-	JooY5PuJo62RYHNEf/cZn9AprNWAxxx0Zm9egPccdjeh5MbKCHLh85Oqx1c3QyA/vPU7cc2CVi5
-	Y/JXfBtvKkKchDtgXhJj22o8Jpf9Q=
-X-Google-Smtp-Source: AGHT+IFcAQGu4dcHPMMMTDjZXD39ScyoZicDpJAPf3QODoX1p8n5ve681VrqpR7cohfc9ZYH79+ER6ZKnoyA9ZodQdk=
-X-Received: by 2002:a05:651c:2211:b0:30a:44ca:7e74 with SMTP id
- 38308e7fff4ca-30d6a3e4308mr30581311fa.12.1742482850475; Thu, 20 Mar 2025
- 08:00:50 -0700 (PDT)
+	s=arc-20240116; t=1742482934; c=relaxed/simple;
+	bh=GScx7v1DB+peoikwJcbCBTD5+TH21YH6ulY+itNoyaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GanXOOmLCi5vp11Aft0w7dic5myaK0K6zPXXLzN8b2EcktIAUZM+0GQFUIaLNTLcuLO+GO5WYR+ywH5wXTxRauCTbJNbwc3svMdCWlkXY6QHOiZqcHL2HwiBgoq77h7OSmFGeF937w+gZwCDo6furj4sq2IVR/epwwyIAxmToo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCF7UO8O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF7BEC4CEDD;
+	Thu, 20 Mar 2025 15:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742482933;
+	bh=GScx7v1DB+peoikwJcbCBTD5+TH21YH6ulY+itNoyaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vCF7UO8OTLEpYla8Np1Nni4VhxyluqH2ma0n80LLMr0TO8qHJQexViPiSm+FWRcMk
+	 LeggL64kHd88RyBEwsigeRwu8LIVvbCQjAG7ZaeSnQ187oDJtfqZLsh9zdUBWft+EO
+	 hiTicb4BUjZekXj8kM6QUvmhteW0ICUWj4zcGQsvGdxYYbNd2b9R1GgpHkIPMdGTB3
+	 1sqYb4NjqhFp4oUBdCyPVsCTb9VzBdLJoxl1c/6E89RPc4/2LZd46Bn01qFgjvIKod
+	 a4JzqJMu2gVe+7MotBqBmSEQx0xH9CWgTGWug7ANS38VaPOUV92fDmBDhoLbVwJGvN
+	 +E4mbs+OAw5AQ==
+Date: Thu, 20 Mar 2025 17:02:08 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+	linux-integrity@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v3 4/4] x86/sev: register tpm-svsm platform device
+Message-ID: <Z9wt8EXI5wL1OaSK@kernel.org>
+References: <20250311094225.35129-1-sgarzare@redhat.com>
+ <20250311094225.35129-5-sgarzare@redhat.com>
+ <7c35f370-f1f2-7100-3b78-b595e977e964@amd.com>
+ <Z9gk0jg1JLZY4Fk9@kernel.org>
+ <nrn4ur66lz2ocbkkjl2bgiex3xbp552szerfhalsaefunqxf7p@ki7xf66zrf6u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320063903.2685882-1-avagin@google.com> <24d6f7a9-82db-4240-a8d6-2c8b58861521@lucifer.local>
-In-Reply-To: <24d6f7a9-82db-4240-a8d6-2c8b58861521@lucifer.local>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Thu, 20 Mar 2025 08:00:36 -0700
-X-Gm-Features: AQ5f1JrXudWuepBjRLzmdl2-9SJu1uWlfvYIgvYvJPd4oC0rVqDvyy0YLbrWIvs
-Message-ID: <CANaxB-xuND3OoUqDrFQfN+xLwiWzY0SMRJ_RvF1+-emTuqNZkA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fs/proc: extend the PAGEMAP_SCAN ioctl to report
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrei Vagin <avagin@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	criu@lists.linux.dev, 
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, Pavel Tikhomirov <snorcht@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nrn4ur66lz2ocbkkjl2bgiex3xbp552szerfhalsaefunqxf7p@ki7xf66zrf6u>
 
-On Thu, Mar 20, 2025 at 4:04=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Well I guess it couldn't wait ;) we're (very!) late in the cycle and
-> immediately pre-LSF (will you be there btw?) so this is 6.16 for sure.
->
-> Kinda wish you'd mentioned you wanted to do it as I'd rearranged my
-> schedule to tackle this as a priority post-LSF, but you've done a good jo=
-b
-> so we're all good! Just a little heads up would have been nice ;)
->
-> Some nits and you need to fix the test header thing but otherwise good.
+On Tue, Mar 18, 2025 at 11:44:05AM +0100, Stefano Garzarella wrote:
+> On Mon, Mar 17, 2025 at 03:34:10PM +0200, Jarkko Sakkinen wrote:
+> > On Fri, Mar 14, 2025 at 11:56:31AM -0500, Tom Lendacky wrote:
+> > > On 3/11/25 04:42, Stefano Garzarella wrote:
+> > > > SNP platform can provide a vTPM device emulated by SVSM.
+> > > >
+> > > > The "tpm-svsm" device can be handled by the platform driver added
+> > > > by the previous commit in drivers/char/tpm/tpm_svsm.c
+> > > >
+> > > > The driver will call snp_svsm_vtpm_probe() to check if SVSM is
+> > > > present and if it's support the vTPM protocol.
+> > > >
+> > > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > > ---
+> > > >  arch/x86/coco/sev/core.c | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > >
+> > > > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> > > > index 2166bdff88b7..a2383457889e 100644
+> > > > --- a/arch/x86/coco/sev/core.c
+> > > > +++ b/arch/x86/coco/sev/core.c
+> > > > @@ -2664,6 +2664,11 @@ static struct platform_device sev_guest_device = {
+> > > >  	.id		= -1,
+> > > >  };
+> > > >
+> > > > +static struct platform_device tpm_svsm_device = {
+> > > > +	.name		= "tpm-svsm",
+> > > > +	.id		= -1,
+> > > > +};
+> > > > +
+> > > >  static int __init snp_init_platform_device(void)
+> > > >  {
+> > > >  	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+> > > > @@ -2672,6 +2677,9 @@ static int __init snp_init_platform_device(void)
+> > > >  	if (platform_device_register(&sev_guest_device))
+> > > >  		return -ENODEV;
+> > > >
+> > > > +	if (platform_device_register(&tpm_svsm_device))
+> > > > +		return -ENODEV;
+> > > > +
+> > > 
+> > > You could avoid registering the device if an SVSM isn't present. Not sure
+> > > if that is desirable or not.
+> > 
+> > Is there any use for the device if an SVSM isn't present? :-)
+> > 
+> > I'd judge it based on that...
+> 
+> I tried to keep the logic of whether or not the driver is needed all in the
+> tpm_svsm_probe()/snp_svsm_vtpm_probe() (where I check for SVSM).
+> If you prefer to move some pieces here, though, I'm open.
 
-I wasn't rushing these changes. Just trying to help and save you some
-time:). We'd like to backport this to older releases, but that's a separate
-task. I'll submit backport requests to the stable branches and hope
-(fingers crossed) the maintainers approve them. Sorry I didn't let you know
-I could help with this.
+OK good point, thanks! Let's look the update as a whole and not touch
+on this. There's already quite a few pieces moving. Ignore this for
+the moment :-)
 
-Thanks for the review.
+> 
+> Thanks,
+> Stefano
+> 
 
-P.S. I don't think I made the CRIU urgency clear enough earlier. We're not
-in panic mode, and we do have time to handle this. The lightweight guard
-regions are in glibc, but aren't in any distro releases yet. We found the
-problem when CRIU tests started failing on Fedora Rawhide. We probably have
-a few months before the new glibc hits official distros and becomes a real
-issue for CRIU users.
-
-Thanks,
-Andrei
+BR, Jarkko
 
