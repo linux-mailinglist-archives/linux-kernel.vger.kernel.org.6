@@ -1,93 +1,55 @@
-Return-Path: <linux-kernel+bounces-569077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0531A69E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:26:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4D7A69E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB658A6677
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 537BF7B012C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A09E1EB184;
-	Thu, 20 Mar 2025 02:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E241EA7EB;
+	Thu, 20 Mar 2025 02:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7u3UbIY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NW0iqYGr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BA91E98FC;
-	Thu, 20 Mar 2025 02:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA18192B82;
+	Thu, 20 Mar 2025 02:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742437582; cv=none; b=PGPVCrlP65uL7OxL4bnY+YL0oo+k057OfHSJxssUYuScKhOacOHGXgaA7hU7mToYpYMJ4G49tIqKk3Ov/rqvzHdbpLeZikZKzVpSZqKMOwpRSzBWuocW0Yz/paxEcBAROkAZQP1V2JKgCToMJKE0cJz3C1lhKOyvQZ9Ky0ak+kg=
+	t=1742437564; cv=none; b=pVc0xX1LMEBecajsJh0k25IbODWdEoXuzzgQrCj/QO9N7MfXUH7OkMOgK2gKlBRHB72N5UDwPHPvVoa5AkA9Kr8S0y5mKcTdevweT4M9g4HnU4ejnKGAMQ6X5mYEgk8JjFLriRw1Gtf9dJLkGQvs7cj01yzmKcGEgRx8uG1AVlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742437582; c=relaxed/simple;
-	bh=291HTSj4fCLUSrxd6oGcWY8dOfOz8/d+lx/A+WebZc0=;
+	s=arc-20240116; t=1742437564; c=relaxed/simple;
+	bh=wd4bDV3Pbt8B3W9w906X2pNdOFxkfrKKq9cy9tqyocI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jhmDk02ZeUs/1EfpR5KQa0W+3HZntcGCC2KQ9BzVfRMKWWOK1r794RLGWl3t4bETTNiaeU+KNC0Ht2eKOrY2qnHsHSnuBcKVGFhobF6YRVkZU6YQn3dZbo5yj+xP4yg1ERdlwHI1Vug2T9JCl9Sxca3vA7DIzPAHi8k6bhD/E1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7u3UbIY; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742437581; x=1773973581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=291HTSj4fCLUSrxd6oGcWY8dOfOz8/d+lx/A+WebZc0=;
-  b=H7u3UbIYyRVKflPJct5l7/4T19frxGMi15/ZMpeefuoOeVO4lpumzy4A
-   d/phdLpk40kyILZA4JF6VgjEbagaXW196Zx1X8xOQiedlh71qIwsI4wFb
-   QLYNLHppcExdCKsKUVNWEhacvOiwkR+pmNmVovz8sa/Kj+1afZHHgLwom
-   z0760gaZy7XjE7KiiMZKC839hjkKNazLdjQnKF2LV32toaf+IvLdLS3a0
-   TjuucwDYwVQNILQDMBVcY2Cu0+XRlXVWO4quypdgntIYMMi7WNSBEjjSb
-   suJSsipn0hzJxCNXUtRH5IL0r7MJhPI0h8ErLdmSZxrqIySr0kaaow9tc
-   w==;
-X-CSE-ConnectionGUID: TM/wO+W7Q8uMnUk8thqmpQ==
-X-CSE-MsgGUID: sWYVrA2mQne8qotXCmJUWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31234046"
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="31234046"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 19:26:20 -0700
-X-CSE-ConnectionGUID: WQ1ooowkQ3Otx7abhDKtlw==
-X-CSE-MsgGUID: lazrnhHSRHew6gtn2nXdWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="128129700"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 19 Mar 2025 19:26:14 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tv5bn-00007r-1J;
-	Thu, 20 Mar 2025 02:26:11 +0000
-Date: Thu, 20 Mar 2025 10:25:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: mathieu.dubois-briand@bootlin.com, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	andriy.shevchenko@intel.com,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <202503201022.7smCPVZj-lkp@intel.com>
-References: <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMKzy1VPdH0XBaAXO/why94aioOMipU3yJN0p6d5hFqoY+F7npT+SU2EJfbKCuUu5CfarQ6yFoFshbxGrxeJAL8duU6nAkqZYwyxGpvOFS5MrfExflNK59OEcthTG6u6qF2Q5+4YN8O0rLvzykEjDUMTQqcdG7NJl2syX1pn9wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NW0iqYGr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E863C4CEE4;
+	Thu, 20 Mar 2025 02:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742437563;
+	bh=wd4bDV3Pbt8B3W9w906X2pNdOFxkfrKKq9cy9tqyocI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NW0iqYGr9u018xkh9A+wagJOm0WjRvlK8XZjDMnPzm7eFCXN/lkzjOH3lxtTQQCPR
+	 KPluGt7UgPwguLuAJmccnFOjURi4XuYP8Au49RM8AdV99eePCDj15xIPRK1OmeAbaK
+	 4KYVoFL45mkH/znPMB+2kJg9ww8qMcHS6uZ0lp1hwIn7Xi4p5AW6tVvRFKdIe900h9
+	 sBUNUOCF+G4kKP5lBe7QHINoArAa1yYiSxqJrDhE8/3VNdyzkRhfU1NVTggOIjKN8T
+	 AUZ5ZwJ+s0mt6U7OaMIz4n6uEE8Hgimv4moGsFN332LTOhn7+UBHBHx+htarvt+gC2
+	 dq0jr92Ej7xEg==
+Date: Thu, 20 Mar 2025 02:26:01 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] f2fs: remove redundant assignment to variable err
+Message-ID: <Z9t8uTQOmVB4ue2B@google.com>
+References: <20250319113011.791319-1-colin.i.king@gmail.com>
+ <a9c06462-5fd2-4724-9d44-0285f281ecec@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,34 +58,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+In-Reply-To: <a9c06462-5fd2-4724-9d44-0285f281ecec@stanley.mountain>
 
-Hi,
+On 03/19, Dan Carpenter wrote:
+> On Wed, Mar 19, 2025 at 11:30:10AM +0000, Colin Ian King wrote:
+> > The variable err is being assigned a value zero and then the following
+> > goto page_hit reassigns err a new value. The zero assignment is redundant
+> > and can be removed.
+> > 
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > ---
+> >  fs/f2fs/node.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 5f15c224bf78..37c76bb19a8c 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -1497,7 +1497,6 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
+> >  	if (err < 0) {
+> >  		goto out_put_err;
+> >  	} else if (err == LOCKED_PAGE) {
+> > -		err = 0;
+> >  		goto page_hit;
+> >  	}
+> 
+> We could remove the curly braces as well.
 
-kernel test robot noticed the following build warnings:
+Applied as below. Thanks.
 
-[auto build test WARNING on a64dcfb451e254085a7daee5fe51bf22959d52d3]
+@@ -1494,12 +1494,10 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
+                return folio;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mathieu-Dubois-Briand/dt-bindings-mfd-gpio-Add-MAX7360/20250319-003750
-base:   a64dcfb451e254085a7daee5fe51bf22959d52d3
-patch link:    https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-4-fb20baf97da0%40bootlin.com
-patch subject: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-config: nios2-kismet-CONFIG_PINCTRL_MAX7360-CONFIG_PWM_MAX7360-0-0 (https://download.01.org/0day-ci/archive/20250320/202503201022.7smCPVZj-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250320/202503201022.7smCPVZj-lkp@intel.com/reproduce)
+        err = read_node_page(&folio->page, 0);
+-       if (err < 0) {
++       if (err < 0)
+                goto out_put_err;
+-       } else if (err == LOCKED_PAGE) {
+-               err = 0;
++       if (err == LOCKED_PAGE)
+                goto page_hit;
+-       }
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503201022.7smCPVZj-lkp@intel.com/
+        if (parent)
+                f2fs_ra_node_pages(parent, start + 1, MAX_RA_NODE);
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for PINCTRL_MAX7360 when selected by PWM_MAX7360
-   WARNING: unmet direct dependencies detected for PINCTRL_MAX7360
-     Depends on [n]: PINCTRL [=n] && MFD_MAX7360 [=y]
-     Selected by [y]:
-     - PWM_MAX7360 [=y] && PWM [=y] && MFD_MAX7360 [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> regards,
+> dan carpenter
 
