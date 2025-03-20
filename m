@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-570532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50008A6B1C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:45:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2145A6B1C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287E23BF02A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A498A62E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406671EDA00;
-	Thu, 20 Mar 2025 23:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAB522D7B3;
+	Thu, 20 Mar 2025 23:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RK12fon3"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kve6RE+c"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C0F22D786
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3EE22D78A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742514206; cv=none; b=sskYeK1zBie2/OKAVUyDwwB60MZc9kuQmyuzd4hso9dPdJQt9AzlgYD8aiAVcnT+oOQ4x37U0U95vCpNF9GZtOVHz6lBPtcfr3W21xhhj4TBLxv17WqHTj1SsDtmFtUhhP6VYjHkvpfFPDejsKRSa0VjIW2yrHzxaO47b43YD0s=
+	t=1742514207; cv=none; b=CNQNhbQfCfpQRDr7ED5LCbl85TgOEm68XcvrcZcq5vOT/I+XMUyAsk5JDgh7sXFP9wCcRISvt8feQtYHfVXwLTrho0XBYGZSHnbFp+cXLutjsbpQVCfLvfjJrlX7BhEGBVqt7lYAT2cubS60ka5nF0BkEyyyHKyAP8U7wJ3aAJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742514206; c=relaxed/simple;
-	bh=hUBrU2riw54JbGjbrObRF5oJyPterDJkVSk73+3ZkDw=;
+	s=arc-20240116; t=1742514207; c=relaxed/simple;
+	bh=qD6P1XLuScC/GDGjJU+aH/i/e6IvzbV5XOIX9N5YGfQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r7qHX/f5wpdQjm3wfravIuzlw74TXwcZ6PjFdeRzTTw3uy1HSFNxk7dpk9p4MoEy5bep2rZmeFFdd5E/ypjXaWs47JY0XcHWRF0DSa+KGGgyAgndtTpF7uBIHBlB93AkuKhKxLC+I1j2eXPfm8NVU48geK3InSczOpfQq5lO2nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RK12fon3; arc=none smtp.client-ip=198.175.65.20
+	 MIME-Version; b=kMoi7o0bv4F5adSKc8GNcL23CT8w+O3Q5PY59/ghFAAm8ZcvzBF4CWHUm8VtWPydUUYJwP4lINMVNzQc567oUptmSohkXufo92lRyZQgla+JNY/ovcYaRYukHmvSybCDDE0Q/PVCaqsXqfHb4ckHduhitsZOXgK4A0ohjXqNL0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kve6RE+c; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742514203; x=1774050203;
+  t=1742514206; x=1774050206;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=hUBrU2riw54JbGjbrObRF5oJyPterDJkVSk73+3ZkDw=;
-  b=RK12fon3NjnFrRbLNmHrEBZN7Qv+Xx4SKxCqHu0wf97rj5ZdWmIKhUmd
-   pY3EyKtjAMgXaU1xg9JZPticzkSzhUzA3h3nLh3DVi4x0Vq7c+u3itGmv
-   wRRlymiGuUI5Vq2mZHxIxLDQbSYBZtnlJIgu10Xl3o0ZoQNbmDu508IOw
-   ea69dA7sTL7FO/p5H6NRCyww62OiKAFkGypM+q6rCTDR2kWp2YqgPK1YX
-   kkHpQUodrPJFlsuefGM54FICmr+0D3COmd7e2BMUngZ5Gxrps8njjV8hm
-   W06jKK3uOjYZZoMAiBvMUWWnLIaivuCii3USy+neO8BWJwV+nNeJ/1rDA
+  bh=qD6P1XLuScC/GDGjJU+aH/i/e6IvzbV5XOIX9N5YGfQ=;
+  b=Kve6RE+c2mXSuH4je95pxNjV2a+Vg8RirHoGIWK12GSazcecsSBoGwxF
+   XXD4LGheJ/vXhXYehSL01CwuPoB/L2o3wxZ5JRwIjgPaJ//XHGeFad8eH
+   83jZizJkjuulD6dthdT7R7zgEegqZrYmEZ09WCbR9yUYchoMUT/qDvyRT
+   D6aYSeiqt2h1Kc1CaaO77uOdhT+WScWva6tmbKNLrSAjc4i2EkBtb2JZj
+   7ci7jqSiFX1qmP0iqejWiXs9U0psBWvLMLWusaFFQOYmBKRieoa4XrreA
+   /eMSM8FO71B/bfouzhSdOV6r6c7NxzsvrL6Ui8c4ULy4KefTr8XG8kIDf
    g==;
-X-CSE-ConnectionGUID: 1C3z/Jj8TzyAdFsKCDOSEA==
-X-CSE-MsgGUID: nYsxH3w5S+Wue64+L+8vBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43502609"
+X-CSE-ConnectionGUID: PU5rCOgoSl6WVr+rVIgJQA==
+X-CSE-MsgGUID: RMqs61u+QNKfBI6vF8CqZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43502615"
 X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="43502609"
+   d="scan'208";a="43502615"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:43:23 -0700
-X-CSE-ConnectionGUID: 277gBNJORLmXDYbuQt+Gzw==
-X-CSE-MsgGUID: bCEIsnlKSC+KE4Apug0AvA==
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 16:43:26 -0700
+X-CSE-ConnectionGUID: dQpHxLrzSoGXAR66ALJkFQ==
+X-CSE-MsgGUID: 4IQi0SRERFKavnepo+EoMQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="122962991"
+   d="scan'208";a="122963016"
 Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.161.68])
-  by orviesa009.jf.intel.com with ESMTP; 20 Mar 2025 16:43:23 -0700
+  by orviesa009.jf.intel.com with ESMTP; 20 Mar 2025 16:43:25 -0700
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -65,9 +65,9 @@ Cc: x86@kernel.org,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	chang.seok.bae@intel.com
-Subject: [PATCH RFC v2 7/9] x86/fpu/apx: Disallow conflicting MPX presence
-Date: Thu, 20 Mar 2025 16:42:58 -0700
-Message-ID: <20250320234301.8342-8-chang.seok.bae@intel.com>
+Subject: [PATCH RFC v2 8/9] x86/fpu/apx: Enable APX state support
+Date: Thu, 20 Mar 2025 16:42:59 -0700
+Message-ID: <20250320234301.8342-9-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250320234301.8342-1-chang.seok.bae@intel.com>
 References: <20250227184502.10288-1-chang.seok.bae@intel.com>
@@ -80,49 +80,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-APX is introduced as xstate component 19, following AMX. However, in the
-non-compacted format, its offset overlaps with the space previously
-occupied by the now-deprecated MPX:
-
-  45fc24e89b7c ("x86/mpx: remove MPX from arch/x86")
-
-To prevent conflicts, the kernel must ensure the CPU never expose both
-features at the same time. If so, it indicates unreliable hardware. In
-such cases, XSAVE should be disabled entirely as a precautionary measure.
-
-Add a sanity check to detect this condition and disable XSAVE if an
-invalid hardware configuration is identified.
-
-Note: MPX state components remain enabled on legacy systems solely for
-KVM guest support.
+With securing APX against conflicting MPX, it is now ready to be enabled.
+Include APX in the enabled xfeature set.
 
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 ---
- arch/x86/kernel/fpu/xstate.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/include/asm/fpu/xstate.h | 3 ++-
+ arch/x86/kernel/fpu/xstate.c      | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index 7f39fe7980c5..b308a76afbb7 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -32,7 +32,8 @@
+ 				      XFEATURE_MASK_PKRU | \
+ 				      XFEATURE_MASK_BNDREGS | \
+ 				      XFEATURE_MASK_BNDCSR | \
+-				      XFEATURE_MASK_XTILE)
++				      XFEATURE_MASK_XTILE | \
++				      XFEATURE_MASK_APX)
+ 
+ /*
+  * Features which are restored when returning to user space.
 diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 2a270683a762..0d68d5c4bc48 100644
+index 0d68d5c4bc48..a5e3954dc834 100644
 --- a/arch/x86/kernel/fpu/xstate.c
 +++ b/arch/x86/kernel/fpu/xstate.c
-@@ -814,6 +814,17 @@ void __init fpu__init_system_xstate(unsigned int legacy_size)
- 		goto out_disable;
- 	}
+@@ -371,7 +371,8 @@ static __init void os_xrstor_booting(struct xregs_state *xstate)
+ 	 XFEATURE_MASK_BNDCSR |			\
+ 	 XFEATURE_MASK_PASID |			\
+ 	 XFEATURE_MASK_CET_USER |		\
+-	 XFEATURE_MASK_XTILE)
++	 XFEATURE_MASK_XTILE |			\
++	 XFEATURE_MASK_APX)
  
-+	if (fpu_kernel_cfg.max_features & XFEATURE_MASK_APX &&
-+	    fpu_kernel_cfg.max_features & (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR)) {
-+		/*
-+		 * This is a problematic CPU configuration where two
-+		 * conflicting state components are both enumerated.
-+		 */
-+		pr_err("x86/fpu: both APX and MPX present in the CPU's xstate features: 0x%llx.\n",
-+		       fpu_kernel_cfg.max_features);
-+		goto out_disable;
-+	}
-+
- 	fpu_kernel_cfg.independent_features = fpu_kernel_cfg.max_features &
- 					      XFEATURE_MASK_INDEPENDENT;
- 
+ /*
+  * setup the xstate image representing the init state
 -- 
 2.45.2
 
