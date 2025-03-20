@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-569839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79897A6A85B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:22:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE7C6A6A81D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52F5188704E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056013BFD9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030332222C0;
-	Thu, 20 Mar 2025 14:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y9e124WU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32226222596;
+	Thu, 20 Mar 2025 14:13:00 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F9AAD5A;
-	Thu, 20 Mar 2025 14:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7E2221563;
+	Thu, 20 Mar 2025 14:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480049; cv=none; b=aQ2xWer3Xw7pCy0KY/Bv793TipdnraDdXAjDuKW6pQsZ53qSf09wtIsZILDTlaqLP3QkoLPnR+IboLpw4TiI75n9CltIopwHKd/F76aAncG/FkB0BCfmXkdl+BjomMSiuOS2MWzDTpi8OVHDco8gmZHD+qriIkzFFvCOV7rdZvg=
+	t=1742479979; cv=none; b=VqxuIvVwrw3LS65lHLbh3tVzDcMjWQXDPjGuHS+sr2qlVU5dyybWxqykFc3ohCMQ+vhaPSIU3V7Aff8pSW4stOMbick0msTzueT7EXMdjAJtN1omKhGGiUg2zSNJCpAzwZE5ZXk8GymTFaBZ/nvHZlhGvDy5vn8qAVFHWsqgxHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480049; c=relaxed/simple;
-	bh=EGUjts6cOJFS9FblualjsATD3QmejyxxxC7dFaW5/DM=;
+	s=arc-20240116; t=1742479979; c=relaxed/simple;
+	bh=iYZLHFS+sUPT1uWziqin4XyUb36fkzNi2aFQ/f4HF5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0XtaWZSxLvpGTwlw80jQiEOHrjP/yeFJ3fFMUNdx2EnECAmz7+/2GAN6OWW8/sL4+G2Jl6kwiahVcEt5YPM4VYwTjd7TfhJt71tcQzLnR/T7Z1KWHwQGx51YqKrs9V+FamgYLDGWqDETVarUiJWYZ1OM3EdYPdO31Ieo38Ly+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y9e124WU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35C2C4CEDD;
-	Thu, 20 Mar 2025 14:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742480048;
-	bh=EGUjts6cOJFS9FblualjsATD3QmejyxxxC7dFaW5/DM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y9e124WU5Fh/SrJ9jRKPyGicGkOuCrQjZTh+Lpbzf/FoXX02qzrsv3sYSeGUfPGie
-	 Ge/DqI9O0KBgRx2SPYF6NyMj2ZOHrFzQ1+TE0ZyYmcYpiKxOsGhDcMTEChsyEAjXcv
-	 DLiRw1gge+PCb89ckE2wp709AuIQtzIWkLApBDhM=
-Date: Thu, 20 Mar 2025 07:12:49 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Madhur Kumar <madhurkumar004@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: sm750fb: Replace architecture-specific defines
- with CONFIG_X86
-Message-ID: <2025032040-yesterday-maturity-2f21@gregkh>
-References: <20250222193242.14302-1-madhurkumar004@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/MC9nGAyXEL+1O+GQ2N0DI/pi5LSZcEA+ve4qgBDFbOFLm9i+S4arxB34qqBAItDtO8Vd0Spx58uY9JVPuClh1ly/De9bz9n8m9YzT3TmZPCUTNO8lri8lHp24vN0N8aoOD8VusPhKFfhu5DvNT7ckoSe+Xb8xc2seqPAqgkjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 1522368BFE; Thu, 20 Mar 2025 15:12:54 +0100 (CET)
+Date: Thu, 20 Mar 2025 15:12:53 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org, djwong@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v6 10/13] xfs: iomap COW-based atomic write support
+Message-ID: <20250320141253.GD10939@lst.de>
+References: <Z9fOoE3LxcLNcddh@infradead.org> <eb7a6175-5637-4ea6-a08c-14776aa67d8b@oracle.com> <20250318053906.GD14470@lst.de> <eff45548-df5a-469b-a4ee-6d09845c86e2@oracle.com> <20250318083203.GA18902@lst.de> <de3f6e25-851a-4ed7-9511-397270785794@oracle.com> <20250319073045.GA25373@lst.de> <ef315f4e-d7e9-48ee-b975-e0a014d10ba2@oracle.com> <20250320052929.GA12560@lst.de> <f8cdd6b1-fcd5-4783-9fdf-bcb6e7c3e992@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,35 +50,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250222193242.14302-1-madhurkumar004@gmail.com>
+In-Reply-To: <f8cdd6b1-fcd5-4783-9fdf-bcb6e7c3e992@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sun, Feb 23, 2025 at 01:02:42AM +0530, Madhur Kumar wrote:
-> Replace the use of __i386__ and __x86_64__ with CONFIG_X86 to adhere to
-> kernel coding guideline, make the code more portable and integrates
-> better with the Kconfig system.
-> 
-> Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
-> ---
->  drivers/staging/sm750fb/ddk750_chip.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
-> index 02860d3ec..67a2f6044 100644
-> --- a/drivers/staging/sm750fb/ddk750_chip.c
-> +++ b/drivers/staging/sm750fb/ddk750_chip.c
-> @@ -229,7 +229,7 @@ int ddk750_init_hw(struct initchip_param *p_init_param)
->  		reg |= (VGA_CONFIGURATION_PLL | VGA_CONFIGURATION_MODE);
->  		poke32(VGA_CONFIGURATION, reg);
->  	} else {
-> -#if defined(__i386__) || defined(__x86_64__)
-> +#ifdef CONFIG_X86
->  		/* set graphic mode via IO method */
->  		outb_p(0x88, 0x3d4);
->  		outb_p(0x06, 0x3d5);
-> -- 
-> 2.48.1
-> 
-> 
+On Thu, Mar 20, 2025 at 09:49:44AM +0000, John Garry wrote:
+>>> offset_fsb does not change, and logically cmap.br_startoff == end_fsb
+>>> already, right?
+>>
+>> Afte unlocking and relocking the ilock the extent layout could have
+>> changed.
+>
+> ok, understood. Maybe a comment will help understanding that.
 
-Does not apply to my tree at all :(
+Sure.  As said this was just intended as draft code.  Maybe factoring
+out a helper or two would also be useful, although I couldn't think
+of a really obvious one.
+
 
