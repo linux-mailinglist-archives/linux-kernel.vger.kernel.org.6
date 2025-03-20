@@ -1,268 +1,195 @@
-Return-Path: <linux-kernel+bounces-569380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4A7A6A214
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:07:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79062A6A216
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D0B3A367D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:06:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F3AF7A70E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2676E21481E;
-	Thu, 20 Mar 2025 09:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eK8MGuqU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3310121C17B;
+	Thu, 20 Mar 2025 09:07:29 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFFBD2FB;
-	Thu, 20 Mar 2025 09:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0943FD2FB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742461617; cv=none; b=edVJAVwMPO7Wkkms6KLWsjQ6ygc8MvFUYfNz/BaG22JwNdsS/slwsi70Lx/aqK+yoVtIhdKoviUiDb/MgKib4qmuyvmq5PwXneXqWytlL36mUGncRmwgbTmDcB0ynPr7juPeFM5oaN71DuNNO6eZyLHcrOs4QboX4swb11HenHY=
+	t=1742461648; cv=none; b=LykCTONZ81nrMbPTAuDO8k7/oIruHh/JWfSXZzaM8ynNXY7QB7qeIbd/yrxV5LzDKqkanY4bE8AzmMXTxe4P4EiV8DacPIj5qJvUIuGKmVHc6nnkDW/xyfyR7HKh587QMeKDM5y18COIsAI+aih3Vh/L0Gsocd06FmLJn41ZE98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742461617; c=relaxed/simple;
-	bh=pfQ50DScHy5B2hGnA/xfElhuDtGGC1uqaV5CxJ3vKgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shRhtJ2Wz42bWkjY02C+ImSuz+KuV/uV3h8cV41D1LKySQav6YfRBD/Fkv19G47YztjxQ1qr17z5S3HmQJZ3Wcloo+Rnk9yLmLwmaydZcZICl8JOU1URFiJhzgGq6j35otUplyIwj8LnQUSYE8vNWL+ce+dKNHPwfN05tejpLpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eK8MGuqU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0D0C4CEDD;
-	Thu, 20 Mar 2025 09:06:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742461616;
-	bh=pfQ50DScHy5B2hGnA/xfElhuDtGGC1uqaV5CxJ3vKgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eK8MGuqUeyd5bwCQSPsxOFNGfg/DLAGcO/YG8RTKbVY4pCMGLLvlwDmCVj88SKLkr
-	 SLv0ZjGu/pHxMW0vQyHogtyIo6Q4cU4wTbB/nvljDfOwJhXqyRyW1/YaOKpE+YF3cw
-	 /2e+mdquudcqcdnmkuGTw/cxIdMXG84kf5CjLGhXwQv5wci3F4WJBDeFol2B7D4USs
-	 mvbLvuJ/eJa/1JJ9MucQlzGo2UAXmKH2Ygk15kuZiceYbc+oQiQms88wBO7eJoU7b4
-	 GNeOlvS5K4rjl2ls3SiIcdJjWy4l8Zkz09rQj1MIVqhR0tqy6578R1H1wRtnqpKZsA
-	 gY+rXi4CrmvAw==
-Date: Thu, 20 Mar 2025 10:06:53 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: regulator: add adi,adp5055-regulator
-Message-ID: <20250320-unbiased-cooperative-coyote-e7e255@krzk-bin>
-References: <20250320-upstream-adp5055-v2-0-aac2d3705802@analog.com>
- <20250320-upstream-adp5055-v2-1-aac2d3705802@analog.com>
+	s=arc-20240116; t=1742461648; c=relaxed/simple;
+	bh=tB0s+m6aFPYw2aUKhjQrnBmhGjg3R3H1qUca04bdGEs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YW6FoThIp1w20j/wzUgTdVt6o8fo26F9nFDJBhY1xBp+JdW19cRRTgqlid1dSVdFsPHWY0N40wwLx6ct/QZSdAmXL8NS4fYzFybsVj7kHh2M5F7t9R7ZOVd6YHDJAjp7pg1KkDtF7KEuncfMgEfWNj0x6CClaLQ8KVsaObSfVOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d44b221f0dso11911945ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:07:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742461646; x=1743066446;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hJAGCcFQC5ruyciO77MttM2UXxm4c5ZthxU0/9v+U6I=;
+        b=MotGRjqsRTLbm6sSxWnb7ve0dD7VoZGXOKfM3RGklHSZNqNRz6gaT3yfHM8DolunYa
+         NpgkcGm2+l2vjnmqzuX00dggDpKjuPf4sHQyKwB0OzuGlKhG+/OZuTlM8pWortIZgIS2
+         Xqla7PGpQGD5Fn8vA2M5mLDmdnIZBjSIwtMQwrnfTF7C9mmRJ8ZccMlyPPlYp30p43L0
+         afmv+re5qLCYn2kw25Mb70GZmVzLjqd8nFkNJXaXL8+CkU72LkjkanNk8T8qAeu3cKmS
+         TriuXq2ytHm236FlUoX52p+IIiR+WPZyVjXNzU5dXZd6VEUAa1LDudvWstx+OjSJlIxK
+         HoYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFXSEePDsBEk6ltoukjdIqmoFy06G8f6+mI89p2T3v2n5x768LFhLl+gQvxv+CGSowazI1d8cL/XllCGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMiXVlF2zyd+e9yq1+BRaxygDUmLHD5ieLT4M5KQrpsgOLCaWK
+	hI8x6+54x5F3PlIVKSbwsnaDzjqjOhyPi08DAESgb+z8C7O6jLWIMJEwBsrx4hJpYQLx1RK46qS
+	p5eQXYELV7smul43k59iQAiJUgGfPmamVErEm68Uz/8B1J5PQftTBY7o=
+X-Google-Smtp-Source: AGHT+IHkd9aGmCSyxtOnJ9AZaC1LbCNax4fNstQBY5Acgd7vJs6VEfBK5wbWW4AK2HGnt+Ium+k8WqxbeCT9VqX/8PTVGPeRjhE2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250320-upstream-adp5055-v2-1-aac2d3705802@analog.com>
+X-Received: by 2002:a05:6e02:1547:b0:3d3:d07d:20a3 with SMTP id
+ e9e14a558f8ab-3d58ebc2d70mr26103775ab.10.1742461646218; Thu, 20 Mar 2025
+ 02:07:26 -0700 (PDT)
+Date: Thu, 20 Mar 2025 02:07:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dbdace.050a0220.31a16b.000b.GAE@google.com>
+Subject: [syzbot] [bluetooth?] [usb?] BUG: soft lockup in hci_cmd_timeout (2)
+From: syzbot <syzbot+7f3e9d90cb008752b863@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, luiz.dentz@gmail.com, 
+	marcel@holtmann.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 20, 2025 at 02:53:54PM +0800, Alexis Czezar Torreno wrote:
-> Add documentation for devicetree bindings for ADP5055. The device consists
-> of 3 buck regulators able to connect to high input voltages of up to 18V
-> with no preregulators.
-> 
+Hello,
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+syzbot found the following issue on:
+
+HEAD commit:    a5618886fdab Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=101283b0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=29061e148cfaa3d3
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f3e9d90cb008752b863
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138abff8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8b90307e7f61/disk-a5618886.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8b5ea0300ee3/vmlinux-a5618886.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/47f59a45fc8c/Image-a5618886.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7f3e9d90cb008752b863@syzkaller.appspotmail.com
+
+yealink 1-1:36.0: unexpected response 0
+yealink 1-1:36.0: urb_ctl_callback - urb status -71
+yealink 1-1:36.0: urb_irq_callback - urb status -71
+yealink 1-1:36.0: unexpected response 0
+watchdog: BUG: soft lockup - CPU#1 stuck for 26s! [kworker/u9:1:6013]
+Modules linked in:
+irq event stamp: 347894
+hardirqs last  enabled at (347893): [<ffff8000804b08ac>] console_emit_next_record kernel/printk/printk.c:3130 [inline]
+hardirqs last  enabled at (347893): [<ffff8000804b08ac>] console_flush_all+0x678/0xb90 kernel/printk/printk.c:3210
+hardirqs last disabled at (347894): [<ffff80008b7cdd84>] __el1_irq arch/arm64/kernel/entry-common.c:557 [inline]
+hardirqs last disabled at (347894): [<ffff80008b7cdd84>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:575
+softirqs last  enabled at (347888): [<ffff8000803128a4>] softirq_handle_end kernel/softirq.c:407 [inline]
+softirqs last  enabled at (347888): [<ffff8000803128a4>] handle_softirqs+0xb44/0xd34 kernel/softirq.c:589
+softirqs last disabled at (347877): [<ffff800080020dbc>] __do_softirq+0x14/0x20 kernel/softirq.c:595
+CPU: 1 UID: 0 PID: 6013 Comm: kworker/u9:1 Not tainted 6.14.0-rc6-syzkaller-ga5618886fdab #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: hci3 hci_cmd_timeout
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:176 [inline]
+pc : arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline]
+pc : console_emit_next_record kernel/printk/printk.c:3130 [inline]
+pc : console_flush_all+0x69c/0xb90 kernel/printk/printk.c:3210
+lr : console_emit_next_record kernel/printk/printk.c:3130 [inline]
+lr : console_flush_all+0x698/0xb90 kernel/printk/printk.c:3210
+sp : ffff8000a4ad72c0
+x29: ffff8000a4ad7400 x28: 1ffff0001495ae72 x27: 1fffe0001aec87a2
+x26: dfff800000000000 x25: 1ffff000122bcaa7 x24: 0000000000000001
+x23: ffff8000915e5538 x22: ffff8000915e54e0 x21: 0000000000000000
+x20: 0000000000000000 x19: 00000000000000c0 x18: ffff8000a4ad7208
+x17: 20627275202d206b x16: ffff80008046947c x15: 0000000000000001
+x14: 1ffff00011f8fe70 x13: ffff8000a4ad8000 x12: 0000000000000003
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d7643d00 x7 : ffff8000804aa598 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000006 x1 : 0000000000000080 x0 : 0000000000000000
+Call trace:
+ __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
+ arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
+ console_emit_next_record kernel/printk/printk.c:3130 [inline] (P)
+ console_flush_all+0x69c/0xb90 kernel/printk/printk.c:3210 (P)
+ __console_flush_and_unlock kernel/printk/printk.c:3269 [inline]
+ console_unlock+0x138/0x3ac kernel/printk/printk.c:3309
+ vprintk_emit+0x308/0x55c kernel/printk/printk.c:2432
+ vprintk_default+0xa0/0xe4 kernel/printk/printk.c:2447
+ vprintk+0x94/0x12c kernel/printk/printk_safe.c:82
+ _printk+0xdc/0x128 kernel/printk/printk.c:2457
+ bt_err+0xfc/0x144 net/bluetooth/lib.c:296
+ hci_cmd_timeout+0x108/0x1cc net/bluetooth/hci_core.c:1452
+ process_one_work+0x810/0x1638 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x97c/0xeec kernel/workqueue.c:3400
+ kthread+0x65c/0x7b0 kernel/kthread.c:464
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.14.0-rc6-syzkaller-ga5618886fdab #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:50
+lr : default_idle_call+0xf8/0x128 kernel/sched/idle.c:124
+sp : ffff80008fb37cf0
+x29: ffff80008fb37cf0 x28: dfff800000000000 x27: 1ffff00011f66fac
+x26: ffff80008fbbd000 x25: 0000000000000000 x24: 0000000000000001
+x23: 1ffff00011f77ac1 x22: ffff80008fbbd608 x21: 0000000000000000
+x20: ffff80008fbe6780 x19: ffff800080410018 x18: 1fffe000366f1886
+x17: ffff80008fbbd000 x16: ffff80008040f8f8 x15: 0000000000000001
+x14: 1fffe000366f3537 x13: 0000000000000000 x12: 0000000000000003
+x11: 0000000000000001 x10: 0000000000000003 x9 : 0000000000000000
+x8 : 000000000028a3a3 x7 : ffff8000805c3f98 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80008b7d2680
+x2 : 0000000000000000 x1 : ffff80008b87a760 x0 : ffff800123c84000
+Call trace:
+ __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+ arch_local_irq_enable+0x8/0xc arch/arm64/include/asm/irqflags.h:48 (P)
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x1ec/0x4e0 kernel/sched/idle.c:325
+ cpu_startup_entry+0x5c/0x74 kernel/sched/idle.c:423
+ rest_init+0x2dc/0x2f4 init/main.c:743
+ start_kernel+0x3f8/0x4f8 init/main.c:1099
+ __primary_switched+0x8c/0x94 arch/arm64/kernel/head.S:246
 
 
-> Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-> ---
->  .../bindings/regulator/adi,adp5055-regulator.yaml  | 161 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 +
->  2 files changed, 167 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/adi,adp5055-regulator.yaml b/Documentation/devicetree/bindings/regulator/adi,adp5055-regulator.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fc8f1e61ba321f8b4c6f8c1e3d0e91d570fb4953
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/adi,adp5055-regulator.yaml
-> @@ -0,0 +1,161 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/adi,adp5055-regulator.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADP5055 Triple Buck Regulator
-> +
-> +maintainers:
-> +  - Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-> +
-> +description: |
-> +  The ADP5055 combines three high performance buck regulators.
-> +  The device enables direct connection to high input voltages
-> +  up to 18 V with no preregulators.
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adp5055.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,adp5055
-> +
-> +  reg:
-> +    enum:
-> +      - 0x70
-> +      - 0x71
-> +
-> +  adi,tset-us:
-> +    description:
-> +      Setting time used by the device. This is changed via soldering
-> +      specific resistor values on the CFG2 pin.
-> +    enum: [2600, 20800]
-> +    default: 2600
-> +
-> +  adi,hw-en-array-gpios:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Drop prefix, drop "array" and this probably will be changed anyway.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> +    description:
-> +      Asserted during driver probe. Each array entry acts as the
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-s/Asserted during driver probe.//
-If driver moves this code to other place, does it mean bindings are
-wrong?
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> +      hardware enable for channels 0-2. Should be marked 0 for active
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-What does it mean "0" for active low? No, active low has its own flag.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Use proper flags and implement it properly in the driver.
-
-What is hardware enable and software enable? Is it enable-gpios per
-regulator? Then why this isn't in the regulator node, just like we
-expect for all regulator bindings?
-
-
-> +      low. Requires all three channels to be initialized. Not adding
-> +      the property turns the system to a software only enable mode.
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  adi,ocp-blanking:
-> +    description:
-> +      If present, the over current protection
-> +      blanking (OCP) for all channels is on.
-
-Don't
-wrap
-at
-random
-places, plese.
-
-> +    type: boolean
-> +
-> +  adi,delay-power-good:
-> +    description:
-> +      Configures delay timer of the power good (PWRGD) pin.
-> +      Delay is based on Tset which can be 2.6 ms or 20.8 ms.
-> +    type: boolean
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^channel@([0-2])$":
-
-This is a mess... never tested and makes no sense. Either this is a
-regulator or a channel. Looks like regulator, but you called it a
-channel. If regulator, then missing ref to regulator schema.
-
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description: The channel number representing each buck converter.
-> +        maximum: 2
-> +
-> +      adi,dvs-limit-upper-microvolt:
-> +        description:
-> +          Configure the allowable upper side limit of the
-> +          voltage output of each channel in microvolt.
-> +          Voltages are in 12mV steps, value is autoadjusted.
-> +          Vout_high = Vout + DVS_upper_limit.
-
-And how do you configure vout?
-
-> +        minimum: 12000
-> +        maximum: 192000
-> +        default: 192000
-> +
-> +      adi,dvs-limit-lower-microvolt:
-> +        description:
-> +          Configure the allowable lower side limit of the
-> +          voltage output of each channel in microvolt.
-> +          Voltages are in 12mV steps, value is autoadjusted.
-> +          Vout_low = Vout + DVS_lower_limit.
-> +        minimum: -190500
-> +        maximum: -10500
-> +        default: -190500
-> +
-> +      adi,fast-transient:
-> +        description:
-> +          Configures the fast transient sensitivity for each channel.
-> +          "none"    - No fast transient.
-> +          "3G_1.5%" - 1.5% window with 3*350uA/V
-> +          "5G_1.5%" - 1.5% window with 5*350uA/V
-> +          "5G_2.5%" - 2.5% window with 5*350uA/V
-> +        enum: [none, 3G_1.5%, 5G_1.5%, 5G_2.5%]
-> +        default: 5G_2.5%
-> +
-> +      adi,mask-power-good:
-> +        description:
-> +          If present, masks individual channels to the external
-> +          PWRGD hardware pin.
-> +        type: boolean
-> +
-> +    required:
-> +      - regulator-name
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        regulator@70 {
-> +            compatible = "adi,adp5055";
-> +            reg = <0x70>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            adi,tset-us = <2600>;
-> +            adi,hw-en-array-gpios = <&gpio 17 0>,
-> +                                    <&gpio 18 0>,
-> +                                    <&gpio 19 0>;
-
-No, use proper defines and proper flags.
-
-> +
-> +            adi,ocp-blanking;
-> +            adi,delay-power-good;
-> +
-> +            DCDC0 {
-
-Your schema said something else. Test your patches before sending, not
-through our systems.
-
-Best regards,
-Krzysztof
-
+If you want to undo deduplication, reply with:
+#syz undup
 
