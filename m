@@ -1,238 +1,183 @@
-Return-Path: <linux-kernel+bounces-570422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B227FA6B02B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:50:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E82A6B048
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CBC1708E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:48:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20A8483CBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D112522A4EB;
-	Thu, 20 Mar 2025 21:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6507C222596;
+	Thu, 20 Mar 2025 22:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bmkAfInM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="Zirxau5G"
+Received: from zebra.cherry.relay.mailchannels.net (zebra.cherry.relay.mailchannels.net [23.83.223.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6B01B6D06;
-	Thu, 20 Mar 2025 21:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE71221702
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.195
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742507308; cv=fail; b=f0C9735gkNtwutdHAdYOoi2Qz2FKlDA2NH7Fp5Afg+h5bs+gGjymdWxWdLTlUdr5dLYMxhYOYUbDcUKnEJXlLzo/GEkgl/Q+UcQzRjI8eo1cplIe7k90vJplSlvh2fLTTn1T/Ieiwa7GVtJZoSI22A1DlAuNDH7kb1Jj+EypZBY=
+	t=1742508414; cv=pass; b=PMVs9cTJXeEL6D09lqzMSesa0pzS5hchyRFOYWi5fi7OJ2ThzwsVSMx5oD/lgg+KylxgGv54NHLlA6UMUO/GpkT/ofarkqrooT4fuO93d4fKCnnCiycjs2UORt+47n13ZktvJj4ZSxEatDWElnaQiRBf66AXZGRCZV8W0DRNNOQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742507308; c=relaxed/simple;
-	bh=ZUhXprwYTqTkJlUx0pehaBAMG+hm6jLMscotjr4/ot0=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=SdY4hdg3AuXApw27yB+2hDcekjm4YW8LhwCd2JW+4353hw2hi8hSVUAW3ULnhxe3wR8TX+yJS/gyfE5n/EpWpgEuBE41efumunhLKmknLAVkggl6eAPRvIUGlZzpOhvZYD7T4hOSoRSVVQDjO/5XNtW6DKOFaGDdqXaa8CjQK7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bmkAfInM; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KHBatF023453;
-	Thu, 20 Mar 2025 21:48:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=ZUhXprwYTqTkJlUx0pehaBAMG+hm6jLMscotjr4/ot0=; b=bmkAfInM
-	g+pLOiOsRXKTvkKYzYBNs+ijiinyodhctJ+vFFDb53359kSqVkZmL0zicY6yc8tS
-	oSM+YS1LB5guNCtJa4/e7ODxRmWEe7EuTxqqC77qAKZ2/85IflUvlojJoog0S8Nk
-	IgLYN4ynzBqQcL2xrGlHg4MKKMZkmjUB80ViUOoQ1IAj9RZ5n//IBT+YcYMI2sWl
-	dqO200qxfdlgXQS1AMFb84y0pdwwPpJGSETxU5NVs4SnVSdohv3OspC08AKfQRW4
-	+k4L+akspaNUeI4O4PbToWGw9DeiCOHKvJNbMTmGL8Mxmwje4c0SzfRpu5lsEIh7
-	uzE2JxgCj7ZPHw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gq6w19gh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 21:48:15 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52KLiDZn002168;
-	Thu, 20 Mar 2025 21:48:15 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2172.outbound.protection.outlook.com [104.47.59.172])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gq6w19gg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 21:48:15 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oc/SlLOJ0UsYEEfz/bJS3WLo51Bqy5dIkOpmkwFiMIu570BTUnSKsnZ5nmS//qy5JWgMJUMbi2I9SbokD3sekDN7HdMX0HbZMPYk2G4gnqCrUqX4yaxIcpj+G8HyD0sycc2l8GXO3bloJmDWjt0ljnot+DQO44JuXlbJsELL8vkGBpUCwVVZbYQE7Bog9twq865gOUtKjqZsWigQnf34ncL1EvFmTWNZN759TXekYXRK6qk3iTQIEkS7FuhBNjeaLb8i4UIYTgm3KfW2DoH1EJwruSSmCkfBllm/v2sT1/I5jlKuETqikCkNC4OP2+nY7DQu3b2gkKuMRW5Hm+qSVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZUhXprwYTqTkJlUx0pehaBAMG+hm6jLMscotjr4/ot0=;
- b=KPOUOsxSB+N3/sUBGf6AMDnLSO6TWGC80iWs+dzXG7Vjsfb7WCYv/UEQybi/TfLSBxmrTJXRwA/MN+1BeItrX9g0cpv8vBrZ+icCmOf+mZSUFcVZ1jfDt48fR0tjL7KTdw1NkuNZ0TtsfLF0rSCBji0Nw4xuc3kQi+/h+Laq/dnjbi4xuwR8P7v3o+22PyLHD/fZHjrHUD/cfuv3++7F/X/FXi33u7/9/JkI6OC/msgy3tNfYZVA8OYAX9mpdMlUSIL607FK8cinBWFkRgMFFC73Fb2Dh//JI2/HJ4Udu7LQwflYp/sGSOT9QkgkWhN/k86Q9h/NjVSutztm2N/IyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by MW5PR15MB5304.namprd15.prod.outlook.com (2603:10b6:303:19c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Thu, 20 Mar
- 2025 21:48:12 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8534.036; Thu, 20 Mar 2025
- 21:48:06 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "idryomov@gmail.com" <idryomov@gmail.com>,
-        David Howells
-	<dhowells@redhat.com>
-CC: "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Alex Markuze <amarkuze@redhat.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>
-Thread-Topic: [EXTERNAL] Why use plain numbers and totals rather than predef'd
- constants for RPC sizes?
-Thread-Index: AQHbmajBegOr1HhNAUqF+X1TOwSF87N8kDQA
-Date: Thu, 20 Mar 2025 21:48:06 +0000
-Message-ID: <c61e6b608f5d5537bb23892be27a52c92e1bd85d.camel@ibm.com>
-References: <749dc130afd32accfd156b06f297585a56af47f3.camel@ibm.com>
-		 <20250313233341.1675324-1-dhowells@redhat.com>
-		 <20250313233341.1675324-24-dhowells@redhat.com>
-	 <3172946.1742482785@warthog.procyon.org.uk>
-In-Reply-To: <3172946.1742482785@warthog.procyon.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|MW5PR15MB5304:EE_
-x-ms-office365-filtering-correlation-id: 1a9f8d59-cb5c-4e02-6450-08dd67f8e637
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?WUJRZUZnSjJYRVdVbjh2SCtlTk1hL2t5TVMrbkRCL3BXUWtyVHNtdkJiYnBN?=
- =?utf-8?B?R0hHcm8xVlo4bmk5S2tudm5zYVlFQ0F4Rk1xRW1oNkNlK0lBd3pwMGhubVJY?=
- =?utf-8?B?SFN2ajNhSC9GS09oOUljZGpVOFBzbnR2UWZCL2x0andJRmdRL3lqbTI0N290?=
- =?utf-8?B?b0JCYk9FWm95QnhFQm11aitLN3NIdW9FZ2FMTVhzdzhGejQzNHlrd3NIcXNj?=
- =?utf-8?B?cmN0ekJ2d1lFRHdPRWJEWEp4Y1dDV1ZjZVo0bWVhRGZLS2FLVGhWdDFwN3Nr?=
- =?utf-8?B?clJ1UjlYSTBPQnNxRnliUW1jMkJOUGhNQ1BMS1gwZjIyRGNteWhIaGdUWEdp?=
- =?utf-8?B?b1lmQUEwSHNYcHlnYWJIdVlGc2R1NFJmL3FTWHVVendNbGdRZTA5V3Z1YmdV?=
- =?utf-8?B?dURwUjUzVVIwb2lwa1ZQeS9mWnoxNkpMam5jYXBDbTg2WnRuZTdtZnBNanNI?=
- =?utf-8?B?YUhFZlBQTnY2NGQwZFJhNXNnT3hwakg1clJvN3pNM09ZSzJBVkIvYUZZL1h0?=
- =?utf-8?B?ZFd6cUtpZ0tNeHU4VG1DUUJQY2ZhVko5THVxM01QdlAvZXluVnBSUjFhemd0?=
- =?utf-8?B?VXhlald0ZVlsRkN4aXRaa1Jyc0JSbjhpSzlmSFVZZDJNRlR4bEdaN3ZuL0l3?=
- =?utf-8?B?a3krSk9VeHhIQUZscUE1ZnlpK2JnLzM2Smg4dlhCM1pvRTl4b04vQXFaMG9X?=
- =?utf-8?B?MENRbzBDOW5zckhrU3UybHdLeVdpdytzUk5NcUVsMDE1aWVvc0ZEeUErNDBB?=
- =?utf-8?B?enJLeWFtWm1CWTBvVktReUJjYTYzQ0RsOVNzeWFRT3RoK0UrV0FzYjZCZHM5?=
- =?utf-8?B?VlIwcCtncUNETm1YaC93RDlMaUFFRERlMXMzNUhtbUg1TXF0by9LSjAyajBa?=
- =?utf-8?B?S2g1UlFkVjczdmwrSGwzejAxWXBxU1htRC82WTRveTJaTHZ0LzEwUXo3SXdT?=
- =?utf-8?B?QXJ0Z05QVXpIWUZGdXRYNjVZTm9pV3REY3c4b252ckxuSTY2QTFuRGpxS0Zr?=
- =?utf-8?B?Mm5DOTh5MkEzcmJyT0V1V3BvWmp0b0JVUmdrTzNLdGpwaFpRZmJGREZYSE9B?=
- =?utf-8?B?Y0kxMnVta0lSeHhERFhBaGhrNGpoaVJCbkhZNjU3QmVnNG55NDhDVG5ucXZG?=
- =?utf-8?B?SDRwMitNUTlRR3dUUUZOa0tGcnM2dFREaXNITWhDWHBqWUN2UHRvd2xBdGJI?=
- =?utf-8?B?MHhkMGFtNzNNalFEZ3h3VEk2VjNlZ2F2eS9ydmdHNllyd3ZySlMxZ0J3OHVU?=
- =?utf-8?B?R0tCTjE4SmdxTlB2ekRoYkZTZTFUa3ZzY3BRSGhYazRaTGp6VGpUZkNvRWor?=
- =?utf-8?B?V1AvZ1h2T2xYTS9SaW5ndFVVOXBEZEFiOFJzUnBrRnlyZjQwWlY0d0gyUkl4?=
- =?utf-8?B?cmpGZDhwMFRkVmVabU5kajZpYkZWeDRxcHM1ZE94QkxDQWM0SUNranNZbEVT?=
- =?utf-8?B?bUE5dkJsOWZIK1RjSGU4bjBERVZPa3NHQ3dnc3UzVndqZFovV1ZhS0kxUU9G?=
- =?utf-8?B?cjdlaGtBczExN3lxTnJvQmEzMHcrQWRwYjJPTmJVbkRydm94UVp2UkI2MFR0?=
- =?utf-8?B?K2QyMlJXSjZLbGtnL2k4WWUrclJ1anp6UVZDdVRGMzkrSFliOUxSRkhkQjBT?=
- =?utf-8?B?akdER0w5OHFKWkNWUkdDbTdZbE9ZSWVTa1MxUHlqZ3YzRXJIZGYxQVB0bVJy?=
- =?utf-8?B?NDlwK3NJU0lIak1TUUdnUWdWeHBJOHRMd015OGJPblM1aStNcFc4Vnh0YXlo?=
- =?utf-8?B?YzMya05DVkY5SFpLRGpXMDEzMWV2VXplSm5sMGMwa0JWaGM4ODQ5R05FZmR3?=
- =?utf-8?B?eGxQQ3dwRkxvblJvTldGb0tja3krRWRuZndQb0NLMWNmZUpseGFSc2dkcEJX?=
- =?utf-8?B?TTgwWVV0ZzBxbHdnNWIzUnZFak5PRnZ1aGNSY0ExMlYxVUUzNUFocWJoaGhI?=
- =?utf-8?Q?MJHEXTBuYFOqpkDCNyCR178vI7S2t/nU?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YmZmcnc1R1htNW9XLzNUWXB5a3VVVEtabjFraGZVbXNYVHZLdmZuQWk3Ly9o?=
- =?utf-8?B?ZndVYys2WTdLdlZWVlJFVjFBMUt6QjVMaXpzK1NvSmJhNmJ2dTBad3BsR3V3?=
- =?utf-8?B?NFN1UzFQazc3cldxY282d2N3amR2QmtBMFg5N3RqTHV4QVpBUXowVjk1ZmNr?=
- =?utf-8?B?bGEvUTM0aHhQY0NXbzdUa1dDWGg0azYzVVJVdFlHMFppVk53TWREQ3BUTUtn?=
- =?utf-8?B?WHVDV282eUtSSm5STGlVTlB6RWI1SnNXUzhDL2VaOTBVazNYdkRQYWd5M24v?=
- =?utf-8?B?OUFaYnVXWjlDS1hXWTVUTXZaU2tnWkRMR25RS2FiYkdYK3Z4K2xMMXdZUVlV?=
- =?utf-8?B?OCs1RVF2YVdYekFCazdVS1FsOEJOQWIwRjAxRm4xUXJCa2orcHBxTE4yWXRo?=
- =?utf-8?B?NFRzSHpLbG9YQitCRUh3eEJuK3UwelczZm4zR2pGYWtObmdSNFJDWkJFd2FZ?=
- =?utf-8?B?Um5xZ0cza1VmSjhUekZMemRyQzhiS2hsNzFuYmhZckQwN2pBbzk2REhVdDY2?=
- =?utf-8?B?NDhGclhWNGZ3anNkR1lacVRGQ094cG9lYUlNYkZTMi96T3MvSkcrWE5YTVBv?=
- =?utf-8?B?NWVwUUdXTi9hV2JLV0tXQ3Q5MEJqM3JUVmc1REUrYzdpLzU2MWVRUitWdnVN?=
- =?utf-8?B?Zm5pWnZUcWRHMmJXYzNXQkJERHZWcFhUU2Z2Mlh0ZVhKSU5qbEg0ZjhHUkZ4?=
- =?utf-8?B?U1RUb3EvRUVaSVgvc0JkWmU3amZSMmNRajNxVUJmYzNBSWlyQjVJTDRyS2dr?=
- =?utf-8?B?Z3JRMUJCeVBJZEUrZVJGVy9jaE1XeHg3T2c1aXp2QnRLbGl2aGJoelRGV3Bo?=
- =?utf-8?B?azhqdDRBL29VUXpybk52NVkxRUZQWkZmdjgrSEhMSzZoa1JnNEJZU3I4amZF?=
- =?utf-8?B?QUNOUzhqNEJETExDUGIyUnp4VHdueUt1Q0NOZUl4dkFCck9oekJiNE9CVFdC?=
- =?utf-8?B?ZlZHUVdPK2Uyb0dmVEJxOW1PL29VY0Z6dGFuOGUra3lnUkVtdlJ1Vlo3WWFt?=
- =?utf-8?B?dHNmczlDUThvY0FuRlNPbHh5T1NmSExDdFBsbnFzOHYzRXNJdGs0ZVpZdWNY?=
- =?utf-8?B?aTZTT3hIalBvRlBIeGpnek94QVh4cGNkUTZjTnJnc2RuMUZRcUZCR0hXSVI2?=
- =?utf-8?B?N1h2d2FYYitxM3E4QTJscWpoUFhZVUlwMjIvQmpDNWRkVG1Rc2JWclBDS05K?=
- =?utf-8?B?cENTT0hMVjAxUlNtcllGV0pYSVhNQWlqNG1QcExNc0J0RnNIYWU3akVmd0x6?=
- =?utf-8?B?QkF4VDVqYU1QWHJhNytYZHltbnRlcER0bXlOVEVuOWtpcEptblJWZytYYTFp?=
- =?utf-8?B?TlEwSFJEQmlGc2dFcVgrblJHdlN4M2YwY3hMVXNMS0hvdkU2a0JvRDRJalVu?=
- =?utf-8?B?UkZYVlRhMHRwQm82dHFNTnFzZVE5OU5xVmsrZXBBU3ZkbkEwU1Z0UmVNK3Bh?=
- =?utf-8?B?eUQxSVdsUEl0eVlXTTNsanpZUlNXNXI1a3lRT3EwdlJVQVA2OFZKcmV0dU9s?=
- =?utf-8?B?RWdnbEYxSmRxTHoyNHJ6eVYwa01VZVM0NDhWNE5Td3RZZXA0TGUvT2hjT3ph?=
- =?utf-8?B?M0ZJUCsyZi9qTHFOYmpzRGd3Q3I5aWpsUDg2TE9XUTk2OFptU0JNRlZpeDB1?=
- =?utf-8?B?ZFFkeEQ3aFpWbThPcG55OS9LbEFObGRUWVhpR2F0dTlSdGtXSVIvbUJXazIw?=
- =?utf-8?B?UkRKRzUwN2U4cXR1UmlHQzJMaVpZdkY2U0JJQW01OU9wUG15QXBOM0tKS2Qx?=
- =?utf-8?B?UDZ3TzI0b25ET29ZZGF5cHhqQlEvRnJ1Q3RFOEFleWRsV0RKckFML3FSTDE0?=
- =?utf-8?B?ZUIyNGR4T2QxdkdzM2liSTVJZlZuU2JJVlNsMTV5aGY0cXVYb3hkb1A5UlpD?=
- =?utf-8?B?elhqaGxiMTYyMUE4cE5PWmc3OGE3cGVkd1U2ejNUd1NJRVNPZ1hQcXFVQjdF?=
- =?utf-8?B?dy9wWW0vWFNuck9jdVBlSUs1NDlMK1AzMmFzNENsQ2t2WGVjTmNrdzBORVNN?=
- =?utf-8?B?Yk5EWFVpQ3FFcTdNSmdvU1VUd1lxbW5OV1BEODQ3THVLNzA0ZFNSZXloMVVT?=
- =?utf-8?B?eWZtTVJVNWNxVytWeTNxeWFhOThmV21Bc0tEWlFDR3VGMkNtMk96dHN1RU9F?=
- =?utf-8?B?R25WQWMrdlpHOUIxcU5BcEdackdRcjVRVVVIellpM1k0Uk9zMExrL0hIcHZx?=
- =?utf-8?Q?mor/squTASD9IoPshj9xg/8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <35D0AD18F5B65240840309144814EB40@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1742508414; c=relaxed/simple;
+	bh=rKnRuj1sOu1P6GoDMqyMdLAxFo1dk1B7Wxfi2jiBslQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=skSqOBsqxIcRf0qumQQQis3jSKsCXROmgv/BeE1dbbpoQQryCbJaGRMLmUbkmzDFKdvDaL2mLkSCvcMwVcv2JXAPypyF4UhBT8157ydchF+ZBoJbsk78IrAt1DwwDtFNVkJf6lkRNWYhJxyPcacaFIs5T1MpJVTEKyUYbA0xihM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=Zirxau5G; arc=pass smtp.client-ip=23.83.223.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 70FE42C45EF;
+	Thu, 20 Mar 2025 21:51:03 +0000 (UTC)
+Received: from pdx1-sub0-mail-a203.dreamhost.com (100-118-196-158.trex-nlb.outbound.svc.cluster.local [100.118.196.158])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 529622C2B48;
+	Thu, 20 Mar 2025 21:51:02 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1742507462; a=rsa-sha256;
+	cv=none;
+	b=b6kki2cOSvV90fmc/GzqhMDjx6vucTa1JoGeYHYgZoQpP80GyGzC41lfN/mugdu+JJkx0H
+	+gkoI1vjsInROXn2gf2UD8dJp8ExkH7aOi5Y2KPrduabLCbd/PdSjYThVpbvJStPpkeqRZ
+	enG/TorqqDtMKV5jS37HgBG2iCf38qeOjYHDj7qxgSKVpyn3qfBMP4P7cofiCknGkIKyh0
+	RJKgUxmf9SsA6JngZwPKunByl7CrYdNJrBJaK/ahF5ry3IWYimuQJm+Hi5qwsTPaCb3yCZ
+	2OkYY4DeciX3kf3hSiy+8yjF4WYTcDE9op7sXk1RsldlTkNVYjK1UwgdSg6Rww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1742507462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=rKnRuj1sOu1P6GoDMqyMdLAxFo1dk1B7Wxfi2jiBslQ=;
+	b=oR0KJfYEbBEqzhU9m2NvAZaVh0aIjzFR7+EFX7ceHFwxvlwuDk7lsAEFlGmM61Z7j8ZOKP
+	gGnzNhivm7o0YTIapWUBmjkjX35zAI+TUaCS1vG2ella8ic7ViLnU00Pl5i5T0CuT28qJe
+	O0ekW+a2zN9gYA1E6pg28AHEhKuwX/97nG84JEHYvNKmtUidK29aeYmUIcp9f6FIqh/CRe
+	MJwTNj6a9G/kbXhcZsm7na40LGCKTuv1ZCfJFcEEWyAKFn+MudDNU2FcYTTU95J01v5ar7
+	/sjTQpd85SmpQ6TLPj4MX+dPQLpOGmwkBy2sfsDR+Qa+lS2cxiGWIehAnxy1+g==
+ARC-Authentication-Results: i=1;
+	rspamd-588454d544-hp7ss;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Trail-Average: 537d018d746d63d8_1742507463174_1537222768
+X-MC-Loop-Signature: 1742507463174:1378819086
+X-MC-Ingress-Time: 1742507463174
+Received: from pdx1-sub0-mail-a203.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.118.196.158 (trex/7.0.2);
+	Thu, 20 Mar 2025 21:51:03 +0000
+Received: from offworld (unknown [104.36.25.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a203.dreamhost.com (Postfix) with ESMTPSA id 4ZJfQq3VzSz4x;
+	Thu, 20 Mar 2025 14:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1742507462;
+	bh=rKnRuj1sOu1P6GoDMqyMdLAxFo1dk1B7Wxfi2jiBslQ=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=Zirxau5Gg+fixQD8oJaOo/EhgqYA95gOT5zQ0Lt8ulojHb2y04BLjtm5yOHukUXwO
+	 CFe9jLHE51bHO4x7xpV+pGADEXUmi+NQfMke0uotwCrLHADSwNrf+X3JHTeWfVR8/Z
+	 zaFjp5z4wG2c70vA3Gpvv9h4vjmPgHFX0nsuaPF3KLfym9TmGA4VeWvlN8s34cGFdQ
+	 LqV3plDIdVhUmOrycylqHMpzo3kLdTRbRApaxS3W8ZkyGk5DIDfL9L7DmVIgC3HxcL
+	 oLJW5cNIRjrjO1zatLFeJlVkkxgGrDlchLTJ0fK99CCw1kHyPznXVmSN3v/XaAUtpK
+	 KNH28qH5wLh9A==
+Date: Thu, 20 Mar 2025 14:50:56 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+Cc: AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
+	Michael.Day@amd.com, akpm@linux-foundation.org, bharata@amd.com,
+	dave.hansen@intel.com, david@redhat.com,
+	dongjoo.linux.dev@gmail.com, feng.tang@intel.com, gourry@gourry.net,
+	hannes@cmpxchg.org, honggyu.kim@sk.com, hughd@google.com,
+	jhubbard@nvidia.com, jon.grimm@amd.com, k.shutemov@gmail.com,
+	kbusch@meta.com, kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com,
+	leillc@google.com, liam.howlett@oracle.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
+	nphamcs@gmail.com, peterz@infradead.org, riel@surriel.com,
+	rientjes@google.com, rppt@kernel.org, santosh.shukla@amd.com,
+	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
+	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
+	ying.huang@linux.alibaba.com, ziy@nvidia.com,
+	Jonathan.Cameron@huawei.com, alok.rathore@samsung.com
+Subject: Re: [RFC PATCH V1 00/13] mm: slowtier page promotion based on PTE A
+ bit
+Message-ID: <20250320215056.miwm2vdphdksrfjx@offworld>
+Mail-Followup-To: Raghavendra K T <raghavendra.kt@amd.com>,
+	AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
+	Michael.Day@amd.com, akpm@linux-foundation.org, bharata@amd.com,
+	dave.hansen@intel.com, david@redhat.com,
+	dongjoo.linux.dev@gmail.com, feng.tang@intel.com, gourry@gourry.net,
+	hannes@cmpxchg.org, honggyu.kim@sk.com, hughd@google.com,
+	jhubbard@nvidia.com, jon.grimm@amd.com, k.shutemov@gmail.com,
+	kbusch@meta.com, kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com,
+	leillc@google.com, liam.howlett@oracle.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
+	nphamcs@gmail.com, peterz@infradead.org, riel@surriel.com,
+	rientjes@google.com, rppt@kernel.org, santosh.shukla@amd.com,
+	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
+	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
+	ying.huang@linux.alibaba.com, ziy@nvidia.com,
+	Jonathan.Cameron@huawei.com, alok.rathore@samsung.com
+References: <20250319193028.29514-1-raghavendra.kt@amd.com>
+ <20250319230015.bewglxf3hrf2mx3f@offworld>
+ <52b2c1dd-2f4a-42fa-8a40-bd3664e7c56a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a9f8d59-cb5c-4e02-6450-08dd67f8e637
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 21:48:06.8264
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: d+dS3e5B1FeQTyrra+03qlkRxXRqtaVM9SfFJi7Yge1b1Fa+X2w2Xx1tIMrjABgnqhax03ya3fiqL5U3CyS8lg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR15MB5304
-X-Proofpoint-GUID: 0-FCTtW2FUBvuPcNqQd3gNvSLTOlpYqr
-X-Proofpoint-ORIG-GUID: hwVAUEl50aBM8GyNu-CbjUfklUtjSQ4w
-Subject: Re:  Why use plain numbers and totals rather than predef'd constants for
- RPC sizes?
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_07,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 impostorscore=0 clxscore=1015 spamscore=0 mlxlogscore=960
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503200139
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <52b2c1dd-2f4a-42fa-8a40-bd3664e7c56a@amd.com>
+User-Agent: NeoMutt/20220429
 
-T24gVGh1LCAyMDI1LTAzLTIwIGF0IDE0OjU5ICswMDAwLCBEYXZpZCBIb3dlbGxzIHdyb3RlOg0K
-PiBWaWFjaGVzbGF2IER1YmV5a28gPFNsYXZhLkR1YmV5a29AaWJtLmNvbT4gd3JvdGU6DQo+IA0K
-PiA+ID4gLQlkYnVmID0gY2VwaF9kYXRhYnVmX3JlcGx5X2FsbG9jKDEsIDggKyBzaXplb2Yoc3Ry
-dWN0IGNlcGhfdGltZXNwZWMpLCBHRlBfTk9JTyk7DQo+ID4gPiAtCWlmICghZGJ1ZikNCj4gPiA+
-ICsJcmVxdWVzdCA9IGNlcGhfZGF0YWJ1Zl9yZXBseV9hbGxvYygxLCA4ICsgc2l6ZW9mKHN0cnVj
-dCBjZXBoX3RpbWVzcGVjKSwgR0ZQX05PSU8pOw0KPiA+IA0KPiA+IERpdHRvLiBXaHkgZG8gd2Ug
-aGF2ZSA4ICsgc2l6ZW9mKHN0cnVjdCBjZXBoX3RpbWVzcGVjKSBoZXJlPw0KPiANCj4gQmVjYXVz
-ZSB0aGF0J3MgdGhlIHNpemUgb2YgdGhlIGNvbXBvc2l0ZSBwcm90b2NvbCBlbGVtZW50Lg0KPiAN
-Cj4gQXMgdG8gd2h5IGl0J3MgdXNpbmcgYSB0b3RhbCBvZiBwbGFpbiBpbnRlZ2VycyBhbmQgc2l6
-ZW9mcyByYXRoZXIgdGhhbg0KPiBjb25zdGFudCBtYWNyb3MsIElseWEgaXMgdGhlIHBlcnNvbiB0
-byBhc2sgYWNjb3JkaW5nIHRvIGdpdCBibGFtZTstKS4NCj4gDQo+IEkgd291bGQgcHJvYmFibHkg
-cHJlZmVyIHNpemVvZihfX2xlNjQpIGhlcmUgb3ZlciA4LCBidXQgSSBkaWRuJ3Qgd2FudCB0bw0K
-PiBjaGFuZ2UgaXQgdG9vIGZhciBmcm9tIHRoZSBleGlzdGluZyBjb2RlLg0KPiANCj4gSWYgeW91
-IHdhbnQgbWFjcm8gY29uc3RhbnRzIGZvciB0aGVzZSBzb3J0cyBvZiB0aGluZ3MsIHNvbWVvbmUg
-ZWxzZSB3aG8ga25vd3MNCj4gdGhlIHByb3RvY29sIGJldHRlciBuZWVkcyB0byBkbyB0aGF0LiAg
-WW91IGNvdWxkIHByb2JhYmx5IHdyaXRlIHNvbWV0aGluZyB0bw0KPiBnZW5lcmF0ZSB0aGVtIChh
-a2luIHRvIHJwY2dlbikuDQo+IA0KDQpZZXMsIG1ha2Ugc2Vuc2UuIEkgdG90YWxseSBhZ3JlZSB3
-aXRoIHlvdS4gOikNCg0KVGhhbmtzLA0KU2xhdmEuDQoNCg==
+On Thu, 20 Mar 2025, Raghavendra K T wrote:
+
+>>Does NUMAB2 continue to exist? Are there any benefits in having two
+>>sources?
+>>
+>
+>I think there is surely a benefit in having two sources.
+
+I think I was a bit vague. What I'm really asking is if the scanning is
+done async (kmmscand), should NUMAB2 also exist as a source and also feed
+into the migrator? Looking at it differently, I guess doing so would allow
+additional flexibility in choosing what to use.
+
+>NUMAB2 is more accurate but slow learning.
+
+Yes. Which is also why it is important to have demotion in the picture to
+measure the ping pong effect. LRU based heuristics work best here.
+
+>IBS: No scan overhead but we need more sampledata.
+
+>PTE A bit: more scanning overhead (but was not much significant to
+>impact performance when compared with NUMAB1/NUMAB2, rather it was more
+>performing because of proactive migration) but has less accurate data on
+>hotness, target_node(?).
+>
+>When system is more stable, IBS was more effective.
+
+IBS will never be as effective as it should be simply because of the lack
+of time decay/frequency (hence all that related phi hackery in the kpromoted
+series). It has a global view of memory, it should beat any sw scanning
+heuristics by far but the numbers have lacked.
+
+As you know, PeterZ, Dave Hansen, Ying and I have expressed concerns about
+this in the past. But that is not to say it does not serve as a source,
+as you point out.
+
+Thanks,
+Davidlohr
 
