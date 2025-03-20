@@ -1,185 +1,107 @@
-Return-Path: <linux-kernel+bounces-570041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D64A6AB4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:41:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37099A6AB4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C0D1898121
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:42:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05EAC483DA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462A72206B9;
-	Thu, 20 Mar 2025 16:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0092321D3E2;
+	Thu, 20 Mar 2025 16:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/m0Vqel"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIvhV0b5"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9552717591;
-	Thu, 20 Mar 2025 16:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBB217591
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742488909; cv=none; b=DZqaraW4bd6N+PYIvXMEg6eTiiJU34GfxPSuB4wLtCM22pm+7C9JUY17MaFjX8zm3+4SVBJHs1gVn1PWHNJV5/foQPPZlwRXn+11RysZHxlR2GzoaUz/aotnhL2+o3ml9hndsIKEvzDcI9QQYXbOKlliOEjOdVV0ceIf3OvVIjE=
+	t=1742489074; cv=none; b=B/lTGSy1CIHW9Q+XpNEX/iIQZ8UNzVFsrIqz5XNeDqFfnsw8nfE7fzRdw5PCHS5RhwljqM9f4YztAnznlNp8dO9xewrpGv8CKb6uUZThkLy/JVlO8bXXuUmCeU+kdN9kpqXpONfPVbhE5PuDNjgc3AVBxKZq+yHia6PgoA5JBto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742488909; c=relaxed/simple;
-	bh=4o2nxI0GvC/k5QTevrl92f6La2EgrldXcycsukxcDUg=;
+	s=arc-20240116; t=1742489074; c=relaxed/simple;
+	bh=Sl+Q3tAbqojV0VFuCPLFXyH+mpVFTX55Wv7F6O0y5c8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n6mhNZ2erXjUUWuJl+uTWP3r/OosffvYVa6/BLy25o1VyxFFncK/d5oGr3AZEtRRHPPXjPGIjLBsrjDpfsT8wCpvdkpnvzGtveU0bs+GfiDFpvx5BVHsQX92upa1WwAnHIPK5J8rByCy3VWrEQ/MUyOx0gX3brUPpEUmQB82KpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/m0Vqel; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B56C4AF09;
-	Thu, 20 Mar 2025 16:41:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742488909;
-	bh=4o2nxI0GvC/k5QTevrl92f6La2EgrldXcycsukxcDUg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m/m0VqelfLaOpzKsTNaOLTfePUN9dGDAptyLD2/5cU981SxXtNkyYqPPYGr1zMHkE
-	 ysDTrOmTvLWPoHIaLO58IBj9QYncGhyheUKOmgBJtk0mTqZMbxN3RR0D8Bz+sbyEKJ
-	 SAhA6Hx31v/8oMW2OBfkdA2ccSENod8/HYlXpfGabc5My5SfN4O4Iw39PqzsKrSzSj
-	 6BSi79v0eNh9QGp0Mm2p8ZgwD5hFHQTY+hczK8ou+fvzmXNgJqsiN9wvCfXnXTZYpi
-	 1XmmzjQvGGyVFuN0ftXDcDl38ofIqjNWDCWQEpxuwFqxPnvl0llcm0H2jrEHceb8vJ
-	 MhKzFuRO2XR3w==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so1111348e87.1;
-        Thu, 20 Mar 2025 09:41:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEMMrkYJJUepE0l8g06sVlq5vKa6i0QehIuRdK+5J88oyiOKrmRinBgR5yokteWlwbgbfc6OX9dY/vtRc=@vger.kernel.org, AJvYcCWy/NRFCDAAGqlyX/Hj52nTLprUuqU/OK/WTr7uBDhqZBS1MXJ34qPyQg63J8sdbKvxpOCG0IOl+g6T8dv+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAbnMpas6e0gZY3zQ0KjXMrONnBOnNNl/z8ymlRsPOQ56OTgc2
-	DWBUoPSKcgYewDLAo8IlVJh6mhvoTP+zFn4zkC34jhhSYtc1LATlgvEO0Y1MbuBcPMJNg736pg6
-	1isCinTFcy3KlC151F2bb42mwGPU=
-X-Google-Smtp-Source: AGHT+IEo02YsEG7EonianAke3+7Kn0h0ddtVhFGHF4mCLji3NulGiHMvab3VtYH9CzstumAT6CZ6y0DC0stLI/rZDas=
-X-Received: by 2002:a05:6512:12c4:b0:545:2ab1:3de with SMTP id
- 2adb3069b0e04-54acb1b79a6mr2750243e87.13.1742488907332; Thu, 20 Mar 2025
- 09:41:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=JrqiTyIJ2Seu/OsetrTyNAMu0Wep8vdou4y/zT9y55xDlx4rXCjvhpZFQlKFKfr7HqsCyAwQ9daLrSJ69SwFT5UOFsyUWmuhp7aOJvCSef9DqVRwzpyCAoO/8hKQvG6i1wsMT50e46F4Pk41uXLoovz/XYIVJrJDtKfbWd2N3RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIvhV0b5; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3996683dd7bso132782f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:44:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742489071; x=1743093871; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sl+Q3tAbqojV0VFuCPLFXyH+mpVFTX55Wv7F6O0y5c8=;
+        b=nIvhV0b5pAk7RR4N7Y1Wj4rXFuc8lKj56FGfQXnZuSQc5d6wB3v5008/cg8k4MTQgC
+         Saran7I4bza5cWVETP6yTnpy0dPdPjisM0QZQoH5bUU8SzjXcishCoy+0Mj3eXNyBmco
+         ALvLxV7zKEQIc2iN3adfAkbRKBtvE61bChPIk/q1mvirs6Y6tlKdKGdwXPFtRno6JKxY
+         a2R01738ru44JyvRPRKIoMXtFre24k1KMd3jXxO5fgHRUgNSmxNwpjo3GGn9OX9dsJVJ
+         EkgAZjggB2JzE9rMkhTVfiD4X+rc81GmTmAP3xIRJ/e2pj0g/Me9BuiCeY57053BA74r
+         maQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742489071; x=1743093871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sl+Q3tAbqojV0VFuCPLFXyH+mpVFTX55Wv7F6O0y5c8=;
+        b=a6rJL1BV7zR7vTaNcAbZekJdEI6eEs9J8UZSEmFjSAuUYgmDnxd0FwM2mTrNWCBLcl
+         nDmTNdTIvKkp3sLLrrLzQlHYqSk9Hv0+2d9LuGaGTevAHlOMlGjFm9t83zsQZcBs4Gs7
+         5+uBOJuOLkOoiZICFENYqKsPg9OGUODTblh2Xpi0lEotUS08IY3iyMsnAxWgFfDnoQ0/
+         s7ZMdC+pgEQ34fGk/x88G7jRO9ECk3wuIyeCUODTIxrtGBFIyd4NbEyijeEJYxbPRVsf
+         cW9et4UKLo6kC9853zLhtIov2XSfYwF0uNh81GdZCULAcl+pDDnJ/pBPo4FatQtiCzlY
+         wl5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWpgTFc+gsZ61SZjWdnZtk0o9dpbSxReknVtReZjRZJMVmtRTZ8IsoTB7bBSrkvkoQu0Pu4AFX+J1Dp9jc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5PLhX7SruDd0Eob78BcVtTWqzaxZwDW1afo3il0L0uK2YYd0k
+	PgjXTVwsFXmJbpgnu/TBAueg/Vdtzl0nsNW3fuMSUk2f4T8q9ciA10DkfGN1BN8kidccfbpkyv1
+	aQtYdrEZmh/febG7KJ214M1wcFUI=
+X-Gm-Gg: ASbGnctC3cFEKZo2UP26bQHNhuc0npwlU/y23xuz1LAzLzbRQ2Z3mGHBsI/Y9EoUTSR
+	e2yQ6H3U6OiTTumpwrN11EqQlK9EAFfO8qj3gjHYhlXX81sfDTcA9PkkLXDYg86tq8vl9aBkEBE
+	ld74HIpVH0Gudc3I03SUVbrYAZXG/GoMWHUWyij/l1bbtjStUc1cNVc9SY2Lz9NN906+I=
+X-Google-Smtp-Source: AGHT+IFZKHpYsKH5wHL76fHPVWZbMWOpx+QtGI6GB8lz4cUAk5M6cNdY7pR3ndrTN39JCHBJ7oIVLGdJhU6rQSsqLpU=
+X-Received: by 2002:a5d:6da1:0:b0:38d:d371:e03d with SMTP id
+ ffacd0b85a97d-3997f8ee224mr80691f8f.3.1742489070959; Thu, 20 Mar 2025
+ 09:44:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320070746.101552-2-ardb+git@google.com> <CABCJKuc3zZOG4qgoFca_g80GMkzviVRemGLJB8GaA88u27Mt8A@mail.gmail.com>
- <CAMj1kXFZFgYp40xD72s0oMThgxK7J-yyCYUQkkBQjh3xR+fNeQ@mail.gmail.com> <CABCJKueFujwW_=JMZHTf+Y3qN9=uvQYSoDcg_6v=9svUYTsMGQ@mail.gmail.com>
-In-Reply-To: <CABCJKueFujwW_=JMZHTf+Y3qN9=uvQYSoDcg_6v=9svUYTsMGQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 20 Mar 2025 17:41:36 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHCX9oinqQ6xSMgKHdVqp16svPrs9bZu0tX_iD6h76NtA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoVJC_tPxpybg66O-Rx4_hPF8DalCfneXHub3kKa-OJHmWT1krw9YxBf2c
-Message-ID: <CAMj1kXHCX9oinqQ6xSMgKHdVqp16svPrs9bZu0tX_iD6h76NtA@mail.gmail.com>
-Subject: Re: [PATCH] gendwarfksyms: define __GENKSYMS__ when processing asm-protoypes.h
-To: Sami Tolvanen <samitolvanen@google.com>, Ingo Molnar <mingo@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kbuild@vger.kernel.org, brgerst@gmail.com, 
-	x86@kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
-	linux-kernel@vger.kernel.org, nogikh@google.com, 
-	syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+References: <20250318015926.1629748-1-harry.yoo@oracle.com>
+In-Reply-To: <20250318015926.1629748-1-harry.yoo@oracle.com>
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Date: Thu, 20 Mar 2025 17:44:06 +0100
+X-Gm-Features: AQ5f1Jo9CZLQDM2kpJQ_9WPJBbin-yAHC_Ppwb9Qyz7cZjnJt1uQNfIhmTJ0Fcw
+Message-ID: <CAPAsAGxdD04nOz35TERJi0aPs+9TBEytrqNVq8h4EA819PA9pg@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable] mm/kasan: use SLAB_NO_MERGE flag instead of
+ an empty constructor
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Mar 2025 at 17:22, Sami Tolvanen <samitolvanen@google.com> wrote=
-:
+On Tue, Mar 18, 2025 at 2:59=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
+ote:
 >
-> On Thu, Mar 20, 2025 at 9:09=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
-> >
-> > On Thu, 20 Mar 2025 at 15:48, Sami Tolvanen <samitolvanen@google.com> w=
-rote:
-> > >
-> > > Hi Ard,
-> > >
-> > > On Thu, Mar 20, 2025 at 12:07=E2=80=AFAM Ard Biesheuvel <ardb+git@goo=
-gle.com> wrote:
-> > > >
-> > > > From: Ard Biesheuvel <ardb@kernel.org>
-> > > >
-> > > > Ensure that __GENKSYMS__ is #define'd when passing asm/asm-prototyp=
-es.h
-> > > > through the compiler to capture the exported symbols. This ensures =
-that
-> > > > exported symbols such as __ref_stack_chk_guard on x86, which is dec=
-lared
-> > > > conditionally, is visible to the tool.
-> > > >
-> > > > Otherwise, an error such as the below may be raised, breaking the b=
-uild
-> > > > when CONFIG_GENDWARFKSYMS=3Dy
-> > > >
-> > > >   <stdin>:4:15: error: use of undeclared identifier '__ref_stack_ch=
-k_guard'
-> > > >
-> > > > Cc: Sami Tolvanen <samitolvanen@google.com>
-> > > > Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-> > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > > ---
-> > > >  scripts/Makefile.build | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > > > index 993708d11874..7855cdc4e763 100644
-> > > > --- a/scripts/Makefile.build
-> > > > +++ b/scripts/Makefile.build
-> > > > @@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
-> > > >  getasmexports =3D                                                 =
-               \
-> > > >     { echo "\#include <linux/kernel.h>" ;                          =
-     \
-> > > >       echo "\#include <linux/string.h>" ;                          =
-     \
-> > > > +     echo "\#define  __GENKSYMS__" ;                              =
-     \
-> > > >       echo "\#include <asm/asm-prototypes.h>" ;                    =
-     \
-> > > >       $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
-> > >
-> > > This works with gendwarfksyms since __GENKSYMS__ is defined after the
-> > > EXPORT_SYMBOL() definition, but I'm now getting warnings with
-> > > genksyms:
-> > >
-> > >   AS      arch/x86/lib/clear_page_64.o
-> > > <stdin>:3:10: warning: "__GENKSYMS__" redefined
-> > > <command-line>: note: this is the location of the previous definition
-> > >
-> >
-> > Oops.
-> >
-> > Do you think the fix below should be sufficient?
-> >
-> > --- a/scripts/Makefile.build
-> > +++ b/scripts/Makefile.build
-> > @@ -314,7 +314,7 @@
-> >  else
-> >  cmd_gensymtypes_S =3D                                                 =
-   \
-> >         $(getasmexports) |                                             =
- \
-> > -       $(CPP) -D__GENKSYMS__ $(c_flags) -xc - | $(genksyms)
-> > +       $(CPP) $(c_flags) -xc - | $(genksyms)
-> >  endif # CONFIG_GENDWARFKSYMS
-> >
-> >  quiet_cmd_cpp_s_S =3D CPP $(quiet_modtag) $@
+> Use SLAB_NO_MERGE flag to prevent merging instead of providing an
+> empty constructor. Using an empty constructor in this manner is an abuse
+> of slab interface.
 >
-> EXPORT_SYMBOL() has a different definition when __GENKSYMS__ is
-> defined, so I think with genksyms we actually do need this on the
-> command line. I suppose you could wrap the getasmexports definition in
-> #ifndef __GENKSYMS__ to avoid the warning, or just use
-> __GENDWARFKSYMS__ like you suggested earlier.
+> The SLAB_NO_MERGE flag should be used with caution, but in this case,
+> it is acceptable as the cache is intended solely for debugging purposes.
 >
+> No functional changes intended.
+>
+> Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
 
-Yeah, on second thought, we could just do what Masahiro suggested, and
-drop the conditional from asm/asm-prototypes.h
-
-The issue in question only affects definitions, not declarations, and
-so having the declaration visible shouldn't be a problem.
-
-Ingo, mind dropping this patch again? We'll do the below instead (I'll
-send out the patch in a minute)
-
-
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -20,6 +20,6 @@
- extern void cmpxchg8b_emu(void);
- #endif
-
--#if defined(__GENKSYMS__) && defined(CONFIG_STACKPROTECTOR)
-+#ifdef CONFIG_STACKPROTECTOR
- extern unsigned long __ref_stack_chk_guard;
- #endif
+Acked-by: Andrey Ryabinin <ryabinin.a.a@gmail.com>
 
