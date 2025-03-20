@@ -1,143 +1,95 @@
-Return-Path: <linux-kernel+bounces-569673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9064A6A5E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:10:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1645EA6A5F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2A29484FF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3263A496C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551E3221DB5;
-	Thu, 20 Mar 2025 12:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D782220683;
+	Thu, 20 Mar 2025 12:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="MfKW5vZd"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAlds+kt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E1E21D3D4;
-	Thu, 20 Mar 2025 12:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57F21B9C5;
+	Thu, 20 Mar 2025 12:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472366; cv=none; b=qTynRqnteDeYuO77zDAl2PypVvn6TRhk0SFr3w7swAcHLD1vUD46IDPrswmglkoTKLPGrUlCtFh1pkkTF3OdShStGWLekhNqEvNIgM+363JiM4lhXlRpL9w8kpLyVZybtX0BeIjfGgFUfC38pnkX6DmSpAjpwmxhCaMD/27vLqo=
+	t=1742472446; cv=none; b=rAbHhHeHZvCVKJeUjeacDX5AWwO0SnKCCQxEyq9NZ48wWrHfisWV3ZaM0/RZrwzC5Q5uBmTV/6+ekM8l9uT1wJCfWLlVxqMBmOGDNUf8AteHn2TPAIqCg/qviSoA30Y7abQ4/7FhDLh0VUhlnjIU9tXPSrCRtUYMEOeRsWUP6nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472366; c=relaxed/simple;
-	bh=RP8m+cI8EIFrcJC5Arx0ydpQjxHIdTN1PNVsy4F58hc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BadrG8FWCfamMV4fXd18oQIxiRtZdedK2OrhbbSUemP7eN+PXPCZ9ZvaN4aM8TN9Z5hQ9DPB0WXp4rQCGQAMAX9reNy8T7s5PlrzALQSaQMN2f+dWiaiSLaRWI4r9HsmNuoNH0appTN0CCfPPutedhxs9uqJMVe6cDJBtm6YA5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=MfKW5vZd; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1tvEeX-0063Kz-Ud; Thu, 20 Mar 2025 13:05:37 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
-	bh=6fOje8AeUS/Yxn3hx5OTHsOh5tHx9bATkJVXXWk7VAw=; b=MfKW5vZd3fMkyXspnk8lBKIt8z
-	MpZ0BJLYCCPteWSSD4spC/GfH71VWrqxTiMecNO40Pv2Ukl6PlgCk3SAE+wvzotNrolapGX3LHkNK
-	sdKqt/1ki5let0Ms7sWBEh3mk3y3CefAZEahJUQKXht95KPm6d7wE9zMBpdbs02gSZ8aRxYO9kBYg
-	bYzFZgSUYehTiUiXoErtg7a75uxcJs3WcQ3ypZ9DBHJoEsDdNMvjAsU9vleGqXwVA/NKlXJ7dtPFX
-	ZsasutGAkB47/RuqCoyDLISON8W+n4wT2iGejFXLEcSplmjLmeyWEHcVCRJZ0LP+JGlpo/8GW6z5X
-	xtbgzHrA==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1tvEeW-000461-EZ; Thu, 20 Mar 2025 13:05:36 +0100
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1tvEeQ-00H9rZ-5u; Thu, 20 Mar 2025 13:05:30 +0100
-Message-ID: <4de119d5-c9c7-4f66-9e31-91c44a92c773@rbox.co>
-Date: Thu, 20 Mar 2025 13:05:27 +0100
+	s=arc-20240116; t=1742472446; c=relaxed/simple;
+	bh=DdLmbiZIe5M95mj8ZrqKxiqcbLuETf4IHvDcbhbav20=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=avg7O/MrNKfWYTXCREqOSJeBVpsCCxBUdI8oOhNAPkuVjy0RVDONu0elBXSCucQbXvkGowWbvZAPZngf0RkZjl7p2vWBrUtFiQe+7dJ2jXBLtahwAhPbERcGMrglUM2ODiC7IMhB5PiriZkAkBMhCSOBn2Ts+ej8v8JFWL2PuA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAlds+kt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F245C4CEDD;
+	Thu, 20 Mar 2025 12:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742472446;
+	bh=DdLmbiZIe5M95mj8ZrqKxiqcbLuETf4IHvDcbhbav20=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YAlds+ktckns+lx03YOhpcg7QLsXf9aTlsiGKvG65wTlG8kGo2HsLfriEq1U/AcDs
+	 mLVZ3CuuKVEuAyeq0y0iNA+ICMevPsGa0BRE/g6cB+z/kpBBuWxwS38Y+dxPjNIhRQ
+	 0mtBsJstRSHycySS37jacLoCmSD3Y5k1IOPBMYpDok/ADoiWZGaEMkBkNa7SSlrTlL
+	 UuLekyyTzn7FNb/R2pEVhJD2PbkgdmBEGehqkQ7pGsA8UwTO+t4kUsxOlWVX6L5uQM
+	 FfdSoyAuiEaxo259JWLDS70qY98+2O63Rv0U0XdyGtn7WEZvSyuBe37qXY01OCjaDb
+	 88FM+56MeoXkQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] fs: call inode_sb_list_add() outside of inode hash lock
+Date: Thu, 20 Mar 2025 13:07:20 +0100
+Message-ID: <20250320-rustikal-urwald-20739009faa8@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250320004643.1903287-1-mjguzik@gmail.com>
+References: <20250320004643.1903287-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Michal Luczaj <mhal@rbox.co>
-Subject: Re: [PATCH net v4 3/3] vsock/bpf: Fix bpf recvmsg() racing transport
- reassignment
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
- Bobby Eshleman <bobby.eshleman@bytedance.com>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- netdev@vger.kernel.org, bpf@vger.kernel.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250317-vsock-trans-signal-race-v4-0-fc8837f3f1d4@rbox.co>
- <20250317-vsock-trans-signal-race-v4-3-fc8837f3f1d4@rbox.co>
- <Z9tCnq0rBw+nETfW@pop-os.localdomain>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <Z9tCnq0rBw+nETfW@pop-os.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1238; i=brauner@kernel.org; h=from:subject:message-id; bh=DdLmbiZIe5M95mj8ZrqKxiqcbLuETf4IHvDcbhbav20=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfYfmxX9HM1eu/zYcpl/bfNJvSH2Sefbxg+ev+5D9id zf86jt3t6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiBcsZ/uleLV84pWZ640G3 d/8rWZ4dy1h/2qh1xrIrPEuF9y+88EuSkeEhR1zVj4O3Ci/nSKvd2bTli/NDQcuvr3+0HhC3eOu 0YBkXAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 3/19/25 23:18, Cong Wang wrote:
-> On Mon, Mar 17, 2025 at 10:52:25AM +0100, Michal Luczaj wrote:
->> Signal delivery during connect() may lead to a disconnect of an already
->> established socket. That involves removing socket from any sockmap and
->> resetting state to SS_UNCONNECTED. While it correctly restores socket's
->> proto, a call to vsock_bpf_recvmsg() might have been already under way in
->> another thread. If the connect()ing thread reassigns the vsock transport to
->> NULL, the recvmsg()ing thread may trigger a WARN_ON_ONCE.
->>
-
-   *THREAD 1*                      *THREAD 2*
-
->> connect
->>   / state = SS_CONNECTED /
->>                                 sock_map_update_elem
->>                                 vsock_bpf_recvmsg
->>                                   psock = sk_psock_get()
->>   lock sk
->>   if signal_pending
->>     unhash
->>       sock_map_remove_links
+On Thu, 20 Mar 2025 01:46:43 +0100, Mateusz Guzik wrote:
+> As both locks are highly contended during significant inode churn,
+> holding the inode hash lock while waiting for the sb list lock
+> exacerbates the problem.
 > 
-> So vsock's ->recvmsg() should be restored after this, right? Then how is
-> vsock_bpf_recvmsg() called afterward?
-
-I'm not sure I understand the question, so I've added a header above: those
-are 2 parallel flows of execution. vsock_bpf_recvmsg() wasn't called
-afterwards. It was called before sock_map_remove_links(). Note that at the
-time of sock_map_remove_links() (in T1), vsock_bpf_recvmsg() is still
-executing (in T2).
-
->>     state = SS_UNCONNECTED
->>   release sk
->>
->> connect
->>   transport = NULL
->>                                   lock sk
->>                                   WARN_ON_ONCE(!vsk->transport)
->>
+> Why moving it out is safe: the inode at hand still has I_NEW set and
+> anyone who finds it through legitimate means waits for the bit to clear,
+> by which time inode_sb_list_add() is guaranteed to have finished.
 > 
-> And I am wondering why we need to WARN here since we can handle this error
-> case correctly?
+> [...]
 
-The WARN and transport check are here for defensive measures, and to state
-a contract.
+Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.misc branch should appear in linux-next soon.
 
-But I think I get your point. If we accept for a fact of life that BPF code
-should be able to handle transport disappearing - then WARN can be removed
-(while keeping the check) and this patch can be dropped.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-My aim, instead, was to keep things consistent. By which I mean sticking to
-the conditions expressed in vsock_bpf_update_proto() as invariants; so that
-vsock with a psock is guaranteed to have transport assigned.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.misc
+
+[1/1] fs: call inode_sb_list_add() outside of inode hash lock
+      https://git.kernel.org/vfs/vfs/c/c918f15420e3
 
