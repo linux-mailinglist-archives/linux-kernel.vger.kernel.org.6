@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-569639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E91A6A586
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:55:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EABA6A589
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848F31B61307
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:53:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22A2517072B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52F2227E8B;
-	Thu, 20 Mar 2025 11:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD52D22A1CF;
+	Thu, 20 Mar 2025 11:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="NqZOMXYH"
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="DgC4x02z"
 Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6EF225768;
-	Thu, 20 Mar 2025 11:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DB7226CEE;
+	Thu, 20 Mar 2025 11:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742471398; cv=none; b=WroRz5wwTahppCfk3ubZvf6ZFF0uk4XOyEXzwIpEkxe+6frJvg5Iqwt+LenT43ueS/DgTfdK/7KEZ16DSNgwK+UCHJVV+fMfPq8rZCgxkPlgmvwaRWcJlHHAR40KwS2DZfW4QE+3maqEA1cmLaq8HqzXrBBqZG0PHXrW7NR9URQ=
+	t=1742471400; cv=none; b=Sb3NbFYNUwg2OktK/hVLoxYosEXNbRuAooGm6cMk8HrmMuzAM3AMq/AmAm9Mef7v8sFEjG5iYlaADS2lTS2+JEFI60CYz9H/wO65rmUv1F4q4lSK21cNJQaRVeTYuQpMEvhSxVYP0Fh7/GW2R2K+6RBMhCadD1c2krQQtFdNZ1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742471398; c=relaxed/simple;
-	bh=zspinsC/V9sAeyQBJpZd7CawZjK+6F8C1ZetDcURwDw=;
+	s=arc-20240116; t=1742471400; c=relaxed/simple;
+	bh=u1casUeI9Ls0Pb7TwvXEMa3nKlI9a1VHQ9Flv7MTick=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=BvWo9dcVWHtUJBHUx+WT4mwOmuGNSO2w7zJsKahZ+FHcgSvQuFar+5BRj4G30ap36t0qkF+47xbcHU3ROC0oeZ/8bKaAvOgOw3OZWwjl3LOabdGashGVF8Bf9zwCg6yCQwrjeQtPEU8UzFP4P1D0mvG2VusOGBblCHfI8jzD16s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=NqZOMXYH; arc=none smtp.client-ip=185.132.180.163
+	 In-Reply-To:To:CC; b=usqjd4Tl8FBVUNTBhiU5lfAD1NDxuv+OXQc7fQePuYQpWZieWYOVK2mSMC7MFKn8psQpw1G0LAzeGVqr35W4pyuz4IFJNDmHiJRT8mgIexCDlUhp5uKN1on3cSfsGOrBnmCiEp0gVfbRAApSsV0YcPZjkJ8MHWL8iECxWfS3toM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=DgC4x02z; arc=none smtp.client-ip=185.132.180.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
 Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K5Ntge021993;
-	Thu, 20 Mar 2025 11:32:30 GMT
+	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K5Ntgf021993;
+	Thu, 20 Mar 2025 11:32:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=2
-	sWM2kcnUK5OS4tpefAKNycEYEdbj45XoOmmPmFeHXc=; b=NqZOMXYHjZU9w62nK
-	GDK2UjWlP++mqDCMvuyn9GOT84+wVDEJt3Jc3SQ3CFhe6pRj/OMzBrWuNE7WLQaO
-	K/RaLA7xv8RZYVqaMUUXBHSV7HawCUAn5loUVOiOfISmmSe0o6y1I7Po+gW6U706
-	3rxHNbOcYl/PZIkBTcq3Pjbc9R1fV9Mu3jGcz88ZuX3S5WrEVPkqdPthdpzuF/Nj
-	QuW7ExjWPHdStSf6d4W/mOoAoGj4uPMkBX+RgUrLK8Txpr+po0qAv8yhcr9QTNcl
-	zpf5/ydEcS4x1GuVwqjcc3QE0mJ7J3poAfdWXdwZDOTVIVUvHtrHdEYfHeUH3vxD
-	o6WvA==
+	:message-id:mime-version:references:subject:to; s=dk201812; bh=H
+	RYPBZwOxb7NLrAVi2qebzHMrELoukkBJcqf0HL2AdM=; b=DgC4x02z6zQGNlw+Q
+	lpdabYizjBedlCjyYoVYzcBqzqZCBsYO0BKIC5ypkCKqlZeejqf/sSu8DFdEZvqX
+	5LonFKMHlp/HQ+rz0N/t5zJBSzjcmvT588C8/KEwex0gaQam6YKy14CljiUe/Uga
+	2plaKSq4jE2DtNonyBZrG+Xjtv84/tdwAAatuMK/OfkAp36fidGBqhqlUk0aS35c
+	PFJw9pySPuVDmKwvYYMtQnq/3/zpuKWJ0BYkWOpr2+J1ruzPdJNIR+TzZKSz+zn0
+	Ur92GUVwPOYi8fhrZAxqELYigsZ0LahI8HibaPN77BV9r+rO2TtRHRsYMrPBA8o9
+	y4I0Q==
 Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 45d2h1kwg5-1
+	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 45d2h1kwg5-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
 	Thu, 20 Mar 2025 11:32:30 +0000 (GMT)
 Received: from
  1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
  (172.25.0.133) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 20 Mar 2025 11:32:28 +0000
+ 15.1.2507.44; Thu, 20 Mar 2025 11:32:29 +0000
 From: Matt Coster <matt.coster@imgtec.com>
-Date: Thu, 20 Mar 2025 11:32:18 +0000
-Subject: [PATCH v4 08/18] drm/imagination: Remove firmware enable_reg
+Date: Thu, 20 Mar 2025 11:32:19 +0000
+Subject: [PATCH v4 09/18] drm/imagination: Rename event_mask -> status_mask
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250320-sets-bxs-4-64-patch-v1-v4-8-d987cf4ca439@imgtec.com>
+Message-ID: <20250320-sets-bxs-4-64-patch-v1-v4-9-d987cf4ca439@imgtec.com>
 References: <20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com>
 In-Reply-To: <20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com>
 To: Frank Binns <frank.binns@imgtec.com>,
@@ -88,119 +88,91 @@ CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
 	<alessio.belle@imgtec.com>,
         Alexandru Dadu <alexandru.dadu@imgtec.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4388;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3243;
  i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=zspinsC/V9sAeyQBJpZd7CawZjK+6F8C1ZetDcURwDw=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMaTf/nMk/9oJr6vHfcQP8i35e/Zibcjrpj+t+6ud97rOv
- KdcceDf445SFgYxDgZZMUWWHSssV6j9UdOSuPGrGGYOKxPIEAYuTgGYiLQvwz+t9e/n80y/0x+v
- 79LPZcouqHu4eYvYr4bPAnMPdxcd4VjL8D9XddZRz79Xv1gvvifTESr6dw+31vFfs15GOYhP2t2
- 16xUPAA==
+ bh=u1casUeI9Ls0Pb7TwvXEMa3nKlI9a1VHQ9Flv7MTick=;
+ b=owGbwMvMwCFWuUfy8817WRsYT6slMaTf/nOUcX/QrXe3qxdrO/pceZXtM2nDnY1KHEGVvl7hM
+ 5Mvtn/b11HKwiDGwSArpsiyY4XlCrU/aloSN34Vw8xhZQIZwsDFKQATeXyJkeFBeLBK0oUzbn8K
+ 17w5p/dmi6FSxO9O7UMVhqo6VxZUmGxk+F/Gyp2/p8sxaov9F8m7ngYte7Xs7u1ab+BoveVOyfv
+ sq/wA
 X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
  fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
 X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Proofpoint-GUID: tOcimysPUDsv8iPYyVCsMfP5nuiCm6NX
-X-Proofpoint-ORIG-GUID: tOcimysPUDsv8iPYyVCsMfP5nuiCm6NX
-X-Authority-Analysis: v=2.4 cv=V8Z90fni c=1 sm=1 tr=0 ts=67dbfcce cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=f_O7cd1dQeFu8-5Qt7YA:9
+X-Proofpoint-GUID: B-fId4-PgKhpJlqDBbIbz7wYN48LS0U9
+X-Proofpoint-ORIG-GUID: B-fId4-PgKhpJlqDBbIbz7wYN48LS0U9
+X-Authority-Analysis: v=2.4 cv=V8Z90fni c=1 sm=1 tr=0 ts=67dbfcce cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=eQCmySvtvC0styh21agA:9
  a=QEXdDO2ut3YA:10 a=t8nPyN_e6usw4ciXM-Pk:22
 
-After a previous commit ("drm/imagination: Mask GPU IRQs in threaded
-handler"), this register is now only used to enable firmware interrupts at
-start-of-day. This is, however, unnecessary since they are enabled by
-default.
-
-In addition, the soon-to-be-added RISC-V firmware processors do not have
-an equivalent register.
+Now that enable_reg isn't used, rename the previously shared event_mask to
+status_mask since it's only used with status_reg.
 
 Signed-off-by: Matt Coster <matt.coster@imgtec.com>
 ---
 Changes in v4:
 - None
-- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-8-143b3dbef02f@imgtec.com
+- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-9-143b3dbef02f@imgtec.com
 Changes in v3:
-- Reference a different commit removing use of enable/disable ops.
-- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-10-3fd45d9fb0cf@imgtec.com
+- None
+- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-11-3fd45d9fb0cf@imgtec.com
 Changes in v2:
 - None
-- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-10-4ed30e865892@imgtec.com
+- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-11-4ed30e865892@imgtec.com
 ---
- drivers/gpu/drm/imagination/pvr_device.c  |  1 -
- drivers/gpu/drm/imagination/pvr_fw.h      | 11 +----------
- drivers/gpu/drm/imagination/pvr_fw_meta.c |  1 -
- drivers/gpu/drm/imagination/pvr_fw_mips.c |  1 -
- 4 files changed, 1 insertion(+), 13 deletions(-)
+ drivers/gpu/drm/imagination/pvr_fw.h      | 6 +++---
+ drivers/gpu/drm/imagination/pvr_fw_meta.c | 2 +-
+ drivers/gpu/drm/imagination/pvr_fw_mips.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
-index a47dd1dd82432f1d66ff90aca26b7b264f4068df..1e488a30c7840466574c7fc3648ab93edfb46354 100644
---- a/drivers/gpu/drm/imagination/pvr_device.c
-+++ b/drivers/gpu/drm/imagination/pvr_device.c
-@@ -311,7 +311,6 @@ pvr_device_irq_init(struct pvr_device *pvr_dev)
- 
- 	/* Clear any pending events before requesting the IRQ line. */
- 	pvr_fw_irq_clear(pvr_dev);
--	pvr_fw_irq_enable(pvr_dev);
- 
- 	if (pvr_dev->has_safety_events)
- 		pvr_device_safety_irq_clear(pvr_dev);
 diff --git a/drivers/gpu/drm/imagination/pvr_fw.h b/drivers/gpu/drm/imagination/pvr_fw.h
-index b7966bd574a924862b7877c175fa2b5d757d89db..29bae4bc244a243a6a95bcf838d924060cc043e2 100644
+index 29bae4bc244a243a6a95bcf838d924060cc043e2..eead744835726712622d5aba9b3480fe264a089f 100644
 --- a/drivers/gpu/drm/imagination/pvr_fw.h
 +++ b/drivers/gpu/drm/imagination/pvr_fw.h
-@@ -188,9 +188,6 @@ struct pvr_fw_defs {
- 	 * processor backend in pvr_fw_funcs::init().
- 	 */
- 	struct {
--		/** @enable_reg: FW interrupt enable register. */
--		u32 enable_reg;
--
- 		/** @status_reg: FW interrupt status register. */
- 		u32 status_reg;
- 
-@@ -202,7 +199,7 @@ struct pvr_fw_defs {
+@@ -199,8 +199,8 @@ struct pvr_fw_defs {
  		 */
  		u32 clear_reg;
  
--		/** @event_mask: Bitmask of events to listen for. */
-+		/** @event_mask: Bitmask of events to listen for in the status_reg. */
- 		u32 event_mask;
+-		/** @event_mask: Bitmask of events to listen for in the status_reg. */
+-		u32 event_mask;
++		/** @status_mask: Bitmask of events to listen for in the status_reg. */
++		u32 status_mask;
  
  		/** @clear_mask: Value to write to the clear_reg in order to clear FW IRQs. */
-@@ -412,12 +409,6 @@ struct pvr_fw_device {
+ 		u32 clear_mask;
+@@ -404,7 +404,7 @@ struct pvr_fw_device {
+ 	pvr_cr_write32((pvr_dev), (pvr_dev)->fw_dev.defs->irq.name ## _reg, value)
+ 
+ #define pvr_fw_irq_pending(pvr_dev) \
+-	(pvr_fw_irq_read_reg(pvr_dev, status) & (pvr_dev)->fw_dev.defs->irq.event_mask)
++	(pvr_fw_irq_read_reg(pvr_dev, status) & (pvr_dev)->fw_dev.defs->irq.status_mask)
+ 
  #define pvr_fw_irq_clear(pvr_dev) \
  	pvr_fw_irq_write_reg(pvr_dev, clear, (pvr_dev)->fw_dev.defs->irq.clear_mask)
- 
--#define pvr_fw_irq_enable(pvr_dev) \
--	pvr_fw_irq_write_reg(pvr_dev, enable, (pvr_dev)->fw_dev.defs->irq.event_mask)
--
--#define pvr_fw_irq_disable(pvr_dev) \
--	pvr_fw_irq_write_reg(pvr_dev, enable, 0)
--
- extern const struct pvr_fw_defs pvr_fw_defs_meta;
- extern const struct pvr_fw_defs pvr_fw_defs_mips;
- 
 diff --git a/drivers/gpu/drm/imagination/pvr_fw_meta.c b/drivers/gpu/drm/imagination/pvr_fw_meta.c
-index 6d13864851fc2e83bdaa94f16435b97841e5de94..a51eec867884b24767f23b3b34cd7029cb660f48 100644
+index a51eec867884b24767f23b3b34cd7029cb660f48..6786e0153970691fa51ba3a0e62c00a46244a3a3 100644
 --- a/drivers/gpu/drm/imagination/pvr_fw_meta.c
 +++ b/drivers/gpu/drm/imagination/pvr_fw_meta.c
-@@ -548,7 +548,6 @@ const struct pvr_fw_defs pvr_fw_defs_meta = {
- 	.wrapper_init = pvr_meta_wrapper_init,
- 	.has_fixed_data_addr = pvr_meta_has_fixed_data_addr,
+@@ -550,7 +550,7 @@ const struct pvr_fw_defs pvr_fw_defs_meta = {
  	.irq = {
--		.enable_reg = ROGUE_CR_META_SP_MSLVIRQENABLE,
  		.status_reg = ROGUE_CR_META_SP_MSLVIRQSTATUS,
  		.clear_reg = ROGUE_CR_META_SP_MSLVIRQSTATUS,
- 		.event_mask = ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_EN,
+-		.event_mask = ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_EN,
++		.status_mask = ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_EN,
+ 		.clear_mask = ROGUE_CR_META_SP_MSLVIRQSTATUS_TRIGVECT2_CLRMSK,
+ 	},
+ };
 diff --git a/drivers/gpu/drm/imagination/pvr_fw_mips.c b/drivers/gpu/drm/imagination/pvr_fw_mips.c
-index 0bed0257e2ab75f66d8b8966b2ceac6342396fb5..c810a67eeecf1016064e76baf534e31a44c859b5 100644
+index c810a67eeecf1016064e76baf534e31a44c859b5..f195c602bb112066e88210d0106cb5ffc0a9abc6 100644
 --- a/drivers/gpu/drm/imagination/pvr_fw_mips.c
 +++ b/drivers/gpu/drm/imagination/pvr_fw_mips.c
-@@ -243,7 +243,6 @@ const struct pvr_fw_defs pvr_fw_defs_mips = {
- 	.wrapper_init = pvr_mips_wrapper_init,
- 	.has_fixed_data_addr = pvr_mips_has_fixed_data_addr,
+@@ -245,7 +245,7 @@ const struct pvr_fw_defs pvr_fw_defs_mips = {
  	.irq = {
--		.enable_reg = ROGUE_CR_MIPS_WRAPPER_IRQ_ENABLE,
  		.status_reg = ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS,
  		.clear_reg = ROGUE_CR_MIPS_WRAPPER_IRQ_CLEAR,
- 		.event_mask = ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS_EVENT_EN,
+-		.event_mask = ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS_EVENT_EN,
++		.status_mask = ROGUE_CR_MIPS_WRAPPER_IRQ_STATUS_EVENT_EN,
+ 		.clear_mask = ROGUE_CR_MIPS_WRAPPER_IRQ_CLEAR_EVENT_EN,
+ 	},
+ };
 
 -- 
 2.49.0
