@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-569934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5E1A6A9DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:27:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4140EA6A9D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7671896F75
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:25:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 991824863E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA76221717;
-	Thu, 20 Mar 2025 15:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683261E98E7;
+	Thu, 20 Mar 2025 15:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FiLnYZwG"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WT2f77W2"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5339221F00;
-	Thu, 20 Mar 2025 15:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CB9222596;
+	Thu, 20 Mar 2025 15:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742484284; cv=none; b=YVKg093TXfgzBeMG4HE9vafn8LKuI1Ecc33RbWTvLNVNUTT0Hnzl+5b92kApw6z/iCFNJqlnYSXL9JYmWSpdiAFBtkGt405A0yYWcoheTez+ZK0r+H665eR/hvasNARloFWA/TQb6aqoZgbfF9nTJwH9MH4a5L3iQ1O1n0l9ebY=
+	t=1742484286; cv=none; b=n6XViIXrSBE0Xj865RWnZBAHOJz04TaUPM+tlymcJIfFO/oJ9VakSoHzRl9HV6f9jnoUn8omZX4nGs5os/xoDop1wTsbS8fmzAfT+4eygiW0FWmZmSuivuwqffjqrZxZNXNHdj5lTmU+Omn3gX15H2cgONa+/nk5qjw3jgwM94k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742484284; c=relaxed/simple;
-	bh=zyB2uaDDv1BAG0YqbiEdmRLnG2B1bXVWmRwVAs+kqS8=;
+	s=arc-20240116; t=1742484286; c=relaxed/simple;
+	bh=bBJquWmbhZlBT0E9fzqTISanbT0nOLqq8zl6vtcWbDs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tw7ww5tze9uQZTX83VgvjIDVOdZOEtjPPJhem4jlLu2LDm519WPikVxd4GAJZWcpKDNfha7d9x9cyhvaLXgbJIRV8aYQjX00LiNpLFtNPywCcckwopoa35Hd0IFBYLyR3BuXtZRIo2/HY0mwLHE/NQujMvK6KIBHMBAGv5tNA50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FiLnYZwG; arc=none smtp.client-ip=209.85.214.176
+	 In-Reply-To:To:Cc; b=PBNBNfIpZX5dOeGQjd1WDt7DvYxgIcIfQUgaeWUiEjQrLhpAeAE6QNG0QZR1OESaLUPYOeIZKCDM2zA9i5UnP1EnGxEr4az7o/237leVHuS0vIuZ/L8ywp5ELY5vCt5TQZjniEt42PgilgvijCssVnuZ0i0Lb4/7QhEjiXTXSmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WT2f77W2; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-225b5448519so18087935ad.0;
-        Thu, 20 Mar 2025 08:24:42 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224100e9a5cso18263515ad.2;
+        Thu, 20 Mar 2025 08:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742484282; x=1743089082; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742484285; x=1743089085; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HhPGWpSJf4aEvLnPhTJquxIyNv0KK5Phy3xNH0kC5O0=;
-        b=FiLnYZwG2TMjXqid47FH7H2hsC4j1689LCKMow1drLsfJDbLhCa0jksaC9T8clfRCT
-         a2UstkJU8WQ3otVVqnPOqKH9m2Q7gx33/AsMwZkYoH/cjEqhcmpEHiF7Hsvzrw19wAjx
-         b49h4YOmTk+dYgBi7s2EEh4OQ5sD43OGHz5iAg+s4wTZimtLTpjtuO+YpoPmqMit36Lm
-         /FEKq0NXCiyIOrX9tnwX31i+m7FHPcgHYpQRgbWZ0d0N5iqmWo2A9pOkcjXtXs6M1DOE
-         e/KDa8JksxlRVNxkb6RjRZdetmPneoW1NYZjPteJrfKw/5xw1fjTMQfTg9cRQQSSGiGs
-         uHoQ==
+        bh=BdO66wmJYQ3an/CxnUlug2JV7sb1pt8dsfeshj9bVHI=;
+        b=WT2f77W2I+tawEXNk3Gpki7JRpoQKAMez11gJ3B/lI9Z2HzFUHo/ZeIdd1M1PVcBZx
+         +0OLZ2qWbdsWmjJbEH88+IUkQagllJvfGqJ1JEAnlMauw2b58LySAQimw1eXpQkj+j6+
+         /RlPws7WJwkSC+5T5F8of6WF84F3F8jyKoH5UovvIHwAdEqo0N7GK2thbcMJFMmaIz6c
+         Q/XpfSCbJlFNf2Bdkqk1tR64Fulm91ZlurLos7UKDl0Wzd366E8eZjXXJ2FKTQjgRt2w
+         xvUWELQG8x+KfjWuh+1Ia0+2swJgkxCamGdlWqZEGTwkygz8L1Zr415sM2yDrcnMBEIf
+         FtEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742484282; x=1743089082;
+        d=1e100.net; s=20230601; t=1742484285; x=1743089085;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HhPGWpSJf4aEvLnPhTJquxIyNv0KK5Phy3xNH0kC5O0=;
-        b=wrPDpQOdCSRV8dlf1RgUAwduMqGrmy8jmaBZqLOvc/e0EtJmAPD+wisHJvbaZ33Sv4
-         WfUQ/KUENoDOiVJxm6Odl0EQKkcgPh+hwjNkLYsPcoZ4YZz3xm8zcRWcWYENy3lWP3bB
-         9FJ1jI9moR5NwSQ9G9TiIk8jYSGNxXx30O44e9IBGCI36g53scxhPE+YxZ0tcEvSJBel
-         EX+hrB12EVt06pBIfQZA6akhvq0jiYuRwdEYQyg8gJzN4vfJq0TWmA8lhJO4IdNrIf1m
-         ZjZFnZkZ5ixljHZN0R3XWIi0XBXnFo+ew13mzk38TVOLndSv4UFxIn3oZs+LJGYYaLJs
-         sAbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNmT6gVDGugdIi7nrqo6gftXKRBP6eg1MSCmgzqlE4LVbXA4h4KOz7tlIE8Ejgos+PVBv1lDKST0qKZqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweSkmiJfexgkZ6TYGy/1DjE2yZp5+8zhPIzNFdxlzM0OjkzAc9
-	Fjv5AdORllW0PgDodsYytKP5r95rH+ZPan4YFKf/VunTOFacC/rk
-X-Gm-Gg: ASbGncvynxHV/xB+Wv2CM0CHNpa3uefyNYTYhtOnLRWdKbIq5d7BT0EcXkf/AgzAI+K
-	RCoo12b7TmvNUZ33hepcWRLP+O/ASO8cez8lEf53G765SPMkXFPlg25+6T2vDr4mxYKGraKKY0s
-	kjCuDjjwziqhB4n8hI7wJEi2K7FzXx+pS3CgNlbeXLP7SNlKjnucZnPKqCenbHUGtxpYAQyfzlC
-	SgkV/lWJW3HDny972EUJ7EJd0yF33krIznbjChTVfGH15PgQ+JMSPLTuT0zTAiz4xr5YKM+1Vd4
-	eJPcjFFCRn0bIHZfGcCX66mIX69Hi2H8wbqk3RouOfULjWlB0ZIwBghND+WLZK+kUIe+XIFQA5M
-	Qe48yIuE6IWz955OhpdCTJn13JsTrCgan
-X-Google-Smtp-Source: AGHT+IGkYoRpTwvX0SPQrV2WZJvZ/92oS7+7U7y4cTjAdvt5uiAV4eA9Zp8uehwfG/gclRTVojzHSg==
-X-Received: by 2002:a17:902:cf07:b0:223:53fb:e1dd with SMTP id d9443c01a7336-22649928472mr115859395ad.9.1742484281811;
-        Thu, 20 Mar 2025 08:24:41 -0700 (PDT)
+        bh=BdO66wmJYQ3an/CxnUlug2JV7sb1pt8dsfeshj9bVHI=;
+        b=Tni7PbTvA3erUTR5mftvlbPwv0Thp2XTJvUgeoxG647QeasbXhWxdVqwouXy4bAs02
+         ACmDSBtTEyEuF/FRLF5SJJdfVx6ZIm212haaZoFvirQ0Agf1jcbbzTQWgVaVSW1Mpkdh
+         X+v0DEFX3lu1p1bTHwi1b1xu8MUjpiZrl5mINNWETndLGTYpQM/kFdn3H7BaruFmEhHb
+         K32Ddfu9DxTymB9Ge9E0NN9deyH5WS3xZw53lgLs3/6TI0c6UNpII7eyXa0+WQ+tqr34
+         8WR8MiafaS+clyfVYYby5EOgXqgFIcZnV2fYZiSGSalpzp6en5zMc7ZuWBsGay4BM/Tv
+         Dr+A==
+X-Forwarded-Encrypted: i=1; AJvYcCV/d9vGvOE3TJxCTGrh4bJo+w1fEPBUfLz9l4wY7Plv+8O9+Td9RpemMbQt/2Jlqj1dsv+6ZSTdLtRCGwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGwvWQAL8+BfsIYVpeSuvY8rTaHBvxOWHbfIyJDUL/S4Hsjf/m
+	cqOh/EkQ3HVgg37lNDlzQfJiAwxB6OfsRO5qvT0cnyB0EHjCYumu
+X-Gm-Gg: ASbGncuwFsVl7bH7b3TaDWYcUaVeDkRla7G8bW16B5adOHn6NAjLFWUZr1XWW7pzXlV
+	QJ9qUH+DNfhT0M+7udXO4Bm3DF9/apJaz4kSJ8Wfdye9Yqdf0XrK6rBoIGTM6oUEovc36Wfl0Gu
+	9HyHQOvJPZOAoFgpGZULVzxogp5eBBtBAW2NBbzgL0Zo/hj2pl7XPkTviWJvkf2z/VOeMorJtE+
+	06Fl2FYfznefdYpcOf4HY80pTNlB3UPGrr4y11H+mmPYZ0aSjEWMwjzibd1IGUrcj2fcmUp683W
+	VznrKt1NK7Yrw8pbw6oUiiDBPhbfR3v1JIbeeLF8rJDHAwGez+7N71Ew4fI6lboZTuwP/90ZYXC
+	lC8l4MTJ/S5/x/fLUDz8Zow==
+X-Google-Smtp-Source: AGHT+IE0FDg/RvatznD5nSPBO0u6iFrPVYdj39Zl3XVqmYw9j17E38UUu3Xc7F1pPw2qEsugW3y4Rg==
+X-Received: by 2002:a17:903:320e:b0:223:fabd:4f99 with SMTP id d9443c01a7336-2265ed68d0dmr64182055ad.5.1742484284467;
+        Thu, 20 Mar 2025 08:24:44 -0700 (PDT)
 Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4a8fsm136905515ad.234.2025.03.20.08.24.39
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4a8fsm136905515ad.234.2025.03.20.08.24.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 08:24:41 -0700 (PDT)
+        Thu, 20 Mar 2025 08:24:44 -0700 (PDT)
 From: Potin Lai <potin.lai.pt@gmail.com>
-Date: Thu, 20 Mar 2025 23:21:55 +0800
-Subject: [PATCH v5 05/10] ARM: dts: aspeed: catalina: Add second source fan
- controller support
+Date: Thu, 20 Mar 2025 23:21:56 +0800
+Subject: [PATCH v5 06/10] ARM: dts: aspeed: catalina: Add second source HSC
+ node support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-potin-catalina-dts-update-20250102-v5-5-e161be6583a7@gmail.com>
+Message-Id: <20250320-potin-catalina-dts-update-20250102-v5-6-e161be6583a7@gmail.com>
 References: <20250320-potin-catalina-dts-update-20250102-v5-0-e161be6583a7@gmail.com>
 In-Reply-To: <20250320-potin-catalina-dts-update-20250102-v5-0-e161be6583a7@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -96,109 +96,41 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
  Potin Lai <potin.lai.pt@gmail.com>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742484265; l=2445;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742484265; l=979;
  i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
- bh=zyB2uaDDv1BAG0YqbiEdmRLnG2B1bXVWmRwVAs+kqS8=;
- b=yaNv8/tBD1Dp9LskMzc98/pZcRkIlWncgoAtHa/Wg9TwNWL4CEXyC5gYPtOviqhsSEpoBkEsx
- 4B7gSQTFjQDDSpT4l2vBGBkj0T+OQloWQevOabCyJnZBfpDX4KalonZ
+ bh=bBJquWmbhZlBT0E9fzqTISanbT0nOLqq8zl6vtcWbDs=;
+ b=nY7Z5IkRbcS1V5IGJjWbsZaB1Q3BvpU6kh56rBgCZUHC3bvVeo1uNTaxziEpT3fNRvoeEldAt
+ plVdW1akqN3AcuEdgCyo2mqwpTyxRFgQu4v7AIIo8yta+XVuO35qHk9
 X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
  pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
 
-Add device tree nodes for the NCT7363 fan controllers on the second-source
-Power Distribution Board (PDB).
+Add device tree nodes for the XDP710 Hot-Swap Controller (HSC) to support
+the Power Distribution Board (PDB) with a second-source configuration.
 
 Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
 ---
- .../dts/aspeed/aspeed-bmc-facebook-catalina.dts    | 76 ++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-index fd22add90449..9cbb296dcd9e 100644
+index 9cbb296dcd9e..cf8a31b50074 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-@@ -467,6 +467,82 @@ i2c1mux0ch2: i2c@2 {
+@@ -562,6 +562,14 @@ i2c1mux0ch4: i2c@4 {
  			#size-cells = <0>;
- 			reg = <0x2>;
+ 			reg = <0x4>;
  
-+			hwmon0: hwmon@1 {
-+				compatible = "nuvoton,nct7363";
-+				reg = <0x01>;
-+				#pwm-cells = <2>;
-+
-+				fan-9 {
-+					pwms = <&hwmon0 0 40000>;
-+					tach-ch = /bits/ 8 <0x09>;
-+				};
-+				fan-11 {
-+					pwms = <&hwmon0 0 40000>;
-+					tach-ch = /bits/ 8 <0x0b>;
-+				};
-+				fan-10 {
-+					pwms = <&hwmon0 4 40000>;
-+					tach-ch = /bits/ 8 <0x0a>;
-+				};
-+				fan-13 {
-+					pwms = <&hwmon0 4 40000>;
-+					tach-ch = /bits/ 8 <0x0d>;
-+				};
-+				fan-15 {
-+					pwms = <&hwmon0 6 40000>;
-+					tach-ch = /bits/ 8 <0x0f>;
-+				};
-+				fan-1 {
-+					pwms = <&hwmon0 6 40000>;
-+					tach-ch = /bits/ 8 <0x01>;
-+				};
-+				fan-0 {
-+					pwms = <&hwmon0 10 40000>;
-+					tach-ch = /bits/ 8 <0x00>;
-+				};
-+				fan-3 {
-+					pwms = <&hwmon0 10 40000>;
-+					tach-ch = /bits/ 8 <0x03>;
-+				};
++			power-monitor@13 {
++				compatible = "infineon,xdp710";
++				reg = <0x13>;
 +			};
-+			hwmon1: hwmon@2 {
-+				compatible = "nuvoton,nct7363";
-+				reg = <0x02>;
-+				#pwm-cells = <2>;
-+
-+				fan-9 {
-+					pwms = <&hwmon1 0 40000>;
-+					tach-ch = /bits/ 8 <0x09>;
-+				};
-+				fan-11 {
-+					pwms = <&hwmon1 0 40000>;
-+					tach-ch = /bits/ 8 <0x0b>;
-+				};
-+				fan-10 {
-+					pwms = <&hwmon1 4 40000>;
-+					tach-ch = /bits/ 8 <0x0a>;
-+				};
-+				fan-13 {
-+					pwms = <&hwmon1 4 40000>;
-+					tach-ch = /bits/ 8 <0x0d>;
-+				};
-+				fan-15 {
-+					pwms = <&hwmon1 6 40000>;
-+					tach-ch = /bits/ 8 <0x0f>;
-+				};
-+				fan-1 {
-+					pwms = <&hwmon1 6 40000>;
-+					tach-ch = /bits/ 8 <0x01>;
-+				};
-+				fan-0 {
-+					pwms = <&hwmon1 10 40000>;
-+					tach-ch = /bits/ 8 <0x00>;
-+				};
-+				fan-3 {
-+					pwms = <&hwmon1 10 40000>;
-+					tach-ch = /bits/ 8 <0x03>;
-+				};
++			power-monitor@1c {
++				compatible = "infineon,xdp710";
++				reg = <0x1c>;
 +			};
- 			pwm@21{
- 				compatible = "maxim,max31790";
- 				reg = <0x21>;
+ 			power-monitor@42 {
+ 				compatible = "lltc,ltc4287";
+ 				reg = <0x42>;
 
 -- 
 2.31.1
