@@ -1,174 +1,143 @@
-Return-Path: <linux-kernel+bounces-569095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EADFA69E76
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:53:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2C2A69E7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8851795A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E9117A2EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CDC28EA;
-	Thu, 20 Mar 2025 02:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB80D3597B;
+	Thu, 20 Mar 2025 02:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N3ccJmrU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XNEcXFdG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB017A2E3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7789C78F20;
+	Thu, 20 Mar 2025 02:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742439176; cv=none; b=XxGlAl7vtlJ9HwvWzYaieY4ej9BcIHDZh5VZxA7bN2JUWgYiFmMXXPWo+0xzB7JvsKTuLYwg/s2Sz8fFFD7vX/0Glg6tifnf4r/RwENdzd07TQKtDZvADHiMSaL0WylRcf1zDNDSJgsjLCZIhnnuTMpDAt4GxBWmcjevdywxqzU=
+	t=1742439292; cv=none; b=Q4/g0tZnbeWph6RuMzbDjwGrjRCxUbjpjVejRJtTDBkXETNTw0UVSi6vv6JF7vAPzSY2rp1qYyRfBaMz9RsRMCTTGxGJhvCM+BZ9a+R7XYC5nfdS/hQjv5gHZzbK21ehlCvCnCV3LVu3QCRw9wk+aMGAMR+IKBzzKOp8IPjW5s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742439176; c=relaxed/simple;
-	bh=vg4+ggxmuzeKTljMhEG1Oo/JmSE8/6fLfiQV1X3qNsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJ2CtmcCQJPxuyG5OyvjiWto02OwcYNtDCLIFgoGwWg6lbNkka3qBOdApTx8VYQlcy8IJ7S1lHr9gZDUX18VPgVWtxeQM8LXW2Tj1P9sOlpH4ASfLky/rnwf9K2ZbAsn3St9YMBS8lLcBURR7lfEAlMacNROFk/gxG7BXRwh76c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N3ccJmrU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742439173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=llxsDGyF5OTS0kLxtrZq1xxBUU0ow8OofIklAK3fpNU=;
-	b=N3ccJmrUh2Qv6PDYr1LkgrCeJNaj+nfS8IbXJVZV8WJczUgHZmvarH0oeF5hyU0gP8Bgjh
-	YUdWeycoMUthhT7ppotbZ3XqXjWDZR5s+5LdktA+xs3xlkcEA9/v7PmAXKM3Gt6K/tUGiH
-	mr18kvPDfpIaTdKRkzeRjQvF0B5ETMA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-121-BuMgurEROi-9O3Ip2yolXw-1; Wed,
- 19 Mar 2025 22:52:49 -0400
-X-MC-Unique: BuMgurEROi-9O3Ip2yolXw-1
-X-Mimecast-MFC-AGG-ID: BuMgurEROi-9O3Ip2yolXw_1742439167
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74EC41800875;
-	Thu, 20 Mar 2025 02:52:46 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.30])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66BA180174E;
-	Thu, 20 Mar 2025 02:52:42 +0000 (UTC)
-Date: Thu, 20 Mar 2025 10:52:38 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 7/8] ima: make the kexec extra memory configurable
-Message-ID: <Z9uC9g+UaVAA/0tY@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-8-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1742439292; c=relaxed/simple;
+	bh=6YGR3xxLuAy6VPfLwDGnb2gK4KW1VwGjWv8ZU9DH4fI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QWoMPgCxCE3juVEpZdtVJf12z3CYO82iy1b3/LNbeEaXM1ZcAjiyatFb9E8RqHFiNn+caZYmS35Dz8Qg6Vo4hvRsPIqw1Wg9rxstMgT/IwDCNDUOYVplyHSZA0wfwILu8YUuHx6/JHNgD06jjbxtVtZEMIf0SloUEWTW5di7NgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XNEcXFdG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K2Kl5L002204;
+	Thu, 20 Mar 2025 02:54:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=daihNcU+Ha8PKd8G9F6EL5
+	pPpaAxQoRbQZQCKlEHeqw=; b=XNEcXFdGD2vS0361MBXmRanOEMOE0Tng7O9+q6
+	JN4ou7uYrVWqbFcGhqXrlZBwa8/1SYbcWOTr09aZD4FauZUI7/QnKmwL9x2kfCb2
+	D2si8/VNQGNoha4htyG8DsDRiMwwcrIu0Qar59dopQWTwPS8gsN3182gRwZIPSOU
+	VmznCWlyQTQluXiW2484AMGAwmyf/aw1WLiosnIojRugM0EFy6TLV5fZkbKVPsUm
+	m5kYTjGdoDNqXdJW7DtrZbElOHFfcM37kZz/6Cdaua2kzsY+TboCJjieOwWYflq8
+	0hAzm/Qa8WeObLboeSftaO/OIfzrP3aguNDkwjSCIRmlzkNg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmc019e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 02:54:46 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52K2sjKO010788
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 02:54:45 GMT
+Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Mar 2025 19:54:41 -0700
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+Subject: [PATCH v2 0/3] media: qcom: iris: add support for SA8775P
+Date: Thu, 20 Mar 2025 08:24:28 +0530
+Message-ID: <20250320-dtbinding-v2-0-8d8eaa4e76cc@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318010448.954-8-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGSD22cC/03MQQ6CMBCF4auQWVvTadMArrwHYQHtFGZhqy0SD
+ eHuVhITl//Ly7dBpsSU4VJtkGjlzDGUUKcK7DyEiQS70qCkMlKjFG4ZOTgOk2hahaO3aJBaKP9
+ 7Is+vw+r60jPnJab3Qa/4XX8K/ikrCimMbWTttPb1QNfHky0He7bxBv2+7x+WE0rypAAAAA==
+X-Change-ID: 20250310-dtbinding-8921bfc151e9
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sumit.garg@oss.qualcomm.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742439281; l=1017;
+ i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
+ bh=6YGR3xxLuAy6VPfLwDGnb2gK4KW1VwGjWv8ZU9DH4fI=;
+ b=V6xDM4J49VxD6ly4oFvd/bJ7jWDXaJRw/3LLtY6o35DPvvEN+gcc97RIbZGmDC/MzfJvqkCi0
+ 53Xn8QUkxvQBBzCusuv4HzSnrbBaWDfxTHU/zktlMKxnQw8pWC21KWO
+X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
+ pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WHVkEwfbKMD6pRzfXlcCFIfJJ2ERivqA
+X-Proofpoint-GUID: WHVkEwfbKMD6pRzfXlcCFIfJJ2ERivqA
+X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67db8376 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=H251FuTyKS9KxEcm2wcA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_01,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=904 bulkscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200018
 
-On 03/17/25 at 06:04pm, steven chen wrote:
-> The extra memory allocated for carrying the IMA measurement list across
-> kexec is hard-coded as half a PAGE.  Make it configurable.
-> 
-> Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
-> extra memory (in kb) to be allocated for IMA measurements added during
-> kexec soft reboot.  Ensure the default value of the option is set such
-> that extra half a page of memory for additional measurements is allocated
-> for the additional measurements.
-> 
-> Update ima_add_kexec_buffer() function to allocate memory based on the
-> Kconfig option value, rather than the currently hard-coded one.
-> 
-> Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  security/integrity/ima/Kconfig     | 10 ++++++++++
->  security/integrity/ima/ima_kexec.c | 16 +++++++++++-----
->  2 files changed, 21 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index 475c32615006..d73c96c3c1c9 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
->  	help
->  	   This option disables htable to allow measurement of duplicate records.
->  
-> +config IMA_KEXEC_EXTRA_MEMORY_KB
-> +	int "Extra memory for IMA measurements added during kexec soft reboot"
-> +	depends on IMA_KEXEC
-> +	default 0
+add support for video hardware acceleration on SA8775P platform.
 
-Is there range for this memory, e.g [0, max] and max will be a value
-according to our current perception?
+Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+---
+Changes in v2:
+- Drop 01/04 patch as it was not needed.
+- Introduce sa8775p as fallback compatible to sm8550.
+- Move firmware files to board DT
+- Link to v1: https://lore.kernel.org/r/20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com
 
-> +	help
-> +	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-> +	  allocated (in kb) for IMA measurements added during kexec soft reboot.
-> +	  If set to the default value of 0, an extra half page of memory for those
-> +	  additional measurements will be allocated.
-> +
->  endif
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index c390c745f882..0f214e41dd33 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -131,6 +131,7 @@ void ima_add_kexec_buffer(struct kimage *image)
->  				  .buf_min = 0, .buf_max = ULONG_MAX,
->  				  .top_down = true };
->  	unsigned long binary_runtime_size;
-> +	unsigned long extra_memory;
->  
->  	/* use more understandable variable names than defined in kbuf */
->  	size_t kexec_buffer_size = 0;
-> @@ -138,15 +139,20 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	int ret;
->  
->  	/*
-> -	 * Reserve an extra half page of memory for additional measurements
-> -	 * added during the kexec load.
-> +	 * Reserve extra memory for measurements added during kexec.
->  	 */
-> -	binary_runtime_size = ima_get_binary_runtime_size();
-> +	if (CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB <= 0)
-> +		extra_memory = PAGE_SIZE / 2;
-> +	else
-> +		extra_memory = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
-> +
-> +	binary_runtime_size = ima_get_binary_runtime_size() + extra_memory;
-> +
->  	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
->  		kexec_segment_size = ULONG_MAX;
->  	else
-> -		kexec_segment_size = ALIGN(ima_get_binary_runtime_size() +
-> -					   PAGE_SIZE / 2, PAGE_SIZE);
-> +		kexec_segment_size = ALIGN(binary_runtime_size, PAGE_SIZE);
-> +
->  	if ((kexec_segment_size == ULONG_MAX) ||
->  	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
->  		pr_err("Binary measurement list too large.\n");
-> -- 
-> 2.25.1
-> 
-> 
+---
+Vikash Garodia (3):
+      dt-bindings: media: qcom,sm8550-iris: document SA8775p IRIS accelerator
+      arm64: dts: qcom: sa8775p: add support for video node
+      arm64: dts: qcom: sa8775p-ride: enable video
+
+ .../bindings/media/qcom,sm8550-iris.yaml           |  7 ++-
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |  5 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 71 ++++++++++++++++++++++
+ 3 files changed, 82 insertions(+), 1 deletion(-)
+---
+base-commit: f2151613e040973c868d28c8b00885dfab69eb75
+change-id: 20250310-dtbinding-8921bfc151e9
+
+Best regards,
+-- 
+Vikash Garodia <quic_vgarodia@quicinc.com>
 
 
