@@ -1,361 +1,86 @@
-Return-Path: <linux-kernel+bounces-569296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E08A6A110
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:20:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE7CA6A10B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:19:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106C98A42DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F63188C514
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BD6209F4E;
-	Thu, 20 Mar 2025 08:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ik5lQE5Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F78205E3E;
+	Thu, 20 Mar 2025 08:19:09 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028401E832E;
-	Thu, 20 Mar 2025 08:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D841E832E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742458782; cv=none; b=LD+nmqDXna86zPo6XbbNTuKltW9MDZuHtYDn853pinKvjQAAc70Z72vMUmnZ3qeUncXy+FYThiYS3hP5CyH0Ftb8H4AB+uqioKyGvDcK83l5PcWeBwBR5HnsHH7gaCnjacLRqPS/+gtjupXzfbvPZNw5kCH+C0edZepH5DMyla8=
+	t=1742458749; cv=none; b=ovydlyU0ovqD4ykAw6dNk8jPrrTOj+5D1PSbwg6WDALbbJDVuW7MSotHGRCQZynRzCStAgjhhXJt7NTtxsAVQSzwf4AjXMh97l8gmcv9fPd5g3dIZ+vf3KyzfwZNe4UxpCGt4DH0YdZC4u3gHQNtuqV+B+8geCTBj+Ub8cZIrZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742458782; c=relaxed/simple;
-	bh=wFfbaNg3wsvfFKP1ifvMbGHH7f1HN+6srFuJIoWJvuU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cBQ+bADgkYZRoT2SsN6gT23esnKWGk4L9VIKSp9SE9JyefYw43Z0pSDG9suQP0+Q20D+b2UDQsGSeRtZllOOEKTbX8qdoIrVE4FOTPFcVXHKTxFfhw+NemuKTMqZ4mCFLIMn78LeWO8buccgIVHRu1q5LgmL7HKM9aKtIbVaD/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ik5lQE5Q; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742458781; x=1773994781;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=wFfbaNg3wsvfFKP1ifvMbGHH7f1HN+6srFuJIoWJvuU=;
-  b=ik5lQE5Q/aSq37WTtX7zy+rcgeE+Dp2QtTfdb9cMrRbKQSHsLNIyr2yE
-   +MhwTo5DU7gimBX0jkpvgLT2qVPfnmZem30kIroXN32tasciZQ+R7/I2A
-   FBOZqgG5FpqdwM8KkYQD9L+YY0kdgmnNlkppt/LO0gVD75fXzyiRUQ6hQ
-   4BrHQ9czM2/PX7a1FvcXo3Gk0WLuM2gVBetTBaluJh7r0rHCJskhqHv1I
-   J8cZKNh2k0UjH9F12MVDtzFzTd0VXmDnPDYa/G8OAC1dV8utocyDqL0L4
-   /fu0ARJ72Nyi1dPExfmIwAsNwYx4Wi3lopxrRA1PLKTqQHiT9vfcv2Obj
-   w==;
-X-CSE-ConnectionGUID: pYwug0mnSSGARAjcVcOA1w==
-X-CSE-MsgGUID: fVBYHjWYRhmtj2aK4IKN+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="31261489"
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="31261489"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 01:19:40 -0700
-X-CSE-ConnectionGUID: BvTRZpolTnSFDmQf10zL9Q==
-X-CSE-MsgGUID: bN7SLZmNQtOcYaDFtBLqqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="122954458"
-Received: from ysun46-mobl1.sh.intel.com ([10.239.161.21])
-  by orviesa010.jf.intel.com with ESMTP; 20 Mar 2025 01:19:38 -0700
-From: Yi Sun <yi.sun@intel.com>
-To: dave.jiang@intel.com,
-	anil.s.keshavamurthy@intel.com,
-	vkoul@kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: gordon.jin@intel.com,
-	andriy.shevchenko@intel.com,
-	yi.sun@linux.intel.com,
-	Yi Sun <yi.sun@intel.com>
-Subject: [PATCH] dma/idxd: Remove __packed from structures
-Date: Thu, 20 Mar 2025 16:18:07 +0800
-Message-ID: <20250320081807.3688123-1-yi.sun@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742458749; c=relaxed/simple;
+	bh=dQSLooTmN2HIWPJybpTzymcE+nUlDPqrg9LSn3p/eek=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HQrPRnIf1tfv8OFlmfuJrfwc6rvL/Jr9ku6ORx+W0qaAzQXAlvP8odUb+ocQxchI+JV3Cb00UqJCLoUt9nGoNw0saNVcLT8JM4yB/YaiHvpCfX4z5Vq7Ot+k8sx/FmiG2X2oSGrzOpI7E66oeqNv/EYb5tbuR74eGdw+iSn/u50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d434c328dbso9160755ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:19:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742458747; x=1743063547;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FkZsC+86W3g9jPGh3loS/ZM0dl7YZEVEqLlCHTRhnY=;
+        b=qpNaHwCeArfM5iCF5mzMK4ObIXihx9x7uCeGsslMEjHP8nZOVHCyFtrS2jOIY02su3
+         9aD31GtSp5owL2dW9Wg9tpbUC8LGasegLK9xbXXr3W16yvG7rmBRcW3E2MP4eontk4hJ
+         LN60WZ8PVi9gWx7dQeWgzK4S+oOrSeL+dFs8H6tN9kWsC/g07YEMMWo8KXt5mr6qPZ03
+         so/pofRFpKWfSPReZe3drQTNmm37noR4+/IlSz5DurCiUOKYI8w3bdimGXybNOeBsECB
+         Yi3q+b//A8/rekSiOqVLgdlDFjsMUSH0HowSi77ImvQhdXaEdlIIR05Zv/EI6PYg1il2
+         b2/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXBR2TzuPHCuk7g5Eqhq5t+qrHsUBqsiwuba52/IroufRMWHz29hknrL+V9rT70KNQXGQKq7I0QI1TLEHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoXFjzZhgDhbjDz4CmCoOQ96bYMPyEp/TA9mZWnQQGZFtJa0Mw
+	W5O0yBCHRNDkv5yRoc7C+u7U8jDOCr49sp1+v6iMLhVZsGpnenfi2UGBlZQpaiVvH11yg9Wbtht
+	mo5diO/ee2WSwMc9DjajT/RVkKSttKcrR2tLNX5KvEcDD5FKFsVFrRJ0=
+X-Google-Smtp-Source: AGHT+IHBHBHfCd1wdHWYTZ2r9LRa3Dj2LKb/16m3v+HxIa4TFf7nb/73CAlga1yPkZgEzbIT4nhHKljQF9D1QArJKYTQaL7Nj9CK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1549:b0:3d3:e3fc:d5e1 with SMTP id
+ e9e14a558f8ab-3d586b1b246mr57152235ab.1.1742458747107; Thu, 20 Mar 2025
+ 01:19:07 -0700 (PDT)
+Date: Thu, 20 Mar 2025 01:19:07 -0700
+In-Reply-To: <CAMj1kXGxmGwJieicpgOcErBGaMm2=CZz9Ra6G203AobexUCyhQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dbcf7b.050a0220.31a16b.0009.GAE@google.com>
+Subject: Re: [syzbot] linux-next build error (20)
+From: syzbot <syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com>
+To: ardb@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The __packed attribute introduces potential unaligned memory accesses
-and endianness portability issues. Instead of relying on compiler-specific
-packing, it's much better to explicitly fill structure gaps using padding
-fields, ensuring natural alignment.
+Hello,
 
-Since all previously __packed structures already enforce proper alignment
-through manual padding, the __packed qualifiers are unnecessary and can be
-safely removed.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Yi Sun <yi.sun@intel.com>
+Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Tested-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
 
-diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-index 006ba206ab1b..9c1c546fe443 100644
---- a/drivers/dma/idxd/registers.h
-+++ b/drivers/dma/idxd/registers.h
-@@ -45,7 +45,7 @@ union gen_cap_reg {
- 		u64 rsvd3:32;
- 	};
- 	u64 bits;
--} __packed;
-+};
- #define IDXD_GENCAP_OFFSET		0x10
- 
- union wq_cap_reg {
-@@ -65,7 +65,7 @@ union wq_cap_reg {
- 		u64 rsvd4:8;
- 	};
- 	u64 bits;
--} __packed;
-+};
- #define IDXD_WQCAP_OFFSET		0x20
- #define IDXD_WQCFG_MIN			5
- 
-@@ -79,7 +79,7 @@ union group_cap_reg {
- 		u64 rsvd:45;
- 	};
- 	u64 bits;
--} __packed;
-+};
- #define IDXD_GRPCAP_OFFSET		0x30
- 
- union engine_cap_reg {
-@@ -88,7 +88,7 @@ union engine_cap_reg {
- 		u64 rsvd:56;
- 	};
- 	u64 bits;
--} __packed;
-+};
- 
- #define IDXD_ENGCAP_OFFSET		0x38
- 
-@@ -114,7 +114,7 @@ union offsets_reg {
- 		u64 rsvd:48;
- 	};
- 	u64 bits[2];
--} __packed;
-+};
- 
- #define IDXD_TABLE_MULT			0x100
- 
-@@ -128,7 +128,7 @@ union gencfg_reg {
- 		u32 rsvd2:18;
- 	};
- 	u32 bits;
--} __packed;
-+};
- 
- #define IDXD_GENCTRL_OFFSET		0x88
- union genctrl_reg {
-@@ -139,7 +139,7 @@ union genctrl_reg {
- 		u32 rsvd:29;
- 	};
- 	u32 bits;
--} __packed;
-+};
- 
- #define IDXD_GENSTATS_OFFSET		0x90
- union gensts_reg {
-@@ -149,7 +149,7 @@ union gensts_reg {
- 		u32 rsvd:28;
- 	};
- 	u32 bits;
--} __packed;
-+};
- 
- enum idxd_device_status_state {
- 	IDXD_DEVICE_STATE_DISABLED = 0,
-@@ -183,7 +183,7 @@ union idxd_command_reg {
- 		u32 int_req:1;
- 	};
- 	u32 bits;
--} __packed;
-+};
- 
- enum idxd_cmd {
- 	IDXD_CMD_ENABLE_DEVICE = 1,
-@@ -213,7 +213,7 @@ union cmdsts_reg {
- 		u8 active:1;
- 	};
- 	u32 bits;
--} __packed;
-+};
- #define IDXD_CMDSTS_ACTIVE		0x80000000
- #define IDXD_CMDSTS_ERR_MASK		0xff
- #define IDXD_CMDSTS_RES_SHIFT		8
-@@ -284,7 +284,7 @@ union sw_err_reg {
- 		u64 rsvd5;
- 	};
- 	u64 bits[4];
--} __packed;
-+};
- 
- union iaa_cap_reg {
- 	struct {
-@@ -303,7 +303,7 @@ union iaa_cap_reg {
- 		u64 rsvd:52;
- 	};
- 	u64 bits;
--} __packed;
-+};
- 
- #define IDXD_IAACAP_OFFSET	0x180
- 
-@@ -320,7 +320,7 @@ union evlcfg_reg {
- 		u64 rsvd2:28;
- 	};
- 	u64 bits[2];
--} __packed;
-+};
- 
- #define IDXD_EVL_SIZE_MIN	0x0040
- #define IDXD_EVL_SIZE_MAX	0xffff
-@@ -334,7 +334,7 @@ union msix_perm {
- 		u32 pasid:20;
- 	};
- 	u32 bits;
--} __packed;
-+};
- 
- union group_flags {
- 	struct {
-@@ -352,13 +352,13 @@ union group_flags {
- 		u64 rsvd5:26;
- 	};
- 	u64 bits;
--} __packed;
-+};
- 
- struct grpcfg {
- 	u64 wqs[4];
- 	u64 engines;
- 	union group_flags flags;
--} __packed;
-+};
- 
- union wqcfg {
- 	struct {
-@@ -410,7 +410,7 @@ union wqcfg {
- 		u64 op_config[4];
- 	};
- 	u32 bits[16];
--} __packed;
-+};
- 
- #define WQCFG_PASID_IDX                2
- #define WQCFG_PRIVL_IDX		2
-@@ -474,7 +474,7 @@ union idxd_perfcap {
- 		u64 rsvd3:8;
- 	};
- 	u64 bits;
--} __packed;
-+};
- 
- #define IDXD_EVNTCAP_OFFSET		0x80
- union idxd_evntcap {
-@@ -483,7 +483,7 @@ union idxd_evntcap {
- 		u64 rsvd:36;
- 	};
- 	u64 bits;
--} __packed;
-+};
- 
- struct idxd_event {
- 	union {
-@@ -493,7 +493,7 @@ struct idxd_event {
- 		};
- 		u32 val;
- 	};
--} __packed;
-+};
- 
- #define IDXD_CNTRCAP_OFFSET		0x800
- struct idxd_cntrcap {
-@@ -506,7 +506,7 @@ struct idxd_cntrcap {
- 		u32 val;
- 	};
- 	struct idxd_event events[];
--} __packed;
-+};
- 
- #define IDXD_PERFRST_OFFSET		0x10
- union idxd_perfrst {
-@@ -516,7 +516,7 @@ union idxd_perfrst {
- 		u32 rsvd:30;
- 	};
- 	u32 val;
--} __packed;
-+};
- 
- #define IDXD_OVFSTATUS_OFFSET		0x30
- #define IDXD_PERFFRZ_OFFSET		0x20
-@@ -533,7 +533,7 @@ union idxd_cntrcfg {
- 		u64 rsvd3:4;
- 	};
- 	u64 val;
--} __packed;
-+};
- 
- #define IDXD_FLTCFG_OFFSET		0x300
- 
-@@ -543,7 +543,7 @@ union idxd_cntrdata {
- 		u64 event_count_value;
- 	};
- 	u64 val;
--} __packed;
-+};
- 
- union event_cfg {
- 	struct {
-@@ -551,7 +551,7 @@ union event_cfg {
- 		u64 event_enc:28;
- 	};
- 	u64 val;
--} __packed;
-+};
- 
- union filter_cfg {
- 	struct {
-@@ -562,7 +562,7 @@ union filter_cfg {
- 		u64 eng:8;
- 	};
- 	u64 val;
--} __packed;
-+};
- 
- #define IDXD_EVLSTATUS_OFFSET		0xf0
- 
-@@ -580,7 +580,7 @@ union evl_status_reg {
- 		u32 bits_upper32;
- 	};
- 	u64 bits;
--} __packed;
-+};
- 
- #define IDXD_MAX_BATCH_IDENT	256
- 
-@@ -620,17 +620,17 @@ struct __evl_entry {
- 	};
- 	u64 fault_addr;
- 	u64 rsvd5;
--} __packed;
-+};
- 
- struct dsa_evl_entry {
- 	struct __evl_entry e;
- 	struct dsa_completion_record cr;
--} __packed;
-+};
- 
- struct iax_evl_entry {
- 	struct __evl_entry e;
- 	u64 rsvd[4];
- 	struct iax_completion_record cr;
--} __packed;
-+};
- 
- #endif
--- 
-2.43.0
+Tested on:
 
+commit:         ff7f9b19 Add linux-next specific files for 20250319
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4bdd42b70d1ca0a
+dashboard link: https://syzkaller.appspot.com/bug?extid=06fd1a3613c50d36129e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174fe004580000
+
+Note: testing is done by a robot and is best-effort only.
 
