@@ -1,167 +1,118 @@
-Return-Path: <linux-kernel+bounces-570074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8D4A6ABB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:11:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A06A6ABC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53CE5189A82E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1630F8A2131
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACF92236E0;
-	Thu, 20 Mar 2025 17:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94F422371B;
+	Thu, 20 Mar 2025 17:13:57 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362AE224AF7;
-	Thu, 20 Mar 2025 17:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6EB1BD9FA;
+	Thu, 20 Mar 2025 17:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742490693; cv=none; b=kRRfL8GKtTk3wBhbl31VMrFnjHtcWEdH061vnc6i0Hpo3Ew7sWLYYocSguci2hklmFLSGS0yJz2a+SvqDg3KVaYn72TwBw+OWGzZXFugHMyQa04dGdr0jwM9r1e6XPg9Ru6Cs5n/QnzX4mDLj1ho5Z1zmyTx0rCZfqYDvksvUpw=
+	t=1742490837; cv=none; b=nkwrGHjCEkhXpQPJjgFpo+u0NKSNrQ2jFwopw3wiCSuXeiIOvk9nmzd83KnnhaCgTS/RHk2AzKB0e27UeutWzF7p/Ej9wYqmiRAdTVS86INYu5NuwnQlKU/lH/XJBKri3ts2KbMJ6s4NvBLmxpHzeDGzyBxL6obCMEezAWPC9Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742490693; c=relaxed/simple;
-	bh=AdqVVkv/pV4tq7Nbasjp5R+AYZLXmvGl7wulY1PUWjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W8SW+LtdJBbtddxpYMdnYXFYwB5sGFLBBwLr4k/Q8YqyoM799jqcRXeJlzEf2tWoECG9d0JOvZnwPxEmqrnpfN+gFwBAaBCXpoSyJFh8VIhD9Njuz2v/mtqnoj4rxbutErlFxmGyQsoKtSgPejemz/ArfihIgj6yXPsPUusmwl4=
+	s=arc-20240116; t=1742490837; c=relaxed/simple;
+	bh=zB2IwDZ51pPE+pv8LlcV5Dy+qMvyYCTBZV5CBy3Loro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoxlquWhkIdlSzE1nfGoyNcQEtD5aJ/hTUgATSkTMieOkfJHJnTuU/8js/zY+zJHAnPIKRshMgwJ8mRX77JAzK2T5Ms+R6IwOL4K25yHjTuAfKF90TN02wgfpBMUTomLNSGc41j8TCiT9GIU8hse17CE9OGRsrEI7hnHqoiJ8ME=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51D83113E;
-	Thu, 20 Mar 2025 10:11:38 -0700 (PDT)
-Received: from [10.57.69.2] (unknown [10.57.69.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3E10F3F673;
-	Thu, 20 Mar 2025 10:11:26 -0700 (PDT)
-Message-ID: <952cc3ea-ca11-43a3-a8f4-36e3bbb1fa84@arm.com>
-Date: Thu, 20 Mar 2025 17:11:25 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06E6A113E;
+	Thu, 20 Mar 2025 10:14:03 -0700 (PDT)
+Received: from e133081.arm.com (unknown [10.57.15.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91C333F673;
+	Thu, 20 Mar 2025 10:13:50 -0700 (PDT)
+Date: Thu, 20 Mar 2025 17:13:47 +0000
+From: =?utf-8?Q?Miko=C5=82aj?= Lenczewski <miko.lenczewski@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: ryan.roberts@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+	catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
+	robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+	ardb@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com,
+	maz@kernel.org, james.morse@arm.com, broonie@kernel.org,
+	oliver.upton@linux.dev, baohua@kernel.org, david@redhat.com,
+	ioworker0@gmail.com, jgg@ziepe.ca, nicolinc@nvidia.com,
+	mshavit@google.com, jsnitsel@redhat.com, smostafa@google.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev
+Subject: Re: [PATCH v4 1/3] arm64: Add BBM Level 2 cpu feature
+Message-ID: <20250320171347.GA494995@e133081.arm.com>
+References: <20250319150533.37440-2-miko.lenczewski@arm.com>
+ <20250319150533.37440-3-miko.lenczewski@arm.com>
+ <f9c5839e-5d55-497e-9df3-ab778c4eae72@arm.com>
+ <20250320170936.GB487465@e133081.arm.com>
+ <952cc3ea-ca11-43a3-a8f4-36e3bbb1fa84@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] arm64: Add BBM Level 2 cpu feature
-Content-Language: en-GB
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
- robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
- ardb@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
- james.morse@arm.com, broonie@kernel.org, oliver.upton@linux.dev,
- baohua@kernel.org, david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev
-References: <20250319150533.37440-2-miko.lenczewski@arm.com>
- <20250319150533.37440-3-miko.lenczewski@arm.com>
- <f9c5839e-5d55-497e-9df3-ab778c4eae72@arm.com>
- <20250320170936.GB487465@e133081.arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250320170936.GB487465@e133081.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <952cc3ea-ca11-43a3-a8f4-36e3bbb1fa84@arm.com>
 
-On 20/03/2025 17:09, Mikołaj Lenczewski wrote:
-> On Thu, Mar 20, 2025 at 01:24:25PM +0000, Suzuki K Poulose wrote:
->> On 19/03/2025 15:05, Mikołaj Lenczewski wrote:
->>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>> index fb8752b42ec8..3e4cc917a07e 100644
->>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>> @@ -453,6 +453,9 @@
->>>    	arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
->>>    			32 bit applications.
->>> +	arm64.nobbml2	[ARM64] Unconditionally disable Break-Before-Make Level
->>> +			2 support
->>> +
->>>    	arm64.nobti	[ARM64] Unconditionally disable Branch Target
->>>    			Identification support
->>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->>> index 940343beb3d4..49deda2b22ae 100644
->>> --- a/arch/arm64/Kconfig
->>> +++ b/arch/arm64/Kconfig
->>> @@ -2057,6 +2057,17 @@ config ARM64_TLB_RANGE
->>>    	  The feature introduces new assembly instructions, and they were
->>>    	  support when binutils >= 2.30.
->>> +config ARM64_BBML2_NOABORT
->>> +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
->>> +	default y
->>> +	help
->>> +	  FEAT_BBM provides detection of support levels for break-before-make
->>> +	  sequences. If BBM level 2 is supported, some TLB maintenance requirements
->>> +	  can be relaxed to improve performance. We additonally require the
->>> +	  property that the implementation cannot ever raise TLB Conflict Aborts.
->>> +	  Selecting N causes the kernel to fallback to BBM level 0 behaviour
->>> +	  even if the system supports BBM level 2.
->>
->> minor nit: Should we mention that the feature can be disabled at runtime
->> using a kernel parameter ?
+On Thu, Mar 20, 2025 at 05:11:25PM +0000, Suzuki K Poulose wrote:
+> On 20/03/2025 17:09, Mikołaj Lenczewski wrote:
+> > On Thu, Mar 20, 2025 at 01:24:25PM +0000, Suzuki K Poulose wrote:
+> > > On 19/03/2025 15:05, Mikołaj Lenczewski wrote:
+> > > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > > > index fb8752b42ec8..3e4cc917a07e 100644
+> > > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > > @@ -453,6 +453,9 @@
+> > > >    	arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
+> > > >    			32 bit applications.
+> > > > +	arm64.nobbml2	[ARM64] Unconditionally disable Break-Before-Make Level
+> > > > +			2 support
+> > > > +
+> > > >    	arm64.nobti	[ARM64] Unconditionally disable Branch Target
+> > > >    			Identification support
+> > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > > > index 940343beb3d4..49deda2b22ae 100644
+> > > > --- a/arch/arm64/Kconfig
+> > > > +++ b/arch/arm64/Kconfig
+> > > > @@ -2057,6 +2057,17 @@ config ARM64_TLB_RANGE
+> > > >    	  The feature introduces new assembly instructions, and they were
+> > > >    	  support when binutils >= 2.30.
+> > > > +config ARM64_BBML2_NOABORT
+> > > > +	bool "Enable support for Break-Before-Make Level 2 detection and usage"
+> > > > +	default y
+> > > > +	help
+> > > > +	  FEAT_BBM provides detection of support levels for break-before-make
+> > > > +	  sequences. If BBM level 2 is supported, some TLB maintenance requirements
+> > > > +	  can be relaxed to improve performance. We additonally require the
+> > > > +	  property that the implementation cannot ever raise TLB Conflict Aborts.
+> > > > +	  Selecting N causes the kernel to fallback to BBM level 0 behaviour
+> > > > +	  even if the system supports BBM level 2.
+> > > 
+> > > minor nit: Should we mention that the feature can be disabled at runtime
+> > > using a kernel parameter ?
+> > 
+> > Yes, this sounds very reasonable, I should have thought of that. Will
+> > mention the commandline parameter in the kconfig option documentation.
 > 
-> Yes, this sounds very reasonable, I should have thought of that. Will
-> mention the commandline parameter in the kconfig option documentation.
-
-And also may be mention this in the patch description and may be also
-add the rationale for providing this tunable.
-
-Cheers
-Suzuki
-
-
+> And also may be mention this in the patch description and may be also
+> add the rationale for providing this tunable.
 > 
->>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>> index d561cf3b8ac7..1a4adcda267b 100644
->>> --- a/arch/arm64/kernel/cpufeature.c
->>> +++ b/arch/arm64/kernel/cpufeature.c
->>> @@ -2176,6 +2176,67 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
->>>    	return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
->>>    }
->>> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
->>> +{
->>> +	/* We want to allow usage of bbml2 in as wide a range of kernel contexts
->>> +	 * as possible. This list is therefore an allow-list of known-good
->>> +	 * implementations that both support bbml2 and additionally, fulfill the
->>> +	 * extra constraint of never generating TLB conflict aborts when using
->>> +	 * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
->>> +	 * kernel contexts difficult to prove safe against recursive aborts).
->>> +	 *
->>> +	 * Note that implementations can only be considered "known-good" if their
->>> +	 * implementors attest to the fact that the implementation never raises
->>> +	 * TLBI conflict aborts for bbml2 mapping granularity changes.
->>> +	 */
->>> +	static const struct midr_range supports_bbml2_noabort_list[] = {
->>> +		MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
->>> +		MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
->>> +		{}
->>> +	};
->>> +
->>> +	return is_midr_in_range_list(cpu_midr, supports_bbml2_noabort_list);
->>> +}
->>> +
->>> +static inline unsigned int cpu_read_midr(int cpu)
->>> +{
->>> +	WARN_ON_ONCE(!cpu_online(cpu));
->>> +
->>> +	return per_cpu(cpu_data, cpu).reg_midr;
->>> +}
->>> +
->>> +static bool has_bbml2_noabort(const struct arm64_cpu_capabilities *caps, int scope)
->>> +{
->>> +	if (!IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT))
->>> +		return false;
->>> +
->>> +	if (scope & SCOPE_SYSTEM) {
->>> +		int cpu;
->>> +
->>> +		/* We are a boot CPU, and must verify that all enumerated boot
->>
->> minor nit: See Documentation/process/coding-style.rst,
->> Section 8 Commenting.
-> 
-> My bad, had skimmed the coding style at one point but clearly missed or
-> forgot the section on comments. Will fix up this and all other instances
-> of the same issue.
+> Cheers
+> Suzuki
 > 
 
+Will do! :)
+
+-- 
+Kind regards,
+Mikołaj Lenczewski
 
