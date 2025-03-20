@@ -1,149 +1,168 @@
-Return-Path: <linux-kernel+bounces-569122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6FDA69ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:31:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E02A69ED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 04:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376EC4621BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:29:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07E7F7A1314
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8C6207DE2;
-	Thu, 20 Mar 2025 03:28:30 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137241EBA03
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CB01DD9D1;
+	Thu, 20 Mar 2025 03:31:40 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080BF3987D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742441309; cv=none; b=uTrTdcHDQyylhkZaee97Z+g1p8AHiKZo8TfNH4Su+6viYEwRrT2tMRKN9kU9bxgfddPlTPubwHNBhdLquEZtur8c0QZz1Al3/RgzIhBidbiYeaNTNkgnDnc7Eup9mB/QnURqt3VnlIim78+lDah7o37qWNmQNVyYaGLCuS2n4yc=
+	t=1742441500; cv=none; b=aa1QNWF+XuKp6/KOHfF9lc/dTuRyi8x2HxSZzTk3GSjk6LervjKPPd0EnulLMu1qLtQZ722cvgWUJSkxozIEKDeF8uQtpPuQeQTgv7b5500ISJOyzalXyMj2hRO+yttnspEPVUj/TP+DKP37U8uS8/UODyjq5kmcNXr3yi0GWZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742441309; c=relaxed/simple;
-	bh=JLOL9AJQ2cnSXdz2CMf8N5vWGfKJ6GmWRVN03fA85Hk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Wa2ta0/G41VT/VdXy6OUKQfgTMaXbNfaczp4gAQ4N6H6ojbvUoghqqW5DKo0KswJxi2YQ1AqwKT15VqGNhl99TjPBsLYzT2rqZP0kA+IjwaclbSErB9s92uj+PsptxHimezPb+m5c79kPXQ6H8EeJH/a4QyxE3NRD/WBOKDS/ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85b3a62e3e5so73211839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 20:28:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742441307; x=1743046107;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hecAEkEpOupHb2oLD0Zh2B0utuBtVCK9YGIDBVlwllE=;
-        b=GB01Jpbh2tThAnDRRJzWrI5ORXDuhErGM+6V8WCkpLelU4u31m4Q58aC5ihA1v511F
-         aDw6t6L1HCqT3bzoh4SQHsP5WNQoyBhkTLeGIDXXP9yxdmqvnw7b5aVNGJpaJdTA41Z+
-         vG83PmVgV7j1tch/Wc1eIox6hhfRQF3DFBlsrenS0QPsr6IyG0lfp71Fe4RUW2kZ7u0B
-         Ti0gltoBvZIaH+UzDJ3B00N55jpRSWDlNn0z9dO3gJy3bbvc5oIJniC6GowXb3kTQxZ0
-         CMb5L+lbxji38+4++JhD+GgHcbCudz27MtbHSEzP0h9iNr/JM3+h2pOufkHIIMm2uXWC
-         crSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQMX1xi0cMfe4FkvXg1QkZekwhwELfdvHH+Eb7CIekCtNWn1AvSVHsEEEjxHFZ1jGDfWCHUTB3an4xaoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV1JupkMGQQNFGT5o3MBoEHvhqDzSpPnrlAzXdbN3MCgAfllEZ
-	FeAH/vaEfIg6JUaMZWJtHuVx5F3IXDL8REMoux3u6JnPeaAJxXm2ki03cyvkM4PLIrVWBg2fM0u
-	aUH6FPUQNRVKU9QdHEHpnkBr9zEY+UaZald1bAZhx1xSQpH8JtiLNLOs=
-X-Google-Smtp-Source: AGHT+IH2FH63ihr7KH8PHX4OwIbTm0+zipnw7sTZ8BDsGMrxsR8sA4b5DdQfTomhyQTgDAln6rbz9JOtu9oWrogpobyrchcjdtaD
+	s=arc-20240116; t=1742441500; c=relaxed/simple;
+	bh=5GmMr7sONuv6fDugtC4v698xa1pa+WZCdXaYZ4FxEeM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=BvWYwB5dB9K4GB3usxc1ZS157jINEi0bH5bKNVKD9XORZq8QsM0MZrDfopK++jlsdmPI3l0J46HplAOkjv/mCCn1bKStuipyPkxqGbSrPceh+0XzwqsJcPS4lrCVxxEXB5vo08VrJorlXPetFIVYCC6NoYqA50zvdj96TrT7FZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxTWsRjNtnVPGdAA--.4406S3;
+	Thu, 20 Mar 2025 11:31:29 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMDx_MQKjNtnM_hUAA--.47363S3;
+	Thu, 20 Mar 2025 11:31:26 +0800 (CST)
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+To: Oliver Upton <oliver.upton@linux.dev>,
+ David Hildenbrand <david@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Marc Zyngier <maz@kernel.org>,
+ Ankit Agrawal <ankita@nvidia.com>, "joey.gouly@arm.com"
+ <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "shahuang@redhat.com" <shahuang@redhat.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+ Kirti Wankhede <kwankhede@nvidia.com>,
+ "Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+ Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ Dan Williams <danw@nvidia.com>, Zhi Wang <zhiw@nvidia.com>,
+ Matt Ochs <mochs@nvidia.com>, Uday Dhoke <udhoke@nvidia.com>,
+ Dheeraj Nigam <dnigam@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>,
+ "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+ "sebastianene@google.com" <sebastianene@google.com>,
+ "coltonlewis@google.com" <coltonlewis@google.com>,
+ "kevin.tian@intel.com" <kevin.tian@intel.com>,
+ "yi.l.liu@intel.com" <yi.l.liu@intel.com>, "ardb@kernel.org"
+ <ardb@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "gshan@redhat.com" <gshan@redhat.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "ddutile@redhat.com" <ddutile@redhat.com>,
+ "tabba@google.com" <tabba@google.com>,
+ "qperret@google.com" <qperret@google.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <86r033olwv.wl-maz@kernel.org>
+ <SA1PR12MB7199500A3683B15A64B663D6B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <87tt7y7j6r.wl-maz@kernel.org>
+ <SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <8634fcnh0n.wl-maz@kernel.org> <Z9h98RhunemcFhhz@arm.com>
+ <86wmcmn0dp.wl-maz@kernel.org> <20250318125527.GP9311@nvidia.com>
+ <Z9nJH38Em9XEx3U7@arm.com> <ed25f5a6-dad6-4b5e-b42b-58e6ced6c7a2@redhat.com>
+ <Z9nMHW-OqTLEqDRs@linux.dev>
+From: bibo mao <maobibo@loongson.cn>
+Message-ID: <bbb361bd-6cb8-7b9d-f689-d52bb1a05605@loongson.cn>
+Date: Thu, 20 Mar 2025 11:30:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdac:0:b0:3d3:d28e:eae9 with SMTP id
- e9e14a558f8ab-3d586b40c24mr59334145ab.7.1742441307205; Wed, 19 Mar 2025
- 20:28:27 -0700 (PDT)
-Date: Wed, 19 Mar 2025 20:28:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67db8b5b.050a0220.31a16b.0001.GAE@google.com>
-Subject: [syzbot] [fs?] KCSAN: data-race in __lookup_mnt / __se_sys_pivot_root (6)
-From: syzbot <syzbot+de8b27abd23eac60e15f@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    a7f2e10ecd8f Merge tag 'hwmon-fixes-for-v6.14-rc8/6.14' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=166a383f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f33d372c4021745
-dashboard link: https://syzkaller.appspot.com/bug?extid=de8b27abd23eac60e15f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/614aabc71b48/disk-a7f2e10e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d47dd90a010a/vmlinux-a7f2e10e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/418d8cf8782b/bzImage-a7f2e10e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+de8b27abd23eac60e15f@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in __lookup_mnt / __se_sys_pivot_root
-
-write to 0xffff888118782d98 of 8 bytes by task 20163 on cpu 0:
- unhash_mnt fs/namespace.c:1030 [inline]
- __do_sys_pivot_root fs/namespace.c:4456 [inline]
- __se_sys_pivot_root+0x850/0x1090 fs/namespace.c:4388
- __x64_sys_pivot_root+0x31/0x40 fs/namespace.c:4388
- x64_sys_call+0x1abf/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:156
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff888118782d98 of 8 bytes by task 20164 on cpu 1:
- __lookup_mnt+0xa0/0xf0 fs/namespace.c:839
- __follow_mount_rcu fs/namei.c:1592 [inline]
- handle_mounts fs/namei.c:1622 [inline]
- step_into+0x426/0x820 fs/namei.c:1952
- walk_component fs/namei.c:2120 [inline]
- link_path_walk+0x50e/0x830 fs/namei.c:2479
- path_lookupat+0x72/0x2b0 fs/namei.c:2635
- filename_lookup+0x150/0x340 fs/namei.c:2665
- user_path_at+0x3c/0x120 fs/namei.c:3072
- __do_sys_pivot_root fs/namespace.c:4404 [inline]
- __se_sys_pivot_root+0x10e/0x1090 fs/namespace.c:4388
- __x64_sys_pivot_root+0x31/0x40 fs/namespace.c:4388
- x64_sys_call+0x1abf/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:156
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0xffff888106a31d80 -> 0xffff8881004dccc0
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 20164 Comm: syz.0.5594 Tainted: G        W          6.14.0-rc7-syzkaller-00074-ga7f2e10ecd8f #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
+In-Reply-To: <Z9nMHW-OqTLEqDRs@linux.dev>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDx_MQKjNtnM_hUAA--.47363S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7WFW5WFW5Kr47Ww15ZF4fJFc_yoW8ZF1Dpr
+	yxt3ZFka1kXrySyws29w42gF40yw4Fqr4UXw15Kr1UCwn09FnrKFWFya12kFsrAF1Sq39F
+	vFZ0q347JFya9abCm3ZEXasCq-sJn29KB7ZKAUJUUUUJ529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4UJwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU5UR67UUUU
+	U==
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2025/3/19 上午3:40, Oliver Upton wrote:
+> On Tue, Mar 18, 2025 at 08:35:38PM +0100, David Hildenbrand wrote:
+>> On 18.03.25 20:27, Catalin Marinas wrote:
+>>> On Tue, Mar 18, 2025 at 09:55:27AM -0300, Jason Gunthorpe wrote:
+>>>> On Tue, Mar 18, 2025 at 09:39:30AM +0000, Marc Zyngier wrote:
+>>>>> The memslot must also be created with a new flag ((2c) in the taxonomy
+>>>>> above) that carries the "Please map VM_PFNMAP VMAs as cacheable". This
+>>>>> flag is only allowed if (1) is valid.
+>>>>>
+>>>>> This results in the following behaviours:
+>>>>>
+>>>>> - If the VMM creates the memslot with the cacheable attribute without
+>>>>>     (1) being advertised, we fail.
+>>>>>
+>>>>> - If the VMM creates the memslot without the cacheable attribute, we
+>>>>>     map as NC, as it is today.
+>>>>
+>>>> Is that OK though?
+>>>>
+>>>> Now we have the MM page tables mapping this memory as cachable but KVM
+>>>> and the guest is accessing it as non-cached.
+>>>
+>>> I don't think we should allow this.
+>>>
+>>>> I thought ARM tried hard to avoid creating such mismatches? This is
+>>>> why the pgprot flags were used to drive this, not an opt-in flag. To
+>>>> prevent userspace from forcing a mismatch.
+>>>
+>>> We have the vma->vm_page_prot when the memslot is added, so we could use
+>>> this instead of additional KVM flags.
+>>
+>> I thought we try to avoid messing with the VMA when adding memslots; because
+>> KVM_CAP_SYNC_MMU allows user space for changing the VMAs afterwards without
+>> changing the memslot?
+> 
+> Any checks on the VMA at memslot creation is done out of courtesy to
+> userspace so it 'fails fast'. We repeat checks on the VMA at the time of
+> fault to handle userspace twiddling VMAs behind our back.
+yes, I think it is better to add cachable attribute in memslot, it can 
+be checked on the VMA at memslot creation. Also cache attribute can be 
+abstracted with cachable/uc/wc type rather than detailed arch specified.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Regards
+Bibo Mao
+> 
+> VM_MTE_ALLOWED is an example of this.
+> 
+> Thanks,
+> Oliver
+> 
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
