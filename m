@@ -1,141 +1,165 @@
-Return-Path: <linux-kernel+bounces-569386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB613A6A220
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:11:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039ECA6A222
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE928A66EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:10:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6723F189D404
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDCC21ADCC;
-	Thu, 20 Mar 2025 09:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA7521ADCC;
+	Thu, 20 Mar 2025 09:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="In1g4rUi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4JNpfK1c";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FYHYHo0n"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447C8213245;
-	Thu, 20 Mar 2025 09:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EDE1A238C;
+	Thu, 20 Mar 2025 09:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742461862; cv=none; b=uNiGawy0n9OMDihUe/BLyFGQp/6R1oJvAyY1TsY2ECMXSezSSsmDZaZfyx1GSqAfbtKvieDrP5eO+NRS9N3jxt1fKbDWfodWvcFYRxqFrmGz5W3HE0q6124fHQlNu5AUC+cza8LTgNQR2TXuVT8BwSvAMvALxz32R54dmem2Xrs=
+	t=1742461878; cv=none; b=R3VeRt7ChweFJw/aeWh1/OpdoY51FjlTpBKoKlMFvRu3wECRfD9hR492RhNjuMOx2QpM6BOkIufmnCf+TSsXDyutP4neDdhntJkF90uuDDWX1HjjfEFKLnkCkNMsfc+Ui+UfjX8eqrAtlA1tpOF3RQVHECbDj3PsZR5HhuZcDHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742461862; c=relaxed/simple;
-	bh=15a5VxRJS8V9l6kVXtwQdjDgviqb/vy7Z07smrfa5V0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nc5RAcyGR7vBNTIq9SVmrspmzmuloDqKY66uFz7ursO/IAaa36lG4izIAhjB2vefhUu2/RwOrj9EZ+xIPTeW03enFfq9IybyA7NQuwx0lyscTfU6y1rGEyNIBIAM9qZ1GOVhfNSqI4TkWszw2JwwtYDmxxttZjJjZIo9jVbpxRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=In1g4rUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D944C4CEDD;
-	Thu, 20 Mar 2025 09:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742461862;
-	bh=15a5VxRJS8V9l6kVXtwQdjDgviqb/vy7Z07smrfa5V0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=In1g4rUiolC6SIkmnEALCTEXDYVMLz5EFWLWj36oPyKIcgjFEHaTZuNatgG2DhL+1
-	 Mzvun4IotKG63Ip76H8ynAUYaBMRTZdwMjcb3XKYdJSU8UrZPc74fnMsnfJNc2pc1M
-	 xMZdIDOyppa8ka4pwHgmwX4CTQd0GR1wSxhCDPwMb9VPds4sbGY5OFmBvZuzXkUDBZ
-	 F+Qh8HLG7IYqoTb/jzbN3wYx/XVugVsY4ragG1iYScTkhzJpHAASddNDx0xxGgfKA1
-	 jo7Z7EQY3rGzzc1i8eGLq3pWRFbzbNeKrHJJ2SQeLfi7DBuQvFfdlZtIGI+Qr70ahK
-	 N9wpoIB7Yk6Fg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tvBvX-00FMTh-OY;
-	Thu, 20 Mar 2025 09:10:59 +0000
-Date: Thu, 20 Mar 2025 09:10:59 +0000
-Message-ID: <86iko4m5i4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose
- <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	devel@daynix.com
-Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
-In-Reply-To: <0d84bc94-1c65-4737-a2eb-aa7f96a7d1e0@daynix.com>
-References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
-	<Z9pze3J2_zrTk_yC@linux.dev>
-	<e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
-	<86plidmjwh.wl-maz@kernel.org>
-	<bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
-	<86o6xxmg87.wl-maz@kernel.org>
-	<aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
-	<86msdhmemw.wl-maz@kernel.org>
-	<cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
-	<86ldt0n9w1.wl-maz@kernel.org>
-	<Z9sSMJAlf7cQ5viu@linux.dev>
-	<0d84bc94-1c65-4737-a2eb-aa7f96a7d1e0@daynix.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742461878; c=relaxed/simple;
+	bh=Dst/DGFL64COKD10SvoG59LF+Is/23kUkBCSAsjgk1Q=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PPQFec5F/QHXxTggZVULevvE+YXA5imDbupDbZWXADrVG0CcaKVQFxKdsUl5fCtq6lnxXuvdLZId+tfcYWPWQsDkwhY+xPekfsA4pB/zZZq9/EEswqQoyuWju3N964qsc/4uTxPD7PeSW07tIW8jsbE2JvI1twfJCSbUhq5gX1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4JNpfK1c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FYHYHo0n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 20 Mar 2025 09:11:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742461873;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p+3/J2hd2qN9XRVW1GlgGpad6IVb1zQuDogijj12jbo=;
+	b=4JNpfK1chBOplfttSxPTcKdiveTcTuqII9skq4fHATNa/tIYvyiOtLn1NIcgwkn1fi9oVJ
+	XiJQG54WvYxLOkYYk05yd6eUsPgJOrzpGAUkikE22MYd27QjZbjOKZPPv+56Z5Z7SLWdaa
+	65KQXhIxxRxijlufphjGy0WYK7R4nxo56xC/hXk8jfRZ3PBEFc4dWlYsTR97jq2baE+bt9
+	NJxJNYtwelUpjwIJ+Qr4KEvK7ffXOHUwnv44PalXlDCPNn2I+jr8IGD3ZZOn86/gGKY+2o
+	4kbtgY1FxbT0XZp2X41aAl5LG3Ddpnb+4z7qFc8O0NIdK1RHI7c0UEPIbpEokg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742461873;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p+3/J2hd2qN9XRVW1GlgGpad6IVb1zQuDogijj12jbo=;
+	b=FYHYHo0nSXR76j0iD+vynrvCuiL85AnGlr3ZSCj7WusaYb17hkNdPF4P8tS1owkslVIltX
+	JY5DtTLJCLmGFGCA==
+From: "tip-bot2 for Yujun Dong" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] cpuidle, sched: Use smp_mb__after_atomic() in
+ current_clr_polling()
+Cc: Yujun Dong <yujundong@pascal-lab.net>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241230141624.155356-1-yujundong@pascal-lab.net>
+References: <20241230141624.155356-1-yujundong@pascal-lab.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kees@kernel.org, gustavoars@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devel@daynix.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Message-ID: <174246187166.14745.68835127537382463.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Mar 2025 06:03:35 +0000,
-Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> 
-> On 2025/03/20 3:51, Oliver Upton wrote:
-> > On Wed, Mar 19, 2025 at 06:38:38PM +0000, Marc Zyngier wrote:
-> >> On Wed, 19 Mar 2025 11:51:21 +0000, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> >>> What about setting the flag automatically when a user fails to pin
-> >>> vCPUs to CPUs that are covered by one PMU? There would be no change if
-> >>> a user correctly pins vCPUs as it is. Otherwise, they will see a
-> >>> correct feature set advertised to the guest and the cycle counter
-> >>> working.
-> >> 
-> >> How do you know that the affinity is "correct"? VCPU affinity can be
-> >> changed at any time. I, for one, do not want my VMs to change
-> >> behaviour because I let the vcpus bounce around as the scheduler sees
-> >> fit.
-> 
-> Checking the affinity when picking the default PMU; the vCPU affinity
-> is the only thing that rules the choice of the default PMU even now.
->
-> Perhaps we may model the API as follows: introduce another "composite"
-> PMU that works on any core but only exposes the cycle counter. Robust
-> VMMs will choose it or one of hardware PMUs with
-> KVM_ARM_VCPU_PMU_V3_SET_PMU. KVM will choose the default PMU according
-> to the vCPU affinity at the point of KVM_ARM_VCPU_INIT otherwise. If
-> the affinity is covered by one hardware PMU, that PMU will be chosen
-> as the default. The "composite" PMU will be the default otherwise.
+The following commit has been merged into the sched/core branch of tip:
 
-This makes no sense to me. A VCPU is always affine to a PMU, because
-we do not support configurations where only some CPUs have a PMU. This
-is an all-or-nothing situation.
+Commit-ID:     3785c7dbae0f733f13f8857beaaada5d7dc63e02
+Gitweb:        https://git.kernel.org/tip/3785c7dbae0f733f13f8857beaaada5d7dc63e02
+Author:        Yujun Dong <yujundong@pascal-lab.net>
+AuthorDate:    Mon, 30 Dec 2024 22:16:24 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 20 Mar 2025 10:03:52 +01:00
 
-More importantly, you keep suggesting the same "new default", and I
-keep saying NO.
+cpuidle, sched: Use smp_mb__after_atomic() in current_clr_polling()
 
-My position is clear: if you want a *new* behaviour, you *must* add a
-new flag that the VMM explicitly provides to enable this CC-only PMU.
-No change in default behaviour at all.
+In architectures that use the polling bit, current_clr_polling() employs
+smp_mb() to ensure that the clearing of the polling bit is visible to
+other cores before checking TIF_NEED_RESCHED.
 
-I'm not going to move from that.
+However, smp_mb() can be costly. Given that clear_bit() is an atomic
+operation, replacing smp_mb() with smp_mb__after_atomic() is appropriate.
 
-	M.
+Many architectures implement smp_mb__after_atomic() as a lighter-weight
+barrier compared to smp_mb(), leading to performance improvements.
+For instance, on x86, smp_mb__after_atomic() is a no-op. This change
+eliminates a smp_mb() instruction in the cpuidle wake-up path, saving
+several CPU cycles and thereby reducing wake-up latency.
 
--- 
-Without deviation from the norm, progress is not possible.
+Architectures that do not use the polling bit will retain the original
+smp_mb() behavior to ensure that existing dependencies remain unaffected.
+
+Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241230141624.155356-1-yujundong@pascal-lab.net
+---
+ include/linux/sched/idle.h | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/sched/idle.h b/include/linux/sched/idle.h
+index e670ac2..439f602 100644
+--- a/include/linux/sched/idle.h
++++ b/include/linux/sched/idle.h
+@@ -79,6 +79,21 @@ static __always_inline bool __must_check current_clr_polling_and_test(void)
+ 	return unlikely(tif_need_resched());
+ }
+ 
++static __always_inline void current_clr_polling(void)
++{
++	__current_clr_polling();
++
++	/*
++	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
++	 * Once the bit is cleared, we'll get IPIs with every new
++	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
++	 * fold.
++	 */
++	smp_mb__after_atomic(); /* paired with resched_curr() */
++
++	preempt_fold_need_resched();
++}
++
+ #else
+ static inline void __current_set_polling(void) { }
+ static inline void __current_clr_polling(void) { }
+@@ -91,21 +106,15 @@ static inline bool __must_check current_clr_polling_and_test(void)
+ {
+ 	return unlikely(tif_need_resched());
+ }
+-#endif
+ 
+ static __always_inline void current_clr_polling(void)
+ {
+ 	__current_clr_polling();
+ 
+-	/*
+-	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
+-	 * Once the bit is cleared, we'll get IPIs with every new
+-	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
+-	 * fold.
+-	 */
+ 	smp_mb(); /* paired with resched_curr() */
+ 
+ 	preempt_fold_need_resched();
+ }
++#endif
+ 
+ #endif /* _LINUX_SCHED_IDLE_H */
 
