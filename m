@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-569701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123D7A6A64F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:35:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4671A6A64D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953C03B356C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D8967A5613
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17041F5F6;
-	Thu, 20 Mar 2025 12:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960F1D555;
+	Thu, 20 Mar 2025 12:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="IYJDlksZ"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTjbgLvX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD46139E;
-	Thu, 20 Mar 2025 12:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9767D139E;
+	Thu, 20 Mar 2025 12:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742474016; cv=none; b=EZAxwajng6bOgyWkNURPBCV0kMKWclUfjI7W4QMnQv0r7ERgfDv/70D6PkCvhxWwKOGwBU/jOUn2Ye9S3iCWwikzs1B9RySRwNOWYUQjhOfiIn8QCkj/bsOSqvZHxzPMESa9MYdmfmxq6G4vpy+EzYZn4IHVvq7yatvbHabOZCo=
+	t=1742473995; cv=none; b=j5LWE3wz3LgU2CoVQuEB5vDxmE8Fnfquqd6Os2Lu4zGne+r/FmRCPCtCxQebLbrSCpZ8l416oHUgHnIazOGjHU5PTG1iiJ7mSiG08iN94fqUIk4WblfbCoA7bv/7hLu+engloojk9OFbXQdek8gHIn8/w3vIKDADCqthgrtPKDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742474016; c=relaxed/simple;
-	bh=m9r0AbXxI3hD3b/IDRiy8UewvP2qrBQybEza6MCZe80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XLTvdxmj1US6bJ5b4keQlQkCAUyFgG5DeNNkGCA32Gqy5klS2/7yG9Gdv1ETRhvI4K8k5C86/hEWwfaeGms2IzfqGgmwMy5tXNNiJitH4AEaMNjUtauK3jgKqHj44oahW+KlWGfkKmyekp5cE9Wo+pt1Pq54UsTIEycC1If7UVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=IYJDlksZ; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1tvF5N-006bbm-Ui; Thu, 20 Mar 2025 13:33:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=yXhMsCE0agUhqpYyGmOJUSGwpFIxlvTbhSiqHGBblFw=; b=IYJDlksZnXDwSzUWEpVLM0T2xz
-	amE/duVv1f4Vdb5t54txFNX9uGSb7XxG1cWw/Xiqe+t3pxffQ0gJJm/sfgdA661+bbSYqEhAR5SWh
-	jvL1xOqNj2zQIYacwkqUW+V6FpkeDqWrKoyChxTMgfX7QnEuHOzKmWWQXffZ1XcpqSESraZyBVq0x
-	8ygPZSFYH7BPHUuoO4PhoU51X6nH2Q8QhLT+ySJb/5VZk/x3fpq20gKnLRbt8CJ237TuK83U5IvUQ
-	FRT2uV2689hYsvXt94TQ47rulbG2nABYpf9QmW4DYAjmBAktoCjOoqB4jhV5fZvFlG2ga74lO3LPf
-	YRfAXJkQ==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1tvF5H-0006Hf-NK; Thu, 20 Mar 2025 13:33:15 +0100
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1tvF4x-00HH1a-O0; Thu, 20 Mar 2025 13:32:55 +0100
-Message-ID: <1e8c8e7a-23d9-4ed3-902a-8a4ba06f1f69@rbox.co>
-Date: Thu, 20 Mar 2025 13:32:53 +0100
+	s=arc-20240116; t=1742473995; c=relaxed/simple;
+	bh=8G0b6aj9wz9P0NoVVC9GJR8BMwPTa2rqfrK2RhHdplM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cmbvNiwVa4EApOocSED3/oqN9wISp41JzTxEARUex+yVYWH993NQB0sqRD+ZVOGB9gV8ExpJjIfcvZS9rjh0dzRba0oKoX5DmMRQecE/VmseAevEw00t9jOngP81WzBCM0dCbHeXmoajxlmGhjKdb6e/lgqlW258p+4d5mBrLAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTjbgLvX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88562C4CEDD;
+	Thu, 20 Mar 2025 12:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742473995;
+	bh=8G0b6aj9wz9P0NoVVC9GJR8BMwPTa2rqfrK2RhHdplM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bTjbgLvXivLxdxDwR/uQQTB2BWwiOcbehfh/Dg+pWiz+BXP1sgTL8MW3JikJrMCwR
+	 K0Vj7DzWCTInPcV9CdsxXJ8or0R0foJrFB2XqbY7BHC1I3suwivpa26LKkJr4uM5pJ
+	 DrKAbgRRK2dDT5CIrvZKyJiyGWOIh1tGp1EwXSFkOnrN+Ci9WcbwHAcu7jUnQlxA3s
+	 GtNLaZDgSC28Y+6CBCUQvlE+rttwN+33DXNNApY6QvoFdcj/hAhTcnv/+xMnbKZh59
+	 igxsNz96VbGH2jyXc3ZutOJQFliELZjwd2ibwczdbjXKqnVq2i7JtUUOmNxNyIW1tG
+	 0VS9AjEh9Bfaw==
+Date: Thu, 20 Mar 2025 13:33:12 +0100
+From: Daniel Gomez <da.gomez@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, John Ogness <john.ogness@linutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: Taint the kernel when write-protecting
+ ro_after_init fails
+Message-ID: <d65wbmp54onniprsai73siwa4pqcmmzlzag53l72sucq6irp6r@vwhbn2bkvptu>
+References: <20250306103712.29549-1-petr.pavlu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 1/3] bpf, sockmap: avoid using sk_socket after
- free when sending
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, xiyou.wangcong@gmail.com,
- john.fastabend@gmail.com, jakub@cloudflare.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
- mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
- song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- sgarzare@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
- <20250317092257.68760-2-jiayuan.chen@linux.dev>
-From: Michal Luczaj <mhal@rbox.co>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <20250317092257.68760-2-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306103712.29549-1-petr.pavlu@suse.com>
 
-On 3/17/25 10:22, Jiayuan Chen wrote:
-> The sk->sk_socket is not locked or referenced, and during the call to
-> skb_send_sock(), there is a race condition with the release of sk_socket.
-> All types of sockets(tcp/udp/unix/vsock) will be affected.
-> ...
-> Some approach I tried
-> ...
-> 2. Increased the reference of sk_socket->file:
->    - If the user calls close(fd), we will do nothing because the reference
->      count is not set to 0. It's unexpected.
+On Thu, Mar 06, 2025 at 11:36:55AM +0100, Petr Pavlu wrote:
+> In the unlikely case that setting ro_after_init data to read-only fails, it
+> is too late to cancel loading of the module. The loader then issues only
+> a warning about the situation. Given that this reduces the kernel's
+> protection, it was suggested to make the failure more visible by tainting
+> the kernel.
+> 
+> Allow TAINT_BAD_PAGE to be set per-module and use it in this case. The flag
+> is set in similar situations and has the following description in
+> Documentation/admin-guide/tainted-kernels.rst: "bad page referenced or some
+> unexpected page flags".
+> 
+> Adjust the warning that reports the failure to avoid references to internal
+> functions and to add information about the kernel being tainted, both to
+> match the style of other messages in the file. Additionally, merge the
+> message on a single line because checkpatch.pl recommends that for the
+> ability to grep for the string.
+> 
+> Suggested-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> ---
+> I opted to use TAINT_BAD_PAGE for now because it seemed unnecessary to me
+> to introduce a new flag only for this specific case. However, if we end up
+> similarly checking set_memory_*() in the boot context, a separate flag
+> would be probably better.
+> ---
+>  kernel/module/main.c | 7 ++++---
+>  kernel/panic.c       | 2 +-
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 1fb9ad289a6f..8f424a107b92 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -3030,10 +3030,11 @@ static noinline int do_init_module(struct module *mod)
+>  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+>  #endif
+>  	ret = module_enable_rodata_ro_after_init(mod);
+> -	if (ret)
+> -		pr_warn("%s: module_enable_rodata_ro_after_init() returned %d, "
+> -			"ro_after_init data might still be writable\n",
+> +	if (ret) {
+> +		pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
 
-Have you considered bumping file's refcnt only for the time of
-send/callback? Along the lines of:
+This is quite large. Can we simplify it?
 
-static struct file *sock_get_file(struct sock *sk)
-{
-	struct file *file = NULL;
-	struct socket *sock;
+For 1 line grep parsing we can start writing at the beginning of the line as
+it's done in some cases in fs/xfs/xfs_super.c. Proposals:
 
-	rcu_read_lock();
-	sock = sk->sk_socket;
-	if (sock)
-		file = get_file_active(&sock->file);
-	rcu_read_unlock();
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 6d1094c6dea8..fc5510b8aa14 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -2982,7 +2982,8 @@ static noinline int do_init_module(struct module *mod)
+ #endif
+        ret = module_enable_rodata_ro_after_init(mod);
+        if (ret) {
+-               pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
++               pr_warn(
++"%s: write-protecting ro_after_init failed with %d - tainting kernel\n",
+                        mod->name, ret);
+                add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
+        }
 
-	return file;
-}
 
-static int sk_psock_handle_skb(struct sk_psock *psock, struct sk_buff *skb,
-			       u32 off, u32 len, bool ingress)
-{
-	int err;
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 6d1094c6dea8..4fa0c80b2bb4 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -2982,7 +2982,8 @@ static noinline int do_init_module(struct module *mod)
+ #endif
+        ret = module_enable_rodata_ro_after_init(mod);
+        if (ret) {
+-               pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
++               pr_warn(
++"%s: ro_after_init failed with %d, data might be writable - tainting kernel\n",
+                        mod->name, ret);
+                add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
+        }
 
-	if (!ingress) {
-		struct sock *sk = psock->sk;
-		struct file *file;
-		...
-
-		file = sock_get_file(sk);
-		if (!file)
-			return -EIO;
-
-		err = skb_send_sock(sk, skb, off, len);
-		fput(file);
-		return err;
-	}
-	...
-}
-
-static void sk_psock_verdict_data_ready(struct sock *sk)
-{
-	struct file *file;
-	...
-
-	file = sock_get_file(sk);
-	if (!file)
-		return;
-
-	copied = sk->sk_socket->ops->read_skb(sk, sk_psock_verdict_recv);
-	fput(file);
-	...
-}
-
+Daniel
 
