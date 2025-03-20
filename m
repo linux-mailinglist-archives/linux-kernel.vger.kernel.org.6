@@ -1,142 +1,127 @@
-Return-Path: <linux-kernel+bounces-569325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836FBA6A182
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:36:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F1EA6A184
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5E719C175D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:36:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA877B1E66
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2D121C9ED;
-	Thu, 20 Mar 2025 08:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B7D2144A2;
+	Thu, 20 Mar 2025 08:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7VOgy6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nKJ1iucM"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CCB20FA90;
-	Thu, 20 Mar 2025 08:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CD71519BE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742459747; cv=none; b=hLfOPMWXk6UiY8Bu7G3OYX0LxvKpm+Spnl39s8IKXhMqE8fw8a/Al6y8gGbkWeqIIuPnRK2tTFmTZAXVxIQcdQlMH0ikz3I6ljiL2G/VktaQ2OL3Gb6igOpUSkszMh2ODn8j3oqUx5tLgwQ39+6l4VT6gUPxgtzPwVB9PiI2qFA=
+	t=1742459767; cv=none; b=k5jIRew5ZPlDevxf9SH00Yr77/N7nMlioaa7hSGIRJV2zy2ZzN7qLoECOH1rxli1dujxMssSVcDoa50KA12zuIIdCVsOd4ogdSySixnEEwHoxvfL8DRLADo+fXDVUWNSvsjUzfmNm1jxLvP6PdxUkquI5SG2ELjFkfDotCCd5sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742459747; c=relaxed/simple;
-	bh=Fi+/sL/HB7rD5Vc5usDgoiW1Oe/Vw1Swp0WgOewHlmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QwMIEP08vAPjD1IiaonSdjCQFkoHQBsk654j+tU8A2Y/cACVCPvhCz3Llhj+W+C4ys1+5xrTQx5lu6ytDHodEzmMSDfmWNz7G4oxJW5+sMqvaHkOVOaJVHWVFux+ugLQjrq2majocsB91FZXbtuiMZC4dU+NKMTaiuesSQEeRC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7VOgy6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B86DCC4CEEC;
-	Thu, 20 Mar 2025 08:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742459747;
-	bh=Fi+/sL/HB7rD5Vc5usDgoiW1Oe/Vw1Swp0WgOewHlmM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I7VOgy6tfCHbABO0CGULJ8EYynSLFNdNXzP9fKTvU1m8bbJpGSB45IUuELwoiHAI4
-	 xano06wJvgouG9j4DOz/n3Ky9fWtqyk5OZhxDLsLQ57SkvKKKtHLdJIORsgn0aq8X/
-	 y8fGoAVEgz6Fm/HidSov+MV1J/ayJ/Mu83lIwfreV+QKmq7vicrjsVu1oJXxnxu0J/
-	 ZyM/H0tBOkXUANONwi15x+Jkp46/hgn//TEDiYetlfeM/4dhERsBPXDYKOPZEPc4rz
-	 0sKXXtevId7M+aiRNJPd/UVEibDBP5C6Qti1+czXqJKJTzvGz0D64CramVwLnUR4g/
-	 haA06zXU99XUA==
-Date: Thu, 20 Mar 2025 09:35:43 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Johannes Berg <johannes@sipsolutions.net>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
-	=?utf-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>, 
-	Mailing List <devicetree-spec@vger.kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v4 1/5] dt-bindings: net: Add network-class schema for
- mac-address properties
-Message-ID: <20250320-cocky-proficient-alligator-5da8a2@krzk-bin>
-References: <20250319-dt-bindings-network-class-v4-0-2329336802b4@ixit.cz>
- <20250319-dt-bindings-network-class-v4-1-2329336802b4@ixit.cz>
+	s=arc-20240116; t=1742459767; c=relaxed/simple;
+	bh=KNJnFdpohVmIa9lQL3tDOPD+TWPXmNHbRtdDIF7XKFs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hhBf4eI2EGfevMsq4YJUkdM2hCT8eHwVOAn46gPhUH1h5Z5C2TVy3Eo0giqMktzDkB6wP/gkJIy+hx3BsO8HSyeVX4bEn7tXxe7N31Y2/+A4p14v3zYtcB5va/vqwU4bdIrB5S+FJrkb6WVa4puCmtsFUGzE4s2wepjxmNRRXME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nKJ1iucM; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so2512145e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742459764; x=1743064564; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F//KPN2uLlDC+J9SdRcv9HHuEvs+T8Y6Iwqb4VpEjaQ=;
+        b=nKJ1iucMm4+Ft7xY7dWQjBzS9hYTpOAaS0HrvwhD4WKQglGeji44zIKnRc5a0tC40U
+         wIzQ5R42sHRNnC8jJUrfnQ5PTnUYUt6IGwuKT+isj56g+xZuK3bF6oy4e4Y5xHXyJPgy
+         oQXDIqJNlz7w5sgdcqSdg0hj02IzXurvJzEKGhwDiskbA2b24KBJ1KAEzmlZkumWcCZd
+         KFgsufXXs2LwyrwzqjfduLjOLWrmtil1671KKqXeBx+TsfAQpy3YSybba/7D3GoknfWF
+         mflNIdQpmLDbIo5vH5Q5pjVi3/rmjRqOcMExqFVSzJ+wUC7+Dz9VlRUAISePfLsv2Zit
+         U9jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742459764; x=1743064564;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F//KPN2uLlDC+J9SdRcv9HHuEvs+T8Y6Iwqb4VpEjaQ=;
+        b=RWc3IgQE1h2MzdjfY0dBcWs0xtoxCJ/bqeWTSPdNKicczibxCRiLQjVnfjRz2LNwq8
+         9+A0hN6wONpll08bmHBR8keZ93NMheocII0f6Osg34FneyeUD44fC/omKKKaI2QehM2/
+         /GU+KnUsy0Vz5ZxJCw4a/DzrW1VPcH8osJQ69z/dG/E1W+J3J5MLlGFKl3Vg3LKKgoCy
+         ICubiJjvFyavYBA85HRuKInZVfmmqFpdPJvMLV7TgvPjlkyMNGqTSaOtA5G95hT2Olyw
+         cil27OKHJOvs/FBlRjqIjp39utaV4oytKHrrcnyY68rS/41qPZ20pkjL6Vdl0liIQw3Z
+         Of3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCtkviNyZVUNozPrBisnjfNcfRNySMsACitIujNP7zJ78JCEfnUI0CCNobULrjy13CuDDf0zPorKjkDi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhv6RGvlcHWprMFiozq5ep9WffqlZuSXqTSDdJOCriEWJ85MuA
+	pojXIICHhPIm+WISGFnC/cAVn86oapCPo7mlrXZUJgu5aFvxaT/dnu0uoRjVuZdn6B1YhhPJgZx
+	Tlm4y/vBZM1pwEQ==
+X-Google-Smtp-Source: AGHT+IGae8DQmm0qB5K/T2yS0Ts18/juxqQiCR0uNBRGxkWQTVlUWPIuqtVDcfSLOrlM8VzPf2m3TStxTVObcuM=
+X-Received: from wmby10.prod.google.com ([2002:a05:600c:c04a:b0:43d:1f4c:ccf2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4f86:b0:43c:f616:f08 with SMTP id 5b1f17b1804b1-43d4378b1bbmr48923425e9.8.1742459764068;
+ Thu, 20 Mar 2025 01:36:04 -0700 (PDT)
+Date: Thu, 20 Mar 2025 08:36:02 +0000
+In-Reply-To: <20250319203112.131959-3-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250319-dt-bindings-network-class-v4-1-2329336802b4@ixit.cz>
+Mime-Version: 1.0
+References: <20250319203112.131959-1-dakr@kernel.org> <20250319203112.131959-3-dakr@kernel.org>
+Message-ID: <Z9vTctFR7QAOa4tn@google.com>
+Subject: Re: [PATCH 2/4] rust: device: implement bus_type_raw()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Mar 19, 2025 at 08:42:46AM +0100, David Heidelberg wrote:
-> From: Janne Grunau <j@jannau.net>
+On Wed, Mar 19, 2025 at 09:30:26PM +0100, Danilo Krummrich wrote:
+> Implement bus_type_raw(), which returns a raw pointer to the device'
+> struct bus_type.
 > 
-> The ethernet-controller schema specifies "mac-address" and
-> "local-mac-address" but other network devices such as wireless network
-> adapters use mac addresses as well.
-> The Devicetree Specification, Release v0.3 specifies in section 4.3.1
-> a generic "Network Class Binding" with "address-bits", "mac-address",
-> "local-mac-address" and "max-frame-size". This schema specifies the
-> "address-bits" property and moves the remaining properties over from
-> the ethernet-controller.yaml schema.
+> This is useful for bus devices, to implement the following trait.
 > 
-> The "max-frame-size" property is used to describe the maximal payload
-> size despite its name. Keep the description from ethernet-controller
-> specifying this property as MTU. The contradictory description in the
-> Devicetree Specification is ignored.
+> 	impl TryFrom<&Device> for &pci::Device
 > 
-> Signed-off-by: Janne Grunau <j@jannau.net>
-
-Incorrect DCO chain, missing SoB.
-
-...
-
-> +  - Devicetree Specification Mailing List <devicetree-spec@vger.kernel.org>
-> +
-> +properties:
-> +  address-bits:
-> +    description:
-> +      Specifies number of address bits required to address the device described
-
-"Specifies number of address bits required to address the device
-described by this node, e.g. size of the MAC address."
-
-And drop the second sentence.
-
-> +      by this node. This property specifies number of bits in MAC address.
-> +    default: 48
-> +    const: 48
-> +
-
-...
-
-> +  mac-address:
-> +    description:
-> +      Specifies the MAC address that was last used by the boot program. This
-> +      property should be used in cases where the MAC address assigned to the
-> +      device by the boot program is different from the
-> +      local-mac-address property. This property shall be used only if the value
-> +      differs from local-mac-address property value.
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    minItems: 6
-> +    maxItems: 6
-> +
-> +  max-frame-size:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Maximum transfer unit (IEEE defined MTU), rather than the
-> +      maximum frame size (there\'s contradiction in the Devicetree
-> +      Specification).
-> +
-> +
-
-Just one blank line
-
-> +additionalProperties: true
+> With this a caller can try to get the bus specific device from a generic
+> device in a safe way. try_from() will only succeed if the generic
+> device' bus type pointer matches the pointer of the bus' type.
 > 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/device.rs | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index 76b341441f3f..e2de0efd4a27 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -78,6 +78,13 @@ pub fn parent<'a>(&self) -> Option<&'a Self> {
+>          }
+>      }
+>  
+> +    /// Returns a raw pointer to the device' bus type.
+> +    #[expect(unused)]
+> +    pub(crate) fn bus_type_raw(&self) -> *const bindings::bus_type {
+> +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
 
-Best regards,
-Krzysztof
+Is this field immutable?
 
+> +        unsafe { (*self.as_raw()).bus }
+> +    }
+> +
+>      /// Convert a raw C `struct device` pointer to a `&'a Device`.
+>      ///
+>      /// # Safety
+> -- 
+> 2.48.1
+> 
 
