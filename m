@@ -1,85 +1,131 @@
-Return-Path: <linux-kernel+bounces-569833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B4A6A80C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:11:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF6EA6A7FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18EF8464F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:11:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D4BE7AEB7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEE71CAA99;
-	Thu, 20 Mar 2025 14:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBF222258E;
+	Thu, 20 Mar 2025 14:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hLoGDzES"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RnjYKOkT"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A06223321;
-	Thu, 20 Mar 2025 14:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959B6EEBA;
+	Thu, 20 Mar 2025 14:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479859; cv=none; b=W9toHj7fPQ5KPR+cSwPqFMAj8P58VRog0OXA0VSOdNfOldatucLU6WpUk7UPW8cEgHje9ST7cs6uDmrUUftapLnO/b7+Ssycu609Y6rIjJESg70IsxLk7NsJbMKKntn41rEGxgoSDm6Nf4RQ1/35XA4MiKq8joYqLLLnLot74TA=
+	t=1742479792; cv=none; b=uNrBhCDEcwVdRg3FKrjE5P576O5OxTDcazAMNjyzqC0w2y1tU5ABkmRTaIAxQgPjWbR7+s7EXT9OGBSPt0MbBrHWFB196mYRrvOtS4ngN54ZHchL1FIyNgT60SD0bQCPsevgCmb3HKTF+W2xupZamPapptjPKjJSAdAxVwb04Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479859; c=relaxed/simple;
-	bh=3HEJnEhZ/d669MOLql9alT4mXVOxE30ft99+n226O20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jAZpf+MYHj5OLpA1GjBlNkybI7SKdHnOtHRLigqkIP/Rzu6jU4HlhuswdhrHxQxvy9IOANzYMShDeqcOveC+Hz/C+uaerwTnZe9WnISkFpfBeRJOe9wEJMTB+KLKohmkbcflteNQat5oXgDtV7neAY4DTkVNi+S2WcyJC3WyihU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hLoGDzES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5229C4AF0B;
-	Thu, 20 Mar 2025 14:10:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742479858;
-	bh=3HEJnEhZ/d669MOLql9alT4mXVOxE30ft99+n226O20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hLoGDzESP3WOVoxz7nzIQITIX9J0ISZilVyTxhEO/rO0w+bR1rTys4f1iIpcJXJXT
-	 RuFpwDPEjuVFG1PYJIAdUs3au1pe4Cfz5Hq0cvxN3DxW5PBs6MuHSk6m/TnUjjR6K0
-	 blK1D1rs88Was9bVgiN2RYWVd5qN0fK3kV/TSUGs=
-Date: Thu, 20 Mar 2025 07:09:39 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Madhur Kumar <madhurkumar004@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] [PATCH v2] staging: sm750fb: Make g_fbmode truly constant
-Message-ID: <2025032027-babble-ominous-c704@gregkh>
-References: <20250222201514.15730-1-madhurkumar004@gmail.com>
+	s=arc-20240116; t=1742479792; c=relaxed/simple;
+	bh=3gUsqaE7mUufKOG+8Ij0UulGdSKP7dyRB6jukOjry5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j4dK9tmiBtTp6InsfuPnLSryiHUlotFM1WFhkHhRSC1+XK2pRWOntJpWyaWUiS7X1mSxOchuZvfnFjhJbSPHukt4SMLZ3LxWPc0yqnZrGrwcx0S8+z5HHJ+K6smazNI1EfoI0xxdixi5c2v/KZ9jKEQm83Y9WtQnDxiMmAH7ybY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RnjYKOkT; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9A3AB444F5;
+	Thu, 20 Mar 2025 14:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742479787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+k1WKBS8wmBGYzs9sr3LXVqLTZJWa/ILl+XBNscDrbY=;
+	b=RnjYKOkToOruA8gtWMfVJQ2lVzosiERg2s/F0lfOMsW+ruPaTOwSBxJrVEsbEBOUHf/zsi
+	Taf0zisRRm7yXvuh9Y9N/mcLcRLWcp9ghxNIIYxEdy4JgNKmvIzry06R7k4pdux4r+kp3/
+	Jc8HCqJe+bRnGbNoYJ7/HbDSLXy8gId8hxT7K3adtc9V9+q7l8sWWqbpXywAuhYgDoFbLW
+	XxgGGb4+afw6A+479MukdQiPptRg7ekdm1cE33XeQWAMLG2GpfHYuROX5G5njn2M6xixjx
+	uCjG68LJ3GXjQQhXjXUpVGe1Yppmn19/s3b/4tpGVIw1gaJFCZLHvOOs+TeVfw==
+Date: Thu, 20 Mar 2025 15:09:44 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 03/12] net: pse-pd: tps23881: Add support
+ for PSE events and interrupts
+Message-ID: <20250320150944.6ee054c3@kmaincent-XPS-13-7390>
+In-Reply-To: <Z9fu3u34K3-OeDis@pengutronix.de>
+References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+	<20250304-feature_poe_port_prio-v6-3-3dc0c5ebaf32@bootlin.com>
+	<Z9fu3u34K3-OeDis@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222201514.15730-1-madhurkumar004@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehku
+ hgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Sun, Feb 23, 2025 at 01:45:14AM +0530, Madhur Kumar wrote:
-> Declare g_fbmode as a pointer to constant data. This ensures that both
-> array and its element are immutable.
-> 
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
-> ---
-> Changes in v2:
-> - Added commit message
-> ---
->  drivers/staging/sm750fb/sm750.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-> index 04c1b32a2..aa154032f 100644
-> --- a/drivers/staging/sm750fb/sm750.c
-> +++ b/drivers/staging/sm750fb/sm750.c
-> @@ -33,7 +33,7 @@
->  static int g_hwcursor = 1;
->  static int g_noaccel;
->  static int g_nomtrr;
-> -static const char *g_fbmode[] = {NULL, NULL};
-> +static const char * const g_fbmode[] = {NULL, NULL};
+On Mon, 17 Mar 2025 10:43:58 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-How did you test this?  It totally breaks the build :(
+> On Tue, Mar 04, 2025 at 11:18:52AM +0100, Kory Maincent wrote:
+> > +static int tps23881_irq_handler(int irq, struct pse_controller_dev *pc=
+dev,
+> > +				unsigned long *notifs,
+> > +				unsigned long *notifs_mask)
+> > +{
+> > +	struct tps23881_priv *priv =3D to_tps23881_priv(pcdev);
+> > +	struct i2c_client *client =3D priv->client;
+> > +	int ret, it_mask;
+> > +
+> > +	/* Get interruption mask */
+> > +	ret =3D i2c_smbus_read_word_data(client, TPS23881_REG_IT_MASK);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +	it_mask =3D ret;
+> > +
+> > +	/* Read interrupt register until it frees the interruption pin. */
+> > +	while (true) { =20
+>=20
+> If the hardware has a stuck interrupt, this could result in an infinite
+> loop. max_retries with some sane value would be good.
+
+Ack I will. Do you have a value in mind as a sane value?
+
+> > +
+> > +static int tps23881_setup_irq(struct tps23881_priv *priv, int irq)
+> > +{
+> > +	struct i2c_client *client =3D priv->client;
+> > +	struct pse_irq_desc irq_desc =3D {
+> > +		.name =3D "tps23881-irq", =20
+>=20
+> here or in devm_pse_irq_helper() it would be good to add intex suffix to
+> the irq handler name.
+
+You mean index? Like the PSE index?
+So I will need to add back the support of the PSE index in the series.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
