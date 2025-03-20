@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-569412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E3AA6A29B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:29:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C9AA6A2B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE1D460333
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B1B189BC4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4915C2222CD;
-	Thu, 20 Mar 2025 09:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaqU+T3N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C53222582;
+	Thu, 20 Mar 2025 09:33:05 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6F521CFEC;
-	Thu, 20 Mar 2025 09:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19F42222CA;
+	Thu, 20 Mar 2025 09:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742462976; cv=none; b=qYg0/BxK+k2vL0rpW2hToZwxGS/RbHMOea7irffp9ofq8OAIPxd+gOlZ2yBDgtE7W+xx59wLXDsZsDQA4pFcXbL21ydzWX6rqU7SOI6nAQYb9sqVCT2E6RSusD/b4WTDUrMQ8YQo4xen4pXKjDjqNjRFf4huCiIBxHYAibj42kI=
+	t=1742463185; cv=none; b=Tvy8LcGcBYY3rBQzBiGsWnxzuT07HqdPHfpA+t95/iP3rGumty7ITbkDNwyLePMdED/vWk8s3wUwZKF7EVGpb6q+NehoiTLGfBBlerT/Cx2ytQsr33Ki//frzh8tArHWhb9QvCxjWyXKw21gIDCu0481XtTVdmj1y6oGzA9kUic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742462976; c=relaxed/simple;
-	bh=ivUJqvJiPWuttt/YiRnzmn0luJJQP4uNLrNqD31cg1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wgn1mtXMiDtz95rM8gJu/4qK3no9DLX4SHnCUk1+Tz+Ts6warB2SmhlAnLyMmatnMp8i0bO/Kx8nFKaPkp2f8y781zezxMgxi8f91QK2n8IxVYTR221MXLvL8gcA8HoXsPtOP0wJbAdCiB3/r2r+qXQET09c2+WiAs5WRlAfdqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YaqU+T3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9711EC4CEDD;
-	Thu, 20 Mar 2025 09:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742462976;
-	bh=ivUJqvJiPWuttt/YiRnzmn0luJJQP4uNLrNqD31cg1s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YaqU+T3N0frZ/ZaymRWwsSk154Fvuf/Mcmd6vRiMB1G92IMCkN6psUVIY9L9rlIgj
-	 HvQwaLzL/nH7qut5bb1KSsCc/SuRZu7OEYxoqAGv7g0yvPHvF8BwFMSgi8SkA1ceiX
-	 Pj54WICko6THIGWbp97cX8LH909RCBlwr2tP311HLHUN8WjEGPnBCKFgWn5qSrHd7V
-	 Vhqv5aYA40BaWgHbwxKvyQpYZRkxoJ8sweUPxMJ51Xr8PODNHYfL7Y4rufzStIt0l3
-	 j9AjMeFY1/AKuxQ7qvkXEFvJ0EOpTk1YB7QXo87JKH/VdfL34TGr8TM2YWHEI0Tcyz
-	 huynDh4i9JszA==
-Date: Thu, 20 Mar 2025 10:29:32 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: broonie@kernel.org, andersson@kernel.org, lgirdwood@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@linaro.org, 
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, johan+linaro@kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e78100-t14s: Enable audio
- headset support
-Message-ID: <20250320-busy-trogon-of-philosophy-fad8db@krzk-bin>
-References: <20250319091637.4505-1-srinivas.kandagatla@linaro.org>
- <20250319091637.4505-4-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1742463185; c=relaxed/simple;
+	bh=zGVoYuexyNAYTW+12AY61QB9oJUhu0/d1dOlv0Die0w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZp8dYPMLPDPOa/a6yd30Qa5cnKZ+rEOQ3wXKB2nA9aDKmA6h8AEN6UWfc2aL84/FJHCj4qcdI9WzERqOdcSna2tkJf9ya83O9z/5f1RVxuEBmpfh/FsoH1r0MwJCBMkwgSomta3aXUI6IEnQPM4MTK6mXnDGKcs3Eexcfb9BRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [210.73.43.1])
+	by APP-05 (Coremail) with SMTP id zQCowADn7qLC4Ntn6cmWFg--.39879S2;
+	Thu, 20 Mar 2025 17:32:51 +0800 (CST)
+From: Zhe Qiao <qiaozhe@iscas.ac.cn>
+To: qiaozhe@iscas.ac.cn,
+	robert.moore@intel.com,
+	rafael.j.wysocki@intel.com,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ACPICA: Adjust the position of code lines.
+Date: Thu, 20 Mar 2025 17:29:43 +0800
+Message-Id: <20250320092943.92790-1-qiaozhe@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250319091637.4505-4-srinivas.kandagatla@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADn7qLC4Ntn6cmWFg--.39879S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFykXF18Zr4fAFWrCw15Jwb_yoWDXFc_WF
+	nxJFs3XFWFyF1xWw10qa4fWr4av3y7uFWxKFy7try3Aw1xZry2v34UCr1fZa1Ykw4F9Fsx
+	X3yDXryfAr9F9jkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
+	6r126r1DMxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUUKFAJUUUUU==
+X-CM-SenderInfo: ptld061kh6x2xfdvhtffof0/
 
-On Wed, Mar 19, 2025 at 09:16:37AM +0000, srinivas.kandagatla@linaro.org wrote:
->  		vdd-buck-supply = <&vreg_l15b_1p8>;
->  		vdd-rxtx-supply = <&vreg_l15b_1p8>;
->  		vdd-io-supply = <&vreg_l15b_1p8>;
->  		vdd-mic-bias-supply = <&vreg_bob1>;
-> +		vdd-hp-switch-supply = <&vreg_l16b_2p5>;
->  
->  		#sound-dai-cells = <1>;
->  	};
-> @@ -367,6 +369,13 @@ vreg_l15b_1p8: ldo15 {
->  			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->  		};
->  
-> +		vreg_l16b_2p5: ldo16 {
-> +			regulator-name = "vreg_l6b_2p5";
+In the acpica/utcache.c file, adjust the position of the
+"ACPI_MEM_TRACKING(cache->total_allocated++);" code line
+to ensure that the increment operation on total_allocated
+is included within the ACPI_DBG_TRACK_ALLOCATIONS configuration.
 
-Typo: l16b
+Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
+---
+ drivers/acpi/acpica/utcache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/acpi/acpica/utcache.c b/drivers/acpi/acpica/utcache.c
+index 85a85f7cf750..046e6ba127d4 100644
+--- a/drivers/acpi/acpica/utcache.c
++++ b/drivers/acpi/acpica/utcache.c
+@@ -251,9 +251,9 @@ void *acpi_os_acquire_object(struct acpi_memory_list *cache)
+ 	} else {
+ 		/* The cache is empty, create a new object */
+ 
++#ifdef ACPI_DBG_TRACK_ALLOCATIONS
+ 		ACPI_MEM_TRACKING(cache->total_allocated++);
+ 
+-#ifdef ACPI_DBG_TRACK_ALLOCATIONS
+ 		if ((cache->total_allocated - cache->total_freed) >
+ 		    cache->max_occupied) {
+ 			cache->max_occupied =
+-- 
+2.34.1
 
 
