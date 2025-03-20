@@ -1,263 +1,199 @@
-Return-Path: <linux-kernel+bounces-569259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D26A6A09D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:41:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EC2A6A0A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E697189D258
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A06F3B7609
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0EA1F8739;
-	Thu, 20 Mar 2025 07:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48B51F8BC5;
+	Thu, 20 Mar 2025 07:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fajab6of"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/1Fu0DN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C9F1F4CB8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD961C3BF1;
+	Thu, 20 Mar 2025 07:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742456496; cv=none; b=SmusfH5MK2LUfYmAtC+EIyM9Cs+zmdh1a6o2YXK1w37DwFS2yb9dHx+pFo18H+AFNoAuHrUu9c1kvMhW5hRWDDAyiPr+9PGnGK04H1oeRJnXRgBHG9l/Xfav+V8WpwT2e7TSxeNP2PP/MpFVlrl/TjmVpQvzT5n7atsuRMxO6sI=
+	t=1742456602; cv=none; b=h9nj0ziLViqkHEMn/IOb1uH/b4dCIJmuad104FpFl18mEFRnD6Pfa+vOV2qCTEE2sPHwcxVQAn5WXj++f4FSp0Iy7wThsgNqrw0B382EbFEHvsrExcnShsxqi6oA2Uzovhqd0W0RMFp64RpCQGzstTXNg0BvYy/i+aaXDyS4XDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742456496; c=relaxed/simple;
-	bh=I6G/d5/C2EXxfscctBySxlIviUB0BPm6oXNQZcB57Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lPT3lWLWtLcP+TyxUCVcygh+7r4MaTtPN4T/Dxy02PPSwhNZFevsscpw4CSeRm2hdwSVgHAsJNrjf8srQT7BoACyIYSRNHcRjVcHU2vyktnGrd3POfJdpg9mQJcVJJicitJMGKPDg2xoV1WgfKbAMeK5xh1XCt+gCxQY5SvReP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fajab6of; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2E3C84436F;
-	Thu, 20 Mar 2025 07:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742456486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fmPdfR67O2wcc6/RI+Tc9AyY4rjn6JD2dOIfEvFlJnQ=;
-	b=Fajab6ofQy9GQKOL1lDcWQfm/0zyroqQRlF4ltPWxT9DK3Kz2DXP4fiTBAuRaWBovUj2Cq
-	7Xs65a44MCIogTqhY9yE+Pbjp+uATyM3uGz8ZXBovdasbw4nY74FcibRBPw15cVC5B//HL
-	HoE79L729ZJJC2p0S2zTI6MKh5g6VFJAR5pV3gUeTNOpVL9Bk7zrb72rG67qGTRwhtUEmP
-	doGblm+y8jR0MsywXUhEFuv1zt7JHUkmCFEJPi/JlSYAhD2EBPzsvfS9haVYm4wtkorHyP
-	nZ64j9pnqZIyUM2/BSBuYi5mvWIKq1K7tmjyz/E7reZ1jTkV0dPNeOZ858B90w==
-Date: Thu, 20 Mar 2025 08:41:18 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, Stefan Agner
- <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, Jagan
- Teki <jagan@amarulasolutions.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
- =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
- bridge refcount
-Message-ID: <20250320084118.347bafc9@booty>
-In-Reply-To: <20250319-stylish-lime-mongoose-0a18ad@houat>
-References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
-	<20250314-daft-woodoo-cheetah-e029c5@houat>
-	<20250317155607.68cff522@booty>
-	<20250319-stylish-lime-mongoose-0a18ad@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742456602; c=relaxed/simple;
+	bh=3lhO2km3yhcGSETOKtDVVVI/E/SbtDk4dNbH6wGgta8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pd1pcQ/EKrKoVlkLI59KEZtN83UBu1PpiJ99DVDnKenTXdmzHJbPBNMfTf3SRQHx4NancK8QtJdgYrAJYZCrR0k4/gQB92n0uzRMT7esRqHgdHyMB/R2Yj4Z0eoIBsoOKrBg7i4wJB1HjEbHtcZqHLqqsHmI52lHSBgZHyYu/WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/1Fu0DN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9130DC4CEDD;
+	Thu, 20 Mar 2025 07:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742456601;
+	bh=3lhO2km3yhcGSETOKtDVVVI/E/SbtDk4dNbH6wGgta8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F/1Fu0DNTO+aUXRxtvQqDJNt41yR39mSH4xCP+YjAHBACAaH5T6UnI+j8FSs5TdVN
+	 cJauPdKvFY9B1URplLoJ+EnZbtDwTF1MvVgQc6rsIMagDBbjipA9vdZ0hmmRJe39K1
+	 XV0dxV2BtqjjTF0TuStum2rmo1jCmFe2wUlDRkemh4d3I950avsIkuw41JEqGAbK+7
+	 WaWC9xV+EW4asyhno2NKeAGHfP/qOEX4swMrf0ZNeeLN+Kt61GPTSbWRZq6OwdLLr/
+	 KVeaaJP9oxt7lSsmyGDRBfBMbFnriefdhHewcbrOLPePpdrY3Gw75dA717kHuoJ4Zk
+	 rthG+rixVVsVw==
+Message-ID: <8665e99f-8d04-42fe-a81a-dfadf494cf6e@kernel.org>
+Date: Thu, 20 Mar 2025 08:43:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-tuxedo-14: add sound support
+To: srinivas.kandagatla@linaro.org, andersson@kernel.org,
+ konradybcio@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ggo@tuxedocomputers.com,
+ ettore.chimenti@linaro.org
+References: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250319143613.11177-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejieegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrr
- hhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello Mazime,
-
-On Wed, 19 Mar 2025 17:16:53 +0100
-Maxime Ripard <mripard@kernel.org> wrote:
-
-> On Mon, Mar 17, 2025 at 03:56:07PM +0100, Luca Ceresoli wrote:
-> > Hello Maxime,
-> > 
-> > On Fri, 14 Mar 2025 19:21:01 +0100
-> > Maxime Ripard <mripard@kernel.org> wrote:
-> >   
-> > > Hi,
-> > > 
-> > > On Fri, Mar 14, 2025 at 11:31:13AM +0100, Luca Ceresoli wrote:  
-> > > > This series improves the way DRM bridges are allocated and
-> > > > initialized and makes them reference-counted. The goal of reference
-> > > > counting is to avoid use-after-free by drivers which got a pointer
-> > > > to a bridge and keep it stored and used even after the bridge has
-> > > > been deallocated.
-> > > > 
-> > > > The overall goal is supporting Linux devices with a DRM pipeline
-> > > > whose final components can be hot-plugged and hot-unplugged,
-> > > > including one or more bridges. For more details see the big picture
-> > > > [0].
-> > > > 
-> > > > DRM bridge drivers will have to be adapted to the new API, which is
-> > > > pretty simple for most cases. Refcounting will have to be adopted
-> > > > on the two sides: all functions returning a bridge pointer and all
-> > > > code obtaining such a pointer. This series has just an overview of
-> > > > some of those conversions, because for now the main goal is to
-> > > > agree on the API.
-> > > > 
-> > > > Series layout:
-> > > > 
-> > > >  1. Add the new API and refcounting:
-> > > > 
-> > > >     drm/bridge: add devm_drm_bridge_alloc()
-> > > >     drm/bridge: add support for refcounting
-> > > > 
-> > > >  2. get/put the reference in basic operations in the bridge core:
-> > > > 
-> > > >     drm/bridge: get/put the bridge reference in
-> > > > drm_bridge_add/remove() drm/bridge: get/put the bridge reference in
-> > > > drm_bridge_attach/detach()
-> > > > 
-> > > >  3. as an example of changes for bridge consumers, get a reference
-> > > > for the bridge returned by drm_bridge_chain_get_first_bridge(),
-> > > > have it put by all callers (all users will be covered later on
-> > > > separately):
-> > > > 
-> > > >     drm/bridge: add a cleanup action for scope-based
-> > > > drm_bridge_put() invocation drm/bridge: get the bridge returned by
-> > > > drm_bridge_chain_get_first_bridge() drm/mxsfb: put the bridge
-> > > > returned by drm_bridge_chain_get_first_bridge() drm/atomic-helper:
-> > > > put the bridge returned by drm_bridge_chain_get_first_bridge()
-> > > > drm/probe-helper: put the bridge returned by
-> > > > drm_bridge_chain_get_first_bridge()
-> > > > 
-> > > >  4. convert a few bridge drivers (bridge providers) to the new API:
-> > > > 
-> > > >     drm/bridge: ti-sn65dsi83: use dynamic lifetime management
-> > > >     drm/bridge: samsung-dsim: use dynamic lifetime management
-> > > > 
-> > > > This work was formerly a part of my v6 DRM bridge hotplug
-> > > > series[0], now split as a standalone series with many improvements,
-> > > > hence the "v7" version number.    
-> > > 
-> > > Except for one patch where I had comments, I think the series is in
-> > > excellent shape. We're still missing a couple of things to close this
-> > > topic though:
-> > > 
-> > >   - Converting the other bridge iterators/accessors to take / put the
-> > > references  
-> > 
-> > I sent a couple in this series as you had asked, to show how conversion
-> > looks like. But I have a large part of this conversion partially done
-> > already, and it is the largest part of the refcounting work in terms of
-> > touched files due to the large number of drivers using the iterators
-> > and accessors. Here are the functions to convert:
-> > 
-> >  A) drm_bridge_chain_get_first_bridge
-> >  B) drm_bridge_get_prev_bridge
-> >  C) drm_bridge_get_next_bridge
-> >  D) drm_for_each_bridge_in_chain
-> >  E) drm_bridge_connector_init
-> >  F) of_drm_find_bridge
-> > 
-> > A) is present in this series as an example but I don't think it should
-> > be applied until all bridge drivers are converted to
-> > drm_bridge_alloc(). Otherwise for not-yet-converted bridge drivers we'd
-> > have drm_bridge_get/put() operating on an uninitialized kref, and
-> > __drm_bridge_free() called on non-refcounted bridges, so I think we'd
-> > see fireworks.
-> > 
-> > In the previous iteration I used drm_bridge_is_refcounted() in
-> > drm_bridge_get/put() to allow a progressive migration, but if we want
-> > to convert everything in a single run we need to first convert all
-> > bridges to drm_bridge_alloc() and then convert all accessors.
-> > 
-> > The same reasoning applies to patches 3-4 which add get/put to
-> > drm_bridge_add/remove() and _attach/detach().  
+On 19/03/2025 15:36, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> Agreed.
+> This patch adds sound support for this platform,
+> support includes
+> 	- 2x Speakers.
+> 	- 2x dmic
+> 	- Headset
 > 
-> > B) to E) are ready in my work branch, about 20 patches in total.
-> > Indeed item E) is a special case but it is handled there too.
-> > 
-> > Item F) is the beast, because of the reverse call graph of
-> > of_drm_find_bridge() which includes drm_of_find_panel_or_bridge() and
-> > then *_of_get_bridge(), each having a few dozen callers, and leading
-> > to the panel_bridge topic. I have converted maybe half of the users of
-> > accessors in F), it's 35 patches but it's the easy half and I still need
-> > to tackle to hardest ones.  
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 > 
-> One thing to keep in mind is that, while it's not correct, if the bridge
-> has been allocated with devm_drm_bridge_alloc, it's not worse either. If
-> you're not getting a reference to your pointer, the point is buggy,
-> sure, but it's just as buggy as before, and in the same situations.
+> This patch depends on
+> "arm64: dts: qcom: Add device tree for TUXEDO Elite 14 Gen1" patch
+>  https://lkml.org/lkml/2025/3/6/867
 > 
-> So we can make that gradually if it's more convenient.
-
-I see your point, right. And definitely doing it in gradually will help.
-
-> One way to solve it would be that, for example, of_drm_find_bridge is
-> oddly named according to our convention and it would make more sense to
-> be called drm_of_find_bridge().
+> ucm changes:
+> https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/x1e80100-tuxedo
 > 
-> So maybe we can just create drm_of_find_bridge() that takes a reference,
-> make of_drm_find_bridge() deprecated in favour of drm_of_find_bridge(),
-> add a TODO, and call it a day. People will gradually switch to the new
-> API over time.
-
-Thanks for the suggestion, I will certainly try this way when I get
-back to the accessor conversion work. While increasing the number of
-deprecated functions is not great, I'm starting to suspect a conversion
-of _all_ the of_drm_find_bridge() users at once is not realistic.
-
-> > >   - Documenting somewhere (possibly in drm_bridge_init?) that it
-> > > really shouldn't be used anymore  
-> > 
-> > I'm afraid there is no drm_bridge_init(), bridge drivers just do
-> > [devm_]kzalloc and set fields explicitly. So I don't think there is a
-> > place to document this.  
+> tplg changes:
+> https://github.com/Srinivas-Kandagatla/audioreach-topology/tree/tuxedo-elite-14
 > 
-> Oh, right.
+>  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 190 ++++++++++++++++++
+>  1 file changed, 190 insertions(+)
 > 
-> Then, drm_bridge_add() would be a good candidate too to mention that
-> bridges must be allocated using devm_drm_bridge_alloc().
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> index 86bdec4a2dd8..465221b8a3fa 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> @@ -20,6 +20,34 @@ aliases {
+>  		serial0 = &uart21;
+>  	};
+>  
+> +
 
-Sure. I'll add such a comment.
+No need for blank line
 
-> > Overall, I think this could be the path forward, let me know if
-> > youthink it should be done differently:
-> > 
-> >  A. have patches 1 and 2 of this series applied
-> >     (why not, even patches 10-11)  
-> 
-> I had some comments on patch 2, but it's ok for me on principle.
+> +	wcd938x: audio-codec {
+> +		compatible = "qcom,wcd9385-codec";
+> +
+> +		pinctrl-0 = <&wcd_default>;
+> +		pinctrl-names = "default";
+> +
+> +		qcom,micbias1-microvolt = <1800000>;
+> +		qcom,micbias2-microvolt = <1800000>;
+> +		qcom,micbias3-microvolt = <1800000>;
+> +		qcom,micbias4-microvolt = <1800000>;
+> +		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
+> +		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
+> +		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
+> +		qcom,rx-device = <&wcd_rx>;
+> +		qcom,tx-device = <&wcd_tx>;
+> +
+> +		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
+> +
+> +		vdd-buck-supply = <&vreg_l15b_1p8>;
+> +		vdd-rxtx-supply = <&vreg_l15b_1p8>;
+> +		vdd-io-supply = <&vreg_l15b_1p8>;
+> +		vdd-mic-bias-supply = <&vreg_bob1>;
+> +
+> +
 
-Sorry, my wording was not clear. I really meant "have patches 1 and 2 of
-this series applied after the improvements proposed". So hopefully the
-v8 I'm sending today-ish. I'm going to send only patches 1, 2, 10 and
-11. The other patches are not meant to be merged now, so I'm resending
-them when appropriate.
+Here only one as well
 
-Luca
+> +		#sound-dai-cells = <1>;
+> +	};
+> +
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+...
+
+> +&swr0 {
+> +	status = "okay";
+> +
+> +	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
+> +	pinctrl-names = "default";
+> +
+> +	/* WSA8845, Left Speaker */
+> +	left_spkr: speaker@0,0 {
+> +		compatible = "sdw20217020400";
+> +		reg = <0 0>;
+> +		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
+Interesting that on X1E even two-speaker configurations share the reset
+GPIO. Typical two-speaker setups like MTP and QRD use two different GPIOs.
+
+Assuming this is not a copy-paste and with blank line fixes:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
