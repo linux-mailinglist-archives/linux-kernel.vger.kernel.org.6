@@ -1,369 +1,203 @@
-Return-Path: <linux-kernel+bounces-569483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89727A6A38E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:24:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E2EA6A363
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEAC188CC4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DAE17E9AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1399225792;
-	Thu, 20 Mar 2025 10:22:59 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C63224236;
+	Thu, 20 Mar 2025 10:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fv71Bc/F"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13232253BC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1A3221F13
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466178; cv=none; b=jD9K0lJ/B7S4xFgiuxGA0SnWQWj5u6qbG3yftYXqnpTxIc6PeXWh4wFvjwFGSAiu66ZQq+FUBPmTT9qXZXpr7MihQeQGp4rlQWX0LFWgnC9tu798/BOUYaRWOJDGSBRIXIJCFlRyHk03YEPCXIKaWR3MkY6sluIkyGNPURmIE1Y=
+	t=1742465698; cv=none; b=eyUb5WB+CcxArWw4nlcGWaI4PQOdRshD5S9HQV8lZBTm2fUWu9HmHMjce5y7iFgG3bHgjL+6iZFGvyydTe7ssAfk8Fv+zyiqagl/s4/+EzE/VmKwoOcCfi3XQp8e3NkG3hGuR0URw22+NhBVQnCM8YN1n9gzb5JOBTDScD9e5CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466178; c=relaxed/simple;
-	bh=ndtQj3Quuiuzfj8P1fJiUEABRGfbmS7H1u+JYWjzFIs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nrk9GCrt8QNS1ry/eesJrWu/B+aD/TObARKnRLNgQbLBehtpKQGurZBqzf/ik9R9VEKmfP7Rt5GxvDUPYld9zG7nBTlqRB2ITJRjIidNwQOsnMZSqBnsQyONDOmehidU1JBKhKFORhPxF+nvbt2E5Odqv+UvtM81BeDo5hga/lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZJM6m2cf1z1c0SP;
-	Thu, 20 Mar 2025 18:21:04 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D49414034D;
-	Thu, 20 Mar 2025 18:22:49 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 20 Mar 2025 18:22:47 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 drm-dp 6/9] drm/hisilicon/hibmc: Add colorbar-cfg feature and its debugfs file
-Date: Thu, 20 Mar 2025 18:14:52 +0800
-Message-ID: <20250320101455.2538835-7-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250320101455.2538835-1-shiyongbang@huawei.com>
-References: <20250320101455.2538835-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1742465698; c=relaxed/simple;
+	bh=mad9TF6HWlzgsDYW0Xw2B9cirt0EV2aKRdW2jLlXXxQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lbP4yDNceNeM1epaX02f/5InaZ4H3t7s98ER5aY9JsXvXeXG3xnAsP8v8CWtS3kqOKOBFQJEh/WuD3UqNI3FGESnV4PHWbhs77H15+A883zI10vKDTHwkMbLdSeAQsb9JDZ4c+WV+AuuGEZycyEYb3oVovFykKADKDO7sIIJUDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fv71Bc/F; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so6038125e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742465694; x=1743070494; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KsTKzQd+0EkTWpAX3OmSlSj7NCNCv0EtzNWUjH+/fWo=;
+        b=Fv71Bc/FD3d6wsQD+D34W5hZ+qkWPMI92bhpQx4fOqmzLWzQBv75oEX1O/XOWhLOiv
+         QNKA1uHtgThbFPCNI+6XbpiwgFh7ZGY6xnkGjBBP2tApKYaugGJCLK2pMob6GwxkdPT9
+         3LvdMJPKS9YSAroLlyqNnlPaGySd3HRVy0DMyjahz012dyGPD2zsd9rH4I9qeU5vdg0C
+         yrLtINAhO7VZicm9UtY4dfZW3+dC7LsS9oUJqBRwlG8e3EEjMIuRfekOeaT8DiqEEVdT
+         95Y3epCUDLz+Sf5s2xFppVlgSZlQpOXtM7RbflYw4L7h80J5dnZ9OTvVs2H8vHpTlAce
+         x+rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742465694; x=1743070494;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KsTKzQd+0EkTWpAX3OmSlSj7NCNCv0EtzNWUjH+/fWo=;
+        b=Da40EyJc1q2shsDoYDDc8m5eMrW6F5GBfrYVq9pWpyFhYL2NsaVqh2nG0R47lDPVOB
+         6/UJqaZI15KTMw1AdD384tt2lwKJH4/tToG6ZAoFbUeGJ5y2rPTYrGd30Xjyhe/cn50u
+         MtBiayt8470EEGHY9w9emIfheki/JX08VdQjn3ITYKbMzERGR6QO4ACTlDoB1tLt0PBG
+         8z9wBsg+wk3ddAhu1Sb05WWLEneKTHQkDkHbu15mhwKmkLIgKbn34MPdI+CGjE/0YF6H
+         h5c2brwP690lRhOJbU+auk3mD7q04iNlCMkegEycIOZlkBeBmh/sPWiKiW29uKRfUzIP
+         MzoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNilVpjBP/6qclQThfH6+qPry2iI8TE/fbh5479nQ7e+ACmQmpOV0zu0h/EwHZZjeATqz6K/vqHUHtaP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU7wzZb4eyzzqFmZicKyTqWsyyLOkhcvHsX6dp/pp8k4OkfoEs
+	vCgxdg/cH6RBbohQEFuYpxvIRpi8VEcfwgB+pu2E/hGKjKqELEqh9lR8ew6saBo=
+X-Gm-Gg: ASbGncsUv0wsc4oJgv+PLT2jAIqJj6ASkaaAxLxj4SaMEkfa7vrnlqwGcIUdmDAmcbv
+	60gcTHmzWB6xHsNkw0IYSRaSg34f03no1ZyvC9gpEIZoJR+/D8Y6XV2m2ydMC1upWqIWG4BRl/O
+	TVByepyARZfwUbQaMln4Ercpx2BqrrrvFu3LiDNfmnlxm4p0LDYmY/m9XFBpyEX3A5cUqMoOUrk
+	C+2kP/QtSmNoYq3XbIu/nIIQ/i79OM86a35S1eqZID92HKKm9UY5uYF1HHQhr43pm9ZUE7KMlcb
+	PezIjv+/TZyCShSozXzvivC5QIuQe6rvc9rxM+dHkj+lEkyHaGDx4Ox+GveyBOvD3u5DYfv11eL
+	a4bThJ2DYqPAppRlP
+X-Google-Smtp-Source: AGHT+IFim8WXF4Bw641hmtsIGi/r9529B0IxX/j4bUMRvtVtznNxhRUIgBVI1Lkw4lHn3sf2W9z0JA==
+X-Received: by 2002:a5d:59ae:0:b0:398:9e96:e798 with SMTP id ffacd0b85a97d-399795a8cb5mr3197534f8f.13.1742465694455;
+        Thu, 20 Mar 2025 03:14:54 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:3bd:568:f697:d1a2? ([2a01:e0a:3d9:2080:3bd:568:f697:d1a2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b7656sm22861868f8f.40.2025.03.20.03.14.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 03:14:54 -0700 (PDT)
+Message-ID: <2fafed58-4959-41ca-b0e1-c10a8da60aa1@linaro.org>
+Date: Thu, 20 Mar 2025 11:14:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
+ Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
+ <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+ <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
+ <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
+ <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+ <8b05760b-db99-4b43-8444-d655b18d3699@kernel.org>
+ <770daf27-ae9c-4ed5-87d0-aadcc3b74bbd@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <770daf27-ae9c-4ed5-87d0-aadcc3b74bbd@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Baihan Li <libaihan@huawei.com>
+Hi Jeff,
 
-DP controller can support generating a color bar signal over the
-DisplayPort interface. This can be useful to check for possible DDR
-or GPU problems, as the signal generator resides completely in the DP
-block. Add debugfs file that controls colorbar generator.
+On 19/03/2025 19:32, Jeff Johnson wrote:
+> On 3/19/2025 3:27 AM, Krzysztof Kozlowski wrote:
+>> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
+>>>>>> ---
+>>>>>> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+>>>>>> change-id: 20250303-topic-ath12k-fix-crash-49e9055c61a1
+>>>>>>
+>>>>>> Best regards,
+>>>>>
+>>>>> NAK since this will break QCN
+>>>>> There is a series under internal review to address MLO issues for WCN chipsets
+>>>>
+>>>> ???
+>>>>
+>>>> The original commit is wrong, this fixes the conversion, nothing else.
+>>>
+>>> Nope. Driver changes to enable MLO with WCN chipset are not there yet.
+>>> Setting the mlo capability flag without having required driver changes
+>>> for WCN chipset will likely result in firmware crash. So the recommendation
+>>> is to enable MLO (in WCN) only when all the necessary driver changes
+>>> (in development, public posting in near future) are in place.
+>> Really, these are your answers? There is regression and first reply is
+>> upstream should wait for whatever you do internally. Second answer is
+>> the same - public posting in near future?
+>>
+>> Can you start working with the upstream instead?
+> 
+> There is a lot going on in this thread. I want to address the big picture. It
+> is no secret that Qualcomm has historically focused on downstream drivers, and
+> upstream was mostly an afterthought. But that mindset has changed. Qualcomm is
+> fully embracing upstream kernel development, and has actively recruited (and
+> is still recruiting!) experienced upstream Linux Kernel engineers. And in
+> places where there are shortcoming, Qualcomm has partnered with companies like
+> Linaro to bring in needed support. So Qualcomm is very much "working with the
+> upstream." We may not be working well sometimes, but many of us are still
+> inexperienced with working with the upstream. We are coming up to speed.
+> Specifically for Wi-Fi, we have a large number of engineers who have primarily
+> worked on downstream code who are now working on upstream (including me!). And
+> we still have the issue that many of the products we are shipping now still
+> have a lot of downstream DNA, especially when it comes to firmware interfaces.
+> So please bear with us as we learn and evolve.
+> 
+> Please keep the constructive feedback coming. And remember, the more detailed
+> the feedback, the easier it is to incorporate the feedback.
 
-echo: config the color bar register to display
-cat: print the color bar configuration
+Thanks for all the feedback, all this escalated mainly because the 46d16f7e1d14
+commit doesn't do what is written in the commit message, and there were no clear
+sign MLO support with WCN firmares would be removed shortly and redeveloped later.
 
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-ChangeLog:
-v3 -> v4:
-  - add comments in hibmc_control_write(), suggested by Dmitry Baryshkov.
-v2 -> v3:
-  - rewrite the commit log, suggested by Dmitry Baryshkov.
-  - move colorbar debugfs entry to this patch, suggested by Dmitry Baryshkov.
-  - change binary format to integer format, suggested by Dmitry Baryshkov.
-v1 -> v2:
-  - add colorbar introduction in commit, suggested by Dmitry Baryshkov.
-  - splittting colorbar and debugfs in different patches, suggested by Dmitry Baryshkov.
-  - deleting edid decoder and its debugfs, suggested by Dmitry Baryshkov.
-  - using debugfs_init() callback, suggested by Dmitry Baryshkov.
----
- drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  43 ++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  29 +++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |   3 +
- .../drm/hisilicon/hibmc/hibmc_drm_debugfs.c   | 104 ++++++++++++++++++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    |   1 +
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   2 +
- 7 files changed, 184 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
+As final note for this patch, do you have any timeline for when MLO would be enabled
+again on WCN chips ?
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-index 43de077d6769..1f65c683282f 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
--	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o
-+	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o dp/dp_serdes.o hibmc_drm_dp.o \
-+	       hibmc_drm_debugfs.o
- 
- obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index aa9354a996c9..ce7cb07815b2 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -226,3 +226,46 @@ int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
- 
- 	return 0;
- }
-+
-+static const struct hibmc_dp_color_raw g_rgb_raw[] = {
-+	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
-+	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
-+	{CBAR_RED,       0xfff, 0x000, 0x000},
-+	{CBAR_ORANGE,    0xfff, 0x800, 0x000},
-+	{CBAR_YELLOW,    0xfff, 0xfff, 0x000},
-+	{CBAR_GREEN,     0x000, 0xfff, 0x000},
-+	{CBAR_CYAN,      0x000, 0x800, 0x800},
-+	{CBAR_BLUE,      0x000, 0x000, 0xfff},
-+	{CBAR_PURPLE,    0x800, 0x000, 0x800},
-+	{CBAR_BLACK,     0x000, 0x000, 0x000},
-+};
-+
-+void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg)
-+{
-+	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
-+	struct hibmc_dp_color_raw raw_data;
-+
-+	if (cfg->enable) {
-+		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(9),
-+					 cfg->self_timing);
-+		hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, GENMASK(8, 1),
-+					 cfg->dynamic_rate);
-+		if (cfg->pattern == CBAR_COLOR_BAR) {
-+			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(10), 0);
-+		} else {
-+			raw_data = g_rgb_raw[cfg->pattern];
-+			drm_dbg_dp(dp->drm_dev, "r:%x g:%x b:%x\n", raw_data.r_value,
-+				   raw_data.g_value, raw_data.b_value);
-+			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(10), 1);
-+			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, GENMASK(23, 12),
-+						 raw_data.r_value);
-+			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL1, GENMASK(23, 12),
-+						 raw_data.g_value);
-+			hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL1, GENMASK(11, 0),
-+						 raw_data.b_value);
-+		}
-+	}
-+
-+	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_COLOR_BAR_CTRL, BIT(0), cfg->enable);
-+	writel(HIBMC_DP_SYNC_EN_MASK, dp_dev->base + HIBMC_DP_TIMING_SYNC_CTRL);
-+}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-index 53b6d0beecea..83a53dae8012 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-@@ -14,6 +14,33 @@
- 
- struct hibmc_dp_dev;
- 
-+enum hibmc_dp_cbar_pattern {
-+	CBAR_COLOR_BAR,
-+	CBAR_WHITE,
-+	CBAR_RED,
-+	CBAR_ORANGE,
-+	CBAR_YELLOW,
-+	CBAR_GREEN,
-+	CBAR_CYAN,
-+	CBAR_BLUE,
-+	CBAR_PURPLE,
-+	CBAR_BLACK,
-+};
-+
-+struct hibmc_dp_color_raw {
-+	enum hibmc_dp_cbar_pattern pattern;
-+	u32 r_value;
-+	u32 g_value;
-+	u32 b_value;
-+};
-+
-+struct hibmc_dp_cbar_cfg {
-+	u8 enable;
-+	u8 self_timing;
-+	u8 dynamic_rate; /* 0:static, 1-255(frame):dynamic */
-+	enum hibmc_dp_cbar_pattern pattern;
-+};
-+
- struct hibmc_dp {
- 	struct hibmc_dp_dev *dp_dev;
- 	struct drm_device *drm_dev;
-@@ -21,10 +48,12 @@ struct hibmc_dp {
- 	struct drm_connector connector;
- 	void __iomem *mmio;
- 	struct drm_dp_aux aux;
-+	struct hibmc_dp_cbar_cfg cfg;
- };
- 
- int hibmc_dp_hw_init(struct hibmc_dp *dp);
- int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
- void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
-+void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
- 
- #endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-index 6eb76decc636..5614b727a710 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-@@ -67,6 +67,9 @@
- #define HIBMC_DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
- #define HIBMC_DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
- 
-+#define HIBMC_DP_COLOR_BAR_CTRL			0x260
-+#define HIBMC_DP_COLOR_BAR_CTRL1		0x264
-+
- #define HIBMC_DP_TIMING_GEN_CONFIG0		0x26c
- #define HIBMC_DP_CFG_TIMING_GEN0_HACTIVE	GENMASK(31, 16)
- #define HIBMC_DP_CFG_TIMING_GEN0_HBLANK		GENMASK(15, 0)
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
-new file mode 100644
-index 000000000000..f585387c3a49
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_debugfs.c
-@@ -0,0 +1,104 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2024 Hisilicon Limited.
-+
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+#include <linux/seq_file.h>
-+#include <linux/pci.h>
-+
-+#include <drm/drm_drv.h>
-+#include <drm/drm_file.h>
-+#include <drm/drm_debugfs.h>
-+#include <drm/drm_edid.h>
-+
-+#include "hibmc_drm_drv.h"
-+
-+#define MAX_BUF_SIZE 12
-+
-+static ssize_t hibmc_control_write(struct file *file, const char __user *user_buf,
-+				   size_t count, loff_t *ppos)
-+{
-+	struct hibmc_drm_private *priv = file_inode(file)->i_private;
-+	struct hibmc_dp_cbar_cfg *cfg = &priv->dp.cfg;
-+	int ret, idx;
-+	u8 buf[MAX_BUF_SIZE];
-+
-+	if (count >= MAX_BUF_SIZE)
-+		return -EINVAL;
-+
-+	if (copy_from_user(buf, user_buf, count))
-+		return -EFAULT;
-+
-+	buf[count] = '\0';
-+
-+	/* Only 4 parameters is allowed, the ranger are as follow:
-+	 * [0] enable/disable colorbar feature
-+	       0: enable colorbar, 1: disable colorbar
-+	 * [1] the timing source of colorbar displaying
-+	       0: timing follows XDP, 1: internal self timing
-+	 * [2] the movment of colorbar displaying
-+	       0: static colorbar image,
-+	 *     1~255: right shifting a type of color per (1~255)frames
-+	 * [3] the color type of colorbar displaying
-+	       0~9: color bar, white, red, orange,
-+	 *          yellow, green, cyan, bule, pupper, black
-+	 */
-+	if (sscanf(buf, "%hhu %hhu %hhu %u", &cfg->enable, &cfg->self_timing,
-+		   &cfg->dynamic_rate, &cfg->pattern) != 4) {
-+		return -EINVAL;
-+	}
-+
-+	if (cfg->pattern > 9 || cfg->enable > 1 || cfg->self_timing > 1)
-+		return -EINVAL;
-+
-+	ret = drm_dev_enter(&priv->dev, &idx);
-+	if (!ret)
-+		return -ENODEV;
-+
-+	hibmc_dp_set_cbar(&priv->dp, cfg);
-+
-+	drm_dev_exit(idx);
-+
-+	return count;
-+}
-+
-+static int hibmc_dp_dbgfs_show(struct seq_file *m, void *arg)
-+{
-+	struct hibmc_drm_private *priv = m->private;
-+	struct hibmc_dp_cbar_cfg *cfg = &priv->dp.cfg;
-+	int idx;
-+
-+	if (!drm_dev_enter(&priv->dev, &idx))
-+		return -ENODEV;
-+
-+	seq_printf(m, "hibmc dp colorbar cfg: %u %u %u %u\n", cfg->enable, cfg->self_timing,
-+		   cfg->dynamic_rate, cfg->pattern);
-+
-+	drm_dev_exit(idx);
-+
-+	return 0;
-+}
-+
-+static int hibmc_open(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, hibmc_dp_dbgfs_show, inode->i_private);
-+}
-+
-+static const struct file_operations hibmc_dbg_fops = {
-+	.owner   = THIS_MODULE,
-+	.write   = hibmc_control_write,
-+	.read    = seq_read,
-+	.open    = hibmc_open,
-+	.llseek  = seq_lseek,
-+	.release = single_release,
-+};
-+
-+void hibmc_debugfs_init(struct drm_connector *connector, struct dentry *root)
-+{
-+	struct drm_device *dev = connector->dev;
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
-+
-+	/* create the file in drm directory, so we don't need to remove manually */
-+	debugfs_create_file("colorbar-cfg", 0200,
-+			    root, priv, &hibmc_dbg_fops);
-+}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-index 8e5ee816dfbd..a86ecce4b3c1 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-@@ -55,6 +55,7 @@ static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
- 	.late_register = hibmc_dp_late_register,
- 	.early_unregister = hibmc_dp_early_unregister,
-+	.debugfs_init = hibmc_debugfs_init,
- };
- 
- static inline int hibmc_dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-index 3ddd71aada66..bc89e4b9f4e3 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-@@ -69,4 +69,6 @@ int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_vdac *connector);
- 
- int hibmc_dp_init(struct hibmc_drm_private *priv);
- 
-+void hibmc_debugfs_init(struct drm_connector *connector, struct dentry *root);
-+
- #endif
--- 
-2.33.0
+I'm happy Qualcomm is embracing mainline development, but Qualcomm still ships
+hundreds of different incompatible firmware and downstream drivers variant in the
+field, and this makes system integration very hard.
+
+And as you mention the partnership with Linaro, we are very happy to help
+and support your mainline development over time by reviewing, testing and
+reporting.
+
+Thanks,
+Neil
+
+> 
+> Thanks!
+> /jeff
+> 
 
 
