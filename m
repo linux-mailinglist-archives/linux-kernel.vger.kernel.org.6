@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-569206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCDFCA69FF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:49:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931A2A69FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B771895B7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:50:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7EAE1895CCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45401EA7C2;
-	Thu, 20 Mar 2025 06:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1D01EF388;
+	Thu, 20 Mar 2025 06:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw92UGF1"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co3y5Ypd"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE401BE251
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93FC1EF0BB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742453386; cv=none; b=EZgSoCfVrCsCqFgnKBgjUijdrUR0ji/fZMAIERbrgnec92YbZ5nCUodlhTemhpreRmffYPwtpHvSk/CRdzYnZntgIPsMpOQyOVsD7wab7RUkHgd/qoT51SKWKKf7JqclTb3DWEv207XBxwByUlsns/nt6hnFu0+orzF2YGkUMJw=
+	t=1742453391; cv=none; b=nEHl+NlQVh/qNx9WQm40kX9EQWku1jiQvyWikpOqxHM0SpWqJs21g0BHvxvgGCcSjczXobZnWEi+YWZYN51yEg1veHX39WpqbzCJ0ovDwqE7pvbxcOExAOY9xIqwvHDEBpWj1gVFgBh8mDMkv7Pp6dq1aSFkH2+J9GcDsbQtM0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742453386; c=relaxed/simple;
-	bh=HD/aZlYOobvGLkwcXxoRUHjKQ8ApF3UDJ2BOuPBG4pY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASoi4Fqcwmrr2PbK6UABZOOJtTfc3nrKpu0vDBWIhZgvyO8N9tfyH5i2VVfoILwa4zjsEWCSvuO7iCUjBc5WRK7iEZtMePX3grTAKXlKtnF40mDT5IuSDN22C7gPSxfb1TGY/ByK5Or+sfdpaFZR3YZX30qfm/z81oFxvPNGsfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mw92UGF1; arc=none smtp.client-ip=209.85.216.49
+	s=arc-20240116; t=1742453391; c=relaxed/simple;
+	bh=Q3B4ztC5UfKKbD8pZjDo1mFpMDP6UCdo0zeWuFAosUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VbVKYb74w8zQAnt/8NnDQNqRBzjFgAOXfQ1RTBnAuTSUdvwWlsl7v8s4Sn2HGcw8g8Wu0Em/oXhY644/w4oV2Sv8cyfcdh8fuXft9mQTn0NdUlThMglTMuCXJJrh26BzGxQwQ7TKja+AFx49eitsIs7rpLOheBQCLZqgoUkXPK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co3y5Ypd; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-300fefb8e06so824731a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:49:43 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223fd89d036so5705625ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742453383; x=1743058183; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXOO3bKJSnf/iDCevzy1JpJbFCGuEvw9AgOpzlDoFyU=;
-        b=Mw92UGF17rpOc7KVmTTrW/x6cObgowa8OQKULZiFAve0jX1ojfYUgEe1j/dMo9MhfP
-         w+JGQD1FyqZ2G10oyJxs7A1MctAhXYn5k7bYIQEs/OAO0trHGDMi119UP52BTx7T6Ci4
-         ymw9jrpR8aiLUnZZlc/s81jSHdcq2MDwNvsXceuGvreAEWCTGgN00fB0MNw+tPjgIzLM
-         BoMrf8/RPVZfdQUlkmhvKDrbQQe/HuFDxZvl+EMKLEJYGMp8imwenAgrnysH0sr5TOAp
-         sBUEcpvWC03H574KAPnjYSr6byQRfH9n5rZHshnc7iJX8CzF/aRMefd8xRIg99Wlyf01
-         K4+g==
+        d=gmail.com; s=20230601; t=1742453389; x=1743058189; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=03Xv1keiWzxrHieU5ZbpkW3iG/vVYUxPpzBjO5i3q8A=;
+        b=co3y5YpdRcBOoa5VOHGLovtKSRfjsCmI+MhCD2JtCfnuG8PPvYOydagCTcUd64rCUy
+         cGTuoS98GOyYgD4p3pv5NWQFfkNyykzl2gVosb8OdwPrEs6KwgvXVRIsKoxd7LO6GMoP
+         YWXJXNFm7RkpKcw/ZSBsphY0WQoaCARSBDermcPym2Nne4bN764f4TcN1Og4Y9SG+Edz
+         kuboL5aFbsypB1tzQCN/HUTs3+WHTLPcHfE7bmu5uc9onaYgwnKARIz22s5ZSzS55SjC
+         6xtEZkeYS1vH49Y21aRFs7tBFbVfuXN2ebPazMQ6RVjYrFRtuW/OY676o1BxGMS8DD9g
+         yDTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742453383; x=1743058183;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gXOO3bKJSnf/iDCevzy1JpJbFCGuEvw9AgOpzlDoFyU=;
-        b=l3HZ3o9kno7EXUcqiM2xMUHSCxAftbXRlzE1mP2m5vRz/YoZp2IbMmlH1wYsoTwc54
-         9mMAi5j5YguqWv4tRc3Xq3XOJti6f2sLBbIQWU7fu2ngrL5Dfxd2EJvzc91AcohaKWzv
-         LWR11sQ1xGS2+zgzLNPvNFNO3ePrpPchaEX9+2weqoXL4PH5BBNPxDCh0UnQpVamltEe
-         dN71BBJZuMSVnm8QdGKOjjypZTQyXBDlmqaeJdt+tjfv9KcOpPzaTbQJhrQ9h1FDQPCl
-         srAoCRvagsUAPDVDL2TzPsNB4F76Nh2NyLdcg7WLlXOAIgE5T5ULRcXgW2xQqZxGhue6
-         fBoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRcz713TYH7VyjPyy6io/u4eNVilZIx/jnQHuLJwInkaimIcZ5tLnPKw7VJmEDUyjW6RS/5G6vM5RdPqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCMY8ciK2/5/7B6ixkJXZWJ/RVFtAwNEuAXmEnAMMJ+/5+gHQD
-	FyRcYuxWc/bVZRq3GleH9rrDtAUuiPCQbEeKkTrxPaSk75AQZ6XW
-X-Gm-Gg: ASbGncvA6jX9bSt4muc2aOlV4K9mqE73NdqOCOoMwzWKrSGcBnwUZmlpEn9r3NRE25h
-	ioqvY4GkY996qOkoZwiOzHT5LKX0S9eh0jkKJ4OQ5nOFgbNQQ4X3togfWlLwxIdW6dA2JD9daHi
-	7XzeUKrz9IEY8tDLpb9Issu4Wdbwtlb/VXoGXwhjHAZwGxsitEX2+HLW+m+ImJlXVIXdseUIY6o
-	+7NLNIiG+FmIw5Ahfcl5a1YJA73d3jJJSv5Wc4ySMw/VeeSYu0joYFXZtwiGEZku1u18qGACf/b
-	P9O+aV0OLnVTjHtZVqbrNKEZd+hrmRHOycYE8Kt1fRYslWgxyZmM
-X-Google-Smtp-Source: AGHT+IEwicNm2K39Ha2/ODJPFS9rRCq9591lPiIdTuvlBppnRe9elJT9KQkhOC+NPUUHMDofqu8Hhw==
-X-Received: by 2002:a17:90b:4a48:b0:2fe:a77b:d97e with SMTP id 98e67ed59e1d1-301bde59536mr8658765a91.11.1742453382573;
-        Wed, 19 Mar 2025 23:49:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742453389; x=1743058189;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=03Xv1keiWzxrHieU5ZbpkW3iG/vVYUxPpzBjO5i3q8A=;
+        b=Z5zRHRd6+X/mwYO0vVIoSB/UMavJRLAhdX1gPkKBQOE17A2uS7UstGxGB49NuD5xHH
+         zRhL1wqnC3IKsGrEZn2S+3x+4FI7rLk0qk9x94U6X7H89D9PgmBMgmDB8KxoW9YR+2D3
+         nZsIOLwhMHaUZu3grHNj8KS/GoDo1gFKBr3EhXD06pBVujsa03oggSNlqNZXYtTUHtpL
+         xkPYjibE28yLbS1nEG/kfsrQcCMO69ANKSgzDNPr/MZzoL5GDHi8cW6dpfv1HW8CwYkw
+         vtoDpmlhylRszbOIzxXqeKBqE74lmXXW30ThGAHNwrge+7H4hfpwj976IPAhFk9DmJiv
+         bCHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxXwzQZZsb6KYDKRAW7VfBVw/bS4/inTriB8kVNqdIy3z2yLBOXV+b0+wMDZl3A+IdW4MdhLrVvk2rzpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQzXcBv0baucDEoVlmz0FjEhZCMX4RbSptR72wrpjVmnklvzZ7
+	LFK+9ywxwWrnkKDZu6kUhjBU9UDRj3tsuJgPBR9HHsyNBhOPEztJ
+X-Gm-Gg: ASbGncvu4d24TvM67zF5bIdRKFe9EZ7g4X0S9cfh6qYBSqpGDg/fns1lzLbZectgRVD
+	2o29kpK+mXbwzRBZAXzQWbWbAgce68MO5inG8AF2ksdIpt1R72RIvtFROHKpdN4eA9MCZrxCEDm
+	kjjEOyX5j49q1te9qvjJ+Cb3kQFkNPbwU+qTSldj2Ttepz4lCJb8RWgF/z2wlX1x+zzwt2RApqv
+	XxMbzYH4jZ7rp2wGAODeyHbis7pya/LLZDNHitTdQF44+Y8U+dntNb6VwQDPDfp2Xqd9u5iq68K
+	b4meL8eds2ls7rx72Tct89Zm02FezlM5YHXIjLgPV/AqQruTnNARLFEcSUWDzFM=
+X-Google-Smtp-Source: AGHT+IF3RJQvrZXSax/z/cCKngBADtM/wtxhJQDhvbqiQpvsNxBAPAKbhaEyCy5y29hu3OBaFfxmKw==
+X-Received: by 2002:a17:902:db01:b0:224:1c95:451e with SMTP id d9443c01a7336-22649c8e7c3mr80690285ad.33.1742453388916;
+        Wed, 19 Mar 2025 23:49:48 -0700 (PDT)
 Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68885a1sm127260155ad.13.2025.03.19.23.49.36
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68885a1sm127260155ad.13.2025.03.19.23.49.42
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 19 Mar 2025 23:49:42 -0700 (PDT)
+        Wed, 19 Mar 2025 23:49:48 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 To: akpm@linux-foundation.org
 Cc: will@kernel.org,
@@ -87,11 +89,14 @@ Cc: will@kernel.org,
 	tfiga@chromium.org,
 	amaindex@outlook.com,
 	jstultz@google.com,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v4 0/3] hung_task: extend blocking task stacktrace dump to semaphore
-Date: Thu, 20 Mar 2025 14:49:20 +0800
-Message-ID: <20250320064923.24000-1-ioworker0@gmail.com>
+	Lance Yang <ioworker0@gmail.com>,
+	Mingzhe Yang <mingzhe.yang@ly.com>
+Subject: [PATCH v4 1/3] hung_task: replace blocker_mutex with encoded blocker
+Date: Thu, 20 Mar 2025 14:49:21 +0800
+Message-ID: <20250320064923.24000-2-ioworker0@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250320064923.24000-1-ioworker0@gmail.com>
+References: <20250320064923.24000-1-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,132 +105,212 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+This patch replaces 'struct mutex *blocker_mutex' with 'unsigned long
+blocker', as only one blocker is active at a time.
 
-Inspired by mutex blocker tracking[1], this patch series extend the
-feature to not only dump the blocker task holding a mutex but also to
-support semaphores. Unlike mutexes, semaphores lack explicit ownership
-tracking, making it challenging to identify the root cause of hangs. To
-address this, we introduce a last_holder field to the semaphore structure,
-which is updated when a task successfully calls down() and cleared during
-up().
+The blocker filed can store both the lock addrees and the lock type, with
+LSB used to encode the type as Masami suggested, making it easier to extend
+the feature to cover other types of locks.
 
-The assumption is that if a task is blocked on a semaphore, the holders
-must not have released it. While this does not guarantee that the last
-holder is one of the current blockers, it likely provides a practical hint
-for diagnosing semaphore-related stalls.
+Also, once the lock type is determined, we can directly extract the address
+and cast it to a lock pointer ;)
 
-With this change, the hung task detector can now show blocker task's info
-like below:
-
-[Thu Mar 20 04:52:21 2025] INFO: task cat:955 blocked for more than 120 seconds.
-[Thu Mar 20 04:52:21 2025]       Tainted: G            E      6.14.0-rc6+ #1
-[Thu Mar 20 04:52:21 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[Thu Mar 20 04:52:21 2025] task:cat             state:D stack:0     pid:955   tgid:955   ppid:917    task_flags:0x400000 flags:0x00000000
-[Thu Mar 20 04:52:21 2025] Call Trace:
-[Thu Mar 20 04:52:21 2025]  <TASK>
-[Thu Mar 20 04:52:21 2025]  __schedule+0x491/0xbd0
-[Thu Mar 20 04:52:21 2025]  schedule+0x27/0xf0
-[Thu Mar 20 04:52:21 2025]  schedule_timeout+0xe3/0xf0
-[Thu Mar 20 04:52:21 2025]  ? __folio_mod_stat+0x2a/0x80
-[Thu Mar 20 04:52:21 2025]  ? set_ptes.constprop.0+0x27/0x90
-[Thu Mar 20 04:52:21 2025]  __down_common+0x155/0x280
-[Thu Mar 20 04:52:21 2025]  down+0x53/0x70
-[Thu Mar 20 04:52:21 2025]  read_dummy_semaphore+0x23/0x60
-[Thu Mar 20 04:52:21 2025]  full_proxy_read+0x5f/0xa0
-[Thu Mar 20 04:52:21 2025]  vfs_read+0xbc/0x350
-[Thu Mar 20 04:52:21 2025]  ? __count_memcg_events+0xa5/0x140
-[Thu Mar 20 04:52:21 2025]  ? count_memcg_events.constprop.0+0x1a/0x30
-[Thu Mar 20 04:52:21 2025]  ? handle_mm_fault+0x180/0x260
-[Thu Mar 20 04:52:21 2025]  ksys_read+0x66/0xe0
-[Thu Mar 20 04:52:21 2025]  do_syscall_64+0x51/0x120
-[Thu Mar 20 04:52:21 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[Thu Mar 20 04:52:21 2025] RIP: 0033:0x7ff96d4ab46e
-[Thu Mar 20 04:52:21 2025] RSP: 002b:00007ffe2f47f3a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-[Thu Mar 20 04:52:21 2025] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007ff96d4ab46e
-[Thu Mar 20 04:52:21 2025] RDX: 0000000000020000 RSI: 00007ff96d39f000 RDI: 0000000000000003
-[Thu Mar 20 04:52:21 2025] RBP: 00007ff96d39f000 R08: 00007ff96d39e010 R09: 0000000000000000
-[Thu Mar 20 04:52:21 2025] R10: fffffffffffffbc5 R11: 0000000000000246 R12: 0000000000000000
-[Thu Mar 20 04:52:21 2025] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
-[Thu Mar 20 04:52:21 2025]  </TASK>
-[Thu Mar 20 04:52:21 2025] INFO: task cat:955 blocked on a semaphore likely last held by task cat:909
-[Thu Mar 20 04:52:21 2025] task:cat             state:S stack:0     pid:909   tgid:909   ppid:771    task_flags:0x400000 flags:0x00000000
-[Thu Mar 20 04:52:21 2025] Call Trace:
-[Thu Mar 20 04:52:21 2025]  <TASK>
-[Thu Mar 20 04:52:21 2025]  __schedule+0x491/0xbd0
-[Thu Mar 20 04:52:21 2025]  ? _raw_spin_unlock_irqrestore+0xe/0x40
-[Thu Mar 20 04:52:21 2025]  schedule+0x27/0xf0
-[Thu Mar 20 04:52:21 2025]  schedule_timeout+0x77/0xf0
-[Thu Mar 20 04:52:21 2025]  ? __pfx_process_timeout+0x10/0x10
-[Thu Mar 20 04:52:21 2025]  msleep_interruptible+0x49/0x60
-[Thu Mar 20 04:52:21 2025]  read_dummy_semaphore+0x2d/0x60
-[Thu Mar 20 04:52:21 2025]  full_proxy_read+0x5f/0xa0
-[Thu Mar 20 04:52:21 2025]  vfs_read+0xbc/0x350
-[Thu Mar 20 04:52:21 2025]  ? __count_memcg_events+0xa5/0x140
-[Thu Mar 20 04:52:21 2025]  ? count_memcg_events.constprop.0+0x1a/0x30
-[Thu Mar 20 04:52:21 2025]  ? handle_mm_fault+0x180/0x260
-[Thu Mar 20 04:52:21 2025]  ksys_read+0x66/0xe0
-[Thu Mar 20 04:52:21 2025]  do_syscall_64+0x51/0x120
-[Thu Mar 20 04:52:21 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[Thu Mar 20 04:52:21 2025] RIP: 0033:0x7fe6bf7a046e
-[Thu Mar 20 04:52:21 2025] RSP: 002b:00007ffd6e1a4028 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-[Thu Mar 20 04:52:21 2025] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fe6bf7a046e
-[Thu Mar 20 04:52:21 2025] RDX: 0000000000020000 RSI: 00007fe6bf694000 RDI: 0000000000000003
-[Thu Mar 20 04:52:21 2025] RBP: 00007fe6bf694000 R08: 00007fe6bf693010 R09: 0000000000000000
-[Thu Mar 20 04:52:21 2025] R10: fffffffffffffbc5 R11: 0000000000000246 R12: 0000000000000000
-[Thu Mar 20 04:52:21 2025] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
-
-[1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com
-
-Thanks,
-Lance
-
+Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
-v3 -> v4:
- * #01 #02 Pick RB from Masami - thanks!
- * #03 Pick AB from Masami - thanks!
- * Extract the type from the blocker and use a switch-case instead of
-if-else, suggested by Masami
- * https://lore.kernel.org/all/20250319081138.25133-1-ioworker0@gmail.com
-
-v2 -> v3:
- * Remove the unnecessary WARN_ON_ONCE check for 'current->blocker',
- suggested by Masami
- * Drop the redundant #ifdef for including the hung task header file,
- suggested by Masam
- * Unify the samples into 'hung_task_tests.c', suggested by Masami
- * https://lore.kernel.org/all/20250314144300.32542-1-ioworker0@gmail.com
-
-v1 -> v2:
- * Use one field to store the blocker as only one is active at a time,
- suggested by Masami
- * Leverage the LSB of the blocker field to reduce memory footprint,
- suggested by Masami
- * Add a hung_task detector semaphore blocking test sample code
- * https://lore.kernel.org/all/20250301055102.88746-1-ioworker0@gmail.com
-
-Lance Yang (2):
-  hung_task: replace blocker_mutex with encoded blocker
-  hung_task: show the blocker task if the task is hung on semaphore
-
-Zi Li (1):
-  samples: extend hung_task detector test with semaphore support
-
- include/linux/hung_task.h           | 99 +++++++++++++++++++++++++++++
- include/linux/sched.h               |  2 +-
- include/linux/semaphore.h           | 15 ++++-
- kernel/hung_task.c                  | 55 ++++++++++++----
- kernel/locking/mutex.c              |  5 +-
- kernel/locking/semaphore.c          | 52 +++++++++++++--
- samples/Kconfig                     |  9 +--
- samples/hung_task/Makefile          |  2 +-
- samples/hung_task/hung_task_mutex.c | 66 -------------------
- samples/hung_task/hung_task_tests.c | 97 ++++++++++++++++++++++++++++
- 10 files changed, 310 insertions(+), 92 deletions(-)
+ include/linux/hung_task.h | 99 +++++++++++++++++++++++++++++++++++++++
+ include/linux/sched.h     |  2 +-
+ kernel/hung_task.c        | 13 +++--
+ kernel/locking/mutex.c    |  5 +-
+ 4 files changed, 111 insertions(+), 8 deletions(-)
  create mode 100644 include/linux/hung_task.h
- delete mode 100644 samples/hung_task/hung_task_mutex.c
- create mode 100644 samples/hung_task/hung_task_tests.c
 
+diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+new file mode 100644
+index 000000000000..a5414d7b402d
+--- /dev/null
++++ b/include/linux/hung_task.h
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Detect Hung Task: detecting tasks stuck in D state
++ *
++ * Copyright (C) 2025 Tongcheng Travel (www.ly.com)
++ * Author: Lance Yang <mingzhe.yang@ly.com>
++ */
++#ifndef __LINUX_HUNG_TASK_H
++#define __LINUX_HUNG_TASK_H
++
++#include <linux/bug.h>
++#include <linux/sched.h>
++#include <linux/compiler.h>
++
++/*
++ * @blocker: Combines lock address and blocking type.
++ *
++ * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
++ * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
++ * always zero. So we can use these bits to encode the specific blocking
++ * type.
++ *
++ * Type encoding:
++ * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
++ * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
++ * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
++ * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
++ */
++#define BLOCKER_TYPE_MUTEX      0x00UL
++#define BLOCKER_TYPE_SEM        0x01UL
++#define BLOCKER_TYPE_RTMUTEX    0x02UL
++#define BLOCKER_TYPE_RWSEM      0x03UL
++
++#define BLOCKER_TYPE_MASK       0x03UL
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++static inline void hung_task_set_blocker(void *lock, unsigned long type)
++{
++	unsigned long lock_ptr = (unsigned long)lock;
++
++	WARN_ON_ONCE(!lock_ptr);
++	WARN_ON_ONCE(READ_ONCE(current->blocker));
++
++	/*
++	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
++	 * without writing anything.
++	 */
++	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
++		return;
++
++	WRITE_ONCE(current->blocker, lock_ptr | type);
++}
++
++static inline void hung_task_clear_blocker(void)
++{
++	WARN_ON_ONCE(!READ_ONCE(current->blocker));
++
++	WRITE_ONCE(current->blocker, 0UL);
++}
++
++/*
++ * hung_task_get_blocker_type - Extracts blocker type from encoded blocker
++ * address.
++ *
++ * @blocker: Blocker pointer with encoded type (via LSB bits)
++ *
++ * Returns: BLOCKER_TYPE_MUTEX, BLOCKER_TYPE_SEM, etc.
++ */
++static inline unsigned long hung_task_get_blocker_type(unsigned long blocker)
++{
++	WARN_ON_ONCE(!blocker);
++
++	return blocker & BLOCKER_TYPE_MASK;
++}
++
++static inline void *hung_task_blocker_to_lock(unsigned long blocker)
++{
++	WARN_ON_ONCE(!blocker);
++
++	return (void *)(blocker & ~BLOCKER_TYPE_MASK);
++}
++#else
++static inline void hung_task_set_blocker(void *lock, unsigned long type)
++{
++}
++static inline void hung_task_clear_blocker(void)
++{
++}
++static inline unsigned long hung_task_get_blocker_type(unsigned long blocker)
++{
++	return 0UL;
++}
++static inline void *hung_task_blocker_to_lock(unsigned long blocker)
++{
++	return NULL;
++}
++#endif
++
++#endif /* __LINUX_HUNG_TASK_H */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 1419d94c8e87..f27060dac499 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1218,7 +1218,7 @@ struct task_struct {
+ #endif
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-	struct mutex			*blocker_mutex;
++	unsigned long			blocker;
+ #endif
+ 
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index dc898ec93463..79558d76ef06 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -22,6 +22,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/debug.h>
+ #include <linux/sched/sysctl.h>
++#include <linux/hung_task.h>
+ 
+ #include <trace/events/sched.h>
+ 
+@@ -98,16 +99,18 @@ static struct notifier_block panic_block = {
+ static void debug_show_blocker(struct task_struct *task)
+ {
+ 	struct task_struct *g, *t;
+-	unsigned long owner;
+-	struct mutex *lock;
++	unsigned long owner, blocker;
+ 
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+ 
+-	lock = READ_ONCE(task->blocker_mutex);
+-	if (!lock)
++	blocker = READ_ONCE(task->blocker);
++	if (!blocker ||
++	    hung_task_get_blocker_type(blocker) != BLOCKER_TYPE_MUTEX)
+ 		return;
+ 
+-	owner = mutex_get_owner(lock);
++	owner = mutex_get_owner(
++		(struct mutex *)hung_task_blocker_to_lock(blocker));
++
+ 	if (unlikely(!owner)) {
+ 		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
+ 			task->comm, task->pid);
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index 6a543c204a14..e9ef70a6cb5f 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -29,6 +29,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/debug_locks.h>
+ #include <linux/osq_lock.h>
++#include <linux/hung_task.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/lock.h>
+@@ -189,7 +190,7 @@ __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
+ 		   struct list_head *list)
+ {
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-	WRITE_ONCE(current->blocker_mutex, lock);
++	hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
+ #endif
+ 	debug_mutex_add_waiter(lock, waiter, current);
+ 
+@@ -207,7 +208,7 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
+ 
+ 	debug_mutex_remove_waiter(lock, waiter, current);
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-	WRITE_ONCE(current->blocker_mutex, NULL);
++	hung_task_clear_blocker();
+ #endif
+ }
+ 
 -- 
 2.45.2
 
