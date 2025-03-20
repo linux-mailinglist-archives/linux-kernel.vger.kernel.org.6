@@ -1,186 +1,308 @@
-Return-Path: <linux-kernel+bounces-569162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCC6A69F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:35:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA84A69F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098D78A380E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:34:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B683A8228
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99021E5204;
-	Thu, 20 Mar 2025 05:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750241AAE01;
+	Thu, 20 Mar 2025 05:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="A+sZvOjb"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2058.outbound.protection.outlook.com [40.107.237.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="ELsMzPGe"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3671DE3A8;
-	Thu, 20 Mar 2025 05:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742448883; cv=fail; b=cPD4sN2KcXJUMXmZgx6elp6UVKyT7vgTMJQje3h9fB7iwXCB/ws753okCm/KZY1iTVx9JAh/c2BzQYAhBRtR3DHaE1gIZlszlss/uX0Mie/6vopMbb/7C12cdUE6iiGd8zwhAII2kQSGmN/D1Skz0KM87BHN5eYSlhxZlp4JsRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742448883; c=relaxed/simple;
-	bh=w2fYFYyCph0huuTBuIvANv9XqTa83RNHkOO9g1srgSw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=l6GHE3Ks8aoYMgQ2BRH6kBYfGT5k7RER3yLKikEw7xWrnj9AplKwUfxFOme1fDhNKuiOR/O5wOhn3kneKPDU3nBdwhdkYHIQwT7gSWTlgTalb4sdPMGt7fm8ukTqw0a3BROYw/enTgwq/qvqm+dqmWr4DvO3YuouGLcu3xJpRt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=A+sZvOjb; arc=fail smtp.client-ip=40.107.237.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=up8IlvMGVSKZOuCyH5aCqHwGizu6Vtehd2szw5rLz4vqvC62GfTYXGqOFlvCNfnMxGcIo+3RR1Bvv6/aFjfhhauGkZYxBlB3EneEchG8D5KS7UPVzvJu/DkBzwKykO7ie9A+FxfeqFRmJ7OFqDDWcPGBjjD8UYMSSkkfyOP5ge99ShbtBUTsDw1K4W16+sP0sqF+iXI1AseQoPh3UTMzUPe8ocz3cnP6TvukbijRlE42M0FzMAsX1CabSdNkOpBZdftf0cg0uc5GvBIExnR2BFew8g/Z90w5jX+VwU0fORXTRSTjOpd8Up397tIdvXgF7UFul9qZvI6Md62vZOD8Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KOZwjOmiqDJJ2srqH9lnYey3x7XaBNktqWlfkalEK4E=;
- b=IrEEpKYTXiHY56bFJv84oDW7IwQFE64tQbV+W2r9/KDI81LGNRvgNFGVSQSJ/bB4mLZ8KK61oWjz/xXMinLmoKG9imXLT69DvXL8+vVVtrW0kdpQ0tu5qZTTB5mXSqqID014HuDtjU9/w+2dBgf6J4WXXJWnTwcCCSB4jrPdw0Oc1fCh6p2WsavadlR3/dm1ikBeUB4WXXObUdPnoUK90q0v4lzyrdlcLqng9lvg0fRTYSOpTma18lCEN5vaWIOBFNGPa7baXF2x0q4LWNi2hKbBRFl+pWmdLDg6q1zGpR5XITtqKP/W3s4rWli+brJDo2piv/QAHQismiRlVK3VGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KOZwjOmiqDJJ2srqH9lnYey3x7XaBNktqWlfkalEK4E=;
- b=A+sZvOjbuagTH9Zp439qp4SAGoqqMrD8tLk4OKoYpTMVXX9xmSQkHUlmn9nruJlaJZtXLYhFDqhYgrWOqaPlSp0ChXxTs/lqUiBVW0f0tVnLmGZvJbHqxI6zO3C2spNdtRuDEqCQETVPXRAhvI04tXNKW04i/We5huMF8SBiHbk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- PH7PR12MB7377.namprd12.prod.outlook.com (2603:10b6:510:20c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
- 2025 05:34:37 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%4]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
- 05:34:37 +0000
-Message-ID: <aac3b9ab-8dbf-424e-856a-d02135323c8b@amd.com>
-Date: Thu, 20 Mar 2025 11:04:29 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] KVM: SVM: Add support for 4096 vcpus with x2AVIC
-To: "Naveen N Rao (AMD)" <naveen@kernel.org>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-References: <cover.1740036492.git.naveen@kernel.org>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <cover.1740036492.git.naveen@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0174.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:de::15) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF818DB24
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742448973; cv=none; b=VHfxe+ut2AfcmPVt71Kqpa6eMEH3MgvfKLYBTIQ61EZ4dnn9bIQbXF08Z0u+1z7lE7p2M4UIWIx6qKtlVWtJFogR11vGar0vGYPuLqV3DiE+EpRPG8WQj+eOtJE/UmVdBsOWRCpltYBXvTsFp6kyXV9bAO6m8+/AqZlU4PMuE98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742448973; c=relaxed/simple;
+	bh=pykQWiiCufg9UKjHIJTQCkNZCnZqG7otAUgzUYRGDng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hFGPw81dvq6CC2drGh/1k2f8+wkDetyVbyDDaus5ggzJvFJcViefUplJrF3ODotJMeLFE01czctt3qUakK3mxf5Vq0o4DEivJjR7xfmV8QCFCZIte99kQE0DvLqOcxxxOHLs92ZmT1tEk3KaXDCVgxLl68JIhiPaj/SJOT6pwCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=ELsMzPGe; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-225a28a511eso5720665ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 22:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742448971; x=1743053771; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RbGnsTCcev6pYDQx9u/sGBjWd1vcflm1xvB7Aplfx1U=;
+        b=ELsMzPGelMHj6/3W0OmjnVamtZoCueZhxniH/FycdsvGNvtMacSkxtIvLcxcvpWU7u
+         9g6H0AQjfHgkobaIAS4L9OoQGbl/4wOilBT/4hGQZzY2M2S6J5pGcCW/sHJb3Ea564kd
+         AY8vM1k4MpgRCZIl5enUsvH5No2C/IrAkaaMbK8kRqRwzTafydcYPPcxEt2JDP66psVQ
+         fyLq2LwlRXX/c0fpxqu7Yj3/QlI788wiKjJ/1dMugi6N3K0+kv9+zkx+ux92k6JdfFvF
+         0vzJKRIEVDGdBwFFT3Dka8Hvi2N3wtfA96KtruB/AB0XUoHLJ/WqwkKzqLi0BH/OABZL
+         DtNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742448971; x=1743053771;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RbGnsTCcev6pYDQx9u/sGBjWd1vcflm1xvB7Aplfx1U=;
+        b=WiSY8SuZtMuKGSx4k8GuVpdKa9a9hvIcd+zNk1Gjk4o1R383UwwJg1ywBxsP01yich
+         aGkAjRbYc/x4cyr9l4+lO5LeBbpoplKOQl8HwSuNZW6U5n4lZqw2zgPKqm/d4e6WKLW7
+         ibbxBNMGktPEzD+D8Cq4HQo2YXe9S4jCARyzMMNdUDFzWbP8iQm14Cr22YHsh8PecaBw
+         issiM+dcYQpeTA4XZxEqqpMwwnsDyM0nz+jRTNS8aRoe60iKtsnJD5Mkijnp3+PLhMLL
+         NQ4vkSOqyjE2Rdcfgd1bxuZqtEDYhBkXbBL6AeubW6m5AOHN56KNe/EX+rnsHccUUneJ
+         XpNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKJJ/H7md99QUkoWMv16JPCZCxBx3f+f0ZI7Cr22LnerCujI8uTtASCrSS6Kv3TCgV7zE0D52KzVv87zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLN8f4KSuBDE7v1ku5mP8p7J31zKfLJlyXLrl33OihBAI7iAqn
+	6uQno+qX4EHAthw4CVFq/99yJ5oRJNkYplgCDX5/WHU16y7GCMXsWFYq83+OIsE=
+X-Gm-Gg: ASbGncuNsYBoDMwTyPX1XSJc1EYrWYzB8eyFFlMvRhJJRcdxQ3IRzNG4s0qcLPNqU8K
+	6mIjzc1SzsRNus8knV5JWKxIJB7WWnWV2sHBQImd4l7xUxtYyuu0ieqBRjiLk9VisTfQL9aWYBm
+	/2f8Mvy9NhYWyqUHgC5BXtBZ0fErknLZy2uHdrIDPFNDWCf1DXW1wfu35/K5dr9S8CEHOTWa8xq
+	/p5qfccajQTNfTHgi3zhIdVdC8bDjgu7K2RJpKMUkgvhosbhNUlF87VRlfAjO2L+XZovDsH5VdN
+	qCmAS4JV2Nh33FaoB0TU+vIYentaBgOHX+xNYpnQ8Iljwvx7/2bthTr6oA==
+X-Google-Smtp-Source: AGHT+IErhQqYwyVfjSSFE49cyYQSwTfv6bxLT2Cv1e2uEHao33rhRGfa+oAbBrQwdclN/m7vUf+GeA==
+X-Received: by 2002:a17:902:ce0d:b0:224:1eab:97b2 with SMTP id d9443c01a7336-22649ccca04mr93156685ad.53.1742448971138;
+        Wed, 19 Mar 2025 22:36:11 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba721esm125565465ad.149.2025.03.19.22.36.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 22:36:10 -0700 (PDT)
+Message-ID: <83a5ab7b-7b29-413e-a854-31c7893f3c4a@daynix.com>
+Date: Thu, 20 Mar 2025 14:36:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|PH7PR12MB7377:EE_
-X-MS-Office365-Filtering-Correlation-Id: c45f4195-a247-468b-42ef-08dd6770e707
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cUZaRzNOVVdXSUFpb01OUklJakZJZC92MXVNUDFyTDYrd2JnNTQxd05qYlg3?=
- =?utf-8?B?RkdrYWNVTUNtejdSdUd2NGRXMmdPYzJ6N0ZWOFNEeUN6bG1uenF0ZEc5d2VX?=
- =?utf-8?B?RkV2UDNSRFRUK29VYm1USnFXNFUxbVRteVFxNVlPMU1QOUJ3cnNOSG1jYjMx?=
- =?utf-8?B?aWM5aTVrYjBDcHdqMVpBZUpoRGZ0QVpMTks1NUVJUHQ5ME9GRkN1SVdsSDBv?=
- =?utf-8?B?b2RNa0JPc3NWMVljMDcySFRBS004cWpQQjNKRStseHc2OHNRT2IzZUJNayt1?=
- =?utf-8?B?SlduQnU2cDZBb1JITlZPdGdDNy9FWnZGdzhpeWlWSjdnSDRsdUt0VTZUcmpO?=
- =?utf-8?B?S25wOThIaTlzNm5BcHM1WWhxNDE0d0xFdWtIR2dlR25uS1J5eWxIUnBkTVkw?=
- =?utf-8?B?OSt1cWY4SUhWSW1VNmpPa2puMnZOcGZkN09QWFZydWZFYkE0RUhBZDBNb3Ru?=
- =?utf-8?B?YmNqK1lsbW9YNzVLbm9YMHNjVTdHRjNicVByQW5VejBGSm9YOTJjTXFDMzRs?=
- =?utf-8?B?NkNpTUg4RkFaeEo0bEt2akQyakk4NUZyMnJOaW9CTUxZZFlIVzZVMHVYTHZE?=
- =?utf-8?B?cjVxOTBBWEFDSFhLcm9hNUFHdVlaTUNUYVN5R2R5VUdEY3pzOGJBa1JJMmJE?=
- =?utf-8?B?Yml0STRaam53cHo1cVJROHFiM0NTcUhNb1V6L1pacnR1bE11L3ZoWWpOSnZj?=
- =?utf-8?B?YzZjSnMxR3RWRnlWYVpVVkZ4WXlzYUVoaE9xUU5TdFdZSi9rbnJUZVMvMTdu?=
- =?utf-8?B?a25scUpTRy94bG1FWTZTMzNqcG1KVnRJb1RvR2J6SFpJam1xNXdhbG1qRldt?=
- =?utf-8?B?bldpSitkbGE5ZmQxUjBsc1Z6NTVzaGZSU0thRmlHM1gxSlhCS2VxdmJ0eGcr?=
- =?utf-8?B?UUE3elZhTHlTSlZzQ0ZrbjhaVk00ZXhTQlAxNWRJd2JUZUtKSTNCYks5K0FQ?=
- =?utf-8?B?K1VRTHlYaWZEc0NLRVR0SGV3TzdhaHFrcG8vZGVaYXBMRGg1TXJxRmcyRkkr?=
- =?utf-8?B?ZysvM3hVcE9vTThLZERnRDg0ei9Ec3RtSUpLdncwc1hpN0ZFNUlXTTB3ZFdn?=
- =?utf-8?B?U3lGM21GY3EzZStuaW9EYkRCWkdvZEJKbHBwejNyZitnZ0p5a29vSVJXMEg4?=
- =?utf-8?B?TlZMTjFVekFzMEdRZE9jS0VDQTg4NUZxcjl1QTBCZzIzNFlOaVN5TVMzT1lv?=
- =?utf-8?B?NTlyOFFGTWNzMHgyd2RhSGpKSUFzbDdLVEZEYVZEcUFxa0UraU5EaW5Lem1k?=
- =?utf-8?B?VE1MRFZ2MzBKcGJvTWQxd3FzK0pVM0lvY1pXS1F6RTdVQ0xGNTVpYnpmaEFn?=
- =?utf-8?B?Ykt6N3NzT3RQUVlVUmFDb295enNRaUQxWTVob1E5clJnemFiTFJwUGNkNTl0?=
- =?utf-8?B?Y2NqcVV0WGVQWjJ0TUNXYnR3WFhJbk1RZW1CMnNGN2RtSjZXWTN5eUhRaXdt?=
- =?utf-8?B?dk9tRXdoVFhLRlN3VVRYc3A2OEQxRUJuMlZJYTJjTlpKU2lWaS9SQUtkdlFU?=
- =?utf-8?B?RTNnRFpSRU1WVnQxVWwrLzlma3BFeFVabmd3M1RwaVpQbko1blhTK0JoRWkw?=
- =?utf-8?B?TUxLemtId2oreHpRQ3VYR09yejdZSUNneVNNRzlHVjJublU3R2VuZm45Tyt5?=
- =?utf-8?B?Vi9hViszK0pJZm5uWlhxc0dsWjhibGZvbzJycVVKbEczdFpTd25EdmppQlRV?=
- =?utf-8?B?MG5Jd2VFMFBaeFowbHlBUStWYloxRDRnNnMrVDk0dndrVkt6YUR3cURJckdy?=
- =?utf-8?B?WUNXSDZqbHQwZHpZaWJwcjRUUWhxZmpzWGZpejB5NGtSMFlWSXVKcm1tSWQx?=
- =?utf-8?B?T1hKNElwMlN1NHQ2Zjc5NGJCdjN6RnY4U0pYMXI5eEJ5eEY2UkY3UVpiNmVR?=
- =?utf-8?Q?NSP47TDfF4do9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dXFSTjczWXVFZFNqaGJncW9hZHE3NGUrWW41QjVPMjZNWnFtbjdoUmhycmRP?=
- =?utf-8?B?SkVYUW5NZ3ZSd29ibytXWnlxSmppNWVHQVIwbm9NejhZTlJuL2FIcDBLOEJy?=
- =?utf-8?B?TjJEaUd1TlhiVmVPZGJnRk5WS2srb21SdjAvUm5TV1pOVkxvOFh4dEZTa1p6?=
- =?utf-8?B?eXJ4UkZxWEEzekFPeVV1dG1hdEx1ZTA5Nlg5OGFDOE9RVFV0RFptTHFsWGFw?=
- =?utf-8?B?U2lhbFozV05FZWpuejZXV1dBMzhZUUpNb2NmdlU1ZkRYVldQaUdQZUo0U3J3?=
- =?utf-8?B?MUFWZHFIa1FFRkczZHdyUGpNMW5IcTBvdzJjMUlFeWdYdUp6ZXRId0srTFRQ?=
- =?utf-8?B?Z1BTazIyZFB4SHpOK0wzTVRlVzMzZnlIcVRrcktSUnFMQjB4eWo2aGR0QWZz?=
- =?utf-8?B?KzJXeEFxMUFqcHN2d0ptakM3UzdScnRPbVJNckp2am9zZ0c5ZmRYTGIyTFBj?=
- =?utf-8?B?a0tNUlZ5WWgvMVFOMTBVOGR5allJTXg2eHdjdUR6em9OeXFkVlJ5aXJrYW9t?=
- =?utf-8?B?WjM2d1UvWldXU1VXYjg3TEl3KzVJdzBMZE5DdVk1MXYvWHZPMnA4bXYyNkFs?=
- =?utf-8?B?MmtUaStFVTFzci9YMlRleWtJTWJxaHE4OHpTc2pnSXF6VURWOElKU2NwRk5W?=
- =?utf-8?B?eHdjZVVqNkFGVnBEeXovaUVKL0lKb05Va0hHdnZ5U1I2OG02ckxDaWU0U0o5?=
- =?utf-8?B?UzMvVnZXYTErWUpxVStDb3BZdEh5UVkwcURMYWc1ckNDZk1uLzdzbVVMZTEy?=
- =?utf-8?B?TUZmbWRvYXJLNzhRUHpWU3FWaldyajFER0htQVdFOUdITU5DZEJIM0ZHeGVJ?=
- =?utf-8?B?ek5JbWZzUXJwNUVGUkVwVmozYkRBZFdZcFBMZ3ZML1I0VEs4dkErT3NsVVMx?=
- =?utf-8?B?ODBFQmphYUJPdlYxUXJ3WGRMaVNqZXZ1ZWJRQTZ1SUVnR05IVTVuQW01ajhk?=
- =?utf-8?B?R3A1YjhBU0tTQnR5V3J1Y0pZZ0ZoM2ZHY0k0cmE4dHVFUjFHYy9MQ2NUcWlw?=
- =?utf-8?B?RG9QWFNkUElDQ2FCdy9uamdtOFlySHM5Y1loU0xZVlBZQ1BGbUtYVGtSQ09j?=
- =?utf-8?B?UUN0dzd2OEM2dDA2RGhqNzUxN2tTc2VPNzZvRTJHMnVwT25UbjdybDNsNE1D?=
- =?utf-8?B?WEI3ZlVFZlFJVU1PcW5sZEptYlNrOFE5ODVoNDFFTllEK2lJS08xNWJvRTRt?=
- =?utf-8?B?QzBQdjRhMGxsZ3BTdUgrV2ZNUmtXMVJZRGhyWmZ1MkxDdE9nNk9XdzlnUTh0?=
- =?utf-8?B?STdCZVNTWjc0OU15TzZkS0VUTzNEMERoOW9vUVBkUG1sblpEdUxJd1hKN3NT?=
- =?utf-8?B?TGZqdEtHOXJwTGYxMmRxM0JYcUNpL2g3ZXlIMFNNQTRlQzFOSWJmb3hLYzl5?=
- =?utf-8?B?ZDgzdnpIV2p5YVlDTmNKcCtkVkdvMHJiNVY5WTN6L092OTJnTHplZnQ5VGRw?=
- =?utf-8?B?eWRNRmRjbUVYcmlna2ZRMkdFOVo0enhWZFBpcHo2Z2lQd1VpN2gwVW5CM0tH?=
- =?utf-8?B?bGpadnhUbkxNWTV6ZFEyTG9TRUZSZFhRRlliSkdsVHlIclJId1RpRWRGMUc1?=
- =?utf-8?B?ODFDOE5vZW9NU0E4VFBGMTYyMW1jaHlpSmNTYmQ1V3BhTWc2T05QMkFQL0pZ?=
- =?utf-8?B?TFZ0aDVXZktKT2x4ZC9CMFRzNmEwbGZFMXNRdVdtbUNsNjRveTUzck9zQTE5?=
- =?utf-8?B?c0M3YzNZMGl5bFh6UUY3SkRDYmM4bkFTcHdScmFYd1Bqb2hqc250eXZOTUlp?=
- =?utf-8?B?YldXZnF0V0o1TUNKSkxycWN0ckMwZzcxRWxxaUdybHgvME9XVmE4Njg3LzZC?=
- =?utf-8?B?Ry9ibTZrVyt4c3oxelpYRDZUSXZ5TDVPOHlSUVhhMTlIOGVaU0hrVE5iZ3gw?=
- =?utf-8?B?TGppYk1RdnlzTm9RL0NTZEhiSEdUVUJwQ2JEeENaRnFoVFNsYnVnMXJOL3ph?=
- =?utf-8?B?TytvTWVST041VHpIK1VoazRWdHR4dHhmR1A5VTB1eVYrcEpBb3RkTm5PTW1W?=
- =?utf-8?B?K3NucG53czVOdnAvODNRa2dzZUwzMjR0OVY3TFJuNTJzK1FodjJYczlnbGQ3?=
- =?utf-8?B?RnpidnAwY2lMY3grTnZtdmphNWhQcDhRMVY1dTFWMkwyRVZ3RmNnbEY5Mjl4?=
- =?utf-8?Q?xur0u5NJjArbes7oMMXcgEPpy?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c45f4195-a247-468b-42ef-08dd6770e707
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 05:34:37.0894
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dGztK/TxoB8Pfnjd9fnBncLuCKjvKOJ2JQLdYZMFVWlQyquX4xYcp7Nk3atxNP4yaqGCKKLKE0caOOQoFgfJ5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7377
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/4] virtio_net: Use new RSS config structs
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>,
+ Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
+References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+ <20250318-virtio-v1-3-344caf336ddd@daynix.com>
+ <CACGkMEv1TTXHd_JGb_vyN8pfTAMLbsTE6oU9_phrdpaZBrE97Q@mail.gmail.com>
+ <b6eec81d-618f-4a59-8680-8e22f1a798bf@daynix.com>
+ <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2/20/2025 1:08 PM, Naveen N Rao (AMD) wrote:
-> This is v3 of the series posted at:
-> http://lkml.kernel.org/r/cover.1738563890.git.naveen@kernel.org
+On 2025/03/20 10:50, Jason Wang wrote:
+> On Wed, Mar 19, 2025 at 12:48 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/19 10:43, Jason Wang wrote:
+>>> On Tue, Mar 18, 2025 at 5:57 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> The new RSS configuration structures allow easily constructing data for
+>>>> VIRTIO_NET_CTRL_MQ_RSS_CONFIG as they strictly follow the order of data
+>>>> for the command.
+>>>>
+>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>> ---
+>>>>    drivers/net/virtio_net.c | 117 +++++++++++++++++------------------------------
+>>>>    1 file changed, 43 insertions(+), 74 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>>> index d1ed544ba03a..4153a0a5f278 100644
+>>>> --- a/drivers/net/virtio_net.c
+>>>> +++ b/drivers/net/virtio_net.c
+>>>> @@ -360,24 +360,7 @@ struct receive_queue {
+>>>>           struct xdp_buff **xsk_buffs;
+>>>>    };
+>>>>
+>>>> -/* This structure can contain rss message with maximum settings for indirection table and keysize
+>>>> - * Note, that default structure that describes RSS configuration virtio_net_rss_config
+>>>> - * contains same info but can't handle table values.
+>>>> - * In any case, structure would be passed to virtio hw through sg_buf split by parts
+>>>> - * because table sizes may be differ according to the device configuration.
+>>>> - */
+>>>>    #define VIRTIO_NET_RSS_MAX_KEY_SIZE     40
+>>>> -struct virtio_net_ctrl_rss {
+>>>> -       __le32 hash_types;
+>>>> -       __le16 indirection_table_mask;
+>>>> -       __le16 unclassified_queue;
+>>>> -       __le16 hash_cfg_reserved; /* for HASH_CONFIG (see virtio_net_hash_config for details) */
+>>>> -       __le16 max_tx_vq;
+>>>> -       u8 hash_key_length;
+>>>> -       u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+>>>> -
+>>>> -       __le16 *indirection_table;
+>>>> -};
+>>>>
+>>>>    /* Control VQ buffers: protected by the rtnl lock */
+>>>>    struct control_buf {
+>>>> @@ -421,7 +404,9 @@ struct virtnet_info {
+>>>>           u16 rss_indir_table_size;
+>>>>           u32 rss_hash_types_supported;
+>>>>           u32 rss_hash_types_saved;
+>>>> -       struct virtio_net_ctrl_rss rss;
+>>>> +       struct virtio_net_rss_config_hdr *rss_hdr;
+>>>> +       struct virtio_net_rss_config_trailer rss_trailer;
+>>>> +       u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+>>>>
+>>>>           /* Has control virtqueue */
+>>>>           bool has_cvq;
+>>>> @@ -523,23 +508,16 @@ enum virtnet_xmit_type {
+>>>>           VIRTNET_XMIT_TYPE_XSK,
+>>>>    };
+>>>>
+>>>> -static int rss_indirection_table_alloc(struct virtio_net_ctrl_rss *rss, u16 indir_table_size)
+>>>> +static size_t virtnet_rss_hdr_size(const struct virtnet_info *vi)
+>>>>    {
+>>>> -       if (!indir_table_size) {
+>>>> -               rss->indirection_table = NULL;
+>>>> -               return 0;
+>>>> -       }
+>>>> +       u16 indir_table_size = vi->has_rss ? vi->rss_indir_table_size : 1;
+>>>>
+>>>> -       rss->indirection_table = kmalloc_array(indir_table_size, sizeof(u16), GFP_KERNEL);
+>>>> -       if (!rss->indirection_table)
+>>>> -               return -ENOMEM;
+>>>> -
+>>>> -       return 0;
+>>>> +       return struct_size(vi->rss_hdr, indirection_table, indir_table_size);
+>>>>    }
+>>>>
+>>>> -static void rss_indirection_table_free(struct virtio_net_ctrl_rss *rss)
+>>>> +static size_t virtnet_rss_trailer_size(const struct virtnet_info *vi)
+>>>>    {
+>>>> -       kfree(rss->indirection_table);
+>>>> +       return struct_size(&vi->rss_trailer, hash_key_data, vi->rss_key_size);
+>>>>    }
+>>>>
+>>>>    /* We use the last two bits of the pointer to distinguish the xmit type. */
+>>>> @@ -3576,15 +3554,16 @@ static void virtnet_rss_update_by_qpairs(struct virtnet_info *vi, u16 queue_pair
+>>>>
+>>>>           for (; i < vi->rss_indir_table_size; ++i) {
+>>>>                   indir_val = ethtool_rxfh_indir_default(i, queue_pairs);
+>>>> -               vi->rss.indirection_table[i] = cpu_to_le16(indir_val);
+>>>> +               vi->rss_hdr->indirection_table[i] = cpu_to_le16(indir_val);
+>>>>           }
+>>>> -       vi->rss.max_tx_vq = cpu_to_le16(queue_pairs);
+>>>> +       vi->rss_trailer.max_tx_vq = cpu_to_le16(queue_pairs);
+>>>>    }
+>>>>
+>>>>    static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>>>>    {
+>>>>           struct virtio_net_ctrl_mq *mq __free(kfree) = NULL;
+>>>> -       struct virtio_net_ctrl_rss old_rss;
+>>>> +       struct virtio_net_rss_config_hdr *old_rss_hdr;
+>>>> +       struct virtio_net_rss_config_trailer old_rss_trailer;
+>>>>           struct net_device *dev = vi->dev;
+>>>>           struct scatterlist sg;
+>>>>
+>>>> @@ -3599,24 +3578,28 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>>>>            * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
+>>>>            */
+>>>>           if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+>>>> -               memcpy(&old_rss, &vi->rss, sizeof(old_rss));
+>>>> -               if (rss_indirection_table_alloc(&vi->rss, vi->rss_indir_table_size)) {
+>>>> -                       vi->rss.indirection_table = old_rss.indirection_table;
+>>>> +               old_rss_hdr = vi->rss_hdr;
+>>>> +               old_rss_trailer = vi->rss_trailer;
+>>>> +               vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
+>>>> +               if (!vi->rss_hdr) {
+>>>> +                       vi->rss_hdr = old_rss_hdr;
+>>>>                           return -ENOMEM;
+>>>>                   }
+>>>>
+>>>> +               *vi->rss_hdr = *old_rss_hdr;
+>>>>                   virtnet_rss_update_by_qpairs(vi, queue_pairs);
+>>>>
+>>>>                   if (!virtnet_commit_rss_command(vi)) {
+>>>>                           /* restore ctrl_rss if commit_rss_command failed */
+>>>> -                       rss_indirection_table_free(&vi->rss);
+>>>> -                       memcpy(&vi->rss, &old_rss, sizeof(old_rss));
+>>>> +                       kfree(vi->rss_hdr);
+>>>> +                       vi->rss_hdr = old_rss_hdr;
+>>>> +                       vi->rss_trailer = old_rss_trailer;
+>>>>
+>>>>                           dev_warn(&dev->dev, "Fail to set num of queue pairs to %d, because committing RSS failed\n",
+>>>>                                    queue_pairs);
+>>>>                           return -EINVAL;
+>>>>                   }
+>>>> -               rss_indirection_table_free(&old_rss);
+>>>> +               kfree(old_rss_hdr);
+>>>>                   goto succ;
+>>>>           }
+>>>>
+>>>> @@ -4059,28 +4042,12 @@ static int virtnet_set_ringparam(struct net_device *dev,
+>>>>    static bool virtnet_commit_rss_command(struct virtnet_info *vi)
+>>>>    {
+>>>>           struct net_device *dev = vi->dev;
+>>>> -       struct scatterlist sgs[4];
+>>>> -       unsigned int sg_buf_size;
+>>>> +       struct scatterlist sgs[2];
+>>>>
+>>>>           /* prepare sgs */
+>>>> -       sg_init_table(sgs, 4);
+>>>> -
+>>>> -       sg_buf_size = offsetof(struct virtio_net_ctrl_rss, hash_cfg_reserved);
+>>>> -       sg_set_buf(&sgs[0], &vi->rss, sg_buf_size);
+>>>> -
+>>>> -       if (vi->has_rss) {
+>>>> -               sg_buf_size = sizeof(uint16_t) * vi->rss_indir_table_size;
+>>>> -               sg_set_buf(&sgs[1], vi->rss.indirection_table, sg_buf_size);
+>>>> -       } else {
+>>>> -               sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved, sizeof(uint16_t));
+>>>> -       }
+>>>> -
+>>>> -       sg_buf_size = offsetof(struct virtio_net_ctrl_rss, key)
+>>>> -                       - offsetof(struct virtio_net_ctrl_rss, max_tx_vq);
+>>>> -       sg_set_buf(&sgs[2], &vi->rss.max_tx_vq, sg_buf_size);
+>>>> -
+>>>> -       sg_buf_size = vi->rss_key_size;
+>>>> -       sg_set_buf(&sgs[3], vi->rss.key, sg_buf_size);
+>>>> +       sg_init_table(sgs, 2);
+>>>> +       sg_set_buf(&sgs[0], vi->rss_hdr, virtnet_rss_hdr_size(vi));
+>>>> +       sg_set_buf(&sgs[1], &vi->rss_trailer, virtnet_rss_trailer_size(vi));
+>>>
+>>> So I still see this:
+>>>
+>>>           if (vi->has_rss || vi->has_rss_hash_report) {
+>>>                   if (!virtnet_commit_rss_command(vi)) {
+>>>
+>>> Should we introduce a hash config helper instead?
+>>
+>> I think it's fine to use virtnet_commit_rss_command() for hash
+>> reporting. struct virtio_net_hash_config and struct
+>> virtio_net_rss_config are defined to have a common layout to allow
+>> sharing this kind of logic.
 > 
-> The first patch adds support for up to 4096 vcpus with x2AVIC, while the 
-> second patch limits the value that is programmed into 
-> AVIC_PHYSICAL_MAX_INDEX in the VMCB based on the max APIC ID indicated 
-> by the VMM.
+> Well, this trick won't work if the reserved field in hash_config is
+> used in the future.
 
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+Right, but we can add a hash config helper when that happens. It will 
+only result in a duplication of logic for now.
 
--Vasant
+Regards,
+Akihiko Odaki
+
+> 
+> Thanks
+> 
+>>
+>> Regards,
+>> Akihiko Odaki
+>>
+>>>
+>>> Thanks
+>>>
+>>
+> 
 
 
