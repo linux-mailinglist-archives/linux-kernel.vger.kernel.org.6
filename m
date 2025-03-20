@@ -1,77 +1,89 @@
-Return-Path: <linux-kernel+bounces-569028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095A5A69DBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:46:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B4BA69DC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F77467E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C2C3BBAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B921CB9F0;
-	Thu, 20 Mar 2025 01:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F6B1CEEB2;
+	Thu, 20 Mar 2025 01:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SfOUSRdy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="TK3PNrbc"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50D17991;
-	Thu, 20 Mar 2025 01:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746C41A5BA4
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742435179; cv=none; b=aEyfXy53XQaCjpB9MAabhGeXxlvPnNnirgwbYNTpM1+kzL5HB66V/JaD9wL0qXoPZsbsOOHUcuvmkIpBFJ9Gd4RsII83EDJ0RkHH96PN9sZlLZ/XWYb/+Oxp308SJeusL2zPQxSdupURw5+W/jtNAbzztLMxekqjzZ1PQtF3Gp8=
+	t=1742435279; cv=none; b=FnLNiwTdWRtbmt0Pki/RUV6Gh5juForExpTVIzwErcmVVBuvAuDlLLeSTOhwIxLplRm/WpcZJa96aYqezo8Ujr2xCAbR6lBQ2U1YSaWHP9r2+g4j7whtdGPlCRw1iT7qFlhi6zwpsnOtL0ZQpAYKhPM1dDYmCAsdyVpik5TX+60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742435179; c=relaxed/simple;
-	bh=SvcwQS4Iw/lWUXoRVbyZKH9s2y37xApp15yT3jr2J0E=;
+	s=arc-20240116; t=1742435279; c=relaxed/simple;
+	bh=8vd93+qClvT7Jmn/2fjitb9N8zbtZJSVzHQ/sb/MSvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzEureImmr2nj1Xk2t9pZYxUU+KVgYCfrC4KCZBdhzG9QACct17mx1mgzJ1koGRMiC3KUOGwU6eDGXtY84oz323/poZApX40zc5SquQOJoUJL/YrvzXCdWdmS/nY6SSw5IB0/UIh2mY7R1wCATgM/eeP01QRqmqJWRDSVy7bY2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SfOUSRdy; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742435177; x=1773971177;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SvcwQS4Iw/lWUXoRVbyZKH9s2y37xApp15yT3jr2J0E=;
-  b=SfOUSRdy2HM0a8qCwPUlaGQfcF3Ge667Q9JgkddO2Vkha/UoNRxqz6I9
-   1+PsGF31gSQKRMTvFlDmOwuPlIO+jZJBF3QWwdm/vjIy57tKat5D0djkJ
-   MBn2+w7Ah1Cm3a9/sHwFb4sp1+J4gqGSYG3qH4EXTaexHwm6dPT7apIoI
-   1Ul//9zfk5fn7QYdZxR6uaaYFCxiPr8p+cuP0vthBL3NZu+eGXcZi4EoB
-   I3zO1zTQVVoxe2dPWVNYwF+Vs/bhTEmQe+LIBuwSHjUEzMdR1YIIa5va8
-   xrZPvVBUIxjgRXEOwXP+XwO99s+tTIb/7OAlNde5TbC4n3cDJfSeV8wqT
-   w==;
-X-CSE-ConnectionGUID: 0x9a8GO3RlyRgoOo21+sbQ==
-X-CSE-MsgGUID: DjXREx82SL6nDQSFiUlMAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="47425326"
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="47425326"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 18:46:17 -0700
-X-CSE-ConnectionGUID: eHHtwSwSQRyIPckfsL7QyQ==
-X-CSE-MsgGUID: /sKVIWVWR4yXttnHRf7jwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="123394916"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.43])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 18:46:16 -0700
-Date: Wed, 19 Mar 2025 18:46:14 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Robert Richter <rrichter@amd.com>, ming.li@zohomail.com,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject: Re: [PATCH 0/4 v3] cxl/core: Enable Region creation on x86 with Low
- Mem Hole
-Message-ID: <Z9tzZkn1rqd2Uk_6@aschofie-mobl2.lan>
-References: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXHqjBzQ2h8jOmt4nj8BaVjyowXd2VKXJ6nNYA/naZvqqdpftvGsADDvaR58n/nWJJWdDO7soosI5OpM1fAkdcHeoV+38Djyt3KvUQHaBEwqIy1QOMZEj7wZlPBBwaV5wkeblRCVgAvMVM2QzJPz9vV22jK/5wcMwkOLYkO7rfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=TK3PNrbc; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-224100e9a5cso2971825ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1742435278; x=1743040078; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9dN+i2AzDUfkPkdVFhgTMlxb4u3ArQIL7V+3H4EdIc=;
+        b=TK3PNrbchWhUgvSI65oeS5fc4fFkbRpkO/Dn3pC9UIN81mP9SlyYHM8VhVky7V4XTL
+         zEnJnKFxj568lbZKhNjUsbWaNLssmUxadLKEPhmWkZMuCgRlLmg4ZMqyE2HFy28LrXp3
+         KfzhqBtwV8Rbb4oFIIN3VXy7f0sUqyIvKy8JA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742435278; x=1743040078;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+9dN+i2AzDUfkPkdVFhgTMlxb4u3ArQIL7V+3H4EdIc=;
+        b=t+UQl6DlpW4n00qiLaj6zw5jGgnj28FIpD1TgURE8b7Du9V9/sa+pYKjcQip0oUKvp
+         6TLlggDTN9l2aHHFcNBhx5wn8wTfWLhBb/R+uJeTdMS/Mz6AtkjaZrkUC1lfBjymvd8Q
+         mEUuUzn8UBA2iAqPyN2sPJVLLBRpvNlhE57wlapKn5dPzcSWa22x7eNvYmPQTjJCOdBJ
+         +QEoZKWWE6pWSJf1+Q7NZ73mzeGKeTy3QAo+ZDTIwkKu6Mb0sGzWDjK1lw/iLVjYoZ+K
+         98ej4jmSANi/Z6fueVw1MpvWFloGyYtovIMvBSVGXXS5wn1rLtCcGhUI/zqSR1SjzYba
+         /3Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsO9baPGh4wGRbJvr3VznPRcPtaQjHLEFSHboxo9q8oM3iNe4VDCocpc+v6fjJ6PeTxSHZ6AcoYwFCfn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT/fk1zJJqVqqyLSS8v90OQbc0hZ5QH8YBLlhd0VkM5KRXeQ9f
+	IknYCqQYKldArbZHGhDT2CB6blajXTjW5FPe+o1EiybmKdkdBqw46MuptkAhtG4=
+X-Gm-Gg: ASbGncvMPe3wKJWaqP0tMCde4rDjfarGwfuZgGWy8y6psaIYqusBbhjLMz1nZh9Z7g7
+	kXTB17UEqooz1xtr/s7ubYTqRPanDV6IZGIvk6bhMRHhAAovBdO7uZh08sxtfGYU/k1Yv4vBYY/
+	Vt1lU/wyTrFTT/dJFhLTB1z103rVNovD/KJJpaGJW5007Qi9HVLV45VRrsep4ToGFzHzDdyS+em
+	9QWmfst+WpUfh/i3YtQdoSrvE3anQoe7f+NXqGNCVx3/xFo8l3GxILfvhtxfewQS1Oi/DAi5TW4
+	IwvHf53z0jjvxPcUQglyvi0dY4z8sj9W52DaEQTYegYwRc2A8GbvXEtRH35fxQf8aLfPh2A7Z1L
+	z
+X-Google-Smtp-Source: AGHT+IEnL5zS2NVHMqd/Y2yTk6lYwUWXQfuMKAs4klVP0D5Ix1QzfZttlHpANYf8RWDNJxVQfzHybA==
+X-Received: by 2002:a17:902:c944:b0:223:4d7e:e523 with SMTP id d9443c01a7336-2265ee93b4cmr19116065ad.50.1742435277699;
+        Wed, 19 Mar 2025 18:47:57 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([221.148.76.1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371152931bsm12453091b3a.3.2025.03.19.18.47.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 18:47:57 -0700 (PDT)
+Date: Thu, 20 Mar 2025 10:47:43 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: dsterba@suse.cz, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: (subset) [RFC PATCH v5 0/5] introduce
+ io_uring_cmd_import_fixed_vec
+Message-ID: <Z9tzvz_4IDzMUOFb@sidongui-MacBookPro.local>
+References: <20250319061251.21452-1-sidong.yang@furiosa.ai>
+ <174239798984.85082.13872425373891225169.b4-ty@kernel.dk>
+ <f78c156e-8712-4239-b17f-d917be03226a@kernel.dk>
+ <20250319170710.GK32661@suse.cz>
+ <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,63 +92,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+In-Reply-To: <4ba22ceb-d910-4d2c-addb-dc8bcb6dfd91@kernel.dk>
 
-On Fri, Mar 14, 2025 at 12:36:29PM +0100, Fabio M. De Francesco wrote:
-> The CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
-> Physical Address (HPA) windows that are associated with each CXL Host
-> Bridge. Each window represents a contiguous HPA that may be interleaved
-> with one or more targets (CXL v3.1 - 9.18.1.3).
+On Wed, Mar 19, 2025 at 11:10:07AM -0600, Jens Axboe wrote:
+> On 3/19/25 11:07 AM, David Sterba wrote:
+> > On Wed, Mar 19, 2025 at 09:27:37AM -0600, Jens Axboe wrote:
+> >> On 3/19/25 9:26 AM, Jens Axboe wrote:
+> >>>
+> >>> On Wed, 19 Mar 2025 06:12:46 +0000, Sidong Yang wrote:
+> >>>> This patche series introduce io_uring_cmd_import_vec. With this function,
+> >>>> Multiple fixed buffer could be used in uring cmd. It's vectored version
+> >>>> for io_uring_cmd_import_fixed(). Also this patch series includes a usage
+> >>>> for new api for encoded read/write in btrfs by using uring cmd.
+> >>>>
+> >>>> There was approximately 10 percent of performance improvements through benchmark.
+> >>>> The benchmark code is in
+> >>>> https://github.com/SidongYang/btrfs-encoded-io-test/blob/main/main.c
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Applied, thanks!
+> >>>
+> >>> [1/5] io_uring: rename the data cmd cache
+> >>>       commit: 575e7b0629d4bd485517c40ff20676180476f5f9
+> >>> [2/5] io_uring/cmd: don't expose entire cmd async data
+> >>>       commit: 5f14404bfa245a156915ee44c827edc56655b067
+> >>> [3/5] io_uring/cmd: add iovec cache for commands
+> >>>       commit: fe549edab6c3b7995b58450e31232566b383a249
+> >>> [4/5] io_uring/cmd: introduce io_uring_cmd_import_fixed_vec
+> >>>       commit: b24cb04c1e072ecd859a98b2e4258ca8fe8d2d4d
+> >>
+> >> 1-4 look pretty straight forward to me - I'll be happy to queue the
+> >> btrfs one as well if the btrfs people are happy with it, just didn't
+> >> want to assume anything here.
+> > 
+> > For 6.15 is too late so it makes more sense to take it through the btrfs
+> > patches targetting 6.16.
 > 
-> The Low Memory Hole (LMH) of x86 is a range of addresses of physical low
-> memory to which systems cannot send transactions. On those systems, BIOS
-> publishes CFMWS which communicate the active System Physical Address (SPA)
-> ranges that map to a subset of the Host Physical Address (HPA) ranges. The
-> SPA range trims out the hole, and capacity in the endpoint is lost with no
-> SPA to map to CXL HPA in that hole.
+> No problem - Sidong, guessing you probably want to resend patch 5/5 once
+> btrfs has a next branch based on 6.15-rc1 or later.
+
+Thanks, I'll resend only patch 5/5 then.
+
+Thanks,
+Sidong
 > 
-> In the early stages of CXL Regions construction and attach on platforms
-> with Low Memory Holes, the driver fails and returns an error because it
-> expects that the CXL Endpoint Decoder range is a subset of the Root
-> Decoder's (SPA >= HPA). On x86 with LMH's, it happens that SPA < HPA.
-> 
-> Therefore, detect x86 Low Memory Holes, match CXL Root and Endpoint
-> Decoders or already made CXL Regions and Decoders to allow the
-> construction of new CXL Regions and the attachment of Endpoint Decoders,
-> even if SPA < HPA. If needed because of LMH's, adjust the Endpoint Decoder
-> range end to match Root Decoder's.
-
-I think the dpa_res field of the endpoint decoder needs adjusting.
-After the region is setup, the cxled->dpa_res has the unadjusted value
-and that leads to region warning and address translation failure because
-the driver 'thinks' that DPA is within a region, but when it tries
-to translate to an HPA in that region, it fails.
-
-Here's where I looked at it: using the cxl-test LMH auto-region (nice!)
-each endpoint decoder is programmed to contribute 512MB to the 1024MB region.
-The LMH adjustment shrunk the region to 768MB, so each endpoint is only
-contributing 384MB to the region. 
-
-DPA->HPA address translations of DPA addresses in the 384->512 gap cause
-a problem. The driver will needlessly warn that they are in a region for
-any poison inject or clear, and will fail address translations for any
-poison, general media or dram event.
-
-I think this should fail in region.c: __cxl_dpa_to_region()
-        if (dpa > cxled->dpa_res->end || dpa < cxled->dpa_res->start)
-                return 0;
-
-For that to fail, LMH code needs to adjust cxled->dpa_res too. 
-
-
-To test is using clear_poison you can:
-# echo 536866816 > /sys/kernel/debug/cxl/mem1/clear_poison
-  (536866816 = 512MB - 4096)
-
-[ ] cxl_core:__cxl_dpa_to_region:2860: cxl decoder18.0: dpa:0x1ffff000 mapped in region:region0
-[ ] cxl_core:cxl_dpa_to_hpa:2963: cxl_region region0: Addr trans fail: hpa 0x3ff04fffe000 not in region
-
-
-snip
+> -- 
+> Jens Axboe
 > 
 
