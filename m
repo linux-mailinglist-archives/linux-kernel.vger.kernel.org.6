@@ -1,188 +1,128 @@
-Return-Path: <linux-kernel+bounces-569515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12C7A6A40B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01729A6A411
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A838189E446
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398CC189C98F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC529224258;
-	Thu, 20 Mar 2025 10:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34080224AE6;
+	Thu, 20 Mar 2025 10:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="bEmaajYy"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O7iLOW5O"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F56E2147F2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8497C2080D9;
+	Thu, 20 Mar 2025 10:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467653; cv=none; b=CENAf+e/WPCg8dhRWkgTcRG1iLpiIIzH2ZfBVm28H8vPqh6AQhopVioj/4rQ8svIHojmbwRxScGLTyvkaTpQ0wnqUtB1PDEEh2pDGnlzQFMunGQHmfw6f8VpOTpQ+MwxeX3EGHyqaidtQAA7CVh7R7RF+2aDCoqwBB/mz15Idr8=
+	t=1742467712; cv=none; b=B8CBwvW54leWMUGgqH5SzY9UNAx1kEE5EDJFFW4lLSf7BGD8VyQVhRZJnu84Z0TTZcq3LuIZ1Yvw9yJA8PMsWPqLwBQCE8tbm6jMJNd7RVOQMeHB7Uj9kxLuYByUTzZhOuS7yHU0C+i1qqi4ZZJHs66wU4iByQ/reyBjhtpCvvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467653; c=relaxed/simple;
-	bh=9dLj34jXO3aWy8eeyY3CZQzkprJGU2y+2pU7Y2wkRA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hy+XBi5DJ1pt6EBR9wXdHyqQb/8Ib+GCmRc+5Oiu77xrY9h9pS4mk9ECglYnabUks1gHpsVuUktHswnd4HEVvUx1JBly3hDqAl3IxgE+gRskD8nhEuJwoQu1r/0C67qW1xOw9esNv2zeNnRoKSslkLEWHsBIZ69C7BfgC5s2RMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=bEmaajYy; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so5501785e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:47:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1742467650; x=1743072450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=foGgFo33VLzIkzjoUbfwPOydEMR+xeWsTRE1WEHeQbI=;
-        b=bEmaajYyuEAwqsj1lT8XHD82b/XDX7wdgDnk4gAkmWIerawX7CIrbX7sW2qTvqKgy+
-         wikI9i6hruJYVLlE7pOiXLnAwGWqb2/6J5D7gtkTe9wVo+cAxhU35STNea7eFyLxEARI
-         LHY0+aRc/bJFjbBfpxXUXLCKaztk76T3rDmiIrvLoO2FwZtXHPvuJeZrHq5QX9R7ZHzm
-         fipw234hvMWjGW0JLC8h6XZJP+8nB/gBykadkQF6rj4Nmvo2a+dYEGe/Wf3nzC/XnacX
-         san9StQbuOWEBP2J7YXIZUDTMTWUIPnesdVg8ukv2sQGshkyvkKJ61wWC91x2MBtJtth
-         gYDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742467650; x=1743072450;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=foGgFo33VLzIkzjoUbfwPOydEMR+xeWsTRE1WEHeQbI=;
-        b=fkRR1eXPbIqmp6SSTTNfEjmJtH/61PJs8Mw5026BdyPsNJSHUecLgiK9+wIthmbAll
-         Qn4q55jfoM14669G0uNmeqBZJOlBD/ekQN4STlIg9rK/m/U0uk2fMli+gShlxS8AnAMO
-         GGl6dB/ULi9eSDrJCDyWR1W7Cn9Kjwr3f/5x59ZFxbdXreY9EtDVEZqNEKlqLSwxLKe7
-         1L9FbLcnPQbBUHZp+YOfGTeq5smebcX5B7yNkkMpkYsyupRfHUx7aCKTulSVFNfUq9Gh
-         LyumJFgYGgQ/xaTxLzFvbLVr9bjb6HtnYRUH5YVsVA2T6X76EAjKDcpoJjKpERv4HS1l
-         Fuqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXutG5gQ/SpGYq4Gwdn3eS8KhyA5/mTsUZonZx3ytnsJwP7q0Yj0Vh+szcYWugd8Am0mshjyLgnJ9h3ljg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1yDN0XcjY4JoRX/xf1Wj+g6xOfIp6RRmNClK8+6Kn3g6yZsVs
-	F+xJX6PW4/ZDc5gAi80bo63Ay/k2qSLimIdXf3WlZFKgYTEDZ6vKapGqoK+4YLo=
-X-Gm-Gg: ASbGncvNwE3hi5XVuoPUZCJSJvhCHGNOtQHsdLhee6a1NlaUd+VfZgpxsX1IX5lf4N7
-	Z/9XYCMkrzXVo8G5Rt4zUbTtIu7dXZefaz6AQjDZVyk7/uvMP+SBD2497OzgcjwzjnJQBXX17oc
-	1JtV5ZP26jgw/ljXtNV+LHRWI5HO0bk3N3SMRyAOBfVKI/okKSM+btzqXvAGp26OwVVD5Ik7fzU
-	EDl9tsSWBRDSDMoH1vQTpp3ssWFWUm+tnwgXOPkcpRZt4Wfv3INhb1PG8jQ5jgWfFZcvyIYA33X
-	Cr5ZiUm/0s4dEf0SNfvYHUNWC/rv1B3M7eP4ZphVJxuWTakbWZndVY7g/Cuy
-X-Google-Smtp-Source: AGHT+IEvHPoPXyg7rfkgM3Y97xOpECmfVdCIe7gAm9tgP99dIaDKMLf19aoDb9oOuJzL8kX1SocWRw==
-X-Received: by 2002:a05:600c:5008:b0:43c:f87c:24d3 with SMTP id 5b1f17b1804b1-43d4381b4b9mr64371575e9.20.1742467649457;
-        Thu, 20 Mar 2025 03:47:29 -0700 (PDT)
-Received: from [192.168.0.101] ([90.241.98.187])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df35f7sm23678038f8f.13.2025.03.20.03.47.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 03:47:29 -0700 (PDT)
-Message-ID: <d4ef3a3b-eed1-4c15-827b-4a34a8a47dc1@ursulin.net>
-Date: Thu, 20 Mar 2025 10:47:28 +0000
+	s=arc-20240116; t=1742467712; c=relaxed/simple;
+	bh=YXf76glTiVLhkyc7lbXE2+pKrx3GYsR3bIlNF0cGzTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4VYU6MZKypxLHA0B4KCYvjTyVPSA6VAKet97azpA5hdGszKZ5iPCKmrydulq8neByUrpEwwbCYOThMem9l212fI7cnLdao1tlbIAYq+4uELQl96f1kf/7qSUhgK3gZshj6GQebDjDAV1Q3+HyTZAs2ijpEjoA3jn7g2eKtYxHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O7iLOW5O; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742467711; x=1774003711;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=YXf76glTiVLhkyc7lbXE2+pKrx3GYsR3bIlNF0cGzTo=;
+  b=O7iLOW5OmmxTKKl8e8BrTlqBfLv9X0YUzA4jKDEjWzrLXxlpUlBaPcQQ
+   7c7tTihnIlYYhmL2jqYjmv/pJHNkqi/ZdRF2e5DtpvVkXXy12xjgoC4Eo
+   zNPf6X81jB4Kw/fsT0aDpbeEXwQGIj32mvg5RKMCj5hAh6SLmnjtt9HXW
+   7cGspFC0gsJmJgbBIVHEGuFMr1bILWl8thHBGea3lixjJCmCrvZbW4xv8
+   +hhQhtR1aJUkHNsbKIMs5tWne0bHynRY0o3AR9wD2qNF3ZgWReqeNjqc5
+   6Rd4eH6a7SixRGwfVnSarSwiFLwHmSXFlFgqBWxMbV6shIbGdLrsDeZXX
+   A==;
+X-CSE-ConnectionGUID: WvGSGFJdS/iEeGU9B2QbDw==
+X-CSE-MsgGUID: 7my3w65pSfGe7m3hchTrXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="55067736"
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="55067736"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:48:30 -0700
+X-CSE-ConnectionGUID: 8e2ihiKmRAKcZ+OnwvAfXQ==
+X-CSE-MsgGUID: Pl152daVTTKnuQ8fxUuEhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="122778298"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:48:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tvDRl-00000004CLa-2QSo;
+	Thu, 20 Mar 2025 12:48:21 +0200
+Date: Thu, 20 Mar 2025 12:48:21 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: mathieu.dubois-briand@bootlin.com, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+Message-ID: <Z9vydaUguJiVaHtU@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+ <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
+ <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 05/10] drm/sched: trace dependencies for gpu jobs
-To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Philipp Stanner <phasta@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20250320095818.40622-1-pierre-eric.pelloux-prayer@amd.com>
- <20250320095818.40622-6-pierre-eric.pelloux-prayer@amd.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20250320095818.40622-6-pierre-eric.pelloux-prayer@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Mar 20, 2025 at 08:50:00AM +0100, Uwe Kleine-König wrote:
+> On Wed, Mar 19, 2025 at 01:18:50PM +0200, Andy Shevchenko wrote:
+> > On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@bootlin.com wrote:
 
-On 20/03/2025 09:58, Pierre-Eric Pelloux-Prayer wrote:
-> We can't trace dependencies from drm_sched_job_add_dependency
-> because when it's called the job's fence is not available yet.
+...
+
+> > > +	chip = devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0);
+> > 
+> > This is quite worrying. The devm_ to parent makes a lot of assumptions that may
+> > not be realised. If you really need this, it has to have a very good comment
+> > explaining why and object lifetimes.
 > 
-> So instead each dependency is traced individually when
-> drm_sched_entity_push_job is used.
-> 
-> Tracing the dependencies allows tools to analyze the dependencies
-> between the jobs (previously it was only possible for fences
-> traced by drm_sched_job_wait_dep).
-> 
-> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-> ---
->   .../gpu/drm/scheduler/gpu_scheduler_trace.h   | 24 ++++++++++++++++++-
->   drivers/gpu/drm/scheduler/sched_entity.c      |  8 +++++++
->   2 files changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> index 21a85ee59066..5d9992ad47d3 100644
-> --- a/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> +++ b/drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> @@ -54,7 +54,6 @@ DECLARE_EVENT_CLASS(drm_sched_job,
->   			   __assign_str(dev);
->   			   __entry->fence_context = sched_job->s_fence->finished.context;
->   			   __entry->fence_seqno = sched_job->s_fence->finished.seqno;
-> -
->   			   ),
->   	    TP_printk("dev=%s, id=%llu, fence=%llu:%llu, ring=%s, job count:%u, hw job count:%d",
->   		      __get_str(dev), __entry->id,
-> @@ -88,6 +87,29 @@ TRACE_EVENT(drm_sched_process_job,
->   		      __entry->fence_context, __entry->fence_seqno)
->   );
->   
-> +TRACE_EVENT(drm_sched_job_add_dep,
-> +	TP_PROTO(struct drm_sched_job *sched_job, struct dma_fence *fence),
-> +	TP_ARGS(sched_job, fence),
-> +	TP_STRUCT__entry(
-> +		    __field(u64, fence_context)
-> +		    __field(u64, fence_seqno)
-> +		    __field(u64, id)
-> +		    __field(u64, ctx)
-> +		    __field(u64, seqno)
-> +		    ),
-> +
-> +	TP_fast_assign(
-> +		    __entry->fence_context = sched_job->s_fence->finished.context;
-> +		    __entry->fence_seqno = sched_job->s_fence->finished.seqno;
-> +		    __entry->id = sched_job->id;
-> +		    __entry->ctx = fence->context;
-> +		    __entry->seqno = fence->seqno;
-> +		    ),
-> +	TP_printk("fence=%llu:%llu, id=%llu depends on fence=%llu:%llu",
-> +		  __entry->fence_context, __entry->fence_seqno, __entry->id,
-> +		  __entry->ctx, __entry->seqno)
-> +);
-> +
->   TRACE_EVENT(drm_sched_job_wait_dep,
->   	    TP_PROTO(struct drm_sched_job *sched_job, struct dma_fence *fence),
->   	    TP_ARGS(sched_job, fence),
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-> index a6d2a4722d82..047e42cfb129 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -580,6 +580,14 @@ void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
->   	ktime_t submit_ts;
->   
->   	trace_drm_sched_job(sched_job, entity);
-> +
-> +	if (trace_drm_sched_job_add_dep_enabled()) {
-> +		struct dma_fence *entry;
-> +		unsigned long index;
-> +
-> +		xa_for_each(&sched_job->dependencies, index, entry)
-> +			trace_drm_sched_job_add_dep(sched_job, entry);
-> +	}
->   	atomic_inc(entity->rq->sched->score);
->   	WRITE_ONCE(entity->last_user, current->group_leader);
->   
+> Pretty sure this is broken. This results for example in the device link
+> being created on the parent. So if the pwm devices goes away a consumer
+> might not notice (at least in the usual way). I guess this was done to
+> ensure that #pwm-cells is parsed from the right dt node? If so, that
+> needs a different adaption. That will probably involve calling
+> device_set_of_node_from_dev().
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+It's an MFD based driver, and MFD core cares about propagating fwnode by
+default. I believe it should just work if we drop that '->parent' part.
 
-Regards,
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Tvrtko
 
 
