@@ -1,183 +1,421 @@
-Return-Path: <linux-kernel+bounces-570052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB95A6AB76
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:51:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49373A6AB64
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C03079835A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:48:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8749E7AC918
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3841D2253E8;
-	Thu, 20 Mar 2025 16:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9A22248B8;
+	Thu, 20 Mar 2025 16:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="i2jXe/E6"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2048.outbound.protection.outlook.com [40.107.101.48])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dizFEInD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2FA221717;
-	Thu, 20 Mar 2025 16:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742489250; cv=fail; b=mDL6FTxdJNElnDlc+p5Z9qifb6kDcJ7r9tnHQqCHGicFKMspe03uIherH6bZGPQ4N21TTdfyfGTBLP8dnR63TCALTjxvegxlpho/NwFhdeyuRwm25Qm5Af/KC5Ume4zg+QtYXeIwFGRQm3d1WgixBz5gORgAOIpUApac6SE4Ugo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742489250; c=relaxed/simple;
-	bh=0ygIGf2m3sVjT8SES9vxOomwdKS0GV6pXgJi2wSQMfA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WOnBIxJjRlsTMjlS4FjyIROKFJU3/y3qfBLBh6NGHSNIngWJpNGVJte+fEsEJXOV31NCdehqYT1bqMzhgEVzjIA4Fx4pfvXkDy5XVq1dNGNXbf06YwIe4EH8tbZ3Grzx1gvKKfzOWqI7MX+Yp1tDWPZzMpcieGYpOA1VS6rAPfc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=i2jXe/E6; arc=fail smtp.client-ip=40.107.101.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yh5ReJXPoeu3l8gQh0K3o+B+sLeT94jfyri0XOsQ4Rp3YrS//LiFdBpJ9rRY2r1f7u90GAnnNj8wb/fTo8GPZK2qz0O3bW8BbZoITlZX5EtiIHZMz169UcqHuDiQl619qRK6HjPMhvMFXlod94doie5iApz4k3SyyM1QS9TVZg0NRYSALVmO+4RkWL0v20atwV28ddR6/CBtv5ZKfGqDNHRmsXo6n0WeVUkTOnJmTcZyUA5k7c0Iir92SxE+6u2rTsokGBSItIoja0JpjhCH8eNpz+c9E7YJeVQzrJA/0b/nAAdqh5OJ0pXFMoYDZa/ephQ63HW8BuXhhw/oMXqCew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gGwj1AVsYPOh63OOBdys6u0R2ME5hit3ehrcKRYHRf0=;
- b=IoxuHC7NWaOhKCxnkdkfeBkf7Ty+m6ATsARfpBUfJYuqMJWoOQIUyHJBFsLyYOUxzsa80n6hLTX7neIOH8dwGm6kkT0C2EbU/ZD7FMFm7VM8PiaIuPKXd+0DbF0sFb9SuF22seZWP/IR4tzXEq4a2ZOuouX4FhtCxxnKUQ6bl5YlzQifKAk52tZyW94+WfAVO6spdsdt0iV5KA7p5NsWAJXpnBTwRdy0Hqhpx/dec1eFp9iLU+oBveRZyBNa0vs/A0mJiq49iroGoEOH1iCFUotKuw/aDUTdSLFUhldEh56Ie9EFacP6Wx2K3MuspOnaRlI+ZH/TWTLXi/XixvVTWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gGwj1AVsYPOh63OOBdys6u0R2ME5hit3ehrcKRYHRf0=;
- b=i2jXe/E61tbhmaGJq/VpSfUIQXSeHc3hGu9zcAogJ8MujLJ3JyyrjvD+JCNly6e3EuajZt5tbczCxaFaDZUXY/vQq+NBlM9RFDon6SVZGFMuxSmazTiXFz8vXS0xHMcxML+Uk3FYEtyP+w1KU9YwKsMqjNYLcHnxMW9r+Zf0CZB6Hrb87s2mwDZ6HB+A2JDwnxYUwjU5OnX/9GGTUQk/JW9xoi8z8FL3ZEDAA55GwPUnXk3y/+BhuNc46zT1wHhtEURbCLJ6Vw6BTQ34E27aTY4SFvVg3+CPDmCbLmRkiEAeyoDD0oWSeEaBqzBLFlLFWMEv2Mn1m+XFrftEFmD4kg==
-Received: from SA9P221CA0012.NAMP221.PROD.OUTLOOK.COM (2603:10b6:806:25::17)
- by MN0PR12MB6248.namprd12.prod.outlook.com (2603:10b6:208:3c0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 16:47:25 +0000
-Received: from SA2PEPF00003F61.namprd04.prod.outlook.com
- (2603:10b6:806:25:cafe::7a) by SA9P221CA0012.outlook.office365.com
- (2603:10b6:806:25::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.36 via Frontend Transport; Thu,
- 20 Mar 2025 16:47:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SA2PEPF00003F61.mail.protection.outlook.com (10.167.248.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Thu, 20 Mar 2025 16:47:24 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Mar
- 2025 09:47:14 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 20 Mar 2025 09:47:13 -0700
-Received: from willie-obmc-builder.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 20 Mar 2025 09:47:13 -0700
-From: Willie Thai <wthai@nvidia.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <kees@kernel.org>,
-	<tony.luck@intel.com>, <gpiccoli@igalia.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<openbmc@lists.ozlabs.org>
-CC: <wthai@nvidia.com>, <leohu@nvidia.com>, <tingkaic@nvidia.com>,
-	<dkodihalli@nvidia.com>, Mars Yang <maryang@nvidia.com>
-Subject: [PATCH v3 2/2] dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC
-Date: Thu, 20 Mar 2025 16:46:33 +0000
-Message-ID: <20250320164633.101331-3-wthai@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250320164633.101331-1-wthai@nvidia.com>
-References: <20250320164633.101331-1-wthai@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDEC19DF98;
+	Thu, 20 Mar 2025 16:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742489207; cv=none; b=N6QqlefMNANt7roI7epvXMm9YwaGazdFtHZfwWhKFYvOEQWg71yoL39wcCynNTmLl5FhftfcijzEDbjchdQmKr+dIqr3i/JC/sli1YJ2M1Sr05cuu0b0k784nA6g8UcaozRggjPjXt9QBS5CDHOaDcqBlvOUqQIkWhuEz7BJfH0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742489207; c=relaxed/simple;
+	bh=8PzccMNrJT5W8W7N7Yc4hGCXeynPoeHzA1FX/c6gIjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZnFicenqpwjk99wYbSxfQdM47/k6WrF9d+UGHpfLdwqEE759IApEMFoHIgpPc3dBp5Mvey3huCSc+nIzh70mTUQDAtxGT7JKoGXAT/+FN7n53hlier/w2PACFcq7DHwaHCriKDk59gRZV9jgBO1pJWPBBEcEfdyJslf4s60SMYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dizFEInD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C461C4CEDD;
+	Thu, 20 Mar 2025 16:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742489207;
+	bh=8PzccMNrJT5W8W7N7Yc4hGCXeynPoeHzA1FX/c6gIjE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dizFEInDR/7AXa1hkGS5nkOJUqZ9O3fAVaDVd/TKU1TdEDC3ZQSZBPdrsxGNVlbgd
+	 KxS26QNR6nTK3WwKfr9xBecSQq04Z/cTKML5TeVrW5d76Agce+6DLOSKrQqvZGzzfd
+	 nSSMEa1eH+oV4H94FlefCPdwdCALF/Nf1/IS2ssgq8jfJdpYBFEvthr1E3vQc1RxWw
+	 3Us6NaiRUhic6I4NE5ss2+PHQx9ujtEAT/5eptE0HWVxGynPZxR7CC/Maq9a3npYfu
+	 ajQ4Dwt+of3XqYNRyMTCWAmtcP/k/0pfG4gZ5czOcHGD1DY6iKzwco7qjdTk9LlIwN
+	 yChsoK5zgYtdg==
+Message-ID: <1b54afae-cb86-4022-b9f5-e5c1fc075be8@kernel.org>
+Date: Thu, 20 Mar 2025 11:46:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 04/13] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+ Huang Rui <ray.huang@amd.com>, "Gautham R . Shenoy"
+ <gautham.shenoy@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+References: <20250218190822.1039982-1-superm1@kernel.org>
+ <20250218190822.1039982-5-superm1@kernel.org>
+ <f90d49d6-e031-4722-b63f-26931eae1aa5@linux.intel.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <f90d49d6-e031-4722-b63f-26931eae1aa5@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F61:EE_|MN0PR12MB6248:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd25bb09-32df-45b1-8a97-08dd67cee47e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014|921020|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0T4iF+757M0tYgxLoMGQ5SynBgOj4geMDoRgVd3kJ29k7h/9Ako7amWcAXCy?=
- =?us-ascii?Q?NJhlixJgXdgGiqO1Sy3+3xP6ZNvOmq7C+aHLmoTuvW8O4qSuKXa0YFg7D6hi?=
- =?us-ascii?Q?p6o55C3KlGzjeIq09MCFcWgiceYre36Vm3ScDDBNVPMcQF9GtrO/ffQJTSET?=
- =?us-ascii?Q?ydg3/xgg6HPtHlE9xvHxtlTCAXGAtm2FI8iu5sAPWJfoC3ilxoM2V6cvgc8w?=
- =?us-ascii?Q?47xeVpapQAoSf2F5pKF9wMTB5aENP7Z8L0hL1abHp3xc9Yr+OiObtJOIPDPK?=
- =?us-ascii?Q?CEOxLKDnDoysnGcvx8n9nzcvGOXIyhy/DwwHlQuAyTDXhU91LZbWHaN9JKnU?=
- =?us-ascii?Q?oOCiwzCNU7dCzAgjmvgics/dF27VoEpn5LPOY4iA4tL9C0eXZT5fBz+Bbe9O?=
- =?us-ascii?Q?Vpzl1lusy//oHEiLFvf2+acr8jwvim2FkgmGG8vdklPjyE3N0/9gNzJc7kdA?=
- =?us-ascii?Q?FRYVD+7VfIFjNvXBfLuzGbwvHzDlxy3aOUk9fWATpp7ucrNQExqO/z/rvh4Q?=
- =?us-ascii?Q?kBY8T0Sur3vcK6+WlYcYJFknI5sUBWnEyq1d0rgPLOsEAjlgghuUyPBPnKzx?=
- =?us-ascii?Q?Ze6gHz+dsbN3xXOI6P+TazvD1ommv4yILT0c09cOLvPsDdZdOjaWTdI3aYgg?=
- =?us-ascii?Q?bzy9Y2qdUZhfqcrGYxqhqnXFL8RSUlee7TWtxMPiCDtxUW7lt9/JQuf+SPhI?=
- =?us-ascii?Q?TjkTufuJOfvN4B/L2llz8lHg5R2s6E6JnMQRJVFSj0OpL+enjuW+SSyUA/dH?=
- =?us-ascii?Q?CDUw4HVX9a/BAa5GZBy/jT5IcQ/EB+toW/mxe+K1vYKCrpMDsT58qWFQvFlR?=
- =?us-ascii?Q?jAPdrffRjbSZcPw9tKB9AcfB685sK8gSDBimLDMgSSd29FDk/4RxFZxUboI9?=
- =?us-ascii?Q?kmGv/ff93kjtab2oLC5vp/ZETPMdiF6NUqoEKk332Opv01mWCapiA7KIUDwB?=
- =?us-ascii?Q?JOf5eYEcf0bSh+Nss5e/xt65VhnxpEiHzOXU+lpUYS8x7PxN2U/uKcqmQEHf?=
- =?us-ascii?Q?5o9y1pNxPgmrs8RyCJd3S3eXdw1Q46WQZABfyiQ9uXpy1ggGF/rTCsPbyO2f?=
- =?us-ascii?Q?gcf0f0FTdcA7GZOVSvKdfKw3ZJKohQMqpKWNS2J5LRRK3k7pCKbAaEa1HoRV?=
- =?us-ascii?Q?SnpaT6kfEXkH64DF18AL6JpF3lw9d439GyiGsnYNHAyfqJKUQlmynHnfSKbT?=
- =?us-ascii?Q?2zEbdtGY+rsjTBYS5f6SJxWtPiGuCkvjDo3I6WFGYZou9H6xqVI3ACqE+f1s?=
- =?us-ascii?Q?hHrxAHs1yBGdI7zqonzkWAwEMmnpTP8eVAEcym2direoX9msTTR4wFi4mNmx?=
- =?us-ascii?Q?EkgtReP/eDH8h0Pm289VafejkjasuuPuR5EzVN7cWMh6a8ktQ9oTbLZg6AEl?=
- =?us-ascii?Q?PJDXx9IDE2botrDXsd12WDxbcw6We6CIavj0eHB85m4hOoi/FG9RVBY3CLjW?=
- =?us-ascii?Q?/9TophNT2KYxr66fKpgRL0TJjBcVgcfmk+BAWnfWHM3powQ/XNxyL6HQ3oo2?=
- =?us-ascii?Q?cl8dvtgVWs5j3LM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014)(921020)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 16:47:24.9494
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd25bb09-32df-45b1-8a97-08dd67cee47e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F61.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6248
 
-This patch adds a binding for GB200NVL BMC.
+On 3/19/2025 09:03, Ilpo Järvinen wrote:
+> On Tue, 18 Feb 2025, Mario Limonciello wrote:
+> 
+>> From: Perry Yuan <Perry.Yuan@amd.com>
+>>
+>> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+>> provide behavioral classification and a dynamically updated ranking table
+>> for the scheduler to use when choosing cores for tasks.
+>>
+>> There are two CPU core types defined: `Classic Core` and `Dense Core`.
+>> "Classic" cores are the standard performance cores, while "Dense" cores
+>> are optimized for area and efficiency.
+>>
+>> Heterogeneous compute refers to CPU implementations that are comprised
+>> of more than one architectural class, each with two capabilities. This
+>> means each CPU reports two separate capabilities: "perf" and "eff".
+>>
+>> Each capability lists all core ranking numbers between 0 and 255, where
+>> a higher number represents a higher capability.
+>>
+>> Heterogeneous systems can also extend to more than two architectural
+>> classes.
+>>
+>> The purpose of the scheduling feedback mechanism is to provide information
+>> to the operating system scheduler in real time, allowing the scheduler to
+>> direct threads to the optimal core during task scheduling.
+>>
+>> All core ranking data are provided by the PMFW via a shared memory ranking
+>> table, which the driver reads and uses to update core capabilities to the
+>> scheduler. When the hardware updates the table, it generates a platform
+>> interrupt to notify the OS to read the new ranking table.
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+>> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+>> Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+>> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+>> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v8:
+>>   * s,devm_kzalloc,devm_kcalloc,
+>>   * fold newlines from patch 5 into this patch
+>>   * Drop ->cpu member, push to later patch
+>>   * s,for_each_present_cpu,for_each_possible_cpu,
+>> v7:
+>>   * Adjust Kconfig to 80 characters
+>> ---
+>>   drivers/platform/x86/amd/Kconfig      |   1 +
+>>   drivers/platform/x86/amd/Makefile     |   1 +
+>>   drivers/platform/x86/amd/hfi/Kconfig  |  20 ++++
+>>   drivers/platform/x86/amd/hfi/Makefile |   7 ++
+>>   drivers/platform/x86/amd/hfi/hfi.c    | 162 ++++++++++++++++++++++++++
+>>   5 files changed, 191 insertions(+)
+>>   create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
+>>   create mode 100644 drivers/platform/x86/amd/hfi/Makefile
+>>   create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
+>>
+>> diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+>> index c3e086ea64fc6..589d61ebf726b 100644
+>> --- a/drivers/platform/x86/amd/Kconfig
+>> +++ b/drivers/platform/x86/amd/Kconfig
+>> @@ -6,6 +6,7 @@
+>>   source "drivers/platform/x86/amd/hsmp/Kconfig"
+>>   source "drivers/platform/x86/amd/pmf/Kconfig"
+>>   source "drivers/platform/x86/amd/pmc/Kconfig"
+>> +source "drivers/platform/x86/amd/hfi/Kconfig"
+>>   
+>>   config AMD_3D_VCACHE
+>>   	tristate "AMD 3D V-Cache Performance Optimizer Driver"
+>> diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+>> index 56f62fc9c97b4..c50e93c3334cf 100644
+>> --- a/drivers/platform/x86/amd/Makefile
+>> +++ b/drivers/platform/x86/amd/Makefile
+>> @@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
+>>   obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+>>   obj-$(CONFIG_AMD_PMF)		+= pmf/
+>>   obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
+>> +obj-$(CONFIG_AMD_HFI)		+= hfi/
+>> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
+>> new file mode 100644
+>> index 0000000000000..532939eb08a6a
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/amd/hfi/Kconfig
+>> @@ -0,0 +1,20 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +#
+>> +# AMD Hardware Feedback Interface Driver
+>> +#
+>> +
+>> +config AMD_HFI
+>> +	bool "AMD Hetero Core Hardware Feedback Driver"
+>> +	depends on ACPI
+>> +	depends on CPU_SUP_AMD
+>> +	help
+>> +	 Select this option to enable the AMD Heterogeneous Core Hardware
+>> +	 Feedback Interface. If selected, hardware provides runtime thread
+>> +	 classification guidance to the operating system on the performance and
+>> +	 energy efficiency capabilities of each heterogeneous CPU core. These
+>> +	 capabilities may vary due to the inherent differences in the core types
+>> +	 and can also change as a result of variations in the operating
+>> +	 conditions of the system such as power and thermal limits. If selected,
+> 
+> This says the capabilities can change but metadata is only read and scores
+> updated during probe?
+> 
+>> +	 the kernel relays updates in heterogeneous CPUs' capabilities to
+>> +	 userspace, allowing for more optimal task scheduling and resource
+>> +	 allocation, leveraging the diverse set of cores available.
+> 
+> How are the capabilities communicated to userspace as mentioned here? I'm
+> asking this because I only noted debugfs interface, and that commit
+> claimed the debug fs interface was to troubleshoot scheduler issues.
 
-The GB200NVL BMC is an Aspeed Ast2600 based BMC for Nvidia Blackwell GB200NVL platform.
-Reference to Ast2600 SOC [1].
-Reference to Blackwell GB200NVL Platform [2].
+This is one of those cases that the split into multiple parts shows. 
+Thinking through I feel it makes more sense to adjust for now and then 
+we can change it again on the next part.
 
-Co-developed-by: Mars Yang <maryang@nvidia.com>
-Signed-off-by: Mars Yang <maryang@nvidia.com>
-Link: https://www.aspeedtech.com/server_ast2600/ [1]
-Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-Signed-off-by: Willie Thai <wthai@nvidia.com>
----
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> 
+>> diff --git a/drivers/platform/x86/amd/hfi/Makefile b/drivers/platform/x86/amd/hfi/Makefile
+>> new file mode 100644
+>> index 0000000000000..672c6ac106e95
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/amd/hfi/Makefile
+>> @@ -0,0 +1,7 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +#
+>> +# AMD Hardware Feedback Interface Driver
+>> +#
+>> +
+>> +obj-$(CONFIG_AMD_HFI) += amd_hfi.o
+>> +amd_hfi-objs := hfi.o
+>> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+>> new file mode 100644
+>> index 0000000000000..426f7e520b76c
+>> --- /dev/null
+>> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+>> @@ -0,0 +1,162 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * AMD Hardware Feedback Interface Driver
+>> + *
+>> + * Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+> 
+> 2025 ?
 
-diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-index 01333ac111fb..a3736f134130 100644
---- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-+++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-@@ -98,6 +98,7 @@ properties:
-               - inventec,starscream-bmc
-               - inventec,transformer-bmc
-               - jabil,rbp-bmc
-+              - nvidia,gb200nvl-bmc
-               - qcom,dc-scm-v1-bmc
-               - quanta,s6q-bmc
-               - ufispace,ncplite-bmc
--- 
-2.25.1
+Ack.
+
+Heh, earlier versions started in 2024!
+
+> 
+>> + *
+>> + * Authors: Perry Yuan <Perry.Yuan@amd.com>
+>> + *          Mario Limonciello <mario.limonciello@amd.com>
+>> + */
+>> +
+>> +#define pr_fmt(fmt)  "amd-hfi: " fmt
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/cpu.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/gfp.h>
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/smp.h>
+>> +
+>> +#define AMD_HFI_DRIVER		"amd_hfi"
+>> +
+>> +#define AMD_HETERO_CPUID_27	0x80000027
+>> +
+>> +static struct platform_device *device;
+>> +
+>> +struct amd_hfi_data {
+>> +	const char	*name;
+>> +	struct device	*dev;
+>> +	struct mutex	lock;
+> 
+> Please mention what this protects.
+
+As a comment at the end like this, right?
+
+struct mutex lock; /* lock the foo */
+
+> 
+>> +};
+>> +
+>> +struct amd_hfi_classes {
+>> +	u32	perf;
+>> +	u32	eff;
+>> +};
+>> +
+>> +/**
+>> + * struct amd_hfi_cpuinfo - HFI workload class info per CPU
+>> + * @cpu:		cpu index
+>> + * @class_index:	workload class ID index
+>> + * @nr_class:		max number of workload class supported
+>> + * @amd_hfi_classes:	current cpu workload class ranking data
+>> + *
+>> + * Parameters of a logical processor linked with hardware feedback class
+> 
+> missing .
+
+Ack
+
+> 
+>> + */
+>> +struct amd_hfi_cpuinfo {
+>> +	int		cpu;
+>> +	s16		class_index;
+>> +	u8		nr_class;
+>> +	struct amd_hfi_classes	*amd_hfi_classes;
+>> +};
+>> +
+>> +static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
+>> +
+>> +static int amd_hfi_alloc_class_data(struct platform_device *pdev)
+>> +{
+>> +	struct amd_hfi_cpuinfo *hfi_cpuinfo;
+>> +	struct device *dev = &pdev->dev;
+>> +	int idx;
+>> +	int nr_class_id;
+>> +
+>> +	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
+>> +	if (nr_class_id < 0 || nr_class_id > 255) {
+> 
+> Is the signed type correct for this?
+> 
+>> +		dev_err(dev, "failed to get number of supported classes: %d\n",
+>> +			nr_class_id);
+> 
+> I'd reword the error message as the number of classes was just too
+> large / outside the allowed range.
+
+OK.
+
+> 
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	for_each_possible_cpu(idx) {
+>> +		struct amd_hfi_classes *classes;
+>> +
+>> +		classes = devm_kcalloc(dev,
+>> +				       nr_class_id,
+>> +				       sizeof(struct amd_hfi_classes),
+>> +				       GFP_KERNEL);
+>> +		if (!classes)
+>> +			return -ENOMEM;
+>> +		hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, idx);
+>> +		hfi_cpuinfo->amd_hfi_classes = classes;
+>> +		hfi_cpuinfo->nr_class = nr_class_id;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct acpi_device_id amd_hfi_platform_match[] = {
+>> +	{"AMDI0104", 0},
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, amd_hfi_platform_match);
+>> +
+>> +static int amd_hfi_probe(struct platform_device *pdev)
+>> +{
+>> +	struct amd_hfi_data *amd_hfi_data;
+>> +	int ret;
+>> +
+>> +	if (!acpi_match_device(amd_hfi_platform_match, &pdev->dev))
+>> +		return -ENODEV;
+>> +
+>> +	amd_hfi_data = devm_kzalloc(&pdev->dev, sizeof(*amd_hfi_data), GFP_KERNEL);
+>> +	if (!amd_hfi_data)
+>> +		return -ENOMEM;
+>> +
+>> +	amd_hfi_data->dev = &pdev->dev;
+>> +	ret = devm_mutex_init(&pdev->dev, &amd_hfi_data->lock);
+>> +	if (ret)
+>> +		return ret;
+>> +	platform_set_drvdata(pdev, amd_hfi_data);
+>> +
+>> +	ret = amd_hfi_alloc_class_data(pdev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct platform_driver amd_hfi_driver = {
+>> +	.driver = {
+>> +		.name = AMD_HFI_DRIVER,
+>> +		.owner = THIS_MODULE,
+>> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
+>> +	},
+>> +	.probe = amd_hfi_probe,
+>> +};
+>> +
+>> +static int __init amd_hfi_init(void)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (acpi_disabled ||
+>> +	    !cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES) ||
+>> +	    !cpu_feature_enabled(X86_FEATURE_AMD_WORKLOAD_CLASS))
+>> +		return -ENODEV;
+>> +
+>> +	device = platform_device_register_simple(AMD_HFI_DRIVER, -1, NULL, 0);
+>> +	if (IS_ERR(device)) {
+>> +		pr_err("unable to register HFI platform device\n");
+>> +		return PTR_ERR(device);
+>> +	}
+>> +
+>> +	ret = platform_driver_register(&amd_hfi_driver);
+>> +	if (ret)
+>> +		pr_err("failed to register HFI driver\n");
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static __exit void amd_hfi_exit(void)
+>> +{
+>> +	platform_device_unregister(device);
+>> +	platform_driver_unregister(&amd_hfi_driver);
+> 
+> Why are these not in the opposite order than in init?
+
+Oversight.  Will fix it.
+
+> 
+>> +}
+>> +module_init(amd_hfi_init);
+>> +module_exit(amd_hfi_exit);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("AMD Hardware Feedback Interface Driver");
+>>
+> 
 
 
