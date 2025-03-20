@@ -1,240 +1,257 @@
-Return-Path: <linux-kernel+bounces-569024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C23A69DB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:41:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE5BA69DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02673BCC05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9233BDFE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A121D5CDD;
-	Thu, 20 Mar 2025 01:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0181D7E3E;
+	Thu, 20 Mar 2025 01:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkFDN4B+"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gtUfwelE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D442372;
-	Thu, 20 Mar 2025 01:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A991C3C07
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742434850; cv=none; b=rD7rN/Rm242IuLMPLL7q0o/9Bn3aymVC80jPz5eGlodvuqSyTfPbUNm2KGbDDVyxu6irWy7MRG4GGokZu1cz2ll8MiiIMAeIi/368F89C7d5raRqB9CA00tdS6kf3kx+uNg96RRF/rsyrf8tpduABobalY8YujXAZBbu4wsAbgY=
+	t=1742434914; cv=none; b=MytxI+zQuZomcOC/bnYWNn95i21CAg4eZKjKRE2/BulMH4PWL1hRqBumWPZ/pgufohCXpBE9QEUONMe/n0VHXibCypf/HC0Slg8c7tTrNDOD5/T7zGfez/CdhAf5qWrTt24qihv3zQiI2aX1algE/Z9XGpVapgMxinpb+JDtolI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742434850; c=relaxed/simple;
-	bh=HGmiF3HS4vBLGxfE+Tk5FDvNHWfEqXj33fBrePu3Jiw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=HuBu5P/2uwNI7/MrRMP47AqGUWx10R0v0xsw5lsuDrGlCe8xOLA6VJBRibANDPctsT0d5YmegEQD4IlnyTXcPZ/RiVGZaAyhidOh3+9aEBCCM6BhAm1dh3vGZ1ECZkUANzdP7JihVS7SrlqYYa8K65pjnCppTP/3Zk/77oTR/u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkFDN4B+; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224104a9230so503625ad.1;
-        Wed, 19 Mar 2025 18:40:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742434848; x=1743039648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOjUd27nufztLF2S6KVSqoGMZpiaZqdZp9+YAnPXvP0=;
-        b=ZkFDN4B+RNHLtzFURMFbpwMUEt2A0bHO5ejfx/M2+jtN/GuggEeSRdoLLLhoCFrybD
-         hQT3NFdmpG9T+29wmwklq95N/NE2zvu/G5PJyjdvWBoTtpwTEhaZpEtwCHKrb1T2kEFI
-         tdMBhZa/7y40uj7I2akWL6KGnj4b1RdR9Sjhmqmt0JP4vM4Sg+P58NUJqhL3BhyVVOnq
-         7r/30OwBGuMXkKsnp2IjyY0E7oyHpyWSgSXmLXjDmjS7ez9LrCD43fX9WDGYIwpcaQ5w
-         4l2f/m2xp7sOcocpXco3fYJH7WRLeO7qeRZVgupuc9sGz5nH56TCE5pbQluunG5Efie4
-         aNdA==
+	s=arc-20240116; t=1742434914; c=relaxed/simple;
+	bh=w9AfWzzr+d037/c3NOeBWhBaP4yXq6yTOr4wb6Ns8vc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LtodBEEWFJG2nvhvtIbev8zU1m0HEe3ayFlBN6vwYuOoHUcFukWcn3I3FGRpi49XJdnSYFrHGCsdYMPKHYZJuahAhjLxFtZuBYxMgoE9o+IPJJq2binJVI/g4Scp3Bm3Ipy+fbyIKEOEvzOu0to0KOZX+0Yw0SxhXtZVx/4nvjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gtUfwelE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742434912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pSuXJ+t16wNkJ0IQCizE9LYu63n/iEBBS31rUbJRxyo=;
+	b=gtUfwelE/06MUR3oHHRF3eHSiC/EU0hLHGXPTc79TyhUCY3NwTHuDIH724A+9utPbPWF8u
+	u4BiTw6d48/veSdbOjgCSCaIDEMzpg30zzDH7ppmvFxATF0ly+ekKkO1lZPKJp0QVFQAcp
+	zB0jVkI6J1IpOU/ndI044zx+u+bvQcc=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-658-u082NmP6Oy2J3pyVpj7EfA-1; Wed, 19 Mar 2025 21:41:50 -0400
+X-MC-Unique: u082NmP6Oy2J3pyVpj7EfA-1
+X-Mimecast-MFC-AGG-ID: u082NmP6Oy2J3pyVpj7EfA_1742434910
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2254bdd4982so4598525ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 18:41:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742434848; x=1743039648;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOjUd27nufztLF2S6KVSqoGMZpiaZqdZp9+YAnPXvP0=;
-        b=T5KYEd9OO26pvxF2NOjDeViGRlrLcPTzq9NCv+T6rAphMismFT0N55l75dYlwVfCDA
-         VPTNPNzsUyvh+1I0HGiFMrKE9Uv9yySnMn03BI6qDIEHlezTOJV7qRtLPfO/E+dRd+dK
-         jWd5laHY0gNrTzc69DrcbNRquO7oDpa+usYx308A+XX9yxsu6XyGp3UXmItWtjrdc2Cc
-         6o/8f39VUe8Ihyo/9sTjqbsL6V9sGYmx2div0DQGp6AhFuRa7w4drLhPd7kv3A4E8dGy
-         /a0wFfktLX70gahAZebyb7AMM7nHIXGSkYxdM2sZdv7nEJ1GiMOpdcJQTBPuivKa/Pma
-         rupg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZlESmP4aI0bW7XxFePcpAfdf2g+NNlcOKUuFsTTKACPKq8ug8F3QQfw8ZLIRn2tn+XEslkqj6J5fKz2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGkCgzUstI/Donk5LXOnVMNIguG9sML7VtZMS1Z8NITkEw+zom
-	ocLvrq/xGjMSKP9sLH6pvrAwOHmZUDj7pBU0YRiA7lwvXGpPfzrweOgfPbYM44Y=
-X-Gm-Gg: ASbGnctgSb6zeFMT6U2yLVDZdXHADRGP/6zCiJJ2ah1HYitT07e0SMEyD+YuQsoMQvB
-	k+zdstgT1A6clTqNMCANO3RstP9n3YsVHnYXGGZ3eFImzai2US5u66HYdr82tk/aOqoLhHXhCXh
-	KtRRGwjKQGXu/AAMfsF5WquzZ1Os638+1Wi3stDqK70kgGZRRmwwrHnNgcj++mZ7DrUVY+ksxai
-	yeOLBL6E1ZEz71vfA2Z4B6UCr9yQS1QUOLK7VtSsuKUDC/xBdRR9yEjm/Oycfd/at+oENpZPuJK
-	nv5cXNNkY0pL9sQCWGJC//S5kOW986tPwVpgx45L32flbRLdLkOdIRqjhz3rU3u7+6BIh0e9IQ=
-	=
-X-Google-Smtp-Source: AGHT+IGnN6FZ7JH7eIbqHIfnVzzCo8VIr/3epLGLHo5i4eRABYj70aPsNYSWDgH9z/8CmL1tYSzthQ==
-X-Received: by 2002:a17:902:e542:b0:224:252c:eae1 with SMTP id d9443c01a7336-2264c5f7c3dmr25621925ad.6.1742434847815;
-        Wed, 19 Mar 2025 18:40:47 -0700 (PDT)
-Received: from localhost.localdomain ([138.94.103.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a44csm2463494a91.37.2025.03.19.18.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 18:40:47 -0700 (PDT)
-From: "Christian S. Lima" <christiansantoslima21@gmail.com>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	~lkcamp/patches@lists.sr.ht,
-	richard120310@gmail.com
-Subject: [PATCH v5] rust: transmute: Add methods for FromBytes trait
-Date: Wed, 19 Mar 2025 22:40:41 -0300
-Message-ID: <20250320014041.101470-1-christiansantoslima21@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1742434910; x=1743039710;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pSuXJ+t16wNkJ0IQCizE9LYu63n/iEBBS31rUbJRxyo=;
+        b=R9P2T/igAHxCecJlEG7qbzuv8WB+Mn7TGfAbHNSXl95/TnFxJmtvOudQ7sSc0qhh0d
+         sa/sPAHaypyCtaKjOL+c7ePY1zCT1PCoIlYIiYW3iUFYvHKewOoCX5QLF8RlvDNdeWN4
+         AKQ9+TiE1Rgmgo/s6iZ4MWoR0VR6v3HwK2Q84XWulDUnYBpeaD413Vai13jzF2wi3jlB
+         jF9UVNZcCF3wlG7vjpPtLO+yjiXVDqBu5Y4/7eqxpa3ft5fiNMeSXiMIGSfW3gr3seTM
+         LjXaqWrSF/H7/pNLT/rfprNgoxAhmCEg1tS5su16eMsr0ZMI5WEVfFXBfCljWoVo0OqE
+         DiKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTcztssli5Z0NdlDi2y7dYqE6ybYp7es5yHlsl74oBkBrATK97Qh6iA/pbwwVr1PTkVZGirVXvGIYwVDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhFMJzrBKs8icuOnR5PiPhPi7mHzVrnYy75iolb005YlgTRSRz
+	/UQhh6jcdv1oD0+3UU6iJxqOR/VpA2K+hxAZuIRarJmK2TRkWOoWEeZQ4uIcT6hqcpWoq8WR/qu
+	WUr45B+em9FXI8avn9TCzkcviAu5Y/0TAAbwFcm/ov40ald0xO1bPgTtze2MkKd9yyn9MNKD58U
+	0rSeRGO0O/R0NT+qceoHJsPPR42zIQnAqVj0/J
+X-Gm-Gg: ASbGnct3DXr7ptLh4KMzEj49mrHimEoCp1hiGEmu0EYJAJXm1Ss5o0NjwiYD0Q15tbd
+	XzkX2BLh1gasN1NDlW3HrzHAvWn/5Ov1d40as7laIw4lquRj0tyNObQzdMDISBP1EnusVN0sZhw
+	==
+X-Received: by 2002:a17:903:94d:b0:224:584:6f04 with SMTP id d9443c01a7336-22649932705mr63381835ad.18.1742434909667;
+        Wed, 19 Mar 2025 18:41:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEVZKY3/+gQ5uW4/fRFDSSY4RbxBwj7ezTcwSLDI5DmlGESAAawToYcSxzkgeMlD8Gi5b0Qg6P+w4Wdqx5CWrg=
+X-Received: by 2002:a17:903:94d:b0:224:584:6f04 with SMTP id
+ d9443c01a7336-22649932705mr63381575ad.18.1742434909306; Wed, 19 Mar 2025
+ 18:41:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250317235546.4546-1-dongli.zhang@oracle.com>
+ <20250317235546.4546-5-dongli.zhang@oracle.com> <CACGkMEtOsQg68O+Nqo9ycLSq7sN4AMZ92ZvLLMEF7xYDCA5Ycw@mail.gmail.com>
+ <93797957-b23c-4861-a755-28bfc506051f@oracle.com>
+In-Reply-To: <93797957-b23c-4861-a755-28bfc506051f@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 20 Mar 2025 09:41:37 +0800
+X-Gm-Features: AQ5f1JoEyf7e7dIADyZ-GdsiVzlSQbUdGG6ZatFtMLzEzjqH5P6c8GQYkcs51wI
+Message-ID: <CACGkMEvrrENCeBFkVeBDgvPo=dizcxA9EOaLeN7MWTH_qjnnfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/10] vhost: modify vhost_log_write() for broader users
+To: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org, 
+	netdev@vger.kernel.org, mst@redhat.com, michael.christie@oracle.com, 
+	pbonzini@redhat.com, stefanha@redhat.com, eperezma@redhat.com, 
+	joao.m.martins@oracle.com, joe.jin@oracle.com, si-wei.liu@oracle.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Methods receive a slice and perform size check to add
-a valid way to make conversion safe.
-In this patch, I use an Option, in error case just
-return `None` instead of an Error and
-removed some commentaries.
+On Thu, Mar 20, 2025 at 12:38=E2=80=AFAM Dongli Zhang <dongli.zhang@oracle.=
+com> wrote:
+>
+> Hi Jason,
+>
+> On 3/17/25 6:12 PM, Jason Wang wrote:
+> > On Tue, Mar 18, 2025 at 7:51=E2=80=AFAM Dongli Zhang <dongli.zhang@orac=
+le.com> wrote:
+> >>
+> >> Currently, the only user of vhost_log_write() is vhost-net. The 'len'
+> >> argument prevents logging of pages that are not tainted by the RX path=
+.
+> >>
+> >> Adjustments are needed since more drivers (i.e. vhost-scsi) begin usin=
+g
+> >> vhost_log_write(). So far vhost-net RX path may only partially use pag=
+es
+> >> shared by the last vring descriptor. Unlike vhost-net, vhost-scsi alwa=
+ys
+> >> logs all pages shared via vring descriptors. To accommodate this, a ne=
+w
+> >> argument 'partial' is introduced. This argument works alongside 'len' =
+to
+> >> indicate whether the driver should log all pages of a vring descriptor=
+, or
+> >> only pages that are tainted by the driver.
+> >>
+> >> In addition, removes BUG().
+> >>
+> >> Suggested-by: Joao Martins <joao.m.martins@oracle.com>
+> >> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> >> ---
+> >>  drivers/vhost/net.c   |  2 +-
+> >>  drivers/vhost/vhost.c | 28 +++++++++++++++++-----------
+> >>  drivers/vhost/vhost.h |  2 +-
+> >>  3 files changed, 19 insertions(+), 13 deletions(-)
+> >>
+> >> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> >> index b9b9e9d40951..0e5d82bfde76 100644
+> >> --- a/drivers/vhost/net.c
+> >> +++ b/drivers/vhost/net.c
+> >> @@ -1219,7 +1219,7 @@ static void handle_rx(struct vhost_net *net)
+> >>                 if (nvq->done_idx > VHOST_NET_BATCH)
+> >>                         vhost_net_signal_used(nvq);
+> >>                 if (unlikely(vq_log))
+> >> -                       vhost_log_write(vq, vq_log, log, vhost_len,
+> >> +                       vhost_log_write(vq, vq_log, log, vhost_len, tr=
+ue,
+> >>                                         vq->iov, in);
+> >>                 total_len +=3D vhost_len;
+> >>         } while (likely(!vhost_exceeds_weight(vq, ++recv_pkts, total_l=
+en)));
+> >> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> >> index 9ac25d08f473..db3b30aba940 100644
+> >> --- a/drivers/vhost/vhost.c
+> >> +++ b/drivers/vhost/vhost.c
+> >> @@ -2304,8 +2304,14 @@ static int log_used(struct vhost_virtqueue *vq,=
+ u64 used_offset, u64 len)
+> >>         return 0;
+> >>  }
+> >>
+> >> -int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log=
+,
+> >> -                   unsigned int log_num, u64 len, struct iovec *iov, =
+int count)
+> >> +/*
+> >> + * 'len' is used only when 'partial' is true, to indicate whether the
+> >> + * entire length of each descriptor is logged.
+> >> + */
+> >
+> > While at it, let's document all the parameters here.
+>
+> Sure.
+>
+> >
+> >> +int vhost_log_write(struct vhost_virtqueue *vq,
+> >> +                   struct vhost_log *log, unsigned int log_num,
+> >> +                   u64 len, bool partial,
+> >> +                   struct iovec *iov, int count)
+> >>  {
+> >>         int i, r;
+> >>
+> >> @@ -2323,19 +2329,19 @@ int vhost_log_write(struct vhost_virtqueue *vq=
+, struct vhost_log *log,
+> >>         }
+> >>
+> >>         for (i =3D 0; i < log_num; ++i) {
+> >> -               u64 l =3D min(log[i].len, len);
+> >> +               u64 l =3D partial ? min(log[i].len, len) : log[i].len;
+> >> +
+> >>                 r =3D log_write(vq->log_base, log[i].addr, l);
+> >>                 if (r < 0)
+> >>                         return r;
+> >> -               len -=3D l;
+> >> -               if (!len) {
+> >> -                       if (vq->log_ctx)
+> >> -                               eventfd_signal(vq->log_ctx);
+> >> -                       return 0;
+> >> -               }
+> >> +
+> >> +               if (partial)
+> >> +                       len -=3D l;
+> >
+> > I wonder if it's simpler to just tweak the caller to call with the
+> > correct len (or probably U64_MAX) in this case?
+>
+> To "tweak the caller to call with the correct len" may need to sum the le=
+ngth
+> of all log[i].
+>
+> Regarding U64_MAX, would you like something below? That is, only use 'len=
+'
+> when it isn't U64_MAX.
+>
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 9ac25d08f473..5b49de05e752 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2327,15 +2327,14 @@ int vhost_log_write(struct vhost_virtqueue *vq, s=
+truct vhost_log *log,
+>                 r =3D log_write(vq->log_base, log[i].addr, l);
+>                 if (r < 0)
+>                         return r;
+> -               len -=3D l;
+> -               if (!len) {
+> -                       if (vq->log_ctx)
+> -                               eventfd_signal(vq->log_ctx);
+> -                       return 0;
+> -               }
+> +
+> +               if (len !=3D U64_MAX) ---> It is impossible to have len =
+=3D U64_MAX from vhost-net
+> +                       len -=3D l;        How about keeping those two li=
+nes?
+>         }
+> -       /* Length written exceeds what we have stored. This is a bug. */
+> -       BUG();
+> +
+> +       if (vq->log_ctx)
+> +               eventfd_signal(vq->log_ctx);
+> +
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_log_write);
 
-The conversion between slices `[T]`
-is separated from others, because I couldn't implement it
-in the same way as the other conversions.
+Something like this.
 
-Link: https://github.com/Rust-for-Linux/linux/issues/1119
-Signed-off-by: Christian S. Lima <christiansantoslima21@gmail.com>
----
-Changes in v2:
-- Rollback the implementation for the macro in the repository
-and implement methods in trai
-- Link to v2: https://lore.kernel.org/rust-for-linux/20241012193657.290cc79c@eugeo/T/#t
+Thanks
 
-Changes in v3:
-- Fix grammar errors
-- Remove repeated tests
-- Fix alignment errors
-- Fix tests not building
-- Link to v3: https://lore.kernel.org/rust-for-linux/20241109055442.85190-1-christiansantoslima21@gmail.com/
-
-Changes in v4:
-- Removed core::simd::ToBytes
-- Changed trait and methods to safe
-- Add Result<&Self, Error> in order to make safe methods
-- Link to v4: https://lore.kernel.org/rust-for-linux/20250314034910.134463-1-christiansantoslima21@gmail.com/
-
-- Link to v1: https://lore.kernel.org/rust-for-linux/20241009014810.23279-1-christiansantoslima21@gmail.com/
----
- rust/kernel/transmute.rs | 74 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 69 insertions(+), 5 deletions(-)
-
-diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-index 1c7d43771a37..5f2cf66187ad 100644
---- a/rust/kernel/transmute.rs
-+++ b/rust/kernel/transmute.rs
-@@ -9,15 +9,53 @@
- ///
- /// It's okay for the type to have padding, as initializing those bytes has no effect.
- ///
-+/// # Example
-+/// ```
-+/// let foo = &[1, 2, 3, 4];
-+///
-+/// let result = u8::from_bytes(foo);
-+///
-+/// assert_eq!(*result, 0x40300201);
-+/// ```
-+///
- /// # Safety
- ///
- /// All bit-patterns must be valid for this type. This type must not have interior mutability.
--pub unsafe trait FromBytes {}
-+pub unsafe trait FromBytes {
-+    /// Receives a slice of bytes and converts to a valid reference of Self when it's possible.
-+    fn from_bytes(bytes: &[u8]) -> Option<&Self>;
-+
-+    /// Receives a mutable slice of bytes and converts to a valid reference of Self when it's possible.
-+    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
-+    where
-+        Self: AsBytes;
-+}
- 
- macro_rules! impl_frombytes {
-     ($($({$($generics:tt)*})? $t:ty, )*) => {
-         // SAFETY: Safety comments written in the macro invocation.
--        $(unsafe impl$($($generics)*)? FromBytes for $t {})*
-+        $(unsafe impl$($($generics)*)? FromBytes for $t {
-+            fn from_bytes(bytes: &[u8]) -> Option<&$t> {
-+                if bytes.len() == core::mem::size_of::<$t>() {
-+                    let slice_ptr = bytes.as_ptr() as *const $t;
-+                    unsafe { Some(&*slice_ptr) }
-+                } else {
-+                    None
-+                }
-+            }
-+
-+            fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut $t>
-+            where
-+                Self: AsBytes,
-+            {
-+                if bytes.len() == core::mem::size_of::<$t>() {
-+                    let slice_ptr = bytes.as_mut_ptr() as *mut $t;
-+                    unsafe { Some(&mut *slice_ptr) }
-+                } else {
-+                    None
-+                }
-+            }
-+        })*
-     };
- }
- 
-@@ -26,12 +64,38 @@ macro_rules! impl_frombytes {
-     u8, u16, u32, u64, usize,
-     i8, i16, i32, i64, isize,
- 
--    // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
--    // patterns are also acceptable for arrays of that type.
--    {<T: FromBytes>} [T],
-     {<T: FromBytes, const N: usize>} [T; N],
- }
- 
-+unsafe impl<T: FromBytes> FromBytes for [T] {
-+    fn from_bytes(bytes: &[u8]) -> Option<&Self> {
-+        let slice_ptr = bytes.as_ptr() as *const T;
-+        if bytes.len() % core::mem::size_of::<T>() == 0 {
-+            let slice_len = bytes.len() / core::mem::size_of::<T>();
-+            // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
-+            // patterns are also acceptable for arrays of that type.
-+            unsafe { Some(core::slice::from_raw_parts(slice_ptr, slice_len)) }
-+        } else {
-+            None
-+        }
-+    }
-+
-+    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
-+    where
-+        Self: AsBytes,
-+    {
-+        let slice_ptr = bytes.as_mut_ptr() as *mut T;
-+        if bytes.len() % core::mem::size_of::<T>() == 0 {
-+            let slice_len = bytes.len() / core::mem::size_of::<T>();
-+            // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
-+            // patterns are also acceptable for arrays of that type.
-+            unsafe { Some(core::slice::from_raw_parts_mut(slice_ptr, slice_len)) }
-+        } else {
-+            None
-+        }
-+    }
-+}
-+
- /// Types that can be viewed as an immutable slice of initialized bytes.
- ///
- /// If a struct implements this trait, then it is okay to copy it byte-for-byte to userspace. This
--- 
-2.49.0
+>
+>
+> Thank you very much!
+>
+> Dongli Zhang
+>
 
 
