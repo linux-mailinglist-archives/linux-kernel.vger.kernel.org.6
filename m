@@ -1,128 +1,232 @@
-Return-Path: <linux-kernel+bounces-569516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01729A6A411
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE26A6A416
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398CC189C98F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFE11894EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34080224AE6;
-	Thu, 20 Mar 2025 10:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C605E2248B3;
+	Thu, 20 Mar 2025 10:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O7iLOW5O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTQTcCj6"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8497C2080D9;
-	Thu, 20 Mar 2025 10:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B402080D9;
+	Thu, 20 Mar 2025 10:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742467712; cv=none; b=B8CBwvW54leWMUGgqH5SzY9UNAx1kEE5EDJFFW4lLSf7BGD8VyQVhRZJnu84Z0TTZcq3LuIZ1Yvw9yJA8PMsWPqLwBQCE8tbm6jMJNd7RVOQMeHB7Uj9kxLuYByUTzZhOuS7yHU0C+i1qqi4ZZJHs66wU4iByQ/reyBjhtpCvvI=
+	t=1742467776; cv=none; b=eWcABilXqDU41V+PcupTCsXAbq5rtEzhi52u3Oo8Hesh9QYHV7z0WkAONhXh77UcTz0DN+l9bL/l7OW1OclFNQkvXPJ9Cm7MkvSh5XRYe04gGrybpFInQUnj6tb0F/VdBQtKiWOmL4rMpmIv04jFwbJPY8E82zd/ODrtpDuFU2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742467712; c=relaxed/simple;
-	bh=YXf76glTiVLhkyc7lbXE2+pKrx3GYsR3bIlNF0cGzTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4VYU6MZKypxLHA0B4KCYvjTyVPSA6VAKet97azpA5hdGszKZ5iPCKmrydulq8neByUrpEwwbCYOThMem9l212fI7cnLdao1tlbIAYq+4uELQl96f1kf/7qSUhgK3gZshj6GQebDjDAV1Q3+HyTZAs2ijpEjoA3jn7g2eKtYxHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O7iLOW5O; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742467711; x=1774003711;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=YXf76glTiVLhkyc7lbXE2+pKrx3GYsR3bIlNF0cGzTo=;
-  b=O7iLOW5OmmxTKKl8e8BrTlqBfLv9X0YUzA4jKDEjWzrLXxlpUlBaPcQQ
-   7c7tTihnIlYYhmL2jqYjmv/pJHNkqi/ZdRF2e5DtpvVkXXy12xjgoC4Eo
-   zNPf6X81jB4Kw/fsT0aDpbeEXwQGIj32mvg5RKMCj5hAh6SLmnjtt9HXW
-   7cGspFC0gsJmJgbBIVHEGuFMr1bILWl8thHBGea3lixjJCmCrvZbW4xv8
-   +hhQhtR1aJUkHNsbKIMs5tWne0bHynRY0o3AR9wD2qNF3ZgWReqeNjqc5
-   6Rd4eH6a7SixRGwfVnSarSwiFLwHmSXFlFgqBWxMbV6shIbGdLrsDeZXX
-   A==;
-X-CSE-ConnectionGUID: WvGSGFJdS/iEeGU9B2QbDw==
-X-CSE-MsgGUID: 7my3w65pSfGe7m3hchTrXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="55067736"
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="55067736"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:48:30 -0700
-X-CSE-ConnectionGUID: 8e2ihiKmRAKcZ+OnwvAfXQ==
-X-CSE-MsgGUID: Pl152daVTTKnuQ8fxUuEhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
-   d="scan'208";a="122778298"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:48:24 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tvDRl-00000004CLa-2QSo;
-	Thu, 20 Mar 2025 12:48:21 +0200
-Date: Thu, 20 Mar 2025 12:48:21 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: mathieu.dubois-briand@bootlin.com, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <Z9vydaUguJiVaHtU@smile.fi.intel.com>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
- <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
- <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
+	s=arc-20240116; t=1742467776; c=relaxed/simple;
+	bh=ak0bH5VBArM9dgqVdz1GZ80nURKTsbHuii2hrbIquTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VIovS3XQm2PuwJdK7O8I9w7CW6VM3h0v8WCw12SWw/Gv02L6tm4y5FfnBjV/pltCymzj7aRKWMa1LZF4LmRKlBuTIwOFA8/ceBoZ6aZ0yaDKm3i0qFB5RKOP5EFFcfHZvHf4MkrpJX3pewUkPk8d44GO6gKE6l1dGqkbUJMjIuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTQTcCj6; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3996af42857so1130033f8f.0;
+        Thu, 20 Mar 2025 03:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742467772; x=1743072572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jk4+4I5tIyCXCGc4MllrQDDfIeW6/YEI8kHwE9WZjQQ=;
+        b=VTQTcCj63usj610/ICNFe2N6QX3VbfEowjXq2/ecxY2ONaPNiQVw9wQYd5fS0XMfIJ
+         B9WLy8aM7bG1Yq/x+xi7yUBy1V5XyO2msTAFA+S9OI9yCztUGlTCx+iRdxbCbzOyaLLB
+         UEsDULZaKlSGMddla3EGDdxaDhJTut6ndezMpFEyIuuqK2GrixbVimfC44fErwqBNpuc
+         Au8d+8TGEJCsWKE4arZC6I6Gssxsio1Dx+qwGfrCJ+PcMF120Zs+yjYVXIbHP1PsuzWh
+         VsNLCbfHV6pesPVVC3IxgHxmCFITMTylSPKygPL2FNEpVdufFKKdigzCRRiA174TSi84
+         hxAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742467772; x=1743072572;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jk4+4I5tIyCXCGc4MllrQDDfIeW6/YEI8kHwE9WZjQQ=;
+        b=a4GDLAzXIivGYyuAWnilr4Bl/ZVqrqM6glbATIeunVMIXcPm2egIdh37fcBBEt5CxE
+         /iz3O/0+YqlKLDZeRhSnqOY6YGG7iRgc0DLyKMejqVHMsxw+lf0yatnI1bOf+vR3Rroi
+         /25FvirhpqvR6rdPv4DOrvOuEhwYcUeneXsQCsUeY9lKZCjte1sMgWngKti6QKihXhpl
+         yvw1yXKfE7RSTkddjUc9tLKKexZC0Xo7WWjPmeJcULo6cq15fYXg70+JDeKmdxZ9+LfN
+         IVUujzxx06i044l4gXWzgLkdMEAzXydVtUB0ijekYxHPgI0BDddWqMgwgNqIrn2lBkoW
+         iHoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrc+hhktdx5Pq8OdRl9Fu5t0BeBiPqcaJS32aZvbFPo9jbek8tz6j2U1DMYXS6iP/DzHgWM25a6+wwUFat@vger.kernel.org, AJvYcCUtO7IabyptUrQ8m7KSJ8Hw6Pt/ZWFZB7aF9IOccXo6Au06ZrZesq4I9MIVbmie1gkiLTucN9hU0+4AKuS8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9haN6KADpo2namdYomlDv8+bWQcfmXOH2qT5cDQL1nVD751P/
+	+HajCcu7fIwH3Dic5y48vaasf74WNPMHwK7OopMuIelU311Yx+LU
+X-Gm-Gg: ASbGncvlPYgfYls31pf6HUvr8LaTJtCCiYG4kOnw/S2BZVuAN9a/kbAfrBUcb3huQ0n
+	WtNZSxyEHVu++kPdH7CB8Snbc3bZ7B4lJ4rtoR5QNVotUw2Zwo7+gsOoY4yakZ5NMY6IPAk3Gld
+	aEFbFCZCPsSG6LNy2Fvyua69BKEKO/mfs9rjBEvOrzvzx5rXynrvYDWC+P4nfKeXHA+SWbN2fT3
+	4LUP5Cx0fbgsJFURsmYSeNfddoBLXYamIb/HQLvwiHCMCNo3iuvduA7yzjGt/mt7Cm9ybTe33rx
+	nErNUNYoXUnhDJZYN6W5JAR9VZCEycvGKeA+OuPYvBI2gcwC86Kh1Lc+9UcvntU=
+X-Google-Smtp-Source: AGHT+IH7IHYglIPsFR5Yz4XMi3toi73MU18BBRwjfxKR5Wa+qwGqEc6tfXIeU39WaV8+kUF1ZqZsfA==
+X-Received: by 2002:adf:e846:0:b0:390:f0ff:2c10 with SMTP id ffacd0b85a97d-39979586da2mr2129503f8f.19.1742467772197;
+        Thu, 20 Mar 2025 03:49:32 -0700 (PDT)
+Received: from f.. (cst-prg-67-174.cust.vodafone.cz. [46.135.67.174])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997e3eb672sm249387f8f.95.2025.03.20.03.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 03:49:31 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] fs: sort out stale commentary about races between fd alloc and dup2()
+Date: Thu, 20 Mar 2025 11:49:22 +0100
+Message-ID: <20250320104922.1925198-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Mar 20, 2025 at 08:50:00AM +0100, Uwe Kleine-König wrote:
-> On Wed, Mar 19, 2025 at 01:18:50PM +0200, Andy Shevchenko wrote:
-> > On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@bootlin.com wrote:
+Userspace may be trying to dup2() over a fd which is allocated but not
+yet populated.
 
-...
+Commentary about it is split in 2 parts (and both warrant changes):
 
-> > > +	chip = devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0);
-> > 
-> > This is quite worrying. The devm_ to parent makes a lot of assumptions that may
-> > not be realised. If you really need this, it has to have a very good comment
-> > explaining why and object lifetimes.
-> 
-> Pretty sure this is broken. This results for example in the device link
-> being created on the parent. So if the pwm devices goes away a consumer
-> might not notice (at least in the usual way). I guess this was done to
-> ensure that #pwm-cells is parsed from the right dt node? If so, that
-> needs a different adaption. That will probably involve calling
-> device_set_of_node_from_dev().
+1. in dup2()
 
-It's an MFD based driver, and MFD core cares about propagating fwnode by
-default. I believe it should just work if we drop that '->parent' part.
+It claims the issue is only relevant for shared descriptor tables which
+is of no concern for POSIX (but then is POSIX of concern to anyone
+today?), which I presume predates standarized threading.
 
+The comment also mentions the following systems:
+- OpenBSD installing a larval file -- they moved away from it, file is
+installed late and EBUSY is returned on conflict
+- FreeBSD returning EBADF -- reworked to install the file early like
+OpenBSD used to do
+- NetBSD "deadlocks in amusing ways" -- their solution looks
+Solaris-inspired (not a compliment) and I would not be particularly
+surprised if it indeed deadlocked, in amusing ways or otherwise
+
+I don't believe mentioning any of these adds anything and the statement
+about the issue not being POSIX-relevant is outdated.
+
+dup2 description in POSIX still does not mention the problem.
+
+2. above fd_install()
+
+<quote>
+> We need to detect this and fput() the struct file we are about to
+> overwrite in this case.
+>
+> It should never happen - if we allow dup2() do it, _really_ bad things
+> will follow.
+</quote>
+
+I have difficulty parsing it. The first sentence would suggest
+fd_install() tries to detect and recover from the race (it does not),
+the next one claims the race needs to be dealt with (it is, by dup2()).
+
+Given that fd_install() does not suffer the burden, this patch removes
+the above and instead expands on the race in dup2() commentary.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+This contains the new commentary from:
+https://lore.kernel.org/linux-fsdevel/20250320102637.1924183-1-mjguzik@gmail.com/T/#u
+
+and obsoletes this guy hanging out in -next:
+ommit ec052fae814d467d6aa7e591b4b24531b87e65ec
+Author: Mateusz Guzik <mjguzik@gmail.com>
+Date:   Thu Dec 5 16:47:43 2024 +0100
+
+    fs: sort out a stale comment about races between fd alloc and dup2
+
+as in it needs to be dropped.
+
+apologies for the churn :)
+
+I think it will be best long term if this is one commit.
+
+ fs/file.c | 52 ++++++++++++++++++++++++++++------------------------
+ 1 file changed, 28 insertions(+), 24 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index d0ecc3e59f2f..dc3f7e120e3e 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -626,22 +626,14 @@ void put_unused_fd(unsigned int fd)
+ 
+ EXPORT_SYMBOL(put_unused_fd);
+ 
+-/*
+- * Install a file pointer in the fd array.
+- *
+- * The VFS is full of places where we drop the files lock between
+- * setting the open_fds bitmap and installing the file in the file
+- * array.  At any such point, we are vulnerable to a dup2() race
+- * installing a file in the array before us.  We need to detect this and
+- * fput() the struct file we are about to overwrite in this case.
+- *
+- * It should never happen - if we allow dup2() do it, _really_ bad things
+- * will follow.
++/**
++ * fd_install - install a file pointer in the fd array
++ * @fd: file descriptor to install the file in
++ * @file: the file to install
+  *
+  * This consumes the "file" refcount, so callers should treat it
+  * as if they had called fput(file).
+  */
+-
+ void fd_install(unsigned int fd, struct file *file)
+ {
+ 	struct files_struct *files = current->files;
+@@ -1259,18 +1251,30 @@ __releases(&files->file_lock)
+ 	struct fdtable *fdt;
+ 
+ 	/*
+-	 * We need to detect attempts to do dup2() over allocated but still
+-	 * not finished descriptor.  NB: OpenBSD avoids that at the price of
+-	 * extra work in their equivalent of fget() - they insert struct
+-	 * file immediately after grabbing descriptor, mark it larval if
+-	 * more work (e.g. actual opening) is needed and make sure that
+-	 * fget() treats larval files as absent.  Potentially interesting,
+-	 * but while extra work in fget() is trivial, locking implications
+-	 * and amount of surgery on open()-related paths in VFS are not.
+-	 * FreeBSD fails with -EBADF in the same situation, NetBSD "solution"
+-	 * deadlocks in rather amusing ways, AFAICS.  All of that is out of
+-	 * scope of POSIX or SUS, since neither considers shared descriptor
+-	 * tables and this condition does not arise without those.
++	 * dup2() is expected to close the file installed in the target fd slot
++	 * (if any). However, userspace hand-picking a fd may be racing against
++	 * its own threads which happened to allocate it in open() et al but did
++	 * not populate it yet.
++	 *
++	 * Broadly speaking we may be racing against the following:
++	 * fd = get_unused_fd_flags();     // fd slot reserved, ->fd[fd] == NULL
++	 * file = hard_work_goes_here();
++	 * fd_install(fd, file);           // only now ->fd[fd] == file
++	 *
++	 * It is an invariant that a successfully allocated fd has a NULL entry
++	 * in the array until the matching fd_install().
++	 *
++	 * If we fit the window, we have the fd to populate, yet no target file
++	 * to close. Trying to ignore it and install our new file would violate
++	 * the invariant and make fd_install() overwrite our file.
++	 *
++	 * Things can be done(tm) to handle this. However, the issue does not
++	 * concern legitimate programs and we only need to make sure the kernel
++	 * does not trip over it.
++	 *
++	 * The simplest way out is to return an error if we find ourselves here.
++	 *
++	 * POSIX is silent on the issue, we return -EBUSY.
+ 	 */
+ 	fdt = files_fdtable(files);
+ 	fd = array_index_nospec(fd, fdt->max_fds);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
