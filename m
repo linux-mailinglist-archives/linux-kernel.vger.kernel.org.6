@@ -1,80 +1,215 @@
-Return-Path: <linux-kernel+bounces-569820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F013A6A7EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:07:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F10A6A7DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BB93BB4BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:02:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB6634854DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87637222580;
-	Thu, 20 Mar 2025 14:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H7wC7U4q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4097FBD6;
-	Thu, 20 Mar 2025 14:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5A52222C0;
+	Thu, 20 Mar 2025 14:01:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87A3204F85;
+	Thu, 20 Mar 2025 14:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479360; cv=none; b=BFEuAJ/XEaVbDUFN+9X2K4GOJTCdu+Ew3sRtgeYRsB+jsWUndhvS9KIdT/Su/gvxNXFYO1yrKqHdTZvkk8BTgNz/Y2nWoPYJFShzrvsAJUiooIBwN4PxGVgOBrwy2VuHGWMazA1dt1sSRQh6OqYmFAiGMdfJBlOnKS8envEERlo=
+	t=1742479306; cv=none; b=dhD+Di1+q+m32ekZZZl30bJ22mZIfHH+wDrYlDLT5PEmH6Z1iq31EBIAj5gGpaegV9BZgFqOY65qwYKDLH9Q7Rp62Gmn67RmhLBtqyWdpWyQ7PRx+CUmJBrzmntIkazezWpdyWQTokWVKILWUp/0PI0LWn+DvJC4okZngvCIi3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479360; c=relaxed/simple;
-	bh=jK3397BdrtUlBR0ZqoujfE4jvwrD8tW91D+P9fByrlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhxkqRGKL7a/vynFdM1t+ePvaZ7LToz3qXwCUobbTEs7J+prSCgfKgDYcS35sDEFWOFkXavsgOj//bqS0h4Ugjr0U4A8bVXsKoTVmNBHpiFLQWnxuDad0sm7bOZn3C/lCCfUEvG4TAxJ8S30QGqf7i7Mw/09rgoFuqakGNkajFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H7wC7U4q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1908DC4CEDD;
-	Thu, 20 Mar 2025 14:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742479359;
-	bh=jK3397BdrtUlBR0ZqoujfE4jvwrD8tW91D+P9fByrlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7wC7U4q4rC/obmYMiWc6K9r+VMOyscFo2WrFsxQdTOmTL+/mEjmvV0z9tbwjwS2C
-	 lMSHXikKleAutr9hsXRYHwq03XGpkfrx5qCVXQtCm9q8Yzu833ROdCeK/9ee/BrKV3
-	 Sx7tdslNp5lt6VDEQcdF6Oz+HvIlrA/GbQ+vTP8s=
-Date: Thu, 20 Mar 2025 07:01:19 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next 2/2] staging: gpib: Remove unnecessary print
- function dev_err()
-Message-ID: <2025032037-antibody-emptier-9986@gregkh>
-References: <20250226060735.7484-1-jiapeng.chong@linux.alibaba.com>
- <20250226060735.7484-2-jiapeng.chong@linux.alibaba.com>
+	s=arc-20240116; t=1742479306; c=relaxed/simple;
+	bh=EbDfeZBW+Qqxz9QJQfg9SBKQSFAEasL45ys9LJXsEhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zt0ir2zis7GaWeMXWyVwG0BElX/O84pRqnBm+YrLkfNiZ8Z8kgtEDWlmRrS8m4Tp5vfp3eDfaqoVIEWjhW0T7ZJ12e6I4WPVtDKxutK7U+EuIQ/yq7/u4RlFeME9uXYRG0CU9/XPT1qrS3nwtF6PJZioAPWN3ryL7OoT8tRA+Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFF5A113E;
+	Thu, 20 Mar 2025 07:01:51 -0700 (PDT)
+Received: from [10.57.84.158] (unknown [10.57.84.158])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7EAC3F63F;
+	Thu, 20 Mar 2025 07:01:39 -0700 (PDT)
+Message-ID: <2cbca34c-477c-4055-b388-a13bb6c22b4d@arm.com>
+Date: Thu, 20 Mar 2025 14:01:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226060735.7484-2-jiapeng.chong@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] arm64: Add BBM Level 2 cpu feature
+Content-Language: en-GB
+To: Ard Biesheuvel <ardb@kernel.org>,
+ =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
+Cc: suzuki.poulose@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+ catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
+ james.morse@arm.com, broonie@kernel.org, oliver.upton@linux.dev,
+ baohua@kernel.org, david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev
+References: <20250319150533.37440-2-miko.lenczewski@arm.com>
+ <20250319150533.37440-3-miko.lenczewski@arm.com>
+ <CAMj1kXFOofRCiVHxxxBZMGQHRH-ghtqNxgd=uww9D4sr4vvjEQ@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAMj1kXFOofRCiVHxxxBZMGQHRH-ghtqNxgd=uww9D4sr4vvjEQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 02:07:35PM +0800, Jiapeng Chong wrote:
-> The print function dev_err() is redundant because platform_get_irq()
-> already prints an error.
+On 20/03/2025 13:37, Ard Biesheuvel wrote:
+> On Wed, 19 Mar 2025 at 16:06, Mikołaj Lenczewski
+> <miko.lenczewski@arm.com> wrote:
+>>
+>> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
+>> and this commit adds a dedicated BBML2 cpufeature to test against
+>> support for, as well as a kernel commandline parameter to optionally
+>> disable BBML2 altogether.
+>>
+>> This is a system feature as we might have a big.LITTLE architecture
+>> where some cores support BBML2 and some don't, but we want all cores to
+>> be available and BBM to default to level 0 (as opposed to having cores
+>> without BBML2 not coming online).
+>>
+>> To support BBML2 in as wide a range of contexts as we can, we want not
+>> only the architectural guarantees that BBML2 makes, but additionally
+>> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
+>> us having to prove that no recursive faults can be induced in any path
+>> that uses BBML2, allowing its use for arbitrary kernel mappings.
+>> Support detection of such CPUs.
+>>
+>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+>> ---
+>>  .../admin-guide/kernel-parameters.txt         |  3 +
+>>  arch/arm64/Kconfig                            | 11 +++
+>>  arch/arm64/include/asm/cpucaps.h              |  2 +
+>>  arch/arm64/include/asm/cpufeature.h           |  5 ++
+>>  arch/arm64/kernel/cpufeature.c                | 68 +++++++++++++++++++
+>>  arch/arm64/kernel/pi/idreg-override.c         |  2 +
+>>  arch/arm64/tools/cpucaps                      |  1 +
+>>  7 files changed, 92 insertions(+)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index fb8752b42ec8..3e4cc917a07e 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -453,6 +453,9 @@
+>>         arm64.no32bit_el0 [ARM64] Unconditionally disable the execution of
+>>                         32 bit applications.
+>>
+>> +       arm64.nobbml2   [ARM64] Unconditionally disable Break-Before-Make Level
+>> +                       2 support
+>> +
+>>         arm64.nobti     [ARM64] Unconditionally disable Branch Target
+>>                         Identification support
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 940343beb3d4..49deda2b22ae 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -2057,6 +2057,17 @@ config ARM64_TLB_RANGE
+>>           The feature introduces new assembly instructions, and they were
+>>           support when binutils >= 2.30.
+>>
+>> +config ARM64_BBML2_NOABORT
+>> +       bool "Enable support for Break-Before-Make Level 2 detection and usage"
+>> +       default y
+>> +       help
+>> +         FEAT_BBM provides detection of support levels for break-before-make
+>> +         sequences. If BBM level 2 is supported, some TLB maintenance requirements
+>> +         can be relaxed to improve performance. We additonally require the
+>> +         property that the implementation cannot ever raise TLB Conflict Aborts.
+>> +         Selecting N causes the kernel to fallback to BBM level 0 behaviour
+>> +         even if the system supports BBM level 2.
+>> +
+>>  endmenu # "ARMv8.4 architectural features"
+>>
+>>  menu "ARMv8.5 architectural features"
+>> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+>> index 0b5ca6e0eb09..2d6db33d4e45 100644
+>> --- a/arch/arm64/include/asm/cpucaps.h
+>> +++ b/arch/arm64/include/asm/cpucaps.h
+>> @@ -23,6 +23,8 @@ cpucap_is_possible(const unsigned int cap)
+>>                 return IS_ENABLED(CONFIG_ARM64_PAN);
+>>         case ARM64_HAS_EPAN:
+>>                 return IS_ENABLED(CONFIG_ARM64_EPAN);
+>> +       case ARM64_HAS_BBML2_NOABORT:
+>> +               return IS_ENABLED(CONFIG_ARM64_BBML2_NOABORT);
+>>         case ARM64_SVE:
+>>                 return IS_ENABLED(CONFIG_ARM64_SVE);
+>>         case ARM64_SME:
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index e0e4478f5fb5..108ef3fbbc00 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -866,6 +866,11 @@ static __always_inline bool system_supports_mpam_hcr(void)
+>>         return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
+>>  }
+>>
+>> +static inline bool system_supports_bbml2_noabort(void)
+>> +{
+>> +       return alternative_has_cap_unlikely(ARM64_HAS_BBML2_NOABORT);
+>> +}
+>> +
+>>  int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+>>  bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
+>>
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index d561cf3b8ac7..1a4adcda267b 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -2176,6 +2176,67 @@ static bool hvhe_possible(const struct arm64_cpu_capabilities *entry,
+>>         return arm64_test_sw_feature_override(ARM64_SW_FEATURE_OVERRIDE_HVHE);
+>>  }
+>>
+>> +static bool cpu_has_bbml2_noabort(unsigned int cpu_midr)
+>> +{
 > 
-> ./drivers/staging/gpib/fmh_gpib/fmh_gpib.c:1426:2-9: line 1426 is redundant because platform_get_irq() already prints an error.
+> We generally start these block comments with just /* on the first line
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19059
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>> +       /* We want to allow usage of bbml2 in as wide a range of kernel contexts
+>> +        * as possible. This list is therefore an allow-list of known-good
+>> +        * implementations that both support bbml2 and additionally, fulfill the
+>> +        * extra constraint of never generating TLB conflict aborts when using
+>> +        * the relaxed bbml2 semantics (such aborts make use of bbml2 in certain
+>> +        * kernel contexts difficult to prove safe against recursive aborts).
+>> +        *
+>> +        * Note that implementations can only be considered "known-good" if their
+>> +        * implementors attest to the fact that the implementation never raises
+>> +        * TLBI conflict aborts for bbml2 mapping granularity changes.
+>> +        */
+>> +       static const struct midr_range supports_bbml2_noabort_list[] = {
+>> +               MIDR_REV_RANGE(MIDR_CORTEX_X4, 0, 3, 0xf),
+>> +               MIDR_REV_RANGE(MIDR_NEOVERSE_V3, 0, 2, 0xf),
+>> +               {}
+>> +       };
+>> +
+> 
+> Why on earth is this needed? Is there nothing in the architecture that
+> can inform us about this? That seems like a huge oversight to me ...
 
-You have 2 different patches here, yet the identical subject line.  I
-just caught this after I added it to my staging-testing branch, so I'll
-go drop it from there now and wait for a v2 series.
+Currently the architecture can only tell us about the BBM support level.
+Currently level 2 is the highest and that permits an implementation to raise a
+conflict abort instead of handling it in HW.
 
-thanks,
+Since this series only relies on BBML2 for user space memory, we believe we
+could contain and handle any conflict abort safely (the first version of this
+series handled the abort). But Yang Shi has a series on list that aims to use
+BBML2 to enable dynamically splitting the linear map. It becomes much harder to
+reason about the safety of any conflict abort in that case.
 
-greg k-h
+Will was keen to take this approach were we decide if the HW supports
+"BBML2+NOABORT" semanitics based on the MIDR. Plans are in flight to fix the
+arch so we can tidy this up long term, but Will didn't want to hold up Ampere.
+
+Thanks,
+Ryan
+
+
 
