@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-569713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99E2A6A675
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:50:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E200AA6A682
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37DD37AF01C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F273F8A4763
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA72D1C69D;
-	Thu, 20 Mar 2025 12:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDF929406;
+	Thu, 20 Mar 2025 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ISblEG1Q"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSEaEywe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C47F29A5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED32F9EC;
+	Thu, 20 Mar 2025 12:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742474999; cv=none; b=gzS9HHsHqUCACvuidf+5kTUNPlBlodNiH1rPxqq/2+/4GUeiyt85BNcI4iLRGAwcZOc88xFeVDT82bKQf7MFSJ+Ks4yLpXiRVNhqSZtbrpgSXixlt6HDc+keMDxOYtt6Bo9wBiL2Yzb5URPRVTiPytU73MPXUYa1/7e8I9UTIV0=
+	t=1742475236; cv=none; b=qHTBWclWRE1MNvFg/RDy0PIL8MkciDarRYb4yEqj8cuDe1ZZ9MxoPBB+GTTe84/r/wz2mEQda88BAiGqGM9vEqbrxKYes6dG1n+xpo35AYpyJmwfQTtpaiNUHuMKGZH8NJc/zee357a6HhyQWqun2g6V+MBBkAn7WaDjqsl5VJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742474999; c=relaxed/simple;
-	bh=cMvE+JlI8RJDpCMGanqAmBzaChQf25piZf0jsfxHXp8=;
+	s=arc-20240116; t=1742475236; c=relaxed/simple;
+	bh=qz7MeaPR8fOUUQcZ6yj6cjFnFISOPaxEsa/PQ0ftEok=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVSibcOhcWfvlCUebw2RH/XbgbetnMoyvxNyypmkq1SUuuZKoQWVH9WtpVOP270vuURIVkZDUm7FicO0pZbYU7ziJ1mNBvccrg9PSCdeg2he0R3Qxmq2exQkslPzwTjlXHD1VpRXn/Q65thfcAYXwB1HJuSFJ/cploQyzSCoIU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ISblEG1Q; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=txvx
-	9KCFrfF8aRLOeltDIvK2zbqOXhw2Zh4y2n5sWjs=; b=ISblEG1Q51XVDPnZGfh/
-	TXcWYVR+LzOyFcaOf76zGr4D1Oo0i0rIKABaYDF7Naa0HcqEG/ZP5YcFKBFxNCtw
-	tWOKXOWHlR8GnunYR0ma1192m9xjLZ1+e0LGpr2DTZqT19g1LadtO52tSw5MpsYe
-	cK2axQvhFQYLXWr4CO4fPJGY3/RqaiLaVqrnMPP+BEzHvU57gfXUxVzYr5ppfNnZ
-	MbUQTV1XMMRiesnIVCh5pB46J/6PqGjiByd4sNelnKHbef5efFbp/oeZVyjxxyFf
-	VEAKc+S148NnPGLEVt5TfwLp13YhuYNy38sWVehiUmz5lu78KNgA4fHXevuzELCQ
-	9A==
-Received: (qmail 668798 invoked from network); 20 Mar 2025 13:49:53 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2025 13:49:53 +0100
-X-UD-Smtp-Session: l3s3148p1@tM8Dk8UwDNwgAwDPXyTHAJp038nK7dx+
-Date: Thu, 20 Mar 2025 13:49:53 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [RFC PATCH 0/3] i2c: Introduce i2c bus extensions
-Message-ID: <Z9wO8SIy1CcfO0bZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20250205173918.600037-1-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ju0xaMAfrsXT13/3bFmozirK+B3b+ILZfT46/22xMcdXqoV9tm3PSl0smqEPkyvuve98DJeAnDo6kaxGZZCGiwTNcs6i+UhNZyT64qmtIk3KDSlvMXgj3gr3ozeirCeV28M9gl6h7F6zZXT9dG3bL01xgqSwpB5CFIrbP3UuJBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSEaEywe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDDBC4CEDD;
+	Thu, 20 Mar 2025 12:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742475235;
+	bh=qz7MeaPR8fOUUQcZ6yj6cjFnFISOPaxEsa/PQ0ftEok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OSEaEyweNzA4Glaku9/kxFiZYPTRlTzqNWNKbcpiVt/T0M7WrzFY/xXDcutG7k5+u
+	 uHHjzBC581oQo4wIvbP1SEszyEzB1856/ZDv9NriIotrP4CF5GrlZ5psV42voERfr4
+	 Ry42mOocCkwIBXO99fp9JpMdoSBFOglm9n4ZYiuyu08kYdyzcSgWv5nYUXfvl9JAim
+	 6/o3gNfm+Nd/BuOtWDP54RdRLSi9n08t5BY+Dq2+Zpj2mxxcRQozAOFtFHLDBKiSdz
+	 2+5DGh2sJPOchXiUFxqv97zueJDS01w781OpmO9C61jXvCcvhi0cXCJ3Krgz7gGHGJ
+	 vgccg7ifdK5XQ==
+Date: Thu, 20 Mar 2025 12:53:49 +0000
+From: Simon Horman <horms@kernel.org>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, andrew+netdev@lunn.ch, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kory.maincent@bootlin.com,
+	javier.carrasco.cruz@gmail.com, diogo.ivo@siemens.com,
+	jacob.e.keller@intel.com, john.fastabend@gmail.com, hawk@kernel.org,
+	daniel@iogearbox.net, ast@kernel.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com
+Subject: Re: [PATCH net-next 1/3] net: ti: prueth: Fix kernel warning while
+ bringing down network interface
+Message-ID: <20250320125349.GN280585@kernel.org>
+References: <20250317101551.1005706-1-m-malladi@ti.com>
+ <20250317101551.1005706-2-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bNRjihevQH0RPQGp"
-Content-Disposition: inline
-In-Reply-To: <20250205173918.600037-1-herve.codina@bootlin.com>
-
-
---bNRjihevQH0RPQGp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250317101551.1005706-2-m-malladi@ti.com>
 
-Hi Herve,
+On Mon, Mar 17, 2025 at 03:45:48PM +0530, Meghana Malladi wrote:
+> During network interface initialization, the NIC driver needs to register
+> its Rx queue with the XDP, to ensure the incoming XDP buffer carries a
+> pointer reference to this info and is stored inside xdp_rxq_info.
+> 
+> While this struct isn't tied to XDP prog, if there are any changes in
+> Rx queue, the NIC driver needs to stop the Rx queue by unregistering
+> with XDP before purging and reallocating memory. Drop page_pool destroy
+> during Rx channel reset and this is already handled by XDP during
+> xdp_rxq_info_unreg (Rx queue unregister), failing to do will cause the
+> following warning:
+> 
+> [  271.494611] ------------[ cut here ]------------
+> [  271.494629] WARNING: CPU: 0 PID: 2453 at /net/core/page_pool.c:1108 0xffff8000808d5f60
 
-> The related big picture has been already presented in
->   - the 'Add support for GE SUNH hot-pluggable connector' series [0]
->   - the 'Runtime hotplug on non-discoverable busses with device tree
->     overlays' talk at Linux Plumbers Conference 2024 [1].
+I think it would be nice to include a bit more of the stack trace here.
 
-Any outcome of the Plumbers meetup? Was this "double-link" solution
-agreed on or so? I mean the code is the easy part here, but I would like
-to have an agreed approach for handling all kinds of non-probable
-busses. I really don't want an island solution for I2C. So, the key
-question here is what do DT maintainers think?
+> 
+> Fixes: 46eeb90f03e0 ("net: ti: icssg-prueth: Use page_pool API for RX buffer allocation")
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
 
-You sent code without bindings, but I'd think the other way around would
-be better for the discussion.
+It is a shame that we now have more asymmetry regarding
+the allocation of the pool and unwind on error prueth_prepare_rx_chan().
 
-Makes sense?
+But if I see things correctly the freeing of the pool via
+xdp_rxq_info_unreg() is unconditional. And with that in mind
+I agree the approach taken by this patch makes sense.
 
-Happy hacking,
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-   Wolfram
-
-
---bNRjihevQH0RPQGp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfcDvEACgkQFA3kzBSg
-KbZX9RAAh393rYZAyzqeRBdmTJau9tqSbizH8NtFkhnv0PxG3HlPyd+fQwHlZrID
-CTORu4/u9sx6NVj7e41DUhPBCIZZzqAVK6ZYGp7osj/qJB2AFumASzaNZaBaNIT8
-qi2QaP65FqU4ZhLEJWpWU1oYDDZT0HdN1W2YyeQJWC7CUN8cDbumqB8D7sIWYvFq
-9mHqjpKkS444f2aGYr2C8viXZwnUOaizc7SPbMdYlRu+BW6Qcn0/UCnjSrUiPVJ7
-22UP6rc8hxsdycUIH7u2yQW5zDFRP2Hl6mfnR88oODTA9Uc5KwRRF3frJcrmig1U
-V61vxcObarroCrfXY6W/c+b/0ui1K1lV/snpLh7VJWVMUUZy/f+AUTrNRoq6MjhQ
-ejwevyCjA7PdmFScaniHw1iuniO0+2Ta/5+hI/fps57TaKSiuUb53UMKE5sqJHJk
-iQBaVf+MajGg0ScYOgLm2ywvCywLqqXOqmv2lpvKY26uDmuUdEy6FFafUPvHZDMA
-K+4Xo3cz8UpvA1RnI18V6zrqCevO0OdPpHwd5R3GlO84Es1MjNYGQGJvZCn45pJU
-7WppwpMw1t7CphppoqTtRtUkn4rxpVLWsuc4orAqGJnNh/e1XF0svPc9PTSpYD28
-SvB66ys3t0hAI+9rOLb/VIvrYctX7YMCj27h0dQcy5WsXyj1ZSA=
-=I+6E
------END PGP SIGNATURE-----
-
---bNRjihevQH0RPQGp--
+...
 
