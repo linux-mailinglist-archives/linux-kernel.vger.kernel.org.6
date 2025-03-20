@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-570430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9920A6B042
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:02:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D2FA6B043
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F917A346F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:01:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68333483B0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93596221F3C;
-	Thu, 20 Mar 2025 22:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43719221F03;
+	Thu, 20 Mar 2025 22:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RqdtWJtU"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBDLMaDu"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFEC2222DD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C86C1F7074;
+	Thu, 20 Mar 2025 22:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508136; cv=none; b=VuvdXTv4JaSjC+w08bAauqUKHoDVqiwC8z/Mso20C+iT3HlTlcIxZ3taFj4AgKj6u7CDFd+4AmR5B4ADoA8w8P1RNJm/YpVMitmkhNo7qUbW5I0yT/TXduZ34zaQnObBfKKkueOtAMB3YOcam6Uy2I8xsaABmD1b+8NVK8ZHITc=
+	t=1742508317; cv=none; b=GdmjgOQ/PnOfd+lFoNGWtpJbC6vXzb2LJIoxCAeilLHNpqYnWFsrUGQZ9OoD3NORIF5fBe2iVrIc9nQnuceaV9J2k3DAqitcZ21q07SiuG0GUXov4yw2Zr4nt5x5s+AFyz3HkDaRZS61RV5IKUIEn2UKnl8t79yIXNNbZQWkdYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508136; c=relaxed/simple;
-	bh=d7Ya1LHCdyWqJD4dFEE2qeC6cXP+snsY2+GnEOCqguE=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=KxY5GhOrjDyl1npKiL8ZQPooQQsqcNtGJiSED48Q/MzJhqpzUxL24HxrA2zScFwElV7QzqX3bfyeth0hj1z+cNAmxOmCfe2c4DbW/kpO8azrZte7wsRBGj5IEjwhGE8idzNy7QDKQQDgcvH+U9JILV35h9gN0lUE+WWQbhq84Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RqdtWJtU; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476ac73c76fso14643321cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:02:14 -0700 (PDT)
+	s=arc-20240116; t=1742508317; c=relaxed/simple;
+	bh=p1RASg2XHKczACQM/FXb7ShSCTSi7hvrsyoDrMPtTCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cV8Tiip8lYoi63tCeQ+D82E7c5UmewXlJ6VkwJoqrZBVHY7Zd7yMNZwaUdx118odEbFelbba+8InQjGOIYsX3jrM00WbzIdYnvGoMGzjOdVOg1j/UEJRI/Lgai/4wEoyAQhes925gEYbyRLTj7LItVJpNK6mpmS/gw/PZJsXKs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBDLMaDu; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30beedb99c9so13226611fa.3;
+        Thu, 20 Mar 2025 15:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742508133; x=1743112933; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jBZh6zpn6DRlrcZ7VEPN5EqgicdAyzcXvCF6SeotL1s=;
-        b=RqdtWJtUJFwWLCWWVQskqWRqyTkNrKr2VuOEIBBU/696BmyLTBSV4YCSJnnI6+EWIJ
-         eaLmwVkohnR9ca0+Z91WsdOs9lXgpT5nb2oBp/C+AKVwAifYQ9LEIVx0fAlaANRvNZ8l
-         0klRQTrO1EpHgm4NoXBRJQ8EzCKKT7t5U4c6ozCU5c/592h/aMAHlkXmVOnXvzsPFxzz
-         6PjK441ZrUnTzQ/Qk2Mf+v+j8di5D8ThTURfHdxCXH5MVynNthRrSneXpt/lBSTvBMde
-         2bv57iJZE4Ll/Wzr6iLtJiYy5vg6uaP794cVtA8hhHP+om7btTgCsPMNHz/FSGdwf7vm
-         mFkg==
+        d=gmail.com; s=20230601; t=1742508314; x=1743113114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p1RASg2XHKczACQM/FXb7ShSCTSi7hvrsyoDrMPtTCc=;
+        b=cBDLMaDuBufYo8lB9rDE2y+aAR4fo2rbUyvbtqIuPv9LA6wxvgdsD+R2tTuqW5Bg5c
+         o/9P0SY9u4yPlpcfXzCe0RJNSCV6OD/PZkH2iYqRDpeekJTjHlooy2O+uEp8lE3/afdW
+         G7KKuV519YqGcf8RWm7og7+gSh81jSbzOE0H2OlyFaXmaBJlr1d2Zw1HLU3V50xx1Nt/
+         bCVpoVa+gXyBYb7ipZoQTfvUBB3hiPNbkOcgbDonSPsG3Ng/chHYzVeDv21/4wi3wYFS
+         5lVNNQCbh3gS2giBkfAQg674wAtyLeHZ4ZNB97saIHCwabAk4dft1GGPZ1Ua0QX0wLOn
+         Shqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742508133; x=1743112933;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jBZh6zpn6DRlrcZ7VEPN5EqgicdAyzcXvCF6SeotL1s=;
-        b=mU3/NG4ZTz1nG272/bu1hTYvHbcJUd/4ucOEhFoqEkwd75CIh6eo7Bg7plyerm8biQ
-         jbR90TeZA8LXIUNqGUEcR4XYVmdJFpc+g/C4KRr6S/kV/xzGj3eqEUdfVFmramB3Ig26
-         qRBd3jwjYvlOxDdmufTrGGCoB9VE64kotSIPYm5GH7KsN6OSVz8UPNq9yqBxvyY7XO2n
-         krdeYng7ejxHiteFFrBmt91iB10PgG/swfxUpggjWqFXeBiDoPS0DmhrkOfwDsDyHRCO
-         7eKSBBQ/cciTw57AhWlIaZPSg7LzrtcWZqqwfe7L3pWJK2pRafF6eo/eiJmFIDJoIQgN
-         NAMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQk6OSpumuk0lrHzteg/YLsE7jCveFpKTYKIlx21NJ+qrU62DWCWYavLw/3hygev8NYqVmMaU+74P7ogQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjy0R1nBdX2gEuxslaJkP967J3CRYTicM1bqnGuqW5NkfzpoxS
-	8smfaTG8qrpHtwciqIFkeK+bszqE1bffOP8pBkx8oMuavZWszb4fWO+dw+jI2KhBh/coHCITW8A
-	=
-X-Gm-Gg: ASbGnctGW3DjDhw0WkQXCmUtagWpjS8DUndNqvNlAo4P3Juei5KM7GfeHr7tYgO2uRI
-	wcUcfVVn8vyhvnA45kNSaWLlZ5uo3xkPswnuKkEaLx1Ni2y+xQxhg/MpnOeUKNHAWr6IAZlMGnD
-	ucLRconJRcwVO5bevIaxxUP/wHXiw6P7YTC+TpoAcB4LcrRv/SRTKKO8ajNhWrOX9sl6Efn/zNG
-	o4LJzotKfD1W6yKmk7NtgivR+zMtnjQkgr3z5lf4LU8pQl7SfC8MDYEqMq0BoONpzpdV/AjDt/d
-	ZD1eOxNA68xpIxm+sPPPAgmkXmprhaLArRjue3w5o9/4SfgXP6k3rkLAockcJPZb5q6zOuljbee
-	iRtoKYAM3xIkO2A==
-X-Google-Smtp-Source: AGHT+IEpTU+4E0FkwubwYokg6Ah9wbYKDgW5/Z1hnBycqv4qF/mtU8N7ku2JritQ36rrSIqLmxtbKQ==
-X-Received: by 2002:a05:622a:1f0a:b0:476:a74d:f23b with SMTP id d75a77b69052e-4771de62897mr15221101cf.48.1742508133366;
-        Thu, 20 Mar 2025 15:02:13 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4771d191ea6sm3608231cf.45.2025.03.20.15.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 15:02:13 -0700 (PDT)
-Date: Thu, 20 Mar 2025 18:02:12 -0400
-Message-ID: <c7f860b806603cd8af7740c73db68197@paul-moore.com>
+        d=1e100.net; s=20230601; t=1742508314; x=1743113114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p1RASg2XHKczACQM/FXb7ShSCTSi7hvrsyoDrMPtTCc=;
+        b=TSRVzYKmMI/ouzXoIWRDUfvjvbLxpSFJUr2exTNqmSuYPvviTiwfjNFmIqwJybeOOR
+         jcCMDVURgg3U1+NhUnowGN+vYx6Boqy590G9dEbSJR4eDRYFh/S+m+KbR+suQfwlvjI0
+         iebMiUOdZQ45XLP6Qh+tyBAZvrxgjkYf6TGD1hY+ZdpHbtZAsITnzxWnV7U50Q3YkwX0
+         dDnj4LgC6QT4zJJ/eNAFn4DUqDGVXN178DTYmZfQ7bgx9FUF2IAsPOWy2ySkoKB22r2b
+         zGiH6J3zhS+ft93dMiSL0lcrMRLT/TuYs2Ii5Y4kR3E5fuMMjCfGX1nUMmsLNw9McVFX
+         DRYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXj+T8C57WKoDQLnoEP0+XQV9KNw3s5MuXlk0+YsYpHu7vNjiELknGvq0eD4lzRZ9K+cTBqKpEEWFeV4R86jSk=@vger.kernel.org, AJvYcCXktsl12AVhSAEHcxurAonLmp3B0trQ0OBEItx1YZXRc0VA0eN4ZCQPg2kvW800i/SY2wOJ/LtW+d+7CSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHbWgkt9RxhuDDcss+mGooatcUVc51h7JeYsuwRBGhOgFZZ9r5
+	2+BvAdbi0efxDP4QXEAYJqh6qr3aNFqQ7wT2bwKjNQUPxwwM2wngHw0Zux9tSMZRn5CgKN0psLm
+	96u2/M/AQRJerZPXjLpZW/YDOVFs=
+X-Gm-Gg: ASbGncsafpn7O4u6AflFEh3X+b7MVbGOwA4MNR98JduF5WWOBotv2dfyVpdplW/2/ox
+	HAym7UOZbefbAxVxhWx3Ntupe9aYbBkoMfsRXgAjROScG1mgRa4+GhF0h3cPNTVHT+kyf+uFRX3
+	joy7NzsII9mgDmOQAuRNsZR/VZfYUjpr+ixJ1eM+BGpA==
+X-Google-Smtp-Source: AGHT+IFbDrbgapsx0x5jQolKztjF8xOTEPBIpHmIn1P9NZeF4PPEYJKKlawUnSbtvBVcJl1s1tGB8s2tnca3JePpHWw=
+X-Received: by 2002:a05:651c:4cb:b0:307:deea:f576 with SMTP id
+ 38308e7fff4ca-30d7e2d98e9mr3683461fa.34.1742508313804; Thu, 20 Mar 2025
+ 15:05:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250320_1749/pstg-lib:20250319_1956/pstg-pwork:20250320_1749
-From: Paul Moore <paul@paul-moore.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Casey Schaufler <casey@schaufler-ca.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Eric Paris <eparis@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] audit: Mark audit_log_vformat() with __printf()  attribute
-References: <20250313085343.241623-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250313085343.241623-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-1-7dff5cf25fe8@google.com>
+In-Reply-To: <20250320-vec-methods-v1-1-7dff5cf25fe8@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 20 Mar 2025 18:04:37 -0400
+X-Gm-Features: AQ5f1JrCJGPMLCdNoFj9SS9bSNS_H9ODe9oTnHfTk7nN88NcmsnMvbYT3n-xXXw
+Message-ID: <CAJ-ks9mVTCH954G_HvT6MoxpguEm5NWXtjmNmFBZKENZ0UzZpQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] rust: alloc: add Vec::clear
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mar 13, 2025 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> audit_log_vformat() is using printf() type of format, and GCC compiler
-> (Debian 14.2.0-17) is not happy about this:
-> 
-> kernel/audit.c:1978:9: error: function ‘audit_log_vformat’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-> kernel/audit.c:1987:17: error: function ‘audit_log_vformat’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-> 
-> Fix the compilation errors (`make W=1` when CONFIG_WERROR=y, which is default)
-> by adding __printf() attribute.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> v2: added necessary technical information to the commit message (Paul)
-> 
->  kernel/audit.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, Mar 20, 2025 at 10:06=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> Our custom Vec type is missing the stdlib method `clear`, thus add it.
+> It will be used in the miscdevice sample.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Merged into audit/dev-staging, this will move to audit/dev after the
-upcoming merge window.
-
---
-paul-moore.com
+Reviewed-by: Tamir Duberstein <tamird@gmail.com>
 
