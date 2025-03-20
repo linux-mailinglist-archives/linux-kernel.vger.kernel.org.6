@@ -1,124 +1,250 @@
-Return-Path: <linux-kernel+bounces-569980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD41A6AA67
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:56:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EE5A6AA6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 518C67B1471
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:55:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10C604846CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675DC1EB5E0;
-	Thu, 20 Mar 2025 15:56:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE1B1E98EA;
-	Thu, 20 Mar 2025 15:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E141EB1A8;
+	Thu, 20 Mar 2025 15:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UkFNKTiT"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A5E1EB195
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742486170; cv=none; b=XAZRaPqYYCY3+8CGJhBlAFoesncEvJuKBUVN4hfyKaV2nMrRBhIyiJ/YtyH0smHgZjiFPcwj/aex1d0Tuf1Dl35BibpKO1rz8L+vMz/oEdyGb5x8l+V9bgmJ5LY1GioNE26tyM0lWsAsmdZ9CqIZW7hd6HXgy1z3rmNjokbBRPI=
+	t=1742486195; cv=none; b=sdlIDLL5DDaevM3SMysvFnLEIyYWvotvXXTcSmKPabDXbEfHL3gRq0BnGVM9/0/r3WmqoL8Otla1AlwfdfcDsnUQquYPVO8BArQvm9Wcl92JRwda9wMqJe4qhZYWAMAKWDzzRRvEsPlRQc1TiJgQzs1BV1L+R6TRRpfr+YPASt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742486170; c=relaxed/simple;
-	bh=h6Tcpw25xgx4OGNJRXuC8Ivumbn4vEdkkk6QO2pNB4M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=muvsHwOJns0d+bLniVCgsuyEUVaBF+9ZlHbcsO36Evzy83Yc0YWFOYDr3DeTmezWgk+6CpAidXSw7QyF+n9peNNuH0ZKzx/WGPOuDZxAagyTx/ddhxuN10aQrwZ4FGUWAIX2v84ECg25wwcM2ZQK+bK4DmoYts86pzSaMB576yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FFAD1063;
-	Thu, 20 Mar 2025 08:56:14 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.100.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D24693F673;
-	Thu, 20 Mar 2025 08:56:04 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Yangtao Li <tiny.windzz@gmail.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Brandon Cheo Fusi <fusibrandon13@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: sun50i: prevent out-of-bounds access
-Date: Thu, 20 Mar 2025 15:55:57 +0000
-Message-Id: <20250320155557.211211-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742486195; c=relaxed/simple;
+	bh=Pg+8432XIY1RmD3o7Gs+WGJlVnBjwftYIj/Xx29MjkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oic8Qzjw36635ANoE/E2GwkOzYMnKGphiwXgoYjsNQ9EfdxP2k2/yVjEFEm44u07N5c+Cse9nec/uYeH95ph7drsqHqW563RTp/ufmyYxi+zIZc24+ph/bcLq1TSQiGAj7tMhrrJ5xbTQO7a2b7VRJcHmYkbN094ijh5Gmoc/9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UkFNKTiT; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30613802a6bso9989631fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742486192; x=1743090992; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8n8TNAgQeXDINcAz9ek7HcTAkZoaBTVAa+vhgGh7zC8=;
+        b=UkFNKTiTk2jcOiBYGxDE9VX2UvjeBF8GiKO6NUAylRBDnP0mLMC86FkXN2uKPke7gV
+         Q40snUHHAMqDQGeupeqw0sPFHt+A7Xw0xiPWsn4mgDCeZ3Oc3FlZEsdXDgBXoEe96HJ+
+         21aoEGr9sUc2j742dizqI8m9gkdMTgrv39bkqNoNo9Fb+b3ye9RljZtQTvySh1/HYvXs
+         fCdxISB+cAKyL5nl6DWmcPEEJ+oTdoXWbqoB5xxFK1ZmtANwIHiN8jaN+J/vhWb4g4Yj
+         cWnzh+j1HJxAgphKj4gByYlrywmbgJ0FGaFflM2mvj/FHEf0cTEnnAKnDgO5V58ZXHuR
+         Uvhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742486192; x=1743090992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8n8TNAgQeXDINcAz9ek7HcTAkZoaBTVAa+vhgGh7zC8=;
+        b=s4aYrMoWfde3wwU8/PV1gs4JF9VawHo+vLNorQs23UsjqxagZPu2z4YUDIAWdg2OEf
+         O9hPY3Afnm82+uk0AGw6/sau6PsK1BdgtAt0BdZFOOV/SzCW+c/UpoH6BRRh2FXckyNm
+         tdj3TSe+8td24ZHLCTlYnhntHjQ7mJUt3FID+1PBA4R15n+4S0ubjPsZ98GHAg1w7Bgu
+         jgRHnER629E7bxCQyKKOnT7uiDclFcBVxeB/2mpu8grH0lDgIybruUUDkkLJ1kUCW04R
+         MwI2DhISiOqPBIwBnh5CVHBIm9956Dn/idVxdSCJVl/dJtqvUuPSKGgmgRHhvRAtejkb
+         t/xA==
+X-Forwarded-Encrypted: i=1; AJvYcCXf5TOx94uJYkSdLx4G1SpiCrQmK5shFH4yAB/5vrprbeWiYaDfjj4PR/lv4JEwjxrHZ9J/KWk4raDf7dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrxioLqlkzuACz237wR2Tgl5IN9ceK1jdjIi6ze3tGeDVtTMEv
+	48lqVO3j4H/VtWkkL+JOj+AcxDLZl4o7J0ZOstaMl8bEpwUfH3eucVfAjAXiRnJB09dlQaZd1XE
+	pUs6Ij/reRp4bDJdK+AfX/M/HI8MbOEf+8t0csw==
+X-Gm-Gg: ASbGncvH3CAHmVPgLMhO3NESi+qVYeNbkN5S4gRi2lPV89FRKISKoH+JrrBoUHY1rCZ
+	hfRX9Msp7KctPahQ/wOFPqG07tuJYfaVeXVhdBsCgvoA8wtNB9yL1Hm2ldG9fQacGG7NZbqSpED
+	glbPsfl5bH2fO9tmOrs8l0HjbRSgmqw8lrB4p7onf87Sg9RP59C9JivUAdUaqMhBkB2DSB
+X-Google-Smtp-Source: AGHT+IGTwvnzBedelgYeIG2XIlrHeQ96Vy3zCeIi71ifL5+oZNFvcJoCUD0BJMTuIVRe2FGR3+BTabWjimKS/VvsbXc=
+X-Received: by 2002:a2e:b8d6:0:b0:30b:edfc:5d8a with SMTP id
+ 38308e7fff4ca-30d6a1efadbmr34464451fa.0.1742486191822; Thu, 20 Mar 2025
+ 08:56:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250315164123.1855142-1-koichiro.den@canonical.com>
+In-Reply-To: <20250315164123.1855142-1-koichiro.den@canonical.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Mar 2025 16:56:20 +0100
+X-Gm-Features: AQ5f1JowFng81dq75UDfEEYlHxIDBQIW-PBU1W4Hva1SRz22XpNprkVHqgRNKUc
+Message-ID: <CAMRc=Me=um+=uAKxP8enVPQ4gZvKgtsmaT5m0tM_=7-xGRVY3w@mail.gmail.com>
+Subject: Re: [PATCH v6 0/9] Introduce configfs-based interface for gpio-aggregator
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A KASAN enabled kernel reports an out-of-bounds access when handling the
-nvmem cell in the sun50i cpufreq driver:
-==================================================================
-BUG: KASAN: slab-out-of-bounds in sun50i_cpufreq_nvmem_probe+0x180/0x3d4
-Read of size 4 at addr ffff000006bf31e0 by task kworker/u16:1/38
+On Sat, Mar 15, 2025 at 5:41=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
+l.com> wrote:
+>
+> This patch series introduces a configfs-based interface to gpio-aggregato=
+r
+> to address limitations in the existing 'new_device' interface.
+>
+> The existing 'new_device' interface has several limitations:
+>
+>   Issue#1. No way to determine when GPIO aggregator creation is complete.
+>   Issue#2. No way to retrieve errors when creating a GPIO aggregator.
+>   Issue#3. No way to trace a GPIO line of an aggregator back to its
+>            corresponding physical device.
+>   Issue#4. The 'new_device' echo does not indicate which virtual
+>            gpiochip<N> was created.
+>   Issue#5. No way to assign names to GPIO lines exported through an
+>            aggregator.
+>
+> Although Issue#1 to #3 could technically be resolved easily without
+> configfs, using configfs offers a streamlined, modern, and extensible
+> approach, especially since gpio-sim and gpio-virtuser already utilize
+> configfs.
+>
+> This v6 patch series includes 9 patches:
+>
+>   Patch#1: Fix an issue that was spotted during v3 preparation.
+>            (Not present in gpio/for-next, so retained in v6.)
+>   Patch#2: Reorder functions to prepare for configfs introduction.
+>   Patch#3: Add aggr_alloc() to reduce code duplication.
+>   Patch#4: Introduce basic configfs interface. Address Issue#1 to #5.
+>   Patch#5: Prepare for Patch#6.
+>   Patch#6: Expose devices created with sysfs to configfs.
+>   Patch#7: Suppress deferred probe for purely configfs-based aggregators.
+>   Patch#8: Documentation for the new configfs interface.
+>   Patch#9: Selftest for gpio-aggregator.
+>
+> N.B. This submission is targeting at gpio/for-next and is based on:
+>      commit 21c853ad9309 ("gpio: adnp: use new line value setter callback=
+s")
+>
+> v5->v6 changes:
+>   - Addressed feedback from Bartosz:
+>     * Resolved issues spotted with lockdep and kasan.
+>     * Added kselftest for gpio-aggregator.
+>   - Fixed a memory leak in aggr_free_line() (missing kfree(line->name)).
+>   - Fixed a bug I mistakenly added in aggr_parse() (misplaced scnprintf()=
+).
+>   - Eliminated a potential lock inversion deadlock by removing
+>     gpio_aggregator_lock acquisition in gpio_aggregator_remove_all(), whi=
+ch
+>     became unnecessary after the upstream commit 12f65d120350 ("gpio:
+>     aggregator: protect driver attr handlers against module unload").
+>
+> v4->v5 changes:
+>   - Rebased off of the latest gpio/for-next, that includes the patch seri=
+es:
+>     "Add synchronous fake device creation utility for GPIO drivers"
+>     (https://lore.kernel.org/all/20250221133501.2203897-1-koichiro.den@ca=
+nonical.com/)
+>
+> v3->v4 changes:
+>   - Split off the introduction of gpio-pseudo.[ch] and conversions.
+>   - Reordered commits to place a fix commit first.
+>   - Squashed the trivial update for gpio-aggregator's conversion to gpio-=
+pseudo
+>     into the primary commit "gpio: aggregator: introduce basic configfs i=
+nterface"
+>     as it is only meaningful when combined.
+>
+> v2->v3 changes:
+>   - Addressed feedback from Bartosz:
+>     * Factored out the common mechanism for synchronizing platform device
+>       probe by adding gpio-pseudo.[ch].
+>     * Renamed "_auto." prefix to "_sysfs." for auto-generated
+>       configfs entries corresponding to sysfs-created devices.
+>     * Squashed v2 Patch#3 into its predecessor.
+>   - Addressed feedback from Geert:
+>     * Factored out duplicate code in struct gpio_aggregator initializatio=
+n
+>       by adding gpio_alloc()/gpio_free() functions. Note that v2 Patch#7
+>       was dropped for other reasons as mentioned below, so aggr_free() in
+>       v3 is unrelated to the same-named function in v2.
+>     * Removed redundant parsing of gpio-line-names and unnecessary
+>       chip->names assignments; squashed v2 Patch#4 + v2 Patch#5 into v3
+>       Patch#9.
+>     * Updated to use sysfs_emit().
+>     * Updated Kconfig (select CONFIGFS_FS).
+>     * Fixed typos, coding style issues, missing const qualifiers, and oth=
+er
+>       minor issues.
+>   - Resolved an issue that was spotted during v3 preparation. See Patch#2=
+.
+>   - Reordered resource initialization order in gpio_aggregator_init() to
+>     both eliminate a potential race condition (as noted in the source cod=
+e
+>     comment) and simplify the code. See Patch#8. This enabled:
+>     * Removal of v2 Patch#7.
+>     * Merging of aggr_unregister_lines() and aggr_free_lines() into a
+>       unified function.
+>   - Disabled 'delete_device' functionality for devices created via config=
+fs
+>     for simplicity. It was mistakenly allowed in v2 and proved buggy. See
+>     Patch #8.
+>
+> RFC->v2 changes:
+>   - Addressed feedback from Bartosz:
+>     * Expose devices created with sysfs to configfs.
+>     * Drop 'num_lines' attribute.
+>     * Fix bugs and crashes.
+>     * Organize internal symbol prefixes more cleanly.
+>   - Split diffs for improved reviewability.
+>   - Update kernel doc to reflect the changes.
+>
+> v5: https://lore.kernel.org/all/20250224143134.3024598-1-koichiro.den@can=
+onical.com/
+> v4: https://lore.kernel.org/all/20250217143531.541185-1-koichiro.den@cano=
+nical.com/
+> v3: https://lore.kernel.org/all/20250216125816.14430-1-koichiro.den@canon=
+ical.com/
+> v2: https://lore.kernel.org/all/20250203031213.399914-1-koichiro.den@cano=
+nical.com/
+> RFC (v1): https://lore.kernel.org/linux-gpio/20250129155525.663780-1-koic=
+hiro.den@canonical.com/T/#u
+>
+>
+> Koichiro Den (9):
+>   gpio: aggregator: protect driver attr handlers against module unload
+>   gpio: aggregator: reorder functions to prepare for configfs
+>     introduction
+>   gpio: aggregator: add aggr_alloc()/aggr_free()
+>   gpio: aggregator: introduce basic configfs interface
+>   gpio: aggregator: rename 'name' to 'key' in aggr_parse()
+>   gpio: aggregator: expose aggregator created via legacy sysfs to
+>     configfs
+>   gpio: aggregator: cancel deferred probe for devices created via
+>     configfs
+>   Documentation: gpio: document configfs interface for gpio-aggregator
+>   selftests: gpio: add test cases for gpio-aggregator
+>
+>  .../admin-guide/gpio/gpio-aggregator.rst      |  107 ++
+>  drivers/gpio/Kconfig                          |    2 +
+>  drivers/gpio/gpio-aggregator.c                | 1155 ++++++++++++++---
+>  tools/testing/selftests/gpio/Makefile         |    2 +-
+>  tools/testing/selftests/gpio/config           |    1 +
+>  .../testing/selftests/gpio/gpio-aggregator.sh |  723 +++++++++++
+>  6 files changed, 1800 insertions(+), 190 deletions(-)
+>  create mode 100755 tools/testing/selftests/gpio/gpio-aggregator.sh
+>
+> --
+> 2.45.2
+>
 
-This is because the DT specifies the nvmem cell as covering only two
-bytes, but we use a u32 pointer to read the value. DTs for other SoCs
-indeed specify 4 bytes, so we cannot just shorten the variable to a u16.
+It's too late in the cycle for this to make v6.15, let's try again
+once v6.15-rc1 is tagged. I've tested it and it now seems to work
+well, I've been unable to trigger any issues even with corner cases.
 
-Fortunately nvmem_cell_read() allows to return the length of the nvmem
-cell, in bytes, so we can use that information to only access the valid
-portion of the data.
-To cover multiple cell sizes, use memcpy() to copy the information into a
-zeroed u32 buffer, then also make sure we always read the data in little
-endian fashion, as this is how the data is stored in the SID efuses.
+I still see some nits I'd like to see fixed but I think we're close to
+getting it into the tree.
 
-Fixes: 6cc4bcceff9a ("cpufreq: sun50i: Refactor speed bin decoding")
-Reported-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/cpufreq/sun50i-cpufreq-nvmem.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-index 17d6a149f580d..c48ed04b82335 100644
---- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-@@ -194,7 +194,9 @@ static int sun50i_cpufreq_get_efuse(void)
- 	struct nvmem_cell *speedbin_nvmem;
- 	const struct of_device_id *match;
- 	struct device *cpu_dev;
--	u32 *speedbin;
-+	void *speedbin_ptr;
-+	u32 speedbin = 0;
-+	size_t len;
- 	int ret;
- 
- 	cpu_dev = get_cpu_device(0);
-@@ -217,14 +219,18 @@ static int sun50i_cpufreq_get_efuse(void)
- 		return dev_err_probe(cpu_dev, PTR_ERR(speedbin_nvmem),
- 				     "Could not get nvmem cell\n");
- 
--	speedbin = nvmem_cell_read(speedbin_nvmem, NULL);
-+	speedbin_ptr = nvmem_cell_read(speedbin_nvmem, &len);
- 	nvmem_cell_put(speedbin_nvmem);
--	if (IS_ERR(speedbin))
--		return PTR_ERR(speedbin);
-+	if (IS_ERR(speedbin_ptr))
-+		return PTR_ERR(speedbin_ptr);
- 
--	ret = opp_data->efuse_xlate(*speedbin);
-+	if (len <= 4)
-+		memcpy(&speedbin, speedbin_ptr, len);
-+	speedbin = le32_to_cpu(speedbin);
- 
--	kfree(speedbin);
-+	ret = opp_data->efuse_xlate(speedbin);
-+
-+	kfree(speedbin_ptr);
- 
- 	return ret;
- };
--- 
-2.46.3
-
+Bart
 
