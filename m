@@ -1,137 +1,234 @@
-Return-Path: <linux-kernel+bounces-569585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B09BA6A4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:32:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A07A6A56B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B87418993BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022078A175F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4C021638D;
-	Thu, 20 Mar 2025 11:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B6D22333B;
+	Thu, 20 Mar 2025 11:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P9K6ugwT"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="kWXhecZu"
+Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6A1189F36
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA57527701;
+	Thu, 20 Mar 2025 11:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742470329; cv=none; b=aKKk8FIzP/NZSdRLfI86fMjhfrwqLtPJrc+K6PAb/oOnV3ldggL//8bKBY0ITq9FPQJudpdxOfLWeeW40PBBC+0hWxtYM8piyVTDYPaDTr1FEpFbTtWvlyT7VpbZ2e3xPz7aPBLNd+c+gs9gOM83Qzt6WyjNoUOee00jPpoMgOs=
+	t=1742471392; cv=none; b=bNllbm/fQRJuje6ZY5eQ0k5XoiDdEBZVFc89zPAcea3Wzr5xmM6uONfGimgJ/8hxWF0NRGrwNFsKqViK+FbOGkOg6UxffbrCSY+wFGTdrk68sY3mRVloceZ3x4DNVV+ZuxLcFv/Tr1LrJQyFyRgFvuCxc41MhnaALtFzv63HxBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742470329; c=relaxed/simple;
-	bh=bIWxxHLaEUs7nKR8UquB5Bxi4qsYCUmHqTaYzR326DA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aZ4wr/9IC60PDuu/fyoPgDAzU02jVmpYGycfHqWnq8CVk2AxlfFm33TJyK80a3qTuUmd9IHkX5Ef8xmMk4TujIavlo3L+U7O+Ip2e8vaD0UpLdR2RaU04Q7+Y7lAkWqlN0P2gGub0dVvqNpn6gbCZ2VZRGdcrPWJLw9qBojGT5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P9K6ugwT; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DEE7543150;
-	Thu, 20 Mar 2025 11:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742470319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CWcS7+LaqjyqkZYE4vdWzKlwoH9+A6aKT6QyHshPnaQ=;
-	b=P9K6ugwTO5leK8GhtCbUb1gS4TsDUg1MMCfoFYEMUHnzfjo9NOyJgV9vAVd+IfShl0JvLt
-	wf8xjXLHDumMs8GFxwFZVkjOxmR3ty7vc4FaqlMFjV6fTVxyqVKHkd7U6dJIdWxeZibCO4
-	Sfo/8NByF4Nf0NehnKfkMOPgx+9cv+Chsqu0lWcqAERS3nzkOTXLsaqQsuWGtd+l9dehVh
-	g4wNO4Ev3O6h4nTINUUjTppwm+t8UapIREdpcvZJxujPhvODlflgJe2YYDQhm7A750mGSJ
-	egj4gHhqdftxnptwAlRt5QXbSyMcFVAIIrR3CfRMqIwITP1+H7/nnz8mLJSwCw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Santhosh Kumar K <s-k6@ti.com>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <michael@walle.cc>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  Steam Lin <stlin2@winbond.com>,
-  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/21] mtd: spinand: Use more specific naming for the
- reset op
-In-Reply-To: <ba99ef52-0c98-45a9-91e0-4fd205649e00@linaro.org> (Tudor
-	Ambarus's message of "Thu, 20 Mar 2025 08:08:50 +0000")
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
-	<20250307-winbond-6-14-rc1-octal-v1-1-45c1e074ad74@bootlin.com>
-	<9004166e-5535-4024-8114-9fdb217407bb@linaro.org>
-	<87v7skrgjl.fsf@bootlin.com>
-	<f1111d1b-a111-4171-9467-450d90a14c0a@linaro.org>
-	<87iko50vvb.fsf@bootlin.com>
-	<ba99ef52-0c98-45a9-91e0-4fd205649e00@linaro.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 20 Mar 2025 12:31:55 +0100
-Message-ID: <87msdgvsyc.fsf@bootlin.com>
+	s=arc-20240116; t=1742471392; c=relaxed/simple;
+	bh=/drBQ+EY8V4wxyvc0vjx/Oygt083Vv7P4Uspc/5c/Ec=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=e3ZzCF1Ov41VjWXUQklq4AHsNYwP5G6Q0hV+ZJfJ6Vc+DE8z2UHwhAiwJIGfaDvbhxX6uwJ6wPV57PyGW1pun1zsI1xcQ5tGGiXSH7rVM0t94sbo5UMicYmzMqhhE19nkScPF0HXpl8+7bFdB4TQ/vIy9rrFS/LBU3763oMaYlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=kWXhecZu; arc=none smtp.client-ip=185.132.180.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
+	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K7I9lO006831;
+	Thu, 20 Mar 2025 11:32:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=dk201812; bh=gaiSg/UQRCv0UtztXX61BGs
+	qxfLRtDkme/gJHd1mFzw=; b=kWXhecZuImuBNAnH+ojcvthHCGqAx8kECQWWy4y
+	TWzGT6hBFvYBpG8st0Wh83HfJ7RpUQ1uxdjyjdhfWelIrkAPIciCnQu4Ew8XxQEJ
+	P4l4QADgapFolFpBzUaQBsBm+exa7f+8MCvUXgOdA6x6sCiDWQjWcIWRDPhMQrMk
+	2qMYnj4uRdIqBRwT6L1OIHGdytnVz1P78X1DvXPlcxYkGpRFhOSB7WFm2lFAggid
+	BzTM3qUrZFQrBUcDb054i4e31cukzZt5uNWJhvUS7gl9292d4GP5hJ154VFHM907
+	1YAJTqx9IyqEcdEcZDp5+K4a9cwAaS73klEN/W/m1srXEOw==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 45d2h1kwg1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 20 Mar 2025 11:32:24 +0000 (GMT)
+Received: from
+ 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
+ (172.25.0.133) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 20 Mar 2025 11:32:22 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+Subject: [PATCH v4 00/18] Imagination BXS-4-64 MC1 GPU support
+Date: Thu, 20 Mar 2025 11:32:10 +0000
+Message-ID: <20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekuddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegvdduleeihfettdfgieevtdffjeeggfefveetudeludekieffhfeiffduvdehffenucffohhmrghinhepfihinhgsohhnugdrtghomhenucfkphepledvrddukeegrdduuddtrdeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddutddrfedtpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehtuhguohhrrdgrmhgsrghruhhssehlihhnrghrohdrohhrghdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepshdqkheisehtihdrtghomhdprhgtphhtthhopehprhgrthihuhhshheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
- hepmhhitghhrggvlhesfigrlhhlvgdrtggtpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshhtlhhinhdvseifihhnsghonhgurdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALv822cC/3XNzQrCMAzA8VeRno2kbSqbJ99DPLg23XrYB+0Yk
+ 7F3tyqCIoNc/oH8sojEMXASp90iIk8hhb7LQfudsM2tqxmCyy0UKpKoJCQeE1RzAoIjwXAbbQO
+ TBCLrfGmtMcaLfDxE9mF+wZdr7iaksY/3159JPrdvUqLZIvMgEDuNXBxNUapzaOuR7cH2rXiak
+ /pyZLHpqOxo78i40ldo/Z+jP45BLXHT0dmRpCvtKvaofp11XR8AtdtcTQEAAA==
+X-Change-ID: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
+To: Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster
+	<matt.coster@imgtec.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Vignesh
+ Raghavendra" <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
+        "Michal
+ Wilczynski" <m.wilczynski@samsung.com>,
+        Alessio Belle
+	<alessio.belle@imgtec.com>,
+        Alexandru Dadu <alexandru.dadu@imgtec.com>,
+        "Sarah Walker" <sarah.walker@imgtec.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6399;
+ i=matt.coster@imgtec.com; h=from:subject:message-id;
+ bh=/drBQ+EY8V4wxyvc0vjx/Oygt083Vv7P4Uspc/5c/Ec=;
+ b=owGbwMvMwCFWuUfy8817WRsYT6slMaTf/nP43+LT7/elcCt3c8xeJrh9H9MR3sLGydftRCXOM
+ nC/2rL0REcpC4MYB4OsmCLLjhWWK9T+qGlJ3PhVDDOHlQlkCAMXpwBMZP96hn8qTMcEVJeE5v9l
+ 2zN7m2hB2A+jb5783iu8v+Rm8rMdSu9h+KewLD1Zfar2jqvP+IXD1xqq3BBS+i9Sc/pD+czdran
+ XjvABAA==
+X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
+ fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Proofpoint-GUID: x8GmIMnDaCW7u_DZKY-t--TVfpC6FC8A
+X-Proofpoint-ORIG-GUID: x8GmIMnDaCW7u_DZKY-t--TVfpC6FC8A
+X-Authority-Analysis: v=2.4 cv=V8Z90fni c=1 sm=1 tr=0 ts=67dbfcc8 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
+ a=4ypaFGEvw_zvJEgvs6UA:9 a=QEXdDO2ut3YA:10 a=Vxmtnl_E_bksehYqCbjh:22 a=t8nPyN_e6usw4ciXM-Pk:22
 
+This GPU is found in the TI AM68 family of SoCs, with initial support
+added to the k3-j721s2 devicetree and tested on a TI SK-AM68 board.
 
->>> How do you feel about a OP-An-Bn-Cn-transaction-format,
->>> 	where A, B, C is {1, 2, 4, 8}
->>> 	n is {S, D}
->>> 	transaction format is {0,1,2,3}{A,B,C,...}
->>>
->>> Care must be taken care of at the transaction format, as I see there are
->>> a few, depending on the xSPI profile and protocol mode.
->>=20
->> I must admit I really dislike the transaction format abbreviation because
->
-> I'm not in love with the "transaction format" either.
->
->> it is specific to a spec we do not follow and is not explicit. I have a
->> strong preference towards keeping just "An-Bn-Cn", like I did in this
->
-> Okay.
->
->> series. If people are in doubt, they can check what is in the op, it is
->> self explanatory. I chose this in the first place because it is more
->> explicit than just "An" which may feel like a cropped
->> acronym. Furthermore, most octal capable datasheets I've looked at seem
->> to use the "An-Bn-Cn" format, even for single opcodes.
->
-> So for RESET, WREN, WRDI and other opcodes that don't require address
-> and data, are those datasheets referring to these opcodes as 1-1-1 comman=
-ds?
-> Can you point me to one of these datasheets, please?
+A suitable firmware binary can currently be found in the IMG
+linux-firmware repository[1] as powervr/rogue_36.53.104.796_v1.fw.
 
-All Winbond datasheets use this convention:
-https://www.winbond.com/export/sites/winbond/datasheet/W35N01JW_Datasheet_B=
-rief.pdf
-See 7.1.2 Instruction Set Table p.25.
+No new UAPI will be necessary for this platform as it is sufficiently
+similar to the already supported AXE-1-16M.
 
-I checked Macronix and Gigadevice datasheets, they simply never "name"
-these opcodes clearly.
+UMD support is close to being complete. We're now able to pass >92% of
+Vulkan conformance on our Mesa development branch. The compiler has been
+undergoing a significant rework needed to accomodate the BXS-4-64, as
+well as to make it more flexible to support additional Rogue GPUs going
+forward. The first part of this rework landed in Mesa in [2], and the
+next chunk is currently in review in [3].
 
-> In SPI NOR, WREN is just WREN, regardless of the number of lines it is
-> sent on, 1, 4, or 8. How would you model it here, 1-0-0, 4-0-0, 8-0-0
-> using the same opcode?
+There are several dt-bindings changes at the beginning of this series.
+We expect the result to be versatile enough to handle all Imagination
+Rogue GPUs while being a strong foundation to build bindings for the
+newer Volcanic architecture (for which we're currently developing
+support).
 
-I guess, yes.
+The DTS changes at the end of the series are marked [DO NOT MERGE]. Once
+the series is reviewed, we will request these be taken through the
+relevant tree.
 
->> So unless there are strong arguments against, I'd prefer to keep the
->> current formatting. TBH, it is not set in stone and can still evolve
->> later if that's needed.
->
-> I find the naming scheme An-Bn-Cn good, I'm arguing that it's not needed
-> everywhere, opcode only commands are better off with it, I think.
+This version of the series depends on a patch[4] which exists in
+drm-misc-fixes, but has not yet made it back to drm-misc-next (the
+target of this series). That patch adds the function pvr_vm_unmap_obj()
+which is used in patch 14 ("drm/imagination: Add RISC-V firmware
+processor support").
 
-Ok, I can drop the -0-0 in this case if you prefer.
+[1]: https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr
+[2]: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/32258
+[3]: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33998
+[4]: https://lore.kernel.org/r/20250226-hold-drm_gem_gpuva-lock-for-unmap-v2-1-3fdacded227f@imgtec.com
 
-Thanks,
-Miqu=C3=A8l
+---
+Changes in v4:
+- Update status of UMD support (cover)
+- Fix backwards compatibility of new compatible strings (P1)
+- Fix power-domains property constraints (P1/P2)
+- Fix power-domain-names property constraints (P2)
+- Only invoke pvr_device_safety_irq_clear() if has_safety_events is set
+  (P7)
+- Use pvr_vm_unmap_obj() in pvr_riscv_vm_unmap() (P14)
+- Fix formatting of pvr_riscv_fw_process() signature (P14)
+- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-0-143b3dbef02f@imgtec.com
+
+Changes in v3:
+- Reorder some patches to ensure the proper sequencing
+- Update status of UMD support (cover)
+- Don't use more specific compatible strings when not required (P1)
+- Avoid ABI break by limiting new required properties to new compatible
+  strings (P2)
+- Move power domain changes to the patch in which they're used (P2/P5)
+- Update register definitions (P3) [Thanks, Alessio!]
+- Don't use more specific compatible strings when not required (P4)
+- Enhanced commit messages (P4)
+- Remove unnecessary example (P5)
+- Add proper fixes for threaded IRQs (P6) [Thanks, Alessio!]
+- Include fix for a separate IRQ issue (P7) [Thanks, Alessio!]
+- Don't enable firmware debug module (was P13 in v2, also in P14)
+- Change from a workaround to a regular codepath (P15)
+- Drop platform overrides framework (was P18 in v2, also in P16)
+- Mark DTS changes [DO NOT MERGE] (P17/P18)
+- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com
+
+Changes in v2:
+- Clarified justification for compatible strings (P1)
+- Simplified clocks constraints (P2)
+- Simplified power-domains constraints (P3/P4)
+- Use normal reg syntax for 64-bit values (P8/P21)
+- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com
+
+---
+Alessio Belle (3):
+      drm/imagination: Update register defs for newer GPUs
+      drm/imagination: Mask GPU IRQs in threaded handler
+      drm/imagination: Handle Rogue safety event IRQs
+
+Matt Coster (14):
+      dt-bindings: gpu: img: Future-proofing enhancements
+      dt-bindings: gpu: img: Add BXS-4-64 devicetree bindings
+      drm/imagination: Use new generic compatible string
+      drm/imagination: Add power domain control
+      drm/imagination: Remove firmware enable_reg
+      drm/imagination: Rename event_mask -> status_mask
+      drm/imagination: Make has_fixed_data_addr a value
+      drm/imagination: Use a lookup table for fw defs
+      drm/imagination: Use callbacks for fw irq handling
+      drm/imagination: Move ELF fw utils to common file
+      drm/imagination: Use cached memory with dma_coherent
+      drm/imagination: Add support for TI AM68 GPU
+      [DO NOT MERGE] arm64: dts: ti: k3-am62: New GPU binding details
+      [DO NOT MERGE] arm64: dts: ti: k3-j721s2: Add GPU node
+
+Sarah Walker (1):
+      drm/imagination: Add RISC-V firmware processor support
+
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml |  81 +++++++++-
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi           |   4 +-
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         |  12 ++
+ drivers/gpu/drm/imagination/Makefile               |   2 +
+ drivers/gpu/drm/imagination/pvr_device.c           | 126 ++++++++++++++--
+ drivers/gpu/drm/imagination/pvr_device.h           |  31 +++-
+ drivers/gpu/drm/imagination/pvr_drv.c              |  16 ++
+ drivers/gpu/drm/imagination/pvr_fw.c               |  28 +++-
+ drivers/gpu/drm/imagination/pvr_fw.h               |  85 +++++------
+ drivers/gpu/drm/imagination/pvr_fw_meta.c          |  23 +--
+ drivers/gpu/drm/imagination/pvr_fw_mips.c          |  82 ++--------
+ drivers/gpu/drm/imagination/pvr_fw_riscv.c         | 165 +++++++++++++++++++++
+ drivers/gpu/drm/imagination/pvr_fw_startstop.c     |  17 +++
+ drivers/gpu/drm/imagination/pvr_fw_util.c          |  67 +++++++++
+ drivers/gpu/drm/imagination/pvr_gem.c              |  10 +-
+ drivers/gpu/drm/imagination/pvr_gem.h              |   6 +-
+ drivers/gpu/drm/imagination/pvr_mmu.c              |   8 +-
+ drivers/gpu/drm/imagination/pvr_power.c            | 114 ++++++++++++++
+ drivers/gpu/drm/imagination/pvr_power.h            |   3 +
+ drivers/gpu/drm/imagination/pvr_rogue_cr_defs.h    | 153 ++++++++++++++++---
+ drivers/gpu/drm/imagination/pvr_rogue_riscv.h      |  41 +++++
+ 21 files changed, 896 insertions(+), 178 deletions(-)
+---
+base-commit: d034e6f7ea8ddc866d4ac59c104e18675b13975b
+change-id: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
 
 
