@@ -1,159 +1,126 @@
-Return-Path: <linux-kernel+bounces-569707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1354A6A662
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:43:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AB5A6A667
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215AC4823B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779A6175708
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBCD1DF25C;
-	Thu, 20 Mar 2025 12:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556F5A944;
+	Thu, 20 Mar 2025 12:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0lfyI2E"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IjVijfH9"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6771E1DE4F6;
-	Thu, 20 Mar 2025 12:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C78229A5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742474582; cv=none; b=fRBXGEdYtTMM65f5vft7HKpAPA1F0uwQ9nRnjqKSV3hfM7M/7lvt2QSK2EXJ353t+E0+/cz/IJc6plKevk/kLfDwz2kBpkhaLIpyvea739djduZkyONm8EYYLtZkirVJF0ugU7Clk6taaWqllr7TtRWTCQEwxOEdyNRmAFdsiTk=
+	t=1742474766; cv=none; b=YKGoL6O+MLA+y162V3Ca+9yG2NwaWUVkx/Q6uJHiZg+2/IdhdNDP35sKSaEOLZ9K99XzPMvXp+wOMIHm7L61WBpbVXgbVSrZ9aJT8wX4oQNXc+dwXRAVM02MYsnoJaN+/kZQX2++XeHDavwvXGGYfBz1mORm9UxwX5xZjJr8HNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742474582; c=relaxed/simple;
-	bh=wTdaPTDa0jCwylQO/d7LcQaRxibO4+U7IE3VzJvXwMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QzqJ2RAwXELxUFTjrkcrDSzPQaFWllDWjEBcCIAj8zxgAzES5hw0j1Zrg/+2Q80z7N8mmxNpKbHp7F0n5/dtuNepofrRkMuGvQnLhYmQNC8mOjz28MCKdqH00/a9FvBtuBIaPP5aATuAAPdEaNG9EPjwgCswrEHXaQmBQ2DzF9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0lfyI2E; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301e05b90caso649795a91.2;
-        Thu, 20 Mar 2025 05:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742474581; x=1743079381; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+uL3IGjTjiuqrVnOz2Ww5dOwcBX+a3DDkjY6XFGUpLc=;
-        b=X0lfyI2EXw7DjPF1/kcpayZBdHt/m4Vfm0ibDhceqR31AL5qih2eL8crX6iPqwWSRe
-         sMEUM+DVEjINbqmEBQKcpp2yAAIvYYXCbgsC7ex54ZpVrOnzllzR03AN8jfGXTzQRsT1
-         gU+sJVlgkfrqyRHr8QoSlEMVKsxGCF0AqLzSJapy2HQmaT1x8Cdt+WktXIFCZwlvk1CZ
-         7h7yQ4mcdNSq/EMvM+ChDVmNObT2lmJ1F7XO669TAuvbxB/lWTP3rEz1zfFIJPx8atzT
-         Mx5IHrcj6eR4tzQ3Z9x3tNppWV3hZaDEIbCJr2JesvgvrY/sc7uCdH6sN53qChPcnkFc
-         tWuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742474581; x=1743079381;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+uL3IGjTjiuqrVnOz2Ww5dOwcBX+a3DDkjY6XFGUpLc=;
-        b=MXSuwE4Zqryp1QFmN8U3OWZb4uXXXtvpVZcW3U15Pt78UwYWvI0vyVDituhc0E2VsE
-         8vMK/L6XnNeEQ1JheGp7XBmPBGK1uehkJ+c/WQFVreYXMidlB4JshHpxw2F/baH3StRb
-         bq5Osu9Ry/+gHrL4mlFfPJFABBh7Od2hv8/fdFUi4AVz8h5HpYB/biYUpv6XitkxDAHK
-         HEiz3tldyMObeR6q1wwMcZ9s+ReyJKFMKp0FQRaaKxuIXY7D4JJmsczde2k84lX+lMug
-         80GFTlTgqL7Q8SBSv+ziWCvTr4826Kj/lUOeVVa+Vz1EYRrEW1aTUcVZRG5MiAZmp27l
-         ly5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUmf4IXohd5FsEjnG+Mj9p+E5ZmQqzmb/0AQV/G0yNvLDwBAZYSlULVLuXgw0wYmv3lcGo3g56o@vger.kernel.org, AJvYcCVzItY7qAJqgIDE9BITK/eqyNMcvNV9cJvu6RxckIkkOkDbj1pSfqaMZbLqKnkRUdQvddYf32ApCtdqf68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU/1/xZInT95uk+v0XKW0DM7BI65vANunNVDEXlvDxeLvR5KW2
-	64VErDdYdED+Ia3qlPTjTc9Uvqxi3b5AMOv18y8M7KZwH51du9+C115MMjDG06MTO5KAqE+uVYL
-	0UMKSAzsAJUlUiR/9GZR4Ml2/uBs=
-X-Gm-Gg: ASbGncuIqHm0Pd9Q/vDfiPNHtrrxS7R021Yi6w+UAV7/cf9kgyere1aTxPhRep11rtK
-	bfa5o2aMjVLPhWCmj7idMKBjdr//we+4FlYpzTXsUdQ0RwDyN4haa96CPl9V7n8IYgxztn26URg
-	bya0gfxQVdQL7YqAFvfsia3tqRrcs=
-X-Google-Smtp-Source: AGHT+IG3IAgXvK8pSWNiHSoRiODV5fRdTOwPg8f+TG2YtMLkTzQixdJdL1YxVKheImSCU2oRd0FUdqQX1TmgTyEHAIg=
-X-Received: by 2002:a17:90b:4a92:b0:2ee:74a1:fba2 with SMTP id
- 98e67ed59e1d1-301bdf93ed2mr10044571a91.20.1742474580671; Thu, 20 Mar 2025
- 05:43:00 -0700 (PDT)
+	s=arc-20240116; t=1742474766; c=relaxed/simple;
+	bh=gUTj6pkXYtfCR7RG/DA4rREjr3XxfW+t91BATIMfZd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cYSO3tfS2+V25VtvcBG+OZFYJkmOq8sc4Czhcu6n8TvwZLubbDGrxL5C+d1G7AE2unJcjrgJ11hIDblwrf1YXGcU2sruDLtnnEvzzvLYAlNctqGSaz2S8DO+zWJ+g+fovuzfxp7AGKP7/DJLiVcXCNSd6XPnHasyZQzS42ukQc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IjVijfH9; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742474762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0LwHn7dsELp2UKJ8EPQ1BTRVUwHXdy8XbS/H1ImBUVo=;
+	b=IjVijfH93XImSaPwMQYpAYbbETLE+xUAicRZ5Lk3RZUdPx3V86O31MdlrztSStsNUT56o4
+	2ITFe7XH35YAlEimxDY7s824od2i2z6RIA8UpSttTb2Wreq8dBzC5QRkRsx2yINMNph0zB
+	uMY5zXEnf1D5jyDfSLU+wLiDrtSdERE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] xfrm: Remove unnecessary strscpy_pad() size arguments
+Date: Thu, 20 Mar 2025 13:44:51 +0100
+Message-ID: <20250320124450.32562-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319143027.685727358@linuxfoundation.org> <20250319165703.51651-1-sj@kernel.org>
-In-Reply-To: <20250319165703.51651-1-sj@kernel.org>
-From: Luna Jernberg <droidbittin@gmail.com>
-Date: Thu, 20 Mar 2025 12:42:48 +0000
-X-Gm-Features: AQ5f1JpMvwcK-1U-hbVAN0-qz9U6SBJvwStCRYbt1diHejdo2BJVf9HMKmOCCEk
-Message-ID: <CADo9pHg+iuBtM_cz1jJKS82Cw1oP4G7KoJiaRwFzed1Af1uWCw@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/241] 6.13.8-rc1 review
-To: SeongJae Park <sj@kernel.org>, Luna Jernberg <droidbittin@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	damon@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Works fine on my Dell Latitude 7390 laptop with model name    :
-Intel(R) Core(TM) i5-8350U CPU @ 1.70GHz
-and Arch Linux with testing repos enabled
+If the destination buffer has a fixed length, strscpy_pad()
+automatically determines its size using sizeof() when the argument is
+omitted. This makes the explicit sizeof() calls unnecessary - remove
+them.
 
-Tested-by: Luna Jernberg <droidbittin@gmail.com>
+No functional changes intended.
 
-Den tors 20 mars 2025 kl 02:40 skrev SeongJae Park <sj@kernel.org>:
->
-> Hello,
->
-> On Wed, 19 Mar 2025 07:27:50 -0700 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> > This is the start of the stable review cycle for the 6.13.8 release.
-> > There are 241 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
-> > Anything received after that time might be too late.
->
-> This rc kernel passes DAMON functionality test[1] on my test machine.
-> Attaching the test results summary below.  Please note that I retrieved the
-> kernel from linux-stable-rc tree[2].
->
-> Tested-by: SeongJae Park <sj@kernel.org>
->
-> [1] https://github.com/damonitor/damon-tests/tree/next/corr
-> [2] 14de9a7d510f ("Linux 6.13.8-rc1")
->
-> Thanks,
-> SJ
->
-> [...]
->
-> ---
->
-> ok 9 selftests: damon: damos_tried_regions.py
-> ok 10 selftests: damon: damon_nr_regions.py
-> ok 11 selftests: damon: reclaim.sh
-> ok 12 selftests: damon: lru_sort.sh
-> ok 13 selftests: damon: debugfs_empty_targets.sh
-> ok 14 selftests: damon: debugfs_huge_count_read_write.sh
-> ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
-> ok 16 selftests: damon: debugfs_rm_non_contexts.sh
-> ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-> ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
-> ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
-> ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-> ok 1 selftests: damon-tests: kunit.sh
-> ok 2 selftests: damon-tests: huge_count_read_write.sh
-> ok 3 selftests: damon-tests: buffer_overflow.sh
-> ok 4 selftests: damon-tests: rm_contexts.sh
-> ok 5 selftests: damon-tests: record_null_deref.sh
-> ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-> ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-> ok 8 selftests: damon-tests: damo_tests.sh
-> ok 9 selftests: damon-tests: masim-record.sh
-> ok 10 selftests: damon-tests: build_i386.sh
-> ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-> ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-> ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-> ok 14 selftests: damon-tests: build_i386_highpte.sh
-> ok 15 selftests: damon-tests: build_nomemcg.sh
->  [33m
->  [92mPASS [39m
->
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/xfrm/xfrm_user.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 08c6d6f0179f..a4d92ea43e3d 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1161,7 +1161,7 @@ static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
+ 	if (!nla)
+ 		return -EMSGSIZE;
+ 	algo = nla_data(nla);
+-	strscpy_pad(algo->alg_name, auth->alg_name, sizeof(algo->alg_name));
++	strscpy_pad(algo->alg_name, auth->alg_name);
+ 
+ 	if (redact_secret && auth->alg_key_len)
+ 		memset(algo->alg_key, 0, (auth->alg_key_len + 7) / 8);
+@@ -1174,7 +1174,7 @@ static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
+ 	if (!nla)
+ 		return -EMSGSIZE;
+ 	ap = nla_data(nla);
+-	strscpy_pad(ap->alg_name, auth->alg_name, sizeof(ap->alg_name));
++	strscpy_pad(ap->alg_name, auth->alg_name);
+ 	ap->alg_key_len = auth->alg_key_len;
+ 	ap->alg_trunc_len = auth->alg_trunc_len;
+ 	if (redact_secret && auth->alg_key_len)
+@@ -1195,7 +1195,7 @@ static int copy_to_user_aead(struct xfrm_algo_aead *aead, struct sk_buff *skb)
+ 		return -EMSGSIZE;
+ 
+ 	ap = nla_data(nla);
+-	strscpy_pad(ap->alg_name, aead->alg_name, sizeof(ap->alg_name));
++	strscpy_pad(ap->alg_name, aead->alg_name);
+ 	ap->alg_key_len = aead->alg_key_len;
+ 	ap->alg_icv_len = aead->alg_icv_len;
+ 
+@@ -1217,7 +1217,7 @@ static int copy_to_user_ealg(struct xfrm_algo *ealg, struct sk_buff *skb)
+ 		return -EMSGSIZE;
+ 
+ 	ap = nla_data(nla);
+-	strscpy_pad(ap->alg_name, ealg->alg_name, sizeof(ap->alg_name));
++	strscpy_pad(ap->alg_name, ealg->alg_name);
+ 	ap->alg_key_len = ealg->alg_key_len;
+ 
+ 	if (redact_secret && ealg->alg_key_len)
+@@ -1238,7 +1238,7 @@ static int copy_to_user_calg(struct xfrm_algo *calg, struct sk_buff *skb)
+ 		return -EMSGSIZE;
+ 
+ 	ap = nla_data(nla);
+-	strscpy_pad(ap->alg_name, calg->alg_name, sizeof(ap->alg_name));
++	strscpy_pad(ap->alg_name, calg->alg_name);
+ 	ap->alg_key_len = 0;
+ 
+ 	return 0;
 
