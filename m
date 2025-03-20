@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-569846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA65CA6A833
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:17:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658C9A6A83B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1797B2D94
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB5548689E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C564422333A;
-	Thu, 20 Mar 2025 14:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7405A224248;
+	Thu, 20 Mar 2025 14:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+24EFHJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Nzlx+CG2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B00F22157F;
-	Thu, 20 Mar 2025 14:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F81224228;
+	Thu, 20 Mar 2025 14:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480226; cv=none; b=HUABtOvAG3bCLBUcVqaoZSYJb7cRWxuHsgXErcVnoqoHZU9du5Z44UggikmoxNRMl+9lg0JCp3Sx4xa6HIpJxdcjgk2M8RFNLawdBNOy1WRovMRAlCvGkqF/NUlCmA7yGII9+lI4DNfT3yMRdSS0eVz8eDySVZq01+UAXmROrRQ=
+	t=1742480252; cv=none; b=ZbTOuTqgOid3fYMatCM4mQKHQe5GYjTvQIzxk+49E7GFqNvoEl7seq4oqoqoy8DULWmG+HXwNgHhZsXRCLLrDuyu/BhhtTnaq1CdVKbcpOE6b87rRnc/ghNKKTejHJ9mex4sDPhn+zWJMpUeuZUnwWlFy2ktWhgvLDea3bOVocw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480226; c=relaxed/simple;
-	bh=EjjKERzL9oRudkewhdPf4Dc/ASPKyLKPzJYZKd4P92U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dak1c+QyFhmXs+xoe/WF3LvtW4bui9iFYagyX2LiFM4uNEumxyLGAW5nw/2p6G7piZDxNML2bEkH5KXXZbCnpuxOdGWVNKqedCxi4FJRWS/44dTlDDDAEY671C1EQQ0xgZIs1rK7hVxvtVa0hSQ3jqKUEbttP9tb0udY4AKIlgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+24EFHJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C873C4CEDD;
-	Thu, 20 Mar 2025 14:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742480225;
-	bh=EjjKERzL9oRudkewhdPf4Dc/ASPKyLKPzJYZKd4P92U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=c+24EFHJ04X18330vNb0qvQVQclTR51gvmZhx6dCiNEg2GMog2RB+E9oFoujVqvrZ
-	 LeYq+0Hy8UGCA2CRXtXx+CybrELjaI3qHoOE6hphTeSrwfxJ0NarRajZEro1L6FTKA
-	 OEN79OzpDUc+76vZk/mI+iPCzl44CWK4GKuJfQLc92NqZPPCBF/PhU2kfa8LBQnlFf
-	 vOKWPwW5p6feTiikS9vP8LT6DNznx+tH4tXIxqHMGgSRqbgUG8j6Yrj7r7m4e/r5zG
-	 x3R/XZxd4JHCXUidFVPs76J8QxPfyAMDZQsR2at66r4ah7VACODMTzqdTvzgmhGRhG
-	 Y+uxgO2DH8zmQ==
-From: Christian Brauner <brauner@kernel.org>
-To: djwong@kernel.org,
-	hch@lst.de,
-	John Garry <john.g.garry@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	dchinner@redhat.com,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com,
-	martin.petersen@oracle.com,
-	tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 0/3] further iomap large atomic writes changes
-Date: Thu, 20 Mar 2025 15:16:57 +0100
-Message-ID: <20250320-unliebsam-uninteressant-341618121b90@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250320120250.4087011-1-john.g.garry@oracle.com>
-References: <20250320120250.4087011-1-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742480252; c=relaxed/simple;
+	bh=FVcikiI2lacP9JSxWJbrpt9jBAjCrBGlViup+ZG8GzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QXWgSWEcHqLCiSWPPjqAu9mhycdMNYE9zfC+cQ7dKqRnm3teerm+5TKrBc3r+SGQzuwS7oVzN2hrmh6o+bgc+7nuvMlNkbGxQIBiuJSxKKuCSSBBqsoFwkcAy7MQ0XpbdSQzWW7GBubd6MVs/OUlfMnvgjrTp/Ji/KzDlkcXOBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Nzlx+CG2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DD30540E01AC;
+	Thu, 20 Mar 2025 14:17:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9e4An085VCGt; Thu, 20 Mar 2025 14:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742480243; bh=R4nwaOnRrRfOppIp7hpeF6UCm7njwKvTCIA2w/B2up4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nzlx+CG24LcU6YmUASZx8vBP+huyJCCy9K3TJO90BhBbOAumoMZJbF6bfArS0nfQy
+	 x7M8d3pqjxaTeC6yYkk04NpTPJKRwK7bG24/etXUoRggLbEXFJi5DMsPrYzCF9ZdTl
+	 xkh+KZNECNaBiWD4isdQbNuRNd0viNaXo3UmhY6vxNs5c8H16LT5pPCWiA0wnnPJ5n
+	 HCn5ksoTWBYSgYR0uA2Ok1h5iofA/xmuzW6ZVfXAuRnxgko4LGUj5Pv6lgMBwTmEzZ
+	 FdRqdDJCh2hTPMfvhpdcHLqNhL6HwIETLmzEKrRcNLSlmxJrZt/f/RePP2WFIZj6GM
+	 7uTGdTkP5Oehk1G0Jb/D2C9gTCLERHB1uWaD+S+FrcrqvRXkYolMZU21mYG1l7kDXE
+	 hlytzq/ff3l35FBuqcwV/e5hjEO8TF1iAKdwXQwobxF1KzusrtYxnsXLQTLLMhJAu0
+	 134rLbHIE8RKEhN4sXd0f+jitSvWNkF5kYlcOBT0Q3nhcvurB4ffOsLCvbelZNZmeB
+	 0brJlOzj/OD7pIB4qXJkqmnWgUjBl4uSmMzUQGZ5EeHSKpcgKmH/iuu+8OdDRdiJt/
+	 G1XeX5msuafOlAzXbAUnAti6dbCuvSQYcgyAAmtolS+1YqT11dRbNkoXPOxploHtJq
+	 toHgg5KGTvYhXyw6mJxGlGkY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D58FD40E0213;
+	Thu, 20 Mar 2025 14:17:12 +0000 (UTC)
+Date: Thu, 20 Mar 2025 15:17:07 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Roth <michael.roth@amd.com>
+Subject: Re: [PATCH 0/5] Provide SEV-ES/SEV-SNP support for decrypting the
+ VMSA
+Message-ID: <20250320141707.GBZ9wjY42cY7_dQ4ql@fat_crate.local>
+References: <cover.1742477213.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1552; i=brauner@kernel.org; h=from:subject:message-id; bh=EjjKERzL9oRudkewhdPf4Dc/ASPKyLKPzJYZKd4P92U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTfUY42ZJ0Uqvq22KudT+TgNBGXPrb+6WtOPX11wHrtP /E9ly/ldpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwk7jgjw90g3VKXcqWbGtIW x0Kz2Y1eGXAs2d92TYsv+uDCTO3FOxn+mW+eumPi5kP380yfX7a8IGMnc2PzsqvF91gMn8VyPwi 1YAAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1742477213.git.thomas.lendacky@amd.com>
 
-On Thu, 20 Mar 2025 12:02:47 +0000, John Garry wrote:
-> These iomap changes are spun-off the XFS large atomic writes series at
-> https://lore.kernel.org/linux-xfs/86a64256-497a-453b-bbba-a5ac6b4cb056@oracle.com/T/#ma99c763221de9d49ea2ccfca9ff9b8d71c8b2677
-> 
-> The XFS parts there are not ready yet, but it is worth having the iomap
-> changes queued in advance.
-> 
-> Some much earlier changes from that same series were already queued in the
-> vfs tree, and these patches rework those changes - specifically the
-> first patch in this series does.
-> 
-> [...]
+On Thu, Mar 20, 2025 at 08:26:48AM -0500, Tom Lendacky wrote:
+> This series adds support for decrypting an SEV-ES/SEV-SNP VMSA in
+> dump_vmcb() when the guest policy allows debugging.
 
-Applied to the vfs-6.15.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.iomap branch should appear in linux-next soon.
+I would really really love to have that so
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+-- 
+Regards/Gruss,
+    Boris.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.iomap
-
-[1/3] iomap: inline iomap_dio_bio_opflags()
-      https://git.kernel.org/vfs/vfs/c/d279c80e0bac
-[2/3] iomap: comment on atomic write checks in iomap_dio_bio_iter()
-      https://git.kernel.org/vfs/vfs/c/aacd436e40b0
-[3/3] iomap: rework IOMAP atomic flags
-      https://git.kernel.org/vfs/vfs/c/370a6de7651b
+https://people.kernel.org/tglx/notes-about-netiquette
 
