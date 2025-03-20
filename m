@@ -1,127 +1,226 @@
-Return-Path: <linux-kernel+bounces-570481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E523BA6B118
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:41:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A478DA6B133
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A41981FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD0A487A88
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD67A22A4E5;
-	Thu, 20 Mar 2025 22:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="FCxQaWPO"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541A322A7F7;
+	Thu, 20 Mar 2025 22:44:48 +0000 (UTC)
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1A61EDA2F;
-	Thu, 20 Mar 2025 22:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5F22A4E5;
+	Thu, 20 Mar 2025 22:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742510460; cv=none; b=CGS6bqPAVbaOxqbSPDH7vAVFr70OWqdTc2GKsJN6Jk/XKYp/Z/qDXo9O7pZI6HDCjqOi9e/U8z6onTA7CRmKC0vTriv7ygnuSQsnWTjQtZe0hwsOyTVqg8DmpSZbablHfBJw9uA6k6DtsbO9X5sVBeb0clezzzztcb2IiiGxK78=
+	t=1742510687; cv=none; b=N5SiexihVTQ7wtL1RYvWWlh/gQ9gKncUYiVXtV2URKEy0fK8pM/aNY+ECtlpVgb/oI95uFaGWzRJRKUiRP9C0BetsbBkaoyLeDhfZDZouB6bU5eYiHQjBFMIUYDvaCIKF57XrXknTsaNXqAUmZOtb6ZcdLIE7/VUu6qGw+Z6SJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742510460; c=relaxed/simple;
-	bh=JKnvNlXwLqCU5iyEfTBNAPr85fP/oZ8D60vEMAgvaHs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ny+6+T8AL+XzGVumZVjeR2uMLPUDnAnLkzXxpPFVaJB9GtWvudS8kdmjzq3OZnvhASXgfpkFPyjHsg3nLLiRsEFxaSa7GNJeIZyEARtCbnueJ0hYNblYnsS4E/DuP5kqCC4idDmS/lFwC4UOXrfKwbaOiXXtkKHoWgAmJGq8CBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=FCxQaWPO; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742510457;
-	bh=JKnvNlXwLqCU5iyEfTBNAPr85fP/oZ8D60vEMAgvaHs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=FCxQaWPOLZDZHzES9KhJgGM5WofCEzg5i2ztHJe5nGFkB/lTxcpjFR5ZLC7UBfkaH
-	 e0fWepEUtYB7x2fEMG5BwQLO0Krn6joSS3hwI1Or4XXzS/o8CMs1oPeAaM1+DDS2kb
-	 9zv+uqeOix7JDyJ+674vBB6u+pW/riRkCSH3Z944=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id BF7C91C0061;
-	Thu, 20 Mar 2025 18:40:56 -0400 (EDT)
-Message-ID: <95e7a43a2dd675615a146c56a10abf6921f955f9.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
- <paul@paul-moore.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
- Jarkko Sakkinen <jarkko@kernel.org>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>,  David Woodhouse
- <dwmw2@infradead.org>, "herbert@gondor.apana.org.au"
- <herbert@gondor.apana.org.au>,  "davem@davemloft.net"
- <davem@davemloft.net>, Ard Biesheuvel <ardb@kernel.org>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
- "casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger
- <stefanb@linux.ibm.com>, "ebiggers@kernel.org" <ebiggers@kernel.org>, Randy
- Dunlap <rdunlap@infradead.org>, open list <linux-kernel@vger.kernel.org>, 
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Thu, 20 Mar 2025 18:40:55 -0400
-In-Reply-To: <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
-	 <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
-	 <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
-	 <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
-	 <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
-	 <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
-	 <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
-	 <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
-	 <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
-	 <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
-	 <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
-	 <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com>
-	 <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
-	 <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
-	 <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
-	 <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com>
-	 <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-	 <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1742510687; c=relaxed/simple;
+	bh=81W+fRdC1ccZbYs88xxJfmhU+006b6KJS+29d3+FUM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SWDg9H8Yr3bstWe1Z2ALS42324Nm0Vy2As85OmNGDsmRkBCVuYrihmwRXd+dPpTVhzxHCBIzqFJYhIVe/hc3nGGB2RcfIwEfHipMtJ5QbOh+TUU1wmywmviRppTCW12uJnhXu3STGPONbEsukQhvzOpU885aUfxQdOYxM6mXnWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-43948021a45so10831785e9.1;
+        Thu, 20 Mar 2025 15:44:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742510684; x=1743115484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K8Go2A9K/0sa4Ok8A3HNxc/VLWrtBUpGE6Rv5fEk69U=;
+        b=dPumryMp92/MXEfUXv3632RjC6B8jyv91NLUrvrl1qPWexV4qlCXRHa3uCO6/HEj6e
+         opnWeO64cbnPfiK9pC4tsB0rslpRuFMN6Q7vb41IRYuY+mOGXx/TIDi4Gyunt7oX01PM
+         wH6HNSOhgUjbtnue5cFb1B2h/wg5km5FhfC999+m2GyrkBz4cBYHYO3DNvDrrYU45X0X
+         O0QOimZ9vCwt1BWFuKAiR8oUoE1tfVgWA0pH3gRP2GBaltz1KIa2rz/p6Sl/cww/VUf4
+         OrGIkBPntyrUdfISPK/x8jytLE9gHAyWDtn6lGXI3tAb+BP6hiYzUs7HLsr5DERrouuZ
+         XmOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWMKm4GYtyG7SywNLPGW0C4t0S/owYoAV3SPhXZq0FgS3ydQnN8XVi9M/QXjK9brf27xZ69Y7j22A1f2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa0ffOm7DeG9DF1rLmoBNmP6yOPswWnCVR4hyDvLtBSdCjFTTi
+	jPzZCI73Qdsp4viek7m1+Y0aGqIlmUg9qG9UyfUgKf3gyXnSaLTbEvZVKxI4
+X-Gm-Gg: ASbGncsSRyOh7cGI7UB/y7uOpjw++dBgRQPXw5Q43w5cn5/mgarfxdagxgZens0biug
+	uyjgwrqfT/R7XvqaE15sWA6Vl4pHh4rrrt/AuyW6vb9NYGWl/SgBsUUsZ1PLxT7VLJdLBOV1mg4
+	1yOUmcsOdz8pN6Yjmy5YcizrN7hQoI9tMShydhH9E5d7FKXjbyq7CYQg7dcTIybsiBGuDrfC6um
+	fPFBtc3urV7/fvloALW3ZT+HF3MNG4d4ZaJksELr/Zjz1G8GRBd+9x8zIJXgXedmZwtihfzhNMJ
+	Hf7hN2PdqdRknA8k4x2s5OZrmq5jy8Iy7etUlsNbkCeIfQsOLKdUYBzJJo5iWnn3+g5HvGpviMF
+	V+ihqyMg=
+X-Google-Smtp-Source: AGHT+IH9z/Ufr9GSKlFGp9wTMcIjmzn+VkGQIRZdhq3lJFSjiuvPgv3WMgtMOmTxIVkvQ1BM9FrwhQ==
+X-Received: by 2002:a05:600c:1989:b0:43c:ebc4:36a5 with SMTP id 5b1f17b1804b1-43d509e9dd0mr7675245e9.7.1742510683300;
+        Thu, 20 Mar 2025 15:44:43 -0700 (PDT)
+Received: from im-t490s.redhat.com (ip-86-49-44-151.bb.vodafone.cz. [86.49.44.151])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbcfaasm9490115e9.35.2025.03.20.15.44.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 15:44:42 -0700 (PDT)
+From: Ilya Maximets <i.maximets@ovn.org>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	dev@openvswitch.org,
+	linux-kernel@vger.kernel.org,
+	Pravin B Shelar <pshelar@ovn.org>,
+	Eelco Chaudron <echaudro@redhat.com>,
+	Aaron Conole <aconole@redhat.com>,
+	Ilya Maximets <i.maximets@ovn.org>
+Subject: [PATCH net-next] net: openvswitch: fix kernel-doc warnings in internal headers
+Date: Thu, 20 Mar 2025 23:42:07 +0100
+Message-ID: <20250320224431.252489-1-i.maximets@ovn.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-03-20 at 16:24 +0000, Eric Snowberg wrote:
-> Having lockdown enforcement has always been=20
-> a requirement to get a shim signed by Microsoft.
+Some field descriptions were missing, some were not very accurate.
+Not touching the uAPI header or .c files for now.
 
-This is factually incorrect.  Microsoft transferred shim signing to an
-independent process run by a group of open source maintainers a while
-ago:
+Formatting of those comments isn't great in general, but at least
+they are not missing anything now.
 
-https://github.com/rhboot/shim-review/
+Before:
+  $ ./scripts/kernel-doc -none -Wall net/openvswitch/*.h 2>&1 | wc -l
+  16
 
-If you actually look, you'll see even Microsoft has to obey this
-upstream process for their Linux distro:
+After:
+  $ ./scripts/kernel-doc -none -Wall net/openvswitch/*.h 2>&1 | wc -l
+  0
 
-https://github.com/rhboot/shim-review/issues/427
+Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+---
+ net/openvswitch/datapath.h | 20 ++++++++++++++------
+ net/openvswitch/vport.h    |  9 +++++++++
+ 2 files changed, 23 insertions(+), 6 deletions(-)
 
-Regards,
-
-James
+diff --git a/net/openvswitch/datapath.h b/net/openvswitch/datapath.h
+index 9ca6231ea647..384ca77f4e79 100644
+--- a/net/openvswitch/datapath.h
++++ b/net/openvswitch/datapath.h
+@@ -29,8 +29,8 @@
+  * datapath.
+  * @n_hit: Number of received packets for which a matching flow was found in
+  * the flow table.
+- * @n_miss: Number of received packets that had no matching flow in the flow
+- * table.  The sum of @n_hit and @n_miss is the number of packets that have
++ * @n_missed: Number of received packets that had no matching flow in the flow
++ * table.  The sum of @n_hit and @n_missed is the number of packets that have
+  * been received by the datapath.
+  * @n_lost: Number of received packets that had no matching flow in the flow
+  * table that could not be sent to userspace (normally due to an overflow in
+@@ -40,6 +40,7 @@
+  *   up per packet.
+  * @n_cache_hit: The number of received packets that had their mask found using
+  * the mask cache.
++ * @syncp: Synchronization point for 64bit counters.
+  */
+ struct dp_stats_percpu {
+ 	u64 n_hit;
+@@ -74,8 +75,10 @@ struct dp_nlsk_pids {
+  * ovs_mutex and RCU.
+  * @stats_percpu: Per-CPU datapath statistics.
+  * @net: Reference to net namespace.
+- * @max_headroom: the maximum headroom of all vports in this datapath; it will
++ * @user_features: Bitmap of enabled %OVS_DP_F_* features.
++ * @max_headroom: The maximum headroom of all vports in this datapath; it will
+  * be used by all the internal vports in this dp.
++ * @meter_tbl: Meter table.
+  * @upcall_portids: RCU protected 'struct dp_nlsk_pids'.
+  *
+  * Context: See the comment on locking at the top of datapath.c for additional
+@@ -128,10 +131,13 @@ struct ovs_skb_cb {
+ #define OVS_CB(skb) ((struct ovs_skb_cb *)(skb)->cb)
+ 
+ /**
+- * struct dp_upcall - metadata to include with a packet to send to userspace
++ * struct dp_upcall_info - metadata to include with a packet sent to userspace
+  * @cmd: One of %OVS_PACKET_CMD_*.
+  * @userdata: If nonnull, its variable-length value is passed to userspace as
+  * %OVS_PACKET_ATTR_USERDATA.
++ * @actions: If nonnull, its variable-length value is passed to userspace as
++ * %OVS_PACKET_ATTR_ACTIONS.
++ * @actions_len: The length of the @actions.
+  * @portid: Netlink portid to which packet should be sent.  If @portid is 0
+  * then no packet is sent and the packet is accounted in the datapath's @n_lost
+  * counter.
+@@ -152,6 +158,10 @@ struct dp_upcall_info {
+  * struct ovs_net - Per net-namespace data for ovs.
+  * @dps: List of datapaths to enable dumping them all out.
+  * Protected by genl_mutex.
++ * @dp_notify_work: A work notifier to handle port unregistering.
++ * @masks_rebalance: A work to periodically optimize flow table caches.
++ * @ct_limit_info: A hash table of conntrack zone connection limits.
++ * @xt_label: Whether connlables are configured for the network or not.
+  */
+ struct ovs_net {
+ 	struct list_head dps;
+@@ -160,8 +170,6 @@ struct ovs_net {
+ #if	IS_ENABLED(CONFIG_NETFILTER_CONNCOUNT)
+ 	struct ovs_ct_limit_info *ct_limit_info;
+ #endif
+-
+-	/* Module reference for configuring conntrack. */
+ 	bool xt_label;
+ };
+ 
+diff --git a/net/openvswitch/vport.h b/net/openvswitch/vport.h
+index 3e71ca8ad8a7..9f67b9dd49f9 100644
+--- a/net/openvswitch/vport.h
++++ b/net/openvswitch/vport.h
+@@ -97,6 +97,8 @@ struct vport {
+  * @desired_ifindex: New vport's ifindex.
+  * @dp: New vport's datapath.
+  * @port_no: New vport's port number.
++ * @upcall_portids: %OVS_VPORT_ATTR_UPCALL_PID attribute from Netlink message,
++ * %NULL if none was supplied.
+  */
+ struct vport_parms {
+ 	const char *name;
+@@ -125,6 +127,8 @@ struct vport_parms {
+  * have any configuration.
+  * @send: Send a packet on the device.
+  * zero for dropped packets or negative for error.
++ * @owner: Module that implements this vport type.
++ * @list: List entry in the global list of vport types.
+  */
+ struct vport_ops {
+ 	enum ovs_vport_type type;
+@@ -144,6 +148,7 @@ struct vport_ops {
+ /**
+  * struct vport_upcall_stats_percpu - per-cpu packet upcall statistics for
+  * a given vport.
++ * @syncp:     Synchronization point for 64bit counters.
+  * @n_success: Number of packets that upcall to userspace succeed.
+  * @n_fail:    Number of packets that upcall to userspace failed.
+  */
+@@ -164,6 +169,8 @@ void ovs_vport_free(struct vport *);
+  *
+  * @vport: vport to access
+  *
++ * Returns: A void pointer to a private data allocated in the @vport.
++ *
+  * If a nonzero size was passed in priv_size of vport_alloc() a private data
+  * area was allocated on creation.  This allows that area to be accessed and
+  * used for any purpose needed by the vport implementer.
+@@ -178,6 +185,8 @@ static inline void *vport_priv(const struct vport *vport)
+  *
+  * @priv: Start of private data area.
+  *
++ * Returns: A reference to a vport structure that contains @priv.
++ *
+  * It is sometimes useful to translate from a pointer to the private data
+  * area to the vport, such as in the case where the private data pointer is
+  * the result of a hash table lookup.  @priv must point to the start of the
+-- 
+2.47.0
 
 
