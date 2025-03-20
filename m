@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-569492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B0EA6A3A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:29:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452B5A6A3AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDDD3188BD0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3798A0EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A76224AE6;
-	Thu, 20 Mar 2025 10:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F79224254;
+	Thu, 20 Mar 2025 10:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="EH33pLp4"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4a3gN06"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8903D224888
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFF01E231F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742466530; cv=none; b=XyhzrMkJLvcNSyymKmcm0Jaqoiz1e0ssrraR8OJJN/IALTRQe+7OphtLyhiKWlia6VcaEjT6wTufPabrMi14XfuQugvtB/defxyE4pdFXlyjo4ZWp/aUffIz+opjt6tOK+BaVq2gFd0+nYDKkT3D/78GIOXuNcgeX1SC5JvDIyM=
+	t=1742466619; cv=none; b=P6+9nQa2hHwGYrtUMXi6t5bdMKrIYe+/hQRqtQA42fGyZ3ruVBkyzzT65i3QqwB4TvwCLDJqKtW4O81Ifw646PuZZSsJph52XRd2Mh9wvJ4dvsPLIqTkE+gBiK6+Nzn26baH2/ZzAp60LKGmE+PBZje8Tb0N0Hras8zicbBtNCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742466530; c=relaxed/simple;
-	bh=khC4F+I13TkYeZQRBsGXVV/+15Z5FgfMSYY+HvGff3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D6hemG6kFjrajIb2oFckpXnLojKHGGNexBjiTS2E+H8ulNRwzFB+Bit23uyqwb9Amk0r4BiJJJ9PkwQALrKBPqhcqKsrAhCd8OYt9mM1hP3BDEXu3csfrktUL1gSO/WARf6LXGsa4IMRx/Ye85FY/vk3gSfcXCLwllsXW+YGf3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=EH33pLp4; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id us5dtaQbMzZPavD8ptWAeX; Thu, 20 Mar 2025 10:28:47 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id vD8otRlL8RlrsvD8pt6mct; Thu, 20 Mar 2025 10:28:47 +0000
-X-Authority-Analysis: v=2.4 cv=Qamtvdbv c=1 sm=1 tr=0 ts=67dbeddf
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=axMDLpPUFtze2iTFic/lgRRWODnye8AgYMuvuh4UIEI=; b=EH33pLp44M4dTjP49mBCCq791v
-	ZByVNM5YChupJoGEcTrhwtJvNnx6uh4TgfTRZ+fDnW7OBygZPZJkfafT90MMZ644/TZbGtKHpOopI
-	msg88KXLPeCTRxiVmb4zcgkZcfEzLreDWKNnRfL0ddEYs3yaxbYmtIAZc8MlRVGkhKxEQFsTiFRuz
-	/voE6ZXJ20xgUqgfoZjsiVPZMLTgim/O9jmSh2MAaQMJJXNISEalwEBA1a3E/j6RP7Zg8goppxmNj
-	jkI0BupvqxeXmKPy2B64bKSB3koKi03NM5bfDQhq1UqPZj0wQtxWNhAySVP4iZoWXCmUpBF7//Auf
-	jTWFhxSQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:48952 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1tvD8m-00000003O0V-3XXh;
-	Thu, 20 Mar 2025 04:28:44 -0600
-Message-ID: <2ff822ea-589b-4370-89a8-d9519da6989d@w6rz.net>
-Date: Thu, 20 Mar 2025 03:28:41 -0700
+	s=arc-20240116; t=1742466619; c=relaxed/simple;
+	bh=QEcVLOrybX9veWH2QWEzGvEcx2Yh4oGQyodaSAZ1Yqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O5aUnMYzG66BGta5Swlq5oUhEvKy9q8EDIvD5jLiNjr0ApEw+6tWjvBL2TNMJ/Xs0989wagIJf3k/beyPneu3Yxty+D7LqKN7rcfjAmUjcGejls8bfLV0eE6bdwCc15u62xEwmsWLv14ngD2u4ISV9n/KpTbJD+9N2S7/vYq3+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4a3gN06; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30795988ebeso6116911fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 03:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742466616; x=1743071416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MBoD8P0IJhjSl0p0g5lSdkN0D0kbyrVmDP9Fb2cdiRA=;
+        b=S4a3gN065rS9W5ubiZdnd/at5L3bACSuFqiJxOVk2spCCyxOBz6issst6PeJPT3Ruq
+         f1E9lxC0Qt3zCoKuWh9l/6gKwX6apKOv3P3aoTGbwvnuq8tu+l4MdNo8kepnap+pPWxy
+         QcMLlFVNNgWgMzQPJw0RS8bNU2WLonseoPV+TKnPlTWbq3xdZMX7+C4s8nq7qQQmCDgO
+         2pvs3ucJGjzDjixNAmcvhISZ8qxss1UdCIqcYEfPSzR/WO+MIBgMf4Mu+almnv4aPvWZ
+         zlf4KhYAKnrmXIKuryP52VAQef0QQh4xANctgpC4QkuGWxhEdUPhRv+iyol8R2M1cVJL
+         6dQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742466616; x=1743071416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MBoD8P0IJhjSl0p0g5lSdkN0D0kbyrVmDP9Fb2cdiRA=;
+        b=h4YHmby4PnnO4B2FS/vrl/hFrj2yU/mJP7Y60/1rhhvjNqWOzqwSimeedpAM38c5Fk
+         TLdshXN5J1Bvo/4EDlmE8Gp4PmJoOHL0pTB1AYUOpYJ9AGu1KmIK+997+z1hTHzV1JyY
+         TvVhe5bL3Tans7UdfxCnrh1LvLRtyQYjj+G8HBSJztx7pTMtpIYw1E7lhFD7HVa9Sm70
+         V8zDROp2iWc6BdXXecmWU072jZgP6MvRHH+oTs7DhC60sl94Q0IZcz6s+y7s71YBRH53
+         xvJoqV6/g/GV59R0brODkVScYJEwLnVURaUAqQWuUI3UVjLQhBuEAittLTJoWLZeYg67
+         xPPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqISn0aiEOhqsG1Sq08pN3ALhYDA4a55Tn+Larks/WLDeH/HJmbtpzOrUSQwqEwSLZ4wAz0SwJekqveUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBJUPQAeqesF7AUkV8jUb3LN5rIVSiUi8p5WQQpwwmFaOPucGw
+	FF+Zdzt4kao2vRQbMKJ5Rnr+RgYWkQhg2FFgBpden6Q26CO91VTpLPo3d47Mw+W7bXNiIdwWOP8
+	LuJYNvriZRq2Pk/iO719qxirUW6A=
+X-Gm-Gg: ASbGncuG4UquspPzxyA8TSxE3BfCeWP5EbELN/MOQwhy4/9YCMiY09jk5N/ECdvHhQY
+	ZADtyP2xa/gphxhSY6huK407VbAj6nZp+/JiDNMVITL+D7bOvqzwUcPmQR0Nc/PpLTvvahC3RS4
+	q4PlGBD1L+zF338PcxSxt11uNS+VphwzdjAfCO
+X-Google-Smtp-Source: AGHT+IG1pxrCPicgmF56C4o9zOaP1o1MypdnxKIq8dagms2ek9IqztzJ34n2T26QUUoKU5JvUSK0VuyA/OB5So85qIw=
+X-Received: by 2002:a2e:8015:0:b0:30b:f2d6:8aab with SMTP id
+ 38308e7fff4ca-30d6a464949mr22406921fa.32.1742466615360; Thu, 20 Mar 2025
+ 03:30:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250319143019.983527953@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250319143019.983527953@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tvD8m-00000003O0V-3XXh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:48952
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 54
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMlHX0qBV66tyxd8YRU79PXY1wEZsMPftKDFuVEEzpjGYzinpxaLb5Uk+jK/kCyw4hwzChCMA2pvS7vBq0yDw1bQUa+Rti5Qz1KDJbaDzK1JZOkJY5c5
- N90Lpq5gDszMK2tZyvGGpCsZWuV79nQpt2K3qyM6ZzDt56y4KdzgBJ9yhMc0tldLb6JwzFZfnuUTcXCqHh46fMxVsGdPe2g1mMs=
+References: <20250317221824.3738853-1-mingo@kernel.org> <5A417EE0-8DF3-4C6E-A7E9-9EE6705282F1@zytor.com>
+ <Z9m1rtmlk1PxGIQA@gmail.com> <CAHk-=whAUHyXM29_9w_T26=15D1KZnuR3R+f4MT9f-C89oukvA@mail.gmail.com>
+ <Z9m_kUqxqMPfU8Fl@gmail.com> <Z9nTfFiPv0-Lxm-_@gmail.com> <CAFULd4aFUun7+1izxbDM8nTEEta5PApysyTGsn1hjvQND=2UtQ@mail.gmail.com>
+ <Z9tGh0Fa96gACmpQ@gmail.com> <CAFULd4bxUOiPLQ9aaZFx2jsLUwEPH0h=XiCOtxYn+Z8JEAeHUw@mail.gmail.com>
+ <Z9vY8Bm1Wv1vkqNO@gmail.com>
+In-Reply-To: <Z9vY8Bm1Wv1vkqNO@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 20 Mar 2025 11:30:04 +0100
+X-Gm-Features: AQ5f1Jr5bKkMPyT3ml3M5WeR4ItKcjbgJYUCv_5BAGZ96XyLSXPlMikKeEJmj_0
+Message-ID: <CAFULd4ZZ6rjG=LTQX6hsrqp6BQ5XcRW7kQ_rzHKrOxKCu51=sw@mail.gmail.com>
+Subject: Re: [PATCH] compiler/gcc: Make asm() templates asm __inline__() by default
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>, 
+	Stefano Stabellini <sstabellini@kernel.org>, "Ahmed S . Darwish" <darwi@linutronix.de>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, John Ogness <john.ogness@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/19/25 07:29, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.84 release.
-> There are 166 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Mar 20, 2025 at 9:59=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
+e:
 >
-> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
-> Anything received after that time might be too late.
 >
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.84-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> * Uros Bizjak <ubizjak@gmail.com> wrote:
 >
-> thanks,
+> > > > > I haven't looked at code generation much yet, but text size chang=
+es are
+> > > > > minimal:
+> > > > >
+> > > > >       text         data     bss      dec            hex filename
+> > > > >   29429076      7931870 1401196 38762142        24f769e vmlinux.b=
+efore
+> > > > >   29429631      7931870 1401200 38762701        24f78cd vmlinux.a=
+fter
+> > > > >
+> > > > > Which is promising, assuming I haven't messed up anywhere.
+> > > >
+> > > > Please use bloat-o-meter, it is more precise.
+> > >
+> > > Here's the bloat-o-meter output between vanilla and patched vmlinux:
+> >
+> > [...]
+> >
+> > > A lot fewer functions are affected than I expected from such a
+> > > large-scope change.
+> >
+> > Interestingly, I got *many* more changes just from converting atomic
+> > locking functions to asm_inline, as reported in [1].
+> >
+> > [1] https://lore.kernel.org/lkml/CAFULd4YBcG45bigHBox2pu+To+Y5BzbRxG+pU=
+r42AVOWSnfKsg@mail.gmail.com/
 >
-> greg k-h
+> Have you used a pristine x86-64 defconfig for your build tests?
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Yes, it was vanilla x86-64 defconfig, but in -tip tree.
 
-Tested-by: Ron Economos <re@w6rz.net>
+> Could you perhaps check my patch against your patch in your build
+> environment and figure out why there's such unexpected differences?
+>
+> As you noted my patch should be a blunt-instrument superset of your
+> changes so if then it should affect *more* functions, not fewer.
 
+Yes, I'll try this experiment.
+
+Thanks,
+Uros.
 
