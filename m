@@ -1,140 +1,466 @@
-Return-Path: <linux-kernel+bounces-570288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B44A6AE63
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:17:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53390A6AE24
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1491F46124E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC46983E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D46A22A7EF;
-	Thu, 20 Mar 2025 19:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B01322B5B1;
+	Thu, 20 Mar 2025 19:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="szANa/5a"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bc8IfVuS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD6D1C5F2C;
-	Thu, 20 Mar 2025 19:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E22227E9B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742497799; cv=none; b=WijRL1EH5GUUj1Lc91fTbc1bVc0hGLhk5284fLQXReiRG2wySgm9DyXqv93xV+IGqyAqMIG2F7f2Nr/P10AZ2OUfMZHnGGocsw/6Wnljdp43nDNTlwzLQojsbMkJy2YQB5CBYh0KxbfNoGtOeyIk5NOj2PbUHtAQ59iz7vyEWA8=
+	t=1742497226; cv=none; b=f2TepdG6mRHLsEnMNjGecQJMXacuC/H42zUoeiEh/ScD28k9SnsfV8XDgbVw0jVIB1ghcGTz7rvwaQ03OoA3NA9kaJ1smAEno93YVpUjLmYG5SHYxTBW2v5nArmJ8eHsAE80OeJhqjhYigwCGz9lGNVVrIvfE3SgS1M4fjIX+54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742497799; c=relaxed/simple;
-	bh=TJPs+6wmIiv7YBBthqS5uAj/EfP7DIgfa/FVnOx9cNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AK2Irm6RplW1R7IoAnOQ+Rh4KEnH24H2hCKk6YqDkNeAuLKHiXgCY20SQ9K60BpF7iDB4CUTrqcD2PFwT8lh6cIzkdDF+Zb0lsGC3kItzPMumniNRdA5tcag9dDQkQBBXoV/rvnaZxphV81BKsE/nIjBOOqdvE/NFxnFiZ4mkEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=szANa/5a; arc=none smtp.client-ip=212.227.126.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1742497781; x=1743102581; i=christian@heusel.eu;
-	bh=dN7Ji6DtQjkkoXTgLs8+LwmmvBuvr5b2CCS+MInyr4Y=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=szANa/5a4iwCELE7d7JBQQ+CAv+YgAtp0WSb1Sqy8g7vzScFAXT+GWhzOFExSuN0
-	 /LpryzDxAM3H/drbOTPjHJTpjgivzSFfd1u/pAfdayYatovznivPq8AhsOV8NmtnN
-	 fxuDziye6eTRQXuwvlb4Mdnc99C2r4u5Zba9b/bx9MdxijOWR2EzTviyG9KZ0i8Fh
-	 l6wlvH1eDSm0ZWdkQreEHLrSxIO0hIM43vFNYKpEBgzD5KTqepggh29+NTBEUO+bc
-	 Az++cktr78peXvwAbb5CWKfI04mo4WOekLj/7YjU1UMqBjuoIKmLn+d+/bYivJf5H
-	 JtnvMYGxytUZ6O6XNg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([147.142.150.221]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N5mWp-1t7d7S0mXz-016eyf; Thu, 20 Mar 2025 19:54:49 +0100
-Date: Thu, 20 Mar 2025 19:54:46 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.13 000/241] 6.13.8-rc1 review
-Message-ID: <7ab191ab-448f-476a-a54e-31113996b110@heusel.eu>
-References: <20250319143027.685727358@linuxfoundation.org>
+	s=arc-20240116; t=1742497226; c=relaxed/simple;
+	bh=fONLWc0pdl6aockjAsBgkwI0FG1fN/b0CNtheN9i+xg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Lm2yYmVNkum7CuIYw0HFN9jfwLXiMHcIs3HAsXnEHOAqh66FFFXn5EahhUhnLU/LWB2Jjg8035llmPBvWwg9vEGeLEBIHlFx4L4LqoYccl/NQxKGWWY9bKM6oGJp+Hvf5BaaDdIZdgcL2KJ86KzuqmqcXl/pTdqmR80+i5v7gRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bc8IfVuS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742497222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GuLKzl80HJEUzxBiHeEZpvGj2gfPB3PhlsUl2O7OoJE=;
+	b=Bc8IfVuSCOLGCskodCOQnVC5EAS46LyU2I9CC4XOrqbPZDUkVhAGp4Oho6HEC5QIa5/NNt
+	0Pu3KAE6K12cJRMa9b42x6q1sfgIVtGQqVIJrbLWRS8DgBm9WdPw9mMaIHOXCcHW2m8/Oc
+	CfkjSh9koa54J+UyRsY12zDFVTLZwms=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-379-h0tROPluPZyoperPfXkPTA-1; Thu, 20 Mar 2025 15:00:21 -0400
+X-MC-Unique: h0tROPluPZyoperPfXkPTA-1
+X-Mimecast-MFC-AGG-ID: h0tROPluPZyoperPfXkPTA_1742497221
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c09f73873fso191142885a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:00:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742497220; x=1743102020;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GuLKzl80HJEUzxBiHeEZpvGj2gfPB3PhlsUl2O7OoJE=;
+        b=QvrqTQ8CAkUt7fiKpXrCRGzz6paE5tLWNKbL7mwyl0bgXtVGsrfdv2zAACmoPXBBuv
+         Q/G1ircxaLhHdhPxOqr1KX8TZ3NZ3nxR87Cplz4FIlbuk147Y8UX2xviMQSB3kzRIMne
+         RC1apJ3X1rMamf1hIf212om4t7h/M9vwGgcUmvNF51AhvK66NynGMlyeiGqmusPSx285
+         YD2w5k0P0VnYCC5cIu2Dt+UsDExA/qs8mfmJy3JKdpJxMheKPLTogEXBEY+BKUALduZ+
+         +XMh+D6viH3OJJTLiopSOPGaN81CBKpYhFV21WH2hhu3DsaTu+993jhPf+8BnLd6uW/L
+         M/2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVQRNmv5XOfYXVzwbylItKIKs4w+Oqs6kUPwxecdqsmfkK8i5JHyOqkr0eCYwLMDzLASVO1tT2UwMhSRQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL+oOL888goSgDF6glNEtKMcjkToxWL8+ahehrZ0rgqMXnN+kc
+	Py79kOcLvkII9qJHgg5mCsHSl7zdL/XTeB6WcbrkPmUvTlAQzo65IAZVIz+Vh1H/qt5EIjjwCMw
+	PzQ0kuhCnIDacA4TOxQEP9/M4DcJ7sN0kJsK1bfG3PUk0NQsDHwbC8le2oSd0FQ==
+X-Gm-Gg: ASbGncuAzKTelhXPl1A6V8Qydg5Xq9qm2T7kJunNyXzMyOo/7OwmzEYcujUCZE3JOAu
+	1iChxkXDcq8h3anBX9P27lJp4u3zS8u/L/rcR/y9E0ARX6z2Vv5QtJTmEhDeKfQPaqssmaE6D9g
+	j72YMg7ldiBS4X9oziWVstbGI9KYf15saBUpe7VxLxgcirqAVTBjBG/EobGkDBBV57qxSQTGryo
+	/vHqDS9qy2aodI+fYe9R1HP9Cah4Of4Z25wS/e+tpEtbLMnT5GLkg4UTm6XiT9wtg+OjQnzskWC
+X-Received: by 2002:a05:620a:44c2:b0:7c5:43c2:a908 with SMTP id af79cd13be357-7c5ba133652mr60554885a.6.1742497220498;
+        Thu, 20 Mar 2025 12:00:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJCv97CbLirycFl3FwKrvZEV1g9U/E4BjEKpfuDTaAswcrKNBDLffkcybURQtgaTw+QqN/Hw==
+X-Received: by 2002:a05:620a:44c2:b0:7c5:43c2:a908 with SMTP id af79cd13be357-7c5ba133652mr60547585a.6.1742497220085;
+        Thu, 20 Mar 2025 12:00:20 -0700 (PDT)
+Received: from fionn ([76.69.33.37])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ec54dsm21984785a.59.2025.03.20.12.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 12:00:19 -0700 (PDT)
+Date: Thu, 20 Mar 2025 15:00:08 -0400 (EDT)
+From: John Kacur <jkacur@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, Luis Goncalves <lgoncalv@redhat.com>
+Subject: Re: [PATCH 1/6] rtla/osnoise: Unify params struct
+In-Reply-To: <20250320092500.101385-2-tglozar@redhat.com>
+Message-ID: <e6a2d061-42bf-72c0-0e40-75bbe5b1e831@redhat.com>
+References: <20250320092500.101385-1-tglozar@redhat.com> <20250320092500.101385-2-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xw3vwn7ep3f4np5v"
-Content-Disposition: inline
-In-Reply-To: <20250319143027.685727358@linuxfoundation.org>
-X-Provags-ID: V03:K1:qS2mWgbyy4p+6ATI4UNi8W2UsUcEoRtG63M2FiZ4bB/p3WEqOkD
- MFXP4hUkttdmZW+Kt8ApPjcvr1F58NOr4B53AOby9TcTVQybuP1zK337lRpSz3jDh+1MeUs
- 6YYKwFqi5E3lJh22eBhMkj5YmYKQVjUyDLZSCwQ9VR/wylgVev8k80Dxc0ay4fuVQpUaLth
- 8aobssraWGqkAe/kkQjaw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lNB/bmmMXEs=;MLmfs0EPjz6VTOr6arRdkm2iOZf
- 0u52w5A2WbnIGiIO/htPgAhtp34rBmeJBjRDCLR1GJ+GVDxs1EQgHS+gZxYW6EgfyJzwoToL9
- ZOAu1r4BBZURZgrPOitVAKLvdMxD34GBRpv8HovQuRh5dTPyVmb88tRQWXlB7CWBlMtMAfVvD
- e/Kjtfsjp++kKTF5dhQyyT1kOpoZtIfYjJmlXvm96tjipnVoysS+n10NfppeKJfNsD8BC7RqY
- 37bL5cRxbUPl11sIYXrkYubH+0ELs1EriFTxBGANCOxvPloGHN0k0NMUKrX5iJz5+LWv7Ugb1
- uMpb5SE2LTt+QL3mwEy907yQlkMScLdB1YqU7l59An136Hz69BjW3gX9L5vSsWOCUAnZ08XwT
- Z/ZXYEnW7lW+0aR8y/LKdCpQuuf871w+Idhf0jAak2y9KqwN5QZ8oaM+2w0ZGn91lDMS0SfSX
- vYlRNsOwJR+BKuGHoZN7GK8NI2d8G4iO3R7ZLN6gM2RBFoFek6rZ4EHoLtrKynAY6SV+zgBwZ
- uQj1X2oNzG4POSI6/of5A+bwUDqOq9L1HqsZm0NvvWMV5aOg8RA1Uf17iHeehLPDNPag5NgCV
- YV2FJ08RSSMSnWO47C/cxlvgiX8RnMkTJ4FNMAh2iOt8403ViuW9JCyVJyNY8ZpXl/0QOT9kF
- cg3ywCTMZ2ykeUd4p6n0+ok5NILs98xM7Lufot4okT2eNyByogBXAG9RzIi1SLl9WZB+bHJrl
- 3/f8jcdKLJPHzl4oLik4esSV7vVMiEFhAsDD+uTNSZmFuHzNs9m5K/q/kbNvjY17lOU0fawSz
- FeKnJfVtWkzm9G+FACFT0FyItwrhMxfVgzS+EQTYz3WsKf4gnnEKEKjV3YQvBonDP9obRUHxX
- 1GFBQrMqxTXWemdQz3L6lg6qnE5lNn7Zneoq1k1pJLBR4xBUNUbGnX2iOv191hWqMdfStm3rY
- OSMkZ0ea1YSWkyOQKj09Iass8EdDCU+mTpJGoPUMytaJzYYfVaneXO+e3p4M+VjHDI2xqloOD
- 6ATaFb3mDP6j0QIoF5I/rrBuHZwpNj+oF4vNSd9qEDx9HKAerHCh37KD/tBp1gziyf8Y4x+FX
- Ffk00z5iCpzc0ycfdSkw/tBFzbJmiZdDjjc07NZUwaoii+r9z2FhpWMd6YLabQp73SKkdEd2O
- TlKI7GBtaDPyQJ1ytcfxz9J2NzkCztMZmx5USP6DKqPjc4aAjTdwNp/zOOW1KERrxNPkw7yG0
- RdpZr2pwCSx1hm3S0J59Zhbs3EBMzL+q63tIGA2rY8hebJ3PtRDCHs8Tea2U1don3pWd3OtRl
- JZwuO3Tf85QGN9n8qquHAlDUDK1O1yWE03dqKKcalBk6UEK8InvVkocKJYoi7PbgWmmYefzgo
- L5hLx8Kq2hiS2gGt0cvaoEBRa8kRnMkS2cFY8=
+Content-Type: text/plain; charset=US-ASCII
 
 
---xw3vwn7ep3f4np5v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.13 000/241] 6.13.8-rc1 review
-MIME-Version: 1.0
 
-On 25/03/19 07:27AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.8 release.
-> There are 241 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Fri, 21 Mar 2025 14:29:55 +0000.
-> Anything received after that time might be too late.
+On Thu, 20 Mar 2025, Tomas Glozar wrote:
 
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU, on the
-Steam Deck (LCD variant) aswell as the Framework Desktop.
+> Instead of having separate structs osnoise_top_params and
+> osnoise_hist_params, use one struct osnoise_params for both.
+> 
+> This allows code using the structs to be shared between osnoise-top and
+> osnoise-hist.
+> 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/src/osnoise.c      |  1 -
+>  tools/tracing/rtla/src/osnoise.h      | 47 +++++++++++++++++++++++
+>  tools/tracing/rtla/src/osnoise_hist.c | 52 ++++++--------------------
+>  tools/tracing/rtla/src/osnoise_top.c  | 54 +++++----------------------
+>  tools/tracing/rtla/src/timerlat.h     |  1 -
+>  5 files changed, 68 insertions(+), 87 deletions(-)
+> 
+> diff --git a/tools/tracing/rtla/src/osnoise.c b/tools/tracing/rtla/src/osnoise.c
+> index 85f398b89597..93d485c0e949 100644
+> --- a/tools/tracing/rtla/src/osnoise.c
+> +++ b/tools/tracing/rtla/src/osnoise.c
+> @@ -14,7 +14,6 @@
+>  #include <stdio.h>
+>  
+>  #include "osnoise.h"
+> -#include "utils.h"
+>  
+>  /*
+>   * osnoise_get_cpus - return the original "osnoise/cpus" content
+> diff --git a/tools/tracing/rtla/src/osnoise.h b/tools/tracing/rtla/src/osnoise.h
+> index 056c8b113dee..f78ffbdc8c8d 100644
+> --- a/tools/tracing/rtla/src/osnoise.h
+> +++ b/tools/tracing/rtla/src/osnoise.h
+> @@ -1,8 +1,55 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #pragma once
+>  
+> +#include "utils.h"
+>  #include "trace.h"
+>  
+> +enum osnoise_mode {
+> +	MODE_OSNOISE = 0,
+> +	MODE_HWNOISE
+> +};
+> +
+> +struct osnoise_params {
+> +	/* Common params */
+> +	char			*cpus;
+> +	cpu_set_t		monitored_cpus;
+> +	char			*trace_output;
+> +	char			*cgroup_name;
+> +	unsigned long long	runtime;
+> +	unsigned long long	period;
+> +	long long		threshold;
+> +	long long		stop_us;
+> +	long long		stop_total_us;
+> +	int			sleep_time;
+> +	int			duration;
+> +	int			set_sched;
+> +	int			cgroup;
+> +	int			hk_cpus;
+> +	cpu_set_t		hk_cpu_set;
+> +	struct sched_attr	sched_param;
+> +	struct trace_events	*events;
+> +	int			warmup;
+> +	int			buffer_size;
+> +	union {
+> +		struct {
+> +			/* top only */
+> +			int			quiet;
+> +			int			pretty_output;
+> +			enum osnoise_mode	mode;
+> +		};
+> +		struct {
+> +			/* hist only */
+> +			int			output_divisor;
+> +			char			no_header;
+> +			char			no_summary;
+> +			char			no_index;
+> +			char			with_zeros;
+> +			int			bucket_size;
+> +			int			entries;
+> +		};
+> +	};
+> +};
+> +
+>  /*
+>   * osnoise_context - read, store, write, restore osnoise configs.
+>   */
+> diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
+> index f4c9051c33c4..4721f15f77cd 100644
+> --- a/tools/tracing/rtla/src/osnoise_hist.c
+> +++ b/tools/tracing/rtla/src/osnoise_hist.c
+> @@ -14,38 +14,8 @@
+>  #include <time.h>
+>  #include <sched.h>
+>  
+> -#include "utils.h"
+>  #include "osnoise.h"
+>  
+> -struct osnoise_hist_params {
+> -	char			*cpus;
+> -	cpu_set_t		monitored_cpus;
+> -	char			*trace_output;
+> -	char			*cgroup_name;
+> -	unsigned long long	runtime;
+> -	unsigned long long	period;
+> -	long long		threshold;
+> -	long long		stop_us;
+> -	long long		stop_total_us;
+> -	int			sleep_time;
+> -	int			duration;
+> -	int			set_sched;
+> -	int			output_divisor;
+> -	int			cgroup;
+> -	int			hk_cpus;
+> -	cpu_set_t		hk_cpu_set;
+> -	struct sched_attr	sched_param;
+> -	struct trace_events	*events;
+> -	char			no_header;
+> -	char			no_summary;
+> -	char			no_index;
+> -	char			with_zeros;
+> -	int			bucket_size;
+> -	int			entries;
+> -	int			warmup;
+> -	int			buffer_size;
+> -};
+> -
+>  struct osnoise_hist_cpu {
+>  	int			*samples;
+>  	int			count;
+> @@ -126,7 +96,7 @@ static struct osnoise_hist_data
+>  static void osnoise_hist_update_multiple(struct osnoise_tool *tool, int cpu,
+>  					 unsigned long long duration, int count)
+>  {
+> -	struct osnoise_hist_params *params = tool->params;
+> +	struct osnoise_params *params = tool->params;
+>  	struct osnoise_hist_data *data = tool->data;
+>  	unsigned long long total_duration;
+>  	int entries = data->entries;
+> @@ -168,7 +138,7 @@ static void osnoise_destroy_trace_hist(struct osnoise_tool *tool)
+>   */
+>  static int osnoise_init_trace_hist(struct osnoise_tool *tool)
+>  {
+> -	struct osnoise_hist_params *params = tool->params;
+> +	struct osnoise_params *params = tool->params;
+>  	struct osnoise_hist_data *data = tool->data;
+>  	int bucket_size;
+>  	char buff[128];
+> @@ -253,7 +223,7 @@ static void osnoise_read_trace_hist(struct osnoise_tool *tool)
+>   */
+>  static void osnoise_hist_header(struct osnoise_tool *tool)
+>  {
+> -	struct osnoise_hist_params *params = tool->params;
+> +	struct osnoise_params *params = tool->params;
+>  	struct osnoise_hist_data *data = tool->data;
+>  	struct trace_seq *s = tool->trace.seq;
+>  	char duration[26];
+> @@ -292,7 +262,7 @@ static void osnoise_hist_header(struct osnoise_tool *tool)
+>   * osnoise_print_summary - print the summary of the hist data to the output
+>   */
+>  static void
+> -osnoise_print_summary(struct osnoise_hist_params *params,
+> +osnoise_print_summary(struct osnoise_params *params,
+>  		       struct trace_instance *trace,
+>  		       struct osnoise_hist_data *data)
+>  {
+> @@ -370,7 +340,7 @@ osnoise_print_summary(struct osnoise_hist_params *params,
+>   * osnoise_print_stats - print data for all CPUs
+>   */
+>  static void
+> -osnoise_print_stats(struct osnoise_hist_params *params, struct osnoise_tool *tool)
+> +osnoise_print_stats(struct osnoise_params *params, struct osnoise_tool *tool)
+>  {
+>  	struct osnoise_hist_data *data = tool->data;
+>  	struct trace_instance *trace = &tool->trace;
+> @@ -508,10 +478,10 @@ static void osnoise_hist_usage(char *usage)
+>  /*
+>   * osnoise_hist_parse_args - allocs, parse and fill the cmd line parameters
+>   */
+> -static struct osnoise_hist_params
+> +static struct osnoise_params
+>  *osnoise_hist_parse_args(int argc, char *argv[])
+>  {
+> -	struct osnoise_hist_params *params;
+> +	struct osnoise_params *params;
+>  	struct trace_events *tevent;
+>  	int retval;
+>  	int c;
+> @@ -731,7 +701,7 @@ static struct osnoise_hist_params
+>   * osnoise_hist_apply_config - apply the hist configs to the initialized tool
+>   */
+>  static int
+> -osnoise_hist_apply_config(struct osnoise_tool *tool, struct osnoise_hist_params *params)
+> +osnoise_hist_apply_config(struct osnoise_tool *tool, struct osnoise_params *params)
+>  {
+>  	int retval;
+>  
+> @@ -808,7 +778,7 @@ osnoise_hist_apply_config(struct osnoise_tool *tool, struct osnoise_hist_params
+>   * osnoise_init_hist - initialize a osnoise hist tool with parameters
+>   */
+>  static struct osnoise_tool
+> -*osnoise_init_hist(struct osnoise_hist_params *params)
+> +*osnoise_init_hist(struct osnoise_params *params)
+>  {
+>  	struct osnoise_tool *tool;
+>  	int nr_cpus;
+> @@ -842,7 +812,7 @@ static void stop_hist(int sig)
+>   * osnoise_hist_set_signals - handles the signal to stop the tool
+>   */
+>  static void
+> -osnoise_hist_set_signals(struct osnoise_hist_params *params)
+> +osnoise_hist_set_signals(struct osnoise_params *params)
+>  {
+>  	signal(SIGINT, stop_hist);
+>  	if (params->duration) {
+> @@ -853,7 +823,7 @@ osnoise_hist_set_signals(struct osnoise_hist_params *params)
+>  
+>  int osnoise_hist_main(int argc, char *argv[])
+>  {
+> -	struct osnoise_hist_params *params;
+> +	struct osnoise_params *params;
+>  	struct osnoise_tool *record = NULL;
+>  	struct osnoise_tool *tool = NULL;
+>  	struct trace_instance *trace;
+> diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
+> index dacec2f99017..7f393019bbf5 100644
+> --- a/tools/tracing/rtla/src/osnoise_top.c
+> +++ b/tools/tracing/rtla/src/osnoise_top.c
+> @@ -14,40 +14,6 @@
+>  #include <sched.h>
+>  
+>  #include "osnoise.h"
+> -#include "utils.h"
+> -
+> -enum osnoise_mode {
+> -	MODE_OSNOISE = 0,
+> -	MODE_HWNOISE
+> -};
+> -
+> -/*
+> - * osnoise top parameters
+> - */
+> -struct osnoise_top_params {
+> -	char			*cpus;
+> -	cpu_set_t		monitored_cpus;
+> -	char			*trace_output;
+> -	char			*cgroup_name;
+> -	unsigned long long	runtime;
+> -	unsigned long long	period;
+> -	long long		threshold;
+> -	long long		stop_us;
+> -	long long		stop_total_us;
+> -	int			sleep_time;
+> -	int			duration;
+> -	int			quiet;
+> -	int			set_sched;
+> -	int			cgroup;
+> -	int			hk_cpus;
+> -	int			warmup;
+> -	int			buffer_size;
+> -	int			pretty_output;
+> -	cpu_set_t		hk_cpu_set;
+> -	struct sched_attr	sched_param;
+> -	struct trace_events	*events;
+> -	enum osnoise_mode	mode;
+> -};
+>  
+>  struct osnoise_top_cpu {
+>  	unsigned long long	sum_runtime;
+> @@ -158,7 +124,7 @@ osnoise_top_handler(struct trace_seq *s, struct tep_record *record,
+>   */
+>  static void osnoise_top_header(struct osnoise_tool *top)
+>  {
+> -	struct osnoise_top_params *params = top->params;
+> +	struct osnoise_params *params = top->params;
+>  	struct trace_seq *s = top->trace.seq;
+>  	char duration[26];
+>  
+> @@ -218,7 +184,7 @@ static void clear_terminal(struct trace_seq *seq)
+>   */
+>  static void osnoise_top_print(struct osnoise_tool *tool, int cpu)
+>  {
+> -	struct osnoise_top_params *params = tool->params;
+> +	struct osnoise_params *params = tool->params;
+>  	struct trace_seq *s = tool->trace.seq;
+>  	struct osnoise_top_cpu *cpu_data;
+>  	struct osnoise_top_data *data;
+> @@ -258,7 +224,7 @@ static void osnoise_top_print(struct osnoise_tool *tool, int cpu)
+>   * osnoise_print_stats - print data for all cpus
+>   */
+>  static void
+> -osnoise_print_stats(struct osnoise_top_params *params, struct osnoise_tool *top)
+> +osnoise_print_stats(struct osnoise_params *params, struct osnoise_tool *top)
+>  {
+>  	struct trace_instance *trace = &top->trace;
+>  	static int nr_cpus = -1;
+> @@ -286,7 +252,7 @@ osnoise_print_stats(struct osnoise_top_params *params, struct osnoise_tool *top)
+>  /*
+>   * osnoise_top_usage - prints osnoise top usage message
+>   */
+> -static void osnoise_top_usage(struct osnoise_top_params *params, char *usage)
+> +static void osnoise_top_usage(struct osnoise_params *params, char *usage)
+>  {
+>  	int i;
+>  
+> @@ -354,9 +320,9 @@ static void osnoise_top_usage(struct osnoise_top_params *params, char *usage)
+>  /*
+>   * osnoise_top_parse_args - allocs, parse and fill the cmd line parameters
+>   */
+> -struct osnoise_top_params *osnoise_top_parse_args(int argc, char **argv)
+> +struct osnoise_params *osnoise_top_parse_args(int argc, char **argv)
+>  {
+> -	struct osnoise_top_params *params;
+> +	struct osnoise_params *params;
+>  	struct trace_events *tevent;
+>  	int retval;
+>  	int c;
+> @@ -553,7 +519,7 @@ struct osnoise_top_params *osnoise_top_parse_args(int argc, char **argv)
+>   * osnoise_top_apply_config - apply the top configs to the initialized tool
+>   */
+>  static int
+> -osnoise_top_apply_config(struct osnoise_tool *tool, struct osnoise_top_params *params)
+> +osnoise_top_apply_config(struct osnoise_tool *tool, struct osnoise_params *params)
+>  {
+>  	int retval;
+>  
+> @@ -640,7 +606,7 @@ osnoise_top_apply_config(struct osnoise_tool *tool, struct osnoise_top_params *p
+>  /*
+>   * osnoise_init_top - initialize a osnoise top tool with parameters
+>   */
+> -struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
+> +struct osnoise_tool *osnoise_init_top(struct osnoise_params *params)
+>  {
+>  	struct osnoise_tool *tool;
+>  	int nr_cpus;
+> @@ -674,7 +640,7 @@ static void stop_top(int sig)
+>  /*
+>   * osnoise_top_set_signals - handles the signal to stop the tool
+>   */
+> -static void osnoise_top_set_signals(struct osnoise_top_params *params)
+> +static void osnoise_top_set_signals(struct osnoise_params *params)
+>  {
+>  	signal(SIGINT, stop_top);
+>  	if (params->duration) {
+> @@ -685,7 +651,7 @@ static void osnoise_top_set_signals(struct osnoise_top_params *params)
+>  
+>  int osnoise_top_main(int argc, char **argv)
+>  {
+> -	struct osnoise_top_params *params;
+> +	struct osnoise_params *params;
+>  	struct osnoise_tool *record = NULL;
+>  	struct osnoise_tool *tool = NULL;
+>  	struct trace_instance *trace;
+> diff --git a/tools/tracing/rtla/src/timerlat.h b/tools/tracing/rtla/src/timerlat.h
+> index e452d385cb0f..cadc613dc82e 100644
+> --- a/tools/tracing/rtla/src/timerlat.h
+> +++ b/tools/tracing/rtla/src/timerlat.h
+> @@ -1,5 +1,4 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> -#include "utils.h"
+>  #include "osnoise.h"
+>  
+>  struct timerlat_params {
+> -- 
 
---xw3vwn7ep3f4np5v
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: John Kacur <jkacur@redhat.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmfcZHYACgkQwEfU8yi1
-JYV7ExAAsTcCSYipslyJJfjqj46cseSWoEVf/H3DawpIPeCrTX0vp284cL2uRz7n
-6KHXAWp0KP3hSxXo5i/NyPhQ5SZus8BNYkbKmkMSUciC/vrTY9b5PrnQ//mndhUa
-luM5yE6SAShkbl69LuMIxr8Jg9+/Lzk6HYdLeiOE+dvy/tR6izcKEhrulDn08qCD
-qrIGMYGlvTNtAKrrwQYnHqBOv3akXUtXv8xrdoa5e7XeyArFbIXwU1wTJllLaevn
-UQdAOjRD7PKAQYLV0HA6iY0Uic1yICZ2kEueSgfn7iEuvkijeS2rXLjynoev5YSA
-J9LNHY7UQTQVzVyvRr72TmodRUwLFsETRwpYqPbhj37p7tYVfSV+YCHoEfI65IgS
-LkMlZe0QdH8ywSsGbBs3chPcrA+y/bKeJ4pzSnuLLBOcrZPwK6qcxm9nQGcFMqu+
-LmC3BxekambG6f+B4rF15vtuiK0QU1VlkJeFy5IGGJKSEDeQmqHmpbz+6i8AJplq
-M9SfI6nmNyI0NNDiG7QtHYvnmD8Hcyst3Oiip+1gwfkN2WVn9v8vXiw1l3H4AcOZ
-qAzA78xhnjZhpTN+WKPZNJVhQB0tdrpC0E6H7LSbeGh+3vS1WH5LrAhgCiRz/Zhy
-uVfvQL+BJFJPn1AyVSXa6CYOMYKGHdQHghY0qOy1to1SkqxwJpk=
-=ejVD
------END PGP SIGNATURE-----
-
---xw3vwn7ep3f4np5v--
 
