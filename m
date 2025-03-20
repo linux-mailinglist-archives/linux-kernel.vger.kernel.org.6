@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-570514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7B4A6B1AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:30:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2A3A6B18D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4065A8854D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B69DB3B644A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3565219A8E;
-	Thu, 20 Mar 2025 23:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4CC22A7EA;
+	Thu, 20 Mar 2025 23:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="fNgr/Eey"
-Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L0QfNVNw"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AB321577D;
-	Thu, 20 Mar 2025 23:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910A6218ADD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742513416; cv=none; b=b87SvYQJCjwcDuvKknuBYR4GzvJuphHLmz4yBwqyoyXQ0IqJvaVtjPIXvLXEwln2rceQlI+wpuFgdhEnDbSRzNY3PYy79fWsOIcSvRWL9X4FjlKe33eMI15Wxy/geiIuuvIBOGYKk92FQwFyf1d0AXBnLEfqNhHbZBsf3qfMUEc=
+	t=1742512909; cv=none; b=s5OuHuw1hNDZTCdiq8rXMPAm4K2BmpliQg1RXWXE9DbErL6Rq+8wZQDaEwvSnRTG7ZniJEwpSzg1tLGunW9UaMaiydB3xBop3eJR7tSHxjY56RZ7nUzOjlYi19ZXLRjMUOIR4f05acUJdzg0OcEprQuySaqp9htjUe92fQh/40s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742513416; c=relaxed/simple;
-	bh=SYuzpk+px42U3u0B0b6aH3gUKA150zqr0yAGUPT6MkY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=EIHi+g+mRx+Wrl+lBZF1iKf7DFHzb5SELvB3mripUrYE683mZ6EDtjyqzLSnmi1r5qYq0qoDjPyje3lJtZqzQQP0F0W7q52EMpOh4bUZH5bKtAP2TuWI4y7k2y3gJtfB6tsW0LffrBWD2Z1/mhJbpf3TUqFD2IqkmUAYnHWIeqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=fNgr/Eey; arc=none smtp.client-ip=5.161.67.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mx.nixnet.email (Postfix) with ESMTPSA id 9B1CD7D2E3;
-	Fri, 21 Mar 2025 00:20:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
-	t=1742512842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=avCcyNinvHxHfLjLW9hb3JXsotFCmyMou6TeLSEEHuA=;
-	b=fNgr/EeyA5/GxyI0wJjivl4bb8ZmCHEPa55i55BX2qKVnKZeg+Esbl7RXBWg0Xbj6NLhtZ
-	A2hbvK7Jiq11p7YImesnNkOcnLNN5KT0v7483mBWXzpedppBPcPjIaTFaiBVJz4u5r1vtp
-	h/UXo7LB2+A/35wbor03NjRvMyVJ65c=
+	s=arc-20240116; t=1742512909; c=relaxed/simple;
+	bh=AHDmzyijp9ZELgL1o7g85JgdlQHpfVV++jmUNt0pl44=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=exv+bMxqJw4BL/uDgRr3DuRk/nRTPkgG9G9E1YiYD417YpBpnQBbuC+umlHC7wpDKQzMoT2+GvqHAYBbaxu1zKfHrUeOOhxmkxn9eKyhYYXMX+6fRYHzFvRxg1ss9VndMOCnW+5xB+/Uq6ozfx7Xy2nftW3g+IFRF/hOekrxl14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=L0QfNVNw; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250320232138euoutp02c53157ac59cef5ceffe6cb46083a6dba~upj_scmtq3150231502euoutp023
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:21:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250320232138euoutp02c53157ac59cef5ceffe6cb46083a6dba~upj_scmtq3150231502euoutp023
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742512898;
+	bh=Jgh7/aGnQ8G2WHCuJK0N49oWUWg1YldfBxA4ZHdy2LI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=L0QfNVNwRPosJe8SgrBHCSjPuXflg9A3P5y4iNVLOpb7D2MrhDIQUcTRfDEjal+Xj
+	 3jSY+etlkAjMWl8crKFwHwc9AJ3BzejewH7l+l58hNQ1VHcNkwtj9hZFOAeW+p9wNV
+	 wfRCVunWjlsKcoCyxfNP0xbwHQPasHv7QPNib0Jo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250320232137eucas1p289da6fe11c17ac87a8faa6ab647746dc~upj_b7M5z2395123951eucas1p2N;
+	Thu, 20 Mar 2025 23:21:37 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id FE.8A.20409.103ACD76; Thu, 20
+	Mar 2025 23:21:37 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250320232137eucas1p2f877454de65336d638b200d920ccf2f3~upj9wupIO2394423944eucas1p2L;
+	Thu, 20 Mar 2025 23:21:37 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250320232137eusmtrp2b4030c2d062c85cec93d261b45a0e0f1~upj9wRTqg0223902239eusmtrp2X;
+	Thu, 20 Mar 2025 23:21:37 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-63-67dca3018d2a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 53.68.19920.103ACD76; Thu, 20
+	Mar 2025 23:21:37 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250320232136eusmtip2d3eb93a765e337482f1f6bb1c6cf220f~upj9cXt820599605996eusmtip2c;
+	Thu, 20 Mar 2025 23:21:36 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: [GIT PULL] dma-mapping fix for Linux 6.14
+Date: Fri, 21 Mar 2025 00:21:15 +0100
+Message-Id: <20250320232115.3940-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 21 Mar 2025 00:20:38 +0100
-Message-Id: <D8LH8Z7F0IO7.210MAQO7ZF8DT@pwned.life>
-Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
- <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
- <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
- <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
- <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
- <hargar@microsoft.com>, <broonie@kernel.org>
-Subject: Re: [PATCH 6.13 000/207] 6.13.7-rc1 review
-From: "Achill Gilgenast" <fossdd@pwned.life>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <stable@vger.kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250310170447.729440535@linuxfoundation.org>
-In-Reply-To: <20250310170447.729440535@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7djPc7qMi++kGyz/Y2zx64uFxeVdc9gs
+	HvW9ZXdg9jgx4zeLx4vNMxk9Pm+SC2CO4rJJSc3JLEst0rdL4MpoWHqHsaCXo2LF/z72Bsa/
+	bF2MnBwSAiYS19ZcY+li5OIQEljBKNH6dT4jSEJI4AujxJwbIRCJz4wSN+dvYoTp+PGzkQ0i
+	sZxR4smlG+wQDlDHhbaVLCBVbAKGEl1vu8B2iAgYSXx+cYUVxGYWMJf48nMeO4gtDBTf+uUt
+	WA2LgKrEvJNLwTbwCthI3Dm8nhlim7zE/oNnmSHighInZz5hgZgjL9G8dTYzyGIJgbfsEv0z
+	24AWcAA5LhKn9ldD9ApLvDq+hR3ClpH4v3M+E0R9O6PEgt/3oZwJjBINz29B/WYtcefcLzaQ
+	QcwCmhLrd+lDhB0lXl/sZISYzydx460gxA18EpO2TWeGCPNKdLQJQVSrScw6vg5u7cELl6BK
+	PCSu7SiDBG6sxKbr75gmMCrMQvLYLCSPzUI4YQEj8ypG8dTS4tz01GKjvNRyveLE3OLSvHS9
+	5PzcTYzAVHH63/EvOxiXv/qod4iRiYPxEKMEB7OSCK9Ix+10Id6UxMqq1KL8+KLSnNTiQ4zS
+	HCxK4ryL9remCwmkJ5akZqemFqQWwWSZODilGpgy3UR8Iz7Nib/7O0J145Wvl5abcennGJ6e
+	OXd38eFjex9X5Eus+3j47pZ/PFKfO3YJf5ycuURI5vLvjTpxRhx3zyyztMtXWR2flcvspMal
+	bvNbaqHY0kKXaws/b1krwPf0kXFZo+VVb/PXYfm2RsY3vz0KV1yr9Pv/uhV7HS80nzs/y1r+
+	3IWrer+q/Wa/kgiY6H1ugjPX6psX/oo/PybgKLlJKOPRJtuIN8ueJddtqpNwWaxW/snI/HOx
+	p9Cs6XV3jTRkdbMcD7U/DyuK/172+13dbsbO+AieC6E2p14EiZbfjnvvc8+w/GDS/5p5+g97
+	i/Szd629PmWtgMty18tpqYfdnRK/rsvKa/jDdM5JiaU4I9FQi7moOBEAH7AGIIQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t/xe7qMi++kGyw4wmHx64uFxeVdc9gs
+	HvW9ZXdg9jgx4zeLx4vNMxk9Pm+SC2CO0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2
+	j7UyMlXSt7NJSc3JLEst0rdL0MtoWHqHsaCXo2LF/z72Bsa/bF2MnBwSAiYSP342AtlcHEIC
+	Sxkllu+bwwiRkJE4Oa2BFcIWlvhzrQuq6BOjxIojM8CK2AQMJbredoFNEhEwkvj84gpYA7OA
+	pcTX63OZQWxhoPjWL2/BalgEVCXmnVwK1ssrYCNx5/B6ZogF8hL7D55lhogLSpyc+YQFYo68
+	RPPW2cwTGPlmIUnNQpJawMi0ilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzBMtx37uXkH47xX
+	H/UOMTJxMB5ilOBgVhLhFem4nS7Em5JYWZValB9fVJqTWnyI0RTovonMUqLJ+cBIySuJNzQz
+	MDU0MbM0MLU0M1YS53W7fD5NSCA9sSQ1OzW1ILUIpo+Jg1OqgWnqIgWJyfUtyttC5x/b0BQ1
+	z3fj43jfTbtWB+R/Ozb9WtVXg8KMnpOdhq9PhXc9E53T8lltc8qXnoJmH6GN9aquHsZZaYe0
+	HIyT/zGua11uHnoqOpSN8dmeFZadHsI251RljFlvXXg30Wbj2T+7JzxXbXXlCrhz9qnKUktb
+	qfC1VbdSlmoKRF+W4jFV3cjTeHOF7eQPaRLbJ967xzStbM57zw375MvbjczM4128q9pvlauH
+	rErYX7fwYIzFXPUZL79eYWPfKrL9/Yc/G/RXr+MNPx5V9H1j+SZ3vavF/zim7Db1WmgXvS3b
+	utBnjnWvv9yMcp1fmz4ws97rFcv3tp9nYP79uUTakm8FnK/rZiuxFGckGmoxFxUnAgDeE3UR
+	3AIAAA==
+X-CMS-MailID: 20250320232137eucas1p2f877454de65336d638b200d920ccf2f3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250320232137eucas1p2f877454de65336d638b200d920ccf2f3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250320232137eucas1p2f877454de65336d638b200d920ccf2f3
+References: <CGME20250320232137eucas1p2f877454de65336d638b200d920ccf2f3@eucas1p2.samsung.com>
 
-On Mon Mar 10, 2025 at 6:03 PM CET, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.7 release.
-> There are 207 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 12 Mar 2025 17:04:00 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.7-=
-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
- linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-Thanks! Builded and tested with Alpine Linux configs.
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-Tested-By: Achill Gilgenast <fossdd@pwned.life>
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.14-2025-03-21
+
+for you to fetch changes up to 8324993f60305e50f27b98358b01b9837e10d159:
+
+  dma-mapping: fix missing clear bdr in check_ram_in_range_map() (2025-03-12 13:41:44 +0100)
+
+----------------------------------------------------------------
+dma-mapping fix for Linux 6.14
+
+- fix missing clear bdr in check_ram_in_range_map()
+  (Baochen Qiang)
+
+----------------------------------------------------------------
+Baochen Qiang (1):
+      dma-mapping: fix missing clear bdr in check_ram_in_range_map()
+
+ kernel/dma/direct.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+----------------------------------------------------------------
+
+Thanks!
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
