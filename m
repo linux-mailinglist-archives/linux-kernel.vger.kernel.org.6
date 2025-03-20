@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-570428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E230AA6B03E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:02:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370BCA6B041
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:02:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE91189F1FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5512B482376
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191322222DD;
-	Thu, 20 Mar 2025 22:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D889229B29;
+	Thu, 20 Mar 2025 22:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJgU/vas"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="URG6vgEZ"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C252222C3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07B8221702
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508115; cv=none; b=bjK2YG8lBnnnryv9ghKb1h108qgmoyJF/GU2QzDmt674XBtcipPphc5QCerxF7lTmZk448nPRCl2p0pYMCvB9m4imoMdEPfp3v7plekGugBWm14Gkbgi5KboflVHbSOLQJRr2szPedfthI72bIyq3apb8xWn1K0XhIsJ4lhPgOk=
+	t=1742508125; cv=none; b=nYQUNo6m4Cp8RvQd09TsBL4ukBdRFUHQ6F7Jw4GAuetOVGswuvjmBOJSpVnvnOZzAqGSNJNHKSzgvN+y2DT05fEZCd09gn5bg1mOoCEcjBPto7uJzMbwLXSksXnB8a9ytdw8+cAYDImPxucZoLyk01AOcJS1g0CXHYXSIRASbnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508115; c=relaxed/simple;
-	bh=l46e7WvQp7J+u4Z5EX8AQyZh+dGtvJNmAWmfgvlr7CM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=k78ZiInjxVomfKMQEr9YJUVW0Hu7uhhXIAXobLh3jvxEq1/WXHi3sT5CkF2g22Am+EGZgGgQqq6Djf6uujdDnznjJ9fuu4/+9KKlkzk4QfAAd8BekusWm76D0NuexGcAIR91Pr5uz2mXGXaBW33FIjM0KZPismwZDOy0ENa6Aug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AJgU/vas; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742508112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3pVNFaMrkkMNH1afwjuMhJu9nhsFzBTmbXX/DA+H+oU=;
-	b=AJgU/vasrsGmQrflmJ8X3Yyp4Xu46sXPcL2+FLVv4PWCZkSJJP/toi0rRUy6iIVHk46xR/
-	R0zNnhpEtWeu87Kq3ReqosJKbdYwqSII+Sb38WF4qaeFdIP3ODmbh58epVSaGBefUM5g8a
-	6JpqUUBChUOnSayrF0N32V3fRW6QRG8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-DoN8hO2rPGWqv68As9fzgw-1; Thu,
- 20 Mar 2025 18:01:49 -0400
-X-MC-Unique: DoN8hO2rPGWqv68As9fzgw-1
-X-Mimecast-MFC-AGG-ID: DoN8hO2rPGWqv68As9fzgw_1742508108
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74367180882E;
-	Thu, 20 Mar 2025 22:01:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D710D3001D1F;
-	Thu, 20 Mar 2025 22:01:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <3fa0bf814ce79765c88211990644a010197b11bf.camel@ibm.com>
-References: <3fa0bf814ce79765c88211990644a010197b11bf.camel@ibm.com> <a62918950646701cb9bb2ab0a32c87b53e2f102e.camel@dubeyko.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-5-dhowells@redhat.com> <2161520.1742212378@warthog.procyon.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, "slava@dubeyko.com" <slava@dubeyko.com>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    Alex Markuze <amarkuze@redhat.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: [RFC PATCH 04/35] ceph: Convert ceph_mds_request::r_pagelist to a databuf
+	s=arc-20240116; t=1742508125; c=relaxed/simple;
+	bh=vQEUHahmE0RxJxd8mlAyGEQmkYgLlkG5wCTawhk/mTw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mKN25rhG9AfDALMD474E4oQMo98Zs9HlleszJhh407DCwuL06v4c0cvcT5QHkF1ES4rEZCOVYVz2h7K+yrYZUFAgXbnt3zPrjjkq/aZhQ1z3gYZhylRuwOUqkWd35bH6z+zFpeTSQHyBRcnHQY9hXvwl9R7wVbFEnbnvkW8ELkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=URG6vgEZ; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742508115; x=1742767315;
+	bh=xpd6RshpBAJVZpyxgIcYL8YR6vfst5k2rURA4gA6WZw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=URG6vgEZFLa8bXIuVYXU+FMShpx8r/iylIz2qTOMJoaNTM2kF7kbGlkhKh3ZTR9Yx
+	 CAn1UbozCaY6ximNkCdnilb2Xm8KxzP+VHVa/K0TFttnc8BJV7uIVfTWnbDr/P0JJ4
+	 2DEIpa3J5uySuALLLM6zBmQ3Hki8Y5BeOQiE3FDzy0yhL/nmcxdI62BkkCyNZHZVgV
+	 8L7rW7fOSbyKlyoUIBNL1BFeqAYX0bFJD0BXztf6BUW1OMfacoQa6fhA+nPetIhMP/
+	 QIUVBq4F3+kn2VbpO0hmoDBjs78dP/U36hMv24aKHZLfVZHibZZCvr7ie81xGmHQGi
+	 EXJpLsOudW0Lg==
+Date: Thu, 20 Mar 2025 22:01:50 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] rust: alloc: add Vec::clear
+Message-ID: <D8LFKL7HM8YI.1U8GEUV34YMP6@proton.me>
+In-Reply-To: <20250320-vec-methods-v1-1-7dff5cf25fe8@google.com>
+References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-1-7dff5cf25fe8@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 88b65252f2b1a6763b2f590f63fd6c46dc4b9eb8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3188325.1742508102.1@warthog.procyon.org.uk>
-Date: Thu, 20 Mar 2025 22:01:42 +0000
-Message-ID: <3188326.1742508102@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On Thu Mar 20, 2025 at 2:52 PM CET, Alice Ryhl wrote:
+> Our custom Vec type is missing the stdlib method `clear`, thus add it.
+> It will be used in the miscdevice sample.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-> > > > +	if (ceph_databuf_insert_frag(dbuf, 0, sizeof(*header),
-> > > > GFP_KERNEL) < 0)
-> > > > +		goto out;
-> > > > +	if (ceph_databuf_insert_frag(dbuf, 1, PAGE_SIZE, GFP_KERNEL)
-> > > > < 0)
-> > > >  		goto out;
-> > > >  
-> > > > +	iov_iter_bvec(&iter, ITER_DEST, &dbuf->bvec[1], 1, len);
-> > > 
-> > > Is it correct &dbuf->bvec[1]? Why do we work with item #1? I think it
-> > > looks confusing.
-> > 
-> > Because you have a protocol element (in dbuf->bvec[0]) and a buffer (in
-> > dbuf->bvec[1]).
-> 
-> It sounds to me that we need to have two declarations (something like this):
-> 
-> #define PROTOCOL_ELEMENT_INDEX    0
-> #define BUFFER_INDEX              1
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-But that's specific to this particular usage.  There may or may not be a
-frag/page allocated to a protocol element and there may or may not be buffer
-parts and may be multiple buffer parts.  There could even be multiple pages
-allocated to protocol elements.
+---
+Cheers,
+Benno
 
-David
+> ---
+>  rust/kernel/alloc/kvec.rs | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index eb6d40a1bf8ba45126bd47f1dd4a7b7ef86112c4..95e752ed27395fce72d372976=
+b74fb1b0e957194 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -395,6 +395,26 @@ pub fn into_raw_parts(self) -> (*mut T, usize, usize=
+) {
+>          (ptr, len, capacity)
+>      }
+> =20
+> +    /// Clears the vector, removing all values.
+> +    ///
+> +    /// Note that this method has no effect on the allocated capacity
+> +    /// of the vector.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D kernel::kvec![1, 2, 3]?;
+> +    ///
+> +    /// v.clear();
+> +    ///
+> +    /// assert!(v.is_empty());
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    #[inline]
+> +    pub fn clear(&mut self) {
+> +        self.truncate(0);
+> +    }
+> +
+>      /// Ensures that the capacity exceeds the length by at least `additi=
+onal` elements.
+>      ///
+>      /// # Examples
+
 
 
