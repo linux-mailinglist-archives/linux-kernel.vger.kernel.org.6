@@ -1,98 +1,131 @@
-Return-Path: <linux-kernel+bounces-569796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B029A6A7A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:52:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB10CA6A7A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:52:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB70A179248
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D59A17AD9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF6B222595;
-	Thu, 20 Mar 2025 13:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94022222D4;
+	Thu, 20 Mar 2025 13:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="itTE3y7L"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CnhWvbyi"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B3D221F07;
-	Thu, 20 Mar 2025 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742478653; cv=pass; b=CGZ08CXFqam18xcJIgcew+hPc9P8JBRnhuMXEJVJuHUf/QCBlEeb3GLcqMIy9a+h+MrPmqlDMhr9lm6hqQCz4uXQymAulXYrcQfX/R9sd39NxHZ74znbrbieFx/WRcTWGzsk6iKp3vSCZnb4PymzgyU1ogMvFIB8CAPd4fRN7ZI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742478653; c=relaxed/simple;
-	bh=FJGkDF/tymf/u8VYaYBP7bBv4Mifo8RhklQ1Ki/gMF8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=A3DP38Oalq14NF7mDdZvOXqWoBF7OVQN8l4EpAhVZYhx2xokSXs2pqg1a6Bz4wZ6PM2j8S9m6LGwJyQ6tynx3tivnukx09/8vaYpJfQk50lg/A9VKmlJF3VcK226NKMX+zmw2WBVpMu3XziXrvGxhhqzE60rE64M48BRTJ3e/K4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=itTE3y7L; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742478627; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z31VeW3MhdJYyzmBGVjqYVr4ryGCz8+u2ghG7FDbdAYGgYRDFnQLNwrBHtX5Npq2j3HAaVCA3UdDb7NVwkcNpkxpE0nyg+Gy0+VtalwBLQNO7/R7aig1J+jT2G58lP9xFplgu3AcxnGnHZnRmuNeRhAgWXRLEKQaImj9vCxhJtU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742478627; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FJGkDF/tymf/u8VYaYBP7bBv4Mifo8RhklQ1Ki/gMF8=; 
-	b=g6MNx7EzkABgdb06oZ6UorGTzQyp9CGvnajR6jJ8NXkp6upFcJIWsehoQNKaWoDm14nN0B+qzAD5II6L94NHsyl71QNKQ81p3kf9idWK5KEE9JTzhST4jwFze5pexrEdiCby37c9UX34rqJ/2wEtXV0E66fW8+9j88p4YB/qsDc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742478627;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=FJGkDF/tymf/u8VYaYBP7bBv4Mifo8RhklQ1Ki/gMF8=;
-	b=itTE3y7L57sKJXFppS1xuuWOIulVMrCsci0gmiOwE5ZuLLm1lBEy2bbJjD6dAHlW
-	Ry3jJmu+kzHL6IibARDDUdE0hoQB5X+4J8lc8oiga5QnBxOsKSa46ZWqrXsuaOvBzv7
-	na0KpqrPcaiCwu70jkTj0Ps5x23bZ3mFa/nFAwjA=
-Received: by mx.zohomail.com with SMTPS id 174247862340235.97143990973666;
-	Thu, 20 Mar 2025 06:50:23 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CC22AD16;
+	Thu, 20 Mar 2025 13:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742478690; cv=none; b=TbGuznrU9M+3InA56m4Iy+zoGc7G5zHrOHggNrcD5cXgnf4lOcFkmakhVTms1nLfN/ymDDcHYV9fssfAHtmc/dhMKzCbALSq+lD2WCmfkHAsHVWzNzxOeSfxbU5Tjd93xhqyXcHJ4euYKbYinxeCkp1WoM1rtmG9h+ulil8ZlTE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742478690; c=relaxed/simple;
+	bh=Yt9hy15zEGNBpO91IHCS6p/xqj9mzRbON/1OE2Kyl1A=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCbRrtWC02es8rg/XJtE+qfB0I1vBR9g4jvoAaFCaO8Nm5+ubq3LRLYZosDwjuBlS2EQV5Z18Cq5vWNT2ThCvT26mFVnxFgTxGvINLiq0wcZ2WvtPGFPzL2VisVIpEfgMtHjpT7Hft1J2kKDxBSvRIw39CPSAPv/PvrDvRe9vWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CnhWvbyi; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390f5f48eafso442502f8f.0;
+        Thu, 20 Mar 2025 06:51:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742478687; x=1743083487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vn81ISR0yNm/qr0HtNJu+EHioxH/WEZq3aEC2iTSvKM=;
+        b=CnhWvbyiXz3E1hWW9io39Dr391S8jtSftqxqHhhECAqXxYItUXlzsCEtOMUIjR1u4o
+         ds8Z/d2zjWiMVSDLmYcgCxWpvuGHTL7COZvmSJ4IO0bspq01KueooOkWJLFkEaCXnGmG
+         8bpdWJVWfvrjGxfqgDtfNa4ZDeMYQSbQVz+Y7mdmagybogbs/i8E5r9AICssADC00qX/
+         vP/2JQmhEBSgOEv6qxaTPfcUAWDgQhI1B0r/xEANQ5AMLafqpkUFLWr/6QAdiMYKJyXs
+         Jj5VpSzT9Qavx9ohvvyt/ZK+iXd5yZ9S66sfCljJVv5MVFmZQDeEneouEVgsriyjbrmu
+         VuWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742478687; x=1743083487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vn81ISR0yNm/qr0HtNJu+EHioxH/WEZq3aEC2iTSvKM=;
+        b=L71v5zBW+ZoLUXAC4ghCss+9BhN06zlX6O83xxlqkYkEjnqeJdG7dgHK3w+YqhaMIH
+         m8Is9EtnexTt0k5pIqnCjdF2+0f1ZV0kac3JMUh+o2DcOchC7D06kBkn1lC9Pb5n9Trv
+         oh1dBs7CjNo0tJ/G5mORwRensbKkN+Z523whuqRYTBWPTLYR9w+xcHd/hqgUyP0d23aI
+         hSTWiqCfcsOKFZ+cwdQmpgVYGY5i08uoNTin5nDgYewPXXSW+SnGYR8cnFVve+afdC7+
+         +LZdFLb+1vgqbcqTYsEpbiCERTrPErRT6Sd7Aoii9OfLzM1q/5I9y4odZ2RDvF89S4xd
+         tOTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEIaWkeGilbOMR5gN6YHEZ4Yr3JqYQSokyzdfGV30KviFvobL/Esr1qZq+KcvaCTqLLKGqbP+MZudf8k+F@vger.kernel.org, AJvYcCUkotWcd9qkRiUxmrjB7nKi83qGx9phqXFvWhZd2OtkeMU6EO83BeSg6OmEOr0swMUATHOPnNbUC6OCW6nd7G8mf5NU@vger.kernel.org, AJvYcCXq/fOHQ4bPZs8fWVJUFs3xupPLzPAntn92v2mI2weXNvWiONvbXPsLXmwNeujfWbJ7bT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlFIIBYd4eKn3Bmp0N1Ykl+1E12DtMpQBGp/dUVNLbXdcvof8t
+	N3GXL5DuZqK+Rne8EzRHBfMyFU12+KsNuqZR/NrFpw4xKogVQqEeUPQsqNK3U+wHqg==
+X-Gm-Gg: ASbGncuQ8mAADK0rYcn18MvoD/GQY4UnUDdPMP/u0z6RH7U0lCFwoZAkXuLxmzqyKT0
+	CJvwSYLz3uCveCU9vHAgGe/w55Oza6GT7tt0iLzODXDd3wrV1R0IdIVKqBsML0zrWvxHLcLhJ4e
+	cnBonzSJbJ7dImWKSOnLlKCk5rpFALRxPTf3wmIa9jxlWtGcDWHAbdYiHSXWIxJl596scIvbydm
+	xWVfO3N35hwKtY5tI81ZB22+ahwrIfkBNWMCZ6F+t6mT8WgS9FtHJiB4crULBPbGqBaP7Pww8F/
+	mfpfKSjg+27266X+2pHHyWidZzc4UuA=
+X-Google-Smtp-Source: AGHT+IGymzs6LfRQCvzU5rTf+/HAxuRgWUZMl/ALUIWJKPpY2mXkpe5eZLLZXzrJE4QHfY7Txg/Big==
+X-Received: by 2002:a5d:6d07:0:b0:38d:d9bd:18a6 with SMTP id ffacd0b85a97d-39973b32cf5mr5934125f8f.42.1742478686566;
+        Thu, 20 Mar 2025 06:51:26 -0700 (PDT)
+Received: from krava ([173.38.220.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881544sm23401269f8f.43.2025.03.20.06.51.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 06:51:26 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 20 Mar 2025 14:51:24 +0100
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>, kees@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Subject: Re: [PATCH RFCv3 00/23] uprobes: Add support to optimize usdt probes
+ on x86_64
+Message-ID: <Z9wdXPtElYOpObld@krava>
+References: <20250320114200.14377-1-jolsa@kernel.org>
+ <20250320122343.GC11256@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v4] rust: kernel: add support for bits/genmask macros
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <D8KB8CPBOIY1.10ATK35TV2X79@nvidia.com>
-Date: Thu, 20 Mar 2025 10:50:12 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- Fiona Behrens <me@kloenk.dev>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BC968EEF-03CD-49A2-818D-08789791E461@collabora.com>
-References: <20250318-topic-panthor-rs-genmask-v4-1-35004fca6ac5@collabora.com>
- <D8KB8CPBOIY1.10ATK35TV2X79@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320122343.GC11256@redhat.com>
 
-Hi Alex,
+On Thu, Mar 20, 2025 at 01:23:44PM +0100, Oleg Nesterov wrote:
+> On 03/20, Jiri Olsa wrote:
+> >
+> > hi,
+> > this patchset adds support to optimize usdt probes on top of 5-byte
+> > nop instruction.
+> 
+> Just in case... This series conflicts with (imo very important) changes
+> from David,
+> 
+> 	[PATCH v2 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
+> 	https://lore.kernel.org/all/20250318221457.3055598-1-david@redhat.com/
+> 
+> I think they should be merged first.
 
-> Would it make sense to also have u16 and u8 variants? I guess one can
-> always use genmask_u32 and then cast to the desired type though.
+ok, I'll check on those
 
-There=E2=80=99s no u16 and u8 variants because I did not think there =
-would be users.=20
+thanks,
+jirka
 
-I can add them otherwise, IMHO we should refrain from using casts when =
-possible.
-
-=E2=80=94 Daniel=
+> 
+> (and I am not sure yet, but it seems that we should cleanup (fix?) the
+>  update_ref_ctr() logic before other changes).
+> 
+> Oleg.
+> 
 
