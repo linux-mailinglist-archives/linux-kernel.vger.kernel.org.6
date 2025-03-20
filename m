@@ -1,228 +1,183 @@
-Return-Path: <linux-kernel+bounces-570347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F37A6AF32
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:30:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEF5A6AF41
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0D81887611
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3A44675B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE3E229B28;
-	Thu, 20 Mar 2025 20:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CBC229B0C;
+	Thu, 20 Mar 2025 20:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gFR5E6BQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jQmCA8Gh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323552A1A4;
-	Thu, 20 Mar 2025 20:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE221EFF9C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742502549; cv=none; b=gEYg6oWr1/kdH9MG0iB8geQSBfKaADl+cELMOmvj4O4MTgTE3j+LTARcm25gStxEAN2JmgrHCKzioYOW9+9R0g8s74h5jR9s1GJ7Rm51fNXpxpG5D7QNTd3XpnQmyimz2gf0w1CjkqGXmjxvCIK0ch6ohT4XLmBjcCUgmWVoZmY=
+	t=1742502981; cv=none; b=SwZoB+/HriEEKO2DQ4lOOyec+u/oRdzK9Qef82m5hovN79+BVbSV3XPLoMhEZK0Ju0I7OHkSeseu9143F0+7wGbsl/Q6z232VIwRUHL9CC1+cwMOzcK3WztWRZFG8RBLBRGiaQSYeP9N+zRnXTCjfX1nL7rh6MDhCDX3dBfuQGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742502549; c=relaxed/simple;
-	bh=/A7i/1Uro6h6eIUjAdKuaXPvRrA3wGaUjO4OFnhofeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtWS7TflIo/6uY/ru6x5u8cUoPfj3KZXtvUsESNUSzIswrNO0uSE0hJ/r52Pshcnb3WXPrO5Gs+UjJR4PUH/cXGXdxqT7z9+qjLYIVkJLiklh83DZOViW6hjeCdtqh5aKx/eLXjsgIz8Af2iPTj9Prf7O7GBfT76PJMdVyCxiWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gFR5E6BQ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742502547; x=1774038547;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/A7i/1Uro6h6eIUjAdKuaXPvRrA3wGaUjO4OFnhofeM=;
-  b=gFR5E6BQkeWuoPW9RqJAX0QSTbjHWq7anj9p94nVASl0lA1+/SbQLYQr
-   bNETSC6nxylpk4c8dMiq+78mDZV5j5YbOPUNSqbhPU06BwlsYuchpEfzP
-   2KnyFkt0bWLOyYOSErdLnGJ136uT8FWVBnLBwqDqSaMMmZo7Vj2doGJNd
-   dRKLb5fHHYS8BjKJnGSnHh1Ujvt2F6/KMK+Ekb7iTDN423xl3WBelemSh
-   t9a6ncU5EzoqR+ydJJ2VyjntF7IkhS/cCEqEZ8wET2yf6CYeYyk4VForK
-   gTXALtEiDbJft6ggk2A7Gb5RNznxx7Wk1w1WbTZ9OGLzNLPmEqsb6zmBF
-   A==;
-X-CSE-ConnectionGUID: v/SpxdCBS4mPPxJ1l+UoYw==
-X-CSE-MsgGUID: XyxZxKqmSMy33vGqH3ok5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43641584"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="43641584"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 13:29:06 -0700
-X-CSE-ConnectionGUID: zWGEOKDhRA6107exREHPMQ==
-X-CSE-MsgGUID: mqxpcH5pQA2dGiRObZSJvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="122921213"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 13:29:06 -0700
-Date: Thu, 20 Mar 2025 13:34:51 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yunhong Jiang <yunhong.jiang@linux.intel.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org,
-	lenb@kernel.org, kirill.shutemov@linux.intel.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
-	ricardo.neri@intel.com, ravi.v.shankar@intel.com
-Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
- mailbox
-Message-ID: <20250320203451.GA8338@ranerica-svr.sc.intel.com>
-References: <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
- <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
- <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
- <1d0ba3fc-1504-4af3-a0bc-fba86abe41e8@kernel.org>
- <20240919191725.GA11928@yjiang5-mobl.amr.corp.intel.com>
- <874d5908-f1db-412f-96a2-83fcebe8dd98@kernel.org>
- <20250303222102.GA16733@ranerica-svr.sc.intel.com>
- <acb5fa11-9dce-44d0-85e3-e67a6a10c48f@kernel.org>
- <20250312055118.GA29492@ranerica-svr.sc.intel.com>
- <17d37eab-2275-49ff-97b9-6b6706756f04@kernel.org>
+	s=arc-20240116; t=1742502981; c=relaxed/simple;
+	bh=HNI3+8j2uUg+iUrX5QfJ8q4x1m2XlYX6YegdFOe8SbQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lEvNKfsQJkvcPqezkAAkYy+8hZVCCzwSHBZqrUz/F5TMG8CU1ywTGE9ZMbFch1JwNNsSnH/lLoRiJgQvj03+rIXPViRbL4xK1ra6r773EiMO2mdnPO+udvYCaxMHL6ikuiWKNF3wrHq3vjiwMBgV9K2vfpdsaLULySQ0ZjkKtqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jQmCA8Gh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742502978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wt6bgZEsyM6VG0/rKn/P//sJOGO57/PIOicF9noce8g=;
+	b=jQmCA8GhfGw/6z6DCM5KOZjwqZq2QKp/+D0y/T/GJqvPxl2W9eNBUOF5xvPnr6Rd6A3QOI
+	A6f49oU/ncgLBGDt61PEUxOOi490s7hGQUepIQUxy7a2aT1D+vK5OdtgedbmaBmhuXRg+r
+	nTeMBLzw9sTX/+GtQw+UhouTW1GKRjY=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-59-6s09irAHPwGvQ0OtIXd-Pg-1; Thu, 20 Mar 2025 16:36:17 -0400
+X-MC-Unique: 6s09irAHPwGvQ0OtIXd-Pg-1
+X-Mimecast-MFC-AGG-ID: 6s09irAHPwGvQ0OtIXd-Pg_1742502977
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476b2179079so22735871cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:36:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742502977; x=1743107777;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wt6bgZEsyM6VG0/rKn/P//sJOGO57/PIOicF9noce8g=;
+        b=ZgFu0y4affT7nIQkx6idapq8im3+2i3cfbFoAjD/Z99ROyNNIeiJ1ER3kvjIOXDw4H
+         206FLHkorlXC/aPbDTLoKKQ8zKQFahvAqLX3gS00Re3ZDmUtrT2n89w5wtEgT1XI5kUi
+         OYStUs5Jeb5i/myWdDsFrMzIsHvIC7IlqnfeXWZqtoWG3Bsw5lvVlLaZJhphnv5fnA00
+         YAEc+1YqknDaLmRtraZkIuD4qmiZCy6yQtDhHTdHpW6V3ZMeldE+b24dz5ioVLh0whrs
+         ZX6GYHA7aEHalMAfwJUVyiSjx4lnqBQ3ugC5ZUXxdANbOx3k4FE89v7gCfCMGFYBRFLn
+         PZVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDURzei1LRykJ8xctAAmjYcpipWw3+XfHIz34v8m/CnAcuDFwYAm6RLaJGXYoEGBw7OjJkxoTl5cSohLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCXyc6Ls6JcYdXhdiXeNo4bNqkGl12bwZFO89Xt1URNq1kxnbS
+	aUU8/HD0c8Oa7cRTGCDduDwFOHk4eO4CZuWGd0neDtrBfZVpGXa30FiOXV8jiQG2Byd7ypCkoMJ
+	3DXC4W3/14g0XkuOobWEU0idFIeITGJL0AE88znmDux9J+4Xg4MMahuXv23mWXQ==
+X-Gm-Gg: ASbGncuinSBzSjh5NmguupKKK1lJdUVOfX02SlXTRbSCMiuRZYiVd5sZpO0/ztML6it
+	v64yvb2el9GwIbXxIWnBDXb23k3E2SixjTLbwVyXtbKrhIhI0MgIadfYzBP8I5ZhSrHQ/7Z3pBQ
+	JEmv3GQboEGnXbGg0YAjADXDLVXafXWsSAyCBsGS0wQ2SUAinv7NXycJ+84o6VxNLuO7dInfzjk
+	bn+pKPDJ4Gko8FqtEfOFzofkxqtfgXRNyZnSVwppNmr6GO0icknKsFGc7fpdT/19pSOnlKuOieT
+X-Received: by 2002:a05:622a:1f89:b0:476:7bd1:68dd with SMTP id d75a77b69052e-4771de7deadmr13620591cf.50.1742502977167;
+        Thu, 20 Mar 2025 13:36:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFc6nQvnoQrcX1ByqFsZNWw+StGQCeklVgridhqC3mGlG9suOczgaIZuDOEPlY7AITfEcVPCg==
+X-Received: by 2002:a05:622a:1f89:b0:476:7bd1:68dd with SMTP id d75a77b69052e-4771de7deadmr13620071cf.50.1742502976694;
+        Thu, 20 Mar 2025 13:36:16 -0700 (PDT)
+Received: from fionn ([76.69.33.37])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d6361b6sm2726701cf.74.2025.03.20.13.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 13:36:16 -0700 (PDT)
+Date: Thu, 20 Mar 2025 16:36:05 -0400 (EDT)
+From: John Kacur <jkacur@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, Luis Goncalves <lgoncalv@redhat.com>
+Subject: Re: [PATCH 5/6] rtla/tests: Reset osnoise options before check
+In-Reply-To: <20250320092500.101385-6-tglozar@redhat.com>
+Message-ID: <ea016692-37b4-7d18-ffcc-3c7a145bf59e@redhat.com>
+References: <20250320092500.101385-1-tglozar@redhat.com> <20250320092500.101385-6-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17d37eab-2275-49ff-97b9-6b6706756f04@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Mar 19, 2025 at 08:52:37AM +0100, Krzysztof Kozlowski wrote:
-> On 12/03/2025 06:51, Ricardo Neri wrote:
-> > On Tue, Mar 11, 2025 at 11:01:28AM +0100, Krzysztof Kozlowski wrote:
-> >> On 03/03/2025 23:21, Ricardo Neri wrote:
-> >>> On Fri, Sep 20, 2024 at 01:15:41PM +0200, Krzysztof Kozlowski wrote:
-> >>>
-> >>> [...]
-> >>>  
-> >>>> enable-method is part of CPUs, so you probably should match the CPUs...
-> >>>> I am not sure, I don't have the big picture here.
-> >>>>
-> >>>> Maybe if companies want to push more of bindings for purely virtual
-> >>>> systems, then they should first get involved more, instead of relying on
-> >>>> us. Provide reviews for your virtual stuff, provide guidance. There is
-> >>>> resistance in accepting bindings for such cases for a reason - I don't
-> >>>> even know what exactly is this and judging/reviewing based on my
-> >>>> practices will no be accurate.
-> >>>
-> >>> Hi Krzysztof,
-> >>>
-> >>> I am taking over this work from Yunhong.
-> >>>
-> >>> First of all, I apologize for the late reply. I will make sure
-> >>> communications are timely in the future.
-> >>>
-> >>> Our goal is to describe in the device tree a mechanism or artifact to boot
-> >>> secondary CPUs.
-> >>>
-> >>> In our setup, the firmware puts secondary CPUs to monitor a memory location
-> >>> (i.e., the wakeup mailbox) while spinning. From the boot CPU, the OS writes
-> >>> in the mailbox the wakeup vector and the ID of the secondary CPU it wants
-> >>> to boot. When a secondary CPU sees its own ID it will jump to the wakeup
-> >>> vector.
-> >>>
-> >>> This is similar to the spin-table described in the Device Tree
-> >>> specification. The key difference is that with the spin-table CPUs spin
-> >>> until a non-zero value is written in `cpu-release-addr`. The wakeup mailbox
-> >>> uses CPU IDs.
-> >>>
-> >>> You raised the issue of the lack of a `compatible` property, and the fact
-> >>> that we are not describing an actual device.
-> >>>
-> >>> I took your suggestion of matching by node and I came up with the binding
-> >>> below. I see these advantages in this approach:
-> >>>
-> >>>   * I define a new node with a `compatible` property.
-> >>>   * There is precedent: the psci node. In the `cpus` node, each cpu@n has
-> >>
-> > 
-> > Thanks for your feedback!
-> > 
-> >> psci is a standard. If you are documenting here a standard, clearly
-> >> express it and provide reference to the specification.
-> > 
-> > It is not really a standard, but this mailbox behaves indentically to the
-> > wakeup mailbox described in the ACPI spec [1]. I am happy reference the
-> > spec in the documentation of the binding... or describe in full the
-> > mechanism of mailbox without referring to ACPI. You had indicated you don't
-> > care about what ACPI does [2].
-> 
-> Behaving like ACPI and implementing a spec are two different things. The
-> question is whether you need to implement it like that and I believe
-> answer is: no.
-> 
-> > 
-> > In a nutshell, the wakeup mailbox is similar to the spin table used in ARM
-> > boards: it is reserved memory region that secondary CPUs monitor while
-> > spinning.
-> > 
-> >>
-> >>
-> >>>     an `enable-method` property that specify `psci`.
-> >>>   * The mailbox is a device as it is located in a reserved memory region.
-> >>>     This true regardless of the device tree describing bare-metal or
-> >>>     virtualized machines.
-> >>>
-> >>> Thanks in advance for your feedback!
-> >>>
-> >>> Best,
-> >>> Ricardo
-> >>>
-> >>> (only the relevant sections of the binding are shown for brevity)
-> >>>
-> >>> properties:
-> >>>   $nodename:
-> >>>     const: wakeup-mailbox
-> >>>
-> >>>   compatible:
-> >>>     const: x86,wakeup-mailbox
-> >>
-> >> You need vendor prefix for this particular device. If I pointed out lack
-> >> of device and specific compatible, then adding random compatible does
-> >> not solve it. I understand it solves for you, but not from the bindings
-> >> point of view.
-> > 
-> > I see. Platform firmware will implement the mailbox. It would not be any
-> > specific hardware from Intel. Perhaps `intel,wakeup-mailbox`?
-> > 
-> >>
-> >>>
-> >>>   mailbox-addr:
-> >>>     $ref: /schemas/types.yaml#/definitions/uint64
-> >>
-> >> So is this some sort of reserved memory?
-> > 
-> > Yes, the mailbox is located in reserved memory.
-> 
-> 
-> Then why reserved memory bindings are not working?
-> 
-> Anyway this was half a year ago. None of the emails are in my inbox.
-> None of the context is in my head.
-> 
-> It's the second or third email this month someone responds to my email
-> from 2024.
-> 
-> Frankly, that's a neat trick. I won't remember anything, but it would be
-> impolite to say just "no" without arguments. So now you will resend the
-> same code leading to the same discussions we had half a year ago. Or
-> ignoring that discussions.
-> 
-> I don't understand why this should be reviewers problem, so no, that's
-> just unfair.
-> 
 
-Thank you again for your feedback. I will send a third version of the
-patchset. This will give the full context. I will incorporate your feedback
-in such version.
 
-Thanks and BR,
-Ricardo
+On Thu, 20 Mar 2025, Tomas Glozar wrote:
+
+> Remove any dangling tracing instances from previous improperly exited
+> runs of rtla, and reset osnoise options to default before running a test
+> case.
+> 
+> This ensures that the test results are deterministic. Specific test
+> cases checked that rtla behaves correctly even when the tracer state is
+> not clean will be added later.
+> 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/tests/engine.sh | 40 ++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/tools/tracing/rtla/tests/engine.sh b/tools/tracing/rtla/tests/engine.sh
+> index 64d0446dc28e..5db8aa4bc031 100644
+> --- a/tools/tracing/rtla/tests/engine.sh
+> +++ b/tools/tracing/rtla/tests/engine.sh
+> @@ -8,12 +8,44 @@ test_begin() {
+>  	[ -n "$TEST_COUNT" ] && echo "1..$TEST_COUNT"
+>  }
+>  
+> +reset_osnoise() {
+> +	# Reset osnoise options to default and remove any dangling instances created
+> +	# by improperly exited rtla runs.
+> +	pushd /sys/kernel/tracing || return 1
+> +
+> +	# Remove dangling instances created by previous rtla run
+> +	echo 0 > tracing_thresh
+> +	cd instances
+> +	for i in osnoise_top osnoise_hist timerlat_top timerlat_hist
+> +	do
+> +		[ ! -d "$i" ] && continue
+> +		rmdir "$i"
+> +	done
+> +
+> +	# Reset options to default
+> +	# Note: those are copied from the default values of osnoise_data
+> +	# in kernel/trace/trace_osnoise.c
+> +	cd ../osnoise
+> +	echo all > cpus
+> +	echo DEFAULTS > options
+> +	echo 1000000 > period_us
+> +	echo 0 > print_stack
+> +	echo 1000000 > runtime_us
+> +	echo 0 > stop_tracing_total_us
+> +	echo 0 > stop_tracing_us
+> +	echo 1000 > timerlat_period_us
+> +
+> +	popd
+> +}
+> +
+>  check() {
+>  	# Simple check: run rtla with given arguments and test exit code.
+>  	# If TEST_COUNT is set, run the test. Otherwise, just count.
+>  	ctr=$(($ctr + 1))
+>  	if [ -n "$TEST_COUNT" ]
+>  	then
+> +		# Reset osnoise options before running test.
+> +		[ "$NO_RESET_OSNOISE" == 1 ] || reset_osnoise
+>  		# Run rtla; in case of failure, include its output as comment
+>  		# in the test results.
+>  		result=$(stdbuf -oL $TIMEOUT "$RTLA" $2 2>&1); exitcode=$?
+> @@ -37,6 +69,14 @@ unset_timeout() {
+>  	unset TIMEOUT
+>  }
+>  
+> +set_no_reset_osnoise() {
+> +	NO_RESET_OSNOISE=1
+> +}
+> +
+> +unset_no_reset_osnoise() {
+> +	unset NO_RESET_OSNOISE
+> +}
+> +
+>  test_end() {
+>  	# If running without TEST_COUNT, tests are not actually run, just
+>  	# counted. In that case, re-run the test with the correct count.
+> -- 
+> 2.48.1
+> 
+> 
+> 
+Reviewed by: John Kacur <jkacur@redhat.com>
 
 
