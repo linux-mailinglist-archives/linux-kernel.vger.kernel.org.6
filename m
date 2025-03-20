@@ -1,167 +1,144 @@
-Return-Path: <linux-kernel+bounces-570375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCB3A6AF8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:06:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93968A6AF8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52BE317DC7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1563A981AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C5C22A4E1;
-	Thu, 20 Mar 2025 21:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5C822A4FD;
+	Thu, 20 Mar 2025 21:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="C6A4CQfg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wsWzbRLk"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4hQz/hC"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189971BD01D;
-	Thu, 20 Mar 2025 21:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB621BD01D;
+	Thu, 20 Mar 2025 21:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504638; cv=none; b=d7FbQB27Nl5pw3M2u19zREDiAi9yBeNqhBJfuFgvb2MvaNl1/0Lw/BFEZR3WgmiwmFaq7kjLN+asNw3zXeKpvQ0rBPNYJtwUcAVwU0uoAARNAMXgtH0Oi62QREld0OAUx7DuG5qONrslw8CcNGS9daKC7adeuxNOkLZuCebDFFA=
+	t=1742504744; cv=none; b=B5UzY11c3DFs4O8rpVva3l8p+Z1gVpFYZkQxHJIGl6Ou7HXqmQZBKTs96eQVQfUYu4bl/Yj0iLoKZI0hzno3X94so3IiVUNMfsTuoWYLuEOPvENqocD9Zw57xnJiMyMMWntxAEEbmmcymiuzDMguh1HCHeqfLemcr1SXgr8o234=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504638; c=relaxed/simple;
-	bh=G64RnsZyffb5HoNDyjvSqNe4yPGbkvKH5namj0omtWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CPugb7crs0ua5rVD+0TB601bALM3yf8r/aT9BeBYRS/DQAqZkpJnhijMDl76eN5HbHLbRVJT5V5cbsl/wqmHmROsDUq7oyro/oKFI2LdM2ShywMjNmBSNFaU4sD3rAcIo+q/gE8E0BUKUaalmVuzPgYikwiqVqa1gz95W8Se6Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=C6A4CQfg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wsWzbRLk; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 188F41380A27;
-	Thu, 20 Mar 2025 17:03:56 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 20 Mar 2025 17:03:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742504636;
-	 x=1742591036; bh=ly+PiDnpTmX6wAuUIPjJrP087guiCBammai7bWPbJqQ=; b=
-	C6A4CQfgxGaEPcGkvmRM4uEi2wfB2+pmojCyYIpsP1Bs1pJ60AIrQ/7QzIqrmxr9
-	RuiPduTtiRuiMvQFDWnQMO/yX77jo7Y27Z+ylc1RR5vAJK+hrDqu3upL+ZdlabWF
-	n8vV+7w+jh+Q+P32lAPmySBiiXjOaxZzcC84yJs5L9NaFPJOqVroHe1tcgvP3wMi
-	3d3VXBn/n1VMRs1WyC4cleNHEMK1RVLWTGYfziCvivvOQoIJNAWyBCiKrPLmaFjO
-	8SJp/+h6vanxFG7kAZXLeqmeX0/kFnr6VGYlSQmOiu+R5yR6kHG21cfp4lTxY1LO
-	2Yum5wUP4/I9w143JvohQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742504636; x=
-	1742591036; bh=ly+PiDnpTmX6wAuUIPjJrP087guiCBammai7bWPbJqQ=; b=w
-	sWzbRLkuEdbGJM+BksnSTOLnbi2m1kdUeT/3b15JwkxUG6xMdlR8qDAW9m3NO5Mg
-	5mORXiPYAMWh79Ij9MlWOcKgppNsZruOFxJzRlO3zZVJsH4cE3NvikCELJ4buJGv
-	KeIv9x3VJ/jekACQ8AIQAQl+AScw8MVqOQFNphjJH6p+zIP3z8NLlqiArmRLa1fj
-	/gYOytoMj31FtqjHN8ukdvuXorsSAUngIcsUZuCwh9vwVNvc5b+XuuG6eXDXbgod
-	pUC4ATs7+pgovWHpKOSmE00GVT7yJkzMSw/2gxPBNJ5y35UiUuiAqefCbkVfif6J
-	RmJPiwV13wNbkB7As/vbw==
-X-ME-Sender: <xms:u4LcZ8NDS0kq0JnCeRlcrjWEARs02UbjHYaGL1MpHSiKKYGwmnAsXw>
-    <xme:u4LcZy8op60WlcdKezqJ90_i9lbVYJ2N-MQp5cL_FiJ9eu_hifm_XNDd8EMX2FQBe
-    n2XNVT0rWL4lrAqxmM>
-X-ME-Received: <xmr:u4LcZzSu-uKiaKcd8Slv1ALnJ6Y4t7_LqiRcLTUpjS5KqexH_Osd4HE0exBdimNw6D4In6eY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeelvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
-    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
-    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
-    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:u4LcZ0tQEtIvsU1N_HyL6JEzcDhJz5MRVrU_ecKYjZhokB2lSs-HSw>
-    <xmx:u4LcZ0dWVzFUWG8gmWzQdXkmQV83hBvYIFBNz2q_RE6suDyrcluAjQ>
-    <xmx:u4LcZ40iDhZbeG0Bi6AhIhdLfEq4FXl0uVvnQomMpFszMKJXWKF5Ew>
-    <xmx:u4LcZ4_1qKlqsCU9X2SC0_phxWKfHHhTbwoi7j1oBQoCG1lrUl7E5Q>
-    <xmx:vILcZ7yLQT602srq6KuZI0xAIPsMZCH9sKVzZ4AUdFXzkDGzevnx_CZk>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Mar 2025 17:03:51 -0400 (EDT)
-Message-ID: <42531720-ad01-497f-96f5-5cd3ee16afa0@ljones.dev>
-Date: Fri, 21 Mar 2025 10:03:48 +1300
+	s=arc-20240116; t=1742504744; c=relaxed/simple;
+	bh=YgdpRvORfQrJXyGjouHiXsPKxSh1pKbm6IQi0Z4fEqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUk2qYyZJ7mlvIrLD99CUFjnA9huYt8WKC+h4M4vj+WhrqOn4quQtLkC7WumW6GcBTHYopPOyIwUd0hJtweSt4BIum1ZJ8K1vr+PxT4OS4HSHwhSnIVxNNQSnLYoUJ3iFdmQJV6lo76RB3O96jBbVetGC88rlGQk6qFADMKgrxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4hQz/hC; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fb0f619dso26686065ad.1;
+        Thu, 20 Mar 2025 14:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742504741; x=1743109541; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3jPDdAZsU2RRMMAuFebBCueBYeGg/JKuNefmjD9nyKY=;
+        b=f4hQz/hCoDzmcVqX69VzFkchC9WiShFUEsaTUZoSlXwWS2Cgi7rDvgzKeFY6vkAK1J
+         eSI9eb7+VlQzuxFEZ9KXV4aZj0lo96pMTTzyKr8oysl+B6sa1IwnotwTvki80bGvmKUQ
+         6QsKaqYfMNTJalmlfEqW+d6fwDHynj1VW3Qc+FCpQFr3br79eGkLGvw4WwPx55XFyaUX
+         Y7PrsrF2CVyjmmC1k7UsaORhOy/PXO/V0iYPhwTB4lmGVHKgT/fTJIeRUjDanvygbtS6
+         q5HZLqJPtRuVwzCaEXMM3I0XQ+zHsU0Gsh3WVdiY/xp6O+PFyK6llhfotXSodICrNpCE
+         BGTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742504741; x=1743109541;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3jPDdAZsU2RRMMAuFebBCueBYeGg/JKuNefmjD9nyKY=;
+        b=T9+Se1v/TXMjkDn+dgaokaxf2eY6PRKKWlyo+YWP4TPf8PngOi2QxTJRe9f/Dht22f
+         OMyGluEvRc/IKP9DWQILpZz40pHaCivGtNrdmudXXbx3tfTSG6h2S0jlbKIdZ9WweI1G
+         /YWz7eEvzStj72hKRVvVuBkofyGaOTGHA+2H5/BNWicCMa27Gc8O9dxwmsr4n/K6SMdx
+         43RYYWDdBZ+g3yzWD7laXiTA3PJuUcifU4E4rOgDxhe8aeXUoFbyr9XBbXmqa2zKqr+p
+         ebz5gN9Cy/8HprXBDvcXUs6HFPP+8aZas2Tha7J6juZQvL4A0QCq5ijexqGfDHXe47/T
+         DMJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg/8t8XZBWS4RRRzPWxUubAL6PbGIIwbsyZQ7wTYYoGpWSQTxtuekFBd1BX4lWCaNzIHOowlyL@vger.kernel.org, AJvYcCVPuGR2HOTnttZz/iSvDg5OhODi9hSmsUGpyy/0dpsmUQrj0RUreVLJ8pJox9s7PtYRe8V62Gu81mjBHAf5@vger.kernel.org, AJvYcCVVdxJSR+YV6ugk70K+6HiL4KgULCfxUBrr62Cl4dvKU4n8H2iRsd6Phs4qMSIdyJgOP9g=@vger.kernel.org, AJvYcCWhRis8wexgLlWAMuKtce7lFZTHM98OZJaUxAhtE3fNPuV7AgCv/by1M8hepHEx8boSvs/Q5zRLPHKJK38r@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL9RdsZjQ3geDm7+7Xap9RjKxF0EVm5VB8/J/YawUZWp33x+Z4
+	2eCKv2MgonsmHQh2IMgHx4rVAs24rhCVOf2B819kUFZmzZVtLsdc
+X-Gm-Gg: ASbGnctKQmgAnIyYMyi/ezzmnuqwML+jB6z7cVNo1/uNJV7UiMeTc5o+x03P7u1Shmo
+	ngu7aFjFchGvF+edZWVPYEDYvVKB3sI8shNcPmJrOPxpgZuvwNM1OpQ4VyHogv2YC28ma8wi8a3
+	z39fkMnFnXSE7nSYIV1KpNqKvDLv0rrfE5kN28ONFiiJ9jEoxho4LPTKBbYJjwOkMIGCnxmIRmR
+	1xk+B5cqH5xDqzBhUpFn6te4jM3iLiIp3yX9Mrd9i2kZ8vUZi45pGqZW19MF7Hsnf4jEvSRV2Zd
+	FiDeXL+FRAKihhGFXboFnd8cktZ0FNHqq9Sq7d1ZaUb/lmfWkeQXJwYPL0JGkcxQCQ==
+X-Google-Smtp-Source: AGHT+IGByHBrbBgXXk1MNKK8PoOJzGBZqACnvtAZVXwzJ5Mt98hUmINKtxNrRQVVmQU2iZkin8qKTA==
+X-Received: by 2002:a17:903:182:b0:223:653e:eb09 with SMTP id d9443c01a7336-22780c50a59mr11694335ad.7.1742504740770;
+        Thu, 20 Mar 2025 14:05:40 -0700 (PDT)
+Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:7::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2278120981fsm2458075ad.250.2025.03.20.14.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 14:05:40 -0700 (PDT)
+Date: Thu, 20 Mar 2025 14:05:38 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] vhost/vsock: use netns of process that opens the
+ vhost-vsock-netns device
+Message-ID: <Z9yDIl8taTAmG873@devvm6277.cco0.facebook.com>
+References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
+ <20250312-vsock-netns-v2-3-84bffa1aa97a@gmail.com>
+ <09c84a94-85f3-4e28-8e7d-bdc227bf99ab@redhat.com>
+ <nwksousz7f4pkzwefvrpbgmmq6bt5kimv4icdkvm7n2nlom6yu@e62c5gdzmamg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/11] HID: asus: introduce small delay on Asus Z13 RGB
- init
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <20250319191320.10092-7-lkml@antheas.dev>
- <51c78ba6-9518-4259-85da-d761b031df7f@ljones.dev>
- <CAGwozwGsB4UjsHa=CWT2zzbpHx5yPEOtTA9RmVqR1jqMB4_C6Q@mail.gmail.com>
-Content-Language: en-US
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <CAGwozwGsB4UjsHa=CWT2zzbpHx5yPEOtTA9RmVqR1jqMB4_C6Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nwksousz7f4pkzwefvrpbgmmq6bt5kimv4icdkvm7n2nlom6yu@e62c5gdzmamg>
 
-On 20/03/25 21:30, Antheas Kapenekakis wrote:
-> On Thu, 20 Mar 2025 at 08:12, Luke D. Jones <luke@ljones.dev> wrote:
->>
->> On 20/03/25 08:13, Antheas Kapenekakis wrote:
->>> The folio keyboard of the Z13 can get stuck in its BIOS mode, where the
->>> touchpad behaves like a mouse and the keyboard start button is not
->>> reliable if we perform the initialization too quickly. This mostly
->>> happens during boot, and can be verified to be caused by hid-asus
->>> through simple blacklisting. A small delay fixes it.
->>>
->>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->>> ---
->>>    drivers/hid/hid-asus.c | 4 ++++
->>>    1 file changed, 4 insertions(+)
->>>
->>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
->>> index 85ae75478b796..5b75ee83ae290 100644
->>> --- a/drivers/hid/hid-asus.c
->>> +++ b/drivers/hid/hid-asus.c
->>> @@ -571,6 +571,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->>>        unsigned char kbd_func;
->>>        int ret;
->>>
->>> +     /* Wait a bit before init to prevent locking the keyboard */
->>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ROG Flow Z13"))
->>> +             msleep(500);
->>> +
->>>        ret = asus_kbd_init(hdev);
->>>        if (ret < 0)
->>>                return ret;
->>
->> See my comment on patch 1 about trying a loop with the init
->> request/response as a hopeful way to test readiness.
->>
->> Cheers,
->> Luke.
+On Thu, Mar 20, 2025 at 10:08:02AM +0100, Stefano Garzarella wrote:
+> On Wed, Mar 19, 2025 at 10:09:44PM +0100, Paolo Abeni wrote:
+> > On 3/12/25 9:59 PM, Bobby Eshleman wrote:
+> > > @@ -753,6 +783,8 @@ static int vhost_vsock_dev_release(struct inode *inode, struct file *file)
+> > >  	virtio_vsock_skb_queue_purge(&vsock->send_pkt_queue);
+> > > 
+> > >  	vhost_dev_cleanup(&vsock->dev);
+> > > +	if (vsock->net)
+> > > +		put_net(vsock->net);
+> > 
+> > put_net() is a deprecated API, you should use put_net_track() instead.
+> > 
+> > >  	kfree(vsock->dev.vqs);
+> > >  	vhost_vsock_free(vsock);
+> > >  	return 0;
+> > 
+> > Also series introducing new features should also include the related
+> > self-tests.
 > 
-> Turns out there isn't an init problem. I have removed this patch from V2.
+> Yes, I was thinking about testing as well, but to test this I think we need
+> to run QEMU with Linux in it, is this feasible in self-tests?
 > 
-> It was hid-asus taking control of the touchpad from hid-multitouch. So
-> adding HID_GROUP_GENERIC fixes this. I replaced it with that and
-> squashed the rename patch alongside it.
+> We should start looking at that, because for now I have my own ansible
+> script that runs tests (tools/testing/vsock/vsock_test) in nested VMs to
+> test both host (vhost-vsock) and guest (virtio-vsock).
 > 
-> Antheas
 
-Awesome. Is this the one on `#define INPUT_REPORT_ID 0x5d`?
+Maybe as a baseline we could follow the model of
+tools/testing/selftests/bpf/vmtest.sh and start by reusing your
+vsock_test parameters from your Ansible script?
 
+I don't mind writing the patches.
+
+Best,
+Bobby
 
