@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-569857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2719A6A88D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 267ACA6A87B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81BCD188BBBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6921B6227A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B597225A36;
-	Thu, 20 Mar 2025 14:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF0522332B;
+	Thu, 20 Mar 2025 14:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3AG9xUgc"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU/MsPs1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3B2225403
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26BF21CA0E;
+	Thu, 20 Mar 2025 14:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742480431; cv=none; b=J6Wm9ikAWwOOp6RrL1gpRJ+bucY5vARkjs/Yc329KYIaY4bpFLAqJGVPrVHBtzkFfmVtmSeKwzQk49aTB00uyDikOCf/BHMlIASrm4ZBHOWInjH7Sh0jsbb6LPKYDadMiF+j08KAMNVmcR7eGIDfxv2pOjHtf2d4gJ9nd/ylulo=
+	t=1742480396; cv=none; b=OjcwYjYG2VDjUQHqnIpIQo0aTMc5HcORuVtXdDUtCtUej0XRN1A83Peu+ABxJ7XZYI1XhnFXkIdp6GkiOSTKyXKs1wc8AGXGFmrx6W8F5RKTTjbiSU30VdjpguSgB8/lKhBqvih5bvCkV85kpEZnaWoqrTBO32nvnRaclWYTXpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742480431; c=relaxed/simple;
-	bh=Il0oi8W0P1a3TdzcT4YRMppA6PiszW9iVacc6BETtEU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EiXBfeUxjf56+SuauGGr6g1GKEoFLaP3vbNXYzKlrmO2H1l8hcfhH06gtfU1nAXAJ4V3kcvjy4213KKTsjAJNpOPo50S0lO0F2X9ml4oFyt8Sqsv26KVFo8hRIUY//rgN+18q/M3+R6/LphL3C08tlyA5LGuisPWuxB4gyvBGZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3AG9xUgc; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff7cf599beso2037420a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:20:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742480429; x=1743085229; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=qmMYNbiE7NCmjn3AfFSyN2d7EeiAyZE9x1WOdP/HlBU=;
-        b=3AG9xUgc3lGd6Pprwr5yr5yEN1mF7TejSfjEUZ/gzhImLPe8OsrvWOCIAtz4MDuiJn
-         CwyQTTwYdjpSjPRJPcpsIt2EnuaU/4l4959u0cEwtvQaewkwDAmej+tCF55jGUiJ+vjL
-         ldgcB+C4f1ddKuFBxU0tIZjIHBZ+c86EKWQjss74HgXc1lbOJc2EQFDL6Nv6YTyhLxsa
-         cJG8PUfyhhvQ7h2FXFS1KVCl0NVZ+EQFeadT25obuVL9vLe8+LrfUkYMN5a+fKRMNzQR
-         /EAqe5WJY+VCqok6IhnApi+JY/KQN6K9LIO5jsp6uv0xPMGDczTOjlGJ7MdMGYroquI3
-         zbeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742480429; x=1743085229;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qmMYNbiE7NCmjn3AfFSyN2d7EeiAyZE9x1WOdP/HlBU=;
-        b=I53q5yq5Hm3QmxM8w2BYt+alBovWHpBUCYx1YC8Qw6mUOwACseBSjinXx4JGa990ZW
-         Q4sihwHpW5cV7qnE1qeMTX1azcI6miGQfsPENKl1tkQprMNoWo0K1CkgFimFwhwA+DtJ
-         21jFhgzsxzC10TPCo5cUOZdOLF2JbzFiXaVM7drk3R3k2fjr1QOOthZQsFqfZBlbF5pf
-         vBBxa2LN1PZu9HQDtIRA4Wpmjghuri+TU4vkaXWtGvx24FmqWYYBNgzGaay7rS1Zx4yV
-         NuLouHIa+bq0ncDQUvW1uw2DEP5pIKbihO8eu0SOSzCZZfwvHQSqjxSsDG4JpItYFqLW
-         tRww==
-X-Forwarded-Encrypted: i=1; AJvYcCWfrZZAMjWFji8wwRW5EAURq9/WUXEs2JnEMAELcTXcCyzkUy9keJnoGqU/yudL46K/7R50ycdErTD6lCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmdJKR4ApPlnvoFIdZg00I086KpmubBzTNvy5n7jKYFfrNqIzK
-	0w4SMbZRkhNTE2uT083lSIsvZc2AyyQEjigWZecCK9WNStDYKu0BHXZGRJzXX45hkvy0CR+ahle
-	RKA==
-X-Google-Smtp-Source: AGHT+IE+kfb1HoHRnQ267XvStqDZApTqRyoY0YWXiW9OB48WA4CtrHH/pA04OI5VxdB4Gu95vkhQH/SyzBw=
-X-Received: from pjur8.prod.google.com ([2002:a17:90a:d408:b0:2fa:b84:b308])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2f84:b0:2fe:8c08:88c6
- with SMTP id 98e67ed59e1d1-301bde53e35mr11107321a91.7.1742480429675; Thu, 20
- Mar 2025 07:20:29 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 20 Mar 2025 07:20:22 -0700
-In-Reply-To: <20250320142022.766201-1-seanjc@google.com>
+	s=arc-20240116; t=1742480396; c=relaxed/simple;
+	bh=qyfaxEvK49XR27EAJ+fha8D6RJrKSVW9cEOBHN9smow=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rDn8Y/0MC/2y2qj6J5SbNyn3wgBfMtH+hwpvLQ+vmIUOvIm8mY8M8+qw7SRQSyn2yc8k1+k703+IJCXW8zY3vY/GXyi74YbqKdJtZ8yRNcamUyCEbePSXq8jLU0dlTLBbYvDcTBFFg5g0T5xAYtgpg6JsA7PIkvvqYz9W2YagNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU/MsPs1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B62BC4CEDD;
+	Thu, 20 Mar 2025 14:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742480396;
+	bh=qyfaxEvK49XR27EAJ+fha8D6RJrKSVW9cEOBHN9smow=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hU/MsPs1238cpRZqFXwzNfbraISgJ0SS/+KPvba1hyFk1p1hAus3Q3KvdFMAwDVyC
+	 YrlYLOVeyvH4+pW3XGaoZ/f84UMVX5a7WZRsSi5faXjEXYKj9lzR+TFp5c4QaaIBoe
+	 NxaUUB3R/YbXQ1+k7prnr9o3Oo8TNPyK34lUQJvthvt7cp934HG6T93PAq9yRQ3bgX
+	 y9Bf/Q7daApE7gKdFjES+zaG+UEfVTp6mqcUHFmdWVI6ag6YD0T+p13Y9lAkWD7NhT
+	 Qal7+HWP3SWxWVDsJlKYRt7tP/a2feVNHLTCgqdoc8MQ9B3j2QQKSl3mzblzBIO1KL
+	 SlG66qVICCDLA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0AB3806654;
+	Thu, 20 Mar 2025 14:20:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250320142022.766201-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250320142022.766201-4-seanjc@google.com>
-Subject: [PATCH v2 3/3] KVM: x86: Add a module param to control and enumerate
- device posted IRQs
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/3] mptcp: fix data stream corruption and missing
+ sockopts
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174248043234.1784312.9345758838813943465.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Mar 2025 14:20:32 +0000
+References: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-0-122dbb249db3@kernel.org>
+In-Reply-To: <20250314-net-mptcp-fix-data-stream-corr-sockopt-v1-0-122dbb249db3@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, fw@strlen.de, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amongodin@randorisec.fr, stable@vger.kernel.org
 
-Add a module param to allow disabling device posted interrupts without
-having to sacrifice all of APICv/AVIC, and to also effectively enumerate
-to userspace whether or not KVM may be utilizing device posted IRQs.
-Disabling device posted interrupts is very desirable for testing, and can
-even be desirable for production environments, e.g. if the host kernel
-wants to interpose on device interrupts.
+Hello:
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/x86.c              | 9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index d881e7d276b1..bf11c5ee50cb 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1922,6 +1922,7 @@ struct kvm_arch_async_pf {
- extern u32 __read_mostly kvm_nr_uret_msrs;
- extern bool __read_mostly allow_smaller_maxphyaddr;
- extern bool __read_mostly enable_apicv;
-+extern bool __read_mostly enable_device_posted_irqs;
- extern struct kvm_x86_ops kvm_x86_ops;
- 
- #define kvm_x86_call(func) static_call(kvm_x86_##func)
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index f76d655dc9a8..e7eb2198db26 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -227,6 +227,10 @@ EXPORT_SYMBOL_GPL(allow_smaller_maxphyaddr);
- bool __read_mostly enable_apicv = true;
- EXPORT_SYMBOL_GPL(enable_apicv);
- 
-+bool __read_mostly enable_device_posted_irqs = true;
-+module_param(enable_device_posted_irqs, bool, 0444);
-+EXPORT_SYMBOL_GPL(enable_device_posted_irqs);
-+
- const struct _kvm_stats_desc kvm_vm_stats_desc[] = {
- 	KVM_GENERIC_VM_STATS(),
- 	STATS_DESC_COUNTER(VM, mmu_shadow_zapped),
-@@ -9772,6 +9776,9 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
- 	if (r != 0)
- 		goto out_mmu_exit;
- 
-+	enable_device_posted_irqs &= enable_apicv &&
-+				     irq_remapping_cap(IRQ_POSTING_CAP);
-+
- 	kvm_ops_update(ops);
- 
- 	for_each_online_cpu(cpu) {
-@@ -13552,7 +13559,7 @@ EXPORT_SYMBOL_GPL(kvm_arch_has_noncoherent_dma);
- 
- bool kvm_arch_has_irq_bypass(void)
- {
--	return enable_apicv && irq_remapping_cap(IRQ_POSTING_CAP);
-+	return enable_device_posted_irqs;
- }
- EXPORT_SYMBOL_GPL(kvm_arch_has_irq_bypass);
- 
+On Fri, 14 Mar 2025 21:11:30 +0100 you wrote:
+> Here are 3 unrelated fixes for the net tree.
+> 
+> - Patch 1: fix data stream corruption when ending up not sending an
+>   ADD_ADDR.
+> 
+> - Patch 2: fix missing getsockopt(IPV6_V6ONLY) support -- the set part
+>   is supported.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,1/3] mptcp: Fix data stream corruption in the address announcement
+    https://git.kernel.org/netdev/net/c/2c1f97a52cb8
+  - [net,2/3] mptcp: sockopt: fix getting IPV6_V6ONLY
+    (no matching commit)
+  - [net,3/3] mptcp: sockopt: fix getting freebind & transparent
+    (no matching commit)
+
+You are awesome, thank you!
 -- 
-2.49.0.395.g12beb8f557-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
