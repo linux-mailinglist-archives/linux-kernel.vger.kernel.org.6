@@ -1,235 +1,136 @@
-Return-Path: <linux-kernel+bounces-570512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA202A6B197
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:24:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E77A6B1AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7E6188F6FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5D33B4F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A971F5F6;
-	Thu, 20 Mar 2025 23:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E3422A819;
+	Thu, 20 Mar 2025 23:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="BJP2TfCS"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11010008.outbound.protection.outlook.com [52.101.51.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MaSTqBvV"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F98C22A81D;
-	Thu, 20 Mar 2025 23:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.51.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742513049; cv=fail; b=hF/TDcDYtxPCfLZp4ejN7RFg2J4XfimCtlJh5H5ZQ1vd7532nMuZwal2s4cN2WncO6u5HQZ+/jBzl3WMwEu7eZ/BB8xnNgEFxtZyUWuEi8Uu7SZi2YAqJ/C8T+L8Kivgpfoi6bqNt0hqPujGb70kSPjhyeUm9phzJlz/alRqhhE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742513049; c=relaxed/simple;
-	bh=GjmV6+3V/al5OTZA+8dHYWIU2flgs5WkxeqVPkWlgLw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KR2ttxE2y0WISOJpS0erY/AfeeWeQDuYjnjUMMhzLHBAcYYr3kNDnQaeIQiBd1+f49Yclytkrg3VrCTL7ga1Gxo7GKhg3MPU8p+Fox1KbliB8P1RlCrA6qeQOQHZA/HvKTCQvIgYD9kVokfj3ZDaqUBiZnDE7XUO/UQIhJhAe7U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=BJP2TfCS; arc=fail smtp.client-ip=52.101.51.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tc9jbl1tLCexOXKky+eXTzwF2BGoUnHxVKiF9XbIVt2xjgMcRfGaPe5cOlAlaBXMt1F1ucC1SaInFtCjtYnPW1NFbZ8rjD13AJT4S7wppELc9SFHUN89e6H1ECeYZAWmOVLmUKZ22z0uUuD1sOy2XHjuDdUQ0nc6eu50ApUJoaCCrrZjyjV3J0I9IA90qniLrtqRsNSHNmOIEGoFrYRJcE0XZ8lZZCdC2e1jxQ2Xt81c7SO8e9czDT72xNWPWzje2+pu+XOGm9llD+jbu2AVHNpUuUeyq0GdQzdDLY4qHQftiDW7erveIkGZ1ygpwyqG55t0C5TQciWANvKXOaovqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CM5uIu46G12a9KPdLthrDMDQ6XRRyUos7qEUH9UBiGk=;
- b=ndlaIEYoh42henh6UEiRyFYojdw0FkCJzJPXXqLc6YLvsCWoLjcLVXfbDzRfVyw22YqpmKEYgnzCA2mzhcJTaWc9YeyDpEV9la632UKPH2DQWJf6CcnexDUIl0BX1XllveDzmckdT5KFCjxaGRXszEE8q6Bxb6oXeNaOJ3lcANNZA+4nxq2idlO4x2ja9wfRn6dGWuGURcoO7Uoba0UAYpoxuD9FqkBmlULZKMrpf6ah3eoYHeLWLIV+AJyqUx9nvBh39u01VAtAfPnvKzBoexbIkbG9ndmoCnZXPvxVVJO7gIYdHgRNMgx6xXeXhHngui2/0TrrneX9e/It54AVPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CM5uIu46G12a9KPdLthrDMDQ6XRRyUos7qEUH9UBiGk=;
- b=BJP2TfCSSVbZAsR4VJMEr5fzi/dUVRS9DUl+fI/oX32SgdaC1kNy8xM8ZMCSUPPl5PIJ4x2Wrno76Ld/thoA8DVHdwf27zBaum/8KBIp2qz+gNJC4vNniUwSP8PWE18EjnYjWZP8M1RrIj3fWLpPpS365vxU3E4oDAFGLFDOz6n95Eyr9xxk/NZbwhclDkODYA+kn7zmY/DYDs7pE+LRy2ElJEiriqPvor26gcY5nQZXrzKUASi9y6TFAWn3SvPItokiQGYG2IvdC96XhRwLwr8wCOokmDOa+GJSSSyq0BinyTucDrQMYU++7fnKhgO4VGBTt7fmD3hGLIZMb25hWQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
- by DS1PR03MB7869.namprd03.prod.outlook.com (2603:10b6:8:21d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 23:24:03 +0000
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c]) by BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c%2]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
- 23:24:03 +0000
-Message-ID: <3b325b3b-df64-4f16-9284-cddfaaa40a21@altera.com>
-Date: Thu, 20 Mar 2025 16:24:02 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: agilex: Update eccmgr in DTSI to reflect
- hw/yaml
-To: Rob Herring <robh@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org,
- bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
- rric@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-edac@vger.kernel.org
-References: <20250320164622.6971-1-matthew.gerlach@altera.com>
- <20250320164622.6971-4-matthew.gerlach@altera.com>
- <20250320193413.GB750632-robh@kernel.org>
-Content-Language: en-US
-From: "Gerlach, Matthew" <matthew.gerlach@altera.com>
-In-Reply-To: <20250320193413.GB750632-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0135.namprd13.prod.outlook.com
- (2603:10b6:a03:2c6::20) To BYAPR03MB3461.namprd03.prod.outlook.com
- (2603:10b6:a02:b4::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA6C22A4FD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742513287; cv=none; b=OZYzn6dpL7CVs3tHkJNY+aV9A1yvS7gEhXUkgIASjWPm2GeTpoMqsNQIZzfelLPEFjCLPyXIP3GBl9FpMSUjLMcz5mgCscyyUgOYu0xnMw3aN5Mm1GrcVfmpMB4l+D7pCLDrOwVHdhruF9Oe3vHQJDo3HChifKtCunoBX0mSbN0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742513287; c=relaxed/simple;
+	bh=sTzT5PtwQSPHGFOm3VurrDvsdk8Mjq6EUX9qB/8ft9M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Q3KyRNYLZVWpUxc8BbcNWo3jHXFTwozGEU2PTQfKc7joJ7tb+QN+6y2DyttWHtzPKwmmrpd/S5F5R5IMseAmdDC1KJ+35tu0A4c2XKG53UvZuVmX5Nx2zVAoqe/AOO5pA7i7+FBbi8KdBxHGiWlVrmDn8ybUcQ+jQqKRQE3IjsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MaSTqBvV; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso3053936a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742513284; x=1743118084; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kzKhceJYkAUqAvfvyFb46En6N7ik17gmHG0Ft959/Ys=;
+        b=MaSTqBvVlvd8QmrxkuM4IcrQwPmDyczMhD4BOENlrUXSO7ORTweuil9G5IkpK8Z4yO
+         QX7iP93UA/RXBSgAK0BETlkZuJR6XBjLJxj9N2oq+es+/xgxiSFewfEyKLIVNDVIHOM+
+         2v18BjEpsCqjHU2lFMgia5rSn5iqn3haADyl9AENK+GUdXTEz3PYPKOlw0rLAJkhl+w9
+         zrpzSbj0rCt0iQJgamPhz5iE4saJqL1L4yI+01FjKA9Un/UMHlf9FYYdHG1uiNXf0oBW
+         G/HUERmg5OLRSxTneZElq6VH8UHs+ThHQ3Qgd3lyk9INqBZwjNgfWR6xcKWW5nOwp7s/
+         B7qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742513284; x=1743118084;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kzKhceJYkAUqAvfvyFb46En6N7ik17gmHG0Ft959/Ys=;
+        b=xG4gvA2GPrDZEfjea5v+ONz8gHBnofFmVBzsXdwy4cukppzJFamX2ruQT6/SOHD6iM
+         arx6IeYMHx6k32l39EzXkMa7s9MMZl8WsWWDWf2jCWEd9QEVKcX+ABt8MnDkm+dhhdul
+         3V2AUHMRGaoTaSWpqbjdGQUyblxM+I1G7Ld+EKwf2NW0/KxJdh1hk79o0/tNvU/DkX0H
+         LdRLLczXrO/afXg8zFNH8UgS7kN1Iq0rLIeSloBux3X1d+cSltEGOLJlqqnnWUKm1MH3
+         wdxME7+0ucGAfvlowrUlNmqkYlJUuSLxhSx9aCYCsN6fFTfVhwkHwk+E2tMNSukbm7Fe
+         UhSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwtqZzSnVkdbOgytmPeVUBjebptbzpzNa+iTISnpjljci+zHKQgKoH8OpJVDjrIXxlf3GIHZGdZH8+Fa4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwElXp9olbyGjNTIvYXtjNAnHAMT2QYr7zsTPXY8gZ6PsLT0XJL
+	w9V0e6ZIzggYdpEuOLSWS8071iHhQjhYmcvZAz+7MbsGudPuzLWQmaxdERRJvLNyvkNES6kb0fy
+	bYNOB79uSWz0x8JFlzO/HhR5Szw==
+X-Google-Smtp-Source: AGHT+IHnAupWokYIK22X9v/qMVPuyMFNnXuVjx1FMSGpF61YwN2ljJRb873YXI9hUKxhoK14+Ih+q/r8UQu7GQopifg=
+X-Received: from pjbpq9.prod.google.com ([2002:a17:90b:3d89:b0:2fa:a101:755])
+ (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:2551:b0:2ee:d193:f3d5 with SMTP id 98e67ed59e1d1-3030fe595c0mr2031878a91.7.1742513283758;
+ Thu, 20 Mar 2025 16:28:03 -0700 (PDT)
+Date: Thu, 20 Mar 2025 23:27:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|DS1PR03MB7869:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d1ceb3a-3a2e-4306-4e63-08dd68064d76
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bmVPSTdLTTl3cnRPS1hjenF6ZCtKZDg1c3pHMTltSUMyY3JWK3FQZ01qUEls?=
- =?utf-8?B?c2o1M3ZmSzFRUlVNcnlBODV6aTRUQ2ZBZndSQWcwUklFdEtvZDJUODduaFUz?=
- =?utf-8?B?S0M0d3pLUFArc3BOWUlGN3NuZkxNSTZJb2hCRGJheDhrK2pqSkFzK29yYTBS?=
- =?utf-8?B?US9ueC9XUy9jRklOSmh6eXF4OWNqUElhUWtieHFjaXllcFhpcWF5V0ZZRlRn?=
- =?utf-8?B?S242S3piMXh6enkrajVCR2w5WkJ5Wnc5WDMvTG1JNXlCelI2N3FmMjU4VzhX?=
- =?utf-8?B?eVJpL0NhSTRmUmswUzJJdlNoUTVpWVlBd3NZTTB5T3dtZmoybllmU3YySXc0?=
- =?utf-8?B?VDVEeVlBejA4MXd5OTNCRWdPWnJyQnFjY2VVMTlURkZjNnVMQWIrRHM3Mkx0?=
- =?utf-8?B?N2Rxa3RsYVA4RmI4UWoyNmRyb2VaL0x6MzhrSjlpWXoyN1RzQXVxQzN5ZzdK?=
- =?utf-8?B?MUdFOGRkWERyRVFjMVpZaUFaZ3BDbkJNMVpuc01xcDFqd2FEakZyWTJhT1Fm?=
- =?utf-8?B?N3NLYkxUOXgrMTUwNjhIVTFKcTZqYzFwelgrYk5FeEtmY05LYkt0TVo5RGV4?=
- =?utf-8?B?RWo0MUlkK3ppbmJYNnQzWUdYWDhYZnVyeWxhKzEwcG5oc1hFMG9RZm92aE9m?=
- =?utf-8?B?WFpWWUlXVnV4VHdLd1kwQWF1d3lxOGR2U0NoWkh2VFZIRU9XSmlOemNsTG9N?=
- =?utf-8?B?SW8vSWd5NGJqbUd3eC8yQW1lejVONXlkNEhmU1pGMnBQTjNEUktQYmhsZThu?=
- =?utf-8?B?cGJiem5FY3l5Q0RjTkEzaVMxMWRna1hPZGxRRDR3NDQ1Q1JhYzArcytTZW1t?=
- =?utf-8?B?eUIzNjN3ckx1UmxHalVZQjdXSmwrSXA5c3h3TzYxTWdPUk5RZHFOOUxyRUNY?=
- =?utf-8?B?OER5MFpEUzVFeDNKRS9QcHprYk9NQ2FSYXFJYlJ2eFN6SVpoOWhNNzBpNkJQ?=
- =?utf-8?B?MmNMY2cwdTJxcjBKOEIxVGlNMWlQeEV1eHZjL1RISUg0U0FmT0ZUcUplZ1JS?=
- =?utf-8?B?cnc0TnQycTJvRUxaWktlclgwR2VPdWswblEwZFBORGkydTBWMUpzSVFURHJk?=
- =?utf-8?B?WEllQUcyVUdBTVpWQUx3SnNzZzJPZTZiZzNpMjhmOFNxYXU5cmxoWWZyT3pP?=
- =?utf-8?B?amlNU2tLdThIWjd4QThJcWxwbnlBYzQ4VVp0Y25Ha1hFYkw4TXBSSUVxeGFs?=
- =?utf-8?B?VFFxWFc0NWNSb0Eyb0RXSHA3ZGlDSmZocUFNeHhKRUoxcjF6ZUF2WWlHN0sx?=
- =?utf-8?B?ODBucHMwNXJzc3JTeVluUy9LeWlUNnJLalB2bmJ0aVNITUtrdC9oZWJPbUVY?=
- =?utf-8?B?NThKOFJoeFY4VkNEVUFzMnhBUUZ6WFpmVGQ3QXhSejg4K3h2NS80MlFtN0Rt?=
- =?utf-8?B?YUd3ZU8zeVRaVzdid2pJemw2Qk0vL3pIdytqajRIOGJZSVB6SGlXVnJVcHV2?=
- =?utf-8?B?cmMyeWd1YmswbFdzbTd5Wkxia3o4R2dvdVhvR0pqWHpMd1c5T3MyYkVmQm1r?=
- =?utf-8?B?RVVpaFJsWDZiWk9qTGF4U0NQN0wrMi9uZmdEb2FJb2tDU2VRV0V5T0wxeWN0?=
- =?utf-8?B?cXpJWDEvWGExb1RmdnVJUUVYR0VVRlBYRmZJV1pMZHpJblNJbFdwRWk1dVdR?=
- =?utf-8?B?R3pOQ3hveEszdlMwUTJrUndjYlhoMXMwZjIyVnY4MmRMZ0tQYmxvWFF4Yk9v?=
- =?utf-8?B?K3ZCUDJFckNNMUhYR0pkL0p0VTlhR2FSRVo2N1BFaGxzTkpqVWU1V3VidzVJ?=
- =?utf-8?B?ZkFGUkFtc0FObUVYNTg3T0pheGc0WlhWdlAxOUlWbU9lYjRCUHQrT3pKelVz?=
- =?utf-8?B?dG51eE9BbnZpeEEvU2Jabmx4WGhkOVprSDJ3SUFkS1M1eXR5R3VmUWJyMzh1?=
- =?utf-8?Q?FITHbcLDFQZrW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bUZRc3NNdFlNelJYWjFVS21HMzJQQm54eTVCU2ZWSTR1MnRhc2svNlhjS1ZU?=
- =?utf-8?B?RnhrVlJxMXhXN3J1ZUJFY3NyT0RDd0padlR4UkVnMW1WaFZ1dkdyNDZvclJw?=
- =?utf-8?B?cmFDQ21JNmxBOTdDb2drdC95dnVjTnlyRmlENy91NjZETGVnV2hDc1B4dFo1?=
- =?utf-8?B?ekovYlkxTjJDdjJ2MVVmRFUvc25SOVVmVEVleWtJQ29ielp5b1JuY29TUDVK?=
- =?utf-8?B?TjJrRWpiazhmbWJ2WVo0ZzgrS3ZzSGkyc3k3dGYydk91T1YrWGpEL2VtRTFM?=
- =?utf-8?B?aXVOcWdsS1IrV0FVOEFTYjJ2bDNJTnVyYng3MHBUKzBRaVhscC9sRDVQVWtv?=
- =?utf-8?B?MUNiK0lnMDRxQWNVdVJmc21IZ2VZUlNOTWpiQzJ2aXRXTXFqWFhpS0xNU0FK?=
- =?utf-8?B?QjNNUlJhSVVmV2R4SjJMczJRcUtGK3RIbTZWaXJkc2xiNEE4eGdGQTZjWVBC?=
- =?utf-8?B?NmFjNlNxM1B3SGdsU2ZlNDRHVGhud05sS0s4S1gwZXNYYmhKMDIrNEs3Kzlz?=
- =?utf-8?B?ME9Ud2NnQ1Vjdlp4bEJ6RmIyT3Z3MDhEOHpoRHRBVlFqbEpsQ1I1bFJQRENz?=
- =?utf-8?B?RVlPVGZyR0lwMFRhUzNRR2hSdUdoSno2aG50cGZBVldTdzl2Mjd1MUpKMFRF?=
- =?utf-8?B?cy9na0JtSnlKNDFscTJsV0Y5TGpHNVQ1cHViZmR2K2FvUXdxcWFrZkVHaDVq?=
- =?utf-8?B?Qk5tOE0xeGJCc3BvNExkTS94cWE3eUJhTWlrTVM3M0dmNE9ia1IxSmZxTlJm?=
- =?utf-8?B?bWlxTlkzSTZOVE03QUxpUVNySTFoamRPNlFkTEFGWTlEYVhqcnhyTTJ3dEZK?=
- =?utf-8?B?dmdyU1F3RFhhaDlhU0hJSXF6bUNBbzV5OFpHTnpiWXJMend2Ny9aeGlzYnRv?=
- =?utf-8?B?aUY5UEsvUXZRSkdPbVYxNHVVczZQY2Vyb0RqWHNOSzlldlhiaUFyVmdIWDRF?=
- =?utf-8?B?dGFpYU1xWExyZWJIVWd0aUZoZ0pXc2R2SzRXcWdtTjg0YUlUWW9OMkNsZVp4?=
- =?utf-8?B?TzF1ckdDWVYvRDdIOFlobDBRcjBNWkZESVBiOFc3RlkrOEhaK3lQZGpxOWlW?=
- =?utf-8?B?YmNyMDN0WlpieVB5TTQyaXBSQVphRmZpbnlmaGNsVXVNZ3ZQQWlzV1l4RWd6?=
- =?utf-8?B?dEt2UlZkR29ld05jSmxtNGZqUjM4SnkzeG12TXJhZU9ab2pKT2s3ZW1URG9z?=
- =?utf-8?B?cDUrRWRhMVVIc1VoUkNaeFFiVG1wUlBZTzF5dU1qSXplQzJlTCs4L1dOUXJM?=
- =?utf-8?B?SCtSd0xudXN3Y0EwVmtCL1VrSXhwdGZvRmNMZEFKMDk0MnlJeS8yV1VEdGFt?=
- =?utf-8?B?cTJqRTRubVNWSk9vVmxUSlFKaUdPSUpVdXZTSmtOdFBPZjJzOENUdjZUaDlI?=
- =?utf-8?B?b1hrRlVIYzFST1k0bkMvK0VHeFlBUkR5WjZsUVptdkQ0Q0hLYzlCUnhxeVFn?=
- =?utf-8?B?L1NodGhxbi9UQ0VodWhGUERTa0Roa3pUVEIzdTRxbjJPMGp3T3ViVElQNng2?=
- =?utf-8?B?RXlqUmNMV0VDMTVodEFiVHk3djdaTXZ2NWNOU3ZqYUt0b0V3Y2x1Sk9BcWF6?=
- =?utf-8?B?c0EzNUVydHJXUzJWc2ttcVF5RDU5MnplNlNKYUR3UVJlR0U5NHgxZzFpSHds?=
- =?utf-8?B?QlVIK0FBaFdmQ0YzeEJXUlFMWTdDbTQ2RkpyWXRubHBOQU5OUm9qeDY0UEVJ?=
- =?utf-8?B?WVQ0UjFHOUN3dDJvLzVPT0tBN25RVFRrazRZd0ZSYjJLSGExQzJhMm1ZcytZ?=
- =?utf-8?B?VGRSNmhITDlQNXlrVllCNG5mRmdOTzBjdWsxaDVCU1ZrWkxZcWl6UklJRDRo?=
- =?utf-8?B?b3ZVZk92b1hxUHVaMy9wMnMvc25LSGlhYVRPbEVCQ2d0THVUMnlQcUtod3A3?=
- =?utf-8?B?eFkzZ0NQcTkrcWFwa3kzaFZDV0pGa0xFNGpXT0NBNEdXTEV2aDRZWWZ3Znlk?=
- =?utf-8?B?cXRINndIOW4wYWNvcS8rc1FSckVCMkpneWQ2UXJZaXhmZ2lmVy84b0QyRTZ1?=
- =?utf-8?B?cWhTSDFibDU0SnQvejNLS2lNQzR5SkZhSmRDeEVYekpOSzJxWHFDNTRIdDQr?=
- =?utf-8?B?YzVvbFBSYmhaVERJeXdDd3Q0QmRROFlBcWdKUllxN3Z3TWdPcG1ncStCUlk4?=
- =?utf-8?B?T1crOS9oUVN2eVJ1YUlTNHd5WGprTC9Mdlh2dFJwRnFyaGVmWk5jMWNwdXFX?=
- =?utf-8?B?a3c9PQ==?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d1ceb3a-3a2e-4306-4e63-08dd68064d76
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 23:24:03.6209
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YrfzZfjNJu8KcBKisQxyUUnJBQWmxMAey48lQPZVdU29a2wlc1lwglidrEQH0rS2I04GaRoYNcnLYGDY7e7KbWlM8Nu7N6m90fQTN2kB81Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR03MB7869
+Mime-Version: 1.0
+X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2029; i=samitolvanen@google.com;
+ h=from:subject; bh=sTzT5PtwQSPHGFOm3VurrDvsdk8Mjq6EUX9qB/8ft9M=;
+ b=owGbwMvMwCEWxa662nLh8irG02pJDOl3ltT2hVutY8g1/PDl6u6AP4GND2d9CpBU873Zs17EK
+ yOh9uTmjlIWBjEOBlkxRZaWr6u37v7ulPrqc5EEzBxWJpAhDFycAjCRskiG/9F5Px3Ot6o136w5
+ fDv7eqJv8iR3w0YZT3Nv0Xldn2/su8LIcJpxm8H6V2m6thEKRncv5XZu3y67Qsar1+CK8aGe+Xw beQA=
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250320232757.2283956-2-samitolvanen@google.com>
+Subject: [PATCH] kbuild: Require pahole >v1.29 with GENDWARFKSYMS and BTF on X86
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Paolo Pisati <paolo.pisati@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 
+With CONFIG_GENDWARFKSYMS, __gendwarfksyms_ptr variables are added
+to the kernel in EXPORT_SYMBOL() to ensure DWARF type information
+is available for exported symbols in the TUs where they're actually
+exported. These symbols are dropped when linking vmlinux, but
+dangling references to them remain in DWARF.
 
-On 3/20/2025 12:34 PM, Rob Herring wrote:
-> On Thu, Mar 20, 2025 at 09:46:21AM -0700, Matthew Gerlach wrote:
-> > Update socfpga_agilex.dtsi to track the actual hardware description
-> > provided in altr,socfpga-s10-ecc-manager.yaml.
-> > 
-> > Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> > ---
-> >  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 18 ++++++------------
-> >  1 file changed, 6 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> > index 1235ba5a9865..708cb8e762b6 100644
-> > --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> > +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-> > @@ -602,8 +602,7 @@ sdr: sdr@f8011100 {
-> >  		};
-> >  
-> >  		eccmgr {
-> > -			compatible = "altr,socfpga-s10-ecc-manager",
-> > -				     "altr,socfpga-a10-ecc-manager";
-> > +			compatible = "altr,socfpga-s10-ecc-manager";
->
-> You are breaking the ABI here. Before this series, the driver required
-> altr,socfpga-a10-ecc-manager.
-Yes, breaking the ABI required the change in PATCH 2/4, which is 
-suboptimal.
->
-> >  			altr,sysmgr-syscon = <&sysmgr>;
-> >  			#address-cells = <1>;
-> >  			#size-cells = <1>;
-> > @@ -619,40 +618,35 @@ sdramedac {
-> >  			};
-> >  
-> >  			ocram-ecc@ff8cc000 {
-> > -				compatible = "altr,socfpga-s10-ocram-ecc",
-> > -					     "altr,socfpga-a10-ocram-ecc";
-> > +				compatible = "altr,socfpga-a10-ocram-ecc";
->
-> AIUI, nothing used altr,socfpga-s10-ocram-ecc, so this change is okay I
-> guess. Normally, we'd require both because there might be some
-> difference you find later on, but here you could just look at the parent
-> node compatible.
->
-> If it were me, I'd just add the compatible string in the schema and
-> avoid the .dts change. That would have been less work...
-Less work sounds better. I will look at just creating the yaml, with no 
-dtsi/dts and no driver changes.
->
-> Rob
+With CONFIG_DEBUG_INFO_BTF enabled on X86, pahole versions
+before commit 9810758003ce ("btf_encoder: Verify 0 address
+DWARF variables are in ELF section") place these symbols in the
+.data..percpu section, which results in an "Invalid offset" error in
+btf_datasec_check_meta() during boot, as all the variables are at
+zero offset and have non-zero size. If CONFIG_DEBUG_INFO_BTF_MODULES
+is enabled, this also results in a failure to load modules with:
 
+  failed to validate module [$module] BTF: -22
 
-Thanks for the feedback,
+The pahole commit that adds 0 address DWARF variable verification
+was merged after v1.29 was released, so later versions of pahole
+shouldn't have this issue. Require pahole >v1.29 when GENDWARFKSYMS
+is enabled with DEBUG_INFO_BTF on X86.
 
-Matthew Gerlach
+Reported-by: Paolo Pisati <paolo.pisati@canonical.com>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+---
+ kernel/module/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+index d7762ef5949a..7c75832aa1af 100644
+--- a/kernel/module/Kconfig
++++ b/kernel/module/Kconfig
+@@ -192,6 +192,10 @@ config GENDWARFKSYMS
+ 	depends on !DEBUG_INFO_REDUCED && !DEBUG_INFO_SPLIT
+ 	# Requires ELF object files.
+ 	depends on !LTO
++	# Requires pahole commit 9810758003ce ("btf_encoder: Verify 0 address
++	# DWARF variables are in ELF section") on X86 to avoid conflicts with
++	# __gendwarfksyms_ptr symbols.
++	depends on !X86 || !DEBUG_INFO_BTF || PAHOLE_VERSION > 129
+ 	help
+ 	  Calculate symbol versions from DWARF debugging information using
+ 	  gendwarfksyms. Requires DEBUG_INFO to be enabled.
+
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+-- 
+2.49.0.395.g12beb8f557-goog
 
 
