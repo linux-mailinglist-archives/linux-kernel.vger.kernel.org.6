@@ -1,128 +1,151 @@
-Return-Path: <linux-kernel+bounces-570248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F12A6AE0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:04:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB01A6AE10
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B8C189F41C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08EE3189ECCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8E124C073;
-	Thu, 20 Mar 2025 18:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B8C228CA5;
+	Thu, 20 Mar 2025 18:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2x15mOz"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3lHK5vH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B32124BBF2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB4A1C69D;
+	Thu, 20 Mar 2025 18:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742496852; cv=none; b=h675DnqNI5n4zQzPvpsAbx44gU1RDTCa55gDMPm/1k/oaej8wzoSucy9MUPLaXOvZHTGyyfRyceJTKINvm/yPMxyh2XKOB1lG6RTBjJeP6jPodzNJ82/E4/8BrTIYfVkfRj4rQzF8foMQA3vI1tCl+sCJITWB9N3iFqsxcCKKOo=
+	t=1742496954; cv=none; b=g02BRJ5Qi+JE1HkaTTjcJJR7oaWYkluCnfeD9Rp1cHrDdBJo7srDYx/z1qTs/aiaPorPqhc62fRUdKyazU1UzpET06N54dEVdeK+hyVP4xvHmdBRp9NXbmcDtpDlLTTunXAkixQQ2UOInghpxhdqID1EcAK9UdHXMgfhVPkodOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742496852; c=relaxed/simple;
-	bh=jo1ydT2hB6u1cx8n6xgWYmM/1GUAUgZV4IauZsWcOk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N6HZJaHtx4aXjdmE40GJ3FpsuPiBJrDt6Yj/zWjH1gntZ4Z9+1Wn3krfUgdc57NOE8JTbJaO/Eyj0joO9RjNZ+20gJruugd0gxTKIxOTsFIRG/ebf+qq72IjoqNRkVN5zazTAq1n9iycqc04gYGHQbNH7D2L3XDUI+giqR2/okQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2x15mOz; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-85b4277d03fso43924439f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742496849; x=1743101649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=riXSD1tORrHtkttiQwAlqFF38I5b7O133kwF8VYREw8=;
-        b=T2x15mOz1CSO6ZORPg77Fz2K00aOoPBU5wKc1um9gmMd2RWyC+4qgc1m/N9Ctr6Lio
-         232pbeWRzCLGc1i+KqjMAhqigW3Ve6+clAK/vIDo3Wn+yPVY6a5bknNkexeB7X2/TG1z
-         Dg2tRIScx43IfCzGY89icFN9DCv37PyzmD98n/TFX7L2zh+nYBwkeA3riPL7tifuBjpf
-         J4eG0llN9VJvMW95wKIJZ7es6wsy8wlKwIo1ACo4Ncv+bLuSbl6K3J7qERkzgiaor/nf
-         mfdt7xjG+PH1gJ9SG0tJ5GgpyuBNYDy4n7jpgtAu1myRoWUk2Q+kxjO3FPS59GqU1YR2
-         s+9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742496849; x=1743101649;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=riXSD1tORrHtkttiQwAlqFF38I5b7O133kwF8VYREw8=;
-        b=rqhNgelYbt/vcuJzafL/fFp4iFodfvC4ytnWiKfAaiSuvs/XApXvnxu2hmh7OYneeF
-         5/iLg/aivul596HFove7d/6AuufpeC2YPLNPp5T9kv1pJ/g+PSZWNOPW97ZHZNMiQrll
-         S2adjbG3u51YH5y4h2lHvlcbOMoqx1iQVeQ8gKqWoZ0zwB6/6StcroaSHPhBC3Y3NmZc
-         tmn+bEE8jNY/3i70IaDUVunsWG3GzVGrkg/5gvVhMv0pCSisZQuuWHzLoEou5TLkXVAP
-         GrWpg5AeF0J85z1aTxMg6ZvKPlm15KoCj+CKegWnDLekLOmvMgW2dlm0S7s9DDFhvBG7
-         95kw==
-X-Gm-Message-State: AOJu0YyuCpA8WzAGgtqMWuqMaRl9oK+5zL8FWsr9lRqRXFghkwea0cW7
-	HvMT95Y0cdgWIlTuCkq1J0mOYfb81reWPM5hknI3umkbcqpLi4og1l8hTxeE
-X-Gm-Gg: ASbGncv6cQB7pQ5VCLsLh1xkrILXO3LoV6FtLc+FQ6iRPbgt+zCUJSuWFQALe2jChrC
-	Id+i0kZOdgQTRFhkiske1nq33f1NYI802S9vFtZjpyVxlADXZt5HXE5IveVS90WDkJrtJ/8xsH7
-	z1AfjlTg0ItoZyVOwcVizhwhY/cj5wiVJuE8wlsxictSb1AUOIqQyMfND7BoEwxHXnP8QMJUoa9
-	F4vwpJqbnThjs/2Ux9r0ITnsxZE0LK2OLRCYKmp3Q5QgZq0+ZqQceX2RIm9KYIpRyPgYGxdy80z
-	bilsnX4P0SE7T3xhXpdU72IdF+3f8TdQyoS2BFdo4GU4wIMxE4V6yBkapcStwsJtKAl1qO9icP6
-	FBg==
-X-Google-Smtp-Source: AGHT+IF1oSBpmraBX8zPImUtfNnxyTPneTMK46EMc6j1uPXohNjQQHHeHYBBNbkda865fA0ElyE4Lg==
-X-Received: by 2002:a05:6602:4145:b0:85b:37eb:f466 with SMTP id ca18e2360f4ac-85e2ca19f85mr41137739f.1.1742496849336;
-        Thu, 20 Mar 2025 11:54:09 -0700 (PDT)
-Received: from gandalf.. (c-67-165-245-5.hsd1.co.comcast.net. [67.165.245.5])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-85e2bc273e7sm7078039f.17.2025.03.20.11.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 11:54:08 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-gfx-trybot@lists.freedesktop.org
-Cc: jbaron@akamai.com,
-	gregkh@linuxfoundation.org,
-	ukaszb@chromium.org,
-	louis.chauvet@bootlin.com,
-	daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com,
-	jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com,
-	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v2 57/59] drm-dyndbg: add DRM_CLASSMAP_USE to the drm_gem_shmem_helper driver
-Date: Thu, 20 Mar 2025 12:52:35 -0600
-Message-ID: <20250320185238.447458-58-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250320185238.447458-1-jim.cromie@gmail.com>
-References: <20250320185238.447458-1-jim.cromie@gmail.com>
+	s=arc-20240116; t=1742496954; c=relaxed/simple;
+	bh=bpN/85K3GQ3AlOPx5AI0LjvEzJfDvNGW47DH3s5PiEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZ7aLiIaaVZYSaYw4lnAdlBRYz5jUIx3PfKQ+j5oNfX7z4W598vvgppoQPR+AELNStySN8xueI0PucXjFu94/Omz+eKjGXECAI7Rvzs/gEmR4kZA1MVVpPxdVf45vW9/APEObfzUyoF4PvaULfEdG6tDgb0C+SPkmQP31YHRork=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3lHK5vH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B057EC4CEDD;
+	Thu, 20 Mar 2025 18:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742496954;
+	bh=bpN/85K3GQ3AlOPx5AI0LjvEzJfDvNGW47DH3s5PiEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n3lHK5vHOqpFKN1p3oJ3mUrEoqQ81FB0P7fbPDe1YezSmZV6wSL52DcI+X4wO8oTu
+	 y8sPDVBbPi7g5gRrk4g2PCEtvi5oWabcgJGE3EkQvU1+LcpS28Prpuv/rVjT39iptx
+	 Bw7aJ1dU6fHji1x7v+0LykFg5SrJu2VLPo1QvXf4s4rErZgG3YKnwUySAij60V7RA5
+	 iNBVL3ANuGxWyCHYPpoYL5Bt/vz+iQtubTo9f+6+sd0Td6eJj7LZZkS5hfy+UAlhvA
+	 wzEJUZo+AxUGx5bSABIwep3bniIGzEHLZMVDfjzd9LxzlqLoIM9qR22vZhpP8siwYk
+	 m5QV5kkAEww2A==
+Date: Thu, 20 Mar 2025 18:55:49 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Grant Likely <grant.likely@secretlab.ca>,
+	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] spi: Ensure memory used for spi_write_then_read() is DMA
+ safe
+Message-ID: <c46aa694-d804-47d6-a2d0-990ca6fbebb2@sirena.org.uk>
+References: <1359268504-24937-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <20130205142128.2E28D3E1265@localhost>
+ <20250320124330.480d652d@mordecai.tesarici.cz>
+ <ca70e24d-57b6-4250-bd0d-7f5c72e1d282@sirena.org.uk>
+ <b37480a4-5344-4cf4-8fd1-400e2588fc28@app.fastmail.com>
+ <20250320153536.44774a74@mordecai.tesarici.cz>
+ <9ac953ec-fba3-41a7-8e5d-b867abc1566f@sirena.org.uk>
+ <20250320170846.64db4a4d@mordecai.tesarici.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gFCt+t73yFgTihPX"
+Content-Disposition: inline
+In-Reply-To: <20250320170846.64db4a4d@mordecai.tesarici.cz>
+X-Cookie: Do not fold, spindle or mutilate.
 
-The drm_gem_shmem_helper driver has a number of DRM_UT_* debugs, make
-them controllable when CONFIG_DRM_USE_DYNAMIC_DEBUG=y by telling
-dyndbg that the module uses them.
 
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- drivers/gpu/drm/drm_gem_shmem_helper.c | 1 +
- 1 file changed, 1 insertion(+)
+--gFCt+t73yFgTihPX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 5ab351409312..481d18561688 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -23,6 +23,7 @@
- #include <drm/drm_print.h>
- 
- MODULE_IMPORT_NS("DMA_BUF");
-+DRM_CLASSMAP_USE(drm_debug_classes);
- 
- /**
-  * DOC: overview
--- 
-2.49.0
+On Thu, Mar 20, 2025 at 05:08:46PM +0100, Petr Tesarik wrote:
+> Mark Brown <broonie@kernel.org> wrote:
+> > On Thu, Mar 20, 2025 at 03:35:36PM +0100, Petr Tesarik wrote:
 
+> > > CC'ing Robin Murphy, because there seem to be some doubts about DMA A=
+PI
+> > > efficiency. =20
+
+> > Or possibly just documentation, the number of memory types we have to
+> > deal with and disjoint interfaces makes all this stuff pretty miserable.
+
+> I have to agree here. Plus the existing documentation is confusing, as
+> it introduces some opaque terms: streaming, consistent, coherent ...
+> what next?
+
+> I volunteer to clean it up a bit. Or at least to give it a try.
+
+That would be amazing.
+
+> If we want to make life easier for authors who don't need to squeeze
+> the last bit of performance from their driver, the core DMA API could be
+> extended with a wrapper function that checks DMA-ability of a buffer
+> address and takes the appropriate action. I kind of like the idea, but
+> I'm not a subsystem maintainer, so my opinion doesn't mean much. ;-)
+
+That sounds sensible.  There's the dance that spi_{map,unmap}_buf() is
+doing which feels like it should be more generic, a general "I have this
+buffer, make it DMAable" which sounds like the same sort of ballpark and
+I always thought could be usefully factored out but never got round to
+finding a home for.
+
+> > > I still believe the SPI subsystem should not try to be clever. The
+> > > DMA API already avoids unnecessary copying as much as possible. =20
+
+> > It's not particularly trying to be clever here?
+
+> Well, it tries to guess whether the lower layer will have to make a
+> copy, but it does not always get it right (e.g. memory encryption).
+
+> Besides, txbuf and rxbuf might be used without any copying at all, e.g.
+> if they point to direct-mapped virtual addresses (e.g. returned by
+> kmalloc).
+
+> At the end of the day, it's no big deal, because SPI transfers are
+> usually small and not performance-critical. I wouldn't be bothered
+> myself if it wasn't part of a larger project (getting rid of DMA zones).
+
+Some of the IIO users might beg to differ about performance criticality
+and transfer sizes there, and there's things like firmware download and
+SPI flashes too.  A lot of the performance work on the subsystem came
+=66rom people with CAN controllers they're trying to saturate, some of
+which was large messages.  It's not the same situation as block devices
+or networking but it's an area where anything we can do to eliminate
+dead time on the bus can be really noticable to applications.  It gets
+used a lot with mixed signal applications where implementing digital
+logic is expensive but you might want to get a lot of data in or out.
+
+--gFCt+t73yFgTihPX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcZLUACgkQJNaLcl1U
+h9DOIwgAgPEw0mfje+6KbfDLvx2eO3UqUQ8cGQZ1eq97+oAVr5FhPdfZbvtEylBu
+jRGSiB6i2jFxAFcEUHFNDmBEXIHO97CDjoe8bcqui5OaEisPaQpugFbpFKPAiwSa
+6rXpZmIXPeHxJ5gBFE1c2zsGPSnoZVPSowlX1d77aR/eqHP3VcxDMfLmJkufu+4O
+L+e2LFCXnf+88o79K3ZVrartGpNQ5zRVL2/jLFzsWYzlZJaxla/NLm2WoyBkbaVk
+8mbnpdGXs2D03zXIUAYAEgFbFiiz7AQ5997bWAUidbzThMtq0bKmh5odjwI5hq4g
++PY0lhtuYrNr8wmyqmTPzm4OEbgehg==
+=cWMq
+-----END PGP SIGNATURE-----
+
+--gFCt+t73yFgTihPX--
 
