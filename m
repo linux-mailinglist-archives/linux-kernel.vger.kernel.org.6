@@ -1,237 +1,108 @@
-Return-Path: <linux-kernel+bounces-570290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FA2A6AE61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:17:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB226A6AE69
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42231885D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:14:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237834A0111
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF9C227EA3;
-	Thu, 20 Mar 2025 19:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A3227BA9;
+	Thu, 20 Mar 2025 19:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="aT616jAP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bJzM14bF"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SryMWsN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7960B1E8339;
-	Thu, 20 Mar 2025 19:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415B120297C;
+	Thu, 20 Mar 2025 19:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742498001; cv=none; b=b+lAKSU7Hk0KHKxzq6vay6qc661HQnXPKbKDY9BSs/Iu0OABt6ZxBT1inbS8474toCT/iH0MzE2+cQtfOMc5Aqj9ZRJ3AaSq/z3XlLU9tstZvCjquEeAA2HlRHCrvKLcuULuMKuGDA6X1OFAP1X4aQ508sct5s2J1crfJVaOraU=
+	t=1742498044; cv=none; b=FpTQJWREDZsenyngGIzqdsa1dBCVGjyChHThbvS1Lrl273ZYTxAPeqVej5ff3MWBHzgPL4oZZyS5CxKLDf+jHFNyVaaS3qN+JK9snRIWB34GtYoCDPuXwvYnl3HHuTDn+ilSQW8XAK4QjDu8IwqRRq9O0Xvz6zEts4+1oNpF9MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742498001; c=relaxed/simple;
-	bh=w/1BLVeeR5mW230WGJrNA+NFTbyOHjTi05Pv0pOAJ1g=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=YVyff+D5a4wokl4Co7lNyaIcIHClvwzbI9hIsD77oIjg6cDGkMYvESWRcmq8DryJAarzibHn9BVd+0ZDiFFNltRZUZUUn5hoT9t/izgCbBl2tJSSlT2biCSecM0nSt7Ys7NTwc/eHVE/VgZHU/wNgY5qUKVh2tZQ3XaXVACLsC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=aT616jAP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bJzM14bF; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 29A0F11400CA;
-	Thu, 20 Mar 2025 15:13:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 20 Mar 2025 15:13:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
-	 t=1742497996; x=1742584396; bh=IR0OXTd3Mv/VRatqgXGdaWOrIeWV/sLQ
-	QJTuLfYjzLw=; b=aT616jAPMrlWAxnfKkedGpJkDfJb1DxJMfWphu5UHCC5PfvM
-	pqB7cqm79krHFn+I39PTDENyTpkOfTOfG84/yPSTV3B9TnZxoX/hfAGDGt5JrdYD
-	GbqOvGJKx6PM4WLuFEnrR2l7AV6wpOovOZa3HpjoiEE4ljmaBs3orjzAEsXXg4DU
-	PHW0pMg+/n1WXMdY2eS7QPG+fHj1GOGzw3tTjjK36PmO7P4VGNMFcxnqlHHH3Q/v
-	S1gVgNlBvrP3P5V4Tzp0iirSXaRsIwwWHlVBklmDt/rfPA5W1aXzU842CipwHEBO
-	xAjaYSPLX4RFryZt08y3boX83gEHHGOZDKhKOw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742497996; x=
-	1742584396; bh=IR0OXTd3Mv/VRatqgXGdaWOrIeWV/sLQQJTuLfYjzLw=; b=b
-	JzM14bF/3TePJ/3oTX5HMRKxuXa0o9RGUv1jh6o6cKkLWWqFpDHajoH0LprAtGqx
-	ciexdFnN+Y9qG8pN5gZTIOao/FuaRLa+1cfoBCiIsJnvvg8x7aCaQwRjtr65r+Wh
-	fFpI6+VlpUWjEQHMNOxqkqQUhrJGs8q5zT5XHu0F/LHPkQQ7lQqlbnb92Moo5Cl0
-	m1QCF+n0AX28xhvttONLiJWZ+bGsWCr6R9CuUW31ziot0Cjgp0raz7j9eUjayI5l
-	fMRXKXH60fFcF9H63Wbl0d2wO3j8UecllIbrrBd5IEtWfyO7iKrev7kN5ZG3CvYw
-	XrTa7VuSjnfoGDTR5f54w==
-X-ME-Sender: <xms:y2jcZ_5lCRQitctDFsBtHo0Noz8NQxgB8UgA_E4aV9UEvjAujS471Q>
-    <xme:y2jcZ069wItkakjpBn_iDngyEnMPX4rp1wDBwo6aoMu_SwmJYN-j_3uPkEu8Eo-ga
-    Nm0IiYV1IVN9XDsZxo>
-X-ME-Received: <xmr:y2jcZ2cGbcrWm4bWNNMAE4KRk3Ky1Cc1VTm_63gsSiaQN_ZAbfOlN2rUWR4VwKg6iQwqhw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeeltdefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhephffvvefujghfofggtgfgfffksehtqhertder
-    tdejnecuhfhrohhmpeflrgihucggohhssghurhhghhcuoehjvhesjhhvohhssghurhhghh
-    drnhgvtheqnecuggftrfgrthhtvghrnhepgeefgffhgffhhfejgfevkefhueekvefftefh
-    gfdtuddtfeffueehleegleeiuefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepjhhvsehjvhhoshgsuhhrghhhrdhnvghtpdhnsggprhgtphht
-    thhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhgriihorhessghlrg
-    gtkhifrghllhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhn
-    vghtpdhrtghpthhtoheplhhiuhhhrghnghgsihhnsehgmhgrihhlrdgtohhmpdhrtghpth
-    htohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehhohhrmhhs
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthho
-    pegtrhgrthhiuhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheplhhirghlihesrhgvug
-    hhrghtrdgtohhm
-X-ME-Proxy: <xmx:y2jcZwKwA6JMSeVR8VAyAt4_DPAqXZbTvcm0Kaz73D26vRJcEEYPNA>
-    <xmx:y2jcZzKBz4VrZrhhZ_0CNrCJiwLHkcib3ZmL0lci2NWHeliMEuPzyw>
-    <xmx:y2jcZ5yKa147PyFblOVwWW_70K6ypQ7COYvOIxne4Ii8xBnLZEqk2w>
-    <xmx:y2jcZ_K9v1SsvGa8r4PyF5ibGRU9NXlPJcG5PPQYmzlMyTlZUm9qTQ>
-    <xmx:zGjcZ9Aef3wNq5BRxRpeSg1IhKx44YDjc0Bfo8ekGzANUm1-HY0CuqR_>
-Feedback-ID: i53714940:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Mar 2025 15:13:15 -0400 (EDT)
-Received: by famine.localdomain (Postfix, from userid 1000)
-	id 344A79FC4A; Thu, 20 Mar 2025 12:13:14 -0700 (PDT)
-Received: from famine (localhost [127.0.0.1])
-	by famine.localdomain (Postfix) with ESMTP id 318109FC46;
-	Thu, 20 Mar 2025 12:13:14 -0700 (PDT)
-From: Jay Vosburgh <jv@jvosburgh.net>
-To: Hangbin Liu <liuhangbin@gmail.com>
-cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>,
-    Nikolay Aleksandrov <razor@blackwall.org>,
-    Simon Horman <horms@kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>,
-    linux-kernel@vger.kernel.org, Liang Li <liali@redhat.com>
-Subject: Re: [PATCH net] bonding: use permanent address for MAC swapping if device address is same
-In-reply-to: <20250319080947.2001-1-liuhangbin@gmail.com>
-References: <20250319080947.2001-1-liuhangbin@gmail.com>
-Comments: In-reply-to Hangbin Liu <liuhangbin@gmail.com>
-   message dated "Wed, 19 Mar 2025 08:09:47 -0000."
-X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
+	s=arc-20240116; t=1742498044; c=relaxed/simple;
+	bh=GMKQ+IsWksG+8EFLNZfKP/T07o9pwNrkxZF5rQ7ya3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXUZjftTNvPHbGKjH0iReTFt7yXx/OdQXBQJE7mUcq/FPwE7XSKsOgEaa31UTUnspH6Oehl11/+5pcKNUmdQh2zRG2/CEQ0cRJOEAuv2B9H0xzZLo/+oTOaPuq8HeT19aD4fv+6pAYf2lDw3umfmKlanIM4za/iGq5tRyq6ar2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SryMWsN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04768C4CEDD;
+	Thu, 20 Mar 2025 19:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742498043;
+	bh=GMKQ+IsWksG+8EFLNZfKP/T07o9pwNrkxZF5rQ7ya3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SryMWsN/ZDyqRfkm+Ild3Ogufm4HIPsfW1YToRbRWN8e0fDnBEUX9M54kQRMbXyIy
+	 Hbh/ZHIvepdBZ+aRyLEOtSKoisSwkcimysMyLm2mX6E1HNpSN2D81GLRFre2kBbOh8
+	 U6PIX4ftGtZ7fS6x0qOPsieRA+vTNcHW9rMKtBKxPpvbC481kqWasaSoyFUenSZhMa
+	 SRaetseswCRcNjN/iGAoIyRePmNYP3ElOs5FWrDeCKUJBH29CgvfLRK5Mn0pdOEwcF
+	 eWyBayJJmPqa2dcWuFCyukPFE1ShiNxH61CLGYGVMxH1O2EjMtzvxXGW7OC3hcQuGF
+	 22DQb3tzsmRGQ==
+Date: Thu, 20 Mar 2025 19:13:58 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Nico Pache <npache@redhat.com>
+Cc: rf@opensource.cirrus.com, patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, simont@opensource.cirrus.com,
+	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev,
+	davidgow@google.com, rmoar@google.com, johannes.berg@intel.com,
+	sj@kernel.org
+Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling
+ it
+Message-ID: <618b8578-1897-45e4-83eb-b725102ab27d@sirena.org.uk>
+References: <20250319230539.140869-1-npache@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 20 Mar 2025 12:13:14 -0700
-Message-ID: <2696885.1742497994@famine>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yj/ZQFCSnYoR7wNF"
+Content-Disposition: inline
+In-Reply-To: <20250319230539.140869-1-npache@redhat.com>
+X-Cookie: Do not fold, spindle or mutilate.
 
-Hangbin Liu <liuhangbin@gmail.com> wrote:
 
->Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
->fail_over_mac policy"). The fail_over_mac follow mode requires the formerly
->active slave to swap MAC addresses with the newly active slave during
->failover. However, the slave's MAC address can be same under certain
->conditions:
->
->1) ip link set eth0 master bond0
->   bond0 adopts eth0's MAC address (MAC0).
->
->1) ip link set eth1 master bond0
->   eth1 is added as a backup with its own MAC (MAC1).
->
->3) ip link set eth0 nomaster
->   eth0 is released and restores its MAC (MAC0).
->   eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
->
->4) ip link set eth0 master bond0
->   eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
->   breaking the follow policy.
+--yj/ZQFCSnYoR7wNF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Are all of these steps necessary, or does the issue happen if a
-new interface (not previously part of the bond) is added to the bond
-with its MAC set to whatever the bond's MAC is?
+On Wed, Mar 19, 2025 at 05:05:39PM -0600, Nico Pache wrote:
+> FW_CS_DSP gets enabled if KUNIT is enabled. The test should rather
+> depend on if the feature is enabled. Fix this by moving FW_CS_DSP to the
+> depends on clause, and set CONFIG_FW_CS_DSP=y in the kunit tooling.
 
-	Did this come up in practise somewhere, or through inspection /
-testing?  I'm curious as I'd expect usage of this option today would be
-rare, as I hope that current hardware wouldn't have the "MAC assigned to
-multiple ports" issues that led to the "follow" logic.  If memory
-serves, the issue arose originally in the ehea network device (on IBM
-POWER), which I believe is out of production now for some years.
+>  config FW_CS_DSP_KUNIT_TEST
+>  	tristate "KUnit tests for Cirrus Logic cs_dsp" if !KUNIT_ALL_TESTS
+> -	depends on KUNIT && REGMAP
+> +	depends on KUNIT && REGMAP && FW_CS_DSP
+>  	default KUNIT_ALL_TESTS
+> -	select FW_CS_DSP
 
->To resolve this issue, we need to swap the new active slave=E2=80=99s perm=
-anent
->MAC address with the old one. The new active slave then uses the old
->dev_addr, ensuring that it matches the bond address. After the fix:
->
->5) ip link set bond0 type bond active_slave eth0
->   dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
->   Swap new active eth0's permanent MAC (MAC0) to eth1.
->   MAC addresses remain unchanged.
->
->6) ip link set bond0 type bond active_slave eth1
->   dev_addr is the same, swap the old active eth0's MAC (MAC0) with eth1.
->   Swap new active eth1's permanent MAC (MAC1) to eth0.
->   The MAC addresses are now correctly differentiated.
+This makes no sense to me, the select statement is forcing on the code
+it's testing which is a library and so is selected by it's users, this
+change will just stop the tests being run unless someone does the dance
+to enable a driver which relies on the library.  That is something that
+seems unlikely to change the outcome of the tests when run from KUnit
+which is independent of any hardware.
 
-	An alternative solution could be to disallow adding a new
-interface in "follow" mode if its MAC matches the active interface of
-the bond.  If this patch is more of an correctness exercise rather than
-something found out in the world impacting production deployments, it
-might be better to keep the MAC swapping logic in the failover code
-simpler.
+--yj/ZQFCSnYoR7wNF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	-J
+-----BEGIN PGP SIGNATURE-----
 
->Fixes: 3915c1e8634a ("bonding: Add "follow" option to fail_over_mac")
->Reported-by: Liang Li <liali@redhat.com>
->Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
->---
-> drivers/net/bonding/bond_main.c | 9 +++++++--
-> include/net/bonding.h           | 8 ++++++++
-> 2 files changed, 15 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_ma=
-in.c
->index e45bba240cbc..9cc2348d4ee9 100644
->--- a/drivers/net/bonding/bond_main.c
->+++ b/drivers/net/bonding/bond_main.c
->@@ -1107,8 +1107,13 @@ static void bond_do_fail_over_mac(struct bonding *b=
-ond,
-> 			old_active =3D bond_get_old_active(bond, new_active);
->=20
-> 		if (old_active) {
->-			bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
->-					  new_active->dev->addr_len);
->+			if (bond_hw_addr_equal(old_active->dev->dev_addr, new_active->dev->dev=
-_addr,
->+					       new_active->dev->addr_len))
->+				bond_hw_addr_copy(tmp_mac, new_active->perm_hwaddr,
->+						  new_active->dev->addr_len);
->+			else
->+				bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
->+						  new_active->dev->addr_len);
-> 			bond_hw_addr_copy(ss.__data,
-> 					  old_active->dev->dev_addr,
-> 					  old_active->dev->addr_len);
->diff --git a/include/net/bonding.h b/include/net/bonding.h
->index 8bb5f016969f..de965c24dde0 100644
->--- a/include/net/bonding.h
->+++ b/include/net/bonding.h
->@@ -463,6 +463,14 @@ static inline void bond_hw_addr_copy(u8 *dst, const u=
-8 *src, unsigned int len)
-> 	memcpy(dst, src, len);
-> }
->=20
->+static inline bool bond_hw_addr_equal(const u8 *dst, const u8 *src, unsig=
-ned int len)
->+{
->+	if (len =3D=3D ETH_ALEN)
->+		return ether_addr_equal(dst, src);
->+	else
->+		return (memcmp(dst, src, len) =3D=3D 0);
->+}
->+
-> #define BOND_PRI_RESELECT_ALWAYS	0
-> #define BOND_PRI_RESELECT_BETTER	1
-> #define BOND_PRI_RESELECT_FAILURE	2
->--=20
->2.46.0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfcaPUACgkQJNaLcl1U
+h9AIRgf/ccGrIBHTcdZaATYWPh0Ma2trtMpDz+zzZLn/Darau6fPQVOZYxw57Jfm
+XVQ4la3YkHtK6A2p12YD84pcpE2VzE3GN3xyhjoaBoO+h9cESs4foUWvRLhy1QbU
+oQXGUDgFR5Fs8bix/z1cEGbexaE5n1TwruWvrkFJUKbrKcmKXlB8qZQCq7iX/qOU
+8qSksIDnzq4YU/c4sWxMw7TdJriDX6h0adQlgDZb+lAZS2XK3Gd4Tsb/bRMK14nA
+iRdnQji3tW5WJH2FOTt7hoOMNu2hECfbFDYzHUVhpQM0zJG4plgHi3syp8/AlSSU
+cobYnJ2yCJMhMHU+us8jRNV3leRrcg==
+=bWLQ
+-----END PGP SIGNATURE-----
 
----
-	-Jay Vosburgh, jv@jvosburgh.net
-
+--yj/ZQFCSnYoR7wNF--
 
