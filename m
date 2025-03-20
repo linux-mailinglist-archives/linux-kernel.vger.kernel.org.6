@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-569625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F3AA6A56A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:53:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0DBA6A573
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:53:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1DC8A0E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5667481737
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D089223311;
-	Thu, 20 Mar 2025 11:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1702E22424F;
+	Thu, 20 Mar 2025 11:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="oQVbpz2+"
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="xD/yK+D8"
 Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA61D21CC4A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA693221DA2;
 	Thu, 20 Mar 2025 11:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742471391; cv=none; b=nss4M2CbuA26kEQz3q7QLNDrogcbTEiUA3g5hvH4NgPfEpSHjQoDj22krWrS0G/a4tVSupakveDCFq+Mp+nCpullBeeUTSzlK9OqDkkKMhXKsNhj1Qty+tDGwOcTZUldlwdW896tZrGrzA75xZngK++cs3yFoLaLhF+mwfUxFDY=
+	t=1742471393; cv=none; b=UNvalzC54fpl2Cy4gxWhaSOQdE8oHwbwsG9se7Gsh5T8LSgvGf7tHiMMtyo5ibUvBTFDrSBZwxAnoS1OMAXRPBttJYoPlHLQE5uTSwKhaIfNw28PcqhcH0VunpZOvIgQHD+TkTdOwrqGZSCPhsFFChSzhBX7LKRcI6uBMGk7jXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742471391; c=relaxed/simple;
-	bh=ucwwSoqIRug4WyXQRNUrjkeXzLx8FCRsGcNO8CwB3BY=;
+	s=arc-20240116; t=1742471393; c=relaxed/simple;
+	bh=lzMiSBj3W97x6LnL+njszLrGkUtUMHWsN2UbS7jRfF8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=pIVpg5dHhtdhyPvyxMUmr2ilOEAW1G2nvL+ZS0IcRqVH2QmRBZ+5gtHRg1HndJwWtUpDQQ6z+7sX400dR6y0KoAmOGpRXtmPK1s6sB//sUw761f/t4c0XmdNABFIUX/4Z4n+iCD8OibNj3ODCLCGrx6bSnGqK8VmxEBF5z9z4dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=oQVbpz2+; arc=none smtp.client-ip=185.132.180.163
+	 In-Reply-To:To:CC; b=YXv9NpYudo6cWN8CdolaxXZAYQRd8YrlNashGxla9FX32sRz2xbodm+9VouuzL3IMcCFrtHbgR/IbUeEts8XNCuRnFLaWAaY6kUDDpyREzDtGT6I+noRwridUtXFSljdBhPYvN7wFNEKS464VVroQ9J8NpU37gGt29V022Auchs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=xD/yK+D8; arc=none smtp.client-ip=185.132.180.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
 Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K7I9lS006831;
+	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K7I9lT006831;
 	Thu, 20 Mar 2025 11:32:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=1
-	xy+ZXc07bYcyzNP5LSe5ZmUyg3L7ep80ycLoyYfWbE=; b=oQVbpz2+D/4pEivYS
-	bIlwAM0TaMkSm693pHQo/94w0LfCTW6a2kootfoikyAoGqojpf4Zz0hQQC6GN4Ua
-	RfAWLD4yt9cdnKP20HsSzNuXWbVZJo3DhE+LucyZ6u2iQ4eUO6CU9HEFYeZT+f4e
-	rRqPzpwVpJE5fLyYPjVPbIVBj1pv8XLIJQd7Vrlf89EwheBkDDh4004E+a1KNCfM
-	9XCHrjH09VO/bmhyI4INhY7LxXMbCzos9AugI1d14EFcb8D/I7VKvQ5U2xGh5nCc
-	2ystNoE42yYWX7ehA01rowy+04WKzt6+OlGTPprEUe+eOsuqHrzYwrruByaSUXHV
-	0QGzw==
+	:message-id:mime-version:references:subject:to; s=dk201812; bh=z
+	F1PsVs8tAIHp1nwIAkdofs/M/mB7uWevLMDDPw0xkI=; b=xD/yK+D8BxNv9R/wZ
+	LiKwt6VKHXFyeGlQW8YjSme4KgT9smalk2Fdbe08tRvKLycGtBXXdMMFAYDNf4iF
+	2mSgQVOzl4fBh67pTRIF2UkISQK7ChcuXkoH8m9PK+kHlpqcyq0SIkW6mnr0jIoN
+	PkI07T3bGyl4VUao7xZIbmz6P/dZnJqFVliTUJsj4XOlMyzIRwN0ZZCXv8wBf8mK
+	JXNM/Ct2vxrJufHT0YQr6gOLCVm+TYZCzkqf43YhhkoZU1m1EWk/9kTgQV0yaqLG
+	k09et2vRS1mqw9I8REQtJqAQzIieePRcDaDrINvnZM++LKoL1uGPzrYSZojDq//N
+	PZ/Jw==
 Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 45d2h1kwg1-5
+	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 45d2h1kwg1-6
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 20 Mar 2025 11:32:26 +0000 (GMT)
+	Thu, 20 Mar 2025 11:32:27 +0000 (GMT)
 Received: from
  1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
  (172.25.0.133) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 20 Mar 2025 11:32:25 +0000
+ 15.1.2507.44; Thu, 20 Mar 2025 11:32:26 +0000
 From: Matt Coster <matt.coster@imgtec.com>
-Date: Thu, 20 Mar 2025 11:32:14 +0000
-Subject: [PATCH v4 04/18] drm/imagination: Use new generic compatible
- string
+Date: Thu, 20 Mar 2025 11:32:15 +0000
+Subject: [PATCH v4 05/18] drm/imagination: Add power domain control
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250320-sets-bxs-4-64-patch-v1-v4-4-d987cf4ca439@imgtec.com>
+Message-ID: <20250320-sets-bxs-4-64-patch-v1-v4-5-d987cf4ca439@imgtec.com>
 References: <20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com>
 In-Reply-To: <20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com>
 To: Frank Binns <frank.binns@imgtec.com>,
@@ -89,62 +88,255 @@ CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
 	<alessio.belle@imgtec.com>,
         Alexandru Dadu <alexandru.dadu@imgtec.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1784;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7131;
  i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=ucwwSoqIRug4WyXQRNUrjkeXzLx8FCRsGcNO8CwB3BY=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMaTf/nPkoZTaHoU/HCvP8nmYqT2XeGAX657x6QqX7L4yh
- c/MYs/Pd5SyMIhxMMiKKbLsWGG5Qu2PmpbEjV/FMHNYmUCGMHBxCsBEvioxMnT9nnp6re7DqNjJ
- 4tfPrXly8L9J86tdUjnu2bpHY568mf2AkWH13BL25JqVc4PzXW8uktmzq88ggXfCPs00pfRu5Uk
- f7BkA
+ bh=lzMiSBj3W97x6LnL+njszLrGkUtUMHWsN2UbS7jRfF8=;
+ b=owGbwMvMwCFWuUfy8817WRsYT6slMaTf/nNEQWqB1FcFtUmTAz4brf3HkNM7z9zmQ4bnAs7jh
+ os5mEUlOkpZGMQ4GGTFFFl2rLBcofZHTUvixq9imDmsTCBDGLg4BWAiRU8Y/sel7LqwbYJd0Qee
+ mJJOhXO/p/M5chbs29/C4x2hvHaDpREjQ/+JsFu7rhgskFQ/Ias2U8Oq/HC0VtHWgw0TBDYsMK0
+ rZAMA
 X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
  fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
 X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Proofpoint-GUID: uWTghCdVsd_LKiSqLvtUOYuSFj5WPb1P
-X-Proofpoint-ORIG-GUID: uWTghCdVsd_LKiSqLvtUOYuSFj5WPb1P
-X-Authority-Analysis: v=2.4 cv=V8Z90fni c=1 sm=1 tr=0 ts=67dbfcca cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=6TxX0kamTyKH95WNaFsA:9
+X-Proofpoint-GUID: C9Vv6zmkmSKWcFM0Bt4-RiPunjZCXROY
+X-Proofpoint-ORIG-GUID: C9Vv6zmkmSKWcFM0Bt4-RiPunjZCXROY
+X-Authority-Analysis: v=2.4 cv=V8Z90fni c=1 sm=1 tr=0 ts=67dbfccb cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=ETbM1kImDFEA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8 a=Iu228gY9Y64KKxsXE-4A:9
  a=QEXdDO2ut3YA:10 a=t8nPyN_e6usw4ciXM-Pk:22
 
-Follow-on from the companion dt-bindings change ("dt-bindings: gpu: img:
-More explicit compatible strings"), deprecating "img,img-axe" in favour of
-the more explicit combination of "img,img-rogue" and "img,img-axe-1-16m".
+The first supported GPU only used a single power domain so this was
+automatically handled by the device runtime.
 
-Since all relevant details are interrogated from the device at runtime,
-we can match on the generic "img,img-rogue" and avoid adding more entries
-with NULL data members (barring hardware quirks).
+In order to support multiple power domains, they must be enumerated from
+devicetree and linked to both the GPU device and each other to ensure
+correct power sequencing at start time.
+
+For all Imagination Rogue GPUs, power domains are named "a", "b", etc. and
+the sequence A->B->... is always valid for startup with the reverse true
+for shutdown. Note this is not always the *only* valid sequence, but it's
+simple and does not require special-casing for different GPU power
+topologies.
 
 Signed-off-by: Matt Coster <matt.coster@imgtec.com>
 ---
 Changes in v4:
 - None
-- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-4-143b3dbef02f@imgtec.com
+- Link to v3: https://lore.kernel.org/r/20250310-sets-bxs-4-64-patch-v1-v3-5-143b3dbef02f@imgtec.com
 Changes in v3:
-- Don't use more specific compatible strings when not required
-- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-5-3fd45d9fb0cf@imgtec.com
+- None
+- Link to v2: https://lore.kernel.org/r/20241118-sets-bxs-4-64-patch-v1-v2-6-3fd45d9fb0cf@imgtec.com
 Changes in v2:
 - None
-- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-5-4ed30e865892@imgtec.com
+- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-6-4ed30e865892@imgtec.com
 ---
- drivers/gpu/drm/imagination/pvr_drv.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/imagination/pvr_device.h |   8 +++
+ drivers/gpu/drm/imagination/pvr_drv.c    |   7 ++
+ drivers/gpu/drm/imagination/pvr_power.c  | 114 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/imagination/pvr_power.h  |   3 +
+ 4 files changed, 132 insertions(+)
 
+diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
+index 6d0dfacb677b46a880f37f419dfa7b67c68fe63d..2dd8a8885fe07078896d669d822525fb2b7bab51 100644
+--- a/drivers/gpu/drm/imagination/pvr_device.h
++++ b/drivers/gpu/drm/imagination/pvr_device.h
+@@ -18,6 +18,7 @@
+ #include <linux/bits.h>
+ #include <linux/compiler_attributes.h>
+ #include <linux/compiler_types.h>
++#include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+@@ -131,6 +132,13 @@ struct pvr_device {
+ 	 */
+ 	struct clk *mem_clk;
+ 
++	struct pvr_device_power {
++		struct device **domain_devs;
++		struct device_link **domain_links;
++
++		u32 domain_count;
++	} power;
++
+ 	/** @irq: IRQ number. */
+ 	int irq;
+ 
 diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
-index 0639502137b4431dc23a349476572cc898d1f8d0..3130193f8fffc185e630a293be53374bdc4b7ce0 100644
+index 3130193f8fffc185e630a293be53374bdc4b7ce0..ac4f5855c5692f0956862cebdbf76b16d8da9a81 100644
 --- a/drivers/gpu/drm/imagination/pvr_drv.c
 +++ b/drivers/gpu/drm/imagination/pvr_drv.c
-@@ -1473,6 +1473,13 @@ static void pvr_remove(struct platform_device *plat_dev)
+@@ -1411,6 +1411,10 @@ pvr_probe(struct platform_device *plat_dev)
+ 
+ 	platform_set_drvdata(plat_dev, drm_dev);
+ 
++	err = pvr_power_domains_init(pvr_dev);
++	if (err)
++		return err;
++
+ 	init_rwsem(&pvr_dev->reset_sem);
+ 
+ 	pvr_context_device_init(pvr_dev);
+@@ -1450,6 +1454,8 @@ pvr_probe(struct platform_device *plat_dev)
+ err_context_fini:
+ 	pvr_context_device_fini(pvr_dev);
+ 
++	pvr_power_domains_fini(pvr_dev);
++
+ 	return err;
+ }
+ 
+@@ -1470,6 +1476,7 @@ static void pvr_remove(struct platform_device *plat_dev)
+ 	pvr_watchdog_fini(pvr_dev);
+ 	pvr_queue_device_fini(pvr_dev);
+ 	pvr_context_device_fini(pvr_dev);
++	pvr_power_domains_fini(pvr_dev);
  }
  
  static const struct of_device_id dt_match[] = {
-+	{ .compatible = "img,img-rogue", .data = NULL },
+diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/imagination/pvr_power.c
+index ba7816fd28ec77e6ca5ce408302a413ce1afeb6e..19b079b357df78e8bcdecfa377fc9c05b6e8e4b0 100644
+--- a/drivers/gpu/drm/imagination/pvr_power.c
++++ b/drivers/gpu/drm/imagination/pvr_power.c
+@@ -10,10 +10,13 @@
+ 
+ #include <drm/drm_drv.h>
+ #include <drm/drm_managed.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/interrupt.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/timer.h>
+ #include <linux/types.h>
+@@ -431,3 +434,114 @@ pvr_watchdog_fini(struct pvr_device *pvr_dev)
+ {
+ 	cancel_delayed_work_sync(&pvr_dev->watchdog.work);
+ }
 +
-+	/*
-+	 * This legacy compatible string was introduced early on before the more generic
-+	 * "img,img-rogue" was added. Keep it around here for compatibility, but never use
-+	 * "img,img-axe" in new devicetrees.
-+	 */
- 	{ .compatible = "img,img-axe", .data = NULL },
- 	{}
- };
++int pvr_power_domains_init(struct pvr_device *pvr_dev)
++{
++	struct device *dev = from_pvr_device(pvr_dev)->dev;
++
++	struct device_link **domain_links __free(kfree) = NULL;
++	struct device **domain_devs __free(kfree) = NULL;
++	int domain_count;
++	int link_count;
++
++	char dev_name[2] = "a";
++	int err;
++	int i;
++
++	domain_count = of_count_phandle_with_args(dev->of_node, "power-domains",
++						  "#power-domain-cells");
++	if (domain_count < 0)
++		return domain_count;
++
++	if (domain_count <= 1)
++		return 0;
++
++	link_count = domain_count + (domain_count - 1);
++
++	domain_devs = kcalloc(domain_count, sizeof(*domain_devs), GFP_KERNEL);
++	if (!domain_devs)
++		return -ENOMEM;
++
++	domain_links = kcalloc(link_count, sizeof(*domain_links), GFP_KERNEL);
++	if (!domain_links)
++		return -ENOMEM;
++
++	for (i = 0; i < domain_count; i++) {
++		struct device *domain_dev;
++
++		dev_name[0] = 'a' + i;
++		domain_dev = dev_pm_domain_attach_by_name(dev, dev_name);
++		if (IS_ERR_OR_NULL(domain_dev)) {
++			err = domain_dev ? PTR_ERR(domain_dev) : -ENODEV;
++			goto err_detach;
++		}
++
++		domain_devs[i] = domain_dev;
++	}
++
++	for (i = 0; i < domain_count; i++) {
++		struct device_link *link;
++
++		link = device_link_add(dev, domain_devs[i], DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
++		if (!link) {
++			err = -ENODEV;
++			goto err_unlink;
++		}
++
++		domain_links[i] = link;
++	}
++
++	for (i = domain_count; i < link_count; i++) {
++		struct device_link *link;
++
++		link = device_link_add(domain_devs[i - domain_count + 1],
++				       domain_devs[i - domain_count],
++				       DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
++		if (!link) {
++			err = -ENODEV;
++			goto err_unlink;
++		}
++
++		domain_links[i] = link;
++	}
++
++	pvr_dev->power = (struct pvr_device_power){
++		.domain_devs = no_free_ptr(domain_devs),
++		.domain_links = no_free_ptr(domain_links),
++		.domain_count = domain_count,
++	};
++
++	return 0;
++
++err_unlink:
++	while (--i >= 0)
++		device_link_del(domain_links[i]);
++
++	i = domain_count;
++
++err_detach:
++	while (--i >= 0)
++		dev_pm_domain_detach(domain_devs[i], true);
++
++	return err;
++}
++
++void pvr_power_domains_fini(struct pvr_device *pvr_dev)
++{
++	const int domain_count = pvr_dev->power.domain_count;
++
++	int i = domain_count + (domain_count - 1);
++
++	while (--i >= 0)
++		device_link_del(pvr_dev->power.domain_links[i]);
++
++	i = domain_count;
++
++	while (--i >= 0)
++		dev_pm_domain_detach(pvr_dev->power.domain_devs[i], true);
++
++	kfree(pvr_dev->power.domain_links);
++	kfree(pvr_dev->power.domain_devs);
++
++	pvr_dev->power = (struct pvr_device_power){ 0 };
++}
+diff --git a/drivers/gpu/drm/imagination/pvr_power.h b/drivers/gpu/drm/imagination/pvr_power.h
+index 9a9312dcb2dab7d36ee8ff7f69e69d126c5469a9..ada85674a7ca762dcf92df40424230e1c3910342 100644
+--- a/drivers/gpu/drm/imagination/pvr_power.h
++++ b/drivers/gpu/drm/imagination/pvr_power.h
+@@ -38,4 +38,7 @@ pvr_power_put(struct pvr_device *pvr_dev)
+ 	return pm_runtime_put(drm_dev->dev);
+ }
+ 
++int pvr_power_domains_init(struct pvr_device *pvr_dev);
++void pvr_power_domains_fini(struct pvr_device *pvr_dev);
++
+ #endif /* PVR_POWER_H */
 
 -- 
 2.49.0
