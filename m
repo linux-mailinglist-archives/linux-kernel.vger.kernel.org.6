@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-569349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7C1A6A1BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7372A6A1C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5E0176073
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938FC3B237F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105C5130A73;
-	Thu, 20 Mar 2025 08:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C9521ADCC;
+	Thu, 20 Mar 2025 08:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M1AOPBfc"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="L4xvqo1r"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E44207A0F;
-	Thu, 20 Mar 2025 08:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0552206A9;
+	Thu, 20 Mar 2025 08:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742460533; cv=none; b=UYmn1VjhrBPUOJvHBnL3GrCyYNcoXN24UQEAIgqXEQ+mUMPGEQnEvAtsWzdLqiLFno6I5gZr/cbPf+IF1YXIYhsKY5uQg1NSB7XOa6dH5i5vjdc5NXSzqAqxl6+JzChRVrFhVYpUcuRfp1N+q4wZQaOZM+WDvQpY5FgAvQwVBK8=
+	t=1742460540; cv=none; b=E769wOLsJzQUxm4Fgr83o/BA3UBuq7IGgFa6x5evt/WrTxpSf4DKwzJLiYvWRYyITb2PBdGPgE1tkSN2xXnUOtzFORGIUm/D4Ssp/ywPS4r27MihVpgaLouAoie88CBMUsedVeikW6Z8RnJpN6CKJFuBnoOgqUK2bz6VIA73/DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742460533; c=relaxed/simple;
-	bh=piwWujZ95X2+r888zaO9uwHDGuG7wI2DPfi6mXKB+GI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=GqRqCEquf1HKZiQpD6co1xwzGOt0efI15RjNtXkESMg8J+uJJ1sUDBmrR95hbEfEV7aqybLhrCsltRnfS4nYh/FzoEY4YmAKXmpvy/ORRkEdOUJfgfHAQdXXJkd7GhGgq+rCPc3jz2XaS0CEhN0iCzti5uLWYEZUiuQNusJduYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M1AOPBfc; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E348F443E5;
-	Thu, 20 Mar 2025 08:48:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742460528;
+	s=arc-20240116; t=1742460540; c=relaxed/simple;
+	bh=P+7/Zp+0R5xx8fr0FSrg9iWCByiTibRgM9OarpQcLtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTsx5qFV4el8pbGZNL71lV6UGuzExvKyKDKI64CK1upGSrHnG8pHNi51TH9f9TTIT+ux0qrjwCO4ak5u570K77hfa9voI36NRLZRr1nxCn5DGBeJceEVt3GUdWDrTy277+kI9lNdPCEKQas92HFg6WG7h5VAUSKj5sILpfWOsx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=L4xvqo1r; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 645821C013F; Thu, 20 Mar 2025 09:48:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1742460530;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YZBbFeB+cHAe3LqVeQ7qmEznxfKl0DVyWGj2Y+wzxXU=;
-	b=M1AOPBfcrZy5xNZ96ThS+AYNGZK0EaxP4/ceehgcEh7QIZQ9fQp9h1+lFATIsdDI7fohAV
-	vO7GFv1OKFzCHh2Dg9cz47TCZCQrGDgBG5icaqGA+VxVtuS9wUp6xhsZziey9E/Ev1RjUS
-	cxdbws1ioCUMakOqh9hc37Y/OLDSu3Q2AeL2yLY4PMEBDfwHIHCR/PcVWHqR0KZxiqbQgT
-	xnHv0OEJwGIqO464+FCO6xrvEAks8EknvRx10GlpIPCZNFvgoQXqamv0U0MpTHjxL+8Uuf
-	WCPf0l1IdN0i6jEI0cHwAO9nZexQB/RaTmBiYKp+rMlpLKl+iXEd15e0ayc8Cg==
+	bh=GJQK1E3+ihk0OyLfdiHoeojuMQugFJPqvRpJ1SRBxFs=;
+	b=L4xvqo1rLLNoWojGPsfHm3JP18cLEx25zcNOUBqLTVbaI86uGbGSgEMvTPDwoXExK8X9QB
+	NJ8qgpNCrC3i2ECA3JK2GFfE0DKAvGI/i/7UXa86EFpiJYeg7RXV6peu2MgxPToo6aesGI
+	nou6KX4RB+knvCDx9rZSU9mLQ+LzDbY=
+Date: Thu, 20 Mar 2025 09:48:49 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: David Heidelberg <david@ixit.cz>, Tony Lindgren <tony@atomide.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: nokia n900: remove useless io-channel-cells
+ property
+Message-ID: <Z9vWca4WfIP7UD1g@duo.ucw.cz>
+References: <20250213203208.93316-1-david@ixit.cz>
+ <jqvulfqjjscwyjw7yzmnfxlwj6p3qnazfjddlhasof5qbtmu55@mb6om3fbalon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YSNvZQUFPCCxvbp1"
+Content-Disposition: inline
+In-Reply-To: <jqvulfqjjscwyjw7yzmnfxlwj6p3qnazfjddlhasof5qbtmu55@mb6om3fbalon>
+
+
+--YSNvZQUFPCCxvbp1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Mar 2025 09:48:47 +0100
-Message-Id: <D8KYPFLQHXY9.10R2C06GYEO17@bootlin.com>
-Subject: Re: [PATCH v5 07/11] gpio: regmap: Allow to provide init_valid_mask
- callback
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-7-fb20baf97da0@bootlin.com>
- <Z9mk8ZE1Z5_Zdyer@smile.fi.intel.com>
-In-Reply-To: <Z9mk8ZE1Z5_Zdyer@smile.fi.intel.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejjeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegrieeimeefudektdemtgdtsggvmegslegrkeemvgehledvmeeirgeffhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemrgeiieemfedukedtmegttdgsvgemsgelrgekmegvheelvdemiegrfehfpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhor
- hhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Tue Mar 18, 2025 at 5:53 PM CET, Andy Shevchenko wrote:
-> On Tue, Mar 18, 2025 at 05:26:23PM +0100, Mathieu Dubois-Briand wrote:
-> > Allows to populate the gpio_regmap_config structure with
-> > init_valid_mask() callback to set on the final gpio_chip structure.
->
-> ...
->
-> > -	chip->request =3D gpiochip_generic_request;
-> > -	chip->free =3D gpiochip_generic_free;
->
-> Stray change.
+Hi!
 
-Oops, reminder of a dropped patch, thanks for noticing this.
+> > This property is irrelevant for the ad5820 DAC,
+> > the driver nor the hardware indicate use of channel cells.
+> >=20
+> > Fixes: d510d12f26f4 ("ARM: dts: nokia n900: update dts with camera supp=
+ort")
+> > Signed-off-by: David Heidelberg <david@ixit.cz>
+> > ---
+>=20
+> I certainly don't think this is a fix and probably just stay, see:
+>=20
+> https://lore.kernel.org/all/ih3ykzxrnpbwg4bvkmpoo2tashcxidir4r4zofhlvrs7u=
+dkp7o@6qtqh6wtmkwd/
+
+The idea is that we can simplify binding document at that
+point. Currently we are getting feedback that it is not needed on that
+side :-(
 
 Best regards,
-Mathieu
+								Pavel
+> > @@ -816,8 +816,6 @@ ad5820: dac@c {
+> >  		reg =3D <0x0c>;
+> > =20
+> >  		VANA-supply =3D <&vaux4>;
+> > -
+> > -		#io-channel-cells =3D <0>;
+> >  	};
+> >  };
+
 
 --=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+People of Russia, stop Putin before his war on Ukraine escalates.
 
+--YSNvZQUFPCCxvbp1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9vWcQAKCRAw5/Bqldv6
+8pVYAJ4mrUga0sffh7CDOe7cyJ1Ilv8fEQCgnUmu/QBuOUgDYw3NW4/S/VqFtxc=
+=3HHQ
+-----END PGP SIGNATURE-----
+
+--YSNvZQUFPCCxvbp1--
 
