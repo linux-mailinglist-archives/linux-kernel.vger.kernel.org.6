@@ -1,142 +1,154 @@
-Return-Path: <linux-kernel+bounces-570128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7498DA6AC91
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:57:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7B1A6AC9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E02F2487EEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4EE18983BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB33C225403;
-	Thu, 20 Mar 2025 17:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79FA226CE5;
+	Thu, 20 Mar 2025 17:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IgdTDTb1"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c8J2fgUL"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5E0224229
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43191DE3A8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742493446; cv=none; b=aAh/w7mr7cTjBCnu3fohTM5Tpe3fT9WtAyHYw4DCtoUtagbR6UOpVF+viiEMh1/M6WPfdV9jQZeQtrHiyOR7MDEEZE/2hQiXGTFo/c6IkYhZkbNMHLWuc3q5lUR0o7p98h3XPAj8KGcOgl+8lZtjGbMROykNEv2mspzIoQx9J18=
+	t=1742493563; cv=none; b=kYx+B2PZYuiqagfc4TIoV/O7tecF1OY7UDjiC4XZ6FuZ+sLRfOL21CdmdDll5bAoiH26AnI4H1lE5oQw47b97lVOsP+Ck89gefwF8qKVOpDlVsFgd1F+fW81IO7ufj59ot5TgP7mjmFPkq5t+va5pMN8OiYz+uzMJeK5tWYM+kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742493446; c=relaxed/simple;
-	bh=mO6ApbMHzxFMCtQxPMSGmJnnaUVaxpdYXWiMJjhdnYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVV9uA0f1h5A647KyGdXebHKlnnb8ICE4+F+GkQGgBpUEjaZENwjptprRA7dpBm81vfxqsFPmqI3Uo3vEGGfKoBxgOmcVtcXxkyGGq1nyI3U8wOzzNTyVM61Vl20BiA7GIIk1Qtx22SZyVnX1DH0dPEtVJOKRQgAI0MHG0FDvaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IgdTDTb1; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso3588258a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:57:24 -0700 (PDT)
+	s=arc-20240116; t=1742493563; c=relaxed/simple;
+	bh=Z7ZUdOd1Qu0akPYKGzYTaas6tJ63tvSTqgDH4om2eDk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=DowhLxnnQCSyyyUG+bZXvWgFDpsyw3wLKDN/XTqyuzBArD86u6jd6M3frvtphZW/9FSxqUWHjbhv9CBWv3zGKWAjDT1ooIZ2w3ZBvEMW26LSJmtYJfEYAFZyu82ryk/sqAlVTLfrZuZCdvdbiMd+OTUMudiy4iiM8/gE9sBja6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c8J2fgUL; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so1597111a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 10:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742493444; x=1743098244; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KZBuAO/4lH4CVBlD86N+IBRXOKzZiRkJHD/4cEnzLg8=;
-        b=IgdTDTb1X2qtQtOkDRsbcKFEP0YT598B/9Y24roSjP6k+N94B0usGnhtgNhRHvg0oA
-         ug/vDzEqKyvbWyEoPZoWX7T1fP0ze0kP5URxeXtgHY3H1yKyh+FQBkONrq/sUv+v4HRb
-         SAI/w/sQUA+DLKkcAVN5KHw+yH3qNxSmovIy4=
+        d=google.com; s=20230601; t=1742493561; x=1743098361; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gtjBMjBZnb8gIPfwNEw+gjcHeYhjJgmG8Gm1x0OUREY=;
+        b=c8J2fgUL0MNMVEFoqzAlBUkfUYeAesz0D7fCkmZWL0Kxxs86TSNizBDaSJRKKOT1bW
+         Rny2AFvUzkVpAMtZigVcoMyXeSO+aVTWFEVXt+RNEBgQ1iKSnf/W9sBp3M+6i8EXlSGh
+         SbOtaXSpXjcm9b6l9pvA19xGZayogrdJr0GKmPUy82Xqqv+PwBNFj7ExJ5xrj9cIJQWG
+         sb+FI8iyizoNjT9y8J12k40DpvyjbHMAxb5X25ojHb8vn0CLr6P0iAceA8xM8mKzn++f
+         Hwetxywy5DAmrtjJheOo6DEaR/CzqfqPPbzl34bEmf4WlMVRtQaPqqXHfm1VFg8srnn1
+         5SDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742493444; x=1743098244;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZBuAO/4lH4CVBlD86N+IBRXOKzZiRkJHD/4cEnzLg8=;
-        b=Fdwn5MU5KF3Shp/e3cUa0grIxRImQHzveW/FwLX0z4gOrlW3wbNZflSCWETq3j9Mdf
-         DgKpCnKnnxb3wnWEdgwR1K8bNKGahwfHlJPDILFLzgB8kKj0NA/rSvoXmGAsV78E53XP
-         ZnSbyk9iDWUQPHhqF9/5Oqt4c5TmoZ44bvEu+TBnzqyKffI2omduO0m4DuSLhT2NX7bc
-         oBkrm0qVS3cnxOpyCj7C4b+jGUQZldhgumCFpAjmbbS5UmC0U0UaYCe+Vt4uTZuOjTbQ
-         W+QBZVa5f/rhVCm3UbLzIMH11e8ZEA0bL4YyTDPhNUtNzRajqYJ3oak4H8vPxdEx9N4o
-         gzrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyVZthSMAh57ogsX993/ZMsW2hwWcKzy9nQs/A9AGg8N/BukjVUUTv2L3Nj+WoggJdrCmneYs/vIntxDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypmpP5wmdbvewlIKqEyIngFkpFXawkEuhZGkZxSbxFM1ZXRLEV
-	zFFXo12BHhhLUXoYhbHvK1LGd/JOItdXklFYrrTh28x0AcF93uteOI9AfxxajA==
-X-Gm-Gg: ASbGncvwbjJDahiuxLHtATcEma0r+neTItCx6jZ/+f9u19ky+oCQYlZ/Jo7xcS1NgOq
-	RY03AVZf0M+h70DpJd5ZIqfYUJVNh8MwV5EX9XJn3/zuGTk/qW29/l53jVJv4qpV0k36tTiT+qa
-	T5kYuPw4gXoflBhpCxhyozDB/u/OOOHgz24UDc6ucZXMLasCI+c9PzF8XylAk4AXP3HkKBdyd7t
-	gygt0YBwG2wHbVf04YjHOkV8hU5jQGC1HskHOM84fnoKR7auc1I6bNFFUPkadDEXxxbB05bfJ/X
-	cul42pO0dUHZLsuZvRYCr6gU9myYDEHOHQkGmJWd7UgcnEqc21fEr6C5I1Lja7SihmKMqKCrUCA
-	ZNUVRV64=
-X-Google-Smtp-Source: AGHT+IE7xF5qbvgKRnHfx2I3KfMDgIwTK12qXs2qkhWYJrmEZMMPOAnefkb2h4CcUxPOX3VUqrZHNw==
-X-Received: by 2002:a17:90b:54c7:b0:2fe:93be:7c9d with SMTP id 98e67ed59e1d1-3030ec2a985mr625654a91.7.1742493444134;
-        Thu, 20 Mar 2025 10:57:24 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:9e6b:24df:389d:f71b])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-301a5ea4e9asm2514396a91.1.2025.03.20.10.57.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 10:57:23 -0700 (PDT)
-Date: Thu, 20 Mar 2025 10:57:21 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
-	Hsin-Yi Wang <hsinyi@chromium.org>, linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com, linux-acpi@vger.kernel.org,
-	linux-pci@vger.kernel.org, lukas@wunner.de
-Subject: Re: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all
- Devicetree based platforms
-Message-ID: <Z9xXAYA4KS5BabhE@google.com>
-References: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
- <20250228174509.GA58365@bhelgaas>
- <Z8IC_WDmix3YjOkv@google.com>
- <CAJZ5v0j_6jeMAQ7eFkZBe5Yi+USGzysxAgfemYh=-zq4h5W+Qg@mail.gmail.com>
- <20250313052113.zk5yuz5e76uinbq5@thinkpad>
+        d=1e100.net; s=20230601; t=1742493561; x=1743098361;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtjBMjBZnb8gIPfwNEw+gjcHeYhjJgmG8Gm1x0OUREY=;
+        b=jM63nj7Tah95CSW14vAyF6JY+fXhOPPm3R2Nlt6/JcdEpKFLfo2y53nHDXwG6AlQAP
+         HqRtXp8B7DJ7hC2bVWRAobUX1iVc7YaQJAbppOHjoAR4vKD4HNo3FjDkvL8Ea/vgH0da
+         KZh4nlajRVcpgVmnoL4/vm8moWWe4NAEv2MfNgbeO0nIk9PMrQnNFGPiL2mXO7LoeSkx
+         h5eij/4OYLTEd0/nsWC1W/3BIPNu+gsilQEWQeIVQEjVfb8DNiq1m35oB4pduwYWsd5Z
+         wFm+sjzzO3ff7OLcEj8oCs5yGe4nE30T4JSLUWt7cauRXuuXkaiAFa6dNBFpdbPSnmHG
+         bFLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsrvStyjjATIfzkPkxsz+p6F6sKnedSs8FcEA5cWVqnov6SwquTIh/bD3PnKVy/euDy0aRdz68QhhBuGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK6ua020bJtVDb/nRN+gX9BJuCdunj6mrsSmIxEJMNzfBN8Fd2
+	wRLn51kv/M4H06cwscnpHNpacaYTCDm5UrEVJxCfnr0Qm3bZPFex7Ad6d6kkim2x4MebMK287a6
+	m4w==
+X-Google-Smtp-Source: AGHT+IFFDux1CbiuMzkBtnyPZqPK4Cl0AlpMwyk2P7kdhcy6JyBURFc0XcLg0BWALe2g4ffe15lbm7EMEl4=
+X-Received: from pjbqj7.prod.google.com ([2002:a17:90b:28c7:b0:301:1ea9:63b0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2ed0:b0:2fe:b470:dde4
+ with SMTP id 98e67ed59e1d1-3030fe8bcb9mr311450a91.12.1742493561104; Thu, 20
+ Mar 2025 10:59:21 -0700 (PDT)
+Date: Thu, 20 Mar 2025 10:59:19 -0700
+In-Reply-To: <20250320142022.766201-4-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313052113.zk5yuz5e76uinbq5@thinkpad>
+Mime-Version: 1.0
+References: <20250320142022.766201-1-seanjc@google.com> <20250320142022.766201-4-seanjc@google.com>
+Message-ID: <Z9xXd5CoHh5Eo2TK@google.com>
+Subject: Re: [PATCH v2 3/3] KVM: x86: Add a module param to control and
+ enumerate device posted IRQs
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Rafael, Manivannan,
+On Thu, Mar 20, 2025, Sean Christopherson wrote:
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index f76d655dc9a8..e7eb2198db26 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -227,6 +227,10 @@ EXPORT_SYMBOL_GPL(allow_smaller_maxphyaddr);
+>  bool __read_mostly enable_apicv = true;
+>  EXPORT_SYMBOL_GPL(enable_apicv);
+>  
+> +bool __read_mostly enable_device_posted_irqs = true;
+> +module_param(enable_device_posted_irqs, bool, 0444);
+> +EXPORT_SYMBOL_GPL(enable_device_posted_irqs);
+> +
+>  const struct _kvm_stats_desc kvm_vm_stats_desc[] = {
+>  	KVM_GENERIC_VM_STATS(),
+>  	STATS_DESC_COUNTER(VM, mmu_shadow_zapped),
+> @@ -9772,6 +9776,9 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+>  	if (r != 0)
+>  		goto out_mmu_exit;
+>  
+> +	enable_device_posted_irqs &= enable_apicv &&
+> +				     irq_remapping_cap(IRQ_POSTING_CAP);
 
-On Thu, Mar 13, 2025 at 10:51:13AM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Mar 05, 2025 at 02:41:26PM +0100, Rafael J. Wysocki wrote:
-> > There were hardware issues related to PM on x86 platforms predating
-> > the introduction of Connected Standby in Windows.  For instance,
-> > programming a port into D3hot by writing to its PMCSR might cause the
-> > PCIe link behind it to go down and the only way to revive it was to
-> > power cycle the Root Complex.  And similar.
-> > 
-> > Also, PM has never really worked correctly on PCI (non-PCIe) bridges
-> > and there is this case where the platform firmware handles hotplug and
-> > doesn't want the OS to get in the way (the bridge->is_hotplug_bridge
-> > && !pciehp_is_native(bridge) check in pci_bridge_d3_possible()).
-> > 
-> > The DMI check at the end of pci_bridge_d3_possible() is really
-> > something to the effect of "there is no particular reason to prevent
-> > this bridge from going into D3, but try to avoid platforms where it
-> > may not work".
-> > 
-> 
-> Thanks for sharing the background. This could go in the commit message IMO.
+Drat, this is flawed.  Putting the module param in kvm.ko means that loading
+kvm.ko with enable_device_posted_irqs=true, but a vendor module with APICv/AVIC
+disabled, leaves enable_device_posted_irqs disabled for the lifetime of kvm.ko.
+I.e. reloading the vendor module with APICv/AVIC enabled can't enable device
+posted IRQs.
 
-Yes, thanks Rafael. This adds a bit more than the guesswork I've done so
-far.
+Option #1 is to do what we do for enable_mmio_caching, and snapshot userspace's
+desire.
 
-> > Basically, as far as I'm concerned, this check can be changed into
-> > something like
-> > 
-> > if (!IS_ENABLED(CONFIG_X86) || dmi_get_bios_year() >= 2015)
-> >         return true;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e7eb2198db26..c84ad9109108 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -228,6 +228,7 @@ bool __read_mostly enable_apicv = true;
+ EXPORT_SYMBOL_GPL(enable_apicv);
+ 
+ bool __read_mostly enable_device_posted_irqs = true;
++bool __ro_after_init allow_device_posted_irqs;
+ module_param(enable_device_posted_irqs, bool, 0444);
+ EXPORT_SYMBOL_GPL(enable_device_posted_irqs);
+ 
+@@ -9776,8 +9777,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+        if (r != 0)
+                goto out_mmu_exit;
+ 
+-       enable_device_posted_irqs &= enable_apicv &&
+-                                    irq_remapping_cap(IRQ_POSTING_CAP);
++       enable_device_posted_irqs = allow_device_posted_irqs && enable_apicv &&
++                                   irq_remapping_cap(IRQ_POSTING_CAP);
+ 
+        kvm_ops_update(ops);
+ 
+@@ -14033,6 +14034,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_rmp_fault);
+ 
+ static int __init kvm_x86_init(void)
+ {
++       allow_device_posted_irqs = enable_device_posted_irqs;
++
+        kvm_init_xstate_sizes();
+ 
+        kvm_mmu_x86_module_init();
 
-I suppose if this harms any non-x86 BIOS systems, we can just add to
-bridge_d3_blacklist[]. This works for me too.
 
-> > which also requires updating the comment above it accordingly.
-> > 
-> > This would have been better than the check added by the $subject patch IMV.
-> 
-> Looks good to me. Brian, could you please respin incorporating the comments?
+Option #2 is to shove the module param into vendor code, but leave the variable
+in kvm.ko, like we do for enable_apicv.
 
-Sure, will send shortly.
-
-Brian
+I'm leaning toward option #2, as it's more flexible, arguably more intuitive, and
+doesn't prevent putting the logic in kvm_x86_vendor_init().
 
