@@ -1,313 +1,276 @@
-Return-Path: <linux-kernel+bounces-569249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863ECA6A089
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF1BA6A090
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E86C1896206
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B62918956BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC72820B80E;
-	Thu, 20 Mar 2025 07:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48D21F0991;
+	Thu, 20 Mar 2025 07:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Gei0cDqU"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tNEpsWbi"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0866207DEA;
-	Thu, 20 Mar 2025 07:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742456227; cv=none; b=Nb3DIKeKk26YeUF7RX+t4DCpMk1g1Ii/ygPhVHecDXkmlkSzbZRTGdU4sDc1n9HlC/nTibyOTjA0H8IZmvtv+YY867BUjfvbZskx4EVOS5PhfwvwP26/FKEUAbP2vbjOdAoPQlFe3vuJwrAYbx9Dv/7Fdu0I1/AQ+at9ZjF290M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742456227; c=relaxed/simple;
-	bh=nLsOANJT/aINhdclRfW3Wt3Q2lipBv6ixoIBIFt/J6w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YXAzc49BoDBALQXJihsJMBhPL+s6gZiy9INvlHQdNu06XpF6FUhmBmbh5m1kRgjA2kxlMLYSpdBIMAXPmYwbkWKeDF8GcK/vEYopV7+dXh4yS41DvVezl02D77duYr39ZYp7G94UiUT5ZNYPnEgBla6lQzRSwUNFiOw6AQ/d2og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Gei0cDqU; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1b6ea9d6055e11f08eb9c36241bbb6fb-20250320
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=RZ2JcBvio+ntIgdmdYECbx7+bIzD61zrEsYhBVvtdO4=;
-	b=Gei0cDqUa+PAORV4DDXIdEHKtOSxHuTbrCk/TtXAzQ8QrPmb82KR/7wZ/8U9XKnfu9PQPX7JvP75a93D/4QDNi4E56xMS7sPVS0CbwN3vAWbiKbQd0laeqs+gcV1gFuR9CahWAnwmfSYo0MGZRer0btahf156ayov+R9j9xVu9c=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:c5f7bf32-1eee-41f1-9781-dd1d0799f524,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:1fae9c8c-f5b8-47d5-8cf3-b68fe7530c9a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 1b6ea9d6055e11f08eb9c36241bbb6fb-20250320
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <xueqi.zhang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1275332326; Thu, 20 Mar 2025 15:36:59 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 20 Mar 2025 15:36:57 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Thu, 20 Mar 2025 15:36:57 +0800
-From: Xueqi Zhang <xueqi.zhang@mediatek.com>
-To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob
- Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Wendy-st Lin <wendy-st.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<iommu@lists.linux.dev>, Xueqi Zhang <xueqi.zhang@mediatek.com>
-Subject: [PATCH 3/3] memory: mtk-smi: mt8196: Add smi support
-Date: Thu, 20 Mar 2025 15:36:18 +0800
-Message-ID: <20250320073625.25225-4-xueqi.zhang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250320073625.25225-1-xueqi.zhang@mediatek.com>
-References: <20250320073625.25225-1-xueqi.zhang@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B3615C0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 07:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742456386; cv=fail; b=G3UhFpDqXwwUI+gU5pQSV2WOso3dV5IKELRWHiuQ4KfKJF3NPQNBlqYn5W/7MfjD0XeL+fB/PGV9Qf1INd4tID0pMzXtCL6SwQwHpio6amm+6kN+9MgshR2/AF1s0hlAMahfmB+cL1JRkTQZJGwAWfRs976f2S0RFP91fkqt38s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742456386; c=relaxed/simple;
+	bh=daxp2b3Cog6aCmj1wQ0OdmjfBGQHqvM25tSTHIQ7zTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dyDRigJRsJbkOi4vPpHMYvhFKiGLDc5z0pQ4+j/p6ZZ5jxCInEz507nF7JhRDStzM+aGzT3bx5ejbw0K+uNMhkMg7nkIMzoX6cMevIJugUnFX5Gf1LTfEUKYeVZcXfKjvA4BbdxET2cwvTbL6baZiBVhTaHtgXjElp+93JLroCg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tNEpsWbi; arc=fail smtp.client-ip=40.107.94.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vtJbBrMiCdlycrG+yNtvxcOBjZMCSyzpp+K6f7tiHfrwYSguaJEGfHp4MeCABKdQgzkDg3EhljpEcUSjDCfU5M7lWD65WyvFdzEA+1cwp5Y/6IJK5LoVxOnWV6YtxiaSEAw4gQb883AwpUt+Zwp/XqU6AlR8gxchllRO6jHrK0qbSL4yR1EmjeI7PORd1LNKCfoO2UIg57vIxNFobj9cD4kzNSxECr9+aQmU8SDrLeGzCUhEEDwCOPH/14zd9fSFEt5tYgLG+/Iv95+fSBDuZMckmIoHtSm2IbblTkr4P+xxFHQeLv256W5NwVOm3+BgFbvvbuV+YsCK5GV7a8Upmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uX0W5P9HfN+bC9888lkxsQxs8cCqw6zl9hDATO+ofQg=;
+ b=cihPS7zuHcUROqO8kKBGau0Yj4isTpP4pEQ66o4vMQlXUObNYBgfVmnPYcMfeZjTwX4N++HMiSIDMpKehkf/C6tJZG7BzZef0irKv/cjmCwzJNoWZU6WIAwSFVO0HcRJXrEfpf6n/vaT3cLRp/2ZElWUsCAY/S/SNvG5BEid9uL7bUomGojKnznnnOKd9hTMLRYUq28Y6Ft4n3vRGWC33/I8GVHwCEm+Lul85oAH/imFJfYFOyn5tKh/L9VqfQkHlYACUnxtfI70IhBlC4H4WHCiZo8GLouoK0h+9IEJyRz1B7fJaS6De0n2xNoX7OFXv1h4VEIm8ejSAQcxUQSwTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uX0W5P9HfN+bC9888lkxsQxs8cCqw6zl9hDATO+ofQg=;
+ b=tNEpsWbiCBw4tTUhey2LveXwD/iSdabbO8vPEvVaiZpYfTpYtQosBsE4VWSRN3TUQe5EKj12UJ94i7nxE6+w/2f2ncjW73exDwfiuieJ+DaI1gL1G/snu1okm11E+WdURoA29yjMGhSB+7AB43X5j0Sd7fVKiiN0YDfh/L3NiedIbstg8J2JMMrsKZBjzzJYqPX54OCLAZcZLOqXeNy2p00QJ6vMK9yueyUoD+xioe48qSAuSr9KPKhuWut81RlkmKdIZpTfrz9SPeVofgoVmOHsS3S0LepQGkeD7JaiJLF49lacUwq2E3R0hD49qYnXE3F9dfv5goyEVcsYXD6ZOQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by MW4PR12MB7438.namprd12.prod.outlook.com (2603:10b6:303:219::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
+ 2025 07:39:40 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
+ 07:39:40 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHSET v5 sched_ext/for-6.15] sched_ext: Enhance built-in idle selection with allowed CPUs
+Date: Thu, 20 Mar 2025 08:36:40 +0100
+Message-ID: <20250320073927.216147-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM8P189CA0024.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:218::29) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|MW4PR12MB7438:EE_
+X-MS-Office365-Filtering-Correlation-Id: b122399e-ddaf-45a7-906f-08dd67825f72
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?izgUUQUwHDbkCS623OfIkt5k2gRDRlXIAPLuUgh4FW0EKVaUU6qK2ok/J52O?=
+ =?us-ascii?Q?ZH3cp4tiHlKOIUkWFVdAblb1wl9QVOT5Gs9vJv7XMcBIDCwTlqatrOYohWZF?=
+ =?us-ascii?Q?sEZhVD3C1o/Mndq5JPdzRYtjzs/BQYZEH0ap54zMhqQED8/chA81ZzUDsLTP?=
+ =?us-ascii?Q?R83XQ5wDMLAIetI8hJlD1twiaDHlTFRTMHcz2snzZH89o3li7MDkHbOwK7+4?=
+ =?us-ascii?Q?M8lv7Q70pgJ/wLBLt5y8JxYs5DxXbvsvCebxJ0SHG5basosP0OtV7GQGPnKO?=
+ =?us-ascii?Q?nug88WOJhrrQk0kb/TJy+fkah+n6M3/eY9aPNmiI/e6ZunJE59EE6Tpm+GWI?=
+ =?us-ascii?Q?XSLv6h3brLM3xHQCeKPf5EGnk9fMleLBA5DtmQNH0z09yEW4kYrpRqrGxS4L?=
+ =?us-ascii?Q?RcrVSw+8wYVDexKlNi5LwAPL3pQBGT6zlKj2WTVElyAQc7kKhCLESoc9qN+s?=
+ =?us-ascii?Q?fn9v+MznSjeQsDOJDN6puH3WtK9O8coXBZYGhc3nlDOTfz6wRJBmQplN7lIu?=
+ =?us-ascii?Q?tZYTAaIeRBK7zEWbXQ3MgJIRCCrO3ugj5TahaP3Im5LTgDX9GqsvnyGJ2CxU?=
+ =?us-ascii?Q?zSm1f6VANRsdeYIQQu2mRYdqjguRvJrjaVH6onV23gtsGupxukXixDvHNmSE?=
+ =?us-ascii?Q?sc9NZWc2JDScPaDEyUxRf9DlpRkfzY8QKFZpt/9UbO8w/w73Uk+MTmEKbMwl?=
+ =?us-ascii?Q?lYXNGtOYwauXbK/IGJFvG8C4vWv+p0AZb7D7FvdzCcVj7QP+w8/vyYbLZgRp?=
+ =?us-ascii?Q?wYbk7KIVIVC3dPGhGnHhJsSgh7P0FYLpanqOf4wa1iyQaQzrMkWtuXFIH0NP?=
+ =?us-ascii?Q?fK04qR+4PVwEFfxheG+s71Z54YzeJAg0/UjQoWcQA0nEgvcJgWB7kEwbNk54?=
+ =?us-ascii?Q?OR7SJ4YD8oov2pmM7UMjpARwxMJaBc0euQqDvgAe8TTCzc/ViIqFQlMYFDT7?=
+ =?us-ascii?Q?na83kkgCkblionPTMrU8vGNMfsSoGJRvonQW1Y+jpEEJGI420t1qw7Hhch3T?=
+ =?us-ascii?Q?dKga9e5V4VtHOsxOGenQgi3k4usa4i4gwaB+vqtrQLtvGpbvzEEcFHF2HJvd?=
+ =?us-ascii?Q?i2asJ/vx5MesJR9b8wJf+U55+3GN5RS7Sbyv+d0ha0vUGyc8r5u0t50mq34+?=
+ =?us-ascii?Q?m4xZj1XeXsGW0/hRIdf4lmA5jdHIxKwbpCOBYCNrnIEkmA1HUoRNZ9mopN/d?=
+ =?us-ascii?Q?6uQ/OYSXomVvvk/5qyvriFozf+XRfe1ERhvfydij/J/U1S4VCuROhKMXki0r?=
+ =?us-ascii?Q?Rhf8kvu2Ym3v0cssX2P78fC0Jq28oWiAi+ZAjiTjqxOAJySSyORPZgB/Bq5P?=
+ =?us-ascii?Q?sOXjP6a/qEfFQBAPnbBCfg8AYKkXUEGXediojUns1Iw0+xcrXFXygc5r0jnM?=
+ =?us-ascii?Q?fta2fzf+ds/CzAngZubILfM6KAbb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KVTxjwWpyuSyY2IaIJ067DgiUdBlKB3YkKJssKOAK/tE8fZOVA8ZbMcueqbH?=
+ =?us-ascii?Q?uJJHVW4adAzPMDZPcjYg2Rg6lwXK0Wt7aa7hzlV4ASPrATIj2fANb1fGK2PR?=
+ =?us-ascii?Q?xHcFMkmLdMJVgapMSC/2Qx3nFfDI1uf5I0ZvL/b7QWN0vAwDruTSlc5NsWk5?=
+ =?us-ascii?Q?rfU6Z0ngkaYBe59t0540XcuJ3sc5L5F7vXXN1Sl/6k+Zb9uVyft+UUgSFKkO?=
+ =?us-ascii?Q?laV5y6mJHzDRReU3ve3vFKCdLKPObUe9JEFWmKr2jxjiT9tcpqiPfzA9utwW?=
+ =?us-ascii?Q?g3TjgK1diTnyg3ymX/nXBndq0rTfO9V2bG3pJFyYGNS4qndvv68+u4yzYh2+?=
+ =?us-ascii?Q?KyNwuBwjRWlH9wceTyTKJCa5hFEpU2W2yJOZXhU6pKIGyENXe9IIaiunmVv3?=
+ =?us-ascii?Q?42vazllLUT/XkUqg8L4kTHjYtTYsLklhgghK5APX+K7t7+QJnbYRWojII0mF?=
+ =?us-ascii?Q?RaK4oVx2gG8YLB6WRUVna8EWnuk5ZqtQ7GGSXdxSlo1e5Nm7D2mkQ+GicecW?=
+ =?us-ascii?Q?eoWbuBxXs6IDQoddPFxvOqGVdrGqKbU7fPt/L1AHiRQxR66G92yRxJA8pYHq?=
+ =?us-ascii?Q?/2f6Btxgixxj0ZZOPAhT7LwxUn5eoZ+6bDNiqJF0A/Lq+8zOAlctUyCDp5Qg?=
+ =?us-ascii?Q?M/21kFrLeqaSp1sqkFKOOQDjyMEBeHzzHIEfg9Hu2XFKGzDBOJyh8QAupaSB?=
+ =?us-ascii?Q?gGsxmA96tK2QcxKBEU/tbrqy0QP1gh+XFfrpZtxqDT7N0jyxsWzeiVSDqa7+?=
+ =?us-ascii?Q?JiPWWOB2lu5Qfkdw/Cav2PJ5d3jDDD0NgLmEed1pF4IE+MavMOD7gzUNuYaJ?=
+ =?us-ascii?Q?Vt7wHEjcz+n8r+n4s38Asm1s8L6fpVqdgGrxHTC9WH1bFGDUDdAWEm0NXLfi?=
+ =?us-ascii?Q?G9TEOc5W+xVGbZ0CVNyig/BaicmX3bvKSg/+9AJtyQ98575miBpMKj+vj2dE?=
+ =?us-ascii?Q?M62Z9L2c5p5RMQoPpOrLx10BSoXEqMZxgrh9vD0W54v3/1mR7GWMAPv7K4WW?=
+ =?us-ascii?Q?WZMv7tBP8Es9sb1Y7sop66FcEPAUiTc6Txnpp5Zc8IjK+nCGJUC2gql/IwhC?=
+ =?us-ascii?Q?6/YL/i8XA14D40+z0zx4JvvHiaWrn2N+4wv7DvYSdrvqIl43nHNLZfM7iEAi?=
+ =?us-ascii?Q?N2balGwRMPi8p883kzt/xtGGw44wym2h3eTKx+ZJIud8SYCJegqpIznw7d4T?=
+ =?us-ascii?Q?+7BNTVivXLBieAYV4AVfRmP3eCgxehT6Qjf9+yWLMTDwhbZAxkox6bpGZ9QX?=
+ =?us-ascii?Q?QuoRLPIzoQyXyOQxzvlpbVfbBbXldzfshlkznLCzFBNVlU3rXqHSPWaMHizx?=
+ =?us-ascii?Q?uU7H0UTBqpia5Jx3t9n7f5+IfnN3BuJd2GQQmtok23NYLsmurvDg9Iuq5L40?=
+ =?us-ascii?Q?47VQBUMpBWecKbniGaCSrImJ3JicgABM78ObuWRRoQEIdqpGDBPHOWKb2Q1X?=
+ =?us-ascii?Q?6aGcYTGMEKgjTRJXzzustH1h3uShgMxfnlxIJgH8jnr60wkDCzsRK0cve8Nl?=
+ =?us-ascii?Q?qOKzJY9ubE7acPUJOXXECXXGWRyJRC6o2pp4i9mYP7MZhuxbtvxxB9LLnACm?=
+ =?us-ascii?Q?m4yejhlluWj3Wqp3ldQmrbyjrhnP4BCezPHK7d1F?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b122399e-ddaf-45a7-906f-08dd67825f72
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 07:39:40.2428
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dYM43pNU+NClZG5tFxogrvpXiEMCwM8HqOaFCojDC9l2yFhXUdkh09aBd/OcGFbkZlo6sTZPu2ceeNR+VxE2LQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7438
 
-Add support for MT8196 SMI common and SMI LARB.
-Since the MT8196 SMI connects with SMMU, rather than MTK_IOMMU,
-it doesn't componet_add with mtk_iommu. Add a flag
-MTK_SMI_FLAG_CONNECT_SMMUV3 for this.
+Many scx schedulers implement their own hard or soft-affinity rules to
+support topology characteristics, such as heterogeneous architectures
+(e.g., big.LITTLE, P-cores/E-cores), or to categorize tasks based on
+specific properties (e.g., running certain tasks only in a subset of CPUs).
 
-Signed-off-by: Xueqi Zhang <xueqi.zhang@mediatek.com>
----
- drivers/memory/mtk-smi.c | 134 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 133 insertions(+), 1 deletion(-)
+Currently, there is no mechanism that allows to use the built-in idle CPU
+selection policy to an arbitrary subset of CPUs. As a result, schedulers
+often implement their own idle CPU selection policies, which are typically
+similar to one another, leading to a lot of code duplication.
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index b9affa3c3185..bd68df23e40b 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -92,6 +92,7 @@
- #define MTK_SMI_FLAG_SW_FLAG		BIT(1)
- #define MTK_SMI_FLAG_SLEEP_CTL		BIT(2)
- #define MTK_SMI_FLAG_CFG_PORT_SEC_CTL	BIT(3)
-+#define MTK_SMI_FLAG_CONNECT_SMMUV3	BIT(4)
- #define MTK_SMI_CAPS(flags, _x)		(!!((flags) & (_x)))
- 
- struct mtk_smi_reg_pair {
-@@ -275,6 +276,9 @@ static int mtk_smi_larb_config_port_gen2_general(struct device *dev)
- 		}
- 	}
- 
-+	if (MTK_SMI_CAPS(larb->larb_gen->flags_general, MTK_SMI_FLAG_CONNECT_SMMUV3))
-+		return 0;
-+
- 	for_each_set_bit(i, (unsigned long *)larb->mmu, 32) {
- 		reg = readl_relaxed(larb->base + SMI_LARB_NONSEC_CON(i));
- 		reg |= F_MMU_EN;
-@@ -410,6 +414,101 @@ static const u8 mtk_smi_larb_mt8195_ostd[][SMI_LARB_PORT_NR_MAX] = {
- 	[28] = {0x1a, 0x0e, 0x0a, 0x0a, 0x0c, 0x0e, 0x10,},
- };
- 
-+static const u8 mtk_smi_larb_mt8196_ostd[][SMI_LARB_PORT_NR_MAX] = {
-+	[0] = {0x4, 0x4, 0x40, 0x40, 0x1, 0x1, 0x2, 0x2, 0x4, 0x4,
-+	       0x1, 0x1, 0x1,},
-+	[1] = {0x4, 0x4, 0x40, 0x40, 0x32, 0x1, 0x2, 0x2, 0x2, 0x4,
-+	       0x4, 0x2, 0x1, 0x1, 0x1, 0x1,},
-+	[2] = {0x1, 0x1, 0x1, 0x1, 0x9, 0xb, 0x2a, 0x1, 0x1, 0x1,
-+	       0x1, 0x1, 0x1, 0x1, 0x3, 0x1c, 0x1, 0x1,},
-+	[3] = {0x2, 0x2, 0x2, 0x2, 0x1a, 0x20, 0x2a, 0x2, 0x1, 0x1,
-+	       0x1, 0x1, 0x1, 0x2, 0x8, 0x1c, 0x1, 0x1,},
-+	[4] = {0x40, 0x10, 0x10, 0x1, 0x4, 0x10, 0x8, 0x8,},
-+	[5] = {0x10, 0x8, 0x40, 0x1e, 0x8, 0x8, 0x4, 0x1,},
-+	[6] = {0x40, 0x12, 0x1,},
-+	[7] = {0x20, 0x6, 0x6, 0x1, 0x1, 0x24, 0x2b, 0x7, 0x4, 0x1,
-+	       0x1, 0xf, 0x3, 0x5, 0x8, 0x8, 0x3, 0x8, 0x5, 0x23,
-+	       0x24, 0x4, 0x2, 0xb, 0x10, 0x17, 0x4, 0x8, 0x5, 0x1,
-+	       0x1, 0x6,},
-+	[8] = {0x20, 0x6, 0x6, 0x1, 0x1, 0x24, 0x2b, 0x7, 0x4, 0x1,
-+	       0x1, 0xf, 0x3, 0x5, 0x8, 0x8, 0x3, 0x8, 0x5, 0x23,
-+	       0x24, 0x4, 0x2, 0xb, 0x10, 0x17, 0x4, 0x8, 0x5, 0x1,
-+	       0x1, 0x6,},
-+	[9] = {0x2b, 0x8, 0x9, 0x31, 0x10, 0x26, 0x15, 0x13, 0x7, 0x4,
-+	       0x1, 0x1, 0x7, 0xa, 0xb, 0x6, 0x1, 0x1, 0x1, 0x1,
-+	       0x1, 0x1, 0xf, 0x9, 0x6, 0x3,},
-+	[10] = {0x2b, 0x8, 0x20, 0x1d, 0x19, 0xf, 0x1, 0x3,},
-+	[11] = {0x8, 0x16, 0x16, 0x24, 0x1, 0x1, 0x1, 0x3, 0x32, 0x1,
-+		0x8, 0x10, 0x16, 0x2, 0x38,},
-+	[12] = {0xa, 0xa, 0x1,},
-+	[13] = {0x2, 0x20, 0x14, 0x1, 0x1, 0x2, 0x2,},
-+	[14] = {0x2, 0x20, 0x14, 0x1, 0x2, 0x2,},
-+	[15] = {0x2b, 0x7, 0x31, 0xa, 0x10, 0x10, 0x2b, 0x29, 0x7, 0x1,},
-+	[16] = {0x4, 0x4, 0x12, 0x8, 0x8, 0x16, 0x8, 0x6, 0xe, 0x6,
-+		0x1e, 0x18, 0x16, 0xe, 0x8, 0xe, 0x8, 0x2, 0x2,},
-+	[17] = {0x18, 0x18, 0x8, 0x8, 0xc, 0x4, 0x2,},
-+	[18] = {0xb, 0x1, 0x10, 0x1, 0x2,},
-+	[19] = {0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x4, 0x2, 0x1, 0x1,
-+		0x4, 0x2, 0x1,},
-+	[20] = {0x2, 0x2, 0x2, 0x40, 0x40, 0x40, 0x1, 0x2, 0x2, 0x2,
-+		0x4, 0x4, 0x4, 0x1, 0x1,},
-+	[21] = {0x2, 0x2, 0x2, 0x40, 0x40, 0x40, 0x1, 0x32, 0x32, 0x32,
-+		0x2, 0x2, 0x2, 0x4, 0x4, 0x4, 0x2, 0x1,},
-+	[22] = {0x8, 0x16, 0x16, 0x24, 0x1, 0x1, 0x1, 0x3, 0x32, 0x1,
-+		0x8, 0x10, 0x16, 0x2, 0x38,},
-+	[23] = {0x8, 0x16, 0x16, 0x24, 0x1, 0x1, 0x1, 0x3, 0x32, 0x1,
-+		0x8, 0x10, 0x16, 0x2, 0x38,},
-+	[24] = {0x20, 0x6, 0x6, 0x1, 0x1, 0x24, 0x2b, 0x7, 0x4, 0x1,
-+		0x1, 0xf, 0x3, 0x5, 0x8, 0x8, 0x3, 0x8, 0x5, 0x23,
-+		0x24, 0x4, 0x2, 0xb, 0x10, 0x17, 0x4, 0x8, 0x5, 0x1,
-+		0x1, 0x6,},
-+	[25] = {0x2, 0xc, 0x2, 0xc, 0x6, 0x6, 0x3, 0x3, 0x3, 0x1,
-+		0x1, 0x2, 0x2,},
-+	[26] = {0x2, 0xc, 0x2, 0xc, 0x6, 0x6, 0x3, 0x3, 0x3, 0x1,
-+		0x1, 0x2, 0x2,},
-+	[27] = {0x6, 0x2, 0xe, 0x6, 0x2, 0x14, 0x14, 0x4, 0x6,},
-+	[28] = {0x2b, 0x8, 0x31, 0x10, 0x26, 0x15, 0x1, 0x10,},
-+	[29] = {0x2, 0x2, 0x2, 0x2, 0x10, 0xe, 0x6, 0x6, 0x1, 0x1,
-+		0x2, 0x2, 0x2, 0x2,},
-+	[30] = {0x2, 0x2, 0x2, 0x2,},
-+	[31] = {},
-+	[32] = {0x1, 0x1, 0x1, 0x1, 0x2, 0x2, 0x32, 0x32, 0x1, 0x2,},
-+	[33] = {0xa, 0x1, 0x1, 0x1, 0xa, 0xa, 0xa, 0x1, 0x26, 0x32,
-+		0x32, 0x32, 0x32, 0x32, 0x2, 0x1,},
-+	[34] = {0x4, 0x4, 0x40, 0x40, 0x1, 0x1, 0x2, 0x2, 0x4, 0x4,
-+		0x1, 0x1, 0x1,},
-+	[35] = {0x4, 0x4, 0x40, 0x40, 0x32, 0x1, 0x2, 0x2, 0x2, 0x4,
-+		0x4, 0x2, 0x1, 0x1, 0x1, 0x1,},
-+	[36] = {0x2, 0x2, 0x2, 0x40, 0x40, 0x40, 0x1, 0x2, 0x2, 0x2,
-+		0x4, 0x4, 0x4, 0x1, 0x1,},
-+	[37] = {0x2, 0x2, 0x2, 0x40, 0x40, 0x40, 0x1, 0x32, 0x32, 0x32,
-+		0x2, 0x2, 0x2, 0x4, 0x4, 0x4, 0x2, 0x1,},
-+	[38] = {0x29, 0x40, 0x40, 0x7, 0x4, 0x40, 0x4, 0x18, 0x1, 0x1,
-+		0x1, 0x7, 0x4,},
-+	[39] = {0x16, 0x4, 0x4, 0x8, 0x4, 0x6, 0x6, 0x13, 0x11, 0x20,
-+		0x11, 0x1, 0x1, 0x1, 0x9, 0x8, 0x4, 0x6, 0x6,},
-+	[40] = {0x9, 0x7, 0x7, 0xb, 0xf, 0x1d, 0x13, 0x6, 0x1, 0x1,
-+		0x1, 0x6, 0x9, 0x7, 0xe, 0x3,},
-+	[41] = {0x40, 0x8, 0x1, 0x1, 0x2, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x8, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x8, 0x8, 0x8, 0x8, 0x8, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x1,},
-+	[42] = {0x1, 0x8, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x8, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x8, 0x8, 0x8, 0x8, 0x8, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x1,},
-+	[43] = {0x4, 0x4, 0x12, 0x8, 0x8, 0x16, 0x8, 0x6, 0xe, 0x6,
-+		0x1e, 0x18, 0x16, 0xe, 0x8, 0xe, 0x8, 0x1, 0x1,},
-+	[44] = {0x4, 0x4, 0x12, 0x8, 0x8, 0x16, 0x8, 0x6, 0xe, 0x6,
-+		0x1e, 0x18, 0x16, 0xe, 0x8, 0xe, 0x8, 0x1, 0x1,},
-+	[45] = {0x18, 0x18, 0x8, 0x8, 0xc, 0x4, 0x1,},
-+	[46] = {0x18, 0x18, 0x8, 0x8, 0xc, 0x4, 0x1,},
-+	[47] = {0x1, 0x8, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x8, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x8, 0x8, 0x8, 0x8, 0x8, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x1,},
-+};
-+
- static const struct mtk_smi_larb_gen mtk_smi_larb_mt2701 = {
- 	.port_in_larb = {
- 		LARB0_PORT_OFFSET, LARB1_PORT_OFFSET,
-@@ -470,6 +569,13 @@ static const struct mtk_smi_larb_gen mtk_smi_larb_mt8195 = {
- 	.ostd		            = mtk_smi_larb_mt8195_ostd,
- };
- 
-+static const struct mtk_smi_larb_gen mtk_smi_larb_mt8196 = {
-+	.config_port                = mtk_smi_larb_config_port_gen2_general,
-+	.flags_general	            = MTK_SMI_FLAG_THRT_UPDATE | MTK_SMI_FLAG_SW_FLAG |
-+				      MTK_SMI_FLAG_SLEEP_CTL | MTK_SMI_FLAG_CONNECT_SMMUV3,
-+	.ostd		            = mtk_smi_larb_mt8196_ostd,
-+};
-+
- static const struct of_device_id mtk_smi_larb_of_ids[] = {
- 	{.compatible = "mediatek,mt2701-smi-larb", .data = &mtk_smi_larb_mt2701},
- 	{.compatible = "mediatek,mt2712-smi-larb", .data = &mtk_smi_larb_mt2712},
-@@ -482,6 +588,7 @@ static const struct of_device_id mtk_smi_larb_of_ids[] = {
- 	{.compatible = "mediatek,mt8188-smi-larb", .data = &mtk_smi_larb_mt8188},
- 	{.compatible = "mediatek,mt8192-smi-larb", .data = &mtk_smi_larb_mt8192},
- 	{.compatible = "mediatek,mt8195-smi-larb", .data = &mtk_smi_larb_mt8195},
-+	{.compatible = "mediatek,mt8196-smi-larb", .data = &mtk_smi_larb_mt8196},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, mtk_smi_larb_of_ids);
-@@ -569,6 +676,7 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
- {
- 	struct mtk_smi_larb *larb;
- 	struct device *dev = &pdev->dev;
-+	bool connect_with_smmuv3;
- 	int ret;
- 
- 	larb = devm_kzalloc(dev, sizeof(*larb), GFP_KERNEL);
-@@ -580,6 +688,13 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
- 	if (IS_ERR(larb->base))
- 		return PTR_ERR(larb->base);
- 
-+	connect_with_smmuv3 = MTK_SMI_CAPS(larb->larb_gen->flags_general,
-+					   MTK_SMI_FLAG_CONNECT_SMMUV3);
-+	if (connect_with_smmuv3 && !IS_ENABLED(CONFIG_ARM_SMMU_V3)) {
-+		dev_err(dev, " SMMU property conflict.\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = mtk_smi_dts_clk_init(dev, &larb->smi, mtk_smi_larb_clks,
- 				   MTK_SMI_LARB_REQ_CLK_NR, MTK_SMI_LARB_OPT_CLK_NR);
- 	if (ret)
-@@ -593,6 +708,10 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(dev);
- 	platform_set_drvdata(pdev, larb);
-+
-+	if (!connect_with_smmuv3)
-+		return 0;
-+
- 	ret = component_add(dev, &mtk_smi_larb_component_ops);
- 	if (ret)
- 		goto err_pm_disable;
-@@ -610,7 +729,8 @@ static void mtk_smi_larb_remove(struct platform_device *pdev)
- 
- 	device_link_remove(&pdev->dev, larb->smi_common_dev);
- 	pm_runtime_disable(&pdev->dev);
--	component_del(&pdev->dev, &mtk_smi_larb_component_ops);
-+	if (!MTK_SMI_CAPS(larb->larb_gen->flags_general, MTK_SMI_FLAG_CONNECT_SMMUV3))
-+		component_del(&pdev->dev, &mtk_smi_larb_component_ops);
- }
- 
- static int __maybe_unused mtk_smi_larb_resume(struct device *dev)
-@@ -750,6 +870,16 @@ static const struct mtk_smi_common_plat mtk_smi_sub_common_mt8195 = {
- 	.has_gals = true,
- };
- 
-+static const struct mtk_smi_common_plat mtk_smi_common_mt8196 = {
-+	.type     = MTK_SMI_GEN2,
-+	.skip_rpm = true,
-+};
-+
-+static const struct mtk_smi_common_plat mtk_smi_sub_common_mt8196 = {
-+	.type     = MTK_SMI_GEN2_SUB_COMM,
-+	.skip_rpm = true,
-+};
-+
- static const struct mtk_smi_common_plat mtk_smi_common_mt8365 = {
- 	.type     = MTK_SMI_GEN2,
- 	.bus_sel  = F_MMU1_LARB(2) | F_MMU1_LARB(4),
-@@ -770,6 +900,8 @@ static const struct of_device_id mtk_smi_common_of_ids[] = {
- 	{.compatible = "mediatek,mt8195-smi-common-vdo", .data = &mtk_smi_common_mt8195_vdo},
- 	{.compatible = "mediatek,mt8195-smi-common-vpp", .data = &mtk_smi_common_mt8195_vpp},
- 	{.compatible = "mediatek,mt8195-smi-sub-common", .data = &mtk_smi_sub_common_mt8195},
-+	{.compatible = "mediatek,mt8196-smi-common", .data = &mtk_smi_common_gen2},
-+	{.compatible = "mediatek,mt8196-smi-sub-common", .data = &mtk_smi_sub_common_mt8196},
- 	{.compatible = "mediatek,mt8365-smi-common", .data = &mtk_smi_common_mt8365},
- 	{}
- };
--- 
-2.46.0
+To address this, extend the built-in idle CPU selection policy introducing
+the concept of allowed CPUs.
 
+With this concept, BPF schedulers can apply the built-in idle CPU selection
+policy to a subset of allowed CPUs, allowing them to implement their own
+hard/soft-affinity rules while still using the topology optimizations of
+the built-in policy, preventing code duplication across different
+schedulers.
+
+To implement this introduce a new helper kfunc scx_bpf_select_cpu_and()
+that accepts a cpumask of allowed CPUs:
+
+s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu,
+			   u64 wake_flags,
+			   const struct cpumask *cpus_allowed, u64 flags);
+
+Example usage
+=============
+
+s32 BPF_STRUCT_OPS(foo_select_cpu, struct task_struct *p,
+		   s32 prev_cpu, u64 wake_flags)
+{
+	const struct cpumask *cpus = task_allowed_cpus(p) ?: p->cpus_ptr;
+	s32 cpu;
+
+	cpu = scx_bpf_select_cpu_and(p, prev_cpu, wake_flags, cpus, 0);
+	if (cpu >= 0) {
+		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+		return cpu;
+	}
+
+	return prev_cpu;
+}
+
+Results
+=======
+
+Load distribution on a 4 sockets / 4 cores per socket system, simulated
+using virtme-ng, running a modified version of scx_bpfland that uses the
+new helper scx_bpf_select_cpu_and() and 0xff00 as allowed domain:
+
+     $ vng --cpu 16,sockets=4,cores=4,threads=1
+     ...
+     $ stress-ng -c 16
+     ...
+     $ htop
+     ...
+       0[                         0.0%]   8[||||||||||||||||||||||||100.0%]
+       1[                         0.0%]   9[||||||||||||||||||||||||100.0%]
+       2[                         0.0%]  10[||||||||||||||||||||||||100.0%]
+       3[                         0.0%]  11[||||||||||||||||||||||||100.0%]
+       4[                         0.0%]  12[||||||||||||||||||||||||100.0%]
+       5[                         0.0%]  13[||||||||||||||||||||||||100.0%]
+       6[                         0.0%]  14[||||||||||||||||||||||||100.0%]
+       7[                         0.0%]  15[||||||||||||||||||||||||100.0%]
+
+With scx_bpf_select_cpu_dfl() tasks would be distributed evenly across all
+the available CPUs.
+
+ChangeLog v4 -> v5:
+ - simplify the code to compute (and) task's temporary cpumasks
+
+ChangeLog v3 -> v4:
+ - keep p->nr_cpus_allowed optimizations (skip cpumask operations when the
+   task can run on all CPUs)
+ - allow to call scx_bpf_select_cpu_and() also from ops.enqueue() and
+   modify the kselftest to cover this case as well
+ - rebase to the latest sched_ext/for-6.15
+
+ChangeLog v2 -> v3:
+ - incrementally refactor scx_select_cpu_dfl() to accept idle flags and an
+   arbitrary allowed cpumask
+ - build scx_bpf_select_cpu_and() on top of the existing logic
+ - re-arrange scx_select_cpu_dfl() prototype, aligning the first three
+   arguments with select_task_rq()
+ - do not use "domain" for the allowed cpumask to avoid potential ambiguity
+   with sched_domain
+
+ChangeLog v1 -> v2:
+  - rename scx_bpf_select_cpu_pref() to scx_bpf_select_cpu_and() and always
+    select idle CPUs strictly within the allowed domain
+  - rename preferred CPUs -> allowed CPU
+  - drop %SCX_PICK_IDLE_IN_PREF (not required anymore)
+  - deprecate scx_bpf_select_cpu_dfl() in favor of scx_bpf_select_cpu_and()
+    and provide all the required backward compatibility boilerplate
+
+Andrea Righi (6):
+      sched_ext: idle: Extend topology optimizations to all tasks
+      sched_ext: idle: Explicitly pass allowed cpumask to scx_select_cpu_dfl()
+      sched_ext: idle: Accept an arbitrary cpumask in scx_select_cpu_dfl()
+      sched_ext: idle: Introduce scx_bpf_select_cpu_and()
+      selftests/sched_ext: Add test for scx_bpf_select_cpu_and()
+      sched_ext: idle: Deprecate scx_bpf_select_cpu_dfl()
+
+ Documentation/scheduler/sched-ext.rst              |  11 +-
+ kernel/sched/ext.c                                 |   6 +-
+ kernel/sched/ext_idle.c                            | 196 ++++++++++++++++-----
+ kernel/sched/ext_idle.h                            |   3 +-
+ tools/sched_ext/include/scx/common.bpf.h           |   5 +-
+ tools/sched_ext/include/scx/compat.bpf.h           |  37 ++++
+ tools/sched_ext/scx_flatcg.bpf.c                   |  12 +-
+ tools/sched_ext/scx_simple.bpf.c                   |   9 +-
+ tools/testing/selftests/sched_ext/Makefile         |   1 +
+ .../testing/selftests/sched_ext/allowed_cpus.bpf.c | 121 +++++++++++++
+ tools/testing/selftests/sched_ext/allowed_cpus.c   |  57 ++++++
+ .../selftests/sched_ext/enq_select_cpu_fails.bpf.c |  12 +-
+ .../selftests/sched_ext/enq_select_cpu_fails.c     |   2 +-
+ tools/testing/selftests/sched_ext/exit.bpf.c       |   6 +-
+ .../sched_ext/select_cpu_dfl_nodispatch.bpf.c      |  13 +-
+ .../sched_ext/select_cpu_dfl_nodispatch.c          |   2 +-
+ 16 files changed, 404 insertions(+), 89 deletions(-)
+ create mode 100644 tools/testing/selftests/sched_ext/allowed_cpus.bpf.c
+ create mode 100644 tools/testing/selftests/sched_ext/allowed_cpus.c
 
