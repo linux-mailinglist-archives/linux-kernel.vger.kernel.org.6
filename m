@@ -1,131 +1,92 @@
-Return-Path: <linux-kernel+bounces-569173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC54DA69F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:41:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7E1A69F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4945F189DF06
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D896D463426
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D41E47B0;
-	Thu, 20 Mar 2025 05:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55611EBFFF;
+	Thu, 20 Mar 2025 05:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aiQ23o1f"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B33mFDNa"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2B1E3769;
-	Thu, 20 Mar 2025 05:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D27DB665;
+	Thu, 20 Mar 2025 05:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742449276; cv=none; b=BL8hL0ito0UwGA3PzTAg3REFpxPOLjciamMLjxWOJDgWPe2GqwNbQ/6nTiouQsaRum+W2DZQeMusDI9kTa15Sq2NzJG5vlc4T0MCvSziZfHlkuVxt1dCDz4WKrXftv3UeB6KuJG83rHYolSpFlvGJ8k5wHco2+5adQRg39PGyOo=
+	t=1742449821; cv=none; b=ntYNnv96JRFTfRrO703N3O8XFcQsMybRhq2M+AE5z/nm+XnIPK+LLzEOrVNBo5o0eSdShQM0vjFCy1FrtCbuMdiWNcE47g/ExyiOj8+QnmutgfPAnyQZWzddmkfB7TruiWMmmJTvgi+iDMzjlfRaXvXnLy7kydkDRLO1o9YtAK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742449276; c=relaxed/simple;
-	bh=FSRjntSQhWPLa02TONDY5WM1kzyi51yjXA8O7KZ11d8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lkwK9ULb2wEyhOc1rR/nRUhR8hLNExtuFF9UhD5izO7M9BB8XnZkqw8nOWdtkmWAA8EJMPmPaJM5XuUJysdS5fL7scrhkmODnyo5KJnzi9amWQz4gNALY0cjfJevbEC9Ykpg+1Mudl6gADqmLyMqXGCtu+3VSNRnykDzLlpXMRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aiQ23o1f; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742449268;
-	bh=om4SfL+rs7yXAMjmCpcR7Chi7f9L0ieNUX8zveSiNcQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aiQ23o1f+jZrqOsK2pg03xEcAhexQrbvHbm3HUgYj7l+LlE6ZOfzdUbfwwztm8TGE
-	 cln+WZ2uosC9oABcBCbBl32zhvcJhawyyi/dQD6CAY02MXTR9OyVXoRMRCQGPdQOW6
-	 LqorLZX+qwHZGFSTy7M+CFBFLmv9ATwg8N50EMHPoD/Qn/ugqqRIZQmvhGTN+uBoz8
-	 Y16cINFUXtgHEBOdiMxHHvzyxTZJE9nQ52KmWfACuFrfuWoeKqM06NA1Yvc0CeCZcK
-	 KyR2knlBwjyPHsPJvThV2JzOqo7n5ZXWIrZ8pUS1w5mMHopbIUkWRp3k8/SJDe3jdg
-	 qvXJWoWXmm0vw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJDvl6Bbhz4wnp;
-	Thu, 20 Mar 2025 16:41:07 +1100 (AEDT)
-Date: Thu, 20 Mar 2025 16:41:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg KH <greg@kroah.com>, Dave Airlie <airlied@redhat.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <20250320164107.51f7737e@canb.auug.org.au>
-In-Reply-To: <Z9qnl2bxFZ-Q5Al4@pollux>
-References: <20250319180556.4475584f@canb.auug.org.au>
-	<Z9qnl2bxFZ-Q5Al4@pollux>
+	s=arc-20240116; t=1742449821; c=relaxed/simple;
+	bh=BXGKzOHEz1ClBhXem+aJPa6nOMKZChuKMiZ/tPuzmAQ=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q9qmvzmjkLNf0s0P8hcmI1dZdz43MRNMzDDSxRh+5arYlEhFGMh+ZoG8eCedCip39IYINjJO5DH3H348bmlPzXm2x11B/nEaAKjOFHYgdVUDDnfZa0TPItVBpeunxN5HOQCshFbjoYGPEw2BfXpm5Enod3VdK9wdIX0Y2mqxU8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B33mFDNa; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lhWq7dIR/TOnTpgqOBSfHCVpFoLt91BH+g7yyBM4SfI=; b=B33mFDNaZ+CkZcj4my3QZjC0Uh
+	3PRZIy0Yp3Xsv4r3l5a2rvaDyvYCESYOlvCENoyiZcxNLLYDgYZKe9dZbLUFYAkPf53tM63I65PkK
+	37RuqVbZKmSEDdqG4er4ZN6zEQDeMHNT6czXW25Cjc4XjidwEfa0mDtu4uM+qWuFvO5SVkpcnvDYW
+	yjkENQtqmhR8xbECSergg7Ug3jQzrVEclDWbQb8kpVYfzTA0mY108r75769gwjlvJYFI3zMjcMB9j
+	554LtXg6GRfgwtNcxC8m5D7rAczXTJEMLkY+lYdPzd/lFb4qvHS0tpwZ1jPmDUIrgGAYfePkg9FYa
+	ZuAMnwFw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tv8nK-0000000BFYh-3rAt;
+	Thu, 20 Mar 2025 05:50:18 +0000
+Date: Wed, 19 Mar 2025 22:50:18 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
+	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
+	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
+	jolsa@kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+Message-ID: <Z9usmpFw7y75eOhk@infradead.org>
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org>
+ <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/o2tDcpD+dduaO+xh.g0XoJL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
---Sig_/o2tDcpD+dduaO+xh.g0XoJL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 19, 2025 at 08:32:19AM -0700, Joe Damato wrote:
+> See the docs on MSG_ZEROCOPY [1], but in short when a user app calls
+> sendmsg and passes MSG_ZEROCOPY a completion notification is added
+> to the error queue. The user app can poll for these to find out when
+> the TX has completed and the buffer it passed to the kernel can be
+> overwritten.
 
-Hi Danilo,
+Yikes.  That's not just an ugly interface, but something entirely
+specific to sockets and incompatible with all other asynchronous I/O
+interfaces.
 
-On Wed, 19 Mar 2025 12:16:39 +0100 Danilo Krummrich <dakr@kernel.org> wrote:
->
-> The following diff should fix the below conflict.
->=20
-> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driv=
-er.rs
-> index 63c19f140fbd..a08fb6599267 100644
-> --- a/drivers/gpu/nova-core/driver.rs
-> +++ b/drivers/gpu/nova-core/driver.rs
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
-> =20
-> -use kernel::{bindings, c_str, pci, prelude::*};
-> +use kernel::{bindings, c_str, device::Core, pci, prelude::*};
-> =20
->  use crate::gpu::Gpu;
-> =20
-> @@ -27,7 +27,7 @@ impl pci::Driver for NovaCore {
->      type IdInfo =3D ();
->      const ID_TABLE: pci::IdTable<Self::IdInfo> =3D &PCI_TABLE;
-> =20
-> -    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin=
-<KBox<Self>>> {
-> +    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<P=
-in<KBox<Self>>> {
->          dev_dbg!(pdev.as_ref(), "Probe Nova Core GPU driver.\n");
-> =20
->          pdev.enable_device_mem()?;
->=20
+> > and why aren't you simply plugging this into io_uring and generate
+> > a CQE so that it works like all other asynchronous operations?
+> 
+> I linked to the iouring work that Pavel did in the cover letter.
+> Please take a look.
 
-I have added that to the merge resolution for the merge of the
-driver-core tree today and it works for me.  Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/o2tDcpD+dduaO+xh.g0XoJL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfbqnMACgkQAVBC80lX
-0Gw0mAf/a/d3kTac8y5zs/ehujge70tzHze+CLi6NpUOXIoVn2FcDV9uHVsskx23
-1UaWfCsH+OBjy4u+Dl6CJ+Ch/Wse6C3wAZDR5ORxxIV0AdKKFXgMxlE8uYwAVMrL
-QlsEiYNFjmcZMkvFA80EUCY/k7HGyEwapC7ZL8wzGZy7VViDq5wCr5gNxqOYeQQZ
-WfOvPqKlNQYXTOVqnGb3XCRNKWyLb58CRNfCtPB17fDvwLNhDua1ohTCh59oJDTf
-MZESYCy+d3suDDB81/PDsFpxZBfOwugE3GWAFniRoiH6cF4F9g6CoQ+Yy3nUt76o
-RGgE6xGTwuiqfPUONIgkkw4qUXNpAg==
-=RqmF
------END PGP SIGNATURE-----
-
---Sig_/o2tDcpD+dduaO+xh.g0XoJL--
+Please write down what matters in the cover letter, including all the
+important tradeoffs.
 
