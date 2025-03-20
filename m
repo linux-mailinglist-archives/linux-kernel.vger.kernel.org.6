@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-569085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC59A69E61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E5EA69E60
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 03:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771D08A6CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D808A6CDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0CF1EE7A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B41EE7B7;
 	Thu, 20 Mar 2025 02:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Drzz8U7K"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Wu6Qf8iV"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8061E0DEB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DBE1EB5CA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 02:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742438422; cv=none; b=Rcm1QMNYrxiiBG6ck4zLser2PrwpuuFl5+foqEhw9YZi8tzKEeojVax5j/2to41xGU3H4fZAJJuf2UeApP0eMKqALhpFBBsZZlbKQFMDPMtR4/bVKSL489LrUuB+J9UE+nOdcvyDfvzNFCiX4m8O/c/Rl/6yUhuk11R1bWpi4cw=
+	t=1742438422; cv=none; b=Hnl+WDFJVO27nqCROysaSLLxLjcsswpjegZOUYQYLczWabTtuIixa2YOAJhogudJZKMYw4bKhAxtQ5osHkBiydRJbKqn3VEOOgbGjMU6IKRwQ33KUVKOVFqiVBJKumxII2sTQri1r6i9lgMeWURkv9ejC/peWOeMhOSV0T8s2vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742438422; c=relaxed/simple;
-	bh=oUG8URVwL7hgoL7A0Syp6JtiW7YzotL8mXkD7FBHINQ=;
+	bh=9+E3bHTinanH1s8MUHJq6zltLim+XQs80eZWFRW6BT8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hs399TYchx1LAVCG0DDxl4KOecZRZXA0BgSUFFVHjp/X0Sto1wLpQGhZ6x42Na+R4qVZuqHi3F/tqV12U/7V2lp/T/LhQ9AffldzGwWLIHc6jdNomkWfZn35Ti29m1e9fe+LOKPeQxxd6swhE1ejzpBRrIUYM0OU3wGsf1LX66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Drzz8U7K; arc=none smtp.client-ip=209.85.222.182
+	 MIME-Version; b=FlEoLqptDzLpI1333ikay9T0OpHb36dmzmf23HdxF3PoL4/VFgjDMG3gXzBqz5FAO93QuAyryLtcchzS3v0LPpWEWjD3WDyflUTHRKZFc5yIKXIcCe+kWMt94vxvIz7KCI7JtyMzQw3zbfYzUeEtSl+3LN8Hv0BUw0u6feavBuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Wu6Qf8iV; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c58974ed57so35199985a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:40:17 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c5675dec99so43503285a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 19:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1742438417; x=1743043217; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1742438418; x=1743043218; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O+Xiz6rkBGzGCx6+zJzw9Yhwx3PtKxS1SxbWRWfwpXc=;
-        b=Drzz8U7KocmJKum6DuOcSK0C6OZQp+4O59lVOjvoc1KggJ369wtRYiF/TUyDigbjsT
-         phsDn62Xmx57Dcss2ASSKSjq6kjC2OgrQE43pExRgduIxP70v+xVD5ddQJrvE/SVHCpY
-         q5rTnMh11zwVlQ33TIIS49+PSnvd+QBFFGibblsz/+0VFQ0TvyqVrEASJKNC3plfHPO6
-         iCg3X83NZ1yPL8SgjASQbE3G/8lBsU72Ag2ttQRo7A5wiLfCEFootLOUu5kej6FDAejM
-         C9DMYB2m36D6e0Nm5N8G/O9W9JI/BgsELy7yZ+GjwZFpDQoOokO7mR3tA1cyC1dvqmw8
-         XxSQ==
+        bh=ynOsaVOaQFi/AXKciHVqgKzlBWbrXAaLPm4MY50kwhM=;
+        b=Wu6Qf8iVMXQZBSFN6PEWOTEju+q2oIPXcm7WjULUWivKYB7uXg9mkeHpoophlMJI81
+         MmnnbISTpJ/kGYRrwzfEWJN/uiww4NEd+GwexxrbbuxcJ9lviGYdAEOAlxMaIt1Mb1G+
+         2OOwImCSxjPKA/Hj4uYvRPtswYuv5aGZ850tHpKgtd4zqwLFj9wFutD4RAeKqFZiODDL
+         mLocRsFyYOpdnwrpoAq4HZAqfNCtCUsu3wuwp0lfArcIdYNIilqj7LVcyT818PnaO3QM
+         eyJ02v74C1kKMRQbEJRp1TvtP0VjzKAIVfjOuCHfm1eDewQJHKVX2EXZeAHWRlaJvlBf
+         pm7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742438417; x=1743043217;
+        d=1e100.net; s=20230601; t=1742438418; x=1743043218;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O+Xiz6rkBGzGCx6+zJzw9Yhwx3PtKxS1SxbWRWfwpXc=;
-        b=wppg3pHKb2/fBfPJFMMk80swiN0DCkd/WMJLBVFFLsCWs26YUNBmHnT9LnSLOk3NqM
-         AkgQ+3GB/QoZRmjla0xYqy2F9mC0ULxs8r/riupskF6RBTicmcggE04Pur0stW6NVJcP
-         GhOiCWAhAZJ9w3pOgUNudYspQVXshz25qXfX+BEenasArgjWPzcfPM6kL75Poep8bjjM
-         jK+e31Ne5YcCgFCZSaUU7iwwzH+1iw1L4yfHFFNrzfcWjX1C7FBVhYgYYRffnReEAhdp
-         GjCbL7WjPgjVe/IH+6HjBkIM6oyj02q+Z45qGN2uBSlBCDv4IiRZYpkbxepIBFu6h9ME
-         9s/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtIwVtHPt6Y5JTran79BkErV5RjsGyNWJlOHan2LE5a49UfqNsTXRlm0Y2q8OBGskZK7xwYQOQNSdpaTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqqINDDdMpwktN6wVaOSMAHn+/UydgycPlBVCQHC3fETjo2tfU
-	NoHXiluOtyZ852RBx0eus3xagAcDhDRRkzK/kNxWBjJd2qZR+oINzfzmcdbfdCM=
-X-Gm-Gg: ASbGncv3XJs5XG2OkIKVt7dePQRCH6qYXwINhfiQc7V94eQ6MFZoGSKq8+1Kfb/LcTk
-	rlVik/SIBXkAFzJWNBYDbPymSMz5Wo7tx3JWjxnKpuQsjMMIVbp9iKlTOnqUWkjSkslAXl99VI7
-	vQVNHzyDtkyJ3tz9zIVDapHVFJCRgBPDPnvKf+7uSncaudIf8Ao5l8Uh0h2khuFOoLhrXqOmd92
-	9IRnvkH88N4gyzpmRcm1wIkP4R2jzLEPd3fpCJiRM/ipcrbEH9z01NlKN3HBUBDAVk++Hpx3nGe
-	3z5cXNr5fjtRIcvHAmGVLToI+pKGekIFzAsLYg/Xr1R6ay4/FmjK7lTj2tvdcHxqKk0IdmPzupn
-	cPtLY6nveTWy7c+x8nTEWmu8NHST6FlG5
-X-Google-Smtp-Source: AGHT+IECui50SakZ7C7j7snjuNIthZesTdZJUHAg91VJ4PC9grwsGDIy6VwaTrETU0CHVsqqi/YDqw==
-X-Received: by 2002:a05:620a:469e:b0:7c5:6ba5:dd40 with SMTP id af79cd13be357-7c5a83967e9mr732231285a.17.1742438416577;
-        Wed, 19 Mar 2025 19:40:16 -0700 (PDT)
+        bh=ynOsaVOaQFi/AXKciHVqgKzlBWbrXAaLPm4MY50kwhM=;
+        b=G+ZdcnCdgwL3Azo7c+OBOl2Q/xAPEWYg/gcWY0ZuSjxM8KWS19T8HcGoeeCh6oh2Gj
+         EeWI0cs6LX5VeHCjZ4zbcenZ3jlp7so1dhKNnz7JvVGRshvsNHfCW+F9ZXwU8ZpD2clJ
+         5M9AJQJoKoN9M+7DTPkjV3epIGeCKdqWy6+wl4yjOirMn50pJoNTyzgLueVTU+t+AeFQ
+         o3ZiU/IwM5FayYND1tcAD4SUaTeDKBTVrR4P3Xev3PA0staIivFlHfirlWT7l3W2Q9BY
+         Y3VgO9ts0y1ie182U7ntgn6/ZpwX392fSBe/o/uit6T1DsOmsPbe0A/aQnj1TCGUkha9
+         qlwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnZPJ3Fb3Lxf724Y0beirc0pSycuuRSu5I6Ed0gGHOp+KfJv2SeBGERX4gnO1svTuP5jGc3ygZTl9eGEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+Gb4ayf82G0U/1KtOTtHXXAtz2G0OOy1O4WL7I0Ve4rvxwNTH
+	isXt03acZOn1MllMRw/Rau1eYr9XiidN97U+xv1RLf9RrwCGzkypkJNtj0M55fI=
+X-Gm-Gg: ASbGncsJUXJHOQl7wH51+pHI+Vk4u7Y/e573EcgwK4rUreE881fZ7YXIX5x1HKOvMly
+	m8zEK4q1zQeDtzILgceQ3fEat8GjEMULE/WXxTxvd9Y2EGhc34Gni4D17YDUKiuuYtWt2PsR9Oy
+	8faYHJ2+t26Wk7HdKNgcUFrGZbRTBvY0BiSVISliwCR6OdsyXKoJKFU5gD8R/kO2ArfVyw48NlB
+	yGUYq+9pGw/MDBn39flpEqYYanbcqTb6fHc/50yN1Q5yK6K3i8e5U1oAhyd1/AiQcfQmZY/WNZN
+	fWJCN8jSyJF78ChOiQ1iZsSq5zqqPzVb/+KKgCEEC+HnYhl6QHv1kGvpT2WTyJFm/Zck3HtKD1o
+	Ua5QkyGy5oJc8KIJTHpwjIYyFMBTnFZqA
+X-Google-Smtp-Source: AGHT+IEJ2UJXPT+t+NVQjQQQ9sNsL2zYu+8obd/VfE+eIaPnWjnFZH5iTp3YAslKxGWWLRPc5uywMA==
+X-Received: by 2002:a05:620a:371a:b0:7c5:65ab:4ff5 with SMTP id af79cd13be357-7c5b0d07bcemr259941585a.45.1742438417993;
+        Wed, 19 Mar 2025 19:40:17 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (249.60.48.34.bc.googleusercontent.com. [34.48.60.249])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c4dd9fsm947815985a.4.2025.03.19.19.40.15
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c4dd9fsm947815985a.4.2025.03.19.19.40.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 19:40:15 -0700 (PDT)
+        Wed, 19 Mar 2025 19:40:17 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: changyuanl@google.com,
 	graf@amazon.com,
@@ -133,9 +133,9 @@ To: changyuanl@google.com,
 	stuart.w.hayes@gmail.com,
 	jgowans@amazon.com,
 	jgg@nvidia.com
-Subject: [RFC v1 1/3] luo: Live Update Orchestrator
-Date: Thu, 20 Mar 2025 02:40:09 +0000
-Message-ID: <20250320024011.2995837-2-pasha.tatashin@soleen.com>
+Subject: [RFC v1 2/3] luo: dev_liveupdate: Add device live update infrastructure
+Date: Thu, 20 Mar 2025 02:40:10 +0000
+Message-ID: <20250320024011.2995837-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
 In-Reply-To: <20250320024011.2995837-1-pasha.tatashin@soleen.com>
 References: <20250320024011.2995837-1-pasha.tatashin@soleen.com>
@@ -147,477 +147,186 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduces the Live Update Orchestrator (LUO), a new kernel subsystem
-designed to facilitate live updates. Live update is a method to reboot
-the kernel while attempting to keep selected devices alive across the
-reboot boundary, minimizing downtime.
+Introduce a new subsystem within the driver core to enable keeping
+devices alive during kernel live update. This infrastructure is
+designed to be registered with and driven by a separate Live Update
+Orchestrator, allowing the LUO's state machine to manage the save and
+restore process of device state during a kernel transition.
 
-The primary use case is cloud environments, allowing hypervisor updates
-without fully disrupting running virtual machines. VMs can be suspended
-while the hypervisor kernel reboots, and devices attached to these VM
-are kept operational by the LUO.
+The goal is to allow drivers and buses to participate in a coordinated
+save and restore process orchestrated by a live update mechanism. By
+saving device state before the kernel switch and restoring it
+immediately after, the device can appear to remain continuously
+operational from the perspective of the system and userspace.
 
-Features introduced:
+components introduced:
 
-- Core orchestration logic for managing the live update process.
-- A state machine (NORMAL, PREPARED, UPDATED, *_FAILED) to track
-  the progress of live updates.
-- Notifier chains for subsystems (device layer, interrupts, KVM, IOMMU,
-  etc.) to register callbacks for different live update events:
-    - LIVEUPDATE_PREPARE: Prepare for reboot (before blackout).
-    - LIVEUPDATE_REBOOT: Final serialization before kexec (blackout).
-    - LIVEUPDATE_FINISH: Cleanup after update (after blackout).
-    - LIVEUPDATE_CANCEL: Rollback actions on failure or user request.
-- A sysfs interface (/sys/kernel/liveupdate/) for user-space control:
-    - `prepare`: Initiate preparation (write 1) or reset (write 0).
-    - `finish`: Finalize update in new kernel (write 1).
-    - `cancel`: Abort ongoing preparation or reboot (write 1).
-    - `reset`: Force state back to normal (write 1).
-    - `state`: Read-only view of the current LUO state.
-    - `enabled`: Read-only view of whether live update is enabled.
-- Integration with KHO to pass orchestrator state to the new kernel.
-- Version checking during startup of the new kernel to ensure
-  compatibility with the previous kernel's live update state.
+- `struct dev_liveupdate`: Embedded in `struct device` to track the
+  device's participation and state during a live update, including
+  request status, preservation status, and dependency depth.
 
-This infrastructure allows various kernel subsystems to coordinate and
-participate in the live update process, serializing and restoring device
-state across a kernel reboot.
+- `liveupdate()` callback: Added to `struct bus_type` and
+  `struct device_driver`. This callback receives an enum
+  `liveupdate_event` to manage device state at different stages of the
+  live update process:
+    - LIVEUPDATE_PREPARE: Save device state before the kernel switch.
+    - LIVEUPDATE_REBOOT: Final actions just before the kernel jump.
+    - LIVEUPDATE_FINISH: Clean-up after live update.
+    - LIVEUPDATE_CANCEL: Clean up any saved state if the update is
+      aborted.
+
+- Sysfs attribute "liveupdate/requested": Added under each device
+  directory, allowing user to request that a specific device to
+  participate in live update. I.e. its state is to be preserved
+  during the update.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- .../ABI/testing/sysfs-kernel-liveupdate       |  51 ++
- Documentation/admin-guide/index.rst           |   1 +
- Documentation/admin-guide/liveupdate.rst      |  23 +
- MAINTAINERS                                   |  10 +
- include/linux/liveupdate.h                    | 238 ++++++
- init/Kconfig                                  |   2 +
- kernel/Kconfig.liveupdate                     |  19 +
- kernel/Makefile                               |   1 +
- kernel/liveupdate.c                           | 749 ++++++++++++++++++
- kernel/reboot.c                               |   4 +
- 10 files changed, 1098 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-kernel-liveupdate
- create mode 100644 Documentation/admin-guide/liveupdate.rst
- create mode 100644 include/linux/liveupdate.h
- create mode 100644 kernel/Kconfig.liveupdate
- create mode 100644 kernel/liveupdate.c
+ Documentation/driver-api/index.rst      |   1 +
+ Documentation/driver-api/liveupdate.rst |  23 +
+ MAINTAINERS                             |   3 +
+ drivers/base/Makefile                   |   1 +
+ drivers/base/core.c                     |  25 +-
+ drivers/base/dev_liveupdate.c           | 816 ++++++++++++++++++++++++
+ include/linux/dev_liveupdate.h          | 109 ++++
+ include/linux/device.h                  |   6 +
+ include/linux/device/bus.h              |   4 +
+ include/linux/device/driver.h           |   4 +
+ 10 files changed, 984 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/driver-api/liveupdate.rst
+ create mode 100644 drivers/base/dev_liveupdate.c
+ create mode 100644 include/linux/dev_liveupdate.h
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-liveupdate b/Documentation/ABI/testing/sysfs-kernel-liveupdate
-new file mode 100644
-index 000000000000..92f4f745163f
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-kernel-liveupdate
-@@ -0,0 +1,51 @@
-+What:		/sys/kernel/liveupdate/
-+Date:		March 2025
-+KernelVersion:	6.14.0
-+Contact:	pasha.tatashin@soleen.com
-+Description:	Interface to control and query live update orchestrator. Live
-+		update is a feature that allows to reboot kernel without
-+		resetting selected devices. This is needed, for example,  in
-+		order to do a quick hypervisor update without terminating
-+		virtual machines.
-+
-+What:		/sys/kernel/liveupdate/state
-+Date:		March 2025
-+KernelVersion:	6.14.0
-+Contact:	pasha.tatashin@soleen.com
-+Description:	Read only file that contains the current live update state.
-+
-+		The state can be one of the following:
-+
-+		normal: no live update in progress.
-+		prepared: live update is prepared for reboot.
-+		updated: rebooted to a new kernel, live update can be finished
-+		by echoing 1 into finish file.
-+
-+What:		/sys/kernel/liveupdate/prepare
-+Date:		March 2025
-+KernelVersion:	6.14.0
-+Contact:	pasha.tatashin@soleen.com
-+Description:	Is a write-only file that notifies the devices about upcoming
-+		live update reboot or cancels it.
-+		Writing '1' to this file changes the live update state from
-+		"normal" to "prepared".
-+		Internally, all drivers that implement liveupdate callback are
-+		notified by calling this function with LIVEUPDATE_PREPARE
-+		parameter. If any liveupdate() callback fails, the state is not
-+		changed, and all already notiified subsystems are notified via
-+		liveupdate(LIVEUPDATE_CANCEL) prior to returning to usersapce.
-+		Writing '0' to this file change the live update state from
-+		"prepared" back to "normal" state by notifying all registered
-+		subsystems via liveupdate(LIVEUPDATE_CANCEL) callback..
-+
-+What:		/sys/kernel/liveupdate/finish
-+Date:		March 2025
-+KernelVersion:	6.14.0
-+Contact:	pasha.tatashin@soleen.com
-+Description:	Is a write-only file that notifies the devices that live update
-+		has been completed.
-+		Writing '1' to this file changes the live update state from
-+		"updated" to "normal" state.
-+		Internally, all drivers that implement liveupdate callback are
-+		notified by calling this function with LIVEUPDATE_FINISH
-+		parameter.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index c8af32a8f800..049f18034e10 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -95,6 +95,7 @@ likely to be of interest on almost any system.
-    cgroup-v2
-    cgroup-v1/index
-    cpu-load
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 16e2c4ec3c01..70df19321f58 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -25,6 +25,7 @@ of interest to most developers working on device drivers.
+    infrastructure
+    ioctl
+    pm/index
 +   liveupdate
-    mm/index
-    module-signing
-    namespaces/index
-diff --git a/Documentation/admin-guide/liveupdate.rst b/Documentation/admin-guide/liveupdate.rst
+ 
+ Useful support libraries
+ ========================
+diff --git a/Documentation/driver-api/liveupdate.rst b/Documentation/driver-api/liveupdate.rst
 new file mode 100644
-index 000000000000..f66e4e13f50b
+index 000000000000..3afa6173a536
 --- /dev/null
-+++ b/Documentation/admin-guide/liveupdate.rst
++++ b/Documentation/driver-api/liveupdate.rst
 @@ -0,0 +1,23 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+===========
-+Live Update
-+===========
++==================
++Device Live Update
++==================
 +:Author: Pasha Tatashin <pasha.tatashin@soleen.com>
 +
-+Live Update Orchestrator (LUO)
-+==============================
-+.. kernel-doc:: kernel/liveupdate.c
-+   :doc: Live Update Orchestrator (LUO)
++dev_liveupdate
++==============
++.. kernel-doc:: drivers/base/dev_liveupdate.c
++   :doc: Device Live Update
 +
 +Public API
 +==========
-+.. kernel-doc:: include/linux/liveupdate.h
++.. kernel-doc:: include/linux/dev_liveupdate.h
 +
-+.. kernel-doc:: kernel/liveupdate.c
++.. kernel-doc:: drivers/base/dev_liveupdate.c
 +   :export:
 +
 +Internal API
 +============
-+.. kernel-doc:: kernel/liveupdate.c
++.. kernel-doc:: drivers/base/dev_liveupdate.c
 +   :internal:
 diff --git a/MAINTAINERS b/MAINTAINERS
-index d0df0b380e34..32257bde9647 100644
+index 32257bde9647..81f8c2881e60 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -13481,6 +13481,16 @@ F:	kernel/module/livepatch.c
- F:	samples/livepatch/
- F:	tools/testing/selftests/livepatch/
+@@ -13487,6 +13487,9 @@ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/ABI/testing/sysfs-kernel-liveupdate
+ F:	Documentation/admin-guide/liveupdate.rst
++F:	Documentation/driver-api/liveupdate.rst
++F:	drivers/base/dev_liveupdate.c
++F:	include/linux/dev_liveupdate.h
+ F:	include/linux/liveupdate.h
+ F:	kernel/Kconfig.liveupdate
+ F:	kernel/liveupdate.c
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index 8074a10183dc..58939921e5e1 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_GENERIC_MSI_IRQ) += platform-msi.o
+ obj-$(CONFIG_GENERIC_ARCH_TOPOLOGY) += arch_topology.o
+ obj-$(CONFIG_GENERIC_ARCH_NUMA) += arch_numa.o
+ obj-$(CONFIG_ACPI) += physical_location.o
++obj-$(CONFIG_LIVEUPDATE) += dev_liveupdate.o
  
-+LIVE UPDATE
-+M:	Pasha Tatashin <pasha.tatashin@soleen.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/ABI/testing/sysfs-kernel-liveupdate
-+F:	Documentation/admin-guide/liveupdate.rst
-+F:	include/linux/liveupdate.h
-+F:	kernel/Kconfig.liveupdate
-+F:	kernel/liveupdate.c
+ obj-y			+= test/
+ 
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 2fde698430df..21b5dfa0f70c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -3151,6 +3151,7 @@ void device_initialize(struct device *dev)
+ 	dev->dma_coherent = dma_default_coherent;
+ #endif
+ 	swiotlb_dev_init(dev);
++	dev_liveupdate_init(dev);
+ }
+ EXPORT_SYMBOL_GPL(device_initialize);
+ 
+@@ -3627,6 +3628,7 @@ int device_add(struct device *dev)
+ 	if (error)
+ 		goto DPMError;
+ 	device_pm_add(dev);
++	dev_liveupdate_add_device(dev);
+ 
+ 	if (MAJOR(dev->devt)) {
+ 		error = device_create_file(dev, &dev_attr_dev);
+@@ -4740,6 +4742,10 @@ int device_change_owner(struct device *dev, kuid_t kuid, kgid_t kgid)
+ 	if (error)
+ 		goto out;
+ 
++	error = dev_liveupdate_sysfs_change_owner(dev, kuid, kgid);
++	if (error)
++		goto out;
 +
- LLC (802.2)
- L:	netdev@vger.kernel.org
- S:	Odd fixes
-diff --git a/include/linux/liveupdate.h b/include/linux/liveupdate.h
+ 	/*
+ 	 * Change the owner of the symlink located in the class directory of
+ 	 * the device class associated with @dev which points to the actual
+@@ -4810,14 +4816,17 @@ void device_shutdown(void)
+ 				dev_info(dev, "shutdown_pre\n");
+ 			dev->class->shutdown_pre(dev);
+ 		}
+-		if (dev->bus && dev->bus->shutdown) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown\n");
+-			dev->bus->shutdown(dev);
+-		} else if (dev->driver && dev->driver->shutdown) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown\n");
+-			dev->driver->shutdown(dev);
++
++		if (!dev_liveupdate_preserved(dev)) {
++			if (dev->bus && dev->bus->shutdown) {
++				if (initcall_debug)
++					dev_info(dev, "shutdown\n");
++				dev->bus->shutdown(dev);
++			} else if (dev->driver && dev->driver->shutdown) {
++				if (initcall_debug)
++					dev_info(dev, "shutdown\n");
++				dev->driver->shutdown(dev);
++			}
+ 		}
+ 
+ 		device_unlock(dev);
+diff --git a/drivers/base/dev_liveupdate.c b/drivers/base/dev_liveupdate.c
 new file mode 100644
-index 000000000000..66c4e9d28a4a
+index 000000000000..7e961d2cd3b1
 --- /dev/null
-+++ b/include/linux/liveupdate.h
-@@ -0,0 +1,238 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (c) 2025, Google LLC.
-+ * Pasha Tatashin <pasha.tatashin@soleen.com>
-+ */
-+#ifndef _LINUX_LIVEUPDATE_H
-+#define _LINUX_LIVEUPDATE_H
-+
-+#include <linux/compiler.h>
-+#include <linux/notifier.h>
-+
-+/**
-+ * enum liveupdate_event - Events that trigger live update callbacks.
-+ * @LIVEUPDATE_PREPARE: Sent when the live update process is initiated via
-+ *                      a sysfs by writing '1' into
-+ *                      ``/sys/kernel/liveupdate/prepare``. This happens
-+ *                      *before* the blackout window. Subsystems should prepare
-+ *                      for an upcoming reboot by serializing their states.
-+ *                      However, it must be considered that user applications,
-+ *                      e.g. virtual machines are still running during this
-+ *                      phase.
-+ * @LIVEUPDATE_REBOOT:  Sent from the reboot() syscall, when the old kernel is
-+ *                      on its way out. This is the final opportunity for
-+ *                      subsystems to save any state that must persist across
-+ *                      the reboot. Callbacks for this event are part of the
-+ *                      blackout window and must be fast.
-+ * @LIVEUPDATE_FINISH:  Sent in the newly booted kernel after a successful live
-+ *                      update and *after* the blackout window. This event is
-+ *                      initiated by writing '1' into
-+ *                      ``/sys/kernel/liveupdate/prepare``. Subsystems should
-+ *                      perform any final cleanup during this phase. This phase
-+ *                      also provides an opportunity to clean up devices that
-+ *                      were preserved but never explicitly reclaimed during the
-+ *                      live update process. State restoration should have
-+ *                      already occurred before this event. Callbacks for this
-+ *                      event must not fail. The completion of this call
-+ *                      transitions the machine from ``updated`` to ``normal``
-+ *                      state.
-+ * @LIVEUPDATE_CANCEL:  Sent if the LIVEUPDATE_PREPARE or LIVEUPDATE_REBOOT
-+ *                      stage fails. Subsystems should revert any actions taken
-+ *                      during the corresponding prepare phase. Callbacks for
-+ *                      this event must not fail.
-+ *
-+ * These events represent the different stages and actions within the live
-+ * update process that subsystems (like device drivers and bus drivers)
-+ * need to be aware of to correctly serialize and restore their state.
-+ *
-+ */
-+enum liveupdate_event {
-+	LIVEUPDATE_PREPARE,
-+	LIVEUPDATE_REBOOT,
-+	LIVEUPDATE_FINISH,
-+	LIVEUPDATE_CANCEL,
-+};
-+
-+/**
-+ * enum liveupdate_state - Defines the possible states of the live update
-+ * orchestrator.
-+ * @LIVEUPDATE_STATE_NORMAL:         Default state, no live update in progress.
-+ * @LIVEUPDATE_STATE_PREPARED:       Live update is prepared for reboot; the
-+ *                                   LIVEUPDATE_PREPARE callbacks have completed
-+ *                                   successfully.
-+ *                                   Devices might operate in a limited state
-+ *                                   for example the participating devices might
-+ *                                   not be allowed to unbind, and also the
-+ *                                   setting up of new DMA mappings might be
-+ *                                   disabled in this state.
-+ * @LIVEUPDATE_STATE_UPDATED:        The system has rebooted into a new kernel
-+ *                                   via live update the system is now running
-+ *                                   the new kernel, awaiting the finish stage.
-+ *
-+ * These states track the progress and outcome of a live update operation.
-+ */
-+enum liveupdate_state  {
-+	LIVEUPDATE_STATE_NORMAL,
-+	LIVEUPDATE_STATE_PREPARED,
-+	LIVEUPDATE_STATE_UPDATED,
-+};
-+
-+/**
-+ * enum liveupdate_cb_priority - Priority levels for live update notifiers.
-+ * @LIVEUPDATE_CB_PRIO_BEFORE_DEVICES: Callbacks with this priority will be
-+ *                                     executed before the device layer
-+ *                                     callbacks.
-+ * @LIVEUPDATE_CB_PRIO_WITH_DEVICES:   Callbacks with this priority will be
-+ *                                     executed at the same time as the device
-+ *                                     layer callbacks.
-+ * @LIVEUPDATE_CB_PRIO_AFTER_DEVICES:  Callbacks with this priority will be
-+ *                                     executed after the device layer
-+ *                                     callbacks.
-+ *
-+ * This enum defines the priority levels for notifier callbacks registered with
-+ * the live update orchestrator. It allows subsystems to control the order in
-+ * which their callbacks are executed relative to other subsystems during the
-+ * live update process.
-+ */
-+enum liveupdate_cb_priority {
-+	LIVEUPDATE_CB_PRIO_BEFORE_DEVICES,
-+	LIVEUPDATE_CB_PRIO_WITH_DEVICES,
-+	LIVEUPDATE_CB_PRIO_AFTER_DEVICES,
-+};
-+
-+#ifdef CONFIG_LIVEUPDATE
-+
-+/* Called during reboot to notify subsystems to complete serialization */
-+int liveupdate_reboot(void);
-+
-+/*
-+ * Return true if machine is in updated state (i.e. live update boot in
-+ * progress)
-+ */
-+bool liveupdate_state_updated(void);
-+
-+/*
-+ * Return true if machine is in normal state (i.e. no live update in progress).
-+ */
-+bool liveupdate_state_normal(void);
-+
-+/* Protect live update state with a rwsem, take it as a reader */
-+int liveupdate_read_state_enter_killable(void);
-+void liveupdate_read_state_enter(void);
-+void liveupdate_read_state_exit(void);
-+
-+/* Return true if live update orchestrator is enabled */
-+bool liveupdate_enabled(void);
-+
-+int liveupdate_register_notifier(struct notifier_block *nb);
-+int liveupdate_unregister_notifier(struct notifier_block *nb);
-+
-+/**
-+ * LIVEUPDATE_DECLARE_NOTIFIER - Declare a live update notifier with default
-+ * structure.
-+ * @_name: A base name used to generate the names of the notifier block
-+ * (e.g., ``_name##_liveupdate_notifier_block``) and the callback function
-+ * (e.g., ``_name##_liveupdate``).
-+ * @_priority: The priority of the notifier, specified using the
-+ * ``enum liveupdate_cb_priority`` values
-+ * (e.g., ``LIVEUPDATE_CB_PRIO_BEFORE_DEVICES``).
-+ *
-+ * This macro declares a static struct notifier_block and a corresponding
-+ * notifier callback function for use with the live update orchestrator.
-+ * It simplifies the process by automatically handling the dispatching of
-+ * live update events to separate handler functions for prepare, reboot,
-+ * finish, and cancel.
-+ *
-+ * This macro expects the following functions to be defined:
-+ *
-+ * ``_name##_liveupdate_prepare()``:  Called on LIVEUPDATE_PREPARE.
-+ * ``_name##_liveupdate_reboot()``:   Called on LIVEUPDATE_REBOOT.
-+ * ``_name##_liveupdate_finish()``:   Called on LIVEUPDATE_FINISH.
-+ * ``_name##_liveupdate_cancel()``:   Called on LIVEUPDATE_CANCEL.
-+ *
-+ * The generated callback function handles the switch statement for the
-+ * different live update events and calls the appropriate handler function.
-+ * It also includes warnings if the finish or cancel handlers return an error.
-+ *
-+ * For example, declartion can look like this:
-+ *
-+ * ``static int foo_liveupdate_prepare(void) { ... }``
-+ *
-+ * ``static int foo_liveupdate_reboot(void) { ... }``
-+ *
-+ * ``static int foo_liveupdate_finish(void) { ... }``
-+ *
-+ * ``static int foo_liveupdate_cancel(void) { ... }``
-+ *
-+ * ``LIVEUPDATE_DECLARE_NOTIFIER(foo, LIVEUPDATE_CB_PRIO_WITH_DEVICES);``
-+ *
-+ */
-+#define LIVEUPDATE_DECLARE_NOTIFIER(_name, _priority)			\
-+static int _name##_liveupdate(struct notifier_block *nb,		\
-+			      unsigned long action,			\
-+			      void *data)				\
-+{									\
-+	enum liveupdate_event event = (enum liveupdate_event)action;	\
-+	int err = 0;							\
-+	int rv;								\
-+									\
-+	switch (event) {						\
-+	case LIVEUPDATE_PREPARE:					\
-+		err = _name##_liveupdate_prepare();			\
-+		break;							\
-+	case LIVEUPDATE_REBOOT:						\
-+		err = _name##_liveupdate_reboot();			\
-+		break;							\
-+	case LIVEUPDATE_FINISH:						\
-+		rv = _name##_liveupdate_finish();			\
-+		WARN_ONCE(rv, "finish failed[%d]\n", rv);		\
-+		break;							\
-+	case LIVEUPDATE_CANCEL:						\
-+		rv = _name##_liveupdate_cancel();			\
-+		WARN_ONCE(rv, "cancel failed[%d]\n", rv);		\
-+		break;							\
-+	default:							\
-+		WARN_ONCE(1, "unexpected event[%d]\n", event);		\
-+		return NOTIFY_DONE;					\
-+	}								\
-+									\
-+	return notifier_from_errno(err);				\
-+}									\
-+									\
-+static struct notifier_block _name##_liveupdate_notifier_block = {	\
-+	.notifier_call = _name##_liveupdate,				\
-+	.priority = _priority,						\
-+}
-+
-+/**
-+ * LIVEUPDATE_REGISTER_NOTIFIER - Register a live update notifier declared with
-+ * the macro.
-+ * @_name: The base name used when declaring the notifier with
-+ * ``LIVEUPDATE_DECLARE_NOTIFIER``.
-+ *
-+ * This macro simplifies the registration of a notifier block that was
-+ * declared using the LIVEUPDATE_DECLARE_NOTIFIER macro.
-+ */
-+#define LIVEUPDATE_REGISTER_NOTIFIER(_name)				\
-+	liveupdate_register_notifier(&_name##_liveupdate_notifier_block)
-+
-+#else /* CONFIG_LIVEUPDATE */
-+
-+static inline int liveupdate_reboot(void)
-+{
-+	return 0;
-+}
-+
-+static inline int liveupdate_register_notifier(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+
-+static inline int liveupdate_unregister_notifier(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+
-+#endif /* CONFIG_LIVEUPDATE */
-+#endif /* _LINUX_LIVEUPDATE_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index 324c2886b2ea..9800b8301fa2 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -2079,3 +2079,5 @@ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
- # <asm/syscall_wrapper.h>.
- config ARCH_HAS_SYSCALL_WRAPPER
- 	def_bool n
-+
-+source "kernel/Kconfig.liveupdate"
-diff --git a/kernel/Kconfig.liveupdate b/kernel/Kconfig.liveupdate
-new file mode 100644
-index 000000000000..8468591fac4a
---- /dev/null
-+++ b/kernel/Kconfig.liveupdate
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Live update configs
-+#
-+
-+config ARCH_SUPPORTS_LIVEUPDATE
-+	bool
-+
-+config LIVEUPDATE
-+	bool "Enable kernel live update"
-+	depends on ARCH_SUPPORTS_LIVEUPDATE
-+	depends on KEXEC_HANDOVER
-+	help
-+	  Enables support for Live Update, a feature that allows to
-+	  keep devices alive across the transition from the old kernel
-+	  to the new kernel. Live Update designed to minimize downtime
-+	  during kernel updates
-+
-+	  If unsure, say N.
-diff --git a/kernel/Makefile b/kernel/Makefile
-index cef5377c25cd..18c65f71ddb5 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -103,6 +103,7 @@ obj-$(CONFIG_TASK_DELAY_ACCT) += delayacct.o
- obj-$(CONFIG_TASKSTATS) += taskstats.o tsacct.o
- obj-$(CONFIG_TRACEPOINTS) += tracepoint.o
- obj-$(CONFIG_LATENCYTOP) += latencytop.o
-+obj-$(CONFIG_LIVEUPDATE) += liveupdate.o
- obj-$(CONFIG_FUNCTION_TRACER) += trace/
- obj-$(CONFIG_TRACING) += trace/
- obj-$(CONFIG_TRACE_CLOCK) += trace/
-diff --git a/kernel/liveupdate.c b/kernel/liveupdate.c
-new file mode 100644
-index 000000000000..64b5d4d4b6c4
---- /dev/null
-+++ b/kernel/liveupdate.c
-@@ -0,0 +1,749 @@
++++ b/drivers/base/dev_liveupdate.c
+@@ -0,0 +1,816 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
@@ -626,362 +335,203 @@ index 000000000000..64b5d4d4b6c4
 + */
 +
 +/**
-+ * DOC: Live Update Orchestrator (LUO)
++ * DOC: Device Live Update
 + *
-+ * Live Update is a specialized reboot process where selected devices are
-+ * kept operational across a kernel transition. For these devices, DMA and
-+ * interrupt activity may continue uninterrupted during the kernel reboot.
++ * Provides infrastructure for preserving device state across a system update.
 + *
-+ * The primary use case is in cloud environments, allowing hypervisor updates
-+ * without disrupting running virtual machines. During a live update, VMs can be
-+ * suspended (with their state preserved in memory), while the hypervisor kernel
-+ * reboots. Devices attached to these VMs (e.g., NICs, block devices) are kept
-+ * operational by the LUO during the hypervisor reboot, allowing the VMs to be
-+ * quickly resumed on the new kernel.
++ * This subsystem allows drivers and buses to save and restore device state,
++ * enabling a seamless transition during a live update.
 + *
-+ * Various kernel subsystems register with the Live Update Orchestrator to
-+ * participate in the live update process. These subsystems are notified at
-+ * different stages of the live update sequence, allowing them to serialize
-+ * device state before the reboot and restore it afterwards. Examples include
-+ * the device layer, interrupt controllers, KVM, IOMMU, and specific device
-+ * drivers.
++ * The core idea is to identify a set of devices whose state needs to be
++ * preserved. For each such device, the associated driver and bus can implement
++ * callbacks to save the device's state before the update and restore it
++ * afterwards.
 + *
-+ * The core of LUO is a state machine that tracks the progress of a live update,
-+ * along with a callback API that allows other kernel subsystems to participate
-+ * in the process. Example subsystems that can hook into LUO include: kvm,
-+ * iommu, interrupts, Documentation/driver-api/liveupdate.rst, participating
-+ * filesystems, and mm.
++ * Userspace can interact with this subsystem via sysfs attributes exposed
++ * under each device directory (e.g., ``/sys/devices/.../liveupdate/``).
++ * This directory contains the following attributes:
 + *
-+ * LUO uses KHO to transfer memory state from Old Kernel to the New Kernel.
++ * ``requested``
++ *   A read-write attribute allowing userspace to control whether a device
++ *   should participate in the live update sequence. Writing "1" requests the
++ *   device and its ancestors (that support live update) be preserved.
++ *   Writing "0" requests the device be excluded. This attribute can only be
++ *   modified when LUO is in the ``normal`` state.
++ * ``preserved``
++ *   A read-only attribute indicating whether the device's state was
++ *   preserved during the ``prepare`` and ``reboot`` stages.
++ * ``reclaimed``
++ *   A read-only attribute indicating whether the device was successfully
++ *   re-attached and resumed operation in the new kernel after an update.
++ *   For example, a VM to which this device was passthrough has been resumed.
 + *
-+ * LUO can be controlled through sysfs interface. It provides the following
-+ * files under: ``/sys/kernel/liveupdate/{state, prepare, cancel}``
++ * By default, devices do not participate in the live update. Userspace can
++ * explicitly request participation by writing "1" to the ``requested`` file.
 + *
-+ * The ``state`` file can contain the following values:
++ * The live update process typically involves the following stages,
++ * reflected in the ``liveupdate_event`` enum:
 + *
-+ * ``normal``
-+ *   The system is operating normally, and no live update is in progress.
-+ *   This is the initial state.
-+ * ``prepared``
-+ *   The system has begun preparing for a live update. This state is reached
-+ *   after subsystems have successfully responded to the ``LIVEUPDATE_PREPARE``
-+ *   callback. It indicates that initial preparation is done, but it does not
-+ *   necessarily mean all state has been serialized; subsystems can save more
-+ *   state during the subsequent ``LIVEUPDATE_REBOOT`` callback.
-+ * ``updated``
-+ *   The new kernel has successfully taken over, and any suspended operations
-+ *   are resumed. However, the system has not yet fully transitioned back to
-+ *   a normal operational state; this happens after the ``LIVEUPDATE_FINISH``
-+ *   callback is invoked.
++ * ``LIVEUPDATE_PREPARE``
++ *   Prepare devices for the upcoming state transition. Drivers and buses should
++ *   save the necessary device state. Happens before blackouts.
++ * ``LIVEUPDATE_REBOOT``
++ *   A final notification before the system jumps to the new kernel. Called
++ *   during blackout from reboot() syscall.
++ * ``LIVEUPDATE_FINISH``
++ *   The system has completed a transition. Drivers and buses should have
++ *   already restored the previously saved state. Clean up, reset unreclaimed
++ *   devices.
++ * ``LIVEUPDATE_CANCEL``
++ *   Cancel the live update process. Drivers and buses should clean up any saved
++ *   state if necessary.
 + *
-+ * The state machine ensures that operations are performed in the correct
-+ * sequence and provides a mechanism to track and recover from potential
-+ * failures, and select devices and subsystems that should participate in
-+ * live update sequence.
++ * Documentation/admin-guide/liveupdate.rst contains more details.
 + *
++ * The global state of the live update subsystem can be accessed and
++ * controlled via a separate sysfs interface (e.g., ``/sys/kernel/liveupdate/``)
++ * via Live Update Orchestrator.
 + */
-+
-+ #undef pr_fmt
-+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
 +
 +#undef pr_fmt
 +#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
 +
-+#include <linux/kernel.h>
-+#include <linux/sysfs.h>
-+#include <linux/string.h>
-+#include <linux/rwsem.h>
-+#include <linux/err.h>
-+#include <linux/liveupdate.h>
-+#include <linux/cpufreq.h>
-+#include <linux/kexec_handover.h>
++#include <linux/dev_liveupdate.h>
++#include <linux/list_sort.h>
++#include <linux/kobject.h>
++#include <linux/device.h>
++#include <linux/pci.h>
++#include "base.h"
 +
-+#define LUO_KHO_NODE_NAME		"liveupdate_orchestrator"
-+#define LUO_KHO_VERSION_PROP_NAME	"version"
-+#define LUO_VERSION_MAJOR		1
-+#define LUO_VERSION_MINOR		0
-+
-+/* 'version' property */
-+struct luo_kho_version_prop {
-+	u32 major;
-+	u32 minor;
-+};
-+
-+static const struct luo_kho_version_prop luo_version = {
-+	.major = LUO_VERSION_MAJOR,
-+	.minor = LUO_VERSION_MINOR,
-+};
-+
-+static struct kho_node luo_node = KHO_NODE_INIT;
-+static enum liveupdate_state luo_state;
-+static DECLARE_RWSEM(luo_state_rwsem);
-+static BLOCKING_NOTIFIER_HEAD(luo_notify_list);
-+
-+static const char *const luo_event_str[] = {
-+	"PREPARE",
-+	"REBOOT",
-+	"FINISH",
-+	"CANCEL",
-+};
-+
-+static const char *const luo_state_str[] = {
-+	"normal",
-+	"prepared",
-+	"updated",
-+};
-+
-+static bool luo_enabled;
-+static bool luo_sysfs_initialized;
-+
-+static int __init early_liveupdate_param(char *buf)
-+{
-+	return kstrtobool(buf, &luo_enabled);
-+}
-+
-+early_param("liveupdate", early_liveupdate_param);
-+
-+/* Return true if the current state is equal to the provided state */
-+#define IS_STATE(state) (READ_ONCE(luo_state) == (state))
-+
-+/* Get the current state as a string */
-+#define LUO_STATE_STR luo_state_str[READ_ONCE(luo_state)]
-+
-+static void __luo_set_state(enum liveupdate_state state)
-+{
-+	WRITE_ONCE(luo_state, state);
-+	if (luo_sysfs_initialized)
-+		sysfs_notify(kernel_kobj, NULL, "state");
-+}
-+
-+static inline void luo_set_state(enum liveupdate_state state)
-+{
-+	pr_info("Switched from [%s] to [%s] state\n",
-+		LUO_STATE_STR, luo_state_str[state]);
-+	__luo_set_state(state);
-+}
-+
-+/* Show the current live update state */
-+static ssize_t state_show(struct kobject *kobj,
-+			  struct kobj_attribute *attr,
-+			  char *buf)
-+{
-+	return sysfs_emit(buf, "%s\n", LUO_STATE_STR);
-+}
++static const char liveupdate_group_name[] = "liveupdate";
 +
 +/**
-+ * luo_notify - Call registered notifiers for a live update event.
-+ * @event: The live update event to notify subsystems about.
++ * is_liveupdate_possible() - Check if a device can participate in live update
++ * @dev: The device to check.
 + *
-+ * This function is notifying registered subsystems about the specified event.
++ * This function verifies if the given device and all its ancestors (up to
++ * the root device or until a missing callback is found) are capable of
++ * participating in a live update.
 + *
-+ * For ``LIVEUPDATE_PREPARE`` event, it uses
-+ * ``blocking_notifier_call_chain_robust()`` to ensure that if a notifier
-+ * callback fails, a corresponding ``LIVEUPDATE_CANCEL`` notification is sent
-+ * to already-notified subsystems, allowing for a rollback.
++ * It checks for the presence of the ``liveupdate`` callback in the device's
++ * driver and bus, and performs the same check for all parent devices. If any
++ * device in the hierarchy (including the device itself)
++ * lacks a ``liveupdate`` callback in either its driver or bus, the function
++ * returns false.
 + *
-+ * For ``LIVEUPDATE_REBOOT`` event, it uses ``blocking_notifier_call_chain()``
-+ * and if it returns a failure, cancels the operation via calling
-+ * ``lou_notify(LIVEUPDATE_CANCEL)`` to notify every subsystem to transition
-+ * back to ``normal`` state.
-+ *
-+ * For ``LIVEUPDATE_FINISH`` and ``LIVEUPDATE_CANCEL`` events, it uses the
-+ * standard ``blocking_notifier_call_chain()``. These events are expected not to
-+ * fail, and a warning is printed if they do.
-+ *
-+ * @return 0 on success, or the negative error code returned by the failing
-+ * notifier callback (for ``LIVEUPDATE_PREPARE`` and ``LIVEUPDATE_REBOOT``), or
-+ * 0 for ``LIVEUPDATE_FINISH`` and ``LIVEUPDATE_CANCEL`` even if a warning was
-+ * printed due to a callback failure.
++ * Return: True if the device and all its relevant ancestors have the
++ * liveupdate callback, false otherwise.
 + */
-+static int luo_notify(enum liveupdate_event event)
++static bool is_liveupdate_possible(struct device *dev)
 +{
-+	int ret;
++	struct device *parent_dev;
++	bool is_possible = true;
 +
-+	if (event == LIVEUPDATE_PREPARE) {
-+		ret = blocking_notifier_call_chain_robust(&luo_notify_list,
-+							  LIVEUPDATE_PREPARE,
-+							  LIVEUPDATE_CANCEL,
-+							  NULL);
-+	} else if (event == LIVEUPDATE_REBOOT) {
-+		ret = blocking_notifier_call_chain(&luo_notify_list,
-+						   LIVEUPDATE_REBOOT,
-+						   NULL);
-+		/*
-+		 * For LIVEUPDATE_REBOOT do CANCEL for everyone, so even
-+		 * prepared subsystems return back to the normal state
-+		 */
-+		if (notifier_to_errno(ret))
-+			lou_notify(LIVEUPDATE_CANCEL)
-+	} else {
-+		ret = blocking_notifier_call_chain(&luo_notify_list,
-+						   event,
-+						   NULL);
-+		/* Cancel and finish must not fail, warn and return success */
-+		WARN_ONCE(notifier_to_errno(ret), "Callback failed event: %s [%d]\n",
-+			  luo_event_str[event], notifier_to_errno(ret));
-+		ret = 0;
++	dev = get_device(dev);
++	for (; ;) {
++		if (dev->driver) {
++			is_possible = !!dev->driver->liveupdate;
++			if (!is_possible) {
++				dev_warn(dev, "driver[%s] no liveupdate callback\n",
++					 dev->driver->name);
++				break;
++			}
++		}
++
++		if (dev->bus) {
++			is_possible = !!dev->bus->liveupdate;
++			if (!is_possible) {
++				dev_warn(dev, "bus[%s] no liveupdate callback\n",
++					 dev->bus->name);
++				break;
++			}
++		}
++
++		if (!dev->parent)
++			break;
++
++		parent_dev = get_device(dev->parent);
++		put_device(dev);
++		dev = parent_dev;
 +	}
++	put_device(dev);
 +
-+	return notifier_to_errno(ret);
++	return is_possible;
 +}
 +
-+/**
-+ * luo_prepare - Initiate the live update preparation phase.
-+ *
-+ * This function is called to begin the live update process. It attempts to
-+ * transition the luo to the ``LIVEUPDATE_STATE_PREPARED`` state.
-+ *
-+ * It first acquires the write lock for the orchestrator state. Then, it checks
-+ * if the current state is ``LIVEUPDATE_STATE_NORMAL``. If not, it returns an
-+ * error. If the state is normal, it triggers the ``LIVEUPDATE_PREPARE``
-+ * notifier chain.
-+ *
-+ * If the notifier chain completes successfully, the orchestrator state is set
-+ * to ``LIVEUPDATE_STATE_PREPARED``. If any notifier callback fails a
-+ * ``LIVEUPDATE_CANCEL`` notification is sent to roll back any actions.
-+ *
-+ * @return 0 on success, ``-EAGAIN`` if the state change was cancelled by the
-+ * user while waiting for the lock, ``-EINVAL`` if the orchestrator is not in
-+ * the normal state, or a negative error code returned by the notifier chain.
++/*
++ * dev->{driver, bus}->liveupdate->{prepare, reboot} callback
++ * Warn if liveupdate not present, this is an internal error, and should never
++ * be the case.
++ * return callback result, or 0 if callback is not implemented.
 + */
-+static int luo_prepare(void)
-+{
-+	int ret;
++#define DEV_LIVEUPDATE_RET_CALLBACK(_dev, _drv_or_bus, _func) ({	\
++	int rv = 0;							\
++									\
++	if ((_dev)->_drv_or_bus &&					\
++	    !WARN_ON(!(_dev)->_drv_or_bus->liveupdate) &&		\
++	    (_dev)->_drv_or_bus->liveupdate->_func) {			\
++		rv = (_dev)->_drv_or_bus->liveupdate->_func(_dev);	\
++	}								\
++	rv;								\
++})
 +
-+	if (down_write_killable(&luo_state_rwsem)) {
-+		pr_warn(" %s, change state canceled by user\n", __func__);
-+		return -EAGAIN;
-+	}
-+
-+	if (!IS_STATE(LIVEUPDATE_STATE_NORMAL)) {
-+		pr_warn("Can't switch to [%s] from [%s] state\n",
-+			luo_state_str[LIVEUPDATE_STATE_PREPARED],
-+			LUO_STATE_STR);
-+		up_write(&luo_state_rwsem);
-+
-+		return -EINVAL;
-+	}
-+
-+	ret = luo_notify(LIVEUPDATE_PREPARE);
-+	if (!ret)
-+		luo_set_state(LIVEUPDATE_STATE_PREPARED);
-+
-+	up_write(&luo_state_rwsem);
-+
-+	return ret;
-+}
-+
-+/**
-+ * luo_finish - Finalize the live update process in the new kernel.
-+ *
-+ * This function is called  after a successful live update reboot into a new
-+ * kernel, once the new kernel is ready to transition to the normal operational
-+ * state. It signals the completion of the live update sequence to subsystems.
-+ *
-+ * It first attempts to acquire the write lock for the orchestrator state.
-+ *
-+ * Then, it checks if the system is in the ``LIVEUPDATE_STATE_UPDATED`` state.
-+ * If not, it logs a warning and returns ``-EINVAL``.
-+ *
-+ * If the state is correct, it triggers the ``LIVEUPDATE_FINISH`` notifier
-+ * chain. Note that the return value of the notifier is intentionally ignored as
-+ * finish callbacks must not fail. Finally, the orchestrator state is
-+ * transitioned back to ``LIVEUPDATE_STATE_NORMAL``, indicating the end of the
-+ * live update process.
-+ *
-+ * @return 0 on success, ``-EAGAIN`` if the state change was cancelled by the
-+ * user while waiting for the lock, or ``-EINVAL`` if the orchestrator is not in
-+ * the updated state.
++/*
++ * A void variant of the previous macro
++ * dev->{driver, bus}->liveupdate->{cancel, finish} callback
++ * Warn if liveupdate not present, this is an internal error, and should never
++ * be the case.
 + */
-+static int luo_finish(void)
++#define DEV_LIVEUPDATE_CALLBACK(_dev, _drv_or_bus, _func) do {		\
++	if ((_dev)->_drv_or_bus &&					\
++	    !WARN_ON(!(_dev)->_drv_or_bus->liveupdate) &&		\
++	    (_dev)->_drv_or_bus->liveupdate->_func) {			\
++		(_dev)->_drv_or_bus->liveupdate->_func(_dev);		\
++	}								\
++} while (0)
++
++static ssize_t preserved_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
 +{
-+	if (down_write_killable(&luo_state_rwsem)) {
-+		pr_warn(" %s, change state canceled by user\n", __func__);
-+		return -EAGAIN;
-+	}
++	return sysfs_emit(buf, "%d\n", dev_liveupdate_preserved(dev));
++}
++static DEVICE_ATTR_RO(preserved);
 +
-+	if (!IS_STATE(LIVEUPDATE_STATE_UPDATED)) {
-+		pr_warn("Can't switch to [%s] from [%s] state\n",
-+			luo_state_str[LIVEUPDATE_STATE_NORMAL],
-+			LUO_STATE_STR);
-+		up_write(&luo_state_rwsem);
++static ssize_t reclaimed_show(struct device *dev,
++			      struct device_attribute *attr,
++			      char *buf)
++{
++	return sysfs_emit(buf, "%d\n", dev_liveupdate_reclaimed(dev));
++}
++static DEVICE_ATTR_RO(reclaimed);
 +
-+		return -EINVAL;
-+	}
-+
-+	(void)luo_notify(LIVEUPDATE_FINISH);
-+	luo_set_state(LIVEUPDATE_STATE_NORMAL);
-+
-+	up_write(&luo_state_rwsem);
-+
-+	return 0;
++static ssize_t requested_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	return sysfs_emit(buf, "%d\n", dev_liveupdate_requested(dev));
 +}
 +
 +/**
-+ * luo_cancel - Cancel the ongoing live update preparation or reboot states.
-+ *
-+ * This function is called to abort a live update that is currently in the
-+ * ``LIVEUPDATE_STATE_PREPARED`` state. It can be triggered either
-+ * programmatically or via the sysfs interface.
-+ *
-+ * If the state is correct, it triggers the ``LIVEUPDATE_CANCEL`` notifier chain
-+ * to allow subsystems to undo any actions performed during the prepare or
-+ * reboot phase. Finally, the orchestrator state is transitioned back to
-+ * ``LIVEUPDATE_STATE_NORMAL``.
-+ *
-+ * @return 0 on success, or ``-EAGAIN`` if the state change was cancelled by the
-+ * user while waiting for the lock.
-+ */
-+static int luo_cancel(void)
-+{
-+	if (down_write_killable(&luo_state_rwsem)) {
-+		pr_warn(" %s, change state canceled by user\n", __func__);
-+		return -EAGAIN;
-+	}
-+
-+	if (!IS_STATE(LIVEUPDATE_STATE_PREPARED)) {
-+		pr_warn("Can't switch to [%s] from [%s] state\n",
-+			luo_state_str[LIVEUPDATE_STATE_NORMAL],
-+			LUO_STATE_STR);
-+		up_write(&luo_state_rwsem);
-+
-+		return -EINVAL;
-+	}
-+
-+	(void)luo_notify(LIVEUPDATE_CANCEL);
-+	luo_set_state(LIVEUPDATE_STATE_NORMAL);
-+
-+	up_write(&luo_state_rwsem);
-+
-+	return 0;
-+}
-+
-+/**
-+ * prepare_store - store method for starting live update prepare state or go
-+ * back to normal from a prepared state.
-+ * @kobj: The kobject associated with luo.
-+ * @attr: The sysfs attribute
++ * requested_store() - Store function for the ``requested`` sysfs attribute
++ * @dev: The device associated with the attribute.
++ * @attr: The device attribute structure.
 + * @buf: The buffer containing the value written by the user.
 + * @count: The number of bytes written.
 + *
-+ * This function is the store method for the 'prepare' file under the
-+ * 'liveupdate' sysfs directory.
++ * Allows userspace to request that a device be included in or excluded from
++ * the live update process. Writing "1" requests the device to be preserved
++ * during live update, and writing "0" requests it to be excluded.
 + *
-+ * Writing "1" to this attribute will trigger the luo_prepare() function,
-+ * attempting to start the live update preparation phase.
++ * This function checks if the live update system is in the 'normal' state
++ * before allowing changes. It also verifies that the device supports
++ * live update before setting the requested state.
 + *
-+ * Writing "0" to this attribute will trigger the luo_cancel() function,
-+ * attempting to cancel the orchestrator to the normal state.
-+ *
-+ * @return The number of bytes processed on success, or a negative error code
-+ * if the input is invalid or if the underlying functions fail.
++ * Return: The number of bytes written on success, ``-EINVAL`` if the input is
++ * invalid or if the live update system is not in the 'normal' state, or
++ * ``-EAGAIN`` if the operation was interrupted.
 + */
-+static ssize_t prepare_store(struct kobject *kobj,
-+			     struct kobj_attribute *attr,
-+			     const char *buf,
-+			     size_t count)
++static ssize_t requested_store(struct device *dev, struct device_attribute *attr,
++			       const char *buf, size_t count)
 +{
-+	ssize_t ret;
 +	long val;
 +
 +	if (kstrtol(buf, 0, &val) < 0)
@@ -990,405 +540,813 @@ index 000000000000..64b5d4d4b6c4
 +	if (val != 1 && val != 0)
 +		return -EINVAL;
 +
-+	if (val)
-+		ret = luo_prepare();
-+	else
-+		ret = luo_cancel();
++	/* if state does not change, ignore */
++	if (dev_liveupdate_requested(dev) == !!val)
++		return count;
 +
-+	if (!ret)
-+		ret = count;
-+
-+	return ret;
-+}
-+
-+/**
-+ * finish_store - store method for finalizing a live update.
-+ * @kobj: The kobject associated with the luo.
-+ * @attr: The sysfs attribute
-+ * @buf: The buffer containing the value written by the user.
-+ * @count: The number of bytes written.
-+ *
-+ * This function is the store method for the ``finish`` file under the
-+ * ``liveupdate`` sysfs directory.
-+ *
-+ * Writing "1" to this attribute will trigger the luo_finish() function,
-+ * attempting to finalize the live update process in the new kernel and
-+ * transition to the normal state.
-+ *
-+ * @return The number of bytes processed on success, or a negative error code
-+ * if the input is invalid or if luo_finish() fails.
-+ */
-+static ssize_t finish_store(struct kobject *kobj,
-+			    struct kobj_attribute *attr,
-+			    const char *buf,
-+			    size_t count)
-+{
-+	ssize_t ret;
-+	long val;
-+
-+	if (kstrtol(buf, 0, &val) < 0)
-+		return -EINVAL;
-+
-+	if (val != 1)
-+		return -EINVAL;
-+
-+	ret = luo_finish();
-+	if (!ret)
-+		ret = count;
-+
-+	return ret;
-+}
-+
-+static struct kobj_attribute state_attribute = __ATTR_RO(state);
-+static struct kobj_attribute prepare_attribute = __ATTR_WO(prepare);
-+static struct kobj_attribute finish_attribute = __ATTR_WO(finish);
-+
-+static struct attribute *luo_attrs[] = {
-+	&state_attribute.attr,
-+	&prepare_attribute.attr,
-+	&finish_attribute.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group luo_attr_group = {
-+	.attrs = luo_attrs,
-+	.name = "liveupdate",
-+};
-+
-+/**
-+ * luo_init - Initialize the Live Update Orchestrator sysfs interface.
-+ *
-+ * This function is called during the kernel's late initialization phase
-+ * (``late_initcall``). It is responsible for creating the sysfs interface
-+ * that allows user-space to interact with the Live Update Orchestrator.
-+ *
-+ * If the "liveupdate" feature is enabled (checked via luo_enabled()), this
-+ * function creates a sysfs directory named ``liveupdate`` under the kernel's
-+ * top-level sysfs directory (``/sys/kernel/``).
-+ *
-+ * It then creates the following sysfs attribute files within the
-+ * ``/sys/kernel/liveupdate/`` directory:
-+ *
-+ * - ``prepare``: Writing '1' initiates preparation, '0' cancels.
-+ * - ``finish``:  Writing '1' finalizes the update in the new kernel.
-+ * - ``state``:   Read-only file displaying the current orchestrator state.
-+ *
-+ * @return 0 on success, or a negative error code if sysfs directory or
-+ * attribute creation fails.
-+ */
-+static int __init luo_init(void)
-+{
-+	int ret;
-+
-+	if (!luo_enabled || !kho_is_enabled()) {
-+		pr_info("disabled by user\n");
-+		luo_enabled = false;
-+
-+		return 0;
-+	}
-+
-+	ret = sysfs_create_group(kernel_kobj, &luo_attr_group);
-+	if (ret)
-+		pr_err("Failed to create group\n");
-+
-+	luo_sysfs_initialized = true;
-+	pr_info("Initialized\n");
-+
-+	return ret;
-+}
-+subsys_initcall(luo_init);
-+
-+/**
-+ * luo_startup - Initialize the Live Update Orchestrator on live update boot.
-+ *
-+ * This function is called during the kernel's early initialization phase
-+ * (early_initcall). Its primary role is to detect if the system is booting
-+ * as part of a live update sequence by checking for the presence of a
-+ * luo node in the kho tree.
-+ *
-+ * If a kho node named ``liveupdate_orchestrator`` is found, the function
-+ * extracts the version information from the previous kernel. It then performs
-+ * the following checks to ensure a safe continuation of the live update:
-+ *
-+ * 1. Verifies the size of the version property.
-+ * 2. Compares the major version and checks if the minor version of the
-+ *    previous orchestrator is compatible with the current one. If a mismatch
-+ *    is detected, the system panics to prevent potential memory corruption.
-+ * 3. Checks if the ``liveupdate`` kernel command-line parameter has enabled
-+ *    the feature. If the kho node exists but the feature is disabled, the
-+ *    system panics.
-+ *
-+ * If all checks pass, the orchestrator state is set to
-+ * ``LIVEUPDATE_STATE_UPDATED``.
-+ *
-+ * @return 0 always.
-+ */
-+static int __init luo_startup(void)
-+{
-+	enum liveupdate_state state = LIVEUPDATE_STATE_NORMAL;
-+	const struct luo_kho_version_prop *p;
-+	struct kho_in_node luo_node;
-+	int len;
-+
-+	if (kho_get_node(NULL, LUO_KHO_NODE_NAME, &luo_node) < 0)
-+		goto no_liveupdate;
-+
-+	p = kho_get_prop(&luo_node, LUO_KHO_VERSION_PROP_NAME, &len);
-+	if (len != sizeof(struct luo_kho_version_prop)) {
-+		panic("Unexcpected version property size, excpected[%ld] found[%d]\n",
-+		      sizeof(struct luo_kho_version_prop), len);
-+	}
-+
-+	/*
-+	 * Panic if feature is disabled or version mismatch, we do not want
-+	 * memory corruptions due to DMA or interrupt tables activity.
-+	 */
-+	if (p->major != LUO_VERSION_MAJOR ||
-+	    p->minor > LUO_VERSION_MINOR) {
-+		pr_err("prev orchestrator version (%d.%d)\n",
-+		       p->major, p->minor);
-+		pr_err("new orchestrator version (%d.%d)\n",
-+		       LUO_VERSION_MAJOR, LUO_VERSION_MINOR);
-+		panic("Orchestrator version mismatch\n");
-+	}
-+
-+	if (!luo_enabled)
-+		panic("Live update node found, but feature is disabled\n");
-+
-+	state = LIVEUPDATE_STATE_UPDATED;
-+	pr_info("live update boot\n");
-+
-+no_liveupdate:
-+	__luo_set_state(state);
-+
-+	return 0;
-+}
-+early_initcall(luo_startup);
-+
-+/* Public Functions */
-+
-+/**
-+ * liveupdate_reboot - Notify subsystems to perform final serialization for live
-+ * update.
-+ *
-+ * This function is called directly from the reboot() syscall path when a live
-+ * update is prepared (i.e., the system is rebooting into a new kernel while
-+ * preserving devices). It is part of the "blackout" window where the old kernel
-+ * is transitioning to the new one.
-+ *
-+ * During this phase, the function iterates through the list of participating in
-+ * the live update subsystems and invokes their registered ``LIVEUPDATE_REBOOT``
-+ * callbacks. These callbacks *must* be extremely time-sensitive as they perform
-+ * the final serialization of device/subsystem state necessary to survive the
-+ * imminent kernel transition. Any delays here directly impact the duration of
-+ * the blackout window.
-+ *
-+ * If any callback fails, the live update process is aborted, and a
-+ * ``LIVEUPDATE_CANCEL`` notification is sent to all subsystems, that were
-+ * already notified and were not notified to bring machine back to the
-+ * ``LIVEUPDATE_NORMAL`` state..
-+ *
-+ * On success, the function adds a node to the KHO tree to indicate to the next
-+ * kernel that a live update is in progress.
-+ *
-+ * @return 0 on success, or a negative error code if a callback fails or if
-+ * adding the KHO node fails.
-+ */
-+int liveupdate_reboot(void)
-+{
-+	int ret;
-+
-+	if (!IS_STATE(LIVEUPDATE_STATE_PREPARED))
-+		return 0;
-+
-+	if (down_write_killable(&luo_state_rwsem)) {
-+		pr_warn(" %s, change state canceled by user\n", __func__);
++	if (liveupdate_read_state_enter_killable()) {
++		dev_warn(dev, "Changing requested state Canceled by user\n");
 +		return -EAGAIN;
 +	}
 +
-+	ret = luo_notify(LIVEUPDATE_REBOOT);
-+	if (ret < 0) {
-+		luo_set_state(LIVEUPDATE_STATE_NORMAL);
-+	} else {
-+		/* Add live update orchestrator node to KHO tree */
-+		ret = kho_add_node(NULL, LUO_KHO_NODE_NAME, &luo_node);
-+		if (!ret) {
-+			ret = kho_add_prop(&luo_node, LUO_KHO_VERSION_PROP_NAME,
-+					   &luo_version, sizeof(luo_version));
-+		}
-+
-+		if (ret) {
-+			(void)luo_notify(LIVEUPDATE_CANCEL);
-+			luo_set_state(LIVEUPDATE_STATE_NORMAL);
-+		}
++	if (!liveupdate_state_normal()) {
++		dev_warn(dev, "Participation can be requested only in [normal] state\n");
++		liveupdate_read_state_exit();
++		return -EINVAL;
 +	}
 +
-+	up_write(&luo_state_rwsem);
++	if (!val) {
++		dev_liveupdate_set_requested(dev, false);
++		list_del_init(&dev->lu.liveupdate_entry);
++		liveupdate_read_state_exit();
++		return count;
++	}
 +
-+	if (ret)
-+		pr_warn("%s failed: %d\n", __func__, ret);
++	if (!is_liveupdate_possible(dev)) {
++		liveupdate_read_state_exit();
++		return -EINVAL;
++	}
 +
-+	return ret;
++	dev_liveupdate_set_requested(dev, true);
++	liveupdate_read_state_exit();
++
++	return count;
++}
++static DEVICE_ATTR_RW(requested);
++
++static struct attribute *liveupdate_attrs[] = {
++	&dev_attr_preserved.attr,
++	&dev_attr_reclaimed.attr,
++	&dev_attr_requested.attr,
++	NULL,
++};
++
++static const struct attribute_group liveupdate_attr_group = {
++	.name	= liveupdate_group_name,
++	.attrs	= liveupdate_attrs,
++};
++
++static int dev_liveupdate_sysfs_add(struct device *dev)
++{
++	int rv;
++
++	rv = sysfs_create_group(&dev->kobj, &liveupdate_attr_group);
++
++	return rv;
++}
++
++static int dev_liveupdate_get_depth(struct device *current_dev)
++{
++	struct device *dev;
++	int depth = 0;
++
++	for (dev = current_dev; dev; dev = dev->parent)
++		depth++;
++
++	return depth;
 +}
 +
 +/**
-+ * liveupdate_state_updated - Check if the system is in the live update
-+ * 'updated' state.
++ * LIST_HEAD(dev_liveupdate_preserve_list) - List of devices to preserve during
++ * live update
++ * @dev_liveupdate_preserve_list: This section is about this list.
 + *
-+ * This function checks if the live update orchestrator is in the
-+ * ``LIVEUPDATE_STATE_UPDATED`` state. This state indicates that the system has
-+ * successfully rebooted into a new kernel as part of a live update, and the
-+ * preserved devices are expected to be in the process of being reclaimed.
++ * This list holds devices that need to have their state preserved across a
++ * live update. It is populated during the ``LIVEUPDATE_PREPARE`` stage by
++ * dev_liveupdate_build_preserve_list() with devices explicitly requested
++ * for live update and their ancestors. The list is sorted by device depth
++ * to ensure correct processing order: children before parents.
 + *
-+ * This is typically used by subsystems during early boot of the new kernel
-+ * to determine if they need to attempt to restore state from a previous
-+ * live update.
++ * Functions like __dev_liveupdate_reboot_prepare() iterate through this list
++ * to notify drivers and buses about the upcoming update or reboot.
++ * __dev_liveupdate_cancel() uses this list to perform cancellation.
++ * The list is cleared by dev_liveupdate_destroy_preserve_list() when it's
++ * no longer needed.
 + *
-+ * @return true if the system is in the ``LIVEUPDATE_STATE_UPDATED`` state,
-+ * false otherwise.
++ * The list is protected by ``luo_state_rwsem`` as it is used only during
++ * prepare and reboot callbacks when this lock is taken as writer.
 + */
-+bool liveupdate_state_updated(void)
-+{
-+	return IS_STATE(LIVEUPDATE_STATE_UPDATED);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_state_updated);
++static LIST_HEAD(dev_liveupdate_preserve_list);
 +
 +/**
-+ * liveupdate_state_normal - Check if the system is in the live update 'normal'
-+ * state.
++ * __find_ancestors_and_depth() - Add a device and its ancestors to the preserve
++ * list
++ * @current_dev: The device to start with.
 + *
-+ * This function checks if the live update orchestrator is in the
-+ * ``LIVEUPDATE_STATE_NORMAL`` state. This state indicates that no live update
-+ * is in progress. It represents the default operational state of the system.
++ * This function adds the @current_dev and all its ancestors to the
++ * dev_liveupdate_preserve_list. It also calculates and sets the
++ * liveupdate_depth for each device added, relative to the @current_dev.
 + *
-+ * This can be used to gate actions that should only be performed when no
-+ * live update activity is occurring.
++ * The function iterates from @current_dev up to the root device. For each
++ * device in the path, if it's not already in the preserve list (checked via
++ * the liveupdate_depth field), it's added to the list, its depth is set,
++ * and a reference is taken using get_device() (unless it's the initial
++ * @current_dev, which already has a reference).
 + *
-+ * @return true if the system is in the ``LIVEUPDATE_STATE_NORMAL`` state,
-+ * false otherwise.
++ * The list to which the devices are added (dev_liveupdate_preserve_list) is
++ * expected to be sorted later.
 + */
-+bool liveupdate_state_normal(void)
++static void __find_ancestors_and_depth(struct device *current_dev)
 +{
-+	return IS_STATE(LIVEUPDATE_STATE_NORMAL);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_state_normal);
++	struct device *dev;
++	int depth = 0;
 +
-+/**
-+ * liveupdate_register_notifier - Register a notifier for live update events.
-+ *
-+ * This function registers a notifier block to receive callbacks for various
-+ * stages of the live update process. Notifiers are called when the live
-+ * update state changes, allowing subsystems to participate in the
-+ * serialization and restoration of state.
-+ *
-+ * @nb: Pointer to the notifier block to register.
-+ *
-+ * @return 0 on success, or a negative error code on failure (e.g., if
-+ * the notifier block is already registered).
-+ */
-+int liveupdate_register_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_register(&luo_notify_list, nb);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_register_notifier);
++	/*
++	 * If depth is set, it means this devices was already included as an
++	 * ancestor of another requested device.
++	 */
++	if (current_dev->lu.liveupdate_depth)
++		return;
 +
-+/**
-+ * liveupdate_unregister_notifier - Unregister a live update event notifier.
-+ *
-+ * This function unregisters a previously registered notifier block from
-+ * receiving further callbacks for live update events.
-+ *
-+ * @nb: Pointer to the notifier block to unregister.
-+ *
-+ * @return 0 on success, or a negative error code if the notifier block
-+ * was not found.
-+ */
-+int liveupdate_unregister_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_unregister(&luo_notify_list, nb);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_unregister_notifier);
++	depth = dev_liveupdate_get_depth(dev);
 +
-+/**
-+ * liveupdate_enabled - Check if the live update feature is enabled.
-+ *
-+ * This function returns the state of the live update feature flag, which
-+ * can be controlled via the ``liveupdate`` kernel command-line parameter.
-+ *
-+ * @return true if live update is enabled, false otherwise.
-+ */
-+bool liveupdate_enabled(void)
-+{
-+	return luo_enabled;
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_enabled);
-+
-+/**
-+ * liveupdate_read_state_enter_killable - Acquire the live update state read
-+ * lock (killable).
-+ *
-+ * This function attempts to acquire the read lock protecting the live update
-+ * orchestrator state. It allows multiple readers but excludes writers. The
-+ * call is interruptible by signals.
-+ *
-+ * Subsystems should acquire this lock if they need to read the live update
-+ * state and potentially perform actions based on it.
-+ *
-+ * Callers *must* call liveupdate_read_state_exit() to release the lock.
-+ *
-+ * @return 0 on success, or ``-EINTR`` if interrupted by a signal.
-+ */
-+int liveupdate_read_state_enter_killable(void)
-+{
-+	return down_read_killable(&luo_state_rwsem);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_read_state_enter_killable);
-+
-+/**
-+ * liveupdate_read_state_enter - Acquire the live update state read lock.
-+ *
-+ * The same as liveupdate_read_state_enter_killable(), but not interruptable.
-+ */
-+void liveupdate_read_state_enter(void)
-+{
-+	down_read(&luo_state_rwsem);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_read_state_enter);
-+
-+/**
-+ * liveupdate_read_state_exit - Release the live update state read lock.
-+ *
-+ * This function releases the read lock protecting the live update
-+ * orchestrator state. It must be called after a successful call to
-+ * liveupdate_read_state_enter_killable() or liveupdate_read_state_enter().
-+ */
-+void liveupdate_read_state_exit(void)
-+{
-+	up_read(&luo_state_rwsem);
-+}
-+EXPORT_SYMBOL_GPL(liveupdate_read_state_exit);
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index b5a8569e5d81..d57413cdc9b9 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -18,6 +18,7 @@
- #include <linux/syscalls.h>
- #include <linux/syscore_ops.h>
- #include <linux/uaccess.h>
-+#include <linux/liveupdate.h>
- 
- /*
-  * this indicates whether you can reboot with ctrl-alt-del: the default is yes
-@@ -791,6 +792,9 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
- 
- #ifdef CONFIG_KEXEC_CORE
- 	case LINUX_REBOOT_CMD_KEXEC:
-+		ret = liveupdate_reboot();
-+		if (ret)
++	for (dev = current_dev; dev; dev = dev->parent) {
++		/*
++		 * This ancestor, and all above are already in the
++		 * dev_liveupdate_preserve_list
++		 */
++		if (dev->lu.liveupdate_depth)
 +			break;
- 		ret = kernel_kexec();
- 		break;
++
++		if (dev != current_dev)
++			get_device(dev);
++
++		/* Ancestor might be in the request_list */
++		list_del_init(&dev->lu.liveupdate_entry);
++		dev->lu.liveupdate_depth = depth;
++		list_add_tail(&dev->lu.liveupdate_entry,
++			      &dev_liveupdate_preserve_list);
++		depth--;
++	}
++}
++
++static int dev_depth_cmp(void *priv,
++			 const struct list_head *head_a,
++			 const struct list_head *head_b)
++{
++	struct device *dev_a, *dev_b;
++
++	dev_a = container_of(head_a, struct device, lu.liveupdate_entry);
++	dev_b = container_of(head_b, struct device, lu.liveupdate_entry);
++
++	if (dev_a->lu.liveupdate_depth > dev_b->lu.liveupdate_depth)
++		return -1;
++
++	if (dev_a->lu.liveupdate_depth < dev_b->lu.liveupdate_depth)
++		return 1;
++
++	return 0;
++}
++
++/**
++ * dev_liveupdate_build_preserve_list() - Build a list of devices to preserve
++ *
++ * This function constructs a list ``dev_liveupdate_preserve_list`` of devices
++ * that require state preservation during a live update.
++ *
++ * It first iterates through all devices and identifies those for which a live
++ * update has been explicitly requested using dev_liveupdate_requested().
++ * These devices are added to a temporary list.
++ *
++ * Then, for each device in the temporary list, the function calls
++ * __find_ancestors_and_depth() to add the device and all its ancestors to the
++ * global ``dev_liveupdate_preserve_list`` and calculate their respective
++ * depths.
++ *
++ * Finally, the ``dev_liveupdate_preserve_list`` is sorted by device depth using
++ * dev_depth_cmp() to ensure a correct preservation order (e.g., children before
++ * parents). A reference count is maintained for each device added to the
++ * preserve list using get_device().
++ */
++static void dev_liveupdate_build_preserve_list(void)
++{
++	LIST_HEAD(request_list);
++	struct device *dev;
++
++	spin_lock(&devices_kset->list_lock);
++	list_for_each_entry(dev, &devices_kset->list, kobj.entry) {
++		get_device(dev);
++		spin_unlock(&devices_kset->list_lock);
++		if (dev_liveupdate_requested(dev)) {
++			list_add_tail(&dev->lu.liveupdate_entry,
++				      &request_list);
++		} else {
++			put_device(dev);
++		}
++		spin_lock(&devices_kset->list_lock);
++	}
++	spin_unlock(&devices_kset->list_lock);
++
++	while (!list_empty(&request_list)) {
++		dev = list_first_entry(&request_list,
++				       struct device,
++				       lu.liveupdate_entry);
++		list_del_init(&dev->lu.liveupdate_entry);
++		__find_ancestors_and_depth(dev);
++	}
++
++	list_sort(NULL, &dev_liveupdate_preserve_list, dev_depth_cmp);
++}
++
++/**
++ * dev_liveupdate_destroy_preserve_list() - Destroy the live update preserve
++ * list
++ *
++ * This function iterates through the ``dev_liveupdate_preserve_list``, which
++ * contains devices ordered by depth, and performs cleanup for each device.
++ * For each device in the list, it:
++ *
++ * 1. Removes the device from the list and reinitializes its list head.
++ * 2. Resets the liveupdate_depth field to 0.
++ * 3. Calls put_device() to decrement the device's reference count.
++ *
++ * This function is typically called after the preserve list is no longer
++ * needed, such as after the reboot phase of a live update or during
++ * cancellation.
++ */
++static void dev_liveupdate_destroy_preserve_list(void)
++{
++	struct device *dev;
++
++	while (!list_empty(&dev_liveupdate_preserve_list)) {
++		dev = list_first_entry(&dev_liveupdate_preserve_list,
++				       struct device,
++				       lu.liveupdate_entry);
++		list_del_init(&dev->lu.liveupdate_entry);
++		dev->lu.liveupdate_depth = 0;
++		put_device(dev);
++	}
++}
++
++/**
++ * __dev_liveupdate_cancel() - Cancel live update for devices
++ * @dev: The device from which to start the cancellation (or NULL to cancel
++ * all).
++ *
++ * This function cancels the ongoing live update process for devices starting
++ * from the position just before the given @dev in the
++ * ``dev_liveupdate_preserve_list`` and proceeding backwards to the beginning of
++ * the list. If @dev is ``NULL``, the cancellation is performed for all devices
++ * in the list.
++ *
++ * It iterates through the relevant devices in reverse order, calling the
++ * ``LIVEUPDATE_CANCEL`` handler for each device's bus and driver (if
++ * available). After processing the devices, it clears the liveupdate_preserved
++ * flag for each device and finally destroys the
++ * ``dev_liveupdate_preserve_list``.
++ */
++static void __dev_liveupdate_cancel(struct device *dev)
++{
++	dev = list_prepare_entry(dev, &dev_liveupdate_preserve_list,
++				 lu.liveupdate_entry);
++
++	list_for_each_entry_continue_reverse(dev, &dev_liveupdate_preserve_list,
++					     lu.liveupdate_entry) {
++		DEV_LIVEUPDATE_CALLBACK(dev, bus, cancel);
++		DEV_LIVEUPDATE_CALLBACK(dev, driver, cancel);
++
++		dev->lu.liveupdate_preserved = false;
++	}
++
++	dev_liveupdate_destroy_preserve_list();
++}
++
++/**
++ * __dev_liveupdate_reboot_prepare() - Notify drivers and buses of a
++ * prepare/reboot event
++ * @event: The live update event, either ``LIVEUPDATE_PREPARE`` or
++ * ``LIVEUPDATE_REBOOT``.
++ *
++ * This function iterates through the list of devices to be preserved
++ * (``dev_liveupdate_preserve_list``) and calls the liveupdate() callback for
++ * the driver and bus of each device with the specified event.
++ *
++ * If a driver or bus  callback returns an error, a warning is logged,
++ * and the function attempts to cancel the live update for the remaining devices
++ * using __dev_liveupdate_cancel().
++ *
++ * Upon successful completion for a device, the ``liveupdate_preserved`` flag
++ * for that device is set to true.
++ *
++ * Return: 0 on success, or the error code from the failing driver/bus
++ * liveupdate->{prepare, reboot} callback.
++ */
++static int __dev_liveupdate_reboot_prepare(enum liveupdate_event event)
++{
++	struct device *dev;
++	int rv;
++
++	rv = 0;
++	list_for_each_entry(dev, &dev_liveupdate_preserve_list,
++			    lu.liveupdate_entry) {
++		if (event == LIVEUPDATE_PREPARE)
++			rv = DEV_LIVEUPDATE_RET_CALLBACK(dev, driver, prepare);
++		else
++			rv = DEV_LIVEUPDATE_RET_CALLBACK(dev, driver, reboot);
++
++		if (rv) {
++			dev_warn(dev, "driver live update failed\n");
++			goto err_cancel;
++		}
++
++		if (event == LIVEUPDATE_PREPARE)
++			rv = DEV_LIVEUPDATE_RET_CALLBACK(dev, bus, prepare);
++		else
++			rv = DEV_LIVEUPDATE_RET_CALLBACK(dev, bus, reboot);
++
++		if (rv) {
++			dev_warn(dev, "bus live update failed\n");
++			goto err_cancel_bus;
++		}
++
++		dev->lu.liveupdate_preserved = true;
++	}
++
++	return 0;
++
++err_cancel_bus:
++	DEV_LIVEUPDATE_CALLBACK(dev, driver, cancel);
++
++err_cancel:
++	__dev_liveupdate_cancel(dev);
++
++	return rv;
++}
++
++/**
++ * device_liveupdate_prepare() - Prepare devices for a live update
++ *
++ * This function is called as part of the ``LIVEUPDATE_PREPARE`` stage.
++ * It first calls dev_liveupdate_build_preserve_list() to construct a list
++ * of devices that need their state preserved during the update.
++ * Then, it calls the internal function __dev_liveupdate_reboot_prepare()
++ * with the ``LIVEUPDATE_PREPARE`` event to notify drivers and buses to prepare
++ * for the upcoming update.
++ *
++ * Return: The return value from __dev_liveupdate_reboot_prepare().
++ */
++static int device_liveupdate_prepare(void)
++{
++	dev_liveupdate_build_preserve_list();
++
++	return __dev_liveupdate_reboot_prepare(LIVEUPDATE_PREPARE);
++}
++
++/**
++ * device_liveupdate_reboot() - Prepare devices for the reboot stage of a live
++ * update
++ *
++ * This function is called as part of the ``LIVEUPDATE_REBOOT`` stage, from
++ * reboot() syscall. It calls the internal function
++ * __dev_liveupdate_reboot_prepare() with the LIVEUPDATE_REBOOT event to notify
++ * drivers and buses to perform any actions needed before the reboot.  If the
++ * reboot preparation is successful (returns 0), it then calls
++ * dev_liveupdate_destroy_preserve_list() to free the list of devices that was
++ * built during the prepare stage.
++ *
++ * Return: The return value from __dev_liveupdate_reboot_prepare().
++ */
++static int device_liveupdate_reboot(void)
++{
++	int rv;
++
++	rv = __dev_liveupdate_reboot_prepare(LIVEUPDATE_REBOOT);
++	if (!rv)
++		dev_liveupdate_destroy_preserve_list();
++
++	return rv;
++}
++
++/**
++ * device_liveupdate_finish() - Finalize the device live update process
++ *
++ * This function is called as part of the ``LIVEUPDATE_FINISH`` stage. It
++ * iterates through all registered devices, identifies devices that were
++ * preserved during the prepare phase, sorts them by depth.
++ *
++ * After sorting, the function iterates through the list. For each device, it
++ * logs a warning about unreclaimed device and call the
++ * ``{driver, bus}->liveupdate->finish()`` handler for ever device's driver and
++ * bus on the list. Finally, it resets the live update related fields in the
++ * device's ``dev_liveupdate`` structure, effectively removing it from the live
++ * update tracking.
++ *
++ * Note: this function must not fail.
++ *
++ * Return: Always returns 0.
++ */
++static int device_liveupdate_finish(void)
++{
++	LIST_HEAD(preserved_list);
++	struct device *dev;
++
++	spin_lock(&devices_kset->list_lock);
++	list_for_each_entry(dev, &devices_kset->list, kobj.entry) {
++		get_device(dev);
++		spin_unlock(&devices_kset->list_lock);
++		if (!dev_liveupdate_preserved(dev)) {
++			put_device(dev);
++			spin_lock(&devices_kset->list_lock);
++			continue;
++		}
++
++		list_add_tail(&dev->lu.liveupdate_entry, &preserved_list);
++		dev->lu.liveupdate_depth = dev_liveupdate_get_depth(dev);
++		spin_lock(&devices_kset->list_lock);
++	}
++	spin_unlock(&devices_kset->list_lock);
++
++	list_sort(NULL, &preserved_list, dev_depth_cmp);
++
++	while (!list_empty(&preserved_list)) {
++		dev = list_first_entry(&preserved_list, struct device,
++				       lu.liveupdate_entry);
++
++		if (!dev_liveupdate_reclaimed(dev))
++			dev_warn(dev, "Device was not reclaimed during live update\n");
++
++		DEV_LIVEUPDATE_CALLBACK(dev, driver, finish);
++		DEV_LIVEUPDATE_CALLBACK(dev, bus, finish);
++
++		/* Reset live update fields to their default values */
++		list_del_init(&dev->lu.liveupdate_entry);
++		dev->lu.liveupdate_reclaimed = false;
++		dev->lu.liveupdate_preserved = false;
++		dev->lu.liveupdate_depth = 0;
++		put_device(dev);
++	}
++
++	return 0;
++}
++
++/**
++ * device_liveupdate_cancel() - Cancel the ongoing device live update process
++ *
++ * This function is called as part of the ``LIVEUPDATE_CANCEL`` stage. It
++ * initiates the cancellation of the live update process by calling the
++ * internal function __dev_liveupdate_cancel() with a NULL argument,
++ * indicating a global cancellation.
++ *
++ * Note: this function must not fail.
++ *
++ * Return: Always returns 0.
++ */
++static int device_liveupdate_cancel(void)
++{
++	__dev_liveupdate_cancel(NULL);
++
++	return 0;
++}
++
++LIVEUPDATE_DECLARE_NOTIFIER(device, LIVEUPDATE_CB_PRIO_WITH_DEVICES);
++
++/**
++ * dev_liveupdate_startup() - Register device live update notifier
++ *
++ * This function is called during the late initialization phase of the kernel.
++ * It registers a notifier for devices subsystem with live update orchestrator.
++ *
++ * If registration fails, a warning message is printed to the kernel log.
++ *
++ * Return: 0 on success (notifier registration is void, so only failure
++ * is explicitly handled).
++ */
++static int __init dev_liveupdate_startup(void)
++{
++	int rv;
++
++	rv = LIVEUPDATE_REGISTER_NOTIFIER(device);
++	if (rv) {
++		pr_warn("Failed to register devices with live update orchestrator [%d]\n",
++			rv);
++	}
++
++	return 0;
++}
++late_initcall(dev_liveupdate_startup);
++
++/* Public Interfaces */
++
++/**
++ * dev_liveupdate_init() - Initialize the dev_liveupdate structure
++ * @dev: Pointer to the dev_liveupdate structure to initialize.
++ *
++ * This function initializes the fields of the dev_liveupdate structure
++ * to their default states. The list head is initialized, and the
++ * boolean flags are cleared. The depth is initialized to 0.
++ */
++void dev_liveupdate_init(struct device *dev)
++{
++	INIT_LIST_HEAD(&dev->lu.liveupdate_entry);
++	dev->lu.liveupdate_requested = false;
++	dev->lu.liveupdate_preserved = false;
++	dev->lu.liveupdate_reclaimed = false;
++	dev->lu.liveupdate_depth = 0;
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_init);
++
++/**
++ * dev_liveupdate_add_device() - Add live update sysfs interface to a new device
++ * @dev: The device to add to the live update system.
++ *
++ * This function checks if live update functionality is enabled. If it is,
++ * it attempts to add the live update sysfs interface for the given device.
++ * If the sysfs group creation fails, a warning message is logged.
++ */
++void dev_liveupdate_add_device(struct device *dev)
++{
++	if (!liveupdate_enabled())
++		return;
++
++	if (dev_liveupdate_sysfs_add(dev))
++		dev_warn(dev, "Failed to create liveupdate sysfs group\n");
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_add_device);
++
++/**
++ * dev_liveupdate_sysfs_change_owner() - Change the owner of the liveupdate
++ * sysfs group
++ * @dev: The device whose liveupdate sysfs group owner is to be changed.
++ * @kuid: The user ID for the new owner.
++ * @kgid: The group ID for the new owner.
++ *
++ * This function changes the ownership of the sysfs attribute group associated
++ * with the live update interface for the given device. It uses the
++ * sysfs_group_change_owner() function to update the owner to the specified
++ * user ID (@kuid) and group ID (@kgid).
++ *
++ * Return: 0 on success, or a negative error code returned by
++ * sysfs_group_change_owner().
++ */
++int dev_liveupdate_sysfs_change_owner(struct device *dev,
++				      kuid_t kuid,
++				      kgid_t kgid)
++{
++	return sysfs_group_change_owner(&dev->kobj, &liveupdate_attr_group,
++					kuid, kgid);
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_sysfs_change_owner);
++
++/**
++ * dev_liveupdate_preserved() - Check if a device's live update state is
++ * preserved
++ * @dev: The device to check.
++ *
++ * Returns: true if the device's live update state has been preserved,
++ * false otherwise.
++ */
++bool dev_liveupdate_preserved(struct device *dev)
++{
++	return dev->lu.liveupdate_preserved;
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_preserved);
++
++/**
++ * dev_liveupdate_reclaimed() - Check if a device was reclaimed after live
++ * update
++ * @dev: The device to check.
++ *
++ * Returns: true if the device has been reclaimed, false otherwise.
++ */
++bool dev_liveupdate_reclaimed(struct device *dev)
++{
++	return dev->lu.liveupdate_reclaimed;
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_reclaimed);
++
++/**
++ * dev_liveupdate_requested() - Check if a live update has been requested for
++ * the device
++ * @dev: The device to check.
++ *
++ * Returns: true if a live update has been requested for the device (i.e.
++ * device and its ancestors are going to participate in live update), false
++ * otherwise.
++ */
++bool dev_liveupdate_requested(struct device *dev)
++{
++	return dev->lu.liveupdate_requested;
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_requested);
++
++/**
++ * dev_liveupdate_set_requested() - Set the live update requested state for a
++ * device
++ * @dev: The device to modify.
++ * @val: The boolean value to set the requested state to (true or false).
++ *
++ * Sets the ``liveupdate_requested`` flag for the given device to the
++ * specified value.
++ */
++void dev_liveupdate_set_requested(struct device *dev, bool val)
++{
++	dev->lu.liveupdate_requested = val;
++}
++EXPORT_SYMBOL_GPL(dev_liveupdate_set_requested);
+diff --git a/include/linux/dev_liveupdate.h b/include/linux/dev_liveupdate.h
+new file mode 100644
+index 000000000000..caf38e16ba91
+--- /dev/null
++++ b/include/linux/dev_liveupdate.h
+@@ -0,0 +1,109 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (c) 2025, Google LLC.
++ * Pasha Tatashin <pasha.tatashin@soleen.com>
++ */
++#ifndef _LINUX_DEV_LIVEUPDATE_H
++#define _LINUX_DEV_LIVEUPDATE_H
++
++#include <linux/liveupdate.h>
++
++#ifdef CONFIG_LIVEUPDATE
++
++/**
++ * struct dev_liveupdate - Device state for live update operations
++ * @liveupdate_entry:     List head for linking the device into live update
++ *                        related lists (e.g., a list of devices participating
++ *                        in a live update sequence).
++ * @liveupdate_requested: Set if a live update has been requested for this
++ *                        device (i.e. device will participate in live update).
++ * @liveupdate_preserved: Set if the device's state has been successfully
++ *                        preserved during a live update prepare phase.
++ * @liveupdate_reclaimed: Set if resources or state associated with a
++ *                        previous live update attempt have been reclaimed.
++ *                        Device has been re-attached to previous work and
++ *                        resumed its operation.
++ * @liveupdate_depth:     The hierarchical depth of the device, used for
++ *                        ordering live update operations. Lower values
++ *                        indicate devices closer to the root.
++ *
++ * This structure holds the state information required for performing
++ * live update operations on a device. It is embedded within a struct device.
++ */
++struct dev_liveupdate {
++	struct list_head liveupdate_entry;
++	bool liveupdate_requested:1;
++	bool liveupdate_preserved:1;
++	bool liveupdate_reclaimed:1;
++	int liveupdate_depth:28;
++};
++
++/**
++ * struct dev_liveupdate_cbs - Live Update callback functions
++ * @prepare:     Prepare device for the upcoming state transition. Driver and
++ *               buse should save the necessary device state. Happens before
++ *               blackouts.
++ * @reboot:      A final notification before the system jumps to the new kernel.
++ *               Called during blackout from reboot() syscall.
++ * @finish:      The system has completed a transition. Drivers and buses should
++ *               have already restored the previously saved device state.
++ *               Clean-up any saved state or reset unreclaimed device.
++ * @cancel:      Cancel the live update process. Driver should clean
++ *               up any saved state if necessary.
++ *
++ * This structure is used by drivers and buses to hold the callback from LUO.
++ */
++struct dev_liveupdate_cbs {
++	int (*prepare)(struct device *dev);
++	int (*reboot)(struct device *dev);
++	void (*finish)(struct device *dev);
++	void (*cancel)(struct device *dev);
++};
++
++void dev_liveupdate_init(struct device *dev);
++void dev_liveupdate_add_device(struct device *dev);
++int dev_liveupdate_sysfs_change_owner(struct device *dev,
++				      kuid_t kuid,
++				      kgid_t kgid);
++
++bool dev_liveupdate_preserved(struct device *dev);
++bool dev_liveupdate_reclaimed(struct device *dev);
++bool dev_liveupdate_requested(struct device *dev);
++void dev_liveupdate_set_requested(struct device *dev, bool val);
++
++#else /* CONFIG_LIVEUPDATE */
++
++static inline void dev_liveupdate_init(struct devie *dev);
++static inline void dev_liveupdate_add_device(struct device *dev) { }
++
++static inline int dev_liveupdate_sysfs_change_owner(struct device *dev,
++						    kuid_t kuid,
++						    kgid_t kgid)
++{
++	return 0;
++}
++
++static inline bool dev_liveupdate_preserved(struct device *dev)
++{
++	return false;
++}
++
++static inline bool dev_liveupdate_reclaimed(struct device *dev)
++{
++	return false;
++}
++
++static inline bool dev_liveupdate_requested(struct device *dev)
++{
++	return false;
++}
++
++static inline void dev_liveupdate_set_requested(struct device *dev, bool val)
++{
++}
++
++static inline void dev_liveupdate_set_reclaimed(struct device *dev);
++
++#endif /* CONFIG_LIVEUPDATE */
++#endif /* _LINUX_DEV_LIVEUPDATE_H */
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 80a5b3268986..0b8cdc10e002 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -21,6 +21,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/compiler.h>
+ #include <linux/types.h>
++#include <linux/dev_liveupdate.h>
+ #include <linux/mutex.h>
+ #include <linux/pm.h>
+ #include <linux/atomic.h>
+@@ -663,6 +664,7 @@ struct device_physical_location {
+  * @pm_domain:	Provide callbacks that are executed during system suspend,
+  * 		hibernation, system resume and during runtime PM transitions
+  * 		along with subsystem-level and driver-level callbacks.
++ * @lu:		Live update state.
+  * @em_pd:	device's energy model performance domain
+  * @pins:	For device pin management.
+  *		See Documentation/driver-api/pin-control.rst for details.
+@@ -758,6 +760,10 @@ struct device {
+ 	struct dev_pm_info	power;
+ 	struct dev_pm_domain	*pm_domain;
+ 
++#ifdef CONFIG_LIVEUPDATE
++	struct dev_liveupdate	lu;
++#endif
++
+ #ifdef CONFIG_ENERGY_MODEL
+ 	struct em_perf_domain	*em_pd;
  #endif
+diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+index f5a56efd2bd6..d05f12187d34 100644
+--- a/include/linux/device/bus.h
++++ b/include/linux/device/bus.h
+@@ -17,6 +17,7 @@
+ #include <linux/kobject.h>
+ #include <linux/klist.h>
+ #include <linux/pm.h>
++#include <linux/dev_liveupdate.h>
+ 
+ struct device_driver;
+ struct fwnode_handle;
+@@ -63,6 +64,8 @@ struct fwnode_handle;
+  *			this bus.
+  * @pm:		Power management operations of this bus, callback the specific
+  *		device driver's pm-ops.
++ * @liveupdate:	Live update callbacks, notify bus of the live update state, and
++ *		allow preseve device across reboot.
+  * @need_parent_lock:	When probing or removing a device on this bus, the
+  *			device core should lock the device's parent.
+  *
+@@ -103,6 +106,7 @@ struct bus_type {
+ 	void (*dma_cleanup)(struct device *dev);
+ 
+ 	const struct dev_pm_ops *pm;
++	const struct dev_liveupdate_cbs *liveupdate;
+ 
+ 	bool need_parent_lock;
+ };
+diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
+index cd8e0f0a634b..01ade77061fc 100644
+--- a/include/linux/device/driver.h
++++ b/include/linux/device/driver.h
+@@ -19,6 +19,7 @@
+ #include <linux/pm.h>
+ #include <linux/device/bus.h>
+ #include <linux/module.h>
++#include <linux/dev_liveupdate.h>
+ 
+ /**
+  * enum probe_type - device driver probe type to try
+@@ -80,6 +81,8 @@ enum probe_type {
+  *		it is bound to the driver.
+  * @pm:		Power management operations of the device which matched
+  *		this driver.
++ * @liveupdate:	Live update callbacks, notify device of the live
++ *		update state, and allow preseve device across reboot.
+  * @coredump:	Called when sysfs entry is written to. The device driver
+  *		is expected to call the dev_coredump API resulting in a
+  *		uevent.
+@@ -116,6 +119,7 @@ struct device_driver {
+ 	const struct attribute_group **dev_groups;
+ 
+ 	const struct dev_pm_ops *pm;
++	const struct dev_liveupdate_cbs *liveupdate;
+ 	void (*coredump) (struct device *dev);
+ 
+ 	struct driver_private *p;
 -- 
 2.49.0.395.g12beb8f557-goog
 
