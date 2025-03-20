@@ -1,225 +1,568 @@
-Return-Path: <linux-kernel+bounces-569645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91082A6A58F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:59:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24831A6A59E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A204816E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6EC1882F49
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD14221F3A;
-	Thu, 20 Mar 2025 11:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2684223311;
+	Thu, 20 Mar 2025 11:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nyHGPu9E"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R5GlhjY+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AD8221F16
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 11:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B282222D7;
+	Thu, 20 Mar 2025 11:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742471578; cv=none; b=bV5KBdC+7Q+FHrvKIspW5d2Fsc4F4FzSBVWLIiRRKDt7X6Q4z0AG0qlCcqU7apUqtRRYgeDkq2vL4s3QbUKwV7bC8t575ohq645O0ltK6VAKYJFDu8npexdvvynrmMlOw2iudOG9xFmDoOXtxdZ7ZWxtC3ZEICyMLk+yWb8tvZs=
+	t=1742471588; cv=none; b=t+/ufxmGNc0sBgZW6F2w0rfgvPTqIoja8Xs56PuA2f0P90uPSsYQ+gChOh/qwwI+uN85QU74GdyovH02SxoebDWJtyeAjm9uZ1rvFBQ3SHOSBB+PZD7XTFqmPkh17dNN9xdkqWchAYgbGMdEcFzoch4INu14S5cPhZZTwwJ6OwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742471578; c=relaxed/simple;
-	bh=OjN9wGOAIpjmQa7W63iYZMm20wHgFG2lfSL6golGLFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9eAccDTf+HShS0638bz+CRY86jxAawLHJ008Ubgv+RYzJiMQTLXf4t/QQJACHuayv5yOJC3nyJwSNkuassoVIigZiOsF00ZUbUHq9Rv3Ay5H5GiIbSZoKGU80LS5pgc5OAi2CsBMTXjvSByqTvjVTjZh8SQZ4Bh024nSHBLFNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nyHGPu9E; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-399744f74e9so398859f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 04:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1742471572; x=1743076372; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=W7Q+Uv9PP7IrwTG/eBced107V/Y8wAy3D1YQ6SsCvek=;
-        b=nyHGPu9Eo3AB27mSotro2qA4qAzML0gNfUXxqyx7QQb/WXDHYh5N2UsywJuJwrk1jq
-         W9gMvXIERbofA7sD2fQ1m0T/OWVl69aLMMP9XWiMKo+I9Me/C5lBIcb1rb+eQ8rzSXKa
-         SR7bIOp0MGVoNAKQYscBf4abvkxeBuuo0lXvoEBeqK5m00C7SGqX/8O4oqowpGYDzuo2
-         0o0YZnV1IKRKqymbl/vVjo9L2Z0REtOJQhAie3Q2Ukipn9a5/vCcV5wHEkSTtCljArDH
-         Cy3wgrSpU5OHxGHc6do38386Grq1ndbNCd7TaKReG9Tkl31oLe2Q6J53xXQ/2y2wFEuj
-         oVRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742471572; x=1743076372;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W7Q+Uv9PP7IrwTG/eBced107V/Y8wAy3D1YQ6SsCvek=;
-        b=bgY3NXCht1ux9TcwDkTrFBisoLZxZjyQEMaPX47oj/B0MHq67zxwbEs/8pfiUUHGG+
-         O2WnF1OJRy/vv89OkJ+Wi5OV2/qxvqRj3n8sZEqq2PF/VmAhuUZ1/f3qJQuDcpAR/IT9
-         NbE6A9DK2Eowg78GXCKFS9B0bf/vFgb9I+LJpAOTv29R4nbtHBWZ3hx/jrq70bknSP51
-         jPLdbbKDdMeut6aBIF4KrViEG1dRqAJtTfC5asOBKNdAmS07xrMJ7a3B0SrLkE3jvKiN
-         sDISxXG/+HAJZfvTrCLvEa0xPbPFIamtRSLR7Re947xRtJ6ZysuIQlh3TwNfe1SxRu0R
-         sh/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVw3aCf7viScINW1htBbq2Y3hVbPHQiuB7y2OsGVkeNvl5yqcvGPaVrgWilPdl1P2Sl+XCHS9DIyhqD8iU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmirWp7Wuv5hIyhhT/2DYQdt8lZiBkku1RHf5IBJDQSQH6iSj7
-	nTL3Gfsf0AKE9MtkNLRphvY6EDTDLX7pvjoazZPp42DqGovBzK6TAiYIuzs6slA=
-X-Gm-Gg: ASbGncv8Zwb/cWdbccEF9Ud2rCQ5Q1i8qJ0CX2817xTqmHUW6nIHX730+Tf4ByYLvc+
-	jjGtESR/N0gWC4YVBnQgq3yv4GDX6J9Bo44bP68FAmMC7h9eiG/wz/IWAa3zZ5iZzi4IxSkrw1K
-	F1iWIbpVlX87RmKcaZa9Esf+3OGZEJkce0+f91AvOM3jhDHNDIg9Ahmbt6jluA12djNgg0XvW5m
-	Mul4qSQNg68ChkUeY6kuGbIBX4AmN5FO0guLmFxNFwvU2QSqs16/lWPKObnYeiNtGSWA6hmF7IT
-	iVDIxmTK7GxYUgD0hUWA1/9AgEvNNAqE
-X-Google-Smtp-Source: AGHT+IHeyTD2wSXlAOfdAKS53YepR+/8W8LiJeiUCHJdoX9DdjQszAGbC8mMUKoCZx6XO5JpwnfZmg==
-X-Received: by 2002:a05:6000:188e:b0:391:2e6a:30de with SMTP id ffacd0b85a97d-399739beb10mr5536213f8f.19.1742471572182;
-        Thu, 20 Mar 2025 04:52:52 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997e3eb672sm404452f8f.95.2025.03.20.04.52.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 04:52:51 -0700 (PDT)
-Date: Thu, 20 Mar 2025 12:52:50 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Himanshu Chauhan <hchauhan@ventanamicro.com>, 
-	Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>, 
-	Atish Patra <atishp@atishpatra.org>
-Subject: Re: [PATCH v3 2/4] riscv: add support for SBI Supervisor Software
- Events extension
-Message-ID: <20250320-5f9612f1b503c79c9b185b10@orel>
-References: <20241206163102.843505-1-cleger@rivosinc.com>
- <20241206163102.843505-3-cleger@rivosinc.com>
- <20250319-46b625cf8b771616d4c7c053@orel>
- <b3fbd730-295f-4491-b0d6-d4e258941ae5@rivosinc.com>
+	s=arc-20240116; t=1742471588; c=relaxed/simple;
+	bh=DFmnp1QXbp1zbNyOMComr+3s6U/bXRD/s4yTBs1ypYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l65fUjXVWXYIZ4DvA3/+txBAcEUbu/dcJcUJqq4HvodCTVzFEwa7iGIshR7OUzQfuDrWyg9F7KiIwn5Wpfxcj762quyc9kmYQoEw+oGJZwX5dkrORr2LHVhz0YHJdrc7uI+oKL7ba1+gcu6AgyNsWQO66nIgykvyihM72ISy9C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R5GlhjY+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742471584;
+	bh=DFmnp1QXbp1zbNyOMComr+3s6U/bXRD/s4yTBs1ypYc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=R5GlhjY+u51qyjEOA6bkO0AHVE5C3U61OEgOqFcm8Dsf/4GLoP+DdkoICRcu7dese
+	 N40VkYjRidSNb/DYxkRXDPnRaIvhKzLH7/hD2Vui+SVqSoelC7n5L9pQBoPJ7UlJ0/
+	 GVz1ZjPfn3x/FcrIg9aC8PSNCFT69meE2YHWhUErSh4VRzXKdVGfqvE0NwchbXpqAL
+	 5xmxlK5Y37C5tCDjZKccNoIndYvqj2Loih9kFhiUD/PHq6Ak/0ZTEaGKKFUHugrrrj
+	 tg0D5PJM6Er2ogsxcJj60gkaOTqwJJ23cLj+qZiwd+l3+Ldfog8zOtsdOpkaJQkitB
+	 1C2NUEiUOAPfg==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBC6D17E017D;
+	Thu, 20 Mar 2025 12:53:02 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: lgirdwood@gmail.com
+Cc: peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	daniel.baluta@nxp.com,
+	kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	christophe.jaillet@wanadoo.fr,
+	gregkh@linuxfoundation.org,
+	peterz@infradead.org,
+	krzk@kernel.org,
+	lee.lockhey@gmail.com,
+	u.kleine-koenig@baylibre.com,
+	cujomalainey@chromium.org,
+	jakiela@google.com,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] ASoC: SOF: mediatek: Commonize duplicated functions
+Date: Thu, 20 Mar 2025 12:53:00 +0100
+Message-ID: <20250320115300.137410-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b3fbd730-295f-4491-b0d6-d4e258941ae5@rivosinc.com>
 
-On Thu, Mar 20, 2025 at 09:16:07AM +0100, Clément Léger wrote:
-> 
-> 
-> On 19/03/2025 18:08, Andrew Jones wrote:
-> > On Fri, Dec 06, 2024 at 05:30:58PM +0100, Clément Léger wrote:
-> > ...
-> >> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32 evt_id, int cpu)
-> >> +{
-> >> +	void *stack;
-> >> +
-> >> +	arch_evt->evt_id = evt_id;
-> >> +	stack = sse_stack_alloc(cpu, SSE_STACK_SIZE);
-> >> +	if (!stack)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	arch_evt->stack = stack + SSE_STACK_SIZE;
-> >> +
-> >> +	if (sse_init_scs(cpu, arch_evt))
-> >> +		goto free_stack;
-> >> +
-> >> +	if (is_kernel_percpu_address((unsigned long)&arch_evt->interrupted)) {
-> >> +		arch_evt->interrupted_state_phys =
-> >> +				per_cpu_ptr_to_phys(&arch_evt->interrupted);
-> >> +	} else {
-> >> +		arch_evt->interrupted_state_phys =
-> >> +				virt_to_phys(&arch_evt->interrupted);
-> >> +	}
-> >> +
-> >> +	return 0;
-> > 
-> > Hi Clément,
-> > 
-> > Testing SSE support with tools/testing/selftests/kvm/riscv/sbi_pmu_test
-> > led to an opensbi sbi_trap_error because the output_phys_lo address passed
-> > to sbi_sse_read_attrs() wasn't a physical address. The reason is that
-> > is_kernel_percpu_address() can only be used on static percpu addresses,
-> > but local sse events get their percpu addresses with alloc_percpu(), so
-> > is_kernel_percpu_address() was returning false even for local events. I
-> > made the following changes to get things working.
-> 
-> Hi Andrew,
-> 
-> Did something changed recently ? Because I tested that when it was send
-> (PMU + some kernel internal testsuite) and didn't saw that. Anyway, I'll
-> respin it with your changes as well.
+In order to reduce duplication, move the ADSP mailbox callbacks
+handle_reply(), handle_request(), and other common SOF callbacks
+send_msg(), get_bar_index(), pcm_hw_params() and pcm_pointer()
+to the mtk-adsp-common.c file.
 
-It depends on the kernel config. Configs that don't have many
-alloc_percpu() calls prior to the one made by sse can work, because,
-iiuc, alloc_percpu() will get its allocation from the percpu allocator's
-first chunk until that chunck fills up. The first chunck is shared with
-the static allocations.
+This cleanup brings no functional differences.
 
-Thanks,
-drew
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ sound/soc/sof/mediatek/mt8186/mt8186.c   | 105 ++----------------
+ sound/soc/sof/mediatek/mt8195/mt8195.c   | 105 ++----------------
+ sound/soc/sof/mediatek/mtk-adsp-common.c | 130 +++++++++++++++++++++++
+ sound/soc/sof/mediatek/mtk-adsp-common.h |  10 ++
+ 4 files changed, 152 insertions(+), 198 deletions(-)
 
-> 
-> Thanks !
-> 
-> Clément
-> 
-> > 
-> > Thanks,
-> > drew
-> > 
-> > diff --git a/arch/riscv/kernel/sse.c b/arch/riscv/kernel/sse.c
-> > index b48ae69dad8d..f46893946086 100644
-> > --- a/arch/riscv/kernel/sse.c
-> > +++ b/arch/riscv/kernel/sse.c
-> > @@ -100,12 +100,12 @@ int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32 evt_id, int cp
-> >         if (sse_init_scs(cpu, arch_evt))
-> >                 goto free_stack;
-> > 
-> > -       if (is_kernel_percpu_address((unsigned long)&arch_evt->interrupted)) {
-> > +       if (sse_event_is_global(evt_id)) {
-> >                 arch_evt->interrupted_state_phys =
-> > -                               per_cpu_ptr_to_phys(&arch_evt->interrupted);
-> > +                               virt_to_phys(&arch_evt->interrupted);
-> >         } else {
-> >                 arch_evt->interrupted_state_phys =
-> > -                               virt_to_phys(&arch_evt->interrupted);
-> > +                               per_cpu_ptr_to_phys(&arch_evt->interrupted);
-> >         }
-> > 
-> >         return 0;
-> > diff --git a/drivers/firmware/riscv/riscv_sse.c b/drivers/firmware/riscv/riscv_sse.c
-> > index 511db9ad7a9e..fef375046f75 100644
-> > --- a/drivers/firmware/riscv/riscv_sse.c
-> > +++ b/drivers/firmware/riscv/riscv_sse.c
-> > @@ -62,11 +62,6 @@ void sse_handle_event(struct sse_event_arch_data *arch_event,
-> >                         ret);
-> >  }
-> > 
-> > -static bool sse_event_is_global(u32 evt)
-> > -{
-> > -       return !!(evt & SBI_SSE_EVENT_GLOBAL);
-> > -}
-> > -
-> >  static
-> >  struct sse_event *sse_event_get(u32 evt)
-> >  {
-> > diff --git a/include/linux/riscv_sse.h b/include/linux/riscv_sse.h
-> > index 16700677f1e8..06b757b036b0 100644
-> > --- a/include/linux/riscv_sse.h
-> > +++ b/include/linux/riscv_sse.h
-> > @@ -8,6 +8,7 @@
-> > 
-> >  #include <linux/types.h>
-> >  #include <linux/linkage.h>
-> > +#include <asm/sbi.h>
-> > 
-> >  struct sse_event;
-> >  struct pt_regs;
-> > @@ -16,6 +17,11 @@ struct ghes;
-> > 
-> >  typedef int (sse_event_handler)(u32 event_num, void *arg, struct pt_regs *regs);
-> > 
-> > +static inline bool sse_event_is_global(u32 evt)
-> > +{
-> > +       return !!(evt & SBI_SSE_EVENT_GLOBAL);
-> > +}
-> > +
-> >  #ifdef CONFIG_RISCV_SSE
-> > 
-> >  struct sse_event *sse_event_register(u32 event_num, u32 priority,
-> 
+diff --git a/sound/soc/sof/mediatek/mt8186/mt8186.c b/sound/soc/sof/mediatek/mt8186/mt8186.c
+index 31437fdd4e92..a5291099493e 100644
+--- a/sound/soc/sof/mediatek/mt8186/mt8186.c
++++ b/sound/soc/sof/mediatek/mt8186/mt8186.c
+@@ -22,7 +22,6 @@
+ #include <sound/sof/xtensa.h>
+ #include "../../ops.h"
+ #include "../../sof-of-dev.h"
+-#include "../../sof-audio.h"
+ #include "../adsp_helper.h"
+ #include "../mtk-adsp-common.h"
+ #include "mt8186.h"
+@@ -38,53 +37,9 @@ static int mt8186_get_window_offset(struct snd_sof_dev *sdev, u32 id)
+ 	return MBOX_OFFSET;
+ }
+ 
+-static int mt8186_send_msg(struct snd_sof_dev *sdev,
+-			   struct snd_sof_ipc_msg *msg)
+-{
+-	struct adsp_priv *priv = sdev->pdata->hw_pdata;
+-
+-	sof_mailbox_write(sdev, sdev->host_box.offset, msg->msg_data,
+-			  msg->msg_size);
+-
+-	return mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_REQ, MTK_ADSP_IPC_OP_REQ);
+-}
+-
+-static void mt8186_dsp_handle_reply(struct mtk_adsp_ipc *ipc)
+-{
+-	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&priv->sdev->ipc_lock, flags);
+-	snd_sof_ipc_process_reply(priv->sdev, 0);
+-	spin_unlock_irqrestore(&priv->sdev->ipc_lock, flags);
+-}
+-
+-static void mt8186_dsp_handle_request(struct mtk_adsp_ipc *ipc)
+-{
+-	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
+-	u32 p; /* panic code */
+-	int ret;
+-
+-	/* Read the message from the debug box. */
+-	sof_mailbox_read(priv->sdev, priv->sdev->debug_box.offset + 4,
+-			 &p, sizeof(p));
+-
+-	/* Check to see if the message is a panic code 0x0dead*** */
+-	if ((p & SOF_IPC_PANIC_MAGIC_MASK) == SOF_IPC_PANIC_MAGIC) {
+-		snd_sof_dsp_panic(priv->sdev, p, true);
+-	} else {
+-		snd_sof_ipc_msgs_rx(priv->sdev);
+-
+-		/* tell DSP cmd is done */
+-		ret = mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_RSP, MTK_ADSP_IPC_OP_RSP);
+-		if (ret)
+-			dev_err(priv->dev, "request send ipc failed");
+-	}
+-}
+-
+ static const struct mtk_adsp_ipc_ops dsp_ops = {
+-	.handle_reply		= mt8186_dsp_handle_reply,
+-	.handle_request		= mt8186_dsp_handle_request,
++	.handle_reply		= mtk_adsp_handle_reply,
++	.handle_request		= mtk_adsp_handle_request,
+ };
+ 
+ static int platform_parse_resource(struct platform_device *pdev, void *data)
+@@ -381,54 +336,6 @@ static int mt8186_dsp_resume(struct snd_sof_dev *sdev)
+ 	return ret;
+ }
+ 
+-/* on mt8186 there is 1 to 1 match between type and BAR idx */
+-static int mt8186_get_bar_index(struct snd_sof_dev *sdev, u32 type)
+-{
+-	return type;
+-}
+-
+-static int mt8186_pcm_hw_params(struct snd_sof_dev *sdev,
+-				struct snd_pcm_substream *substream,
+-				struct snd_pcm_hw_params *params,
+-				struct snd_sof_platform_stream_params *platform_params)
+-{
+-	platform_params->cont_update_posn = 1;
+-
+-	return 0;
+-}
+-
+-static snd_pcm_uframes_t mt8186_pcm_pointer(struct snd_sof_dev *sdev,
+-					    struct snd_pcm_substream *substream)
+-{
+-	int ret;
+-	snd_pcm_uframes_t pos;
+-	struct snd_sof_pcm *spcm;
+-	struct sof_ipc_stream_posn posn;
+-	struct snd_sof_pcm_stream *stream;
+-	struct snd_soc_component *scomp = sdev->component;
+-	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+-
+-	spcm = snd_sof_find_spcm_dai(scomp, rtd);
+-	if (!spcm) {
+-		dev_warn_ratelimited(sdev->dev, "warn: can't find PCM with DAI ID %d\n",
+-				     rtd->dai_link->id);
+-		return 0;
+-	}
+-
+-	stream = &spcm->stream[substream->stream];
+-	ret = snd_sof_ipc_msg_data(sdev, stream, &posn, sizeof(posn));
+-	if (ret < 0) {
+-		dev_warn(sdev->dev, "failed to read stream position: %d\n", ret);
+-		return 0;
+-	}
+-
+-	memcpy(&stream->posn, &posn, sizeof(posn));
+-	pos = spcm->stream[substream->stream].posn.host_posn;
+-	pos = bytes_to_frames(substream->runtime, pos);
+-
+-	return pos;
+-}
+-
+ static void mt8186_adsp_dump(struct snd_sof_dev *sdev, u32 flags)
+ {
+ 	u32 dbg_pc, dbg_data, dbg_inst, dbg_ls0stat, dbg_status, faultinfo;
+@@ -505,19 +412,19 @@ static const struct snd_sof_dsp_ops sof_mt8186_ops = {
+ 	.read64		= sof_io_read64,
+ 
+ 	/* ipc */
+-	.send_msg		= mt8186_send_msg,
++	.send_msg		= mtk_adsp_send_msg,
+ 	.get_mailbox_offset	= mt8186_get_mailbox_offset,
+ 	.get_window_offset	= mt8186_get_window_offset,
+ 	.ipc_msg_data		= sof_ipc_msg_data,
+ 	.set_stream_data_offset = sof_set_stream_data_offset,
+ 
+ 	/* misc */
+-	.get_bar_index	= mt8186_get_bar_index,
++	.get_bar_index	= mtk_adsp_get_bar_index,
+ 
+ 	/* stream callbacks */
+ 	.pcm_open	= sof_stream_pcm_open,
+-	.pcm_hw_params	= mt8186_pcm_hw_params,
+-	.pcm_pointer	= mt8186_pcm_pointer,
++	.pcm_hw_params	= mtk_adsp_stream_pcm_hw_params,
++	.pcm_pointer	= mtk_adsp_stream_pcm_pointer,
+ 	.pcm_close	= sof_stream_pcm_close,
+ 
+ 	/* firmware loading */
+diff --git a/sound/soc/sof/mediatek/mt8195/mt8195.c b/sound/soc/sof/mediatek/mt8195/mt8195.c
+index 371563d7ce79..498d417e2829 100644
+--- a/sound/soc/sof/mediatek/mt8195/mt8195.c
++++ b/sound/soc/sof/mediatek/mt8195/mt8195.c
+@@ -22,7 +22,6 @@
+ #include <sound/sof/xtensa.h>
+ #include "../../ops.h"
+ #include "../../sof-of-dev.h"
+-#include "../../sof-audio.h"
+ #include "../adsp_helper.h"
+ #include "../mtk-adsp-common.h"
+ #include "mt8195.h"
+@@ -38,53 +37,9 @@ static int mt8195_get_window_offset(struct snd_sof_dev *sdev, u32 id)
+ 	return MBOX_OFFSET;
+ }
+ 
+-static int mt8195_send_msg(struct snd_sof_dev *sdev,
+-			   struct snd_sof_ipc_msg *msg)
+-{
+-	struct adsp_priv *priv = sdev->pdata->hw_pdata;
+-
+-	sof_mailbox_write(sdev, sdev->host_box.offset, msg->msg_data,
+-			  msg->msg_size);
+-
+-	return mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_REQ, MTK_ADSP_IPC_OP_REQ);
+-}
+-
+-static void mt8195_dsp_handle_reply(struct mtk_adsp_ipc *ipc)
+-{
+-	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&priv->sdev->ipc_lock, flags);
+-	snd_sof_ipc_process_reply(priv->sdev, 0);
+-	spin_unlock_irqrestore(&priv->sdev->ipc_lock, flags);
+-}
+-
+-static void mt8195_dsp_handle_request(struct mtk_adsp_ipc *ipc)
+-{
+-	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
+-	u32 p; /* panic code */
+-	int ret;
+-
+-	/* Read the message from the debug box. */
+-	sof_mailbox_read(priv->sdev, priv->sdev->debug_box.offset + 4,
+-			 &p, sizeof(p));
+-
+-	/* Check to see if the message is a panic code 0x0dead*** */
+-	if ((p & SOF_IPC_PANIC_MAGIC_MASK) == SOF_IPC_PANIC_MAGIC) {
+-		snd_sof_dsp_panic(priv->sdev, p, true);
+-	} else {
+-		snd_sof_ipc_msgs_rx(priv->sdev);
+-
+-		/* tell DSP cmd is done */
+-		ret = mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_RSP, MTK_ADSP_IPC_OP_RSP);
+-		if (ret)
+-			dev_err(priv->dev, "request send ipc failed");
+-	}
+-}
+-
+ static const struct mtk_adsp_ipc_ops dsp_ops = {
+-	.handle_reply		= mt8195_dsp_handle_reply,
+-	.handle_request		= mt8195_dsp_handle_request,
++	.handle_reply		= mtk_adsp_handle_reply,
++	.handle_request		= mtk_adsp_handle_request,
+ };
+ 
+ static int platform_parse_resource(struct platform_device *pdev, void *data)
+@@ -400,54 +355,6 @@ static int mt8195_dsp_resume(struct snd_sof_dev *sdev)
+ 	return ret;
+ }
+ 
+-/* on mt8195 there is 1 to 1 match between type and BAR idx */
+-static int mt8195_get_bar_index(struct snd_sof_dev *sdev, u32 type)
+-{
+-	return type;
+-}
+-
+-static int mt8195_pcm_hw_params(struct snd_sof_dev *sdev,
+-				struct snd_pcm_substream *substream,
+-				struct snd_pcm_hw_params *params,
+-				struct snd_sof_platform_stream_params *platform_params)
+-{
+-	platform_params->cont_update_posn = 1;
+-
+-	return 0;
+-}
+-
+-static snd_pcm_uframes_t mt8195_pcm_pointer(struct snd_sof_dev *sdev,
+-					    struct snd_pcm_substream *substream)
+-{
+-	int ret;
+-	snd_pcm_uframes_t pos;
+-	struct snd_sof_pcm *spcm;
+-	struct sof_ipc_stream_posn posn;
+-	struct snd_sof_pcm_stream *stream;
+-	struct snd_soc_component *scomp = sdev->component;
+-	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+-
+-	spcm = snd_sof_find_spcm_dai(scomp, rtd);
+-	if (!spcm) {
+-		dev_warn_ratelimited(sdev->dev, "warn: can't find PCM with DAI ID %d\n",
+-				     rtd->dai_link->id);
+-		return 0;
+-	}
+-
+-	stream = &spcm->stream[substream->stream];
+-	ret = snd_sof_ipc_msg_data(sdev, stream, &posn, sizeof(posn));
+-	if (ret < 0) {
+-		dev_warn(sdev->dev, "failed to read stream position: %d\n", ret);
+-		return 0;
+-	}
+-
+-	memcpy(&stream->posn, &posn, sizeof(posn));
+-	pos = spcm->stream[substream->stream].posn.host_posn;
+-	pos = bytes_to_frames(substream->runtime, pos);
+-
+-	return pos;
+-}
+-
+ static void mt8195_adsp_dump(struct snd_sof_dev *sdev, u32 flags)
+ {
+ 	u32 dbg_pc, dbg_data, dbg_bus0, dbg_bus1, dbg_inst;
+@@ -529,19 +436,19 @@ static const struct snd_sof_dsp_ops sof_mt8195_ops = {
+ 	.read64		= sof_io_read64,
+ 
+ 	/* ipc */
+-	.send_msg		= mt8195_send_msg,
++	.send_msg		= mtk_adsp_send_msg,
+ 	.get_mailbox_offset	= mt8195_get_mailbox_offset,
+ 	.get_window_offset	= mt8195_get_window_offset,
+ 	.ipc_msg_data		= sof_ipc_msg_data,
+ 	.set_stream_data_offset = sof_set_stream_data_offset,
+ 
+ 	/* misc */
+-	.get_bar_index	= mt8195_get_bar_index,
++	.get_bar_index	= mtk_adsp_get_bar_index,
+ 
+ 	/* stream callbacks */
+ 	.pcm_open	= sof_stream_pcm_open,
+-	.pcm_hw_params	= mt8195_pcm_hw_params,
+-	.pcm_pointer	= mt8195_pcm_pointer,
++	.pcm_hw_params	= mtk_adsp_stream_pcm_hw_params,
++	.pcm_pointer	= mtk_adsp_stream_pcm_pointer,
+ 	.pcm_close	= sof_stream_pcm_close,
+ 
+ 	/* firmware loading */
+diff --git a/sound/soc/sof/mediatek/mtk-adsp-common.c b/sound/soc/sof/mediatek/mtk-adsp-common.c
+index 20bcf5590eb8..01bbadb160ff 100644
+--- a/sound/soc/sof/mediatek/mtk-adsp-common.c
++++ b/sound/soc/sof/mediatek/mtk-adsp-common.c
+@@ -12,8 +12,11 @@
+  */
+ 
+ #include <linux/module.h>
++#include <sound/asound.h>
+ #include <sound/sof/xtensa.h>
+ #include "../ops.h"
++#include "../sof-audio.h"
++#include "adsp_helper.h"
+ #include "mtk-adsp-common.h"
+ 
+ /**
+@@ -81,5 +84,132 @@ void mtk_adsp_dump(struct snd_sof_dev *sdev, u32 flags)
+ }
+ EXPORT_SYMBOL(mtk_adsp_dump);
+ 
++/**
++ * mtk_adsp_send_msg - Send message to Audio DSP
++ * @sdev: SOF device
++ * @msg: SOF IPC Message to send
++ */
++int mtk_adsp_send_msg(struct snd_sof_dev *sdev, struct snd_sof_ipc_msg *msg)
++{
++	struct adsp_priv *priv = sdev->pdata->hw_pdata;
++
++	sof_mailbox_write(sdev, sdev->host_box.offset, msg->msg_data,
++			  msg->msg_size);
++
++	return mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_REQ, MTK_ADSP_IPC_OP_REQ);
++}
++EXPORT_SYMBOL(mtk_adsp_send_msg);
++
++/**
++ * mtk_adsp_handle_reply - Handle reply from the Audio DSP through Mailbox
++ * @ipc: ADSP IPC handle
++ */
++void mtk_adsp_handle_reply(struct mtk_adsp_ipc *ipc)
++{
++	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->sdev->ipc_lock, flags);
++	snd_sof_ipc_process_reply(priv->sdev, 0);
++	spin_unlock_irqrestore(&priv->sdev->ipc_lock, flags);
++}
++EXPORT_SYMBOL(mtk_adsp_handle_reply);
++
++/**
++ * mtk_adsp_handle_request - Handle request from the Audio DSP through Mailbox
++ * @ipc: ADSP IPC handle
++ */
++void mtk_adsp_handle_request(struct mtk_adsp_ipc *ipc)
++{
++	struct adsp_priv *priv = mtk_adsp_ipc_get_data(ipc);
++	u32 panic_code;
++	int ret;
++
++	/* Read the message from the debug box. */
++	sof_mailbox_read(priv->sdev, priv->sdev->debug_box.offset + 4,
++			 &panic_code, sizeof(panic_code));
++
++	/* Check to see if the message is a panic code 0x0dead*** */
++	if ((panic_code & SOF_IPC_PANIC_MAGIC_MASK) == SOF_IPC_PANIC_MAGIC) {
++		snd_sof_dsp_panic(priv->sdev, panic_code, true);
++	} else {
++		snd_sof_ipc_msgs_rx(priv->sdev);
++
++		/* Tell DSP cmd is done */
++		ret = mtk_adsp_ipc_send(priv->dsp_ipc, MTK_ADSP_IPC_RSP, MTK_ADSP_IPC_OP_RSP);
++		if (ret)
++			dev_err(priv->dev, "request send ipc failed");
++	}
++}
++EXPORT_SYMBOL(mtk_adsp_handle_request);
++
++/**
++ * mtk_adsp_get_bar_index - Map section type with BAR idx
++ * @sdev: SOF device
++ * @type: Section type as described by snd_sof_fw_blk_type
++ *
++ * MediaTek Audio DSPs have a 1:1 match between type and BAR idx
++ */
++int mtk_adsp_get_bar_index(struct snd_sof_dev *sdev, u32 type)
++{
++	return type;
++}
++EXPORT_SYMBOL(mtk_adsp_get_bar_index);
++
++/**
++ * mtk_adsp_stream_pcm_hw_params - Platform specific host stream hw params
++ * @sdev: SOF device
++ * @substream: PCM Substream
++ * @params: hw params
++ * @platform_params: Platform specific SOF stream parameters
++ */
++int mtk_adsp_stream_pcm_hw_params(struct snd_sof_dev *sdev,
++				  struct snd_pcm_substream *substream,
++				  struct snd_pcm_hw_params *params,
++				  struct snd_sof_platform_stream_params *platform_params)
++{
++	platform_params->cont_update_posn = 1;
++	return 0;
++}
++EXPORT_SYMBOL(mtk_adsp_stream_pcm_hw_params);
++
++/**
++ * mtk_adsp_stream_pcm_pointer - Get host stream pointer
++ * @sdev: SOF device
++ * @substream: PCM substream
++ */
++snd_pcm_uframes_t mtk_adsp_stream_pcm_pointer(struct snd_sof_dev *sdev,
++					      struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
++	struct snd_soc_component *scomp = sdev->component;
++	struct snd_sof_pcm_stream *stream;
++	struct sof_ipc_stream_posn posn;
++	struct snd_sof_pcm *spcm;
++	snd_pcm_uframes_t pos;
++	int ret;
++
++	spcm = snd_sof_find_spcm_dai(scomp, rtd);
++	if (!spcm) {
++		dev_warn_ratelimited(sdev->dev, "warn: can't find PCM with DAI ID %d\n",
++				     rtd->dai_link->id);
++		return 0;
++	}
++
++	stream = &spcm->stream[substream->stream];
++	ret = snd_sof_ipc_msg_data(sdev, stream, &posn, sizeof(posn));
++	if (ret < 0) {
++		dev_warn(sdev->dev, "failed to read stream position: %d\n", ret);
++		return 0;
++	}
++
++	memcpy(&stream->posn, &posn, sizeof(posn));
++	pos = spcm->stream[substream->stream].posn.host_posn;
++	pos = bytes_to_frames(substream->runtime, pos);
++
++	return pos;
++}
++EXPORT_SYMBOL(mtk_adsp_stream_pcm_pointer);
++
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_DESCRIPTION("SOF helpers for MTK ADSP platforms");
+diff --git a/sound/soc/sof/mediatek/mtk-adsp-common.h b/sound/soc/sof/mediatek/mtk-adsp-common.h
+index 612cff1f38f7..dc36b91d6779 100644
+--- a/sound/soc/sof/mediatek/mtk-adsp-common.h
++++ b/sound/soc/sof/mediatek/mtk-adsp-common.h
+@@ -7,4 +7,14 @@
+ #define MTK_ADSP_STACK_DUMP_SIZE 32
+ 
+ void mtk_adsp_dump(struct snd_sof_dev *sdev, u32 flags);
++int mtk_adsp_send_msg(struct snd_sof_dev *sdev, struct snd_sof_ipc_msg *msg);
++void mtk_adsp_handle_reply(struct mtk_adsp_ipc *ipc);
++void mtk_adsp_handle_request(struct mtk_adsp_ipc *ipc);
++int mtk_adsp_get_bar_index(struct snd_sof_dev *sdev, u32 type);
++int mtk_adsp_stream_pcm_hw_params(struct snd_sof_dev *sdev,
++				  struct snd_pcm_substream *substream,
++				  struct snd_pcm_hw_params *params,
++				  struct snd_sof_platform_stream_params *platform_params);
++snd_pcm_uframes_t mtk_adsp_stream_pcm_pointer(struct snd_sof_dev *sdev,
++					      struct snd_pcm_substream *substream);
+ #endif
+-- 
+2.48.1
+
 
