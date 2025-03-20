@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-569471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A207FA6A368
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:17:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D630CA6A36E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 11:19:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10A2C179485
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A6B3B7B97
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF31215783;
-	Thu, 20 Mar 2025 10:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB942223300;
+	Thu, 20 Mar 2025 10:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddn2M+9I"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YUzMyr+Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5555B33E4;
-	Thu, 20 Mar 2025 10:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23061EEA56;
+	Thu, 20 Mar 2025 10:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742465840; cv=none; b=UzUqhNDOEqEd9DnVeSMF21JA6lqpwpEVEZDCnoYhFvmFdvFCitAzn6H4UZJnpZhH/EwwLArMORlV821iGIlboFjjB3EX3otNe9cAad+XQBMo98hgCU5p/RZe2EMlT8huRIS4sFK01+AXl9PLbT+IdaY49AvxuPxNkk1PfRm2f+g=
+	t=1742465953; cv=none; b=WY6JdFoEFbzHLE3p/TjVBUMDHSNH3koQhgy6rCB34WGl33DWl98jqgp8vK1OEHX3/keDB99JVbpk+lAeSvlDELx/IQIenhs7iY/0niRzN2Tsb6+mUkMrs9hutQLGii+2/DaWWzsFan9LfFp9IArOm1eAMSpiVvPzMPMTn/8tBIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742465840; c=relaxed/simple;
-	bh=8FwI3dNTXsuUp+UusLgEoQFB4n9H7qEmcgfplOt3LT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U9ivOK81O0yGF1XReAFk74TaonV/xMsytVf+gzgSsc9QYiUXs/IT4kJCLX5mY7izt6lEnKPc/MSOduWwHBjCZMWRJhin44+0HPh6E7HhGzI09X49IjecZb1mLKKIrOCcJo9iWdqY/GYpjKAh545FScJ30jroFiZCbkS3r4Ri80E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddn2M+9I; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54acc04516fso635176e87.0;
-        Thu, 20 Mar 2025 03:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742465836; x=1743070636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8FwI3dNTXsuUp+UusLgEoQFB4n9H7qEmcgfplOt3LT8=;
-        b=ddn2M+9IF85eZVzjiIFw6ECKJOgjkfivmCUxTeyNZfDO3P2epXHYjOWWDX9h93cMlQ
-         20ws0y31vFvheTnUpQFEwAFy/lA17Dol5sL0MfQnK5x3DtJWz9P9aDFAEJv5/K+qB2ai
-         rrdagQ2B8/zrnUPoztrsXFCwtVKB+H67xXzLFJIc1SFJaT2i+VEIkrqntiIAI7DbO+Ql
-         m3+oorY2E2wJxxbf61jZxn/1gTQm9m0QBngnZhwSMrjgHGbkYnK40XaM8QQy9fq9rdjb
-         vbc/wYct9NywLglWrdJPGrjPSen09I9OB8qyuF0fPukyB82Hnot/6aMUoirSsDJ/5koF
-         2Fww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742465836; x=1743070636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8FwI3dNTXsuUp+UusLgEoQFB4n9H7qEmcgfplOt3LT8=;
-        b=j/gSJ84EUKwXWIgU3O7RA7AHWVm6UyvkpxLA2GwJ5FR172fTzsxZqyHzGQwhF6bFi2
-         HShRVE/OzqJeeeAFAl1Q4QvFMZyYkkoC0FM1i3OZSx0RVnT+lGfV0FyOBAWj95p8cCna
-         LDuB9TCxJypWujSBHk4xgOARFaq0GhY04ZKMVU1czD2JUj86GS6VCwxyv4a5xiOOz4wZ
-         mYQNsO9m6iBhwefwf4/VB+jhXQPjV15mkT/vDfTEUPgOTlQ7g7lNtIQbqmkhnUJQbLEX
-         A1xoKEcHvYb0Vm2VTD2e1DL2ry5rnANCRwZ2eiH0Ut9x2BdZKqV5hYpOkKz1rIi0ZSrE
-         nKIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQzY8+NE+DOw7YjjHB4i/+SpCuuTOL2w/OrJ/x/IrqKqYVXLErR0RfK+cxdyrKkHI9mJz4bTo4cblUDYTv9ko=@vger.kernel.org, AJvYcCXgNihrh0MLSgdmA6SXVOxbOBfSj55yNwfGQwThTVoiri3LM7WFTqapOtK3zkt8mCI5o7JIjL9wUpYQy38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRg99cuYE06rywFLIh9MtXLOjN4UtJRGzZMRe/GqPPyPYSVRdi
-	9GzElxChFegNvKKQjvSabDMhejwes7hmd0No1wu8oEeuiBn8gpSNHDdSer0IaC55wTtGPKw22nj
-	ix4fsVXzX3/a9YT2s/BGNXjV7LDI=
-X-Gm-Gg: ASbGnctr518PmrQiiT/y96kIj1+JShn/iDnB9BM20vqHUzRLh1c84oUeVqhUr5ILDVr
-	CaQlTxOiRCcUnnNbyGIWww24k2KTGUoYgKIqO8O9RWyMZ/vyDPo5nDXnwpK4O/9Mndwm9Mr34sk
-	5XaikL4fRsAkNje4f3n+lBz9X3anLT531rIyiYIbr9qgdvkN0gSqdSQMMm0iib
-X-Google-Smtp-Source: AGHT+IFlvt70meSzfgewn33Q5PeaIXoxXNPwyuQFKujMLyrUZl4JP6t9irCBeonUXVkCKzLTf07K5E+psootTwspXuE=
-X-Received: by 2002:a05:6512:1094:b0:549:903a:1c0 with SMTP id
- 2adb3069b0e04-54ad0619da7mr847267e87.8.1742465835967; Thu, 20 Mar 2025
- 03:17:15 -0700 (PDT)
+	s=arc-20240116; t=1742465953; c=relaxed/simple;
+	bh=8WDPQ7/wmjD0kkZAXaPY1dsidVCmiWqFIXWkKeaRNEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWeUenCHOpaJz+6vCf3yr3KK3T6Coklp0TSG+/BGAz6tJL8vj/nAy6Ed44zGhkgDrMRMvaO5s7Xd2wJKMFbPVdK8LT6Z7QQfLDiqYnlniSFiSAsukap5R47KI4P4OwWZQ6BS2kd6CuJ/OSvksHA7YeZICphBHwIVEqSS/9x1qCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YUzMyr+Y; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742465952; x=1774001952;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8WDPQ7/wmjD0kkZAXaPY1dsidVCmiWqFIXWkKeaRNEw=;
+  b=YUzMyr+Y/bVgJt92QxYMiPnQtMUpIQMO62HNnKdSKGTPMBe5a+h5f5td
+   AbY0GBj/znuIFWDHihZ2YroXZyuTFLMekz/deztdDNFpChMEdDYC5CO53
+   dh78GhdVUHTM8lKEnhk0OON/Oim1FskTD8jXgkfDJ0QhvDCUn1WfNgsCo
+   nyhpmpFF4aV+apgGA+v8FhFWOJ2n6NTPRHZH/pA4s0WwuE9BGVRc1ct7c
+   49ne9Dp5JfvCNNC4m/HCyV7Mqo4mdUyZCZGlQWNDIBEISs9RrVD7Ee7to
+   VJtnCW03sk/uGf8QQ2TrePY0GwTpRfCETITGYICfzjurANKitCz6l6fVn
+   Q==;
+X-CSE-ConnectionGUID: uaq7BB6oQ8OLr7hQcTjz1A==
+X-CSE-MsgGUID: R50ZMYAGTkmdNewX5WLP/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="66150346"
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="66150346"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 03:19:11 -0700
+X-CSE-ConnectionGUID: 2aJi/B0kRWybmQ6SvR0Z9w==
+X-CSE-MsgGUID: Hl5aCehrRqeOZpoxMUZ72g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,261,1736841600"; 
+   d="scan'208";a="128143941"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 20 Mar 2025 03:19:09 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tvCzS-0000Mp-22;
+	Thu, 20 Mar 2025 10:19:06 +0000
+Date: Thu, 20 Mar 2025 18:18:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: Re: [PATCH 11/11] HID: asus: add support for the asus-wmi brightness
+ handler
+Message-ID: <202503201739.4NJJCyeZ-lkp@intel.com>
+References: <20250319191320.10092-12-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319-pin-init-internal-quote-v1-1-19de6a33a257@gmail.com> <Z9vH6qSAx2Hps3SX@google.com>
-In-Reply-To: <Z9vH6qSAx2Hps3SX@google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 20 Mar 2025 06:16:39 -0400
-X-Gm-Features: AQ5f1JppL2AYeeh0o-mldl0yYUWvB6bwqZnxP09bQxBtlYY2Gu8vfuS2Loahtbw
-Message-ID: <CAJ-ks9==tw30HK-jFpXtfjEoU_Bo-GkGxVvM8WtFG_2i093MmA@mail.gmail.com>
-Subject: Re: [PATCH] rust: pin_init_internal: fix rust-analyzer `mod quote`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319191320.10092-12-lkml@antheas.dev>
 
-On Thu, Mar 20, 2025 at 3:46=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Wed, Mar 19, 2025 at 09:35:40PM -0400, Tamir Duberstein wrote:
-> > Replace the `#[path]` attribute with a symlink to work around a
-> > limitation in rust-analyzer that requires all modules to belong to the
-> > same "source root". This allows code navigation from `pin_init_internal=
-`
-> > to `quote` to work properly.
-> >
-> > Link: https://github.com/rust-lang/rust-analyzer/issues/3898
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> Are we allowed to have symlinks?
+Hi Antheas,
 
-There are 77 symlinks in the kernel by my count. Perhaps most
-interesting are these:
+kernel test robot noticed the following build errors:
 
-include/dt-bindings/clock/qcom,dispcc-sm8150.h
-include/dt-bindings/clock/qcom,dispcc-sm8350.h
-include/dt-bindings/clock/qcom,sm8650-dispcc.h
-include/dt-bindings/input/linux-event-codes.h
+[auto build test ERROR on 4701f33a10702d5fc577c32434eb62adde0a1ae1]
 
-I'm not sure if there are further criteria we need to satisfy.
+url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-refactor-init-sequence-per-spec/20250320-031740
+base:   4701f33a10702d5fc577c32434eb62adde0a1ae1
+patch link:    https://lore.kernel.org/r/20250319191320.10092-12-lkml%40antheas.dev
+patch subject: [PATCH 11/11] HID: asus: add support for the asus-wmi brightness handler
+config: s390-randconfig-002-20250320 (https://download.01.org/0day-ci/archive/20250320/202503201739.4NJJCyeZ-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503201739.4NJJCyeZ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503201739.4NJJCyeZ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/hid/hid-asus.c: In function 'asus_event':
+>> drivers/hid/hid-asus.c:325:11: error: invalid use of void expression
+       return !asus_brt_event(ASUS_BRT_UP);
+              ^
+   drivers/hid/hid-asus.c:327:11: error: invalid use of void expression
+       return !asus_brt_event(ASUS_BRT_DOWN);
+              ^
+   drivers/hid/hid-asus.c:329:11: error: invalid use of void expression
+       return !asus_brt_event(ASUS_BRT_TOGGLE);
+              ^
+
+
+vim +325 drivers/hid/hid-asus.c
+
+   311	
+   312	static int asus_event(struct hid_device *hdev, struct hid_field *field,
+   313			      struct hid_usage *usage, __s32 value)
+   314	{
+   315		if ((usage->hid & HID_USAGE_PAGE) == 0xff310000 &&
+   316		    (usage->hid & HID_USAGE) != 0x00 &&
+   317		    (usage->hid & HID_USAGE) != 0xff && !usage->type) {
+   318			hid_warn(hdev, "Unmapped Asus vendor usagepage code 0x%02x\n",
+   319				 usage->hid & HID_USAGE);
+   320		}
+   321	
+   322		if (usage->type == EV_KEY && value) {
+   323			switch (usage->code) {
+   324			case KEY_KBDILLUMUP:
+ > 325				return !asus_brt_event(ASUS_BRT_UP);
+   326			case KEY_KBDILLUMDOWN:
+   327				return !asus_brt_event(ASUS_BRT_DOWN);
+   328			case KEY_KBDILLUMTOGGLE:
+   329				return !asus_brt_event(ASUS_BRT_TOGGLE);
+   330			}
+   331		}
+   332	
+   333		return 0;
+   334	}
+   335	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
