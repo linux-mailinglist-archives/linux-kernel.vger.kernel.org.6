@@ -1,117 +1,289 @@
-Return-Path: <linux-kernel+bounces-570055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA512A6AB79
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:51:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814BFA6AB7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BA207B0E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310713B24C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC55222585;
-	Thu, 20 Mar 2025 16:51:07 +0000 (UTC)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196332222DC;
+	Thu, 20 Mar 2025 16:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgHBqKhv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D61321D3E2;
-	Thu, 20 Mar 2025 16:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5981D19DF98;
+	Thu, 20 Mar 2025 16:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742489467; cv=none; b=eVPIFHd6gF6PIUD0c41RD2Yune3hi7OKu6nvT9e5IV29F1HQVXLY+slnGvbvBRPRpQ2Wcw/KQLU8gpjiSkQw/to9CHxZ88xQ9bZFnM5cYmnVTxm0iLrAnG+rrYnK23QA2NwE9mkpow1o+kZMUF8/TpKjejxbkOEveNB/JGdLlrc=
+	t=1742489545; cv=none; b=n7M5ukZ3mq5LeyXd99nK+pxyq/jYgyvDkgAJDlPW/YzLf06nFGxokqDscTchYxT1QpF9Aa8YIWB6hy1lbtSLjzTHt841rH8QNWP2jkSNL+mj7J3IcxQlfyzI83kAeOpNwGzhdCpeFy3z/DWALmFHFPpKKkyMMq3avXoW8q/k6Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742489467; c=relaxed/simple;
-	bh=96XACga2vRXvHJIb8ALHCPTfpdziK3WvQkZ4PbiQkhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KQb+eMGpwQBFgmfxzsRKAaRudITv9bdQYpTv214RPtYPLPsNFrQajn9WRld3ymHc309ZI73yZPwbjlL1+OfyWpxE4BvtQpyvBKnMfXc8acdnUj/+jHrMO+eEvt7Ao8pOc/mxkF39MJmO3t2NXpED8FMJmpjqC0foNJd0IWITf9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-224019ad9edso25885085ad.1;
-        Thu, 20 Mar 2025 09:51:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742489464; x=1743094264;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePOhuEBOuQw7EEF85BsUnrOhaZqLyrnFAXA4BOdYNfM=;
-        b=LIg77Nb7pgHJ9fnGduXiDoY8RoBQcrjBfmWJgLpIlZRFKlx6B0Ia8j1jNDOq2LvC35
-         FItJy4DP7CZ+ULT/LFmcJNNN8tzwaP5uO/vc7BIr+S17Ivl13rZt4SVIANimN36/EGsk
-         QNL5bsORGyns1UM32fJ6gwMdfcmzTPuBymd9pdYnljFJwKKG8dDE8rtFTy4/hBG6Tsug
-         o5hlq1UP//fCXT1RbMpdfw+myZ1jtaTifGqdmxAXxNHsIY+5f4eIUooum4fqLSwoOz9F
-         Ir9i5A3e1AIOHjFelGt5gbvHiM3xRoYjZdoxhxdVjzzCfFzhF0DVOApsXhElwvHqHULt
-         32Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWd0eN6NIkCo1uouMrhtF0SvIu9f2K1EOdkHJqhuvlY+nnfps/CK1N83xvE7S/1O9B/lGFS3bezAEEAkDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0OtYceG77qPXlthHL+rdxoqylCHHffDOK6O6tfMEg0AFgRL94
-	hfwIXNUcfbcZspLnMiWGgXcg/q9HjCyH3f1LiMU2iqMMs5Fy3wsAZiol
-X-Gm-Gg: ASbGncsZdIKlf8gT90NYmKohSHPqCdlpX35z314to1a6r9w0jdCZLJzg6DRcHcIMKrU
-	R0V5Ib2Jug+t59hu5I4o+lxjCgxKC+VykLFTri+b7FpqF2lFpmoGXzWMeLq4FPqgs0x6tGxO+Ud
-	jqeJMtCXZgQzJEgBhyaTdtxy8gnkvEoiUnk0+cnouT+QWa5h+ab2MksUuapg5RPsy8vORRfwI+X
-	tdDZeocWp+n5DfBX6iS0gNWdQudP58qnzZSPxqxKwTG63saQ9OFsGXJcn6hfb/In3C14+t9F1+n
-	ZS1fLn6TMcjF7YK+wSOAdchEdj2OVNF6nsihGitWQ5TH
-X-Google-Smtp-Source: AGHT+IFym2XBNm7BhSm1aJW6/nPpOwI8L8IRO0TBiReykeX9o8xWnc5WrTdklEthGTQ+1cbQkL/a3Q==
-X-Received: by 2002:a05:6a00:179b:b0:736:52d7:daca with SMTP id d2e1a72fcca58-73905a2a062mr276066b3a.18.1742489464166;
-        Thu, 20 Mar 2025 09:51:04 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73905fab82esm9448b3a.14.2025.03.20.09.51.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 09:51:03 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	horms@kernel.org,
-	sdf@fomichev.me
-Subject: [PATCH net-next v2] net: hold netdev reference during qdisc_create request_module
-Date: Thu, 20 Mar 2025 09:51:03 -0700
-Message-ID: <20250320165103.3926946-1-sdf@fomichev.me>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742489545; c=relaxed/simple;
+	bh=HWAppdyLE+tSuREdaAW/Nnb1S8EdoAieaN9iTTI13QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5o9w8GXTq8bI3Lmq7PZXUtioTFIIUswa+SS6KCLQ0KEwxZn4EshBl3/9HRWCkN3YMkdDmnfQuvDms1kTQKExuFqgQfNGUrftsXB99uXm6MH3YAFDxax5JJYRwPRZRX0zGyukZcB0kHROFyrPFZwsQ066B9+h/zRVPtzdzpNa9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgHBqKhv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEB7C4CEDD;
+	Thu, 20 Mar 2025 16:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742489545;
+	bh=HWAppdyLE+tSuREdaAW/Nnb1S8EdoAieaN9iTTI13QY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JgHBqKhvAabsJD0TM7MxiuKrSw/oA8pr194vFb7TISCnga8NlW6V8YfsfzjESNIQm
+	 ElsGcIQaOU3OIAOGuckp5KpbhGFRtiXqVLc9fuyzOqlOCVn44xq+Ti3QfBYSBLa/6D
+	 so8GY/5kBntn6qcr72lnWppf7irYlNMZJAeXAAomdGSoAK7wfPaJlBZWwx4yS443fT
+	 4yeAOYspOgg5IGnX2T0CopmOsER+FoHpeU8RkVNA9cOy+Om21Rw8ab03vM9Zg6i19R
+	 q0AX7ifYIExSljCrgy4WFYtTt9qeL5P1crrhGF21vdVCa4YbdhkewtYH2xZeKOavDr
+	 t4/KQt20m7vdg==
+Date: Thu, 20 Mar 2025 16:52:20 +0000
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/14] mfd: rohm-bd96801: Add chip info
+Message-ID: <20250320165220.GB1750245@google.com>
+References: <cover.1741864404.git.mazziesaccount@gmail.com>
+ <fd445f9cbbdaa3fd5d7a9e59093f86e5ff7139b1.1741864404.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <fd445f9cbbdaa3fd5d7a9e59093f86e5ff7139b1.1741864404.git.mazziesaccount@gmail.com>
 
-Eric reports that by the time we call netdev_lock_ops after
-rtnl_unlock/rtnl_lock, the dev might point to an invalid device.
-Add extra dev_hold/dev_put to make sure the device pointer
-is still valid after rtnl_unlock.
+On Thu, 13 Mar 2025, Matti Vaittinen wrote:
 
-Fixes: a0527ee2df3f ("net: hold netdev instance lock during qdisc ndo_setup_tc")
-Reported-by: Eric Dumazet <edumazet@google.com>
-Link: https://lore.kernel.org/netdev/20250305163732.2766420-1-sdf@fomichev.me/T/#me8dfd778ea4c4463acab55644e3f9836bc608771
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- net/sched/sch_api.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Prepare for adding support for BD96802 which is very similar to BD96801.
+> Separate chip specific data into own structure which can be picked to be
+> used by the device-tree.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+>  drivers/mfd/rohm-bd96801.c | 83 ++++++++++++++++++++++++++------------
+>  1 file changed, 57 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
+> index 60ec8db790a7..1232f571e4b1 100644
+> --- a/drivers/mfd/rohm-bd96801.c
+> +++ b/drivers/mfd/rohm-bd96801.c
+> @@ -40,7 +40,21 @@
+>  #include <linux/mfd/rohm-bd96801.h>
+>  #include <linux/mfd/rohm-generic.h>
+>  
+> -static const struct resource regulator_errb_irqs[] = {
+> +struct bd968xx_chip_data {
+> +	const struct resource *errb_irqs;
+> +	const struct resource *intb_irqs;
+> +	int num_errb_irqs;
+> +	int num_intb_irqs;
+> +	const struct regmap_irq_chip *errb_irq_chip;
+> +	const struct regmap_irq_chip *intb_irq_chip;
+> +	const struct regmap_config *regmap_config;
+> +	struct mfd_cell *cells;
 
-diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
-index aef39f6dc6a8..85ddb811780c 100644
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -1280,11 +1280,13 @@ static struct Qdisc *qdisc_create(struct net_device *dev,
- 			 * We replay the request because the device may
- 			 * go away in the mean time.
- 			 */
-+			dev_hold(dev);
- 			netdev_unlock_ops(dev);
- 			rtnl_unlock();
- 			request_module(NET_SCH_ALIAS_PREFIX "%s", name);
- 			rtnl_lock();
- 			netdev_lock_ops(dev);
-+			dev_put(dev);
- 			ops = qdisc_lookup_ops(kind);
- 			if (ops != NULL) {
- 				/* We will try again qdisc_lookup_ops,
+We're not passing MFD data through OF to be fed back through MFD APIs.
+
+It's generally considered better to device_get_match_data() on an enum,
+then populate MFD cells using that as a differentiator.
+
+  git grep compatible -- drivers/mfd | grep data
+
+> +	int num_cells;
+> +	int unlock_reg;
+> +	int unlock_val;
+> +};
+> +
+> +static const struct resource bd96801_reg_errb_irqs[] = {
+>  	DEFINE_RES_IRQ_NAMED(BD96801_OTP_ERR_STAT, "bd96801-otp-err"),
+>  	DEFINE_RES_IRQ_NAMED(BD96801_DBIST_ERR_STAT, "bd96801-dbist-err"),
+>  	DEFINE_RES_IRQ_NAMED(BD96801_EEP_ERR_STAT, "bd96801-eep-err"),
+> @@ -98,7 +112,7 @@ static const struct resource regulator_errb_irqs[] = {
+>  	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_SHDN_ERR_STAT, "bd96801-ldo7-shdn-err"),
+>  };
+>  
+> -static const struct resource regulator_intb_irqs[] = {
+> +static const struct resource bd96801_reg_intb_irqs[] = {
+>  	DEFINE_RES_IRQ_NAMED(BD96801_TW_STAT, "bd96801-core-thermal"),
+>  
+>  	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPH_STAT, "bd96801-buck1-overcurr-h"),
+> @@ -345,18 +359,37 @@ static const struct regmap_config bd96801_regmap_config = {
+>  	.cache_type = REGCACHE_MAPLE,
+>  };
+>  
+> +static const struct bd968xx_chip_data bd96801_chip_data = {
+
+Just call it 'struct bd968xx' then below instead of cd, use ddata.
+
+  git grep "cc =" -- drivers/mfd
+
+VS
+
+  git grep "ddata =" -- drivers/mfd
+
+Conforrrrrrmmm ...    =;-)
+
+> +	.errb_irqs = bd96801_reg_errb_irqs,
+> +	.intb_irqs = bd96801_reg_intb_irqs,
+> +	.num_errb_irqs = ARRAY_SIZE(bd96801_reg_errb_irqs),
+> +	.num_intb_irqs = ARRAY_SIZE(bd96801_reg_intb_irqs),
+> +	.errb_irq_chip = &bd96801_irq_chip_errb,
+> +	.intb_irq_chip = &bd96801_irq_chip_intb,
+> +	.regmap_config = &bd96801_regmap_config,
+> +	.cells = bd96801_cells,
+> +	.num_cells = ARRAY_SIZE(bd96801_cells),
+> +	.unlock_reg = BD96801_LOCK_REG,
+> +	.unlock_val = BD96801_UNLOCK,
+> +};
+> +
+>  static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  {
+>  	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
+>  	struct irq_domain *intb_domain, *errb_domain;
+> +	static const struct bd968xx_chip_data *cd;
+>  	const struct fwnode_handle *fwnode;
+>  	struct resource *regulator_res;
+>  	struct resource wdg_irq;
+>  	struct regmap *regmap;
+> -	int intb_irq, errb_irq, num_intb, num_errb = 0;
+> +	int intb_irq, errb_irq, num_errb = 0;
+>  	int num_regu_irqs, wdg_irq_no;
+>  	int i, ret;
+>  
+> +	cd = device_get_match_data(&i2c->dev);
+> +	if (!cd)
+> +		return -ENODEV;
+> +
+>  	fwnode = dev_fwnode(&i2c->dev);
+>  	if (!fwnode)
+>  		return dev_err_probe(&i2c->dev, -EINVAL, "Failed to find fwnode\n");
+> @@ -365,34 +398,32 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  	if (intb_irq < 0)
+>  		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
+>  
+> -	num_intb =  ARRAY_SIZE(regulator_intb_irqs);
+> -
+>  	/* ERRB may be omitted if processor is powered by the PMIC */
+>  	errb_irq = fwnode_irq_get_byname(fwnode, "errb");
+> -	if (errb_irq < 0)
+> -		errb_irq = 0;
+> +	if (errb_irq == -EPROBE_DEFER)
+> +		return errb_irq;
+>  
+> -	if (errb_irq)
+> -		num_errb = ARRAY_SIZE(regulator_errb_irqs);
+> +	if (errb_irq > 0)
+> +		num_errb = cd->num_errb_irqs;
+>  
+> -	num_regu_irqs = num_intb + num_errb;
+> +	num_regu_irqs = cd->num_intb_irqs + num_errb;
+>  
+>  	regulator_res = devm_kcalloc(&i2c->dev, num_regu_irqs,
+>  				     sizeof(*regulator_res), GFP_KERNEL);
+>  	if (!regulator_res)
+>  		return -ENOMEM;
+>  
+> -	regmap = devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
+> +	regmap = devm_regmap_init_i2c(i2c, cd->regmap_config);
+>  	if (IS_ERR(regmap))
+>  		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+>  				    "Regmap initialization failed\n");
+>  
+> -	ret = regmap_write(regmap, BD96801_LOCK_REG, BD96801_UNLOCK);
+> +	ret = regmap_write(regmap, cd->unlock_reg, cd->unlock_val);
+>  	if (ret)
+>  		return dev_err_probe(&i2c->dev, ret, "Failed to unlock PMIC\n");
+>  
+>  	ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, intb_irq,
+> -				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
+> +				       IRQF_ONESHOT, 0, cd->intb_irq_chip,
+>  				       &intb_irq_data);
+>  	if (ret)
+>  		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
+> @@ -404,24 +435,25 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  	 * has two domains so we do IRQ mapping here and provide the
+>  	 * already mapped IRQ numbers to sub-devices.
+>  	 */
+> -	for (i = 0; i < num_intb; i++) {
+> +	for (i = 0; i < cd->num_intb_irqs; i++) {
+>  		struct resource *res = &regulator_res[i];
+>  
+> -		*res = regulator_intb_irqs[i];
+> +		*res = cd->intb_irqs[i];
+>  		res->start = res->end = irq_create_mapping(intb_domain,
+>  							    res->start);
+>  	}
+>  
+>  	wdg_irq_no = irq_create_mapping(intb_domain, BD96801_WDT_ERR_STAT);
+>  	wdg_irq = DEFINE_RES_IRQ_NAMED(wdg_irq_no, "bd96801-wdg");
+> -	bd96801_cells[WDG_CELL].resources = &wdg_irq;
+> -	bd96801_cells[WDG_CELL].num_resources = 1;
+> +
+> +	cd->cells[WDG_CELL].resources = &wdg_irq;
+> +	cd->cells[WDG_CELL].num_resources = 1;
+>  
+>  	if (!num_errb)
+>  		goto skip_errb;
+>  
+>  	ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, errb_irq, IRQF_ONESHOT,
+> -				       0, &bd96801_irq_chip_errb, &errb_irq_data);
+> +				       0, cd->errb_irq_chip, &errb_irq_data);
+>  	if (ret)
+>  		return dev_err_probe(&i2c->dev, ret,
+>  				     "Failed to add ERRB IRQ chip\n");
+> @@ -429,18 +461,17 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  	errb_domain = regmap_irq_get_domain(errb_irq_data);
+>  
+>  	for (i = 0; i < num_errb; i++) {
+> -		struct resource *res = &regulator_res[num_intb + i];
+> +		struct resource *res = &regulator_res[cd->num_intb_irqs + i];
+>  
+> -		*res = regulator_errb_irqs[i];
+> +		*res = cd->errb_irqs[i];
+>  		res->start = res->end = irq_create_mapping(errb_domain, res->start);
+>  	}
+>  
+>  skip_errb:
+> -	bd96801_cells[REGULATOR_CELL].resources = regulator_res;
+> -	bd96801_cells[REGULATOR_CELL].num_resources = num_regu_irqs;
+> -
+> -	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO, bd96801_cells,
+> -				   ARRAY_SIZE(bd96801_cells), NULL, 0, NULL);
+> +	cd->cells[REGULATOR_CELL].resources = regulator_res;
+> +	cd->cells[REGULATOR_CELL].num_resources = num_regu_irqs;
+> +	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> +				   cd->cells, cd->num_cells, NULL, 0, NULL);
+>  	if (ret)
+>  		dev_err_probe(&i2c->dev, ret, "Failed to create subdevices\n");
+>  
+> @@ -448,7 +479,7 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>  }
+>  
+>  static const struct of_device_id bd96801_of_match[] = {
+> -	{ .compatible = "rohm,bd96801",	},
+> +	{ .compatible = "rohm,bd96801", .data = &bd96801_chip_data, },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, bd96801_of_match);
+> -- 
+> 2.48.1
+> 
+
+
+
 -- 
-2.48.1
-
+Lee Jones [李琼斯]
 
