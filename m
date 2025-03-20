@@ -1,146 +1,292 @@
-Return-Path: <linux-kernel+bounces-569021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD801A69DA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:36:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3432BA69DAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 02:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A98B46745B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:36:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B1E18982AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 01:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145391C3C1C;
-	Thu, 20 Mar 2025 01:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DA61CD205;
+	Thu, 20 Mar 2025 01:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="MIJCJ0cK"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DRrIwM9F"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB6F1B81DC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5997A40BF5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742434584; cv=none; b=VgJu52U0HBVP0+rF73QVdm30i9TBkqGFM21BlB0TJznnTb85uUVgOdsLnPPETCLGqHLhIPL2tNzn37VoRsM4hA5G39YyLPpfc2+svj9DPOkHgDfJ8bjw87Q2K60jLryVILqadyAVAyrvbUNkN/Vb5ig3yAl63AwYX0gVStuthI8=
+	t=1742434706; cv=none; b=j/dwH2rYJ16prVN6Cd1Hx/Ad9UEamOsEb3mTLNVycDcu4DEo0PcT00rghp3laRJcO8oAmN8JFK5nYGFx+U55/o1KAOHc/l/QXmc+ebGawMPT7QJYrRqrXfsVhiD5sAma9ayzECLNClWsSnaDKssf9ObIlcU8PXVsYfThzExpdRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742434584; c=relaxed/simple;
-	bh=JXjqiCJ7hZ9I+Z2yreo0KU3P0ph1vreLH67Y/dWkUkY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JUcEn5cuhTkQHXn+96RD3MRmtYsey3WzKo9u/pIXMf7BRnBKb/61EoM5+UMICBv8m0xbTQjV2GG5heP5Cay5FwOXVbk8n3Bqy248huE1wNBiRCTSMW+z0AeRxrkYzDCD1uh6MhK86+8qNuvsUMpNjxCDNtdHwD5dq7NIDDBgNWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=MIJCJ0cK; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id BDFCC2C052B;
-	Thu, 20 Mar 2025 14:36:12 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1742434572;
-	bh=JXjqiCJ7hZ9I+Z2yreo0KU3P0ph1vreLH67Y/dWkUkY=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=MIJCJ0cKy6yHS1y/8kLmaDvqWsYMCM400YwrJYWh+Mk04idNG5ZJo5CWuzBIv9WS+
-	 pLFkV+K4g1LjKA0ec7ZpesvFdtvmY/aONW5i9tXpl5Vziz35398+4oIrNN8LWyHNWN
-	 PUEAP8L3qTClP1hqqWVVf25ef5Rq17c2uOInw5SVFSIdt63AJYcGxTgENvbzJ2xgcp
-	 iJ5swxH6qSCRfVJuADdIVTCZqDG433mQkWSQBozz/nM7tKnFU4SCP6GcH+yrVdIWrd
-	 LnXf7H2j/jWKRKdaL0U/YaJ7PZcTkp1+9fR5tutv0lcCjs/LnuuyOYOawsjeOL2i0s
-	 o39Vst2rSXL7w==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67db710c0001>; Thu, 20 Mar 2025 14:36:12 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 20 Mar 2025 14:36:12 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Thu, 20 Mar 2025 14:36:12 +1300
-From: Aryan Srivastava <Aryan.Srivastava@alliedtelesis.co.nz>
-To: "andi.shyti@kernel.org" <andi.shyti@kernel.org>
-CC: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-	"Markus.Elfring@web.de" <Markus.Elfring@web.de>, "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "rric@kernel.org" <rric@kernel.org>
-Subject: Re: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
-Thread-Topic: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
-Thread-Index: AQHbl6vJiHEHFgk1+0C1V3/aq92iNLN6MJoAgAA3DQA=
-Date: Thu, 20 Mar 2025 01:36:12 +0000
-Message-ID: <d542d00d25e37a922c0fe9d25bba7bbc7220f580.camel@alliedtelesis.co.nz>
-References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
-	 <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
-	 <thazi6n7jwqp6xoz4p6ce7ohxts7ubhgs5h6chqsnnexbkiy3j@q6xzdrze6a6f>
-In-Reply-To: <thazi6n7jwqp6xoz4p6ce7ohxts7ubhgs5h6chqsnnexbkiy3j@q6xzdrze6a6f>
-Accept-Language: en-US, en-NZ
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <09B03E16ADBDB645A4F8043F8E95CBD0@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1742434706; c=relaxed/simple;
+	bh=lUxXEkFRHHHNJX99onFBXnUkkJ7DKinzXz1EDIK4+LY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=URPxRr/kzUcRsSk+Ap4OBM79e8nZqYyN/8z9wrcoRZR5tQLQRWCCOL0yyxmpbRzTgijf8S7hLuSbVSf/SnpeRZYa9dRJ+MXEU8DHrl873APz7ICWKJPJPtpoBg6bd37zF22bZJSx6Q8OiR/9w7Vv+6S5bc69Mv/8bo6nwHU1OI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DRrIwM9F; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742434692;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gRMlGyB5XFp7GaH+cooZMXYbRFS0CDGtIS8cCdSLhYY=;
+	b=DRrIwM9FHWcbfExOWZBVimSVFCAG4krEwkiFTKsecrOkqg73pHI3U6JaBbv6etFMwc3epR
+	6RbFMyF+JdWizDWPVSMTf5lyFEl+OdgEHreDmwQYWQWmnWxv6x9mgpSZjqT72ik+1uGVqz
+	FaRFv1lToIvbDjTXZztG3EEV1Sqkp38=
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	x86@kernel.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Subject: [PATCH] KVM: x86: Unify cross-vCPU IBPB
+Date: Thu, 20 Mar 2025 01:37:59 +0000
+Message-ID: <20250320013759.3965869-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67db710c a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=w1vUsAckAk8A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=knz6bhgZyDJ6hf-j8LYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-SGkgQW5kaSwKCk9uIFdlZCwgMjAyNS0wMy0xOSBhdCAyMzoxOSArMDEwMCwgQW5kaSBTaHl0aSB3
-cm90ZToKPiBIaSBBcnlhbiwKPiAKPiBmZXcgbml0cGlja3MgYmV0d2VlbiB0aGUgbGluZXMuIFBs
-ZWFzZSBzZW5kIG9ubHkgdGhpcyBwYXRjaCBhcyBJCj4gaGF2ZSBhcHBsaWVkIGFscmVhZHkgcGF0
-Y2ggMSBhbmQgMi4KPiAKPiAuLi4KPiAKPiA+ICtzdGF0aWMgaW50IG9jdGVvbl9pMmNfaGxjX2Js
-b2NrX2NvbXBfcmVhZChzdHJ1Y3Qgb2N0ZW9uX2kyYyAqaTJjLAo+ID4gc3RydWN0IGkyY19tc2cg
-Km1zZ3MpCj4gPiArewo+ID4gK8KgwqDCoMKgwqDCoMKgaW50IHJldDsKPiA+ICvCoMKgwqDCoMKg
-wqDCoHUxNiBsZW47Cj4gPiArwqDCoMKgwqDCoMKgwqB1NjQgY21kOwo+ID4gKwo+ID4gK8KgwqDC
-oMKgwqDCoMKgb2N0ZW9uX2kyY19obGNfZW5hYmxlKGkyYyk7Cj4gPiArwqDCoMKgwqDCoMKgwqBv
-Y3Rlb25faTJjX2Jsb2NrX2VuYWJsZShpMmMpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgLyog
-V3JpdGUgKHNpemUgLSAxKSBpbnRvIGJsb2NrIGNvbnRyb2wgcmVnaXN0ZXIgKi8KPiA+ICvCoMKg
-wqDCoMKgwqDCoGxlbiA9IG1zZ3NbMV0ubGVuIC0gMTsKPiA+ICvCoMKgwqDCoMKgwqDCoG9jdGVv
-bl9pMmNfd3JpdGVxX2ZsdXNoKCh1NjQpbGVuLCBpMmMtPnR3c2lfYmFzZSArCj4gPiBPQ1RFT05f
-UkVHX0JMT0NLX0NUTChpMmMpKTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoC8qIFByZXBhcmUg
-Y29yZSBjb21tYW5kICovCj4gPiArwqDCoMKgwqDCoMKgwqBjbWQgPSBTV19UV1NJX1YgfCBTV19U
-V1NJX1IgfCBTV19UV1NJX1NPVlIgfAo+ID4gU1dfVFdTSV9PUF83X0lBOwo+ID4gK8KgwqDCoMKg
-wqDCoMKgY21kIHw9ICh1NjQpKG1zZ3NbMF0uYWRkciAmIDB4N2Z1bGwpIDw8IFNXX1RXU0lfQURE
-Ul9TSElGVDsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoC8qIFNlbmQgY29yZSBjb21tYW5kICov
-Cj4gPiArwqDCoMKgwqDCoMKgwqByZXQgPSBvY3Rlb25faTJjX2hsY19yZWFkX2NtZChpMmMsIG1z
-Z3NbMF0sIGNtZCk7Cj4gPiArwqDCoMKgwqDCoMKgwqBpZiAocmV0KQo+ID4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiByZXQ7Cj4gCj4gRG8gd2UgbmVlZCB0byBkaXNhYmxl
-IHRoZSBibG9jayBtb2RlPwo+IApEbyB5b3UgbWVhbiwgZG8gd2UgbmVlZCB0byBkaXNhYmxlIHRo
-ZSBibG9jayBtb2RlIGF0IGFsbD8gaS5lLiBoYXZlIGl0Cm9uIGFsbCB0aGUgdGltZT8gT3RoZXJ3
-aXNlLCBpdCBnZXRzIGRpc2FibGVkIGF0IHRoZSBib3R0b20gb2YgdGhpcwpmdW5jLgo+ID4gK8Kg
-wqDCoMKgwqDCoMKgY21kID0gX19yYXdfcmVhZHEoaTJjLT50d3NpX2Jhc2UgKwo+ID4gT0NURU9O
-X1JFR19TV19UV1NJKGkyYykpOwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKChjbWQgJiBTV19UV1NJ
-X1IpID09IDApCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIG9jdGVv
-bl9pMmNfY2hlY2tfc3RhdHVzKGkyYywgZmFsc2UpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKg
-LyogcmVhZCBkYXRhIGluIEZJRk8gKi8KPiA+ICvCoMKgwqDCoMKgwqDCoG9jdGVvbl9pMmNfd3Jp
-dGVxX2ZsdXNoKFRXU1hfQkxPQ0tfU1RTX1JFU0VUX1BUUiwKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGkyYy0+dHdzaV9i
-YXNlICsKPiA+IE9DVEVPTl9SRUdfQkxPQ0tfU1RTKGkyYykpOwo+ID4gK8KgwqDCoMKgwqDCoMKg
-Zm9yICh1MTYgaSA9IDA7IGkgPD0gbGVuOyBpICs9IDgpIHsKPiAKPiBQbGVhc2UsIGRvIG5vdCBk
-ZWNsYXJlIHRoZSBpdGVyYXRvciBpbnNpZGUgdGhlIGZvciBsb29wLgo+IApEb25lLgo+ID4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIEJ5dGUtc3dhcCBGSUZPIGRhdGEgYW5kIGNv
-cHkgaW50byBtc2cgYnVmZmVyICovCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-X19iZTY0IHJkID0gY3B1X3RvX2JlNjQoX19yYXdfcmVhZHEoaTJjLT50d3NpX2Jhc2UKPiA+ICsg
-T0NURU9OX1JFR19CTE9DS19GSUZPKGkyYykpKTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqBtZW1jcHkoJm1zZ3NbMV0uYnVmW2ldLCAmcmQsIG1pbig4LCBtc2dzWzFd
-LmxlbiAtCj4gPiBpKSk7Cj4gPiArwqDCoMKgwqDCoMKgwqB9Cj4gPiArCj4gPiArwqDCoMKgwqDC
-oMKgwqBvY3Rlb25faTJjX2Jsb2NrX2Rpc2FibGUoaTJjKTsKPiA+ICvCoMKgwqDCoMKgwqDCoHJl
-dHVybiByZXQ7Cj4gPiArfQo+IAo+IC4uLgo+IAo+ID4gwqAjZGVmaW5lIE9DVEVPTl9SRUdfU1df
-VFdTSSh4KcKgwqDCoMKgwqDCoMKgwqDCoMKgKCh4KS0+cm9mZi5zd190d3NpKQo+ID4gwqAjZGVm
-aW5lIE9DVEVPTl9SRUdfVFdTSV9JTlQoeCnCoMKgwqDCoMKgwqDCoMKgwqAoKHgpLT5yb2ZmLnR3
-c2lfaW50KQo+ID4gwqAjZGVmaW5lIE9DVEVPTl9SRUdfU1dfVFdTSV9FWFQoeCnCoMKgwqDCoMKg
-wqAoKHgpLT5yb2ZmLnN3X3R3c2lfZXh0KQo+ID4gwqAjZGVmaW5lIE9DVEVPTl9SRUdfTU9ERSh4
-KcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKCh4KS0+cm9mZi5tb2RlKQo+ID4gKyNkZWZpbmUg
-T0NURU9OX1JFR19CTE9DS19DVEwoeCnCoMKgwqDCoMKgwqDCoMKgKHgtPnJvZmYuYmxvY2tfY3Rs
-KQo+ID4gKyNkZWZpbmUgT0NURU9OX1JFR19CTE9DS19TVFMoeCnCoMKgwqDCoMKgwqDCoMKgKHgt
-PnJvZmYuYmxvY2tfc3RzKQo+ID4gKyNkZWZpbmUgT0NURU9OX1JFR19CTE9DS19GSUZPKHgpwqDC
-oMKgwqDCoMKgwqAoeC0+cm9mZi5ibG9ja19maWZvKQo+IAo+IFBsZWFzZSB1c2UgdGhlICgoeCkt
-Pi4uLikgZm9ybS4KPiAKRG9uZS4KPiBBbmRpCj4gCj4gPiDCoAo+ID4gLS8qIFNldCBSRUZDTEtf
-U1JDIGFuZCBIU19NT0RFIGluIFRXU1hfTU9ERSByZWdpc3RlciAqLwo+ID4gKy8qIFRXU1hfTU9E
-RSByZWdpc3RlciAqLwo+ID4gwqAjZGVmaW5lIFRXU1hfTU9ERV9SRUZDTEtfU1JDwqDCoMKgQklU
-KDQpCj4gPiArI2RlZmluZSBUV1NYX01PREVfQkxPQ0tfTU9ERcKgwqDCoEJJVCgyKQo+ID4gwqAj
-ZGVmaW5lIFRXU1hfTU9ERV9IU19NT0RFwqDCoMKgwqDCoMKgQklUKDApCj4gPiDCoCNkZWZpbmUg
-VFdTWF9NT0RFX0hTX01BU0vCoMKgwqDCoMKgwqAoVFdTWF9NT0RFX1JFRkNMS19TUkMgfAo+ID4g
-VFdTWF9NT0RFX0hTX01PREUpCgo=
+Both SVM and VMX have similar implementation for executing an IBPB
+between running different vCPUs on the same CPU to create separate
+prediction domains for different vCPUs.
+
+For VMX, when the currently loaded VMCS is changed in
+vmx_vcpu_load_vmcs(), an IBPB is executed if there is no 'buddy', which
+is the case on vCPU load. The intention is to execute an IBPB when
+switching vCPUs, but not when switching the VMCS within the same vCPU.
+Executing an IBPB on nested transitions within the same vCPU is handled
+separately and conditionally in nested_vmx_vmexit().
+
+For SVM, the current VMCB is tracked on vCPU load and an IBPB is
+executed when it is changed. The intention is also to execute an IBPB
+when switching vCPUs, although it is possible that in some cases an IBBP
+is executed when switching VMCBs for the same vCPU. Executing an IBPB on
+nested transitions should be handled separately, and is proposed at [1].
+
+Unify the logic by tracking the last loaded vCPU and execuintg the IBPB
+on vCPU change in kvm_arch_vcpu_load() instead. When a vCPU is
+destroyed, make sure all references to it are removed from any CPU. This
+is similar to how SVM clears the current_vmcb tracking on vCPU
+destruction. Remove the current VMCB tracking in SVM as it is no longer
+required, as well as the 'buddy' parameter to vmx_vcpu_load_vmcs().
+
+[1]https://lore.kernel.org/lkml/20250221163352.3818347-4-yosry.ahmed@linux.dev/
+
+Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+---
+ arch/x86/kvm/svm/svm.c    | 24 ------------------------
+ arch/x86/kvm/svm/svm.h    |  2 --
+ arch/x86/kvm/vmx/nested.c |  6 +++---
+ arch/x86/kvm/vmx/vmx.c    | 15 ++-------------
+ arch/x86/kvm/vmx/vmx.h    |  3 +--
+ arch/x86/kvm/x86.c        | 19 ++++++++++++++++++-
+ 6 files changed, 24 insertions(+), 45 deletions(-)
+
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 8abeab91d329d..89bda9494183e 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -1484,25 +1484,10 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
+ 	return err;
+ }
+ 
+-static void svm_clear_current_vmcb(struct vmcb *vmcb)
+-{
+-	int i;
+-
+-	for_each_online_cpu(i)
+-		cmpxchg(per_cpu_ptr(&svm_data.current_vmcb, i), vmcb, NULL);
+-}
+-
+ static void svm_vcpu_free(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_svm *svm = to_svm(vcpu);
+ 
+-	/*
+-	 * The vmcb page can be recycled, causing a false negative in
+-	 * svm_vcpu_load(). So, ensure that no logical CPU has this
+-	 * vmcb page recorded as its current vmcb.
+-	 */
+-	svm_clear_current_vmcb(svm->vmcb);
+-
+ 	svm_leave_nested(vcpu);
+ 	svm_free_nested(svm);
+ 
+@@ -1554,18 +1539,9 @@ static void svm_prepare_host_switch(struct kvm_vcpu *vcpu)
+ 
+ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ {
+-	struct vcpu_svm *svm = to_svm(vcpu);
+-	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
+-
+ 	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
+ 		shrink_ple_window(vcpu);
+ 
+-	if (sd->current_vmcb != svm->vmcb) {
+-		sd->current_vmcb = svm->vmcb;
+-
+-		if (!cpu_feature_enabled(X86_FEATURE_IBPB_ON_VMEXIT))
+-			indirect_branch_prediction_barrier();
+-	}
+ 	if (kvm_vcpu_apicv_active(vcpu))
+ 		avic_vcpu_load(vcpu, cpu);
+ }
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index d4490eaed55dd..c4584cee8f71c 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -338,8 +338,6 @@ struct svm_cpu_data {
+ 	struct vmcb *save_area;
+ 	unsigned long save_area_pa;
+ 
+-	struct vmcb *current_vmcb;
+-
+ 	/* index = sev_asid, value = vmcb pointer */
+ 	struct vmcb **sev_vmcbs;
+ };
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index d06e50d9c0e79..5fd59722f5a2f 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -301,7 +301,7 @@ static void vmx_switch_vmcs(struct kvm_vcpu *vcpu, struct loaded_vmcs *vmcs)
+ 	cpu = get_cpu();
+ 	prev = vmx->loaded_vmcs;
+ 	vmx->loaded_vmcs = vmcs;
+-	vmx_vcpu_load_vmcs(vcpu, cpu, prev);
++	vmx_vcpu_load_vmcs(vcpu, cpu);
+ 	vmx_sync_vmcs_host_state(vmx, prev);
+ 	put_cpu();
+ 
+@@ -4520,12 +4520,12 @@ static void copy_vmcs02_to_vmcs12_rare(struct kvm_vcpu *vcpu,
+ 
+ 	cpu = get_cpu();
+ 	vmx->loaded_vmcs = &vmx->nested.vmcs02;
+-	vmx_vcpu_load_vmcs(vcpu, cpu, &vmx->vmcs01);
++	vmx_vcpu_load_vmcs(vcpu, cpu);
+ 
+ 	sync_vmcs02_to_vmcs12_rare(vcpu, vmcs12);
+ 
+ 	vmx->loaded_vmcs = &vmx->vmcs01;
+-	vmx_vcpu_load_vmcs(vcpu, cpu, &vmx->nested.vmcs02);
++	vmx_vcpu_load_vmcs(vcpu, cpu);
+ 	put_cpu();
+ }
+ 
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index b70ed72c1783d..26b9d48b786f7 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1441,8 +1441,7 @@ static void shrink_ple_window(struct kvm_vcpu *vcpu)
+ 	}
+ }
+ 
+-void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
+-			struct loaded_vmcs *buddy)
++void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	bool already_loaded = vmx->loaded_vmcs->cpu == cpu;
+@@ -1469,16 +1468,6 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
+ 	if (prev != vmx->loaded_vmcs->vmcs) {
+ 		per_cpu(current_vmcs, cpu) = vmx->loaded_vmcs->vmcs;
+ 		vmcs_load(vmx->loaded_vmcs->vmcs);
+-
+-		/*
+-		 * No indirect branch prediction barrier needed when switching
+-		 * the active VMCS within a vCPU, unless IBRS is advertised to
+-		 * the vCPU.  To minimize the number of IBPBs executed, KVM
+-		 * performs IBPB on nested VM-Exit (a single nested transition
+-		 * may switch the active VMCS multiple times).
+-		 */
+-		if (!buddy || WARN_ON_ONCE(buddy->vmcs != prev))
+-			indirect_branch_prediction_barrier();
+ 	}
+ 
+ 	if (!already_loaded) {
+@@ -1517,7 +1506,7 @@ void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
+ 		shrink_ple_window(vcpu);
+ 
+-	vmx_vcpu_load_vmcs(vcpu, cpu, NULL);
++	vmx_vcpu_load_vmcs(vcpu, cpu);
+ 
+ 	vmx_vcpu_pi_load(vcpu, cpu);
+ }
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 951e44dc9d0ea..aec7ae3a3d4c2 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -376,8 +376,7 @@ struct kvm_vmx {
+ 	u64 *pid_table;
+ };
+ 
+-void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
+-			struct loaded_vmcs *buddy);
++void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu);
+ int allocate_vpid(void);
+ void free_vpid(int vpid);
+ void vmx_set_constant_host_state(struct vcpu_vmx *vmx);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 69c20a68a3f01..4034190309a61 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4961,6 +4961,8 @@ static bool need_emulate_wbinvd(struct kvm_vcpu *vcpu)
+ 	return kvm_arch_has_noncoherent_dma(vcpu->kvm);
+ }
+ 
++static DEFINE_PER_CPU(struct kvm_vcpu *, last_vcpu);
++
+ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ {
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+@@ -4983,6 +4985,18 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 
+ 	kvm_x86_call(vcpu_load)(vcpu, cpu);
+ 
++	if (vcpu != per_cpu(last_vcpu, cpu)) {
++		/*
++		 * Flush the branch predictor when switching vCPUs on the same physical
++		 * CPU, as each vCPU should have its own branch prediction domain. No
++		 * IBPB is needed when switching between L1 and L2 on the same vCPU
++		 * unless IBRS is advertised to the vCPU. This is handled on the nested
++		 * VM-Exit path.
++		 */
++		indirect_branch_prediction_barrier();
++		per_cpu(last_vcpu, cpu) = vcpu;
++	}
++
+ 	/* Save host pkru register if supported */
+ 	vcpu->arch.host_pkru = read_pkru();
+ 
+@@ -12367,10 +12381,13 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ 
+ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+ {
+-	int idx;
++	int idx, cpu;
+ 
+ 	kvmclock_reset(vcpu);
+ 
++	for_each_possible_cpu(cpu)
++		cmpxchg(per_cpu_ptr(&last_vcpu, cpu), vcpu, NULL);
++
+ 	kvm_x86_call(vcpu_free)(vcpu);
+ 
+ 	kmem_cache_free(x86_emulator_cache, vcpu->arch.emulate_ctxt);
+-- 
+2.49.0.395.g12beb8f557-goog
+
 
