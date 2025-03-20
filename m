@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-569276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400AFA6A0DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F169A6A0E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBFD3AED1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61CF23AE236
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C749B2063E3;
-	Thu, 20 Mar 2025 07:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTvARj4N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B138205AA5;
+	Thu, 20 Mar 2025 08:01:48 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326AF1BE251;
-	Thu, 20 Mar 2025 07:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1E15A8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 08:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742457481; cv=none; b=tbXX78WRxNgujduXJ9DBNJEUNuE+3PFbyH/Jsqigv+FNbEckkt6JTzmqgnEwnyLa52zbil+UfpTAKApihoUlJS4cI3+ezUcmUdSHnMyVhKzOzkuDYKEg4bQVo5/deiZFww6hLLFxKObd8lk3sSfUGGrADk8UXRE3wRSbzTlp2RM=
+	t=1742457708; cv=none; b=Zngh3zWQ2cJDruRBCiHxSEHut3CtshHC2C2QKWvWL0kBhev9eUQrNyv9Di/U3+kK+ENQbkYQU1YpBOIEbWmg5S/iSI5edzyBVTS6DfrHIIjJmAwB9gU3FEiK3DHl311RYxeaoGZxuky4kER5ov9aq7SSgq3u6YhUw0SLrYqHglA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742457481; c=relaxed/simple;
-	bh=Ess/GFiXQnY/TJf5j8pZaKg+a4s6VGT+FXoCIdtSljY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iZeUtnN/zX6wzXyox2NOjyk0NZCRB/p+ngWfaEHZC93mJhZq7Lc9HKAJjotj8RDgM56Bwfxl7P7TjixiRv3n7OUMi98ZZIxppvsfC8UOv0eq0NX/xtWJaJNaLWYTKwfe4yxIWlbK4uP/NDQ8uUGSdvcTaPaBW77PH9PMaPKqkDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTvARj4N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBFCC4CEEC;
-	Thu, 20 Mar 2025 07:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742457480;
-	bh=Ess/GFiXQnY/TJf5j8pZaKg+a4s6VGT+FXoCIdtSljY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LTvARj4Ns2d9QyrT1ya7RPJ0WCyjrQ2F+ebTYcZzc3PQh4FZwUFJg+iYm8PXWvzVi
-	 /wSZ3RywOLddXzanBd2Qij0dRnUWs7EAzB03L+8B5JlX+n6eiTJ+lg5T/H0uXDRaLF
-	 obhdhDfNtSR+1BsAlkJnf8YKFTE7X6gint44dg5IRhwuRabbg6PN5PFnTXdqENJS6/
-	 95wmNBccSi04IyWQEnrj+rwlkpSICO/dn8s4w213IXdEVxcn31MVXbU5c1NW57UHUa
-	 aaLx39jeLV3/Z8gSVxcHqzJT5THrbuGcYYI5CxB6oy1ADb0KSrS83/jLygoSKu+cg8
-	 2mfJUJUH5PUVQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549946c5346so616131e87.2;
-        Thu, 20 Mar 2025 00:58:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzYHUJo4eCMBklIXGyYw9i75JdvL2LdSTaNm/M3zfdDnA+WyS5yPw7JP83shTmXNb+/Kk1qSbAl36ARCXr@vger.kernel.org, AJvYcCXpi8QQSdBUlEv/pk+bDVOiFwQLqnoc/TfopdDm49EROE9I5SQA9Yd1E+/BRq8aIlszBzAPTdKfH5yisHSC8Lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs9w03hcn2ShbJK4m5HIcQMIFTlcStBhp2RWac+sbc4LxvgUEe
-	6lWlzJd+bV3++JLRKJ3LM9yRso87oCZhrJBkmwCeX23gG1KKhIL74+PDcOm2etZxet3Nr/zmaVm
-	SSSWQDn9QLrc0nm1eGYvP6nAc04M=
-X-Google-Smtp-Source: AGHT+IHxMPNnW3ahoF6dyr61q+mJ5mQKb0REzmKIWVM/WDF7dR9vMAw2jTe0SRluNBmN6Nesu4NshFyCdDUXlanegeA=
-X-Received: by 2002:a05:6512:3ca8:b0:549:8fd0:bad8 with SMTP id
- 2adb3069b0e04-54acb1b83f6mr1925566e87.21.1742457478970; Thu, 20 Mar 2025
- 00:57:58 -0700 (PDT)
+	s=arc-20240116; t=1742457708; c=relaxed/simple;
+	bh=88bRQ6wqAeT6MxN0t9xtncQL9d1/18HH0SwOFAgjjg0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=liqtdrG2vSMZgAprvK4sQoS7b90Xcak0CcMPbRlnQ8usSObE8FK+iqRpnTcf9ZYBr95JFawNfxwWPVjkJ+LRB2z8t6O85/Jvs3vdmziHzm9k1UnB+wU8roOLAVduLJ7m8uWKSusPPB4auta0VF7eij764QCzzuDkw2ifBvZN254=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d44a3882a0so4501935ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 01:01:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742457705; x=1743062505;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8is7iFSAmlrM2zAmO2ytfqcGAv9nfj5bb5h7M9lP44I=;
+        b=sjq6AG7Ubp7kPaXMy34cMA2LUWAcwgoX9Yjj2ZxzDNEkBUXP9zQfs0aauPQ5dLH86X
+         BpyUaNSBJvi+Es0EBtyxs6TsXDdA7J0Suxr827r2kX/LbN8jayFSKO9PWh66zErams3p
+         d3iKwzaFqyhuivqtxAkqGANjAgZLL7xewkEKcg50puubZ8PZgA8tU5V11dhri1uBWfNp
+         DiUZid1kr2Cw1oBf0jwiU+fUTQXVCSYaPEp0T75oz/QiGLy8tTtKNZ3QZBRkrGwipUxn
+         ErpkWN6zBNmc3xlhPqkqiAnUo25ApSzsikS2/EqQpilDFXNQxDvmS2WvqBY45KYWrhbX
+         vQkQ==
+X-Gm-Message-State: AOJu0Ywoa+HWUMXrVoguiKTfVWXx2eX0g0fX8TSL3ipN68+EOKAz3WBM
+	u5KEmxni3562C80ePxJrkZP0TvHON6ldZ7hpbx6HWn8A7/wdl2bEADK2vj05xbC2a8CNDlKEbdH
+	X8AYr7TPbYjV1qjP/O1Flw3TFaXXYCW3gXdWfrcD645hYfLFD+82IMNI=
+X-Google-Smtp-Source: AGHT+IHOFSEfuj7Jm54TfSF8KmcCdQhQq7rRutZo0kPy2IOoFsvLrrEEaUq2WPBdTSR4iJFxOcAbf7MYbN+BAG8WvtLK9Aw0p1YR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318134949.3194334-2-ardb+git@google.com>
-In-Reply-To: <20250318134949.3194334-2-ardb+git@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 20 Mar 2025 08:57:47 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHXAYt0xLnx4=+qiCbnuF5U+9dzwnds1yd+vhTtpP5v3Q@mail.gmail.com>
-X-Gm-Features: AQ5f1JruVvX2NW9k2AtKWjmGfECveHlfhMO7faRJZ8Td6Fub8xUy3jUEpJHaXeo
-Message-ID: <CAMj1kXHXAYt0xLnx4=+qiCbnuF5U+9dzwnds1yd+vhTtpP5v3Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] arm64/mm: Remove randomization of the linear map
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	Kees Cook <kees@kernel.org>
+X-Received: by 2002:a05:6e02:1fe8:b0:3d3:fa69:6755 with SMTP id
+ e9e14a558f8ab-3d58e8596abmr19396385ab.5.1742457705702; Thu, 20 Mar 2025
+ 01:01:45 -0700 (PDT)
+Date: Thu, 20 Mar 2025 01:01:45 -0700
+In-Reply-To: <67bab9f0.050a0220.bbfd1.000e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dbcb69.050a0220.31a16b.0007.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] linux-next build error (20)
+From: syzbot <syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 18 Mar 2025 at 14:50, Ard Biesheuvel <ardb+git@google.com> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Since commit
->
->   97d6786e0669 ("arm64: mm: account for hotplug memory when randomizing the linear region")
->
-> the decision whether or not to randomize the placement of the system's
-> DRAM inside the linear map is based on the capabilities of the CPU
-> rather than how much memory is present at boot time. This change was
-> necessary because memory hotplug may result in DRAM appearing in places
-> that are not covered by the linear region at all (and therefore
-> unusable) if the decision is solely based on the memory map at boot.
->
-> In the Android GKI kernel, which requires support for memory hotplug,
-> and is built with a reduced virtual address space of only 39 bits wide,
-> randomization of the linear map never happens in practice as a result.
-> And even on arm64 kernels built with support for 48 bit virtual
-> addressing, the wider PArange of recent CPUs means that linear map
-> randomization is slowly becoming a feature that only works on systems
-> that will soon be obsolete.
->
-> So let's just remove this feature. We can always bring it back in an
-> improved form if there is a real need for it.
->
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Additional note based on an off-list discussion with Kees and the KSPP team:
+***
 
-Initially, the randomization of the linear map was considered to be a
-layer of defense against the abuse of writable linear aliases of
-read-only mappings in the vmalloc range, such as module text and
-rodata. This has been addressed in the meantime, by mapping the linear
-region down to pages by default, and mapping linear aliases read-only
-if the vmalloc mapping is read-only.
+Subject: Re: [syzbot] linux-next build error (20)
+Author: ardb@kernel.org
 
-So considering that, and the fact that randomization of the linear map
-occurs rarely if at all on recent CPUs, I think we should go ahead and
-remove this feature.
+#syz test
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 993708d11874..7855cdc4e763 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
+ getasmexports =
+         \
+    { echo "\#include <linux/kernel.h>" ;                               \
+      echo "\#include <linux/string.h>" ;                               \
++     echo "\#define  __GENKSYMS__" ;                                   \
+      echo "\#include <asm/asm-prototypes.h>" ;                         \
+      $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
 
