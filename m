@@ -1,134 +1,182 @@
-Return-Path: <linux-kernel+bounces-570122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10208A6AC78
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:51:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3036BA6AC7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13B48A71F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495DD487340
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03910229B38;
-	Thu, 20 Mar 2025 17:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC42822687A;
+	Thu, 20 Mar 2025 17:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArD4xhyG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JoPUFr1D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FEF1953A1;
-	Thu, 20 Mar 2025 17:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B361E3772;
+	Thu, 20 Mar 2025 17:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742492981; cv=none; b=jOlPUGSyNzjAdJv2SchIirkRVYXsptkNALpAx8XRiABZR02d4OeeFHVvCw+zwh2A6kcevad9jqejva82lruaX1SvMaYiEMAyukEeX8MrluWSKESMfp+2lQfBRmUlFVADZS+ombFsLJL3jgDaQvuPiklNpzawNqVuqEN3AUHfRKw=
+	t=1742493059; cv=none; b=PNaZ9+tspejeC47TRl7ulMXu59x2pJm9v1Y2mEivaZ0kJnNVPD8GgInbFim8rVib2MISYcz8coNhNUhsjFzk71eaLUqLhJiGOBrf24fdtWMl60tpWNINiGAYixQThdoTpMgJmxoQU/GLKNJ4OarsCGaDZTjGK3vpIflQUHHKNhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742492981; c=relaxed/simple;
-	bh=xqyeSV4G9bEvGxh7+XLA1KQjiatdEWvQJJpEHF2K2MA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t1GiDzztLsMCBL1NaXak7SJBiOERf0x6DD5jrgYtXzHuDjXyanw3gSvJZptnRSCN0yOANzoUkHKf6fKicXQF8S/N2LFKIBnJNfmAxj+ptGXxsTSTzvb5d5cqn3+2+vsObpLQchlUiROMrRcvWZaVIkwuigzf+z8kwW1rVVDiVjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArD4xhyG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BD1C4CEED;
-	Thu, 20 Mar 2025 17:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742492981;
-	bh=xqyeSV4G9bEvGxh7+XLA1KQjiatdEWvQJJpEHF2K2MA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ArD4xhyGTHStavD8A76PBgnwVf/b6DAeY0m4VNRVRdFa2EkzAIAMHc43M4ZQD+5BY
-	 ZMtCAri6xcGzEOK83N3mMk1laPZkfieEaaiATEePwar2BgC4yeB1K2uiSiPwvegp//
-	 cnr7pWshpDEfcnZfw8xTk7ys/WytKBhlSCoMFDv8CTJaSamT5F3gRiNm0nn2LQFzBV
-	 l02C3ED582IYHSyzmbLmmvAr8kKgOzF7Zxh6z+2fnOHyRLfxTypyw4dw1bQC8wC40v
-	 hFEQ6LEGweKDFQGvWU5y+V3NlfA2LGnuTBydGQHPj74m4SbMpaJGfS69g6G8l8YR73
-	 G0Jv/4omDVUwg==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Thu, 20 Mar 2025 18:48:44 +0100
-Subject: [PATCH bpf-next/net v3 5/5] selftests/bpf: Drop cgroup_fd of
- run_mptcpify
+	s=arc-20240116; t=1742493059; c=relaxed/simple;
+	bh=cea3vmsVkjuO2XwGRUt+ahnW8RAvoY9Qk5TkREX0e2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P3iQDTFCvjbCpX+H3nf+31b+W2W9k9eH2OhZeKImoAu30tte2HdT8sunL2fsWSneUC1gyraEE5yO0JBqLUNKMNpSuiEoBpLdkz3Bbr9wyZJ5pGCW98tz8ZQNui54KysZqrt/VTep1Psx1YTfsNTOqYG298OItU6IjgK3oWPQU3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JoPUFr1D; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742493058; x=1774029058;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=cea3vmsVkjuO2XwGRUt+ahnW8RAvoY9Qk5TkREX0e2E=;
+  b=JoPUFr1DgkZ7Q7UBBigJW6RodXDI3JdUqENNYD/Vdrk1e8xIiIMyafaX
+   u4n75Z9QhsRIAeNDMW+5eo87SjwHJcR+qE88peiX8revx9z0BtqjOzSdk
+   7/v3XQjyvNIZfwyCFXpd+xDxcoSLj7E/qy/eoz+eNOjZUKOUdGlPLBPFj
+   2zeEWsO9+26B1w/29wikTfTvMKln4HDqU48IQncYCVs9knNzzXKLpn8sa
+   Yg159xEElcbXNghxgt5tg1i65awPP9BZVJ4yLyIqhYfbJ0ps5vozBZedH
+   rDdBVYqtXhRTfqWH/0+NZaTjz1QrO4qq6yC+ZOrm+WgjExKamje89OwHQ
+   w==;
+X-CSE-ConnectionGUID: p9mq7mPbSNGkB8qaVAwHQw==
+X-CSE-MsgGUID: IJ0kh1CIQ6mN1Inz/VfcdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="66204429"
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="66204429"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 10:50:57 -0700
+X-CSE-ConnectionGUID: JydCvEvfSJujt0UDk44Flw==
+X-CSE-MsgGUID: TpYanpyeR/CHZ/RImw0Hgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
+   d="scan'208";a="154163594"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 10:50:44 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tvK2Q-00000004IWz-3yfN;
+	Thu, 20 Mar 2025 19:50:38 +0200
+Date: Thu, 20 Mar 2025 19:50:38 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: changyuanl@google.com, graf@amazon.com, rppt@kernel.org,
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, leon@kernel.org,
+	lukas@wunner.de, bhelgaas@google.com, wagi@kernel.org,
+	djeffery@redhat.com, stuart.w.hayes@gmail.com, jgowans@amazon.com,
+	jgg@nvidia.com
+Subject: Re: [RFC v1 1/3] luo: Live Update Orchestrator
+Message-ID: <Z9xVbqyomZunipQL@smile.fi.intel.com>
+References: <20250320024011.2995837-1-pasha.tatashin@soleen.com>
+ <20250320024011.2995837-2-pasha.tatashin@soleen.com>
+ <Z9wan08CpbvddHhc@smile.fi.intel.com>
+ <CA+CK2bDWJcrWpkk0asKUb46GYT-r9JdBMU-OUx3E4qjr6rVpGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-bpf-next-net-mptcp-bpf_iter-subflows-v3-5-9abd22c2a7fd@kernel.org>
-References: <20250320-bpf-next-net-mptcp-bpf_iter-subflows-v3-0-9abd22c2a7fd@kernel.org>
-In-Reply-To: <20250320-bpf-next-net-mptcp-bpf_iter-subflows-v3-0-9abd22c2a7fd@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Geliang Tang <geliang@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1276; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=MJ4yUIHEjVx1dlHDaBDAevTBfGako1NrlTzaHOWEc8c=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBn3FUR0f5fhrsnGbmJRYV8FaWCHCgsF459EuDdS
- kPQ5IX7TrKJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ9xVEQAKCRD2t4JPQmmg
- c5QBEACswLflX88JxzwMso+MxP61b7Q6a3H/WnAWYTZ57E0J0zI1QCQ/a1gelBY+QrIxE+e21W6
- sRoVTuz7kmSMxpn8VyuIlP//CD8/LZyT5cPWpCz3bTE0MI3FgbtIms20l6xr0udoqRdDibB7Ta+
- b7y5yKaXlNHSjKbx2r6jpi0OTTgR9R6C0xxDXQpQ/ySa/XGNTq76b4PNRrZQ5haMJvpUwhgaFIO
- UBOA6AYV5VQmooN2+w7Q2G0PVu8HAEaXzsqu189ZfI4nGZHOFpi6BCXUqREM19DQ+SmvT5D3DGa
- duV7zJpICVUDUqFF3GpkRRapMYfUucegH9KbGxPKfiiH8VsaHol686/v37Yegjb70FQfK+8qyZd
- 30y0INxl/pJUUtKyTYPqlZj8ZZZ43tUEDTLFIcSfE1GDJQCmiM71rDz40EYEm4HCx1/iiZeUBSV
- OtXwF/yeLXSZ1m0YMMRRt7vgS03MbzWDepEeJJJAdBXfH4Zj74M/8H6GMNci86d7G3KmX6I06pb
- YUr1XxoiIft85ld/JeYHCffzA1V+eBl+bG4JwJS8pb0oVo84dHOi1zcGp7D6P7ADFk7dLHQGXa9
- K3IIq97dFf30psO5+91vkGHWDhhGzBG6gJCHUk/AssJ0arGpkg2IsmYG648tsjWYnh6KlPM3Fk5
- I/sQEyhCmGnhefQ==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bDWJcrWpkk0asKUb46GYT-r9JdBMU-OUx3E4qjr6rVpGA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Geliang Tang <tanggeliang@kylinos.cn>
+On Thu, Mar 20, 2025 at 12:35:20PM -0400, Pasha Tatashin wrote:
+> On Thu, Mar 20, 2025 at 9:40 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Mar 20, 2025 at 02:40:09AM +0000, Pasha Tatashin wrote:
 
-The parameter 'cgroup_fd' of run_mptcpify() is useless, drop it.
+...
 
-Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
- - v3:
-   - New patch, simply to remove an unused parameter in the selftests.
----
- tools/testing/selftests/bpf/prog_tests/mptcp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > > +#ifndef _LINUX_LIVEUPDATE_H
+> > > +#define _LINUX_LIVEUPDATE_H
+> >
+> > > +#include <linux/compiler.h>
+> > > +#include <linux/notifier.h>
+> >
+> > This is semi-random list of inclusions. Try to follow IWYU principle.
+> > See below.
+> 
+> I will remove <linux/compiler.h>
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index f37574b5ef68d8f32f8002df317869dfdf1d4b2d..f519c452884e7b6088de24b6c2a9e646954fe0d8 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -272,7 +272,7 @@ static int verify_mptcpify(int server_fd, int client_fd)
- 	return err;
- }
- 
--static int run_mptcpify(int cgroup_fd)
-+static int run_mptcpify(void)
- {
- 	int server_fd, client_fd, err = 0;
- 	struct mptcpify *mptcpify_skel;
-@@ -325,7 +325,7 @@ static void test_mptcpify(void)
- 	if (!ASSERT_OK_PTR(netns, "netns_new"))
- 		goto fail;
- 
--	ASSERT_OK(run_mptcpify(cgroup_fd), "run_mptcpify");
-+	ASSERT_OK(run_mptcpify(), "run_mptcpify");
- 
- fail:
- 	netns_free(netns);
+But you need to add something more...
+
+...
+
+> > > +bool liveupdate_state_updated(void);
+> >
+> > Where bool is defined?
+> 
+> in kernel/liveupdate.c
+
+Nope, I meant where the type is defined. It is IIRC in types.h which needs to
+be included.
+
+...
+
+> > > +     if (kstrtol(buf, 0, &val) < 0)
+> > > +             return -EINVAL;
+> >
+> > Shadower error code.
+> 
+> In this case it is appropriate, we do not case why kstrtol() could not
+> be converted into an appropriate integer, all we care is that the
+> input was invalid, and that what we return back to user.
+
+The kstrtox() may give different error codes. User may want to know more about
+what's wrong with the input. Shadowed error codes are discouraged and should be
+explained.
+
+> > > +     if (val != 1 && val != 0)
+> > > +             return -EINVAL;
+> >
+> > What's wrong with using kstrtobool() from the beginning?
+> 
+> It makes the input less defined, here we only allow '1' or '0',
+> kstrtobool() allows almost anything.
+
+But kstrtobool() is the interface for boolean input. You may document only
+0 and 1 and don't tell people to use anything else. ABI documentation should
+be clear, that's it.
+
+...
+
+> > > +EXPORT_SYMBOL_GPL(liveupdate_state_normal);
+> >
+> > No namespace?
+> 
+> Namespace is 'liveupdate_', all public interfaces have this prefix,
+> private functions are prefixed with luo_ where it makes sense.
+
+No, I'm talking about export namespace. Why does the entire kernel need these APIs?
 
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
