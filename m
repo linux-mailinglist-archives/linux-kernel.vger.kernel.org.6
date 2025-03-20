@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-570454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4701A6B087
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:13:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0C9A6B088
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 23:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2E019C3056
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C9316EFDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E508822A7FE;
-	Thu, 20 Mar 2025 22:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6735227E9B;
+	Thu, 20 Mar 2025 22:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SQyL5yoc"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="a42aE7eW"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B5322A808
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688182222DD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 22:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742508615; cv=none; b=BSIjmt8RDNSXICb3+qtf6f4l8AsvtEtP9Izlscggjorz3cbomJk3gWia/3VogY6ZT+vpu2pizPmyCIZ+9B1BgKe1jbypdngXBdpUTTdkB7E7SN/J+zLe8qFnV4qZ5J/3FeaY9mYLKDqSUBMqJIotbnsT+wNKD54Hz6Ix+PdCFoI=
+	t=1742508684; cv=none; b=ilBSSXKWoOK1CyxwsAWzQXkJjFyzRnE0q4HiOr4vHCPIurGd2AYgqOQWp0KmHiJP+hcqriDnrKkU5seYxgd1BwpyCoXSJxtKda1gVWhlKgyL1SeP/U4H3jg0HqnTpCTV6UCHoFfA79ARzl38jgyhgWW2B2rjfy5WZUM4zQigDqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742508615; c=relaxed/simple;
-	bh=WUircD2gMunYayRFEsupwySC2IZlWNKmBLpSeBOKDuk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=dcY/SNsgUUmMBezH42AXhSThIU77bZHneA3WwLucGW7mybL/khyUzXiaIU3GuiLA8ek780q1qDLdhFhoCZDYtidynOVHg+P6Tw/QyVAS3IyksyRCww7D6EkQ4JMoLbR3CD5mgO4e8uZy3x09VIBtjfIK11+Z4j7ih/CClsk5rlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SQyL5yoc; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf7c2c351so949495e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1742508611; x=1743113411; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:from:to:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ewXqUeA7RBIygwSLbMlGfEG1GVvVQPFVPFBcsvVuklE=;
-        b=SQyL5yoctpMIiYraB/AyPJVy5DTn1JNM7nuDEIwNOlvDwmTGaE9QarnzBNwRDAf9Yr
-         S6lWelZYnyG13MGjY2aFEn46naiKYS1xGah6DovppVBMq+DDhC342JRPMjGWevaGDi5D
-         P38+EiLB1ojzvFt5wwQFvpnLxSbZuIRTVsaZQMg27u8bgMpy60iVeHb9rDYaq9Ch1DoL
-         n7VygtUNpF09YivzwCyYIE5D9NYt11cY5TEpv7Rmqd0MetiT4IISrsvho8/QptOahGnW
-         HSodB+AOHO/NZGq3BhnhMnt67qgbmBRCOsz5KNU9y7+Ek/5TWWnpf2wajHBWkLWd3rAk
-         KQIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742508611; x=1743113411;
-        h=in-reply-to:references:subject:from:to:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ewXqUeA7RBIygwSLbMlGfEG1GVvVQPFVPFBcsvVuklE=;
-        b=ZMNB7oRl9NOvZ/PmFlbE+i+AnM7pTFL0/Jt7qBPs4uRrC5pLDLgvvahpgbMhhVnr6b
-         rdLJSMLJqS+HyZdjaiaGPc13/vqVnhkDM+2gNm4I/diQFw4dOwFi2bDamgStBZSs7/pD
-         rV7QDK32MR8Slt2PpGl5gRR7JrxZqocxZDWtrCcETP5ONRTfE37WlShl4Sk4jbAOPQbo
-         Cg/q0G4OD3NaHXaRljYRdDlApW6U/FOLXrxzVQpoOZQEHp8wPc5b7mVrRc14z7ln3aoh
-         wXzM04auWv6u6ydmR21ECrHfYJwyUK+IiXLFFKUagqZ6GWz26GWctmS698dxSH43ulqO
-         BHDw==
-X-Gm-Message-State: AOJu0YyFZiIaA13uDgDxaIVkPBtiISPVkW+hQ8Zw3xeRkD9TPqsJ3s5w
-	4ZqF0wvGpG07hH49vIlyAWJXKRu8mC0NfzwHHljr0bKy7aAPzqxx9lanl5c+W0Y=
-X-Gm-Gg: ASbGncvTK4x12HbiKMuicU2pNYgKY7iemBB6QzXbNM5n72x9G8UHZoifcKBKDFycp6B
-	MU2zOD3hS1FcyFyZ9H/lKVHkCb3IZuTfd0r3PhF2M9gizLbU6vkpZIrFMnu+F/uJdKLasbXEl8r
-	qcHEs+rpvrxY7mVWXqfiWmYRohtqc0SNpTDMuMpW2oaY9s1Qga5aYVM4cnDSqWF8VrC+ENoMSae
-	RwCbvD+z+ZD+s5PFsBAudAOOQrbVLdSRhwQD+4yLwVu2g4kEtDiEdDqi0B/3OLaw9104ww+jyKu
-	2T7vV3n4JafiXloAvxMT1e0zsAoHyH4CKLsRmKCNF3s0gDT1tCZpF1o31f9of0NAigHAX37V4mw
-	1xEDAWOm6C6xCXTE=
-X-Google-Smtp-Source: AGHT+IG3iOdJG0QpOBXcV58Rkg48UtcOBUQNUhvPAa+an4gh1o0G7FLaaJ5j+6uFEW3mo9uctUtXkw==
-X-Received: by 2002:a05:600c:5252:b0:439:9909:c785 with SMTP id 5b1f17b1804b1-43d5171da80mr576165e9.7.1742508611223;
-        Thu, 20 Mar 2025 15:10:11 -0700 (PDT)
-Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9eef37sm655138f8f.85.2025.03.20.15.10.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 15:10:08 -0700 (PDT)
+	s=arc-20240116; t=1742508684; c=relaxed/simple;
+	bh=j4m/4kR3AKIDf1SGcymhk4lpp5b2oiTqmH3M80tjwaU=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Q14sSsBg+4XS3vObUjCOE+ZISk36UY1WIanwDB+IG0lR/DEsXpoGhiFPX7CNFhRg92+bILT7jPLg4AHuMUk5akGOTrcuY7RJT9bau4+s1oLM2fV9DTWD1sIYommLmIO7m71m2VAO2xbMAeRU4e2xwZOowkAD1aC1eZpz5eLeqQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=a42aE7eW; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742508675; x=1742767875;
+	bh=8j0eHeB4bjnnAP0B/WbCNB3mG2MsYZ2VTB5+OyhqIWc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=a42aE7eWqFnDX3Wp+LBVfwzs+Q111qUU9KLlmIgoaUph/wPm0ewKiSRKOnJGD5xrm
+	 FV1BY3PwVDEVCH2HS4oxKhR9eA4Wevd9gVVrccgSWV4ry1KSaoVGarqz0gl0MSUll2
+	 +u0jwhtTaBvz3zYPGfYqmko4dJlvm0UbipqyPGTo3/F75XcZ+e4RFdZWcT/szs1Rkz
+	 kNLWYFYbRLmYMx+S/qpZrnseWcW5CVNdkkk/3t5wBZyx+9AVu30dK3eN92r9bz8wAu
+	 m/8ziESVYlcgFyWEhlejuiAiXKd4KactbdkEHwKcZHsB1ZtC3C0qk+zT/5MmGUuk5V
+	 QqUYIM68MMuKA==
+Date: Thu, 20 Mar 2025 22:11:09 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] rust: alloc: add Vec::pop
+Message-ID: <D8LFRQ5IX33R.35U012LFZ06W0@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b20d688fdac027eaa34781278aefbde8eb19aedc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Mar 2025 23:10:06 +0100
-Message-Id: <D8LFQYX4EHF8.2AJ01XL34WK0W@ventanamicro.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
- <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
- <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
- <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
- <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
- <zong.li@sifive.com>, "linux-riscv"
- <linux-riscv-bounces@lists.infradead.org>
-To: "Deepak Gupta" <debug@rivosinc.com>, "Thomas Gleixner"
- <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov"
- <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>,
- <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Arnd Bergmann"
- <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>, "Peter Zijlstra"
- <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>, "Eric Biederman"
- <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>, "Jonathan Corbet"
- <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann Horn"
- <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-Subject: Re: [PATCH v12 22/28] riscv: enable kernel access to shadow stack
- memory via FWFT sbi call
-References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
- <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
-In-Reply-To: <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
 
-2025-03-14T14:39:41-07:00, Deepak Gupta <debug@rivosinc.com>:
-> Kernel will have to perform shadow stack operations on user shadow stack.
-> Like during signal delivery and sigreturn, shadow stack token must be
-> created and validated respectively. Thus shadow stack access for kernel
-> must be enabled.
-
-Why can't kernel access the user shadow stack through an aliased WR
-mapping?
-
-> In future when kernel shadow stacks are enabled for linux kernel, it must
-> be enabled as early as possible for better coverage and prevent imbalance
-> between regular stack and shadow stack. After `relocate_enable_mmu` has
-> been done, this is as early as possible it can enabled.
+On Thu Mar 20, 2025 at 2:52 PM CET, Alice Ryhl wrote:
+> This introduces a basic method that our custom Vec is missing. I expect
+> that it will be used in many places, but at the time of writing, Rust
+> Binder has six calls to Vec::pop.
 >
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
->  	la tp, init_task
->  	la sp, init_thread_union + THREAD_SIZE
->  	addi sp, sp, -PT_SIZE_ON_STACK
-> +	li a7, SBI_EXT_FWFT
-> +	li a6, SBI_EXT_FWFT_SET
-> +	li a0, SBI_FWFT_SHADOW_STACK
-> +	li a1, 1 /* enable supervisor to access shadow stack access */
-> +	li a2, SBI_FWFT_SET_FLAG_LOCK
-> +	ecall
+>  rust/kernel/alloc/kvec.rs | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index 95e752ed27395fce72d372976b74fb1b0e957194..9943358c70aa63f5ad7ed9782=
+cb8879d7a80a8fb 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -302,6 +302,37 @@ pub fn push(&mut self, v: T, flags: Flags) -> Result=
+<(), AllocError> {
+>          Ok(())
+>      }
+> =20
+> +    /// Removes the last element from a vector and returns it, or `None`=
+ if it is empty.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D KVec::new();
+> +    /// v.push(1, GFP_KERNEL)?;
+> +    /// v.push(2, GFP_KERNEL)?;
+> +    /// assert_eq!(&v, &[1, 2]);
+> +    ///
+> +    /// assert_eq!(v.pop(), Some(2));
+> +    /// assert_eq!(v.pop(), Some(1));
+> +    /// assert_eq!(v.pop(), None);
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn pop(&mut self) -> Option<T> {
+> +        let Some(len_sub_1) =3D self.len.checked_sub(1) else {
+> +            return None;
+> +        };
 
-I think the ecall can fail even on machines that have Zicfiss, so it
-would be good to disable user shadow stack if that happens.
+Isn't it possible to do:?
+   =20
+    let len_sub_1 =3D self.len.checked_sub(1)?;
+
+> +
+> +        // INVARIANT: If the first `len` elements are valid, then the fi=
+rst `len-1` elements are
+
+Please add spaces around `-`.
+
+> +        // valid.
+> +        self.len =3D len_sub_1;
+> +
+> +        // INVARIANT: This invalidates a value in this vector's allocati=
+on, but the Vec invariants
+> +        // do not require it to be valid because `self.len <=3D len_sub_=
+1`.
+
+I don't think this should be an `INVARIANT` comment. Maybe we don't even
+need it.
+
+---
+Cheers,
+Benno
+
+> +        // SAFETY: Since `len_sub_1` is less than the value `self.len` h=
+ad at the beginning of
+> +        // `pop`, this index holds a valid value.
+> +        Some(unsafe { self.as_mut_ptr().add(len_sub_1).read() })
+> +    }
+> +
+>      /// Creates a new [`Vec`] instance with at least the given capacity.
+>      ///
+>      /// # Examples
+
+
 
