@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-569413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D41FA6A2A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:31:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F8A6A2AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8171A188F15E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AED8A5465
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28B3222566;
-	Thu, 20 Mar 2025 09:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF5322256E;
+	Thu, 20 Mar 2025 09:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9O+5vm/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXeUXtPE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BDD1C1F2F;
-	Thu, 20 Mar 2025 09:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5748C222560;
+	Thu, 20 Mar 2025 09:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742463000; cv=none; b=e34YEo4z62jB3eE/wsi7ZEqky2jAK6/NAzXSN0caa0WrH4qxoR0eC86LqnAm4Y6c6Rt012XLmlyYRZOS+DjZzboB3YbDM0tNiQ5p53p3vRA/ZUtogNCFJJyHGjUDBtrdNOHj9oliLhK8/elK84I/Z9i0khwbgiTelGjnH6P0X0E=
+	t=1742463089; cv=none; b=FoygxjMugPCSY/9E/WTv7Rq7w3WyRM59q7JcUwdcmgzegRY6orzHqDU0aQDEcvKFqRPsbx4uz7Hto91VPvI29c5/jA1nimPdyssG/XhzTtzfEtiZIKDEP8L02YVjulM0gEqikO297nThIK1U7liFXCfebNRXCEkUuqBd/w3W7JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742463000; c=relaxed/simple;
-	bh=dw5ASQC8hlhdIlEBxhQ13OH2Na6Ploy5abBdY4RpC7o=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eSL40Iao3xFrckvNEIyLa4i+10pLZLpbKKxaskIfmgOH9hcbECGv7UrbaDdeyngQPETRAhLRQxK5nniH1NIPXGCifkNFq6W7byQZuvKKoCTwZNPbwwfoexnvB/Q0C1okUF3qtSJpTQYpiJ7qUqjiVU78mXfnoUoYeO5iJOPWcJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9O+5vm/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66309C4CEDD;
-	Thu, 20 Mar 2025 09:29:59 +0000 (UTC)
+	s=arc-20240116; t=1742463089; c=relaxed/simple;
+	bh=l9eem7WJGYypfrHFJiimr1YXth3+uzyUvblKHYU1JeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3zmHsa//l6z+1/+1pjQuoX2Cz0exkSHTe7lcwuyc2JKPvJ6Jp382M2nPeLIepOSdQC4C1TiuokRU8Vmp+9/cKolMXDYSkFXLj4R8ZPs2N1jKhhcZJphv0AZCAHbUhrVRCRTP1W9FO1vtMbV5hIAYiHwjZ/Qv6YxQKlvf32G8gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXeUXtPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77A8C4CEDD;
+	Thu, 20 Mar 2025 09:31:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742462999;
-	bh=dw5ASQC8hlhdIlEBxhQ13OH2Na6Ploy5abBdY4RpC7o=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=C9O+5vm/fgxVcGbIa0CSvUZTqO1EN332MFqVP5ms+f5GW2KqPTGsFSpnSbpN4a+ws
-	 L5o7bPrdNG6oz+/sn7+qysMoUgojy1ZCMKSPLuY6rCGwGmnLOiyuVgBHPoR7SKLTcm
-	 EY3dvujW32ceYa4uw8JBJfp/iRtx7MwwadMEQhaviy8GFMfimMkCUIN7C/wcklG0LX
-	 hREaHmkt92sIcuiAILo0Z6Pi3Ao8JQsicWY5CGtwrEfbbglPG0pUjECAUljOpON+AF
-	 3QzuDri5cr+3pk/OvRk5C2CYi9ENwiJIuLNZathWMcBaiRCVbg49N+P51rhlJsunUD
-	 7B6clqADSgbuQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71FC93806654;
-	Thu, 20 Mar 2025 09:30:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1742463088;
+	bh=l9eem7WJGYypfrHFJiimr1YXth3+uzyUvblKHYU1JeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NXeUXtPE6JVonW5rDIhp1JZVyg4q+rxLeJkeWKwRxe0N3QetCZ+WNlsU8VVZ8ZI8W
+	 JPjdtUfgOMSEMgRmrl/8igSZ1rNl197VPSAbTgmMY2u51EqM76RE2GSzRQKDLS22eH
+	 7gsBzF9uVsFRCtO7D1Xq7jvZO39EM6EDqmNjUyt4q3cxN43kEsXtoj60QVHZ972kDH
+	 Du5T1LPvNDr8gN4CzWteepf6bxtlxKCCwvoQMKAHzlSEnkeG9FLDtLColrpatXMzhg
+	 oPRV6+B9ZGqU3r4XeHCdL4S6/OLQtIt3W3ORZAg5ziDaYiIH7uLWZ0FO0iR+Qq8ixX
+	 Uo6tSWhp9yQFQ==
+Date: Thu, 20 Mar 2025 10:31:25 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, andersson@kernel.org, lgirdwood@gmail.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz, 
+	tiwai@suse.com, dmitry.baryshkov@linaro.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	johan+linaro@kernel.org
+Subject: Re: [PATCH 1/3] ASoC: dt-bindings: wcd93xx: add bindings for audio
+ switch controlling hp
+Message-ID: <20250320-feathered-super-walrus-8eeef8@krzk-bin>
+References: <20250319091637.4505-1-srinivas.kandagatla@linaro.org>
+ <20250319091637.4505-2-srinivas.kandagatla@linaro.org>
+ <4ie22uuz5tpg77jto3c3hec6lhonr44hrjda7jk655axlaxvba@u3atd4gcyghn>
+ <660115f1-d1fb-4fd7-a453-e8c177be9eed@linaro.org>
+ <51dd7cb2-0c22-4043-b3a1-fa8410903cbd@sirena.org.uk>
+ <938cb09f-3fb1-4daf-802d-2d95222f30db@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/12] mptcp: pm: prep work for new ops and sysctl
- knobs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174246303526.1366947.13566116463963705037.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Mar 2025 09:30:35 +0000
-References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
-In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, corbet@lwn.net, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <938cb09f-3fb1-4daf-802d-2d95222f30db@linaro.org>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 13 Mar 2025 11:20:49 +0100 you wrote:
-> Here are a few cleanups, preparation work for the new PM ops, and sysctl
-> knobs.
+On Wed, Mar 19, 2025 at 06:00:51PM +0000, Srinivas Kandagatla wrote:
 > 
-> - Patch 1: reorg: move generic NL code used by all PMs to pm_netlink.c.
 > 
-> - Patch 2: use kmemdup() instead of kmalloc + copy.
+> On 19/03/2025 16:03, Mark Brown wrote:
+> > On Wed, Mar 19, 2025 at 03:59:23PM +0000, Srinivas Kandagatla wrote:
+> > > On 19/03/2025 10:01, Dmitry Baryshkov wrote:
+> > 
+> > > > Is this regulator supplying the codec or some external component? In the
+> > > > latter case it's likely that it should not be a part of WCD bindings.
+> > 
+> > > This is regulator powering a mux that is driven by gpio which is part of
+> > > codec binding. So I would assume this will fall into the codec.
+> > 
+> > > Where would we fit this if not part of codec?
+> > 
+> > > Unless we mark this regulator as always on.
+> > 
+> > I would expect that the mux would appear in the DT and consume both the
+> > GPIO and the regulator.
+> Yes, its doable, so we would endup with a mux driver consuming regulator and
+> gpio and move the gpio handling in codec to move to use mux control.
 > 
-> [...]
+> Let met try that and see how it looks like.
 
-Here is the summary with links:
-  - [net-next,01/12] mptcp: pm: split netlink and in-kernel init
-    https://git.kernel.org/netdev/net-next/c/b97d6b682027
-  - [net-next,02/12] mptcp: pm: in-kernel: use kmemdup helper
-    https://git.kernel.org/netdev/net-next/c/fa123489e7ef
-  - [net-next,03/12] mptcp: pm: use pm variable instead of msk->pm
-    https://git.kernel.org/netdev/net-next/c/5fff36b69cd4
-  - [net-next,04/12] mptcp: pm: only fill id_avail_bitmap for in-kernel pm
-    https://git.kernel.org/netdev/net-next/c/98a0a99e81b6
-  - [net-next,05/12] mptcp: pm: add struct_group in mptcp_pm_data
-    https://git.kernel.org/netdev/net-next/c/eff5b1578e99
-  - [net-next,06/12] mptcp: pm: define struct mptcp_pm_ops
-    https://git.kernel.org/netdev/net-next/c/1305b0c22eca
-  - [net-next,07/12] mptcp: pm: register in-kernel and userspace PM
-    https://git.kernel.org/netdev/net-next/c/770170b41810
-  - [net-next,08/12] mptcp: sysctl: set path manager by name
-    https://git.kernel.org/netdev/net-next/c/595c26d122d1
-  - [net-next,09/12] mptcp: sysctl: map path_manager to pm_type
-    https://git.kernel.org/netdev/net-next/c/573b653401a8
-  - [net-next,10/12] mptcp: sysctl: map pm_type to path_manager
-    https://git.kernel.org/netdev/net-next/c/7982ed0edda3
-  - [net-next,11/12] mptcp: sysctl: add available_path_managers
-    https://git.kernel.org/netdev/net-next/c/fa3ee9dd8067
-  - [net-next,12/12] selftests: mptcp: add pm sysctl mapping tests
-    https://git.kernel.org/netdev/net-next/c/9cf0128e64ab
+Looking at schematics this is clearly not a supply of a codec, but as
+Dmitry said, separate switch. Actually two switches.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Best regards,
+Krzysztof
 
 
