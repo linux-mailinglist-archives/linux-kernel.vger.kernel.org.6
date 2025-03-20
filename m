@@ -1,78 +1,164 @@
-Return-Path: <linux-kernel+bounces-570393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C3A3A6AFC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:24:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C571A6AFCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 22:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A310189D37D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:24:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFB4887053
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DC3228C9D;
-	Thu, 20 Mar 2025 21:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABE822A4CC;
+	Thu, 20 Mar 2025 21:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dXuit9Ku"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="id1O5h57"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F69BE6C;
-	Thu, 20 Mar 2025 21:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6482222B6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742505847; cv=none; b=mfbH2TZVwui+AJzkR/5rV7FlRcUiBkwTuq6EFWSmfvx0zJ3trTLNPH8rA4eN1SrLyCjOfmnP221IwOtKf8xPsVSrqDokVhDVGbK9qOMD+jHfzidMf4dfbbU4asnIs50z5wj9G4FDdS2EB3pZhDGnZyHUpXFztDEWjfhwzRebJ/8=
+	t=1742505935; cv=none; b=l+CXuYKc9pvpcHfPhjTEBONbpnOW888IY8ygYy2DAWm2tQ9fNzImEknu33U2vcr1g7YEYFzict9jIyMXpAPI5RfMa6oTPuEfgKFPxwZBFzeumcFwm3FrNSoc/fNrhQivZwlhuP2C9AqeWaKRqqYSWdDRLDeFuZpAOTKqqB3tkAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742505847; c=relaxed/simple;
-	bh=WNNFXb5qqPBSMUEeyAEErC3JoChpdRD3LCm1OZY3c7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XN6snLsdAJb+/Vu3zXEdTk5XLDLVIqT06zyt1H+/BG7OmaGibFwmIvMFqgyeUA6CdWQt8/HKsehoAEl3llMthcLx4JouKXZ92CF5jDbi1U447IKrcvWUaWQKlKfottPCyCrNECNPYaQMtx8rZ5XbFWmEwJ2m5IS7OuDRCCUYuvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dXuit9Ku; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YlKOI1W/bc+9wVXeJXLrkLcgvNxryli1d2V8y+irOuE=; b=dXuit9Kuo/Z4tsOYMHnNstvC39
-	3lzFpmEAMwLedVEbrMPWzca8ZKwwOm3pR43pji+1UtAgkdResjYyLslNyihrccAFdD4fBslPVX84c
-	0T0IoRU1bblAbZhC6AD9Re1wmrnarFl/czdm+uMzOD0GtpCKrV2wFjRnFeA48+fQS0uM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tvNMr-006W5f-Da; Thu, 20 Mar 2025 22:23:57 +0100
-Date: Thu, 20 Mar 2025 22:23:57 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: hfdevel@gmx.net
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 5/7] net: tn40xx: create swnode for mdio and
- aqr105 phy and add to mdiobus
-Message-ID: <7d7a7499-f8cf-4e35-9692-78c9037b35c4@lunn.ch>
-References: <20250318-tn9510-v3a-v6-0-808a9089d24b@gmx.net>
- <20250318-tn9510-v3a-v6-5-808a9089d24b@gmx.net>
+	s=arc-20240116; t=1742505935; c=relaxed/simple;
+	bh=vI1BPqRdoy10g+WgmlSAf2KikeZLxUqHEVWTLCbIm9w=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=ot8wwrjzrT8JQU86f1AkWpScXKBv7471XQ9vF3Whq/Sw7DLAbhIUr8Ckm9NKHnfgfxFLOxtmLDi4rAQP7ReXzfA/9+hEK4b9/of6BPQ70KjLNThFs7zH8w3LlYJNp8DVAmR+XDEqThMhkleoRXjYHN2tCkLrkPUbDVX+pPdVtQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=id1O5h57; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf861f936so1526915e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 14:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742505932; x=1743110732; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/BM8p6OTMwPELuLuoM3O1JzZA7D2mDcWqh6aQhebe2w=;
+        b=id1O5h57dAQjiDasqV2/7bP8JCx+7wK0qTWvGUFZIikYjPdQhH440cY1WkFWuPLj3E
+         Wp7ELiRUOwLbv5xP26jsNv+e+z5qxeEWZEMtqgt6f3YuPZQ7GnRgkJbiDOFgVLYwjdiq
+         /IrpNJBwrDRmcHHY327m6kexMF28rtSydbs07mSXy9UtxD0wR5Vf9pRUPX2f3H1F/X17
+         BLbBNEnL9EBL4C4F6lnyA2w5DxOzdHlFTzNg/JFLzYwN5q59FOdRGCBMtAwJoJROJ/mb
+         bJzdsa09nUyagj+fGusJD4w9365g5eMjbI/lVbEVJ2yfgG+zA5kvI99zIvRdbfFbUWQ5
+         k9Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742505932; x=1743110732;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/BM8p6OTMwPELuLuoM3O1JzZA7D2mDcWqh6aQhebe2w=;
+        b=FbXSv2k4Qcbh+0WFT4ylKIjSRlf/DAntsTCOArJCwQSkvJZIQ69ZxesclKctgcd+iO
+         ABnPQ6i4ofLpSZ4pzTeY/KB3KycecJbCPSjpPBMektL8fwWYTvHnyGTMDqsemZ565U3L
+         3q5B5JdI4GfGdL2aSPJgVDeZl61Vt7oE8g9eH6QorTtcykzN6rMWaesOoS4uk836Kwzd
+         SsxNHw8Ep25LXFLxhWJX0xYg7gzYka+p3wsGk/yKTdWA4CD5mY6mbunEyPTbFOon4qP0
+         qVF9t5+g1VvF6n6PBrBDPkWjTQKnpPuyQEEt7CZpfBAn0aMbqC4hAy/L+26oTsX5tLTh
+         +ebg==
+X-Gm-Message-State: AOJu0YxWRXp/WvkLC4wtSMKbOzn3w1wunN7Iubx0V1DrbfUghBdhC3Qw
+	Jqm6wFDHgQtUGpEfxuB8vT5yo0dIz8Cr3w6OCngd7j8X72Pq/bY0/2cJBWjZj8A=
+X-Gm-Gg: ASbGncsuQ3RRfI4VY7LYM9c/ddQl3Xfqmoqf3WB7NM5Pqe7Pp1hCKKR0/bB3VGsVWga
+	LoqtRNFvzzdjZQHeLWEUYd4kmm/aCiXxptjyplZEfuXSYEzxvHXE67ge4+lx8ug+lhPv9hVHWRU
+	KmbfhX6ji0doOk/js/IqklLyHTYSVNuchj+c47bpoHcb+zeE2jMgzTK0V7xABhJPX3dcd7G2+HE
+	47tnvJuP5Ka7C61Q3fYXfSAH9HMjhMbWThENCJlcy1hRy/bTXXLBqHL+CFKQPqRLLf43qdOq6Kc
+	gN6TPjYMHskMHS4t6SnzIXdg4iAAWsSI7ENMwW4lsvPy3tdxsLaj+a5SXkzq8TYwm+8SpEEtnid
+	5w7Mh
+X-Google-Smtp-Source: AGHT+IENUyr/tuJjthynG7pDAFWYzf7OBnXUo8NpuhgchW3KTo0PDxUCxZfCqwEA5Mqzg2/ebVjxow==
+X-Received: by 2002:a05:600c:46c3:b0:439:8294:2115 with SMTP id 5b1f17b1804b1-43d50a53d12mr2494095e9.8.1742505931793;
+        Thu, 20 Mar 2025 14:25:31 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9efe55sm579763f8f.88.2025.03.20.14.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 14:25:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318-tn9510-v3a-v6-5-808a9089d24b@gmx.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 20 Mar 2025 22:25:30 +0100
+Message-Id: <D8LESTM58PV0.7F6M6XYSL4BU@ventanamicro.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
+ <zong.li@sifive.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>, "Thomas Gleixner"
+ <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov"
+ <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>,
+ <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Arnd Bergmann"
+ <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>, "Eric Biederman"
+ <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>, "Jonathan Corbet"
+ <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann Horn"
+ <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH v12 25/28] riscv: create a config for shadow stack and
+ landing pad instr support
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-25-e51202b53138@rivosinc.com>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-25-e51202b53138@rivosinc.com>
 
-> +void tn40_swnodes_cleanup(struct tn40_priv *priv)
-> +{
-> +	/* cleanup of swnodes is only needed for AQR105-based cards */
-> +	if (priv->pdev->device == 0x4025) {
+2025-03-14T14:39:44-07:00, Deepak Gupta <debug@rivosinc.com>:
+> This patch creates a config for shadow stack support and landing pad inst=
+r
+> support. Shadow stack support and landing instr support can be enabled by
+> selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` wire=
+s
+> up path to enumerate CPU support and if cpu support exists, kernel will
+> support cpu assisted user mode cfi.
+>
+> If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS`,
+> `ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> @@ -250,6 +250,26 @@ config ARCH_HAS_BROKEN_DWARF5
+> +config RISCV_USER_CFI
+> +	def_bool y
+> +	bool "riscv userspace control flow integrity"
+> +	depends on 64BIT && $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zicfiss)
+> +	depends on RISCV_ALTERNATIVE
+> +	select ARCH_HAS_USER_SHADOW_STACK
+> +	select ARCH_USES_HIGH_VMA_FLAGS
+> +	select DYNAMIC_SIGFRAME
+> +	help
+> +	  Provides CPU assisted control flow integrity to userspace tasks.
+> +	  Control flow integrity is provided by implementing shadow stack for
+> +	  backward edge and indirect branch tracking for forward edge in progra=
+m.
+> +	  Shadow stack protection is a hardware feature that detects function
+> +	  return address corruption. This helps mitigate ROP attacks.
+> +	  Indirect branch tracking enforces that all indirect branches must lan=
+d
+> +	  on a landing pad instruction else CPU will fault. This mitigates agai=
+nst
+> +	  JOP / COP attacks. Applications must be enabled to use it, and old us=
+er-
+> +	  space does not get protection "for free".
+> +	  default y
 
-Maybe replace this magic number with a #define?
+A high level question to kick off my review:
 
-      Andrew
+Why are landing pads and shadow stacks merged together?
+
+Apart from adding build flexibility, we could also split the patches
+into two isolated series, because the features are independent.
 
