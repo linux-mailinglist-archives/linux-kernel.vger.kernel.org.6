@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-569192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD8BA69FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:26:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABA2A69FD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F12189D6A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7F7189792C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E831E2611;
-	Thu, 20 Mar 2025 06:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9EC1E412A;
+	Thu, 20 Mar 2025 06:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZA4c8He"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tt+wFAqZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7DE15A8;
-	Thu, 20 Mar 2025 06:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155B01BD9D3;
+	Thu, 20 Mar 2025 06:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742451980; cv=none; b=ke+zi36Z7VZ/xWiWC91PwD6HJbEZAQLsY83eod5TX5ZN6BDYmWpMkBttMqJHE6t8sFLwlAik+RaazmL/wiiR3bnNwoPgIvJCgT5Glyzj1gZEF3H2pUwcJRPl2RkX/CssKD7xE/O/UQWu3O8gHym0DNpuLVlX3qaLoQa5SsRBba8=
+	t=1742452359; cv=none; b=Ou+NCJOKPnHT/mfWIU10uYhMrv8eEMhqC8J30YrTLLNTEmdLMpjpy8y/lS3+M/hMc5T66M8YxhG4Ax2jTIxkWqga9O4tN0r0Esg5wwNd+kYGGsJ2z/NwAoPt66hyIfhZsolOy/rtGcJ7sRN9VhdddGf3sHSJ/8itHuPB79Pcb8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742451980; c=relaxed/simple;
-	bh=OTeO1mDZ68FB/NGRuVKX7yUGtO4Y8nHFoWrewcm0+uE=;
+	s=arc-20240116; t=1742452359; c=relaxed/simple;
+	bh=2TB5IInua8OAesfAMZ5bcck0jt24kT8PyVVFFuOdIfE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQNjzBnk/Ia2A2f28ImDXeo3zZ9duSiDxoUTXXYEsgM5fSh+3BWU7GhUFK4B9gjS4qcXmxwZe8ZFiZVGfMCfeoe1MJDhfShSl5Ya1+vYfUuTIwngjv0zwLZxNGJ8R2MU+W+3U8TFbTo1Pw8NUOT/VHnAbA6O3gOXgZx/bpyVpko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZA4c8He; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7458AC4CEE7;
-	Thu, 20 Mar 2025 06:26:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uFBjHTyb9TR3AjAFJesGMnN+KBqizsKMkBo3MS4QZUCW7hqZadURMNzVidlkjuXxSAgS28JZl6/WcXLjdrq94Suz8OK8EPYan9mshFTZnszf6HwFL6o8QHiYsB/wobKOBE5OVKlqvegB0zK9Pt+mI808PNp5c352ntjZUtE0AnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tt+wFAqZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3407EC4CEDD;
+	Thu, 20 Mar 2025 06:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742451978;
-	bh=OTeO1mDZ68FB/NGRuVKX7yUGtO4Y8nHFoWrewcm0+uE=;
+	s=k20201202; t=1742452358;
+	bh=2TB5IInua8OAesfAMZ5bcck0jt24kT8PyVVFFuOdIfE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HZA4c8HeCtpv6R6PzglcHMonN2ZkRlzOXLiQqGyP3xq28btIYjh80FLIwO0lOjD8J
-	 HHlH/kqHGyOfPedR0y8+kaokEHEbO2+RD91wqiTL0LxPV7YQbOYP2pw9yHlYhAUoh3
-	 8uD5b9F3wB3QNRbWqVpE4E1XCarYmSteCUmtx2B1q610plXe5lGyMv2YoAzELxUTsp
-	 6KmrX2LNLZ7om2re2OuAbjd9UYMne+f6nvL/VPRpSmXUHCK4Ax9+U4nXDcreJkXmJU
-	 cMDPaKODAbyNOxJ5Cikj/l6Rej5/ehct4IZZ0kFXxFtaQ6YZoZJdxqUlInd4JfX4AA
-	 STyvR4EHTj0qg==
-Message-ID: <1367aa41-3829-4cf7-9012-e3cb0ca42b58@kernel.org>
-Date: Thu, 20 Mar 2025 07:26:16 +0100
+	b=tt+wFAqZhdrypxfxSenZXkajrst1fFnTtgdJoh4GSO7qHwUCRaTz2jPKzHdFulsC+
+	 gdTxiyn4WbMq87Jtvm5TIQ58DZ3nGShw90dMabiKhBnR2TJNwdGRS4sgu/p52jUJab
+	 NaLM0Qlevgp02itW/NqnvHFCbPzLD2xVt7KR5yizJMXRtk/g0TEjgc8146m3NCTv3+
+	 dOPxqwhTgNBHNCYSog2d2ROOboRWIGYkpERWvPAvJ7CJ4PvRKki43awzFxUNS1fsKC
+	 8pbonH/q/VnHSafgjx0Fwift1uEZEdlm5puGS5tcROCUFMLy+ZqLcbXUc8DcgiLOVJ
+	 2FIr/0sSSzggg==
+Message-ID: <ec7e7166-6c02-4a2e-8b10-2c795304789d@kernel.org>
+Date: Thu, 20 Mar 2025 07:32:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 55/57] docs: irq-domain.rst: Simple improvements
+Subject: Re: [PATCH v2 56/57] docs: irqdomain: Update
 To: Randy Dunlap <rdunlap@infradead.org>, tglx@linutronix.de
 Cc: maz@kernel.org, linux-kernel@vger.kernel.org,
  Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
 References: <20250319092951.37667-1-jirislaby@kernel.org>
- <20250319092951.37667-56-jirislaby@kernel.org>
- <4c71b7bd-5264-4a64-81bc-297dcf1c81a1@infradead.org>
+ <20250319092951.37667-57-jirislaby@kernel.org>
+ <907fba96-d8f5-428e-b762-738abc8f88a4@infradead.org>
 Content-Language: en-US
 From: Jiri Slaby <jirislaby@kernel.org>
 Autocrypt: addr=jirislaby@kernel.org; keydata=
@@ -100,70 +100,29 @@ Autocrypt: addr=jirislaby@kernel.org; keydata=
  f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
  DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
  S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <4c71b7bd-5264-4a64-81bc-297dcf1c81a1@infradead.org>
+In-Reply-To: <907fba96-d8f5-428e-b762-738abc8f88a4@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19. 03. 25, 18:54, Randy Dunlap wrote:
-> Hi,
-> 
-> On 3/19/25 2:29 AM, Jiri Slaby (SUSE) wrote:
->> The improvements include:
->> * Capitals in headlines.
->> * Added commas: for easier reading, it is always desired to add commas
->>    at some places in text. Like before adverbs or after fronted
->>    sentences.
->> * 3rd person -> add 's' to verbs.
->> * End some sentences with period and start a new one. Avoid thus heavy
->>    sentences.
->>
->> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: linux-doc@vger.kernel.org
->> Cc: Randy Dunlap <rdunlap@infradead.org>
->> ---
->>   Documentation/core-api/irq/irq-domain.rst | 22 +++++++++++-----------
->>   1 file changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-api/irq/irq-domain.rst
->> index 775dd43b3340..c2f2728b1a35 100644
->> --- a/Documentation/core-api/irq/irq-domain.rst
->> +++ b/Documentation/core-api/irq/irq-domain.rst
->> @@ -1,19 +1,19 @@
->>   ===============================================
->> -The irq_domain interrupt number mapping library
->> +The irq_domain Interrupt Number Mapping Library
->>   ===============================================
->>   
->>   The current design of the Linux kernel uses a single large number
->>   space where each separate IRQ source is assigned a different number.
->>   This is simple when there is only one interrupt controller, but in
->> -systems with multiple interrupt controllers the kernel must ensure
->> +systems with multiple interrupt controllers, the kernel must ensure
->>   that each one gets assigned non-overlapping allocations of Linux
->>   IRQ numbers.
->>   
-> 
-> (I'm OK with all of the changes here except this one:)
-> 
->>   The number of interrupt controllers registered as unique irqchips> -show a rising tendency: for example subdrivers of different kinds
->> +shows a rising tendency. For example, subdrivers of different kinds
->>   such as GPIO controllers avoid reimplementing identical callback
+On 19. 03. 25, 19:01, Randy Dunlap wrote:
+>> @@ -15,45 +15,64 @@ such as GPIO controllers avoid reimplementing identical callback
 >>   mechanisms as the IRQ core system by modelling their interrupt
->> -handlers as irqchips, i.e. in effect cascading interrupt controllers.
->> +handlers as irqchips. I.e. in effect cascading interrupt controllers.
+>>   handlers as irqchips. I.e. in effect cascading interrupt controllers.
+>>   
+>> -Here the interrupt number loose all kind of correspondence to
+>> -hardware interrupt numbers: whereas in the past, IRQ numbers could
+>> -be chosen so they matched the hardware IRQ line into the root
+>> -interrupt controller (i.e. the component actually fireing the
+>> -interrupt line to the CPU) nowadays this number is just a number.
+>> +So in the past, IRQ numbers could be chosen so that they match the
+>> +hardware IRQ line into the root interrupt controller (i.e. the
+>> +component actually firing the interrupt line to the CPU). Nowadays,
+>> +this number is just a number and the number loose all kind of
 > 
-> I would just add a comma after "i.e.". In the new + line, the "I.e." part
-> is not a sentence.
+>                                                 loses
 
-Thanks. Of course, so now, I have:
-
-The number of interrupt controllers registered as unique irqchips
-shows a rising tendency. For example, subdrivers of different kinds
-such as GPIO controllers avoid reimplementing identical callback
-mechanisms as the IRQ core system by modelling their interrupt
-handlers as irqchips, i.e., in effect cascading interrupt controllers.
-
+Thanks, fixed in 55/57 where I explicitly do "3rd person -> add 's' to 
+verbs.". Even though this was "loose" and not "lose" ;).
 
 -- 
 js
