@@ -1,96 +1,47 @@
-Return-Path: <linux-kernel+bounces-569229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A61A6A051
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:19:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3780A6A054
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6037E7A9EBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135AB189F6DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26B1EF39E;
-	Thu, 20 Mar 2025 07:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430C41F4C81;
+	Thu, 20 Mar 2025 07:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="CRdyK9wK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cJSzbvPj"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQ+pWIg3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ACD1E378C;
-	Thu, 20 Mar 2025 07:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4FB1EDA3A;
+	Thu, 20 Mar 2025 07:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742455167; cv=none; b=nM/Qumoz7l4dO8+AgBoTXKfoOqOiZu/iSUcdoPRsy2Elfk1R+BefZQO5LIw3vdd1uyY5LRJlWfcELP/5VLctCyZ4YI033AVuJwIeZbz+9iW4f4wSIOLQphysU9tUXgqioPt+yOPv/yyqZSg9lC7WCUObnbeKvUNwzxd/osfWakU=
+	t=1742455308; cv=none; b=Qqm7Bmn3nN2nWgHKX89MGOs6BcANIU6iNG593kL2Ypb2qBi0quXSYFOpb82GFtjcjb4TLyNr62q7q9HdVeGZzyEnA97+T6PTmUqr9qYiQK/QsPevlJ1gj9XVogOvyl1forSCprIipEqoeuctOw6z5x9asxcIQFiB7WxKLBj8ksY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742455167; c=relaxed/simple;
-	bh=MNehgo02ZIvB+dbmKeh2z24IAu7gyZTIbDWlF8uNuvA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jxYdbE5Hg6OVKqTpPMBmdZtKAGWzJiqXBKz59b5uItp1ikkYD5eZHQVMeJm1OlIINJb8d/PdvNW7ORu4hxZY1m1AZ0v5w0ld23EA8KZj3qCWIDHdW/0vTq6JRTjMINvjGkNJwNChH5b1FDBe0TJfezbsJVwBQdcbHSffW4QiCX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=CRdyK9wK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cJSzbvPj; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7DDF0114019E;
-	Thu, 20 Mar 2025 03:19:24 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Thu, 20 Mar 2025 03:19:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742455164;
-	 x=1742541564; bh=IkKR4Il8czP7aKXMKTYH7NqaSmhXxthO7I0PorMEqeY=; b=
-	CRdyK9wKzKBMuJPeT/5YepbJMBM2OIVTnW8QErCxOBxNI4jtc+Eloa0LvNSpAmR4
-	tnzyAsThLQ6RzWgoxJ7o7dceBY9sjh/cIU1yO3pQTFnvPAo1aT4BWCZ2QlgzpveS
-	cRXtcpYT7tCSS6TZ242tnLz4p0/i+OQaDeuGfHMOVYiB8Jx+DwPIAlFaN2I0bzD3
-	x6Td5MbfFesd9Qn+qpTFOaEv1U6BcU1zMD1asCU7D8Tj+9D56fv3bzWtzwSQpkih
-	qXBCRFq7lHlHeUda3tg2B7PF7sd/WEwNdfsLgx+rhmREVVAPqpLcSSBhhq+4xlk7
-	yWT/iGwheQGfqKMzmopQkA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742455164; x=
-	1742541564; bh=IkKR4Il8czP7aKXMKTYH7NqaSmhXxthO7I0PorMEqeY=; b=c
-	JSzbvPjkI4yEqy8KV8C20V0i9psQ1SYbBS5wNu7M9KGXigbkoMyhPg22iCyiSZax
-	hYqsGiC7vkehYKpJkpUEwyM4ucM5BAcrcBDz/a3s2G638tKSi6haCthhpWTrncf8
-	0txyBUzLCBQf5HZ9+dE9bUddJfPBrIoaOphWz9HD0L06nWdMKV+XtVzLB/A/5xFv
-	FKDEaj3We7qX5nEtj4/7Ot21Z6O8IRHaZAC5RuEZJfui1lgIPfMS1hdT7fFb7gIM
-	0zJenxzOzB+1lgoYJTv+cXTAJfkc+xyMY1768sW/cG+tBzYr49qytmy6/SPJXxhA
-	d966q5Q7vr9ynKkcF3QIQ==
-X-ME-Sender: <xms:fMHbZ8Mhl01U-F8XJR4LZdIkHhTaYGZx2pIiiAyvRKZ6H6anzgw-pw>
-    <xme:fMHbZy-uaFP1AAZbOapaJn9YrsjYiIHgjGK1Uuw74iXNpvcDm3ycdHbFzwFujoC4d
-    p1IiYIsmTr94Nb87Ik>
-X-ME-Received: <xmr:fMHbZzS8xNwqxbnDtAagrCO5ZskCSlXRAmmRpAZ15ARJUA_u08JESga2-ImrAs_qWvyw0y4R>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejheelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
-    gvshdruggvvheqnecuggftrfgrthhtvghrnhepkeetheevveetleelhfdugeevudefhfet
-    ledtteffgfegueeiteeludeiveffveffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
-    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:fMHbZ0tGrp3IWPVuStuaC3J5bdWR70wDU5xixhiiwZ8wn-40h8NihA>
-    <xmx:fMHbZ0cUw8nNl4F4iKOGxyAhirbQ0NgMP6_OFvrmwlxPfn0Z9W750g>
-    <xmx:fMHbZ40IovCdXqS0T5aPDrbF5JNTz1YowKlM1Javm7mHiWMSRo_N5w>
-    <xmx:fMHbZ4_jRaM2BYq6l5CWl1bPo3yvE8NqIlSCOQchfFVqTjQxUoIGbw>
-    <xmx:fMHbZ7wZq5aez5EXA4O5aj5BvMjnrQ1XekpSzoan2u5-gWhmHdTd8N2F>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Mar 2025 03:19:19 -0400 (EDT)
-Message-ID: <567b2056-8687-4f92-b4d2-7f289321275e@ljones.dev>
-Date: Thu, 20 Mar 2025 20:19:16 +1300
+	s=arc-20240116; t=1742455308; c=relaxed/simple;
+	bh=LPFNRfq1ARkgilTcOqF5DTW8sEDkK6LkNiXxUH933bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OTcKNNXIE/N44Z4MRvyBwtiyi/+J2P4ZC7XN2VbEDK0JZxfE7y+JW6PcOXbwxvxKYjF8KuhZQIw0YlFEdNdqo6iIhaQ2WU9n8sHnzUvKnpdo6fR866hOvBf46nPaLE1q6KGOQ+ODQ8a/4sQIeFbv/FiNQaiwoV+xx/hVk9P7elM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQ+pWIg3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2D8C4CEDD;
+	Thu, 20 Mar 2025 07:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742455308;
+	bh=LPFNRfq1ARkgilTcOqF5DTW8sEDkK6LkNiXxUH933bg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PQ+pWIg3kVhN5Omh9Nx1hntZCFqbooR87jFiN8wUn69vxM3n2CNdZPfl/N9wnaWzg
+	 K62hXYU0q/wwCGVaEFm7zC2DgtIMFtqidwBYMqpXtwtjr3adtv2sLh2ekt7G7m0zHj
+	 izsFAVHwLBgGhgax2fJL57J9f6PUvSofjaAL0s8U0ysOz4jrMBTrMRXVyeJ1aaOEfU
+	 69t/6UDyRL8EgWhRmVa/4p61hL+pPlCoKW6vtQDxhaNuPWNospy2VNvO3JFo48vh7s
+	 L5D1ZFbpg/jzfUOlJdr5GoVfnJObhzbCwymoFaM34MMbgzjn99j75nsIhNEBkECT5t
+	 Q/cotZaFZm7IA==
+Message-ID: <6d946f17-704a-4f5e-8e1e-c05dcbb55d70@kernel.org>
+Date: Thu, 20 Mar 2025 08:21:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,187 +49,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: "Luke D. Jones" <luke@ljones.dev>
-Subject: Re: [PATCH 01/11] HID: asus: refactor init sequence per spec
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <20250319191320.10092-2-lkml@antheas.dev>
-Content-Language: en-NZ
-In-Reply-To: <20250319191320.10092-2-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH net] wifi: ath12k: properly set single_chip_mlo_supp to
+ true in ath12k_core_alloc()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Baochen Qiang <quic_bqiang@quicinc.com>, neil.armstrong@linaro.org,
+ Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson
+ <jjohnson@kernel.org>, Aditya Kumar Singh <quic_adisi@quicinc.com>,
+ linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250303-topic-ath12k-fix-crash-v1-1-f871d4e4d968@linaro.org>
+ <24b2f1f8-97bd-423a-acbd-9a5cd45e4a40@oss.qualcomm.com>
+ <7901d7f0-d6d0-4bf3-89ad-d710e88477b7@linaro.org>
+ <7b4b598f-bc13-aa4b-8677-71477e1f5434@quicinc.com>
+ <a5ebfdfb-107f-407f-b557-522b074c904f@linaro.org>
+ <38cd738c-1a2a-4382-80f8-d57feb7c829d@quicinc.com>
+ <91a5a1f7-6eef-4ea0-bcde-350640984a7b@kernel.org>
+ <vpumypwwywrxi54z6g6zmcosd4mbw5y33rdex4zdbzsymcww6s@5fsbhdy6vuju>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <vpumypwwywrxi54z6g6zmcosd4mbw5y33rdex4zdbzsymcww6s@5fsbhdy6vuju>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On 20/03/25 08:13, Antheas Kapenekakis wrote:
-> Currently, asus_kbd_init() uses a reverse engineered init sequence
-> from Windows, which contains the handshakes from multiple programs.
-> Keep the main one, which is 0x5a (meant for drivers).
-
-0x5A is also used for Ally setup commands, used from userspace in 
-Windows. Only a nit but I don't think stating it's only for drivers is 
-accurate but then again asus kind of blurs the line a bit.
-
-> In addition, perform a get_response and check if the response is the
-> same. To avoid regressions, print an error if the response does not
-> match instead of rejecting device.
+On 19/03/2025 12:25, Dmitry Baryshkov wrote:
+> On Wed, Mar 19, 2025 at 11:29:18AM +0100, Krzysztof Kozlowski wrote:
+>> On 19/03/2025 10:46, Baochen Qiang wrote:
+>>>
+>>>
+>>> On 3/19/2025 5:12 PM, neil.armstrong@linaro.org wrote:
+>>>> Hi,
+>>>>
+>>>> On 19/03/2025 10:06, Vasanthakumar Thiagarajan wrote:
+>>>>>
+>>>>>
+>>>>> On 3/19/2025 1:34 PM, Neil Armstrong wrote:
+>>>>>> On 18/03/2025 17:35, Jeff Johnson wrote:
+>>>>>>> On 3/3/2025 7:00 AM, Neil Armstrong wrote:
+>>>>>>>> In commit 46d16f7e1d14 ("wifi: ath12k: rename mlo_capable_flags to
+>>>>>>>> single_chip_mlo_supp")
+>>>>>>>> the line:
+>>>>>>>>     ab->mlo_capable_flags = ATH12K_INTRA_DEVICE_MLO_SUPPORT;
+>>>>>>>> was incorrectly updated to:
+>>>>>>>>     ab->single_chip_mlo_supp = false;
+>>>>>>>> leading to always disabling INTRA_DEVICE_MLO even if the device supports it.
+>>>>>>>>
+>>>>>>>> The firmware "WLAN.HMT.1.1.c5-00156-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1"
+>>>>>>>> crashes on driver initialization with:
+>>>>>>>>   ath12k_pci 0000:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0x3d soc_id 0x40170200
+>>>>>>>>   ath12k_pci 0000:01:00.0: fw_version 0x110f009c fw_build_timestamp 2024-05-30 11:35
+>>>>>>>> fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HMT.1.1.c5-00156-
+>>>>>>>> QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
+>>>
+>>> this FW version is not upstream yet, why are you testing with it?
+>>>
+>>> Generally we only support upstrmea driver + upstream FW.
+>> FW does not have to be upstream. We work, here in upstream, with all
+>> sort of vendors and all sorts of devices, for which vendors might not
+>> send yet their FW or we are unclear about licensing rules.
 > 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/hid/hid-asus.c | 82 +++++++++++++++++++++++-------------------
->   1 file changed, 46 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 46e3e42f9eb5f..aa4a481dc4f27 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->   #define FEATURE_REPORT_ID 0x0d
->   #define INPUT_REPORT_ID 0x5d
->   #define FEATURE_KBD_REPORT_ID 0x5a
-> -#define FEATURE_KBD_REPORT_SIZE 16
-> +#define FEATURE_KBD_REPORT_SIZE 64
->   #define FEATURE_KBD_LED_REPORT_ID1 0x5d
->   #define FEATURE_KBD_LED_REPORT_ID2 0x5e
->   
-> @@ -386,16 +386,43 @@ static int asus_kbd_set_report(struct hid_device *hdev, const u8 *buf, size_t bu
->   	return ret;
->   }
->   
-> -static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
-> +static int asus_kbd_init(struct hid_device *hdev)
->   {
-> -	const u8 buf[] = { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0x54,
-> -		     0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
-> +	/*
-> +	 * Asus handshake identifying us as a driver (0x5A)
-> +	 * 0x5A then ASCII for "ASUS Tech.Inc."
-> +	 * 0x5D is for userspace Windows applications.
+> If you are working with non-supported firmware, then, basically, you are
+> on your own. I think you'd get the same response from any other vendor
+> shipping firmware files. Consider reporting an issue to i915 or amdgpu
+> driver _and_ stating that you are using some non-standard firmware files
+> that were not provided to you by the corresponding team.
 
-0x5D is the report ID used for commands such as RGB modes. Probably 
-don't need to mention it here, and only where it is used.
 
-> +	 * The handshake is first sent as a set_report, then retrieved
-> +	 * from a get_report to verify the response.
-> +	 */
-> +	const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0x41, 0x53, 0x55, 0x53, 0x20,
-> +		0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
-> +	u8 *readbuf;
->   	int ret;
->   
->   	ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
-> -	if (ret < 0)
-> -		hid_err(hdev, "Asus failed to send init command: %d\n", ret);
-> +	if (ret < 0) {
-> +		hid_err(hdev, "Asus failed to send handshake: %d\n", ret);
-> +		return ret;
-> +	}
->   
-> +	readbuf = kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
-> +	if (!readbuf)
-> +		return -ENOMEM;
-> +
-> +	ret = hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf,
-> +				 FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REPORT,
-> +				 HID_REQ_GET_REPORT);
-> +	if (ret < 0) {
-> +		hid_err(hdev, "Asus failed to receive handshake ack: %d\n", ret);
-> +	} else if (memcmp(readbuf, buf, sizeof(buf)) != 0) {
-> +		hid_err(hdev, "Asus handshake returned invalid response: %*ph\n",
-> +			FEATURE_KBD_REPORT_SIZE, readbuf);
-> +		// Do not return error if handshake is wrong to avoid regressions
+FW extracted from whatever-we-got-there is entire history of all WiFi
+drivers... And no one asked here for support.
 
-I'll have to test this on the oldest model I have. Hopefully it's a 
-non-issue and this can return error instead.
 
-Side-note: I notice you're using a msleep to try and work around an 
-issue in a later patch - it might be worth trying replacing that with a 
-retry/count loop with an inner of small msleep + a call to this init, 
-see if it still responds to this during that critical period.
-
-> +	}
-> +
-> +	kfree(readbuf);
->   	return ret;
->   }
->   
-> @@ -540,42 +567,25 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->   	unsigned char kbd_func;
->   	int ret;
->   
-> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> -		/* Initialize keyboard */
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		/* The LED endpoint is initialised in two HID */
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
-> -		if (ret < 0)
-> -			return ret;
-
-Ah, I recall now. Some devices like the Slash or AniMe Matrix required 
-the 0x5E and 0x5D report ID (device dependent) however these are 
-currently being done via userspace due to not being HID devices.
-
-There *are* some older laptops still in use that require init on 0x5E or 
-0x5D for RGB to be usable, from memory. It's been over 5 years so I'll 
-pull out the laptop I have with 0x1866 PID MCU and see if that is 
-actually true and not just my imagination.
-
-> +	ret = asus_kbd_init(hdev);
-> +	if (ret < 0)
-> +		return ret;
->   
-> -		if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> -			ret = asus_kbd_disable_oobe(hdev);
-> -			if (ret < 0)
-> -				return ret;
-> -		}
-> -	} else {
-> -		/* Initialize keyboard */
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> -		if (ret < 0)
-> -			return ret;
-> +	/* Get keyboard functions */
-> +	ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-> +	if (ret < 0)
-> +		return ret;
->   
-> -		/* Get keyboard functions */
-> -		ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-> +	if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> +		ret = asus_kbd_disable_oobe(hdev);
->   		if (ret < 0)
->   			return ret;
-> -
-> -		/* Check for backlight support */
-> -		if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> -			return -ENODEV;
->   	}
->   
-> +	/* Check for backlight support */
-> +	if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> +		return -ENODEV;
-> +
->   	drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
->   					      sizeof(struct asus_kbd_leds),
->   					      GFP_KERNEL);
-
-I've left only small comments on a few patches for now. I'll review in 
-full after I get testing done on a variety of devices whcih I'm aiming 
-for this weekend. Overall impression so far is everything looks good and 
-this is a nice improvement. Thank you for taking the time to implement it.
-
-Cheers,
-Luke.
+Best regards,
+Krzysztof
 
