@@ -1,96 +1,47 @@
-Return-Path: <linux-kernel+bounces-569224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24755A6A03B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:12:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A672A6A040
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:13:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B6D189B208
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C69817B4AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5441EF360;
-	Thu, 20 Mar 2025 07:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851D71EEA56;
+	Thu, 20 Mar 2025 07:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="lsk8i3SG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g4lv+eJH"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNSPxtcI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987D22744D;
-	Thu, 20 Mar 2025 07:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DBA2744D;
+	Thu, 20 Mar 2025 07:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742454770; cv=none; b=OEcZne+oRh8758rL4W6+wCxTgKn2jrXGkJGsgBIKJ/B4Evi0bmdDEkeov9iIaHETIQSecnqONuaZU76QQR3e2wl7uwrXkYEPpKlRECQyP6kBeGczLhwMYVU6fltvvoW9obO+RYGpRPAR7bKdv145r8d5f0LOS6D57giMFW5l0lk=
+	t=1742454820; cv=none; b=QNwVur65W+9575crbvxYk+E0ZSQzYqQpFUzWoHexSoNBt40BBcGVgjSYzN2f1vhNCXh7x5t/tGiYegph1HN96/kKyGvGhBS2+nJxIDWaF7URqZBLw+d3FjEfviNb4pOeBOE+7roAQm5aRyC31UONTVt/yhvtvfDFH3sJwCL6uOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742454770; c=relaxed/simple;
-	bh=MT8nyD/PfCAM9gUqtSHMNqQZ0kDztWEnrBz2Pr4SGXQ=;
+	s=arc-20240116; t=1742454820; c=relaxed/simple;
+	bh=UuARulmInnBUADHH7bXdcjHIkE+FWXcsYmX41MdIaHw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pk8UsGBvoG3k9QMqHWc1oQrnhjFovSuYt0YKTamNcOCfBuKYRsDCodIekbDpPlysZXrEBb+AQYYc+ITXdsRYWpzuqKKefIJZiUurvccnM8uzfvd16xKNsom5myLyV8XK/yFP5DlVyQqIUIlGTA74yT6kKgO9SkfCa/8Di6d38w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=lsk8i3SG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g4lv+eJH; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 5F45225401C2;
-	Thu, 20 Mar 2025 03:12:47 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 20 Mar 2025 03:12:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742454767;
-	 x=1742541167; bh=FpSAft60jR4u85D2Ofi92uo7DV6nNJ7rZp7/7M7RMyc=; b=
-	lsk8i3SGgHUJIHysM82NMPaELSCSl1p/OjESSiiUOttf4A1eLtctceAmVn5KV1BE
-	6zoHRLIMQw0Qw6cCrUjzwX/hrbK+FSbzpHhI+wutpXo+eKZSptjOUgDNSjciqoyZ
-	MHDhM/J7F5kDCoh/7v+1g+Qm1sq9OaA8VdoTOyy601Omw1v2hwcEGoL03nBHQHV/
-	RCzK8rWu9ejGFL3H2prAv8rnJ30qgPZzoXesW6nSeI2qU6TSK2mai8xMf+RhX8QC
-	gKGuBeEuC9tZLBhnPK6xqxUE9aBkKUJvsAM/EdRP2BunxqrAxsRUoKeNsTGsgzQV
-	5ye5u39cT0Ld/+3cjUgyoA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742454767; x=
-	1742541167; bh=FpSAft60jR4u85D2Ofi92uo7DV6nNJ7rZp7/7M7RMyc=; b=g
-	4lv+eJHHGVvy8rUnqq8XXQd/kw+CDo0gOvR+M/XAZgfdJl9fbwBxjgCi9KuCpcI3
-	hMr6B4j4rOoqm4f2mRj8FD5dznK2ZDBKB4Sx2EhKBcN/cvGFWuaDYvyUsxJww0UU
-	WQSJnAoBPRPep39bABFr49jVAR3Q7J9iU/4Rcgq20zULP0P3ArfnW3Z4QJvsVp5p
-	Fsm+ba3QwKIEblscAaS/ShUSChV0JzL7h+d83Nwfw058rskKp0nta/+33wk57Gtf
-	P1mAYkqz/CN3Yo4voxIUIyaNyc0Z9VqeviExdzdvKOmTr2gPOpH2gGofqQIX1yZx
-	jCb6q+cMpTs5SIwnMaxBA==
-X-ME-Sender: <xms:7r_bZ2vkYMBbvYAHsBYs2luisYO35iCe0U-GjjWZZEoatxec6uHlSg>
-    <xme:7r_bZ7d_E5sHrOK3zvAn0PiwfORW9uvbX6UEkkqudghUOfqjU67zWtcqByCnJZ_jO
-    aNqmozdu6d6y9N91oA>
-X-ME-Received: <xmr:7r_bZxwjIPK-H4452ydptXPev090JuLc4V1B20QzZrwz0-NeGSJtRrxX0fVH_9MXtcyWq_7A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeejheejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
-    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
-    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgepudenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
-    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:7r_bZxOH7eE7v3qMLMwrmkUWqCEvurfNc8KsNnCow8eqVSX4KYE_Ag>
-    <xmx:7r_bZ29ZRdUlfacIYxEvhWHFMae-FQTeJl6htacE8mqyFUwhlRknYw>
-    <xmx:7r_bZ5VqG1LoPcvKwzBurDJVPgUAdcQQNTmbe6S4KS2mvVNdHiSywg>
-    <xmx:7r_bZ_fQZ4GxNlThJ2mw9IiFX4G7Fd1G4InHND3L8kqRq-QHM9u-3g>
-    <xmx:77_bZ6QKzlpNM-AZie8x67crhEl5neFdJdoFrBsnG71vt6b2qhQiCm7V>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Mar 2025 03:12:42 -0400 (EDT)
-Message-ID: <51c78ba6-9518-4259-85da-d761b031df7f@ljones.dev>
-Date: Thu, 20 Mar 2025 20:12:39 +1300
+	 In-Reply-To:Content-Type; b=YKul00KW/mxcPDIpAcqW9083eUpcfJtIek+GBUqFc6L1WXkhSADiTAut4JIwhRITOJcu/VB8+8cSxiNWGjWKyWhIjM6/+arpObCN9GvrxrtXmhLNmrHOEPXgegQte8+pIAMvUoi3t1wx36Mm5N8bYRGhKh7CFGMCuXrFr1t/D54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNSPxtcI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAF9C4CEDD;
+	Thu, 20 Mar 2025 07:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742454819;
+	bh=UuARulmInnBUADHH7bXdcjHIkE+FWXcsYmX41MdIaHw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LNSPxtcIT+quFnMch+1xRe99sSi2+AhhMvgDgUtHtkPqDjHwmeMNVqFGGBKFQF3YT
+	 PLvYOAVUgt+EsFLGPeZo3oh8iJ0nLWEkATaGqBjDu2pu/UauFkyGvbUG6a9eG9a03X
+	 P7YzeTbU+axLToXgOtAIIb4cpHgdqfhDaNgXtm8xRd+q87oBJ4V42Ol/xgmQAhebyC
+	 iYr0HvYbPqk8KOB9Rz71WVSvX572uSNv17ZoYEVSFX/ISWfEaTWjVs6czgYKtJLmSJ
+	 zLULHCG2Ct8W3Pi1qloDBzglAV8eNW5qlWv23gdz49f6HF9boFblxeP5fzXY3/fmCo
+	 MeE9c8uW2V9jA==
+Message-ID: <55a5e3f3-1b3f-469b-bde0-69abfff826e4@kernel.org>
+Date: Thu, 20 Mar 2025 08:13:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,54 +49,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/11] HID: asus: introduce small delay on Asus Z13 RGB
- init
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <20250319191320.10092-7-lkml@antheas.dev>
-Content-Language: en-NZ
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <20250319191320.10092-7-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v5 12/16] arm64: add KHO support
+To: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org
+Cc: graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
+ anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
+ benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
+ dave.hansen@linux.intel.com, dwmw2@infradead.org, ebiederm@xmission.com,
+ mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, rppt@kernel.org,
+ mark.rutland@arm.com, pbonzini@redhat.com, pasha.tatashin@soleen.com,
+ hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org,
+ robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com,
+ rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+ usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org,
+ kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250320015551.2157511-1-changyuanl@google.com>
+ <20250320015551.2157511-13-changyuanl@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250320015551.2157511-13-changyuanl@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/03/25 08:13, Antheas Kapenekakis wrote:
-> The folio keyboard of the Z13 can get stuck in its BIOS mode, where the
-> touchpad behaves like a mouse and the keyboard start button is not
-> reliable if we perform the initialization too quickly. This mostly
-> happens during boot, and can be verified to be caused by hid-asus
-> through simple blacklisting. A small delay fixes it.
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/hid/hid-asus.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 85ae75478b796..5b75ee83ae290 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -571,6 +571,10 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->   	unsigned char kbd_func;
->   	int ret;
->   
-> +	/* Wait a bit before init to prevent locking the keyboard */
-> +	if (dmi_match(DMI_PRODUCT_FAMILY, "ROG Flow Z13"))
-> +		msleep(500);
+On 20/03/2025 02:55, Changyuan Lyu wrote:
+>  
+> +/**
+> + * early_init_dt_check_kho - Decode info required for kexec handover from DT
+> + */
+> +static void __init early_init_dt_check_kho(void)
+> +{
+> +	unsigned long node = chosen_node_offset;
+> +	u64 kho_start, scratch_start, scratch_size;
+> +	const __be32 *p;
+> +	int l;
 > +
->   	ret = asus_kbd_init(hdev);
->   	if (ret < 0)
->   		return ret;
+> +	if (!IS_ENABLED(CONFIG_KEXEC_HANDOVER) || (long)node < 0)
+> +		return;
+> +
+> +	p = of_get_flat_dt_prop(node, "linux,kho-fdt", &l);
 
-See my comment on patch 1 about trying a loop with the init 
-request/response as a hopeful way to test readiness.
 
-Cheers,
-Luke.
+You are adding undocumented ABI for OF properties. That's not what was
+explained last time.
+
+NAK.
+
+
+Best regards,
+Krzysztof
 
