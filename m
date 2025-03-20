@@ -1,174 +1,125 @@
-Return-Path: <linux-kernel+bounces-570358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30578A6AF51
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:43:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF7AA6AF56
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 21:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D7C4483216
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E23B8C1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 20:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37811E0DD9;
-	Thu, 20 Mar 2025 20:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE7C229B0C;
+	Thu, 20 Mar 2025 20:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ITipPvyU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kpt3j7rE"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC20212FB3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7286212FB3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 20:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742503381; cv=none; b=MOJl6uIpSRjeunYitVqLONy1tJNxwL0Q0DpB8TSbSSbjfh4clsHN9/ft8+XPVtzjqj3S/Kbbo5YSRMx7NvlQHQ7Inmo3jmU0A+asXODAbZVCw1gUQAFnWr7MuIxw9Rw7F0OPJwT85Vli7hTMjat4S76MrrjFzKHJVhB8T/MHzss=
+	t=1742503387; cv=none; b=ILI317hSK6v7X8Pndq9X7ZjhAIKAlvUj7QjQMOd8EJaEIBDhtZ79ljunsMrT51QXVPFWCm4sWdnMxEWfgqezGoS0qHii0crYkHterZkBkCtleTyN1eXEywam7vSalpoelnYpJ3HTTc5NJHYiSe2yK+9lKJMR+hwqYEKpexnNBg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742503381; c=relaxed/simple;
-	bh=Xdh/MJnCIprNyk5gQo7vfrxF4hS9VbcpNTXzPMRPSTY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LfcJKlD/6bF8OGl6Zz2RkJWg0cGvn3KY1aMlzTfRJVfTUrEi8of9JA9x+84qLcY/pn6l4ZN9970imDdDktvtoiXruUEKknDQOd7jgaf06nN779DwCmB9Poz0ub4r8+SyAQ63SXTSFmeuziDzZ3QNIgf7t+nLVzmsdm1SobCT+D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ITipPvyU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742503378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lk0vo4ySgcjWcYyqJYaGojYKQ2mTUpyWgtMJYQlkL3c=;
-	b=ITipPvyU0es/gAYc/5fZy+eBasaPdbvaubi0L9k/nZwC749dmnQPGHAJVQYLzGcJnHG2rx
-	JF5/KZnMgnnGHfiQvLJwhq1VdHcCwBm4wW0VydfB5kpnU/hfCvsKpl8PvykCje1SQp0gqv
-	yJ4xU8aEgc8hBGeW3i+vq1gk83dPcDM=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-N6y2mbzsPwuDPwO-biQMdw-1; Thu, 20 Mar 2025 16:42:57 -0400
-X-MC-Unique: N6y2mbzsPwuDPwO-biQMdw-1
-X-Mimecast-MFC-AGG-ID: N6y2mbzsPwuDPwO-biQMdw_1742503377
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-47682f9e7b9so19806391cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:42:57 -0700 (PDT)
+	s=arc-20240116; t=1742503387; c=relaxed/simple;
+	bh=FpuegLmU5tbQxu4BeI6waAfSkfTSY0kMV2xhhNvEvm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTpCf9VVPkKciJVk70im7zoxjRdtec5tHYfhGUs/GbGtdq0CMJ8GkLfDaLkjVsG4mXI0NW/StE+mQoGQvc/645XwrR0rbvbc6NjObxeus4M2p7GCFdCm6HKXAwlgNvYbmP/pY/oHdQaBoe6Bk20hwF9tec+VcB7yPctTG1/YrZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kpt3j7rE; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3fea67e64caso746394b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742503384; x=1743108184; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JndwPcEu40LTfcktnqoRyV1fHHjivjql1RHGUu6ZCpk=;
+        b=kpt3j7rETHSFaFIAO+I3sKZH9baiTJ5sqT8BYFy9kuZK+aH3yKsmd0DyDmcGgKTPYJ
+         KkNijPHk+4eHa5efJIqGDD2eo0DEUix7af5hcRSHd4fkJ15BA/aosl/JPemddTIAe92u
+         PKEQoIuZVt1ZOtuNb51CqAX0qehMaYl6h5QEOg5COFuI3Hf0nc1NZooTTMXwJjDFSTJN
+         DDZJ0gRa4admAOtzuTPqJ/yqhm6dIpy+jRBZECQKXHw8vlteVEY3SE3ssi+36r6Q/gTD
+         on3h96wteoecb+X5oKEYNYbHEfZ/g2w/DlPsvzFiNkXGPPry7X5vbeX27AOADvx1KQi2
+         xtVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742503377; x=1743108177;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lk0vo4ySgcjWcYyqJYaGojYKQ2mTUpyWgtMJYQlkL3c=;
-        b=lv50dTqwwf25OYJyuijVHwh6UgWOmcvpolNV6rhOZoEygdLUiTjo/DrJ7YydFtacAF
-         2+XLFvQj7ifkJo23JP8zcDoelI3i8gmVbZB89GZkYl/B/ZgmIIRByfnDWFmftOK+CjyZ
-         RBMzlOjh/9jPtIBROJjDXS8duRFlZpuW1Qvmu0/qDUYodDDeuhMMWaiTsaq9mj7DWsOT
-         05/mG+kU0WjpVx32jn/sqn7FQb2W3ukFOeLOnaCy6uqKcmxRdcX1HG1hPXvkRLAQuEJy
-         jamQ8ZyLPW82/xoS6xq6kjRSKyu3ZBQ5B2E+F3XvBHycxs8lKNkOS7TNhUBMT4tFUkeD
-         CIHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuXTGF7y3lc7t8zglwJRuS/wwrKHTi6mVlBrxkuOW2RRYmLQT/wzCjZAJMq4yvPi0oifwfoby1NjTpfwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp+u68KY600x6Uqjo+5DUjbJO5pIljKQ/Miw2MElX5C9QX9hoC
-	odEWR1n1h+9B7xxyUtbX2dhyBG5Xn5D1OB4uNqOvtW3sP75mnawKu0/zUy+VGCTEtoZ1E+knerF
-	b+4hqsUFv0SiqbdTlrhWc2jH3YQ+6OVg3YTrV9rFuSDzXEnkiCjE507SWI3COEg==
-X-Gm-Gg: ASbGncsJUSGXzA9Ey0CgAVelk4T3S3RtDPufy/XvKwco9bzZepmKWC4TM2FKkRmcBCm
-	VUyRgSBnbk+Gdy1Y5XBv/74XO3RfPtt6EI2AZkPvuVdA967URIslOHuNtzYvcahg/YMpmikRgul
-	0zKCm1JJqYBOt+L/SkeRzX13aBMB84PEoUok+m6yQrxyRzS3fsz34j31xMQ7lgOjgkt+jMuMYku
-	XtTrUWbKohPx7oSnK4il2tT4xkDKeNv2c1boyCsp2k8SLNEOGTjExn9DWmznEZ0zL6U0WBa//BH
-X-Received: by 2002:ac8:5ac3:0:b0:477:1f29:e80f with SMTP id d75a77b69052e-4771f29e85fmr1879711cf.4.1742503376810;
-        Thu, 20 Mar 2025 13:42:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMG1UpKj1xwg60B9Ao0w2zuv2Lvk2uR3IbSS3I1F5A4BrQHvbrmH05TUt/jndE9B9USAOUbA==
-X-Received: by 2002:ac8:5ac3:0:b0:477:1f29:e80f with SMTP id d75a77b69052e-4771f29e85fmr1879321cf.4.1742503376308;
-        Thu, 20 Mar 2025 13:42:56 -0700 (PDT)
-Received: from fionn ([76.69.33.37])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d18f7d4sm2876801cf.37.2025.03.20.13.42.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 13:42:55 -0700 (PDT)
-Date: Thu, 20 Mar 2025 16:42:44 -0400 (EDT)
-From: John Kacur <jkacur@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Luis Goncalves <lgoncalv@redhat.com>
-Subject: Re: [PATCH 6/6] rtla/tests: Test setting default options
-In-Reply-To: <20250320092500.101385-7-tglozar@redhat.com>
-Message-ID: <72c05486-1b49-242e-478d-e83c367e16fa@redhat.com>
-References: <20250320092500.101385-1-tglozar@redhat.com> <20250320092500.101385-7-tglozar@redhat.com>
+        d=1e100.net; s=20230601; t=1742503384; x=1743108184;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JndwPcEu40LTfcktnqoRyV1fHHjivjql1RHGUu6ZCpk=;
+        b=pDDzzxN68IKQi1uzKsde5xkPa5kfCUpWu6T7JoHvtmh1H7tZmNVmYDuxib4dhy+a5C
+         hAQORiHmVcFA/muyjdkQE+sHbLhBhIOIktlywfE8bXPRt0POi7OIes4LI+eRKq0SQ4BO
+         7qHj2VQAW4HwpC4Af5aaSNxcKigm4kg/esytxZihY33ckCOaqDxGERAuG//NVjdueCo5
+         o29uTwZyFM9BaUXBseo6FySoi+zGsSTgVK0m0IHE5F1hycH4QSosQBtWBRRVm3PFhYYF
+         +fnIYws+NIoEZ+ntDW/y2OlU+s4dXBHnIpPwJq4mxLHu6gH3K47487c6dNSRlsxl+3cU
+         kXKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYZIVX5EpnSa3rl9w8Nuhz9BJOAA5CvDe//mFwLIeRNvzeTzgNc4MRhn/aQSrWi/JW5iJe/KYPIo9mNsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY+ap8QbMZ2ynBnWMu6sMYhuDqpvgCOQxaVqzGU8SyS+Tok6qR
+	3WHBDv2/P1nDUL/FV7ZXEzz1Jut4iMrjvxbslBmR7Xe1BEbdGyxWce3JLxkY2j8UQzKEqXtaxlt
+	pEOo=
+X-Gm-Gg: ASbGncuRU6x8HXp3noKcOaeZIrQAL55z6cuMTGKZGG3sKBncftWS7DxDqJ009limFLC
+	V3Fw346cbQZEMX0xs3nN5m5koe1jexN5FqOBwhIJor2Ug9IcYzvOjkA6z3z4onKLSCFwNpJmk3V
+	5WnzgYgN08XIDfxeqeOqBf27vMWWT0Eg52w0jYm5cCmiorQU9QrNYv1Iz7qOPYcgCz1WjBeRL8y
+	zLPTqhPLwaIeM7fT7CMyBHFD0r6421GiqmDlM0151HK3Pbl/kt3uf8+oGjph2SXcFUUmiP+g4aH
+	YE1I2zE95YzSAayz9DetBbOONgoXnJRpR+u52V2/Ozfkrf2vIweUlFwZLxy68GPJxYgaICq46hE
+	i6Y7qVw==
+X-Google-Smtp-Source: AGHT+IGrPQlyXSXYBY7u+saxCR6isREiortDVdrxVss20iMydrEK8XXm7gPitUstCTe1G0rs6K8I/Q==
+X-Received: by 2002:a05:6808:178d:b0:3fa:cf11:1493 with SMTP id 5614622812f47-3febf70afbfmr451429b6e.1.1742503383804;
+        Thu, 20 Mar 2025 13:43:03 -0700 (PDT)
+Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3febf6dce65sm62432b6e.14.2025.03.20.13.43.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 13:43:02 -0700 (PDT)
+Message-ID: <4fb5329f-be34-4d98-b34e-2da4e035f44c@baylibre.com>
+Date: Thu, 20 Mar 2025 15:43:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] iio: adc: ad400: Set transfer bits_per_word to
+ have data in CPU endianness
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+ corbet@lwn.net, marcelo.schmitt1@gmail.com
+References: <cover.1742394806.git.marcelo.schmitt@analog.com>
+ <930560a0d0ca7af597d4ad901422bc9ba3fc6a79.1742394806.git.marcelo.schmitt@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <930560a0d0ca7af597d4ad901422bc9ba3fc6a79.1742394806.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On Thu, 20 Mar 2025, Tomas Glozar wrote:
-
-> Add function to test engine to test with pre-set osnoise options, and
-> use it to test whether osnoise period (as an example) is set correctly.
+On 3/19/25 9:57 AM, Marcelo Schmitt wrote:
+> When SPI `bits_per_word` is not set, SPI transfers default 8-bit word size
+> and ADC data gets stored in big-endian format in memory. Because of that,
+> the IIO driver requests ADC data to be rearranged from BE to CPU
+> endianness. However, with `bits_per_word` set to the number of ADC
+> precision bits, transfers use larger word sizes that get stored in
+> 'in-memory wordsizes' and can be read in CPU endianness.
 > 
-> The test works by pre-setting a high period of 10 minutes and stop on
-> threshold. Thus, it is easy to check whether rtla is properly resetting
-> the period to default: if it is, the test will complete on time, since
-> the first sample will overflow the threshold. If not, it will time out.
+> Use proper `bits_per_word` size for SPI transfers thus saving the driver
+> from requesting endianness conversions. With that, shifting the buffer
+> data is also no longer needed. This change has no impact on IIO device
+> functionality.
 > 
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
->  tools/tracing/rtla/tests/engine.sh | 26 ++++++++++++++++++++++++++
->  tools/tracing/rtla/tests/osnoise.t |  6 ++++++
->  2 files changed, 32 insertions(+)
-> 
-> diff --git a/tools/tracing/rtla/tests/engine.sh b/tools/tracing/rtla/tests/engine.sh
-> index 5db8aa4bc031..b1697b3e3f52 100644
-> --- a/tools/tracing/rtla/tests/engine.sh
-> +++ b/tools/tracing/rtla/tests/engine.sh
-> @@ -61,6 +61,32 @@ check() {
->  	fi
->  }
->  
-> +check_with_osnoise_options() {
-> +	# Do the same as "check", but with pre-set osnoise options.
-> +	# Note: rtla should reset the osnoise options, this is used to test
-> +	# if it indeed does so.
-> +	# Save original arguments
-> +	arg1=$1
-> +	arg2=$2
-> +
-> +	# Apply osnoise options (if not dry run)
-> +	if [ -n "$TEST_COUNT" ]
-> +	then
-> +		[ "$NO_RESET_OSNOISE" == 1 ] || reset_osnoise
-> +		shift
-> +		while shift
-> +		do
-> +			[ "$1" == "" ] && continue
-> +			option=$(echo $1 | cut -d '=' -f 1)
-> +			value=$(echo $1 | cut -d '=' -f 2)
-> +			echo "option: $option, value: $value"
-> +			echo "$value" > "/sys/kernel/tracing/osnoise/$option" || return 1
-> +		done
-> +	fi
-> +
-> +	NO_RESET_OSNOISE=1 check "$arg1" "$arg2"
-> +}
-> +
->  set_timeout() {
->  	TIMEOUT="timeout -v -k 15s $1"
->  }
-> diff --git a/tools/tracing/rtla/tests/osnoise.t b/tools/tracing/rtla/tests/osnoise.t
-> index 86596e547893..e5995c03c790 100644
-> --- a/tools/tracing/rtla/tests/osnoise.t
-> +++ b/tools/tracing/rtla/tests/osnoise.t
-> @@ -16,4 +16,10 @@ check "verify the  --trace param" \
->  check "verify the --entries/-E param" \
->  	"osnoise hist -P F:1 -c 0 -r 900000 -d 1M -b 10 -E 25"
->  
-> +# Test setting default period by putting an absurdly high period
-> +# and stopping on threshold.
-> +# If default period is not set, this will time out.
-> +check_with_osnoise_options "apply default period" \
-> +	"osnoise hist -s 1" period_us=600000000
-> +
->  test_end
-> -- 
-> 2.48.1
-> 
-> 
-> 
-looks correct
-change "stop" to "stopping" in description
-Reviewed-by: John Kacur <jkacur@redhat.com>
 
+This is a breaking change. Some SPI controllers, like RPi can only do 8-bit
+transfers, so this driver would stop working on those platforms. Also, if
+anyone made software already that depended on the big-endian ordering without
+checking the scan_type attribute, it would break that software.
+
+I would leave this as-is (drop this patch) and just make it:
+
+	.endianness = _offl ? IIO_CPU : IIO_BE,
+
+in the next patch.
 
