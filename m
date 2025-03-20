@@ -1,165 +1,173 @@
-Return-Path: <linux-kernel+bounces-569181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EC7A69FA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:59:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F4AA69FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 07:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C922446368E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 05:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D67F17F48A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 06:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5C01E9B39;
-	Thu, 20 Mar 2025 05:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208051DF25A;
+	Thu, 20 Mar 2025 06:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cfd/H9w/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="W5ezF0t3"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A5D17A2E2;
-	Thu, 20 Mar 2025 05:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E627D19D8A0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742450361; cv=none; b=Zvgtfgi6P9FjvV2Wza/ieo/R8/M4wC+oxVIwh6/Td/IsfwVP+jHIxKZ3Cs4cC2Ncb+9wlQIynH3J5Ybz2KfS5qudXLPQr+0T8pJQ4UVRnsa1E8TBUbRXkdfZ/GcoA7DT40O5dGJBBxlyXGd518xDVIvrYWMXsmh4ThV2tksAE58=
+	t=1742450622; cv=none; b=NNMDXapyBVbUv560qQeLfuIkfGsy8YdzPW0SFbMn9XEKMiCdsGfWdZ2l6uS6SEF7/q848YtvB4G3TFppAefdyjALr6bRd5aUFgppPDJ861LPd8TEhc6YCoB2Mfamm0C5b5je8vGQ/FdWfvFGxn46g647l4UBuhmtFAgKWTHS9dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742450361; c=relaxed/simple;
-	bh=6wOHqHyaAYl2OOgUVQ27dvXcl/fHn1Ol0duojZbcTJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ky7pnry6hoEq8oERsYv84zXZJo+8rqW45jOY2dCM/+trmmg1Vl3hARjDyWxUTFYiYZEP/hZUcq/TkuztIiOfcdenSb+qypMIb9t5V7qIOOgIue6sJEXe8s/RKlgZVd+OWVWYn+VeB90imjDOC/yYPuVjBAIT+Zq83/5F2sIob8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cfd/H9w/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52K4rwmg021621;
-	Thu, 20 Mar 2025 05:59:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nfn6s62Sd9gS4WebcWOa6jAcwo0r94FJpZpiVn1PjJc=; b=cfd/H9w/peEOcRei
-	04ovvzupazBivy7743WQTyqW1C3ocy3uXtiigvx4k033vTUJwnx0PoBhhh1/9l59
-	GJ6Lp3/d7zueNURUrFXLDFT2U3YLZbWJ93XjFcFXDld56YJr7AVWM4mCg7XGXq2+
-	AljET6wPiFrCs/0o3QX4KK8cGQkUBRG11JHxUZu7yXg6b/lQOX+qsLZ/81FnW7qA
-	mtTCMXuJ7OgYD4P6+d1ZLKnebjieEoGXBvQhK837TmHcBrFCuDF/rqDZk5Ldi3Wr
-	ktoKnYoyA9Ysnn5OnaKWE011sMT0aHIEdSE70K64uxbS4ivkCxYAPfDHcdUHpylP
-	mCMXJw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gcd18460-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 05:59:09 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52K5x8U2001272
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 05:59:08 GMT
-Received: from [10.152.201.53] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Mar
- 2025 22:59:04 -0700
-Message-ID: <abe02188-9cb8-aa4b-9723-372000e08110@quicinc.com>
-Date: Thu, 20 Mar 2025 11:29:01 +0530
+	s=arc-20240116; t=1742450622; c=relaxed/simple;
+	bh=oBycr6yoTR/XQt9L743N6Lo8JRUTc8DPHmcT1O2rPO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BuK+WVd16nupLGbYOJxEVoN3q4tpqlXyTu6u6bqGTkryYwhFKs5oe5gfW196jHEwvUCSP94V06ZPYKqi35oYKUVRlaMV/SE3XQznAluPvxhjdUu18z1kLMuEYPd3ziBnLqHzbTAwRznJm798iAe+MkSGFNr8x0RognerekiDuTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=W5ezF0t3; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fb0f619dso5530295ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Mar 2025 23:03:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742450620; x=1743055420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EUlQy+omekyAlQ/UT0+jDTx9lfmxYWK64YNT4WpuUK4=;
+        b=W5ezF0t3yXUaQx7LeiVZS+sVU0dAcO3LcOcC9R55zaAGQqNGZrhN3baAGeER9qr+lO
+         7hU0Af/WDVvTwH03PhXpNHkQcW1KA2+QovelRnfz+VZCQgafhUS+bUZzEAW/9vJF5vO1
+         1VocisXxV7MjxmoEMO7o6Xh78zfoZdAy4Vy+x8pfYrGHHLGHpU+sNfXT9fBrdIqjB5pN
+         U1JX0fMxkFlhSFHrHjKi9FUWq7ReTSazdamHJWOYF23tw7OeCep/VuSMINE/LbXQsrbV
+         2qSZyagslvEHqQV2uSRhIQsbiwyzXtVo469EUkOo0fHRG3FUa/bLgWzUSuJ+Mlz3rQAg
+         w3LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742450620; x=1743055420;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EUlQy+omekyAlQ/UT0+jDTx9lfmxYWK64YNT4WpuUK4=;
+        b=L2vx3KkjRLFcLpbZtpF952pUEgCdGwe7LqItZFspumQVpTlumgtWbP+c10l7OtjAkL
+         WTCX6vO4jvucsTdIzC5t5PBDvc5z+tIhjuS2t+sKT4Nux0mCHCh7y8U0arAc6AwYjUyj
+         VErKzceGWNd5ezVLnCYHS/EY8YzZ2OVZfIeLFps6KSypa26FJp+GKhR7F2xcV2DHNGbx
+         gBDYfBGOKEYZ8h3Jnu6KzIbRTI2HsoA9cojH761XYLB2gQ7t3B4T2DHF29AR3Ap+8evX
+         /8c2Wub0PEDuk2sah8YDObWrYCiGqDuVmv5X99LExG+QRNbJe9AsHwD9LdXXRwE/lD27
+         rF2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQWfuuPqvSrDU7nDRCO4V62+WmKIc+ZjSMD0OLEjNZ+u/rRrUkhFVPt9q+Mt72A6bFnQpZ02RkWv8wSts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlNkdTNSNu/s0KoQwRo1pvT1hSIJQ6Nru9yW4TMHr7rylMCIeM
+	1wWS6TE+1OBIlEvACwhxBhahdXVub15PvfBJ5iUVt8XILXslXS+BqvK98V0/WIY=
+X-Gm-Gg: ASbGncslQ8zC2WRzfa1zJjPpFpiqLufdy88pzJfAWBXKWX1AydIQIkWMe5Kl0yi2Wr3
+	L5lEd5nGMcjjrs+vCbFIzirbXoQrz5Dcaaf6+vchtXJn2/5uynyv+kPEJPJQAwSxnYdrH1Y++Cb
+	EZ05azvB11/YFaJTBaxDEMON0vyjfdvGqUhDLxFiOsMFixrbJsk/JulA1IfyRWLSZSIds542uRd
+	uDUp/iaquda3LA60Ua10y181+2RfQ+38pVBfv8q3+vdfTOC3wGOgjBWsQe3tHzGgam3XKZmG4me
+	Upgr1N+YZ+96aCc83hCK52uCOeitetVn9ABIJqd/amfRPI5Jtq65f2LhLw==
+X-Google-Smtp-Source: AGHT+IFenEJO6TI9Hsl5cc1hX2SStJer0wmUMMpctF1K7VqnKKB8w0l0InlYXp+IwtSylHw5lHcLYg==
+X-Received: by 2002:a17:902:d2cc:b0:224:1c41:a4c0 with SMTP id d9443c01a7336-2264981b59bmr83265325ad.9.1742450620129;
+        Wed, 19 Mar 2025 23:03:40 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711557e9fsm13269592b3a.51.2025.03.19.23.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 23:03:39 -0700 (PDT)
+Message-ID: <0d84bc94-1c65-4737-a2eb-aa7f96a7d1e0@daynix.com>
+Date: Thu, 20 Mar 2025 15:03:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 1/4] mtd: rawnand: qcom: Pass 18 bit offset from QPIC
- base address to BAM
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+Cc: Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ devel@daynix.com
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+ <Z9pze3J2_zrTk_yC@linux.dev>
+ <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+ <86plidmjwh.wl-maz@kernel.org>
+ <bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
+ <86o6xxmg87.wl-maz@kernel.org>
+ <aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
+ <86msdhmemw.wl-maz@kernel.org>
+ <cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
+ <86ldt0n9w1.wl-maz@kernel.org> <Z9sSMJAlf7cQ5viu@linux.dev>
 Content-Language: en-US
-To: Gabor Juhos <j4g8y7@gmail.com>, <manivannan.sadhasivam@linaro.org>,
-        <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <broonie@kernel.org>, <bbrezillon@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>
-References: <20250310120906.1577292-1-quic_mdalam@quicinc.com>
- <20250310120906.1577292-2-quic_mdalam@quicinc.com>
- <32785a6a-3f30-4d77-b32d-ee70c459de1b@gmail.com>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <32785a6a-3f30-4d77-b32d-ee70c459de1b@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=bfFrUPPB c=1 sm=1 tr=0 ts=67dbaead cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=fSq50Qp5J-9m2WgZyFwA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: YqL-auvLiDSNqCt_67f9tQJVRmp9iRzP
-X-Proofpoint-ORIG-GUID: YqL-auvLiDSNqCt_67f9tQJVRmp9iRzP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_01,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- clxscore=1011 suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 adultscore=0 phishscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503200036
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <Z9sSMJAlf7cQ5viu@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025/03/20 3:51, Oliver Upton wrote:
+> On Wed, Mar 19, 2025 at 06:38:38PM +0000, Marc Zyngier wrote:
+>> On Wed, 19 Mar 2025 11:51:21 +0000, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>> What about setting the flag automatically when a user fails to pin
+>>> vCPUs to CPUs that are covered by one PMU? There would be no change if
+>>> a user correctly pins vCPUs as it is. Otherwise, they will see a
+>>> correct feature set advertised to the guest and the cycle counter
+>>> working.
+>>
+>> How do you know that the affinity is "correct"? VCPU affinity can be
+>> changed at any time. I, for one, do not want my VMs to change
+>> behaviour because I let the vcpus bounce around as the scheduler sees
+>> fit.
 
+Checking the affinity when picking the default PMU; the vCPU affinity is 
+the only thing that rules the choice of the default PMU even now.
 
-On 3/18/2025 8:22 PM, Gabor Juhos wrote:
-> 2025. 03. 10. 13:09 keltezéssel, Md Sadre Alam írta:
->> Currently we are configuring lower 24 bits of address in descriptor
->> whereas QPIC design expects 18 bit register offset from QPIC base
->> address to be configured in cmd descriptors. This is leading to a
->> different address actually being used in HW, leading to wrong value
->> read.
+Perhaps we may model the API as follows: introduce another "composite" 
+PMU that works on any core but only exposes the cycle counter. Robust 
+VMMs will choose it or one of hardware PMUs with 
+KVM_ARM_VCPU_PMU_V3_SET_PMU. KVM will choose the default PMU according 
+to the vCPU affinity at the point of KVM_ARM_VCPU_INIT otherwise. If the 
+affinity is covered by one hardware PMU, that PMU will be chosen as the 
+default. The "composite" PMU will be the default otherwise.
+
+Regards,
+Akihiko Odaki
+
 >>
->> the actual issue is that the NANDc base address is different from the
->> QPIC base address. But the driver doesn't take it into account and just
->> used the QPIC base as the NANDc base. This used to work as the NANDc IP
->> only considers the lower 18 bits of the address passed by the driver to
->> derive the register offset. Since the base address of QPIC used to contain
->> all 0 for lower 18 bits (like 0x07980000), the driver ended up passing the
->> actual register offset in it and NANDc worked properly. But on newer SoCs
->> like SDX75, the QPIC base address doesn't contain all 0 for lower 18 bits
->> (like 0x01C98000). So NANDc sees wrong offset as per the current logic
->>
->> The address should be passed to BAM 0x30000 + offset. In older targets
->> the lower 18-bits are zero so that correct address being paased. But
->> in newer targets the lower 18-bits are non-zero in QPIC base so that
->> 0x300000 + offset giving the wrong value.
->>
->> SDX75 : QPIC_QPIC | 0x01C98000 (Lower 18 bits are non zero)
->> SDX55 : QPIC_QPIC | 0x1B00000 (Lower 18 bits are zero) Same for
->> older targets.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
->> Tested-by: Lakshmi Sowjanya D <quic_laksd@quicinc.com>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> ---
+>> Honestly, this is not a can of worm I want to open. We already have a
+>> pretty terrible userspace API for the PMU, let's not add to the
+>> confusion. *If* we are going down the road of presenting a dumbed-down
+>> PMU to the guest, it has to be an explicit buy-in from userspace.
 > 
-> <...>
+> I also have a very strong distaste for the crappy UAPI we have around a
+> 'default' PMU. At the same time I do recognize this hurts practical
+> usecases since some VMMs can't be bothered to configure the vPMU / vCPU
+> pinning correctly.
 > 
->>   /*
->> diff --git a/include/linux/mtd/nand-qpic-common.h b/include/linux/mtd/nand-qpic-common.h
->> index cd7172e6c1bb..6268f08b9d19 100644
->> --- a/include/linux/mtd/nand-qpic-common.h
->> +++ b/include/linux/mtd/nand-qpic-common.h
->> @@ -200,7 +200,7 @@
->>   #define dev_cmd_reg_addr(nandc, reg) ((nandc)->props->dev_cmd_reg_start + (reg))
->>   
->>   /* Returns the NAND register physical address */
->> -#define nandc_reg_phys(chip, offset) ((chip)->base_phys + (offset))
->> +#define nandc_reg_phys(chip, offset)  ((nandc)->props->nandc_offset + (offset))
+> I'm at least willing to plug my nose and do the following:
 > 
-> The macro has no parameter named 'nandc', so this works only when there is an
-> identifier with that name in the code where the macro is used.
+>   1) When the VMM does not specify a vPMU type:
 > 
-> Additionally, the macro will no longer return the physical address of a register
-> after the change, so both the comment before the macro and the name of the macro
-> will be misleading.
+>     - We continue to present the 'default' PMU (including event counters)
+>       to the VM
 > 
-> Since the macro is used only in the qcom_prep_bam_dma_desc_cmd() function to
-> compute the 'addr' parameter for the bam_prep_ce{_le32}() functions, maybe it
-> would be better to get rid of it completely, and do the computation directly in
-> the function instead.
-Ok, Will handle in next revision.
+>     - KVM ensures that the fixed CPU cycle counter works on any PMUv3
+>       implementation in the system, even if it is different from the
+>       default
 > 
-> Regards,
-> Gabor
+>     - Otherwise, event counters will only count on the default
+>       implementation and will not count on different PMUs
+> 
+>   2) Implement your suggestion of a UAPI where the VMM can select a PMU
+>      that only has the CPU cycle counter and works on any PMUv3
+>      implementation.
+> 
+> Either way KVM will need to have some special case handling of the fixed
+> CPU cycle counter. That'd allow users to actually run Windows *now* and
+> provide a clear mechanism for userspace to present a less-broken vPMU if
+> it cares.
+> 
+> Thanks,
+> Oliver
+
 
