@@ -1,134 +1,207 @@
-Return-Path: <linux-kernel+bounces-569807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12029A6A7BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:57:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC56A6A7BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 14:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9A917DEC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9A617267D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE5F221F12;
-	Thu, 20 Mar 2025 13:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BB92222DA;
+	Thu, 20 Mar 2025 13:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8jBjX0C"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0jfo4yuH"
+Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74201221F26
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01BD1C5D7E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 13:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742479004; cv=none; b=eLfCaLytzQLrNs/Op9zBg1G/Lve7PFMTwV30IvEuNKGDfh3Do+U/qqMJv4xtU+sVPaCWxOj+VJLNJnx4qhpD4YOA9ZrJrHZw47OCDlyaZRswBgd90CbUu8YHCwrWTGlUV5p3SzuF6zfClERpPhFgtQZYUL/sgeZ7Yenmn6VpJ0g=
+	t=1742479075; cv=none; b=u9xTziq2dpD1aljPBBDVvrtcQS891jD+j8o4SI6KFr/8E4AzLSwdbPMJFIT9rKwbcB4Et0nbsGexZQt0HVS5hNUSzwcVtrGiIjpAOwlQ8zE7g9EmoKbVZlz2Z3Gn+30fwHli9mEYfwMU/Ic+zsWk1eWzLAHbpsBWIwDABg7z9JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742479004; c=relaxed/simple;
-	bh=S9T/qBL+z4aNd6M0Hkz2pYEIkgtE38X3OTfgtg4dx7c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DpoE24VG/LQxaLWIWabi8L73xQjOVjC88nMN8BUjmkuxW0Y5LXYw95abcWDKW1v/dQAyJVxy9cA+4mFYKZhNPxuq8lSlHPURhOf4u3rm6eP6IbDOeZ1EpGgQF7OOv9BQC94RqjtXRLtpRT6hS5RCHIEpGXkrX9MlLOQXTIcA0Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I8jBjX0C; arc=none smtp.client-ip=209.85.221.74
+	s=arc-20240116; t=1742479075; c=relaxed/simple;
+	bh=I2M38mDEaD7fFB1pTVGpHa9sMKUIjfO1Rqrct2uiK7g=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=vBC88WAcO8f7i9FWuyPCXXPa07mhXPUHnMnjP5/Nzv9J3vsOjkJ21kdz3TqXeoy5UfkQPwwSW96YV7i8h/1UUTfr+8CXcq6QW5qtxQ54FglZj72aqqhF4fxgCL/3qu0RycB1NIbhudsBAIST1TZmHtXWVW9hgOO2fUTSpUw1fZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0jfo4yuH; arc=none smtp.client-ip=209.85.208.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3912539665cso956420f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:56:41 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
+Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-30c2e219d47so4651391fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 06:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742479000; x=1743083800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kWWAhmzvNwlqSFcvmaCbepdAYIL6fnNZCCrItGOwILo=;
-        b=I8jBjX0CNcMzw4nly5M5euWr4s1AomnOZikZCs4AhYo35H1WlvSQkF67ZT6XMVFEuB
-         WJN+LCfdxGw2g7k2UIP1uc6B2tF+xkKgwq/8YcI2t+FxfWuC1fD+YZkDjz5S2AvzLWaz
-         mkvH+uS4/p5RS69qMmouGPhS7SJOmubS+eVWs3yAIs8xPeFY1Y7S0e+DD3U62vFbFW1u
-         Kc3ggIzSQmdsN+cTsnOMpLikbi1iQF5PAgfSE1bLQZ0eSEjhAcZBgBaOYfCrOmLptg0w
-         kHVw/h3N/siEMaZoHQmEEFttcHJcDBxCEt7kwd01oM6i04OrhAI3mRe+kxy2saFnWClM
-         PsLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742479000; x=1743083800;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=google.com; s=20230601; t=1742479072; x=1743083872; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=kWWAhmzvNwlqSFcvmaCbepdAYIL6fnNZCCrItGOwILo=;
-        b=KvmnvbOZQokRKpWt9oNth8qC4nHUTP2VBGi1U8bz73GyQp1+ilE3cxq/DmPXTrcGOY
-         ShkxNy34SwmaXVjKWvuyhIsx+Ca67gZ0G2DK7J8HYBFaPMOlIfFxdCtI1ITdHeedFYe4
-         Nzr4Zwe9JD+7y09c5+w5W/FfVw9i6/XGCzcYPse09TL6Vg/8FdeprOC+d3+8OQmyGQ5o
-         eOk6wflVMVMZ4w8SBQUoJRaHFRZYEMvjFrBb0c90u0SnMtavaNcxZeYpRErfB7a0ASdE
-         m7HFz2RUPYmHPYgA2LD1lZJMBjPBXDw9wih7r2M4UBufAu4R5QD9Dk5LZFIzrDS+Hltn
-         kkcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZQo/WLMLYZGZvtxDs/DCVcPKKwmRQ1HU55DruDia5N8kRRVNq8ogXt6w0oW0BMe4yr0oPLlHwmUTLaLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz2HZSe80ow5KN1ocYIOs8L5JaiMF33IF/BzbX2pJsKOgxcOEw
-	mZjxTYtDP08tZ9CP8N6NUsCnK5pNKRUMzxpbIDtAEhTh7lp4uM12uoiYDDAMAwBG1GkcUzCSfzq
-	ufUc5+QaBi8ZkdQ==
-X-Google-Smtp-Source: AGHT+IFGmucGm31xquzCIdMPfx+iY6I4pvpkEGnfiBPJy7YBlidkxn1rhz3SbgkwfrscFWZRuiT3zZv9bZSaQQs=
-X-Received: from wmbfl10.prod.google.com ([2002:a05:600c:b8a:b0:43c:f122:1874])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1f88:b0:399:6d6a:90d9 with SMTP id ffacd0b85a97d-39979586b74mr3303422f8f.18.1742478999908;
- Thu, 20 Mar 2025 06:56:39 -0700 (PDT)
-Date: Thu, 20 Mar 2025 13:56:38 +0000
-In-Reply-To: <Z9wHv-2HXfoYZFmk@pollux>
+        bh=5hJSwNW0zETo4WJV8ChD3jYeVfuUrGHCvGqpwI/MqoU=;
+        b=0jfo4yuH8kDdxpopUQCEZAJgtGyWiuYJLfRLRUbFbMYZUnjizpcO9UsYZX3sbe0w1G
+         rn+q6qWSPiW7UGaISkOGb4PlkD/xvqdVK3t/fixbdHMUvJO8t//3lSIvz7M7EEIUjtBV
+         OX0rmD4LC4cP0xAj5EiDISzOeprhFf0yESYlX/O2PEoM5tEh4JhoKzbnxy8CVsA8QSuc
+         DEvkmyGDXKTsAd9vSsMvs6ENRHQ6OM22Dq+SDPgkxN/2qtvy+u9DolTrkIsUGSI3WUXj
+         i8KqvJlsZfH7tllJ/H3KC3XS+xUSl8EINbIp9KeCDVaoZ8vLV10hdxsX1VnhUZpFnns9
+         1fSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742479072; x=1743083872;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5hJSwNW0zETo4WJV8ChD3jYeVfuUrGHCvGqpwI/MqoU=;
+        b=NkvBKT50qIl4uf7lR4S9xM6ykAJs85CnoKWxNaPGQpwuKmTV3KHnj43VwDXvQM2H35
+         pdA1aNhgeavPE7rtwAdB0WqfCEyIaYC8laCBsDBDaDiovE5xTCktn0Ds3/7/JPW4PvCO
+         OkTsf99r1E1FwnH/mZR7JM6zaVydSLRpBkbqXwwP7DOPWuhq80k7uqVtyxYjIE9syfwp
+         rEXyGGAhnt8UVAvs1yBFoOyhrSHUXqkn5+CzGQJuTST9TtrlWKxUNfQ1ru0bpZeXMAX1
+         ptcu/6OpRaeGseHO0O0cYKIjI13x3q3fYcmPwgdrAx0gPUyVNSsLPCNvJs2fhHHmkxHI
+         lwnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE/FsZw9c8SIe0haxmtA4hhMZEtVvxlyNl76qzOskAINXfO+tw4TcM+KShxZ/8gQNO2gnxjlWW5fkBGfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFvi8LtJSkRXSZ1Sai2m0m27hbJ4O4Bv6KrWqzwgil+FpzUQ4Z
+	o0pzIli1UYHoWDkrPMVqrJklkPRzIBFtU5gp0GQs9T8UjZjfZAYWu3FikjprWvd/tmvQudcBbG1
+	StQ==
+X-Google-Smtp-Source: AGHT+IFKWkXFYCtsDNlC1lSUYZcFS4L/ZyXFKpgR/0gphodOCR8RHnpSkShdya5Rvhf5IlDP8DnPwCenPjU=
+X-Received: from ljha3.prod.google.com ([2002:a2e:8303:0:b0:30b:accc:1be0])
+ (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a2e:bc0d:0:b0:30b:b9e4:13c5
+ with SMTP id 38308e7fff4ca-30d6a3ce2a7mr31947181fa.4.1742479071760; Thu, 20
+ Mar 2025 06:57:51 -0700 (PDT)
+Date: Thu, 20 Mar 2025 21:56:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250319203112.131959-1-dakr@kernel.org> <20250319203112.131959-2-dakr@kernel.org>
- <Z9vTDUnr-G4vmUqS@google.com> <CAH5fLggvFanUvysDkZiLqFz4Ay7XSP5LF3CvxBU3xgWE3PSZXQ@mail.gmail.com>
- <Z9wHv-2HXfoYZFmk@pollux>
-Message-ID: <Z9wellJ7Rsm6Wvd-@google.com>
-Subject: Re: [PATCH 1/4] rust: device: implement Device::parent()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250320135734.3778611-1-khtsai@google.com>
+Subject: [PATCH] usb: dwc3: Abort suspend on soft disconnect failure
+From: Kuen-Han Tsai <khtsai@google.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kuen-Han Tsai <khtsai@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 20, 2025 at 01:19:11PM +0100, Danilo Krummrich wrote:
-> On Thu, Mar 20, 2025 at 09:40:45AM +0100, Alice Ryhl wrote:
-> > On Thu, Mar 20, 2025 at 9:34=E2=80=AFAM Alice Ryhl <aliceryhl@google.co=
-m> wrote:
-> > >
-> > > On Wed, Mar 19, 2025 at 09:30:25PM +0100, Danilo Krummrich wrote:
-> > > > Device::parent() returns a reference to the device' parent device, =
-if
-> > > > any.
-> > > >
-> > > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > > > ---
-> > > >  rust/kernel/device.rs | 13 +++++++++++++
-> > > >  1 file changed, 13 insertions(+)
-> > > >
-> > > > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> > > > index 21b343a1dc4d..76b341441f3f 100644
-> > > > --- a/rust/kernel/device.rs
-> > > > +++ b/rust/kernel/device.rs
-> > > > @@ -65,6 +65,19 @@ pub(crate) fn as_raw(&self) -> *mut bindings::de=
-vice {
-> > > >          self.0.get()
-> > > >      }
-> > > >
-> > > > +    /// Returns a reference to the parent device, if any.
-> > > > +    pub fn parent<'a>(&self) -> Option<&'a Self> {
-> > > > +        // SAFETY: By the type invariant `self.as_raw()` is always=
- valid.
-> > > > +        let parent =3D unsafe { *self.as_raw() }.parent;
-> > >
-> > > This means:
-> > > 1. Copy the entire `struct device` onto the stack.
-> > > 2. Read the `parent` field of the copy.
-> > >
-> > > Please write this instead to only read the `parent` field:
-> > > let parent =3D unsafe { *self.as_raw().parent };
-> >=20
-> > Sorry I meant (*self.as_raw()).parent
->=20
-> Good catch, thanks!=20
+When dwc3_gadget_soft_disconnect() fails, dwc3_suspend_common() keeps
+going with the suspend, resulting in a period where the power domain is
+off, but the gadget driver remains connected.  Within this time frame,
+invoking vbus_event_work() will cause an error as it attempts to access
+DWC3 registers for endpoint disabling after the power domain has been
+completely shut down.
 
-With that fixed you may add
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Abort the suspend sequence when dwc3_gadget_suspend() cannot halt the
+controller and proceeds with a soft connect.
+
+CC: stable@vger.kernel.org
+Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+---
+
+Kernel panic - not syncing: Asynchronous SError Interrupt
+Workqueue: events vbus_event_work
+Call trace:
+ dump_backtrace+0xf4/0x118
+ show_stack+0x18/0x24
+ dump_stack_lvl+0x60/0x7c
+ dump_stack+0x18/0x3c
+ panic+0x16c/0x390
+ nmi_panic+0xa4/0xa8
+ arm64_serror_panic+0x6c/0x94
+ do_serror+0xc4/0xd0
+ el1h_64_error_handler+0x34/0x48
+ el1h_64_error+0x68/0x6c
+ readl+0x4c/0x8c
+ __dwc3_gadget_ep_disable+0x48/0x230
+ dwc3_gadget_ep_disable+0x50/0xc0
+ usb_ep_disable+0x44/0xe4
+ ffs_func_eps_disable+0x64/0xc8
+ ffs_func_set_alt+0x74/0x368
+ ffs_func_disable+0x18/0x28
+ composite_disconnect+0x90/0xec
+ configfs_composite_disconnect+0x64/0x88
+ usb_gadget_disconnect_locked+0xc0/0x168
+ vbus_event_work+0x3c/0x58
+ process_one_work+0x1e4/0x43c
+ worker_thread+0x25c/0x430
+ kthread+0x104/0x1d4
+ ret_from_fork+0x10/0x20
+
+---
+ drivers/usb/dwc3/core.c   | 10 +++++++---
+ drivers/usb/dwc3/gadget.c | 22 +++++++++-------------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 66a08b527165..d64d17677bdb 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -2387,7 +2387,7 @@ static int dwc3_core_init_for_resume(struct dwc3 *dwc)
+ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ {
+ 	u32 reg;
+-	int i;
++	int i, ret;
+
+ 	if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
+ 		dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
+@@ -2406,7 +2406,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 	case DWC3_GCTL_PRTCAP_DEVICE:
+ 		if (pm_runtime_suspended(dwc->dev))
+ 			break;
+-		dwc3_gadget_suspend(dwc);
++		ret = dwc3_gadget_suspend(dwc);
++		if (ret)
++			return ret
+ 		synchronize_irq(dwc->irq_gadget);
+ 		dwc3_core_exit(dwc);
+ 		break;
+@@ -2441,7 +2443,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 			break;
+
+ 		if (dwc->current_otg_role == DWC3_OTG_ROLE_DEVICE) {
+-			dwc3_gadget_suspend(dwc);
++			ret = dwc3_gadget_suspend(dwc);
++			if (ret)
++				return ret;
+ 			synchronize_irq(dwc->irq_gadget);
+ 		}
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 89a4dc8ebf94..316c1589618e 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
+ 	int ret;
+
+ 	ret = dwc3_gadget_soft_disconnect(dwc);
+-	if (ret)
+-		goto err;
+-
+-	spin_lock_irqsave(&dwc->lock, flags);
+-	if (dwc->gadget_driver)
+-		dwc3_disconnect_gadget(dwc);
+-	spin_unlock_irqrestore(&dwc->lock, flags);
+-
+-	return 0;
+-
+-err:
+ 	/*
+ 	 * Attempt to reset the controller's state. Likely no
+ 	 * communication can be established until the host
+ 	 * performs a port reset.
+ 	 */
+-	if (dwc->softconnect)
++	if (ret && dwc->softconnect) {
+ 		dwc3_gadget_soft_connect(dwc);
++		return ret;
++	}
+
+-	return ret;
++	spin_lock_irqsave(&dwc->lock, flags);
++	if (dwc->gadget_driver)
++		dwc3_disconnect_gadget(dwc);
++	spin_unlock_irqrestore(&dwc->lock, flags);
++
++	return 0;
+ }
+
+ int dwc3_gadget_resume(struct dwc3 *dwc)
+--
+2.49.0.395.g12beb8f557-goog
+
 
