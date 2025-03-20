@@ -1,79 +1,76 @@
-Return-Path: <linux-kernel+bounces-569926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819B5A6A9AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:23:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A8CA6A9B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1381886484
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:23:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9195E4842BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAE81E9B06;
-	Thu, 20 Mar 2025 15:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E71A1E5B9F;
+	Thu, 20 Mar 2025 15:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TLEQ1kwy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rmicgVpP"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5E1E47A5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55851DDC2B;
+	Thu, 20 Mar 2025 15:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742484175; cv=none; b=nluqGOfBH9ZgLwjx0+JI2U6fTjv/vDKbMmWfK9nlos6tgvESjnZf0Dot1hJKCewaTFQDrR5C+Fzows6Ek3h+Q1mV+vBZMR2isucGzP/8ybDnL+sCp8PNC6wR2fFR9pp1PFIRo628hhU1W6BX0mO1TAo+OKHQi2QUPq88WQTt1p4=
+	t=1742484194; cv=none; b=Nqw1QqjacJWJv4CkZZLyMD0r6z26oWG5xsah+m+pqFLuvdPMF3y6pnVtt5HZNp4ebg3RERUv73G5eUDBqHnKJ8DoxpgtW8NMd8DfQ/StEPCc2gnbE2+bpkEMM/7LTBX2wK+5xdRP2vO3IyDqJ/RpPPqyQ7/Xy02T2sIrhijqZeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742484175; c=relaxed/simple;
-	bh=dN0PedVSuX7QXaHpTR0F3DmJyYmt/gOm5NeJEuK58N0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=nwsmCXgUdaJu0BcPWVGT4ct0uPN1VINcAGvaSjj00OLetEZEJ3xmTnzTAwJSBFgEY2NL8r9uz9Gge+3ZsywenTA3c/S+9BCV9iBLa6Cdyi7Xe5exSFH+R6lwUVkxp6+9UJZvCegyujXf1k4tdbAWFL3QeBmN577PRq//07vxyVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TLEQ1kwy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742484172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQ12SBS+xaGKl0p+tVquQxEaQenYHJNZyAI7USNHD6U=;
-	b=TLEQ1kwyiwg6qkcN97NteosfRuuPFeVJ5UdVn7IgSxAjIyMzBivq9OsTyZA26GYek7d14U
-	7ae5Q4zg/7wXtYRKgOBBm9/XuC3dyGTedzCVggxt6knAn878gfAQPCX1/6ZSrympzIsSCS
-	VQt6vhPIRK7Nb8uVsF9e7NBNlHmezmc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-13-BWj7Ce4kPMmRnlhAhS4IhA-1; Thu,
- 20 Mar 2025 11:22:47 -0400
-X-MC-Unique: BWj7Ce4kPMmRnlhAhS4IhA-1
-X-Mimecast-MFC-AGG-ID: BWj7Ce4kPMmRnlhAhS4IhA_1742484165
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 228D9180025C;
-	Thu, 20 Mar 2025 15:22:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B6EE11828A93;
-	Thu, 20 Mar 2025 15:22:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <dd76239caf5ae7ea8f681fd778e6028cb41bbc43.camel@ibm.com>
-References: <dd76239caf5ae7ea8f681fd778e6028cb41bbc43.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-29-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 28/35] netfs: Adjust group handling
+	s=arc-20240116; t=1742484194; c=relaxed/simple;
+	bh=oOrd6qUPDwbA6xtfAP+LiWV2/BgQTJ0wqwd0cqsXxO8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVDk12gxu2Co0GROfe1NEdkPWyhw6FycNoaYbmx+4yMgq7r32euFG4lyC+jwVs76IzZ0RctlZ+mhqi6n8tJncMpc2Zr0E7Xgh6385kmQc3klxDB+bDQj+RZ5f5WTOBPpiZgtahPMkf9LCluLBUl+/jW4HWHlLDJY2R+Fkh7EUYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rmicgVpP; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52KFMrVn664173
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 10:22:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742484173;
+	bh=tdhjUaEpge+sh2/HmxIDfMo+ucgquiWth6F5utS9+iA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=rmicgVpPt+9HzF5sfuP7w95FjMue2MaSO+ZFAmsZA5JioKrnIsHEYxovOMjlluulm
+	 mUjyxg0nFxQPQ32YPMKYIjeg1ETzTiq53HcuFwlBNWJ25zGHE/O1qn1qcEBPAOrvP4
+	 zfBw+1Crfd7Gtsn+tvsVxQF6UZl5ZmepRUB2KEaI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52KFMrUY054048
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 20 Mar 2025 10:22:53 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 20
+ Mar 2025 10:22:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 20 Mar 2025 10:22:53 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52KFMrJ6023231;
+	Thu, 20 Mar 2025 10:22:53 -0500
+Date: Thu, 20 Mar 2025 10:22:53 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Parth Pancholi <parth105105@gmail.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Parth Pancholi
+	<parth.pancholi@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: ti: k3-j784s4-main: Enable ACSPCIE
+ outputs for PCIe interfaces
+Message-ID: <20250320152253.rm7zavvnqvzmy6pv@galore>
+References: <20250320122259.525613-1-parth105105@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,130 +78,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3173667.1742484160.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 20 Mar 2025 15:22:40 +0000
-Message-ID: <3173668.1742484160@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Disposition: inline
+In-Reply-To: <20250320122259.525613-1-parth105105@gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+On 13:22-20250320, Parth Pancholi wrote:
+> From: Parth Pancholi <parth.pancholi@toradex.com>
+> 
+> TI J784S4-based devices, such as the AM69 SoC, provide PCIE_REFCLK outputs
+> from the SoC, which can be used to clock external PCIe endpoint devices.
+> Each PCIE_REFCLK output is enabled via the corresponding ACSPCIE clock buffer,
+> with each buffer supporting two PADs to provide reference clocks for two
+> associated PCIe instances. The mappings are as follows:
+>         - PCIe0 -> ACSPCIE1 PAD0
+>         - PCIe1 -> ACSPCIE0 PAD0
+>         - PCIe2 -> ACSPCIE1 PAD1
+>         - PCIe3 -> ACSPCIE0 PAD1
+> 
+> This patch enables each ACSPCIE module and its corresponding PADs to ensure
+> that all PCIE_REFCLK outputs are functional.
+> 
+> This change have been tested on an AM69-based custom hardware platform,
+> where all four PCIe instances (PCIe0, PCIe1, PCIe2, and PCIe3) with the
+> internal PCIE_REFCLK are utilized with various endpoint devices such as
+> a WiFi card, NVMe SSD, and PCIe-to-USB bridge.
+> 
+> Link: https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1484211/am69-pcie-refclk-out-and-acspcie-mappings
+> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+> ---
+> This change depends on https://lore.kernel.org/all/20241209085157.1203168-1-s-vadapalli@ti.com/
+> ---
+>  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi      | 10 ++++++++--
+>  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi             | 10 ++++++----
+>  2 files changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> index 591609f3194c..854fdf7b771e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> @@ -132,6 +132,11 @@ acspcie0_proxy_ctrl: clock-controller@1a090 {
+>  			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
+>  			reg = <0x1a090 0x4>;
+>  		};
+> +
+> +		acspcie1_proxy_ctrl: clock-controller@1a094 {
+> +			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
 
-> >  		if (unlikely(group !=3D netfs_group) &&
-> > -		    group !=3D NETFS_FOLIO_COPY_TO_CACHE)
-> > +		    group !=3D NETFS_FOLIO_COPY_TO_CACHE &&
-> > +		    (group || folio_test_dirty(folio)))
-> =
+We have the same challenge with bindings as well?
 
-> I am trying to follow to this complex condition. Is it possible case tha=
-t
-> folio is dirty but we don't flush the content?
+> +			reg = <0x1a094 0x4>;
+> +		};
+>  	};
+>  
+>  	main_ehrpwm0: pwm@3000000 {
+> @@ -1067,11 +1072,12 @@ pcie0_rc: pcie@2900000 {
+>  		interrupts = <GIC_SPI 318 IRQ_TYPE_EDGE_RISING>;
+>  		device_type = "pci";
+>  		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
+> +		ti,syscon-acspcie-proxy-ctrl = <&acspcie1_proxy_ctrl 0x1>;
+>  		max-link-speed = <3>;
+>  		num-lanes = <4>;
+>  		power-domains = <&k3_pds 332 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 332 0>;
+> -		clock-names = "fck";
+> +		clocks = <&k3_clks 332 0>, <&serdes1 CDNS_TORRENT_REFCLK_DRIVER>;
+> +		clock-names = "fck", "pcie_refclk";
+>  		#address-cells = <3>;
+>  		#size-cells = <2>;
+>  		bus-range = <0x0 0xff>;
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> index 0160fe0da983..ebbc315649d0 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> @@ -34,8 +34,8 @@ pcie2_rc: pcie@2920000 {
+>  		max-link-speed = <3>;
+>  		num-lanes = <2>;
+>  		power-domains = <&k3_pds 334 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 334 0>;
+> -		clock-names = "fck";
+> +		clocks = <&k3_clks 334 0>, <&serdes1 CDNS_TORRENT_REFCLK_DRIVER>;
+> +		clock-names = "fck", "pcie_refclk";
+>  		#address-cells = <3>;
+>  		#size-cells = <2>;
+>  		bus-range = <0x0 0xff>;
+> @@ -45,6 +45,7 @@ pcie2_rc: pcie@2920000 {
+>  		dma-coherent;
+>  		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
+>  		ti,syscon-pcie-ctrl = <&pcie2_ctrl 0x0>;
+> +		ti,syscon-acspcie-proxy-ctrl = <&acspcie1_proxy_ctrl 0x3>;
+>  		status = "disabled";
+>  	};
+>  
+> @@ -63,8 +64,8 @@ pcie3_rc: pcie@2930000 {
+>  		max-link-speed = <3>;
+>  		num-lanes = <2>;
+>  		power-domains = <&k3_pds 335 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 335 0>;
+> -		clock-names = "fck";
+> +		clocks = <&k3_clks 335 0>, <&serdes0 CDNS_TORRENT_REFCLK_DRIVER>;
+> +		clock-names = "fck", "pcie_refclk";
+>  		#address-cells = <3>;
+>  		#size-cells = <2>;
+>  		bus-range = <0x0 0xff>;
+> @@ -74,6 +75,7 @@ pcie3_rc: pcie@2930000 {
+>  		dma-coherent;
+>  		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
+>  		ti,syscon-pcie-ctrl = <&pcie3_ctrl 0x0>;
+> +		ti,syscon-acspcie-proxy-ctrl = <&acspcie0_proxy_ctrl 0x3>;
+>  		status = "disabled";
+>  	};
+>  
+> -- 
+> 2.34.1
+> 
 
-It's slightly complicated by fscache.
-
-The way I have made local caching work for things that use netfslib fully =
-is
-that the writeback code copies the data to the cache.  We achieve this by
-marking the pages dirty when we read them from the server.
-
-However, so that we don't *also* write the clean data back to the server, =
-the
-writeback group[*] field is set to a special value (NETFS_FOLIO_COPY_TO_CA=
-CHE)
-and we make the assumption that the writeback group is only actually going=
- to
-be used by the filesystem if the page is actually modified - in which case=
- the
-writeback group field is overwritten.
-
-[*] This is either folio->private or in a netfs_folio struct attached to
-folio->private.  Note that folio->private is set to be removed in the futu=
-re.
-
-In the event that a page is modified it will be written back to the server=
-(s)
-and the cache, assuming there is a cache.  Also note the netfs_io_stream
-struct.  There are two in the netfs_io_request struct and these are used t=
-o
-separately manage and divide up the writes to a server and to the cache.  =
-I've
-also left the possibility open that we can have more than two streams in t=
-he
-event that we need to write the data to multiple servers.
-
-Further, another reason for making writeback write the data to both the ca=
-che
-and the server is that if you are using content encryption, the data is
-encrypted and then the ciphertext is written to both the server and the ca=
-che.
-
-> Is it possible case that folio is dirty but we don't flush the content?
-
-Anyway, to answer the question more specifically, yes.  If the folio is di=
-rty
-and in the same writeback group (e.g. most recent ceph snap context), then=
- we
-can presumably keep modifying it.
-
-And if the folio is marked dirty and is marked NETFS_FOLIO_COPY_TO_CACHE, =
-then
-we can just overwrite it, replace or clear the NETFS_FOLIO_COPY_TO_CACHE m=
-ark
-and then it just becomes a regular dirty page.  It will get written to fsc=
-ache
-either way.
-
-> > +		if ((++flush_counter & 0xf) =3D=3D 0xf)
-> > +			msleep(10);
-> =
-
-> Do we really need to use sleep? And why is it 10 ms? And even if we woul=
-d
-> like to use sleep, then it is better to introduce the named constant. An=
-d
-> what is teh justification for 10 ms?
-
-At the moment, debugging and stopping it from running wild in a tight loop
-when a mistake is made.  Remember: at this point, this is a WIP.
-
-But in reality, we might see this if we're indulging in cache ping-pong
-between two clients.  I'm not sure how this might be mitigated in the ceph
-environment - if that's not already done.
-
-> > -		kdebug("wrong group");
-> > +		kdebug("wrong group %px !=3D %px", fgroup, wreq->group);
-> =
-
-> I believe to use the %px is not very good practice. Do we really need to=
- show
-> the real pointer?
-
-At some point I need to test interference from someone cranking the snaps =
-and
-I'll probably need this then - though it might be better to make a tracepo=
-int
-for it.
-
-> > +/*
-> > + * Get a ref on a netfs group attached to a dirty page (e.g. a ceph s=
-nap).
-> > + */
-> > +static inline struct netfs_group *netfs_get_group(struct netfs_group =
-*netfs_group)
-> > +{
-> > +	if (netfs_group && netfs_group !=3D NETFS_FOLIO_COPY_TO_CACHE)
-> =
-
-> The netfs_group is a pointer. Is it correct comparison of pointer with t=
-he
-> NETFS_FOLIO_COPY_TO_CACHE constant?
-
-This constant?
-
-#define NETFS_FOLIO_COPY_TO_CACHE ((struct netfs_group *)0x356UL) /* Write=
- to the cache only */
-
-Yes.  See explanation above.
-
-David
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
