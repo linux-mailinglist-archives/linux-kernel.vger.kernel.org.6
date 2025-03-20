@@ -1,111 +1,134 @@
-Return-Path: <linux-kernel+bounces-569657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8028A6A5AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:03:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55135A6A5BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483C0177E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66708A2454
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2222206B7;
-	Thu, 20 Mar 2025 12:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FD222157A;
+	Thu, 20 Mar 2025 12:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICrrUmxl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6yGMcMt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D2921B9C5;
-	Thu, 20 Mar 2025 12:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589CF39AD6;
+	Thu, 20 Mar 2025 12:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742472029; cv=none; b=WV0bfm8vOwVmE8DryL6TIxNOPicotPe+GReDWAye1haexmf8GOJzsN9QoZy9Ryk7NiAA1tjO66HpXzytnMh3LHJt6oTWjwgEa483nW3POL8kV0ndwl+EMQspFsXqACoNxukw1zpjBNdtTpcPWSbzrEagrFH94WCBv3EcS6xsnv8=
+	t=1742472050; cv=none; b=nNYm/fY+YTSENTsc779qRI38zQYCJ+X4pxJsAbyKWV6uqU6kztgucEF2iGyVN3z6B6y1w1Fvfmb1m+pu23hIwf2KdWZ7ByTtoSNgweFG/pzyVIND4CRqoErjWQUS2uiSfP7+yPpodVwjtSDD6i+NcTULBhlv8qC2UUBlE6FXDfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742472029; c=relaxed/simple;
-	bh=oN1hZwcug4vQehOxcTXgDUuIltGoxFsTe011Irv16Hg=;
+	s=arc-20240116; t=1742472050; c=relaxed/simple;
+	bh=I2BU+qsSWA9Jxmh2vNgtN0RHEtMSdlZf/at4dwi6RJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVvSWLzrH8x4Ju7kPjRddPsJFB28I/wCHzZu90dkwrNuJAKI2/0afsDNos06dC5QdrvO9v+RnBULy9z35e9i/v4lT64DSEFTRrfmZJOWRXly4iQLqPa3QIGX7izktNFNa9flPraGZyT7xnvWT3I4UYi/l1lAn5K+4K7sNyBPMOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICrrUmxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9467C4CEDD;
-	Thu, 20 Mar 2025 12:00:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8Hq29NrywYqhgiwUhowC8TeP+746WGArALLjpemMM+7TU6lP9jM+KVmCkLxpjxlxcQULTheV/EhNik8May2zutVk+qufd/aMT2DY0SlcUpUmY43E0rNF8zQoypNu+81DJH12fIfW7SzhbQhTPUZ5a2TlTaZhw+wmVRLDfrFMwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6yGMcMt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5709BC4CEEA;
+	Thu, 20 Mar 2025 12:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742472028;
-	bh=oN1hZwcug4vQehOxcTXgDUuIltGoxFsTe011Irv16Hg=;
+	s=k20201202; t=1742472049;
+	bh=I2BU+qsSWA9Jxmh2vNgtN0RHEtMSdlZf/at4dwi6RJ8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICrrUmxl04FjlGxus1Tn21z3qRENtKtrZ3t9I2ANQ2Gp9Ws9KCtUZCPgyp2kbILjo
-	 gskhUk+YbWqipI0oLECrUNwiM6ersVfmZqyxUkDqeyJpNU/dU400ZnbqVxj/6atpkT
-	 RqfNF2YHh6CsBhd0s11OJ0812WcmbcsBCi1I6LQ1+xLE/jn5EuKC/OgMRP/r5tx+vq
-	 789M1kAC/o31EXqrk9FNa09ah8O1hOVzNiZy66BCYiEezUEj4WPlf1XIrzJ8H0UPP9
-	 5iAVQ4shUyYWIaIRV4xPe+oqLXemah+XAux80qjYC9r0DSc9xhlN8mvtNyfeAJgfeO
-	 QaYQDp3YR8oqQ==
-Date: Thu, 20 Mar 2025 13:00:23 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, tmgross@umich.edu, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] rust: device: implement bus_type_raw()
-Message-ID: <Z9wDV7Y0-pwe_A-v@pollux>
-References: <20250319203112.131959-1-dakr@kernel.org>
- <20250319203112.131959-3-dakr@kernel.org>
- <Z9vTctFR7QAOa4tn@google.com>
+	b=i6yGMcMtI495UC0u2NOvqjljFvh/k1FKhOq+4zKWZuefs2TuWkfvGS1rGKNpcGGb8
+	 NdBcJR+93RLe3JKkQDr3YkmhKkXPdk1msjKXlERZpXvi26JR/FuR+Rl7Je2+aiwie1
+	 1ixb9lkYYyEkkAuPhNBXnDvLa9RUSR0qH8t76Abd84UE5GS+HFISpVqA3Sq40kDkNr
+	 sSERXHf+itD/iwo8qEy4QuxW/jtNXkjWdaDW3ixR3E4Jve7AiAz1NevNrzHgjooS4S
+	 7fpHAWq916cJLvgbaDftt1JCwM2jz2njTTfDbY2jNsW6N7TA0ejjrR4eMSZX47H/I0
+	 HgLIz6+G3dZkw==
+Date: Thu, 20 Mar 2025 12:00:42 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Min Lin <linmin@eswincomputing.com>,
+	Pritesh Patel <pritesh.patel@einfochips.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Yu Chien Peter Lin <peterlin@andestech.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	Darshan Prajapati <darshan.prajapati@einfochips.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
+	"rafal@milecki.pl" <rafal@milecki.pl>,
+	Anup Patel <anup@brainfault.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/10] Basic device tree support for ESWIN EIC7700 RISC-V
+ SoC
+Message-ID: <20250320-uprising-couch-0af012a1fee6@spud>
+References: <20250311073432.4068512-1-pinkesh.vaghela@einfochips.com>
+ <20250311-backdrop-porthole-440ae005e8fa@spud>
+ <SA3PR04MB893164FCD6C4CB8924FC8DE583D82@SA3PR04MB8931.namprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dqsjL8OpJogiK+vA"
+Content-Disposition: inline
+In-Reply-To: <SA3PR04MB893164FCD6C4CB8924FC8DE583D82@SA3PR04MB8931.namprd04.prod.outlook.com>
+
+
+--dqsjL8OpJogiK+vA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9vTctFR7QAOa4tn@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 08:36:02AM +0000, Alice Ryhl wrote:
-> On Wed, Mar 19, 2025 at 09:30:26PM +0100, Danilo Krummrich wrote:
-> > Implement bus_type_raw(), which returns a raw pointer to the device'
-> > struct bus_type.
-> > 
-> > This is useful for bus devices, to implement the following trait.
-> > 
-> > 	impl TryFrom<&Device> for &pci::Device
-> > 
-> > With this a caller can try to get the bus specific device from a generic
-> > device in a safe way. try_from() will only succeed if the generic
-> > device' bus type pointer matches the pointer of the bus' type.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/kernel/device.rs | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> > index 76b341441f3f..e2de0efd4a27 100644
-> > --- a/rust/kernel/device.rs
-> > +++ b/rust/kernel/device.rs
-> > @@ -78,6 +78,13 @@ pub fn parent<'a>(&self) -> Option<&'a Self> {
-> >          }
-> >      }
-> >  
-> > +    /// Returns a raw pointer to the device' bus type.
-> > +    #[expect(unused)]
-> > +    pub(crate) fn bus_type_raw(&self) -> *const bindings::bus_type {
-> > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
-> 
-> Is this field immutable?
+On Thu, Mar 20, 2025 at 10:39:52AM +0000, Pinkesh Vaghela wrote:
+> Hi Conor,
+>=20
+> On Tue, Mar 11, 2025 at 11:38 PM, Conor Dooley wrote:
+> > On Tue, Mar 11, 2025 at 01:04:22PM +0530, Pinkesh Vaghela wrote:
+> > > Add support for ESWIN EIC7700 SoC consisting of SiFive Quad-Core
+> > > P550 CPU cluster and the first development board that uses it, the
+> > > SiFive HiFive Premier P550.
+> > >
+> > > This patch series adds initial device tree and also adds ESWIN
+> > > architecture support.
+> > >
+> > > Boot-tested using intiramfs with Linux 6.14.0-rc2 on HiFive Premier
+> > > P550 board using U-Boot 2024.01 and OpenSBI 1.4.
+> >=20
+> > There's no git tree in your MAINTAINERS entry, nor mention here of what=
+ the
+> > story is going to be in terms of sending patches to Arnd. Who is going =
+to be
+> > doing that?
+>=20
+> We are not currently set up for sending signed pull requests,
+> so for now we plan to send changes to Arnd as separate patches.
 
-dev->bus is a pointer to a const struct bus_type, yes.
+Undesirable, but sure. You didn't answer the first part of my question
+though, and there's no git tree listed in your v2 series. That part is
+not negotiable, you have to have one and get it included in linux-next.
 
-> 
-> > +        unsafe { (*self.as_raw()).bus }
-> > +    }
-> > +
-> >      /// Convert a raw C `struct device` pointer to a `&'a Device`.
-> >      ///
-> >      /// # Safety
-> > -- 
-> > 2.48.1
-> > 
+Cheers,
+Conor.
+
+--dqsjL8OpJogiK+vA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ9wDagAKCRB4tDGHoIJi
+0qi/AP9YKzFUiYQGiDGSwHohlkUToDB0pum+R3rZQuqFodKXXAEAk6gtT0rvQonb
+1UJ5lZsOGhW0cLSxRu5z5tlnca1WJAM=
+=UrIu
+-----END PGP SIGNATURE-----
+
+--dqsjL8OpJogiK+vA--
 
