@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-569424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C9AA6A2B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:33:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D41FA6A2A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B1B189BC4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8171A188F15E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C53222582;
-	Thu, 20 Mar 2025 09:33:05 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28B3222566;
+	Thu, 20 Mar 2025 09:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9O+5vm/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19F42222CA;
-	Thu, 20 Mar 2025 09:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BDD1C1F2F;
+	Thu, 20 Mar 2025 09:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742463185; cv=none; b=Tvy8LcGcBYY3rBQzBiGsWnxzuT07HqdPHfpA+t95/iP3rGumty7ITbkDNwyLePMdED/vWk8s3wUwZKF7EVGpb6q+NehoiTLGfBBlerT/Cx2ytQsr33Ki//frzh8tArHWhb9QvCxjWyXKw21gIDCu0481XtTVdmj1y6oGzA9kUic=
+	t=1742463000; cv=none; b=e34YEo4z62jB3eE/wsi7ZEqky2jAK6/NAzXSN0caa0WrH4qxoR0eC86LqnAm4Y6c6Rt012XLmlyYRZOS+DjZzboB3YbDM0tNiQ5p53p3vRA/ZUtogNCFJJyHGjUDBtrdNOHj9oliLhK8/elK84I/Z9i0khwbgiTelGjnH6P0X0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742463185; c=relaxed/simple;
-	bh=zGVoYuexyNAYTW+12AY61QB9oJUhu0/d1dOlv0Die0w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZp8dYPMLPDPOa/a6yd30Qa5cnKZ+rEOQ3wXKB2nA9aDKmA6h8AEN6UWfc2aL84/FJHCj4qcdI9WzERqOdcSna2tkJf9ya83O9z/5f1RVxuEBmpfh/FsoH1r0MwJCBMkwgSomta3aXUI6IEnQPM4MTK6mXnDGKcs3Eexcfb9BRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [210.73.43.1])
-	by APP-05 (Coremail) with SMTP id zQCowADn7qLC4Ntn6cmWFg--.39879S2;
-	Thu, 20 Mar 2025 17:32:51 +0800 (CST)
-From: Zhe Qiao <qiaozhe@iscas.ac.cn>
-To: qiaozhe@iscas.ac.cn,
-	robert.moore@intel.com,
-	rafael.j.wysocki@intel.com,
-	lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	acpica-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPICA: Adjust the position of code lines.
-Date: Thu, 20 Mar 2025 17:29:43 +0800
-Message-Id: <20250320092943.92790-1-qiaozhe@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742463000; c=relaxed/simple;
+	bh=dw5ASQC8hlhdIlEBxhQ13OH2Na6Ploy5abBdY4RpC7o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=eSL40Iao3xFrckvNEIyLa4i+10pLZLpbKKxaskIfmgOH9hcbECGv7UrbaDdeyngQPETRAhLRQxK5nniH1NIPXGCifkNFq6W7byQZuvKKoCTwZNPbwwfoexnvB/Q0C1okUF3qtSJpTQYpiJ7qUqjiVU78mXfnoUoYeO5iJOPWcJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9O+5vm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66309C4CEDD;
+	Thu, 20 Mar 2025 09:29:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742462999;
+	bh=dw5ASQC8hlhdIlEBxhQ13OH2Na6Ploy5abBdY4RpC7o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=C9O+5vm/fgxVcGbIa0CSvUZTqO1EN332MFqVP5ms+f5GW2KqPTGsFSpnSbpN4a+ws
+	 L5o7bPrdNG6oz+/sn7+qysMoUgojy1ZCMKSPLuY6rCGwGmnLOiyuVgBHPoR7SKLTcm
+	 EY3dvujW32ceYa4uw8JBJfp/iRtx7MwwadMEQhaviy8GFMfimMkCUIN7C/wcklG0LX
+	 hREaHmkt92sIcuiAILo0Z6Pi3Ao8JQsicWY5CGtwrEfbbglPG0pUjECAUljOpON+AF
+	 3QzuDri5cr+3pk/OvRk5C2CYi9ENwiJIuLNZathWMcBaiRCVbg49N+P51rhlJsunUD
+	 7B6clqADSgbuQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71FC93806654;
+	Thu, 20 Mar 2025 09:30:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,51 +51,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADn7qLC4Ntn6cmWFg--.39879S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFykXF18Zr4fAFWrCw15Jwb_yoWDXFc_WF
-	nxJFs3XFWFyF1xWw10qa4fWr4av3y7uFWxKFy7try3Aw1xZry2v34UCr1fZa1Ykw4F9Fsx
-	X3yDXryfAr9F9jkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUUKFAJUUUUU==
-X-CM-SenderInfo: ptld061kh6x2xfdvhtffof0/
+Subject: Re: [PATCH net-next 00/12] mptcp: pm: prep work for new ops and sysctl
+ knobs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174246303526.1366947.13566116463963705037.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Mar 2025 09:30:35 +0000
+References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
+In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, corbet@lwn.net, shuah@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
 
-In the acpica/utcache.c file, adjust the position of the
-"ACPI_MEM_TRACKING(cache->total_allocated++);" code line
-to ensure that the increment operation on total_allocated
-is included within the ACPI_DBG_TRACK_ALLOCATIONS configuration.
+Hello:
 
-Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
----
- drivers/acpi/acpica/utcache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/drivers/acpi/acpica/utcache.c b/drivers/acpi/acpica/utcache.c
-index 85a85f7cf750..046e6ba127d4 100644
---- a/drivers/acpi/acpica/utcache.c
-+++ b/drivers/acpi/acpica/utcache.c
-@@ -251,9 +251,9 @@ void *acpi_os_acquire_object(struct acpi_memory_list *cache)
- 	} else {
- 		/* The cache is empty, create a new object */
- 
-+#ifdef ACPI_DBG_TRACK_ALLOCATIONS
- 		ACPI_MEM_TRACKING(cache->total_allocated++);
- 
--#ifdef ACPI_DBG_TRACK_ALLOCATIONS
- 		if ((cache->total_allocated - cache->total_freed) >
- 		    cache->max_occupied) {
- 			cache->max_occupied =
+On Thu, 13 Mar 2025 11:20:49 +0100 you wrote:
+> Here are a few cleanups, preparation work for the new PM ops, and sysctl
+> knobs.
+> 
+> - Patch 1: reorg: move generic NL code used by all PMs to pm_netlink.c.
+> 
+> - Patch 2: use kmemdup() instead of kmalloc + copy.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,01/12] mptcp: pm: split netlink and in-kernel init
+    https://git.kernel.org/netdev/net-next/c/b97d6b682027
+  - [net-next,02/12] mptcp: pm: in-kernel: use kmemdup helper
+    https://git.kernel.org/netdev/net-next/c/fa123489e7ef
+  - [net-next,03/12] mptcp: pm: use pm variable instead of msk->pm
+    https://git.kernel.org/netdev/net-next/c/5fff36b69cd4
+  - [net-next,04/12] mptcp: pm: only fill id_avail_bitmap for in-kernel pm
+    https://git.kernel.org/netdev/net-next/c/98a0a99e81b6
+  - [net-next,05/12] mptcp: pm: add struct_group in mptcp_pm_data
+    https://git.kernel.org/netdev/net-next/c/eff5b1578e99
+  - [net-next,06/12] mptcp: pm: define struct mptcp_pm_ops
+    https://git.kernel.org/netdev/net-next/c/1305b0c22eca
+  - [net-next,07/12] mptcp: pm: register in-kernel and userspace PM
+    https://git.kernel.org/netdev/net-next/c/770170b41810
+  - [net-next,08/12] mptcp: sysctl: set path manager by name
+    https://git.kernel.org/netdev/net-next/c/595c26d122d1
+  - [net-next,09/12] mptcp: sysctl: map path_manager to pm_type
+    https://git.kernel.org/netdev/net-next/c/573b653401a8
+  - [net-next,10/12] mptcp: sysctl: map pm_type to path_manager
+    https://git.kernel.org/netdev/net-next/c/7982ed0edda3
+  - [net-next,11/12] mptcp: sysctl: add available_path_managers
+    https://git.kernel.org/netdev/net-next/c/fa3ee9dd8067
+  - [net-next,12/12] selftests: mptcp: add pm sysctl mapping tests
+    https://git.kernel.org/netdev/net-next/c/9cf0128e64ab
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
