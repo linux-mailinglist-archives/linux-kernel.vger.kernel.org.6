@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-569376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654E4A6A20B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:02:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2FDA6A20E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD561465D1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824D3466CE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A470214A74;
-	Thu, 20 Mar 2025 09:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37ADB21E0B7;
+	Thu, 20 Mar 2025 09:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cUmkhvs8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="350RVoBT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fc9AIbDz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48659207A03;
-	Thu, 20 Mar 2025 09:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2D91E5204
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742461269; cv=none; b=Vp4SHQWjwqhTMJspsvfr0Q60xaSprs0iDDWvWyYau4sUZoO1GU/DAUjjzNCaZaZguwbom5AFHoLjpsDvygHlHh6mH7mQuw3ZjxabFhccNOyVfMQ/UWYKEemPHIEkG3RxWAEH1aHOphmIhBLBEK6fgl00tthKujhrkt4xilDrZhI=
+	t=1742461286; cv=none; b=GLw5fzDOH2KoBkIReJGdHqhk2ybBF8uqF5QFAdbIxIRuoIFOsGxmV5ZfakaG6RWokjyPqt+y+aabdVrAkej2w5RqBlazu6Mq5+fH7lJjawobxpRyrgg0Vn0nDkVmJwrS/qKjA+v//co+qBVxn1ZzltEsGPKyqkwC+lmWjzp+4aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742461269; c=relaxed/simple;
-	bh=ZT0sJ+5w47IhNip0vZsoB41Y6n9mv1fmc5It9kaFzlM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RP4m+PKtFExAdvzoTrF7z9lHwqk5isU/BcR+UnfneYeHDPEQtI3z2ErMS+yUI+9PSW14rxclvlhfJnuUHOtm5NmSJOIaAAvmSTAnT4tZNkjVKtL3ZcHkVgtR2TJueylylZk5lF6pYNoZGjUN1yub88BR2/Sjvd5yOSyxBO6sBVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cUmkhvs8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=350RVoBT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Mar 2025 09:01:04 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742461265;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CFUzOF+hwdOfS46KtEoCc3LXrvdoQndwZimkD2TQRw=;
-	b=cUmkhvs8pmZ9uLj7kFYsSIo2W45xkuz1sSgni1CMIslbdJQFlgLEPdNYBlSSitmzoYi8kK
-	iAKHu9qJPlq/mklqjI+4GYEUDELsg7vIc9HjR/AntBt1lZn+O4ldL7c0uRWd9yJduZDsSI
-	BVB8PntaWNkhW+PcDmkdmq9xsWdFdvUmICUObRD8A4IN71R72gNIMR+Rl35ipvj7gsyHhU
-	0OhAi9UkiQrnEgTVZ5xOUcf/CePOGH6HY3kqEdvtOSsqcBDXO/0wtjF/Y/kiWfbH1CWcgE
-	5Yyqla9410KbrvjNE7Zl1x1limy+RgzaPSI47ySd5QX42G/FMjJTMQw/PzVW/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742461265;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6CFUzOF+hwdOfS46KtEoCc3LXrvdoQndwZimkD2TQRw=;
-	b=350RVoBTGnR0wQoMjb2R0fsxEjZg80Bx7Aov2Sf1y5apkYcHCNFzNfc6cBw0b51Y4j6FDc
-	ddHZBMBDhO6SMhAg==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] gendwarfksyms: Define __GENKSYMS__ when processing
- <asm/asm-protoypes.h>
-Cc: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com,
- Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Masahiro Yamada <yamada.masahiro@socionext.com>,
- Michal Marek <michal.lkml@markovi.net>, Brian Gerst <brgerst@gmail.com>,
- Uros Bizjak <ubizjak@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250320070746.101552-2-ardb+git@google.com>
-References: <20250320070746.101552-2-ardb+git@google.com>
+	s=arc-20240116; t=1742461286; c=relaxed/simple;
+	bh=5l9jwMAcnsf1oLxy6ZmyjDg3hozK14Egdv9q6rSt7pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LC8CfSfyhrj6eKuxmBMhZkMwio5U/WXmaFPIYHn2he0qc0Ofr0JtZhrcaeeIZWDH8N5wpauRtgUAJMgmSkNL5UyUNMvOKt24loL5dEL3WbgGzRE9IffXJOvLDvxoiOH6fxWjsunLzMzoz8v5/axaajUPRnmbs8iSJoXwdt0Vi70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fc9AIbDz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A702C4CEE8;
+	Thu, 20 Mar 2025 09:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742461286;
+	bh=5l9jwMAcnsf1oLxy6ZmyjDg3hozK14Egdv9q6rSt7pk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fc9AIbDzyhmJe5F843Vik1qG222uAdC5zlcrjHv/RASdem/9w5AuR2Fc2CYxVPLkk
+	 xILD6Dr72N6r9c0ay6SqY7zzwaWqvP1gX+R4a0yajJk/7lWDqW77WIBRYxRuZR9C05
+	 e+wn/tnrOe+kNjDh+fWenmHiOevyGSTOIol0T3pHB+ISaX0KLUZqzINEjhpERz8zkn
+	 aDPAKRkIVY0IQtvrFBosMxoT1Jcst+tA+rKebqj95HEi8AnAzknkBNC6SF/QF0zWC/
+	 sg4TiPEnMEzgRkT9KuE3XwlESIl8CzwuvQGxU+t2pk0MrdZj23sASvPjXGyKtI1W6i
+	 57ZXEI3d7fm6g==
+Date: Thu, 20 Mar 2025 10:01:20 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: Bert Karwatzki <spasswolf@web.de>, Alex Deucher <alexdeucher@gmail.com>,
+	Kees Cook <kees@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org
+Subject: Re: commit 7ffb791423c7 breaks steam game
+Message-ID: <Z9vZYIbXOz2wF59j@gmail.com>
+References: <146277bb0ecbb392d490683c424b8ae0dfa82838.camel@web.de>
+ <b63b1de8-7eec-4235-b61e-e654e78543ba@nvidia.com>
+ <fa8d5e76694918bdaae9faee9648776f298f78ca.camel@web.de>
+ <7866593f-0322-4fb3-9729-82366940fc85@nvidia.com>
+ <a168e78b-ae27-4675-8821-0b1a2499b2b2@nvidia.com>
+ <5d34bfc5109b8d104fd4f8550dd17945344f9d07.camel@web.de>
+ <551b9797-20d6-4bfe-b54c-84dd7aae7794@nvidia.com>
+ <CADnq5_Pvmxa10dJWYjajwxG-0Y_oxhL6wS6NsG2F0dmcJS6o8A@mail.gmail.com>
+ <9be36dfab79b17e108f71d51a6ebf39073e110c6.camel@web.de>
+ <b5d80ef2-fd5a-41cc-9184-6c82226c330a@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174246126447.14745.7024307702923339978.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b5d80ef2-fd5a-41cc-9184-6c82226c330a@nvidia.com>
 
-The following commit has been merged into the x86/core branch of tip:
 
-Commit-ID:     fb3135208f688c5cab7d05e3a0d229935ee7611a
-Gitweb:        https://git.kernel.org/tip/fb3135208f688c5cab7d05e3a0d229935ee7611a
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Thu, 20 Mar 2025 08:07:47 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 20 Mar 2025 09:48:49 +01:00
+* Balbir Singh <balbirs@nvidia.com> wrote:
 
-gendwarfksyms: Define __GENKSYMS__ when processing <asm/asm-protoypes.h>
+> On 3/17/25 00:09, Bert Karwatzki wrote:
+> > This is related to the admgpu.gttsize. My laptop has the maximum amount 
+> > of memory (64G) and usually gttsize is half of main memory size. I just 
+> > tested with cmdline="nokaslr amdgpi.gttsize=2048" and the problem does 
+> > not occur. So I did some more testing with varying gttsize and got this
+> > for the built-in GPU
+> > 
+> > 08:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI]
+> > Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] (rev c5)
+> > 
+> > (nokaslr is always enabeld)
+> > gttssize   input behaviour
+> >  2048		GOOD
+> >  2064		GOOD
+> >  2080		SEMIBAD (i.e. noticeable input lag but not as bad as below)
+> >  3072		BAD
+> >  4096		BAD
+> >  8192		BAD
+> > 16384		BAD
+> > 
+> > As the build-in GPU has ~512 VRAM there seems to be problems when gttsize >
+> > 4*VRAM so I tested for the discrete GPU with 8G of VRAM
+> > gttsize   input behaviour
+> > 49152		GOOD
+> > 64000		GOOD
+> > 
+> > So for the discrete GPU increasing gttsize does no reproduce the bug.
+> > 
+> 
+> Very interesting, I am not a GTT expert, but with these experiments do you
+> find anything interesting in
+> 
+> /sys/kernel/debug/x86/pat_memtype_list?
+> 
+> It's weird that you don't see any issues in Xorg (Xfce), just the games.
+> May be we should get help from the amd-gfx experts to further diagnose/debug
+> the interaction of nokaslr with the game.
 
-Ensure that __GENKSYMS__ is #define'd when passing <asm/asm-prototypes.h>
-through the compiler to capture the exported symbols. This ensures that
-exported symbols such as __ref_stack_chk_guard on x86, which is declared
-conditionally, is visible to the tool.
+So basically your commit:
 
-Otherwise the build might break when CONFIG_GENDWARFKSYMS=y:
+  7ffb791423c7 ("x86/kaslr: Reduce KASLR entropy on most x86 systems")
 
-  <stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_guard'
+inflicts part of the effects of a 'nokaslr' boot command line option, 
+and triggers the regression due to that?
 
-Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lore.kernel.org/r/20250320070746.101552-2-ardb+git@google.com
----
- scripts/Makefile.build | 1 +
- 1 file changed, 1 insertion(+)
+Or is there some other cause?
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 993708d..7855cdc 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
- getasmexports =								\
-    { echo "\#include <linux/kernel.h>" ;				\
-      echo "\#include <linux/string.h>" ;				\
-+     echo "\#define  __GENKSYMS__" ;					\
-      echo "\#include <asm/asm-prototypes.h>" ;				\
-      $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
- 
+Thanks,
+
+	Ingo
 
