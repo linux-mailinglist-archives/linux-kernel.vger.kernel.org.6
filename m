@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-569406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90310A6A28D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:27:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BF9A6A291
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 10:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E7F189B161
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54D1885F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8904F224240;
-	Thu, 20 Mar 2025 09:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C768C2248B4;
+	Thu, 20 Mar 2025 09:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iZcrQAQf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GiplGrcl"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F502222C8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521182222CD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 09:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742462744; cv=none; b=eynFbeOtRij36QaVmPw2LnMCiaEq3dy+t5ZMce07VhZJ1fTcyCciI/ltvTxfffIIHUr7Jae+cf0FNqpXsuq2JopqcB/eyPvY9oXsH5e38ag5XVBmibX036TmLG1Z/oTRb6XiT++huzmwqg3RhU3lsyFtte61SOZv31OooB64250=
+	t=1742462746; cv=none; b=FNcW2VfHinKopE9UoCEqcWoBHpSi898OBJT482SHumVddyJ3kGO9cq6Hp5OJtUNpAHJISIAQQobD9P/FFkV0aBhhizkQvT0uWWMLLKykepxGUgKIYPBWQewvvoDCx1r/DI6LeTYK1Y1VdlII4PAv3mtyHIkZB89MtIW/4dBmGHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742462744; c=relaxed/simple;
-	bh=fqgEYXFIkxF5GlmCmiHytufE/2k0aA2ttPBEs7bulF8=;
+	s=arc-20240116; t=1742462746; c=relaxed/simple;
+	bh=nxJBiLzczhFnBakyS21AFbLzppLXT/zMwnVUHhdHALc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GMPv39Q9F0s7wb+91dfiBUpOX5g5jkgIGni6arUwyGuSM8Peile/8+/IAQdZb13VOPOkrIBpzbuNe52iBbIaEE6c/uw8Z0DolBp8g6e04nP7eJpYUs0K+wP8YzN3eGYujIZLkry5CIXmJ9KwdZWOvt71/KXQbE4YbWSu/2Pe4Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iZcrQAQf; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=qiRImHm5FMo756V+bG3m59BzmL3IWSAUcThjEDmdwpw0Q7B2JwwnJpk5di3FXTTFoxtBifkvUuzgVZjOyAR3LvTS05SQuz3liGcQZFyBwQP+VWcCqdU+Mxs/Sn5Fh0vbKDyiOIQUjlFhU9Gfhpppxo4tSDg2ce337YrElfvAs8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GiplGrcl; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742462741;
+	s=mimecast20190719; t=1742462743;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CK5pM6D00pDpzKNVnPPnJFk4235/1El011hY/HmMZUU=;
-	b=iZcrQAQfYxiHdNp24Z3lhGFPEgTLE3B9NTkASISC/rdqH0k5As9xV9wbRwvUCW9dHzoPuq
-	oQSdWZBJ79lKXr+O+gMJcmoRUzn1YD0gmibCS29er9wJRZCMj4cQ/ajWIervc+I8l21zsH
-	pSX2T8q1z8pP37xm1GhQENyl64u7G3Q=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=zlYKhEorVqLYcQtYVkQA5iU2P6/611obw/UuZKDRxAo=;
+	b=GiplGrclKiBpqdNadMEytu68bf+pF+tc7CjisxL8JH0j6AFQL/idO3kSlEcvmf44E1wGnV
+	T1E/hHmbjsuBZYHUD+lREjxssN2+3BL7dan6vEYOjjjoAvZY9OV0H47RCkn8vITEyVaup/
+	LZEpAFHVc5oGJBKK0RwUuoSRLGKxAzI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-12-uLVHq97nPsutBKwaRVLPoA-1; Thu,
- 20 Mar 2025 05:25:38 -0400
-X-MC-Unique: uLVHq97nPsutBKwaRVLPoA-1
-X-Mimecast-MFC-AGG-ID: uLVHq97nPsutBKwaRVLPoA_1742462737
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-o6u0A1-oMdSYrrLbQTiphg-1; Thu,
+ 20 Mar 2025 05:25:41 -0400
+X-MC-Unique: o6u0A1-oMdSYrrLbQTiphg-1
+X-Mimecast-MFC-AGG-ID: o6u0A1-oMdSYrrLbQTiphg_1742462740
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6AC211800267;
-	Thu, 20 Mar 2025 09:25:37 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 383981944F0A;
+	Thu, 20 Mar 2025 09:25:40 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.45.224.73])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3061019560AF;
-	Thu, 20 Mar 2025 09:25:34 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 04E0719560AF;
+	Thu, 20 Mar 2025 09:25:37 +0000 (UTC)
 From: Tomas Glozar <tglozar@redhat.com>
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: linux-trace-kernel@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc: linux-trace-kernel@vger.kernel.org,
 	John Kacur <jkacur@redhat.com>,
 	Luis Goncalves <lgoncalv@redhat.com>,
 	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH 4/6] rtla: Always set all tracer options
-Date: Thu, 20 Mar 2025 10:24:58 +0100
-Message-ID: <20250320092500.101385-5-tglozar@redhat.com>
+Subject: [PATCH 5/6] rtla/tests: Reset osnoise options before check
+Date: Thu, 20 Mar 2025 10:24:59 +0100
+Message-ID: <20250320092500.101385-6-tglozar@redhat.com>
 In-Reply-To: <20250320092500.101385-1-tglozar@redhat.com>
 References: <20250320092500.101385-1-tglozar@redhat.com>
 Precedence: bulk
@@ -77,234 +77,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-rtla currently only sets tracer options that are explicitly set by the
-user, with the exception of OSNOISE_WORKLOAD.
+Remove any dangling tracing instances from previous improperly exited
+runs of rtla, and reset osnoise options to default before running a test
+case.
 
-This leads to improper behavior in case rtla is run with those options
-not set to the default value. rtla does reset them to the original
-value upon exiting, but that does not protect it from starting with
-non-default values set either by an improperly exited rtla or by another
-user of the tracers.
+This ensures that the test results are deterministic. Specific test
+cases checked that rtla behaves correctly even when the tracer state is
+not clean will be added later.
 
-For example, after running this command:
-
-$ echo 1 > /sys/kernel/tracing/osnoise/stop_tracing_us
-
-all runs of rtla will stop at the 1us threshold, even if not requested
-by the user:
-
-$ rtla osnoise hist
-Index   CPU-000   CPU-001
-1             8         5
-2             5         9
-3             1         2
-4             6         1
-5             2         1
-6             0         1
-8             1         1
-12            0         1
-14            1         0
-15            1         0
-over:         0         0
-count:       25        21
-min:          1         1
-avg:       3.68      3.05
-max:         15        12
-rtla osnoise hit stop tracing
-
-Fix the problem by setting the default value for all tracer options if
-the user has not provided their own value.
-
-For most of the options, it's enough to just drop the if clause checking
-for the value being set. For cpus, "all" is used as the default value,
-and for osnoise default period and runtime, default values of
-the osnoise_data variable in trace_osnoise.c are used.
-
-Fixes: 1eceb2fc2ca5 ("rtla/osnoise: Add osnoise top mode")
-Fixes: 829a6c0b5698 ("rtla/osnoise: Add the hist mode")
-Fixes: a828cd18bc4a ("rtla: Add timerlat tool and timelart top mode")
-Fixes: 1eeb6328e8b3 ("rtla/timerlat: Add timerlat hist mode")
 Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 ---
- tools/tracing/rtla/src/osnoise.c  | 56 ++++++++++++++---------------
- tools/tracing/rtla/src/timerlat.c | 59 +++++++++++++++----------------
- 2 files changed, 56 insertions(+), 59 deletions(-)
+ tools/tracing/rtla/tests/engine.sh | 40 ++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/tools/tracing/rtla/src/osnoise.c b/tools/tracing/rtla/src/osnoise.c
-index a71618d876e9..2dc3e4539e99 100644
---- a/tools/tracing/rtla/src/osnoise.c
-+++ b/tools/tracing/rtla/src/osnoise.c
-@@ -17,6 +17,9 @@
+diff --git a/tools/tracing/rtla/tests/engine.sh b/tools/tracing/rtla/tests/engine.sh
+index 64d0446dc28e..5db8aa4bc031 100644
+--- a/tools/tracing/rtla/tests/engine.sh
++++ b/tools/tracing/rtla/tests/engine.sh
+@@ -8,12 +8,44 @@ test_begin() {
+ 	[ -n "$TEST_COUNT" ] && echo "1..$TEST_COUNT"
+ }
  
- #include "osnoise.h"
- 
-+#define DEFAULT_SAMPLE_PERIOD	1000000			/* 1s */
-+#define DEFAULT_SAMPLE_RUNTIME	1000000			/* 1s */
++reset_osnoise() {
++	# Reset osnoise options to default and remove any dangling instances created
++	# by improperly exited rtla runs.
++	pushd /sys/kernel/tracing || return 1
 +
- /*
-  * osnoise_get_cpus - return the original "osnoise/cpus" content
-  *
-@@ -1127,46 +1130,43 @@ osnoise_apply_config(struct osnoise_tool *tool, struct osnoise_params *params)
- 	if (!params->sleep_time)
- 		params->sleep_time = 1;
- 
--	if (params->cpus) {
--		retval = osnoise_set_cpus(tool->context, params->cpus);
--		if (retval) {
--			err_msg("Failed to apply CPUs config\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_cpus(tool->context, params->cpus ? params->cpus : "all");
-+	if (retval) {
-+		err_msg("Failed to apply CPUs config\n");
-+		goto out_err;
- 	}
- 
- 	if (params->runtime || params->period) {
- 		retval = osnoise_set_runtime_period(tool->context,
- 						    params->runtime,
- 						    params->period);
--		if (retval) {
--			err_msg("Failed to set runtime and/or period\n");
--			goto out_err;
--		}
-+	} else {
-+		retval = osnoise_set_runtime_period(tool->context,
-+						    DEFAULT_SAMPLE_PERIOD,
-+						    DEFAULT_SAMPLE_RUNTIME);
- 	}
- 
--	if (params->stop_us) {
--		retval = osnoise_set_stop_us(tool->context, params->stop_us);
--		if (retval) {
--			err_msg("Failed to set stop us\n");
--			goto out_err;
--		}
-+	if (retval) {
-+		err_msg("Failed to set runtime and/or period\n");
-+		goto out_err;
- 	}
- 
--	if (params->stop_total_us) {
--		retval = osnoise_set_stop_total_us(tool->context, params->stop_total_us);
--		if (retval) {
--			err_msg("Failed to set stop total us\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_stop_us(tool->context, params->stop_us);
-+	if (retval) {
-+		err_msg("Failed to set stop us\n");
-+		goto out_err;
- 	}
- 
--	if (params->threshold) {
--		retval = osnoise_set_tracing_thresh(tool->context, params->threshold);
--		if (retval) {
--			err_msg("Failed to set tracing_thresh\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_stop_total_us(tool->context, params->stop_total_us);
-+	if (retval) {
-+		err_msg("Failed to set stop total us\n");
-+		goto out_err;
-+	}
++	# Remove dangling instances created by previous rtla run
++	echo 0 > tracing_thresh
++	cd instances
++	for i in osnoise_top osnoise_hist timerlat_top timerlat_hist
++	do
++		[ ! -d "$i" ] && continue
++		rmdir "$i"
++	done
 +
-+	retval = osnoise_set_tracing_thresh(tool->context, params->threshold);
-+	if (retval) {
-+		err_msg("Failed to set tracing_thresh\n");
-+		goto out_err;
- 	}
- 
- 	if (params->hk_cpus) {
-diff --git a/tools/tracing/rtla/src/timerlat.c b/tools/tracing/rtla/src/timerlat.c
-index 448fb1f7d3a6..c29e2ba2d7d8 100644
---- a/tools/tracing/rtla/src/timerlat.c
-+++ b/tools/tracing/rtla/src/timerlat.c
-@@ -16,6 +16,8 @@
- 
- #include "timerlat.h"
- 
-+#define DEFAULT_TIMERLAT_PERIOD	1000			/* 1ms */
++	# Reset options to default
++	# Note: those are copied from the default values of osnoise_data
++	# in kernel/trace/trace_osnoise.c
++	cd ../osnoise
++	echo all > cpus
++	echo DEFAULTS > options
++	echo 1000000 > period_us
++	echo 0 > print_stack
++	echo 1000000 > runtime_us
++	echo 0 > stop_tracing_total_us
++	echo 0 > stop_tracing_us
++	echo 1000 > timerlat_period_us
 +
- /*
-  * timerlat_apply_config - apply common configs to the initialized tool
-  */
-@@ -27,49 +29,44 @@ timerlat_apply_config(struct osnoise_tool *tool, struct timerlat_params *params)
- 	if (!params->sleep_time)
- 		params->sleep_time = 1;
- 
--	if (params->cpus) {
--		retval = osnoise_set_cpus(tool->context, params->cpus);
--		if (retval) {
--			err_msg("Failed to apply CPUs config\n");
--			goto out_err;
--		}
--	} else {
-+	retval = osnoise_set_cpus(tool->context, params->cpus ? params->cpus : "all");
-+	if (retval) {
-+		err_msg("Failed to apply CPUs config\n");
-+		goto out_err;
-+	}
++	popd
++}
 +
-+	if (!params->cpus) {
- 		for (i = 0; i < sysconf(_SC_NPROCESSORS_CONF); i++)
- 			CPU_SET(i, &params->monitored_cpus);
- 	}
+ check() {
+ 	# Simple check: run rtla with given arguments and test exit code.
+ 	# If TEST_COUNT is set, run the test. Otherwise, just count.
+ 	ctr=$(($ctr + 1))
+ 	if [ -n "$TEST_COUNT" ]
+ 	then
++		# Reset osnoise options before running test.
++		[ "$NO_RESET_OSNOISE" == 1 ] || reset_osnoise
+ 		# Run rtla; in case of failure, include its output as comment
+ 		# in the test results.
+ 		result=$(stdbuf -oL $TIMEOUT "$RTLA" $2 2>&1); exitcode=$?
+@@ -37,6 +69,14 @@ unset_timeout() {
+ 	unset TIMEOUT
+ }
  
--	if (params->stop_us) {
--		retval = osnoise_set_stop_us(tool->context, params->stop_us);
--		if (retval) {
--			err_msg("Failed to set stop us\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_stop_us(tool->context, params->stop_us);
-+	if (retval) {
-+		err_msg("Failed to set stop us\n");
-+		goto out_err;
- 	}
- 
--	if (params->stop_total_us) {
--		retval = osnoise_set_stop_total_us(tool->context, params->stop_total_us);
--		if (retval) {
--			err_msg("Failed to set stop total us\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_stop_total_us(tool->context, params->stop_total_us);
-+	if (retval) {
-+		err_msg("Failed to set stop total us\n");
-+		goto out_err;
- 	}
- 
- 
--	if (params->timerlat_period_us) {
--		retval = osnoise_set_timerlat_period_us(tool->context, params->timerlat_period_us);
--		if (retval) {
--			err_msg("Failed to set timerlat period\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_timerlat_period_us(tool->context,
-+						params->timerlat_period_us ?
-+						params->timerlat_period_us :
-+						DEFAULT_TIMERLAT_PERIOD);
-+	if (retval) {
-+		err_msg("Failed to set timerlat period\n");
-+		goto out_err;
- 	}
- 
- 
--	if (params->print_stack) {
--		retval = osnoise_set_print_stack(tool->context, params->print_stack);
--		if (retval) {
--			err_msg("Failed to set print stack\n");
--			goto out_err;
--		}
-+	retval = osnoise_set_print_stack(tool->context, params->print_stack);
-+	if (retval) {
-+		err_msg("Failed to set print stack\n");
-+		goto out_err;
- 	}
- 
- 	if (params->hk_cpus) {
++set_no_reset_osnoise() {
++	NO_RESET_OSNOISE=1
++}
++
++unset_no_reset_osnoise() {
++	unset NO_RESET_OSNOISE
++}
++
+ test_end() {
+ 	# If running without TEST_COUNT, tests are not actually run, just
+ 	# counted. In that case, re-run the test with the correct count.
 -- 
 2.48.1
 
