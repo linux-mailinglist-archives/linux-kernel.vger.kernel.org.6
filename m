@@ -1,166 +1,159 @@
-Return-Path: <linux-kernel+bounces-570157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC3AA6ACE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:12:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CDAA6ACB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 19:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098D9986C18
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:10:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A937B0A16
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7608E22A4E6;
-	Thu, 20 Mar 2025 18:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YWzHs6kc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ACE226173;
+	Thu, 20 Mar 2025 18:05:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A289228CA9;
-	Thu, 20 Mar 2025 18:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28592AD20;
+	Thu, 20 Mar 2025 18:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742494179; cv=none; b=K7o1OM0zxXAqACdtXsXkWfYb3heUiqyt70jlwS0OmFAIT0VYh/VnkxmhZqKtCGqQLZDL27JMrd3iGg5c8ohGCTyhFNmIdXTqtN0hidnsI1ZL3Lhm8MGKBbezaS/iI/VYa972QMOhjLPNkq6yW2/Fb3/7fB1/OBnOH8oZAcN1Des=
+	t=1742493934; cv=none; b=pT6LMTj/kCm5Xb+7V2W8lsU1McLTuU/4Yn1x3oB6EwvD8NXT7qme6C/97+yqGcOd16BvMTCbMCyToxn2B70zf9vonpba4WwXtZDb2G9OJPv8YZVwHNxfm/O911qzCHHlUqWsmoECQlGbo/CSVJH7wUfAk9uL9EsJObGpGnaqpFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742494179; c=relaxed/simple;
-	bh=B/IrAUEQScS6ZPsOJQ4R3YhljPCbyRabKcJDMFmRDeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tvd5emxYTxs+7L4YnsmcA0K2vl+oflrujR4YMKDkC+fTHFjBJt6Sl2myj5s/aTi+InaDOsgAqUYvl9XpTzYsERYs/LTtXTMv4bUlEudSOt0oF53+pc2y6lZPye0Sd5aCPd0gp57Si7EdbIUM5RhDHSp8I7UI+OlfodjqJeL8eFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YWzHs6kc; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742494178; x=1774030178;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=B/IrAUEQScS6ZPsOJQ4R3YhljPCbyRabKcJDMFmRDeQ=;
-  b=YWzHs6kck+k7i1+3vJoIT2SCj2+LsdLEIqPzmpXyKw0D90hySLy4wsrU
-   SoKH2l3nkK8yVaPCStYwkqqqJoB66NA1o2GXbJKzq7C3fULWJOTFGALDR
-   ghAH99xP1FGWP2Bvk13ZJjB5VlioUth/fZTvL21OOU6sVFttBZsTWI+3l
-   XMBQOr/Su2q9VMo+ugKrj18ZliyQOimKfE+qyRYPisoPmHLbiJUG7H7IB
-   mW48X3NNcSeKyA2XaNX5p8XczS9XtVcA0jj4MSX2UiAKUrmsyWACzdP50
-   7qmMFxrIoWAlZ9mA4ajiDXnNI7p8WI5SYFduJ9Cy7O0ft6bPNmqJ5MJRK
-   w==;
-X-CSE-ConnectionGUID: 5r3QEwJiQvWgXqKBw0pk2g==
-X-CSE-MsgGUID: ugQFD39TQ2iKL9Hw2sLZVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="66208853"
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="66208853"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 11:09:37 -0700
-X-CSE-ConnectionGUID: CHnv/ul0T6a72fTp0xFsGw==
-X-CSE-MsgGUID: WZmDiWoFQ6SBrvIt0IIw8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,262,1736841600"; 
-   d="scan'208";a="146405852"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 20 Mar 2025 11:09:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DC0738B7; Thu, 20 Mar 2025 20:09:27 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Kees Cook <kees@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v1 6/6] vsnprintf: Mark va_format() with __printf() attribute
-Date: Thu, 20 Mar 2025 20:04:27 +0200
-Message-ID: <20250320180926.4002817-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
-References: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1742493934; c=relaxed/simple;
+	bh=0t4PiwsiSc6juoFtUbzI40uzV16dx23LcTpGllWaXdM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aNYeOf076Cc6+aQRjzyhIN9C/x370xtes6Hm12ugA/q3b1x+xZ+yMTYP1syYWgeiL2kRWaX78gOHSy+GI+2jfJx9RxN2xdzEvKkWakVlOpo5CqgvZGd9PeMTqahHXRyhDXhQPtL/X1zufbLUADVWoOERUczc/l45yjH+sb+0ItM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZJYM93p9Wz6K9M6;
+	Fri, 21 Mar 2025 02:02:29 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id 103481405A0;
+	Fri, 21 Mar 2025 02:05:28 +0800 (CST)
+Received: from P_UKIT01-A7bmah.china.huawei.com (10.48.156.145) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 20 Mar 2025 19:05:25 +0100
+From: <shiju.jose@huawei.com>
+To: <linux-cxl@vger.kernel.org>, <dan.j.williams@intel.com>,
+	<dave@stgolabs.net>, <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>
+CC: <linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <bp@alien8.de>,
+	<tony.luck@intel.com>, <rafael@kernel.org>, <lenb@kernel.org>,
+	<mchehab@kernel.org>, <leo.duran@amd.com>, <Yazen.Ghannam@amd.com>,
+	<rientjes@google.com>, <jiaqiyan@google.com>, <Jon.Grimm@amd.com>,
+	<dave.hansen@linux.intel.com>, <naoya.horiguchi@nec.com>,
+	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
+	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
+	<gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <yazen.ghannam@amd.com>, <tanxiaofei@huawei.com>,
+	<prime.zeng@hisilicon.com>, <roberto.sassu@huawei.com>,
+	<kangkang.shen@futurewei.com>, <wanghuiqiang@huawei.com>,
+	<linuxarm@huawei.com>, <shiju.jose@huawei.com>
+Subject: [PATCH v2 0/8] cxl: support CXL memory RAS features
+Date: Thu, 20 Mar 2025 18:04:37 +0000
+Message-ID: <20250320180450.539-1-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500007.china.huawei.com (7.182.85.172)
 
-va_format() is using printf() type of format, and GCC compiler
-(Debian 14.2.0-17) is not happy about this:
+From: Shiju Jose <shiju.jose@huawei.com>
 
-lib/vsprintf.c:1704:9: error: function ‘va_format’ might be a candidate for ‘gnu_print ’ format attribute [-Werror=suggest-attribute=format]
+Support for CXL memory RAS features: patrol scrub, ECS, soft-PPR and
+memory sparing.
 
-Fix the compilation errors (`make W=1` when CONFIG_WERROR=y, which is default)                                   by adding __printf() attribute. This, unfortunately, requires to reconsider
-the type of the parameter used for that. That's why I added static_assert()
-and used explicit casting. Any other solution I tried failed with the similar
-or other error.
+This CXL series was part of the EDAC series [1].
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/printk.h | 5 ++++-
- lib/vsprintf.c         | 7 ++++---
- 2 files changed, 8 insertions(+), 4 deletions(-)
+The code is based on cxl.git next branch [2] merged with ras.git edac-cxl
+branch [3].
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 4217a9f412b2..182d48b4930f 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -2,12 +2,13 @@
- #ifndef __KERNEL_PRINTK__
- #define __KERNEL_PRINTK__
- 
--#include <linux/stdarg.h>
- #include <linux/init.h>
- #include <linux/kern_levels.h>
- #include <linux/linkage.h>
- #include <linux/ratelimit_types.h>
- #include <linux/once_lite.h>
-+#include <linux/stdarg.h>
-+#include <linux/stddef.h>
- 
- struct console;
- 
-@@ -87,6 +88,8 @@ struct va_format {
- 	va_list *va;
- };
- 
-+static_assert(offsetof(struct va_format, fmt) == 0);
-+
- /*
-  * FW_BUG
-  * Add this to a message where you are sure the firmware is buggy or behaves
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 8ebb5f866b08..ebb3c563a7ee 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1692,9 +1692,10 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 	return buf;
- }
- 
--static char *va_format(char *buf, char *end, struct va_format *va_fmt,
--		       struct printf_spec spec, const char *fmt)
-+static __printf(3, 0)
-+char *va_format(char *buf, char *end, const char *fmt, struct printf_spec spec)
- {
-+	struct va_format *va_fmt = (struct va_format *)fmt;
- 	va_list va;
- 
- 	if (check_pointer(&buf, end, va_fmt, spec))
-@@ -2462,7 +2463,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 	case 'U':
- 		return uuid_string(buf, end, ptr, spec, fmt);
- 	case 'V':
--		return va_format(buf, end, ptr, spec, fmt);
-+		return va_format(buf, end, ptr, spec);
- 	case 'K':
- 		return restricted_pointer(buf, end, ptr, spec);
- 	case 'N':
+1. https://lore.kernel.org/linux-cxl/20250212143654.1893-1-shiju.jose@huawei.com/
+2. https://web.git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/log/?h=next
+3. https://web.git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git/log/?h=edac-cxl
+
+Userspace code for CXL memory repair features [4] and
+sample boot-script for CXL memory repair [5].
+
+[4]: https://lore.kernel.org/lkml/20250207143028.1865-1-shiju.jose@huawei.com/
+[5]: https://lore.kernel.org/lkml/20250207143028.1865-5-shiju.jose@huawei.com/
+
+Changes
+=======
+v1 -> v2:
+1. Feedbacks from Dan Williams on v1,
+   https://lore.kernel.org/linux-mm/20250307091137.00006a0a@huawei.com/T/
+  - Fixed lock issues in region scrubbing, added local cxl_acquire()
+    and cxl_unlock.
+  - Replaced CXL examples using cat and echo from EDAC .rst docs
+    with short description and ref to ABI docs. Also corrections
+    in existing descriptions as suggested by Dan.
+  - Add policy description for the scrub control feature.
+    However this may require inputs from CXL experts. 
+  - Replaced CONFIG_CXL_RAS_FEATURES with CONFIG_CXL_EDAC_MEM_FEATURES.
+  - Few changes to depends part of CONFIG_CXL_EDAC_MEM_FEATURES.
+  - Rename drivers/cxl/core/memfeatures.c as drivers/cxl/core/edac.c
+  - snprintf() -> kasprintf() in few places.
+  
+2. Feedbacks from Alison on v1,
+  - In cxl_get_feature_entry()(patch 1), return NULL on failures and
+    reintroduced checks in cxl_get_feature_entry().
+  - Changed logic in for loop in region based scrubbing code.
+  - Replace cxl_are_decoders_committed() to cxl_is_memdev_memory_online()
+    and add as a local function to drivers/cxl/core/edac.c
+  - Changed few multiline comments to single line comments.
+  - Removed unnecessary comments from the code.
+  - Reduced line length of few macros in ECS and memory repair code.
+  - In new files, changed "GPL-2.0-or-later" -> "GPL-2.0-only".
+  - Ran clang-format for new files and updated.                                                                                                                                                                       
+3. Changes for feedbacks from Jonathan on v1.
+  - Changed few multiline comments to single line comments.
+
+Shiju Jose (8):
+  cxl: Add helper function to retrieve a feature entry
+  EDAC: Update documentation for the CXL memory patrol scrub control
+    feature
+  cxl/edac: Add CXL memory device patrol scrub control feature
+  cxl/edac: Add CXL memory device ECS control feature
+  cxl/mbox: Add support for PERFORM_MAINTENANCE mailbox command
+  cxl: Support for finding memory operation attributes from the current
+    boot
+  cxl/memfeature: Add CXL memory device soft PPR control feature
+  cxl/memfeature: Add CXL memory device memory sparing control feature
+
+ Documentation/edac/memory_repair.rst |   31 +
+ Documentation/edac/scrub.rst         |   47 +
+ drivers/cxl/Kconfig                  |   27 +
+ drivers/cxl/core/Makefile            |    1 +
+ drivers/cxl/core/core.h              |    2 +
+ drivers/cxl/core/edac.c              | 1730 ++++++++++++++++++++++++++
+ drivers/cxl/core/features.c          |   23 +
+ drivers/cxl/core/mbox.c              |   45 +-
+ drivers/cxl/core/memdev.c            |    9 +
+ drivers/cxl/core/ras.c               |  145 +++
+ drivers/cxl/core/region.c            |    5 +
+ drivers/cxl/cxlmem.h                 |   73 ++
+ drivers/cxl/mem.c                    |    4 +
+ drivers/cxl/pci.c                    |    3 +
+ drivers/edac/mem_repair.c            |    9 +
+ include/linux/edac.h                 |    7 +
+ 16 files changed, 2159 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/cxl/core/edac.c
+
 -- 
-2.47.2
+2.43.0
 
 
