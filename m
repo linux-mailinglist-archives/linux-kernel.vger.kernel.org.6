@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-569970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0003A6AA4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:50:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CBFA6AA50
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E989981083
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8337E9826A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472701EB1AC;
-	Thu, 20 Mar 2025 15:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D067D1E25F2;
+	Thu, 20 Mar 2025 15:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUT6uO7d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Gr4YoEnw"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C36C1E5201;
-	Thu, 20 Mar 2025 15:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E6C1EB5CF
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742485817; cv=none; b=HjTWKUvRRZJxewMGj7wEFvw9lDwpL/tFE7NT1lNYCzITps0Q8I1dBVkGCozUQwX4gYwHPvxgUnMER1g0/b+sjHdNFIWJGljq7jzwnNsoKSVFgjgAkVAc4QzO82RBPTQh4IhYiGS5+CfHz9Q6EFMfol1LEq8XxitG5SmL/48seFA=
+	t=1742485841; cv=none; b=LJq+43XMIeee2JTx+FiYWKUj9vsSKEe8pNHA1XFwyxU23lJG9RDHW+qGAQaVR4nnxbpAQLIeoiVwrIDbMrliBCtJSFd2vA8/e4mfHcuNViILqDLfMlVcXmTWa9rtnLSqkkElFHqE152EDBY1tl4jf8tPJzr4N8rB8ruTmpUz2rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742485817; c=relaxed/simple;
-	bh=pyAJ9pTMRfAZijv4b+LgLfdzavNILKNsBgVkyl/TfU8=;
+	s=arc-20240116; t=1742485841; c=relaxed/simple;
+	bh=UyBdXNFgm67KU+j1EDo5XsOZ0SNYD8as+5pMPGwvsws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7hxYHpWiFOpt+8vILtJhl7G7+iu5QWVpXpJuwbrD4q67XveKHSw82Xj5qpAuBwvWkmb9jWb39iIwrRY+iux52qmvFospkS4uoaqtlM1EUXu9PHZI37CdQmS3ky57Kz93XcuKVFC+UcheTpcBc8uFLB4QDf3KygML0ncXUgRo5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUT6uO7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E14C4CEDD;
-	Thu, 20 Mar 2025 15:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742485817;
-	bh=pyAJ9pTMRfAZijv4b+LgLfdzavNILKNsBgVkyl/TfU8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FUT6uO7d+E+EbjUhPjhUvxl1mK288J+YHWF5YEAgeHdcT+mk+FpA39s3fLwcotEV8
-	 otjDqPlKZ8NBq17P5ETmKkV4zEWjSkaO1+/Z8N5vxbZfBEqMk91I0TBfHoad8sf8oZ
-	 fQb52G4oaiUSMcSbGT0ZANhf8IcZ4YU4HWzNLiZdQ020oF7kdutrWKp+YOb7cN35aj
-	 MQiNZ1Akm2pc+TF4WrRvb//mtkZn0ZYjtSXr7A+nq2PAX7CNlmozVroQ76tGC0HMmz
-	 eN/oEZ+0wKHLYtnXFzIfsQIakvIU5ZlSqjKlG524z9ICOcsX4DFlVbcdTWDOozEaDg
-	 TovGf/lWmzHuw==
-Date: Thu, 20 Mar 2025 15:50:12 +0000
-From: Lee Jones <lee@kernel.org>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: krzk+dt@kernel.org, pavel@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
-Message-ID: <20250320155012.GT3890718@google.com>
-References: <20250306172126.24667-4-trannamatk@gmail.com>
- <20250318133508.4531-1-trannamatk@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gch2yihQSPo5xpRX0g0Md9IHBJ8RyDAbEwDuhv43dxAONpo4sFEyiX0Y8iLrGwbfsHlXmJ/+T9q8w+rN6wag1FqokEnrgMd8GKCssrnVvSleIZggs3nICaHX0UsMHROuJywl+IO7/z5uqiRDvS2h6ZNWfljE+JvI0xcIV1NNRTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Gr4YoEnw; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=UyBd
+	XNFgm67KU+j1EDo5XsOZ0SNYD8as+5pMPGwvsws=; b=Gr4YoEnwL2NBjGN79FNI
+	KRdPMDIaDCChdpDCj6diCg+HVhB8UPjLLRFNwmjVQla2f7qlZ3w3Zy+uemqhuwPt
+	jxL9hnqtPvwtvQYbOfmLxlRpRJW6CxUtVgqS+zqoz2VR5h7FBASPSCPckrYm8jSs
+	l1+Hwon/TAGLyHEAxSfDeDHBnEB35FP8JiqInroF7kT4ikO9wwmJ2IXFDOKLJy+x
+	1XBECDDH9sUS9+1Z3EuORpqCJoHAFheN4OKqkNBb76Nwbcai183oihwaMj8d9aJt
+	AUVFO9vdNYOgigN4zRQs+CVB7V8pmFitlgRUGdrQbEvd4N7aOSxT4SBqT17laZTt
+	YA==
+Received: (qmail 747425 invoked from network); 20 Mar 2025 16:50:34 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2025 16:50:34 +0100
+X-UD-Smtp-Session: l3s3148p1@PcAoGcgwQJgujnsn
+Date: Thu, 20 Mar 2025 16:50:33 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] mmc: core: Add support for graceful host removal for
+ eMMC/SD
+Message-ID: <Z9w5SZmytn5g9SA9@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250320140040.162416-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="j0szOiKot0rmBNkW"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250318133508.4531-1-trannamatk@gmail.com>
+In-Reply-To: <20250320140040.162416-1-ulf.hansson@linaro.org>
 
-On Tue, 18 Mar 2025, Nam Tran wrote:
 
-> From: Nam Tran <trannamatk@gmail.com>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org> Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-> 
-> I sincerely apologize for not addressing all of your previous comments earlier. That was not my intention, and I truly appreciate the time and effort you have put into reviewing my patch. Below, I would like to properly address your concerns.
-> 
-> On Fri, Mar 07, 2025 at 12:21:26AM +0700, Nam Tran wrote:
-> > The chip can drive LED matrix 4x3.
-> > This driver enables LED control via I2C.
-> 
-> You still did not respond to comments from v1. I don't see it being addressed.
-> 
-> Nam: I am sorry. This is my mistake. I think that I just need to update source code based on your comments and submit a new patch. This is the first time I try to update a new thing to the Linux Kernel. I will give answer inline your message for tracing easily.
+--j0szOiKot0rmBNkW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For the record, I find this format pretty unreadable.
+On Thu, Mar 20, 2025 at 03:00:31PM +0100, Ulf Hansson wrote:
+> As pointed out by Wolfram Sang and already discussed at LKML [1] - an mmc=
+ host
+> driver may allow to unbind from its corresponding host device. If there i=
+s and
+> eMMC/SD card attached to the host, the mmc core will just try to cut the =
+power
+> for it, without trying to make a graceful power-off, thus potentially we =
+could
+> damage the card.
+>=20
+> This series intends to fix this problem for eMMC/SD cards.
+>=20
+> Please help to test and review!
 
-Please reply directly to the email you are responding to.  This response
-looks as though you're replying to the patch itself.
+Awesome! Thank you. Will surely check it out. Not before next week I am
+afraid. But already looking forward to testing it!
 
-Configure your mailer to refrain from placing header information (To:
-Cc: From: etc) in the body of the mail.
 
-If your mailer conducts quoting correctly, there should be no need for
-"Nam:" comments.  For me it looks as though you authored both the review
-comment and the response, since your mailer currently does not handle
-quoting correctly.
+--j0szOiKot0rmBNkW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-It would help everyone out if you could configure your mailer correctly.
+-----BEGIN PGP SIGNATURE-----
 
-Maybe this document has additional hints for you particular mailer:
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfcOUUACgkQFA3kzBSg
+KbbFrg//TOs03sVI6OVfUHIF+m2I8NGYBR6Jr8ZvnegntJ1DO+1MiQSg5OmHs/A8
+mG94c+JO3yR6vC1vLs3/65xaFt2q0Yqn71krhcQgCI8G9DhVX5tBjm/OLtP/+9tt
+5cIeT+nixYNvs10Q00ZSeVIOHeXAAJnw4CgY768Jr7FGqw+4M6fPWzk/QSIo+iLD
+oCYfKlnj1cpyIZQoaN0Pb+ST3VWyib2WN7CL0iRqBJFEWK6NhFjunj2Pr2nwpkTQ
+X9Lai/qkhT2rL6iWcZvY6AxY3cnenZ+rlD5VZcJRqAp0V7HGXj8CMxyc2GHL0xbc
+ZRrEvlgE40X2FwWitlvQ2aIwxaOhBzrqullLyV+HJP306u24jNCfZUSaqLTfey04
+CBPHr5VMfsWwmoGdrROwVwe10oZfg2TNFtDJSa+hV645yvrSXsRHu9XHldaCg9lZ
++1cwlQ0RT8Nfa+YmKoL+X32Am3Oe+ZciOwj+j+a2GeGUtSUBYlM4M3pEnNnyS3jy
+AhskO6ONr3Q8gfhvQhl08P4fOKgYkWYpaysu9siVDaEqpXi33nXnFD446sdhGab+
+G64ifA9U+UpxDivCNJ2FDCBV3XIzHo3CE6nM3zclSCu7ZFJczhcveLxtcERgJxol
+tFAo2YpHjSKJVObDJNgTlOPE3+XLTB1+mE7OjYO6dPtwWIkGuYA=
+=Oz+a
+-----END PGP SIGNATURE-----
 
-  Documentation/process/email-clients.rst
-
--- 
-Lee Jones [李琼斯]
+--j0szOiKot0rmBNkW--
 
