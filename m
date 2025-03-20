@@ -1,97 +1,168 @@
-Return-Path: <linux-kernel+bounces-569953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C91A6AA18
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6A4A6AA2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4159D3AECED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:41:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443BF3B8D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 15:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2FB1E98F3;
-	Thu, 20 Mar 2025 15:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6014E1EB195;
+	Thu, 20 Mar 2025 15:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1U/AATt0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m18W9V4w"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3151E2858
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337D11E98EA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 15:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742485307; cv=none; b=U5R5FEyBvbJYghiRdty5ICmRkFH4dFh8seSqebISASbwQ2pekx1ta3egdyg5kEvhcM3QmB/E9lK+JoKXHsMJthGzKvcOYvAM7ok3BPVwzDv0GeETRW+OWB6PcjZkhedA/0ho5o2BuOBuEl+4j9LaiInT5FL7r62XVYmT79/X3EY=
+	t=1742485358; cv=none; b=UUR0BZFFtkm/hCtfyyS+9rzdbxp5WMHLwD1DII0SFSnQ9MVtY1nB4ihrKiLraEZI+y2Bg+AtDxZQ2sSXdjV7rpcqVvP9EyjkItlzWJjlBvnUvkx1ZhK3NK5ZgBclPt8Giq7S0M+D3kDjoFsBkesv1OlBSbsxKdWJCbwoZIvCBds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742485307; c=relaxed/simple;
-	bh=SwzN4rsNO+8yq0gB9kYdl+eu93RIZ2WSiBjET65clOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=spw8rDDOObz6IRQYDxlSgj7VMxdQJiFbniXMqb8TPO/0jbZqglY2tNaS4wSEjkeuFU5BnDt5sd71bWONoAX45jfs5QwDSuyWhxGq8wqZGJMFPs0E3fvWPQIbEcyYwTgk6UENwMipzkEQHaw0iBx0NPhWMyp1FAGsparEm2IU/0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1U/AATt0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YH8NMYy0CZP6enlttApaJU7aUE5w6jDlUhfkMzIiI7A=; b=1U/AATt0kBpkEhxO2ToduoWXQj
-	+xlELDPKYbHti4hUO/e7vGAWCr5J/8TAb1srdfgAxD2UIXUEVwa8ewWPQvCFQ9w/ajrt/iPmSLmNk
-	h0HQ+SKqv+yLmVrsTkeSqYugonNYGMICFPl3xxpQkMuBbGOZHD72jX7Z42ECAporjEBfKttUcHRzj
-	QXWeL1ez5mv6Xb7Op6Csvi+FADHOL8sk/Ujqt54DC7Rdf3YOByuFlcWUHUkxygKpPucPCmyn8EIK7
-	vxWgBF+bBwWPAuOcx1bNcmvryqd+i/NY2IAbTv9RBclTqRuTOAvKxVmmjGKRGNRKHT2OV80b5MQox
-	GZ3t8k5A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tvI1V-0000000CZ6M-01Db;
-	Thu, 20 Mar 2025 15:41:33 +0000
-Date: Thu, 20 Mar 2025 08:41:32 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, anshuman.khandual@arm.com, akpm@linux-foundation.org,
-	mingo@kernel.org, catalin.marinas@arm.com, ryan.roberts@arm.com,
-	kirill.shutemov@linux.intel.com, namcao@linutronix.de,
-	bjorn@rivosinc.com, arnd@arndb.de, stuart.menefy@codasip.com,
-	luxu.kernel@bytedance.com, vincenzo.frascino@arm.com,
-	samuel.holland@sifive.com, christophe.leroy@csgroup.eu,
-	dawei.li@shingroup.cn, rppt@kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: introduce the ioremap_prot() function
-Message-ID: <Z9w3LL8oZixBKM3t@infradead.org>
-References: <20250320084428.51151-1-cuiyunhui@bytedance.com>
+	s=arc-20240116; t=1742485358; c=relaxed/simple;
+	bh=d94NmL5l/c4RNcgkHzekopRG1modY77iggD4ffQWA1M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r9VAm7XplGW+6fwOFoa9P8n75YdA/02H+Rn3e0rfqAosEJCuVawr5U/uKcwCL9F8l1BRfJb3+g1C5xdl2HGTQ48GhYVHpeyJNkbBKMx8F7Uequg8uADpdml9YWTB/J8hfJqC2+FULOMrO433oGGgIUBH/H4UItG56m6CgiBBY3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m18W9V4w; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ACB0D44408;
+	Thu, 20 Mar 2025 15:42:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742485352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8mBeHfjSG+AR7A8Fp8QKLSrhvK7lhd1SXAkNAnYVLtw=;
+	b=m18W9V4w7yusNw0mo6qqU9toSKUuwPKXTEBs5rlqYEFiw4yzWXhSy1EChVjxOqiubNVJjD
+	pAL2KTjUrvqX1tzM1/cEkI6ZOaVEzFJ8nBLpbpADeIq/6/Ayqk9wKswVouV6NfHHNExWw5
+	qayfzfiglank6Q4uNeCYNi5MXslQnDXWuQwiX8kro0kwzD5xfvJiD3cAGAxZYzlZm0yrdf
+	bpSLDnc2PkZg3S7s0PDz49uSDOtQWVhv1CP5JVL4RRDpf1Y7DKDC7Uipt3XcQ5jCAXwtJw
+	SKvFr4HyEtnAily0Fp+lKUbE8CL0CNj3JiMEAoILcnAW1QOGAn0KrBOE9AgrmQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v8 0/5] drm/bridge: add devm_drm_bridge_alloc() with bridge
+ refcount
+Date: Thu, 20 Mar 2025 16:42:09 +0100
+Message-Id: <20250320-drm-bridge-refcount-v8-0-b3ddaa9f1368@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320084428.51151-1-cuiyunhui@bytedance.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFE33GcC/32NTQ7CIBCFr9LMWgzUUqgr72G6sPzYSSwYqETTc
+ HfHHsDkbb75Mu9tkF1Cl+HcbJBcwYwxEOhDA2a+hbtjaImh5a3kJ9ExmxY2JbRkkvMmvsLKpLY
+ DWYrvgT6fZPC9t15H4hnzGtNnHynqd/3fVxTjTMhWKuG16YfuMsW4PjAcTVxgrLV+AR1PxK24A
+ AAA
+X-Change-ID: 20250314-drm-bridge-refcount-58d9503503f6
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Anusha Srivatsa <asrivats@redhat.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+ =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgieetkeekgfdtudevueffueffveekheeiudfhfedvhfeukeeuhffhtddtvdekfeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedruddukegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedupdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsu
+ hhsvgdruggvpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-> +{
-> +	phys_addr_t addr = PFN_PHYS(pfn);
-> +
-> +	/* avoid false positives for bogus PFNs, see comment in pfn_valid() */
-> +	if (PHYS_PFN(addr) != pfn)
-> +		return 0;
-> +
-> +	return memblock_is_map_memory(addr);
-> +}
-> +EXPORT_SYMBOL(pfn_is_map_memory);
+This series improves the way DRM bridges are allocated and initialized and
+makes them reference-counted. The goal of reference counting is to avoid
+use-after-free by drivers which got a pointer to a bridge and keep it
+stored and used even after the bridge has been deallocated.
 
-This should not be exported or even exposed.  Please just open code it
-in the only caller.
+The overall goal is supporting Linux devices with a DRM pipeline whose
+final components can be hot-plugged and hot-unplugged, including one or
+more bridges. For more details see the big picture [0].
 
-> +void __iomem *ioremap_prot(phys_addr_t phys_addr, size_t size,
-> +			   pgprot_t pgprot)
-> +{
-> +	/* Don't allow RAM to be mapped. */
-> +	if (WARN_ON(pfn_is_map_memory(__phys_to_pfn(phys_addr))))
-> +		return NULL;
+DRM bridge drivers will have to be adapted to the new API -- the change is
+trivial for most cases. This series converts two of them to serve as an
+example. The remaining ones will be done as a follow-up after this first
+part is merged.
 
-Or just use pfn_valid as that's what we usually use for that check.
-Or am I missing something specific here?
+After that, refcounting will have to be added on the two sides: all
+functions returning a bridge pointer and all code obtaining such a
+pointer. A few examples have been sent in v7 (link below), they are OK, but
+I removed them from v8 because they must be merged only after converting
+all bridges.
 
-It would also be nice to just life this to common code.
+Here's the grand plan:
+
+ A. add new alloc API and refcounting (this series, at least patches 1-3)
+ B. after (A), convert all bridge drivers to new API
+ C. after (A), add documentation and kunit tests
+ D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+    (patches 3-4 in the v7 series)
+ E. after (B), convert accessors (including patches 5-9 in the v7 series
+    which convert drm_bridge_chain_get_first_bridge() and its users);
+    this is a large work and can be done in chunks
+
+Series layout:
+
+ 1. Add the new API and refcounting:
+
+    drm/bridge: add devm_drm_bridge_alloc()
+    drm/bridge: add support for refcounting
+    drm/bridge: deprecate old-style bridge allocation
+
+ 2. convert a few bridge drivers (bridge providers) to the new API:
+
+    drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+    drm/bridge: samsung-dsim: use dynamic lifetime management
+
+[0] https://lore.kernel.org/dri-devel/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v8:
+- Applied requested changes to patch 2
+- Add R-by to other patches
+- Removed v7 patches 3-9: they are OK but must wait until all bridge
+  drivers are converted to the new API
+- Added patch to deprecate old-style bridge allocation
+- Link to v7: https://lore.kernel.org/r/20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com
+
+---
+Luca Ceresoli (5):
+      drm/bridge: add devm_drm_bridge_alloc()
+      drm/bridge: add support for refcounting
+      drm/bridge: deprecate old-style bridge allocation
+      drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+      drm/bridge: samsung-dsim: use dynamic lifetime management
+
+ drivers/gpu/drm/bridge/samsung-dsim.c |  7 ++-
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c |  7 ++-
+ drivers/gpu/drm/drm_bridge.c          | 96 +++++++++++++++++++++++++++++++++++
+ include/drm/drm_bridge.h              | 36 +++++++++++++
+ 4 files changed, 138 insertions(+), 8 deletions(-)
+---
+base-commit: c940d00c7306a77ec293661abca634756207c885
+change-id: 20250314-drm-bridge-refcount-58d9503503f6
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
