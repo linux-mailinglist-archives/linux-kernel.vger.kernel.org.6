@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-570126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687B1A6AC8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E45A6AC8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 18:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384F7487564
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1521B189620B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7D5226520;
-	Thu, 20 Mar 2025 17:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F7222687A;
+	Thu, 20 Mar 2025 17:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUp8i5V0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bQz9AiiA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60C62628C;
-	Thu, 20 Mar 2025 17:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A07E2628C;
+	Thu, 20 Mar 2025 17:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742493285; cv=none; b=WjAEBpvR6mfytjHIqzBvZY8NuCyGnej/HplOo9toqMwwtni48HqrVm29cMHFhprG/25Ob447n5MMcavwbgVmnhKBhevJq9CEH3tyEflz+rx/ps2JhNcwjVoyU36Hnac/NYzhx7vRQyG3uugl8ftyq+/xQHgSI9cgKWEDgIS5KC8=
+	t=1742493305; cv=none; b=IEoIhgqYs3NMB42hMr++VKWcjKsaEHTVru+ZgM1vJ1GTM1lWp+iOyzGPXhjSaLaz+QzPWGem/vapn2JXwsTV3szRht4PXsh6GpbCRlWzIOtWkN/mSgMkQZZXUTp2TXNYvyQUmXxx6Qdi1ejvPlb5xPIRIb1nE+P/H9NZkV1wXY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742493285; c=relaxed/simple;
-	bh=4sxwANhWgnEl6Kc/mFjYhiXrRcRqIQfKJad6QWXOhDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zb1hv5Pso6fbw0tszzh4uN7Ufnyxy+HI+srx7EXoayZ1c5fPDumS/V7/fdoxQhYtFDNNfD3qOepWtdqoSHnaoEzKMEwDPOqbEAzkHPjRngqTDTdq/o+bv3h20qpuCxL1oSE+e4xQeC/t/KAdgXoT61NkrDeUTNIjkZNwuICQz1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUp8i5V0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50073C4CEEC;
-	Thu, 20 Mar 2025 17:54:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742493284;
-	bh=4sxwANhWgnEl6Kc/mFjYhiXrRcRqIQfKJad6QWXOhDw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QUp8i5V0XxsaORfuEEn/a57KcDTV8a25rLGsUgHFZRFoIqgJJsWSCiPptlojBtmmZ
-	 rCSdImJGPOMzjLbL56J2nU1YfCDQyK4GsVL+gHugqH+1u9PCu0gDF/sJCbAmKO53bE
-	 ozIxLLkitm+tNbDG8bY+S6/LfYz09Ge0uBv0fTIkLaI1l4uPtFG/ybtQG3tm+nMmbp
-	 v9dVQAY7Uhpou5IK3+bRTMnyd5AYxk71+S+8amCQicYjTHKxX0UhYnfjWOzAczTFMU
-	 r5WxD0/HTgEM1Kr8oEPXWnF0PTp7Uxj7PU/B/Mdvimu5c+FKrJeL1y1U6aFzC9XP57
-	 Rr7fnU8hNIA7g==
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d3db3b68a7so11664545ab.0;
-        Thu, 20 Mar 2025 10:54:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOBpPjkpBUIjXQ3m9CPZeVW/4UBs7+yXOvZKXx+54tJaYWJmCarGJ+LMFHvDouy11d2o8uzx1h46CEonE=@vger.kernel.org, AJvYcCVUcn7qCg71PfaKjAuKEOs865wkqW6LQmGxHPIDY/xVSYayg+igIg6kk5CDQn+UvFcSoSmAQouqIs+qPUASI1a/zg==@vger.kernel.org, AJvYcCXgPbGk1Mbj3NfqGWEUWdsFPcf1RhhNPqZiP9acNaO5rKkxHFhyypBUbuFwOjlx7TBsIzG8XdBmKJlh0P7ZeQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzelCtGq4UNBhTHa8ViAmvEDUmTOZPTOS87d+X2U4sUTrI9hjCi
-	sCsSLBVR8T7b8GFLoo4hNE3lxcDbf3/bJC+vMgeopUer1Q09SxGyswswKvMkFGlVOcUJH063utE
-	GupLNVo5JCYvIdlZsigJbDbenoEg=
-X-Google-Smtp-Source: AGHT+IFWP8pfbwBl1chUhyuT+CmtDXuqo+7XO1cRO0Tzq74gsrngMMCJZXVSqHKZk5dQh66q7nufSFKxHTUARVoFyIM=
-X-Received: by 2002:a05:6e02:85:b0:3d0:4e0c:2c96 with SMTP id
- e9e14a558f8ab-3d5960d2337mr5568995ab.2.1742493283619; Thu, 20 Mar 2025
- 10:54:43 -0700 (PDT)
+	s=arc-20240116; t=1742493305; c=relaxed/simple;
+	bh=b7WPYVB4avkHvYlhsKX4r/4q1srYzQLdRV0HNGs3CTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PXG3gskdFzsc4FBqK8EpbfGmBArtRW9SSnQgRWXIt7O3hpnqVClA67S1vgJUjt85gx4a4SJ8KJSug5Pv1PPAq0rgfS47E2vLK1Ja2YHbgskn7cZG+FrK27Qn23n24KDMhuFSKb59X0EWu3kmsfn7adL/MTcPg6cb30YZxkPPZsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bQz9AiiA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KCS0Yt030296;
+	Thu, 20 Mar 2025 17:54:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=fdAJmg
+	A8x/DyLgki6UGmCIKVDlIrxAcV/gCy52yibzM=; b=bQz9AiiAuGSrKdHEPcEB8f
+	IABivnIpupqYJMsPlqaJaShNowYW6bXXdoLS5GH67i0yVgstu9pK/3ZC7B59CNep
+	9WsEI37+uJ6BAmpgRf9tMvY+q4fW42QNS8PDjACylARHCB2BwAIjhArJr3P4m7Ah
+	QsYxSiRbxhTGM+J2GP8sOrFW3UnY/506ae/dxLDkwfJSbnBw7LTR9WhOjNpkAYjo
+	ZQdJGF3DXZ7RIh1uHfBiXuUQRFZWyzBZVcCWNgt3gAcpV/2cKQiV91D6bIQ53JoZ
+	TIzzKUG6/hs5GvJHeLeljft3fUSGx+cS2evWOI4vTtDWYMmtHPClCNapKdjjVAFg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gk21sv4a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 17:54:56 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52KGXH8U020324;
+	Thu, 20 Mar 2025 17:54:54 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dncmh81k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 17:54:54 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52KHsqt441091458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Mar 2025 17:54:52 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 37D8020043;
+	Thu, 20 Mar 2025 17:54:52 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5BD6920040;
+	Thu, 20 Mar 2025 17:54:50 +0000 (GMT)
+Received: from [9.124.213.75] (unknown [9.124.213.75])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Mar 2025 17:54:50 +0000 (GMT)
+Message-ID: <9131d1be-d68e-48d6-afe3-af8949194b21@linux.ibm.com>
+Date: Thu, 20 Mar 2025 23:24:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320171559.3423224-2-song@kernel.org> <20250320174642.855602-1-wnliu@google.com>
-In-Reply-To: <20250320174642.855602-1-wnliu@google.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 20 Mar 2025 10:54:32 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7RAXHRt3c+8DYqirPFRA+Sdw4ZNJ+Ad1uSiAHGOJ9RSA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqKgmhQkJ9V_QiMvwS8pM3CeUzcisCl2Y1OPuDskAkxbNElxRHFu-VgG9M
-Message-ID: <CAPhsuW7RAXHRt3c+8DYqirPFRA+Sdw4ZNJ+Ad1uSiAHGOJ9RSA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] arm64: Implement arch_stack_walk_reliable
-To: Weinan Liu <wnliu@google.com>
-Cc: indu.bhagat@oracle.com, irogers@google.com, joe.lawrence@redhat.com, 
-	jpoimboe@kernel.org, kernel-team@meta.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
-	mark.rutland@arm.com, peterz@infradead.org, puranjay@kernel.org, 
-	roman.gushchin@linux.dev, rostedt@goodmis.org, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vfio: pci: Advertise INTx only if LINE is connected
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: jgg@ziepe.ca, kevin.tian@intel.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, yi.l.liu@intel.com, Yunxiang.Li@amd.com,
+        pstanner@redhat.com, maddy@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org
+References: <174231895238.2295.12586708771396482526.stgit@linux.ibm.com>
+ <20250318115832.04abbea7.alex.williamson@redhat.com>
+Content-Language: en-US
+From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+In-Reply-To: <20250318115832.04abbea7.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 2ArvXWe6IanlGKcJBSbLAOIKEdIivx5Z
+X-Proofpoint-GUID: 2ArvXWe6IanlGKcJBSbLAOIKEdIivx5Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_05,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200111
 
-On Thu, Mar 20, 2025 at 10:46=E2=80=AFAM Weinan Liu <wnliu@google.com> wrot=
-e:
+On 3/18/25 11:28 PM, Alex Williamson wrote:
+> On Tue, 18 Mar 2025 17:29:21 +0000
+> Shivaprasad G Bhat <sbhat@linux.ibm.com> wrote:
 >
-> On Thu, Mar 20, 2025 at 10:16=E2=80=AFAM Song Liu <song@kernel.org> wrote=
-:
-> >
-> >  static __always_inline void
-> > @@ -230,8 +231,26 @@ kunwind_next_frame_record(struct kunwind_state *st=
-ate)
-> >         new_fp =3D READ_ONCE(record->fp);
-> >         new_pc =3D READ_ONCE(record->lr);
-> >
-> > -       if (!new_fp && !new_pc)
-> > -               return kunwind_next_frame_record_meta(state);
-> > +       if (!new_fp && !new_pc) {
-> > +               int ret;
-> > +
-> > +               ret =3D kunwind_next_frame_record_meta(state);
+>> On POWER systems, when the device is behind the io expander,
+>> not all PCI slots would have the PCI_INTERRUPT_LINE connected.
+>> The firmware assigns a valid PCI_INTERRUPT_PIN though. In such
+>> configuration, the irq_info ioctl currently advertizes the
+>> irq count as 1 as the PCI_INTERRUPT_PIN is valid.
+>>
+>> The patch adds the additional check[1] if the irq is assigned
+>> for the PIN which is done iff the LINE is connected.
+>>
+>> [1]: https://lore.kernel.org/qemu-devel/20250131150201.048aa3bf.alex.williamson@redhat.com/
+>>
+>> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+>> Suggested-By: Alex Williamson <alex.williamson@redhat.com>
+>> ---
+>>   drivers/vfio/pci/vfio_pci_core.c |    4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+>> index 586e49efb81b..4ce70f05b4a8 100644
+>> --- a/drivers/vfio/pci/vfio_pci_core.c
+>> +++ b/drivers/vfio/pci/vfio_pci_core.c
+>> @@ -734,6 +734,10 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
+>>   			return 0;
+>>   
+>>   		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+>> +#if IS_ENABLED(CONFIG_PPC64)
+>> +		if (!vdev->pdev->irq)
+>> +			pin = 0;
+>> +#endif
+>>   
+>>   		return pin ? 1 : 0;
+>>   	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
+>>
+>>
+> See:
 >
-> The exception case kunwind_next_regs_pc() will return 0 when unwind succe=
-ss.
-> Should we return a different value for the success case of kunwind_next_r=
-egs_pc()?
+> https://lore.kernel.org/all/20250311230623.1264283-1-alex.williamson@redhat.com/
+>
+> Do we need to expand that to test !vdev->pdev->irq in
+> vfio_config_init()?
 
-I am assuming once the unwinder hits an exception boundary, the stack is no=
-t
-100% reliable. This does mean we will return -EINVAL for some reliable stac=
-k
-walk, but this is safer and good enough for livepatch. IIUC, SFrame based
-unwinder should not have this limitation.
+Yes. Looks to be the better option. I did try this and it works.
 
-Thanks,
-Song
 
->
-> > +               if (ret < 0) {
-> > +                       /*
-> > +                        * This covers two different conditions:
-> > +                        *  1. ret =3D=3D -ENOENT, unwinding is done.
-> > +                        *  2. ret =3D=3D -EINVAL, unwinding hit error.
-> > +                        */
-> > +                       return ret;
-> > +               }
-> > +               /*
-> > +                * Searching across exception boundaries. The stack is =
-now
-> > +                * unreliable.
-> > +                */
-> > +               if (state->end_on_unreliable)
-> > +                       return -EINVAL;
-> > +               return 0;
-> > +       }
->
+I see your patch has already got Reviewed-by. Are you planning
+
+for v2 Or want me to post a separate patch with this new check?
+
+
+> We don't allow a zero irq to be enabled in
+> vfio_intx_enable(), so we might as well not report it as supported.
+
+Yes. I agree.
+
+
+Thank you!
+
+
+Regards,
+
+Shivaprasad
+
+
 
