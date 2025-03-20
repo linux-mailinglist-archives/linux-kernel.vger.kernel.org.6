@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-569984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F3DA6AA7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:01:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D9FA6AA85
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 17:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7EC189AF18
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B162617340C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 16:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B9A1F8BB0;
-	Thu, 20 Mar 2025 16:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F75E1922C0;
+	Thu, 20 Mar 2025 16:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jo6hJDzx"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T5Vls0GF"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D961922C0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924BA2144C9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 16:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742486441; cv=none; b=kjUnIELGhkNLVD1s7i8EnCj6JXJDsqg3lUQv8PYB3JJq/BoX0lAtnbBnWeuB8fEVRN+CGRce+uo9fWntz/XRDTzZvrlGPgHKC7h0uGbvgy+plyZZZmMqQmGsrmdqRuMYSxRry01Q/wGeWh+lleY55ppFX2yV2Mj9dNDQCc+Y6hM=
+	t=1742486444; cv=none; b=CnGjVDKXIVkELpBR06zpfzwVPc5/e6LWV/rKR0V848MtVjIdIYZJHqrIYQtIVtx7/DXC8VSfay4dJE8+s9QIeeh3acAvC8/LthkhjD6L8FpC5oLK+i1KliNGCIVy/5PUi2W0k2cLR9sqgmBThbqF94ZVgNc5ZjoLzoFBQ3prC1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742486441; c=relaxed/simple;
-	bh=tWpzu7ba133Zdaj4dIf8mfTY5P/FzEw3AwQGlLkB6nY=;
+	s=arc-20240116; t=1742486444; c=relaxed/simple;
+	bh=lEa3BxN/6LhqthWXir58vTyZRT4d8BUmsi3iv05b4SI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pOM/DNNoaI3g8WTQYV8QPvA2IbBZDVHLQ4ZG3SufXRiKO9THfJKEU1mQB7z44J9iKn7nL1BwZBNJMtLUe5iNSVfqzl9nTSrHPbYTjsiAFYA2+A3P16NzIlEEu6QlfMyJcve1LA2fA0+B+IPdug7OqDUvhyoXuRtl37U1cnfI5jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Jo6hJDzx; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=CCsdj5vzlx0xdujRo1ZBHbCSCQcOphL/kODo6FHlIImlL3wD/Sns6uck2JOm+TNKuh1wIQBvVweVVuivUIEliZ/JD9vvKJ6OuKe5B+fQ+Ct9vuSE2gICbkFOqtvYCOSghMz8FSfmbPRCkMljQcTi8DdwtpnzVEiOXdB/ba1gVr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T5Vls0GF; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 333C6836;
-	Thu, 20 Mar 2025 16:58:47 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5633BA98;
+	Thu, 20 Mar 2025 16:58:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742486328;
-	bh=tWpzu7ba133Zdaj4dIf8mfTY5P/FzEw3AwQGlLkB6nY=;
+	s=mail; t=1742486329;
+	bh=lEa3BxN/6LhqthWXir58vTyZRT4d8BUmsi3iv05b4SI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Jo6hJDzx4MMVutviFoW6uze0v/t/ZUm3X99o4o+jspdo0aHxYvjZr5GZqfyHXe72l
-	 cVOWAeLOIYol7UZjpp2ic1QNh6dyw0QY5HSFa/V1rBRn+Dmt0oLVbMTdU9nPjjWvRp
-	 f5azgycs2yk3KZQDl9kPW2S6tLE5LGaoHomhfRJc=
+	b=T5Vls0GFxnPD5hn1unW34oSBxrMO4OhNp9j7+A6Cd/7trv98Dlxt18y3spIQ/h0i7
+	 OrNwM13+SUvs/qwg4Bu91rsBZ6ltlm6QJ3rLP7Q8en7StCMqAq22FDMzAExbVc4o/6
+	 RfqhiV1GJzDDtv4TQHxhYOohXdZeXjMira+mO67c=
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Thu, 20 Mar 2025 17:59:56 +0200
-Subject: [PATCH 01/18] drm/tidss: Fix missing includes and struct decls
+Date: Thu, 20 Mar 2025 17:59:57 +0200
+Subject: [PATCH 02/18] drm/tidss: Use the crtc_* timings when programming
+ the HW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-cdns-dsi-impro-v1-1-725277c5f43b@ideasonboard.com>
+Message-Id: <20250320-cdns-dsi-impro-v1-2-725277c5f43b@ideasonboard.com>
 References: <20250320-cdns-dsi-impro-v1-0-725277c5f43b@ideasonboard.com>
 In-Reply-To: <20250320-cdns-dsi-impro-v1-0-725277c5f43b@ideasonboard.com>
 To: Jyri Sarha <jyri.sarha@iki.fi>, 
@@ -69,93 +70,82 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Devarsh Thakkar <devarsht@ti.com>, 
  Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2118;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2447;
  i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=tWpzu7ba133Zdaj4dIf8mfTY5P/FzEw3AwQGlLkB6nY=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn3DuW0VeV/16xby0waSsVTa5y/p9LuoqqSPndU
- 5qCby6XyN6JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ9w7lgAKCRD6PaqMvJYe
- 9dQ0D/9sDS7OWljZibT3MD38u4WdeOEtCPLTN1jQCfDoLLOLHAfQUc+o+a4qSO7UTE/cwMA6PPL
- /vB4NvQh55DDELk66YfnQh7/FtRB5yDEIrP1RLuZWYY5Cz6TAmoB76WsjRqP+9axnYTYy5GFiP6
- 5gDJKn3Vmdh+xCqc21B65a6f23OGqzwDvkedeFjBuMp5H2pKJFoU+33s0t7SLbeT6XiumAqkQzu
- 8k4W82fykMZZnoZQDWCNDVOX6hkJCWUJucgV3ImF3UmPqy6uDo0XVs6TXDaDGjC3yvYMrBtWl5Q
- /pnXmA93cICYvkxW0jRsP7DXw/VpWddrvuF9OSioi1cfNxvucKp6brh75Ox1d0Uma52+aVOCYsk
- Fws048xy7UkFtnDRuMTH0172iX5a3uwxVSxT0Jq3nZjPsO2jsTNLUsnlKo5TaObi0KLTlwjP13H
- ggG04o92RTjt93ztMubmHVmpjVmm/3QoEOypvKycMyLQ9H3+r+idMSZrmGaAZZNqm0oEIO4CLzb
- YAlRi70GtFcrO9uN3dZGgTL8vjJkKppyAnmxX9V4ChjuqZYnoYKaiMSsUYGNUt+P7mk1Oq9Zj7P
- GQvFstwP99RXtjk0naJTT9N3/3vhbCo34aBtQ2IDx+I8StOcRzUTzfe1+I9cYd/w6YeoJWsAXRl
- 6MXwh1eLPU6BTpA==
+ bh=lEa3BxN/6LhqthWXir58vTyZRT4d8BUmsi3iv05b4SI=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn3DuWAhb6U3BLt5lLhsPChcq8E4oZSETUJXSx5
+ z12mq0p56KJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ9w7lgAKCRD6PaqMvJYe
+ 9Th3EACjcrw6JZ9VPnH9olNkIpUQhmsh0DkbdGgOZ2y8ivDMJb390ebjUjcycXeJzVAwa11yzjv
+ ARnz9GkQYtX1PSm6EMaxo6GvwryU4NcgJYUbeQvL8ZIRcYhggMFmIFOih5Xwor3BjRPg5tn2oMG
+ 67zYVSK9YdQ3JnTmEWXyzSo164E8/nhJRoWz4/28U8ywqbeAWrBImTxgsPcP4D95I74h+bmdMe3
+ qov6INwon7Bgg85T+1DEyXjcjZWjGenn7gXSJIqgjr6x8KX2KIC3ObutCIMuKXq4KuZdBvB4KFn
+ tBlgqVWeJYXXaxTfRLgKvYVF5QE8HcOA3QJO1IdjNVAkJ7kdpWOxt0G6w/JdI5XFP5gLusf4eA4
+ fP6bDH7iGRh4FLnzzYBC2CN6hVo1I2SQeygB8ZXJiTCa1ULxtJMwUpan/MlqfnmBaSZeRFqsjtU
+ 1X1C+hZE/HKKon9Mx/GXPb64iHJfvAc1Nc+bX/9+baLDDjdAtOGoyXBcDRwBseUV8e+v1+0cmjw
+ E6Et+9k44cpM9Dj9G2ppuF3lNjMtyYhCuceqzmu2DUrCF51U1ZPMdhz3YX6LG0bUlsiHwC6UfFc
+ 8uIdeiCbMnT6+m/B8SdTag2o0UoMxWtT7+7MSTLAH0DAZv/0L9/plFbDBbXQ+om+MdZNwy4lD+f
+ DhEeFcQOT4L1Jkw==
 X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Fix missing includes and struct declarations. Even if these don't cause
-any compile issues at the moment, it's good to have them correct.
+Use the crtc_* fields from drm_display_mode, instead of the "logical"
+fields. This shouldn't change anything in practice, but afaiu the crtc_*
+fields are the correct ones to use here.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 ---
- drivers/gpu/drm/tidss/tidss_dispc.h       | 3 +++
- drivers/gpu/drm/tidss/tidss_drv.h         | 2 ++
- drivers/gpu/drm/tidss/tidss_plane.h       | 2 ++
- drivers/gpu/drm/tidss/tidss_scale_coefs.h | 2 ++
- 4 files changed, 9 insertions(+)
+ drivers/gpu/drm/tidss/tidss_crtc.c  |  2 +-
+ drivers/gpu/drm/tidss/tidss_dispc.c | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-index 086327d51a90..c31b477a18b0 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-@@ -7,11 +7,14 @@
- #ifndef __TIDSS_DISPC_H__
- #define __TIDSS_DISPC_H__
+diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+index 94f8e3178df5..1604eca265ef 100644
+--- a/drivers/gpu/drm/tidss/tidss_crtc.c
++++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+@@ -225,7 +225,7 @@ static void tidss_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	tidss_runtime_get(tidss);
  
-+#include <drm/drm_color_mgmt.h>
-+
- #include "tidss_drv.h"
+ 	r = dispc_vp_set_clk_rate(tidss->dispc, tcrtc->hw_videoport,
+-				  mode->clock * 1000);
++				  mode->crtc_clock * 1000);
+ 	if (r != 0)
+ 		return;
  
- struct dispc_device;
+diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+index cacb5f3d8085..a5107f2732b1 100644
+--- a/drivers/gpu/drm/tidss/tidss_dispc.c
++++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+@@ -1084,13 +1084,13 @@ void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
  
- struct drm_crtc_state;
-+struct drm_plane_state;
+ 	dispc_set_num_datalines(dispc, hw_videoport, fmt->data_width);
  
- enum tidss_gamma_type { TIDSS_GAMMA_8BIT, TIDSS_GAMMA_10BIT };
+-	hfp = mode->hsync_start - mode->hdisplay;
+-	hsw = mode->hsync_end - mode->hsync_start;
+-	hbp = mode->htotal - mode->hsync_end;
++	hfp = mode->crtc_hsync_start - mode->crtc_hdisplay;
++	hsw = mode->crtc_hsync_end - mode->crtc_hsync_start;
++	hbp = mode->crtc_htotal - mode->crtc_hsync_end;
  
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-index 7f4f4282bc04..56a2020e20d0 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.h
-+++ b/drivers/gpu/drm/tidss/tidss_drv.h
-@@ -9,6 +9,8 @@
+-	vfp = mode->vsync_start - mode->vdisplay;
+-	vsw = mode->vsync_end - mode->vsync_start;
+-	vbp = mode->vtotal - mode->vsync_end;
++	vfp = mode->crtc_vsync_start - mode->crtc_vdisplay;
++	vsw = mode->crtc_vsync_end - mode->crtc_vsync_start;
++	vbp = mode->crtc_vtotal - mode->crtc_vsync_end;
  
- #include <linux/spinlock.h>
+ 	dispc_vp_write(dispc, hw_videoport, DISPC_VP_TIMING_H,
+ 		       FLD_VAL(hsw - 1, 7, 0) |
+@@ -1132,8 +1132,8 @@ void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
+ 		       FLD_VAL(ivs, 12, 12));
  
-+#include <drm/drm_device.h>
-+
- #define TIDSS_MAX_PORTS 4
- #define TIDSS_MAX_PLANES 4
+ 	dispc_vp_write(dispc, hw_videoport, DISPC_VP_SIZE_SCREEN,
+-		       FLD_VAL(mode->hdisplay - 1, 11, 0) |
+-		       FLD_VAL(mode->vdisplay - 1, 27, 16));
++		       FLD_VAL(mode->crtc_hdisplay - 1, 11, 0) |
++		       FLD_VAL(mode->crtc_vdisplay - 1, 27, 16));
  
-diff --git a/drivers/gpu/drm/tidss/tidss_plane.h b/drivers/gpu/drm/tidss/tidss_plane.h
-index aecaf2728406..92c560c3a621 100644
---- a/drivers/gpu/drm/tidss/tidss_plane.h
-+++ b/drivers/gpu/drm/tidss/tidss_plane.h
-@@ -7,6 +7,8 @@
- #ifndef __TIDSS_PLANE_H__
- #define __TIDSS_PLANE_H__
- 
-+#include <drm/drm_plane.h>
-+
- #define to_tidss_plane(p) container_of((p), struct tidss_plane, plane)
- 
- struct tidss_device;
-diff --git a/drivers/gpu/drm/tidss/tidss_scale_coefs.h b/drivers/gpu/drm/tidss/tidss_scale_coefs.h
-index 9c560d0fdac0..9824d02d9d1f 100644
---- a/drivers/gpu/drm/tidss/tidss_scale_coefs.h
-+++ b/drivers/gpu/drm/tidss/tidss_scale_coefs.h
-@@ -9,6 +9,8 @@
- 
- #include <linux/types.h>
- 
-+struct device;
-+
- struct tidss_scale_coefs {
- 	s16 c2[16];
- 	s16 c1[16];
+ 	VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, 1, 0, 0);
+ }
 
 -- 
 2.43.0
