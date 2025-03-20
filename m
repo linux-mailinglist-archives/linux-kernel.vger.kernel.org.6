@@ -1,115 +1,171 @@
-Return-Path: <linux-kernel+bounces-569721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD8DA6A693
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:57:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2F3A6A68E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 13:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC90485445
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9A697A50C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 12:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512C242065;
-	Thu, 20 Mar 2025 12:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17022557C;
+	Thu, 20 Mar 2025 12:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="heI/BSbk"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75590179BC;
-	Thu, 20 Mar 2025 12:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tjFExFxj"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF5C18E2A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 12:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742475442; cv=none; b=mlYhCvV8zcsKIWA8d5k4DC3kzL98bdbNbJ/9IezHSHkbHRztfDI13w4OLGugsVmzJ3PIZScsl2SCAe8Zzj8ACjEuWFF+w1N08W7o4GgKoSDgcVIJQo45KpukwcfZWw3WM5/N+DaHmgS/Pj2GvzNt7JlJUnQgXufhXH/uRQn7c7k=
+	t=1742475388; cv=none; b=cLPbNM1Or3DGwptfyuWuOr4L3ZAUcJId/IwKGSzzWpFCVLcp21Hv2NrCrUd8u8Owz4LO1aeN5qLtQKmfi2HsXisSH05um/0xfARntkh/9aNUjS3MPlaO1vM8rEOt9llgHSWu3FVNi5mUxnnfF+SDcD70MFGA16uO3H/SVC0Volo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742475442; c=relaxed/simple;
-	bh=PzL1hNUP4we1Y+VXPMp5QAgKUT95/IJsjvsaRpU6fWQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=jn2p8jfVD2YE5EaQ6A95twZD8GVubHGlR7KwkSUt6nzH5dntTRFQlbVxdOWV/qc/C6ty72r4S4lmEkexLYndKqJSmL9bBuTFJTxsUf9YilGtqTIfUT4TIcXblrVY1mhHCvgwIc0G2xFY9B23CZ+S1hHyNJwUoilExACJrXtdalI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=heI/BSbk reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=PV8J72Kd8Fa075AwZSVmGmHrrt420GzFAmi5jXfZWH8=; b=h
-	eI/BSbkrIuvldqB/lJQ4JMIvoWt78fgs408Zt+CycsmWKKbQs72ZSUGJ7Jrdg9L5
-	WDSEMbMwJyILyF9yVZrTgdlgY2L8Ze3ByK9i1lXduCuKB3MRu9qN4sloc5rFWZuM
-	gc3Tp7gmfwUnITcmJDHw2oCd+7gD7x+AzvzoImVOFA=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-111 (Coremail) ; Thu, 20 Mar 2025 20:56:04 +0800
- (CST)
-Date: Thu, 20 Mar 2025 20:56:04 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: dsimic@manjaro.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, krzk+dt@kernel.org,
-	"Andy Yan" <andy.yan@rock-chips.com>
-Subject: Re:Re:Re: [PATCH] arm64: dts: rockchip: aliase sdhci as mmc0 for
- rk3566 box demo
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <19b62068.1082.193ed25f901.Coremail.andyshrk@163.com>
-References: <20241221104920.4193034-1-andyshrk@163.com>
- <24438615.ouqheUzb2q@diego>
- <19b62068.1082.193ed25f901.Coremail.andyshrk@163.com>
-X-NTES-SC: AL_Qu2fAPicukst4iSeYukfmkcVgOw9UcO5v/Qk3oZXOJF8jDjp4xEhV2B6MH/20uOCARCyuyGufh9t7txYW6d3eJ0gDSag/xFgLgGfyqB2/Sa6kw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1742475388; c=relaxed/simple;
+	bh=zTnXAKmTuZRtU1d1p7Q5TlC/BTFpcP/VJalqvVhGyj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MU3NJ5JK4+pPZ3oxaHiT8dEakccmda+vk25VSuYhZsTo5bL0+EXTvmXU9yZxavQNoEkReMjOjea2XjijDc5TQaWmiUQ30fpPUzdDOK3PuH0IjqzjvCtuqrwyg8O5LW/X7M44gMK02uO+kpa4FudjY4+9ZcYtWrc3lCUhBEMT4yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tjFExFxj; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abf3d64849dso135439866b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 05:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742475384; x=1743080184; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HTiBMnvR5EfiapTBlQ2zIHklJYLCh/G/HYnYPld7nw4=;
+        b=tjFExFxjbUzksAmUGKs8bktnIAL/dOdAIUu3uNWvSMhjDPsaW4uoHKutafmN0FVyLh
+         ekTaSBtt9wKZaKYmJXpK72UxQPHEy43whWsR5evtAvjC5huZNbQpB/CNjzTIrri7rh8N
+         diz+e0BKg56edVlYvqArZmvLOH0LrYe0k9nLU2dZ1ljZgq1r8uSbf1ewL53kyVpOPUx9
+         gxN58T0N5A+uOB5eEIPVPYJGOaFcoKgI6B3HpwjjRafAzpyBDJq/2dj8u+BKcU5yNKmM
+         Tu6DTpMrgszaMYb8navO0fLM09oejSADZEt4fhIqYfO9mKU0yz6YpXRmSxwMjAYWM6dE
+         6TXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742475384; x=1743080184;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HTiBMnvR5EfiapTBlQ2zIHklJYLCh/G/HYnYPld7nw4=;
+        b=K9mSF3KtJDd7OoI/Dthe0G8/JP5Kk0qGwkuj76vrnidSsu3RMhspzIFk64K33ixBbe
+         PDZHKcAMztsbPbbtRFvo/51hiZ1BdXwN9XxJAKs9TZQIhpfcxnBeuvTeE2j5Ya7i/nZl
+         klNLUS9ZF3oChaQcY7c+Nh4h7o3i2Ibcn66ioCP00hQF9/wPgMaAS7Paogy4/I7AmWM1
+         XoqTfO8e5jm8YTB6sIxBsqc4OznwyvT/Su0FtvJibnwGe2VaVB1z5Lecw6FiYQlBFjO5
+         f8fQrPkhJKiYGMy87D88zSGhvxAYJF2Xbzjn/hhy+6R7Qgce9xnsmrVHbCTLWJS7E8fk
+         xMBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrgfKouYsyvQBwitxms9Z0UXsvTaRpi3V2xBfRSJtcHWI29EUe6bti/+1z/8RrGFfWqMjy8EEd8Gi0+Zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSsWI/KeDF6Lzx6Smy1kWB0YlIIXsIreLQ5kVJEtFcqj2wEd49
+	VOFN9rWSATPE1lPM9f/1KSc2E1JpGQf58Zb36RlgLIRyCVp38qIJJCJ9kKsnSQ4=
+X-Gm-Gg: ASbGncvgYxZTSZOKgQMaNfxPoPAwZqyOc3WVDhH6MGsK0dBvWawa4mtcNCkuJt1WTkb
+	Z6PvgQK1pA1jXUH+at+JnIlLu21u+vDBC+f3zA+NbSXDtyimde2yCx8ewOUSy5YSUppJjvNq+qy
+	5TnnPqSEEKq1ISGmQoqtGKAliletrzINUUAhcG0RkzKlFZ+sm3OkYizZ0vxXCCRQfUPT+go8g4K
+	Hzb457a2N37MCRVprBnDDPkQMqK9wVhs9SdEzZtT7uY5bcdqTg+qND129fc25hB8vPkD4PiggIh
+	Q7Vqk/Wz0JpatRO6cc/bD41rAWyWM2DTKWc5joOchEYHICexTucAkTL/oH7SqmKrI07DqNpVONy
+	HwazHvRIgKtue
+X-Google-Smtp-Source: AGHT+IFwbUtBKy1cKZpiAYgKgI/ab8Fj6ZMme+dS/eEmYErdP1Yx16iHt4BcTPb5hz8rYdlEnkXIEA==
+X-Received: by 2002:a17:907:f50a:b0:ac3:45c0:6d08 with SMTP id a640c23a62f3a-ac3b7373065mr786509366b.0.1742475384270;
+        Thu, 20 Mar 2025 05:56:24 -0700 (PDT)
+Received: from [192.168.69.235] (88-187-86-199.subs.proxad.net. [88.187.86.199])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146af080sm1155354066b.31.2025.03.20.05.56.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 05:56:23 -0700 (PDT)
+Message-ID: <817c02a0-5493-419a-9663-73a85182b047@linaro.org>
+Date: Thu, 20 Mar 2025 13:56:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2ae3fb1a.ad30.195b3a0087e.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:bygvCgD3vzFkENxnDwKCAA--.42918W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAcWXmfcCF-htQABsm
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/41] mips: Replace __ASSEMBLY__ with __ASSEMBLER__ in
+ the mips headers
+To: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org
+References: <20250314071013.1575167-1-thuth@redhat.com>
+ <20250314071013.1575167-20-thuth@redhat.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+In-Reply-To: <20250314071013.1575167-20-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-SGkgSGVpa2/vvIwKCkF0IDIwMjQtMTItMjIgMTQ6NTU6MDksICJBbmR5IFlhbiIgPGFuZHlzaHJr
-QDE2My5jb20+IHdyb3RlOgo+Cj5IaSBIZWlrb++8jAo+QXQgMjAyNC0xMi0yMSAyMDo1NTowMiwg
-IkhlaWtvIFN0w7xibmVyIiA8aGVpa29Ac250ZWNoLmRlPiB3cm90ZToKPj5IaSBBbmR5LAo+Pgo+
-PkFtIFNhbXN0YWcsIDIxLiBEZXplbWJlciAyMDI0LCAxMTo0OTowNyBDRVQgc2NocmllYiBBbmR5
-IFlhbjoKPj4+IEZyb206IEFuZHkgWWFuIDxhbmR5LnlhbkByb2NrLWNoaXBzLmNvbT4KPj4+IAo+
-Pj4gRm9sbG93IG1vc3Qgb3RoZXJzIHJrMzU2eCBiYXNlZCBib2FyZHMsIGFuZCB1LWJvb3Qgb25s
-eSB1c2UgbW1jMC8xCj4+PiBhcyBtbWMgYm9vdCB0YXJnZXRzLCBzbyBhbGlhc2Ugc2RoY2kgYXMg
-bW1jMC4KPj4+IAo+Pj4gU2lnbmVkLW9mZi1ieTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2stY2hp
-cHMuY29tPgo+Pj4gLS0tCj4+PiAKPj4+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tjaGlwL3Jr
-MzU2Ni1ib3gtZGVtby5kdHMgfCA2ICsrKy0tLQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2Vy
-dGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+PiAKPj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0
-L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU2Ni1ib3gtZGVtby5kdHMgYi9hcmNoL2FybTY0L2Jvb3Qv
-ZHRzL3JvY2tjaGlwL3JrMzU2Ni1ib3gtZGVtby5kdHMKPj4+IGluZGV4IDQxYjRjZDVhNDIyMC4u
-N2QwZWVkZjFiZDBkIDEwMDY0NAo+Pj4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9yb2NrY2hp
-cC9yazM1NjYtYm94LWRlbW8uZHRzCj4+PiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tj
-aGlwL3JrMzU2Ni1ib3gtZGVtby5kdHMKPj4+IEBAIC0xOSw5ICsxOSw5IEBAIC8gewo+Pj4gIAo+
-Pj4gIAlhbGlhc2VzIHsKPj4+ICAJCWV0aGVybmV0MCA9ICZnbWFjMTsKPj4+IC0JCW1tYzAgPSAm
-c2RtbWMwOwo+Pj4gLQkJbW1jMSA9ICZzZG1tYzE7Cj4+PiAtCQltbWMyID0gJnNkaGNpOwo+Pj4g
-KwkJbW1jMCA9ICZzZGhjaTsKPj4+ICsJCW1tYzEgPSAmc2RtbWMwOwo+Pj4gKwkJbW1jMiA9ICZz
-ZG1tYzE7Cj4+Cj4+c29ycnksIGJ1dCB0aGF0IHdvbid0IGJlIHBvc3NpYmxlIDotKCAuCj4+Cj4+
-VGhlIG9yaWdpbmFsIGFsaWFzZXMgZm9yIHRoZSBtbWMgb3JkZXIgd2VyZSBhZGRlZCBvdmVyIDIg
-eWVhcnMgYWdvCj4+KG5vdmVtYmVyIDIwMjIpIGFuZCBiZWNhbWUgcGFydCBvZiB0aGUgQUJJIHRo
-ZW4uCj4KPlllcywgIHRoZSBwYXRjaCBmb3IgdGhpcyBib2FyZCB3YXMgc3VibWl0dGVkIGJ5IG1l
-Lgo+VGhpcyBpcyBhIHR2IGJveCAgZXZhbHVhdGlvbiBkZW1vIGJvYXJkIHRoYXQgd2UgdXNlIGlu
-dGVybmFsbHnvvIxhbmQgaXQgaXMgbm90IHNvbGQgdG8gdGhlIHB1YmxpYy4KPkkgc3VibWl0dGVk
-IGl0IHRvIHRoZSBtYWlubGluZSBiZWNhdXNlIGl0IGlzIHNtYWxsLCBjb21wYWN0IGFuZCBzdHJl
-YW1saW5lZCwgaXQgZWFzeSBmb3IgbWUKPnRvIHVzZSBpdCAgdGVzdCB0aGUgbWFpbmxpbmUgdm9w
-MiBkcml2ZXIuIAo+SSB0aGluayBpIGFtIGN1cnJlbnRseSB0aGUgb25seSB1c2VyIHdobyB3aWxs
-IHVzZSB0aGlzIGJvYXJkIHJ1biB0aGUgbWFpbmxpbmUga2VybmVsLgo+SSdtIG5vdCBzdXJlIGlm
-IHdlIGNhbiBsZXQgaXQgZ28uCgoKU28gZmFyLCBubyBvbmUgaGFzIGNvbWUgZm9yd2FyZCB0byBj
-bGFpbSB0aGF0IHRoZXkgYXJlIHVzaW5nIHRoaXMgYm9hcmQuCkFjdHVhbGx5LCBhcyBJIG1lbnRp
-b25lZCBiZWZvcmUsIGN1cnJlbnRseSwgaXQgaXMgb25seSBtZSB3aG8gaXMgdXNpbmcgdGhpcwpi
-b2FyZCB0byBkbyBzb21lIERSTS1yZWxhdGVkIHRlc3RzLiBDb3VsZCB5b3UgY29uc2lkZXIgbWVy
-Z2luZyBpdD8gCklmIGxhdGVyIG9uIHNvbWVvbmUgcmVhbGx5IGNvbWVzIGZvcndhcmQgYW5kIGNs
-YWltcyB0aGF0IHRoaXMgbW9kaWZpY2F0aW9uCmhhcyBhZmZlY3RlZCBpdCwgd2UgY2FuIHN0aWxs
-IHJldmVydCB0aGlzIHBhdGNoLgoKPgo+Cj4+Cj4+SW1hZ2luZSBzb21lb25lIHVzaW5nIHRoYXQg
-Ym9hcmQgd2l0aCBhIHJvb3Rmcz0vZGV2L21tY2JsazJwMSBwYXJ0Cj4+aW4gdGhlIGNvbW1hbmRs
-aW5lIHRvIG1vdW50IHRoZSBvbGQgc2RoY2ktcGFydDEgYXMgcm9vdGZzLCBidXQgbm93Cj4+eW91
-IHJlb3JkZXIgdGhlIGNvbnRyb2xsZXJzLCBzbyBzbyB0aGF0IGNvbW1hbmRsaW5lIHdvdWxkIHRy
-eSB0byBhY2Nlc3MKPj5zZG1tYzEsIHNvIHRoZWlyIHN5c3RlbSB3b24ndCBib290IGFueW1vcmUg
-YWZ0ZXIganVzdCBhIHNpbXBsZSBrZXJuZWwKPj51cGRhdGUuCj4+Cj4+QnJlYWtpbmcgcGVvcGxl
-J3Mgc2V0dXAgaXMgb25lIG9mIHRob3NlIGJpZyBuby1nby1zIGluIHRoZSBrZXJuZWwsIHNvCj4+
-c2FkbHkgeW91J2xsIG5lZWQgdG8gbGl2ZSB3aXRoIHRoZSBleGlzdGluZyBvcmRlci4KPj4KPj4K
-Pj5IZWlrbwo+Pgo+Pgo=
+On 14/3/25 08:09, Thomas Huth wrote:
+> While the GCC and Clang compilers already define __ASSEMBLER__
+> automatically when compiling assembly code, __ASSEMBLY__ is a
+> macro that only gets defined by the Makefiles in the kernel.
+> This can be very confusing when switching between userspace
+> and kernelspace coding, or when dealing with uapi headers that
+> rather should use __ASSEMBLER__ instead. So let's standardize on
+> the __ASSEMBLER__ macro that is provided by the compilers now.
+> 
+> This is almost a completely mechanical patch (done with a simple
+> "sed -i" statement), with just one comment tweaked manually in
+> arch/mips/include/asm/cpu.h (that was missing some underscores).
+> 
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: linux-mips@vger.kernel.org
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> ---
+>   arch/mips/include/asm/addrspace.h            |  4 +--
+>   arch/mips/include/asm/asm-eva.h              |  6 ++--
+>   arch/mips/include/asm/asm.h                  |  8 ++---
+>   arch/mips/include/asm/bmips.h                |  4 +--
+>   arch/mips/include/asm/cpu.h                  |  4 +--
+>   arch/mips/include/asm/dec/ecc.h              |  2 +-
+>   arch/mips/include/asm/dec/interrupts.h       |  4 +--
+>   arch/mips/include/asm/dec/kn01.h             |  2 +-
+>   arch/mips/include/asm/dec/kn02.h             |  2 +-
+>   arch/mips/include/asm/dec/kn02xa.h           |  2 +-
+>   arch/mips/include/asm/eva.h                  |  4 +--
+>   arch/mips/include/asm/ftrace.h               |  4 +--
+>   arch/mips/include/asm/hazards.h              |  4 +--
+>   arch/mips/include/asm/irqflags.h             |  4 +--
+>   arch/mips/include/asm/jazz.h                 | 16 ++++-----
+>   arch/mips/include/asm/jump_label.h           |  4 +--
+>   arch/mips/include/asm/linkage.h              |  2 +-
+>   arch/mips/include/asm/mach-generic/spaces.h  |  4 +--
+>   arch/mips/include/asm/mips-boards/bonito64.h |  4 +--
+>   arch/mips/include/asm/mipsmtregs.h           |  6 ++--
+>   arch/mips/include/asm/mipsregs.h             |  6 ++--
+>   arch/mips/include/asm/msa.h                  |  4 +--
+>   arch/mips/include/asm/pci/bridge.h           |  4 +--
+>   arch/mips/include/asm/pm.h                   |  6 ++--
+>   arch/mips/include/asm/prefetch.h             |  2 +-
+>   arch/mips/include/asm/regdef.h               |  4 +--
+>   arch/mips/include/asm/sibyte/board.h         |  4 +--
+>   arch/mips/include/asm/sibyte/sb1250.h        |  2 +-
+>   arch/mips/include/asm/sibyte/sb1250_defs.h   |  6 ++--
+>   arch/mips/include/asm/smp-cps.h              |  6 ++--
+>   arch/mips/include/asm/sn/addrs.h             | 18 +++++-----
+>   arch/mips/include/asm/sn/gda.h               |  4 +--
+>   arch/mips/include/asm/sn/kldir.h             |  4 +--
+>   arch/mips/include/asm/sn/klkernvars.h        |  4 +--
+>   arch/mips/include/asm/sn/launch.h            |  4 +--
+>   arch/mips/include/asm/sn/nmi.h               |  8 ++---
+>   arch/mips/include/asm/sn/sn0/addrs.h         | 14 ++++----
+>   arch/mips/include/asm/sn/sn0/hub.h           |  2 +-
+>   arch/mips/include/asm/sn/sn0/hubio.h         | 36 ++++++++++----------
+>   arch/mips/include/asm/sn/sn0/hubmd.h         |  4 +--
+>   arch/mips/include/asm/sn/sn0/hubni.h         |  6 ++--
+>   arch/mips/include/asm/sn/sn0/hubpi.h         |  4 +--
+>   arch/mips/include/asm/sn/types.h             |  2 +-
+>   arch/mips/include/asm/sync.h                 |  2 +-
+>   arch/mips/include/asm/thread_info.h          |  4 +--
+>   arch/mips/include/asm/unistd.h               |  4 +--
+>   arch/mips/include/asm/vdso/gettimeofday.h    |  4 +--
+>   arch/mips/include/asm/vdso/processor.h       |  4 +--
+>   arch/mips/include/asm/vdso/vdso.h            |  4 +--
+>   arch/mips/include/asm/vdso/vsyscall.h        |  4 +--
+>   arch/mips/include/asm/xtalk/xtalk.h          |  4 +--
+>   arch/mips/include/asm/xtalk/xwidget.h        |  4 +--
+>   drivers/soc/bcm/brcmstb/pm/pm.h              |  2 +-
+>   53 files changed, 140 insertions(+), 140 deletions(-)
+
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+
 
