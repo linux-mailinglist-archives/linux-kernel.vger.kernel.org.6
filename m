@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-569309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-569310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249DAA6A14A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:26:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B5BA6A141
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 09:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A85980787
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117F6177A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Mar 2025 08:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882132147F2;
-	Thu, 20 Mar 2025 08:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A35220693;
+	Thu, 20 Mar 2025 08:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSHjZ3Cb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MpBPjPHO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ASM7tm++"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC21120FA8B;
-	Thu, 20 Mar 2025 08:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414AE20FA97;
+	Thu, 20 Mar 2025 08:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742458981; cv=none; b=gcNuLLiZvJKTosj1NZurGXRAimghuCgv+AbxOuJwLfJx+0Hhjvuu24GSNvqLtFlXH/phJpelG4OzzQExohqbzLz7zao+g68Yw7z2aIWgol8Y1bPfb3wpjTH0/Zx5tN3F13XKB3pHXlxiuRtW1dYkD9csRmzRg/PnGS/ubnBjPbA=
+	t=1742458998; cv=none; b=OcTuESWtsu1PealC3bnZbNPZGjSSJkKidpAIK1NBor9EFH82ybpwuNNtnnsQvznm/yAj4T+CaVrP8KBk6bBK3N6yRIEEcZ0rzTvTNjLxY33yPdggK9VT/rWGto+oiWb2/7vMlcYGBppPLLUVKNqUnJXINgdtWq88tMdl3xx4jsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742458981; c=relaxed/simple;
-	bh=uuDoS8H7uaThtE/+q1g0GRK9CFx+DtO0sFLmtPBeD4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIa0HTAnrqmLoIcBxAt9RFIGiTNHyB7I2VBPyjRCHFGY51NfIbxaZqZgDINLkAIhELiPOzq+bS3WzPyfCj71DiJl9RYiMz7f200IDdDkKd+wWaZcrZkpY7sE9dle8p/HIzJHQXdQqXoo9dwjIoIdPlzTfrmdF+XlBzlHf/jV+AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSHjZ3Cb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BAA6C4CEEC;
-	Thu, 20 Mar 2025 08:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742458980;
-	bh=uuDoS8H7uaThtE/+q1g0GRK9CFx+DtO0sFLmtPBeD4E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LSHjZ3Cb1nwY8hDZZFe24onM1tyWYUA+pjm7Ntu5iTU52EROw8KWHUnjBvsSL955Z
-	 h557aE2sh5GZpy+b1Nu8g5AVFskRvHi1xm3i3K6csUszqVxhMFxMF4CqPJcn2UCiFa
-	 xRVRHaA9IYb8zOxYBwEWcSJ+uSLxNYN/xxK2E0dnZsItYXoWMLQFpdx/u3vsezet/b
-	 IAwKXLnmCRXwkcQX8RYjcgH85vRnNqH2Hr9Te9yKjFEay8cxrWu93zPzposzfrSzbl
-	 C03yb1vjdksw0J1O67BVqKTiNZrY6uySONdUbRdLca4tu8C3DJ1tkjdPtB9GM6Wf+9
-	 pXtJVXDwFvq4g==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30762598511so6361151fa.0;
-        Thu, 20 Mar 2025 01:23:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUmdhVodlxh45YsTcyb9EekPqPkShj2Ie7OGv8jsIaR4KC4lS83dFU+v1c75uQHYLTtZr4/PDtq3J/F98M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2R1amSdxhJww0QL/ocwK/iNrRB/k67peUUB5BqmTsgkiEs1mP
-	qjpU2nN609Xh2kQtUV1274kHvoEfuq3UQLAho2qvbSedS4rHk0U6SuEqz/0eohKXXnpWUrmPMbF
-	tSlDXETiEzVxwCEEePqiG0gUcIhQ=
-X-Google-Smtp-Source: AGHT+IEbHrSSAz0orcE7ux3IVnlmNkwpe31ZXIN+54sZQPWqBuHuIthlBb7EM3d3HaeT207h4cxITmbghV29DZ4qv/M=
-X-Received: by 2002:a05:651c:2211:b0:30a:44ca:7e74 with SMTP id
- 38308e7fff4ca-30d6a3e4308mr24169131fa.12.1742458978712; Thu, 20 Mar 2025
- 01:22:58 -0700 (PDT)
+	s=arc-20240116; t=1742458998; c=relaxed/simple;
+	bh=tv5wCB4p8oeh66WwO1jDuyzP1uyHfR0URb1jM6Btmvc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S4moagWeXHbk6ESH7pVQavHcCIQp6WpaZ6kDkLiUWAluBcKBpKtkhnx4WVXof1GCh2okQ0l3WukSB+DGhlvCq6W2Hd3gZfEOGEcw2TBekpLs/auYv5HwsY9+CPRqigrgI+Fk/ihsVbncvAybIQr8sLQ+li+2WYEmcknL3fKaCT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MpBPjPHO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ASM7tm++; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742458987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g+FF8L31bluj5IUvydOuAJAVMO+mokt/1K0z0gQUDYk=;
+	b=MpBPjPHOPXus5HC2PFkee+KTnGmNVP6AK4KIHjIDgp/YIA7znKhp9gOGKw2km2t53amaLr
+	M6vjtc2JfqVieI7duEYbWa/1ctQlwgP+b74S31fZAo2N9TYQxolocBPy/oeBbeo34hzlf3
+	EEZQZtTm8C1dK2FLbNKM8hAA6sMiaYqo8VRziGzIXe+K9Bh1ljV8PuUsqGPUw31Fv1+xQV
+	iSf7KmTC2qq4kQAIq7yVh8tjYzaEuh8J7sgo0/SND4lj+zKtE4Ku/uV4MmVXXR3EojfZsn
+	y8CwrHi7K8jN11/xtwMueXHzB21KqMQ8ICpEn1x/vjNRiCZYhvaOY8FFX0Z3DA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742458987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g+FF8L31bluj5IUvydOuAJAVMO+mokt/1K0z0gQUDYk=;
+	b=ASM7tm++d8S2C0lKTd6aaHKKbgaE6Og+CdejqgcPe0ucSsytZo3OZ4Ej30a+EyBB3K6d19
+	Urtw4vRGNlMnsTCQ==
+To: Wen Xiong <wenxiong@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, gjoyce@linux.ibm.com,
+ linux-pci@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
+ linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 1/1] genirq/msi: Dynamic remove/add stroage adapter hits
+ EEH
+In-Reply-To: <90777da90abe02c87d30968bfedc9168@linux.ibm.com>
+References: <1742386474-13717-1-git-send-email-wenxiong@linux.ibm.com>
+ <87a59h3sk9.ffs@tglx> <90777da90abe02c87d30968bfedc9168@linux.ibm.com>
+Date: Thu, 20 Mar 2025 09:23:06 +0100
+Message-ID: <877c4k3yc5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320070746.101552-2-ardb+git@google.com>
-In-Reply-To: <20250320070746.101552-2-ardb+git@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 20 Mar 2025 09:22:47 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEqNALtjhHyj=4AY=C-mFpj_uCv1BuS5X=xdxarJ5Ekgw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr9ucMoS5AX_IYMQK64fc7PpiEoA9OFnR41asQy2G4ghgZqpVV--DH4Sn4
-Message-ID: <CAMj1kXEqNALtjhHyj=4AY=C-mFpj_uCv1BuS5X=xdxarJ5Ekgw@mail.gmail.com>
-Subject: Re: [PATCH] gendwarfksyms: define __GENKSYMS__ when processing asm-protoypes.h
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kbuild@vger.kernel.org, brgerst@gmail.com, x86@kernel.org, 
-	masahiroy@kernel.org, nathan@kernel.org, linux-kernel@vger.kernel.org, 
-	nogikh@google.com, Sami Tolvanen <samitolvanen@google.com>, 
-	syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Thu, 20 Mar 2025 at 08:08, Ard Biesheuvel <ardb+git@google.com> wrote:
+On Wed, Mar 19 2025 at 21:58, Wen Xiong wrote:
+>> The real problem has nothing to do with a remove/add operation. The
+>> problem is solely in the probe function.
 >
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Ensure that __GENKSYMS__ is #define'd when passing asm/asm-prototypes.h
-> through the compiler to capture the exported symbols. This ensures that
-> exported symbols such as __ref_stack_chk_guard on x86, which is declared
-> conditionally, is visible to the tool.
->
-> Otherwise, an error such as the below may be raised, breaking the build
-> when CONFIG_GENDWARFKSYMS=y
->
->   <stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_guard'
->
-> Cc: Sami Tolvanen <samitolvanen@google.com>
-> Reported-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> I don't think we have problems in probe function since this driver has 
+> been in productions for many many years.
 
-Tested-by: syzbot+06fd1a3613c50d36129e@syzkaller.appspotmail.com
+Seriously?
 
-https://syzkaller.appspot.com/bug?extid=06fd1a3613c50d36129e
+It does not matter at all whether you had it many years in production or
+not. Fact is that the driver is operational and after that a device
+reset happens, which wipes the config space. That _IS_ the problem.
 
-> ---
->  scripts/Makefile.build | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 993708d11874..7855cdc4e763 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -305,6 +305,7 @@ $(obj)/%.rs: $(obj)/%.rs.S FORCE
->  getasmexports =                                                                \
->     { echo "\#include <linux/kernel.h>" ;                               \
->       echo "\#include <linux/string.h>" ;                               \
-> +     echo "\#define  __GENKSYMS__" ;                                   \
->       echo "\#include <asm/asm-prototypes.h>" ;                         \
->       $(call getexportsymbols,EXPORT_SYMBOL(\1);) ; }
->
-> --
-> 2.49.0.rc1.451.g8f38331e32-goog
->
+> Also we didn't see the issue before the "MSI domain" patchset dropping 
+> into linux interrupt code(no issue in rhel92 release).
+
+That's completely irrelevant. See above.
+
+> Device reset is not called in probe function.
+
+Right. The reset is part of PCI error handling, which happens _AFTER_
+the driver has set up interrupts.
+
+> We don't see the issue without dynamically remove/add operation.
+> There is a small window which irqbalance daemon kicks in during device
+> reset. So it took about over 6 hours to recreate the issue when doing
+> remove/add loop operation.
+
+Sure. You need a loop to hit the window. And it does not matter whether
+it's the probe or the remove which triggers it. Fact is that the reset
+wipes out the config space, which means that any read from the config
+space between reset and restore will return garbage. That problem is not
+restricted to the interrupt code. It's a general problem.
+
+> We can't find the good way to fix the issue in both of device drivers. 
+> So we look for some help in interrupt code.
+
+No. This is _NOT_ a interrupt specific problem. You are observing the
+symptom related to interrupts, but any other code which reads from
+config space during the reset window has exactly the same problem.
+
+The PCI error handling resets the device asynchronously to any other
+operation which might access the config space. Yes, set_affinity() is
+one possible way to hit that due to the implementation detail of
+pseries_msi_compose_msg(), which reads the MSI message composed by the
+underlying hypervisor back from config space. But even if it would not
+read back and compose the message itself then set_affinity() would
+create inconsistent state because:
+
+       reset()
+                        compose()
+                        write()
+       restore()
+
+I.e. the reset machinery overwrites the new message, which means this
+ends up with inconsistent state.
+
+So this is a general problem with PCI error handling and _not_ a problem
+of the interrupt subsystem. I have no idea what to do about that, but
+this needs to be looked at from the PCI error handling side and not
+papered over at the messenger.
+
+Thanks,
+
+        tglx
 
