@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-571559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40BFA6BECC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:54:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607F7A6BED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362EF3B5B7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284EF3BA53A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BCE22CBC8;
-	Fri, 21 Mar 2025 15:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC15522ACC6;
+	Fri, 21 Mar 2025 15:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHILnwct"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oaHaHYtO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D7D223703;
-	Fri, 21 Mar 2025 15:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE6042A94;
+	Fri, 21 Mar 2025 15:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572325; cv=none; b=rxXi/RghFxPqINJOOkGjX2pfQIIPtvbkiJTSasPCjBAQfmSxU4381Vel/2MdmxBHz190Jle+D4ytokhbpQDG8v7Rs66Iw0vj4i98EPE+/gNqu/UmpAI7Q3yQjyiUTiBHI/FM04XnxtJCt6flwMUM7XiwfZd4TiDmY6pmZ3Nc2fI=
+	t=1742572336; cv=none; b=rYg7drnUbPR10MiRjJTAU0zw6GDUx6K6Jl5IMNHQzHTlyLLNg53AIcSz/GVfh6UrM2KzA6FZjCmkdWKf56JQSwPv/HlHYxH6sZzy4L4N1jjLM1xcGsiM8n8O+2FpxqylkPS/ntW6gnUeZGTIyFukegYgAyW720zK1kr+g6Tcohs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742572325; c=relaxed/simple;
-	bh=+MlNXD+nU/FyW3Z2jZmfsNxmoyYLAZ6DjsTXsGyJU40=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dkVZlFjnrru9h588GivdgPSYvsdlxRLPwwAt54mdjHiMc/D8EBVQUYCxjZGZ+D8BeUkRg63+5nbjV+C+lHvr2t6KyFqnMelAi4tYNh2bIt4RVkoQv+zSAGO1tiynuUldIkKuuwUAP8rCluXdfc88kcZquWLI4eIvslQwz6uaOKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHILnwct; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5384C4CEE3;
-	Fri, 21 Mar 2025 15:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742572324;
-	bh=+MlNXD+nU/FyW3Z2jZmfsNxmoyYLAZ6DjsTXsGyJU40=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=hHILnwctpsR2U3NwJKnAltNyE1+kAw+SlNF6GhQl77dNVgUgJ/w6fUOEoY0pSvNsd
-	 mRBRjeQZZ8+AC/8P/EoJ6CI7OK26Smdv7OTT9Z13gXK7cUFp6YtQWHJwtknoHVlqia
-	 TMmTUOUfX6qV0aPcyDJuXjGz7aqcHdg+1jI+MGR9sISmgnihz46rcCZLUNltUDXs36
-	 EhVc5PcmhGRw9ktk+ba3pd7OhigWJa14l814TeQJ74igJrdbvdSoNmUV0Ew6r1ZBD/
-	 F4iBX+9jwkCgdKyKoFgTcMKDDX7Ti+fftV+82FoB4UQE6uc/adMXruZr9n3kySxPQQ
-	 6dzLZuSOV5JGA==
-Date: Fri, 21 Mar 2025 10:52:03 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1742572336; c=relaxed/simple;
+	bh=g1DDnj5fD1ZAtu0cPRAYle7RyFlSUuFSlUaHm4oy8gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/Ucnymkyd+VNG2RzcscQaSZIlxrNxuzil+GRKzuBCoIPAEm6k8Ddq3ynm95J+CyFaow2P9LhAL7PeNepkMyqrEYo2ZwJxdtmlZQUJs4InNteUUO1q2au8hUdJNGBld5I8k1qp9l2vU9itfE/KKl9IX5Wet69wNcsoZq3byjJTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oaHaHYtO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 459D12C5;
+	Fri, 21 Mar 2025 16:50:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742572228;
+	bh=g1DDnj5fD1ZAtu0cPRAYle7RyFlSUuFSlUaHm4oy8gA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oaHaHYtOo9bV4KMSNdhULofTmTKihTEM8zaKPpI4nTHirL2tIHGnXU57RNYahtVmV
+	 SXh1To6IquYNipoe50Ucmnie0vNkHj9BNWksCdvhhKUMIA07QgldXZLdDr//STatzg
+	 nT8oFIVvtLq3g7Ua+BGDHxqr4Re4kmMrKdT3Va/M=
+Date: Fri, 21 Mar 2025 16:52:09 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v5 6/7] media: vsp1: rwpf: Support operations with IIF
+Message-ID: <3yyktuikkxbj64ajc2zcq6zgclecyuvq4wdsmsyqphn3cio65a@jc3dbz62z7sr>
+References: <20250319-v4h-iif-v5-0-0a10456d792c@ideasonboard.com>
+ <20250319-v4h-iif-v5-6-0a10456d792c@ideasonboard.com>
+ <20250321120942.GB1752@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Thomas Gleixner <tglx@linutronix.de>, linux-mips@vger.kernel.org, 
- linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu, 
- Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <20250321134633.2155141-3-cjd@cjdns.fr>
-References: <20250321134633.2155141-1-cjd@cjdns.fr>
- <20250321134633.2155141-3-cjd@cjdns.fr>
-Message-Id: <174257232355.3436156.11164230137695407225.robh@kernel.org>
-Subject: Re: [PATCH v1 2/8] dt-bindings: interrupt-controller: Add EcoNet
- EN751221 INTC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250321120942.GB1752@pendragon.ideasonboard.com>
 
+Hi Laurent
 
-On Fri, 21 Mar 2025 13:46:27 +0000, Caleb James DeLisle wrote:
-> Document the device tree binding for the interrupt controller in the
-> EcoNet EN751221 MIPS SoC.
-> 
-> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
-> ---
-> If anyone is aware of a standard name for this "shadow interrupt" pattern,
-> please let me know and I will re-send with updated naming.
-> ---
->  .../econet,en751221-intc.yaml                 | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/econet,en751221-intc.yaml
-> 
+On Fri, Mar 21, 2025 at 02:09:42PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
+>
+> On Wed, Mar 19, 2025 at 12:28:19PM +0100, Jacopo Mondi wrote:
+> > When the RPF/WPF units are used for ISP interfacing through
+> > the IIF, the set of accessible registers is limited compared to
+> > the regular VSPD operations.
+> >
+> > Support ISP interfacing in the rpf and wpf entities by checking if
+> > the pipe features an IIF instance and writing only the relevant
+> > registers.
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/renesas/vsp1/vsp1_rpf.c | 11 +++++++++--
+> >  drivers/media/platform/renesas/vsp1/vsp1_wpf.c | 14 ++++++++++----
+> >  2 files changed, 19 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_rpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
+> > index 056491286577cc8e9e7a6bd096f1107da6009ea7..4e960fc910c16600b875286c2efec558ebdc1ee7 100644
+> > --- a/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
+> > +++ b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
+> > @@ -84,7 +84,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+> >  	sink_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SINK);
+> >  	source_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SOURCE);
+> >
+> > -	infmt = VI6_RPF_INFMT_CIPM
+> > +	infmt = (pipe->iif ? 0 : VI6_RPF_INFMT_CIPM)
+> >  	      | (fmtinfo->hwfmt << VI6_RPF_INFMT_RDFMT_SHIFT);
+> >
+> >  	if (fmtinfo->swap_yc)
+> > @@ -98,7 +98,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+> >  	vsp1_rpf_write(rpf, dlb, VI6_RPF_INFMT, infmt);
+> >  	vsp1_rpf_write(rpf, dlb, VI6_RPF_DSWAP, fmtinfo->swap);
+> >
+> > -	if (entity->vsp1->info->gen == 4) {
+> > +	if (entity->vsp1->info->gen == 4 && !pipe->iif) {
+>
+> I think this can be dropped, because ...
+>
+> >  		u32 ext_infmt0;
+> >  		u32 ext_infmt1;
+> >  		u32 ext_infmt2;
+> > @@ -163,6 +163,13 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
+> >  	if (pipe->interlaced)
+> >  		top /= 2;
+> >
+> > +	/* No further configuration for VSPX. */
+> > +	if (pipe->iif) {
+> > +		/* VSPX wants alpha_sel to be set to 0. */
+> > +		vsp1_rpf_write(rpf, dlb, VI6_RPF_ALPH_SEL, 0);
+> > +		return;
+> > +	}
+> > +
+>
+> This block can be moved right after DSWAP. I can handle this when
+> applying the series if there's no need to resend for other reasons (I
+> would appreciate the change being tested first though).
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Indeed, this is way nicer.
 
-yamllint warnings/errors:
+I've sent v6 with the change you have suggested and re-tested it
+again.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/interrupt-controller/econet,en751221-intc.example.dtb: interrupt-controller@1fb40000: 'interrupt-parent' is a required property
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/econet,en751221-intc.yaml#
+Thanks
+  j
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250321134633.2155141-3-cjd@cjdns.fr
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>
+> >  	vsp1_rpf_write(rpf, dlb, VI6_RPF_LOC,
+> >  		       (left << VI6_RPF_LOC_HCOORD_SHIFT) |
+> >  		       (top << VI6_RPF_LOC_VCOORD_SHIFT));
+> > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> > index a32e4b3527db41e7fac859ad8e13670141c1ef04..fafef9eeb3f898b774287d615bb4a99fed0b4cfe 100644
+> > --- a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> > +++ b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> > @@ -247,8 +247,11 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+> >  	sink_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SINK);
+> >  	source_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SOURCE);
+> >
+> > -	/* Format */
+> > -	if (!pipe->lif || wpf->writeback) {
+> > +	/*
+> > +	 * Format configuration. Skip for IIF (VSPX) or if the pipe doesn't
+> > +	 * write to memory.
+> > +	 */
+> > +	if (!pipe->iif && (!pipe->lif || wpf->writeback)) {
+> >  		const struct v4l2_pix_format_mplane *format = &wpf->format;
+> >  		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
+> >
+> > @@ -291,7 +294,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+> >  	 * Sources. If the pipeline has a single input and BRx is not used,
+> >  	 * configure it as the master layer. Otherwise configure all
+> >  	 * inputs as sub-layers and select the virtual RPF as the master
+> > -	 * layer.
+> > +	 * layer. For VSPX configure the enabled sources as masters.
+> >  	 */
+> >  	for (i = 0; i < vsp1->info->rpf_count; ++i) {
+> >  		struct vsp1_rwpf *input = pipe->inputs[i];
+> > @@ -299,7 +302,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+> >  		if (!input)
+> >  			continue;
+> >
+> > -		srcrpf |= (!pipe->brx && pipe->num_inputs == 1)
+> > +		srcrpf |= (pipe->iif || (!pipe->brx && pipe->num_inputs == 1))
+> >  			? VI6_WPF_SRCRPF_RPF_ACT_MST(input->entity.index)
+> >  			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
+> >  	}
+> > @@ -316,6 +319,9 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+> >  	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(index),
+> >  			   VI6_WPF_IRQ_ENB_DFEE);
+> >
+> > +	if (pipe->iif)
+> > +		return;
+> > +
+> >  	/*
+> >  	 * Configure writeback for display pipelines (the wpf writeback flag is
+> >  	 * never set for memory-to-memory pipelines). Start by adding a chained
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
