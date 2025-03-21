@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-571780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06445A6C22E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:15:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD24A6C23C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C073B9876
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775AC189E8DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D8322E3E2;
-	Fri, 21 Mar 2025 18:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868F222F3B8;
+	Fri, 21 Mar 2025 18:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UDGkLwOJ"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0/cOQyX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABF113C695;
-	Fri, 21 Mar 2025 18:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863611E5B83;
+	Fri, 21 Mar 2025 18:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742580940; cv=none; b=RhO0DwKpUGuzSK7j2V3d5x8jmWJwxmAxl7Wjb+GZpuDfP9Xk4BFocl6rfjsv47uTFt3zLFM862SogQdiazseyFw5o/ILaW6Q65ifX2+XgarENgOSv5q+SgXaFQeFYdYsjCWTPmCBJ01Q55Wt0UEcJnIFjKQEExr/Th/KBdQzLoY=
+	t=1742581290; cv=none; b=s1KF2mZh4aHWZdOhqwY5c2PmUGYLei8LdTI5J6gY+M96nod6GgqvzJt1LVcXWzK6zsAnDjYTa3N6KAoov3eivvVC9lCwBdUyKqax5kK26rYs/72nel9fadPPeSbSjEwUJIyS00anEBJ996mqd8Kjfvc3sJPSHMmWiv2e5msxk6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742580940; c=relaxed/simple;
-	bh=iAq4y/BTk/MAEwUl7X+7XcMLVXDWQGMRVeU3Cnms5Pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l1Bb3Wa2GvjYTyaxbMwZvdAaTL4DRftjpyHHLNnydl0uuQQ3VRcOqkpQ+uMlS29m1ZaRe+b9ppi6sw88Uw4dgF4uCnR0J0iXseoh2bvnxH9VXd2/Ifr0h0bmiIBE4o8OBRKfrtOGXtp+nDsYV8i4PNrejMNPbPSA4rW2VvKiFC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UDGkLwOJ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 309B2442C9;
-	Fri, 21 Mar 2025 18:15:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742580936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9i89mOUewMbia4ZPRxR3kcufVYyKXRfB/Vul82O5Bbs=;
-	b=UDGkLwOJHkLDgxwCxRitwd7kkWi0RaDTLb3Wx9JrIe3eq/TKlDlSjMKhD2YIy4ELuc1bDi
-	kahWsSTPhwb0wN3kZx25zZMrOVEPyxh0Ob6lvnXGLVPYIOR6V9pnA76Gs87c6PgAmb4mwK
-	bz7s8VdunP4FdVY0Xc8+tmZExUrjhcbZcW2VB7bSUX+w4yuhhhonl0P92IQxef9a7ogUqf
-	StLBBBPbPzls3iVnNjaf/uIKcIK6aqUQGEhV7uWJmFxhbe+7mzXqg0jzQvuN8Yr2/I2PJa
-	dUB8qBoKnNcEDVSyg6sd9mhb3tEbno4v1juAC9pzm48t5BQwodhph9xwy/0SGw==
-Date: Fri, 21 Mar 2025 19:15:34 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
- <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Simon Horman
- <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Antoine
- Tenart <atenart@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?B?QmrDuHJu?= Mork
- <bjorn@mork.no>
-Subject: Re: [PATCH net-next v3 2/2] net: mdio: mdio-i2c: Add support for
- single-byte SMBus operations
-Message-ID: <20250321191534.39e00de3@fedora.home>
-In-Reply-To: <20250314162319.516163-3-maxime.chevallier@bootlin.com>
-References: <20250314162319.516163-1-maxime.chevallier@bootlin.com>
-	<20250314162319.516163-3-maxime.chevallier@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742581290; c=relaxed/simple;
+	bh=J1ERQ49XFhRMmrZp0nFoXvG1e9ijz8mIl3/GdWKUuO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2JWvHFkc3T+1u/JQgjBpB+v7z0CdT19hzgoQkJUkK9pkiBTlwpG4y8LhtO4ZYlg+N0nB1MlX8b5Wh2+7aGVwryAoimPC/q67OtyM4g01Nj2bb+zl4bm4NVd49qnWyV5tVXM5kFVSBiHwht2bm1hWZUwL4/50F17c8A2gJwHASE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0/cOQyX; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742581289; x=1774117289;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=J1ERQ49XFhRMmrZp0nFoXvG1e9ijz8mIl3/GdWKUuO4=;
+  b=b0/cOQyX0PcsR9/CWw0JAFRSTg3rK+Gi9IQpaOZJGrwhO6q8NYVt4b3+
+   OaofwFvsvPZlmCURJGxlEoiaHTlgp8DDXelErEeNubJYz4lXfvX1yf5Tc
+   CJZByrcRaAPLjaZHwlxxhz29U5WWfspjIvWrWPfi/GXNCvmCweZ+0PYfL
+   UFcwWOhP8ORNdI/8YFoppkLceU6J/U865tmLnR397z/NnOqibh+zYCslt
+   M4abLWm0h6lR7ujWAM9F17QgaAm67RvvBeWooVa0IFYiAEQZOXVy9mz5c
+   dVqn2WdIWKoowMsbpyNefUMg6cTcmexhKHExbowVFGZMPsXEd7Xgs+xzj
+   g==;
+X-CSE-ConnectionGUID: WtSuJHUzR6CFhRv2pszoTg==
+X-CSE-MsgGUID: Mh3ph7gTTFakdaRIBxT+jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="69212006"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="69212006"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 11:21:28 -0700
+X-CSE-ConnectionGUID: x+E9T7JVQoKELHzKuE+3Dg==
+X-CSE-MsgGUID: 6sBk/X3uQKG7LQNmG+EtvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="124423520"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 21 Mar 2025 11:21:26 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9BCB314B; Fri, 21 Mar 2025 20:21:24 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: [PATCH v1 0/7] serial: 8250_ni: Clean up the driver
+Date: Fri, 21 Mar 2025 20:20:11 +0200
+Message-ID: <20250321182119.454507-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedujeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguu
- hhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Mar 2025 17:23:18 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+The newly introduced driver inherited almost all same issues
+that 8250_platform had and others. Clean up the driver accordingly.
 
-> PHYs that are within copper SFP modules have their MDIO bus accessible
-> through address 0x56 (usually) on the i2c bus. The MDIO-I2C bridge is
-> desgned for 16 bits accesses, but we can also perform 8bits accesses by
-> reading/writing the high and low bytes sequentially.
-> 
-> This commit adds support for this type of accesses, thus supporting
-> smbus controllers such as the one in the VSC8552.
-> 
-> This was only tested on Copper SFP modules that embed a Marvell 88e1111
-> PHY.
+Andy Shevchenko (7):
+  serial: 8250_ni: Switch to use uart_read_port_properties()
+  serial: 8250_ni: Remove duplicate mapping
+  serial: 8250_ni: Switch to use platform_get_mem_or_io()
+  serial: 8250_ni: Remove unneeded conditionals
+  serial: 8250_ni: use serial_port_in()/serial_port_out() helpers
+  serial: 8250_ni: Switch to use dev_err_probe()
+  serial: 8250_ni: Tidy up ACPI ID table
 
-As a side note, it's kind of a strange coincidence but I just had
-access to a weird SGMII to 100BaseFX module (so with a PHY), and from
-my tests the PHY only responds to single-byte MDIO accesses !
+ drivers/tty/serial/8250/8250_ni.c | 89 +++++++++++++------------------
+ drivers/tty/serial/8250/Kconfig   |  2 +-
+ 2 files changed, 38 insertions(+), 53 deletions(-)
 
-Trying to access the PHY with word transactions on 0x56 actually causes
-the i2c bus to lock-up...
+-- 
+2.47.2
 
-For the curious the module is a CISCO-PROLABS   GLC-GE-100FX-C, and the
-PHY id indicates it embeds a Broadcom BCM5461, probably strapped in
-SGMII to 100FX mode.
-
-The EEPROM reports strange things though, and I can't get that module to
-work at all, the SGMII autoneg appears to go wrong and I get link
-up/down events all over the place without anything ever going through,
-so I don't think I'll upstream the fixups for the module. Still it
-may be another use-case for single-byte mdio-smbus.
-
-Maxime
 
