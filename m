@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-571832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C8FA6C2E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:59:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90ECBA6C2EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207E3468481
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763763B1CC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC17022FE03;
-	Fri, 21 Mar 2025 18:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC07A22D4F1;
+	Fri, 21 Mar 2025 19:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVawPpmZ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQb5Jn26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDE41EB1A1;
-	Fri, 21 Mar 2025 18:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3293D86250;
+	Fri, 21 Mar 2025 19:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742583563; cv=none; b=hHkJJLjo+FNWIqnYbRVTnyIh7IIUiNam394WubMrIBKyXnLGtYZReb17AxrQ1/4al2nj3Z4qiCbjUJWnAqBAkeCXwn7KkcN5M2a3Bx5Xy7QMO9EcGX/y0oNWlMpF0OhJI6pbft80T84+l9TsQkGZSG+yT+a8Z4sY8TNFwsZoACE=
+	t=1742583649; cv=none; b=TPWKdafgYZKO5m10jt2D8RNsPTf59VHxSJZaEqY252onh/71wuo1w21ROkynVJJUtAbGGHCc4oweNptS3vUrlW2F1Dew/2E58ZfjHogWVqJqVb+8s8Aep/eVsVmcnzeXxy65dQPJDs9wffjo7ox5bhN72r6vEmzo5e7vhzQB91M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742583563; c=relaxed/simple;
-	bh=ygPQW8tbUTmdJrqZEgpDb8uggfJx8S4P4KR69j0L3yk=;
+	s=arc-20240116; t=1742583649; c=relaxed/simple;
+	bh=kI8/Ktbo4bXHZBHuFJiJpt1zlW7YKWggmvRDSjyVR/4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/38N1aWFaprsqUCliL4W6peAWHYDRwvSSacPyvE0Xw1H3GButuVo6ozVHrkucSijDe7yyPLckPW+nx+S0lq9/pY3+zrOeaQ3lJGvKDmYz3fAT1m/sRu1WdLKqnMYrnwSUCZQ8x+TSwJXjdAaxvS2tE0gJ3jWFmF2/1df0bPgig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVawPpmZ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22403c99457so5604625ad.3;
-        Fri, 21 Mar 2025 11:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742583561; x=1743188361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJ/vT/adxKWtOd7X1FiYMTVQZCBQfkBp6IciAkLtWI0=;
-        b=fVawPpmZDBaoO9OC6CMmSEVVCWo0QwIo+OWvXFc/I7iSBfmiZZGKc2JyBe/vCMz3OY
-         fYhRYXOM4evs55ejBSF/a5UyH6TvLEtoBM9SOjPWeUZOCBxt4sboa6XJQvJ7k/JaaRV3
-         oQL+PG4IO5xBmM+bEHW/o7/gtUwbQMGyRDDlOn7ltlqUc3nu7BxEZsHa3CecwR9irLnI
-         zlmozUHVHgEnJiBrqqkufjujGLBtzvCGPmSe4IoCEmj+lVPuqztj70OZlCvJHTPytxrF
-         GVkgkP8XX530qcyrluPVqVVI/Wy/+K+sSuRQ1Dpvd1149Wj2hwYBGQPHLr/P22M6bWXP
-         r3ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742583561; x=1743188361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WJ/vT/adxKWtOd7X1FiYMTVQZCBQfkBp6IciAkLtWI0=;
-        b=cSjDgPJQMRpu8ASyqwoE6CxBHKD6ivnFIZ6R655JYylKFXM24eqHDaC7a5RumqOI68
-         9Mmi4ntUc7dYzutVYoC+OnEI+mZoHMKzm5Spzww4VPXbjpSrx5VxKvgKbcHQd2p7iEzX
-         fI/jSAcz9+M6vrT1b/4ZvxFwRjUL1PCmnkIA5KuF5PtF2ezV2oC70fdVR1xXRFtc/eAm
-         SjCowVL3rU5DIb5Uvt+upEskyovySArqMSJnBrT+KbQ5ksrbbP2e0FS1Qw85OM/dflBo
-         7VynB6zsnf+mYUo7mzD74x1/j6PjS3MPhvm5TA9ZnzBKAy9IGjiNqlB67ZPZEtDYdHgl
-         m6wA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0B9KDeRzYnYwlq9Wa7Nh0V0K1BGlG4vWsZyrLgouGS8H3qV4mHIF2hrhbyIzHU2nz8k38m+fwkX+4@vger.kernel.org, AJvYcCUbwrU3WyhC1Ouo9hbn/B7jkoExV8Pt5oD5yG16+3c08f7wQINeRqWdnmTjjbwLkj47Gx/IAlvL+7w19ZwTpPE=@vger.kernel.org, AJvYcCW9jxphrbHatkiXJ1jwM3+8qOkt6jHyId7C4FdPHoqD0bZ1nllPvwwywOjcjGRgKZUiqDE6AKIqnQBrjM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY/MyOZsl9nBO21ZVwMLq7k1Dy74mDXrjogNEazVifpOP3QW7r
-	pv0jBOGwQFpXt5zjARrO/aySjEj99SB26rCtFjl+lyFdLv0RzvVeSFq4Nz/b6BTUt7BTNnBQ0mN
-	GFnN+f11aKb79NqaN1MY3NmHbPDo=
-X-Gm-Gg: ASbGncuI4qcA0BNmszR7EcU4vbxBwf5ueb9JwCz8vNj60jSpgnz+MsuTKiezXiAFkxw
-	tFE7BrDKbmqI4LNi9unJa+bgy6hf8Zbh7XKs/bZ7rrWDGkIRE3pest0Z/c4oqFYypWvImzfoTWR
-	VYhexOaPARJzh5iis2NrccVRjtzg==
-X-Google-Smtp-Source: AGHT+IGAhuxfeZ6SMRo9eoFdQod84Rl9u+2lNK2X9LUSh8QQLFr055E6+3UGZR4aL6UGNGhtlqOrJBGyvyBKGkMk4TE=
-X-Received: by 2002:a17:902:d489:b0:224:e0e:e08b with SMTP id
- d9443c01a7336-22780b9c1c1mr25632305ad.0.1742583561013; Fri, 21 Mar 2025
- 11:59:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=KWeEwVKLgNNd3MIBga4S3tZgQDHhaWdxQs5vO+x1iQz9iB21xYRRs9yUdTwvVbTIQqv0mIx2nomAdZlq5KT11ldhLu7LdYJTnIBauD4t9qWmTcS+E0j6ZdySi1M6Cce7ADD7cnw/hXeHPTR+Ay5Lxsk+AMGzclXXD/PUTz6Mx1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQb5Jn26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9610EC4CEEA;
+	Fri, 21 Mar 2025 19:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742583648;
+	bh=kI8/Ktbo4bXHZBHuFJiJpt1zlW7YKWggmvRDSjyVR/4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YQb5Jn26+WwIClqQvwYcBQaD3iMrUoa4kE3yiwhdLPCIk2E6Trjl/YjTnbAvdLzW4
+	 ryrjhKnBpXMHja6g1OZkvHkXVjOjRtaANc9FmmbmX0B/jTYy3t4uRSsg64M99G6IUq
+	 tepc9tvcrXRjl9lM+1PsSnxWijVD08xhP0hkoM4R/kJmrmJCF1i4+1dU34miQwhT3u
+	 foAMF7lnq1+xvyXQMzKE7Pwu9crqbgdvOeKP9lc2+YcspZRxG+XG40r+sDx4SPLLCs
+	 41rmFVHXm46xtXmBOkz9L8/H3795j4cj4xqCS83wFcezxM99OziNY1pz2HMqW+IoOQ
+	 EJqdeBlbnFLAg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-543d8badc30so2671763e87.0;
+        Fri, 21 Mar 2025 12:00:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXJ+AFq01b6IUVfGt8s19ivjyYkkt+qFiD5yMcjvMonXeBSz//zOi5fChYTU+jR7HUfPZ3SP/079vCe7xoY@vger.kernel.org, AJvYcCXmmHujUFI5/TC+qhC4GenhHLJrAJHKBUBMHDPauspw0Tk1Q9U1iifPQNZUAezDaJMxlGAWBFyHSHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyEP5ltnbMnE5c2oXHKme+SM7WG/QjPxBj1+bWKp5AP9olA0+i
+	7ZGbg3zd21isaD8YE6HKQmSj47yTJ2cfpGrK5yJ+UkQNPvfacy8n88zDinu9NNiVNrGcKpfbFI2
+	4nPd6uIz612gC0tpfpOKJVh8hIOA=
+X-Google-Smtp-Source: AGHT+IHVtFvm9jig31iFYh/ebZbe5ZEY4GpJWCcsd3+Ea0fK5mulYd2Ssx1Wy7Nqbzs6Z0uJWKxSLgFdGiz8PKTAK5g=
+X-Received: by 2002:a05:6512:3da1:b0:545:8c5:44cb with SMTP id
+ 2adb3069b0e04-54ad649651emr1899366e87.31.1742583646891; Fri, 21 Mar 2025
+ 12:00:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320222823.16509-4-dakr@kernel.org> <202503220040.TDePlxma-lkp@intel.com>
- <Z92ldvI4ihlm0HJd@cassiopeiae>
-In-Reply-To: <Z92ldvI4ihlm0HJd@cassiopeiae>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 21 Mar 2025 19:59:08 +0100
-X-Gm-Features: AQ5f1JqE3UuC3lvXEQjAanveB2Yg9Z53_egm0hdBd5uAqUk-Rr6bLA0unz11U68
-Message-ID: <CANiq72=s3rQwRt-TOr0_n=EKHwJSQSGmKfu_4TtoEhSTc2Fvqg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] rust: pci: impl TryFrom<&Device> for &pci::Device
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, bhelgaas@google.com, gregkh@linuxfoundation.org, 
-	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250321184028.1797879-1-sdl@nppct.ru>
+In-Reply-To: <20250321184028.1797879-1-sdl@nppct.ru>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 21 Mar 2025 20:00:35 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEatQ6o8dt7x-1mkX0+ct01ThbXDE-kmctWtEnZbC1gEQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jrsqm5ZKw1ssQ6i1BzrR7cxcAa9fGii9HAvF6CAdcYyX2Hh7WEQJN-jTCo
+Message-ID: <CAMj1kXEatQ6o8dt7x-1mkX0+ct01ThbXDE-kmctWtEnZbC1gEQ@mail.gmail.com>
+Subject: Re: [PATCH 6.1] efivarfs: Move efivarfs list into superblock s_fs_info
+To: Alexey Nepomnyashih <sdl@nppct.ru>
+Cc: Jeremy Kerr <jk@ozlabs.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org, 
+	syzbot+1902c359bfcaf39c46f2@syzkaller.appspotmail.com, 
+	syzbot+246ea4feed277471958a@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 6:44=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
+On Fri, 21 Mar 2025 at 19:40, Alexey Nepomnyashih <sdl@nppct.ru> wrote:
 >
-> This requires an unsafe block for compilers < 1.82. For compilers >=3D 1.=
-82 it
-> turns into a warning *if* using an unsafe block.
+> From: Ard Biesheuvel <ardb@kernel.org>
 >
-> *Not* requiring unsafe for this seems like the correct thing -- was this =
-a
-> bugfix in the compiler?
+> commit cdb46a8aefbf7fd36772bb206aaaf7e45d7cf8f6 upstream.
 >
-> I guess to make it work for all compiler versions supported by the kernel=
- we
-> have to use unsafe and suppress the warning?
+> syzbot reports issues with concurrent fsopen()/fsconfig() invocations on
+> efivarfs, which are the result of the fact that the efivarfs list (which
+> caches the names and GUIDs of existing EFI variables) is a global
+> structure. In normal use, these issues are unlikely to trigger, even in
+> the presence of multiple mounts of efivarfs, but the execution pattern
+> used by the syzkaller reproducer may result in multiple instances of the
+> superblock that share the global efivarfs list, and this causes list
+> corruption when the list is reinitialized by one user while another is
+> traversing it.
+>
+> So let's move the list head into the superblock s_fs_info field, so that
+> it will never be shared between distinct instances of the superblock. In
+> the common case, there will still be a single instance of this list, but
+> in the artificial syzkaller case, no list corruption can occur any
+> longer.
+>
+> Reported-by: syzbot+1902c359bfcaf39c46f2@syzkaller.appspotmail.com
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> Reported-by: syzbot+246ea4feed277471958a@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=246ea4feed277471958a
+> Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
+> ---
+>  fs/efivarfs/inode.c    |  3 ++-
+>  fs/efivarfs/internal.h |  9 ++++++---
+>  fs/efivarfs/super.c    | 26 +++++++++++++++++---------
+>  fs/efivarfs/vars.c     |  5 +++--
+>  4 files changed, 28 insertions(+), 15 deletions(-)
+>
 
-It was a feature, but it has been fairly annoying -- it affected
-several series, e.g. the latest KUnit one as well as:
+The original commit has
 
-    https://lore.kernel.org/rust-for-linux/CANiq72kuebpOa4aPxmTXNMA0eo-SLL+=
-Ht9u1SGHymXBF5_92eA@mail.gmail.com/
+ fs/efivarfs/inode.c    |  3 ++-
+ fs/efivarfs/internal.h |  6 +++---
+ fs/efivarfs/super.c    | 19 ++++++++++---------
+ fs/efivarfs/vars.c     |  5 +++--
+ 4 files changed, 18 insertions(+), 15 deletions(-)
 
-Please see:
-
-    https://blog.rust-lang.org/2024/10/17/Rust-1.82.0.html#safely-addressin=
-g-unsafe-statics
-
-So, yeah, we use `allow(unused_unsafe)` (no `expect`, since it depends
-on the version).
-
-I hope that helps.
-
-Cheers,
-Miguel
+so you will need to explain where those extra 10 lines came from.
 
