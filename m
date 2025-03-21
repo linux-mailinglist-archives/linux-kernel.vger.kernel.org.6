@@ -1,200 +1,108 @@
-Return-Path: <linux-kernel+bounces-570884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694EAA6B5C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:09:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A92A6B5CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E830F3B7512
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:09:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 724E17A6D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F9B1EF08D;
-	Fri, 21 Mar 2025 08:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3961EF08A;
+	Fri, 21 Mar 2025 08:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XPbKowL1"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IniCyGxc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124442A1C9;
-	Fri, 21 Mar 2025 08:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155F379EA;
+	Fri, 21 Mar 2025 08:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742544560; cv=none; b=kf0jncTIcI2J0CGtUH7NIy6kjwfTDQH7Ta1jK+iZzMT5Gw9SHvBD+G6NfUXQgOOnRnwWLZqNwYrob03JiJCqGlSmT5dQMWEAVfvN6jATO8HyBehlFPba6San7S76RH2w3G/RSIOe9WzH4oYY+Thr1P/mijTqj3A9RNi9nVUowBY=
+	t=1742544630; cv=none; b=IS93wfXAJB9eyeYl2+teSd/tj2DbkAEykpt/6Egt4eD7trpWh0u/0/fY3RcYEOxV2MJJVpH8ySKaOSv7zyubquGrtwqo4CvrbnGNSeb6tKbpXxcBzNzTVQRwvV0rJNBqOwylwKKghSDV6ylbcCeaDLClytlVn5zTHN5D18U/bWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742544560; c=relaxed/simple;
-	bh=pAo9chrEumreo42/NZKjR3BNwRnTEHqTkG3cEmiMZrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m+XEAwkD76f1mgElQJWyWlAUOQAII3wyux1gbIB3wQl/BAhgNpRlNS+mHo2FDBz1ylE2Bf6cD+ixK/J/Dz3918xkJFyZtWlEUkvsMF08wnuzlXDHcLtEfhA9JcBZcGHzSBXBuJCjbdLzdbnwQmsXQB318Ez1H4Gdvlg7ifcFS28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XPbKowL1; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742544555;
-	bh=YDk7Qpxhc9U9ir6wMaFnsSUvY5hvTrKA0kG+aQ6itYc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XPbKowL168j1PFmdhVgejSZVDgXAF/91ZK4rnBiqZeiFOZp1ZT7AQ+whsXXnc+17v
-	 q6Crc5VhzPvxPtKl0INq+cYNodlFw42BsFGX0NxzIkfHajX+Qc5kL9VMe7RXJQNVhT
-	 zUTaIO7szfnRoHsjXP3TqJlCO8QN+o1OyQ/MoOlF98nZg85LVmENU4O/3NKSmqNe1g
-	 SKky7RB1YSLroG4fcEH9fHDJCJArs5pqKIjAZ2hfNsw29+92y/P6e8gsnf4isJHCQh
-	 tR8g58ThXhoKtgjULU5shYkX1WisRQMO/7em/0MJjPFX1SoOgYTnF/vluFzKoQms10
-	 28g/0FzmdxU6Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJw896kPQz4wbp;
-	Fri, 21 Mar 2025 19:09:13 +1100 (AEDT)
-Date: Fri, 21 Mar 2025 19:09:12 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>
-Cc: Joerg Roedel <jroedel@suse.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nicolin Chen <nicolinc@nvidia.com>, Robin
- Murphy <robin.murphy@arm.com>
-Subject: linux-next: manual merge of the iommufd tree with the iommu tree
-Message-ID: <20250321190912.0495cc78@canb.auug.org.au>
+	s=arc-20240116; t=1742544630; c=relaxed/simple;
+	bh=CewbNIIS6U+waYSVoQrgh6okwCFZo0yqerVt8T81p3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KU9uQbaZG1N2ZXO/Z8oDCEJ6/gTs/ucBj0Vio1IetoHjxMpUaO+PcCT5CpTpUl7Ui4Nk/83aqGyd1bQBMq61sPuXSUttnoKnd2k1NmSlgTHX++mpuLO9GMa9WZeUWFZXpvuy6B5YBsEJSAiVqGwSGXg2gK2ThPkOCnwOAzWQEHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IniCyGxc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B03AC4CEE3;
+	Fri, 21 Mar 2025 08:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742544629;
+	bh=CewbNIIS6U+waYSVoQrgh6okwCFZo0yqerVt8T81p3k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IniCyGxckzZtWj+2dlbb0v64OvYg+bqfKE3IRnc0vd40Sch4Ao4rCs4gqE9RWBRmk
+	 agZy2UJsw0/6iXUdOtguUQIwjnkhzHR1T/8wjKqQqXeY5rmTsXmZsnGmhLewHWziqs
+	 S8okXkG1Zo0sS3kUSx/dV6erJKLVt6sV2gv9NNT7N4vAg2MKFJ2sudPOpC8gWE+ffR
+	 ogp+s89hcRX5EDW6CyTE2QYwczzCWfRdvLTsS8AJD76nvB8GHLgR7FL5BRdcxFAYWY
+	 GpPC4cCSkGuB6W1tFn28/gf96wrZDPkePQWPKLH+SvbOZO6B7Xw284VGdl5pmDamVS
+	 96L2717LMZRJA==
+Date: Fri, 21 Mar 2025 01:10:26 -0700
+From: Kees Cook <kees@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
+ (4)
+Message-ID: <202503210019.F3C6D324@keescook>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <202503201225.92C5F5FB1@keescook>
+ <20250321014423.GA2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oOKhd_mMBbaL0YyjVoVc5sa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321014423.GA2023217@ZenIV>
 
---Sig_/oOKhd_mMBbaL0YyjVoVc5sa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 21, 2025 at 01:44:23AM +0000, Al Viro wrote:
+> On Thu, Mar 20, 2025 at 01:09:38PM -0700, Kees Cook wrote:
+> 
+> > What I can imagine here is two failing execs racing a fork:
+> > 
+> > 	A start execve
+> > 	B fork with CLONE_FS
+> > 	C start execve, reach check_unsafe_exec(), set fs->in_exec
+> > 	A bprm_execve() failure, clear fs->in_exec
+> > 	B copy_fs() increment fs->users.
+> > 	C bprm_execve() failure, clear fs->in_exec
+> > 
+> > But I don't think this is a "real" flaw, though, since the locking is to
+> > protect a _successful_ execve from a fork (i.e. getting the user count
+> > right). A successful execve will de_thread, and I don't see any wrong
+> > counting of fs->users with regard to thread lifetime.
+> > 
+> > Did I miss something in the analysis? Should we perform locking anyway,
+> > or add data race annotations, or something else?
+> 
+> Umm...  What if C succeeds, ending up with suid sharing ->fs?
 
-Hi all,
+I still can't quite construct it -- fs->users is always correct, I
+think?
 
-Today's linux-next merge of the iommufd tree got a conflict in:
+Below would be the bad set of events, but it's wrong that "fs->users==1".
+If A and C are both running with CLONE_FS then fs->users==2. A would need to
+exit first, but it can't do that and also set fs->in_exec=0
 
-  drivers/iommu/dma-iommu.c
+A execve, reaches bprm_execve() failure path
+B fork with CLONE_FS, reaches copy_fs()
+C execve, reaches check_unsafe_exec()
+C takes fs->lock, counts, finds safe fs->users==1, sets in_exec=1, unlocks
+A sets fs->in_exec=0
+B takes fs->lock, sees in_exec==0, does fs->users++, unlocks
+C goes setuid, sharing fs with unpriv B
 
-between commit:
+Something still feels very weird, though. Does fs->in_exec not matter at
+all? Hmm, no, it stops fs->users++ happening after it was validated to be 1.
 
-  032d7e435cbd ("iommu/dma: Remove redundant locking")
-
-from the iommu tree and commits:
-
-  f3f47b821931 ("iommu: Sort out domain user data")
-  e009e088d88e ("iommu: Drop sw_msi from iommu_domain")
-
-from the iommufd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/iommu/dma-iommu.c
-index 0832998eca38,2bd9f80a83fe..000000000000
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@@ -59,34 -54,31 +54,30 @@@ struct iommu_dma_options=20
-  };
- =20
-  struct iommu_dma_cookie {
-- 	enum iommu_dma_cookie_type	type;
-+ 	struct iova_domain iovad;
-+ 	struct list_head msi_page_list;
-+ 	/* Flush queue */
-  	union {
-- 		/* Full allocator for IOMMU_DMA_IOVA_COOKIE */
-- 		struct {
-- 			struct iova_domain	iovad;
-- 			/* Flush queue */
-- 			union {
-- 				struct iova_fq	*single_fq;
-- 				struct iova_fq	__percpu *percpu_fq;
-- 			};
-- 			/* Number of TLB flushes that have been started */
-- 			atomic64_t		fq_flush_start_cnt;
-- 			/* Number of TLB flushes that have been finished */
-- 			atomic64_t		fq_flush_finish_cnt;
-- 			/* Timer to regularily empty the flush queues */
-- 			struct timer_list	fq_timer;
-- 			/* 1 when timer is active, 0 when not */
-- 			atomic_t		fq_timer_on;
-- 		};
-- 		/* Trivial linear page allocator for IOMMU_DMA_MSI_COOKIE */
-- 		dma_addr_t		msi_iova;
-+ 		struct iova_fq *single_fq;
-+ 		struct iova_fq __percpu *percpu_fq;
-  	};
-- 	struct list_head		msi_page_list;
--=20
-+ 	/* Number of TLB flushes that have been started */
-+ 	atomic64_t fq_flush_start_cnt;
-+ 	/* Number of TLB flushes that have been finished */
-+ 	atomic64_t fq_flush_finish_cnt;
-+ 	/* Timer to regularily empty the flush queues */
-+ 	struct timer_list fq_timer;
-+ 	/* 1 when timer is active, 0 when not */
-+ 	atomic_t fq_timer_on;
-  	/* Domain for flush queue callback; NULL if flush queue not in use */
-- 	struct iommu_domain		*fq_domain;
-+ 	struct iommu_domain *fq_domain;
-  	/* Options for dma-iommu use */
-- 	struct iommu_dma_options	options;
-+ 	struct iommu_dma_options options;
- -	struct mutex mutex;
-+ };
-+=20
-+ struct iommu_dma_msi_cookie {
-+ 	dma_addr_t msi_iova;
-+ 	struct list_head msi_page_list;
-  };
- =20
-  static DEFINE_STATIC_KEY_FALSE(iommu_deferred_attach_enabled);
-@@@ -393,14 -363,19 +362,18 @@@ int iommu_dma_init_fq(struct iommu_doma
-   */
-  int iommu_get_dma_cookie(struct iommu_domain *domain)
-  {
-- 	if (domain->iova_cookie)
-+ 	struct iommu_dma_cookie *cookie;
-+=20
-+ 	if (domain->cookie_type !=3D IOMMU_COOKIE_NONE)
-  		return -EEXIST;
- =20
-- 	domain->iova_cookie =3D cookie_alloc(IOMMU_DMA_IOVA_COOKIE);
-- 	if (!domain->iova_cookie)
-+ 	cookie =3D kzalloc(sizeof(*cookie), GFP_KERNEL);
-+ 	if (!cookie)
-  		return -ENOMEM;
- =20
-- 	iommu_domain_set_sw_msi(domain, iommu_dma_sw_msi);
- -	mutex_init(&cookie->mutex);
-+ 	INIT_LIST_HEAD(&cookie->msi_page_list);
-+ 	domain->cookie_type =3D IOMMU_COOKIE_DMA_IOVA;
-+ 	domain->iova_cookie =3D cookie;
-  	return 0;
-  }
- =20
-
---Sig_/oOKhd_mMBbaL0YyjVoVc5sa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfdHqgACgkQAVBC80lX
-0GznQwgAhY4s9Xj23iF2AdDmiecxxIHBU8DgrUqVFBhKgTgXk1IZJhMx00SU9q5S
-lnlpSCPSTx+thA5NU1aPv4Sqs8QFL5qfR1iy2DB8+1H6ex4+g+f7MVEl0O+9HZXl
-anDZXe43E3CPOvEFKRyK2YQ9WX0Y4AbXr90t7PTPSUyDJ678q2ikf1s5OtHaRpq8
-6PVtvZBF7zjS6ggSmv9qwc1Jo0u4SzpCuHFcDSPE1sTtSOBISLjTJU55WkE1tqhB
-gs6LvL6VmaeMbhJsRNTHIxrqOcPK72g/hj7ddVfIkDeCXBR/ng2uwAXFLsDBewND
-4G1rRu94YICzRY8baXvH0ChxD58DiA==
-=DmPG
------END PGP SIGNATURE-----
-
---Sig_/oOKhd_mMBbaL0YyjVoVc5sa--
+-- 
+Kees Cook
 
