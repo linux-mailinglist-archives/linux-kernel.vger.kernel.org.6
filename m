@@ -1,274 +1,152 @@
-Return-Path: <linux-kernel+bounces-571814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77801A6C2B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:43:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC39A6C2B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AEE5480CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:43:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23064814B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A8422FF32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6DF22FE0E;
 	Fri, 21 Mar 2025 18:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZM2XwXtA"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nq24M0oc"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0C61ADC6D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C009A1EB9E1;
 	Fri, 21 Mar 2025 18:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742582573; cv=none; b=hiyTJk/DU4QuT/WZ+PFFiNPNO7fGePHK12ObhOP2f1UoCpqc5wSyO7jH08EoTZt5EjdTbhxsPkX6Wbnh1DRLpJRtku8uJLCrIUzBUuldWPxT7CXE0L0U478LI6l6a25YP5yBHK5YxE1JUPcmtqFmp/hf+xrmFULxYUiEZ4zpyVE=
+	t=1742582573; cv=none; b=Mc5UatcKKPijPio1mdbclbNiyivYIUF9Jbnf2yxE2dZDwYV53e3K8bU0U2cPlhZcwEGGb8WZD6b3CiYuTpd+fWPGj1a7HyhEq1fskVTxR8WfMN5siBh6tqe25KORCphjXPQjIivB3hv+YvOCUymoYqnm16mjg6RyvO6IZ611HOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742582573; c=relaxed/simple;
-	bh=6p9/xCFwuiZLdlnx3CHna7SmFJBXvkdGfKbhrFQIG0k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GzDQ6b6y4mTBQ6+RKXu30VLi4f0G13GQR9J9yP05pmMrU8BKAjsglP8aVDMDcD5wKRrS8s9w+Qiomk1J0e83Oa6uGk+tQXfQlmvlpwvshEIDZDw7blvxHp4QUmG7tsx2rMZyxb6tY1WumT9nPgLuNohugAPfiCSq3oshBY6Bg8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZM2XwXtA; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6p9/xCFwuiZLdlnx3CHna7SmFJBXvkdGfKbhrFQIG0k=; b=ZM2XwXtAnlCfsKo0XNxstP2jSG
-	U865vPXju9/sBv+RnSL1oLUhFaTt2GFwko2fe13ZTxN5XgbKStRgAAR78S0c8riUBjLDHxGGFTN5Q
-	IQA4Yi+4+rZ1VNApBOPqo7TyG2AJozAp9crvsFlBasJmN1P5+A7mtenETUUxqwfBL+zH+cZmbIYLr
-	z7cSt9GR1dDsUHs+EJK9M+UxkQ6+mlITOdRL0A3LxKgHPzuJ5TZVQYJ/rn2uCfWHQp3OCwzyzp8bt
-	Ww29Q/jlsLm3WtWuqretBM4DoH7lfYgqvIceQ+Kh7p6DoVlSSAYtY5sYDJJFhZ6ik+JXg10G+yCzE
-	Wt0j8Uxw==;
-Received: from [172.31.31.145] (helo=u09cd745991455d.ant.amazon.com)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tvhK0-00000004VRm-4BjR;
-	Fri, 21 Mar 2025 18:42:21 +0000
-Message-ID: <d1382a6ee959f22dc5f6628d8648af77f4702418.camel@infradead.org>
-Subject: Re: Using Restricted DMA for virtio-pci
-From: David Woodhouse <dwmw2@infradead.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Claire Chang <tientzu@chromium.org>, Rob Herring <robh+dt@kernel.org>, 
- mpe@ellerman.id.au, Joerg Roedel <joro@8bytes.org>, Will Deacon
- <will@kernel.org>,  Frank Rowand <frowand.list@gmail.com>, Konrad Rzeszutek
- Wilk <konrad.wilk@oracle.com>,  boris.ostrovsky@oracle.com,
- jgross@suse.com, Christoph Hellwig <hch@lst.de>,  Marek Szyprowski
- <m.szyprowski@samsung.com>, heikki.krogerus@linux.intel.com,
- peterz@infradead.org,  benh@kernel.crashing.org, grant.likely@arm.com,
- paulus@samba.org, mingo@kernel.org,  sstabellini@kernel.org, Saravana
- Kannan <saravanak@google.com>,  xypron.glpk@gmx.de, "Rafael J . Wysocki"
- <rafael.j.wysocki@intel.com>,  Bartosz Golaszewski
- <bgolaszewski@baylibre.com>, xen-devel@lists.xenproject.org, Thierry Reding
- <treding@nvidia.com>,  linux-devicetree <devicetree@vger.kernel.org>,
- linuxppc-dev@lists.ozlabs.org, Nicolas Boichat <drinkcat@chromium.org>, 
- Dan Williams <dan.j.williams@intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Greg KH <gregkh@linuxfoundation.org>,
- Randy Dunlap <rdunlap@infradead.org>, lkml <linux-kernel@vger.kernel.org>,
- "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>, Jim
- Quinlan <james.quinlan@broadcom.com>,  Robin Murphy <robin.murphy@arm.com>,
- hch@infradead.org, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Eugenio =?ISO-8859-1?Q?P=E9rez?=
- <eperezma@redhat.com>, virtualization@lists.linux.dev, graf@amazon.de
-Date: Fri, 21 Mar 2025 18:42:20 +0000
-In-Reply-To: <20250321142947-mutt-send-email-mst@kernel.org>
-References: <20210209062131.2300005-1-tientzu@chromium.org>
-	 <979b6a34ca5724ced1d4871b58bf227065d7da57.camel@infradead.org>
-	 <20250321142947-mutt-send-email-mst@kernel.org>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-9um69C3QOUe8WBwkTdXa"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	bh=AvEOBE0yE4qY/KJuGrAgKI7WyCIkAClu4X50DJgTsGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oqbthlB7DeIyeC9d4q76nKcTPCzO5q+4iDyTRND0iiid2CUFsz70cE0w56xY1rEyNwpSccHjUiZCZfmBAwfHL5AoCHh5lFyhqslAzxBK9soSbTXTXq/xtQUfnPk3QIAzaoRWkFU2FnpaCGQ4uz4LGodaQz4moak8ArK4+ssygls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nq24M0oc; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso17301005e9.2;
+        Fri, 21 Mar 2025 11:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742582570; x=1743187370; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xkhJhb5KibJG7wvOxcyqZnnmJEX4g1WLn+kx+Q0rQIc=;
+        b=nq24M0ocWqoTMEXWBryGosTY0Xs3SksHcWyElQAb0S1EY/qnYkC2L/lQyeBRc9PEdY
+         N4+dMAu73k5EhZWIqawbK4MJHurI19uaQR6uk3Nl2vYQoGLpd98kTcNYYAHfUSdrujfC
+         aN17brEbVwOf50flAqu0Ef8Y//7DxrnEWRzoHBo1HlR0xKXFjfwS8rLInVYOdDHGah5H
+         htzTgZv9mniHJnS0/sPx9mx+YmFmcFH5kRTcGJRFvrRhL9E9bAHySz8z6Ffn2EDrkRYv
+         YlzC4mln+CY80NupaL318fwewkpn3piRB756Fve/OqI6uMcrIrrrAzgw5Bm0CSAgGGXo
+         DSXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742582570; x=1743187370;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkhJhb5KibJG7wvOxcyqZnnmJEX4g1WLn+kx+Q0rQIc=;
+        b=Fbu67JN3b6b3/5w/0mv71pS5/6QIl9FO69HqGOH8zpxEf0vR1Kwisua7xDiox5mmaC
+         eY3RYXdUkUK0qRtD8WqRCjKYq77on3MtFVyQ8LjGKkouNOhrrtbfChybMsMRVfALPPo0
+         88SptTtBglKkRtoTAOZrVTKAi+coKKkLE2aqRSmvpnF7CTOxBdbpsKTrxWhFTSYHYs9t
+         HjoHtwT9/kVqXdsUgJBn8YETfQJH40LvcnhvJhkPl1UKC3Z/EZfA4ZOIVMtDs4CS+Mx8
+         M2EgyCYBV+6Tcmta5k1VkXfmHsPedmJpaXPLUG6NgayG1OvEkghEVdovrkhw7gd1fXAE
+         wccw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwLaZ4JybShP8g5mQkmygwvMJ5vj3xB2HOoVXWfy3zOmop6+guehEjLgkKmPJGam3xhbuGfw5X@vger.kernel.org, AJvYcCVNOPbq9GxNH2B7X4JrjDGvViXJB8T2uxAa0CO7Yj8q7OsLsNQRGsJdefACe1C+14ghQzp/FXolAGUZ2rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfrMiOET9b9kp9s3X4wv01zDvgZiJkETdJDfn3r+ESaO4YAxBY
+	vdHoHXrS3gYMDYXzIbviKe3tiBEUqYnUqvVPYKYdXTNyHGy0mL4m
+X-Gm-Gg: ASbGncvgUJz+GEpBN6dhFDmvTyIuCNE201qcJqUALaH9z7JNI6QIoo++LOVRfI2CvwD
+	V2ImK3Iy7pi1gbpdLw6J6YCHgixxrWY6iPJsqxUu8dxhkNQy9MsekydE/MRU9u1yTUc4QcblxEw
+	D0IEflFxteiWLaGJmkGAqNYgfCYaDibUOJUWq5MN2OsBzhn1EZwe38T2cFq9fsUc7RymZpRI8+8
+	jmX9HOCSfHPrVUnjxwzfeEwpLe9cAgSVT+T/ylRxksqZtGA2yTEVK53pBO80r14JXANg3xVQnPh
+	Yux95zc4JDDwiHD4LBjGgbavoA2i3eG6Y9ia2ynqMJ7tL+dn
+X-Google-Smtp-Source: AGHT+IGHShP8TZ93bUmoxG59VBXZdzCleXOrrS+vMNkLwHzO8GRb2ahF5afjhB9vdhw2gYbmgvOcbg==
+X-Received: by 2002:a05:6000:42c4:b0:390:de66:cc0c with SMTP id ffacd0b85a97d-3997f93c452mr2860509f8f.46.1742582569592;
+        Fri, 21 Mar 2025 11:42:49 -0700 (PDT)
+Received: from qasdev.system ([2a02:c7c:6696:8300:de5d:afa9:bb95:3f19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b25c9sm3022597f8f.42.2025.03.21.11.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 11:42:48 -0700 (PDT)
+Date: Fri, 21 Mar 2025 18:42:32 +0000
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org,
+	pabeni@redhat.com, yyyynoom@gmail.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: dl2k: fix potential null deref in receive_packet()
+Message-ID: <Z92zGMsCPHCIbx62@qasdev.system>
+References: <20250321121352.29750-1-qasdev00@gmail.com>
+ <CANn89iJ+VtuyB1tRLeNqVzx3ZpxEiusyfAJv855B90P2XcpDag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iJ+VtuyB1tRLeNqVzx3ZpxEiusyfAJv855B90P2XcpDag@mail.gmail.com>
 
+On Fri, Mar 21, 2025 at 04:13:04PM +0100, Eric Dumazet wrote:
+> On Fri, Mar 21, 2025 at 1:15 PM Qasim Ijaz <qasdev00@gmail.com> wrote:
+> >
+> > If the pkt_len is less than the copy_thresh the netdev_alloc_skb_ip_align()
+> > is called to allocate an skbuff, on failure it can return NULL. Since
+> > there is no NULL check a NULL deref can occur when setting
+> > skb->protocol.
+> >
+> > Fix this by introducing a NULL check to handle allocation failure.
+> >
+> > Fixes: 89d71a66c40d ("net: Use netdev_alloc_skb_ip_align()")
+> 
+> This commit has not changed the behavior in case of memory alloc error.
+> 
 
---=-9um69C3QOUe8WBwkTdXa
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Eric,
 
-On Fri, 2025-03-21 at 14:32 -0400, Michael S. Tsirkin wrote:
-> On Fri, Mar 21, 2025 at 03:38:10PM +0000, David Woodhouse wrote:
-> > On Tue, 2021-02-09 at 14:21 +0800, Claire Chang wrote:
-> > > This series implements mitigations for lack of DMA access control on
-> > > systems without an IOMMU, which could result in the DMA accessing the
-> > > system memory at unexpected times and/or unexpected addresses, possib=
-ly
-> > > leading to data leakage or corruption.
-> >=20
-> > Replying to an ancient (2021) thread which has already been merged...
-> >=20
-> > I'd like to be able to use this facility for virtio devices.
-> >=20
-> > Virtio already has a complicated relationship with the DMA API, because
-> > there were a bunch of early VMM bugs where the virtio devices where
-> > magically exempted from IOMMU protection, but the VMM lied to the guest
-> > and claimed they weren't.
-> >=20
-> > With the advent of confidential computing, and the VMM (or whatever's
-> > emulating the virtio device) not being *allowed* to arbitrarily access
-> > all of the guest's memory, the DMA API becomes necessary again.
-> >=20
-> > Either a virtual IOMMU needs to determine which guest memory the VMM
-> > may access, or the DMA API is wrappers around operations which
-> > share/unshare (or unencrypt/encrypt) the memory in question.
-> >=20
-> > All of which is complicated and slow, if we're looking at a minimal
-> > privileged hypervisor stub like pKVM which enforces the lack of guest
-> > memory access from VMM.
-> >=20
-> > I'm thinking of defining a new type of virtio-pci device which cannot
-> > do DMA to arbitrary system memory. Instead it has an additional memory
-> > BAR which is used as a SWIOTLB for bounce buffering.
-> >=20
-> > The driver for it would look much like the existing virtio-pci device
-> > except that it would register the restricted-dma region first (and thus
-> > the swiotlb dma_ops), and then just go through the rest of the setup
-> > like any other virtio device.
-> >=20
-> > That seems like it ought to be fairly simple, and seems like a
-> > reasonable way to allow an untrusted VMM to provide virtio devices with
-> > restricted DMA access.
-> >=20
-> > While I start actually doing the typing... does anyone want to start
-> > yelling at me now? Christoph? mst? :)
->=20
->=20
-> I don't mind as such (though I don't understand completely), but since
-> this is changing the device anyway, I am a bit confused why you can't
-> just set the VIRTIO_F_ACCESS_PLATFORM feature bit?=C2=A0 This forces DMA =
-API
-> which will DTRT for you, will it not?
+Thanks for pointing this out, I referenced this commit because it 
+added the netdev_alloc_skb_ip_align() call without ensuring the 
+result of it succeeds or not. Before this change the code used 
+netdev_alloc_skb(), so I now see that there is no functional
+difference since an allocation occurs in both versions.
 
-That would be necessary but not sufficient. The question is *what* does
-the DMA API do?
+> > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> > ---
+> >  drivers/net/ethernet/dlink/dl2k.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+> > index d0ea92607870..22e9432adea0 100644
+> > --- a/drivers/net/ethernet/dlink/dl2k.c
+> > +++ b/drivers/net/ethernet/dlink/dl2k.c
+> > @@ -968,6 +968,11 @@ receive_packet (struct net_device *dev)
+> >                                                            np->rx_buf_sz,
+> >                                                            DMA_FROM_DEVICE);
+> >                         }
+> > +
+> > +                       if (unlikely(!skb)) {
+> > +                               np->rx_ring[entry].fraginfo = 0;
+> 
+> Not sure how this was tested...
+> 
+> I think this would leak memory.
 
-For a real passthrough PCI device, perhaps we'd have a vIOMMU exposed
-to the guest so that it can do real protection with two-stage page
-tables (IOVA=E2=86=92GPA under control of the guest, GPA=E2=86=92HPA under =
-control of
-the hypervisor). For that to work in the pKVM model though, you'd need
-pKVM to be talking the guest's stage1 I/O page tables to see if a given
-access from the VMM ought to be permitted?
+Could you please elaborate on where you think this may arise so I can
+investigate further and try to amend it?
 
-Or for confidential guests there could be DMA ops which are an
-'enlightenment'; a hypercall into pKVM to share/unshare pages so that
-the VMM can actually access them, or SEV-SNP guests might mark pages
-unencrypted to have the same effect with hardware protection.
-
-Doing any of those dynamically to allow the VMM to access buffers in
-arbitrary guest memory (when it wouldn't normally have access to
-arbitrary guest memory) is complex and doesn't perform very well. And
-exposes a full 4KiB page for any byte that needs to be made available.
-
-Thus the idea of having a fixed range of memory to use for a SWIOTLB,
-which is fairly much what the restricted DMA setup is all about.
-
-We're just proposing that we build it in to a virtio-pci device model,
-which automatically uses the extra memory BAR instead of the
-restricted-dma-pool DT node.
-
-It's basically just allowing us to expose through PCI, what I believe
-we can already do for virtio in DT.
-
---=-9um69C3QOUe8WBwkTdXa
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMyMTE4NDIy
-MFowLwYJKoZIhvcNAQkEMSIEIGcyYTz0b1vuiH1kWWxvYDxf5DNV/dQ7A75n0iBOd8eNMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIARn19baiF2SH2
-Qb9UeIoovp68Lz+c9QM1LVM2qfpB5Vd0Mo6gccUM+8DiDyJMxYXZYd+Ib/AHhooSjCJ7Vd+x1jd/
-eE2BveuRvzQsn0gH191zw8awf3fPMrbOk3llDZYRVLcacd7BN4nPbidbrJoba0bd+Jae2M/3XhTl
-3HaAW+ipsj4grnoF8FHOYmjFh1S1ck7PIW6ktorhKEm172YFUTt2cX/R6v+CBBdCOxLtolCNEAFW
-hXXC+4TAFIm4oOHe739VwqO5ZmeggeWlRL9obSOFMKFoSKP0oE/Uad1ix97JVg0Q1rtKNONJOr5B
-XSKJ94cbE6IidFlzqYP+yCv4MnkcV5FAI3Rqbsn4lHPBQDkE455yrBp0B4p0D4pVh2if7/EDc1rm
-UBXYoQaZCOeKwmmI6oP1OSRG1NVAy6ocmiVmdMoSERlcn4xl91AdRWa4VYi8zku3lBXBMc+P3015
-DJUkXfrC+CPC+xcubKPvGF8gEOm0eQquHCBVzBnkp+BFkoAYyjAwZ44Qj2OCSacwvkEnqVmFO3BZ
-HopfPoXAIL3bQEYPdQMQ0xN945VVQvkv0cAfQShC7INrjhQSVFFN5FkLEXhcdDDEYdajiVk4KP3I
-Q3tytvpDIY7DQy7Ps1tS5IPFaTquT8yBCWN7DBonmrigS/kpax+uh53Ph5AVDcQAAAAAAAA=
-
-
---=-9um69C3QOUe8WBwkTdXa--
+Thanks
+Qasim
+> 
+> > +                               break;
+> > +                       }
+> >                         skb->protocol = eth_type_trans (skb, dev);
+> >  #if 0
+> >                         /* Checksum done by hw, but csum value unavailable. */
+> > --
+> > 2.39.5
 
