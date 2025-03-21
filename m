@@ -1,195 +1,148 @@
-Return-Path: <linux-kernel+bounces-570687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44A1A6B382
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:59:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E104A6B388
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D794A466917
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F364669FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A9E1E5B70;
-	Fri, 21 Mar 2025 03:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29061E5B9B;
+	Fri, 21 Mar 2025 04:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="oTJOjUSb"
-Received: from cornsilk.maple.relay.mailchannels.net (cornsilk.maple.relay.mailchannels.net [23.83.214.40])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QyYjGOmL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E2A1C174A;
-	Fri, 21 Mar 2025 03:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.214.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742529571; cv=pass; b=iz6+C4BELn4Ir+LYUoUezwWjPflTx8Qs6KwjXa2ImnCIkwQyMoYSsu6mQbxsie0iDEiTb9nRHl6WrTq38kA0Hxi8gurFLlhSniLT5SMLonKhknL6CkbQB4afdtHH9qSHMfBTbCbMcZ8uJRufyzxejgiT7HCLZtNB3C5FCPaJi7A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742529571; c=relaxed/simple;
-	bh=aFfYjpXXJ4M+8hXi2SGYDgMHE4lcqymrONqlLwxg3Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1QIaZb6XIC9C9OGW86KtrJKm+7MhZYqPdwmgXwxL5+vM4NV7+L7XxWY7HI+k3MsBcg88zLimKkWHgtPsm2ocrsOXY9+ZapBaNMzCvgC8ZIp7Xqy7kAxPcf3axDaLfNpHojy7xqEmTS+iUoq617cPMb/Xy3uN308vG3xUhuJqAA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=oTJOjUSb; arc=pass smtp.client-ip=23.83.214.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id B84C8163D85;
-	Fri, 21 Mar 2025 03:59:23 +0000 (UTC)
-Received: from pdx1-sub0-mail-a231.dreamhost.com (100-96-207-186.trex-nlb.outbound.svc.cluster.local [100.96.207.186])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 85980164D80;
-	Fri, 21 Mar 2025 03:59:22 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1742529562; a=rsa-sha256;
-	cv=none;
-	b=F0RJXvSWSHTnIhpNgzln5OTRXDJ9b/hlQAED+zxrgHM0CH1mO5Bxk2toF2oBnBPiCnHDCz
-	m+mdGqbI/KHWH8Mkju2L713I1Fo5vBzkCIKsyKeehR3WDkn9IJDQVobMSmJgMfIrOf+V9W
-	APlq46XB+aGfNV+LOV7O6duRATf/P525HKX/MJI/W0A++f6FfaCBjnMi8lc4aJr4+JWXuH
-	ub4p2KLErUvM2J6VqyyKRwaVUnb8QZQzGwc2gVEsh2OtaJAGINq5hto2VYI0TuFqAztK0B
-	oTM6PhhUgOCSlqfgnEcIaBZ1tjscbmAITg59ODRXQ+bAYHdqd2/0r1e3bcB/JQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1742529562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=f09muvj1zbZ8O3iLc/6V5qba8mC06vgAkUEv+s5LLiA=;
-	b=7Ru7q2LL7fqhZP3sJwW3zsNaxOJo7ptkwFBtUvvaGkm5nuhflwBqVuOil95ePgDGYnzHAB
-	x6WYLlja0toJaKCUYkfTemB5dJJpdk8u5YmbTcM3IVKOn4WhY1LxdABs6BKE/gvV3w8W9u
-	LejPCXz1sfbjR5pyhTX54s2dJ2xOnwQovRQYu5n2Gw3Kmv/CMK9MeL5XBeuZWD1YrKFtxe
-	zi9Kweu/6CUVv1gP2/ksLlSvr9RDTkewkPkIrypBiP7VeFpcevB6VRIGitoOUV8iN5iv21
-	uZFILXqECrIxduh3HLC6610rUUCDEWXh6f2k4mQ3GmtYBHnRPGJNwzWXQRNJxQ==
-ARC-Authentication-Results: i=1;
-	rspamd-67d8974966-4drm9;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Company-Tart: 459bdddb1dbe7e5e_1742529563640_1315007263
-X-MC-Loop-Signature: 1742529563640:1402950586
-X-MC-Ingress-Time: 1742529563640
-Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.96.207.186 (trex/7.0.2);
-	Fri, 21 Mar 2025 03:59:23 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4ZJpbs6mGfzB9;
-	Thu, 20 Mar 2025 20:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1742529562;
-	bh=f09muvj1zbZ8O3iLc/6V5qba8mC06vgAkUEv+s5LLiA=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=oTJOjUSbpxweUwhJyVmmtbN8AGWutqwPeEYOFSLX3YFMgUbJizPqNiB4WQ3XKNIt+
-	 lT46XQQfeyZbW8ag5a8IDIopf3ivroVKkM9K9DiPTuzs9zHdvTlZTs/HkSdjuzkKJw
-	 +RvEmirdmHY0XDFgYH+gHwlmwWMam9xDNfrUgrccA+tsHWrd+I1onmp7HCDMzfqowL
-	 RAYKTbCvpz0JEZovzS69ILXxkoWCJNlFBwzF13x+hv3XorAPpeeVOC895FQxPd5MeK
-	 LW5KJuXKwawuuoGUSzjN3Wfim+FWXRfLObYQLipDb7Gz/aDlfx2HX6uOR8rWXbYyjy
-	 ZnhyMKWIKGHwA==
-Date: Thu, 20 Mar 2025 20:59:18 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Li Ming <ming.li@zohomail.com>
-Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC Patch v1 0/3] Fix using wrong GPF DVSEC location issue
-Message-ID: <20250321035918.yyicfmvmpm7selin@offworld>
-References: <20250319035516.222054-1-ming.li@zohomail.com>
- <20250321021441.vdmo5txhvb6kya3a@offworld>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D2F1ADC93
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742529783; cv=none; b=UivakARt4J2fUrCgpXxqg+JF8ZR8EZ6NZaVPoQ8Xv84SLGvQn9yYEKtcsbhxGDN5eD85sMutYMKm0PMtJupS61hrpub6ZrYwlGPA7Z3HSVkfQQgE5vzrIgzXDk0ktSmUOdE8j5YDMc6xNKsZ0JTjbgymO5+4NOO+LgKCHbS1ZIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742529783; c=relaxed/simple;
+	bh=8jgC6O5Rf5wrPIndxOK3S+gqzhuYxuqoOEjq38oFdKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZLSNFTDX1O6v0R949C7RMKzt1ezYJu4LnDBUw/e4az8OVp2e5g4loCbdc6pBrT3BlQdkdUtSk0hs3qrKGEDAZ5cVdDyix1ut2vh7Fp4kt9SFG9g/0+BQGNdp3QLFl4AFLxd3UQO6PORA1ubzuU80hj6whPCTpexykzvGn+UK1rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QyYjGOmL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L1WihM030931
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:03:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yWfO2BcPvIMHXrjWEJOrynRVKuEBJtq4aHvLkmmDT70=; b=QyYjGOmLUpxclaAK
+	dDWaouWtz19mMXVHiiBtHFF7Ox5e4xP5Is3hMPKf9opGpXUpy5H7xPAZH6aQ8JgR
+	OkvR4z4sJTLj8HjaKMPByG2akwKsCI25J0Cleo3wlhaX1fGbmKOigHN9W1viKlPE
+	vkEg38tSWf36Egc4sy28/6dKcYSUK3Sk7/ZP9ak1j4700OwBurVWOSQzcytX6S5+
+	HbnfvwI4tmOBqAe5W9HK7Lud69c9LfZJyoA8NxbQajo+0CY1PVftr2XdR4XAcmAE
+	RaIQZi1h1jDWlONlFAfcXFsGThsx6oWpiJ7SRH4NsiHD9XyT0a4JQAtcle+QBSPc
+	06ka2A==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gcd1bgu0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:03:00 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff6943febeso2092176a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:03:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742529779; x=1743134579;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yWfO2BcPvIMHXrjWEJOrynRVKuEBJtq4aHvLkmmDT70=;
+        b=oMgFCANJ3Iz1KzA1J/29icQLmRjdvZtunKOVuHgmccEfWvENNmLtZablYn55jXHItP
+         fg9P+knJKP6fwCvVgQAzvS8Cq7WrIyk6qvnijrk6WQHmpHaqZGIzlLRxzt8wZvF0SnkJ
+         xcYwJ80cKAzJvS/Wcl2Pn2KionugFjeV5rtEXpmNf6+MNsBdrtnfMM6S3yFV/A0a3Y1w
+         4uG1Lw8GoBuWVLLKUF366He++mGErkd1VPy8V8le+GSDeldzIZeTvAaruaJ0z2/iEoT6
+         QV3pbNb7iNEs3j3rC2h1MmxiZIhPL9sa598mKoCnKyj7d/2Krq7BpjOMOeE810v0XBtR
+         v8YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeJqm75iRX8N6zN19P2JW4Hk7PU3mucBNp9KVe+hH2jG2Sq+jpua5ApYVBjyxqQpokLFIt6tcfYNx7ooQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeUTLOt1taWR0GVYkqdrMApF5ye+EdjT0IGsddVNT/IbNJTShw
+	pkUDhxwq9olihT6iDPHqKCFYE2WfjVf7LAMyifAks9qm/7QcWBB+1X7e+Y/K808qOk1sO7xHwEF
+	EB5To+AXeZuMRfYsWICwL6DaP/yOpPNN0QYDQpBud2jXA8kngPtKcoAeWOc5SVX8=
+X-Gm-Gg: ASbGnct9ny9IbXDk7hD3qTZ71PIi7jn6S58axl4p4fUsZvxg/U86WQtOvVqn+uV/QXv
+	TI2kMybKGZG9XB8Xeo3NAkQr2MtvJxSwImKUyI+nXRvpA/cBu4N3l2wNJAUhdOJ4PE8pTy6VzVs
+	l1dUt/p1+7/1puBza0hydF5HtPFUlNVIkbngk2+lS5tVxbuXHzv4MH7ytjjUT7sskfTOIYnj65u
+	lLSP9OaVclMj5eioqTDPR92NElyIRZs7K3O0lvUNNznEcJe1228CanPrvbEgh2QaId71Ro0Yq26
+	R7e45z0IleVI4s60NmovVfPzGvi6e0xl+g7U4W8yuM8gGp3tkQ6l4Qbd3Uc8O9Ly
+X-Received: by 2002:a17:90b:3943:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-301d43c9272mr9424158a91.15.1742529779079;
+        Thu, 20 Mar 2025 21:02:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwEfWS1L0HjIr9WqT5+3VKK9Z3whZ1PxEMMo079UfL+36e8bxMvOO2G+eNOx5jd6ObvadbLA==
+X-Received: by 2002:a17:90b:3943:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-301d43c9272mr9424116a91.15.1742529778596;
+        Thu, 20 Mar 2025 21:02:58 -0700 (PDT)
+Received: from [192.168.225.142] ([157.49.201.200])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf58b02csm4865226a91.17.2025.03.20.21.02.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 21:02:58 -0700 (PDT)
+Message-ID: <df8149da-beb8-b06c-949a-025a29f9f84f@oss.qualcomm.com>
+Date: Fri, 21 Mar 2025 09:32:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250321021441.vdmo5txhvb6kya3a@offworld>
-User-Agent: NeoMutt/20220429
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next] wifi: ath12k: don't put ieee80211_chanctx_conf
+ struct in ath12k_link_vif
+Content-Language: en-US
+To: Baochen Qiang <quic_bqiang@quicinc.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>
+References: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=bfFrUPPB c=1 sm=1 tr=0 ts=67dce4f4 cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=13kUIL9uG/hLjppKjZ3b/g==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=bC-a23v3AAAA:8 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=uvMg_fejPkrpZwH_nmEA:9 a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10 a=iS9zxrgQBfv6-_F4QbHw:22 a=FO4_E8m0qiDe52t0p3_H:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: H7Y7fo4CETXVv1oFvsfIT80qRUcUQsbo
+X-Proofpoint-ORIG-GUID: H7Y7fo4CETXVv1oFvsfIT80qRUcUQsbo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_01,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=758
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 adultscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210026
 
-On Thu, 20 Mar 2025, Davidlohr Bueso wrote:
 
->On Wed, 19 Mar 2025, Li Ming wrote:
->
->>But I am not sure if all dports under a same port will have same
->>configuration space layout, if yes, that will not be a problem. If I am
->>wrong, please let me know, thanks.
->
->Yes, when caching the dvsec was suggested, it was my assumption that the
->config space would be the same.
 
-Ultimately I don't know what the expectation is here, but your updates
-do allow more flexibility from vendors, I guess(?). It's a bit late
-in the cycle, unfortunately, so if these are to go in for v6.15, they
-would be considered a fix imo, otherwise perhaps they are wanted for
-v6.16 or not at all (patch 3 does look useful regardless)?
+On 3/21/2025 7:15 AM, Baochen Qiang wrote:
+> ieee80211_chanctx_conf struct is not put at the end of ath12k_link_vif.
+> Note ieee80211_chanctx_conf has flexible array member inside it, causing
+> below warning with GCC-14:
+> 
+> drivers/net/wireless/ath/ath12k/core.h:298:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Although there is no issue for now since the array is not getting used,
+> this should be fixed to avoid any potential data corruption issue in the
+> future.
+> 
+> Remove this struct from ath12k_link_vif, fetch it from ieee80211_bss_conf
+> instead when needed.
+> 
+> This change only applies to WCN7850, and should has no impact on other
+> chipsets.
+> 
+> This is an alternative to the solution proposed in [1].
+> 
+> Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> 
+> Reported-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Link: https://msgid.link/Z8-Snz86Xfwdlyd7@kspp # [1]
+> Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
 
-Based on some of the topologies listed in qemu, I did some testing (and
-this was also why the same dvsec config layout) and see things working as
-expected.
-
-https://www.qemu.org/docs/master/system/devices/cxl.html#example-command-lines
-
-(i) 2 direct-attached Type3 devices:
--next
-[    3.938238] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:00.0: Port GPF phase 1 timeout: 20 secs
-[    3.939323] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:00.0: Port GPF phase 2 timeout: 20 secs
-[    4.003074] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:01.0: Port GPF phase 1 timeout: 20 secs
-[    4.003676] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:01.0: Port GPF phase 2 timeout: 20 secs
--next+fix
-[    3.969841] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:00.0: Port GPF phase 1 timeout: 20 secs
-[    3.970957] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:00.0: Port GPF phase 2 timeout: 20 secs
-[    3.971622] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:01.0: Port GPF phase 1 timeout: 20 secs
-[    3.972664] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:01.0: Port GPF phase 2 timeout: 20 secs
-
-(ii) 2 CXL host bridges. Each host bridge has 2 CXL Root Ports, with the CXL Type3 device directly attached:
--next
-[    6.182333] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:de:00.0: Port GPF phase 1 timeout: 20 secs
-[    6.182352] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:de:00.0: Port GPF phase 2 timeout: 20 secs
-[    6.183938] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:01.0: Port GPF phase 1 timeout: 20 secs
-[    6.183955] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:01.0: Port GPF phase 2 timeout: 20 secs
-[    6.204324] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:00.0: Port GPF phase 1 timeout: 20 secs
-[    6.205407] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:00.0: Port GPF phase 2 timeout: 20 secs
-[    6.210006] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:de:01.0: Port GPF phase 1 timeout: 20 secs
-[    6.210921] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:de:01.0: Port GPF phase 2 timeout: 20 secs
--next+fix
-[    6.153093] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:01.0: Port GPF phase 1 timeout: 20 secs
-[    6.153107] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:01.0: Port GPF phase 2 timeout: 20 secs
-[    6.154170] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:de:01.0: Port GPF phase 1 timeout: 20 secs
-[    6.154187] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:de:01.0: Port GPF phase 2 timeout: 20 secs
-[    6.195279] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:de:00.0: Port GPF phase 1 timeout: 20 secs
-[    6.195859] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:de:00.0: Port GPF phase 2 timeout: 20 secs
-[    6.255782] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:00.0: Port GPF phase 1 timeout: 20 secs
-[    6.257152] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:00.0: Port GPF phase 2 timeout: 20 secs
-
-(iii) 4 Type3 devices below a CXL Switch:
--next
-[    3.940200] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:01.0: Port GPF phase 1 timeout: 20 secs
-[    3.940218] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:01.0: Port GPF phase 2 timeout: 20 secs
-[    3.940231] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:00.0: Port GPF phase 1 timeout: 20 secs
-[    3.940245] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:00.0: Port GPF phase 2 timeout: 20 secs
-[    3.940340] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:00.0: Port GPF phase 1 timeout: 20 secs
-[    3.940350] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0c:00.0: Port GPF phase 2 timeout: 20 secs
-[    3.948114] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:02.0: Port GPF phase 1 timeout: 20 secs
-[    3.949203] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:02.0: Port GPF phase 2 timeout: 20 secs
-[    3.997620] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:03.0: Port GPF phase 1 timeout: 20 secs
-[    3.997641] cxl_core:update_gpf_port_dvsec:1125: pcieport 0000:0e:03.0: Port GPF phase 2 timeout: 20 secs
--next+fix
-[    3.983632] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:01.0: Port GPF phase 1 timeout: 20 secs
-[    3.983649] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:01.0: Port GPF phase 2 timeout: 20 secs
-[    3.984525] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:00.0: Port GPF phase 1 timeout: 20 secs
-[    3.984539] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0c:00.0: Port GPF phase 2 timeout: 20 secs
-[    3.984667] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:03.0: Port GPF phase 1 timeout: 20 secs
-[    3.984692] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:03.0: Port GPF phase 2 timeout: 20 secs
-[    3.985074] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:02.0: Port GPF phase 1 timeout: 20 secs
-[    3.985090] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:02.0: Port GPF phase 2 timeout: 20 secs
-[    3.988954] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:00.0: Port GPF phase 1 timeout: 20 secs
-[    3.990464] cxl_core:update_gpf_port_dvsec:1131: pcieport 0000:0e:00.0: Port GPF phase 2 timeout: 20 secs
-
-Thanks,
-Davidlohr
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
