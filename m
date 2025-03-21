@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-571949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0710DA6C495
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:51:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D552A6C49E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FDAC484FE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F8D1B61130
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E83232373;
-	Fri, 21 Mar 2025 20:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE2D232785;
+	Fri, 21 Mar 2025 20:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="od8KMFIg"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYDpoUPw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEF81EB184;
-	Fri, 21 Mar 2025 20:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995A11D5AD4;
+	Fri, 21 Mar 2025 20:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590254; cv=none; b=b0pbMeWFF+sJCPN0SBBFkG4P1drb7jTQ1UGwKLitb6K+951Go2JkNFchRJcSKdOvgq3sFIGxZIJKXYMdeZ7wpuv2/koFHhvtmOqzfVKrF/DtF54XTXD2mdy+sPvdFp+sju5egEYcbcu5sRLCNjp+OcMjkZeYUkDo+it3HuaTAzY=
+	t=1742590276; cv=none; b=ZLP9xbRhHn6xLU9I4nV/P7FfjonzauK5BAf5FpQTP22jKE9uLMfN0olWh1mISIu9fMv9NT3RStfZ4iW7C/Fm5+RyGdCRe1ACRHONzhy6WRWEX1WCIogzUhdKfTUzmAx5/yfeIRXOvOjUfWm8gNpz2mJdi3avVTLvu5Q5IuOD/Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590254; c=relaxed/simple;
-	bh=T5ujmAaR4xgKNXeP8ry4q+nDHEK0NKCBNGnZ2FgSpdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZII6TxWmZ5qvErAmxrUODviCQdg9ztmP8Yq0VHnhkeqR9reCq0Kv4crGVM9D+XspApthtDVoMRzTwce5iCT6XunJCJk2DNatyQ7sfBEaeeol2fCHFp7+fM/KnaCuEyVHsB9vKxyWjPw1F5P1zifkSrs8VvvmfMFR9YP+BcLxge4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=od8KMFIg; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=tHv7nLlprZxmSQXUZm9DhaF6vLhfRz2/mA148zHp2CY=; b=od
-	8KMFIgI3ViAvI4hVFfM6O/5GWrhqZpeRDBqdhwggo+C3q7wm3kKpc5SOyTOoFB1s304ZMCH9dYl/h
-	orzXZTOWNVQ0Xw8zQPnAY682ybdA2qYsUUUtXbVpW1ijt2csQN8Slr5nfIN7V1w1nf4sSJZf6Y2eQ
-	Q0KQYyZgO2J/piw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tvjK9-006eVT-0o; Fri, 21 Mar 2025 21:50:37 +0100
-Date: Fri, 21 Mar 2025 21:50:37 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH net-next 04/13] net: macb: use BIT() macro for capability
- definitions
-Message-ID: <053e2a0c-ade1-4b6f-ad67-f15a90bf2b4f@lunn.ch>
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-4-537b7e37971d@bootlin.com>
+	s=arc-20240116; t=1742590276; c=relaxed/simple;
+	bh=9kXERGWJ4IUeqTQtzLrow766M6oxKrGWyKs4LWZ3fcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oR58YyTEA0y1reglu8Z8p9TpSEIIJAfjGE2y9NQTsB7Gs0S4t3T6LJP3yRdqe9P502nc68TLySvyoUji8ifacQun6I5i5J1SWtel1fcosMd+d4FKg8BXfs7Xjl89GkD8TS8q20lDvSjsKaeryAmFdW3lz8wJzc7U76HsYbS10t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYDpoUPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9E62C4CEE3;
+	Fri, 21 Mar 2025 20:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742590276;
+	bh=9kXERGWJ4IUeqTQtzLrow766M6oxKrGWyKs4LWZ3fcg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VYDpoUPwm57JKvJzx9SpOY9FXlFPRs+uvWK99/l0kOdhFgHFghQKSVvrrX+feECey
+	 ID4fRjF6uRWn1LRVHCuXiR1EqhmI7Ha4aR9qSBRz8s6KV6TA+KfqV+U9vJP3MOwKS7
+	 mINVok465d0tSZxSGZPhR0u5xRPWpLohmwjLQu73KnsVZ7wa4MqeabVAaBOYy69SWd
+	 b4k5Tl0g7xr4zegYTfko/GHFl2A4OB1E4vYiic3Ovl6POGFxQk1npTHhVi1B7H2TWT
+	 uWPvXqBqlm1FZyskVB+Qjvld4Cx4bC+0+ii+iV0ZVT732ceuVDCMplYYb25Q7O04+U
+	 0In4/6lhztAWA==
+Date: Fri, 21 Mar 2025 15:51:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] PCI/hotplug: Don't enable HPIE in poll mode
+Message-ID: <20250321205114.GA1144421@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321-macb-v1-4-537b7e37971d@bootlin.com>
+In-Reply-To: <Z92q84PdWVtftxI4@wunner.de>
 
-On Fri, Mar 21, 2025 at 08:09:35PM +0100, Théo Lebrun wrote:
-> Replace all capabilities values by calls to the BIT() macro.
+On Fri, Mar 21, 2025 at 07:07:47PM +0100, Lukas Wunner wrote:
+> On Fri, Mar 21, 2025 at 12:09:19PM -0500, Bjorn Helgaas wrote:
+> ...
+
+> >   - It's annoying that pcie_enable_interrupt() and
+> >     pcie_disable_interrupt() are global symbols, a consequence of
+> >     pciehp being split across five files instead of being one, which
+> >     is also a nuisance for code browsing.
 > 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> Roughly,
+> pciehp_core.c contains the interface to the PCI hotplug core
+>   (registering the hotplug_slot_ops etc),
+> pciehp_hpc.c contains the interaction with hardware registers,
+> pciehp_core.c contains the state machine,
+> pciehp_pci.c contains the interaction with the PCI core
+>   (enumeration / de-enumeration of devices on slot bringup / bringdown).
+> 
+> The only reason I've refrained from making major adjustments to this
+> structure in the past was that it would make "git blame" a little more
+> difficult and applying fixes to stable kernels would also become somewhat
+> more painful as it would require backporting.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Yeah, that's the main reason I haven't tried to do anything either.
+On the other hand, the browsing nuisance is an everyday thing forever
+if we leave it as-is.  I did consolidate portdrv.c a couple years ago
+and don't regret it.  But moving things definitely makes "git blame" a
+bit of a hassle; my notes are full of things like this:
 
-    Andrew
+  a1ccd3d91138 ("PCI/portdrv: Squash into portdrv.c")
+    squash drivers/pci/pcie/portdrv_pci.c and portdrv_core.c into portdrv.c
+  950bf6388bc2 ("PCI: Move DesignWare IP support to new drivers/pci/dwc/ directory")
+    mv drivers/pci/host/pci-imx6.c drivers/pci/dwc/pci-imx6.c
+  6e0832fa432e ("PCI: Collect all native drivers under drivers/pci/controller/")
+    mv drivers/pci/dwc/pci-imx6.c drivers/pci/controller/dwc/pci-imx6.c
+
+> >   - I forgot why we have both pcie_write_cmd() and
+> >     pcie_write_cmd_nowait() and how to decide which to use.
+> 
+> pcie_write_cmd_nowait() is the "fire and forget" variant,
+> whereas pcie_write_cmd() can be thought of as the "_sync" variant,
+> i.e. the control flow doesn't continue until the command has been
+> processed by the slot.
+> 
+> E.g. pciehp_power_on_slot() waits for the slot command to complete
+> before making sure the Link Disable bit is clear.  It wouldn't make
+> much sense to do the latter when the former hasn't been completed yet.
+
+Right, I know what the difference is; I guess I just don't know how to
+figure out when pcie_write_cmd_nowait() is safe.
+
+Bjorn
 
