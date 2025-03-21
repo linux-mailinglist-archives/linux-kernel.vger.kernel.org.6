@@ -1,94 +1,116 @@
-Return-Path: <linux-kernel+bounces-571933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD0A6C470
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:45:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CDDA6C46F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 140663B835F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE0D481FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC2C2309AD;
-	Fri, 21 Mar 2025 20:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C207B1D7E57;
+	Fri, 21 Mar 2025 20:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2kAJ1qhD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0qlZx47f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Df7G/70S"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DD28E7
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F38F230277
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589822; cv=none; b=dplk5aWegOtdlZU9A0MdBIB5kpJttZ5kKAb1it6U5OlaQEM3f7uXrvWbd0tkehgz6QligFhGFjHPay3CAyNOenaA+ZKue9HXvgnaQXO93TFjHGy3Chc9hvZFNeypozioxIvOjNxLgYFgqjaH997yxVboLxzgeMusHIcua2iPpTQ=
+	t=1742589872; cv=none; b=jJ7gr6yZTttRHVVer7+GDDUTxgz9+RrAZ6m5GOVX/sT4RZ8F5jwn3NmdQP/RCMPI4b1uJgon9snKMTo8oN7sEp9NOuzk0DFA/Hx82d/TubFFknDOiaA1opdP2+AzsUY8hwpkK8aDhU49WtmRx1q8iS1mZthd68wHy29G/VVH6RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742589822; c=relaxed/simple;
-	bh=3+EdBNK/VKnFWTreKV0D3zQNtyMo78ipi11iaiOBgN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=b0/5PVO9wTCNXmhj2iudQ85z7nHsGJfq03TR+BA/SkJ5adAoTbHynhBqDTljFwe4M4FL1CR5W7Pye6bxngI3bPnIKFRYBfT2loHgBAKCUuhF1hwoOdsNWPvAOMF61nATu/t6F9egHkX6VdKagvlZWWRw5jOPn/XLdQq9mDpcq5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2kAJ1qhD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0qlZx47f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742589819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmk8p+Jhhkira6XquVJasIEjBawMRdgLjqNrGkBIoeY=;
-	b=2kAJ1qhDXeF1c6YxzD3g1uuyRC7dqikOvdg8q4vmxdwV5Ys16/x46YloC4xPHKj1u8evSe
-	MdoS6+fSf9a3nihJtw5BerHtGGQL6K+z1WkO3t3w6Htvs88Vqo/1LVOe/dycrFHea5tplw
-	AZi5o7U2KfrQ7b74XP7lYHvXYwtNixxxp3UyEfF1RizGZ8mZI4jCzAp79jYrpXaffrg75r
-	NSsF7ijYUU3oqwHcZ3Jkhz8De6s/3SW1iIpYkM4Fu8XzLCwUZ9Ndc+jIF2KQQHetcX5n1w
-	TCxE74azlSei/YjF4+ev4btBimPDlHtiw53egzm1RaIcM2eOo4ENHiNbcgy/0Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742589819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmk8p+Jhhkira6XquVJasIEjBawMRdgLjqNrGkBIoeY=;
-	b=0qlZx47fvr4vPaNePqehJfGveQ+BEjujZQDZH0mehLX91LDI5CVPd29SDJVkw9ZIVQTBfn
-	UNFblHHmj0eDYVBg==
-To: Sean Christopherson <seanjc@google.com>, David Woodhouse
- <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel
- <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Robert Lippert
- <rlippert@google.com>, Wentao Yang <wentaoyang@google.com>, Sean
- Christopherson <seanjc@google.com>
-Subject: Re: [PATCH] iommu/vt-d: Wire up irq_ack() to irq_move_irq() for
- posted MSIs
-In-Reply-To: <20250321194249.1217961-1-seanjc@google.com>
-References: <20250321194249.1217961-1-seanjc@google.com>
-Date: Fri, 21 Mar 2025 21:43:38 +0100
-Message-ID: <87ldsy15dx.ffs@tglx>
+	s=arc-20240116; t=1742589872; c=relaxed/simple;
+	bh=IzHqaB1xXtn1biQiH6+BombSZ4qjcO3Cqq4ZsPGl3l8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dO63oSxTt03ozNzwuNcRkYSuTJXx/emSebCx7cN6Wy5xKHM+gorBdAnx/SlEXgp2j3XqyPOwwRUM2y+OCHIZ2GiWjLV8rEIfbkVg+kdyOMbEXPauVAP8RPnIeETHh0tsyCwbLvu0SepAlOhLOzRsCcmWZzVtyPgRWPzPgLXSG5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Df7G/70S; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff67f44fcaso607614a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:44:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1742589870; x=1743194670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IzHqaB1xXtn1biQiH6+BombSZ4qjcO3Cqq4ZsPGl3l8=;
+        b=Df7G/70S6OrIfrYMdFD/IF050RU2QpVYEdF+ukbmw/l6vBikGlCg5wr6/q1u+QApgT
+         pu8o1mIOZK0jpPAYA2Dj5sqHe7cILgWH4Xo/XGcylI95zlOfdmELN7RcQnfnUv/ESBde
+         2y3tzLf4QayuyOfptORABC+0vvyjh+aGT91++ZxWgCKnw6C4tm91pn1/0ML1BJsD48f7
+         x8j74+zdHeKZnqtANBVpkOFF8NSCgfmML2Gn3FqCTpQmZUGpWtguGUj9YNRcAlPFJt8E
+         z4C40Ie+oBR9dyhWlLB/ytYh2MrWyd3pSopUnwXbIt5IABJadIju+aRBtR4VGoeJz3KR
+         krKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742589870; x=1743194670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IzHqaB1xXtn1biQiH6+BombSZ4qjcO3Cqq4ZsPGl3l8=;
+        b=KVQN4ervOXlH1xZy/+U7bhQ9Pw+3C4SeSn7rKcxFhm7hRynXCoijlj/hqBtGRvx/M0
+         6PS1HH4nw7sSVfEbwrOND4drMQKkqm8R6iP6H2hXdFL6c2xT7ouAOB9WgBc8dtFQCEwf
+         J4kdQrQo24CFhwjeI/f3wp+9aUbVeaR4eIleVfHH8C3Oo+JKcU9T4O3RhlZPXSurmCJa
+         9pLYdCPXwsw7ylmz76Je9y6MGqJFFUK03tmmyRRwyTT7fv3nSjxvJtguzfPvL2DPla9+
+         kr0sBCi4GrvlRRVgcPdfFRGxhqFx25ZdsiEvZb81faSj5PDHriL11Zg6eRwLS/TG/lxc
+         GWrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPaDOFlHGhD7lqgNYMtZ9QiDXtnHLtLlWmSXFzeflqM0gXMCYwdS/l96umBgz51GHBfd3P8l4z/4sKpVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJuVnmjiLkBU85WkTxnNomrAO7bkYaalAJewJGesnk/ioOkPFq
+	HzojzGzgsBCh7It2v/PciKVofSTArdDPSyDPkzLFmzQMnr/I6ZdaJ9u9YTLTo5DmjJ6ldnYI4vv
+	P0sVyZV521R38Z7EK+u8vntP6ACNZZvMd4ux6Ag==
+X-Gm-Gg: ASbGnct95aApqZLnKyoZzR0QI76nYcdSqvrfxPRib/NnrmxW2n9hTQAKP9aOaOAoLlq
+	tv5BlE6kEIEGUWLTx7ZZrgWHwOWicWE/ZMZclM7HgEN+pdVP5/U2cfIopD3Pm+42TfFUOBPE35E
+	ank7roCk50s9mXwuFUTBlgeh3D
+X-Google-Smtp-Source: AGHT+IHb7qNZVc4dbo1EN1WvdXjQ6zVnZ8qtjLzzTA7S1AqgBNosamOSmdEMbw5hYcAX2F+qzbprqzxMQiDGSU0T5QI=
+X-Received: by 2002:a17:90b:1c08:b0:2ff:7970:d2bd with SMTP id
+ 98e67ed59e1d1-3030fef77bfmr2814564a91.5.1742589869879; Fri, 21 Mar 2025
+ 13:44:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250321184819.3847386-1-csander@purestorage.com>
+ <20250321184819.3847386-2-csander@purestorage.com> <ee6c175c-d5b7-4a1f-97b3-4ff6166c5c73@gmail.com>
+In-Reply-To: <ee6c175c-d5b7-4a1f-97b3-4ff6166c5c73@gmail.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Fri, 21 Mar 2025 13:44:17 -0700
+X-Gm-Features: AQ5f1JqsMWeWHDB8wb1B7Zchq6sPKT-24dX-m8MSW4wk0vEJnpusemPKRi6lxhQ
+Message-ID: <CADUfDZq=UMw+tm8YdnttVSL=wvF_fnBSvixbfj=KZ1inOLZHug@mail.gmail.com>
+Subject: Re: [PATCH 1/3] io_uring/net: only import send_zc buffer once
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Xinyu Zhang <xizhang@purestorage.com>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21 2025 at 12:42, Sean Christopherson wrote:
-> Set the posted MSI irq_chip's irq_ack() hook to irq_move_irq() instead of
-> a dummy/empty callback so that posted MSIs process pending changes to the
-> IRQ's SMP affinity.  Failure to honor a pending set-affinity results in
-> userspace being unable to change the effective affinity of the IRQ, as
-> IRQD_SETAFFINITY_PENDING is never cleared and so irq_set_affinity_locked()
-> always defers moving the IRQ.
+On Fri, Mar 21, 2025 at 1:37=E2=80=AFPM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
 >
-> The issue is most easily reproducible by setting /proc/irq/xx/smp_affinity
-> multiple times in quick succession, as only the first update is likely to
-> be handled in process context.
+> On 3/21/25 18:48, Caleb Sander Mateos wrote:
+> > io_send_zc() guards its call to io_send_zc_import() with if (!done_io)
+> > in an attempt to avoid calling it redundantly on the same req. However,
+> > if the initial non-blocking issue returns -EAGAIN, done_io will stay 0.
+> > This causes the subsequent issue to unnecessarily re-import the buffer.
+> >
+> > Add an explicit flag "imported" to io_sr_msg to track if its buffer has
+> > already been imported. Clear the flag in io_send_zc_prep(). Call
+> > io_send_zc_import() and set the flag in io_send_zc() if it is unset.
 >
-> Fixes: ed1e48ea4370 ("iommu/vt-d: Enable posted mode for device MSIs")
-> Cc: Robert Lippert <rlippert@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Reported-by: Wentao Yang <wentaoyang@google.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> lgtm. Maybe there is a way to put it into req->flags and combine
+> with REQ_F_IMPORT_BUFFER, but likely just an idea for the future.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Yes, I considered making it a bitflag. But since there was an existing
+hole in io_sr_msg, I figured it wasn't worth optimizing. Certainly if
+we want to shrink io_sr_msg in the future, this is low-hanging fruit.
+I'm a bit hesitant to reserve a bit in the generic req->flags that's
+only used for one opcode.
+
+Best,
+Caleb
 
