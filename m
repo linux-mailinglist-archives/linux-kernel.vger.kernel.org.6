@@ -1,135 +1,205 @@
-Return-Path: <linux-kernel+bounces-572093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86CB7A6C661
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:20:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11950A6C668
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C613BD73F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FE6D3AFC55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA131E2852;
-	Fri, 21 Mar 2025 23:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD4922CBE9;
+	Fri, 21 Mar 2025 23:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CrBlte5h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="KWrCeNVY"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866AC20C019
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B3C1D54D8;
+	Fri, 21 Mar 2025 23:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742599147; cv=none; b=cg7zQaejrhdWKTYP1lRqw2CSTeHrlgIN0uv8QdhEuw33q8N1C5h5Hdq4OPXq48QjhmMwE6kXVvJ6JkBI4MldUNmcNL00hMwYGbBNn/v9tkfArLfJfbgMcRMMKj/w9oLlTUJpIABfA4qxXgbjLvK1r4L2KNNSSv+l+SUiqRrLFEE=
+	t=1742599275; cv=none; b=otgLSr+qK7I+oft8XybX1QdbKJFH4HZFgua0vQ+THCdF6krdNTy8U6miaNHDDWtlWy9fQGJxsoVNr87OWTAUpEUB0tNtxSqumFuWb4QUnGfUKa8q9jEBemmZ3uQDLZuiJkRzrqpFWBlIJUnQM1mQdfzbDKbJdfL0YwFDLCngElU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742599147; c=relaxed/simple;
-	bh=PQwu67NN7SBu/vgOhDhukka15Co2iZcZX4FljPzQtAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rw9KRHy5gAJKexbgBq8knUW+VrklUnrhjuKHcSdGDFoiXNAsgBGZiCaroXK7z2vZPPhgDifdokfP5UzI9S27XkvVCmxpjyTJHUavZPTrsOzc3mzi3qsVws93V0U5tlrbJovNKcAENl333M+DmJz7LB5nBn79i2vlLfFw9CABeOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CrBlte5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03156C4CEE3;
-	Fri, 21 Mar 2025 23:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742599147;
-	bh=PQwu67NN7SBu/vgOhDhukka15Co2iZcZX4FljPzQtAU=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=CrBlte5hGNctkPkca5wZqigvKWEhgL8QVFDDoOH7xG8J/rr4HA8nPMfWF1wISiQm5
-	 lArWqlswLYDPERWhJF+X//gEqF0ByMq8ZeBLICQIorDFrqwBKazm1mQzyEvH0cDCfx
-	 NN6tJj4FjwxzC9Fd+DhxTYHv1lUTIW6oLnfh6a5CD15v/9y4dJ5TymCnqFp6NWPDn0
-	 iTGtxU2szgkPFpkEXPFmjRZ6QwHglS4Zgsv0/oCkSEmQVhu5fuZCkp8/8uFdYqKHfO
-	 zLegF+nt8jDrSP+JvOVJgqPDzyDpgUpCeiznmLE/C/Gk+EruA0S20YklNNIiclCaEt
-	 NKIzcFbSWgCCw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A00FDCE0D1D; Fri, 21 Mar 2025 16:19:06 -0700 (PDT)
-Date: Fri, 21 Mar 2025 16:19:06 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, w@lwt.eu,
-	linux@weissschuh.net, skhan@linuxfoundation.org, louis@kragniz.eu
-Subject: [GIT PULL] nolibc changes for v6.15
-Message-ID: <bd17eb5b-bdd0-46cf-85fe-2c4f2aade82d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1742599275; c=relaxed/simple;
+	bh=En7UCMOZ/Us8TjDqlFU22i6jKe9CIGnV39ahNfBbLc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XhxUiKMtvBXGR0qDggdcXwr7CXT5vwLTxkc9J6xiCxEQgPMd/7IJp14mlJGvfJet2/NGcUWwhY7FEkzSF6mM/vmFWXAefIa5WRFnHs7aWrkCsO+Hzw2KFFpDrWli+H8J3of49wHLdoMKMclhiLsJZ1QzteQ23u2KW3uys9UQBoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=KWrCeNVY; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4CC16297BD3;
+	Sat, 22 Mar 2025 00:21:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1742599268; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=T7qf5nCrt4nQBcV2jofoiUmHFXdin3E7pHJVSgDL2NA=;
+	b=KWrCeNVYFLT1VAUwHgj5Tm7pEKIUbYrrIuNl46wUDy1IxYQfL7cDJBSyTMBlw0mFijms+e
+	d0jq4ilMNYEMYjhnQJLDtl/plb07xLmVT4qFOctMMa6PcNKUy7VTNAQHHJZtd5U5VtZpLQ
+	wZy7DWlMNRA+JG11knIrBjXysU+q8vuJymox+swaYYRCJtDaUGTf4U0gb5axowEs9aaYHs
+	AjioF4khd8tQKS/IRXr/1VpRtHBgCiFN41bQCcZlxpUTH7EP7GKhCGv6rqUYY3d8d6BBFh
+	la7dJzfzc5D94h/AeebMmveABSE6vdlU07TnVOc2hXljLa1dSTJ6LE4XiUcaRA==
+Message-ID: <8f095a56-a188-45e9-945a-1d77ef175dc8@cjdns.fr>
+Date: Sat, 22 Mar 2025 00:21:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v1 4/8] dt-bindings: timer: Add EcoNet HPT CPU Timer
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-mips@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
+References: <20250321134633.2155141-1-cjd@cjdns.fr>
+ <20250321134633.2155141-5-cjd@cjdns.fr>
+ <c1791b2e-bdf6-448c-88d3-c97511af3357@kernel.org>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <c1791b2e-bdf6-448c-88d3-c97511af3357@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello, Linus,
+Thank you for the review.
 
-Once the v6.15 merge window opens, please pull the latest nolibc
-changes from:
+On 21/03/2025 21:56, Krzysztof Kozlowski wrote:
+> On 21/03/2025 14:46, Caleb James DeLisle wrote:
+>> Add device tree binding documentation for the high-precision timer (HPT)
+>> in the EcoNet EN751221 SoC.
+>>
+>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> Previous patch was not tested, so was this one tested?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu tags/nolibc-20250308-for-6.15-1
-  # HEAD: bceb73904c855c78402dca94c82915f078f259dd: tools/nolibc: don't use asm/ UAPI headers (2025-03-08 13:18:27 +0100)
+Yes, all of this has been tested on multiple devices, I believe I was
+unclear in the question I added in patch 3.
 
-----------------------------------------------------------------
-nolibc changes for 6.15
+>
+>> ---
+>>   .../bindings/timer/econet,timer-hpt.yaml      | 58 +++++++++++++++++++
+>>   1 file changed, 58 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml b/Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml
+>> new file mode 100644
+>> index 000000000000..8b7ff9bce947
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml
+>> @@ -0,0 +1,58 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/timer/econet,timer-hpt.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: EcoNet High Precision Timer (HPT)
+>> +
+>> +maintainers:
+>> +  - Calev James DeLisle <cjd@cjdns.fr>
+>> +
+>> +description: |
+> Do not need '|' unless you need to preserve formatting.
+Ok
+>
+>> +  The EcoNet High Precision Timer (HPT) is a timer peripheral found in various
+>> +  EcoNet SoCs, including the EN751221 and EN751627 families. It provides per-VPE
+>> +  count/compare registers and a per-CPU control register, with a single interrupt
+>> +  line using a percpu-devid interrupt mechanism.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: econet,timer-hpt
+> Soc components must have soc-based compatible and then filename matching
+> whatever you use as fallback.
 
-Changes
--------
+I have so far been unable to find good documentation on writing DT bindings
+specifically for SoC devices. If you have anything to point me to, I will read it.
+If not, even a good example of someone else doing it right is helpful.
 
-* 32bit s390 support
-* opendir() and friends
-* openat() support
-* sscanf() support
-* various cleanups
+Currently, I see qcom,pdc.yaml appears to do what you say, so I in absence
+of any other advice, I can try to do what they do.
 
-----------------------------------------------------------------
-Louis Taylor (5):
-      tools/nolibc: add support for openat(2)
-      tools/nolibc: always use openat(2) instead of open(2)
-      tools/nolibc: process open() vararg as mode_t
-      tools/nolibc: drop outdated example from overview comment
-      selftests/nolibc: use O_RDONLY flag instead of 0
+>
+>> +
+>> +  reg:
+>> +    minItems: 1
+>> +    maxItems: 2
+> No, list items instead.
+I see qcom,pdc.yaml using items: with per-item description so can follow that.
+>
+>> +    description: |
+>> +      Physical base address and size of the timer's register space. On 34Kc
+>> +      processors, a single region is used. On 1004Kc processors, two regions are
+>> +      used, one for each core.
+> So different hardware, different compatible. That's why you need
+> soc-based compatibles. Follow standard SoC upstreaming rules and examples.
+I presume this should ideally be with If: statements to further validate the DT (?)
+>
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +    description: |
+> Do not need '|' unless you need to preserve formatting.
+Ok
+>
+>> +      The interrupt number for the timer.
+> Drop, redundant.
+Ok
+>
+>
+>> This is a percpu-devid interrupt shared
+>> +      across CPUs.
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: |
+>> +      A clock to get the frequency of the timer.
+> Drop description, redundant
+Ok
+>
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - clocks
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    timer_hpt@1fbf0400 {
+> No underscores
+I knew that, my mistake.
+>
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Thank you, this is useful.
+>
+> Look how other SoCs are calling this.
+As said, any documentation link or example of someone who does this right
+is much appreciated. In any case, thank you very much for your time and I
+will address these points in v2.
 
-Thomas Weißschuh (21):
-      tools/nolibc: add prototypes for non-static functions
-      selftests/nolibc: ignore -Wmissing-prototypes
-      selftests/nolibc: enable -Wmissing-prototypes
-      tools/nolibc: make signature of ioctl() more flexible
-      selftests/nolibc: drop mips32be EXTRACONFIG
-      selftests/nolibc: drop call to prepare target
-      selftests/nolibc: drop call to mrproper target
-      selftests/nolibc: execute defconfig before other targets
-      selftests/nolibc: always keep test kernel configuration up to date
-      tools/nolibc: add support for sys_llseek()
-      tools/nolibc: add support for directory access
-      selftests/nolibc: split up architecture list in run-tests.sh
-      selftests/nolibc: only run constructor tests on nolibc
-      selftests/nolibc: rename s390 to s390x
-      tools/nolibc: add support for 32-bit s390
-      tools/nolibc: add support for [v]sscanf()
-      Revert "selftests: kselftest: Fix build failure with NOLIBC"
-      selftests/nolibc: explicitly enable ARM mode
-      selftests/nolibc: add armthumb configuration
-      selftests/nolibc: stop testing constructor order
-      tools/nolibc: don't use asm/ UAPI headers
+Thanks,
+Caleb
 
- tools/include/nolibc/Makefile                      |   1 +
- tools/include/nolibc/arch-mips.h                   |   1 +
- tools/include/nolibc/arch-s390.h                   |   9 +-
- tools/include/nolibc/arch.h                        |   2 +-
- tools/include/nolibc/crt.h                         |   2 +
- tools/include/nolibc/dirent.h                      |  98 +++++++++++++++
- tools/include/nolibc/errno.h                       |   2 +-
- tools/include/nolibc/nolibc.h                      |   4 +-
- tools/include/nolibc/signal.h                      |   1 +
- tools/include/nolibc/stackprotector.h              |   2 +
- tools/include/nolibc/stdio.h                       |  98 +++++++++++++++
- tools/include/nolibc/stdlib.h                      |   1 +
- tools/include/nolibc/string.h                      |   4 +
- tools/include/nolibc/sys.h                         |  83 +++++++++----
- tools/testing/selftests/kselftest.h                |   5 -
- tools/testing/selftests/nolibc/Makefile            |  30 +++--
- .../testing/selftests/nolibc/nolibc-test-linkage.c |   6 +-
- tools/testing/selftests/nolibc/nolibc-test.c       | 138 ++++++++++++++++++++-
- tools/testing/selftests/nolibc/run-tests.sh        |  26 +++-
- 19 files changed, 457 insertions(+), 56 deletions(-)
- create mode 100644 tools/include/nolibc/dirent.h
+>
+>> +        compatible = "econet,timer-hpt";
+>> +        reg = <0x1fbf0400 0x100>;
+>> +        interrupt-parent = <&intc>;
+>> +        interrupts = <30>;
+>> +        clocks = <&hpt_clock>;
+>> +    };
+>> +...
+>
+> Best regards,
+> Krzysztof
 
