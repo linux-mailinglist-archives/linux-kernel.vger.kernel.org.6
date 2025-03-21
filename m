@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-570621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F2CA6B2B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:42:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E05CA6B2B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0668B17B82C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7AE3B3E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D481DFDA1;
-	Fri, 21 Mar 2025 01:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515BF1DF979;
+	Fri, 21 Mar 2025 01:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S/CvSF1m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="O+HQ7TZD"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045741DED40;
-	Fri, 21 Mar 2025 01:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40A31DED40;
+	Fri, 21 Mar 2025 01:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742521338; cv=none; b=a3AJkSNIPHPMyDx22qHFSZn2gQUU/rYugdQenzrzg4/NfFJRnFjXZR92BMdZGG0Md3v+qNhoNaOg7Q9JnSdHSrvcjqa8eXNlDbxKoSBFqMxltRiQyYEN1gMifKjQSE5FpLwgFLbwFERllvpscz1b7v8aEzICeHOMZSDIR/FEgAo=
+	t=1742521469; cv=none; b=iLgEEfoa1IjlEVhH4Zhd7e9WbUAvG4009Q2rmDNPCfOnqb6OhinlEyAlzWs6SaHSEG+NqhscuedgV4N0myYAyQYQQpOw8tZdYvh5TnUS9ydpHg3bbVx5LSxF83CzgFEKG725Z0A/fszuPEhyXepCo61T7uMJkuFUWl9BSWaOvsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742521338; c=relaxed/simple;
-	bh=PKIFXkU9dIe6Z2MC09sE1rh52+sss3Nm9eYgOLmZw4M=;
+	s=arc-20240116; t=1742521469; c=relaxed/simple;
+	bh=16cc4KHT/TGVInG6/sIhiVIeHtROS6EMUut/J6wo2j0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i59aNsuhBc6xdToY08B0ULQ0rq5ENhIdCQLrFfxkjMU9n8+UVypiMo7pWzA18MP71tv4eOZrn2XPu1iG7dgo9h25wpKXFAhUlnbcDh8MNHbSeW1FbcVLIBz54bCPRZ2A+bSBxIZkSDbbSBii7VvlS9BveA3SsGqCRpDPaODAYk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S/CvSF1m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45587C4CEDD;
-	Fri, 21 Mar 2025 01:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742521336;
-	bh=PKIFXkU9dIe6Z2MC09sE1rh52+sss3Nm9eYgOLmZw4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S/CvSF1m+3OMbxeU5Y8/cwhrqY+35H4D0Wo9/CKc13zYzgrRNeIKsNXS5SQNTqi7S
-	 NE//RL2elf0ZYsR5h179FolvtnP+nQts00bNHy4FYZbpWiL2sx3t/OgS0dMhNGRPug
-	 afcsuqS/q1erQNjjxwWvZUw+7d0ujJ7mrqae4mAI=
-Date: Thu, 20 Mar 2025 18:40:56 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] rust: device: implement Device::parent()
-Message-ID: <2025032018-perceive-expectant-5c48@gregkh>
-References: <20250320222823.16509-1-dakr@kernel.org>
- <20250320222823.16509-2-dakr@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WySe+ZnmPlTc/X+oEYtdgJIDiCbOEjIuTtF2sHgPIBScy+lB+N6ajQsyk5GMlAG34I4Xm0/CYtGtB6OoWshKcZqSkKhoIUti3QFD8StdjceBajF/9bODtMYMZIEqG1gW8bhsmLtV8IyZkrMaiImvXBOYfPUvtffKgItjp//wbiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=O+HQ7TZD; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TFHenndtR+JmeEXFkqj6A1CTl6kNgvKqQcIKOIozPfc=; b=O+HQ7TZDda8jv+r4HWcvfNrYIB
+	8dhaD2c+Iy0+b+lz5dBMM2AZfSJRL2uYdg+a79a56/j7qEG2lWIfct/IffadVyOJwajdrxkyWDMYy
+	ICc8r+0kJYJr4B2YftT2nW7xSgQcgiL7o7AjhurV7DC21dWPQaeQqi0sGv/9CkGN3bpGmSZs0+/+Z
+	uuIDE6FMou5FPCILl+0CKYMXcnl0Pf2ekOEulpENlptt88iWfq3Tp28BTCO9dYNaPD2lNjbCAgzb+
+	jqKStFyCEIq9sPkqbwu8Hh2qgoiHjOVB93ncEiNRhbtt8R3pZb29MCR47DdCpDxFlCprBA05aHPel
+	1kzlrRPQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tvRQt-000000078Ju-1scf;
+	Fri, 21 Mar 2025 01:44:23 +0000
+Date: Fri, 21 Mar 2025 01:44:23 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Kees Cook <kees@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
+ (4)
+Message-ID: <20250321014423.GA2023217@ZenIV>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <202503201225.92C5F5FB1@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,18 +63,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320222823.16509-2-dakr@kernel.org>
+In-Reply-To: <202503201225.92C5F5FB1@keescook>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Mar 20, 2025 at 11:27:43PM +0100, Danilo Krummrich wrote:
-> Device::parent() returns a reference to the device' parent device, if
-> any.
+On Thu, Mar 20, 2025 at 01:09:38PM -0700, Kees Cook wrote:
 
-Ok, but why?  You don't use it in this series, or did I miss it?
+> What I can imagine here is two failing execs racing a fork:
+> 
+> 	A start execve
+> 	B fork with CLONE_FS
+> 	C start execve, reach check_unsafe_exec(), set fs->in_exec
+> 	A bprm_execve() failure, clear fs->in_exec
+> 	B copy_fs() increment fs->users.
+> 	C bprm_execve() failure, clear fs->in_exec
+> 
+> But I don't think this is a "real" flaw, though, since the locking is to
+> protect a _successful_ execve from a fork (i.e. getting the user count
+> right). A successful execve will de_thread, and I don't see any wrong
+> counting of fs->users with regard to thread lifetime.
+> 
+> Did I miss something in the analysis? Should we perform locking anyway,
+> or add data race annotations, or something else?
 
-A driver shouldn't care about the parent of a device, as it shouldn't
-really know what it is.  So what is this needed for?
-
-thanks,
-
-greg k-h
+Umm...  What if C succeeds, ending up with suid sharing ->fs?
 
