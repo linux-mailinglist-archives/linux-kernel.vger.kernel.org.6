@@ -1,78 +1,127 @@
-Return-Path: <linux-kernel+bounces-570700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D05A6B3B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:35:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F28A6B3B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB07C19C3ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:34:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C115F7AA0E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ADA1DF980;
-	Fri, 21 Mar 2025 04:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DEE1E8823;
+	Fri, 21 Mar 2025 04:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEkjWjAC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5752B4206B;
-	Fri, 21 Mar 2025 04:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AEBRVxEH"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFCD1DF248;
+	Fri, 21 Mar 2025 04:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742531659; cv=none; b=to6KrRlkkk9m+ccyYrPMHKAA7uA6BOqdeEgxxydenJ7Ot+HgVmo6NwHyHYskyWqLveTDQqIbRTmtPYoVaV2RK6k1Adind213+XKpkayF4tN6cNaayqQfySYEZmyituaAX4x5qkyrkRZ9m1AyXlCbdKmjh7+pcymf6Tx0bJSZCwQ=
+	t=1742531814; cv=none; b=Dt9wxCWZmLAscXXVLAxG8Ydm9hBLa/gGVKO94qiMeUbEn8XYj6sDdMb3uOtjpCGIo0hp2uIqbrx13Socy9ecmq8YA3oIOofIQZTDbOrfiyhbMY8mo9Jy75NzWJOCfvQMA3sDuc6e8n3jzdGAROs1bloiEvFahDNNQ62KnGmOfmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742531659; c=relaxed/simple;
-	bh=EIC9HXTRuEQtdzBaeo/9xcZIAIQJ9DNIuQ8qi5F6I2Y=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hE9FUoo3Bt2FytjjexrJwkFAaWDUkJbA9TSRBFpUunZ7+wvJgGZUoW4Xx01X12FDRmhnG8Fp4V2vpk8AnnNon5qdzerBqLm8ulZxlPLLKNEKelWp7+16iXXFUECK3SIdfMFLLDSFJ64U9KnQ613HgL941xgu+fg8BpwpZjdFQMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEkjWjAC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB446C4CEE8;
-	Fri, 21 Mar 2025 04:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742531656;
-	bh=EIC9HXTRuEQtdzBaeo/9xcZIAIQJ9DNIuQ8qi5F6I2Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=HEkjWjACCDYwveAu8X6zNtBomOb6QkXK+3UTjC7aILwEqsWZaTFH7dcLwoQhcHanT
-	 UTROL/YGkiXOKVz9IHMbmH/M13SobOMjCaCi5P0hdK9v8bgfIVFoqoUQtKATClopPc
-	 E8032rB0SPTDKmBX2MnqFrn78X+nBE1jTHE+wpH8kFHHl2IZdrG7QcegfrgfzRf2Ew
-	 gqrjjK8u9W053dz6VrdemLvkJU5cXmXAXAKhEiCpHcB+ScIypG6wUGkXkB4aGDU7Vx
-	 ks3PjCCbIPfHkmTrOd/Wa0AQYrYTQL3/fgaYXcOyWipfhbCI/FdgIbwe8NCg3VTWrF
-	 RGCqF03efa4LA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEC13806654;
-	Fri, 21 Mar 2025 04:34:53 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fix
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5msU7_yWYT+waaDx16Bi2ejPJDTUmeMczXOVF1+wPUXvEA@mail.gmail.com>
-References: <CAH2r5msU7_yWYT+waaDx16Bi2ejPJDTUmeMczXOVF1+wPUXvEA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5msU7_yWYT+waaDx16Bi2ejPJDTUmeMczXOVF1+wPUXvEA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.14-rc7-smb3-client-fix
-X-PR-Tracked-Commit-Id: 7643dbd9db09fffebb4a62cd27599f17f4148b17
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a7ea35b61e37149963d975814104302fe8d69862
-Message-Id: <174253169257.2013956.17698495532878786080.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Mar 2025 04:34:52 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+	s=arc-20240116; t=1742531814; c=relaxed/simple;
+	bh=t0i7SiFUWByjspuwZXWi2oX+opfdd37i61RQzSXbxd4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fp7MDbRxwuCubBOm87LMAgjoRhqcBsQTAbNVl+SRIG/7ETwzFYZIOISG+6dvn2VjcTa3yx0Zqtwh4UkOflLgRGPRRCvxJbtICIDeCILBXOcsgoqo5JTU+fuD4VV+1rFwFZnQP1awID/GB3qz+4j3cStgbf5/e/AAjlzktFSOwdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AEBRVxEH; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Z3pCP
+	xJVXUUIxdhsJWQMXxWW0e4Bl3BXgVM1YB2G9Vw=; b=AEBRVxEH2NGvW5hB8z5F6
+	LWvOhF1bHllsstptTw5do9/ZWVcza3pHKg9vY+VTCVPlPUJnQdKoreBMhii96f6l
+	DjhqyQWd2rBYHdAcfPCyT1PCkyUDlmNJZ0KW7TXJ1MUFL2eeL8HqKlHO9HFDzAFU
+	zI/ginTmlW/IE3w9ooFaPI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3zxSh7NxnVIVvAw--.47506S2;
+	Fri, 21 Mar 2025 12:35:46 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: song@kernel.org
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	mathieu.desnoyers@efficios.com,
+	mattbobrowski@google.com,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org,
+	sdf@fomichev.me,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH] bpf: Remove duplicate judgments
+Date: Fri, 21 Mar 2025 12:35:43 +0800
+Message-Id: <20250321043543.174426-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAPhsuW4iVUdwhgDsnwy0oeiPhdfMSrRfEcXSFHw7bqXtBVzPyQ@mail.gmail.com>
+References: <CAPhsuW4iVUdwhgDsnwy0oeiPhdfMSrRfEcXSFHw7bqXtBVzPyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3zxSh7NxnVIVvAw--.47506S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFyxur13GFyDAFWDAF48Xrb_yoW8XF45p3
+	y7Ar90vr1vyw47XrsYyws8J3Z7Kr1rWrWkWr97t343Zr45u39rtFWxGFy5K3s3Zryakay7
+	Xw42q39IkFy7Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUoOJnUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiwgMXeGfc6olCWQAAst
 
-The pull request you sent on Thu, 20 Mar 2025 22:43:02 -0500:
+On Thu, 20 Mar 2025 09:45:17 -0700 Song Liu <song@kernel.org> wrote:
+>
+> On Wed, Mar 19, 2025 at 8:23 PM Feng Yang <yangfeng59949@163.com> wrote:
+> >
+> > From: Feng Yang <yangfeng@kylinos.cn>
+> >
+> > Most of the judgments also exist in bpf_base_func_deto, remove them.
+>
+> "Most" of them also exist is not enough. Please make sure that this does
+> not introduce any behavior change. For example, we should not remove
+> return of bpf_perf_event_read_value_proto.
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.14-rc7-smb3-client-fix
+in trace/bpf_trace.c:
+const struct bpf_func_proto *bpf_get_perf_event_read_value_proto(void)
+{
+	return &bpf_perf_event_read_value_proto;
+}
+in bpf/core.c:
+const struct bpf_func_proto * __weak bpf_get_perf_event_read_value_proto(void)
+{
+	return NULL;
+}
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a7ea35b61e37149963d975814104302fe8d69862
+And weak symbols will be covered
+nm vmlinux | grep bpf_get_perf_event_read_value_proto
+ffffffff814b90e0 T bpf_get_perf_event_read_value_proto
+ffffffff814b90d0 T __pfx_bpf_get_perf_event_read_value_proto
 
-Thank you!
+So the return of bpf_perf_event_read_value_proto can be done through the bpf_base_func_proto function.
+bpf_base_func_proto
+	......
+	case BPF_FUNC_perf_event_read_value:
+		return bpf_get_perf_event_read_value_proto();
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I think this can be removed.
+
+> For future patches, please read Documentation/bpf/bpf_devel_QA.rst
+> and follow rules for email subject, etc. For example, this patch should
+> have a subject like "[PATCH bpf-next] xxx".
+
+Thank you very much for your suggestion. I will pay attention to it next time.
+
+> Thanks,
+> Song
+
+
 
