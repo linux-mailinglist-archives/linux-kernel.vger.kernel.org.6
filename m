@@ -1,83 +1,133 @@
-Return-Path: <linux-kernel+bounces-571300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3DCA6BB78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:11:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9FEA6BB7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4363B152D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B77179349
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD691227EBD;
-	Fri, 21 Mar 2025 13:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC94722A4D8;
+	Fri, 21 Mar 2025 13:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EMELKBL8"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gfMHJWgh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U/aYrDIf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gfMHJWgh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U/aYrDIf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C51B22ACC6;
-	Fri, 21 Mar 2025 13:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B182227EBD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742562653; cv=none; b=P5V3ixbw+N8GYs/2pIch0TDp6NL5Psp9jVxsLOxUDurpColMi7VSwqijCCSmilzWHEIHv+SOX1cSZwt/nAuA5pc7bXfdBUwieJuAgF869Txga09ZlhWhcAbDwyNBJXZx3UnGIHI2adcT9m9joh5O8/px4d3j8oKHwHdKvUEekBw=
+	t=1742562792; cv=none; b=pzCdewKS5YY3MEOd1W22XsbtBb2yBMt7lsh7FuqwvJGS4phdvfX1x3BcgiYp9OuqWQWX7Y1Ip5HZ/8jpcF4AQ4/qp2k0b/b8XZUwsj4jpE73X/bfwhSVLz9H+tv+5DuMC2vpFiUjW1tAuXJIi4X1gLqW/9kFx13WsQCZdsqnQJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742562653; c=relaxed/simple;
-	bh=gyxfuz3biyX/j0JM6faVvSVxFfuTvlSqD8bchmBZM5Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UUnJAELXCRsZ6vO79Borj3OuK5qtFM898KS6dJnBGcIartMXZFIe3kWho/5UvT0pKoeIMzyb4uUdQBd6WFW59yheNrEGb2v5vyDxz3iqDerwEvxIJ+ITF7J0W9NNEMGq2bOUUNUNSRyMSKpuC1z2gJ0LVfRUH6GfBfTmSXaZgM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EMELKBL8; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742562649; x=1742821849;
-	bh=gyxfuz3biyX/j0JM6faVvSVxFfuTvlSqD8bchmBZM5Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=EMELKBL8/SGvy8hoXif+WYGKhj4Et1CiKweY1a4gVLvYHEiz8h7GErZauSOyeLqfe
-	 YAxOJ5ZLwAPXVP5AOKUVfQTTI4GjbkMXTN9quh8qxj+zh8b9t6hXNG8H9IoMYlITh7
-	 aV7++qwTdLO1j5btGvHq2CCLsu/Q9RuZ48kW947tale0BZqB3dz/gX3bIB+Lx9U+an
-	 Brb1NgMf+xbCXjdVLivcAjWhvoiuQG5JI/VCo+CgGSEw7068ZIokVBxbKJDZrh1MlX
-	 gJ1GJSS0HbnkmQR4vzF2z2deevzyuNahBtpfN2Tg5oR071pI/vfv3gC4Wu0QKeMEno
-	 471qmkRMF0MzQ==
-Date: Fri, 21 Mar 2025 13:10:43 +0000
-To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH v2 0/7] Additional methods for Vec
-Message-ID: <D8LYWIFUVJOC.ZIPANZF9ONJJ@proton.me>
-In-Reply-To: <Z91au1h1zhDT9IxQ@pollux>
-References: <20250321-vec-methods-v2-0-6d9c8a4634cb@google.com> <Z91au1h1zhDT9IxQ@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: dd867d54f4fcedc4ea50f2cc667bafddde2aa966
+	s=arc-20240116; t=1742562792; c=relaxed/simple;
+	bh=myxFxmWfgAaw5W5xyI0IBJVCHz9jurtAEGnFUOEwHFk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YRqKr7NAaTOvAFELX0dgW1xLV8d5XB5IrWavJ+XWZxTh6ViXcs/Uo2QPoKo356xX/Q5IAbZcv59yMgh76xbC4FW3TF0ZIypLE2fYwxSVRQPDIIBqcEw7JGQ9Qkr+NWQlAHrqQiCS2vkip6qNkN8qnsN6/q+YZGGNmKL+In1DIdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gfMHJWgh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U/aYrDIf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gfMHJWgh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U/aYrDIf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 335F521B7A;
+	Fri, 21 Mar 2025 13:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742562782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EnNudQNwYrh4P9QBPumKXRNgfzxFcX63UX/KJSI7PC4=;
+	b=gfMHJWghMw29PICV0RYynLCRpA4HzmW2YL/UI+1XjPI91mrDOqikdjk1+iWps+dERsu6r0
+	C7GgXjK/XQAIu/+UcZc9/oGbkJMgVUt/UMrSpRPSMM6OAzMOtApk87i2rcnoOgWaZDH6pJ
+	LlU6YJ2hyIqFWtNxSW6m6hmif8Ata9g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742562782;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EnNudQNwYrh4P9QBPumKXRNgfzxFcX63UX/KJSI7PC4=;
+	b=U/aYrDIfYeWgBU+0SjRGcMYPP6aVDq3jtEegXIhSndsdE+8tB9lSYmX5uy+sVOXbU1j8G4
+	O8z/p9QGob97GtDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742562782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EnNudQNwYrh4P9QBPumKXRNgfzxFcX63UX/KJSI7PC4=;
+	b=gfMHJWghMw29PICV0RYynLCRpA4HzmW2YL/UI+1XjPI91mrDOqikdjk1+iWps+dERsu6r0
+	C7GgXjK/XQAIu/+UcZc9/oGbkJMgVUt/UMrSpRPSMM6OAzMOtApk87i2rcnoOgWaZDH6pJ
+	LlU6YJ2hyIqFWtNxSW6m6hmif8Ata9g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742562782;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EnNudQNwYrh4P9QBPumKXRNgfzxFcX63UX/KJSI7PC4=;
+	b=U/aYrDIfYeWgBU+0SjRGcMYPP6aVDq3jtEegXIhSndsdE+8tB9lSYmX5uy+sVOXbU1j8G4
+	O8z/p9QGob97GtDQ==
+Date: Fri, 21 Mar 2025 14:13:02 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Filipe Xavier <felipeaggger@gmail.com>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
+    Shuah Khan <shuah@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
+    live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, felipe_life@live.com
+Subject: Re: [PATCH v2 0/2] selftests: livepatch: test if ftrace can trace
+ a livepatched function
+In-Reply-To: <20250318-ftrace-sftest-livepatch-v2-0-60cb0aa95cca@gmail.com>
+Message-ID: <alpine.LSU.2.21.2503211412390.29639@pobox.suse.cz>
+References: <20250318-ftrace-sftest-livepatch-v2-0-60cb0aa95cca@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.com,redhat.com,vger.kernel.org,live.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri Mar 21, 2025 at 1:25 PM CET, Danilo Krummrich wrote:
-> On Fri, Mar 21, 2025 at 12:09:55PM +0000, Alice Ryhl wrote:
->> This adds various Vec methods. Some of them are needed by Rust Binder,
->> and others are needed in other places. Each commit explains where it is
->> needed.
->>=20
->> I'm not sure what we concluded on the set_len / dec_len changes, so I
->> don't depend on that series for now.
->
-> So far I see no reason to assume otherwise, so it probably makes sense to
-> rebase. Unless Tamir is fine to rebase his changes onto this series.
+On Tue, 18 Mar 2025, Filipe Xavier wrote:
 
-I haven't yet taken a look at the reworked version of dec_len, so I'd
-wait until we have finished discussion on that.
+> This patchset add ftrace helpers functions and
+> add a new test makes sure that ftrace can trace
+> a function that was introduced by a livepatch.
+> 
+> Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
+> Suggested-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
----
-Cheers,
-Benno
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 
+M
 
