@@ -1,353 +1,222 @@
-Return-Path: <linux-kernel+bounces-571983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA01A6C4FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:21:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4AEA6C505
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:21:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13B63BC2E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:19:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95F21B61ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E973B23237A;
-	Fri, 21 Mar 2025 21:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964BC230D0F;
+	Fri, 21 Mar 2025 21:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TxYZVzce"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fm+j5sFo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF401E9B34
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742591964; cv=none; b=lrPvvfirAuJ+UmbDNVjhVbZsob9yhdZISbpwlNrIHl3bKpPU8m3ORcb5SLJsMiB41EyMPo9wG03HQwma5L5V+LqZFUxGymWGOLI+WmSQTOw8iJQZ/7ptaeIv4Ji6RSMU3ZcYljKBRyGtgj21Uy1JKWC2R4XWPkXcgZq3M+/3iQA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742591964; c=relaxed/simple;
-	bh=JXIAAuoVrvy5Ob63FrknpztYTblf94+zyGMhc43zRhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XYDFSl7CWi/FKrWePgahWoDgeoDc9ERpQyVY5NgDsq3g/+J+TFx25f0eW/EclLGSj4VdEbTk8JgteokzY6+TFFHlIJMA+ZngSI8ja5PCE5CTx0ZkkmWbirUzmsywsklaWY4/polc9pNWGMYpMihQw+2ISvTDUpzKstmVX3oFpUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TxYZVzce; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C029230BF0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742591978; cv=fail; b=UMhaMq4DWfBIGF/NNKuijcOEWJX6rmydDDSQwtQdlVmrp2HiRXBJ25GmcnovrAPA468lhMUIDJlLDajXgAqzgLTOdMkKy8bkjwUIdNTcKhVbiIKoN/OCykI9pXXPXboEyLuk1tsIZK/5GvE2QDnKbC0DLLEv48Ko/BxBi267sm4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742591978; c=relaxed/simple;
+	bh=kptr555EP+pkn/GtzqV/U5uS45fvtC2+FcQGoWr3NH8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eOi4fz8m2Iwg4eZtW02M5C13pzKZZcXYWXC4bR7alexzoF1QOz4M8aqTf/Dt6Hhi3B4JA61Wg25T+YVeNAYpqziAG1FvOoN2Fz7UtDT7AWj0ciQnRAFK0JQM0aV6pPHJtnxYG1nbe/Pwr5lFx/2V6PP5po83I379fzWw5ohkB1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fm+j5sFo; arc=fail smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742591963; x=1774127963;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JXIAAuoVrvy5Ob63FrknpztYTblf94+zyGMhc43zRhw=;
-  b=TxYZVzceI7hv6rgmvUzPKe2eT/9PGa9RQ9fgC6QaJ0DCqhIi4TeMIBvi
-   ArH010PrB21ITXBjvvnY3La/Kk1GpWBVJaOFaxueQcRXVMLF0flI70yOV
-   wy4dHA5OzDAA76Se/B/TwJEEkX7o1Tnpg/2h/ceu7dZwI8rtx5fLtetL4
-   34SUPZJcdWp9ZR+LLjiFTtW9havjyevhH0ISb19i88KfLHb+/s5MmaiAf
-   pEFqsdohU/3Xl31Ss8xsQgSJqBu+kyBefVQ4GYIoUGpX7TY/djMLtIvGI
-   21jUJd1Jkx8cneIlsoQgvs6DSoWmuBSWZgFbqVUTicfRbjgPrEoF1wx45
-   w==;
-X-CSE-ConnectionGUID: sjeWu/7NT5qrqTYWEJ0h8Q==
-X-CSE-MsgGUID: Fxd8KMrATZaprteYEoZHwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="54086294"
+  t=1742591977; x=1774127977;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=kptr555EP+pkn/GtzqV/U5uS45fvtC2+FcQGoWr3NH8=;
+  b=fm+j5sFoVGCO52pueLYqy25bXvYow/lJjqasdKCWTJOFoK1/Nn3tk2tX
+   X3rKYSNf07fMUcpZi1ekmxUTNnKJB0z0A6oFVtDv3w/KU3G1i1+rABJad
+   2EhjmeCM5fF7oKWSZoKDXhWb2A5nlwVFTKQISSxrKUKq4+WFlzpa+HIJy
+   b4OakXy/OjnaYZIeaCgVNPDDTHb/wzhjBsOQxmH+UukPZCMP7PLu2k852
+   G8DcQiC35DHHw5sBb6NGV5RYVFWW3/q3OmYlr4/vSFdGd98o/CbuOaszf
+   1cQgw+1CNgfTlCL0SiQBW+y8/BZM7RtS/j0EVafqH7RDQPa/QdIZYbhNs
+   g==;
+X-CSE-ConnectionGUID: 8t5CTr2nRQyZH++sAf6K9w==
+X-CSE-MsgGUID: l3vzB7+xRj2+EtYxzTPoZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="61265730"
 X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="54086294"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 14:19:22 -0700
-X-CSE-ConnectionGUID: /A5h12UYRViiN1r5g2tFRQ==
-X-CSE-MsgGUID: kTIgXRfTSUeH5qv8OMNPbg==
+   d="scan'208";a="61265730"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 14:19:34 -0700
+X-CSE-ConnectionGUID: InKEietSQXypcMxf7nGqng==
+X-CSE-MsgGUID: XBrfGKZVQ7iDsmT6GNP4UA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="124284614"
-Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.168.117])
-  by fmviesa009.fm.intel.com with ESMTP; 21 Mar 2025 14:19:21 -0700
+   d="scan'208";a="128568239"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 14:19:34 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 21 Mar 2025 14:19:33 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 21 Mar 2025 14:19:33 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 21 Mar 2025 14:19:33 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XIGy3su8nhiXtUp9+d/vniNJUz//ep0Ds3DBxbOR05tY5KbK+go9oFicW6RBr1Srhr6Gpw8fCvHnRd/NOYvMsIIseT7FeAlBjmyEq/uot+n+jOGjb9ZQq8Rer9CTQUZXu9POZbBQWTd2rX6ZrUjsxg962iEy40jJ9WNruDJNonnMktFHWrfLX2FsG+zTGRX4eXM1okAj0JFgwZuDkhrBm7o6wYg4lTJhJWo/yOGsk0osg4cTLRkc5x3CwIIsrhwCoTrcMOVgRWlmoo2dNHXanS/dYkQeetj9btxBOiR70nTrNam/8U7JRRtIhre4QQdTWR/GV3XXQxR3ZxmNqp0tvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zKFD4o+2u0nThmwQoQdPy3RfZPo9MlOrAj+NTh2NgxI=;
+ b=O+Kg+ALsyx/4u0oK4rkMYP4oQRU35RfNhvuSh/plvI+Cwk2ubarH7mIll1HMFE1IRIsz9Iaa/4tZJW/JKeYtZgrEPf6+mpENo9Dh3Dp/kdtOwTYTvWacfjU3vyqGGv5aa0s9xpnAZ3M/yc2AS6GAFjyaQf4Imgw/J75Dq4LnvK9mVXLAfz0Joermk7OZKERs3oBBFbRN0uFgFA8jM6w+1Wz0TaGqfa3f4Kru0w8Ic/v6B59q1oJqVjTprTaLD7w6zXboYADXSQ4d+5yFrEVuAjbX20n+TcDFYJ1mbJNv7PVxKeBYHhpwJFjT7XWbGYyXCfMsl6JeemJWMVqrHpljzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7925.namprd11.prod.outlook.com (2603:10b6:8:f8::18) by
+ PH7PR11MB8122.namprd11.prod.outlook.com (2603:10b6:510:235::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.37; Fri, 21 Mar
+ 2025 21:19:29 +0000
+Received: from DS0PR11MB7925.namprd11.prod.outlook.com
+ ([fe80::b1ef:c95b:554d:19c9]) by DS0PR11MB7925.namprd11.prod.outlook.com
+ ([fe80::b1ef:c95b:554d:19c9%6]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
+ 21:19:29 +0000
+Message-ID: <cf1e2b8e-2cb1-4477-8bf4-f8e0ff55b79f@intel.com>
+Date: Fri, 21 Mar 2025 14:19:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] x86/microcode/intel: Implement staging handler
+To: Dave Hansen <dave.hansen@intel.com>, <linux-kernel@vger.kernel.org>
+CC: <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <colinmitchell@google.com>
+References: <20250320234104.8288-1-chang.seok.bae@intel.com>
+ <20250320234104.8288-5-chang.seok.bae@intel.com>
+ <b01224ee-c935-4b08-a76f-5dc49341182d@intel.com>
+Content-Language: en-US
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	colinmitchell@google.com,
-	chang.seok.bae@intel.com
-Subject: [PATCH v2a 5/6] x86/microcode/intel: Support mailbox transfer
-Date: Fri, 21 Mar 2025 14:19:19 -0700
-Message-ID: <20250321211919.13944-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250320234104.8288-6-chang.seok.bae@intel.com>
-References: <20250320234104.8288-6-chang.seok.bae@intel.com>
+In-Reply-To: <b01224ee-c935-4b08-a76f-5dc49341182d@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR03CA0034.namprd03.prod.outlook.com
+ (2603:10b6:a02:a8::47) To DS0PR11MB7925.namprd11.prod.outlook.com
+ (2603:10b6:8:f8::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7925:EE_|PH7PR11MB8122:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0acb382e-6e40-4e0f-6af6-08dd68be1100
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WFQrQTd4QWNWYTlKR0VUeFNPanFhbTJ3TDY5T0tVRGtlblpsdUFpS3p6T2Nv?=
+ =?utf-8?B?MUV6NGRDZlp5dThRZzFaSHFqeXFaRWRlUFV4YSs4WC9GTS9MSTAzd1pxaGV4?=
+ =?utf-8?B?aklaajk5M1A4bEJEUUMraUc3L3JJZlJHbmNTZnJpY1JUOXZsSnNpZFJzYWkr?=
+ =?utf-8?B?enhLbWdaaFdqdFVZWWJ1S2xZRWpmdThzNHZReGplT1JSSm5aSGc2Tkh2SGt5?=
+ =?utf-8?B?L21pVWhOVjM5M09mczQzdW9nM0xnM1JQOUhSYktwNUdreXBUY05OeXR0eHFo?=
+ =?utf-8?B?NGFYeldxdlRpMmZRZ05NZzNNcE9FWGY1VkU4RDVhSEJaTE9RVURvTit5SWJw?=
+ =?utf-8?B?eCsvZTl0ZXRhSS9WckFuSjV4QXFlcDlzZDlEUDAyOVpSSTRLdFEvWHVaVVd3?=
+ =?utf-8?B?eFRkeXNITEhGemtXc2V3VmI0UURaRkszU21VaUdjKzgweUtYdDdYR0liaDMr?=
+ =?utf-8?B?OU9YSENRNS8zeHRSMGdzVnl6eFNJZG9wNFlySDQ1NTdzQjJvNjRQZGVZcERM?=
+ =?utf-8?B?VFFnTE5BMThZTi9ucldERHZTTUp2T3lETVV3UHlhaXVNeFRqamErYlRncGhp?=
+ =?utf-8?B?eWl2Ukl5MzdyL29NVnFaamFpbGdWTUhVNnNGQXZqUTQ3QWZNTjhDWUZFZnJG?=
+ =?utf-8?B?eGwrL2JMd0gzeDZXOVZiMzhQVno5bEFLVWlJTnpzMEJjWDI1cXR5T0dqRk82?=
+ =?utf-8?B?RVBWYTdPMUZiNGxJOHNJajZKTzY1d3M5cWRQa2hFcWJIek5sbGhTQmRkcXFk?=
+ =?utf-8?B?bHhtS05aUmlqcTZ2Y0JLZHFXUWxtUWVYN2U3cVBjZ3ZYcnNFSGgyZ3RFRUZD?=
+ =?utf-8?B?blJDaTh2cmJrQlp6Mk45STJ6QTBPTExJNkpNL3dMT3JmZXF5NWlEY1IrSkQz?=
+ =?utf-8?B?b29vcXhWSlRHU2tCRGNLS2pheVppcXEvZFJDaVdrZjlFQW1HU090UlBEbkpj?=
+ =?utf-8?B?WWxkcWFIQzJXNEVLdURqWmprUnYwSTU2YkZOb1g0WHJEZklIU0N1bndXK25j?=
+ =?utf-8?B?QUpVcFZwU2lySU1IRndnalhGeW1HMTJ3UlJ6V0E3Y0tLUU51Skdhd2lWUzNX?=
+ =?utf-8?B?Y1NzbUVPVGpXY1FwSVo1aU5CVmpIMFBaMG1haUEydlAwT2JEMXozcTFJVjJw?=
+ =?utf-8?B?aVgreXZTeXZIU2lJTlBVc1M4Z2llYlV4Ukl6bXU1TDlFZ2xmY3padVNVaVYx?=
+ =?utf-8?B?SzFiNEtja3kvVzlOU1d4bHVIK3BwQlBiaDY0S1I5b3Q2QnlVU3VERlB6Ym5J?=
+ =?utf-8?B?dThJYjZVYUt6NUZtcXErYm5wU2wvaTEvK2hydkF5NTgrTlZvOGl2YXR4eGZt?=
+ =?utf-8?B?RG9DNFhWdkJKc0xUbUtja0lPckN2RWdCcjJNNVc2a3k3aW5vRWJEWi9HWkNV?=
+ =?utf-8?B?OTlmTW95WG1qbVJjYWRmeFRveGpkbXZsVG9ONlZLKzBOY1dqTlRPbFBNb2R5?=
+ =?utf-8?B?TGEvZmp5UGZQUWZkSjlmYWdTOHZ4RkQ3M2JNdlB4YUQ5eGlIcWdJTVJ2NEta?=
+ =?utf-8?B?Z3R6eFFRanhNRGIyOWE3bG1rYXVRazJ3clBUUXVZQnlvT0ZzQmlJRDQwdGFT?=
+ =?utf-8?B?M0tZdEdQVlB5V29QL2xOQWRHUWQwZi8vdkFSWkJjVEZVNm1WSlFkKzgxTGVH?=
+ =?utf-8?B?T2FRQ1hMRXpPdU9pOUpyWWl0U1JmaUk0czhESTkwcVpuMGp6WkEvRzhtWFBY?=
+ =?utf-8?B?bEJ3NlBSSS9Pd1U4bC8zY2ZBaFRxQ1hDMXVHM2txNEpBWWNwT2x2ZjlmOEJ3?=
+ =?utf-8?B?cWdrS3BtSjZDR2lyUzFvRS83eFVOVStVK1V1TDQzVEZTWVcwc0djVjhvWWdE?=
+ =?utf-8?B?VU95TlFmQVZlOVZmRzd2REVLdnhMZjg3eFJ4azF3ejNSM2NVbjlpUUp0aHFq?=
+ =?utf-8?Q?VmZEDC0PQ8laJ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7925.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?L0tuZWRHMFBocEptanN3RDZtWDU4dTUvaXBCSERSSWpaTWxoMU1qWlBWR0JF?=
+ =?utf-8?B?VktvQTVZZ0JFZU9UWkZLeWN1WTFscnhycTdsTUN6ZEkrVTdYMHdLN0Y0WGRt?=
+ =?utf-8?B?SEJRTVNYR1pNRWRmc1RFOGpXUFNOVllFbzA5T0txUmIvSVZwRy9CY3NJK2lF?=
+ =?utf-8?B?a245cWFQM1VVWjlqNXdJWnJIbk9YSUZ6SFZNQ1RNYjgyYmhwbHRVSGFkcFdV?=
+ =?utf-8?B?cTI4S25US3VrVjdzZWFhZVBrWmFMT1RxS2lxY21DNmZDWXIzbXlxVVZ5ZWlU?=
+ =?utf-8?B?Nmxkd09IU2x0NlRON3BTeE1hNDQ5RlUraENCKzhla2dvZ1ppc2FZNC80NUFw?=
+ =?utf-8?B?Z2c5YmJ1ZHZVdzYzVUtCZHVwVFU1SXlZd1NGakpkRzJwOEQ1d1E0MHA0UWxw?=
+ =?utf-8?B?Wm1GbUl1c2EwZUFsMllvTEFBRFdYbi8xSTVhMTEzZUFzVlZ1ZjJqL1hiNGJh?=
+ =?utf-8?B?bkZmc3dvc2dFVC9zQXRJOFRuMEZCRzBIRGZRRGtucjlFUlVOazBDU0dvWHhx?=
+ =?utf-8?B?UmtLY0QzTnBwKzJWQXlJUDBreUdDM0gwdC9JNzEyaHhSU1FxQjZVM25sem5i?=
+ =?utf-8?B?b0l6cjhybVhQQ1V3b2Fqdm5jNjlCZlBEdVpGTFljNm5OVWhiSFJJQnhrYnNU?=
+ =?utf-8?B?eW1ydFhQc3dsdGdkbml2a2p0dkJkV25KbFl4bGJIMXlVZkRlQW1Lb1pYRXNX?=
+ =?utf-8?B?ZVA5akZ3VVVkeXM0UTRPUEduRzByUTUzaE00MEdkS1VsWWp4ZVFXZlVjd2RP?=
+ =?utf-8?B?bG1RRUdxLzBKYjhPZ3M2UE1sSVBIUHBoQTR3cmxyaU9VcC83WUNxT05XVmF0?=
+ =?utf-8?B?ZEIxU1V2ckloUmFHRkV2RDBFL3NzVGpzajE0OUYvbmM3N0c5cjZOa0p3aVFO?=
+ =?utf-8?B?WkpOUW95clpHckdoZjZjaWE3WU8vbU1nR09CdG11OTZMTHd1MmxoRkF1TTlM?=
+ =?utf-8?B?UDlrc2ZmYTMvQkhhZW4xd0IzcVZJWHloYlNhMW56Vy8wb0RyQm5qSG5zdFJD?=
+ =?utf-8?B?bjNWUEZWTDNYbDdnVmtOMnFQTytKcmxGdFFuSXhXdWNnYjhvZThMbEJTZFlE?=
+ =?utf-8?B?c05BeTZYNXVZRUZUejFnYWZvbVRiUVVZcVJYMDUxRDFoZ3d1YWUvL0dmd1dq?=
+ =?utf-8?B?b2M4eS9YTitvdzVPNDFJQmprMW9JaVoyVUo0VzNmSG1YUDBadjBMb1JFaEFm?=
+ =?utf-8?B?MWJ5ZGs5aVQ4OFlQTklQM0lJSHFoWFFrOVlHVnZXYVVJbnNuanoxOVhBNXZN?=
+ =?utf-8?B?azIwdDRiVmdwSFp3Um5PNmxSc0N6R2JRcVV5SG9iRlBhMzlMNExERExSVkds?=
+ =?utf-8?B?cUc0ZVdzemZjSzkzUG5DY2M4N3dkMkJ0SSs0MWxOa2NSMWZzaXBaZmhQampx?=
+ =?utf-8?B?SXVFazRaa0tFd0Q1NGViTkdtd3JJTGJINUxZRldobjBxYzFwVkpvbEp4TjBL?=
+ =?utf-8?B?cjIzU2VpaEFtazhLcXY0K3M4Uy9MQzFabDI3S0M3N0ZkZHVGY1p2UDlzVUla?=
+ =?utf-8?B?RkxEWjh4SU1jdUY2a3pkdkhnVUh1eTNCRjdFM2g1ZzZJOUtsdWJadVZVdFR0?=
+ =?utf-8?B?SVdrL0F3OXdzOW1sWm84NWpqbWpWdjBlQURPYlB2NEQ0ZkNvZ3U1NW02Q2JX?=
+ =?utf-8?B?ZUdObzFyaGs3d2tIdTYwOWJJTmRRWWdhTW9XVEhwSXFqN2hLeU5UQ05pVGxJ?=
+ =?utf-8?B?dU5sanZ2Q2s0REx2THV2aXJQbUM4L01KeTcwWDhBZEsvNXVuS1NZNW5xNStK?=
+ =?utf-8?B?S25hdlV3WDJWWUZnaHRWU0xhL2dZbzc3UkYvZEtvbSsyV1JJZ3IySkRmTmIy?=
+ =?utf-8?B?b2NkeGRVem92WE5NNzVJaVVGMDFYZVJybGd6L2JWVEx4elVXNVlKZkxuRC9a?=
+ =?utf-8?B?UnpVZW5zU0hLUEtXVVFYVDhIeVRkZEZJT1E0QU5nU1lwdGlvL0FrVERpYW53?=
+ =?utf-8?B?NCtIU2hzcW9GSE5jUE5Ub2NCMEhvQ1VuaGRnRi9QUVFsdUNEWHFEczA0WUFm?=
+ =?utf-8?B?cG9vL1VlN0J0L1FwZDE4UWExRWxPUkdkYlhGamxqRGdsMnVDcVRndXJRbVRJ?=
+ =?utf-8?B?NUR5SFVIbVlpTW5vclNjNFFaN0xRWkdoR2xJNFV1aGFqblRwQkhvV2xOOVNz?=
+ =?utf-8?B?QkpCNnhQbUR0NTBGM25sdllpV0V0VmEva2JiOEZ6VlE4WTZtVzd1QjNVMVpK?=
+ =?utf-8?B?enc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0acb382e-6e40-4e0f-6af6-08dd68be1100
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7925.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 21:19:29.8199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hs+1yTUa1VV1STW55jAEsYMjq1OUlIASP0YnWGXoBPVsXpE3PAy/1Twig0Bn69j8pEkhh0NNosmfRSUHTIgc5poFtXkz1Z1UDsHE/1IzwO0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8122
+X-OriginatorOrg: intel.com
 
-Previously, the functions for sending microcode data and retrieving the
-next offset were placeholders, as they required handling the specific
-mailbox format. Implement them as following:
+On 3/20/2025 5:15 PM, Dave Hansen wrote:
+> 
+> Yeah, it means passing around _one_ function argument to a function
+> that's not currently taking an argument. But it makes it a heck of a lot
+> more clear what is going on. It also makes the lifetime and
+> initialization state of 'staging' *MUCH* more obvious.
 
-== Mailbox Format ==
+I see -- that seemed like a case of over-simplification.
 
-The staging mailbox consists of two primary sections: 'header' and
-'data'. While the microcode must be transferred following this format,
-the actual data transfer mechanism involves reading and writing to
-specific MMIO registers.
+I've updated the relevant patches after passing the staging test. I've 
+also thought reordering patches (patch2 <-> patch3), perhaps when 
+posting v3.
 
-== Mailbox Data Registers ==
-
-Unlike conventional interfaces that allocate MMIO space for each data
-chunk, the staging interface features a "narrow" interface, using only
-two dword-sized registers for read and write operations.
-
-For example, if writing 2 dwords of data to a device. Typically, the
-device would expose 2 dwords of "wide" MMIO space. To send the data to
-the device:
-
-	writel(buf[0], io_addr + 0);
-	writel(buf[1], io_addr + 1);
-
-But, this interface is a bit different. Instead of having a "wide"
-interface where there is separate MMIO space for each word in a
-transaction, it has a "narrow" interface where several words are written
-to the same spot in MMIO space:
-
-	writel(buf[0], io_addr);
-	writel(buf[1], io_addr);
-
-The same goes for the read side.
-
-== Implementation Summary ==
-
-Given that, introduce two layers of helper functions at first:
-
-  * Low-level helpers for reading and writing to data registers directly.
-  * Wrapper functions for handling mailbox header and data sections.
-
-Using them, implement send_data_chunk() and fetch_next_offset()
-functions. Add explicit error and timeout handling routine in
-wait_for_transaction(), finishing up the transfer.
-
-Note: The kernel has support for similar mailboxes. But none of them are
-compatible with this one. Trying to share code resulted in a bloated
-mess, so this code is standalone.
-
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
----
-V2 -> V2a:
-* Adjust the code to align with the global variable removal (Dave [1]).
-
-Note: this quick revision is just intended to ensure that the feedback
-has been properly addressed.
-
-[1]: https://lore.kernel.org/lkml/b01224ee-c935-4b08-a76f-5dc49341182d@intel.com/
----
- arch/x86/kernel/cpu/microcode/intel.c | 152 +++++++++++++++++++++++++-
- 1 file changed, 146 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 44b94d4d05f7..ca1847ce1059 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -22,6 +22,7 @@
- #include <linux/mm.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/pci_ids.h>
- 
- #include <asm/cpu_device_id.h>
- #include <asm/processor.h>
-@@ -42,8 +43,30 @@ static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
- 
- #define MBOX_CONTROL_OFFSET	0x0
- #define MBOX_STATUS_OFFSET	0x4
-+#define MBOX_WRDATA_OFFSET	0x8
-+#define MBOX_RDDATA_OFFSET	0xc
- 
- #define MASK_MBOX_CTRL_ABORT	BIT(0)
-+#define MASK_MBOX_CTRL_GO	BIT(31)
-+
-+#define MASK_MBOX_STATUS_ERROR	BIT(2)
-+#define MASK_MBOX_STATUS_READY	BIT(31)
-+
-+#define MASK_MBOX_RESP_SUCCESS	BIT(0)
-+#define MASK_MBOX_RESP_PROGRESS	BIT(1)
-+#define MASK_MBOX_RESP_ERROR	BIT(2)
-+
-+#define MBOX_CMD_LOAD		0x3
-+#define MBOX_OBJ_STAGING	0xb
-+#define DWORD_ALIGN(size)	((size) / sizeof(u32))
-+#define MBOX_HEADER(mbox_size)	(PCI_VENDOR_ID_INTEL | \
-+				 (MBOX_OBJ_STAGING << 16) | \
-+				 ((u64)DWORD_ALIGN(mbox_size) << 32))
-+
-+/* The size of each mailbox header */
-+#define MBOX_HEADER_SIZE	sizeof(u64)
-+/* The size of staging hardware response */
-+#define MBOX_RESPONSE_SIZE	sizeof(u64)
- 
- /*
-  * Each microcode image is divided into chunks, each at most
-@@ -57,6 +80,7 @@ static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
-  */
- #define MBOX_XACTION_SIZE	PAGE_SIZE
- #define MBOX_XACTION_MAX(imgsz)	((imgsz) * 2)
-+#define MBOX_XACTION_TIMEOUT_MS	(10 * MSEC_PER_SEC)
- 
- /* Current microcode patch used in early patching on the APs. */
- static struct microcode_intel *ucode_patch_va __read_mostly;
-@@ -345,6 +369,49 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
- 	return size ? NULL : patch;
- }
- 
-+static inline u32 read_mbox_dword(void __iomem *mmio_base)
-+{
-+	u32 dword = readl(mmio_base + MBOX_RDDATA_OFFSET);
-+
-+	/* Acknowledge read completion to the staging firmware */
-+	writel(0, mmio_base + MBOX_RDDATA_OFFSET);
-+	return dword;
-+}
-+
-+static inline void write_mbox_dword(void __iomem *mmio_base, u32 dword)
-+{
-+	writel(dword, mmio_base + MBOX_WRDATA_OFFSET);
-+}
-+
-+static inline u64 read_mbox_header(void __iomem *mmio_base)
-+{
-+	u32 high, low;
-+
-+	low  = read_mbox_dword(mmio_base);
-+	high = read_mbox_dword(mmio_base);
-+
-+	return ((u64)high << 32) | low;
-+}
-+
-+static inline void write_mbox_header(void __iomem *mmio_base, u64 value)
-+{
-+	write_mbox_dword(mmio_base, value);
-+	write_mbox_dword(mmio_base, value >> 32);
-+}
-+
-+static void write_mbox_data(void __iomem *mmio_base, u32 *chunk, unsigned int chunk_size)
-+{
-+	int i;
-+
-+	/*
-+	 * The MMIO space is mapped as Uncached (UC). Each write arrives
-+	 * at the device as an individual transaction in program order.
-+	 * The device can then resemble the sequence accordingly.
-+	 */
-+	for (i = 0; i < DWORD_ALIGN(chunk_size); i++)
-+		write_mbox_dword(mmio_base, chunk[i]);
-+}
-+
- /*
-  * Prepare for a new microcode transfer by resetting hardware and
-  * initializing software states.
-@@ -392,24 +459,97 @@ static bool can_send_next_chunk(struct staging_state *ss)
- 	return true;
- }
- 
-+/*
-+ * Wait for the hardware to complete a transaction.
-+ * Return true on success, false on failure.
-+ */
-+static bool wait_for_transaction(struct staging_state *ss)
-+{
-+	u32 timeout, status;
-+
-+	/* Allow time for hardware to complete the operation: */
-+	for (timeout = 0; timeout < MBOX_XACTION_TIMEOUT_MS; timeout++) {
-+		msleep(1);
-+
-+		status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
-+		/* Break out early if the hardware is ready: */
-+		if (status & MASK_MBOX_STATUS_READY)
-+			break;
-+	}
-+
-+	status = readl(ss->mmio_base + MBOX_STATUS_OFFSET);
-+
-+	/* Check for explicit error response */
-+	if (status & MASK_MBOX_STATUS_ERROR) {
-+		ss->state = UCODE_ERROR;
-+		return false;
-+	}
-+
-+	/*
-+	 * Hardware is neither responded to the action nor
-+	 * signaled any error. Treat the case as timeout.
-+	 */
-+	if (!(status & MASK_MBOX_STATUS_READY)) {
-+		ss->state = UCODE_TIMEOUT;
-+		return false;
-+	}
-+
-+	ss->state = UCODE_OK;
-+	return true;
-+}
-+
- /*
-  * Transmit a chunk of the microcode image to the hardware.
-  * Return true if the chunk is processed successfully.
-  */
--static bool send_data_chunk(struct staging_state *unused)
-+static bool send_data_chunk(struct staging_state *ss)
- {
--	pr_debug_once("Staging mailbox loading code needs to be implemented.\n");
--	return false;
-+	u16 mbox_size = MBOX_HEADER_SIZE * 2 + ss->chunk_size;
-+	u32 *chunk = ss->ucode_ptr + ss->offset;
-+
-+	/*
-+	 * Write 'request' mailbox object in the following order:
-+	 * - Mailbox header includes total size
-+	 * - Command header specifies the load operation
-+	 * - Data section contains a microcode chunk
-+	 */
-+	write_mbox_header(ss->mmio_base, MBOX_HEADER(mbox_size));
-+	write_mbox_header(ss->mmio_base, MBOX_CMD_LOAD);
-+	write_mbox_data(ss->mmio_base, chunk, ss->chunk_size);
-+	ss->bytes_sent += ss->chunk_size;
-+
-+	/*
-+	 * Notify the hardware that the mailbox is ready for processing.
-+	 * The staging firmware will process the request asynchronously.
-+	 */
-+	writel(MASK_MBOX_CTRL_GO, ss->mmio_base + MBOX_CONTROL_OFFSET);
-+	return wait_for_transaction(ss);
- }
- 
- /*
-  * Retrieve the next offset from the hardware response.
-  * Return true if the response is valid, false otherwise.
-  */
--static bool fetch_next_offset(struct staging_state *unused)
-+static bool fetch_next_offset(struct staging_state *ss)
- {
--	pr_debug_once("Staging mailbox response handling code needs to be implemented.\n\n");
--	return false;
-+	const u16 mbox_size = MBOX_HEADER_SIZE + MBOX_RESPONSE_SIZE;
-+
-+	/* All responses begin with the same header value: */
-+	WARN_ON_ONCE(read_mbox_header(ss->mmio_base) != MBOX_HEADER(mbox_size));
-+
-+	/*
-+	 * The 'response' mailbox contains two dword data:
-+	 * - First has next offset in microcode image
-+	 * - Second delivers status flag
-+	 */
-+	ss->offset = read_mbox_dword(ss->mmio_base);
-+	if (read_mbox_dword(ss->mmio_base) & MASK_MBOX_RESP_ERROR) {
-+		ss->state = UCODE_ERROR;
-+		return false;
-+	}
-+
-+	ss->state = UCODE_OK;
-+	return true;
- }
- 
- /*
--- 
-2.45.2
-
+Thanks,
+Chang
 
