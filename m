@@ -1,465 +1,152 @@
-Return-Path: <linux-kernel+bounces-572049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94EECA6C5D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:20:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159D9A6C5DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005D03AD4CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EE8F465357
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3275F2309A1;
-	Fri, 21 Mar 2025 22:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60592309A1;
+	Fri, 21 Mar 2025 22:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="VG0XXhE9"
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYgPCnOX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175E71F0E32;
-	Fri, 21 Mar 2025 22:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4842D8BEE;
+	Fri, 21 Mar 2025 22:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742595624; cv=none; b=n2AJCDh4LwVE/4aBPKAUO+CdAQ6N+YQi/bq7rd2L6kspzAPIkT6ohPinn0B0QzQbLKmCEAPlQXPIH1TrRl5cOpsGXgtlQX/fXf5OFXTB9ZyZHeTcBwV6aVwU8HiRhV60xzhKQZn+cGZmsgpEJGeSWZUDkZIEMVFGc2k7PwZGkm8=
+	t=1742595696; cv=none; b=e6wBiNj2W5Dj/MJLqsxiRyuHFWJcXTJZ9VNdAQ0ZZYqtQ/W+c3tMkn3msZQC9F8hpsHMlikHcH4qWsPtAJasR6I4Osl98AoJEQDRZIxzay51303jpXT5x9E8PUP6rmP5r4jubc4NOhOEWLZzEiACMZoGkbp5O94RqAGPOYgsSG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742595624; c=relaxed/simple;
-	bh=cERLG2SsMOlLY8vbrFIcc/8oHjWKiOk7u8Vpb9yfte0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hi0xGH2bBYc6YLQChQc8P1HZeViGFooPl5Ry+6GdXvWbi4kzCyt6L1rkGQ5eqYI5dhzu3WDHrby8VolJsE6Vca2ovkZ4g8aBnow4Eu6feNNwME4m/4sBNZuz6aXiLWPuxij16szaSx0fIDjhqcZjz7IfEeuDxOe1mJAydiO5m0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=VG0XXhE9; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2DB1A297811;
-	Fri, 21 Mar 2025 23:20:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1742595619; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=pLbJTC+Y5RBA9GZMvfRLdRvPlXV6lwZfciYMqHP1vww=;
-	b=VG0XXhE9ZL7X7Vs996QCBcVkApJbsCbWNO/gXVnfvKhI3Jw+eMlWF5lYsM8DtvUXiLa/l9
-	Ckxak02IJvno8CA05TFWuEsUzSoUSFDlY2Dvlm5NWlF5R4/MO/5XHDNuvXhR++Wx8Ja2PQ
-	Cz+IeXhv/8g89T25gb6+wz3Hqgh1jCm2YRpVSVXPETJFtjuSq+weNs7mGntH2JgK7i+Taf
-	HZlCH+QkWDcagt3XquexhsBOMyyTMW9o+SlFqKANNavYmlKTl0ayUOCnDQj6Fda+53PILI
-	3p39dxBNM+939XsTw1z8Piq9/70y6D8YiAf/4R5OJOQYaO2Jy8ULgOU62XFzbg==
-Message-ID: <ce72abfe-e822-48d6-9fc7-3cf9faffdc76@cjdns.fr>
-Date: Fri, 21 Mar 2025 23:20:15 +0100
+	s=arc-20240116; t=1742595696; c=relaxed/simple;
+	bh=HJFvVXl45GjCHB77vkVbfYG2LXCQM1Yu7VkVLSHwgtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6rbvUIdAn+BmLlmPGNQMFlCYbOwb1dFgB5H2FE9G+a6zNpNx0Wa+xf+ShmpUKXmvxdPvlDlNrZwugN8RgqJj4E2LCC6kmOvYqgcZU/JqWA1kWgUEls/SgT4YteYk9abdJfQQTKZ4Jl43u3zFgijOMB/OOf7CX36odPLOP62P9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYgPCnOX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2BAC4CEE3;
+	Fri, 21 Mar 2025 22:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742595695;
+	bh=HJFvVXl45GjCHB77vkVbfYG2LXCQM1Yu7VkVLSHwgtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RYgPCnOX2/NYKWyQPW6LLib0j+Q3H9+rHSpNI2L2Cb1laNKAJiZhik9jvwjU0dPQ7
+	 pq/4kAmagE0IORsYyhGLuoooKAOMPPiRu98d2vywU/FmIvED6MeRose+GkaS3LUyJT
+	 to/3Kj1w1J1AHdd5z3FfpyS2/UNXHaw0wT1a8IxP1lqTo3WKHLw1oEo+YUdDbpaXil
+	 5LhjUHwzgEalhhpc1RRNs/TdE9DO5wgFbTdPHT3lcd2WthohavgGfkJXUVOJslwSPw
+	 JnmozSN195VoD86b7eMlo6wgF04gbHq7FvJzu//UP1Pkin43h44fNWJqG//dx/cI7R
+	 iP+PQ5DVxZvWA==
+Date: Fri, 21 Mar 2025 17:21:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] remoteproc: Add device awake calls in rproc boot and
+ shutdown path
+Message-ID: <6lyuwfypd5sq5fqu2ibgpxiulvq3txe6igxhrpqd4443z4zex4@5bvlrpohwg5c>
+References: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v1 3/8] irqchip: Add EcoNet EN751221 INTC
-To: Thomas Gleixner <tglx@linutronix.de>, linux-mips@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
-References: <20250321134633.2155141-1-cjd@cjdns.fr>
- <20250321134633.2155141-4-cjd@cjdns.fr> <87tt7m1664.ffs@tglx>
-Content-Language: en-US
-From: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <87tt7m1664.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317114057.1725151-1-quic_schowdhu@quicinc.com>
 
-Thank you for this review.
+On Mon, Mar 17, 2025 at 05:10:57PM +0530, Souradeep Chowdhury wrote:
+> Add device awake calls in case of rproc boot and rproc shutdown path.
+> Currently, device awake call is only present in the recovery path
+> of remoteproc. If a user stops and starts rproc by using the sysfs
+> interface, then on pm suspension the firmware loading fails. Keep the
+> device awake in such a case just like it is done for the recovery path.
+> 
 
-On 21/03/2025 21:26, Thomas Gleixner wrote:
-> Caleb!
->
-> On Fri, Mar 21 2025 at 13:46, Caleb James DeLisle wrote:
->> ---
->> If CPU_MIPSR2_IRQ_EI / CPU_MIPSR2_IRQ_VI are enabled in the build, this
->> device switches to sending all interrupts as vectored - which IRQ_MIPS_CPU
->> is not prepared to handle. If anybody knows how to either disable this
->> behavior, or handle vectored interrupts without ugly code that breaks
->> cascading, please let me know and I will implement that and add
->> MIPS_MT_SMP in a future patchset.
-> This must be addressed before this driver can be merged, but that's a
-> topic for the MIPS wizards and out of my area of expertise, except for
-> the obvious:
->
->      For a start you can exclude this platform from being enabled in
->      Kconfig when the EI/VI muck is enabled. That's what 'depends on' is
->      for,
+Please rewrite this in the form expressed in
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
 
+Clearly describe the problem you're solving - not just the change in
+behavior.
 
-Maybe my message was misleading everything has been tested and works correctly
-on multiple SoCs because ECONET_SOC_EN751221 does not select EI/VI. Answering
-this question will allow me to enable them, thus also getting MIPS_MT_SMP.
+What do you mean that "firmware loading fails" if we hit a suspend
+during stop and start through sysfs? At what point does it fail?
 
-I could look at forbidding them in the driver, but I'm not sure that's appropriate as this
-seems like more of an SoC issue than an INTC issue. But I'll follow your guidance.
+> Fixes: a781e5aa59110 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
 
+That patch clearly states that it intends to keep the system from
+suspending during recovery. As far as I can tell you're changing the
+start and stop sequences.
 
->
-> So this patch clearly should have been tagged with 'RFC'.
+As such, I don't think the referred to patch was broken and you're not
+fixing it.
 
-Given the patchset works correctly in testing, does this comment stand?
+> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+> Cc: stable@vger.kernel.org
 
->
->> +static const struct econet_intc {
->> +	const struct irq_chip chip;
->> +
->> +	const struct irq_domain_ops domain_ops;
->> +} econet_intc;
-> Please see
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+It's not clear to me from the commit message why this should be
+backported to stable kernel.
 
-Thank you, I've been reading a lot of documentation but did not find that one.
+> ---
+> Changes in v3
+> 
+> *Add the stability mailing list in commit message
+>  
+>  drivers/remoteproc/remoteproc_core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c2cf0d277729..908a7b8f6c7e 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1916,7 +1916,8 @@ int rproc_boot(struct rproc *rproc)
+>  		pr_err("invalid rproc handle\n");
+>  		return -EINVAL;
+>  	}
+> -
+> +	
 
->
-> Aside of the coding style issues, what's the actual value of this
-> struct? Is there anything which can't be done with:
->
-> static const struct irq_chip econet_chip = {
-> 	.name	= ....
-> };
->
-> static const struct irq_domain_ops econet_domain_ops = {
-> 	.xlate	= ....
-> };
->
-> Which avoids the above forward struct declaration completely and does
-> not need any forward declaration at all, neither for the chip nor for
-> the domain.
-
-My normal instinct lead me to minimize symbols on the top level scope and I
-didn't realize I was doing it and should check what is typical in kernel code.
-Will refactor.
-
->
->> +static struct {
->> +	void __iomem *membase;
->> +	u8 shadow_interrupts[INTC_IRQ_COUNT];
->> +} econet_intc_rai __ro_after_init;
->> +
->> +static DEFINE_RAW_SPINLOCK(irq_lock);
->> +
->> +static void econet_wreg(u32 reg, u32 val, u32 mask)
->> +{
->> +	unsigned long flags;
->> +	u32 v;
->> +
->> +	raw_spin_lock_irqsave(&irq_lock, flags);
-> Please use
->
->         guard(raw_spinlock)(&irq_lock);
->
-> You don't need irqsave when invoked from mask/unmask as the caller
-> guarantees to have interrupts disabled. Then you only need to disable
-> interrupts across the invocation from mask_all().
-Thank you very much, I would not have thought of this.
->
->> +
->> +	v = ioread32(econet_intc_rai.membase + reg);
->> +	v &= ~mask;
->> +	v |= val & mask;
->> +	iowrite32(v, econet_intc_rai.membase + reg);
->> +
->> +	raw_spin_unlock_irqrestore(&irq_lock, flags);
->> +}
->> +
->> +static void econet_chmask(u32 hwirq, bool unmask)
->> +{
->> +	u32 reg;
->> +	u32 mask;
->> +	u32 bit;
->> +	u8 shadow;
-> Search the same document for local variables.
-Ok
->
->> +	shadow = econet_intc_rai.shadow_interrupts[hwirq];
->> +	if (WARN_ON_ONCE(shadow == INTC_IS_SHADOW))
->> +		return;
->> +	else if (shadow < INTC_NO_SHADOW && smp_processor_id() > 0)
->> +		hwirq = shadow;
-> This is completely undocumented voodoo. Please add comments which
-> explain this properly.
-
-Sure thing, I often write and then remove comments because I don't want to be
-judged for over-explaining. In fact, I love explaining.
-
->
->> +	if (hwirq >= 32) {
->> +		reg = REG_MASK1;
->> +		mask = BIT(hwirq - 32);
->> +	} else {
->> +		reg = REG_MASK0;
->> +		mask = BIT(hwirq);
->> +	}
->> +	bit = (unmask) ? mask : 0;
->> +	econet_wreg(reg, bit, mask);
->          econet_wreg(reg, unmask ? mask : 0, mask);
-Ok
->
->> +}
->> +
->> +static void econet_intc_mask(struct irq_data *d)
->> +{
->> +	econet_chmask(d->hwirq, false);
->> +}
->> +
->> +static void econet_intc_unmask(struct irq_data *d)
->> +{
->> +	econet_chmask(d->hwirq, true);
->> +}
->> +
->> +static void econet_mask_all(void)
->> +{
-> with a
->
->       guard(irq)();
->
-> added here you spare the irqsave in the write function.
-Ok, thanks.
->
->> +static void econet_intc_from_parent(struct irq_desc *desc)
->> +{
->> +	struct irq_chip *chip = irq_desc_get_chip(desc);
->> +	struct irq_domain *domain;
->> +	u32 pending0;
->> +	u32 pending1;
->> +
->> +	chained_irq_enter(chip, desc);
->> +
->> +	pending0 = ioread32(econet_intc_rai.membase + REG_PENDING0);
->> +	pending1 = ioread32(econet_intc_rai.membase + REG_PENDING1);
->> +
->> +	if (unlikely(!(pending0 | pending1))) {
->> +		spurious_interrupt();
->> +		goto out;
->> +	}
->> +
->> +	domain = irq_desc_get_handler_data(desc);
->> +
->> +	econet_intc_handle_pending(domain, pending0, 0);
->> +	econet_intc_handle_pending(domain, pending1, 32);
-> 	if (likely(pending0 | pending1) {
->               domain = ...
->               ...
->          } else {
->               spurious_interrupt();
->          }
->
-> Makes the goto go away _and_ sets the focus on the likely path and not
-> on the visual clutter of the unlikely one.
-Indeed, will fix.
->
->> +static int econet_intc_map(struct irq_domain *d, u32 irq, irq_hw_number_t hwirq)
->> +{
->> +	int ret;
->> +
->> +	if (hwirq >= INTC_IRQ_COUNT) {
->> +		pr_err("%s: hwirq %lu out of range\n", __func__, hwirq);
->> +		return -EINVAL;
->> +	} else if (econet_intc_rai.shadow_interrupts[hwirq] == INTC_IS_SHADOW) {
->> +		pr_err("%s: can't map hwirq %lu, it is a shadow interrupt\n",
->> +		       __func__, hwirq);
-> No newline
-If I understand correctly, you prefer:
-.....interrupt\n", __func__, hwirq);
-for a 96 char line?
->
->> +		return -EINVAL;
->> +	}
-> Please put a newline here for readability instead.
-Sure thing
->
->> +	if (econet_intc_rai.shadow_interrupts[hwirq] != INTC_NO_SHADOW) {
-> This INTC_IS_SHADOW and INTC_NO_SHADOW logic is beyond confusing without
-> comments. Three month down the road you will ask yourself what the hell
-> this means.
-I'll add comments and also try to make the code a little more self-evident in v2.
->
->> +		irq_set_chip_and_handler(
->> +			irq, &econet_intc.chip, handle_percpu_devid_irq);
-> This line break is unreadable. See documentation.
->
-> If at all this wants to be:
->
-> 		irq_set_chip_and_handler(irq, &econet_intc.chip,
->                                           handle_percpu_devid_irq);
->
-> But this fits nicely within 100 characters, so get rid of it completely.
-My apologies. It was my intention, but instincts are sneaky and for some reason
-checkpatch didn't catch it.
->
->> +		ret = irq_set_percpu_devid(irq);
-> And please add a comment which explains why this magic shadow thing maps
-> to percpu devid interrupts.
-Sure thing
->
->> +		if (ret) {
->> +			pr_warn("%s: Failed irq_set_percpu_devid for %u: %d\n",
->> +				d->name, irq, ret);
->> +		}
->> +	} else {
->> +		irq_set_chip_and_handler(
->> +			irq, &econet_intc.chip, handle_level_irq);
-> Same here.
-Ok.
->
->> +	}
->> +	irq_set_chip_data(irq, NULL);
->> +	return 0;
->> +}
->> +
->> +static const struct econet_intc econet_intc = {
->> +	.chip = {
->> +		.name		= "en751221-intc",
->> +		.irq_unmask	= econet_intc_unmask,
->> +		.irq_mask	= econet_intc_mask,
->> +		.irq_mask_ack	= econet_intc_mask,
->> +	},
->> +	.domain_ops = {
->> +		.xlate = irq_domain_xlate_onecell,
->> +		.map = econet_intc_map,
-> See documention.
-I suppose this is tab alignment, but I will in any case make a point
-of reading it all carefully.
->
->> +	},
->> +};
->> +
->> +static int __init get_shadow_interrupts(struct device_node *node)
->> +{
->> +	const char *field = "econet,shadow-interrupts";
->> +	int n_shadow_interrupts;
->> +	u32 *shadow_interrupts;
->> +
->> +	n_shadow_interrupts = of_property_count_u32_elems(node, field);
->> +	memset(econet_intc_rai.shadow_interrupts, INTC_NO_SHADOW,
->> +	       sizeof(econet_intc_rai.shadow_interrupts));
->> +	if (n_shadow_interrupts <= 0) {
->> +		return 0;
->> +	} else if (n_shadow_interrupts % 2) {
->> +		pr_err("%pOF: %s count is odd, ignoring\n", node, field);
->> +		return 0;
->> +	}
->> +	shadow_interrupts = kmalloc_array(n_shadow_interrupts, sizeof(u32),
->> +					  GFP_KERNEL);
-> 	u32 *shadow_interrupts __free(kfree) =
->          	kmalloc_array(n_shadow_interrupts, sizeof(u32), GFP_KERNEL);
->
-> Then the return paths don't have to care about this allocation at all.
-Very nice, thank you.
->
->> +	if (!shadow_interrupts)
->> +		return -ENOMEM;
->> +	if (of_property_read_u32_array(node, field,
->> +				       shadow_interrupts, n_shadow_interrupts)
->> +	) {
-> Your random choices of coding style and lack of visual seperation by
-> empty newlines really make this hard to digest.
-Apologies, will restructure.
->
->> +		pr_err("%pOF: Failed to read %s\n", node, field);
->> +		kfree(shadow_interrupts);
->> +		return -EINVAL;
->> +	}
-> The __free() above will reduce this to
->
-> 	if (of_property_read_u32_array(node, field, shadow_interrupts, n_shadow_interrupts)) {
-> 		pr_err("%pOF: Failed to read %s\n", node, field);
->                  return -EINVAL;
-> 	}
->
-> and removes the kfree() at the end of the function.
-Yes, I wasn't aware of __free() until now. Generally I love this type of thing
-and use them wherever possible.
->
->> +	for (int i = 0; i < n_shadow_interrupts; i += 2) {
->> +		u32 shadow = shadow_interrupts[i + 1];
->> +		u32 target = shadow_interrupts[i];
->> +
->> +		if (shadow > INTC_IRQ_COUNT) {
->> +			pr_err("%pOF: %s[%d] shadow(%d) out of range\n",
->> +			       node, field, i, shadow);
-> No line break.
-Ok
->
->> +			continue;
->> +		}
-> Newline
-Ok (I will check for tightly packed if statements and fix all)
->
->> +		if (target >= INTC_IRQ_COUNT) {
->> +			pr_err("%pOF: %s[%d] target(%d) out of range\n",
->> +			       node, field, i + 1, target);
-> No line break.
-Ok
->
->> +			continue;
->> +		}
->> +		econet_intc_rai.shadow_interrupts[target] = shadow;
->> +		econet_intc_rai.shadow_interrupts[shadow] = INTC_IS_SHADOW;
-> What the heck does any of this mean? This whole shadow magic is
-> hideously incomprehensible. It's amazing that this whole file does not
-> contain a single line of comment.
->
-> Aside of that how is any of this sanity checked, i.e. so that there are
-> no existing entries overwritten? I assume this blindly relies on the
-> device tree being correct. Fine, but then please document it.
-I had a nice comment on the oddities of these "shadow interrupts" which I
-then moved into the DT binding and removed from the source. I'll happily
-add it back and more.
-
-As I said, I actually like explaining, I perhaps erroneously tried to match the
-terseness of other kernel drivers.
->
->> +	}
->> +	kfree(shadow_interrupts);
->> +	return 0;
->> +}
->> +
->> +static int __init econet_intc_of_init(struct device_node *node, struct device_node *parent)
->> +{
->> +	int ret;
->> +	int irq;
->> +	struct resource res;
->> +	struct irq_domain *domain;
-> Sigh.
-Ok I see, reverse fir tree order.
->
->> +
->> +	domain = irq_domain_add_linear(
->> +		node, INTC_IRQ_COUNT,
->> +		&econet_intc.domain_ops, NULL);
-> Finally my eyes bleed and my mental code pattern matching engine threw a
-> garbage-overload exception.
->
-> Seriously. Consistent coding style _and_ comments explaining the
-> non-obvious parts of the code are not optional.
->
-> You want me and others to review your code, so please have the courtesy
-> to provide it in a digestable form.
->
-> That spares us to point out the obvious, which can be looked up in
-> documentation, and the frustration of staring at incomprehensible
-> undocumented logic. And it spares you the frustration of getting your
-> submission ripped into bits and pieces.
-
-In case of any doubt, I wasn't trying to sneak bad code past you. I read a lot of
-documentation, though clearly not enough / the right stuff.
-When I sent this, I didn't know what was left that could be improved.
+You're replacing an empty line with a tab...
 
 
-I'm going to read the documentation you linked, then re-read all of this patchset
-with your comments in mind, and hopefully come back with something much
-better. Lastly, I very much appreciate your taking the time.
+Other than that, the change looks sensible.
 
-Thanks,
-Caleb
+Regards,
+Bjorn
 
->
-> Thanks,
->
->          tglx
->
->
+> +	pm_stay_awake(rproc->dev.parent);
+>  	dev = &rproc->dev;
+>  
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+>  		atomic_dec(&rproc->power);
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+> +	pm_relax(rproc->dev.parent);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_boot);
+> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	struct device *dev = &rproc->dev;
+>  	int ret = 0;
+>  
+> +	pm_stay_awake(rproc->dev.parent);
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+>  	if (ret) {
+>  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	rproc->table_ptr = NULL;
+>  out:
+>  	mutex_unlock(&rproc->lock);
+> +	pm_relax(rproc->dev.parent);
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(rproc_shutdown);
+> -- 
+> 2.34.1
+> 
 
