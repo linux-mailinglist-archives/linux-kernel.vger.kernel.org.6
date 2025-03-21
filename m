@@ -1,139 +1,236 @@
-Return-Path: <linux-kernel+bounces-571283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24948A6BB56
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:00:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25D5A6BB58
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36008189B76F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3AEC7A7E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D9322A4EA;
-	Fri, 21 Mar 2025 13:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E79238F80;
+	Fri, 21 Mar 2025 13:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HSHJTQm4"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxXfuQD6"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D291EE7D5
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20371E87B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742562018; cv=none; b=F/xfOIpEASZ9u3GdUOV19myWfbli9z6b1bpXpIDverZiu4kfAITYgZ/AC42d+SnjHBaNyz+xI/rhowz/CY0BLayimkaua5mOb+4P6y/e76gGczNw+A6KUe6FPQZnwgwQP9Jb4tm3KShmkcRdtRbxVLEZKmXqaOQSFT+hkn4G6nM=
+	t=1742562118; cv=none; b=QrVVXHvtrgrzAnJKqw0cMhDdOuB220Cd6RA/YoF2BYOzYIcSNwnk3r/pKFXSaphGWZjxJgdj633EtFte54YErVsYZHiFmX90fPnTr6nEUpZ5UC1La7+JZ2GiI8PWybGGK5cWEqrFOGFMN9thy9MQ+spOTq/E7Vb02N+lNs8WWAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742562018; c=relaxed/simple;
-	bh=plwBUBWa9ym9Mh4TJJ3ICNDcswub88W+vU2KUtjaPjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFXZ1IlnC1Nm0WxXF0kGmBLGxIclfdQ5ZeA+w4iraIa6QAniyMk5a78eHkM+6IoWgUfZ3mjCKwefcmxumH7nwqmQBfovPcYgqzfTxvSUV+hQS1llPjoRHfoVD3QblOGc0LYeA11Af+/A+sBgy6XanRNdQmHxNvLCnY6Dt4/d2vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HSHJTQm4; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240b4de12bso2449475ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:00:16 -0700 (PDT)
+	s=arc-20240116; t=1742562118; c=relaxed/simple;
+	bh=z2u8qvqYz6lJqaLdrjTi7qjLknt9brw8deTZT/n1p3o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:Cc:
+	 In-Reply-To:Content-Type; b=IPALvVTuYbgFsD46MIvbDMee9cnku+6EziEMMSMG9gJiAAIr0BEEdRgPXlpdhtuuNE+VAUJF6WWK0qLMaIKyOuNBMiOaZ99LBzxIgrsz/ZkgpMrBg7JN8MihzdVF58nTTzLBqwq5/z8zZeFiwzWyqVAiPufUHOwu9osrbsAB2Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lxXfuQD6; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-72bbc03d436so1201384a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742562015; x=1743166815; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wLOWpBJ/84QqSStkKvu70G+ifFT/ePp0AEqvzzVNHGQ=;
-        b=HSHJTQm4gzsOdAXxkfpUlnIASgwID2Qa/SB3VSa7FykybFmUFkH0AGKLkOIz/EAc9q
-         ta7siQKSzDUJBEGz51J2LDuhnChHUqKfmBlDD/w5Kanc0tyMRTEaS7JqlKE0wc8F9obR
-         bteVDlbqvqJGOsFXoJ9vuwqn40t9e3kcmbFRxL6PndlocfiiH4ufDiDlU3WwYTlco2mx
-         f6KTfxhGXmC6MCknGSKN0mWsReQjqcqKvniDfHBj2fMGWii5yk2o3dgkzDfGYNHZ0VR1
-         2ZCtqws6lfzCSxJLVLIqpExKbcyQZqAv/z4QZ5RHvu1jB0N/S5bpzierV0HuFMxKNPJo
-         kNlw==
+        d=gmail.com; s=20230601; t=1742562115; x=1743166915; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:content-language
+         :references:to:from:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z2u8qvqYz6lJqaLdrjTi7qjLknt9brw8deTZT/n1p3o=;
+        b=lxXfuQD6SQ/9xqlDONRvIVIpggxLn97v5ScdZ5IkMA1+Xv0b9g6IFGxx+MyGKnm4Nr
+         W7X+8P8capwB4Mfb2lOAER4gZ3HJIEELLTqWVIRb/rcCJ+KKXGbiFWNnIbQRWSHmGmfk
+         Egn/pDyWkhQnnH+UoYhP77Og2XOgbUZFkRtZje+K+m4hLcoNLCBjJIhtTCpvE2DCkbd9
+         vlONpB8XqEa5MyIbCa6aiHgMjgF5LW6Tbm0H3xR3PDc89L9QiBkQ2hoqS+vuWGDwt9JJ
+         70G7rVswg2gVdRuhCYZTSRZmcRusU1Oq4twkgWrdSTdTwoDUn2g/OsY0M8hFoqm7PVso
+         PUvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742562015; x=1743166815;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1742562115; x=1743166915;
+        h=content-transfer-encoding:in-reply-to:cc:content-language
+         :references:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wLOWpBJ/84QqSStkKvu70G+ifFT/ePp0AEqvzzVNHGQ=;
-        b=pM2PIH+aBumi+UMMLlEQu98CN/IFTakv7h31r/tr2QofQnFGG30wCknMUuRQ38T3Ex
-         hQPNFnhb3CUCdo+Ry82dQ9YRPPSk2ZQgpcJ+y3Br2pcsMdxi5sxS2g8PVAtGp1WizMph
-         w+LnaXAOAICILG9FqVYjc91XCp6Wb/RbLrI96Y0adbbouhVSXYET9BJ7uSfFdxaFLSLk
-         sA6oh8OM8j595QZtPvFMPYkQPprjjtUFwiMyzSBnlQkHIV01wYzAZuD9H4fJQOJP5p/0
-         IagDx4n7VIruYxSG4UMrcHGeMVvrU3aSGkX6B9Rz8ZietlpZMl1vVsvolF+udR/pULtt
-         Co5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKzcHQZi4YeevdjD9npamwFUHpVn6V0KiS8FmF8HXi7hBRd52yAeVFETBD3T05iQMbbR/LbCpBNzYtCgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKU8cYTpEpxA19LiOvUyC+ZVT6xIlQcmHp9qUEA4ioVJLQlH6r
-	6ucKyXC126KPom4vcCGbNiINKwaff9QXQit7h8r3AslMJi0YxfM5OP5wifZy1Q==
-X-Gm-Gg: ASbGnct92KYj7IdleYzg832g+QFVe/T2rEaJO9AzGfXN4pOz9B/qaj8XAZ9UR79dpfZ
-	aBaqvPsRUkAJufTiSaeksezEcBGZMyP28E1/fVcpxRrXBUpvZNxH6d6RnJ5jZTlD2W3bIKEiU7i
-	JHOmnZteklwNOKW6R9io3ACZ8M0JKE/mMK6hBR/KpGEpT9w2PJh/5SjWIATt1Bai+DjikmEtha7
-	EFF3788+5QnZqqw7ePwnGS2i7/Pp7iVMwMEuzdXonZGap28Yh4pBQqsA3zebmi2741ZDYZu4vR2
-	u56ja88UzSsXFxPAp7rM72beL4nKvfIuXBkY3qKfCkMYPmMtBvHGF8Y0waqRn/OTjF5H
-X-Google-Smtp-Source: AGHT+IFTfL0DLPrgepqPKLA9JqmhC76PAJXtBjhi2YTyYHpFIbG4X1nRwScZA52uGahHQ3nMbVLuZA==
-X-Received: by 2002:a05:6a20:d497:b0:1f5:8678:183d with SMTP id adf61e73a8af0-1fe42f2c686mr5981977637.14.1742562015263;
-        Fri, 21 Mar 2025 06:00:15 -0700 (PDT)
-Received: from thinkpad ([2409:40f4:22:5799:90ea:bfc4:b1d2:dda2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a4f585sm1602397a12.73.2025.03.21.06.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 06:00:14 -0700 (PDT)
-Date: Fri, 21 Mar 2025 18:30:10 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [v4 1/4] PCI: Introduce generic capability search functions
-Message-ID: <20250321130010.s6svrtqlpdkgxmir@thinkpad>
-References: <20250321101710.371480-1-18255117159@163.com>
- <20250321101710.371480-2-18255117159@163.com>
+        bh=z2u8qvqYz6lJqaLdrjTi7qjLknt9brw8deTZT/n1p3o=;
+        b=hqA3XjPNKbXfSib8xtgfN0JwLGPrmxm45ZMUoB/3eKYIrBjXS5K24eIbUfO3MciG0z
+         OKV/qADlc/m0KbNKWJMxuPjqN4eJPxz9HLCDQW/BUQxetqjGnbIXbwEWtf1USi18XC5z
+         KRVZ05VryCZPl27dIXsmhZIG16nCws5zNAX4WawvK/zSGqnW4j+YYH3v7iOiIRS31gJ6
+         I+msJP6u59mLhPJWTVlA82ukMl5M3yHRXmHg65AtnIAs81vGsAe7rF3f+mbNyQL2UETE
+         82e6TL+TUwmmg1tLD59pUIJtbVPfhTdqqssDWr6x4N4g75UIC3CZ1fHqiUllfk4s6Fv6
+         ogIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYPGwYXuL+1JG4C2kdI/PcKLH/il3nN8QKE6D8eyPA3XbH3trdllblNfi3EyolFtVg5YnHr735gO3Y0u4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzw4ctYLGg4/0EDG1Z2sPu0HAnb1D8+1kwkbV6Pbf8iJvQ0Tmk
+	VhV1v8EaqaiEzl7xpt3zIIJ5HO53ro5zNmfzSDrQkATeiFitcWyN
+X-Gm-Gg: ASbGnctu3tLUWhMahd6qcWeOVu7cQAa9DeYMLZYY7FJumT4NUqB1XRQITnVLaEUUUqk
+	CRHgnm/+udaOeW3oUGIo+tCM70ZNqMeHAoWmOJyqdNBKmMrabRQL2/lD3n9UMZx9l8U/PD+l0fW
+	gKyj7HcnlwPNFAPn9W+8aDP0OEE0e89FmdkRlb5tYgUJzOUSC54Q92OvJQetKjeg4O3lWXMLYdv
+	WWMjZF4vOzZjCPSkhokf+XgLj1WlHG2euPZiRxmJqamLFfy2FzQYmoHBvMz8iZX7pXwrOpghIyY
+	N9IHh8V5mnmApFFm/ivUpoTccnsA+eQHguguqDSTw8r7HkEmAjROeq9knA7KXO6lj9S1CVVdctq
+	tc9JPuYHdv7tepFloyS3gMdbZVOigDL+A
+X-Google-Smtp-Source: AGHT+IHsu1GyQ07inUssgB3XeNarkpCkGjPnlsxGq9UPMk+ecJRQXcIuvZ6NgBcp8NN0kEYe6a7NIA==
+X-Received: by 2002:a05:6830:d0b:b0:727:24ab:3e4 with SMTP id 46e09a7af769-72c0ae529d0mr2427461a34.9.1742562114417;
+        Fri, 21 Mar 2025 06:01:54 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72c0abac228sm372760a34.14.2025.03.21.06.01.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 06:01:53 -0700 (PDT)
+Message-ID: <7b3a0288-20f9-42cf-af81-e10ad2d04b27@gmail.com>
+Date: Fri, 21 Mar 2025 08:01:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: [RFC] panic: reduce CPU consumption when finished handling panic
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+To: pmladek@suse.com, Andrew Morton <akpm@linux-foundation.org>,
+ jani.nikula@intel.com, open list <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, takakura@valinux.co.jp,
+ john.ogness@linutronix.de
+References: <f2272f04-510e-4c92-be5e-fedcbb445eb0@gmail.com>
+Content-Language: en-US
+Cc: jglauber@digitalocean.com
+In-Reply-To: <f2272f04-510e-4c92-be5e-fedcbb445eb0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321101710.371480-2-18255117159@163.com>
 
-On Fri, Mar 21, 2025 at 06:17:07PM +0800, Hans Zhang wrote:
-> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
-> duplicate logic for scanning PCI capability lists. This creates
-> maintenance burdens and risks inconsistencies.
-> 
-> To resolve this:
-> 
-> 1. Add pci_generic_find_capability() and pci_generic_find_ext_capability()
-> in drivers/pci/pci.c, accepting controller-specific read functions
-> and device data as parameters.
-> 
+Hello again,
 
-I'd reword pci_generic* as pci_host_bridge* to reflect the fact that these APIs
-are meant for host bridges.
 
-> 2. Refactor dwc_pcie_find_capability() and similar functions to utilize
-> these new generic interfaces.
-> 
+I thought it would be helpful to share some numbers to support my claim
+and a couple ideas to improve the patch. Below are the perf stats from
+the hypervisor after triggering a panic on a guest running kernel v5.15
+(I'll provide the details of the experiment afterward.)
 
-This is not part of this patch. So should be dropped.
 
-> 3. Update out-of-tree drivers to leverage the common implementation,
-> eliminating code duplication.
-> 
+Samples: 55K of event 'cycles:P', Event count (approx.): 36090772574
+Overhead  Command          Shared Object            Symbol
+  42.20%  CPU 5/KVM        [kernel.kallsyms]        [k] vmx_vmexit
+  19.07%  CPU 5/KVM        [kernel.kallsyms]        [k] vmx_spec_ctrl_restore_host
+   9.73%  CPU 5/KVM        [kernel.kallsyms]        [k] vmx_vcpu_enter_exit
+   3.60%  CPU 5/KVM        [kernel.kallsyms]        [k] __flush_smp_call_function_queue
+   2.91%  CPU 5/KVM        [kernel.kallsyms]        [k] vmx_vcpu_run
+   2.85%  CPU 5/KVM        [kernel.kallsyms]        [k] native_irq_return_iret
+   2.67%  CPU 5/KVM        [kernel.kallsyms]        [k] native_flush_tlb_one_user
+   2.16%  CPU 5/KVM        [kernel.kallsyms]        [k] llist_reverse_order
+   2.10%  CPU 5/KVM        [kernel.kallsyms]        [k] __srcu_read_lock
+   2.08%  CPU 5/KVM        [kernel.kallsyms]        [k] flush_tlb_func
+   1.52%  CPU 5/KVM        [kernel.kallsyms]        [k] vcpu_enter_guest.constprop.0
+   1.50%  CPU 5/KVM        [kernel.kallsyms]        [k] native_apic_msr_eoi
+   1.01%  CPU 5/KVM        [kernel.kallsyms]        [k] clear_bhb_loop
+   0.66%  CPU 5/KVM        [kernel.kallsyms]        [k] sysvec_call_function_single
 
-This also.
 
-> This approach:
-> - Centralizes critical PCI capability scanning logic
-> - Allows flexible adaptation to varied hardware access methods
-> - Reduces future maintenance overhead
-> - Aligns with kernel code reuse best practices
-> 
-> Tested with DWC PCIe controller and CDNS PCIe drivers.
-> 
+And here are the results from the guest VM after applying my patch:
 
-This tested info is also not required since the DWC and CDNS changes are not
-part of this patch.
 
-- Mani
+Samples: 28  of event 'cycles:P', Event count (approx.): 28961952
+Overhead  Command          Shared Object            Symbol
+  11.03%  qemu-system-x86  [kernel.kallsyms]        [k] task_mm_cid_work
+  11.03%  qemu-system-x86  qemu-system-x86_64       [.] 0x0000000000579944
+   9.80%  qemu-system-x86  qemu-system-x86_64       [.] 0x000000000056512b
+   8.45%  IO mon_iothread  libc.so.6                [.] 0x00000000000a3f12
+   8.45%  IO mon_iothread  libglib-2.0.so.0.7200.4  [.] g_mutex_lock
+   7.51%  IO mon_iothread  [kernel.kallsyms]        [k] avg_vruntime
+   6.65%  IO mon_iothread  libc.so.6                [.] write
+   5.93%  IO mon_iothread  [kernel.kallsyms]        [k] security_file_permission
+   4.97%  qemu-system-x86  libglib-2.0.so.0.7200.4  [.] g_thread_self
+   4.64%  IO mon_iothread  [kernel.kallsyms]        [k] aa_label_sk_perm.part.0
+   4.13%  IO mon_iothread  libglib-2.0.so.0.7200.4  [.] g_main_context_release
+   3.79%  IO mon_iothread  [kernel.kallsyms]        [k] seccomp_run_filters
+   3.42%  IO mon_iothread  libglib-2.0.so.0.7200.4  [.] g_main_context_dispatch
+   3.42%  IO mon_iothread  qemu-system-x86_64       [.] 0x00000000004edbab
+   3.28%  IO mon_iothread  qemu-system-x86_64       [.] 0x00000000005999c8
+   3.09%  IO mon_iothread  qemu-system-x86_64       [.] 0x00000000004e636b
+   0.22%  qemu-system-x86  [kernel.kallsyms]        [k] __intel_pmu_enable_all.constprop.0
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+As you can see, CPU consumption is significantly reduced after applying the
+proposed change during panic, with KVM-related functions (e.g.,
+vmx_vmexit) dropping from more than 70% of CPU usage to virtually nothing.
+Also, the num of samples decreased from 55K to 28, and the event count
+dropped from 36.09 billion to 28.96 million.
+
+
+Jan suggested that a better way to implement cpu_halt_end_panic() (perhaps
+cpu_halt_after_panic() is a better name) would be to define it as a weak
+function in asm-generic, allowing archs to overwrite it. What do you think?
+
+Thank you in advance!
+
+Regards,
+Carlos
+
+---
+
+Details on the experiment:
+
+- Linux kernel v5.15 (commit 8bb7eca)
+
+-  VM guest CPU: Intel(R) Xeon(R) Gold 5318Y CPU @ 2.10GHz
+
+- I executed to collect samples:
+  /usr/bin/perf record -p 2618527 -a sleep 30
+
+- Image Ubuntu 22.04 (LTS) x64, 8 vCPUs, 16GB / 100GB Disk
+
+
+Thanks,
+
+Carlos
+
+
+On 3/17/25 17:01, Carlos Bilbao wrote:
+> After the kernel has finished handling a panic, it enters a busy-wait loop.
+> But, this unnecessarily consumes CPU power and electricity. Plus, in VMs,
+> this negatively impacts the throughput of other VM guests running on the
+> same hypervisor.
+>
+> I propose introducing a function cpu_halt_end_panic() to halt the CPU
+> during this state while still allowing interrupts to be processed. See my
+> commit below.
+>
+> Thanks in advance!
+>
+> Signed-off-by: Carlos Bilbao <carlos.bilbao@kernel.org>
+> ---
+>  kernel/panic.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index fbc59b3b64d0..c00ccaa698d5 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -276,6 +276,21 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+>          crash_smp_send_stop();
+>  }
+>  
+> +static void cpu_halt_end_panic(void)
+> +{
+> +#ifdef CONFIG_X86
+> +    native_safe_halt();
+> +#elif defined(CONFIG_ARM)
+> +    cpu_do_idle();
+> +#else
+> +    /*
+> +     * Default to a simple busy-wait if no architecture-specific halt is
+> +     * defined above
+> +     */
+> +    mdelay(PANIC_TIMER_STEP);
+> +#endif
+> +}
+> +
+>  /**
+>   *    panic - halt the system
+>   *    @fmt: The text string to print
+> @@ -474,7 +489,7 @@ void panic(const char *fmt, ...)
+>              i += panic_blink(state ^= 1);
+>              i_next = i + 3600 / PANIC_BLINK_SPD;
+>          }
+> -        mdelay(PANIC_TIMER_STEP);
+> +        cpu_halt_end_panic();
+>      }
+>  }
+>  
 
