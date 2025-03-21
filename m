@@ -1,202 +1,107 @@
-Return-Path: <linux-kernel+bounces-571071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E5EA6B8B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:24:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBEAA6B8BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:27:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595753B2D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:24:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5B13B2418
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED71F1F3B8F;
-	Fri, 21 Mar 2025 10:24:32 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096D20CCDA;
+	Fri, 21 Mar 2025 10:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="TdZlsUHs"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70A81F3BAF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739EE1E47C2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742552672; cv=none; b=EtAiscIengjsk03swT6dNKvhnlp9cw8CTtalOUehrx2dWxBdPa7ZDNXAM1+aNkDH/mWyJz0AGT6TJlS5iBGmf7qeBOoHKdlybCgP5sLuUthF/LEjOI5bieB9d3tLP9GMiT4xdr0psmW/GxlWoObjwhIbxNJYt4A+mrSnqQcpjuc=
+	t=1742552826; cv=none; b=ZAP6JvnFlmdbEmeBlRgJUTpsV8+Gmf/Lo+tBxrpGO3GnJNdwKuj1NV5SCmLKBlZ8UUgC6eQop0pw/qkfTOAupjFRPdHzpXknbI73lMJQrFAZEeNfuMCcwH9Gec64Dkj9cEAzB6clQaMEdSPKPavKUQvFwi+GRCH3iMB1RVdvLzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742552672; c=relaxed/simple;
-	bh=3L1k6EZ6HqN4Jr58ja35SAAQN7Ikbs1lTiTV/MxSrZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8qJKOnxZ1Xij2cIje6STo4JivBRseWGM2HBuzwnIqkEHZyPnA8zE8Z49H3SE+C4hHifSggyzyBD2utifH7wZgVzFYBpu9aofFPk/eGZHRos5F9ubcq08N5Z29R+Y+SZ6SBttK3VsY86An4NJ1BooPrhnvgDthhQCTuQMSTZSwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 28C5421A45;
-	Fri, 21 Mar 2025 10:24:29 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99D3213A2C;
-	Fri, 21 Mar 2025 10:24:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2PZ8Ilw+3WcvLQAAD6G6ig
-	(envelope-from <nik.borisov@suse.com>); Fri, 21 Mar 2025 10:24:28 +0000
-From: Nikolay Borisov <nik.borisov@suse.com>
-To: linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com,
-	serge@hallyn.com,
-	kees@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kirill.shutemov@linux.intel.com,
-	linux-coco@lists.linux.dev,
-	Nikolay Borisov <nik.borisov@suse.com>
-Subject: [PATCH 2/2] lockdown/kunit: Introduce kunit tests
-Date: Fri, 21 Mar 2025 12:24:21 +0200
-Message-ID: <20250321102422.640271-3-nik.borisov@suse.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321102422.640271-1-nik.borisov@suse.com>
-References: <20250321102422.640271-1-nik.borisov@suse.com>
+	s=arc-20240116; t=1742552826; c=relaxed/simple;
+	bh=C6XBFDQAIe6jgF6F40xRB15uQkrbHzlxj9SySg4AP08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=leOqYqbmWRd5y3W6AEcp6LyvXjZg05m5K7UKhUsFR1NUgik4yvu6qkcvHorXFOdBqYofT9+Xbdb8okFKdi89kbsE4WqlWrP87APYAK/i3LOTa08MiKEJZW29alobVHuiTAvICOj/4jjgNt8s6XRDboAT5FJVILKMzqOKvgb7T8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=TdZlsUHs; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c53b9d66fdso244303485a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 03:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1742552823; x=1743157623; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C6XBFDQAIe6jgF6F40xRB15uQkrbHzlxj9SySg4AP08=;
+        b=TdZlsUHsbgNrvFWKr74ib1rO52+3/liwAwS1JFqwx6yapEeDkX3o9P8hqbxg4TWr87
+         70MyY/R5x2Tom9e/G9Du9krSwiYhS3PpQlCLIuDQ8Kpcibsr7kl7i3+mL2f/5eIal170
+         pvfI6WO93waEO1YCmhromQZ8XjMKa5pytw+HplISM6cIZ3Jyc8FWLZ7i4lKIJ0EExGbZ
+         LqL9h1XwDRbi1qN5IavNQBl7pF/liW2j5ZbkZ+6vKEwh242vW6XCL5kaHH1+4HDcVZqC
+         MDDlqXfQ9iW0jfpRsd4WAeRqtHHRFhz+BNdJ3oyo/P6PqeyPLo9ogk86aLgGZSrfhuRZ
+         HE9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742552823; x=1743157623;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C6XBFDQAIe6jgF6F40xRB15uQkrbHzlxj9SySg4AP08=;
+        b=J/Heq/EZpYVtRDpb2Mp4h36a1eJoYrT5/39FbadIRX4wA7wBaEOrqR4T9rrb6Vo7++
+         gvFVH5ew1XThneAQB9v/xKbePFpBy7FHcFrOXgkc+blnjw1kxDu6bPZ71SRp+3O305Bd
+         d9DCmQUELOXvYqMxjFO/x4JGPWtUqofkhQa6GkueRb6/Ij+UO/pUEpBmIFQmeF8bTgYf
+         WjGIDWeFnBv5e2dopMOxjkPT8bRwJdcmi3nMUr93uBcRFYfOk/213k3PmSzioiALQbyo
+         wtnUZuXt3TmJx+GTHr8ZBC3abVkwDLpcYCQswCqRkMiKcP2IMaYaNsWvvrIf5073AcfM
+         GLvw==
+X-Forwarded-Encrypted: i=1; AJvYcCULQBDdhQEA4LjONe7TRFfsjACltc2ThJkKU66Ggewn7B8Q0++bjdWrNXPq6HeI/jqVX8By82G1iJ3HdLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWDrV2LBAOHSB9zV8XG+BLwQRZK7S0e1ANXWwxkehkkJj8/kon
+	nhYTsZTRVLUWJ9+vvjAv31Up+B4F9HWo/0MntjjhbPclPzbSXBWJgyvncqAzM/4v/nEbyOsw+Cc
+	15QE1AdMlPRBoezFrG5zwJ/2mfLPh8+6N2y2Bsw==
+X-Gm-Gg: ASbGnctzEr7p9xP45QPbh/qitZDCcpWnq6r2LfzNrDVMZYg8M5wz3D2BvSPUxt2xM78
+	X5kCwRdn9pA9TM9/iUnkL0/h70bhOo/Tm6Kno//nqHMRUFcaN+0diYgh39jb2XvZOJtTXch3uIH
+	mEhq9Ik+6SeezOF/7f7f9SWP2Z
+X-Google-Smtp-Source: AGHT+IGtKZxKAoZgtR0aBlIVmyFJdz4vLgELnLl5z6u4LuYLjXNoyuq0UVrTF+CIIc7xPDTVRmAHZ+SRVPvG/7TyZXI=
+X-Received: by 2002:a05:620a:4055:b0:7c5:a423:f5b0 with SMTP id
+ af79cd13be357-7c5ba13361dmr406693385a.7.1742552823192; Fri, 21 Mar 2025
+ 03:27:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 28C5421A45
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+References: <20250314085858.39328-1-vignesh.raman@collabora.com> <20250314085858.39328-2-vignesh.raman@collabora.com>
+In-Reply-To: <20250314085858.39328-2-vignesh.raman@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 21 Mar 2025 10:26:52 +0000
+X-Gm-Features: AQ5f1JpymW7UP78_0g_Z-sNByprYGBFX-xYqr_OlbVrsK0-Hob7Zk88vIu6Znbc
+Message-ID: <CAPj87rMjF84yyPqBshuGu=8qx6Xhq9Z-HgEnQe=tRtbu3E8OtQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] drm/ci: uprev mesa
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
+	helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch, 
+	robdclark@gmail.com, guilherme.gallo@collabora.com, 
+	sergi.blanch.torne@collabora.com, valentine.burley@collabora.com, 
+	lumag@kernel.org, quic_abhinavk@quicinc.com, mripard@kernel.org, 
+	jani.nikula@linux.intel.com, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add a bunch of tests to ensure lockdown's conversion to bitmap hasn't
-regressed it.
+Hi Vignesh,
 
-Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
----
- security/lockdown/Kconfig         |  5 +++
- security/lockdown/Makefile        |  1 +
- security/lockdown/lockdown.c      |  5 ++-
- security/lockdown/lockdown_test.c | 55 +++++++++++++++++++++++++++++++
- 4 files changed, 65 insertions(+), 1 deletion(-)
- create mode 100644 security/lockdown/lockdown_test.c
+On Fri, 14 Mar 2025 at 08:59, Vignesh Raman <vignesh.raman@collabora.com> wrote:
+> LAVA was recently patched [1] with a fix on how parameters are parsed in
+> `lava-test-case`, so we don't need to repeat quotes to send the
+> arguments properly to it. Uprev mesa to fix this issue.
 
-diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-index e84ddf484010..5fb750da1f8c 100644
---- a/security/lockdown/Kconfig
-+++ b/security/lockdown/Kconfig
-@@ -6,6 +6,11 @@ config SECURITY_LOCKDOWN_LSM
- 	  Build support for an LSM that enforces a coarse kernel lockdown
- 	  behaviour.
- 
-+config SECURITY_LOCKDOWN_LSM_TEST
-+	tristate "Test lockdown functionality" if !KUNIT_ALL_TESTS
-+	depends on SECURITY_LOCKDOWN_LSM && KUNIT
-+	default KUNIT_ALL_TESTS
-+
- config SECURITY_LOCKDOWN_LSM_EARLY
- 	bool "Enable lockdown LSM early in init"
- 	depends on SECURITY_LOCKDOWN_LSM
-diff --git a/security/lockdown/Makefile b/security/lockdown/Makefile
-index e3634b9017e7..f35d90e39f1c 100644
---- a/security/lockdown/Makefile
-+++ b/security/lockdown/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown.o
-+obj-$(CONFIG_SECURITY_LOCKDOWN_LSM_TEST) += lockdown_test.o
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 5014d18c423f..412184121279 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -25,7 +25,10 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
- /*
-  * Put the kernel into lock-down mode.
-  */
--static int lock_kernel_down(const char *where, enum lockdown_reason level)
-+#if !IS_ENABLED(CONFIG_KUNIT)
-+static
-+#endif
-+int lock_kernel_down(const char *where, enum lockdown_reason level)
- {
- 
- 	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-diff --git a/security/lockdown/lockdown_test.c b/security/lockdown/lockdown_test.c
-new file mode 100644
-index 000000000000..0b4184a40111
---- /dev/null
-+++ b/security/lockdown/lockdown_test.c
-@@ -0,0 +1,55 @@
-+#include <linux/security.h>
-+#include <kunit/test.h>
-+
-+int lock_kernel_down(const char *where, enum lockdown_reason level);
-+
-+static void lockdown_test_invalid_level(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, -EINVAL, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX+1));
-+}
-+
-+static void lockdown_test_depth_locking(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
-+	for (int i = 1; i < LOCKDOWN_INTEGRITY_MAX; i++) {
-+		KUNIT_EXPECT_EQ_MSG(test, -EPERM, security_locked_down(i), "at i=%d", i);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_INTEGRITY_MAX));
-+}
-+
-+static void lockdown_test_individual_level(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_PERF));
-+	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_PERF));
-+	/* Ensure adjacent levels are untouched */
-+	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_TRACEFS));
-+	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_DBG_READ_KERNEL));
-+}
-+
-+static void lockdown_test_no_downgrade(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX));
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
-+	/*
-+	 * Ensure having locked down to a lower leve after a higher level
-+	 * lockdown nothing is lost
-+	 */
-+	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_TRACEFS));
-+}
-+
-+static struct kunit_case lockdown_tests[] = {
-+	KUNIT_CASE(lockdown_test_invalid_level),
-+	KUNIT_CASE(lockdown_test_depth_locking),
-+	KUNIT_CASE(lockdown_test_individual_level),
-+	KUNIT_CASE(lockdown_test_no_downgrade),
-+	{}
-+};
-+
-+static struct kunit_suite lockdown_test_suite = {
-+	.name = "lockdown test",
-+	.test_cases = lockdown_tests,
-+};
-+kunit_test_suite(lockdown_test_suite);
-+
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
+Thanks a lot; the series is:
+Acked-by: Daniel Stone <daniels@collabora.com>
 
+Cheers,
+Daniel
 
