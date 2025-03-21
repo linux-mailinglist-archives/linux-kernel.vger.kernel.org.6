@@ -1,285 +1,195 @@
-Return-Path: <linux-kernel+bounces-571248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FC8A6BAE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:42:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05340A6BAC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30ED3B61EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769AC466B0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC822A4E2;
-	Fri, 21 Mar 2025 12:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB52227BA1;
+	Fri, 21 Mar 2025 12:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iXJIsfaB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lj4NMOu3"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688A522A4D8;
-	Fri, 21 Mar 2025 12:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932191EE7C6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560828; cv=none; b=ZVAXvSikw4HeSKIuPtKNYqeI+Ejyz0Rne7GgqJSlNj8VNxiY3TX2MB78EaFBCYm2UEDBChgt0T5GyLmoiTtS3h8rmWTfN+/jw9bJga+jq2aTntgFzGByyClqnBs5bBUynRsAaMAK0OX92M/dK/a5JeFwteVJqGeMZdiSzSlY4IY=
+	t=1742560542; cv=none; b=WbMwk39d24knZwy06vJ0wB0u9sZU7Zdk8QdgG5iKdiW+kL33iLMt+a5VTqpbNgyhFbMNigs0kBN7LtlBb89kEd/ZdnnHlBsIhbHD4bTHoKuXb/92fJIi63Z2bf3CRmw4+hapu+57VlohzLZh7iYCTn48J3XoLzqPUjqJZU+naWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560828; c=relaxed/simple;
-	bh=qVkCx9Q/hxNNJcyqpxOD7H8MnEgWj+eoaHhhFqRCp8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R8JWNTwwtVp6FReOk7dB2s9go0drSMpBStiXRY4sDyk7bjRHp1jRNKyS8F1tftVkx+K3be4tSojM7YLRXB5fSX0XPnlwbsbfVEhOqCvDZeryT7Z/gcjW+O/hS+B7ghVclXj/z47ctZ1d6rQzhDm+9tQ3TbldyU27zE3xl/bWVuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iXJIsfaB; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742560826; x=1774096826;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qVkCx9Q/hxNNJcyqpxOD7H8MnEgWj+eoaHhhFqRCp8c=;
-  b=iXJIsfaBcv2g4ZsXj0hIma6BmcPvcBbdsSca7noOaoQ7MKbCVJar9vl0
-   cLAgSQ2LUIVPlSBFN1wBS9RGA6UGLGSLe+kdhv5/mKBuPfXz+wMqazEOK
-   1Lt++OrxdrTVsMsJssrN8Ykn0P3EvJA3QF+tkbWYyVlGiwzRVZRVAG5hI
-   FU//ozuGbbmijiSoGrMckiNP8K1sdVCTQQtVagu0wg28tdEXJ2F3FppjJ
-   H2zM+qHMs9c03iLm1oS5KGIcAHefiHVkvMmkXIYZ6skRoJxTY2V8MgRI/
-   dk5o+lXVUQ70HdP75959AA6j1rd3p3kLt5a7RWRyUD5RBQHsv8T2Szexc
-   Q==;
-X-CSE-ConnectionGUID: 9cEGK1k+SLK2bK9//6i4Sw==
-X-CSE-MsgGUID: hikzge1fSnGUOy0zn1DMXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="54493393"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="54493393"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:40:26 -0700
-X-CSE-ConnectionGUID: Idk7BbUbTx23qlSXeR/cgA==
-X-CSE-MsgGUID: WTfntceBRdWE7g1xuK9Egw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="154400005"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.246.189])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:40:20 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	dionnaglaze@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	Cathy Zhang <cathy.zhang@intel.com>
-Subject: [PATCH 4/4] x86/sgx: Implement ENCLS[EUPDATESVN] and opportunistically call it during first EPC page alloc
-Date: Fri, 21 Mar 2025 14:34:43 +0200
-Message-ID: <20250321123938.802763-5-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250321123938.802763-1-elena.reshetova@intel.com>
-References: <20250321123938.802763-1-elena.reshetova@intel.com>
+	s=arc-20240116; t=1742560542; c=relaxed/simple;
+	bh=6PRbJ7TQ5aODdbz0m2PU+5RLlhJgh3PHA4Yj0p5qlTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RCTHjBRjPRYlTthil19hLtAe0Zov45M0X3yVf1uu4i1gybMbHRbZ8WXyw5cexVvNdy626yZ5UqBqvkWOllQ4rnUTMqFWRkyCOUvxHuBcsm1QMyCa1H/KW3EUrzJOlac5gECgELVG9uI7cAs0F/gZ1ZCcgAnPeVlQWsL2QQEjsEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lj4NMOu3; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso3404414a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742560538; x=1743165338; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yv4lZ+YNLUl7ot9RW8qDQsIhZ1LLB6J6i6RU1rh9WlA=;
+        b=lj4NMOu3omf+TEDG3c+kA8Vh7ru45E0TBhNissTlAmVNDHnwS7x2W5VO8KdUj1xv5j
+         Px7PET9GHb04dmviaQMirOp0Gm4aNeSewG2COqhrDJnxAdRrhHcaWUcFK4NHIEImTGfk
+         4oGCuaSzSXvzHL39ELS/YQZjMTxLucQTxI0/nMJ0hcpKy61NayLUktIBPGT4gnN6mIJm
+         q4tRRhOkk6DiFko66uUqbIULKbx51Qx+vFw9nUaU39EQ1EsRQ6QJlJQj2SkdHA0Vrlq2
+         sSGBlMUtsvaT3b/upJ3UInahdE1N2SbMWOknlKzX/4WU60cldwZ8AQ/jEpjfvkR8xXpP
+         ZA0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742560538; x=1743165338;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yv4lZ+YNLUl7ot9RW8qDQsIhZ1LLB6J6i6RU1rh9WlA=;
+        b=Lfnr8fO9k/1oQcqbPVfz3ymzRon+bMBR/Wm/bdh5faEvp05zXVcysXUI4Gv3CJX9Vx
+         EgRynCn0XddGflsxXdD3EwAxBY8yFU7hdcYICvwYNoeFshNrs3HHNOQrExKPfviW1RmH
+         ttuYb87DTNt3vM5ru1bOU7Q5OTt5Oz6EFgGrluqtyM4sxEQkQ7VKYCuW1XE2oCKSiLFy
+         4kNkh3frsHo3LWWxm0V8T5LEJSLaVJjIkShEjg0h8IpYq0qjKw0ax4aJc6M+UZUr5F0k
+         BrOrotX1RlsyjVbhcEpfFl20mO5D/+D4xLKnrhiX/noqgupGOHVTOWvcwLTn5+7Vg9gk
+         fmzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5iYXNor8IcvmtTo2nFZSo011B/tIGVIaVs7ZSnhxCEM1fuu/nUU4mOm+JIqmnxUobH3mNr8ysfqoMqRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrVObrBeVUPjWFIZkfZiG5EplAQReFK/klhpsX0aXuh5417h7z
+	JcpaFZJ0t+N+YmCHQLivRcEQ9mQ+70CxXb8do9OyOcwXiF+yoOBKzbPtdq7BrMk=
+X-Gm-Gg: ASbGncsCi+P53LjMJBz0Kv68OkN0mNONaCJser78Piy4yp5T31qdeCZmfLUiC/PBoK8
+	X0i6fPa/vk3UdyMRrDV9RMTo/MLr5PDf8dabDjcV/cOwlihPFURnQK7ZZIkKrg/3SoLumMNSzzF
+	I5kNECw759lCLy0lpACjr3D45KddRoxSCpc3RcbGhi5EEcGB3W6nPfM0rY8gzhybQcJAZ0J+vCl
+	6SZJk2JXtu4NPNKkHk+2lL2rQL/kzthyDGzD26h2347ZNJTgCP2CdlVXrjKARipPnOolzjK+Bts
+	x6R9tWR8wwi0PVW5KP1e/BwkBpxKC4PTTBDvKAWDoKjgypPsIWp3OByuV3gx90u2G/wfSYQXHw=
+	=
+X-Google-Smtp-Source: AGHT+IG2h1yWDQQeNTqSEG97hM0WQIsywT10+rmqmILs3H3/8OMMRH7lWKNJLMtf+dIGR5DUR3nMqA==
+X-Received: by 2002:a05:6402:51d4:b0:5e0:8c55:501 with SMTP id 4fb4d7f45d1cf-5ebcd41677amr2789203a12.7.1742560537711;
+        Fri, 21 Mar 2025 05:35:37 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c774esm1257920a12.59.2025.03.21.05.35.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 05:35:37 -0700 (PDT)
+Message-ID: <b1aed195-b2e6-4f48-ba10-3049d74085a9@linaro.org>
+Date: Fri, 21 Mar 2025 12:35:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] ASoC: codecs: wcd938x: add mux control support for
+ hp audio mux
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
+ krzk+dt@kernel.org, ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, johan+linaro@kernel.org
+References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
+ <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
+ <rdvsnxuc6by6sci56sh7thzpxo5cqi7q24fnmc7hi5yrfszwrg@kqjpiilko3xo>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <rdvsnxuc6by6sci56sh7thzpxo5cqi7q24fnmc7hi5yrfszwrg@kqjpiilko3xo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGX architecture introduced  a new instruction called EUPDATESVN [1]
-to Ice Lake. It allows updating security SVN version, given that EPC
-is completely empty. The latter is required for security reasons
-in order to reason that enclave security posture is as secure as the
-security SVN version of the TCB that created it.
 
-Additionally it is important to ensure that while ENCLS[EUPDATESVN]
-runs, no concurrent page creation happens in EPC, because it might
-result in #GP delivered to the creator. Legacy SW might not be prepared
-to handle such unexpected #GPs and therefore this patch introduces
-a locking mechanism to ensure no concurrent EPC allocations can happen.
 
-It is also ensured that ENCLS[EUPDATESVN] is not called when running
-in a VM since it does not have a meaning in this context (microcode
-updates application is limited to the host OS) and will create
-unnecessary load.
+On 20/03/2025 14:03, Dmitry Baryshkov wrote:
+> On Thu, Mar 20, 2025 at 11:56:32AM +0000, srinivas.kandagatla@linaro.org wrote:
+>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>
+>> On some platforms to minimise pop and click during switching between
+>> CTIA and OMTP headset an additional HiFi mux is used. Most common
+>> case is that this switch is switched on by default, but on some
+>> platforms this needs a regulator enable.
+>>
+>> move to using mux control to enable both regulator and handle gpios,
+>> deprecate the usage of gpio.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   sound/soc/codecs/Kconfig   |  2 ++
+>>   sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
+>>   2 files changed, 32 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+>> index ee35f3aa5521..b04076282c8b 100644
+>> --- a/sound/soc/codecs/Kconfig
+>> +++ b/sound/soc/codecs/Kconfig
+>> @@ -2226,6 +2226,8 @@ config SND_SOC_WCD938X
+>>   	tristate
+>>   	depends on SOUNDWIRE || !SOUNDWIRE
+>>   	select SND_SOC_WCD_CLASSH
+>> +	select MULTIPLEXER
+>> +	imply MUX_GPIO
+> 
+> Why? This is true for a particular platform, isn't it?
 
-The implementation of ENCLS[EUPDATESVN] is based on previous submision in [2]
+We want to move the codec to use gpio mux instead of using gpios directly
 
-[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
-[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/T/#medb89e6a916337b4f9e68c736a295ba0ae99ac90
+So this become codec specific, rather than platform.
 
-Co-developed-by: Cathy Zhang <cathy.zhang@intel.com>
-Signed-off-by: Cathy Zhang <cathy.zhang@intel.com>
-Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- arch/x86/include/asm/sgx.h      | 33 +++++++++--------
- arch/x86/kernel/cpu/sgx/encls.h |  6 +++
- arch/x86/kernel/cpu/sgx/main.c  | 65 ++++++++++++++++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/sgx.h   |  2 +
- 4 files changed, 90 insertions(+), 16 deletions(-)
+> 
+>>   
+>>   config SND_SOC_WCD938X_SDW
+>>   	tristate "WCD9380/WCD9385 Codec - SDW"
+>> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+>> index f2a4f3262bdb..b7a235eef6ba 100644
+>> --- a/sound/soc/codecs/wcd938x.c
+>> +++ b/sound/soc/codecs/wcd938x.c
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/regmap.h>
+>>   #include <sound/soc.h>
+>>   #include <sound/soc-dapm.h>
+>> +#include <linux/mux/consumer.h>
+>>   #include <linux/regulator/consumer.h>
+>>   
+>>   #include "wcd-clsh-v2.h"
+>> @@ -178,6 +179,8 @@ struct wcd938x_priv {
+>>   	int variant;
+>>   	int reset_gpio;
+>>   	struct gpio_desc *us_euro_gpio;
+>> +	struct mux_control *us_euro_mux;
+>> +	u32 mux_state;
+>>   	u32 micb1_mv;
+>>   	u32 micb2_mv;
+>>   	u32 micb3_mv;
+>> @@ -3243,9 +3246,16 @@ static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component, bool activ
+>>   
+>>   	wcd938x = snd_soc_component_get_drvdata(component);
+>>   
+>> -	value = gpiod_get_value(wcd938x->us_euro_gpio);
+>> +	if (!wcd938x->us_euro_mux) {
+>> +		value = gpiod_get_value(wcd938x->us_euro_gpio);
+>>   
+>> -	gpiod_set_value(wcd938x->us_euro_gpio, !value);
+>> +		gpiod_set_value(wcd938x->us_euro_gpio, !value);
+> 
+> This looks like a separate topic, but why is 'active' being ignored?
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 8ba39bbf4e91..5caf5c31ebc6 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -26,23 +26,26 @@
- #define SGX_CPUID_EPC_SECTION	0x1
- /* The bitmask for the EPC section type. */
- #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
-+/* EUPDATESVN presence indication */
-+#define SGX_CPUID_EUPDATESVN	BIT(10)
- 
- enum sgx_encls_function {
--	ECREATE	= 0x00,
--	EADD	= 0x01,
--	EINIT	= 0x02,
--	EREMOVE	= 0x03,
--	EDGBRD	= 0x04,
--	EDGBWR	= 0x05,
--	EEXTEND	= 0x06,
--	ELDU	= 0x08,
--	EBLOCK	= 0x09,
--	EPA	= 0x0A,
--	EWB	= 0x0B,
--	ETRACK	= 0x0C,
--	EAUG	= 0x0D,
--	EMODPR	= 0x0E,
--	EMODT	= 0x0F,
-+	ECREATE		= 0x00,
-+	EADD		= 0x01,
-+	EINIT		= 0x02,
-+	EREMOVE		= 0x03,
-+	EDGBRD		= 0x04,
-+	EDGBWR		= 0x05,
-+	EEXTEND		= 0x06,
-+	ELDU		= 0x08,
-+	EBLOCK		= 0x09,
-+	EPA		= 0x0A,
-+	EWB		= 0x0B,
-+	ETRACK		= 0x0C,
-+	EAUG		= 0x0D,
-+	EMODPR		= 0x0E,
-+	EMODT		= 0x0F,
-+	EUPDATESVN	= 0x18,
- };
- 
- /**
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 99004b02e2ed..3d83c76dc91f 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -233,4 +233,10 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
- 	return __encls_2(EAUG, pginfo, addr);
- }
- 
-+/* Update CPUSVN at runtime. */
-+static inline int __eupdatesvn(void)
-+{
-+	return __encls_ret_1(EUPDATESVN, "");
-+}
-+
- #endif /* _X86_ENCLS_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index b61d3bad0446..698921229094 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -32,6 +32,11 @@ static DEFINE_XARRAY(sgx_epc_address_space);
- static LIST_HEAD(sgx_active_page_list);
- static DEFINE_SPINLOCK(sgx_reclaimer_lock);
- 
-+/* This lock is held to prevent new EPC pages from being created
-+ * during the execution of ENCLS[EUPDATESVN].
-+ */
-+static DEFINE_SPINLOCK(sgx_epc_eupdatesvn_lock);
-+
- static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
- static unsigned long sgx_nr_total_pages;
- 
-@@ -457,7 +462,17 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
- 	page->flags = 0;
- 
- 	spin_unlock(&node->lock);
--	atomic_long_inc(&sgx_nr_used_pages);
-+
-+	if (!atomic_long_inc_not_zero(&sgx_nr_used_pages)) {
-+		spin_lock(&sgx_epc_eupdatesvn_lock);
-+		/* Only call sgx_updatesvn() once the first enclave's
-+		 * page is allocated from EPC
-+		 */
-+		if (atomic_long_read(&sgx_nr_used_pages) == 0)
-+			sgx_updatesvn();
-+		atomic_long_inc(&sgx_nr_used_pages);
-+		spin_unlock(&sgx_epc_eupdatesvn_lock);
-+	}
- 
- 	return page;
- }
-@@ -970,3 +985,51 @@ static int __init sgx_init(void)
- }
- 
- device_initcall(sgx_init);
-+
-+/**
-+ * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
-+ * If EPC is ready, this instruction will update CPUSVN to the currently
-+ * loaded microcode update SVN and generate new cryptographic assets.
-+ */
-+void sgx_updatesvn(void)
-+{
-+	int ret;
-+	int retry = 10;
-+
-+	lockdep_assert_held(&sgx_epc_eupdatesvn_lock);
-+
-+	/* Do not execute EUPDATESVN if instruction is unavalible or running in a VM */
-+	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN) ||
-+		    boot_cpu_has(X86_FEATURE_HYPERVISOR))
-+		return;
-+
-+	do {
-+		ret = __eupdatesvn();
-+		if (ret != SGX_INSUFFICIENT_ENTROPY)
-+			break;
-+
-+	} while (--retry);
-+
-+	switch (ret) {
-+	case 0:
-+		pr_debug("EUPDATESVN was successful!\n");
-+		break;
-+	case SGX_NO_UPDATE:
-+		pr_debug("EUPDATESVN was successful, but CPUSVN was not updated, "
-+			"because current SVN was not newer than CPUSVN.\n");
-+		break;
-+	case SGX_EPC_NOT_READY:
-+		pr_debug("EPC is not ready for SVN update.");
-+		break;
-+	case SGX_INSUFFICIENT_ENTROPY:
-+		pr_debug("CPUSVN update is failed due to Insufficient entropy in RNG, "
-+			"please try it later.\n");
-+		break;
-+	case SGX_EPC_PAGE_CONFLICT:
-+		pr_debug("CPUSVN update is failed due to concurrency violation, please "
-+			"stop running any other ENCLS leaf and try it later.\n");
-+		break;
-+	default:
-+		break;
-+	}
-+}
-diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index d2dad21259a8..92c9e226f1b5 100644
---- a/arch/x86/kernel/cpu/sgx/sgx.h
-+++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -104,4 +104,6 @@ static inline int __init sgx_vepc_init(void)
- 
- void sgx_update_lepubkeyhash(u64 *lepubkeyhash);
- 
-+void sgx_updatesvn(void);
-+
- #endif /* _X86_SGX_H */
--- 
-2.45.2
+We should be able to use it.. will fix it in next version for mux usecase.
 
+--srini
+> 
+>> +	} else {
+>> +		mux_control_deselect(wcd938x->us_euro_mux);
+>> +		wcd938x->mux_state = !wcd938x->mux_state;
+>> +		if (mux_control_select(wcd938x->us_euro_mux, wcd938x->mux_state))
+> 
+> Can't it just be 'mux_control_select(wcd938x->us_euro_mux, active)' ?
+> 
+>> +			dev_err(component->dev, "Unable to select us/euro mux state\n");
+>> +	}
+>>   
+>>   	return true;
+>>   }
+> 
 
