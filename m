@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-571601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F18A6BF97
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:19:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DACA6BF7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC521B61CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F3C3B91E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F143622836C;
-	Fri, 21 Mar 2025 16:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7844222B8CC;
+	Fri, 21 Mar 2025 16:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRS2Kd/2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A7JGV9oI"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB3E1DEFC5
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4D11E3DFC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573783; cv=none; b=EVEny0C7d7IR0TLxwGbs0OMsuQJxPtZWeevKliBDxgixzJs5erauJ0i82eoQ1hx1hoNBm5v0J00JX2iPCXsu1a/kYqCAr73XaflbGhsVWTUoaIltfhjTsZmbF51rpybsPpnSxle+/D8jvuG/rHp8znwv0R5C3y1Cq+zNNc4R+ZM=
+	t=1742573717; cv=none; b=Zvmj4xnlNieef9szBqUwvs2Ywe0jst7dSUq2Prky7tdB8CoogSftYxC4lkiWwlvLpRY+AnR0zRgKKQzMxbtwBRwNXN39gaoBam/8eVtMh0zvNn8m3X5E8I4Z2T7ZyoWFUw6pJXH7oE6Nv2nB3uhwxgzwVCFKfzqH2mntXDO/glk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573783; c=relaxed/simple;
-	bh=pFeQIM0elSHXudDzaZqSa3sSLY7KBkvo9aowDlPa0tY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XyLHhKx6c3awzf3C/yvF/+JNDO14vj023TpS8gML7l8epGkurGRUzIH641lkYZ9aT2TqguY6GU+QJx68N4HPab6bSCezF7fYK1uTGSpF4A9I+Nxdp3yPd9TVTQhnLHbwF6lgjQnXG5C2AVsuiCpNbcEOlvsTYE7m1AWspaKIQzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRS2Kd/2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742573781;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mC48yAiQls1tllwqU0y43QmgvHaHdh/HKhHrXStRZ/Q=;
-	b=TRS2Kd/2tcXJN1gFVKY79supQq6/2shlYtetOKIGyl+Ydzw8VRHhNy2eQMK8FcMBaW7Obh
-	yNHUuM6N95K90NTkQ/dhW2nibZihtI34Kuq5n5oFSlD+45aEMph5gdEbYz+ZnclDO6pj8t
-	skgRFvVwBNZjAcWkNe+gUeIZxvuvuus=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-N9C-eFN8PcyB-SoiNJS0Tw-1; Fri, 21 Mar 2025 12:16:19 -0400
-X-MC-Unique: N9C-eFN8PcyB-SoiNJS0Tw-1
-X-Mimecast-MFC-AGG-ID: N9C-eFN8PcyB-SoiNJS0Tw_1742573779
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85e15e32366so220662539f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:16:19 -0700 (PDT)
+	s=arc-20240116; t=1742573717; c=relaxed/simple;
+	bh=t0I85wJl6Q02gWZfsGxbdmSAryl/5ThAyE7h6UCvpP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5Tcj4NQW+AcWyqtiGe3mMYbRqGpEr5e+HOyM7H+epn06uUsaLKVt+ihLCx18xBRVdcu/zDtI3BhFLJDtr9QOgwLJrdAfAsO27lDtQJaADxhwuk7TrT8/9e3q9KO5VoXvbmUiFvYCyUnPejh9nfp3nkKGzB0pJpCaOtPL8ZYdnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A7JGV9oI; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54acc04516fso1934194e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742573714; x=1743178514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xxLB0h16iEEcVhCHw+83yfdc4253yuJpjZl1F1gKp+U=;
+        b=A7JGV9oIh6ZmKwqaD71AYdB8LPOezlNH2kf2dHxfonUSKw1QOz6ojZeb8Z2027BhiP
+         P+vDFbddpHbxA3WKgumIYQiE+PodnoVXVmmbEOuiFpBUZOReK9P4GrWFVLCzKzd37j+5
+         xRaFNQQKnYPaL3TrurnBf7l0w0Vx29gAmKxYmS+w1p+/gsTOcIInm9cZE8G5mfrnbKkL
+         3lMFgL0x8z6ycMHPKKqjo+ErAkES9oOgW1P+4ZiJj7AeT9LvSoKwrmbmymk2HkUz2tNp
+         PhwlMjZjRMwx8KTz3WqeSedAiXiXPlxR5W1Woom/BBc4KAzxKu1wtuJtbwD4fCTeR7u2
+         S7TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573779; x=1743178579;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mC48yAiQls1tllwqU0y43QmgvHaHdh/HKhHrXStRZ/Q=;
-        b=kjeaAmYTIlJAq2NhJ1kquzKgZztrvZdUl9emmaSyWr4FwhKVlHzBqH9suJt4gCtc3w
-         PwO1/2d3TI3cYW14ryJGttXyjdjCAKtKS+Z5j2we6SOsaxXaBmJD0N+oDeHmYggRwhmR
-         +VF6Jp1bGjRL58UWWosUKve4QHTfYCyPml3ISRQwDzezLc+u7XIXuNKxjvqSQ3O4aa2N
-         GN9+qVYdphTE/okBv/rdlfs+puvH02GkvQFU1BnFVKl//J7x3VCW9uUAR6eoBVDEvTr5
-         z3FvzBOk1SYKy9K/MJfUEAFXHggpwiB0d+XyVGfM7TQDaP2ollgOo7Gm5Ji8yx5w/M4F
-         sRNA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+kNAgBpYg84Q3fEbTPWLJJDLwRW6dM711QKHGzNfvjZbBbDuCQ2BSat8+5Fj18T3gkaKIxBUzzVrKGf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUlP6/9Qa8UWFi0S6+hEtyopPySHNIcNm5oqxbfhnbQHvIy8Pw
-	Kam2dE6I2u3wnA9+g5NXDnE+Czj7+QJGztpTo+qMU9UiVlTCqzHxEXDCdDSB2PYo/Nud/3/n/oG
-	4Zxy1Up1KYRPVZRUJxnw+OD1HFTMBU3zoIkd3gi56gNvth2/snWCWIaKFyKlzWQ==
-X-Gm-Gg: ASbGncu6lkTJsf5sJFq9UOUzquX+5yg+6+hZ6DUXoO5wGauAnOtln+DQPrKG6KLarRt
-	JdqUB6BYlOUMsKYas8rnCoJzdKEdMv9Zfs7tQh6FfMJ7k72CFH8IE+Gj7P98ux8qfs7C0Nhl59W
-	MS4N8iDi6GraqBglWTCJD5y6zC7WMa332Ivlh8v+P0M0fLmhpgSSfio/uomgOgJiVJ34PCK0jZh
-	EBs9b1O6fNkocRagLxFoKD8fmCQg85mhdhbRGJ6Z7AiIjCFcpo4EGywesZj8d7nL5W2Og+6Tb4m
-	nuK02NLEXZdYWvChUpKzuV4iXOkBvg1hVgvN7u63JG0x+d9+Ax+e2c4R8+sX8D8tHE4kpYqOgyQ
-	=
-X-Received: by 2002:a05:6602:4088:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-85e2cb417c3mr499149739f.14.1742573778727;
-        Fri, 21 Mar 2025 09:16:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGbaQHrqE43XUvLxfY1cyZCTiEOWEjd8FXpM95Z7lNYACE/IjdXtXMvElMRWZlz02YAI2fshQ==
-X-Received: by 2002:a05:6602:4088:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-85e2cb417c3mr499145039f.14.1742573778344;
-        Fri, 21 Mar 2025 09:16:18 -0700 (PDT)
-Received: from rhdev.redhat.com (2603-9001-3d00-5353-0000-0000-0000-1422.inf6.spectrum.com. [2603:9001:3d00:5353::1422])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbeb565csm495653173.131.2025.03.21.09.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:16:17 -0700 (PDT)
-From: Jennifer Berringer <jberring@redhat.com>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jennifer Berringer <jberring@redhat.com>
-Subject: [PATCH v5] power: reset: nvmem-reboot-mode: support smaller magic
-Date: Fri, 21 Mar 2025 12:14:49 -0400
-Message-ID: <20250321161449.1175473-1-jberring@redhat.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1742573714; x=1743178514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xxLB0h16iEEcVhCHw+83yfdc4253yuJpjZl1F1gKp+U=;
+        b=Y1wVBF8UOjnjPhgMS10oLXMUMTyijY59By9v5e/jzLiVpKrhNG+NKGcMZhA2FoazhT
+         l7hanhlnlyAgiw9E8iHg8QuQGv0gr26hgPS3uThP62MPX5CNnTrqo/5C6qfdUchkza5V
+         gI+VDlNsVuaiJ3vyM3/vArHDpWU7/dZTR4WfW4GZSbJm7Sx3FCE9oj0E/XcQapqYbP/6
+         1f5sS+s3jBEEpaIx8mnIMINNxG6f6UAtDx55ya5PN25QD+H8upfUjSHEWt+YhBEfSomE
+         V8cSokez1NEPxRw4AoaRU1xBFkItfsxwzZAkx1H6A9YSOxISi1aVlxUUDPFaEqpLW+mw
+         andQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURhB0ys4qha5hPMcWTE6k+iN7zh6FS5Jh4V7SMFc8qv3X/mOwE2OaJ/DaIoUdcogclndlBtJydY3eS2aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhNMJ02mojo8F8GRKRR1YDMGtTgxpA2TWkY5rD/g83H2P0CQ+O
+	ESD88aI2Fk5n1W4bTghN9ZxjZeNjgKelbhX++v9G9wTWfIzqQSN4WKobYagXYJs480h+XQUNCG6
+	DmWhW0HABVhc6k3w+AUbi5iYphN79tBxfynPO3g==
+X-Gm-Gg: ASbGncsq2hs5SbRkxlpzXTOpAWAhtYJz05vgjN/75zv9mfsvlMmQzOsJf14DPH2+YAL
+	xIIYDzBypUIti/sG6MEi8EDmR42OkIqdiTug4JimVJh+vEAqvGpwZOOIwIHhBwvXG0l8z8ATKbw
+	lL6U7UDRP4JmFJUeExu5j9kiM9Ab+G/ExhI4yfqVXPue8ukqhmCQCxBRboLjU=
+X-Google-Smtp-Source: AGHT+IFpr7tj7lCX7rK9TyEdAX36qI3BUwAIzNojkRB11whvA4tpCS//FWsPqh8dSvOvjgyUXnDZxoxT5uuaNvkOseo=
+X-Received: by 2002:a05:6512:1088:b0:549:8bb2:8575 with SMTP id
+ 2adb3069b0e04-54ad6476834mr1559553e87.10.1742573713747; Fri, 21 Mar 2025
+ 09:15:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250315194002.13778-1-marco.crivellari@suse.com>
+ <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Fri, 21 Mar 2025 17:15:02 +0100
+X-Gm-Features: AQ5f1JowyTWw49XnxSHXBxJuGDwxUK9dmkDqvxpfG5_TtVO4oP_4udCpS9k6fzw
+Message-ID: <CAAofZF4gy6WJKLK4TzF5aV7+ca3gob5jVz3XQZyGrTpfnCsn_Q@mail.gmail.com>
+Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some devices, such as Qualcomm sa8775p, have an nvmem reboot mode cell
-that is only 1 byte, which resulted in nvmem_reboot_mode_write() failing
-when it attempts to write a 4-byte magic. Checking the nvmem cell size
-and writing only the lower bits of the reboot mode magic is needed for
-these devices.
+Hi Maciej,
 
-Signed-off-by: Jennifer Berringer <jberring@redhat.com>
----
-This patch depends on [1].
+On Fri, Mar 21, 2025 at 12:53=E2=80=AFPM Maciej W. Rozycki <macro@orcam.me.=
+uk> wrote:
+>  This instruction sequence still suffers from the coprocessor move delay
+> hazard.  How many times do I need to request to get it fixed (counting
+> three so far)?
 
-[1] https://lore.kernel.org/all/20250318094716.3053546-5-o.rempel@pengutronix.de/
+Can I have more details about this?
 
-Changes v5:
-- Switch to using nvmem_cell_get_size() from the above linked patch
-  instead of introducing another function with the same purpose.
----
- drivers/power/reset/nvmem-reboot-mode.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+I can see it is the same code present also in local_irq_enable()
+(arch_local_irq_enable()),
+and from the manual I've seen:
 
-diff --git a/drivers/power/reset/nvmem-reboot-mode.c b/drivers/power/reset/nvmem-reboot-mode.c
-index 41530b70cfc4..6be178be4a58 100644
---- a/drivers/power/reset/nvmem-reboot-mode.c
-+++ b/drivers/power/reset/nvmem-reboot-mode.c
-@@ -20,11 +20,23 @@ static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
- 				    unsigned int magic)
- {
- 	int ret;
-+	u8 *magic_ptr = (u8 *) &magic;
-+	size_t cell_size;
- 	struct nvmem_reboot_mode *nvmem_rbm;
- 
- 	nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
- 
--	ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
-+	ret = nvmem_cell_get_size(nvmem_rbm->cell, &cell_size, NULL);
-+	if (ret < 0) {
-+		dev_err(reboot->dev, "failed to get reboot mode nvmem cell size\n");
-+		return ret;
-+	}
-+
-+	/* Use magic's low-order bytes when writing to a smaller cell. */
-+	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) && cell_size < sizeof(magic))
-+		magic_ptr += sizeof(magic) - cell_size;
-+
-+	ret = nvmem_cell_write(nvmem_rbm->cell, magic_ptr, MIN(cell_size, sizeof(magic)));
- 	if (ret < 0)
- 		dev_err(reboot->dev, "update reboot mode bits failed\n");
- 
--- 
-2.48.1
+"The Spacing column shown in Table 2.6 and Table 2.7 indicates the
+number of unrelated instructions (such as NOPs or SSNOPs) that,
+prior to the capabilities of Release 2, would need to be placed
+between the producer and consumer of the hazard in order to ensure
+that the effects of the first instruction are seen by the second instructio=
+n."
 
+The "Spacing column" value is 3, indeed.
+
+"With the hazard elimination instructions available in Release 2, the
+preferred method to eliminate hazards is to place one of the
+instructions listed in Table 2.8 between the producer and consumer of the
+hazard. Execution hazards can be removed by using the EHB [...]"
+
+What am I missing?
+
+Thanks in advance
+
+
+--
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
+
+
+
+
+marco.crivellari@suse.com
 
