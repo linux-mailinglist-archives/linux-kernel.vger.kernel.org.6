@@ -1,217 +1,198 @@
-Return-Path: <linux-kernel+bounces-571647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8149CA6C02B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39097A6C038
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBFC57AA58E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:37:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A80A07AB84D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4C22CBFD;
-	Fri, 21 Mar 2025 16:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C59922D4E1;
+	Fri, 21 Mar 2025 16:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K8prQpQw"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="RQlj3h8q";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="imyEzbi+"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2574522CBC0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742575115; cv=none; b=lTl4J+KNexzJFr8P/MizVZTJF4yX6Osd7BnlxdEzMcXDAmW6HuWdzAiQkG8wYfPXGjpnIETrkw/mE8E279AZxMRGNWBMtGmy+Q3fyAR4rwSbsztxAYx8HH4QQjx4dvmoro1J6lsIAIVge70HoJKS3obwq+N7jdOzaY7GSwLO/s0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742575115; c=relaxed/simple;
-	bh=SGMyVxnZ+MzTdvrIj2s8i38Iq/iGKfsChbod70j0t28=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OtH0uo8HvGbZtGTlp1ub9Chj4tWn9kB9R7JiT/Ppoo13OuSqSGlurXw7Y+4ihJbl1WTvcPVjvdU6x2P+2KpWxA8JUd+j/VKesFU6EFbBNVGh5Xy5lgm1EP2dosLNYbZR+2M5KuXP7+YkCt+oizMvtqd4NgoNTW6U6T6fEUFsvSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K8prQpQw; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913b539aabso1226336f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:38:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD4D22CBE4;
+	Fri, 21 Mar 2025 16:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742575198; cv=fail; b=p2BoxX15V0pJUpoV4ViljBSJnbqC9Oh0aefYuPDvLAL8ocb+UmR58YHlZk6uRKhAsaYAcpov7Go9ZtF2Onl2ClO5W4g4IX/2Y26VXpnaTUAWn/9nkobRqspy1G4nPjEEgm9NqYNP+snlQWNS8yUBrDVJVTubsOnU0W1M1BdR9rw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742575198; c=relaxed/simple;
+	bh=u11iIfydieEEXrNHuJeYNgeICbJmVhpwCDzkc8VFeV0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZgWfjz6K4QBxngFgimhDIEYUKpfL6NUM7FlcYVek4AU5oHci00WyQfONWHdwxEhwBMwiLPzHMiF4lLZRB2D3LoHefR8bUPx5aNkDxliwXhjvIP6wphU1t710300M0ItvJzIhmdDmfEX3zMQTUPo/N1z/bc2ZKwG/0aQJPEw7scI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=RQlj3h8q; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=imyEzbi+; arc=fail smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L7jNnv019850;
+	Fri, 21 Mar 2025 11:39:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=f477woEGjffaseZW
+	3/eQnsrB+nus71tPR8ljlCWHOsM=; b=RQlj3h8qSpxojUcYmZQw5EuR4IY4Mj5f
+	+b+hUj3J3ae/fN0RvWH6eho4NkHFXI6UuPSy6yujsLR+sslsZsUSOZbGHqoMMyBN
+	XJRdETl+BI4/GFlNUUpS8hlxEajghZZh1V1n0k/vxwCg1+HPwlaTCJtc9AcmvqG+
+	LLEGHOKmqXYoCxgl3IRA7va8bvop80WL4LZRwBNG3I6+ITXN3NemQwYoMVBZjGNu
+	X6ePpp3mUcwrWcYSeYL0/yFbL5EWSeNLQURR3VgYt50NnVIFpFJVg3oT9IO90mT4
+	dEo41EpM07oPtwOwOgA8zDEIZusD3bhuUIQjbFXtZfL6iRtmGCro9A==
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45h40m11yj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 11:39:35 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DpgB+LgQtmCKKBgk3gQNIexvJD0MIYYMFLcFt2iISf7DjB8ncBiAW7bRjUiBNIHWZZDK2NlVQt/srpGPzQGIm73HAAfyz+WrnG+EMre4qcwlm0VJpYtTeqqU4QebEGhBwerrtxfKCHid9RztVAxXtfr+qQS/cx9dsjPFowKnoKJkKZHmZwOVVaDPAJvQyg1Kr6oc3wCUcCL2FjPHWkAjpw8bG/29NiabPkcvAGOMPcp3txZC2Dw0tNYm4DU3sZU/0stNJhmE/In0ChZN3TXfdQngo+PJP9CgcL/Ox0BcBkA//lGh+qlHlAJYNgA8juGKzniASURegssH27M+868wVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f477woEGjffaseZW3/eQnsrB+nus71tPR8ljlCWHOsM=;
+ b=RpWUgILjpDNTnSDnbv/QKLwOJMz/k6mpMTKWi/PEtxEqxspK9XMJN7CT8wDpBW3X8UGxYe9I8Rtz+vSHe3iSRcUu/J16o0++3N0FTDWIS/qJOrF2DU4TQjCcSyEY3Fmvkh3D2jUHGFp2CGGKZGS0gpKjeP/R2Bn5ws7EjyDiS8NAueGJU5sFlCN3u7gPFffy4abYeyiB0wD3CSJCqrOiMS2TPuSup9TXV/8pTmBXWhEPoFAfO87ZJYmeBN2toQcjaqLF2CILHCoqhyS2Atex7cxUlJPi3oEbW8vtsW+HOXf2lk30EN5KhauI5FLjZ8AQ22rE36JNc6MxGBokrDTHUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
+ dmarc=temperror action=none header.from=opensource.cirrus.com; dkim=none
+ (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742575111; x=1743179911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M66IomIzkzJINrakLHl9O9LuZS7ixOMTsWRGHpefK08=;
-        b=K8prQpQw/msqvVuL7EOCuXMyrRzbuTYiIM8WuXSwVLs7xkIaonU2Aq7fcTFAzzaevY
-         CMtl3YmN+N9AiZlp1nhIuO/KKGdAVufXQvS2lvis2VdNwoWHTWD3Cbeycq6qb6RNYk5f
-         2c+Xcdwu+mAyRXqUTqTtnON9zT8mIiVh2k+RkBOCvhb84j9gg22/Vm01RQC3o/sLBsnl
-         MZx64P+fPgU0xS3jeitj1seg+cWwXK4YDpPyblT/bLmRiAVQe7hUmPtXFHqtM1sQwKrm
-         klBVxZKu4Vi+IGX3mSQmNU5D21bCr8qe9R+7OZTXwMVhE5EEU42LEyekdTr4vPRR5fxk
-         uO2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742575111; x=1743179911;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M66IomIzkzJINrakLHl9O9LuZS7ixOMTsWRGHpefK08=;
-        b=fJyvG0IjB6TzGYupQw5UBbhIY/pTpPofr+fcPnUz4iKDsZNO12/j/WIZFtafrFJm9r
-         DtPvxLxo391kXuIIGcsiYLMKh5oyr8G1PDnmQ9letzfw+6XhwO0uWTpvtU2ktW/gs+nK
-         rVpAY53pyWXxM6HyQxROESgInQb8rPzt1J+Ol0dPxW+4APGYIrh83wTBnLodlMyGfbVE
-         r/w/4OXvEPiU421/N43X+r4akd8TkCK4/0W6+vtAGZ0BSdv4LvjbNXR1kSoEI+E4N15P
-         7D479kUZtTUrr+w/GxXVGhXOn2ZyVHEBrzNjyrIWbDI7d1eamh0ZE1zci8gWKZl3sDXF
-         5DNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrSaoSW3Ql1zGAWXVE1V79To0BI6wtKEh2I/6vLSaB8ZSQd6A4RcaCY5w4DlfSD0BhAdQWGnFb9kXqGk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP5ZUKN3dJXobmk/dbyiTKazr9T44NG2q1SvBCdBnanE85PimC
-	fYofFEjP4QRwQ1TQf9pKngTG9riucBrQf6eZ15xQ0Pkg9zcz9u3re16BOHZFDjs=
-X-Gm-Gg: ASbGncvs4uweY9HFoCBdqo0BRiXeJChfbE7ZZbHov7wK5uG3OHyfuQt84blyTnm4NzM
-	0u2q4DqNuU+aH0H2yPXlznjIk6eXq8uibHNH7Qzm65nUIEApeFNt2ZOmIdJkRouEyu1lazatzpR
-	4g9Lv9ZeV0Uf1g6XByIzystTUj3r14LXAL2KUXKPilL+/0ku0esw8d45f9+xoQT6D4aeLwj+mYX
-	zuTndMuOQfZUCMLoEQ06loi9PG/3cEO0acBNXq3+e/lMlH/RvX/ZFq///shSlgfxtcmiZrcjZws
-	QUPsGob6Hok9zI4M3CaN+uLfUR1xSK+dLsG1mGUzrdGxh4aNpA==
-X-Google-Smtp-Source: AGHT+IGs2Xs5NA9UgDikP21BJ+dhSnlUUOV2e0GxK4LQKHW92AIbM5FNZTZmXDjI3Jxw+OyKtJ/5AQ==
-X-Received: by 2002:a05:6000:401f:b0:391:22a9:4427 with SMTP id ffacd0b85a97d-3997f90f413mr3856367f8f.12.1742575111321;
-        Fri, 21 Mar 2025 09:38:31 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9efe61sm2829454f8f.97.2025.03.21.09.38.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:38:30 -0700 (PDT)
-Date: Fri, 21 Mar 2025 19:38:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Hao Yao <hao.yao@intel.com>, Jim Lai <jim.lai@intel.com>,
-	You-Sheng Yang <vicamo.yang@canonical.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH 1/8] media: i2c: add OV02E10 image sensor driver
-Message-ID: <e1f7b80c-7b7f-40d1-ab0c-051198b245e3@stanley.mountain>
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f477woEGjffaseZW3/eQnsrB+nus71tPR8ljlCWHOsM=;
+ b=imyEzbi+CoO5rJn2SPii8G7gtIrGtlfZSIHHd2cjaQ5QowQypjBagVWp+XgippjBEHprj+VvDtHpGjUYE0p8dtuvw5CqBXREViPrWpBmO35FXLZHcNlkXJnrrd1z4t2hbHXkGsFc0Ea1ndCTHOb5CaXO4ijQd4QTeFh2eEuis9k=
+Received: from BL1P222CA0002.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::7)
+ by PH0PR19MB4892.namprd19.prod.outlook.com (2603:10b6:510:94::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
+ 2025 16:39:31 +0000
+Received: from BN2PEPF0000449D.namprd02.prod.outlook.com
+ (2603:10b6:208:2c7:cafe::e8) by BL1P222CA0002.outlook.office365.com
+ (2603:10b6:208:2c7::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Fri,
+ 21 Mar 2025 16:39:31 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 84.19.233.75) smtp.mailfrom=cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=opensource.cirrus.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of cirrus.com: DNS Timeout)
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ BN2PEPF0000449D.mail.protection.outlook.com (10.167.243.148) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
+ via Frontend Transport; Fri, 21 Mar 2025 16:39:30 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id E8D85406540;
+	Fri, 21 Mar 2025 16:39:28 +0000 (UTC)
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id AE296820244;
+	Fri, 21 Mar 2025 16:39:28 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com, pierre-louis.bossart@linux.dev,
+        yung-chuan.liao@linux.intel.com, peter.ujfalusi@linux.intel.com,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: [PATCH 0/3] Add DAPM/ASoC helpers to create SDCA drivers
+Date: Fri, 21 Mar 2025 16:39:25 +0000
+Message-Id: <20250321163928.793301-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317-b4-media-comitters-next-25-03-13-ov02e10-v1-1-bd924634b889@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449D:EE_|PH0PR19MB4892:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: fd1da291-413a-4d30-6ce3-08dd6896f3f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|61400799027|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2krrG8wulOvWIAA3tMtSCHKEtCu4p40ZnIofHZ4I+K3QLlWGSpKWIdIU2Dtc?=
+ =?us-ascii?Q?SEI9qzmNhdP6tv+bAMMmofkX9sJ7iZxEk92/HaxMDn3Bwdegqprc3LLZ5Xf5?=
+ =?us-ascii?Q?vlXxHzdscwtJAXWrFzw23RUQtUfgKFE9cY2H3lBRpg2yCS28rcuuzAKNq8jn?=
+ =?us-ascii?Q?fpYHnFpvi5NNWxOQab0tAjpKSKShoy0fWaYfLLbw65uRJgw8z42DVypcsAaO?=
+ =?us-ascii?Q?c/ZNO2vapFelNZX6jT6WNXQFVXj8vRsbSSd++9lhZZQCmzXK8bfbJ4Un8iZG?=
+ =?us-ascii?Q?UvSgBZV8/4/skiv1M3sAhfm8ukEwy/1ZPknnJfBeIVoMmBZm6SNGCtVA2Cew?=
+ =?us-ascii?Q?36ngcEW6ckG+lULRH2/2+nYFSX3GMzt0qVJerTMWsu6foLH4XL2KDurdQEFH?=
+ =?us-ascii?Q?LSpztcLzVxlP7Ur+eAIBL+05JSAf0oKskpCs2DZKKhQlL8mw/8kQHBxtHCN8?=
+ =?us-ascii?Q?v/hP3xRaVMkkhySjhMKHtMgLX2FiUhTrOq4jMVVgFGtxEPGyfegePIOciGf/?=
+ =?us-ascii?Q?DiAICmJcyi1qlmEyHRNbKwm2C945+xvrSuzlUsT+NdLLUXvschDcsjZYnvgv?=
+ =?us-ascii?Q?/NH0x2p+duZ9Y09yopZyPbWKJeYOzATdIVBQTa0bFnQSpvVaVlN50pir0Xk7?=
+ =?us-ascii?Q?9tg61q47t9Ytft5RCWxnNGa7PICx74Cqq/wz1sOlEFY1ORlqMpDQpI5fGaFG?=
+ =?us-ascii?Q?pbu0XQcC8Eez0k6aKbl3NRtOX4r9jpLj0ho0hOjjM3iGJ9axi4XZ5qZnPc3k?=
+ =?us-ascii?Q?zB8qrm9R7dCeS9lbMxvFhnFQqAjbJMnAWZAiOS/iZx6Mm5I5g+nsNZg/gjFZ?=
+ =?us-ascii?Q?STAoTaszsPDaYDmzYJarz23YOH4Yec+p2GdgvEstv1R2uO3F4sBjBQkKYbvv?=
+ =?us-ascii?Q?YnWv0/nN/n91qCDEXKOgWnwoUIpBZF9i30tnDNWclXlmjSlFe+ynRdfhVg3A?=
+ =?us-ascii?Q?vfx0RvlV7Pp0GlVyjm0T71JaR+bnIzW80jXAVGzXbPK+jlEgcN/CyZl2c8WB?=
+ =?us-ascii?Q?ZayVEYX8cW292dkNoUsGvdp33QO2yIafzxoFhyD4KfZLP6TF2wqRZicFfoJh?=
+ =?us-ascii?Q?LS6HBtGWWwvIxGjI4bDL8jIe48fCkOggllWfFXX6BCIb9VOHSRzCS7pZ7jlH?=
+ =?us-ascii?Q?q7V7TmcdiVB6W7BCgCJoAjVFWNR3nv609O/IObIyvC2k5CMU0yritO3b/dKN?=
+ =?us-ascii?Q?f/mJz990Fr0F51BnBJfVeJIghqOzZQ6H15R7E4GAWpN2RqVBkLmV1x6b/eB1?=
+ =?us-ascii?Q?1cm09LwjmlP2vMIFlj45xWCxP/Pw3aDapf1WXKwFJsI6LYtsz4KPTVtgJLxL?=
+ =?us-ascii?Q?qw/MGevmYD0ymw/BP1CgXJHM1MoJx9tqhERFxNcVbV+7TL01y4riywvD12nG?=
+ =?us-ascii?Q?8ndIT4s4LG2Kuj60STNc8kSj7KN3hgFGA0LrNxUvsyXp8jJ3hKENqrqaJ6HL?=
+ =?us-ascii?Q?iYbQt1c5BlzabKXVAgAaKZmyTrTABPsqAhotAzaZCvNp6IAxWz58pOE8mOve?=
+ =?us-ascii?Q?7S7sPKyjzhTxJiE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(61400799027)(36860700013)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 16:39:30.1909
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd1da291-413a-4d30-6ce3-08dd6896f3f7
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR19MB4892
+X-Proofpoint-GUID: DgchTayQSDKF96Lj9AuY-4i_BDwOWSYD
+X-Authority-Analysis: v=2.4 cv=DdkXqutW c=1 sm=1 tr=0 ts=67dd9647 cx=c_pps a=gaH0ZU3udx4N2M5FeSqnRg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=Vs1iUdzkB0EA:10 a=s63m1ICgrNkA:10
+ a=RWc_ulEos4gA:10 a=hulU0MfjRZACQXYr7gAA:9 a=BGLuxUZjE2igh1l4FkT-:22
+X-Proofpoint-ORIG-GUID: DgchTayQSDKF96Lj9AuY-4i_BDwOWSYD
+X-Proofpoint-Spam-Reason: safe
 
-Hi Bryan,
+Add helper functions to add DAPM widgets, routes, ALSA controls,
+and DAI drivers, these will be used to create SDCA function device
+drivers.
 
-kernel test robot noticed the following build warnings:
+This series should provide most of the core functionality needed to
+get a device registered and have a working DAPM graph within the
+device. There are some features that still need additional work, these
+are marked with FIXMEs in the code. The two main things are SDCA
+Clock Muxes (not used in our devices and needs some ASoC core work),
+and better support for more complex SDCA volume control definitions
+(our parts have fairly simple volumes, and SDCA has a large amount of
+flexibility in how the volume control is specified).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bryan-O-Donoghue/media-i2c-add-OV02E10-image-sensor-driver/20250317-084316
-base:   f2151613e040973c868d28c8b00885dfab69eb75
-patch link:    https://lore.kernel.org/r/20250317-b4-media-comitters-next-25-03-13-ov02e10-v1-1-bd924634b889%40linaro.org
-patch subject: [PATCH 1/8] media: i2c: add OV02E10 image sensor driver
-config: openrisc-randconfig-r073-20250321 (https://download.01.org/0day-ci/archive/20250322/202503220055.pt1r9P7M-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 11.5.0
+The next steps in the process are to add helpers for the DAI ops
+themselves, some IRQ handling, and firmware download. And finally we
+should be able to actually add the SDCA class driver itself.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202503220055.pt1r9P7M-lkp@intel.com/
+Thanks,
+Charles
 
-smatch warnings:
-drivers/media/i2c/ov02e10.c:903 ov02e10_probe() warn: missing unwind goto?
+Charles Keepax (3):
+  ASoC: SDCA: Create DAPM widgets and routes from DisCo
+  ASoC: SDCA: Create ALSA controls from DisCo
+  ASoC: SDCA: Create DAI drivers from DisCo
 
-vim +903 drivers/media/i2c/ov02e10.c
-
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  862  static int ov02e10_probe(struct i2c_client *client)
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  863  {
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  864  	struct ov02e10 *ov02e;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  865  	int ret;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  866  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  867  	/* Check HW config */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  868  	ret = ov02e10_check_hwcfg(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  869  	if (ret)
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  870  		return ret;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  871  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  872  	ov02e = devm_kzalloc(&client->dev, sizeof(*ov02e), GFP_KERNEL);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  873  	if (!ov02e)
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  874  		return -ENOMEM;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  875  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  876  	/* Initialize subdev */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  877  	ov02e->regmap = devm_cci_regmap_init_i2c(client, 8);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  878  	if (IS_ERR(ov02e->regmap))
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  879  		return PTR_ERR(ov02e->regmap);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  880  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  881  	v4l2_i2c_subdev_init(&ov02e->sd, client, &ov02e10_subdev_ops);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  882  	ov02e10_get_pm_resources(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  883  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  884  	ret = ov02e10_power_on(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  885  	if (ret) {
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  886  		dev_err_probe(&client->dev, ret, "failed to power on\n");
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  887  		goto error_power_off;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  888  	}
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  889  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  890  	/* Check module identity */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  891  	ret = ov02e10_identify_module(ov02e);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  892  	if (ret) {
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  893  		dev_err(&client->dev, "failed to find sensor: %d\n", ret);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  894  		goto error_power_off;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  895  	}
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  896  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  897  	/* Set default mode to max resolution */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  898  	ov02e->cur_mode = &supported_modes[0];
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  899  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  900  	dev_dbg(&client->dev, "will Init controls\n");
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  901  	ret = ov02e10_init_controls(ov02e);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  902  	if (ret)
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17 @903  		return ret;
-
-goto error_power_off;?
-
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  904  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  905  	/* Initialize subdev */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  906  	ov02e->sd.internal_ops = &ov02e10_internal_ops;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  907  	ov02e->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  908  	ov02e->sd.entity.ops = &ov02e10_subdev_entity_ops;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  909  	ov02e->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  910  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  911  	/* Initialize source pad */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  912  	ov02e->pad.flags = MEDIA_PAD_FL_SOURCE;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  913  	ret = media_entity_pads_init(&ov02e->sd.entity, 1, &ov02e->pad);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  914  	if (ret) {
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  915  		dev_err(&client->dev, "%s failed:%d\n", __func__, ret);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  916  		goto error_handler_free;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  917  	}
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  918  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  919  	ret = v4l2_async_register_subdev_sensor(&ov02e->sd);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  920  	if (ret < 0) {
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  921  		dev_err(&client->dev, "async reg subdev error\n");
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  922  		goto error_media_entity;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  923  	}
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  924  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  925  	/*
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  926  	 * Device is already turned on by i2c-core with ACPI domain PM.
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  927  	 * Enable runtime PM and turn off the device.
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  928  	 */
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  929  	pm_runtime_set_active(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  930  	pm_runtime_enable(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  931  	pm_runtime_idle(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  932  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  933  	return 0;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  934  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  935  error_media_entity:
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  936  	media_entity_cleanup(&ov02e->sd.entity);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  937  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  938  error_handler_free:
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  939  	v4l2_ctrl_handler_free(ov02e->sd.ctrl_handler);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  940  	mutex_destroy(&ov02e->mutex);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  941  	dev_err(&client->dev, "%s failed:%d\n", __func__, ret);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  942  error_power_off:
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  943  	ov02e10_power_off(&client->dev);
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  944  
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  945  	dev_dbg(&client->dev, "probe done\n");
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  946  	return ret;
-62323d3b3c4dc1 Jingjing Xiong 2025-03-17  947  }
+ include/sound/sdca_asoc.h     |   42 ++
+ include/sound/sdca_function.h |   69 ++
+ sound/soc/sdca/Makefile       |    2 +-
+ sound/soc/sdca/sdca_asoc.c    | 1183 +++++++++++++++++++++++++++++++++
+ 4 files changed, 1295 insertions(+), 1 deletion(-)
+ create mode 100644 include/sound/sdca_asoc.h
+ create mode 100644 sound/soc/sdca/sdca_asoc.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
 
 
