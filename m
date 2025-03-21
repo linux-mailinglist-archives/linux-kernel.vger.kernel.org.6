@@ -1,255 +1,162 @@
-Return-Path: <linux-kernel+bounces-571179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11145A6BA15
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:43:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F16A6BA0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8441319C3ECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEDE016CDED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39AB227EBE;
-	Fri, 21 Mar 2025 11:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF36224259;
+	Fri, 21 Mar 2025 11:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y8hrAs+p"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DoI4g7gg"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33706224259;
-	Fri, 21 Mar 2025 11:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742557355; cv=none; b=RXg5aTV+JS3CiQSVYYBeQj0QDQXzGxZLMWI7jfXORmdvvG9wGzfSl/Wz4ZugSomuk1zzpJbyxwYYc/FIl4wVyD6nYXTn24iKVIdh3A1M638WjgPgTKGBbVPmWZkLVMt4NxTIRBkr6bW7q0pEIQvYXjVhFseXZySwHxibG57PSwI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742557355; c=relaxed/simple;
-	bh=SDCIlfafWBMvWzNiE3MHOiQ22Bn3e+yP/64zuKHxYjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cmUT+3J/L31hdU2lJf03FrQN/axRvmpoQmT91IHLBGm95DJLy3VmTEbfuCNKxIBkxuUGC92VSLZ2I8mtFcWA2icgOwvdkLqd9L+K3RqVqchS/CHXHyjpluY7Mf0xNsgQm8mw5JAYjmmn0/svTeR1s+n3tBkoIVY2UFXRXQiu+8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y8hrAs+p; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATcLe014247;
-	Fri, 21 Mar 2025 11:42:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HxEUrF
-	SkwvtTHGZsRrcYMHupA72KBahfp9Or61L+rwM=; b=Y8hrAs+pldr03rjzo+WhAy
-	U52ZrtB+IqpzlWD9UpaK9zugv90jFOORN2zkELt6EwBYrXFWIcZS7T1RujhRR0LQ
-	3Nf9j8Yjpxk3xB9bYRq14TwB/gDfnvtsM98c0oASGAYIbK/QB4X9zQZqm+IkjRDE
-	ribkrbF5GRfCwv50NtewtRkh8OhPtU6xy8rSO7LnT8LIX56v3qdxJjHbPqxbZAph
-	BD+5t5VtF45BpBRp3FPz6zlw4+LuZ5Jdm7JFgVBVk7SG8v/GkVL/roGm5XjcQs+L
-	s7rfJ8QPLxW6fTafqX2ZQ1y2WOGXHcm336io/OvsUF3QmYmLAdMZqov2l5nbldnw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gt80u9xe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 11:42:15 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52LBY281031415;
-	Fri, 21 Mar 2025 11:42:14 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gt80u9x5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 11:42:14 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52LB0iUw019218;
-	Fri, 21 Mar 2025 11:42:14 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvpd2m9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 11:42:14 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52LBgCoH31654592
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Mar 2025 11:42:13 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E184158067;
-	Fri, 21 Mar 2025 11:42:12 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B8DF85805D;
-	Fri, 21 Mar 2025 11:42:04 +0000 (GMT)
-Received: from [9.43.64.160] (unknown [9.43.64.160])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Mar 2025 11:42:04 +0000 (GMT)
-Message-ID: <31a3d76b-617b-4c97-b83d-2cd47fabbf02@linux.ibm.com>
-Date: Fri, 21 Mar 2025 17:12:01 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DAE22423F;
+	Fri, 21 Mar 2025 11:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742557344; cv=fail; b=u0YHx08jWlJiY1Y7e/Ubp5g9dK+txUIcJCzXT0TlOibMkLEhJzA8Tk4tgpl+xLuPhQ3hcx1bYg3XZ3DDtlo8m4eLmOEASRa4M0OaIKIIoo4N7rt8WWbsmuglbeUo9VW7sLtIMcXwHNr47V592T5KDEfApiHa+5vzfcSPSLRrfqI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742557344; c=relaxed/simple;
+	bh=FGpfo3Z7mksI+Hpm7VDfNzYqGZMjQAFf5Gc/uyWebOQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UWUOmZLlwoXKfwnBaCkeRm66QAyQTPHSFwc4Ba9k+Lbj//RrBdSeYXRnk0lzE91AHz0iFEBmko3MKjRC2r/f4ftD/rHX7cIawMl7NyF6nrPaWONxbU/WQRyV0Fy8q/KqR81kTSb2QWu1+2t44GZm8exX7dZQM7+SIp3Cm7cLxOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DoI4g7gg; arc=fail smtp.client-ip=40.107.244.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ls7lXU0pU1anmp1BY4lL/qaU3rSOhvAX4uDoO7bBX+DfskUpj31IdTOH7LwpihPwyoFvZ1Nk0oJ6YJNtJeGFeAFGZHNL/L6u9lIRclxAiQVOM/Wh/1hWoIYJI9GFXIbmZ7OpzGXnPCVm9iMxyl8uKdOfNiLxTu1DOgWVvONpARZj8CZ8snMg+RijrbYjZJ/WicWjtg45bdyz07aRRr/5W6ZP/PBdxwDE5xChKswI07j6uAajMd2+J23H2ncM/9AAYzK9IL0DIc1Atkd/IxvszAdWFv4oPZKrTOh0xyS1NVjP0XQDK+YnjDZ8zsJQ1QHafvljrKFl59a/ICNQWe65Vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K81K/m6/F+TvWM9JfodKRaqiAYdfY+2MJLsZF23fMbE=;
+ b=XZ67cuHMXmWegqbze9v8whiPFUSzzWVScMbjaAZDrimnLq9XG53qLuJExCwEdl5AwpZO5HlOsC1MbsqAzBZkVcUESmWtCr2Lu0GMfFs30eoFtGBUzLftBu/+cYH82MJFaVX04dIMrLYdfO7qDWhhu8i7ZoBS7Vm5Yf6J1lsYEUT1v31o1Vu8YbhL7gUZfByO4fEd3JDIxlRPsEBmEia9n/bzXe5LLHSJgHFvMDu/G1f9HuIGIxfuo4ZWwtBQ1+FDmHTjISmAEuxMcFm1zYY0m7339FrjVFS8CSBSX4NF3OtDXk26tas9BztU8ncgUFfxmzXxPN+m4gBTudTKyu5x4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K81K/m6/F+TvWM9JfodKRaqiAYdfY+2MJLsZF23fMbE=;
+ b=DoI4g7ggLKjKpVGXqaXHAIdxSh+9yXo5VT/3oZIh3JryipYasFWhn6V/O4AA3SLifEzour2UhcnpjBuKCCMYdD/IH5u5WrYXa8jOXw4iAgovXXK1OgCKCKsHb3NX+9u9Pe/2cf/LWOBlSdvF3c2RL7Bfjpk7k6U+kn1bO4Uz4hw=
+Received: from MN2PR16CA0027.namprd16.prod.outlook.com (2603:10b6:208:134::40)
+ by MW4PR12MB7119.namprd12.prod.outlook.com (2603:10b6:303:220::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
+ 2025 11:42:19 +0000
+Received: from BN1PEPF00006003.namprd05.prod.outlook.com
+ (2603:10b6:208:134:cafe::1d) by MN2PR16CA0027.outlook.office365.com
+ (2603:10b6:208:134::40) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Fri,
+ 21 Mar 2025 11:42:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN1PEPF00006003.mail.protection.outlook.com (10.167.243.235) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Fri, 21 Mar 2025 11:42:18 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Mar
+ 2025 06:42:17 -0500
+Received: from xhdlc200235.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 21 Mar 2025 06:42:14 -0500
+From: Sai Krishna Musham <sai.krishna.musham@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <cassel@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<bharat.kumar.gogada@amd.com>, <thippeswamy.havalige@amd.com>,
+	<sai.krishna.musham@amd.com>
+Subject: [PATCH v5 0/2] Add support for PCIe RP PERST#
+Date: Fri, 21 Mar 2025 17:12:09 +0530
+Message-ID: <20250321114211.2185782-1-sai.krishna.musham@amd.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] tools/perf/powerpc/util: Add support to handle
- compatible mode PVR for perf json events
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>, namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, irogers@google.com,
-        akanksha@linux.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com, acme@kernel.org, hbathini@linux.ibm.com,
-        adrian.hunter@intel.com, jolsa@kernel.org
-References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
- <20241010145107.51211-2-atrajeev@linux.vnet.ibm.com>
- <7cd87317-4f2a-45af-bd07-6e715406ff55@csgroup.eu>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <7cd87317-4f2a-45af-bd07-6e715406ff55@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TxLlLE1cX4Hnb4p2JPivH8_9XWPO13lL
-X-Proofpoint-GUID: 3Jh4cugb2FdlH5bhaW77yb4YKss_41FL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_04,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1011
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503210085
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: sai.krishna.musham@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00006003:EE_|MW4PR12MB7119:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6a30d87-c0dd-4096-15d7-08dd686d6f78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Qe74uy1BGmBrbf4YRsdDZaFM6jDppv+nnra5Fc758wsSF+LQTOjO8skomxx1?=
+ =?us-ascii?Q?9qJ15EIQMzFiWrQCzmRna5Gv4j/lYEQM/eG+nRUaaagr6XU5qkKeTzT9ugR2?=
+ =?us-ascii?Q?sznz+SBc5gL6n5DNv4u2e1fM5C+qL5qoAUwOuGzZm7rm4FPFyXMwVCqz+lwD?=
+ =?us-ascii?Q?ceIYnVJ/lxb+D3kfQmRI/f1xVyMLopCD16yknavCyPEe1+qvNzQcxYQj6FvF?=
+ =?us-ascii?Q?oxFJeBcoXOZnN0pzH0CPsjPGr5vBb5Zwkngd7Lz+tj/T+OWAVxFrepF3Bgz/?=
+ =?us-ascii?Q?EsopnOyYRUhksBkwUUB4w5XZHRjYIUmLmyA5SiuEmHtLxj2JvdyAww3Y3Ji8?=
+ =?us-ascii?Q?QhyCa25zQPkfktFlEaoEXP0U2q73eu4Hk4GJn3JddJIejyCC66p6A/IyZT5i?=
+ =?us-ascii?Q?t7hr4ikSm8liSjXuKqiaasnaW/f48mh7Ilk4QLKoCHYMp5RJE9sojHAYos9b?=
+ =?us-ascii?Q?36/6LJexVoK0Acz3RXxBSHif2MJdOFjmIPNo8LAgS94o9tWDL6L8rZXNSmle?=
+ =?us-ascii?Q?9K1akjDnWQqx5PYrDd60hUeiJns66M7sRSGqL9U04xY0NNx6D6+Ji/xL51y/?=
+ =?us-ascii?Q?EsuYNQzTbBIWrkTsoirAYY17XX+OyLcA6g/+J4BU5ruoSKq3jG5lb4cJXSjG?=
+ =?us-ascii?Q?+7dN17QpJkBnaozrfFQxB2vIvDCiheuuN7FM+wG63nyIFvHpkmz8kbrZRPEm?=
+ =?us-ascii?Q?d/sr00l4qVb5d4iIoCGfhlB3PcvD+tfFxFhn+Fp0kCWNO3inDInvRYMGY/g8?=
+ =?us-ascii?Q?+kQzcSUgtEBlBYDSX+I3UTyIoppB/GKafsImd9Xjf1DS5TDNMUdGwBXXWsfu?=
+ =?us-ascii?Q?Gz9tUPgm0Cnj4bciDjlvSupd5H461OOcFiG+m/T5viJPAfFMMejtufpPwBDA?=
+ =?us-ascii?Q?drhDeEuwYAiib0DaJpsPzvPhSqHGDBPx0JvqFkZU+XyaDb1RChGwInBaoq63?=
+ =?us-ascii?Q?sYhVGiSbu24UzbvyucPngbdu9Pj6t6ZdQizQXiNbk5+L+5TmRyfRp5Ebc+BQ?=
+ =?us-ascii?Q?h2+PSlBtRy/cdvFbaAMtxBlh9dhLUQC8EdIGSM/wAOFy5r5dJm6S7LP+nJjL?=
+ =?us-ascii?Q?QWzGwPrlSI27VjT7wJcW3lA58ineUzCbRYro2wMzRs9URjRo4/sFCRm3QKac?=
+ =?us-ascii?Q?B+yfN2LNW27HbDokfM+7rR58lY1CgcTUUNAZNb8YQdcP5PfbuW/oieEqUW8k?=
+ =?us-ascii?Q?qtdSjpo9z4Vgn/mej0jT9JhfcuHWcU8VPjN5vciau2WIe9vYWiKf54vyXkyZ?=
+ =?us-ascii?Q?RLmD+i3T7ya5NEJgwr8s47p9IsapqBVryS7GyhPybmBtPx8Dph+abFbt6Fap?=
+ =?us-ascii?Q?LfbfAplx9YULNzILd3UUsWLzXo+nHavBxqtH5MpYtZDiFuaZJ6A6UkvheRAT?=
+ =?us-ascii?Q?PlbnSSayMDC+BSIZaqP72sUCRVpuodSECNILsyUjjnMVF7LkkYhTjD4RhV6F?=
+ =?us-ascii?Q?DM9wxfad/hDJ4Qm9V6q0hybo+jL3R3SlZk0bKprFaXCF6q9QCvRJdC3cf7ID?=
+ =?us-ascii?Q?vh7lGCTmbbqhvNY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 11:42:18.6873
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6a30d87-c0dd-4096-15d7-08dd686d6f78
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00006003.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7119
 
+Add support for PCIe Root Port PERST# signal.
 
+Add `reset-gpios` property to the Versal CPM PCIe controller binding.
+Add CPM clock and reset control register base for handling Versal CPM
+PCIe IP reset.
 
-On 3/21/25 4:04 PM, Christophe Leroy wrote:
-> Hi,
-> 
-> Le 10/10/2024 à 16:51, Athira Rajeev a écrit :
->> perf list picks the events supported for specific platform
->> from pmu-events/arch/powerpc/<platform>. Example power10 events
->> are in pmu-events/arch/powerpc/power10, power9 events are part
->> of pmu-events/arch/powerpc/power9. The decision of which
->> platform to pick is determined based on PVR value in powerpc.
->> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
->>
->> Example:
->>
->> Format:
->>     PVR,Version,JSON/file/pathname,Type
->>
->> 0x004[bcd][[:xdigit:]]{4},1,power8,core
->> 0x0066[[:xdigit:]]{4},1,power8,core
->> 0x004e[[:xdigit:]]{4},1,power9,core
->> 0x0080[[:xdigit:]]{4},1,power10,core
->> 0x0082[[:xdigit:]]{4},1,power10,core
->>
->> The code gets the PVR from system using get_cpuid_str function
->> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
->> with value from mapfile.csv
->> In case of compat mode, say when partition is booted in a power9
->> mode when the system is a power10, this picks incorrectly. Because
->> PVR will point to power10 where as it should pick events from power9
->> folder. To support generic events, add new folder
->> pmu-events/arch/powerpc/compat to contain the ISA architected events
->> which is supported in compat mode. Also return 0x00ffffff as pvr
->> when booted in compat mode. Based on this pvr value, json will
->> pick events from pmu-events/arch/powerpc/compat
->>
->> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
->> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> 
-> I see this patch was merged into mainline allthough it had CI failures and still has.
-> 
-> Could you please fix it ?
+Sai Krishna Musham (2):
+  dt-bindings: PCI: xilinx-cpm: Add reset-gpios for PCIe RP PERST#
+  PCI: xilinx-cpm: Add support for PCIe RP PERST# signal
 
-We already have a fix patch posted for this issue 
+ .../bindings/pci/xilinx-versal-cpm.yaml       | 17 ++--
+ drivers/pci/controller/pcie-xilinx-cpm.c      | 86 ++++++++++++++++++-
+ 2 files changed, 94 insertions(+), 9 deletions(-)
 
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20250321100726.699956-1-likhitha@linux.ibm.com/
-
-Maddy
-
-
-> 
-> arch/powerpc/util/header.c: In function 'is_compat_mode':
-> Error: arch/powerpc/util/header.c:20:14: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
->    20 |  if (!strcmp((char *)platform, (char *)base_platform))
->       |              ^
-> Error: arch/powerpc/util/header.c:20:32: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
->    20 |  if (!strcmp((char *)platform, (char *)base_platform))
->       |                                ^
-> cc1: all warnings being treated as errors
-> make[6]: *** [/linux/tools/build/Makefile.build:86: /output/arch/powerpc/util/header.o] Error 1
-> 
-> 
-> The following fix but is maybe not the right one as in reality getauxval() seems to return a long not a u64.
-> 
-> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
-> index c7df534dbf8f..1b045d410f31 100644
-> --- a/tools/perf/arch/powerpc/util/header.c
-> +++ b/tools/perf/arch/powerpc/util/header.c
-> @@ -17,7 +17,7 @@ static bool is_compat_mode(void)
->      u64 base_platform = getauxval(AT_BASE_PLATFORM);
->      u64 platform = getauxval(AT_PLATFORM);
-> 
-> -    if (!strcmp((char *)platform, (char *)base_platform))
-> +    if (!strcmp((char *)(long)platform, (char *)(long)base_platform))
->          return false;
-> 
->      return true;
-> 
-> 
-> Thanks
-> Christophe
-> 
->> ---
->> changelog:
->> V1 -> V2:
->> Corrected commit message and subject line
->>
->>   tools/perf/arch/powerpc/util/header.c | 32 ++++++++++++++++++++++++++-
->>   1 file changed, 31 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
->> index 6b00efd53638..adc82c479443 100644
->> --- a/tools/perf/arch/powerpc/util/header.c
->> +++ b/tools/perf/arch/powerpc/util/header.c
->> @@ -10,6 +10,18 @@
->>   #include "utils_header.h"
->>   #include "metricgroup.h"
->>   #include <api/fs/fs.h>
->> +#include <sys/auxv.h>
->> +
->> +static bool is_compat_mode(void)
->> +{
->> +    u64 base_platform = getauxval(AT_BASE_PLATFORM);
->> +    u64 platform = getauxval(AT_PLATFORM);
->> +
->> +    if (!strcmp((char *)platform, (char *)base_platform))
->> +        return false;
->> +
->> +    return true;
->> +}
->>     int
->>   get_cpuid(char *buffer, size_t sz)
->> @@ -33,8 +45,26 @@ char *
->>   get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
->>   {
->>       char *bufp;
->> +    unsigned long pvr;
->> +
->> +    /*
->> +     * IBM Power System supports compatible mode. That is
->> +     * Nth generation platform can support previous generation
->> +     * OS in a mode called compatibile mode. For ex. LPAR can be
->> +     * booted in a Power9 mode when the system is a Power10.
->> +     *
->> +     * In the compatible mode, care must be taken when generating
->> +     * PVR value. When read, PVR will be of the AT_BASE_PLATFORM
->> +     * To support generic events, return 0x00ffffff as pvr when
->> +     * booted in compat mode. Based on this pvr value, json will
->> +     * pick events from pmu-events/arch/powerpc/compat
->> +     */
->> +    if (!is_compat_mode())
->> +        pvr = mfspr(SPRN_PVR);
->> +    else
->> +        pvr = 0x00ffffff;
->>   -    if (asprintf(&bufp, "0x%.8lx", mfspr(SPRN_PVR)) < 0)
->> +    if (asprintf(&bufp, "0x%.8lx", pvr) < 0)
->>           bufp = NULL;
->>         return bufp;
-> 
+-- 
+2.44.1
 
 
