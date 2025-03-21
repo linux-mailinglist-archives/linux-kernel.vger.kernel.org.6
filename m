@@ -1,105 +1,169 @@
-Return-Path: <linux-kernel+bounces-571892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770D2A6C3F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:10:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608C5A6C3F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2443B97CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C949467CFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D56B22FF40;
-	Fri, 21 Mar 2025 20:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0722FE1F;
+	Fri, 21 Mar 2025 20:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BeX9sO6k"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEhrZuKf"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C698022FDE2;
-	Fri, 21 Mar 2025 20:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1571E7C0B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742587838; cv=none; b=RzRak0NIO7sRzd57yQStr5TIQVED/ai/3L/uKm3v49gOWJNzqHaOO4Pn8YbA+1z5jOjXslJGrkqFaYyrTa0dM8DVyJfEShjXpZppv8f3kdnhgrqI1zDeGpexRgWVeVAQ/6XtCMOrZl3X0jUQRRzBBrzTFG/uFuPLZiiOAGsNb2w=
+	t=1742587856; cv=none; b=EfQsMUZlfmhfi+6BImZHzF0EtB66MQ+8pJ/GI/VL3FLOLHHkAChMDik6YemrlNGTuW57YJ+2kHBA5wwcNtyatQhZYyTEVeLzXMGshdVpNbvt0plvxtlBmqjruaAGPunO4I1DDMJtRaX0JYWgCMXMJ1Ksh3MiSwAjWUWEv0vX4tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742587838; c=relaxed/simple;
-	bh=ExX4HzIXt1eLoL7kgSQzUTPK0LokgibMRw5hn9r+UAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qbmavbHpySe/thyIEICfFaPNKqMCvbqBPVW7zbE213wRdCHNTyb5LWOBx3oF6cqOGtUi3g3hPNCwpUJCxcwvf/9DpaCQfptuJfzMAE8AqcIhT9O/ycJY3qNdNaccYlpUq0TWo6f//pJ6i43VGu7HCUBODC8O5oUcuq24ObFmNXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BeX9sO6k; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZKD8W4Ty3zm8Stx;
-	Fri, 21 Mar 2025 20:10:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742587833; x=1745179834; bh=NntvXvtWhzJ6OcqXMIfgs9i0
-	GrnRvBUhZKhhcyppfos=; b=BeX9sO6k4WzpXNtsHcsp6DjnpMY0Zih21JisnYN0
-	KFhaiOHHFGhm5T6dCGbULAsNlImXcz92dNL6FIlVdSkmIHfifpRzGM4PLKeHDZGs
-	WDGwckOK0/Y2eXq7eGrFkhrNVdasSm7N1cYsgweCHk3gub9JIy8S+56uPNeMZc7q
-	S68CoHQIbFKziQ14d4cVlCOL9j/WY0Z0h1T+dCgGcuQdVs1TxlnoJY2w4d5qqXB5
-	Y1AZlQryhEsnJ+7cpTzfw3pU/3mAaiSgn4N0NCQgXsyNDzSkmyNG9NTIMt3uyEVr
-	3MRSjIvE9gkEcFozIOkSJTKNdzeCO01xO2Rog5ncVgFwGA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id wZ0MmdshLZIg; Fri, 21 Mar 2025 20:10:33 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZKD891S2jzm0Q6C;
-	Fri, 21 Mar 2025 20:10:16 +0000 (UTC)
-Message-ID: <8d5fd977-b600-492c-b888-2318130f46ec@acm.org>
-Date: Fri, 21 Mar 2025 13:10:14 -0700
+	s=arc-20240116; t=1742587856; c=relaxed/simple;
+	bh=oBFmbXLTCOlolb4HJN8KpRNx8Ol2RR9NblxDlUHFW9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LtVrWPath0ev6Zfs0IfPz5eKuGyeCg4Q4sZDWazrmDaoD4LXo0sfPPqk2ASBHxzfZ1yv7Gz3ndVq/HhX1GajjlP29tnqA0NeKMz9HxjxAtTwWXpTC5YwWqQcxDcgJkWoCgTuZbbElYMOP0TSkZXtquqoiXvZueXMPM2kiLL1iFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEhrZuKf; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso4172686a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742587853; x=1743192653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IIXEPjm+bWQMQJYnXAQ9zjO/eTYMnsh8kj9KsEqXiMk=;
+        b=fEhrZuKf8p32T+fyUdJ+/tFFLedGM6VKnkmpCk4mxQd+n/+WxqTdFsUGwaA/cDV7wK
+         ZgT9buJKKPOa4Bk4/CrXhMbP+wk1hvahKUmJVEZ9B0JXbrXAcQGvCmREkwfWPZ+AUcoC
+         nlIG0zrccW1BEAmwkRRRFd6i2Qu/dxhvp7eYGjvSr7gMk5FxltGB+KnMPw6L+Srdaemv
+         uB3TF/E8PfoUOxesRVpErd2ruiUNGFGHJHJ1zRU1bWnrz+fAVOkjXzWLzZWWALsIEO5V
+         j2liSZJIlt8wDviKUMoPbvWhW7pN+wvBXh6YEL/weLGKXq9EEDz3S+ZCIMaNYpn3+S7g
+         1PKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742587853; x=1743192653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IIXEPjm+bWQMQJYnXAQ9zjO/eTYMnsh8kj9KsEqXiMk=;
+        b=cHo0Uk1C1VWpLqnJNm+qONWOjJAd5yNezIbZRieIdXMDQhv3gGGTn8qJl7OLd/nvf3
+         neWK4DNxltxLcB/MJ5BHwlKXWd4L82j2s3/c8HHWxuh2Z4pWf6ZUKy1BvVJcF32u9+KY
+         EbUJ2Mfiz/fHxKPDbqiOd5//P9rdiQS3WZV7/Ig7hUctUuREStD/a0sGA3JxOXSpi2vM
+         +JKKIciCE4reHHaXEFjrN8/DrqrxhATr2yrhR5aLO/xkfMIvmK9ULdWeIz1R2CL5ko/5
+         nVgnEtg6sON6T6g1K7URGzdmJPmKDEQ79i91BQukQBKHK4gb17gH3WYz/Sf7FaOojZWH
+         Gejg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHtHb/3icbAXUuiE3wTIbSpb0SopJqKNByNmdPRZ6vpmYeNG5xbkTbmIHgAJ6XkULNkxJuDSrJ41PqId0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMVZATR2ilT7GcTiXdhcxarockyZq3H8sy4G3L/Stj7OhchWmf
+	UeBcpWh8pfylu2VOXWIqsYbXZwyZ/H4RRW315fZpmCCU+eftKLJOwDig4Pt0cU4M6xcJHOCcqvG
+	mEzDW8gQIx34WHIZFnc1jUBK6QHk=
+X-Gm-Gg: ASbGncs+N/+rk/nPaSrxDrVOfARuTtyTnIr/No7SerMxs3dcRm7zjvPrl9uZPkmdibe
+	H2PpCiwQMtt0O8eLic1Q1AyPUKM91PDtJSmzoGECIflhkb3fur2eU1RHFBckeSSjlK85ZgR41hH
+	Njh7aJLXVDtAHbHYwdits+PFuOTQ==
+X-Google-Smtp-Source: AGHT+IH30x1YkLwjN2HebhAwoyQ5GpENDgh5sMfBLXNJzGCiHLIlXgrbOS+6f2Q2h3VuJKHwht93h61HlX8RX21MmIY=
+X-Received: by 2002:a17:907:7292:b0:ac2:88df:6a5b with SMTP id
+ a640c23a62f3a-ac3f251ba1emr468617766b.42.1742587852719; Fri, 21 Mar 2025
+ 13:10:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] ufs-exynos stability fixes for gs101
-To: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Chanho Park <chanho61.park@samsung.com>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Eric Biggers <ebiggers@kernel.org>, willmcvicker@google.com,
- kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- stable@vger.kernel.org
-References: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250320190514.1961144-1-mjguzik@gmail.com> <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
+ <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
+ <CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com> <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 21 Mar 2025 21:10:39 +0100
+X-Gm-Features: AQ5f1JqHE84S56Y_JvE-pFKA7cyBgBi1agxUj7cy2UZWE968t64_VPNtPP2j_Wc
+Message-ID: <CAGudoHHjk6PXU33CqAX6oitbEED-jzs2p=Dfm5-q_xMy5Cy_Uw@mail.gmail.com>
+Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
+ overlapping store
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86@kernel.org, hkrzesin@redhat.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com, 
+	atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/19/25 8:30 AM, Peter Griffin wrote:
-> This series fixes several stability issues with the upstream ufs-exynos
-> driver, specifically for the gs101 SoC found in Pixel 6.
-> 
-> The main fix is regarding the IO cache coherency setting and ensuring
-> that it is correctly applied depending on if the dma-coherent property
-> is specified in device tree. This fixes the UFS stability issues on gs101
-> and I would imagine will also fix issues on exynosauto platform that
-> seems to have similar iocc shareability bits.
-> 
-> Additionally the phy reference counting is fixed which allows module
-> load/unload to work reliably and keeps the phy state machine in sync
-> with the controller glue driver.
+On Fri, Mar 21, 2025 at 12:53=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, 20 Mar 2025 at 14:17, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Thu, 20 Mar 2025 at 12:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> > >
+> > > I have a recollection that handling the tail after rep movsq with an
+> > > overlapping store was suffering a penalty big enough to warrant a
+> > > "normal" copy instead, avoiding the just written to area.
+> >
+> > Ahh. Good point. The rep movsq might indeed end up having odd effects
+> > with subsequent aliasing memory operations.
+> >
+> > Consider myself convinced.
+>
+> Actually, I think there's a solution for this.
+>
+> Do not do the last 0-7 bytes as a word that overlaps with the tail of
+> the 'rep movs'
+>
+> Do the last 8-15 bytes *non-overlapping* (well, they overlap each
+> other, but not the 'rep movs')
+>
+> Something UNTESTED like the appended, in other words. The large case
+> then ends up without any conditionals, looking something like this:
+>
+>         mov    %rcx,%rax
+>         shr    $0x3,%rcx
+>         dec    %rcx
+>         and    $0x7,%eax
+>         rep movsq %ds:(%rsi),%es:(%rdi)
+>         mov    (%rsi),%rcx
+>         mov    %rcx,(%rdi)
+>         mov    (%rsi,%rax,1),%rcx
+>         mov    %rcx,(%rdi,%rax,1)
+>         xor    %ecx,%ecx
+>         ret
+>
+> with some added complexity - but not a lot - in the exception fixup cases=
+.
+>
+> This is once again intentionally whitespace-damaged, because I don't
+> want people applying this mindlessly. Somebody needs to double-check
+> my logic, and verify that this also avoids the cost from the aliasing
+> with the rep movs.
+>
 
-Although these patches are somewhat outside my area of expertise, the
-patches look good to me, hence:
+I think the code works, but I find the idea to be questionable.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+I'm worried what happens when the consumer has a nicely aligned target
+buffer with a nice size (say, a multiple of a cache line) which this
+is now unconditionally messing with -- are some uarchs going to
+suffer?
+
+That aside, this executes for any size >=3D 64 bytes. The start latency
+is pretty high and the 64 byte limit is probably too low even without
+the patch. For the 64 size in particular there will be only 48 bytes
+handled by rep movsq followed by 16 bytes of regular stores, largely
+defeating the point of avoiding the regular mov loop. If going this
+way, I would bump the threshold to punt to rep movsq by at least 16.
+
+I would bench it myself, but don't have appropriate hw to do this sucker.
+
+All in all, for the time being I stand by not messing with this bit
+(i.e., sticking to just my patch). Serious benchmarking effort should
+instead accompany rewriting the routine to begin with (along with
+sorting out memset and memcpy to both use overlapping stores and rep
+as needed).
+
+However, if you are looking to commit this thing anyway, you can feel
+free to roll up my change into it without credit -- it is kind of
+stock standard for this kind of work.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
