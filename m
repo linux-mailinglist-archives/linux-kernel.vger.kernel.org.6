@@ -1,62 +1,94 @@
-Return-Path: <linux-kernel+bounces-571486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D68A6BDC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:56:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CAEA6BDD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AD3179E88
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5106C3AE6F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549921D79BE;
-	Fri, 21 Mar 2025 14:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65C61D88A4;
+	Fri, 21 Mar 2025 14:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fj1I1XTL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWMe/FjV"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8A41D54D1;
-	Fri, 21 Mar 2025 14:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D21E1D5CCC;
+	Fri, 21 Mar 2025 14:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568930; cv=none; b=o80Ycs6v2MX+g7vd9uJfZKNM8tlvYliGTAneDVXzKGiucAJ0DrhRU5JGTDDCEPtdfvX8uXHNpOhZm0UtdT9FZFEyiw8PY8NoHbcewzAKgXUqb6r4YY9xj65+6MySzPztE7wLG6GalYpvM6LMWw3Uz2k2HCFjYtDDjomyOq6vMJ0=
+	t=1742568832; cv=none; b=drNNO0oj8nA0XRqpJFillSoBb7PRhCBFfp4KJmA1VxdfcRWur4uunEhTAoc7YqoAql91cxudIZsOV7NVj18m+Dq4TW3OVpbwh0ovbZxNEvV/MfLpEUSFf2m+PKe61EdUCn82tTWIhD7m6JKL3gk2NVWjAZANF4LSDgMtI9Ar+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568930; c=relaxed/simple;
-	bh=ZcznbrIAimjf3k62jvVeyb7mB0mKsIZKqhT19/qFcrU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WXYQqd7p/TM2g+7Lde+f/eW13SEwdsdMtmH1bUUatfumElUkwkv91FpMobUIqmAjJWPlPxQD3Schg94OI1sQOybjM+4EV7JYf9eSleiLnGsItDmihprZp8aHRB/SCmtmEyDGEOPaWg9ndyipAk4BHUfAtB3QTmwTOQclz1Yec74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fj1I1XTL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26852C4CEE3;
-	Fri, 21 Mar 2025 14:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742568930;
-	bh=ZcznbrIAimjf3k62jvVeyb7mB0mKsIZKqhT19/qFcrU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fj1I1XTLpatdDoMn/FxSugWTyGK7E+FjNTLy4iZKkEMwiKi9c37fmNLq7tfYgKh6R
-	 jpSBCM0etC4El4sFneH3ypiwPBBxk2Zpm+0/6jKv162xZRI+1Xv0NJ/ohFNQxkXrj7
-	 bbJwwYLEM3OCnqatatjFMFp94Wnj3lBfGhdUA3bsMmfuGGesUFMFzUXvDGBiXo1fAV
-	 ExTl2webDHgNPiR6bJ+u6gS7E1K3oj9Ka5ZXdElp1Dag4lViA1smoGsFtXWEVFlzLB
-	 Putl9MXyEzh3pWVpEM2GxW66u1kb13LLjU9+WC2QU7gSLtSRNT7pso8qkPCo286Xji
-	 Z1+cn+kq/Jmnw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1tvdmW-000000001IG-2WDN;
-	Fri, 21 Mar 2025 15:55:32 +0100
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
-	Steev Klimaszewski <steev@kali.org>,
-	Clayton Craft <clayton@craftyguy.net>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	ath11k@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] wifi: ath11k: fix rx completion meta data corruption
-Date: Fri, 21 Mar 2025 15:53:02 +0100
-Message-ID: <20250321145302.4775-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742568832; c=relaxed/simple;
+	bh=tJQaIJvEGpTx7uoe36B2IgtjGJaMYTQGyDS0OxDwzsc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lg21Uz7fTVwrtluTOHooFjGYmtPgwm6z2SXLtRXP06S0/8Lbng7nRcKztaIr6cKzbfw9SQ+seUpdqaS3EDsNBPzlK35fW6oIu2jrY9S68NsMTqDX/b291g2yPOlhV8V7/vxAPcDaF5f6KvJbo/6Y13k6Fk+OhFqfxtF6mCaWBMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWMe/FjV; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so3712541a12.0;
+        Fri, 21 Mar 2025 07:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742568829; x=1743173629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ChUt5g7sEmNJxFpJWWSVXorLuRmqgR/VFYSsYvgvkIQ=;
+        b=GWMe/FjVK+m7LxlVu9R/kELKbsDjss1Rurf+pCsr58YmyHGbphql/GFDgczmkaUyMz
+         MYAnLQY8vAywbfCK5nuE07higqLmSnG+lH27hm+QHVuUpAEl7MJWCREKbVRZlB/chmGo
+         q4zuV+sXLxfPF6kjISUSuFkS2EW7e5EfczNk5PMW94jeqtH1aAPvTYmISIDca9XoAq8C
+         FPLotSN0+LI/8WuRGR91ZrsslxTkYXeb4yQAmK9Er8GPsrZYEpuoHpYaWVtqbb2SKVzM
+         na5pasQRccDKrZOFEznqIO1ie6DWMoj40czVJmStngcPtpMT7xkpRU66jxbhwaUmiyw+
+         wD7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742568829; x=1743173629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ChUt5g7sEmNJxFpJWWSVXorLuRmqgR/VFYSsYvgvkIQ=;
+        b=H7DhyxVBQa5CFGTmky1YY6Ea2krhRMvJCgaBr+SE/Gf9Q29djdYCW0XtQiNk/tIQWx
+         qLTwgYOGMVJkQn0Hcb7ks76Yo0M0gjoSVB0mEcjGgpYwVndzqLyfHBRpfPBAJs0hWnh/
+         LRcWmKtYmtQyP3zUpACrJryio9GWykEo8nzPmjmiUvqAHEy6gbsA91AZLvcySdDrub/B
+         RIfU4MYIgm7pc8RbwGMYp5SCxgSwkoWOiCeFkVe4Ilt7T1HJ+MrTpfdFUh3piFlFS4nb
+         WVOgYxIF+2tO+glCLYSyZX8VUFN5blQ8VlnOmpLKwF3DwxtYpl7ol1q/0R3KqYNCL+1m
+         +PPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGJpMML3nYO47lpd3msBDdrM+fCdwRaXVmrz0QLN5dl/5owkt9C0OY2mas+TVIX14uTvn3ZR4fJhiHIiqB@vger.kernel.org, AJvYcCVnIuFvId0Q+SFsv6+mEw12bMByvzB7S+vjb3lNeVXduojhtPBzs9x4k8rY/FPxMyWEIDoaGlWAEHjtnzc=@vger.kernel.org, AJvYcCXpHKTXrhAXJbztAzIDaxUZsrRJDWHvOVKOMpymY/g37ClzQFZqEQcK2whYhAZSAR2gt1i+IhC4yxUo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8wT/hmiG9s6cXBgkSlFKBiaF4XuVIwAvfpojpjvF/h2rUmcYH
+	g2TlzrXeyYbB858TAc4xO4v1sk6u6v4vu3hWTzSEb59/vIhgIki53nbkvw==
+X-Gm-Gg: ASbGncvC1IshbZsFFrETW92wGLBd9gusx/swTuG0RphH5bQPjyPXjThklXNZbnQXilq
+	P1f4r9ZbnyUnsK9rF9RRH3BEynFhddhw/vLE/rs74zZcrIjQfA8sVLxYs8QSyPRiAG22wPhJV/d
+	mrO3fSQjMO0Bj5WnFiVQZhM6L88G2tm5Dq7dMFjClxqf8So9fv8xlHodQyUk4QlgmG3qHhqWiFo
+	dKhExQDrb+mMvkbWU0mcg6Efs+reu/8+xvtba0svkJmyrBc2n1NPcB8uLTYFFT81kgSSx72mJJC
+	eQmVWREcHwF+v96MhDPHbMb1pm8/phibhtJL
+X-Google-Smtp-Source: AGHT+IGsI9/Y4lZbu5RbXukOyzO+Xa93YyElGT/2zT0CcERymtAFucBxgAiQ6soKIwQ8+tziVD8/rw==
+X-Received: by 2002:a17:907:7f24:b0:ac3:3cff:268 with SMTP id a640c23a62f3a-ac3f22b2c30mr350924766b.30.1742568828520;
+        Fri, 21 Mar 2025 07:53:48 -0700 (PDT)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbe038dsm163224666b.138.2025.03.21.07.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:53:48 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] thermal: tegra: add SOCTHERM support for Tegra114
+Date: Fri, 21 Mar 2025 16:53:21 +0200
+Message-ID: <20250321145326.113211-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,116 +97,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the missing memory barrier to make sure that the REO dest ring
-descriptor is read after the head pointer to avoid using stale data on
-weakly ordered architectures like aarch64.
+SCTHERM is thermal sensor and thermal throttling controller found in Tegra
+SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+with Tegra114 and needs only a few slight adjustmets of fuse calibration
+process.
 
-This may fix the ring-buffer corruption worked around by commit
-f9fff67d2d7c ("wifi: ath11k: Fix SKB corruption in REO destination
-ring") by silently discarding data, and may possibly also address user
-reported errors like:
+Svyatoslav Ryhel (5):
+  soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+  dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+    System
+  thermal: tegra: soctherm-fuse: parametrize configuration further
+  thermal: tegra: add Tegra114 specific SOCTHERM driver
+  ARM: tegra: Add SOCTHERM support on Tegra114
 
-	ath11k_pci 0006:01:00.0: msdu_done bit in attention is not set
+ .../thermal/nvidia,tegra124-soctherm.yaml     |   2 +
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 204 +++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra30.c         | 122 ++++++++++
+ drivers/thermal/tegra/Makefile                |   1 +
+ drivers/thermal/tegra/soctherm-fuse.c         |  33 ++-
+ drivers/thermal/tegra/soctherm.c              |   6 +
+ drivers/thermal/tegra/soctherm.h              |  17 +-
+ drivers/thermal/tegra/tegra114-soctherm.c     | 213 ++++++++++++++++++
+ drivers/thermal/tegra/tegra124-soctherm.c     |   8 +
+ drivers/thermal/tegra/tegra132-soctherm.c     |   8 +
+ drivers/thermal/tegra/tegra210-soctherm.c     |   8 +
+ 11 files changed, 611 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
 
-Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Cc: stable@vger.kernel.org	# 5.6
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=218005
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
-
-As I reported here:
-
-	https://lore.kernel.org/lkml/Z9G5zEOcTdGKm7Ei@hovoldconsulting.com/
-
-the ath11k and ath12k appear to be missing a number of memory barriers
-that are required on weakly ordered architectures like aarch64 to avoid
-memory corruption issues.
-
-Here's a fix for one more such case which people already seem to be
-hitting.
-
-Note that I've seen one "msdu_done" bit not set warning also with this
-patch so whether it helps with that at all remains to be seen. I'm CCing
-Jens and Steev that see these warnings frequently and that may be able
-to help out with testing.
-
-Johan
-
-
- drivers/net/wireless/ath/ath11k/dp_rx.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
-index 029ecf51c9ef..0a57b337e4c6 100644
---- a/drivers/net/wireless/ath/ath11k/dp_rx.c
-+++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
-@@ -2646,7 +2646,7 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
- 	struct ath11k *ar;
- 	struct hal_reo_dest_ring *desc;
- 	enum hal_reo_dest_ring_push_reason push_reason;
--	u32 cookie;
-+	u32 cookie, info0, rx_msdu_info0, rx_mpdu_info0;
- 	int i;
- 
- 	for (i = 0; i < MAX_RADIOS; i++)
-@@ -2659,11 +2659,14 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
- try_again:
- 	ath11k_hal_srng_access_begin(ab, srng);
- 
-+	/* Make sure descriptor is read after the head pointer. */
-+	dma_rmb();
-+
- 	while (likely(desc =
- 	      (struct hal_reo_dest_ring *)ath11k_hal_srng_dst_get_next_entry(ab,
- 									     srng))) {
- 		cookie = FIELD_GET(BUFFER_ADDR_INFO1_SW_COOKIE,
--				   desc->buf_addr_info.info1);
-+				   READ_ONCE(desc->buf_addr_info.info1));
- 		buf_id = FIELD_GET(DP_RXDMA_BUF_COOKIE_BUF_ID,
- 				   cookie);
- 		mac_id = FIELD_GET(DP_RXDMA_BUF_COOKIE_PDEV_ID, cookie);
-@@ -2692,8 +2695,9 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
- 
- 		num_buffs_reaped[mac_id]++;
- 
-+		info0 = READ_ONCE(desc->info0);
- 		push_reason = FIELD_GET(HAL_REO_DEST_RING_INFO0_PUSH_REASON,
--					desc->info0);
-+					info0);
- 		if (unlikely(push_reason !=
- 			     HAL_REO_DEST_RING_PUSH_REASON_ROUTING_INSTRUCTION)) {
- 			dev_kfree_skb_any(msdu);
-@@ -2701,18 +2705,21 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
- 			continue;
- 		}
- 
--		rxcb->is_first_msdu = !!(desc->rx_msdu_info.info0 &
-+		rx_msdu_info0 = READ_ONCE(desc->rx_msdu_info.info0);
-+		rx_mpdu_info0 = READ_ONCE(desc->rx_mpdu_info.info0);
-+
-+		rxcb->is_first_msdu = !!(rx_msdu_info0 &
- 					 RX_MSDU_DESC_INFO0_FIRST_MSDU_IN_MPDU);
--		rxcb->is_last_msdu = !!(desc->rx_msdu_info.info0 &
-+		rxcb->is_last_msdu = !!(rx_msdu_info0 &
- 					RX_MSDU_DESC_INFO0_LAST_MSDU_IN_MPDU);
--		rxcb->is_continuation = !!(desc->rx_msdu_info.info0 &
-+		rxcb->is_continuation = !!(rx_msdu_info0 &
- 					   RX_MSDU_DESC_INFO0_MSDU_CONTINUATION);
- 		rxcb->peer_id = FIELD_GET(RX_MPDU_DESC_META_DATA_PEER_ID,
--					  desc->rx_mpdu_info.meta_data);
-+					  READ_ONCE(desc->rx_mpdu_info.meta_data));
- 		rxcb->seq_no = FIELD_GET(RX_MPDU_DESC_INFO0_SEQ_NUM,
--					 desc->rx_mpdu_info.info0);
-+					 rx_mpdu_info0);
- 		rxcb->tid = FIELD_GET(HAL_REO_DEST_RING_INFO0_RX_QUEUE_NUM,
--				      desc->info0);
-+				      info0);
- 
- 		rxcb->mac_id = mac_id;
- 		__skb_queue_tail(&msdu_list[mac_id], msdu);
 -- 
-2.48.1
+2.43.0
 
 
