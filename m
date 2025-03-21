@@ -1,102 +1,108 @@
-Return-Path: <linux-kernel+bounces-571239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D09A6BACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:37:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311A6A6BAC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8343F19C174A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 255B619C14B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FB2226D15;
-	Fri, 21 Mar 2025 12:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B7B22759D;
+	Fri, 21 Mar 2025 12:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCf19iYW"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dCNvmiro"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A932253FC;
-	Fri, 21 Mar 2025 12:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F070CA5A;
+	Fri, 21 Mar 2025 12:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560650; cv=none; b=fEAGU0xX5LiGVL5nY3taxjCKci4yKQ163qKThJy1wqdQEHTFIm8GmA+t3wQqHYxueUpqrgDsHDf4G5Tk/BRilFGTuCz4FBhEM044cjyR4ttU4RA0gjP2W7MDptFMkQtzlr0eaVquWFBiCrlCz0t0xZoCXe+ZLXPWykXFiV2rf0I=
+	t=1742560644; cv=none; b=VRc8HUS5AQgIaWERgxI3IfMtP+Npzr8QvCczsPuyh28stqT/iKqCsga7YaE84IdhpRMfSQhXzgv2t8RAsVo83szQGIwjXqSI0Q+t5qcT3BEYLgOUBzs2aR2JGImGGyCXL3jV8nsEPphKiI6P0+M/qajBOES607xcs5hvJUd4O6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560650; c=relaxed/simple;
-	bh=Or6QuG77bV09z00Zjh/yMMBjENRVafR4XgVliURaVO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pS8fIacqsZOIHQxJqyg8CnsQ/aKfiAxzLZWDGvXrsEcAZ7+jPg4F0oit0f36YrFwNbtEOL0fVsnNrWNhJD2oCywkO8vGQkDcfGlGZleAfODc3QG9YVxbh4I8gOkQGEe+wnJTsE8nIRJqznRumBbV3u+kB9Tpi/ROWTDMBMmcIhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCf19iYW; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54963160818so2427439e87.2;
-        Fri, 21 Mar 2025 05:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742560646; x=1743165446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Or6QuG77bV09z00Zjh/yMMBjENRVafR4XgVliURaVO8=;
-        b=dCf19iYWMHEuCpUaM78dx361q3dBU2a1nRWN+b/THYeE9jo/FmMAMCbbHSDo0JmP94
-         zOoouL0sOgqk8Zi8OJzs8o6I8DCeEjF3b0ZXzbcHG+bBPkUo0swD+bBQnxo72qmwj6CE
-         37FAzFXzEcMkmGLbzBasf5wSuLAuwS5DkucW65ZYkfQ4oUjUN+izydiIX4qanyJoYXZd
-         rgg0pzvNU78/HWm+/wLX8Pp/iuQPVYMFBGIIGUpddVZCd6+qeUxY24yKNMqlnSnoNq5A
-         nHt7gSY8ZVLknfE+3+CvpTmZyDbx2zGmpFalwxQ8JelhXgUw11V3ZGKBFVICk9fqpG4v
-         9myg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742560646; x=1743165446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Or6QuG77bV09z00Zjh/yMMBjENRVafR4XgVliURaVO8=;
-        b=IwyLEIw9Fd8d/DIZnbJIExeZlP5Pi3i7V+Te4MznoRoa61OtmiABAuSxfELAfo9E9w
-         MSrDzT1XoxxyyzMWtANr9OUUckAUU726lPLzexFn29NFaEOtdUYqKhsvzlGKIRbe8rTM
-         AbdLIRli6IJhQvz5QVxm/h1cr7K1mFNbsV3MypdtS+Myl2718nhacYAlOUILwa0LxhtJ
-         E2rl32mbS1k2coEddtscHliGfhu1OLxdEbb/LbeipLfXyppPui6vKKXHmoA3AmpJaxAS
-         Z/8JnF4iyhe/dKY2EMw/G8SOL/btEt539AQJ2uLzjUdsXFvgd+f10iRMZsSsPAh6IjqK
-         W3yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0im2ltt3JtHJrjqLyX9Wdege7LOyzX7BTX0StlTc36KlN2viRQCtG4Xs16P+dabbv6NUkApLOekILRXc=@vger.kernel.org, AJvYcCWkVgCGz4qcn/9fzWGByGSZ4aMVeUsE12ln5hGSjx9XpLjwcK6OfmCvrFlskAz9ZcJqps3xIOQp+qh1yFnr@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj8ocgnpeNaLiO0vlzPzhB5ijKjiJWaQJX4TLZ7Ov3MD2apgL/
-	TgE2VSodwT5QM8ZAtKqAeOEegYau03mbLF9EEkw3Qoj0aJtE9Qt0X8hLi0PuRIZ6yakKZRH11AA
-	z0MLmmKHBChTyNE1pTCcHSyNuRywSYg==
-X-Gm-Gg: ASbGnctVicMBmbL2YnQDIo7jfZmdemGiPELkdZ7MZKPN88Zluc/zplRfv/nIfCnWskd
-	YCmqqvGdRT34ol3xRqP+3fTwxNZXaM1vla8EqH3nzNfcQT/do8RD8IyJY+sK2IeDMgfe4oQkfrD
-	PEfVzNP+PGdQ0kDkS3JOv4B+XgB9nT2MhKnU9FFY3xnXkZyuirOafN/i8o8Q==
-X-Google-Smtp-Source: AGHT+IF5ZhvHNp9WkOfM+Q8diZfXaNlHoCdnWVMGrImaIEqIs1NM7JfBS6ONLUiVtVtJjKYMBeXX2rGQei/E5BktgGw=
-X-Received: by 2002:a05:6512:12cb:b0:54a:c4af:29 with SMTP id
- 2adb3069b0e04-54ad650348fmr1331856e87.52.1742560646266; Fri, 21 Mar 2025
- 05:37:26 -0700 (PDT)
+	s=arc-20240116; t=1742560644; c=relaxed/simple;
+	bh=oQyGiV78LEK+tbLWGXm5etpWS3sUCPu5H0kZTYpo8lU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rRL0rAwAYJa0F5cFSzEqmuTI36+st0l5DSPDKidMrP6AvUNbhLgr6S8S4n9lvKTv+hXkvz0Aet1C8RpVX4UmdIyRsVaGWufuIfqemnbIbtX+L27xrIymi4WNVqW5xIjLE5QiaTaUDfOP4ZedC0r6EJhYZMMBQ6W54BX0V+SV+Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dCNvmiro; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742560642; x=1774096642;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=oQyGiV78LEK+tbLWGXm5etpWS3sUCPu5H0kZTYpo8lU=;
+  b=dCNvmiroThBVGoOb5HAHbwY7cdtXwCg98vfZGyuHs6iCsgk9oeMCC3ia
+   WhmGyA8339Wx3RFhhQByG+6q63S3PBd9Mem2E095UBBHeYMxjDo18d5zt
+   A+YbbODCnA3uOCHG+0XCj3J9wrhz5dY/B/rBwXxSrqfaetIUBW14dPYSw
+   L7MCO/eUpJ0BkjcANuYJf60Hc03e89Yc1mQoPFT3Sj2OdZmpN0SSJ237T
+   ZrQoGxzbDOVa79Muf5+k+oGdQZ7WAvhLLR6S6ri8jh6rYmQN7GT5adqIE
+   o3uic+0WKfHDqF2SL3QEszsswieXVhMDNXsrdmKW/ieEQynN3NmCvGEEC
+   w==;
+X-CSE-ConnectionGUID: szUApg3OTk6hqvKKhRI7lw==
+X-CSE-MsgGUID: b4z1f3PHRg2/70jDYHPYew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="31415835"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="31415835"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:37:21 -0700
+X-CSE-ConnectionGUID: fN2LIwPEQj+XS2avHEyG7g==
+X-CSE-MsgGUID: kaLgaq4RTxebwSNATqk6Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="127535785"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.201])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:37:19 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>
+Cc: Markus Theil <theil.markus@gmail.com>, linux-kernel@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, netdev@vger.kernel.org, tytso@mit.edu
+Subject: Re: [PATCH v2 1/3] drm/i915/selftests: use prandom in selftest
+In-Reply-To: <Z9r7ORwztMxsNyF4@zx2c4.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <CAHmME9oqvWp_Nd1Gwgyw52qy8wxztMyCpNsjByH=VnRaXqczww@mail.gmail.com>
+ <20250211063332.16542-1-theil.markus@gmail.com>
+ <20250211063332.16542-2-theil.markus@gmail.com>
+ <Z64pkN7eU6yHPifn@ashyti-mobl2.lan> <Z9r7ORwztMxsNyF4@zx2c4.com>
+Date: Fri, 21 Mar 2025 14:37:15 +0200
+Message-ID: <874izmd0g4.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321073950.108820-1-sherry.sun@nxp.com>
-In-Reply-To: <20250321073950.108820-1-sherry.sun@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 21 Mar 2025 09:37:14 -0300
-X-Gm-Features: AQ5f1JoXo2ejsWQ1aGN1zM--X22HsVKpWU6VSj_zLDkLidKs307tqtN72kTPvf4
-Message-ID: <CAOMZO5Bo82YfE-4S=FboLhg5yJPFmGVKjx4XmYuf8MLZYLRgZQ@mail.gmail.com>
-Subject: Re: [PATCH V4 0/3] tty: serial: fsl_lpuart: cleanup lpuart driver
-To: Sherry Sun <sherry.sun@nxp.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, shenwei.wang@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Mar 21, 2025 at 4:42=E2=80=AFAM Sherry Sun <sherry.sun@nxp.com> wro=
-te:
+On Wed, 19 Mar 2025, "Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
+> Hi Andi,
 >
-> Do some cleanup for lpuart driver, no functionality change.
+> On Thu, Feb 13, 2025 at 06:19:12PM +0100, Andi Shyti wrote:
+>> Hi Markus,
+>> 
+>> On Tue, Feb 11, 2025 at 07:33:30AM +0100, Markus Theil wrote:
+>> > This is part of a prandom cleanup, which removes
+>> > next_pseudo_random32 and replaces it with the standard PRNG.
+>> > 
+>> > Signed-off-by: Markus Theil <theil.markus@gmail.com>
+>> 
+>> I merged just this patch in drm-intel-gt-next.
 >
-> Changes in V4:
-> 1. Fix unused variable 'sport' warning in patch#2 reported by kernel test=
- robot.
+> This is minorly annoying for me... What am I supposed to do with patches
+> 2 and 3? Take them through my tree for 6.16 in like half a year? Can I
+> just take the v1 into my tree and we can get this done with straight
+> forwardly? Or do you have a different suggestion for me?
 
-For the series:
+Feel free to apply it to your tree too. It's not ideal to have two
+commits for the same thing, but oh well.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+
+-- 
+Jani Nikula, Intel
 
