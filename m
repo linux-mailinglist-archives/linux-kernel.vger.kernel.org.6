@@ -1,254 +1,145 @@
-Return-Path: <linux-kernel+bounces-570742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB805A6B416
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D08E9A6B422
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C816C3B149A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:38:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE753A5905
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180891E3DED;
-	Fri, 21 Mar 2025 05:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAEA1E98E1;
+	Fri, 21 Mar 2025 05:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="vlkFrIgN"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="RHsqvk/1"
+Received: from panther.cherry.relay.mailchannels.net (panther.cherry.relay.mailchannels.net [23.83.223.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2655812E7F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742535508; cv=none; b=mE3TeeJ81Gql2GhfyRdEuwgdGHBlNW6VIUJI4nYGDxLvGUJp/TEAPpnoPeKr86dJPYLeuJkH281R3D587WXYRfvG+kNEA7/cxzLViT40xZQOCttJ+3O/O/uEpQ4rzHHxY42fxvDiIxtzk0R+9+Gg+dO6140XlcG8ZvSP3d6Vlac=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742535508; c=relaxed/simple;
-	bh=NC6QiepBs9K+Sok8y6Yh+YN7Hclo1o+gg9PZoRh7qxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=soMFj7+n0j7BfcUgbgUkn3od1OzZg1KKB+Sh6zZOqo1iaVnJXqR1m7LRCHEr0P0eWpuCCgWEu+CCHbSRIKtYHAaEJfQE1U4Kln7hzooEeLd/FPr3GAIWwjXR0VltFA3cwuuV4VLqXoIRKOsm2+CFfO3t69btXIzATt3IRJrwZts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=vlkFrIgN; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52L5baLZ2479887
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Thu, 20 Mar 2025 22:37:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52L5baLZ2479887
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742535459;
-	bh=7Ui5I04vfxpOv5HtAhqzlCLJj97+ac7rGHmQk2Q9rQA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vlkFrIgNs3CrKDehOpzP4SmNtyvkWL7kXJQk+SJ8BIIQpQ6LmVu0QOXlMNeEvv1KJ
-	 myr57051a+RM6AY5gRAzbV58+fu8uimVwZ8IILgT/A+AlYmJc2iPDM/o7KVb6nKqVN
-	 jHkDM+CU6EYjxcacU6JVztJKTEEGk7iyT+UbekmhBKu0OwcAnHC3SQnB9J+0sMG9h8
-	 ZA3QSKovyfYnV8B5wf6eaTxiEygAgSqf1wckk/79AYH132kEOjFD6k0rrgkZaQXu/c
-	 kcgyyz3tMAE4IqZVRjh+A/FUnKjCJT0198YVkMcymYJTXe1QwcPUIr7Bn0onYQ7TMu
-	 B75vRh/e7+dpg==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: luto@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, brgerst@gmail.com
-Subject: [PATCH v3A 1/3] x86/fred: Allow variable-sized event frame
-Date: Thu, 20 Mar 2025 22:37:35 -0700
-Message-ID: <20250321053735.2479875-1-xin@zytor.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250319071009.1390984-2-xin@zytor.com>
-References: <20250319071009.1390984-2-xin@zytor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1284A208A7;
+	Fri, 21 Mar 2025 05:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.83.223.141
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742536136; cv=fail; b=Nv97+kNAA1vBrHM94RwIoxjmPALRdDQ/6cZA+JUA240gLzy+tnZ9V5BTyNBkcwSM5p4z7QWdLu4dnP5dKP2zmLMA+7ooUG8jnZm2R7DuqdU6ciTRgxBgTBHPChYoOc9upnWpFQJDUsMNrL8BS3pot/YEYaJ0E/RYcWWuvw5Zv7o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742536136; c=relaxed/simple;
+	bh=53FJt8Nl3aXBuorygGMCbOuRq+BG25RLd2YX5y4RzbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhKWRLOLATGllWel3j3rQzKZv/JRiy+Tu03Iv4EGgstztLieLws7YKdYfd1QtlyG+f0H+9C2pR9ujx7rji062WilCvWIMb8hlJnY5tuAEh4pfe45Zeqz/m6QLly8ryw4V6iVtPtxeNkeaRotKmZ6e3uy6gGE4krbFEE/xONUMxg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=RHsqvk/1; arc=fail smtp.client-ip=23.83.223.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 5A99C1A3DC0;
+	Fri, 21 Mar 2025 05:40:11 +0000 (UTC)
+Received: from pdx1-sub0-mail-a223.dreamhost.com (trex-7.trex.outbound.svc.cluster.local [100.97.52.66])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id D06681A4113;
+	Fri, 21 Mar 2025 05:40:10 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1742535610; a=rsa-sha256;
+	cv=none;
+	b=KkOOAJK/RAPYuED448YYtciDVpjjGB5NkuOL0nfT5QX/20bjsWfwiwFAWRwKOWfps6XZGI
+	1Bl88lbIzFQBbyHw+SvxY02iugHgeG9axX9JW12q+j6MlP2HiKaSejN/3713pkr4LgfZ26
+	gkRW314A8SdlLcwaBtan4TF7zcN52CeTuaFCBtMj4tu5LQ4lX8UDBZgVK1vMvTo+DthVmr
+	MXlybxob76sYS2IypL/mxBmdB+Xrsh9j93qQYC9wVrqNaefnESeDRBlsI6TMDE3Yt9ymNT
+	U8dGst+XPyi7rJMRlY5I6+7Xmg2506bIzpxY7zppZYXcIvCARO8sOe5tiksgOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1742535610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=0PS513F+RSzcE7ufaJ1VV9J2RalenEzSdXL1qjKWnms=;
+	b=OoYV9OvX8osBCWuo1z4lXevDHb7ctaR//ds0EAxfbEBLTOF69FTRHifaubz8qs/N/a3y5q
+	Ka2MUzle+QmjX9Ky6A1sC2IpuwOgcEfFlD+gGGg7DOsBrv7S7k/7USrshax8ItDJwYHYrO
+	WTiHUwerlAddn/YKgEQaFKowbDlWDpdES4YRcrG0hgtYvq6LbA//oA6lA8Dx1GSpJYEEIC
+	8aLLNPqcyfV+c27nftJalilFAk/UqAa/AoyaDlSLzhqjFN+n/C9weQnOguqubUJh5yG4kI
+	X46fnZTOygbig2GOAtRuGNu4q4JLixqCTIwudX1LNz/1ZGvyUyOJUsUsiuRVTA==
+ARC-Authentication-Results: i=1;
+	rspamd-67d8974966-r82qp;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Whistle-Unite: 26a4e5d0610e8f75_1742535611133_93697085
+X-MC-Loop-Signature: 1742535611133:926574431
+X-MC-Ingress-Time: 1742535611133
+Received: from pdx1-sub0-mail-a223.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.97.52.66 (trex/7.0.2);
+	Fri, 21 Mar 2025 05:40:11 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a223.dreamhost.com (Postfix) with ESMTPSA id 4ZJrrB0STTzJt;
+	Thu, 20 Mar 2025 22:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1742535610;
+	bh=BA6hsN3yvUC4+OlJ0/XH6ZXiSbYXeRCoV1wEkucA7r0=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=RHsqvk/1568KqhWp9X5bbEj2n24ZOEV1YOO8kcs6xbEmZ1jzhUy+wjOWy4iXFwFB1
+	 7DGjQOe7gVErt6/XvFFTE8lRGU4hUz5a4cWnasX1+qM/yOqY3e0aykzzhtSgeFP22f
+	 wX57AgpIyJqX5J8RNBYaWtKB+TUFgUmlqRdN5aHugGDAxkYskNhM+YT2JQ6y08PVvP
+	 4OCW8J82RCXS203ybMuXuIf6idmlNwtmcclt7kSzlrzSg41CFhuiVKcjEfBHh1bVIF
+	 VeMxFfESwGO6EnL8kLgjZH3s50sWkCsAoPgTcbgBiPVDD+PofVyStbF7l2LtJb2kA8
+	 w0PDCKs3o1hzw==
+Date: Thu, 20 Mar 2025 22:40:07 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Li Ming <ming.li@zohomail.com>
+Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC Patch v1 2/3] cxl/pci: Update Port GPF timeout only when
+ the first EP attaching
+Message-ID: <20250321054007.fidkwiemotwqyui3@offworld>
+References: <20250319035516.222054-1-ming.li@zohomail.com>
+ <20250319035516.222054-3-ming.li@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250319035516.222054-3-ming.li@zohomail.com>
+User-Agent: NeoMutt/20220429
 
-A FRED event frame could contain different amount of information for
-different event types, or perhaps even for different instances of the
-same event type. Thus the size of an event frame pushed by a FRED CPU
-is not fixed and the address of the pt_regs structure that is used to
-save a user level context of current task is not at a fixed offset
-from top of current task kernel stack.
+On Wed, 19 Mar 2025, Li Ming wrote:
 
-Add a new field named 'user_pt_regs' in the thread_info structure to
-save the address of user level context pt_regs structure, thus to
-eliminate the need of any advance information of event frame size
-and allow a FRED CPU to push variable-sized event frame.
+>If a CXL switch is under a CXL root port, The Port GPF Phase timeout
+>will be updated on the CXL root port when each cxl memory device under
+>the CXL switch is attaching. It is possible to be updated more than
+>once. Actually, it is enough to initialize once, other extra
+>initializations are redundant.
 
-For IDT user level event delivery, a pt_regs structure is pushed by
-hardware and software _always_ at a fixed offset from top of current
-task kernel stack, so simply initialize user_pt_regs to point to the
-pt_regs structure no matter whether one is pushed or not.
+It's actually not updated more than necessary because update_gpf_port_dvsec()
+checks first:
 
-While for FRED user level event delivery, user_pt_regs is updated with
-a pt_regs structure pointer generated in asm_fred_entrypoint_user().
+	if (FIELD_GET(base, ctrl) == GPF_TIMEOUT_BASE_MAX &&
+	    FIELD_GET(scale, ctrl) == GPF_TIMEOUT_SCALE_MAX)
+		return 0;
 
-Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
+>When the first EP attaching, it always triggers its ancestor dports to
+>locate their own Port GPF DVSEC. The change is that updating Port GPF
+>Phase timeout on these ancestor dports after ancestor dport locating a
+>Port GPF DVSEC. It guaranttess that Port GPF Phase timeout updating on a
 
-Change in v3A:
-* Add declaration for __top_init_kernel_stack[] (Intel lkp).
+s/guaranttess/guarantees
 
-Change in v3:
-* Replace "(struct pt_regs *)TOP_OF_INIT_STACK - 1" with
-  (struct pt_regs *)__top_init_kernel_stack (Brian Gerst).
----
- arch/x86/entry/entry_fred.c        | 10 ++++++++++
- arch/x86/include/asm/processor.h   | 12 ++++++------
- arch/x86/include/asm/thread_info.h | 11 ++++++++---
- arch/x86/kernel/process.c          | 22 ++++++++++++++++++++++
- include/linux/thread_info.h        |  1 +
- kernel/fork.c                      |  6 ++++++
- 6 files changed, 53 insertions(+), 9 deletions(-)
+>dport only happens during the first EP attaching.
 
-diff --git a/arch/x86/entry/entry_fred.c b/arch/x86/entry/entry_fred.c
-index f004a4dc74c2..a5f5bdd16ad8 100644
---- a/arch/x86/entry/entry_fred.c
-+++ b/arch/x86/entry/entry_fred.c
-@@ -228,6 +228,16 @@ __visible noinstr void fred_entry_from_user(struct pt_regs *regs)
- 	/* Invalidate orig_ax so that syscall_get_nr() works correctly */
- 	regs->orig_ax = -1;
- 
-+	/*
-+	 * A FRED event frame could contain different amount of information
-+	 * for different event types, or perhaps even for different instances
-+	 * of the same event type. Thus the size of an event frame pushed by
-+	 * a FRED CPU is not fixed and the address of the pt_regs structure
-+	 * that is used to save a user level context of current task is not
-+	 * at a fixed offset from top of current task stack.
-+	 */
-+	current->thread_info.user_pt_regs = regs;
-+
- 	switch (regs->fred_ss.type) {
- 	case EVENT_TYPE_EXTINT:
- 		return fred_extint(regs);
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 5d2f7e5aff26..7ff3443eb57d 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -646,12 +646,12 @@ static __always_inline void prefetchw(const void *x)
- 
- #define task_top_of_stack(task) ((unsigned long)(task_pt_regs(task) + 1))
- 
--#define task_pt_regs(task) \
--({									\
--	unsigned long __ptr = (unsigned long)task_stack_page(task);	\
--	__ptr += THREAD_SIZE - TOP_OF_KERNEL_STACK_PADDING;		\
--	((struct pt_regs *)__ptr) - 1;					\
--})
-+/*
-+ * Note, this can't be converted to an inline function as this header
-+ * file defines 'struct thread_struct' which is used in the task_struct
-+ * structure definition.
-+ */
-+#define task_pt_regs(task) ((task)->thread_info.user_pt_regs)
- 
- #ifdef CONFIG_X86_32
- #define INIT_THREAD  {							  \
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 9282465eea21..07c6a6a92c65 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -56,6 +56,7 @@
-  */
- #ifndef __ASSEMBLER__
- struct task_struct;
-+struct pt_regs;
- #include <asm/cpufeature.h>
- #include <linux/atomic.h>
- 
-@@ -66,11 +67,15 @@ struct thread_info {
- #ifdef CONFIG_SMP
- 	u32			cpu;		/* current CPU */
- #endif
-+	struct pt_regs		*user_pt_regs;
- };
- 
--#define INIT_THREAD_INFO(tsk)			\
--{						\
--	.flags		= 0,			\
-+extern unsigned long __top_init_kernel_stack[];
-+
-+#define INIT_THREAD_INFO(tsk)						\
-+{									\
-+	.flags		= 0,						\
-+	.user_pt_regs	= (struct pt_regs *)__top_init_kernel_stack,	\
- }
- 
- #else /* !__ASSEMBLER__ */
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 91f6ff618852..58c1cd4ca60a 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -108,6 +108,28 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- 	return 0;
- }
- 
-+/*
-+ * Initialize thread_info.user_pt_regs for IDT event delivery.
-+ *
-+ * For IDT user level event delivery, a pt_regs structure is pushed by both
-+ * hardware and software and always resides at a fixed offset from top of
-+ * current task kernel stack, thus thread_info.user_pt_regs is a per-task
-+ * constant and NEVER changes after initialization.
-+ *
-+ * While for FRED user level event delivery, user_pt_regs is updated in
-+ * fred_entry_from_user() immediately after user level event delivery.
-+ *
-+ * Note: thread_info.user_pt_regs of the init task is initialized at build
-+ * time.
-+ */
-+void arch_init_user_pt_regs(struct task_struct *tsk)
-+{
-+	unsigned long top_of_stack = (unsigned long)task_stack_page(tsk) + THREAD_SIZE;
-+
-+	top_of_stack -= TOP_OF_KERNEL_STACK_PADDING;
-+	tsk->thread_info.user_pt_regs = (struct pt_regs *)top_of_stack - 1;
-+}
-+
- #ifdef CONFIG_X86_64
- void arch_release_task_struct(struct task_struct *tsk)
- {
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index cf2446c9c30d..324667e0b8dd 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -273,6 +273,7 @@ void arch_task_cache_init(void); /* for CONFIG_SH */
- void arch_release_task_struct(struct task_struct *tsk);
- int arch_dup_task_struct(struct task_struct *dst,
- 				struct task_struct *src);
-+void arch_init_user_pt_regs(struct task_struct *tsk);
- 
- #endif	/* __KERNEL__ */
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index e27fe5d5a15c..2b0367368afb 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1101,6 +1101,10 @@ int __weak arch_dup_task_struct(struct task_struct *dst,
- 	return 0;
- }
- 
-+void __weak arch_init_user_pt_regs(struct task_struct *tsk)
-+{
-+}
-+
- void set_task_stack_end_magic(struct task_struct *tsk)
- {
- 	unsigned long *stackend;
-@@ -1128,6 +1132,8 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	if (err)
- 		goto free_tsk;
- 
-+	arch_init_user_pt_regs(tsk);
-+
- #ifdef CONFIG_THREAD_INFO_IN_TASK
- 	refcount_set(&tsk->stack_refcount, 1);
- #endif
--- 
-2.48.1
+... but yeah, I think this is still better, logically.
 
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+
+(with the caveat that if patch 1 is not necessary then this would need to
+be redone).
 
