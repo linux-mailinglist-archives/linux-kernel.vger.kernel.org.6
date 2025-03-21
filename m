@@ -1,84 +1,55 @@
-Return-Path: <linux-kernel+bounces-571430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F28A6BD08
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:35:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6DAA6BD0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273C2188996C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBF43B210C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EFB1D6DDA;
-	Fri, 21 Mar 2025 14:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444FD1CDA3F;
+	Fri, 21 Mar 2025 14:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUmRVEEP"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0Yk+j/Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453241D6DDD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19E37D07D;
+	Fri, 21 Mar 2025 14:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567656; cv=none; b=A/OVLEtJeDsKIjpucoXfmTgoKu1uBWRi8B23kZfJ+aa9y/5uCsS9mXeX2DfanFKUtqdfu5Ot5irexTjOWmRoVuJWPX3K5ipnkV95Wq7Xikp2BdG4VFS0EeG2ynUoLXmHKMmUkDCdNwOy1efOfWJTJnT4sXjvhrvt5WHxfstUEaw=
+	t=1742567679; cv=none; b=mCoJq+7SRrVYosVWnDs6Wet7C/1e1JE86GiUg5VD/Zcscpha3Nf4iWs2fd8sN0BDcQV8AVTppitD1XkdeuXXn7chj7VH/sm3Uc8T9SyXLZ4dCDuDRD4usJdcm9ZsEFuTbemBfuse4M7M6aDNzCrniq7LLe6iSEugdNySvgBBLhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567656; c=relaxed/simple;
-	bh=6MoXFu4CLfosp+15aOYuT+yR51crnXpBLzFRutHhie8=;
+	s=arc-20240116; t=1742567679; c=relaxed/simple;
+	bh=ncUdgGT8J7AIZ2KnPWf1uNaVh3x3t/nt+3RArU3kK1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VyEZ5/bW7PkVrX/2a+ByZmok7nEBjk+JbZvhNtKKCWkbCDKJq7O4aP6vcF5uqudUkOQ6yEaJXl7DhCuqxrILOI8zwMr+V06V8J4TVBnnYgwQmwnZ2K4LoXJfFdNmzh6sUe6ummWcyr+5QZaOP0bdfBYpHBp77qWxXyIvVaW2Wv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gUmRVEEP; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3912e96c8e8so1263467f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742567653; x=1743172453; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1kqVdYeLxFWfGG4ab3N4AIVapOQ8iQyK3/JzY3rIwWk=;
-        b=gUmRVEEPhIr9cMyEt9TTnQUDVTF6Y4fYxaJtt6CpdVuuPkcVNKGpOtuihXBBJiCGp/
-         dKjmlXbJENFSZ+XKYLNCULG7J82lE2nzQTOwbCiQe4P2tfTKgP2UBT37YzsieV2eDt26
-         fwyRdLoZv8eI0wMeIKJJxaCTb9OaD8XvNn8ufDRaHZzX59//FezpkUnRDUIpht4gJg2r
-         3d0CQYXEBD/VKUBED2fUAOEVHoxgoXp594PNsTpddcDxKfh0/ErDwf0ake0tfd7NdnPA
-         g4wiJazFluguLgv8v7JoWXGu5DYNytca4Ept4C6fLUyuPgwo7wGtndW3PzjPIZgQd6h8
-         eMAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742567653; x=1743172453;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1kqVdYeLxFWfGG4ab3N4AIVapOQ8iQyK3/JzY3rIwWk=;
-        b=i+nqAKwHgt8AElFSBmb50iLYQUEWdL4ly8OGXgapSmzMoRQHowEKqeIiA+zPzxDyz0
-         O+dTuoZc+I/zEyuIFeVcfn1QXg0n5bPXlmcYfKUuRGgZ9tNUU/4kXDwlwOLZKfl0DsoU
-         CZSq+feBSnDy/FAit87kwkNCAhkA7JMnQ1FSrg9tKOxLBRD00pInORALaB2zazAN/AYG
-         BJ1cvUjGCwJ21PGoG4fWDUZI1jSdPXOfCb0++hUovp6t2Sb2GFXCsHLsMiccaEM6ERla
-         jSog0fjoh1hyfbOsyKDVNmQVNfcaDWr/RgnhOyPBo11LnwQifBaIjbiqZpmhYUWXjelU
-         SIzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfPRLTp8+EbXOvz6s3izR/SV65LUYRM6S0qGFAasEyrx4/7BvMEBfwiVt2qGqpE8zij1PjIiz1ADH9aL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuMlddr7NRTuuEz7/gBzhXC88/56O5CWtFDVSLIAjbll9sHNXD
-	2M6fOw6u3Pq/8ezh4ra2rcpXeLYLjxPXkHrXDxZT9NAR6LCWSz1lQp8qSjw8sG8=
-X-Gm-Gg: ASbGncuUiwkJj08NB9Lz6wmpRLr9VWUbhtVHpennFRB7b8H46mHa2HfajzURSnj2oYF
-	RxGXrI1o032piEwf3XBU7uhVxXIr3G73QW6qyveprKGGghip+wvsFNeZC6/LYyHgBLsjOg/VawF
-	EKbXkqn7rlBj4SG7++7Dnc/q0ZF/OSNztqyg8SKxHkUD78dcRWg0skPorxWBSTvb6RcgQE3v0ig
-	GEyObNpHNkCIHf0IpYppGglrkWMleRQfZZqYoTUHNQLFFxd+HZ/YTCx+g8Ws9V7inVTBxYfg7YC
-	qROyH6kn2+Ty0Wo77ZiKwvWasEeEnqdgylypp+pxEjtC5BmmDg==
-X-Google-Smtp-Source: AGHT+IH3J7mR0ItKLtQh/BfAHr2Qv0TD83WieWbRHva+BSl455obiV7i95/cpX3n3cQBcn7spSf0kw==
-X-Received: by 2002:a05:6000:18a2:b0:390:f9d0:5e4 with SMTP id ffacd0b85a97d-3997f8fafb1mr3799744f8f.21.1742567653378;
-        Fri, 21 Mar 2025 07:34:13 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f99540bsm2503365f8f.2.2025.03.21.07.34.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:34:13 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:34:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] power: supply: max77705: Fix error code in
- max77705_get_health()
-Message-ID: <0ea50e87-2b63-4062-8c2a-17537495f481@stanley.mountain>
+	 Content-Disposition; b=r/uLkXyt1BaUy11ZZ3DBjfWsDu9q0YBFUIKKSRHBFGaJOPFD3WGFxCPVqV/ioPIFVJQQv0mJjq2/oEhPNv4nqUmAlDlsaVo68vhntdR1ypsX1PlOvANw+FRqcxjnBVTwpEjnBvogIatjcIFIe0dBmetXsxWXJJZRkR2V3PNfWFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0Yk+j/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02646C4CEE3;
+	Fri, 21 Mar 2025 14:34:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742567679;
+	bh=ncUdgGT8J7AIZ2KnPWf1uNaVh3x3t/nt+3RArU3kK1w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=S0Yk+j/YoTYKkgQSlqZtooOsMJq69c87rAg3lRGyeWoTypoYl4ioc1SWYKmXaLPb7
+	 JrNVkEkiffOtniUvH3nQnbPdlbFP5F+wUm0fflO+1tTfBTkn+dfzuIKDF/AONCXvjJ
+	 mobtlupeit3A3eciVogNzVUhBAKlO8oKlog8pGTKRgX+IY7z1lEJf6G3ZDgC5MVGgZ
+	 nlz1sONyc2w+mZrnipxA6HJjhtWbnRiygL2/k6BfENttEfoD1YzW1qxEpVHdbgGVeF
+	 yesEZuUUkVsZrF4qGK+AIiqJsF6Ano3KgyNC951uIOijuEnThcfWURpDIlVUfErskO
+	 aNgfyk45ke/CQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tvdSL-000000000dQ-2RUH;
+	Fri, 21 Mar 2025 15:34:41 +0100
+Date: Fri, 21 Mar 2025 15:34:41 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] USB-serial update for 6.15-rc1
+Message-ID: <Z915ASU5AKnAigu1@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,30 +58,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <94f55158-1776-4f2f-9296-e307e83d569a@stanley.mountain>
 
-Return -EINVAL if the health is bad.  Don't return success.
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
 
-Fixes: a6a494c8e3ce ("power: supply: max77705: Add charger driver for Maxim 77705")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/power/supply/max77705_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
 
-diff --git a/drivers/power/supply/max77705_charger.c b/drivers/power/supply/max77705_charger.c
-index 329b430d0e50..0e347353c41e 100644
---- a/drivers/power/supply/max77705_charger.c
-+++ b/drivers/power/supply/max77705_charger.c
-@@ -285,7 +285,7 @@ static int max77705_get_health(struct max77705_charger_data *charger, int *val)
- 	if (is_online) {
- 		ret = max77705_get_vbus_state(regmap, val);
- 		if (ret || (*val != POWER_SUPPLY_HEALTH_GOOD))
--			return ret;
-+			return -EINVAL;
- 	}
- 	return max77705_get_battery_health(charger, val);
- }
--- 
-2.47.2
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.15-rc1
+
+for you to fetch changes up to 6a7713ec5337d3a535a1e35a7a7a71020436770e:
+
+  USB: serial: mos7840: drop unused defines (2025-02-17 10:59:28 +0100)
+
+----------------------------------------------------------------
+USB-serial update for 6.15-rc1
+
+Here's a single USB-serial cleanup for 6.15-rc1 that's been sitting in
+linux-next for a few weeks without any reported issues.
+
+----------------------------------------------------------------
+Johan Hovold (1):
+      USB: serial: mos7840: drop unused defines
+
+ drivers/usb/serial/mos7840.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
