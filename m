@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-571619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873C2A6BFCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:25:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9EEA6BFD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:26:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ADE71B622D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F3A1891741
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1816629D0B;
-	Fri, 21 Mar 2025 16:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476B022A7FF;
+	Fri, 21 Mar 2025 16:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L0WuCZSX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7gPvO3o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8514601C;
-	Fri, 21 Mar 2025 16:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA891A238C;
+	Fri, 21 Mar 2025 16:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742574085; cv=none; b=YAcGXMoE349Me9Swj7a4hRYDyc9FI1qLspyoKAmPzW8LCZVf+255vcE6B4k2nfPYHiGndEMMfPqlY5UuToeELg2Q7MionEajuNno8XPoa+cP8oQiAcMpOVXcc3miDzwv3rkRo0qLTCf0YYuGm5BrGyDZwDY6asj1sdFcujdilCI=
+	t=1742574196; cv=none; b=KQ2/XLgKx8mt4Y5im1uJJHwtw+tsHYwN0RoptRq1N6hS26TRaAOh2qltwYZq0hqLI2WkLDnE/01MWY0Nd6DE9uluaf/eC8iAGX9kZM3t35FRRq5OQWTF4OXbVD7WoHA+QfWRF4qWb3u4R8HTOlKqyl9RMH6PL1/IlcHlA1bHkts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742574085; c=relaxed/simple;
-	bh=e8HyGx+31UnR/GpZxIrV+eNyLSuBm+MWfmWimk8Ut2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YI/dbJUaO4Fg+CJtDCv3ZRZ7iczA/2aAcG19buMlLXdORHczHKvueWETwG4es371Qqnwi2Eovo068eCsHz3Lr9yn8NlB800tIs6DfkbeOoLj4j0PyWIo/HNNjLRdiQs04i/XNbAcQ5Larf1N7EAcMqrVtIvFlyzvArOpWinygRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L0WuCZSX; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742574084; x=1774110084;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=e8HyGx+31UnR/GpZxIrV+eNyLSuBm+MWfmWimk8Ut2U=;
-  b=L0WuCZSX3cbSqSHfkRkdCJ+r2vY23RAvu7RrFv5INIdjtquNj+JgTbDX
-   HQ//VSjRptovklqgpApu+4NSvycvXldBdgSf/PXsTlc6wKYHHXTqvYqZS
-   HiLQwYZC5s/K/J1WUOgttgGjjdJDUqaPBCLmzVeszImSIOVAvhqGHQFHP
-   4kJ6KJks/hUdQb6JMJhEyV04C8GCP1i2VAoel4+tAoGvu+ZSCfq1jkf2q
-   Um4FPfqGZyTBUVEu+n6nJK+/Yh+vGRgtck8UaDtJx9KfZGKCF8RBfJpia
-   WVQc991E2q2HAvfCPFbvXq89Fw8Q8ZkdMUwtZg72XS4c2YvRvgHt+bkyt
-   g==;
-X-CSE-ConnectionGUID: DIrk0o+HQpu186eYAGXWiQ==
-X-CSE-MsgGUID: vCBHv3CaT+CcjTeXxQ0K1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="47503046"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="47503046"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 09:21:23 -0700
-X-CSE-ConnectionGUID: 944zfTjuQ1CMrijVWpKgVA==
-X-CSE-MsgGUID: UjiuwLNOReaImB7My2ak+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="123618978"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 09:21:20 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1742574196; c=relaxed/simple;
+	bh=uhN6QJh0tP83UgoduWmaigRwPkVaACTLj8V+BUixCws=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ANgGDsV2Cm/3VJh6BVyl9GPF8Jgx8AViEvces2fAHVgX74xv5zRhY/LbHbTzGImttGOHzSDjVr37UxskNzYDHbZuxvLzCo2aW/kuXpzCBlbpwp2HzXe1ZO4AkbxVpTsYpJ/gX2LrIzRxRVEmq/tpukUSCVzZRhHXEfdhlzAy/NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7gPvO3o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B070BC4CEE3;
+	Fri, 21 Mar 2025 16:23:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742574195;
+	bh=uhN6QJh0tP83UgoduWmaigRwPkVaACTLj8V+BUixCws=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=t7gPvO3okxvDMLDqE4vtR0NptCjPnaTAqAqUwY3qA/DfySDChcOVpbmG5vpe/8RVJ
+	 TUcu7fYT1pYBNBo4cVtentnH6ATRwjYhV+cdQ5304hCyc7giVcUGIL1peapF9KXO4X
+	 dCZ3Bw/RstpIWLo8sOLQk1F/lH76+JK5lPWlIHmi45fKc6WWBGieuK3VRGwsi3gFVj
+	 meQnBcSupj12gb67FwJHx/QdKAjjM4T84Xr4JPigVlnzD0sckKH9HG1UiHspr9PTi4
+	 Kgq+CNkVvN9OvmaQ9UF67LRzXC56ukdco3SYjd4lsdz2e8IP5aR0rkm//NdtUwJJD4
+	 1iICj7yAU750g==
+From: Conor Dooley <conor@kernel.org>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Min Lin <linmin@eswincomputing.com>,
+	Pritesh Patel <pritesh.patel@einfochips.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Yu Chien Peter Lin <peterlin@andestech.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	Darshan Prajapati <darshan.prajapati@einfochips.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	rafal@milecki.pl,
+	Anup Patel <anup@brainfault.org>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH v2 1/1] PCI/hotplug: Don't enable HPIE in poll mode
-Date: Fri, 21 Mar 2025 18:21:14 +0200
-Message-Id: <20250321162114.3939-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: (subset) [PATCH v2 00/10] Basic device tree support for ESWIN EIC7700 RISC-V SoC
+Date: Fri, 21 Mar 2025 16:21:50 +0000
+Message-ID: <20250321-trimness-unwind-0ffafee4ac8a@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250320105449.2094192-1-pinkesh.vaghela@einfochips.com>
+References: <20250320105449.2094192-1-pinkesh.vaghela@einfochips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=646; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=G5nMXPv07/5t5qEEHTEA3VTjgeOZ3saVfKZymta3BuE=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOl3Jyk6nJ7/OTf/3mtx64Ctwmf+FhRPnFWmpLMvnW2v3 Iz5PoVbO0pZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjARpxyG/8URCaFT+Q/8UrpX 6lXeUV/3Ty9tTemRRZVB7IevGfmfWcLIcM8o7Hvinq2Jy8V3zirel7PHSO/G6kNHXfkkdrNl/zV dxQAA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-PCIe hotplug can operate in poll mode without interrupt handlers using
-a polling kthread only. The commit eb34da60edee ("PCI: pciehp: Disable
-hotplug interrupt during suspend") failed to consider that and enables
-HPIE (Hot-Plug Interrupt Enable) unconditionally when resuming the
-Port.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Only set HPIE if non-poll mode is in use. This makes
-pcie_enable_interrupt() match how pcie_enable_notification() already
-handles HPIE.
+On Thu, 20 Mar 2025 16:24:39 +0530, Pinkesh Vaghela wrote:
+> Add support for ESWIN EIC7700 SoC consisting of SiFive Quad-Core
+> P550 CPU cluster and the first development board that uses it, the
+> SiFive HiFive Premier P550.
+> 
+> This patch series adds initial device tree and also adds ESWIN
+> architecture support.
+> 
+> [...]
 
-Fixes: eb34da60edee ("PCI: pciehp: Disable hotplug interrupt during suspend")
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
----
+Applied to riscv-cache-for-next, but too late for this merge window.
+They'll be 6.16 material, the commit hashes below will change when I
+rebase on top of 6.15-rc1.
 
-v2:
-- Dropped other hotplug fixes/changes (Lukas' approach/fix is better)
-- Fixed typo in shortlog
+[05/10] dt-bindings: cache: sifive,ccache0: Add ESWIN EIC7700 SoC compatibility
+        https://git.kernel.org/conor/c/a506a819af37
+[06/10] cache: sifive_ccache: Add ESWIN EIC7700 support
+        https://git.kernel.org/conor/c/4a9d4db6ba17
 
- drivers/pci/hotplug/pciehp_hpc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index bb5a8d9f03ad..28ab393af1c0 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -842,7 +842,9 @@ void pcie_enable_interrupt(struct controller *ctrl)
- {
- 	u16 mask;
- 
--	mask = PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_DLLSCE;
-+	mask = PCI_EXP_SLTCTL_DLLSCE;
-+	if (!pciehp_poll_mode)
-+		mask |= PCI_EXP_SLTCTL_HPIE;
- 	pcie_write_cmd(ctrl, mask, mask);
- }
- 
-
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
--- 
-2.39.5
-
+Thanks,
+Conor.
 
