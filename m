@@ -1,147 +1,231 @@
-Return-Path: <linux-kernel+bounces-570853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD8AA6B544
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:44:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0ABA6B54A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26560188F5FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC93F3B79F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EB31EE7DF;
-	Fri, 21 Mar 2025 07:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4BF1EEA32;
+	Fri, 21 Mar 2025 07:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIGI0wFR"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxtOttO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE082AF1B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A754D1EB9F7;
+	Fri, 21 Mar 2025 07:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742543053; cv=none; b=OgAj92I5w0+4p3BiogR9rqwQmMuwwjMYkCuHbA1cce7xhqc+vmurpf89rE0CLhoff/U30WpBrRR3oYWpAkT9rpK4lY2zxadnFJ+D20pMq6xdweMsZL/mvnis55dcVC65vAug+jcYEK8Gs8rNnVNrBe9j9uas5+a/leEtZhmUJ4I=
+	t=1742543072; cv=none; b=hYzIAslPk58VQhIa9tp05H+zjtMDcKTVvvfsQM1leohhiCH7tH9M7tcnt3GbGgHMDmyqb698J1zaLkbgp+6JRpISp8jjRx7fzPG842VH7VhzW6TcaJ095S4v/plNeegicKZh2hzYKFveE9Z9q1rMCY7xLLffj/kCoxO+7Shyzjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742543053; c=relaxed/simple;
-	bh=BbW5J7bJ0F/6xzUhLBXbzsRHMWimzxpvWyckCSBAybc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=frMGhfNqH5vsaCyPr4Du2C3UIDKMyQO7v8hha3BGzf1ExxAodP1GIz6gKaWCwgLOi3+Xpk9znaA8L5GzEhb9gHlQWLviNFdSosicDKY3X2HKbg3sf/LYXxP9wklY9S7iM9yexR0d5YQWFSUSdfi7SJ0WpMlA15OH8BXE8UDSXZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jIGI0wFR; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ce245c5acso17630405e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:44:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742543050; x=1743147850; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RmkFRH9GaUbe55qgjxHC/Rqmku15Hvr0oI20CNeu9iU=;
-        b=jIGI0wFRsZ4+E2Bx11Q4eidwSbuQO5QWMRDDNxhRTfbNCdbnFGJ+A0aVS9ayUM677N
-         +Zk0EAhfqcf+3dnECR7/EIJxrWcNiXcriYBDrRfqPZ7MGNUyyruOF/GfVhlVEkBJFvde
-         ucCLrjj/+GiKvkEBgp7pp3nvINoSnSB+f0BkD+VdG46Z6xfsC8ey/8DcYwwrXq6EWRs7
-         Y/v5iV+c4GxFtcF+I+nGgNeBK+6CRbUrRDzCOxmaKPAm/d2h6umVNfTNCqJetTrC6V6i
-         7m3cV5N/4cnPQOcd25FG06NgSv6Yzc/w6ecTFMi/WbqbiW9lJi0rLTSn7xmnHutg0+3Y
-         0Jsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742543050; x=1743147850;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RmkFRH9GaUbe55qgjxHC/Rqmku15Hvr0oI20CNeu9iU=;
-        b=jfQVqjWFKk4yizl9ja6iYAk1aDIrnt1hBPyvFjAj/0F9O3MihJqm9c9ca9CwZhJY8c
-         TOXsNe0G6MKFKHeferIL/GrbXy3OCRKhjfBPTWJ3wjeWPZQ/Mn6yrZDiCHhQhqtRkZq6
-         n4Zngoy5p3URyZnx69Xx5aWYhYIVRtYFckNdYxDYuHZz3j4QHqWrHR99Or2tbeUMujsk
-         xH7GSuYb8y53lZjuO2eOqO7IPDVaDcyY4wxD9VR+Dd+OnisMsxDgDmtJh00WlgmymOBb
-         gQHERKvleIkjiuZZ32V8L0Cy82N0aef5cGoFx6qZlbkM50a/f3U8aqM3LZLqZ96+3qFv
-         ODcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlh30bWRqaejbdEdQW468MwPkItCTWWb/RRLxlFZEfTzEEDZM4rV/3RzpoA1qHbeqYrdtoqtN2I5MEZ6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkplt7ffR/yjlRXoNJpL5r7tMMbxKTuTMRcJVPMhu6Q33LCkSs
-	OMcuUXdkGbhyqx9R85t5yixpFhkmyw/iDMc0BsvW1DfnKYL2fWDd0oUjqzzPmNxAMQBU8JdrSjF
-	bWl6rHUlwnRVK7Q==
-X-Google-Smtp-Source: AGHT+IHusjLFbM5ugVtWBOs5d/FRmaSn72gmCX4kY3Tdaw8+WjbGKM+n4bBd7V+17bKoax+DIVEKZdNpfjdZGdw=
-X-Received: from wmbgx13.prod.google.com ([2002:a05:600c:858d:b0:43d:8f:dd29])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4693:b0:43c:fda5:41e9 with SMTP id 5b1f17b1804b1-43d50a5237fmr14181765e9.31.1742543050715;
- Fri, 21 Mar 2025 00:44:10 -0700 (PDT)
-Date: Fri, 21 Mar 2025 07:44:08 +0000
-In-Reply-To: <D8LFRQ5IX33R.35U012LFZ06W0@proton.me>
+	s=arc-20240116; t=1742543072; c=relaxed/simple;
+	bh=/YmjxGbakqtnak0HA4K/vKGsWFbKueiINUncr9XTSzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oBmYvLDytX3zsPntGOUXY/ZHD6Xlx90qbjJ5x73vAJX0QFSGqdN1zTiOlPKHvR8ajI4nz6KuV7P+pfYZBC1N+h+sqcH0DssGW/iKtTsz9IHbbo6qdNYXiF+NXzpAsXaqvDJuzH6zhMX074rAib7VqqvT150K8BKcwEeVbpqHdeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxtOttO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DE8C4CEE3;
+	Fri, 21 Mar 2025 07:44:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742543072;
+	bh=/YmjxGbakqtnak0HA4K/vKGsWFbKueiINUncr9XTSzw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uxtOttO2F7v89LlJgh70CQiu5tLI6RaIemI9Z0u8HLRIqerUioGSSYZrDpkcA3sPv
+	 /3KXrgvNsfcYBjgOdatbfruVTVSwl1+thHkX/4svLdGjdAGPxr1R56cev/osRg9N+E
+	 XQOySpa5W7nDLmt3gtA6T85KBMttBU4UT2JX4NAwoUC2ZjQH/NEstb50hKeD5MTUe+
+	 o2/4Y4f8v+vaGHApik+dNWVxLFpmvynZOa2PbQRTfGBGihAx3Hj69aLPViPfRYMQh+
+	 ZzfXaT758lgC2uoV+MGwjGcfQoysEVl+q9Cn33/sVgS8DSNBPQrpI+MCfoi87U9CqV
+	 busQicYEiHfTA==
+Message-ID: <5127f2e7-cb38-4103-8799-551fdedd8152@kernel.org>
+Date: Fri, 21 Mar 2025 08:44:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <D8LFRQ5IX33R.35U012LFZ06W0@proton.me>
-Message-ID: <Z90YyLPhil2vBTc_@google.com>
-Subject: Re: [PATCH 2/5] rust: alloc: add Vec::pop
-From: Alice Ryhl <aliceryhl@google.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] ARM: dts: aspeed: Add device tree for Nvidia's
+ GB200NVL BMC
+To: Willie Thai <wthai@nvidia.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+ kees@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc: leohu@nvidia.com, tingkaic@nvidia.com, dkodihalli@nvidia.com,
+ Mars Yang <maryang@nvidia.com>, Andrew Lunn <andrew@lunn.ch>,
+ Paul Menzel <pmenzel@molgen.mpg.de>
+References: <20250320164633.101331-1-wthai@nvidia.com>
+ <20250320164633.101331-2-wthai@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250320164633.101331-2-wthai@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 20, 2025 at 10:11:09PM +0000, Benno Lossin wrote:
-> On Thu Mar 20, 2025 at 2:52 PM CET, Alice Ryhl wrote:
-> > This introduces a basic method that our custom Vec is missing. I expect
-> > that it will be used in many places, but at the time of writing, Rust
-> > Binder has six calls to Vec::pop.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/alloc/kvec.rs | 31 +++++++++++++++++++++++++++++++
-> >  1 file changed, 31 insertions(+)
-> >
-> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > index 95e752ed27395fce72d372976b74fb1b0e957194..9943358c70aa63f5ad7ed9782cb8879d7a80a8fb 100644
-> > --- a/rust/kernel/alloc/kvec.rs
-> > +++ b/rust/kernel/alloc/kvec.rs
-> > @@ -302,6 +302,37 @@ pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
-> >          Ok(())
-> >      }
-> >  
-> > +    /// Removes the last element from a vector and returns it, or `None` if it is empty.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let mut v = KVec::new();
-> > +    /// v.push(1, GFP_KERNEL)?;
-> > +    /// v.push(2, GFP_KERNEL)?;
-> > +    /// assert_eq!(&v, &[1, 2]);
-> > +    ///
-> > +    /// assert_eq!(v.pop(), Some(2));
-> > +    /// assert_eq!(v.pop(), Some(1));
-> > +    /// assert_eq!(v.pop(), None);
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn pop(&mut self) -> Option<T> {
-> > +        let Some(len_sub_1) = self.len.checked_sub(1) else {
-> > +            return None;
-> > +        };
-> 
-> Isn't it possible to do:?
->     
->     let len_sub_1 = self.len.checked_sub(1)?;
+On 20/03/2025 17:46, Willie Thai wrote:
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		led-0 {
+> +			label = "uid_led";
+> +			gpios = <&sgpiom0 27 GPIO_ACTIVE_LOW>;
+> +		};
+> +		led-1 {
+> +			label = "fault_led";
+> +			gpios = <&sgpiom0 29 GPIO_ACTIVE_LOW>;
+> +		};
+> +		led-2 {
+> +			label = "power_led";
+> +			gpios = <&sgpiom0 31 GPIO_ACTIVE_LOW>;
+> +		};
+> +
 
-Yes, good catch.
+You still have stray blank lines in few places.
 
-> > +
-> > +        // INVARIANT: If the first `len` elements are valid, then the first `len-1` elements are
-> 
-> Please add spaces around `-`.
+> +	};
+> +
+> +	buttons {
+> +		button-power {
+> +			label = "power-btn";
+> +			gpio = <&sgpiom0 156 GPIO_ACTIVE_LOW>;
+> +		};
+> +		button-uid {
+> +			label = "uid-btn";
+> +			gpio = <&sgpiom0 154 GPIO_ACTIVE_LOW>;
+> +		};
+> +	};
+> +
+> +};
+> +
 
-I can do that, but does it really read better?
+...
 
-> > +        // valid.
-> > +        self.len = len_sub_1;
-> > +
-> > +        // INVARIANT: This invalidates a value in this vector's allocation, but the Vec invariants
-> > +        // do not require it to be valid because `self.len <= len_sub_1`.
-> 
-> I don't think this should be an `INVARIANT` comment. Maybe we don't even
-> need it.
+> +/*
+> + * Enable USB port A as device (via the virtual hub) to host
+> + */
+> +&vhub {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	/*
+> +	 * Uncomment below line to enable internal EHCI controller
+> +	 * Current config uses xHCI Port1
+> +	 */
 
-I can drop the INVARIANT: prefix.
+Comment makes no sense.
 
-Alice
+> +};
+> +
+> +&video {
+> +	status = "okay";
+> +	memory-region = <&video_engine_memory>;
+> +};
+> +
+
+...
+
+> +&gpio0 {
+> +	gpio-line-names =
+> +		/*A0-A7*/ "", "", "", "", "", "", "", "",
+> +		/*B0-B7*/ "", "", "", "", "", "", "", "",
+> +		/*C0-C7*/ "SGPIO_I2C_MUX_SEL-O", "", "", "", "", "", "", "",
+> +		/*D0-D7*/ "", "", "", "UART1_MUX_SEL-O", "", "FPGA_PEX_RST_L-O", "", "",
+> +		/*E0-E7*/ "RTL8221_PHY_RST_L-O", "RTL8211_PHY_INT_L-I",	"", "UART3_MUX_SEL-O",
+> +					"", "", "", "SGPIO_BMC_EN-O",
+> +		/*F0-F7*/ "", "", "", "", "", "", "", "",
+> +		/*G0-G7*/ "", "", "", "", "", "", "", "",
+> +		/*H0-H7*/ "", "", "", "", "", "", "", "",
+> +		/*I0-I7*/ "", "", "", "", "", "QSPI2_RST_L-O", "GLOBAL_WP_BMC-O", "BMC_DDR4_TEN-O",
+> +		/*J0-J7*/ "", "", "", "", "", "", "", "",
+> +		/*K0-K7*/ "", "", "", "", "", "", "", "",
+> +		/*L0-L7*/ "", "", "", "", "", "", "", "",
+> +		/*M0-M7*/ "PCIE_EP_RST_EN-O", "BMC_FRU_WP-O", "HMC_RESET_L-O", "STBY_POWER_EN-O",
+> +					"STBY_POWER_PG-I", "PCIE_EP_RST_L-O", "", "",
+> +		/*N0-N7*/ "", "", "", "", "", "", "", "",
+> +		/*O0-O7*/ "", "", "", "", "", "", "", "",
+> +		/*P0-P7*/ "", "", "", "", "", "", "", "",
+> +		/*Q0-Q7*/ "", "", "", "", "", "", "", "",
+> +		/*R0-R7*/ "", "", "", "", "", "", "", "",
+> +		/*S0-S7*/ "", "", "", "", "", "", "", "",
+> +		/*T0-T7*/ "", "", "", "", "", "", "", "",
+> +		/*U0-U7*/ "", "", "", "", "", "", "", "",
+> +		/*V0-V7*/ "AP_EROT_REQ-O", "EROT_AP_GNT-I", "", "","PCB_TEMP_ALERT-I", "","", "",
+> +		/*W0-W7*/ "", "", "", "", "", "", "", "",
+> +		/*X0-X7*/ "", "", "TPM_MUX_SEL-O", "", "", "", "", "",
+> +		/*Y0-Y7*/ "", "", "", "EMMC_RST-O", "","", "", "",
+> +		/*Z0-Z7*/ "BMC_READY-O","", "", "", "", "", "", "";
+> +};
+> +
+> +&gpio1 {
+> +	/* 36 1.8V GPIOs */
+> +	gpio-line-names =
+> +		/*A0-A7*/ "", "", "", "", "", "", "", "",
+> +		/*B0-B7*/ "", "", "", "", "", "", "IO_EXPANDER_INT_L-I","",
+> +		/*C0-C7*/ "", "", "", "", "", "", "", "",
+> +		/*D0-D7*/ "", "", "", "", "", "", "SPI_HOST_TPM_RST_L-O", "SPI_BMC_FPGA_INT_L-I",
+> +		/*E0-E7*/ "", "", "", "", "", "", "", "";
+> +};
+> +
+> +// EMMC group that excludes WP pin
+> +&pinctrl {
+> +	pinctrl_emmcg5_default: emmcg5_default {
+
+No underscores in node names.
+
+> +		function = "EMMC";
+> +		groups = "EMMCG5";
+> +	};
+> +};
+
+
+Best regards,
+Krzysztof
 
