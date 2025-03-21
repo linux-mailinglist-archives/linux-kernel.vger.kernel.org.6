@@ -1,115 +1,184 @@
-Return-Path: <linux-kernel+bounces-570912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C130BA6B62D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:44:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DA2A6B646
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951CF188C091
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7350119C0CC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E511EFFAC;
-	Fri, 21 Mar 2025 08:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="as1rQeXY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BEC1E571A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED761EFFB9;
+	Fri, 21 Mar 2025 08:50:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE2A1E571A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546639; cv=none; b=EbGMlIARGkvvR6iL3fRenVOoS3FY0yrG23dCQ04XAUT7F8S4WzIWuMiX+A6TpXbHDJRI4NczlyHnyFdIBgbvfpHCOYwPcfGD4imvc6iE1Tnq+3PPeExmyHdEQaswJkOLOaZZZEZ8AP+0uQpl75uafIZyLjNHqeCMmPD/4Gs0RuQ=
+	t=1742547005; cv=none; b=bn6UJ/XYiTtVLLddLouFFKp9P/mdxCN0DKdWZh2aITXEva9wXdGiG5EuglotCDGA3h8XDxDqhAzrN4WqF3gDLsOh/3DSOoBezk4ReQir5DNXmicMxDCkA4fV+Aa881A0tA0Xp+0B8kalrTq4pQ+8bC+0APJ+sA74LF/H0jmNgS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546639; c=relaxed/simple;
-	bh=ZdMfirDqSxAiPoPdpxSL5z49ZYOXEt3ILIkDPg+hh20=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnh7kC3D8XeUhtuVl0ueKiW+yFKfpLS1W9VWE0fUc3tbH5bRVVMRW5fTnyP4RHP/Hfp6f2Sz+cFjozgov2Kkkk1vhHk61nmtxedqhp3VM2GJhHdIYuWMkJ3Z8mYvl/zdJrxQhib7G5DaqHKTT0KGmxvvnRUhMtiWR4C9/wREcdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=as1rQeXY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742546635;
-	bh=ZdMfirDqSxAiPoPdpxSL5z49ZYOXEt3ILIkDPg+hh20=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=as1rQeXYhMnRaCsPd82RZzQU24/nZIXzO2nWZ38SWBHexkWFTP7YGf+rzmQ6F5bhk
-	 XzGjRo2wCg7bndfyV2H/qCXP/UH3Z9P/IM+sNDbkNfpTomHk7MDNKvEr+oe22NR2+C
-	 Cm+K/shgkc30CRv+54GeWItwZLYcJdXRXIPdPbCAEw4sq5cdy/Mfmfrti9RLJw3AZ/
-	 ubgjrfISesgmRAxqrfayIYQINo60GkcCZtncqDaz5grVFi+dNTYP6EOM8uvbKACCsd
-	 b2ExAGklSfxooLTk04H+HbjhEPT6bv+qk4k/WBLVmwMNx1VIK5XeQwKqopIUoaAAuG
-	 4D1XNzd+TFqsw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E158717E0EA9;
-	Fri, 21 Mar 2025 09:43:54 +0100 (CET)
-Date: Fri, 21 Mar 2025 09:43:51 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/9] drm/panthor: Move GPU info initialization into
- panthor_hw.c
-Message-ID: <20250321094351.537c768c@collabora.com>
-In-Reply-To: <20250321091645.0edec07a@collabora.com>
-References: <20250320111741.1937892-1-karunika.choo@arm.com>
-	<20250320111741.1937892-5-karunika.choo@arm.com>
-	<20250321091645.0edec07a@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742547005; c=relaxed/simple;
+	bh=Yt2xqwz8bT8+3vtDi7huaR6B5ilaTZyiIYjySeGUU+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=APN2MtntMV3dfinKznawhZEBIr9TJc/+kz+bXfC5PeXWqiuNQrTd6CmahLrDbsbUDDcPS/zhW91aT7qlr7AkFUvFV6Zc8cbm8nQbAISxmo6OA7bx6xFNgy2UOsmqWI56hGwtIqkgHTF5lY4uapqH8QaMdy0EdGpzzWvPAwal/sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZJwwr01Hdz9sTL;
+	Fri, 21 Mar 2025 09:44:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 3l0nmMf_J-b8; Fri, 21 Mar 2025 09:44:27 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJwwq6BCCz9sSg;
+	Fri, 21 Mar 2025 09:44:27 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BBED18B79C;
+	Fri, 21 Mar 2025 09:44:27 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id oOgqbaLveOw1; Fri, 21 Mar 2025 09:44:27 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 08EA08B763;
+	Fri, 21 Mar 2025 09:44:26 +0100 (CET)
+Message-ID: <49ecd313-887d-4839-93b1-027f14c26174@csgroup.eu>
+Date: Fri, 21 Mar 2025 09:44:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 34/57] irqdomain: soc: Switch to irq_domain_create_*()
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, tglx@linutronix.de
+Cc: maz@kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn
+ <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Qiang Zhao <qiang.zhao@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+ <20250319092951.37667-35-jirislaby@kernel.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250319092951.37667-35-jirislaby@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 21 Mar 2025 09:16:45 +0100
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-> On Thu, 20 Mar 2025 11:17:36 +0000
-> Karunika Choo <karunika.choo@arm.com> wrote:
-> 
-> > This patch moves GPU info initialization into panthor_hw.c in
-> > preparation of handling GPU register changes. The GPU register reading
-> > operations to populate gpu_info are separated into an architecture
-> > specific arch_*_gpu_info_init() function and is called via the new
-> > function pointer abstraction under hw.ops.gpu_info_init().
-> > 
-> > Future GPU support will be performed by implementing a *_gpu_info_init()
-> > function specific to that architecture version. It can call any existing
-> > *_gpu_info_init() and extend it with additional register reads or
-> > provide an entirely different implementation.  
-> 
-> Could you give us an insight into what the reg layout changes are? So
-> far, they were mostly unchanged between GPU gens, and I'd really
-> prefer we could keep the majority of them unchanged part of the commo 
-> discovery, and only add the missing reads in the ->gpu_info_init()
-> callback.
-> 
-> Note that I'm also working on abstracting mali device operations to add
-> JM support to panthor, and the only things I had to specialize are:
-> 
-> - CSF ID for CSF
-> - JS features/present masks for JM
-> 
-> The rest is just common. So what I have is a common gpu_init_info()
-> helper that reads all the regs excepts those two, and after that, I
-> have a device ops selection based on the arch major of the GPU ID [1].
-> The device-specific GPU info are then read as part of the
-> panthor_device_ops::init().
 
-With the link this time :-).
+Le 19/03/2025 à 10:29, Jiri Slaby (SUSE) a écrit :
+> irq_domain_add_*() interfaces are going away as being obsolete now.
+> Switch to the preferred irq_domain_create_*() ones. Those differ in the
+> node parameter: They take more generic struct fwnode_handle instead of
+> struct device_node. Therefore, of_fwnode_handle() is added around the
+> original parameter.
+> 
+> Note some of the users can likely use dev->fwnode directly instead of
+> indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
+> guaranteed to be set for all, so this has to be investigated on case to
+> case basis (by people who can actually test with the HW).
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> Cc: Qiang Zhao <qiang.zhao@nxp.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
 
-[1]https://gitlab.freedesktop.org/bbrezillon/linux/-/blob/panthor-jm/drivers/gpu/drm/panthor/panthor_device.c?ref_type=heads#L359
+
+Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu> # For soc/fsl
+
+> ---
+>   drivers/soc/dove/pmu.c     | 4 ++--
+>   drivers/soc/fsl/qe/qe_ic.c | 4 ++--
+>   drivers/soc/qcom/smp2p.c   | 2 +-
+>   drivers/soc/qcom/smsm.c    | 2 +-
+>   drivers/soc/tegra/pmc.c    | 5 +++--
+>   5 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
+> index 6202dbcd20a8..cfc0efab27d7 100644
+> --- a/drivers/soc/dove/pmu.c
+> +++ b/drivers/soc/dove/pmu.c
+> @@ -274,8 +274,8 @@ static int __init dove_init_pmu_irq(struct pmu_data *pmu, int irq)
+>   	writel(0, pmu->pmc_base + PMC_IRQ_MASK);
+>   	writel(0, pmu->pmc_base + PMC_IRQ_CAUSE);
+>   
+> -	domain = irq_domain_add_linear(pmu->of_node, NR_PMU_IRQS,
+> -				       &irq_generic_chip_ops, NULL);
+> +	domain = irq_domain_create_linear(of_fwnode_handle(pmu->of_node), NR_PMU_IRQS,
+> +					  &irq_generic_chip_ops, NULL);
+>   	if (!domain) {
+>   		pr_err("%s: unable to add irq domain\n", name);
+>   		return -ENOMEM;
+> diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
+> index bbae3d39c7be..e5831c298ad6 100644
+> --- a/drivers/soc/fsl/qe/qe_ic.c
+> +++ b/drivers/soc/fsl/qe/qe_ic.c
+> @@ -446,8 +446,8 @@ static int qe_ic_init(struct platform_device *pdev)
+>   		high_handler = NULL;
+>   	}
+>   
+> -	qe_ic->irqhost = irq_domain_add_linear(node, NR_QE_IC_INTS,
+> -					       &qe_ic_host_ops, qe_ic);
+> +	qe_ic->irqhost = irq_domain_create_linear(of_fwnode_handle(node), NR_QE_IC_INTS,
+> +						  &qe_ic_host_ops, qe_ic);
+>   	if (qe_ic->irqhost == NULL) {
+>   		dev_err(dev, "failed to add irq domain\n");
+>   		return -ENODEV;
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index a3e88ced328a..8c8878bc87f5 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -399,7 +399,7 @@ static int qcom_smp2p_inbound_entry(struct qcom_smp2p *smp2p,
+>   				    struct smp2p_entry *entry,
+>   				    struct device_node *node)
+>   {
+> -	entry->domain = irq_domain_add_linear(node, 32, &smp2p_irq_ops, entry);
+> +	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smp2p_irq_ops, entry);
+>   	if (!entry->domain) {
+>   		dev_err(smp2p->dev, "failed to add irq_domain\n");
+>   		return -ENOMEM;
+> diff --git a/drivers/soc/qcom/smsm.c b/drivers/soc/qcom/smsm.c
+> index e803ea342c97..021e9d1f61dc 100644
+> --- a/drivers/soc/qcom/smsm.c
+> +++ b/drivers/soc/qcom/smsm.c
+> @@ -456,7 +456,7 @@ static int smsm_inbound_entry(struct qcom_smsm *smsm,
+>   		return ret;
+>   	}
+>   
+> -	entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
+> +	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smsm_irq_ops, entry);
+>   	if (!entry->domain) {
+>   		dev_err(smsm->dev, "failed to add irq_domain\n");
+>   		return -ENOMEM;
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 51b9d852bb6a..e0d67bfe955c 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -2500,8 +2500,9 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
+>   	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
+>   	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
+>   
+> -	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
+> -					       &tegra_pmc_irq_domain_ops, pmc);
+> +	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96,
+> +						  of_fwnode_handle(pmc->dev->of_node),
+> +						  &tegra_pmc_irq_domain_ops, pmc);
+>   	if (!pmc->domain) {
+>   		dev_err(pmc->dev, "failed to allocate domain\n");
+>   		return -ENOMEM;
+
 
