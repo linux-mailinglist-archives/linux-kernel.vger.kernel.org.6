@@ -1,167 +1,291 @@
-Return-Path: <linux-kernel+bounces-572052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31AEA6C5EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A5EA6C5F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225BB1B60458
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7835189FEE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE091F4198;
-	Fri, 21 Mar 2025 22:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dF1GdA0h"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6360D231A30;
+	Fri, 21 Mar 2025 22:26:00 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F601C3F0C;
-	Fri, 21 Mar 2025 22:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293821519BE;
+	Fri, 21 Mar 2025 22:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742595852; cv=none; b=NlbQJJf3fXWLA1a65iSo6hSEYMHzIS7kGE/cT6VdQm5RHrORSka3WqYWG4wIJwqjX48zAoknYFzS7/LGIHTPbA6FvfTNnrQRkMhQwdR6PHlffhF8axorpnGyKGirNg288lGuCLvbtrwP7r0636GmyE3/r4QXfm1a38Z1KxMGmKw=
+	t=1742595960; cv=none; b=j06vw86zC/fQ6UtjmxuTT0fw5ctGgW+GRf+kI5j49xRXp4Cx4rcSZs6tKyc2XV12+4mHGYFQjFHwksKlHuSP4a7S1cxP7FXCELAxAek6OCjQbuwlFsGetXRJnORm1kD6KEWbv5ZLyX/4ar9w1/GdlpqRVzDvjHF1c4PUEh8mIJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742595852; c=relaxed/simple;
-	bh=0YkPzCxkfOAlHN0wqWyLmmk4ddNfU4ie91D9ISjUL9Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DFNlb6Ylxby9DNC4RmpjR8R/RMgN3p06ZM4Od/y+Jpz6T4s15608DcfGz+pFknGV1YATvYTMJ68IxqscgOP6fS901gA8etebKPzk09HYT2cj68jF69vsuiq9KQyMvewIHRCJwN4WH6D+Slcd5tXaAev+zNy7vc1aWC8l2SF6Nyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dF1GdA0h; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2260c915749so35450265ad.3;
-        Fri, 21 Mar 2025 15:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742595850; x=1743200650; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5tf2Ikh9NqR1U+q6oew+ZklnvlQHvC0og7D+/5iMioM=;
-        b=dF1GdA0hrJASxP3viZhZEGLQuBUrLnu+cXR4TJ4EMzhFtKJk4FO6tdywNW7BcfIusM
-         9L/Y4s0JBDJtZmmmgDDBhVBbYbZD2Yyb6gl6ZjuciAA82S8bgr/JHjUfMrijMNvQtq/K
-         VGAizbagKDPEGzOAmUaXbr9UtbxyaZTez/Hxf/RQQlCYeO/Dhuu4FbRDYodlZc4sKJIO
-         dmrvqIsL2zMxh7XgxW0vM4K1Q+eKw9fYrU5Te67wUGUAqYhOJvdGhCxDYjYstsZz6jiB
-         EqEIa2aDjg+BLTVzVHYghuXq02UanCWFejg2+tQup6UFHpFcDW1bibKYb+tJl8uHddvC
-         sKFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742595850; x=1743200650;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5tf2Ikh9NqR1U+q6oew+ZklnvlQHvC0og7D+/5iMioM=;
-        b=aT6vHUsyhyI2fwaqekYiOR9b8KsAnJHv5FGm/QFgz0Jzldqa1mv1TRc34VpRZxIy2U
-         /fcXbL/39f8KTmCSA0BYWIpvMYOdRf5xqyj6kHLC2cPzct97I9gjhO3taelly9m10AyA
-         wU03SQLeN6RQY/auhzNfBAVdj26Cf2V1+aS7JwBONFGBwiofXabykS//QsL1/LKZwWSW
-         MwpzjCWv3O9BFQDTrodGQYzYBB5geX8NuZZ1KgOAsQW4X8mK+FQRFe7crurGa5N2B88l
-         qwmBSAtkiJHwHFp+0eIj+8J66x8iKplmkVXsVdaDYhsqnpIb1QfG04BOFYkOrhv7VynH
-         vwDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK++8bGzYHPxS4r7d9nPTER2jN5quyBabOwNsCbjISYBa8O496ipNnSS0NOUqJ6ZByBso/gVTG6qY0xuKP@vger.kernel.org, AJvYcCVjrK6vsPWW4SImh8IzSy5lWHz5iP6uAkQMSjqpphUJrn/5GQBFy1REpR+1YQahoDZyFP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOvyZUXhK6b2FpGE6EV5PvjzLwq7SMqb30pZFVQJAAovA4UCgw
-	2sbNQaVP1oy1BGOoGj6J6qPNjW2vLbL02AQmLIwQ1GJoidKdyAo44VvxVQ==
-X-Gm-Gg: ASbGnctrJEFFTjSp0t2jQF59O5pWcgjaddkZSk1j62Ac2DrF2vPie/I0gZf/1bOQOha
-	f84aQTEApdygLkfmkGp3rUNZQwImGqqO3h7F5fprtuvMHc10KJy5wyMSqct1Ryibyd1CuwtrLsV
-	Wtky+S65HDoQV9+mTvqy6OOQ7qNtjL/65UZHFtHVAx5HiFsap2m4H+OqTjgkHvfzVHQOHaSTh0d
-	aH1K0bpqS54YNjYuK0zljE15qy/QKjdfzg+oPUYsReknSxpMgrbDt6vARyolB0kOJWTGnIxYIyw
-	1Evqv64E9nabarMlbbPZF3+Mz5YDeQMIvZwytx0m
-X-Google-Smtp-Source: AGHT+IHB+5AwTCUriSk+8m+jnYaDcxMN0yxif6zPGeg4oT8NcJaiOvkgjZx06CxF5bpaBiF7f3SxGg==
-X-Received: by 2002:a17:902:f64d:b0:223:47b4:aaf8 with SMTP id d9443c01a7336-22780e3f214mr73252335ad.52.1742595849969;
-        Fri, 21 Mar 2025 15:24:09 -0700 (PDT)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da369sm22930475ad.170.2025.03.21.15.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 15:24:09 -0700 (PDT)
-Message-ID: <65ff9c62d0d2c355121468b04c0701081d3275fd.camel@gmail.com>
-Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add selftests for
- load-acquire/store-release when register number is invalid
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Kohei Enju <enjuk@amazon.com>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>,  John Fastabend <john.fastabend@gmail.com>, Andrii
- Nakryiko <andrii@kernel.org>, Martin KaFai Lau	 <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Peilin Ye
- <yepeilin@google.com>, Ilya Leoshkevich <iii@linux.ibm.com>, Kuniyuki
- Iwashima	 <kuniyu@amazon.com>, kohei.enju@gmail.com
-Date: Fri, 21 Mar 2025 15:24:04 -0700
-In-Reply-To: <20250321110010.95217-6-enjuk@amazon.com>
-References: <20250321110010.95217-4-enjuk@amazon.com>
-	 <20250321110010.95217-6-enjuk@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742595960; c=relaxed/simple;
+	bh=vYmiiL+JAp1wGAkVFDCwFvS+vkrR9HpnBuY5stT1Bsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGUwkudF2a1IGQfJm7uudH6DHtmY1m1YmmSR61ZlLMkOcYj2tAhlY+mwGFsVuDI1QloD3/NwjEPkelVkwbcPYUJ/hruRMT+tFQMNsis3VonXkB8ctcv40paHQC8DVOuZO3uI83Agkq+xLB3niJZ0J48XMJcJA1ZPJ50ht0dX7oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 17D023430C5;
+	Fri, 21 Mar 2025 22:25:56 +0000 (UTC)
+Date: Fri, 21 Mar 2025 22:25:46 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
+ spacemit,k1-ccu resets
+Message-ID: <20250321222546-GYA11633@gentoo>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321151831.623575-2-elder@riscstar.com>
 
-On Fri, 2025-03-21 at 19:59 +0900, Kohei Enju wrote:
+hi Alex:
 
-Hi Kohei,
-
-Thank you for adding these tests.
-
-[...]
-
-> +SEC("socket")
-> +__description("load-acquire with invalid register R11")
-> +__failure __failure_unpriv __msg("R11 is invalid")
-> +__naked void load_acquire_with_invalid_reg(void)
-> +{
-> +	asm volatile (
-> +	".8byte %[load_acquire_insn];" // r0 =3D load_acquire((u64 *)(r11 + 0))=
-;
-> +	"exit;"
-> +	:
-> +	: __imm_insn(load_acquire_insn,
-> +		     BPF_ATOMIC_OP(BPF_DW, BPF_LOAD_ACQ, BPF_REG_0, 11 /* invalid reg =
-*/, 0))
-> +	: __clobber_all);
-> +}
+On 10:18 Fri 21 Mar     , Alex Elder wrote:
+> There are additional SpacemiT syscon CCUs whose registers control both
+> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
+> previously, these will initially support only resets.  They do not
+> incorporate power domain functionality.
+> 
+> Define the index values for resets associated with all SpacemiT K1
+> syscon nodes, including those with clocks already defined, as well as
+> the new ones (without clocks).
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+>  include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
+>  2 files changed, 143 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> index 07a6728e6f864..333c28e075b6c 100644
+> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> @@ -19,6 +19,9 @@ properties:
+>        - spacemit,k1-syscon-apbc
+>        - spacemit,k1-syscon-apmu
+>        - spacemit,k1-syscon-mpmu
+> +      - spacemit,k1-syscon-rcpu
+> +      - spacemit,k1-syscon-rcpu2
+> +      - spacemit,k1-syscon-apbc2
+>  
+>    reg:
+>      maxItems: 1
+> @@ -57,13 +60,15 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: spacemit,k1-syscon-apbc
+> +            enum:
+> +              - spacemit,k1-syscon-apmu
+> +              - spacemit,k1-syscon-mpmu
+>      then:
+> -      properties:
+> -        "#power-domain-cells": false
+> -    else:
+>        required:
+>          - "#power-domain-cells"
+> +    else:
+> +      properties:
+> +        "#power-domain-cells": false
+>  
+>  additionalProperties: false
+>  
+> diff --git a/include/dt-bindings/clock/spacemit,k1-ccu.h b/include/dt-bindings/clock/spacemit,k1-ccu.h
+> index 4a0c7163257e3..a1e1b1fe714ce 100644
+> --- a/include/dt-bindings/clock/spacemit,k1-ccu.h
+> +++ b/include/dt-bindings/clock/spacemit,k1-ccu.h
+> @@ -78,6 +78,9 @@
+>  #define CLK_APB			31
+>  #define CLK_WDT_BUS		32
+>  
+> +/*	MPMU resets	*/
+> +#define RST_WDT			0
 > +
->  #else /* CAN_USE_LOAD_ACQ_STORE_REL */
-> =20
->  SEC("socket")
-> diff --git a/tools/testing/selftests/bpf/progs/verifier_store_release.c b=
-/tools/testing/selftests/bpf/progs/verifier_store_release.c
-> index cd6f1e5f378b..2dc1d713b4a6 100644
-> --- a/tools/testing/selftests/bpf/progs/verifier_store_release.c
-> +++ b/tools/testing/selftests/bpf/progs/verifier_store_release.c
-> @@ -257,6 +257,20 @@ __naked void store_release_leak_pointer_to_map(void)
->  	: __clobber_all);
->  }
-> =20
-> +SEC("socket")
-> +__description("store-release with invalid register R11")
-> +__failure __failure_unpriv __msg("R11 is invalid")
-> +__naked void store_release_with_invalid_reg(void)
-> +{
-> +	asm volatile (
-> +	".8byte %[store_release_insn];" // store_release((u64 *)(r11 + 0), r1);
-> +	"exit;"
-> +	:
-> +	: __imm_insn(store_release_insn,
-> +		     BPF_ATOMIC_OP(BPF_DW, BPF_STORE_REL, 11 /* invalid reg */, BPF_RE=
-G_1, 0))
-
-On my machine / config, the value of 11 was too small to trigger the
-KASAN warning. Value of 12 was sufficient.
-Curious if it is my config, did you see KASAN warning locally when running =
-this test
-before applying the fix?
-Maybe set the value to 15 here and above to maximize probability of KASAN w=
-arning?
-
-> +	: __clobber_all);
-> +}
+>  /*	APBC clocks	*/
+>  #define CLK_UART0		0
+>  #define CLK_UART2		1
+> @@ -109,6 +112,7 @@
+>  #define CLK_PWM17		27
+>  #define CLK_PWM18		28
+>  #define CLK_PWM19		29
 > +
->  #else
-> =20
->  SEC("socket")
+as Rob point out, this isn't necessary, not related to reset
 
+>  #define CLK_SSP3		30
+>  #define CLK_RTC			31
+>  #define CLK_TWSI0		32
+> @@ -180,6 +184,60 @@
+>  #define CLK_TSEN_BUS		98
+>  #define CLK_IPC_AP2AUD_BUS	99
+>  
+> +/*	APBC resets	*/
+> +
+I'd also suggest to drop above blank line, keep style consistent
+with others in this file, some same below that I won't comment
+> +#define RST_UART0		0
+> +#define RST_UART2		1
+> +#define RST_UART3		2
+> +#define RST_UART4		3
+> +#define RST_UART5		4
+> +#define RST_UART6		5
+> +#define RST_UART7		6
+> +#define RST_UART8		7
+> +#define RST_UART9		8
+> +#define RST_GPIO		9
+> +#define RST_PWM0		10
+> +#define RST_PWM1		11
+> +#define RST_PWM2		12
+> +#define RST_PWM3		13
+> +#define RST_PWM4		14
+> +#define RST_PWM5		15
+> +#define RST_PWM6		16
+> +#define RST_PWM7		17
+> +#define RST_PWM8		18
+> +#define RST_PWM9		19
+> +#define RST_PWM10		20
+> +#define RST_PWM11		21
+> +#define RST_PWM12		22
+> +#define RST_PWM13		23
+> +#define RST_PWM14		24
+> +#define RST_PWM15		25
+> +#define RST_PWM16		26
+> +#define RST_PWM17		27
+> +#define RST_PWM18		28
+> +#define RST_PWM19		29
+> +#define RST_SSP3		30
+> +#define RST_RTC			31
+> +#define RST_TWSI0		32
+> +#define RST_TWSI1		33
+> +#define RST_TWSI2		34
+> +#define RST_TWSI4		35
+> +#define RST_TWSI5		36
+> +#define RST_TWSI6		37
+> +#define RST_TWSI7		38
+> +#define RST_TWSI8		39
+> +#define RST_TIMERS1		40
+> +#define RST_TIMERS2		41
+> +#define RST_AIB			42
+> +#define RST_ONEWIRE		43
+> +#define RST_SSPA0		44
+> +#define RST_SSPA1		45
+> +#define RST_DRO			46
+> +#define RST_IR			47
+> +#define RST_TSEN		48
+> +#define RST_IPC_AP2AUD		49
+> +#define RST_CAN0		50
+> +
+>  /*	APMU clocks	*/
+>  #define CLK_CCI550		0
+>  #define CLK_CPU_C0_HI		1
+> @@ -244,4 +302,80 @@
+>  #define CLK_V2D			60
+>  #define CLK_EMMC_BUS		61
+>  
+> +/*	APMU resets	*/
+> +
+> +#define RST_CCIC_4X		0
+> +#define RST_CCIC1_PHY		1
+> +#define RST_SDH_AXI		2
+> +#define RST_SDH0		3
+> +#define RST_SDH1		4
+> +#define RST_SDH2		5
+> +#define RST_USBP1_AXI		6
+> +#define RST_USB_AXI		7
+> +#define RST_USB3_0		8
+> +#define RST_QSPI		9
+> +#define RST_QSPI_BUS		10
+> +#define RST_DMA			11
+> +#define RST_AES			12
+> +#define RST_VPU			13
+> +#define RST_GPU			14
+> +#define RST_EMMC		15
+> +#define RST_EMMC_X		16
+> +#define RST_AUDIO		17
+> +#define RST_HDMI		18
+> +#define RST_PCIE0		19
+> +#define RST_PCIE1		20
+> +#define RST_PCIE2		21
+> +#define RST_EMAC0		22
+> +#define RST_EMAC1		23
+> +#define RST_JPG			24
+> +#define RST_CCIC2PHY		25
+> +#define RST_CCIC3PHY		26
+> +#define RST_CSI			27
+> +#define RST_ISP_CPP		28
+> +#define RST_ISP_BUS		29
+> +#define RST_ISP			30
+> +#define RST_ISP_CI		31
+> +#define RST_DPU_MCLK		32
+> +#define RST_DPU_ESC		33
+> +#define RST_DPU_HCLK		34
+> +#define RST_DPU_SPIBUS		35
+> +#define RST_DPU_SPI_HBUS	36
+> +#define RST_V2D			37
+> +#define RST_MIPI		38
+> +#define RST_MC			39
+> +
+> +/*	RCPU resets	*/
+> +
+> +#define RST_RCPU_SSP0		0
+> +#define RST_RCPU_I2C0		1
+> +#define RST_RCPU_UART1		2
+> +#define RST_RCPU_IR		3
+> +#define RST_RCPU_CAN		4
+> +#define RST_RCPU_UART0		5
+> +#define RST_RCPU_HDMI_AUDIO	6
+> +
+> +/*	RCPU2 resets	*/
+> +
+> +#define RST_RCPU2_PWM0		0
+> +#define RST_RCPU2_PWM1		1
+> +#define RST_RCPU2_PWM2		2
+> +#define RST_RCPU2_PWM3		3
+> +#define RST_RCPU2_PWM4		4
+> +#define RST_RCPU2_PWM5		5
+> +#define RST_RCPU2_PWM6		6
+> +#define RST_RCPU2_PWM7		7
+> +#define RST_RCPU2_PWM8		8
+> +#define RST_RCPU2_PWM9		9
+> +
+> +/*	APBC2 resets	*/
+> +
+> +#define RST_APBC2_UART1		0
+> +#define RST_APBC2_SSP2		1
+> +#define RST_APBC2_TWSI3		2
+> +#define RST_APBC2_RTC		3
+> +#define RST_APBC2_TIMERS0	4
+> +#define RST_APBC2_KPC		5
+> +#define RST_APBC2_GPIO		6
+> +
+>  #endif /* _DT_BINDINGS_SPACEMIT_CCU_H_ */
+> -- 
+> 2.43.0
+> 
+> 
 
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
