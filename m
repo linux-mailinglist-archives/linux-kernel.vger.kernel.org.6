@@ -1,203 +1,155 @@
-Return-Path: <linux-kernel+bounces-571603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9C0A6BF9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB46A6BF9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:19:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599351B614C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB383189FD08
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89E222D4D8;
-	Fri, 21 Mar 2025 16:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB67922CBC0;
+	Fri, 21 Mar 2025 16:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VXCPZao7"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9376B226D1B;
-	Fri, 21 Mar 2025 16:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itDBty/K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2126C1D86F2;
+	Fri, 21 Mar 2025 16:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573812; cv=none; b=f6q3JeHioCwQ7yHW6WuASZRMF1ngTCr+/PT9+gVIh+AGjHMSiCqZkljjw0JeJiN6Iuy69uYD2VLaLkQ6zqCdojKOkUgP4ECcmBo4e9Sxu+XrPhpOwM8dPppj48pREycdsds3wPx3EICvQnceeIvVnOun8MEkrM6tyWAuqSAvLU4=
+	t=1742573828; cv=none; b=FQl/w7YTv0Ibae+F7e3VNHtFg/R7lW1RojOqA3VCSgwRzow5Zkg39xnX8JHLqbJAuNf1PDokDZ3LRlQO0q1gLuprozwClJb1GXvr+F8caE9waKQXUwytZtwvYQLHNY0aoVrDNsw9b90mdU7keUonXO4sWboOxwF+Jfh4fX32U1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573812; c=relaxed/simple;
-	bh=g4njPH8ooH1e2h/tZs1yCYEpzY85WHP+MRJtcNkh5oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z6oN5p7QGpjmbUrEg/vns1G5b8Pwfjims65uYr9qmplZMkHH+AcY5YXbBRlLpSq9qhD41SrHvAJD+pvskBLr0rX/0nApqe7WXNNH+pSYR0kOGU7q92pOPSp+1CWO66xlT9tKXCnNz27GlOqUl6uS08kM2SNDepfu2YgBxm4UIwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VXCPZao7; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.17.64.97] (unknown [131.107.174.225])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 07F52202537E;
-	Fri, 21 Mar 2025 09:16:50 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 07F52202537E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742573810;
-	bh=R1nD5dBAblQuNZ9vwCHQrc+0rDQkVy0Dn4/k8PPkSg8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VXCPZao7zvdMcq+p5QAf2NTnAQSKSj1jGH57/DoHd8DBvMhknS0QK93UGTaai0LcJ
-	 gys+d3sy6s/OMLq5IyV3YRm6PUSXyyeeTu0RQrqLHpbWu8E9OkcSkYhU7KG0sw7Vwg
-	 NZ7ofHMq8wQCv3++xbQjEadUjMVD4S4tGyUHt/7s=
-Message-ID: <4340a887-f0d1-481f-b47f-cd0226adf869@linux.microsoft.com>
-Date: Fri, 21 Mar 2025 09:16:50 -0700
+	s=arc-20240116; t=1742573828; c=relaxed/simple;
+	bh=umYqcnZz+agf38qEhHYrPYvQsxuxpuc1Mi3ge1ApdAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Du6+gb9OJ8sanX67c4gedoaJNbDWtXroiDfEA9a0yhxoALomNGsolBtF27nizgR8F/XMHcI23TubmTZ9O+xJ5e36k4HnQnTN3ku9od+nlIPuhDarla4csx6eqKOZ3ze0yfWh5GXuvx9VSy2tpqlwXGplSFIL9vpK58QgZiPMVhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itDBty/K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5272AC4CEE3;
+	Fri, 21 Mar 2025 16:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742573827;
+	bh=umYqcnZz+agf38qEhHYrPYvQsxuxpuc1Mi3ge1ApdAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=itDBty/KNEjPSwYMNa8z9uFKfsH0bVgmDLPIEi8PauRGi2IsNeIKCWCHA+7pug8TT
+	 HQGf94iD4NvsRp/7HPBYE0eBFgeIVSrDYjvkCaHWzwfWaauADPnUSFUHGyerp/SbAZ
+	 +LV1En1EFRXbtrXjhZXDbkGW/WllYWVrD+e7Fh+5rVh/qNWtfy1+8ZXyyMGvPkHL2c
+	 77sS5sVOpcqkOyU5IxGJNnBXBprsQ0Nn+f9+zIDJtt38hg4h0iZiEvDPGkRbyJHv+O
+	 OoLu72AYlRCo291i+Nvavko7MTXmPvzRrhF5k1RqmO/nxl4ApxB8OmBk5yPIV9Upmr
+	 pZr243kG80S9Q==
+Date: Fri, 21 Mar 2025 16:17:03 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Nick Hu <nick.hu@sifive.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3] dt-bindings: timer: Add SiFive CLINT2
+Message-ID: <20250321-crazily-attention-1aeb67606cf3@spud>
+References: <20250321083507.25298-1-nick.hu@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/8] ima: rename variable the ser_file "file" to
- "ima_kexec_file"
-To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-2-chenste@linux.microsoft.com>
- <255e75954d9418e2658a6eba6879804c31b3713f.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <255e75954d9418e2658a6eba6879804c31b3713f.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dT2myeOCt2U0MUNc"
+Content-Disposition: inline
+In-Reply-To: <20250321083507.25298-1-nick.hu@sifive.com>
 
-On 3/19/2025 6:42 AM, Mimi Zohar wrote:
-> Fix spelling: set_file
->
->
-> On Mon, 2025-03-17 at 18:04 -0700, steven chen wrote:
->> The name of the local variable "file" of type seq_file defined in the
->> ima_dump_measurement_list function is too generic. To better reflect the
->> purpose of the variable, rename it to "ima_kexec_file". This change will
->> help improve code readability and maintainability by making the variable's
->> role more explicit.
-> The reason for making the variable name change is the variable scope.
->
-> -> Before making the function local seq_file "file" variable global, rename it
-> to ima_kexec_file.
->
->> The variable ima_kexec_file is indeed the memory allocated for copying IMA
->> measurement records. The ima_dump_measurement_list function calculates the
->> actual memory occupied by the IMA logs and compares it with the allocated
->> memory. If there is enough memory, it copies all IMA measurement records;
->> otherwise, it does not copy any records, which would result in a failure
->> of remote attestation.
-> This paragraph is not applicable to the patch change.
->
->> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->> ---
->>   security/integrity/ima/ima_kexec.c | 39 ++++++++++++++++++------------
->>   1 file changed, 24 insertions(+), 15 deletions(-)
->>
->> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
->> index 9d45f4d26f73..8567619889d1 100644
->> --- a/security/integrity/ima/ima_kexec.c
->> +++ b/security/integrity/ima/ima_kexec.c
->> @@ -15,33 +15,41 @@
->>   #include "ima.h"
->>   
->>   #ifdef CONFIG_IMA_KEXEC
->> +/*
->> + * Copy the measurement list to the allocated memory
->> + * compare the size of IMA measurement list with the size of the allocated memory
->> + *    if the size of the allocated memory is not less than the size of IMA measurement list
->> + *        copy the measurement list to the allocated memory.
->> + *    else
->> + *        return error
->> + */
-> Please minimize patch changes.  Before posting, please look at the patch(s) and
-> remove anything not applicable to it.  In this case, the comment is not
-> applicable to the variable name change.
->
-> thanks,
->
-> Mimi
->    
->>   static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->>   				     unsigned long segment_size)
->>   {
->> +	struct seq_file ima_kexec_file;
->>   	struct ima_queue_entry *qe;
->> -	struct seq_file file;
->>   	struct ima_kexec_hdr khdr;
->>   	int ret = 0;
->>   
->>   	/* segment size can't change between kexec load and execute */
->> -	file.buf = vmalloc(segment_size);
->> -	if (!file.buf) {
->> +	ima_kexec_file.buf = vmalloc(segment_size);
->> +	if (!ima_kexec_file.buf) {
->>   		ret = -ENOMEM;
->>   		goto out;
->>   	}
->>   
->> -	file.file = NULL;
->> -	file.size = segment_size;
->> -	file.read_pos = 0;
->> -	file.count = sizeof(khdr);	/* reserved space */
->> +	ima_kexec_file.file = NULL;
->> +	ima_kexec_file.size = segment_size;
->> +	ima_kexec_file.read_pos = 0;
->> +	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
->>   
->>   	memset(&khdr, 0, sizeof(khdr));
->>   	khdr.version = 1;
->>   	/* This is an append-only list, no need to hold the RCU read lock */
->>   	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
->> -		if (file.count < file.size) {
->> +		if (ima_kexec_file.count < ima_kexec_file.size) {
->>   			khdr.count++;
->> -			ima_measurements_show(&file, qe);
->> +			ima_measurements_show(&ima_kexec_file, qe);
->>   		} else {
->>   			ret = -EINVAL;
->>   			break;
->> @@ -55,23 +63,24 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->>   	 * fill in reserved space with some buffer details
->>   	 * (eg. version, buffer size, number of measurements)
->>   	 */
->> -	khdr.buffer_size = file.count;
->> +	khdr.buffer_size = ima_kexec_file.count;
->>   	if (ima_canonical_fmt) {
->>   		khdr.version = cpu_to_le16(khdr.version);
->>   		khdr.count = cpu_to_le64(khdr.count);
->>   		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
->>   	}
->> -	memcpy(file.buf, &khdr, sizeof(khdr));
->> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
->>   
->>   	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
->> -			     file.buf, file.count < 100 ? file.count : 100,
->> +			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
->> +			     ima_kexec_file.count : 100,
->>   			     true);
->>   
->> -	*buffer_size = file.count;
->> -	*buffer = file.buf;
->> +	*buffer_size = ima_kexec_file.count;
->> +	*buffer = ima_kexec_file.buf;
->>   out:
->>   	if (ret == -EINVAL)
->> -		vfree(file.buf);
->> +		vfree(ima_kexec_file.buf);
->>   	return ret;
->>   }
->>   
 
-Hi Mimi,
+--dT2myeOCt2U0MUNc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will update in next version.
+On Fri, Mar 21, 2025 at 04:35:06PM +0800, Nick Hu wrote:
+> Add compatible string and property for the SiFive CLINT v2. The SiFive
+> CLINT v2 is incompatible with the SiFive CLINT v0 due to differences
+> in their control methods.
+>=20
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
 
-Thanks,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Steven
+> ---
+> - v3 changes:
+>   - Add the reason for the incompatibility between sifive,clint2 and
+>     sifive,clint0.
+> - v2 changes:
+>   - Don't allow sifive,clint2 by itself. Add '-{}' to the first entry
+>   - Mark the sifive,fine-ctr-bits as the required property when
+>     the compatible includes the sifive,clint2
+>=20
+>  .../bindings/timer/sifive,clint.yaml          | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/=
+Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> index 76d83aea4e2b..34684cda8b15 100644
+> --- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> +++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+> @@ -36,6 +36,12 @@ properties:
+>                - starfive,jh7110-clint   # StarFive JH7110
+>                - starfive,jh8100-clint   # StarFive JH8100
+>            - const: sifive,clint0        # SiFive CLINT v0 IP block
+> +      - items:
+> +          - {}
+> +          - const: sifive,clint2        # SiFive CLINT v2 IP block
+> +        description:
+> +          SiFive CLINT v2 is the HRT that supports the Zicntr. The contr=
+ol of sifive,clint2
+> +          differs from that of sifive,clint0, making them incompatible.
+>        - items:
+>            - enum:
+>                - allwinner,sun20i-d1-clint
+> @@ -62,6 +68,22 @@ properties:
+>      minItems: 1
+>      maxItems: 4095
+> =20
+> +  sifive,fine-ctr-bits:
+> +    maximum: 15
+> +    description: The width in bits of the fine counter.
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: sifive,clint2
+> +then:
+> +  required:
+> +    - sifive,fine-ctr-bits
+> +else:
+> +  properties:
+> +    sifive,fine-ctr-bits: false
+> +
+>  additionalProperties: false
+> =20
+>  required:
+> --=20
+> 2.17.1
+>=20
 
+--dT2myeOCt2U0MUNc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ92Q/wAKCRB4tDGHoIJi
+0rQ6AQCiSS55Yt7GDJR+NVBVe/vA621bKXpmgoK5F4s/BCg0YQD/cAZ/JN+9lRZi
+SzUkk9S/gW9bBvtexlGOY8rgWEaEmQ8=
+=pGkd
+-----END PGP SIGNATURE-----
+
+--dT2myeOCt2U0MUNc--
 
