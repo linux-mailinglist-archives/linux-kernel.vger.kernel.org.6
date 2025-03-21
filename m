@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-571227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB3DA6BAA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:27:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C006A6BAA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CBA17A673
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA003AC72E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9EB22576C;
-	Fri, 21 Mar 2025 12:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2166922652D;
+	Fri, 21 Mar 2025 12:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="pEtiuKG4"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXbnxGzp"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59571EDA18
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6F32253FE;
+	Fri, 21 Mar 2025 12:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560015; cv=none; b=mm4sgpLT9JIGqvwUXNLdUgkPCZgIkkx8FNuycYC7BlnR8+Eq2Q1dfwb28e41/TDLlvmg7ajd6m70cx90e4vWamk3jKQQc5+sfEx0Dn2IICVaXurBB6l3ZapKkCa2JbwLKVVlGbNhHExSo6qGv70hVN0V99vrFG71WTr4qOinKCY=
+	t=1742560031; cv=none; b=UKeVevwAIph/72b2wQtzaQmdcqqWqRh/JsYaP3Pu6K1NopQPtwE6N9s1KttE7V1tOJcA7lkHX/3v5WQV3906fp4ISRCeRW+Gp0VR1gqGNEmgFTkv4ejsn3z9Ik8pHOj3aaFRub/c9KM1RRWiMJ2oyx60C/wxjs8x909dNwsIjAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560015; c=relaxed/simple;
-	bh=SXxZiaLdZ4z9M0+8Ey2jniDWP2HoTeuoM7dRvbgWR6Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gGt42kuqKqW1umEsW3e3lvAfh7Her9h15LQSsmJYv25JCKctq2ZkXMfO+wQsbA7UginLGD2/PLSW8xKJbgyG5MZ6k1R1qX+ct/nsXCbczPkSPdO3FM6Q7eCxM4lcRWPOY4mDHCSlSDy7FF4/5oDYIP3+6O3/ttDYYjxVKlZwNNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=pEtiuKG4; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742559995; x=1743164795; i=spasswolf@web.de;
-	bh=fAp/e/K+ER1n135Om5Ydb7iLewTMQJFGtGq8rdrLITE=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pEtiuKG4oBkwcXKaE3Lld4AJlnmhfZ8m1UvrGFfMUBm4HZ+ncfZdDYdAiiAknq2M
-	 mVnIEG8ND6ZVNXFc6Eh5/x4ZoBzrq63emwRIoKjLqcOX/3jMjWUAOyfaJU4GErOe+
-	 sPgEJCP74EfDHh47zqb5ZhPzs1bIxp33VpBUJjdkFych3T5k3zEy7vxj/oZRpDdh/
-	 9jOL36Zza5+1GQMUN5dhl9rhvBBXMRmyXs2oAH97gOnkEWTl7DblepyGFCDikM46H
-	 nKREA8BNGHYM47sQyLvf00Np/zTYOpVKx/QLZzz7n88lJSfDa9KwH0AqhSz1yyndP
-	 kvVlL7dXgArXX0I5dQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBjMM-1u18I31Qia-00COo2; Fri, 21
- Mar 2025 13:26:35 +0100
-Message-ID: <d2158680b8962c248c9faada97f2a93b3fef1842.camel@web.de>
-Subject: Re: commit 7ffb791423c7 breaks steam game
-From: Bert Karwatzki <spasswolf@web.de>
-To: Balbir Singh <balbirs@nvidia.com>, Alex Deucher <alexdeucher@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, Bjorn
- Helgaas	 <bhelgaas@google.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, spasswolf@web.de
-Date: Fri, 21 Mar 2025 13:26:34 +0100
-In-Reply-To: <d3580fa0-df0c-49ce-aa4e-e8c945172939@nvidia.com>
-References: <20250310112206.4168-1-spasswolf@web.de>
-	 <414f4deb8c7670a159854006b0c410ce05a6049e.camel@web.de>
-	 <12d950ee-4152-4ad6-b93e-7c5b75804b1a@nvidia.com>
-	 <705e95cec3dc5181ca2aa73722e6b84f63f3e91d.camel@web.de>
-	 <20b5823e-247a-456a-bb55-d50f212a9f5a@nvidia.com>
-	 <a34a1ae0b1d226b1bac7d73daa24da8e5899cb3e.camel@web.de>
-	 <c7bb0bd1-529d-466d-9cce-abbac4b480ab@nvidia.com>
-	 <146277bb0ecbb392d490683c424b8ae0dfa82838.camel@web.de>
-	 <b63b1de8-7eec-4235-b61e-e654e78543ba@nvidia.com>
-	 <fa8d5e76694918bdaae9faee9648776f298f78ca.camel@web.de>
-	 <7866593f-0322-4fb3-9729-82366940fc85@nvidia.com>
-	 <a168e78b-ae27-4675-8821-0b1a2499b2b2@nvidia.com>
-	 <5d34bfc5109b8d104fd4f8550dd17945344f9d07.camel@web.de>
-	 <551b9797-20d6-4bfe-b54c-84dd7aae7794@nvidia.com>
-	 <CADnq5_Pvmxa10dJWYjajwxG-0Y_oxhL6wS6NsG2F0dmcJS6o8A@mail.gmail.com>
-	 <9be36dfab79b17e108f71d51a6ebf39073e110c6.camel@web.de>
-	 <b5d80ef2-fd5a-41cc-9184-6c82226c330a@nvidia.com>
-	 <841287f296579671dcd91329a49feed97186bcd3.camel@web.de>
-	 <d3580fa0-df0c-49ce-aa4e-e8c945172939@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.0-1 
+	s=arc-20240116; t=1742560031; c=relaxed/simple;
+	bh=w8VYrX5+bW5UcgXYA9Urb+GSK2WlWR7keMIXkmj68l0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JTindnGwr7s/LzFrcDwmcKhVx38B10n7W85+H5kSTT3ncCWN2U9sW3I8tgqxPe1nVUaU/9xjoqCEepD8FkBc0gDgp5H07kIMkLL9lUnF6rV0Y2/mvSyWfwpVAgUXZ6yOO2/ivdEK8JIOvgQMI6ER2l55jlQxogV/tBTGkEKyAUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXbnxGzp; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-543d8badc30so2180228e87.0;
+        Fri, 21 Mar 2025 05:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742560028; x=1743164828; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K1TEmYZt94hfT9Oyrc1X5ge3lXbzJL8n7mBbAQkbguA=;
+        b=OXbnxGzpGX5gSrqPtl4aS4Y0v13jNzy6LN/c23fV+lphX0eQeFIpvNFCXADSGPaWza
+         8cNpuhaZU3mu0cknMlS3TwH/IDxlzpgVaO9pKWk0NFy8UF8b9OL/i6sXwO/MvFyTUVo2
+         Zn8WNbseZMZpdv1gNLB4e/aIeFKr1+rSWLYA8eMQIDjobJfyU8cnuw6tURYvfoMUNxbk
+         mNPQQUJE/lLJ4BwCKAp8u/UUnbI1NIA4bpLqm+Agw/Lswpf4cXRxxZCJO068HQGr4Wzf
+         7J0/uRP1k88Q1mwJOfd2syWqgRuk79GS85EQZ5PucDzAvATSSJiYX0SLa9aRioz6zolT
+         7f4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742560028; x=1743164828;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1TEmYZt94hfT9Oyrc1X5ge3lXbzJL8n7mBbAQkbguA=;
+        b=t5yyUM3aEV0Xh5XxUhEgtNu4gTGV0MTecCC1TqB3VpSn4io+2MAIGqUz+x79m2lSIC
+         XDCBDlulyR1QKwAdGQna/Ulwe0TwXMGlIf4tCc3G6tSkegPZoBAzwnF9r81exAsF+ztN
+         zPwfDlQiMD77geffeIJ/pwIAGFdsVKZ3qok/qJo3YDFv8KZTvzg7oD5SlPGtoeAF6SVw
+         /D26qFVGPv0gJN6ViYW2lukqpxAsK+G2wz80VwOQGkDzzM+DSxbGmYMXv0aQzQ7T0sRa
+         DNZwbwHr8XIHQ39ZrzSCDKyZbyCUey0/uLDHiP7bKF8xAtdnGXNHgMNdZTodUSkP5L+A
+         qn4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUfLUkxk8eBCMIhHpcDk2Yi9mI6UDp5dPV5FKSKe2z3uqPai3eUNLuXTzwMiGbUsJH8l3ZurekavQsK+ViU@vger.kernel.org, AJvYcCVm/J+aA/R3r2MVVwX++X2cHU56TYcjxmaXSUxsu5r/oaHVVtH3lKvv+kIBD5cPNFq3Vx9SjRI7qedJsd+GlqtY1eo=@vger.kernel.org, AJvYcCVwuXMH66GsnL1Lfuyj6vnoY7v31eIhM6gz/n+V5ztNlhXcHd68iHvJESgJATtxsKvkPViLlX4wMHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw93d8j3f94sn3c3pR3yF4RTyA1VYvnR3iuLyDlwW3vXMi1nPFd
+	3km6egYDHIes6pZ3u5nnqTdhvgKm8K7WIi9ItMX0xIk/pQCCO8rS
+X-Gm-Gg: ASbGncuMmejQS6TUIvO3DdhQnySLEHOuNyjG44oRRmOwkJEEfD15ZmQDX5tEKmaHyyn
+	ycgIpbDojQ1CmTMBLEGMmmIrFbPTwQgZiLDs/syvzsySlbeenp94EhVELaT4EXrN9eg33tD23XH
+	7xJ/SMtGx7hHyIHqXTx6XpJM1/uKpAZCzneJ1cgshrdvNkgwb/7XyCKDu57TMfeis9AHGYntQ9Q
+	SqHQgvuCDl1Q9Z8lu8a2TJ85vz0Ti7bfWeudVSjCohs+9oPEpqA2D5n+vBoq+RSRwm8gxQZfr+q
+	hcc9eFdflGLCt5QxPIrnK6QR9Pv4LzSTfHrxmCHG5bmj43VajmqJFC7bvo03DQw/S22TNnICjjF
+	eObAVm4913/I4NnHAjXCdosRoMA==
+X-Google-Smtp-Source: AGHT+IH0hmj7qVUBfmZdqS91Czx0BgIpF4xU0yrexl+qcUjSBmw1w3GM09JlciPG3KRdwmkSXp6x6g==
+X-Received: by 2002:a05:6512:33ce:b0:549:7354:e4d1 with SMTP id 2adb3069b0e04-54ad64f5a99mr983569e87.38.1742560027424;
+        Fri, 21 Mar 2025 05:27:07 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64fbcd0sm169784e87.153.2025.03.21.05.27.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 05:27:05 -0700 (PDT)
+Message-ID: <5175a057-48ed-415a-9096-23879364cb5f@gmail.com>
+Date: Fri, 21 Mar 2025 14:27:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rStlZ0oxjiGkfbMMJdYE/uraBquVWPUt0cKrqqlTn8QRr19bqGc
- cmOqcHqWbWe0RSo5Y7NNxksBjAanVk2arPftzX0P0rFkJJMiHLa56pIKlrPID6euiG0hEtR
- VWSY+fXTFY7VEO0SVsw9sbhvb1c3tD53MSseHwz3RrEOQ3I0NTS/EEG2QKDIFw//uZ4HjHp
- +1r/DQeoCjBTbvvBTQljQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/q2118qoiTc=;iEBKZor2YOZNUwg4de6GhgDNK2v
- AjmuSe7AmZhEZtFq9IpAPrB01sNYr/YTlxo9bPaqEhx8NMDHZXGEvkRipA32EMQ+tXQQ9ogsN
- ujyvHTKMmD8RCTaR4VepAA3lTStGJX/S9FEN1H2s5kjR6AwST6KHP2pAKuf68jYx4KuJIzNqp
- /kWdKfBXqopGJVwEc7L+ZMFoc1njVyV+j4mRAPniP6oPojtuWTybCaNGQAZyR6KOpYQDKWiJJ
- C68lIRhvhsk8Kjy5QSB5XrGs1c+A32QERIRQhDQRHt6x/7EVrok35rowbvh0kJ2f7bqB4c7SJ
- Hvplv28putYXiRE6C6go6n1pbr5FnviHC4Z5xuVoJ3BwIajVRxDASmgJ9IBzedkAJKQKsso4T
- jkGDX16uBSMerLeHniFGQndbQvGIrkC2R2JAsrNfMZeew8QcSuLal427ZGmPU9zHRzdHYhwuQ
- zzqYuk7ugvJmtF7t6oMX6D/TdVaU+KcaCf3KykVFV4CXJ9XM5LueCBT0Xeb/d/thbU4tMIXb6
- 2qI1SKtK058ndA7FqQ+8Cy2F8tWVVVtLmCbq/m95DY48CIeGfxSfD9Iwz75GZjYSZS4EjW3HP
- SadUG4O1JX+b/8CPoYDMkZdguhegF/5WTOY2qEiIEizXwsrTlHdmpptQILyrapZQmck3/rysJ
- g2/3NwQJmhQ23b2a2qQqSFaoFyVb6XAOA6zT72FnVAOGMRmrwKqKyxQ6rRzHmm+VXF1L9eMPU
- uTZqBMncxui4nJW/IOWx75hYmxWBALWNOVqIHo+9oInmRVIWFkhBwlLHSdtFGYHxSX3m7rwG2
- Pfki2P0PM0Bm66Iaug/yMVpKmhjQTgxci3+utPuiG3b3mx0V2GD/f38bpM2oOnv9K0EXo2LHL
- TmMeWILolfztYdJj7FcCcuZT7F/T+A+L2XsHp5n3EeFgDw7YqS1q0kthMNTwrh3V2fByAnMmJ
- j/F0qGIARg/ZVAOBm4e0aHuuCpMlms4TM8OGwvYReDQBEMhXZtsEPT5zUd0ReB2MHpHO71POo
- mOwCJ6FlzxRbizIPeVVclaNuV0NER5UxQLdtV1bdSJilGAnIBsP/dC7YEhLARlngThq4+dwGL
- hMbNAGwnegDPNcKipEE3uyO7xn9acQS+BLqay5twpQNhtYBRj6g3woIL6B8W6o+Xdnw66sbjT
- /BQNQT/kA1mo5CdLJANvDGzPgXnSYSa7nPtTPG8AzE8nPdUUAAwGe9kLu0aqHtYEi8RqYACAH
- SJCvhDc1qvcBLoZ1KVCz+rbJsX2TM5z7/yhtqWHTT4/y8UsQwPeJndMUJQhFYyh0YpbOeOzSu
- lU3DqqIbQzU4U3RY1wFJ+AQHYphSZXqf/DMcuXal0i+LqBP4aJ4pRvWhEcAPVzX4JUpMgUlqN
- eLSlj58hvRByIxUfdRBgYx7nhD72rCBUSKoO5G25lstGvTTYYMFqY4IKM5hFDagLM8F8RzELK
- ZolBwSg==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/8] iio: adc: rzg2l_adc: Use adc-helpers
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Chen-Yu Tsai <wens@csie.org>, David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <cover.1742457420.git.mazziesaccount@gmail.com>
+ <9a3a11561dbd3d5023da2da05cf2190793738242.1742457420.git.mazziesaccount@gmail.com>
+ <d55ed22b-7a13-4037-9a11-1a65040f8a7c@tuxon.dev>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <d55ed22b-7a13-4037-9a11-1a65040f8a7c@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> >
->
-> I am not an expert in amdgpu or gtt_mgr, but I wonder if some of the del=
-etes are coming
-> from forceful eviction  of memory during allocation?
->
-> Have you filed a bug report for the nokaslr case?
->
-> Balbir Singh
+On 20/03/2025 15:13, Claudiu Beznea wrote:
+> Tested-by: Claudiu Beznea<claudiu.beznea.uj@bp.renesas.com>
+> Reviewed-by: Claudiu Beznea<claudiu.beznea.uj@bp.renesas.com>
 
-I did some more monitoring and in the BAD case ttm_global_swapout() is cal=
-led
-585 times leading to 54495 calls to ttm_bo_swapout_cb() while in the GOOD =
-both
-function are called 0 times.
+Thanks a ton!!
 
-Bert Karwatzki
+:)
+
+Yours,
+	-- Matti
 
