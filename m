@@ -1,134 +1,162 @@
-Return-Path: <linux-kernel+bounces-571567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928DCA6BED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:55:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538CAA6BEE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D57107A3AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694D23AA930
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7080216E01;
-	Fri, 21 Mar 2025 15:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BDD214A98;
+	Fri, 21 Mar 2025 15:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TBNxRapp"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="paawdqxI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB011F12F8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7883B227E90
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572519; cv=none; b=mtvEjGfJ+M7Kzr8VSPfAQXLPbHd8vEjYlDjv0BtUG1nTFC2SkzMtVtsd26sBrfaTdshgx3D9ZoO3xvzpVAGry+5SW3twNRH/c7GjaHFqupoF+/7hRyspKSAd6gI8I+/nDNn3h60nmCou4J4z77E9JD3UtATzaLuNuL9laF/qGqY=
+	t=1742572562; cv=none; b=Ij6zZO2tphLFvhZG0Q2z4s5PUZnPPy+zE3YLLs3pPjaC0EWlJWQhN/rk65JGe63e55da9382Cvh9qztjBOh8u0UG0kcLfFkXYl65LGydUIxzIIfvffF5BTUWd+0CKl+iQ/xetCocvMjn3dLfk1H3e9q6YJjezu4wYQudkjJxlyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742572519; c=relaxed/simple;
-	bh=1wNtXhel12/P9++f5zzCWHX9NzteKr/42/osDVNIPRs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QprxMgk69S10Zxc0OPwlcrdhh1VdOZlI/E+0lhmEh5RMdZ0LM7y6kN2v3dT9sG7A4m0IlX3bVVH0+AoZTGXDelUocACa78cKXilnJ6zUMnEk1lkj6Q/bx9C0Pm8zG+k7MZOlN0+Dk7AGR9i20Sb7PMfWs4r487vjOJg6LAqtcmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TBNxRapp; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso10245065e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:55:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742572516; x=1743177316; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=keE5UAE8I7WQVpj+EG1JG1WPFCAgkdvUmiHSr+M5kNk=;
-        b=TBNxRappCOi0ACvBXxjn5U2IBBHAuGlU1bWnqocxQFM3u7ck/pq9twTGJyayywwNBV
-         XTdYLYdpEC3J0/9I2ilxeFpVobkOe1Nvj6FgwRtd9Tdeacjbm4O/uwYUKbdXE1oXkx+T
-         ArD7IDUcz3KxadmoKFANu+mSZ+20lixUXTJ4/tJb43RnY3S6m0KDkF1OwDsYn9iSfUc2
-         kZgGzZj5vSjGMJ029vb5sc1n3FU8abrE9hZavgwX32UKHJk2aITP/es3cZe+fJL669Q6
-         G//pHczpmOEiI5xbAYQSw+DsKNG6vO6PClKE2P7DHuvlr1Dgx+ZQ/uBg0+47JMZL9rQH
-         C0SQ==
+	s=arc-20240116; t=1742572562; c=relaxed/simple;
+	bh=Jq89ASxO+RlQoZ0gTVY7HIGXZ3XESEER/rt4tTQsbOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eorZTKAak45km8BfIoFUpOAkPq2NRXbedNrAwhI5i7vc63uE6m2QPe6bUdXNKbKuZKyYLSJ/M7MRxv1r8CkGol3lY7cTe4T5mtfGM/+GmBk8ljmX21aKac0OLpRrvzCDDt5vOe1rAOfiYSxYJlX/ftQttBzsuysBh7VTNdiSUiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=paawdqxI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATLf2012847
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:56:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=04I2GyzdKmUJhCQaYtdGLGSe
+	ZPL6vjPt7nnOQuXCnAc=; b=paawdqxI0c2X/qEkfKLkv8o2JkWb8utkyFdpIKoX
+	e+QU9xFk0jb7j4zUIMf5Ks/YlxvUK3b12oF07grUJcoqT9vOfQlQtl6QKopesiDE
+	spp5neDhNK9gldpZrsRpeLafeIO6xfTMz1awA/H+7czQW8mcZhcxNHa5K25jaFQc
+	g9da/dvwdZeluENvmV8d2Sg63NL5Kmnk8rxZn1R9QKtprzi9UzXEuSBhoLSP5lA+
+	pe9DZRuc/2oUcq6GJgRLzDmtBb17U62CwKV9ankW9VAK85oPP+dsDfose1I1D1Dz
+	G30NVTqMFg20O2tWEHCrEEu/Yxy3XgcullJRmmW5b/T6Hg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g4t46ct8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:56:00 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4769273691dso40465541cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:56:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742572516; x=1743177316;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1742572559; x=1743177359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=keE5UAE8I7WQVpj+EG1JG1WPFCAgkdvUmiHSr+M5kNk=;
-        b=dgBgp8UPUvAKf/EUb6Fgrzfi5hj8N4IWi8Z9B6Npli+sOcGDBICqZBb2A5WMFZoTHh
-         SK75wHRa56nqd+nfxCXeAogxoBzCE2dKCAbcMo3WiNKvs7ndR+CTIv6TGmjOUgvwQGzY
-         Nz0RFFha1G//pCFiDH9GZDq+nYPbkPNrUJTYgAHYtUDNyI2Z9Pm5olXdGjdJhvZbZLSb
-         2PBL5ivVEcaik84XA21VYtMjM77UWQitF4vgsJJ2/bDDhv/mh8+hzb/X1zpyfCZyqlia
-         awE0bYRDwGmt7jHSbDqjke9hVC9FKeDtaSJ21q0pFcoD774Aw9wwgGyNDQ+Xg43imWAW
-         c3IA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRW6fgreJ7rXWFoafdlGsy6d1bsekkiMzqHcUrXr14DehZtDqCwVta+7/H/rVjNz1DHqj4iXE/JYSQrjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx572jtiB275xdM9/NliFq+4Kg3pIG26iYgiz3OmhpPjEUAY4t5
-	Bk/eSzGrZmp/8SYbNXk9SD1ThwoI6nZ1aPe+kYeeis78VRptnsAIobAd//sIBGlAJkf+SZBw0/e
-	GOsw=
-X-Gm-Gg: ASbGncsKn8dQrjCTvx4NoKyANJDbl2Q3UdhUey3ilQhiV7ckwkxXaSb9OHuvWT6buvL
-	Us8rx+0/dhbtxko70KmDfcApjPitboO1Kg55LNG7Yy4UGRPhfOSA9r55f7l+s/I7SU29Y3VNw1K
-	Tb9rG0sD3HVWFZ4OalCR06lWZLAie+a7HRxAq71io0wqFq2Yz+l/NYtCamzazkSWihFvxhyK85o
-	xAPyLiVCbhEJ0aFhk9JDsDZz62u19RBbUqKAbwJQhlbUIwIDk4AZ6b4nNNjhpLOy0dm0/0jNB1N
-	/F0KnBAhhyjMTScRKeruEMuWBg8PDfjtd/7Z83bEXGNFNxoNJAlMcFk=
-X-Google-Smtp-Source: AGHT+IGf7f6p3B2QWzXbSlTw1NK0pPjUROlEz/T5BuJywHA6Cp2/lY5juGyE3geEn0WI2gDMWjaauQ==
-X-Received: by 2002:a05:600c:198a:b0:43c:fd27:a216 with SMTP id 5b1f17b1804b1-43d52376b88mr29455795e9.23.1742572515585;
-        Fri, 21 Mar 2025 08:55:15 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:2102:ce42:30c0:9b40])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d43f3328bsm81162415e9.1.2025.03.21.08.55.14
+        bh=04I2GyzdKmUJhCQaYtdGLGSeZPL6vjPt7nnOQuXCnAc=;
+        b=V2zH9GNQXalxkcIG5zc3mTxOhQ14IZzMnJrdeRTqr/MLuljuyN3Y7dLU+Zc/P0Ui/9
+         Iii7P6HZl1EumPXaOggOjY1lJb35XEHorp/MIk3wVNIpTiSn7RGttneh2UCPoImEhkQY
+         FcxQf8hlVuwDDIq1a2UwdYpdXGwHCEYWmCSFYahkDacw/0vplzrgM8LtggTV2nDac0GF
+         T3AC3SfCatqbejNI3vHczJAB6dXtTrMmPOS4PKf78PQKKBVLegk+vSOh6uxxb5zdw8Bc
+         jHW//676jqbBaOj6IW7ugpzegTVbLzLdqBg4j3VMLVOydY2zbcbNQ7JoMdL8FriTGigq
+         mRTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVSp1lN/E72QZQo9SSErWyWGgAMT40isGwgvnh9Z/928WgjURRyxXfNt6XWFPrRvZv0Me+PeAXM8mxZ+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE/wiCzskdmvE4Z3q86yB4psKCZVnpyvKRKb6227IhmZJZD4gm
+	uDWOpKDEBp+UA8B6IBVu2WWL0CHdeGWjsprP9m9G69WiXzSj39fyk1Yst+RmivfRtGAyMYF1f5T
+	jc77Ijq4hMuzWi2B7FD4VbGGidQdM6crxzfQbQsNjYUQwullzkzpC7Hu9K4NtL+M=
+X-Gm-Gg: ASbGncuCOe6Lv9N8progUSYHpJr1nY7puAUqa1sraQFz7nxorSNqc1ZmA8T+JBNgYVd
+	NR5BrJENr2zNGFE9Nt7zffP4+YGvjk8aKg9i08GSmIFCPNZ0jrPDMRS4sE3/ZIO7QPhsQSqopgf
+	C3u1H2whpdCgSBdYeRdxq2Hp5/NTaGAN56Y5F/MLEykKy49hdMz4a2a9g0xweRo5q6aXOnHbV/1
+	XJx2h1A5LZtjdyLIkf9GssRmyKeeSKc8gV5G31qTKERUEWRFLBcLChBANGHQZlfOb4BG69oIT91
+	epX+BwFskqPeCQrWt9lVYCyY28w8iYEg7TrWhU164R5L9hVzdHbRF2OYhtNI/y36oDSIjWSCHhn
+	ctqo=
+X-Received: by 2002:a05:622a:4188:b0:474:fe6c:be44 with SMTP id d75a77b69052e-4771dd79997mr61852241cf.14.1742572558625;
+        Fri, 21 Mar 2025 08:55:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF07+SUkMs8VSdxuN5uNzjGJeTfpHG0ykEhaRVsi5AnxzE/ifh8qn7JCa0nZawf12AcsfFBAQ==
+X-Received: by 2002:a05:622a:4188:b0:474:fe6c:be44 with SMTP id d75a77b69052e-4771dd79997mr61851351cf.14.1742572557858;
+        Fri, 21 Mar 2025 08:55:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6512aeesm207340e87.244.2025.03.21.08.55.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 08:55:15 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] clk: amlogic: drop clk_regmap tables
-In-Reply-To: <1j7c4i2xq5.fsf@starbuckisacylon.baylibre.com> (Jerome Brunet's
-	message of "Fri, 21 Mar 2025 16:46:10 +0100")
-References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
-	<20241220-amlogic-clk-drop-clk-regmap-tables-v1-2-96dd657cbfbd@baylibre.com>
-	<9f1d69ebe1ddce5dfc170e986c9213f2.sboyd@kernel.org>
-	<1ja5cp8f87.fsf@starbuckisacylon.baylibre.com>
-	<88fe909ab182d1f17f6ef18161c7f064.sboyd@kernel.org>
-	<1jfrlwb69r.fsf@starbuckisacylon.baylibre.com>
-	<ed20c67e7d1a91d7fd8b921f156f56fb.sboyd@kernel.org>
-	<1jmsg2adgu.fsf@starbuckisacylon.baylibre.com>
-	<697b634770d789ef8ff0e05cec9465f5.sboyd@kernel.org>
-	<1j4j205ark.fsf@starbuckisacylon.baylibre.com>
-	<5109de7fe1a1a8467118daf80c7b7f8a.sboyd@kernel.org>
-	<1j7c4i2xq5.fsf@starbuckisacylon.baylibre.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Fri, 21 Mar 2025 16:55:14 +0100
-Message-ID: <1j1puq2xb1.fsf@starbuckisacylon.baylibre.com>
+        Fri, 21 Mar 2025 08:55:56 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:55:53 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: Add video clock controller driver for
+ SM6350
+Message-ID: <pzevgib37fgdupythk3mawmeuki6dflpw5bze4ujb6jcjvj7ar@jmjuzeabvq7y>
+References: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
+ <20250321-sm6350-videocc-v1-2-c5ce1f1483ee@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321-sm6350-videocc-v1-2-c5ce1f1483ee@fairphone.com>
+X-Authority-Analysis: v=2.4 cv=HMPDFptv c=1 sm=1 tr=0 ts=67dd8c10 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=qohHCxWBmeq9gVc9HfwA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-GUID: UBIYf689tsKcwDZYY4gaV08dgEiM4dgl
+X-Proofpoint-ORIG-GUID: UBIYf689tsKcwDZYY4gaV08dgEiM4dgl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503210117
 
-On Fri 21 Mar 2025 at 16:46, Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Fri, Mar 21, 2025 at 03:45:00PM +0100, Luca Weiss wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
+> 
+> Add support for the video clock controller found on SM6350 based
+> devices.
+> 
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  drivers/clk/qcom/Kconfig          |   9 +
+>  drivers/clk/qcom/Makefile         |   1 +
+>  drivers/clk/qcom/videocc-sm6350.c | 355 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 365 insertions(+)
+> 
+> +
+> +/* 600 MHz */
+> +static const struct alpha_pll_config video_pll0_config = {
+> +	.l = 0x1F,
 
->>> 
->>> I admit this is heavily inspired by how devres works :) but it does solve
->>> the early clock controller problem and does not scale with the number of
->>> clock registered.
->>> 
->>
->> I don't know if devres is a good model. It's about tracking allocations
->> and things to undo later, not really to track things to do when called
->> initially.
->
-> My point was more the decoupling it allows.
-> Maybe it is me being too picky, but what I'm trying to do is related to the
-> clock type, so it bothers me when it scales with the number of instances
-> instead of the type.
->
-> More generally, something devres-like allows to register an attribute
-> and link it to a group. Then the group members come and just pick what
-> they need. Whatever manages the attribute does not have to track
-> them. That is pretty much aligned with what I'm trying to do.
+Nit: lowercase hex please. No need to repost just for the sake of this
+single line.
 
-Just to be clear, this idea is meant to live in /drivers/clk/meson, for
-a start a least, not as something generic.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+> +	.alpha = 0x4000,
+> +	.config_ctl_val = 0x20485699,
+> +	.config_ctl_hi_val = 0x00002067,
+> +	.test_ctl_val = 0x40000000,
+> +	.test_ctl_hi_val = 0x00000002,
+> +	.user_ctl_val = 0x00000101,
+> +	.user_ctl_hi_val = 0x00004005,
+> +};
+> +
+> 
 
 -- 
-Jerome
+With best wishes
+Dmitry
 
