@@ -1,136 +1,155 @@
-Return-Path: <linux-kernel+bounces-571839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DFDA6C2FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:06:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126C4A6C301
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08FE6480C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:06:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA711B628EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1D522F15E;
-	Fri, 21 Mar 2025 19:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB622E3F1;
+	Fri, 21 Mar 2025 19:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OA5NWrBy"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNNh7tpo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sczX0TCN";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNNh7tpo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sczX0TCN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F7F22D4F1;
-	Fri, 21 Mar 2025 19:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A983154426
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742583995; cv=none; b=Wb5Q5ZREHiPCvjE2Z0Xx8l3PW43fgZ0haQC3uORjCCFzlZLZSMrpmQYe2YvvELJRycYbbFRct/3r1WVYa5nIGz4vPq8fY86VYaYIl3CpSoP4rFlqLSzxXzeLNGYiABtPA6KSABi3CFHwZ/E2Vt2WN2zVXqLFA6GOaw0BqbOr0OY=
+	t=1742584107; cv=none; b=WyckVN90MDUsQP/tMs2koSoZ1t+I0meARE6gBdIxL8xtfcfdgufzcVe0E8VRM+xmKMjSsJ6NwzrGeyNECUm2zg4o/L5+KUBhDoD8JsbgQFDNrrM8wO98vuuX1CeEsv5ncB64pY2gKJ2l0+x5euK6uxkq+txjnZie010urSbTe60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742583995; c=relaxed/simple;
-	bh=B+aD9dvfpVDv7F9UkKnouTo4wvTO8SyZ4HvL6VdDMqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CgrvZp1rOEaDDO+rUnhwER08XD2oVDdUnPFljxBF0fNyd63vkq8OfFi/fZWy96E9shDwdA2Tx9gAHs3q1YRxUf6/hxcqpRtSZgG/PqUu+dTfRYBYywC396lqD1jgr+Kk+upO1uoi2ZvV1P4UNzb+1hPqflLO2ZXYb1JtJv683dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OA5NWrBy; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2240b4de12bso17648715ad.2;
-        Fri, 21 Mar 2025 12:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742583993; x=1743188793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zSQFBrcYGnUp+r+VXHpl/J3fI5NrdgINu2gTCJ+GUK8=;
-        b=OA5NWrByr8EdZq0LnvIMN7Ow+05Ht2O7juPvAgpDuRiziptqHgp1CMSzyg9xF5GvjO
-         8xt0KAyQt+14Ao5XGUTc+YXpjrUkh4WVjEmbqm6X99vQ1MgLnECJX/czujdRK4wBHFSe
-         Vpx749XFQicai2HrIuQvmgZ5SeOf6Lk7XEG/kLqdUaP+ErOXHTKhOUw7N1IyRKzLoFnS
-         KVJWn2EAygQfqChHJqiSk1kHzlggneAo2xkBXcitIuGcIb+HRIUmZvxBqwKoTLJFkQ8M
-         DkEGqWCWS0RUfKTOd7ezQqyCCrT8dzSAZKSbWkIh64WCm4MhB7gZB6/sYcd3PnfK3ZxN
-         Wngg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742583993; x=1743188793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zSQFBrcYGnUp+r+VXHpl/J3fI5NrdgINu2gTCJ+GUK8=;
-        b=SPWx7/6uDaXqPkJrRXfaavDb//Egf5IBUqorBcfOqUkARGO1O3nr3tgBBwZWLv3jxT
-         LeumDuh0djiDqLcuLoC63ePQ0c+LcbAFC1F4fH226T+GWwBcM6Uy4BDRYY/t/5x0xjBr
-         dBP+sg1HS/VfBzQYzKAqeSON0wngSVpY4Vp5Z/i4urwW2oV7w8PJPgtN9MauT/n92VYn
-         ieHySZmKsufMNP2J+mJGxtRe11Y8KRPOgstE1/6G5lz7j6qWTN508vkUMlbtzMFTmw7n
-         SMujQX7xLJF6EqvA1u21isEe5ukCPZUKNilydnycFPYyBaNHv8273P5aVLrz7GXg6njo
-         xySg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkcLdLNLfZHv5xiUfzJCcTLvZDVcbgxV1moHLyeKyDG/Msv3xd3yBJnOp+Xzy10SCrvAt+uGjhcAo=@vger.kernel.org, AJvYcCVR1JuJVtPRPKckqyZs9JQ90NyaDo2Q7bYJ2HR1o7km1ZyZ/3UeKEgFkzTmpCSbZkYxyuTkRoLIinKG@vger.kernel.org, AJvYcCWlY4AIXOOF5GLD8w4YWGSH8HZGRKqX94HNRBrnc1CPUxQqle0Stbyx4AHMcEN9NKRZ6cqoscLQzDXwsW55@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkML7zy11COlRoHuWzRPEweWhDXfyqovo50SYAaVJnUwrFEQNt
-	zi/EqHxgMc5YU+vX7DK1DOc2DvQTFb5fHFSz05PkHW6Y1bzHifzh
-X-Gm-Gg: ASbGnctD1nRg7AH5/0yHVyA9pgMeWtqSKPMBXVyS/wwC9w2APqlV1LBD70X/sIbVeUg
-	KJ2cb0yt/Ra1D7NuazWr+jaTdMhqhBUQKpMyAL3jlTZdcJB2EeBqF9DxqU+lUI2he7rUKkPVUEj
-	Ng4bc6w5/RxBGjYQ9Gocs+3baazGo+QWlDEgqcJtMTyTgqSMQmY9BKg6ej0cChA33iYTKOW8Pjb
-	3I0Q9S/UpjxShnXEy7x0FY1AxKfBmAQHlveYV6JH7eRw1EvbLz93xifFoSWY2Kpc2EWN2vANntY
-	qWOqQWmn/ERxf2uXZz4HWjVnzJatY1W68Km5bJ8+p/gAAKZTDFRmDg==
-X-Google-Smtp-Source: AGHT+IHhIKo6xXDfS3u4KCV16vBsyMkhHcyd/L8JMgusFH8Rv4KN00NY/E49L7DMWZ0wMIjy/M1cWw==
-X-Received: by 2002:a05:6a21:38c:b0:1f5:8a69:f41b with SMTP id adf61e73a8af0-1fe43435b0bmr8791567637.37.1742583992486;
-        Fri, 21 Mar 2025 12:06:32 -0700 (PDT)
-Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73905fd57d6sm2458985b3a.58.2025.03.21.12.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 12:06:31 -0700 (PDT)
-Date: Fri, 21 Mar 2025 16:07:31 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	corbet@lwn.net
-Subject: Re: [PATCH v2 1/5] iio: adc: ad400: Set transfer bits_per_word to
- have data in CPU endianness
-Message-ID: <Z92480lC8WdgyuiT@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1742394806.git.marcelo.schmitt@analog.com>
- <930560a0d0ca7af597d4ad901422bc9ba3fc6a79.1742394806.git.marcelo.schmitt@analog.com>
- <4fb5329f-be34-4d98-b34e-2da4e035f44c@baylibre.com>
+	s=arc-20240116; t=1742584107; c=relaxed/simple;
+	bh=3ob7dWnddRt7NjhXz3FcRpTbvHcFlALDzT4Ho7pFvIA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rqTALxXTZKhftuTajg2+O4d+JvtaMCX+tz6JovYpuOQIfiTTh7vPJAWX/LRs4Up6LvggPQkNen+QckuE+/AamikSCFpKBmZvVTEDAszuz3QOTXgNgXDC/uO19GWLNKQQmbqJoJxTvORPJCoTU+EF6C+z4PUQjyl9Z7oiDf4H7To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNNh7tpo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sczX0TCN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNNh7tpo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sczX0TCN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 955071FCF5;
+	Fri, 21 Mar 2025 19:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742584103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
+	b=TNNh7tpom1OngPUO8IN1B4FuDteGntQaPHhnyyEOjVVlklo+9jO0lGBFQ8vKGgbPfGioja
+	0EDYBDmXKQIKdN0AMicb4E1hHQZB4dT9DGMAhmzG4Xfe9Ddg4g4S8EFCil91DtMDzlZboX
+	JKAdSnN7AEHJuVCi6i7fUF6Y431WhAs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742584103;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
+	b=sczX0TCNSbAsOVQOSD/w+Fo6KX6C4nFYB5/meRGO8o5YjlomEB/MDKlqUDksWOuMb0zstN
+	gfxYlUtyDDf7TKDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TNNh7tpo;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sczX0TCN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742584103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
+	b=TNNh7tpom1OngPUO8IN1B4FuDteGntQaPHhnyyEOjVVlklo+9jO0lGBFQ8vKGgbPfGioja
+	0EDYBDmXKQIKdN0AMicb4E1hHQZB4dT9DGMAhmzG4Xfe9Ddg4g4S8EFCil91DtMDzlZboX
+	JKAdSnN7AEHJuVCi6i7fUF6Y431WhAs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742584103;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
+	b=sczX0TCNSbAsOVQOSD/w+Fo6KX6C4nFYB5/meRGO8o5YjlomEB/MDKlqUDksWOuMb0zstN
+	gfxYlUtyDDf7TKDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62A6B139AA;
+	Fri, 21 Mar 2025 19:08:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 80xxFie53WeSUQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 21 Mar 2025 19:08:23 +0000
+Date: Fri, 21 Mar 2025 20:08:22 +0100
+Message-ID: <87frj6td5l.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Stefan Binding <sbinding@opensource.cirrus.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v1] ALSA: hda/realtek: Add support for various HP Laptops using CS35L41 HDA
+In-Reply-To: <20250321175040.800963-1-sbinding@opensource.cirrus.com>
+References: <20250321175040.800963-1-sbinding@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4fb5329f-be34-4d98-b34e-2da4e035f44c@baylibre.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 955071FCF5
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Flag: NO
 
-On 03/20, David Lechner wrote:
-> On 3/19/25 9:57 AM, Marcelo Schmitt wrote:
-> > When SPI `bits_per_word` is not set, SPI transfers default 8-bit word size
-> > and ADC data gets stored in big-endian format in memory. Because of that,
-> > the IIO driver requests ADC data to be rearranged from BE to CPU
-> > endianness. However, with `bits_per_word` set to the number of ADC
-> > precision bits, transfers use larger word sizes that get stored in
-> > 'in-memory wordsizes' and can be read in CPU endianness.
-> > 
-> > Use proper `bits_per_word` size for SPI transfers thus saving the driver
-> > from requesting endianness conversions. With that, shifting the buffer
-> > data is also no longer needed. This change has no impact on IIO device
-> > functionality.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
+On Fri, 21 Mar 2025 18:50:06 +0100,
+Stefan Binding wrote:
 > 
-> This is a breaking change. Some SPI controllers, like RPi can only do 8-bit
-> transfers, so this driver would stop working on those platforms. Also, if
-> anyone made software already that depended on the big-endian ordering without
-> checking the scan_type attribute, it would break that software.
-
-Hmm, if user space software doesn't check
-deviceX/scan_elements/in_<channel_type>_type, nor
-deviceX/bufferY/in_<channel_type>Y_type, then I'd say that's already
-somewhat broken since at least buffer scan_element type attributes are documented
-https://web.git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/tree/Documentation/ABI/testing/sysfs-bus-iio?h=testing#n1470.
-
-Anyway, this patch it indeed broke RPi support so I'll revert buffer endianness
-and SPI transfer bits_per_word configurations the way it was in v1.
-
-Adding possible failure due to controller not supporting specific bits_per_word
-size to my list of peculiarities related to that field.
-
+> Add support for HP Cadet, Clipper OmniBook, Turbine OmniBook, Trekker,
+> Enstrom Onmibook, Piston Omnibook
 > 
-> I would leave this as-is (drop this patch) and just make it:
+> Laptops use 2 CS35L41 Amps with HDA, using Internal boost, with I2C
 > 
-> 	.endianness = _offl ? IIO_CPU : IIO_BE,
-> 
-> in the next patch.
+> Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
+
+This seems conflicting with the recent changes.
+Could you try to rebase to for-linus branch and resubmit?
+
+
+thanks,
+
+Takashi
 
