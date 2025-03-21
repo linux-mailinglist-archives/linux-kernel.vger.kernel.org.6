@@ -1,249 +1,185 @@
-Return-Path: <linux-kernel+bounces-572090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA12A6C65D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:19:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B928FA6C65F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F9E16B364
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6A81788B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1858232792;
-	Fri, 21 Mar 2025 23:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BD823372E;
+	Fri, 21 Mar 2025 23:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="083mogp6"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jkr9BvQy"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6930920F093
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979723371C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742599013; cv=none; b=TstiVsOPU8MHJzNoUXJqKuo/n+InJHJYZiEyv8adGgOf+N5NDjgWjfreF2Kmie6bOlzQrgDku+bPcTUCQfXb+gj6y3vDw2JQNTCouZKj0i51cNif327p/nFsZ/ToJDCs7kNjp/tpa/2y7u6rIfgC1vOL57J9pFTZ8i3iIiOSx14=
+	t=1742599067; cv=none; b=eK2LMQOPz9qv+cCrESNPcP2GtCLf8z/koCQxwCwlM7pjAL5YfdNE1e99E0vFfP/APLBkl3nKubHWTLwfjLfhNOZziTzmPtQLCP3wMRpIydPqHFcbApLV7LMG6sbG2tNDuZuzXpytDewwJ00FtkeyQhe02tyucJ4AZm+Bqhu0v4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742599013; c=relaxed/simple;
-	bh=8DKaaQsE+scs9IafPhGAEN9NCbmfrSyJ0w8/Xd4IlfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVyL1166jlKNVfcsN2b5/agNU15+2AiHwBWaA3zYoexvLKpfz6HPACfhwWpqaYjji+SSMatIL5wO0HbCcn4gxoEXAgC/mvL/g5cUWt1/sAVyyNnyWwPSEJM5mbScTn4gR7ls8nAt33wzoaSrmhXzxRVL7VULAnz0XQAWLOAD/oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=083mogp6; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1742599067; c=relaxed/simple;
+	bh=lXrOKtzABjGhWs7Ij/i6BaRO/TDVJITftxkEaZ9HOcs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ixEymlOLRCMW+uq6J/1X3oRNNJW5bkvXdvD9acbSYdUIBpvTkpt31S+chZFMEgodK6ueTk5kHa5zG3KaBSYiaH1nc6DvIB0/wWLMn/eV8zVSWTlH6fZQbT9wEyggM4jIFqSV2hHnZB4DBdOt9diD9WVOaOkzrkGxy70cggffzEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jkr9BvQy; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-226185948ffso52229185ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:51 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fec3e38c2dso6251814a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742599011; x=1743203811; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OIH7ijeBPiqYRtbzIPfbeGjnxQWH5Tz1Ymx0+lmARm8=;
-        b=083mogp6PTA20FKNijOETmLv9aZtDH212EAJBGgs6DaPl1IGtRZspiCRxofSUmVGcf
-         l2aYeIdHzGFqnyBdsh16TMhHAbeUI/B8SGQkcSget+a0bPeLb2Qaj4nrX7rYmZgaYeQB
-         ZuL+cr+3bTolgbfY368hH9/H+8BFSHUKzNL5Y+Wu4bDuJzy6FGMouSI4urYRnQ6wno0d
-         +68tqci+8nXz7v0Qsqor0iHl+UQ68/MdE+TbegoYpCcg7VliuD2CKtcJlXnDfY96w40Y
-         2kxQnoYGV5PJH7qd+YvGExYCL5tNn1Kd1W4eeD0ShKpFSwvG3U4en9gOupYUG3RZ5Z/K
-         xgvA==
+        d=google.com; s=20230601; t=1742599065; x=1743203865; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IyLJOzYWzjCIZlosJUfQjcjVnmAe1GOmsaNGK/OHc9M=;
+        b=jkr9BvQykSuOMo+liRLTXlPg4i8eKTGy1JJrdDLPkT4twknuUYqz0ePg/cL/Sx9jav
+         rs7P6QYJwW4vcRIkEfZhRazLyyKKLr7WBpSC9PAVVXDxdTkT1JTXQCQ5e/ZPOCGyo6bg
+         aK2+oDfC+Ycb9qFVlxnorYWyvcvdiNGLW3QXinOtDJvsWtrkrGRupGA0L8352WlHHmyY
+         /LgpHxtzXmSc52BRUzPhZJh81COMqttKTmAi6bKLMJVRLCwWxQ1r8rm7WwRrv1kjMdxD
+         j47LrrWsrpKGvzULlwWglEstUJ7VgaJqGseAviB1gsjyzh726jUiBIsC7pE8einGbvWL
+         cpFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742599011; x=1743203811;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OIH7ijeBPiqYRtbzIPfbeGjnxQWH5Tz1Ymx0+lmARm8=;
-        b=c10WW5bjnlh4l8mEESMwkKBv0DQrJaDuWzA1i6F5a2RFxJWrKUMz2sLSfI9sdIMgdp
-         WmH9xhsHUUojeRhdfCCXxlhBn4/FQdmvsclFmelM0JTsVtsqkrex3p/MeEhQnFRfUWJn
-         7heGGVR9OB27IdKg6ievDeEcIeMKl07SJU4ks4ARuROhoOoaJTJAsQ9jiqm70cfpLesh
-         3sfcFOJdLeHrbQOR9CkADkFIHkB5YR/Cmp0UL+fFIqqUMNkom+yc+vLfxkOmY4I2Hxly
-         HERqI1fegK+rlvbwnBCH246f2zSVkddIMFvX9k7X+o7jk4OdSoXubR8R6nCb79iFuwwc
-         Hfsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWj9nRUYNc3gTpygmFJMSNc0u0kpZOeV1qmcy25v7FhXB1ZyM6SNkuipho7dbCjavcIUUG2lPsgcXiDK2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN+0iQ7ZaT+z2OqUTHpBTxldoOKf+jZbFkyx41vkSKFkbeNDI1
-	VK+Sj7W4APIeBOYfWvFBiHBR8/ZgNDuhhr+IkAjb68JqR/mSQJpWoLMbvlqNRA==
-X-Gm-Gg: ASbGnctpx+PJSNOk6jYGbzTI/be/5qGfMBAvEdbqWbVgsZamwL7X/cJy74W0rdr28Mp
-	kCj5P2w2AECUJfRBHr8X2Fbr56noxQuVOGlrM1dI4Ow49To1DU1J+L4Rt9OUnrai808tYLPQ8TQ
-	JAGba8CFz5wnXElzkGDU/WYE8/rvHZU822AbzC+sEY8oEqmI+jayEBO2fXTfU1YCJmKJYpkR2//
-	VgLyDQB5rrTGX/NgXZ+sJvEbju94WsO4XLeTBf9+ncYAnmj/rS6qRBTh8KAfKuOHv+NjSqND4L7
-	0sMkJMIbg6L3lyVpcRjtBwVHkRt1I9NFcZT+byv0Mtx3S/+AhzrKLM3tQeCSCa2tNemKXWVGXzL
-	SpiygGiI=
-X-Google-Smtp-Source: AGHT+IG+S/vbJZ8UdHGhIlmSLgyiSEb9xnXeh1Dx5wYWoCCxNEnUuuhrUbiG8myJeH5qClc9kzs0uw==
-X-Received: by 2002:a05:6a00:1393:b0:730:9801:d3e2 with SMTP id d2e1a72fcca58-7390599a142mr8273307b3a.8.1742599010047;
-        Fri, 21 Mar 2025 16:16:50 -0700 (PDT)
-Received: from google.com (132.111.125.34.bc.googleusercontent.com. [34.125.111.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fa92dfsm2639905b3a.5.2025.03.21.16.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 16:16:48 -0700 (PDT)
-Date: Fri, 21 Mar 2025 23:16:44 +0000
-From: Benson Leung <bleung@google.com>
-To: Andrei Kuchynski <akuchynski@chromium.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: typec: class: Fix NULL pointer access
-Message-ID: <Z93zXHJPO3UHY_YF@google.com>
-References: <20250321143728.4092417-1-akuchynski@chromium.org>
- <20250321143728.4092417-2-akuchynski@chromium.org>
+        d=1e100.net; s=20230601; t=1742599065; x=1743203865;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IyLJOzYWzjCIZlosJUfQjcjVnmAe1GOmsaNGK/OHc9M=;
+        b=dNY94wEipSO5rlS24ToWkBa13mNpXlCqGtHl+qE0KBW8erxweoJZF3rN6WN5le7BcD
+         dgHMz9WUuaRuMH3W8UWQF0ytt2mO9klcfdAjyB4vsowi1RquHh9rH1sf+Dt4hD/iPbic
+         AvVskYfkKRRPkLEhCa++VGg0yL7JHeg9Y+njBqBFI6hq3ApeaXtZ5eoSTgCdZBsvt/uX
+         GA5RbO6yIL1HrPnsLule4KwNQIz+kbN4Qi9rtFK/SIrtkPt/61XaU6wTQS31qprpyGcn
+         Lhyg9PIp2aI5kh28T13rILjBJHAX1Z900S6n2a/DU+LIH26NaMg7coUVGVMM2C8kRZyc
+         Yyqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsHdNZG63VZC0Z4lMfashqZjA09mIhe8hGZ7qRL7c6PXfXmCy7tPqTtVNjeyEoydq0BmQu38ex8MBldYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy+q0d4WA+1rRb/JjfJSdW3uWSLXOGytuREHDgpUAyk4nSd5tF
+	hwnyG087lrfwsY8gcfUkEQryfPaDnDWbIRk2x7t7XsxAFgeHoYt0iZCecHp7drXAy12M5tcfDTG
+	zMg==
+X-Google-Smtp-Source: AGHT+IHpmffoheyuElFouvvpNqd6iCMiNPs8uVvwlJYQzQ/8dOEH51DfQjENTXniALDbstnCy+o/Z2aFi8Q=
+X-Received: from pgjh4.prod.google.com ([2002:a63:df44:0:b0:af5:91a1:e217])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a10c:b0:1f5:5614:18d3
+ with SMTP id adf61e73a8af0-1fe42f07bb6mr9334872637.8.1742599065381; Fri, 21
+ Mar 2025 16:17:45 -0700 (PDT)
+Date: Fri, 21 Mar 2025 16:17:43 -0700
+In-Reply-To: <aeabbd86-0978-dbd1-a865-328c413aa346@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oA1blLjyxrjfEY96"
-Content-Disposition: inline
-In-Reply-To: <20250321143728.4092417-2-akuchynski@chromium.org>
+Mime-Version: 1.0
+References: <6053e8eba1456e4c1bf667f38cc20a0ea05bc72c.1742232014.git.thomas.lendacky@amd.com>
+ <48899db8-c506-b4d1-06cd-6ba9041437f7@amd.com> <Z9hbwkqwDKlyPsqv@google.com>
+ <8c0ed363-9ecc-19b2-b8d7-5b77538bda50@amd.com> <91b5126e-4b3e-bcbf-eb0d-1670a12b5216@amd.com>
+ <29b0a4fc-530f-29bf-84d4-7912aba7fecb@amd.com> <aeabbd86-0978-dbd1-a865-328c413aa346@amd.com>
+Message-ID: <Z93zl54pdFJ2wtns@google.com>
+Subject: Re: [PATCH] KVM: SVM: Fix SNP AP destroy race with VMRUN
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Fri, Mar 21, 2025, Tom Lendacky wrote:
+> On 3/18/25 08:47, Tom Lendacky wrote:
+> > On 3/18/25 07:43, Tom Lendacky wrote:
+> >>>> Very off-the-cuff, but I assume KVM_REQ_UPDATE_PROTECTED_GUEST_STATE just needs
+> >>>> to be annotated with KVM_REQUEST_WAIT.
+> >>>
+> >>> Ok, nice. I wasn't sure if KVM_REQUEST_WAIT would be appropriate here.
+> >>> This is much simpler. Let me test it out and resend if everything goes ok.
+> >>
+> >> So that doesn't work. I can still get an occasional #VMEXIT_INVALID. Let
+> >> me try to track down what is happening with this approach...
+> >
+> > Looks like I need to use kvm_make_vcpus_request_mask() instead of just a
+> > plain kvm_make_request() followed by a kvm_vcpu_kick().
 
---oA1blLjyxrjfEY96
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ugh, I was going to say "you don't need to do that", but I forgot that
+kvm_vcpu_kick() subtly doesn't honor KVM_REQUEST_WAIT.
 
-Hi Andrei,
+Ooof, I'm 99% certain that's causing bugs elsewhere.  E.g. arm64's KVM_REQ_SLEEP
+uses the same "broken" pattern (LOL, which means that of course RISC-V does too).
+In quotes, because kvm_vcpu_kick() is the one that sucks.
 
+I would rather fix that a bit more directly and obviously.  IMO, converting to
+smp_call_function_single() isntead of bastardizing smp_send_reschedule() is worth
+doing regardless of the WAIT mess.  This will allow cleaning up a bunch of
+make_request+kick pairs, it'll just take a bit of care to make sure we don't
+create a WAIT where one isn't wanted (though those probably should have a big fat
+comment anyways).
 
-On Fri, Mar 21, 2025 at 02:37:26PM +0000, Andrei Kuchynski wrote:
-> Concurrent calls to typec_partner_unlink_device can lead to a NULL pointer
-> dereference. This patch adds a mutex to protect USB device pointers and
-> prevent this issue. The same mutex protects both the device pointers and
-> the partner device registration.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 59de2a56d127 ("usb: typec: Link enumerated USB devices with Type-C=
- partner")      =20
-> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+Compiled tested only.
 
-Reviewed-by: Benson Leung <bleung@chromium.org>
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 5de20409bcd9..fd9d9a3ee075 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1505,7 +1505,16 @@ bool kvm_vcpu_block(struct kvm_vcpu *vcpu);
+ void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu);
+ void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu);
+ bool kvm_vcpu_wake_up(struct kvm_vcpu *vcpu);
+-void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
++
++#ifndef CONFIG_S390
++void __kvm_vcpu_kick(struct kvm_vcpu *vcpu, bool wait);
++
++static inline void kvm_vcpu_kick(struct kvm_vcpu *vcpu)
++{
++       __kvm_vcpu_kick(vcpu, false);
++}
++#endif
++
+ int kvm_vcpu_yield_to(struct kvm_vcpu *target);
+ void kvm_vcpu_on_spin(struct kvm_vcpu *vcpu, bool yield_to_kernel_mode);
+ 
+@@ -2253,6 +2262,14 @@ static __always_inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+        __kvm_make_request(req, vcpu);
+ }
+ 
++#ifndef CONFIG_S390
++static inline void kvm_make_request_and_kick(int req, struct kvm_vcpu *vcpu)
++{
++       kvm_make_request(req, vcpu);
++       __kvm_vcpu_kick(vcpu, req & KVM_REQUEST_WAIT);
++}
++#endif
++
+ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+ {
+        return READ_ONCE(vcpu->requests);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 201c14ff476f..2a5120e2e6b4 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3734,7 +3734,7 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_wake_up);
+ /*
+  * Kick a sleeping VCPU, or a guest VCPU in guest mode, into host kernel mode.
+  */
+-void kvm_vcpu_kick(struct kvm_vcpu *vcpu)
++void __kvm_vcpu_kick(struct kvm_vcpu *vcpu, bool wait)
+ {
+        int me, cpu;
+ 
+@@ -3764,12 +3764,12 @@ void kvm_vcpu_kick(struct kvm_vcpu *vcpu)
+        if (kvm_arch_vcpu_should_kick(vcpu)) {
+                cpu = READ_ONCE(vcpu->cpu);
+                if (cpu != me && (unsigned)cpu < nr_cpu_ids && cpu_online(cpu))
+-                       smp_send_reschedule(cpu);
++                       smp_call_function_single(cpu, ack_kick, NULL, wait);
+        }
+ out:
+        put_cpu();
+ }
+-EXPORT_SYMBOL_GPL(kvm_vcpu_kick);
++EXPORT_SYMBOL_GPL(__kvm_vcpu_kick);
+ #endif /* !CONFIG_S390 */
+ 
+ int kvm_vcpu_yield_to(struct kvm_vcpu *target)
 
-> ---
->  drivers/usb/typec/class.c | 15 +++++++++++++--
->  drivers/usb/typec/class.h |  1 +
->  2 files changed, 14 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 9c76c3d0c6cf..eadb150223f8 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -1052,6 +1052,7 @@ struct typec_partner *typec_register_partner(struct=
- typec_port *port,
->  		partner->usb_mode =3D USB_MODE_USB3;
->  	}
-> =20
-> +	mutex_lock(&port->partner_link_lock);
->  	ret =3D device_register(&partner->dev);
->  	if (ret) {
->  		dev_err(&port->dev, "failed to register partner (%d)\n", ret);
-> @@ -1063,6 +1064,7 @@ struct typec_partner *typec_register_partner(struct=
- typec_port *port,
->  		typec_partner_link_device(partner, port->usb2_dev);
->  	if (port->usb3_dev)
->  		typec_partner_link_device(partner, port->usb3_dev);
-> +	mutex_unlock(&port->partner_link_lock);
-> =20
->  	return partner;
->  }
-> @@ -1083,12 +1085,14 @@ void typec_unregister_partner(struct typec_partne=
-r *partner)
-> =20
->  	port =3D to_typec_port(partner->dev.parent);
-> =20
-> +	mutex_lock(&port->partner_link_lock);
->  	if (port->usb2_dev)
->  		typec_partner_unlink_device(partner, port->usb2_dev);
->  	if (port->usb3_dev)
->  		typec_partner_unlink_device(partner, port->usb3_dev);
-> =20
->  	device_unregister(&partner->dev);
-> +	mutex_unlock(&port->partner_link_lock);
->  }
->  EXPORT_SYMBOL_GPL(typec_unregister_partner);
-> =20
-> @@ -2041,10 +2045,11 @@ static struct typec_partner *typec_get_partner(st=
-ruct typec_port *port)
->  static void typec_partner_attach(struct typec_connector *con, struct dev=
-ice *dev)
->  {
->  	struct typec_port *port =3D container_of(con, struct typec_port, con);
-> -	struct typec_partner *partner =3D typec_get_partner(port);
-> +	struct typec_partner *partner;
->  	struct usb_device *udev =3D to_usb_device(dev);
->  	enum usb_mode usb_mode;
-> =20
-> +	mutex_lock(&port->partner_link_lock);
->  	if (udev->speed < USB_SPEED_SUPER) {
->  		usb_mode =3D USB_MODE_USB2;
->  		port->usb2_dev =3D dev;
-> @@ -2053,18 +2058,22 @@ static void typec_partner_attach(struct typec_con=
-nector *con, struct device *dev
->  		port->usb3_dev =3D dev;
->  	}
-> =20
-> +	partner =3D typec_get_partner(port);
->  	if (partner) {
->  		typec_partner_set_usb_mode(partner, usb_mode);
->  		typec_partner_link_device(partner, dev);
->  		put_device(&partner->dev);
->  	}
-> +	mutex_unlock(&port->partner_link_lock);
->  }
-> =20
->  static void typec_partner_deattach(struct typec_connector *con, struct d=
-evice *dev)
->  {
->  	struct typec_port *port =3D container_of(con, struct typec_port, con);
-> -	struct typec_partner *partner =3D typec_get_partner(port);
-> +	struct typec_partner *partner;
-> =20
-> +	mutex_lock(&port->partner_link_lock);
-> +	partner =3D typec_get_partner(port);
->  	if (partner) {
->  		typec_partner_unlink_device(partner, dev);
->  		put_device(&partner->dev);
-> @@ -2074,6 +2083,7 @@ static void typec_partner_deattach(struct typec_con=
-nector *con, struct device *d
->  		port->usb2_dev =3D NULL;
->  	else if (port->usb3_dev =3D=3D dev)
->  		port->usb3_dev =3D NULL;
-> +	mutex_unlock(&port->partner_link_lock);
->  }
-> =20
->  /**
-> @@ -2614,6 +2624,7 @@ struct typec_port *typec_register_port(struct devic=
-e *parent,
-> =20
->  	ida_init(&port->mode_ids);
->  	mutex_init(&port->port_type_lock);
-> +	mutex_init(&port->partner_link_lock);
-> =20
->  	port->id =3D id;
->  	port->ops =3D cap->ops;
-> diff --git a/drivers/usb/typec/class.h b/drivers/usb/typec/class.h
-> index b3076a24ad2e..db2fe96c48ff 100644
-> --- a/drivers/usb/typec/class.h
-> +++ b/drivers/usb/typec/class.h
-> @@ -59,6 +59,7 @@ struct typec_port {
->  	enum typec_port_type		port_type;
->  	enum usb_mode			usb_mode;
->  	struct mutex			port_type_lock;
-> +	struct mutex			partner_link_lock;
-> =20
->  	enum typec_orientation		orientation;
->  	struct typec_switch		*sw;
-> --=20
-> 2.49.0.395.g12beb8f557-goog
->=20
-
---oA1blLjyxrjfEY96
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCZ93zWwAKCRBzbaomhzOw
-whHhAQD+8sY8h9MFvLXXJX6m474QUzZ0HHuNX40P6R8IYKKqagD9GKf8CySd6Duo
-INhWr5qPzNJGGbEPtJO1uox4DHWFuQg=
-=yS43
------END PGP SIGNATURE-----
-
---oA1blLjyxrjfEY96--
 
