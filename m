@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-571498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EB5A6BDF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:06:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05934A6BDF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:06:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214C13ADB78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4525E3AF04C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DDC5CDF1;
-	Fri, 21 Mar 2025 15:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E701DED49;
+	Fri, 21 Mar 2025 15:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgBowR4O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APwaGSfd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA2F42A94;
-	Fri, 21 Mar 2025 15:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D85B1D86FF;
+	Fri, 21 Mar 2025 15:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742569534; cv=none; b=RkFSVOqhA2iNDovGbTcTM0twBIYubo19/Y/vUa7oKZhRhH7Fi/i3eJFjnAv1MJqJHe84aH1IDsvB+zcL4E+c0DaxREAtMCNlzmsrxqvNc0DumIy52opHjlcmVKA5KtgNWCQ2wFbZEWuMfR9fHlipaL9rjZdy4YPl9tRyhycXHe8=
+	t=1742569536; cv=none; b=AB5RMa1AzfJGfY3ckTeU0/JQIoKtEhkl3AQ0f1BUOVhv/FIB9zvuWWrRZv2+ZsvpV/SrVSKvefzvMDS96/TkFbJanKL+5VlW2Vv/YBWNXr0ej51BeXug9qdCgk9bYslnmlrVvY7DoyMAru8OrlJHSHk0UU6tjfcvv68hbd0jr5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742569534; c=relaxed/simple;
-	bh=PfOQ0FP+8YX/koHyI8Fcu+/q5N8sChby5arINuhCyWg=;
+	s=arc-20240116; t=1742569536; c=relaxed/simple;
+	bh=LDK5i2JsWcIPqbJqtViwb+7u1TmV0WXlcCRoTF0x1ks=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=rJHZ0ZqzhOYZa7AqqKcfKCt1mHFVAHEb85BuJjiHS1gxz8dMj21qHneoiBrSFdsiLcrD4A1M9J3N2jSrUPvPNi3ADsmudFwIa7/kDitCW04/RWrpg5g4IUOtjOM7dTOP7b71y2MeR0nk6TSLOOIDbdoPKHsC8BFl8bsFkY5LMko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgBowR4O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC1BC4CEE3;
-	Fri, 21 Mar 2025 15:05:33 +0000 (UTC)
+	 Message-Id:Subject; b=S+5l+Ht1LA64kDei+SwvXNbHgavHcVqCAASXrvSJKfkBn+HgF2+dRcrvIvtoI2f4xcjXz3eN9iYQy0I4Z247ttGgsTGpEPbWJ/w2t6l6zrBlRuHfQ2rAuAbqS6KKqC/vCCewG5o1zbCi+/af3EaW/GzGPt7u5de0bCn3OJtlSo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APwaGSfd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CCD3C4CEE3;
+	Fri, 21 Mar 2025 15:05:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742569534;
-	bh=PfOQ0FP+8YX/koHyI8Fcu+/q5N8sChby5arINuhCyWg=;
+	s=k20201202; t=1742569535;
+	bh=LDK5i2JsWcIPqbJqtViwb+7u1TmV0WXlcCRoTF0x1ks=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=JgBowR4OhM3a0EdNODoa+6b93RS5XJtcSRdUZsDIuf98P1S4gTZ2AzwV/JV6PuaMB
-	 BCU15njrWpKDVRGlkEPDaN+4IaovNoalpKI8l8npc64YUW3VrjSRSS8rcMZmo7RQ8n
-	 Dawu3V/UjI3SQuFhbkhKxTgsVwNTrM8g6m+RoIYQmaPt/+ag/TdokexHoYY/6l9JNL
-	 eukYKlLpWe/AqahYYIPMxhN4DF/uXkBNTjDemyowHEFLVroPq2VIxfrDBcRSZ96+3Z
-	 03lJQRVurqiqz0orKBk/NMTsHz7SVqlRusu7AKo1dtP4Kf83VvKvWkIWpfP9gPyGIC
-	 jDaSi2t4LGSfA==
-Date: Fri, 21 Mar 2025 10:05:32 -0500
+	b=APwaGSfdOEZrLVz5s3iLIusVTnKNqhTX6atbo8GEnSd/YOyeb04Bc8bgUQ1oxbRE/
+	 r9zNcRcV9lbtb/V3eXCaZZwaQqc9o5d5js5Bup1jPoR69+wzM9SwBfFAJwM4IymAaR
+	 G41weHV5ez+olm0xsIB3vIb7nmDoQ6tru4GSboK7TCIhZHnS8bbirWxn6qvGCQ8gry
+	 LUCfa83Cv8aQk3qp3Oua8U46noRp2YuWCaw4fA3730xOquBLgd6WpxO9s0lvNyGyrl
+	 5U0mQDzaJKDHnCq/2QANzTpK0a59FQs2sc9tHcZ3wVh9SbjObtio6ygYYluqOXoqKT
+	 vTHQhJl6C+D9A==
+Date: Fri, 21 Mar 2025 10:05:34 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,64 +50,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- patrick@stwcx.xyz, krzk+dt@kernel.org, joel@jms.id.au, 
- Jason Hsu <jason-hsu@quantatw.com>, devicetree@vger.kernel.org, 
- andrew@codeconstruct.com.au, yang.chen@quantatw.com, jerry.lin@quantatw.com, 
- linux-kernel@vger.kernel.org, conor+dt@kernel.org
-To: Jason Hsu <jasonhell19@gmail.com>
-In-Reply-To: <20250321123731.1373596-1-jason-hsu@quantatw.com>
-References: <20250321123731.1373596-1-jason-hsu@quantatw.com>
-Message-Id: <174256796315.3336760.12396122805182974784.robh@kernel.org>
-Subject: Re: [PATCH v5 0/2] Add Meta(Facebook) Ventura BMC(AST2600)
+Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Nitheesh Sekar <quic_nsekar@quicinc.com>, linux-phy@lists.infradead.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ 20250317100029.881286-2-quic_varada@quicinc.com, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
+References: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
+Message-Id: <174256796512.3336836.9071668590061212281.robh@kernel.org>
+Subject: Re: [PATCH v6 0/6] Enable IPQ5018 PCI support
 
 
-On Fri, 21 Mar 2025 20:37:29 +0800, Jason Hsu wrote:
-> Add Linux device tree entry related to Meta(Facebook) Ventura specific
-> devices connected to BMC(AST2600) SoC.
+On Fri, 21 Mar 2025 16:14:38 +0400, George Moussalem wrote:
+> This patch series adds the relevant phy and controller
+> DT configurations for enabling PCI gen2 support
+> on IPQ5018. IPQ5018 has two phys and two controllers,
+> one dual-lane and one single-lane.
+> 
+> Last patch series (v3) submitted dates back to August 30, 2024.
+> As I've worked to add IPQ5018 platform support in OpenWrt, I'm
+> continuing the efforts to add Linux kernel support.
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+> Changes in v6:
+> - Fixed issues reported by 'make dt_bindings_check' as per Rob's bot
+> - Removed Krzysztof's Ack-tag on
+> - Link to v5: https://lore.kernel.org/r/20250321-ipq5018-pcie-v5-0-aae2caa1f418@outlook.com
+> 
+> Changes in v5:
+> - Re-ordered reg and reg-names in dt-bindings and dts to align with
+>   other IPQ SoCs
+> - Corrected nr of interrupts in dt-bindings: phy: qcom: Add IPQ5018 SoC
+> - Corrected ranges property of pcie controller nodes
+> - Removed newlines between cells properties in pcie phy nodes
+> - Modified dt bindings to add descriptions and separate conditions for
+>   ipq5018 and ipq5332 as they have different nr of clocks and resets
+>   As such, also removed Krzysztof's RB tag for validation
+> - Ran dtbs_check and fixed:
+>   interrupt-map property in pcie nodes:
+>   /soc@0/pcie@80000000:interrupt-map: Cell 13 is not a phandle(0)
+>   /soc@0/pcie@a0000000:interrupt-map: Cell 13 is not a phandle(0)
+> - Added missing gpio header file to ipq5018-rdp432-c2.dts
+> - Added MHI register requirement to bindings and to PCIe nodes as per:
+>   Depends-on: <20250317100029.881286-2-quic_varada@quicinc.com>
+> - Link to v4: https://lore.kernel.org/all/DS7PR19MB8883F2538AA7D047E13C102B9DD22@DS7PR19MB8883.namprd19.prod.outlook.com/
+> 
+> Changes in v4:
+> - removed dependency as the following have been applied:
+> 	dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
+> 	phy: qcom: Introduce PCIe UNIPHY 28LP driver
+> 	dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller
+>   Link: https://lore.kernel.org/all/20250313080600.1719505-1-quic_varada@quicinc.com/
+> - added Mani's RB tag to: PCI: qcom: Add support for IPQ5018
+> - Removed power-domains property requirement in dt-bindings for IPQ5018
+>   and removed Krzysztof's RB tag from:
+>   dt-bindings: PCI: qcom: Add IPQ5018 SoC
+> - fixed author chain and retained Sricharan Ramabadhran in SoB tags and
+>   kept Nitheesh Sekar as the original author
+> - Removed comments as per Konrad's comment in:
+>   arm64: dts: qcom: ipq5018: Add PCIe related nodes
+> - Link to v3 submitted by Sricharan Ramabadhran:
+>   Link: https://lore.kernel.org/all/20240830081132.4016860-1-quic_srichara@quicinc.com/
+> - Link to v3, incorrectly versioned:
+>   Link: https://lore.kernel.org/all/DS7PR19MB8883BC190797BECAA78EC50F9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com/
+> 
+> Changes in v3 (incorrectly versioned):
+> - Depends on
+>   Link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
+> - Added 8 MSI SPI and 1 global interrupts (Thanks Mani for confirming)
+> - Added hw revision (internal/synopsys) and nr of lanes in patch 4
+>   commit msg
+> - Sorted reg addresses and moved PCIe nodes accordingly
+> - Moved to GIC based interrupts
+> - Added rootport node in controller nodes
+> - Tested on Linksys devices (MX5500/SPNMX56)
+> - Link to v2: https://lore.kernel.org/all/20240827045757.1101194-1-quic_srichara com/
+> 
+> Changes in v3:
+>  - Added Reviewed-by tag for patch#1.
+>  - Fixed dev_err_probe usage in patch#3.
+>  - Added pinctrl/wak pins for pcie1 in patch#6.
+> 
+> Changes in v2:
+>  - Fixed all review comments from Krzysztof, Robert Marko,
+>    Dmitry Baryshkov, Manivannan Sadhasivam, Konrad Dybcio.
+>  - Updated the respective patches for their changes.
+>  - Link to v1: https://lore.kernel.org/lkml/32389b66-48f3-8ee8-e2f1-1613feed3cc7@gmail.com/T/
 > 
 > ---
-> v1:
->     1. Create ventura dts file.
->     2. Add commit msg.
->     3. Use format-patch to generate patch.
->     4. Add subject prefixes matching the subsystem.
-> ---
-> v2:
->     1. Modify email content.
-> ---
-> v3:
->     1. Add mail list.
-> ---
-> v4:
->     1. Apply git send-email --thread option.
->     2. Sort nodes in the dts alphanumerically.
-> ---
-> v5:
->     1. Run scripts/checkpatch.pl and fix reported warnings.
->     2. Remove unnecessary 88E6393X CONFIG FRU.
-> ---
-> v6:
->     1. Add a new stage for the DTS change.
->     2. Run scripts/checkpatch.pl and fix reported error.
->     3. Fix the issue in a separate patch.
-> ---
-> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
+> Nitheesh Sekar (6):
+>       dt-bindings: phy: qcom: uniphy-pcie: Add ipq5018 compatible
+>       phy: qualcomm: qcom-uniphy-pcie 28LP add support for IPQ5018
+>       dt-bindings: PCI: qcom: Add IPQ5018 SoC
+>       PCI: qcom: Add support for IPQ5018
+>       arm64: dts: qcom: ipq5018: Add PCIe related nodes
+>       arm64: dts: qcom: ipq5018: Enable PCIe
 > 
-> Jason Hsu (2):
->   dt-bindings: arm: aspeed: add Meta Ventura board
->   ARM: dts: aspeed: ventura: add Meta Ventura BMC
+>  .../devicetree/bindings/pci/qcom,pcie.yaml         |  50 +++++
+>  .../bindings/phy/qcom,ipq5332-uniphy-pcie-phy.yaml |  49 ++++-
+>  arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  40 ++++
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 234 ++++++++++++++++++++-
+>  drivers/pci/controller/dwc/pcie-qcom.c             |   1 +
+>  drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c   |  45 ++++
+>  6 files changed, 409 insertions(+), 10 deletions(-)
+> ---
+> base-commit: 5744a64fddfc33629f3bcc9a06a646f7443077a7
+> change-id: 20250321-ipq5018-pcie-1d44abf0e2f5
 > 
->  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
->  arch/arm/boot/dts/aspeed/Makefile             |    1 +
->  .../aspeed/aspeed-bmc-facebook-ventura.dts    | 1399 +++++++++++++++++
->  3 files changed, 1401 insertions(+)
->  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dts
-> 
-> 
-> base-commit: b3ee1e4609512dfff642a96b34d7e5dfcdc92d05
+> Best regards,
 > --
-> 2.34.1
+> George Moussalem <george.moussalem@outlook.com>
 > 
 > 
 > 
@@ -127,55 +191,24 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250321123731.1373596-1-jason-hsu@quantatw.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: timer: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: bus@1e600000: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: syscon@1e6e2000: 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/syscon@1e6e2000/interrupt-controller@560: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic0']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: adc@1e6e9000: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: adc@1e6e9100: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: crypto@1e6fa000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/video@1e700000: failed to match any schema with compatible: ['aspeed,ast2600-video-engine']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: lpc@1e789000: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@114: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: sdc@1e740000: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: sdc@1e740000: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: fsi@1e79b000: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: fsi@1e79b100: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
-arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dtb: /ahb/apb/pwm-tacho-controller@1e786000: failed to match any schema with compatible: ['aspeed,ast2500-pwm-tacho']
+arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@80000000: reg: [[2147483648, 3869], [2147487520, 168], [2147487744, 4096], [491520, 12288], [2148532224, 4096], [503808, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@80000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@a0000000: reg: [[2684354560, 3869], [2684358432, 168], [2684358656, 4096], [524288, 12288], [2685403136, 4096], [536576, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@a0000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@80000000: reg: [[2147483648, 3869], [2147487520, 168], [2147487744, 4096], [491520, 12288], [2148532224, 4096], [503808, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@80000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@a0000000: reg: [[2684354560, 3869], [2684358432, 168], [2684358656, 4096], [524288, 12288], [2685403136, 4096], [536576, 4096]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@a0000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
 
 
 
