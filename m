@@ -1,125 +1,191 @@
-Return-Path: <linux-kernel+bounces-570732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC85DA6B403
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:23:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0483FA6B40A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559BD189BB6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4A4189C6ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF2C1E3DD3;
-	Fri, 21 Mar 2025 05:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281B01E9900;
+	Fri, 21 Mar 2025 05:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="X+Zzo/3m"
-Received: from seahorse.cherry.relay.mailchannels.net (seahorse.cherry.relay.mailchannels.net [23.83.223.161])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l2aB2qpQ"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2066.outbound.protection.outlook.com [40.107.96.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE6B664;
-	Fri, 21 Mar 2025 05:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE3CB664;
+	Fri, 21 Mar 2025 05:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742534602; cv=pass; b=n9s5GClSbpUiGP1aBUxqyi1wmPSJ9cZcSqEX0JdH3JVvRLldHEWanXyInSbLtWGk+XGdh98unhc0XLLK5pu4dzBrL05R8CQwE5wf/AFAFRK6nNd18mXYKR8uJcrinw+divwBmUUgaiMdFLtNr9/WABRKwcqULGXBjwLPTtOOT4A=
+	t=1742534846; cv=fail; b=vDR/x0p0wKRjVMWY7Er6uUsWWPBVl+yD7jGsW4L6Dx3oyyIfvUzzUn/cqQ924Ed/bFnZ1hOC37QJvy5qKY5ZRkYABepyLX39n68iZCHFut11W+5g8JuoFpAEtzwlL0AMAXR7dTUMAmljseniVo+BzY92/cE74f3QzJS0f6puP5g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742534602; c=relaxed/simple;
-	bh=t1naq+VCEMf0ogURBrW9QjucvZMdFB3JeOJdmjydhZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUn2+4tFuY1PkSqcxTAXnWdbkA2tAxrUi6ynt4ywb181ieEKkIkOMC1Sf1atjP+r8hOs40DeSVzqlNuFQZWwW4NCrpclY2cMkyfjdVFzvCsBmPoXcmjZe1j+Ncqr2WBNkajosC/Rr04YN1+RP1OaatvVv3sulXFF8woYkegbOco=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=X+Zzo/3m; arc=pass smtp.client-ip=23.83.223.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id F2EE121705;
-	Fri, 21 Mar 2025 05:23:13 +0000 (UTC)
-Received: from pdx1-sub0-mail-a223.dreamhost.com (100-118-196-111.trex-nlb.outbound.svc.cluster.local [100.118.196.111])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 8E69B20D49;
-	Fri, 21 Mar 2025 05:23:13 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1742534593; a=rsa-sha256;
-	cv=none;
-	b=5o4My6UazYdZWIoblHdCnhPo1KaCeyncsficcjUzTAas5Z81VGpJboRRmeRIgOoR3vwwmw
-	O2/S37I6vbl3naBBOKmh8MdJE/tIm9z8dp7OMPNBkknnmIjIAHIyP2cQ/Lj9bWzxKyEIE7
-	i85qQZQvSo1m1ecc7mamSPVB1HNY5wtIjXwPAuUy+SbkqnHMuBW7nf2HRvuv+u2zxZtarz
-	V5yZnPmQslriZgqTvucZygezhPwkexDhgv7hxRybq0BDGIkqZQDaVamDbbTz6QiLdR8lQ8
-	/Idb9KXpQ6ylFXMM3H74nisihbr+bXSElPtnipUWwY5W2U6n+9NRCg3ssYjqQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1742534593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=t1naq+VCEMf0ogURBrW9QjucvZMdFB3JeOJdmjydhZ0=;
-	b=GvKaoqwKYSs5MZRZVZ/+pi/XU2IhUhCd99/vMbM2UhOmV0VxWwjn1MTJALwmGW/7oNR5LE
-	BivP3jJLevtQP4lItmlSJPThDlM0N+z3W/US+LHF0BcGUMsJGD9tDR16z5G19eWKF4bAbZ
-	ydyBYbdoN9nSesfJjASR9SUIoxwfJUOAbIM1J97bnQcwHND+2cUJaJTALAjS86hGIF/uoL
-	P1QvnWInppU1bjSHN8MI8sAWiKjgz2JjI6OSZFWE+mkBsh9Jepib9UyFsWZDnZ39eJ+6+h
-	jRuGmZyx48vVKneX/gBKLMSr2moRHnrK1XWxm9HYEKImsgrnVJJj53NzSfQDNQ==
-ARC-Authentication-Results: i=1;
-	rspamd-74d566c845-wkfks;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Shoe-Illegal: 7fd6764676d829a3_1742534593843_3088180186
-X-MC-Loop-Signature: 1742534593843:2888225149
-X-MC-Ingress-Time: 1742534593843
-Received: from pdx1-sub0-mail-a223.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.118.196.111 (trex/7.0.2);
-	Fri, 21 Mar 2025 05:23:13 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a223.dreamhost.com (Postfix) with ESMTPSA id 4ZJrSc6sFqzZT;
-	Thu, 20 Mar 2025 22:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1742534593;
-	bh=t1naq+VCEMf0ogURBrW9QjucvZMdFB3JeOJdmjydhZ0=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=X+Zzo/3mWBvQGMN5MFcze3kcDpjb4ryN0Dwbv90Wr/sXi0ycz4imzJufFIhez2Knx
-	 AJmmEfON1V4KP5myMuuPMLQl15XXiM+ZQsh+uzGq/6muPlPW3Gb7+IuS8gOFzMvA4d
-	 J1iouYQMZzDjiEJqTBKimwSoTUR7KiDVS6H/sgedpvT7RZrKt+bzgWtOXdAq/zLJJe
-	 RdehBluLhEfF2SNEjbcBLgPTPVHsjp1dqUzUiikmINmMOr/tyAlu5g7k3v2a8JQ+Z/
-	 NbCYvCH0/24SMZYXZyVc/wSTaSO1dvkSBF7ywfNH33J2IH26F4hP72eW6aVclhepAG
-	 8slb6/dtMQ7tg==
-Date: Thu, 20 Mar 2025 22:23:09 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Li Ming <ming.li@zohomail.com>
-Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC Patch v1 3/3] cxl/pci: Drop the parameter is_port of
- cxl_gpf_get_dvsec()
-Message-ID: <20250321052309.qkhlyabmcgbxtmtf@offworld>
-References: <20250319035516.222054-1-ming.li@zohomail.com>
- <20250319035516.222054-4-ming.li@zohomail.com>
+	s=arc-20240116; t=1742534846; c=relaxed/simple;
+	bh=r02zmA6/j2pmJ97pctzGtm/uKeXGnsPKq52ta2mzTbA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KV2xhthBcNSQvCynxXjmSj4q1okqgVkT5Ljg7sFdxt7yCMd0g76DgQ2ns565cs8Wy8ziDiE56ysyn++RxxgvcKjKKFkOpd990icg4/xdqYpDKfG5Hi7JJbywXTwDlr/NHaHoonaifytz5YwUDzdVlpBnG4rA9I/wh1swVj1YaIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l2aB2qpQ; arc=fail smtp.client-ip=40.107.96.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iYA50OOlLMSCrc8NhFc5bi5Jj8tMkSZ3b0xwNzhVLLJ8aArQ0mLrOr0wO8USXFLQjDNSOw7nVX+LwsGtRUpPROKUUtQtuNF0xWabnHMVCRQth1xZSrnxRNXzIUBruXI92BQ6dnwisiI/7SHmZDeypyZnCXFcuWMOh1bLmnwFhU+OiPAk8dXQFw6tqZjVIgvmf7JoQQ40DZ25vZyb51jx5qbt5CCcVvEd9MQUZG7Tv602XT8AkYU48X6DXE3hjSqFdmG7oBX4ZwSDyDvbiwsj3q9PUS1hmaTAPNDtfwiZt7XXEtlTM+NwBvAY52ZrnHweGDA/vtsoXQIuIS2QWjTAIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dWe4i/o/emgIU7KiUTXmsXGJjkkR9LPYZ+BbJq3N7u8=;
+ b=DrxJF7SI9gJbYZPdez0TT3n2mpznFFZzlTzgo6rbDV3NqRnIR84MguWwHiSn4LSumHg9cnKFW9aFpRUXUexzDdPHwXm9RMNaG77ZX4glEnoNfsGOVFtj0JcYxaEvsck1Hqkw9fPBSUfJ6AsK6qNuBplQUqhz6B7w58iNqgSVDlMPPq9woUgG/DVA7VcW8eHa+jK7dEV7Lospe8kotYNg2upaLuXHKey0ow1+bYfNhlSlUldrSHWQw9BCXa66PqOA+EwP75K6vdBXKbUnDAyFEZ1R0GyD1gMt83ozl01FAAbVYJ9yoDVb4u17SXPZfOI0vawM17yCSCERxllqa5xp4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=codeconstruct.com.au
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dWe4i/o/emgIU7KiUTXmsXGJjkkR9LPYZ+BbJq3N7u8=;
+ b=l2aB2qpQA7MC7xMe8rtF0dnQW769LgmtsdgZC5F5o0BXdfRyUBm5VFDthPkUjjrJPfFFPhU9zTKA57KFEwokHWFq1LgzFWqoghUPm5FqSDyNb5zgc6Fl6nfhx+bHo9reKlg/P2zdMYbvML99G72qwpDtu8MOsg89FF748JMfket4wOkIL7SoL6cZHA0upz16s6xTQyiltYTxcu1ciHROjGIibakmvtaa9pJ4gpK7WbMDMjAi9JzihNHuH7UCSgqxQIClMN29kDNPxHHSa2QX15Cd1zJQWnIqH1WuSyBRe384BANKuoOQfUSK64dA8Je/tNWcQ+YLggmTcFskR9el2A==
+Received: from PH1PEPF000132F7.NAMP220.PROD.OUTLOOK.COM (2603:10b6:518:1::3c)
+ by IA1PR12MB8553.namprd12.prod.outlook.com (2603:10b6:208:44e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Fri, 21 Mar
+ 2025 05:27:20 +0000
+Received: from CY4PEPF0000EE37.namprd05.prod.outlook.com
+ (2a01:111:f403:f912::2) by PH1PEPF000132F7.outlook.office365.com
+ (2603:1036:903:47::3) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.36 via Frontend Transport; Fri,
+ 21 Mar 2025 05:27:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EE37.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Fri, 21 Mar 2025 05:27:19 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 20 Mar
+ 2025 22:27:13 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 20 Mar
+ 2025 22:27:12 -0700
+Received: from willie-obmc-builder.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 20 Mar 2025 22:27:12 -0700
+From: Willie Thai <wthai@nvidia.com>
+To: <andrew@codeconstruct.com.au>
+CC: <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<dkodihalli@nvidia.com>, <gpiccoli@igalia.com>, <joel@jms.id.au>,
+	<kees@kernel.org>, <krzk+dt@kernel.org>, <leohu@nvidia.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<maryang@nvidia.com>, <openbmc@lists.ozlabs.org>, <robh@kernel.org>,
+	<tingkaic@nvidia.com>, <tony.luck@intel.com>, <wthai@nvidia.com>
+Subject: Re: [PATCH v3 2/2] dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC
+Date: Fri, 21 Mar 2025 05:27:12 +0000
+Message-ID: <20250321052712.104446-1-wthai@nvidia.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <585c2b050a44f4009b3a61cab69f800c88a0cf5e.camel@codeconstruct.com.au>
+References: <585c2b050a44f4009b3a61cab69f800c88a0cf5e.camel@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250319035516.222054-4-ming.li@zohomail.com>
-User-Agent: NeoMutt/20220429
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE37:EE_|IA1PR12MB8553:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b334aa3-0d8e-45e4-a8df-08dd68390d0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/BFd7w6qYybSixwtYLholfNEeUXI04hCCG6Xv39JK2EanSiRDJo2vrrkm0uO?=
+ =?us-ascii?Q?t/jYdeUO1chAFXmbYeqImJ8hWgx+Y0piNtJSyAYpYb5mR+96n93cnhgUp2aO?=
+ =?us-ascii?Q?P5FZwOsPhTjIPUoUV86NKogKbyk2W8CUf4/Rij+tsSbK9b04HoZr3ANFED5L?=
+ =?us-ascii?Q?e70xY3f2Omxu5Mg6iARKuJXBEmaRBHygrxjaLuBAPzPfoIuuSnIPSpWY0p4o?=
+ =?us-ascii?Q?o4WD1oY0B7fmu332KN1+a8ZYhbOQei4WstWKG9tj1194q0p8gIyzwWH9AaNR?=
+ =?us-ascii?Q?RRojdyBmomAWFc52Hg0N1szqf3Qu6pKzeKaPUa3LsoQkHl2C5/H1jGfqTObK?=
+ =?us-ascii?Q?LyfjpCX/mIVaxFfJOsREKwexk2JcCJ3Ev2VpCxKus7XmomjZHa4hlKyVDwoA?=
+ =?us-ascii?Q?FJE0HZhUmtMvbXICvNMRUD/k54qJtaB0uxXIHRDA5fv5g7ZZQ+0jXzxUdgxw?=
+ =?us-ascii?Q?izb1WMd0YY9yXX5RPjckQDH7XCS8gF8WOjmsyKfr6EKJFiroq6ZIUzjP7dNc?=
+ =?us-ascii?Q?APcgc1IjKMfajaZXFG4bmXOUUGhUYwkmsMyvFyY542hgd1ZqTm3GJkxkBRQa?=
+ =?us-ascii?Q?MqwmJiEh9T5jMHTfJMjNpNe+BspwsKzbUXk0YTI/SZE9wAzCgE+pIQkJo8Vh?=
+ =?us-ascii?Q?oAEYx1OLteLFVXjOKUVIAmsbarbd3cwa4sNQ/bCMfppwBB1nJT2902FX/Gl7?=
+ =?us-ascii?Q?Dlwrma5nEETqiFvZvPHDcy56LmWEuLTyP9yWSWji5LvhO7OcLAPJQ9NWYKby?=
+ =?us-ascii?Q?m/G8ei79UWsFJDmjVo5kxq42Uzd40JtX0rHmjUVZHVbE3ANb0rP9uULnhonN?=
+ =?us-ascii?Q?kulTVW/HWxuh8xA54AXISlFrtrkdMe/6OddwtDF3X4N0GT97MVKKHMpzHzIf?=
+ =?us-ascii?Q?iZAIiMF/kH0CWLS/ZJxfrWhY+4KQ+YhSrGcDrQlqorDw8wP6senDJ0nZYORf?=
+ =?us-ascii?Q?P3M+9R8HUciMASB67Og7CDpcptm9bqQfPF2dPg7O5rK0qYgGf6TbDysWFw6M?=
+ =?us-ascii?Q?atUzO8SiEl/weSCVHm0o3vGQLBE0msISWJpJek1ScjMuzv8rKIZLaA4USEOB?=
+ =?us-ascii?Q?V7HghJ5sYWAeajmyzWl58yItODN2y5LyPvjx1L5XWfrWLkzpGS1nc89nkdIo?=
+ =?us-ascii?Q?+mEfybx6fdtIBCeWUxWGIz/Cut6dGJ+ysz9Ux79Y/1VbJ6DWMmcxERHu8n7w?=
+ =?us-ascii?Q?3eMahbCpf3I1qlrOVBKJoKde7ob9lwBWznz6WIobS42DHd2PQbzH85p5iwrB?=
+ =?us-ascii?Q?1y+jCB0/FvP927tlPMLM7bkfz7qY+QgxcaaRGeN5xghTpd9G/VDEi6cZZ+3d?=
+ =?us-ascii?Q?jd8DtSoDRpWY3r19vXWRJBJvcuaT24F4fE+Av8JtFNFJzoJg/ziXbq0gqqfz?=
+ =?us-ascii?Q?SArmMnm+xJpw2Qz0i9aA+vYqZRLaYBkjY1wFyL4CKOsPcy9FupzmvJDE9VxB?=
+ =?us-ascii?Q?LcEvZOPpn+RUpvGY2IyLbGdo9N+DI0icRExlk6VRzRu8PMEom4gPoA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 05:27:19.7277
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b334aa3-0d8e-45e4-a8df-08dd68390d0d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE37.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8553
 
-On Wed, 19 Mar 2025, Li Ming wrote:
+> Hi Willie,
+> 
+> On Thu, 2025-03-20 at 16:46 +0000, Willie Thai wrote:
+>> This patch adds a binding for GB200NVL BMC.
+>> 
+>> The GB200NVL BMC is an Aspeed Ast2600 based BMC for Nvidia Blackwell
+>> GB200NVL platform.
+>> Reference to Ast2600 SOC [1].
+>> Reference to Blackwell GB200NVL Platform [2].
+>> 
+>> Co-developed-by: Mars Yang <maryang@nvidia.com>
+>> Signed-off-by: Mars Yang <maryang@nvidia.com>
+>> Link: https://www.aspeedtech.com/server_ast2600/ [1]
+>> Link:
+>> https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
+>> Signed-off-by: Willie Thai <wthai@nvidia.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> index 01333ac111fb..a3736f134130 100644
+>> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> @@ -98,6 +98,7 @@ properties:
+>>                - inventec,starscream-bmc
+>>                - inventec,transformer-bmc
+>>                - jabil,rbp-bmc
+>> +              - nvidia,gb200nvl-bmc
+>>                - qcom,dc-scm-v1-bmc
+>>                - quanta,s6q-bmc
+>>                - ufispace,ncplite-bmc
+> 
+> Please order this patch first in your series, before the devicetree.
+> 
+> Andrew
 
->The first parameter of cxl_gpf_get_dvsec() is a struct device, can be
->used to distinguish if the device is a cxl dport or a cxl pci device by
->checking the PCIe type of it, so the parameter is_port is unnecessary
->to cxl_gpf_get_dvsec(), using parameter struct device is enough.
->
->Signed-off-by: Li Ming <ming.li@zohomail.com>
-
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Thanks Andrew for the feedback, will order the patches in v4.
 
