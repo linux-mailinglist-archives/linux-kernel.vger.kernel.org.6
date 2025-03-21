@@ -1,1299 +1,208 @@
-Return-Path: <linux-kernel+bounces-570613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5504A6B292
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:14:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3D7A6B299
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FF4188AB6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA8E3B3054
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287FA22611;
-	Fri, 21 Mar 2025 01:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXqRXhqQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3584A35973;
+	Fri, 21 Mar 2025 01:17:38 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF5B38384
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742519631; cv=none; b=PwPCpS5S/I9soY9RkV7OyxGBaLj62KlQQutNqu547J9uToW3JeRsW6hflBTs8K7+/OwM6VC5EK13wKpNZcrsYAdoB5qVx0rbTMG783FjNHdYIScpkKYz8pRUWgqp7WpU7vXd5mHJFWLe1Gy8hJ+YZ7exgXGc39PQY0eUH3kTAB8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742519631; c=relaxed/simple;
-	bh=CNMgfMs7PIXrUlbeDXFIimGEacCQ1lexRprF+m6OoNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=emyE7MGRXlI3NCdzN7vgsOwJEzl5L6mYxgzfRT+Ua0oZnwQBmkyU/l0Tk6yxab4YJlpXVqfbbchrxA1OHYVL7t18SSM2esvs/NgJkFNgaemU4KDvNC/jzr7sAFOH2j+iQwntQvhrYZC89WHRjXCyLqDQVHfS69z8amZVF67MboY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXqRXhqQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742519625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxUWxALaqNN5lUvJMKMNpR6Ea0WgZ73Ozs73qhw7brI=;
-	b=AXqRXhqQXqfnnkNEqitv+/LnviqX5NCXZ3n4RHBw87yXEmwEEYoxNYqPBepu/gva4k2mSJ
-	oCXQ+4lXHLqdRiELB89J7T3X3BJYs48KrQEnCy/0e+55yGcib1/zBFAlTwm2RCg805H2jR
-	TAW6zxeUnPOE3N9xQS6Y3DuOtEVfXeM=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-tDxfgT75PvW61lPv_cViKw-1; Thu, 20 Mar 2025 21:13:43 -0400
-X-MC-Unique: tDxfgT75PvW61lPv_cViKw-1
-X-Mimecast-MFC-AGG-ID: tDxfgT75PvW61lPv_cViKw_1742519622
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff799be8f5so2424566a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:13:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742519622; x=1743124422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxUWxALaqNN5lUvJMKMNpR6Ea0WgZ73Ozs73qhw7brI=;
-        b=BtJyOC4hD29fxuKKa4QgkYd2RPyprzfd9tlCU6Ua/WAYK/e3OoWJxYag2tVQKN2Rax
-         SrrWpVpATyLFoCXQD2rVC+o2/IkGAwaNADqQSzokTOQI4PBBCh/VZqErGvj+wgllkihx
-         U+dpAE8CbYDnq29ZCsS9rvkB/ovMfNEWMFZwZeBbuxZumSib8jyzRA9jqBwo8poFJHkN
-         N4zbB5bsTYfFs5yCUsaqYWvbUiLS9FkDLuGyUY/EVJ//H/2dLDNOhcMqHY+4J6wDKiE3
-         3wJmAXL0oY+u5+yG5eMU4SeyvX4QHg8vtCAtQDlIecNjYkIwKB2vYXdrprlupvz36MSk
-         NmMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq8f//psOhEVtJ/cG8/L5Jdv0soshUtgac1doTNOyNEqyH8RJ1XkUYnbTQ2RM9fowKAKuopvP6SW4PHXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywtGT1c0u2W6dc5/BxrtBUEA0Al9KHQdd3m9uwl2VZ4ruKDLch
-	Ne0nKzE/fW1wN00j8CZyUoYDWKt+3eb1H8hQOvg/A6b8m7RqcZyQ/12+CKLzykUiiRL4z9pVGAa
-	HwbVXPXWV9BzIlhOjqHhkNaAuCzajkVWENQVQptAavLTQ6s8U2dtZkvwiIqtLPm36jNniFHHpPB
-	bExSlLV8Risq8klgCdVdVaGQ09XGaJrcTnoESs
-X-Gm-Gg: ASbGncv/wngWQ/Vr+rDJC+gOF/7oF7E0yAG4aEhK14JLM2huRPPAR/OkA31mdkFdTxL
-	uzf7yHcXYthwK/vHMNIQOZQClorGpP7IOEoPervuPFqDDiastR51QL3nLNGIsqhJyofg+DXrB
-X-Received: by 2002:a17:90b:35c4:b0:2fe:80cb:ac05 with SMTP id 98e67ed59e1d1-3030fe7f0fcmr2069309a91.9.1742519621865;
-        Thu, 20 Mar 2025 18:13:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA5tf5etNYP52/vQ8cvatd+U1Kwj4L1D/KoXOrE733z/Yf8RIuUNtXjQREbJS5bfH8sqQLG96KeJet04uwVQc=
-X-Received: by 2002:a17:90b:35c4:b0:2fe:80cb:ac05 with SMTP id
- 98e67ed59e1d1-3030fe7f0fcmr2069247a91.9.1742519621064; Thu, 20 Mar 2025
- 18:13:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2655A7E1;
+	Fri, 21 Mar 2025 01:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742519857; cv=fail; b=fagFULiNQ1nyI0yEbcTf+LIlLfDpJgcAmZ5ixQsqoU9QTODW10Fgy4Jfu2fJWYbDKrV/J0ayAB/TYp5VoZCMQ5aFcZpJZWelQSEly9jUfC7b3UpsEVDtXaMozJmF+9hGOyHH9E32h3+wjl4dpJ8dRpDg4xcVQ+qllR4dJjsdlCQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742519857; c=relaxed/simple;
+	bh=+lL/PuaPfZbrM9FWfEQhwlVRMgu8sPvC26k1Tkum+ac=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q4FdZgLb4JQVv3KAWqvoZ9sr6Xz+HWpRbrMX78uv0SHBUVhSAvsc2hxl9vrciUk8VOiLx8rSSPBRn5CIh5vREuYpHl2oWibAHTX1q/xIIRxg/Ky8oKPcc9dQknSU4olXhYmQpQga/jYtEu1jBGcjDViQDKP63CwhLj2y+3vxct0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L15TZF003286;
+	Fri, 21 Mar 2025 01:17:29 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2045.outbound.protection.outlook.com [104.47.66.45])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45d0h96nbb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 01:17:28 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wk9T5nbCLmpQliwPZNJlkaZ02VstVmhJruYu7Clt+u73uE+i3OURkfYuE5vvR97tcmiefsPFPnV0yDcx6Hhkk/kko6znWnT4s/MrM1Ia5/NV7xpeZkYeUilONbwwvn4qEV41w8Q+0UHX4CiukGTxgWGNMDrZjWN86ZQlzJDqZO15b66mVrm+mOp39d3vLZGJ7fZzf5bIguXTIbVVwvkQFvj2yGzqPL4T85zdCzN3+B6Lr/TqGj/IBBvET/+i8b7oeLkK2kAynaVM26/ckiBNLtfIpomsUVc6Wj9sunu2l6Me0cOj5GslwvYlzZfYL98/6i8U+HV8QMcxQ1ONdAzN7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y8IXIoqFdNoO4ZedLRzDc4VgKCBdRjFtnOI2n3ty0Yg=;
+ b=ky+CeA36pWxthpU0EUrPNXqbYtrUwZ4r9C1RmF8vl2XcQ1N8O3MfS5eXZwbT4NXMGZIQALRA0NofJX61KVpA+KZTzPmp35482cuG3E55pKTrrCtWGMbipgdeJRQi8DXkfveCOA4qeuaxinaorViAiSsmBk8BjA0s/Ndm0xIhxnwTTKSWMFmCpjsl2eDq8I2pVOKox/JQ7rXI19arvTmNd2AP1SuxlYKysp69AUSSVRQIkGHp4jsOiQjhPp4M3rPvapvXUrns1k3Qanu7frXlWIUY+9D5k8wa0vRMpEGhiodE3prXHJLY0wQt7a+bm3ApSIuKIlwJ2A9nO2pxwP+BBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from SJ0PR11MB5866.namprd11.prod.outlook.com (2603:10b6:a03:429::10)
+ by IA0PR11MB8304.namprd11.prod.outlook.com (2603:10b6:208:48b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Fri, 21 Mar
+ 2025 01:17:24 +0000
+Received: from SJ0PR11MB5866.namprd11.prod.outlook.com
+ ([fe80::265f:31c0:f775:c25b]) by SJ0PR11MB5866.namprd11.prod.outlook.com
+ ([fe80::265f:31c0:f775:c25b%4]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
+ 01:17:24 +0000
+Message-ID: <0f75b9fc-88a5-410e-a07f-5901b16a1fbc@windriver.com>
+Date: Fri, 21 Mar 2025 09:17:01 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] PCI: of_property: Omit 'bus-range' property if no
+ secondary bus
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Vidya Sagar <vidyas@nvidia.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kevin Hao <kexin.hao@windriver.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+References: <20250311135229.3329381-1-Bo.Sun.CN@windriver.com>
+ <20250311135229.3329381-3-Bo.Sun.CN@windriver.com>
+ <20250318062946.2udvt5uryf6y2jmk@thinkpad>
+Content-Language: en-US
+From: Bo Sun <Bo.Sun.CN@windriver.com>
+In-Reply-To: <20250318062946.2udvt5uryf6y2jmk@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MEVPR01CA0033.ausprd01.prod.outlook.com
+ (2603:10c6:220:1ff::13) To SJ0PR11MB5866.namprd11.prod.outlook.com
+ (2603:10b6:a03:429::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-3-df76624025eb@daynix.com>
- <CACGkMEsNHba=PY5UQoH1zdGQRiHC8FugMG1nkXqOj1TBdOQrww@mail.gmail.com>
- <7978dfd5-8499-44f3-9c30-e53a01449281@daynix.com> <CACGkMEsR4_RreDbYQSEk5Cr29_26WNUYheWCQBjyMNUn=1eS2Q@mail.gmail.com>
- <edf41317-2191-458f-a315-87d5af42a264@daynix.com> <CACGkMEta3k_JOhKv44XiBXZb=WuS=KbSeJNpYxCdeiAgRY2azg@mail.gmail.com>
- <ff7916cf-8a9c-4c27-baaf-ca408817c063@daynix.com> <CACGkMEsVgbJPhz2d2ATm5fr3M2uSEoSXWW7tXZ_FrkQtmmu1wA@mail.gmail.com>
- <73250942-9ab9-4ee4-9bbe-e0a155a61f51@daynix.com> <CACGkMEud0Ki8p=z299Q7b4qEDONpYDzbVqhHxCNVk_vo-KdP9A@mail.gmail.com>
- <1f06b4b6-267a-4091-a3ba-e7b9dafae918@daynix.com> <CACGkMEsACb5S4rv-bWeBadDmnCcwFfnNp4MN7_4RQGB0MUWrzQ@mail.gmail.com>
- <20c34c80-7549-43e1-8bec-f7210a90f94e@daynix.com> <CACGkMEs8DyrusOsLPXSwhBvr3mKerzfNBQD3mLNfzLXhbCpR5A@mail.gmail.com>
- <ed72ad97-4ca7-40ba-ac47-9e776a07df64@daynix.com>
-In-Reply-To: <ed72ad97-4ca7-40ba-ac47-9e776a07df64@daynix.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 21 Mar 2025 09:13:29 +0800
-X-Gm-Features: AQ5f1Jqvx1I2DgNNU612vc_-XVgNtGwswYCVUZGrSHFRpm4Q6X8kZ1aphzxyXPc
-Message-ID: <CACGkMEt-Y5E11qhE=vJP95fV+JAtLA+BW9P1jFUoocxysQ=W_g@mail.gmail.com>
-Subject: Re: [PATCH net-next v9 3/6] tun: Introduce virtio-net hash feature
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
-	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB5866:EE_|IA0PR11MB8304:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4f673b7-225c-44c0-73e8-08dd681622dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHMyVTlMYUcwU0ZSVGRsejgvUVVBTXpIRWRJalN5ZEQwZCswaVgxbk9acExx?=
+ =?utf-8?B?bitFaElqajA1YzdycG0vcmh0d1lFWWF4UmlFTFhrMmFjUnZKZ0NSYjNQZFJ6?=
+ =?utf-8?B?NUpRWXdiVXNocldzWWs1NkhlNklPZWVBVnBUQlFPcFNjTDk3c0xmM1Vib0d5?=
+ =?utf-8?B?ZlNuekpRdU5Fb29FUHMzakp6RSsvemQ5R1lpQzJQSWN5M1lIdlQ1OGIvWnhM?=
+ =?utf-8?B?aDJ4OE51U2QrV2tEcytBU0pQUis3SXlLdmFVZG9LZXErTW9IRTVrTE9IUjRR?=
+ =?utf-8?B?SFpnbXdLR2RKNENiYkh0akMwckkxL1hoYXA3bkZyMDlQTzd4c09sL0Vycjhn?=
+ =?utf-8?B?SFR4RnJZQkM3TFZYK3UwSTJ2U21BWjY5cktPUk1wMUtwSFBzNEh0SkxJTHkz?=
+ =?utf-8?B?MUlwTlg1UG9IYWYvcnM1ajJjSWxMOTVIa3U4dEZyQnVUWE4vMTB3aW9QcTF5?=
+ =?utf-8?B?b3U2dzdQWWlvb0p4K2MvdnpaaDlKTFYzL1hGUEQ5YUIzZFBoMjNxTHIxZjBl?=
+ =?utf-8?B?QklrdFlZOVFOUFBoeU5wcWpVbE9jcUxnZTVoKzRXemlOUzJPYXYxOVhCR1E2?=
+ =?utf-8?B?eTlwWG5uS2tjTisyRUEzeGR0SUp0YmIzcjhqUExncVNBZ2NqcjlvQ2lOcjF6?=
+ =?utf-8?B?emV2cUg1WmY4YnpCdUNhbnhFWHA3a2hFR0xFNklXaFBhTXVNMVdrdE9UeS8z?=
+ =?utf-8?B?NEJJcVQ5akY5a0JsRW5Pb1JMUlJpZldXYzV1S0lWUUx2Y1dyblpuMlA4M2dV?=
+ =?utf-8?B?NjBVc0xPU2Y2ejB2QmJFdXVCQiszNHhkQWVNR05rVjBEMnFlRE1yQ0FrdkF2?=
+ =?utf-8?B?U0VPcFpCUXFXYm9ORzJKOThsTllmOC95SmpZc1ltVUcwREdnNit0WURHSnRF?=
+ =?utf-8?B?TC9OZ2VkU1lKNVZyVk03c0hMTXAySkNtaFFKclRVcmwwZXVuQS9wTytIclM3?=
+ =?utf-8?B?NG9yMG9oMTBSbkFhRlhMSlErU0R5RkFabkp3Y1JLZkIrK0VpWktYaHFKRGp4?=
+ =?utf-8?B?TDNuMUdmeXZvcnd4V0Y2ZjhDbkVUTVdOcEs0NnM5RHdRN1hLWHYyOGswRkZE?=
+ =?utf-8?B?SitZNW9mWE5FRHl2V3JxMnUwajMxQWw5d01hL3VhSUwyc2dsMG41d3Fnc25B?=
+ =?utf-8?B?dENaWmd3S1R2UDBhaU1UU2p6UmRmaGIveHBVM0w1alduUzU0ZTJRTUtkR0tM?=
+ =?utf-8?B?aFZuMG1qTTlGT3V3aTBzZDRac01YM2NOWUpaQUtzU1pNRWhCTHl3OCt5QWZO?=
+ =?utf-8?B?ZWVzVGsrelNIb1V5NVhGZlMwY2o4QmZLREpPRGIvekpEQVVWcDUvem1vRGZD?=
+ =?utf-8?B?K0xzYmw2cHZ0NitRK1BJWUVEaHo4Y2dMS3ZCdzRadTI3QklJVjJrajZIU2Vi?=
+ =?utf-8?B?eHU3SzJnZFFpdEVwbDhXbUV2V2FCNFNFUVNNdzF2NFk3eXNqNVFSaUNKZmg4?=
+ =?utf-8?B?RTVvNWZMay9iQXVQNjBBVHdRZ05GL1Ftdm1hb1UrVkIyYUpISGJJU1hBaFVH?=
+ =?utf-8?B?Um9nUEtTRWRKM01zaUFOYklsMVFNNHFXaEFPNWVDOHdvOU9FVFVSSnZ6SHRq?=
+ =?utf-8?B?RkdIbHFDOU95cE41VVF6NENya2dFL2JNRlZ3ZktsMGhhSFpud1pmMitobUNt?=
+ =?utf-8?B?UmdObHhKcXpvWFpKKzRhSFh1Ui9Hc0x1NmRPV24rY1NyTTB4cytCNy9zK21h?=
+ =?utf-8?B?OG1lYXk3ZWh1c2ZLQ2JJUVM3N0lzWjVyaWFRcjlla2tiOVd4dGFHMmwvNmxt?=
+ =?utf-8?B?Qys4NURYWm9VVldEL25TS2R2NGZlNnIyekVualNwU2hNU0Npb08xMDJkSWZx?=
+ =?utf-8?B?YTJoSmd0YkxoK3NpNFVyY2VQQStqc1BLN2F0ZUJJclU3YWV5OWVYdnNBeTlM?=
+ =?utf-8?Q?JTXyv1zJtV96d?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5866.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q0syNDhHV21MU3doQWFEaEs1c0h3VlhoSXc4aEg4eXVBRUJHK2Vxb0ExOHRP?=
+ =?utf-8?B?akMrN3c1RnEyMHdGMERqTG4wa1NhbWpYVEJadGpqVmZIazFUR2pWMGc3ZjFV?=
+ =?utf-8?B?Y2FYUkFXT0dlL240U1hQWnVZWko1TmNLaWc5Z2lGajZFNUV0VkNQdTVuQ04r?=
+ =?utf-8?B?b3E5NGNoVGEzMmMvOWFHK05scHlYSHd2MmljTXJuWFZ1cnViUFVwWTEwYjlt?=
+ =?utf-8?B?Z3lnbkR6b0dlSjIxK0hKSmxVaE15SWZnMGJPN1ltWnNmS2dLUWYvak5TNjZV?=
+ =?utf-8?B?S3NyR2xvZDVIN0F6NkczUkYzNXFhajR2N1g4S1M4OEp3S3k3eW1jYXFXbzJO?=
+ =?utf-8?B?eUV1MGMvY1AwaHBSYXJoU1ZYWDVTbmZCWXM1KzVrb1NRa0FXQWlaa3FSOXBF?=
+ =?utf-8?B?STlqcHgwM2ErSjk3azBxQStySUk1YTA1RzFHMFlVTWZHK1ZoOFN3U0pZUC9u?=
+ =?utf-8?B?UlA0Mjh5UDQyNFdJaTExY2VLZENWQ0RpUUlUNCt5N1gyVVZNSWRsd01oL0ZR?=
+ =?utf-8?B?aHRJYnUyQ0Irc3ZKdGZHZE5YdVdIcXZZK0RsM2xFRTl0OHFjQnhtN1ovOG54?=
+ =?utf-8?B?QkNXTWQvaG9vcmZ3Rk96TStUUTFadCtUY0QzWEZIaWo3RU4xM3BwTHlOM3dF?=
+ =?utf-8?B?QkkzdzZYWnpqcVpwTXVlRm1UN0lwVldLTGxtYXlEdEdESWRVZVAvOG9RRjJY?=
+ =?utf-8?B?QXVCbHlUMGlDYzNNOFNBUE1BU0hMM3NZNXdWZXlWTDhyOXo1d1BkQVNGL0VX?=
+ =?utf-8?B?cXk4RzlHYXp0dFZtRVErSmx1dHFNdUJuK0JtcE9KVmlFTmhYdmFMYUhvSmNy?=
+ =?utf-8?B?c3c4VFFQNmREbm1iNHlxWENvRHlCejcvTmtVaFRENVU0WUY1THJnRXUrZkdk?=
+ =?utf-8?B?ZXNhWFVVVCtsYXJMMnlVRFhXYUlZRU16bHV6T1FycEwvZnZlSTVNcS9kZTJt?=
+ =?utf-8?B?b1B6cmZIUjFtM09LKzdXZnBwKzF2dmVBM1A3ek42SWxodmFQUmp4V3ZESGl6?=
+ =?utf-8?B?L09JRFA0aXJWZGFRcm82M055d1BIangwRW5tcDc5Mi9HOW82cDNkU2hTQUZl?=
+ =?utf-8?B?am5iWFRvOU83NzFUdGZHUC8yeVI1cXJxeXVFWXFJTFhDbVdzem9KaW5Jd0NJ?=
+ =?utf-8?B?Qk80dkkrU3ZLc05uT0orZ3lQV0ZZakFlYTNqSEx4OXovd3N1YkZLTU9JdW4r?=
+ =?utf-8?B?RXVBM2RmWXZBcHY4YTFnNzRUb1FuQld2VHRpZjd0eUZmY29kK2U0NE5hOGNB?=
+ =?utf-8?B?Zk9nbkNOd0F0NGl4VlhyT2ZGNFE1SjM1REFpTFhJTVY3Sy8zRXhHd0ZrSjVP?=
+ =?utf-8?B?YWJUMjk3M0Q3bEl1ZWxLM2Y2dDZwc0wvcUJvckRSaEgrTmNaa1Q0RzNJenBG?=
+ =?utf-8?B?OVVHOHF1aDM3MEZaZ2I5eVJVc2c0UG1LcGpBMHFVazF0SkRjZHI4ZHBVd2tD?=
+ =?utf-8?B?SHp3cnpQdDdGUkk0NGhPdTZYMWxnTXlJZy9vYWNyazliZlZxVk1JeE9YSGVQ?=
+ =?utf-8?B?bTd5dTl4bFpnandqZjdRRTFhMkhrazJYWXVWM0VFTnlUZjhxTHUxMEJET2N2?=
+ =?utf-8?B?TW04V1R6dWxmcUQ1Y1N4NUpaL0dsUWdWVlNoN3A0MWl3UnAzaU5qQUI2dmNC?=
+ =?utf-8?B?QWpRTjZ1M3pqamhXS2xPZTJwYWhwbEJ4YkdJT2Z5Sjl6ZEtwUVA0Q1MwSTVH?=
+ =?utf-8?B?RkRMTjlNOEF3RmFQczRsY1JqUC8vdFJwOVJaR0pIb1UvMUxtVG5EajRMOWxY?=
+ =?utf-8?B?bFdQdytKQVIwNzRRVE80dkVYeUorV1VQMlorVFZRbWo4Y2U4VU1QNHR4YW8v?=
+ =?utf-8?B?UXIwQy9FZTN2YXc1bWxsN05TdkNSUmxIWEZNUkxlTUxrenhFcXdVTTdmV2JB?=
+ =?utf-8?B?Qk9CMUFDbWttWmJwMGlqczVFWE9EVGEzQWJmTjFRQ25qTDFWbmdpMGJIZUtH?=
+ =?utf-8?B?RGcxb2Q0cU1JSUtGN0wybEtYQ0x1OElBRGxMRkVTQ2MrNStQWEl2dUxobWNm?=
+ =?utf-8?B?b20xbGNLaUJwbVJkOU9sZXp1dDFGaTZnaDZNUndKS2tkMEljQmJHSWxQN1Y3?=
+ =?utf-8?B?dk42eEppRGV3ODVBL3MyL0VlQ1dWVmlwVDkxdkZjaWQ5NitFamxjVEN0Y1kz?=
+ =?utf-8?B?bXdmQWNGQnJhT1FYaWxPYzBzVS9vbWh5ZGtUY1dWODVzMzBjVGtic3V6UVBl?=
+ =?utf-8?B?alE9PQ==?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4f673b7-225c-44c0-73e8-08dd681622dc
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5866.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 01:17:24.1804
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dxUVSoD0/XLwdS7s27H896VDF5gYige5JtFXAUxTYXy+XfBEmA2ujjviPKFUxV0JOEy3vtihBjzHH/HWAUrOsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8304
+X-Proofpoint-ORIG-GUID: p4CZV5aqvHoP4mRSdih1VAXneqGzSL7W
+X-Authority-Analysis: v=2.4 cv=ROOzH5i+ c=1 sm=1 tr=0 ts=67dcbe28 cx=c_pps a=smr7v+wKk2SgYJk0SwJNKg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=gafl5Dy9YAt0WcwJN_QA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
+X-Proofpoint-GUID: p4CZV5aqvHoP4mRSdih1VAXneqGzSL7W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_09,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=695 malwarescore=0 impostorscore=0 phishscore=0 clxscore=1015
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2503210007
 
-On Thu, Mar 20, 2025 at 1:33=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
-.com> wrote:
->
-> On 2025/03/20 10:31, Jason Wang wrote:
-> > On Wed, Mar 19, 2025 at 1:29=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
-ynix.com> wrote:
-> >>
-> >> On 2025/03/19 9:58, Jason Wang wrote:
-> >>> On Tue, Mar 18, 2025 at 6:10=E2=80=AFPM Akihiko Odaki <akihiko.odaki@=
-daynix.com> wrote:
-> >>>>
-> >>>> On 2025/03/18 9:15, Jason Wang wrote:
-> >>>>> On Mon, Mar 17, 2025 at 3:07=E2=80=AFPM Akihiko Odaki <akihiko.odak=
-i@daynix.com> wrote:
-> >>>>>>
-> >>>>>> On 2025/03/17 10:12, Jason Wang wrote:
-> >>>>>>> On Wed, Mar 12, 2025 at 1:03=E2=80=AFPM Akihiko Odaki <akihiko.od=
-aki@daynix.com> wrote:
-> >>>>>>>>
-> >>>>>>>> On 2025/03/12 11:35, Jason Wang wrote:
-> >>>>>>>>> On Tue, Mar 11, 2025 at 2:11=E2=80=AFPM Akihiko Odaki <akihiko.=
-odaki@daynix.com> wrote:
-> >>>>>>>>>>
-> >>>>>>>>>> On 2025/03/11 9:38, Jason Wang wrote:
-> >>>>>>>>>>> On Mon, Mar 10, 2025 at 3:45=E2=80=AFPM Akihiko Odaki <akihik=
-o.odaki@daynix.com> wrote:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> On 2025/03/10 12:55, Jason Wang wrote:
-> >>>>>>>>>>>>> On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihi=
-ko.odaki@daynix.com> wrote:
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Hash reporting
-> >>>>>>>>>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Allow the guest to reuse the hash value to make receive st=
-eering
-> >>>>>>>>>>>>>> consistent between the host and guest, and to save hash co=
-mputation.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> RSS
-> >>>>>>>>>>>>>> =3D=3D=3D
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> RSS is a receive steering algorithm that can be negotiated=
- to use with
-> >>>>>>>>>>>>>> virtio_net. Conventionally the hash calculation was done b=
-y the VMM.
-> >>>>>>>>>>>>>> However, computing the hash after the queue was chosen def=
-eats the
-> >>>>>>>>>>>>>> purpose of RSS.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Another approach is to use eBPF steering program. This app=
-roach has
-> >>>>>>>>>>>>>> another downside: it cannot report the calculated hash due=
- to the
-> >>>>>>>>>>>>>> restrictive nature of eBPF steering program.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Introduce the code to perform RSS to the kernel in order t=
-o overcome
-> >>>>>>>>>>>>>> thse challenges. An alternative solution is to extend the =
-eBPF steering
-> >>>>>>>>>>>>>> program so that it will be able to report to the userspace=
-, but I didn't
-> >>>>>>>>>>>>>> opt for it because extending the current mechanism of eBPF=
- steering
-> >>>>>>>>>>>>>> program as is because it relies on legacy context rewritin=
-g, and
-> >>>>>>>>>>>>>> introducing kfunc-based eBPF will result in non-UAPI depen=
-dency while
-> >>>>>>>>>>>>>> the other relevant virtualization APIs such as KVM and vho=
-st_net are
-> >>>>>>>>>>>>>> UAPIs.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> >>>>>>>>>>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
-> >>>>>>>>>>>>>> ---
-> >>>>>>>>>>>>>>         Documentation/networking/tuntap.rst |   7 ++
-> >>>>>>>>>>>>>>         drivers/net/Kconfig                 |   1 +
-> >>>>>>>>>>>>>>         drivers/net/tap.c                   |  68 ++++++++=
-++++++-
-> >>>>>>>>>>>>>>         drivers/net/tun.c                   |  98 ++++++++=
-+++++++++-----
-> >>>>>>>>>>>>>>         drivers/net/tun_vnet.h              | 159 ++++++++=
-++++++++++++++++++++++++++--
-> >>>>>>>>>>>>>>         include/linux/if_tap.h              |   2 +
-> >>>>>>>>>>>>>>         include/linux/skbuff.h              |   3 +
-> >>>>>>>>>>>>>>         include/uapi/linux/if_tun.h         |  75 ++++++++=
-+++++++++
-> >>>>>>>>>>>>>>         net/core/skbuff.c                   |   4 +
-> >>>>>>>>>>>>>>         9 files changed, 386 insertions(+), 31 deletions(-=
-)
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> diff --git a/Documentation/networking/tuntap.rst b/Documen=
-tation/networking/tuntap.rst
-> >>>>>>>>>>>>>> index 4d7087f727be5e37dfbf5066a9e9c872cc98898d..86b4ae8caa=
-8ad062c1e558920be42ce0d4217465 100644
-> >>>>>>>>>>>>>> --- a/Documentation/networking/tuntap.rst
-> >>>>>>>>>>>>>> +++ b/Documentation/networking/tuntap.rst
-> >>>>>>>>>>>>>> @@ -206,6 +206,13 @@ enable is true we enable it, otherwis=
-e we disable it::
-> >>>>>>>>>>>>>>               return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
-> >>>>>>>>>>>>>>           }
-> >>>>>>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> [...]
-> >>>>>>>>>
-> >>>>>>>>>>>>>> +static inline long tun_vnet_ioctl_sethash(struct tun_vnet=
-_hash_container __rcu **hashp,
-> >>>>>>>>>>>>>> +                                         bool can_rss, vo=
-id __user *argp)
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> So again, can_rss seems to be tricky. Looking at its caller=
-, it tires
-> >>>>>>>>>>>>> to make eBPF and RSS mutually exclusive. I still don't unde=
-rstand why
-> >>>>>>>>>>>>> we need this. Allow eBPF program to override some of the pa=
-th seems to
-> >>>>>>>>>>>>> be common practice.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> What's more, we didn't try (or even can't) to make automq a=
-nd eBPF to
-> >>>>>>>>>>>>> be mutually exclusive. So I still didn't see what we gain f=
-rom this
-> >>>>>>>>>>>>> and it complicates the codes and may lead to ambiguous uAPI=
-/behaviour.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> automq and eBPF are mutually exclusive; automq is disabled w=
-hen an eBPF
-> >>>>>>>>>>>> steering program is set so I followed the example here.
-> >>>>>>>>>>>
-> >>>>>>>>>>> I meant from the view of uAPI, the kernel doesn't or can't re=
-ject eBPF
-> >>>>>>>>>>> while using automq.
-> >>>>>>>>>>       > >>
-> >>>>>>>>>>>> We don't even have an interface for eBPF to let it fall back=
- to another
-> >>>>>>>>>>>> alogirhtm.
-> >>>>>>>>>>>
-> >>>>>>>>>>> It doesn't even need this, e.g XDP overrides the default rece=
-iving path.
-> >>>>>>>>>>>
-> >>>>>>>>>>>> I could make it fall back to RSS if the eBPF steeering
-> >>>>>>>>>>>> program is designed to fall back to automq when it returns e=
-.g., -1. But
-> >>>>>>>>>>>> such an interface is currently not defined and defining one =
-is out of
-> >>>>>>>>>>>> scope of this patch series.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Just to make sure we are on the same page, I meant we just ne=
-ed to
-> >>>>>>>>>>> make the behaviour consistent: allow eBPF to override the beh=
-aviour of
-> >>>>>>>>>>> both automq and rss.
-> >>>>>>>>>>
-> >>>>>>>>>> That assumes eBPF takes precedence over RSS, which is not obvi=
-ous to me.
-> >>>>>>>>>
-> >>>>>>>>> Well, it's kind of obvious. Not speaking the eBPF selector, we =
-have
-> >>>>>>>>> other eBPF stuffs like skbedit etc.
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Let's add an interface for the eBPF steering program to fall b=
-ack to
-> >>>>>>>>>> another steering algorithm. I said it is out of scope before, =
-but it
-> >>>>>>>>>> makes clear that the eBPF steering program takes precedence ov=
-er other
-> >>>>>>>>>> algorithms and allows us to delete the code for the configurat=
-ion
-> >>>>>>>>>> validation in this patch.
-> >>>>>>>>>
-> >>>>>>>>> Fallback is out of scope but it's not what I meant.
-> >>>>>>>>>
-> >>>>>>>>> I meant in the current uAPI take eBPF precedence over automq. I=
-t's
-> >>>>>>>>> much more simpler to stick this precedence unless we see obviou=
-s
-> >>>>>>>>> advanatge.
-> >>>>>>>>
-> >>>>>>>> We still have three different design options that preserve the c=
-urrent
-> >>>>>>>> precedence:
-> >>>>>>>>
-> >>>>>>>> 1) Precedence order: eBPF -> RSS -> automq
-> >>>>>>>> 2) Precedence order: RSS -> eBPF -> automq
-> >>>>>>>> 3) Precedence order: eBPF OR RSS -> automq where eBPF and RSS ar=
-e
-> >>>>>>>> mutually exclusive
-> >>>>>>>>
-> >>>>>>>> I think this is a unique situation for this steering program and=
- I could
-> >>>>>>>> not find another example in other eBPF stuffs.
-> >>>>>>>
-> >>>>>>> As described above, queue mapping could be overridden by tc-ebpf.=
- So
-> >>>>>>> there's no way to guarantee the RSS will work:
-> >>>>>>>
-> >>>>>>> https://github.com/DPDK/dpdk/blob/main/drivers/net/tap/bpf/tap_rs=
-s.c#L262
-> >>>>>>>
-> >>>>>>> Making eBPF first leaves a chance for the management layer to ove=
-rride
-> >>>>>>> the choice of Qemu.
-> >>>>>>
-> >>>>>> I referred to the eBPF steering program instead of tc-ebpf. tc-ebp=
-f is
-> >>>>>> nothing to do with the TUNSETSTEERINGEBPF ioctl, which this patch =
-changes.
-> >>>>>
-> >>>>> I meant you can't do "full control" in any case, the point below
-> >>>>> doesn't stand. Queue mapping could be restored even if RSS is set.
-> >>>>
-> >>>> What matters here is how we handle the control when tc didn't take i=
-t.
-> >>>> eBPF, RSS, or automq make take all of it; I referred that as "full c=
-ontrol".
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> The current version implements 3) because it is not obvious whet=
-her we
-> >>>>>>>> should choose either 1) or 2).
-> >>>>>>>
-> >>>>>>> But you didn't explain why you choose 3), and it leads to tricky =
-code
-> >>>>>>> (e.g the can_rss stuff etc).
-> >>>>>>
-> >>>>>> I wrote: "because it is not obvious whether we should choose eithe=
-r 1)
-> >>>>>> or 2)", but I think I can explain it better:
-> >>>>>>
-> >>>>>> When an eBPF steering program cannot implement a fallback, it mean=
-s the
-> >>>>>> eBPF steering program requests the full control over the steering.=
- On
-> >>>>>> the other hand, RSS also requests the same control. So these two w=
-ill
-> >>>>>> conflict and the entity controlling the steering will be undefined=
- when
-> >>>>>> both are enabled.
-> >>>>>
-> >>>>> Well, the fallback is orthogonal to the proposal here. We haven't h=
-ad
-> >>>>> that since the introduction of the eBPF steering program. This mean=
-s
-> >>>>> automq has been in "conflict" with eBPF for years. Again, another
-> >>>>> advantage, allowing the eBPF program to be the first to allow the
-> >>>>> management layer to override Qemu's steering.
-> >>>>
-> >>>> What if a VMM uses eBPF steering program and the management layer
-> >>>> decides to override it with RSS?
-> >>>
-> >>> That's possible but I think we're seeking which approach is better. I=
-n
-> >>> this case, RSS could be implemented in eBPF but not the reverse.
-> >>>
-> >>> So my point is to start from something that is simpler. Simply allow
-> >>> eBPF on top of RSS as automq. And optimize on top.
-> >>
-> >>
-> >> The in-kernel RSS implementation is more optimized and capable of hash
-> >> reporting. I don't think either eBPF steering program or in-kernel RSS
-> >> is more capable than the other and there is a reason to place eBPF on
-> >> top of RSS.
-> >>
-> >>>
-> >>>>
-> >>>> eBPF is obviously predecedent to automq as eBPF is an opt-in feature=
- and
-> >>>> automq is the implicit default. But this logic cannot be applied to
-> >>>> decide the order of eBPF and RSS because they are both opt-in featur=
-es.
-> >>>
-> >>> This is from the perspective of kernel development. But let's try to
-> >>> think from the userspace: A well written user space knows what it
-> >>> does, rejecting eBPF while RSS is set doesn't help. But anyhow if you
-> >>> stick, it doesn't harm.
-> >>
-> >> Yes, it not for the current userspace but for the future kernel
-> >> development; the kernel can reserve the freedom to decide the priority
-> >> of eBPF and RSS by rejecting eBPF while RSS.
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> 3) eliminates the undefined semantics by rejecting to enable both.
-> >>>>>
-> >>>>> This would lead a usersapce noticeable change of the behaviour? And
-> >>>>> what do you mean by "rejecting to enable both"?
-> >>>>
-> >>>> Existing userspace code should see no change as it only cares the ca=
-se
-> >>>> where RSS is enabled.
-> >>>>
-> >>>> Here, rejecting to enable both means to deny setting an eBPF steerin=
-g
-> >>>> program when RSS is enabled, and visa-versa.
-> >>>>
-> >>>>>
-> >>>>>> An
-> >>>>>> alternative approach is to allow eBPF steering programs to fall ba=
-ck.
-> >>>>>> When both the eBPF program and RSS are enabled, RSS will gain the
-> >>>>>> control of steering under the well-defined situation where the eBP=
-F
-> >>>>>> steering program decides to fall back.
-> >>>>>
-> >>>>> How about just stick the eBPF precedence in this proposal and
-> >>>>> introduce the fallback on top? This helps to speed up the iteration
-> >>>>> (as the version has been iterated to 11).
-> >>>>
-> >>>> I don't think that helps much since we have another ongoing discussi=
-on
-> >>>> below and it is not the sole roadblock.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> But 1) will be the most capable option if
-> >>>>>>>> eBPF has a fall-back feature.
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> [...]
-> >>>>>>>>>
-> >>>>>>>>>>>>> Is there a chance that we can reach here without TUN_VNET_H=
-ASH_REPORT?
-> >>>>>>>>>>>>> If yes, it should be a bug.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> It is possible to use RSS without TUN_VNET_HASH_REPORT.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Another call to separate the ioctls then.
-> >>>>>>>>>>
-> >>>>>>>>>> RSS and hash reporting are not completely independent though.
-> >>>>>>>>>
-> >>>>>>>>> Spec said:
-> >>>>>>>>>
-> >>>>>>>>> """
-> >>>>>>>>> VIRTIO_NET_F_RSSRequires VIRTIO_NET_F_CTRL_VQ.
-> >>>>>>>>> """
-> >>>>>>>>
-> >>>>>>>> I meant the features can be enabled independently, but they will=
- share
-> >>>>>>>> the hash type set when they are enabled at the same time.
-> >>>>>>>
-> >>>>>>> Looking at the spec:
-> >>>>>>>
-> >>>>>>> Hash repot uses:
-> >>>>>>>
-> >>>>>>> """
-> >>>>>>> struct virtio_net_hash_config {
-> >>>>>>>         le32 hash_types;
-> >>>>>>>         le16 reserved[4];
-> >>>>>>>         u8 hash_key_length;
-> >>>>>>>         u8 hash_key_data[hash_key_length];
-> >>>>>>> };
-> >>>>>>> """
-> >>>>>>>
-> >>>>>>> RSS uses
-> >>>>>>>
-> >>>>>>> """
-> >>>>>>> struct rss_rq_id {
-> >>>>>>>        le16 vq_index_1_16: 15; /* Bits 1 to 16 of the virtqueue i=
-ndex */
-> >>>>>>>        le16 reserved: 1; /* Set to zero */
-> >>>>>>> };
-> >>>>>>>
-> >>>>>>> struct virtio_net_rss_config {
-> >>>>>>>         le32 hash_types;
-> >>>>>>>         le16 indirection_table_mask;
-> >>>>>>>         struct rss_rq_id unclassified_queue;
-> >>>>>>>         struct rss_rq_id indirection_table[indirection_table_leng=
-th];
-> >>>>>>>         le16 max_tx_vq;
-> >>>>>>>         u8 hash_key_length;
-> >>>>>>>         u8 hash_key_data[hash_key_length];
-> >>>>>>> };
-> >>>>>>> """
-> >>>>>>>
-> >>>>>>> Instead of trying to figure out whether we can share some data
-> >>>>>>> structures, why not simply start from what has been done in the s=
-pec?
-> >>>>>>> This would ease the usersapce as well where it can simply do 1:1
-> >>>>>>> mapping between ctrl vq command and tun uAPI.
-> >>>>>>
-> >>>>>> The spec also defines struct virtio_net_hash_config (which will be=
- used
-> >>>>>> when RSS is disabled) and struct virtio_net_rss_config to match th=
-e
-> >>>>>> layout to share some fields. However, the UAPI does not follow the
-> >>>>>> interface design of virtio due to some problems with these structu=
-res.
-> >>>>>
-> >>>>> Copy-paste error. The above is copied from the virtio spec, but I
-> >>>>> meant the existing uAPI in virtio_net.h:
-> >>>>>
-> >>>>> /*
-> >>>>>     * The command VIRTIO_NET_CTRL_MQ_RSS_CONFIG has the same effect=
- as
-> >>>>>     * VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET does and additionally configu=
-res
-> >>>>>     * the receive steering to use a hash calculated for incoming pa=
-cket
-> >>>>>     * to decide on receive virtqueue to place the packet. The comma=
-nd
-> >>>>>     * also provides parameters to calculate a hash and receive virt=
-queue.
-> >>>>>     */
-> >>>>> struct virtio_net_rss_config {
-> >>>>>            __le32 hash_types;
-> >>>>>            __le16 indirection_table_mask;
-> >>>>>            __le16 unclassified_queue;
-> >>>>>            __le16 indirection_table[1/* + indirection_table_mask */=
-];
-> >>>>>            __le16 max_tx_vq;
-> >>>>>            __u8 hash_key_length;
-> >>>>>            __u8 hash_key_data[/* hash_key_length */];
-> >>>>> };
-> >>>>>>     #define VIRTIO_NET_CTRL_MQ_RSS_CONFIG          1
-> >>>>>
-> >>>>> /*
-> >>>>>     * The command VIRTIO_NET_CTRL_MQ_HASH_CONFIG requests the devic=
-e
-> >>>>>     * to include in the virtio header of the packet the value of th=
-e
-> >>>>>     * calculated hash and the report type of hash. It also provides
-> >>>>>     * parameters for hash calculation. The command requires feature
-> >>>>>     * VIRTIO_NET_F_HASH_REPORT to be negotiated to extend the
-> >>>>>     * layout of virtio header as defined in virtio_net_hdr_v1_hash.
-> >>>>>     */
-> >>>>> struct virtio_net_hash_config {
-> >>>>>            __le32 hash_types;
-> >>>>>            /* for compatibility with virtio_net_rss_config */
-> >>>>>            __le16 reserved[4];
-> >>>>>            __u8 hash_key_length;
-> >>>>>            __u8 hash_key_data[/* hash_key_length */];
-> >>>>> };
-> >>>>>
-> >>>>> This has been used by Qemu but I see a virtio-net version of:
-> >>>>>
-> >>>>> struct virtio_net_ctrl_rss {
-> >>>>>            u32 hash_types;
-> >>>>>            u16 indirection_table_mask;
-> >>>>>            u16 unclassified_queue;
-> >>>>>            u16 hash_cfg_reserved; /* for HASH_CONFIG (see
-> >>>>> virtio_net_hash_config for details) */
-> >>>>>            u16 max_tx_vq;
-> >>>>>            u8 hash_key_length;
-> >>>>>            u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
-> >>>>>
-> >>>>>            u16 *indirection_table;
-> >>>>> };
-> >>>>>
-> >>>>> This is ugly and results in a tricky code when trying to submit
-> >>>>> RSS/HASH commands to the device:
-> >>>>>
-> >>>>>            if (vi->has_rss) {
-> >>>>>                    sg_buf_size =3D sizeof(uint16_t) * vi->rss_indir=
-_table_size;
-> >>>>>                    sg_set_buf(&sgs[1], vi->rss.indirection_table, s=
-g_buf_size);
-> >>>>>            } else {
-> >>>>>                    sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved,
-> >>>>> sizeof(uint16_t));
-> >>>>>            }
-> >>>>
-> >>>> The only reference to struct virtio_net_rss_config in QEMU is to der=
-ive
-> >>>> the offset of indirection_table. This is because the definition in
-> >>>> virtio_net.h also includes indirection_table in the middle and the
-> >>>> offsets of later part are unusable.
-> >>>
-> >>> Yes.
-> >>>
-> >>>>
-> >>>> QEMU internally has a structure named VirtioNetRssData which just lo=
-oks
-> >>>> like struct virtio_net_ctrl_rss.
-> >>>
-> >>> It's a pity that it doesn't use uAPI. We might need to fix them.
-> >>
-> >> It doesn't want to use the UAPI structures for the internal storage
-> >> because it wants to store them in native endians and QEMU is not
-> >> interested in some fields in the UAPI structures. struct tun_vnet_hash
-> >> and struct tun_vnet_hash_rss are easy to fill using VirtioNetRssData.
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Below is the definition of struct virtio_net_hash_config:
-> >>>>>>
-> >>>>>> struct virtio_net_hash_config {
-> >>>>>>         le32 hash_types;
-> >>>>>>         le16 reserved[4];
-> >>>>>>         u8 hash_key_length;
-> >>>>>>         u8 hash_key_data[hash_key_length];
-> >>>>>> };
-> >>>>>>
-> >>>>>> Here, hash_types, hash_key_length, and hash_key_data are shared wi=
-th
-> >>>>>> struct virtio_net_rss_config.
-> >>>>>>
-> >>>>>> One problem is that struct virtio_net_rss_config has a flexible ar=
-ray
-> >>>>>> (indirection_table) between hash_types and hash_key_length. This i=
-s
-> >>>>>> something we cannot express with C.
-> >>>>>
-> >>>>> We can split the virtio_net_rss_config to ease the dealing with
-> >>>>> arrays, more below.
-> >>>>>
-> >>>>>>
-> >>>>>> Another problem is that the semantics of the key in struct
-> >>>>>> virtio_net_hash_config is not defined in the spec.
-> >>>>>
-> >>>>> If this is the case. Let's fix that in the spec first to make sure =
-our
-> >>>>> uAPI aligns with spec without ambiguity. It would be a nightmare to
-> >>>>> deal with the in-consistency between virtio spec and Linux uAPIs.
-> >>>>
-> >>>> The userspace doesn't need to do anything to deal with inconsistency
-> >>>> since these fields are unused.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> To solve these problems, I defined the UAPI structures that do not
-> >>>>>> include indiretion_table.
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> A plot twist is the "types" parameter; it is a parameter that =
-is
-> >>>>>>>>>> "common" for RSS and hash reporting.
-> >>>>>>>>>
-> >>>>>>>>> So we can share part of the structure through the uAPI.
-> >>>>>>>>
-> >>>>>>>> Isn't that what this patch does?
-> >>>>>>>
-> >>>>>>> I didn't see, basically I see only one TUNSETVNETHASH that is use=
-d to
-> >>>>>>> set both hash report and rss:
-> >>>>>>
-> >>>>>> The UAPI shares struct tun_vnet_hash for both hash report and rss.
-> >>>>>
-> >>>>> I meant sharing structure in two ioctls instead of reusing a specif=
-ic
-> >>>>> structure for two semantics in one ioctl if possible. Though I don'=
-t
-> >>>>> think we need any sharing.
-> >>>>
-> >>>> The UAPI implemented in this patch already shares struct tun_vnet_ha=
-sh
-> >>>> and having two ioctls doesn't change that.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> """
-> >>>>>>> +/**
-> >>>>>>> + * define TUNSETVNETHASH - ioctl to configure virtio_net hashing
-> >>>>>>> + *
-> >>>>>>> + * The argument is a pointer to &struct tun_vnet_hash.
-> >>>>>>> + *
-> >>>>>>> + * The argument is a pointer to the compound of the following in=
- order if
-> >>>>>>> + * %TUN_VNET_HASH_RSS is set:
-> >>>>>>> + *
-> >>>>>>> + * 1. &struct tun_vnet_hash
-> >>>>>>> + * 2. &struct tun_vnet_hash_rss
-> >>>>>>> + * 3. Indirection table
-> >>>>>>> + * 4. Key
-> >>>>>>> + *
-> >>>>>>> """
-> >>>>>>>
-> >>>>>>> And it seems to lack parameters like max_tx_vq.
-> >>>>>>
-> >>>>>> max_tx_vq is not relevant with hashing.
-> >>>>>
-> >>>>> It is needed for RSS and we don't have that, no?
-> >>>>
-> >>>> No. RSS is Receive Side Scaling but it's not about receiving.
-> >>>
-> >>> Just to make sure I understand this, max_tx_vq is part of the
-> >>> virtio_net_rss_config, how would Qemu behave when it receives this
-> >>> from guest?
-> >>>
-> >>> """
-> >>> A driver sets max_tx_vq to inform a device how many transmit
-> >>> virtqueues it may use (transmitq1=E2=80=A6transmitq max_tx_vq).
-> >>> """
-> >>
-> >> It does nothing.
-> >
-> > Nope, see:
-> >
-> > commit 50bfcaedd78e53135ec0504302269b3b65bf1eff
-> > Author: Philo Lu <lulie@linux.alibaba.com>
-> > Date:   Mon Nov 4 16:57:06 2024 +0800
-> >
-> >      virtio_net: Update rss when set queue
-> >
-> >      RSS configuration should be updated with queue number. In particul=
-ar, it
-> >      should be updated when (1) rss enabled and (2) default rss configu=
-ration
-> >      is used without user modification.
-> >
-> >      During rss command processing, device updates queue_pairs using
-> >      rss.max_tx_vq. That is, the device updates queue_pairs together wi=
-th
-> >      rss, so we can skip the sperate queue_pairs update
-> >      (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
-> >
-> >      Also remove the `vi->has_rss ?` check when setting vi->rss.max_tx_=
-vq,
-> >      because this is not used in the other hash_report case.
-> >
-> >      Fixes: c7114b1249fa ("drivers/net/virtio_net: Added basic RSS supp=
-ort.")
-> >      Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
-> >      Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> >      Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> >      Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-> >
-> > RSS doesn't depend on MQ.
-> >
-> > If it is not handled by Qemu, it should be a bug?
->
-> I was wrong; QEMU does handle this field, but it doesn't use the
-> definition of struct virtio_net_rss_config and name it queue_pairs
-> instead of max_tx_vq so I could not find it by grep.
+On 3/18/25 14:29, Manivannan Sadhasivam wrote:
+> CAUTION: This email comes from a non Wind River email account!
+> Do not click links or open attachments unless you recognize the sender and know the content is safe.
+> 
+> On Tue, Mar 11, 2025 at 09:52:29PM +0800, Bo Sun wrote:
+>> The previous implementation of of_pci_add_properties() and
+>> of_pci_prop_bus_range() assumed that a valid secondary bus is always
+>> present, which can be problematic in cases where no bus numbers are
+>> assigned for a secondary bus. This patch introduces a check for a valid
+>> secondary bus and omits the 'bus-range' property if it is not available,
+>> preventing dereferencing the NULL pointer.
+>>
+> 
+> This definitely needs a Fixes tag and should be backported.
 
-Yes, another side effect is that uAPI is not even used there...
+OK, I will add the Fixes tag and send the v3 patches.
 
->
-> For tap, max_tx_vq is handled by changing the number of open file
-> descriptors so passing it via an ioctl is redundant.
-
-See my reply below.
-
->
-> >
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> What's more, we've already had virito-net uAPI. Why not simply re=
-using them?
-> >>>>>>
-> >>>>>> See the above.
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>> RSS and hash reporting must share
-> >>>>>>>>>> this parameter when both are enabled at the same time; otherwi=
-se RSS may
-> >>>>>>>>>> compute hash values that are not suited for hash reporting.
-> >>>>>>>>>
-> >>>>>>>>> Is this mandated by the spec? If yes, we can add a check. If no=
-t,
-> >>>>>>>>> userspace risk themselves as a mis-configuration which we don't=
- need
-> >>>>>>>>> to bother.
-> >>>>>>>>
-> >>>>>>>> Yes, it is mandated. 5.1.6.4.3 Hash calculation for incoming pac=
-kets says:
-> >>>>>>>>      > A device attempts to calculate a per-packet hash in the f=
-ollowing
-> >>>>>>>>      > cases:
-> >>>>>>>>      >
-> >>>>>>>>      >   - The feature VIRTIO_NET_F_RSS was negotiated. The devi=
-ce uses the
-> >>>>>>>>      >     hash to determine the receive virtqueue to place inco=
-ming packets.
-> >>>>>>>>      >   - The feature VIRTIO_NET_F_HASH_REPORT was negotiated. =
-The device
-> >>>>>>>>      >     reports the hash value and the hash type with the pac=
-ket.
-> >>>>>>>>      >
-> >>>>>>>>      > If the feature VIRTIO_NET_F_RSS was negotiated:
-> >>>>>>>>      >
-> >>>>>>>>      >   - The device uses hash_types of the virtio_net_rss_conf=
-ig structure
-> >>>>>>>>      >     as =E2=80=99Enabled hash types=E2=80=99 bitmask.
-> >>>>>>>>      >   - The device uses a key as defined in hash_key_data and
-> >>>>>>>>            hash_key_length of the virtio_net_rss_config structur=
-e (see
-> >>>>>>>>      >      5.1.6.5.7.1).
-> >>>>>>>>      >
-> >>>>>>>>      > If the feature VIRTIO_NET_F_RSS was not negotiated:
-> >>>>>>>>      >
-> >>>>>>>>      >   - The device uses hash_types of the virtio_net_hash_con=
-fig structure
-> >>>>>>>>      >     as =E2=80=99Enabled hash types=E2=80=99 bitmask.
-> >>>>>>>>      >   - The device uses a key as defined in hash_key_data and
-> >>>>>>>>      >     hash_key_length of the virtio_net_hash_config structu=
-re (see
-> >>>>>>>>      >      .1.6.5.6.4).
-> >>>>>>>>
-> >>>>>>>> So when both VIRTIO_NET_F_RSS and VIRTIO_NET_F_HASH_REPORT are
-> >>>>>>>> negotiated, virtio_net_rss_config not only controls RSS but also=
- the
-> >>>>>>>> reported hash values and types. They cannot be divergent.
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Note that spec use different commands for hash_report and rss.
-> >>>>>>>>
-> >>>>>>>> TUNSETVNETHASH is different from these commands in terms that it=
- also
-> >>>>>>>> negotiates VIRTIO_NET_F_HASH_REPORT and VIRTIO_NET_F_RSS.
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> There Are different "issues" here:
-> >>>>>>>
-> >>>>>>> 1) Whether or not we need to use a unified API for negotiating RS=
-S and
-> >>>>>>> HASH_REPORT features
-> >>>>>>> 2) Whether or not we need to sue a unified API for setting RSS an=
-d
-> >>>>>>> HASH_REPORT configuration
-> >>>>>>>
-> >>>>>>> What I want to say is point 2. But what you raise is point 1.
-> >>>>>>>
-> >>>>>>> For simplicity, it looks to me like it's a call for having separa=
-ted
-> >>>>>>> ioctls for feature negotiation (for example via TUNSETIFF). You m=
-ay
-> >>>>>>> argue that either RSS or HASH_REPORT requires configurations, we =
-can
-> >>>>>>> just follow what spec defines or not (e.g what happens if
-> >>>>>>> RSS/HASH_REPORT were negotiated but no configurations were set).
-> >>>>>>
-> >>>>>> Unfortunately TUNSETIFF does not fit in this use case. The flags s=
-et
-> >>>>>> with TUNSETIFF are fixed, but the guest can request a different fe=
-ature
-> >>>>>> set anytime by resetting the device.
-> >>>>>
-> >>>>> TUNSETIFF, enables the device to be able to handle RSS/HASREPORT.
-> >>>>> TUNSETHASH/RSS. dealing with RSS/HASH command from userspace.
-> >>>>
-> >>>> We also needs to be able to disable them at runtime so that we can
-> >>>> handle resets.
-> >>>
-> >>> Via TUNSETHASH/RSS? I think it should have a way to accept parameters
-> >>> that disable RSS or hash report.
-> >>
-> >> That's what this patch implements. TUNSETVNETHASH accepts parameters t=
-o
-> >> choose what features to be enabled.
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>> This is the way we used to do for multi queue and vnet header.
-> >>>>> TUNSETIFF requires CAP_NET_ADMIN, this could be an extra safe guard
-> >>>>> for unprivileged userspace.
-> >>>>
-> >>>> I intend to allow using this feature without privilege. A VMM is usu=
-ally
-> >>>> unprivileged and requiring a privilege to configure tuntap is too
-> >>>> prohibitive.
-> >>>
-> >>> For safety, tun is not allowed to be created by unprivileged users.
-> >>> And it's not to configure the tuntap dynamically, it's about telling
-> >>> the function that tuntap can have (not necessarily enabled though) .
-> >>
-> >> I don't think we need another barrier for the new functions. Once an
-> >> unprivileged user get a file descriptor of tuntap from a privileged
-> >> user, they are free to enable RSS and/or hash reporting.
-> >
-> > Only if such a feature is allowed by the privileged user.
->
-> I don't see a reason not to allow the feature to unprivileged users. It
-> only complicates the setup.
-
-For safety, e.g reduce the chance for unprivileged user to explore
-part of the kernel codes.
-
->
-> >
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>     > >> In the virtio-net specification, it is not defined what w=
-ould
-> >>>>>> happen if
-> >>>>>>>> these features are negotiated but the VIRTIO_NET_CTRL_MQ_RSS_CON=
-FIG or
-> >>>>>>>> VIRTIO_NET_CTRL_MQ_HASH_CONFIG commands are not sent. There is n=
-o such
-> >>>>>>>> ambiguity with TUNSETVNETHASH.
-> >>>>>>>
-> >>>>>>> So I don't see advantages of unifying hash reports and rss into a
-> >>>>>>> single ioctl. Let's just follow what has been done in the spec th=
-at
-> >>>>>>> uses separated commands. Tuntap is not a good place to debate whe=
-ther
-> >>>>>>> those commands could be unified or not. We need to move it to the=
- spec
-> >>>>>>> but assuming spec has been done, it might be too late or too few
-> >>>>>>> advantages for having another design.
-> >>>>>>
-> >>>>>> It makes sense for the spec to reuse the generic feature negotiati=
-on
-> >>>>>> mechanism, but the situation is different for tuntap; we cannot us=
-e
-> >>>>>> TUNSETIFF and need to define another. Then why don't we exploit th=
-is
-> >>>>>> opportunity to have an interface with well-defined semantics?
-> >>>>>
-> >>>>> That's perfectly fine, but it needs to be done in virtio-net's uAPI
-> >>>>> not tun's. What's more, if you think two commands are not
-> >>>>> well-defined, let's fix that in the virtio spec first.
-> >>>>>
-> >>>>>> The virtio
-> >>>>>> spec does its best as an interface between the host and guest and =
-tuntap
-> >>>>>> does its best as an UAPI.
-> >>>>>
-> >>>>> See above, let's fix the uAPI first. We don't want DPDK to use tun'=
-s
-> >>>>> uAPI for RSS
-> >>>>
-> >>>> virtio-net's UAPI is for the virtio spec which has a capable generic
-> >>>> feature negotiation mechanism. tuntap needs its own feature negotiat=
-ion
-> >>>> and it's nothing to do with virtio-net's UAPI.
-> >>>
-> >>> Well, I don't mean the part of the feature negotiation. I mean the
-> >>> part for rss and hash report configuration.
-> >>
-> >> The feature negotiation still matters when deciding the granularity of
-> >> ioctls. We need one ioctl for a feature negotiation, and to avoid havi=
-ng
-> >> an intermediate state,
-> >
-> > I don't understand this. For example, driver can choose to
-> >
-> > 1) negotiate RSS
-> > 2) do something else.
-> > 3) configure RSS
-> >
-> > Spec doesn't require those two to be configured at the same time, so
-> > "intermediate state" is allowed.
->
-> The spec doesn't define what should happen in the intermediate state eith=
-er.
-
-Yes but my point is that in the uAPI layer we don't need to care about
-the intermediate state. It can just work as other features, e.g having
-a default state after feature negotiation is more than enough. This is
-the way we deal with other features like vnet header etc.
-
->
-> For a hardware implementation I think it's fine whatever the
-> implementation defines as the intermediate state. But for the UAPI, it's
-> better avoiding having such a definition to keep the interface minimal
-> and maximize the UAPI stability.
-
-Well, even if you think there's an issue:
-
-1) I don't see how we can avoid the intermediate state consider guest
-have such state
-2) We need to "fix" virtio spec and virito-net first, tuntap is not
-the right place to workaround virtio specific issues
-
->
-> >
-> >> the ioctl should also do the configuration. Hence
-> >> that one ioctl should do all of the feature negotiation and configurat=
-ion.
-> >>
-> >>>
-> >>>>
-> >>>> The structures for two commands have unused or redundant fields and =
-a
-> >>>> flexible array in the middle of the structure, but they are ABIs so =
-we
-> >>>> can't change it.
-> >>>>
-> >>>> DPDK is another reason to define tuntap's own UAPIs. They don't care
-> >>>> unused or redundant fields and a flexible array in middle that are
-> >>>> present in the virtio spec. It will also not want to deal with the
-> >>>> requirement of little endian. Constructing struct virtio_net_rss_con=
-fig
-> >>>> is an extra burden for DPDK.
-> >>>
-> >>> I meant for vhost-user implementation in DPDK, it needs to use
-> >>> virtio-net uAPI not tuntap's for example.
-> >>
-> >> The vhost-user implementation will use tuntap's UAPIs for its ethernet
-> >> device backend.
-> >
-> > That sounds pretty weird, vhost-user has nothing related to tuntap.
->
-> My expression in the last email was weird. More precisely, the ethernet
-> backend of tuntap will use the UAPIs, and the vhost-user will use the
-> ethernet backend in turn.
-
-I don't understand what "ethernet backend" means here.
-
->
-> >
-> >> It uses the generic interface of ethernet device so for
-> >> RSS it will use functions like rte_eth_dev_rss_hash_update() for
-> >> example. tuntap's UAPIs are more suited to implement these interfaces =
-as
-> >> they operate in native endian and don't have extra fields.
-> >
-> > Nope, for example it needs to use le for virtio_net_hdr if a modern
-> > device is used. But it needs a "native" endian according to the guest
-> > endian via TUNSETVNETLE/BE. We don't have a choice as virtio-net hdr
-> > support in tuntap is much earlier than modern devices.
-> >
-> > Let's don't do the same thing (native endian) for tuntap as RSS
-> > depends on modern, so we know it must be le.
->
-> virtio_net_hdr is the data path while the current discussion is about
-> the control path. All configuration knobs of tuntap operates in the
-> native endian.
-
-Because they are not directly related to virtio specification.  We
-don't want to duplicate virtio-net with our own version every time E.g
-once RSSv2 or aRFS were implemented. Or I would even introduce a
-single uAPI to transport possible cvq commands then we can avoid
-inventing new ioctls that just transport cvq commands.
-
->
-> So I think we should stick to the little endian for the data path while
-> we should stick to the native endian for the control path to maximize
-> the consistency.
-
-I don't see a reason to differ datapath from control path. Virtio-net
-uAPI has been reused by tuntap for more than a decade.
-
->
-> >
-> >
-> >>
-> >> DPDk applications other than vhost-user also matter; they do not care
-> >> what virtio does at all.
-> >>
-> >>   > >>
-> >>>> On the other hand, Constructing tuntap-specific structures is not th=
-at
-> >>>> complicated for VMMs.
-> >>>
-> >>> Not complicated but redundant.
-> >>>
-> >>>> A VMM will need to inspect struct
-> >>>> virtio_net_rss_config anyway to handle migration and check its size =
-so
-> >>>> it can store the values it inspected to struct tun_vnet_hash and str=
-uct
-> >>>> tun_vnet_hash_rss and pass them to the kernel.
-> >>>
-> >>> I don't see how rss and hash reports differ from what we have now.
-> >>> Those inspections must be done anyhow for compatibility for example
-> >>> the check of offloading features. Such steps could not be eliminated
-> >>> no matter how we design the uAPI.
-> >>
-> >> I explained the difference between the virtio and tuntap UAPIs, not
-> >> between RSS and hash reporting.
-> >
-> > See above.
-> >
-> >>
-> >>>
-> >>>>
-> >>>> The overall userspace implementation will be simpler by having
-> >>>> structures specifically tailored for the communication between the
-> >>>> userspace and kernel.
-> >>>
-> >>> This is exactly how a good uAPI should behave. If uAPI in virtio-net
-> >>> can't do this, I don't understand why uAPI in tuntap can solve it.
-> >>
-> >> The UAPI in virtio-net cannot do it because it's already fixed and it
-> >> also needs to perform endian conversion for the VM use case. tuntap
-> >> doesn't have these restrictions.
-> >
-> > Same here.
-> >
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> I don't think there is an advantage to split ioctls to follow the =
-spec
-> >>>>>> after all. It makes sense if we can pass-through virtio commands t=
-o
-> >>>>>> tuntap, but it is not possible as ioctl operation codes are differ=
-ent
-> >>>>>> from virtio commands.
-> >>>>>
-> >>>>> I don't see a connection with the operation code. For example, we c=
-an
-> >>>>> add new uAPIs in virtio-net which could be something like:
-> >>>>>
-> >>>>>     struct virtio_net_rss_config_header {
-> >>>>>          __le32 hash_types;
-> >>>>>          __le16 indirection_table_mask;
-> >>>>>          __le16 unclassified_queue;
-> >>>>>          __le16 indirection_table[];
-> >>>>> }
-> >>>>>
-> >>>>> struct virtio_net_rss_config_tailer {
-> >>>>>          __le16 max_tx_vq;
-> >>>>>          u8 hash_key_length;
-> >>>>>          u8 hash_key_data[];
-> >>>>> }
-> >>>>>
-> >>>>> These two are used by TUNSETVNETRSS. And simply reuse the
-> >>>>> virtio_net_hash_config for TUNSETVETHASH.
-> >>>>    > > With this, we can tweak the virtio-net driver with this new u=
-API. Then
-> >>>>> tap* can reuse this.
-> >>>>
-> >>>> I implemented a UAPI and driver change accordingly:
-> >>>> https://lore.kernel.org/r/20250318-virtio-v1-0-344caf336ddd@daynix.c=
-om
-> >>>>
-> >>>> This is a nice improvement for the driver, but I still don't think i=
-t is
-> >>>> suited for the UAPI of tuntap.
-> >>>
-> >>> Any reason for this? It should work like virtio_net_hdr.
-> >>>
-> >>>> The requirements of extra fields and
-> >>>> little endian cannot be removed from the virtio spec but they are
-> >>>> irrelevant for tuntap.
-> >>>
-> >>> I don't understand this part. What fields are "extra" and need to be
-> >>> removed from the spec?
-> >>
-> >> All fields not included in struct tun_vnet_hash and struct
-> >> tun_vnet_hash_rss. Namely, for struct virtio_net_hash_config:
-> >> - reserved
-> >> - hash_key_length
-> >> - hash_key_data
-> >>
-> >> For struct virtio_net_rss_config:
-> >> - max_tx_vq
-> >> - hash_key_length
-> >
-> > See my above reply, and I basically meant
-> >
-> > TUNSETVETHASH accept struct virtio_net_hash_config;
-> > TUNSETVETRSS accept struct virtio_net_rss_config_hdr + struct
-> > virtio_net_rss_config_trailer;
->
-> That still bring the extra fields I noted in the last email.
-
-I don't know how to define "extra" here. Let's summarize here:
-
-Method A:
-
-1) virtio specification use separate commands for has_report and rss
-2) hash_port ans rss doesn't depend on each other
-3) reuse virtio-net uAPI
-
-Method B:
-
-1) trying to define and remove the "extra" fields in tuntap, and
-redefine it in TUNTAP
-
-It would always be much easier to start from simply reusing the
-virtio-net uAPI. Method B makes both the implementation and reviewing
-harder, as we need to
-
-1) revisit the design of the virtio spec, this needs to be done in the
-virtio community not here
-2) audit the difference between virtio spec and TUN/TAP, that's why we
-have a very long discussion here
-
-For example, the root cause of why you think the max_tx_vq is "extra" is:
-
-1) The spec defines VIRTIO_NET_F_RSS and VIRTIO_NET_F_MQ as independent fea=
-tures
-2) Your code tries to re-use IFF_MULTI_QUEUE for both VIRTIO_NET_F_RSS
-and VIRTIO_NET_F_MQ, this would have a lot of implications, e.g
-automatic steering might be applied when only RSS is negotiated etc
-
-The correct way to implement this is:
-
-1) Introduce IFF_RSS and only set it during TUNSETIFF when device only
-offers RSS
-2) reuse virtio-net uAPI and accept max_tx_vq and use that to change
-the queue(or queue paris) if necessary
-
-Then we have a clean and well defined behaviour (for example when
-devices only support RSS but not MQ).
-
-Thanks
-
->
-> Regards,
-> Akihiko Odaki
->
-> >
-> > Thanks
-> >
-> >>
-> >> Regards,
-> >> Akihiko Odaki
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>> The best possibility is to share structures, not
-> >>>>>> commands, and I don't think even sharing structures makes sense he=
-re
-> >>>>>> because of the reasons described above.
-> >>>>>
-> >>>>> I don't want to share structures, I meant starting from something t=
-hat
-> >>>>> is simple and has been sorted in the virtio spec. Optimization coul=
-d
-> >>>>> be done on top.
-> >>>>
-> >>>> I meant to reuse the structures in virtio_net.h.
-> >>>>
-> >>>> Regards,
-> >>>> Akihiko Odaki
-> >>>
-> >>> Thanks
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Regards,
-> >>>>>> Akihiko Odaki
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> Regards,
-> >>>>>>>> Akihiko Odaki
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> The paramter will be duplicated if we have separate ioctls for=
- RSS and
-> >>>>>>>>>> hash reporting, and the kernel will have a chiken-egg problem =
-when
-> >>>>>>>>>> ensuring they are synchronized; when the ioctl for RSS is issu=
-ed, should
-> >>>>>>>>>> the kernel ensure the "types" parameter is identical with one =
-specified
-> >>>>>>>>>> for hash reporting? It will not work if the userspace may deci=
-de to
-> >>>>>>>>>> configure hash reporting after RSS.
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> See my reply above.
-> >>>>>>>>>
-> >>>>>>>>> Thanks
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>
-> >>>>>
-> >>>>
-> >>>
-> >>
-> >
->
-
+Thanks,
+Bo
 
