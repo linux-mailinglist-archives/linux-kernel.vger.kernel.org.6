@@ -1,249 +1,138 @@
-Return-Path: <linux-kernel+bounces-572047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F76A6C5CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:19:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C68A6C5CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C656B3B6A23
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:17:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A7D7A914E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECCF23496B;
-	Fri, 21 Mar 2025 22:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93DD233706;
+	Fri, 21 Mar 2025 22:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k9QaZ2IE"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzwUuilQ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0793123313E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 22:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD8D231A3B;
+	Fri, 21 Mar 2025 22:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742595372; cv=none; b=dWgmhwPKwdgX1d2aqdVpmUZqR6qI1ZKaKYRLUhaei6ujKl12Qes0pafQUMs9N2ymbARSDhMDTyuU+MwkWXj/0e6ocjtawOSc6xeOsediOTRLoLexRZ1Uf0ij/XONYaZqc2Ytdq2ozWDQfHUXBA+j4+ET4JeIUvFhiFLOWNYsqpo=
+	t=1742595411; cv=none; b=LNCxhLdqrmbv3MNjF675lPuG+Pzvyaa0DCDi8qdDhO76I3WK1PX5BjEwGxwVV4/r1G3mLk1bt/faGDoKb0JGLCy4UIFArEQtbwdPNujBKIhp7cVOmJ29N+KiHAfNkY+IaNz2Dmd3TDETUrZs69KbQzDkm9szIal1Zr4j0j2Tep0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742595372; c=relaxed/simple;
-	bh=xTN8uHl1SeuIX+6Go9vzBRBl5rKlx9/gkpF9UMsFCuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UMkmKFCNwsCmosfMwl5uJxsVKHmdPi0O9fY1R+3te92J1+gwQ5YHIJ+EwSR/6WraWjslEf5NPHW7sAdihOmMDooXCptaIKKS7TR+1KEEtofoYyI7p0Tg5FKdwEvbnCh88+hL63VUp+nqpHUjoAKwZSwhWY/YMAsGwutVUylvyQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k9QaZ2IE; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2242ac37caeso27255ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:16:10 -0700 (PDT)
+	s=arc-20240116; t=1742595411; c=relaxed/simple;
+	bh=McojSxNO9gqGGYuPqlD7OTJKX7Y9wTjkkf5Vw+TLAxU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fMNZCkiQRv1CMH2Mdexv9TqmwLyuvfMUtBrsYyzoKDRduGoldgG5eT3M2OkjZ3WGxMAziYghC1YO4OQuacnMFVbNSHw0RIKQTrSLDKahtIsdv0J2SM/rKdhUZWTzgOht6tzMGswPWDmVdNzvvpvJ1xRxAJ1+kE9U1k9DXl83Sjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzwUuilQ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2241053582dso17756425ad.1;
+        Fri, 21 Mar 2025 15:16:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742595370; x=1743200170; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+KM/OqzMgVHyAstUImFrYrGve1V5xobanjZKdFyJS9w=;
-        b=k9QaZ2IEHPEZY5y/aOSkfFUXsm0QLdx4ngo8Rd2qKM0/vjWIZFwDp3J+bMRNrGnqqQ
-         wYtDm1aPW9NkgxH3Gc/mYv08vEL7Sb/b+qnMdDcjIbhqsNyusfcqeKVZZj3nL2Q4k36/
-         fKntHDbZ6AXjF/t2TK6rSCiXwsGTXkBjUfR+MZ1uUZ9PVNFoJciPgX4iDSwFjHKfz+5g
-         QGLmRR4bPTUQhJdoz1oBNpYbJ50bNNAEYjKOQhTS+d6dppdPZOIXY0j8HTGW2poytBt9
-         Bt7/NL7iwcBZXVoXnx65s1OikkdWCbbFGYmYPXy5atrYI5l/ohbF59EXL595VDcf75Ym
-         KdSQ==
+        d=gmail.com; s=20230601; t=1742595409; x=1743200209; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rO6kZlYBodR+iNzCw38n1gX1Mhj3Y52+rByQ+vHqnPg=;
+        b=bzwUuilQFB4bvQWWvFKIzadn2SjN4/Y2kGUZOQSPbjTSiGz/nLM4rpJXxhlceavvI1
+         wEGJBCc3+PN5FVkW51MOG6Z6iSr6jppYBO6i7tBeP5S8f0odVYcaQLbOvB4I3LZBES2e
+         6x0t4XhV4+5J/FT2czEftgTtfKuIyJY2qaAfZf2iE4EV6zIHDdCqihVh6CbO+/S9SFIX
+         +rxtwffoFUfotz1eNNMft02Gt0fIFu2wpVZx1WNHTexvLMXnTpzxBNI6rK/hXithdHL3
+         r3VZsaJRQvg738U2v3U8I2l5792r/tWwFJ4ZO3X0lbhqeVl1RJQg3iIJY7eBnJX7onUN
+         cH9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742595370; x=1743200170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KM/OqzMgVHyAstUImFrYrGve1V5xobanjZKdFyJS9w=;
-        b=NKrYt90j269FJTsxUKs86h58SV12371KLT7/kwIech2U7vkatYPVf+wgpEWeY7B7QF
-         brQa0+sqiFSWL8nOKok515VTc98lC/oNWKhGVv9jaQ4XZ5qq3CUn6MEA9/62G5RwBGns
-         dgWLNOHOI/Z4gyPvFcgTe2FoD4FwnNNVgVybTT9u7oNMmFw4BPt8F++tMPeUmI0v/0M/
-         74aCr0yN9YOTphjq63nAMEF9SGv5wR+iial5YratE6GbXahOAk57gf03XQzzgTu/e1Je
-         fyrY9FUXb8SiZEA9RmuNKkMR83s3rCLvWkyvtFqWIfKy6Us/BFZzi8gzSSiTja0lGjbh
-         R+nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUb4fnBPCfa4wmzkf7kVsBpyz0EL+ZkPn1DvI+hH8WrC5H7e1jt/Rld8wE6rkizlqDgb95Qd91Z/6+xzm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmNzGcwTSfN1Bcz5xI8xmSg6fnQloJH0awN0sXJNJgtMhoK/XJ
-	p6PQqTWnwsDHWJ6g0ieUQO6Nb79vjmAsZki/b0h2cvGg8bn1Wxoq6c7n3poy/mpAR5XnGuXBEBc
-	oLFUiKvbSviXfJfny6K51P8rEr8MKrLJVWfDX
-X-Gm-Gg: ASbGncsQSWTdg27YeOY5/dxD+Ny4ZtilnKa18HJARa0FssVCq4r3VvXHI024AYhVkFo
-	GTBiHgXy/mpLXIrGtBU9fSlfXMKwFASmoXgJgOz3oVdu1lEaN8CufvDTHYCKiD5Qvy99bT+kJQr
-	+3rmf3fvFp/XeSKarSZs7F2nuAoiO5HA1SBhG27/V2vgx+LXwAeMCEitI=
-X-Google-Smtp-Source: AGHT+IFB6PSWq8585YC3bfe4eP32Yir6EYNkFzXJi8bOkq8iwWtXfNlhA5baw0lPh6UvS7ldsM4iZisORLPef1bKOlA=
-X-Received: by 2002:a17:903:19e4:b0:215:86bf:7e46 with SMTP id
- d9443c01a7336-22799f6adb8mr317095ad.7.1742595369962; Fri, 21 Mar 2025
- 15:16:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742595409; x=1743200209;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rO6kZlYBodR+iNzCw38n1gX1Mhj3Y52+rByQ+vHqnPg=;
+        b=XNzQLPUrcBHqgmNUvs8ZUyF1EyW08wXXrvILXExZh6mdc5rxsJnx8hq2jXlj7HC2+l
+         84JQKuJ1PtIBxzBenI6I9PJJblITLRCbyEE42osNXQRr48c8uzAatl+yyZwlKp1p0ctB
+         OzRTn/unZa4GtHf9MrgC513ODlnwNnde+LwrLV4W/oCBp7u9hjI4i4SZfa51u7AM5wu6
+         FygKBgmmeQOP11fqFWUS5RxM+0+t56PB8TBtfrHnR/cqMYuTwlTP4wGNDXlgQlwiGIaX
+         jPTeH3hvVo5MLjYT0nVInJeCsjgIB1CXNWec5PEBQzeLVdqPOYlEtOi7KIas7+RZj7ob
+         KyXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT5WHLRU98+dVTbmBPANEYhNftMahN6pRhvt4YznTjXqBWKz2Zel1nzhkR/r90Sg+EQQG4EkXBu73IqoB7@vger.kernel.org, AJvYcCUyGl7wAXqYUTX9NOkwx0o30IVDpCL+zIW7esHtWsUYWV/5G85uASGCLU5EzdNs6z66J1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvycsUCfbPs4sQAZcq6Yoz+4WhOSrU7ycZWQ5iEyqz0MNifP2x
+	TBdfFbmizADJwHAlhYSQ+cXzF1IDsraE8P5OFwfFTmufZkuPgu1e
+X-Gm-Gg: ASbGncu5gehyZBhL0UJ5QyTKzOjUcCCT36y3g5aW9l0i4p8GudJvNKKhUjJ0RAVxe9j
+	cUPPY/EZKR3iRO93hARyGtxHEgNdO5VZetRrg0BxMDoRczGS47cGIMZNSAXFxa3kBDPlvKOzMOM
+	+dmhVuQ8KeSEaVw0/87XLYK4NbNjtY3FNpkmzZCaPzt3TSBWh6kXgbM4oznmsZz20Ka2mjsHW1+
+	T+XZ5AiYru03XjmTr/6n5ZNcmTYIYlOnt0lYPknsc5IGiueGrnlZIH32tlOQvUWEXQdtDOo6e6v
+	XfLEeDpDcTlq3KzASZrWlsIy7dXtRAUsG037TEqrfql1Ca9oJP4=
+X-Google-Smtp-Source: AGHT+IG+7fbfZqhtDkRho2xcuIKFy2kY62DiTesFWRmKF/XNZF1b8e5xATfB1scEeKvKEHs7REYlDg==
+X-Received: by 2002:a17:903:2ca:b0:216:3c36:69a7 with SMTP id d9443c01a7336-22780e2fdbfmr82432295ad.45.1742595408938;
+        Fri, 21 Mar 2025 15:16:48 -0700 (PDT)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f45029sm23147485ad.53.2025.03.21.15.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 15:16:48 -0700 (PDT)
+Message-ID: <44d4adae6a5398dcd97afbe2c922f8c9a71598f2.camel@gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/2] bpf: Fix out-of-bounds read in
+ check_atomic_load/store()
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Kohei Enju <enjuk@amazon.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,  John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau	 <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Peilin Ye
+ <yepeilin@google.com>, Ilya Leoshkevich <iii@linux.ibm.com>, Kuniyuki
+ Iwashima	 <kuniyu@amazon.com>, kohei.enju@gmail.com, 
+	syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
+Date: Fri, 21 Mar 2025 15:16:43 -0700
+In-Reply-To: <20250321110010.95217-5-enjuk@amazon.com>
+References: <20250321110010.95217-4-enjuk@amazon.com>
+	 <20250321110010.95217-5-enjuk@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308214045.1160445-1-almasrymina@google.com>
- <20250308214045.1160445-4-almasrymina@google.com> <8fb48d36-f5ce-40ce-bb05-b4c342da8b4f@redhat.com>
-In-Reply-To: <8fb48d36-f5ce-40ce-bb05-b4c342da8b4f@redhat.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 21 Mar 2025 15:15:57 -0700
-X-Gm-Features: AQ5f1JqTqeE1hEQJimNEPqykmM1XOpBm4kOaF6t5YahF7_VNclL_518XjsZaXEs
-Message-ID: <CAHS8izNu6biiVg==pri8PeDVP9unZthGrwSj4fGr84o61sLFgg@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 3/9] net: devmem: TCP tx netlink api
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 1:39=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On 3/8/25 10:40 PM, Mina Almasry wrote:
-> > From: Stanislav Fomichev <sdf@fomichev.me>
-> >
-> > Add bind-tx netlink call to attach dmabuf for TX; queue is not
-> > required, only ifindex and dmabuf fd for attachment.
-> >
-> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> >
-> > ---
-> >
-> > v3:
-> > - Fix ynl-regen.sh error (Simon).
-> >
-> > ---
-> >  Documentation/netlink/specs/netdev.yaml | 12 ++++++++++++
-> >  include/uapi/linux/netdev.h             |  1 +
-> >  net/core/netdev-genl-gen.c              | 13 +++++++++++++
-> >  net/core/netdev-genl-gen.h              |  1 +
-> >  net/core/netdev-genl.c                  |  6 ++++++
-> >  tools/include/uapi/linux/netdev.h       |  1 +
-> >  6 files changed, 34 insertions(+)
-> >
-> > diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/ne=
-tlink/specs/netdev.yaml
-> > index 36f1152bfac3..e560b05eb528 100644
-> > --- a/Documentation/netlink/specs/netdev.yaml
-> > +++ b/Documentation/netlink/specs/netdev.yaml
-> > @@ -743,6 +743,18 @@ operations:
-> >              - defer-hard-irqs
-> >              - gro-flush-timeout
-> >              - irq-suspend-timeout
-> > +    -
-> > +      name: bind-tx
-> > +      doc: Bind dmabuf to netdev for TX
-> > +      attribute-set: dmabuf
-> > +      do:
-> > +        request:
-> > +          attributes:
-> > +            - ifindex
-> > +            - fd
-> > +        reply:
-> > +          attributes:
-> > +            - id
-> >
-> >  kernel-family:
-> >    headers: [ "linux/list.h"]
-> > diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-> > index 7600bf62dbdf..7eb9571786b8 100644
-> > --- a/include/uapi/linux/netdev.h
-> > +++ b/include/uapi/linux/netdev.h
-> > @@ -219,6 +219,7 @@ enum {
-> >       NETDEV_CMD_QSTATS_GET,
-> >       NETDEV_CMD_BIND_RX,
-> >       NETDEV_CMD_NAPI_SET,
-> > +     NETDEV_CMD_BIND_TX,
-> >
-> >       __NETDEV_CMD_MAX,
-> >       NETDEV_CMD_MAX =3D (__NETDEV_CMD_MAX - 1)
-> > diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
-> > index 996ac6a449eb..f27608d6301c 100644
-> > --- a/net/core/netdev-genl-gen.c
-> > +++ b/net/core/netdev-genl-gen.c
-> > @@ -99,6 +99,12 @@ static const struct nla_policy netdev_napi_set_nl_po=
-licy[NETDEV_A_NAPI_IRQ_SUSPE
-> >       [NETDEV_A_NAPI_IRQ_SUSPEND_TIMEOUT] =3D { .type =3D NLA_UINT, },
-> >  };
-> >
-> > +/* NETDEV_CMD_BIND_TX - do */
-> > +static const struct nla_policy netdev_bind_tx_nl_policy[NETDEV_A_DMABU=
-F_FD + 1] =3D {
-> > +     [NETDEV_A_DMABUF_IFINDEX] =3D NLA_POLICY_MIN(NLA_U32, 1),
-> > +     [NETDEV_A_DMABUF_FD] =3D { .type =3D NLA_U32, },
-> > +};
-> > +
-> >  /* Ops table for netdev */
-> >  static const struct genl_split_ops netdev_nl_ops[] =3D {
-> >       {
-> > @@ -190,6 +196,13 @@ static const struct genl_split_ops netdev_nl_ops[]=
- =3D {
-> >               .maxattr        =3D NETDEV_A_NAPI_IRQ_SUSPEND_TIMEOUT,
-> >               .flags          =3D GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-> >       },
-> > +     {
-> > +             .cmd            =3D NETDEV_CMD_BIND_TX,
-> > +             .doit           =3D netdev_nl_bind_tx_doit,
-> > +             .policy         =3D netdev_bind_tx_nl_policy,
-> > +             .maxattr        =3D NETDEV_A_DMABUF_FD,
-> > +             .flags          =3D GENL_CMD_CAP_DO,
-> > +     },
-> >  };
-> >
-> >  static const struct genl_multicast_group netdev_nl_mcgrps[] =3D {
-> > diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
-> > index e09dd7539ff2..c1fed66e92b9 100644
-> > --- a/net/core/netdev-genl-gen.h
-> > +++ b/net/core/netdev-genl-gen.h
-> > @@ -34,6 +34,7 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff *skb,
-> >                               struct netlink_callback *cb);
-> >  int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info=
-);
-> >  int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *inf=
-o);
-> > +int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info=
-);
-> >
-> >  enum {
-> >       NETDEV_NLGRP_MGMT,
-> > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-> > index 2b774183d31c..6e5f2de4d947 100644
-> > --- a/net/core/netdev-genl.c
-> > +++ b/net/core/netdev-genl.c
-> > @@ -931,6 +931,12 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, st=
-ruct genl_info *info)
-> >       return err;
-> >  }
-> >
-> > +/* stub */
-> > +int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info=
-)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> >  void netdev_nl_sock_priv_init(struct list_head *priv)
-> >  {
-> >       INIT_LIST_HEAD(priv);
->
-> I'm sorry, but this chunck does not apply cleanly anymore.
->
-> Please rebase.
->
-> Disclaimer: unfortunately I must note that due to the long backlog
-> pending and the upcoming merge window, I'm unsure I'll be able to
-> process the next revision before the net-next closing.
->
+On Fri, 2025-03-21 at 19:59 +0900, Kohei Enju wrote:
+> syzbot reported the following splat [0].
+>=20
+> In check_atomic_load/store(), register validity is not checked before
+> atomic_ptr_type_ok(). This causes the out-of-bounds read in is_ctx_reg()
+> called from atomic_ptr_type_ok() when the register number is MAX_BPF_REG
+> or greater.
+>=20
+> Let's call check_load_mem()/check_store_reg() before atomic_ptr_type_ok()
+> to avoid the OOB read.
 
-Thanks Paolo. I have also been under the weather the last couple of
-days so I haven't even been able to repost. I guess I'll repost after
-the merge window if netdev closes today.
+[...]
 
---
-Thanks,
-Mina
+>  Memory state around the buggy address:
+>   ffff888141b0d580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>   ffff888141b0d600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  >ffff888141b0d680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>                           ^
+>   ffff888141b0d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>   ffff888141b0d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>=20
+> Reported-by: syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Da5964227adc0f904549c
+> Tested-by: syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
+> Fixes: e24bbad29a8d ("bpf: Introduce load-acquire and store-release instr=
+uctions")
+> Fixes: ff3afe5da998 ("selftests/bpf: Add selftests for load-acquire and s=
+tore-release instructions")
+> Signed-off-by: Kohei Enju <enjuk@amazon.com>
+> ---
+
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+
+[...]
+
 
