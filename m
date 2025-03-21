@@ -1,125 +1,83 @@
-Return-Path: <linux-kernel+bounces-570677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FDCA6B35E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:37:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE10A6B364
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEEAA189EB8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B105C3A9607
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D4C1E3DE8;
-	Fri, 21 Mar 2025 03:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5B01E8824;
+	Fri, 21 Mar 2025 03:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="uwFpPbx4"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6XuhqVy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FA22AD0C;
-	Fri, 21 Mar 2025 03:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2C21E7C19;
+	Fri, 21 Mar 2025 03:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742528241; cv=none; b=fNGVCjqgx4UGJNSbvPkwmQvgJ85xqEjOCesAMxyBn6kQcHV6gyBDr+mzjMBbAvkAo9Fdl6uMENWqXpOwVf/ppUfMGt6qJehfndVmT1MeSGDS97DT0V4pE4ELB6tMsvxK8rP0CjAcmXwt5d++W7CTLdqTNbblW9sVunafXJgF8xs=
+	t=1742528243; cv=none; b=RFvKmw42eOFy82+42tvTuKxwNEk+7BMsoRTsC+lxl5683c0cCWLK7JbVp6Eqzh1ltnynPMxLeN9fhWnX4VsnXWJO3uwRbsio7+xe84k5Pu6Oo3KDRV/zwxpmpxMhyAi8wdM023xSLnZ+LBigmKIhY6hOocxljAun/4tU4B17EFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742528241; c=relaxed/simple;
-	bh=7DsFfDmL7gdTc7G/SCSeYR6NfLhG6ZKlecesGG71VOU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=jnFeIQ3aDjOJu8d3ycVNXHVB4AH48hJMBUYqTm+4QMnoaX8P/VtmHeDZ9ye4urlEx9F8kLYDwDdkbVIZiJc/qDF6m9J4vzJ1/wTfebpuygPWNUPIEeVuI7vNIyFyQA8bZtMqip8C4faj8p0BRMdwpa1wpCUPKYLy+YdFD8HjdRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=uwFpPbx4; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1742528243; c=relaxed/simple;
+	bh=aL28XEpJktFyzSrtGRAjtcrEGubi+gEbKi8XefWZizM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRc+iStLGfvgjHj1KnU4cOnAB9fHF1rZVLlkE3FpRNDD6BBZtOxthqGFBiREuAlwhHmiEheqSTzbOXdvNYbsDUew/2hhW4ibsYHLmipZmks5fNyg5knWxj1A9zq//HLut8iBxFMJptA0dbzHfJHra21OpW8+D4yLNQZa91DosTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6XuhqVy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C3EC4CEDD;
+	Fri, 21 Mar 2025 03:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742528242;
+	bh=aL28XEpJktFyzSrtGRAjtcrEGubi+gEbKi8XefWZizM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t6XuhqVyWbogmwwm749xUsJgPCnAqqSeCGZTosFqhBb1Xe/PFfgZLonAAxLGXYM2h
+	 H5Rjl+jZ+/nUhpAcyb+NZ3oZa+MJTxsW9iUFlD1i+O9EsR5L+oU0GujSqvdi5uPkrH
+	 NR5NNeo7jJmgJyvlx+SP0oVtTV3I4MXd52BPL0GeYVJC4yST0Ie41FpzM8R9TM50UP
+	 6R0RliihTl36P+7U+ey9yJeNLMJSgXvTkqGnQFHTSzVzTxurGNRx2Vx1Ei5SBQ3zV6
+	 HfkpAUO/Iox/kqVD+SqJQdCciahcO9jLLNHKy8PNLdy25hshCxVkg0yldLmNOb2Ub9
+	 neF2SocRn9Dvw==
+Date: Thu, 20 Mar 2025 20:37:18 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ignacio Encinas <ignacio@iencinas.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Arnd Bergmann <arnd@arndb.de>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] riscv: introduce asm/swab.h
+Message-ID: <20250321033718.GA98513@sol.localdomain>
+References: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
+ <20250319-riscv-swab-v2-2-d53b6d6ab915@iencinas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1742528236;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r0RO79xWz5uplYpgJ0aagZslkAQuZeU7KWZBSxdHL84=;
-	b=uwFpPbx4k0pVxvvfDCpYP9Lzo0PEsFw0hCtQgOZaLCL2HzQkhNv8Dl5BtayT85WnavzCDg
-	oYm392g5GozjLeSKyGuv+x+YJ1O2bRm+jffBPguQDC1GNYy/JeHAlS4tqYQIVyoo8xQ473
-	nszaAOusS6l6X+z8GmM/Thqd0f2owCeK3h/zCW0WiM4W1KFeGBMB6LzrhR/NYAXX6AbgpY
-	cFpjpnxUwAdHGQlMBQx1DCwV8Nk6Bd2hwSB6RaKGHNH70zGc5kvdqJsGh/2QfKfJ/wNxu4
-	K+Ult3oMOtD/ysjULEgMXyYAWf3QHRDVrPPQOyEe9DrhbMCzOHnOoUN8h30B+Q==
-Date: Fri, 21 Mar 2025 04:37:16 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Quentin Schulz <quentin.schulz@cherry.de>, Alexey Charkov
- <alchark@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, Diederik de Haas
- <didi.debian@cknow.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Kever Yang <kever.yang@rock-chips.com>
-Subject: Re: [PATCH v5 7/8] arm64: dts: rockchip: Add OPP data for CPU cores
- on RK3588j
-In-Reply-To: <80c7d9fcdd270df2c61fbd61eec44d70@manjaro.org>
-References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
- <a56b59a21dc3c21192fe45197eee4865@manjaro.org>
- <2cf3889741f84584d8f23a4407fed08e@manjaro.org> <3271211.5fSG56mABF@phil>
- <80c7d9fcdd270df2c61fbd61eec44d70@manjaro.org>
-Message-ID: <4432e7f5dd9cb75584fb36e1f52497aa@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319-riscv-swab-v2-2-d53b6d6ab915@iencinas.com>
 
-Hello all,
+On Wed, Mar 19, 2025 at 10:09:46PM +0100, Ignacio Encinas wrote:
+> +#define ARCH_SWAB(size) \
+> +static __always_inline unsigned long __arch_swab##size(__u##size value) \
+> +{									\
+> +	unsigned long x = value;					\
+> +									\
+> +	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,			\
+> +			     RISCV_ISA_EXT_ZBB, 1)			\
+> +			     :::: legacy);				\
 
-On 2025-03-13 20:43, Dragan Simic wrote:
-> On 2025-03-13 20:00, Heiko Stuebner wrote:
->> Am Donnerstag, 13. März 2025, 11:42:17 MEZ schrieb Dragan Simic:
->>> On 2025-03-12 11:34, Dragan Simic wrote:
->>> Just as a note, everything above (and even a bit more) is confirmed
->>> and clearly described in the publicly available RK3588J datasheet,
->>> which I'll provide as a reference in my upcoming patch.
->> 
->> so just to reiterate my stance, in mainline I really only want 
->> frequencies
->> that are not possibly influencing the lifetime of the chip.
->> 
->> It doesn't even matter about the variant we're talking about being
->> industrial :-) . When someone is using mainline I want them to be
->> reasonable assured that we don't have stuff in here that may affect
->> the lifetime of their board.
->> 
->> All gambling on performance for possible lifetime reduction people
->> can do on their own ... for example with a dt-overlay ;-) .
->> 
->> So TL;DR, I agree to both Quentin and Dragan
-> 
-> Thanks!  Indeed, we must provide only the OPPs that are declared
-> by the manufacturer to be always safe for the particular SoC
-> variant.  The RK3588J is actually a good example, because it, in
-> theory, can run safely at higher OPPs as well, but only when not
-> enjoying the extended temperature range that the RK3588J, as an
-> SoC variant targeted at industrial applications, is specifically
-> made (or binned) for.
-> 
-> Thus, we must support only the RK3588J OPPs that are declared to
-> be safe throughout the entire extended temperature range, while
-> anyone who actually can assure that their RK3588J-based board is
-> never going to run within the extended temperature range, probably
-> may safely apply an overlay that adds the higher OPPs.  As we
-> obviously can't know what will be the temperature conditions, we
-> may provide only the lower OPPs that are always safe.
-> 
-> I'll finish the patch and send it over tomorrow or so...  I still
-> need to go through the changes once again, to make 100% sure I've
-> missed nothing, and that I haven't included anything extraneous. :)
+Is there a reason to use this instead of
+riscv_has_extension_likely(RISCV_ISA_EXT_ZBB) which seems to do the same thing,
+including using a static branch?
 
-For future reference and for anyone interested, below is the link
-to the above-mentioned patch.
-
-https://lore.kernel.org/linux-rockchip/f929da061de35925ea591c969f985430e23c4a7e.1742526811.git.dsimic@manjaro.org/T/#u
+- Eric
 
