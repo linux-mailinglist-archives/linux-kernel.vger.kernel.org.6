@@ -1,115 +1,169 @@
-Return-Path: <linux-kernel+bounces-571868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3217BA6C366
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:36:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A2BA6C369
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02B2A3B8CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21BCF189C3EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B3C22FE17;
-	Fri, 21 Mar 2025 19:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CE922FF35;
+	Fri, 21 Mar 2025 19:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="c/PbSQNi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4461D54CF;
-	Fri, 21 Mar 2025 19:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UGh6s/Hq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3EB1D54CF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742585766; cv=none; b=bYoEroNU1R9hkx1Y/u4M/rjMzF9vI4uvA3SpC85TC/2W1QSDa0WqfD9gIVX4L8w/m2qX775o0afHshUDVFTySS0Go9y7ULVIj7UMaYGEQI3YoIetiFIxvleAPTAXS0OTh8GxOGDiBjeEGFMf5fBOoLzjaxYtE+96Os9Ix6hJIeQ=
+	t=1742585831; cv=none; b=JnP/tHmDC/Q/taMjW4t1bvlRJ7Dbc9ejcWKyvHOnxEhTS2iHXVgq150UhI2tweYgIJpPLzQt7XRNbZI/bog296OMG7YuYpTB85mVkhvCJZnk4GStPlAcLaFAVnouGZ0G9xeHcw6+LC1jt9eX+xw0x4Y1pvvwJOzYO03ASr6OWV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742585766; c=relaxed/simple;
-	bh=C++Y8u3ya02o1vKzmoM0dnDY7A2chUdCqKyyJh4SfA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RtkCq3HF+pKugQTT5vIi/g+ECi8JWS2tckIqJaud+hx8RT20E9sCj48qPPRauRej/tAsNYMFicn+z9s8a8IzytnkSGBt5WFssoO4BFqDCsovdUxHl77GpbYgR7xy/ThscpktrYBASF7yf04+iPpJiAWLvtxgU/spiEtue8HJFWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=c/PbSQNi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9E7672025389;
-	Fri, 21 Mar 2025 12:36:02 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9E7672025389
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742585763;
-	bh=i3HSKurM5BztT+SIxfmwMikTCwCikJk6+44/qfduWSo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c/PbSQNi6xW7xt4qq/YZKnryb+JE1EPhc6+zDpfT6yk2I5a8iVpVIWvCazf9pjqjI
-	 qTi/0ZJr06K3vQ+l7bHQ90m7I2zIF+LEXr+wHsFQ3kvpMuVPaUjubkaBXnXnxHNbFc
-	 z5liRIDSpGRGa0jRI78+VxZ292ebAiKWTRi2KogM=
-Message-ID: <96f2c859-790a-4282-9eef-9863ffb42ee1@linux.microsoft.com>
-Date: Fri, 21 Mar 2025 12:35:57 -0700
+	s=arc-20240116; t=1742585831; c=relaxed/simple;
+	bh=C5dSvFClHUK1mf991gzXd1Vn4vGKVld6B02AmFGbYzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MeQrtzKtbH5LaFiURHrLSxmGeIk97mzMFwjVPS5+QEEEJOukg48qVdVnaxFwDKKShsMpDbXp5Ug3YUqdsJttl+KwyhXIwVBpbX6nAHdnF7wPI9gLFY2ucDZ2iPN0upmm/3xVwa8wyvIY+LY8HJlrxpSRSvESwy7LmpkKHvZAISM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UGh6s/Hq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742585828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/QQC0oRuX+H1qRng4JbQdwL2Ntm0XtGldJhk0GkoAWw=;
+	b=UGh6s/Hq8a7XLa8AlvDj/Z0OS9uA7arP+Us7HBLpknwCdtvp78cb8N4SZpFGL59oCo+Hts
+	z5ImRumD0YOCacBwmi/a9tUUX5tNiHfG7LrFu6Px2fvIrQK4vnLOtun684KrXZU3JiEPrD
+	OZRLEWBLZ1W7HP0S55bnYh+AhJ9y1jw=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-7FvCAgFrNiafuXBJB8YtHg-1; Fri, 21 Mar 2025 15:37:05 -0400
+X-MC-Unique: 7FvCAgFrNiafuXBJB8YtHg-1
+X-Mimecast-MFC-AGG-ID: 7FvCAgFrNiafuXBJB8YtHg_1742585825
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2242f3fd213so34284175ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:37:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742585825; x=1743190625;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/QQC0oRuX+H1qRng4JbQdwL2Ntm0XtGldJhk0GkoAWw=;
+        b=Zel5cBEKYsPvN751eZkzQuWKWGobPIv7JPJfPbg3BvNamwmcmKKHhUdXR2qY0Erriq
+         bLtauIcV7WNdpBswMPyp8dvhJxKFPEwITNmb9eTch8+oyda2WhFDvn1nEz1yApV7b57I
+         J3cTMK6jaEANks9vZnKHFJ9i4Oks/8jwP8ypdwLJBpFjYcYMn9aPtJTii8gkkvhiWdnD
+         K93Y4+r04HZFtCjK3tt/wE4V+HA8FvsHuFE0aoYEZM4pAQyCrJDXi5ICBTLhMu8x+z8J
+         to1KCuPQWgyZI6Yy9iMT8lmawOLTJzSoAGgUAqhQgjzjcJ/ZjJAWjYGujaXRHq2141ze
+         3i6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVdH67UXw+TyYhT3/9NVAcKrcW2S0JXn70XIVoUbyklto+1H6MxauUwWH8t0eBDGRo0nCcJAphagpkogTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjXz/M5q3va2BhfWHG1Q3DMlK2uHl/H7EjzaIZFaAz+pYYrt00
+	4vTE7K9Vju3SEsL6PSLUEL+vb9W/+0y+DQCMxoPWQNM4p0fL9BS6slPXvzKSm0RRO5HPDaGeEzo
+	PorI1aUkmz9Llsn8XqR94PkqQU0D7fRQduh/Zj7TvfGA+F/2bpLIF4fYvURnREQ==
+X-Gm-Gg: ASbGncscQkeQ3mc+dqxhLJ8OS5XPa/+PBxstJx8Uq4xMhq5ua9PBWhUlvxCZPX8pkS+
+	hZfQxDdoMlGuE/xkzx5JyfGeCfFasJE1Kh3H/LwLvoYD8QbXxQK+ZBHXXXcx81SHcdKb0mBLVbh
+	rs+bNIRtUwMKwMvmo9HGci6BvFbQy4D1dLcJdYy2fr95Hauemsj414y/BeCkXtK+ucVWshbKZWr
+	Y0gl52Mn98ws4J1pD7psClR3N6neuk/W+n8KxkGbcdj4KNLS11XaUx2LdUb2bCcP3YbGiHebivV
+	bVNzl6Cb
+X-Received: by 2002:a05:6a00:398d:b0:736:b402:533a with SMTP id d2e1a72fcca58-7390593b622mr6060483b3a.1.1742585824589;
+        Fri, 21 Mar 2025 12:37:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEowWUXagoZIoweCvQRfmtjqA/SNMQoj6gAyfhHZS9vDb6q+jhLEaKJ62zuuxrIuV9JfDVSgQ==
+X-Received: by 2002:a05:6a00:398d:b0:736:b402:533a with SMTP id d2e1a72fcca58-7390593b622mr6060440b3a.1.1742585823983;
+        Fri, 21 Mar 2025 12:37:03 -0700 (PDT)
+Received: from redhat.com ([195.133.138.172])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fd5c72sm2500514b3a.59.2025.03.21.12.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 12:37:03 -0700 (PDT)
+Date: Fri, 21 Mar 2025 15:36:58 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Cindy Lu <lulu@redhat.com>
+Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 0/8] vhost: Add support of kthread API
+Message-ID: <20250321153611-mutt-send-email-mst@kernel.org>
+References: <20250302143259.1221569-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] x86/hyperv: Use hv_hvcall_*() to set up hypercall
- arguments -- part 2
-To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
-Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20250313061911.2491-1-mhklinux@outlook.com>
- <20250313061911.2491-4-mhklinux@outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250313061911.2491-4-mhklinux@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250302143259.1221569-1-lulu@redhat.com>
 
-On 3/12/2025 11:19 PM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
+On Sun, Mar 02, 2025 at 10:32:02PM +0800, Cindy Lu wrote:
+> In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),   
+> the vhost now uses vhost_task and operates as a child of the   
+> owner thread. This aligns with containerization principles.   
+> However, this change has caused confusion for some legacy   
+> userspace applications. Therefore, we are reintroducing   
+> support for the kthread API. 
 > 
-> Update hypercall call sites to use the new hv_hvcall_*() functions
-> to set up hypercall arguments. Since these functions zero the
-> fixed portion of input memory, remove now redundant calls to memset()
-> and explicit zero'ing of input fields.
-> 
-> For hv_mark_gpa_visibility(), use the computed batch_size instead
-> of HV_MAX_MODIFY_GPA_REP_COUNT. Also update the associated gpa_page_list[]
-> field to have zero size, which is more consistent with other array
-> arguments to hypercalls. Due to the interaction with the calling
-> hv_vtom_set_host_visibility(), HV_MAX_MODIFY_GPA_REP_COUNT cannot be
-> completely eliminated without some further restructuring, but that's
-> for another patch set.
-> 
-> Similarly, for the nested flush functions, update the gpa_list[] to
-> have zero size. Again, separate restructuring would be required to
-> completely eliminate the need for HV_MAX_FLUSH_REP_COUNT.
-> 
-> Finally, hyperv_flush_tlb_others_ex() requires special handling
-> because the input consists of two arrays -- one for the hv_vp_set and
-> another for the gva list. The batch_size computed by hv_hvcall_in_array()
-> is adjusted to account for the number of entries in the hv_vp_set.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
-> 
-> Notes:
->     Changes in v2:
->     * In hyperv_flush_tlb_others_ex(), added check of the adjusted
->       max_gvas to make sure it doesn't go to zero or negative, which would
->       happen if there is insufficient space to hold the hv_vpset and have
->       at least one entry in the gva list. Since an hv_vpset currently
->       represents a maximum of 4096 CPUs, the hv_vpset size does not exceed
->       512 bytes and there should always be sufficent space. But do the
->       check just in case something changes. [Nuno Das Neves]
-> 
->  arch/x86/hyperv/ivm.c       | 18 +++++++++---------
->  arch/x86/hyperv/mmu.c       | 19 +++++--------------
->  arch/x86/hyperv/nested.c    | 14 +++++---------
->  include/hyperv/hvgdk_mini.h |  4 ++--
->  4 files changed, 21 insertions(+), 34 deletions(-)
-> 
+> In this series, a new UAPI is implemented to allow   
+> userspace applications to configure their thread mode.
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+This seems to be on top of an old tree.
+Can you rebase pls?
+
+> Changelog v2:
+>  1. Change the module_param's name to enforce_inherit_owner, and the default value is true.
+>  2. Change the UAPI's name to VHOST_SET_INHERIT_FROM_OWNER.
+> 
+> Changelog v3:
+>  1. Change the module_param's name to inherit_owner_default, and the default value is true.
+>  2. Add a structure for task function; the worker will select a different mode based on the value inherit_owner.
+>  3. device will have their own inherit_owner in struct vhost_dev
+>  4. Address other comments
+> 
+> Changelog v4:
+>  1. remove the module_param, only keep the UAPI
+>  2. remove the structure for task function; change to use the function pointer in vhost_worker
+>  3. fix the issue in vhost_worker_create and vhost_dev_ioctl
+>  4. Address other comments
+> 
+> Changelog v5:
+>  1. Change wakeup and stop function pointers in struct vhost_worker to void.
+>  2. merging patches 4, 5, 6 in a single patch
+>  3. Fix spelling issues and address other comments.
+> 
+> Changelog v6:
+>  1. move the check of VHOST_NEW_WORKER from vhost_scsi to vhost
+>  2. Change the ioctl name VHOST_SET_INHERIT_FROM_OWNER to VHOST_FORK_FROM_OWNER
+>  3. reuse the function __vhost_worker_flush
+>  4. use a ops sturct to support worker relates function
+>  5. reset the value of inherit_owner in vhost_dev_reset_owner s.
+>  
+> Changelog v7: 
+>  1. add a KConfig knob to disable legacy app support
+>  2. Split the changes into two patches to separately introduce the ops and add kthread support.
+>  3. Utilized INX_MAX to avoid modifications in __vhost_worker_flush
+>  4. Rebased on the latest kernel
+>  5. Address other comments
+>   
+> Tested with QEMU with kthread mode/task mode/kthread+task mode
+> 
+> Cindy Lu (8):
+>   vhost: Add a new parameter in vhost_dev to allow user select kthread
+>   vhost: Reintroduce vhost_worker to support kthread
+>   vhost: Add the cgroup related function
+>   vhost: Introduce vhost_worker_ops in vhost_worker
+>   vhost: Reintroduce kthread mode support in vhost
+>   vhost: uapi to control task mode (owner vs kthread)
+>   vhost: Add check for inherit_owner status
+>   vhost: Add a KConfig knob to enable IOCTL VHOST_FORK_FROM_OWNER
+> 
+>  drivers/vhost/Kconfig      |  15 +++
+>  drivers/vhost/vhost.c      | 227 +++++++++++++++++++++++++++++++++----
+>  drivers/vhost/vhost.h      |  21 ++++
+>  include/uapi/linux/vhost.h |  15 +++
+>  4 files changed, 259 insertions(+), 19 deletions(-)
+> 
+> -- 
+> 2.45.0
+
 
