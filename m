@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-571682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A5A6C0A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:55:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C3DA6C0AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:56:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577AB1884593
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:54:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 716267A856C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B55722D4DA;
-	Fri, 21 Mar 2025 16:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4725722DF8A;
+	Fri, 21 Mar 2025 16:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="LFNdauyj"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOBvVxl6"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D533F6;
-	Fri, 21 Mar 2025 16:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0410522D7A3;
+	Fri, 21 Mar 2025 16:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742576025; cv=none; b=CT0y/3qafkt/boTkaw1Tgvz7+PZHEUOlGPzjFHdtvEKmqlrw1I3njyFGoKIcPJLK/qd01SjCVYSwHBGbWwaMztwIj1n0u/HLND7Qdah+6sjM1lZCaqvVPqyzQmRKD2g2AdzppnHQMBilXN3TN2LXIb4NND7884ilrcYPijAjmJo=
+	t=1742576056; cv=none; b=Tav6eigutfMppbmedTwKpVi9S0jNOHUrECWBNWvPYAj8AyCrH9/crDo4kLuSI2XSo/CX5s4DxpK1eo32WPZ4JI4KDMCenAB5ghN/Y1P1113gd8Djdm+riHqBvO/gv+MzRdzprOunmANCEq8y4N2CxER25/vmPdcwAesyVRXOZWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742576025; c=relaxed/simple;
-	bh=rjggehHb3/ek/UW076JgUNyTQpz9HIchaQMIUiRAH0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UPTHbNVtbhMWCkzKKQZnxH7D85OP4Ryu661ufsU7g23QMFNSkW7KL29tI1I7dqdo6gOVdtBTMeTkKPmQvhw+uNwhTZ1hflGp62dkcw5SV9a+JNQnT4VU9vZj6/EuJghiWXcfrjOUmlrrhks7EnfsDLW7rIJbUYaeTAufMFT2LzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=LFNdauyj; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZK7nL5x5Gzm98ny;
-	Fri, 21 Mar 2025 16:53:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742576021; x=1745168022; bh=SJAYLF2VqFzb7FR4PUAr9bM6
-	2F70h9KmZMsNQV3U3WI=; b=LFNdauyjVIAbrYrNtvMsTR+OZUX82PmT4pfcB5x/
-	bXAZawy32QYkfh/AhmX8C2WV0ujgpyNDWXo+0mJGvYZYvd4hFXXZmMyRJhxHrLsm
-	nW+I5olAe7BvHiZyHWcy7ew53hZkFhNyX88CI9ZR4r37NTckuyJE8agWXWdvwcxD
-	y/1DvwXTkOKezYyUh4Mc+TXHoecGhzNP4pNkRPyG+bnAF61V5BmixVn7uf8Rbh96
-	sa8iluAeNzyesJ+2z7G/P/aumqwY9I3qlZHAaEg6Ud7yNWrtT85C+4CI1VeUGaF2
-	uKCv5jBNFoJQftB4ONMTIR0xk6HnWZiZliLGsfVyfvDQ0g==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id LgDOEkYWSJOp; Fri, 21 Mar 2025 16:53:41 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZK7nB2ZJZzltP0t;
-	Fri, 21 Mar 2025 16:53:32 +0000 (UTC)
-Message-ID: <a0da2dc5-80e5-4fd7-92a0-69c399f2a171@acm.org>
-Date: Fri, 21 Mar 2025 09:53:31 -0700
+	s=arc-20240116; t=1742576056; c=relaxed/simple;
+	bh=UOuUAOdU6fzwILEwoTUwQrZ3IxBywdm7PqAVnZyzNrk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jrgj8FyaS1jnSyBPGdoXMGFqk4Jvos1TJP7YvvxSp1e0tWIG2qFwWlufhunVed36qUE9b9ahJ+CU0V1QLRXQaTc79fo5aSvltx/cnJldLJGBoNjzOfs1lUO/2JxDbvQb2V2BWoFIB7g6iKWJKM736uHE3WA2UVzPnWBqW7KPk6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOBvVxl6; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30613802a04so23839261fa.2;
+        Fri, 21 Mar 2025 09:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742576053; x=1743180853; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UOuUAOdU6fzwILEwoTUwQrZ3IxBywdm7PqAVnZyzNrk=;
+        b=JOBvVxl6Vde0N4Bm2kv6VGe/Xk+jPiCbd1TAvk0jtQy+FufC706GIjMSgYf9FRPMsp
+         JjW2Ce7FWtr36shqr+Do1faBLRJX1CCUO37qXQ4YXFqfNmoor1Tc60OWuZitXODCQP/r
+         t/azjwCZrznsBgCGBIFt5YVhhGuJnES0hz80mPvkvhr0i8Z8iYxPI5bwHu95czw2Sb9C
+         DhZoC3n6/1XeG/R7yGV1i12HteQ45v1tQcuAVp1AvN2oXRvNFVHn+Ldp/jrzUC2WupsB
+         vmo7OHHfcjjtwQomaGUf6NzA6nggiINNjJATlU7y1/GkkEDag/k86Wodt0S98Dx4433d
+         hRgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742576053; x=1743180853;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UOuUAOdU6fzwILEwoTUwQrZ3IxBywdm7PqAVnZyzNrk=;
+        b=MQ7HYHz+WQvtUe2g12RRHmujzot4iRF6t3e8mo3Diuey3z1YSHwiQYz7+l4sqgz2Qb
+         5W5slYwykM0QmgHTW7KK4kSvKvebDmx06CwBSa31q2GolkhhUr/GgeuXZXF+VRPP0VN0
+         gUPERUOK/em/yUuRGoNDP1tXUDbhHyhGiuL8/0Amb7hiT8vvosxleiF+mR5sWddlDiFT
+         ctJQ8jq/D+zM3SvpphdbvmkIgdOOiFG2SPSO2vTShcIJAHDEVwJA6W2r/1Tx+bKbyqlX
+         GQslty6P5fKrVJD3WVqwcF0qYhWFV37xV98FgM2C7YWrf1XMrXHyvsZxP0FZgKH6qDEq
+         yy1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCtszRXmBpmUem8C3aBGC23JnWh/DC2RGUWCafACiGuIPYtjjM7avhlnsD++xNGemfe9WjXr/Jb1eVjDk=@vger.kernel.org, AJvYcCUEqyaHypGHOIAJgkhjKnpEyKzQbGhB9IvzHd6oszyZpB6RxDF5YS+eTUhsLWBrK57gGLHvA7lYmBzEBm6d/40t@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+1NKyFQzVJ2FHvKuYX4LyLl2eMZj4bILvKwFhFF6OYEJBIlFe
+	Jc3qJ6HMuDbpFBPozMg04Eh97bsz/lbqhGcaIH0HyCJWyuR68B9Hvjrm2HWWkAsnUJBGRIvBFma
+	gZn2Kp1r4i+1xtyC09FVx/AYkBEs=
+X-Gm-Gg: ASbGncurLdftT1XxI2ZCsQNMbm0vQcC8NVOmmgkpo6YxddUe5tz9akY/CyXdfPxYAXy
+	h7vtfIi9vy1E7ywPxjvRl56FQTn5kbTifrGyL/Z9Ra3mEFKDl3gRPqFq2KQhF+WOCTbOv9okUP5
+	ulq1caLe9Cz6QBD5bF6qn1fkmUalKGVx332Wa0RmqMGw==
+X-Google-Smtp-Source: AGHT+IG4olNJH+a7c6RlZFJF8zMksT58/wvmA/7TP25sQDIbCAdnPDYZgYQ8vKGk1x10x0tRVyTKoEGU45fo+N4bqok=
+X-Received: by 2002:a2e:8e73:0:b0:30b:b7c3:949a with SMTP id
+ 38308e7fff4ca-30d7e2383b9mr16939331fa.18.1742576052901; Fri, 21 Mar 2025
+ 09:54:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: crypto: add host_sem lock in ufshcd_program_key
-To: ZhangHui <zhanghui31@xiaomi.com>, ebiggers@kernel.org
-Cc: James.Bottomley@hansenpartnership.com, alim.akhtar@samsung.com,
- avri.altman@wdc.com, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
- peter.griffin@linaro.org
-References: <20250321044455.GB98513@sol.localdomain>
- <20250321074524.126338-1-zhanghui31@xiaomi.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250321074524.126338-1-zhanghui31@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250207-bitmap-kunit-convert-v1-0-c520675343b6@gmail.com>
+ <Z6eaDuXnT_rjVSNS@thinkpad> <CAMuHMdUsq_39kgBa8oanXeTzv44HuhS1e5MK7K2jxkVXQ7uWdw@mail.gmail.com>
+ <bd71c705-5f57-4067-b200-fd80b98ddbc9@nvidia.com> <Z6pfomw-3LuWoQQo@thinkpad> <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
+In-Reply-To: <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 21 Mar 2025 12:53:36 -0400
+X-Gm-Features: AQ5f1JocXlnKOaYntHf6DffQI-TKvt-QvytM7DCEc6s7gdq0Tj17rR69Ljw6v-g
+Message-ID: <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com>
+Subject: Re: distro support for CONFIG_KUNIT: [PATCH 0/3] bitmap: convert
+ self-test to KUnit
+To: David Gow <davidgow@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-kselftest@vger.kernel.org, Brad Figg <bfigg@nvidia.com>, 
+	David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/21/25 12:45 AM, ZhangHui wrote:
-> I have checked the device_shutdown process and it seems only wait
-> for the resume that has not been processed to be completed, and
- > then continue. It does not seem to cause pm_runtime_get_sync to return
- > an error.
+Hi all, now that the printf and scanf series have been taken via kees'
+tree[0] and sent in for v6.15-rc1[1], I wonder if we'd like to revisit
+this discussion.
 
-device_shutdown() is a kernel function. File systems must be unmounted
-by user space code before the device_shutdown() kernel function is
-called. The sequence followed by systemd is as follows (see also the
-systemd source file src/shutdown/shutdown.c):
-* Call sync().
-* Send SIGTERM and SIGKILL to all running processes.
-* Unmount all filesystems, deactivate swap devices, detach loopback
-   devices, stop md devices and detach dm devices.
-* Call sync() again.
-* Call the reboot() system call.
+As I understand it, the primary objections to moving bitmap to KUnit were:
+- Unclear benefits.
+- Source churn.
+- Extra dependencies for benchmarks.
 
- From kernel/reboot.c:
+Hopefully David's enumeration of the benefits of KUnit was compelling.
+Regarding source churn: it is inevitable, but I did pay attention to
+this and minimized the diff where possible.
 
-SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
-		void __user *, arg)
-{
-	...
-	case LINUX_REBOOT_CMD_POWER_OFF:
-		kernel_power_off();
-		do_exit(0);
-		break;
-	...
-}
+The last point is trickiest, because KUnit doesn't have first-class
+benchmark support, but nor is there a blessed benchmark facility in
+the kernel generally. I'd prefer not to tie this series to distros
+enabling KUNIT_CONFIG by default, which will take $time.
 
-void kernel_power_off(void)
-{
-	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
-	if (pm_power_off_prepare)
-		pm_power_off_prepare();
-	migrate_to_reboot_cpu();
-	syscore_shutdown();
-	pr_emerg("Power down\n");
-	kmsg_dump(KMSG_DUMP_POWEROFF);
-	machine_power_off();
-}
+I think the most sensible thing we can do - if we accept that KUnit
+has benefits to offer - is to split test_bitmap.c into
+benchmark_bitmap.c and bitmap_kunit.c.
 
-static void kernel_shutdown_prepare(enum system_states state)
-{
-	blocking_notifier_call_chain(&amp;reboot_notifier_list,
-		(state == SYSTEM_HALT) ? SYS_HALT : SYS_POWER_OFF, NULL);
-	system_state = state;
-	usermodehelper_disable();
-	device_shutdown();
-}
+Please let me know your thoughts.
+Tamir
 
->> Or does the UFS driver still need to check
- >> ufshcd_is_user_access_allowed() too? If that's the case, I'm also
- >> wondering whether it's okay to nest host_sem inside
- >> pm_runtime_get_sync().  Elsewhere in the UFS driver they are>> 
-called in the opposite order.>
- > I found that ufshcd_is_user_access_allowed is used in many places in
- > the ufs driver code. What is the historical reason for this?
-
-My understanding is that ufshcd_is_user_access_allowed() is only called
-from sysfs and debugfs show and store callbacks. I'd like to remove that
-function because my understanding is that access to sysfs and debugfs
-attributes stops before the device .shutdown() callbacks are called.
-
-Bart.
+[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=move-lib-kunit-v6.15-rc1
+[1] https://lore.kernel.org/all/202503170842.FFEE75351@keescook/
 
