@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-571120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A42A6B96C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:03:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADC9A6B967
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55E019C1D56
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:01:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025C67A871C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A7422155C;
-	Fri, 21 Mar 2025 11:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56876221D92;
+	Fri, 21 Mar 2025 11:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VnUUuLZY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgVG9l/5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B192D1EFF93
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5EA21D3F9;
+	Fri, 21 Mar 2025 11:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742554859; cv=none; b=QybxSxWu7spdnZk3u/LayKIhU85lq48xdft8mQ2Zy0ptPKKJWOrgXu4oD7L9aE/MKPf+9tzo1so6bPIlkthB1X0SWLa/zNehTzGQiOguKWdREhcVzLs6+BkP664Ppty/estSYKml5eMp9YyYfLo073lV/w1wvQOh2JiNFNFrObE=
+	t=1742554910; cv=none; b=uyRdp26p1dMe8kdTMwxy7cHgp3m/ZH8jncFrp3+4Tdqo2kbcBrbAM1duZSM5KwAETMQ/ayLa2GS4i1QBtkVxbY+Rx2GLz5YUi7YNDEw6zJfATSqycqDAzGtI5JrNNKUBcjqD2mS1pODGJ4ZbyPzF02IEv2QExQOwFBSBnmMvY5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742554859; c=relaxed/simple;
-	bh=MClhHYdDYbfSs0X8oLGlhpUPZfPqb+p3CJs/tABView=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lJ9VtbpYR+bxSu+CjI3t0evL+rE757czTdLdINqk6F+8JxYJvcofr/8mklry/9724gAi2tKWu+nDOPM+FlOSsdZrcYjBW+Y8XjnyLLbMgxfaEAmS8B9btU8UOr533jbRghBgksjVkV9uzRK4TRqR5VXaeswQpIWSIpt0pLiOUug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VnUUuLZY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742554856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kR92x38MaPIUcSwwuTEs6+JYl/zG4hCrnKTSGKNxEmY=;
-	b=VnUUuLZYWef2vkjUbEAdHaGLDkH2+95egn7TnnIkniJGieVMWGXeQF5xqeYfaway912S/o
-	ewHcahtVkelLVUVVOxblarkBDH7+WqdN6Y6TjNxZUJftA0bEQK4PDAtTb22DqfCzLdPVzF
-	WoUn4c2hrTnQpT2rq77Yc7Ly/4wHA+o=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-mee-NGPyOiG5eBzh11t4rw-1; Fri, 21 Mar 2025 07:00:55 -0400
-X-MC-Unique: mee-NGPyOiG5eBzh11t4rw-1
-X-Mimecast-MFC-AGG-ID: mee-NGPyOiG5eBzh11t4rw_1742554853
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac2bb3ac7edso186400066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:00:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742554853; x=1743159653;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kR92x38MaPIUcSwwuTEs6+JYl/zG4hCrnKTSGKNxEmY=;
-        b=oAY6l0yCFYEwfX9lPZpO9wkdQ7hwEKvhbBKVUX9yX5M0ts8QIaBlV0Lc4tfQ7Hje0t
-         skJcO0k1mJQMdFzYx/2Y0vTcr/IaTN0sHDyEd5OGF+9pIwqHy4nn7OfMdEkhLNhhvZt+
-         j8VMS0nyoxn9f+S3rZsGP2Tn/v2vt2tmG0SbgyB5FLAsUtQts8wcsRG+U7UCVOpdEz9q
-         gX5HOSDlqDrmuKDQoP7j3dB+UGvyuK8TzdRl2wJKIKjd+BWVGVWVKsL9vPf3BOZkU4d3
-         wIxyM+1zCgvVQcXemXSK6oeHLn3oqXXrbtTfpC5UzH04beOTjd/A3WSpWfhFCNCxgrPc
-         rWFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUd5hcYfDcTUtWHTD/z78yOJ9I+86jt2xTO3doxWYP+VpvbEX69PenkP9EJhLCkW92erWXqaxtBfVQ+5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhRzj5vDTUIe4MwalJVl3ZQNA5EEVdEfdMLqNCEXaXVYVMu0Kb
-	9I6+YkiJTlp4BMfGkKiStrFDBeQpRJ+XtTPTXdb+A7JUFTUzA3LDeu23uIDBzCyU9caAHyd1u37
-	zDRecffBIT5/a7YlvNYzMlPp7QPm5j2WpKNmFUch6qksGqbOeGXhThPyXPHR79w==
-X-Gm-Gg: ASbGnct8MHvanXTFRb+wrPK+WZgykogRApN4lLetCsCwjlBFuEsp8GJnyuKMQfLHUQu
-	2FMhhSc18/p5K8BnzNnGJwlfbmDaffjp7F9Qbm0rMdv1TzGUDWOov+oio3PaKe8pKdd7Jic4Puq
-	8DDJ4sUyZyUsUtOz9wJv6YEzry3bn1pgDKV1t7JPieIKo4TNmX9O+/p8o1FW5EpUYZryiD+4U5g
-	V1XqyKD8ezTwE1M1IjFkBTk8wEc8h9FaiXapba34IrOFLhmkHwkiy/kbsY5UZyHm6RR4rDmG6PZ
-	7qjdCEUgOMz+asD1QzK1yMgjZaNVEOevWI55kh/UeagqmIITk6x5vQrjx2o3
-X-Received: by 2002:a17:907:7ba8:b0:abf:6ec7:65e9 with SMTP id a640c23a62f3a-ac3f24d7921mr264856666b.43.1742554852923;
-        Fri, 21 Mar 2025 04:00:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUELeIFk2iV4bJhmhlsWZybhpWr1ETkAjOnrpXoDFpNR4vvFc6TbQxKArtqciFKT2yl++k2A==
-X-Received: by 2002:a17:907:7ba8:b0:abf:6ec7:65e9 with SMTP id a640c23a62f3a-ac3f24d7921mr264852566b.43.1742554852498;
-        Fri, 21 Mar 2025 04:00:52 -0700 (PDT)
-Received: from [10.44.34.122] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef93e1bbsm129520966b.81.2025.03.21.04.00.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Mar 2025 04:00:52 -0700 (PDT)
-From: Eelco Chaudron <echaudro@redhat.com>
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- dev@openvswitch.org, linux-kernel@vger.kernel.org,
- Pravin B Shelar <pshelar@ovn.org>, Aaron Conole <aconole@redhat.com>
-Subject: Re: [PATCH net-next] net: openvswitch: fix kernel-doc warnings in
- internal headers
-Date: Fri, 21 Mar 2025 12:00:51 +0100
-X-Mailer: MailMate (2.0r6239)
-Message-ID: <1FAE19BE-E1F9-4836-9AF5-5EFB7FD291AD@redhat.com>
-In-Reply-To: <20250320224431.252489-1-i.maximets@ovn.org>
-References: <20250320224431.252489-1-i.maximets@ovn.org>
+	s=arc-20240116; t=1742554910; c=relaxed/simple;
+	bh=lNYSQAqs2tXjdXifey+AJAEii2quKt+rJKsXZVd4dGU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d8nylUhL2HjF8LTM4AoUJUIZFN4QMHJSxwttrKoTWgHaBp/7kV6VOZsLz495p6db+LvXXWbM6LQ9dmsQpgFkObGdH2BhSHuuuOodGPtixh1hVxsp2iY9wCx/wAjFwu0e6PTCPAbc73TWEy8QyVTW5Ux1kg23bSJUzJXJc4gqppw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgVG9l/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8A9C4CEE7;
+	Fri, 21 Mar 2025 11:01:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742554910;
+	bh=lNYSQAqs2tXjdXifey+AJAEii2quKt+rJKsXZVd4dGU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RgVG9l/5vUv5+OhjcapFEIZgL1kox50pLgt3B2BDj5xzGWALY+nxxWPnDmpEcbEQz
+	 Sv86Cmi+aopHwYQikKq/FTFLwZpGUy0En/vZw86wQaN0kfLVQyR89Rqb4KVZtUhnZS
+	 10qF567Ed+rf+50P8azVfwlLBKn5e1nFaykjWw0qSufiFipXKkwKI+7PlDCVUuXuux
+	 ef5rUTeOxwT4NuCVG40PonuZl3xnSC6CNnrzNR/+YlLCK32T7koj6+aIu4SiUImSZu
+	 DSchYarx1vCJHoq+7Q10msNoOvMA5FZ0AKpHxBZx+fy+Wv1RIeR3wuEGHyTIZplH4w
+	 v3Dirc+F11qnQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tva8J-00Fl2b-Tk;
+	Fri, 21 Mar 2025 11:01:48 +0000
+Date: Fri, 21 Mar 2025 11:01:47 +0000
+Message-ID: <868qoymyuc.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	marcin@juszkiewicz.com.pl,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v4 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+In-Reply-To: <Z91AG0lH1JNN7NHq@nchen-desktop>
+References: <20250305053823.2048217-1-peter.chen@cixtech.com>
+	<20250305053823.2048217-6-peter.chen@cixtech.com>
+	<86frj8m4be.wl-maz@kernel.org>
+	<Z9vmeTj68LmwinPD@nchen-desktop>
+	<86bjtun4an.wl-maz@kernel.org>
+	<Z91AG0lH1JNN7NHq@nchen-desktop>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: peter.chen@cixtech.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl, krzysztof.kozlowski@linaro.org, fugang.duan@cixtech.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Fri, 21 Mar 2025 10:31:55 +0000,
+Peter Chen <peter.chen@cixtech.com> wrote:
+> 
+> On 25-03-21 09:04:00, Marc Zyngier wrote:
+> > > On 25-03-20 09:36:37, Marc Zyngier wrote:
+> > > > Peter Chen <peter.chen@cixtech.com> wrote:
+> > > > >
+> > > > > +     pmu-a520 {
+> > > > > +             compatible = "arm,cortex-a520-pmu";
+> > > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition0>;
+> > > > > +     };
+> > > > > +
+> > > > > +     pmu-a720 {
+> > > > > +             compatible = "arm,cortex-a720-pmu";
+> > > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition1>;
+> > > > > +     };
+> > > > > +
+> > > > > +     pmu-spe {
+> > > > > +             compatible = "arm,statistical-profiling-extension-v1";
+> > > > > +             interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW 0>;
+> > > > > +     };
+> > > >
+> > > > SPE should follow the same model as the PMU, as each CPU has its own
+> > > > SPE implementation, exposing different micro-architectural details.
+> > > >
+> > >
+> > > Hi Marc,
+> > >
+> > > Thanks for your reply. But there is only one compatible string
+> > > "statistical-profiling-extension-v1" at drivers/perf/arm_spe_pmu.c,
+> > > how could differentiate pmu-spe-a720 and pmu-spe-a520, do I need
+> > > to change arm_spe_pmu.c as well?
+> > 
+> > I don't think there is a need to have different compatible. The driver
+> > can probe which CPU this is on, and work out the implemented
+> > subfeatures from the PMSIDR_EL1 register. New compatible strings are
+> > better avoided when there is a way to probe/discover the HW (and in
+> > most cases, there is).
+> > 
+> > Note that this equally applies to TRBE, which also explicitly deals
+> > with interrupt partitioning and yet only has a single compatible.
+> > Please consider adding TRBE support when you repost this series.
+> > 
+> 
+> Hi Marc,
+> 
+> Thanks for your comment, we need to discuss it internally. Since it
+> is very initial dts support for CIX sky1 SoC, I will delete pmu-spe
+> support at this time, and add better support for it when adding
+> more components next time.
 
+And therefore making this machine even less useful than it already is?
 
-On 20 Mar 2025, at 23:42, Ilya Maximets wrote:
+<s> I think this is a great plan. </s>
 
-> Some field descriptions were missing, some were not very accurate.
-> Not touching the uAPI header or .c files for now.
->
-> Formatting of those comments isn't great in general, but at least
-> they are not missing anything now.
->
-> Before:
->   $ ./scripts/kernel-doc -none -Wall net/openvswitch/*.h 2>&1 | wc -l
->   16
->
-> After:
->   $ ./scripts/kernel-doc -none -Wall net/openvswitch/*.h 2>&1 | wc -l
->   0
->
-> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+	M.
 
-Thanks for taking the time to fix this. The changes look good to me.
-
-Acked-by: Eelco Chaudron <echaudro@redhat.com>
-
+-- 
+Without deviation from the norm, progress is not possible.
 
