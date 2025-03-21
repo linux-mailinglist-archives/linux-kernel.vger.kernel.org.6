@@ -1,141 +1,128 @@
-Return-Path: <linux-kernel+bounces-571466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7B4A6BDA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:53:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37458A6BD93
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1793D3A9310
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204A5485413
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0821DEFC5;
-	Fri, 21 Mar 2025 14:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103791D6DDD;
+	Fri, 21 Mar 2025 14:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UX5gO9Js"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R11z5zxD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB71D798E;
-	Fri, 21 Mar 2025 14:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1F11388;
+	Fri, 21 Mar 2025 14:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568492; cv=none; b=NoHuH/+1R53Twgt2ANtvkqJV4XuXLhpkvYl1Fif1l2Gx9D0bIvNz6RvRChs9Clupdrasgj+628QWBFWzcshXLqaDVtTse3z7fEh4/W5KNJp2rzymOF6UVLHCrVHXVSkvasKodLfGPxFOXihUwxZjljedBgDtoqjtnizwwIfSFS0=
+	t=1742568567; cv=none; b=Tc8Rx6JWRPdEXbNz+B7En3APZCZhuMpjAC1jvQ4lupuee87GhUACLv7rZHsdcIvqvKlu/osa9ud11ua7sPcz1d8amKNcQo3OfokjBiuV9TTJvKHNnKUKCSuJ8SMOad8RlwQ4jU1z3xjvskKdz2BYKt8ipW2fRfuhWznaMfLZb9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568492; c=relaxed/simple;
-	bh=gHef/WiJIYxfSHBE8F247KxYLolP4gheBKJOWI5k8io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cV2T61ZF/Rt3fcSmvWLOLw4/BweB+k28VPzw+9cUbeMPHNMc5ObyQdl2TGZGV+RDJqhihDH7Zf8F4R1DQKgIQWqDnxlt5+mxeEpfa6Xk7MYXoN3l+l71SOYU7rXTbXGwf1JyW3wUuB8AfSgXzhKcaWvnnvtWQ5PP7ZA3H6fXT6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UX5gO9Js; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39127512371so1406665f8f.0;
-        Fri, 21 Mar 2025 07:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742568489; x=1743173289; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eglGoRr46S0QXsG3q/hnCjtc4IGj4qTm0VYKUvrdsl0=;
-        b=UX5gO9Jsm0Nh41Ij4DARZne/W3ELCU5J5NZ2/8h0AW7mdbaTt/czqKhz8QNS6lnTBP
-         7fVbFku2R4Y9Rt7BluJrrycRKX7LEP00eJPiV2YR79ycc0M9Pz/BmNbhnvVbkhX8b1QM
-         N/CtsJimNRw1RIAU04bIBC53LG28zX/+dgg7pH/QeDUZ9e0OktPoMl6qFH7IKCUfF4IR
-         N46h8mGjxo+SKi1f378bnMpknIBj9TFIU9fItdiiJLGN0ia/hKt9pnMbcSixGrNX3QWF
-         AM1ufKo5XalNJ5YUAEfrMrmN9moWheq88a9tSypP3PgD/8HrS1Wm1dDBsJzCyBbhluoG
-         MZmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742568489; x=1743173289;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eglGoRr46S0QXsG3q/hnCjtc4IGj4qTm0VYKUvrdsl0=;
-        b=XoE4ARTI0UuRXlvbrFW6qrqvKKXJvECImohH1NO54Xy1hxmGg0CSDvLXwV6bds1Yvi
-         3OcGddaV0JlzHWtW0gGgs1VJ/BoW9Z3je3hEtHykgWMoZPsWMD4E+AYKdmrTpc3Ezz5M
-         qEPTq8aY84Eq6yiyDMTH7ySU7kCpDXI+n5c7eAJt6XaSdJdphUyz2YUWENFENWjeF53l
-         pjMyZU+WwVWNghhvKGLa7rntrLyGgoF7zcZiM3Abxey/9R8YRn//lI+cXBBRVOUMZs+Z
-         LPIDepss4IExoPKmykNEiYIYAdPxNYUvnNm+Rm90TlPfOEnwLTJYec11oq1B7QeW1js2
-         wcvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMDMBmpZ+MBH79Jn8NyI2VWJhSwiooui7SLRdTyK6nIjpfC1fCf8MKkRkrPwZEQAKzrqjAeeGuIZjfL4WlpCPEQ64=@vger.kernel.org, AJvYcCUh4I1ZtdgrAw+oyVxHAFc0KPLr7W5dOpYaj3XiBcn72O9YsdqoTHF6UTiaBLEFvLcMJQB5+Vx3i2/O@vger.kernel.org, AJvYcCViibzQdGf7Jevqz9UnbXTPF6BZGBbGWEds7uZVxeaFvTQIbE7tvI1mNAiEvaLB3kRQSznvevgmhQmfMYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfpu0wV5hjPjRCpBsOmkTMgqzh+Ta5IdSbs7OT1Onubdq978WO
-	v0o9foVGRtuwgBg0qhhWWDUuln8alqHT6xCd2cYnMHY76Pa/+p57
-X-Gm-Gg: ASbGncs6AsvgiBT8EFIaLIgu3pMn4nlIvSmN0LcpbvQZfKZL7lgiTMX/yBU8lvnYHBC
-	gqlkasJ1DEtiGqtpGKxoaJD//cJJqTfVC+zSrg93NC1Gz8ED6ekC0zrazoy0aDESP+r6p4Yofr9
-	gFPLkLT8oA8jPPOdthuN6ZgiUT+JDmPjfn/qP8eVhrMvm5LbTIU1XRAjtTPU/fN0NnEKFJ8jxPz
-	zgAdms6MIXIl9C9wSCnxFrFzeKel4EwcqaQ/EUxFEFyYa3Y3w/AZkk+WFMXuPSMrJTsE0AfoEfQ
-	aXqycoQrm/OfThaGbEDtJvSOZgURrf/KkGUDKkYTb9MN9Jvagm/6Yotdv82E0uBIdsMNRKhZ95H
-	nHil8J83ZBGFNvpEdhzaF
-X-Google-Smtp-Source: AGHT+IGV1TOlNM3xng9QbH9wlKQQUk/Hqr0UTaR7z33DFcaPZufgeSbUX/WC36jQ/lzEZqtWL3v0TQ==
-X-Received: by 2002:a05:6000:210b:b0:391:2192:ccd6 with SMTP id ffacd0b85a97d-3997f932f07mr3452699f8f.39.1742568489430;
-        Fri, 21 Mar 2025 07:48:09 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3dd5sm2533851f8f.45.2025.03.21.07.48.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:48:09 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: devicetree@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 2/2] usb: dwc3: exynos: add support for Exynos2200 variant
-Date: Fri, 21 Mar 2025 16:48:03 +0200
-Message-ID: <20250321144804.1435502-3-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321144804.1435502-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250321144804.1435502-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1742568567; c=relaxed/simple;
+	bh=aVhUuTJqUnb+X5iwVusMDvsLR5i0p7vUkHZcj+ddVAo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GzAapPoh8zwh6WhIBsLQUA5kcF33N6vyHg0co7SvTEpjLTeieYZOWmwqtYKvAsUAnjEhrJ2o6kO6CqQQe6UVihnMGG2sFYHeQbo2ecU7skAZfdnFmxTRiUx8KS0oWgYZzJ13zijauxL7z92l1DIuVCARj18/KMLHENQDU5mGmMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R11z5zxD; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742568567; x=1774104567;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=aVhUuTJqUnb+X5iwVusMDvsLR5i0p7vUkHZcj+ddVAo=;
+  b=R11z5zxDnY5GpOb44Qq7a1FeYlwABT+TCPlsGuDZgWNXD1onUPyxhLaz
+   8chmKfr5qtYzyCEw3xLUkMvTo911pkr2P32423NyuBWWzsIpQI5nmO/AJ
+   zrpOGVCnxiZH0PmgK7zm4ZGcLPgbxqVzmwsaoJw0EnM3jUyHmNmtsvbdN
+   z9v2b2Cw5LcR5RgXm9mUNxnuFfy8sRP+3tQmqddckXpllYVn1M8WP5lVs
+   LUw4VKAgoWiVi9+YEefgsO9twi80QLh+jtZNXMKWAyXBeaqVcG4CXQ/Q1
+   gZNq8FBibj45jqgn2QJzSuij8weIaQ04xK67lFyQkPLK8mg1ZtlfSE7Vj
+   A==;
+X-CSE-ConnectionGUID: 3Otq0Na/QyybCJJvWQaBVw==
+X-CSE-MsgGUID: pPrrrp0rQJqL1I+IM1wcJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="55221023"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="55221023"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:49:26 -0700
+X-CSE-ConnectionGUID: TbVKqvsfSVmoccHibrQJoA==
+X-CSE-MsgGUID: hUyV+CN3To+ZGfYzKffOQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="160655390"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:49:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 21 Mar 2025 16:49:19 +0200 (EET)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: intel/pmc: Fix iounmap call for valid
+ addresses
+In-Reply-To: <20250319224410.788273-1-xi.pardee@linux.intel.com>
+Message-ID: <66c1a0f1-7d7a-da07-e80f-027964c503b8@linux.intel.com>
+References: <20250319224410.788273-1-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Add Exynos2200 compatible string and associated driver data. This SoC
-requires a Link interface AXI clock.
+On Wed, 19 Mar 2025, Xi Pardee wrote:
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
----
- drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> pmc_core_clean_structure() is called when generic_core_init() fails.
+> generic_core_init() could fail before ioremap() is called to get
+> a valid regbase for pmc structure. The current code does not check
+> regbase before calling iounmap(). Add a check to fix it.
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index f5d963fae..aa22265c7 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -145,6 +145,12 @@ static void dwc3_exynos_remove(struct platform_device *pdev)
- 	regulator_disable(exynos->vdd10);
- }
- 
-+static const struct dwc3_exynos_driverdata exynos2200_drvdata = {
-+	.clk_names = { "link_aclk" },
-+	.num_clks = 1,
-+	.suspend_clk_idx = -1,
-+};
-+
- static const struct dwc3_exynos_driverdata exynos5250_drvdata = {
- 	.clk_names = { "usbdrd30" },
- 	.num_clks = 1,
-@@ -177,6 +183,9 @@ static const struct dwc3_exynos_driverdata gs101_drvdata = {
- 
- static const struct of_device_id exynos_dwc3_match[] = {
- 	{
-+		.compatible = "samsung,exynos2200-dwusb3",
-+		.data = &exynos2200_drvdata,
-+	}, {
- 		.compatible = "samsung,exynos5250-dwusb3",
- 		.data = &exynos5250_drvdata,
- 	}, {
+Hi,
+
+The approach that calls the same "full cleanup" function as deinit uses 
+when init function fails midway is very error prone as once again is 
+demonstrated. Is this the only error handling problem? Are you 100% sure?
+
+Think about it, init is x% (<100%) done when it fails, then it calls a 
+function that tries to undo 100%. One needs to add lots of special logic 
+to handle 0-100% rollback into that cleanup function. The init function, 
+on the other hand, knows exactly where it was so it can rollback just what 
+is needed and not even try to rollback for more.
+
+It's also very inconsistent to rollback ssram_pcidev in this file as ssram 
+code was moved into core_ssram so I think the ssram deinit should be moved 
+there too.
+
+I think these init functions should be converted to do proper rollback 
+within the init function(s) to avoid very hard to track error handling.
+I tried to check the error handling now in the pmc driver and after I 
+would have needed to jump between the files, I gave up.
+
+> Fixes: 1b8c7b843c00 ("platform/x86:intel/pmc: Discover PMC devices")
+> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel/pmc/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+> index 7a1d11f2914f..de5fc06232e5 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -1471,7 +1471,7 @@ static void pmc_core_clean_structure(struct platform_device *pdev)
+>  	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
+>  		struct pmc *pmc = pmcdev->pmcs[i];
+>  
+> -		if (pmc)
+> +		if (pmc && pmc->regbase)
+>  			iounmap(pmc->regbase);
+
 -- 
-2.43.0
+ i.
 
 
