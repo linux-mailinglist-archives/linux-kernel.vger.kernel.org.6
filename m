@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-571356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DF4A6BC28
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52838A6BC15
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372B1480511
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2311895468
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633F11D63D0;
-	Fri, 21 Mar 2025 13:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363C478F29;
+	Fri, 21 Mar 2025 13:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hFKTo13M"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XN6nhnxd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF33C142659;
-	Fri, 21 Mar 2025 13:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A537E139579;
+	Fri, 21 Mar 2025 13:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565187; cv=none; b=LaGFjSEyGcfugTOzG4hv34ctbHDYm7VP1A9CDmn4BZIQfktipv1eYNnQ0D0PID11TYfn5aL+LLZQIvCvSavonCRtDP7caFlKxE0rGehVrjxUs3Sfu0w7AEdxcn8pxJfuQ9K7k0JK/9gelFuBTmsOBa42MT+WJ6cnZ3/Jnqgqv80=
+	t=1742565173; cv=none; b=OtWZmcumXCIywIwCdeAq/20MZ/Zhc5hWxxHj6/zcH7IV5GaGPG1KTnBcojJ/3WMgcr9FVGTOq0/u6FESHDq+EPIJLT3X9A/Qkb6Idp8lRvrLDPOoPZKxd6z59QWgHHU5DuyhoAn5iBsKQdwhZUiGSlGmq9b3wBwtD12/6SPGOko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565187; c=relaxed/simple;
-	bh=NX4e6NsWbLcYcrYcLG0s5rLv6crXDWHy/rHcoVm1nqg=;
+	s=arc-20240116; t=1742565173; c=relaxed/simple;
+	bh=7uwt+WRbg935B8HV4GfKPn0KXksrxwoSlHa/0gv941k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLsiJi94pm8D5qviG3p2YeXOepcvdnW+5gxyIeUX3ARy45iuo4avHR3pkdZMQyyqE+pQ7UKrXJlzpNan63Nphq99R0yOS42JwV6Bj87CWnxeNTKeLvOKxaFD35fI9H3C8Q6EDY4veuHHpFClB2FyCzrpha7+/5E0d2vdK6tpSME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hFKTo13M; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4720840E021F;
-	Fri, 21 Mar 2025 13:53:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id xU4x89GJ0puP; Fri, 21 Mar 2025 13:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742565176; bh=XSWG7oiYGAeCKB+qfTwRv41Y2MS5husvtxXq7POYzCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hFKTo13MXXbjZ+iFqwYjQv9OybFKuigKA27CNFa4HiAuY+4eT2mo2EH0wQKF+XIkY
-	 e6USQO3zIgoaqju+7ObBxCpyUGqOMnE5mNJFuor9tSlOxyxRb3ZDPJRsa9h3O7C53Z
-	 nSxtTZPRC+8J8ghT7XCrlw/M5e9G3yvMWUdzyjmuS8JFFlWSligxSfBPgnayweTBbL
-	 MPgwtzTERyxDBLaPQkpeg3arPuGdIrvlZtMBo/OzkK0bYHKqmCy0CrsVI3h9W8paJj
-	 Yq5PpaQ9OjqGNyeD05a9eRuTi4/Q5XYYnm8CgjgCegVJTSNQgrcWX5lTAneDB7Mue8
-	 AMmKTuhD1JITbkYRzPKMCqa8B/VC9gT61kUJPSRtNyzbwIaZqPhRTEx+UfKJJY8+EM
-	 kBt6+NPfwNo3VoBfjPATR6HR0PrTpLz+Y2mhO4h7531wAKBbTEUl8Do/5NJs+im8ts
-	 TVnSDbI0OfUihAkxifDJypoOibBEaCk68bF+JkueU1u94DDu8CQPT/t2VQ+nT7OK7S
-	 3q0A+mmcm/jpSANa3hpzQ/KjYj823qKlQKnl4qvVjZjzkFEcMfRlKMnRkjguc1UeZK
-	 n1pCamCYferS1EA8P01Kgfxy1LetrvdbGhBRJ5Zz3FDOuyGKN7HSBi9JFQotcq+18w
-	 jLzenbZqKX/8ULlHJizg2odo=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 738EE40E0169;
-	Fri, 21 Mar 2025 13:52:36 +0000 (UTC)
-Date: Fri, 21 Mar 2025 14:52:30 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org,
-	mingo@redhat.com, dave.hansen@linux.intel.com,
-	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
-	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
-	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
-	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
-	huibo.wang@amd.com, naveen.rao@amd.com
-Subject: Re: [RFC v2 01/17] x86/apic: Add new driver for Secure AVIC
-Message-ID: <20250321135230.GBZ91vHhSEmj6jG8iT@fat_crate.local>
-References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
- <20250226090525.231882-2-Neeraj.Upadhyay@amd.com>
- <20250320155150.GNZ9w5lh9ndTenkr_S@fat_crate.local>
- <87y0wy3651.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPnPGcr7t+lIN4RpybDJswdF4P4lkU/fb/ETRYiv4ZgYuK4QY/Sv/wzAu5UiH1MFoJJ84q45MjCvA6XI6bwFqAuRzBd3IZ1mYpVRY3LBvHlooVpUy3hyYGQhX5TzH8KPjvasTgqA+Zz6ovzBXkO/SIHI1p1DHNLu9WoldcFEf1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XN6nhnxd; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742565172; x=1774101172;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7uwt+WRbg935B8HV4GfKPn0KXksrxwoSlHa/0gv941k=;
+  b=XN6nhnxd1ICS2tM5CZg6L1L7eoRQiWZbvw5HDw4oTss8OyhlewA9xJFG
+   T6cMDOECioArkmrfKeC2xy1/jRg/Is2HPguZ7f55e4z1qeLdVo1QeLm9p
+   mS0jPJ4o2SPs0EIKpW072Gi6m8Xq6FDaGchVeY2wbWlTf+ZspcCucE60U
+   rz995Z0BmKl3f+74g5VhkwWfa5PDDpTsnWC4JjFgmU4/mj4biFfnegPK7
+   bS3yjmf0zNK1UhFvDNmq4kObTNoOpaS3dh+zaR7ltLr0urCMqv/oelLJs
+   4A/qqyVaJvAapkM04pWeZgcrN/34R8G51O46ZoK1BFdnFz06aCSzop4fb
+   A==;
+X-CSE-ConnectionGUID: knTl2GwVTi67LU87KcxVYg==
+X-CSE-MsgGUID: dPQzj/vkQlS+Jmzqzk+MhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="42996178"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="42996178"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:52:51 -0700
+X-CSE-ConnectionGUID: zC0VwK/QSKWYHwx+Cz3ZJg==
+X-CSE-MsgGUID: FOXq9rRET4+y7Yrkwycv4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="154294641"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:52:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tvcnj-00000004Ww4-42Fd;
+	Fri, 21 Mar 2025 15:52:43 +0200
+Date: Fri, 21 Mar 2025 15:52:43 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rasmus Villemoes <ravi@prevas.dk>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 5/6] vsnprintf: Mark pointer() with __printf()
+ attribute
+Message-ID: <Z91vK_6B2T0uA-r6@smile.fi.intel.com>
+References: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
+ <20250320180926.4002817-6-andriy.shevchenko@linux.intel.com>
+ <87msdeebyh.fsf@prevas.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,27 +88,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87y0wy3651.ffs@tglx>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87msdeebyh.fsf@prevas.dk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Mar 21, 2025 at 01:44:26PM +0100, Thomas Gleixner wrote:
-> So if you box does not switch to something else it keeps the default and
-> does not print. See the first condition in apic_install_driver().
+On Fri, Mar 21, 2025 at 02:43:18PM +0100, Rasmus Villemoes wrote:
+> On Thu, Mar 20 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > pointer() is using printf() type of format, and GCC compiler
+> > (Debian 14.2.0-17) is not happy about this:
+> >
+> > lib/vsprintf.c:2466:17: error: function ‘pointer’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
+> >
+> > Fix the compilation errors (`make W=1` when CONFIG_WERROR=y, which is default)
+> > by adding __printf() attribute.
+> >
+> 
+> I had quite a bit of trouble reproducing, until I realized I had to
+> apply your patches in reverse order, because adding the attribute to one
+> function will then "taint" its callers.
 
-Ofc.
+Exactly, that's why cover letter has "strict order" mention.
 
-> But that SNP thing will switch and print....
+> So this one seems to be self-inflicted pain by the annotation of
+> va_format (which is completely broken, I'll reply separately to that
+> one). This doesn't solve the false warning for va_format(), but how
+> about we at least do
+> 
+>  static char *va_format(char *buf, char *end, struct va_format *va_fmt,
+> -                      struct printf_spec spec, const char *fmt)
+> +                      struct printf_spec spec)
+>  {
+> 
+>         case 'V':
+> -               return va_format(buf, end, ptr, spec, fmt);
+> +               return va_format(buf, end, ptr, spec);
+>         case 'K':
+> 
+> because va_format() doesn't use that fmt argument at all.
 
-Can we pretty-please make that an unconditional pr_info_once() so that I know
-what it is?
-
-Even you and I have wondered in the past while debugging something, what APIC
-driver the thing selects...
-
-Thx.
+Yes, I was thinking about this. I'll do it in a separate patch in v2.
 
 -- 
-Regards/Gruss,
-    Boris.
+With Best Regards,
+Andy Shevchenko
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
