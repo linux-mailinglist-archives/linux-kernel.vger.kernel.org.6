@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-571863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E371FA6C353
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:26:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B640AA6C360
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DB207A7E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27407189C3A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CBD22FAD3;
-	Fri, 21 Mar 2025 19:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBD722E414;
+	Fri, 21 Mar 2025 19:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="EnpUc2Zs"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="ssRnq50W"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655B71D54D1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA21E5B6D;
+	Fri, 21 Mar 2025 19:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742585200; cv=none; b=ssDNNO0Q4ly7VmF6fQJ9e2vZQG4ZPoJyRW6eEyrGTXSdgGBN9CH50qTxa0xb12Zt4S6KukGH10gpe4exQzAZvwzFhSwLAuTKF4995fqz0sOd6PidWf+JLvmLTQECntexHBd/eNs55TbPkwaluw+ze0ugx8vOnotwCM12DcXjxRc=
+	t=1742585593; cv=none; b=E8PJ/3hOZdPFrZlKW/aJaaLNU5hHoQScixhunl2pfC0w2CqGltWjzQQnA4KNRbikHcvD/MkTam8d9cHrZfb/DvQxy9NDN74W9ZEZZoxRg6t/fK9VO5RzkT+rp+g0vVryBJf0FvVA42n3KHvETg2Fo5kNZm9w81mcBrb1IvgnZjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742585200; c=relaxed/simple;
-	bh=AQtYWPDk3CvetOCve84lRX1JyISvGuScVWZopI4wmHE=;
+	s=arc-20240116; t=1742585593; c=relaxed/simple;
+	bh=No278/BwGKzimlmVAXabPdx3Lp9HAwXEy+j7FH5iTWE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ObePSgcodT+I+0C0uaLf4QHP0K+2TMil0A/0iozncyDvN2m2cokpb1rjAMG3Lzp/9g++ehmWQyb2G1Tl6pTThypBEARWgeHbOLtJ7NpHCt7tPNdlXsoVprgoHJMPmpEsleabvsRL/C5Hm00g+rHQQrj3TrBhf6Os9bLqbUi5YWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=EnpUc2Zs; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ab1IJiuoaxZZ4FCqfzKsBQm/LWCmymrYyy6tsJjejUs=; b=EnpUc2Zs6BuIHSQkGRH37rWZYv
-	b/1HYd0MoyJrfYJeU5KaGhWu8cstzBX4fmB3Z/Embh/1n0xTlOjO197BNdi6MiI8OI66UNbTF3erk
-	KH1AXCziGIMzJrv5jdD6PYIHRsw2czsaE8GJZgCFTiv7cCAc5tjVy9JgmjxnCvGSIjWTHUPI3mhkm
-	3BrPGjp6LiwCUqValx7mC0dDpVSwlqCb3V6kfj6UgBXosIR91yJv7fHIjoVvvA4yE7Y+CBDZEX2kc
-	uaNRGfG6Xt2PQOKJTj6jP7GMNnxKmEUCFzK7IY74xM9/i0TzZrbkxWQdaoLCB9jjpg7kTHChqhGyO
-	BdKz9VDg==;
-Received: from [187.90.172.172] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tvi0O-004MRc-6A; Fri, 21 Mar 2025 20:26:08 +0100
-Message-ID: <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com>
-Date: Fri, 21 Mar 2025 16:26:02 -0300
+	 In-Reply-To:Content-Type; b=N+8SnxlhQUQSbBRm2G5wsYxNTALOhhhWJpvR5Umam7B/YQnn78BVFEtT7U6OmOW4Vm9NY0v5i+9dxBkscZr9G7zA8djRVZ8q8N6ItK3t3zl79GQTxN04qv59Li1T7uqgzGUiDGnT12O6NhESqCEzo/vFQ8FYjWnv6RZR6BCfUZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=ssRnq50W; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1742585574; x=1743190374;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=o5KuILFsArzDnml8ZNWsQJ8DsMl/xcUsw5dgf52brGo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ssRnq50Waqu++4rsD1QVb9Hh2w++MwWnBXJCPKxYR/dKX5DJJRwGIOVjb8ffoKXp
+	 9LZwI1WP4F8eM3S5hwdAbS4cueUxQcw9y39HjZiksORrqRO9Cn1tpCmj3oJv+7P6w
+	 7L6PN5jz7ILt2rG5cVTGJR1DHx+LNQ2OaBcpZ7ayI+DKxd3i5mjG8tVG7BJ/uFv3v
+	 aw4agaHO08rjjTQYftU5Z032vILOxD48zSoWu1Nc9hhE2P6cSC1373W7qjILZy2BY
+	 1eS7/qsHrFPPpI4qd/j9GM/aIvMkopEwabj1l97erqrfT2HpgrpjOOWu9S0YUsaLV
+	 lVzsYzq6pXwX0uxEzw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MzhWp-1t09Nw2NdJ-00uqaa; Fri, 21 Mar 2025 20:27:13 +0100
+Message-ID: <a2b2d743-42eb-4eb2-ac41-93d2ab0af939@oldschoolsolutions.biz>
+Date: Fri, 21 Mar 2025 20:27:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
- boot
-To: "H. Peter Anvin" <hpa@zytor.com>, bp@alien8.de
-Cc: tglx@linutronix.de, x86@kernel.org, linux-kernel@vger.kernel.org,
- mingo@redhat.com, dave.hansen@linux.intel.com, kernel@gpiccoli.net,
- kernel-dev@igalia.com
-References: <20250226132733.58327-1-gpiccoli@igalia.com>
- <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
- <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: fix ring-buffer corruption
+To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
+ Steev Klimaszewski <steev@kali.org>, Clayton Craft <clayton@craftyguy.net>,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250321094916.19098-1-johan+linaro@kernel.org>
 Content-Language: en-US
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20250321094916.19098-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4dfKNF8HgT0iUPiS0YLMuHQtP46Vjd5JnvB0drE83CaG3D+6MJ+
+ Ity7CaC7MozQZQGLs5J33TTjO/+4CH/npxqtytEHAaXop+U+aoqo2ziHThoj4CmRCfcJnHK
+ jkymob2jwwi+dFnWSEI1I8QsE3EX6qb4cdhSPxj+bM0sslfsIrcdXysf0IF4sr8de5x8qNP
+ yMiNsDTi7QFMzj6Vfb4+w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HAXqntq0MjA=;lAZo7T553Ap6eSU8RLKZIYxgVME
+ 5ZvVouoLWqW590S2G/8ChERT6iEBRY36npu4n82K5Td7SUh56z3NbG/yPf9VZmiATluhHLHEp
+ L30rPbKsS5+vfxU531X0cM3zaGU0C0uxSUbf9CCN5xpux2tnyyOJrGghjJ/dyBOmQZpO3tOao
+ /fLhoeHlGVcQIUfrxk8OsrhQDu/o7PykNNfyAB+oSotl/DwM6oauEUnr5bswOaCXEWa8j3vGt
+ Db/YW57zS+Zni9GkVQpcibY89T1IP5Lue7l3vH6nlQGpUFv/QFaTeZ7LVrgHfWOdAyosqSMtX
+ uGzt7Ukxw54tYA9hCxvtAeK7nnCpyO+XxGRKkEvCDEkijaYERREvehnP4FaXQi5jGGEo5TtJW
+ uI7Wu+p2xOOBriz49m3jK96V2WYZzBP2V1lTZjT090w7P4YFz72m+ox3UZirkfBjV56YPjXqs
+ DeqzYrfJMcSuo00KL1TFsFhtB9UOelcrnRX1w3o3iSEPjaWc1HTFE4NNqSriy60C7WGWU3Xj8
+ 9Bhs3fqq0E8SEHwb/SqkMRvOq8kLGzYM0k0LT5HAJ72FaWJDVVmX04yzQM0rD7ukyc5zOCBHd
+ PbipUFvb43zot9SRzYmfxFqGVf46GbYp6fP8kX1LS7EXmbWWpcKQD+WY9JtS6pGfcTT+oM7HV
+ NQhh2VZA2etVjay3BG4+ihuB4xgo2s7fWiVZxjJaAeqX3TknFh6v3yVmZjEMMOtce2UPIXrs6
+ FwFFLmuDxa3cp+VeF29Ohirz1WYkoVlVBrqz4KFZEuStlJzGog3AfqniL2cibSsqmmClu7LqI
+ r8vf8cWGivV5Urt03pP7diMXl5RIik+e7PLD2rQG53qI/GIGjrWfrh7ajRlaHaH26jaIapdf4
+ wOIADVG51qSP/L7jEy9dfA7AySwPAwXX8h5OV5CWLMf0jJduMm025x4LTRTCX+9qIYakxoG06
+ jcxsc7eeqDaSCPv6CCjqHRNCswfaIGl6Tabn6v00QSTBax0FeLxXOjFy68fU6rFHU75tyVKe/
+ j7DPRlOBPajyOut0zbfBYFQeM+Yaq+XGsfHCXBzngF00picK9f0AGVEHbz+uPldCC6VJRyEuV
+ NEJ+uPmKkjaVPBPg/miHNwLT7BX3fYThepRr/GoQWTFD+19Y6pPBkHOSL/9CR3QpNPNwGf89l
+ MkrpEBSz+zXxJkJzXKJb/mxSM3XDyeyJXpg+kNU9jCs8DnOrzUAZQtEYHAhsI6BwC0jwGBHq0
+ hfJx+ykC1Z+9/kAk48szAsbaEHQlrAjQ9a23pClBNVB4aQA1uQx9GItD9ZIgp453udfjQ1+Mx
+ vj8t6PHE/jBtVTvP51NEKnslEdSg0PoeXTNcX6Ha/YabsgrxQ069uKloJook2DaMDi4ONZqW+
+ LAarNRk8j8kSF9PPBH/VCeSXWa0pBYLPKKz2o=
 
-On 17/03/2025 15:42, H. Peter Anvin wrote:
-> On March 17, 2025 7:35:45 AM PDT, "Guilherme G. Piccoli" <gpiccoli@igalia.com> wrote:
->> On 26/02/2025 10:27, Guilherme G. Piccoli wrote:
->>> Right now, we can force the TSC to be marked as unstable through
->>> boot parameter. There are debug / test cases though in which would
->>> be preferable to simulate the clocksource watchdog behavior, i.e.,
->>> marking TSC as unstable during the system run. Some paths might
->>> change, for example: the tracing clock is auto switched to global
->>> if TSC is marked as unstable on boot, but it could remain local if
->>> TSC gets marked as unstable after tracing initialization.
->>>
->>> Hence, the proposal here is to have a simple debugfs file that
->>> gets TSC marked as unstable when written.
->>>
->>> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
->> Guilherme
-> 
-> To be honest I don't think this belongs in debugfs; rather it belongs in sysfs.
-> 
-> Debugfs should not be necessarily in serious production systems – it is way too large of an attack surface, which is a very good reason why it is its own filesystem – but if this is a real issue on hardware then it may be needed.
-> 
->    -hpa
+On 3/21/25 10:49, Johan Hovold wrote:
+> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
+> breaks and the log fills up with errors like:
+>
+>      ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, exp=
+ected 1492
+>      ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, exp=
+ected 1484
+>
+> which based on a quick look at the driver seemed to indicate some kind
+> of ring-buffer corruption.
+>
+I had this issue on the Windows Dev Kit 2023 and X13s, interestingly
+never on the HP Omnibook X14. With this patch there have been no
+occurrences.
 
-Thanks! I agree, but as per Boris comment, he suggested to drop this
-one, right?
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
+with best regards
 
-In other words, we have 2 options in my understanding:
+Jens
 
-(a) Drop it;
-
-(b) Re-implement using sysfs entry instead of debugfs;
-
-
-What do you all think?
-Thanks again,
-
-
-Guilherme
 
