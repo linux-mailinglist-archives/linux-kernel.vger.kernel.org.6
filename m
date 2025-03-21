@@ -1,89 +1,170 @@
-Return-Path: <linux-kernel+bounces-570622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E05CA6B2B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:44:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC7BA6B2B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7AE3B3E87
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:44:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC053881270
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515BF1DF979;
-	Fri, 21 Mar 2025 01:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="O+HQ7TZD"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203801DFE09;
+	Fri, 21 Mar 2025 01:45:53 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40A31DED40;
-	Fri, 21 Mar 2025 01:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3CC1C1ADB;
+	Fri, 21 Mar 2025 01:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742521469; cv=none; b=iLgEEfoa1IjlEVhH4Zhd7e9WbUAvG4009Q2rmDNPCfOnqb6OhinlEyAlzWs6SaHSEG+NqhscuedgV4N0myYAyQYQQpOw8tZdYvh5TnUS9ydpHg3bbVx5LSxF83CzgFEKG725Z0A/fszuPEhyXepCo61T7uMJkuFUWl9BSWaOvsg=
+	t=1742521552; cv=none; b=beR3GUZNVUQpMCDdQ9Dcrza8kHhLP8W6SKXj1D9I/mVGW069U/86nNyWOoxZq5rlrE0ABnCCglaAePkQ+iUcr8BmkyYLD0S6PvlJfF/JvxXbQjukAYNV4zvTpV7v7k3IrIvJblqDLh9Ktj7aRorZpBD2iXjdWLMPUo5QTfBc3+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742521469; c=relaxed/simple;
-	bh=16cc4KHT/TGVInG6/sIhiVIeHtROS6EMUut/J6wo2j0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WySe+ZnmPlTc/X+oEYtdgJIDiCbOEjIuTtF2sHgPIBScy+lB+N6ajQsyk5GMlAG34I4Xm0/CYtGtB6OoWshKcZqSkKhoIUti3QFD8StdjceBajF/9bODtMYMZIEqG1gW8bhsmLtV8IyZkrMaiImvXBOYfPUvtffKgItjp//wbiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=O+HQ7TZD; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TFHenndtR+JmeEXFkqj6A1CTl6kNgvKqQcIKOIozPfc=; b=O+HQ7TZDda8jv+r4HWcvfNrYIB
-	8dhaD2c+Iy0+b+lz5dBMM2AZfSJRL2uYdg+a79a56/j7qEG2lWIfct/IffadVyOJwajdrxkyWDMYy
-	ICc8r+0kJYJr4B2YftT2nW7xSgQcgiL7o7AjhurV7DC21dWPQaeQqi0sGv/9CkGN3bpGmSZs0+/+Z
-	uuIDE6FMou5FPCILl+0CKYMXcnl0Pf2ekOEulpENlptt88iWfq3Tp28BTCO9dYNaPD2lNjbCAgzb+
-	jqKStFyCEIq9sPkqbwu8Hh2qgoiHjOVB93ncEiNRhbtt8R3pZb29MCR47DdCpDxFlCprBA05aHPel
-	1kzlrRPQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tvRQt-000000078Ju-1scf;
-	Fri, 21 Mar 2025 01:44:23 +0000
-Date: Fri, 21 Mar 2025 01:44:23 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Kees Cook <kees@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
- (4)
-Message-ID: <20250321014423.GA2023217@ZenIV>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <202503201225.92C5F5FB1@keescook>
+	s=arc-20240116; t=1742521552; c=relaxed/simple;
+	bh=cPi2rLqMVZVMrpf6kVXEz5Xc035JMvkZO475SzT1E6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RCqGduKl8xM0p5LeJaV3K/eDKy9yNWlN0ijelhnxCbZB7t6/NKu6TTLSJ5HSLyLcV2Qvt1yCfiMsDKvFHydZ0s8ZIXg/C1aYW7Gjc/jahe4kpPrSD5rEEs6rvgKckPNdEIUwLXRyXLnoSSAbLHbClFwzUlvsspv6QVowvxZyBmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZJldS2dxjz1d0cp;
+	Fri, 21 Mar 2025 09:45:32 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 023261402CC;
+	Fri, 21 Mar 2025 09:45:48 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 21 Mar
+ 2025 09:45:47 +0800
+Message-ID: <67031906-5b7e-4f4d-86c8-d534b6d61f2c@huawei.com>
+Date: Fri, 21 Mar 2025 09:45:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202503201225.92C5F5FB1@keescook>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/8] ACPI: CPPC: Rename cppc_get_perf() to
+ cppc_get_reg_val()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <robert.moore@intel.com>, <viresh.kumar@linaro.org>,
+	<mario.limonciello@amd.com>, <gautham.shenoy@amd.com>, <ray.huang@amd.com>,
+	<pierre.gondois@arm.com>, <acpica-devel@lists.linux.dev>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linuxarm@huawei.com>, <yumpusamongus@gmail.com>,
+	<srinivas.pandruvada@linux.intel.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <hepeng68@huawei.com>,
+	<fanghao11@huawei.com>
+References: <20250206131428.3261578-1-zhenglifeng1@huawei.com>
+ <20250206131428.3261578-4-zhenglifeng1@huawei.com>
+ <CAJZ5v0iNzNROkPD4+b=Au8DwdF9unajKivdRQMBFfwzjFxHLcg@mail.gmail.com>
+ <4fc77a58-8c77-463c-a50d-06ad19685bfb@huawei.com>
+ <CAJZ5v0gmGx-9QsTTdbKi6EMQm2tePfhBdYMry_88gbybLUY6WA@mail.gmail.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <CAJZ5v0gmGx-9QsTTdbKi6EMQm2tePfhBdYMry_88gbybLUY6WA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On Thu, Mar 20, 2025 at 01:09:38PM -0700, Kees Cook wrote:
+On 2025/3/14 18:32, Rafael J. Wysocki wrote:
 
-> What I can imagine here is two failing execs racing a fork:
+> On Fri, Mar 14, 2025 at 10:25 AM zhenglifeng (A)
+> <zhenglifeng1@huawei.com> wrote:
+>>
+>> On 2025/3/13 3:54, Rafael J. Wysocki wrote:
+>>
+>>> On Thu, Feb 6, 2025 at 2:14 PM Lifeng Zheng <zhenglifeng1@huawei.com> wrote:
+>>>>
+>>>> Rename cppc_get_perf() to cppc_get_reg_val() as a generic function to read
+>>>> cppc registers. And extract the operations if register is in pcc out as
+>>>> cppc_get_reg_val_in_pcc(). Without functional change.
+>>>
+>>> This should be split into two patches IMV.
+>>
+>> Yes. That makes sense. Thanks.
+>>
+>>>
+>>>> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+>>>> ---
+>>>>  drivers/acpi/cppc_acpi.c | 66 +++++++++++++++++++++-------------------
+>>>>  1 file changed, 35 insertions(+), 31 deletions(-)
+>>>>
+>>>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>>>> index db22f8f107db..3c9c4ce2a0b0 100644
+>>>> --- a/drivers/acpi/cppc_acpi.c
+>>>> +++ b/drivers/acpi/cppc_acpi.c
+>>>> @@ -1189,48 +1189,52 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+>>>>         return ret_val;
+>>>>  }
+>>>>
+>>>> -static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
+>>>> +static int cppc_get_reg_val_in_pcc(int cpu, struct cpc_register_resource *reg, u64 *val)
+>>>>  {
+>>>> -       struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+>>>> -       struct cpc_register_resource *reg;
+>>>> +       int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
+>>>> +       struct cppc_pcc_data *pcc_ss_data = NULL;
+>>>> +       int ret;
+>>>>
+>>>> -       if (!cpc_desc) {
+>>>> -               pr_debug("No CPC descriptor for CPU:%d\n", cpunum);
+>>>> +       if (pcc_ss_id < 0) {
+>>>> +               pr_debug("Invalid pcc_ss_id\n");
+>>>>                 return -ENODEV;
+>>>>         }
+>>>>
+>>>> -       reg = &cpc_desc->cpc_regs[reg_idx];
+>>>> +       pcc_ss_data = pcc_data[pcc_ss_id];
+>>>>
+>>>> -       if (IS_OPTIONAL_CPC_REG(reg_idx) && !CPC_SUPPORTED(reg)) {
+>>>> -               pr_debug("CPC register (reg_idx=%d) is not supported\n", reg_idx);
+>>>> -               return -EOPNOTSUPP;
+>>>> -       }
+>>>
+>>> I'm not a big fan of the IS_OPTIONAL_CPC_REG() macro.  I'm not
+>>> convinced at all that it adds any value above (and in the next patch
+>>> for that matter) and the message printing the register index is just
+>>> plain unuseful to anyone who doesn't know how to decode it.
+>>
+>> With this index, it is easier to locate problems. This is what a "pr_debug"
+>> for, isn't it?
 > 
-> 	A start execve
-> 	B fork with CLONE_FS
-> 	C start execve, reach check_unsafe_exec(), set fs->in_exec
-> 	A bprm_execve() failure, clear fs->in_exec
-> 	B copy_fs() increment fs->users.
-> 	C bprm_execve() failure, clear fs->in_exec
-> 
-> But I don't think this is a "real" flaw, though, since the locking is to
-> protect a _successful_ execve from a fork (i.e. getting the user count
-> right). A successful execve will de_thread, and I don't see any wrong
-> counting of fs->users with regard to thread lifetime.
-> 
-> Did I miss something in the analysis? Should we perform locking anyway,
-> or add data race annotations, or something else?
+> For those who know how to decode it, yes.  For others, not really.
 
-Umm...  What if C succeeds, ending up with suid sharing ->fs?
+At least it means something. But if you think this index is confusing for
+those who don't know how to decode it, I'll remove it in the next version.
+
+> 
+>>>
+>>> If CPC_SUPPORTED(reg) is not true, the register cannot be used AFAICS
+>>> regardless of what IS_OPTIONAL_CPC_REG() has to say about it.
+>>
+>> The name "CPC_SUPPORTED" may be a little confused. Actually, in ACPI 6.5,
+>> only optional _CPC package fields that are not supported by the platform
+>> should be encoded as 0 intergers or NULL registers. A mandatory field as a
+>> 0 interger is valid. So If I wanted to make this function as a generic one
+>> to read cppc registers, it would have been more reasonable to do this
+>> IS_OPTIONAL_CPC_REG() check before CPC_SUPPORTED().
+> 
+> I see, so you need to explain this in the changelog.
+
+OK.
+
+> 
+> And IMV the code logic should be:
+> 
+> (1) If this is a NULL register, don't use it.
+> (2) If it is integer 0, check if it is optional.
+>     (a) If it is optional, don't use it.
+>     (b) Otherwise, use 0 as the value.
+> 
+> Of course, there is a problem for platforms that may want to pass 0 as
+> an optional field value, but this is a spec issue.
+
+I'll change the logic in next version. Thanks!
+
 
