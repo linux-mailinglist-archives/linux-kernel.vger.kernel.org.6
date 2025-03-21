@@ -1,155 +1,177 @@
-Return-Path: <linux-kernel+bounces-571841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126C4A6C301
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:08:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12047A6C311
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA711B628EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04DC3BE5EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB622E3F1;
-	Fri, 21 Mar 2025 19:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A26D23026D;
+	Fri, 21 Mar 2025 19:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNNh7tpo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sczX0TCN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TNNh7tpo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sczX0TCN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AYdMzyoi"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A983154426
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA0C13C914;
+	Fri, 21 Mar 2025 19:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742584107; cv=none; b=WyckVN90MDUsQP/tMs2koSoZ1t+I0meARE6gBdIxL8xtfcfdgufzcVe0E8VRM+xmKMjSsJ6NwzrGeyNECUm2zg4o/L5+KUBhDoD8JsbgQFDNrrM8wO98vuuX1CeEsv5ncB64pY2gKJ2l0+x5euK6uxkq+txjnZie010urSbTe60=
+	t=1742584446; cv=none; b=VgYpNHIW+8ttU4BeFSQgI/b7hAyHg5HlKlqyU0fWB9530ZaZCiEPeUswIfkyEgyJ/9X+IQFMnQdW0TRbCrSTnuCKsUxe3CScVfWClHcHza3tT16u/ZUxnVCqg7hnusAK5v6tTXtAKiCtasuemjUBFdRWIFxqMkOCtg7VVSPpm2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742584107; c=relaxed/simple;
-	bh=3ob7dWnddRt7NjhXz3FcRpTbvHcFlALDzT4Ho7pFvIA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rqTALxXTZKhftuTajg2+O4d+JvtaMCX+tz6JovYpuOQIfiTTh7vPJAWX/LRs4Up6LvggPQkNen+QckuE+/AamikSCFpKBmZvVTEDAszuz3QOTXgNgXDC/uO19GWLNKQQmbqJoJxTvORPJCoTU+EF6C+z4PUQjyl9Z7oiDf4H7To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNNh7tpo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sczX0TCN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TNNh7tpo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sczX0TCN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 955071FCF5;
-	Fri, 21 Mar 2025 19:08:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742584103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
-	b=TNNh7tpom1OngPUO8IN1B4FuDteGntQaPHhnyyEOjVVlklo+9jO0lGBFQ8vKGgbPfGioja
-	0EDYBDmXKQIKdN0AMicb4E1hHQZB4dT9DGMAhmzG4Xfe9Ddg4g4S8EFCil91DtMDzlZboX
-	JKAdSnN7AEHJuVCi6i7fUF6Y431WhAs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742584103;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
-	b=sczX0TCNSbAsOVQOSD/w+Fo6KX6C4nFYB5/meRGO8o5YjlomEB/MDKlqUDksWOuMb0zstN
-	gfxYlUtyDDf7TKDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TNNh7tpo;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sczX0TCN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742584103; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
-	b=TNNh7tpom1OngPUO8IN1B4FuDteGntQaPHhnyyEOjVVlklo+9jO0lGBFQ8vKGgbPfGioja
-	0EDYBDmXKQIKdN0AMicb4E1hHQZB4dT9DGMAhmzG4Xfe9Ddg4g4S8EFCil91DtMDzlZboX
-	JKAdSnN7AEHJuVCi6i7fUF6Y431WhAs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742584103;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxfzUjstrgUZ2nQluVCGRlxri+auozNaRVyG3dPT8Tk=;
-	b=sczX0TCNSbAsOVQOSD/w+Fo6KX6C4nFYB5/meRGO8o5YjlomEB/MDKlqUDksWOuMb0zstN
-	gfxYlUtyDDf7TKDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62A6B139AA;
-	Fri, 21 Mar 2025 19:08:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 80xxFie53WeSUQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 21 Mar 2025 19:08:23 +0000
-Date: Fri, 21 Mar 2025 20:08:22 +0100
-Message-ID: <87frj6td5l.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Stefan Binding <sbinding@opensource.cirrus.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH v1] ALSA: hda/realtek: Add support for various HP Laptops using CS35L41 HDA
-In-Reply-To: <20250321175040.800963-1-sbinding@opensource.cirrus.com>
-References: <20250321175040.800963-1-sbinding@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1742584446; c=relaxed/simple;
+	bh=k/PBgt4a9h5ig/uH/xMlB6D72uDmaauMvOmb7yre5Sg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lsi5pE1hkN33fxss25OA+MwF4SpCHJnRwBFDGcrzjRARY1VLciQ8sZLKOAXK5A8bPQEzT/hhaSPWcRTRX90TgomMeaUmOxDQuFGcsF+iwqLfEW8OHDt6fnCypJkV4V93xNoPzaQIAPD2OvMhThSpULSbkolOulvgb1yaFta260g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AYdMzyoi; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E6F2C4454F;
+	Fri, 21 Mar 2025 19:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742584435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xcBqvduohD6gqiPxLsI52qzDZm7lLSAqNmPHQXXkRpY=;
+	b=AYdMzyoiVaWwgmUgyFKnzDYw3VV+1Z1ETfmA/Jc1sDbVffVb3a68IIos9v9ZoKZEEfFg1y
+	1oW2QtSxBMdBjhoyGg0p4RLJ3cxxMUq/QqcAmxhOYAAzBcsGb7w99o+OSFRzEqpkehBjFV
+	cASIaOo/2KB48KY1claSJKPEmoJVh42BKfySynrQausAa7xni8kFKJDy8juoeGXEanW2Ud
+	SlLqvcZ6ouv9GojEVqYEbRsNxi+zAB/SIcYTHlYYOWkgVqiyqFnqmLWftMrClX/650Fcq0
+	AVuFBRDRLl9GxBudXpfkTQtJX3yM8NAAvlvxNDQ6Oipwyd22/d/u/jLiANRb4g==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH net-next 00/13] Support the Cadence MACB/GEM instances on
+ Mobileye EyeQ5 SoCs
+Date: Fri, 21 Mar 2025 20:09:31 +0100
+Message-Id: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 955071FCF5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGu53WcC/x3MQQqAIBBA0avErBPU0KKrRIvJxppFFhohhHdPW
+ j74/BcSRaYEY/NCpIcTn6FCtQ24HcNGgtdq0FIb2SklDnSLsAZ7j4NFr1ao6RXJc/43EwS6RaB
+ 8w1zKB0b7cctgAAAA
+X-Change-ID: 20250311-macb-65a7fa86af1d
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheduledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeefgeevheeiveffieegudduieefgfejueegvedtgfelffevgfejheekveffudekueenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrddufeehrdekuddrieehpdhhvghloheplgduledvrdduieekrddurdeftdgnpdhmrghilhhfrhhomhepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdekpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehkuhgsrgeskhgvr
+ hhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitgholhgrshdrfhgvrhhrvgesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Fri, 21 Mar 2025 18:50:06 +0100,
-Stefan Binding wrote:
-> 
-> Add support for HP Cadet, Clipper OmniBook, Turbine OmniBook, Trekker,
-> Enstrom Onmibook, Piston Omnibook
-> 
-> Laptops use 2 CS35L41 Amps with HDA, using Internal boost, with I2C
-> 
-> Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
+Mobileye EyeQ5 SoCs provides two GEM IP blocks. The end result is
+working networking on the EyeQ5 eval board. It isn't just a new
+macb_config & compatible, here are each commit with a brief note:
 
-This seems conflicting with the recent changes.
-Could you try to rebase to for-linus branch and resubmit?
+ - Let's get the cleanup patches out of the way first:
 
+   [PATCH net-next 04/13] net: macb: use BIT() macro for capability definitions
+   [PATCH net-next 06/13] net: macb: simplify macb_probe() code touching match data
+   [PATCH net-next 08/13] net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+   [PATCH net-next 09/13] net: macb: sort #includes
 
-thanks,
+ - LSO has been observed to be buggy, even though HW reports it is
+   supported. We add a capability to force-disable it:
 
-Takashi
+   [PATCH net-next 05/13] net: macb: add no LSO capability (MACB_CAPS_NO_LSO)
+
+ - The MACB driver code has an issue: the HW inserts two dummy bytes at
+   the start of Rx buffers, for IP header alignment (ie skb_reserve is
+   done AFTER writing the addr in DMA descriptors). But the driver
+   assumes that alignment is NET_IP_ALIGN. We appear to be facing the
+   first SoC where that isn't the case.
+
+   Happy to get comments & discuss the approach proposed.
+
+   [PATCH net-next 07/13] net: macb: move HW IP alignment value to macb_config
+
+ - We want cache coherent memory through a CM3 IO Coherency Unit (IOCU).
+   To route through that, DMA addresses must have BIT(36) enabled.
+
+   We do that in platform-specific code and hook our dma_map_ops through
+   a notifier block.
+
+   [PATCH net-next 11/13] MIPS: mobileye: add EyeQ5 DMA IOCU support
+
+ - dt-bindings improvements:
+
+   [PATCH net-next 02/13] dt-bindings: net: cdns,macb: allow tsu_clk without tx_clk
+   [PATCH net-next 03/13] dt-bindings: net: cdns,macb: allow dma-coherent
+
+ - Add the hardware to:
+    - dt-bindings: new compatible, new phandle property,
+    - the driver: macb_config, compatible and a custom init callback
+      (that needs a regmap to the system-controller),
+    - the DTS: both the SoC GEM instances and the eval board PHYs.
+
+   [PATCH net-next 01/13] dt-bindings: net: cdns,macb: add Mobileye EyeQ5 ethernet interface
+   [PATCH net-next 10/13] net: macb: Add "mobileye,eyeq5-gem" compatible
+   [PATCH net-next 12/13] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+   [PATCH net-next 13/13] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+
+Have a nice day,
+Théo
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Théo Lebrun (13):
+      dt-bindings: net: cdns,macb: add Mobileye EyeQ5 ethernet interface
+      dt-bindings: net: cdns,macb: allow tsu_clk without tx_clk
+      dt-bindings: net: cdns,macb: allow dma-coherent
+      net: macb: use BIT() macro for capability definitions
+      net: macb: add no LSO capability (MACB_CAPS_NO_LSO)
+      net: macb: simplify macb_probe() code touching match data
+      net: macb: move HW IP alignment value to macb_config
+      net: macb: introduce DMA descriptor helpers (is 64bit? is PTP?)
+      net: macb: sort #includes
+      net: macb: Add "mobileye,eyeq5-gem" compatible
+      MIPS: mobileye: add EyeQ5 DMA IOCU support
+      MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+      MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+
+ .../devicetree/bindings/net/cdns,macb.yaml         |  25 +-
+ MAINTAINERS                                        |   2 +-
+ arch/mips/boot/dts/mobileye/eyeq5-epm5.dts         |  26 ++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  34 +++
+ arch/mips/mobileye/Kconfig                         |   1 +
+ arch/mips/mobileye/Makefile                        |   2 +
+ arch/mips/mobileye/eyeq5-iocu-dma.c                | 160 +++++++++++
+ drivers/net/ethernet/cadence/macb.h                |  51 ++--
+ drivers/net/ethernet/cadence/macb_main.c           | 309 +++++++++++++--------
+ 9 files changed, 470 insertions(+), 140 deletions(-)
+---
+base-commit: ddf9c6d982ae7472a4da982e0497be2a140a194b
+change-id: 20250311-macb-65a7fa86af1d
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
 
