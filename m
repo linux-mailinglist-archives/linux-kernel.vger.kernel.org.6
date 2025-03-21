@@ -1,77 +1,138 @@
-Return-Path: <linux-kernel+bounces-571961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B15FA6C4B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:58:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4164A6C4C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:01:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6D4189D6B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8201B60D99
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156EF233709;
-	Fri, 21 Mar 2025 20:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D5E230BF0;
+	Fri, 21 Mar 2025 21:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ym2bZEUT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gm25ytLk"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEFB232384;
-	Fri, 21 Mar 2025 20:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0182AF1B;
+	Fri, 21 Mar 2025 21:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590659; cv=none; b=SLT1wMpXeFD/VdmPgzPGmiJlmM93mkrTNt4uj9d4X+g3c8uRXjqGP2U0/J6tck6t2wdgSW1m75qKGnfruHwVrFRAm6k2tmOQ5RWlLNZHC7qAriFevkSi+PGKCOVSdOCtUWbKrPUAxTyw2dX1KnXgNnGGdQDgfKpMVQrJuswdIeo=
+	t=1742590859; cv=none; b=AnmR3NTk+MvOAPCJsGYO/IHX4F6unlXMb0AiJXM4/Ec4U6SsQJSW1YfqGYIkjqtflUe3UdCCiqCXpzEBgUCCCKGjhzsI3I0tgXolFmsBnlzcyw/noooLK/ogcqJVUK9Yl2O1znC2/RRtl0Saxpee2Ch+sMOuIbIfOEps46e6Sac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590659; c=relaxed/simple;
-	bh=ZXz1lCeNrvjVJLRs04XWZoMrQXMdrcjG9uS7WXXyp9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H97KFsgyqM6GV9P0zbes8cFz4k+a/4i0GDS3w1QwIDtwWhmhG1LpWrSYR/ILCJ1DmErPqNnY1EHrtF8Y5P1XYfh97OCgZtYUhB9RBLudEFfScDB2WtnwVtR59uAEJuY9F+fD/RP9+FsBySEMSN5yOpsgQHllbX5FiYMOmmkjSjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ym2bZEUT; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742590657; x=1774126657;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZXz1lCeNrvjVJLRs04XWZoMrQXMdrcjG9uS7WXXyp9k=;
-  b=Ym2bZEUTWag0A2F3TzGt+bOdtOzt704uckulqFjHJWPOMN9+mpQaWmty
-   Ish8nLKBkyjxUkYJ3Toq1dEEY/6V13YJ3oX8FASrgrtfCE+e/AOBqRIsx
-   bZWye+/LLNwrvpDy6ENMVChryxyfBMetg+Lm42/Ilwm2R2NHW+HsCE8rz
-   +h+ADDCIX3Qfj3OaTrh4IJIocu7Jbkd3loMbgk+2Bzdr0eGxkXdc0D70D
-   HuEP/doZDIZFnhlBqhLD/K8yQgqQUE5FI7ZeZzr0RkPgQHWOAcUGuwJXU
-   9XRvPOpGdRlCuoGRiJVk1e+YYE5wJxF+nQJefg5FdcmfOtwzB5dHUPui0
-   A==;
-X-CSE-ConnectionGUID: 5PoZ45heSYyzLAz4jRJhyg==
-X-CSE-MsgGUID: aOxRfWwuSsKE0Dk07OWO6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="44057303"
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="44057303"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 13:57:36 -0700
-X-CSE-ConnectionGUID: t1NdUEubT1Wto0n2pc9WMw==
-X-CSE-MsgGUID: N6WEr2ixShCQQD6FioBq5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="128179654"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 21 Mar 2025 13:57:33 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvjQo-0001gn-2m;
-	Fri, 21 Mar 2025 20:57:30 +0000
-Date: Sat, 22 Mar 2025 04:57:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hans Zhang <18255117159@163.com>
-Subject: Re: [v5 1/4] PCI: Introduce generic capability search functions
-Message-ID: <202503220416.dfoSTxfs-lkp@intel.com>
-References: <20250321163803.391056-2-18255117159@163.com>
+	s=arc-20240116; t=1742590859; c=relaxed/simple;
+	bh=w0+ZrH5okB6sO4yHwZsP/O+qhxRXAwnW2UDoEeHq02A=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDqxSDJibWnwOVozcMl87aHZrB7bYVs/Jl6MQE5XAq2wDQy5C6GPIMvW3TRLDSbrlx+vEoga+0myvBMJkKpMEYwFO2fDKGo+PVX0nVnLhieeab14sxHFQBgbvXJfzqLMpuIoNrMRXkZ9X2ZDhQ8wxFVTrATjcku3MAkY2EYNGSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gm25ytLk; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c56a3def84so241334485a.0;
+        Fri, 21 Mar 2025 14:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742590857; x=1743195657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GFm+utToYllRDPvFrcY0VNwV9ONAWh+ysfKx7zHInPw=;
+        b=gm25ytLknJGaTkK1GlUCT8QfJGbFvwHqj7SW4Qz1wjNDSsxt4Oy9JSDeOlbZEBxKJX
+         1j7F3gklwwQNoQzKpfncyN8YsqUArJXXMxUk4N+ufXdjglh0J3Wjks5rWHtUSpNMtnHk
+         Yv/DdS5a3ejBEYjiG66XZF4M63Y6+Zd5qLFn530bjnhR8H13mS7fzsffSJ/7M+W3XHVh
+         B0dgrj+5BrCFKebjk607eG1FbDwERQhPxvdHnNtBy3V0OJYKX1YQf9GPVRzcD0NEYA2R
+         1wdicImg8MVYl+rAtvtqK4VlWVJHMo6wTVS2C6cBdiudaQCvVOiJimGZ8EtRTxIEkZg3
+         bmig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742590857; x=1743195657;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GFm+utToYllRDPvFrcY0VNwV9ONAWh+ysfKx7zHInPw=;
+        b=AaagedhYysLd6Rno38hiQHxw/0bZNkLgWn7vyUKlNYpFPBF174Xd81jUfgaLQdrhCv
+         bDgOIxSxcmQfc0Y4WYHn/gwO+Ze+2JNA/A3r833frd0IGtVZTAVk3RbftlHX3knPO3cY
+         vAg8ndEFCaxq6UfUP1tl4GVNYBRUeggVRjgZlLfpPINoCQAlrd4RhPB1+fFvgDHHRg4p
+         cKuHHJLidChYPt0szianqhH8N8Q66TX5EU2xYquwPx8EpcSQceFb2T7pxoMe3INZqBKV
+         EoMUKoBy4vI7vydfSHv2l36azjBOX776zYMrsdWXucRZihSaXilrcqI/26tOF6nvk3tv
+         1l2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVtWy0fCZNkAhZAxagE7xK/hcaIEgLhEzhsBXUdGSbI0FVVbggRuWOTzzS1yCf+yOM3aY9Ci0+M@vger.kernel.org, AJvYcCX3XSHtwvN3EqQTz0YfBYKq+Au2OoINOjDNDyOC2s3AX4KXet2jATo93YSNt0wYdO9pm62lDL76zowjB6oCgNE=@vger.kernel.org, AJvYcCX8sB30Y69NAEDzJZwZU+KqGKJ3xAqlow1WnPZ0pwwn2EesjPi88mAK/WHLSK0h28A1S7WzLhHj6T59aGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCZftI2iLJ+exF2I5mwfYJigIN3J1B1ZpsBE/CrOTXXspg/qeO
+	S48iU1E3WP9tb4cNCEo9x9lrpMrnNK18lthSLxSuIe3nwXw2Ylnf
+X-Gm-Gg: ASbGncu0cdMs/CP02DFOCZCWV/o4+ZLQbYw9rieO8A9Jrve+IBDn/MDKwx9FFm552T7
+	VK1CM6OJVGEaDqJqXthINB/Fak5d6ylsvVATPgqrlC6SG36S+q/ext5qBw/Bfw/69d/aqZYF0Pm
+	JrjMhy9ssb3jjq7SPrWh3iUSQfkf2j58ux+Dyt2S+Ib+RD6kxzpc0gx9LmHLrf9xUJcYIJZvEKH
+	1smF9aFR5P8kW8bvFoeZyiDTciwC3yE8Dalk1MSUAZJ30PUCR6nncLJdZxzMRt7hvvwZxMyX6FN
+	TOo+kIHc7ZJ6eVpjIfaY7WV0IwtLqtkWnzkqsSKfy2pzduuE+a45a0/ZKTrGoBdZIEyJBUjKtM9
+	GJE36c9WEa4Bhb/sjv0ajHC1vlHMLJatpDuk=
+X-Google-Smtp-Source: AGHT+IGayzhF/fnOzVDsUHL0vISCU5U/4LH600wkt0RjUh43Uc9VAdYMY9vcsFjlx6GEMau8u5GnRg==
+X-Received: by 2002:a05:620a:1a19:b0:7c5:3c0a:ab7a with SMTP id af79cd13be357-7c5ba13a64cmr559981385a.3.1742590856448;
+        Fri, 21 Mar 2025 14:00:56 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92d68f3sm174606585a.40.2025.03.21.14.00.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 14:00:55 -0700 (PDT)
+Message-ID: <67ddd387.050a0220.3229ca.921c@mx.google.com>
+X-Google-Original-Message-ID: <Z93ThNi0lw5D3sEu@winterfell.>
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 1A3E31200043;
+	Fri, 21 Mar 2025 17:00:55 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Fri, 21 Mar 2025 17:00:55 -0400
+X-ME-Sender: <xms:htPdZ12MNZRQQE7ZBpVWBKvRfdm60ysEfAYWmGQHUNJ0pycfTsmZ3w>
+    <xme:htPdZ8FtmorIxWvcRPnAMmyIBjKwyXyNHd_ubZvG7sP-caKrZuaKbXforIoZzzSnK
+    eVjnRgD0rB6RwLFgg>
+X-ME-Received: <xmr:htPdZ155qEVvKynd5xohnsj_aII-ISCpxPiKJp_z0vKbKv4pcJ4h7vbKZ_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedvuddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
+    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfeegpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrd
+    guvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepfhhujhhithgrrdhtohhmohhnohhrihesghhmrghilhdrtghomhdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesgh
+    hmrghilhdrtghomhdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:htPdZy2NUbEc8iRoHuQ5rmZBT-a-qpZcCsJCgzSkz0zToZgHNg3cqQ>
+    <xmx:h9PdZ4FOTyzHJpZSIs3EjcFulk53tjW1yXVrVFMawvw7I7M-5jzr_Q>
+    <xmx:h9PdZz_vHtzHAu_BBhMfH6pGDEFYZJZPSHBVpAIgPqTfJZAw8TuGaw>
+    <xmx:h9PdZ1kJ0CahWPpDRL-UedgPp2hD0uMn2Tc9ylhCLWakctSOuJblTQ>
+    <xmx:h9PdZ8G9tkPsoqaK33692ka1rPsPaH6g93dQC4Qo45jvvXXXCk3yJivi>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Mar 2025 17:00:54 -0400 (EDT)
+Date: Fri, 21 Mar 2025 14:00:52 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	anna-maria@linutronix.de, frederic@kernel.org, arnd@arndb.de,
+	jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
+	david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 6/8] MAINTAINERS: rust: Add new sections for
+ DELAY/SLEEP and TIMEKEEPING API
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+ <20250220070611.214262-7-fujita.tomonori@gmail.com>
+ <Z9xnDzwixCbbBm0o@boqun-archlinux>
+ <87jz8ichv5.fsf@kernel.org>
+ <87o6xu15m1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,82 +141,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321163803.391056-2-18255117159@163.com>
+In-Reply-To: <87o6xu15m1.ffs@tglx>
 
-Hi Hans,
+On Fri, Mar 21, 2025 at 09:38:46PM +0100, Thomas Gleixner wrote:
+> On Fri, Mar 21 2025 at 20:18, Andreas Hindborg wrote:
+> >> Could you add me as a reviewer in these entries?
+> >>
+> >
+> > I would like to be added as well.
+> 
+> Please add the relevant core code maintainers (Anna-Maria, Frederic,
+> John Stultz and myself) as well to the reviewers list, so that this does
+> not end up with changes going in opposite directions.
+> 
 
-kernel test robot noticed the following build errors:
+Make sense, I assume you want this to go via rust then (althought we
+would like it to go via your tree if possible ;-))?
 
-[auto build test ERROR on a1cffe8cc8aef85f1b07c4464f0998b9785b795a]
+Regards,
+Boqun
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Introduce-generic-capability-search-functions/20250322-004312
-base:   a1cffe8cc8aef85f1b07c4464f0998b9785b795a
-patch link:    https://lore.kernel.org/r/20250321163803.391056-2-18255117159%40163.com
-patch subject: [v5 1/4] PCI: Introduce generic capability search functions
-config: arm-randconfig-001-20250322 (https://download.01.org/0day-ci/archive/20250322/202503220416.dfoSTxfs-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250322/202503220416.dfoSTxfs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503220416.dfoSTxfs-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/arm/mm/iomap.c:9:0:
->> include/linux/pci.h:2025:1: error: expected identifier or '(' before '{' token
-    { return 0; }
-    ^
-   include/linux/pci.h:2029:1: error: expected identifier or '(' before '{' token
-    { return 0; }
-    ^
-   In file included from arch/arm/mm/iomap.c:9:0:
-   include/linux/pci.h:2023:1: warning: 'pci_host_bridge_find_capability' declared 'static' but never defined [-Wunused-function]
-    pci_host_bridge_find_capability(void *priv, pci_host_bridge_read_cfg read_cfg,
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pci.h:2027:1: warning: 'pci_host_bridge_find_ext_capability' declared 'static' but never defined [-Wunused-function]
-    pci_host_bridge_find_ext_capability(void *priv,
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +2025 include/linux/pci.h
-
-  2000	
-  2001	static inline void pci_set_master(struct pci_dev *dev) { }
-  2002	static inline void pci_clear_master(struct pci_dev *dev) { }
-  2003	static inline int pci_enable_device(struct pci_dev *dev) { return -EIO; }
-  2004	static inline void pci_disable_device(struct pci_dev *dev) { }
-  2005	static inline int pcim_enable_device(struct pci_dev *pdev) { return -EIO; }
-  2006	static inline int pci_assign_resource(struct pci_dev *dev, int i)
-  2007	{ return -EBUSY; }
-  2008	static inline int __must_check __pci_register_driver(struct pci_driver *drv,
-  2009							     struct module *owner,
-  2010							     const char *mod_name)
-  2011	{ return 0; }
-  2012	static inline int pci_register_driver(struct pci_driver *drv)
-  2013	{ return 0; }
-  2014	static inline void pci_unregister_driver(struct pci_driver *drv) { }
-  2015	static inline u8 pci_find_capability(struct pci_dev *dev, int cap)
-  2016	{ return 0; }
-  2017	static inline u8 pci_find_next_capability(struct pci_dev *dev, u8 post, int cap)
-  2018	{ return 0; }
-  2019	static inline u16 pci_find_ext_capability(struct pci_dev *dev, int cap)
-  2020	{ return 0; }
-  2021	typedef u32 (*pci_host_bridge_read_cfg)(void *priv, int where, int size);
-  2022	static inline u8
-  2023	pci_host_bridge_find_capability(void *priv, pci_host_bridge_read_cfg read_cfg,
-  2024					u8 cap);
-> 2025	{ return 0; }
-  2026	static inline u16
-  2027	pci_host_bridge_find_ext_capability(void *priv,
-  2028					    pci_host_bridge_read_cfg read_cfg, u8 cap);
-  2029	{ return 0; }
-  2030	static inline u64 pci_get_dsn(struct pci_dev *dev)
-  2031	{ return 0; }
-  2032	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Thanks,
+> 
+>         tglx
 
