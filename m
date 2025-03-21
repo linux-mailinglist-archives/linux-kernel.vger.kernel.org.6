@@ -1,166 +1,166 @@
-Return-Path: <linux-kernel+bounces-571386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5867EA6BC87
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:06:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB72A6BC86
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205D918942C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42C23B4912
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDF4139579;
-	Fri, 21 Mar 2025 14:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA9578F29;
+	Fri, 21 Mar 2025 14:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtomZVYe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SKZT2Tqi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671AE78F4F;
-	Fri, 21 Mar 2025 14:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB3438FB9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565967; cv=none; b=oggcR3ozITnKIK7UsEMWxFKe7+g7tdVuvNIwoaWzi0GfwSPivl26jasmzmVY/cmAg4PQhgjuHGr63uBiFKy9uckN2g35HfXi9ATLbtDYrrfVb0bslWzjMTJ+HkWRWmVXMgJMvGL/X+R94V4BLD9pFvLj2ltYCq8LqV3Ovch6jxI=
+	t=1742565987; cv=none; b=WI66sRJiOPqagOa4E5660dFNZ9eSuGAthGZNP6ICsoOsNy139s/LvEwVwSVgRpxWxIkn5r4qW5Uni2+83A62EYJIf40hFLDrunf5tJ2HkT46IgPU+5uRS4gW4LmRaTfR1bC+eY8LtqW9AYzRWA+Szkvmv+CTpCF4K3U1lFhxKOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565967; c=relaxed/simple;
-	bh=Efp2oPA71k6HAIzm+TmV+Ye55dV032TIttlnUM1IzOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RP4dZjge06WWZVIETqAXnWV1kh9tzKgjIBL6HpV0w4wCAMoKdy7qUC1EzZp729cT96zLBqw7kI+CiWR7K+o10SlhjsSbh9yYxAFCOLfMng5iP9dlWLWZdDC0AkF++08zSaXsTP4axRG4UqGaybzxu6GPk47qdFLLhSQfNP9OJZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtomZVYe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F51FC4CEE9;
-	Fri, 21 Mar 2025 14:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742565966;
-	bh=Efp2oPA71k6HAIzm+TmV+Ye55dV032TIttlnUM1IzOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TtomZVYeDy8wuAU9Z1FLMBCNPF80tqxAb9OYMid0PPJqMYM3GP6Y13h3xTFT3duda
-	 EsZJtubJ4eo1f27/8eijbytMXypXK9OpAQvtR6SSvixcT5H5Vii2MhLoL5SLtzb/Lu
-	 0s/caJoC/vby0Y1EP4mDAykVW2LxQXapv6BFXtpmQyPrxZgK6STqVkdLGCyTYHu8Vm
-	 mCCFPWNOppzziuF3ByXKJs3Ie2dXyK1dl1rP19u8nYcVc1S745ZPh8fdb1rtan7e9q
-	 Du4G1UQee+eAtGBrbvm+tFS9gYh0kewyZAIG31l16DPgHomybi/A7b0/1WpyBnZYBO
-	 txFCMNNUxYjnQ==
-Date: Fri, 21 Mar 2025 14:05:58 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, liam.howlett@oracle.com,
-	alexandru.elisei@arm.com, peterx@redhat.com, hannes@cmpxchg.org,
-	mhocko@kernel.org, m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com,
-	mina86@mina86.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, hch@infradead.org, jack@suse.cz,
-	hbathini@linux.ibm.com, sourabhjain@linux.ibm.com,
-	ritesh.list@gmail.com, aneesh.kumar@kernel.org, bhelgaas@google.com,
-	sj@kernel.org, fvdl@google.com, ziy@nvidia.com, yuzhao@google.com,
-	minchan@kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
-Subject: Re: [RFC 3/3] mm: integrate GCMA with CMA using dt-bindings
-Message-ID: <20250321-unhelpful-doze-791895ca5b01@spud>
-References: <20250320173931.1583800-1-surenb@google.com>
- <20250320173931.1583800-4-surenb@google.com>
+	s=arc-20240116; t=1742565987; c=relaxed/simple;
+	bh=pr/QaPmsS1R3c1ZPvXy4FKnBJCT8B5G42KzW+EOLsnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nwv56baPOk+Wjot0KfskPizYpGJaZaJxtC1nje3NQxHzpglA3pW0I1vn/8sbVGPbmeX1RB+tTLhd+EP7ymHrWFxNv8iR0xebOoDiuoMaGySai3Crde89WGEuro+8eQGpfj54gOQZNwW1etiEEZK6KW9TYu1UbySFttDSkGO1JSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SKZT2Tqi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742565984;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PtfqZFqF8iFiel/s4I4nuuc5DqZUNdlFQlj2cWV2Ueg=;
+	b=SKZT2TqiGog31SHDGSOPh6FoplixFOL/dkNwDdujcHBcGU5FAD6mxcn45cyKrZkzOBuasu
+	6j3t4TQIkBG/SH+U/NhJr0mUgMDw5cyVMs+XryHQ0cqjZTJd6RD0PcZeBUxCWBTjMN8jEc
+	S3janHRmQwlT1tVcJMytvIPfKOGNgOY=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-201-vvTOdc1kOfG324fSlLgG_Q-1; Fri, 21 Mar 2025 10:06:23 -0400
+X-MC-Unique: vvTOdc1kOfG324fSlLgG_Q-1
+X-Mimecast-MFC-AGG-ID: vvTOdc1kOfG324fSlLgG_Q_1742565982
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3f6abe5c0cbso352163b6e.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:06:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742565982; x=1743170782;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PtfqZFqF8iFiel/s4I4nuuc5DqZUNdlFQlj2cWV2Ueg=;
+        b=lvTD/JF7UJhh1iqAtvxzfpPGhYtrxnpaZLMiD2chsarwqlYJhBgFUcZUJWCXiCkQuY
+         9eWx9pySGWnkKwdd37vxLuqLZ9NHdeJMwXVUVXTX9yXUJTC8IlmOqnUJZK6B1C4lmGUf
+         JVJpXyc3GSvPZ4KfRHvEfmh8odoC16wy1PdZ8Qs0S+kfSxQEeDXNfQ+85i6V743oHFmD
+         STr1hKiD5FDot5QAH+0cdcyFVEXpfYQsvvJEbXtSlxjCKw705GbksvwCDJ9QqgQNbhcj
+         3lUqPadSyUlA+e7BAz2DJ/4hDTeB/CTDqrXwwpgbAL1+wbtPwJjAcreFISpF6y6eGjgT
+         0gOw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3AE5qBYwQ9XEomGm3N/5rwaEd1o4E4fEErjI7X46Xjnz2TK6ukce6AYUoPJS9pZRlW1dUxPpQlsGagFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtebJxs1UZBS8EHUq75z6dalA7fOq+1jJRy1vB3eEjw79Cn3s8
+	jSgH+C1E21qzc4KFU4ICKSBWz4uW/HDPYn7qQMkRaIxWO6g74OAysnk1Zke+7426vKxfTqfzPek
+	nKh7IuJF+E8DSdkiai4+iyuofmxVP/rTho+clUotRcJYQDtbT1hA8c1nXklbdOA==
+X-Gm-Gg: ASbGnctnBN/SG4gIhM0NKaMIIgq7Nbt+x3295XY98Q1ydiS9cbBUFZHTctUWOqfYc2I
+	AIPU/IlRvMfy4RkXj+pZDDVXhr6UUIe3ikz2oVtYVl0BOcXIp7S4Gfm1i5LgLOCpjy2tJwaNXsY
+	4J9hujtruUPXEtogM6+WeM2wjqXXTHISjZJP0/wL/DZGC8iMLg1ejv8/rAK2L7DN35wm98BUUBX
+	2J+6mM0hCrP2o8rBrU56tnyv8hSc4//SfLDjAcCnloI9R6vtl8mDodbzH1wlSb53b1FZA2nsdvW
+	5CZPtngYLtbFf+xJMvI=
+X-Received: by 2002:a05:6808:6807:b0:3fe:b5d3:3f23 with SMTP id 5614622812f47-3febf793391mr842057b6e.5.1742565982320;
+        Fri, 21 Mar 2025 07:06:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXrUa2CJtGUuPnUiUVvqG8OIHWW+85+a82cVLjG6j0tZ/F39gii6vY+WagE3AnL6fCZ04BMg==
+X-Received: by 2002:a05:6808:6807:b0:3fe:b5d3:3f23 with SMTP id 5614622812f47-3febf793391mr842043b6e.5.1742565981807;
+        Fri, 21 Mar 2025 07:06:21 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3febf7109ddsm335819b6e.26.2025.03.21.07.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:06:19 -0700 (PDT)
+Date: Fri, 21 Mar 2025 08:06:13 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+Cc: jgg@ziepe.ca, kevin.tian@intel.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, yi.l.liu@intel.com, Yunxiang.Li@amd.com,
+ pstanner@redhat.com, maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] vfio: pci: Advertise INTx only if LINE is connected
+Message-ID: <20250321080613.566cb6bd.alex.williamson@redhat.com>
+In-Reply-To: <9131d1be-d68e-48d6-afe3-af8949194b21@linux.ibm.com>
+References: <174231895238.2295.12586708771396482526.stgit@linux.ibm.com>
+	<20250318115832.04abbea7.alex.williamson@redhat.com>
+	<9131d1be-d68e-48d6-afe3-af8949194b21@linux.ibm.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fM541kW8FgR5YYtY"
-Content-Disposition: inline
-In-Reply-To: <20250320173931.1583800-4-surenb@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 20 Mar 2025 23:24:49 +0530
+Shivaprasad G Bhat <sbhat@linux.ibm.com> wrote:
 
---fM541kW8FgR5YYtY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 3/18/25 11:28 PM, Alex Williamson wrote:
+> > On Tue, 18 Mar 2025 17:29:21 +0000
+> > Shivaprasad G Bhat <sbhat@linux.ibm.com> wrote:
+> >  
+> >> On POWER systems, when the device is behind the io expander,
+> >> not all PCI slots would have the PCI_INTERRUPT_LINE connected.
+> >> The firmware assigns a valid PCI_INTERRUPT_PIN though. In such
+> >> configuration, the irq_info ioctl currently advertizes the
+> >> irq count as 1 as the PCI_INTERRUPT_PIN is valid.
+> >>
+> >> The patch adds the additional check[1] if the irq is assigned
+> >> for the PIN which is done iff the LINE is connected.
+> >>
+> >> [1]: https://lore.kernel.org/qemu-devel/20250131150201.048aa3bf.alex.williamson@redhat.com/
+> >>
+> >> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+> >> Suggested-By: Alex Williamson <alex.williamson@redhat.com>
+> >> ---
+> >>   drivers/vfio/pci/vfio_pci_core.c |    4 ++++
+> >>   1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> >> index 586e49efb81b..4ce70f05b4a8 100644
+> >> --- a/drivers/vfio/pci/vfio_pci_core.c
+> >> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> >> @@ -734,6 +734,10 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
+> >>   			return 0;
+> >>   
+> >>   		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+> >> +#if IS_ENABLED(CONFIG_PPC64)
+> >> +		if (!vdev->pdev->irq)
+> >> +			pin = 0;
+> >> +#endif
+> >>   
+> >>   		return pin ? 1 : 0;
+> >>   	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
+> >>
+> >>  
+> > See:
+> >
+> > https://lore.kernel.org/all/20250311230623.1264283-1-alex.williamson@redhat.com/
+> >
+> > Do we need to expand that to test !vdev->pdev->irq in
+> > vfio_config_init()?  
+> 
+> Yes. Looks to be the better option. I did try this and it works.
+> 
+> 
+> I see your patch has already got Reviewed-by. Are you planning
+> 
+> for v2 Or want me to post a separate patch with this new check?
 
-On Thu, Mar 20, 2025 at 10:39:31AM -0700, Suren Baghdasaryan wrote:
-> This patch introduces a new "guarantee" property for shared-dma-pool.
-> With this property, admin can create specific memory pool as
-> GCMA-based CMA if they care about allocation success rate and latency.
-> The downside of GCMA is that it can host only clean file-backed pages
-> since it's using cleancache as its secondary user.
->=20
-> Signed-off-by: Minchan Kim <minchan@google.com>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  arch/powerpc/kernel/fadump.c |  2 +-
->  include/linux/cma.h          |  2 +-
->  kernel/dma/contiguous.c      | 11 ++++++++++-
->  mm/cma.c                     | 33 ++++++++++++++++++++++++++-------
->  mm/cma.h                     |  1 +
->  mm/cma_sysfs.c               | 10 ++++++++++
->  6 files changed, 49 insertions(+), 10 deletions(-)
->=20
-> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-> index 4b371c738213..4eb7be0cdcdb 100644
-> --- a/arch/powerpc/kernel/fadump.c
-> +++ b/arch/powerpc/kernel/fadump.c
-> @@ -111,7 +111,7 @@ void __init fadump_cma_init(void)
->  		return;
->  	}
-> =20
-> -	rc =3D cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma);
-> +	rc =3D cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma, =
-false);
->  	if (rc) {
->  		pr_err("Failed to init cma area for firmware-assisted dump,%d\n", rc);
->  		/*
-> diff --git a/include/linux/cma.h b/include/linux/cma.h
-> index 62d9c1cf6326..3207db979e94 100644
-> --- a/include/linux/cma.h
-> +++ b/include/linux/cma.h
-> @@ -46,7 +46,7 @@ extern int __init cma_declare_contiguous_multi(phys_add=
-r_t size,
->  extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
->  					unsigned int order_per_bit,
->  					const char *name,
-> -					struct cma **res_cma);
-> +					struct cma **res_cma, bool gcma);
->  extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsi=
-gned int align,
->  			      bool no_warn);
->  extern bool cma_pages_valid(struct cma *cma, const struct page *pages, u=
-nsigned long count);
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 055da410ac71..a68b3123438c 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -459,6 +459,7 @@ static int __init rmem_cma_setup(struct reserved_mem =
-*rmem)
->  	unsigned long node =3D rmem->fdt_node;
->  	bool default_cma =3D of_get_flat_dt_prop(node, "linux,cma-default", NUL=
-L);
->  	struct cma *cma;
-> +	bool gcma;
->  	int err;
-> =20
->  	if (size_cmdline !=3D -1 && default_cma) {
-> @@ -476,7 +477,15 @@ static int __init rmem_cma_setup(struct reserved_mem=
- *rmem)
->  		return -EINVAL;
->  	}
-> =20
-> -	err =3D cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name, &c=
-ma);
-> +	gcma =3D !!of_get_flat_dt_prop(node, "guarantee", NULL);
+It seems worth noting this as an additional vector for virtualizing the
+PIN register since we'd often expect the PIN is already zero if
+pdev->irq is zero.  I posted a patch[1], please review/test.  Thanks,
 
-When this (or if I guess) this goes !RFC, you will need to document this
-new property that you're adding.
+Alex
 
---fM541kW8FgR5YYtY
-Content-Type: application/pgp-signature; name="signature.asc"
+[1]https://lore.kernel.org/all/20250320194145.2816379-1-alex.williamson@redhat.com/
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ91yRgAKCRB4tDGHoIJi
-0vghAQCIfI8+ZQNSSUJvyG5N5hCisJl/fWg9Vm7F5uQooGdzzwD/TYcjtjBBKsJv
-aa6VSuGFaENELpO0FBTADe4awZ04uA0=
-=vA0y
------END PGP SIGNATURE-----
-
---fM541kW8FgR5YYtY--
 
