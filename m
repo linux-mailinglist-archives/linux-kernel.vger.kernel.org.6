@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-570803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8105EA6B4A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:56:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC68A6B4A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:56:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EFD13B5BD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470A748480C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6621EB1AE;
-	Fri, 21 Mar 2025 06:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB471EB9E5;
+	Fri, 21 Mar 2025 06:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="avGi0Eod"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spvWqnqp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B52A1E2307;
-	Fri, 21 Mar 2025 06:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742540164; cv=pass; b=Hqhe1YVQjTZer33xnE7qka8xpceXrOJbQr3oxVQPVtbVJJ/4j0UU//2jAzYen65l9RfAbhy9F9sSuvoiwzQRyN9wfFBSzO6X8itcRqUfnrIG+oUHlBQ0FFbNPdsZ8wMmJ1e2PqX1EHBZSEInGi5fF74rGF6BI5fZ1vYNi42FOQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742540164; c=relaxed/simple;
-	bh=/VHiiCxto2R/1KXLhH7ajRusAesxdycWpINakHbyPGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVkLn4En743Lk6Mr2uSipPUEg/92qOybXupSIhTA21biwy+ixAkUWya6WzX2FYQoUihAEYc0SNxG7YIbh23wQo//lRSsnMSTGYuqmhnNCCQJOY+GVVLLJXdtwONfgn37qkd2TdAoRZabV3PtzoGCrvr9eMOpmPJdEIH6gr9mNi0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=avGi0Eod; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742540148; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Vq7DyEqvTzwiLcLwZlDNrr27V6I4ZT9WOGiia9BEBgoZp99x7AuC3ksL6Fy02egLgCHwovUCqw5qy7zpdyaERaLzCfzcC0RidSGU78G7Yh/a1YTuh/cFpKFILppx+2gqn7qdu8FXVUguBO2qEhLn8osz2xmRwmYxiigjmhlYlvc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742540148; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/VHiiCxto2R/1KXLhH7ajRusAesxdycWpINakHbyPGA=; 
-	b=lPyN//MlV27g3kqyMQnmpWvGqnF0uOxKnSGUnmsJor4j1QwLEbon605kTAfNUQQWoRVihIx4s+ekTBQ9+YT5p09gvzFw/WhgmBmfasXoJyG8Bo+F4TJZ2eO9Cuhim52K7/hUeD4/xsOJpswMsJhG0TH/Bgu6MtAypoI9Bmyqzs0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742540148;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=/VHiiCxto2R/1KXLhH7ajRusAesxdycWpINakHbyPGA=;
-	b=avGi0Eod/ZXVtz7liJelj5xS/dwrw8rzqrI+9uv+fQmSuznCCh6AFIDC7VgNgaZZ
-	lomeN6zT5VY6FBecGLejZJXcxbmQbtsW8WQ74dbs4eUdXwcO96AV2Xweh1HxA+d4Huf
-	ogD+FxdRwUd4l2E6i9HJ1N52Jl0bAMSzdEiFtfAQ=
-Received: by mx.zohomail.com with SMTPS id 1742540146147283.0692621506083;
-	Thu, 20 Mar 2025 23:55:46 -0700 (PDT)
-Message-ID: <0f537373-7a71-49a5-a4d3-8adb0ef41349@zohomail.com>
-Date: Fri, 21 Mar 2025 14:55:42 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F141E0E15;
+	Fri, 21 Mar 2025 06:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742540185; cv=none; b=AdaIGnAc2PonzlV93hdrrpVe0++GmeGxUvN1jLTEh3hViLaCaSSU8juodhlLTk5UE2DXMJfpoTnEhbE293ZW7pCCZaBx9IeHxwrS3RQexWQ6WXMz/YprKBchONtJcS63JaOOSGc4AR+xP/f5jsSITl+MKk5FISbbN7aDm/yDTEU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742540185; c=relaxed/simple;
+	bh=HKi5VTkLFjJWETNHJNT0AA5w360AFs+b+M+pXrHipCQ=;
+	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
+	 MIME-Version:Content-Type; b=q41UL5GOa/cauOhb7OtRGkM36h+ZxfO7lKuYsWFoGyc8G627XBxUI1d8gQmgDxiYrFN3poEKfwR96y1I9U8rbavuWGXrrTGToCRKMz9ZOQoM+i/IrVPitO/3AGjES7u6qeHRMIdMtBAkdK77g+DlU9GhgBJ+sQFTIwplR0egvc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spvWqnqp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30CD3C4CEE9;
+	Fri, 21 Mar 2025 06:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742540185;
+	bh=HKi5VTkLFjJWETNHJNT0AA5w360AFs+b+M+pXrHipCQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=spvWqnqpSmIDaa2nC7B2TVdLeQoLGM5h0xlsGKVqVaQJZtrIoYl4bB3F4Zjt+z1rP
+	 0d5vQXhAtDDozh69X4mJFHvnjS6um1oRJUKaWL9iowCcgCxVht4L4mfYEypTDc3ydq
+	 Hqut4h2wc5iE4TyflBw4/CueiE+hudLbHEAvHsEFT1KP3yH6OymBjmSRHgbdqPfnhw
+	 t6W+q3TmOw9EGZkgfKPtNZeENnp5RWZijDTUDL4CTYNB6vtd53ZwYI25HNQwViRBnR
+	 6e+MmzEi5Sarfp49TeRirh7bTjYh/MWuY45n6AF3Yopp5e0XXMjMvveTL340rU890d
+	 /tsAXeIyAq7+Q==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <daniel.almeida@collabora.com>,
+  <dakr@kernel.org>,  <robin.murphy@arm.com>,  <aliceryhl@google.com>,
+  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?us-ascii?Q?=3D=3Futf-8=3FQ=3FBj=3DC3=3DB6rn=3F=3D?=
+ Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Valentin Obst" <kernel@valentinobst.de>,
+  <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,
+  "Marek Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,
+  <iommu@lists.linux.dev>
+Subject: Re: [PATCH v15 02/11] rust: add dma coherent allocator abstraction.
+In-Reply-To: <CANiq72k_2dknw9CWj=yxMeBBrvMjPp5mhu=H++BP_wTVCHtnew@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Fri, 21 Mar 2025 00:54:52 +0100")
+Message-ID: <87a59eeuwm.fsf@kernel.org>
+References: <20250317185345.2608976-1-abdiel.janulgue@gmail.com>
+	<UiefwZ9WcVV7q7YyERsbNIYqOxTWUWEO9aZNxThH7uRFkjE4LDSUtaVdiLeShk_JYe5RJLD5MgFC9IxGUuzTEw==@protonmail.internalid>
+	<20250317185345.2608976-3-abdiel.janulgue@gmail.com>
+	<87senajxlv.fsf@kernel.org>
+	<QEvctNEvG4qrg2wb67KaDRAH9rV8zNNwU-ndUgkyjB30tX360Xi88B_WpcxXcoZuEKTcOhOv1eJDKEWodZ0bnw==@protonmail.internalid>
+	<CANiq72k_2dknw9CWj=yxMeBBrvMjPp5mhu=H++BP_wTVCHtnew@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 21 Mar 2025 07:56:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC Patch v1 0/3] Fix using wrong GPF DVSEC location issue
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250319035516.222054-1-ming.li@zohomail.com>
- <20250321021441.vdmo5txhvb6kya3a@offworld>
- <20250321035918.yyicfmvmpm7selin@offworld>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <20250321035918.yyicfmvmpm7selin@offworld>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227b8598aaed87a2442afdbd40a000089009ff252a1ab62d16b961283879ccd1e9e8ba5c34710dbbf:zu080112274cbd8febf8063b8b78bf32e300007b97fa915085bc952e7701093a5e2bc918f1dc8255d389390a:rf0801122de1475c61b64a9c83d262a66a000081ec13efe6ad891b2dc2875cd906ef2e9f6a96774c0816d8239583908b38ef:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
 
-On 3/21/2025 11:59 AM, Davidlohr Bueso wrote:
-> On Thu, 20 Mar 2025, Davidlohr Bueso wrote:
->
->> On Wed, 19 Mar 2025, Li Ming wrote:
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+
+> On Tue, Mar 18, 2025 at 2:13=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
 >>
->>> But I am not sure if all dports under a same port will have same
->>> configuration space layout, if yes, that will not be a problem. If I am
->>> wrong, please let me know, thanks.
+>> The wording of in the other doc comments is different than this one and
+>> the two next ones. Consider aligning them:
 >>
->> Yes, when caching the dvsec was suggested, it was my assumption that the
->> config space would be the same.
+>>   Hints the DMA-mapping subsystem that ...
+>>
+>>   Tells the DMA-mapping subsystem ...
+>>
+>>   Indicates that the buffer ...
 >
-> Ultimately I don't know what the expectation is here, but your updates
-> do allow more flexibility from vendors, I guess(?). It's a bit late
-> in the cycle, unfortunately, so if these are to go in for v6.15, they
-> would be considered a fix imo, otherwise perhaps they are wanted for
-> v6.16 or not at all (patch 3 does look useful regardless)?
+> These come from the C side and are copy-pasted, so I suspect that was
+> the reason -- they may want to have them in sync, so I didn't touch
+> them.
 
-My understanding is that the expectation of the patchset is to avoid using a wrong GPF DVSEC in case of dports under a same port have different config space layout. And I think the change is more closely to the description of CXL spec.
-
-If the case(dports under a same port have different config space layout) would not happen, maybe add a comment in cxl_gpf_port_setup() is another option.
-
-Yes, if patch 1 & 2 are considered to be merged, they are worth a fix tag. And patch 3 is an obvious cleanup change.
-
->
-> Based on some of the topologies listed in qemu, I did some testing (and
-> this was also why the same dvsec config layout) and see things working as
-> expected.
-
-Thanks for testing.
+Since this particular doc discussion is about wording and not semantics,
+I won't object too much. However, writing the docs for Rust is a very
+good chance to get _better_ docs and in general I would encourage taking
+advantage of that.
 
 
-Ming
+Best regards,
+Andreas Hindborg
 
-[snip]
+
 
 
