@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-571478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC711A6BDC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:56:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B34BA6BDA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32EE03BC226
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFDF188ADD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BF31D63C4;
-	Fri, 21 Mar 2025 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1081F1D6DDC;
+	Fri, 21 Mar 2025 14:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrkoEdc5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAVu5TtF"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605E3154426;
-	Fri, 21 Mar 2025 14:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CCE1D514E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568703; cv=none; b=cCO18ga1Hw5DKIT/P9F6B9R4m4yMUCpeBCZdzOrlpylQUusTzjSCt76rfdE5uralL17ZljMwlR5yfQ4XRzukg+HV/5JMLmWbWiypwErF0da/e9kKEQ5SoeaylJum6sldYrNd0MdU2iNAscjy6+4/h8PEyFuWWtOCLap6EeGw0rk=
+	t=1742568801; cv=none; b=J8bvihtiwPBcN0IW5VMB1mapWrlD10p3NQTHXG4b9dN4/bU6OVWtQedYCIfTbl6OqfF0s9tHOvCmQzZYE6Bv6RYK6oTnMpdI5/wGRrDGzQnnXqsUmWH9ttKLlRwsL6YRSalvtfnrfElNgWIvj0B6W+aLTBvBcJJPOfexOYy7XAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568703; c=relaxed/simple;
-	bh=PhuVuMchyJ3HJTMtCg1H6MJB1Gn7Kg0keWLQLs0iu9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2T9o/AnHtyu+UvNvirJU0HFAjSLxfxEoKu75CsQgjaHqc//ie5HHsnT9DNXj0u/TBBa+hZBnTkdnVSy343BFKP2NcXkr08oD2dp8bMhPcrRgwXdpoelvL2pPWm2zFJh5Ca76Bwq39R8hC7wRhx0lYPv8Q5yJs1pBh5O3BWvQjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrkoEdc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45722C4CEE3;
-	Fri, 21 Mar 2025 14:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742568702;
-	bh=PhuVuMchyJ3HJTMtCg1H6MJB1Gn7Kg0keWLQLs0iu9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NrkoEdc5u2lqcHeV05xrtf40mrquBkRW9n/fzn4LZGdFNHSQ8gmOE0cie+9+qOZFb
-	 px/pwhq+h+SQuXUmMJkVUCfO9IXqdLBiSFMCyLg2brK2YdcJF3xKsh3cuFV9IzbMw6
-	 8NNvCtAdpWvucPoPz/2RenkeGryO/Arw460MehktKmJkdDngHzGVo0InxYOfMvGg3A
-	 +ouSKWParfQld/grByeo1gPBIIuO9DUs9ztvOJGhP6jo4R/zNW5Iklk4De5J5JQ6kf
-	 cdZD2b15GbiVlW7px4k7YJ8fsNcQZ+jrFqmB1YX3ydldNZU3SncODZCXCp8WYzU/IT
-	 Gscc5KYbfqdbQ==
-Date: Fri, 21 Mar 2025 14:51:39 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Nico Pache <npache@redhat.com>
-Cc: rf@opensource.cirrus.com, patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, simont@opensource.cirrus.com,
-	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev,
-	davidgow@google.com, rmoar@google.com, johannes.berg@intel.com,
-	sj@kernel.org
-Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling
- it
-Message-ID: <Z918-4psPV3j9c-d@finisterre.sirena.org.uk>
-References: <20250319230539.140869-1-npache@redhat.com>
- <618b8578-1897-45e4-83eb-b725102ab27d@sirena.org.uk>
- <CAA1CXcD4dOUWOXp0ODSEo4+g9_QQkJe1tmX3bVdcs3N_PPdSHQ@mail.gmail.com>
- <a0fdd818-a4be-446e-b18e-0c655bc94c9a@sirena.org.uk>
- <CAA1CXcDPg7Na9biCMOx4i_xwXZ5Y_qq-7SiYEU82v2a6TFpMJA@mail.gmail.com>
+	s=arc-20240116; t=1742568801; c=relaxed/simple;
+	bh=WsZaMEUQpMdYAbITySr5w6XbtX/sM1W7f9WSRsngGaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mXhplnhJEXY2nVq1v9+SLj7vKb0JXqMRC1YJZkLWzpIXo1IUl5W9JUMOsHiK1PNc9To/GmP8713Qw4Vttx//Z1vSI42HZRex+V9vXnxNv9ZL5NSGuo/DUAbQ/bDj5vNiK77D39EFbfi/7Yz1cKV33051IyUe0P1SbDR9o/9WO1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAVu5TtF; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bef9b04adso22057741fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742568798; x=1743173598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WsZaMEUQpMdYAbITySr5w6XbtX/sM1W7f9WSRsngGaM=;
+        b=NAVu5TtFpoUSVtcS4BW8LL6TZfYemNVewvEvKx3LpwdGTecsED9BzGz7FjaLnOkOQK
+         ndVyAENedGdQjPBAmRcFGveLiDbflR8JjrlVDNPaOMUpNWLHmbCwHjadSO7ArWdPJKFB
+         WDjRaCcaXiWHi4cjmHrlW+JgQnFmG5EIWODW9+hpYecz4wa8qhKLhHr0v1rh7db6oN0j
+         1pdkSWbf347NOYBoAQq0IrQ/REzExTw6nq7xSrA4DnQdhb0RuQ/xQOEudBwmlsKhQ/bN
+         i1MfrVCHkeLS4G37afEemj8Ro5cn5lPCS7h5dwvQ/3bi+2eazYabzQFmQbSLw5f3HXVS
+         VmAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742568798; x=1743173598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WsZaMEUQpMdYAbITySr5w6XbtX/sM1W7f9WSRsngGaM=;
+        b=hHI11YUbMQuowtxFjNY7lTYQqWQMK7Vjh9m2ezwiGY5X6O/tihcr3Npklt5X6BDF/S
+         J2gSuH4YjwlDK+GYPcxY+swqNaA2hOW+D4Q/pEWPpYc6AlfnyRhNvEV8kOU/uBEezRH9
+         AoBk7mH635ctPtWkYWe3aJRIk15ZQP7V9vKPjXt4dA6VJ51jvJXhrsVMU4dfhPU3gVIT
+         CW87ImFqn4IpmqBW4lseTRvTbvWzRZYB/3qfkuz/BzGCIvJzGEG4RuCabM7qztGTENo1
+         Ww6eZgEU6jwRLLAbJSOYHpw2hRQLe8Beyff6OlJE76FSDSxB5Kt7sEWrmMcJDtc1jKQR
+         ERMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfeqn1D4qlFMeSWIkyleVkVMDnAIVhT0mzlYBB31mQsMJXz78G2f4zdgLoOkQPUYRhVjoxrdll1+EAKd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+++leukRB1jyf2VW6J1BOT0UAlqJO2hLebg1pUpUsVOGp9J0d
+	PknmRuJlJI3Jy9vqPz4rrFR6QgFBIqDWHZXAFpzALNg/buiPb65rlL7pgZIqja6+TJN9D9WNmPT
+	oaP60nUvZ5QlZbhE0ueesxMJTIfc=
+X-Gm-Gg: ASbGncvSvh7Cg6qnKJbCzUUxknMJygz6B4oQHBX0x/sfU+rOgnTbGW2XF7IJDWFbIzE
+	8OBMX0ro56LS5qr4dDxU0B2gbxWVqET1yp/xypgG3KMTq08V+VVcFYurYP2WIOowkYtt2AgpGhd
+	1PqoxLbubgrsWRrVriIRsnBF6gRxFVtH9+R8P9eGask5J/4hsGChXu
+X-Google-Smtp-Source: AGHT+IEoqAeCVxsaLpAMrnJ7GUtqvrVGP2riMgFX902orqt7evSDVSU8oxeVmyL6yJEZxwaUbM2vlN3sJxoZMnLHoas=
+X-Received: by 2002:a05:651c:50a:b0:30c:2da4:85fb with SMTP id
+ 38308e7fff4ca-30d7e22171cmr14921951fa.12.1742568797671; Fri, 21 Mar 2025
+ 07:53:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="44Vt4as3XnXLhDhy"
-Content-Disposition: inline
-In-Reply-To: <CAA1CXcDPg7Na9biCMOx4i_xwXZ5Y_qq-7SiYEU82v2a6TFpMJA@mail.gmail.com>
-X-Cookie: Well begun is half done.
-
-
---44Vt4as3XnXLhDhy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
+ <CAJ-ks9=zN0pUAt9ELckna+3GcnDfhjF3jgiM1FHXLji9pWc2wQ@mail.gmail.com> <PN3PR01MB95976F630E0E4004CDC5310DB8DB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+In-Reply-To: <PN3PR01MB95976F630E0E4004CDC5310DB8DB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 21 Mar 2025 10:52:40 -0400
+X-Gm-Features: AQ5f1JqQXgzNuJZ0okD1pSLH_L9kORmcIYy7VMdjprWpK9CpxKbY2jYbrLTSovY
+Message-ID: <CAJ-ks9mcuwSEQ=h1niGO5WkvNdkTwm0JeKtvp1RaioEb8WmuOQ@mail.gmail.com>
+Subject: Re: [PATCH] printf: add tests for generic FourCCs
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Kees Cook <kees@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 05:37:50AM -0600, Nico Pache wrote:
-> On Thu, Mar 20, 2025 at 4:49=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
-rote:
+On Fri, Mar 21, 2025 at 10:23=E2=80=AFAM Aditya Garg <gargaditya08@live.com=
+> wrote:
+>
+>
+> Can you give me some docs for running the Kunit tests? The patch is basic=
+ally a port of the original version.
 
-> > Simply adding it to the all_tests.config will just result in it getting
-> > turned off by Kconfig during the build since it's not a visible option
-> > so that's not accomplishing anything.  all_tests.config is not UML
-> > specific, it's for enabling all the KUnit tests that could run in UML no
-> > matter how you're running them.
+I use:
 
-> So would the correct approach be allowing users to select FW_CS_DSP,
-> then apply these changes?
+tools/testing/kunit/kunit.py run --arch arm64 --make_options LLVM=3D1 print=
+f
 
-That user select should only be visible if KUnit is enabled though,
-it really is library code so shouldn't actually be user selectable.  I'm
-not sure if there's some other strategy other KUnit tests for libraries
-use.
+You can probably just use:
 
-> It also looks like FW_CS_DSP_KUNIT_TEST_UTILS and FW_CS_DSP_KUNIT_TEST
-> are redundant.
+tools/testing/kunit/kunit.py run printf
 
-Possibly there's more tests to come that'll use them?
+It would also be useful to see raw output:
 
---44Vt4as3XnXLhDhy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfdfPoACgkQJNaLcl1U
-h9D9wwgAggSj6DC9vV8bIsmlbXcAIQQ+ae2h9tlW7pLq+3MPqtKUcsHOpNZp0cfR
-EyOVUIOnhovRvqBu/q4PEfqdlNBArIlOZT9rI8YsJspAviayPPSw+XCRtPucpU4/
-11mzcrDAg4LxhIUg2Gj/Pj0iuUDfEHgH4kuNUM0gX/SJzvQfEYxYrwSWylh1907X
-gNq3d1S/4H0FQ8Im81I5bPlhkgLRFcYNNtSTFFHnKE+rmvLT8wn1+ryUlNFwYtSX
-scihIsl9KMz8lWEhuLXM84YD9FUc9vYjZy4Wa7qZYEo0XOqlZslZiBU7G8CQ8S38
-gCJYp7V0if04dtb5Vh6EmGH0G06A1Q==
-=EvbZ
------END PGP SIGNATURE-----
-
---44Vt4as3XnXLhDhy--
+tools/testing/kunit/kunit.py run printf --raw_output
 
