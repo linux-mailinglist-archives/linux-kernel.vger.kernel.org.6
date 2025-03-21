@@ -1,1296 +1,410 @@
-Return-Path: <linux-kernel+bounces-571149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0CCA6B9C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:21:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AC2A6B9CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7188C7AA773
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37BE18997E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14B223709;
-	Fri, 21 Mar 2025 11:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7746E222582;
+	Fri, 21 Mar 2025 11:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjiBqb2Y"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RFu4hC1N"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3565224AED;
-	Fri, 21 Mar 2025 11:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC051F03F3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742555918; cv=none; b=d9u6J3fnvrNrMKydmYo6aeMPPy40CvfKfAjvgdK70qaU61lQe7iRgnAcQKwOAmhkQ2z2nRONBU354UPn+98LMMHtJY0tSQW+bVHW0UFMsgZPRh5d0Ieq2VsYNqLcxWitGSSZ/I6dZo0mtW70Zhvak6YECj5v5A9ub1PaSZEdKXM=
+	t=1742556213; cv=none; b=qI5d/SIL/SdOdjxgJpTBpwJqXEL2nZr/BNK05l/J74vk18JQxENuo4zpr1VhZuNCe1vZrIlqsDITlOck5jH7GrvU+S3N5vhs+kZ2SI0h1mcvlECxFplDkiptDDe/JE5KH4q2BkkMg2KqyojP4lHh+69f9hl6rwxpb8kn4FYlBmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742555918; c=relaxed/simple;
-	bh=owllK2gD+NNiVI+Pgm2D+Z6JczWJc3BO5i0i+m1Qr1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tGHqN5IpEQI9SCUkia2X2OfSKoTLHlviQ5PcoXHHS+ZV4gAco0iefYA0t61yOW6sQT4ocSs2/ADtQ58ori5HEObJPMU2AMf51AE/r16Y6tN5c3pE/GW6Yd5EUK9UBA1codDn4Bk9JOJdchwBKlpTlvzclkmBssTeW6KZlUUkChU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mjiBqb2Y; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaecf50578eso368483366b.2;
-        Fri, 21 Mar 2025 04:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742555914; x=1743160714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uGxsBKgqMl9xMbRl5tOrqJAmvA31rEvKumJwh3rNaXs=;
-        b=mjiBqb2Yr+5+0xQiN5uiYKadA4oApMZOF7zd1ZOCK1/6Htz6O7rsg0nU85x8wTrwEz
-         kUQses+zfbKfx7g3nsN8DFmxTvy60wRoxV8gAUM1yVZ1FAtAS6vbgwjtVX5OAy3BZFWw
-         eEAxBtBBcOs3rXtaOUVZ1fgV3Nc8Nen3iQI5GFaut6e/CqaQlDVl0sBIH2Zno2kzSjTU
-         m99F9KEtK0naK5lOgBQ0myShsYK6UP4QJA+Z8yAQlZGzVeZtSaV6oE0uP4dzV0LgZbmh
-         SI9fARXBWe6sgq1rbYfCJXo+7H70blgRCC+zshhOu1BV/l1IRSTOd7UOsmqJLlO9hAHa
-         qLdw==
+	s=arc-20240116; t=1742556213; c=relaxed/simple;
+	bh=OgTMpAOzLMbPPHCzEavmMQWVrZMLgSwbobYSoT2Wjy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDAoWmZsEaKipy6LVH5+j19gXEl5E1eW9CGYLmvbYWj8q8rxFYSR6iv8jabRyv7VHC4wZ6jRYUSLt32XO2Y8bIr92nALa/x7NiFAg8vWkQXyPIiLq7QxC73w56zEHbqSSl4RW0WfY4R5vB86vBsXqF3LvVRB9Z15EexSsFQObbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RFu4hC1N; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742556209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=s/md+4NTjaWUNzHR/fDVjCHKrpiH7LiUEFL7MRG8nvU=;
+	b=RFu4hC1NHjmSHZMnTPwYSAnw3RzKKPMMP6RKbn6aJ2H+2EkwHZjkukobfq7mFdUtZNLsdX
+	dQaIzYUbacLQ+cdqLoiL8dfsaD8bJ3tkVXTWvxn5Ihk03ETYSCHYLIwvle2cpBBp3JlV8n
+	8qJOZ6dz+ZdnH9D+Qy0idHkh9OBTgqk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-186-qlFhi1SsMtaQFlLZZ3gZ1Q-1; Fri, 21 Mar 2025 07:23:27 -0400
+X-MC-Unique: qlFhi1SsMtaQFlLZZ3gZ1Q-1
+X-Mimecast-MFC-AGG-ID: qlFhi1SsMtaQFlLZZ3gZ1Q_1742556206
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-394bbefc98cso1116125f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:23:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742555914; x=1743160714;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uGxsBKgqMl9xMbRl5tOrqJAmvA31rEvKumJwh3rNaXs=;
-        b=tr3B0pgOQT2sx3enOPEMp4fEEptACDsbSRqXM0/IdM0cDc8cLuA77HsSKCMFRsqu0R
-         Mi4Yqz8Yiikg4CA//a5joB7Yhyj5mp1YYZ4vmOIbYQbySct6Ui8/FQ+sCPvQEgPr3kUe
-         77RgIZz7qko0CIBNCOjLxlKDbELm4B06M2gMGBgoalzUOv6oghlPVUy7UKjqnyLy2DWw
-         c5/QBJqbtfqWA+noJhuyOEGbNQTuVXJZ6hQbSSX7AopUmcteJHw+gUbgUMbHJmmZlNbo
-         4MTVnDgZiUhEcI7bWIy5jEQpnfgHXec6qtgyOK+nC+Vk7xbClpvYfwCko4Ff3uk2OA9h
-         VwLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpbMzLg/2NLNUjY06k8kj+5RCpt0H+1ArH1vl8TB3VenLDKrpk7dFE4UX5JuSdujAOoVWrkbnHW/yW@vger.kernel.org, AJvYcCVbVgmCGlfD39LVIHEhF5y6AQyi1s3rPIrEFxAk6QmN2iRJLLoX/8nK6eXq4j1B3DmksrkW6O2+xzPtQh7i@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBjeGCkhHkhu4m6Ri0ih+ma3PYBXVCd4IeFfvhppF6Txnu4O1R
-	C8qK8sRaHEzD4ivYgDsudUp9tuidgtfDdMXHcSYw6vZgCCkN0cvE
-X-Gm-Gg: ASbGncuHyPoqlpvLcV6Vnv0yu4noml6hwFK7Cxm+wjoHiONxyeiLcUFwvb+veBM2gkE
-	viMYnn7ocgQDVb8G+vbD2xP/leqBRCnF43pBoCEnj8LRY2224XnqqsOnUWaRr1r7iwDgc38ddNg
-	mK5jKjjPl2oc+4pkUng42FTmVWfOY26x+UVXpQQsZlNNzNUrXUjty7DY8Qc5PPClGeEbSvLw6fi
-	Mk3u4AFSCDeWm8YA3xgjfTdB8R1gMhCCt7aSXAjLl7vBsb6EohEbaPqCzCSum2F9TDf1wCUINEY
-	UxNYSXBLkEYrTBKztkARX61itblo9emzQGx8SE8Se43649Qu
-X-Google-Smtp-Source: AGHT+IGA1GXNW/fy22nt4L655eb+Dm6B415Vy+ZA6TW9FlOvu5RLzotWbDSKoeyXSFVO2uAu9F5SzQ==
-X-Received: by 2002:a17:907:3ea7:b0:ac2:1c64:b0a with SMTP id a640c23a62f3a-ac3f212ad50mr256566066b.14.1742555913953;
-        Fri, 21 Mar 2025 04:18:33 -0700 (PDT)
-Received: from wslxew242.. ([188.193.103.108])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd569f3sm134228866b.171.2025.03.21.04.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 04:18:33 -0700 (PDT)
-From: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <goran.radni@gmail.com>,
-	=?UTF-8?q?B=C3=B6rge=20Str=C3=BCmpfel?= <boerge.struempfel@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: =?UTF-8?q?Goran=20Ra=C4=91enovi=C4=87?= <gradenovic@ultratronik.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/4] ARM: dts: stm32: add initial support for stm32mp157-ultra-fly-sbc board
-Date: Fri, 21 Mar 2025 12:18:19 +0100
-Message-ID: <20250321111821.361419-5-goran.radni@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321111821.361419-1-goran.radni@gmail.com>
-References: <20250321111821.361419-1-goran.radni@gmail.com>
+        d=1e100.net; s=20230601; t=1742556206; x=1743161006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s/md+4NTjaWUNzHR/fDVjCHKrpiH7LiUEFL7MRG8nvU=;
+        b=WvY8VsAG49I6dnB01evsCev1dKcDbwWHjzUqVmewet2rIrWoeG4iNEe7BNgjdl3qCs
+         IC0x1KHoEPozu5Nb+1Og0qSxXOkvNTwuOQOLXd9rr4pOH8JJTP3VgqMnu7NG/ABYs5qQ
+         62lKcIXoPIyd4+1SE6Oi31vwspr2pUu7+CjfuZ+ko0MnHhdd+zMLzAo1dQyFnrKH5r4y
+         SeoF9gtOmHd0QG4EBklzYWYSGx2P2Jq6nHiCKRZB92xdLVho/E5n2CaxQF5NIIvteTuT
+         8Ojx9jeaOiSW2sZwzAYA1ibULAnWd5PvNN6S/XD3voh1ihc+bXwHHsVHT0iudiOuFyqZ
+         vzPw==
+X-Gm-Message-State: AOJu0YwuyPxyfOeOwPba6WRGKGy8A9qZ0BjWz8VNXKGBj8rsop1D7Luq
+	RYEdeoh4LIQIN6k7iaqsALCepFKVIRBSmiMj0FgUy+kKkV7O5V2WPf1cOqhRuz688OhZKQVkyaB
+	8EhP5hF+7MLAOMjFgKXnFCp0xgptReA+gZFGqs5Y5nG34qA8twiFmj+7675u8tCh7Ie25UFVWA3
+	fQgVLI65Rg7bQsc/AvMC8iw/X/pfoFIJB7EQ3eozh2lfiO
+X-Gm-Gg: ASbGncvLaexHwO7bsfhsFs+0bcTm7NiJmv9LEVFu7f7wZFKncRjrWFbSn2wD++7aYvl
+	yKGISW3YVdjTDgZ8cuEI6mGZMKK28kSJj75lYDzZTFbT5/fgsNW6A6ChXpkFFPxQk7iMhJU+Y1t
+	mpckqQogG1wcVfhlKcesL05MenIvto0JXEnYwVJyal/qoH4CePNcH42UusnycQRX53EDGnlIOKU
+	H7WXbAj8tSpD6g1smDnxOtuAArW+zbSYy5C3wjkyjwy8fLxA5ZjDFWqf8KVvFzH//LFTWCNqRO7
+	3dqv143Ie/nUbwYowwNEv00T/Wt46fFAIK9w5kJPBLacIlSTi2dE3ZuaIuYR7titJ65Or8ntBLh
+	D
+X-Received: by 2002:a5d:64c7:0:b0:390:d73a:4848 with SMTP id ffacd0b85a97d-3997f94035cmr3215268f8f.47.1742556206332;
+        Fri, 21 Mar 2025 04:23:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYuZSe0DTbFu+RBbXBxnS/gPdmj7yPzI1Yx5Cf0QQX6uqSW0HICnEbt4GhRaACxTadtFYxEw==
+X-Received: by 2002:a5d:64c7:0:b0:390:d73a:4848 with SMTP id ffacd0b85a97d-3997f94035cmr3215219f8f.47.1742556205703;
+        Fri, 21 Mar 2025 04:23:25 -0700 (PDT)
+Received: from localhost (p200300cbc72a910023d23800cdcc90f0.dip0.t-ipconnect.de. [2003:cb:c72a:9100:23d2:3800:cdcc:90f0])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd27b59sm24111505e9.23.2025.03.21.04.23.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 04:23:25 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	x86@kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	xingwei lee <xrivendell7@gmail.com>,
+	yuxin wang <wang1315768607@163.com>,
+	Marius Fleischer <fleischermarius@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rik van Riel <riel@surriel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Xu <peterx@redhat.com>
+Subject: [PATCH v2] x86/mm/pat: Fix VM_PAT handling when fork() fails in copy_page_range()
+Date: Fri, 21 Mar 2025 12:23:23 +0100
+Message-ID: <20250321112323.153741-1-david@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Goran Rađenović <gradenovic@ultratronik.de>
+If track_pfn_copy() fails, we already added the dst VMA to the maple
+tree. As fork() fails, we'll cleanup the maple tree, and stumble over
+the dst VMA for which we neither performed any reservation nor copied
+any page tables.
 
-Add support for Ultratronik's stm32mp157c fly board. This board embeds
-a STM32MP157c SOC and 1GB of DDR3. Several connections are available on
-this boards: 2*USB2.0, 1*USB2.0 MiniUSB, Debug UART, 1*UART, 1*USART,
-SDcard, RJ45, ...
+Consequently untrack_pfn() will see VM_PAT and try obtaining the
+PAT information from the page table -- which fails because the page
+table was not copied.
 
-This patch enables basic support for a kernel boot - SD-card or eMMC.
+The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
+if track_pfn_copy() fails. However, the whole thing is about "simply"
+clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
+and performed a reservation, but copying the page tables fails, we'll
+simply clear the VM_PAT flag, not properly undoing the reservation ...
+which is also wrong.
 
-Signed-off-by: Goran Rađenović <gradenovic@ultratronik.de>
+So let's fix it properly: set the VM_PAT flag only if the reservation
+succeeded (leaving it clear initially), and undo the reservation if
+anything goes wrong while copying the page tables: clearing the VM_PAT
+flag after undoing the reservation.
+
+Note that any copied page table entries will get zapped when the VMA will
+get removed later, after copy_page_range() succeeded; as VM_PAT is not set
+then, we won't try cleaning VM_PAT up once more and untrack_pfn() will be
+happy. Note that leaving these page tables in place without a reservation
+is not a problem, as we are aborting fork(); this process will never run.
+
+A reproducer can trigger this usually at the first try:
+
+  https://gitlab.com/davidhildenbrand/scratchspace/-/raw/main/reproducers/pat_fork.c
+
+  [   45.239440] WARNING: CPU: 26 PID: 11650 at arch/x86/mm/pat/memtype.c:983 get_pat_info+0xf6/0x110
+  [   45.241082] Modules linked in: ...
+  [   45.249119] CPU: 26 UID: 0 PID: 11650 Comm: repro3 Not tainted 6.12.0-rc5+ #92
+  [   45.250598] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
+  [   45.252181] RIP: 0010:get_pat_info+0xf6/0x110
+  ...
+  [   45.268513] Call Trace:
+  [   45.269003]  <TASK>
+  [   45.269425]  ? __warn.cold+0xb7/0x14d
+  [   45.270131]  ? get_pat_info+0xf6/0x110
+  [   45.270846]  ? report_bug+0xff/0x140
+  [   45.271519]  ? handle_bug+0x58/0x90
+  [   45.272192]  ? exc_invalid_op+0x17/0x70
+  [   45.272935]  ? asm_exc_invalid_op+0x1a/0x20
+  [   45.273717]  ? get_pat_info+0xf6/0x110
+  [   45.274438]  ? get_pat_info+0x71/0x110
+  [   45.275165]  untrack_pfn+0x52/0x110
+  [   45.275835]  unmap_single_vma+0xa6/0xe0
+  [   45.276549]  unmap_vmas+0x105/0x1f0
+  [   45.277256]  exit_mmap+0xf6/0x460
+  [   45.277913]  __mmput+0x4b/0x120
+  [   45.278512]  copy_process+0x1bf6/0x2aa0
+  [   45.279264]  kernel_clone+0xab/0x440
+  [   45.279959]  __do_sys_clone+0x66/0x90
+  [   45.280650]  do_syscall_64+0x95/0x180
+
+Likely this case was missed in commit d155df53f310 ("x86/mm/pat: clear
+VM_PAT if copy_p4d_range failed")
+
+... and instead of undoing the reservation we simply cleared the VM_PAT flag.
+
+Keep the documentation of these functions in include/linux/pgtable.h,
+one place is more than sufficient -- we should clean that up for the other
+functions like track_pfn_remap/untrack_pfn separately.
+
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yuxin wang <wang1315768607@163.com>
+Closes: https://lore.kernel.org/lkml/CABOYnLx_dnqzpCW99G81DmOr+2UzdmZMk=T3uxwNxwz+R1RAwg@mail.gmail.com/
+Reported-by: Marius Fleischer <fleischermarius@gmail.com>
+Closes: https://lore.kernel.org/lkml/CAJg=8jwijTP5fre8woS4JVJQ8iUA6v+iNcsOgtj9Zfpc3obDOQ@mail.gmail.com/
+Fixes: d155df53f310 ("x86/mm/pat: clear VM_PAT if copy_p4d_range failed")
+Fixes: 2ab640379a0a ("x86: PAT: hooks in generic vm code to help archs to track pfnmap regions - v3")
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Xu <peterx@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/arm/boot/dts/st/Makefile                 |    3 +-
- .../boot/dts/st/stm32mp157c-ultra-fly-sbc.dts | 1155 +++++++++++++++++
- 2 files changed, 1157 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/st/stm32mp157c-ultra-fly-sbc.dts
 
-diff --git a/arch/arm/boot/dts/st/Makefile b/arch/arm/boot/dts/st/Makefile
-index b7d5d305cbbe..270d1c699e1a 100644
---- a/arch/arm/boot/dts/st/Makefile
-+++ b/arch/arm/boot/dts/st/Makefile
-@@ -66,7 +66,8 @@ dtb-$(CONFIG_ARCH_STM32) += \
- 	stm32mp157c-lxa-tac-gen2.dtb \
- 	stm32mp157c-odyssey.dtb \
- 	stm32mp157c-osd32mp1-red.dtb \
--	stm32mp157c-phycore-stm32mp1-3.dtb
-+	stm32mp157c-phycore-stm32mp1-3.dtb \
-+	stm32mp157c-ultra-fly-sbc.dtb
- dtb-$(CONFIG_ARCH_U8500) += \
- 	ste-snowball.dtb \
- 	ste-hrefprev60-stuib.dtb \
-diff --git a/arch/arm/boot/dts/st/stm32mp157c-ultra-fly-sbc.dts b/arch/arm/boot/dts/st/stm32mp157c-ultra-fly-sbc.dts
-new file mode 100644
-index 000000000000..1778f5a527ba
---- /dev/null
-+++ b/arch/arm/boot/dts/st/stm32mp157c-ultra-fly-sbc.dts
-@@ -0,0 +1,1155 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+v1 -> v2:
+* Avoid a second get_pat_info() [and thereby fix the error checking]
+  by passing the pfn from track_pfn_copy() to untrack_pfn_copy()
+* Simplify untrack_pfn_copy() by calling untrack_pfn().
+* Retested
+
+Not sure if we want to CC stable ... it's really hard to trigger in
+sane environments.
+
+---
+ arch/x86/mm/pat/memtype.c | 43 +++++++++++++++++----------------------
+ include/linux/pgtable.h   | 31 ++++++++++++++++++++++------
+ kernel/fork.c             |  4 ++++
+ mm/memory.c               | 11 ++++------
+ 4 files changed, 52 insertions(+), 37 deletions(-)
+
+diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+index feb8cc6a12bf2..ffddbf52cd478 100644
+--- a/arch/x86/mm/pat/memtype.c
++++ b/arch/x86/mm/pat/memtype.c
+@@ -984,26 +984,30 @@ static int get_pat_info(struct vm_area_struct *vma, resource_size_t *paddr,
+ 	return -EINVAL;
+ }
+ 
+-/*
+- * track_pfn_copy is called when vma that is covering the pfnmap gets
+- * copied through copy_page_range().
+- *
+- * If the vma has a linear pfn mapping for the entire range, we get the prot
+- * from pte and reserve the entire vma range with single reserve_pfn_range call.
+- */
+-int track_pfn_copy(struct vm_area_struct *vma)
++int track_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma, unsigned long *pfn)
+ {
++	const unsigned long vma_size = src_vma->vm_end - src_vma->vm_start;
+ 	resource_size_t paddr;
+-	unsigned long vma_size = vma->vm_end - vma->vm_start;
+ 	pgprot_t pgprot;
++	int rc;
+ 
+-	if (vma->vm_flags & VM_PAT) {
+-		if (get_pat_info(vma, &paddr, &pgprot))
+-			return -EINVAL;
+-		/* reserve the whole chunk covered by vma. */
+-		return reserve_pfn_range(paddr, vma_size, &pgprot, 1);
+-	}
++	if (!(src_vma->vm_flags & VM_PAT))
++		return 0;
+ 
++	/*
++	 * Duplicate the PAT information for the dst VMA based on the src
++	 * VMA.
++	 */
++	if (get_pat_info(src_vma, &paddr, &pgprot))
++		return -EINVAL;
++	rc = reserve_pfn_range(paddr, vma_size, &pgprot, 1);
++	if (rc)
++		return rc;
++
++	/* Reservation for the destination VMA succeeded. */
++	vm_flags_set(dst_vma, VM_PAT);
++	*pfn = PHYS_PFN(paddr);
+ 	return 0;
+ }
+ 
+@@ -1095,15 +1099,6 @@ void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
+ 	}
+ }
+ 
+-/*
+- * untrack_pfn_clear is called if the following situation fits:
+- *
+- * 1) while mremapping a pfnmap for a new region,  with the old vma after
+- * its pfnmap page table has been removed.  The new vma has a new pfnmap
+- * to the same pfn & cache type with VM_PAT set.
+- * 2) while duplicating vm area, the new vma fails to copy the pgtable from
+- * old vma.
+- */
+ void untrack_pfn_clear(struct vm_area_struct *vma)
+ {
+ 	vm_flags_clear(vma, VM_PAT);
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 94d267d02372e..df2aff504da69 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1508,10 +1508,12 @@ static inline void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+ }
+ 
+ /*
+- * track_pfn_copy is called when vma that is covering the pfnmap gets
+- * copied through copy_page_range().
++ * track_pfn_copy is called when a VM_PFNMAP VMA is about to get the page
++ * tables copied during copy_page_range(). On success, stores the pfn to be
++ * passed to untrack_pfn_copy().
+  */
+-static inline int track_pfn_copy(struct vm_area_struct *vma)
++static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma, unsigned long *pfn)
+ {
+ 	return 0;
+ }
+@@ -1528,8 +1530,10 @@ static inline void untrack_pfn(struct vm_area_struct *vma,
+ }
+ 
+ /*
+- * untrack_pfn_clear is called while mremapping a pfnmap for a new region
+- * or fails to copy pgtable during duplicate vm area.
++ * untrack_pfn_clear is called in the following cases on a VM_PFNMAP VMA:
++ *
++ * 1) During mremap() on the src VMA after the page tables were moved.
++ * 2) During fork() on the dst VMA, immediately after duplicating the src VMA.
+  */
+ static inline void untrack_pfn_clear(struct vm_area_struct *vma)
+ {
+@@ -1540,12 +1544,27 @@ extern int track_pfn_remap(struct vm_area_struct *vma, pgprot_t *prot,
+ 			   unsigned long size);
+ extern void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+ 			     pfn_t pfn);
+-extern int track_pfn_copy(struct vm_area_struct *vma);
++extern int track_pfn_copy(struct vm_area_struct *dst_vma,
++		struct vm_area_struct *src_vma, unsigned long *pfn);
+ extern void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
+ 			unsigned long size, bool mm_wr_locked);
+ extern void untrack_pfn_clear(struct vm_area_struct *vma);
+ #endif
+ 
 +/*
-+ * Copyright (C) Ultratronik GmbH 2024-2025 - All Rights Reserved
++ * untrack_pfn_copy is called when a VM_PFNMAP VMA failed to copy during
++ * copy_page_range(), but after track_pfn_copy() was already called.
 + */
-+
-+/dts-v1/;
-+#include "stm32mp157.dtsi"
-+#include "stm32mp15xc.dtsi"
-+#include "stm32mp15-pinctrl.dtsi"
-+#include "stm32mp15xxac-pinctrl.dtsi"
-+#include <dt-bindings/pinctrl/stm32-pinfunc.h>
-+#include <dt-bindings/mfd/st,stpmic1.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "STM STM32MP15x Ultratronik MMI_A7 board";
-+	compatible = "ultratronik,stm32mp157c-ultra-fly-sbc", "st,stm32mp157";
-+
-+	aliases {
-+		ethernet0 = &ethernet0;
-+		serial0 = &uart4;
-+		serial1 = &uart5;
-+		serial2 = &uart7;
-+		serial3 = &usart1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@c0000000 {
-+		device_type = "memory";
-+		reg = <0xC0000000 0x40000000>;
-+	};
-+
-+	usb_otg_vbus: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "usb_otg_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpioh 3 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		retram: retram@38000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x38000000 0x10000>;
-+			no-map;
-+		};
-+
-+		mcuram: mcuram@30000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x30000000 0x40000>;
-+			no-map;
-+		};
-+
-+		mcuram2: mcuram2@10000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10000000 0x40000>;
-+			no-map;
-+		};
-+
-+		vdev0vring0: vdev0vring0@10040000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10040000 0x2000>;
-+			no-map;
-+		};
-+
-+		vdev0vring1: vdev0vring1@10042000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10042000 0x2000>;
-+			no-map;
-+		};
-+
-+		vdev0buffer: vdev0buffer@10044000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10044000 0x4000>;
-+			no-map;
-+		};
-+
-+		gpu_reserved: gpu@f8000000 {
-+			reg = <0xf8000000 0x8000000>;
-+			no-map;
-+		};
-+	};
-+
-+	leds: leds {
-+		compatible = "gpio-leds";
-+
-+		led0{
-+			label = "buzzer";
-+			gpios = <&gpiof 2 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "none";
-+		};
-+
-+		led1 {
-+			label = "led1";
-+			gpios = <&gpioa 12 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led2 {
-+			label = "led2";
-+			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led3 {
-+			label = "led3";
-+			gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	gpio_keys: gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-1 {
-+			label = "KEY1";
-+			gpios = <&gpiod 1 GPIO_ACTIVE_HIGH>;
-+			wakeup-source;
-+			linux,code = <2>;
-+		};
-+
-+		key-2 {
-+			label = "KEY2";
-+			gpios = <&gpiod 7 GPIO_ACTIVE_HIGH>;
-+			wakeup-source;
-+			linux,code = <3>;
-+		};
-+	};
-+};
-+
-+&adc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&adc1_ux_ain_pins_a>;
-+	vdd-supply = <&vdd>;
-+	vdda-supply = <&vdd>;
-+	vref-supply = <&vrefbuf>;
-+	status = "okay";
-+
-+	adc1: adc@0 {
-+		st,min-sample-time-nsecs = <5000>;
-+		st,adc-channels = <0 1 6 13>; /* ANA0 ANA1 PF12 PC3 */
-+		status = "okay";
-+	};
-+
-+	adc2: adc@100 {
-+		st,adc-channels = <0 1 12>; /* ANA0 ANA1 INT_TEMP*/
-+		st,min-sample-time-nsecs = <10000>;
-+		status = "okay";
-+
-+		channel@12 {
-+			reg = <12>;  /* Channel 12 = internal temperature sensor */
-+			label = "internal_temp";
-+		};
-+	};
-+};
-+
-+&dac {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&dac_ux_ch1_pins_a &dac_ux_ch2_pins_a>;
-+	vref-supply = <&vrefbuf>;
-+	status = "okay";
-+
-+	dac1: dac@1 {
-+		status = "okay";
-+	};
-+
-+	dac2: dac@2 {
-+		status = "okay";
-+	};
-+};
-+
-+&dts {
-+	compatible = "st,stm32-thermal";
-+	status = "okay";
-+};
-+
-+&ethernet0 {
-+	status = "okay";
-+	pinctrl-0 = <&ethernet0_ux_rgmii_pins_a>;
-+	pinctrl-1 = <&ethernet0_ux_rgmii_pins_sleep_a>;
-+	pinctrl-names = "default", "sleep";
-+	phy-mode = "rgmii-id";
-+	max-speed = <1000>;
-+	phy-handle = <&phy1>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "snps,dwmac-mdio";
-+		phy1: ethernet-phy@1 {
-+			reg = <1>;
-+			interrupt-parent = <&gpiod>;
-+			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-+		};
-+	};
-+};
-+
-+&gpioa {
-+	gpio-line-names =
-+	"#PMIC_IRQ", "", "", "", "DAC1", "DAC2", "", "",
-+	"", "", "OTG_ID", "TIM1_4", "#LED1", "#LED2", "#LED3", "";
-+};
-+
-+&gpiob {
-+	gpio-line-names =
-+	"", "", "", "", "", "", "", "",
-+	"", "", "", "", "", "", "", "";
-+};
-+
-+&gpioc {
-+	gpio-line-names =
-+	"#AMP_SD", "", "", "ANA5", "", "", "", "",
-+	"", "", "", "", "", "PMIC_WAKEUP", "", "";
-+};
-+
-+&gpiod {
-+	gpio-line-names =
-+	"#G_INT", "#TASTER1", "", "", "GPIO1", "GPIO2", "", "#TASTER2",
-+	"", "", "", "", "", "", "TIM4_3", "TIM4_4";
-+};
-+
-+&gpioe {
-+	gpio-line-names =
-+	"", "", "", "", "", "", "", "",
-+	"", "", "PWM2", "", "", "", "", "";
-+};
-+
-+&gpiof {
-+	gpio-line-names =
-+	"#SD1_CD", "SD1_WP", "BUZZER", "#DISP_POW", "BKL_POW", "#CAM_RES", "", "",
-+	"", "TIM17_1N", "", "CAM_PWDN", "ANA6", "ENA_USB", "", "";
-+};
-+
-+&gpiog {
-+	gpio-line-names =
-+	"#ESP_RES", "#ESP_BOOT", "GPIO3", "GPIO4", "", "", "", "",
-+	"", "#TOUCH_IRQ", "", "", "", "", "", "#PCAP_RES";
-+};
-+
-+&gpioh {
-+	gpio-line-names =
-+	"", "CAM_LED", "", "USB_OTG_PWR", "", "USB_OTG_OC", "", "",
-+	"", "", "", "", "", "", "", "";
-+};
-+
-+&gpioi {
-+	gpio-line-names =
-+	"BKL_PWM", "", "", "", "", "", "", "",
-+	"#SPI_CS0", "", "", "#SPI_CS1", "", "", "", "";
-+};
-+
-+&gpioj {
-+	gpio-line-names =
-+	"", "", "", "", "", "", "", "",
-+	"", "", "", "", "", "", "", "";
-+};
-+
-+&gpiok {
-+	gpio-line-names =
-+	"", "", "", "", "", "", "", "",
-+	"", "", "", "", "", "", "", "";
-+};
-+
-+&gpioz {
-+	gpio-line-names =
-+	"", "", "", "#SPI_CS2", "", "", "", "",
-+	"", "", "", "", "", "", "", "";
-+};
-+
-+&gpu {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&i2c1_ux_pins_a>;
-+	pinctrl-1 = <&i2c1_ux_pins_sleep_a>;
-+	i2c-scl-rising-time-ns = <100>;
-+	i2c-scl-falling-time-ns = <7>;
-+	status = "okay";
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+
-+	rtc@32 {
-+		compatible = "epson,rx8900";
-+		reg = <0x32>;
-+		epson,vdet-disable;
-+		trickle-diode-disable;
-+	};
-+};
-+
-+&i2c4 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&i2c4_ux_pins_a>;
-+	pinctrl-1 = <&i2c4_ux_pins_sleep_a>;
-+	i2c-scl-rising-time-ns = <185>;
-+	i2c-scl-falling-time-ns = <20>;
-+	status = "okay";
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+
-+	pmic: pmic@33 {
-+		compatible = "st,stpmic1";
-+		reg = <0x33>;
-+		interrupts-extended = <&exti 0 IRQ_TYPE_EDGE_FALLING>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		regulators {
-+			compatible = "st,stpmic1-regulators";
-+
-+			ldo1-supply = <&v3v3>;
-+			ldo3-supply = <&vdd_ddr>;
-+			ldo6-supply = <&v3v3>;
-+			pwr_sw1-supply = <&bst_out>;
-+			pwr_sw2-supply = <&bst_out>;
-+
-+			vddcore: buck1 {
-+				regulator-name = "vddcore";
-+				regulator-min-microvolt = <1250000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-always-on;
-+				regulator-initial-mode = <0>;
-+				regulator-over-current-protection;
-+			};
-+
-+			vdd_ddr: buck2 {
-+				regulator-name = "vdd_ddr";
-+				regulator-min-microvolt = <1350000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-always-on;
-+				regulator-initial-mode = <0>;
-+				regulator-over-current-protection;
-+			};
-+
-+			vdd: buck3 {
-+				regulator-name = "vdd";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+				st,mask-reset;
-+				regulator-initial-mode = <0>;
-+				regulator-over-current-protection;
-+			};
-+
-+			v3v3: buck4 {
-+				regulator-name = "v3v3";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+				regulator-over-current-protection;
-+				regulator-initial-mode = <0>;
-+			};
-+
-+			vtt_ddr: ldo3 {
-+				regulator-name = "vtt_ddr";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <750000>;
-+				regulator-always-on;
-+				regulator-over-current-protection;
-+			};
-+
-+			vdd_usb: ldo4 {
-+				regulator-name = "vdd_usb";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+				interrupts = <IT_CURLIM_LDO4 0>;
-+			};
-+
-+			v1v8: ldo6 {
-+				regulator-name = "v1v8";
-+				regulator-min-microvolt = <1600000>;/* offset +200 mv ??? */
-+				regulator-max-microvolt = <1600000>;/* real 1800000 */
-+				regulator-always-on;
-+				interrupts = <IT_CURLIM_LDO6 0>;
-+			};
-+
-+			vref_ddr: vref_ddr {
-+				regulator-name = "vref_ddr";
-+				regulator-always-on;
-+			};
-+
-+			bst_out: boost {
-+				regulator-name = "bst_out";
-+				interrupts = <IT_OCP_BOOST 0>;
-+			};
-+
-+			vbus_otg: pwr_sw1 {
-+				regulator-name = "vbus_otg";
-+				interrupts = <IT_OCP_OTG 0>;
-+				regulator-active-discharge = <1>;
-+			 };
-+
-+			 vbus_sw: pwr_sw2 {
-+				regulator-name = "vbus_sw";
-+				interrupts = <IT_OCP_SWOUT 0>;
-+				regulator-active-discharge = <1>;
-+			 };
-+		};
-+	};
-+};
-+
-+&iwdg2 {
-+	timeout-sec = <32>;
-+	status = "okay";
-+};
-+
-+&m_can2 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&m_can2_ux_pins_a>;
-+	pinctrl-1 = <&m_can2_ux_sleep_pins_a>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+
-+	adc1_ux_ain_pins_a: adc1-ux-ain-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F',12, ANALOG)>, /* ADC1 in6 */
-+				 <STM32_PINMUX('C', 3, ANALOG)>; /* ADC2 in13 */
-+		};
-+	};
-+
-+	dac_ux_ch1_pins_a: dac-ux-ch1-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 4, ANALOG)>;
-+		};
-+	};
-+
-+	dac_ux_ch2_pins_a: dac-ux-ch2-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 5, ANALOG)>;
-+		};
-+	};
-+
-+	ethernet0_ux_rgmii_pins_a: rgmii-ux-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('G', 5, AF11)>, /* ETH_RGMII_CLK125 */
-+				 <STM32_PINMUX('G', 4, AF11)>, /* ETH_RGMII_GTX_CLK */
-+				 <STM32_PINMUX('G', 13, AF11)>, /* ETH_RGMII_TXD0 */
-+				 <STM32_PINMUX('G', 14, AF11)>, /* ETH_RGMII_TXD1 */
-+				 <STM32_PINMUX('C', 2, AF11)>, /* ETH_RGMII_TXD2 */
-+				 <STM32_PINMUX('E', 2, AF11)>, /* ETH_RGMII_TXD3 */
-+				 <STM32_PINMUX('B', 11, AF11)>; /* ETH_RGMII_TX_CTL */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <2>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('C', 4, AF11)>, /* ETH_RGMII_RXD0 */
-+				 <STM32_PINMUX('C', 5, AF11)>, /* ETH_RGMII_RXD1 */
-+				 <STM32_PINMUX('B', 0, AF11)>, /* ETH_RGMII_RXD2 */
-+				 <STM32_PINMUX('H', 7, AF11)>, /* ETH_RGMII_RXD3 */
-+				 <STM32_PINMUX('A', 1, AF11)>, /* ETH_RGMII_RX_CLK */
-+				 <STM32_PINMUX('A', 7, AF11)>; /* ETH_RGMII_RX_CTL */
-+			bias-disable;
-+		};
-+		pins3 {
-+			pinmux = <STM32_PINMUX('C', 1, AF11)>; /* ETH_MDC */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins4 {
-+			pinmux = <STM32_PINMUX('A', 2, AF11)>; /* ETH_MDIO */
-+			bias-disable;
-+			drive-open-drain;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	ethernet0_ux_rgmii_pins_sleep_a: rgmii-ux-sleep-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('G', 5, ANALOG)>, /* ETH_RGMII_CLK125 */
-+				 <STM32_PINMUX('G', 4, ANALOG)>, /* ETH_RGMII_GTX_CLK */
-+				 <STM32_PINMUX('G', 13, ANALOG)>, /* ETH_RGMII_TXD0 */
-+				 <STM32_PINMUX('G', 14, ANALOG)>, /* ETH_RGMII_TXD1 */
-+				 <STM32_PINMUX('C', 2, ANALOG)>, /* ETH_RGMII_TXD2 */
-+				 <STM32_PINMUX('E', 2, ANALOG)>, /* ETH_RGMII_TXD3 */
-+				 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH_RGMII_TX_CTL */
-+				 <STM32_PINMUX('A', 2, ANALOG)>, /* ETH_MDIO */
-+				 <STM32_PINMUX('C', 1, ANALOG)>, /* ETH_MDC */
-+				 <STM32_PINMUX('C', 4, ANALOG)>, /* ETH_RGMII_RXD0 */
-+				 <STM32_PINMUX('C', 5, ANALOG)>, /* ETH_RGMII_RXD1 */
-+				 <STM32_PINMUX('B', 0, ANALOG)>, /* ETH_RGMII_RXD2 */
-+				 <STM32_PINMUX('B', 1, ANALOG)>, /* ETH_RGMII_RXD3 */
-+				 <STM32_PINMUX('A', 1, ANALOG)>, /* ETH_RGMII_RX_CLK */
-+				 <STM32_PINMUX('A', 7, ANALOG)>; /* ETH_RGMII_RX_CTL */
-+		};
-+	};
-+
-+	i2c1_ux_pins_a: i2c1-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F', 14, AF5)>, /* I2C1_SCL */
-+				 <STM32_PINMUX('F', 15, AF5)>; /* I2C1_SDA */
-+			bias-disable;
-+			drive-open-drain;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	i2c1_ux_pins_sleep_a: i2c1-1 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F', 14, ANALOG)>, /* I2C1_SCL */
-+				 <STM32_PINMUX('F', 15, ANALOG)>; /* I2C1_SDA */
-+		};
-+	};
-+
-+	m_can2_ux_pins_a: m-can2-ux-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('B', 6, AF9)>; /* CAN1_TX */
-+			slew-rate = <0>;
-+			drive-push-pull;
-+			bias-disable;
-+		};
-+
-+		pins2 {
-+			pinmux = <STM32_PINMUX('B', 5, AF9)>; /* CAN1_RX */
-+			bias-disable;
-+		};
-+	};
-+
-+	m_can2_ux_sleep_pins_a: m-can2-ux-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('B', 6, ANALOG)>, /* CAN1_TX */
-+				 <STM32_PINMUX('B', 5, ANALOG)>; /* CAN1_RX */
-+		};
-+	};
-+	pwm1_ux_pins_a: pwm1-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A',11, AF1)>, /* TIM1_CH4 */
-+				 <STM32_PINMUX('E',10, AF1)>; /* TIM1_CH2N */
-+			bias-pull-down;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	pwm1_ux_sleep_pins_a: pwm1-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A',11, ANALOG)>, /* TIM1_CH4 */
-+				 <STM32_PINMUX('E',10, ANALOG)>; /* TIM1_CH2N */
-+		};
-+	};
-+
-+	pwm4_ux_pins_a: pwm4-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('D', 14, AF2)>, /* TIM4_CH3 */
-+				 <STM32_PINMUX('D', 15, AF2)>; /* TIM4_CH4 */
-+			bias-disable;
-+		};
-+	};
-+
-+	pwm4_ux_sleep_pins_a: pwm4-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('D', 14, ANALOG)>, /* TIM4_CH3 */
-+				 <STM32_PINMUX('D', 15, ANALOG)>; /* TIM4_CH4 */
-+		};
-+	};
-+
-+	pwm5_ux_pins_a: pwm5-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('I', 0, AF2)>; /* TIM5_CH4 */
-+			bias-pull-down;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	pwm5_ux_sleep_pins_a: pwm5-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('I', 0, ANALOG)>; /* TIM5_CH4 */
-+		};
-+	};
-+
-+	pwm17_ux_pins_a: pwm17-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F', 9, AF1)>; /* TIM17_CH1N */
-+			bias-pull-down;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	pwm17_ux_sleep_pins_a: pwm17-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F', 9, ANALOG)>; /* TIM17_CH1N */
-+		};
-+	};
-+
-+	qspi_bk1_ux_pins_a: qspi-bk1-ux-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('F', 8, AF10)>, /* QSPI_BK1_IO0 */
-+				 <STM32_PINMUX('D',12, AF9)>, /* QSPI_BK1_IO1 */
-+				 <STM32_PINMUX('F', 7, AF9)>, /* QSPI_BK1_IO2 */
-+				 <STM32_PINMUX('F', 6, AF9)>; /* QSPI_BK1_IO3 */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <1>;
-+		};
-+
-+		pins2 {
-+			pinmux = <STM32_PINMUX('B',10, AF9)>; /* QSPI_BK1_NCS */
-+			bias-pull-up;
-+			drive-push-pull;
-+			slew-rate = <1>;
-+		};
-+	};
-+
-+	qspi_bk1_ux_sleep_pins_a: qspi-bk1-ux-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('F', 8, ANALOG)>, /* QSPI_BK1_IO0 */
-+				 <STM32_PINMUX('D',12, ANALOG)>, /* QSPI_BK1_IO1 */
-+				 <STM32_PINMUX('F', 7, ANALOG)>, /* QSPI_BK1_IO2 */
-+				 <STM32_PINMUX('F', 6, ANALOG)>, /* QSPI_BK1_IO3 */
-+				 <STM32_PINMUX('B',10, ANALOG)>; /* QSPI_BK1_NCS */
-+		};
-+	};
-+
-+	qspi_clk_ux_pins_a: qspi-clk_ux-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('G', 7, AF9)>; /* QSPI_CLK */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <3>;
-+		};
-+	};
-+
-+	qspi_clk_ux_sleep_pins_a: qspi-clk-ux-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('G', 7, ANALOG)>; /* QSPI_CLK */
-+		};
-+	};
-+
-+	sai2a_ux_pins_a: sai2a-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('I', 5, AF10)>, /* SAI2_SCK_A */
-+				 <STM32_PINMUX('D',11, AF10)>, /* SAI2_SD_A */
-+				 <STM32_PINMUX('I', 7, AF10)>, /* SAI2_FS_A */
-+				 <STM32_PINMUX('E', 0, AF10)>; /* SAI2_MCLK_A */
-+			slew-rate = <0>;
-+			drive-push-pull;
-+			bias-disable;
-+		};
-+	};
-+
-+	sai2a_ux_sleep_pins_a: sai2a-1 {
-+		pins {
-+			pinmux = <STM32_PINMUX('I', 5, ANALOG)>, /* SAI2_SCK_A */
-+				 <STM32_PINMUX('D',11, ANALOG)>, /* SAI2_SD_A */
-+				 <STM32_PINMUX('I', 7, ANALOG)>, /* SAI2_FS_A */
-+				 <STM32_PINMUX('E', 0, ANALOG)>; /* SAI2_MCLK_A */
-+		};
-+	};
-+
-+	sdmmc1_ux_b4_pins_a: sdmmc1-ux-b4-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
-+				 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
-+				 <STM32_PINMUX('C',10, AF12)>, /* SDMMC1_D2 */
-+				 <STM32_PINMUX('C',11, AF12)>, /* SDMMC1_D3 */
-+				 <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
-+			slew-rate = <1>;
-+			drive-push-pull;
-+			bias-disable;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
-+			slew-rate = <2>;
-+			drive-push-pull;
-+			bias-disable;
-+		};
-+	};
-+
-+	sdmmc1_ux_b4_od_pins_a: sdmmc1-b4-od-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
-+				 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
-+				 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1_D2 */
-+				 <STM32_PINMUX('C', 11, AF12)>; /* SDMMC1_D3 */
-+			slew-rate = <1>;
-+			drive-push-pull;
-+			bias-disable;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
-+			slew-rate = <2>;
-+			drive-push-pull;
-+			bias-disable;
-+		};
-+		pins3 {
-+			pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
-+			slew-rate = <1>;
-+			drive-open-drain;
-+			bias-disable;
-+		};
-+	};
-+
-+	sdmmc1_ux_b4_sleep_pins_a: sdmmc1-b4-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('C', 8, ANALOG)>, /* SDMMC1_D0 */
-+				 <STM32_PINMUX('C', 9, ANALOG)>, /* SDMMC1_D1 */
-+				 <STM32_PINMUX('C', 10, ANALOG)>, /* SDMMC1_D2 */
-+				 <STM32_PINMUX('C', 11, ANALOG)>, /* SDMMC1_D3 */
-+				 <STM32_PINMUX('C', 12, ANALOG)>, /* SDMMC1_CK */
-+				 <STM32_PINMUX('D', 2, ANALOG)>; /* SDMMC1_CMD */
-+		};
-+	};
-+
-+	sdmmc2_ux_b4_pins_a: sdmmc2-ux-b4-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
-+				<STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
-+				<STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
-+				<STM32_PINMUX('B', 4, AF9)>, /* SDMMC2_D3 */
-+				<STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
-+			slew-rate = <1>;
-+			drive-push-pull;
-+			bias-pull-up;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
-+			slew-rate = <2>;
-+			drive-push-pull;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sdmmc2_ux_b4_od_pins_a: sdmmc2-ux-b4-od-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('B', 14, AF9)>, /* SDMMC2_D0 */
-+				<STM32_PINMUX('B', 15, AF9)>, /* SDMMC2_D1 */
-+				<STM32_PINMUX('B', 3, AF9)>, /* SDMMC2_D2 */
-+				<STM32_PINMUX('B', 4, AF9)>; /* SDMMC2_D3 */
-+			slew-rate = <1>;
-+			drive-push-pull;
-+			bias-pull-up;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 3, AF9)>; /* SDMMC2_CK */
-+			slew-rate = <2>;
-+			drive-push-pull;
-+			bias-pull-up;
-+		};
-+		pins3 {
-+			pinmux = <STM32_PINMUX('G', 6, AF10)>; /* SDMMC2_CMD */
-+			slew-rate = <1>;
-+			drive-open-drain;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sdmmc2_ux_b4_sleep_pins_a: sdmmc2-ux-b4-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('B', 14, ANALOG)>, /* SDMMC2_D0 */
-+				<STM32_PINMUX('B', 15, ANALOG)>, /* SDMMC2_D1 */
-+				<STM32_PINMUX('B', 3, ANALOG)>, /* SDMMC2_D2 */
-+				<STM32_PINMUX('B', 4, ANALOG)>, /* SDMMC2_D3 */
-+				<STM32_PINMUX('E', 3, ANALOG)>, /* SDMMC2_CK */
-+				<STM32_PINMUX('G', 6, ANALOG)>; /* SDMMC2_CMD */
-+		};
-+	};
-+
-+	sdmmc2_ux_d47_pins_a: sdmmc2-ux-d47-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 8, AF9)>, /* SDMMC2_D4 */
-+				<STM32_PINMUX('A', 9, AF10)>, /* SDMMC2_D5 */
-+				<STM32_PINMUX('E', 5, AF9)>, /* SDMMC2_D6 */
-+				<STM32_PINMUX('D', 3, AF9)>; /* SDMMC2_D7 */
-+			slew-rate = <1>;
-+			drive-push-pull;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	sdmmc2_ux_d47_sleep_pins_a: sdmmc2-ux-d47-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 8, ANALOG)>, /* SDMMC2_D4 */
-+				<STM32_PINMUX('A', 9, ANALOG)>, /* SDMMC2_D5 */
-+				<STM32_PINMUX('E', 5, ANALOG)>, /* SDMMC2_D6 */
-+				<STM32_PINMUX('D', 3, ANALOG)>; /* SDMMC2_D7 */
-+		};
-+	};
-+
-+	uart4_ux_pins_a: uart4-ux-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('G', 11, AF6)>; /* UART4_TX */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
-+			bias-disable;
-+		};
-+	};
-+
-+	uart4_ux_idle_pins_a: uart4-ux-idle-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('G', 11, ANALOG)>; /* UART4_TX */
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
-+			bias-disable;
-+		};
-+		};
-+
-+	uart4_ux_sleep_pins_a: uart4-ux-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('G', 11, ANALOG)>, /* UART4_TX */
-+				<STM32_PINMUX('B', 2, ANALOG)>; /* UART4_RX */
-+		};
-+	};
-+
-+	uart5_ux_pins_a: uart5-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('B', 13, AF14)>; /* UART5_TX */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('B', 12, AF14)>; /* UART5_RX */
-+			bias-disable;
-+		};
-+	};
-+
-+	uart5_ux_idle_pins_a: uart5-idle-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('B', 13, ANALOG)>; /* UART5_TX */
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('B', 12, AF14)>; /* UART5_RX*/
-+			bias-disable;
-+		};
-+	};
-+
-+	uart5_ux_sleep_pins_a: uart5-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('B', 13, ANALOG)>, /* UART5_TX */
-+				 <STM32_PINMUX('B', 12, ANALOG)>; /* UART5_RX */
-+		};
-+	};
-+
-+	uart7_ux_pins_a: uart7-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('E', 8, AF7)>; /* USART7_TX */
-+			bias-pull-up;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 7, AF7)>; /* USART7_RX */
-+			bias-pull-up;
-+		};
-+		pins3 {
-+			pinmux = <STM32_PINMUX('E', 9, AF7)>; /* USART7_RTS/DE */
-+		};
-+	};
-+
-+	uart7_ux_idle_pins_a: uart7-idle-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('E', 8, ANALOG)>, /* USART7_TX */
-+				 <STM32_PINMUX('E', 9, AF7)>; /* USART7_RTS/DE */
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 7, AF7)>; /* USART7_RX */
-+			bias-disable;
-+		};
-+	};
-+
-+	uart7_ux_sleep_pins_a: uart7-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('E', 8, ANALOG)>, /* USART7_TX */
-+				 <STM32_PINMUX('E', 9, AF7)>, /* USART7_RTS/DE */
-+				 <STM32_PINMUX('E', 7, ANALOG)>; /* USART7_RX */
-+		};
-+	};
-+};
-+
-+&pinctrl_z {
-+
-+	i2c4_ux_pins_a: i2c4-ux-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
-+				<STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
-+			bias-disable;
-+			drive-open-drain;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	i2c4_ux_pins_sleep_a: i2c4-1 {
-+		pins {
-+			pinmux = <STM32_PINMUX('Z', 4, ANALOG)>, /* I2C4_SCL */
-+				<STM32_PINMUX('Z', 5, ANALOG)>; /* I2C4_SDA */
-+		};
-+	};
-+
-+	spi1_ux_pins_a: spi1-ux-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('Z', 0, AF5)>, /* SPI1_SCK */
-+				<STM32_PINMUX('Z', 2, AF5)>; /* SPI1_MOSI */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <1>;
-+		};
-+
-+		pins2 {
-+			pinmux = <STM32_PINMUX('Z', 1, AF5)>; /* SPI1_MISO */
-+			bias-disable;
-+		};
-+	};
-+
-+	spi1_ux_sleep_pins_a: spi1-ux-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('Z', 0, ANALOG)>, /* SPI1_SCK */
-+				<STM32_PINMUX('Z', 1, ANALOG)>, /* SPI1_MISO */
-+				<STM32_PINMUX('Z', 2, ANALOG)>; /* SPI1_MOSI */
-+		};
-+	};
-+};
-+
-+&pwr_regulators {
-+	vdd-supply = <&vdd>;
-+	vdd_3v3_usbfs-supply = <&vdd_usb>;
-+};
-+
-+&qspi {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&qspi_clk_ux_pins_a &qspi_bk1_ux_pins_a>;
-+	pinctrl-1 = <&qspi_clk_ux_sleep_pins_a &qspi_bk1_ux_sleep_pins_a>;
-+	reg = <0x58003000 0x1000>, <0x70000000 0x1000000>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	flash0: flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-rx-bus-width = <4>;
-+		spi-max-frequency = <133000000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-+
-+&sdmmc1 {
-+	pinctrl-names = "default", "opendrain", "sleep";
-+	pinctrl-0 = <&sdmmc1_ux_b4_pins_a>;
-+	pinctrl-1 = <&sdmmc1_ux_b4_od_pins_a>;
-+	pinctrl-2 = <&sdmmc1_ux_b4_sleep_pins_a>;
-+	broken-cd;
-+	st,neg-edge;
-+	bus-width = <4>;
-+	vmmc-supply = <&v3v3>;
-+	no-1-8-v;
-+	status = "okay";
-+};
-+
-+&sdmmc2 {
-+	pinctrl-names = "default", "opendrain", "sleep";
-+	pinctrl-0 = <&sdmmc2_ux_b4_pins_a &sdmmc2_ux_d47_pins_a>;
-+	pinctrl-1 = <&sdmmc2_ux_b4_od_pins_a &sdmmc2_ux_d47_pins_a>;
-+	pinctrl-2 = <&sdmmc2_ux_b4_sleep_pins_a &sdmmc2_ux_d47_sleep_pins_a>;
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+	st,neg-edge;
-+	bus-width = <8>;
-+	vmmc-supply = <&v3v3>;
-+	vqmmc-supply = <&v3v3>;
-+	mmc-ddr-3_3v;
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&spi1_ux_pins_a>;
-+	pinctrl-1 = <&spi1_ux_sleep_pins_a>;
-+	status = "okay";
-+	cs-gpios = <&gpioi 8 0>, <&gpioi 11 0>, <&gpioz 3 0>;
-+
-+	flash: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "jedec,spi-nor";
-+		spi-max-frequency = <20000000>;
-+		reg = <0>;
-+	};
-+};
-+
-+&timers1 {
-+	/* spare dmas for other usage */
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+
-+	pwm {
-+		pinctrl-0 = <&pwm1_ux_pins_a>;
-+		pinctrl-1 = <&pwm1_ux_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+
-+	timer@0 {
-+		status = "okay";
-+	};
-+};
-+
-+&timers4 {
-+	dmas = <&dmamux1 31 0x400 0x5>;
-+	dma-names = "ch3";
-+	status = "okay";
-+
-+	pwm4_4: pwm {
-+		pinctrl-0 = <&pwm4_ux_pins_a>;
-+		pinctrl-1 = <&pwm4_ux_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+};
-+
-+&timers5 {
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+
-+	pwm5_4: pwm {
-+		pinctrl-0 = <&pwm5_ux_pins_a>;
-+		pinctrl-1 = <&pwm5_ux_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+
-+	timer@4 {
-+		status = "okay";
-+	};
-+};
-+
-+&timers17 {
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	status = "okay";
-+
-+	pwm17_4: pwm {
-+		pinctrl-0 = <&pwm17_ux_pins_a>;
-+		pinctrl-1 = <&pwm17_ux_sleep_pins_a>;
-+		pinctrl-names = "default", "sleep";
-+		status = "okay";
-+	};
-+
-+	timer@16 {
-+		status = "okay";
-+	};
-+};
-+
-+&uart4 {
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	pinctrl-names = "default", "sleep", "idle", "no_console_suspend";
-+	pinctrl-0 = <&uart4_ux_pins_a>;
-+	pinctrl-1 = <&uart4_ux_sleep_pins_a>;
-+	pinctrl-2 = <&uart4_ux_idle_pins_a>;
-+	pinctrl-3 = <&uart4_ux_pins_a>;
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	pinctrl-names = "default", "sleep", "idle";
-+	pinctrl-0 = <&uart5_ux_pins_a>;
-+	pinctrl-1 = <&uart5_ux_sleep_pins_a>;
-+	pinctrl-2 = <&uart5_ux_idle_pins_a>;
-+	status = "okay";
-+};
-+
-+&uart7 {
-+	/delete-property/dmas;
-+	/delete-property/dma-names;
-+	pinctrl-names = "default", "sleep", "idle";
-+	pinctrl-0 = <&uart7_ux_pins_a>;
-+	pinctrl-1 = <&uart7_ux_sleep_pins_a>;
-+	pinctrl-2 = <&uart7_ux_idle_pins_a>;
-+	status = "okay";
-+};
-+
-+&usart1 {
-+	/*Muxing happens in uboot*/
-+	status = "okay";
-+};
-+
-+&usbh_ehci {
-+	phys = <&usbphyc_port0>;
-+	phy-names = "usb";
-+	status = "okay";
-+};
-+
-+&usbh_ohci {
-+	phys = <&usbphyc_port0>;
-+	phy-names = "usb";
-+	status = "okay";
-+};
-+
-+&usbotg_hs {
-+	phys = <&usbphyc_port1 0>;
-+	phy-names = "usb2-phy";
-+	vbus-supply = <&usb_otg_vbus>;
-+	status = "okay";
-+};
-+
-+&usbphyc {
-+	status = "okay";
-+};
-+
-+&usbphyc_port0 {
-+	phy-supply = <&vdd_usb>;
-+	st,tune-hs-dc-level = <2>;
-+	st,enable-fs-rftime-tuning;
-+	st,enable-hs-rftime-reduction;
-+	st,trim-hs-current = <15>;
-+	st,trim-hs-impedance = <1>;
-+	st,tune-squelch-level = <3>;
-+	st,tune-hs-rx-offset = <2>;
-+	st,no-lsfs-sc;
-+};
-+
-+&usbphyc_port1 {
-+	phy-supply = <&vdd_usb>;
-+	st,tune-hs-dc-level = <2>;
-+	st,enable-fs-rftime-tuning;
-+	st,enable-hs-rftime-reduction;
-+	st,trim-hs-current = <15>;
-+	st,trim-hs-impedance = <1>;
-+	st,tune-squelch-level = <3>;
-+	st,tune-hs-rx-offset = <2>;
-+	st,no-lsfs-sc;
-+};
-+
-+&vrefbuf {
-+	regulator-min-microvolt = <2500000>;
-+	regulator-max-microvolt = <2500000>;
-+	vdda-supply = <&vdd>;
-+	status = "okay";
-+};
++static inline void untrack_pfn_copy(struct vm_area_struct *dst_vma,
++		unsigned long pfn)
++{
++	untrack_pfn(dst_vma, pfn, dst_vma->vm_end - dst_vma->vm_start, true);
++	/*
++	 * Reservation was freed, any copied page tables will get cleaned
++	 * up later, but without getting PAT involved again.
++	 */
++}
++
+ #ifdef CONFIG_MMU
+ #ifdef __HAVE_COLOR_ZERO_PAGE
+ static inline int is_zero_pfn(unsigned long pfn)
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 735405a9c5f32..ca2ca3884f763 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -504,6 +504,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
+ 	vma_numab_state_init(new);
+ 	dup_anon_vma_name(orig, new);
+ 
++	/* track_pfn_copy() will later take care of copying internal state. */
++	if (unlikely(new->vm_flags & VM_PFNMAP))
++		untrack_pfn_clear(new);
++
+ 	return new;
+ }
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index fb7b8dc751679..dc8efa1358e94 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1362,12 +1362,12 @@ int
+ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ {
+ 	pgd_t *src_pgd, *dst_pgd;
+-	unsigned long next;
+ 	unsigned long addr = src_vma->vm_start;
+ 	unsigned long end = src_vma->vm_end;
+ 	struct mm_struct *dst_mm = dst_vma->vm_mm;
+ 	struct mm_struct *src_mm = src_vma->vm_mm;
+ 	struct mmu_notifier_range range;
++	unsigned long next, pfn;
+ 	bool is_cow;
+ 	int ret;
+ 
+@@ -1378,11 +1378,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
+ 
+ 	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
+-		/*
+-		 * We do not free on error cases below as remove_vma
+-		 * gets called on error from higher level routine
+-		 */
+-		ret = track_pfn_copy(src_vma);
++		ret = track_pfn_copy(dst_vma, src_vma, &pfn);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -1419,7 +1415,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 			continue;
+ 		if (unlikely(copy_p4d_range(dst_vma, src_vma, dst_pgd, src_pgd,
+ 					    addr, next))) {
+-			untrack_pfn_clear(dst_vma);
+ 			ret = -ENOMEM;
+ 			break;
+ 		}
+@@ -1429,6 +1424,8 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 		raw_write_seqcount_end(&src_mm->write_protect_seq);
+ 		mmu_notifier_invalidate_range_end(&range);
+ 	}
++	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
++		untrack_pfn_copy(dst_vma, pfn);
+ 	return ret;
+ }
+ 
+
+base-commit: b3ee1e4609512dfff642a96b34d7e5dfcdc92d05
 -- 
-2.43.0
+2.48.1
 
 
