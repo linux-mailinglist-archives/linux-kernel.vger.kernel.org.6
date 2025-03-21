@@ -1,83 +1,85 @@
-Return-Path: <linux-kernel+bounces-571092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB02A6B909
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:50:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55731A6B908
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B257189D37D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:49:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1B6484D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4451EFF81;
-	Fri, 21 Mar 2025 10:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4455022069A;
+	Fri, 21 Mar 2025 10:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NUd1oBFS"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="nFafVQiW"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2BC1D514A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA2E1F17EB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742554165; cv=none; b=VVDvpIWLvot9CMB5I5ihnikdTGTjXByXJ9HOQDB7mhCbTMgn7q2F/8EsV1ob5xGVTMwlBXEpbidjviJFchqgAZ/QPQnMKYRYNmi6GbJgoE4DP2A+rRNwxNDUr6/xEu6Cs30RKMQUGbt9lbnRbBZL7McIxBxc9MGIiWzncZM5Z1U=
+	t=1742554166; cv=none; b=fNkdP2SWigL+28SSkSFvMxHrS24MoSFXe6cu5sS4Gixe2ee5cXSa2LNPOX7bpK4e0GeloPoCgZjE23/IP9zK3OzPJBNcEIw+GfOjL/SWc32Bt+vset9LNUKf9EZ6pCnKVRZrCUtZ7wv/rG9K2LrpPjqH6shUzHSb8ZoAjd9HXLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742554165; c=relaxed/simple;
-	bh=aStHTjdtJrpDKacYsLyzO+frL12AwKU5p8uNGZysYew=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DNNTOuTenD/FfEMzGSqfGeJo1CieBwo5eBnSF4zK7A6YeKXY8J8FfHFtX03eFivwd9YkSDaHNjhrFCmWUEB9z53ATskX1dRCydbZLsG4bPhevwPaoPaGkYPxvKAqyU/o1NRjayQZHe6vUM9vhfLlsqTkAJatLtWK9PXgMQqcGps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NUd1oBFS; arc=none smtp.client-ip=185.125.188.123
+	s=arc-20240116; t=1742554166; c=relaxed/simple;
+	bh=AKiz805D4eOoRMrIxzZ76eB1qkCaMajH61Sf5nmAkB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P/3eVE4TNiHR8wA0SQfBWGrB0SqK+z8CWKs52asMGLNWnyjcxqlYWN96xTit0BO0K9LqJ195238W3b6ei07XidkfD96zOSgKGedLVlCEezSCCKO6w1n9FC1CrJhHxDlKb7k7hcYyWiZ6O2DrXR3E7nqnZ8oPSaVA3xle954LIPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=nFafVQiW; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 34F9F3F6CA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:49:21 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E90693FCCF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:49:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742554161;
-	bh=z9wosfMTvKly19CGRaWf+kiQFrol15FV6ibGh+/i9lo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-	b=NUd1oBFSLTg9XdOQ8rRXvV+npO3sGgewvZRRMcqbc/m2PdmVNN/zXgAIe31EPrio5
-	 aiuXJVjdiENqpF/vVax5x67tQXwTOgPls0zDAwAT89rHm7H57a1vV7Jg+y7VERWxN7
-	 fTuNLLA627RjuvqKnp+iIqKJtRcZniT3QwYwHvMAWI7PDAsXPhbqzJYoDMOx0P1oVI
-	 t2wa5GqhZpqCx+svJ8IZ/iGAk73H6XZswXgWv8vk3AHyI7ln+xg4NzLCnLOTdDuhcn
-	 pl4tkGtaoWmL/y/B0A/qQrUME3G591bzcDjPwknZGqSCcZk4aguKk00SywOezlwkaT
-	 TpeqmUaRrjIng==
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff68033070so2772297a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 03:49:21 -0700 (PDT)
+	s=20210705; t=1742554162;
+	bh=wk3p2RHEb7IC5cBg8qDlCuH+i3pQ0PXB+Ife22F3hrE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version;
+	b=nFafVQiWMoSZW5NH93A64h6Wp84VnyYMgY0tqDpsvX9Kh3FPFO68ZoizoTBzwoklo
+	 LtCYEAF7motp3QhwaHgEIhaBR4sydjoSpeQuo9TM6Ob84NqVmIeeTY1Kw/WQl3Qvi3
+	 dJ3x4DZIV0K9QhQo9YrWg+OMKYtNnb9Xak2qHEyI+wo/FXQxu0FgrxaSMzCWu919zn
+	 v1baPq3m3YzR2ajfEcPPuWtNan3rriuGtZVm2ljC+4ni7cZB9lUONxQqVFSqIN9owH
+	 PDOW+Q9f8TnwMvdxflW10dOEU9RW8hqVOKoWLTiU7kbaY7KIFpG90aLcxaTyazqSrB
+	 7SDNvBV6ioxSg==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-224347aef79so43774935ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 03:49:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742554159; x=1743158959;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z9wosfMTvKly19CGRaWf+kiQFrol15FV6ibGh+/i9lo=;
-        b=r7ohWCmHJFoXtvhDclUxg+DvQ5JGXx7Y9ZJdJx9Ns90ltuP34+JNwyATSwZvrroOM+
-         nvv/B9oOYJyZ8QF5br4oowzQQi7xzmn8hdlHZ6JZSfc36l8Ofi0k8ySyKAkoWmUvwD1d
-         gjMvrMs6DwolZnqbI57zUCW2ZA1Ls1lH7+0/73s4obtrIK12i72iUxvP9IZbHKdhW/RR
-         xyjYe18z2C4JsHztl/Oue2uBCVlLMjLVnJElNxenro9nmojnzv/11DueR7qDLEwMLX2H
-         wB0wbReH7dqCT6C53fHYtvJmFEzQySzWXKUf3o6H1x+5Jsk7VTKOTgxb6hFWfdV631KT
-         dhfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeOuOq02NVwg6zwSQwXTqT8iaIZpXutJFbus7o8BFKmDSBKDsOcY7sDYyacQE3Io1XjQuQExIkUTl8bvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpW//7ONcZJ8ObPwpsXCWbQ6nXHGGcRh3Gmp3CmS/j63pn8PaX
-	zeUNPGFPL5/vJpfgihocYoDn3CwwbnRunVL2ScVop4x6GKWhHJI4oBy1b4991ZNPX1B6KkLRXKP
-	FwVb3JMl1DtrnwLJLSq2DemtMhgWwbyn+MN4gqXsl1NSZiK/l1ykjOZ88zbnBVhwgz2tREwxhcj
-	/GSQ==
-X-Gm-Gg: ASbGncvtzzNO+Dy6vyxrJodpLKOCdyc7VXWvXkGcEkXTWeHNXf2oeYVDfyIBocHNo2C
-	yNhj1P8VWKEAzQk4oYoy8wBtpWzEPO2pEjy7sKk7had2z3jIUGOV/lZfcOVlH/AZ8AbCWwXBNrd
-	FWh8Su74EOeHEkKSzAzMuh9MQ03eRsUzUJiTnkvJNPEnnAgx6UHHzUrq/0QF0Odo5rXr2wjcIGB
-	dQAEw5ikRhaFhxSKae59OXWQJbZTMFrVsjVQ6ATuV2N+ZoL9ZvdHQywZuv7UjFb+B5sj+IkzHX8
-	6MhJwV6T5uZ6T6GyAwzfJdCL4y4QrS8dtZXujr7HPlowGm6D0FLHEaWsGRpd4w==
-X-Received: by 2002:a05:6a20:430c:b0:1f5:9961:c44 with SMTP id adf61e73a8af0-1fe42f09264mr5515683637.3.1742554159476;
-        Fri, 21 Mar 2025 03:49:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCJ33UaDL4j8gJNAwbjlWs3Ea2yNfzjlg9zUYpfJQPH141PwlC3oJsanq+y+Pr9AOvWq9u7A==
-X-Received: by 2002:a05:6a20:430c:b0:1f5:9961:c44 with SMTP id adf61e73a8af0-1fe42f09264mr5515649637.3.1742554159016;
-        Fri, 21 Mar 2025 03:49:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742554161; x=1743158961;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wk3p2RHEb7IC5cBg8qDlCuH+i3pQ0PXB+Ife22F3hrE=;
+        b=pQZVi6kMbuwLgNiIlSGJEUO2oVEnSPs4IJoMcRkUcAGNkHyppphUuyzZ3IZWaPQEXE
+         shaKVUH1+++anQSJnHVwg0DHDul76MD7kWkRnvE+wcKqWHsxnKB+/HY3dp4rN5iXY6Yf
+         ybs2ZC94FmrmpNK8/xiDCwcjLimFH1GpfDfUuwuFrFXHiwspDH5iESKRClAyE3an0BY1
+         kYu5iI3A4Bu7VQF1PJH00qOnyphseO5xz+Pb2HyFz7k5nhFzLb7mBu51dnU83YjoxOAV
+         4FFWdOPJhz3CY4SszRSthpB6Wt1vBrWABDGVr5pukA1dYeJPFI7Cu6HKyahIPpr7uLVa
+         yPGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVJ39jR5Wlnhspzh8QxqOtuPwRQd3lrizZmnPrvrXAtPPXqPACWZ0hs7Bm4TxrgTjo0YErXAJuEw6tW9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz707ZPXTw6qWbMJ/YuaH6zV0819Kykimu+78JBmqfqgQwIKqgM
+	Ys3lMd9LhaXU85K1LiyvuZJ8k9NeEeTji+xwLGs9X2En04FfLlkHVg8sPl8rMazgth4LpAPns/b
+	eIeM9S2C2fStQG3iWwJklIkVK6wW8RLvBBkT6lgkYtATuF8wjL4R3RDxekZHJyj1ZkX2Ag2lDm/
+	otVg==
+X-Gm-Gg: ASbGnctq3wRWzVeKAyJJDzEB3SdnCneZzL9Qwu7n6/NinsQE9WjYt8mZpiMFRYPpq2d
+	lnoO/9ftYhfJX7rjfAJsNxGRSz6ao14CkJKehHdcZcd5N2kGXrpKTNilMqiZR0YR1h70gfHG4vw
+	2eXCvH9SD81+71JNwn6dwqccKrU3Bdp1FEtQP4o7RXZHyehssB2mnCXStTQomEpMjy9nQRg1TCP
+	HeAm778hVRZJ7T5e3lAU5+ia2xyL0A0C21bvNu/mtL4awN6CcvURSjHTCkKSDBriTXkGtc3CEpY
+	Zn0HAK6qwzzA+7BwMIBhYg/xCB8xuf+8JuwOkSJGL5Z51sjzjQnWyDPSAwF+SA==
+X-Received: by 2002:a05:6a00:808:b0:736:55ec:ea94 with SMTP id d2e1a72fcca58-73905a5255dmr5427977b3a.20.1742554161313;
+        Fri, 21 Mar 2025 03:49:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8CE8cLdwjqNwnbScAp+7k6TEaCT0uf3ktobtaMxTgvHAj1XlubrJEYiUV3y0FvyGo2+Xq/A==
+X-Received: by 2002:a05:6a00:808:b0:736:55ec:ea94 with SMTP id d2e1a72fcca58-73905a5255dmr5427947b3a.20.1742554160896;
+        Fri, 21 Mar 2025 03:49:20 -0700 (PDT)
 Received: from u-XPS-9320.. (114-36-251-180.dynamic-ip.hinet.net. [114.36.251.180])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fa92bbsm1589353b3a.16.2025.03.21.03.49.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fa92bbsm1589353b3a.16.2025.03.21.03.49.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 03:49:18 -0700 (PDT)
+        Fri, 21 Mar 2025 03:49:20 -0700 (PDT)
 From: Chris Chiu <chris.chiu@canonical.com>
 To: tiwai@suse.com,
 	perex@perex.cz
@@ -86,10 +88,12 @@ Cc: simont@opensource.cirrus.com,
 	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Chris Chiu <chris.chiu@canonical.com>
-Subject: [PATCH v2 1/2] ALSA: hda/realtek: fix micmute LEDs on HP Laptops with ALC3315
-Date: Fri, 21 Mar 2025 18:49:13 +0800
-Message-Id: <20250321104914.544233-1-chris.chiu@canonical.com>
+Subject: [PATCH v2 2/2] ALSA: hda/realtek: fix micmute LEDs on HP Laptops with ALC3247
+Date: Fri, 21 Mar 2025 18:49:14 +0800
+Message-Id: <20250321104914.544233-2-chris.chiu@canonical.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250321104914.544233-1-chris.chiu@canonical.com>
+References: <20250321104914.544233-1-chris.chiu@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,46 +102,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-More HP laptops with Realtek HDA codec ALC3315 with combined CS35L56
-Amplifiers need quirk ALC285_FIXUP_HP_GPIO_LED to fix the micmute LED.
+More HP EliteBook with Realtek HDA codec ALC3247 with combined CS35L56
+Amplifiers need quirk ALC236_FIXUP_HP_GPIO_LED to fix the micmute LED.
 
 Signed-off-by: Chris Chiu <chris.chiu@canonical.com>
 ---
- sound/pci/hda/patch_realtek.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+
+v2: fix the quirk order by SSIDs
+
+ sound/pci/hda/patch_realtek.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 1d8caf791dbc..30d4cd93dae1 100644
+index 30d4cd93dae1..5bafa8817bad 100644
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -10723,13 +10723,27 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8cf5, "HP ZBook Studio 16", ALC245_FIXUP_CS35L41_SPI_4_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8d01, "HP ZBook Power 14 G12", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8d84, "HP EliteBook X G1i", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d85, "HP EliteBook 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d86, "HP Elite X360 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d8c, "HP EliteBook 13 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d8d, "HP Elite X360 13 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d8e, "HP EliteBook 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d8f, "HP EliteBook 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d90, "HP EliteBook 16 G12", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8d91, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
+@@ -10734,6 +10734,11 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
  	SND_PCI_QUIRK(0x103c, 0x8d92, "HP ZBook Firefly 16 G12", ALC285_FIXUP_HP_GPIO_LED),
  	SND_PCI_QUIRK(0x103c, 0x8de8, "HP Gemtree", ALC245_FIXUP_TAS2781_SPI_2),
  	SND_PCI_QUIRK(0x103c, 0x8de9, "HP Gemtree", ALC245_FIXUP_TAS2781_SPI_2),
-+	SND_PCI_QUIRK(0x103c, 0x8e14, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e15, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e16, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e17, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8e18, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8e19, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8e1a, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e1b, "HP EliteBook G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e1c, "HP EliteBook G12", ALC285_FIXUP_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8e2c, "HP EliteBook 16 G12", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
- 	SND_PCI_QUIRK(0x1043, 0x1054, "ASUS G614FH/FM/FP", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8dec, "HP EliteBook 640 G12", ALC236_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8dee, "HP EliteBook 660 G12", ALC236_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8df0, "HP EliteBook 630 G12", ALC236_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8dfc, "HP EliteBook 645 G12", ALC236_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8dfe, "HP EliteBook 665 G12", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8e14, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8e15, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8e16, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
 -- 
 2.34.1
 
