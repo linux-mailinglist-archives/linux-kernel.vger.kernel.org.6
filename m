@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-570601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA55A6B263
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:40:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FFEA6B25D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B0D3B8033
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:37:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994DC7AA2DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72E47DA6D;
-	Fri, 21 Mar 2025 00:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D5F1EA84;
+	Fri, 21 Mar 2025 00:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A81doXkB"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="fLl/ZWWt"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED793D3B8;
-	Fri, 21 Mar 2025 00:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5063F2A1A4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742517452; cv=none; b=Z/LXW7SUv3PMZVuBzuoSGZtVHXCnOIRyf6IavKKuG7Qnah+qUNM/FpJK+Qt9laD+M8t1B8iOZge6/pJ7SNx0Np0nBvBwAHv4wyeRZ7BFPRtB+olTbqg6fxEzHdwQjrgdWv4HYQRNYsf4LbajJqjxrs4QCWmVkogtGRETp8HakEU=
+	t=1742517502; cv=none; b=lqLgGWrn/ERRg+jfYs3oZORZBNW6T2MgO3m7NjJVsnfOp/xc2o+a6Ri2uUgFVJ4ZcsH0nwZbnGKVMLRlTGDK1kmgsNsKY+MU2kpP/vZVqHiBhyNhECDTl6gyMQnPmp4DpeuQgvqtRDzDowhPLCdhrIYiFaMxyrDF/7aPcS8D/pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742517452; c=relaxed/simple;
-	bh=Wn9sdykgVuVb0p0u6RYov8qab8zpmmw1HO/w2gL1Vsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U8LKyB5kZNn68cNDqnpt81HzZl7A3TWtK7WgKF6s86P/ftS6Yy9nAeOjGJg4UTC1SFwFlD99c7UTNS00JjxXPVzhqd0A8QKR96/c2mROtnnWsu6zv0mkfFLHl48NTs2D+9zxWLWW/bmMeTBBqxep8fWkkbEpJOl82Y/caRm4zAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A81doXkB; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KLB9TU023357;
-	Fri, 21 Mar 2025 00:37:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=mduNjyoW3sBGYNQhbPVGMbXCuXPdG93WAzYB2HB/lkM=; b=
-	A81doXkBzdPNBzPUx/rWL4qF7+RUDx8XBIo0mIUPcj7tZpwpRD+3N3qEbTDohn97
-	PyecJ6F5erILsBk/1JGFbQj+Ow0UoPGygbCrl/tnf/z8LSlg6YEuFLTH2o22hMkD
-	1MpTICIKZtk0UKKIkpOWTIfyheVoWVFlE4A00f4vnytmMP3aLjRC1an47dxk6FuO
-	B29mK1FE9z8rfroa2Mg/m6+qcNgFxqaaSaWUqh8L4gYh5EKNOPjUba220tRh2D1k
-	u7nkvjpkFsFZXEiv2aSZ9t0XW/84twg6VBmHRmKFylxT4QeG5f6068svlp66P3Lu
-	/5u3o0aoBCvoBw6ZIwUPRQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d1m17fpg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Mar 2025 00:37:21 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52KNjAi1004495;
-	Fri, 21 Mar 2025 00:37:20 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ftmxt6ux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Mar 2025 00:37:20 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52L0bHsi024893;
-	Fri, 21 Mar 2025 00:37:19 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45ftmxt6tx-6;
-	Fri, 21 Mar 2025 00:37:19 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>,
-        Karan Tilak Kumar <kartilak@cisco.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
-Date: Thu, 20 Mar 2025 20:36:54 -0400
-Message-ID: <174251737533.2240574.17214367115238701645.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250314221626.43174-2-thorsten.blum@linux.dev>
-References: <20250314221626.43174-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1742517502; c=relaxed/simple;
+	bh=QKt0cY+Zvq60xx1hE+ZOQIVIBfS1vWtHtndVif0lPJ4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=D81LRk2rjdq+TvtD3jCnhznvL3r50nb0OCv1g8aOOOUf3Ir33zugHiOv3AfFTF1feLRi5ZUIHQXisQcKZT/pqsjylYHqkqBfLTd7WnCARLm86Vt/cSLLvMShQbMKRkHyxA+w+lwII9mFzRSn0ZwKD05bdS3zTeAvD5yJwFus31E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=fLl/ZWWt; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_09,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- mlxlogscore=831 suspectscore=0 spamscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2503210002
-X-Proofpoint-GUID: 0D70a6Vug9JTv-S70I6TScB-gxy7COqu
-X-Proofpoint-ORIG-GUID: 0D70a6Vug9JTv-S70I6TScB-gxy7COqu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1742517490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GMuBo8PBLUfzgvC250aHSwUK/V2T2NbkU69GBOnmW2k=;
+	b=fLl/ZWWtMhHF3fP8xV9YZa93rMbwa0F4JQLtogL8oqHrMGi43rko/xOzhm0ZVHuuvWlH72
+	lzZ1NFWA5Ghh4ZjpUL+xez9hLGhB3rVkMF4PjdiVGfumAV4g7TL4o9nvcPsa4QsDyQZfpH
+	5YUvj79ZbvK+o3bbiyUhwC25tpR2ye2jtK6ZmRUEgSL8yl4FiLqfjpzSYR7CwUWc7sR9kS
+	Rhh2Ngx/J5eGClE8/6j/HZIQJXQvO4p4UFD/NsF9d/nRDm+ihjwfCbmPRxElBXmRjp9+qX
+	o57O6Frtcm9lx4Lm2kWc3fRj0gmgWb2aOwIFAGKa/W09P8/hnu8HThXh/stBsg==
+Date: Fri, 21 Mar 2025 01:38:08 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Daniel_Kukie=C5=82a?= <daniel@kukiela.pl>, Sven Rademakers
+ <sven.rademakers@gmail.com>, Joshua Riek <jjriek@verizon.net>
+Subject: Re: [PATCH] arm64: dts: rockchip: Allow Turing RK1 cooling fan to
+ spin down
+In-Reply-To: <20250315204852.1247992-1-CFSworks@gmail.com>
+References: <20250315204852.1247992-1-CFSworks@gmail.com>
+Message-ID: <e1cdc3a39b9201cb115b12b559899aee@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Fri, 14 Mar 2025 23:16:26 +0100, Thorsten Blum wrote:
+Hello Sam,
 
-> strscpy_pad() already NUL-terminates 'data' at the corresponding
-> indexes. Remove any unnecessary NUL-terminations.
+On 2025-03-15 21:48, Sam Edwards wrote:
+> The RK3588 thermal sensor driver only receives interrupts when a
+> higher-temperature threshold is crossed; it cannot notify when the
+> sensor cools back off. As a result, the driver must poll for 
+> temperature
+> changes to detect when the conditions for a thermal trip are no longer
+> met. However, it only does so if the DT enables polling.
 > 
-> No functional changes intended.
+> Before this patch, the RK1 DT did not enable polling, causing the fan 
+> to
+> continue running at the speed corresponding to the highest temperature
+> reached.
 > 
+> Follow suit with similar RK3588 boards by setting a polling-delay of
+> 1000ms, enabling the driver to detect when the sensor cools back off,
+> allowing the fan speed to decrease as appropriate.
 > 
+> Fixes: 7c8ec5e6b9d6 ("arm64: dts: rockchip: Enable automatic fan
+> control on Turing RK1")
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> index 6bc46734cc14..0270bffce195 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> @@ -214,6 +214,8 @@ rgmii_phy: ethernet-phy@1 {
+>  };
+> 
+>  &package_thermal {
+> +	polling-delay = <1000>;
+> +
+>  	trips {
+>  		package_active1: trip-active1 {
+>  			temperature = <45000>;
 
-Applied to 6.15/scsi-queue, thanks!
+Thanks for the patch, it's looking good to me, with some related
+thoughts below.  Please, feel free to include:
 
-[1/1] scsi: fnic: Remove unnecessary NUL-terminations
-      https://git.kernel.org/mkp/scsi/c/bd067766ee2a
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+After a quick look at the RK3588 TRM Part 1, it seems possible
+to actually generate additional interrupts when the TSADC channel
+temperature readouts reach predefined low thresholds.  Moreover,
+avoiding the polling would actually help the SoC cool down a tiny
+bit faster, which makes it worth detailed investigation in my book,
+despite not being used by the downstream kernel code.
 
