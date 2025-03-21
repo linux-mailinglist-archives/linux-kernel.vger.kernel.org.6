@@ -1,213 +1,302 @@
-Return-Path: <linux-kernel+bounces-571884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070E8A6C3C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:52:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB226A6C3C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3F61895383
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:52:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54AF23B0FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610791EF08F;
-	Fri, 21 Mar 2025 19:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000F91EF090;
+	Fri, 21 Mar 2025 19:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ztl8NIuh"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2046.outbound.protection.outlook.com [40.107.92.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGswRSrY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FF618FC75
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742586764; cv=fail; b=l5lD+GYcFXpSps7gVKBnRhL91fnqyt8CScqI5phr/4gG+v8gwYUIm98QOjeHTu67FSjdehY9t48SHEdCkIJ7JIy7e7hViYtcIALKK7u7w1JKXKtbTSV3/xQxGFtOnRjr5x5bC9jF896zWgcn8Clyim80yOx7vXRD84pCVsBdaq4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742586764; c=relaxed/simple;
-	bh=PQLOIir9SwJwx0rvuTFCWMkx/Ec/8xwfHwfPqW0/UAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=t2IdfAnTVR1iL1n9/oXDllBfCyM7CAxgQMW3hCoKRhpZDQGzpbKqzZXFj+qd2cGbQm98rEYOe9vFxusmmX/qHHkqw+FBHYdB2QwiIL6OiG5rO+VMAiF5bR/n9PXZ8N0rICHePQizOnw3kcaL/08sM0IZmvE7+vL41IXh15PZsro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ztl8NIuh; arc=fail smtp.client-ip=40.107.92.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e8NXH0WY+V53pIqdgqaRANFJ7hM2tgTdbIRJu5s2i7ns6cyoYLDkvQdXWQXnTtMxALWavXz5NR5MibfP75eA+D/RUOSmwjeG8s8wpm6Mqe3h9K0Otxs8a5DXXimU6yZ2F6W+S8EifkuDCOvHH15zPYuJCY9iIVHiCuAUP/ow3BEAbQx/GKg8i61DnbcHNoG5yMvX+NnrdwR9PYXEvpSkJeo/wPHvJJqDSuL34AZO55YMZ1PqOzmTGdnX1GsKBPHkeNyVHpuNEQmLnniTjlBrvTyLQxUesMcyk9aLXuZlhhS/mAtLt3IbqsA24+fTSZOriKonQxpXwtNUpDAx1wZnnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZkNgJMn3HNJ29bHdgVeue67PwinJHCZsetBAsX8SjIk=;
- b=okRoY1v54/f5uDpddKisEOcMFUhSZmuayXSRrI83Jkg8MSExnMD9+6UE0NDp6k9SM6mwE81hmhEKc6kF4lrdaqxCbxN3nAA1fT8pzN47AG8vP9w5cVdfrm5k5lQh+MobfdkAED+z0FB0ygnez/BoZhWVvp00bT6y7i4LiyUaMiI7Hx5hJtM0Hx0lVks7eegm/wZYaBJXcC4jHLz7/zW7oV47qipngbxkwVtXGLUZz2zjdSv+ypqZl3VuPS0E/DxnZwh60UWFbGGl0KwD4fiEdhZx2BaBST3Gg+QtOo1+XP2qQi3I1Qp6D47SjlnQQ5DbvM/G8IED44p42S0smByh9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oss.qualcomm.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZkNgJMn3HNJ29bHdgVeue67PwinJHCZsetBAsX8SjIk=;
- b=Ztl8NIuhFL1HYuAQKye0GuVfAtpgu5tkDzvAf9gsWAUoH5PPxz2jRZuNScS8pvafMAHb/McJaPOCHiuOqWOHLqcF0jcUWf0gHCtlYFFGuuFCsO8HJgenHsiIP2vU3LL8ZL7/yO7V2FU0d5gvQOcTDeKTUdICRJraAnm/bRX4m4M=
-Received: from BN9PR03CA0974.namprd03.prod.outlook.com (2603:10b6:408:109::19)
- by CY5PR12MB6105.namprd12.prod.outlook.com (2603:10b6:930:2a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Fri, 21 Mar
- 2025 19:52:38 +0000
-Received: from MN1PEPF0000F0E5.namprd04.prod.outlook.com
- (2603:10b6:408:109:cafe::57) by BN9PR03CA0974.outlook.office365.com
- (2603:10b6:408:109::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Fri,
- 21 Mar 2025 19:52:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0E5.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Fri, 21 Mar 2025 19:52:38 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Mar
- 2025 14:52:37 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 21 Mar 2025 14:52:35 -0500
-Message-ID: <e7358027-6a8b-85b0-3ccd-cb09b3a9ce7d@amd.com>
-Date: Fri, 21 Mar 2025 12:52:35 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D69E18FC75
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742586817; cv=none; b=YjzVeq6NEu3xS1i+V8Vt6htqOw75U94gZ137RO1QXHaav1Yj4dAy1MCwRAW0axHDczomNzvGSgT/YlcHPMZYqlHIY/kGa3Lwm3YVtVtdCb5SuM51kxdiPX5W/tTC68nMqFXUIVmEr6hlrPkk1bjQxaGki2wlFrtAxP8/P/sMzDo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742586817; c=relaxed/simple;
+	bh=c8FJ+llQ15GZ1HQtRzW115bMUmPvehE6errInggrfG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ojET08avbRM6QoS/iKPh7T4ampRqkRWTJtZKojnXDRbdG1tpzNg+xqtZLc+z7WAyfVtePEX6b5h7Fxe08cw3IX1Ztsh5KKnDcjOVaD6PqCwtlPxgAMwOz4FRgnzdduqGm+xHi1ipqiWe10Hk23+yF7PzuO2TrwZhDmo5qevSbs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGswRSrY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA3FC4CEE3;
+	Fri, 21 Mar 2025 19:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742586816;
+	bh=c8FJ+llQ15GZ1HQtRzW115bMUmPvehE6errInggrfG0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JGswRSrYaefnsu/qDucqjy+ZZpRVFm4Eqb2qyykO7km7B0+kEobeVTpFAMXdhe+n6
+	 F1TA2VlV8ocwbeliCmEUDsGS1fwemJ+ihMB5sRcpFBRHjvKLUhESkgbvSd9PQ/37xs
+	 1/GCbMgwYUEEGAWm0rT0muGczM4gBCt7h77EDYKvFPvqVAzrQXMnJxO6AisPGwFIeM
+	 nhdqUtkL/b0dy7xeg9jJ8TAlKsrYCw+nZ9TyXBAs6uCRwJ/KUgELPrWAJ6K13WEU3p
+	 BEhM7dj7C+Vc2dZsediKKZNmFUqeSTZp+kvaCtzP5FVOyXpTrd6IgncbF9RDsCBcti
+	 dzAGOQIPi8yIg==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2] tracing: Disable branch profiling in noinstr code
+Date: Fri, 21 Mar 2025 12:53:32 -0700
+Message-ID: <fb94fc9303d48a5ed370498f54500cc4c338eb6d.1742586676.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V1] accel/amdxdna: Add BO import and export
-Content-Language: en-US
-To: Jeff Hugo <jeff.hugo@oss.qualcomm.com>, <ogabbay@kernel.org>,
-	<jacek.lawrynowicz@linux.intel.com>, <mario.limonciello@amd.com>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20250306180334.3843850-1-lizhi.hou@amd.com>
- <d2d6b84b-7463-483a-a634-396b5099ef56@oss.qualcomm.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <d2d6b84b-7463-483a-a634-396b5099ef56@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E5:EE_|CY5PR12MB6105:EE_
-X-MS-Office365-Filtering-Correlation-Id: ecb321f2-6dce-4ad3-39a0-08dd68b1eeda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M25YdW9WWmNqTHRKamhWaGkreEpwa0FCNUVIVUc0RGErSHl3UlU0cSs0N0Y1?=
- =?utf-8?B?TEExR3hsQ0FxQWNxYm5ON3NwcmpkdTU3ODNBOSt4NVp5Vi9KUVd3Q2RGLzVv?=
- =?utf-8?B?cVBJQkk4V2MrV1ZySmxMc2hPMTEzT1E0SmJDTVJxU0ZIZE13cE9SRHRES0ZV?=
- =?utf-8?B?eEJRRFJmS094UndkVXVwdy9vR1RVL0kwU0xXZzdQWUtRR1V2L3NiT2ZaZmwv?=
- =?utf-8?B?SG5BZnJZeXc4dkNOTm0wUW5oOXJ2RkZJK2RWNzUrSGJwKy9HcFBhdUEzNU1k?=
- =?utf-8?B?ZHJObytsc2JzTmpleHRqWU9PVzIxL0l4WGZscDlXNEx0Z3dDaVoweGNiYlh5?=
- =?utf-8?B?MjBUeEQ3Y2tTQkZRKzR0Um5Nak1XcG9HN1JPNitMN1ZzNkJXOWpUUGc0UHVD?=
- =?utf-8?B?NEtGOWYrbE9NbTV1V0tjSWNZRGUyRkpmUXBnYWI3SHN3a3AzeGJWaWlHK0xY?=
- =?utf-8?B?QjdOOEpYejgrcGFEdVhtQ2lQMy9JNXJjenZTTy80RlpkYkZWR2FHT2hsRWpP?=
- =?utf-8?B?OVRDeVNqTFBHc2dxZnBKNElTaEg0bmdvWVVCRlZBZko4VWpPaGg1dmdOVVBB?=
- =?utf-8?B?Tk5tUGcxUGUvak8wdldNMlFMbGtHSkNaV0ZTSlMwVko5cmxvcmw3RlFKUnpO?=
- =?utf-8?B?eWl4YzhmMS9OeStWWk9xS1k4SW1yRGdqRnBpVUl5NGhXaGZBUUxIb0pTNUh5?=
- =?utf-8?B?eTZmSG9iQ0VLeE56V1ZocWpEVmtpejVBQ2NWVndxTjh4V29UTEhzK2s0TGhz?=
- =?utf-8?B?cHZieWZaRHlnNlZYaEFjMFFINGhpenJITmZiQklqYVh3RjdqeEZCWnRMRWRS?=
- =?utf-8?B?NHEvZnJXRWVvejdNckNSQzNNNHJYTHk0czdNWXJKVnpRUFpJaTRyQjUxZkkx?=
- =?utf-8?B?bDl5MThCV0I5dHQ0ZW5aVkF5SEQ1akZoWWg3dVN3WHozRW9ucmYwOHB4b2VP?=
- =?utf-8?B?Ym00dzBIWVdWbm0xZldrYUw3Z2N6Ulg3RC9xbkIxbzZwSW5peDNpaFVaTjhB?=
- =?utf-8?B?dU1VMEJLK2N3UDROTUdrUG5zaW1wOTBlU01ObEdYL0Q0aVl1emVjMmhjS3JW?=
- =?utf-8?B?Q2RQQVA5RHRTbEJIVW8ra3BHcjRVYjQ0SjlpQmEza1RWZU8wNENGUGdFWFFl?=
- =?utf-8?B?NjlzVENEZmpkYXZCQ2JpaGJkakhiRFpDb0UzS3NDN2UxR0Zhc25DdGVKQURr?=
- =?utf-8?B?QmU4REJ1SU0vRFcyK0xkamhWMzJvWEZXVU5kLzZBdGhkRmJzaVZSb3Z0ME8r?=
- =?utf-8?B?TUJHdWNHcmRUajc2M1AwR2RhbG9OUCsyYXlIRVFYS2hiU0FKZTViVUppb20y?=
- =?utf-8?B?dmhiZzJpT20zUDJFRmp6MmtocEpobXYyUWNHdkcxSzZrWGd3YVRSdHBNeU4v?=
- =?utf-8?B?dXBaYzZvbGk1SjduaUhDUVF3OFBtbVJJSTVzOWhBeDh4d3lNa28xOEt3MnVU?=
- =?utf-8?B?eFhnNEJNU1NWK3JyRUVySVNtdTg0V0NPRDY2OThxNFFsNU1UbmV0RmZBekY2?=
- =?utf-8?B?NkgrV1Q2Q21rVUhOMDR6VVNtdkM0VUJ6QXFaMFpuUE41M1RZZ3VmQTRCNmd3?=
- =?utf-8?B?TExFY3pPNy9ELzZQUXEzSDVuYURlc080VnhtWXRTajdabTdLMWNsNXRZbTZh?=
- =?utf-8?B?ZXU1alI5cHRlU3krVytWY2RJUCtqanBmbG9CTkZ0UkZPR241ckxSNEtjcStj?=
- =?utf-8?B?SmJjdmEybG56a3piWkZtQW9wc3I0bHAwOG5PYlh1VzdsZUJLRVFCODVGNGFD?=
- =?utf-8?B?QlZsdS8rSG9qOHFWRHlZZEdqMkM1U1FaSjdjbDlaMFhEclJmTjY2ZHJhRjFY?=
- =?utf-8?B?WExSdHlOYWllQWVUMFFFTDNFQXF0T2J6TEQxekV5Vjlnd2dRZEdqREJJNUVL?=
- =?utf-8?B?bXRUbmRER2wvbTFnWDRpNnQxdzZTSUp4bFg2K2xDV2JxT0s3MUZjbDBSUUxy?=
- =?utf-8?B?S2hFeTJqZ25mOUtWaS9sSUFmSzZlMk52Z2lRbHNjWFB0Q1lnQ1E2NVRIS2hp?=
- =?utf-8?Q?uGiwcg+jLRohSr+EteMkZTa8szC2eY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 19:52:38.1788
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecb321f2-6dce-4ad3-39a0-08dd68b1eeda
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E5.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6105
 
+CONFIG_TRACE_BRANCH_PROFILING inserts a call to ftrace_likely_update()
+for each use of likely() or unlikely().  That breaks noinstr rules if
+the affected function is annotated as noinstr.
 
-On 3/21/25 08:15, Jeff Hugo wrote:
-> On 3/6/2025 11:03 AM, Lizhi Hou wrote:
->> +struct drm_gem_object *
->> +amdxdna_gem_prime_import(struct drm_device *dev, struct dma_buf 
->> *dma_buf)
->> +{
->> +    struct dma_buf_attachment *attach;
->> +    struct drm_gem_object *gobj;
->> +    struct sg_table *sgt;
->> +    int ret;
->> +
->> +    attach = dma_buf_attach(dma_buf, dev->dev);
->> +    if (IS_ERR(attach))
->> +        return ERR_CAST(attach);
->> +
->> +    get_dma_buf(dma_buf);
->> +
->> +    sgt = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
->> +    if (IS_ERR(sgt)) {
->> +        ret = PTR_ERR(sgt);
->> +        goto fail_detach;
->> +    }
->> +
->> +    gobj = drm_gem_shmem_prime_import_sg_table(dev, attach, sgt);
->> +    if (IS_ERR(gobj)) {
->> +        ret = PTR_ERR(gobj);
->> +        goto fail_unmap;
->> +    }
->> +
->> +    gobj->import_attach = attach;
->> +    gobj->resv = dma_buf->resv;
->> +
->> +    return gobj;
->> +
->> +fail_unmap:
->> +    dma_buf_unmap_attachment_unlocked(attach, sgt, DMA_BIDIRECTIONAL);
->> +fail_detach:
->> +    dma_buf_detach(dma_buf, attach);
->> +    dma_buf_put(dma_buf);
->
-> You attach() and then get(), so normal "reverse order" cleanup would 
-> be put(), then detach(). That is not what you do here. Should this be 
-> reordered, or should you get() then attach() first?
+Disable branch profiling for files with noinstr functions.  In addition
+to some individual files, this also includes the entire arch/x86
+subtree, as well as the kernel/entry, drivers/cpuidle, and drivers/idle
+directories, all of which are noinstr-heavy.
 
-I referred drm_gem_prime_import_dev(). And I agree with you. It looks 
-better to get() before attach(). I will respin V2 which will also 
-contain another small update for this patch.
+Due to the nature of how sched binaries are built by combining multiple
+.c files into one, branch profiling is disabled more broadly across the
+sched code than would otherwise be needed.
 
+This fixes many warnings like the following:
 
-Thanks,
+  vmlinux.o: warning: objtool: do_syscall_64+0x40: call to ftrace_likely_update() leaves .noinstr.text section
+  vmlinux.o: warning: objtool: __rdgsbase_inactive+0x33: call to ftrace_likely_update() leaves .noinstr.text section
+  vmlinux.o: warning: objtool: handle_bug.isra.0+0x198: call to ftrace_likely_update() leaves .noinstr.text section
+  ...
 
-Lizhi
+Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+v2:
+- disable for entire arch/x86/* subtree
+- improve commit log
 
->
->
+ arch/x86/Kbuild                    | 4 ++++
+ arch/x86/coco/sev/core.c           | 2 --
+ arch/x86/kernel/head64.c           | 2 --
+ arch/x86/mm/kasan_init_64.c        | 1 -
+ arch/x86/mm/mem_encrypt_amd.c      | 2 --
+ arch/x86/mm/mem_encrypt_identity.c | 2 --
+ drivers/acpi/Makefile              | 4 ++++
+ drivers/cpuidle/Makefile           | 3 +++
+ drivers/idle/Makefile              | 5 ++++-
+ kernel/Makefile                    | 5 +++++
+ kernel/entry/Makefile              | 3 +++
+ kernel/sched/Makefile              | 5 +++++
+ kernel/time/Makefile               | 6 ++++++
+ lib/Makefile                       | 5 +++++
+ 14 files changed, 39 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
+index cf0ad89f5639..f7fb3d88c57b 100644
+--- a/arch/x86/Kbuild
++++ b/arch/x86/Kbuild
+@@ -1,4 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++# Branch profiling isn't noinstr-safe.  Disable it for arch/x86/*
++subdir-ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
++
+ obj-$(CONFIG_ARCH_HAS_CC_PLATFORM) += coco/
+ 
+ obj-y += entry/
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 96c7bc698e6b..d14bce0f82cc 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -9,8 +9,6 @@
+ 
+ #define pr_fmt(fmt)	"SEV: " fmt
+ 
+-#define DISABLE_BRANCH_PROFILING
+-
+ #include <linux/sched/debug.h>	/* For show_regs() */
+ #include <linux/percpu-defs.h>
+ #include <linux/cc_platform.h>
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 05f8b8acf784..fa9b6339975f 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -5,8 +5,6 @@
+  *  Copyright (C) 2000 Andrea Arcangeli <andrea@suse.de> SuSE
+  */
+ 
+-#define DISABLE_BRANCH_PROFILING
+-
+ /* cpu_feature_enabled() cannot be used this early */
+ #define USE_EARLY_PGTABLE_L5
+ 
+diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+index 9dddf19a5571..0539efd0d216 100644
+--- a/arch/x86/mm/kasan_init_64.c
++++ b/arch/x86/mm/kasan_init_64.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define DISABLE_BRANCH_PROFILING
+ #define pr_fmt(fmt) "kasan: " fmt
+ 
+ /* cpu_feature_enabled() cannot be used this early */
+diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
+index b56c5c073003..7490ff6d83b1 100644
+--- a/arch/x86/mm/mem_encrypt_amd.c
++++ b/arch/x86/mm/mem_encrypt_amd.c
+@@ -7,8 +7,6 @@
+  * Author: Tom Lendacky <thomas.lendacky@amd.com>
+  */
+ 
+-#define DISABLE_BRANCH_PROFILING
+-
+ #include <linux/linkage.h>
+ #include <linux/init.h>
+ #include <linux/mm.h>
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index 9fce5b87b8c5..5eecdd92da10 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -7,8 +7,6 @@
+  * Author: Tom Lendacky <thomas.lendacky@amd.com>
+  */
+ 
+-#define DISABLE_BRANCH_PROFILING
+-
+ /*
+  * Since we're dealing with identity mappings, physical and virtual
+  * addresses are the same, so override these defines which are ultimately
+diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+index 40208a0f5dfb..797070fc9a3f 100644
+--- a/drivers/acpi/Makefile
++++ b/drivers/acpi/Makefile
+@@ -5,6 +5,10 @@
+ 
+ ccflags-$(CONFIG_ACPI_DEBUG)	+= -DACPI_DEBUG_OUTPUT
+ 
++ifdef CONFIG_TRACE_BRANCH_PROFILING
++CFLAGS_processor_idle.o += -DDISABLE_BRANCH_PROFILING
++endif
++
+ #
+ # ACPI Boot-Time Table Parsing
+ #
+diff --git a/drivers/cpuidle/Makefile b/drivers/cpuidle/Makefile
+index d103342b7cfc..1de9e92c5b0f 100644
+--- a/drivers/cpuidle/Makefile
++++ b/drivers/cpuidle/Makefile
+@@ -3,6 +3,9 @@
+ # Makefile for cpuidle.
+ #
+ 
++# Branch profiling isn't noinstr-safe
++ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
++
+ obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
+ obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
+ obj-$(CONFIG_DT_IDLE_STATES)		  += dt_idle_states.o
+diff --git a/drivers/idle/Makefile b/drivers/idle/Makefile
+index 0a3c37510079..a34af1ba09bd 100644
+--- a/drivers/idle/Makefile
++++ b/drivers/idle/Makefile
+@@ -1,3 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_INTEL_IDLE)			+= intel_idle.o
+ 
++# Branch profiling isn't noinstr-safe
++ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
++
++obj-$(CONFIG_INTEL_IDLE)			+= intel_idle.o
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 87866b037fbe..434929de17ef 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -21,6 +21,11 @@ ifdef CONFIG_FUNCTION_TRACER
+ CFLAGS_REMOVE_irq_work.o = $(CC_FLAGS_FTRACE)
+ endif
+ 
++# Branch profiling isn't noinstr-safe
++ifdef CONFIG_TRACE_BRANCH_PROFILING
++CFLAGS_context_tracking.o += -DDISABLE_BRANCH_PROFILING
++endif
++
+ # Prevents flicker of uninteresting __do_softirq()/__local_bh_disable_ip()
+ # in coverage traces.
+ KCOV_INSTRUMENT_softirq.o := n
+diff --git a/kernel/entry/Makefile b/kernel/entry/Makefile
+index 095c775e001e..d4b8bd0af79b 100644
+--- a/kernel/entry/Makefile
++++ b/kernel/entry/Makefile
+@@ -6,6 +6,9 @@ KASAN_SANITIZE := n
+ UBSAN_SANITIZE := n
+ KCOV_INSTRUMENT := n
+ 
++# Branch profiling isn't noinstr-safe
++ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
++
+ CFLAGS_REMOVE_common.o	 = -fstack-protector -fstack-protector-strong
+ CFLAGS_common.o		+= -fno-stack-protector
+ 
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index 976092b7bd45..8ae86371ddcd 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -22,6 +22,11 @@ ifneq ($(CONFIG_SCHED_OMIT_FRAME_POINTER),y)
+ CFLAGS_core.o := $(PROFILING) -fno-omit-frame-pointer
+ endif
+ 
++# Branch profiling isn't noinstr-safe
++ifdef CONFIG_TRACE_BRANCH_PROFILING
++CFLAGS_build_policy.o += -DDISABLE_BRANCH_PROFILING
++CFLAGS_build_utility.o += -DDISABLE_BRANCH_PROFILING
++endif
+ #
+ # Build efficiency:
+ #
+diff --git a/kernel/time/Makefile b/kernel/time/Makefile
+index fe0ae82124fe..e6e9b85d4db5 100644
+--- a/kernel/time/Makefile
++++ b/kernel/time/Makefile
+@@ -1,4 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++# Branch profiling isn't noinstr-safe
++ifdef CONFIG_TRACE_BRANCH_PROFILING
++CFLAGS_sched_clock.o += -DDISABLE_BRANCH_PROFILING
++endif
++
+ obj-y += time.o timer.o hrtimer.o sleep_timeout.o
+ obj-y += timekeeping.o ntp.o clocksource.o jiffies.o timer_list.o
+ obj-y += timeconv.o timecounter.o alarmtimer.o
+diff --git a/lib/Makefile b/lib/Makefile
+index fcdee83deb5c..8627b7ab827b 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -5,6 +5,11 @@
+ 
+ ccflags-remove-$(CONFIG_FUNCTION_TRACER) += $(CC_FLAGS_FTRACE)
+ 
++# Branch profiling isn't noinstr-safe
++ifdef CONFIG_TRACE_BRANCH_PROFILING
++CFLAGS_smp_processor_id.o += -DDISABLE_BRANCH_PROFILING
++endif
++
+ # These files are disabled because they produce lots of non-interesting and/or
+ # flaky coverage that is not a function of syscall inputs. For example,
+ # rbtree can be global and individual rotations don't correlate with inputs.
+-- 
+2.48.1
+
 
