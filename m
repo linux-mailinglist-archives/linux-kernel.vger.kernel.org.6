@@ -1,182 +1,398 @@
-Return-Path: <linux-kernel+bounces-570861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D287A6B584
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:52:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4595CA6B587
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6A018934F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D301893263
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491981EF08A;
-	Fri, 21 Mar 2025 07:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117D91EDA35;
+	Fri, 21 Mar 2025 07:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSM7m5X/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DdEAIF07"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882A326ACB;
-	Fri, 21 Mar 2025 07:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B306726ACB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742543512; cv=none; b=gjgwO469xH6+tci8kWg5oxCY3BF8AC+qJhJC0zGFf1bip2YyA4wem8weuUDDkAxjNIx16uexgk1rwqwMIoLKRn0PHLa57hpPTZouVw7utmsYrvEmkxhjRhDWICqMBodIBLQBwZg1uHOhCmj8/GS8rMTzjRqIZ0KHI5SaIfzOPZA=
+	t=1742543596; cv=none; b=mwgZFxULxKtuAlSSTXfzQyqlFR6/EfXJYvPlupZkZuhJiskVXu6vJvnHTFrGj6Uz2dKpHvrhLewUGGugvm5cK8NelRAE+shvlSxHuDo/O4PBk0WZF+5CfYc9AuI1xrlUqqQClDmcTaPg02PlLdShUJRYMa7ofenU3J6EbIp3Cxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742543512; c=relaxed/simple;
-	bh=eUqWIJcB3nSd/mXSYygUn6M3e1U2VTzoZUejWvBj2HU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBnCbKFt502vSvC3f28yVpj2vrYmYCYhlq5RUYPQ0KDB4g1mR+GeHOWanKcVlyWX7OpB5Py5hBtyJxqe6NogiGe3iYq14TEqRwZ6WfrDlpTZ8pww7uC4N8Fwohv1EfKX+hq1LDbQyohpj33nbdG3pdHR3PMYWjtEYa3+bg3h5gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSM7m5X/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB1CC4CEE3;
-	Fri, 21 Mar 2025 07:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742543512;
-	bh=eUqWIJcB3nSd/mXSYygUn6M3e1U2VTzoZUejWvBj2HU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tSM7m5X/sYFP6LXrJRSTdDwt2LcAuSi/NbowmE7HCqzddAOieWE5YS0TfNr9wIg0I
-	 AGVEZRJrt+VbwkTIh90aVx86Rr2oN0yoR2uUY9wrwk/pZj174J35fL0seVaqCf3Rvv
-	 cSBqhCbyLj31KkLqd6j9BeBAPbhBSxK+1XClerEIAjXns3hVmnsqnPBwaC8GO9qEpz
-	 TzXd8DGFQV+7Jj2QTv7jruYJqRvjylgLH33whHVEgavMziPOqsYS2/kJnSai9fX+fn
-	 z/xfUz30MG8rKxg0LRzYWYVkAY8/q3a4MsdkWbAvaVOwiktgYDMOXWcBFq6r1np2Yf
-	 5ccvARZiKZqrw==
-Message-ID: <442bebf4-4de1-42d1-a14b-2bb509fea12f@kernel.org>
-Date: Fri, 21 Mar 2025 08:51:43 +0100
+	s=arc-20240116; t=1742543596; c=relaxed/simple;
+	bh=enCbel2iRJcTPHtXReynf9C3YSEj7sSO1j/UpMt0lY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H3wjLueguL3Zz6rEvdMSihNR9W06wWQx8Oe9NL3VfD+wb998AbJ+hYv4feRu+MRvmxX9iqs4ko2vd/xy4jCZgSS0KGzNkPW/db/45gK4mDAdv9lPfoVifc2AaqlRqoW0+40X8HaMKKgwr/AdOaF/C9DM9nthQedXqIAOpvxjdyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DdEAIF07; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742543591;
+	bh=enCbel2iRJcTPHtXReynf9C3YSEj7sSO1j/UpMt0lY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DdEAIF07vhWzK5D1yxlN38RFbvZGKx8GRut/0eJ9kr0Rz9aVfacdAa5g+sUHTEzDM
+	 PKLkPp8xuBjOOdEnlZ0yIx0PpM2GtBU4JE/RI5vRvqAmObadnsr7RUf6g5fX8Z8MoT
+	 3UUdBDi8zDUUjeH/OH929J+zOAFUo/1Wu9Bb+7Ax/2o0/s/lAh7yHpM7pQQ/C6UBl/
+	 1TLbkJKfIiehn+hZxzRK9jG4BCFnzeIiW7u7DG+EqgwyIErfAlLI9pjokAsKyWTqd3
+	 gq6PHjMXtcOQ5Lm3XItOaskFCDeP7jp55tBncrWGA/RnuICsrJi8INbt+hlefxGUKo
+	 EQfY5DK2kCJAQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 447FA17E0C38;
+	Fri, 21 Mar 2025 08:53:11 +0100 (CET)
+Date: Fri, 21 Mar 2025 08:53:06 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] drm/panthor: Use 64-bit and poll register
+ accessors
+Message-ID: <20250321085306.0d79ec5d@collabora.com>
+In-Reply-To: <20250320111741.1937892-3-karunika.choo@arm.com>
+References: <20250320111741.1937892-1-karunika.choo@arm.com>
+	<20250320111741.1937892-3-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Add support for Battery Status & Battery Caps AMS in
- TCPM
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Sebastian Reichel <sre@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
- <20250313-determined-wild-seahorse-f7871a@krzk-bin>
- <914a0df4-96d0-4cd4-ac87-3826fa9c1440@google.com>
- <3f65fe16-56f8-4887-bb91-994b181ce5a9@kernel.org>
- <9852e5a8-843d-48ae-90d0-7991628e93b3@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <9852e5a8-843d-48ae-90d0-7991628e93b3@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 20/03/2025 22:11, Amit Sunil Dhamne wrote:
-> On 3/16/25 9:52 AM, Krzysztof Kozlowski wrote:
->> On 15/03/2025 01:49, Amit Sunil Dhamne wrote:
->>> Hi Krzysztof,
->>>
->>> Thanks for the review!
->>>
->>> On 3/13/25 1:50 AM, Krzysztof Kozlowski wrote:
->>>> On Wed, Mar 12, 2025 at 04:42:00PM -0700, Amit Sunil Dhamne wrote:
->>>>> Support for Battery Status & Battery Caps messages in response to
->>>>> Get_Battery_Status & Get_Battery_Cap request is required by USB PD devices
->>>>> powered by battery, as per "USB PD R3.1 V1.8 Spec", "6.13 Message
->>>>> Applicability" section. This patchset adds support for these AMSes
->>>>> to achieve greater compliance with the spec.
->>>> Which board uses it? I would be happy to see that connection between
->>>> batteries and USB connector on the schematics of some real device. How
->>>> does it look like?
->>> Any board that uses a USB Type-C connector that supplies power into or
->> If you keep responding like this, you will got nowhere, so let me
->> re-iterate:
->>
->> Which upstream DTS (or upstream supported hardware) is going to use this
->> binding, so I can see how you are going to implement it there in the
->> entire system?
-> 
-> This is for maxim,max33359 Type-C controller.
+On Thu, 20 Mar 2025 11:17:34 +0000
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-Stop deflecting the questions. max33359 is not a board. I already asked
-two times.
+> This patch updates Panthor to use the new 64-bit accessors and poll
+> functions.
 
-Apparently admitting "no upstream users" is impossible, so let's state
-the obvious:
-
-There are no upstream users of this.
+nit: I don't think it makes sense to dissociate the introduction of the
+new helpers and their use. Could we squash this patch into the previous
+one?
 
 > 
-> This would property would have been present for the connector present in 
-> the typec device for gs101-oriole board (that uses the max33359 
-> controller).
-
-
-But it is not.
-
-
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_fw.c  |   9 +-
+>  drivers/gpu/drm/panthor/panthor_gpu.c | 142 +++++++-------------------
+>  drivers/gpu/drm/panthor/panthor_mmu.c |  34 ++----
+>  3 files changed, 53 insertions(+), 132 deletions(-)
 > 
-> However, I will be exploring existing bindings to describe the 
-> relationship for now.
-> 
->>> out of a battery while operating in sink or source mode respectively.
->>> The VBUS is connected to the (battery + buck boost IC's CHGin/Vin) or a
->>> companion IFPMIC connected to a battery.  In our board we have USB
->>> Connector <-> IFPMIC <-> Battery.
->> Which board is that?
-> 
-> gs101-oriole board.
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index 0f52766a3120..ecfbe0456f89 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -1059,8 +1059,8 @@ static void panthor_fw_stop(struct panthor_device *ptdev)
+>  	u32 status;
+>  
+>  	gpu_write(ptdev, MCU_CONTROL, MCU_CONTROL_DISABLE);
+> -	if (readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
+> -			       status == MCU_STATUS_DISABLED, 10, 100000))
+> +	if (gpu_read_poll_timeout(ptdev, MCU_STATUS, status,
+> +				  status == MCU_STATUS_DISABLED, 10, 100000))
+>  		drm_err(&ptdev->base, "Failed to stop MCU");
+>  }
+>  
+> @@ -1085,8 +1085,9 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
+>  
+>  		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
+>  		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
+> -		if (!readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
+> -					status == MCU_STATUS_HALT, 10, 100000)) {
+> +		if (!gpu_read_poll_timeout(ptdev, MCU_STATUS, status,
+> +					   status == MCU_STATUS_HALT, 10,
+> +					   100000)) {
+>  			ptdev->reset.fast = true;
+>  		} else {
+>  			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index 671049020afa..0dee011fe2e9 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -108,14 +108,9 @@ static void panthor_gpu_init_info(struct panthor_device *ptdev)
+>  
+>  	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
+>  
+> -	ptdev->gpu_info.shader_present = gpu_read(ptdev, GPU_SHADER_PRESENT_LO);
+> -	ptdev->gpu_info.shader_present |= (u64)gpu_read(ptdev, GPU_SHADER_PRESENT_HI) << 32;
+> -
+> -	ptdev->gpu_info.tiler_present = gpu_read(ptdev, GPU_TILER_PRESENT_LO);
+> -	ptdev->gpu_info.tiler_present |= (u64)gpu_read(ptdev, GPU_TILER_PRESENT_HI) << 32;
+> -
+> -	ptdev->gpu_info.l2_present = gpu_read(ptdev, GPU_L2_PRESENT_LO);
+> -	ptdev->gpu_info.l2_present |= (u64)gpu_read(ptdev, GPU_L2_PRESENT_HI) << 32;
+> +	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT_LO);
+> +	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT_LO);
+> +	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
+>  
+>  	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
+>  	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
+> @@ -152,8 +147,7 @@ static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  {
+>  	if (status & GPU_IRQ_FAULT) {
+>  		u32 fault_status = gpu_read(ptdev, GPU_FAULT_STATUS);
+> -		u64 address = ((u64)gpu_read(ptdev, GPU_FAULT_ADDR_HI) << 32) |
+> -			      gpu_read(ptdev, GPU_FAULT_ADDR_LO);
+> +		u64 address = gpu_read64(ptdev, GPU_FAULT_ADDR_LO);
+>  
+>  		drm_warn(&ptdev->base, "GPU Fault 0x%08x (%s) at 0x%016llx\n",
+>  			 fault_status, panthor_exception_name(ptdev, fault_status & 0xFF),
+> @@ -244,45 +238,27 @@ int panthor_gpu_block_power_off(struct panthor_device *ptdev,
+>  				u32 pwroff_reg, u32 pwrtrans_reg,
+>  				u64 mask, u32 timeout_us)
+>  {
+> -	u32 val, i;
+> +	u32 val;
+>  	int ret;
+>  
+> -	for (i = 0; i < 2; i++) {
+> -		u32 mask32 = mask >> (i * 32);
+> -
+> -		if (!mask32)
+> -			continue;
+> -
+> -		ret = readl_relaxed_poll_timeout(ptdev->iomem + pwrtrans_reg + (i * 4),
+> -						 val, !(mask32 & val),
+> -						 100, timeout_us);
+> -		if (ret) {
+> -			drm_err(&ptdev->base, "timeout waiting on %s:%llx power transition",
+> -				blk_name, mask);
+> -			return ret;
+> -		}
+> +	ret = gpu_read64_relaxed_poll_timeout(ptdev, pwrtrans_reg, val, !val,
+> +					      100, timeout_us);
+> +	if (ret) {
+> +		drm_err(&ptdev->base,
+> +			"timeout waiting on %s:%llx power transition", blk_name,
+> +			mask);
+> +		return ret;
+>  	}
+>  
+> -	if (mask & GENMASK(31, 0))
+> -		gpu_write(ptdev, pwroff_reg, mask);
+> -
+> -	if (mask >> 32)
+> -		gpu_write(ptdev, pwroff_reg + 4, mask >> 32);
+> -
+> -	for (i = 0; i < 2; i++) {
+> -		u32 mask32 = mask >> (i * 32);
+> +	gpu_write64(ptdev, pwroff_reg, mask);
+>  
+> -		if (!mask32)
+> -			continue;
+> -
+> -		ret = readl_relaxed_poll_timeout(ptdev->iomem + pwrtrans_reg + (i * 4),
+> -						 val, !(mask32 & val),
+> -						 100, timeout_us);
+> -		if (ret) {
+> -			drm_err(&ptdev->base, "timeout waiting on %s:%llx power transition",
+> -				blk_name, mask);
+> -			return ret;
+> -		}
+> +	ret = gpu_read64_relaxed_poll_timeout(ptdev, pwrtrans_reg, val, !val,
+> +					      100, timeout_us);
+> +	if (ret) {
+> +		drm_err(&ptdev->base,
+> +			"timeout waiting on %s:%llx power transition", blk_name,
+> +			mask);
+> +		return ret;
+>  	}
+>  
+>  	return 0;
+> @@ -305,45 +281,26 @@ int panthor_gpu_block_power_on(struct panthor_device *ptdev,
+>  			       u32 pwron_reg, u32 pwrtrans_reg,
+>  			       u32 rdy_reg, u64 mask, u32 timeout_us)
+>  {
+> -	u32 val, i;
+> +	u32 val;
+>  	int ret;
+>  
+> -	for (i = 0; i < 2; i++) {
+> -		u32 mask32 = mask >> (i * 32);
+> -
+> -		if (!mask32)
+> -			continue;
+> -
+> -		ret = readl_relaxed_poll_timeout(ptdev->iomem + pwrtrans_reg + (i * 4),
+> -						 val, !(mask32 & val),
+> -						 100, timeout_us);
+> -		if (ret) {
+> -			drm_err(&ptdev->base, "timeout waiting on %s:%llx power transition",
+> -				blk_name, mask);
+> -			return ret;
+> -		}
+> +	ret = gpu_read64_relaxed_poll_timeout(ptdev, pwrtrans_reg, val, !val,
+> +					      100, timeout_us);
+> +	if (ret) {
+> +		drm_err(&ptdev->base,
+> +			"timeout waiting on %s:%llx power transition", blk_name,
+> +			mask);
+> +		return ret;
+>  	}
+>  
+> -	if (mask & GENMASK(31, 0))
+> -		gpu_write(ptdev, pwron_reg, mask);
+> -
+> -	if (mask >> 32)
+> -		gpu_write(ptdev, pwron_reg + 4, mask >> 32);
+> -
+> -	for (i = 0; i < 2; i++) {
+> -		u32 mask32 = mask >> (i * 32);
+> +	gpu_write64(ptdev, pwron_reg, mask);
+>  
+> -		if (!mask32)
+> -			continue;
+> -
+> -		ret = readl_relaxed_poll_timeout(ptdev->iomem + rdy_reg + (i * 4),
+> -						 val, (mask32 & val) == mask32,
+> -						 100, timeout_us);
+> -		if (ret) {
+> -			drm_err(&ptdev->base, "timeout waiting on %s:%llx readiness",
+> -				blk_name, mask);
+> -			return ret;
+> -		}
+> +	ret = gpu_read64_relaxed_poll_timeout(ptdev, pwrtrans_reg, val, !val,
+> +					      100, timeout_us);
+> +	if (ret) {
+> +		drm_err(&ptdev->base, "timeout waiting on %s:%llx readiness",
+> +			blk_name, mask);
+> +		return ret;
+>  	}
+>  
+>  	return 0;
+> @@ -492,26 +449,6 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
+>  	panthor_gpu_l2_power_on(ptdev);
+>  }
+>  
+> -/**
+> - * panthor_gpu_read_64bit_counter() - Read a 64-bit counter at a given offset.
+> - * @ptdev: Device.
+> - * @reg: The offset of the register to read.
+> - *
+> - * Return: The counter value.
+> - */
+> -static u64
+> -panthor_gpu_read_64bit_counter(struct panthor_device *ptdev, u32 reg)
+> -{
+> -	u32 hi, lo;
+> -
+> -	do {
+> -		hi = gpu_read(ptdev, reg + 0x4);
+> -		lo = gpu_read(ptdev, reg);
+> -	} while (hi != gpu_read(ptdev, reg + 0x4));
+> -
+> -	return ((u64)hi << 32) | lo;
+> -}
+> -
+>  /**
+>   * panthor_gpu_read_timestamp() - Read the timestamp register.
+>   * @ptdev: Device.
+> @@ -520,7 +457,7 @@ panthor_gpu_read_64bit_counter(struct panthor_device *ptdev, u32 reg)
+>   */
+>  u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+>  {
+> -	return panthor_gpu_read_64bit_counter(ptdev, GPU_TIMESTAMP_LO);
+> +	return gpu_read64_sync(ptdev, GPU_TIMESTAMP_LO);
+>  }
+>  
+>  /**
+> @@ -531,10 +468,5 @@ u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+>   */
+>  u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
+>  {
+> -	u32 hi, lo;
+> -
+> -	hi = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_HI);
+> -	lo = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_LO);
+> -
+> -	return ((u64)hi << 32) | lo;
+> +	return gpu_read64(ptdev, GPU_TIMESTAMP_OFFSET_LO);
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 12a02e28f50f..a0a79f19bdea 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -510,9 +510,9 @@ static int wait_ready(struct panthor_device *ptdev, u32 as_nr)
+>  	/* Wait for the MMU status to indicate there is no active command, in
+>  	 * case one is pending.
+>  	 */
+> -	ret = readl_relaxed_poll_timeout_atomic(ptdev->iomem + AS_STATUS(as_nr),
+> -						val, !(val & AS_STATUS_AS_ACTIVE),
+> -						10, 100000);
+> +	ret = gpu_read_relaxed_poll_timeout_atomic(ptdev, AS_STATUS(as_nr), val,
+> +						   !(val & AS_STATUS_AS_ACTIVE),
+> +						   10, 100000);
+>  
+>  	if (ret) {
+>  		panthor_device_schedule_reset(ptdev);
+> @@ -564,8 +564,7 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
+>  	region = region_width | region_start;
+>  
+>  	/* Lock the region that needs to be updated */
+> -	gpu_write(ptdev, AS_LOCKADDR_LO(as_nr), lower_32_bits(region));
+> -	gpu_write(ptdev, AS_LOCKADDR_HI(as_nr), upper_32_bits(region));
+> +	gpu_write64(ptdev, AS_LOCKADDR_LO(as_nr), region);
+>  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
+>  }
+>  
+> @@ -615,14 +614,9 @@ static int panthor_mmu_as_enable(struct panthor_device *ptdev, u32 as_nr,
+>  	if (ret)
+>  		return ret;
+>  
+> -	gpu_write(ptdev, AS_TRANSTAB_LO(as_nr), lower_32_bits(transtab));
+> -	gpu_write(ptdev, AS_TRANSTAB_HI(as_nr), upper_32_bits(transtab));
+> -
+> -	gpu_write(ptdev, AS_MEMATTR_LO(as_nr), lower_32_bits(memattr));
+> -	gpu_write(ptdev, AS_MEMATTR_HI(as_nr), upper_32_bits(memattr));
+> -
+> -	gpu_write(ptdev, AS_TRANSCFG_LO(as_nr), lower_32_bits(transcfg));
+> -	gpu_write(ptdev, AS_TRANSCFG_HI(as_nr), upper_32_bits(transcfg));
+> +	gpu_write64(ptdev, AS_TRANSTAB_LO(as_nr), transtab);
+> +	gpu_write64(ptdev, AS_MEMATTR_LO(as_nr), memattr);
+> +	gpu_write64(ptdev, AS_TRANSCFG_LO(as_nr), transcfg);
+>  
+>  	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+> @@ -635,14 +629,9 @@ static int panthor_mmu_as_disable(struct panthor_device *ptdev, u32 as_nr)
+>  	if (ret)
+>  		return ret;
+>  
+> -	gpu_write(ptdev, AS_TRANSTAB_LO(as_nr), 0);
+> -	gpu_write(ptdev, AS_TRANSTAB_HI(as_nr), 0);
+> -
+> -	gpu_write(ptdev, AS_MEMATTR_LO(as_nr), 0);
+> -	gpu_write(ptdev, AS_MEMATTR_HI(as_nr), 0);
+> -
+> -	gpu_write(ptdev, AS_TRANSCFG_LO(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+> -	gpu_write(ptdev, AS_TRANSCFG_HI(as_nr), 0);
+> +	gpu_write64(ptdev, AS_TRANSTAB_LO(as_nr), 0);
+> +	gpu_write64(ptdev, AS_MEMATTR_LO(as_nr), 0);
+> +	gpu_write64(ptdev, AS_TRANSCFG_LO(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+>  
+>  	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
+>  }
+> @@ -1680,8 +1669,7 @@ static void panthor_mmu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  		u32 source_id;
+>  
+>  		fault_status = gpu_read(ptdev, AS_FAULTSTATUS(as));
+> -		addr = gpu_read(ptdev, AS_FAULTADDRESS_LO(as));
+> -		addr |= (u64)gpu_read(ptdev, AS_FAULTADDRESS_HI(as)) << 32;
+> +		addr = gpu_read64(ptdev, AS_FAULTADDRESS_LO(as));
+>  
+>  		/* decode the fault status */
+>  		exception_type = fault_status & 0xFF;
 
-
-Then why this is not used? The board was released some years ago, so I
-do not see a problem in using it.
-
-Best regards,
-Krzysztof
 
