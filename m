@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-570889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6EDA6B5DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:14:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2FFA6B5E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB84E3B8A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28CF9189C563
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC2B1F03DE;
-	Fri, 21 Mar 2025 08:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD1B1EFF93;
+	Fri, 21 Mar 2025 08:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ss5XFq8L"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="w0rYLhRJ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B401EFFB0;
-	Fri, 21 Mar 2025 08:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774671E991D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742544837; cv=none; b=Txta0gbh5WjAmBvs/z95LuHY5QvO/HPqYbXKPYxKc8ff7p/iLffDeXupNDZVETcgHXD6VmP7EBZIuT8OZeY98NeAflitr6GbY+wBIoQBndk0lbp2FQaPJDVjPJSavWAPx0jbxuv/rfxAj88lhQ77HyzbwJFmCPQBIus06xlTTw0=
+	t=1742544930; cv=none; b=iKNiu6yp0eX4ZmhXfbKNnZlAI0pFAkzwN2pspl4kAYVAJ6Ph1dGSMnJz3gJ12uyJ6sX87iOlvAMMcz0Wvsc4lUhGWFA361aOF76kVUc0P82PIWO61uiBZbqTSNRT8+bzGlVKZP+fK4u7M1yLPvuruGZN2EaFO6kZ0ggtc0pzUYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742544837; c=relaxed/simple;
-	bh=iQ3f1Uo9PBRmeOIRNc3lzhLy3Ycu/Zb+R/wdm0l71M4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PAxe9tgTcpcp2PeJvrEKFmyl7ej/bSAoOXNyPbh+4FqpFazo7/UL9rh/eGwXCctnALbzcO2P+Y9a6hzj9wQP+zHP/fCNFOL4TJ86jdbHDW4kCGsv3YsW88x6t2IPGP5/SY01dN52b/f4BQLyQ4n+Y0F00Y1cK42V4WMBd8rnWQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ss5XFq8L; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52L8DSub262220
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 21 Mar 2025 03:13:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742544808;
-	bh=zBkFyFej/LjUcEirj4ZJVbw1Q5NfS6rUgggc1XPBP10=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Ss5XFq8LA0mUPPXeTRbGotDm6AdtwmosmwCG78Ii6kaD27XwhznnIYw8cVOGAJai0
-	 R41m/8h7bQYy2ZkQEDEZtHOKNDy27ikNZDCJpob/7VBZC8HcsbNAeT6gze6wdXOtQY
-	 51FxIdjWVmhBi2M+vQM5DI493skyDJclkwtYuZ2k=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52L8DSl1127629;
-	Fri, 21 Mar 2025 03:13:28 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Mar 2025 03:13:28 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Mar 2025 03:13:28 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52L8DShA130300;
-	Fri, 21 Mar 2025 03:13:28 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 52L8DQSt032443;
-	Fri, 21 Mar 2025 03:13:27 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kory.maincent@bootlin.com>, <dan.carpenter@linaro.org>,
-        <javier.carrasco.cruz@gmail.com>, <diogo.ivo@siemens.com>,
-        <jacob.e.keller@intel.com>, <horms@kernel.org>, <m-malladi@ti.com>,
-        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
-        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger
- Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net-next v2 3/3] net: ti: icss-iep: Fix possible NULL pointer dereference for perout request
-Date: Fri, 21 Mar 2025 13:43:13 +0530
-Message-ID: <20250321081313.37112-4-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321081313.37112-1-m-malladi@ti.com>
-References: <20250321081313.37112-1-m-malladi@ti.com>
+	s=arc-20240116; t=1742544930; c=relaxed/simple;
+	bh=d6ILCZZssy97zc5fURHqUsCaBvkhMm0Qn33u5P5AIrY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=JssQ/e9pFD92DbN/hqX79eFxmTODXKDMn0PD6+/OI0XlAWwXlPRS1JfW/HkSjweQjBNtOczvfabm74xWPkRx5zw84KzK/akq549ra4NsVixq9Wy4Il2CBlgZc/TuIvyQfFMzzlXRym9X/DDfm23+jY4k6UsZDHn8OPS/gvk0MsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=w0rYLhRJ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52L8Euuv2541398
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 21 Mar 2025 01:14:57 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52L8Euuv2541398
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742544897;
+	bh=NxSlo284Cm1ijdBKAZxqPOJ6SDvYvA0rTpktQYQy2nM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=w0rYLhRJJJAGoia7Puqd8EzAX3UTgYCjWBki+1Du1iiixdfHWO7X8gszn+H5fn/Yg
+	 Cx+p1IlPTw+1e0MzLgpE+chc6YH7E3/PeRYqBrp6yMdbqTsOKkGWDmAxBlfqiaa/Xs
+	 oIua98g7L7JJZRrToqEHLRz2CPXjqkZgmHzlb0fml/Epby/VQjil+zdx+UbNJDDNMy
+	 JtErZNdYi97XaQaCkAnBTxx0m5JI/fsI9VsPXuuuouSst/B16X4C2374dcZNngktmo
+	 k6JTxCiBiuQ4AVdWrT+voHkeQuo2q7xZN2BOA5BPQTV2kPYyLBal9WnaDU8uzX1DTe
+	 I1iY2asmUAHSA==
+Date: Fri, 21 Mar 2025 01:14:54 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Xin Li <xin@zytor.com>, Brian Gerst <brgerst@gmail.com>
+CC: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, peterz@infradead.org
+Subject: Re: [PATCH v3 3/3] x86: Zap TOP_OF_KERNEL_STACK_PADDING on x86_64
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8b920da6-0c9a-43b4-bd50-79c057a01932@zytor.com>
+References: <20250319071009.1390984-1-xin@zytor.com> <20250319071009.1390984-4-xin@zytor.com> <CAMzpN2jFv8KE97ymEWAX1setxdgXy0jZGn_7JVp9fFEBfZ2ynA@mail.gmail.com> <8b920da6-0c9a-43b4-bd50-79c057a01932@zytor.com>
+Message-ID: <1106B557-4AA2-410F-A990-C0C3BB7E675B@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Whenever there is a perout request from the user application,
-kernel receives req structure containing the configuration info
-for that req. Add NULL pointer handling for perout request if
-that req struct points to NULL.
+On March 20, 2025 10:47:25 PM PDT, Xin Li <xin@zytor=2Ecom> wrote:
+>On 3/19/2025 12:17 PM, Brian Gerst wrote:
+>> I'm not sure it's worth fully removing TOP_OF_KERNEL_STACK_PADDING for
+>> 64-bit if it results in needing separate definitions of
+>> task_top_of_stack()=2E  Leaving it at zero is fine=2E  The other change=
+s
+>> are fine though=2E
+>
+>Let's leave it to x86 maintainers ;-)
+>
+>But to me, TOP_OF_KERNEL_STACK_PADDING no longer makes sense on 64-bit,
+>and it makes it simpler to remove it=2E  On the other side, 32-bit is to
+>be zapped=2E=2E=2E
+>
+>Thanks!
+>    Xin
+>
 
-Fixes: e5b456a14215 ("net: ti: icss-iep: Add pwidth configuration for perout signal")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-
-Changes from v1(v2-v1):
-- Collected RB tag from Simon Horman <horms@kernel.org>
-
- drivers/net/ethernet/ti/icssg/icss_iep.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
-index b4a34c57b7b4..aeebdc4c121e 100644
---- a/drivers/net/ethernet/ti/icssg/icss_iep.c
-+++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
-@@ -498,6 +498,10 @@ static int icss_iep_perout_enable(struct icss_iep *iep,
- {
- 	int ret = 0;
- 
-+	/* Return error if the req is NULL */
-+	if (!req)
-+		return -EINVAL;
-+
- 	/* Reject requests with unsupported flags */
- 	if (req->flags & ~(PTP_PEROUT_DUTY_CYCLE |
- 			  PTP_PEROUT_PHASE))
--- 
-2.43.0
-
+For what it's worth, it was there as 0 before the FRED changes, so =2E=2E=
+=2E
 
