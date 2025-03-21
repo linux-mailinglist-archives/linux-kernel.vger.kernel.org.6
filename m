@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-570600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8009DA6B25A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:37:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1FDA6B255
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB5387B1890
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D0C1892C2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4AB38FA3;
-	Fri, 21 Mar 2025 00:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7912A1CF;
+	Fri, 21 Mar 2025 00:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U1vFUeod"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="WBj3XUqm"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656CB2CCDB;
-	Fri, 21 Mar 2025 00:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F0C1EA84;
+	Fri, 21 Mar 2025 00:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742517449; cv=none; b=SzFKN0UtTvu49yNCL0N1VNK4pmh4idt/fXKXOCdpDiK1oaq0Ebrqvs4c5xgw0k1hy7fAbEffLIfLhcNRP1D+/qZN3Vrqz7TnWRd2kvz2HWFZYFuTPADYrdwiumRsTAMkHPAHImHcXb7XzLjCHV+j30hFb0DxQRt1xhC4YE/AwPg=
+	t=1742517423; cv=none; b=djEwJKYGe4ZEbxX7z2dZO31kmqPSwgED4BQl/C394qq29ZDb02RjT58PbwcNze6/Qb/dTTlyPbIDZl3brlNPk//fvIySlh9GYNji5M2i/mfaRoLPVoaou3ZBbPvugVlJqobj7tGgzkrh3ZPjWziifvkhf93h9lQ7xQ8hcDQjOQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742517449; c=relaxed/simple;
-	bh=46roC/Ycs6wPPeW/WUrD74GeQD35/HD9JpUT70E3zrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GRXVOnRs44wyNwblb8rwljEGAIQKLLTYOQsxyqel8b1YmzJODVmcb295/sG4gqvDKKDFWdgPrWlnAX5bhYfpzWVmnrW90TEoNjZPxGDzK34DDbRzLMw2lTwIpbMRmUu1+C8OVMRm80zfWdl/nvvSbBeu5STG8ItTdypHJPJLKe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=U1vFUeod; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KLBTAs020677;
-	Fri, 21 Mar 2025 00:37:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=gCBhP/ziZNo5beYM1BWeO3F3w4kU5X8d7uMOH6wKQyM=; b=
-	U1vFUeodj8C4qTuV5W4FhDoqNosAewuXcBTIW84vT1U7qkHeILc+AmP2RCTSL6nZ
-	XKJLnyEaP+r7/5jDNaCuzHN7hL8mnMyPG7jogBdQd1xth+5ehasQ56pH0awutoWI
-	l9RW0qN5HMf1+rWxRueL8V1MkkVbrZEq9uz0f29mbxrv7pil2cAfg7ofrf3i00Ug
-	bs/t2ehlF39AMKkq7RGq2rxf1mwbhUU+RZgRX9dO8+d+lnhbb1ygbWs6MljSEmDn
-	7NZFXtTMqjE1W7lJsHqYHZmtcZVvte7cuC7aDllvOlCjQw4ckSSPc4K7uJkJAlc2
-	osqxnmSN81AWHuXd4wfWfA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d1n8q8d2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Mar 2025 00:37:20 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52KNYNax004848;
-	Fri, 21 Mar 2025 00:37:19 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ftmxt6us-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Mar 2025 00:37:19 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52L0bHsg024893;
-	Fri, 21 Mar 2025 00:37:19 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45ftmxt6tx-5;
-	Fri, 21 Mar 2025 00:37:19 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
-        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH] scsi: fnic: Remove redundant 'flush_workqueue()' calls
-Date: Thu, 20 Mar 2025 20:36:53 -0400
-Message-ID: <174251737515.2240574.11609887080073706550.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250312074320.1430175-1-nichen@iscas.ac.cn>
-References: <20250312074320.1430175-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1742517423; c=relaxed/simple;
+	bh=2z2RHDJm+LH1XHYv8vwtILZIc8Ji7eD8BNHKPWzg2vA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eduWkBzB7iP9kBFCjUOv6AlZ4B1Cf6YlLL7yUKzxkKPMAtpSrHT69yceLjCT4tvkVCKPQsh6zggmltOKfpVfLGtPj74TxXfa9pxLPF8ciyIZdRahcB8Bc1X7+/KXsHF+m++tYeLiz6l2WCYAOp9XbTm/G/RdwbfR8GFBydgRIwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=WBj3XUqm; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43690d4605dso9625385e9.0;
+        Thu, 20 Mar 2025 17:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1742517418; x=1743122218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YqUcVj28ADCuEV5WcvgqcjEh/QhHQb8TbIe4WSOMGp8=;
+        b=WBj3XUqm4FnbRm0/AjgEkPKuwWWxvwYBekfvqjTMtT/OOMPSQF5zyDwinJ+0JHSvMk
+         c+ZOZC+y/pzh6ixTCKsuOPYOMn7gpMZf0xmzcRPGcC3ImWdv0jb8KCPra5LSavAP32ux
+         amlINMVMRhky8jZ0Kbm43EVx/KXRA0pFIp2SYOMf2gYyuv2f8TsSAmcVyJseGknp0g6m
+         oQt/i972WCRQ939ErFr/0QAyc/FaufIMXGVhAdMxT+3EZRrQu50DECJqZNGsbjM61TvZ
+         qJPwO2Ik2G8La/K9f3MSYCAQtFfA2PJ5ZMQ9A2dW2jzACsQCumbdTWf3yC6yGKvc0ORr
+         /spQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742517418; x=1743122218;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YqUcVj28ADCuEV5WcvgqcjEh/QhHQb8TbIe4WSOMGp8=;
+        b=GQX+PAEz5+xb3RQzjuFzTwldqV4BXLplbiHGSYp7BI6Uvrkx2H7rdlEaeDnzTBfbAF
+         7xRWsQYaQN1hvjoXc7UDX1ow8/IsUn+26cOGBQNCsmMQ5jvBKi6sGSRKxlnILWx8Jwgc
+         UOArkTN9aTSeHjOHGtT9gGQc/MENDS+Wg3Smu0TPjhu3AsaoZ6WaIyo1Txt/OEzvxBWD
+         2vhavOHTQPdrR/g4PJGosigsfqbLf8vqHINDAbbr2IdXPH5nRbxRrf7TKWM9sECghmka
+         U9XIeBmrcW+q1pUtUN2oGE69fgVMjC1onemHlyqXDDIXRkxJjN1epL9OMpmLoo4MKYvz
+         BvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8im8Jzbsf8WqretLLuyxAm037bgWwYgexMcZaYEtepMEa7Z0v/sUFhEScAdRkwlEPZ7AI42rQ@vger.kernel.org, AJvYcCWzHJSAUL1/DLXCgWN6YYENUmreIc03f75zjXGGySv0QdKmrqARRqqipIkRzsAxoatCZzi7gJO67uHxplo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjKNFjSAhb2JCfTw3xFFajhLBnZhhNpke4DdsUU4EFanzHS6/8
+	x4rL7QkhKLcKzPmGCAQ1/SfxqmGQz1LXQ3YTMk3gsGVQdSjwtuvgB3Jv
+X-Gm-Gg: ASbGnctLu6BcRykS2SNAzhP23/BztwIl25gM4NM14i65jH2w7/+UeXQszMIlmdyWfFJ
+	63YwEVv2Q4gdPEl6RpIcigslfD2B2vc76BEqpyTpdR7VM9CBCd4fqpbTwkUpcckZOzkoXUJU/ac
+	LqTOEcQLm4FIj4WN7GjO82SJhGlgERNChpa8My0iu/JHlJ2RXuGgNaKrd2fJEDcBV0YqC6gY164
+	PwLZ4kklSJoweqbvqpbXuN2RwRTUc+g5fySjtpL4ySFnc+iZeOig9KznDsMbe6skTzgBXDsorF+
+	f6KC185M+zDOBH/iwInKrmMw7/zNEFNwgI+frDrYvOZguUEMOt8HYUFrmxZJHYwEFhFtdw3KJ7p
+	Q6uUXlkqtiT8E5QFmFIvBSw==
+X-Google-Smtp-Source: AGHT+IHvGLjMkOgQHJeFISgsZU+mKKIo64KH7v61/RWdA0q63XnnMd2pNMchgRNfh+u1zcQOFJefnw==
+X-Received: by 2002:a05:600c:4503:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-43d509f5a43mr11075975e9.17.1742517417855;
+        Thu, 20 Mar 2025 17:36:57 -0700 (PDT)
+Received: from [192.168.1.3] (p5b0579be.dip0.t-ipconnect.de. [91.5.121.190])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3ae04a94sm45405785e9.0.2025.03.20.17.36.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 17:36:56 -0700 (PDT)
+Message-ID: <d5f238f2-2ffd-4e85-9667-9a7398b42516@googlemail.com>
+Date: Fri, 21 Mar 2025 01:36:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250319143019.983527953@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250319143019.983527953@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-20_09,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- mlxlogscore=706 suspectscore=0 spamscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502280000 definitions=main-2503210002
-X-Proofpoint-ORIG-GUID: 9pza1RW5cgi6l14kgkProE22teJxGs98
-X-Proofpoint-GUID: 9pza1RW5cgi6l14kgkProE22teJxGs98
 
-On Wed, 12 Mar 2025 15:43:20 +0800, Chen Ni wrote:
+Am 19.03.2025 um 15:29 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.84 release.
+> There are 166 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> 'destroy_workqueue()' already drains the queue before destroying it, so
-> there is no need to flush it explicitly.
-> 
-> Remove the redundant 'flush_workqueue()' calls.
-> 
-> This was generated with coccinelle:
-> 
-> [...]
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Applied to 6.15/scsi-queue, thanks!
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-[1/1] scsi: fnic: Remove redundant 'flush_workqueue()' calls
-      https://git.kernel.org/mkp/scsi/c/160d6ec69f40
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
