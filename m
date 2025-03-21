@@ -1,208 +1,168 @@
-Return-Path: <linux-kernel+bounces-571422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05512A6BCEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:27:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64130A6BCF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7571D3B11A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:27:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB09189B163
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03581BEF6D;
-	Fri, 21 Mar 2025 14:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D9F19CC20;
+	Fri, 21 Mar 2025 14:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U3wlo3Jh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J6RtMImY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TwqldJdU"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4931991CB;
-	Fri, 21 Mar 2025 14:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC814C85
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567233; cv=none; b=RsoVVCigOIVq/38FOHS2PRq+Khx+N3yekt5TjQ//4W4vBPWHkp+JxHiNOUWnMTdB4T7Ur/MgRal1kjiZ62CNXCqaUgRtHEKabOj6mAMwcdYRWMY+87XFNozZN2b8R/SiI6VnqJa0VcQIc9GVCz/cHXCuihDd3em6SpXBIVQbRkw=
+	t=1742567357; cv=none; b=j4rtQk+z4r9u1ak00N52xkvP0z3z99VDVYHZxjxVsknQc1JI/er3Mqh1TpJwTJSlHogHmWwJodRF3wsTacjSvulCEkbvbs/3csvEpWDpSaawbp/wmXI/T+hiTB5L8Mx6nNe0LcKAM/G/gkLb/eQKrcctHBnPo2UjQfZCgD7ntDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567233; c=relaxed/simple;
-	bh=Vvupyb2Sy3uvR9u042VzEw2wiaEuHN4nbQdv1bL9SvA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m1NsivVNfnJZpblJ5l0DX74e8cnJexrBluZHfnQU1E3FoScGiKCEgCXJ1GRlNCMOeAQBvNfFo1eKspeZHenHvlrVvcVZ8z5xzhjdtq0Gq078r8vX6Ni5QAJpCnEQnPr2eg63QT+DQGX/z1s3Ues/6E6/Bpu8GTuqg9+ujYI+EwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U3wlo3Jh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J6RtMImY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742567229;
+	s=arc-20240116; t=1742567357; c=relaxed/simple;
+	bh=sTYAUFclVZdLncU1+P/eN4/e7zBKr17UMTJxSmWMco4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IG9E+/ZfXLteMhqYJdYCR+FPRbMZzjpPg6/kgqVWvuTmef+8ilUEiF8oob8wQeFzZWXJ22yZAYC0MkHWWE1hHvePy+es0up4oYeomIFGJNZlHqjBQhwdh6cCoWk+Y5Gddl3kEwgvhZAxoG/A6YLSvcnQKWfqesa/NDvC3jHDsGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TwqldJdU; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZK4ZW1s0rz9spF;
+	Fri, 21 Mar 2025 15:29:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1742567347;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UmxNltNz39yMIHUoaxtv61lmZ7jvm/jrC728nmOVc2o=;
-	b=U3wlo3Jhx/S2r2nGUnhDmfCQr4QEfCByQzzn1ru+9ZI/knFgKulS12t2z546XVlH3usb+N
-	Ji7Hzd6rJK5JVP6ULi0qLvFv2x3FXDo/p7pR4fcXxbuupfiG0xUVpc7ojBe/Q+o7/DeXua
-	vb3CpqbrBibAcT7XvsCmuFdfLnfsodfrK+L0UxdxXUVcQUGqJNSQmgCt0zaWRxIDjh7nOy
-	5Tx8utFdHGVTT5g2d5ufFMmsimT0NDwF4mvaPljF7YsreeQS1ijvOed6RB0mqTs9lr1k47
-	6BvbROn6UOi1kW6kwJK15RcPr5EmFfPZDxoUZD93uQl+yCYNzXAPPiGHVuqFwg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742567229;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UmxNltNz39yMIHUoaxtv61lmZ7jvm/jrC728nmOVc2o=;
-	b=J6RtMImY0QEvcinKM5Jo0YuDQyUXDyCJMAI7u1tZ9zUQdkpsd7bl4Qqs/kqLEbR+7ibCUn
-	cBLogD1bTM3BG8Ag==
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
- huibo.wang@amd.com, naveen.rao@amd.com
-Subject: Re: [RFC v2 05/17] x86/apic: Add update_vector callback for Secure
- AVIC
-In-Reply-To: <20250226090525.231882-6-Neeraj.Upadhyay@amd.com>
-References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
- <20250226090525.231882-6-Neeraj.Upadhyay@amd.com>
-Date: Fri, 21 Mar 2025 15:27:08 +0100
-Message-ID: <87jz8i31dv.ffs@tglx>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vMXXI+E/Sbp6yE2srQIZ5UyRk/DPJ+o0tAoJuj3BRCY=;
+	b=TwqldJdUhainKtapBf+eSHFuKToyIyFA3rihZ/6ztaUjoe/1mhyu68rTfYX+bwyuAcPFWN
+	aumWZtaa41558Klb0UZrLe1Cz2VvkmPh/EWn2i7LaaNrk1kNJN+nNmFGSu45OGZB2Q+vVj
+	2B0eeej0AqVC22tb0yNkWxzcFWjdFhtG1kx6MOnmhhYKtrErxU7Qx4JBB4gz2NtPKtdMmj
+	N8vdXuwqVa+20JHW5u7FkoP7Z/XcIixwo8Tm5FU+aWOFsNUoEEBhHkFJbTkzrlOGrND6+v
+	W6JtEGCTHVfmnpwp7wYd0sh780iDCGKiR0lulYUMlWAonVwAqeAMumAdmFkM9g==
+From: Tor Vic <torvic9@mailbox.org>
+To: arnd@kernel.org,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: bp@alien8.de,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	hpa@zytor.com
+Subject: [PATCH] arch/x86: Add an option to build the kernel with '-march=native' on x86-64
+Date: Fri, 21 Mar 2025 15:28:58 +0100
+Message-ID: <20250321142859.13889-1-torvic9@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 7ce7796149f77df7e09
+X-MBO-RS-META: anjwshskwop1t1ss9yczbbtgpx78g5a4
 
-On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
-> Add update_vector callback to set/clear ALLOWED_IRR field in
-> the APIC backing page. The ALLOWED_IRR field indicates the
-> interrupt vectors which the guest allows the hypervisor to
-> send (typically for emulated devices). Interrupt vectors used
-> exclusively by the guest itself (like IPI vectors) should not
-> be allowed to be injected into the guest for security reasons.
-> The update_vector callback is invoked from APIC vector domain
-> whenever a vector is allocated, freed or moved.
+Add a 'native' option that allows users to build an optimized kernel for
+their local machine (i.e. the machine which is used to build the kernel)
+by passing '-march=native' to the CFLAGS.
 
-Your changelog tells a lot about the WHAT. Please read and follow the
-documentation, which describes how a change log should be structured.
+The idea comes from Linus' reply to Arnd's initial proposal in [1].
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+This patch is based on Arnd's x86 cleanup series, which is now in -tip [2].
 
-> diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-> index 72fa4bb78f0a..e0c9505e05f8 100644
-> --- a/arch/x86/kernel/apic/vector.c
-> +++ b/arch/x86/kernel/apic/vector.c
-> @@ -174,6 +174,8 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
->  		apicd->prev_cpu = apicd->cpu;
->  		WARN_ON_ONCE(apicd->cpu == newcpu);
->  	} else {
-> +		if (apic->update_vector)
-> +			apic->update_vector(apicd->cpu, apicd->vector, false);
->  		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
->  				managed);
->  	}
-> @@ -183,6 +185,8 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
->  	apicd->cpu = newcpu;
->  	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
->  	per_cpu(vector_irq, newcpu)[newvec] = desc;
-> +	if (apic->update_vector)
-> +		apic->update_vector(apicd->cpu, apicd->vector, true);
+[1] https://lore.kernel.org/all/CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com/
+[2] https://lore.kernel.org/all/20250226213714.4040853-1-arnd@kernel.org/
 
-A trivial
+Signed-off-by: Tor Vic <torvic9@mailbox.org>
+---
+Here are some numbers comparing 'generic' to 'native' on a Skylake dual-core
+laptop (generic --> native):
 
-static inline void apic_update_vector(....)
-{
-        if (apic->update_vector)
-           ....
-}
+  - vmlinux and compressed modules size:
+      125'907'744 bytes --> 125'595'280 bytes  (-0.248 %)
+      18'810 kilobytes --> 18'770 kilobytes    (-0.213 %)
 
-would be too easy to read and add not enough line count, right?
+  - phoronix, average of 3 runs:
+      ffmpeg:
+      130.99 --> 131.15                        (+0.122 %)
+      nginx:
+      10'650 --> 10'725                        (+0.704 %)
+      hackbench (lower is better):
+      102.27 --> 99.50                         (-2.709 %)
 
->  static void vector_assign_managed_shutdown(struct irq_data *irqd)
-> @@ -528,11 +532,15 @@ static bool vector_configure_legacy(unsigned int virq, struct irq_data *irqd,
->  	if (irqd_is_activated(irqd)) {
->  		trace_vector_setup(virq, true, 0);
->  		apic_update_irq_cfg(irqd, apicd->vector, apicd->cpu);
-> +		if (apic->update_vector)
-> +			apic->update_vector(apicd->cpu, apicd->vector, true);
->  	} else {
->  		/* Release the vector */
->  		apicd->can_reserve = true;
->  		irqd_set_can_reserve(irqd);
->  		clear_irq_vector(irqd);
-> +		if (apic->update_vector)
-> +			apic->update_vector(apicd->cpu, apicd->vector, false);
->  		realloc = true;
+  - xz compression of firefox tarball (lower is better):
+      319.57 seconds --> 317.34 seconds        (-0.698 %)
 
-This is as incomplete as it gets. None of the other code paths which
-invoke clear_irq_vector() nor those which invoke free_moved_vector() are
-mopping up the leftovers in the backing page.
+  - stress-ng, bogoops, average of 3 15-second runs:
+      fork:
+      111'744 --> 115'509                      (+3.397 %)
+      bsearch:
+      7'211 --> 7'436                          (+3.120 %)
+      memfd:
+      3'591 --> 3'604                          (+0.362 %)
+      mmapfork:
+      630 --> 629                              (-0.159 %)
+      schedmix:
+      42'715 --> 43'251                        (+1.255 %)
+      epoll:
+      2'443'767 --> 2'454'413                  (+0.436 %)
+      vm:
+      1'442'256 --> 1'486'615                  (+3.076 %)
 
-And no, you don't sprinkle this nonsense all over the call sites. There
-is only a very limited number of functions which are involed in setting
-up and tearing down a vector. Doing this at the call sites is a
-guarantee for missing out as you demonstrated.
+  - schbench (two message threads), 30-second runs:
+      304 rps --> 305 rps                      (+0.329 %)
 
-> +#define VEC_POS(v)	((v) & (32 - 1))
-> +#define REG_POS(v)	(((v) >> 5) << 4)
+There is little difference both in terms of size and of performance, however
+the native build comes out on top ever so slightly.
+---
+ arch/x86/Kconfig.cpu | 9 +++++++++
+ arch/x86/Makefile    | 5 +++++
+ 2 files changed, 14 insertions(+)
 
-This is unreadable, undocumented and incomprehensible garbage.
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 8fcb8ccee44b..057d7c28b794 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -245,6 +245,15 @@ config MATOM
+ 
+ endchoice
+ 
++config NATIVE_CPU
++	bool "Build for native CPU"
++	depends on X86_64
++	default n
++	help
++	  Optimize for the current CPU used to compile the kernel.
++	  Use this option if you intend to build the kernel for your
++	  local machine.
++
+ config X86_GENERIC
+ 	bool "Generic x86 support"
+ 	depends on X86_32
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 8120085b00a4..0075bace3ed9 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -178,8 +178,13 @@ else
+ 	# Use -mskip-rax-setup if supported.
+ 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
+ 
++ifdef CONFIG_NATIVE_CPU
++        KBUILD_CFLAGS += -march=native
++        KBUILD_RUSTFLAGS += -Ctarget-cpu=native
++else
+         KBUILD_CFLAGS += -march=x86-64 -mtune=generic
+         KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
++endif
+ 
+         KBUILD_CFLAGS += -mno-red-zone
+         KBUILD_CFLAGS += -mcmodel=kernel
+-- 
+2.49.0
 
->  static DEFINE_PER_CPU(void *, apic_backing_page);
->  
->  struct apic_id_node {
-> @@ -192,6 +195,22 @@ static void x2apic_savic_send_IPI_mask_allbutself(const struct cpumask *mask, in
->  	__send_IPI_mask(mask, vector, APIC_DEST_ALLBUT);
->  }
->  
-> +static void x2apic_savic_update_vector(unsigned int cpu, unsigned int vector, bool set)
-> +{
-> +	void *backing_page;
-> +	unsigned long *reg;
-> +	int reg_off;
-> +
-> +	backing_page = per_cpu(apic_backing_page, cpu);
-> +	reg_off = SAVIC_ALLOWED_IRR_OFFSET + REG_POS(vector);
-> +	reg = (unsigned long *)((char *)backing_page + reg_off);
-> +
-> +	if (set)
-> +		test_and_set_bit(VEC_POS(vector), reg);
-> +	else
-> +		test_and_clear_bit(VEC_POS(vector), reg);
-> +}
-
-What's the test_and_ for if you ignore the return value anyway?
-
-Als I have no idea what SAVIC_ALLOWED_IRR_OFFSET means. Whether it's
-something from the datashit or a made up thing does not matter. It's
-patently non-informative.
-
-Again:
-
-struct apic_page {
-	union {
-		u32	regs[NR_APIC_REGS];
-		u8	bytes[PAGE_SIZE];
-	};
-};                
-
-       struct apic_page *ap = this_cpu_ptr(apic_page);
-       unsigned long *sirr;
-
-       /*
-        * apic_page.regs[SAVIC_ALLOWED_IRR_OFFSET...] is an array of
-        * consecutive 32-bit registers, which represents a vector bitmap.
-        */
-        sirr = (unsigned long *) &ap->regs[SAVIC_ALLOWED_IRR_OFFSET];
-        if (set)
-        	set_bit(sirr, vector);
-        else
-        	clear_bit(sirr, vector);
-
-See how code suddenly becomes self explaining, obvious and
-comprehensible?
-
-Thanks,
-
-        tglx
 
