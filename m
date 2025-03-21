@@ -1,82 +1,85 @@
-Return-Path: <linux-kernel+bounces-571428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A174EA6BD05
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:34:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E513DA6BD09
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723EA188B7AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680D63B819C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D27A1D517E;
-	Fri, 21 Mar 2025 14:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E69A1C863C;
+	Fri, 21 Mar 2025 14:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wm8zM/VL"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ltio/Pf3"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746251CEACB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FA91CB501
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567647; cv=none; b=fjQqA/ByIz1n+RdIFq+1Cz4JItq++09Nnhe4DvdpILqhC9D2n9GDD34ih77/xSNA6N9/5ReS+qWwXEHIJpmBPyZBp7e/mcZqcgVn/7qbJLbdOC9CdbNrax44/fFhuNLxuNJ6kIBRTo2Ib0/uwsHezscJpM4ysaWoLPKiBdm1+jE=
+	t=1742567652; cv=none; b=XW8ZbbyNhsxq9MWphnvxGaBcjxWzYOp+qbYvsw4+tVahxg0Fy+6ZrSpi0bkl8bbTsiYopEvIPIsxaK5aMe1lax/pfIb49KPOa3FpbS6AzJZiLgndSSQ5XCewb1H2bTvfPpCO6OxoI3XgiCD03qNrstAYyuuo6zrE9fyMJLxNpig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567647; c=relaxed/simple;
-	bh=EqIPwfTYPPoQxL5MLxtRVL0jHROodvx6q7fDZTLOKSI=;
+	s=arc-20240116; t=1742567652; c=relaxed/simple;
+	bh=tlQRpQpjQvic1qXez0/nyHsRFfIfy8pmEkG+XWvnph0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q/qvmly5nc7CWMzdojdiDVdVL9znNlKNocOZc5wzZn92Cy/qoZJK6JCaeSB+aP9Qsts7bv3xHrn8+Y307T/d80mYvLwws2T5H1R3g9oVA692JtufX+hqwIIBpPS5VFd9wEChVN72/isldgtuK4eno+hKUhMr4QRoNPVszJ94OcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wm8zM/VL; arc=none smtp.client-ip=209.85.221.45
+	 Content-Disposition:In-Reply-To; b=EO+YZv4oMCKCwF6o79U6Je7OI464ZNiLA8caeieDrOc/DrwHhHzyzUJN4bTKPX0dh9e4Ydui9o+H/WzAJYpSkcugq/uwAds6snlbZogSC/4gUj3hbu1nyVXhiVuB6q+HyoSlRLitGa8uSdb72Lwg+EjfpuKxpa1ECcAH00Ehw54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ltio/Pf3; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-391342fc1f6so1683024f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:34:05 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so12257505e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742567644; x=1743172444; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QbQNjrgeARyR0EHQsfXA9zl775aTD+T4eCDtqm9UkOw=;
-        b=wm8zM/VLbZKgrGbwTVnISOwb7fyc2z4U+B0ComVln+jYQWzA8kdqv9Vu94Jlvyrosu
-         TNdctLI39WRX3Rqaeysek4jnfcmwGfRMVqNAx6wd6d1dl5hQyVHD6E2U/wNajGoY3uKR
-         rS6/FX8NKfP3v+ca8No3ZIluciyqYL5+G861gdcsRhq758PIbb0pozOfBiAD/ERNT+L+
-         +hPtKLEH58I0Jv7T1hg3/32wodZw/QRVT8CWo0VT1OZkIRGYOh2eKpMUHl0Uiyb+0XWl
-         PHc9N/xrykB9dIvmet3G6TnwJpPEvwK4e0iwHadbUp5ZPX7NgP0jZy6AWWb+d0d9Po0Z
-         SgIg==
+        d=linaro.org; s=google; t=1742567649; x=1743172449; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dn5MV4p4HQ7G2Y8DIgL0c1yin6zEacSDQc7QrsuKG8A=;
+        b=Ltio/Pf3s817w2OksunZj5dFPRNLvBhk9MxCJBk4AA4INGjXFYC3/t9dU9uLmUgez8
+         klXGhhmR/puhRfNZKfi3vlKoT5aDjoOsGG87LN1LwaT500GLrVJf4ExC0nGFWNke+Z52
+         EHKYx3tuiS/wciaI/HbvvBaIxXFqDayvmhv6uVnhGYPzEMxYeQGsEj4DOD2Xba+EqsWj
+         rJDZTo5x0yMVLI/BWU/tzNYNwpugCA3T4nh2N20HwT+VQXip1ZdLjRZ52/wL5LzI0YYb
+         7TdcCxqYfpijHKcxPSHwHYxey880umrMvn18MIOzX5E5nZA2YD41UnstS/fuXl0DGQrs
+         9Y9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742567644; x=1743172444;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QbQNjrgeARyR0EHQsfXA9zl775aTD+T4eCDtqm9UkOw=;
-        b=I/wAy2MA3au2dS2lKmiVlQjvoW3kBQWpmGAuGQeHfUvD4mSaWoEIdwo69QUKH1RSzV
-         m7jdaGSAX+XJFTtnakJH52+14h/yBo79kK5Edjn3pn2aZatFe/FNKzVj+GKWSLgbpqyt
-         t1l5/V4pGuppUbEC0O1X0s9SqnLIIT001PPL43yJxMTAFggcpOyCdiWZg8oaNU6siXN2
-         VMpylzwt+0x1AB4oL4Dbu4W1Jpj8N0VhV/eR/LenxeN/hZwMupEcHpOuyHrO0bfT4L1F
-         h+3amUiZmUnQN8FQv/eB4t72pwhBvC8mL5EayV5x6W96qJy9TPcUv8NjFhc/U5X7SxjY
-         GR6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1+9ukImmL9m/0JRmMlgKTRaI/vJ8qusb3DkkfbT8GhtyJK7XotvkXt0EbOvM7YPHrTh9OSsdSLRd1dDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIILfVPPOofHahcXJYXf6dxtsqrHAwi7HBk2FVPB0iCgRZZZxm
-	bDFvqMi6gi8eY0NF9GSrZis3QSlXG9VAxWCAG7ERX7Magx8dwIubVdLVcvbKQvs=
-X-Gm-Gg: ASbGncuVjXHMqmO5kEBGJfTsT/lHqL6saZy05ZYrAqRYAJlyEYswLFjDDS55+u27Ri2
-	dWkGmJg/ku8PE+uwv56pyG20NAL0BUGAE3M9MNv1HHc/aMo9c5a6oRdnB2AsqXPTg2oShYX+Ao7
-	/zgoEYC5VEGw6lWS9jCO5DW6QLoq8ce35//th2+XAXdpCSzlPi12uzLWSaEq5UnBjFcbId4veGH
-	KrJTUExyAHKa1fWA6mMG/Ufxx6QaLqEMgURnZVYmsat6CSu1rmFK9khNonheuQ/J42+S7tBXs4H
-	wIm94qMgSyTSSuPLPjacBdgwEF/8Sw5gRUeHYQYnp+IIdc4n0w==
-X-Google-Smtp-Source: AGHT+IHDSdCcZoreBSspjtZNd/pom48SGiQP4YUprqdbqk51uAXoTMnzRnHPLgGT/CuHVCtYcgRaLg==
-X-Received: by 2002:a5d:6c6b:0:b0:390:e535:8758 with SMTP id ffacd0b85a97d-3997f8f78b5mr3634459f8f.9.1742567643588;
-        Fri, 21 Mar 2025 07:34:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742567649; x=1743172449;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dn5MV4p4HQ7G2Y8DIgL0c1yin6zEacSDQc7QrsuKG8A=;
+        b=P3BOa13ul+iWz8ONP0jcUDVlI/pn0RdnPNOdrUU/Al+3P40ScAU+GZKlm5opyvVmIg
+         5fNkfuKgzJNVrLCv59YY0Oi6KrhgbhoF8AHnEhS+qknE+NyezMmH/8BI+V1md/gH6urR
+         vo6m9kaMpxDH+c2dM1jmEsb65bZE4OiWUZr1MHuzxiBQHYCOgGsjG6ETmt1ewpx7NyX3
+         BZeABYRumIkt0RlRvl86t/cPFubrh1tGGm5WIEXOaWFxmhTayK/uKB6D2kUpXKBQc2C1
+         b2o+qf5RmCZsdEgONYHRtr9q/YSzwGuZdNz82/L1ejPwMw1RuFcC3bive2H2/KO+j+XL
+         Q5VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZb5YzmA/8Jq+Qc76c0Xu8/9dFO8W2DnRJhbXIKBjIW6M06jUYj5WwreUsDRbvOsB5OPidmoOjp8XZj7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCgcwyfKOpvAXMF2R9ga83Qv+SPIJ3GXVe8Ox6VQ9s3ikk20BC
+	aVqKpP/MvQa9OdvevI2chjBI8HcJnwMkltkVnxKoS4Je2L5+MHIX/R7wgp26jEw=
+X-Gm-Gg: ASbGncvqDBtrOu66V1+WGMhb28yhepc5uOtYq6gdkwSGoxywUmOpfRb5HFnm4hhMVPa
+	qy25JlUgD/hCEOvgJHb3o4KmiLLoNO9XFHvArJaEdrdXgKkwRc6YRoBDZ+1ivLGIrvwcqPrCYi3
+	gO6Liw8zZWe8jXaJ/DJDz5G9hfIE4cXJOiGKNRmjd4mjZ8qdRAwmJ68IOI1VMZmfgUCCLyE74hY
+	xonx2OXWbsh7UgwiHqtalikFjmth2bktYARpJajMMrSiC3GggEuV3mwHolNUA3xsKNjZqhjzolU
+	qJyweBXvM37LVtTPOkv+Sti79XV/EadD4n6RwiNqkfmfEe9Wew==
+X-Google-Smtp-Source: AGHT+IGxt6h0dPisO3HhNUj6iUzVe79pzrQ1FxQp78Ey1ug+TmaSuEtDysT8dPdfqLj+8Nbo4TB4bg==
+X-Received: by 2002:a05:6000:1ac8:b0:390:f6aa:4e80 with SMTP id ffacd0b85a97d-3997f937b82mr4553904f8f.53.1742567649021;
+        Fri, 21 Mar 2025 07:34:09 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9a3993sm2542245f8f.27.2025.03.21.07.34.02
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9b260fsm2484221f8f.43.2025.03.21.07.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:34:03 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:34:00 +0300
+        Fri, 21 Mar 2025 07:34:08 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:34:06 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH 0/2] power: supply: max77705: Fix two static checker issues
-Message-ID: <94f55158-1776-4f2f-9296-e307e83d569a@stanley.mountain>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Lee Jones <lee@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] power: supply: max77705: Fix workqueue error handling in
+ probe
+Message-ID: <547656e3-4a5f-4f2e-802b-4edcb7c576b0@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,16 +88,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <94f55158-1776-4f2f-9296-e307e83d569a@stanley.mountain>
 
-Fix some error handling and an error code bug.
+The create_singlethread_workqueue() doesn't return error pointers, it
+returns NULL.  Also cleanup the workqueue on the error paths.
 
-Dan Carpenter (2):
-  power: supply: max77705: Fix workqueue error handling in probe
-  power: supply: max77705: Fix error code in max77705_get_health()
+Fixes: a6a494c8e3ce ("power: supply: max77705: Add charger driver for Maxim 77705")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/power/supply/max77705_charger.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
- drivers/power/supply/max77705_charger.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/power/supply/max77705_charger.c b/drivers/power/supply/max77705_charger.c
+index eec5e9ef795e..329b430d0e50 100644
+--- a/drivers/power/supply/max77705_charger.c
++++ b/drivers/power/supply/max77705_charger.c
+@@ -545,20 +545,28 @@ static int max77705_charger_probe(struct i2c_client *i2c)
+ 		return dev_err_probe(dev, ret, "failed to add irq chip\n");
+ 
+ 	chg->wqueue = create_singlethread_workqueue(dev_name(dev));
+-	if (IS_ERR(chg->wqueue))
+-		return dev_err_probe(dev, PTR_ERR(chg->wqueue), "failed to create workqueue\n");
++	if (!chg->wqueue)
++		return dev_err_probe(dev, -ENOMEM, "failed to create workqueue\n");
+ 
+ 	ret = devm_work_autocancel(dev, &chg->chgin_work, max77705_chgin_isr_work);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "failed to initialize interrupt work\n");
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to initialize interrupt work\n");
++		goto destroy_wq;
++	}
+ 
+ 	max77705_charger_initialize(chg);
+ 
+ 	ret = max77705_charger_enable(chg);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "failed to enable charge\n");
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to enable charge\n");
++		goto destroy_wq;
++	}
+ 
+ 	return devm_add_action_or_reset(dev, max77705_charger_disable, chg);
++
++destroy_wq:
++	destroy_workqueue(chg->wqueue);
++	return ret;
+ }
+ 
+ static const struct of_device_id max77705_charger_of_match[] = {
 -- 
 2.47.2
 
