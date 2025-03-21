@@ -1,168 +1,125 @@
-Return-Path: <linux-kernel+bounces-570554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEF2A6B1EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:06:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBEDA6B1EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0646B1891D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:06:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51848A625A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E5A2F43;
-	Fri, 21 Mar 2025 00:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFAB3C00;
+	Fri, 21 Mar 2025 00:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="eJ+33smC"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8G17aTX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BD5360
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0F67E1;
+	Fri, 21 Mar 2025 00:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742515564; cv=none; b=DUE2haaH8ljg9mnrc0r/KeSdWr1fsOrVu2UThVtBk7CVw+YucCsZAZ39mxx/S1NYUUfzgeO5uUkB8pIb/IfwfA4KJZxQKTXEC8yiwbDnesp9H8erlavhXfvU+wjPrzkhveH1z3v8s4GFESIblaj97GHCr3K8OWTwWUetAGubT5o=
+	t=1742515839; cv=none; b=oA9IGnNjPGXEfUsVZfzde5cD3+wT2Z98F8swqSzT1xa9h5FlmzK+r90lyCWK9PHKZQjLhxd+svByHkCmcW7W45CfSPuf7OTYLPb5eh4ZXq92I5/oeRaR49azqPhiG0vmBZbBwoh0fX1DN/39Hz70LyHmTOauDYU8DnbepH6bxm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742515564; c=relaxed/simple;
-	bh=4f49NoS6Ua2AtL9jlFnIAyhaoPKsxkb9yMLM+0JPwKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/Eo681XXpazM7qzl5W/gQyvPGDVVyz414MPFPqakcDj9PKd5cnoFcxldjGQTVP2xQCOm414OJcwq7gwEB+Gi54yYt8P7vIkenotRjJhm+LWaWc4nn4KE/gd9D1c4icwblZ+YPuDnv7a5TE/5+Y67lmaSmp4NLY6oEg3avCBwOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=eJ+33smC; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-851c4ee2a37so92024439f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742515559; x=1743120359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n4TfadqjZ0j6MqAFYL1jRZZ+rK1DG5WpxhhztW2TPnw=;
-        b=eJ+33smCVGN/OpGikNX/kc3IWU+asSq1neNaQ6GSnLCKBTlDiHhVPbzALfv892qyUh
-         1jgcfqMO01t5Qzc7Qf8loUM8gWIleHUdxWuleLkb3tmtw5Sx45gUIoczFgrxeIFyhgRO
-         8l+8VPVzZhqTjoskLXEpNQFSRWwVgkLTLMRtiMrzvelnLMZwnOJv90X84Yg3xleRoxSL
-         89tFwZVGT80mCR8wUeGPoQ0WewS5RDc3ECKYAmdXssGq/ySPSoYAXQcfa1zv5HBckEbY
-         uy3OpD3xDg7ZxBA+fLG/jcu15HFzLCuVndzqS4O9EAEcdKW1DI1bm82QI/ozWiwO1gKJ
-         1JTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742515559; x=1743120359;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n4TfadqjZ0j6MqAFYL1jRZZ+rK1DG5WpxhhztW2TPnw=;
-        b=A/y9VWiyasbGBQYXDm03AnKUwl0257e7570Zwv8ygPEtyFZMsoXXYlurVIXJiVJPH3
-         uS8jxycYeCQ1V9SVv/fWBKyHDsMPEdku/X/6r7ovPg1Xeu/pI4SF8rs/Vn05P8d4QDgl
-         owS2JraaQcPc/3mYGpHJPoNIO1KaU1TLG2bGabGtjHg7gg1Z8OfzNTFjdKTiurhVrzNt
-         GXPfvh90yD/OWFcPlYOq3PqQF/57gJ/AjbrfHeHNq+Z/3HCfy0QeJ5TCsX0RRTAf1jIv
-         8tvv7Yr7xy00dfm/n/hEGUKMMkNZxKRFOFb28ffN1T82lAk8f+Cz22O9xvotBPflBe6L
-         Z6FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUf64eqpt1VtpeNgIhs3/kGy6c8QJpYHoTg3f7IwkoPSsfevfuM1Z73N0GBbGFXwgjRRZ1WX8JPvOjMmdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5AHZyLlIufTmc9VEiA0wFqEs5QWAfssBCPATGlCIJqksArrhh
-	BMSdDK//TbnvyjhpaeuaOgKK5KRW4JqI3ksHNu6CJp/h6oElEOgldoFKTxthQnfvRDW2cwZKcEn
-	cx8YYbA==
-X-Gm-Gg: ASbGncuYZf5G2r2ZJBgYMlhbNMEUizggdUjUzoyLNS22i08R/mAZzCeAwFiQ/YKKh6O
-	XNha3PYP1FFkIepGuMxt7Y11tGzEUV2Vkd/jrzdgyUDybXREFXs1GE7GHzORxHutv7bfpWbhDv9
-	cE1zXABkg1abe6fiTvC+PKmjkfb8Kuor1/3i1Xv5Sw3BVNZkLyGmUuoAbTRMaJWFMahqJ1RPFvN
-	jODObON6xz3cKyk2jOhRggHf2Gpw4UFlq3FSGO9YKjXJuKtiISTCZNJy651g/PBcp8fwGBpriv6
-	UHwG68vcwLYjDxMkxs1Xk9vHAFIVs3xVQMaEy9ikgCggTEinSmmbqaXQ90LmMiCHQIVP4AEFXL7
-	TyH53o+eMUfmXl30GrBm5WyMWv/OD
-X-Google-Smtp-Source: AGHT+IGzFnEpgZCQdgtfV3+fVi3PtzjOuuJwDIrbNxEcjYjLjI8xkEowRotMUucCu+Yti4QqnIOtrA==
-X-Received: by 2002:a05:6602:3f08:b0:85d:a5d3:618c with SMTP id ca18e2360f4ac-85e2cb59310mr109252739f.11.1742515559239;
-        Thu, 20 Mar 2025 17:05:59 -0700 (PDT)
-Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbeb21b0sm167895173.115.2025.03.20.17.05.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 17:05:58 -0700 (PDT)
-Message-ID: <fe26de4f-5593-4f34-a752-5fb051972c31@riscstar.com>
-Date: Thu, 20 Mar 2025 19:05:57 -0500
+	s=arc-20240116; t=1742515839; c=relaxed/simple;
+	bh=UnwmEOzkbVYA12kIeylZ6mRzOZdlCojdMzHgIqtEWHg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iP4OT46Mx2H7YURitOlT71UJrpd4h/IBdDolW7POGsvtYjBvr6fiT4A9oVtNhCutBnjWBksf6ZbCQRtURuKxVL4O3l/PbpfKBkQKfz4aMQUAAXpuQRaDhpl0LOTgJa7q2Q7o8qaDwpUWo+ZabWttYcThEtWySyEvsSN3oEwgGKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8G17aTX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1F8C4CEDD;
+	Fri, 21 Mar 2025 00:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742515838;
+	bh=UnwmEOzkbVYA12kIeylZ6mRzOZdlCojdMzHgIqtEWHg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=h8G17aTXy7pKB7dyU4WVLaw42gkw94O6XAMEfaS3aQnsrNmFmPTaTor/HkUgy6nFZ
+	 tDzudy0Z/oT3KtveAIGQM/x6igV8OEhQyheHxruDNoGH7DmiB1wyexwZA3iE9SiN9k
+	 QibC0QttzPFh9F5CdTbkNPIPapAQ3UzDQtDdYODq1TdBydkiR07/QqgW26BlSx1soU
+	 yfRVfEvDamE2bM5e64ZrMWkrU7E6Qi+fUtpD8WXcD69etMilrdpQNbitD0I2smoslz
+	 50jGqPQ/JE63txaELirqjPK7NSxu2o8ATN5Ba0WRc5sruJvpM2Xt2JzcqlpD47fRXy
+	 KQiEUywJgPB3w==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 6.13 v2 0/8] KVM: arm64: Backport of SVE fixes to v6.13
+Date: Fri, 21 Mar 2025 00:10:09 +0000
+Message-Id: <20250321-stable-sve-6-13-v2-0-3150e3370c40@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] clk: spacemit: add K1 reset support
-To: Yixun Lan <dlan@gentoo.org>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heylenay@4d2.org,
- guodong@riscstar.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250320194449.510569-1-elder@riscstar.com>
- <20250320232128-GYA10498@gentoo>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250320232128-GYA10498@gentoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGKu3GcC/2WNwQ6DIBBEf8XsuWtgVWh66n80HsAuSmqwAUPaG
+ P+9hGuPbybz5oDE0XOCW3NA5OyT30IBujQwLSbMjP5ZGEjQIIg0pt3YlTFlRoWyw2Fi43pxtYP
+ TUFbvyM5/qvEBqpUdjCVdfNq3+K03WdauGjtJf8YsUeCkrRHaKNc7fX9xDLy2W5xhPM/zB8DQU
+ Uy1AAAA
+X-Change-ID: 20250227-stable-sve-6-13-5ceaf408b5f7
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, Fuad Tabba <tabba@google.com>, 
+ James Clark <james.clark@linaro.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Eric Auger <eauger@redhat.com>, Wilco Dijkstra <wilco.dijkstra@arm.com>, 
+ Eric Auger <eric.auger@redhat.com>, Florian Weimer <fweimer@redhat.com>, 
+ Jeremy Linton <jeremy.linton@arm.com>, Paolo Bonzini <pbonzini@redhat.com>
+X-Mailer: b4 0.15-dev-1b0d6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1702; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=UnwmEOzkbVYA12kIeylZ6mRzOZdlCojdMzHgIqtEWHg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn3K5z+OUtTc8Yn+JX7kpLLlAGN05FTJOgpvs9yukl
+ 5RHjDbmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ9yucwAKCRAk1otyXVSH0IDuB/
+ 9Qx4rfSQv9RPjp4QcG5wJW92CPAHkXG0TJCQuGzbqNllI333pq6rZqHS3xbJBW+tTqBOK2D47PCNLZ
+ TwKkUeEE2V4oXfP9VfSVii7YsX3zgKiNJzmJXccaGRNqZjpdoM6nprl9N/5E/Ypchg0s6XJAk4OLvF
+ zng/O9IcBn6yg5yKu6SDB5O2iCfnZZm+j3LiJDIaYGV9dPBtRDp2KB/uXIBry+dypUiDiI/nanQt27
+ NA+peMIwULuUVSfgw4eaHTE1NWC3C962IKydHWzbhyssLydTRgi6xgusBnry/wSdGSM0OIIqMyzBAF
+ Qkj4F4RPpYiXktijmdIYj1PW6/bD8Z
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 3/20/25 6:21 PM, Yixun Lan wrote:
-> Hi Alex:
-> 
-> Thanks for sending this patch series
-> 
-> Can you also CC spacemit mailing list: spacemit@lists.linux.dev
-> it should be handled automaticlly in next 6.15-rc1 version as the
-> MAINTAINERS file updated
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?id=4a0c4e723c94
+This series backports some recent fixes for SVE/KVM interactions from
+Mark Rutland to v6.13.
 
-Sorry about that.  I will copy it on my next version.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Remove an erronious kern_hyp_va().
+- Move standard cherry pick to stable format in patch 8.
+- Link to v1: https://lore.kernel.org/r/20250312-stable-sve-6-13-v1-0-c7ba07a6f4f7@kernel.org
 
-Are you asking me to RESEND this series with that addition?
+---
+Fuad Tabba (1):
+      KVM: arm64: Calculate cptr_el2 traps on activating traps
 
-					-Alex
+Mark Rutland (7):
+      KVM: arm64: Unconditionally save+flush host FPSIMD/SVE/SME state
+      KVM: arm64: Remove host FPSIMD saving for non-protected KVM
+      KVM: arm64: Remove VHE host restore of CPACR_EL1.ZEN
+      KVM: arm64: Remove VHE host restore of CPACR_EL1.SMEN
+      KVM: arm64: Refactor exit handlers
+      KVM: arm64: Mark some header functions as inline
+      KVM: arm64: Eagerly switch ZCR_EL{1,2}
 
-> On 14:44 Thu 20 Mar     , Alex Elder wrote:
->> This series adds reset controller support for the SpacemiT K1 SoC.
->> It is based on Linux v6.14-rc1.
->>
->> It is built upon the clock controller driver that Haylen Chu
->> currently has out for review (currently at v5):
->>    https://lore.kernel.org/lkml/20250306175750.22480-2-heylenay@4d2.org/
->>
->> It also depends on two commits that will land in v6.15: 5728c92ae1123
->> ("mfd: syscon: Restore device_node_to_regmap() for non-syscon nodes")
->> and 7ff4faba63571 ("pinctrl: spacemit: enable config option").
->>
-> you can use b4 to handle patch dependency, and currently you may got
-> linux.riscv.bot complaint, but may fix later
-> https://github.com/linux-riscv/github-ci/issues/24
-> 
->> The first patch adds three more system controller CCU nodes to those
->> implemented by the SpacemiT K1.  The second updates the existing clock
->> driver with a structure used for OF match data, allowing both clocks
->> and resets to be specified.  The third provides code that implements
->> reset functionality.  The fourth defines groups of reset controls
->> implemented by the CCUs that have alraady been defined.  The fifth
->> makes it possible for a CCU to be defined with resets but no clocks.
->> The sixth defines three new CCUs which define only resets.  And the
->> last patch defines these additional syscon nodes in "k1.dtsi".
->>
->> All of these patches are available here:
->>    https://github.com/riscstar/linux/tree/outgoing/reset-v1
->>
->> 					-Alex
->>
->> Alex Elder (7):
->>    dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
->>    clk: spacemit: define struct k1_ccu_data
->>    clk: spacemit: add reset controller support
->>    clk: spacemit: define existing syscon resets
->>    clk: spacemit: make clocks optional
->>    clk: spacemit: define new syscons with only resets
->>    riscv: dts: spacemit: add reset support for the K1 SoC
->>
->>   .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
->>   arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 +
->>   drivers/clk/spacemit/ccu-k1.c                 | 393 +++++++++++++++++-
->>   include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++
->>   4 files changed, 539 insertions(+), 19 deletions(-)
->>
->> -- 
->> 2.43.0
->>
-> 
+ arch/arm64/include/asm/kvm_host.h       |  25 ++----
+ arch/arm64/kernel/fpsimd.c              |  25 ------
+ arch/arm64/kvm/arm.c                    |   9 ---
+ arch/arm64/kvm/fpsimd.c                 | 100 ++----------------------
+ arch/arm64/kvm/hyp/entry.S              |   5 ++
+ arch/arm64/kvm/hyp/include/hyp/switch.h | 133 ++++++++++++++++++++++---------
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      |  11 +--
+ arch/arm64/kvm/hyp/nvhe/pkvm.c          |  30 -------
+ arch/arm64/kvm/hyp/nvhe/switch.c        | 134 ++++++++++++++++++--------------
+ arch/arm64/kvm/hyp/vhe/switch.c         |  21 ++---
+ 10 files changed, 201 insertions(+), 292 deletions(-)
+---
+base-commit: 648e04a805652f513af04b47035cde896addf9b0
+change-id: 20250227-stable-sve-6-13-5ceaf408b5f7
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
