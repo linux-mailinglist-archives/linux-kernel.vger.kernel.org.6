@@ -1,125 +1,164 @@
-Return-Path: <linux-kernel+bounces-571279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D477A6BB40
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:54:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B44A6BB48
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CB257A6130
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A08918889DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F4622AE71;
-	Fri, 21 Mar 2025 12:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SnlyvJ34";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4WI+jTYd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CDF22A7FD;
-	Fri, 21 Mar 2025 12:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E71F229B0C;
+	Fri, 21 Mar 2025 12:57:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D901C2DB2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742561617; cv=none; b=cUMNRbjuX16lZ8BKBNgKzm4qOKtHu76p8iNXFgJ9XZ21K0epi0ZLSd+wtukXaqPxd4QJsaGBrlQXQDl0PVdU8supz2JA0x6/VtoNdSCb0OEI0O8bi/ZdUjZVzRHenGqd5/W7b8swqyGj+Otdr3Do6wlCusHKuVvr8zeiAC+H/Qc=
+	t=1742561866; cv=none; b=IMXLvpao44Yr4pJc5t8/oXal+Qi8a1UPr4RBqHZ4ZgE+GRrh0LjPxTsk8kft8sa2mkSPMnDChVYRI6hWi2z+26VBaYVkwaKgY7opiJuZHWvAh+vwIzVM29SLxvRMyceBa5RpwKQyHP6G6UECfhUVxxAPzkb355eIy59cxBlPMBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742561617; c=relaxed/simple;
-	bh=aBAET/lES4NSQO8sibgQ3bClN8JuLjhCvkLvXNFXUBc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=X+4h2l2Q56eABaMXOW8Apq9lVsVpjHIo1gsY87woXZ95ELsMuQO0extNyKwtE6bqMsSBKrWWcrws61WLPJGGgNHFVJ6Sm9vZ7qKhg1x2Atl/Lad7B3wOBefm2ak/GayhcexLx14JD5SsPTbm7cDtTu/YeoNEulaiiShsbPOrBCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SnlyvJ34; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4WI+jTYd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742561613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORnYV+7gu7XamQTgzT1UwvEguLeAv3ZmQ2vwtTbBVRo=;
-	b=SnlyvJ34EDMUWV/JVRrU1MBXx3fMEo1sqb9XdqaRs+/Doim0p3MG1SlFm04PrkFH7crY0V
-	+OvgukD/aung1VL/LTAGw7qGy0X+gnwDYKhcasX4PcjN3hcetm85YisAMAp8ELCOT1Sqzn
-	3dYlngzQRQ9FZiTrcSDydMlu2hsACJNUNGgvwPC0EszWc8J8lMbvmCTklEHcdNnxxvReHq
-	NJ+/nTfEsshtqfcOcD+66xR52lgYyzwNjFa+NXo8SSKNULoRIPoq5NL7Q8kPccn4kv4oFr
-	4qEMKMGmeNtIZDTNHiZA/7N/aYzUs2P/m5fir3ucoNZI17PYEb8f6XiNHB3jDw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742561613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORnYV+7gu7XamQTgzT1UwvEguLeAv3ZmQ2vwtTbBVRo=;
-	b=4WI+jTYdzocwVYeI+pFWX6SZyJSSFXgN47ji0RxENrSkV2uiudKNAYEv8yNGYFP+a5LJPX
-	ibPvB7FP7KZSycAw==
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
- huibo.wang@amd.com, naveen.rao@amd.com
-Subject: Re: [RFC v2 01/17] x86/apic: Add new driver for Secure AVIC
-In-Reply-To: <20250226090525.231882-2-Neeraj.Upadhyay@amd.com>
-References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
- <20250226090525.231882-2-Neeraj.Upadhyay@amd.com>
-Date: Fri, 21 Mar 2025 13:53:32 +0100
-Message-ID: <87v7s235pv.ffs@tglx>
+	s=arc-20240116; t=1742561866; c=relaxed/simple;
+	bh=9V5F+5KE+QgZzg0jOhP26TdHasnAHrPxMgAE6T3UHpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cd5HQJLMtWatn82EMhsdob6G3/SwSWiHff4yoQ5DGDAPS5PT2pcg9UfpMV43fAQ5Iwflf10/L3Vnmcn4JJL3GYW/kfmwm7zDB7NbIAhbaFF9imqb5XMCv07vpU3cdATd2hVIdOJojAxKzqfmEhYqeYL/Tfm+5/OU6hFqv5L7gYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 408B5106F;
+	Fri, 21 Mar 2025 05:57:50 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC44A3F63F;
+	Fri, 21 Mar 2025 05:57:40 -0700 (PDT)
+Date: Fri, 21 Mar 2025 12:57:32 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, open list
+ <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Linux ARM
+ <linux-arm-kernel@lists.infradead.org>, kvmarm@lists.linux.dev, Anshuman
+ Khandual <anshuman.khandual@arm.com>, Rob Herring <robh@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>,
+ Aishwarya TCV <aishwarya.tcv@arm.com>, Anders Roxell
+ <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, Arnd
+ Bergmann <arnd@arndb.de>
+Subject: Re: Fast model boot failure with Linux next-20250312
+Message-ID: <20250321125732.6def5eca@donnerap.manchester.arm.com>
+In-Reply-To: <CA+G9fYuw_jXCz07Dsk46QXQr3+y5-NfkC30ZNh+XmyeWgibQhA@mail.gmail.com>
+References: <CA+G9fYvPu+MQKhYyPZSSDpAn-zhRGmeHQ8hJksT_cdDdxfbB-g@mail.gmail.com>
+	<Z9ra3I2axii2HRVb@J2N7QTR9R3>
+	<CA+G9fYuw_jXCz07Dsk46QXQr3+y5-NfkC30ZNh+XmyeWgibQhA@mail.gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
-> +static void x2apic_savic_send_IPI(int cpu, int vector)
-> +{
-> +	u32 dest = per_cpu(x86_cpu_to_apicid, cpu);
-> +
-> +	/* x2apic MSRs are special and need a special fence: */
-> +	weak_wrmsr_fence();
-> +	__x2apic_send_IPI_dest(dest, vector, APIC_DEST_PHYSICAL);
-> +}
-> +
-> +static void
-> +__send_IPI_mask(const struct cpumask *mask, int vector, int apic_dest)
-> +{
-> +	unsigned long query_cpu;
-> +	unsigned long this_cpu;
-> +	unsigned long flags;
-> +
-> +	/* x2apic MSRs are special and need a special fence: */
-> +	weak_wrmsr_fence();
-> +
-> +	local_irq_save(flags);
-> +
-> +	this_cpu = smp_processor_id();
-> +	for_each_cpu(query_cpu, mask) {
-> +		if (apic_dest == APIC_DEST_ALLBUT && this_cpu == query_cpu)
-> +			continue;
-> +		__x2apic_send_IPI_dest(per_cpu(x86_cpu_to_apicid, query_cpu),
-> +				       vector, APIC_DEST_PHYSICAL);
-> +	}
-> +	local_irq_restore(flags);
-> +}
-> +
-> +static void x2apic_savic_send_IPI_mask(const struct cpumask *mask, int vector)
-> +{
-> +	__send_IPI_mask(mask, vector, APIC_DEST_ALLINC);
-> +}
-> +
-> +static void x2apic_savic_send_IPI_mask_allbutself(const struct cpumask *mask, int vector)
-> +{
-> +	__send_IPI_mask(mask, vector, APIC_DEST_ALLBUT);
-> +}
+On Thu, 20 Mar 2025 16:03:32 +0530
+Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 
-The above are identical copies (aside of the names) of the functions in
-x2apic_phys.c.
+Hi,
 
-Why can't this simply share the code ?
+> On Wed, 19 Mar 2025 at 20:25, Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > On Wed, Mar 19, 2025 at 08:07:47PM +0530, Naresh Kamboju wrote:  
+> > > Regressions on the arm64 Fast Model (FVP-AEMvA) caused boot failures starting
+> > > with Linux next-20250312 and persisting through next-20250319.
+> > >
+> > > First seen on the next-20250312
+> > >  Good: next-20250311
+> > >  Bad:  next-20250312 .. next-20250319
+> > >
+> > > Regressions found on FVP:
+> > >  - boot
+> > >
+> > > Regression Analysis:
+> > >  - New regression? Yes
+> > >  - Reproducible? Yes
+> > >
+> > > Boot regression: Fast model boot failure with Linux next-20250312
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > >
+> > > Anders bisected this to this commit id,
+> > >
+> > > # first bad commit:
+> > >   [858c7bfcb35e1100b58bb63c9f562d86e09418d9]
+> > >   arm64/boot: Enable EL2 requirements for FEAT_PMUv3p9
+> > >
+> > > NOTE:
+> > >   LKFT is currently running FVP Fast Models version 11.24.
+> > >   Planned upgrade to the Fast Models version 11.28 in this sprint.  
+> >
+> > What firmware (and version therof) are you running within the model?  
+> 
+> Fast Models [11.24.11 (Nov 29 2023)]
+> Booting Trusted Firmware
+> BL1: v2.9(release):v2.9.0
+> BL2: v2.9(release):v2.9.0
+> BL31: v2.9(release):v2.9.0
+> UEFI firmware (version  built at 22:31:25 on May 26 2023)
+> UEFI v2.70 (EDK II, 0x00010000)
+> 
+> We need to update the firmware version at our end.
 
-Thanks,
+Oh yes, please, v2.9.0 is quite old by now, especially for a moving target
+like the FVP, and when enabling new architecture features.
+FWIW, after Anshuman pointed me the problem, I made a patch for TF-A to
+enable PMUv3p9:
+https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/35884
+You would need that for this Linux commit here to work.
+FEAT_FGT2 should be enabled already by default for the FVP.
 
-        tglx
+Please feel free to leave a comment at the TF-A gerrit, stating that you
+need the patch, that should accelerate the upstream process.
+
+Cheers,
+Andre
+
+> > For example, if the EL3 firmware lacks support for FEAT_FGT2 or
+> > FEAT_PMUv3p9, the kernel will trap to EL3 early during boot and die.
+> >
+> > It would be really helpful if you could capture that in the report in
+> > future.
+> >
+> > Mark.
+> >  
+> > >
+> > > ## Boot log
+> > >   <No crash log on the console>
+> > >
+> > > ## Source
+> > > * Kernel version: 6.14.0-rc7
+> > > * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > > * Git sha: ff7f9b199e3f4cc7d61df5a9a26a7cbb5c1492e6
+> > > * Git describe: next-20250319
+> > > * Project details:
+> > > https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319
+> > > * DUT: arm64 Fast Model (FVP-AEMvA)
+> > > * Toolchains: gcc-13 and clang-20
+> > >
+> > > ## Build
+> > > * Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27675691/suite/boot/test/gcc-13-lkftconfig/log
+> > > * Build history:
+> > > https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27675685/suite/boot/test/gcc-13-lkftconfig/history/
+> > > * Build details:
+> > > https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250319/testrun/27675691/suite/boot/test/gcc-13-lkftconfig/
+> > > * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2EtC2pQdmVZ7ccoyhoi01Yy0/
+> > > * Kernel config:
+> > > https://storage.tuxsuite.com/public/linaro/lkft/builds/2uX2EtC2pQdmVZ7ccoyhoi01Yy0/config
+> > >
+> > > --
+> > > Linaro LKFT
+> > > https://lkft.linaro.org
+> > >  
+> 
+> - Naresh
+> 
+
 
