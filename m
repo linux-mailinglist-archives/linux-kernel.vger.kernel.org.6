@@ -1,79 +1,398 @@
-Return-Path: <linux-kernel+bounces-570699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B457A6B3B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:34:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0776FA6B3B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DBC485F94
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:34:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5027E19C3641
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2894206B;
-	Fri, 21 Mar 2025 04:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F941E833F;
+	Fri, 21 Mar 2025 04:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATCKSwGF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b="D9oMJIFu"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F0B28EA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091843C0B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742531639; cv=none; b=J+w4y4C43hNA7TcP3AoGQSrXeHvPkjTrFVYsDLS9IFmU5/mSUITfHe0tHAYiI3Vbxms2G/KZhTErywBfgHN/PHP1LvjaXEMYLy/0APWSJ2ZS1rQbqiNd57QKMA/GUBN0yNonO9jBE/a6KMeC4rZ3Lh2wCyCqzOMKsJXeNsfg2k0=
+	t=1742531724; cv=none; b=j7KEJnS0YB/DP9FFsQ0u7ebd2fTFpJQ71OMtTGF0aYoEwbMT0zTumnL4m6VeZn/+dmdXYoCfL393qpn8+MmUJFXlNbUc4ggoPtbygVQnRj9r+19411OzfEaboxHrYjig1pzDJEqFPcLsKmkYfsV5UT7w0GeyOkF5CN0/ZyaVNn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742531639; c=relaxed/simple;
-	bh=KcOx8O1H77hnjxGqdj4bgLJ6OhoSyJWcxsShykGdxUU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=rC47mwNSq5Lg8R0E0kuMsSQCJ78cTNrGHIm7ZUk4ibN3+z92e4Gdn69asoflDEWEaBjR1qjtyowm9QbVqNP8uwwZsuOzJQaY7kmF+n21UDQO0Ry0aY+JPinT15STfwqOa61EbfRwRa+5yVW/fYXQvCAPXLoaxLwJEQI6L1Jj6hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATCKSwGF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C74A4C4CEE8;
-	Fri, 21 Mar 2025 04:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742531638;
-	bh=KcOx8O1H77hnjxGqdj4bgLJ6OhoSyJWcxsShykGdxUU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ATCKSwGFIwTIwgUwQ9BpDyWxy1ilvQYzYB2ztncNodEX2ssTHBIp0rqBxfPRh9JYl
-	 VQ1pkc6ery4Fa19EO5VPksdfxNtF950OfxyrMXPG0M4FYS3c8+ocfqfk9jFB02yvUx
-	 mb/yydsLc95A0slw9EdNJ4vVQEgORkl3iFZWDesRyYKnzE6bnWXBdBGXHdPoDYvVwH
-	 CX8Skwy+l2X+nLwjn2OPtbNqh6aDFIjOu74Qry3pm/71WJRBgZhkbhhtC3fQJd5Ys2
-	 hwOI5YDw9S46Xmr5k3RZYZ0JXgkKZ6gme0HmtcxJ1vw8QgTsBtu00XAwQNaGt1y4j1
-	 HPAv4FC5reCtw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB15B3806654;
-	Fri, 21 Mar 2025 04:34:35 +0000 (UTC)
-Subject: Re: [git pull] drm fixes for 6.14-rc8/final
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9txGdh-rbWbxA_nQVV_1AMin8SgJpo1T4HNcCc_4aRtJ0Q@mail.gmail.com>
-References: <CAPM=9txGdh-rbWbxA_nQVV_1AMin8SgJpo1T4HNcCc_4aRtJ0Q@mail.gmail.com>
-X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
- <dri-devel.lists.freedesktop.org>
-X-PR-Tracked-Message-Id: <CAPM=9txGdh-rbWbxA_nQVV_1AMin8SgJpo1T4HNcCc_4aRtJ0Q@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-03-21
-X-PR-Tracked-Commit-Id: 41e09ef6c26f0bd89f93691ef967fd621a38d759
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3ee1e4609512dfff642a96b34d7e5dfcdc92d05
-Message-Id: <174253167447.2013956.2398442468965880120.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Mar 2025 04:34:34 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1742531724; c=relaxed/simple;
+	bh=jKYE3NB+Gs26wXS23PivSeYV9rBN3SxDZOEye6bz+SQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=MPwCLBtrwPf+vhdZTQoEBc6Jv5FDGWGfwoumesX9RuOwyVqkgLx5n1bEYOEASb+NZ2oYHpdHrSUiIwk/jz2emKPbiQLDTEiwWyY8HsipYENVWGCgL75RkMCzhYL3CDocetjYdn0wWqid3Oo2DogRGMmpg6qCJ0YjE5wTibb+TzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev; spf=pass smtp.mailfrom=orbstack.dev; dkim=pass (2048-bit key) header.d=orbstack.dev header.i=@orbstack.dev header.b=D9oMJIFu; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=orbstack.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orbstack.dev
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-225a28a511eso33428355ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=orbstack.dev; s=google; t=1742531720; x=1743136520; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FCb0k01KUN3VgINtQNKZg7ZdhsQt9bP7InV3Urg85cY=;
+        b=D9oMJIFuaGpRptpIh9XMgcZsPNEGzUFMERXGR2V0oZWtqhmc9UJM5jvXlcN3fhP54J
+         7grtJAEQMqcwpQR8DZbpZyv8JbTL5TEMZQCUzpe4ovGcSMxwg2JjN6rnC/Uci3+LpRRz
+         RkH1pEalrM/0uzN0WlyY3rdcmp/NpGNlL/VQ7rjJC7zADeLtPqQ+ycWXzCOHtKnLvEV1
+         G7tdZRt4EuGd4vEZ1UcnEd9MgsLzze+NbjcLLC+uxaUUJ+pGuSsqxlfXATKKx/81SkPL
+         wXK5g7X0d+2f7cIZ1DWvDRxN/mUJZmhmZqoJw/AvTunEaqMAoVoVulHH7nNLvUCK2Xro
+         EuXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742531720; x=1743136520;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FCb0k01KUN3VgINtQNKZg7ZdhsQt9bP7InV3Urg85cY=;
+        b=MlvOulW0f2/Mdb2SUeh9ZGajH5YD/H8FO8/CRyIUg37HbcDZK9uOsR0b/btlyqHrX6
+         Qmi1u0ixTz1JXSvvCbgoBXFxRXTz0u6WsjRoBL+WC4pMKxvRY48EimyhtKdlrYP18Ybu
+         0M4Ytg+UH5bQbGQZJHV/muhpfTmzx7kYTRjAMFQpTchKwrstLBlyeOiN21e0WhGye6EY
+         4C4OBa0sdC/hvgVEORzZSGLI79FueeGxCvrwC/9Yh7ZUqbgLhCgiqGmLiyiqCrqLxsfS
+         +jWkG2QmH0lkOzIi68wdOPSFPR7Du4oE+UYO56KQqRKc4wf5uzcJDqejP+/iP1KIkZ39
+         NrKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD+mhhU+ZXnnCh/v6XxtIgyEKMMOXXEULRgqJwkj7kjujw6UBcw1OGPulmg9yooTGCcjvjmv6qxty+tGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4HomVHd/DStPYsS9Vk/7CO49SciOPqVJonbaxhDKdDg8L7Fvb
+	d+YSJS3EkTTiUtMAdJB0sBVRcLuQxP9ZfyU00ep5RQ9pnlHTnYgjeIAuDYkVr/U=
+X-Gm-Gg: ASbGncvvOn/pigVtLAl8kpVyJEf5KP3zGNQU6xiy7/Ygg84M9GcZqvvem9UZUvXz9IB
+	8j8haZDNzGo8tjxKUCBAxCxRxZgyRfpSe3p+TydPQh3ZSBbiDBuFkh4xRjerNZ/QBHVTpjdGst+
+	EkyF73PY5afPX+p4c/CB3dblL+IdhucwXUbz0atc6K5rMQxHxGM/ONND/BztJ2FmjO/9P26/0iH
+	iPnAaqtTEHWdc9P0b/FZqbdrWCOA/EbLOfvAIWcl1cMgqqWrjT4HGDUZriDcZTJmebLb5gu6b1X
+	zbIhapuqT2RIMjD3bupkW+ZBFHGBvD5wdjMe4DzpVHIXytMd
+X-Google-Smtp-Source: AGHT+IFbUGetndzcOrun3f92dzjSPwPd+E6FNJVK61Vk5gNKDwi/CxvBNjk8NRC9yliLhdywtuMZlw==
+X-Received: by 2002:a05:6a21:398e:b0:1f5:9208:3ac7 with SMTP id adf61e73a8af0-1fe4330f268mr3349764637.41.1742531719997;
+        Thu, 20 Mar 2025 21:35:19 -0700 (PDT)
+Received: from debian.. ([136.24.187.18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fd57f7sm783767b3a.44.2025.03.20.21.35.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 21:35:19 -0700 (PDT)
+From: Danny Lin <danny@orbstack.dev>
+To: Matteo Croce <teknoraver@meta.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Danny Lin <danny@orbstack.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] net: fully namespace net.core.{r,w}mem_{default,max} sysctls
+Date: Thu, 20 Mar 2025 21:34:49 -0700
+Message-ID: <20250321043504.9729-1-danny@orbstack.dev>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 21 Mar 2025 14:19:05 +1000:
+This builds on commit 19249c0724f2 ("net: make net.core.{r,w}mem_{default,max} namespaced")
+by adding support for writing the sysctls from within net namespaces,
+rather than only reading the values that were set in init_net. These are
+relatively commonly-used sysctls, so programs may try to set them without
+knowing that they're in a container. It can be surprising for such attempts
+to fail with EACCES.
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-03-21
+Unlike other net sysctls that were converted to namespaced ones, many
+systems have a sysctl.conf (or other configs) that globally write to
+net.core.rmem_default on boot and expect the value to propagate to
+containers, and programs running in containers may depend on the increased
+buffer sizes in order to work properly. This means that namespacing the
+sysctls and using the kernel default values in each new netns would break
+existing workloads.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3ee1e4609512dfff642a96b34d7e5dfcdc92d05
+As a compromise, inherit the initial net.core.*mem_* values from the
+current process' netns when creating a new netns. This is not standard
+behavior for most netns sysctls, but it avoids breaking existing workloads.
 
-Thank you!
+Signed-off-by: Danny Lin <danny@orbstack.dev>
+---
+ include/net/netns/core.h                    |  5 +++++
+ include/net/sock.h                          |  6 -----
+ net/core/net_namespace.c                    | 21 +++++++++++++++++
+ net/core/sock.c                             | 16 ++++---------
+ net/core/sysctl_net_core.c                  | 25 ++++-----------------
+ net/ipv4/ip_output.c                        |  2 +-
+ net/ipv4/tcp_output.c                       |  2 +-
+ net/netfilter/ipvs/ip_vs_sync.c             |  4 ++--
+ tools/testing/selftests/net/netns-sysctl.sh | 24 ++++++++++++++------
+ 9 files changed, 55 insertions(+), 50 deletions(-)
 
+diff --git a/include/net/netns/core.h b/include/net/netns/core.h
+index 9b36f0ff0c20..0459523602cb 100644
+--- a/include/net/netns/core.h
++++ b/include/net/netns/core.h
+@@ -17,6 +17,11 @@ struct netns_core {
+ 	u8	sysctl_txrehash;
+ 	u8	sysctl_tstamp_allow_data;
+ 
++	u32 sysctl_wmem_max;
++	u32 sysctl_rmem_max;
++	u32 sysctl_wmem_default;
++	u32 sysctl_rmem_default;
++
+ #ifdef CONFIG_PROC_FS
+ 	struct prot_inuse __percpu *prot_inuse;
+ #endif
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 8daf1b3b12c6..7aeddba44919 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -2849,12 +2849,6 @@ void sk_get_meminfo(const struct sock *sk, u32 *meminfo);
+ #define SK_WMEM_MAX		(_SK_MEM_OVERHEAD * _SK_MEM_PACKETS)
+ #define SK_RMEM_MAX		(_SK_MEM_OVERHEAD * _SK_MEM_PACKETS)
+ 
+-extern __u32 sysctl_wmem_max;
+-extern __u32 sysctl_rmem_max;
+-
+-extern __u32 sysctl_wmem_default;
+-extern __u32 sysctl_rmem_default;
+-
+ #define SKB_FRAG_PAGE_ORDER	get_order(32768)
+ DECLARE_STATIC_KEY_FALSE(net_high_order_alloc_disable_key);
+ 
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index 4303f2a49262..61a417f499e9 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -317,6 +317,27 @@ static __net_init void preinit_net_sysctl(struct net *net)
+ 	net->core.sysctl_optmem_max = 128 * 1024;
+ 	net->core.sysctl_txrehash = SOCK_TXREHASH_ENABLED;
+ 	net->core.sysctl_tstamp_allow_data = 1;
++
++	/*
++	 * net.core.{r,w}mem_{default,max} used to be non-namespaced.
++	 * For backward compatibility, inherit values from the current netns
++	 * when creating a new one, so that setting them in init_net
++	 * affects new namespaces like it used to. This avoids causing
++	 * surprising performance regressions for namespaced applications
++	 * relying on tuned rmem/wmem.
++	 */
++	if (net == &init_net) {
++		net->core.sysctl_wmem_max = SK_WMEM_MAX;
++		net->core.sysctl_rmem_max = SK_RMEM_MAX;
++		net->core.sysctl_wmem_default = SK_WMEM_MAX;
++		net->core.sysctl_rmem_default = SK_RMEM_MAX;
++	} else {
++		struct net *current_net = current->nsproxy->net_ns;
++		net->core.sysctl_wmem_max = current_net->core.sysctl_wmem_max;
++		net->core.sysctl_rmem_max = current_net->core.sysctl_rmem_max;
++		net->core.sysctl_wmem_default = current_net->core.sysctl_wmem_default;
++		net->core.sysctl_rmem_default = current_net->core.sysctl_rmem_default;
++	}
+ }
+ 
+ /* init code that must occur even if setup_net() is not called. */
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 323892066def..88694cd59abd 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -278,14 +278,6 @@ static struct lock_class_key af_wlock_keys[AF_MAX];
+ static struct lock_class_key af_elock_keys[AF_MAX];
+ static struct lock_class_key af_kern_callback_keys[AF_MAX];
+ 
+-/* Run time adjustable parameters. */
+-__u32 sysctl_wmem_max __read_mostly = SK_WMEM_MAX;
+-EXPORT_SYMBOL(sysctl_wmem_max);
+-__u32 sysctl_rmem_max __read_mostly = SK_RMEM_MAX;
+-EXPORT_SYMBOL(sysctl_rmem_max);
+-__u32 sysctl_wmem_default __read_mostly = SK_WMEM_MAX;
+-__u32 sysctl_rmem_default __read_mostly = SK_RMEM_MAX;
+-
+ DEFINE_STATIC_KEY_FALSE(memalloc_socks_key);
+ EXPORT_SYMBOL_GPL(memalloc_socks_key);
+ 
+@@ -1333,7 +1325,7 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 		 * play 'guess the biggest size' games. RCVBUF/SNDBUF
+ 		 * are treated in BSD as hints
+ 		 */
+-		val = min_t(u32, val, READ_ONCE(sysctl_wmem_max));
++		val = min_t(u32, val, READ_ONCE(sock_net(sk)->core.sysctl_wmem_max));
+ set_sndbuf:
+ 		/* Ensure val * 2 fits into an int, to prevent max_t()
+ 		 * from treating it as a negative value.
+@@ -1365,7 +1357,7 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
+ 		 * play 'guess the biggest size' games. RCVBUF/SNDBUF
+ 		 * are treated in BSD as hints
+ 		 */
+-		__sock_set_rcvbuf(sk, min_t(u32, val, READ_ONCE(sysctl_rmem_max)));
++		__sock_set_rcvbuf(sk, min_t(u32, val, READ_ONCE(sock_net(sk)->core.sysctl_rmem_max)));
+ 		break;
+ 
+ 	case SO_RCVBUFFORCE:
+@@ -3618,8 +3610,8 @@ void sock_init_data_uid(struct socket *sock, struct sock *sk, kuid_t uid)
+ 	timer_setup(&sk->sk_timer, NULL, 0);
+ 
+ 	sk->sk_allocation	=	GFP_KERNEL;
+-	sk->sk_rcvbuf		=	READ_ONCE(sysctl_rmem_default);
+-	sk->sk_sndbuf		=	READ_ONCE(sysctl_wmem_default);
++	sk->sk_rcvbuf		=	READ_ONCE(sock_net(sk)->core.sysctl_rmem_default);
++	sk->sk_sndbuf		=	READ_ONCE(sock_net(sk)->core.sysctl_wmem_default);
+ 	sk->sk_state		=	TCP_CLOSE;
+ 	sk->sk_use_task_frag	=	true;
+ 	sk_set_socket(sk, sock);
+diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+index c7769ee0d9c5..aedc249bf0e2 100644
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -676,21 +676,9 @@ static struct ctl_table netns_core_table[] = {
+ 		.extra2		= SYSCTL_ONE,
+ 		.proc_handler	= proc_dou8vec_minmax,
+ 	},
+-	{
+-		.procname	= "tstamp_allow_data",
+-		.data		= &init_net.core.sysctl_tstamp_allow_data,
+-		.maxlen		= sizeof(u8),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dou8vec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE
+-	},
+-	/* sysctl_core_net_init() will set the values after this
+-	 * to readonly in network namespaces
+-	 */
+ 	{
+ 		.procname	= "wmem_max",
+-		.data		= &sysctl_wmem_max,
++		.data		= &init_net.core.sysctl_wmem_max,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -698,7 +686,7 @@ static struct ctl_table netns_core_table[] = {
+ 	},
+ 	{
+ 		.procname	= "rmem_max",
+-		.data		= &sysctl_rmem_max,
++		.data		= &init_net.core.sysctl_rmem_max,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -706,7 +694,7 @@ static struct ctl_table netns_core_table[] = {
+ 	},
+ 	{
+ 		.procname	= "wmem_default",
+-		.data		= &sysctl_wmem_default,
++		.data		= &init_net.core.sysctl_wmem_default,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -714,7 +702,7 @@ static struct ctl_table netns_core_table[] = {
+ 	},
+ 	{
+ 		.procname	= "rmem_default",
+-		.data		= &sysctl_rmem_default,
++		.data		= &init_net.core.sysctl_rmem_default,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -748,13 +736,8 @@ static __net_init int sysctl_core_net_init(struct net *net)
+ 			goto err_dup;
+ 
+ 		for (i = 0; i < table_size; ++i) {
+-			if (tbl[i].data == &sysctl_wmem_max)
+-				break;
+-
+ 			tbl[i].data += (char *)net - (char *)&init_net;
+ 		}
+-		for (; i < table_size; ++i)
+-			tbl[i].mode &= ~0222;
+ 	}
+ 
+ 	net->core.sysctl_hdr = register_net_sysctl_sz(net, "net/core", tbl, table_size);
+diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+index 6e18d7ec5062..7b7c5e4ea5d8 100644
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@ -1643,7 +1643,7 @@ void ip_send_unicast_reply(struct sock *sk, const struct sock *orig_sk,
+ 
+ 	sk->sk_protocol = ip_hdr(skb)->protocol;
+ 	sk->sk_bound_dev_if = arg->bound_dev_if;
+-	sk->sk_sndbuf = READ_ONCE(sysctl_wmem_default);
++	sk->sk_sndbuf = READ_ONCE(net->core.sysctl_wmem_default);
+ 	ipc.sockc.mark = fl4.flowi4_mark;
+ 	err = ip_append_data(sk, &fl4, ip_reply_glue_bits, arg->iov->iov_base,
+ 			     len, 0, &ipc, &rt, MSG_DONTWAIT);
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index e0a4e5432399..8cb319315e76 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -241,7 +241,7 @@ void tcp_select_initial_window(const struct sock *sk, int __space, __u32 mss,
+ 	if (wscale_ok) {
+ 		/* Set window scaling on max possible window */
+ 		space = max_t(u32, space, READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_rmem[2]));
+-		space = max_t(u32, space, READ_ONCE(sysctl_rmem_max));
++		space = max_t(u32, space, READ_ONCE(sock_net(sk)->core.sysctl_rmem_max));
+ 		space = min_t(u32, space, window_clamp);
+ 		*rcv_wscale = clamp_t(int, ilog2(space) - 15,
+ 				      0, TCP_MAX_WSCALE);
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index 3402675bf521..62f30d5c25c7 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1280,12 +1280,12 @@ static void set_sock_size(struct sock *sk, int mode, int val)
+ 	lock_sock(sk);
+ 	if (mode) {
+ 		val = clamp_t(int, val, (SOCK_MIN_SNDBUF + 1) / 2,
+-			      READ_ONCE(sysctl_wmem_max));
++			      READ_ONCE(sock_net(sk)->core.sysctl_wmem_max));
+ 		sk->sk_sndbuf = val * 2;
+ 		sk->sk_userlocks |= SOCK_SNDBUF_LOCK;
+ 	} else {
+ 		val = clamp_t(int, val, (SOCK_MIN_RCVBUF + 1) / 2,
+-			      READ_ONCE(sysctl_rmem_max));
++			      READ_ONCE(sock_net(sk)->core.sysctl_rmem_max));
+ 		sk->sk_rcvbuf = val * 2;
+ 		sk->sk_userlocks |= SOCK_RCVBUF_LOCK;
+ 	}
+diff --git a/tools/testing/selftests/net/netns-sysctl.sh b/tools/testing/selftests/net/netns-sysctl.sh
+index 45c34a3b9aae..bb6f173a28e2 100755
+--- a/tools/testing/selftests/net/netns-sysctl.sh
++++ b/tools/testing/selftests/net/netns-sysctl.sh
+@@ -20,21 +20,31 @@ fail() {
+ setup_ns test_ns
+ 
+ for sc in {r,w}mem_{default,max}; do
+-	# check that this is writable in a netns
++	initial_value="$(sysctl -n "net.core.$sc")"
++
++	# check that this is writable in the init netns
+ 	[ -w "/proc/sys/net/core/$sc" ] ||
+ 		fail "$sc isn't writable in the init netns!"
+ 
+-	# change the value in the host netns
++	# change the value in the init netns
+ 	sysctl -qw "net.core.$sc=300000" ||
+ 		fail "Can't write $sc in init netns!"
+ 
+-	# check that the value is read from the init netns
+-	[ "$(ip netns exec $test_ns sysctl -n "net.core.$sc")" -eq 300000 ] ||
++	# check that the value did not change in the test netns
++	[ "$(ip netns exec $test_ns sysctl -n "net.core.$sc")" -eq "$initial_value" ] ||
+ 		fail "Value for $sc mismatch!"
+ 
+-	# check that this isn't writable in a netns
+-	ip netns exec $test_ns [ -w "/proc/sys/net/core/$sc" ] &&
+-		fail "$sc is writable in a netns!"
++	# check that this is also writable in the test netns
++	ip netns exec $test_ns [ -w "/proc/sys/net/core/$sc" ] ||
++		fail "$sc isn't writable in the test netns!"
++
++	# change the value in the test netns
++	ip netns exec $test_ns sysctl -qw "net.core.$sc=200000" ||
++		fail "Can't write $sc in test netns!"
++
++	# check that the value is read from the test netns
++	[ "$(ip netns exec $test_ns sysctl -n "net.core.$sc")" -eq 200000 ] ||
++		fail "Value for $sc mismatch!"
+ done
+ 
+ echo 'Test passed OK'
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.47.2
+
 
