@@ -1,194 +1,172 @@
-Return-Path: <linux-kernel+bounces-571432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA04A6BD19
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:36:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C23A6BD14
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:36:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614354820DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FFB03B7380
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AC015530C;
-	Fri, 21 Mar 2025 14:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC3115530C;
+	Fri, 21 Mar 2025 14:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yyAAOBZ3"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FEVOUwqP"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234087D07D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC921C863C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567701; cv=none; b=R9/pqHfIp0LSjgPaTO23HyztsEiHG3XPfQ2uJ2X5uXckP+1DO7yQkb2KPY3SDiM0zBqk+pL4wxo/Pmn4Lwu/I5uKrK5jVy/XsMi7IZYDsFAou5DmLLNDkF9yRnBpLqkjQgZT+KqkrT6v7Qb//Povc6xu2ooLXScswMSP7golkR0=
+	t=1742567731; cv=none; b=jchUbSMKw5zhOyyKy+sFLkNbSqj2GeDH84me5MCCT+8KIiTN+X0f1SXu+54NSUZ3f99W9kF43Mf6sZsmMwpuQgb2iIMIdXPXvxgHkVh0A4Fv1NjQLae/y20d+5wO6UaaOj8P4CPK4kIyiUydTGTOp1cNapeSx4EZVBvfaj02BwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567701; c=relaxed/simple;
-	bh=wdjDpdPO8Gj3iUNrp1JNDGE5Incd6SFvzVMrI/5ClOs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cYASmXLVa9A/dtczpPPFyCCbsr5J0aGenkVx0BtQmmUh1XdcNq6tUCk63GOqxtq5eoIDPL+jH/zrbO64Tu4QQ8EYZwg074HnhRksLpMptQQGyCf813JHi4KKkctsniKytuhz+1Xgf81KG4INvgtO4ax/9phaOxAM62MR5m2c8zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yyAAOBZ3; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1742567731; c=relaxed/simple;
+	bh=Isvn7ydRNc9Mk0jmBqV2imH7i9rYp5Er5f4uLrHFcZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Pdx3BXHDIaGVyaxcOlyV3GrH2DCHjnI5fF3oEoZHDVyA3SRotdLZbyUT7R+kcrvKouJaKvMMqOqHajUVfqvS/bomKrVjCO+KtdUBTmhbIo4sz+jU6UuKEBjR1pXohyKcGLjzOH18kOyLE0ecFVT+y1h92rZLu+LgVZdzJcwBqMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FEVOUwqP; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3913fdd0120so1235182f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:34:59 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3996af42857so2084912f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:35:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742567698; x=1743172498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y6Qr8QAI+Mok+bWdMsFd6M7n8U4F8tUmQSbLyZ4Fyg0=;
-        b=yyAAOBZ3AI9wcESgOW/OECFFLfrbldRrEI3QfbzPvXE4deYCqJPNw6OyjLeqxBly3O
-         wz08uVdMp5CrVbhpDObTTZDVBmLkN3rq0cFCs8vHWqZE8CBaB0CrRRzK6AmsCZ2QIz42
-         9RjmJRpmmHzwAAlMvuKZqf0WAW1w6lNPGqufAFqamZ6Qsj47Z16OP+MY8hLAZVN8x3xY
-         /XmY7Nouc7E7XdRh5HyQrMh5cD2wvqqENfmRDeH9yh8RJSk3UmTSDMIRlN4shZIFpAbD
-         o450FJfSvEDIeSCFGzaCqhZeB+a69vFoKO36g81UD420vSiXwoLHNr61hbU8V8slBOFu
-         DH3A==
+        d=linaro.org; s=google; t=1742567728; x=1743172528; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FpObnI5CWZY4zn2RHNz53FQ4gJRPrxvKsQP+9BpYcsQ=;
+        b=FEVOUwqPcx5H5bPXY5GK3e53txtdgZJDHDfqNfZsb6pit+Q6K4VZw4bv0JjnorW+f3
+         a6TN9f3SBPDvREJTXvsrLBlwofrdXBu0LiIxKpUB/XQ1POXM8JfanwK1XQGcoisiWAC2
+         bkEIBLXL7aReP2iTJZzkSXN370uZC/cMOB0m/W0tzPNTanvJplm38o+8il261qHQTJJJ
+         dG5029aDf/xdUFRfDTf7OcSFJH8t4vDkqJYKB5rOyFU/MJE+G1dtHNa0p8Hp0AdEzlaP
+         SXT/Qm6oT0SOtfF8AGKnArF4Zwx6Gry2/q9TTh+nUue5eujBHfWEMo5P3bJON3/YMPGR
+         BObg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742567698; x=1743172498;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y6Qr8QAI+Mok+bWdMsFd6M7n8U4F8tUmQSbLyZ4Fyg0=;
-        b=emH2eZ+tD77TsEKiIHzfn+amshCfzLecoyHOE+kW9Q5I85dIQcbWUMTeVPEcdn9lDU
-         uh5SvRTDukJkFTYu613Rp1mUHxPs58SZzOfPBBhGb8hZxQaCrVaniaByedx3ebiZKt4U
-         f8I3IVxRMrflh489HN8T4ShwZo/MZnmhIhEHaYb1Oq7q/ZBMjPXDES80FsrKJvjXgXBc
-         qJQCziJ+EvPaGe3Lyy6js4GoEDheBnEAjCpoPGm06qVsHTak/6fMLdEjzaXzFKppjzeH
-         E2V9rv3OfeRIwXfzVu1qgmWTVvMttAGIr2qdLKdvOC8AY7Mrw0BeX0mLnE0RwD8hiX0b
-         Uq+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSQNKIUr+QERNbGCKK3H4fIrxa4ZEefvmPpfXNkRVuhvYNpkwT9Agd0dU0tYtKD+EJ9+InjxypglyGiu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOHppbqxcmK9ZNQsvSF/EygbDEWCg/R8pA0vdHnuV8itT75TUF
-	SjLxaxKDngLXSRviXoogXGldAlqRsb6QExc6SzjNJdeygwr7GIHNFlT5rqJ1lTM=
-X-Gm-Gg: ASbGncvqyi3dQK3mnvift3m5rLOiuw7kcg/eXrJmcOXZhbPrGttGRtyCqTk94fmmK7c
-	4kRQhQFcPkVEbSJW6QyHEE4lg7SCtzsybFI3uedg0zFdgmrTj8vTdTza6yreckRL4j3SWGSK7dK
-	NYIVCd0h0e5VXnCmJqZs0LA6zb2rgXJL56GMS+nCRQo5nlfW1fd3++rtEKJfhAS8txNvDcdHwVb
-	Z0cdYTEOAgyYC5jPYzRRDMOxmmFY+TK/BY2ghcev3m1PQUvvGjCDLU84+IWEV6/JZr9NlYqdBzm
-	fZ5hPHhRhGJxm8Yw85PcaV1MhNBI5apRNJ9/F1I8GtD6RTjFo+Yu2gWXCGVLbH3ccAVfEJ3qt7X
-	Gd/6gSZjZ0I/cS70p1GtluA==
-X-Google-Smtp-Source: AGHT+IGa8KHeqSfvai4gM0A+MR712S3ariHHnp5X7yo+cWqQtSzUkx4fPOGLLduFzalQxzqnA/R9mw==
-X-Received: by 2002:a5d:6485:0:b0:391:2d8f:dd59 with SMTP id ffacd0b85a97d-3997f90d943mr3320018f8f.24.1742567698365;
-        Fri, 21 Mar 2025 07:34:58 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:5080:77b0:43f2:5276? ([2a01:e0a:3d9:2080:5080:77b0:43f2:5276])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b55cdsm2544183f8f.52.2025.03.21.07.34.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 07:34:57 -0700 (PDT)
-Message-ID: <2b572981-7e63-4052-8186-4ba17f530cca@linaro.org>
-Date: Fri, 21 Mar 2025 15:34:57 +0100
+        d=1e100.net; s=20230601; t=1742567728; x=1743172528;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpObnI5CWZY4zn2RHNz53FQ4gJRPrxvKsQP+9BpYcsQ=;
+        b=MoDV1gvSGsVrXRTa6cy2oaUH/PkHfFsAL8csIFbZ5qkzHsoSSRK22ILpOnC0qreojj
+         KfC0iG0Gz1Xuq1hUpNYwD/j4YZWMMsm+B7RskNx/P1aMz5N71aYUuyX3rZD7c7Rf8XRe
+         TaHxSXl2fQJv4B++b/JXyy7bMtfoj2PCSoX1YM4ScYhBXEpxgFWg/+0R1i1M5REP944z
+         uMIGZ8zI2OLEeoCyFKyyW0oZfgCjXCTcoxmXaxIqu/euNuTyMSXvH1r+yMFyDUD+qRgu
+         oK3JbyEgGLoMHi/ZAQr4RV1OjUXBHmG2qcHNVCsQYzaY1Em+2FXzt/BowRyVAKnW0O35
+         Bd6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGv5D6u8Hyu0MACqhsEjD62t3HPj/MofoOx+h36GI+0vjOl1u+2jTr3kkBkgZHFKA8E+Guii/MyFISPd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWLxv2Bo0u52EAiDVoeoLkI7jua0eM2zdGIr5+RcyW2DCwt/OZ
+	n6WR2cviyXd8mz2vp1Db/DqwGYFwY1kz79Gnczwtnq5UHbMUZGKLKZl7JN5IwFk=
+X-Gm-Gg: ASbGncsdviKfFnrkPqyxLMbL+YUFAByaH3h9UtPbAf4PZ++lo3yIgeTAOQ6+kKStjaT
+	3Z1LFGRs8JuKnJZneFCK7IVbjJrx1Mks3oZwnoZt+o22iOUFdqngAYjfnCM/edh4CsvMacnjsvR
+	k09WE7uXFXmkltlcuPGmksI3TQb6N0QQx2gCQXlJdL4ko7kdr91k7OdOZTzNW+i/9fkF2j9Hpo5
+	qBV9W5cOC+TXRGkPZBiV+zKtZuhbf3fn8uYC4DbcPMFN7jmhiN4i2FL0X0jy7XZaSJ7v5rZ/7BL
+	iL29fYqFOVG1xRk8hxua8nE/+G6t6waTJKRBCBeNGVKwcUj4ZWeyXJkuMCtu
+X-Google-Smtp-Source: AGHT+IGFDNIHBWCzsRoL4N2P5NIU7s1oc9Lf7MrF47BI5GNVMNU0v7aRuRhv89k5EDIHXs8yNuMIBg==
+X-Received: by 2002:a05:6000:1548:b0:390:e9e0:5cc6 with SMTP id ffacd0b85a97d-39979556803mr7439315f8f.1.1742567727661;
+        Fri, 21 Mar 2025 07:35:27 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d3ae040f9sm83159355e9.0.2025.03.21.07.35.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:35:27 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:35:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: Kiseok Jo <kiseok.jo@irondevice.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] ASoC: sma1307: Fix error handling in
+ sma1307_setting_loaded()
+Message-ID: <8d32dd96-1404-4373-9b6c-c612a9c18c4c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 05/10] phy: phy-snps-eusb2: split phy init code
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Abel Vesa
- <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250321135854.1431375-1-ivo.ivanov.ivanov1@gmail.com>
- <20250321135854.1431375-6-ivo.ivanov.ivanov1@gmail.com>
- <7v3xkvldjnpqakrndwl6wb6vdsl3idbirlhddpqhwtt3ddadzr@kjafi3updcsb>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <7v3xkvldjnpqakrndwl6wb6vdsl3idbirlhddpqhwtt3ddadzr@kjafi3updcsb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 21/03/2025 15:31, Dmitry Baryshkov wrote:
-> On Fri, Mar 21, 2025 at 03:58:49PM +0200, Ivaylo Ivanov wrote:
->> The current phy init consists of hardware power-up, as well as
->> QCOM-specific eUSB2 init code. Split it into two parts, to make room
->> for such non-QCOM init code.
->>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> ---
->>   drivers/phy/phy-snps-eusb2.c | 96 +++++++++++++++++++++++-------------
->>   1 file changed, 63 insertions(+), 33 deletions(-)
->>
->> @@ -378,6 +401,11 @@ static int snps_eusb2_hsphy_probe(struct platform_device *pdev)
->>   	if (!phy)
->>   		return -ENOMEM;
->>   
->> +	drv_data = of_device_get_match_data(dev);
->> +	if (!drv_data)
->> +		return -EINVAL;
->> +	phy->data = drv_data;
-> 
-> Nit and completely bikeshedding, but this looks simpler:
-> 
-> 	phy->data = of_device_get_match_data(dev);
-> 	if (!phy->data)
-> 		return -EINVAL;
+There are a couple bugs in this code:
 
-Please use device_get_match_data() instead.
+1) The cleanup code calls kfree(sma1307->set.header) and
+   kfree(sma1307->set.def) but those functions were allocated using
+   devm_kzalloc().  It results in a double free.  Delete all these
+   kfree() calls.
 
-Neil
+2) A missing call to kfree(data) if the checksum was wrong on this error
+   path:
+	if ((sma1307->set.checksum >> 8) != SMA1307_SETTING_CHECKSUM) {
+   Since the "data" pointer is supposed to be freed on every return, I
+   changed that to use the __free(kfree) cleanup attribute.
 
-> 
-> 
-> Anyway:
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> 
-> 
->> +
->>   	phy->base = devm_platform_ioremap_resource(pdev, 0);
->>   	if (IS_ERR(phy->base))
->>   		return PTR_ERR(phy->base);
->> @@ -424,8 +452,10 @@ static int snps_eusb2_hsphy_probe(struct platform_device *pdev)
->>   }
->>   
->>   static const struct of_device_id snps_eusb2_hsphy_of_match_table[] = {
->> -	{ .compatible = "qcom,sm8550-snps-eusb2-phy", },
->> -	{ },
->> +	{
->> +		.compatible = "qcom,sm8550-snps-eusb2-phy",
->> +		.data = &sm8550_snps_eusb2_phy,
->> +	}, { },
->>   };
->>   MODULE_DEVICE_TABLE(of, snps_eusb2_hsphy_of_match_table);
->>   
->> -- 
->> 2.43.0
->>
-> 
+Fixes: 0ec6bd16705f ("ASoC: sma1307: Add NULL check in sma1307_setting_loaded()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ sound/soc/codecs/sma1307.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/codecs/sma1307.c b/sound/soc/codecs/sma1307.c
+index f5c303d4bb62..498189ab691c 100644
+--- a/sound/soc/codecs/sma1307.c
++++ b/sound/soc/codecs/sma1307.c
+@@ -1705,7 +1705,7 @@ static void sma1307_check_fault_worker(struct work_struct *work)
+ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *file)
+ {
+ 	const struct firmware *fw;
+-	int *data, size, offset, num_mode;
++	int size, offset, num_mode;
+ 	int ret;
+ 
+ 	ret = request_firmware(&fw, file, sma1307->dev);
+@@ -1722,7 +1722,7 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 		return;
+ 	}
+ 
+-	data = kzalloc(fw->size, GFP_KERNEL);
++	int *data __free(kfree) = kzalloc(fw->size, GFP_KERNEL);
+ 	if (!data) {
+ 		release_firmware(fw);
+ 		sma1307->set.status = false;
+@@ -1742,7 +1742,6 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 					   sma1307->set.header_size,
+ 					   GFP_KERNEL);
+ 	if (!sma1307->set.header) {
+-		kfree(data);
+ 		sma1307->set.status = false;
+ 		return;
+ 	}
+@@ -1763,8 +1762,6 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 	    = devm_kzalloc(sma1307->dev,
+ 			   sma1307->set.def_size * sizeof(int), GFP_KERNEL);
+ 	if (!sma1307->set.def) {
+-		kfree(data);
+-		kfree(sma1307->set.header);
+ 		sma1307->set.status = false;
+ 		return;
+ 	}
+@@ -1782,9 +1779,6 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 				   sma1307->set.mode_size * 2 * sizeof(int),
+ 				   GFP_KERNEL);
+ 		if (!sma1307->set.mode_set[i]) {
+-			kfree(data);
+-			kfree(sma1307->set.header);
+-			kfree(sma1307->set.def);
+ 			for (int j = 0; j < i; j++)
+ 				kfree(sma1307->set.mode_set[j]);
+ 			sma1307->set.status = false;
+@@ -1799,7 +1793,6 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 		}
+ 	}
+ 
+-	kfree(data);
+ 	sma1307->set.status = true;
+ 
+ }
+-- 
+2.47.2
 
 
