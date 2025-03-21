@@ -1,110 +1,164 @@
-Return-Path: <linux-kernel+bounces-571836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095C7A6C2F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:05:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38FB3A6C2F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D83461C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:05:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 423D57A7AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8715E22E41B;
-	Fri, 21 Mar 2025 19:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD9B22D4F1;
+	Fri, 21 Mar 2025 19:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEiQ4Sf6"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gXeRSXP8"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9D154426;
-	Fri, 21 Mar 2025 19:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FB8154426
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742583905; cv=none; b=EWkt5zPQff2dufCs1m2LUrtHCVvyjAwVONQIV4E8vCAbMg/bpJbHa/3evu4uTZ0EKm5RSpH8P+XKTrtIyEvsAhQFY+FRTPaBsAJdZQfO2WPL4d508BLytBIpri7v5PuBvbwISzYRdruQIQ+JhBc1FhYUAxE0/vhQJbHd1bevVQE=
+	t=1742583966; cv=none; b=Ms/HYrXgm8dKUps24EvFbU2AMiN8TGOl0DOsUJKTudIG5MqWVA5JaJy8bJxtfCALuRl14+Zeaa2DmUqcofd0ztsDKUF6L6X2veQnt/nusyW+nkloAD6W1Mn+LWN0POED47u3YNj6wpMUa/7xPaFU5ggPDovT0Zo4oQD61y6TFXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742583905; c=relaxed/simple;
-	bh=jKbpIna3dbFZRR/fucLtB7Q4uGgsuLmcIOJYUwilYQw=;
+	s=arc-20240116; t=1742583966; c=relaxed/simple;
+	bh=sPA3YMc7zB5fmsVIwEgENpeTURZ/iV7aheO5rZV+wXc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QzJ7twrdLOmt5kOQ4TUKfwOHPxxLLQ0iuXWUanTAM65PzdoiDWocNQfG6IuDGYrszm6GZMoT+PveAjuTFmgQrYSMxsC1YlJQ9lC56kVsAgQQX5X13MacY3v0kpJxeWGg6tQt5gd8DifhQaXVm9zbHJBvW+YABKYrcL0xZ+95kng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEiQ4Sf6; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22792ef6215so1653085ad.2;
-        Fri, 21 Mar 2025 12:05:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=duut5WoEJV46B5J9NijY4B3tfI+w7xSDJlBkQW55Hf6G+FF7FMPXlgnLScOoodQ/BmqRM2Q/QQIQe8hA087KRcEp06RZKwIy7MmderqbYnKXTYsc6RyUHuDqqEtnB19+MXUvQRwtliDVlfRfo72zQsfA6S0z86zwe8wI1HFiSkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gXeRSXP8; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e6405e4ab4dso3012404276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:06:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742583903; x=1743188703; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1742583964; x=1743188764; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jKbpIna3dbFZRR/fucLtB7Q4uGgsuLmcIOJYUwilYQw=;
-        b=WEiQ4Sf6QgmSD5YK+kRSNcJ04w2Eb9ZK3YhVJIypMw73i9zu3Rk8cgZcc1B47Wvfxq
-         CZxObsAvmBl29wUtgDW3QNC31uxuD1HhqAoGD96Vnxmkd0uhfuKSyx+qT/gvlg+iaxUp
-         MJyPeDd7OsQGLKtb7GhrlXZ7PAMsPVb5SdJCr2765/2BYq1v4ddT4+PS81F32a8qgFEn
-         di6zOcwPQ614Gi3UJPUZiOKotLMYl2M1z3QV5RBrpa8zgNYFzVbrI8vVcY+hkFEu5O5V
-         QE7grmpHoCRu72he+QPQW/nnvgNgfzMWjWq/mc2XfmcwFMcReIXScjxaPV10KfJhU82P
-         39SQ==
+        bh=4nSFzAgQaMCuwvxmSdJkfWwEiaWngP9LwXhsN0dSMzo=;
+        b=gXeRSXP8CvCeMqi8JRY6Yi1ynaSX2ubPjv4cZVo9lJ1KaE0hpliskj+dq/hb9lvA0a
+         0qY2B81JGVh/PLt1HbFDVP1t0iZ+rk3a3iF11Fe5MNVttoxjtqG3jp/+aC2rXQ1ptXzt
+         HtRaCP06kNfcHf3FlQ5aQy2pMenXZ6FYJAkhw6DcZaa9bw7W51BNBHJ1U4I47KepOuTW
+         M91CiaNmgPqI2w708nVgYHvFXnHgrvvv57Rmxo+lx2z6/ciB2dMyn8YYFq490fzuNFuQ
+         6ii/pFCvYtrUdffRNrhkfgSZ9rtTRyF0Up3UIPT+Kse+41Miv0mAoqlA+n0vCUc5gUhE
+         EO5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742583903; x=1743188703;
+        d=1e100.net; s=20230601; t=1742583964; x=1743188764;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jKbpIna3dbFZRR/fucLtB7Q4uGgsuLmcIOJYUwilYQw=;
-        b=GUPyrdTC/CMy7aTsy7LCGss9nAXkP/cxsX11Z1IHJjEUjzy2dEzN8ycZmaV2BsE6Ha
-         yWMhjEdZ/6xxFcAgIqen25RinShASQUPSFvKMda/vcfMLxET3DA7SRUm4RXq1EVv1uQp
-         6e4clbLaVEzjUI01HMJS/10Ep7wOBtFd9+j+pm5yPgvmvAReshcDFXYJ59Kw5npoqK/c
-         L0QD/wm36blW4ZLQgPtd56fE95L5ofAmmB0B70/o372UB/6NgcqoXNNsfYp5h6qIU+W1
-         3rks8lJ5HIFWbEYv05cnfL7KxEFa9bCt7hli/ZMH+hUd1qF0g79TjT63uL83BNrPKbKE
-         7hiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRDg2iGo3q/Mapa/GPa3Jw5AsDr9tGZ0MlohxK1730+r9//IDwHlzFeUIpYgQS0OpFHm+fbnnaWPKlUOAUq+TU@vger.kernel.org, AJvYcCW8CbSyM84BsjnMT77CITUGoo3DwI2pg6v7M3Y9U+UJJ8uR8+mZOvcEzvKNJ7Q+uUrDNEmky8ESrmLf1UU=@vger.kernel.org, AJvYcCWnhy5HHrYyM2CSL6WUij1BF6u0Txy9TH1PrQXr7dFG8fGmF0TPqN8vqTcIJx7w37MhGhzI0WXT9R7r3GS+98k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymEYVVylxQPOiaD3/kSi1AysI45I4C0eXI8v3ZErwe5rq/Ekgo
-	5JTVIzAi4LyWfTRqrYma9oPyJHCtjYwxmVZokaIR3BMaSw8ShuCS5hbtIxp5L7rnQQyraO4GfmQ
-	LQ7SdLDIANnCsJ4wv2+TzbEaI5M8=
-X-Gm-Gg: ASbGncuGWKKbFo0DaU4dVqrZ3l+vaKrXQ5omWf3D7AP0h1ga2CbqnHbOiP/eeEcigiP
-	Z9DQHaZ/KWapiwJDViw1fIbnIo5zYVg3tu6s41csyPjLpUVBjBDAc7m61M3Fkm7Lh3BQFZCVJdS
-	gQFJQAdCdon1/WgcjkuhWxJPEdfw==
-X-Google-Smtp-Source: AGHT+IFfF0WPiynY7L/JMlKt3aOD+drhtkQpAHg8KRXBtOzwTJ2kdZ/CImypmGLptIC1aJB6bgaJlhn7NWrtUmFYLik=
-X-Received: by 2002:a17:902:ea07:b0:224:1579:b347 with SMTP id
- d9443c01a7336-22780d82835mr25006905ad.7.1742583902713; Fri, 21 Mar 2025
- 12:05:02 -0700 (PDT)
+        bh=4nSFzAgQaMCuwvxmSdJkfWwEiaWngP9LwXhsN0dSMzo=;
+        b=V8bqQ1gGSld987kzaYnT5tOVAnqLjeOCPviUL12gKW10UyG7Bup13og0WQ6KlxI+1c
+         EKAcAC77njlqYazfIwRTUE/q2aBq5K3ZtAZwghN8mT0o5fvcBauSSn4yUG1CX+i+SmAy
+         GnWjiCeLUKs19ICWcEedqAm4FKDBLPnoAbD6p87KL3sygCimFhzUBmVxpnNv/RHMmBs2
+         Kmj18pSFjruaPUvukSjnuo6pXpAHuaA3yWXxlmor9UrhD0HAUlmGujB6RjiTNwTItxoD
+         xgMlgAwdS5twqpz8WNcgQtrGB5s136vILOorZytalaKusENbACSQc4pfkhejarfAVwfl
+         L5QA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8GtxcST8g6ya6G7SSptU/nXNg+nwT75w5mSlb4FIvrf9FkE8mjyQJOp4jlnNb15s5W1ce9vGYx81u2ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWsXxkaEyf+wbijyfC6ak36i2cBznCDeUVfU36GHUNpJktVwMj
+	1EDVhZ/ETASm1vrc4Rq4aTNO+FoppmsHpx7rpfodP22lSAdfk/yBpXAyYfaV+EkSPZZZYXHbSqy
+	48ZtlXR4vDgFOVaMPBEoicXIDEfonyaGvvjIv
+X-Gm-Gg: ASbGncv+SwtEtfdvUOiTm/vRI63GKQKTdlBomAKXHNx1xZ0VNHZfGqnUhznIj2NK6Cs
+	1oO974baQ3VHcJQxDkW9r+esEorB+6J2NnqG7r6724CH4hpVvhqx4Zi/hQ5g0kSybgPy2K+1doi
+	DZZEaUWhT8hN2POhON/rfmyoMIfQ==
+X-Google-Smtp-Source: AGHT+IH/+vybMPgjTy+Q/lR+WQGG9I7BYYRaZ8XGvbeWqhA0zAi7QHXEcXle+vpl3pUGz1AEgz4oOGz9sgmGVmlf3/8=
+X-Received: by 2002:a05:6902:4a8d:b0:e66:a274:7fff with SMTP id
+ 3f1490d57ef6-e66a2748117mr6225899276.21.1742583948895; Fri, 21 Mar 2025
+ 12:05:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316061429.817126-1-contact@antoniohickey.com>
- <20250316061429.817126-9-contact@antoniohickey.com> <CABVgOSkKD2Z60_+MoP_nu3YCUocvxJaohMBZpXy=_aavUZ99XA@mail.gmail.com>
- <CANiq72=jXTpoPAHhFC=T2SCyz3195=pG5h+-yohCCxdds-2hHg@mail.gmail.com>
- <CABVgOSmhMP4F74GuwRG3bWyumgF19WxmC=ymbehuWVD==OxdnQ@mail.gmail.com> <67dd9c7d.c80a0220.2d0437.7969@mx.google.com>
-In-Reply-To: <67dd9c7d.c80a0220.2d0437.7969@mx.google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 21 Mar 2025 20:04:50 +0100
-X-Gm-Features: AQ5f1Jpvyxmt1d9L20jGnAvbXaB55k7MlP28iVo1DJSdd1UYYF2ozSi8aGPpqI4
-Message-ID: <CANiq72ngWXcPnn60JFzqfY7pd+1UFmt+CAmg1q67VxfUnuiJfg@mail.gmail.com>
-Subject: Re: [PATCH v4 08/16] rust: kunit: refactor to use `&raw [const|mut]`
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: David Gow <davidgow@google.com>, Antonio Hickey <contact@byte-forge.io>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Antonio Hickey <contact@antoniohickey.com>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
+ <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
+ <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com> <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
+ <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com> <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com> <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
+ <Z92gTQj6QkedbH0K@kernel.org>
+In-Reply-To: <Z92gTQj6QkedbH0K@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Mar 2025 15:05:38 -0400
+X-Gm-Features: AQ5f1JoCVuy6gH5pZ3qt9eL4_YTiGz_EbkGoV-AHORqyWmdnqKeKo0JNC59Hn0c
+Message-ID: <CAHC9VhSi06azJ+b5YgLuDM6xff2401ArMM6LoP0vsqsUgz6VNA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 6:06=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
+On Fri, Mar 21, 2025 at 1:22=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
+> On Thu, Mar 20, 2025 at 05:36:41PM -0400, Paul Moore wrote:
+
+...
+
+> > I want to address two things, the first, and most important, is that
+> > while I am currently employed by Microsoft, I do not speak for
+> > Microsoft and the decisions and actions I take as an upstream Linux
+> > kernel maintainer are not vetted by Microsoft in any way.  I think you
+> > will find that many upstream kernel maintainers operate in a similar
+> > way for a variety of very good reasons.
 >
-> I agree this whole series should wait a bit, but do we want to merge
-> patch #1 as early as possible (maybe right after v6.15-rc1), so that new
-> code can switch to &raw since that's the direction anyway?
+> This is understood. If one takes a kernel maintainer role, one should
+> unconditionally disobey any vetting by the employer (even at the cost of
+> the job, or alternatively at the cost of giving up the maintainership).
+>
+> And with you in particular I don't think anyone has any trust issues,
+> no matter which group of villains you might be employed by ;-)
 
-Sounds like a good idea to me.
+Haha :D
 
-Cheers,
-Miguel
+> > The second issue is that my main focus is on ensuring we have a
+> > secure, safe, and well maintained LSM subsystem within the upstream
+> > Linux kernel.  While I do care about downstream efforts, e.g. UEFI
+> > Secure Boot, those efforts are largely outside the scope of the
+> > upstream Linux kernel and not my first concern.  If the developer
+> > groups who are focused on things like UEFI SB want to rely on
+> > functionality within the upstream Linux kernel they should be prepared
+> > to stand up and contribute/maintain those features or else they may go
+> > away at some point in the future.  In very blunt terms, contribute
+> > upstream or Lockdown dies.
+>
+> Could Lockdown functionality be re-implemented with that eBPF LSM? I
+> have not really looked into it so far...
+
+I haven't looked at it too closely, but the kernel code is very
+simplistic so I would be surprised if it couldn't be implemented in
+eBPF, although there might be some issues about *very* early boot
+(Lockdown can run as an "early" LSM) and integrity which would need to
+be addressed (there is work ongoing in that are, see the recent Hornet
+posting as one example of that work).  Beyond that there are
+policy/political issues around that would need to be worked out;
+nothing that couldn't be done, but it would be something that we would
+need to sort out.
+
+However, as I mentioned earlier, with Lockdown already present in the
+kernel, deprecation and removal is really only an option of last
+resort, and I'm hopeful we won't come to that.  We've seen some proper
+Lockdown patches submitted overnight (!!!) and I'm discussing
+maintainer roles with a couple of people off-list; with a bit of luck
+I'm thinking Lockdown might be properly maintained after this upcoming
+merge window.  Fingers crossed :)
+
+--=20
+paul-moore.com
 
