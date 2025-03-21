@@ -1,158 +1,206 @@
-Return-Path: <linux-kernel+bounces-570657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC9BA6B309
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C444AA6B30C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E8F189FA3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F19519C0A6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED31E4110;
-	Fri, 21 Mar 2025 02:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D52F1E51FF;
+	Fri, 21 Mar 2025 02:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kOqfawuj"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MNAu3Zw7"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B211E2607
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D9D1E32A0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742524662; cv=none; b=i/bhY6mW1mV/Ifswb/JbOVwOsqm5KOTQU1ZfP8xoN1ysf0Q5ImgduQxdbL4FYhhuECjRA6XKQ7EVumrCykpVorgQ7wvfad+WLhkK4n1vTucTDOVfYc5etlUQuhRgCOQDWZdZgFKZXm/pM405yAqQq8ll7c3kyERevMC5Au7aQxw=
+	t=1742524929; cv=none; b=opaGDTajPSG3VbuboXpcvpS3d8DQnbjhj7KZOCKRq2pPQH5Hgjf6HzFUyDJOxSNGMD+ndqcAGuZa9BDVrDYMVfR6emqY0LbB/0VRiB+vomppUmIQvWf0mAI3Me63BQxIq9/wJmiWlPPPj5zXKcsBP1bYZvmGMFfD2c3CqVcXeQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742524662; c=relaxed/simple;
-	bh=NzL5MhoyxILoggYXwncLpBDKP6RUCP+scqKZXIhJJXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrgQsfoTT3F1ckq8slcAMj/4AhLGK5b6NqLF5Idh3xqkpimgjDPRldZKKaSdRsABU5MFtjluvPID1ZbefEJCjGf0q7f5a0WlHOMJLdA+B1tkB6qWdFt9hxuZjVscmfKYAmzkRMsChaemOala5BvCZ9NhtvFikWPU8bKZM0jnAaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kOqfawuj; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0884C3F22B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742524653;
-	bh=/TiJpfdGOANNODirv3oI1N0gAlEn2jC9qPa08xzAIEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=kOqfawujIVX5EAil70LGoFJQlkHBigluq7zraY7wB3rNgfvCYo5lbqKsSUs1zxGGC
-	 yU3fnw2fdjPMSZD5+ewde5ssKHWgsFkzmYMSJLWRgo1BxdoIJcSfsB5tG4zpjweWq4
-	 OR8wzUAX5vVgs/Sj1bTDp/80UEwV9vKNSF7FpczbyGuSGVF9/OXhie6jKAhoSP+FQl
-	 kArFgLqoCx/bMOnz2B/Io2hF6yDvsRW5XbbqM04AnW9Zn6x3YOW+05UWy11+BI29S0
-	 3LoNyPl3KYThrYdX1Hf9WN2z6UCBueuaR9RmzL7qrEjDRDrHxejM1NJ0RutaYlcV9U
-	 lhYgoTJ0p89LQ==
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff8c5d185aso4354695a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:37:32 -0700 (PDT)
+	s=arc-20240116; t=1742524929; c=relaxed/simple;
+	bh=GqXRT9Mj0QQF8+zoU//BIotvHNU6s/WomEB85g4+M8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jvedrv9YNi67TaFsCa3drm3zYzIXpC57ecooSw1Sr0RhOxwgpoyasTzUQrwYTZtiXYzhGTGGHO7+0vI5rgu3Y8SQDqFJrkkaJZRx0rQ7pnre0DFMNW5JoGRlyLt28DyjGaA0zAyBvoy2aeI+Wb42+NX46zXUUyXzoJOWPcW+nXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MNAu3Zw7; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e789411187so3203a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742524923; x=1743129723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5O8FFjA3hcgQ8XDHydtzreoc5IOsI1FD+LSzQZJbGkI=;
+        b=MNAu3Zw7IncQiRxhNZx1NpYjESDIjcrvCCU6F66d/xbcHM3RYiGD2dr39iD1p7/RJT
+         HiE69v/ZEcsj1yMwUzcTO8HHdUIzpxiUYMrzt0thiaEjSKS9ZMTt+9WAiOuwbhEfQDTL
+         Te0M9CHefiLUQiqVcwej8nQeG+w4XrwWDWBzx+dMTBaHWVHebk7SIV96NP7ks5M3zSyB
+         ZObM2rIKluqOLs8LB6/mKu+ZnOYcg9ya02rHYPfafOZU9zx/ncHAE/VpPcS3gddYHFe4
+         mZQHVH4z+zZ0/jC3/6sHWofPmfRWfR5QLoEIGsAkvkyM0WYMK/e+sH9dFxM6f3XOsOn2
+         Jflg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742524651; x=1743129451;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/TiJpfdGOANNODirv3oI1N0gAlEn2jC9qPa08xzAIEE=;
-        b=qa1NMoK0/aGYB2p5h5UgVMtbVVapTDfuwIZf60DIm6nWsbgY3TMv1x+DZ4hJRPdL2b
-         HqR0rZyZ/wl7oTwWVMY9jLcW1ZXhsF7uMPLLS/vg7MHm8ueq8oW7twArqQIvjdrbYJ+g
-         NGe0Zdk0wDPk8VZVL3mCQEdqFArAVXUvzTI+TrvMieukuSgRnUhjcen0bGcvnjS0Qrc5
-         pSPgDLcGuhBM85h77jFITA29RIsA+diLPvlIj6H1INasqixZLrs3GD7kq3k9hRQyu8Hr
-         21U/ps31n83XEZnBsyz/uSIJLkamM4oY6PpFXW2J6KdfLI+MediZQjnRPXQXnoUsPgNb
-         kwzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8GF9JBcsBilgGeGwHhVlZ+VUzIvJ5yMnaa0Mh3a0HlxDvoj2cfRlsmqD+ZOCx8eZMXIEQBdlczXv6ly0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhmdaWv8zeTuULX+EMKXjb0gs1RjQia1ScJr+eqPOh9Qefmy7b
-	yPHBI0wHkdIGQvkcp/cTXmRJqoSzCZy3j/h8CxuVwVNDBGZaWAaoYxm1+Q4m95FemVUopehsXmR
-	N/gdwd63KiawyLo35yL2+xFtEAFnLAj3OsIJE0/sEC5O19Ybd1QXLp8JacEC4/FisHEiCfNXvdm
-	dJWw==
-X-Gm-Gg: ASbGnctxcNkS+V/eoFr6c/ZLQsJH19mz96uI51cDOCiOYKuXyTzNWLOsjBiscd/WM9w
-	VA7Md/STQipF0NIFp+qhh0CgL2J6dGuBdSMk2wEdvw3f9ewr3i8YwqF8B6+W+asvTMY2PgsIrer
-	vny0QuAFBnYeAPi1ChAfB94oEmAugy7teAdFfYLqrv2vOBVCY8TmJWvrrGGxfX1pf3z9SnzLSKU
-	eHmgq0vMpy5/mlNeZodRjKfyUmOtW6UPtGD8ghBrFVL6cutkRft99yNzqEAg2G+JlxRulxFP8um
-	zcKOKnz4VNKXgGJkdw==
-X-Received: by 2002:a05:6a21:6e43:b0:1ee:e24d:8fe3 with SMTP id adf61e73a8af0-1fe42f358d7mr2755643637.10.1742524651647;
-        Thu, 20 Mar 2025 19:37:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvh8o1abtTk5AEN91MvJywHrX4XvpZuDt/ZutsnhnUVS0aKDkLwlwV0igeqbDfx4zZcjJy2w==
-X-Received: by 2002:a05:6a21:6e43:b0:1ee:e24d:8fe3 with SMTP id adf61e73a8af0-1fe42f358d7mr2755616637.10.1742524651297;
-        Thu, 20 Mar 2025 19:37:31 -0700 (PDT)
-Received: from localhost ([240f:74:7be:1:2dba:1af7:27b6:24fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390617fa4bsm612699b3a.157.2025.03.20.19.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 19:37:30 -0700 (PDT)
-Date: Fri, 21 Mar 2025 11:37:29 +0900
-From: Koichiro Den <koichiro.den@canonical.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/9] gpio: aggregator: add aggr_alloc()/aggr_free()
-Message-ID: <llbybv6dpkfrtir75dveqnphrj6nuephvkoyywy6tx6vfbunl2@ft5io3thby6v>
-References: <20250315164123.1855142-1-koichiro.den@canonical.com>
- <20250315164123.1855142-4-koichiro.den@canonical.com>
- <CAMRc=Md8nB1U--qcZxpcKVzxTcON2hi-pmsUKFn+aBEqHuBzcQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1742524923; x=1743129723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5O8FFjA3hcgQ8XDHydtzreoc5IOsI1FD+LSzQZJbGkI=;
+        b=DBRrmdhtYlGzzi2nXjaLcpqOAqLaGJEF81rTbfylDzQnHCKzou6Ir5GdZ8DSxh1lfe
+         SEftGRfphnK1fMVi/K2A+KVMCbutZBcOl3pNhgufyhhrqorhRl3sNP7P8DqaPEEIUU4A
+         2DN0V04D1VxgC2vNepZjmx+mKnjQXrQJPcWyZqxdNb0vN++IZS72ysM+JjDnx9qfvGIa
+         DyXSx79AhlWiPjztjml3OIWTTc5CFMnA7t1gA79YOEFo5PkKFSZWKqao1OIYoxfusT+s
+         ffVYMiAnoso4b4WR+tHbST7VVBymyHf2/VxrNPjKcxtRXqOO3DRZ4yKepi2XVgHwhYmz
+         m3TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPgWzATKYU+WiousdxoXT2SgCvI1Z1YLavuQYowjl4qzYY3aQYluSoGo6/oI1NYppiUTODVw0AEUu5OF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkMX/Q6T7hdUx+TLNp1ATF18nEDa/VoyEM64AVrRpmAMxNAnmX
+	QL2uhkEfKtcXZ8chyFB1+ohTNv7fvZ0W/PLXtlK25jnDsR103W7O1WfSNvOtGb+wwqIt8uHhsic
+	lSi3hh3TWEdqpHcOj0BpUV6Af80Z69ZlFK6dx
+X-Gm-Gg: ASbGnct2rCswn1ajAdUoidpY5vuNhI6zVUXdlFFfhWuu9vwN8AlJe+Kk0AJ7wyVqUc4
+	1P4m5NlJVE6DQJxbBXAXUxChrAEEGltf3HIbPpaVjbybIMnjfQd/rAuB9NQ7VcqntosVzx+fqLK
+	PKBBKXsrvGf9/nrRMEvf8Fh6/g1YpEYFJaGNn+BdEEWJIANxPnfNiwODc=
+X-Google-Smtp-Source: AGHT+IHOXKmMdZDx/zHgype/m05qi/GswNz7l+pOv7uCTCxdggJGQMw2FvJ3qLXemOkS/xcOSlApQYGzrEpAGMI2DMk=
+X-Received: by 2002:a50:d607:0:b0:5e5:be08:c07d with SMTP id
+ 4fb4d7f45d1cf-5ebcfee3421mr30310a12.7.1742524923099; Thu, 20 Mar 2025
+ 19:42:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Md8nB1U--qcZxpcKVzxTcON2hi-pmsUKFn+aBEqHuBzcQ@mail.gmail.com>
+References: <20250318214035.481950-1-pcc@google.com> <20250318214035.481950-3-pcc@google.com>
+ <CA+fCnZfG79JmGG9rj7KbE=9yX-EM4e8CXDSm5F9=YEmgyX5v3w@mail.gmail.com>
+In-Reply-To: <CA+fCnZfG79JmGG9rj7KbE=9yX-EM4e8CXDSm5F9=YEmgyX5v3w@mail.gmail.com>
+From: Peter Collingbourne <pcc@google.com>
+Date: Thu, 20 Mar 2025 19:41:50 -0700
+X-Gm-Features: AQ5f1Jr2sdg2WCeju5nnmXrNh9jqK16Q_xv8y9FFZD-yPNesP3YY2srT1TECdII
+Message-ID: <CAMn1gO4k-d+8ZwndJhF5Sudr+kWDABe+3Wq=iBhcg3tDwJ60Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] kasan: Add strscpy() test to trigger tag fault on arm64
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 04:51:04PM GMT, Bartosz Golaszewski wrote:
-> On Sat, Mar 15, 2025 at 5:41 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+On Thu, Mar 20, 2025 at 10:25=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail=
+.com> wrote:
+>
+> On Tue, Mar 18, 2025 at 10:41=E2=80=AFPM Peter Collingbourne <pcc@google.=
+com> wrote:
 > >
-> > Prepare for the upcoming configfs interface. These functions will be
-> > used by both the existing sysfs interface and the new configfs
-> > interface, reducing code duplication.
+> > From: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > >
-> > No functional change.
+> > When we invoke strscpy() with a maximum size of N bytes, it assumes
+> > that:
+> > - It can always read N bytes from the source.
+> > - It always write N bytes (zero-padded) to the destination.
 > >
-> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > On aarch64 with Memory Tagging Extension enabled if we pass an N that i=
+s
+> > bigger then the source buffer, it triggers an MTE fault.
+> >
+> > Implement a KASAN KUnit test that triggers the issue with the current
+> > implementation of read_word_at_a_time() on aarch64 with MTE enabled.
+> >
+> > Cc: Will Deacon <will@kernel.org>
+> > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> > Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Co-developed-by: Peter Collingbourne <pcc@google.com>
+> > Signed-off-by: Peter Collingbourne <pcc@google.com>
+> > Link: https://linux-review.googlesource.com/id/If88e396b9e7c058c1a4b5a2=
+52274120e77b1898a
 > > ---
-> >  drivers/gpio/gpio-aggregator.c | 58 +++++++++++++++++++++-------------
-> >  1 file changed, 36 insertions(+), 22 deletions(-)
+> > v2:
+> > - rebased
+> > - fixed test failure
 > >
-> > diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-> > index e026deb4ac64..2692a31e01ac 100644
-> > --- a/drivers/gpio/gpio-aggregator.c
-> > +++ b/drivers/gpio/gpio-aggregator.c
-> > @@ -36,12 +36,41 @@
-> >  struct gpio_aggregator {
-> >         struct gpiod_lookup_table *lookups;
-> >         struct platform_device *pdev;
-> > +       int id;
-> >         char args[];
-> >  };
+> >  mm/kasan/kasan_test_c.c | 31 ++++++++++++++++++++++++++++++-
+> >  1 file changed, 30 insertions(+), 1 deletion(-)
 > >
-> >  static DEFINE_MUTEX(gpio_aggregator_lock);     /* protects idr */
-> >  static DEFINE_IDR(gpio_aggregator_idr);
+> > diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+> > index 59d673400085f..c4bb3ee497b54 100644
+> > --- a/mm/kasan/kasan_test_c.c
+> > +++ b/mm/kasan/kasan_test_c.c
+> > @@ -1570,7 +1570,9 @@ static void kasan_memcmp(struct kunit *test)
+> >  static void kasan_strings(struct kunit *test)
+> >  {
+> >         char *ptr;
+> > -       size_t size =3D 24;
+> > +       char *src, *src2;
+> > +       u8 tag;
+> > +       size_t size =3D 2 * KASAN_GRANULE_SIZE;
 > >
-> > +static int aggr_alloc(struct gpio_aggregator **aggr, size_t arg_size)
-> > +{
-> > +       struct gpio_aggregator *new __free(kfree) = NULL;
-> > +       int ret;
+> >         /*
+> >          * str* functions are not instrumented with CONFIG_AMD_MEM_ENCR=
+YPT.
+> > @@ -1581,6 +1583,33 @@ static void kasan_strings(struct kunit *test)
+> >         ptr =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+> >         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
+> >
+> > +       src =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+> > +       strscpy(src, "f0cacc1a00000000f0cacc1a00000000", size);
 > > +
-> > +       new = kzalloc(sizeof(*new) + arg_size, GFP_KERNEL);
-> 
-> Please prefer declaring the auto variable and initializing it at the
-> same time. Should be:
-> 
-> struct gpio_aggregator *new __free(kfree) = kzalloc(...);
-
-Thanks for the review. Should I send v7 for this change?
-
-Koichiro
-
-> 
-> > +       if (!new)
-> > +               return -ENOMEM;
+> > +       tag =3D get_tag(src);
 > > +
-> > +       mutex_lock(&gpio_aggregator_lock);
-> 
-> If adding new code, please use lock guards.
-> 
-> Bart
+> > +       src2 =3D src + KASAN_GRANULE_SIZE;
+> > +
+> > +       /*
+> > +        * Shorten string and poison the granule after it so that the u=
+naligned
+> > +        * read in strscpy() triggers a tag mismatch.
+> > +        */
+> > +       src[KASAN_GRANULE_SIZE - 1] =3D '\0';
+> > +       kasan_poison(src2, KASAN_GRANULE_SIZE, tag + 1, false);
+> > +
+> > +       /*
+> > +        * The expected size does not include the terminator '\0'
+> > +        * so it is (KASAN_GRANULE_SIZE - 2) =3D=3D
+> > +        * KASAN_GRANULE_SIZE - ("initial removed character" + "\0").
+> > +        */
+> > +       KUNIT_EXPECT_EQ(test, KASAN_GRANULE_SIZE - 2,
+> > +                       strscpy(ptr, src + 1, size));
+> > +
+> > +       /* Undo operations above. */
+> > +       src[KASAN_GRANULE_SIZE - 1] =3D '0';
+> > +       kasan_poison(src2, KASAN_GRANULE_SIZE, tag, false);
+> > +
+> > +       kfree(src);
+>
+> I have trouble understanding what this code is doing...
+>
+> So the goal is to call strcpy with such an address, that the first 8
+> bytes (partially) cover 2 granules, one accessible and the other is
+> not?
+
+The first 16 bytes, but yes.
+
+> If so, can we not do something like:
+>
+> src =3D kmalloc(KASAN_GRANULE_SIZE, GFP_KERNEL | __GFP_ZERO);
+> strscpy(src, "aabbcceeddeeffg\0", size);
+> strscpy(ptr, src + KASAN_GRANULE_SIZE - 2, sizeof(unsigned long));
+
+Yes, something like that should work as well. Let me send a v3.
+
+Peter
+
+> Otherwise, this code needs more explanatory comments and it's probably
+> better to move it out to a helper function.
+>
+> >         kfree(ptr);
+> >
+> >         /*
+> > --
+> > 2.49.0.395.g12beb8f557-goog
+> >
 
