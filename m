@@ -1,99 +1,164 @@
-Return-Path: <linux-kernel+bounces-571322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6323A6BBB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:27:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD05A6BBB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8543B6950
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF19189283D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E3E22B8C8;
-	Fri, 21 Mar 2025 13:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCE222B584;
+	Fri, 21 Mar 2025 13:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZ7nIWn1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="biNfksZS"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E970122B8BC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED56822A7F4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742563615; cv=none; b=f664hlq/DMY7C2fjgJs+MZ4yherDaCCIVKXbsJUy+tCVZWTPhASUGbXfHCNRvqj9WxCjrD4FLCCruuVjzYPy/ZITYaEsM7XxtXeLmD3VQGCRHZ2Zdld8aSUPbqv+hV9JkEEvWK9BKXg0QH68qkzbqA31PuEFNsWHwhj46HYFqaE=
+	t=1742563610; cv=none; b=MXdz+T3t03vTjP3Bxh/nEwXi7efnkaO4kJrZOSPX0qiA0IqdkPVU4XabEp3g+kchHUsPwrFu0vweldp9k2WA+FoMT1W/zj5nW4dKsGlDN1fx4V59TnEPWEMBOtfj05w18uOtqtJ+q5bCAti1PqTiO23G6Yj1FyaZQUbSmsZpJaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742563615; c=relaxed/simple;
-	bh=WStLqp1ynSLWMVQyUpuz+64+OhpFnQ6C/9pDM62Nmtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thPULynDW2dvDw17CufxsTCpozVIXhkpUSHdiJGZcUTqfOPtK7OijSijBYutzQsUK2Hp6Eh879n+tEWmPfnWk0m1HsNJcc5G+q9nlnwZnpC/vkH1oubesTN6O6JrGpu0WsuEq0o65UGWkIJPxTNhC9ypSYz8gD6Qh518k0MoSZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZ7nIWn1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB551C4CEE3;
-	Fri, 21 Mar 2025 13:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742563613;
-	bh=WStLqp1ynSLWMVQyUpuz+64+OhpFnQ6C/9pDM62Nmtw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UZ7nIWn1FdbOiqQTlwmzlTSSUH4YkroaUwwwUlRTOv5LntAydivVehC8Id7POrCDr
-	 V0lXXeM3mSvn78BL1Arg9FyUOfNs4fifWc1WYi7fai4gQVTsHYF65sXI5ADL46IfsN
-	 PfmBL2SEH0yD43tSsa2QI9YTDJatCqZczwqYyQbgGe7wuM95P7VSrSSPFgqeFrAiCV
-	 UBIS+MCrzW6AxRGSfNVF5vAXgCdH9BsefLpNy41AjAC+rVz+xY85Mp8X0cqrbSBWvG
-	 2YYDaQNpc/4tNqOcdD/GjFoxmDt4KfqQW2+JzC56alzHz5H6dw+MIHyyqXTsLqAnHg
-	 AyVeSX37/zG1g==
-Date: Fri, 21 Mar 2025 13:26:43 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/include: make uapi/linux/types.h usable from
- assembly
-Message-ID: <Z91pEzSpbMn170Ku@finisterre.sirena.org.uk>
-References: <20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de>
+	s=arc-20240116; t=1742563610; c=relaxed/simple;
+	bh=xMeqGv/jZySimNc6vELEg0wI4OT6OHTVxuOS/HRWpzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mYal6y7vw6yIceIc39+wxuCCBXRwPxo38cEC59/ttK0M4ETuLEL3DLqsipDozT41YKmxVHxYmyp+B5BqgI6qRew8EwTBVRs0LPMGlLp7mH9/cRc2W4GFLQqTR5EtzttdiFvNvYf2qvgy6h/dtHV/c0NQqHVD8YE05YUOpnJ4y4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=biNfksZS; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913fdd0120so1182212f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742563606; x=1743168406; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x+nfdqXMXDIXPRHZvpsBbeClbsVJF3/i4egLlwdwO+s=;
+        b=biNfksZSvhyJhkN3QGe/C7UTbAt09uwc8cwvp2Y6ZEhKEC8sIJjyhkaZublPCme9cc
+         4VkG+kD3NjeqI1WeYcYx7iK03nFz96JmEe/l0FFtl3WqhUraZ2HhyF5tHJ/PcLEkgNOZ
+         Lrm1SbYlkdeJJHzn1EuU6yx7IlObdv/x7p7XfyJXafSAMbaECbp2R1SPtmdjC6xFwdmF
+         IFzt2uEzaOUFyH2gh+kWeP981x8KvfdVyZ9/NwNLaKEON9J0L0RuLe7Cevka1JmRkBgy
+         TzRHdUEzGByVmtEnwzc3LoYJJaFrS09R3mHWkpZIsKD5ep/T4S1dnn8k8KWTCrsnfUOo
+         mM8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742563606; x=1743168406;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+nfdqXMXDIXPRHZvpsBbeClbsVJF3/i4egLlwdwO+s=;
+        b=YuntFcIiIOkVw74yjZNxdTwJcIhfpWo92bgQpUBPNzweGAdJG41tH/rYpUsByGEYgH
+         vV+0GE/cAg7yvBLN2R2BPpQh4eYMLGWHFQkTWkVIDXINW8TGRzCoC/zADFiV/4HI8LUn
+         fHb44iaxUL1dcRFJ16L/o5D78aOoVDGYhgts6pJWZXb5/srZL7QbiZyfeBQfTZFu5awX
+         8sMH1B+TYPXXN6+khj74v7vt9X0h/rjqUOhOkwKfk4OMTPKBryVyzXAzzMWcF3M4+ws8
+         V4QZ2DG0I8i70aQx8Z6SRY/n5RCeVutmOPI1ofVd4CW1z9e48J5LMoa79wwLTISUBqLn
+         XWag==
+X-Forwarded-Encrypted: i=1; AJvYcCUZH4iJ8Y9xOjJZOIcuJPZBCAoTl3JXP5xUDQYO821ST849jnfFPqPe21enHJzCQTgzHmzzqAq0NQq7lKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBgbWbq7OifOabzGFTHz4lNNyiywVnMBJxO3TuLq6BHhuAVIgK
+	eMOV76DPHoKABzoR2ucYCynrTk6DFveXfdqDgE/C70jlqX+jTBxurvAgdsorBo4=
+X-Gm-Gg: ASbGncvFwZpBFtcJzdr3+kwhv0x2yGr4NP3bnEGqabTiu6iM/p5+w/fZ0SoNwZ+uwcr
+	7MR7ZP6e97dXdsaNy2eMbQF/XslLTUo40evW5vfK8zQVOx1QAEBLeWcbORzqT5DjYswp4LGXGnn
+	yuIBOma2uxbpu1hUJHhTqa4Nt7LDHDF5C7gqyuh5+0VRjzHJE6rT+rzeroBYWfPYrx2Vq2uc+G1
+	qtyhk7bl3kQAJspSsI9MkKkJnNS9uP3p8RdRgjhcDYnAQAuuM+r+IruNED6eWhRQm2tuH9Chvl+
+	zSYxSYvoracb1+WIfF/hAFmsTiwF6HQ9lznYCVru/nob9tgSGL50+x4V/73O5Z4Sx6swJRdcBQ=
+	=
+X-Google-Smtp-Source: AGHT+IFItBfdiuwTpyaV5kuTi/ldTSC9Nx5SxBw7qLGhnUVc61bpqSJwTkGLSn5VdoJA25gliLrfGQ==
+X-Received: by 2002:a5d:588e:0:b0:391:4674:b136 with SMTP id ffacd0b85a97d-3997f90e00cmr2957330f8f.29.1742563606193;
+        Fri, 21 Mar 2025 06:26:46 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f9a3f81sm2419531f8f.35.2025.03.21.06.26.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 06:26:45 -0700 (PDT)
+Message-ID: <1d93f731-66c1-47b2-a249-9bdb25205525@linaro.org>
+Date: Fri, 21 Mar 2025 13:26:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="npBknlLH1QqjidJC"
-Content-Disposition: inline
-In-Reply-To: <20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de>
-X-Cookie: Well begun is half done.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] ASoC: codecs: wcd938x: add mux control support for
+ hp audio mux
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
+ krzk+dt@kernel.org, ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, johan+linaro@kernel.org
+References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
+ <20250320115633.4248-5-srinivas.kandagatla@linaro.org>
+ <rdvsnxuc6by6sci56sh7thzpxo5cqi7q24fnmc7hi5yrfszwrg@kqjpiilko3xo>
+ <b1aed195-b2e6-4f48-ba10-3049d74085a9@linaro.org>
+ <CAO9ioeWLRfzUOwjnFsi_yztdJo2Q25bhvjddh6D3naV_K5eShA@mail.gmail.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <CAO9ioeWLRfzUOwjnFsi_yztdJo2Q25bhvjddh6D3naV_K5eShA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---npBknlLH1QqjidJC
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 09:31:17AM +0100, Thomas Wei=DFschuh wrote:
-> The "real" linux/types.h UAPI header gracefully degrades to a NOOP when
-> included from assembly code.
->=20
-> Mirror this behaviour in the tools/ variant.
->=20
-> Test for __ASSEMBLER__ over __ASSEMBLY__ as the former is provided by the
-> toolchain automatically.
+On 21/03/2025 13:16, Dmitry Baryshkov wrote:
+> On Fri, 21 Mar 2025 at 14:35, Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+>>
+>>
+>>
+>> On 20/03/2025 14:03, Dmitry Baryshkov wrote:
+>>> On Thu, Mar 20, 2025 at 11:56:32AM +0000, srinivas.kandagatla@linaro.org wrote:
+>>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>>>
+>>>> On some platforms to minimise pop and click during switching between
+>>>> CTIA and OMTP headset an additional HiFi mux is used. Most common
+>>>> case is that this switch is switched on by default, but on some
+>>>> platforms this needs a regulator enable.
+>>>>
+>>>> move to using mux control to enable both regulator and handle gpios,
+>>>> deprecate the usage of gpio.
+>>>>
+>>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>>> ---
+>>>>    sound/soc/codecs/Kconfig   |  2 ++
+>>>>    sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
+>>>>    2 files changed, 32 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+>>>> index ee35f3aa5521..b04076282c8b 100644
+>>>> --- a/sound/soc/codecs/Kconfig
+>>>> +++ b/sound/soc/codecs/Kconfig
+>>>> @@ -2226,6 +2226,8 @@ config SND_SOC_WCD938X
+>>>>       tristate
+>>>>       depends on SOUNDWIRE || !SOUNDWIRE
+>>>>       select SND_SOC_WCD_CLASSH
+>>>> +    select MULTIPLEXER
+>>>> +    imply MUX_GPIO
+>>>
+>>> Why? This is true for a particular platform, isn't it?
+>>
+>> We want to move the codec to use gpio mux instead of using gpios directly
+>>
+>> So this become codec specific, rather than platform.
+> 
+> Not quite. "select MULTIPLEXER" is correct and is not questionable.
+> I'm asking about the MUX_GPIO. The codec itself has nothing to do with
+> the board using _GPIO_ to switch 4-pin modes. It is a board-level
+> decision. A board can use an I2C-controlled MUX instead. I'd say, that
+> at least you should describe rationale for this `imply` clause in the
+> commit message.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+I agree to you point, but historically in this case us/euro selection is 
+only driven by gpio. But I see no harm in moving the MUX_GPIO dependency 
+to machine driver KConfigs.
 
---npBknlLH1QqjidJC
-Content-Type: application/pgp-signature; name="signature.asc"
+Will fix this in v3.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfdaRIACgkQJNaLcl1U
-h9AxzQf/U1WhvPlqdTlxtKA91CimreaLN2n4ZKluU1rRzu0LrHuBbv3kEbzpBDmJ
-oeuppRPEESGst/k+8wyCD5F9/JyqtqSNADYTteaLwMFsA3fWAvI3K39Avf2eqbMc
-XTkpVJ/xKChQY7ruaI06F4uSvDGTC6BMTnGimdxvnc4ld/NgPaTkxfv29lzpRjWR
-dXs2sTjy/DV1Kh3CRKGeIyPOAdg7B0Ax+2DhIOspNnbomQ2rQe28fhLjC7I1GnrL
-V6VZLNEFmkhfBRlgBRBoU+01WAHSNSqPElVNvuDGvte8/Pk6xag2LjYibgfx3peA
-oAsy0csE1e9XNBwMfucXrpxScw2wEw==
-=9UyS
------END PGP SIGNATURE-----
-
---npBknlLH1QqjidJC--
+thanks,
+Srini
+> 
 
