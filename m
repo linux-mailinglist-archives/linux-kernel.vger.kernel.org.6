@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-571183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3FEA6BA32
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:56:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE13A6BA34
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2D53B0B8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EA64871AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095A6224B0D;
-	Fri, 21 Mar 2025 11:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13C92253BC;
+	Fri, 21 Mar 2025 11:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHz2ZLlh"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sM23YSNb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7AA7494
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA671E7C27;
+	Fri, 21 Mar 2025 11:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742558158; cv=none; b=Mx2A0PSnBvFW7lm1mksJ1iIwAUgyS4613Z0wvVMsn0DSTeHEFgfCBxmEM34sk1ugfd9FEEusVZbkpkYxIQJ/9D7n10d673BJXKmpOWPd7f2lGvGImBDMQ5UH5+lQw0S3q7giK843CV5wrMv96CMPK5aCWhoWuknvF8VfwJxpvKo=
+	t=1742558377; cv=none; b=SJMeS1qvhIyukFx3OGWmDV+zFAtbegtno4MKdXha/EeK17qXTcm8d+SoIlB0FozmjNavXhk/oinFn6P/KwAHXU+rtetDDCE/f4oU+8/TwSUHj72WPhFZZyxxp7F04XS+drbqvtVUhoyvm6PeRvbifYXOAqFFOADr8r4kdW6GAX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742558158; c=relaxed/simple;
-	bh=tPboUf0Zr+l78s8Qk+IxHCsImOBRnA97c2p4L+E040k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PyiGCQOxxLjiHJQxJKmi2tsqkMPS1v/s0MnSd6szPQfra8SkvZmYP/dN4z70ixq11WdbxmMa8Q5JJsanJ5eIZz+1fK+KQa9C/mHRrGPKSNwQZeSpWCGTVnZLy04erNWt/qN9fcqrzEUnOH1/jX93TdunheuT+VH56+stQi1OoNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XHz2ZLlh; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39149bccb69so1753473f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742558155; x=1743162955; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4sDOHOmH2F/18zOsLI6QpBEwsBgeSty8cc2NNHzyKU=;
-        b=XHz2ZLlhGNOAu967APk+ptuLGGWrc61dAM2sa+7Ciy5lDj23gDkVZeoQGu6REG+XHR
-         Be0J08c5iuWVN071WxX8flOESYEjKQz6HeaT2wHVkRK7/An7H9G/yJRTNuBix3K2pCDQ
-         Q1ovR8gYf/CFEgyV+8J13ZJ6EhCtiQLaW03K+JmYtr52dhq9E6dd60YuQ3x2X+1D6ehg
-         0dxZbHk79aR+0zzNK47DazRuhMWIZzZb0+B++tdVJx4wnEsr6sXXlOKXMhNEUXMHywsG
-         ROgIVy+dkIKVAXz07aXdVjm5yvrJpnMK9Lf4yW6VoKxx71jucf9r9E7Lm/RtYRCyaGze
-         pWyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742558155; x=1743162955;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c4sDOHOmH2F/18zOsLI6QpBEwsBgeSty8cc2NNHzyKU=;
-        b=thMRx+Yp8+497QqL4TRVsNoYpHu+kxA7mul/Y5NOFp4YblfalsAJAtqEfFQsRhlbbA
-         ovjnNGoclT7/yKYo3+4+xp1uUwrevBEi8TSB0nJlIHmb/dGtzMe1opR9ij5Xq/O/KbMn
-         vvj/uQ+RSne/iIlGX3mvqSTaZob/EFw9tdAqW2DXyWXa7BXJbtBTYRG0FbZC3mqsCqDQ
-         EPaArYLm6rinmj/T5uYchkTlsxLSNJPCYl6znVD5DpQj3hZR1rVnYtIyb64Hip+9uEi1
-         oexipdmnGKWXpVhpl6w213OBr7RhZJCi66/kFeYrlHonpwXJCELk9zDkXGCBxByIZyK2
-         nQRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrbB2d7i3nPyfYkDJuZobxOWqpW71XOHh1tjkQ1pl8XZ0g8VBcA9ALR0zlCcMGz9pr9a8NWFr/p4zyLX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC0SNmKYwjP2HTQJiZ2apVzb0GZeTkJdss00g97D+lUKJSMCzP
-	K52HFnjNkhtXhod8eo/k132rEO5FjzELQ4yyCUGgp274T2c2XQuV
-X-Gm-Gg: ASbGncuYC57/gazXRDt6xlpopTWxvb/iLno5YrPJf99QuRTC2Z6mD7yyCcSFuQBleu7
-	KCKXrgcRJDSKOnUzuQZEtVPDuPERh4urzRARscaPzyK4l/lMWvNLrfPt8KcStLuXSG4aiFu6LUp
-	pZawsYUpp+qQOw2+cGtrlxCgax6CC9TexWKuRoTbamaBTgj7pjoemeAxMugldaoiGhqxSu4eZBq
-	M1thGN+ft/MLrDc26svfU0nvznE3zIZfiAyQoUtBqUJP9ESCrFytJXFvtRxF3oqmwy4bkurFyZJ
-	X1UGOKGaW0uBCq2LqrRK4XJg09v2wLWVWqlTj3ktWA==
-X-Google-Smtp-Source: AGHT+IEGpQVJLgp09GpEuzAgmZJOX2/jxZFFMYn1wXHIxrgy8GYpeYc/67utxdndf3QlfJj/lUeemg==
-X-Received: by 2002:a5d:5f85:0:b0:399:6ad6:34 with SMTP id ffacd0b85a97d-3997f9390bemr3262333f8f.35.1742558154743;
-        Fri, 21 Mar 2025 04:55:54 -0700 (PDT)
-Received: from pc.. ([197.155.71.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9ef23esm2148164f8f.81.2025.03.21.04.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 04:55:54 -0700 (PDT)
-From: ErickKaranja <karanja99erick@gmail.com>
-To: hvaibhav.linux@gmail.com,
-	johan@kernel.org,
-	elder@kernel.org,
-	gregkh@linuxfoundation.org,
-	outreachy@lists.linux.dev
-Cc: greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	ErickKaranja <karanja99erick@gmail.com>
-Subject: [PATCH] staging: greybus: fix line length issue
-Date: Fri, 21 Mar 2025 14:55:45 +0300
-Message-ID: <20250321115545.24468-1-karanja99erick@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742558377; c=relaxed/simple;
+	bh=oGvz3k8LBIe38TPWT/uh0M30dGfNLtDrv3HQTfczeXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5qSqbHvrHaXYoS0OvukHoVR6g4NFqNNzGYyi5QUb6Repp5tPSkBpum5vrKFwxi6BjHRSmetJAr5XjRnmUEUn4l2Z56SqAg6CiFVg2FR5+uJO7BYxBK9pmOAAARq2eyMb3BKBcAxyCUtc1h/uoL3Msj2bdMTPgMNVi3PQz4d76o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sM23YSNb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [157.231.223.213])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6143EF6;
+	Fri, 21 Mar 2025 12:57:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742558269;
+	bh=oGvz3k8LBIe38TPWT/uh0M30dGfNLtDrv3HQTfczeXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sM23YSNbNPdKBs0as59XVRS6bBNOhOkBbs56mabpZz/6GoYzO9T3gEsD13j9vmXf5
+	 4+OzD7AmHejIrOoi7Z5KT/Mk7q/WqiRpQWmXM9OEImu2Ne0XH+Vhr4McTHgiQA2iEG
+	 l/NgC9J7cY8tyfu1it+ELvUo8Rsjovf6OLMiL0OM=
+Date: Fri, 21 Mar 2025 13:59:11 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] media: vsp1: wpf: Propagate vsp1_rwpf_init_ctrls()
+Message-ID: <20250321115911.GA1752@pendragon.ideasonboard.com>
+References: <20250319-v4h-iif-v5-0-0a10456d792c@ideasonboard.com>
+ <20250319-v4h-iif-v5-4-0a10456d792c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250319-v4h-iif-v5-4-0a10456d792c@ideasonboard.com>
 
-Fix line length exceeding 100 columns in arche-platform.c. The code now
-follows Linux kernel coding style guidelines by keeping lines under the
-maximum allowed length of 100 characters.
+Hi Jacopo,
 
-Reported by checkpatch:
+Thank you for the patch.
 
-CHECK: line length of 101 exceeds 100 columns
+On Wed, Mar 19, 2025 at 12:28:17PM +0100, Jacopo Mondi wrote:
+> vsp1_wpf.c calls vsp1_rwpf_init_ctrls() to initialize controls that
+> are common between RPF and WPF.
+> 
+> However, the vsp1_wpf.c implementation does not check for the function
+> call return value. Fix this by propagating to the caller the return
+> value.
+> 
+> While at it, drop a duplicated error message in wpf_init_controls() as
+> the caller already report it.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 
-Signed-off-by: ErickKaranja <karanja99erick@gmail.com>
----
- drivers/staging/greybus/arche-platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index d48464390f58..1a82a7a3991c 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -179,8 +179,8 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
- 				 */
- 				if (arche_pdata->wake_detect_state !=
- 						WD_STATE_COLDBOOT_START) {
--					arche_platform_set_wake_detect_state(arche_pdata,
--									     WD_STATE_COLDBOOT_TRIG);
-+					arche_platform_set_wake_detect_state
-+						(arche_pdata, WD_STATE_COLDBOOT_TRIG);
- 					spin_unlock_irqrestore(&arche_pdata->wake_lock,
- 							       flags);
- 					return IRQ_WAKE_THREAD;
+> 
+> ---
+> v2->v3:
+>   - New patch
+> ---
+>  drivers/media/platform/renesas/vsp1/vsp1_wpf.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> index f176750ccd9847fdb8d51f7f51a6bd5092b70197..da651a882bbb7e4d58f2dfea9dcea60a41f4f79c 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
+> @@ -133,6 +133,7 @@ static int wpf_init_controls(struct vsp1_rwpf *wpf)
+>  {
+>  	struct vsp1_device *vsp1 = wpf->entity.vsp1;
+>  	unsigned int num_flip_ctrls;
+> +	int ret;
+>  
+>  	spin_lock_init(&wpf->flip.lock);
+>  
+> @@ -156,7 +157,9 @@ static int wpf_init_controls(struct vsp1_rwpf *wpf)
+>  		num_flip_ctrls = 0;
+>  	}
+>  
+> -	vsp1_rwpf_init_ctrls(wpf, num_flip_ctrls);
+> +	ret = vsp1_rwpf_init_ctrls(wpf, num_flip_ctrls);
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	if (num_flip_ctrls >= 1) {
+>  		wpf->flip.ctrls.vflip =
+> @@ -174,11 +177,8 @@ static int wpf_init_controls(struct vsp1_rwpf *wpf)
+>  		v4l2_ctrl_cluster(3, &wpf->flip.ctrls.vflip);
+>  	}
+>  
+> -	if (wpf->ctrls.error) {
+> -		dev_err(vsp1->dev, "wpf%u: failed to initialize controls\n",
+> -			wpf->entity.index);
+> +	if (wpf->ctrls.error)
+>  		return wpf->ctrls.error;
+> -	}
+>  
+>  	return 0;
+>  }
+
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
