@@ -1,134 +1,176 @@
-Return-Path: <linux-kernel+bounces-570937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88422A6B669
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:55:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00920A6B681
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:00:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0381884956
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC92188866A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121B1F03EA;
-	Fri, 21 Mar 2025 08:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FB51F03EF;
+	Fri, 21 Mar 2025 08:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="C/jeYx/a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="reWrdfSz"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ck+t6MkN"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E836A8BEE;
-	Fri, 21 Mar 2025 08:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01E32B9BC;
+	Fri, 21 Mar 2025 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547340; cv=none; b=PYsAFgmg+VXIaNkwMwBF/dLPvo5TPwzjdxurtqd4YKbytDTKdoR5mmaRadzuzLA44NMYroF1LlPVcRWT/yEoAcBeD94nNtL356CmIbKxAU3flJGJ125wohAvQ9cXT/kSgk/wM6RcjNXbsjagfeK7miP7DT4NfnG6tu0rul8IIiM=
+	t=1742547528; cv=none; b=UgMOlczhGpoMXh+ZM56mtMvty/vWlIj8ox/RJnfisU+81p3MgCRnfqG8ModUI/DZq4UV3XXLdi5PZa8Rp06yYPrQSWN6i+v8ejTVxrDK7HroopEBzzmD5gb9VWMSaAnoRFoy+6ZzKGOV0hjhzLqAYe2w4Q9FfOkcQzrAs+n1fec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547340; c=relaxed/simple;
-	bh=gwz97SF+Ob89YKHD3lqRsYHSxYmlKfH/i7SV1WoHMwU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eqzaZeVs2MflfFRTyOpNUyfXq64lR+fdXIDS41ec+2Y5Y5EZjkZWyDamUsuapsTdApBVzY+BvHosKwrbtJqr2ML4cCHtVTu21rYHjB++trJie2ArHjAVB52gfhxpBFTNaiwHZDc+pxcFRhLpaJWBLGeaY5FuDmSi+BPEYENlvGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=C/jeYx/a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=reWrdfSz; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id F38D11140143;
-	Fri, 21 Mar 2025 04:55:37 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Fri, 21 Mar 2025 04:55:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742547337;
-	 x=1742633737; bh=WsFBUXiH8o16pSj0PWVq1s5XJ9ooiQqZ0HXBk5az69Y=; b=
-	C/jeYx/aa3rbvcxPAVVFtu72F8p7M4V81P3r6HKNZ3E5ZmMkV9uGYclPfAGKhW9d
-	BIhQMJ3DrwKlrIE6tpN3AwRGL0HaXnQRT37oK8jHxupkVvCdC/78xiXx43OxvBrU
-	aT0GiDpAVJ8gvsoYAhG1nQq0wQuZqgbdslfKq51GCoHbN7uhcByCDQ2lp3Q3DB90
-	gr5kqSxwZDJ2eUKq8fgIbV53qH43hLrySWiGDBEcXLlNxbskuHrUFr/BE+RwdE2Y
-	Gbrb8xVrasPrh8M75H0euKxPh0gQEaqSZirhxcYPGrQXOGx93HWoIcfCu8gFmCA2
-	zKKrBn6C06hLwk3MgGowvg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742547337; x=
-	1742633737; bh=WsFBUXiH8o16pSj0PWVq1s5XJ9ooiQqZ0HXBk5az69Y=; b=r
-	eWrdfSzSZkxz3/2t+G9UlXu/9DpQqJDgutuHy2FwE1hcHyLFYcJkLyFxxZttWYeP
-	50vcXEsfXCcBe6ulmf/ZL0ml+DkLIcmTUEkWhbeUJJ2VBUMi6k3vZ5PminvfxnSQ
-	rMe0ZYlaXHzafxfut9lKISbVKdtKEdE4OB2M4/2d8GEvYNb6XlYgphzdGlRvuUp/
-	3PXeuq0GK5M1851onYg1KKl0dM/G0qG5GaqOg8m3usRlEcSlO/dfFi9eWFcD5PyG
-	SFhgDVdxMTM2OC2aYmJ2Kk2zWY2LPXJlIlXY919/PANKdCaFGKDc8wKGmgf+gnhl
-	9x19t1AA80r8NbULxlDHw==
-X-ME-Sender: <xms:iSndZ-AJ1dwMzdn1_uYJzPPqx6MhDid4fCxep7rT-Qjr_Bjt2nN-tg>
-    <xme:iSndZ4iQChBiKtU4o4KyZ2ldxaZveBxCxxFK4J1ZdNazobnlrCwAcxAUSMSfCPTw8
-    s29byk61_3YSV5_Vxk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedtieeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhugh
-    drohhrghdrrghupdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:iSndZxkSGnfU1YuwFS-XzLWPJ9CLO78zW959QBtWJ5zMn8iQIc0Dfg>
-    <xmx:iSndZ8yWS8TnciT3flYa4l-_uURahtMecdk7IgX4iNaWhePgjuJ1DQ>
-    <xmx:iSndZzRB_qWnPwGHhcifyxRrwijC5mJ0VwjneZ3sQynVB4E0YFxPYQ>
-    <xmx:iSndZ3YXrdAHM8AFGDC7nTmkCSFJpZcLApE4QL0UyJohia38-OfM_A>
-    <xmx:iSndZxM2LEDJbbuGzhDU3rRKl_Rhq78T45nhu_ftTrJCqFNo9iqReJZ0>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5BFDD2220073; Fri, 21 Mar 2025 04:55:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742547528; c=relaxed/simple;
+	bh=T1PvkW1tK5JReMqvH5nQyvYh9NGbhr3r9bOLr0LtqVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q7DYnyLrDTIt59PhOpfdIQ7Ajbl/aMNEsq4NetyOhmP/OaWfA+XXII8Fzy1lLHAxS7kNOg0BOZ1ZLbobLVFBmO2/TZrh2943b9+mFPGnNpmbTOf36nBtUSDbzOB8nK/dTuJFsAg78geE0LXWRJ6aIbhLJSPXTNc8z0/3izl9/9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ck+t6MkN; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-549963b5551so1895401e87.2;
+        Fri, 21 Mar 2025 01:58:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742547524; x=1743152324; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VRxr/3yDierEJn4XMuzsB59m3HklSWHOO8B7tMnyABQ=;
+        b=ck+t6MkNy3ZWAlASTgLZMgE/nyCglxwZ7UPq3yzQ3HkgPwM/sr3do5UrPKY2v1iToK
+         oyXLU1P1AJR967imTe3gF5mRUiQsHZpS7xLvZun6UIjKeFf2qyXHkT4c8/BpMH0IFwAi
+         JhXjIUm1tVcd+upmukcliTixflb4qIPCZb51MwvTe88sH2hmhm+VJRF9emKLwl+Axliy
+         93OqTyy0lt5tzcdxarITnuwZEbe22pWtgAQpdc3gYiCZ1oDK2w1+1DEjfvMp0fG+GTUL
+         6Jyd2kpLZg1Dl0S22GvqUYOPE4ShljwENMIl8dj2jadqfD0GH5Zi3dHCuK9B0fiqPg6K
+         C5Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742547524; x=1743152324;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRxr/3yDierEJn4XMuzsB59m3HklSWHOO8B7tMnyABQ=;
+        b=t6vCcJV7JwT5Ay/KZiQ6XL4wMhoa80RGRxsO+F3DpLgPQRq58UdJ/2qiKU+SVNsI5v
+         z8pjvuS6LEA+s3XGpMNd9NWPRgAjvqBE69NboY4LWBm827e34m4eLdR4pfVBmWuIqIzY
+         iUh7iqmUSEcsZjkhVd5aGj0ku/epu5EIbmBgW151crR0eQkW34QFRbr9GnmrP2NObs/u
+         Vd+MvdoL8SHW4GDiU+2YICUSn5xI4xYq5klqggc/ZF/5f/cfe/+NhCnbAO5xNx+S4SH2
+         AmfpnRxRfsI1xPKkBbh9yNql4b/0v8PGA0EGc20P4BpynyQnYe67fN285XSCmJeAfSud
+         2WxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt73J57kKop2BhqH/1UDxXYnaJI2JOk15Pkc70MI64Bk6kYOxeoEE1PWoHv1rz4F27wPQDZungr27fQWI=@vger.kernel.org, AJvYcCVRCygcb10ybZvgTiPHmh9GalCsuVRO2hdAX52kO2zRWfyeYPkk0+VMZhfQOxhGviVEbBWI9A2YoOq8pA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ5QAfuUmWnbPs+9FgbisgZmMpmigLVDAEvPjru1tLbvFEGmwh
+	Uc485ObggJOgJHrr8ztUjWiS5VzIhR9WMcNK5DQIcl8jpo1LTBYa
+X-Gm-Gg: ASbGnctnV1sD5VFuz+ZakOeCIFAyYEQv40Nco3HjOpeHK+9dyN8z56jqJR2iBI5VxVl
+	yMrhl48rONkva8slcGMJfQnlb7y4D5RyGN1pXKgI9G2HNflKcAwY06Un1HTBBDGEvxxr/ZAvgCh
+	mlEn5nv85CHal0NLcuC/ABce37tE6jETxCarCiSdVeFNq05GPhUVdtb/DHbVDd4AxkZ8WyyYlwE
+	XK6S3d17glxDO8xLd9benA9YwZko/+cxhaxWaZ2JrkqtjJlozzvAhO5oFOBv3h1a9wSUtLddN8j
+	ll3jgYCsH4mzl/0natOyqkBroRuIRgn2wOB1HbWCTClQSxzYGJ4=
+X-Google-Smtp-Source: AGHT+IE8unwcjobvTvkmOqQeY6Nvu8RMXa/0/x987i137LsUQ3tqwRNKz4WQRIRSnEi7iG6QfNbr5w==
+X-Received: by 2002:a05:6512:3985:b0:545:2c2c:5802 with SMTP id 2adb3069b0e04-54ad6503700mr931235e87.48.1742547524113;
+        Fri, 21 Mar 2025 01:58:44 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6468745sm131050e87.51.2025.03.21.01.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 01:58:41 -0700 (PDT)
+Date: Fri, 21 Mar 2025 10:58:27 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v2] media: i2c: thp7312: use fwnode_for_each_child_node()
+Message-ID: <Z90qM33DvkTMGg_x@mva-rohm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T03b4c03f0ce6f6fd
-Date: Fri, 21 Mar 2025 09:55:17 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Rob Herring" <robh@kernel.org>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-Message-Id: <1eda0df7-a797-43b9-b3d0-3d1855b58e38@app.fastmail.com>
-In-Reply-To: <20250321153800.639f03c5@canb.auug.org.au>
-References: <20250321153800.639f03c5@canb.auug.org.au>
-Subject: Re: linux-next: duplicate patches in the devicetree tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2t2NLr7q7HXOL/hy"
+Content-Disposition: inline
 
-On Fri, Mar 21, 2025, at 05:38, Stephen Rothwell wrote:
-> Hi all,
->
-> The following commits are also in the arm-soc tree as different commits
-> (but the same patches):
->
->   a78f7a337bc7 ("docs: process: maintainer-soc-clean-dts: linux-next is 
-> decisive")
->   b31cc6af1bb1 ("docs: dt: submitting-patches: Document sending DTS 
-> patches")
->
-> These are commits
->
->   a42d2d53a6d7 ("docs: process: maintainer-soc-clean-dts: linux-next is 
-> decisive")
->   d98d35d99e0f ("docs: dt: submitting-patches: Document sending DTS 
-> patches")
->
-> in the arm-soc tree.
 
-My mistake, I saw them in the patchwork backlog and applied them.
+--2t2NLr7q7HXOL/hy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I dropped them again now as they were still on the top of my branch.
+When fwnode_for_each_available_child_node() is used on the device-tree
+backed systems, it renders to same operation as the
+fwnode_for_each_child_node(), because the fwnode_for_each_child_node()
+does only iterate through those device-tree nodes which are available.
 
-    Arnd
+The thp7312 uses the fwnode_for_each_available_child_node() to look up
+and handle nodes with specific names. This means the code is used only
+on the device-tree backed systems because the node names have little
+meaning on ACPI or swnode backed systems.
+
+Use the fwnode_for_each_child_node() instead of the
+fwnode_for_each_available_child_node() In order to make it clearly
+visible that the 'availability' of the nodes does not need to be
+explicitly considered here. This will also make it clearly visible that
+the code in this driver is suitable candidate to be converted to use the
+new fwnode_for_each_named_child_node()[2] when it gets merged.
+
+[1]:
+https://lore.kernel.org/all/Z9rhfJUlCbi7kA2m@kekkonen.localdomain/
+[2]:
+https://lore.kernel.org/all/9c3880f74476436f39d796b5c10c540ae50b722c.174222=
+5817.git.mazziesaccount@gmail.com/
+
+Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+---
+Revision history:
+v1 =3D> v2:
+ - rephrase the commit message to not claim the 'availability' has no
+   well defined meaning on the DT backed systems. Instead, explain that
+   the fwnode_for_each_available_child_node() only iterates through the
+   available nodes on the DT backed systems and is thus functionally
+   equivalent to the fwnode_for_each_child_node().
+
+NOTE: The change is compile tested only! Proper testing and reviewing is
+highly appreciated (as always).
+---
+ drivers/media/i2c/thp7312.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
+index 8852c56431fe..4b66f64f8d65 100644
+--- a/drivers/media/i2c/thp7312.c
++++ b/drivers/media/i2c/thp7312.c
+@@ -2067,7 +2067,7 @@ static int thp7312_parse_dt(struct thp7312_device *th=
+p7312)
+ 		return -EINVAL;
+ 	}
+=20
+-	fwnode_for_each_available_child_node(sensors, node) {
++	fwnode_for_each_child_node(sensors, node) {
+ 		if (fwnode_name_eq(node, "sensor")) {
+ 			if (!thp7312_sensor_parse_dt(thp7312, node))
+ 				num_sensors++;
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+--=20
+2.48.1
+
+
+--2t2NLr7q7HXOL/hy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfdKjAACgkQeFA3/03a
+ocV0rAf/dK/eKL5/DzjoxB77wHYFdZROYnEiIaVFsFXfV9SHL9bZhQym8Llova+w
+PNxsI8Yyu5b3A9wib3zXBN3MmswmtmXzDg96DicKUadygv3j5bKDa/lyMHfpmBQ8
+yu1Eg24bg1SSpTQN3v5JEGP90pFHd0qIwnevbQCOT2h22K6PyuG7wg3GUuBAQyQu
+i3G+yJYS7Lh2YtOxDm8O2gvicPQ0RjWhUN08s80mXxDGZSI2wGG5hDW1Qnrk0NQK
+4dwwkAgXZMx18OY583ssyjpNuHjvIZFIC2eJDHs8lsMyIoDvJnvUI1W8AA6dzPbw
+ZKUeq1H5xyq0P2iswLQOIgl8ig4gdA==
+=9nnn
+-----END PGP SIGNATURE-----
+
+--2t2NLr7q7HXOL/hy--
 
