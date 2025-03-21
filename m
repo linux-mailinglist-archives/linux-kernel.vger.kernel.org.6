@@ -1,63 +1,101 @@
-Return-Path: <linux-kernel+bounces-571792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBACA6C252
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:25:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14682A6C256
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7CF87AA6DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69EC03BC6A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90AE1E5B83;
-	Fri, 21 Mar 2025 18:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F247222FDEB;
+	Fri, 21 Mar 2025 18:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tggeLW+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="M1IHhNw1"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480C022B8BD;
-	Fri, 21 Mar 2025 18:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD09D22E3E2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581500; cv=none; b=QvYnvj8K8KvdwJcK+3dZXSKnPVDwXjDAkgP6l2UWQcUrerhPU9bJXGRVMelxsIq4ZwEzIBtWihpAjzZfQHOCD+ydF7TwPrt9ohKIbxutGHzLQHBsASJzwKTXThWLnMYupXvh5ulES2DOWQ7DqlpEOX5qbyBZvTT2dxjooABqw3M=
+	t=1742581543; cv=none; b=XJvQ/fCQoDjGUvTsUToMSkiECuzQO5tGd4ASwRb0L7XjqkFtqun9xcCAuz8AvgC8gnwr3Pt5mWN3X15pynebmJ3axjVOE3EhB1kvD7jjxih71UPHW1nM8P2+k0LUHraNjHa4UhajSe+zR3C0RF1BvA+jvCG43YfU3XYJF9odtDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581500; c=relaxed/simple;
-	bh=tuPORlnJJGXXGYoBoU7VqjD4PIV9k+XGJ3BUeOaEKM0=;
+	s=arc-20240116; t=1742581543; c=relaxed/simple;
+	bh=jemg1ODGg1pK6bsHf0OEdD0dT3yUnEMJLXk8hBjZYxE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcCPw5U42UqYhc6x/VKTDvOglkj+gcG0Runz3qPOs1B6G2zl9i21pCSmRv0EqDQdscaj+QJV1p+7YSwBk2GUPu0xhNqNz7vCVslNklgdr8dSkmbsHGChKl8JUP/U0i6x+GOuxB1LhcA8vxQZP7Mb4uNDf6sHInX49swq8IGgjyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tggeLW+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732D3C4CEE3;
-	Fri, 21 Mar 2025 18:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742581499;
-	bh=tuPORlnJJGXXGYoBoU7VqjD4PIV9k+XGJ3BUeOaEKM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tggeLW+o91EZTace/qoK//L/NIrtdgTkAihRQ3IXmS2e0uw9GBPPkfLmWFYZGmWaQ
-	 d1B0GPoJKftHzFMe8TAr4J/BA7qFKw8yZRNT72pLNlucCIDcMqCL37cJsaAoLBGvfr
-	 ciw579TF+/zD+mXRcVhIMLqkjxVNX2wMNMNkN5eSECl2ttXcO8JMzTeZKWSxJ/9Toi
-	 dROW4O3gPZMABAhWTctDH57jkobAdINnCCuWbRh1v5kalK3FjbzbxvSZeGEZwHBmN7
-	 Ug5/Ir84f56zwvrXxcVdAVo/QviYeczxNWTZW2wxIW3VqrYwwB3DonO9oaQxEZD5cg
-	 USI6swkDhuEyg==
-Date: Fri, 21 Mar 2025 18:24:58 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] Drivers: hv: mshv: Prevent potential NULL
- dereference
-Message-ID: <Z92u-g59fWeMgwoJ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
- <38525f8a-823c-4a79-ac55-68a2ef569a85@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g2cqi2kCZGKKM3eDjYw9AC5qSuyV6zgD7UZWV3uRtNlw+RQbjrXIHti4npO7odKUD3XA2X9sLOTMfufyz7BosJHwit9+dp5OYrwuFJTN7whLTByJhgnOznMms9BSy4YsiSZaEMapPcgT+QZn2B3s1BLVzeyrtox+k0W+plHEgqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=M1IHhNw1; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-477282401b3so4100101cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1742581541; x=1743186341; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4DRNDu+mZPYgGquCy2SeZdyPfdQyJHb3d44tNADVang=;
+        b=M1IHhNw1R9ZQMCmOQL90iwHYcU1BJw2ArHDDp8y12TvacSzmuiJiPxm4tL5It98war
+         MwKZ5fNbPFXORUnQAlA+CN7VUOvL5Ys4TVd0H+Gxh5B+/Xojkt0ouGib6cJoe05lQfsN
+         2q+yvGq7jJK3rw+1YSo4BRTmPvGBBguijzYNo5Z7q/Tl5GFwlhTQH0DeNjQ/Q2J2Vv4x
+         eHaH1K/Bn3Is7oXTLzD21RTv9yFsHMD/9RpMaMiSmHt+OWI+XwddiKTW3sa0nRc5b/tp
+         GBgFxqVO9HkXzirutRhmUk/fU3bBAbF9NspYOpJQY18mTmHtOCaXNasxltcTFRhdB9RN
+         R0TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742581541; x=1743186341;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4DRNDu+mZPYgGquCy2SeZdyPfdQyJHb3d44tNADVang=;
+        b=qp/QL4V30cKK8JSpJU68wMdGPVTR5mUE2DqfLbCsXlaZTw298zpgdhi2H41pJJHn6y
+         cdEFCUXZmzRYzjsHPqOVg5l0pZmKV2CDrCXnHJO02sK1cL58lpC0q/TZhPOWyPwH+xEc
+         BGS/vIZdi4By9Hbz/Z3k68vsX72o/Sw9ISYnJWMIEmbKWBrKxEPBKTjrnbk6Ir9hQaR4
+         z8cwDcGVzg69R7KfNNXvc5oBM8FyJQQnn6jZKKyI9FwSnqQ2Jy8PbjtwmLAACT/pM3kk
+         mvqnOprOcaurY35PY9yMljzIeibSficni8dRC82OiVekaqyxtK+iW34Nr1iBOpE4LZsf
+         M16g==
+X-Forwarded-Encrypted: i=1; AJvYcCWh5L0EAUphCSrSP/6D2zfLhwTP+zSbhuv4L5Rzm+vgsESiJjNvB537CicSs75/xNQdS7o/ra3D2aXhX/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSFxSPk38xmi4GevfRiq/oO5lg/QVS6CGKsFl46GZhSzedj7j4
+	GsHTReMBeGLV8aaH1rXkArJKozOS8BMFP/kgk6NJ6/QLyZv/pkHrICZVU8BrfwA=
+X-Gm-Gg: ASbGncu76Qjr2vLrRdmYj8YyF/xDAewQ42nx+2uvjcyWP22s3qYmwTOUb98yZxp8Lq4
+	bvVjpmamdTknwCx7yE+GBCvAuE0GS8sFI+vyeVsZAGJw7wN+6JEC4MRXAkceL0IJ0T0jPl5M2DN
+	SxU5qsOOXbsRNdon37iH9yzCyh8lzvQlsOxCopRmNSHbK5HwvWHx7F5Gg++1Ryn6bxDKm2+dzFg
+	zwu/utHDxb9jPCNUJfhZYJtoIfDEkRXzjFQM8/HG2apGpLXIz7rSty1uoz4Gx9FSRsIHGquOvGO
+	WwSYJMcec5gkoH/KNtKDqiFDcnAsshVZfgnc9c0I3jIPTqoqKjNaK4qcXMMFXc0OXZDcyf3qYPm
+	2t7GqcKoHz19nn3FWJMYbwxA=
+X-Google-Smtp-Source: AGHT+IFpNIlarhIX3KQ1uNeuExxcnUQwaoKxWUOhP9ifvqi6wUM9+9o3gFTu/dM5lv3aP3HzJCq1dQ==
+X-Received: by 2002:a05:6214:268f:b0:6e8:ddf6:d122 with SMTP id 6a1803df08f44-6eb3f294de9mr65457026d6.3.1742581540524;
+        Fri, 21 Mar 2025 11:25:40 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efda6ccsm13609536d6.113.2025.03.21.11.25.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 11:25:39 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tvh3r-000000016XB-1iiC;
+	Fri, 21 Mar 2025 15:25:39 -0300
+Date: Fri, 21 Mar 2025 15:25:39 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com,
+	dakr@kernel.org, robin.murphy@arm.com, aliceryhl@google.com,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v14 02/11] rust: add dma coherent allocator abstraction.
+Message-ID: <20250321182539.GP126678@ziepe.ca>
+References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
+ <20250311174930.2348813-3-abdiel.janulgue@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,40 +104,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <38525f8a-823c-4a79-ac55-68a2ef569a85@linux.microsoft.com>
+In-Reply-To: <20250311174930.2348813-3-abdiel.janulgue@gmail.com>
 
-On Fri, Mar 21, 2025 at 09:53:45AM -0700, Nuno Das Neves wrote:
-> On 3/21/2025 7:35 AM, Dan Carpenter wrote:
-> > Move the NULL check on "partition" before the dereference.
-> > 
-> > Fixes: f5288d14069b ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/hv/mshv_synic.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/hv/mshv_synic.c b/drivers/hv/mshv_synic.c
-> > index a3daedd680ff..88949beb5e37 100644
-> > --- a/drivers/hv/mshv_synic.c
-> > +++ b/drivers/hv/mshv_synic.c
-> > @@ -151,13 +151,12 @@ static bool mshv_async_call_completion_isr(struct hv_message *msg)
-> >  	rcu_read_lock();
-> >  
-> >  	partition = mshv_partition_find(partition_id);
-> > -	partition->async_hypercall_status = async_msg->status;
-> > -
-> >  	if (unlikely(!partition)) {
-> >  		pr_debug("failed to find partition %llu\n", partition_id);
-> >  		goto unlock_out;
-> >  	}
-> >  
-> > +	partition->async_hypercall_status = async_msg->status;
-> >  	complete(&partition->async_hypercall);
-> >  
-> >  	handled = true;
-> 
-> Thanks for catching this one!
-> Wei could you please apply or squash this into the driver patch?
+On Tue, Mar 11, 2025 at 07:47:58PM +0200, Abdiel Janulgue wrote:
+> +pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+> +    dev: ARef<Device>,
+> +    dma_handle: bindings::dma_addr_t,
+> +    count: usize,
+> +    cpu_addr: *mut T,
+> +    dma_attrs: Attrs,
+> +}
 
-Thank you Dan. I squashed this fix to the original patch.
+I'd like to point out how memory wasteful this is from what real
+drivers are doing today when they use the coherent API. Let's compare
+against SMMUv3's use for the CD table..
+
+This would be the code in arm_smmu_alloc_cd_ptr()
+
+It is making a 2 level radix tree.
+
+The cpu_addr is stored in a linear array of pointers:
+
+			struct arm_smmu_cdtab_l2 **l2ptrs;
+
+The dma_addr is encoded into the HW data structure itself:
+
+		arm_smmu_write_cd_l1_desc(&cd_table->l2.l1tab[idx],
+						  l2ptr_dma);
+
+The size of the allocation is fixed size:
+			*l2ptr = dma_alloc_coherent(smmu->dev, sizeof(**l2ptr),
+                                                                ^^^^^^^^^^^^
+						    &l2ptr_dma, GFP_KERNEL);
+
+It doesn't need a struct device pointer or reference because this uses
+the usual kernel 'fence' reasoning for destruction.
+
+It doesn't even use dma_attrs. (why is this in a long term struct?)
+
+So, smmu manages to do this with a single array of 8 bytes/entry to shadow
+the CPU pointer, and recovers the dma_addr from the HW data structure:
+
+			dma_free_coherent(smmu->dev,
+					  sizeof(*cd_table->l2.l2ptrs[i]),
+					  cd_table->l2.l2ptrs[i],
+					  arm_smmu_cd_l1_get_desc(&cd_table->l2.l1tab[i]));
+
+Basically, it was designed to be very memory efficient.
+
+If we imagine driving the same HW in rust the array storing the CPU
+pointer would have to expand to 40 bytes/entry to hold every
+CoherentAllocation. This means rust would need a new high order memory
+allocation to hold the CoherentAllocation memory array!
+
+Jason
 
