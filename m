@@ -1,268 +1,495 @@
-Return-Path: <linux-kernel+bounces-570750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB39A6B425
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:51:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61685A6B427
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5CB19C3398
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D023B2AB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072AF1E9B1C;
-	Fri, 21 Mar 2025 05:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F79E1E9B36;
+	Fri, 21 Mar 2025 05:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="r/ouY+An";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="HcRsSR21"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9EFnLhT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611728BE7;
-	Fri, 21 Mar 2025 05:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742536299; cv=fail; b=Dxi8/RXdjeSdOnkc4iUFTICBQPSme763YCe0GMWZSVcBSmDcy24uPdbUoYaacBv4EleT0/hffmuumfScSJPponU7dlF+f34M0g6LrNZIDx3jeE2FPTXaL1QB/pRijRRJui88QEVKrpY7vSFxsg8+wQhMfA57b2W5Uc2p44wGhRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742536299; c=relaxed/simple;
-	bh=wy5kw+/CyA+ScIaKyM7uap9nn7T3T6vDKZlQkRTAdpc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nKYWiJocaDHfEOCT3w1rYqdbXIeMvpPT1yDOwt1DQCXNc8Yl5rwcsERNQOMYMcf2tJlGFv4S/tbIpLNmMwlWnaB6SLW1JyUpiypDEVeFgPdsmAucq/Ft4fO/tcCVxDQvFDhJg07Ovxyhz4BQvPccdWQMdiIG009cyLzd6OHkRlo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=r/ouY+An; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=HcRsSR21; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 86d67770061811f0aae1fd9735fae912-20250321
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=wy5kw+/CyA+ScIaKyM7uap9nn7T3T6vDKZlQkRTAdpc=;
-	b=r/ouY+AnHeERK981ltkvHedy4qPQvQjf9fNw4bCLcV1j4b57ws4yN0+ngLBlA/fqn/Ed/2m2M1gYB5mkXuP4AvMgjGpl9HO7IaBOMvdrqYfMIzF3ukHWDPgPjjcUrLhwlh1K1mApZjwKbkOdRLR7F3wEMasnTGoT54jyyNh/1js=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:ecef3fa4-895c-40b4-825e-cf281a37d1d4,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:8352634a-a527-43d8-8af6-bc8b32d9f5e9,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,
-	EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 86d67770061811f0aae1fd9735fae912-20250321
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <hailong.fan@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 567018757; Fri, 21 Mar 2025 13:51:25 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 21 Mar 2025 13:51:25 +0800
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 21 Mar 2025 13:51:25 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lGZnn7YVDtqPNB+Ggab+MRfvLf7Jnp6Ygu+wOQHx7IpWV6HuAydCrXiaKtJVzR3+tFn9oS56dkiJrxuFsFhQHpnde8MWyIYfMq4SFKkCVzgszPgnLH0wuwo1vuYViIPINjBr/sOdhYsryYrzA+2X+YVNxQWt3vKOsf48tK2Q1+lWk9anHATcFav9XhAsSCHpHUHbRyU5sDcSyuiJQPFBUlN2FJ9Zly3Zp5R/mOeIo1LAQ9iG5Yr9lKsecrrhmQoB8Mvrc1U0lb8anrfZIkzzOB7WAgjAtYRy5YwHcr1zYZDWMxYzZPnibFbqhIKQM8WHqhvm6PAu1MRkw7w7+1hb3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wy5kw+/CyA+ScIaKyM7uap9nn7T3T6vDKZlQkRTAdpc=;
- b=RetxrYiQJJwgq60mP+Pj3UzE5PLeHqhBM7FUFeoW1uUI9B/PKC9ch1s+vm0CJvT3s81crtYub5OZhGbqi1toOsChneyiV6WJAzch06jiI246D4+XwMhqo3oKrT1JUERrXLYwRDs2gu8KYT2AsB76HygAeYzBacJPEWuqkTtRDxqFCGVjqt5rftZAGR0b1Ue7YBOWW4wN05QkypgzxcDwYIZrDNa4APdloua4FZC2hHlQml4NfC3Vo+0iHFXzYraE8PtJyAIq6J8OhxLywPyCVZL7Lwm3qzfRxLx/E9PR5jgvuWNGUSG/Z3fAkJHLrRzEJm8akdOlJFWrTlnxMprxhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wy5kw+/CyA+ScIaKyM7uap9nn7T3T6vDKZlQkRTAdpc=;
- b=HcRsSR21U1Qg33G8wBzrj5vrhLr/jcub3E9zDvBuSAsn/856jC8zEemFHwzDwbNAW1T63gBG6O/VBfSIRZkeGpVpOZG4lRj7Gi0RCf3xNEQJxkdk7J3un5T3+99/ct0mXtp2opPOHOni0TEaiwBVaL8SAi+CmdoYuy9/+JOEQSs=
-Received: from KL1PR03MB6002.apcprd03.prod.outlook.com (2603:1096:820:8f::5)
- by PS1PPF5DE123533.apcprd03.prod.outlook.com (2603:1096:308::2d8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.35; Fri, 21 Mar
- 2025 05:51:22 +0000
-Received: from KL1PR03MB6002.apcprd03.prod.outlook.com
- ([fe80::f1f:1fbf:e323:1c3d]) by KL1PR03MB6002.apcprd03.prod.outlook.com
- ([fe80::f1f:1fbf:e323:1c3d%4]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
- 05:51:22 +0000
-From: =?utf-8?B?SGFpbG9uZyBGYW4gKOiMg+a1t+m+mSk=?= <Hailong.Fan@mediatek.com>
-To: "krzk@kernel.org" <krzk@kernel.org>
-CC: "perex@perex.cz" <perex@perex.cz>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, =?utf-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?=
-	<Jjian.Zhou@mediatek.com>, "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>, "pierre-louis.bossart@linux.dev"
-	<pierre-louis.bossart@linux.dev>, "kai.vehmanen@linux.intel.com"
-	<kai.vehmanen@linux.intel.com>,
-	=?utf-8?B?WGlhbmd6aGkgVGFuZyAo5ZSQ55u45b+XKQ==?=
-	<Xiangzhi.Tang@mediatek.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "tiwai@suse.com"
-	<tiwai@suse.com>, "robh@kernel.org" <robh@kernel.org>, "lgirdwood@gmail.com"
-	<lgirdwood@gmail.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "yung-chuan.liao@linux.intel.com"
-	<yung-chuan.liao@linux.intel.com>, Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>, "peter.ujfalusi@linux.intel.com"
-	<peter.ujfalusi@linux.intel.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"daniel.baluta@nxp.com" <daniel.baluta@nxp.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-	"ranjani.sridharan@linux.intel.com" <ranjani.sridharan@linux.intel.com>,
-	"sound-open-firmware@alsa-project.org" <sound-open-firmware@alsa-project.org>
-Subject: Re: [PATCH 1/2] ASoC: SOF: MediaTek: Add mt8196 hardware support
-Thread-Topic: [PATCH 1/2] ASoC: SOF: MediaTek: Add mt8196 hardware support
-Thread-Index: AQHbmUbnZKLzS9bHIU6bGASslhev2rN7p14AgAFwn4A=
-Date: Fri, 21 Mar 2025 05:51:22 +0000
-Message-ID: <e369f6ec539454ad7d4f30389fec4ae58d1482ae.camel@mediatek.com>
-References: <20250320031753.13669-1-hailong.fan@mediatek.com>
-	 <20250320031753.13669-2-hailong.fan@mediatek.com>
-	 <20250320-cocky-adventurous-rooster-be2abd@krzk-bin>
-In-Reply-To: <20250320-cocky-adventurous-rooster-be2abd@krzk-bin>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: KL1PR03MB6002:EE_|PS1PPF5DE123533:EE_
-x-ms-office365-filtering-correlation-id: c354b075-3eeb-478a-3a23-08dd683c6906
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?RUdQMlJsai9KUWV4V0VvRkNLT25PVkY0N1JiZi8zZjc2VEFaTHBTWEpFT1ho?=
- =?utf-8?B?ajJzRGdiUmRhVHU1amVncmF3T1BXUnZCMHUyNkJ2ZUx0ZzAzYnZhRDNwRjVV?=
- =?utf-8?B?OVMrd2pkYkdoNzFoMFd0RXBnamZXTzZSaW9oZGkyQlhvVDM3L1VocXBCV2JO?=
- =?utf-8?B?b0xsR3ZaTjZuS3dMMTNtWWkvbit3YTlrYnRQOFFYWjIrODRlcU1UdUcxbWRR?=
- =?utf-8?B?QjZjTHZNUGcvYisrSFRIOWtzQmJpL0ZOWS9CL21FdGpkd0tUeDlRWWdITFZM?=
- =?utf-8?B?eHRWWHdXTUpscXhCL1hFQjMrbmpRaWFXVksrVUJxL0x4dmpudmV1eWs5eHdS?=
- =?utf-8?B?SzhPWnBYL2tVMWhsZU9wRGpQaTdZRnRNam8wQ1I5S3dJSW4xb2RrRFl0clVl?=
- =?utf-8?B?V29YcEZIOGFKMXBJREtNT2diekUwaWx0eHNOSWpEeHJWakQ3RThtRHZmTXRz?=
- =?utf-8?B?R0RlM2N5akNXdVgxdnJ3Snp5Z25DVEVTZ2lzOGtjWm15OXAzVmZBT09xejZu?=
- =?utf-8?B?Tm5udTJHWW9ySUVFN253TkU0Q01jOUVPSTJlZHF1WVB0aG5oQkxKa1UycUsz?=
- =?utf-8?B?WXlUS0tpSnBoWVkxZDA2UUZpaC9EbnhJSDZXdVRqMXpGUi9JOWFsZmRJUHFy?=
- =?utf-8?B?Sm1ydWEvMHdqT1NYbTdNelMwU1BqNDd1WkpZSnNzSVVWNFhJVlhDNjNmZnlT?=
- =?utf-8?B?NmM0Sm1aR050NzB1WUlhV2hGaVBNV2hNYkFhNVNUaUtxWFkzcThJT1NmSDdM?=
- =?utf-8?B?aFBQUVBRQlFXWE96SWJZOTZySXVhZGFjbms1SXUvNkZKMW44a29QUWkvOFA4?=
- =?utf-8?B?TjBmc0pnR09TZFRobHBUalU2N1VxK29xdTg2cmZrWEJMcVhRYm9TK3ZtY3ps?=
- =?utf-8?B?Tk83MTdIOS9yMVdnQW1DckdOLysycDFKRGsrS1B5eUpmU0d2ZVVOdk5KVTFv?=
- =?utf-8?B?bWR3dTA3anBySFZ6cnRwNUFNM0U4K3BCS1VCWHhGZ29yNVYvcDVucmRrNGZF?=
- =?utf-8?B?ekJDUFZNZFV6Z3dCQ0pmNGlPUjdwYUFUNTA5UytwS0JqMnZDN2ovRHhqOXdv?=
- =?utf-8?B?Szk4bGRqcVBnUTdaZUxDRkd4a2Jnck1UbGZXQ2h5SGhiNllmdzlPVUQxckFQ?=
- =?utf-8?B?VEZiRmpXMWtobEFXNjhyTmpZTTEvK0ZtZVJHMC9ELytmeTYwUkU0QzJkUGYw?=
- =?utf-8?B?UU9sSm85ZzJBRmhmR1BEdENmQStIQk5rZ3BqVlMzTlc3bUJGUWRaK3JkSGF4?=
- =?utf-8?B?VXVjYzNQRytPeFJNMlZ3T0hHdHg4YWMyQm01MU50cXVmWERxSjRWN1JSS0FT?=
- =?utf-8?B?OGcwZHJuOUFvNCszUWdOb3Q4UDlHUWY3VTFrcSthQWsxb3daaWdJc2RTZ1Ji?=
- =?utf-8?B?ZlZHWXhCbWVRZ01hVTRzeUR1VFB6RHNuc3JRZzdpbFV2cTJMSFJLc1hDNmNn?=
- =?utf-8?B?UG5UU1NTYklaTGExMnNYZ1dodUtrS2ttM2lqYzZtMTQ1NUdmanpNOFF4Qjg5?=
- =?utf-8?B?OFdFR2pBZ1BLV1ljV2ZtT2R0WjBxeEFkcXZZY1h3NDROcFpzbytZMDN5YzNP?=
- =?utf-8?B?eXJFa3VDQnFMdUVVU3JxV3Y1ditBTnY1VmpWVmVmWGkrUi8xOUg5TXFqTzZM?=
- =?utf-8?B?azY1ejhmaUxwdWRYZGwvMUIxNXAzcmYzRitocksrVWtmN2RranNoL3lwUnQr?=
- =?utf-8?B?cXcyNGlVY0RINGsvalNhUlBrR282WmVDTVo4YU9wNlhMbFNlS09ZUlFwUjRO?=
- =?utf-8?B?emxid2NBTzl0T2hrdG1ua0l1aUlIaTJKajVwVyt6UFhQOTNmSENxc2dhSzdU?=
- =?utf-8?B?cUlSN0NORjBkdE84Q0FnRE5Pb3Q5WGg3dys3TVBKRFIrNEIwM2FuTjR2cDFS?=
- =?utf-8?B?akswWDJ3Nm5nUXFPTFlFTnl0OTNvSVFDQzE5azZLdXRKK0Y2aWVna09xUHlz?=
- =?utf-8?B?WVhoeVJHSERMQVJhdWRNa3FESm1HMFhxKzJXd0UxaERUYWowdlhtdm9lMnor?=
- =?utf-8?B?ZFBPTmJsalBRPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB6002.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Vnd6d3l0ZTk1d3lVZnhTUnIxMVpaREFienJGaUtsTnFYZC9HT1F1UTFTdVdP?=
- =?utf-8?B?aVIyYlIvbm1tVjJmUTZrUEdFNlVsNjlUUjVNT3loZFA3V1ZIMWQwTVlwbmxa?=
- =?utf-8?B?TStvcmxrekZ2SjlCRlBjNVRsRWRDTVgvdDZ5VmVHTmw4MVRpWTZ3bWxkN0hB?=
- =?utf-8?B?aGJ1SnpsclF2V1lNbmlDc2RoczlueWhTS0tTUG9oZnYvUEU3b1hlWkVHL2Rn?=
- =?utf-8?B?OWVST2VpTzJwek9BUmZhZUd1WlZmSDRHZEdsK1k3WGtlREdMWlZBK0ZkSTl4?=
- =?utf-8?B?OG5DNGdEL1dRNWxERHFiWW9DMzVaWktWbC9wTlJ4SU5oOGdrekc1b2tBeUx2?=
- =?utf-8?B?REtJSjZoTHlFelhrQkl0ekpBZm5zK0lwU25hOWdObjV0dlh2dk1RZTNHMnZn?=
- =?utf-8?B?S20rY3NFaUpRM3NmV1B5SFo0UnhsUnZtUlg0OCs3ZjlhUHFWWUE5OFl5MTRT?=
- =?utf-8?B?VUo2Y2h4ZFo3ZzYrMnBocFdadDdkQS9OMWNRYkNSZE9xVjlDK3pHZEdyeGFZ?=
- =?utf-8?B?MWt3aVdDcy9WVWVyNXllTHN3SzM4OFg5Z0ZxNVhrNXV0cmZkUnM3aTRDN0s0?=
- =?utf-8?B?MDFrVmpSYnE1Q3NyTUVCajJ5SDQwZWFWaGlPMnNDbUZsMlZndEVweEpyTUx6?=
- =?utf-8?B?QmdjZFREeFo5d3BnWXVCYk1mREV0TkhKVmtlOWYxczBjZjgyVy9BMDNiQXZQ?=
- =?utf-8?B?VVd1NU5lNzdUSlJjazNnQjJqN1hKNTdsaUI3aUI3TituenVmNG9GV0JjV2R0?=
- =?utf-8?B?b3dCV3ZMdmpmZFlybm5mcm44dC9GN1ZsdVpzK3QyWTRwcGF2Mml3bDVkOU9Z?=
- =?utf-8?B?U3ZEd1d6ZmxPTWpzZFRQcHRRQUNzbjBpdjFjQzhDQzhwZ0xtYjlPeWpFRHVP?=
- =?utf-8?B?TGZwSXArUVYrVXdKL3pDMDg2d1dDMzdrNkdkOGc0QVBCbTZOVGxqcHJZLzd1?=
- =?utf-8?B?QVM2N3ZIMGJQKzJ2ZTk4elZEM3hFbG41bDExbFU1VGhCVW1jY3Axek9FMnYr?=
- =?utf-8?B?QitheHhWUktTTy9GMTk0RmhhenBlSVplNExmcTllb2o2U1l1WWRKdmpEVktC?=
- =?utf-8?B?aHdNRkYrZzg4OHBPMHN4eU1mVXMxZ0xRbGxXUm45RFE3aXJTR2p3YmlyNlVI?=
- =?utf-8?B?K0lUUG93Vng1RkRrcjI3NHp5aHZ5aUlubDN2RmNWZW01YnE4Ulhmdk9EMmQ2?=
- =?utf-8?B?RWx6cE5xaG5CNUx1U3ZpZ2ZvQVFZODBuWlpLSnZUOE5pcWI2SXoyQnUrRk03?=
- =?utf-8?B?WEc2YmJBUnNhb01uSkdoOHVyd2poRkJGU1V4c3g2dlNWOC84ZUJOZm5uQlpP?=
- =?utf-8?B?R21rdEM3Y29FYy85UEFjQVUyaDVCOHZEYXZqRHZnbXoyRU5MVi8wVWVVUXhk?=
- =?utf-8?B?U2RRRG1zSEo2Y1pxVmxMK0kremtQYkN1cWJHdmxSMlp1NmZtT1ppeWQvYmN6?=
- =?utf-8?B?UllGMkJTNytRVWRGSnN3UVlNQ0NQekpxTU1TQUNaakdZSFZQTThyY0VubFc3?=
- =?utf-8?B?UU4vZ1FPL0g4MXJnVkxGV2VBa0hpYkYvR1Q1RkJRcWZJblpjcjEzUDN4YWR0?=
- =?utf-8?B?Qk9xdU9Wc1hLWmNFS3JLN0dYUmZvM29jOGE5VU1KMTRkS1BMVlE1WUdZNzRw?=
- =?utf-8?B?RWVjUDZpVFdYTXhnL2ZiSkx2RnJZdVRuOVdxMlc5Y2tYTk1Ycy9HbHlPbnpq?=
- =?utf-8?B?eHIwVVYwemVQRTQxTXpRUW9kQVEwMnFIQ3dBYU1qaEYycEQ5Y1V6TW1kVElv?=
- =?utf-8?B?bVFpMGlpSFIyWlBad1RLS0lJK1p0b3pkQ0h4TUpNVFBlaXhodmQxbk43b08r?=
- =?utf-8?B?WnJJN3VMaFRtOWtOclVtU2lObUJHUmloVlpMSWRHQnJEZ2dvQStLeGtmZEFN?=
- =?utf-8?B?bWxjcW9zeGJJcTJpMnZYRUZpU2k2dnUvS2FKRFJjYkp6MFVBTDdDZWtoeThO?=
- =?utf-8?B?MjFLNkp2UVBVU0owY21QdjI1dTIzMDNTVEI3TVJUT0pYbkxYK2tBRmJXNWc2?=
- =?utf-8?B?dVBLaDJ2L21EUDJWRGV3cXNlR2tmY1liYXArT1RFTE03ZGZ4Z1hSVW8wOWZG?=
- =?utf-8?B?OEZ5KzVySi9IWDFUOWxTbTVMWVhqRVQxQlhKQ0twNXkycCtpT0kxdXAyS3Zi?=
- =?utf-8?B?SzVveTljL2hUU1JBWEM3N3VLYXhwK0MvaWhldzF2dGsvUzhKSmwxUFlUc05x?=
- =?utf-8?B?cXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5B098D7C0B39054EA7FD8AE598019A38@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502DF8BE7;
+	Fri, 21 Mar 2025 05:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742536448; cv=none; b=KhzY/7AogbY85XEK5SxS6MMHCcz7o45Vdi1ulCv68itHw8VvaNDWtvJWNeD0xysPGbblz9cFWZK3P8M//WTi6azo7bWwdPuqv9ehn4sE2mXsIvZuX6NiLVMpArj5Y81c32yj3XmRwoASZ26qWqaZUEf30LA58050hv3nF/1ffEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742536448; c=relaxed/simple;
+	bh=sF54cMqazZLdkrizp6Kx5IO12q1FP7cX5erX4bhYUzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QHyT4HVJRija8hhet3Kd7UjjoVKWGnyp7d24A1ZUpI8ytRnEEgFXa1ezggdXlacwcJFEf0uPHiUcybh2aY9y0bpJhGjOW7hIBWMdo+iy0q76KoiC+JKu/WNBqWsh0e+cX3H8D/oRpDG75BBDsUlYI+r/4Pur8NktQAKakshYLJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9EFnLhT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E246C4CEE8;
+	Fri, 21 Mar 2025 05:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742536447;
+	bh=sF54cMqazZLdkrizp6Kx5IO12q1FP7cX5erX4bhYUzk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h9EFnLhTD9RaQaNsewjo7njCIxEe2OVcjEVptU09Wu/0vVmGWu+DPTAdOLRVGlVDP
+	 wShyEqlRlpbXh5j9I/p2NNzXc1n+mC+6hfP/aeuPvZ4Hx48n2MvHiY1dLeq3fHeGRw
+	 DKRnsHj3L3vjAey/RFZolGesaSLJmOuRoT/KeYlor7r6uppE2CUi5fV9X0l06eZyDN
+	 pwoS8QivZePL7ETBAJnbFlXlVlp5XlPOksPo9UzjNupBh1A+WNIHDSboXFr8tQtVTy
+	 /4zZw7U84SynuCg3qGQuIiF28ixVVLXdsDS6x3/bNXflDFkXZPHHE7apkRAyuHokaz
+	 O5o1kruVHySpw==
+Date: Thu, 20 Mar 2025 22:54:05 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v2] perf trace: Implement syscall summary in BPF
+Message-ID: <Z9z-_ftY23KcZ6c1@google.com>
+References: <20250317180834.1862079-1-namhyung@kernel.org>
+ <CAH0uvojj=-BE93VeuxK1LWEEBkYXT_BsRAf17gb-34jFRwnDww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB6002.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c354b075-3eeb-478a-3a23-08dd683c6906
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2025 05:51:22.5648
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oKF4Q61XcwgpJvcLRrOjIKEXujYxMES7rWQYDQ2Sx5jTD+eymZiIP4J4LZD6G+2gWeSXnYeHZ9bLh499suu93ueKBOSblo/FkXqEr1jTQfc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF5DE123533
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvojj=-BE93VeuxK1LWEEBkYXT_BsRAf17gb-34jFRwnDww@mail.gmail.com>
 
-T24gVGh1LCAyMDI1LTAzLTIwIGF0IDA4OjUyICswMTAwLCBLcnp5c3p0b2YgS296bG93c2tpIHdy
-b3RlOg0KPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlua3Mgb3Igb3Bl
-biBhdHRhY2htZW50cyB1bnRpbA0KPiB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9yIHRo
-ZSBjb250ZW50Lg0KPiANCj4gDQo+IE9uIFRodSwgTWFyIDIwLCAyMDI1IGF0IDExOjE3OjI0QU0g
-KzA4MDAsIGhhaWxvbmcuZmFuIHdyb3RlOg0KPiA+ICsNCj4gPiArdm9pZCBtdDgxOTZfc29mX2hp
-Zml4ZHNwX3NodXRkb3duKHN0cnVjdCBzbmRfc29mX2RldiAqc2RldikNCj4gPiArew0KPiA+ICsg
-ICAgIC8qIHNldCBSVU5TVEFMTCB0byBzdG9wIGNvcmUgKi8NCj4gPiArICAgICBzbmRfc29mX2Rz
-cF91cGRhdGVfYml0cyhzZGV2LCBEU1BfUkVHX0JBUiwNCj4gPiBBRFNQX0hJRklfUlVOU1RBTEws
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUlVOU1RBTEwsIFJVTlNUQUxMKTsN
-Cj4gPiArDQo+ID4gKyAgICAgLyogYXNzZXJ0IGNvcmUgcmVzZXQgKi8NCj4gPiArICAgICBzbmRf
-c29mX2RzcF91cGRhdGVfYml0cyhzZGV2LCBEU1BfUkVHX0JBUiwNCj4gPiBBRFNQX0NGR1JFR19T
-V19SU1ROLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFNXX1JTVE5fQzAgfCBT
-V19EQkdfUlNUTl9DMCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBTV19SU1RO
-X0MwIHwgU1dfREJHX1JTVE5fQzApOw0KPiA+ICt9DQo+ID4gKw0KPiANCj4gRHJvcCBzdHJheSBi
-bGFuayBsaW5lLg0KT0ssIHdpbGwgZml4IGluIHYyLCB0aHguDQo+IA0KPiA+IGRpZmYgLS1naXQg
-YS9zb3VuZC9zb2Mvc29mL21lZGlhdGVrL210ODE5Ni9tdDgxOTYuYw0KPiA+IGIvc291bmQvc29j
-L3NvZi9tZWRpYXRlay9tdDgxOTYvbXQ4MTk2LmMNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0K
-PiA+IGluZGV4IDAwMDAwMDAwMDAwMC4uMzY0MDY5Y2U5OTU0DQo+ID4gLS0tIC9kZXYvbnVsbA0K
-PiA+ICsrKyBiL3NvdW5kL3NvYy9zb2YvbWVkaWF0ZWsvbXQ4MTk2L210ODE5Ni5jDQo+ID4gQEAg
-LTAsMCArMSw2NTAgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAN
-Cj4gDQo+IExvb2sgaGVyZQ0KT0ssIHdpbGwgZml4IGluIHYyLCB0aHguDQovKiBTUERYLUxpY2Vu
-c2UtSWRlbnRpZmllcjogKEdQTC0yLjAtb25seSBPUiBCU0QtMy1DbGF1c2UpICovDQo+IA0KPiA+
-ICsvKg0KPiA+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMjUgTWVkaWFUZWsgSW5jLg0KPiA+ICsgKiBB
-dXRob3I6IEhhaWxvbmcgRmFuIDxoYWlsb25nLmZhbkBtZWRpYXRlay5jb20+DQo+ID4gKyAqLw0K
-PiANCj4gLi4uDQo+IA0KPiA+ICsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2Vf
-aWQgc29mX29mX210ODE5Nl9pZHNbXSA9IHsNCj4gPiArICAgICB7IC5jb21wYXRpYmxlID0gIm1l
-ZGlhdGVrLG10ODE5Ni1kc3AiLCAuZGF0YSA9DQo+ID4gJnNvZl9vZl9tdDgxOTZfZGVzY30sDQo+
-IA0KPiBCaW5kaW5ncyBhcmUgYmVmb3JlIHVzZXJzLg0KV2lsbCBjaGFuZ2UgcGF0Y2ggb3JkZXIg
-aW4gdjIsIHRoeC4NCj4gDQo+ID4gKyAgICAgeyB9DQo+ID4gK307DQo+ID4gK01PRFVMRV9ERVZJ
-Q0VfVEFCTEUob2YsIHNvZl9vZl9tdDgxOTZfaWRzKTsNCj4gPiArDQo+ID4gKy8qIERUIGRyaXZl
-ciBkZWZpbml0aW9uICovDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHNuZF9z
-b2Zfb2ZfbXQ4MTk2X2RyaXZlciA9IHsNCj4gPiArICAgICAucHJvYmUgPSBzb2Zfb2ZfcHJvYmUs
-DQo+ID4gKyAgICAgLnJlbW92ZSA9IHNvZl9vZl9yZW1vdmUsDQo+ID4gKyAgICAgLnNodXRkb3du
-ID0gc29mX29mX3NodXRkb3duLA0KPiA+ICsgICAgIC5kcml2ZXIgPSB7DQo+ID4gKyAgICAgLm5h
-bWUgPSAic29mLWF1ZGlvLW9mLW10ODE5NiIsDQo+ID4gKyAgICAgICAgICAgICAucG0gPSAmc29m
-X29mX3BtLA0KPiA+ICsgICAgICAgICAgICAgLm9mX21hdGNoX3RhYmxlID0gc29mX29mX210ODE5
-Nl9pZHMsDQo+ID4gKyAgICAgfSwNCj4gPiArfTsNCj4gPiArbW9kdWxlX3BsYXRmb3JtX2RyaXZl
-cihzbmRfc29mX29mX210ODE5Nl9kcml2ZXIpOw0KPiA+ICsNCj4gPiArTU9EVUxFX0xJQ0VOU0Uo
-IkR1YWwgQlNEL0dQTCIpOw0KPiANCj4gQW5kIGhlcmUgSG0/IERvbid0IGZha2UgdGhlIGxpY2Vu
-c2luZy4NCldpbGwgZml4IGluIHYyLCB0aHguDQovKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
-KEdQTC0yLjAtb25seSBPUiBCU0QtMy0NCkNsYXVzZSkgKi8NCj4gDQo+ID4gK01PRFVMRV9ERVND
-UklQVElPTigiU09GIHN1cHBvcnQgZm9yIE1UODE5NiBwbGF0Zm9ybXMiKTsNCj4gPiArTU9EVUxF
-X0lNUE9SVF9OUygiU05EX1NPQ19TT0ZfWFRFTlNBIik7DQo+IA0KPiBJcyB0aGlzIGNvcnJlY3Q/
-DQo+IA0KPiANCj4gQmVzdCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCj4gDQo=
+On Thu, Mar 20, 2025 at 07:35:01PM -0700, Howard Chu wrote:
+> Hello again Namhyung,
+> 
+> As funny as it sounds, I have too much homework this week. I had to
+> break the review into two parts. Sorry.
+
+Thanks for taking your time!
+
+> 
+> 1) Maybe just '--bpf-summary' instead?
+> 
+> First of all, is '-s --bpf-summary' is it ergonomic? Why not drop the
+> -s and just --bpf-summary since the option has 'summary' in its name.
+> Another reason being,
+> sudo ./perf trace -S --bpf-summary --summary-mode=total -- sleep 1
+> sudo ./perf trace -s --bpf-summary --summary-mode=total -- sleep 1
+> are the same (-S will emit no output to stdout).
+
+Hmm.. it looks like a bug, will take a look.  Maybe --bpf-summary is
+redundant, but I think we can make it default later so that -s/-S can
+use BPF without the option excplicitly.  Then this option can be used
+to disable it (--no-bpf-summary) for whatever reasons.
+
+> 
+> 2) Anomaly observed when playing around
+> 
+> sudo ./perf trace -s --bpf-summary --summary-mode=total -- sleep 1
+> this gave me 10000 events
+> 
+> sudo ./perf trace -as --bpf-summary --summary-mode=total -- sleep 1
+> while this gave me 1000 events
+> 
+> I guess it's something to do with the lost events?
+
+No, as you said in the previous message it didn't support process
+targets yet.  I plan to disable it without -a for now.
+
+> 
+> 3) Wrong stddev values
+> Please compare these two outputs
+> 
+> perf $ sudo ./perf trace -as --summary-mode=total -- sleep 1
+> 
+>  Summary of events:
+> 
+>  total, 11290 events
+> 
+>    syscall            calls  errors  total       min       avg
+> max       stddev
+>                                      (msec)    (msec)    (msec)
+> (msec)        (%)
+>    --------------- --------  ------ -------- --------- ---------
+> ---------     ------
+>    mq_open              214     71 16073.976     0.000    75.112
+> 250.120      9.91%
+>    futex               1296    195 11592.060     0.000     8.944
+> 907.590     13.59%
+>    epoll_wait           479      0  4262.456     0.000     8.899
+> 496.568     20.34%
+>    poll                 241      0  2545.090     0.000    10.561
+> 607.894     33.33%
+>    ppoll                330      0  1713.676     0.000     5.193
+> 410.143     26.45%
+>    migrate_pages         45      0  1031.915     0.000    22.931
+> 147.830     20.70%
+>    clock_nanosleep        2      0  1000.106     0.000   500.053
+> 1000.106    100.00%
+>    swapoff              340      0   909.827     0.000     2.676
+> 50.117     22.76%
+>    pselect6               5      0   604.816     0.000   120.963
+> 604.808    100.00%
+>    readlinkat            26      3   501.205     0.000    19.277
+> 499.998     99.75%
+> 
+> perf $ sudo ./perf trace -as --bpf-summary --summary-mode=total -- sleep 1
+> 
+>  Summary of events:
+> 
+>  total, 880 events
+> 
+>    syscall            calls  errors  total       min       avg
+> max       stddev
+>                                      (msec)    (msec)    (msec)
+> (msec)        (%)
+>    --------------- --------  ------ -------- --------- ---------
+> ---------     ------
+>    futex                219     46  2326.400     0.001    10.623
+> 243.028    337.77%
+>    mq_open               19      8  2001.347     0.003   105.334
+> 250.356    117.26%
+>    poll                   6      1  1002.512     0.002   167.085
+> 1002.496    223.60%
+>    clock_nanosleep        1      0  1000.147  1000.147  1000.147
+> 1000.147      0.00%
+>    swapoff               43      0   953.251     0.001    22.169
+> 50.390    112.37%
+>    migrate_pages         43      0   933.727     0.004    21.715
+> 49.149    106.68%
+>    ppoll                 32      0   838.035     0.002    26.189
+> 331.222    252.10%
+>    epoll_pwait            5      0   499.578     0.001    99.916
+> 499.565    199.99%
+>    nanosleep              1      0    10.149    10.149    10.149
+> 10.149      0.00%
+>    epoll_wait            10      0     3.449     0.003     0.345
+> 0.815     88.02%
+>    readlinkat            25      3     1.424     0.006     0.057
+> 0.080     41.76%
+>    recvmsg               61      0     1.326     0.016     0.022
+> 0.052     21.71%
+>    execve                 6      5     1.100     0.002     0.183
+> 1.078    218.21%
+> 
+> I would say stddev here is a little off. The reason is:
+> 
+> On Mon, Mar 17, 2025 at 11:08 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > When -s/--summary option is used, it doesn't need (augmented) arguments
+> > of syscalls.  Let's skip the augmentation and load another small BPF
+> > program to collect the statistics in the kernel instead of copying the
+> > data to the ring-buffer to calculate the stats in userspace.  This will
+> > be much more light-weight than the existing approach and remove any lost
+> > events.
+> >
+> > Let's add a new option --bpf-summary to control this behavior.  I cannot
+> > make it default because there's no way to get e_machine in the BPF which
+> > is needed for detecting different ABIs like 32-bit compat mode.
+> >
+> > No functional changes intended except for no more LOST events. :)
+> >
+> >   $ sudo perf trace -as --bpf-summary --summary-mode=total -- sleep 1
+> >
+> >    Summary of events:
+> >
+> >    total, 2824 events
+> >
+> >      syscall            calls  errors  total       min       avg       max       stddev
+> >                                        (msec)    (msec)    (msec)    (msec)        (%)
+> >      --------------- --------  ------ -------- --------- --------- ---------     ------
+> >      futex                372     18  4373.773     0.000    11.757   997.715    660.42%
+> >      poll                 241      0  2757.963     0.000    11.444   997.758    580.34%
+> >      epoll_wait           161      0  2460.854     0.000    15.285   325.189    260.73%
+> >      ppoll                 19      0  1298.652     0.000    68.350   667.172    281.46%
+> >      clock_nanosleep        1      0  1000.093     0.000  1000.093  1000.093      0.00%
+> >      epoll_pwait           16      0   192.787     0.000    12.049   173.994    348.73%
+> >      nanosleep              6      0    50.926     0.000     8.488    10.210     43.96%
+> >      ...
+> >
+> > Cc: Howard Chu <howardchu95@gmail.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> > v2)
+> >  * rebased on top of Ian's e_machine changes
+> >  * add --bpf-summary option
+> >  * support per-thread summary
+> >  * add stddev calculation  (Howard)
+> <SNIP>
+> > +static double rel_stddev(struct syscall_stats *stat)
+> > +{
+> > +       double variance, average;
+> > +
+> > +       if (stat->count < 2)
+> > +               return 0;
+> > +
+> > +       average = (double)stat->total_time / stat->count;
+> > +
+> > +       variance = stat->squared_sum;
+> > +       variance -= (stat->total_time * stat->total_time) / stat->count;
+> > +       variance /= stat->count;
+> 
+> isn't it 'variance /= stat->count - 1' because we used Bessel's
+> correction? (Link:
+> https://en.wikipedia.org/wiki/Bessel%27s_correction), that is to use n
+> - 1 instead of n, this is what's done in stat.c.
+> 
+>  *       (\Sum n_i^2) - ((\Sum n_i)^2)/n
+>  * s^2 = -------------------------------
+>  *                  n - 1
+> 
+> and the lines down here are unfortunately incorrect
+> + variance = stat->squared_sum;
+> + variance -= (stat->total_time * stat->total_time) / stat->count;
+> + variance /= stat->count;
+> +
+> + return 100 * sqrt(variance) / average;
+> 
+> variance /= stat->count - 1; will get you variance, but I think we
+> need variance mean.
+> Link: https://en.wikipedia.org/wiki/Standard_deviation#Relationship_between_standard_deviation_and_mean
+> 
+> it holds that:
+> variance(mean) = variance / N
+> 
+> so you are losing a '/ stat->count'
+
+You're right, thanks for pointing that out.
+
+> 
+> And with all due respect, although it makes total sense in
+> engineering, mathematically, I find variance = stat->squared_sum,
+> variance -= ... these accumulated calculations on variable 'variance'
+> a little weird... because readers may find difficult to determine at
+> which point it becomes the actual 'variance'
+> 
+> with clarity in mind:
+> 
+> diff --git a/tools/perf/util/bpf-trace-summary.c
+> b/tools/perf/util/bpf-trace-summary.c
+> index 5ae9feca244d..a435b4037082 100644
+> --- a/tools/perf/util/bpf-trace-summary.c
+> +++ b/tools/perf/util/bpf-trace-summary.c
+> @@ -62,18 +62,18 @@ struct syscall_node {
+> 
+>  static double rel_stddev(struct syscall_stats *stat)
+>  {
+> -       double variance, average;
+> +       double variance, average, squared_total;
+> 
+>         if (stat->count < 2)
+>                 return 0;
+> 
+>         average = (double)stat->total_time / stat->count;
+> 
+> -       variance = stat->squared_sum;
+> -       variance -= (stat->total_time * stat->total_time) / stat->count;
+> -       variance /= stat->count;
+> +       squared_total = stat->total_time * stat->total_time;
+> +       variance = (stat->squared_sum - squared_total / stat->count) /
+> (stat->count - 1);
+> +       stddev_mean = sqrt(variance / stat->count);
+> 
+> -       return 100 * sqrt(variance) / average;
+> +       return 100 * stddev_mean / average;
+>  }
+
+Can it be like this?
+
+diff --git a/tools/perf/util/bpf-trace-summary.c b/tools/perf/util/bpf-trace-summary.c
+index a91d42447e850a59..c897fb017914960c 100644
+--- a/tools/perf/util/bpf-trace-summary.c
++++ b/tools/perf/util/bpf-trace-summary.c
+@@ -71,9 +71,9 @@ static double rel_stddev(struct syscall_stats *stat)
+ 
+        variance = stat->squared_sum;
+        variance -= (stat->total_time * stat->total_time) / stat->count;
+-       variance /= stat->count;
++       variance /= stat->count - 1;
+ 
+-       return 100 * sqrt(variance) / average;
++       return 100 * sqrt(variance / stat->count) / average;
+ }
+ 
+ struct syscall_data {
+
+> 
+> btw I haven't checked the legal range for stddev_mean, so I can be wrong.
+> <SNIP>
+> > +static int update_total_stats(struct hashmap *hash, struct syscall_key *map_key,
+> > +                             struct syscall_stats *map_data)
+> > +{
+> > +       struct syscall_data *data;
+> > +       struct syscall_stats *stat;
+> > +
+> > +       if (!hashmap__find(hash, map_key, &data)) {
+> > +               data = zalloc(sizeof(*data));
+> > +               if (data == NULL)
+> > +                       return -ENOMEM;
+> > +
+> > +               data->nodes = zalloc(sizeof(*data->nodes));
+> > +               if (data->nodes == NULL) {
+> > +                       free(data);
+> > +                       return -ENOMEM;
+> > +               }
+> > +
+> > +               data->nr_nodes = 1;
+> > +               data->key = map_key->nr;
+> > +               data->nodes->syscall_nr = data->key;
+> Wow, aggressive. I guess you want it to behave like a single value
+> when it is SYSCALL_AGGR_CPU, and an array when it is
+> SYSCALL_AGGR_THREAD. Do you mind adding a comment about it?
+> 
+> so it's
+> 
+> (cpu, syscall_nr) -> data -> {node}
+> (tid, syscall_nr) -> data -> [node1, node2, node3]
+
+Right, will add comments.
+
+> 
+> 
+> > +
+> > +               if (hashmap__add(hash, data->key, data) < 0) {
+> > +                       free(data->nodes);
+> > +                       free(data);
+> > +                       return -ENOMEM;
+> > +               }
+> > +       }
+> > +
+> > +       /* update total stats for this syscall */
+> > +       data->nr_events += map_data->count;
+> > +       data->total_time += map_data->total_time;
+> > +
+> > +       /* This is sum of the same syscall from different CPUs */
+> > +       stat = &data->nodes->stats;
+> > +
+> > +       stat->total_time += map_data->total_time;
+> > +       stat->squared_sum += map_data->squared_sum;
+> > +       stat->count += map_data->count;
+> > +       stat->error += map_data->error;
+> > +
+> > +       if (stat->max_time < map_data->max_time)
+> > +               stat->max_time = map_data->max_time;
+> > +       if (stat->min_time > map_data->min_time)
+> > +               stat->min_time = map_data->min_time;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int print_total_stats(struct syscall_data **data, int nr_data, FILE *fp)
+> > +{
+> > +       int printed = 0;
+> > +       int nr_events = 0;
+> > +
+> > +       for (int i = 0; i < nr_data; i++)
+> > +               nr_events += data[i]->nr_events;
+> > +
+> > +       printed += fprintf(fp, " total, %d events\n\n", nr_events);
+> > +
+> > +       printed += fprintf(fp, "   syscall            calls  errors  total       min       avg       max       stddev\n");
+> > +       printed += fprintf(fp, "                                     (msec)    (msec)    (msec)    (msec)        (%%)\n");
+> > +       printed += fprintf(fp, "   --------------- --------  ------ -------- --------- --------- ---------     ------\n");
+> > +
+> > +       for (int i = 0; i < nr_data; i++)
+> > +               printed += print_common_stats(data[i], fp);
+> > +
+> > +       printed += fprintf(fp, "\n\n");
+> > +       return printed;
+> > +}
+> > +
+> > +int trace_print_bpf_summary(FILE *fp)
+> > +{
+> > +       struct bpf_map *map = skel->maps.syscall_stats_map;
+> > +       struct syscall_key *prev_key, key;
+> > +       struct syscall_data **data = NULL;
+> > +       struct hashmap schash;
+> > +       struct hashmap_entry *entry;
+> > +       int nr_data = 0;
+> > +       int printed = 0;
+> > +       int i;
+> > +       size_t bkt;
+> > +
+> > +       hashmap__init(&schash, sc_node_hash, sc_node_equal, /*ctx=*/NULL);
+> > +
+> > +       printed = fprintf(fp, "\n Summary of events:\n\n");
+> > +
+> > +       /* get stats from the bpf map */
+> > +       prev_key = NULL;
+> > +       while (!bpf_map__get_next_key(map, prev_key, &key, sizeof(key))) {
+> > +               struct syscall_stats stat;
+> > +
+> > +               if (!bpf_map__lookup_elem(map, &key, sizeof(key), &stat, sizeof(stat), 0)) {
+> > +                       if (skel->rodata->aggr_mode == SYSCALL_AGGR_THREAD)
+> > +                               update_thread_stats(&schash, &key, &stat);
+> > +                       else
+> > +                               update_total_stats(&schash, &key, &stat);
+> > +               }
+> > +
+> > +               prev_key = &key;
+> > +       }
+> > +
+> > +       nr_data = hashmap__size(&schash);
+> > +       data = calloc(nr_data, sizeof(*data));
+> > +       if (data == NULL)
+> > +               goto out;
+> > +
+> > +       i = 0;
+> > +       hashmap__for_each_entry(&schash, entry, bkt)
+> > +               data[i++] = entry->pvalue;
+> > +
+> > +       qsort(data, nr_data, sizeof(*data), datacmp);
+> 
+> Here syscall_data is sorted for AGGR_THREAD and AGGR_CPU, meaning the
+> thread who has the higher total syscall period will be printed first.
+> This is an awesome side effect but it is not the behavior of 'sudo
+> ./perf trace -as -- sleep 1' without the --bpf-summary option. If it
+> is not too trivial, maybe consider documenting this behavior? But it
+> may be too verbose so Idk.
+
+The original behavior is random ordering and now it's ordered by total
+time.  But still we can think it's randomly ordered.  I believe we need
+to maintain strict ordering by total time and then fixed the existing
+code.  Once that happen I can add the documentation.
+
+Thanks for your careful review!
+Namhyung
+
+> 
+> sudo ./perf trace -as -- sleep 1
+> 
+>  ClientModuleMan (4956), 16 events, 0.1%
+> 
+>    syscall            calls  errors  total       min       avg
+> max       stddev
+>                                      (msec)    (msec)    (msec)
+> (msec)        (%)
+>    --------------- --------  ------ -------- --------- ---------
+> ---------     ------
+>    futex                  8      4   750.234     0.000    93.779
+> 250.105     48.79%
+> 
+> 
+>  CHTTPClientThre (15720), 16 events, 0.1%
+> 
+>    syscall            calls  errors  total       min       avg
+> max       stddev
+>                                      (msec)    (msec)    (msec)
+> (msec)        (%)
+>    --------------- --------  ------ -------- --------- ---------
+> ---------     ------
+>    futex                  8      4  1000.425     0.000   125.053
+> 750.317     75.59%
+> 
+> The order is random for the command above.
+> 
+> Thanks,
+> Howard
 
