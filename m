@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-570635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E201AA6B2E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:18:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABF3A6B2FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365FA3B15E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5C917E01B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2441E0DEA;
-	Fri, 21 Mar 2025 02:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4241E25EF;
+	Fri, 21 Mar 2025 02:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GsnWUcHY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="lW9RqoA8"
+Received: from butterfly.birch.relay.mailchannels.net (butterfly.birch.relay.mailchannels.net [23.83.209.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41C217C210
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742523484; cv=none; b=KUPy6yAdSwiYZq+A02tjujNmRxWkPoqaKacqDgabAOACyP0kU9QL8AZRp4E3MymOZpICtWXVXt2KYCw/XRDowQKbna2cd+Zw9Trb9YGiIcC4Hsk2Qf88/dbSm5ZaMQl90nKrCYmv0mCs+cHG2/Es/658XHaeWIFcNoochsSA6Fs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742523484; c=relaxed/simple;
-	bh=yiT0IByiw6hfNbsZ2ycmFtsULRBmPbyQPGomX3XADbA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ldygia2eft0MM9atC6E5SV0LkMTDBQLoZn8oPFadwLnHmsRaE+iORelqzRHk4ZOX2SvBZFMWVbVDK5Av9M/HoNSI4kPaXYWmyYqHPqAs6bvbUQWjwWr83uw/hwtUp0No04e6QVBFeXIB9BgkLzePJrCwVH1pYwP7RTd6bpFgeLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GsnWUcHY; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742523482; x=1774059482;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yiT0IByiw6hfNbsZ2ycmFtsULRBmPbyQPGomX3XADbA=;
-  b=GsnWUcHYMys2oqgyk406KrKgXnNRn2EfnO97JmtojPTTEmMCkizQPJcf
-   uDcaHgnl7eKCz/x7NPizbCNXBm1YYjhJ5dp2BpbFdxqMEDLjtmoDAvY3H
-   np0ZNe8o6C+cbdxeHGT8THDSQNdq5R/nj9ioE2ScVggjoC28CZnoDrH+w
-   MRAawalZP6G6EjEcRpuWmS2XAMAGYT/z0nI+oYfcCMFrclgZjzVLQq3O4
-   7wO73RPQ8xkm78kagDnUH9pX5T4iMf9guVDnOJ4QbkCVYS+dkIQgaA8Mg
-   wyjQAodh1UkYMP9fgEMkpOxu/2SGZKEtF/Ei10AkX5zmG/k13eBEvCu+u
-   A==;
-X-CSE-ConnectionGUID: nh/tafTeSTChj+6imSLtQA==
-X-CSE-MsgGUID: 3HBuhXgXS1Cxa9IKm5DBIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="66247433"
-X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="66247433"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 19:18:01 -0700
-X-CSE-ConnectionGUID: l0xm/TmsR1icDX7kc4ic6A==
-X-CSE-MsgGUID: HN5ZugeWT5GnzJJUsrOWlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="127425864"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 19:17:59 -0700
-Message-ID: <0527bf74-f272-47e1-8cf7-1e66167fb560@linux.intel.com>
-Date: Fri, 21 Mar 2025 10:14:28 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B312F208A7;
+	Fri, 21 Mar 2025 02:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.209.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742524462; cv=pass; b=UgNgbGufOK+nmUvb6/4ywGW5XBc47/3+NCcYbdi5u+z/PHy/AJq+xrOGqhU1QHVM3NiEzS6I/SK96myvTowWGREtPxIJd/y9GSDD3BAD/KVlslN8Ssv0kLos0L4KiqSA4/1wHksnRcE6Ssum+vzGk1bmAqS5ZO/hvSpcT16Hq7g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742524462; c=relaxed/simple;
+	bh=hZXi0UZd5qs65yJy2Fr/zycLpmzQdjI05wB+uU6qyjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bX20fM91WnC6eMYm2vKWfgTN9YwTMboeFbjXK7/IoDTTclSa/HbSum6ZxV26M4URAdlw3HUULB49pPwLurvk2GqSeilewnydyIYE8L0UR+ULNTvZZxvCr3x9e1dOt9NwAPgx2/pO4HwpIqrxnK0+D75mWQddtWzWcKZe52PyXbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=lW9RqoA8; arc=pass smtp.client-ip=23.83.209.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id EF9933222C9;
+	Fri, 21 Mar 2025 02:14:45 +0000 (UTC)
+Received: from pdx1-sub0-mail-a223.dreamhost.com (100-114-54-169.trex-nlb.outbound.svc.cluster.local [100.114.54.169])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 657AD322033;
+	Fri, 21 Mar 2025 02:14:45 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1742523285; a=rsa-sha256;
+	cv=none;
+	b=HujqnApNF73sKMFZX3jMarr0MjXmn9Jh7L5AsqLLBw9D4DDbW2m2a/mJPScR/kH28Vx8mt
+	jN/UY5oAnQoRZS+rmFfydigSyE0pFuK0NBwKdZiEHrEwOinIK6kAivo7cUTPgDkOF5CP3i
+	Oa4IT/WAH0NqaYC5/EAFAgEeI/WjSuaIK4nvtw4GDkkChAJhX8ahJ+5dSMOO0aVVsxSqpN
+	69ung1i0EYprZcR4Uz7jX8cKg36/9NVE5xMWVj66yT2pFd7IUwdxw3jDScuZDQut5LgfAw
+	tgdyIksYgH/c5qZIqGTVA3c2ntpAhIFTFM4DQESForElKfRJxBNffGPh4eQfNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1742523285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=hZXi0UZd5qs65yJy2Fr/zycLpmzQdjI05wB+uU6qyjE=;
+	b=HbBCpAuBlZKgmKDSAOxvVO9LEwGdBHJnTqzjLr2Xr9MU0rFDofiIw+74t9dzbGcVa0i64d
+	yBbx1Ns1T7onSti4Aq1NtYxPz3TjKGqQ4mgqkiAJ3TLsdYb2pUJwmntRErQBpLAFbxeS61
+	yJrdsr8rb3n0eWku3ZWN7zy9lbvE1vsmr4s9fv/ALEhTpKixh3k7H93sw+Xe0xoypy913h
+	jraHDP3EVttyo/5jgpNLWyUK6A8bHOB6hP3k50XM04nxyp1pPwHJFr1Uijf6i7Yi6rKST3
+	k9PPNlIopZOlbPnIHMHwG5dRjbeYXqJHtBtpzxGgXXdGEvFKSAzprhSG7JAVqQ==
+ARC-Authentication-Results: i=1;
+	rspamd-74d566c845-rqlrf;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Hook-Trade: 400a8b9548a43eda_1742523285763_2357163051
+X-MC-Loop-Signature: 1742523285763:3385229739
+X-MC-Ingress-Time: 1742523285763
+Received: from pdx1-sub0-mail-a223.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.114.54.169 (trex/7.0.2);
+	Fri, 21 Mar 2025 02:14:45 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a223.dreamhost.com (Postfix) with ESMTPSA id 4ZJmH85SQ3zcs;
+	Thu, 20 Mar 2025 19:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1742523285;
+	bh=hZXi0UZd5qs65yJy2Fr/zycLpmzQdjI05wB+uU6qyjE=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=lW9RqoA8PJJFhdE+iy/wd5GPM6H2tpcI6J1gVtaxfIzkYLbb29RwrtV9YmRvpfvsJ
+	 evVgXMoFuiRjMj9ofHo+BbgQ2m8G3t9PCIVzoop+p3PKC1xMBQgAOkkTYXzok1i2AU
+	 gMvyjg6cMP0BhlhCAG4G99SxZyLucgKt7lhf9xZAGbkPH0Ix5ngiMKVZ1tcaX1OQ6Q
+	 dWB5yWwhOKkQJSI6Cr6cAupnEN0rqQPx5RRlZKE9rM3z50bH1g8rh4rZqD4gP2goXk
+	 k/QsHRrXJoE14o3onkSs1bc0LUIOd4lpXE+e0ysNkrevqiG7465FXjNWt6cjnJPgJk
+	 DGJFw838tiznA==
+Date: Thu, 20 Mar 2025 19:14:41 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Li Ming <ming.li@zohomail.com>
+Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC Patch v1 0/3] Fix using wrong GPF DVSEC location issue
+Message-ID: <20250321021441.vdmo5txhvb6kya3a@offworld>
+References: <20250319035516.222054-1-ming.li@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] iommu: make inclusion of iommufd directory
- conditional
-To: Rolf Eike Beer <eb@emlix.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>
-References: <12652899.O9o76ZdvQC@devpool47.emlix.com>
- <2243601.irdbgypaU6@devpool47.emlix.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <2243601.irdbgypaU6@devpool47.emlix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250319035516.222054-1-ming.li@zohomail.com>
+User-Agent: NeoMutt/20220429
 
-On 3/20/25 17:22, Rolf Eike Beer wrote:
-> Nothing in there is active if CONFIG_IOMMUFD is not enabled, so the whole
-> directory can depend on that switch as well.
-> 
-> Fixes: 2ff4bed7fee7 ("iommufd: File descriptor, context, kconfig and makefiles")
-> Signed-off-by: Rolf Eike Beer<eb@emlix.com>
+On Wed, 19 Mar 2025, Li Ming wrote:
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+>But I am not sure if all dports under a same port will have same
+>configuration space layout, if yes, that will not be a problem. If I am
+>wrong, please let me know, thanks.
+
+Yes, when caching the dvsec was suggested, it was my assumption that the
+config space would be the same.
+
+Thanks,
+Davidlohr
 
