@@ -1,133 +1,102 @@
-Return-Path: <linux-kernel+bounces-570935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30C6A6B663
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:54:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17455A6B668
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007F819C6D0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:53:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F403BDF33
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445731F03F8;
-	Fri, 21 Mar 2025 08:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC901F0E4C;
+	Fri, 21 Mar 2025 08:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NDMx7gzo"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms4pzBpa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1BC1EFFBB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CB18BEE;
+	Fri, 21 Mar 2025 08:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547217; cv=none; b=Sox77UcKUnS+bpk0dmGXT/vmwlvgOc2D8Qsn8sr0nstJNd9QU1DyBSqrP5puUFbRHfGSTNEJkGIvW/NfbD2c6Hcy18UfB5TS/2t68zpNkW3lT2fC+N/iYQCxBm6szm73k+oJvoUDpkiJirNJ3c50+hJvzfIkoytZ60lwaQeCruM=
+	t=1742547200; cv=none; b=WpiC754+8oiUE+1Fd3DIr1LNz0QVqa6p3rNeXMx5hK43VVMgI4Pgi3+F/26Q9tnRaFcOCPHea2WqPbYskdH7GuDru5dXoVuZ5kQZRJKaYLbaWvButnoIsxA6vU8ZXqOcK0T351iX+eziSc8sQqDLh1CZP/ySQL1FC9Knvdt6BBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547217; c=relaxed/simple;
-	bh=vIw+xo/RVlg0K7NewC2ds9CYeI22kvETCWi6z+XQAyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eGb28KuoxH1sTM4XrypGEuLPYak96W0w0BCoLoOWIIxZeypReVBGJpaSGMUlspqTkVe8hBLNsatDO+fmUKgl4u+qRlW52EjBk9ld2FpMulllJ2/IjBAzuEux1x6Qg9PA5xzoohZzX3yuCZFqAadFfF5xJVtB4hse2L32SdCVG+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NDMx7gzo; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e609cff9927so1242730276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742547215; x=1743152015; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rgcCLbhKsmIYAOgp/Js66iyzZCDf/tFpLepP96oubhU=;
-        b=NDMx7gzoF2arimACgLXmWu/4aMLGWSlQ6LK8NNwmbWSyPeWAvl6qFUFAsh6Zg3WzOB
-         By2XV12XUyegTE/TwGoKP7kYEyKuKdZPkDC5+1zTKL4JwbTR+WDSPxSS4TSR6079kEGE
-         ZF7vaIknVYipfeheJUZj7rDp804VRPz2HWVg3Clt/H5ZJVpZR+Zvv5HLxd5CFxYVVvyD
-         4+SYg4UpJVJF6JdqTUuEEroH1cEY3SasXx35s1Nlrhz13neY5wLV1qhNA4CJnJt3cuNd
-         EjAX8BGGzrhC23eyHZXEkEr2by5RbF6NA8owH8B+KcuM+WTOv3Ay+3ZqNfYZcZKxG/db
-         9eDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742547215; x=1743152015;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rgcCLbhKsmIYAOgp/Js66iyzZCDf/tFpLepP96oubhU=;
-        b=LDS5DFGGjMUpWfmpUwRlP0ahqYHc0yFNugK9cuoWgr3NzoE90WK0aTh6dLsRvAuxI8
-         kC/ks0MMKdPCjq44xEhzHObgAv0DCsZOGJYbk38o5bt+A2b0bDnCuC49UhuPj9KeGcXm
-         6L1pfGIWrzGvS/vp7VzLwG2Is8WYSSPIyNwulAplDBKguUuf1hj8uAmPJcrMligGwJEA
-         WYACEyqPEc6DE9TAOideZtL+JkVZdXfmb5ukWhRFiEmcnUv+IqYg2Af1wU1DfKWuYYWm
-         4hChD6Y4HcuV+YwMxazbhoC78obk3acBXavVWAuPV2s1L3Wx3vdDAXV6IB9Czmm5BKuR
-         65zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSuFPeLqn0xdlQqlC0mB4wb0X5dVGqiQruO/ZcbHbX8vB2aHriWDf8SDVWdXpVZjwxnq/rZhi/6hqjKdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG2mW+cMf4pDsnh/w3GEYVgrs71c60BdCbGf1buLQR6ddq7dIk
-	eG7rtWMvBhaAnUMKY+10n093bP5r8wGskAyo/SwUv1OhtPprk1Dm6F+E9vGNwfzHbVZ19p5r2l8
-	QTmxjSIC46tXbcch2PExwM4/Pgp9u2yb4eMHlzeMFB3woFHMEhVg=
-X-Gm-Gg: ASbGnculvLJZkxSSLPZwdqncgHV/26kwr76jFyk0jFXI3hWRNq6we50d+FYQDZz63od
-	JmcwqB78gAl7bMmNCk79l//4A/dnG4BuKZFU32BUPBosSNiADNnDKlIaHOiQuyVN9DfRObvismF
-	UG+fA+J+zEYYu8VRYC441Lu66IqIZ+qUSAzEhh9xeO0IbsUo/sEcf1xjOO0gw=
-X-Google-Smtp-Source: AGHT+IGIA5O54XjDs3NqQwJeGdMi36x/C9LukWoKZoxYY9+RYJ4sWd1HYzkWqNeyhwHHu+idCoD8F4Fq7IsvO+NBSkE=
-X-Received: by 2002:a05:690c:67c6:b0:6fb:9c08:4980 with SMTP id
- 00721157ae682-700bacd6ac1mr34010717b3.27.1742547214831; Fri, 21 Mar 2025
- 01:53:34 -0700 (PDT)
+	s=arc-20240116; t=1742547200; c=relaxed/simple;
+	bh=t977FsMUBlc8ZNdRKWvO4yugH+jGz1A2sc1tshC8jrM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tujl0FtBII+53ldPirOpv/dq3qhE9vFGfVvQ0qZdhvDEw2bG0l1aAMIpwFBnIu+1fNRnwVmyQEUFfzV2blboOiIvy8sFhrZqKM6kT2ZSQL+d791QS8EalirDgfVbBtY9GvCNV3BWz5DKXacR0OrIuUI/oaKGy32p+J9LzvLGOyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms4pzBpa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF8BC4CEE3;
+	Fri, 21 Mar 2025 08:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742547199;
+	bh=t977FsMUBlc8ZNdRKWvO4yugH+jGz1A2sc1tshC8jrM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ms4pzBpaF/ixuovfKG+R1TVujRf7aHWkE/tkeCd54XjmQ9qwc4CES7TSycue/7rKU
+	 myePBDQ+9MlZGEx/VvPcvtI3qucGbohG8rJz/8KQfs0aHTZkfpTPYbVplmuvgAvQB5
+	 kuT8K041TiNyMUM9CtTYlaH2wnw2MH9le98d3ykJLkqkSl5Dsm1LZ54K5H8qvhJTAh
+	 J0YShJegdRenxGw2pitUd5YrRvIxUE5n9J5wfRbpX9hsxFZVvZKrVIVM6Z0DdeU3kR
+	 65yCl++79NzULnmfVenZRkXWV2uO9q3lFnOcqGpjddk6R4IgGzLYrl0mkYOj5vhjVR
+	 iuL14M7aVO8lg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: kernel test robot <lkp@intel.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] platform: cznic: fix function parameter names
+Date: Fri, 21 Mar 2025 09:53:07 +0100
+Message-Id: <20250321085315.915808-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321080918.1f8b90c4@canb.auug.org.au> <PH7PR16MB6196A1D9A7043FE4E69D8AFAE5DB2@PH7PR16MB6196.namprd16.prod.outlook.com>
- <PH7PR16MB6196B4BE63D7ED4D91E66BD3E5DB2@PH7PR16MB6196.namprd16.prod.outlook.com>
-In-Reply-To: <PH7PR16MB6196B4BE63D7ED4D91E66BD3E5DB2@PH7PR16MB6196.namprd16.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 21 Mar 2025 09:52:57 +0100
-X-Gm-Features: AQ5f1Joyy04hP5ZqLNHiPsqFX5pzDqdwo1UJMfxtCqFw2cJyFhvslvysOB8BsFc
-Message-ID: <CAPDyKFoMZbr+CDf0LeyQ_WxpTW=b_gGp5q8y-PPo+0MBNnyJJQ@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the mmc tree
-To: Avri Altman <Avri.Altman@sandisk.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 21 Mar 2025 at 08:33, Avri Altman <Avri.Altman@sandisk.com> wrote:
->
-> > > Hi all,
-> > >
-> > > In commit
-> > >
-> > >   79055e47336e ("mmc: core: Remove redundant null check")
-> > >
-> > > Fixes tag
-> > >
-> > >   Fixes: 737d220bb2be ("mmc: core: Add open-ended Ext memory
-> > > addressing")
-> > >
-> > > has these problem(s):
-> > >
-> > >   - Target SHA1 does not exist
-> > I was using Ulf's for/next branch, as I always do, and their the sha1 is
-> > 737d220bb2be.
-> > Should I be using different tree/branch ?
-> I apologize.  Looks like 403a0293f1c2 does exist and presumably point to the same commit (impossible):
->
-> commit 737d220bb2bef9efd43267c757faff003533b631
-> Author: Avri Altman <avri.altman@wdc.com>
-> Date:   Sun Oct 6 08:11:42 2024 +0300
->
->     mmc: core: Add open-ended Ext memory addressing
->
-> commit 403a0293f1c230524e0185b31f69c02a6aed12c7
-> Author: Avri Altman <avri.altman@wdc.com>
-> Date:   Sun Oct 6 08:11:42 2024 +0300
->
->     mmc: core: Add open-ended Ext memory addressing
->
-> I guess something in the metadata is different.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Sometimes I am re-basing my tree, so I am guessing the sha is from an
-old tree/branch.
+A invalid prototype made it into a previous patch, causing an clang warning:
 
-Anway I have moved to use 403a0293f1c2 as that should be the correct one.
+drivers/platform/cznic/turris-signing-key.c:25:55: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
 
-[...]
+and a slightly different warning with gcc-11 and earlier but not gcc-12 and up:
 
-Kind regards
-Uffe
+drivers/platform/cznic/turris-signing-key.c: In function 'turris_signing_key_instantiate':
+drivers/platform/cznic/turris-signing-key.c:25:43: error: parameter name omitted
+
+Add the parameters to get a clean build with all compilers.
+
+Fixes: 0b28b7080ef5 ("platform: cznic: Add keyctl helpers for Turris platform")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503210450.AoOpbJXC-lkp@intel.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/platform/cznic/turris-signing-key.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/cznic/turris-signing-key.c b/drivers/platform/cznic/turris-signing-key.c
+index 3b12e5245fb7..3827178565e2 100644
+--- a/drivers/platform/cznic/turris-signing-key.c
++++ b/drivers/platform/cznic/turris-signing-key.c
+@@ -22,7 +22,8 @@
+ 
+ #include <linux/turris-signing-key.h>
+ 
+-static int turris_signing_key_instantiate(struct key *, struct key_preparsed_payload *)
++static int turris_signing_key_instantiate(struct key *key,
++					  struct key_preparsed_payload *payload)
+ {
+ 	return 0;
+ }
+-- 
+2.39.5
+
 
