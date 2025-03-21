@@ -1,122 +1,225 @@
-Return-Path: <linux-kernel+bounces-571955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B0AA6C4A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AFCA6C4AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDB818947E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:55:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F12018961C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A139D230BE5;
-	Fri, 21 Mar 2025 20:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC8230BE7;
+	Fri, 21 Mar 2025 20:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cgxp1b5H"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSxvE5IF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B201513C695;
-	Fri, 21 Mar 2025 20:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A8313C695;
+	Fri, 21 Mar 2025 20:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590508; cv=none; b=YPQKhbI9pNLHmKOZMOKNXMjC4CQwdSrh+FGM6zUb55PXzXk3OZSFIbHA4TdoKs5ZM5zokSkPXUqVcl5TV8CzfJlv4nvjWs8nmHJBn3eDSmRI/cTQn4sjXOkMrmT4MZricGwr/AIzzE5BjMCRjilw1n3gwfsF+SpGHor5mJqgqMU=
+	t=1742590595; cv=none; b=V13B6OtIXBdOqQ2m1msCeNr146atS5zuYuWg9SYgbuNJ04uHBS56AkktPYMOW3EBj458CEPG44bcvRrUyfm/EyrcDFFgfcbwyn7JVy7LcqM42inziHQcC5aPpKEmg2LpIx5eYQ/YlEn6jIpr5R8t/GiwMpY3S1uf7i4PpFkLtGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590508; c=relaxed/simple;
-	bh=MVawJ+uRuf5qJyFi5lAM7ITVcCh8q7Tko+q2Mk4Nb+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DtUhC4R79qHYA6dryoBJwdBU/vwAH5NNEUfF+HddhQxzQMf6p8LMdKDSNSLzT9uh0GGJbeYXKeR2jkFFp3zClVxAys6+TSFbZZHqUUg38z935gAdq0l7vyHJZI/IugHkubU0MN2XaWkGuBb7cS5QGdOB6zeJzP1ZcDtfn6UM/ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cgxp1b5H; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff53b26af2so645106a91.0;
-        Fri, 21 Mar 2025 13:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742590505; x=1743195305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A92tVAeSYZBweGivFYxCcNKXj/GHAJth/Pmm7NFfrYc=;
-        b=Cgxp1b5HYqE173QGX1j3Iq8K/706RmvyZVYuXLPrUTiPTh5Xlvhifqjfq295KWw55Z
-         C/2New2VAyDbr5CWtn+qR+KvRBKdTzJ/lnFbeDaYorYpFic/ZfJ+QQYM1nAp+SREtqEa
-         rIsD4629ktZU+bmo9YzYublbtuFZIWeFW67k9OKPQufvfRo7cDuJHrwpll0fZFat55dd
-         muvJ+hr8uresYYB49r61Vaz2m3lKaXc4TWh6w95nBdVinyj3mY/eDyudos0Je+4f3w0H
-         xWiJrI6CghMtY7M55OYBKve/A2ndJSzamenQlebxRGYNFDDYqp8f6zpdyf0226zd9WkQ
-         +6eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742590505; x=1743195305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A92tVAeSYZBweGivFYxCcNKXj/GHAJth/Pmm7NFfrYc=;
-        b=MwNeHXQGY2cddUBc4SPHbHlM6j4MnK34MdWTptwyn5dJSBmoPZQT6XBhnsIxmPGxrE
-         s5kBwvljGYM1CM7x3wsd4TmREALY38MaNwU8PpAVUMBLd7xLxSEyMBNVhbrejTvr8KO7
-         mqBMV6l3Mq50twiLh6YZItUVok7qFxjHDf+VdWDMhecvW2/u9kPT5qxEgGm3VeHF+RYT
-         HjyLUatLmzHZvrBnxLtyLG0eLheF/8zBjNpGjIT3JxovO4IiPD/wTz+X2FOWTz4PD4qX
-         G5gShQLnAotOuSrUg5eMhkLoS2RBSVBWGu0gfnXdd+uJE4OUN3Tq7no5kvx4Rf9E/S1J
-         07FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5YOivDg8LpJqva2izPewS40t/GNoV111IqGGr20wirYr6D97LhUERh3ILThqUJVFloMvjSzLGtxkY5Q==@vger.kernel.org, AJvYcCXAz30Liug/Bjoyk7enAKnq0LmjLtl5sIEFvGYjuCT7Fq+K3rrfF0SpSB8oLwIfAa7KwE1vIDAZu5E/ORU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB4ry6cp6S3bBINeNIjUVD8JWr7c13LUJeUR7o4TlEjCJ3d+36
-	hhxmVn61e2DFSBNOuvEcrxbtXxodKSVelfhIUgMDEZn8Bbs1vSgHTQYrlsl2wyNZNF4rjYx0MYi
-	iOAu10UcGHaMSukSodITJemtJgt4=
-X-Gm-Gg: ASbGncuao1zEfymRj2NKjVCRGfnIfnG1AfmclaP0V9PQv636KKQTpq2Q1HvCswl1iP7
-	Noav317T1ddUSC/WXf4Vugqu+AJWYIUIVzDo1uOvgSJCzBlg1tH0q3BHiDJsF972Z7W+qnXy5gc
-	XxPjhRwdBsdHvqlrP8fAGic/78eA==
-X-Google-Smtp-Source: AGHT+IF72bezPVTt+Bwr+E5Kw+h8sXNz8ywq21FjjEMo2IOeV33umLOwEl8IQcCzNZYC8pQga0VB/BbY4VQSWZYvlCo=
-X-Received: by 2002:a17:90b:1b0a:b0:301:1c11:aa7a with SMTP id
- 98e67ed59e1d1-3030fedf3e5mr2544199a91.3.1742590504899; Fri, 21 Mar 2025
- 13:55:04 -0700 (PDT)
+	s=arc-20240116; t=1742590595; c=relaxed/simple;
+	bh=ec3+o488fphAO1T0qvJyJYNbwPmkpTwgA5JJPdJ8RSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IfTIV1bia3y/dBWV1pfdSZMpzLKK+DpQuO/6vTKpC5yXK2f5ftvb3VC5tI6N0KJBnnzYGXeYebns+sZNVjiSAZu6TfWCHLrwmpffhpz8TZ1OIvGiehNX9jZ41kC4pY7O+9hirQ/8qVb23skPMB2lmpgz72HLyjvyMyr+bwpklb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSxvE5IF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 722F1C4CEE3;
+	Fri, 21 Mar 2025 20:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742590593;
+	bh=ec3+o488fphAO1T0qvJyJYNbwPmkpTwgA5JJPdJ8RSk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hSxvE5IFT7zH25ei6WnDtLU0sFcu9ydwmTx/UyDdgcSMVfBswrk1afZzc5DpFLFbt
+	 eE9E7i3FLDdIrIxRLT4B38SdoF+tqiHl1atfY8ac3VsWy7ITeheVHQQd07IXoMNo5f
+	 uDa/93Yu1+6egWKBC3unIsrulPiRd4UGCuaeeFFGvwzJHvg8DiYXKd3Zg331+IQMJs
+	 KlMp3z+6U/N1l/PM1onnLacgYR6L+HRCvDTOpiZtON4BGVzfFkRmkrYUPxo2a78EXL
+	 RThnvi5Kt6pr45BYn48+O+ibCWAup/EV3VZgPLwS+uv1qlpfQFR5jQMhSv/RanKkQW
+	 QeiJNQTCutkOA==
+Message-ID: <c1791b2e-bdf6-448c-88d3-c97511af3357@kernel.org>
+Date: Fri, 21 Mar 2025 21:56:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321185630.566dc075@canb.auug.org.au>
-In-Reply-To: <20250321185630.566dc075@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 21 Mar 2025 21:54:51 +0100
-X-Gm-Features: AQ5f1JpLxFtrBj1igOP5SIzY8-Fl-cncCY913l3brOXrQqIuFHUW_pW6F9SgpvY
-Message-ID: <CANiq72n_W50ZeS7xpiH7OL1DMUy4Z5FM2Kwjui_z2aiuJh9+BA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, 
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/8] dt-bindings: timer: Add EcoNet HPT CPU Timer
+To: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
+References: <20250321134633.2155141-1-cjd@cjdns.fr>
+ <20250321134633.2155141-5-cjd@cjdns.fr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250321134633.2155141-5-cjd@cjdns.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 8:56=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Today's linux-next merge of the rust tree got a semantic conflict in:
->
->   samples/rust/rust_dma.rs
->
-> between commit:
->
->   7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
->
-> from the driver-core tree and commit:
->
->   9901addae63b ("samples: rust: add Rust dma test sample driver")
->
-> from the rust tree.
->
-> I fixed it up (I applied the following supplied resolution, thanks Danilo=
-)
-> and can carry the fix as necessary. This is now fixed as far as linux-nex=
-t
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+On 21/03/2025 14:46, Caleb James DeLisle wrote:
+> Add device tree binding documentation for the high-precision timer (HPT)
+> in the EcoNet EN751221 SoC.
+> 
+> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
 
-Looks like it worked from my test builds, thanks!
+Previous patch was not tested, so was this one tested?
 
-Cheers,
-Miguel
+> ---
+>  .../bindings/timer/econet,timer-hpt.yaml      | 58 +++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml b/Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml
+> new file mode 100644
+> index 000000000000..8b7ff9bce947
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/econet,timer-hpt.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/timer/econet,timer-hpt.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: EcoNet High Precision Timer (HPT)
+> +
+> +maintainers:
+> +  - Calev James DeLisle <cjd@cjdns.fr>
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The EcoNet High Precision Timer (HPT) is a timer peripheral found in various
+> +  EcoNet SoCs, including the EN751221 and EN751627 families. It provides per-VPE
+> +  count/compare registers and a per-CPU control register, with a single interrupt
+> +  line using a percpu-devid interrupt mechanism.
+> +
+> +properties:
+> +  compatible:
+> +    const: econet,timer-hpt
+
+Soc components must have soc-based compatible and then filename matching
+whatever you use as fallback.
+
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+
+No, list items instead.
+
+> +    description: |
+> +      Physical base address and size of the timer's register space. On 34Kc
+> +      processors, a single region is used. On 1004Kc processors, two regions are
+> +      used, one for each core.
+
+So different hardware, different compatible. That's why you need
+soc-based compatibles. Follow standard SoC upstreaming rules and examples.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      The interrupt number for the timer.
+
+Drop, redundant.
+
+
+> This is a percpu-devid interrupt shared
+> +      across CPUs.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description: |
+> +      A clock to get the frequency of the timer.
+
+Drop description, redundant
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    timer_hpt@1fbf0400 {
+
+No underscores
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Look how other SoCs are calling this.
+
+> +        compatible = "econet,timer-hpt";
+> +        reg = <0x1fbf0400 0x100>;
+> +        interrupt-parent = <&intc>;
+> +        interrupts = <30>;
+> +        clocks = <&hpt_clock>;
+> +    };
+> +...
+
+
+Best regards,
+Krzysztof
 
