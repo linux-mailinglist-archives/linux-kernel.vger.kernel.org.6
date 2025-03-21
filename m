@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-571362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACFAA6BC36
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:58:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B3EA6BC3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DDAA1896EF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A778417202B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B034B80C02;
-	Fri, 21 Mar 2025 13:57:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890EB78F29;
-	Fri, 21 Mar 2025 13:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C6E80C02;
+	Fri, 21 Mar 2025 13:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jIXoe2XE"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4E78F30;
+	Fri, 21 Mar 2025 13:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565435; cv=none; b=Aqy2JtfWWNmnhHB8a1yhe28nrmsjplZfLdbDuUvhJSSIASaIved8M6xystvFhSpe/SLLCzpyfYaJb0jIabd4ByRscV1iesonvXmDA/lR63o+qpL+JLLbI64SitfukyMZwCSh1jWPrCDfn9vbqzS7+IZy60vlehZMrTOs7HZ3Z5w=
+	t=1742565501; cv=none; b=XChysODE+dqG+zk96OTKqRS838d3KwHRU+tARzwYvfuDXOzWy+uX3aQ5fgrGJEOWmwT/B4PFKsAIfNXHQknSG1LvddPZJ4k0dHS9kIOLiZHh97QP1TphBDA9wVokztUfi8L9ZBU13Tk1jCdCK69rlbA7GU0bUQketcWMCScnS5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565435; c=relaxed/simple;
-	bh=mt5VrjA3cDeDU5iaGmha+OBFVRPyZDe+YhTGWVzJhKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xe64v9jsIOIfNUNm/LIzOv+2Ouz1uKGmvAL/y7ctmitR0XGyrJZrATRTHRSAlDVM4bl4S9eDMtoknZT3Pzg3Def0XZP44tU9Uc/zQcB4rRst1JTf9igSjBEPr5fSjoiGMqDDoySUIUBi7ftPXHVq3/YKOt3g8ZMKlOwkemqZFfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13B44106F;
-	Fri, 21 Mar 2025 06:57:20 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7343D3F673;
-	Fri, 21 Mar 2025 06:57:10 -0700 (PDT)
-Date: Fri, 21 Mar 2025 13:57:07 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Huisong Li <lihuisong@huawei.com>,
-	Adam Young <admiyo@os.amperecomputing.com>,
-	Robbie King <robbiek@xsightlabs.com>,
-	Andi Shyti <andi.shyti@kernel.org>, <linux-i2c@vger.kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, <linux-hwmon@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v3 00/13] mailbox: pcc: Fixes and cleanup/refactoring
-Message-ID: <20250321-elegant-ruby-bull-7d9c50@sudeepholla>
-References: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
+	s=arc-20240116; t=1742565501; c=relaxed/simple;
+	bh=u9+pCxJ+sZ+M8TFCYPDcfeJjTdyKSPr8xUSrtA8xXvs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OjFY7Bx37NqPXtqz2DHvMSWCUPnDYeo0g5jXia2a1USWS3AAErutpYV9HXsoKw+g+Z8jA7kJC8tl+0MLAi47xfNJ+9UiiEYYknZOrNvKQfhsnQfuJe+jJGAJw6kwDyIqquy9UqDpC7tMfPacHVZuvrqJrICD/ZJg05Nalprk4OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jIXoe2XE; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=0ySma77ZxxQ6aT+4clvHKO3TmdAoszwwa+Xa3O6R6WA=;
+	b=jIXoe2XEvdmHieMmZLKFmfn9bRsZ40xB9Xph0EmsS6hTbjmVUHa1zu4sA2psDY
+	zlEHxYbeSQyy+5K3sYXIDtNnZEG4ssuXHgDCk322wrJc3vs0vSHnOxtjtHA9UjXa
+	sX4ahOPrl6S8SG6jf/evgMeaI6vjnv5diWRIiL8TIBlvE=
+Received: from [192.168.60.52] (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDnL39RcN1nGTTLAw--.57738S2;
+	Fri, 21 Mar 2025 21:57:38 +0800 (CST)
+Message-ID: <370e4055-c44b-460c-9ac3-ccac37527c8f@163.com>
+Date: Fri, 21 Mar 2025 21:57:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313-pcc_fixes_updates-v3-0-019a4aa74d0f@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4 1/4] PCI: Introduce generic capability search functions
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, jingoohan1@gmail.com, thomas.richard@bootlin.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250321101710.371480-1-18255117159@163.com>
+ <20250321101710.371480-2-18255117159@163.com>
+ <20250321130010.s6svrtqlpdkgxmir@thinkpad>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250321130010.s6svrtqlpdkgxmir@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDnL39RcN1nGTTLAw--.57738S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tw18uF17ArWUJF43AF4UCFg_yoW8Gw4xpF
+	4rXFnayaykXr4SkF1qvF4UAFy3Gan7JrWxJF98G3sY9FnruF1Ig3yxt348uF9rJF17XF10
+	vF4jqrykuF1DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UK1v3UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxAXo2fdalpqUwABsN
 
-On Thu, Mar 13, 2025 at 03:28:46PM +0000, Sudeep Holla wrote:
-> Here is a summary of the changes in this patch series:
-> 
-> 1. Fix for race condition in updating of the chan_in_use flag
-> 
->    Ensures correct updating of the chan_in_use flag to avoid potential race
->    conditions.
-> 
-> 2. Interrupt handling fix
-> 
->    Ensures platform acknowledgment interrupts are always cleared to avoid
->    leaving the interrupt asserted forever.
-> 
-> 3. Endian conversion cleanup
-> 
->    Removes unnecessary endianness conversion in the PCC mailbox driver.
-> 
-> 4. Memory mapping improvements
-> 
->    Uses acpi_os_ioremap() instead of direct mapping methods for better ACPI
->    compatibility.
-> 
-> 5. Return early if the command complete register is absent
-> 
->    Ensures that if no GAS (Generic Address Structure) register is available,
->    the function exits early.
-> 
-> 6. Refactor IRQ handler and move error handling to a separate function
-> 
->    Improves readability of error handling in the PCC mailbox driver’s
->    interrupt handler.
-> 
-> 7. Shared memory mapping refactoring/enhancements
-> 
->    Ensures the shared memory is always mapped and unmapped in the PCC
->    mailbox driver when the PCC channel is requested and release.
-> 
-> 8. Refactored check_and_ack() Function
-> 
->    Simplifies and improves the logic for handling type4 platform notification
->    acknowledgments.
-> 
-> 09-13. Shared memory handling simplifications across multiple drivers
-> 
->     Simplifies shared memory handling in:
->         Kunpeng HCCS driver (soc: hisilicon)
->         Apm X-Gene Slimpro I2C driver
->         X-Gene hardware monitoring driver (hwmon)
->         ACPI PCC driver
->         ACPI CPPC driver
-> 
-> The X-gene related changes now change the mapping attributes to align
-> with ACPI specification. There are possibilities for more cleanups on
-> top of these changes around how the shmem is accessed within these
-> driver.
-> 
-> Also, my main aim is to get 1-8 merged first and target 9-13 for
-> following merge window through respective tree.
-> 
-> Overall, the patch series focuses on improving correctness, efficiency, and
-> maintainability of the PCC mailbox driver and related components by fixing
-> race conditions, optimizing memory handling, simplifying shared memory
-> interactions, and refactoring code for clarity.
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
-> Jassi,
-> 
-> Please take patch [1-8]/13 through the mailbox tree if and when you are
-> happy with the changes.
 
-Hi Jassi,
 
-I2C change is also acked now. Let me know if you prefer pull request or
-you prefer to take it via ACPI tree which may need you ACK.
+On 2025/3/21 21:00, Manivannan Sadhasivam wrote:
+> On Fri, Mar 21, 2025 at 06:17:07PM +0800, Hans Zhang wrote:
+>> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
+>> duplicate logic for scanning PCI capability lists. This creates
+>> maintenance burdens and risks inconsistencies.
+>>
+>> To resolve this:
+>>
+>> 1. Add pci_generic_find_capability() and pci_generic_find_ext_capability()
+>> in drivers/pci/pci.c, accepting controller-specific read functions
+>> and device data as parameters.
+>>
+> 
+> I'd reword pci_generic* as pci_host_bridge* to reflect the fact that these APIs
+> are meant for host bridges.
+> 
 
--- 
-Regards,
-Sudeep
+Hi Mani,
+
+Thanks your for reply. Will change.
+
+>> 2. Refactor dwc_pcie_find_capability() and similar functions to utilize
+>> these new generic interfaces.
+>>
+> 
+> This is not part of this patch. So should be dropped.
+
+Will change.
+
+>> 3. Update out-of-tree drivers to leverage the common implementation,
+>> eliminating code duplication.
+>>
+> 
+> This also.
+
+Will change.
+
+>> This approach:
+>> - Centralizes critical PCI capability scanning logic
+>> - Allows flexible adaptation to varied hardware access methods
+>> - Reduces future maintenance overhead
+>> - Aligns with kernel code reuse best practices
+>>
+>> Tested with DWC PCIe controller and CDNS PCIe drivers.
+>>
+> 
+> This tested info is also not required since the DWC and CDNS changes are not
+> part of this patch.
+
+Will change.
+
+Best regards,
+Hans
+
 
