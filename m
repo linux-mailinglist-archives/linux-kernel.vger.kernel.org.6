@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-571350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52838A6BC15
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:53:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88199A6BC10
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2311895468
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705C13B5DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363C478F29;
-	Fri, 21 Mar 2025 13:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6128278F49;
+	Fri, 21 Mar 2025 13:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XN6nhnxd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f3mD02cC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SHi5wr1F"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A537E139579;
-	Fri, 21 Mar 2025 13:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2FA7082D;
+	Fri, 21 Mar 2025 13:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565173; cv=none; b=OtWZmcumXCIywIwCdeAq/20MZ/Zhc5hWxxHj6/zcH7IV5GaGPG1KTnBcojJ/3WMgcr9FVGTOq0/u6FESHDq+EPIJLT3X9A/Qkb6Idp8lRvrLDPOoPZKxd6z59QWgHHU5DuyhoAn5iBsKQdwhZUiGSlGmq9b3wBwtD12/6SPGOko=
+	t=1742565167; cv=none; b=EoxKYoYZ0sRM0kgTGPWTBzqrYDEl0j4xs8/aqtVhOaXkTZt7CQFfeY+KRPIUkaYtzakQUZsskJQV/evaCFmj5IA4Q2GxpJoSLTMoGnjhEoJEuX76dyAXBsRH1EtC7QcamMMllGrCKTj4lZ0acl2z2CtTB4DQLsOPFhoJd8BAFZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565173; c=relaxed/simple;
-	bh=7uwt+WRbg935B8HV4GfKPn0KXksrxwoSlHa/0gv941k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rPnPGcr7t+lIN4RpybDJswdF4P4lkU/fb/ETRYiv4ZgYuK4QY/Sv/wzAu5UiH1MFoJJ84q45MjCvA6XI6bwFqAuRzBd3IZ1mYpVRY3LBvHlooVpUy3hyYGQhX5TzH8KPjvasTgqA+Zz6ovzBXkO/SIHI1p1DHNLu9WoldcFEf1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XN6nhnxd; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742565172; x=1774101172;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=7uwt+WRbg935B8HV4GfKPn0KXksrxwoSlHa/0gv941k=;
-  b=XN6nhnxd1ICS2tM5CZg6L1L7eoRQiWZbvw5HDw4oTss8OyhlewA9xJFG
-   T6cMDOECioArkmrfKeC2xy1/jRg/Is2HPguZ7f55e4z1qeLdVo1QeLm9p
-   mS0jPJ4o2SPs0EIKpW072Gi6m8Xq6FDaGchVeY2wbWlTf+ZspcCucE60U
-   rz995Z0BmKl3f+74g5VhkwWfa5PDDpTsnWC4JjFgmU4/mj4biFfnegPK7
-   bS3yjmf0zNK1UhFvDNmq4kObTNoOpaS3dh+zaR7ltLr0urCMqv/oelLJs
-   4A/qqyVaJvAapkM04pWeZgcrN/34R8G51O46ZoK1BFdnFz06aCSzop4fb
-   A==;
-X-CSE-ConnectionGUID: knTl2GwVTi67LU87KcxVYg==
-X-CSE-MsgGUID: dPQzj/vkQlS+Jmzqzk+MhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="42996178"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="42996178"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:52:51 -0700
-X-CSE-ConnectionGUID: zC0VwK/QSKWYHwx+Cz3ZJg==
-X-CSE-MsgGUID: FOXq9rRET4+y7Yrkwycv4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="154294641"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:52:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tvcnj-00000004Ww4-42Fd;
-	Fri, 21 Mar 2025 15:52:43 +0200
-Date: Fri, 21 Mar 2025 15:52:43 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Rasmus Villemoes <ravi@prevas.dk>
-Cc: Petr Mladek <pmladek@suse.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 5/6] vsnprintf: Mark pointer() with __printf()
- attribute
-Message-ID: <Z91vK_6B2T0uA-r6@smile.fi.intel.com>
-References: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
- <20250320180926.4002817-6-andriy.shevchenko@linux.intel.com>
- <87msdeebyh.fsf@prevas.dk>
+	s=arc-20240116; t=1742565167; c=relaxed/simple;
+	bh=KDYzCh9V5eVHzXGipaqIBLXNoOw/gScI2DQmEmTb5n4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Kv9HcF1/s28fURnSJSfUMiHKoLSiOOr+4iYuZK+3q/panKP+V1rzT5fjU+yOpRJXLCY8jNZGuT4FCFNOZNjEwkgwk3PLDHJMMI/95Dt0FYo/oH73b8Mn5grX2PTi5tlhIQ01HHjkiK9LTi3XJpTUju/sDoY+I5dzD1vc2mCLwGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f3mD02cC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SHi5wr1F; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742565164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6CwkrlhgWck2N/CVWRnqhVlubjgAoi4xH51EyOXCvdc=;
+	b=f3mD02cC+Hfx9kDBClHCH7sTKfBjEBREXHTkWclRkvUfGg/UZ2/YvlnRqPF+yqOuxPy4YZ
+	Hmd4ys6ASDcOgq5+vNlPWckf1B2Hgj+0nvIIrPbqtNm740U0aFkwsmuRxHPE5Yefqj/CTe
+	UhVdgsi9YHCHD7FNCOJe9Sy7B14yVDJ777+cdVPjEDA1X5ozmnphBP+roFWF0F/jL/mwUd
+	WcWBqHcAB3aW4BsQ2oqa9C0z7F6mFXb/v9mEY7QtZGHlEG/OldjtEOHcnk8MWeVrrNQrar
+	LsQ/ZZ0KHJ7VwnCAQ/b128y+Lg8+iZnvRTw+GCWkMqiJ+XDOUsKsIitI45O6MA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742565164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6CwkrlhgWck2N/CVWRnqhVlubjgAoi4xH51EyOXCvdc=;
+	b=SHi5wr1FnZm8oGiMYxFxsJoyL2Bo0doM3Kn3olr1YVscPszQji1VSpJi8dutvUQE08aO87
+	RLqxsywgTvWzSOAA==
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
+ huibo.wang@amd.com, naveen.rao@amd.com
+Subject: Re: [RFC v2 04/17] x86/apic: Initialize APIC ID for Secure AVIC
+In-Reply-To: <20250226090525.231882-5-Neeraj.Upadhyay@amd.com>
+References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
+ <20250226090525.231882-5-Neeraj.Upadhyay@amd.com>
+Date: Fri, 21 Mar 2025 14:52:43 +0100
+Message-ID: <87msde32z8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87msdeebyh.fsf@prevas.dk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Fri, Mar 21, 2025 at 02:43:18PM +0100, Rasmus Villemoes wrote:
-> On Thu, Mar 20 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > pointer() is using printf() type of format, and GCC compiler
-> > (Debian 14.2.0-17) is not happy about this:
-> >
-> > lib/vsprintf.c:2466:17: error: function ‘pointer’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-> >
-> > Fix the compilation errors (`make W=1` when CONFIG_WERROR=y, which is default)
-> > by adding __printf() attribute.
-> >
-> 
-> I had quite a bit of trouble reproducing, until I realized I had to
-> apply your patches in reverse order, because adding the attribute to one
-> function will then "taint" its callers.
+On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
+> Initialize the APIC ID in the Secure AVIC APIC backing page with
+> the APIC_ID msr value read from Hypervisor. Maintain a hashmap to
+> check and report same APIC_ID value returned by Hypervisor for two
+> different vCPUs.
 
-Exactly, that's why cover letter has "strict order" mention.
+What for?
+ 
+> +struct apic_id_node {
+> +	 struct llist_node node;
+> +	 u32 apic_id;
+> +	 int cpu;
+> +};
 
-> So this one seems to be self-inflicted pain by the annotation of
-> va_format (which is completely broken, I'll reply separately to that
-> one). This doesn't solve the false warning for va_format(), but how
-> about we at least do
-> 
->  static char *va_format(char *buf, char *end, struct va_format *va_fmt,
-> -                      struct printf_spec spec, const char *fmt)
-> +                      struct printf_spec spec)
->  {
-> 
->         case 'V':
-> -               return va_format(buf, end, ptr, spec, fmt);
-> +               return va_format(buf, end, ptr, spec);
->         case 'K':
-> 
-> because va_format() doesn't use that fmt argument at all.
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
 
-Yes, I was thinking about this. I'll do it in a separate patch in v2.
+and please read the rest of the document too.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +static void init_backing_page(void *backing_page)
+> +{
+> +	struct apic_id_node *next_node, *this_cpu_node;
+> +	unsigned int apic_map_slot;
+> +	u32 apic_id;
+> +	int cpu;
+> +
+> +	/*
+> +	 * Before Secure AVIC is enabled, APIC msr reads are
+> +	 * intercepted. APIC_ID msr read returns the value
+> +	 * from hv.
 
+Can you please write things out? i.e. s/hv/hypervisor/ This is not twatter.
 
+> +	 */
+> +	apic_id = native_apic_msr_read(APIC_ID);
+> +	set_reg(backing_page, APIC_ID, apic_id);
+> +
+> +	if (!apic_id_map)
+> +		return;
+> +
+> +	cpu = smp_processor_id();
+> +	this_cpu_node = &per_cpu(apic_id_node, cpu);
+> +	this_cpu_node->apic_id = apic_id;
+> +	this_cpu_node->cpu = cpu;
+> +	/*
+> +	 * In common case, apic_ids for CPUs are sequentially numbered.
+> +	 * So, each CPU should hash to a different slot in the apic id
+> +	 * map.
+> +	 */
+> +	apic_map_slot = apic_id % nr_cpu_ids;
+> +	llist_add(&this_cpu_node->node, &apic_id_map[apic_map_slot]);
+
+Why does this need to be a llist? What's wrong about a trivial hlist?
+
+> +	/* Each CPU checks only its next nodes for duplicates. */
+> +	llist_for_each_entry(next_node, this_cpu_node->node.next, node) {
+> +		if (WARN_ONCE(next_node->apic_id == apic_id,
+> +			      "Duplicate APIC %u for cpu %d and cpu %d. IPI handling will suffer!",
+> +			      apic_id, cpu, next_node->cpu))
+> +			break;
+> +	}
+
+This does not make any sense at all. The warning is completely useless
+because two milliseconds later the topology evaluation code will yell
+about mismatch of APIC IDs and catch the duplicate.
+
+So what is this overengineered thing buying you? Just more
+incomprehensible security voodoo for no value.
+
+Thanks,
+
+        tglx
 
