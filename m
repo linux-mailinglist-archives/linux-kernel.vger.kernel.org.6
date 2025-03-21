@@ -1,232 +1,176 @@
-Return-Path: <linux-kernel+bounces-570831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BD9A6B51B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:35:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC3AA6B524
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A6E1888315
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C7C8465762
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A21E9B3B;
-	Fri, 21 Mar 2025 07:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E98F1EEA31;
+	Fri, 21 Mar 2025 07:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wk2T5wi6"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OAPjI+Nt"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561DD2AF1B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EFB1EB9F7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742542520; cv=none; b=k+S5L6wT5xAUoCpy3OBwLb1erRrgHGuLlRpH6ycN/Utu5wjX5DmVo0C0CegtD0TPVP+ZymPVPOaU5GE2FuYD1iCYClJNK4Gx3ZzEGe+3LHf2RsTy5/jc55J5lHdHZA3eiS7SjgCDtrolbUhMK7/xvc3H5ZJ2aGNK+gZ23HvM5UU=
+	t=1742542555; cv=none; b=KwXzgzm6Tj8OSirzL97sPTyeZr891rJ6atYpaoqbgDGT0w8DeiD4CRRNRKSP5N20HxE994QZxxYey6ExTMHpEHC4ZUPS64WioQz3vFS88rlYXzVO/1A+np3b4uyonwqVxcEGDxdrPvzLZ1E1CslO4ZWPpAdeu2RuvXEew+ZB88U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742542520; c=relaxed/simple;
-	bh=hE1ZbLJtOcGq8vIQnfdUNQUhHalbIHMTnkMNeWlLdtI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=PT1OGKlZBeAtlVuwpr3PdtYdfvutpQbGgB+XIrHzWgnWvIEE4H3Qf5l+haykujwwsQ14pdesaird2PR2spxX9wEWX7ps1Fi3mRDdZnCfoeOiIj+HXtlYdD2bUMxmLK1kIV5LK0kYqjNM8c2ULumRWezM/kozR22wSoQy3gn1lKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Wk2T5wi6; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250321073516euoutp028a96b009ff7f4a540f7a9feeaec80267~uwS_w3T2F1358313583euoutp02T
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:35:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250321073516euoutp028a96b009ff7f4a540f7a9feeaec80267~uwS_w3T2F1358313583euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742542516;
-	bh=RNT2K+m2Kh9/ubJRwFMhjD+xp03X8faLotIucQNMpuY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Wk2T5wi6fc8xAAP+Ppr/A09DLPnizHp67Vho323sdruyK2f2C9jAs2MVpgnbXVHOy
-	 YzyqPghiW3uBrL2+F4NFNgPDGIakpovvtYE0eRP6YnYq2XezDWI28GzgznwX0dgKmd
-	 EUkylQWz4DJWNluj1an7QeSulTSMU8A05VvPbsz0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250321073512eucas1p11fdbdc3bb672b6d124a475eca48b8a29~uwS6y3A103203332033eucas1p1M;
-	Fri, 21 Mar 2025 07:35:12 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 20.C5.20821.0B61DD76; Fri, 21
-	Mar 2025 07:35:12 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250321073511eucas1p11f3d9353bf52d6b9649cef6ebcd9d158~uwS6VJS080774107741eucas1p1J;
-	Fri, 21 Mar 2025 07:35:11 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250321073511eusmtrp2efd006670188e1b672aafd657dd59bcc~uwS6T9Ob80551005510eusmtrp2J;
-	Fri, 21 Mar 2025 07:35:11 +0000 (GMT)
-X-AuditID: cbfec7f2-b11c470000005155-54-67dd16b0f438
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 6A.D4.19920.FA61DD76; Fri, 21
-	Mar 2025 07:35:11 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250321073510eusmtip2a2a7ebc40cc109cc0d2489a526313c41~uwS5bWPkf0030000300eusmtip22;
-	Fri, 21 Mar 2025 07:35:10 +0000 (GMT)
-Message-ID: <33f85cd5-8387-4358-b2d4-29f8877a7e2e@samsung.com>
-Date: Fri, 21 Mar 2025 08:35:09 +0100
+	s=arc-20240116; t=1742542555; c=relaxed/simple;
+	bh=oVEU4h1wTtlqlUbh+FEIic8QhsG6E3beaWkZ1pscJx8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=tttGq5zJMNZ3EBhSaNhENZ99TENWidiObK8oeJ7nXzsfs9gAbsC6KLGQFaMpWxnDGyAPSnd1heW1kgIIgEq4VK2vCcxeAX7JkHXyoa8EscN3V2b18Lg23M698deYuYJHhS+rdE0CVNlobcE77Cr+6DvkIwdMxNd9z9OLSnyr8u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OAPjI+Nt; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39127effa72so192681f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:35:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742542551; x=1743147351; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uE0YN48K2zRXVt+YdSQ/RPd3ayIjfmSlm7kfHTz7O6c=;
+        b=OAPjI+Nt8Mx7oV7aEVLf94wsdw+DPtnZFtkzH1+AA2u31jCIT1+VBXpuzC/2X46qXd
+         x558zm27VkDuYd75yDwCGQuu9lhq5Xj+h41lYnMHrm9krK9AyzXE2UAZUEYZRGp0WxMs
+         cJqdtk9U6Nx3CFN4imX/4xn2O2btcPml93+vKVoV4monqJ05p9WMdHx9rToeFw+yb/Dz
+         MIy/AwQZkpRzQWF65imYjbbFbhvMKNFMtxfo3QIfFjf2+Wc3aq0hmwkU66NjrQACmYMH
+         XFXCaiPgCRmEm/sRm7nFcbQmPR2a7RCeEsqkBAT5wj57EOelvetdxbMq82PQmd40/kob
+         1WhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742542551; x=1743147351;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uE0YN48K2zRXVt+YdSQ/RPd3ayIjfmSlm7kfHTz7O6c=;
+        b=VVcDpUWjFE/BDvtSRTO7I3KmP2EVKn2G6y/iA2z6s6q3SFwf1X1aoyqDCj/wY1nm92
+         WRe2iHezjXr8zEb1BuJGX0EdhrcfCgX8+bx3kIbrYksvmR1pv/ZNYueCnkSyRifGUEcs
+         2yh+ZguLbfOMTicuO5lMf1MhodHJWRhnX5tpihRoDmyut4ugX8fKOPSvxI5rNqO2Jq+F
+         ESKZvA/kOYjJ6bxclLdSUBZBXDIt3oi1HYF5xhslVy+jFo0AgGrqnp3nXkle1DsvB3CK
+         89+H5l3oP1RMz+dZzAGynlfengmWqN2E9BnFPBHk2K76WGyoD/TcjQ+50TtA/daU4AxC
+         OOlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO+fG6yoqPQCrL7OKEFi8Srlm65NdG6+d3mEwXSm0tUfwJRQZBZ+ncxPFUwuEVyJqvmDjfxUmxkeupXrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUCiDR7Ys4uCzQzrd6sg3o0Qala8GjVH7VNZrWjVwQAizCKCd4
+	pekLEF7ob+zkGPyFGHpAagHQLRmUWEC/MJCPIwlHfkMyBOwxBm+ns5QHjzHKSRw=
+X-Gm-Gg: ASbGncu3q5PUbsXb6Z9nvRK6DDFblcEVBKtkIipwIvs36VpiNknGjoD48o+BDI5/MVt
+	Rjcd2QbASWrHBkz8LBijpPsLfh9U2tfEky7w5mpwOaD8m9WMhep1bdDCka3n7/OEaiTMHyNgFRe
+	KTdXgg8fj79PVF+S1fiU6CIqz441UEnAskA0MZDNGcS1OR4yw/9EfQoVD3mbaFvE5lbT8N4JQmp
+	qKg0HZwzHpf8L9OHbX0NkiFheAjGplkFbeJSbk0M33TXW7hz+/inkBsi34veS9fKT0mJSokLq8o
+	ElH2EWurnct/ZrcgeTOxGIlhq44Uj6aEAtJS64CX19mWMZjc466vbdeYxSG2UPXLL0IXnItcHjj
+	tyuczlFrTJFNWv5U=
+X-Google-Smtp-Source: AGHT+IGZStgpQKD6s5SPSh0Un5MoJV2dCYto8osYkw90aX9XoWoskpnSL/J6+EfI/KAtzzUYKMCKnA==
+X-Received: by 2002:a05:6000:188f:b0:391:277e:c400 with SMTP id ffacd0b85a97d-3997f941b74mr851925f8f.13.1742542551154;
+        Fri, 21 Mar 2025 00:35:51 -0700 (PDT)
+Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3f7csm1592933f8f.49.2025.03.21.00.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 00:35:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2] media: s5p-mfc: Support for handling
- RET_ENC_BUFFER_FULL interrupt
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	krzysztof.kozlowski+dt@linaro.org, linux-samsung-soc@vger.kernel.org,
-	gost.dev@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250305055308.111300-2-aakarsh.jain@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIKsWRmVeSWpSXmKPExsWy7djPc7obxO6mG7TNY7V4umMmq8X9xZ9Z
-	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jotlm/4wWSza+oXd
-	gcdj8Z6XTB6bVnWyedy5tofNY/OSeo++LasYPT5vkvM49fUzewB7FJdNSmpOZllqkb5dAldG
-	z8KXrAUNihX9Wx6wNjB+l+5i5OSQEDCRODFtFnMXIxeHkMAKRokdL06yQzhfGCVuTZzEBOF8
-	ZpQ4cu4qK0zLrzUvmEFsIYHljBJt+4ogij4ySsx4dosJJMErYCdxccNBFhCbRUBV4sTn38wQ
-	cUGJkzOfgMVFBeQl7t+aAbSOg0NYIEbi6aQkkDkiAhMYJa5/PMUC4jAL3GWUmLXoOdhmZgFx
-	iVtP5oMtYBMwlOh628UGYnMK2EvcfDOLHaJGXmL72zlgD0kITOeUmNByhB3ibBeJxe0tULaw
-	xKvjW6BsGYn/O+czQTS0M0os+H0fygG6o+H5LUaIKmuJO+d+sYHcyiygKbF+lz5E2FGi6c8n
-	VpCwhACfxI23ghBH8ElM2jadGSLMK9HRJgRRrSYx6/g6uLUHL1xinsCoNAspXGYheXMWkndm
-	IexdwMiyilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzCVnf53/NMOxrmvPuodYmTiYDzE
-	KMHBrCTCK9JxO12INyWxsiq1KD++qDQntfgQozQHi5I476L9relCAumJJanZqakFqUUwWSYO
-	TqkGpowJhU7rTaL4DVOP68gsXaw9+ehDp7Za1rISs0Vn2KY0LJOfJyucdXnCQuOmjstmP9Zo
-	/v96P/f4VB6Tp18Ez9r6rZPdHbWsvdPez6bi9nLW1KNCpyNmec1fyaidtXHGJ23HdaXenlcm
-	7/GPM2JLDK3WmZV+S+vASVXjHdnvNDIypdMnb16zwv9E+z3lkobdcfPKZG0NnrvtehCvlHTh
-	SKDJDvklfFdZ4vYlVbcLbV915Pm0JT6chY5Ou61/JLftOfpVr/BP65RLP62uqSSpqjXontiy
-	nfOV4K3ofPmWq7deXpr99lHA6pxbKckFDv3W37jt9ZKEog93nvz/0W7KKdPq3yufrT0udvuW
-	a0rhNiWW4oxEQy3mouJEABAoJ5/UAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7rrxe6mG5x5rGjxdMdMVov7iz+z
-	WBzavJXd4uaBnUwWF2feZbHoe/GQ2WLT42usFpd3zWGz6NmwldVixvl9TBbLNv1hsli09Qu7
-	A4/H4j0vmTw2repk87hzbQ+bx+Yl9R59W1YxenzeJOdx6utn9gD2KD2bovzSklSFjPziElul
-	aEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MnoUvWQsaFCv6tzxgbWD8Lt3F
-	yMkhIWAi8WvNC+YuRi4OIYGljBIvV7UyQyRkJE5Oa2CFsIUl/lzrYoMoes8o0fryCxNIglfA
-	TuLihoMsIDaLgKrEic+/mSHighInZz4Bi4sKyEvcvzWDvYuRg0NYIEbi6aQkkDkiAhMYJU6/
-	m8EIUsMscJdR4l+vL8SC44wSz+/+Z4VIiEvcejIfbBmbgKFE11uQKzg5OAXsJW6+mcUOUWMm
-	0bW1C2qQvMT2t3OYJzAKzUJyxywko2YhaZmFpGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT8
-	3E2MwNjdduzn5h2M81591DvEyMTBeIhRgoNZSYRXpON2uhBvSmJlVWpRfnxRaU5q8SFGU2Bg
-	TGSWEk3OByaPvJJ4QzMDU0MTM0sDU0szYyVxXrfL59OEBNITS1KzU1MLUotg+pg4OKUamNiv
-	LP25JnSJYP7R2SXrryx+XLshUzBUQPJQf2Bxp++Mp28spsy10OjX1/lT+Tp3Aa99p0Du59jb
-	nTzGfpfPXEzyDC69v+D7nc7wEOG/rznPCpXW+1/lOdQ9h9vPYPpMG36nFqttPInaJ1je6dpk
-	P/j7oKrYTL0m+U/Tywuf36xXn1i8JO3T9msVb0MXfhNmlkvy0A/dJv6i55eUXPGH4hnX5h7a
-	feJTBZtx2t+X4SeeLHYXYQ36urXp2ZW29QFdx77Lf5Aw+hg2eXPwFnMjaf5JK+W9jmv+ejIt
-	m3kHR8Kt2V2GfYwWLzdt+D3pm8e3mQ+0fyV9u5kXnvskcb1yzJR3u7w3OLz7nWtbk3Y48qsS
-	S3FGoqEWc1FxIgCkdWUJZgMAAA==
-X-CMS-MailID: 20250321073511eucas1p11f3d9353bf52d6b9649cef6ebcd9d158
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250305055908epcas5p222e192cc21512ac178543445184a2519
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250305055908epcas5p222e192cc21512ac178543445184a2519
-References: <20250305055308.111300-1-aakarsh.jain@samsung.com>
-	<CGME20250305055908epcas5p222e192cc21512ac178543445184a2519@epcas5p2.samsung.com>
-	<20250305055308.111300-2-aakarsh.jain@samsung.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 21 Mar 2025 08:35:49 +0100
+Message-Id: <D8LRS46QQ2FE.ZF1856CR80JM@ventanamicro.com>
+Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
+ <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
+ "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
+ Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
+ <zong.li@sifive.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH v12 22/28] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-22-e51202b53138@rivosinc.com>
+ <D8LFQYX4EHF8.2AJ01XL34WK0W@ventanamicro.com>
+ <CAKC1njTyiaBkmHvAM8VT_MG4Cdch=H9P8r3C-m-=QQEuzyrRNA@mail.gmail.com>
+In-Reply-To: <CAKC1njTyiaBkmHvAM8VT_MG4Cdch=H9P8r3C-m-=QQEuzyrRNA@mail.gmail.com>
 
-On 05.03.2025 06:53, Aakarsh Jain wrote:
-> When output encoded buffer size provided by userspace
-> is insufficient with current encoding parameters, it
-> leads to RET_ENC_BUFFER_FULL interrupt which was not
-> handled in IRQ handler.
+2025-03-20T15:42:44-07:00, Deepak Gupta <debug@rivosinc.com>:
+> On Thu, Mar 20, 2025 at 3:10=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
+mar@ventanamicro.com> wrote:
+>>
+>> 2025-03-14T14:39:41-07:00, Deepak Gupta <debug@rivosinc.com>:
+>> > Kernel will have to perform shadow stack operations on user shadow sta=
+ck.
+>> > Like during signal delivery and sigreturn, shadow stack token must be
+>> > created and validated respectively. Thus shadow stack access for kerne=
+l
+>> > must be enabled.
+>>
+>> Why can't kernel access the user shadow stack through an aliased WR
+>> mapping?
 >
-> On handling of RET_ENC_BUFFER_FULL interrupt leads to
-> NAL_ABORT command from host to risc which in turn leads
-> to RET_NAL_ABORT interrupt. On receiving RET_NAL_ABORT
-> driver clears workbit and VB2 queues for cleaner closing
-> of MFC instance.
->
-> When user encounters "Call on DQBUF after unrecoverable
-> error", userspace should close fd and restart with larger
-> output encoder buffer size.
->
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> changelog:
-> v1->v2
-> Patch link: https://patchwork.kernel.org/project/linux-media/patch/20250228065952.14375-1-aakarsh.jain@samsung.com/
-> Fixed build errors reported by Media CI robot.
->   .../media/platform/samsung/s5p-mfc/regs-mfc-v6.h   |  1 +
->   drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c   | 14 ++++++++++++++
->   .../platform/samsung/s5p-mfc/s5p_mfc_common.h      |  1 +
->   .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c      |  5 +++++
->   4 files changed, 21 insertions(+)
->
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
-> index fa49fe580e1a..075a58b50b8c 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
-> +++ b/drivers/media/platform/samsung/s5p-mfc/regs-mfc-v6.h
-> @@ -45,6 +45,7 @@
->   #define S5P_FIMV_H2R_CMD_WAKEUP_V6		8
->   #define S5P_FIMV_CH_LAST_FRAME_V6		9
->   #define S5P_FIMV_H2R_CMD_FLUSH_V6		10
-> +#define S5P_FIMV_H2R_CMD_NAL_ABORT_V6		11
->   /* RMVME: REALLOC used? */
->   #define S5P_FIMV_CH_FRAME_START_REALLOC_V6	5
->   
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-> index 5f80931f056d..e764cab2485c 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-> @@ -739,6 +739,20 @@ static irqreturn_t s5p_mfc_irq(int irq, void *priv)
->   		ctx->state = MFCINST_RUNNING;
->   		goto irq_cleanup_hw;
->   
-> +	case S5P_MFC_R2H_CMD_ENC_BUFFER_FUL_RET:
-> +		ctx->state = MFCINST_NAL_ABORT;
-> +		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-> +		set_work_bit(ctx);
-> +		WARN_ON(test_and_clear_bit(0, &dev->hw_lock) == 0);
-> +		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-> +		break;
-> +
-> +	case S5P_MFC_R2H_CMD_NAL_ABORT_RET:
-> +		ctx->state = MFCINST_ERROR;
-> +		s5p_mfc_cleanup_queue(&ctx->dst_queue, &ctx->vq_dst);
-> +		s5p_mfc_cleanup_queue(&ctx->src_queue, &ctx->vq_src);
-> +		goto irq_cleanup_hw;
-> +
->   	default:
->   		mfc_debug(2, "Unknown int reason\n");
->   		s5p_mfc_hw_call(dev->mfc_ops, clear_int_flags, dev);
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-> index 3cc2a4f5c40a..86c316c1ff8f 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-> @@ -141,6 +141,7 @@ enum s5p_mfc_inst_state {
->   	MFCINST_RES_CHANGE_INIT,
->   	MFCINST_RES_CHANGE_FLUSH,
->   	MFCINST_RES_CHANGE_END,
-> +	MFCINST_NAL_ABORT,
->   };
->   
->   /*
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> index 4cf12f33d706..356adfddcfcf 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> @@ -2229,6 +2229,11 @@ static void s5p_mfc_try_run_v6(struct s5p_mfc_dev *dev)
->   		case MFCINST_HEAD_PRODUCED:
->   			ret = s5p_mfc_run_init_enc_buffers(ctx);
->   			break;
-> +		case MFCINST_NAL_ABORT:
-> +			mfc_write(dev, ctx->inst_no, S5P_FIMV_INSTANCE_ID_V6);
-> +			s5p_mfc_hw_call(dev->mfc_cmds, cmd_host2risc,
-> +					dev, S5P_FIMV_H2R_CMD_NAL_ABORT_V6, NULL);
-> +			break;
->   		default:
->   			ret = -EAGAIN;
->   		}
+> It can, although that opens up a can of worms. If this alternating
+> mapping is user mode
+> then ensuring that another threat in userspace can't write to this
+> address in this window
+> of signal handling.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Right, it must not be user mode.
 
+>                     A kernel alternate mapping can be created, but
+> that can lead to all
+> sorts of requirements of ensuring the page is pinned down. IIRC, It
+> has been debated
+> on x86 shadow stack merge time as well on how a flaky alias mapping appro=
+ach can
+> become and weaken the threat model it is supposed to protect against.
+
+True.
+
+> Simply using `ssamoswap` is simple and serves the purpose. Enabling shado=
+w stack
+> access for the kernel doesn't have any adverse effect on the kernel.
+
+Makes sense.  We just depend on an extra feature, because we should
+consider the case when M-mode doesn't allow S-mode shadow stack, but
+S-mode can enable U-mode shadow stack:
+
+>> > ---
+>> > diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+>> > @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+>> >       la tp, init_task
+>> >       la sp, init_thread_union + THREAD_SIZE
+>> >       addi sp, sp, -PT_SIZE_ON_STACK
+>> > +     li a7, SBI_EXT_FWFT
+>> > +     li a6, SBI_EXT_FWFT_SET
+>> > +     li a0, SBI_FWFT_SHADOW_STACK
+>> > +     li a1, 1 /* enable supervisor to access shadow stack access */
+>> > +     li a2, SBI_FWFT_SET_FLAG_LOCK
+>> > +     ecall
+>>
+>> I think the ecall can fail even on machines that have Zicfiss, so it
+>> would be good to disable user shadow stack if that happens.
 
