@@ -1,138 +1,220 @@
-Return-Path: <linux-kernel+bounces-571051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B38CA6B885
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:10:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BA1A6B889
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B29B03B8E28
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D720C4810E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931A61F4725;
-	Fri, 21 Mar 2025 10:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8FA1F4E59;
+	Fri, 21 Mar 2025 10:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3UFHg53"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="O45aUPQd"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE5E1E1DF1;
-	Fri, 21 Mar 2025 10:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EE1D514A;
+	Fri, 21 Mar 2025 10:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742551827; cv=none; b=PD+4i/YymMFsey9+jKHKClx+Npqijuq1cXJloEVZFO48fFwX12YhuKlDzLinyVYer5vj/L3UIrTzzNReiS6KKuq2beZ6Jup2VEfLk6dvIUE/6TmSTZpHpBbroPVzKL8tDCzjpB/stugvI1BCh2hZIlvZFDo7uhHttEsfwMJx0TI=
+	t=1742551912; cv=none; b=Qd6q4320lrOwg9hsiLDZiIo6jd2FRPTHYi4k7UrrFCah7nVWRH5rrrfezOa+38NSQ9N+qrdVQ+bUB6lBkge2l/XXoHjKvTbtM4tX4TZife8q9THMq/bhfMIJ5gBy/v4o4hyRnRf0RNje8cBNh2KQQrSnfYSkL56nBRsTinSRZpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742551827; c=relaxed/simple;
-	bh=YH7fJ3j+cxz0C85hFBF2iuhtOqEPJCUhbKdA9IRCfXk=;
+	s=arc-20240116; t=1742551912; c=relaxed/simple;
+	bh=u1fDJwY0KnI6T+SKP6FXZkOthu+525MlJxD6jg0kFto=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIy23j5UHTj1dI6Szb6+Yw4qUSkN4wLaC/iU2cttNH81uri4GiFO1i7a+q57HMLrFF8iaip8O1GIA7wJ2qtulE3qZbOQ0yTpn4AmMo4z7UGerCLM3bV6QQ/LGBkbC3YfQ8Seiq7rN4dP1Ae5q10+Kf/9LNyET4YSTYhMBBXJdmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3UFHg53; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 651EEC4CEE3;
-	Fri, 21 Mar 2025 10:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742551826;
-	bh=YH7fJ3j+cxz0C85hFBF2iuhtOqEPJCUhbKdA9IRCfXk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0EZf2Kx6xRRSsqV7u0Hy1HOYSMIVnRwvAqFYQnFoj2b+fHalGDqopQYwcbmuBRADK6uRV84Hv9dyG1y7D/sqGKPLZ2C4HHOr5ivMjknbPIBhALbMXD62HxAJDgD0pVERkAnWBGDD2wQ8G6ItQM7bbuMLA/1pVfsiGiIVhH/iH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=O45aUPQd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [157.231.223.213])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B13CF9FF;
+	Fri, 21 Mar 2025 11:10:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742551803;
+	bh=u1fDJwY0KnI6T+SKP6FXZkOthu+525MlJxD6jg0kFto=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V3UFHg53voc1NcSSosyBQlcYVGP2BnAOGZmo9ULUEr9fxMwUbemnjLqDJN0eB1mi5
-	 fwQKQxMJvxvw3ZYpgl2kgoUN8+TIXo4251vri90DEwBa9iVb15wQycA8FPx7nZ6sHw
-	 qxMImHkGk+Yrs4kBDrJpkaHRsvV88aYHdfJz08QQ1V+eIy2e54TUrvFa85bmN6VX3b
-	 tPG4dKxm2pOr152PaDPH5fTY4ejiPP3K7ydlNZI8LVuEDrHXU4ayuvGAa+XssYu87E
-	 luncr8XHXQBK1Bm8T2m+nBxt7fs6Z6M4GyGFNhvc0O5owso4K3VvB+sw0v2vlcDSPQ
-	 ow4vpZ1EuXPIg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tvZKe-000000005Uu-2F5b;
-	Fri, 21 Mar 2025 11:10:28 +0100
-Date: Fri, 21 Mar 2025 11:10:28 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: quic_jjohnson@quicinc.com, ath11k@lists.infradead.org,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v4 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-Message-ID: <Z907FGWBV_MNlTcE@hovoldconsulting.com>
-References: <20250317072036.2066518-1-quic_miaoqing@quicinc.com>
- <20250317072036.2066518-3-quic_miaoqing@quicinc.com>
+	b=O45aUPQdey0sMF5N+2Cvyk1zrAxrpuoRSwVbiDWD3x0C5+cgypu285DzgMK0zNN+O
+	 W+Bek55zTjtOOIsc18Y6AZd2D/IpzUQ6i1vCZ4blsHPi/Yth2HMC0uJ80TaOBRU8CF
+	 YyzQ8vCkCCWmVJRMsl6GR4zZoRgTwluqie+cc+eQ=
+Date: Fri, 21 Mar 2025 12:11:24 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mehdi Djait <mehdi.djait@linux.intel.com>
+Cc: sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com,
+	jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl,
+	kieran.bingham@ideasonboard.com, naush@raspberrypi.com,
+	mchehab@kernel.org, hdegoede@redhat.com,
+	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3] media: v4l2-common: Add a helper for obtaining
+ the clock producer
+Message-ID: <20250321101124.GB25483@pendragon.ideasonboard.com>
+References: <20250321093814.18159-1-mehdi.djait@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250317072036.2066518-3-quic_miaoqing@quicinc.com>
+In-Reply-To: <20250321093814.18159-1-mehdi.djait@linux.intel.com>
 
-On Mon, Mar 17, 2025 at 03:20:36PM +0800, Miaoqing Pan wrote:
-> A relatively unusual race condition occurs between host software
-> and hardware, where the host sees the updated destination ring head
-> pointer before the hardware updates the corresponding descriptor.
-> When this situation occurs, the length of the descriptor returns 0.
+Hi Mehdi,
+
+Thank you for the patch.
+
+On Fri, Mar 21, 2025 at 10:38:14AM +0100, Mehdi Djait wrote:
+> Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
+> platforms to retrieve a reference to the clock producer from firmware.
 > 
-> The current error handling method is to increment descriptor tail
-> pointer by 1, but 'sw_index' is not updated, causing descriptor and
-> skb to not correspond one-to-one, resulting in the following error:
+> This helper behaves the same as clk_get_optional() except where there is
+> no clock producer like in ACPI-based platforms.
 > 
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+> For ACPI-based platforms the function will read the "clock-frequency"
+> ACPI _DSD property and register a fixed frequency clock with the frequency
+> indicated in the property.
 > 
-> To address this problem and work around the broken hardware,
-> temporarily skip processing the current descriptor and handle it
-> again next time. Also, skip updating the length field of the
-> descriptor when it is 0, because there's a racing update, may
-> never see the updated length.
+> Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> ---
+> Link for discussion (where this patch was proposed): https://lore.kernel.org/linux-media/20250220154909.152538-1-mehdi.djait@linux.intel.com/
 > 
-> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> v1 -> v2:
+> Suggested by Sakari:
+>     - removed clk_name
+>     - removed the IS_ERR() check
+>     - improved the kernel-doc comment and commit msg
+> Link for v1: https://lore.kernel.org/linux-media/20250227092643.113939-1-mehdi.djait@linux.intel.com
 > 
-> Reported-by: Johan Hovold <johan+linaro@kernel.org>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-
-As I've argued elsewhere, I think this should be fixed by adding the
-missing memory barrier which is needed to prevent ordering issues like
-this on aarch64:
-
-	https://lore.kernel.org/lkml/Z90yyrZcORhJJgNU@hovoldconsulting.com/
-
-The fact that this alone does not seem to be sufficient to address the
-issue on qcs615 (and qcs8300) suggests that there are further issues
-with these platforms that need to be properly understood before adding
-workarounds in one place in one driver.
-
-I've just posted my fix, a version of which users have been running now
-for a week without hitting the corruption (that some used to hit
-multiple times a daily), here:
-
-	https://lore.kernel.org/lkml/20250321094916.19098-1-johan+linaro@kernel.org/
-
-> @@ -387,18 +387,26 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
+> v2 -> v3:
+> - Added #ifdef CONFIG_COMMON_CLK for the ACPI case
+> 
+>  drivers/media/v4l2-core/v4l2-common.c | 39 +++++++++++++++++++++++++++
+>  include/media/v4l2-common.h           | 18 +++++++++++++
+>  2 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> index 0a2f4f0d0a07..4e30f8b777b7 100644
+> --- a/drivers/media/v4l2-core/v4l2-common.c
+> +++ b/drivers/media/v4l2-core/v4l2-common.c
+> @@ -34,6 +34,9 @@
+>   * Added Gerd Knorrs v4l1 enhancements (Justin Schoeman)
+>   */
 >  
->  	ath11k_hal_srng_access_begin(ab, srng);
->  
-> -	desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
-> +	desc = ath11k_hal_srng_dst_peek(ab, srng);
->  	if (!desc) {
->  		ret = -EIO;
->  		goto err;
->  	}
->  
->  	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
-> -	if (*nbytes == 0) {
-> +	if (unlikely(*nbytes == 0)) {
-> +		/* A relatively unusual race condition occurs between host
-> +		 * software and hardware, where the host sees the updated
-> +		 * destination ring head pointer before the hardware updates
-> +		 * the corresponding descriptor. Temporarily skip processing
-> +		 * the current descriptor and handle it again next time.
-> +		 */
->  		ret = -EIO;
->  		goto err;
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/module.h>
+>  #include <linux/types.h>
+>  #include <linux/kernel.h>
+> @@ -636,3 +639,39 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_link_freq_to_bitmap);
+> +
+> +struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
+> +{
+> +	struct clk_hw *clk_hw;
+> +	struct clk *clk;
+> +	u32 rate;
+> +	int ret;
+> +
+> +	clk = devm_clk_get_optional(dev, id);
+> +	if (clk)
+> +		return clk;
+> +
+> +#ifdef CONFIG_COMMON_CLK
 
-Your tests suggested that you always see the correct length the next
-time you process the ring buffer, but AFAICT that is not guaranteed to
-happen (i.e. if you hit this on the last transfer).
+This patch will cause warnings when CONFIG_COMMON_CLK is disabled. Could
+you use
 
-Johan
+	if (IS_REACHABLE(CONFIG_COMMON_CLK)) {
+		...
+	}
+
+instead ? It will also ensure that all code gets compile-tested, even
+when CONFIG_COMMON_CLK is disabled ?
+
+If you want to minimize implementation, you could write
+
+	if (!IS_REACHABLE(CONFIG_COMMON_CLK))
+		return ERR_PTR(-ENOENT);
+
+and keep the code below as-is.
+
+> +	if (!is_acpi_node(dev_fwnode(dev)))
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	ret = device_property_read_u32(dev, "clock-frequency", &rate);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	if (!id) {
+> +		id = devm_kasprintf(dev, GFP_KERNEL, "clk-%s", dev_name(dev));
+
+As far as I understand, the name doesn't need to stay valid after
+devm_clk_hw_register_fixed_rate() returns. You can call kasprintf here,
+and call kfree after devm_clk_hw_register_fixed_rate(). You could use
+__free to manage the memory life time:
+
+	const char *clk_id __free(kfree) = NULL;
+
+	if (!id) {
+		clk_id = kasprintf(GFP_KERNEL, "clk-%s", dev_name(dev));
+		if (!clk_id)
+			return ERR_PTR(-ENOMEM);
+		id = clk_id;
+	}
+
+> +		if (!id)
+> +			return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	clk_hw = devm_clk_hw_register_fixed_rate(dev, id, NULL, 0, rate);
+> +	if (IS_ERR(clk_hw))
+> +		return ERR_CAST(clk_hw);
+> +
+> +	return clk_hw->clk;
+> +#else
+> +	return ERR_PTR(-ENOENT);
+> +#endif
+> +}
+> +EXPORT_SYMBOL_GPL(devm_v4l2_sensor_clk_get);
+> diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> index 63ad36f04f72..35b9ac698e8a 100644
+> --- a/include/media/v4l2-common.h
+> +++ b/include/media/v4l2-common.h
+> @@ -573,6 +573,24 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+>  			     unsigned int num_of_driver_link_freqs,
+>  			     unsigned long *bitmap);
+>  
+> +/**
+> + * devm_v4l2_sensor_clk_get - lookup and obtain a reference to an optional clock
+> + *			      producer for a camera sensor.
+> + *
+> + * @dev: device for v4l2 sensor clock "consumer"
+> + * @id: clock consumer ID
+> + *
+> + * This function behaves the same way as clk_get_optional() except where there
+> + * is no clock producer like in ACPI-based platforms.
+> + * For ACPI-based platforms, the function will read the "clock-frequency"
+> + * ACPI _DSD property and register a fixed-clock with the frequency indicated
+> + * in the property.
+> + *
+> + * Return:
+> + * * pointer to a struct clk on success or an error code on failure.
+> + */
+> +struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id);
+> +
+>  static inline u64 v4l2_buffer_get_timestamp(const struct v4l2_buffer *buf)
+>  {
+>  	/*
+
+-- 
+Regards,
+
+Laurent Pinchart
 
