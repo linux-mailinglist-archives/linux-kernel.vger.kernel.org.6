@@ -1,141 +1,136 @@
-Return-Path: <linux-kernel+bounces-571232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629DFA6BAB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAA0A6BAB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6BAC3BD9E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936513B98D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA863225761;
-	Fri, 21 Mar 2025 12:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414AA22687A;
+	Fri, 21 Mar 2025 12:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PylM+OmA"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YIimjCTy"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93142227E99
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA79B226CF8
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560158; cv=none; b=PzjzZobRQfl+dtlnq2gBx1tuwEjop+dLMP8LHAlj6qLTYbF1nO2VKFdAd2ur/MWiS6kNcXyjt0t2pG4EWI8dot2XMBJld34qNTDqnwZfcbmRvMfeQr3D05bv8f6uZQ4IsqtVx4ja8yCiPC20dm1NIn82D/3Ue2z5UyrlS5sViqg=
+	t=1742560211; cv=none; b=fW9WlV7/Dc1e+opDxFqMYpWjQ4Ehq5b5ljWD8sTbH2MZ/KpxXfLccVD8B7k72xPJbHoXFOGXdu9eIB8Zi2a4smn+La1Ta2xVWtVqhsGkTBRYjc0y275Lil4fySUzwZu4Jl6G/aZaPtae2Kn/Xx5qannzgy+o6q1CvSZcKOWlmWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560158; c=relaxed/simple;
-	bh=rVnQZXzA6JyIyOTUd7XuexNwWQ+JpNN7mt/BrTRTsVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQDwJe6iCcz4xiat3CMKUwjTMglWYt0lEl/5DROUPs0vsk0qNkK1WqeR6j7V7Yj/tzamODUzmbwq0QdVtHb7bneJsG2uMK9mYLbAnxFPCMxNjO+P3Lf6Ld8ilbd3jGDAJ+uUd2Dt4TrVVPf8dho0qf2HPpkSXPASxpIAop7w2b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PylM+OmA; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3913d45a148so1574818f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:29:16 -0700 (PDT)
+	s=arc-20240116; t=1742560211; c=relaxed/simple;
+	bh=z2h8kmcrvjsG0wHPqWEEDMYXLWs3RQptqRtGchizi+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbYbFPwvR7iWunXfWueKtZIwfefjuiiDX8ko5AvMZbehWLrgcPopPhF9hWM1IEve05oGs+Sbn7IhDbdKG7volEcvWVhNGzAOUJO+96QE+1S4TZXOUJfiP0y7G92OW4jmp3pfF1bhJsg5cA6tphjy+0/cUJT0+xYongjcl4nEkQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YIimjCTy; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so959215f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:30:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742560155; x=1743164955; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C3SbkmY/ZqJcTj/0FuWSzOs5OjdIbM9VrnkM1LTgh1k=;
-        b=PylM+OmAE9PCm3Tcq1DmejBitqz3rSVDqWvS2+bvHjo98lkHGa+4hZnSzTWdX0qupE
-         6rOSZRGk/g6r1+tz+RCcm950UcCVP9J66v32S+X79KEsYBqZhdb6urXm0vw/Mtz9lZFm
-         G/CP3+fcOKvWI5k/5eltvrbg3rbXRL560ap9UhVskDfnQLo2kvUBPUau6HVaZafwWzWI
-         vn0LFCcVkvlzbpwayU+OwG6oPeD4wzjw9fJFX1drprYK0Wc2qECIi17z0SMIpXbeNTpF
-         c23lue4e5/c9MAdk+C0s3sVLsWPPiUT7y2hy+8v1OXbqMonMzJeU/dL48WzG0uedT2eG
-         3J0g==
+        d=suse.com; s=google; t=1742560208; x=1743165008; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G65UV4/EPEL+kQ65PV9/uamD/u6L+fEtW/r8PlOFSsA=;
+        b=YIimjCTyLFFAlPTNbZO3VZsh/7j3Kc15NqeVnhXZBUOSddhkUAbprRzb0/3GMpZXk7
+         Yt3GwW/WqwgKlcU50hEPXMGjCpjFqno1EzgV3Hb5vJJrEU93vBWjvdn2abi2loOVwOgQ
+         GXNq9gWOTl3dcXxBKIa8U/zHyclZYfs09lgPw8jE1ldQzTkDKFKEwBuIwqpfLRXlT7MR
+         ZoFKS+Ry368BOm7oxaUEVR+8YG4bcX9YbOivunjJ/jE1lrokjvj4/rbEAcHj7h/k6y52
+         kRjUFB7BDRQzvpI72xL2dTvGrdHvXDnxmzkgvwufKA+n4WQJFLn2JlcR7HiKXtHsHFgA
+         FftQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742560155; x=1743164955;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C3SbkmY/ZqJcTj/0FuWSzOs5OjdIbM9VrnkM1LTgh1k=;
-        b=ZI5SKfV8k2tZjNEPENzVlKUoMFhjWu+IOXHbqKBeDIz/WYzOsaicsImHlFyNkD2uJx
-         Q7aMLMu2X3JHkSynO5mA+xJYKUlI0YyEX+nPUn4sMkzB+UWki3l4fKXBbe2tAw0KYVae
-         um2MO3cpqMhauWhymiMZVGnENaTiXFPIqe4Ht39pOEDk0hkFbJm4RSkh/pBlizJVmCu4
-         FmSqRhPkWTRc9RMhdCME7Yq1H5ErLMB7WMt37v6bWPg1rLQpzNmET4Tgs2sKzWjTE7Ic
-         SfRRE217l6zyyGLw1TbcX8FPOco4WU+8sp39MKMrTXeEgHiTIUNqDmj3q+baG4ky35F8
-         CjCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf9oVqW2c+AfVkDqJ1yUmdeheH22kQF6+WcQE7G4ilL/2XMxBx3aNY7Z0s5eZX6EvJ8NIMdtrVMU9hb2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrMeMdd8V+44GMgKiSJLu5WuBfmnmyN6u6aA+tNhs4JpEQKHXE
-	hYrYigsuQ3w4VXxVwHJUNa5p7qw7REzRohlM0Ll5O+Xk32ejudR6xvgDbi6+8Is=
-X-Gm-Gg: ASbGncup18g6uqK3GweD+1Z1HsWONqP6/Jbz43eC35Aqq/FdWGvhAIkJQFTEIZXQnVh
-	kiBMcnsZNm8MlWgAGuG6Ts7uHVdAJsisaZfd7vUF83NqHLlHOoWnmOpoIs3tcK7N93O2bV+1w/G
-	LVXTtJDAvsRQtE6bhjJYLuqDiXbrsVVgqz/TbKhmiAhhi8y2/G/IqShRj7jsnZORO+xacZru04F
-	PlmuZSIGTEsV61P1HUb84gr7/+1c9ohOo84NjIaNDu4JFsVMJfUMVFQ1tUQMbtYnxi9Yz+KPjNt
-	5cAehN0gO6jkitTCemCrf455AZVVV9RNSoc5Wpm/r+A74XaOQd9cxeFK+jvorOo=
-X-Google-Smtp-Source: AGHT+IFBZoh/8u7yI73Eo6y4FHWJpjFIM1ekg9sKkOS3yKX2k4UHIdny93pk+Zu+zSOxe3lYxYq5TA==
-X-Received: by 2002:a5d:47c6:0:b0:38d:d371:e04d with SMTP id ffacd0b85a97d-3997f937cd7mr3013030f8f.34.1742560154684;
-        Fri, 21 Mar 2025 05:29:14 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f9b25c9sm2225387f8f.42.2025.03.21.05.29.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 05:29:13 -0700 (PDT)
-Message-ID: <c276c310-c6af-4ee6-8635-73430aeb4bbf@linaro.org>
-Date: Fri, 21 Mar 2025 12:29:13 +0000
+        d=1e100.net; s=20230601; t=1742560208; x=1743165008;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G65UV4/EPEL+kQ65PV9/uamD/u6L+fEtW/r8PlOFSsA=;
+        b=I172Vz3u/cdvwzEN507t69yXgwfd6H322w4/4Aaun3Zq6hoH3PVAzL7Crdn4dkaRmS
+         msWvBky8Pr0lsDQuwxoaSpcQvYwQMMtRZSZVIN3zC0il6xatIYJxQBtK8kPg/OYPwT7a
+         2oGI7wjXmulepu4dSmgSKsDMchdq4FO9PT+F3gvopKhXMU1i1YCApXy6lYMDo4gsl6YV
+         EHCMJ2WScWyuM+2094ZFZwhedIr8Gk5zVHxU+qcQztRR7/rQe5BjQMe45EEodMjKS7vj
+         9Y55bsqkrultFbv5pZ260xr7qYAep9cuEtkywGSlRYcRQ38Hp8KgjKD2gp+xxlN3Hjj2
+         iExA==
+X-Forwarded-Encrypted: i=1; AJvYcCViX53QvEeNCk5RU38Z0dAvgr9KG45FO6Rw/u+fxcvBXYkdFQr/+1jKo74wJfrsNhk1LSpSxMeX/AccD3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkumevtiKKJuikDuoPvK7rl2iKp/bvSvGWN0HYE3KQLYw48L32
+	ekoPpfUjqZZNdtINj+NzWXof6RrcrRhr+Ct8jE436NXjdpUlt7CIiEa8OKedO4Q=
+X-Gm-Gg: ASbGncvsKLlb7I7zE30lIg4/O2eD6jT+EEw/99TjXhoO0FW/JnEQ5LxQX0nJw8ucoqQ
+	2LlvasTptxSkmUwOGRKZTRV8tw7veWinKHH3udl+khFXGplStR8kVpxUad7jYcpjeKplG5H32Pr
+	CWS6C6yzpKGQa5whrvd6Uu/x1X5lZkY0IyZ7vsCc1H8sA85r+WWshj3A2XHeI38WuWngJsPCa6Z
+	FyjQKAOwotHB/SLFiAjY4PmvZlFU0cMeGWyrWx5MKMUEgfvb1PjwdRXf9Aab9dQkzuBAlMb+IG+
+	ZniD1/cJTaO3ngBi/JMMVizxvwfUYpYLGvkp602yk/QKI4A=
+X-Google-Smtp-Source: AGHT+IExv+tybR5ipnVHMChIozaD9HWg71HI9cTN6Q9laK+gRbql3sVz1wKjQhAcenueVqPKCCAWLw==
+X-Received: by 2002:a5d:598c:0:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3997f9595f6mr2940009f8f.52.1742560207835;
+        Fri, 21 Mar 2025 05:30:07 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3a10sm2231886f8f.28.2025.03.21.05.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 05:30:07 -0700 (PDT)
+Date: Fri, 21 Mar 2025 13:30:05 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Hao Jia <jiahao1@lixiang.com>, Hao Jia <jiahao.kernel@gmail.com>, 
+	akpm@linux-foundation.org, tj@kernel.org, corbet@lwn.net, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
+ direct reclaim statistics
+Message-ID: <isr7mmozkvkj3e4zk55fx2lzkwjxjhl4ac2f45l75qnna3bntp@cfm6v7wkmpyc>
+References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
+ <20250318075833.90615-2-jiahao.kernel@gmail.com>
+ <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
+ <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
+ <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
+ <b8c1a314-13ad-e610-31e4-fa931531aea9@gmail.com>
+ <hvdw5o6trz5q533lgvqlyjgaskxfc7thc7oicdomovww4pn6fz@esy4zzuvkhf6>
+ <3a7a14fb-2eb7-3580-30f8-9a8f1f62aad4@lixiang.com>
+ <rxgfvctb5a5plo2o54uegyocmofdcxfxfwwjsn2lrgazdxxbnc@b4xdyfsuplwd>
+ <20250319154428.GA1876369@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] ASoC: dt-bindings: wcd93xx: add bindings for audio
- mux controlling hp
-To: Krzysztof Kozlowski <krzk@kernel.org>, peda@axentia.se,
- broonie@kernel.org, andersson@kernel.org, krzk+dt@kernel.org
-Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
- zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
- robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- johan+linaro@kernel.org
-References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
- <20250320115633.4248-4-srinivas.kandagatla@linaro.org>
- <e2dc0587-28c1-4294-9bce-e18952ba645d@kernel.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <e2dc0587-28c1-4294-9bce-e18952ba645d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319154428.GA1876369@cmpxchg.org>
+
+On Wed, Mar 19, 2025 at 11:44:28AM -0400, Johannes Weiner <hannes@cmpxchg.org> wrote:
+> Can you clarify if you're proposing this as an addition or instead of
+> the memory.stat items?
+
+1) more precise info for given reclaim daemon
+2) slight saving in the long list of memory stats (sorry, I must
+   question new entries :-) to balance flushing[*])
+
+I was originally motivated by 2) to propose the alternative but it is
+not strong alone if 1) is unnecessary at the moment (and it seems the
+blurring via aggregation is acceptable for the users), so let's consider
+that idea a (potential) addition.
+
+Michal
+
+[*] You'd be right to argue that per-writer collection may not be more
+    efficient in implementation.
 
 
 
-On 21/03/2025 09:29, Krzysztof Kozlowski wrote:
-> On 20/03/2025 12:56, srinivas.kandagatla@linaro.org wrote:
->> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
->> index 10531350c336..e7aa00a9c59a 100644
->> --- a/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
->> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
->> @@ -23,8 +23,13 @@ properties:
->>         - qcom,wcd9380-codec
->>         - qcom,wcd9385-codec
->>   
->> +  mux-controls:
->> +    description: A reference to the audio mux switch for
->> +      switching CTIA/OMTP Headset types
->> +
->>     us-euro-gpios:
->> -    description: GPIO spec for swapping gnd and mic segments
->> +    description: GPIO spec for swapping gnd and mic segments.
->> +      This property is considered obsolete, recommended to use mux-controls.
->>       maxItems: 1
-> 
-> 
-> Assuming intention is to really obsolete/deprecate, then please add:
-> 
->    deprecated: true
+> The proactive reclaimer data points provide a nice bit of nuance to
+> this. They can easily be aggregated over many machines etc.
 
-Thanks, I was looking for this flag..
+That could be collected from memory.reclaim too.
 
-v3 will fix this.
+> A usecase for per-fd stats would be interesting to hear about, but I
+> don't think they would be a suitable replacement for memory.stat data.
 
---srini
-> 
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+There could be reclaim daemons running at different levels of hierarchy,
+the higher one would see effects of its operations only. Or differently
+parametrized reclaimers (swappiness), each interested in their own
+impact.
 
