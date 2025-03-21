@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-571700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBCEA6C0E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:10:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B650DA6C0E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37EC189C781
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E1D03B41B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC05522D794;
-	Fri, 21 Mar 2025 17:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C0122D797;
+	Fri, 21 Mar 2025 17:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="q0aF4oSL"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDTu5oS3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A24322B8CF;
-	Fri, 21 Mar 2025 17:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36332F43;
+	Fri, 21 Mar 2025 17:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742576928; cv=none; b=c503eaRUgBCjgAq4sFZFoZYumqlLMdCM5BsgDISMn4+qGBQ7GfvbleEniZfIiVhZpZYsZ/sdxqRYmm+ynVcedjXSKLPyjcjDTNqLnItONkDpWHjQ/0Vdi6qLQ/ktO0zki4FJ2nj/ctupGN3c2VNwEUIN7V6FZGBaUPvzvya3O20=
+	t=1742576915; cv=none; b=JGihhlkPCitBVKOZdWmIrK6W9fVQwrAfEZRb+VoMqyE6qEF/s/Lf8ke2of91axnRgkhJYf654kIu2FMxihmyH2u7kn8yBrDdlif8vUBA/aTXrqgnDnEbvHjUcoLWOnKPo9xpdsDSILPYfqGEp90BVHGxSRa0mAFb0qFxhicVA1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742576928; c=relaxed/simple;
-	bh=ue+qpndRbnQIzc5aNIoYHd/I40V3i7kVLhxEB5EcUO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zj/r0hSJneC7iv07j1eiQRasRLZO5Jn2rEKo+IFzSHLxfW8E+QEpXl5mZw2Kq4AO29LWKWovRpMLGaEUUdbf74J2OAb/3wK2f9mxzXIJoQhLVZnq0sttVXvJl0FRy/M5fOQzs4H+/a9EwR6ie7tTwvVxJxN/gZy1sc/cQk+282A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=q0aF4oSL; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=rwsJ7KxnNGB85Kzql5aBpB16nToZe3gP5eTNRWMHdQs=; b=q0aF4oSLerS/auoS6KFBVj+xiA
-	A3Mk3DHaREzMedV/GQNe5jEg4VnqUUMhmgLLTtR6HpsjffkFMU0wvA2P+MlrAma/E2v4LNn/tR+xZ
-	l+zEeCTgkyPQgUmyXsi2kO63KbyGCWYqg0b/2PwwJexFRJK+AAXWjSADJtb5Mi0zmv62vCso9Yiv7
-	s1npM5Siaq3ahMq8atgqnYwpJIInpKnIqomrF15Nnu4favedSObOu0OYxgOtMiZaoH+IT0WBUV1s0
-	T6obiNiv4shlo6ogn5UV1LXMDSMODHLfjrkh/7uOvlEqPwHKQCQRsxL43zl1ZtYU6JNnjlEvVJtgx
-	HRf67xDw==;
-Received: from [192.145.10.73] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tvfrA-0003Qo-2G; Fri, 21 Mar 2025 18:08:28 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko.stuebner@cherry.de>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] phy: rockchip-samsung-dcphy: Add missing assignment
-Date: Fri, 21 Mar 2025 18:08:26 +0100
-Message-ID: <2181342.OBFZWjSADL@phil>
-In-Reply-To: <e64265a4-9543-4728-a49f-ea910fccef7c@stanley.mountain>
-References: <e64265a4-9543-4728-a49f-ea910fccef7c@stanley.mountain>
+	s=arc-20240116; t=1742576915; c=relaxed/simple;
+	bh=1NgC7WYxjVqQXoN0hz/U33WN/j1JXyX9+hiBoc78bd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCr29PxA75xC07ILrPnU1DOrTeRBZqt7wKSaeC0XGsWijBLWeMtPmq/EcTQbM7eYXniGZk0LIgLFo/FMMGkAix3ElxSjsH0Sk1ohzn2aD8668JQgUIvzyKMAIKSs5YSpWiU9tMSymrDZVc2Ou2wWNitQ3HyLRJKOApuDC8Nwlg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDTu5oS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082E6C4CEE3;
+	Fri, 21 Mar 2025 17:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742576914;
+	bh=1NgC7WYxjVqQXoN0hz/U33WN/j1JXyX9+hiBoc78bd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kDTu5oS3ogEDl/QCQwW3/iBgnFdqP5u6Q939YLryrfrOrgy2xdjcG2CMeBORC7SSM
+	 8HUgiF6AqPtxFzntp0mYL+YKvDzxftGUNxDR4L88V9YRCv3aV3w1vZU17oY3At5ckA
+	 tZRSrPR4Gm7tWM/h5RQVxhBc+MnYYG5qjPSwLZC3Z3Zwz4+LYB/WxlESwvyIU1OvVz
+	 7YBIEsrXk4UkqOeG9uY5nCREPIUoKUo1npt0UGPa3GmPr8uHnAcG0VS9+0jYZX+5wZ
+	 vUYhsDQkdjfVrGIPcB6hNUeReKDEUbYrzc8S08J7g1Zy0pBvIwOQB6xHA+7aCy1ACP
+	 uUXxU402YUGqQ==
+Date: Fri, 21 Mar 2025 19:08:27 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"ebiggers@kernel.org" <ebiggers@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+Message-ID: <Z92dCwEDNmESjPAs@kernel.org>
+References: <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
+ <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com>
+ <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
+ <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
+ <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
+ <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com>
+ <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
+ <95e7a43a2dd675615a146c56a10abf6921f955f9.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95e7a43a2dd675615a146c56a10abf6921f955f9.camel@HansenPartnership.com>
 
-Hey Dan,
+On Thu, Mar 20, 2025 at 06:40:55PM -0400, James Bottomley wrote:
+> On Thu, 2025-03-20 at 16:24 +0000, Eric Snowberg wrote:
+> > Having lockdown enforcement has always been 
+> > a requirement to get a shim signed by Microsoft.
+> 
+> This is factually incorrect.  Microsoft transferred shim signing to an
+> independent process run by a group of open source maintainers a while
+> ago:
+> 
+> https://github.com/rhboot/shim-review/
+> 
+> If you actually look, you'll see even Microsoft has to obey this
+> upstream process for their Linux distro:
+> 
+> https://github.com/rhboot/shim-review/issues/427
 
-Am Freitag, 21. M=C3=A4rz 2025, 15:36:14 MEZ schrieb Dan Carpenter:
-> The "ret =3D " was accidentally dropped so the error handling doesn't wor=
-k.
->=20
-> Fixes: b2a1a2ae7818 ("phy: rockchip: Add Samsung MIPI D-/C-PHY driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+I did not know this. Thanks for educating!
 
-oh darn ... thanks so much for catching that
+> 
+> Regards,
+> 
+> James
+> 
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-> ---
->  drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c b/drivers/=
-phy/rockchip/phy-rockchip-samsung-dcphy.c
-> index 08c78c1bafc9..28a052e17366 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-> @@ -1653,7 +1653,7 @@ static __maybe_unused int samsung_mipi_dcphy_runtim=
-e_resume(struct device *dev)
->  		return ret;
->  	}
-> =20
-> -	clk_prepare_enable(samsung->ref_clk);
-> +	ret =3D clk_prepare_enable(samsung->ref_clk);
->  	if (ret) {
->  		dev_err(samsung->dev, "Failed to enable reference clock, %d\n", ret);
->  		clk_disable_unprepare(samsung->pclk);
->=20
-
-
-
-
+BR, Jarkko
 
