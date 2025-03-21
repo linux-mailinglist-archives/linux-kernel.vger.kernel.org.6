@@ -1,49 +1,68 @@
-Return-Path: <linux-kernel+bounces-570726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D44A6B3EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:09:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FECEA6B3F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22702466962
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 698277A708C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA701E7C1E;
-	Fri, 21 Mar 2025 05:09:34 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9941E9906;
+	Fri, 21 Mar 2025 05:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kf2KvaaY"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78E81E3793
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D611D5CD7;
+	Fri, 21 Mar 2025 05:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742533774; cv=none; b=l7Xt6YfnYPauJDa6PS9r+Xac13VngsFWeogI3+8ekOxzyio9BeMWsdzuCMYfLEmknLt2lpLb1zEDWXdbfaEfxoMCZ6Q0rumAe272eCoersI4KX/SMucUkwFHji4vC1M4Lgjo55R117LWOplH/YaqGCkQViLQGUmDd86miuSNRcI=
+	t=1742534062; cv=none; b=eVVepYG1LfWC+eWF5MCaxJIlDaw0zCkPxoq4k5COdM7EZvX66oDwwCUEezTMz9hJCUXJ5BM5aGlUpBOHegLk/4q8dkOf8F0tvbRyU6JWa0/Hrh2rwH+iBOGm0wzu7TlowRIHmXluN2l4Dj+oAL6HEhZW7VPE9qE0/yuiRc2nAP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742533774; c=relaxed/simple;
-	bh=thSOFIOaa7CQ3M84B093YYjHWrRsz7Aqtb8JBKOH6rA=;
+	s=arc-20240116; t=1742534062; c=relaxed/simple;
+	bh=kwOkxKV4qTer06lP41Ffd6PSlRNYEP3PWjtpJ0CNkzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lwcwYq62DKnmd63lHFZWzbbmTIJJyExObWOiJv9FTK6pQXGXpV9Ktb+xGcHOFi+Zyzz3m0774UQpBn//97S1chF+XzehlCWezvyLFrM4jOGJIX4bVceCgRA6wHOjKHD5ArIry4dtpsQ14qu3CsJwlGrACF5ZxEpAed7+zy2lvcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-222.bstnma.fios.verizon.net [173.48.82.222])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52L58sAT020188
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 01:08:54 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 0C89A2E010B; Fri, 21 Mar 2025 01:08:54 -0400 (EDT)
-Date: Fri, 21 Mar 2025 01:08:54 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Charles Han <hanchunchao@inspur.com>
-Cc: adilger.kernel@dilger.ca, shikemeng@huaweicloud.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Fix potential null dereference in ext4 test
-Message-ID: <20250321050854.GC1161423@mit.edu>
-References: <20250307115432.2112-1-hanchunchao@inspur.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoulZZ8uuMf4ZYZpjHiqb5T+loSczqTZddJJhPwFM25fTJHsenavZdj0P8bY/LBAdoAVXHCm7nEezpSscT6Az5TDxaB0PbI7M/nwZFFQNPoVCKGig9A4upMMTivzg8dvS56FpomDUEdIM896REs0Gfbes3L7DL5YayoWgwjx6pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kf2KvaaY; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rUyXpJNwMUhzMPk5QM3GkvuJrE/4O7e8Ynsm2+/B6s8=; b=Kf2KvaaYATGpCtxdSKU5/6rPCA
+	KAkFT3eZmQAkfjf5zy7uXXS82wFhob4doB/KA+43X3dISEqyPawWkrNyBlpoZtdgWVXEmob7h9A2T
+	INmhKDoOOCjOrjW4ZSjUvWB03s3OSD+vre15oic0+OgKkwp14Sr/g6/gqSwlMApZNHX6IiM17Op0A
+	0pdaXp0Ty2kdgJI3qfEyUskbjjdfeoRtb2GuSsZ2qkpEpR0MO0Y/g0FonmFmXlySGE0zWNjOhaN18
+	6K+0taEVWg/lI1bi9TslKaztZnjLhaXpsm7T4I+pdul/sW/3pyTjE0hNQ2c74u6nXUIlDS+1SjHRs
+	WTlUT8bw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tvUhg-0000000DsHV-1Vd5;
+	Fri, 21 Mar 2025 05:13:56 +0000
+Date: Thu, 20 Mar 2025 22:13:56 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, liam.howlett@oracle.com,
+	alexandru.elisei@arm.com, peterx@redhat.com, hannes@cmpxchg.org,
+	mhocko@kernel.org, m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com,
+	mina86@mina86.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hch@infradead.org, jack@suse.cz,
+	hbathini@linux.ibm.com, sourabhjain@linux.ibm.com,
+	ritesh.list@gmail.com, aneesh.kumar@kernel.org, bhelgaas@google.com,
+	sj@kernel.org, fvdl@google.com, ziy@nvidia.com, yuzhao@google.com,
+	minchan@kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
+Subject: Re: [RFC 1/3] mm: implement cleancache
+Message-ID: <Z9z1lC9ppphUhDjk@infradead.org>
+References: <20250320173931.1583800-1-surenb@google.com>
+ <20250320173931.1583800-2-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,15 +71,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307115432.2112-1-hanchunchao@inspur.com>
+In-Reply-To: <20250320173931.1583800-2-surenb@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Mar 07, 2025 at 07:54:31PM +0800, Charles Han wrote:
-> kunit_kzalloc() may return a NULL pointer, dereferencing it without
-> NULL check may lead to NULL dereference.
-> Add a NULL check for test_state
+On Thu, Mar 20, 2025 at 10:39:29AM -0700, Suren Baghdasaryan wrote:
+> Cleancache can be thought of as a page-granularity victim cache for clean
 
-Thanks, others have submitted the same fix.  It's now fixed in my tree
-and linux-next.
+Please implement your semantics directly instea of with a single user
+abstraction.  If we ever need an abstraction we can add it once we have
+multiple consumers and know what they need.
 
-	       	    	      	       - Ted
 
