@@ -1,119 +1,138 @@
-Return-Path: <linux-kernel+bounces-571207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC75A6BA65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:15:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FFDA6BA5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2713ADD39
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B894A089B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CB7226CF8;
-	Fri, 21 Mar 2025 12:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5761227E82;
+	Fri, 21 Mar 2025 12:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uqLqPeH8"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBU3MMpp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB2722576C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DAF22579E;
+	Fri, 21 Mar 2025 12:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742559126; cv=none; b=b20oDcFVBb5GhrUCq9T68pjh1XsSoK1FYBK+bKw1trOD5BXL3lEGmiQB9Lm0DfbCWVeVm8I7QMaZExYS6jnS//wCDAFrx1/980KyMPTamXYR/AkwRWov+Z0vUol123qx+B//0/KsLACN5CwdMEN0CQTAkgwUgTdhr9E3lWpjPy4=
+	t=1742559157; cv=none; b=GP9gKM/vBuDQR5RWyGhV6qc96j/mT8iDxPHzHB4AGpK7XFAxWKCibwFPw3ST4D9zCJ1ov0XeK6YR8KzYFwylJENI7TYNp9/nUtkTehU5BOENdi9cd/Gx7c2Iy1/DUfqNFNWUy2p8UBDNUd/QS2zI9Q/ePGJUVgZHu4rkW8WSQ4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742559126; c=relaxed/simple;
-	bh=UNNCij3fMV5Om5k9iqqBpbqo+0QEFQXW5NWRoa/bHY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gJu7SW8O+Ylv4qWOLJ0Jsqn8fKAiubF6UyDNuVTtKlY46CbtzbFr8Kqa93ClJqZRke5KwBOBvH9Y24Pt0CYz10fPz0jCJw7fEJB4KVgGFUnJ+jzQ3p6LpkHh8/7B1FBqrExbQO9uBTP/vxmfeRoL1J3Z41OZ/1OO+yOSb6ChyLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uqLqPeH8; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso8880645e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742559123; x=1743163923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jxPHoqhgPR3ScfztQgxMw9I0oJllqAs23ggh4XWBe44=;
-        b=uqLqPeH8SXL9uJ46G8BR/pzliLpuMA83/himHieOyhAMlVRP+GUKt5GXb7Sak1Uze/
-         mooJuZUFpvHwBaEpNTh3EPaLaFTEK088EZgK7LmyLinuChslWfD6y9XYjl52WMSJoVu0
-         jspEfWtQPzkJIjjjJFEqUppatIYeONY/4BF2GWkamBurO0lKcaxcMLc/1fYQCfLDP3WL
-         HT3SHZyfn/oLUQUuyrB0Bu6DFPf7xXYmCpkOxX9WnaNetIC98UQKc/3aJPfWeEzMEqU1
-         MPrAQR6R0t6egvdteO95xFsmu3YeCGafuBIPtvxtIgZtPJCJ2KagEJjOP8rma7NKW7bO
-         5ECg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742559123; x=1743163923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jxPHoqhgPR3ScfztQgxMw9I0oJllqAs23ggh4XWBe44=;
-        b=Xdjc3ChaeVCb4XuySraOyhWk5wK71lQ87sJz1NmdW2M1aNZ/mB6hCjfvmGlZS2ui2r
-         BIr0BqSmTPkPvlz+uvuMLmZesOKtP8kslCDUs+jzqeK/XJoOH2qOvJOcxHfkMVxSF+m9
-         9dk/yEXzLVawLuhzYmBf8vMd+rG5tqUhZ9yBUqtyXmM3wVCkYcmVKa6BLUrBt2M3wzFn
-         4l3dcZaPDnhBP8AhDNHVMxwNzsrbdpVbVdogsmnU3P41iqLezJPKs64nBaSEkUooEQTH
-         HhRRevWQjmjqS8SQg6am2gWTMFdRPIHKLy2kR+CNZkua8/tXSbs6wzaPYxTu3OMWerEW
-         1JeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgDIhX/B1YHOUbymoNqhABw9yYqmJETlaYfWDiOZJJrUYAktr6SgTADveakBUKf3+jnAW96oiJrkUqFU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWO/ywBR3UfCfc72j1elXsJTaCNDIYgzh/aWPEx3hUC9gopTDR
-	TUaxpiRjPWKaXQ/qHxKQltnPZtCMTsj04QLtJNtuERe0S8bVVw0YSecxcD42G99Hw4XOxChU4Mi
-	VBW5KiWxeoWWrzqELMluh2dwbvQ6Daeb7V43KT8IEu9F0vmwR7g==
-X-Gm-Gg: ASbGncvVW2otyNSIgCju1UkIUBMmbvsLI/y68WlOxgU/5rf8x15xqWM4nHKqg0GRwkQ
-	q2uSY89CUDmITGJAkKLluD9ySs1/JwH+KfuWzZ8LpKX4NayXqmjRhbfFoAmbadA9j7Ua1tirYZN
-	owFtkeht2ECYgDOJkIr1WpuHyTxIZ/qN3Fo7Ecww==
-X-Google-Smtp-Source: AGHT+IHcoh8/QLn7mrObj0kGT04nCNT3y+m/6M10pyXOF/OwjgtcjH1lC6eTC2KVDOD+2C0+ZdF3uSQni3goOcVZ8S4=
-X-Received: by 2002:a05:6000:178d:b0:394:7c55:7030 with SMTP id
- ffacd0b85a97d-3997f90e02fmr2478820f8f.30.1742559123170; Fri, 21 Mar 2025
- 05:12:03 -0700 (PDT)
+	s=arc-20240116; t=1742559157; c=relaxed/simple;
+	bh=xK8yauRt6DqRrXTN9T3yXF88FokRjGpUJksc7timWDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqrRSnwKV4kODTmttcAqSoYAJI5xZjCEabq3+K0zZQU7vkcITZhc14auQ4eWbrFWDzhWFMRi5Pr7RN9ohiCtPzpVd1iMnqFbGMbOAe8h8OtG4YqVGmXJrDeg4o/ewRsuQ6qBQO47JgiareZLoVcZsx20beWLgoT/hs/hr+wlvoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBU3MMpp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AAC3C4CEE3;
+	Fri, 21 Mar 2025 12:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742559156;
+	bh=xK8yauRt6DqRrXTN9T3yXF88FokRjGpUJksc7timWDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBU3MMppGANhUorrUWxTV4oLhl5ufEHpbbenijLkSXLuEpiA1GruMTGuGCrQak0/8
+	 3DhSToi1AL8CHk8gctVu+ffNJKRVF2aFoLRDjYHnkyvPnjCI7yhD8t2jtVcCjMDEd/
+	 Vu+We2Eqo87SVyBFGZbW1+jIzX3iqiMLX6Z7zzgZhYoSIs6GzyKkVLc9s0U/jL0r0n
+	 3mDEibV355uIiio8eTY+tm69jZvcyOVyidxCZXsFxyGDMdSKAF3QCwjTOO64dKUaKt
+	 +585UUrfrWunD6hSI6Jv3eakc56VNRwIAwPPjgGvsah5J+2+fdqyb1H9xVaJiJu7Xu
+	 UpjjR5TbnVO1w==
+Date: Fri, 21 Mar 2025 13:12:30 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z91XrltJYtJdkLUS@pollux>
+References: <Z8l8HgZOV7sDWqBh@phenom.ffwll.local>
+ <20250306153236.GE354511@nvidia.com>
+ <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
+ <20250307123255.GK354511@nvidia.com>
+ <Z8rv-DQuGdxye28N@phenom.ffwll.local>
+ <20250307145557.GO354511@nvidia.com>
+ <Z9LsbhzjI-P3-edQ@phenom.ffwll.local>
+ <20250319172132.GL9311@nvidia.com>
+ <Z91A_Dz-nY2iFqYb@phenom.ffwll.local>
+ <20250321120416.GX206770@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com>
-In-Reply-To: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 21 Mar 2025 13:11:51 +0100
-X-Gm-Features: AQ5f1JqeMlZW7mWOFw0Am6uJ3EhRKQScUKs9fqcHcnY5iXEdr9Vcqb8rhgOVseo
-Message-ID: <CAH5fLgganhjZjoVipYtMDpVMLYy4-k+L-TRG1zo31OCWvXsZWw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Additional methods for Vec
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321120416.GX206770@nvidia.com>
 
-On Thu, Mar 20, 2025 at 2:53=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> This adds various Vec methods. Some of them are needed by Rust Binder,
-> and others are needed in other places. Each commit explains where it is
-> needed.
->
-> I'm not sure what we concluded on the set_len / dec_len changes, so I
-> don't depend on that series for now.
->
-> This series is based on top of Vec::truncate from
-> https://lore.kernel.org/rust-for-linux/20250316111644.154602-1-andrewjbal=
-lance@gmail.com/
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Alice Ryhl (5):
->       rust: alloc: add Vec::clear
->       rust: alloc: add Vec::pop
->       rust: alloc: add Vec::push_within_capacity
->       rust: alloc: add Vec::drain_all
->       rust: alloc: add Vec::retain
->
->  rust/kernel/alloc/kvec.rs | 147 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 147 insertions(+)
+On Fri, Mar 21, 2025 at 09:04:16AM -0300, Jason Gunthorpe wrote:
+> On Fri, Mar 21, 2025 at 11:35:40AM +0100, Simona Vetter wrote:
+> > On Wed, Mar 19, 2025 at 02:21:32PM -0300, Jason Gunthorpe wrote:
+> > > On Thu, Mar 13, 2025 at 03:32:14PM +0100, Simona Vetter wrote:
+> > > 
+> > > > So I think you can still achieve that building on top of revocable and a
+> > > > few more abstractions that are internally unsafe. Or are you thinking of
+> > > > different runtime checks?
+> > > 
+> > > I'm thinking on the access side of the revocable you don't have a
+> > > failure path. Instead you get the access or runtime violation if the
+> > > driver is buggy. This eliminates all the objectionable failure paths
+> > > and costs on the performance paths of the driver.
+> > > 
+> > > And perhaps also on the remove path you have runtime checking if
+> > > "driver lifetime bound" objects have all been cleaned up.
+> > > 
+> > > The point is to try to behave more like the standard fence pattern and
+> > > get some level of checking that can make r4l comfortable without
+> > > inventing new kernel lifecycle models.
+> > > 
+> > > > Yeah maybe we're not that far really. But I'm still not clear how to do
+> > > > an entirely revoke-less world.
+> > > 
+> > > Not entirely, you end up revoking big things. Like RDMA revokes the
+> > > driver ops callbacks using SRCU. It doesn't revoke individual
+> > > resources or DMA maps.
+> > > 
+> > > I have the same feeling about this micro-revoke direction, I don't
+> > > know how to implement this. The DMA API is very challenging,
+> > > especially the performance use of DMA API.
+> > 
+> > Ah I think we're in agreement, I think once we get to big subsystems we
+> > really want subsystem-level revokes like you describe here. And rust
+> > already has this concept of a "having one thing guarantess you access to
+> > another". For example an overall lock to a big datastructure gives you
+> > access to all the invidiual nodes, see LockedBy. So I think we're covered
+> > here.
+> 
+> Make some sense if Rust can do that.
+> 
+> > For me the basic Revocable really is more for all the odd-ball
+> > random pieces that aren't covered by subsystem constructs already. And
+> > maybe drm needs to rethink a bunch of things in this area in general, not
+> > just for rust. So maybe we should extend the rustdoc to explain that bare
+> > Revocable isn't how entire subsystems rust abstractions should be built?
+> 
+> Then why provide it? Like why provide revoke for DMA API or MMIO as
+> mandatory part of the core kernel rust bindings if it isn't supposed
+> to be used and instead rely on this LockedBy sort of thing?
 
-I went ahead and sent a new version now. It's a bit quicker than I
-would normally do, but I wanted to get it out before I go on vacation.
+Not all device resources are managed in the context of the subsystem, so
+subsystem-level revokes do not apply.
 
-Alice
+For the DMA coherent allocations, please see my comment in [1]. Revoking the
+device resources associated with a DMA coherent allocation should hence never
+cause any overhead for accessing DMA memory.
+
+[1] https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/dma.rs#L120
 
