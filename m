@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-571923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A02D6A6C45C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:38:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC16A6C45E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42297467B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666E93B524D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D72230BEF;
-	Fri, 21 Mar 2025 20:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BDF2309A1;
+	Fri, 21 Mar 2025 20:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ImfJjb51"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZaMse/B"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BABA137C37;
-	Fri, 21 Mar 2025 20:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A4137C37;
+	Fri, 21 Mar 2025 20:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589469; cv=none; b=qNmRsTPzaOhBUyCdUgLWjjdMYzxcfkCWO2U1+MA1dmB8m7PWbB1HsJALfSC22gT8fmvgnQu94fz8YO0GfUTrZBpwF6ClTvwtX9AszGTOxPhATD53t/5zeH/N8EB1Et+EzU3wweikWYQnYP1gPBOVSwlkpLbOJkhgNhUBtuz/l00=
+	t=1742589462; cv=none; b=SaZOLADdFwC7a3alq85w1zrMBbGbl0GmTQo8j3t3z847zUiCaziIk06/lp44AWVl4fN/Au8b86433ds3gS7ysoQyKb6bqgV8IGYGv1loe12LhnDILEL6zHiP0YrH9mWj+TR/8mCvyHfDEQQof0Zu3Sqc0LE8URNCfT8NIInzcTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742589469; c=relaxed/simple;
-	bh=HO7nlKXbMubdBKs5dA8F12zWcr0vHn01ammSIHUzW1E=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=gHgrGJZ3IwGBHZbVNlkGziOeUrFEcAOKejXN2Lr+vxFrZrp6eOJ+fkNq4FfACTkYizUPjuqRYhEcUVRxLJDZbwpmselVuAXwDfChexriSgeLQi321BEuQI3Tr5VITPKsUkpDnNzs0EPqFPh02BBw02eMpTsLxccrulyOoX9NJDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ImfJjb51; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6B7C4CEE3;
-	Fri, 21 Mar 2025 20:37:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742589468;
-	bh=HO7nlKXbMubdBKs5dA8F12zWcr0vHn01ammSIHUzW1E=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ImfJjb51Y/I05j7ropG1vHwEmVkLdCHI/NDFhBHgDVkZ4Pj14dzRN/qxXjF42bUml
-	 BEFmXzbwqaUdb97JSLUTfP72S1rEy7dSG4d5KLyojowobIln3NrY/gA+ANtdqBttC5
-	 SWY7+IvvjgDva+PkzhY9Q4ulm3xoik68NkZuGi1Q3hrOPX9WoeyU7I1Am2j9LNQEiJ
-	 vDk6sz/JoXErERhcL6NXKA6lcD9NQZj9eRn2W2neaYeEZ0Y7T0fCFaDreTlkCDNNOl
-	 LcjwQ82/8oqpEN7zYt0bm7P72VQ4G+8v/tt/RtqzH77B97DzAwIJ2KzOJXoiH1pOOf
-	 EIBNR+1YXHG7Q==
-Date: Fri, 21 Mar 2025 15:37:47 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1742589462; c=relaxed/simple;
+	bh=tJOpnxkfpmrbKVWSvg6H5393McsiTMC1u/e8djEou/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F8EyIZTeGEgaWZqE3Kdvu0DYM3Hi1pqU+4Qgit78d4EYK+KD9BjpJIQ+c9oJZ1qxd0NB+a3yM8+m0gqF1nlclDiFXyItQgvotkPzWamIriKpEPNLSud33R59asMI4iVZwaNfIPsLZVqeMH7Toc32+pMb6b1Co9l37lZPhsYbJ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZaMse/B; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abbb12bea54so188837266b.0;
+        Fri, 21 Mar 2025 13:37:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742589459; x=1743194259; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8di2+5db+G/faMtWmD76yKgofncq+owzXn388GWGPKs=;
+        b=OZaMse/BmWVY+YxSlDJqCOyLo+1o4WFW+PsWdcxBGU8ehnCJ7jfM8uB+5Qiseyjhxl
+         OOiFb5vd7v9vzDziFNm3rsCQMVeS7Moxfq/++SQ9pU7cKSzuLfS3Eef/5NXGHFip8LMm
+         Ul+DQXVbiurPKjaPzee7tXYtdeJZM6UmkB6mhQRBp0iotz2g+beN2CsEuhV0ycj2E905
+         JFbGsoQSTP78GlNN6Klx6/wEQ15F5jEyByLWIYrQ6P/tBPF0OWCQpkO1TPwLPjx9H0qc
+         KOHBTuruaCEj4XcUtnY21jeQvNyuAQoiGG7kUfYWUVma3pBwWVibEq69c0+s4RUwezrU
+         xPkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742589459; x=1743194259;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8di2+5db+G/faMtWmD76yKgofncq+owzXn388GWGPKs=;
+        b=afrGDbP/uwyhDsxuQatPM5oYxtCh27nALAdVzwQ1jg2CddtYfn/q0hdQLog26FQJDx
+         0kmwJedJvYBh/+xaakKPRvypvlV/3KzkMhoXz6UKgtps5YXt2tCTFUdWFQ6vQVSWxvwj
+         PeZE4Xfgxxztz9ivxk0mZwPgQj9q/04i0pSIJhwtzFx8qFgCKR70N9qBcqBQ6EnOVCEv
+         vj5/TbC9WbzuMBHVpn9K4Yu9U0DRAoItqAhc6B7K1GsO1tuJQvKTKgpdJnFlrk1XXZ4x
+         XD/X6KS3o+c/ItnZs7dV8BFpyvhITFHNpItONQpI/NCnnvhwOurnobfnHWMP0RvYqXsJ
+         VL0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXJikBsX/lwa3Wg91hT5xbhKqLZf+v82CoJQis/rL7GcELqhCpXQv6HM7J3VWqxookDpSuzQvurww==@vger.kernel.org, AJvYcCXKyJqWJmDzW3fT3bMvGgCDdvTW+ir2Mh1GOqB6zABXriYhZz3glbHTHu0mQ9yoPzbDalVGK2ms7b73akrl@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy7Q5fVKtbpiJEDiroE9DvLBr8VM6cYSEnhjdXCZPSE+sBKXcr
+	3HEou6o7y4tnt5QYqXNEC4gXmxcWswGKmM2PnMh+pvCtyHJYLtDf
+X-Gm-Gg: ASbGncsOWjDu6wtQLPSwHrdIopQJ6Rf/BDCW7cjkI9YCSyx4wG+I8luYv+uFdte77r2
+	4rEE0vIcu3hkX2zzUUneFhcjNQC5VHZDKdbbJPupHOC2FOdO6XSFlhA3QnoNh8xjaPrOvSnFEsL
+	f61DYJPk6F1J756VRlCC4rvfw2q9h3DTdyQoeccWDk6VamTdO97GneT12mpY3Lo2GNcW68d5+DZ
+	chq2XLyP4qzhC5FJABOFu6JwK40egkS3MihhXpYsDM14EyEcxdbPeaA0vn9DzfWOOq1MWFQDThq
+	ejATMWhqWJJNaDg5TzPhzxwjwKeHX7jz8CXIuxmEAKPlGZUfEoeogA==
+X-Google-Smtp-Source: AGHT+IHrRiJ1iTW0Z48ukRmGGb6XVNgOoztXQYwBBfo+m+iTY3JPOOIta58QVGB1CkULhOEnWBIKNw==
+X-Received: by 2002:a17:907:c5c9:b0:ac4:76e:cdc1 with SMTP id a640c23a62f3a-ac4076eda87mr70308966b.21.1742589459101;
+        Fri, 21 Mar 2025 13:37:39 -0700 (PDT)
+Received: from [192.168.8.100] ([85.255.236.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8d3d2dsm211581666b.60.2025.03.21.13.37.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 13:37:38 -0700 (PDT)
+Message-ID: <ee6c175c-d5b7-4a1f-97b3-4ff6166c5c73@gmail.com>
+Date: Fri, 21 Mar 2025 20:38:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Richard Cochran <richardcochran@gmail.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Palmer Dabbelt <palmer@dabbelt.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, 
- Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, 
- Alexandre Ghiti <alex@ghiti.fr>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, linux-kernel@vger.kernel.org, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mips@vger.kernel.org, 
- Albert Ou <aou@eecs.berkeley.edu>, Jakub Kicinski <kuba@kernel.org>, 
- devicetree@vger.kernel.org
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-In-Reply-To: <20250321-macb-v1-1-537b7e37971d@bootlin.com>
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-1-537b7e37971d@bootlin.com>
-Message-Id: <174258946794.3905655.14862807255896065162.robh@kernel.org>
-Subject: Re: [PATCH net-next 01/13] dt-bindings: net: cdns,macb: add
- Mobileye EyeQ5 ethernet interface
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] io_uring/net: only import send_zc buffer once
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>
+Cc: Xinyu Zhang <xizhang@purestorage.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <20250321184819.3847386-1-csander@purestorage.com>
+ <20250321184819.3847386-2-csander@purestorage.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250321184819.3847386-2-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 21 Mar 2025 20:09:32 +0100, Théo Lebrun wrote:
-> Add cdns,eyeq5-gem as compatible for the integrated GEM block inside
-> Mobileye EyeQ5 SoCs. Add a phandle (and two offset arguments) for
-> accessing syscon registers.
+On 3/21/25 18:48, Caleb Sander Mateos wrote:
+> io_send_zc() guards its call to io_send_zc_import() with if (!done_io)
+> in an attempt to avoid calling it redundantly on the same req. However,
+> if the initial non-blocking issue returns -EAGAIN, done_io will stay 0.
+> This causes the subsequent issue to unnecessarily re-import the buffer.
 > 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  .../devicetree/bindings/net/cdns,macb.yaml          | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
+> Add an explicit flag "imported" to io_sr_msg to track if its buffer has
+> already been imported. Clear the flag in io_send_zc_prep(). Call
+> io_send_zc_import() and set the flag in io_send_zc() if it is unset.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+lgtm. Maybe there is a way to put it into req->flags and combine
+with REQ_F_IMPORT_BUFFER, but likely just an idea for the future.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/cdns,macb.yaml: properties:mobileye,olb: 'anyOf' conditional failed, one must be fixed:
-	'description' is a dependency of '$ref'
-	'/schemas/types.yaml#/definitions/phandle-array' does not match '^#/(definitions|\\$defs)/'
-		hint: A vendor property can have a $ref to a a $defs schema
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250321-macb-v1-1-537b7e37971d@bootlin.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+Pavel Begunkov
 
 
