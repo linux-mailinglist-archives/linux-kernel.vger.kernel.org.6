@@ -1,385 +1,117 @@
-Return-Path: <linux-kernel+bounces-571288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B84A6BB66
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:05:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1FBA6BB68
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6F518989ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4AA33B081B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD5F22A1FA;
-	Fri, 21 Mar 2025 13:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B9E1F8F09;
+	Fri, 21 Mar 2025 13:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqNUb4uF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XKHk6F0i"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753011F8F09;
-	Fri, 21 Mar 2025 13:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2AB21A43C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742562308; cv=none; b=IKoHkRBZJNi519gTQ+AaLc9sbYsh8MK0J+C6tkx+F1ggNntH/kcnKt93DRXTrEZx/CmJgJSK2spE+UvYGO2kjCbgjyoleeMmEmXT4gBOsVYsxAhdMM5YBYbv8vWIkY7WsBVvrKRLMb+uR/G6Ig4NcZCqnIbj8/7sD36+oHQOV14=
+	t=1742562324; cv=none; b=puNQDLWsp+Qy++UcmuODN/oiJ8o/urr59F9afSXdnelCe7wsrvLsmXu/u9gkq3YsUG+Bzh8aY3KnNA/LjkbsJE5uqNBCK7uw7XoYVV8GuoHfiCqTMfeL4URQKMAi3fjNyEPuM2njjo9PRqM9JlBFV6Q8Ygeo5IWn4AJ0uwn4n0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742562308; c=relaxed/simple;
-	bh=Ad8Z2X/LZnTedt/yKE44XPTb+y+tNRXWHNLxEN0RzfY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKw5veO+fQP8VpBGASpTmgXg1nyndCIeRuObIgVkRLaVJSz2rjC6Mu7//55WT54Wt2UGYsFNkDQPAXdRQeK/6uDSnoIHg2T0LPnJRSCTaieo4rsdFIfTLSbtrdMgO98m6pF3x+uQ1+87rVLxea5NrdEfmcp1JV5vzoLregdph4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqNUb4uF; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so17638075e9.3;
-        Fri, 21 Mar 2025 06:05:06 -0700 (PDT)
+	s=arc-20240116; t=1742562324; c=relaxed/simple;
+	bh=6WT71yJoEYEpO+UZc+zcWfwjsjcXPsLX80S9vN8bjjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iz4i1T7Ytlviq+2QLzVnSMpaVSTQn5+aVnc37M9LTOOEQXGPK5GQeh/y4XGVnaAy/Lmmdekf6nnRj7CxrR9W3IuOWgLcgFW2UAgDt3Zl/YOe6H/UEETUy766zjMQQpg8otIKsFDJDMHPHuE8q9xcoW7u5RT7WM0o1nskHeX2zkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XKHk6F0i; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2255003f4c6so36608295ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:05:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742562305; x=1743167105; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I4+8N541CkNOWDvfZ0cddMC7Om8lmOSt/AsWehOXc8g=;
-        b=WqNUb4uF+WPs1oIFNXAHKoauncSsYNWDq8rrU0Kd08G+UIxNKtZtgkiJ+Pqr6xDXLG
-         A41Sz66kv5t2xz62GC6ERAdNhYGYcd/KyV/1JJZcLEes6P178T18/jKwf72oor7QCMeJ
-         gCWxy+xIi2edLL7gN2I5J29fTOEdmbsZWeulGM5yn5XZ2cWuyHu1TrR/NA6LNLpbh13Y
-         DX5bQFZOdsepxdCApVnLBOIiXtBLwt7qn++tMgV5rvDk+8fzbPgVejRXPmrBQNfV2AUU
-         U5G57BfSacDC/QJiTIFy0paKHY5kRjFBYxi8kP1NIo9MRbIQbYek/r6aU5kdlEN+jxCR
-         uZdw==
+        d=linaro.org; s=google; t=1742562323; x=1743167123; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sGgl8ZvbquuRJk+BLXwB9YUIkenTH7ZLFyIvKumGdnY=;
+        b=XKHk6F0iDKgntX+th1qr8iKtmxBvaqHgSEZ2xA2EoYY9oYeLGM3DB3m2Rucp03SN1t
+         aEwQkcJMalk3qIIVdnJtoH8RJsED3SsZ3lVhCGxacz9hFY+H/2wgX5M7eAdYZS64vUFf
+         MuPu+SBU4DXMzPG/BBtykXQnDspImzHUczDTOM6iX49e7r/ytTcy+0u6Ey8wjpGsxElG
+         nkI9AS6wK52TavbBAOje+PID9+7Q5Mq5NGq+O40xybgSSHOhJMoyWd3GkzoK3l4K1Nrp
+         Z5yYEHvSTCh5RiwKgIIj4tQtN3Ga/r1R9nefWw5+ccqDl9Z1FLRWC/lHOKlxoF4mTTNx
+         FTZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742562305; x=1743167105;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4+8N541CkNOWDvfZ0cddMC7Om8lmOSt/AsWehOXc8g=;
-        b=FWpD9d/sz2dL5nR0RbmZqQtkEKtDrGKU8lDph+ohaJD2qWSzLe1GcyBZk3eQfeU5nY
-         jEzLksr/SXIgKn29LGIcKD9xgzwFniAgrEHMcQWPEaQXMi9ykmSM+PgbtFDMsb6rnEQZ
-         ZgJ3PtR8VJnA9ocRVJoAS3tqEj8R4RfMra/jsOhpJ3CrgJipH5pHW55tL718QtD11hf2
-         9injeTlNsUbkpm+kp/FhxUsRDicPZV89fSoPPykgXCzk8HGHwku8A/v67yc2T4GXfnwv
-         wFsXep0vB/fowjCHTeEEfofVBjYG7rYLc+Jdhs1Uyic+yHhxnoxSCDIHkpts1pESBm22
-         QqjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/6D0cdC0YC6fCz69rapsXUeUq+pqmg+KKOHnNbtUv9dAe5OTI8A5KxdKng/Bk/jaJapfNn1gEY5H+UUacjjJu@vger.kernel.org, AJvYcCX4zmVUuN4DO853N8lpIDz7sMtJDL16OxjnEThjsAV7wcbulF35f1aT+XPTY1QuoU0qqw8ITOrfhNGpZup8AxoGYthv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN0Mlwuq6CRwyyFjWMYh6yL3XhfDwa0O+3e+DSQEGMXQ3KBhn6
-	GHikxy3Rjf0SSSavMe4wAwAAY5IOFw5M5N66AP7a4DLI3Mi/csTUl9SWY6KiNfw=
-X-Gm-Gg: ASbGncuQUGAVwPnCl2h+R6dN8HL95j7RQ19MSO0X3s9AXLZNDvXMg3pP+fbJS1wxCXz
-	lbblC3Zfl9cfAQQrqO4PhleVyF6cI+SkK7AtZxJpprEWjLxUDvIdNtDfOkjAjeEDYcBpYhwkrq8
-	sfVXIgT0vpGMkuHi6cWq62kvd3doYKwBtihA1wIZljoJS3KlKJMKoV2PDYQq3RDCyORjA7MO+yr
-	b0s471jq956hgcJVJdzhEkVkxklkW6BN6sUuxIBOWweXxK3SkxSDdI3OlsMxwLDPjQyrFjIVZxt
-	6n0E5oBCV814b+yURj+vCQEZk/9eBM4=
-X-Google-Smtp-Source: AGHT+IH86jMzbekNz39ZrDpdZDYAPnbN5nw03VrRG8082LHcSjfAUIiFBGdlOw/SLKZprEqeMfYmYA==
-X-Received: by 2002:a05:600c:4512:b0:43c:f87c:24ce with SMTP id 5b1f17b1804b1-43d50a3781amr21917025e9.21.1742562304146;
-        Fri, 21 Mar 2025 06:05:04 -0700 (PDT)
-Received: from krava ([173.38.220.55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd27980sm26731495e9.21.2025.03.21.06.05.02
+        d=1e100.net; s=20230601; t=1742562323; x=1743167123;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGgl8ZvbquuRJk+BLXwB9YUIkenTH7ZLFyIvKumGdnY=;
+        b=S+/r7eaDThmFybMGMhHC1mE4DU6+c7M1a/l9aOV7jw0980N7FUvT7k8lJYG9ul71p/
+         3VDV1P/rHsUN8T805JfPHYTBJE1wPj9O15qpzNCA0IxFPSjmEKCdYGfjTk49cccB76xX
+         5MZFlJk/+xPHLkPGIpqb1geEK/A0aLA5ELbhK5DBRcftLG3Xu95K4iXUVp6myjzAOny1
+         wFEHxdG9lDvDUsoIhxJ3z+b471bzO3QEC7X88Jk5M2rBt0Ro190PzsFR7j/OGUj0yF1C
+         bkKn4j5y15Jhx04IrSL+N8jkei2k3JWEIi+U9EMFtpL8+f2pq+CP38DN3mjvfp/W31iu
+         GLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNI/zYyk0+ipojK8QcgkX5I6yN5F6vPxiXERDHwCVzZs+RnpaotwxyTF4b2ZpdXGRc/JPdLqw49rio0kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySpayhfIHRk7a7GcwwVPyCAQ+MAf5M5xm3vfmizIe39O6Dv0n4
+	Xscdwo8cSkG6Gb5QSyVL/XDZVLbiBTBfuswrbgsO51lcHxgMF28PBVlzTgtYDw==
+X-Gm-Gg: ASbGnctu86SISPHlSOgK2kiNqAz9rAFg3caHlHFq9ndvt8zxBuTBuOmgFwWa47AhqTd
+	Kz2POFG4sSrt7tWAGy4jXg8HUNcpXJUMYCGy7zvyY/GtaGeihxtMRpLT8U79daNPgPHQU7QkW95
+	8aknGSs+Ih6cP58GcyPq1c1PRuPtPCS8Z8IWN7FlPowlNWiZoIyyTNf3XYtJszO9zUszHfvjy26
+	XIW9xGfLexNVAHPh68TlM4cWzBBoIYArp4gc3HsRoQSGyxbIu/UZEYfPUPTkHham23/fdBtwnhj
+	XfILkzxNKEMpkDysl70aEi7r85fNR6UdhgGJAkz2wuuQS36/YX4XiCr+4g==
+X-Google-Smtp-Source: AGHT+IHoaNUVQmGThxfs9QNaZ63vmGYvQt1jTAGa9uKQijEtEehKHu87zsGhAOUND8TTE+V0Lk5UtA==
+X-Received: by 2002:a17:902:cec8:b0:225:abd2:5e4b with SMTP id d9443c01a7336-22780d7fb22mr49655335ad.16.1742562322314;
+        Fri, 21 Mar 2025 06:05:22 -0700 (PDT)
+Received: from thinkpad ([2409:40f4:22:5799:90ea:bfc4:b1d2:dda2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811f45a7sm15585775ad.223.2025.03.21.06.05.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 06:05:03 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 21 Mar 2025 14:05:01 +0100
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Tong Tiangen <tongtiangen@huawei.com>
-Subject: Re: [PATCH v3 3/3] kernel/events/uprobes: uprobe_write_opcode()
- rewrite
-Message-ID: <Z91j_UwNhi2DQB3N@krava>
-References: <20250321113713.204682-1-david@redhat.com>
- <20250321113713.204682-4-david@redhat.com>
+        Fri, 21 Mar 2025 06:05:21 -0700 (PDT)
+Date: Fri, 21 Mar 2025 18:35:16 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v4 2/4] PCI: dwc: Replace dw_pcie_find_capability() and
+ dw_pcie_find_ext_capability()
+Message-ID: <20250321130516.7pkvfl5ls7fzgtdf@thinkpad>
+References: <20250321101710.371480-1-18255117159@163.com>
+ <20250321101710.371480-3-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250321113713.204682-4-david@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250321101710.371480-3-18255117159@163.com>
 
-On Fri, Mar 21, 2025 at 12:37:13PM +0100, David Hildenbrand wrote:
-
-SNIP
-
-> +static int __uprobe_write_opcode(struct vm_area_struct *vma,
-> +		struct folio_walk *fw, struct folio *folio,
-> +		unsigned long opcode_vaddr, uprobe_opcode_t opcode)
-> +{
-> +	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
-> +	const bool is_register = !!is_swbp_insn(&opcode);
-> +	bool pmd_mappable;
-> +
-> +	/* For now, we'll only handle PTE-mapped folios. */
-> +	if (fw->level != FW_LEVEL_PTE)
-> +		return -EFAULT;
-> +
-> +	/*
-> +	 * See can_follow_write_pte(): we'd actually prefer a writable PTE here,
-> +	 * but the VMA might not be writable.
-> +	 */
-> +	if (!pte_write(fw->pte)) {
-> +		if (!PageAnonExclusive(fw->page))
-> +			return -EFAULT;
-> +		if (unlikely(userfaultfd_pte_wp(vma, fw->pte)))
-> +			return -EFAULT;
-> +		/* SOFTDIRTY is handled via pte_mkdirty() below. */
-> +	}
-> +
-> +	/*
-> +	 * We'll temporarily unmap the page and flush the TLB, such that we can
-> +	 * modify the page atomically.
-> +	 */
-> +	flush_cache_page(vma, vaddr, pte_pfn(fw->pte));
-> +	fw->pte = ptep_clear_flush(vma, vaddr, fw->ptep);
-> +	copy_to_page(fw->page, opcode_vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
-> +
-> +	/*
-> +	 * When unregistering, we may only zap a PTE if uffd is disabled and
-> +	 * there are no unexpected folio references ...
-> +	 */
-> +	if (is_register || userfaultfd_missing(vma) ||
-> +	    (folio_ref_count(folio) != folio_mapcount(folio) + 1 +
-> +	     folio_test_swapcache(folio) * folio_nr_pages(folio)))
-> +		goto remap;
-> +
-> +	/*
-> +	 * ... and the mapped page is identical to the original page that
-> +	 * would get faulted in on next access.
-> +	 */
-> +	if (!orig_page_is_identical(vma, vaddr, fw->page, &pmd_mappable))
-> +		goto remap;
-> +
-> +	dec_mm_counter(vma->vm_mm, MM_ANONPAGES);
-> +	folio_remove_rmap_pte(folio, fw->page, vma);
-> +	if (!folio_mapped(folio) && folio_test_swapcache(folio) &&
-> +	     folio_trylock(folio)) {
-> +		folio_free_swap(folio);
-> +		folio_unlock(folio);
-> +	}
-> +	folio_put(folio);
-
-hi,
-it's probably ok and I'm missing something, but why do we call folio_put
-in here, I'd think it's done by folio_put call in uprobe_write_opcode
-
-thanks,
-jirka
-
-
-> +
-> +	return pmd_mappable;
-> +remap:
-> +	/*
-> +	 * Make sure that our copy_to_page() changes become visible before the
-> +	 * set_pte_at() write.
-> +	 */
-> +	smp_wmb();
-> +	/* We modified the page. Make sure to mark the PTE dirty. */
-> +	set_pte_at(vma->vm_mm, vaddr, fw->ptep, pte_mkdirty(fw->pte));
-> +	return 0;
-> +}
-> +
->  /*
->   * NOTE:
->   * Expect the breakpoint instruction to be the smallest size instruction for
-> @@ -475,116 +480,115 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
->   * uprobe_write_opcode - write the opcode at a given virtual address.
->   * @auprobe: arch specific probepoint information.
->   * @vma: the probed virtual memory area.
-> - * @vaddr: the virtual address to store the opcode.
-> - * @opcode: opcode to be written at @vaddr.
-> + * @opcode_vaddr: the virtual address to store the opcode.
-> + * @opcode: opcode to be written at @opcode_vaddr.
->   *
->   * Called with mm->mmap_lock held for read or write.
->   * Return 0 (success) or a negative errno.
->   */
->  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
-> -		unsigned long vaddr, uprobe_opcode_t opcode)
-> +		const unsigned long opcode_vaddr, uprobe_opcode_t opcode)
->  {
-> +	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
->  	struct mm_struct *mm = vma->vm_mm;
->  	struct uprobe *uprobe;
-> -	struct page *old_page, *new_page;
->  	int ret, is_register, ref_ctr_updated = 0;
-> -	bool orig_page_huge = false;
->  	unsigned int gup_flags = FOLL_FORCE;
-> +	struct mmu_notifier_range range;
-> +	struct folio_walk fw;
-> +	struct folio *folio;
-> +	struct page *page;
->  
->  	is_register = is_swbp_insn(&opcode);
->  	uprobe = container_of(auprobe, struct uprobe, arch);
->  
-> -retry:
-> +	if (WARN_ON_ONCE(!is_cow_mapping(vma->vm_flags)))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * When registering, we have to break COW to get an exclusive anonymous
-> +	 * page that we can safely modify. Use FOLL_WRITE to trigger a write
-> +	 * fault if required. When unregistering, we might be lucky and the
-> +	 * anon page is already gone. So defer write faults until really
-> +	 * required. Use FOLL_SPLIT_PMD, because __uprobe_write_opcode()
-> +	 * cannot deal with PMDs yet.
-> +	 */
->  	if (is_register)
-> -		gup_flags |= FOLL_SPLIT_PMD;
-> -	/* Read the page with vaddr into memory */
-> -	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags, &old_page, NULL);
-> -	if (ret != 1)
-> -		return ret;
-> +		gup_flags |= FOLL_WRITE | FOLL_SPLIT_PMD;
->  
-> -	ret = verify_opcode(old_page, vaddr, &opcode);
-> +retry:
-> +	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags, &page, NULL);
->  	if (ret <= 0)
-> -		goto put_old;
-> -
-> -	if (is_zero_page(old_page)) {
-> -		ret = -EINVAL;
-> -		goto put_old;
-> -	}
-> +		goto out;
-> +	folio = page_folio(page);
->  
-> -	if (WARN(!is_register && PageCompound(old_page),
-> -		 "uprobe unregister should never work on compound page\n")) {
-> -		ret = -EINVAL;
-> -		goto put_old;
-> +	ret = verify_opcode(page, opcode_vaddr, &opcode);
-> +	if (ret <= 0) {
-> +		folio_put(folio);
-> +		goto out;
->  	}
->  
->  	/* We are going to replace instruction, update ref_ctr. */
->  	if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
->  		ret = update_ref_ctr(uprobe, mm, is_register ? 1 : -1);
-> -		if (ret)
-> -			goto put_old;
-> +		if (ret) {
-> +			folio_put(folio);
-> +			goto out;
-> +		}
->  
->  		ref_ctr_updated = 1;
->  	}
->  
->  	ret = 0;
-> -	if (!is_register && !PageAnon(old_page))
-> -		goto put_old;
-> -
-> -	ret = anon_vma_prepare(vma);
-> -	if (ret)
-> -		goto put_old;
-> -
-> -	ret = -ENOMEM;
-> -	new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma, vaddr);
-> -	if (!new_page)
-> -		goto put_old;
-> -
-> -	__SetPageUptodate(new_page);
-> -	copy_highpage(new_page, old_page);
-> -	copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
-> +	if (unlikely(!folio_test_anon(folio))) {
-> +		VM_WARN_ON_ONCE(is_register);
-> +		folio_put(folio);
-> +		goto out;
-> +	}
->  
->  	if (!is_register) {
-> -		struct page *orig_page;
-> -		pgoff_t index;
-> -
-> -		VM_BUG_ON_PAGE(!PageAnon(old_page), old_page);
-> -
-> -		index = vaddr_to_offset(vma, vaddr & PAGE_MASK) >> PAGE_SHIFT;
-> -		orig_page = find_get_page(vma->vm_file->f_inode->i_mapping,
-> -					  index);
-> -
-> -		if (orig_page) {
-> -			if (PageUptodate(orig_page) &&
-> -			    pages_identical(new_page, orig_page)) {
-> -				/* let go new_page */
-> -				put_page(new_page);
-> -				new_page = NULL;
-> -
-> -				if (PageCompound(orig_page))
-> -					orig_page_huge = true;
-> -			}
-> -			put_page(orig_page);
-> -		}
-> +		/*
-> +		 * In the common case, we'll be able to zap the page when
-> +		 * unregistering. So trigger MMU notifiers now, as we won't
-> +		 * be able to do it under PTL.
-> +		 */
-> +		mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm,
-> +					vaddr, vaddr + PAGE_SIZE);
-> +		mmu_notifier_invalidate_range_start(&range);
-> +	}
-> +
-> +	ret = -EAGAIN;
-> +	/* Walk the page tables again, to perform the actual update. */
-> +	if (folio_walk_start(&fw, vma, vaddr, 0)) {
-> +		if (fw.page == page)
-> +			ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr, opcode);
-> +		folio_walk_end(&fw, vma);
->  	}
->  
-> -	ret = __replace_page(vma, vaddr & PAGE_MASK, old_page, new_page);
-> -	if (new_page)
-> -		put_page(new_page);
-> -put_old:
-> -	put_page(old_page);
-> +	if (!is_register)
-> +		mmu_notifier_invalidate_range_end(&range);
->  
-> -	if (unlikely(ret == -EAGAIN))
-> +	folio_put(folio);
-> +	switch (ret) {
-> +	case -EFAULT:
-> +		gup_flags |= FOLL_WRITE | FOLL_SPLIT_PMD;
-> +		fallthrough;
-> +	case -EAGAIN:
->  		goto retry;
-> +	default:
-> +		break;
-> +	}
->  
-> +out:
->  	/* Revert back reference counter if instruction update failed. */
-> -	if (ret && is_register && ref_ctr_updated)
-> +	if (ret < 0 && is_register && ref_ctr_updated)
->  		update_ref_ctr(uprobe, mm, -1);
->  
->  	/* try collapse pmd for compound page */
-> -	if (!ret && orig_page_huge)
-> +	if (ret > 0)
->  		collapse_pte_mapped_thp(mm, vaddr, false);
->  
-> -	return ret;
-> +	return ret < 0 ? ret : 0;
->  }
->  
->  /**
-> -- 
-> 2.48.1
+On Fri, Mar 21, 2025 at 06:17:08PM +0800, Hans Zhang wrote:
+> Replace duplicate logic code. Use a common interface and provide callback
+> functions.
 > 
+
+I'd reword the subject and description as:
+
+```
+PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
+
+Since the PCI core is now exposing generic APIs for the host bridges to
+search for the PCIe capabilities, make use of them in the DWC driver.
+```
+
+Patch LGTM!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
