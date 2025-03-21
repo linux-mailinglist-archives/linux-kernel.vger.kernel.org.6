@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-572074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0917A6C64B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:16:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF87A6C64D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2060A480753
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C245C3B8B0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE8C22B8AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6F4232379;
 	Fri, 21 Mar 2025 23:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFhkGAmX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JEiiLq7C"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1CC1D54D8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776771EB5F4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742598982; cv=none; b=o5Qv7eds3wYNfVdytxQpM/q8EcpSpQ7oSmCJL6csRknbuaDF1SOK9AwWJlK7KyZNfM0IBtXk0L+2g/vBVNHZ7f2Yd36HTOG5POaj8leAbmPZRdw25S7qW24I/8vo35BNIKckwwWH5mFxeGBoaZWKUifEiqy7edeG9xT0v0Egmvc=
+	t=1742598983; cv=none; b=knZkcaYQESMssMZ/yK2hvXNg2BgPLWOIomiWP6MPFG1rMiPfbX4xSHc2RAu669iNR8PuQ58B23v4KHP8qiWgw2TFqbOAi4q9C4RWUYHa70hNjI9rTJFDgfwCTJBkDS/cbv8zELRiYJRhMUuGWa/eVrYt/dnSeIWU84iaIFJS2I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742598982; c=relaxed/simple;
-	bh=tYZ1FbeM8OZ/TWZgv1s5cxOJKU9ePb/qzpnBJ1zSw5g=;
+	s=arc-20240116; t=1742598983; c=relaxed/simple;
+	bh=DzasePM7tlqahns372BpzcFD3OacTZVKVfYZqFTn7rk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mudGGWp/FimxbfMO/KJf381Q0KWNekM7hEDJip9AzcMsnKVKfjFi7E1lXRzO9d3+XRv4tJiFjJiJurzStDSNKSPfgQjaQUVKjxpPBUM/DWKISkS+VfcXI+2NgBVt7rD9sQvNItKw4K+P4TR0EAUsEO6Bkh3BkdWuDHHYUkDD3uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFhkGAmX; arc=none smtp.client-ip=198.175.65.20
+	 MIME-Version; b=GMoS0v/kDOzJHG7pj9WZ+Oyu8tcCOilDTJXWwSJ9SgDR+KOGVY3rv5P/9XeZ27rsegGG3wNkIupO6x1CQT2UHp8c1QLrGM6k+rjb8vwR207Qeobvlj068xfzD9zu298hPpUTlRupf61yCgJvfpBoI9j8ifZIlJPBotydNvzNwjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JEiiLq7C; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742598981; x=1774134981;
+  t=1742598982; x=1774134982;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=tYZ1FbeM8OZ/TWZgv1s5cxOJKU9ePb/qzpnBJ1zSw5g=;
-  b=cFhkGAmXLVpbDhzJluLQU3SuWAm+fh5bTl/q1O3UfZAuNXFRMtxLFo26
-   QGj2yqy3eVo/Ci0seZYsHt1lK9XRWKgaTlJf8ekgAGl7fJT2GFQ2Xx0CU
-   KLEttNNYuPMJhC5pFzqquoVF1FNIGv3g94FZI/SKRQ7wPHxQMNHuWWlVC
-   oZeoGvBSyEDQCatxR9yyFuEdi/6s+mDdCkK1/jE2zqlZQIpJdBAzCnpO5
-   WcLoyGHtAhurNYzbnOIEYubloUTmFXYzh6fBbZZcuVkfPw2A/OXWETRN9
-   ZvaqFak5nfdlNLRWx9R/1DGJXPL+Om4VMinJ9y1maTIl1QtfmquyV//jn
-   w==;
-X-CSE-ConnectionGUID: 9ecSPPf8TgKc+VfMflA/rA==
-X-CSE-MsgGUID: Nj8xvZKBS9qVvXH7Dj5t5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43604546"
+  bh=DzasePM7tlqahns372BpzcFD3OacTZVKVfYZqFTn7rk=;
+  b=JEiiLq7CgOZfpNOhEjaixFYUhfI/HbqDmzRMElgMTg96dg5q3nns+giM
+   hz1bqP9KhAeDKAuId7vkESgNLThsm2agCsc/8InFp0A/h2lX2ZayIGlzj
+   5bIExg4xfVm3BQY4VjK5a3ZDP9TjTKos+baf6nqMEP3c1a1bjBhD3BS2s
+   WKHCxh8fjOYL6N5qETVNKyI9Ejllfvvl09MPDcN3QvCC4x1C4c2jSQOBb
+   iZmUEeXYburBpklzcAZMz+Jrc/VZ8mAY1PkGAWk9/zyZ8Eq3ba2HfjYw7
+   k0U5YqxxM7VNXCNCWWT+RLR1xigVIKI8q/LApn40dbynHgOPq+IXe96Pd
+   Q==;
+X-CSE-ConnectionGUID: zpul890LQXel9QydOb15AQ==
+X-CSE-MsgGUID: t0HSL490Tj+ml9Ujsm/AZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43604553"
 X-IronPort-AV: E=Sophos;i="6.14,266,1736841600"; 
-   d="scan'208";a="43604546"
+   d="scan'208";a="43604553"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 16:16:19 -0700
-X-CSE-ConnectionGUID: E6qkJL7+ThKDKg8hccO/1Q==
-X-CSE-MsgGUID: vTQN5B0xT0aP+RutRW4EFA==
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 16:16:20 -0700
+X-CSE-ConnectionGUID: An+4wk0QR+6U3BzbDpUG+w==
+X-CSE-MsgGUID: wLSEA3+ZQYe4EZknD8Ywfg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,266,1736841600"; 
-   d="scan'208";a="128354289"
+   d="scan'208";a="128354292"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 16:16:19 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -69,9 +69,9 @@ To: Fenghua Yu <fenghuay@nvidia.com>,
 Cc: linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v2 01/16] x86/rectrl: Fake OOBMSM interface
-Date: Fri, 21 Mar 2025 16:15:51 -0700
-Message-ID: <20250321231609.57418-2-tony.luck@intel.com>
+Subject: [PATCH v2 02/16] x86/resctrl: Move L3 initialization out of domain_add_cpu_mon()
+Date: Fri, 21 Mar 2025 16:15:52 -0700
+Message-ID: <20250321231609.57418-3-tony.luck@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250321231609.57418-1-tony.luck@intel.com>
 References: <20250321231609.57418-1-tony.luck@intel.com>
@@ -83,213 +83,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Real version is coming soon ... this is here so the remaining parts
-will build (and run ... assuming a 2 socket system that supports RDT
-monitoring ... only missing part is that the event counters just
-report fixed values).
-
-Real version of this would just add the INTEL_AET_RESCTRL Kconfig
-option with dependency checks on
-  INTEL_VSEC=y && INTEL_AET_TELEMETRY=y && INTEL_AET_DISCOVERY=y
-
-Just for RFC discussion.
+To prepare for additional types of monitoring domains, move all the
+L3 specific initialization into a helper function.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- .../cpu/resctrl/fake_intel_aet_features.h     | 73 +++++++++++++++++++
- .../cpu/resctrl/fake_intel_aet_features.c     | 65 +++++++++++++++++
- arch/x86/Kconfig                              |  1 +
- arch/x86/kernel/cpu/resctrl/Makefile          |  1 +
- drivers/platform/x86/intel/pmt/Kconfig        |  3 +
- 5 files changed, 143 insertions(+)
- create mode 100644 arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.h
- create mode 100644 arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.c
+ arch/x86/kernel/cpu/resctrl/core.c | 52 +++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.h b/arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.h
-new file mode 100644
-index 000000000000..c835c4108abc
---- /dev/null
-+++ b/arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/* Bits stolen from OOBMSM VSEC discovery code */
-+
-+enum pmt_feature_id {
-+	FEATURE_INVALID			= 0x0,
-+	FEATURE_PER_CORE_PERF_TELEM	= 0x1,
-+	FEATURE_PER_CORE_ENV_TELEM	= 0x2,
-+	FEATURE_PER_RMID_PERF_TELEM	= 0x3,
-+	FEATURE_ACCEL_TELEM		= 0x4,
-+	FEATURE_UNCORE_TELEM		= 0x5,
-+	FEATURE_CRASH_LOG		= 0x6,
-+	FEATURE_PETE_LOG		= 0x7,
-+	FEATURE_TPMI_CTRL		= 0x8,
-+	FEATURE_RESERVED		= 0x9,
-+	FEATURE_TRACING			= 0xA,
-+	FEATURE_PER_RMID_ENERGY_TELEM	= 0xB,
-+	FEATURE_MAX			= 0xB,
-+};
-+
-+/**
-+ * struct oobmsm_plat_info - Platform information for a device instance
-+ * @cdie_mask:       Mask of all compute dies in the partition
-+ * @package_id:      CPU Package id
-+ * @partition:       Package partition id when multiple VSEC PCI devices per package
-+ * @segment:         PCI segment ID
-+ * @bus_number:      PCI bus number
-+ * @device_number:   PCI device number
-+ * @function_number: PCI function number
-+ *
-+ * Structure to store platform data for a OOBMSM device instance.
-+ */
-+struct oobmsm_plat_info {
-+	u16 cdie_mask;
-+	u8 package_id;
-+	u8 partition;
-+	u8 segment;
-+	u8 bus_number;
-+	u8 device_number;
-+	u8 function_number;
-+};
-+
-+enum oobmsm_supplier_type {
-+	OOBMSM_SUP_PLAT_INFO,
-+	OOBMSM_SUP_DISC_INFO,
-+	OOBMSM_SUP_S3M_SIMICS,
-+	OOBMSM_SUP_TYPE_MAX
-+};
-+
-+struct oobmsm_mapping_supplier {
-+	struct device *supplier_dev[OOBMSM_SUP_TYPE_MAX];
-+	struct oobmsm_plat_info plat_info;
-+	unsigned long features;
-+};
-+
-+struct telemetry_region {
-+	struct oobmsm_plat_info	plat_info;
-+	void __iomem		*addr;
-+	size_t			size;
-+	u32			guid;
-+	u32			num_rmids;
-+};
-+
-+struct pmt_feature_group {
-+	enum pmt_feature_id	id;
-+	int			count;
-+	struct kref		kref;
-+	struct telemetry_region	regions[];
-+};
-+
-+struct pmt_feature_group *intel_pmt_get_regions_by_feature(enum pmt_feature_id id);
-+
-+void intel_pmt_put_feature_group(struct pmt_feature_group *feature_group);
-diff --git a/arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.c b/arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.c
-new file mode 100644
-index 000000000000..b537068d99fb
---- /dev/null
-+++ b/arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.c
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/cleanup.h>
-+#include <linux/minmax.h>
-+#include <linux/slab.h>
-+#include "fake_intel_aet_features.h"
-+#include <linux/intel_vsec.h>
-+#include <linux/resctrl.h>
-+
-+#include "internal.h"
-+
-+#define ENERGY_QWORDS	((576 * 2) + 3)
-+#define PERF_QWORDS	((576 * 7) + 3)
-+
-+static long pg[4 * ENERGY_QWORDS + 2 * PERF_QWORDS];
-+
-+static int __init fill(void)
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 6ed0d4f5d6a3..4205aeb4f979 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -492,33 +492,12 @@ static void domain_add_cpu_ctrl(int cpu, struct rdt_resource *r)
+ 	}
+ }
+ 
+-static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
++static void setup_l3_mon_domain(int cpu, int id, struct rdt_resource *r, struct list_head *add_pos)
+ {
+-	int id = get_domain_id_from_scope(cpu, r->mon_scope);
+-	struct list_head *add_pos = NULL;
+ 	struct rdt_hw_mon_domain *hw_dom;
+-	struct rdt_domain_hdr *hdr;
+ 	struct rdt_mon_domain *d;
+ 	int err;
+ 
+-	lockdep_assert_held(&domain_list_lock);
+-
+-	if (id < 0) {
+-		pr_warn_once("Can't find monitor domain id for CPU:%d scope:%d for resource %s\n",
+-			     cpu, r->mon_scope, r->name);
+-		return;
+-	}
+-
+-	hdr = resctrl_find_domain(&r->mon_domains, id, &add_pos);
+-	if (hdr) {
+-		if (WARN_ON_ONCE(hdr->type != RESCTRL_MON_DOMAIN))
+-			return;
+-		d = container_of(hdr, struct rdt_mon_domain, hdr);
+-
+-		cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
+-		return;
+-	}
+-
+ 	hw_dom = kzalloc_node(sizeof(*hw_dom), GFP_KERNEL, cpu_to_node(cpu));
+ 	if (!hw_dom)
+ 		return;
+@@ -551,6 +530,35 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+ 	}
+ }
+ 
++static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
 +{
-+	u64 val = 0;
++	int id = get_domain_id_from_scope(cpu, r->mon_scope);
++	struct list_head *add_pos = NULL;
++	struct rdt_domain_hdr *hdr;
 +
-+	for (int i = 0; i < sizeof(pg); i += sizeof(val)) {
-+		pg[i / sizeof(val)] = BIT_ULL(63) + val;
-+		val++;
++	lockdep_assert_held(&domain_list_lock);
++
++	if (id < 0) {
++		pr_warn_once("Can't find monitor domain id for CPU:%d scope:%d for resource %s\n",
++			     cpu, r->mon_scope, r->name);
++		return;
 +	}
-+	return 0;
-+}
-+device_initcall(fill);
 +
-+#define PKG_REGION(_entry, _guid, _addr, _pkg)	\
-+	[_entry] = { .guid = _guid, .addr = (void __iomem *)_addr, .plat_info = { .package_id = _pkg }}
-+
-+static struct pmt_feature_group fake_energy = {
-+	.count = 4,
-+	.regions = {
-+		PKG_REGION(0, 0x26696143, &pg[0 * ENERGY_QWORDS], 0),
-+		PKG_REGION(1, 0x26696143, &pg[1 * ENERGY_QWORDS], 0),
-+		PKG_REGION(2, 0x26696143, &pg[2 * ENERGY_QWORDS], 1),
-+		PKG_REGION(3, 0x26696143, &pg[3 * ENERGY_QWORDS], 1)
++	hdr = resctrl_find_domain(&r->mon_domains, id, &add_pos);
++	if (hdr) {
++		cpumask_set_cpu(cpu, &hdr->cpu_mask);
++		return;
 +	}
-+};
 +
-+static struct pmt_feature_group fake_perf = {
-+	.count = 2,
-+	.regions = {
-+		PKG_REGION(0, 0x26557651, &pg[4 * ENERGY_QWORDS + 0 * PERF_QWORDS], 0),
-+		PKG_REGION(1, 0x26557651, &pg[4 * ENERGY_QWORDS + 1 * PERF_QWORDS], 1)
-+	}
-+};
-+
-+struct pmt_feature_group *
-+intel_pmt_get_regions_by_feature(enum pmt_feature_id id)
-+{
-+	switch (id) {
-+	case FEATURE_PER_RMID_ENERGY_TELEM:
-+		return &fake_energy;
-+	case FEATURE_PER_RMID_PERF_TELEM:
-+		return &fake_perf;
++	switch (r->rid) {
++	case RDT_RESOURCE_L3:
++		setup_l3_mon_domain(cpu, id, r, add_pos);
++		break;
 +	default:
-+		return ERR_PTR(-ENOENT);
++		WARN_ON_ONCE(1);
 +	}
-+	return ERR_PTR(-ENOENT);
 +}
 +
-+void intel_pmt_put_feature_group(struct pmt_feature_group *feature_group)
-+{
-+}
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ea29d22a621f..6112cb6cad05 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -504,6 +504,7 @@ config X86_CPU_RESCTRL
- 	bool "x86 CPU resource control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
- 	depends on MISC_FILESYSTEMS
-+	select INTEL_AET_RESCTRL	if X86_64
- 	select ARCH_HAS_CPU_RESCTRL
- 	select RESCTRL_FS
- 	select RESCTRL_FS_PSEUDO_LOCK
-diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
-index 909be78ec6da..2c3b09f95127 100644
---- a/arch/x86/kernel/cpu/resctrl/Makefile
-+++ b/arch/x86/kernel/cpu/resctrl/Makefile
-@@ -2,6 +2,7 @@
- obj-$(CONFIG_X86_CPU_RESCTRL)		+= core.o rdtgroup.o monitor.o
- obj-$(CONFIG_X86_CPU_RESCTRL)		+= ctrlmondata.o
- obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
-+obj-$(CONFIG_INTEL_AET_RESCTRL)		+= fake_intel_aet_features.o
- 
- # To allow define_trace.h's recursive include:
- CFLAGS_pseudo_lock.o = -I$(src)
-diff --git a/drivers/platform/x86/intel/pmt/Kconfig b/drivers/platform/x86/intel/pmt/Kconfig
-index e916fc966221..6d3b1f64efe9 100644
---- a/drivers/platform/x86/intel/pmt/Kconfig
-+++ b/drivers/platform/x86/intel/pmt/Kconfig
-@@ -38,3 +38,6 @@ config INTEL_PMT_CRASHLOG
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called intel_pmt_crashlog.
-+
-+config INTEL_AET_RESCTRL
-+	bool
+ static void domain_add_cpu(int cpu, struct rdt_resource *r)
+ {
+ 	if (r->alloc_capable)
 -- 
 2.48.1
 
