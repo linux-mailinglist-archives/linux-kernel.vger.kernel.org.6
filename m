@@ -1,131 +1,191 @@
-Return-Path: <linux-kernel+bounces-570787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8F6A6B47F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:36:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CECA6B481
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F2D3B88CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378BC189ABF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BBD1EB9ED;
-	Fri, 21 Mar 2025 06:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TsOwUOPV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1381EB19D;
+	Fri, 21 Mar 2025 06:37:00 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C735184F;
-	Fri, 21 Mar 2025 06:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6BC1DF248
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742538972; cv=none; b=o3I3MeGr9YMZ/dSB+2AK5E+sdbODl+7zuPlAsSeES6c5oB/nsOkG5MXyneBrqggWx36E1b5UcinvnInX5dUxg1NnTKUkiXdVcsc2NDfPqoJtA3hKMZybto7/LZOrWxsTM0IN3C1dP6igM+kCDhyPlBE6+SUJp/0KoVzcfs39jtA=
+	t=1742539020; cv=none; b=tP2NvgUmJafDEGzmCX2bdsXLP81nrelcK0RXVMl6uzxkiM/nQCCT2gOfvT3WPCX5MqgfaV6TH7Jrii+vVOPK6eQqyCLHveQDOL89Olg01DbLtp9llvo7me6Wes08HN1qDf+/OWWc59vHFuu4LWcWpaVQ8SLvoyR63kNMJiTxjng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742538972; c=relaxed/simple;
-	bh=HaWvwtYJ/oU8MJuWlBp9GYIsMVjPAUFk2f+KucFWzzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3ooDmtCYgvWHyAJIPKh4eXz5bIIcyolO01y5lJSfDIeN79Mr+yF88SFx2nxM8S+fVZ5BGkXXbGfrtivARybusfLWAWJtGoL3jao0yc6GcmiKyZ2rrwPbQ1iFm8+8lPADtuZpqjepp0deof9d27ueTsaZEEGD8BcqAjSLERbW1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TsOwUOPV; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742538970; x=1774074970;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HaWvwtYJ/oU8MJuWlBp9GYIsMVjPAUFk2f+KucFWzzI=;
-  b=TsOwUOPVbJm6EL7zw9ZjdVBlo4UDIrrI0/a5OIbfwJyYebBGkfOXx0NQ
-   puB2nsiAwMXrUh7miIX89QTuGv6OobbzH2zYWRpYomQChgaeTf6T6+qxC
-   k2kyEJ4D1OwQ78oGWoj2osi5VVhQkHTlT0wwojGcRLbPZER3SyC197cL/
-   ynThNNfXBV9djq1Q61W5uZFE9A2kdXNXyaLnzwMsmmVzoF3paPTcyNSMU
-   EL9/YosGN1Bd5rgEp8BCLeKFRnPgzMPyUw/Ycp44ANMRicAKFx5JzfX8s
-   TZYeDCoebSChl+egmz4t1UMEfWKRZSS6vo4BI3om/Ts945Gf/EwwOgsQZ
-   A==;
-X-CSE-ConnectionGUID: 8nqMfzwXTha8XWxGp/6l7A==
-X-CSE-MsgGUID: pXGu5vz+SsGfhY6sIFUHew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43985016"
-X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="43985016"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 23:36:09 -0700
-X-CSE-ConnectionGUID: YaSh7HXlQ+OnX5jNfa5gzA==
-X-CSE-MsgGUID: h72+9HCnRUyhlf7lh60ncg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="123830796"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 20 Mar 2025 23:36:05 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tvVz8-00016A-2R;
-	Fri, 21 Mar 2025 06:36:02 +0000
-Date: Fri, 21 Mar 2025 14:35:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@airoha.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: Re: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha
- SoC
-Message-ID: <202503211416.eZCW1LF6-lkp@intel.com>
-References: <20250318235850.6411-6-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1742539020; c=relaxed/simple;
+	bh=y8fZQXJC5hgTKkheB5VelzVO10FdRYFnOoE9Iq65Dyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PYGyCEsS6IJ0VdiVVft2pLXinS29118/z+N0jKw/Y542GPDLwYBgiIRL0Aa0B3/VYvM43fSsudQYcV1UwTaHJ03YFgPovIzTxpGYpVMLOYO7crfJkFKEUJyUCX91iaMj+s68Prq5ND1ADq5xGYB7+ewZf6byIzTu2SLa8gHj4ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2296E4432E;
+	Fri, 21 Mar 2025 06:36:50 +0000 (UTC)
+Message-ID: <da40da36-097a-4b67-a67b-f00148474423@ghiti.fr>
+Date: Fri, 21 Mar 2025 07:36:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318235850.6411-6-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/4] riscv: entry: Split ret_from_fork() into user and
+ kernel
+Content-Language: en-US
+To: Charlie Jenkins <charlie@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
+ Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev
+References: <20250320-riscv_optimize_entry-v6-0-63e187e26041@rivosinc.com>
+ <20250320-riscv_optimize_entry-v6-2-63e187e26041@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250320-riscv_optimize_entry-v6-2-63e187e26041@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedtfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhlefhffeggfeftddvtdeukeelgfehkeehhfeuheehleefkeelgffglefghfffueenucffohhmrghinhepvghnthhrhidrshgsnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemleekgeekmeeksgdvudemheefudejmedugeehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemleekgeekmeeksgdvudemheefudejmedugeehuddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemleekgeekmeeksgdvudemheefudejmedugeehudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheptghhrghrlhhivgesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepp
+ hgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhesgigvnhdtnhdrnhgrmhgvpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Christian,
+Hi Charlie,
 
-kernel test robot noticed the following build errors:
+On 20/03/2025 18:29, Charlie Jenkins wrote:
+> This function was unified into a single function in commit ab9164dae273
+> ("riscv: entry: Consolidate ret_from_kernel_thread into ret_from_fork").
+> However that imposed a performance degradation. Partially reverting this
+> commit to have ret_from_fork() split again results in a 1% increase on
+> the number of times fork is able to be called per second.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>   arch/riscv/include/asm/asm-prototypes.h |  3 ++-
+>   arch/riscv/kernel/entry.S               | 13 ++++++++++---
+>   arch/riscv/kernel/process.c             | 17 +++++++++++------
+>   3 files changed, 23 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
+> index 733ff609778797001006c33bba9e3cc5b1f15387..bfc8ea5f9319b19449ec59493b45b926df888832 100644
+> --- a/arch/riscv/include/asm/asm-prototypes.h
+> +++ b/arch/riscv/include/asm/asm-prototypes.h
+> @@ -52,7 +52,8 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_s);
+>   DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
+>   DECLARE_DO_ERROR_INFO(do_trap_break);
+>   
+> -asmlinkage void ret_from_fork(void *fn_arg, int (*fn)(void *), struct pt_regs *regs);
+> +asmlinkage void ret_from_fork_kernel(void *fn_arg, int (*fn)(void *), struct pt_regs *regs);
+> +asmlinkage void ret_from_fork_user(struct pt_regs *regs);
+>   asmlinkage void handle_bad_stack(struct pt_regs *regs);
+>   asmlinkage void do_page_fault(struct pt_regs *regs);
+>   asmlinkage void do_irq(struct pt_regs *regs);
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index b2dc5e7c7b3a843fa4aa02eba2a911eb3ce31d1f..0fb338000c6dc0358742cd03497fa54b9e9d1aec 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -319,14 +319,21 @@ SYM_CODE_END(handle_kernel_stack_overflow)
+>   ASM_NOKPROBE(handle_kernel_stack_overflow)
+>   #endif
+>   
+> -SYM_CODE_START(ret_from_fork_asm)
+> +SYM_CODE_START(ret_from_fork_kernel_asm)
+>   	call schedule_tail
+>   	move a0, s1 /* fn_arg */
+>   	move a1, s0 /* fn */
+>   	move a2, sp /* pt_regs */
+> -	call ret_from_fork
+> +	call ret_from_fork_kernel
+>   	j ret_from_exception
+> -SYM_CODE_END(ret_from_fork_asm)
+> +SYM_CODE_END(ret_from_fork_kernel_asm)
+> +
+> +SYM_CODE_START(ret_from_fork_user_asm)
+> +	call schedule_tail
+> +	move a0, sp /* pt_regs */
+> +	call ret_from_fork_user
+> +	j ret_from_exception
+> +SYM_CODE_END(ret_from_fork_user_asm)
+>   
+>   #ifdef CONFIG_IRQ_STACKS
+>   /*
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index 7b0a0bfe29aec896c2bdd8976d855dd390de88d7..485ec7a80a56097e8905cd6395af29633846b5c8 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -38,7 +38,8 @@ unsigned long __stack_chk_guard __read_mostly;
+>   EXPORT_SYMBOL(__stack_chk_guard);
+>   #endif
+>   
+> -extern asmlinkage void ret_from_fork_asm(void);
+> +extern asmlinkage void ret_from_fork_kernel_asm(void);
+> +extern asmlinkage void ret_from_fork_user_asm(void);
+>   
+>   void noinstr arch_cpu_idle(void)
+>   {
+> @@ -208,14 +209,18 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+>   	return 0;
+>   }
+>   
+> -asmlinkage void ret_from_fork(void *fn_arg, int (*fn)(void *), struct pt_regs *regs)
+> +asmlinkage void ret_from_fork_kernel(void *fn_arg, int (*fn)(void *), struct pt_regs *regs)
+>   {
+> -	if (unlikely(fn))
+> -		fn(fn_arg);
+> +	fn(fn_arg);
+>   
+>   	syscall_exit_to_user_mode(regs);
+>   }
+>   
+> +asmlinkage void ret_from_fork_user(struct pt_regs *regs)
+> +{
+> +	syscall_exit_to_user_mode(regs);
+> +}
+> +
+>   int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+>   {
+>   	unsigned long clone_flags = args->flags;
+> @@ -238,6 +243,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+>   
+>   		p->thread.s[0] = (unsigned long)args->fn;
+>   		p->thread.s[1] = (unsigned long)args->fn_arg;
+> +		p->thread.ra = (unsigned long)ret_from_fork_kernel_asm;
+>   	} else {
+>   		*childregs = *(current_pt_regs());
+>   		/* Turn off status.VS */
+> @@ -247,12 +253,11 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+>   		if (clone_flags & CLONE_SETTLS)
+>   			childregs->tp = tls;
+>   		childregs->a0 = 0; /* Return value of fork() */
+> -		p->thread.s[0] = 0;
+> +		p->thread.ra = (unsigned long)ret_from_fork_user_asm;
+>   	}
+>   	p->thread.riscv_v_flags = 0;
+>   	if (has_vector() || has_xtheadvector())
+>   		riscv_v_thread_alloc(p);
+> -	p->thread.ra = (unsigned long)ret_from_fork_asm;
+>   	p->thread.sp = (unsigned long)childregs; /* kernel sp */
+>   	return 0;
+>   }
+>
 
-[auto build test ERROR on net-next/main]
+Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/net-phylink-reset-PCS-Phylink-double-reference-on-phylink_stop/20250319-080303
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250318235850.6411-6-ansuelsmth%40gmail.com
-patch subject: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha SoC
-config: i386-randconfig-007-20250321 (https://download.01.org/0day-ci/archive/20250321/202503211416.eZCW1LF6-lkp@intel.com/config)
-compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250321/202503211416.eZCW1LF6-lkp@intel.com/reproduce)
+Thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503211416.eZCW1LF6-lkp@intel.com/
+Alex
 
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: of_pcs_simple_get
-   >>> referenced by pcs-airoha.c:2818 (drivers/net/pcs/pcs-airoha.c:2818)
-   >>>               drivers/net/pcs/pcs-airoha.o:(airoha_pcs_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: of_pcs_add_provider
-   >>> referenced by pcs-airoha.c:2818 (drivers/net/pcs/pcs-airoha.c:2818)
-   >>>               drivers/net/pcs/pcs-airoha.o:(airoha_pcs_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: of_pcs_del_provider
-   >>> referenced by pcs-airoha.c:2828 (drivers/net/pcs/pcs-airoha.c:2828)
-   >>>               drivers/net/pcs/pcs-airoha.o:(airoha_pcs_remove) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
