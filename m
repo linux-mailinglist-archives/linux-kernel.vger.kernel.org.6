@@ -1,105 +1,145 @@
-Return-Path: <linux-kernel+bounces-571329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DBCA6BBD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:40:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B335BA6BBDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845A43B0D92
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07353AE2E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C423122AE71;
-	Fri, 21 Mar 2025 13:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BC222B8B2;
+	Fri, 21 Mar 2025 13:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WcdIWNPL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F3+dYTwT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=embetrix.com header.i=@embetrix.com header.b="WR6gNkCe";
+	dkim=permerror (0-bit key) header.d=embetrix.com header.i=@embetrix.com header.b="G3jS+lcY"
+Received: from mailrelay4-3.pub.mailoutpod2-cph3.one.com (mailrelay4-3.pub.mailoutpod2-cph3.one.com [46.30.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F5D216E01;
-	Fri, 21 Mar 2025 13:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9753E216E01
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742564317; cv=none; b=B47CBFU1u11VRnDogGYiynhOF2/8JPJnux3Eyw7dNOW289sID7AKpL3jgq9cA8xrMWNT9MlPmkrLMlSld+WhHVKCCMIGuPk8TFZfqCcfy+GvAd3eP1g4ARbqDGAG61+S70n9tbA2Y7e4AUpOpeKT5yKgYcfW4LldpjhWTZKkJWs=
+	t=1742564473; cv=none; b=fVsaXRf8dSWR/5ts0EePaVF9kztwvxpU8lg12WdEmQHppHBXRNzbAb4lG7yam5pfF8dszDj8wcmImTjhWtr0cpmQ8QyC5Dh4bDNztyGc+wDHfgb9F5gFTH4hji/8ZLAm1WNX4oIlq8374Ve3gdtE7C1IPomK853CvEPnWaQAHHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742564317; c=relaxed/simple;
-	bh=x1dxC51lbs6jPFuApurZIzSFJ8UWR3D48O+QX2y/E88=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K45ctvCBkmD+XhBLq+WUAPTXEvAnEZ/o3DXIwfACAtyINblFknEYaPF702IhJfpMhgQZrz2TUBuMv6RPGz6lGiMsh6IoDL3naoTpu9UQVE+DQJrWTYvvpJN2tbQDJ+uo7YMaF463Kob8IO3bDyQw+ftcoY0gqbyNh29F0UYdNow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WcdIWNPL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F3+dYTwT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742564314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A2bZMkMal/b569eRfIDoJCT9zyRtoqlj1ERsu3Rhnr8=;
-	b=WcdIWNPL+1+Bznv3fucQBiLMqGZlJ+iYJKGJtVkumzEcjnByzfyCrY52kIwHR2DQ9L8l8d
-	wO0Q37x48tzY+52mIZahOfZ/0Oes8+M+gWu9PuxN3VOgmEqEGO8l1YgaBiayke2p3ovNne
-	pGB2rj4zEucKgf05vAbOlALg0mQyoPCMXWXb8oEo38KYUSh0qICiMPaMtM5orE/tnY0qP3
-	Lup00elYTnqk6UkU9EEd8KFplF38qcYPaPHJksVjuc4VyuCEK4V6TaG7rbrjbxm6u/Fdub
-	u+QvUKVV5YkCryA6WuWPS3kjIk8jqOZqVGUF8x+kTOIJNXMhUzrxRt5/qY6Awg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742564314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A2bZMkMal/b569eRfIDoJCT9zyRtoqlj1ERsu3Rhnr8=;
-	b=F3+dYTwTm9IE9zps0ypJY3Qy4jlDEqH24QnvafNRgODWzEjAJjlqD+kTm1ny4gGaIjepuG
-	nB8+9//ElYjWnCAg==
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
- huibo.wang@amd.com, naveen.rao@amd.com
-Subject: Re: [RFC v2 03/17] x86/apic: Populate .read()/.write() callbacks of
- Secure AVIC driver
-In-Reply-To: <20250226090525.231882-4-Neeraj.Upadhyay@amd.com>
-References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
- <20250226090525.231882-4-Neeraj.Upadhyay@amd.com>
-Date: Fri, 21 Mar 2025 14:38:33 +0100
-Message-ID: <87plia33mu.ffs@tglx>
+	s=arc-20240116; t=1742564473; c=relaxed/simple;
+	bh=hnErctNf5x2CnxSNa17SxPTOIebbJDOSOM9UTJYuH+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aRjGeWpyZKxfCehs3XAUp25M2RbhMcWkJ4u/RK/ro9s1MzTVyBmqd+/DtHQsxPv+XzuadYBuqvrckIsSJLWgSpqWxXgCI52Q4gigyRVqmE5uBoHd4W72hvxpDAFnremjerCfT8tklMYRz4ozd/JOuEOhkDDUN1Y8m7l8uLykZ70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embetrix.com; spf=none smtp.mailfrom=embetrix.com; dkim=pass (2048-bit key) header.d=embetrix.com header.i=@embetrix.com header.b=WR6gNkCe; dkim=permerror (0-bit key) header.d=embetrix.com header.i=@embetrix.com header.b=G3jS+lcY; arc=none smtp.client-ip=46.30.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embetrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=embetrix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742564399; x=1743169199;
+	d=embetrix.com; s=rsa2;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=/kalWy8J0iE790KhbrNqxh8cP5AFD6UvTxuEdRGyIKk=;
+	b=WR6gNkCeOmYsk5IgHkOwpnAR/8Epg/ehW5AL6+N2v7/1t+Rq8sqY+73REP8g6VYmP1VDr5DBfKSUQ
+	 cWxAHFwEno3Be96DJyKjBS3mGr3oFm/s01u5Kkod0g/QCGND0QIf6S3VUd380aV0ilH153Cd9iwRFc
+	 smeeDGkS37nvVP1Y2WR8nh/xrp6QWj4bPbPlB6svzXQBVco/srCgODEVbQUsjQMiUPYQhgCx8Vdfc/
+	 JYjdFmlXVgzK4pbW8t8FFzz5OjtMXdHZIfto5+f/VDUxYm2pFdLZF25dS3rkoLQakS1aEunn6aNFcZ
+	 jl2kdPHfDLHwAgbQBCK+Iwv1FLEcZgg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742564399; x=1743169199;
+	d=embetrix.com; s=ed2;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=/kalWy8J0iE790KhbrNqxh8cP5AFD6UvTxuEdRGyIKk=;
+	b=G3jS+lcYQ9O6fuGy5S1cuS3dXSVu1auvDEgk57JHYkuz/EUGXp4lDtWGcmMv5n3FCK0UwsClbhnjK
+	 gZGk61TCQ==
+X-HalOne-ID: faf22edf-0659-11f0-b7bf-e77cec7da75b
+Received: from xps-13.fritz.box (dynamic-2a02-3102-8c10-00a0-d7d6-6cc2-a3a5-69f6.310.pool.telefonica.de [2a02:3102:8c10:a0:d7d6:6cc2:a3a5:69f6])
+	by mailrelay4.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id faf22edf-0659-11f0-b7bf-e77cec7da75b;
+	Fri, 21 Mar 2025 13:39:59 +0000 (UTC)
+From: Ayoub Zaki <ayoub.zaki@embetrix.com>
+To: linux-kernel@vger.kernel.org
+Cc: dhowells@redhat.com,
+	dwmw2@infradead.org,
+	keyrings@vger.kernel.org,
+	Ayoub Zaki <ayoub.zaki@embetrix.com>
+Subject: [PATCH] sign-file,read_private_key_pkcs11: add pkcs11 provider PIN setting
+Date: Fri, 21 Mar 2025 14:39:56 +0100
+Message-ID: <20250321133956.154597-1-ayoub.zaki@embetrix.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
+in the same way as for PKCS11_ENGINE, add PKCS#11 token PIN injection
+for PKCS11_PROVIDER from key_pass environment variable if set.
 
-> +static inline u32 get_reg(char *page, int reg)
-> +{
-> +	return READ_ONCE(*((u32 *)(page + reg)));
+Signed-off-by: Ayoub Zaki <ayoub.zaki@embetrix.com>
+---
+ scripts/sign-file.c | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
-This type casting is disgusting. First you cast the void pointer of the
-per CPU backing page implicitely into a signed character pointer and
-then cast that to a u32 pointer. Seriously?
+diff --git a/scripts/sign-file.c b/scripts/sign-file.c
+index 7070245edfc1..bdd26e438ff6 100644
+--- a/scripts/sign-file.c
++++ b/scripts/sign-file.c
+@@ -31,6 +31,7 @@
+ # define USE_PKCS11_PROVIDER
+ # include <openssl/provider.h>
+ # include <openssl/store.h>
++#include <openssl/ui.h>
+ #else
+ # if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
+ #  define USE_PKCS11_ENGINE
+@@ -107,19 +108,45 @@ static int pem_pw_cb(char *buf, int len, int w, void *v)
+ 	return pwlen;
+ }
+ 
++#ifdef USE_PKCS11_PROVIDER
++int ui_get_pin(UI *ui, UI_STRING *uis)
++{
++	const char *pin = (const char *)UI_get0_user_data(ui);
++
++	if (pin == NULL)
++		return -1;
++
++	int ret = UI_set_result(ui, uis, pin);
++
++	return (ret == 0) ? 1 : -1;
++}
++#endif
++
+ static EVP_PKEY *read_private_key_pkcs11(const char *private_key_name)
+ {
+ 	EVP_PKEY *private_key = NULL;
+ #ifdef USE_PKCS11_PROVIDER
+ 	OSSL_STORE_CTX *store;
++	UI_METHOD *ui_method = NULL;
+ 
+ 	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
+ 		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
+ 	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
+ 		ERR(1, "OSSL_PROVIDER_try_load(default)");
+-
+-	store = OSSL_STORE_open(private_key_name, NULL, NULL, NULL, NULL);
+-	ERR(!store, "OSSL_STORE_open");
++	if (key_pass) {
++		ui_method = UI_create_method("PIN reader");
++		ERR(!ui_method, "UI_create_method");
++		if (UI_method_set_reader(ui_method, ui_get_pin) != 0)
++			ERR(1, "UI_method_set_reader");
++
++		store = OSSL_STORE_open_ex(private_key_name, NULL, NULL,
++									ui_method, (void *)key_pass,
++									NULL, NULL, NULL);
++		ERR(!store, "OSSL_STORE_open_ex");
++	} else {
++		store = OSSL_STORE_open(private_key_name, NULL, NULL, NULL, NULL);
++		ERR(!store, "OSSL_STORE_open");
++	}
+ 
+ 	while (!OSSL_STORE_eof(store)) {
+ 		OSSL_STORE_INFO *info = OSSL_STORE_load(store);
+-- 
+2.43.0
 
-struct apic_page {
-	union {
-		u32	regs[NR_APIC_REGS];
-                u8	bytes[PAGE_SIZE];
-	};
-};                
-
-and the per CPU allocation of apic_page makes this:
-
-static __always_inline u32 get_reg(unsigned int offset)
-{
-        return READ_ONCE(this_cpu_ptr(apic_page)->regs[offset >> 2]));
-}
-
-which avoids the whole pointer indirection of your backing page construct.
-
-Thanks,
-
-        tglx
 
