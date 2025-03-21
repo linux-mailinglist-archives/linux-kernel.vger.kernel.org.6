@@ -1,131 +1,203 @@
-Return-Path: <linux-kernel+bounces-571602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A6EA6BF8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:18:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9C0A6BF9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6983BB394
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:17:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599351B614C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE3822B8BD;
-	Fri, 21 Mar 2025 16:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89E222D4D8;
+	Fri, 21 Mar 2025 16:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jtSoBD0t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414B014601C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VXCPZao7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9376B226D1B;
+	Fri, 21 Mar 2025 16:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573803; cv=none; b=enGKdXCcUqzcq4eAXzdYY3sSMFHvf3z+Xuq3FbOQETVYfoCLCsku2Ca1FXM3/V3+KQdaGVIbMIyvA+tTqo+9egjMChF+JAXx8jcVmCSTrGC1tZVGc2s6uRTaxTo7CudkaifH2O2uSj0AmSpJ/UHEkyIvm58xFDpcjeBz4iXc/QU=
+	t=1742573812; cv=none; b=f6q3JeHioCwQ7yHW6WuASZRMF1ngTCr+/PT9+gVIh+AGjHMSiCqZkljjw0JeJiN6Iuy69uYD2VLaLkQ6zqCdojKOkUgP4ECcmBo4e9Sxu+XrPhpOwM8dPppj48pREycdsds3wPx3EICvQnceeIvVnOun8MEkrM6tyWAuqSAvLU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573803; c=relaxed/simple;
-	bh=sX4muvpyzWlipm3+edEVZE9OiBEpH0DByrdbnIKMYr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxZkkHWrpM+i3G1J4MI5YifyUKxDpdxg7h0SbUUxi4+yO9fv3iyZwE8Tjo8dZVjVsJbuUeJ6YjtowNsaiEDju7cv6t1MNJRxg/bRZYTa1yHgx4Ent3xSPQ9yQQcrkFE/GRubyr6KeHjswYvCJBajY3TprcYpyXEiuF2UCany0kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jtSoBD0t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATAbx003019
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KC691n78UfcfnBIMAEEZOgix
-	8UerazMGS6DJH8rBSes=; b=jtSoBD0ttl3RR0OcVWAiU/nuCCHpxHsJRs8T718P
-	mPp0eDBxxTQce9+Dar557Zlf9gKMXJGcgJSLUZZjaCzrI59/MGrbjO+ecn6sR5P4
-	/CkzAuySTJIRr7YNmt92bvIlxVqquRB717Kxu5nbZ+5rvED+3XClwt5jMx6jH5rw
-	vDT25pWCuY07CXEUk2jmFMo98CLkWqP99IDOjgamiXKg1GUO8176ikjn/rnPwrOh
-	6wSDPq5uxAB3qEhypBM9JT0wsNGqq2upSh2fSZVEsrCyUiqpels8zshaow4M/B9D
-	d7/iONRXmp4uXex3oCuC3NI9Vvr6lmCqgGrU9Gu59p1Ghg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4p11as7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:41 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c579d37eeeso330848785a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:16:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573800; x=1743178600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KC691n78UfcfnBIMAEEZOgix8UerazMGS6DJH8rBSes=;
-        b=s6oflSxWpp7vKhyl7nXfG6W9majcMHG2zwKZ3WOHkqycD6W6IxJwl7ZnOnh+peGhwd
-         uNpCPKr77SqpcA88omUq8bj0cMuxYTV7tAn7TfdhEIebrgWuPTpXVgyVNrGnOAKF2UlA
-         dRiTb2Ptk6ZTdFENMryaoGpMpXMhsd8HsE9jVXavDvUQEQT+mt4rk4/6B2WLg0W7GVBP
-         9W/kW+2po62d9mkxkfM7XhU5mEMnS7shLBRkBNhyg81DLuBgaVmqD3dBFiVTv+GaNiVF
-         tlxATKghvFY/Y8qhGKkh4T/CIpOO/vlXXyFb6Q11915ezLPcgx6W0+d3MaZKdME0z8Rq
-         enTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW076ZQ+THv2kTI/sP0pSAlds436++ED10S9dnrgkN0q/61S8W/XsC7OYLtteAM3/hvrOwGWeq7JuSTg6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbHJJ93hzl8nYES2ztwLv/z8JOn0mS5v9QuW2iPrW1N1sSA0o2
-	saL7SHu8jRnltWk7JsPPBumv+2mcwZ+Ze0ev2aHuToSoy5hufrooPyshRHwUPxuJEul59FmdBCD
-	5ckluqFRaLdJ73qbfnFxNcQI6CSIOvuwlSi/kvHBdQeMhEwzYfDRl6zvsaHe5uK8=
-X-Gm-Gg: ASbGncvijb+ywno4Cg6ayW35MIPvHDFCqivlBxmnkYl9fkKQmvW3Wwsty9fJTFsVs0K
-	+Bv1yfGUvG64uf7PYrY9E8G4B3vcRxXlvkL7zIxvwmVRe+DrCbllAFtci8CBVzUu1yyGmyfhryH
-	2/6WSblzRNwgnVirmMKK2DBzMCbMpWrAL1gqb+CoM4xaQ6z1p7wgLSMNOSFdC1HPnWEAj4sS8Xm
-	7/dG3XSXdnwSwpizLDwq++z8K8Gzus3wPNu2cjgqu74wFS0Lri8avY0NXhWrJz+srUgP+zRP+4E
-	Ya6TMvvlp2vo8JxbnGaAbCfZmRAObPyoDxrDKP1h9PpkZt4SuYPBRmbQvV1mSiaE6wrHOJjPpzQ
-	9p7A=
-X-Received: by 2002:a05:620a:394a:b0:7c5:4a6c:eb8d with SMTP id af79cd13be357-7c5ba200eb2mr484939385a.58.1742573799924;
-        Fri, 21 Mar 2025 09:16:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCnw0RuPGGAcRXmxyrZFcq6Uvyn0JUfRhjB0xBqWfhqbZS/bLEaIZ6/ICcRwJQBMDqvBgROA==
-X-Received: by 2002:a05:620a:394a:b0:7c5:4a6c:eb8d with SMTP id af79cd13be357-7c5ba200eb2mr484933985a.58.1742573799445;
-        Fri, 21 Mar 2025 09:16:39 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647c79dsm212119e87.70.2025.03.21.09.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:16:38 -0700 (PDT)
-Date: Fri, 21 Mar 2025 18:16:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: sysmon: Update qcom_add_sysmon_subdev()
- comment
-Message-ID: <ytbcjcbzwftajmovkun3x44tvmfyljthzcsrml3vbwyvkd7glg@enfp7qfhtzkq>
-References: <77a6b65b-5f3f-4a21-a837-7a4a7e09b099@stanley.mountain>
+	s=arc-20240116; t=1742573812; c=relaxed/simple;
+	bh=g4njPH8ooH1e2h/tZs1yCYEpzY85WHP+MRJtcNkh5oo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z6oN5p7QGpjmbUrEg/vns1G5b8Pwfjims65uYr9qmplZMkHH+AcY5YXbBRlLpSq9qhD41SrHvAJD+pvskBLr0rX/0nApqe7WXNNH+pSYR0kOGU7q92pOPSp+1CWO66xlT9tKXCnNz27GlOqUl6uS08kM2SNDepfu2YgBxm4UIwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VXCPZao7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.97] (unknown [131.107.174.225])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 07F52202537E;
+	Fri, 21 Mar 2025 09:16:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 07F52202537E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742573810;
+	bh=R1nD5dBAblQuNZ9vwCHQrc+0rDQkVy0Dn4/k8PPkSg8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VXCPZao7zvdMcq+p5QAf2NTnAQSKSj1jGH57/DoHd8DBvMhknS0QK93UGTaai0LcJ
+	 gys+d3sy6s/OMLq5IyV3YRm6PUSXyyeeTu0RQrqLHpbWu8E9OkcSkYhU7KG0sw7Vwg
+	 NZ7ofHMq8wQCv3++xbQjEadUjMVD4S4tGyUHt/7s=
+Message-ID: <4340a887-f0d1-481f-b47f-cd0226adf869@linux.microsoft.com>
+Date: Fri, 21 Mar 2025 09:16:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77a6b65b-5f3f-4a21-a837-7a4a7e09b099@stanley.mountain>
-X-Proofpoint-GUID: 6Xhr9a-mpYJca1-Ku1Gu61aT7vVLZtuy
-X-Proofpoint-ORIG-GUID: 6Xhr9a-mpYJca1-Ku1Gu61aT7vVLZtuy
-X-Authority-Analysis: v=2.4 cv=NZjm13D4 c=1 sm=1 tr=0 ts=67dd90e9 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=Oz3NjKvTjiMZACM5Y-cA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=717
- priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210119
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/8] ima: rename variable the ser_file "file" to
+ "ima_kexec_file"
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-2-chenste@linux.microsoft.com>
+ <255e75954d9418e2658a6eba6879804c31b3713f.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <255e75954d9418e2658a6eba6879804c31b3713f.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 05:35:44PM +0300, Dan Carpenter wrote:
-> The comment says the qcom_add_sysmon_subdev() returns NULL on error but
-> it actually returns error pointers.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/remoteproc/qcom_sysmon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On 3/19/2025 6:42 AM, Mimi Zohar wrote:
+> Fix spelling: set_file
+>
+>
+> On Mon, 2025-03-17 at 18:04 -0700, steven chen wrote:
+>> The name of the local variable "file" of type seq_file defined in the
+>> ima_dump_measurement_list function is too generic. To better reflect the
+>> purpose of the variable, rename it to "ima_kexec_file". This change will
+>> help improve code readability and maintainability by making the variable's
+>> role more explicit.
+> The reason for making the variable name change is the variable scope.
+>
+> -> Before making the function local seq_file "file" variable global, rename it
+> to ima_kexec_file.
+>
+>> The variable ima_kexec_file is indeed the memory allocated for copying IMA
+>> measurement records. The ima_dump_measurement_list function calculates the
+>> actual memory occupied by the IMA logs and compares it with the allocated
+>> memory. If there is enough memory, it copies all IMA measurement records;
+>> otherwise, it does not copy any records, which would result in a failure
+>> of remote attestation.
+> This paragraph is not applicable to the patch change.
+>
+>> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>> ---
+>>   security/integrity/ima/ima_kexec.c | 39 ++++++++++++++++++------------
+>>   1 file changed, 24 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+>> index 9d45f4d26f73..8567619889d1 100644
+>> --- a/security/integrity/ima/ima_kexec.c
+>> +++ b/security/integrity/ima/ima_kexec.c
+>> @@ -15,33 +15,41 @@
+>>   #include "ima.h"
+>>   
+>>   #ifdef CONFIG_IMA_KEXEC
+>> +/*
+>> + * Copy the measurement list to the allocated memory
+>> + * compare the size of IMA measurement list with the size of the allocated memory
+>> + *    if the size of the allocated memory is not less than the size of IMA measurement list
+>> + *        copy the measurement list to the allocated memory.
+>> + *    else
+>> + *        return error
+>> + */
+> Please minimize patch changes.  Before posting, please look at the patch(s) and
+> remove anything not applicable to it.  In this case, the comment is not
+> applicable to the variable name change.
+>
+> thanks,
+>
+> Mimi
+>    
+>>   static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>>   				     unsigned long segment_size)
+>>   {
+>> +	struct seq_file ima_kexec_file;
+>>   	struct ima_queue_entry *qe;
+>> -	struct seq_file file;
+>>   	struct ima_kexec_hdr khdr;
+>>   	int ret = 0;
+>>   
+>>   	/* segment size can't change between kexec load and execute */
+>> -	file.buf = vmalloc(segment_size);
+>> -	if (!file.buf) {
+>> +	ima_kexec_file.buf = vmalloc(segment_size);
+>> +	if (!ima_kexec_file.buf) {
+>>   		ret = -ENOMEM;
+>>   		goto out;
+>>   	}
+>>   
+>> -	file.file = NULL;
+>> -	file.size = segment_size;
+>> -	file.read_pos = 0;
+>> -	file.count = sizeof(khdr);	/* reserved space */
+>> +	ima_kexec_file.file = NULL;
+>> +	ima_kexec_file.size = segment_size;
+>> +	ima_kexec_file.read_pos = 0;
+>> +	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
+>>   
+>>   	memset(&khdr, 0, sizeof(khdr));
+>>   	khdr.version = 1;
+>>   	/* This is an append-only list, no need to hold the RCU read lock */
+>>   	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+>> -		if (file.count < file.size) {
+>> +		if (ima_kexec_file.count < ima_kexec_file.size) {
+>>   			khdr.count++;
+>> -			ima_measurements_show(&file, qe);
+>> +			ima_measurements_show(&ima_kexec_file, qe);
+>>   		} else {
+>>   			ret = -EINVAL;
+>>   			break;
+>> @@ -55,23 +63,24 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>>   	 * fill in reserved space with some buffer details
+>>   	 * (eg. version, buffer size, number of measurements)
+>>   	 */
+>> -	khdr.buffer_size = file.count;
+>> +	khdr.buffer_size = ima_kexec_file.count;
+>>   	if (ima_canonical_fmt) {
+>>   		khdr.version = cpu_to_le16(khdr.version);
+>>   		khdr.count = cpu_to_le64(khdr.count);
+>>   		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
+>>   	}
+>> -	memcpy(file.buf, &khdr, sizeof(khdr));
+>> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+>>   
+>>   	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+>> -			     file.buf, file.count < 100 ? file.count : 100,
+>> +			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
+>> +			     ima_kexec_file.count : 100,
+>>   			     true);
+>>   
+>> -	*buffer_size = file.count;
+>> -	*buffer = file.buf;
+>> +	*buffer_size = ima_kexec_file.count;
+>> +	*buffer = ima_kexec_file.buf;
+>>   out:
+>>   	if (ret == -EINVAL)
+>> -		vfree(file.buf);
+>> +		vfree(ima_kexec_file.buf);
+>>   	return ret;
+>>   }
+>>   
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Hi Mimi,
 
--- 
-With best wishes
-Dmitry
+I will update in next version.
+
+Thanks,
+
+Steven
+
 
