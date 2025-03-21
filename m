@@ -1,108 +1,58 @@
-Return-Path: <linux-kernel+bounces-571996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A1DA6C52B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:29:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AACA6C530
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A66F03B7D45
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33AFC189ECBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739DF232395;
-	Fri, 21 Mar 2025 21:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64434230BC1;
+	Fri, 21 Mar 2025 21:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rFDwWK0a"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syEkVpux"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F781230D0F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E82A1C9;
+	Fri, 21 Mar 2025 21:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742592501; cv=none; b=cD0pIn6lMxByoKlRTuzKmIJPlNlcMk9osjpWkrjmv00zz6upUiSNDA4FC/W7BlQSjpanMchp/hWh1YoWzhH/chkYlyR45YwiT9R1ikodEvt+mN9V0o4S0iYtNv8jyWw5XOliO7Mey+e10ZP52dEBqXB5sRWsCmSvF2I/RhEOA1I=
+	t=1742592673; cv=none; b=WBUMs5rlFdot6sLs2QF2wYSbUgCW8eorRG7wawVx1rbTt8pa17jgbj3sL7jYcmf9mps3FO1zJSr2/P+ix/wj8UQpIwQpLtuSxE9N6Gm7FkjWkc2haDhkTF/UeAfNQS47JZ8TJ61TiesyfUe9hh4yXWdBGx0Y1RIGE77a1kCVKuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742592501; c=relaxed/simple;
-	bh=qXj971FSFP/wOZUPcfSsBiuTp/DvOZnX2IFBROliFJM=;
+	s=arc-20240116; t=1742592673; c=relaxed/simple;
+	bh=+f32SRn/DhI5x9BgYlZ2PYxvre6UQhJsBBuq0rXKjAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPA3bPbU0aMGJKWC+Fgs+vXjvaUGLPeLngxJ5Ldm+7Tjx9OIn6urouBdjfQmouQHPCej4mMgHnn73Vv31zatSDHa51FbrTDx/yVZFSfWSso36d5tbTL3OnEm6li8pWznHwTRETi7g6ynTJIPbP80C6hy+pDAE17tlWry9xrIIkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rFDwWK0a; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223fb0f619dso53360815ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742592499; x=1743197299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qXTCW1lYI/NO5ybgxR6jIW3fidKxOfziUSy+malvYvc=;
-        b=rFDwWK0avfNl2NXF/Sm0Tagbux0abRnzSNOxgj+WraKAiZfbGSb4JJVF5QP7dqmZat
-         /g/aOJHETXEcyx+Vh4kNiV5hNc9m4Fxxh42XDwIKQPrFvrLCyHwXRQblSjNucTbQRnw6
-         f08J7WmZ1APGQii0GT/oLDh/wAlOlP+Jz2E7s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742592499; x=1743197299;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXTCW1lYI/NO5ybgxR6jIW3fidKxOfziUSy+malvYvc=;
-        b=eAAs1FQ6qRuuLgCJeVJK4P4x1Ee1CuCn+3iuwwjj+ioz+74tmjiynZ0reXSkrLMbjo
-         6tG1COBZ+FCfptsZARn/jbIxVNl+aFDUVyACnRSnAzB0aAjnNW0PKP3TGTsjhXu0G6Mx
-         h+55kuTXw9hUwKxcyXDxenX1vNZ3jcdB7IA2gBDgYpxEvtEnJcCIYZp63s6J40SaQ10Y
-         5u/dKgnvJ8+Ky3VTE7Vvgj8ZnFRSI1EW8ixXpMywt2hwn9WoXqDLIOMO4QDotfIpx1/u
-         q4pllFdkywjqxjPHVaGiA4rZZoUsTLYm91V4Q8pc+LWpCkbJL9cfxBnO0W/3NCGyrKLQ
-         7Yqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvyPl/4WZLxpKZ0sEuzMUeaLfARjKgClyiVFcAbGBGUJQmlaMUj6YX1MvN9A0P6EWPdkRs0jP5/bHVGN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVPAHSvK4mLFEHwXbB6jau++mUJOqbAI5XSLmvE/fxIp/ZtqE9
-	TGVVOonTXvFywahuHmrnnI1lRLZ4BvphvxGD2Gz8DRr5/83htNa1XdFl23muAvE=
-X-Gm-Gg: ASbGncvmCZOw1kUDd0Rh9JGhVMN8uHD9QdtJSJRloXEb8XHTHwfj7aK9U63PPScLdnU
-	xohJhen1h6x6SYH/7bagX+g2zrjspHPGfgKu7O6UzMNYhcrCsMaeuSYmRJe7+F39GJUF9D2ge8p
-	EOdMbThurlun3vOJ5bMkvNNFMnDTR3M4Q69x8g/UNy14eo2yry1vis4rKjzDkJ4NaTwU6/8BdYT
-	ffiOWyju1Rd1/0g1hGGifzKGZxhiVHq0wmUggYs5E64fP+Ig92FG+M/7ivKAODwJbpI6AKMLBTn
-	bXzazxc0g+DUfauGl2sGPXvaIDQOxsInnIpiOCIMHhKXxmpIsnII8ei9BuaGHzaZVpTrK73xL5e
-	fdHvQTCS34nJFWwbXP755jF2XV58=
-X-Google-Smtp-Source: AGHT+IFQHiH1Q74zGSjuGJPSwRB6B0nITzjFmSBxRdVQxaFhw5xJuOEQUfZo/n55kU3kKM/0M7AFag==
-X-Received: by 2002:a17:903:2cb:b0:221:78a1:27fb with SMTP id d9443c01a7336-22780c50872mr79615365ad.11.1742592499418;
-        Fri, 21 Mar 2025 14:28:19 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2278120a552sm22391275ad.256.2025.03.21.14.28.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 14:28:18 -0700 (PDT)
-Date: Fri, 21 Mar 2025 14:28:15 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z93Z73vG9NYUNQtE@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <Z9uuSQ7SrigAsLmt@infradead.org>
- <Z9xdPVQeLBrB-Anu@LQ3V64L9R2>
- <Z9z_f-kR0lBx8P_9@infradead.org>
- <ca1fbeba-b749-4c34-b4be-c80056eccc3a@kernel.dk>
- <Z92VkgwS1SAaad2Q@LQ3V64L9R2>
- <Z93Mc27xaz5sAo5m@LQ3V64L9R2>
- <67a82595-0e2a-4218-92d4-a704ccb57125@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mieXixSKo92+gPXD9U/a5QC3Lw70zAlI1GuwQW5taS3SZ1W8Au7BNIZsHWeGZLgJbNa/BbCUMCfxabcnOn0NsYW8xK0MhmZcKD+VC+NymJ0wi7Pe9PHoYj/SWqrdthCJ+xnM2S8RsfkYLEthQTDcoD1rRCya6rEKQTrq5Erv3wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syEkVpux; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B5BC4CEE3;
+	Fri, 21 Mar 2025 21:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742592673;
+	bh=+f32SRn/DhI5x9BgYlZ2PYxvre6UQhJsBBuq0rXKjAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=syEkVpux+zdu6y0+JrMVHXsj0id+RPBgMSJRyjmL+naIk5mt42IQWs6Dd3nAj+928
+	 KBLOzfA12Nwm5/7lbqEvDsuKjgqQnN7A49uAgr+JDdLUoPjEfvv6CJxQbq6StoUHVW
+	 K/2wSMPZhEffNaZV1hEZAcAXlF4NU8TyD5pMDqJv8qPo+n9UfaFvx5VWijvmQw5+1c
+	 Z4pfn3XllVxigqeLX3+gX1KhKAGLUgWf6cPdH6KKopA+lEiFIZDftk7nizKc1yz3S0
+	 iwcyhZ6RgELBGZw2Oni5ZMUbxyuGNgCtIY+Z4Bqd2e3LJCusxE3U1urKBu+q0DU5nQ
+	 86W4XQIgRjVEA==
+Date: Fri, 21 Mar 2025 16:31:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jason Hsu <jasonhell19@gmail.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, patrick@stwcx.xyz,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	yang.chen@quantatw.com, jerry.lin@quantatw.com,
+	Jason Hsu <jason-hsu@quantatw.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: arm: aspeed: add Meta Ventura board
+Message-ID: <20250321213112.GA4137938-robh@kernel.org>
+References: <20250321123731.1373596-1-jason-hsu@quantatw.com>
+ <20250321123731.1373596-2-jason-hsu@quantatw.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,78 +61,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67a82595-0e2a-4218-92d4-a704ccb57125@kernel.dk>
+In-Reply-To: <20250321123731.1373596-2-jason-hsu@quantatw.com>
 
-On Fri, Mar 21, 2025 at 02:33:16PM -0600, Jens Axboe wrote:
-> On 3/21/25 2:30 PM, Joe Damato wrote:
-> > On Fri, Mar 21, 2025 at 09:36:34AM -0700, Joe Damato wrote:
-> >> On Fri, Mar 21, 2025 at 05:14:59AM -0600, Jens Axboe wrote:
-> >>> On 3/20/25 11:56 PM, Christoph Hellwig wrote:
-> >>>>> I don't know the entire historical context, but I presume sendmsg
-> >>>>> did that because there was no other mechanism at the time.
-> >>>>
-> >>>> At least aio had been around for about 15 years at the point, but
-> >>>> networking folks tend to be pretty insular and reinvent things.
-> >>>
-> >>> Yep...
-> >>>
-> >>>>> It seems like Jens suggested that plumbing this through for splice
-> >>>>> was a possibility, but sounds like you disagree.
-> >>>>
-> >>>> Yes, very strongly.
-> >>>
-> >>> And that is very much not what I suggested, fwiw.
-> >>
-> >> Your earlier message said:
-> >>
-> >>   If the answer is "because splice", then it would seem saner to
-> >>   plumb up those bits only. Would be much simpler too...
-> >>
-> >> wherein I interpreted "plumb those bits" to mean plumbing the error
-> >> queue notifications on TX completions.
-> >>
-> >> My sincere apologies that I misunderstood your prior message and/or
-> >> misconstrued what you said -- it was not clear to me what you meant.
-> > 
-> > I think what added to my confusion here was this bit, Jens:
-> > 
-> >   > > As far as the bit about plumbing only the splice bits, sorry if I'm
-> >   > > being dense here, do you mean plumbing the error queue through to
-> >   > > splice only and dropping sendfile2?
-> >   > >
-> >   > > That is an option. Then the apps currently using sendfile could use
-> >   > > splice instead and get completion notifications on the error queue.
-> >   > > That would probably work and be less work than rewriting to use
-> >   > > iouring, but probably a bit more work than using a new syscall.
-> >   > 
-> >   > Yep
-> > 
-> > I thought I was explicitly asking if adding SPLICE_F_ZC and plumbing
-> > through the error queue notifications was OK and your response here
-> > ("Yep") suggested to me that it would be a suitable path to
-> > consider.
-> > 
-> > I take it from your other responses, though, that I was mistaken.
+On Fri, Mar 21, 2025 at 08:37:30PM +0800, Jason Hsu wrote:
+> Document the new compatibles used on Meta Ventura.
+> Add subject prefix for the patch.
 > 
-> I guess I missed your error queue thing here, I was definitely pretty
-> clear in other ones that I consider that part a hack and something that
-> only exists because networking never looked into doing a proper async
-> API for anything.
+> Signed-off-by: Jason Hsu <jason-hsu@quantatw.com>
 
-OK, so then I have no idea what you meant in your earlier response
-with "Yep" :)
+The author and Sob don't match. You need to fix your git author to your 
+quantatw.com address.
 
-Combing everything said amongst a set of emails it sounds like the
-summary is something like:
-
-    A safe, synchronous sendfile can be implemented in userland
-    using iouring, so there is no need to do anything in the kernel
-    at all. At most, some documentation or examples are needed
-    somewhere so people who want a safe version of sendfile know
-    what to do instead.
-
-Is that right?
-
-If so, then great, I guess there is nothing for me to do except
-figure out what documentation or man pages to update.
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 01333ac111fb..a86b411df9a5 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -87,6 +87,7 @@ properties:
+>                - facebook,greatlakes-bmc
+>                - facebook,harma-bmc
+>                - facebook,minerva-cmc
+> +              - facebook,ventura-rmc
+>                - facebook,yosemite4-bmc
+>                - ibm,blueridge-bmc
+>                - ibm,everest-bmc
+> --
+> 2.34.1
+> 
 
