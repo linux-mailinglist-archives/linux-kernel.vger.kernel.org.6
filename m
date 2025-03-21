@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-571891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3344CA6C3E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:07:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770D2A6C3F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A8071897DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2443B97CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DAF22E412;
-	Fri, 21 Mar 2025 20:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D56B22FF40;
+	Fri, 21 Mar 2025 20:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lzwYbugI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BeX9sO6k"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E880622DFA6;
-	Fri, 21 Mar 2025 20:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C698022FDE2;
+	Fri, 21 Mar 2025 20:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742587639; cv=none; b=ew9FzrS1M/NMp0fKAmXA97Aw9YLF7KH2CL5ElIv/lM7ChagPWm3DWZMWm4mclN5dB8eNMaQaR+l6ZHDJqjdhjRgQgCxSMnHZadP5BM/9XKRN8aOSA3B14qc14QVPZB3TT0je9xcOUmUD0UsWgctAgpDf0N3q6KcDzmIY/c4df2M=
+	t=1742587838; cv=none; b=RzRak0NIO7sRzd57yQStr5TIQVED/ai/3L/uKm3v49gOWJNzqHaOO4Pn8YbA+1z5jOjXslJGrkqFaYyrTa0dM8DVyJfEShjXpZppv8f3kdnhgrqI1zDeGpexRgWVeVAQ/6XtCMOrZl3X0jUQRRzBBrzTFG/uFuPLZiiOAGsNb2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742587639; c=relaxed/simple;
-	bh=19oUotyDOCLDkmDdkLpuedsgL2cIAvuGUJEHwHnOgLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Cvi5Fgg/bodmrxfmk+C85EL4y0gPd+J1XKZicKr2i47rDQlgWEG/s8vPBGLePcpXbcbdLdv5Fsa5LjJxsRT+Vg2Udxix6rElIBViHsB3bo0l1oJmHzXj7J4KVEpJk1DLIkMtoxozonyB2940cFcY9fhGdssdqp8SsOcSj9RaGYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lzwYbugI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LAT9tR022053;
-	Fri, 21 Mar 2025 20:06:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BAZWiy3q1WUqRoaiLvI9dIJslrFXt+ABgbRRNuix8fQ=; b=lzwYbugIwJgPebOs
-	BZR/l5K91Y2wuiUb0UD3Gi7Gp32OKbT04rL0j0kY2MF0WH8SVRX2CbYm6IcqVEjr
-	UID4lkN8eXiMXF/SQFE2TQX0ARLW71+kODkzxdwYzQguDZ1sl9M3Tbnuku2fclWR
-	XwKEWoejSh+d/reKnd9s6JZaVnBQy9G2DALzyxBFZafiZqYuhNxWMalDgW+aVIAT
-	siR2Wu0TpyOlc8YgHvTYzJq3cdlECYH1/Pk6wolEN0E/98dxw3JzPf27VlCdu8Ka
-	a3ftzIEA5yAs9xy8FjeOS//ZCL0XT3viLGRdbVAb935rNz8sCjkGrWvlbLTe/3ev
-	EQ9ZYA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4wphrb5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 20:06:50 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52LK6nCH020958
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 20:06:49 GMT
-Received: from [10.71.113.245] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Mar
- 2025 13:06:49 -0700
-Message-ID: <5ba0912a-4d8c-4321-9fa4-0bac89af8224@quicinc.com>
-Date: Fri, 21 Mar 2025 13:06:43 -0700
+	s=arc-20240116; t=1742587838; c=relaxed/simple;
+	bh=ExX4HzIXt1eLoL7kgSQzUTPK0LokgibMRw5hn9r+UAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qbmavbHpySe/thyIEICfFaPNKqMCvbqBPVW7zbE213wRdCHNTyb5LWOBx3oF6cqOGtUi3g3hPNCwpUJCxcwvf/9DpaCQfptuJfzMAE8AqcIhT9O/ycJY3qNdNaccYlpUq0TWo6f//pJ6i43VGu7HCUBODC8O5oUcuq24ObFmNXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BeX9sO6k; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZKD8W4Ty3zm8Stx;
+	Fri, 21 Mar 2025 20:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742587833; x=1745179834; bh=NntvXvtWhzJ6OcqXMIfgs9i0
+	GrnRvBUhZKhhcyppfos=; b=BeX9sO6k4WzpXNtsHcsp6DjnpMY0Zih21JisnYN0
+	KFhaiOHHFGhm5T6dCGbULAsNlImXcz92dNL6FIlVdSkmIHfifpRzGM4PLKeHDZGs
+	WDGwckOK0/Y2eXq7eGrFkhrNVdasSm7N1cYsgweCHk3gub9JIy8S+56uPNeMZc7q
+	S68CoHQIbFKziQ14d4cVlCOL9j/WY0Z0h1T+dCgGcuQdVs1TxlnoJY2w4d5qqXB5
+	Y1AZlQryhEsnJ+7cpTzfw3pU/3mAaiSgn4N0NCQgXsyNDzSkmyNG9NTIMt3uyEVr
+	3MRSjIvE9gkEcFozIOkSJTKNdzeCO01xO2Rog5ncVgFwGA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id wZ0MmdshLZIg; Fri, 21 Mar 2025 20:10:33 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZKD891S2jzm0Q6C;
+	Fri, 21 Mar 2025 20:10:16 +0000 (UTC)
+Message-ID: <8d5fd977-b600-492c-b888-2318130f46ec@acm.org>
+Date: Fri, 21 Mar 2025 13:10:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,139 +64,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v36 00/31] Introduce QC USB SND audio offloading support
-To: Luca Weiss <luca.weiss@fairphone.com>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <tiwai@suse.com>, <robh@kernel.org>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
- <D8LYYEQJ2W4L.1H7FPF4140BVS@fairphone.com>
+Subject: Re: [PATCH v2 0/7] ufs-exynos stability fixes for gs101
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanho Park <chanho61.park@samsung.com>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Eric Biggers <ebiggers@kernel.org>, willmcvicker@google.com,
+ kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ stable@vger.kernel.org
+References: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
 Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <D8LYYEQJ2W4L.1H7FPF4140BVS@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250319-exynos-ufs-stability-fixes-v2-0-96722cc2ba1b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8zEwo_wZhHpbeBVNYzwvKCMZbXs1_InH
-X-Proofpoint-GUID: 8zEwo_wZhHpbeBVNYzwvKCMZbXs1_InH
-X-Authority-Analysis: v=2.4 cv=ZN3XmW7b c=1 sm=1 tr=0 ts=67ddc6db cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=NEAV23lmAAAA:8 a=XwCJkI7jc2rzYGe07aMA:9
- a=QEXdDO2ut3YA:10 a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_06,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 clxscore=1011 phishscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210149
 
-Hi Luca,
+On 3/19/25 8:30 AM, Peter Griffin wrote:
+> This series fixes several stability issues with the upstream ufs-exynos
+> driver, specifically for the gs101 SoC found in Pixel 6.
+> 
+> The main fix is regarding the IO cache coherency setting and ensuring
+> that it is correctly applied depending on if the dma-coherent property
+> is specified in device tree. This fixes the UFS stability issues on gs101
+> and I would imagine will also fix issues on exynosauto platform that
+> seems to have similar iocc shareability bits.
+> 
+> Additionally the phy reference counting is fixed which allows module
+> load/unload to work reliably and keeps the phy state machine in sync
+> with the controller glue driver.
 
-On 3/21/2025 6:13 AM, Luca Weiss wrote:
-> Hi Wesley,
-> 
-> On Wed Mar 19, 2025 at 1:51 AM CET, Wesley Cheng wrote:
->> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
->>
->> Several Qualcomm based chipsets can support USB audio offloading to a
->> dedicated audio DSP, which can take over issuing transfers to the USB
->> host controller.  The intention is to reduce the load on the main
->> processors in the SoC, and allow them to be placed into lower power modes.
->> There are several parts to this design:
->>   1. Adding ASoC binding layer
->>   2. Create a USB backend for Q6DSP
->>   3. Introduce XHCI interrupter support
->>   4. Create vendor ops for the USB SND driver
->>
-> 
-> I was able to test this series (v35) on SM6350/SM7225 Fairphone 4
-> smartphone and it appears to work as expected!
+Although these patches are somewhat outside my area of expertise, the
+patches look good to me, hence:
 
-Thank you for taking the time to testing this :), much appreciated.
-
-> 
-> Based on the sm8350 branch you shared[0] I added similar dts bits for my
-> device, I've pushed that branch here[1] for reference.
-> 
-> [0] https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/commits/usb_audio_offload/
-> [1] https://github.com/sm6350-mainline/linux/commits/sm6350-6.14-wip-usb-snd-offload/
-> 
-> And I've used these commands to test:
-> 
-> fairphone-4:~$ amixer -c0 cset name='USB Mixer MultiMedia2' On
-> 
-> fairphone-4:~$ aplay -l
-> **** List of PLAYBACK Hardware Devices ****
-> card 0: F4 [Fairphone 4], device 0: MultiMedia1 (*) []
-> Subdevices: 1/1
-> Subdevice #0: subdevice #0
-> card 0: F4 [Fairphone 4], device 1: MultiMedia2 (*) []
-> Subdevices: 1/1
-> Subdevice #0: subdevice #0
-> card 1: Audio [Hi-Res Audio], device 0: USB Audio [USB Audio]
-> Subdevices: 1/1
-> Subdevice #0: subdevice #0
-> 
-> fairphone-4:~$ ffmpeg -i test.m4a -acodec pcm_s16le test.wav
-> 
-> fairphone-4:~$ aplay --device=plughw:0,1 Music/test.wav
-> Playing WAVE 'Music/test.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo
-> 
-> And then music was coming out of these headphones connected via a USB-C
-> to 3.5mm dongle.
-> 
-> Every time I'm starting playback this error appears in dmesg, do you
-> also see this on your test setup?
-> 
-> [ 1336.081525] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: AFE Port already open
-> 
-
-The print is coming because the Q6 USB backend DAI link is utilizing the
-q6afe_port_get_from_id() API to fetch the proper AFE port to issue commands
-to.  IMO, that log level should be decreased to at least dev_info() instead
-of an error, but we can probably take that discussion into a different series.
-
-To add, I also see this on my set up.
-
-> 
-> And if I'm not mistaken it's possible to check that actually the offload
-> path is getting used by checking the interrupt counts of the xhci-hcd
-> interrupt.
-> 
-> With regular USB audio card playback there's many interrupts per second
-> happening:
-> 
-> fairphone-4:~$ aplay --device=plughw:1,0 Music/test.wav # regular USB
-> fairphone-4:~$ cat /proc/interrupts | grep -i usb
-> 188:     137524          0          0          0          0          0          0          0    GICv3 165 Level     xhci-hcd:usb1
-> fairphone-4:~$ cat /proc/interrupts | grep -i usb
-> 188:     137591          0          0          0          0          0          0          0    GICv3 165 Level     xhci-hcd:usb1
-> 
-> And with the offload card during playback there's no interrupts
-> happening (just a few when initially starting playback):
-> 
-> fairphone-4:~$ aplay --device=plughw:0,1 Music/test.wav # offload
-> fairphone-4:~$ cat /proc/interrupts | grep -i usb
-> 188:     141947          0          0          0          0          0          0          0    GICv3 165 Level     xhci-hcd:usb1
-> fairphone-4:~$ cat /proc/interrupts | grep -i usb
-> 188:     141947          0          0          0          0          0          0          0    GICv3 165 Level     xhci-hcd:usb1
-> 
-
-This is correct.  With offload enabled, you should probably only see a few
-interrupts from xHCI from the initial USB headset enumeration and control
-transfers, but the data packets itself should result in no increase of the
-xHCI IRQ.
-
-Thanks
-Wesley Cheng
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
