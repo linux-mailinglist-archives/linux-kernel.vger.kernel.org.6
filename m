@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-571380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850EDA6BC83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:06:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A11A6BC6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12EAD7AAE22
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291923B855E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ACB189906;
-	Fri, 21 Mar 2025 13:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F01914AD2D;
+	Fri, 21 Mar 2025 13:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y5TwmUny"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2381487ED;
-	Fri, 21 Mar 2025 13:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="hCWJY4H/"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EDA757EA
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565594; cv=none; b=WmtbjVxOigUKtXBAeZJJCRr6arH+CgvIazoWNKt810d9hmYC135sQmVx4noZKOz5758Pa76SOadUzQQELtTfC/JtG8shChgFuSRPUrb0xWzpT+/U1sZdv79G68P59dhmu4ZHtBnEF0D690SDMeaYKNEU2/oAf5AkH/4P4f3wn80=
+	t=1742565591; cv=none; b=AXXcIDhIMQCp3awX8vwGaSZCPDSKp+xPfseY84GixhFkDnVkV2/56t7X61ZHw//f4uv7xtwNamhpAPGv/qxVjzFWpy/diTV9pxELE9i0DLjyrWXo5z8oWUFdL4BVLPWJHbkQbOBHrPDATGxkZB+iJM9xesEzE0Pf2ubspV1dwMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565594; c=relaxed/simple;
-	bh=1d7MPKtgDtutmtajslFXutq8UFITapsyjEYV4cWt2Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PfxdRlfHJe++0pKC3KB80tVTjRRTJ3bltvkTejky0Qp5U8AftcX8JXwKPjtw6mW9aS5Z7QDgrcyThJ/THg654gthPe1nRghINGMSj8BzFStg+EXKkqzQ7SdQ/rBeYmuEs79Yqt48iEx6LZwdYvwE7qguK+LI8pu9NAOsQ1YVHRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y5TwmUny; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=LqKAz5HyfCeDxh55YkqRrx/1k4efwgcFkhCql8auRck=;
-	b=Y5TwmUnyhlIv+Lr1Ob0J/alrmMrCWyqEKpw/Ngids1lb/Blt+i7AsLXHcBck30
-	KqMjVmcgGl+8RPzLoWa2BHvp6NB4DL/SUhnBT32vKvqejrQw3Is6+a+u/quMB41h
-	P06QZ7z12StL94FKWqLHiBQccoqv/kL13bgNLC3/bhIPI=
-Received: from [192.168.60.52] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDXK5a4cN1n7W6dAw--.12854S2;
-	Fri, 21 Mar 2025 21:59:20 +0800 (CST)
-Message-ID: <1922e611-7a28-4198-8496-7e2a3e9c48ec@163.com>
-Date: Fri, 21 Mar 2025 21:59:20 +0800
+	s=arc-20240116; t=1742565591; c=relaxed/simple;
+	bh=HqRt79DUsL4J+Cje/U08ihks64TvmbBB60ER7m4KqIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UunROprxDewpJDcfniOuUc4Ty0BJkGFte/Gc5b7w5tu5684G1W9Dr4m1XT1/m9oa99TdkukhEbrtL3uudFEHkxie/98PD7ywYMZDNdFQolOALlLE6APDrmu4gawh5pQ952KvdM5xUbRbJDvodySXBS/Q8ADBBFGUtJPIHWoVwxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=hCWJY4H/; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-47692b9d059so27207241cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1742565587; x=1743170387; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9dAeMLXO1UL2jebDZiJp6MgSYhpvl7GGhlGkzkHYBE=;
+        b=hCWJY4H/HvCvnT1jLdtUK2ei//S4FKzJ86TrxA+ffD7axcaxJ8tsd+5Qm83KmnsBSW
+         Usm77Egw5Ca975GFTLgsm96hanNsvwwcf4C4bwXBQO4Sr+vRUpDD9H2kvQ9xN6gc3oxI
+         zQ3LmuBXFBAej+pvIU4/d9Q7sTpYw+NJCldr/JI5iTxK20T+a26I+LIIQ8QYB5vmJ3z/
+         Gv7iUWS58K0ZjwsLZ8DXmxrd0le4j2Fkajuxt/opVMzX1QyZW3CBBevVAVL6xyePNTTK
+         yFULwQSy/CtFmc/rA92vKZ0NLorkJSvMDYr5dt5VvG0tMeZxtzZQ8R/Ia1k2g9MtAn+G
+         yk4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742565587; x=1743170387;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+9dAeMLXO1UL2jebDZiJp6MgSYhpvl7GGhlGkzkHYBE=;
+        b=VScId0fNJJROfXnS4z+Qz4Qb0VteDYjSJTe27qEyXJuI93DY7HjrIESO1g3F6fNdwm
+         LG0n/XzTmiBJqYdayLVgGcWc3NhmHs1rcbDgC4+ilR0tWFb2hlfIGTU3jxS+wTHkaNak
+         jWNCbMGJdaFJPivkwEH3U6iY0TyJRdrwPz3Kl36WqFlvft4WfR5AorAzxappgpSsDkyH
+         HPF1lum4a4O6gppQn3Zz6OCNKBMtRw3AxPWg5QdkZrXavscLukDkz/OKrZ3IyFxvZPn2
+         x8i84Xko5/XIWWUk8jNyj7PzQ6CSkV74os1H2WZloAwsY7lJOLaE8JnKbdMj5YzbDm/S
+         VYww==
+X-Forwarded-Encrypted: i=1; AJvYcCUBAXiS+wcogFYSPxjsI5Aa7UOnVfu4ejzDrhnhQkBxAnY/EWPNWrnoHzyLU8ZaOp39xTaCHvct72cqIzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdPSbw0k5QMxBkzq6E2KoJ9oOxrVWvC2Y13Ukl7wCZSqIyV+rk
+	0EsxqTW7lZq5sIWHqlUmtFbOBGuEYsEpkFcKaf7tDRwI05Z2c7uWfBBa40Nnn9M=
+X-Gm-Gg: ASbGncvQKWFUvaJSrsddcBvzYHBVs2+Mg4VGhlSiLQiHQJUkCQaHPvuxA2PkA0JQXXK
+	x3Y2o97hwH9f5pgiTi9/+TOVmiMCRyrQhYsfWbS9EWORxDjojZI5BO13VllP+P2af3lyndkdvQC
+	S3XNwGYfZrBUjuqBbnBr5R+iOHchiBxwZGrNBfw73M8og0Flr6mA7VPvGL6r/d7WVSfqE6wDbeO
+	vLUSl++306N2437lvhs8+ciSRv+mW4r16qSDr0fORY/QtKd1Z25Relg9VJdX6Zw9YRZaIPa9dBK
+	++LFDArSPZ2/nLhXZFlc0kF8OlyKWh/oOm7Bchl7mNtTNpi3S5f6M/AnxThDdQ8yFS+GYqctPii
+	bU4DyCv+iUOSpPhy/geles1YigbE=
+X-Google-Smtp-Source: AGHT+IE40rw76FodwmzMUd5ZJ5Utk+psc3XwsJk0EM0cBH/ak9gdBIcEuV42/YBp1/X9s3GgwHKeSQ==
+X-Received: by 2002:a05:622a:1148:b0:476:b783:aae8 with SMTP id d75a77b69052e-4771ddc9124mr46926961cf.26.1742565587375;
+        Fri, 21 Mar 2025 06:59:47 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d18f7d4sm12292181cf.37.2025.03.21.06.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 06:59:46 -0700 (PDT)
+Date: Fri, 21 Mar 2025 09:59:44 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com, david@redhat.com,
+	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
+	honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted
+ interleave sysfs
+Message-ID: <Z91w0FQ_CeWCHZRF@gourry-fedora-PF4VCD3F>
+References: <20250320041749.881-1-rakie.kim@sk.com>
+ <20250320041749.881-2-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4 4/4] PCI: cadence: Use cdns_pcie_find_*capability to find
- capability offset instead of hardcore
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
- bhelgaas@google.com, jingoohan1@gmail.com, thomas.richard@bootlin.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250321101710.371480-1-18255117159@163.com>
- <20250321101710.371480-5-18255117159@163.com>
- <20250321131806.34xeuaw2itl6gilj@thinkpad>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250321131806.34xeuaw2itl6gilj@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDXK5a4cN1n7W6dAw--.12854S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrW3ZFyDGF1UAFW8Ww1rJFb_yoW3GFg_Aw
-	s2qFZ29FWUKFn29a1ak345ArWfZw4jqF1jqr18J347Z34fZr4fArnrXr40yF1UJa15Jry5
-	Wry5XF45G3s09jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU16pBDUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhUXo2fdbTxl7wAAs6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320041749.881-2-rakie.kim@sk.com>
 
-
-
-On 2025/3/21 21:18, Manivannan Sadhasivam wrote:
-> On Fri, Mar 21, 2025 at 06:17:10PM +0800, Hans Zhang wrote:
->> The offset address of capability or extended capability designed by
->> different SOC design companies may not be the same. Therefore, a flexible
->> public API is required to find the offset address of a capability or
->> extended capability in the configuration space.
->>
+On Thu, Mar 20, 2025 at 01:17:46PM +0900, Rakie Kim wrote:
+> Memory leaks occurred when removing sysfs attributes for weighted
+> interleave. Improper kobject deallocation led to unreleased memory
+> when initialization failed or when nodes were removed.
 > 
-> The PCIe capability/extended capability offsets are not guaranteed to be
-> the same across all SoCs integrating the Cadence PCIe IP. Hence, use the
-> cdns_pcie_find_{ext}_capability() APIs for finding them.
+> This patch resolves the issue by replacing unnecessary `kfree()`
+> calls with `kobject_put()`, ensuring proper cleanup and preventing
+> memory leaks.
 > 
-> This avoids hardcoding the offsets in the driver.
+> By correctly using `kobject_put()`, the release function now
+> properly deallocates memory without causing resource leaks,
+> thereby improving system stability.
 > 
+> Fixes: dce41f5ae253 ("mm/mempolicy: implement the sysfs-based weighted_interleave interface")
+> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
 
-Hi Mani,
-
-Thank you very much for your advice. Will change.
-
-Best regards,
-Hans
-
-> - Mani
-> 
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
 
