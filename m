@@ -1,110 +1,158 @@
-Return-Path: <linux-kernel+bounces-570791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C543A6B489
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:40:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4976AA6B48C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBAE04847ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:40:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 700C37A5F60
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7491EB184;
-	Fri, 21 Mar 2025 06:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F0F1EA7E7;
+	Fri, 21 Mar 2025 06:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bQ0HJL6l"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGH0oVEV"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F861E8333
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEF5184F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742539227; cv=none; b=eUFHCK87gEtMCu0Xo48oCFaHQIxAqt4X3iQE44fBPjLRci4DmyvOAojjvAgU5thfYksCCqO+uDDERj9yfzIo+4ila95iTjI/x6mP47jM6+4NLP7r+XWQ2NnOgZmFNpweXZtnDhkNW3eUGkEnbOwnjAbXSBNrECdE+PFjuuTSQ5g=
+	t=1742539467; cv=none; b=IO9BQVIGCbhGdQxBc9I7VIG4eIRXKTnqV5rt45osbwG4NOrY/PyVJwsUFlgqIswp8lwcxAxKUd5VI9SttJ/omK8c6bko29X6uC6tKS7WUy8PDFqy2SbnDXrUF4vlD9FsirsPYI6OT6Ypt/dwxOqRF7Hfv8qoD6owLddNqmANACA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742539227; c=relaxed/simple;
-	bh=54/Yqhxj9S2BmqlXvu6SkT0VOC7bHsoQW5vYsIy9oL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ElMgeQGAYIRTu/iCL1Wy6F2EbD8A1c0mTtbOJzSQNiB28CX4v8eUsTnjpnO2boFZSts94F2wM6mnSQF1vIqiHQMP09dn8L2MWZw7ID7bb5GTwlXKdxxX3TYZkVzcL/JxPdUD4X0LgBjV8jJQLOD9dtUInVcYvBRuZUITixlf0s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bQ0HJL6l; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742539221;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wfCxnUDZ4/a0LOQ7Hfhp9OJ19Sm5M7MD6UuIrGvTujE=;
-	b=bQ0HJL6lWhxf0MXlS5Sc2TmSh9daaF0DUMA76BE77ARg2roC+WQEGTAC7x7yYuoyhVSy1s
-	jpjLZwq6AZ9yOV0A5XZOxyZhHoJ/FC44KE8lzZai9RHbw79zSWr8XosyGvmHj+dm6z6BC4
-	g4fngpFJeObDWDcRbin6VTHgpLB8Ps4=
-From: Ye Liu <ye.liu@linux.dev>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Ye Liu <liuye@kylinos.cn>,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: [PATCH v2] mm/page_alloc: Simplify free_page_is_bad by removing free_page_is_bad_report
-Date: Fri, 21 Mar 2025 14:40:11 +0800
-Message-Id: <20250321064011.612336-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1742539467; c=relaxed/simple;
+	bh=DF8PnlG7Hr1ATuCJcOG2OjB6fbV40cCabHnk0emD19c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cDX2aiIcR9TObdLP53f3mOd/Io7DbOT3EcPtHZ4U87Yf1Z/UvpPjbfMbQ5gLXiYL8Tzu7ol6nK+R8rUwXIbKtaO+FxbBdrZ9/Dr6nURgrkZ4xv92sBq+Rh/rBcFsvAEvB/Gx5dhzV7dKG5g5hHEn92Ueew9vZMJDIGIi9PxH9yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QGH0oVEV; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2c663a3daso331419966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742539464; x=1743144264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kGQF18ckYSLxZApXLwPAKI0YhIHltP0kb74o7YZV0/8=;
+        b=QGH0oVEVrUXxiXdZd3YX0bNg4VkDSIetGdxORRLXAv/+PVziqK52cgqC32uGGkwmgL
+         B7p+ubgjxnqisJA/VOd34fZup9B5abDNPYQ30jsRkT6qfoAcDXljbVU9L3TUVkGRI0kN
+         82LxL9Z2x7kzUENLE+2uXgmgqC+MwWFVrdWXIVM4j4Z7oiH76VPy/FYjHwFdnXD27zeQ
+         6W1l/yIfq6SaqRn1Mot2tAgZYlUh4iTOiNG/7M9X4dSAcyU3I1bCujbYRifiGj7GFbBx
+         1JCLpRsLRYWwQMkLhkGxF7s+tPiMzpULrH7ChK9X2V4ZV5VDNC5EP/cG+YbsYb8aIxh3
+         0S8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742539464; x=1743144264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kGQF18ckYSLxZApXLwPAKI0YhIHltP0kb74o7YZV0/8=;
+        b=CqwnhBB6Lb55h947NkFLIWUHW1/sNqrc0OSpOVOaXqGY0Q8F35oUOw5/9rXaMr92aO
+         U6vaepJQeqyskoGmT51mui6egtREaTS2gK1hO5muFYGfmkrOFwx2DjE/QCypApTmjK22
+         5MTDIo3FyUpTI64nYUrSqR19srItUnP+28T594Ihp4nAP5AD9RPgBlRqir6YD0zQkhDo
+         AxtYdwFTW/QfV4EFp3jvM2tyUoWH1Py9691t6odDG2UbrKJQ3fBKzh+bDdv5mUE7tsuZ
+         tdT8wblQCuKXAuhkXWEMYv+SFQHaYJQ+Z43GOsuJ7azAEdZkllnqQfwLcfpTUCxNv6HE
+         vAEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpqcz6WcCqeqEwLwXi1OhUxXX1HCvwCg0PRM9gevPe7a77wv0CIuFe+hpkCSyXvVzkghNWMZLIXFTkXKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMceJTr1MG7RRWrDD5z2od7ZIg/fyZPOT15nwcGn80qErEtCVY
+	32llbN/iX5HGTz/skQ6kT76suWezgVH2gtVTZJipmyD538cUrk1muIHSkbGBW24HriULyswcQ5X
+	ogliuOfxzB/Mbjyfs+laOxfTs89E=
+X-Gm-Gg: ASbGncu4PwnNN9Cd3bF5uND9An1BxUfeox+lxf54LXKYkljtgdLFOlkkio2QW7aCex0
+	cyFDxewpKoR1h0Z0/0/1iA3AgERWmaB22/Iwyh0YLUtFh1mFbXvwag302EYkU6asFBwG/r35V1F
+	QU70rTfVAV6+K2AWRFz9g+bO3v8b+fTZlvrqj2Ew==
+X-Google-Smtp-Source: AGHT+IEuRCs8clnRt9/9XKI8bfSW5ZZ1W0+gJlIQyjBl/iMrlo1+qze4bNwI5oIr5meopg7mreEQR9xCxC0TBdlbCK4=
+X-Received: by 2002:a17:907:97d6:b0:ac2:9683:ad2c with SMTP id
+ a640c23a62f3a-ac3f25412cdmr212419366b.57.1742539464180; Thu, 20 Mar 2025
+ 23:44:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250314090909.8404-1-xuewen.yan@unisoc.com> <aa8baf67-a8ec-4ad8-a6a8-afdcd7036771@arm.com>
+In-Reply-To: <aa8baf67-a8ec-4ad8-a6a8-afdcd7036771@arm.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Fri, 21 Mar 2025 14:44:12 +0800
+X-Gm-Features: AQ5f1Jr27hlricxjEHub04yMulJDFPH1yi49EiIf-ha0hZMffAwHxAf1QvhfxTc
+Message-ID: <CAB8ipk8FX=zhBo0vHPC8MEHMEJKsa+E9J081mzJMLZU_8-U78w@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched/util_est: Do not sub the delayed-task's util-est
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.co, 
+	linux-kernel@vger.kernel.org, hongyan.xia2@arm.com, qyousef@layalina.io, 
+	ke.wang@unisoc.com, di.shen@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ye Liu <liuye@kylinos.cn>
+Hi hongyan
 
-This patch refactors the free_page_is_bad function by directly calling
-bad_page() instead of using the intermediary function
-free_page_is_bad_report(). The removal of free_page_is_bad_report()
-reduces unnecessary indirection, making the code cleaner and easier to
-read.
+On Wed, Mar 19, 2025 at 9:33=E2=80=AFPM Dietmar Eggemann
+<dietmar.eggemann@arm.com> wrote:
+>
+> On 14/03/2025 10:09, Xuewen Yan wrote:
+> > In cpu_util_without, When the task is in rq, we should
+> > sub the task's util_est, however, the delayed_task->on_rq
+> > is true, however, the delayed_task's util had been sub
+> > when sleep, so there is no need to sub the delayed task's
+> > util-est. So add the checking of delayed-task.
+> >
+> > On the other hand, as said in [1], the logic of util_est's
+> > enqueue/dequeue could be simplified.
+> > So simplify it by aligning with the conditions of uclamp.
+>
+> This flag simplification looks good to me.
+>
+> IMHO, you should submit this with the uclamp change so that we can call
+> uclamp_rq_inc() before p->sched_class->enqueue_task(). To make sure the
+> task which is enqueued with 'flags & ENQUEUE_DELAYED' is considered for
+> cpufreq_update_util() in enqueue_task_fair() (Hongyan's finding in
+> https://lkml.kernel.org/r/84441660bef0a5e67fd09dc3787178d0276dad31.174066=
+4400.git.hongyan.xia2@arm.com)
+>
+> I would prefer the less invasive fix you presented here:
+>
+> https://lkml.kernel.org/r/CAB8ipk9LpbiUDnbcV6+59+Sa=3DAi7tFzO=3D=3D=3DmpL=
+D3obNdV4=3DJ-A@mail.gmail.com
+>
+> since uclamp is already a core thing (fair + rt), it works for current
+> max aggregation and it's less invasive.
+>
 
-The functionality remains the same, as free_page_is_bad_report() was
-merely a wrapper for the bad_page() call. The patch also improves
-maintainability by reducing the function call depth.
+Since the uclamp's enqueue is affecting performance, could we fix the
+uclamp-enqueue issue first?
+Need I to send the patch-v2 base the
+https://lore.kernel.org/all/CAB8ipk9LpbiUDnbcV6+59+Sa=3DAi7tFzO=3D=3D=3DmpL=
+D3obNdV4=3DJ-A@mail.gmail.com/T/#mb32d7675beda5cadc35a3c04cddebc39580c718b
+?
+As for whether we need to distinguish sched-class, can we discuss that late=
+r?
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Thanks!
 
----
-V2: Simplify the code by removing unnecessary line breaks.
----
----
- mm/page_alloc.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+> [...]
+>
+> > @@ -8037,7 +8037,8 @@ cpu_util(int cpu, struct task_struct *p, int dst_=
+cpu, int boost)
+> >                */
+> >               if (dst_cpu =3D=3D cpu)
+> >                       util_est +=3D _task_util_est(p);
+> > -             else if (p && unlikely(task_on_rq_queued(p) || current =
+=3D=3D p))
+> > +             else if (p && unlikely(current =3D=3D p ||
+> > +                      (task_on_rq_queued(p) && !p->se.sched_delayed)))
+> >                       lsub_positive(&util_est, _task_util_est(p));
+>
+> cpu_util(..., p !=3D NULL, ...) is only used for select_task_rq_fair().
+> IMHO p->se.sched_delayed is not set there.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 61d6a3b1b286..60c54ba78a11 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -933,19 +933,13 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
- 	return bad_reason;
- }
- 
--static void free_page_is_bad_report(struct page *page)
--{
--	bad_page(page,
--		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_FREE));
--}
--
- static inline bool free_page_is_bad(struct page *page)
- {
- 	if (likely(page_expected_state(page, PAGE_FLAGS_CHECK_AT_FREE)))
- 		return false;
- 
- 	/* Something has gone sideways, find it */
--	free_page_is_bad_report(page);
-+	bad_page(page, page_bad_reason(page, PAGE_FLAGS_CHECK_AT_FREE));
- 	return true;
- }
- 
--- 
-2.25.1
+Hi Dietmar,
+You're right, there's really no need to add extra conditions here at the mo=
+ment.
 
+Thanks!
 
