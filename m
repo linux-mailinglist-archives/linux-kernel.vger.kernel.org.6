@@ -1,77 +1,97 @@
-Return-Path: <linux-kernel+bounces-571250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A492BA6BAEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:42:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34ADA6BAF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9113BF494
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A901B189429A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECC822A1FA;
-	Fri, 21 Mar 2025 12:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B537F22B8AC;
+	Fri, 21 Mar 2025 12:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ec7ew6+t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="coaOL9u/"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428A0226D1E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8011822A80F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560870; cv=none; b=LN/pMEtcq3w1JSL/WJY7Tx9ch5lJJvWuSeCVqYASWUWE7U0WvW0ZjqRZ0F7d7GAjQZBM/5OGkQIkQ60l9WJqXhoOcGdui85pMdQ52U+YOp3lsV7yTM00zw4ccWOg/yV89sKvT5/P6fimbX1xVeagWJbMbaJh9YadBU9pQUEYGdg=
+	t=1742560893; cv=none; b=upLR7CYpDBN9+CbgJVrJqsoUqzgnf5fPNycrd+DmOGKfhtKFf+taU0T3US0KnGzZgPf9/HBfc1EZBlnAAX2k/1eaA6earRygdffKzruicfF1taFtfXKGd2eFIWTwd8C6MOZqQAnY/rUx34PshorYOj2PWZnGjznOWGxD48q/jvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560870; c=relaxed/simple;
-	bh=Y2846tBuL2mWBVQlc560xA5UiYRZ8PX5caGQUYX3m5o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Dss1FJEBqVZ88+UNx20h3zJmIwdINO5tIs7EPMMH142qB+zMMtVeGswy+W2M+E4IzO4H5Bl1ZFVfwLIR87CHLoNnwFqjAY0CiV8cWl5tU5SvrMl6VYyE4L9Rpspvym4w81o53rh6M81YwS2pzV52xlHvCKSmWm7WPCWOa2/HjAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ec7ew6+t; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742560869; x=1774096869;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=Y2846tBuL2mWBVQlc560xA5UiYRZ8PX5caGQUYX3m5o=;
-  b=Ec7ew6+tIevrsYQPXqDnjx+zMHZXHqiLEmkUXpqb0KvfwqCdRgUuFIkX
-   lUJCiuKCbt0grkxgyzjVHCFppxvffECa2U5Oiy7CruyzEPPo9WLu8L4xu
-   JSa8JjyADZiT8f6HXetnssd6Go7pYBN5IRvIaT2dos0V/kyj0JwdDNnQl
-   jIwSn8FZJU9psg3sHxpjjcxta1zzxzqv4SVv9hKN/teQtr6vziQESY93x
-   ocVCjjdBnXe/2wAc5ZH/A3d6NL7NMfvomMNxKBTDQRsxuo2Rmcoo+FQEb
-   +LvfWvRAQEpJx06dtd6Ybja0MHxya11qMgJVWYCrAKGCFCwt7Wjj621Q6
-   A==;
-X-CSE-ConnectionGUID: LqHwmDczTx+LWJ7IFhfMbQ==
-X-CSE-MsgGUID: JEMrvSLQSkqGmrBP5JAmmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="31416192"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="31416192"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:41:08 -0700
-X-CSE-ConnectionGUID: xnWMy0feS82fNJIl+FCjBw==
-X-CSE-MsgGUID: OaH24dpNSFmCPYM51NjsrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="128502379"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.201])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:41:05 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Yue Haibing
- <yuehaibing@huawei.com>, rodrigo.vivi@intel.com,
- joonas.lahtinen@linux.intel.com, tursulin@ursulin.net, airlied@gmail.com,
- simona@ffwll.ch, dev@lankhorst.se
-Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] drm/i915/display: Fix build error without
- DRM_FBDEV_EMULATION
-In-Reply-To: <12145722-609e-41d0-b02b-059df5b6d17f@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250315120143.2344958-1-yuehaibing@huawei.com>
- <12145722-609e-41d0-b02b-059df5b6d17f@suse.de>
-Date: Fri, 21 Mar 2025 14:41:02 +0200
-Message-ID: <87y0wyblpd.fsf@intel.com>
+	s=arc-20240116; t=1742560893; c=relaxed/simple;
+	bh=kYV2tU5W6W7PRa7BY6P3Gb2pA6tdcRdBC8mO2lgEAHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UF8eX0Np5Gtj+4xiVvrL2bwHEBB7JcApUXNzx9JCRYkwXAr2KFjsOBKvQorfeydNv7Xn/iAn+854SZODsfxLHzFc7E9EjK6XoZ075ybrT8aRbkapKtBHa09zKo8IC39HjbBitSKKQ0uZt/r+c2yh0aQd/WT0yYGyNK4OUYqqQzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=coaOL9u/; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2DD293FCCB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742560888;
+	bh=w5dmGg1Zenb5iMErOVl6vrTRYdAblyeideLHWERDpFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=coaOL9u/71t2eFlhch0JwJyJ1GmT0wRmBxLGLHLgWGmuMt03vGVtefgeq6NcpVAMZ
+	 EIC6piqSb12Uta4JbrxJcPRqVHgkW6J95j4fBee1pyNCi6ktDGh5DKj602lD/VBC5d
+	 i02Puap4kjruAjWQD97LTnYwe0YvmRHs/ryOiWEoFUR9II6TwdQMMhbrqZ+i6tS1oD
+	 pEm2bSVhs/0OFjFhoZlrm9ubWVMCvT24T+1Ct5oRKJi/b7faJ366AI26P90o8Y++oL
+	 +QdXHmdPZSf5wAzKHdVzCeoSXvC6A0vcmoHfY9RLq/obRByEFpHsQKZ+gXHcqrrjai
+	 K2if0ChJaQTGg==
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22647ff3cf5so26315325ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:41:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742560886; x=1743165686;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w5dmGg1Zenb5iMErOVl6vrTRYdAblyeideLHWERDpFM=;
+        b=R1QNejuFTcHQm57SrQHa8akyk2ZtFUZ3W+dJt+Lsoi1n78fwfnGb/hsHngvUmSRpyT
+         P0ZZHIkkxx4NLBQ8aiethzplGi0iF9DvVNnvGViR34iLpTKH+c+qSGq+T1GSQbfi/Yfw
+         fta01iGirfHvUinAE5zrAJredvjpzXV7akyND2ORbxt4mjXto0uPORc7z7E/1NS8RqNM
+         codKkVPKAKzdw5JiUJPJuddNkmwNtMA3zm/QEqGBcx8YgKLMwDd1PSELsScpbadG3c3W
+         9uGDl6qt2s/lerys4f/BdOk6KjkjpqWE1Zxk5c1ihWrB16bmA97yQSmtLA6oOEtOoxS4
+         /qmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBs5R3q6lfvEuRCGfJs1c3PWHIbDi2262cNFt4uB4OyWR2l1QT7j8o/9Gwefsb0Z5fnQzmpHkNjHb+46Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnv+DecezTJE94nc7fki74E2wF2lG/hIJjzzYV+OBvviOLgaIk
+	V4fMuYRpC0qQ5+VOKSvtcoeEqFH6Z5gO3JnTk436VrM14hLb2jtdYKEGrm8v3JqACcMi6Iak7tZ
+	GDwxaaXGdCBbFUBuKhYOBtSEaodOfzwjGG/lHX5Qd3ed4Wc8hGH+L+DDVfvb4fP0xkW9cmRvkSl
+	zs7A==
+X-Gm-Gg: ASbGnct+kFFb/CWLi+NyDd1o4F8dbce0HFuV2Aamqkmze8LYsGneYT2cfYxyO4UPjzg
+	CZAj9fO8MvoL/M9AL5zXhdRXV6GN1OBV7U38UTlYiNihfmvbLzvnWSu1qBFzanqRr1DcQhKJpqz
+	zgsUdvBlbkwTZVnNJQ79dngjzQop6YZc8YYK6ByxcxMy6sY8FpX3z6gplbcE75agRF4FwoIQQ4t
+	dHvez2M9sOA7bWZ/1w7ZgKqjI6DycIttSgg7FR+B4QtA4STtVoFG5s36xpm+NwLDLLYY0EmkfuG
+	yLDxzvHcyKDjVWH9cw==
+X-Received: by 2002:a17:902:ccc3:b0:223:3396:15e8 with SMTP id d9443c01a7336-22780d9b9d4mr56470725ad.22.1742560886563;
+        Fri, 21 Mar 2025 05:41:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGptLOm8T0h+3/usNzsqJQv/3kloJ7tcIjHNHv1LCT314QI7cJQSD9ZqqoAAnmCXXt+Kbwy3w==
+X-Received: by 2002:a17:902:ccc3:b0:223:3396:15e8 with SMTP id d9443c01a7336-22780d9b9d4mr56470305ad.22.1742560886100;
+        Fri, 21 Mar 2025 05:41:26 -0700 (PDT)
+Received: from localhost ([240f:74:7be:1:2dba:1af7:27b6:24fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3b520sm15391125ad.6.2025.03.21.05.41.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 05:41:25 -0700 (PDT)
+Date: Fri, 21 Mar 2025 21:41:24 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/9] gpio: aggregator: add aggr_alloc()/aggr_free()
+Message-ID: <t4lng24vhim7pid6c5gafdk3mawnvcit36hqsa64qoe2gozdz3@jcjsh5b7c3bx>
+References: <20250315164123.1855142-1-koichiro.den@canonical.com>
+ <20250315164123.1855142-4-koichiro.den@canonical.com>
+ <CAMRc=Md8nB1U--qcZxpcKVzxTcON2hi-pmsUKFn+aBEqHuBzcQ@mail.gmail.com>
+ <llbybv6dpkfrtir75dveqnphrj6nuephvkoyywy6tx6vfbunl2@ft5io3thby6v>
+ <CAMRc=Mcng+jW2WrAREOf-GC1mCbGEyAiMP_Ms9B3BzXnCoFGFQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,59 +99,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mcng+jW2WrAREOf-GC1mCbGEyAiMP_Ms9B3BzXnCoFGFQ@mail.gmail.com>
 
-On Mon, 17 Mar 2025, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> Am 15.03.25 um 13:01 schrieb Yue Haibing:
->> In file included from <command-line>:
->> ./drivers/gpu/drm/i915/display/intel_fbdev.h: In function =E2=80=98intel=
-_fbdev_framebuffer=E2=80=99:
->> ./drivers/gpu/drm/i915/display/intel_fbdev.h:32:16: error: =E2=80=98NULL=
-=E2=80=99 undeclared (first use in this function)
->>     32 |         return NULL;
->>        |                ^~~~
->> ./drivers/gpu/drm/i915/display/intel_fbdev.h:1:1: note: =E2=80=98NULL=E2=
-=80=99 is defined in header =E2=80=98<stddef.h>=E2=80=99; did you forget to=
- =E2=80=98#include <stddef.h>=E2=80=99?
->>    +++ |+#include <stddef.h>
->>      1 | /* SPDX-License-Identifier: MIT */
->> ./drivers/gpu/drm/i915/display/intel_fbdev.h:32:16: note: each undeclare=
-d identifier is reported only once for each function it appears in
->>     32 |         return NULL;
->>        |                ^~~~
->>
->> Build fails if CONFIG_DRM_FBDEV_EMULATION is n, add missing header file.
->>
->> Fixes: 9fa154f40eb6 ("drm/{i915,xe}: Run DRM default client setup")
->> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
->
-> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+On Fri, Mar 21, 2025 at 10:32:33AM GMT, Bartosz Golaszewski wrote:
+> On Fri, Mar 21, 2025 at 3:37 AM Koichiro Den <koichiro.den@canonical.com> wrote:
+> >
+> > On Thu, Mar 20, 2025 at 04:51:04PM GMT, Bartosz Golaszewski wrote:
+> > > On Sat, Mar 15, 2025 at 5:41 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> > > >
+> > > > Prepare for the upcoming configfs interface. These functions will be
+> > > > used by both the existing sysfs interface and the new configfs
+> > > > interface, reducing code duplication.
+> > > >
+> > > > No functional change.
+> > > >
+> > > > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > > > ---
+> > > >
+> > > > +static int aggr_alloc(struct gpio_aggregator **aggr, size_t arg_size)
+> > > > +{
+> > > > +       struct gpio_aggregator *new __free(kfree) = NULL;
+> > > > +       int ret;
+> > > > +
+> > > > +       new = kzalloc(sizeof(*new) + arg_size, GFP_KERNEL);
+> > >
+> > > Please prefer declaring the auto variable and initializing it at the
+> > > same time. Should be:
+> > >
+> > > struct gpio_aggregator *new __free(kfree) = kzalloc(...);
+> >
+> > Thanks for the review. Should I send v7 for this change?
+> >
+> 
+> You should send one anyway once v6.15-rc1 is tagged.
 
-Merged to drm-intel-next, thanks for the patch and ack.
+Alright. Please let me confirm:
+- After gpio-updates-for-v6.15-rc1, will something like
+  gpio-updates-for-v6.15-rc2 follow?
+- If yes, after v6.15-rc1 is tagged, I'll _quickly_ send v7 rebased onto
+  gpio-updates-for-v6.15-rc1, right?
 
-BR,
-Jani.
+Thanks,
 
->
->> ---
->>   drivers/gpu/drm/i915/display/intel_fbdev.h | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.h b/drivers/gpu/dr=
-m/i915/display/intel_fbdev.h
->> index ca2c8c438f02..89bad3a2b01a 100644
->> --- a/drivers/gpu/drm/i915/display/intel_fbdev.h
->> +++ b/drivers/gpu/drm/i915/display/intel_fbdev.h
->> @@ -6,6 +6,8 @@
->>   #ifndef __INTEL_FBDEV_H__
->>   #define __INTEL_FBDEV_H__
->>=20=20=20
->> +#include <linux/types.h>
->> +
->>   struct drm_fb_helper;
->>   struct drm_fb_helper_surface_size;
->>   struct drm_i915_private;
+Koichiro
 
---=20
-Jani Nikula, Intel
+> 
+> Bartosz
 
