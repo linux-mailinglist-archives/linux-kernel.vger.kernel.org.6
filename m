@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-572043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549DAA6C5C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:18:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F76A6C5CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994861B62426
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C656B3B6A23
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099E42356A4;
-	Fri, 21 Mar 2025 22:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECCF23496B;
+	Fri, 21 Mar 2025 22:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yGwrJnrw"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k9QaZ2IE"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3C8233722
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 22:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0793123313E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 22:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742595330; cv=none; b=haqzuFk+SWrsvqjABZh2h7pPzCjnXW9t93Y6NQKRjQRqK2LBgdxPxJTWEj2Cs/Q0mgm+1TDmwgh6yI3jtpXaqgCXDlVuScqk1odWv12FepvWVr08A32p9Zv8VW5rCKrHWerKv34wD30fL6KkiEEavUJkGZ5NMg8an5i/Hkfv8/o=
+	t=1742595372; cv=none; b=dWgmhwPKwdgX1d2aqdVpmUZqR6qI1ZKaKYRLUhaei6ujKl12Qes0pafQUMs9N2ymbARSDhMDTyuU+MwkWXj/0e6ocjtawOSc6xeOsediOTRLoLexRZ1Uf0ij/XONYaZqc2Ytdq2ozWDQfHUXBA+j4+ET4JeIUvFhiFLOWNYsqpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742595330; c=relaxed/simple;
-	bh=BCN5JQqGHPfZWzsKH88CAQez5y3gRKn+dXSiBfdgsw0=;
+	s=arc-20240116; t=1742595372; c=relaxed/simple;
+	bh=xTN8uHl1SeuIX+6Go9vzBRBl5rKlx9/gkpF9UMsFCuE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8nWP/pnvLj4fnc0+F0GTWbCYTu2AguMZzX7gi/2rTx9zleavP24X7YJQs7jFBi7DuSqzDo7J5h5jTIiuJvbuMLbP4eaW5gINRyiUnY1WBOyU98d6ZXQ1cX29kpVg9Dr/6BQaCEhjiSfnpUh4o22v3oPoKkRKfecQqP4ecYGyC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yGwrJnrw; arc=none smtp.client-ip=209.85.214.177
+	 To:Cc:Content-Type; b=UMkmKFCNwsCmosfMwl5uJxsVKHmdPi0O9fY1R+3te92J1+gwQ5YHIJ+EwSR/6WraWjslEf5NPHW7sAdihOmMDooXCptaIKKS7TR+1KEEtofoYyI7p0Tg5FKdwEvbnCh88+hL63VUp+nqpHUjoAKwZSwhWY/YMAsGwutVUylvyQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k9QaZ2IE; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2264c9d0295so67905ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:15:28 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2242ac37caeso27255ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:16:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742595328; x=1743200128; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742595370; x=1743200170; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hz7SI+MRITJdDDcuu+iapQr7TxDqFp3vr+TXoSWWGCE=;
-        b=yGwrJnrws2TIW3WCiFSxSiW6Pn6RwuwNoYEqwQcBBG7kAkt4qFmivjkPzEJH4wleZX
-         ByZdWBJw30nvL0XpIOT0XM7P52U6W286S2YiIQX/PvQcvcu3XcNZIGbQx3Bkb55iTHX3
-         MQbnzR9JR6Shu6TQTJmhoRbby1Z8QLNUQg0tGT2Zz3qIfyIt899AEde6OkJJ1Q081c2B
-         hl1vHRnjZV57Qy9/yQFUdMDKD8/QqJw7+NHfOgI0ly/jeQ9uOs8j2dBqDk64N9Fs/SHe
-         +6Z5NgcgvfZ9Qq4Rbad/h1qAETS9vCDuvE4t8x0kDJu6cnn/Io3SBNFIV/VOBWThm52z
-         1JIA==
+        bh=+KM/OqzMgVHyAstUImFrYrGve1V5xobanjZKdFyJS9w=;
+        b=k9QaZ2IEHPEZY5y/aOSkfFUXsm0QLdx4ngo8Rd2qKM0/vjWIZFwDp3J+bMRNrGnqqQ
+         wYtDm1aPW9NkgxH3Gc/mYv08vEL7Sb/b+qnMdDcjIbhqsNyusfcqeKVZZj3nL2Q4k36/
+         fKntHDbZ6AXjF/t2TK6rSCiXwsGTXkBjUfR+MZ1uUZ9PVNFoJciPgX4iDSwFjHKfz+5g
+         QGLmRR4bPTUQhJdoz1oBNpYbJ50bNNAEYjKOQhTS+d6dppdPZOIXY0j8HTGW2poytBt9
+         Bt7/NL7iwcBZXVoXnx65s1OikkdWCbbFGYmYPXy5atrYI5l/ohbF59EXL595VDcf75Ym
+         KdSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742595328; x=1743200128;
+        d=1e100.net; s=20230601; t=1742595370; x=1743200170;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hz7SI+MRITJdDDcuu+iapQr7TxDqFp3vr+TXoSWWGCE=;
-        b=ViTJug0LZrqb5wSPVh+PJFjDoijlG7qWI4iHf8NMzKEGNQDe44Cdm4Zp+O+xGqdXSu
-         lQaLUrRFzLI4WA7R+qlouBEmN07LKfFiiPzlLEuP9D/w2wq5V0RP+Hj/cjWnvziCntUx
-         u440oUg8erLowUy+xMbgydoc9p2rVfYWB0zXHbT0VOn49LqWQ0a1w5xhURacToqvvKmY
-         g56I5fTrgPlQEFe3MKYsx3UAAH2302TEo2f/5WeV0SvLVDdG+WWWZ/Vkj7uSwdG5b3et
-         a5oMaIu7PN6qSy/e0TqEX5ITbssleATJkpIOHKtf2PoqC1G0SGo7mr/hGSn2tdXy3MO5
-         Gh1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW+k+cKcGP9JzjnWukStS8GMwNFI0X91KBcWHDCiPvfw8TBMkNnXIluD6405Czz8TOgWNZPbqA4zlSK46A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHXfzQFisSOjZ68D+rq2UJ3k5qjuTIn3SNLR+vt9MpXP/OOqq6
-	+pP6T+A9zoPyUJF9l9qReggFx3YFLLHsuLx/u1Pk2QSddeo65ODNAZySVhV3GMSnQYahI92KoQb
-	pqP/YATwEFk1gua5z9miwY1YopPOINmqSPIeG
-X-Gm-Gg: ASbGncvpPen+HWuTDEgLNIVxVjhnOXsMDEl8zeck/84VQt+LmHeiMxR41nf92pIAmwn
-	vzbwMJlw43Dt7H9HvewdUS/7Ld2HJK4gRbMHL9U5bD7cg24Clcz6XlujE4JxAMiyvwWR1vdaEP9
-	U204UBc/O9Q2XbYfKrEn1bf94yC0ptxRIpDaNh2B5RCKf3g9B9ZLwfjeA=
-X-Google-Smtp-Source: AGHT+IGBoa3JmICUjXYWbIuZG1QnxGwt2v2Pxt/ddhpOPWc2le0JOM4R9EEoSgO2H5EsypXp8nLSfXGBeIbvxdvRzAY=
-X-Received: by 2002:a17:902:d4cf:b0:215:f0c6:4dbf with SMTP id
- d9443c01a7336-227982bd0e7mr778235ad.14.1742595327611; Fri, 21 Mar 2025
- 15:15:27 -0700 (PDT)
+        bh=+KM/OqzMgVHyAstUImFrYrGve1V5xobanjZKdFyJS9w=;
+        b=NKrYt90j269FJTsxUKs86h58SV12371KLT7/kwIech2U7vkatYPVf+wgpEWeY7B7QF
+         brQa0+sqiFSWL8nOKok515VTc98lC/oNWKhGVv9jaQ4XZ5qq3CUn6MEA9/62G5RwBGns
+         dgWLNOHOI/Z4gyPvFcgTe2FoD4FwnNNVgVybTT9u7oNMmFw4BPt8F++tMPeUmI0v/0M/
+         74aCr0yN9YOTphjq63nAMEF9SGv5wR+iial5YratE6GbXahOAk57gf03XQzzgTu/e1Je
+         fyrY9FUXb8SiZEA9RmuNKkMR83s3rCLvWkyvtFqWIfKy6Us/BFZzi8gzSSiTja0lGjbh
+         R+nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUb4fnBPCfa4wmzkf7kVsBpyz0EL+ZkPn1DvI+hH8WrC5H7e1jt/Rld8wE6rkizlqDgb95Qd91Z/6+xzm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmNzGcwTSfN1Bcz5xI8xmSg6fnQloJH0awN0sXJNJgtMhoK/XJ
+	p6PQqTWnwsDHWJ6g0ieUQO6Nb79vjmAsZki/b0h2cvGg8bn1Wxoq6c7n3poy/mpAR5XnGuXBEBc
+	oLFUiKvbSviXfJfny6K51P8rEr8MKrLJVWfDX
+X-Gm-Gg: ASbGncsQSWTdg27YeOY5/dxD+Ny4ZtilnKa18HJARa0FssVCq4r3VvXHI024AYhVkFo
+	GTBiHgXy/mpLXIrGtBU9fSlfXMKwFASmoXgJgOz3oVdu1lEaN8CufvDTHYCKiD5Qvy99bT+kJQr
+	+3rmf3fvFp/XeSKarSZs7F2nuAoiO5HA1SBhG27/V2vgx+LXwAeMCEitI=
+X-Google-Smtp-Source: AGHT+IFB6PSWq8585YC3bfe4eP32Yir6EYNkFzXJi8bOkq8iwWtXfNlhA5baw0lPh6UvS7ldsM4iZisORLPef1bKOlA=
+X-Received: by 2002:a17:903:19e4:b0:215:86bf:7e46 with SMTP id
+ d9443c01a7336-22799f6adb8mr317095ad.7.1742595369962; Fri, 21 Mar 2025
+ 15:16:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,93 +74,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250308214045.1160445-1-almasrymina@google.com>
- <20250308214045.1160445-5-almasrymina@google.com> <5de5943b-5527-49f6-a454-b3c7358cff56@redhat.com>
-In-Reply-To: <5de5943b-5527-49f6-a454-b3c7358cff56@redhat.com>
+ <20250308214045.1160445-4-almasrymina@google.com> <8fb48d36-f5ce-40ce-bb05-b4c342da8b4f@redhat.com>
+In-Reply-To: <8fb48d36-f5ce-40ce-bb05-b4c342da8b4f@redhat.com>
 From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 21 Mar 2025 15:15:14 -0700
-X-Gm-Features: AQ5f1Jp_bSaJYceldtfK0dIdQEXx63Idm2vF7CtmSVJ_E1ycJl8iObtXRhrS3vg
-Message-ID: <CAHS8izNfyfVhMj0wBvP0qa=7E4xL+eo9wn_Fi4o2PT8piwACWA@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 4/9] net: devmem: Implement TX path
+Date: Fri, 21 Mar 2025 15:15:57 -0700
+X-Gm-Features: AQ5f1JqTqeE1hEQJimNEPqykmM1XOpBm4kOaF6t5YahF7_VNclL_518XjsZaXEs
+Message-ID: <CAHS8izNu6biiVg==pri8PeDVP9unZthGrwSj4fGr84o61sLFgg@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 3/9] net: devmem: TCP tx netlink api
 To: Paolo Abeni <pabeni@redhat.com>
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
 	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Willem de Bruijn <willemb@google.com>, 
-	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
 	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
 	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
 	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 1:53=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
+On Tue, Mar 18, 2025 at 1:39=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
 te:
 >
-> Adding Kuniyuki.
->
 > On 3/8/25 10:40 PM, Mina Almasry wrote:
-> > @@ -931,10 +932,67 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, s=
-truct genl_info *info)
+> > From: Stanislav Fomichev <sdf@fomichev.me>
+> >
+> > Add bind-tx netlink call to attach dmabuf for TX; queue is not
+> > required, only ifindex and dmabuf fd for attachment.
+> >
+> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> >
+> > ---
+> >
+> > v3:
+> > - Fix ynl-regen.sh error (Simon).
+> >
+> > ---
+> >  Documentation/netlink/specs/netdev.yaml | 12 ++++++++++++
+> >  include/uapi/linux/netdev.h             |  1 +
+> >  net/core/netdev-genl-gen.c              | 13 +++++++++++++
+> >  net/core/netdev-genl-gen.h              |  1 +
+> >  net/core/netdev-genl.c                  |  6 ++++++
+> >  tools/include/uapi/linux/netdev.h       |  1 +
+> >  6 files changed, 34 insertions(+)
+> >
+> > diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/ne=
+tlink/specs/netdev.yaml
+> > index 36f1152bfac3..e560b05eb528 100644
+> > --- a/Documentation/netlink/specs/netdev.yaml
+> > +++ b/Documentation/netlink/specs/netdev.yaml
+> > @@ -743,6 +743,18 @@ operations:
+> >              - defer-hard-irqs
+> >              - gro-flush-timeout
+> >              - irq-suspend-timeout
+> > +    -
+> > +      name: bind-tx
+> > +      doc: Bind dmabuf to netdev for TX
+> > +      attribute-set: dmabuf
+> > +      do:
+> > +        request:
+> > +          attributes:
+> > +            - ifindex
+> > +            - fd
+> > +        reply:
+> > +          attributes:
+> > +            - id
+> >
+> >  kernel-family:
+> >    headers: [ "linux/list.h"]
+> > diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
+> > index 7600bf62dbdf..7eb9571786b8 100644
+> > --- a/include/uapi/linux/netdev.h
+> > +++ b/include/uapi/linux/netdev.h
+> > @@ -219,6 +219,7 @@ enum {
+> >       NETDEV_CMD_QSTATS_GET,
+> >       NETDEV_CMD_BIND_RX,
+> >       NETDEV_CMD_NAPI_SET,
+> > +     NETDEV_CMD_BIND_TX,
+> >
+> >       __NETDEV_CMD_MAX,
+> >       NETDEV_CMD_MAX =3D (__NETDEV_CMD_MAX - 1)
+> > diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
+> > index 996ac6a449eb..f27608d6301c 100644
+> > --- a/net/core/netdev-genl-gen.c
+> > +++ b/net/core/netdev-genl-gen.c
+> > @@ -99,6 +99,12 @@ static const struct nla_policy netdev_napi_set_nl_po=
+licy[NETDEV_A_NAPI_IRQ_SUSPE
+> >       [NETDEV_A_NAPI_IRQ_SUSPEND_TIMEOUT] =3D { .type =3D NLA_UINT, },
+> >  };
+> >
+> > +/* NETDEV_CMD_BIND_TX - do */
+> > +static const struct nla_policy netdev_bind_tx_nl_policy[NETDEV_A_DMABU=
+F_FD + 1] =3D {
+> > +     [NETDEV_A_DMABUF_IFINDEX] =3D NLA_POLICY_MIN(NLA_U32, 1),
+> > +     [NETDEV_A_DMABUF_FD] =3D { .type =3D NLA_U32, },
+> > +};
+> > +
+> >  /* Ops table for netdev */
+> >  static const struct genl_split_ops netdev_nl_ops[] =3D {
+> >       {
+> > @@ -190,6 +196,13 @@ static const struct genl_split_ops netdev_nl_ops[]=
+ =3D {
+> >               .maxattr        =3D NETDEV_A_NAPI_IRQ_SUSPEND_TIMEOUT,
+> >               .flags          =3D GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
+> >       },
+> > +     {
+> > +             .cmd            =3D NETDEV_CMD_BIND_TX,
+> > +             .doit           =3D netdev_nl_bind_tx_doit,
+> > +             .policy         =3D netdev_bind_tx_nl_policy,
+> > +             .maxattr        =3D NETDEV_A_DMABUF_FD,
+> > +             .flags          =3D GENL_CMD_CAP_DO,
+> > +     },
+> >  };
+> >
+> >  static const struct genl_multicast_group netdev_nl_mcgrps[] =3D {
+> > diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
+> > index e09dd7539ff2..c1fed66e92b9 100644
+> > --- a/net/core/netdev-genl-gen.h
+> > +++ b/net/core/netdev-genl-gen.h
+> > @@ -34,6 +34,7 @@ int netdev_nl_qstats_get_dumpit(struct sk_buff *skb,
+> >                               struct netlink_callback *cb);
+> >  int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info=
+);
+> >  int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *inf=
+o);
+> > +int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info=
+);
+> >
+> >  enum {
+> >       NETDEV_NLGRP_MGMT,
+> > diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> > index 2b774183d31c..6e5f2de4d947 100644
+> > --- a/net/core/netdev-genl.c
+> > +++ b/net/core/netdev-genl.c
+> > @@ -931,6 +931,12 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, st=
+ruct genl_info *info)
 > >       return err;
 > >  }
 > >
-> > -/* stub */
-> >  int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info=
+> > +/* stub */
+> > +int netdev_nl_bind_tx_doit(struct sk_buff *skb, struct genl_info *info=
 )
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> >  void netdev_nl_sock_priv_init(struct list_head *priv)
 > >  {
-> > -     return 0;
-> > +     struct net_devmem_dmabuf_binding *binding;
-> > +     struct list_head *sock_binding_list;
-> > +     struct net_device *netdev;
-> > +     u32 ifindex, dmabuf_fd;
-> > +     struct sk_buff *rsp;
-> > +     int err =3D 0;
-> > +     void *hdr;
-> > +
-> > +     if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_DEV_IFINDEX) ||
-> > +         GENL_REQ_ATTR_CHECK(info, NETDEV_A_DMABUF_FD))
-> > +             return -EINVAL;
-> > +
-> > +     ifindex =3D nla_get_u32(info->attrs[NETDEV_A_DEV_IFINDEX]);
-> > +     dmabuf_fd =3D nla_get_u32(info->attrs[NETDEV_A_DMABUF_FD]);
-> > +
-> > +     sock_binding_list =3D genl_sk_priv_get(&netdev_nl_family,
-> > +                                          NETLINK_CB(skb).sk);
-> > +     if (IS_ERR(sock_binding_list))
-> > +             return PTR_ERR(sock_binding_list);
-> > +
-> > +     rsp =3D genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
-> > +     if (!rsp)
-> > +             return -ENOMEM;
-> > +
-> > +     hdr =3D genlmsg_iput(rsp, info);
-> > +     if (!hdr) {
-> > +             err =3D -EMSGSIZE;
-> > +             goto err_genlmsg_free;
-> > +     }
-> > +
-> > +     rtnl_lock();
+> >       INIT_LIST_HEAD(priv);
 >
-> The above could possibly be a rtnl_net_lock(), right?
+> I'm sorry, but this chunck does not apply cleanly anymore.
 >
-> (not strictily related to this series) The same for the existing
-> rtnl_lock() call in netdev-genl.c, right?
+> Please rebase.
+>
+> Disclaimer: unfortunately I must note that due to the long backlog
+> pending and the upcoming merge window, I'm unsure I'll be able to
+> process the next revision before the net-next closing.
 >
 
-Actually I think this can follow the example set in commit
-1d22d3060b9b ("net: drop rtnl_lock for queue_mgmt operations") and
-take the netdev_get_by_index_lock().
+Thanks Paolo. I have also been under the weather the last couple of
+days so I haven't even been able to repost. I guess I'll repost after
+the merge window if netdev closes today.
 
-
---=20
+--
 Thanks,
 Mina
 
