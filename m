@@ -1,153 +1,170 @@
-Return-Path: <linux-kernel+bounces-570614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA57A6B296
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:17:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C38FA6B29C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AAE0174D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F42A1897E20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B65D35948;
-	Fri, 21 Mar 2025 01:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529DB1ADC6D;
+	Fri, 21 Mar 2025 01:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="CF9LrEaW"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2H9hCxB"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912507E1;
-	Fri, 21 Mar 2025 01:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DEC1C69D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742519848; cv=none; b=OU1cz+Z9ckpnS3fEUZ+D6vPFpjMGVCVrKskr5zA4J+Mn0sZICVWhDVa3nSbUeMw5vqTun4CGLb3G7sIDRuiUUjUKqv4A4hoyct43p/ey9ouFHjL0DnBnlHwmnJaSA1TeVDgA+CK84fFFrPdiXXxpKfIZ67C5gdh0AUzyU+SGJQI=
+	t=1742520036; cv=none; b=tjX/sijwxHb6iE7bAH3Zp1kQfA2GrsAEkIUU8fi+BRVIwnfp2TYsv/TvBhf8viykFIY0aYGFlDmqxOdfkXFgGYfhgG0YQTD3Zv3iwj4Cop+MAvLIV9dY/efDnrZKHoi4ME2ZE+3VcTFzpqOSc2Es1txWdWCJ64AMjxCK7dd/L/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742519848; c=relaxed/simple;
-	bh=3gAbyuISuqa5pnBiQR//72WrRmt0RCFEDOdo2QdTYT0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j4BvSAol2oHR8YxcPnFbLH8eh/FJ35KOpp+d2mEGhsMpq+EjkTEwVVg0mNfzWcgLpTQujucDdEpL7J+zzvkri/UPt7rQUSa2h5EG83FCxXPvip9a9YYxt9AmyJJLdPueIiYQ9lHRKLfiyujhiiXqYODPyF619DjFUyof5B7fPaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=CF9LrEaW; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1742520036; c=relaxed/simple;
+	bh=d1equHrIwerth6ci4u5Gvux0j0YeejlVZrRFHJJu+zU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cIyAZUziyDn9TxVPr9Fs/Zzm63I0rGScDpNHX4qq1sy1l20hyp9GxQ6q/SN+OnYShwejxSr74NkPbAcHyyf+HvNypEdWmH50jJgf1620TQQ0P/IzExBA8lutxTVgR0+iprrbG+S+0NwndifLsVDNv82wlIWdqvbmNVjnbW2uXyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2H9hCxB; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so2667460a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 18:20:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1742519844;
-	bh=3gAbyuISuqa5pnBiQR//72WrRmt0RCFEDOdo2QdTYT0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=CF9LrEaW73SSkAvONjb7ZeJumWBWYxoLQjntgCqAddTkQMb+6W3Ef9L9xMutrChWF
-	 4M3NhEapu1XqbGp4r43Mk9FvfQZcYgdC0PQx74HpzalW6cP4ICJXXFqD8D0H4rsLb5
-	 3wGvehiN82krX48aekEAXVTTltdltypLJydQcmZhkqOAgdHJQHEipk0uZfE+jVVICP
-	 +r1i21k+oLgLe0VA+h4AvyC+LFRGYmJuZhRuMKbdnTwcr+uVt/eBFfERxq6f55lGN3
-	 aKAkmbSbRsBYhxkDscaApAlbXAzbJc2A/+BKBNtV9WsLTR8XUTESe8xIWW/RoiOVu+
-	 hq8h5S6RvwoFw==
-Received: from [192.168.68.112] (unknown [180.150.112.225])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5C53E7A886;
-	Fri, 21 Mar 2025 09:17:23 +0800 (AWST)
-Message-ID: <26a1d17c47c5ca6036dd58ac3b953daeec9f5ef8.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v5 05/10] ARM: dts: aspeed: catalina: Add second source
- fan controller support
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Potin Lai <potin.lai.pt@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	 <joel@jms.id.au>, Patrick Williams <patrick@stwcx.xyz>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, Cosmo Chou
-	 <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>
-Date: Fri, 21 Mar 2025 11:47:22 +1030
-In-Reply-To: <20250320-potin-catalina-dts-update-20250102-v5-5-e161be6583a7@gmail.com>
-References: 
-	<20250320-potin-catalina-dts-update-20250102-v5-0-e161be6583a7@gmail.com>
-	 <20250320-potin-catalina-dts-update-20250102-v5-5-e161be6583a7@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1742520032; x=1743124832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9HZK/FjsgxH8rgQz5UdjpktKxGwid5B9t/SURmUdS6A=;
+        b=U2H9hCxBql4SQTyGqfdLBz2mDveNJzgrB7OrHNKWwKCSZ1AF6HKJF3vViI8s1XR4cR
+         4i4RLds/KfC8iMcP6BO68C6OM3L9Ujzgc1YthR3/0EzXOhi0Aacw1KHLSFSfqP3qHGNV
+         aSKr1adWZGSi3FdOoTIqwf/RUk1ZRrWWg5InXKONPLjkoS79hOQ3DvX2XNpAna5b4i40
+         QY2/OGBw17LpdR4pH1OfUmXyHOY+iP+iWMkiLzqc7vN6Yfiq7KXk9vdqjwnpMU422fKU
+         rNbZYiPoQwFbBuSfQW7fUucb/gg6BuhOo8Ki4eo130aWlgyRHTUUzoCeorxdL0CG2vmv
+         e6yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742520032; x=1743124832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9HZK/FjsgxH8rgQz5UdjpktKxGwid5B9t/SURmUdS6A=;
+        b=uw3jv96Wkt6+FwV6iop6VtahUoEDEg8yYGod9aED5e9rLUlfyZmHj9dWnIRBIAqL/g
+         VaJNt/kA4QT+cJ1kHbWkfV4uGZ9V5/Am4lTrhd2qeJyRnHAi/aTqbZ5tNM+GQpdvujms
+         5GsJUO69uaUi/gaaI3xNZdphdyguNt2pfvjSvNUrE/UpKffASBNH5AxPULqjFjxn80Lx
+         DyHwO+1y0xQ9GIIYFDRAgK9epLJ+Q20QGiaCTIDHm7a3Jd9lFYiQNkIQ4JZTn6qG7vGB
+         6RcAyUkK1zk5LIVU7N4U9q/sD37mCxP2zt7gl2IC+odkVMXNCUzciw8hem/tS6RXcENU
+         SVyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWV8psQa4Mll/Hmo9Fp58f2ylxS186TOHafW+EI36KgF+ouNBdHD8UzWzdbi4PHlST1uIPiXFpRVS/P4MY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaStd7OMjI6dYGrVLgagd0xfWDWsWliaMrBtI2Y3GiJ+F6p/cT
+	hL23s8Taux6D4qW4oB8+CBE6pm7j6Y5uWGxlrKputCOzYCYajQFDLPQPnmg0oeb6BzVocAImHAE
+	QUYaMVzr/uispd0IUE3RKENqblk4=
+X-Gm-Gg: ASbGncsRPo1Qy2r3A1efX8EqlEv0YSD0LxskFNU/D2f1QyO4hFKgwsJxzOgfs+VaqxH
+	VUPe7YjuiZoyygQgmKdX/GOUgVV/IF3cFA0/jqUdE+B3nJub9mJO2QC5wE51c7WJaGKQuSwaIXj
+	SE0DpLgswGPBeBflfmfDlS6w4AADPwaBHDuf+oVwoG0iumKsdU6bNr/HxEwB4=
+X-Google-Smtp-Source: AGHT+IGIE1+moUJxAvVppTaWNdlItcrjKuGQPgygcTy+VdcsvgnoPSCeR+4j8NRkAklH93BWzVlDqMTDcRKMNKFlmI8=
+X-Received: by 2002:a05:6402:2793:b0:5e5:3c1b:c0ff with SMTP id
+ 4fb4d7f45d1cf-5ebcce07a08mr1613441a12.13.1742520031566; Thu, 20 Mar 2025
+ 18:20:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250315204852.1247992-1-CFSworks@gmail.com> <e1cdc3a39b9201cb115b12b559899aee@manjaro.org>
+In-Reply-To: <e1cdc3a39b9201cb115b12b559899aee@manjaro.org>
+From: Sam Edwards <cfsworks@gmail.com>
+Date: Thu, 20 Mar 2025 18:20:20 -0700
+X-Gm-Features: AQ5f1JrZ70w76EeL0x7DU0tc9VlG6Hcd3TPBcx3Yd7HL18hR7dxsfjuAIY08JdU
+Message-ID: <CAH5Ym4hqkMMBsT7XEz_f+TCng+0X2m0nV_Kdr-LAPBqgENgr5A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Allow Turing RK1 cooling fan to
+ spin down
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Daniel_Kukie=C5=82a?= <daniel@kukiela.pl>, 
+	Sven Rademakers <sven.rademakers@gmail.com>, Joshua Riek <jjriek@verizon.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgUG90aW4sCgpPbiBUaHUsIDIwMjUtMDMtMjAgYXQgMjM6MjEgKzA4MDAsIFBvdGluIExhaSB3
-cm90ZToKPiBBZGQgZGV2aWNlIHRyZWUgbm9kZXMgZm9yIHRoZSBOQ1Q3MzYzIGZhbiBjb250cm9s
-bGVycyBvbiB0aGUgc2Vjb25kLQo+IHNvdXJjZQo+IFBvd2VyIERpc3RyaWJ1dGlvbiBCb2FyZCAo
-UERCKS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBQb3RpbiBMYWkgPHBvdGluLmxhaS5wdEBnbWFpbC5j
-b20+Cj4gLS0tCj4gwqAuLi4vZHRzL2FzcGVlZC9hc3BlZWQtYm1jLWZhY2Vib29rLWNhdGFsaW5h
-LmR0c8KgwqDCoCB8IDc2Cj4gKysrKysrKysrKysrKysrKysrKysrKwo+IMKgMSBmaWxlIGNoYW5n
-ZWQsIDc2IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMv
-YXNwZWVkL2FzcGVlZC1ibWMtZmFjZWJvb2stCj4gY2F0YWxpbmEuZHRzIGIvYXJjaC9hcm0vYm9v
-dC9kdHMvYXNwZWVkL2FzcGVlZC1ibWMtZmFjZWJvb2stCj4gY2F0YWxpbmEuZHRzCj4gaW5kZXgg
-ZmQyMmFkZDkwNDQ5Li45Y2JiMjk2ZGNkOWUgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9k
-dHMvYXNwZWVkL2FzcGVlZC1ibWMtZmFjZWJvb2stY2F0YWxpbmEuZHRzCj4gKysrIGIvYXJjaC9h
-cm0vYm9vdC9kdHMvYXNwZWVkL2FzcGVlZC1ibWMtZmFjZWJvb2stY2F0YWxpbmEuZHRzCj4gQEAg
-LTQ2Nyw2ICs0NjcsODIgQEAgaTJjMW11eDBjaDI6IGkyY0AyIHsKPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAjc2l6ZS1jZWxscyA9IDwwPjsKPiDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWcgPSA8MHgyPjsK
-PiDCoAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaHdt
-b24wOiBod21vbkAxIHsKClRoZXJlIG1pZ2h0IGJlIGluc3RhbmNlcyBvZiBjYWxsaW5nIG5vZGVz
-IGFuZCBsYWJlbHMgJ2h3bW9uJyBpbiBvdGhlcgooQk1DKSBkZXZpY2V0cmVlcywgYnV0IEkgZG9u
-J3QgdGhpbmsgd2Ugc2hvdWxkIGNvbnRpbnVlIHRoYXQgcHJhY3RpY2UuCkkgdGhpbmsgaW4gdGhp
-cyBjYXNlIGl0IHNob3VsZCBiZSAnZmFuLWNvbnRyb2xsZXInLgoKaHdtb24gaXMgdGhlIG5hbWUg
-b2YgYSBrZXJuZWwgc3Vic3lzdGVtLCBub3QgYSBjbGFzcyBvZiBoYXJkd2FyZS4gVGhlCmRldmlj
-ZXRyZWVzIHNob3VsZCBkZXNjcmliZSB0aGUgaGFyZHdhcmUgKGFuZCBub3QgY29uY2VwdHMgZnJv
-bSB0aGUKa2VybmVsKS4KCgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNvbXBhdGlibGUgPSAibnV2b3RvbixuY3Q3MzYzIjsK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqByZWcgPSA8MHgwMT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgI3B3bS1jZWxscyA9IDwyPjsKPiArCj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgZmFuLTkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwd21zID0gPCZod21vbjAgMCA0MDAw
-MD47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRhY2gtY2ggPSAvYml0cy8gOCA8MHgwOT47Cj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgfTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqBmYW4tMTEgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwd21zID0g
-PCZod21vbjAgMCA0MDAwMD47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRhY2gtY2ggPSAvYml0
-cy8gOCA8MHgwYj47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBmYW4tMTAgewo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBwd21zID0gPCZod21vbjAgNCA0MDAwMD47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oHRhY2gtY2ggPSAvYml0cy8gOCA8MHgwYT47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBmYW4tMTMgewo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwd21zID0gPCZod21vbjAgNCA0MDAwMD47Cj4gK8KgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoHRhY2gtY2ggPSAvYml0cy8gOCA8MHgwZD47Cj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqBmYW4tMTUgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwd21zID0gPCZod21vbjAgNiA0
-MDAwMD47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRhY2gtY2ggPSAvYml0cy8gOCA8MHgwZj47
-Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgfTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBmYW4tMSB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHB3bXMg
-PSA8Jmh3bW9uMCA2IDQwMDAwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdGFjaC1jaCA9IC9i
-aXRzLyA4IDwweDAxPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZhbi0wIHsKPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgcHdtcyA9IDwmaHdtb24wIDEwIDQwMDAwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgdGFjaC1jaCA9IC9iaXRzLyA4IDwweDAwPjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZhbi0zIHsK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcHdtcyA9IDwmaHdtb24wIDEwIDQwMDAwPjsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgdGFjaC1jaCA9IC9iaXRzLyA4IDwweDAzPjsKPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGh3bW9uMTogaHdtb25A
-MiB7CgpBcyBhYm92ZS4KCkFuZHJldwo=
+On Thu, Mar 20, 2025 at 5:38=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
+rote:
+>
+> Hello Sam,
+>
+> On 2025-03-15 21:48, Sam Edwards wrote:
+> > The RK3588 thermal sensor driver only receives interrupts when a
+> > higher-temperature threshold is crossed; it cannot notify when the
+> > sensor cools back off. As a result, the driver must poll for
+> > temperature
+> > changes to detect when the conditions for a thermal trip are no longer
+> > met. However, it only does so if the DT enables polling.
+> >
+> > Before this patch, the RK1 DT did not enable polling, causing the fan
+> > to
+> > continue running at the speed corresponding to the highest temperature
+> > reached.
+> >
+> > Follow suit with similar RK3588 boards by setting a polling-delay of
+> > 1000ms, enabling the driver to detect when the sensor cools back off,
+> > allowing the fan speed to decrease as appropriate.
+> >
+> > Fixes: 7c8ec5e6b9d6 ("arm64: dts: rockchip: Enable automatic fan
+> > control on Turing RK1")
+> > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> > b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> > index 6bc46734cc14..0270bffce195 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+> > @@ -214,6 +214,8 @@ rgmii_phy: ethernet-phy@1 {
+> >  };
+> >
+> >  &package_thermal {
+> > +     polling-delay =3D <1000>;
+> > +
+> >       trips {
+> >               package_active1: trip-active1 {
+> >                       temperature =3D <45000>;
+>
+> Thanks for the patch, it's looking good to me, with some related
+> thoughts below.  Please, feel free to include:
+>
+> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+>
+> After a quick look at the RK3588 TRM Part 1, it seems possible
+> to actually generate additional interrupts when the TSADC channel
+> temperature readouts reach predefined low thresholds.  Moreover,
 
+Hi Dragan,
+
+Ooh, I see that now!
+
+It seems to be as simple as adding a `.set_cooloff_temp =3D ...` that
+writes the lower thresholds to TSADC_COMP#_LOW_INT and sets the
+necessary bits in TSADC_LT_EN+TSADC_LT_INT_EN. Since the driver
+already rescans all temperatures on any interrupt and acknowledges all
+interrupt status bits indiscriminately, I don't anticipate any other
+necessary changes.
+
+I can easily take care of that this weekend or next if that plan
+sounds good to you. However, since *this* patch is a Fixes:, I'd
+rather land it as-is first and handle the above separately. :)
+
+> avoiding the polling would actually help the SoC cool down a tiny
+> bit faster, which makes it worth detailed investigation in my book,
+> despite not being used by the downstream kernel code.
+
+Do you mean "spin down the fan a tiny bit faster" (since it would
+detect the cool-off without needing to poll for it), or are you
+emphasizing saving CPU cycles that would otherwise be spent polling?
+
+Thanks for the tip,
+Sam
 
