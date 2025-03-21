@@ -1,186 +1,115 @@
-Return-Path: <linux-kernel+bounces-571517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7D5A6BE46
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:23:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AADA6BE36
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B83C4189F2F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9782717772C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38A01DE4C4;
-	Fri, 21 Mar 2025 15:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4899A1F150E;
+	Fri, 21 Mar 2025 15:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Np7eJ2aT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gm1/g1x2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Np7eJ2aT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gm1/g1x2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jIXgKt0J"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7311D95A9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C54A1D86FF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742570358; cv=none; b=Xoss8qyNA5IZyQSfemntvt6y/t6IEhk7eQoWV3AIrkf68xJDUqrNzjMB8k/t+rPMyiQtC4CsN6yhnczOtbndwCL3NzMF5EmBhElvh/zB1r0x1eX0eve9e6KcOVDSq8w/Z1cprHYbn2ev45zr6mXOh1yd8Hz/wVXHVk99PhZ8IqI=
+	t=1742570411; cv=none; b=YPwQUi5+rnlTFkFOBk0Rb/aapn/NuFcjJRVv0eUqvQ90Hs3II4F+pheeGYzQrkOZGQmW8wcfzJWzuJW2Uq9jyvgbVB6Si5P1onuyL0myjeg7nKABMs7IyYkZhKKZm5WJJqcmTQZY15ilsV9FbTD0zN4/iMsXOMvLYls/Rb3Fc3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742570358; c=relaxed/simple;
-	bh=n2VJ9PmdBengREREYWfdPax2TQu01rEy8rzbVz/vnYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6dVOiIMQSdKazWxHdzHvRzRXBzYKU2keZ8yy/nGY0ExJFO7Yq4L4neEPVHIoKKo/ynN6813n4Pcdx+DLBS0Np9RXrLDWef9iCBNeGb/83PQ9TKgHH1XfIa1IQ4o3L+vUO2mv5SwopZiGXdvhczteMDcZH94i4C8092+BSzYBus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Np7eJ2aT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gm1/g1x2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Np7eJ2aT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gm1/g1x2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 87E0421C75;
-	Fri, 21 Mar 2025 15:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742570353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e8QHLGkiT1yWoOVvFUC84YvlHdbONjprG7kw5LGfqY=;
-	b=Np7eJ2aTU+Opw6OCXC+3IgECpkDvvqiE1uYaYVTHQufEt9Cel2ZrhjfOszi7lxKi8jqBZW
-	GQIWxV2PlIBGjpcXbW0W4H0AqYXQr0aHZRannqYbH63cmg/RV9z0YVKwF30o4JNDdwRLSi
-	sKwPgCCt/yOSEI59NN0dir4SHsOx0i8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742570353;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e8QHLGkiT1yWoOVvFUC84YvlHdbONjprG7kw5LGfqY=;
-	b=gm1/g1x2gZ6KpSHZwGnR+8pkL5DS4aymaox/xd2YM0ylT/qXAztBxiDp6X8UOTYRVPl4ED
-	5KEEdRZFKwwbYoDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742570353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e8QHLGkiT1yWoOVvFUC84YvlHdbONjprG7kw5LGfqY=;
-	b=Np7eJ2aTU+Opw6OCXC+3IgECpkDvvqiE1uYaYVTHQufEt9Cel2ZrhjfOszi7lxKi8jqBZW
-	GQIWxV2PlIBGjpcXbW0W4H0AqYXQr0aHZRannqYbH63cmg/RV9z0YVKwF30o4JNDdwRLSi
-	sKwPgCCt/yOSEI59NN0dir4SHsOx0i8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742570353;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e8QHLGkiT1yWoOVvFUC84YvlHdbONjprG7kw5LGfqY=;
-	b=gm1/g1x2gZ6KpSHZwGnR+8pkL5DS4aymaox/xd2YM0ylT/qXAztBxiDp6X8UOTYRVPl4ED
-	5KEEdRZFKwwbYoDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6FEA2139AA;
-	Fri, 21 Mar 2025 15:19:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yeT0GnGD3WfTEgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 21 Mar 2025 15:19:13 +0000
-Message-ID: <809792d8-8717-41d9-8dd8-ca91a5b54a28@suse.cz>
-Date: Fri, 21 Mar 2025 16:19:13 +0100
+	s=arc-20240116; t=1742570411; c=relaxed/simple;
+	bh=h7wMk5xJQiuYRTA9seubj2JOoaZer7gZ3AkwQXbkLMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIa7usGNauTW2AElCdHMEJohaYR8XMr/wEKmpVjvfcPiIYfEvMSQGBsAJr8ddKbqcCdCvzrKdijXj93ktELq6/fZ7ER9iPxwXwrJdJxcR4HUVQm7v9jJTMr7K6LHOShI0X1CYExMiGcHnmjiGHgy9Cw6EeqNaPWYUVFlWPEBLPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jIXgKt0J; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=3atS
+	F2HRKp41o0+hEpGEldmL+PiVf8SnjXURcUIuoTE=; b=jIXgKt0JmHGErQJ8py1L
+	ZYE5yN+hZXqPnFUFQ73zOjeF6Ujl5kB/qW/2PsLR5qHrRxJg+nKSrt6MC/IgLKd9
+	vVCYFBPFhlNi9YGe+gpMbOrvIqaIA3bRvSlNevibjkQkUA6Wf2OTDtkTNyd0NpGl
+	qni0LCTPtyfpEg2IyjCIWFlSTFCPmc7YoGfazuV8uRuntVTQs0Z27IWhFVJnZjTX
+	87Ez1M393iractUxgd0m06rdqenboRiwt3iU3AmZUNUagjQjl4DLp4iEPaMN7l8Z
+	Bx0ensziTSvUUoQ9M9Qd9dw0kCt1QunuaIbztxqNe0I5Jzo/mzYm9dYLE8wBUikf
+	GQ==
+Received: (qmail 1291536 invoked from network); 21 Mar 2025 16:19:57 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Mar 2025 16:19:57 +0100
+X-UD-Smtp-Session: l3s3148p1@qn2Mydsw+skgAwDPXyTHAJp038nK7dx+
+Date: Fri, 21 Mar 2025 16:19:57 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: i2c-host-fixes for v6.14-rc8
+Message-ID: <Z92DnVAtOzHIfCHl@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <pe5su4wqtac6oo7deqkuzihrm6oorqsonhksb2lshujaocyimk@ed3kwddo7ci6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm/debug: Fix parameter passed to
- page_mapcount_is_type()
-Content-Language: en-US
-To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- willy@infradead.org, david@redhat.com, linmiaohe@huawei.com,
- gehao@kylinos.cn, shan.gavin@gmail.com
-References: <20250321120222.1456770-1-gshan@redhat.com>
- <20250321120222.1456770-3-gshan@redhat.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250321120222.1456770-3-gshan@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,linux-foundation.org,infradead.org,redhat.com,huawei.com,kylinos.cn,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EubtGhyDD0WiEUXj"
+Content-Disposition: inline
+In-Reply-To: <pe5su4wqtac6oo7deqkuzihrm6oorqsonhksb2lshujaocyimk@ed3kwddo7ci6>
 
-On 3/21/25 13:02, Gavin Shan wrote:
-> As the comments of page_mapcount_is_type() indicate, the parameter
-> passed to the function should be one more than page->_mapcount.
-> However, page->_mapcount is passed to the function by commit 4ffca5a96678
-> ("mm: support only one page_type per page") where page_type_has_type()
-> is replaced by page_mapcount_is_type(), but the parameter isn't adjusted.
-> 
-> Fix the parameter for page_mapcount_is_type() to be (page->__mapcount
-> + 1). Note that the issue doesn't cause any visible impacts due to the
-> safety gap introduced by PGTY_mapcount_underflow limit.
-> 
-> Fixes: 4ffca5a96678 ("mm: support only one page_type per page")
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+--EubtGhyDD0WiEUXj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  mm/debug.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/debug.c b/mm/debug.c
-> index 8d2acf432385..b6bd9555ec7b 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -71,10 +71,10 @@ static void __dump_folio(struct folio *folio, struct page *page,
->  		unsigned long pfn, unsigned long idx)
->  {
->  	struct address_space *mapping = folio_mapping(folio);
-> -	int mapcount = atomic_read(&page->_mapcount);
-> +	int mapcount = atomic_read(&page->_mapcount) + 1;
->  	char *type = "";
->  
-> -	mapcount = page_mapcount_is_type(mapcount) ? 0 : mapcount + 1;
-> +	mapcount = page_mapcount_is_type(mapcount) ? 0 : mapcount;
 
-At this point it would be perhaps more obvious:
+> The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1a=
+e1:
+>=20
+>   Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
+/i2c-host-fixes-6.14-rc8
+>=20
+> for you to fetch changes up to 6ea39cc388899a121b5b19b6968692e9460ee4a3:
+>=20
+>   i2c: amd-mp2: drop free_irq() of devm_request_irq() allocated irq (2025=
+-03-20 14:37:47 +0100)
 
-if (page_mapcount_is_type(mapcount))
-	mapcount = 0;
+Thanks, pulled!
 
-But doesn't matter much.
 
->  	pr_warn("page: refcount:%d mapcount:%d mapping:%p index:%#lx pfn:%#lx\n",
->  			folio_ref_count(folio), mapcount, mapping,
->  			folio->index + idx, pfn);
+--EubtGhyDD0WiEUXj
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfdg5cACgkQFA3kzBSg
+KbYvxhAAinX0xI1moOF+NzL9FY9UOQ/2sw7ZPnwFEXHoKoF5ESZ0HACxuM2L6XaL
+IpijeLUnXfNA+UAtqsn3gaH/fzQlcYCY5ngXShRZTC1eNoRGAncHlM96SsRZfEjv
+CL+is/VdG8m9X18ZPCzu4dcyEgYXKG4gmM0m2b0fuNVtacZe6J7+6oVyvc/erx/i
+g+9RNPrtXvqfKNfgnvqi81KTH7d2clSoWvmjcGrGN05JBJ6rsdpQ5OUv+ND7nqPN
+QQMvi+MuoPiiox7Ev/WIWcQiCtkjjA3sbUJZp+7qAi25c/Bt90BvWEH3/71/EOSh
+MyaNtX/EUUdsGHx89Jlx3JpcoJL1SzMvmanPVC4GAApTLjFqJODBWesV/jiZruPA
+lWn/GPx4mWJVdAqdC8tmH02lyoXLgY85IfZiJFIryYLbwY2fG+GMVeyybr7jHHKp
+lyFTqbGL0MT8VR06JtaoYMZa+EmwthP+FwfgPoQiTfdmU81aIpqlJsdi3wfWlJcn
+ZNDQZr3eIBq1qTeJGyKFaQ/bjXm22Vy5ApUeQaJX6Ksnz37ej2ZbO6lkKN8P6z1S
+jrO9X+i4MU+5c+BVWl3w6ej2g2S8pYuGjF1BVWU0H5FGnz6Vnaoex8kGlOrIff3a
+ZQC9ueR18BWdyP8WJjHLiKINSe38zXnrhvGeVfFlZBQuwz/TP0Q=
+=PckO
+-----END PGP SIGNATURE-----
+
+--EubtGhyDD0WiEUXj--
 
