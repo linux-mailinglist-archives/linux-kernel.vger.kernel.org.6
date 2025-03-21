@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-570973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3B0A6B736
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:25:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC78A6B73C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B52483B2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:25:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3E5A7A3FBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B998C1F03F0;
-	Fri, 21 Mar 2025 09:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDC31F0E49;
+	Fri, 21 Mar 2025 09:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BkttSCfq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0nUmxzc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1191EEA39;
-	Fri, 21 Mar 2025 09:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129281EEA39;
+	Fri, 21 Mar 2025 09:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742549141; cv=none; b=oqdeKfHjYmZoG81u7vKEjwY8ZjtozAhfyOIv0/LezgMYarHlpxn41c3eLENOU1s5vO82bICMEOMx+tKAgpJZ/li8BKorLAnLfIxLQUwAxjIx0g4IKURJHp560OpFjrMzMvbSx7CeE/9cbsRT0YCMoiw0UXVFBEqC8jXOveNFRq8=
+	t=1742549238; cv=none; b=JtKJkhki80J0Yx3lWVnSqwvCLAm2stxOCSiLB2hNLBvbfs2RmfatQ4OZRQizxI6pXcRci4vdrEjcl46o7J6We5eNhatSgegDbPgz8pzjqxHN6MlE1pRJfnR5OZEm3GzFh5yqfU7MWmpO1FQG1wXUyX9ZQnYj0+tqUegwgNgK9Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742549141; c=relaxed/simple;
-	bh=xagWroqK2KjwExb/4QdLan+HJEEnc1v2heAo/kNeQMg=;
+	s=arc-20240116; t=1742549238; c=relaxed/simple;
+	bh=1lGvQzLP6e2ohzFJ3H7iK1moFYJuclsfqBmNbZxldy4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PsufLKGN5K8AhfYDhCvDh4Ttl4nGnVNiQqidZLuVjuS1F91fwU7s+7cnzcitEiI1+aHalpeYnF6d2Ina7lUxnSnut16L6mEE3JuZVXXgZB29BUOuWsm5vX+XRMR3M7oh9Wp6kA48qDpsISkcUWcx/2Zy4wVUi1iHiouExEd2osA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BkttSCfq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3B8C4CEE3;
-	Fri, 21 Mar 2025 09:25:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=t5H5EjIGdWBeAgQzSXRSpwHSMl/LLxQFWXquqTdMsy/YsZqbEUChn4HrDZqb80LAm4JiNV2KADsOXPfzTBTL7Ia0d/NJH8XytILLjB6vw9x5S53Op4yCLzIKy9HWOzYW7o1FY53Wf/jqpWHb0iWYdYws2lq/otOJg6DLSxKp8A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0nUmxzc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DA1C4CEE3;
+	Fri, 21 Mar 2025 09:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742549140;
-	bh=xagWroqK2KjwExb/4QdLan+HJEEnc1v2heAo/kNeQMg=;
+	s=k20201202; t=1742549236;
+	bh=1lGvQzLP6e2ohzFJ3H7iK1moFYJuclsfqBmNbZxldy4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BkttSCfq/1bl1fNVgyDlJAQugUKukCU1N6GtHzthSFYhlSZyDtdMf0mLZJSvrCBeK
-	 Fu3UUKhXbXKYeepJSBP+57AAHISAOekEZZFyrFVlL8xevY2oVQ/VGFKvjJD2tsUtvK
-	 v1UgI41RlZjuibPCSNX7yS3kPXZ+ScOgNPruhTJ/0IaXSNZMVi5lA3mfJP31nTwiC3
-	 O8m60Aag4/w0PAXoFCNATGS89MDxWSYXoQl4TgmcTOF4HdyFOFH9EfSFCqOwVnniSK
-	 nQQYGTBDe+hZp5U0in6gPO9VKCGDk6CldliWv1icZbXmubvasT025r1bBxek4M+OH5
-	 5q+CAjoxHuQEQ==
-Message-ID: <e21f3e39-573d-4391-885a-2df7c2598d80@kernel.org>
-Date: Fri, 21 Mar 2025 10:25:34 +0100
+	b=U0nUmxzcguxj8eoiR1V6qQahX9ftyAhDmWHJp89re8qSzrGnFca7q0flMvdYBfg/2
+	 R0MzaldYM1IedveCO/94nqKXY0oZxAw0aOyNuG9RGixA9EfDnTyLHvnf8gqnkB1CCt
+	 gvtWJEba97dHxe4wxHaL159jN7Bo1dFRoG79BgGba831shZHU6lOyY7pwS6a8O63Vl
+	 bHuNPBG04D6Q9yXq/7E5Jt8Hp3y/rFkRf9AfBakpVdY3ggWjZThJgwpP+6TwOGci3Y
+	 7O3KYTNx1qbG4N46QtnR9wZZp+phMfWq3dsaR+/Sy3ufvqoRVjxaqcc1LLeRb3Xu5V
+	 DfhFabINqtufg==
+Message-ID: <d9ac99e2-1933-420f-81e3-c3a2946b99fb@kernel.org>
+Date: Fri, 21 Mar 2025 10:27:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: amlogic: a4: fix dtb compilation warning
- issues
-To: xianwei.zhao@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250321-fix-a4-pinctrl-node-v1-1-5719f9f09932@amlogic.com>
+Subject: Re: [PATCH v2 2/5] mux: gpio: add optional regulator support
+To: srinivas.kandagatla@linaro.org, peda@axentia.se, broonie@kernel.org,
+ andersson@kernel.org, krzk+dt@kernel.org
+Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ johan+linaro@kernel.org
+References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
+ <20250320115633.4248-3-srinivas.kandagatla@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,55 +106,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250321-fix-a4-pinctrl-node-v1-1-5719f9f09932@amlogic.com>
+In-Reply-To: <20250320115633.4248-3-srinivas.kandagatla@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/03/2025 03:23, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> When use command 'make ARCH=arm64 dtbs_check W=1' to compile dtb,
-> a warning message appears.
-> "Warning (simple_bus_reg): /soc/bus@fe000000/pinctrl:
-> missing or empty reg/ranges property"
-> 
-> Add the unit address to the pinctrl node to fix it.
-> 
-> Fixes: ce78f679e08c ("arm64: dts: amlogic: a4: add pinctrl node")
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 102 +++++++++++++++-------------
->  1 file changed, 55 insertions(+), 47 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> index fa80fa365f13..582e0043024b 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
-> @@ -51,87 +51,52 @@ pwrc: power-controller {
->  };
+On 20/03/2025 12:56, srinivas.kandagatla@linaro.org wrote:
+>  struct mux_gpio {
+>  	struct gpio_descs *gpios;
+> @@ -82,6 +83,13 @@ static int mux_gpio_probe(struct platform_device *pdev)
+>  		mux_chip->mux->idle_state = idle_state;
+>  	}
 >  
->  &apb {
-> -	gpio_intc: interrupt-controller@4080 {
-> -		compatible = "amlogic,a4-gpio-intc",
-> -			     "amlogic,meson-gpio-intc";
-> -		reg = <0x0 0x4080 0x0 0x20>;
-> -		interrupt-controller;
-> -		#interrupt-cells = <2>;
-> -		amlogic,channel-interrupts =
-> -			<10 11 12 13 14 15 16 17 18 19 20 21>;
-> -	};
-> -
-> -	gpio_ao_intc: interrupt-controller@8e72c {
-> -		compatible = "amlogic,a4-gpio-ao-intc",
-> -			     "amlogic,meson-gpio-intc";
-> -		reg = <0x0 0x8e72c 0x0 0x0c>;
-> -		interrupt-controller;
-> -		#interrupt-cells = <2>;
-> -		amlogic,channel-interrupts = <140 141>;
-> -	};
+> +	ret = devm_regulator_get_enable_optional(dev, "mux");
+> +	if (ret && ret != -ENODEV) {
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "Couldn't retrieve/enable gpio mux supply\n");
 
+return dev_err_probe
 
-Not related to the change you described in commit msg.
 
 
 Best regards,
