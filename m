@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-570909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E566FA6B61C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:36:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D427A6B679
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687F4483F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A29480D98
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41E91EFFA6;
-	Fri, 21 Mar 2025 08:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EF81F03F3;
+	Fri, 21 Mar 2025 08:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="avrOojH2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sX2HDHvt"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5441C1C5F2C;
-	Fri, 21 Mar 2025 08:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8596E1EFFB3;
+	Fri, 21 Mar 2025 08:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546167; cv=none; b=GMkJaeT6DQvSDbqriLNR/7kDoohYuIo08s2aFDeTDgNPDtpz4i3hMEbotXg2MvHpY9DLP3z49w7blCL1KCcdwjExaPWf/Nf86BXoMVKa3GQsIEK0K8s+omeDXCnLa1WEkciIommCncokwIXSkiHtIdl53oc5jBcMFK0F0BVs4xw=
+	t=1742547545; cv=none; b=AidUcjnYAI5KQBwuMmyaLF5KKYlEFg12YQwPLDAhifXXs0UiBld2eWLeIJ8+Ey5SRxx+hk6i6y/xDK/tYLdo0u1L2lojTTjLxAlGKU+KaPUmMIpD95G7Xb0LglFbsg2oNM0IRmsMBhlZEJpeQ/VIl80QH7lPTjAqE0wDhdfN3Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546167; c=relaxed/simple;
-	bh=kD4327qSJNc303P+MczvubdWUwyEuGWST5tT0GsJ2IY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kuR2ujRgNKCwmf3HEJgoPmn8tmgfIPSd12q3uu3RPea1eB1uawd856ctJEtxdlJw0G4GJqVL1Rn7fDRGhDVEzMJ/DweC7ZYE+gBVjRiTGToiy3QMIFOxUKodgemicCvyZIV9fI3pZBrNd/Cr+Otoe9UYw5BNdFi1F3weOBnTThE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=avrOojH2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742546161;
-	bh=kD4327qSJNc303P+MczvubdWUwyEuGWST5tT0GsJ2IY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=avrOojH2bso6CNLYPYftxPHZabiyn+6kmc/hhlatq0B2p2S2nBpyHaw8YnclApW5n
-	 RbgjadnpSTOMkXrZ81u9ucylnbOUItrHc8YkFWj2Bn4qBgOI9XRvTC01rmoapYYnoL
-	 52hbDe9E5/414tqPWaa3HK5iHLVMTapVw0IalYEsU6HDtneReDJYLmYQhKDe3w4cbp
-	 CYSwqgVyWVI32SidmEIEwkads8fiSHs2bSmvX00jyw9s7pHMOMvkY+JgJakwbbBHCX
-	 rqeC0D2cT+pGsE0Obqa+NHW20bc/MEdUl7XpysFtf7I+eThx5obWpv7/we7w9xTT5p
-	 3UWpewm7mC++Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJwl52Ct9z4wb0;
-	Fri, 21 Mar 2025 19:36:01 +1100 (AEDT)
-Date: Fri, 21 Mar 2025 19:36:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the iommufd tree
-Message-ID: <20250321193600.2bfe03bb@canb.auug.org.au>
+	s=arc-20240116; t=1742547545; c=relaxed/simple;
+	bh=gdi5aoLZ4LlIjRWE5zaNEy5Y+dIXtOuTxRg/Y3iOsxE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gVefxuKxLftmTgSfYjW/qnGO2fEcKiabh4eywd947v3kuvIrY073TCO8LGp7Lm7k+Bx61/QxEdBPrSsS410QcjDlVb/6j2/bFSDbRNLf7V5tGioO4IC+fBoJq1kYuGXFHKxP0jempSdZ3jDIVt+Bdu65h7M/pJC4dFba/gZX+m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=sX2HDHvt; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ba1c0b76063211f0aae1fd9735fae912-20250321
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=wgu8/qtKwrUevgUkDOpe6U4a4UoSX2UrXzvWZYVmHiw=;
+	b=sX2HDHvtsC7SGyT2KLFnZ1q9NlQqyb0euZ3clRmZixl0qCuRGJYpSqy1Otts8+VQAyWfjDqGtURYhhZGmBXCl5Y5WR51hDeldMFq2F9VPnOSLwsDi6mBwmnsnY5hOISPr29DK3Ix7K2kh40T/Ve/qpia+krCBKkMEdgdzJm6VXY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:cffac599-598c-4068-85d5-fc3c635902d6,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:5ba8654a-a527-43d8-8af6-bc8b32d9f5e9,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ba1c0b76063211f0aae1fd9735fae912-20250321
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <ot_cathy.xu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1289026274; Fri, 21 Mar 2025 16:58:58 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 21 Mar 2025 16:58:57 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Fri, 21 Mar 2025 16:58:56 +0800
+From: Cathy Xu <ot_cathy.xu@mediatek.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>
+CC: Lei Xue <lei.xue@mediatek.com>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<yong.mao@mediatek.com>, <Axe.Yang@mediatek.com>, <Jimin.Wang@mediatek.com>,
+	<Wenbin.Mei@mediatek.com>, Cathy Xu <ot_cathy.xu@mediatek.com>
+Subject: [PATCH v5 0/3] pinctrl: mediatek: Add pinctrl driver on mt8196
+Date: Fri, 21 Mar 2025 16:39:11 +0800
+Message-ID: <20250321084142.18563-1-ot_cathy.xu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qeY9vNVAVvWA9VTtAuNlkED";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
---Sig_/qeY9vNVAVvWA9VTtAuNlkED
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Changes in v5:
+- Remove header file to fix dt-binding check error.
+- Add /* sentinel */ in pinctrl-mt8196.c.
 
-Hi all,
+Changes in v4:
+- Add rsel-resistence-in-si-unit and remove RSEL macro magic
+  number in mediatek,mt8196-pinctrl.yaml.
+- Add values in SI units option to |struct mtk_pin_soc| in
+  pinctrl-mt8196.c.
+- Move pinmux macro header file to arch/arm64/boot/dts/mediatek.
 
-After merging the iommufd tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Changes in v3:
+- Remove drive-strength-microamp & rsel-resistence-in-si-unit
+  related description in mediatek,mt8196-pinctrl.yaml.
+- Use pm_sleep_ptr() in pinctrl-mt8196.c to fix build error.
 
-vmlinux.o: warning: objtool: iommu_dma_get_msi_page() falls through to next=
- function __iommu_dma_unmap()
+Changes in v2:
+- Fix driver file's coding style.
+- Add pinctrl binding document.
 
-I have no idea where that came from.
+Cathy Xu (3):
+  dt-bindings: pinctrl: mediatek: Add support for mt8196
+  arm64: dts: mediatek: mt8196: Add pinmux macro header file
+  pinctrl: mediatek: Add pinctrl driver on mt8196
 
---=20
-Cheers,
-Stephen Rothwell
+ .../pinctrl/mediatek,mt8196-pinctrl.yaml      |  223 ++
+ arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h | 1574 ++++++++++
+ drivers/pinctrl/mediatek/Kconfig              |   12 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8196.c     | 1859 +++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h | 2789 +++++++++++++++++
+ 6 files changed, 6458 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt8196-pinctrl.yaml
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8196.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h
 
---Sig_/qeY9vNVAVvWA9VTtAuNlkED
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+2.45.2
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfdJPAACgkQAVBC80lX
-0GyagAf/UpDeL4DuhUwnakj1KETluXImFdtmDrkrJSA9YZqUzCLj/GpDyI2TlwgH
-V/lcjfM3NTAe8JuE2iu2MGWWWiOmS0C3w1JG4x6B4iLUsmr4BcWRaidYOHSuaxm6
-YlPn+S9Iy+enWNqJvrzWoZossMuLrkmGijKfdPYdgI23U3SXYkqci2AXWj43jYP/
-4+7rrMRTBZ5IKBg0idTTJjuuW535yd+82+3QJgEK5lIwKiVOMHy7QLM9ArNvceZO
-68Ev0Hbst9gmJy8I1fuyYOlg0SHFk1r5jNPJlbQKq/JtvozWOOVOZGz2CsVMF4mT
-MIKunBOzcpUDFZne7SOwSVERjrjbMQ==
-=oiDu
------END PGP SIGNATURE-----
-
---Sig_/qeY9vNVAVvWA9VTtAuNlkED--
 
