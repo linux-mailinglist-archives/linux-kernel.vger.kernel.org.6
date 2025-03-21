@@ -1,168 +1,263 @@
-Return-Path: <linux-kernel+bounces-570697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7796BA6B3A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:27:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F07A6B3A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA307189C700
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:28:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2E6188B161
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863401E51FF;
-	Fri, 21 Mar 2025 04:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9181E5B66;
+	Fri, 21 Mar 2025 04:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KxUvipl/"
-Received: from out.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbjXH1k1"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ABCB664;
-	Fri, 21 Mar 2025 04:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C182B664
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742531270; cv=none; b=HMkS6pLZy1ZSVBTOCj48lgXaQTLjk/JW8+yB1R/5d8S6gbbCBP9F4X8XnLmymCdTxbXY83n8GFlrBrQdpmO+r9CDQ7hmYx34Y5Mh7FjshJLXVRHu7GzCsKKuoFrMPjvt3+aamfN8rzYwyJfF1cObCrKqo0k1SSWPP769MK3e4X8=
+	t=1742530762; cv=none; b=mezfCCm5IcQctKOkTghcgoqUAeu9IDCxH83Ggo9RyPquhKIq/QyuVjsS1OYZ1Y2mFhFNqKGsG/UCla+16RETx8Tw4iVlCerP+p0DTfG0klrruadneTL0vEzpF79k0ARLd74esG1IRKpjGy2MgFwhSK4CeYSiSMqu/I6dFElcJA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742531270; c=relaxed/simple;
-	bh=C7HXbRAAikkBwHspUHiehLT+PSVXQ2/fzwqlCI0p5vc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WkWcEUYOp/z0NXwodu0xB+fIQJrnMERQuZQYJo8t5ja2ZVb0Iur0KHgkbhUk4AuwQx6iyGfKNA99jsZK2ghKAsa6wa4mcOxreKM7xENvQAmcONAgonxh+DjWUXzvGXjLmSLdSvydddHC6ShE5lMLH/LnR3MCxlI+dh48zdbpjrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KxUvipl/; arc=none smtp.client-ip=193.252.22.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id vTpqtuCVJpih5vTpvtXDey; Fri, 21 Mar 2025 05:18:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742530710;
-	bh=RfTovQ5pBBPXl/sQntAxGWbDNnwENYAK9Bt2Ch93r58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=KxUvipl/mBH9mc3/+Jxp2x1493gZQeZOd7O1dWUrPtM6thSRht5eemzsz0bAhoVki
-	 UK6CTEtCyIr0B2njVsiL/Rbr4irCB0+2uOw5H+lalCF9jyZTppgCSLooDDJSUxSqiP
-	 KLwOa3oQaBRKfU1w7HcWDEh8qDV9uKdiX8SEa3TJYLNcfQMoUqnv/Y+c4nKoVmstXw
-	 QtOzdhj2FmatopgmqctXNjsEuD+W5CATzJW4ecmjZKK+YxcyTexp8CHwQ510jgHD3x
-	 Q85cTm7l4Tdfae2YGjxEcK0z2m8NKPbDmVd5zGOqFiHSeZzl8e/qDzEFkGwqSLiRK8
-	 h/GCI4MlrBSDQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 21 Mar 2025 05:18:30 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <7805e0db-7c17-438d-9985-f4feec644da6@wanadoo.fr>
-Date: Fri, 21 Mar 2025 13:18:18 +0900
+	s=arc-20240116; t=1742530762; c=relaxed/simple;
+	bh=oGwh/r98qC1FrijucD7CZo9YVD3rPbjFpxBfK1X4Jk4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fVB4opr4fIIsWOTTrp0XsHPKnXtjoPqXsCSlCD3ugUKK/ncSDU/MoPWuEwg0ogANZwjcbYm2c6KET73QW2fX2B2sDAI9hk9wEwu5fUZSL+0EgGdrIuC1qgc2dNWncGbDXFXPMErY5sUbU7aR4YqFmeO2IZSx1kpuN16xl+ITrTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbjXH1k1; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so201546366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742530756; x=1743135556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SpibAVJk9elna1e6DyUjTSilMAviHsEHwd+4cHoC0Q8=;
+        b=ZbjXH1k1PQTKFmPykJj/es/eG6bN0HGOgIjaSR6zHsGbcks5xUXzAtdjA/HT76nP4T
+         7D40MxP4L4GphdZhxTmHDFqhHHpTKrhb5rrNXyxzy8ekpsi1ZV2LGZbcPzWXWI9gWAOB
+         EX4TpafqdZVN5gRD99n9r+8FrBhPvOaIaivc9QufKbt8rVWUs6xQt18M6r7bisN8vHY0
+         +F82R0qCl2E9896yCPBULkO71U5fybb4eaibzvwEds6n0qzpHQokgeOHZi7pFl3POIUr
+         VSK1djYMmtGmXx1kaoahRovZUqTM+iYbmbiArSroSTtUqNfqzBDj4S13oqgC798NiRD8
+         ObJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742530756; x=1743135556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SpibAVJk9elna1e6DyUjTSilMAviHsEHwd+4cHoC0Q8=;
+        b=Fp31/qnRWH73TraMvCvcOZADgW2cMLDjso4/DQPhym8XvNEWxPA06TIKFYKoMQDfXI
+         pf9Wohxl1QOrmxKJCvQNTchoePF9TmcWP68V//0h/J5VUQtFVncTYso4T5fbAb0IPp1j
+         zeXTfq6e/if3iNeM8Zy2KrYCNj1gXrX865NCEedAsVpV1rhP5lpxzT7cbPYnaxubNtUg
+         zrEYeNmpB4a5o7q594RRqzkLgQpiAugmVMbVqD3seTTDtjyQa2NHwz2OxJKN9+WWbOmH
+         vyOhutjGdDUOnu1V48ffqAiNRgYeG6h7faQJaLTbMQwC9jjrT9YCcNt3v6FrMooPz8ww
+         ebBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXREecJ949BdpQNWLA43QnDiFhJjD/GbrumOGUOQ2gT5SxLNTiI1KdFIzhQ/TXf3PSG2yBSs83ZuPTi2L0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDrwporoMrzc840NtCuTwSKSWMaPRTP6hT6wu7M1zPyziqvmQz
+	3IB/uKrSLwDjJWxoBelcAc/BxWOs3T850L2ZPLKWe2SE8FQbpuSZwsplaezRaN5REzLegBReWUL
+	+ugoSwcfGUjnYy58ofv8Os8/vwa8=
+X-Gm-Gg: ASbGncv3hgYvd+qM0uxvbbzJMHpWRwz9kc7RjKI93C+c/80LGfKyGsj2budg/+HvC28
+	1ZVdSfuzyTIVDh0957J7/8ECDAhc4H22Kq5NhYX27+ymFJjhvVFTP0kScSuCjvGzr0Vs5fSENJ8
+	SaB1rGXvpWchF0p/g1j7k2Hhn2
+X-Google-Smtp-Source: AGHT+IHlVqDnb9TbCW+gY+cKONThgIjNpaG7RCf0g7ElD2xNuuyzNFbzysKVelmk+2H+F4O4+paWAsWY1SnHSVmTN3Y=
+X-Received: by 2002:a17:906:c103:b0:ac3:ec70:18aa with SMTP id
+ a640c23a62f3a-ac3f22a26c2mr133689966b.25.1742530756331; Thu, 20 Mar 2025
+ 21:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] phy: can-transceiver: Re-instate "mux-states" property
- presence check
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Rob Herring <robh@kernel.org>
-Cc: linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Marc Kleine-Budde <mkl@pengutronix.de>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Peter Rosin <peda@axentia.se>,
- Aswath Govindraju <a-govindraju@ti.com>,
- Biju Das <biju.das.jz@bp.renesas.com>
-References: <3d7e0d723908284e8cf06ad1f7950c03173178f3.1742483710.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <3d7e0d723908284e8cf06ad1f7950c03173178f3.1742483710.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 21 Mar 2025 14:19:05 +1000
+X-Gm-Features: AQ5f1JpybLH9-9_AT_Id0S-ya_nN9kZxZ10q_mUeHQrczvkntzCRCad4nelQQXw
+Message-ID: <CAPM=9txGdh-rbWbxA_nQVV_1AMin8SgJpo1T4HNcCc_4aRtJ0Q@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.14-rc8/final
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/03/2025 at 00:15, Geert Uytterhoeven wrote:
-> On the Renesas Gray Hawk Single development board:
-> 
->     can-transceiver-phy can-phy0: /can-phy0: failed to get mux-state (0)
-> 
-> "mux-states" is an optional property for CAN transceivers.  However,
-> mux_get() always prints an error message in case of an error, including
-> when the property is not present, confusing the user.
-> 
-> Fix this by re-instating the property presence check (this time using
-> the proper API) in a wrapper around devm_mux_state_get().  When the
-> multiplexer subsystem gains support for optional muxes, the wrapper can
-> just be removed.
-> 
-> In addition, propagate all real errors upstream, instead of ignoring
-> them.
+Hi Linus,
 
-I would like to hear Rob's opinion on this. In d02dfd4ceb2e9f34 Rob
-purposely changed the function to ignore errors other than EPROBE_DEFER.
+It appears that the fd.o infrastructure is back enough to facilitate
+sending this week's fixes, hopefully you can grab it without issue.
+Just the usual spread of a bunch for amdgpu, and small changes to
+others.
 
-Right now, I do not see a reason not to propagate the other errors, so
-I am in favor of this roll back. But maybe we are missing something?
+Regards,
+Dave.
 
-Otherwise, the patch looks good to me. Nice improvement over the v1. I
-will wait for Rob's comment to give my review tag.
+drm-fixes-2025-03-21:
+drm fixes for 6.14-rc8
 
-> Fixes: d02dfd4ceb2e9f34 ("phy: can-transceiver: Drop unnecessary "mux-states" property presence check")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Alternatively, the multiplexer subsystem needs to gain support for
-> getting an optional mux...
-> 
-> v2:
->   - Add and use devm_mux_state_get_optional(),
->   - No given tags added, as the new solution is different.
-> ---
->  drivers/phy/phy-can-transceiver.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-transceiver.c
-> index 2bec70615449f94d..f59caff4b3d4c267 100644
-> --- a/drivers/phy/phy-can-transceiver.c
-> +++ b/drivers/phy/phy-can-transceiver.c
-> @@ -93,6 +93,16 @@ static const struct of_device_id can_transceiver_phy_ids[] = {
->  };
->  MODULE_DEVICE_TABLE(of, can_transceiver_phy_ids);
->  
-> +/* Temporary wrapper until the multiplexer subsystem supports optional muxes */
-> +static inline struct mux_state *
-> +devm_mux_state_get_optional(struct device *dev, const char *mux_name)
-> +{
-> +	if (!of_property_present(dev->of_node, "mux-states"))
-> +		return NULL;
-> +
-> +	return devm_mux_state_get(dev, mux_name);
-> +}
-> +
->  static int can_transceiver_phy_probe(struct platform_device *pdev)
->  {
->  	struct phy_provider *phy_provider;
-> @@ -114,13 +124,11 @@ static int can_transceiver_phy_probe(struct platform_device *pdev)
->  	match = of_match_node(can_transceiver_phy_ids, pdev->dev.of_node);
->  	drvdata = match->data;
->  
-> -	mux_state = devm_mux_state_get(dev, NULL);
-> -	if (IS_ERR(mux_state)) {
-> -		if (PTR_ERR(mux_state) == -EPROBE_DEFER)> -			return PTR_ERR(mux_state);
-> -	} else {
-> -		can_transceiver_phy->mux_state = mux_state;
-> -	}
-> +	mux_state = devm_mux_state_get_optional(dev, NULL);
-> +	if (IS_ERR(mux_state))
-> +		return PTR_ERR(mux_state);
-> +
-> +	can_transceiver_phy->mux_state = mux_state;
->  
->  	phy = devm_phy_create(dev, dev->of_node,
->  			      &can_transceiver_phy_ops);
+scheduler:
+- fix fence reference leak
 
-Yours sincerely,
-Vincent Mailhol
+xe:
+- Fix for an error if exporting a dma-buf multiple time
 
+amdgpu:
+- Fix video caps limits on several asics
+- SMU 14.x fixes
+- GC 12 fixes
+- eDP fixes
+- DMUB fix
+
+amdkfd:
+- GC 12 trap handler fix
+- GC 7/8 queue validation fix
+
+radeon:
+- VCE IB parsing fix
+
+v3d:
+- fix job error handling bugs
+
+qaic:
+- fix two integer overflows
+
+host1x:
+- fix NULL domain handling
+The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1=
+:
+
+  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-03-21
+
+for you to fetch changes up to 41e09ef6c26f0bd89f93691ef967fd621a38d759:
+
+  Merge tag 'amd-drm-fixes-6.14-2025-03-20' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes (2025-03-21
+11:59:49 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.14-rc8
+
+scheduler:
+- fix fence reference leak
+
+xe:
+- Fix for an error if exporting a dma-buf multiple time
+
+amdgpu:
+- Fix video caps limits on several asics
+- SMU 14.x fixes
+- GC 12 fixes
+- eDP fixes
+- DMUB fix
+
+amdkfd:
+- GC 12 trap handler fix
+- GC 7/8 queue validation fix
+
+radeon:
+- VCE IB parsing fix
+
+v3d:
+- fix job error handling bugs
+
+qaic:
+- fix two integer overflows
+
+host1x:
+- fix NULL domain handling
+
+----------------------------------------------------------------
+Alex Deucher (1):
+      drm/amdgpu/pm: wire up hwmon fan speed for smu 14.0.2
+
+Dan Carpenter (1):
+      accel/qaic: Fix integer overflow in qaic_validate_req()
+
+Dave Airlie (3):
+      Merge tag 'drm-misc-fixes-2025-03-20' of
+ssh://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Merge tag 'drm-xe-fixes-2025-03-20' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'amd-drm-fixes-6.14-2025-03-20' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+
+David Belanger (1):
+      drm/amdgpu: Restore uncached behaviour on GFX12
+
+David Rosca (3):
+      drm/amdgpu: Fix MPEG2, MPEG4 and VC1 video caps max size
+      drm/amdgpu: Fix JPEG video caps max size for navi1x and raven
+      drm/amdgpu: Remove JPEG from vega and carrizo video caps
+
+Harish Kasiviswanathan (1):
+      drm/amd/pm: add unique_id for gfx12
+
+Jason Gunthorpe (1):
+      gpu: host1x: Do not assume that a NULL domain means no DMA IOMMU
+
+Jay Cornwall (1):
+      drm/amdkfd: Fix instruction hazard in gfx12 trap handler
+
+Jeffrey Hugo (1):
+      accel/qaic: Fix possible data corruption in BOs > 2G
+
+Lo-an Chen (1):
+      drm/amd/display: Fix incorrect fw_state address in dmub_srv
+
+Mario Limonciello (1):
+      drm/amd/display: Use HW lock mgr for PSR1 when only one eDP
+
+Ma=C3=ADra Canal (2):
+      drm/v3d: Don't run jobs that have errors flagged in its fence
+      drm/v3d: Set job pointer to NULL when the job's fence has an error
+
+Nikita Zhandarovich (1):
+      drm/radeon: fix uninitialized size issue in radeon_vce_cs_parse()
+
+Philip Yang (1):
+      drm/amdkfd: Fix user queue validation on Gfx7/8
+
+Tomasz Paku=C5=82a (1):
+      drm/amdgpu/pm: Handle SCLK offset correctly in overdrive for smu 14.0=
+.2
+
+Tomasz Rusinowicz (1):
+      drm/xe: Fix exporting xe buffers multiple times
+
+Wentao Liang (1):
+      drm/amdgpu/gfx12: correct cleanup of 'me' field with gfx_v12_0_me_fin=
+i()
+
+Yilin Chen (1):
+      drm/amd/display: Fix message for support_edp0_on_dp1
+
+qianyi liu (1):
+      drm/sched: Fix fence reference count leak
+
+ drivers/accel/qaic/qaic_data.c                     |   9 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |   2 +-
+ drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c             |  22 +-
+ drivers/gpu/drm/amd/amdgpu/nv.c                    |  20 +-
+ drivers/gpu/drm/amd/amdgpu/soc15.c                 |  21 +-
+ drivers/gpu/drm/amd/amdgpu/vi.c                    |  43 +-
+ drivers/gpu/drm/amd/amdkfd/cwsr_trap_handler.h     | 703 +++++++++++------=
+----
+ .../gpu/drm/amd/amdkfd/cwsr_trap_handler_gfx12.asm |  82 +--
+ drivers/gpu/drm/amd/amdkfd/kfd_queue.c             |  12 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c               |   8 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   2 +-
+ .../gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c  |  11 +
+ drivers/gpu/drm/amd/display/dmub/src/dmub_srv.c    |   2 +-
+ drivers/gpu/drm/amd/pm/amdgpu_pm.c                 |   2 +
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  96 +--
+ drivers/gpu/drm/radeon/radeon_vce.c                |   2 +-
+ drivers/gpu/drm/scheduler/sched_entity.c           |  11 +-
+ drivers/gpu/drm/v3d/v3d_sched.c                    |  23 +-
+ drivers/gpu/drm/xe/xe_bo.h                         |   2 -
+ drivers/gpu/drm/xe/xe_dma_buf.c                    |   2 +-
+ drivers/gpu/host1x/dev.c                           |   6 +
+ 21 files changed, 583 insertions(+), 498 deletions(-)
 
