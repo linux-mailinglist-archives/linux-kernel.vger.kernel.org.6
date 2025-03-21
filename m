@@ -1,114 +1,106 @@
-Return-Path: <linux-kernel+bounces-570603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C40A6B264
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:41:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9981A6B269
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:44:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65283884BD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC558486B63
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1913D2A1CF;
-	Fri, 21 Mar 2025 00:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hNvtqjzo"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BED38FB9;
+	Fri, 21 Mar 2025 00:44:42 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D52E23BE;
-	Fri, 21 Mar 2025 00:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654DA5684
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742517584; cv=none; b=MGRXFfJIJLs7McOFQ2tx1ph75hAdgvznZ0JrYvxZBbEjsn5yITjW0LN8BA4yc4Tyyh5npUPa9tGIAKHh748GuezZ+Lbfay9wffjg1/i8ayid4xEl6xkcsJIVEH0H0kP4DbNP73cHiKNriWZytDJPKbO3Qo2aJYF22OI0nJJY930=
+	t=1742517882; cv=none; b=X0tXEgMPHMjd8Xa6qEQS2H7HZj2delIfq4deciaIFzHwu+2tS3+QUeK6LV0pFe0Mh+/GgSaJrnaIlh2iYv+ZUa6fswD6SOpvwgBZqwOsDPDlyrjr4skumP3/kRbLw6gXoCrBMXajpPmTdezY3X2ke76dU/u3nU7Jckk7kv3srGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742517584; c=relaxed/simple;
-	bh=81e5U12yQNl/T/++JQb1aWg02Oq1JzXIwoKQeuPOf/Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IVCrMY+WgWLYIQXCuEwGCY3oi9spEe3r9r5skscvlM4lJZDPWtHaRdmNV0WUQu79G7+Qdwaz11RQvLTNALxrJ0FrWIyZ93AS4ly036FlFnY/A8OJXFVTzWZjPgHkBHQJTeorxJ65b6JddfCvYRWq4U+aHrOiiH0Eofy8Su0e9yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hNvtqjzo; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1742517572;
-	bh=81e5U12yQNl/T/++JQb1aWg02Oq1JzXIwoKQeuPOf/Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=hNvtqjzoDLk8nMsNRAwLiBQBq+A/jaZLOBJz+AKXu7nVybKAhi3bpWyAN3UwvUAb8
-	 X7W18/K0L0z19l88HAz/Q+IzcU8f5p+yOmbFKNjjC/Vr6SM/ECKFUy1ENppiVPOAp/
-	 ls5fZFHmu4slQdo12PDCxxBwT5rPrsOrlZ17+Ww48dGtZIE59RQ/1bEcHzhclY2HU8
-	 524k15wq+Y3mMZNo+dFMqrzObb2BHGo0BTtsJ1wRv4OL3ScntyzPkIbI6NMg+wO5DT
-	 PuIlnqy0QducLALaoV3cHepsDSaDVxG96w28MCkSn5/NUiqE6ORZLXIuI0PM9Lhd3U
-	 Y+ASm+H464Yfg==
-Received: from [192.168.68.112] (unknown [180.150.112.225])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B61B17A4E7;
-	Fri, 21 Mar 2025 08:39:30 +0800 (AWST)
-Message-ID: <158f6e8e6c41250d6b88c5f2b5dc6df5d728222b.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 1/2] dt-bindings: arm: aspeed: Add AMD Onyx BMC
- compatible
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi@amd.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, joel@jms.id.au,
- robh+dt@kernel.org,  openbmc@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
- jothayot@amd.com, linux-aspeed@lists.ozlabs.org,  krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org
-Date: Fri, 21 Mar 2025 11:09:29 +1030
-In-Reply-To: <174233663954.4094319.18412685456723022993.robh@kernel.org>
-References: <20250318174730.1921983-1-Rajaganesh.Rathinasabapathi@amd.com>
-	 <174233663954.4094319.18412685456723022993.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1742517882; c=relaxed/simple;
+	bh=kUE3XcrhEmwai0vTcZPheXrXbOay9kMH//hPx8KGXa8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r+D3fzAUWg8UqJRRPNTu9RldbbBrQhXe+/Ya35+VyHoUlRCzSJJxr9PBwLluUEoXzVLj6iOARw4Oa4w/iGXJB3cVf/lNyAT8PTBm5aph9szuiP57HzBBuUgmOztszAmQwmIHlBvujUdki8funymbZD9NTg3vUchm2OTauABxHY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d458e61faaso13411225ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 17:44:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742517878; x=1743122678;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kiux3QslEvXRyeLPLg16tLOU0yhFteFXkbcas4hBzGk=;
+        b=k2ven1ZF56VPKv4zZBeD6np/NSLYVCcSqHB3Q6H5J3eq5I3++gwE+K9G6fuf9p3fsI
+         FgMaiWFYzs3T0185DjE97jc+sToEITNcP5fkgYKr48aDpxx/ZJZtDCoZR2mwEiS4caoj
+         urVjTpfOM3vxE/ARipjn1qyWq1Y/aBtLlJWFZiSYak2mkuSzXHcPdccKcUPWT78hCLUr
+         RCACv82pI0pWV5FQHf95o7um5QK0IM7f415fSBOw3Ut/1Jlaoc5d8iFVvLha72SBiJSu
+         HyzdCZS2CgP7lUQEO1mYS45k5a6le2lHUsCFzBoBW+eqB6sYorIcKx7lg8kf6f80ezIo
+         ycxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRpR1OkUonQyHnXFWt4lQ9sR3LIiQe8p/OUkWlkM1/lEpVivDK1TfMcBavA/Bj81NLeHc6G/N5HNegBow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH7ZwfP6EDpvYFG7XC5S/82ZNMYW86Mklovu1WVUU9GjH2zBNI
+	yl8pOWY84uG6NpFBJrKfYEIR+SUHTtBzFU5jH+bRPsQtC42GorpdzvrW5nnpz4mOpikXu9cMPN/
+	4hUTxwqIcRlJVuLQCQjQ1y44GLgrchvf+R0k2z8WAyIFq2dvGyaG74KU=
+X-Google-Smtp-Source: AGHT+IGeQr+Ks25Z+y+VBWToJi9YuwsKICJHIucttlI88aXt/OTUh7dbiuniviUAEK5TsCn8wxWwlNvrIj36MgoEZApemmK4zAo0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:9d:b0:3d4:44:958a with SMTP id
+ e9e14a558f8ab-3d595edd857mr19747435ab.3.1742517878481; Thu, 20 Mar 2025
+ 17:44:38 -0700 (PDT)
+Date: Thu, 20 Mar 2025 17:44:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dcb676.050a0220.31a16b.0015.GAE@google.com>
+Subject: [syzbot] Monthly serial report (Mar 2025)
+From: syzbot <syzbot+lista1d9ae974973bddc29e6@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-03-18 at 17:26 -0500, Rob Herring (Arm) wrote:
->=20
-> On Tue, 18 Mar 2025 12:47:29 -0500, Rajaganesh Rathinasabapathi wrote:
-> > Document new AMD Onyx BMC board compatibles
-> >=20
-> > Signed-off-by: Rajaganesh Rathinasabapathi <Rajaganesh.Rathinasabapathi=
-@amd.com>
-> > ---
-> > =C2=A0Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
-> > =C2=A01 file changed, 1 insertion(+)
-> >=20
->=20
->=20
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->=20
-> =C2=A0 pip3 install dtschema --upgrade
->=20
->=20
-> New warnings running 'make CHECK_DTBS=3Dy for arch/arm/boot/dts/aspeed/' =
-for 20250318174730.1921983-1-Rajaganesh.Rathinasabapathi@amd.com:
->=20
-...
->=20
-> arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: mbeeprom@50: $nodename:=
-0: 'mbeeprom@50' does not match '^eeprom@[0-9a-f]{1,2}$'
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from schema $id: http://d=
-evicetree.org/schemas/eeprom/at24.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-amd-onyx.dtb: mbeeprom@50: Unevaluate=
-d properties are not allowed ('$nodename' was unexpected)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from schema $id: http://d=
-evicetree.org/schemas/eeprom/at24.yaml#
+Hello serial maintainers/developers,
 
-Rajaganesh: Please fix these warnings before you send v5.
+This is a 31-day syzbot report for the serial subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/serial
 
-Andrew
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 19 issues are still open and 44 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 837     Yes   KMSAN: uninit-value in n_tty_receive_buf_standard
+                  https://syzkaller.appspot.com/bug?extid=559c7fe4b8bac56d38c2
+<2> 182     Yes   INFO: task can't die in show_free_areas
+                  https://syzkaller.appspot.com/bug?extid=8f41dccfb6c03cc36fd6
+<3> 123     Yes   KASAN: slab-use-after-free Read in tty_write_room (2)
+                  https://syzkaller.appspot.com/bug?extid=2a81fdd5c6ddffee3894
+<4> 82      Yes   BUG: soft lockup in tx
+                  https://syzkaller.appspot.com/bug?extid=5e87db90e68fbc4707c6
+<5> 78      Yes   KMSAN: uninit-value in n_tty_receive_buf_closing (3)
+                  https://syzkaller.appspot.com/bug?extid=dd514b5f0cf048aec256
+<6> 50      Yes   possible deadlock in tty_buffer_flush (3)
+                  https://syzkaller.appspot.com/bug?extid=52cf91760dcb1dac6376
+<7> 17      No    KMSAN: uninit-value in n_tty_lookahead_flow_ctrl (2)
+                  https://syzkaller.appspot.com/bug?extid=290abdcd4f509377a0eb
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
