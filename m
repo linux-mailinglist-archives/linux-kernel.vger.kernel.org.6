@@ -1,190 +1,159 @@
-Return-Path: <linux-kernel+bounces-571773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E02CA6C21B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:07:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A376FA6C21E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:08:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4280189F2DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:07:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4263B290C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAD422F167;
-	Fri, 21 Mar 2025 18:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Lcm9xCdZ"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B4B22F17C;
+	Fri, 21 Mar 2025 18:07:58 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A79D1DB366
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2ED22DF96;
+	Fri, 21 Mar 2025 18:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742580458; cv=none; b=ElvwQk+WaZgdQu/EEgR7Hap3cu9Fxb45W/Jztf8PLh1sRHNBxI3rABaWQZQpPzDTkyPSbUcuwbDg3XP+sX7j5kHR7w+dFMliT12rUTywiFlATLOI0tm1k+QfgeuCqAfmGjwG9Bh+9O57ajKUEjKMyN8moWaqvtoB7HQ9rSrmvM0=
+	t=1742580478; cv=none; b=CSdaO+O85CQ4z3BBPGU8FHwvvink/1DL6HXG3WOxcH5IKnS8RcyyA/r1JN6gOGlBAdFBF/1Q0xsg1aLr6s15Dgmnktyw13vDCR70x6pjaw/EUADRTbiuEUff7Kc7uIM1KVkLNtkYWqq5LVh9Qldz//ZfBri7ZMId4JUppl9FJjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742580458; c=relaxed/simple;
-	bh=47Y8hQip99iCf7c6Dmi/CZyHe8FpzUoY9ZGUEv+WWks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMnipr2RRCGuchrNdvgbtPoNyQ2qvDatzhDSWTeAryaq3hh4PTTpAc+pFKmwfQ+Yl8P2yyAQ7Z68bpRJxpQjVL00iHhzv/JNggIun13WspZdHmYzp95deIATyVbFIgFTRtq3tB2UfJ1tWZ55Zu3rztPnglfAPo680rhqD9Fh/5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Lcm9xCdZ; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c5b8d13f73so172299885a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1742580454; x=1743185254; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YLZ7c8PVq08fNJyONQLIT/0eP11NvUsx2TyTerL7XHc=;
-        b=Lcm9xCdZx3SU4zIQeK0307UQBIHvzFmf/PvKMcOr1rwqqwY7dxAsvEhHXgMB8oLDbi
-         W8He2l8z0QUaqpWNKzk4Xzwm4stCtCpfgrNuexEcfdvAPY5Zs0DWHdUW3zaKBjhvF2k4
-         BomHBcCf8EvIwSW8xDthRPI2H/VSnP6h2xgfBYAlsWKDR9N2pM2Qpfrc9USAE/LXmHT6
-         enTLFUcC1Z/8FULl3V+X0w636KSuphDbWiukF3qchEsquaaHFX6NYP4N1WjmRrzFlBAz
-         Ov63OOb6a1sPOUiSNlrY/Bx5dvgIgpKwlSc9Fy9NaKsKSYXRqZa+6sRUorYaKxufK1FA
-         WESw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742580454; x=1743185254;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YLZ7c8PVq08fNJyONQLIT/0eP11NvUsx2TyTerL7XHc=;
-        b=ateDH+AyAzb854748SYP5dOLW8hsajXhBok8K1v+mWLAGJmkivCMpMsFnmYrKJmQfA
-         WR4pdOaTb4xYAa2gK1sQDbYdnIe6P5y+HSgPldrBOKl92JFF693bOyL36gl3Pm5CXpKT
-         rFeYNn3iSugD0eq0HhkRC0rb72Rk41RvOGCC+gaD0JLfinSxY7lZP63+7oF4SWtU34xT
-         PNWllVoflqZ3EuQE8fehAri3z36/1Oxiio5mj7riW92WOdcebqEjKCvhtz3hpwg+ITeE
-         9cOZj+c7ask0xJD+PH07pMMoM14hUfIFnj2tTUpg2KlP6nQHG6/Hol7pXjpefnQars1a
-         HZUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYXJeL5SD++d+3iFkC1bV4tSiof5b3tt7YWRwFBYj2idjVnSVUiX8xo8ULBUbVlLql8TE6dMysQWzZVeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk0KC1pxvzjp0VVXvdOBQUfqBJTX9ckGThoX5sMMi977sEs10r
-	Mfdm0/lCz1UVltGSJXWWEoNaWE4Iay8ylq0FJSVKTd4NvhCd27tVJfsPO1iki6g=
-X-Gm-Gg: ASbGnctO2KLYvlpO0KLyTC6+o6vwZIcCc/rSlA1iNdwzJkf10mHZDbxyezTp1oQb9WJ
-	ptPMhRZzcfOjUoQ31bjGyEC0Qf5VwSfQhFH32bs7zXjbeiZrTzC6dTDnLiLNJnt8GIlQD06Xnrs
-	AVwhK7cZXbJCyty525Y+5/oja2IxqqgAbSXGIh70U3ziRGp/PAS0rlEOOyL7JnQrtVyBg9tpy9c
-	TM/CuGNJMmNxciAB/aiiZQvhEtcABB1yjPpb5zy9n7lxVi80xntuv8cgpGQQ66+LNEB2pqZz7ci
-	jY98ebShcmcukYklrhv9l67IR0kFXzukMxJkN0RDH0aGFKyOJwDWoJCBNkwBG/3YaDbthefUBDt
-	QIbpGjNgOmVW2ZGkpsDvejHjEP6QPVyZg
-X-Google-Smtp-Source: AGHT+IFUnfQhtjCQYv7DzHsq6hKskzByzvAs8wuY7quw/aYR00Op6Rp9Y4a5IxpqPKPkNuMTQdbM5g==
-X-Received: by 2002:a05:620a:269a:b0:7c5:3ca5:58fe with SMTP id af79cd13be357-7c5ba15a54emr539420085a.22.1742580454012;
-        Fri, 21 Mar 2025 11:07:34 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F.lan (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92b2bb6sm158643885a.11.2025.03.21.11.07.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 11:07:33 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-cxl@vger.kernel.org
-Cc: nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	dan.j.williams@intel.com,
-	vishal.l.verma@intel.com,
-	dave.jiang@intel.com
-Subject: [PATCH] DAX: warn when kmem regions are truncated for memory block alignment.
-Date: Fri, 21 Mar 2025 14:07:31 -0400
-Message-ID: <20250321180731.568460-1-gourry@gourry.net>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742580478; c=relaxed/simple;
+	bh=Fhfz8OLbMJGn2RhXYgEr4QUyo4HEVfdIWVl+nUy8CXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcU7rH89cZFsAicYJcAwyqujdgxrZyF1WDLNXpwZILuRIHAaim4ODNyolqle2jUDNqf+bvYUl3hQujPeSMrzoQfV/hU6Apn4vNYZmKTjWVcsUtsygYRerbDp7eZBirzOFC4BpxtrFNM7qMOGy5HG8HqSxwkcUtwTrvG5TJChdXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 64B9028041578;
+	Fri, 21 Mar 2025 19:07:47 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 45E432CDCD; Fri, 21 Mar 2025 19:07:47 +0100 (CET)
+Date: Fri, 21 Mar 2025 19:07:47 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] PCI/hotplug: Don't enable HPIE in poll mode
+Message-ID: <Z92q84PdWVtftxI4@wunner.de>
+References: <20250321162114.3939-1-ilpo.jarvinen@linux.intel.com>
+ <20250321170919.GA1130592@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321170919.GA1130592@bhelgaas>
 
-Device capacity intended for use as system ram should be aligned to the
-architecture-defined memory block size or that capacity will be silently
-truncated and capacity stranded.
+On Fri, Mar 21, 2025 at 12:09:19PM -0500, Bjorn Helgaas wrote:
+>   - It does make me wonder why we have both pcie_enable_interrupt()
+>     and pcie_enable_notification().  Apparently we don't need to
+>     restore the other PCI_EXP_SLTCTL bits when resuming?  Maybe we
+>     depend on some other restoration, e.g., pci_restore_pcie_state(),
+>     that happens first?
 
-As hotplug dax memory becomes more prevelant, the memory block size
-alignment becomes more important for platform and device vendors to
-pay attention to - so this truncation should not be silent.
+Yes and yes.
 
-This issue is particularly relevant for CXL Dynamic Capacity devices,
-whose capacity may arrive in spec-aligned but block-misaligned chunks.
+> 
+>     That makes me worry that there's a window between
+>     pci_restore_pcie_state() and pcie_enable_interrupt().  I suppose
+>     we probably saved the pcie state after pcie_disable_interrupt(),
+>     so HPIE would be disabled in the saved state.
 
-Example:
- [...] kmem dax0.0: dax region truncated 2684354560 bytes - alignment
- [...] kmem dax1.0: dax region truncated 1610612736 bytes - alignment
+Yes.
 
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- drivers/dax/kmem.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+> 
+>   - I also wonder about the fact that pci_restore_pcie_state() doesn't
+>     account for Command Completed events, so we might write to Slot
+>     Control too fast.
 
-diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
-index e97d47f42ee2..15b6807b703d 100644
---- a/drivers/dax/kmem.c
-+++ b/drivers/dax/kmem.c
-@@ -28,7 +28,8 @@ static const char *kmem_name;
- /* Set if any memory will remain added when the driver will be unloaded. */
- static bool any_hotremove_failed;
- 
--static int dax_kmem_range(struct dev_dax *dev_dax, int i, struct range *r)
-+static int dax_kmem_range(struct dev_dax *dev_dax, int i, struct range *r,
-+			  unsigned long *truncated)
- {
- 	struct dev_dax_range *dax_range = &dev_dax->ranges[i];
- 	struct range *range = &dax_range->range;
-@@ -41,6 +42,9 @@ static int dax_kmem_range(struct dev_dax *dev_dax, int i, struct range *r)
- 		r->end = range->end;
- 		return -ENOSPC;
- 	}
-+
-+	if (truncated && (r->start != range->start || r->end != range->end))
-+		*truncated = (r->start - range->start) + (range->end - r->end);
- 	return 0;
- }
- 
-@@ -75,6 +79,7 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
- 	mhp_t mhp_flags;
- 	int numa_node;
- 	int adist = MEMTIER_DEFAULT_DAX_ADISTANCE;
-+	unsigned long ttl_trunc = 0;
- 
- 	/*
- 	 * Ensure good NUMA information for the persistent memory.
-@@ -97,7 +102,7 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
- 	for (i = 0; i < dev_dax->nr_range; i++) {
- 		struct range range;
- 
--		rc = dax_kmem_range(dev_dax, i, &range);
-+		rc = dax_kmem_range(dev_dax, i, &range, NULL);
- 		if (rc) {
- 			dev_info(dev, "mapping%d: %#llx-%#llx too small after alignment\n",
- 					i, range.start, range.end);
-@@ -130,8 +135,9 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
- 	for (i = 0; i < dev_dax->nr_range; i++) {
- 		struct resource *res;
- 		struct range range;
-+		unsigned long truncated = 0;
- 
--		rc = dax_kmem_range(dev_dax, i, &range);
-+		rc = dax_kmem_range(dev_dax, i, &range, &truncated);
- 		if (rc)
- 			continue;
- 
-@@ -180,8 +186,12 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
- 				continue;
- 			goto err_request_mem;
- 		}
-+
-+		ttl_trunc += truncated;
- 		mapped++;
- 	}
-+	if (ttl_trunc)
-+		dev_warn(dev, "dax region truncated %ld bytes - alignment\n", ttl_trunc);
- 
- 	dev_set_drvdata(dev, data);
- 
-@@ -216,7 +226,7 @@ static void dev_dax_kmem_remove(struct dev_dax *dev_dax)
- 		struct range range;
- 		int rc;
- 
--		rc = dax_kmem_range(dev_dax, i, &range);
-+		rc = dax_kmem_range(dev_dax, i, &range, NULL);
- 		if (rc)
- 			continue;
- 
--- 
-2.48.1
+We don't. :)  See commit 469e764c4a3c ("PCI: pciehp: Obey compulsory
+command delay after resume").
 
+So this is all a bit subtle and perhaps restoring the Slot Control
+registers should not be done in pci_restore_pcie_state() but rather
+in pciehp and pnv (which are the only hotplug drivers touching
+PCI_EXP_SLTCTL).
+
+In particular, if hotplug control was not granted by the platform,
+I don't think the kernel is supposed to touch the Slot Control
+registers at all.  So it probably shouldn't restore them either.
+
+We've been doing this since 2006 with commit b56a5a23bfec ("PCI:
+Restore PCI Express capability registers after PM event").
+Negotiation of _OSC wasn't added until 2010 with 75fb60f26bef
+("ACPI/PCI: Negotiate _OSC control bits before requesting them").
+But the OSC_PCI_EXPRESS_NATIVE_HP_CONTROL predates the introduction
+of git.  I guess noone ever realized that restoring Slot Control
+shouldn't be done if hotplug control wasn't granted.  I can't
+remember anyone ever reporting issues because of that though.
+
+On the other hand, changing something like this always risks
+regressions.
+
+>   - It's annoying that pcie_enable_interrupt() and
+>     pcie_disable_interrupt() are global symbols, a consequence of
+>     pciehp being split across five files instead of being one, which
+>     is also a nuisance for code browsing.
+
+Roughly,
+pciehp_core.c contains the interface to the PCI hotplug core
+  (registering the hotplug_slot_ops etc),
+pciehp_hpc.c contains the interaction with hardware registers,
+pciehp_core.c contains the state machine,
+pciehp_pci.c contains the interaction with the PCI core
+  (enumeration / de-enumeration of devices on slot bringup / bringdown).
+
+The only reason I've refrained from making major adjustments to this
+structure in the past was that it would make "git blame" a little more
+difficult and applying fixes to stable kernels would also become somewhat
+more painful as it would require backporting.
+
+>     Also annoying that they are generically named, with no pciehp
+>     connection (probably another consequence of being split into
+>     several files).
+
+They can be renamed.  There's no good reason for using the "pcie_"
+prefix, it just appears to be a historic artifact.
+
+>   - The eb34da60edee commit log hints at the reason for testing
+>     pme_is_native().  Would be nice if there were also a comment in
+>     the code about this because it's not 100% obvious why we test PME
+>     support in the PCIe native hotplug driver.
+> 
+>   - Also slightly weird that eb34da60edee added the pme_is_native()
+>     tests in pciehp_suspend() and pciehp_resume(), but somewhere along
+>     the line the suspend-side one got moved to
+>     pciehp_disable_interrupt(), so they're no longer parallel for no
+>     obvious reason.
+> 
+>   - I forgot why we have both pcie_write_cmd() and
+>     pcie_write_cmd_nowait() and how to decide which to use.
+
+pcie_write_cmd_nowait() is the "fire and forget" variant,
+whereas pcie_write_cmd() can be thought of as the "_sync" variant,
+i.e. the control flow doesn't continue until the command has been
+processed by the slot.
+
+E.g. pciehp_power_on_slot() waits for the slot command to complete
+before making sure the Link Disable bit is clear.  It wouldn't make
+much sense to do the latter when the former hasn't been completed yet.
+
+Thanks,
+
+Lukas
 
