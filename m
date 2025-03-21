@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-570599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1FDA6B255
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:37:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA55A6B263
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D0C1892C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B0D3B8033
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7912A1CF;
-	Fri, 21 Mar 2025 00:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72E47DA6D;
+	Fri, 21 Mar 2025 00:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="WBj3XUqm"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A81doXkB"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F0C1EA84;
-	Fri, 21 Mar 2025 00:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED793D3B8;
+	Fri, 21 Mar 2025 00:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742517423; cv=none; b=djEwJKYGe4ZEbxX7z2dZO31kmqPSwgED4BQl/C394qq29ZDb02RjT58PbwcNze6/Qb/dTTlyPbIDZl3brlNPk//fvIySlh9GYNji5M2i/mfaRoLPVoaou3ZBbPvugVlJqobj7tGgzkrh3ZPjWziifvkhf93h9lQ7xQ8hcDQjOQw=
+	t=1742517452; cv=none; b=Z/LXW7SUv3PMZVuBzuoSGZtVHXCnOIRyf6IavKKuG7Qnah+qUNM/FpJK+Qt9laD+M8t1B8iOZge6/pJ7SNx0Np0nBvBwAHv4wyeRZ7BFPRtB+olTbqg6fxEzHdwQjrgdWv4HYQRNYsf4LbajJqjxrs4QCWmVkogtGRETp8HakEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742517423; c=relaxed/simple;
-	bh=2z2RHDJm+LH1XHYv8vwtILZIc8Ji7eD8BNHKPWzg2vA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eduWkBzB7iP9kBFCjUOv6AlZ4B1Cf6YlLL7yUKzxkKPMAtpSrHT69yceLjCT4tvkVCKPQsh6zggmltOKfpVfLGtPj74TxXfa9pxLPF8ciyIZdRahcB8Bc1X7+/KXsHF+m++tYeLiz6l2WCYAOp9XbTm/G/RdwbfR8GFBydgRIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=WBj3XUqm; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43690d4605dso9625385e9.0;
-        Thu, 20 Mar 2025 17:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1742517418; x=1743122218; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YqUcVj28ADCuEV5WcvgqcjEh/QhHQb8TbIe4WSOMGp8=;
-        b=WBj3XUqm4FnbRm0/AjgEkPKuwWWxvwYBekfvqjTMtT/OOMPSQF5zyDwinJ+0JHSvMk
-         c+ZOZC+y/pzh6ixTCKsuOPYOMn7gpMZf0xmzcRPGcC3ImWdv0jb8KCPra5LSavAP32ux
-         amlINMVMRhky8jZ0Kbm43EVx/KXRA0pFIp2SYOMf2gYyuv2f8TsSAmcVyJseGknp0g6m
-         oQt/i972WCRQ939ErFr/0QAyc/FaufIMXGVhAdMxT+3EZRrQu50DECJqZNGsbjM61TvZ
-         qJPwO2Ik2G8La/K9f3MSYCAQtFfA2PJ5ZMQ9A2dW2jzACsQCumbdTWf3yC6yGKvc0ORr
-         /spQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742517418; x=1743122218;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YqUcVj28ADCuEV5WcvgqcjEh/QhHQb8TbIe4WSOMGp8=;
-        b=GQX+PAEz5+xb3RQzjuFzTwldqV4BXLplbiHGSYp7BI6Uvrkx2H7rdlEaeDnzTBfbAF
-         7xRWsQYaQN1hvjoXc7UDX1ow8/IsUn+26cOGBQNCsmMQ5jvBKi6sGSRKxlnILWx8Jwgc
-         UOArkTN9aTSeHjOHGtT9gGQc/MENDS+Wg3Smu0TPjhu3AsaoZ6WaIyo1Txt/OEzvxBWD
-         2vhavOHTQPdrR/g4PJGosigsfqbLf8vqHINDAbbr2IdXPH5nRbxRrf7TKWM9sECghmka
-         U9XIeBmrcW+q1pUtUN2oGE69fgVMjC1onemHlyqXDDIXRkxJjN1epL9OMpmLoo4MKYvz
-         BvMw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8im8Jzbsf8WqretLLuyxAm037bgWwYgexMcZaYEtepMEa7Z0v/sUFhEScAdRkwlEPZ7AI42rQ@vger.kernel.org, AJvYcCWzHJSAUL1/DLXCgWN6YYENUmreIc03f75zjXGGySv0QdKmrqARRqqipIkRzsAxoatCZzi7gJO67uHxplo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjKNFjSAhb2JCfTw3xFFajhLBnZhhNpke4DdsUU4EFanzHS6/8
-	x4rL7QkhKLcKzPmGCAQ1/SfxqmGQz1LXQ3YTMk3gsGVQdSjwtuvgB3Jv
-X-Gm-Gg: ASbGnctLu6BcRykS2SNAzhP23/BztwIl25gM4NM14i65jH2w7/+UeXQszMIlmdyWfFJ
-	63YwEVv2Q4gdPEl6RpIcigslfD2B2vc76BEqpyTpdR7VM9CBCd4fqpbTwkUpcckZOzkoXUJU/ac
-	LqTOEcQLm4FIj4WN7GjO82SJhGlgERNChpa8My0iu/JHlJ2RXuGgNaKrd2fJEDcBV0YqC6gY164
-	PwLZ4kklSJoweqbvqpbXuN2RwRTUc+g5fySjtpL4ySFnc+iZeOig9KznDsMbe6skTzgBXDsorF+
-	f6KC185M+zDOBH/iwInKrmMw7/zNEFNwgI+frDrYvOZguUEMOt8HYUFrmxZJHYwEFhFtdw3KJ7p
-	Q6uUXlkqtiT8E5QFmFIvBSw==
-X-Google-Smtp-Source: AGHT+IHvGLjMkOgQHJeFISgsZU+mKKIo64KH7v61/RWdA0q63XnnMd2pNMchgRNfh+u1zcQOFJefnw==
-X-Received: by 2002:a05:600c:4503:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-43d509f5a43mr11075975e9.17.1742517417855;
-        Thu, 20 Mar 2025 17:36:57 -0700 (PDT)
-Received: from [192.168.1.3] (p5b0579be.dip0.t-ipconnect.de. [91.5.121.190])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3ae04a94sm45405785e9.0.2025.03.20.17.36.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 17:36:56 -0700 (PDT)
-Message-ID: <d5f238f2-2ffd-4e85-9667-9a7398b42516@googlemail.com>
-Date: Fri, 21 Mar 2025 01:36:54 +0100
+	s=arc-20240116; t=1742517452; c=relaxed/simple;
+	bh=Wn9sdykgVuVb0p0u6RYov8qab8zpmmw1HO/w2gL1Vsw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U8LKyB5kZNn68cNDqnpt81HzZl7A3TWtK7WgKF6s86P/ftS6Yy9nAeOjGJg4UTC1SFwFlD99c7UTNS00JjxXPVzhqd0A8QKR96/c2mROtnnWsu6zv0mkfFLHl48NTs2D+9zxWLWW/bmMeTBBqxep8fWkkbEpJOl82Y/caRm4zAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A81doXkB; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KLB9TU023357;
+	Fri, 21 Mar 2025 00:37:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=mduNjyoW3sBGYNQhbPVGMbXCuXPdG93WAzYB2HB/lkM=; b=
+	A81doXkBzdPNBzPUx/rWL4qF7+RUDx8XBIo0mIUPcj7tZpwpRD+3N3qEbTDohn97
+	PyecJ6F5erILsBk/1JGFbQj+Ow0UoPGygbCrl/tnf/z8LSlg6YEuFLTH2o22hMkD
+	1MpTICIKZtk0UKKIkpOWTIfyheVoWVFlE4A00f4vnytmMP3aLjRC1an47dxk6FuO
+	B29mK1FE9z8rfroa2Mg/m6+qcNgFxqaaSaWUqh8L4gYh5EKNOPjUba220tRh2D1k
+	u7nkvjpkFsFZXEiv2aSZ9t0XW/84twg6VBmHRmKFylxT4QeG5f6068svlp66P3Lu
+	/5u3o0aoBCvoBw6ZIwUPRQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d1m17fpg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Mar 2025 00:37:21 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52KNjAi1004495;
+	Fri, 21 Mar 2025 00:37:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ftmxt6ux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Mar 2025 00:37:20 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52L0bHsi024893;
+	Fri, 21 Mar 2025 00:37:19 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45ftmxt6tx-6;
+	Fri, 21 Mar 2025 00:37:19 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Thorsten Blum <thorsten.blum@linux.dev>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: fnic: Remove unnecessary NUL-terminations
+Date: Thu, 20 Mar 2025 20:36:54 -0400
+Message-ID: <174251737533.2240574.17214367115238701645.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250314221626.43174-2-thorsten.blum@linux.dev>
+References: <20250314221626.43174-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/166] 6.6.84-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250319143019.983527953@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250319143019.983527953@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_09,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ mlxlogscore=831 suspectscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2503210002
+X-Proofpoint-GUID: 0D70a6Vug9JTv-S70I6TScB-gxy7COqu
+X-Proofpoint-ORIG-GUID: 0D70a6Vug9JTv-S70I6TScB-gxy7COqu
 
-Am 19.03.2025 um 15:29 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.84 release.
-> There are 166 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, 14 Mar 2025 23:16:26 +0100, Thorsten Blum wrote:
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+> strscpy_pad() already NUL-terminates 'data' at the corresponding
+> indexes. Remove any unnecessary NUL-terminations.
+> 
+> No functional changes intended.
+> 
+> 
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Applied to 6.15/scsi-queue, thanks!
 
-
-Beste Grüße,
-Peter Schneider
+[1/1] scsi: fnic: Remove unnecessary NUL-terminations
+      https://git.kernel.org/mkp/scsi/c/bd067766ee2a
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Martin K. Petersen	Oracle Linux Engineering
 
