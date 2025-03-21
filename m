@@ -1,136 +1,190 @@
-Return-Path: <linux-kernel+bounces-571722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A0FA6C140
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:22:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EFDA6C147
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:23:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7C53B143D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A11D3B1E26
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE03B22AE59;
-	Fri, 21 Mar 2025 17:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D8122DF95;
+	Fri, 21 Mar 2025 17:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0Iq/Lzu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBW8ma+y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEF91E492D;
-	Fri, 21 Mar 2025 17:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40BA1CAA80;
+	Fri, 21 Mar 2025 17:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742577745; cv=none; b=Lo5OnzMjr+7CTxm1HEG0Lf/uGp7YyAp5+Ys6NOF0zKY0vjb62wQjunIHkn46Ix50Y6tBnMGyh2JeyzerNss7YI6AUskvguLn8BnK5OqwDzfEc3ez65m8mWI0IKlofeiWmDt88q6DQYSa8k/Yd41kWp185XAdMO8QyntPY6R5cig=
+	t=1742577792; cv=none; b=JFcslEYkp+w3tS8Ays+CptSUcWIkGqL0mWTPt5bJGw783yDOQQX0WEjb5lZho5A6kDzjlSE5QGLa3jeF2oYCQ/JPOyoXnobX1ppReI6o59/BViUgFRhMMccRr8a53P06uhmoVIaV9AubCdY6noBqvIpWeTTTbqtAeWG74YgLc2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742577745; c=relaxed/simple;
-	bh=Q/2cpfOpAi/WqpaXdWrKInZtwyOQwN+cMfoLexqZElo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9aEsVbjcIc6/+S3BkCTg7qJAgg91VjULn4H1E9LvgFpgNGod82t3308/x4X8gQTnEbyz9D3ezMFzdGGwNcVWg9zUPmNFWlc/XSBziuPisT20IOWv99qtDvtBESmOvo3yApSuj1+F7jQgMis446BKcI8PQJ2LCg2h9TQdt3V5XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0Iq/Lzu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414AFC4CEE3;
-	Fri, 21 Mar 2025 17:22:24 +0000 (UTC)
+	s=arc-20240116; t=1742577792; c=relaxed/simple;
+	bh=ALF8uIdVgunXcUP0TGmP+eJ0CmXSJCrrrJygn06nOiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLYK0/6ZaZFKI7F7aMjAREqEOYwDFu2rl3lZM5X2V96FBeuNuTp0D6ucoYa8/M25eQB1USFak2Y3MX0K7qrM/sQdmU21Q06r8flppfcLqtTsRNPGkyY3Mii3n6Ju2/xZuRnakMP+TmVLB+oxxlOGGO6BjANKwWx01bHXghfuATk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBW8ma+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E527EC4CEE3;
+	Fri, 21 Mar 2025 17:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742577744;
-	bh=Q/2cpfOpAi/WqpaXdWrKInZtwyOQwN+cMfoLexqZElo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h0Iq/Lzu/fvBg6TikKkrUEV8vlYsZPsdOUVPaIxE9HNzmrMgjA1mEGh3tzqmFBb3Y
-	 1QpS7lKxvUNGqXtIkGyFvV048zaYXK8QIbx+grS08m9+UdHAM/ZHpF+xk9GeKB4gBf
-	 7mU/sCxeCxKNMvYfFYSWkNmHyWagXLz5T0d8ZSVTic1cgCi2U/TE3bjCO4s6rsEioZ
-	 q/Ji5eCevxYQdXSlHE6J2gLAyDn0WYGWUY/b9VfFtGnHKZCrXU1GNATo2ZZVsGhReG
-	 tzpIUwNGJBIwTnZJ0B7PAlPKKKsv45Tii8i2Yp/cEp/ypaGXqMeVXltf25OTaco4+P
-	 S1gb9rbHh1g6Q==
-Date: Fri, 21 Mar 2025 19:22:21 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"ebiggers@kernel.org" <ebiggers@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-Message-ID: <Z92gTQj6QkedbH0K@kernel.org>
-References: <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
- <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
- <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com>
- <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
- <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
- <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
- <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com>
- <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
- <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
+	s=k20201202; t=1742577792;
+	bh=ALF8uIdVgunXcUP0TGmP+eJ0CmXSJCrrrJygn06nOiM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eBW8ma+yGXEACHnQAT1uqCIasZxE+WTQAkhXFnS+npwir/3VFXtY26bPunv+XNyie
+	 HXe2TQFw5JeR1PdFheb4r8SzpNDZBViEIuPRWOSUby7cpKPiRYbn0V0/YoKbAhAMLP
+	 bVrKSeVO0XCvKZ1DSdggUHL/cGAmmjLRZII7U/4MfA3ZI4kKXCj6/szJ18VuAjIaA1
+	 nKAGWI+pLSPB3z2Qs8nPyTLdaWS/z4pnzncmOhuj5cKdFycyEYg+Thr+SJfiClyoBr
+	 WwGfXxszZm2EmNC2yod//zm6wXOk45HpDDiCLXxiZdcGjMsfULmzFki42xlCA7G6Bw
+	 teEvcE3LTNWog==
+From: Conor Dooley <conor@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2 0/9] Redo PolarFire SoC's mailbox/clock devicestrees and related code
+Date: Fri, 21 Mar 2025 17:22:33 +0000
+Message-ID: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5347; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=v72IsBW2yUvcvDH5N5nR2Mvll104/cwB1qRKakjs864=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOl3F0TsqLATvPxVRrIrN5V7uvMEKb4CgYjTKz6qJL0Qf x7nlbito5SFQYyDQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABPhXMfwv9Q1fMecYmvxSw6B LDGv47mD0pvm3F3r0Ka2YfPJA1yzmhkZ5gqdytFb+in49i4/N0VRhRkCp+S1DpufCZPjTl/R+u8 lMwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
 
-On Thu, Mar 20, 2025 at 05:36:41PM -0400, Paul Moore wrote:
-> On Thu, Mar 20, 2025 at 12:29 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> > > On Mar 6, 2025, at 7:46 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > > On March 6, 2025 5:29:36 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> 
-> ...
-> 
-> > >> Does this mean Microsoft will begin signing shims in the future without
-> > >> the lockdown requirement?
-> > >
-> > > That's not a question I can answer, you'll need to discuss that with the UEFI SB people.
-> >
-> > Based on your previous lockdown comments, I thought you might have
-> > some new information.  Having lockdown enforcement has always been
-> > a requirement to get a shim signed by Microsoft.
-> 
-> I want to address two things, the first, and most important, is that
-> while I am currently employed by Microsoft, I do not speak for
-> Microsoft and the decisions and actions I take as an upstream Linux
-> kernel maintainer are not vetted by Microsoft in any way.  I think you
-> will find that many upstream kernel maintainers operate in a similar
-> way for a variety of very good reasons.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-This is understood. If one takes a kernel maintainer role, one should
-unconditionally disobey any vetting by the employer (even at the cost of
-the job, or alternatively at the cost of giving up the maintainership).
+(Back to RFC again, as I'm really just wanting to hear from Stephen on
+what I did with the regmap clocks, and if it was what he was looking
+for)
 
-And with you in particular I don't think anyone has any trust issues,
-no matter which group of villains you might be employed by ;-)
+Yo,
 
-> 
-> The second issue is that my main focus is on ensuring we have a
-> secure, safe, and well maintained LSM subsystem within the upstream
-> Linux kernel.  While I do care about downstream efforts, e.g. UEFI
-> Secure Boot, those efforts are largely outside the scope of the
-> upstream Linux kernel and not my first concern.  If the developer
-> groups who are focused on things like UEFI SB want to rely on
-> functionality within the upstream Linux kernel they should be prepared
-> to stand up and contribute/maintain those features or else they may go
-> away at some point in the future.  In very blunt terms, contribute
-> upstream or Lockdown dies.
+Here's something that I've been mulling over for a while, since I
+started to understand how devicetree stuff was "meant" to be done.
+There'd been little reason to actually press forward with it, because it
+is fairly disruptive. I've finally opted to do it, because a user has
+come along with a hwmon driver that needs to access the same register
+region as the mailbox and the author is not keen on using the aux bus,
+and because I do not want the new pic64gx SoC that's based on PolarFire
+SoC to use bindings etc that I know to be incorrect.
 
-Could Lockdown functionality be re-implemented with that eBPF LSM? I
-have not really looked into it so far...
+Given backwards compatibility needs to be maintained, this patch series
+isn't the prettiest thing I have ever written. The reset driver needs to
+retain support for the auxiliary bus, which looks a bit mess, but not
+much can be done there. The mailbox and clock drivers both have to have
+an "old probe" function to handle the old layout. Thankfully in the
+clock driver, regmap support can be used to identically
+handle both old and new devicetree formats - but using a regmap in the
+mailbox driver was only really possible for the new format, so the code
+there is unfortunately a bit of an if/else mess that I'm both not proud
+of, nor really sure is worth "improving".
 
-BR, Jarkko
+The series should be pretty splitable per subsystem, only the dts change
+has some sort of dependency, but I'll not be applying that till
+everything else is in Linus' tree, so that's not a big deal.
+
+I don't really want this stuff in stable, hence a lack of cc: stable
+anywhere here, since what's currently in the tree works fine for the
+currently supported hardware.
+
+AFAIK, the only other project affected here is U-Boot, which I have
+already modified to support the new format.
+
+I previously submitted this as an RFC, only to Lee and the dt list, in
+order to get some feedback on the syscon/mfd bindings:
+https://lore.kernel.org/all/20240815-shindig-bunny-fd42792d638a@spud/
+I'm not really going to bother with a proper changelog, since that was
+submitted with lots of WIP code to get answers to some questions. The
+main change was "removing" some of the child nodes of the syscons.
+
+and as a "real" series where discussion lead to me dropping use of the
+amlogic clk-regmap support:
+https://lore.kernel.org/linux-clk/20241002-private-unequal-33cfa6101338@spud/
+As a result of that, I've implemented what I think Stephen was asking
+for - but I'm not at all sure that it is..
+
+Cheers,
+Conor.
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: pierre-henry.moussay@microchip.com
+CC: valentina.fernandezalanis@microchip.com
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Lee Jones <lee@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+
+Conor Dooley (9):
+  dt-bindings: mfd: syscon document the control-scb syscon on PolarFire
+    SoC
+  dt-bindings: soc: microchip: document the simple-mfd syscon on
+    PolarFire SoC
+  soc: microchip: add mfd drivers for two syscon regions on PolarFire
+    SoC
+  reset: mpfs: add non-auxiliary bus probing
+  dt-bindings: clk: microchip: mpfs: remove first reg region
+  riscv: dts: microchip: fix mailbox description
+  riscv: dts: microchip: convert clock and reset to use syscon
+  clk: divider, gate: create regmap-backed copies of gate and divider
+    clocks
+  clk: microchip: mpfs: use regmap clock types
+
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml |  36 ++-
+ .../devicetree/bindings/mfd/syscon.yaml       |   2 +
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  49 ++++
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 ++-
+ drivers/clk/Kconfig                           |   8 +
+ drivers/clk/Makefile                          |   2 +
+ drivers/clk/clk-divider-regmap.c              | 270 ++++++++++++++++++
+ drivers/clk/clk-gate-regmap.c                 | 253 ++++++++++++++++
+ drivers/clk/clk-gate.c                        |   5 +-
+ drivers/clk/microchip/Kconfig                 |   4 +
+ drivers/clk/microchip/clk-mpfs.c              | 151 ++++++----
+ drivers/reset/reset-mpfs.c                    |  81 ++++--
+ drivers/soc/microchip/Kconfig                 |  13 +
+ drivers/soc/microchip/Makefile                |   1 +
+ drivers/soc/microchip/mpfs-control-scb.c      |  45 +++
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c   |  48 ++++
+ include/linux/clk-provider.h                  | 120 ++++++++
+ 17 files changed, 1026 insertions(+), 96 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+ create mode 100644 drivers/clk/clk-divider-regmap.c
+ create mode 100644 drivers/clk/clk-gate-regmap.c
+ create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+ create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
+
+-- 
+2.45.2
+
 
