@@ -1,153 +1,230 @@
-Return-Path: <linux-kernel+bounces-570786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0880A6B478
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:35:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79238A6B459
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 016FC7A9870
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:34:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89E227A47BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C0A1EDA11;
-	Fri, 21 Mar 2025 06:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3071E2307;
+	Fri, 21 Mar 2025 06:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BIOkUoSN"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="ycDv/0tM"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920341EA7FD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C498836
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742538913; cv=none; b=J7RjXxey5/tGWdEQ9SuBe5Su9u0K9oXPqxFrMzTPD3gjhHC9SlUGvh2zHsCyMOHckqPOMGRcuV2AKrGVQTKNbQ7iztJbjKDV8abLgFfvWR458nLFdGgLgY21LXXkofCB9S+ooiMRGAK1iYbmWPqtLjbjM7kSMDobBEeK3sOlf4w=
+	t=1742538056; cv=none; b=MgFl9d1yA1fwAVV5dfeNDo5SQlpaME7CG8/uMvnmLfy8h2o3Eoh7Qj32qKWfMhnbjMc7PNFEUc890fv5JE1gWj+jOOeWpFtBJRBVXNtVoh8KQb9ZGRYSm4sHDdneKvF0uIv4rpI3Lq5BmsjCWh0sq4ttuZbwIQn7VxIYA6AU6jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742538913; c=relaxed/simple;
-	bh=ypno/VfSFoHOwVqheRJVTlW/U5+RXZSu9hpvuqS8ryc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=GTVx51DPKxRVYc/lF36J+ZIiWIb/1SOOAZ3zchqStUy8G28uqcFKUVAKi3Z5XYXbCS4UAfnI1yHEXy0JgtBX0V+9nuLhdrZoxJfYHrySHnOux712bfTdlomYumUYiN66heiA2KLhUzYv4fkEkTIZr/uiiWfa+W6swxKbRkDzFr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BIOkUoSN; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250321063503epoutp02ef7034b960fd69f4ae3f519e83e252c2~uveZ7reUu2102521025epoutp02B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:35:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250321063503epoutp02ef7034b960fd69f4ae3f519e83e252c2~uveZ7reUu2102521025epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742538903;
-	bh=rgXBgm2j3OYKUDvQQeIioghWI/eaGLrzGCp2iTJH39Y=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=BIOkUoSNbE5RUDFrsKpm7lWu3VaumgiuSwVytA+lXoJotilQiw7EBqSZ6E+YVQ1ID
-	 qLlDDqBoQo1VFovGwjBPONVpw/gA6aUUKU10daktSs7iJqSb4C2xO3F9g3Ou3ga3tp
-	 qixiYMurHnRr0j+1jFDDOgjJ0R+tSWellSD1S5rM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20250321063503epcas1p3a317c22f6b03526139896c3b9807332e~uveZh7yjM2008420084epcas1p3Q;
-	Fri, 21 Mar 2025 06:35:03 +0000 (GMT)
-Received: from epcpadp1new (unknown [182.195.40.141]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4ZJt3V7317z4x9Pr; Fri, 21 Mar
-	2025 06:35:02 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250321061945epcas1p439de78c05f457d53c2afa962c281636e~uvRDYlDpW0146001460epcas1p4f;
-	Fri, 21 Mar 2025 06:19:45 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250321061945epsmtrp1ba2b6490db22e6883c18d245b5764263~uvRDXvUIe2174821748epsmtrp1N;
-	Fri, 21 Mar 2025 06:19:45 +0000 (GMT)
-X-AuditID: b6c32a2a-38bf570000004a05-d4-67dd05010a26
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	16.5E.18949.1050DD76; Fri, 21 Mar 2025 15:19:45 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250321061945epsmtip1087de96b0e989478930ecb3355251fd8~uvRDNvC1Y1126911269epsmtip1M;
-	Fri, 21 Mar 2025 06:19:45 +0000 (GMT)
-From: "Sungjong Seo" <sj1557.seo@samsung.com>
-To: <Yuezhang.Mo@sony.com>, <linkinjeon@kernel.org>
-Cc: <sjdev.seo@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <cpgs@samsung.com>,
-	<stable@vger.kernel.org>, "'Yeongjin Gil'" <youngjin.gil@samsung.com>
-In-Reply-To: <PUZPR04MB6316CA3B8281D08C2A85435A81D82@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Subject: RE: [PATCH] exfat: fix random stack corruption after get_block
-Date: Fri, 21 Mar 2025 15:19:45 +0900
-Message-ID: <1296674576.21742538902983.JavaMail.epsvc@epcpadp1new>
+	s=arc-20240116; t=1742538056; c=relaxed/simple;
+	bh=CScUA6RZAjunTZQEia8fno5GArrQSBbHMDC++5vQewk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CjYQkRUOOhbDNpP52sOQr72KihU4N8zgVk6fqPxf4960by7TVlzHVrQp/UmXsM+YotdYvd3agMIKIc+3HYVrug5XoRu/B/j5WxjprPT+xaUoNaa9g2KCIrwHp6m8A8DIIuzqRaIddkrElnFVZ1RU3aRjIdglvhKMK292SpIRUyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=ycDv/0tM; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22580c9ee0aso32556695ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742538054; x=1743142854; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QrQp4u7BKm6gGzZCqOb8APZXqNDJNPpqpX8eEWyOLX8=;
+        b=ycDv/0tM77V6zzPFnZK42xFS9mcJ70qYsEzFLmMHFWAWokVwS8IKSMoXAMXbP60Ygk
+         KmLZWzuNzObQ47x5uUthRVmid9ZMFRZOFGKvsEQAnawwWMKSJ178hQMdoGsvEWaOw0wA
+         mWCF78+6sdTVQEZozoOEYIkRFUM9OBIFqdBCrYX8sih6KaDgFT3e92/ha7AVJBNOOqvm
+         81ZFu8O5mvubsRG87iJ8FBrNokM0zrB0EhO6vafhdKmNDPd3UJPTve1LaRKq/LF9CvHB
+         5EDTQm7l8rGq1Morh9mHYQQpbEO23yPY1yp8dD72uSqLFMCq+yhVRksTzsyWh8PLrF8W
+         mPrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742538054; x=1743142854;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QrQp4u7BKm6gGzZCqOb8APZXqNDJNPpqpX8eEWyOLX8=;
+        b=KT3kJ0/ArZe3fBmP+gvCDFyRqTGU0I+l/tPpomos8q3LNpFWXNJOe+oVrY9Y4MWLyI
+         1zH6girFmCHcPtxcQtPjX6ecFcsin0glpEVDZzx0YBdiCai6o7+aJf7sV06o2+Ur6LnR
+         mKJhV1jJKq+o1lKM0g699R4MgDFWcFlTBQpTyQworLgExtr5N0XpNkguEr5iSWp7/0Mc
+         0yX/l86nuOZMY8JKsUXCNwiLbuCQPlRzxGgI9VsiaDI4EqyMD8Yi647EIwRNt6dhIpU6
+         GeQ9KYzE/2fRIiEVYankBVPS+f/G78Ek9WKGDKvGnK5mBbCvV+yR32uMVIlQqyzzYe83
+         ajtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJQ9Fs2WMWUxA4Ydk5shirzLG4Qk6B1qk0qJo8yxh46VgsevBvX4bIjlkN89Q+LaX/QBTRsPmpnHFnh88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHuX65Az8YcZkfDHC+FFh+D/sqmcUYnebxcdDf6i4vN4GEySNN
+	mfS4PjFTZ36RS8+kCyfFf1rjPbohv7SP1PCB0hSXW4WDgiaSyL0PABXho/HlhCk=
+X-Gm-Gg: ASbGncvc8PcmTIoaXZ/B1krvPDECAo2JY1IPSlOLWxidR1/xbI506z3JQd0cFfQH9uw
+	qedJY7Ozc88Eml7xpha0obrrMzMezNZlItatXEd77jjyGHvDx+bzKyWnthGQvZvqc0Yn+YUysi+
+	sqoizDJyOvPe4N5FfZkI/Tm6uB3sFQcdLxApB9RKNgZdCnVFAsuc/9xOsDAH1BDAdpVzQmlFedR
+	4ZjSCQ5lDHQ1Wjz6pLJyhdpI1S7MKS+dBORWWUEi6z/U4fpNJBn47wmpfqCEx5lJq431VfLw4ex
+	mQLsjfNa0QjEz8s6qu1feC98zEgTepZp2hW/UPfMPHghvBdW30CYX/UEWw==
+X-Google-Smtp-Source: AGHT+IHe/Q9y2RWJQUcpyi6SzGNru8XSVxXcx9in0WkoW/tVessiSlrZXGzWXyQI3jGi8CYr6TyrAg==
+X-Received: by 2002:a17:902:8b85:b0:21f:bd66:cafa with SMTP id d9443c01a7336-22780c7ba20mr26069275ad.17.1742538054144;
+        Thu, 20 Mar 2025 23:20:54 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b806asm8600895ad.111.2025.03.20.23.20.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 23:20:53 -0700 (PDT)
+Message-ID: <54cb5388-e278-41de-be29-d578cc5c37c5@daynix.com>
+Date: Fri, 21 Mar 2025 15:20:49 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] KVM: arm64: PMU: Use multiple host PMUs
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Cc: Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ devel@daynix.com
+References: <20250319-hybrid-v1-1-4d1ada10e705@daynix.com>
+ <Z9pze3J2_zrTk_yC@linux.dev>
+ <e8324d9d-3756-41cf-a102-28572e302368@daynix.com>
+ <86plidmjwh.wl-maz@kernel.org>
+ <bd681ec6-0b4c-47d9-8a4a-b7324c0883a6@daynix.com>
+ <86o6xxmg87.wl-maz@kernel.org>
+ <aabd71eb-286b-475c-a30e-d5cf5c4f2769@daynix.com>
+ <86msdhmemw.wl-maz@kernel.org>
+ <cd7b4528-34a3-4d87-9711-acc2c2e6f6e1@daynix.com>
+ <86ldt0n9w1.wl-maz@kernel.org> <Z9sSMJAlf7cQ5viu@linux.dev>
+ <0d84bc94-1c65-4737-a2eb-aa7f96a7d1e0@daynix.com>
+ <86iko4m5i4.wl-maz@kernel.org>
+ <ba9cd6d2-1ee5-478a-8102-42b4dac411ce@daynix.com>
+ <86cyebmxo7.wl-maz@kernel.org>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <86cyebmxo7.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQGqPMDwLKOI+5AXW2VZtJVBhfOd4ANqS2Y2AmcVG+WzsUpqUA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJTpeR9W66QdcHQ4uXhzQtJk5bymyx
-	Z+9JFovLu+awWbz4sIHNYsHGR4wWM/Y/Zbe4/uYhqwOHx85Zd9k9Nq3qZPPo27KK0aN9wk5m
-	j8+b5AJYo7hsUlJzMstSi/TtErgy9u76wlKwi7vi5PzVjA2MJ9i6GDk5JARMJJpudAPZXBxC
-	ArsZJa49e8TcxcgBlJCSOLhPE8IUljh8uBii5DmjxI7JPYwgvWwCuhJPbvxkBrFFBEwlvlyG
-	mMkssJ9R4tlcPYiGJ4wS7WeWgSU4BWIlZv4/xwRiCwu4S0xp3ckCYrMIqEpMenwFzOYVsJLo
-	v7CFFcIWlDg58wkLxFA9ifXr5zBC2PIS29/OYYZ4QEFi96ejrBBHOEnsXA9TLyIxu7ONeQKj
-	8Cwko2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQIjiotrR2M
-	e1Z90DvEyMTBeIhRgoNZSYRXpON2uhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeb697U4QE0hNL
-	UrNTUwtSi2CyTBycUg1MmY3+5w9/6O24bzaX5Ywac20Qz/4pdcIMRm557536i+SLEj/r345g
-	i5TKst59PTK6trxVfHvbv2tyVh/S+X82T+Yqf/BavcI4yUamdv55e4MM4b+5KX6nesxjGIRf
-	8/HX5r3OvXH628YzXwVnNySt08/Jva+2ZduzN6zsTxZ3/9xu8Wv2lyMWCRfa1NR9nlZPLki/
-	unr2fzuvmqa9K1MFfs+133pcc2OV6RaNBYmFX7KYfyavCFxs6WKmJufIyjqzrOhfvGu3qtyR
-	QJX5VyuYKuUtXqqfyNzTFPDp9fwYc3Upm8dbFM/bTpU54fmG29p4lYpdVdr682ukF+lKz78V
-	zJq6M1atfctD5qhoRSWW4oxEQy3mouJEAAeoXfYZAwAA
-X-CMS-MailID: 20250321061945epcas1p439de78c05f457d53c2afa962c281636e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-X-ArchiveUser: EV
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250320052646epcas1p384845fdc17bf572784c99ca81cd4c9dc
-References: <CGME20250320052646epcas1p384845fdc17bf572784c99ca81cd4c9dc@epcas1p3.samsung.com>
-	<158453976.61742448904639.JavaMail.epsvc@epcpadp1new>
-	<PUZPR04MB6316CA3B8281D08C2A85435A81D82@PUZPR04MB6316.apcprd04.prod.outlook.com>
 
-Hi Yuezhang,
-> Subject: Re: [PATCH] exfat: fix random stack corruption after get_block
+On 2025/03/21 2:14, Marc Zyngier wrote:
+> On Thu, 20 Mar 2025 09:52:59 +0000,
+> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/20 18:10, Marc Zyngier wrote:
+>>> On Thu, 20 Mar 2025 06:03:35 +0000,
+>>> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2025/03/20 3:51, Oliver Upton wrote:
+>>>>> On Wed, Mar 19, 2025 at 06:38:38PM +0000, Marc Zyngier wrote:
+>>>>>> On Wed, 19 Mar 2025 11:51:21 +0000, Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>> What about setting the flag automatically when a user fails to pin
+>>>>>>> vCPUs to CPUs that are covered by one PMU? There would be no change if
+>>>>>>> a user correctly pins vCPUs as it is. Otherwise, they will see a
+>>>>>>> correct feature set advertised to the guest and the cycle counter
+>>>>>>> working.
+>>>>>>
+>>>>>> How do you know that the affinity is "correct"? VCPU affinity can be
+>>>>>> changed at any time. I, for one, do not want my VMs to change
+>>>>>> behaviour because I let the vcpus bounce around as the scheduler sees
+>>>>>> fit.
+>>>>
+>>>> Checking the affinity when picking the default PMU; the vCPU affinity
+>>>> is the only thing that rules the choice of the default PMU even now.
+>>>>
+>>>> Perhaps we may model the API as follows: introduce another "composite"
+>>>> PMU that works on any core but only exposes the cycle counter. Robust
+>>>> VMMs will choose it or one of hardware PMUs with
+>>>> KVM_ARM_VCPU_PMU_V3_SET_PMU. KVM will choose the default PMU according
+>>>> to the vCPU affinity at the point of KVM_ARM_VCPU_INIT otherwise. If
+>>>> the affinity is covered by one hardware PMU, that PMU will be chosen
+>>>> as the default. The "composite" PMU will be the default otherwise.
+>>>
+>>> This makes no sense to me. A VCPU is always affine to a PMU, because
+>>> we do not support configurations where only some CPUs have a PMU. This
+>>> is an all-or-nothing situation.
+>>
+>> At least isn't it fine to have the composite PMU with a new value for
+>> KVM_ARM_VCPU_PMU_V3_SET_PMU?
 > 
-> +                       /*
-> +                        * No buffer_head is allocated.
-> +                        * (1) bmap: It's enough to fill bh_result without
-I/O.
-> +                        * (2) read: The unwritten part should be filled
-with 0
-> +                        *           If a folio does not have any buffers,
-> +                        *           let's returns -EAGAIN to fallback to
-> +                        *           per-bh IO like
-block_read_full_folio().
-> +                        */
-> +                       if (!folio_buffers(bh_result->b_folio)) {
-> +                               err = -EAGAIN;
-> +                               goto done;
-> +                       }
+> Not sure KVM_ARM_VCPU_PMU_V3_SET_PMU is the right hook (it takes a PMU
+> 'type', which is under control of the perf subsystem). But if we can
+> find a value that is guaranteed to be unique, why not.
 > 
-> bh_result is set as mapped by map_bh(), should we need to clear it if
-> return an error?
-I looked a little deeper into do_mpage_readpage() and
-block_read_full_folio(), and from a security perspective, it seems that
-unmap is necessary in all error situations. Otherwise, unwritten areas
-may be exposed.
+>>> More importantly, you keep suggesting the same "new default", and I
+>>> keep saying NO.
+>>>
+>>> My position is clear: if you want a *new* behaviour, you *must* add a
+>>> new flag that the VMM explicitly provides to enable this CC-only PMU.
+>>> No change in default behaviour at all.
+>>>
+>>> I'm not going to move from that.
+>>
+>> Why not? It will not break anything guaranteed to work in the past.
+> 
+> It doesn't have to be guaranteed. It just has to *exist*. That's the
+> Linux ABI for you.
+> 
+>> Currently KVM only guarantees that the emulated PMU correctly counts
+>> only when
+>> 1) the vCPU affinity is contained by one PMU and
+>> 2) it will not expand
+>>
+>> Breaking these conditions will make the behavior of the emulated PMU
+>> undefined. Now I'm proposing to remove 1).
+> 
+> And I'm saying no to that. I'm also getting tired of arguing the same
+> point on and on.
+> 
+> We currently have two different behaviours:
+> 
+> - either you explicitly set a PMU, and the affinity of this PMU
+>    constraints the affinity of the vcpus. The vcpus are not allowed to
+>    run outside of this affinity. Everything counts all the time.
+> 
+> - or you don't explicitly set a PMU, and a default PMU will be picked
+>    from the current affinity of the first vcpu. Your vcpus will be able
+>    to run anywhere, but the virtual PMU will *only* count when the
+>    vcpus are affine to the default PMU. When the vcpus are not affine
+>    to default PMU, *nothing* counts.
+> 
+> These two behaviours are ABI. They are not changing. They don't get
+> relaxed, they don't get tightened, they stay just as they are,
+> forever.
+
+Is the latter one is really ABI? I see it as part of behaviors that are 
+undefined and not included in ABI for the following reasons:
+
+1) It depends on the scheduler behavior, which cannot be ABI.
+
+2) It provides a broken PMU so the proposed behavioral change is similar 
+a bug fix though I call it a undefined behavior instead of a bug as it 
+is explicitly told that there is no assurance that the PMU works in such 
+a scenario.
+
+3) The userspace could not have relied on it so the "no regressions" 
+rule cannot be applied here; how can anyone have a userspace that relies 
+on a kernel behavior that depends on scheduling?
+
+But for 3), Oliver raised a concern for the guest compatibility so I'd 
+like to hear an explanation for that concern.
 
 > 
-> +
-> +                       BUG_ON(size > sb->s_blocksize);
+> You want a *third* behaviour, go ahead. Define it the way you want.
+> But the behaviours described above will stay unchanged.> > I'm looking forward to your patches implementing it, but I am also
+> done arguing on it.
+
+I understand the discussion is tiring but I want to know the reasoning 
+behind such a design decision before sending an RFC patch to a VMM 
+(QEMU) so that I can explain them why it is necessary in turn.
+
+Regards,
+Akihiko Odaki
+
 > 
-> This check is equivalent to the following condition and is not necessary.
+> 	M.
 > 
->                 } else if (iblock == valid_blks &&
->                            (ei->valid_size & (sb->s_blocksize - 1))) {
-
-Yes, I think so, I'll remove it with v2.
-
-Thanks
-
-
 
 
