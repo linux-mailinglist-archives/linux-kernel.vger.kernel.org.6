@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-571861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74F9A6C34F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:22:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE628A6C351
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:25:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A82116A2CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3A63B3F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D376923024C;
-	Fri, 21 Mar 2025 19:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4245622FDEE;
+	Fri, 21 Mar 2025 19:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UhSL1fQQ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E690F18FC75;
-	Fri, 21 Mar 2025 19:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PILuv2fR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339BD1D54D1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742584917; cv=none; b=ZPzi6djmMNMb7FKuJKTShM9haOFLnLLiYGifl960MxXmHOHWlD5yGmcVfVNTu9szHrh9EMCK4TBvmhbMRt7ydZZd/LhuE1bUXxUe3aNz4C6LsBuENPvL1qClccFkPwvpD7W0cYZaBbSz+CA2Oy6AhvQjoo9ds6LhcaE1bXZaGYY=
+	t=1742585139; cv=none; b=Zb87znJ0KxV1SjEkhUvG0a6tUlDftHS3TolV4eW4ixkMzFwH8FoKhzAFlBlsNCFsYItTZwVWhIfY30gEUGCLlnsqNOueRlqN9BVAgdOdsCEjgmcwDe4ypfwZRrPKl22H+tDI8etjJdw/YcxdNzn14u03MN23623k06PmHRCn7OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742584917; c=relaxed/simple;
-	bh=U4UMzZipjyQsFQ5piujejsQB+c1XLlwVJNvQsvBQ9MI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f2hg6pYuCqnoQu8zO+EGticcqnQrTbD4xtWVx5OLOI0/EAo4mXwpNhVRjep8Hx4sCOLt+KLMAQhgaV0oU8LWcAQxXwr0zLt83uUfnPoe5h0wMLu6dMojQMOidtqQIHbQ2IGZOPztrNuc9uWbrJ0ySIWMOnNoQ7+s3NHLCHGtqiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UhSL1fQQ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 11FED2025389;
-	Fri, 21 Mar 2025 12:21:55 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 11FED2025389
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742584915;
-	bh=TyoFMEsYsu5vnNBRoDsYQO5n/7yf/MyffHvokDDAMiI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UhSL1fQQ52kZteeudkl1dGGnJISMWQ88TblnTnd/kOBJXIkwUleGbA7RRT9mfUAHr
-	 RKGZAYFpvHN0fhQhDzKaZdA/tJLpe4RIVrc/KxQps3DjSdMFTNTiEiMUHjqRu+g96E
-	 aBKQEud+tdfK46cXvPwxEl0Cqwg67lSYLpc9rHsE=
-Message-ID: <bebb7d7a-ef56-4dc1-9eca-844f0f827976@linux.microsoft.com>
-Date: Fri, 21 Mar 2025 12:21:49 -0700
+	s=arc-20240116; t=1742585139; c=relaxed/simple;
+	bh=3IuvYQyG9EosyVBfW3oIksk9W/HDKCe373SOs77IIVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lrWIbK5K02E5kk4o8D6M1yFF4sOauuR2ozg9h2TyQC9xfK4b3NLWZL3TPqb29nv3Tegv9P7Cdo43+ZPPqTaiTW6J9GTIb5w9NkKkwUIJ/XSAT9RmBR4HZrj5OMh2GR2wfdWc+zDzaehD5wEmjRdmUu6CweyS3sjsV/qu/SFb9Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PILuv2fR; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742585138; x=1774121138;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3IuvYQyG9EosyVBfW3oIksk9W/HDKCe373SOs77IIVw=;
+  b=PILuv2fRURGLTfWjnsVE7GbddLfCb8D2RW0iseVOrcMGJ7JkVb3UAB+g
+   VH7/GlQGjmcWTLH7AFzt1riGdh4FetZgugMXHYCk2/wyeBE2oPqkH8mST
+   L8jaPQoDCAjBW0p3H+oNbpdDdtpaqfHijOjI2cLr0HFKZnhr/krcEC5UP
+   3oN0Ccm1wBMSV5aqWd3Gtj6kKhc0DsAreTBr7ajjKjsEy6bCAQypwut7K
+   tvpLU8Q6sdKybGcd5/QVRFHhqRi2dqjxv7DOSySckfpXzd2zbyh/BgEzV
+   Z4nwTLdRnEFgbps/iIWfXL4LK6BM3UQJqFTgXd4JyOZHeOYKiOgw7OX3r
+   w==;
+X-CSE-ConnectionGUID: pygh4GaAQBO3qqQMRkxRAQ==
+X-CSE-MsgGUID: oxeN2sTaSaKUIru0Qpeg2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="47520358"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="47520358"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 12:25:30 -0700
+X-CSE-ConnectionGUID: d62vawfxQ/iwqt0Ny/r06A==
+X-CSE-MsgGUID: IAkKrnsEQFqqF5BqDDim2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="123945194"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 21 Mar 2025 12:25:29 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 909A014B; Fri, 21 Mar 2025 21:25:27 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] i3c: master: Drop duplicate check before calling OF APIs
+Date: Fri, 21 Mar 2025 21:25:26 +0200
+Message-ID: <20250321192527.457324-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] x86/hyperv: Use hv_hvcall_*() to set up hypercall
- arguments -- part 1
-To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
-Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org
-References: <20250313061911.2491-1-mhklinux@outlook.com>
- <20250313061911.2491-3-mhklinux@outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250313061911.2491-3-mhklinux@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/12/2025 11:19 PM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Update hypercall call sites to use the new hv_hvcall_*() functions
-> to set up hypercall arguments. Since these functions zero the
-> fixed portion of input memory, remove now redundant calls to memset()
-> and explicit zero'ing of input fields.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> ---
-> 
-> Notes:
->     Changes in v2:
->     * Fixed get_vtl() and hv_vtl_apicid_to_vp_id() to properly treat the input
->       and output arguments as arrays [Nuno Das Neves]
->     * Enhanced __send_ipi_mask_ex() and hv_map_interrupt() to check the number
->       of computed banks in the hv_vpset against the batch_size. Since an
->       hv_vpset currently represents a maximum of 4096 CPUs, the hv_vpset size
->       does not exceed 512 bytes and there should always be sufficent space. But
->       do the check just in case something changes. [Nuno Das Neves]
-> 
->  arch/x86/hyperv/hv_apic.c   | 10 ++++------
->  arch/x86/hyperv/hv_init.c   |  6 ++----
->  arch/x86/hyperv/hv_vtl.c    |  9 +++------
->  arch/x86/hyperv/irqdomain.c | 17 ++++++++++-------
->  4 files changed, 19 insertions(+), 23 deletions(-)
-> 
+OF APIs are usually NULL-aware and returns an error in case when
+device node is not present or supported. We already have a check
+for the returned value, no need to check for the parameter.
 
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/i3c/master.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index d5dc4180afbc..1580e2630dfe 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -2486,7 +2486,7 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
+ 	struct i2c_adapter *adap = i3c_master_to_i2c_adapter(master);
+ 	struct i2c_dev_desc *i2cdev;
+ 	struct i2c_dev_boardinfo *i2cboardinfo;
+-	int ret, id = -ENODEV;
++	int ret, id;
+ 
+ 	adap->dev.parent = master->dev.parent;
+ 	adap->owner = master->dev.parent->driver->owner;
+@@ -2497,9 +2497,7 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
+ 	adap->timeout = 1000;
+ 	adap->retries = 3;
+ 
+-	if (master->dev.of_node)
+-		id = of_alias_get_id(master->dev.of_node, "i2c");
+-
++	id = of_alias_get_id(master->dev.of_node, "i2c");
+ 	if (id >= 0) {
+ 		adap->nr = id;
+ 		ret = i2c_add_numbered_adapter(adap);
+-- 
+2.47.2
+
 
