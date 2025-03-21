@@ -1,163 +1,173 @@
-Return-Path: <linux-kernel+bounces-571913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F21A6C443
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:33:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B906A6C448
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009043B6ABD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C009465B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B71230BDC;
-	Fri, 21 Mar 2025 20:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9641E230BE3;
+	Fri, 21 Mar 2025 20:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SVtixoBt"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzFWRekB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FF8230981
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13BD1514F6;
+	Fri, 21 Mar 2025 20:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589201; cv=none; b=kxN+0W5BS99vzXvCGE2BLqvdJQvb59bRroyo/Gzoc9lOkCxGh1Ryr7BSuNEs1hUv+KDtcZ/nNjlTMRQSUjHvIjc7JJoaeiEuhczXHUIE8Y0+en90PTC34jsjW3rVbrX//hvEMMMTyXMXuAPrtLv5SsTcDxioQMNshjNEYcOZMOw=
+	t=1742589282; cv=none; b=uv134ij3bMm3Ea/1fBZA7CdHR5wk5GX8Z0eNHofPRk8HhGvMunPOtF9mfXoZKlRUbFVGJkFbOdhIW/ilHb2VzYA2sDd8EeDfBesoBGrLjPIEEWX6lCxBeZSNtkp2OQEqJUUfKSsehAmf0runC5dQIyNnobPPlWxRm+zNH61YLng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742589201; c=relaxed/simple;
-	bh=7lhaM0CG+9tuZnrS9lZcJSlVArtevf4SVBCaDSzqoIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QBdaGbBDC//ar6vt7ZuuajBiYHg2bRcJhONelOPEqr5a7NPh1fFMPESvIdxt3JB1T5/HhS1nqEGWWk9NtRBDi8xZAFyidpoLUFT5psJ1oFd96PiizMC+T4wh9dS+QgIpmFEXfyYO5H0HbXEkiv5y0A7Y6aAoYMJZX/KZlmknq+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SVtixoBt; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d3db3b68a7so26002395ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742589198; x=1743193998; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xuLZuFCKSKg3PxWQwRd8ETXjNuULumylP5s/6/Th/nI=;
-        b=SVtixoBtotTxS6U4OZnzvnwk8oHnpE5tf1GYD3KBq3Cc0Z3z2DvJCO+isPNrKorK8a
-         gjVxI8la7UKqZ74wjvpo88bH6DalQR63upAndrbxyIbIqKlVQWT9inb5LoekVITnO13M
-         YXHxU9qVg1kRPZTG5B0GK1yg10GH1dhKVqrBdkYHPSfyTjnw/aiC5D1NMqYgewsIDmv7
-         YZ21gTmmw4QWdO3nayryvKBK6P7rRCB9orRDJumCpp+Od3acMeBIdn2peLX8yki/z4mZ
-         0BAvCrd+xVGCsC1GxXfOxWch8XxR0YwsZgw0hHYPqiJPNWGaCaIjDK6NsYOgAmrki/Xu
-         tFhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742589198; x=1743193998;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xuLZuFCKSKg3PxWQwRd8ETXjNuULumylP5s/6/Th/nI=;
-        b=ji2r2JY8ClZRoi1YdwDwePbXxsb+7Bw3ypezQW8Mw2nAeKtn3fSin8J7Y/YNpzdXTB
-         NknjMJ7XDqiFty7qLLsdrIk3qBvYluRJTsU9Te3vhXnUDVZV+bmx36ihEnTyxi9u1Eot
-         zdJJsJ5DHhp6PUN6luqlK6ROd87rvRdOy9jYqVAAAnyb3MJHGgLR9L57Dsu4WTGThu3J
-         3BMMZCmUjAjTa3VrNGpb04IXeEMdNS6pOPdkiAIdj+UIjT3cGFB2RBOolCv8Ci6381U2
-         VjMxyzJ6tlHbn5WPw7BRKxdGZgCJ4LDov+R0cvVoELrpC+Ta0zQNOWwn5IOMZix0tsLU
-         Cxqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZWJ/GzSWZZzvu/3hqO+hIOIr+XgCnid63BRT/6YEs9Z3f/Km2PRMiEjnOI5sIlAQf0B66DjRACNOul2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe28OJTYgS4YiSNuUv9WS9jKd8frsqmT41/oVuItwChw8Lm31X
-	L3xGBwZXkb15jGxMgL5vt8Sh8UerLHd1Cu7Ikl35SD1b8MXrOaQiyZfAYYh88ws=
-X-Gm-Gg: ASbGncuvlf0owESOj8F1o2HhWcWyRtJI7GxmlqjhGQ1dqAcJpdg7QYBPrmNqdRVbRr0
-	+XBmIRoBxtsjTdTSRY0ChtRR5tEdWytBurBX3RTtuwGCfLe7W1bn1odLYTZeog2z8AA2xYMrRx1
-	rEEoXunNkLfuo2LkE2XWvPlKodyWLtO7f77rK4ysaJtOmWQ8Y2g9uscfPDp+81Nt7cRXSsRiFZM
-	4UjfHdQZrOLCrQ9mFYVvoZogoNhHPJU/PC1McxTuJsFLi98lRNKwZoA+AoJgFAVje02uXhkV56v
-	fUb1t43M3hhkO8Qung8Sq5NDgbPNsjVAYyG7Y+UttA==
-X-Google-Smtp-Source: AGHT+IFI91THLm3qVJtECcXxa5n7V2R1Cftu+sQP4tmofv//BmWK9VIunVWN3AluV2sQCeMt2KYACw==
-X-Received: by 2002:a05:6e02:170d:b0:3d5:8908:92d0 with SMTP id e9e14a558f8ab-3d5960d22fbmr49781055ab.3.1742589198084;
-        Fri, 21 Mar 2025 13:33:18 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdea05dsm582166173.63.2025.03.21.13.33.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 13:33:17 -0700 (PDT)
-Message-ID: <67a82595-0e2a-4218-92d4-a704ccb57125@kernel.dk>
-Date: Fri, 21 Mar 2025 14:33:16 -0600
+	s=arc-20240116; t=1742589282; c=relaxed/simple;
+	bh=ESuQxc1uo2rrbnn2JcOtucq5e7Bg+IxPDoWM/kKHcd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pd/byEfQpbl2a1QIqp94mtDFGIZcBtfJq0LqigbXhKyZP6g0mf3ZN1ATvxzP9RiNe35sPsXTOJpzFqiJgBAzxhxS2QXPiV+VMMXwFeJzR2qzNeGFALv4Bf1sl9YI9A2pdB4zDCG1GaUhZA0h/bv1UELYxVHVwD5mlkdYDfhCFus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzFWRekB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADECAC4CEEA;
+	Fri, 21 Mar 2025 20:34:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742589280;
+	bh=ESuQxc1uo2rrbnn2JcOtucq5e7Bg+IxPDoWM/kKHcd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rzFWRekBJPwEGvbHtbrGUGtb8eplO2ree3EZf/OaCNzl5PY0Q/KAtSvAdXH+GtNAm
+	 T5A1Wtw1W2QZV0vBTiWfXF1ggx8kkylGKo7ElOdNQdD/hN1PPkpSR5+atMHpaFWhL5
+	 a6YkRlGyRn4TX/5C/0pNt6GQHiVeaQA/GcRvc9bhPasSSiKuW6pE5DyNBGOaqFeHDK
+	 Mw1W5EgxwAQ2lHU7NU5STndVPhO2nnnhVa0einiOVStpAicC5+F4DxYQM2UNRl3k9s
+	 p+Xssx8WC50e3srHz7eJu3abIHa5RgTOVVZJOydi3Zn83tVZ4+eS9Poo5Wok3hguRb
+	 re9bmBDf/ovaQ==
+Date: Fri, 21 Mar 2025 20:34:35 +0000
+From: sergeh@kernel.org
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com,
+	serge@hallyn.com, kees@kernel.org, linux-kernel@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev
+Subject: Re: [PATCH 1/2] lockdown: Switch implementation to using bitmap
+Message-ID: <Z93NW3za1ilzVxLK@lei>
+References: <20250321102422.640271-1-nik.borisov@suse.com>
+ <20250321102422.640271-2-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- asml.silence@gmail.com, linux-fsdevel@vger.kernel.org, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
- linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com,
- arnd@arndb.de, brauner@kernel.org, akpm@linux-foundation.org,
- tglx@linutronix.de, jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2> <Z9uuSQ7SrigAsLmt@infradead.org>
- <Z9xdPVQeLBrB-Anu@LQ3V64L9R2> <Z9z_f-kR0lBx8P_9@infradead.org>
- <ca1fbeba-b749-4c34-b4be-c80056eccc3a@kernel.dk>
- <Z92VkgwS1SAaad2Q@LQ3V64L9R2> <Z93Mc27xaz5sAo5m@LQ3V64L9R2>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z93Mc27xaz5sAo5m@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321102422.640271-2-nik.borisov@suse.com>
 
-On 3/21/25 2:30 PM, Joe Damato wrote:
-> On Fri, Mar 21, 2025 at 09:36:34AM -0700, Joe Damato wrote:
->> On Fri, Mar 21, 2025 at 05:14:59AM -0600, Jens Axboe wrote:
->>> On 3/20/25 11:56 PM, Christoph Hellwig wrote:
->>>>> I don't know the entire historical context, but I presume sendmsg
->>>>> did that because there was no other mechanism at the time.
->>>>
->>>> At least aio had been around for about 15 years at the point, but
->>>> networking folks tend to be pretty insular and reinvent things.
->>>
->>> Yep...
->>>
->>>>> It seems like Jens suggested that plumbing this through for splice
->>>>> was a possibility, but sounds like you disagree.
->>>>
->>>> Yes, very strongly.
->>>
->>> And that is very much not what I suggested, fwiw.
->>
->> Your earlier message said:
->>
->>   If the answer is "because splice", then it would seem saner to
->>   plumb up those bits only. Would be much simpler too...
->>
->> wherein I interpreted "plumb those bits" to mean plumbing the error
->> queue notifications on TX completions.
->>
->> My sincere apologies that I misunderstood your prior message and/or
->> misconstrued what you said -- it was not clear to me what you meant.
+On Fri, Mar 21, 2025 at 12:24:20PM +0200, Nikolay Borisov wrote:
+> Tracking the lockdown at the depth granularity rather than at the
+> individual is somewhat inflexible as it provides an "all or nothing"
+> approach. Instead there are use cases where it  will be useful to be
+> able to lockdown individual features - TDX for example wants to disable
+> access to just /dev/mem.
 > 
-> I think what added to my confusion here was this bit, Jens:
+> To accommodate this use case switch the internal implementation to using
+> a bitmap so that individual lockdown features can be turned on. At the
+> same time retain the existing semantic where
+> INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
+> everything below me".
 > 
->   > > As far as the bit about plumbing only the splice bits, sorry if I'm
->   > > being dense here, do you mean plumbing the error queue through to
->   > > splice only and dropping sendfile2?
->   > >
->   > > That is an option. Then the apps currently using sendfile could use
->   > > splice instead and get completion notifications on the error queue.
->   > > That would probably work and be less work than rewriting to use
->   > > iouring, but probably a bit more work than using a new syscall.
->   > 
->   > Yep
-> 
-> I thought I was explicitly asking if adding SPLICE_F_ZC and plumbing
-> through the error queue notifications was OK and your response here
-> ("Yep") suggested to me that it would be a suitable path to
-> consider.
-> 
-> I take it from your other responses, though, that I was mistaken.
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
 
-I guess I missed your error queue thing here, I was definitely pretty
-clear in other ones that I consider that part a hack and something that
-only exists because networking never looked into doing a proper async
-API for anything.
+Reviewed-by: Serge Hallyn <sergeh@kernel.org>
 
--- 
-Jens Axboe
+but one comment below
+
+> ---
+>  security/lockdown/lockdown.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index cf83afa1d879..5014d18c423f 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -10,12 +10,13 @@
+>   * 2 of the Licence, or (at your option) any later version.
+>   */
+>  
+> +#include <linux/bitmap.h>
+>  #include <linux/security.h>
+>  #include <linux/export.h>
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+>  
+> -static enum lockdown_reason kernel_locked_down;
+> +static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
+>  
+>  static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>  						 LOCKDOWN_INTEGRITY_MAX,
+> @@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>   */
+>  static int lock_kernel_down(const char *where, enum lockdown_reason level)
+>  {
+> -	if (kernel_locked_down >= level)
+> -		return -EPERM;
+>  
+> -	kernel_locked_down = level;
+> +	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
+> +		return -EINVAL;
+> +
+> +	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
+> +		bitmap_set(kernel_locked_down, 1, level);
+> +	else
+> +		bitmap_set(kernel_locked_down, level, 1);
+> +
+>  	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
+>  		  where);
+>  	return 0;
+> @@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+>  		 "Invalid lockdown reason"))
+>  		return -EPERM;
+>  
+> -	if (kernel_locked_down >= what) {
+> +	if (test_bit(what, kernel_locked_down)) {
+>  		if (lockdown_reasons[what])
+>  			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+>  				  current->comm, lockdown_reasons[what]);
+>  		return -EPERM;
+>  	}
+> -
+>  	return 0;
+>  }
+>  
+> @@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+
+Context here is:
+
+static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+                             loff_t *ppos)
+{
+        char temp[80] = "";
+        int i, offset = 0;
+
+        for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
+                enum lockdown_reason level = lockdown_levels[i];
+
+...
+
+>  		if (lockdown_reasons[level]) {
+>  			const char *label = lockdown_reasons[level];
+>  
+> -			if (kernel_locked_down == level)
+> +			if (test_bit(level, kernel_locked_down))
+
+Right now this is still just looping over the lockdown_levels, and so
+it can't get longer than "none [integrity] [confidentiality]" which fits
+easily into the 80 chars of temp.  But I'm worried that someone will
+change this loop i a way that violates that.  Could you just switch
+this to a snprintf that checks its result for < 0 and >= n , or some
+other sanity check?
+
+>  				offset += sprintf(temp+offset, "[%s] ", label);
+>  			else
+>  				offset += sprintf(temp+offset, "%s ", label);
+> -- 
+> 2.43.0
+> 
 
