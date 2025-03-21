@@ -1,178 +1,176 @@
-Return-Path: <linux-kernel+bounces-570859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71BDA6B57A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAF7A6B532
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC0017A82E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B19F27A9B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57221EE02F;
-	Fri, 21 Mar 2025 07:50:07 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFA726ACB;
-	Fri, 21 Mar 2025 07:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742543407; cv=none; b=uPtQJxg/sw6WTilRssFVW3iHVsE1WkJxYmLPHrNRZUt7fD70fZ11ey7DUR9fdK/RudHo6NXQGNbMYMOEVY/G5JeMS43p/Ui1i0BEPIeWbM4LjeDVxIEJsN52CJUOyOSAFtXsHs77/610h1HUA6t2vDLQeicZi4exrofWeUU9c2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742543407; c=relaxed/simple;
-	bh=6hI6HTb0SjrdNqP1YFqTh6hXn9ZSUNy1APKZfKSSCjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBoC8pIpZswCPs8stqF06r3JQHt9gNBxu8fQwARvxEqIt5EGQ90G8XiG8/zUzl2uubNRmb/kmrgw0eMUQtii6QJ7SjfSb16dZpZTJm8TsiO3fwnF/lY4O3BBFnPrVUX+ze1ciM1dGFHkvtDFdq7A1ZR5aVF7MX7s1ngVaB3ZYbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZJvVF4Pn7z9sRy;
-	Fri, 21 Mar 2025 08:39:49 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id F-EBTBk1L9WD; Fri, 21 Mar 2025 08:39:49 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJvVF2zQJz9sRs;
-	Fri, 21 Mar 2025 08:39:49 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 427FB8B79C;
-	Fri, 21 Mar 2025 08:39:49 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 6L_KAMM1K10W; Fri, 21 Mar 2025 08:39:49 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 491FB8B763;
-	Fri, 21 Mar 2025 08:39:47 +0100 (CET)
-Message-ID: <eff21b9b-0b03-4dbc-aa0a-7d3771df9082@csgroup.eu>
-Date: Fri, 21 Mar 2025 08:39:46 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E6D1EE7C6;
+	Fri, 21 Mar 2025 07:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="P/discfH"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012042.outbound.protection.outlook.com [52.101.71.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005381EE008;
+	Fri, 21 Mar 2025 07:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742542779; cv=fail; b=h3XI0V+qcGIV1drxmoDfnDPOBKkjWuK1iXFRTIBvAsn2bD+D56Jfwxc+dk4qU9R/dHktltx/UJzhc8jYAPOhpUU11eW/d4j6nyZmFhqtCuFS3OhVesiYi3wwMFFtPpmGP9M3RvdBUp8XzffVbZztqxujOUOcIlhQB1y+EOYTuDQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742542779; c=relaxed/simple;
+	bh=7C64f9iIkbWkM+oCf3yllggksv7UZ5D/ccUu59e5ruw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=V7U1ahNfBuMdIunUBBOFyOpNY2CUbZERcxPZ6o2pKe41Ib47RB/Ip3SUxhmQ+xxfBYVY4OvielE2jYECeT1XFWNgOvHnMjTIwAjMaFIzDW7VRaQJfqqnjc8Zi+v2GJ+yU6sVXz608wvY2h8n7XpiXMr42/9dQ+hzwAulsh3r/Lg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=P/discfH; arc=fail smtp.client-ip=52.101.71.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PFD2GeVaii5dzOTA4wdViUDAgoMVKVYN0YNiHsxjd1hFsqWb1VmcpX3ojUH0yqrOcUsjN6WUtSmOg6ONN6hm4zHLygUlmJ+yaJdAllGf8xSCsM3chK6D3mYyVuUlIuYqw0N/F3yxq7EWTy6Dj1gDcyU4+yN7e5aKSroD42Y1Gat257vF7z+7Cm725dbFF8s/KTaY4aU0dQxj1SS/YYgcmVL0kDlZuZe5/OUfPtL3dsylH7/3rap+m7GHm2fIBnQwY8j6PDjl9HDWEh5X3GCrdqkNYzLI3dv8uOIuQobRPnuBvBATJG9r0vDy8WeHdU+P8YcyXO4mthWfdXZebn8GXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pvJdaliV4gt8NgMaCsuB0PQJ4MDccTAfbr1oBTQc1rQ=;
+ b=jkTAqKzfYA9Y20c52g9peObBG7s4klcB2GrY/osghzEYAhEX5KUHIGbqaj1dyAPRIhg+3f2EmCrgxJrs5Jsvwrw5h1ojA2a3uB8sSwLVs86prFs+EmGNNiL7NzHmBq/JZW8c8ew8QO6RQMd/CqpBq9/TBr596T5yldCpy2Slf6yuwr4lPH0jc7jkykO2k1rwQfDAVnXjd9HKZjOObYSj3wmaRjY86ao21j/ZdzylDFb898RvHxMP6ORC8aKph2x0cwTCTO8of9fKSwc6BzqAEoKoJQnRgZXEUWt/B4Rkkgdv2FyzsdZ4YTIOCX5gagnZOrt+nXptC0zruoCIJDxDpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pvJdaliV4gt8NgMaCsuB0PQJ4MDccTAfbr1oBTQc1rQ=;
+ b=P/discfHYDJ1aDBDH5jhPUuS4MGCfLJflsnsPuKnegreauFnkb7M6YuFgAeTmdLGaFQB1oLpDNX5g7XWuZ5VB4UhiCf0NNGAXf//kPZGju8xiBTkd01/J6873pFTbFbCUwMxY40j0oFO/oPcCCzBu3ApXZQP0MvmNxAKw5DO75S9g6LYY6MAlx8Ej1rSk5agEwuMG44AgKsKm8ltZyDmGODWIXoBuImRTLfxlNvcGcMdmG7ZS+M86DZu4e5b+5CMPP5l2D3+MpqePWlB+iXGy0ezqhY07AsJaaG2AfXNpS74W2dqwYmNw6bLCmcZACIpbXcAum99va5m1Yu55Merlg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
+ by GV1PR04MB9102.eurprd04.prod.outlook.com (2603:10a6:150:21::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
+ 2025 07:39:35 +0000
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37%6]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
+ 07:39:34 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	shenwei.wang@nxp.com
+Subject: [PATCH V4 0/3] tty: serial: fsl_lpuart: cleanup lpuart driver
+Date: Fri, 21 Mar 2025 15:39:47 +0800
+Message-Id: <20250321073950.108820-1-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0187.apcprd06.prod.outlook.com (2603:1096:4:1::19)
+ To DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] cxl: support CXL memory RAS features
-To: shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
- dan.j.williams@intel.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com
-Cc: linux-edac@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, bp@alien8.de,
- tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
- leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
- jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
- naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
- somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
- duenwen@google.com, gthelen@google.com, wschwartz@amperecomputing.com,
- dferguson@amperecomputing.com, wbs@os.amperecomputing.com,
- nifan.cxl@gmail.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
- roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
- wanghuiqiang@huawei.com, linuxarm@huawei.com
-References: <20250320180450.539-1-shiju.jose@huawei.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250320180450.539-1-shiju.jose@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8429:EE_|GV1PR04MB9102:EE_
+X-MS-Office365-Filtering-Correlation-Id: 800e0c48-1335-4e0b-760c-08dd684b866b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6mcNiWApHKeh3eHRKg4X7ScBZBH4qGPT/t72DHMLYSXDagxQuC9SNvojaCn9?=
+ =?us-ascii?Q?PiEiTj5BnVBoZWl1E+5FW73C/nDNV0+VYyvh+EO/vfMjlIPcHAqby68VdTJb?=
+ =?us-ascii?Q?3PeVl/Vd9lYuQSkmy4hI4arow2MhNwsVfbRm5STZOU5llqEiUTPbcoKDA/Je?=
+ =?us-ascii?Q?nRN6zkjSFMD0dJ2p38zj4JdOovC2eWR6CkC9XdKbnkvoWrZch/1TIb6w6/rD?=
+ =?us-ascii?Q?xgyuHjzVC2ug338RUNGQkxvVZEfAUMVzBppXx8P7ASysYae5aFdgPc5XvGqC?=
+ =?us-ascii?Q?6chZ5yZIgDP4uaRlnr7UrP6CXGI/1g/AM9H3fGlLWmhnuu/zs0o53nzcfxRt?=
+ =?us-ascii?Q?3/n8pCYnW+gepmaE9i18IgiBb2FgWDmtVb/R8fSLsROGF4+jFPET1NHz4o2l?=
+ =?us-ascii?Q?2CIdgOspVEsCPumGQyiYv8seeI0x/pvOikh6dApmaDOcoM9Q2acsjXmdBBJV?=
+ =?us-ascii?Q?4vicIDF9f7Y0B1wHJplEyCUc8RhdbVxm/WSbHCjC58fsCMnC4hS8blo4SINz?=
+ =?us-ascii?Q?whJMWOFNSr5xRSXdOE/EAeUIXOEHI441tDNqX0tW8HyxmGKM8fE99Ge7f75q?=
+ =?us-ascii?Q?vu4j2AcPe+i/oeNS/019S7iHKp3VR8nVBjkL81Qys2v2dYnfTn8U19DDA1Mt?=
+ =?us-ascii?Q?FRvsYXUQXQrtzcTOzg4jvzYEPUbWhkUIJ6jU2ShQ3IzwV2OAhwgw8mjpJEth?=
+ =?us-ascii?Q?UMmZNs4+yyyTasZ+VrF1tsmIm5XxIDvUATlzzPHn/eeNSx1dBeRO7LliSTO9?=
+ =?us-ascii?Q?wZRuwhTaW5zlj5cvkVJp0QpZy+bz4On/VsW+nZdhB4b177gu0Zhmrg9J1OEY?=
+ =?us-ascii?Q?zY36mVdAXF+cQCU1TYaXNvGd8iskHnSLNX4+q9qHqrW0zaydELw08rakvc5S?=
+ =?us-ascii?Q?N3cVfjkUPeWu8N/be5OfymF+RGWRDpsSJy7lI+hDq++Kmpfc6PvjAylA1YK3?=
+ =?us-ascii?Q?hlaQbPeNpsHwor2irkZO/AUk1kmw9TTAasYtBphLz8vBfbqv8QeYjFcKpiu9?=
+ =?us-ascii?Q?O6v1RprUABlpxXV4O3kP6fP9Uqvs4FkuArYTqP3QIVteTEheh/Cp4ypF7fbE?=
+ =?us-ascii?Q?r4UN1X/lpvYJAx+jEKZw5POXjTIh0WKmBb98jL+aq+H3v7zr2+lJFdGGw0UW?=
+ =?us-ascii?Q?I5nNwkPzdbW0NLBwoRj7AIrcA8FBE3PnE2Lro3YafIVbIDcX6T1b606wVOFE?=
+ =?us-ascii?Q?+5NLMD3y+rke9yqxTKIKKkL5sy7tDVD585srAyXriqH8kr17IxFh/w9scKXL?=
+ =?us-ascii?Q?jMAiiK6ftgOpnhVVG2GuwkLMfl4Gpc5ULJ9rqcwOTEsL0sDPL450KmPopuAm?=
+ =?us-ascii?Q?QUfOIRqR4/juT0yh85bf7Mu6Uac+6iR8jOrDolDdn/TOhBBNB4ZOxZg5MNfF?=
+ =?us-ascii?Q?2ouGP9ZtYdFeP5VmJDlauE5PJ8MQoQ825DwteOX1auZVpH5Tl7j/oqHXZ3ZF?=
+ =?us-ascii?Q?lRKWZ7OJ6cl1A43R0scBcOoNwr/Sqop4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hLmCAHJaLcImEz4Z0EnmKxhYGV4mo0lNZ4267WRIoHdduAxb1XQLMGW1TkLh?=
+ =?us-ascii?Q?I5XDJNb3h4RTzdSSG3ZFBzP2yPckHvk78nnBtnhHb1SsdJOQjGUXUEbh629z?=
+ =?us-ascii?Q?9Yutqfg5puoaZsDBZ69p/gmxtTeQcvAUh2QRtT9P5MMnBusHfi20G5jJuLvn?=
+ =?us-ascii?Q?FmaNP2VoniN3C1rf1tLPPM2YG/0RBBELY7lvNX2beZYVolBWCMIARxZOUsGo?=
+ =?us-ascii?Q?f/973FCAwzogZMqh7XomuFRCNNit/HZkPsvFGAsCabspgzd2cZ+MN+hHvD7z?=
+ =?us-ascii?Q?bxU0Scyj4RnRXn4IpoUHB031CP5gv91TOWK9UCLuskElrZ4leJy4JgoXHUqM?=
+ =?us-ascii?Q?jfI2PD8c0VAlBBUPf/zytfZ9TaSRCTixmzIJgMbARNbe13Fr1xTq57vC1Tkt?=
+ =?us-ascii?Q?ik8iCeZ2tFS7BqM6GChnniehNSGbC3T3nd4wiyYL17DDCwOzGwjw6Xisn/II?=
+ =?us-ascii?Q?UPnizsrxkzmDffkvZnLw0hVbfWpw6vYjHaKoPrPYcf/EsRsVS9bsmCpqWk1T?=
+ =?us-ascii?Q?KlOn7Y59xn+UHz5Bm1w2PhhviyCvbMtq+MRQEZZXWkIbDbuFl7uQRSOFj6Gt?=
+ =?us-ascii?Q?EECGdmPsyON1On2wkRhluENjAFEM0iTl3KPXyoPIqEkpWt+G0on8B0rHI3w/?=
+ =?us-ascii?Q?RquGHlwJ8MU+YeYGuCALxRqrSqA8PqIOKv8P+TR5HFzb2niRjWqE29vlBI4I?=
+ =?us-ascii?Q?kiEpc/S7utEmoEvv1zZ4H8ui/Gh6SrpCupJRQjNDmyxcSdxxkP4sGCOenvI7?=
+ =?us-ascii?Q?yftV8lBM7h6H2nJAlMq5JTZCn3xrcmdZvHjDyG5jCO9T+gO7h3kyy4sxIrYz?=
+ =?us-ascii?Q?ygMMXnc3yfJV/AGgerR8GTecWEcwhM7bJTMh8f+qGcpf7wemtSgnkfsNi2jr?=
+ =?us-ascii?Q?RsIkb/uGuSbv5mq1+t5oGnWW3f5MhAlYFbPEvzBZs5+Q9R/1dxVTmlKJgkNa?=
+ =?us-ascii?Q?cczMCmWN5o2pG6bNM+liLCsDky6k1JqoHQy7VeZ1RDqXZpAq9bqU9xcLdFeM?=
+ =?us-ascii?Q?3/e6ZM10m+PRZBYeQsvQvs1VPNz24BEYOGecTgcWh7c40QoKPlAJ6T//AFVy?=
+ =?us-ascii?Q?mQjAavF6K9XYmsHti0ij436e4wqFzmqH1xAIKRVkhnO7dB0nj4H9D8RFAUea?=
+ =?us-ascii?Q?t4jBv7Pc3UFFz8RBP0RvY70FSPDfGlJ3Nm8ER5WwXcCMTdhmH1WjW3uUNgq/?=
+ =?us-ascii?Q?5iP9vcsygt959AIaBqP5puBFkKpIn3bLQjIpK90YG4p0lQtdcMaxuZ7r3z/k?=
+ =?us-ascii?Q?H4ndTKsWqFSifSFQ6Ch6BqTlL0yzay/bDGz8jjWqx07VHdRXIHmFoiJ++1xw?=
+ =?us-ascii?Q?/rAruUbC9sblkQSj2viR56KzWU0SWMlxxcyYOs4fqGWv/jnwmmLA5+7xQI5e?=
+ =?us-ascii?Q?vLUn9ZVglwimj1dOz5TuOdWHIaiPP9tR4p2cN0cuWsDxGBnqhhCJGryZXwSM?=
+ =?us-ascii?Q?tZww4EfyDUZemWX4ii35JfKtlcoqL0VeCAeZOxMWZkIV4uhBtHAQiNwJm+GM?=
+ =?us-ascii?Q?AUwKjb/059z9iTfcnOL43WETMW69RJf1458/UOCazVDn221DOStdM67bDioW?=
+ =?us-ascii?Q?d5SOmzlH0w8oz30bZx9EZrd3J7uZ/DLWGTY5GGpl?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 800e0c48-1335-4e0b-760c-08dd684b866b
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 07:39:34.7166
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bRfUIuJLf1bgrMSAowwL6IOVgooC7IFa9vadHE0wCktgjJnod9OC//KRGE0Nfbmrt6b438VrhdCWz57T8wZGUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9102
 
+Do some cleanup for lpuart driver, no functionality change.
 
+Changes in V4:
+1. Fix unused variable 'sport' warning in patch#2 reported by kernel test robot.
 
-Le 20/03/2025 à 19:04, shiju.jose@huawei.com a écrit :
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Support for CXL memory RAS features: patrol scrub, ECS, soft-PPR and
-> memory sparing.
-> 
-> This CXL series was part of the EDAC series [1].
-> 
-> The code is based on cxl.git next branch [2] merged with ras.git edac-cxl
-> branch [3].
-> 
-> 1. https://lore.kernel.org/linux-cxl/20250212143654.1893-1-shiju.jose@huawei.com/
-> 2. https://web.git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/log/?h=next
-> 3. https://web.git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git/log/?h=edac-cxl
-> 
-> Userspace code for CXL memory repair features [4] and
-> sample boot-script for CXL memory repair [5].
-> 
-> [4]: https://lore.kernel.org/lkml/20250207143028.1865-1-shiju.jose@huawei.com/
-> [5]: https://lore.kernel.org/lkml/20250207143028.1865-5-shiju.jose@huawei.com/
+Changes in V3:
+1. Add the change to covert unsigned char to u8 in the first patch as Jiri suggested.
 
-The title for the series is quite confusing, CXL seems to be something 
-else. There is a series here [1] that removes CXL driver, but after 
-looking it seems to be something completely different.
+Changes in V2:
+1. Add the third patch to rename the register variables as Jiri suggested.
 
-[1] https://lore.kernel.org/all/20250219070007.177725-1-ajd@linux.ibm.com/
+Sherry Sun (3):
+  tty: serial: fsl_lpuart: Use u32 and u8 for register variables
+  tty: serial: fsl_lpuart: use port struct directly to simply code
+  tty: serial: fsl_lpuart: rename register variables more specifically
 
-Christophe
+ drivers/tty/serial/fsl_lpuart.c | 472 ++++++++++++++++----------------
+ 1 file changed, 231 insertions(+), 241 deletions(-)
 
-
-> 
-> Changes
-> =======
-> v1 -> v2:
-> 1. Feedbacks from Dan Williams on v1,
->     https://lore.kernel.org/linux-mm/20250307091137.00006a0a@huawei.com/T/
->    - Fixed lock issues in region scrubbing, added local cxl_acquire()
->      and cxl_unlock.
->    - Replaced CXL examples using cat and echo from EDAC .rst docs
->      with short description and ref to ABI docs. Also corrections
->      in existing descriptions as suggested by Dan.
->    - Add policy description for the scrub control feature.
->      However this may require inputs from CXL experts.
->    - Replaced CONFIG_CXL_RAS_FEATURES with CONFIG_CXL_EDAC_MEM_FEATURES.
->    - Few changes to depends part of CONFIG_CXL_EDAC_MEM_FEATURES.
->    - Rename drivers/cxl/core/memfeatures.c as drivers/cxl/core/edac.c
->    - snprintf() -> kasprintf() in few places.
->    
-> 2. Feedbacks from Alison on v1,
->    - In cxl_get_feature_entry()(patch 1), return NULL on failures and
->      reintroduced checks in cxl_get_feature_entry().
->    - Changed logic in for loop in region based scrubbing code.
->    - Replace cxl_are_decoders_committed() to cxl_is_memdev_memory_online()
->      and add as a local function to drivers/cxl/core/edac.c
->    - Changed few multiline comments to single line comments.
->    - Removed unnecessary comments from the code.
->    - Reduced line length of few macros in ECS and memory repair code.
->    - In new files, changed "GPL-2.0-or-later" -> "GPL-2.0-only".
->    - Ran clang-format for new files and updated.
-> 3. Changes for feedbacks from Jonathan on v1.
->    - Changed few multiline comments to single line comments.
-> 
-> Shiju Jose (8):
->    cxl: Add helper function to retrieve a feature entry
->    EDAC: Update documentation for the CXL memory patrol scrub control
->      feature
->    cxl/edac: Add CXL memory device patrol scrub control feature
->    cxl/edac: Add CXL memory device ECS control feature
->    cxl/mbox: Add support for PERFORM_MAINTENANCE mailbox command
->    cxl: Support for finding memory operation attributes from the current
->      boot
->    cxl/memfeature: Add CXL memory device soft PPR control feature
->    cxl/memfeature: Add CXL memory device memory sparing control feature
-> 
->   Documentation/edac/memory_repair.rst |   31 +
->   Documentation/edac/scrub.rst         |   47 +
->   drivers/cxl/Kconfig                  |   27 +
->   drivers/cxl/core/Makefile            |    1 +
->   drivers/cxl/core/core.h              |    2 +
->   drivers/cxl/core/edac.c              | 1730 ++++++++++++++++++++++++++
->   drivers/cxl/core/features.c          |   23 +
->   drivers/cxl/core/mbox.c              |   45 +-
->   drivers/cxl/core/memdev.c            |    9 +
->   drivers/cxl/core/ras.c               |  145 +++
->   drivers/cxl/core/region.c            |    5 +
->   drivers/cxl/cxlmem.h                 |   73 ++
->   drivers/cxl/mem.c                    |    4 +
->   drivers/cxl/pci.c                    |    3 +
->   drivers/edac/mem_repair.c            |    9 +
->   include/linux/edac.h                 |    7 +
->   16 files changed, 2159 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/cxl/core/edac.c
-> 
+-- 
+2.34.1
 
 
