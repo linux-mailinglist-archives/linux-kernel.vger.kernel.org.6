@@ -1,109 +1,170 @@
-Return-Path: <linux-kernel+bounces-570918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BB7A6B645
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:50:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1B7A6B641
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E663E486843
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:49:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875B618998F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733031EFFB3;
-	Fri, 21 Mar 2025 08:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA68A1F03D4;
+	Fri, 21 Mar 2025 08:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3i3J29x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="P+xMfhfz"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35F68BEE;
-	Fri, 21 Mar 2025 08:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9811E571A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546967; cv=none; b=TrDUJGNU+/oYWtgkZqXAOgnI5DiVwq16gdItceRvXjKvwBkpQ4tTi8/gvwJMYjTD5l5HoJMXCQ7mhS1sggjZFVg4+AxhrxqA+8u47Eu2kTx7oKq2Wa97yzvnCzJ9U2brKDyJ3BqlHvVZQXVfoYfW9CySRUjxwTd6Z1fLhRlpZCg=
+	t=1742546989; cv=none; b=LMl7Sm1XBn153n5i0LphFcUZMiDGxNA3S4tzoDZSiSZZZFCh+ivSKxxu1n7ieoDde6rxuyK9nHCyaDELEf31L2OfpVwNo2YmsDFp2UsMTACvX+F4yGWKEfNQYIlISYy+UwdZBpz4OXIck71w5aY8lZcNM8jvLIzztPmjjDZp/xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546967; c=relaxed/simple;
-	bh=5tlGgGOCOEOLWJ760wOpsG4r1f3W2XkvMyV+/1s6GOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PksVeNcYSjkiIv69upS9HQ3qSMmlm/V/MsbrjhVQgQ9xK9gcvtyAmuB+j96ERVjbmYKKUE6YrTIVbjNKc+tH9Fr7t6apOvXLJ+dqrz346eWrMRrlMBpa4jkPwv6xyGAs4WMjAFVG8yRwQ6JhVT/sv7k4tUANdQQDcqWdln174Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3i3J29x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2079C4CEE3;
-	Fri, 21 Mar 2025 08:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742546967;
-	bh=5tlGgGOCOEOLWJ760wOpsG4r1f3W2XkvMyV+/1s6GOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R3i3J29xLh9feBsXQsFiKfXEO1feWq+/yRnT/MwgquJeNQnQNNExeJOFxMPSwy/fa
-	 a6P6AQ4kdl7wnGdn/BNYNBvIxAjJvFgOPEmttCLCmRSvt9Ti/Y2TYFzDpSa5YupiNE
-	 kiUXH5Oz1raV0Zar7sCOFbTl5qelxyM3NyD66YEoWu2jxQRvNwR/3dmhgrdwWeVv3a
-	 mDn/70ckUyPjO2w5YcOd8gPK/6QNiSitxvlGEBHtIPD5WqxpN1yNPic4tAyM1h4S+N
-	 5OwZ6K7r9i7cycDAAUJZfiYQPD38rFaHaFa+jcsn2+tA4psIGfLwQVIcqFNkPGLlIm
-	 LLMz5mH0Nq3Ow==
-Date: Fri, 21 Mar 2025 09:49:22 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
- (4)
-Message-ID: <20250321-languste-farbig-e68aef9f4ac8@brauner>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <202503201225.92C5F5FB1@keescook>
- <20250321014423.GA2023217@ZenIV>
- <202503210019.F3C6D324@keescook>
+	s=arc-20240116; t=1742546989; c=relaxed/simple;
+	bh=BdYwP7tXPT2j8lmBiDYuVqTDKM/IAWnNLmYs2BkxZbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p5yAbwMoT3c/U5eXHBrwYI5zxezu1It/l61XMN52kOY6YTam+F7QiuwsGsI0JQnF+dK7R65fRZCrwVoZC9ymoH5ys+Tr2wL787YgeaDsKyCkEDbVNMVqd9p9q9Ai3Ru788DMWraeaAwENlq84R3vUsOownfdP83LK/2rakuaskc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=P+xMfhfz; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-43cf680d351so17129055e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1742546986; x=1743151786; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kP/oToQG/ZYW3gTl20lMgrstF8CsuMLc4tD5FNJ7/+I=;
+        b=P+xMfhfzr4PwaptqEy4D637SIdm922hj4P8enE+niopsCKhLlXdTHCp9+2xz98X/Li
+         2ZIY/wgeg6gLWNQr7O+S4jEizw1XAYux3EOCVvIH255RTIPKysiYri6drx7X2Q9qhzUm
+         xSUuZzi4vGIp6DNZjDkMgBtkpd2h4ROmp/6+Cryh9wHAlfPHTFtQmXeUCwdkUQL7SGRK
+         s9nZnHGJRwHwm8jXRFni9GlTupBF9HSipQ/rehApZ6/plBF46LbGwopPaCFs+mBNphci
+         TzqcmnHBdI4zmsT0ztlgBfrmDaWPRBiqSvygnDO1TYHM8ByDoGMxU5CyBIb1ms7kHytI
+         3/Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742546986; x=1743151786;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kP/oToQG/ZYW3gTl20lMgrstF8CsuMLc4tD5FNJ7/+I=;
+        b=DIF04dkW7KFCY/ZB+99EAyvLpWvTIKEMX3o/yXQwfsAtBoilYmLP1M9VV/khCA3+QV
+         wRxxR2ZlRJmM6UuI/AEACl8Jg+ernAXFHTZja3pqKALAfKBA7d4PV3TiuwMf7/SgZ4fX
+         RHxbPvzmmSpuJBNVRU7A/rpBCTx0qOS0Em6xdKUwv5b/lgreFtkBWELimyXaURug1Eze
+         h+yaBtznzJzLWIOYe2PncwtEdDvBBam11YVPfN01SZvcWv5jtPT6uygOR0z7/kHT0ssi
+         kep5vWg8rVEQQi/hJ4CG2Bl1mNAn4lorq+kFDebRbG7LVWCorOxEr2kSoGJq2yuA4tx9
+         1pIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX49N+3HAFhsY4MsvTet+2S6F5Kj74yDxx0u/1VqI4IiWv727EELzmYBqhjc/4Xt5I7UyvEvWV7FUFUrxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe7T6M1Tm2Eo6kxSqwBgjVfbA9yfAb175bkTiuWVaV9JEWTg+G
+	7ujYlwtQ4zaVGi+/GVh4tIUFbnByRBeFkQpLJ8Ds+ACssJjkHAtkd9CQak03H04=
+X-Gm-Gg: ASbGncsZ+E9PurvhlGXFAzKTzseRsbAqzU8n7IQSThsK+9aMMnYSsks3rUls5HF/oom
+	IXCry/v1r118DgohUf67hjfbRzMdHAdsxM0s4w/9r3M6zNjtkxLk9prQyJj/vhh6uC5dMQ9Vonu
+	SXA6fabziAgZhSid+g7A++mNwuoote0Ia2n+ay9NESlkO/5Z7PIOnJ9gHP1AeXS3OuTI77jgi7Z
+	6db94rXEmI1A/jaTUVmZKAoWH82pZqVsDD3zUwLB/TV3+jmTDuEcOHLPnHFMNYLj+9MN3lwOa4z
+	CwnHvJclOFBs11X3n/QZzb9UCXlAqrZiWjRZ8/SavZKAjTPv/QEVdZ1ZIzseAB9kTjJ59z0FK+I
+	d
+X-Google-Smtp-Source: AGHT+IEEPloGyBEU28wIiwPGHJOaEhmT5NLx+HvXiE8cWYV+PLw9KRaTachUL02eG98SY8h03fxa4w==
+X-Received: by 2002:a05:6000:1844:b0:391:1199:22b5 with SMTP id ffacd0b85a97d-3997955ca60mr5557045f8f.10.1742546985428;
+        Fri, 21 Mar 2025 01:49:45 -0700 (PDT)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3ebcsm1755679f8f.47.2025.03.21.01.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 01:49:44 -0700 (PDT)
+Message-ID: <977fc7da-b7dc-4518-b7c9-0c492e2508f6@blackwall.org>
+Date: Fri, 21 Mar 2025 10:49:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202503210019.F3C6D324@keescook>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] bonding: check xdp prog when set bond mode
+To: Wang Liang <wangliang74@huawei.com>, jv@jvosburgh.net,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+ joamaki@gmail.com
+Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20250321044852.1086551-1-wangliang74@huawei.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250321044852.1086551-1-wangliang74@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 01:10:26AM -0700, Kees Cook wrote:
-> On Fri, Mar 21, 2025 at 01:44:23AM +0000, Al Viro wrote:
-> > On Thu, Mar 20, 2025 at 01:09:38PM -0700, Kees Cook wrote:
-> > 
-> > > What I can imagine here is two failing execs racing a fork:
-> > > 
-> > > 	A start execve
-> > > 	B fork with CLONE_FS
-> > > 	C start execve, reach check_unsafe_exec(), set fs->in_exec
-> > > 	A bprm_execve() failure, clear fs->in_exec
-> > > 	B copy_fs() increment fs->users.
-> > > 	C bprm_execve() failure, clear fs->in_exec
-> > > 
-> > > But I don't think this is a "real" flaw, though, since the locking is to
-> > > protect a _successful_ execve from a fork (i.e. getting the user count
-> > > right). A successful execve will de_thread, and I don't see any wrong
-> > > counting of fs->users with regard to thread lifetime.
-> > > 
-> > > Did I miss something in the analysis? Should we perform locking anyway,
-> > > or add data race annotations, or something else?
-> > 
-> > Umm...  What if C succeeds, ending up with suid sharing ->fs?
+On 3/21/25 06:48, Wang Liang wrote:
+> Following operations can trigger a warning[1]:
 > 
-> I still can't quite construct it -- fs->users is always correct, I
-> think?
+>     ip netns add ns1
+>     ip netns exec ns1 ip link add bond0 type bond mode balance-rr
+>     ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
+>     ip netns exec ns1 ip link set bond0 type bond mode broadcast
+>     ip netns del ns1
 > 
-> Below would be the bad set of events, but it's wrong that "fs->users==1".
-> If A and C are both running with CLONE_FS then fs->users==2. A would need to
-> exit first, but it can't do that and also set fs->in_exec=0
+> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
+> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
+> mode is changed after attaching xdp program, the warning may occur.
 > 
-> A execve, reaches bprm_execve() failure path
-> B fork with CLONE_FS, reaches copy_fs()
-> C execve, reaches check_unsafe_exec()
-> C takes fs->lock, counts, finds safe fs->users==1, sets in_exec=1, unlocks
-> A sets fs->in_exec=0
-> B takes fs->lock, sees in_exec==0, does fs->users++, unlocks
-> C goes setuid, sharing fs with unpriv B
+> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
+> with xdp program attached is not good. Add check for xdp program when set
+> bond mode.
 > 
-> Something still feels very weird, though. Does fs->in_exec not matter at
-> all? Hmm, no, it stops fs->users++ happening after it was validated to be 1.
+>     [1]
+>     ------------[ cut here ]------------
+>     WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
+>     Modules linked in:
+>     CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
+>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
+>     Workqueue: netns cleanup_net
+>     RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
+>     Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
+>     RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
+>     RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
+>     RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
+>     RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
+>     R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
+>     R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
+>     FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
+>     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>     CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
+>     Call Trace:
+>      <TASK>
+>      ? __warn+0x83/0x130
+>      ? unregister_netdevice_many_notify+0x8d9/0x930
+>      ? report_bug+0x18e/0x1a0
+>      ? handle_bug+0x54/0x90
+>      ? exc_invalid_op+0x18/0x70
+>      ? asm_exc_invalid_op+0x1a/0x20
+>      ? unregister_netdevice_many_notify+0x8d9/0x930
+>      ? bond_net_exit_batch_rtnl+0x5c/0x90
+>      cleanup_net+0x237/0x3d0
+>      process_one_work+0x163/0x390
+>      worker_thread+0x293/0x3b0
+>      ? __pfx_worker_thread+0x10/0x10
+>      kthread+0xec/0x1e0
+>      ? __pfx_kthread+0x10/0x10
+>      ? __pfx_kthread+0x10/0x10
+>      ret_from_fork+0x2f/0x50
+>      ? __pfx_kthread+0x10/0x10
+>      ret_from_fork_asm+0x1a/0x30
+>      </TASK>
+>     ---[ end trace 0000000000000000 ]---
+> 
+> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> ---
+>  drivers/net/bonding/bond_main.c    | 8 ++++----
+>  drivers/net/bonding/bond_options.c | 3 +++
+>  include/net/bonding.h              | 1 +
+>  3 files changed, 8 insertions(+), 4 deletions(-)
 
-This is a harmless data race afaict. See my other mail.
+Just fyi you should include what changed since v1 below the ---.
+Anyway, thanks! This is exactly what I meant.
+
+Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+
 
