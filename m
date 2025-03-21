@@ -1,70 +1,57 @@
-Return-Path: <linux-kernel+bounces-571800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5979DA6C262
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:30:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F69CA6C260
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562D13AA4C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09E54813E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE4222FF40;
-	Fri, 21 Mar 2025 18:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A755222FE03;
+	Fri, 21 Mar 2025 18:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="da/wdTBU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brLvl+kS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A2322FE0D;
-	Fri, 21 Mar 2025 18:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0962022E3E9;
+	Fri, 21 Mar 2025 18:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581809; cv=none; b=WY7y3rpcn21GZLhyjAoeJGrB6J6NLA98iqAU/xuydMGGNu1qUVpI8Xy+Z+pKKJMm9OBR1jaS+BleMKWrSLk46H+nUxej4BoQWfj9oMK9QgFOx59EFoEHkVlWLF8t3a6uGIFq1E4CuisjYkNMGjcpfKCF321kfrZMWM0gfXfQQCI=
+	t=1742581808; cv=none; b=aZM5alQwTVfKchvcnUvEpTbDGKMmA75WTwOPqEUahLEULx51fyuuXzV7g9fll84XTgsF8nnZK2x/Lf20B1aDghYYDjJ5oIvded6oGU/i6X6bKHNroUUaoL/8vVaugZeusJeeWdXq03V67a6sritRSETh5EUPm0GeOSYRXlfDdLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581809; c=relaxed/simple;
-	bh=Aon3MpuqI2KphyJJxW/mgSijVLrvb2iG67m72HH1MKc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sr5XN/5M3DNGy+3dJkTWNWlMhOrpri5ClSemwK/vybTXufqYanSOn5adZ9HB6+zCqwF2d6EWcmXO4Swl6a8Hawy/YoTOwJV6Xgsq5G1D6Kt+6zEkgMI5sNi6rp41pU6XF89mz9yu6JFaLvsecfeva57k1cuQSdH76OG4RMGbE90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=da/wdTBU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5EF2C4CEEC;
+	s=arc-20240116; t=1742581808; c=relaxed/simple;
+	bh=T/S+1dcOLcMBe5RZO5eduTb7Lb0FyXwdceEDHiisI5A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YdLC7Jw/+pIzewWkNMkjmtzJAIjBD1dGqBdZ6Ry2JEpkP6+WqLcYd/FlHTrSwbhY87l+xgr9lmgUq2VVlKSDvwzUHPn2nOrf5FhPPus8Me/0lkMA4sAoYFRLdwPwxHEow3i/6WbOMK3cwR51xqrFrU9N9Z2l90Zfko71z2oayZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brLvl+kS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C01DC4CEE3;
 	Fri, 21 Mar 2025 18:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742581808;
-	bh=Aon3MpuqI2KphyJJxW/mgSijVLrvb2iG67m72HH1MKc=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=da/wdTBUJ5ngQarDW94IRkO6+fhSqJjh3qAwgHe0AJCeraT/nuof6vKiDPfEldpB+
-	 Ev9nJ+X7z6zIQr7K43miMJoSW4ar1pZoxHfE3vTdbXIrfafARUt0OxKYL7JS5+0JUd
-	 +5ErgfRoLQgGUHhut1mQqpofgYCAvW8xIKr8iQ+DocDidcBTccppwAHCTQBZ87zcKH
-	 UCvJ5M8VlfE0l/vmF1WL1aA7zGrFk5YtcIABNy2L0PI602Q8TvRekFkB08FDXcd9GV
-	 7591axIwNbAESKy5nBIYVWl04wD+RQF7MHRGuQta6/mYx8tEarXLlWGXzClqbL8fcD
-	 6fFNqXKe4IrCQ==
+	s=k20201202; t=1742581807;
+	bh=T/S+1dcOLcMBe5RZO5eduTb7Lb0FyXwdceEDHiisI5A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=brLvl+kSj9BXf3Ks5Tt2YY8hUX4PJNxxr40QoMEb8vahp5IdReJDFlLVmBT+BAZUJ
+	 KUCeZHgTWh3wm9QrLriEIK4fuY3SnqnW1ifQkAC0Uk8p5LmUmhC0xpvzWTU7qtNHTT
+	 /SgUNqF2NQJZHhFh0r35eSBFY7XwYn3arhkhINCEE41J9lBjwQQwa4PaS2IIAtzye8
+	 Qgb0sBtlOdkHacQF45dY6RWGyIBL2i3L5bQ5ryQsST/hs70PwqQi9laTSi+mlzaqhn
+	 IHWxxTwpfk6d9yGGHNpKT87D+lGxz/n6LI2oWWV9IFgmG2Oif4snYUHTQfEoyNrruo
+	 e33tP21sm2fDw==
 From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
- Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
- guoren <guoren@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Charlie Jenkins <charlie@rivosinc.com>, Bibo Mao <maobibo@loongson.cn>, 
- Huacai Chen <chenhuacai@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
- Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Arnd Bergmann <arnd@arndb.de>, Ian Rogers <irogers@google.com>
-In-Reply-To: <20250319050741.269828-1-irogers@google.com>
-References: <20250319050741.269828-1-irogers@google.com>
-Subject: Re: [PATCH v7 00/14] perf: Support multiple system call tables in
- the build
-Message-Id: <174258180770.163787.17026526140964969734.b4-ty@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+ Dmitry Vyukov <dvyukov@google.com>
+In-Reply-To: <20250307080829.354947-1-namhyung@kernel.org>
+References: <20250307080829.354947-1-namhyung@kernel.org>
+Subject: Re: [PATCH 1/3] perf sort: Keep output fields in the same level
+Message-Id: <174258180714.163787.15010272622789563467.b4-ty@kernel.org>
 Date: Fri, 21 Mar 2025 11:30:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,15 +63,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Tue, 18 Mar 2025 22:07:27 -0700, Ian Rogers wrote:
-> This work builds on the clean up of system call tables and removal of
-> libaudit by Charlie Jenkins <charlie@rivosinc.com>.
+On Fri, 07 Mar 2025 00:08:27 -0800, Namhyung Kim wrote:
+> This is useful for hierarchy output mode where the first level is
+> considered as output fields.  We want them in the same level so that it
+> can show only the remaining groups in the hierarchy.
 > 
-> The system call table in perf trace is used to map system call numbers
-> to names and vice versa. Prior to these changes, a single table
-> matching the perf binary's build was present. The table would be
-> incorrect if tracing say a 32-bit binary from a 64-bit version of
-> perf, the names and numbers wouldn't match.
+> Before:
+>   $ perf report -s overhead,sample,period,comm,dso -H --stdio
+>   ...
+>   #          Overhead  Samples / Period / Command / Shared Object
+>   # .................  ..........................................
+>   #
+>      100.00%           4035
+>         100.00%           3835883066
+>            100.00%           perf
+>                99.37%           perf
+>                 0.50%           ld-linux-x86-64.so.2
+>                 0.06%           [unknown]
+>                 0.04%           libc.so.6
+>                 0.02%           libLLVM-16.so.1
 > 
 > [...]
 Applied to perf-tools-next, thanks!
