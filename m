@@ -1,134 +1,129 @@
-Return-Path: <linux-kernel+bounces-570904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E00A6B613
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:30:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0FCA6B614
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99E577A553C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8473B4223
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306D51EE7DF;
-	Fri, 21 Mar 2025 08:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9E71EDA12;
+	Fri, 21 Mar 2025 08:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eY0PUfwh"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iTca1BuB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OdgZlRtq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FE71EEA47;
-	Fri, 21 Mar 2025 08:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14EA1E5B7A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742545822; cv=none; b=PsrU/8OKYk3dl4AQBCXVUqaUCjnGtLr4dE5r92je+PHAYgCd/aNkkU0IpOgptyfFL70LhKEgbjgLRq71YdQqLyFajY1yOz5kiT1xjIHy0cPEVHQQBA3VFSrvDcxvQ5mCG098HS9QWrox7DtwlfOsM01Rz/lA/I71gny+fxOL4a4=
+	t=1742545899; cv=none; b=mp2zJ2N8K4SMDFS5CckQZaGnkJlNWoczUKJNSbrKZPet6LlOKlr6RoPB02fzzDKtDH/4bfK8waDP7WZxAja/AqMJD8xWRU3V2CgHSMNKbOQiSAN5SjBXwVK+qPiWBk9YZDFoG0Akp+/AatBHxDcXmLnMHLLWdpAQEiS76eaQD8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742545822; c=relaxed/simple;
-	bh=20ntTnSxBTYlOfH3SOzTPYFdSiJFquWr9w7esxYqKeQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=b8rTvLm+9WFKADoAHcP0M8vTMTfcDPIX3wCGX0LjLU/oM1yh/n0xnYlZ1Aq3sNHFlYY48L0XRwViZBswT7FNXBSvgSifVgo7MaeXjdi8jWHdVrwo3p735TBhiyAoIps4gwvT3p46qlglDyAGFOK1IlY4zVYjVd6jfyIfySDm3Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eY0PUfwh; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0782d787so11907055e9.0;
-        Fri, 21 Mar 2025 01:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742545819; x=1743150619; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOx84blwgw6z93U5khVjxGdj11xiT8ylUeWTTvHcXRw=;
-        b=eY0PUfwhSsVbXgOEKltYZwhObn9XZ2j14cj9cM/eN5Fj4P35ttix0dRLwD1YT0ukEU
-         W1qN/leibv6H6ZMReKgsQ8SHLYmk+/0bvMOBAGBvp2wj0E5WPwZ/gGaMUDcHrLoTgOMM
-         GsuD3GBN3Ty4gQ79ESxP4ggRcbjmsiNJvYYVqpovO4DhVV9RRTAbQfCP3HUv01NyRK/i
-         zLnTXKssjoin/9BSfVL+5FAXJrV+f24S2VdAH8rHkP+CytzsvnGOLTCReSRJ0LhSZhf1
-         efx6Caz57hXS2cTP8VUP5NRolkzNQlqZOexKU+RAB2RcvOAxwhtyAeTKzm5bWMdjj/id
-         QPRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742545819; x=1743150619;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oOx84blwgw6z93U5khVjxGdj11xiT8ylUeWTTvHcXRw=;
-        b=fTc2iSooS9+D137drYs6w+Cx4642a4x/ERKsQbJVb2i0iRFPqpiltxOn4gkeW5fZj3
-         vWANoAJYIYAyAD8vmYLrlpkGPU7MoJeWCAN4TLexXdyf6G+PpRVoktJPF/IrpqQh+BK9
-         2lbJQTc1ha2/LXm9ieBaWFFqLp7n4rvy5qL/qDvFpPPrVwHkUX7BEpbGt4hIo5t8RPGx
-         PkEXs3N3rKHRns8g34UjMg7J6/kfjfzDm//1LmAwFWxQfm7/dcjeudSW6oH3AbUHrMhL
-         5bngwezWNMhFDnJvFwnzO8KYH726ARfILQgersbBdtRiyu+Mk9lLk772ahUPVWShfld6
-         c0Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVguGNcJ+ztqG2lzVYlt84Q4QVYiZIhlHqDfHHD2O0h7nk/A69bMqNmlvfVh+xeRF3LAmg51SGo6sFvO1o=@vger.kernel.org, AJvYcCWeF/0JkNkGU1PDNOHJx8GyjIVmDZ2VBYvmZ1XDK6klwczG+LfbifO0WoZLbw/W5WGDtlTHvMaXlmn806ZIePcdisb0qg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEk8pEiOL+rsqq6gSrkVNvwa+OOCDTGFXHkK3jQptNwpA9UbwD
-	E1D9Yuy4v4onrm7uY2cF57G90Tar4+tNY8ipJu4mcs3ot+mdTkTH
-X-Gm-Gg: ASbGncvBThn1FnMfguTZMOqNdF4SuTtcvTWwQEZQFboRJhahYhXvllb0au+sJOsNj/9
-	r+x7BflWap++kIoRRUQi3LtT0ZjZXNEsp7X5rl8kFL4Y2ARkf5dz9PheHbFit9JQDnOIOrYZrWq
-	1YlxMjFLBBcPLAiA8E4rPnJC+K1Wdkva3DQ8Wq/pgOT5SpRbM/99IUbsRJMmwqC+VHCFNbH3Ch7
-	U49C9/hi+aUn2SKIPI1FMZ/TbwjYqVq9yhCcsm0mTI8irNOBi8K1WdpM8uoLqk92wvSi4ERP74t
-	Z1Qsqs9rX4Bmw95BJhl66WptWZHEuzbPL0h8xg15deqTDP95aK9N4HEAawPVHb4k4XA=
-X-Google-Smtp-Source: AGHT+IGJGgiklQ70AszSCwdy1jPoQz1gmo25oFygNnJ/kYaXl7f5SlHjGxjVDYPc43ottyzUVYjj8Q==
-X-Received: by 2002:a05:600c:1d92:b0:43c:fdbe:4398 with SMTP id 5b1f17b1804b1-43d509e3881mr18748495e9.6.1742545818824;
-        Fri, 21 Mar 2025 01:30:18 -0700 (PDT)
-Received: from pop-os.fri1.uni-lj.si ([2001:1470:fffd:32ff:2811:7660:dd13:7df9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fceb780sm20343215e9.4.2025.03.21.01.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 01:30:18 -0700 (PDT)
-From: =?UTF-8?q?Ga=C5=A1per=20Nemgar?= <gasper.nemgar@gmail.com>
-To: ikepanhc@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	=?UTF-8?q?Ga=C5=A1per=20Nemgar?= <gasper.nemgar@gmail.com>
-Subject: [PATCH] Added support for a some new buttons in ideapad-laptop driver Added entries to unsuported wmi codes in ideapad_keymap[] and one check in wmi_nofify in order to get wmi code 0x13d to trigger platform_profile_cycle
-Date: Fri, 21 Mar 2025 09:30:03 +0100
-Message-Id: <20250321083003.84661-1-gasper.nemgar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742545899; c=relaxed/simple;
+	bh=w67sV3RD+2GRSUy/DQRUHA5lQkEDkf+DskhxkbJH2TU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pnONpku+4RsMosgCNXUhs4Ez/+NdHnDn6pO6TRSpi8X/pfTIeaZSYTeM8JiWxt3vRVcyMNUxElX7I4zB/2hbTFpqgDM8W9UVR+NDreJO+AuR1Y9RS460FJDeIwabpw2jFvxHG0zBy9yAapi1uugJDhJR3j1qJQ7cVfVzLgarKak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iTca1BuB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OdgZlRtq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742545890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=u1AkDLAGIDODrtA3jsifi5T+wp1kqKH2Rd6dxGPn+j0=;
+	b=iTca1BuBF13GOmUd7mdJuHkulC16jBoqhpHDfulGVuiKyLkljPXh66uQowEKZp2vfPCA0t
+	hZ17mg24s4WJvVplN1GKO4GzzIlyN6Rb/RmTFOzjzaG7fItnyA7uapkMw5bf3Y2wIqsYLT
+	2xhbvIEFDoB70eUrreskRooqwEAzAjFimspmKDpN4QmM2ECccjkamBMQUashnsTFzn/Af3
+	u/HN+EfAi+9gRzgXqYGzpYF1Ibm5X8+97Ddx0rc6zZnnBRjyyc6tgeFdQXuTO3WGcVf97e
+	TQBI0B6NZ11pPK6sMQnwhoGDbh1AZs84tMcUOeV856FvKxwyNZLhkruGUO7gZA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742545890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=u1AkDLAGIDODrtA3jsifi5T+wp1kqKH2Rd6dxGPn+j0=;
+	b=OdgZlRtqcWH25bg8Qt1fp9CvT3DLAYe0YR8ZJLNiiOwuDPvgaEm119hp2cwn1gCpm2ELp7
+	A1iO6NG/Hk+FmdCQ==
+Date: Fri, 21 Mar 2025 09:31:17 +0100
+Subject: [PATCH] tools/include: make uapi/linux/types.h usable from
+ assembly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIANQj3WcC/x3MTQqAIBBA4avErBP8yZCuEi3CppqNilNRSHdPW
+ n6L9wowZkKGoSmQ8SKmGCpU24Df57ChoKUatNRWGq3EOScSPgYmPjD4RxjXd25R2livoGYp40r
+ 3vxyn9/0A4b+Es2IAAAA=
+X-Change-ID: 20250321-uapi-consistency-38648d1235c1
+To: Thomas Gleixner <tglx@linutronix.de>, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742545889; l=1614;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=w67sV3RD+2GRSUy/DQRUHA5lQkEDkf+DskhxkbJH2TU=;
+ b=NeZHrOruCOfCpqctrEtwL0GI653LhSDc56BWNxWDQZlikSUNW9eyZ5ZDxiMufD4srR/YqRaHe
+ wF99uUBQd1YBncHmvtFQ6CNRCa5BiYeYCD85HlqpW3qwQsSRCKnRzPE
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Signed-off-by: Gašper Nemgar <gasper.nemgar@gmail.com>"
+The "real" linux/types.h UAPI header gracefully degrades to a NOOP when
+included from assembly code.
+
+Mirror this behaviour in the tools/ variant.
+
+Test for __ASSEMBLER__ over __ASSEMBLY__ as the former is provided by the
+toolchain automatically.
+
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/lkml/af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk/
+Fixes: c9fbaa879508 ("selftests: vDSO: parse_vdso: Use UAPI headers instead of libc headers")
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- drivers/platform/x86/ideapad-laptop.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Intended to be merged through the tip tree to fix the arm64 selftest build
+failure there.
+---
+ tools/include/uapi/linux/types.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 30bd366d7..a03377d87 100644
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -1308,6 +1308,16 @@ static const struct key_entry ideapad_keymap[] = {
- 	/* Specific to some newer models */
- 	{ KE_KEY,	0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
- 	{ KE_KEY,	0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
-+	/* Star- (User Asignable Key) */
-+	{ KE_KEY,	0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
-+	/* Eye */
-+	{ KE_KEY,	0x45 | IDEAPAD_WMI_KEY, { KEY_BRIGHTNESS_CYCLE } },
-+	/* Performance toggle also Fn+Q */
-+	{ KE_KEY,	0x3d | IDEAPAD_WMI_KEY, { KEY_PROG4 } },
-+	/* shift + prtsc */
-+	{ KE_KEY,   0x2d | IDEAPAD_WMI_KEY, { KEY_CUT } },
-+	{ KE_KEY,   0x29 | IDEAPAD_WMI_KEY, { KEY_TOUCHPAD_TOGGLE } },
-+	{ KE_KEY,   0x2a | IDEAPAD_WMI_KEY, { KEY_ROOT_MENU } },
+diff --git a/tools/include/uapi/linux/types.h b/tools/include/uapi/linux/types.h
+index 91fa51a9c31de1496db9a31c90fa95760adc664d..85aa327245c6874e673f9ed0466698487215c655 100644
+--- a/tools/include/uapi/linux/types.h
++++ b/tools/include/uapi/linux/types.h
+@@ -4,6 +4,8 @@
  
- 	{ KE_END },
- };
-@@ -2093,6 +2103,12 @@ static void ideapad_wmi_notify(struct wmi_device *wdev, union acpi_object *data)
+ #include <asm-generic/int-ll64.h>
  
- 		dev_dbg(&wdev->dev, "WMI fn-key event: 0x%llx\n",
- 			data->integer.value);
-+				
-+		/* performance button triggered by  ...  */
-+		if ((data->integer.value | IDEAPAD_WMI_KEY) == 0x13d ) {
-+			platform_profile_cycle();
-+			break;
-+		}
++#ifndef __ASSEMBLER__
++
+ /* copied from linux:include/uapi/linux/types.h */
+ #define __bitwise
+ typedef __u16 __bitwise __le16;
+@@ -20,4 +22,5 @@ typedef __u32 __bitwise __wsum;
+ #define __aligned_be64 __be64 __attribute__((aligned(8)))
+ #define __aligned_le64 __le64 __attribute__((aligned(8)))
  
- 		/* 0x02 FnLock, 0x03 Esc */
- 		if (data->integer.value == 0x02 || data->integer.value == 0x03)
++#endif /* __ASSEMBLER__ */
+ #endif /* _UAPI_LINUX_TYPES_H */
+
+---
+base-commit: 652262975db421767ada3f05b926854bbb357759
+change-id: 20250321-uapi-consistency-38648d1235c1
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
