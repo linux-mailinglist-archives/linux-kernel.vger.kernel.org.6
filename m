@@ -1,159 +1,129 @@
-Return-Path: <linux-kernel+bounces-571804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0DBA6C26D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:33:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32370A6C27A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4274018959D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF3A189D319
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A0622FDF0;
-	Fri, 21 Mar 2025 18:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FD922F3A8;
+	Fri, 21 Mar 2025 18:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGv/cfXz"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2Ft4CERO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zKFY/i7+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A808122F15E;
-	Fri, 21 Mar 2025 18:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F3C1ADC6D;
+	Fri, 21 Mar 2025 18:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581981; cv=none; b=GsKSLDqR1LdJeKJ92ryanVUXpWbN5LJAn2Jm3hhdWUv4NPGAJFJIqxpXyvM76SKMP/2SXUvVX8FtVmJDhs8lUh5JiBHiXFh7lddNfQmXZrk5HWL2iAEsnAw1egzlpX9R7Fc8tFaJV+5V7PjKSI9wySVEGE0q8t64hj895M8PNj8=
+	t=1742582110; cv=none; b=ivnKJ7XmKbLfmPtXbMLp6tGXOW+KzLQjKGHdmT03mUAd4uSJHl8BGlAk9hAn1LODZIWl232binP5oihzUJQGv10hbVJO3cDFcPK6l8Lb44qNosraxvVqAEnfFaMpRjgbpHidwqmMrBs52C25WR+GVw3z46LvaekkCXVkKTWSRQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581981; c=relaxed/simple;
-	bh=xK61NJ5AcpPTkZxqeIXw3ikD2Gq+iucUtG013FT56sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQsLgfUgUtkGbWpUtYhAPS1m0KbJaFlols2rOfSyfxt9HH1ArQrqWAxxvgU4RtonsGGjoK/cxINyiCb8rnRmD3fzxUfby9j8ijJ1onyTpGo6RbVX0zdVXmBL0ZLY4SLVGJ5EtFLfK95dqI2goRg6Gpt5tr16lWYVxCwYpR20mBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGv/cfXz; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so55985715ad.2;
-        Fri, 21 Mar 2025 11:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742581979; x=1743186779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HYYSOKUxEGqctY3EfhN9A2yhuGU3c7aUKlXkZitVseM=;
-        b=CGv/cfXz6h16+MYAEWgGHaE6luKawPtlwm/UyZrmG9n5SxPdWQHMT34son5uRzKqKU
-         pQH5juq///ouih+AT4duyeFz0Q1766OeEQc+hBMFxIjZBPIyTuvU+369ITzGCkWbBUI4
-         c/SwIbLtKAr1wRa17cxIsLvjMHYyUgG9ahk9FhcLiJgxBKM99DpiC9RMNXf+0d2PpeFu
-         +dhSOaWyAbczYDIMFMpqe9jD1fel0n7jPlkGCNeasQtI9OUGITbDL0x9m6OBms2MKBqo
-         KjScHQ4i1R2yNrOfqTLysiNJuPAIaSEZNCaGt9/r8LJ/9JXwWdGTMgDYTkGCxcaF7fur
-         rcXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742581979; x=1743186779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HYYSOKUxEGqctY3EfhN9A2yhuGU3c7aUKlXkZitVseM=;
-        b=NnBIDpWHrW8quC/4IuU0i5J37cAfjU7VdBCFhZ8FnAgcKrN4U2KziQDB8+QpRMVQNJ
-         9orYBVi1hHnz6Rb2D/o1CO5xiJ4RRRh5ijD1ngCht3JQZGat26e593+e/N42hKhoxrlh
-         sjgUOI6eIZIxmWZsM3PDKOr7Keiqfz5KZqaGE16Lixm/ogQARQS86vov8e9lVRysU1rM
-         QE0Zan0DH5w1RSCSyiKn34dWdzZjBIpSx3fYEe8LK2WeTU0nbvmPsr0v6gEYERHAmJzC
-         oNWGmKZea5qomNbnp3QNPufh2gh1FaFTIViTkfDQaJ5je6LceVCLV6H8KZbdbPLO+m1z
-         4Hyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGS4txXeToTt13ar+OqW4hCcLSfAdPgEQooBIkRIIhgW2W7NqIucaKOEOBS/xfzYtbipT5+Jjsira/KY8=@vger.kernel.org, AJvYcCVfZQ7gYMkgeDhgZkQ0YezJQmTIx45pr4t6/ddl/Nf+Veql2THJ5BLSYGe6BZdFkE0SfXrBxzuCQnfoLP8DMX/e@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMn6ZzrVjYzzJkPcTgr+T8BLtnl7EN8ENL41fwAaD/1dAbvlPB
-	Ipi2sTZLiHWBgGTbBcFWdZOM7Bmht+xGtov9ka9s/pZvOIhBewZXWMNnQw==
-X-Gm-Gg: ASbGncsDEneln+317cVuwqVSKI0QxgPRdk5NY4izN1ltgVrtD6UQscyXzQXuBlUI+gA
-	RceZl8GwKinaDncqCwFErYLG8TqS2lvkbli+37QNsi40eaYcIYD9NA2g6W7Bzc0EPaA7P64EfBD
-	rHZcGlkGQpWQjEV3l/etZsvtWecZD7Y/ke846K5giIH4JFa0uWBrztLszn5E0aLMpfNgimNzuMp
-	Tp+LXyos9lK9wCdbZUGulxyU38BSGr0tb9JcOu1zo7l/bZABULzIeuKDMDZZoSGS8cJp5Ybg0KH
-	Kb9BrEtiAqYsc4j8ksrkNUtikaNoPBCd5sCk87SwRlR3
-X-Google-Smtp-Source: AGHT+IG4Y4KdKGYoy70io/r8gYLZiFwsgOksUI+QUCeOo40CKssKjfePE5RVgUBb4ckPKQzflnN8DQ==
-X-Received: by 2002:a05:6a21:394b:b0:1f5:769a:a4be with SMTP id adf61e73a8af0-1fe4347101emr8883211637.36.1742581978798;
-        Fri, 21 Mar 2025 11:32:58 -0700 (PDT)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73906123ea2sm2382632b3a.108.2025.03.21.11.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 11:32:58 -0700 (PDT)
-Date: Fri, 21 Mar 2025 14:32:55 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-	Brad Figg <bfigg@nvidia.com>, David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: distro support for CONFIG_KUNIT: [PATCH 0/3] bitmap: convert
- self-test to KUnit
-Message-ID: <Z92w13L8v1MvPC8_@thinkpad>
-References: <20250207-bitmap-kunit-convert-v1-0-c520675343b6@gmail.com>
- <Z6eaDuXnT_rjVSNS@thinkpad>
- <CAMuHMdUsq_39kgBa8oanXeTzv44HuhS1e5MK7K2jxkVXQ7uWdw@mail.gmail.com>
- <bd71c705-5f57-4067-b200-fd80b98ddbc9@nvidia.com>
- <Z6pfomw-3LuWoQQo@thinkpad>
- <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
- <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com>
+	s=arc-20240116; t=1742582110; c=relaxed/simple;
+	bh=zzq4DZuoDL4dfG1LaMU5dZMUYxpynJqXdyPSvDEp8CU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=f1FHjp2J7mpR5BsiPraLK3mo5lH6AJdH2/Xo1X1Yh7TEi23D64A4R1jYrm/IKDIhf4/emCIHo9w8xuBPO5YYIppnzH8e8wdx55oQpyC7EpJ7QVovtZ9KfHeWLZ+wZSKZxbu9xDIR2e2tpJXYyxjV4kopsGSksv65BT1M4kH3CC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2Ft4CERO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zKFY/i7+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 21 Mar 2025 18:35:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742582106;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wtXy9UEiedxQFmfuZO3Rv+cQZcODL2rVt4DC4gX5reE=;
+	b=2Ft4CERO083pirxDXVGBB9j6t1Jm6/XVxbn+c30dzQrB38gtY97HUGHZcdcmKhoPSIHF1z
+	odQuU/y64hwgy7a/Fbl4hcsj05JEbNBTkR33pxTUtHcMwDvHG5XzvUs/ZJXGWLZaVm7hEY
+	AN97gIBUTHiXNkras49HakEnKELs6tCCODIeUXsEUhkMlwrGpU8VfvZCelzbkwYc2aWc+I
+	nEJTmKU2mGrj16oh7Swex4XWStUuxVatFGGwA0ggrimxlU851hSMlpQIRNjpuVvxsI+Une
+	6Iw+2aWHQgPw90qbpdh8txRDpon2q4BSqZJQ98m/km/tKZCNTyPbqWd5gFLEiQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742582106;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wtXy9UEiedxQFmfuZO3Rv+cQZcODL2rVt4DC4gX5reE=;
+	b=zKFY/i7+gscu5OTa6ZDnR+dOG64+h6piCzy71yur7/F5GRyYDkbLot9jk30IPdSe+aW9bd
+	0jejqeBBW2vEPxBw==
+From: "tip-bot2 for John Stultz" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] selftests/timers: Improve skew_consistency by
+ testing with other clockids
+Cc: Lei Chen <lei.chen@smartx.com>, John Stultz <jstultz@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250320200306.1712599-2-jstultz@google.com>
+References: <20250320200306.1712599-2-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com>
+Message-ID: <174258210083.14745.7398376389141043766.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 12:53:36PM -0400, Tamir Duberstein wrote:
-> Hi all, now that the printf and scanf series have been taken via kees'
-> tree[0] and sent in for v6.15-rc1[1], I wonder if we'd like to revisit
-> this discussion.
-> 
-> As I understand it, the primary objections to moving bitmap to KUnit were:
-> - Unclear benefits.
-> - Source churn.
-> - Extra dependencies for benchmarks.
-> 
-> Hopefully David's enumeration of the benefits of KUnit was compelling.
-> Regarding source churn: it is inevitable, but I did pay attention to
-> this and minimized the diff where possible.
-> 
-> The last point is trickiest, because KUnit doesn't have first-class
-> benchmark support, but nor is there a blessed benchmark facility in
-> the kernel generally. I'd prefer not to tie this series to distros
-> enabling KUNIT_CONFIG by default, which will take $time.
-> 
-> I think the most sensible thing we can do - if we accept that KUnit
-> has benefits to offer - is to split test_bitmap.c into
-> benchmark_bitmap.c and bitmap_kunit.c.
-> 
-> Please let me know your thoughts.
+The following commit has been merged into the timers/core branch of tip:
 
-Sure, no problem.
+Commit-ID:     e40d3709c0225f5f681fd300f65a65ac63b10f83
+Gitweb:        https://git.kernel.org/tip/e40d3709c0225f5f681fd300f65a65ac63b10f83
+Author:        John Stultz <jstultz@google.com>
+AuthorDate:    Thu, 20 Mar 2025 13:03:01 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 21 Mar 2025 19:16:18 +01:00
 
-I asked you to answer to 4 very simple and specific questions. You
-didn't answer any of them. David sent a lengthy email that doesn't
-address them, either.
+selftests/timers: Improve skew_consistency by testing with other clockids
 
-None of you guys submitted anything to bitmaps - neither in library,
-nor in tests. Your opinion about what is good for bitmap development
-and what's not is purely theoretical.
+Lei Chen reported a bug with CLOCK_MONOTONIC_COARSE having inconsistencies
+when NTP is adjusting the clock frequency.
 
-Real contributors never concerned about current testing model.
+This has gone seemingly undetected for ~15 years, illustrating a clear gap
+in our testing.
 
-I think that you don't care about bitmaps. If bitmaps testing will get
-broken one day, or more complicated, you will not come to help. If I'm
-wrong and you are willing to contribute, you're warmly welcome! I always
-encourage people to increase testing coverage.
+The skew_consistency test is intended to catch this sort of problem, but
+was focused on only evaluating CLOCK_MONOTONIC, and thus missed the problem
+on CLOCK_MONOTONIC_COARSE.
 
-If you'd like to add new cases to existing tests - I'll be happy. If
-you'd like to add completely new tests based on KUNITs or whatever
-else - I'll be happy just as well.
+So adjust the test to run with all clockids for 60 seconds each instead of
+10 minutes with just CLOCK_MONOTONIC.
 
-Thanks,
-Yury
+Reported-by: Lei Chen <lei.chen@smartx.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250320200306.1712599-2-jstultz@google.com
+Closes: https://lore.kernel.org/lkml/20250310030004.3705801-1-lei.chen@smartx.com/
+---
+ tools/testing/selftests/timers/skew_consistency.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
+index 8345014..46c391d 100644
+--- a/tools/testing/selftests/timers/skew_consistency.c
++++ b/tools/testing/selftests/timers/skew_consistency.c
+@@ -47,7 +47,7 @@ int main(int argc, char **argv)
+ 
+ 	pid = fork();
+ 	if (!pid)
+-		return system("./inconsistency-check -c 1 -t 600");
++		return system("./inconsistency-check -t 60");
+ 
+ 	ppm = 500;
+ 	ret = 0;
 
