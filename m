@@ -1,193 +1,258 @@
-Return-Path: <linux-kernel+bounces-571056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC780A6B891
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10961A6B892
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 069DF3BC11A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8E03B646A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590221F4199;
-	Fri, 21 Mar 2025 10:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EF81F2BA4;
+	Fri, 21 Mar 2025 10:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V8XSDnAZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QFDzlmE3"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F2C1F0E37
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BB01EA7E3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742552063; cv=none; b=W7W0/ma6720kkYu9Xo1BGLUpdNwrsiDDIyKUNTpkpmmQ19aWjd2xaPPyrVufa0i8qj3mSWiueO0Wc0WQdePJFRupxdxj1d50fBtZt1NVNXEp1lEFKDbnln0qB+vPD0ZWJXCzIE/5E1VtInCjkJQCtxvc4oP50goOc2u5anKOSEw=
+	t=1742552161; cv=none; b=pIMUpKM/Ql6L9seD/0Th51iYQvISL7nSta+odpIoiIZR6RqxxRgfFC74E2RBO3Ap603zx01FGTQC4MC5mozH+mQEMxfRpHdSWCR+ubpfg6oL4gvw0qSprNGpgxhulO0mTENFS40O/B0SFiFMOlvHNizwWUMZaKc9ifPBvWtmSdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742552063; c=relaxed/simple;
-	bh=rP+JsvMF36TxhV75cEq30zIoJ36SfIacsQTF/ybpU2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tDEtNDBaUy3400+UxLFl8HDx8848r/ihHaiR1uXIBhc43LizBqP46ectqPu3VO4raX+pt+0M6NnrRWOoAGVmjKdm8qyaohoOcdSzIyTRuaBDWsy9dpPD7eRDAs8opoUFH6JfYyP83qqz+aLYIPNomlH4LuzyDdBGTn6T8mOC6EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V8XSDnAZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742552060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PHlbxQe01vLEiQ3mDcT+HixcFtHLS6rNVTX0kCx8V6E=;
-	b=V8XSDnAZeBBSGAjCF8V7cWC1kIbCboYJaqRhH5vrtFjDAZdo6znmUihQe6vvcpxXCmZddr
-	GhW44/bWFPS+HaUIowIX+pcCyYTCjKQH7krPoN0ThOXpSr3a7jaVnQ1XoikcMkqPJ0Z4s/
-	G/6vVzU2iSw44QJnUS83VnKOVEztEkE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-570--IEuQuqmOBmXcXyk4L23mQ-1; Fri, 21 Mar 2025 06:14:19 -0400
-X-MC-Unique: -IEuQuqmOBmXcXyk4L23mQ-1
-X-Mimecast-MFC-AGG-ID: -IEuQuqmOBmXcXyk4L23mQ_1742552058
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cf172ffe1so13166705e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 03:14:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742552058; x=1743156858;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PHlbxQe01vLEiQ3mDcT+HixcFtHLS6rNVTX0kCx8V6E=;
-        b=AWsPaseQ7iCZ4ZFwFaXvuZwdmKt9GPSB3jy6kdN2+EuldOtb8vq1LsqMAzgLSUyMfg
-         SpyAFzuwBO5vcedbL1GfTTudjDD9nxgmYvAOrGPuhxADrjy2tEJZFOg/z5sO4nei3dOy
-         stZzbl2QT3cQJDTlfvMPpBjsOq0dUCbeorQHsYLTPeS4TGB+bG4KJbXm0LMzowdxDPOM
-         QGnEca9BcM8rwE2nNS9aU5GlWyyNLvkzEE/XIRbju85rVCkCTY8qBoBlxtog4bpUD5fu
-         rMIMSfsDeqFBKCK4O7bWmqoemfwbrAeF4gR+0gUTlPGo835ZhbOaNchEOS6yjIQaQoJF
-         odmA==
-X-Gm-Message-State: AOJu0YxUuD3Ge9NIHDNu2SddyR1iIF/TdsAPhS2QuT+iTQWcs4HU1dso
-	JIWJHs2nCETHG4qXUshDhLodDPszALd3GPdUAHiKlG56to1hM4JdJD3pR1ztsBez4feGgZJEJ57
-	U4SMHiz7ZalkhZ1f2ukLmScXqFeryE2COiIHf5QXCJagiNCvTZZM29X8lxit/0A==
-X-Gm-Gg: ASbGncsIC8Sir3M2P4pjUeOmujqa5UEM7J5jP2GPbEgWhOiNpqOCdwNK8Bd5bt2+BoO
-	7PiXrJrlfSi9uwo0+7JZINnvly3rzR+WtscJjNZUGggbbEYqOp9Qox5NRd1zu4adTNL7Wa/r/8y
-	kKc3Ewe42aMR5rWgB1tpkWx200KNAZon9h13ooTswVJN6fQZWmjz8oWOfVO0IPDg57zExvhnzMd
-	eSxuVHyJlGNMt9dCfsm4wFkIVoQ8qCNmZAmTSUgXOJe1zwumC5Lgt+JRW9GHNltKBASrxKTh5Da
-	kkRza/z8qbus3uiMzrL5RQVL5UwXWgw+qXou1WRYK1Our/IbM7VdWqcdepPgSSsCMEVAD7arJP0
-	is/E7w0IqtbtGtwqf7gBRwCNBjnfskC6UbivAY80Ze7M=
-X-Received: by 2002:a05:600c:3c9e:b0:439:9424:1b70 with SMTP id 5b1f17b1804b1-43d50a4f8camr21606375e9.30.1742552058271;
-        Fri, 21 Mar 2025 03:14:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGscQrhBBTGqOWY5+yPvlI3Utf38x4Ufv/GREG+b4A4kR6+FlCoSQJ/MfUa8u7VSgrtM4+SQA==
-X-Received: by 2002:a05:600c:3c9e:b0:439:9424:1b70 with SMTP id 5b1f17b1804b1-43d50a4f8camr21606085e9.30.1742552057876;
-        Fri, 21 Mar 2025 03:14:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72a:9100:23d2:3800:cdcc:90f0? (p200300cbc72a910023d23800cdcc90f0.dip0.t-ipconnect.de. [2003:cb:c72a:9100:23d2:3800:cdcc:90f0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3ba44e63sm68842565e9.1.2025.03.21.03.14.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 03:14:17 -0700 (PDT)
-Message-ID: <6ef83b28-5f01-4405-a25e-0bd59e071118@redhat.com>
-Date: Fri, 21 Mar 2025 11:14:16 +0100
+	s=arc-20240116; t=1742552161; c=relaxed/simple;
+	bh=F11BMJdh6ERI7+h/4obdT2A+8mFbi3+r9NRzEDK34mU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Pb1HMpBOwZbXhJBJGSOTkz1BmjHq+AJ4W1xCaA6sCpmf1QbeBzEUnRLot0dPt9iM8kkWaWXnYpjNnBVxYVS6bsVv3BGU2nmncviX5d4BfaB6qoFN1sDvqzehxbaJ1m3ekpiRKNFT1OcfrkG9ODSG9GiqtksdBBm2PvVPAHaYd6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QFDzlmE3; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
+	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=0XuNPdHu9UK90Cq1vG5kkz5iKvTEhoBs69F28DrlPDY=; b=QFDzlmE3OApTxRbLTehBVMjdID
+	U7dTaCa0wNJW3NJcfaxBti0A3lWNAhlxmDYQ247VHXCdTwOkk/Jh0jMUJwmbYuZJTDgGIG8hZSHbq
+	iyzIbUGllZDemEeL+o1aUPh4/GYm3Ideq/sFckhBFelsyWqfW9wnL37LbGXsi7hASj3eZCJt4MS4X
+	WR/xVEzz70xW+O1jQGsp39BwTErSyPxs92UVOkZe9QB9fzI78OdZhn/64dtYJGj5Zwy/i84vYGaWj
+	omlwb4THVI6sVWP0TpsXUm5UfukGw6HP8g7YP/RTgb0Qe8E09fbKm7WFZLley0giXu3UOTHWvBFTV
+	leHTNZOg==;
+Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
+	by fanzine2.igalia.com with esmtps 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tvZPg-0049GN-0H; Fri, 21 Mar 2025 11:15:40 +0100
+Received: from webmail.service.igalia.com ([192.168.21.45])
+	by mail.igalia.com with esmtp (Exim)
+	id 1tvZPe-005HSF-10; Fri, 21 Mar 2025 11:15:39 +0100
+Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
+	by webmail with esmtp (Exim 4.96)
+	(envelope-from <changwoo@igalia.com>)
+	id 1tvZPS-00ALqy-1C;
+	Fri, 21 Mar 2025 11:15:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm/debug: Fix parameter passed to
- page_mapcount_is_type()
-To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- willy@infradead.org, vbabka@suse.cz, osalvador@suse.de, gehao@kylinos.cn,
- shan.gavin@gmail.com
-References: <20250321053148.1434076-1-gshan@redhat.com>
- <20250321053148.1434076-3-gshan@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250321053148.1434076-3-gshan@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Fri, 21 Mar 2025 19:15:37 +0900
+From: changwoo <changwoo@igalia.com>
+To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>, David
+ Vernet <void@manifault.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] sched_ext: idle: Explicitly pass allowed cpumask to
+ scx_select_cpu_dfl()
+In-Reply-To: <20250320073927.216147-3-arighi@nvidia.com>
+References: <20250320073927.216147-1-arighi@nvidia.com>
+ <20250320073927.216147-3-arighi@nvidia.com>
+Message-ID: <5c932b64-82f6-4374-b48f-e3983013b759@igalia.com>
+X-Sender: changwoo@igalia.com
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Spam-Report: NO, Score=-2.2, Tests=ALL_TRUSTED=-3,BAYES_50=0.8,URIBL_BLOCKED=0.001,URIBL_DBL_BLOCKED_OPENDNS=0.001
+X-Spam-Score: -21
+X-Spam-Bar: --
 
-On 21.03.25 06:31, Gavin Shan wrote:
-> As the comments of page_mapcount_is_type() indicate, the parameter passed
-> to the function should be one more than page->__mapcount. However,
-> page->__mapcount is passed to the function by commit 4ffca5a96678
-> ("mm: support only one page_type per page") where page_type_has_type()
-> is replaced by page_mapcount_is_type(), but the parameter isn't adjusted.
+Hi Andrea,
+
+On 3/20/25 16:36, Andrea Righi wrote:
+> Modify scx_select_cpu_dfl() to take the allowed cpumask as an explicit
+> argument, instead of implicitly using @p->cpus_ptr.
 > 
-> Fix the parameter passed to page_mapcount_is_type() to be (page->__mapcount
-> + 1).
+> This prepares for future changes where arbitrary cpumasks may be passed
+> to the built-in idle CPU selection policy.
 > 
-> Fixes: 4ffca5a96678 ("mm: support only one page_type per page")
-> Cc: stable@vger.kernel.org # v6.12+
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
+> This is a pure refactoring with no functional changes.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 > ---
->   mm/debug.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   kernel/sched/ext.c      |  2 +-
+>   kernel/sched/ext_idle.c | 45 ++++++++++++++++++++++++++---------------
+>   kernel/sched/ext_idle.h |  3 ++-
+>   3 files changed, 32 insertions(+), 18 deletions(-)
 > 
-> diff --git a/mm/debug.c b/mm/debug.c
-> index 8d2acf432385..b6bd9555ec7b 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -71,10 +71,10 @@ static void __dump_folio(struct folio *folio, struct page *page,
->   		unsigned long pfn, unsigned long idx)
->   {
->   	struct address_space *mapping = folio_mapping(folio);
-> -	int mapcount = atomic_read(&page->_mapcount);
-> +	int mapcount = atomic_read(&page->_mapcount) + 1;
->   	char *type = "";
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 06561d6717c9a..f42352e8d889e 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -3395,7 +3395,7 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
+>   	} else {
+>   		s32 cpu;
 >   
-> -	mapcount = page_mapcount_is_type(mapcount) ? 0 : mapcount + 1;
-> +	mapcount = page_mapcount_is_type(mapcount) ? 0 : mapcount;
->   	pr_warn("page: refcount:%d mapcount:%d mapping:%p index:%#lx pfn:%#lx\n",
->   			folio_ref_count(folio), mapcount, mapping,
->   			folio->index + idx, pfn);
+> -		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, 0);
+> +		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, p->cpus_ptr, 0);
+>   		if (cpu >= 0) {
+>   			p->scx.slice = SCX_SLICE_DFL;
+>   			p->scx.ddsp_dsq_id = SCX_DSQ_LOCAL;
+> diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
+> index e1e020c27c07c..a90d85bce1ccb 100644
+> --- a/kernel/sched/ext_idle.c
+> +++ b/kernel/sched/ext_idle.c
+> @@ -397,11 +397,19 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
+>   		static_branch_disable_cpuslocked(&scx_selcpu_topo_numa);
+>   }
+>   
+> +static inline bool task_allowed_all_cpus(const struct task_struct *p)
+> +{
+> +	return p->nr_cpus_allowed >= num_possible_cpus();
+> +}
 
-Acked-by: David Hildenbrand <david@redhat.com>
+This function will be renamed to task_affinity_all() in patch #3.
+Can we use the same name from the beginning?
+That will make the commits easier to read.
 
+> +
+>   /*
+> - * Return the subset of @cpus that task @p can use or NULL if none of the
+> - * CPUs in the @cpus cpumask can be used.
+> + * Return the subset of @cpus that task @p can use, according to
+> + * @cpus_allowed, or NULL if none of the CPUs in the @cpus cpumask can be
+> + * used.
+>    */
+> -static const struct cpumask *task_cpumask(const struct task_struct *p, const struct cpumask *cpus,
+> +static const struct cpumask *task_cpumask(const struct task_struct *p,
+> +					  const struct cpumask *cpus_allowed,
+> +					  const struct cpumask *cpus,
+>   					  struct cpumask *local_cpus)
+>   {
+>   	/*
+> @@ -410,12 +418,10 @@ static const struct cpumask *task_cpumask(const struct task_struct *p, const str
+>   	 * intersection of the architecture's cpumask and the task's
+>   	 * allowed cpumask.
+>   	 */
+> -	if (!cpus || p->nr_cpus_allowed >= num_possible_cpus() ||
+> -	    cpumask_subset(cpus, p->cpus_ptr))
+> +	if (!cpus || task_allowed_all_cpus(p) || cpumask_subset(cpus, cpus_allowed))
+>   		return cpus;
+>   
+> -	if (!cpumask_equal(cpus, p->cpus_ptr) &&
+> -	    cpumask_and(local_cpus, cpus, p->cpus_ptr))
+> +	if (cpumask_and(local_cpus, cpus, cpus_allowed))
+>   		return local_cpus;
+>   
+>   	return NULL;
+> @@ -454,7 +460,8 @@ static const struct cpumask *task_cpumask(const struct task_struct *p, const str
+>    * NOTE: tasks that can only run on 1 CPU are excluded by this logic, because
+>    * we never call ops.select_cpu() for them, see select_task_rq().
+>    */
+> -s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64 flags)
+> +s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
+> +		       const struct cpumask *cpus_allowed, u64 flags)
+>   {
+>   	const struct cpumask *llc_cpus = NULL, *numa_cpus = NULL;
+>   	int node = scx_cpu_node_if_enabled(prev_cpu);
+> @@ -469,13 +476,19 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+>   	 * Determine the subset of CPUs that the task can use in its
+>   	 * current LLC and node.
+>   	 */
+> -	if (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa))
+> -		numa_cpus = task_cpumask(p, numa_span(prev_cpu),
+> +	if (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa)) {
+> +		numa_cpus = task_cpumask(p, cpus_allowed, numa_span(prev_cpu),
+>   					 this_cpu_cpumask_var_ptr(local_numa_idle_cpumask));
+> +		if (cpumask_equal(numa_cpus, cpus_allowed))
 
--- 
-Cheers,
+Since task_cpumask() can return NULL, I think we should test if
+numa_cpus is NULL or not here, something like this: 
 
-David / dhildenb
+if (numa_cpus && cpumask_equal(numa_cpus, cpus_allowed))
+
+> +			numa_cpus = NULL;
+> +	}
+>   
+> -	if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc))
+> -		llc_cpus = task_cpumask(p, llc_span(prev_cpu),
+> +	if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
+> +		llc_cpus = task_cpumask(p, cpus_allowed, llc_span(prev_cpu),
+>   					this_cpu_cpumask_var_ptr(local_llc_idle_cpumask));
+> +		if (cpumask_equal(llc_cpus, cpus_allowed))
+
+Same here.
+
+		if (llc_cpus && cpumask_equal(llc_cpus, cpus_allowed))
+
+> +			llc_cpus = NULL;
+> +	}
+>   
+>   	/*
+>   	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
+> @@ -512,7 +525,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+>   		    cpu_rq(cpu)->scx.local_dsq.nr == 0 &&
+>   		    (!(flags & SCX_PICK_IDLE_IN_NODE) || (waker_node == node)) &&
+>   		    !cpumask_empty(idle_cpumask(waker_node)->cpu)) {
+> -			if (cpumask_test_cpu(cpu, p->cpus_ptr))
+> +			if (cpumask_test_cpu(cpu, cpus_allowed))
+>   				goto out_unlock;
+>   		}
+>   	}
+> @@ -557,7 +570,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+>   		 * begin in prev_cpu's node and proceed to other nodes in
+>   		 * order of increasing distance.
+>   		 */
+> -		cpu = scx_pick_idle_cpu(p->cpus_ptr, node, flags | SCX_PICK_IDLE_CORE);
+> +		cpu = scx_pick_idle_cpu(cpus_allowed, node, flags | SCX_PICK_IDLE_CORE);
+>   		if (cpu >= 0)
+>   			goto out_unlock;
+>   
+> @@ -605,7 +618,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+>   	 * in prev_cpu's node and proceed to other nodes in order of
+>   	 * increasing distance.
+>   	 */
+> -	cpu = scx_pick_idle_cpu(p->cpus_ptr, node, flags);
+> +	cpu = scx_pick_idle_cpu(cpus_allowed, node, flags);
+>   	if (cpu >= 0)
+>   		goto out_unlock;
+>   
+> @@ -861,7 +874,7 @@ __bpf_kfunc s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+>   		goto prev_cpu;
+>   
+>   #ifdef CONFIG_SMP
+> -	cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, 0);
+> +	cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, p->cpus_ptr, 0);
+>   	if (cpu >= 0) {
+>   		*is_idle = true;
+>   		return cpu;
+> diff --git a/kernel/sched/ext_idle.h b/kernel/sched/ext_idle.h
+> index 511cc2221f7a8..37be78a7502b3 100644
+> --- a/kernel/sched/ext_idle.h
+> +++ b/kernel/sched/ext_idle.h
+> @@ -27,7 +27,8 @@ static inline s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, int node
+>   }
+>   #endif /* CONFIG_SMP */
+>   
+> -s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64 flags);
+> +s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
+> +		       const struct cpumask *cpus_allowed, u64 flags);
+>   void scx_idle_enable(struct sched_ext_ops *ops);
+>   void scx_idle_disable(void);
+>   int scx_idle_init(void);
+
+Regards,
+Changwoo Min
 
 
