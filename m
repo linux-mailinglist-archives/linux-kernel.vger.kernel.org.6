@@ -1,180 +1,165 @@
-Return-Path: <linux-kernel+bounces-571662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A632A6C04D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:44:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF38CA6C059
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2113A189F757
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E68B16AD24
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74A522DFAC;
-	Fri, 21 Mar 2025 16:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B20422CBFE;
+	Fri, 21 Mar 2025 16:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CWHFaHSd"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUiTPsUZ"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA4422D7BF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386EC13B59B;
+	Fri, 21 Mar 2025 16:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742575285; cv=none; b=mCjwsjvokHxfWC4An9P+ZJfGGC5aBnjUo+TBZZoBfn2JcgJJuZbRg8xztLgV9jxMboy9FpEqHCgGxFax4e6ygGbPG65sGE1a3AZpWM9tLrMHLpjW4rQ6QxdKvUO7uE+7DnYRSo8bMUQvAa9RyY8aFBaI1tHekC0qC8irrTD6A88=
+	t=1742575411; cv=none; b=WCfHRVCzS37zQ0shW/6HtmocQg32bxIZhsx+WqrVH2LX3uoVQRuBlPbUftTagvkJMkG2TIy5e8qW2nhIyiTnaygY4WN3lGJY+NWGhLjy13nrQBakLDHHY3JsWllccVbxn3xrgr0TEqgHplx3vkDMyozpXlDa6W2cyxTLpwWUVjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742575285; c=relaxed/simple;
-	bh=Pws08LvMbXyIYXHBhhgM7dOJmvCHCz3WGZZhXE7y8N8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b7JnVbEB0q2RBKwSuQgZi0l+2aMEFIbLkgS78n7YyC5qG793QAbm/xXUsCEItmadzbtlIKnAGGZUugAgXASTGOWXXSNAi1TcbKVgHLEkHvzcKEkwfD72HBhJrC1GKwSvDNJA66T4MoZvzLhhK5OplT3IkhdsZpT+gfZkqjVqzMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CWHFaHSd; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac29fd22163so395414066b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:41:23 -0700 (PDT)
+	s=arc-20240116; t=1742575411; c=relaxed/simple;
+	bh=q8gY0EHYv1f0SNCN1IiS93/JbkcsovraFqehXvDUYac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p0w379Fa5utKDQb+/69y+Ut8tVJD8lmvvqKnY/rs6ZGo+eV6+0YOyGZLUwZWsG1auCwB7vjxCAY0e8DeNp4ZfuNnVFkcXcXQrIx7y1ky+B62BC11NcA1wCAo5HVw0XmrboFUlCjQ1iHH/oFZ9thARvuoB4YGO7yDroE30C8OxBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUiTPsUZ; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224191d92e4so45204215ad.3;
+        Fri, 21 Mar 2025 09:43:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742575281; x=1743180081; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tgqqVRk8zgVEKC8aOnJN2NYUg3kMqPomNQlkiSAg/5E=;
-        b=CWHFaHSdsZjmt6BWVhoeGM+/dVvsaDBWbfJUOlGjb8aizJk3QiTkhIjOuDwkkm7tkv
-         H1PV7TWQlYhsDSPEolg3j0KQr21wCROSKdd8JEsMSEkoouYsE6xDmqIw8DRCHy8Apifw
-         LmVYgSI0XFvCc4OX5enFHMPwaCec7yjPlPX/jGb74CfSGx5Q5c2zAO4b40QQ73rusABa
-         bvRRz4gU7pili3KbC94fFkEkw99Haj/fcvkQj87W//8wo+Hxhc5JQMkaq+Cenz3eaADP
-         Y/QUwXYEqKyXHPa7kBaQIEIhwnWXlvSB0jrjQMCBDYSPdtXSn2DEJer8TwfaPi54wFW3
-         53VQ==
+        d=gmail.com; s=20230601; t=1742575409; x=1743180209; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/aJTPH+1xMkR4Zaf05Ht/L3jxae3E9cyEnH7B1bM0G0=;
+        b=eUiTPsUZkHShvkqy8DZjZw7ydtXi4IwkuItp2YZoqtfGTPdaoDyxQSJCJFdrNMzsGD
+         05ReMpVzdYwIoiVpxIXq0vX1u2gHVOWtevaycGa1wQ5aS3n+AYlwHeRXoHR+8YQIaGUa
+         8L6aH/QzASDWQtJjAAyHzMMsNj1B4SOSefaXRFf736CFya3+pKnsQgNPKkQilEkt1BDB
+         UJrpH8+U1GmRbTh4644rmu2PWbWZE80a0kfWjEw4DgT2rYumBF6sjm5SZwmjdpHF0Hq0
+         GTHYrQEpTmYN5xkT7ZcYGp3Ub/7w60Syws4MsqNZPc7QUifN6XRITXBAt/IVH31/v/vg
+         0ddg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742575281; x=1743180081;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tgqqVRk8zgVEKC8aOnJN2NYUg3kMqPomNQlkiSAg/5E=;
-        b=Varw2q4UWqhZW6kXCvBSHlcmyikH+TFi+STmO9gBsTSsZeBu/0bACqua+WS2SPni1v
-         bLxPiAtnM4JoV04VpsAfLFZ3lcsNM+RBeXHBmuSjHtgKbo+qtl1gDX09Q/OPXbUUFDnU
-         JDGqSWPLi/1v0EKvB16VA4/dJgXDx+d5h8rZNpblheZfLR62TtFcLZVamfhB0kumn+vx
-         ILQDZ8Yusy+yTl0WMpj6Fm2IqubooUAroY6SiUtqz9io8K6s5Fq+6LqpmG0tm9S4dn9N
-         F2d7+kmo1k4sQwRgIAHNfBJM44s/XmpPJTW8qqcu3DmIe6xU8hU021ZxtZWm3FnzRAAS
-         izzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUyVg6GBl4TpklALqJBtLx4P6vnbkXKNTknb0nHoB0hXaM6yGK3DcQpWYrwRtyRl54x9VMjf0w2xCxKjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyluQBUR8BI4FeKDXXymzbHjtRb+F8VQuLQUhnBF4AQbHIm/ij6
-	6ahWUZ958+E5wG4VercHRhXzUxZUEgA5dVByvLhj104Xy2I7nu2ppvhDcl/ynhQ=
-X-Gm-Gg: ASbGnctR1qIqmEKmkBduB2wGwwjK1xTymFEovHl0+osPMD6EteDesQAdjBsCLN2TC7K
-	PqIEmjYLCSZbOUdULfKXcJaFRR1eMDdWQVA8pe42xP0al697uXfHy0CsymFAVF9nDfpVvGj1Zja
-	vk5zNhvGeAKKm/cawZAhiAaXXn8YE28cWUKxutnybKQ7hAXM+p9H2GY48WA0Jqkf9uP+lotZ9zn
-	RxoRtMRM93popzsAVD3O2o6vuOYacsiUqTB4oiWRoprxI4XpCOZjMQ/yVJXTkIugz9Yjw5ltz4n
-	84QNjll8JvD9xtIUmJAh6pOqlVwxiHHa717SI5e0gKCcDIvDmoFQo5lw0TjB1vw3fXS64QKNmwt
-	2QpOHNwwTp8yxvsx/jW3KMWuFVfJH
-X-Google-Smtp-Source: AGHT+IECXlewiRNaZcsT7VByFGLy8wa/hYDpGmKSUjf1tAtN9CwCl6c2v3o8DCAfvXOp8IgGjxsCNw==
-X-Received: by 2002:a17:907:3fa3:b0:ac2:758f:9814 with SMTP id a640c23a62f3a-ac3f211101emr418514966b.23.1742575281409;
-        Fri, 21 Mar 2025 09:41:21 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbdc78esm184015666b.134.2025.03.21.09.41.20
+        d=1e100.net; s=20230601; t=1742575409; x=1743180209;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/aJTPH+1xMkR4Zaf05Ht/L3jxae3E9cyEnH7B1bM0G0=;
+        b=DNSrtFmABSyin2NAkI1yJuQRF0Zc9BzqjTv83emUFoWivAfjO4Q0asjquIAIdVMWzX
+         cTNwBqIvDxpi83zWvryaCyzsJWk0oqcYTrmlkfi4lR6FsG4hWq1rlOO5DXq/g1S52aCs
+         xNArZKas7N/tQqhxqMmLJFBdf5q09HWCic//YXLieFEYQDJa/wt0NkgS0wPMfrNPZQoa
+         hUp51wrau2t5vsxcu50noY0+H5iOHGXjYiIbmyxYwpFMrgQbqrfBTy5QhtkAtdGcshEw
+         CoYwcRSzPvxhDlqU4KXYlqgPq4bINHV4rjDmEsEIIxOigWoIiiqkTWfO5+jzaSFWvLle
+         CmNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjFvXseNAMvMOKF23X+KAz9Q7l3Dm3fmNvwPmMXkw8WDL1wW7n0ImsFv0mHrWHgeX8oFE5w4Fq@vger.kernel.org, AJvYcCWavUzQf0ScOa4Lim14Z5jc7hMowBVg+3B4zoikj/3qYap01W+wPBFD86L1VGoTJ4jSA9E/t1tAwKx5g2UK@vger.kernel.org, AJvYcCWiKfmd0cj7w75y8uLxn5OckP352yRLGVEE4ml/NKJe9F1Rff1+Ef7mwfxR2PKI1DpdWi+P0x29SYVnHSsO@vger.kernel.org, AJvYcCWwI1B+L5FqqajL8l7J2fX50QDyWhmBCCGaUd/rfpmC0zQYUmuJ4JnBEi0ZfoWF7CpfNiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBOvTQcjZqlT+fY+S3GJ5QyhMDYKls+Y94iwAhOrNAt6RM83sT
+	Bi8EbW9fS0/oRwC7gXDNjn2W+O5vKmRsmB/oS6FGRbOj+tlAvqb4
+X-Gm-Gg: ASbGnctITVPqzc1muvI01+Qkd8acKfoW7N8uAKY//0Q940fFRyc+VGxt5gZLhhAUmr1
+	PFKNnJAUDibDhZ+vuoOqytA8N2fdYxkyu8YRgSD4Ol6x31SbQJPeWroywOSCuyVk5EKLTlbO9GO
+	XNh+NRf3trIh0h+tQEch0o57Tu5+cmnDlCpTAEz3Wjt2Ow1pMINEnD5S9VPwn6hZ8v7UoEG05Z+
+	BEuMnjE3FzwQCURl3iiCoY9nurDEy/EpSobsqllcnKqPrHQl1CjnL+EfDL0vQiutY80wu3AzikI
+	7PjhRGaEf1lMS6qCQvlourzC8P30ZCyvcyTMasaWxoOIAPj622KU5m/9ClH9YOqWkA==
+X-Google-Smtp-Source: AGHT+IENp6UIAwlpkbF6We8IKTNIq+1iFjd3EWQYgWjKi8R9GSQ9a0yFuxD7FT/yHfceTqi0iUTpuw==
+X-Received: by 2002:a17:902:ef12:b0:223:88af:2c30 with SMTP id d9443c01a7336-22780d8cfeemr57519585ad.16.1742575409441;
+        Fri, 21 Mar 2025 09:43:29 -0700 (PDT)
+Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:3::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b2b30sm19212985ad.120.2025.03.21.09.43.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:41:20 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 21 Mar 2025 16:40:58 +0000
-Subject: [PATCH 2/2] firmware: exynos-acpm: allow use during system
- shutdown
+        Fri, 21 Mar 2025 09:43:28 -0700 (PDT)
+Date: Fri, 21 Mar 2025 09:43:26 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] vhost/vsock: use netns of process that opens the
+ vhost-vsock-netns device
+Message-ID: <Z92XLufHveVjpI43@devvm6277.cco0.facebook.com>
+References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
+ <20250312-vsock-netns-v2-3-84bffa1aa97a@gmail.com>
+ <09c84a94-85f3-4e28-8e7d-bdc227bf99ab@redhat.com>
+ <nwksousz7f4pkzwefvrpbgmmq6bt5kimv4icdkvm7n2nlom6yu@e62c5gdzmamg>
+ <Z9yDIl8taTAmG873@devvm6277.cco0.facebook.com>
+ <aqkgzoo2yswmb52x72fwmch2k7qh2vzq42rju7l5puxc775jjj@duqqm4h3rmlh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250321-acpm-atomic-v1-2-fb887bde7e61@linaro.org>
-References: <20250321-acpm-atomic-v1-0-fb887bde7e61@linaro.org>
-In-Reply-To: <20250321-acpm-atomic-v1-0-fb887bde7e61@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aqkgzoo2yswmb52x72fwmch2k7qh2vzq42rju7l5puxc775jjj@duqqm4h3rmlh>
 
-We need to access the PMIC during late system shutdown and at that time
-we are not allowed to sleep anymore.
+On Fri, Mar 21, 2025 at 11:02:34AM +0100, Stefano Garzarella wrote:
+> On Thu, Mar 20, 2025 at 02:05:38PM -0700, Bobby Eshleman wrote:
+> > On Thu, Mar 20, 2025 at 10:08:02AM +0100, Stefano Garzarella wrote:
+> > > On Wed, Mar 19, 2025 at 10:09:44PM +0100, Paolo Abeni wrote:
+> > > > On 3/12/25 9:59 PM, Bobby Eshleman wrote:
+> > > > > @@ -753,6 +783,8 @@ static int vhost_vsock_dev_release(struct inode *inode, struct file *file)
+> > > > >  	virtio_vsock_skb_queue_purge(&vsock->send_pkt_queue);
+> > > > >
+> > > > >  	vhost_dev_cleanup(&vsock->dev);
+> > > > > +	if (vsock->net)
+> > > > > +		put_net(vsock->net);
+> > > >
+> > > > put_net() is a deprecated API, you should use put_net_track() instead.
+> > > >
+> > > > >  	kfree(vsock->dev.vqs);
+> > > > >  	vhost_vsock_free(vsock);
+> > > > >  	return 0;
+> > > >
+> > > > Also series introducing new features should also include the related
+> > > > self-tests.
+> > > 
+> > > Yes, I was thinking about testing as well, but to test this I think we need
+> > > to run QEMU with Linux in it, is this feasible in self-tests?
+> > > 
+> > > We should start looking at that, because for now I have my own ansible
+> > > script that runs tests (tools/testing/vsock/vsock_test) in nested VMs to
+> > > test both host (vhost-vsock) and guest (virtio-vsock).
+> > > 
+> > 
+> > Maybe as a baseline we could follow the model of
+> > tools/testing/selftests/bpf/vmtest.sh and start by reusing your
+> > vsock_test parameters from your Ansible script?
+> 
+> Yeah, my playbooks are here:
+> https://github.com/stefano-garzarella/ansible-vsock
+> 
+> Note: they are heavily customized on my env, I wrote some notes on how to
+> change various wired path.
+> 
+> > 
+> > I don't mind writing the patches.
+> 
+> That would be great and very much appreciated.
+> Maybe you can do it in a separate series and then here add just the
+> configuration we need.
+> 
+> Thanks,
+> Stefano
+> 
 
-To make this case work, detect this condition and use busy waiting via
-udelay() instead of usleep_range() in that situation.
+Sounds like a plan. Thanks!
 
-The code isn't switched over to udelay() unconditionally so as to not
-waste resources during normal operation. acpm_may_sleep() was heavily
-inspired by the I2C subsystem's i2c_in_atomic_xfer_mode().
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
----
-udelay(10) causes a checkpatch warning (it suggests to use
-usleep_range() instead for usec >= 10), but that's exactly what we can
-not do.
-Reducing the udelay to be smaller will generally cause the loop to be
-iterated more than once, which I wanted to avoid.
-I could reflow the code to hide the actual value from checkpatch, e.g.
-with the help of a local variable if that is preferred to ignoring the
-checkpatch warning.
----
- drivers/firmware/samsung/exynos-acpm.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index d7ed6b77a957af5db5beba7deecce13ac7b30fd2..33cde6e88e2c0773fdd36c80927c77d3bcb44135 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -15,6 +15,8 @@
- #include <linux/firmware/samsung/exynos-acpm-protocol.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/irqflags.h>
-+#include <linux/kernel.h>
- #include <linux/mailbox/exynos-message.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
-@@ -24,6 +26,7 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/preempt.h>
- #include <linux/slab.h>
- #include <linux/types.h>
- 
-@@ -272,6 +275,17 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer)
- 	return 0;
- }
- 
-+/*
-+ * When ACPM transfers happen very late, e.g. to access a PMIC when powering
-+ * down, we can not sleep. We do want to sleep in the normal case, though, to
-+ * avoid wasting CPU cycles!
-+ */
-+static bool acpm_may_sleep(void)
-+{
-+	return system_state <= SYSTEM_RUNNING ||
-+		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
-+}
-+
- /**
-  * acpm_dequeue_by_polling() - RX dequeue by polling.
-  * @achan:	ACPM channel info.
-@@ -299,7 +313,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
- 			return 0;
- 
- 		/* Determined experimentally. */
--		usleep_range(20, 30);
-+		if (!acpm_may_sleep())
-+			udelay(10);
-+		else
-+			usleep_range(20, 30);
- 	} while (!ktime_after(ktime_get(), timeout));
- 
- 	dev_err(dev, "Timeout! ch:%u s:%u bitmap:%lx.\n",
-
--- 
-2.49.0.395.g12beb8f557-goog
-
+Best,
+Bobby
 
