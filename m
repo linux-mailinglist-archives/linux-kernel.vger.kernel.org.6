@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-571928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC293A6C467
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:41:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0BDA6C465
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66B72189F10A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:41:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C425B1B60FB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3298923237B;
-	Fri, 21 Mar 2025 20:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A6E232360;
+	Fri, 21 Mar 2025 20:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxz0E025"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgCd6kW/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B739231A24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2064028E7;
 	Fri, 21 Mar 2025 20:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589669; cv=none; b=JSLkWMjp6xmWw80YLVfC5fIPd3eeUlr2RKLD47SseQhBJCHnFuDAAK8+/WxjO6idGclBuQTbd//KuQad9LXTcAFw3ofdeshOM/LUKhbXSqFGnHxNkz2SfcAyv4iZyuov3tMg2PJZeIvSD1osxaa2DPtVzpQHAE3/oAy19HfNVRI=
+	t=1742589669; cv=none; b=pWTOSqO66bxKfldV3BHmbZYNelS0f88Wo+Wvi1BHiYGFr0JhcysgIpQGuc2o4jFBcQCOxykmc6U8GpajKUMCie3d3Ubyzq1jlA2QfNpJIYeKQzINcq1SsJL3VmvaSGcs7v4pn04zSCO1hb7e4F7iDBeZ3HCXlfzQhF2z/ekSMYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742589669; c=relaxed/simple;
-	bh=JVAu52DHGpijIKeMcuzb7s5YInM6xKk7XO0za9QqBbA=;
+	bh=LFQAzM70Y8/4bSi3hs970uFuPutGXlC4X01Ugec4ydw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BwP6Gcd1m6X13QfHQri06l/r0jbtyBcXy078l4b22bTexI+PmG0AV5EulVYeiDrAnSR0ttLVjHbZq3RzdZuFoegEJ0SdvRARyXLnnTaLqbnlOurn6u/j5VkwjhmLcNZ9TyVulxz8ppsmXCRwRQOxltTJtQmiU7eeOnS43cXV30U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxz0E025; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8979C4CEE7;
+	 MIME-Version; b=kPQUh886RHjydFRBFfsxoim+IjWonkMSXsLjL67WzVZVbS3c98692tnyWVEgWHbZolXiAaFQeIDqlqCUdLobfZwU2EOKKH8eN6/cLfwKQeDsgvopEXbUtv8HD9mX9wZz2RMl7pc9ll+dDot8y0EkxLQwwolnEncdJ4tSiBCQ00A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgCd6kW/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6729C4CEE3;
 	Fri, 21 Mar 2025 20:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1742589669;
-	bh=JVAu52DHGpijIKeMcuzb7s5YInM6xKk7XO0za9QqBbA=;
+	bh=LFQAzM70Y8/4bSi3hs970uFuPutGXlC4X01Ugec4ydw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gxz0E025PiYrfenRJPrd1ufKEJqvcOTAsfkSMzPCpgltkP2SUgsQS12N2c8EljgSz
-	 zgiVI09srPYhEvOSSgXs5ROaeBYP6SZ7+Fw2YfxQY4i6Ba+7+YcK8mAt2c5d8HuHJ0
-	 Tqh1R3CWTFRJqO4UmegO0hwzusA2xwrmzI9ZQw8roHcweLlbDqkvi+6xBnrniP2oAU
-	 BtFiZ+/kQKLLAtFQoGjWoycNyW6GcrT2YXFTX09LE9fFdBY5FGbtkTS5xP5QB8sNqK
-	 GMxxzC1y+w8ynUfTcHOa0OSGAo1vnpeMXTa4QG5mmenTP67xq+mJahEu6YMIhSoi2K
-	 J59rxHLdvxdcw==
+	b=qgCd6kW/4cf5U9VoXqzgie8/lOZnRnTBbNsmqaM8c9IgwSMdkh10zu+Gf4/x+4QMz
+	 F77o/Q6Xpu/bj0wUyHlY2hb8b6ENvPRFa2xUYnNmS3xYrXxVAsvnxUxvx+QqQ/Cy+H
+	 F9IVLpAqbwbjLZB0zrRPOYHj6MDmvqHfZEoc7f+s8w3u6sU7FfcgFOzXHfqc3JOL4e
+	 /3vykj1nDJIwjNY8EUKJzXbCSyUeq4FOTEerXoDOQHcK5jrzoRnfXfs0dUb4jq1HUF
+	 eg5XsILMLFaClPNQxQ/dWoZdN7XUndWFU+Ejv0mg4IdZ/UoVVixTOnlp2XbDCapAKS
+	 /TPIkUpZymQSg==
 From: Kees Cook <kees@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>
 Cc: Kees Cook <kees@kernel.org>,
@@ -58,9 +58,9 @@ Cc: Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH 1/5] treewide: Replace kfree() casts with union members
-Date: Fri, 21 Mar 2025 13:40:57 -0700
-Message-Id: <20250321204105.1898507-1-kees@kernel.org>
+Subject: [PATCH 2/5] treewide: Prepare for kfree() to __kfree() rename
+Date: Fri, 21 Mar 2025 13:40:58 -0700
+Message-Id: <20250321204105.1898507-2-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250321202620.work.175-kees@kernel.org>
 References: <20250321202620.work.175-kees@kernel.org>
@@ -70,100 +70,115 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3631; i=kees@kernel.org; h=from:subject; bh=JVAu52DHGpijIKeMcuzb7s5YInM6xKk7XO0za9QqBbA=; b=owGbwMvMwCVmps19z/KJym7G02pJDOl3z922vz9LcHfWgx0Ss1JsLgmpPp+5tXNXes5RydM5O qfcave4dpSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEzkhC0jw/9bu8RStOIP8nvI Tuat5NF6IfXqVwb7L4WpryOU8ibcqGFkeFnXW3rnoek685fphrnRuqmihr3NCzmtNWMdb+wo3vG NFQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4240; i=kees@kernel.org; h=from:subject; bh=LFQAzM70Y8/4bSi3hs970uFuPutGXlC4X01Ugec4ydw=; b=owGbwMvMwCVmps19z/KJym7G02pJDOl3z93unF6W+Z710Pvrd5tj3dhqnk3pnaPV9KjkmGxzj XnZ811qHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABN5s5zhf6q2cNeSL3tOJdg3 tE7/WPyDx4DPcfLRlaFGdhP9S+8dMmNkeBv3dM7qAGEe+c/zVpsduXh00xmxq/ll6cnHcx2dfIw 1uAE=
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-As a prerequisite to being able to optionally take the address of any
-lvalues used in a call to kfree(), replace casts to the kfree() argument
-with unions to include an actual pointer.
+In preparation for making kfree() a wrapper macro, replace address-taken
+instances of kfree with __kfree so the future renaming of kfree to
+__kfree will work correctly. (Or to avoid needing to create a union for
+a cast.)
 
-This is an example subset. There are another handful remaining:
-
-$ git grep '\bkfree((void \*)'
-arch/mips/alchemy/common/dbdma.c:       kfree((void *)ctp->cdb_membase);
-arch/s390/kernel/crash_dump.c:  kfree((void *)(unsigned long)addr);
-drivers/crypto/atmel-sha204a.c: kfree((void *)i2c_priv->hwrng.priv);
-drivers/infiniband/hw/cxgb4/mem.c:              kfree((void *) (unsigned long) mhp->kva);
-drivers/isdn/mISDN/fsm.c:       kfree((void *) fsm->jumpmatrix);
-drivers/misc/altera-stapl/altera.c:           kfree((void *)vars[variable_id]);
-drivers/misc/altera-stapl/altera.c:                             kfree((void *)vars[i]);
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h:                        kfree((void *)x); \
-drivers/net/ethernet/qlogic/qed/qed_main.c:     kfree((void *)cdev);
-drivers/net/usb/cx82310_eth.c:  kfree((void *)dev->partial_data);
-drivers/net/usb/cx82310_eth.c:  kfree((void *)dev->partial_data);
-drivers/scsi/snic/snic_io.c:            kfree((void *)rqi->sge_va);
-drivers/scsi/snic/snic_io.c:                    kfree((void *)rqi->sge_va);
-drivers/staging/rtl8723bs/os_dep/os_intfs.c:    /* kfree((void *)padapter); */
-drivers/video/fbdev/grvga.c:            kfree((void *)virtual_start);
-drivers/video/fbdev/grvga.c:                    kfree((void *)info->screen_base);
-drivers/xen/grant-table.c:                      kfree((void *)page_private(pages[i]));
-net/ieee802154/nl802154.c:      kfree((void *)cb->args[0]);
-net/sched/em_ipset.c:           kfree((void *) em->data);
-net/sched/em_meta.c:    kfree((void *) v->val);
+This is an example subset needed to build my bootable image. I'm sure
+there are more, but they immediately throw build errors when encountered
+so they cannot be silently missed.
 
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- include/linux/netlink.h | 1 +
- include/net/pkt_cls.h   | 5 ++++-
- net/sched/ematch.c      | 2 +-
- net/wireless/nl80211.c  | 2 +-
- 4 files changed, 7 insertions(+), 3 deletions(-)
+ arch/mips/alchemy/common/dbdma.c |  2 +-
+ include/linux/slab.h             |  2 ++
+ io_uring/futex.c                 |  2 +-
+ io_uring/io_uring.c              | 12 ++++++------
+ kernel/bpf/core.c                |  3 ++-
+ 5 files changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/netlink.h b/include/linux/netlink.h
-index c3ae84a77e16..26eb9eea8a74 100644
---- a/include/linux/netlink.h
-+++ b/include/linux/netlink.h
-@@ -295,6 +295,7 @@ struct netlink_callback {
- 	bool			strict_check;
- 	union {
- 		u8		ctx[NETLINK_CTX_SIZE];
-+		void *		ptr;
+diff --git a/arch/mips/alchemy/common/dbdma.c b/arch/mips/alchemy/common/dbdma.c
+index 6a3c890f7bbf..08548e5daead 100644
+--- a/arch/mips/alchemy/common/dbdma.c
++++ b/arch/mips/alchemy/common/dbdma.c
+@@ -422,7 +422,7 @@ u32 au1xxx_dbdma_ring_alloc(u32 chanid, int entries)
+ 		 * Lost....do it again, allocate extra, and round
+ 		 * the address base.
+ 		 */
+-		kfree((const void *)desc_base);
++		__kfree((const void *)desc_base);
+ 		i = entries * sizeof(au1x_ddma_desc_t);
+ 		i += (sizeof(au1x_ddma_desc_t) - 1);
+ 		desc_base = (u32)kmalloc(i, GFP_KERNEL|GFP_DMA);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 09eedaecf120..3e807ccc8583 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -469,6 +469,8 @@ void kfree(const void *objp);
+ void kfree_sensitive(const void *objp);
+ size_t __ksize(const void *objp);
  
- 		/* args is deprecated. Cast a struct over ctx instead
- 		 * for proper type safety.
-diff --git a/include/net/pkt_cls.h b/include/net/pkt_cls.h
-index c64fd896b1f9..4faf8d6eed1d 100644
---- a/include/net/pkt_cls.h
-+++ b/include/net/pkt_cls.h
-@@ -403,7 +403,10 @@ struct tcf_ematch_ops;
-  */
- struct tcf_ematch {
- 	struct tcf_ematch_ops * ops;
--	unsigned long		data;
-+	union {
-+		unsigned long	data;
-+		void *		ptr;
-+	};
- 	unsigned int		datalen;
- 	u16			matchid;
- 	u16			flags;
-diff --git a/net/sched/ematch.c b/net/sched/ematch.c
-index 5c1235e6076a..f4b00e7aca6a 100644
---- a/net/sched/ematch.c
-+++ b/net/sched/ematch.c
-@@ -411,7 +411,7 @@ void tcf_em_tree_destroy(struct tcf_ematch_tree *tree)
- 			if (em->ops->destroy)
- 				em->ops->destroy(em);
- 			else if (!tcf_em_is_simple(em))
--				kfree((void *) em->data);
-+				kfree(em->ptr);
- 			module_put(em->ops->owner);
- 		}
- 	}
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index d7d3da0f6833..b5a3ae07d84c 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -3270,7 +3270,7 @@ static int nl80211_dump_wiphy(struct sk_buff *skb, struct netlink_callback *cb)
++#define __kfree(x)	kfree(x)
++
+ DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
+ DEFINE_FREE(kfree_sensitive, void *, if (_T) kfree_sensitive(_T))
  
- static int nl80211_dump_wiphy_done(struct netlink_callback *cb)
+diff --git a/io_uring/futex.c b/io_uring/futex.c
+index 43e2143255f5..e46a019fbd08 100644
+--- a/io_uring/futex.c
++++ b/io_uring/futex.c
+@@ -41,7 +41,7 @@ bool io_futex_cache_init(struct io_ring_ctx *ctx)
+ 
+ void io_futex_cache_free(struct io_ring_ctx *ctx)
  {
--	kfree((void *)cb->args[0]);
-+	kfree(cb->ptr);
- 	return 0;
+-	io_alloc_cache_free(&ctx->futex_cache, kfree);
++	io_alloc_cache_free(&ctx->futex_cache, __kfree);
  }
  
+ static void __io_futex_complete(struct io_kiocb *req, struct io_tw_state *ts)
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index ceacf6230e34..0a41a3a981b1 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -360,11 +360,11 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ free_ref:
+ 	percpu_ref_exit(&ctx->refs);
+ err:
+-	io_alloc_cache_free(&ctx->apoll_cache, kfree);
++	io_alloc_cache_free(&ctx->apoll_cache, __kfree);
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+ 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
+-	io_alloc_cache_free(&ctx->uring_cache, kfree);
+-	io_alloc_cache_free(&ctx->msg_cache, kfree);
++	io_alloc_cache_free(&ctx->uring_cache, __kfree);
++	io_alloc_cache_free(&ctx->msg_cache, __kfree);
+ 	io_futex_cache_free(ctx);
+ 	kvfree(ctx->cancel_table.hbs);
+ 	xa_destroy(&ctx->io_bl_xa);
+@@ -2702,11 +2702,11 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+ 	io_sqe_files_unregister(ctx);
+ 	io_cqring_overflow_kill(ctx);
+ 	io_eventfd_unregister(ctx);
+-	io_alloc_cache_free(&ctx->apoll_cache, kfree);
++	io_alloc_cache_free(&ctx->apoll_cache, __kfree);
+ 	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
+ 	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
+-	io_alloc_cache_free(&ctx->uring_cache, kfree);
+-	io_alloc_cache_free(&ctx->msg_cache, kfree);
++	io_alloc_cache_free(&ctx->uring_cache, __kfree);
++	io_alloc_cache_free(&ctx->msg_cache, __kfree);
+ 	io_futex_cache_free(ctx);
+ 	io_destroy_buffers(ctx);
+ 	io_free_region(ctx, &ctx->param_region);
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index da729cbbaeb9..9d2721d24c40 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -280,7 +280,8 @@ void __bpf_prog_free(struct bpf_prog *fp)
+ 		mutex_destroy(&fp->aux->used_maps_mutex);
+ 		mutex_destroy(&fp->aux->dst_mutex);
+ 		kfree(fp->aux->poke_tab);
+-		kfree(fp->aux);
++		/* "fp" may be in read-only memory */
++		__kfree(fp->aux);
+ 	}
+ 	free_percpu(fp->stats);
+ 	free_percpu(fp->active);
 -- 
 2.34.1
 
