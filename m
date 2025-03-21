@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-571153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20784A6B9D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E650A6B9D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A095D3B6918
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971323B6E07
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7C3224243;
-	Fri, 21 Mar 2025 11:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAD7223702;
+	Fri, 21 Mar 2025 11:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LdOeBjF+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ak78XAAo"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B32202C27
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB9202C27
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742556315; cv=none; b=acBJgQKBBWl8tRdV3sF/KcCP+3R+Nh+I//UpndOxIhXaBHSnW2S0kpifBJRT7sH1uF8pBu+Hh+ntu2KneX7bGyRzJubfLIe9ZbiH9HENkTMr4IQ0mdLH1j+6Lw0M1+hDWY7TgOi8O+R3+tVIbvDa9MaHpm/XNMmDW2RAfWXDMs4=
+	t=1742556320; cv=none; b=Q7azP/mEls+9MQnAVXooGQLZfj/kxm/KRvBrUilhSLmtSrJ3teieykbb9MVJc7Er7Fw4/3rVq+0UAMGToITj5Z2GQ1lLWKa89477SZl9uAWEwgeemuRc+L4muJpbEOoFXjkh7/V5kcBzOgMY90RHPde9mfectiarquOIRbPX9XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742556315; c=relaxed/simple;
-	bh=jJntAIfVRU4t714r35ZhKF0V7tnY7tGFqkj4VRR2sUs=;
+	s=arc-20240116; t=1742556320; c=relaxed/simple;
+	bh=0kXVu/gh0yVTqgoh+txA1QpKxhNEuDj21jcjt7Diojo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XnDB/LZx0Ud4UCv/eBjlydcS23LQww1J0c1xGlaJT5/QPiAeHBGAYix5azL2oQx5uyIlKlsrQb+/O9kcVj6+IISVO5E3bfsZdDwYQFoLKBw75iApAzoKyt6VqeSb4j/rT8J8lNIOwzbSC7fh2l1wRooxsBZwQObWGQG0utBBVbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LdOeBjF+; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=e9rNQjAlz6S52znT+z++tcnGgAuT8k5nFeb+hSXzJrMlESifYQPmqcpKrTDpaiKivblvdbNoDkDqNjvIMNPpVTM7M2unDzYiRdEUJRHY+cO7Nkgc7N6B42EItejlceUF935PgeWRPZdUMsLGpNFSBMUNAVn7rllkPWluK9Oconw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ak78XAAo; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742556312;
+	s=mimecast20190719; t=1742556318;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3ULjzTuWq4KWWMz5FWBM7gDBkyDsf2B5DDVUjmTkqks=;
-	b=LdOeBjF+VwE9Gl39gogjmn+MSCD3kYHdN1RQunE7nnml+qwtio7SaQlH2b+QIA9qKV+RvX
-	Psde7GiJjNmC0IJlSEA4tl7cwY9bxJZqvHmJcKTh7cLuDCtk+WDwm8LiLoyCibLSGZEdWl
-	W/hZsfylzLNGNSH5RpF8WChS/Hs2Vww=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=0yUNpi4b7ZWdWO/bV5OTMGm6CGQRq8VicNn8NgDNq0I=;
+	b=ak78XAAo1n6QSVRg/bPa92D8M12LKj3i8dfD92fhMTr2AC/DaYEmtXBgkBxDUTzc730h3I
+	qdbxOwR4SrZ6zVEm0kYAVK0T0N8prvuqnKAbcU99uPZDJ3V/URlJtHJ5gKeroik3XGUOlv
+	bUntOkTMS5sOiK+Nlb7rr40gFd6Vdts=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-sWdaQcbIMZuU33p4OBIaMQ-1; Fri,
- 21 Mar 2025 07:25:09 -0400
-X-MC-Unique: sWdaQcbIMZuU33p4OBIaMQ-1
-X-Mimecast-MFC-AGG-ID: sWdaQcbIMZuU33p4OBIaMQ_1742556307
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-EEhYhU6hOJqu7cGncA5SAg-1; Fri,
+ 21 Mar 2025 07:25:15 -0400
+X-MC-Unique: EEhYhU6hOJqu7cGncA5SAg-1
+X-Mimecast-MFC-AGG-ID: EEhYhU6hOJqu7cGncA5SAg_1742556313
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CD581945103;
-	Fri, 21 Mar 2025 11:25:07 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 124B319560B1;
+	Fri, 21 Mar 2025 11:25:13 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.44.34.21])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5F87180175B;
-	Fri, 21 Mar 2025 11:25:01 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E4B9D180175A;
+	Fri, 21 Mar 2025 11:25:07 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -72,11 +72,10 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	linux-mm@kvack.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>
-Subject: [PATCH v2 1/2] mm/kmap: Add kmap_local_page_try_from_panic()
-Date: Fri, 21 Mar 2025 12:16:55 +0100
-Message-ID: <20250321112436.1739876-2-jfalempe@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v2 2/2] drm/panic: Add support to scanout buffer as array of pages
+Date: Fri, 21 Mar 2025 12:16:56 +0100
+Message-ID: <20250321112436.1739876-3-jfalempe@redhat.com>
 In-Reply-To: <20250321112436.1739876-1-jfalempe@redhat.com>
 References: <20250321112436.1739876-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -88,46 +87,244 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-kmap_local_page() can be unsafe to call from a panic handler, if
-CONFIG_HIGHMEM is set, and the page is in the highmem zone.
-So add kmap_local_page_try_from_panic() to handle this case.
+Some drivers like virtio-gpu, don't map the scanout buffer in the
+kernel. Calling vmap() in a panic handler is not safe, and writing an
+atomic_vmap() API is more complex than expected [1].
+So instead, pass the array of pages of the scanout buffer to the
+panic handler, and map only one page at a time to draw the pixels.
+This is obviously slow, but acceptable for a panic handler.
 
-Suggested-by: Simona Vetter <simona.vetter@ffwll.ch>
+[1] https://lore.kernel.org/dri-devel/20250305152555.318159-1-ryasuoka@redhat.com/
+
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- include/linux/highmem-internal.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/drm_panic.c | 142 ++++++++++++++++++++++++++++++++++--
+ include/drm/drm_panic.h     |  12 ++-
+ 2 files changed, 147 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
-index dd100e849f5e0..5d089b0ca56de 100644
---- a/include/linux/highmem-internal.h
-+++ b/include/linux/highmem-internal.h
-@@ -73,6 +73,13 @@ static inline void *kmap_local_page(struct page *page)
- 	return __kmap_local_page_prot(page, kmap_prot);
+diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+index ab42a2b1567d0..3f22ea2f61c73 100644
+--- a/drivers/gpu/drm/drm_panic.c
++++ b/drivers/gpu/drm/drm_panic.c
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <linux/font.h>
++#include <linux/highmem.h>
+ #include <linux/init.h>
+ #include <linux/iosys-map.h>
+ #include <linux/kdebug.h>
+@@ -154,6 +155,90 @@ static void drm_panic_blit_pixel(struct drm_scanout_buffer *sb, struct drm_rect
+ 				sb->set_pixel(sb, clip->x1 + x, clip->y1 + y, fg_color);
  }
  
-+static inline void *kmap_local_page_try_from_panic(struct page *page)
++static void drm_panic_write_pixel16(void *vaddr, unsigned int offset, u16 color)
 +{
-+	if (!PageHighMem(page))
-+		return page_address(page);
-+	return NULL;
++	u16 *p = vaddr + offset;
++
++	*p = color;
 +}
 +
- static inline void *kmap_local_folio(struct folio *folio, size_t offset)
- {
- 	struct page *page = folio_page(folio, offset / PAGE_SIZE);
-@@ -180,6 +187,11 @@ static inline void *kmap_local_page(struct page *page)
- 	return page_address(page);
++static void drm_panic_write_pixel24(void *vaddr, unsigned int offset, u32 color)
++{
++	u8 *p = vaddr + offset;
++
++	*p++ = color & 0xff;
++	color >>= 8;
++	*p++ = color & 0xff;
++	color >>= 8;
++	*p = color & 0xff;
++}
++
++static void drm_panic_write_pixel32(void *vaddr, unsigned int offset, u32 color)
++{
++	u32 *p = vaddr + offset;
++
++	*p = color;
++}
++
++static void drm_panic_write_pixel(void *vaddr, unsigned int offset, u32 color, unsigned int cpp)
++{
++	switch (cpp) {
++	case 2:
++		drm_panic_write_pixel16(vaddr, offset, color);
++		break;
++	case 3:
++		drm_panic_write_pixel24(vaddr, offset, color);
++		break;
++	case 4:
++		drm_panic_write_pixel32(vaddr, offset, color);
++		break;
++	default:
++		DRM_WARN_ONCE("Can't blit with pixel width %d\n", cpp);
++	}
++}
++
++/*
++ * The scanout buffer pages are not mapped, so for each pixel,
++ * use kmap_local_page_try_from_panic() to map the page, and write the pixel.
++ * Try to keep the map from the previous pixel, to avoid too much map/unmap.
++ */
++static void drm_panic_blit_page(struct page **pages, unsigned int dpitch,
++				unsigned int cpp, const u8 *sbuf8,
++				unsigned int spitch, struct drm_rect *clip,
++				unsigned int scale, u32 fg32)
++{
++	unsigned int y, x;
++	unsigned int page = ~0;
++	unsigned int height = drm_rect_height(clip);
++	unsigned int width = drm_rect_width(clip);
++	void *vaddr = NULL;
++
++	for (y = 0; y < height; y++) {
++		for (x = 0; x < width; x++) {
++			if (drm_draw_is_pixel_fg(sbuf8, spitch, x / scale, y / scale)) {
++				unsigned int new_page;
++				unsigned int offset;
++
++				offset = (y + clip->y1) * dpitch + (x + clip->x1) * cpp;
++				new_page = offset >> PAGE_SHIFT;
++				offset = offset % PAGE_SIZE;
++				if (new_page != page) {
++					if (!pages[new_page])
++						continue;
++					if (vaddr)
++						kunmap_local(vaddr);
++					page = new_page;
++					vaddr = kmap_local_page_try_from_panic(pages[page]);
++				}
++				if (vaddr)
++					drm_panic_write_pixel(vaddr, offset, fg32, cpp);
++			}
++		}
++	}
++	if (vaddr)
++		kunmap_local(vaddr);
++}
++
+ /*
+  * drm_panic_blit - convert a monochrome image to a linear framebuffer
+  * @sb: destination scanout buffer
+@@ -177,6 +262,10 @@ static void drm_panic_blit(struct drm_scanout_buffer *sb, struct drm_rect *clip,
+ 	if (sb->set_pixel)
+ 		return drm_panic_blit_pixel(sb, clip, sbuf8, spitch, scale, fg_color);
+ 
++	if (sb->pages)
++		return drm_panic_blit_page(sb->pages, sb->pitch[0], sb->format->cpp[0],
++					   sbuf8, spitch, clip, scale, fg_color);
++
+ 	map = sb->map[0];
+ 	iosys_map_incr(&map, clip->y1 * sb->pitch[0] + clip->x1 * sb->format->cpp[0]);
+ 
+@@ -209,6 +298,35 @@ static void drm_panic_fill_pixel(struct drm_scanout_buffer *sb,
+ 			sb->set_pixel(sb, clip->x1 + x, clip->y1 + y, color);
  }
  
-+static inline void *kmap_local_page_try_from_panic(struct page *page)
++static void drm_panic_fill_page(struct page **pages, unsigned int dpitch,
++				unsigned int cpp, struct drm_rect *clip,
++				u32 color)
 +{
-+	return page_address(page);
++	unsigned int y, x;
++	unsigned int page = ~0;
++	void *vaddr = NULL;
++
++	for (y = clip->y1; y < clip->y2; y++) {
++		for (x = clip->x1; x < clip->x2; x++) {
++			unsigned int new_page;
++			unsigned int offset;
++
++			offset = y * dpitch + x * cpp;
++			new_page = offset >> PAGE_SHIFT;
++			offset = offset % PAGE_SIZE;
++			if (new_page != page) {
++				if (vaddr)
++					kunmap_local(vaddr);
++				page = new_page;
++				vaddr = kmap_local_page_try_from_panic(pages[page]);
++			}
++			drm_panic_write_pixel(vaddr, offset, color, cpp);
++		}
++	}
++	if (vaddr)
++		kunmap_local(vaddr);
 +}
 +
- static inline void *kmap_local_folio(struct folio *folio, size_t offset)
- {
- 	return page_address(&folio->page) + offset;
+ /*
+  * drm_panic_fill - Fill a rectangle with a color
+  * @sb: destination scanout buffer
+@@ -225,6 +343,10 @@ static void drm_panic_fill(struct drm_scanout_buffer *sb, struct drm_rect *clip,
+ 	if (sb->set_pixel)
+ 		return drm_panic_fill_pixel(sb, clip, color);
+ 
++	if (sb->pages)
++		return drm_panic_fill_page(sb->pages, sb->pitch[0], sb->format->cpp[0],
++					   clip, color);
++
+ 	map = sb->map[0];
+ 	iosys_map_incr(&map, clip->y1 * sb->pitch[0] + clip->x1 * sb->format->cpp[0]);
+ 
+@@ -714,16 +836,24 @@ static void draw_panic_plane(struct drm_plane *plane, const char *description)
+ 	if (!drm_panic_trylock(plane->dev, flags))
+ 		return;
+ 
++	ret = plane->helper_private->get_scanout_buffer(plane, &sb);
++
++	if (ret || !drm_panic_is_format_supported(sb.format))
++		goto unlock;
++
++	/* One of these should be set, or it can't draw pixels */
++	if (!sb.set_pixel && !sb.pages && iosys_map_is_null(&sb.map[0]))
++		goto unlock;
++
+ 	drm_panic_set_description(description);
+ 
+-	ret = plane->helper_private->get_scanout_buffer(plane, &sb);
++	draw_panic_dispatch(&sb);
++	if (plane->helper_private->panic_flush)
++		plane->helper_private->panic_flush(plane);
+ 
+-	if (!ret && drm_panic_is_format_supported(sb.format)) {
+-		draw_panic_dispatch(&sb);
+-		if (plane->helper_private->panic_flush)
+-			plane->helper_private->panic_flush(plane);
+-	}
+ 	drm_panic_clear_description();
++
++unlock:
+ 	drm_panic_unlock(plane->dev, flags);
+ }
+ 
+diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
+index f4e1fa9ae607a..a00bf3cbf62f1 100644
+--- a/include/drm/drm_panic.h
++++ b/include/drm/drm_panic.h
+@@ -39,6 +39,16 @@ struct drm_scanout_buffer {
+ 	 */
+ 	struct iosys_map map[DRM_FORMAT_MAX_PLANES];
+ 
++	/**
++	 * @pages: Optional, if the scanout buffer is not mapped, set this field
++	 * to the array of pages of the scanout buffer. The panic code will use
++	 * kmap_local_page_try_from_panic() to map one page at a time to write
++	 * all the pixels. This array shouldn't be allocated from the
++	 * get_scanoutbuffer() callback.
++	 * The scanout buffer should be in linear format.
++	 */
++	struct page **pages;
++
+ 	/**
+ 	 * @width: Width of the scanout buffer, in pixels.
+ 	 */
+@@ -57,7 +67,7 @@ struct drm_scanout_buffer {
+ 	/**
+ 	 * @set_pixel: Optional function, to set a pixel color on the
+ 	 * framebuffer. It allows to handle special tiling format inside the
+-	 * driver.
++	 * driver. It takes precedence over the @map and @pages fields.
+ 	 */
+ 	void (*set_pixel)(struct drm_scanout_buffer *sb, unsigned int x,
+ 			  unsigned int y, u32 color);
 -- 
 2.47.1
 
