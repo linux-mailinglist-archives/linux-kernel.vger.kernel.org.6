@@ -1,120 +1,171 @@
-Return-Path: <linux-kernel+bounces-570865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B991A6B593
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:56:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB666A6B595
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22634827CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595B01895C97
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF0E1EF0AB;
-	Fri, 21 Mar 2025 07:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BDA1EEA42;
+	Fri, 21 Mar 2025 07:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="wH9jo+0c"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e5/kLoSh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE8526ACB;
-	Fri, 21 Mar 2025 07:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AF51DE2DF;
+	Fri, 21 Mar 2025 07:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742543772; cv=none; b=BGUxTCqXOuzWT2k4rHjXIfGkuBBHq8clpy7QPKW8PpDnAQEuIKhvHfFhoHKD4yn5KgXgiDLhVxu9KMDlGUpq2qiLFooTXocvopHqTZhUUnn3OTnNkEzW0ygm5D7HKKnreYJQXh/kqH0RB5npjwWRU1nAtOoiFDjN+eePBQVsMf0=
+	t=1742543797; cv=none; b=HOQidzCZ02kjqQGk5fiY+pc0EOvbw3IMWqK1fdwuea2lOqwfAs+yDcQ4FBrMgnIgMTcBFjc1QZzt4ImYOcNMUtyPTq9P5J2bi0XqapqwkNXEU3VnSvm9q1xbMLVou/akhI9M8n4KuA0dmGAvGJqo8B9W/VZcilPbvSEBwMSlhHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742543772; c=relaxed/simple;
-	bh=O7zthI6xGCKRlOvN8fVyhphd8wmtwfCyQyQcqNnGvs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IN3/5NJrHtbm489kkT8/ODgOa6SKdCFpehVKFlW9QZK9m5FpxdEUhftY0pY5grVRBlXKcG7ZO6OiDv8BPl7P4OeKzt2YV0leEx7LH3gsqSJPtaBG50cLe0Kn8/OUuPrscSTgVinjhQcM6gFhdx2iJufmoAPQOpyEw6eSrDg2/SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=wH9jo+0c; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=OBxjNrd6hcTR//R8RH8pAAyEucot3xHc00neUSfAF80=; b=wH9jo+0cwMrmdpUrnXDCQ5ITTj
-	yjTLD0wJIEocyiU8G8rBT5DSf6LNGU23XiCTmqAq4ByfrxBPvuxy62xWcxcuG0BJhjOTLUP3NZ01c
-	1JTSMWdGpfkBlXE+W99xrSaNKb6Gp/Hs3UIqZH5dqQaUGru5Kf7XFINYc9uCKGJTJG+UQbIdtiTNT
-	QQjZeQ6qTGmUQL2Sb5SokCso6Czee3noq3LtJFeixQB/XdmAFEJAEX/KgKwhvQbYDvnrWNmZMM/x7
-	qQ3WV7ynXq97fTB3wOx6JMjNJiLjotKHHrE3E+8RAcFXA1yDGGdvRyRU5VYW/JJ7RMsdmqb/aXbbP
-	1tiHFC9Rp3cY/Pr9lHU1JAGEWK/3Tk649NllVAZTuFimvIe5N0orFOtR7Mls2KplAPQ82ZQiMZ3GQ
-	0VJv8Rn6Dt+pJ8654iR+HrWOI5w70sr9xp6lhmdQKSoR8ih+HlGJBo2wTFcfGKAYFpfbQQ1rdjyj4
-	HkjdYz357PbFXitr0VHtgWVm;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1tvXEV-0062FN-2N;
-	Fri, 21 Mar 2025 07:55:59 +0000
-Message-ID: <0fc1032f-908c-4e59-8f64-f22b380ae639@samba.org>
-Date: Fri, 21 Mar 2025 08:55:58 +0100
+	s=arc-20240116; t=1742543797; c=relaxed/simple;
+	bh=6xwiSEfjnsl9oMe9TU6BHiDj61eEv5RNCgUQucsR3dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TqMcCNp5xrX/wOIgAl7YTZQSRsgqz9EXWfncNn9LlTtlEzGW946CeqyYCs9sfUBNsvcw3Evr94vn42XN6c1+zAc556yW+JCCBPV+kUZEcRbxdE1Ldhgkw7YDumhKhqm4MMlceOcknB5NuVoJGlTOQ5lf7Lq2u+0Kk2VxUnHJKb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e5/kLoSh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742543791;
+	bh=Ht5K7/zAi8n/RTu2sEicQ+bbH4WZ5Eum+1gsbP7wX4g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=e5/kLoShqF5bp/HkpzAy4eZ+gVDIgLdb4D504/y/slHwtMsm3HMkGkXdk0QVO9oOU
+	 gHsxUt2IytNE/scXsMtsFh5Lr8I52b4aHHnC1coUJ8iLLGw8Fp8jShORMvejMqJLjw
+	 7Xq3fOBY/EL3QKE7uDoTyJxbSyGWKPuwZt4D784F9P2UZYpZnil7vjnK63o+1VRdsz
+	 jefIwW/eYJ+Wc0fx0S3xZv48p7TxO6y1grPYcq+ztb2+e1sOtsnG+fzLkuP2YufCuG
+	 XIN0cdoRwhXeo0QKQQS/667uWTY7PInVi/fy3Ptgsp2upgIoGs0jeVGpxWoxQSzI+2
+	 wInKg7s5TCR4g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJvsW2pyLz4xD3;
+	Fri, 21 Mar 2025 18:56:31 +1100 (AEDT)
+Date: Fri, 21 Mar 2025 18:56:30 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Danilo Krummrich
+ <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the driver-core tree
+Message-ID: <20250321185630.566dc075@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org, shuah@kernel.org,
- sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
- akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: David Wei <dw@davidwei.uk>
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
- <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
- <fbcd759e-2453-4570-a2a0-c9ad67ae9277@gmail.com>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <fbcd759e-2453-4570-a2a0-c9ad67ae9277@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/iqxKlt56HpPDfLDApe/WxLz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Am 20.03.25 um 11:46 schrieb Pavel Begunkov:
-> On 3/19/25 19:15, Stefan Metzmacher wrote:
->> Am 19.03.25 um 19:37 schrieb Jens Axboe:
->>> On 3/19/25 11:45 AM, Joe Damato wrote:
->>>> On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
-> ...
->>> My argument would be the same as for other features - if you can do it
->>> simpler this other way, why not consider that? The end result would be
->>> the same, you can do fast sendfile() with sane buffer reuse. But the
->>> kernel side would be simpler, which is always a kernel main goal for
->>> those of us that have to maintain it.
->>>
->>> Just adding sendfile2() works in the sense that it's an easier drop in
->>> replacement for an app, though the error queue side does mean it needs
->>> to change anyway - it's not just replacing one syscall with another. And
->>> if we want to be lazy, sure that's fine. I just don't think it's the
->>> best way to do it when we literally have a mechanism that's designed for
->>> this and works with reuse already with normal send zc (and receive side
->>> too, in the next kernel).
->>
->> A few month (or even years) back, Pavel came up with an idea
->> to implement some kind of splice into a fixed buffer, if that
->> would be implemented I guess it would help me in Samba too.
->> My first usage was on the receive side (from the network).
-> 
-> I did it as a testing ground for infra needed for ublk zerocopy,
-> but if that's of interest I can resurrect the patches and see
-> where it goes, especially since the aforementioned infra just got
-> queued.
+--Sig_/iqxKlt56HpPDfLDApe/WxLz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Would be great!
+Hi all,
 
-Have you posted the work in progress somewhere?
+Today's linux-next merge of the rust tree got a semantic conflict in:
 
-Thanks!
-metze
+  samples/rust/rust_dma.rs
 
+between commit:
+
+  7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
+
+from the driver-core tree and commit:
+
+  9901addae63b ("samples: rust: add Rust dma test sample driver")
+
+from the rust tree.
+
+I fixed it up (I applied the following supplied resolution, thanks Danilo)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 21 Mar 2025 18:21:27 +1100
+Subject: [PATCH] fix up for "samples: rust: add Rust dma test sample driver"
+
+interacting with commit
+
+  7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
+
+from the driver-core tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ samples/rust/rust_dma.rs | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
+index 908acd34b8db..874c2c964afa 100644
+--- a/samples/rust/rust_dma.rs
++++ b/samples/rust/rust_dma.rs
+@@ -4,10 +4,10 @@
+ //!
+ //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+=20
+-use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
++use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, prelude=
+::*, types::ARef};
+=20
+ struct DmaSampleDriver {
+-    pdev: pci::Device,
++    pdev: ARef<pci::Device>,
+     ca: CoherentAllocation<MyStruct>,
+ }
+=20
+@@ -48,7 +48,7 @@ impl pci::Driver for DmaSampleDriver {
+     type IdInfo =3D ();
+     const ID_TABLE: pci::IdTable<Self::IdInfo> =3D &PCI_TABLE;
+=20
+-    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<K=
+Box<Self>>> {
++    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin=
+<KBox<Self>>> {
+         dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
+=20
+         let ca: CoherentAllocation<MyStruct> =3D
+@@ -64,7 +64,7 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) ->=
+ Result<Pin<KBox<Self>>
+=20
+         let drvdata =3D KBox::new(
+             Self {
+-                pdev: pdev.clone(),
++                pdev: pdev.into(),
+                 ca,
+             },
+             GFP_KERNEL,
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iqxKlt56HpPDfLDApe/WxLz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfdG64ACgkQAVBC80lX
+0GzF4Qf9G4rdTptuKdsHkfT9ZSgqNHUnyszo/CHCx4XY9xLH1/2aJkJFkxA0fjfl
+AuGOqFGkpR037w5x516iLgm+6ivojnBqLlFvZ5xI7GSE2oaL+gkagGy+qwa/3BSY
+1djheHR34jlJgWI30vbFwcGYdRhj/1U1DkP5n7eB4cw1tr8RmmGq1kjU6g6hh5TD
+CXXT6SKk8uG2v+nzrHvYBdeAiLRuDvB88g7uY4UW1WZJ32srWAyyt+pkGGF/o4SM
+VNwHUPx/mHLkTSWB9IkW0iianBvoBuj44zK40DicwksC3YrWJYUIMsaUxSOGxXY+
+ffyAE5Z9ugSM7ijsQKJD+jelvWtWZA==
+=QC2D
+-----END PGP SIGNATURE-----
+
+--Sig_/iqxKlt56HpPDfLDApe/WxLz--
 
