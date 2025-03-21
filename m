@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-572105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9162A6C682
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:50:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1B3A6C686
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE9A246280A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007451B61272
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17D621D3DD;
-	Fri, 21 Mar 2025 23:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6CF221546;
+	Fri, 21 Mar 2025 23:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i2Q+Rl5m"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WhA+S8k2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A949443
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A41E51FF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742601015; cv=none; b=PF3ZJW5/XEc8SFPmbdFWOVyBP8UiFVQDfRpuScWOXauopc7EWh90SvRALn+vD0bL+m+f/ahzBRtBT/9LLiuyhMcjw273jTDOFcvZYFiz5hBqX8mAde3aGHT7tAGPF2syrnMR1kRZO+E62firy6vGsftCuGditqhTljtsJVZZ5Ac=
+	t=1742601151; cv=none; b=NSVnlvx/iCh5JzrUYW4z7CDCHYRjUCnONzGyBWI4YB+U3NuIm8ERCe5Od4RAljcuvrRCUwTspzb63CI7vo9Q05HUZxjX/kn9nO7SSAXec4lHK5MBFHZvRY0IEXXIAZqrHw5nnrIA+0PVr67SfwIEXjacQEhBL4H5Dp8J+/hnSao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742601015; c=relaxed/simple;
-	bh=r3QZyPOTF9gxAktsfGidZWGEziLvPzaArIRV6aZMZ08=;
+	s=arc-20240116; t=1742601151; c=relaxed/simple;
+	bh=RIvh//ipv7E5Zvf4W/70UQHB5Y9ZXuIEXJ65WbeIe/M=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Jpdzbno7ztBvYDqAMroBk7EO7Rs4qT6o6xWeIO29fIO1cOley+tlZ/j42iQjyejr2R/gEwjyesUvxqHvay1xhChBBq9ERbX2gEQlEQTebgUw50utN1rkb/nLuDdhaGMQMrK7G8OENg5DmoKR0py5CKl98AAYbFHk0iAx/NG5bMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i2Q+Rl5m; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=NpGjEULPKYv7yi7CQRT1Gspr+CXHQGik3izj6L6c8ylz4oBaqYNl6AzZO9+NDT7z4/YdngsMIL9sLYKeveLK49F6dKw3kVTaZzdOj74TDQfkO6F1PlUTe2JJaTfpHf1Ehiol7MmExHAFopgeapygXmPLIGucmQQp09V5DIPnHRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WhA+S8k2; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742601012;
+	s=mimecast20190719; t=1742601148;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NrKRoNH3IdyIjo35xLHsqEua4+zOXZg0HlVIQMRCreI=;
-	b=i2Q+Rl5mddM55AaijO7FW6ZjWMwdMIDB7nL3OW9pShzf0/gisqqp3qV2PsP4nncRM7WhcY
-	uqf5Tdyh2B+pEI0+RojZDpWE2bSFPxYI01Ryz8+RtbTzvoq9U7mAt7CAJSxrcYqTxtx/FE
-	78mbalY1cp3lXn7GAxejNX6E7bE0thE=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=/W162Lk5eFVFuf7b+NhjnYDJjSqT7mKIwDUb9pj7zM8=;
+	b=WhA+S8k2NjjYGThhEIDaI5v+TkspecUvP/BuaayxjkrZDInNAGLY0Hlso1bGcRLRr6+FtL
+	1voLWrpBbm9uDAgKwHQ5YVSbT3jGhNHhSWn0Ki5wW4U19xK6W9SHlN9Kt7/UgYF9tYd4yi
+	sIjYjEm/Fg/pjxO1J5BL3l9JM//Q2B8=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-KWWkGoFyMhSsezMhM3by5A-1; Fri, 21 Mar 2025 19:50:11 -0400
-X-MC-Unique: KWWkGoFyMhSsezMhM3by5A-1
-X-Mimecast-MFC-AGG-ID: KWWkGoFyMhSsezMhM3by5A_1742601011
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c3b53373f7so513506685a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:50:11 -0700 (PDT)
+ us-mta-90-W8D4JE5tOTeLklnEU8Fl4w-1; Fri, 21 Mar 2025 19:52:27 -0400
+X-MC-Unique: W8D4JE5tOTeLklnEU8Fl4w-1
+X-Mimecast-MFC-AGG-ID: W8D4JE5tOTeLklnEU8Fl4w_1742601147
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e8f4367446so27897856d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:52:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742601011; x=1743205811;
+        d=1e100.net; s=20230601; t=1742601147; x=1743205947;
         h=mime-version:user-agent:content-transfer-encoding:organization
          :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NrKRoNH3IdyIjo35xLHsqEua4+zOXZg0HlVIQMRCreI=;
-        b=BDi/sZgc4QRD+nJEKkU1T/WQeoLmZfQFgqhqQevtgIZR6ujCmR/JrSDyyFxeJ8/gbd
-         xvQOKYkX+lOOU9YLFKuHe2GAsGoQpMxE9z+/dMpCSSDy3GGS/vDquSSFpzn5e3mM0JkO
-         RkXRewP+cE3/4UeZHlnSeGY5+ZsxOGE+0un22BTA+yOYZNthM8hFgfWWhnwzg0if9GAM
-         dUr6X3xAeFnikAfqeQu7MeDOaZLw6IeS1bh5tvklv6JUE7n+AR8e/krXmdNNHbU+90ME
-         hGPcbN8jVfJKLfuo4jDwr640i55ME10npZeyX2yQik0e3jOqxw4/oHFjaALq1mgmAMLW
-         PBkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiRJkPY3rJWqzg1xjGRrfRbU3tQs48gL8icFCwAEqiRFoJW+jUgg3lo5kwcuyOtOLGYgKDY9Y0akgJNY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxykJZa+mGC7FjjAmZ0NeBIG5I/kOjx6rBUFGJDyywcI0odmuHH
-	RMX04Lj7lBA7kUKmWjUfOc0ls0b4Rku+DVwarBxeTZ4uua8vI9zDYouE6wwmrnX0aPWfokUUGnd
-	JPUEcfrVTw+jy0AnbZlA3DSzeKk9hhD+GD9wdkoqyuIHHpRf/uUjacQTP85dKpw==
-X-Gm-Gg: ASbGnctSX9kU3lp+9rFJf7nfgaDP34ujGr6zNATxnTFOfyHMRSaLEbQdAB2yzIHuApb
-	d7O2xOJDNiWSJ32rgQfnpNsBLBlwonS4BjU4rUiQ3BomPXKSN+zRWRX7tdMG4QEBKUyOC+VqM8N
-	XlreV/PQ5MwfgQoCHNtkKZmNzYJdufTUSeXK8vqVToR+5J4h5D7uUYsnojVt1TCfR9JBsA8CgAw
-	aL5EY3TktvCQtSA+Qi+5Gzsk04SLrglGGITVueO+s6aMS9yAuM12p/4Bki7YwVNLAEECxoq726q
-	Gf6wZHWZLCc4q9g989ZYUA==
-X-Received: by 2002:a05:620a:394a:b0:7c5:5768:40b3 with SMTP id af79cd13be357-7c5ba1de27amr783953385a.45.1742601010903;
-        Fri, 21 Mar 2025 16:50:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmpv2fzAYbhX3XAzFz7cpBk3vunR0rYchL5E9OJtzTtguekXsRP42AxoqALK345r8BELl/dQ==
-X-Received: by 2002:a05:620a:394a:b0:7c5:5768:40b3 with SMTP id af79cd13be357-7c5ba1de27amr783951385a.45.1742601010603;
-        Fri, 21 Mar 2025 16:50:10 -0700 (PDT)
+        bh=/W162Lk5eFVFuf7b+NhjnYDJjSqT7mKIwDUb9pj7zM8=;
+        b=I6RxCirKzxSp7nxwQBEMrrnEXkVF6vjCPdPO9g/Tn5oAq+e/yjVN5e4LKsgBEeW7nn
+         olXuiIkj9xZAEDIr4rHsWaP6JG0lNebROn5U9HU8h2TWBQLWd/gWz9lQnF+kITIUvNk8
+         tuW4H9Qt/G/elu4ykAZ0z98U6v8q4O+CzWAKm4kcqbFFEbhSk0LwuQbV01FCFPx1VFgD
+         Ot4+yQX1hWptHpQgdAJY8EdO0blMbvmbl6Ly0q1T9ucLvbOZm/R+P7Vx177aIbTuXNvp
+         ekOx0CsjXnbcFtGQFh+n9fck23icWo+U3jUH3YaLwfp9X8gq7bh/sm7g6SWwJVsDOjUr
+         b+XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXPsRjJCznfY3U16z6shUIWacMVLUmZELVfWCc7QDwnAc/Vqt3XbzCFmwijIFVl+R/tdK+mGuuoYAGy0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5X6mKcfVYrKHqQGH6Av0HsIxJM7HBi3fV47eRy+8oggGOzw2F
+	nrKyTKiImlT0tXtemBPqSTtmGsbrC9IG1nk4V786I065Cv3pjE+XSIl/mjrgQOFU289xEJEoZit
+	mAAgOhv4Y4F4JdaFfeo+4SjUwDIb/SDNv5Lpf3rdT/gW0LEF6pw+oa0hoiAdmVw==
+X-Gm-Gg: ASbGncvn7/wBdPJnUSV+lBgcBqt96XmKdKBXxTt3sMTDhGaYcvDcK5YageK597R/Vl1
+	Pi7CCOLjUbnaNeRXcbvOQ5zOv1QTNLLoj+ApRgcQQR7cW12zCQ4QwD3xdUETbZ1wpT9W/Tr2ZLL
+	EDcDAjMIDvYD+vYvYx1QgOXWSNukaIXiZSPEUCEi0uaYkrzAxJadHdr9eeEkCuObFP/VC3IWJDh
+	IwCh1ZBomay+iiz61NOwMNSTPLmCXQx7vRUSgFP0Kq6pLfJ0/pA4zvl+MYU8AV9vxFRce+Mdibl
+	2DZFz4S8YKoMp9FunAMI/g==
+X-Received: by 2002:ad4:5cc3:0:b0:6e4:442c:288b with SMTP id 6a1803df08f44-6eb3f2862b7mr60525516d6.11.1742601147015;
+        Fri, 21 Mar 2025 16:52:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEw7aMUnE5KQAyNz66ZiPWs8EpBZtDp5zailO8JWbAqrBQuYZXpuePtLgdQPHt3fM5t241euQ==
+X-Received: by 2002:ad4:5cc3:0:b0:6e4:442c:288b with SMTP id 6a1803df08f44-6eb3f2862b7mr60525206d6.11.1742601146500;
+        Fri, 21 Mar 2025 16:52:26 -0700 (PDT)
 Received: from ?IPv6:2600:4040:5c4c:a000::bb3? ([2600:4040:5c4c:a000::bb3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b9356b7esm189254485a.106.2025.03.21.16.50.08
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef33527sm16606296d6.63.2025.03.21.16.52.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 16:50:09 -0700 (PDT)
-Message-ID: <dea3218eb31f3e91d2a10f93a7bc6cfa674546e6.camel@redhat.com>
+        Fri, 21 Mar 2025 16:52:25 -0700 (PDT)
+Message-ID: <2d39187892737438c35791aa59681b1af7e62de7.camel@redhat.com>
 Subject: Re: [RFC v3 10/33] rust: drm/kms: Add
  ConnectorGuard::add_modes_noedid()
 From: Lyude Paul <lyude@redhat.com>
@@ -94,11 +94,12 @@ Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, Danilo
  Kroah-Hartman	 <gregkh@linuxfoundation.org>, Asahi Lina
  <lina@asahilina.net>, Wedson Almeida Filho <wedsonaf@gmail.com>, open list
  <linux-kernel@vger.kernel.org>
-Date: Fri, 21 Mar 2025 19:50:08 -0400
-In-Reply-To: <20250314-observant-cyber-chowchow-bfe5f9@houat>
+Date: Fri, 21 Mar 2025 19:52:23 -0400
+In-Reply-To: <dea3218eb31f3e91d2a10f93a7bc6cfa674546e6.camel@redhat.com>
 References: <20250305230406.567126-1-lyude@redhat.com>
-	 <20250305230406.567126-11-lyude@redhat.com>
-	 <20250314-observant-cyber-chowchow-bfe5f9@houat>
+		 <20250305230406.567126-11-lyude@redhat.com>
+		 <20250314-observant-cyber-chowchow-bfe5f9@houat>
+	 <dea3218eb31f3e91d2a10f93a7bc6cfa674546e6.camel@redhat.com>
 Organization: Red Hat Inc.
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -110,58 +111,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-03-14 at 13:02 +0100, Maxime Ripard wrote:
-> On Wed, Mar 05, 2025 at 05:59:26PM -0500, Lyude Paul wrote:
-> > A simple binding for drm_add_modes_noedid() using the ConnectorGuard ty=
-pe
-> > we just added.
+On Fri, 2025-03-21 at 19:50 -0400, Lyude Paul wrote:
+> On Fri, 2025-03-14 at 13:02 +0100, Maxime Ripard wrote:
+> > On Wed, Mar 05, 2025 at 05:59:26PM -0500, Lyude Paul wrote:
+> > > A simple binding for drm_add_modes_noedid() using the ConnectorGuard =
+type
+> > > we just added.
+> > >=20
+> > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > ---
+> > >  rust/bindings/bindings_helper.h  |  1 +
+> > >  rust/kernel/drm/kms/connector.rs | 11 +++++++++++
+> > >  2 files changed, 12 insertions(+)
+> > >=20
+> > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings=
+_helper.h
+> > > index 27828dd36d4f2..846eb6eb8fc4c 100644
+> > > --- a/rust/bindings/bindings_helper.h
+> > > +++ b/rust/bindings/bindings_helper.h
+> > > @@ -13,6 +13,7 @@
+> > >  #include <drm/drm_crtc.h>
+> > >  #include <drm/drm_device.h>
+> > >  #include <drm/drm_drv.h>
+> > > +#include <drm/drm_edid.h>
+> > >  #include <drm/drm_encoder.h>
+> > >  #include <drm/drm_file.h>
+> > >  #include <drm/drm_fbdev_dma.h>
+> > > diff --git a/rust/kernel/drm/kms/connector.rs b/rust/kernel/drm/kms/c=
+onnector.rs
+> > > index 14de3b0529f89..855a47b189a91 100644
+> > > --- a/rust/kernel/drm/kms/connector.rs
+> > > +++ b/rust/kernel/drm/kms/connector.rs
+> > > @@ -446,6 +446,17 @@ fn deref(&self) -> &Self::Target {
+> > >      }
+> > >  }
+> > > =20
+> > > +impl<'a, T: DriverConnector> ConnectorGuard<'a, T> {
+> > > +    /// Add modes for a [`ConnectorGuard`] without an EDID.
+> > > +    ///
+> > > +    /// Add the specified modes to the connector's mode list up to t=
+he given maximum resultion.
+> > > +    /// Returns how many modes were added.
+> > > +    pub fn add_modes_noedid(&self, (max_h, max_v): (i32, i32)) -> i3=
+2 {
 > >=20
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > ---
-> >  rust/bindings/bindings_helper.h  |  1 +
-> >  rust/kernel/drm/kms/connector.rs | 11 +++++++++++
-> >  2 files changed, 12 insertions(+)
+> > Why do we need a tuple of i32 there instead of two u32/usize parameter?
 > >=20
-> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_h=
-elper.h
-> > index 27828dd36d4f2..846eb6eb8fc4c 100644
-> > --- a/rust/bindings/bindings_helper.h
-> > +++ b/rust/bindings/bindings_helper.h
-> > @@ -13,6 +13,7 @@
-> >  #include <drm/drm_crtc.h>
-> >  #include <drm/drm_device.h>
-> >  #include <drm/drm_drv.h>
-> > +#include <drm/drm_edid.h>
-> >  #include <drm/drm_encoder.h>
-> >  #include <drm/drm_file.h>
-> >  #include <drm/drm_fbdev_dma.h>
-> > diff --git a/rust/kernel/drm/kms/connector.rs b/rust/kernel/drm/kms/con=
-nector.rs
-> > index 14de3b0529f89..855a47b189a91 100644
-> > --- a/rust/kernel/drm/kms/connector.rs
-> > +++ b/rust/kernel/drm/kms/connector.rs
-> > @@ -446,6 +446,17 @@ fn deref(&self) -> &Self::Target {
-> >      }
-> >  }
-> > =20
-> > +impl<'a, T: DriverConnector> ConnectorGuard<'a, T> {
-> > +    /// Add modes for a [`ConnectorGuard`] without an EDID.
-> > +    ///
-> > +    /// Add the specified modes to the connector's mode list up to the=
- given maximum resultion.
-> > +    /// Returns how many modes were added.
-> > +    pub fn add_modes_noedid(&self, (max_h, max_v): (i32, i32)) -> i32 =
-{
+> > And the return type should be unsigned as well.
 >=20
-> Why do we need a tuple of i32 there instead of two u32/usize parameter?
->=20
-> And the return type should be unsigned as well.
+> I think I was just copying C (or whatever the bindings here translate the=
+ C
+> type to), but I don't see any issue with changing this to u32.
 
-I think I was just copying C (or whatever the bindings here translate the C
-type to), but I don't see any issue with changing this to u32.
+...wait. Now I remember why I did this: it's not that we expect it to be
+unsigned, it's that the largest possible u32 value cannot be expressed in a
+i32, and I think the C side of things uses i32. Days like this I really wis=
+h
+we had a u31...
+
+think it would be OK for us to convert this to unsigned on the C side of
+things?
 
 >=20
-> Maxime
+> >=20
+> > Maxime
+>=20
 
 --=20
 Cheers,
