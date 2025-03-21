@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-571597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DACA6BF7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:16:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBEDA6BFDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F3C3B91E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6DD5188B500
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7844222B8CC;
-	Fri, 21 Mar 2025 16:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E0E22B8BD;
+	Fri, 21 Mar 2025 16:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A7JGV9oI"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oU7Fs3ea"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4D11E3DFC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D344F1D86F2;
+	Fri, 21 Mar 2025 16:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573717; cv=none; b=Zvmj4xnlNieef9szBqUwvs2Ywe0jst7dSUq2Prky7tdB8CoogSftYxC4lkiWwlvLpRY+AnR0zRgKKQzMxbtwBRwNXN39gaoBam/8eVtMh0zvNn8m3X5E8I4Z2T7ZyoWFUw6pJXH7oE6Nv2nB3uhwxgzwVCFKfzqH2mntXDO/glk=
+	t=1742574228; cv=none; b=E1qqMRtuKGgvTe9Sxb+F9KsA8dFds9h5pqU06GLn8SSXfvXdSyFfjMkqMh6JkypMJFWzM2eObDCXmmxaK0q3LeFjOJJQwlfRHpAQK5CguP+s9qGiDboG41CQuCIG4QYFCzMd9hOZEgamFg/wYCuVTvoQIlmVVAWPuLnLAhyD/x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573717; c=relaxed/simple;
-	bh=t0I85wJl6Q02gWZfsGxbdmSAryl/5ThAyE7h6UCvpP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m5Tcj4NQW+AcWyqtiGe3mMYbRqGpEr5e+HOyM7H+epn06uUsaLKVt+ihLCx18xBRVdcu/zDtI3BhFLJDtr9QOgwLJrdAfAsO27lDtQJaADxhwuk7TrT8/9e3q9KO5VoXvbmUiFvYCyUnPejh9nfp3nkKGzB0pJpCaOtPL8ZYdnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A7JGV9oI; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54acc04516fso1934194e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742573714; x=1743178514; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxLB0h16iEEcVhCHw+83yfdc4253yuJpjZl1F1gKp+U=;
-        b=A7JGV9oIh6ZmKwqaD71AYdB8LPOezlNH2kf2dHxfonUSKw1QOz6ojZeb8Z2027BhiP
-         P+vDFbddpHbxA3WKgumIYQiE+PodnoVXVmmbEOuiFpBUZOReK9P4GrWFVLCzKzd37j+5
-         xRaFNQQKnYPaL3TrurnBf7l0w0Vx29gAmKxYmS+w1p+/gsTOcIInm9cZE8G5mfrnbKkL
-         3lMFgL0x8z6ycMHPKKqjo+ErAkES9oOgW1P+4ZiJj7AeT9LvSoKwrmbmymk2HkUz2tNp
-         PhwlMjZjRMwx8KTz3WqeSedAiXiXPlxR5W1Woom/BBc4KAzxKu1wtuJtbwD4fCTeR7u2
-         S7TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573714; x=1743178514;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xxLB0h16iEEcVhCHw+83yfdc4253yuJpjZl1F1gKp+U=;
-        b=Y1wVBF8UOjnjPhgMS10oLXMUMTyijY59By9v5e/jzLiVpKrhNG+NKGcMZhA2FoazhT
-         l7hanhlnlyAgiw9E8iHg8QuQGv0gr26hgPS3uThP62MPX5CNnTrqo/5C6qfdUchkza5V
-         gI+VDlNsVuaiJ3vyM3/vArHDpWU7/dZTR4WfW4GZSbJm7Sx3FCE9oj0E/XcQapqYbP/6
-         1f5sS+s3jBEEpaIx8mnIMINNxG6f6UAtDx55ya5PN25QD+H8upfUjSHEWt+YhBEfSomE
-         V8cSokez1NEPxRw4AoaRU1xBFkItfsxwzZAkx1H6A9YSOxISi1aVlxUUDPFaEqpLW+mw
-         andQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURhB0ys4qha5hPMcWTE6k+iN7zh6FS5Jh4V7SMFc8qv3X/mOwE2OaJ/DaIoUdcogclndlBtJydY3eS2aw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhNMJ02mojo8F8GRKRR1YDMGtTgxpA2TWkY5rD/g83H2P0CQ+O
-	ESD88aI2Fk5n1W4bTghN9ZxjZeNjgKelbhX++v9G9wTWfIzqQSN4WKobYagXYJs480h+XQUNCG6
-	DmWhW0HABVhc6k3w+AUbi5iYphN79tBxfynPO3g==
-X-Gm-Gg: ASbGncsq2hs5SbRkxlpzXTOpAWAhtYJz05vgjN/75zv9mfsvlMmQzOsJf14DPH2+YAL
-	xIIYDzBypUIti/sG6MEi8EDmR42OkIqdiTug4JimVJh+vEAqvGpwZOOIwIHhBwvXG0l8z8ATKbw
-	lL6U7UDRP4JmFJUeExu5j9kiM9Ab+G/ExhI4yfqVXPue8ukqhmCQCxBRboLjU=
-X-Google-Smtp-Source: AGHT+IFpr7tj7lCX7rK9TyEdAX36qI3BUwAIzNojkRB11whvA4tpCS//FWsPqh8dSvOvjgyUXnDZxoxT5uuaNvkOseo=
-X-Received: by 2002:a05:6512:1088:b0:549:8bb2:8575 with SMTP id
- 2adb3069b0e04-54ad6476834mr1559553e87.10.1742573713747; Fri, 21 Mar 2025
- 09:15:13 -0700 (PDT)
+	s=arc-20240116; t=1742574228; c=relaxed/simple;
+	bh=/ouq0Vnbu9fdDtvgpsSzY689c7oKwvhmkvXS6uikKis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xed1Jh7wnFVt3gB5E6P8KpYVl1CfcKkfgHic5cwMhrlcN/uY0SatHx65F2vr9dPYxnUSTJhqq0bYsWeiUSeUdgf8qW9vbOs8r+HWaJ5Gdv9lLvTLHZ1JX8d/8WSvVzFRztqfKMzCQpHnZnwSbZ6drOY8GbCvrU3aH4L0kqiaT4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oU7Fs3ea; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATAxR022089;
+	Fri, 21 Mar 2025 16:15:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MBRdEC2YlUOGNuYmFaUCuGN/I3DKMV8CuIRZm9h64e4=; b=oU7Fs3eaxw4keBvW
+	9o7y/e38Sp5Sn2DxoMVfGfnzWgYEAD8ifRW+BEVes6Gkmka2BXisi4e+XqOSqEnd
+	Y5jb39nKZ5jZXRrrR9WvsH0yHGAZnl6lbjyJugQZRzNUZLBOcQP95kuDbX4Zs9CA
+	YpxXtLdVBMgZmqEpkplwqTH2CGoRqimllEgzeCfLMhVEBxi89Ozrf+21P+XDpvT8
+	BCD6fJWEEh83NpGTgOGy6KO4/cxbMwQ7XNUMeOlmtsuTNlRO2YSWHGU5P4bUoCNL
+	rDUZIL+dMzkDpdCk0rlpKYKST/T9a+dldEDsx6K7hhjTebc7miRm+hBtP/BzB+gR
+	YToBng==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4wph8c0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 16:15:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52LGFRVj014152
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 16:15:27 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Mar
+ 2025 09:15:26 -0700
+Message-ID: <6cf7d790-57a8-40b9-b5b0-dedfce78d074@quicinc.com>
+Date: Fri, 21 Mar 2025 10:15:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315194002.13778-1-marco.crivellari@suse.com>
- <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
-In-Reply-To: <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Fri, 21 Mar 2025 17:15:02 +0100
-X-Gm-Features: AQ5f1JowyTWw49XnxSHXBxJuGDwxUK9dmkDqvxpfG5_TtVO4oP_4udCpS9k6fzw
-Message-ID: <CAAofZF4gy6WJKLK4TzF5aV7+ca3gob5jVz3XQZyGrTpfnCsn_Q@mail.gmail.com>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/7] accel/rocket: Add IOCTLs for synchronizing memory
+ accesses
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        Oded Gabbay <ogabbay@kernel.org>, Jonathan
+ Corbet <corbet@lwn.net>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Sebastian
+ Reichel <sebastian.reichel@collabora.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-doc@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
+References: <20250225-6-10-rocket-v2-0-d4dbcfafc141@tomeuvizoso.net>
+ <20250225-6-10-rocket-v2-7-d4dbcfafc141@tomeuvizoso.net>
+Content-Language: en-US
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20250225-6-10-rocket-v2-7-d4dbcfafc141@tomeuvizoso.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BOfd9NSv-9Zt74cr0Av2_wp2C2GJ3ORR
+X-Proofpoint-GUID: BOfd9NSv-9Zt74cr0Av2_wp2C2GJ3ORR
+X-Authority-Analysis: v=2.4 cv=ZN3XmW7b c=1 sm=1 tr=0 ts=67dd90a0 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=ZfkCZY2BxkJJNCUMkzUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=916 clxscore=1015 phishscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210119
 
-Hi Maciej,
+On 2/25/2025 12:55 AM, Tomeu Vizoso wrote:
+> +int rocket_ioctl_fini_bo(struct drm_device *dev, void *data, struct drm_file *file)
+> +{
+> +	struct drm_rocket_fini_bo *args = data;
+> +	struct drm_gem_object *gem_obj;
+> +	struct rocket_gem_object *rkt_obj;
+> +	struct drm_gem_shmem_object *shmem_obj;
+> +	struct rocket_device *rdev = to_rocket_device(dev);
+> +
+> +	gem_obj = drm_gem_object_lookup(file, args->handle);
+> +	if (!gem_obj)
+> +		return -ENOENT;
+> +
+> +	rkt_obj = to_rocket_bo(gem_obj);
+> +	shmem_obj = &rkt_obj->base;
+> +
+> +	WARN_ON(rkt_obj->last_cpu_prep_op == 0);
+> +
+> +	for (unsigned int core = 1; core < rdev->num_cores; core++) {
+> +		dma_sync_sgtable_for_device(rdev->cores[core].dev, shmem_obj->sgt,
+> +					    rocket_op_to_dma_dir(rkt_obj->last_cpu_prep_op));
+> +	}
+> +
+> +	rkt_obj->last_cpu_prep_op = 0;
+> +
+> +	drm_gem_object_put(gem_obj);
+> +
+> +	return 0;
+> +}
 
-On Fri, Mar 21, 2025 at 12:53=E2=80=AFPM Maciej W. Rozycki <macro@orcam.me.=
-uk> wrote:
->  This instruction sequence still suffers from the coprocessor move delay
-> hazard.  How many times do I need to request to get it fixed (counting
-> three so far)?
-
-Can I have more details about this?
-
-I can see it is the same code present also in local_irq_enable()
-(arch_local_irq_enable()),
-and from the manual I've seen:
-
-"The Spacing column shown in Table 2.6 and Table 2.7 indicates the
-number of unrelated instructions (such as NOPs or SSNOPs) that,
-prior to the capabilities of Release 2, would need to be placed
-between the producer and consumer of the hazard in order to ensure
-that the effects of the first instruction are seen by the second instructio=
-n."
-
-The "Spacing column" value is 3, indeed.
-
-"With the hazard elimination instructions available in Release 2, the
-preferred method to eliminate hazards is to place one of the
-instructions listed in Table 2.8 between the producer and consumer of the
-hazard. Execution hazards can be removed by using the EHB [...]"
-
-What am I missing?
-
-Thanks in advance
-
-
---
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
-
-
-
-
-marco.crivellari@suse.com
+flags must be 0, and you must check that here. You do not appear to be 
+doing that. Otherwise, userspace may put a value in flags, which is 
+ignored now, but later when you define flags for a purpose, existing 
+userspace will be broken - a uapi violation.
 
