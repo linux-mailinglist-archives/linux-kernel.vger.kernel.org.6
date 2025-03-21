@@ -1,96 +1,74 @@
-Return-Path: <linux-kernel+bounces-571234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAA0A6BAB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:31:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EDDA6BAB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936513B98D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4073189FFEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414AA22687A;
-	Fri, 21 Mar 2025 12:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1807227599;
+	Fri, 21 Mar 2025 12:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YIimjCTy"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k+gHOcvZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA79B226CF8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9D02253FC;
+	Fri, 21 Mar 2025 12:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560211; cv=none; b=fW9WlV7/Dc1e+opDxFqMYpWjQ4Ehq5b5ljWD8sTbH2MZ/KpxXfLccVD8B7k72xPJbHoXFOGXdu9eIB8Zi2a4smn+La1Ta2xVWtVqhsGkTBRYjc0y275Lil4fySUzwZu4Jl6G/aZaPtae2Kn/Xx5qannzgy+o6q1CvSZcKOWlmWo=
+	t=1742560256; cv=none; b=YXLJzvbGE6bqaB02EB3FPHC/ePIxbGE3CVT+ob4s31JDm1qW2L3eE02SSiEgpzAV9Pd6FAiymB1CZm/XwmuF2pQIXCf5eBR175iWHEG09AnFY2BMAP/63HzwzoPg36xY9zqEc8JmR6aaf85ueWphGC9WXz9dIHkiu6l8752p3M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560211; c=relaxed/simple;
-	bh=z2h8kmcrvjsG0wHPqWEEDMYXLWs3RQptqRtGchizi+M=;
+	s=arc-20240116; t=1742560256; c=relaxed/simple;
+	bh=Jd+JJd6lzgEfL1eIohG724QZbmIdDrYxX1bFqtpyW18=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbYbFPwvR7iWunXfWueKtZIwfefjuiiDX8ko5AvMZbehWLrgcPopPhF9hWM1IEve05oGs+Sbn7IhDbdKG7volEcvWVhNGzAOUJO+96QE+1S4TZXOUJfiP0y7G92OW4jmp3pfF1bhJsg5cA6tphjy+0/cUJT0+xYongjcl4nEkQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YIimjCTy; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so959215f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742560208; x=1743165008; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G65UV4/EPEL+kQ65PV9/uamD/u6L+fEtW/r8PlOFSsA=;
-        b=YIimjCTyLFFAlPTNbZO3VZsh/7j3Kc15NqeVnhXZBUOSddhkUAbprRzb0/3GMpZXk7
-         Yt3GwW/WqwgKlcU50hEPXMGjCpjFqno1EzgV3Hb5vJJrEU93vBWjvdn2abi2loOVwOgQ
-         GXNq9gWOTl3dcXxBKIa8U/zHyclZYfs09lgPw8jE1ldQzTkDKFKEwBuIwqpfLRXlT7MR
-         ZoFKS+Ry368BOm7oxaUEVR+8YG4bcX9YbOivunjJ/jE1lrokjvj4/rbEAcHj7h/k6y52
-         kRjUFB7BDRQzvpI72xL2dTvGrdHvXDnxmzkgvwufKA+n4WQJFLn2JlcR7HiKXtHsHFgA
-         FftQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742560208; x=1743165008;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G65UV4/EPEL+kQ65PV9/uamD/u6L+fEtW/r8PlOFSsA=;
-        b=I172Vz3u/cdvwzEN507t69yXgwfd6H322w4/4Aaun3Zq6hoH3PVAzL7Crdn4dkaRmS
-         msWvBky8Pr0lsDQuwxoaSpcQvYwQMMtRZSZVIN3zC0il6xatIYJxQBtK8kPg/OYPwT7a
-         2oGI7wjXmulepu4dSmgSKsDMchdq4FO9PT+F3gvopKhXMU1i1YCApXy6lYMDo4gsl6YV
-         EHCMJ2WScWyuM+2094ZFZwhedIr8Gk5zVHxU+qcQztRR7/rQe5BjQMe45EEodMjKS7vj
-         9Y55bsqkrultFbv5pZ260xr7qYAep9cuEtkywGSlRYcRQ38Hp8KgjKD2gp+xxlN3Hjj2
-         iExA==
-X-Forwarded-Encrypted: i=1; AJvYcCViX53QvEeNCk5RU38Z0dAvgr9KG45FO6Rw/u+fxcvBXYkdFQr/+1jKo74wJfrsNhk1LSpSxMeX/AccD3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkumevtiKKJuikDuoPvK7rl2iKp/bvSvGWN0HYE3KQLYw48L32
-	ekoPpfUjqZZNdtINj+NzWXof6RrcrRhr+Ct8jE436NXjdpUlt7CIiEa8OKedO4Q=
-X-Gm-Gg: ASbGncvsKLlb7I7zE30lIg4/O2eD6jT+EEw/99TjXhoO0FW/JnEQ5LxQX0nJw8ucoqQ
-	2LlvasTptxSkmUwOGRKZTRV8tw7veWinKHH3udl+khFXGplStR8kVpxUad7jYcpjeKplG5H32Pr
-	CWS6C6yzpKGQa5whrvd6Uu/x1X5lZkY0IyZ7vsCc1H8sA85r+WWshj3A2XHeI38WuWngJsPCa6Z
-	FyjQKAOwotHB/SLFiAjY4PmvZlFU0cMeGWyrWx5MKMUEgfvb1PjwdRXf9Aab9dQkzuBAlMb+IG+
-	ZniD1/cJTaO3ngBi/JMMVizxvwfUYpYLGvkp602yk/QKI4A=
-X-Google-Smtp-Source: AGHT+IExv+tybR5ipnVHMChIozaD9HWg71HI9cTN6Q9laK+gRbql3sVz1wKjQhAcenueVqPKCCAWLw==
-X-Received: by 2002:a5d:598c:0:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3997f9595f6mr2940009f8f.52.1742560207835;
-        Fri, 21 Mar 2025 05:30:07 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3a10sm2231886f8f.28.2025.03.21.05.30.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 05:30:07 -0700 (PDT)
-Date: Fri, 21 Mar 2025 13:30:05 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Hao Jia <jiahao1@lixiang.com>, Hao Jia <jiahao.kernel@gmail.com>, 
-	akpm@linux-foundation.org, tj@kernel.org, corbet@lwn.net, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: vmscan: Split proactive reclaim statistics from
- direct reclaim statistics
-Message-ID: <isr7mmozkvkj3e4zk55fx2lzkwjxjhl4ac2f45l75qnna3bntp@cfm6v7wkmpyc>
-References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
- <20250318075833.90615-2-jiahao.kernel@gmail.com>
- <qt73bnzu5k7ac4hnom7jwhsd3qsr7otwidu3ptalm66mbnw2kb@2uunju6q2ltn>
- <f62cb0c2-e2a4-e104-e573-97b179e3fd84@gmail.com>
- <unm54ivbukzxasmab7u5r5uyn7evvmsmfzsd7zytrdfrgbt6r3@vasumbhdlyhm>
- <b8c1a314-13ad-e610-31e4-fa931531aea9@gmail.com>
- <hvdw5o6trz5q533lgvqlyjgaskxfc7thc7oicdomovww4pn6fz@esy4zzuvkhf6>
- <3a7a14fb-2eb7-3580-30f8-9a8f1f62aad4@lixiang.com>
- <rxgfvctb5a5plo2o54uegyocmofdcxfxfwwjsn2lrgazdxxbnc@b4xdyfsuplwd>
- <20250319154428.GA1876369@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRSBXkzQcOL0dA/1DPESQx0ZpeXA83whfJFBa+ruuh6gqtLr0werB03Rqe5WVB5AS+5uonFbhbbVyIJSdMKeP7oEZmMfpEl4XpQ75bLFoDAdN3REPWCNTPPFDnEuxxNFU+PLrVfghBSRvh3GcYzR9NUEozOI27UQbODnhoBg1ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k+gHOcvZ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742560255; x=1774096255;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Jd+JJd6lzgEfL1eIohG724QZbmIdDrYxX1bFqtpyW18=;
+  b=k+gHOcvZ8xhYPJpShzDCUL0rqB8W7BLbqFwpS+UQ3uxySoutlee4m/R9
+   J7BytlT1WYW0ttjJRlV5Inuo3+vubQnCyLI96f/qcYOQJt8Y072QT+XBU
+   /Yws+1t6i9OxS43JknyyEW7enw3rWRNqOoo8P39zjrxuAxCBoMfeYpapx
+   kGHJ9jUCOHfKKc4wmiyGcsei8lexgpWvxHsf8AG9z568lsw86VTXPocpn
+   rwVqs90ZgxmsqyGEPB5jNHF/qPl9kR4k2jukJlQmsZ2CHEgQkzevOaQ6Z
+   TYuu9ZVhqRy0IL8SjK4CQVeu6Mvn257bc8Gmp5qlaqVGPl8KqW/FMWpev
+   Q==;
+X-CSE-ConnectionGUID: 2E4UgMJtSg+9ZdyT+uXqGg==
+X-CSE-MsgGUID: NiSavQ0tQ0W4+dDXqSqobQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43838239"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="43838239"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:30:54 -0700
+X-CSE-ConnectionGUID: 2s/hjFg9Tva+bnES1mMocA==
+X-CSE-MsgGUID: nawoRJgzQqiNnr0Lnsx3Bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="128214603"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.245.43])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:30:51 -0700
+Date: Fri, 21 Mar 2025 13:30:43 +0100
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com, 
+	jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, kieran.bingham@ideasonboard.com, 
+	naush@raspberrypi.com, mchehab@kernel.org, hdegoede@redhat.com, 
+	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3] media: v4l2-common: Add a helper for obtaining
+ the clock producer
+Message-ID: <ryzkubgzndeyufi2i4vuwmgaekyapol36oln237ki4m3fh32yl@mpr7g5woiqcf>
+References: <20250321093814.18159-1-mehdi.djait@linux.intel.com>
+ <20250321101124.GB25483@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,38 +77,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319154428.GA1876369@cmpxchg.org>
+In-Reply-To: <20250321101124.GB25483@pendragon.ideasonboard.com>
 
-On Wed, Mar 19, 2025 at 11:44:28AM -0400, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> Can you clarify if you're proposing this as an addition or instead of
-> the memory.stat items?
+Hi Laurent,
 
-1) more precise info for given reclaim daemon
-2) slight saving in the long list of memory stats (sorry, I must
-   question new entries :-) to balance flushing[*])
+thank you for the review!
 
-I was originally motivated by 2) to propose the alternative but it is
-not strong alone if 1) is unnecessary at the moment (and it seems the
-blurring via aggregation is acceptable for the users), so let's consider
-that idea a (potential) addition.
+On Fri, Mar 21, 2025 at 12:11:24PM +0200, Laurent Pinchart wrote:
+> Hi Mehdi,
+> 
+> Thank you for the patch.
+> 
+> On Fri, Mar 21, 2025 at 10:38:14AM +0100, Mehdi Djait wrote:
 
-Michal
+SNIP
 
-[*] You'd be right to argue that per-writer collection may not be more
-    efficient in implementation.
+> > +
+> > +struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
+> > +{
+> > +	struct clk_hw *clk_hw;
+> > +	struct clk *clk;
+> > +	u32 rate;
+> > +	int ret;
+> > +
+> > +	clk = devm_clk_get_optional(dev, id);
+> > +	if (clk)
+> > +		return clk;
+> > +
+> > +#ifdef CONFIG_COMMON_CLK
+> 
+> This patch will cause warnings when CONFIG_COMMON_CLK is disabled. Could
+> you use
+> 
+> 	if (IS_REACHABLE(CONFIG_COMMON_CLK)) {
+> 		...
+> 	}
+> 
+> instead ? It will also ensure that all code gets compile-tested, even
+> when CONFIG_COMMON_CLK is disabled ?
+> 
+> If you want to minimize implementation, you could write
+> 
+> 	if (!IS_REACHABLE(CONFIG_COMMON_CLK))
+> 		return ERR_PTR(-ENOENT);
+> 
+> and keep the code below as-is.
+> 
 
+this is indeed way better! I will change this in the v3
 
+> > +	if (!is_acpi_node(dev_fwnode(dev)))
+> > +		return ERR_PTR(-ENOENT);
+> > +
+> > +	ret = device_property_read_u32(dev, "clock-frequency", &rate);
+> > +	if (ret)
+> > +		return ERR_PTR(ret);
+> > +
+> > +	if (!id) {
+> > +		id = devm_kasprintf(dev, GFP_KERNEL, "clk-%s", dev_name(dev));
+> 
+> As far as I understand, the name doesn't need to stay valid after
+> devm_clk_hw_register_fixed_rate() returns. You can call kasprintf here,
+> and call kfree after devm_clk_hw_register_fixed_rate(). You could use
+> __free to manage the memory life time:
+> 
+> 	const char *clk_id __free(kfree) = NULL;
+> 
+> 	if (!id) {
+> 		clk_id = kasprintf(GFP_KERNEL, "clk-%s", dev_name(dev));
+> 		if (!clk_id)
+> 			return ERR_PTR(-ENOMEM);
+> 		id = clk_id;
+> 	}
+> 
 
-> The proactive reclaimer data points provide a nice bit of nuance to
-> this. They can easily be aggregated over many machines etc.
+Ack.
 
-That could be collected from memory.reclaim too.
-
-> A usecase for per-fd stats would be interesting to hear about, but I
-> don't think they would be a suitable replacement for memory.stat data.
-
-There could be reclaim daemons running at different levels of hierarchy,
-the higher one would see effects of its operations only. Or differently
-parametrized reclaimers (swappiness), each interested in their own
-impact.
+--
+Kind Regards
+Mehdi Djait
 
