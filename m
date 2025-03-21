@@ -1,96 +1,255 @@
-Return-Path: <linux-kernel+bounces-571175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4803A6BA09
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:42:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11145A6BA15
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352EC3AC35B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8441319C3ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAF1224B09;
-	Fri, 21 Mar 2025 11:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39AB227EBE;
+	Fri, 21 Mar 2025 11:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rih5WJyU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y8hrAs+p"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA761EA7D3;
-	Fri, 21 Mar 2025 11:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33706224259;
+	Fri, 21 Mar 2025 11:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742557323; cv=none; b=CKYR14MnzLwevYcR8nC0uh7N82w5gu56H86OlgM2c+Ox31z8bje0BTk+tpo/e8nz+WCC2Ukb+489Q4Mv7DocSaDUJK6iHEoWep29M28hKoIEP57VS9Mbjp3htriwMTx8BikDkogrodSl6bTd0lpeAsy0BH39lxiCtqdmHVVblkM=
+	t=1742557355; cv=none; b=RXg5aTV+JS3CiQSVYYBeQj0QDQXzGxZLMWI7jfXORmdvvG9wGzfSl/Wz4ZugSomuk1zzpJbyxwYYc/FIl4wVyD6nYXTn24iKVIdh3A1M638WjgPgTKGBbVPmWZkLVMt4NxTIRBkr6bW7q0pEIQvYXjVhFseXZySwHxibG57PSwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742557323; c=relaxed/simple;
-	bh=KVzZGjFPG41jqp69QVYd/mRyk1rD77DMd0M54wVUmyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TvBFTEbrvHWczXok+pD/D3sf+5tENENoPn0J2ckIGbQ6y+PJnNlanGDRSA6GGWoV1UsF6uZGyepcH4V0gq4S/BEXnVmDr4fMTfJx67nAnG47jzsT9uIUhOD50RQNqIHg2zzew+c02NTMcVFbegA+YVMgyFo+RDO898ddw5/DeEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rih5WJyU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6CBBC4CEE3;
-	Fri, 21 Mar 2025 11:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742557323;
-	bh=KVzZGjFPG41jqp69QVYd/mRyk1rD77DMd0M54wVUmyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rih5WJyUzFc3bexfx1zkYZ9nv6sKHXH4lFF6pDhaBofyshl6lp4O90d2nFPdQuTjZ
-	 qVBN6CduVcYZ/8BZ10WmoQV5TAfjZrNb8yc418Z+3+jc4CtoRAHnzUNQsaJKidxflN
-	 REMtZr94VG0IoxTOB3nAsTvbXEeH9ublW7cXstjqUdyey9aZeNjK0fepgHMy+zdkk2
-	 k+490lot8ulO+tHFyiIGEHJMaYMwZoIUERkap/GCOZSr45HV8dgqm89ZppoFZ6DSpo
-	 07Hy4eJSpIwDmb4yiFvYum0JXpW8szzl/+BxIy/2ulretu8D/aWBB2yoKu+QOXRYTt
-	 /u5rtfnewbWkA==
-Date: Fri, 21 Mar 2025 11:41:59 +0000
-From: Lee Jones <lee@kernel.org>
-To: Colin Foster <colin.foster@in-advantage.com>
-Cc: Rasmus Villemoes <ravi@prevas.dk>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Felix Blix Everberg <felix.blix@prevas.dk>
-Subject: Re: [PATCH 1/8] mfd: ocelot: refactor bus-specific regmap
- initialization
-Message-ID: <20250321114159.GJ1750245@google.com>
-References: <20250319123058.452202-1-ravi@prevas.dk>
- <20250319123058.452202-2-ravi@prevas.dk>
- <Z9skKTf30m9DVaC5@colin-ia-desktop>
+	s=arc-20240116; t=1742557355; c=relaxed/simple;
+	bh=SDCIlfafWBMvWzNiE3MHOiQ22Bn3e+yP/64zuKHxYjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cmUT+3J/L31hdU2lJf03FrQN/axRvmpoQmT91IHLBGm95DJLy3VmTEbfuCNKxIBkxuUGC92VSLZ2I8mtFcWA2icgOwvdkLqd9L+K3RqVqchS/CHXHyjpluY7Mf0xNsgQm8mw5JAYjmmn0/svTeR1s+n3tBkoIVY2UFXRXQiu+8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y8hrAs+p; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATcLe014247;
+	Fri, 21 Mar 2025 11:42:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=HxEUrF
+	SkwvtTHGZsRrcYMHupA72KBahfp9Or61L+rwM=; b=Y8hrAs+pldr03rjzo+WhAy
+	U52ZrtB+IqpzlWD9UpaK9zugv90jFOORN2zkELt6EwBYrXFWIcZS7T1RujhRR0LQ
+	3Nf9j8Yjpxk3xB9bYRq14TwB/gDfnvtsM98c0oASGAYIbK/QB4X9zQZqm+IkjRDE
+	ribkrbF5GRfCwv50NtewtRkh8OhPtU6xy8rSO7LnT8LIX56v3qdxJjHbPqxbZAph
+	BD+5t5VtF45BpBRp3FPz6zlw4+LuZ5Jdm7JFgVBVk7SG8v/GkVL/roGm5XjcQs+L
+	s7rfJ8QPLxW6fTafqX2ZQ1y2WOGXHcm336io/OvsUF3QmYmLAdMZqov2l5nbldnw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gt80u9xe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 11:42:15 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52LBY281031415;
+	Fri, 21 Mar 2025 11:42:14 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gt80u9x5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 11:42:14 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52LB0iUw019218;
+	Fri, 21 Mar 2025 11:42:14 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvpd2m9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 11:42:14 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52LBgCoH31654592
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Mar 2025 11:42:13 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E184158067;
+	Fri, 21 Mar 2025 11:42:12 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B8DF85805D;
+	Fri, 21 Mar 2025 11:42:04 +0000 (GMT)
+Received: from [9.43.64.160] (unknown [9.43.64.160])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Mar 2025 11:42:04 +0000 (GMT)
+Message-ID: <31a3d76b-617b-4c97-b83d-2cd47fabbf02@linux.ibm.com>
+Date: Fri, 21 Mar 2025 17:12:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] tools/perf/powerpc/util: Add support to handle
+ compatible mode PVR for perf json events
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, irogers@google.com,
+        akanksha@linux.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com, acme@kernel.org, hbathini@linux.ibm.com,
+        adrian.hunter@intel.com, jolsa@kernel.org
+References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
+ <20241010145107.51211-2-atrajeev@linux.vnet.ibm.com>
+ <7cd87317-4f2a-45af-bd07-6e715406ff55@csgroup.eu>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <7cd87317-4f2a-45af-bd07-6e715406ff55@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9skKTf30m9DVaC5@colin-ia-desktop>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: TxLlLE1cX4Hnb4p2JPivH8_9XWPO13lL
+X-Proofpoint-GUID: 3Jh4cugb2FdlH5bhaW77yb4YKss_41FL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_04,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 suspectscore=0 clxscore=1011
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503210085
 
-On Wed, 19 Mar 2025, Colin Foster wrote:
 
-> On Wed, Mar 19, 2025 at 01:30:51PM +0100, Rasmus Villemoes wrote:
-> > diff --git a/drivers/mfd/ocelot-core.c b/drivers/mfd/ocelot-core.c
-> > index 41aff27088548..78b5fe15efdd2 100644
-> > --- a/drivers/mfd/ocelot-core.c
-> > +++ b/drivers/mfd/ocelot-core.c
-> > @@ -200,10 +200,12 @@ static const struct mfd_cell vsc7512_devs[] = {
-> >  static void ocelot_core_try_add_regmap(struct device *dev,
-> >                                        const struct resource *res)
-> >  {
-> > +       struct ocelot_ddata *ddata = dev_get_drvdata(dev);
-> > +
-> >         if (dev_get_regmap(dev, res->name))
-> >                 return;
-> > 
-> > -       ocelot_spi_init_regmap(dev, res);
-> > +       ddata->init_regmap(dev, res);
+
+On 3/21/25 4:04 PM, Christophe Leroy wrote:
+> Hi,
 > 
-> I remember changing this from function pointers to the direct function
-> call during initial development, per Lee's suggestion. I like it though,
-> and I'm glad to see multiple users now.
+> Le 10/10/2024 à 16:51, Athira Rajeev a écrit :
+>> perf list picks the events supported for specific platform
+>> from pmu-events/arch/powerpc/<platform>. Example power10 events
+>> are in pmu-events/arch/powerpc/power10, power9 events are part
+>> of pmu-events/arch/powerpc/power9. The decision of which
+>> platform to pick is determined based on PVR value in powerpc.
+>> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
+>>
+>> Example:
+>>
+>> Format:
+>>     PVR,Version,JSON/file/pathname,Type
+>>
+>> 0x004[bcd][[:xdigit:]]{4},1,power8,core
+>> 0x0066[[:xdigit:]]{4},1,power8,core
+>> 0x004e[[:xdigit:]]{4},1,power9,core
+>> 0x0080[[:xdigit:]]{4},1,power10,core
+>> 0x0082[[:xdigit:]]{4},1,power10,core
+>>
+>> The code gets the PVR from system using get_cpuid_str function
+>> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
+>> with value from mapfile.csv
+>> In case of compat mode, say when partition is booted in a power9
+>> mode when the system is a power10, this picks incorrectly. Because
+>> PVR will point to power10 where as it should pick events from power9
+>> folder. To support generic events, add new folder
+>> pmu-events/arch/powerpc/compat to contain the ISA architected events
+>> which is supported in compat mode. Also return 0x00ffffff as pvr
+>> when booted in compat mode. Based on this pvr value, json will
+>> pick events from pmu-events/arch/powerpc/compat
+>>
+>> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> 
+> I see this patch was merged into mainline allthough it had CI failures and still has.
+> 
+> Could you please fix it ?
 
-Yeah, we're still not going to be putting call-backs into device data.
+We already have a fix patch posted for this issue 
 
-Either pass the differentiating config through to the core driver or
-handle the differentiation inside the *-i2c.c / *-spi.c files.
+https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20250321100726.699956-1-likhitha@linux.ibm.com/
 
--- 
-Lee Jones [李琼斯]
+Maddy
+
+
+> 
+> arch/powerpc/util/header.c: In function 'is_compat_mode':
+> Error: arch/powerpc/util/header.c:20:14: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+>    20 |  if (!strcmp((char *)platform, (char *)base_platform))
+>       |              ^
+> Error: arch/powerpc/util/header.c:20:32: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+>    20 |  if (!strcmp((char *)platform, (char *)base_platform))
+>       |                                ^
+> cc1: all warnings being treated as errors
+> make[6]: *** [/linux/tools/build/Makefile.build:86: /output/arch/powerpc/util/header.o] Error 1
+> 
+> 
+> The following fix but is maybe not the right one as in reality getauxval() seems to return a long not a u64.
+> 
+> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
+> index c7df534dbf8f..1b045d410f31 100644
+> --- a/tools/perf/arch/powerpc/util/header.c
+> +++ b/tools/perf/arch/powerpc/util/header.c
+> @@ -17,7 +17,7 @@ static bool is_compat_mode(void)
+>      u64 base_platform = getauxval(AT_BASE_PLATFORM);
+>      u64 platform = getauxval(AT_PLATFORM);
+> 
+> -    if (!strcmp((char *)platform, (char *)base_platform))
+> +    if (!strcmp((char *)(long)platform, (char *)(long)base_platform))
+>          return false;
+> 
+>      return true;
+> 
+> 
+> Thanks
+> Christophe
+> 
+>> ---
+>> changelog:
+>> V1 -> V2:
+>> Corrected commit message and subject line
+>>
+>>   tools/perf/arch/powerpc/util/header.c | 32 ++++++++++++++++++++++++++-
+>>   1 file changed, 31 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
+>> index 6b00efd53638..adc82c479443 100644
+>> --- a/tools/perf/arch/powerpc/util/header.c
+>> +++ b/tools/perf/arch/powerpc/util/header.c
+>> @@ -10,6 +10,18 @@
+>>   #include "utils_header.h"
+>>   #include "metricgroup.h"
+>>   #include <api/fs/fs.h>
+>> +#include <sys/auxv.h>
+>> +
+>> +static bool is_compat_mode(void)
+>> +{
+>> +    u64 base_platform = getauxval(AT_BASE_PLATFORM);
+>> +    u64 platform = getauxval(AT_PLATFORM);
+>> +
+>> +    if (!strcmp((char *)platform, (char *)base_platform))
+>> +        return false;
+>> +
+>> +    return true;
+>> +}
+>>     int
+>>   get_cpuid(char *buffer, size_t sz)
+>> @@ -33,8 +45,26 @@ char *
+>>   get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+>>   {
+>>       char *bufp;
+>> +    unsigned long pvr;
+>> +
+>> +    /*
+>> +     * IBM Power System supports compatible mode. That is
+>> +     * Nth generation platform can support previous generation
+>> +     * OS in a mode called compatibile mode. For ex. LPAR can be
+>> +     * booted in a Power9 mode when the system is a Power10.
+>> +     *
+>> +     * In the compatible mode, care must be taken when generating
+>> +     * PVR value. When read, PVR will be of the AT_BASE_PLATFORM
+>> +     * To support generic events, return 0x00ffffff as pvr when
+>> +     * booted in compat mode. Based on this pvr value, json will
+>> +     * pick events from pmu-events/arch/powerpc/compat
+>> +     */
+>> +    if (!is_compat_mode())
+>> +        pvr = mfspr(SPRN_PVR);
+>> +    else
+>> +        pvr = 0x00ffffff;
+>>   -    if (asprintf(&bufp, "0x%.8lx", mfspr(SPRN_PVR)) < 0)
+>> +    if (asprintf(&bufp, "0x%.8lx", pvr) < 0)
+>>           bufp = NULL;
+>>         return bufp;
+> 
+
 
