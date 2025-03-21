@@ -1,65 +1,64 @@
-Return-Path: <linux-kernel+bounces-570978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CFCA6B76D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:31:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C94CA6B79B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53453189867F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1859C17EB4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37D41F12FC;
-	Fri, 21 Mar 2025 09:31:12 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0482A214A7A;
+	Fri, 21 Mar 2025 09:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gduAHBk4"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07A71E5707;
-	Fri, 21 Mar 2025 09:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9455A215078;
+	Fri, 21 Mar 2025 09:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742549472; cv=none; b=KBSo9UN9UWgCpYNB1aQykVyJepJ4Gp/5seSfYOrRg7qv0UQH/o9DRUh6mviXK+RDTC67fXHGTk+WqysLJ/cKS5FJ9bKg41nNFpE7d7ZKAa5a/SwA3eQV5Gg42LmX2pCm66FzSnQin+9ZYIHlCYCbdrCvlRZw8LBy0DepLc/bb5s=
+	t=1742549696; cv=none; b=pjQylMsb3HY61vmpOQdc1Xqcb/mYCTFqaM5SOJ8qkubON93bYFz2pr/xFY3hOLdT7dLl7gJCKs+B1eiLKePpj2XCchsyMRT8dN5UG87WbW5sktL1Fouc3fsGTVOYavFKHMTqEL9qWQzv5fStpHGiyjUWZRXEz/SZ/CiOnVdkeKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742549472; c=relaxed/simple;
-	bh=Y6I/8vVmdfk6sGCvQTPk4i11HKqhHcWpJd91MnYDdOk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TXHGY79XJCnR8mot8lCY2mkUNNwwjM/ELK/mzijUUV5jtW6SSwQjvHpPMpFVGwiQ4r3Ld8+T4CcHNd8e3PhRMBFMfNi1AxqwTjK18QLzs9ULR6v/ospfSnYcTQfYN0+0JKx8+wme0pMf02KnH8AF6YyUQaDOwrmgsqSjzp1agVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaecf50578eso349084866b.2;
-        Fri, 21 Mar 2025 02:31:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742549469; x=1743154269;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W/NPUaREURJ6mCKVAccGEeQmvtTeXxq8+4zuow6YaFw=;
-        b=rWHQlOigmqcksMmd1Gbrl0B7d/55p5uwBnHKhy9SV39PV+i5Llax5CuoeuwaHF0QhZ
-         sZj5gzynWzZi8vjaTpP2rH5cZxgi6aPNb6Vrbo6xJo/uzRl5iTUYRktuD77L2e/AQ7IE
-         JFyiLxrhSHrxVXNMTheREcKp0FXUYo2n7s0jeY/oKIxCqU/jHsL1XO6FDsoRmnGIJ3qE
-         HnjyPAs6u574s5ZvxX3GEBmgnxN57GViuqUhRxHkZNVzONpcoaQj5afn5tGzvkhZ6e2J
-         quvqrlvzE8DW3sB7nRysXVkG86jlBzdX8zE1CXSFbQabkYaDWUjoaIvQkVlFJhty3DHB
-         EoaA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5I3icIdbl5MheYRmxDu+l+LIWssVeC6DJwxrtmWV+vG13WQhX4fBo0iipQ6Kr/4z4Ft2nI+8+@vger.kernel.org, AJvYcCV5Nq7CybI/pRQykVZWMTedsPnzJ2onDzcDCMShtMCieedE1LbfsF9uq75OT8t8RqQogjHUrt2PEsxjCXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztochO7roMXzCMpTtbJ7WDbTzczTwlZPrhJfpuaxpJQ0sJUKWn
-	+zZnxt4Zux+vPCCUnM0g5T+TYvGGm99HoD5PAlAygR8zVtnWXF8q
-X-Gm-Gg: ASbGncsQs/Yo+5jtwtnpjJT3yRr3SoBb+gPC6U8uIdbZPVq5g16CTKOU51OsLKpuhsp
-	d1dZe7G0lOlbHqfpfstMKtnxSmKg8bJklrsMGeFiMgW2Ah1eOBoC1Ek331ITHZ/hlnypF9eHIZx
-	8JmHDNPornsBvKYUsfSTEez1NOkXkTvpmK7VYNkS7EBffCLjR/35dB8XpwB4XJQ2LtRqHsLCh+0
-	oWNr5DHSocWPE/9JHcmDEfy6fMhzI5YyYH1ZS2Lpu2vfex9N5TxdZHCGANFISp95uNTWwyCtg20
-	Eo3QIvuzFwEh2/2rA0iELGfspHnzWrtVmrw=
-X-Google-Smtp-Source: AGHT+IF8f1GC7wbrCO3eXH1B7reEeFIOUHS0zx+PYz/rKNz+5eov4VmNDk0rBsgjC169SJCW/K90hw==
-X-Received: by 2002:a17:907:6e87:b0:ac3:2d47:f6af with SMTP id a640c23a62f3a-ac3f212b833mr201431266b.20.1742549468664;
-        Fri, 21 Mar 2025 02:31:08 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8676c2sm116468566b.9.2025.03.21.02.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 02:31:07 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 21 Mar 2025 02:30:49 -0700
-Subject: [PATCH] lockdep: Speed up lockdep_unregister_key() with expedited
- RCU synchronization
+	s=arc-20240116; t=1742549696; c=relaxed/simple;
+	bh=UqY2D0wkm102XJ0ymHX2ONI5obBB6nSiwLlmcfPIIuA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=lfRWG0ifrrdDHlUdqvGbnlFKKshITOtV0rQEodFdTOxx3n5ktG9RcFqIZaj2wDumBL/LCONpzHdKFSv4VMtNjF1hOthAjueaX9MYfhBGNK1kr629f6EAdf8TfT5AkgRVxPp0H1wCAVjFWmVMSKDih/b7P3vFL2SLLglkMamrCN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gduAHBk4; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L6aNsT022716;
+	Fri, 21 Mar 2025 10:34:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=Zsmdh6nu+UJnS8Y882xvMr
+	X/hRslcMdqQk91zAyTeUM=; b=gduAHBk4A5DkYZP8H9MJxdny5IxbEc+HE0AKO7
+	hSvYtEzqqlETpW4tCPVZwQO9wsFZrIGWfZ3jHkhldYWox/DjoXvlBPWS96uYVbBM
+	jRhvgaNf1XeocXPkJvKQaO75AU2GRIzFPyfLB9qiiiRn3R8tPFtpy1OFOH1fAV8G
+	avNooEz47mic31BbnHb2JU2/teejiD6YiLtPsLaQXNcMlRRxNlWE+w9SWy4fNaiD
+	WjBJnn9lS1U02xLvOEGMvgJTkTILGt+gewTpr8qGmGjw2qSGa8xthbQh0BDXgE+0
+	0SRAhEG3lPgO9Q3bJe4xF5zs70gZeW/mEsrkbDc9lwewCnpA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45ght64hse-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 10:34:29 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4CFBA40059;
+	Fri, 21 Mar 2025 10:33:16 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BA87F7B7160;
+	Fri, 21 Mar 2025 10:32:25 +0100 (CET)
+Received: from localhost (10.252.27.50) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Mar
+ 2025 10:32:25 +0100
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Subject: [PATCH v6 0/7] Add STM32MP25 SPI NOR support
+Date: Fri, 21 Mar 2025 10:32:20 +0100
+Message-ID: <20250321-upstream_ospi_v6-v6-0-37bbcab43439@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,97 +67,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
-X-B4-Tracking: v=1; b=H4sIAMgx3WcC/x3M4QpAMBQG0Fe5fb+tNmyyV5EfMxc3QltJybsr5
- wHOg8xJOMPTg8SXZDl2eDIFIS5hn1nJCE8odWl1ZVq1HXEd+VSD4Rh03bTOWRSEM/Ek9z91/ft
- +5JbwcFkAAAA=
-X-Change-ID: 20250319-lockdep-b1eca0479665
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
- Waiman Long <longman@redhat.com>
-Cc: aeh@meta.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- edumazet@google.com, jhs@mojatatu.com, kernel-team@meta.com, 
- Erik Lundgren <elundgren@meta.com>, Breno Leitao <leitao@debian.org>, 
- "Paul E. McKenney" <paulmck@kernel.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2142; i=leitao@debian.org;
- h=from:subject:message-id; bh=Y6I/8vVmdfk6sGCvQTPk4i11HKqhHcWpJd91MnYDdOk=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn3THacqvxp5klqqqxekE7OYBsb7EMCXA8usIVX
- OhVJnYS046JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ90x2gAKCRA1o5Of/Hh3
- bWszEACxTC+Ie5buHGAr7rv5ihfTYSdVtFYTgDBg7vdatWsfs39+6AdMD/p3O4eqUWs/e/TTGRy
- sTIMHuNC6FbfEfqY/2J6+OGybKh0B7GIZhCnos3xAAst7oR1knZ0PsYqEWVZK7dkkWLlTCYycAQ
- J5FIn816Grs4G8L2hEZk/VLuSxSlCDe1XSBOfSF79ltHk7DqUgcIzc0O8y+S/kkgfDVvJFzxgfE
- GEHclgsI/bZv71856R5aSS1Z0tF7IpfJV7I6TShhjquYYjFnuTu/4VgBK16lG8gPfx79cIO4lMg
- pcj74c6Wt/UhSONLbTz267UgUhCmA6uzmaq/mIRwD/z91enQmqJG6T0lPMWrA9m3BVFgA1hDaIo
- vSu9xrMtCkiGRtXwLuaIPbkFRp6U5D+YVHhhRwwzAiPnevFrfs4lye5dfpQtdybiqW6VAByfpfC
- RLemQxsdOrixHpjQen9hWl894MFOJWq2kp+uWSRb8UdYt4rBIc/GAo5r/pFRktxtEtOH5S3d2Gc
- GpvMGss3Y2ELlcj4/6AndV6OwYKEUiLLupkxPC1gTc2eNjaOPokDj6gafjH7fcYtnL+AZ43Yk9G
- k9IvikeSZhkX1uf5QozaaHOxlRf39WYHB8CuuMJ6nmi4mxs7IYs8IxC1ZUHRGmJA9Q54mXxsCW9
- dqp8+dNwrQU7qOA==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-B4-Tracking: v=1; b=H4sIACQy3WcC/x3MSwqAMAwA0atI1hZq/OJVRErRqFmopdEiFO9uc
+ fkWMxGEPJNAn0XwFFj4PBKaPINps8dKiudkQI21LlGr28nlye7mFMcmNGquSrRd0WKha0iZ87T
+ w8y+H8X0/Axy0L2IAAAA=
+X-Change-ID: 20250320-upstream_ospi_v6-d432a8172105
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_03,2025-03-20_01,2024-11-22_01
 
-lockdep_unregister_key() is called from critical code paths, including
-sections where rtnl_lock() is held. For example, when replacing a qdisc
-in a network device, network egress traffic is disabled while
-__qdisc_destroy() is called for every network queue.
+This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
 
-If lockdep is enabled, __qdisc_destroy() calls lockdep_unregister_key(),
-which gets blocked waiting for synchronize_rcu() to complete.
+On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
+the memory area split, the chip select override and the time constraint
+between its 2 Octo SPI children.
 
-For example, a simple tc command to replace a qdisc could take 13
-seconds:
+Due to these depedencies, this series adds support for:
+  - Octo Memory Manager driver.
+  - Octo SPI driver.
+  - yaml schema for Octo Memory Manager and Octo SPI drivers.
 
-  # time /usr/sbin/tc qdisc replace dev eth0 root handle 0x1: mq
-    real    0m13.195s
-    user    0m0.001s
-    sys     0m2.746s
+The device tree files adds Octo Memory Manager and its 2 associated Octo
+SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
+board.
+    
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-During this time, network egress is completely frozen while waiting for
-RCU synchronization.
+Changes in v6:
+  - Update MAINTAINERS file.
+  - Remove previous patch 1/8 and 2/8, merged by Mark Brown in spi git tree.
+  - Fix Signed-off-by order for patch 3.
+  - OMM driver:
+    - Add dev_err_probe() in error path.
+    - Rename stm32_omm_enable_child_clock() to stm32_omm_toggle_child_clock().
+    - Reorder initialised/non-initialized variable in stm32_omm_configure()
+          and stm32_omm_probe().
+    - Move pm_runtime_disable() calls from stm32_omm_configure() to
+      stm32_omm_probe().
+    - Update children's clocks and reset management.
+    - Use of_platform_populate() to probe children.
+    - Add missing pm_runtime_disable().
+    - Remove useless stm32_omm_check_access's first parameter.
+  - Update OMM's dt-bindings by adding OSPI's clocks and resets.
+  - Update stm32mp251.dtsi by adding OSPI's clock and reset in OMM's node.
 
-Use synchronize_rcu_expedited() instead to minimize the impact on
-critical operations like network connectivity changes.
+Changes in v5:
+  - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
 
-This improves 10x the function call to tc, when replacing the qdisc for
-a network card.
+Changes in v4:
+  - Add default value requested by Krzysztof for st,omm-req2ack-ns,
+    st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
+  - Remove constraint in free form test for st,omm-mux property.
+  - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
+  - Fix SPDX-License-Identifier for stm32-omm.c.
+  - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
+  - Add missing pm_runtime_disable() in the error handling path in
+    stm32-omm.c.
+  - Replace an int by an unsigned int in stm32-omm.c
+  - Remove uneeded "," after terminator in stm32-omm.c.
+  - Update cover letter description to explain dependecies between
+Octo Memory Manager and its 2 Octo SPI children.
 
-   # time /usr/sbin/tc qdisc replace dev eth0 root handle 0x1: mq
-     real     0m1.789s
-     user     0m0.000s
-     sys      0m1.613s
+Changes in v3:
+  - Squash defconfig patches 8 and 9.
+  - Update STM32 Octo Memory Manager controller bindings.
+  - Rename st,stm32-omm.yaml to st,stm32mp25-omm.yaml.
+  - Update STM32 OSPI controller bindings.
+  - Reorder DT properties in .dtsi and .dts files.
+  - Replace devm_reset_control_get_optional() by
+    devm_reset_control_get_optional_exclusive() in stm32_omm.c.
+  - Reintroduce region-memory-names management in stm32_omm.c.
+  - Rename stm32_ospi_tx_poll() and stm32_ospi_tx() to respectively to
+    stm32_ospi_poll() and stm32_ospi_xfer() in spi-stm32-ospi.c.
+  - Set SPI_CONTROLLER_HALF_DUPLEX in controller flags in spi-stm32-ospi.c.
 
-Reported-by: Erik Lundgren <elundgren@meta.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: "Paul E. McKenney" <paulmck@kernel.org>
+Changes in v2:
+  - Move STM32 Octo Memory Manager controller driver and bindings from
+    misc to memory-controllers.
+  - Update STM32 OSPI controller bindings.
+  - Update STM32 Octo Memory Manager controller bindings.
+  - Update STM32 Octo Memory Manager driver to match bindings update.
+  - Update DT to match bindings update.
+
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 ---
- kernel/locking/lockdep.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Patrice Chotard (7):
+      MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+      dt-bindings: memory-controllers: Add STM32 Octo Memory Manager controller
+      memory: Add STM32 Octo Memory Manager driver
+      arm64: dts: st: Add OMM node on stm32mp251
+      arm64: dts: st: Add ospi port1 pinctrl entries in stm32mp25-pinctrl.dtsi
+      arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board
+      arm64: defconfig: Enable STM32 Octo Memory Manager and OcstoSPI driver
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 4470680f02269..a79030ac36dd4 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -6595,8 +6595,10 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	if (need_callback)
- 		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- 
--	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
--	synchronize_rcu();
-+	/* Wait until is_dynamic_key() has finished accessing k->hash_entry.
-+	 * This needs to be quick, since it is called in critical sections
-+	 */
-+	synchronize_rcu_expedited();
- }
- EXPORT_SYMBOL_GPL(lockdep_unregister_key);
- 
-
+ .../memory-controllers/st,stm32mp25-omm.yaml       | 227 ++++++++++
+ MAINTAINERS                                        |   6 +
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi      |  51 +++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             |  54 +++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |  32 ++
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/memory/Kconfig                             |  17 +
+ drivers/memory/Makefile                            |   1 +
+ drivers/memory/stm32_omm.c                         | 474 +++++++++++++++++++++
+ 9 files changed, 864 insertions(+)
 ---
-base-commit: 81e4f8d68c66da301bb881862735bd74c6241a19
-change-id: 20250319-lockdep-b1eca0479665
+base-commit: 88424abd55ab36c3565898a656589a0a25ecd92f
+change-id: 20250320-upstream_ospi_v6-d432a8172105
 
 Best regards,
 -- 
-Breno Leitao <leitao@debian.org>
+Patrice Chotard <patrice.chotard@foss.st.com>
 
 
