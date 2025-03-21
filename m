@@ -1,98 +1,84 @@
-Return-Path: <linux-kernel+bounces-571987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E826CA6C50C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:22:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6294A6C50E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:24:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725113AE967
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07433AFA0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC8F231A37;
-	Fri, 21 Mar 2025 21:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F701231CB0;
+	Fri, 21 Mar 2025 21:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="urekzMMt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EZS5gE+V"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elOSWnqq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066422652E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A641D230BC5;
+	Fri, 21 Mar 2025 21:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742592160; cv=none; b=FaHQgHCmJ6sZwd4ljwNMz4r/nfCIQ9PG/XdknjE86U+JNdpTF7T+gQaLXi2vI5MDL6/snBSgYcOOZ9UZZ9ku6+TV/w5rWaja/RFi4p+T9raMqdkmiR2oHUu2tPYYMqo2VStxv5ER5X3NR8NM2p3zIh8Yyn6j1AGdsK9szbQPLsA=
+	t=1742592239; cv=none; b=jJz3sxpI67kQv99Z/jEuPBE7VOTVQ7OiHO2JpdfPOu511c5Zd53aEMcveqkNfi+edVjd//GKygRAISyJ8aEJqrkekkDgXjcKI7r8vBZM1HnzktMKCyOY6jcJTLJsmKAmHcW0nGYEV/rNrt9VtBTk+emEBphSbGHXYI1J42aj580=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742592160; c=relaxed/simple;
-	bh=MLoEPj1DotaiblARy+HIv8f7Oy71CnrchBnjpKyGesU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XtMAJeh9l1uyQC8Vo5m2yhTma7dsC5mIMdTffikSf5fnKl6GKOOsut3GZo0Difh1wJbm1myR1M5k+/mdXGnW6OKJ7g9w5LTtw2a9eWsiXTW4pHR5ih2ubS+GrWVCv4Y43wD83RU8pqqKyg9FqHCTZCVeJ1HfK06DKaSWGTJ8egk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=urekzMMt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EZS5gE+V; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742592157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+oNseWKuGBEgshNs5P0talv9xg+inN17z1K2AF90QsY=;
-	b=urekzMMtfA3kTy822lbKa4nufWzR1OXLr8MKXehncBoDdm+XaFkjEu7bTZMYsxv8ltVwoi
-	lvGqR9Z+4hyzbhRh4AC896uxdlwHvHw0veohERNmwzCmdAQ04k4q/CHT/60zHV4CdzuzTA
-	n6YkpC/n1jRVZjiX3ycpakTyHVyDhKkoHtGemUXzU9umIyUgY056GYou5iCqFHnXf8FjpT
-	MXxRYQ9tHrj/Lojkqh8tvOra2HYQEqECrVf9+ATCAHPRq5ctBn54mBq/86YWqdn1cU6oNr
-	KT/foI3j5FKmu9mdRZ04kF+JZgKJ/qOzzln5uAjmxECTHSDiRZ7wmLllDx7eaA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742592157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+oNseWKuGBEgshNs5P0talv9xg+inN17z1K2AF90QsY=;
-	b=EZS5gE+VsWIJ5vRL3eP5Jndiht64acIE4ql10QAAbAlD7H53yy7I4AqzDTceNhmWCpRnL1
-	9Xun/0Uq9tAy9gAQ==
-To: Charlie Jenkins <charlie@rivosinc.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Huacai
- Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Peter
- Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>,
- Alexandre Ghiti <alexghiti@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, Charlie Jenkins <charlie@rivosinc.com>
-Subject: Re: [PATCH v6 0/4] entry: Move ret_from_fork() to C and inline
- syscall_exit_to_user_mode()
-In-Reply-To: <20250320-riscv_optimize_entry-v6-0-63e187e26041@rivosinc.com>
-References: <20250320-riscv_optimize_entry-v6-0-63e187e26041@rivosinc.com>
-Date: Fri, 21 Mar 2025 22:22:36 +0100
-Message-ID: <87frj613kz.ffs@tglx>
+	s=arc-20240116; t=1742592239; c=relaxed/simple;
+	bh=gOfJYQK0p2G/hVDRAJhS7e5zivlY9TzR7mIpXiz5tCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u65EG73djf8rN8N5yjcH9vjKHsLn5Zt9n7AmY+79WG+Ig03IklYtS8+22LNaaPlQp50gwuH5eXW4KxjXrvetmZUcu94A1jvc50yyb4NX2bbMORibPATBISix+UGbN3vG9XGHwZqY3ALcHX72FIarnfSbOAwzVKm1+UGITSWVCgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elOSWnqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3801C4CEE3;
+	Fri, 21 Mar 2025 21:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742592239;
+	bh=gOfJYQK0p2G/hVDRAJhS7e5zivlY9TzR7mIpXiz5tCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=elOSWnqq93wMVkWczPA13/4IKBIS/gEcP7YQ2gSZmRHYA5dxERHpWiQMGqEttx5+6
+	 dtGSu+NqKTmIi3smtQkSW6bUyAvjowQebMEIXA9ThllTMPsHanMGVeKGnVtoj/7eBY
+	 A9JP7y5pzvc85LwAPV4NSENTQTUxxdRxahnTgBBHm0Pv1Ap01Ou7h2Hz0i9o0EpAin
+	 OP1n7xKOjVPGCkKDA3u45tIfccztmN4asvqhawYOBJZILZPNql2O1dbsgAtZJKl3uk
+	 R8PyeSGEvDYSdUWhqAwFeriShB2dIxPU5kTpLVDWhdAsgTp5epfvRcBB96H+bG1BHL
+	 CCTw267G7rEiA==
+Date: Fri, 21 Mar 2025 16:23:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Yunfei Dong <yunfei.dong@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Tiffany Lin <tiffany.lin@mediatek.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH] media: dt-bindings: mediatek,vcodec-encoder: Drop
+ assigned-clock properties
+Message-ID: <174259221258.4077511.5846925634356953161.robh@kernel.org>
+References: <20250317214621.794674-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317214621.794674-1-robh@kernel.org>
 
-On Thu, Mar 20 2025 at 10:29, Charlie Jenkins wrote:
-> Similar to commit 221a164035fd ("entry: Move
-> syscall_enter_from_user_mode() to header file"), move
-> syscall_exit_to_user_mode() to the header file as well.
->
-> Testing was done with the byte-unixbench [1] syscall benchmark (which
-> calls getpid) and QEMU. On riscv I measured a 7.09246% improvement, on
-> x86 a 2.98843% improvement, on loongarch a 6.07954% improvement, and on
-> s390 a 11.1328% improvement.
->
-> The Intel bot also reported "kernel test robot noticed a 1.9%
-> improvement of stress-ng.seek.ops_per_sec" [2]
->
-> Since this is on QEMU, I know these numbers are not perfect, but they
-> show a trend of general improvement across all architectures that use
-> the generic entry code.
 
-This looks sane now. I've bookmarked it as post-merge window material.
+On Mon, 17 Mar 2025 16:46:20 -0500, Rob Herring (Arm) wrote:
+> The assigned-clock properties are always allowed on nodes with
+> 'clocks' and generally not required. Additionally the mt8183 doesn't
+> define them, so they must not be required in that case.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/media/mediatek,vcodec-encoder.yaml  | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
 
-Thanks,
+Applied, thanks!
 
-        tglx
 
