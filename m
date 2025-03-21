@@ -1,188 +1,109 @@
-Return-Path: <linux-kernel+bounces-571215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274A9A6BA82
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:18:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F61BA6BA5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE33B880A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0214A07DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D027B22D7A4;
-	Fri, 21 Mar 2025 12:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxqkxxiJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EA122D797;
-	Fri, 21 Mar 2025 12:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E333F227EB2;
+	Fri, 21 Mar 2025 12:10:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C7122C35C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742559299; cv=none; b=FJmHGxEkM4mD/Mi006MjMiOkytPupXEtxhroiSWAnVS8WCTjiaiQWwisdNslt39k07o1aCpVIVug6OfZmiMUHmOWY/bA/r4kGIKa0Ticei2BI+/rmJkTuv0weKzs8Y6nlvp9skzfbCEAKPWtajWcEpPomVRUXcvN5n0zSY6MMDM=
+	t=1742559053; cv=none; b=gWW1QeROAB2+S0DsTMZUilQLRd9ElvWMOtBQ8wMbv9z13pXm8mGn/SiW/i2IaGd8lXJckf64T6Kbqt5azkDSI9Xw3LgyS4vscV7MyTx55wO6WIVM3l/PzQpPyWKyxaatdDupoxsiWTB1kQahek6iPUJsmxUSNYNCN59Ix4KprIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742559299; c=relaxed/simple;
-	bh=jy30EXuNa8upxpkBQWSMCwf+q4I7fePKwXreoaYc4f8=;
-	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
-	 MIME-Version:Content-Type; b=RHFCbaTn/Xa0GszadKpjFZlNaaiOY4kPkeTdSqqFaV0Dds2D7m4dez12Ye8qJ0E4qMPIMlOcFtI2+ZKE/4hnaCkaJODrYVPXSjN0z0oVchNgjpuP1q1AGULBUaKLttrvltC6blnnGnUthzGAPo7HNP1k1wx77Kst1NbL1ISkEWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxqkxxiJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ACB0C4CEE3;
-	Fri, 21 Mar 2025 12:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742559299;
-	bh=jy30EXuNa8upxpkBQWSMCwf+q4I7fePKwXreoaYc4f8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dxqkxxiJgMXNjR2nWBVTvRGUpThYQhgRtcoIJjBQC7sVl3js12k713F9ArXW/5rLu
-	 2BBcEiy6SRmotn+73UQ0Su+RQLBU+6t2q+CsrPVqiuXbfC+mM2dAxe3E+MPBtapsEa
-	 HpO5sEX/DtKHz8MYO1y2ybQJ3XNES7xu6HkB3Tzq/pdFSX4dTFhYwD2IOfhPrxGjJk
-	 fplF+b6HsLJVXpPXzEjcri6KxcRQ7DJftRSYlO7sNM+Y8K6qAaLzd1u36mXtepiqmv
-	 gI4WZQhUiePEg8q2T7V/ct1pZlhJh925NZ1yBe+OcCuRZFYtW+EHAj9l0uovzcJHm+
-	 J1jFZl5NqAYgg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,  "Frederic Weisbecker"
- <frederic@kernel.org>,  "Thomas Gleixner" <tglx@linutronix.de>,
-  linux-kernel@vger.kernel.org,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [GIT PULL] Rust `hrtimer` support for v6.15
-In-Reply-To: <87pliljcvy.fsf@kernel.org> (Andreas Hindborg's message of "Thu,
-	13 Mar 2025 14:09:21 +0100")
-Message-ID: <87tt7md1s6.fsf@kernel.org>
-References: <87pliljcvy.fsf@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 21 Mar 2025 13:10:07 +0100
+	s=arc-20240116; t=1742559053; c=relaxed/simple;
+	bh=Fj/mFVxvwlXZdVqani1oVd1laqrJFziVRQAVU16QOXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ndjqgz0O4YKk7xAj4NvKOv5vgKZCu+RgHMkFnmm+nHojCDtYN+YrjvYSS6vdCjdlGBHK5QEy7jpUeSOaAKxqZN5UIfrhy+q2/pajpZh2kzRh0fv5jRafW33jsplB3fmn7/s/SqA9FtX2vwnZHji7ZOz86Ti4FC5mMiZWV/UE9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56E60106F;
+	Fri, 21 Mar 2025 05:10:57 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0A813F694;
+	Fri, 21 Mar 2025 05:10:48 -0700 (PDT)
+Message-ID: <40e30ec8-a7ea-46b9-b687-aa7efa8cf0e1@arm.com>
+Date: Fri, 21 Mar 2025 12:10:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] coresight: Only check bottom two claim bits
+To: James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, leo.yan@arm.com
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20250320-james-coresight-claim-tags-v3-0-d3145c153820@linaro.org>
+ <20250320-james-coresight-claim-tags-v3-2-d3145c153820@linaro.org>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250320-james-coresight-claim-tags-v3-2-d3145c153820@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On 20/03/2025 14:34, James Clark wrote:
+> The use of the whole register and == could break the claim mechanism if
+> any of the other bits are used in the future. The referenced doc "PSCI -
+> ARM DEN 0022D" also says to only read and clear the bottom two bits.
+> 
+> Use FIELD_GET() to extract only the relevant part.
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>   drivers/hwtracing/coresight/coresight-core.c | 3 ++-
+>   drivers/hwtracing/coresight/coresight-priv.h | 1 +
+>   2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index 8471aefeac76..26d149a4c579 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -131,7 +131,8 @@ coresight_find_out_connection(struct coresight_device *csdev,
+>   
+>   static inline u32 coresight_read_claim_tags(struct coresight_device *csdev)
+>   {
+> -	return csdev_access_relaxed_read32(&csdev->access, CORESIGHT_CLAIMCLR);
+> +	return FIELD_GET(CORESIGHT_CLAIM_MASK,
+> +			 csdev_access_relaxed_read32(&csdev->access, CORESIGHT_CLAIMCLR));
+>   }
+>   
+>   static inline bool coresight_is_claimed_self_hosted(struct coresight_device *csdev)
+> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+> index 82644aff8d2b..38bb4e8b50ef 100644
+> --- a/drivers/hwtracing/coresight/coresight-priv.h
+> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+> @@ -35,6 +35,7 @@ extern const struct device_type coresight_dev_type[];
+>    * Coresight device CLAIM protocol.
+>    * See PSCI - ARM DEN 0022D, Section: 6.8.1 Debug and Trace save and restore.
+>    */
+> +#define CORESIGHT_CLAIM_MASK		GENMASK(1, 0)
+>   #define CORESIGHT_CLAIM_SELF_HOSTED	BIT(1)
 
-Hi Miguel,
+I am checking with the Arm CoreSight architects on this. This is
+problematic, if another agent is assigned, say BIT(2) and we wouldn't
+forward compatible.
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
-
-> Hi Miguel,
->
-> Please pull the Rust support for hrtimer for v6.15.
->
-> This initial support allows for intrusive use of timers without
-> allocating when starting a timer. We support `Pin<Box<T>>`, `Arc<T>`,
-> `Pin<&T>` and `Pin<&mut T>` pointer types for working with these
-> intrusive timers. We support at most one `HrTimer` field in a struct for
-> use with this API.
->
-> For now, the primary users will be the Rust null block driver, `rnull`,
-> and the Rust kernel mode setting driver `rkvms`. I expect us to add more
-> features to the API as the demands from users grow.
->
-> The PR also includes two changes for the core rust and rust/alloc
-> subsytems that are dependencies of the hrtimer Rust API: `Arc::as_ptr`
-> and `Box::into_pin`. The alloc change was Ack'd by Danilo.
->
-> The commits were in linux-next since next-20250313.
-
-Please find an updated pull request below.
-
-As discussed, I fixed the UB you fund in:
-
-  rust: hrtimer: allow timer restart from timer handler
-
-by casting to `u32` when assigning enum values. The commits below this
-commit are unchanged, the later commits were replayed on top of the
-changed commit.
-
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
-
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/rust-for-linux/linux.git tags/rust-hrtimer-for-v6.15-v2
-
-for you to fetch changes up to ac4f9157e8d7f6a9793209a693cb3e3a6f840983:
-
-  rust: hrtimer: add maintainer entry (2025-03-21 12:56:38 +0100)
+Suzuki
 
 
-Best regards,
-Andreas Hindborg
-
-
-- ----------------------------------------------------------------
-Rust hrtimer API for v6.15
-
-Introduce Rust support for the `hrtimer` subsystem:
-
- - Add a way to use the `hrtimer` subsystem from Rust. Rust code can now set up
-   intrusive timers without allocating when starting the timer.
-
- - Add support for `Pin<Box<_>>`, `Arc<_>`, `Pin<&_>` and `Pin<&mut _>` as
-   pointer types for use with timer callbacks.
-
- - Add support for setting clock source and timer mode.
-
-`kernel` crate:
-
- - Add `Arc::as_ptr` for converting an `Arc` to a raw pointer. This is a
-   dependency for the `hrtimer` API.
-
- - Add `Box::into_pin` for converting a `Box<_>` into a `Pin<Box<_>>` to align
-   with Rust `alloc`. This is a dependency for the `hrtimer` API.
-
-- ----------------------------------------------------------------
-Andreas Hindborg (13):
-      rust: hrtimer: introduce hrtimer support
-      rust: sync: add `Arc::as_ptr`
-      rust: hrtimer: implement `HrTimerPointer` for `Arc`
-      rust: hrtimer: allow timer restart from timer handler
-      rust: hrtimer: add `UnsafeHrTimerPointer`
-      rust: hrtimer: add `hrtimer::ScopedHrTimerPointer`
-      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&T>`
-      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
-      rust: alloc: add `Box::into_pin`
-      rust: hrtimer: implement `HrTimerPointer` for `Pin<Box<T>>`
-      rust: hrtimer: add `HrTimerMode`
-      rust: hrtimer: add clocksource selection through `ClockId`
-      rust: hrtimer: add maintainer entry
-
- MAINTAINERS                         |  15 ++
- rust/kernel/alloc/kbox.rs           |   6 +
- rust/kernel/sync/arc.rs             |  13 +-
- rust/kernel/time.rs                 |  68 +++++
- rust/kernel/time/hrtimer.rs         | 517 ++++++++++++++++++++++++++++++++++++
- rust/kernel/time/hrtimer/arc.rs     | 100 +++++++
- rust/kernel/time/hrtimer/pin.rs     | 104 ++++++++
- rust/kernel/time/hrtimer/pin_mut.rs | 108 ++++++++
- rust/kernel/time/hrtimer/tbox.rs    | 120 +++++++++
- 9 files changed, 1049 insertions(+), 2 deletions(-)
- create mode 100644 rust/kernel/time/hrtimer.rs
- create mode 100644 rust/kernel/time/hrtimer/arc.rs
- create mode 100644 rust/kernel/time/hrtimer/pin.rs
- create mode 100644 rust/kernel/time/hrtimer/pin_mut.rs
- create mode 100644 rust/kernel/time/hrtimer/tbox.rs
------BEGIN PGP SIGNATURE-----
-
-iQJKBAEBCAA0FiEEEsH5R1a/fCoV1sAS4bgaPnkoY3cFAmfdVykWHGEuaGluZGJv
-cmdAa2VybmVsLm9yZwAKCRDhuBo+eShjd18rD/0UMWTrZZRm/KPD2V9oZzoT/yYy
-cM9nANXm7FXJJMUaqzKv0rzKl7bxqo6wJwaNJPFBCSkVEKAQhuJo35+REiXTr7nU
-8UnTUtNWl8nhX9q1+fMmQqTwZpYGlydTFn0cjyFtqQe9ahPhfCR/iF+kvb/VtR/s
-3ow8v93epAXy01/4fwcWW7Iozu5GqvTyyz4H8n+6B8UNVSgQp+lo4sylfl27EtQn
-7i/hrAQYaLv765UrxYsQVNyxL2qU3XXKOlDKr0KY9GFXuMVSwm765rbobGNXeD4Q
-kEZ9BU70ebS29ZHHsTncUN0AuiE22iwL/dMdZaSvyjMrD4WgH3oLbtVIuRjLQNJ1
-D4hCryTc5gHvRHJ6ZYZJNv4dqRJ0CJ0GqdR3g19Yi6U8S8GD5HK7QGz84RusiM33
-6LoKEO/XauPPaHP/ZlyDIJmuwrKRz+t9SNiEMmDFtl6UjPq/N4ghqG4zsG3wRbWq
-VBFDKP3nxaOOKTXSF0D7yGec4eENuo6EuGswoXoS4OvC0c9i8KwKBkutoLVw1c4l
-OYrwDeloyAP6V/cKbVgvxKeq3j/MKiBfYsuJBV3iQe8L7r0qoLQrCtM+dzWTRaxT
-IVkKSBnRReVyVNsatf4jmBBwN1eAeNaWUCYy+w8AdCLoGggchjSNizW+FqorR3KQ
-u6wfok7Z9QtTDT4HOA==
-=B5KA
------END PGP SIGNATURE-----
+>   
+>   #define TIMEOUT_US		100
+> 
 
 
