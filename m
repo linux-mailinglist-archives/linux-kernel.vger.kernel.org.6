@@ -1,77 +1,65 @@
-Return-Path: <linux-kernel+bounces-571787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08D2A6C248
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:22:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5076A6C24D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:23:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B031B60B40
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C5B1B61792
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731F7231A36;
-	Fri, 21 Mar 2025 18:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CC822FF41;
+	Fri, 21 Mar 2025 18:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YGxmoQYl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="gjhOQg7+"
+Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B33922FF4D;
-	Fri, 21 Mar 2025 18:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8A222FE0E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581293; cv=none; b=UQylimB6CZfTzdcx/VaSWkNvAhs+KJ0ithetx7KS0uCNjHEf94TfOKxvCOEixSKdf55Ji1OTPseWBKCzpZwRdkLu2Xqx6LVoKy+rciYmjpCJDtfEx7pAG+RGY/FFnJt6Svyn63jc1yzpS5Pqz3yIFckWC5ySS50JsuFQCC1npkQ=
+	t=1742581320; cv=none; b=SRrRjlZtHhl/ocWGuIe7wbe8v/ERNziBjl8APTvOUVo7qnllunMfDK+PmYL/LT/C7/E1GLz4jioW8SpRY4StOUllGxYeCj7XjoX8MkjgJ55Tt99y9fIUoslaUuDozcemklyAyJyGxaQ+FvvQ8p9tNU70VMTWOOlYcTruhM2iL/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581293; c=relaxed/simple;
-	bh=fkjFFznByDQk57yAw7swZKyh1oSTDF5oWpguUFliF8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nkLi2iwY4+1Vxu02J5fJnV0gs0zZmK5/vD0rYaeCNCEzkDNnzykQcMcW2DAfJy4eZ5v78N9FxoVr+c/gQAUUmDUVyRcdj8v93KLUg9ul2fYTkTZnwdVKjPo531DH42fKIc9YJL4v/YxHS4tmxEKKemKhilcJB0wOgtvU27DBDAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YGxmoQYl; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742581292; x=1774117292;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fkjFFznByDQk57yAw7swZKyh1oSTDF5oWpguUFliF8Q=;
-  b=YGxmoQYlSnU1Nqn/HSaMESeGGgwDLaYp1NlrE/uZhSMSofaw510BRk8h
-   7LsWCtQ18CwikUXKkr3PhkE//xBvjCVWieNiT0StKDXRgN+zP0tuK0ASy
-   bme4jMpjYR5wTqwC4E7MdBPKtq9EyNLTuEq7oxbwVjKXTvnMluly2YsPi
-   Dqxvyp/iysPfDBEFvRSUQJ+hI/yJa7un3QGW+QbFxG6X/nLMI9nFiI1GQ
-   FPM909cCuA7dP4vjsLsk7xV57ORW4yIBoZ+usK6662qtbSInnw1iP9FAP
-   B2jLGMT8FzrnyKiWrmFjuVpedbTQF4OypibV6X9E116vE8lHh3Ba2uaOI
-   g==;
-X-CSE-ConnectionGUID: saiQK/H+SDCg9lFCP7laNw==
-X-CSE-MsgGUID: 7XTGZkJEQ62VTiIpLZxqsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="69212019"
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="69212019"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 11:21:30 -0700
-X-CSE-ConnectionGUID: ozzziGvsQfK3iT6AWnwjxQ==
-X-CSE-MsgGUID: clLm38LWTUS8mKEJS4ahEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="124423525"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 21 Mar 2025 11:21:29 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 0ACB1296; Fri, 21 Mar 2025 20:21:24 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: [PATCH v1 7/7] serial: 8250_ni: Tidy up ACPI ID table
-Date: Fri, 21 Mar 2025 20:20:18 +0200
-Message-ID: <20250321182119.454507-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250321182119.454507-1-andriy.shevchenko@linux.intel.com>
-References: <20250321182119.454507-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1742581320; c=relaxed/simple;
+	bh=GlgWYN9/cnYfBQ3q33i/hcaHJ7knAqnJ5VcqkWXrObU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7aL3PTGpWpxkyboXxl/u2TJglT/bEU5S54yb6WM/ttwlpion8V0mZ/Lz2j1gHdFxClV7xXs45LCYK0bL8n71cB6y/SW5mVYMlbh3Xcf5n+8cE5tM+wheQm6Xuvzi1p33dJi4OZrC5DQ2oazHW0UXuA6powvtO3mZAi2HkUXN5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=gjhOQg7+; arc=none smtp.client-ip=195.133.245.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
+Received: from mail.nppct.ru (localhost [127.0.0.1])
+	by mail.nppct.ru (Postfix) with ESMTP id 3E3FC1C17A3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:21:46 +0300 (MSK)
+Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
+	reason="pass (just generated, assumed good)" header.d=nppct.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:to:from:from; s=dkim; t=1742581301; x=
+	1743445302; bh=GlgWYN9/cnYfBQ3q33i/hcaHJ7knAqnJ5VcqkWXrObU=; b=g
+	jhOQg7+jitcmKcBcJuzUFEnNXQHsRe84lxVuOs3eZz5sFDVxYj+M8xspuQ8sQbGg
+	2MVv9PjrD873/7ZVNPAjQwkkz+JJlDn0/Ue3VOXHVbjNP16SH51icn8uYsXEecmk
+	mYU0BUwHAiQzvYzPSD5iI1BRYJ86CdxM+3MgsIkE0Y=
+X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
+Received: from mail.nppct.ru ([127.0.0.1])
+	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3dcuIPlqr4C7 for <linux-kernel@vger.kernel.org>;
+	Fri, 21 Mar 2025 21:21:41 +0300 (MSK)
+Received: from localhost.localdomain (unknown [87.249.24.51])
+	by mail.nppct.ru (Postfix) with ESMTPSA id 721371C0628;
+	Fri, 21 Mar 2025 21:21:35 +0300 (MSK)
+From: Alexey Nepomnyashih <sdl@nppct.ru>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
+	Jeremy Kerr <jk@ozlabs.org>,
+	linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10 1/2] efi: vars: Use locking version to iterate over efivars linked lists
+Date: Fri, 21 Mar 2025 18:21:24 +0000
+Message-ID: <20250321182126.1716111-1-sdl@nppct.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,89 +68,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Tidy up ACPI ID table:
-- drop ACPI_PTR() and hence replace acpi.h with mod_devicetable.h et al.
-- drop comma in the terminator entry
+From: Ard Biesheuvel <ardb@kernel.org>
 
-With that done, extend compile test coverage.
+commit 3a75f9f2f9ad19bb9a0f566373ae91d8f09db85e upstream.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Both efivars and efivarfs uses __efivar_entry_iter() to go over the
+linked list that shadows the list of EFI variables held by the firmware,
+but fail to call the begin/end helpers that are documented as a
+prerequisite.
+
+So switch to the proper version, which is efivar_entry_iter(). Given
+that in both cases, efivar_entry_remove() is invoked with the lock held
+already, don't take the lock there anymore.
+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
 ---
- drivers/tty/serial/8250/8250_ni.c | 15 +++++++++------
- drivers/tty/serial/8250/Kconfig   |  2 +-
- 2 files changed, 10 insertions(+), 7 deletions(-)
+ drivers/firmware/efi/efivars.c | 8 ++------
+ drivers/firmware/efi/vars.c    | 9 +--------
+ fs/efivarfs/super.c            | 9 +++------
+ include/linux/efi.h            | 3 ++-
+ 4 files changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_ni.c b/drivers/tty/serial/8250/8250_ni.c
-index c66bfc56838e..b0e44fb00b3a 100644
---- a/drivers/tty/serial/8250/8250_ni.c
-+++ b/drivers/tty/serial/8250/8250_ni.c
-@@ -10,14 +10,18 @@
-  * Copyright 2012-2023 National Instruments Corporation
+diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
+index e6b16b3a17a8..b925571ee593 100644
+--- a/drivers/firmware/efi/efivars.c
++++ b/drivers/firmware/efi/efivars.c
+@@ -608,10 +608,7 @@ static int efivars_sysfs_callback(efi_char16_t *name, efi_guid_t vendor,
+ 
+ static int efivar_sysfs_destroy(struct efivar_entry *entry, void *data)
+ {
+-	int err = efivar_entry_remove(entry);
+-
+-	if (err)
+-		return err;
++	efivar_entry_remove(entry);
+ 	efivar_unregister(entry);
+ 	return 0;
+ }
+@@ -621,8 +618,7 @@ static void efivars_sysfs_exit(void)
+ 	/* Remove all entries and destroy */
+ 	int err;
+ 
+-	err = __efivar_entry_iter(efivar_sysfs_destroy, &efivar_sysfs_list,
+-				  NULL, NULL);
++	err = efivar_entry_iter(efivar_sysfs_destroy, &efivar_sysfs_list, NULL);
+ 	if (err) {
+ 		pr_err("efivars: Failed to destroy sysfs entries\n");
+ 		return;
+diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
+index eaed1ddcc803..010febd2ab6b 100644
+--- a/drivers/firmware/efi/vars.c
++++ b/drivers/firmware/efi/vars.c
+@@ -534,17 +534,10 @@ EXPORT_SYMBOL_GPL(efivar_entry_add);
+ /**
+  * efivar_entry_remove - remove entry from variable list
+  * @entry: entry to remove from list
+- *
+- * Returns 0 on success, or a kernel error code on failure.
   */
+-int efivar_entry_remove(struct efivar_entry *entry)
++void efivar_entry_remove(struct efivar_entry *entry)
+ {
+-	if (down_interruptible(&efivars_lock))
+-		return -EINTR;
+ 	list_del(&entry->list);
+-	up(&efivars_lock);
+-
+-	return 0;
+ }
+ EXPORT_SYMBOL_GPL(efivar_entry_remove);
  
--#include <linux/acpi.h>
- #include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/io.h>
- #include <linux/init.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/platform_device.h>
- #include <linux/property.h>
--#include <linux/clk.h>
-+#include <linux/serial_core.h>
-+#include <linux/types.h>
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 99d002438008..24a0c5ef4169 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -180,10 +180,7 @@ static int efivarfs_callback(efi_char16_t *name16, efi_guid_t vendor,
  
- #include "8250.h"
+ static int efivarfs_destroy(struct efivar_entry *entry, void *data)
+ {
+-	int err = efivar_entry_remove(entry);
+-
+-	if (err)
+-		return err;
++	efivar_entry_remove(entry);
+ 	kfree(entry);
+ 	return 0;
+ }
+@@ -219,7 +216,7 @@ static int efivarfs_fill_super(struct super_block *sb, struct fs_context *fc)
  
-@@ -392,7 +396,6 @@ static void ni16550_remove(struct platform_device *pdev)
- 	serial8250_unregister_port(data->line);
+ 	err = efivar_init(efivarfs_callback, (void *)sb, true, &efivarfs_list);
+ 	if (err)
+-		__efivar_entry_iter(efivarfs_destroy, &efivarfs_list, NULL, NULL);
++		efivar_entry_iter(efivarfs_destroy, &efivarfs_list, NULL);
+ 
+ 	return err;
+ }
+@@ -255,7 +252,7 @@ static void efivarfs_kill_sb(struct super_block *sb)
+ 	kill_litter_super(sb);
+ 
+ 	/* Remove all entries and destroy */
+-	__efivar_entry_iter(efivarfs_destroy, &efivarfs_list, NULL, NULL);
++	efivar_entry_iter(efivarfs_destroy, &efivarfs_list, NULL);
  }
  
--#ifdef CONFIG_ACPI
- /* NI 16550 RS-485 Interface */
- static const struct ni16550_device_info nic7750 = {
- 	.uartclk = 33333333,
-@@ -417,20 +420,20 @@ static const struct ni16550_device_info nic7a69 = {
- 	.uartclk = 29629629,
- 	.prescaler = 0x09,
- };
-+
- static const struct acpi_device_id ni16550_acpi_match[] = {
- 	{ "NIC7750",	(kernel_ulong_t)&nic7750 },
- 	{ "NIC7772",	(kernel_ulong_t)&nic7772 },
- 	{ "NIC792B",	(kernel_ulong_t)&nic792b },
- 	{ "NIC7A69",	(kernel_ulong_t)&nic7a69 },
--	{ },
-+	{ }
- };
- MODULE_DEVICE_TABLE(acpi, ni16550_acpi_match);
--#endif
+ static struct file_system_type efivarfs_type = {
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 5554d26f91d8..7c5beec4287a 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -994,7 +994,8 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
+ 		void *data, bool duplicates, struct list_head *head);
  
- static struct platform_driver ni16550_driver = {
- 	.driver = {
- 		.name = "ni16550",
--		.acpi_match_table = ACPI_PTR(ni16550_acpi_match),
-+		.acpi_match_table = ni16550_acpi_match,
- 	},
- 	.probe = ni16550_probe,
- 	.remove = ni16550_remove,
-diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
-index 9be9760886dc..63fedac1bbae 100644
---- a/drivers/tty/serial/8250/Kconfig
-+++ b/drivers/tty/serial/8250/Kconfig
-@@ -565,7 +565,7 @@ config SERIAL_8250_BCM7271
- config SERIAL_8250_NI
- 	tristate "NI 16550 based serial port"
- 	depends on SERIAL_8250
--	depends on (X86 && ACPI) || COMPILE_TEST
-+	depends on X86 || COMPILE_TEST
- 	help
- 	  This driver supports the integrated serial ports on National
- 	  Instruments (NI) controller hardware. This is required for all NI
+ int efivar_entry_add(struct efivar_entry *entry, struct list_head *head);
+-int efivar_entry_remove(struct efivar_entry *entry);
++void __efivar_entry_add(struct efivar_entry *entry, struct list_head *head);
++void efivar_entry_remove(struct efivar_entry *entry);
+ 
+ int __efivar_entry_delete(struct efivar_entry *entry);
+ int efivar_entry_delete(struct efivar_entry *entry);
 -- 
-2.47.2
+2.43.0
 
 
