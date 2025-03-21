@@ -1,217 +1,183 @@
-Return-Path: <linux-kernel+bounces-571499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05934A6BDF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:06:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0B2A6BDF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4525E3AF04C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95381891778
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E701DED49;
-	Fri, 21 Mar 2025 15:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB8D1D6DDD;
+	Fri, 21 Mar 2025 15:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APwaGSfd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kae6lGAS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TtaaFLCY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D85B1D86FF;
-	Fri, 21 Mar 2025 15:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96551BF33F;
+	Fri, 21 Mar 2025 15:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742569536; cv=none; b=AB5RMa1AzfJGfY3ckTeU0/JQIoKtEhkl3AQ0f1BUOVhv/FIB9zvuWWrRZv2+ZsvpV/SrVSKvefzvMDS96/TkFbJanKL+5VlW2Vv/YBWNXr0ej51BeXug9qdCgk9bYslnmlrVvY7DoyMAru8OrlJHSHk0UU6tjfcvv68hbd0jr5g=
+	t=1742569574; cv=none; b=E5/kOqZbrZHmUopoYeOnmZJjLMX38NhMz2i97UA9mWZUp0LtqbWO7IX6jSYW2OtckVYHYqPlXD5rKYYr4sWIqszfdMIwj11oGBP1/DVxb94yIj65PBu0Ep6fEii1VLfjsKPlRp7W4eWW8wSsJG3amrLkBAFOcTJhZRa8RSzhWkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742569536; c=relaxed/simple;
-	bh=LDK5i2JsWcIPqbJqtViwb+7u1TmV0WXlcCRoTF0x1ks=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=S+5l+Ht1LA64kDei+SwvXNbHgavHcVqCAASXrvSJKfkBn+HgF2+dRcrvIvtoI2f4xcjXz3eN9iYQy0I4Z247ttGgsTGpEPbWJ/w2t6l6zrBlRuHfQ2rAuAbqS6KKqC/vCCewG5o1zbCi+/af3EaW/GzGPt7u5de0bCn3OJtlSo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APwaGSfd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CCD3C4CEE3;
-	Fri, 21 Mar 2025 15:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742569535;
-	bh=LDK5i2JsWcIPqbJqtViwb+7u1TmV0WXlcCRoTF0x1ks=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=APwaGSfdOEZrLVz5s3iLIusVTnKNqhTX6atbo8GEnSd/YOyeb04Bc8bgUQ1oxbRE/
-	 r9zNcRcV9lbtb/V3eXCaZZwaQqc9o5d5js5Bup1jPoR69+wzM9SwBfFAJwM4IymAaR
-	 G41weHV5ez+olm0xsIB3vIb7nmDoQ6tru4GSboK7TCIhZHnS8bbirWxn6qvGCQ8gry
-	 LUCfa83Cv8aQk3qp3Oua8U46noRp2YuWCaw4fA3730xOquBLgd6WpxO9s0lvNyGyrl
-	 5U0mQDzaJKDHnCq/2QANzTpK0a59FQs2sc9tHcZ3wVh9SbjObtio6ygYYluqOXoqKT
-	 vTHQhJl6C+D9A==
-Date: Fri, 21 Mar 2025 10:05:34 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1742569574; c=relaxed/simple;
+	bh=XA2Gu50kK0XaU4z9LhCZJkypLoFELm9KQ+TbWjfT2Pc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BXWzpCYenfwBQ90LkNjfM2xTLiNK9fzWOOqZadw++2xifeffGCG0npkDtZGZw6v0qGYPqXwPI3jtFqQhbKadz/3SJhzeVoL1ezqF6W2/jqgUd2e/UR3AcoBh7dWh+p2vwutieNQFrEeR/xx4TCWwWO/mGFnu9U8WXgAs3tA2GlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kae6lGAS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TtaaFLCY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742569570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3xRMm/rve5tX4RS5krW2FzMj7lxvQwvAFwsA0ucEdk=;
+	b=kae6lGASZtykieaHmifexy4idu0yP4qRtqwsFaZV7yrzaYKiC8V7DG0O9PsunJlTpumG03
+	jgSovk0pzFC/TnJ9fOFKwg5nptoI1YGOpdudZVQUlsD71nZsOdXSj6c9IG63q9gPd4KidV
+	n6YHH/DRHSXmyaAR6epLyAtXOWR1DaeO2eh3zQcLrc/HN08kuQ8R6D7PPfDQsZ0wKcPbGU
+	pQgUGp3Hn8vTR8q8tYRKIB6RWDmgEp58IzDvZasZK/XLhRT3chpdZbyfrYYoSrCI+oEgsx
+	jNU0pgUr+oBmbwWBE+tVhSyijVWCvyd2EfIed7mhwdbMGxipUAgl3LX1pFvCOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742569570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3xRMm/rve5tX4RS5krW2FzMj7lxvQwvAFwsA0ucEdk=;
+	b=TtaaFLCY3ksSp92lAsQ+lVHRJ2FGy4RFaqJ1MOBIByr3IsZcWRULCZ4d9vjP/3ETaZWHhx
+	P3hdmMDZmiA7HKBw==
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
+ huibo.wang@amd.com, naveen.rao@amd.com
+Subject: Re: [RFC v2 06/17] x86/apic: Add support to send IPI for Secure AVIC
+In-Reply-To: <20250226090525.231882-7-Neeraj.Upadhyay@amd.com>
+References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
+ <20250226090525.231882-7-Neeraj.Upadhyay@amd.com>
+Date: Fri, 21 Mar 2025 16:06:09 +0100
+Message-ID: <87h63m2zku.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Nitheesh Sekar <quic_nsekar@quicinc.com>, linux-phy@lists.infradead.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- 20250317100029.881286-2-quic_varada@quicinc.com, 
- Conor Dooley <conor+dt@kernel.org>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-In-Reply-To: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
-References: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
-Message-Id: <174256796512.3336836.9071668590061212281.robh@kernel.org>
-Subject: Re: [PATCH v6 0/6] Enable IPQ5018 PCI support
+Content-Type: text/plain
 
+On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
+> +	/* Self IPIs are accelerated by hardware, use wrmsr */
+> +	case APIC_SELF_IPI:
+> +		cfg = __prepare_ICR(APIC_DEST_SELF, data, 0);
+> +		native_x2apic_icr_write(cfg, 0);
+> +		break;
 
-On Fri, 21 Mar 2025 16:14:38 +0400, George Moussalem wrote:
-> This patch series adds the relevant phy and controller
-> DT configurations for enabling PCI gen2 support
-> on IPQ5018. IPQ5018 has two phys and two controllers,
-> one dual-lane and one single-lane.
-> 
-> Last patch series (v3) submitted dates back to August 30, 2024.
-> As I've worked to add IPQ5018 platform support in OpenWrt, I'm
-> continuing the efforts to add Linux kernel support.
-> 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
-> Changes in v6:
-> - Fixed issues reported by 'make dt_bindings_check' as per Rob's bot
-> - Removed Krzysztof's Ack-tag on
-> - Link to v5: https://lore.kernel.org/r/20250321-ipq5018-pcie-v5-0-aae2caa1f418@outlook.com
-> 
-> Changes in v5:
-> - Re-ordered reg and reg-names in dt-bindings and dts to align with
->   other IPQ SoCs
-> - Corrected nr of interrupts in dt-bindings: phy: qcom: Add IPQ5018 SoC
-> - Corrected ranges property of pcie controller nodes
-> - Removed newlines between cells properties in pcie phy nodes
-> - Modified dt bindings to add descriptions and separate conditions for
->   ipq5018 and ipq5332 as they have different nr of clocks and resets
->   As such, also removed Krzysztof's RB tag for validation
-> - Ran dtbs_check and fixed:
->   interrupt-map property in pcie nodes:
->   /soc@0/pcie@80000000:interrupt-map: Cell 13 is not a phandle(0)
->   /soc@0/pcie@a0000000:interrupt-map: Cell 13 is not a phandle(0)
-> - Added missing gpio header file to ipq5018-rdp432-c2.dts
-> - Added MHI register requirement to bindings and to PCIe nodes as per:
->   Depends-on: <20250317100029.881286-2-quic_varada@quicinc.com>
-> - Link to v4: https://lore.kernel.org/all/DS7PR19MB8883F2538AA7D047E13C102B9DD22@DS7PR19MB8883.namprd19.prod.outlook.com/
-> 
-> Changes in v4:
-> - removed dependency as the following have been applied:
-> 	dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
-> 	phy: qcom: Introduce PCIe UNIPHY 28LP driver
-> 	dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller
->   Link: https://lore.kernel.org/all/20250313080600.1719505-1-quic_varada@quicinc.com/
-> - added Mani's RB tag to: PCI: qcom: Add support for IPQ5018
-> - Removed power-domains property requirement in dt-bindings for IPQ5018
->   and removed Krzysztof's RB tag from:
->   dt-bindings: PCI: qcom: Add IPQ5018 SoC
-> - fixed author chain and retained Sricharan Ramabadhran in SoB tags and
->   kept Nitheesh Sekar as the original author
-> - Removed comments as per Konrad's comment in:
->   arm64: dts: qcom: ipq5018: Add PCIe related nodes
-> - Link to v3 submitted by Sricharan Ramabadhran:
->   Link: https://lore.kernel.org/all/20240830081132.4016860-1-quic_srichara@quicinc.com/
-> - Link to v3, incorrectly versioned:
->   Link: https://lore.kernel.org/all/DS7PR19MB8883BC190797BECAA78EC50F9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com/
-> 
-> Changes in v3 (incorrectly versioned):
-> - Depends on
->   Link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
-> - Added 8 MSI SPI and 1 global interrupts (Thanks Mani for confirming)
-> - Added hw revision (internal/synopsys) and nr of lanes in patch 4
->   commit msg
-> - Sorted reg addresses and moved PCIe nodes accordingly
-> - Moved to GIC based interrupts
-> - Added rootport node in controller nodes
-> - Tested on Linksys devices (MX5500/SPNMX56)
-> - Link to v2: https://lore.kernel.org/all/20240827045757.1101194-1-quic_srichara com/
-> 
-> Changes in v3:
->  - Added Reviewed-by tag for patch#1.
->  - Fixed dev_err_probe usage in patch#3.
->  - Added pinctrl/wak pins for pcie1 in patch#6.
-> 
-> Changes in v2:
->  - Fixed all review comments from Krzysztof, Robert Marko,
->    Dmitry Baryshkov, Manivannan Sadhasivam, Konrad Dybcio.
->  - Updated the respective patches for their changes.
->  - Link to v1: https://lore.kernel.org/lkml/32389b66-48f3-8ee8-e2f1-1613feed3cc7@gmail.com/T/
-> 
-> ---
-> Nitheesh Sekar (6):
->       dt-bindings: phy: qcom: uniphy-pcie: Add ipq5018 compatible
->       phy: qualcomm: qcom-uniphy-pcie 28LP add support for IPQ5018
->       dt-bindings: PCI: qcom: Add IPQ5018 SoC
->       PCI: qcom: Add support for IPQ5018
->       arm64: dts: qcom: ipq5018: Add PCIe related nodes
->       arm64: dts: qcom: ipq5018: Enable PCIe
-> 
->  .../devicetree/bindings/pci/qcom,pcie.yaml         |  50 +++++
->  .../bindings/phy/qcom,ipq5332-uniphy-pcie-phy.yaml |  49 ++++-
->  arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  40 ++++
->  arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 234 ++++++++++++++++++++-
->  drivers/pci/controller/dwc/pcie-qcom.c             |   1 +
->  drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c   |  45 ++++
->  6 files changed, 409 insertions(+), 10 deletions(-)
-> ---
-> base-commit: 5744a64fddfc33629f3bcc9a06a646f7443077a7
-> change-id: 20250321-ipq5018-pcie-1d44abf0e2f5
-> 
-> Best regards,
-> --
-> George Moussalem <george.moussalem@outlook.com>
-> 
-> 
-> 
+Please move this into a proper inline helper with a understandable
+comment and do not hide it in the maze of this write() wrapper.
 
+>  	/* ALLOWED_IRR offsets are writable */
+>  	case SAVIC_ALLOWED_IRR_OFFSET ... SAVIC_ALLOWED_IRR_OFFSET + 0x70:
+>  		if (IS_ALIGNED(reg - SAVIC_ALLOWED_IRR_OFFSET, 16)) {
+> @@ -154,13 +159,100 @@ static void x2apic_savic_write(u32 reg, u32 data)
+>  	}
+>  }
+>  
+> +static void send_ipi(int cpu, int vector)
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Both are unsigned
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+> +{
+> +	void *backing_page;
+> +	int reg_off;
+> +
+> +	backing_page = per_cpu(apic_backing_page, cpu);
+> +	reg_off = APIC_IRR + REG_POS(vector);
+> +	/*
+> +	 * Use test_and_set_bit() to ensure that IRR updates are atomic w.r.t. other
+> +	 * IRR updates such as during VMRUN and during CPU interrupt handling flow.
+> +	 */
+> +	test_and_set_bit(VEC_POS(vector), (unsigned long *)((char *)backing_page + reg_off));
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+See previous mail.
 
-  pip3 install dtschema --upgrade
+> +}
+> +
+> +static void send_ipi_dest(u64 icr_data)
+> +{
+> +	int vector, cpu;
+> +
+> +	vector = icr_data & APIC_VECTOR_MASK;
+> +	cpu = icr_data >> 32;
 
+Yes, converting from u64 to int is the proper conversion (NOT)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com:
+> +
+> +	send_ipi(cpu, vector);
+> +}
+> +
+> +static void send_ipi_target(u64 icr_data)
+> +{
+> +	if (icr_data & APIC_DEST_LOGICAL) {
+> +		pr_err("IPI target should be of PHYSICAL type\n");
+> +		return;
+> +	}
+> +
+> +	send_ipi_dest(icr_data);
+> +}
+> +
+> +static void send_ipi_allbut(u64 icr_data)
+> +{
+> +	const struct cpumask *self_cpu_mask = get_cpu_mask(smp_processor_id());
+> +	unsigned long flags;
+> +	int vector, cpu;
+> +
+> +	vector = icr_data & APIC_VECTOR_MASK;
+> +	local_irq_save(flags);
+> +	for_each_cpu_andnot(cpu, cpu_present_mask, self_cpu_mask)
+> +		send_ipi(cpu, vector);
+> +	savic_ghcb_msr_write(APIC_ICR, icr_data);
+> +	local_irq_restore(flags);
+> +}
+> +
+> +static void send_ipi_allinc(u64 icr_data)
+> +{
+> +	int vector;
+> +
+> +	send_ipi_allbut(icr_data);
+> +	vector = icr_data & APIC_VECTOR_MASK;
+> +	native_x2apic_icr_write(APIC_DEST_SELF | vector, 0);
+> +}
+> +
+> +static void x2apic_savic_icr_write(u32 icr_low, u32 icr_high)
+> +{
+> +	int dsh, vector;
+> +	u64 icr_data;
+> +
+> +	icr_data = ((u64)icr_high) << 32 | icr_low;
+> +	dsh = icr_low & APIC_DEST_ALLBUT;
+> +
+> +	switch (dsh) {
+> +	case APIC_DEST_SELF:
+> +		vector = icr_data & APIC_VECTOR_MASK;
 
-arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@80000000: reg: [[2147483648, 3869], [2147487520, 168], [2147487744, 4096], [491520, 12288], [2148532224, 4096], [503808, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@80000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@a0000000: reg: [[2684354560, 3869], [2684358432, 168], [2684358656, 4096], [524288, 12288], [2685403136, 4096], [536576, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: pcie@a0000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@80000000: reg: [[2147483648, 3869], [2147487520, 168], [2147487744, 4096], [491520, 12288], [2148532224, 4096], [503808, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@80000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@a0000000: reg: [[2684354560, 3869], [2684358432, 168], [2684358656, 4096], [524288, 12288], [2685403136, 4096], [536576, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: pcie@a0000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config', 'mhi'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+So you construct icr_data first and then extract the vector from it,
+which is encoded in the low bits of icr_low.
 
+> +		x2apic_savic_write(APIC_SELF_IPI, vector);
+> +		break;
+> +	case APIC_DEST_ALLINC:
+> +		send_ipi_allinc(icr_data);
 
+And you do the same nonsense in all other functions. Oh well...
 
+Thanks,
 
-
+        tglx
 
