@@ -1,130 +1,90 @@
-Return-Path: <linux-kernel+bounces-570629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F88A6B2D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:04:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A291FA6B2D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF2327A7B34
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB77C1893AD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D85C1E0DD1;
-	Fri, 21 Mar 2025 02:03:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C581E1A32;
+	Fri, 21 Mar 2025 02:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rh6CPjai"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF29A184F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E261B1922F4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742522632; cv=none; b=MRRP+vWcVz7B5CTmfLuVFNi76ljNwWGTsayd66K9Rz6edUATHgyaQ82JSaGbvE7+fKZ3/EHD68Z81kXzeTRozekSxoCdt0a0azO5H2UfIAElsRbZEMeP+pRmpUdTS/s/y/SvXwTptaMam5eq0UTYcvXu4vE0t1SQ0MKCW7fYvb4=
+	t=1742522872; cv=none; b=RhAku2yRNhybNLg9z+aNhad7yVD1dZfQxAm4aeg1jeWI2GNnY+i7ECr4fJUZR4ujPDgiuk8q5HGypBPYJF5vXWwDYomgczJ6J/w/2EihEtMPgP+wXd2vtrJe13cG/TUQivI4uq9Zrf+dMRQR3USKFn1fkmi7UkA2HPo7CzsP3t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742522632; c=relaxed/simple;
-	bh=EtW8aCkCfxAc+jWDaWwOmvFv1BqCrugX08wxnKMwleg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tLiT6QKTCXnltt9UbITK8chobVBl5xQq09Rg6gj2igAkw+5gpUWuwKzk8CdGgoD9cBGyU5FfcT6j7anyPVcv+hyDa8vvtAU6UGxHcffajK23j3JwP37lf5lCYarW77ftXp54hxrJBhbdKekINLRF4OS5HAzwJtRFBSc+ZXQ4cVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b89d924a05f811f0a216b1d71e6e1362-20250321
-X-CID-CACHE: Type:Local,Time:202503210942+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:fb2a2945-6a54-4184-b09f-de08bc0e33be,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:33cad0a8e0ce4eabaf9486cca15933d3,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b89d924a05f811f0a216b1d71e6e1362-20250321
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <cuiguoqi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2122844142; Fri, 21 Mar 2025 10:03:45 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 4CD75E008902;
-	Fri, 21 Mar 2025 10:03:45 +0800 (CST)
-X-ns-mid: postfix-67DCC901-193765378
-Received: from localhost.localdomain (unknown [10.41.103.97])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 8F484E008901;
-	Fri, 21 Mar 2025 10:03:44 +0800 (CST)
-From: cuiguoqi <cuiguoqi@kylinos.cn>
-To: info@linutronix.de,
-	anna-maria@linutronix.de
-Cc: sales@linutronix.de,
-	frederic@kernel.org,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org,
-	linux-rt-devel@lists.linux.dev,
-	cuiguoqi <cuiguoqi@kylinos.cn>
-Subject: [PATCH] hrtimer: Fix the incorrect initialization of timer->is_hard
-Date: Fri, 21 Mar 2025 10:03:41 +0800
-Message-Id: <20250321020341.1404557-1-cuiguoqi@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742522872; c=relaxed/simple;
+	bh=8626GOzSKn3oGmjAcfgzeKl8yc5s8nz0JuPUVSCipH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=izQdnfwOzEvZ0t7ZwC96m4HYi+EkHqgjLVPe0joa/+WU0CbJYbgAqsF0SsqMSBMJkhExjDzXH/bmwox74yauAtijmEoaP90ftuS3VRvtjzUReSJqq3NqM1tP3H60FjQD5JnCITvGuXzWrA+a2tMFlF+FgIlbOmVB2F2PmmqQAug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rh6CPjai; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742522870; x=1774058870;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8626GOzSKn3oGmjAcfgzeKl8yc5s8nz0JuPUVSCipH4=;
+  b=Rh6CPjaidDqC6mNQ1TJAb9HsNUpBPWLWD148q7mC5tWiOKfY/314x5e5
+   KOgN3ch31oqPTYsv70YiuOqHv3aAE88iQxsr14WM/4zxCoLedTDEYRqR+
+   IXbWN55D2OEcWW8BlbiF5oA3vu5k8n8QJmMXBlbkn/b0a25pU7ynoixB2
+   KfpWwsQjbeyu0SAl36sZm8HvCov9ufWBar0ptzKxdL+Unc01btC1qnEn8
+   8dnLP4uLM5cH79thMApAiHsOVO4FQXUom6a2vczTeoo0hH/WAF3vHAu+b
+   wySFAUzIm+8CJgcghXbYaHp0lqg7y8VjZirUNxvTNGIh/dqV+4rC/odpK
+   Q==;
+X-CSE-ConnectionGUID: ebiLjBb9TpOCGx5CCc37Vg==
+X-CSE-MsgGUID: KR0ii2OwSCC/aFKhsQp4HQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43028923"
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="43028923"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 19:07:42 -0700
+X-CSE-ConnectionGUID: /tI3jXi4QbemQp7G/MB1uQ==
+X-CSE-MsgGUID: HliStc3nT3OsqbFSFxGubQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="154167549"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 19:07:41 -0700
+Message-ID: <9c6840b6-3bff-4c5e-90f9-c0eaf7748225@linux.intel.com>
+Date: Fri, 21 Mar 2025 10:04:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] iommu: make inclusion of intel directory conditional
+To: Rolf Eike Beer <eb@emlix.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Jerry Snitselaar <jsnitsel@redhat.com>
+References: <12652899.O9o76ZdvQC@devpool47.emlix.com>
+ <12654723.O9o76ZdvQC@devpool47.emlix.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <12654723.O9o76ZdvQC@devpool47.emlix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When PREEMPT_RT is disabled,there is a possibility that
-timer->is_hard will be incorrectly initialized.
-When creating a high-resolution timer and setting the mode to
-HRTIMER_MODE_ABS,the timer->is_hard will be incorrectly initialized.
+On 3/20/25 17:07, Rolf Eike Beer wrote:
+> Nothing in there is active if CONFIG_INTEL_IOMMU is not enabled, so the whole
+> directory can depend on that switch as well.
+> 
+> Fixes: ab65ba57e3ac ("iommu/vt-d: Move Kconfig and Makefile bits down into intel directory")
+> Signed-off-by: Rolf Eike Beer<eb@emlix.com>
 
-Pseudocode logic:
-1. mode
-   >> HRTIMER_MODE_ABS	=3D 0x00
-
-2. bool softtimer =3D !!(mode & HRTIMER_MODE_SOFT);	//!PREEMPT_RT
-   base =3D softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;	//!PREEMPT_RT
-   > softtimer =3D false=EF=BC=9B				//!PREEMPT_RT
-   > base =3D 0;						//hard mode
-
-3. timer->is_soft =3D softtimer;
-   > timer->is_soft =3D flase;
-
-4. timer->is_hard =3D !!(mode & HRTIMER_MODE_HARD);	!PREEMPT_RT
-   >  timer->is_hard =3D flase;				//error
-   >  Based on point 2, by default, the hard mode is selected.
-
-Of course, if PREEMPT_RT is enabled, timer->is_hard is correctly set.
-   bool softtimer =3D !!(mode & HRTIMER_MODE_SOFT);
-   if (IS_ENABLED(CONFIG_PREEMPT_RT) && !(mode & HRTIMER_MODE_HARD))
-	softtimer =3D true;
-   timer->is_soft =3D softtimer;				//true
-   timer->is_hard =3D !!(mode & HRTIMER_MODE_HARD);	//flase
-
-Signed-off-by: cuiguoqi <cuiguoqi@kylinos.cn>
----
- kernel/time/hrtimer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 80fe3749d2db..9d8defb1e9b1 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1571,7 +1571,7 @@ static void __hrtimer_init(struct hrtimer *timer, c=
-lockid_t clock_id,
- 	base =3D softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
- 	base +=3D hrtimer_clockid_to_base(clock_id);
- 	timer->is_soft =3D softtimer;
--	timer->is_hard =3D !!(mode & HRTIMER_MODE_HARD);
-+	timer->is_hard =3D !softtimer;
- 	timer->base =3D &cpu_base->clock_base[base];
- 	timerqueue_init(&timer->node);
- }
---=20
-2.25.1
-
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
