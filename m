@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-571803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54D9A6C26A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:32:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0DBA6C26D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269283AFF80
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:32:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4274018959D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F8E22FDEE;
-	Fri, 21 Mar 2025 18:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A0622FDF0;
+	Fri, 21 Mar 2025 18:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i/nDUDsY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGv/cfXz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7B21E3DED
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A808122F15E;
+	Fri, 21 Mar 2025 18:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581967; cv=none; b=diwR1VCzrUWyNAuQwOwJQ3+YMzP2bxj6Hy8YFaIz/8r5bGPXBIENomT/07Kl811u9pfdywduEzg5qUO2M5Q29+MHlh0ZH5ExOFNeSB748r2sZeA5s/3kImtc07Fd6DCximR4JVm/sn7nS+iXFES3n4KcDm24abioPMRpxowiVBg=
+	t=1742581981; cv=none; b=GsKSLDqR1LdJeKJ92ryanVUXpWbN5LJAn2Jm3hhdWUv4NPGAJFJIqxpXyvM76SKMP/2SXUvVX8FtVmJDhs8lUh5JiBHiXFh7lddNfQmXZrk5HWL2iAEsnAw1egzlpX9R7Fc8tFaJV+5V7PjKSI9wySVEGE0q8t64hj895M8PNj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581967; c=relaxed/simple;
-	bh=OGIF01jTzLLwnp3yRBbvZluiVgmfjC+jL66qfu3gwks=;
+	s=arc-20240116; t=1742581981; c=relaxed/simple;
+	bh=xK61NJ5AcpPTkZxqeIXw3ikD2Gq+iucUtG013FT56sI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZEs4MZis2bKlU5i+CVvOHro9h9xkReQXD+f5O4BNEmve5Tk4/fZQtGhZllFmV3EgARlLbR2s+QDya3dflpXgcDNSha2LA7+hxOd3a7pwUb+ZcLSAJpd6N9bqDFLHx9qGg4zj191BDq8LAyDvcUx+CRQca2CBDisMqiO9g0CSAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i/nDUDsY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742581964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x6Pr4yNEy0Ee63hyTGb7eb9xdvxKn8eEKjzFLCkdY+o=;
-	b=i/nDUDsYaS24go49HwGVoHmrV3GQzY5+/B6R5QZfKSYRmtL6CyrJU7gkamhakkLcbNpQUt
-	vFqxlYkntCR6BX4TS2je4LoK4iYiRNNivm2eW2//KO/9c+NcL403XQFZj2gdq494euIT2s
-	Piz/OxTl5ND/OHvLCQrzXva/SydVz1Y=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-oJ6dmARVN9ubevgE53ar9g-1; Fri, 21 Mar 2025 14:32:36 -0400
-X-MC-Unique: oJ6dmARVN9ubevgE53ar9g-1
-X-Mimecast-MFC-AGG-ID: oJ6dmARVN9ubevgE53ar9g_1742581955
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2265a09dbfcso57935635ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:32:35 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQsLgfUgUtkGbWpUtYhAPS1m0KbJaFlols2rOfSyfxt9HH1ArQrqWAxxvgU4RtonsGGjoK/cxINyiCb8rnRmD3fzxUfby9j8ijJ1onyTpGo6RbVX0zdVXmBL0ZLY4SLVGJ5EtFLfK95dqI2goRg6Gpt5tr16lWYVxCwYpR20mBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGv/cfXz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so55985715ad.2;
+        Fri, 21 Mar 2025 11:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742581979; x=1743186779; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HYYSOKUxEGqctY3EfhN9A2yhuGU3c7aUKlXkZitVseM=;
+        b=CGv/cfXz6h16+MYAEWgGHaE6luKawPtlwm/UyZrmG9n5SxPdWQHMT34son5uRzKqKU
+         pQH5juq///ouih+AT4duyeFz0Q1766OeEQc+hBMFxIjZBPIyTuvU+369ITzGCkWbBUI4
+         c/SwIbLtKAr1wRa17cxIsLvjMHYyUgG9ahk9FhcLiJgxBKM99DpiC9RMNXf+0d2PpeFu
+         +dhSOaWyAbczYDIMFMpqe9jD1fel0n7jPlkGCNeasQtI9OUGITbDL0x9m6OBms2MKBqo
+         KjScHQ4i1R2yNrOfqTLysiNJuPAIaSEZNCaGt9/r8LJ/9JXwWdGTMgDYTkGCxcaF7fur
+         rcXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742581955; x=1743186755;
+        d=1e100.net; s=20230601; t=1742581979; x=1743186779;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x6Pr4yNEy0Ee63hyTGb7eb9xdvxKn8eEKjzFLCkdY+o=;
-        b=wi+QKgYMY5mXcle8u7iYCOf9dPw39IUe2tbBfs+hGAI9ffyDm2XGbdE+f7pHCpYKw2
-         ty4idKex069apcF4yyHZyJy4s0TNFElk7lqVgJj5gSNJHPHRH0DcaA5J4R+TigUAWOwH
-         Sd85aOFrGvDo8kUxDf6PinaTeLD/G0goRcgz4D3bvHBFnZSM4UkYXufKw5byI01d750i
-         EvkAzJ8t1/WsqZmNTE2uNkiYEAaxmSxr+UILj3WqUbp2/Ym8kLMzGReJbABnyCxRytlK
-         YqxQe6GWQrIcxZK4Cxmu+808+mUEzJvRcK20aAO2eaQP+fL+MJusgbDckHsqJZ2H+/Bt
-         xPdg==
-X-Forwarded-Encrypted: i=1; AJvYcCURC04eaqKRPnzljO71vPtDfBp+EOJQ2VeGuI32J754nAzmtYwQ/FQ9UVhI3vTQGzXbaztuR1L1NuGzA+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy4QxdOd9MgyQ0WUluGGeT9VXXlFDFFgQ8X2rb7dDV5PsIZQh+
-	nerE6Og8nDr6OIylOLufC+Llobe81V4TtiEz3FaeAHc9iGjN9uf4HK4s5J2cqks2OdqHEBijzZd
-	xgMY8wRPp0TDyDbi3P8SLn5JrLoetQeyxbH0NZGlFCoGEqN3WTD0tz0BFrQ9pDQ==
-X-Gm-Gg: ASbGncvdmLUNEFm4ebwyMJgu27nfMXen8RhSofIkOBraa/T9tOtDCEVCcfhjKOXCL1Q
-	gepPA6chKoXTTsE+okzYbElSO2AEldlsaRfA2QWhT033n7j7+fMrFQQslaBn+ioSeQ7luArCxHn
-	EaFd2UmDeGfQ8fptYpMyvrMR05Z4yZ5Zni5jSS5Kp93YQsh7DEW5Sms+XgW7FAGXV9HryPIU1uB
-	RSlsWZ2sn2hYPyrisPi2lwRHmWrX3z/ae/Rl/bWg8qpMB60GpOM1lYVujqd9u2x38+Bzc4jJVgH
-	eLrPG8KF
-X-Received: by 2002:a05:6a00:3d49:b0:736:592e:795f with SMTP id d2e1a72fcca58-7390598e637mr6094602b3a.9.1742581954620;
-        Fri, 21 Mar 2025 11:32:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgvI4Fq7PhyVG2/6UfPhY7tEePZCtkHS/CCaoQm+lEN40XhsJxvkXhRtIdT7ONaz8I8Nvvbw==
-X-Received: by 2002:a05:6a00:3d49:b0:736:592e:795f with SMTP id d2e1a72fcca58-7390598e637mr6094532b3a.9.1742581953971;
-        Fri, 21 Mar 2025 11:32:33 -0700 (PDT)
-Received: from redhat.com ([195.133.138.172])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390618e08esm2305706b3a.169.2025.03.21.11.32.26
+        bh=HYYSOKUxEGqctY3EfhN9A2yhuGU3c7aUKlXkZitVseM=;
+        b=NnBIDpWHrW8quC/4IuU0i5J37cAfjU7VdBCFhZ8FnAgcKrN4U2KziQDB8+QpRMVQNJ
+         9orYBVi1hHnz6Rb2D/o1CO5xiJ4RRRh5ijD1ngCht3JQZGat26e593+e/N42hKhoxrlh
+         sjgUOI6eIZIxmWZsM3PDKOr7Keiqfz5KZqaGE16Lixm/ogQARQS86vov8e9lVRysU1rM
+         QE0Zan0DH5w1RSCSyiKn34dWdzZjBIpSx3fYEe8LK2WeTU0nbvmPsr0v6gEYERHAmJzC
+         oNWGmKZea5qomNbnp3QNPufh2gh1FaFTIViTkfDQaJ5je6LceVCLV6H8KZbdbPLO+m1z
+         4Hyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGS4txXeToTt13ar+OqW4hCcLSfAdPgEQooBIkRIIhgW2W7NqIucaKOEOBS/xfzYtbipT5+Jjsira/KY8=@vger.kernel.org, AJvYcCVfZQ7gYMkgeDhgZkQ0YezJQmTIx45pr4t6/ddl/Nf+Veql2THJ5BLSYGe6BZdFkE0SfXrBxzuCQnfoLP8DMX/e@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMn6ZzrVjYzzJkPcTgr+T8BLtnl7EN8ENL41fwAaD/1dAbvlPB
+	Ipi2sTZLiHWBgGTbBcFWdZOM7Bmht+xGtov9ka9s/pZvOIhBewZXWMNnQw==
+X-Gm-Gg: ASbGncsDEneln+317cVuwqVSKI0QxgPRdk5NY4izN1ltgVrtD6UQscyXzQXuBlUI+gA
+	RceZl8GwKinaDncqCwFErYLG8TqS2lvkbli+37QNsi40eaYcIYD9NA2g6W7Bzc0EPaA7P64EfBD
+	rHZcGlkGQpWQjEV3l/etZsvtWecZD7Y/ke846K5giIH4JFa0uWBrztLszn5E0aLMpfNgimNzuMp
+	Tp+LXyos9lK9wCdbZUGulxyU38BSGr0tb9JcOu1zo7l/bZABULzIeuKDMDZZoSGS8cJp5Ybg0KH
+	Kb9BrEtiAqYsc4j8ksrkNUtikaNoPBCd5sCk87SwRlR3
+X-Google-Smtp-Source: AGHT+IG4Y4KdKGYoy70io/r8gYLZiFwsgOksUI+QUCeOo40CKssKjfePE5RVgUBb4ckPKQzflnN8DQ==
+X-Received: by 2002:a05:6a21:394b:b0:1f5:769a:a4be with SMTP id adf61e73a8af0-1fe4347101emr8883211637.36.1742581978798;
+        Fri, 21 Mar 2025 11:32:58 -0700 (PDT)
+Received: from localhost ([216.228.125.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73906123ea2sm2382632b3a.108.2025.03.21.11.32.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 11:32:33 -0700 (PDT)
-Date: Fri, 21 Mar 2025 14:32:24 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Claire Chang <tientzu@chromium.org>, Rob Herring <robh+dt@kernel.org>,
-	mpe@ellerman.id.au, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	boris.ostrovsky@oracle.com, jgross@suse.com,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	heikki.krogerus@linux.intel.com, peterz@infradead.org,
-	benh@kernel.crashing.org, grant.likely@arm.com, paulus@samba.org,
-	mingo@kernel.org, sstabellini@kernel.org,
-	Saravana Kannan <saravanak@google.com>, xypron.glpk@gmx.de,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	xen-devel@lists.xenproject.org, Thierry Reding <treding@nvidia.com>,
-	linux-devicetree <devicetree@vger.kernel.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	Nicolas Boichat <drinkcat@chromium.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	"list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-	Jim Quinlan <james.quinlan@broadcom.com>,
-	Robin Murphy <robin.murphy@arm.com>, hch@infradead.org,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, graf@amazon.de
-Subject: Re: Using Restricted DMA for virtio-pci
-Message-ID: <20250321142947-mutt-send-email-mst@kernel.org>
-References: <20210209062131.2300005-1-tientzu@chromium.org>
- <979b6a34ca5724ced1d4871b58bf227065d7da57.camel@infradead.org>
+        Fri, 21 Mar 2025 11:32:58 -0700 (PDT)
+Date: Fri, 21 Mar 2025 14:32:55 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
+	Brad Figg <bfigg@nvidia.com>, David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: distro support for CONFIG_KUNIT: [PATCH 0/3] bitmap: convert
+ self-test to KUnit
+Message-ID: <Z92w13L8v1MvPC8_@thinkpad>
+References: <20250207-bitmap-kunit-convert-v1-0-c520675343b6@gmail.com>
+ <Z6eaDuXnT_rjVSNS@thinkpad>
+ <CAMuHMdUsq_39kgBa8oanXeTzv44HuhS1e5MK7K2jxkVXQ7uWdw@mail.gmail.com>
+ <bd71c705-5f57-4067-b200-fd80b98ddbc9@nvidia.com>
+ <Z6pfomw-3LuWoQQo@thinkpad>
+ <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
+ <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -122,59 +106,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <979b6a34ca5724ced1d4871b58bf227065d7da57.camel@infradead.org>
+In-Reply-To: <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com>
 
-On Fri, Mar 21, 2025 at 03:38:10PM +0000, David Woodhouse wrote:
-> On Tue, 2021-02-09 at 14:21 +0800, Claire Chang wrote:
-> > This series implements mitigations for lack of DMA access control on
-> > systems without an IOMMU, which could result in the DMA accessing the
-> > system memory at unexpected times and/or unexpected addresses, possibly
-> > leading to data leakage or corruption.
+On Fri, Mar 21, 2025 at 12:53:36PM -0400, Tamir Duberstein wrote:
+> Hi all, now that the printf and scanf series have been taken via kees'
+> tree[0] and sent in for v6.15-rc1[1], I wonder if we'd like to revisit
+> this discussion.
 > 
-> Replying to an ancient (2021) thread which has already been merged...
+> As I understand it, the primary objections to moving bitmap to KUnit were:
+> - Unclear benefits.
+> - Source churn.
+> - Extra dependencies for benchmarks.
 > 
-> I'd like to be able to use this facility for virtio devices.
+> Hopefully David's enumeration of the benefits of KUnit was compelling.
+> Regarding source churn: it is inevitable, but I did pay attention to
+> this and minimized the diff where possible.
 > 
-> Virtio already has a complicated relationship with the DMA API, because
-> there were a bunch of early VMM bugs where the virtio devices where
-> magically exempted from IOMMU protection, but the VMM lied to the guest
-> and claimed they weren't.
+> The last point is trickiest, because KUnit doesn't have first-class
+> benchmark support, but nor is there a blessed benchmark facility in
+> the kernel generally. I'd prefer not to tie this series to distros
+> enabling KUNIT_CONFIG by default, which will take $time.
 > 
-> With the advent of confidential computing, and the VMM (or whatever's
-> emulating the virtio device) not being *allowed* to arbitrarily access
-> all of the guest's memory, the DMA API becomes necessary again.
+> I think the most sensible thing we can do - if we accept that KUnit
+> has benefits to offer - is to split test_bitmap.c into
+> benchmark_bitmap.c and bitmap_kunit.c.
 > 
-> Either a virtual IOMMU needs to determine which guest memory the VMM
-> may access, or the DMA API is wrappers around operations which
-> share/unshare (or unencrypt/encrypt) the memory in question.
-> 
-> All of which is complicated and slow, if we're looking at a minimal
-> privileged hypervisor stub like pKVM which enforces the lack of guest
-> memory access from VMM.
-> 
-> I'm thinking of defining a new type of virtio-pci device which cannot
-> do DMA to arbitrary system memory. Instead it has an additional memory
-> BAR which is used as a SWIOTLB for bounce buffering.
-> 
-> The driver for it would look much like the existing virtio-pci device
-> except that it would register the restricted-dma region first (and thus
-> the swiotlb dma_ops), and then just go through the rest of the setup
-> like any other virtio device.
-> 
-> That seems like it ought to be fairly simple, and seems like a
-> reasonable way to allow an untrusted VMM to provide virtio devices with
-> restricted DMA access.
-> 
-> While I start actually doing the typing... does anyone want to start
-> yelling at me now? Christoph? mst? :)
+> Please let me know your thoughts.
 
+Sure, no problem.
 
-I don't mind as such (though I don't understand completely), but since
-this is changing the device anyway, I am a bit confused why you can't
-just set the VIRTIO_F_ACCESS_PLATFORM feature bit?  This forces DMA API
-which will DTRT for you, will it not?
+I asked you to answer to 4 very simple and specific questions. You
+didn't answer any of them. David sent a lengthy email that doesn't
+address them, either.
 
--- 
-MST
+None of you guys submitted anything to bitmaps - neither in library,
+nor in tests. Your opinion about what is good for bitmap development
+and what's not is purely theoretical.
 
+Real contributors never concerned about current testing model.
+
+I think that you don't care about bitmaps. If bitmaps testing will get
+broken one day, or more complicated, you will not come to help. If I'm
+wrong and you are willing to contribute, you're warmly welcome! I always
+encourage people to increase testing coverage.
+
+If you'd like to add new cases to existing tests - I'll be happy. If
+you'd like to add completely new tests based on KUNITs or whatever
+else - I'll be happy just as well.
+
+Thanks,
+Yury
 
