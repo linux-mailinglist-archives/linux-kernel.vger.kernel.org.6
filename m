@@ -1,84 +1,85 @@
-Return-Path: <linux-kernel+bounces-571519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C956FA6BE43
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:23:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCC3A6BE4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:25:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B94A16B7F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95AD188AF66
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C0D1DE4E5;
-	Fri, 21 Mar 2025 15:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD0E1DED72;
+	Fri, 21 Mar 2025 15:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsKdcGF/"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCIcH9EC"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B9664A8F;
-	Fri, 21 Mar 2025 15:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1647229405;
+	Fri, 21 Mar 2025 15:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742570580; cv=none; b=tA/W9pLVoWVdnXwTZ+LYKrFVLwIVvKye2iQ1lhd4W1GPn1H71aTnu12eNH4nrshmlZxQf2ezhULdTAdzjKIplZ7g5uM8EDz/Vt3om7I9xrxgvpHfQR5CCSSXGRkCkUDZ5gRkMAVYBccuMjav9003ZfeSL2vdewLXv7mR1R+j2V4=
+	t=1742570711; cv=none; b=s/9Y0kMFRgbl2tLU02cZORxGDsSsiK5L3SsY4jSqfG4z5hIQuaUKvRSFmcv9zmRyQdHDcnFoGvJcBkWcudAMVp36VaQrkXjcKAQ6eK92e8e/bkhqYThLNAWX7/wiHlSWzLJNdqNn3NwsxTwdqMgDO9eOgP7hVhky3selz4utyFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742570580; c=relaxed/simple;
-	bh=NP5yRsiuzlqMxHRcHuBhZYOrMEcgFy7u5CFgBe8v/G8=;
+	s=arc-20240116; t=1742570711; c=relaxed/simple;
+	bh=gonmBaD35T6vhYWzr4nVLaUUNngSAuVoY9nj188RzKY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=guL/Zavm0UY0J9CySBsrdDxX5P7dbJkFExyqMdPt+Xlb0d9XpTFwXSIjnR8i3NSdDPQ0wQER0UlWRpxj2DSHUZFYoz76vZ9ETDB7Qs2qDOrMrX/V825tH4OGvlCM6W5DUH6R2wk9fJvZ8FsgEXAngvsELj/Fuhx2ehJVKLBlo5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsKdcGF/; arc=none smtp.client-ip=209.85.208.169
+	 To:Cc:Content-Type; b=dAgsnFeEtwTaTrlM2khwsscfmB15aKaPwvaNFn4QD7b/F4xo+QiYLyECu/m2MJzLFASs48LEx2F85zDEXRj7Z+tp4VER5tay2CFacK3jt2VD5s8TBHr/TDGmUN/UnyvgfiiQ21UNm0H63KCFV4OsaEg2v9Qj4biKPzjrzDArWoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCIcH9EC; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bfe0d2b6dso22597541fa.3;
-        Fri, 21 Mar 2025 08:22:58 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bf1d48843so20329861fa.2;
+        Fri, 21 Mar 2025 08:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742570577; x=1743175377; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742570708; x=1743175508; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qfrErcag9Q092oLaTM67M17Xruxr3+6yAHhWH9MGFgc=;
-        b=RsKdcGF/6OfrdfLjWmbajxHE+f9aoyTl+NBsI/PgoRnCNa7d5Z1WfSlSjMQMklI0Rd
-         AiPZ+KfJ/JmBEpD3EBmEzPoG2tGTkxr1cHeHMDxLjZ5QYX5XvfnrV/uGzqgtTZ0UMDEH
-         RtOTfmCo147CGy5Gd+CrWyI1FB0ejn7/oOUhOwpE1TQ203HC3CQyEe1Yyho7gHucVfyz
-         Y37tn11HtpX6qFnoAyMF6gNbteFpZTQeVKOAIqBr6W/DFHEFZ1Pjcw2qhpj5FlSiDG6T
-         IH+9YUip8cxUmz+Y+POkIw3vlmKt+OS7oh5bKcASaWVmQbG3Rog3+Fb15HYHzkYQkb9v
-         3m3g==
+        bh=9FeMkEswfDRDBCyza92nNhHVhv8r9MHi5/ng87liaRo=;
+        b=UCIcH9ECfC0huBZyIcrC4rKhmxKUheAn/sOY17bEe4VN7oldlJqR+08r68zwtsshr5
+         P02WJwqlkYiD8Mb94PHXLv3YD4Yzd08AucHU1pGBBcPiinq0X8EEqFdq1gM9cx6DZIIF
+         YnmKoZPN0LEGU4qP1vqcpI7lKikhLr2eYP4ftcoiK/Zr12aIDogXoHyKoF1z7MVWCjvy
+         uCnhXqy+n7OclFPtCMnD91UFUkWWKQ1iPFLxxcjRqUZkMFqCJ8D7Z7zaMt4KG6xDh9/q
+         6tpRh+62TIb7DP12i6fj+ZatBAs6JOfKLK2uH2Gd54ZS8M+AOGKuggOL1+tS6fMBSoJk
+         2p7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742570577; x=1743175377;
+        d=1e100.net; s=20230601; t=1742570708; x=1743175508;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qfrErcag9Q092oLaTM67M17Xruxr3+6yAHhWH9MGFgc=;
-        b=cDxIzaygy3SOoW5pADXyiycYV/02h2L3+ur4CwWr4erj7nRPVYY5J+VNlhTDJnNZco
-         Y4+4CR1fP7tcy9+iGZe2kPEjHaS1B2TyiCCfBw65O4U0Z80zxRajCEeGDxrCh+h+72tH
-         20xjQXsKhKTnzSujTyvLlDRxcBu6r6Jw5UodUVYr/xSHNG+ujlYJmsy5Fh43Dxhx5HV0
-         Eey3y42aaXCayPg7yke9vZBH9DjeclnQLCcnButyCNmnEZf/r7dlItIYFtEgCV5NwCFK
-         v2qcuNyew5NxNvW7/CnhJXlwFChEl3N8qhlhwBzSnkC6PCrSLo3ZrU9LEJYaMytaPBNF
-         n6SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWG1Sjg1OvK+5ZhuhhrPJqWsFb8OY3I3rOxoDJOtRyaLkFKEPSVcYTdEkMDjjuTnz8wNx7vi9BZq56SD2eXN70=@vger.kernel.org, AJvYcCWImCsDlyw+kaAhiaAPGkkRNr6SUGoQLdrFPagu9RDMM9dvqxUENAZeVpa+8LZXzFnLfZOoS0dtETHYx1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtBvPfjg7G8bGBEgNgSiH2ook59mLowESC3FYVo16OwjS2CLGW
-	R1g8oxbpYQa/hp7HUCkz4F6w+3smb69V85IpNYPSobvmYB5Ara9TYeNRo1g4rAs2wpfENrVQZol
-	MJ+s1dih2nHex5xpDsr5DDOllLj9qC+QZOyaByIOS
-X-Gm-Gg: ASbGncvWIT069Gcf471150qEegR2nuo1nhinFNy/VDT/qjMys/JaAIj21GMG5G2nprN
-	k6qEEEcPmns3gnXQ+Ci9UULrf4O6gJIbzcXx0NPpeMPJo18fJAUVclf6oThcG1XvEKdalkD47Dp
-	pqLbhkOMfCNAyQZ75GjJnZ/z66p62PIpLmEEVoCi7PYw==
-X-Google-Smtp-Source: AGHT+IEFmQtpfMpBZqMXt7QD3NIaKyDBBl/rhs1v/ToyN3SVhxZRO9zIGjPQ309BUsUvmDWvTMlZiIeOSnSs3rRtves=
-X-Received: by 2002:a2e:95ca:0:b0:30c:1d:b147 with SMTP id 38308e7fff4ca-30d7e22a5b7mr12483731fa.19.1742570576694;
- Fri, 21 Mar 2025 08:22:56 -0700 (PDT)
+        bh=9FeMkEswfDRDBCyza92nNhHVhv8r9MHi5/ng87liaRo=;
+        b=n93vae7AHQq1OqHVtS3iReMc19PLXyUTOIPODMMyD50jO/zTZ+/Q3r2CfLTrPFTycA
+         ne7iwtvTcuR+5J2qvZHHSvEBy9L9jaGgC6LQQKTs3owo/feJhha2D+0HdJVkv6IYcHeJ
+         ifYe2figPOqo5QTIN/jv6nslPKEGZHZuQmwvSK23ZjtbzZ9GfVpSnScN0oYkWQfL7Zhs
+         1hViFkxC/4/k5idau9fWplNNh7gTG47dJiXikIKH2QWF9QwANMNXVck5zEQhVerIB1n9
+         8L9AMSdTY0mt17AmFplSZ15YfZsNKVqtmv8svPRiyK77BBsbE4k1muoX7nUTXRXCwIxe
+         uorg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWF/JAqfrLvbHxxKDieO+MEmvgp336jGAg8LoBR7dcc2bvk5SB2hlW1AMrlvJzTYg0OCtFAF5n2wJzEDY=@vger.kernel.org, AJvYcCXi/7YJ/z+kl6UT5QSDHz/yzTWwwJhxW8lKnJPbe3WkEkNqHkuhoXfRqXNxQkJ1xpgIGT38nUZzIIAjmxCY8Pw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3XSlKjKr2x/f5OS0DF2BQ/J5YXutjzj43pFAc1YpT1YK1FZ2D
+	RHctQ+EvJBYffPIhCZNHLwbj/ZrtotbFhVYz9LyHR8OPKF9FyG0voMeb5LxmIkkVJh51mBuUCaa
+	HdD8g30PngkgBjToEHf2KPKUuSTKOn3vwEbbdTQ==
+X-Gm-Gg: ASbGncse9H0WMqSperGsrTNo+l/oOZA+VGrsIYMrqhcR+lnWY83qmNUG4Pw38YxmoPN
+	pZrICnCE8H4Tmft6JdppF4J/SvH+x7l3kx53CWeSP5CeMGCSaC6IO+Rzx6Jq8BVSIprQHQontmt
+	IoT+ffKWgToBMZrLFUFvTNIdrHi2Gf3qvOnH1K64dtZLPB6HWgUK1y
+X-Google-Smtp-Source: AGHT+IFV1kwk7Dc1/DJ8opPqj/YijponY1HB8C2Apxe4rbjqW+R/8bqgWst9NM8QjnR++Gs/zUMZYMaJ9OZq75kwj08=
+X-Received: by 2002:a05:651c:1189:b0:30c:160b:c766 with SMTP id
+ 38308e7fff4ca-30d7e22790emr12839181fa.14.1742570707834; Fri, 21 Mar 2025
+ 08:25:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-3-7dff5cf25fe8@google.com>
-In-Reply-To: <20250320-vec-methods-v1-3-7dff5cf25fe8@google.com>
+References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com> <20250320-vec-methods-v1-5-7dff5cf25fe8@google.com>
+In-Reply-To: <20250320-vec-methods-v1-5-7dff5cf25fe8@google.com>
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 21 Mar 2025 11:22:20 -0400
-X-Gm-Features: AQ5f1Jrng4wUdLdKFKlmT_YGTLp_gs8rZxxYAHCfCXDw4YcmhXdOgqlmy-1DkDk
-Message-ID: <CAJ-ks9kFU+epCF3C4yUo5E2dVeyeBf+Fuc+rWe+2CM1OQvRDTA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] rust: alloc: add Vec::push_within_capacity
+Date: Fri, 21 Mar 2025 11:24:30 -0400
+X-Gm-Features: AQ5f1JpXBlGnQ3JazYbDH3PPIovQYCgLxV02N5l_V4O0jjX8zkwXC8nGFpuSlPI
+Message-ID: <CAJ-ks9k=SxS_zAATadm8SZkfcY2OciYNaty3=WEs2iv5nFJRyA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] rust: alloc: add Vec::retain
 To: Alice Ryhl <aliceryhl@google.com>
 Cc: Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
@@ -88,75 +89,61 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Mar 20, 2025 at 9:57=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
 rote:
 >
-> This introduces a new method called `push_within_capacity` for appending
-> to a vector without attempting to allocate if the capacity is full. Rust
-> Binder will use this in various places to safely push to a vector while
-> holding a spinlock.
+> This adds a common Vec method called `retain` that removes all elements
+> that don't match a certain condition. Rust Binder uses it to find all
+> processes that match a given pid.
 >
-> The existing Vec::push method is reimplemented in terms of the new
-> method.
+> The stdlib retain method takes &T rather than &mut T and has a separate
+> retain_mut for the &mut T case. However, this is considered an API
+> mistake that can't be fixed now due to backwards compatibility. There's
+> no reason for us to repeat that mistake.
 >
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/alloc/kvec.rs | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+> To verify the correctness of this implementation, you may run the
+> following program in userspace:
 >
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index 9943358c70aa63f5ad7ed9782cb8879d7a80a8fb..df930ff0d0b85b8b03c9b7932=
-a2b31dfb62612ed 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -284,6 +284,31 @@ pub fn spare_capacity_mut(&mut self) -> &mut [MaybeU=
-ninit<T>] {
->      /// ```
->      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError>=
- {
->          self.reserve(1, flags)?;
-> +        let err =3D self.push_within_capacity(v);
-> +        // SAFETY: The call to `reserve` was successful, so `push_within=
-_capacity` cannot fail.
-> +        unsafe { err.unwrap_unchecked() };
+>     fn retain<T>(vec: &mut Vec<T>, f: impl Fn(&T) -> bool) {
+>         let mut num_kept =3D 0;
+>         let mut next_to_check =3D 0;
+>         while let Some(to_check) =3D vec.get_mut(next_to_check) {
+>             if f(to_check) {
+>                 vec.swap(num_kept, next_to_check);
+>                 num_kept +=3D 1;
+>             }
+>             next_to_check +=3D 1;
+>         }
+>         vec.truncate(num_kept);
+>     }
+>
+>     fn verify(c: &[bool]) {
+>         let mut vec1: Vec<usize> =3D (0..c.len()).collect();
+>         let mut vec2: Vec<usize> =3D (0..c.len()).collect();
+>
+>         vec1.retain(|i| c[*i]);
+>         retain(&mut vec2, |i| c[*i]);
+>
+>         assert_eq!(vec1, vec2);
+>     }
+>
+>     // Used to loop through all 2^n bit vectors.
+>     fn add(value: &mut [bool]) -> bool {
+>         let mut carry =3D true;
+>         for v in value {
+>             let new_v =3D carry !=3D *v;
+>             carry =3D carry && *v;
+>             *v =3D new_v;
+>         }
+>         carry
+>     }
+>
+>     fn main() {
+>         for len in 0..10 {
+>             let mut retain =3D vec![false; len];
+>             while !add(&mut retain) {
+>                 verify(&retain);
+>             }
+>         }
+>         println!("ok!");
+>     }
 
-I'd prefer an unsafe inner helper to this `unwrap_unchecked` call --
-this safety comment is actually describing the semantics of a safe
-function which can change without necessarily triggering scrutiny of
-its callers.
-
-> +        Ok(())
-> +    }
-> +
-> +    /// Appends an element to the back of the [`Vec`] instance.
-> +    ///
-> +    /// Fails if the vector does not have capacity for the new element.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let mut v =3D KVec::with_capacity(10, GFP_KERNEL);
-> +    /// for i in 0..10 {
-> +    ///     v.push_within_capacity(i).unwrap();
-> +    /// }
-> +    ///
-> +    /// assert!(v.push_within_capacity(11).is_err());
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn push_within_capacity(&mut self, v: T) -> Result<(), T> {
-> +        if self.len() >=3D self.capacity() {
-
-len() > capacity() should be impossible by the (implied until
-https://lore.kernel.org/rust-for-linux/20250318-vec-set-len-v2-1-293d55f82d=
-18@gmail.com/)
-type invariant.
-
-> +            return Err(v);
-> +        }
->
->          // SAFETY:
->          // - `self.len` is smaller than `self.capacity` and hence, the r=
-esulting pointer is
->
-> --
-> 2.49.0.rc1.451.g8f38331e32-goog
->
->
+Now that we have kunit in rust-next, should we make this into a test?
 
