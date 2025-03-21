@@ -1,68 +1,55 @@
-Return-Path: <linux-kernel+bounces-570728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C394A6B3F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:15:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8D6A6B3FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B30C188B9E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:15:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97873B8C3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00141E9B22;
-	Fri, 21 Mar 2025 05:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20311E47C9;
+	Fri, 21 Mar 2025 05:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1wmiI9+V"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="snLL6CxI"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62F31E493C;
-	Fri, 21 Mar 2025 05:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C601876;
+	Fri, 21 Mar 2025 05:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742534098; cv=none; b=Ol6B1hGJj2GDJZTzgE6hjMEJkWk2SbHqLzsuvO70xMn043S8K0tYkS0nIwbqKSbae/SuWmcaFj3E0MNnvJcMXeJGI1hRXaPuVkSbruQO0OC6rYggXpQA6AcmQnO0GeL/vkqUnMJ9jP3pb0xdNIa5+Dlzw5wjSv4V4CxyzloPw+c=
+	t=1742534536; cv=none; b=WJ5Cz3LsZwnutZ6zhRopdiIgUkK5BNQmZgoK82aQ1BDHKS9jZReLv2AMKeSn1xpsXWh2vuKGlX76xFoAqep8riYJQNM3lHRbZk5G1NuKB035VPu1qPWAKN/6hz1ix0LCjFFpUlZmeB/jcZcxytCWl5K7eNa6ZgkeJZ0tqFZS25Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742534098; c=relaxed/simple;
-	bh=xdG9r9zig5930+Z9+K5PrYoRrYhQzmwyeGDldmRg6fM=;
+	s=arc-20240116; t=1742534536; c=relaxed/simple;
+	bh=D0Pei1toekIKyJ/MVpUeBKX12yw54PAwd6J9pJFnZCo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4IxCqx65jsDNo0m/34U/MgSROzar4pBrWfR5PaIcczYQ6VOMDYzsxpLP6y6aA/hcpfqzZuZ7Ii2W8NuEwm3ooP3jC0HhleMufXHWlLDgoze67MRv4AfPZikyose7B1BMbcZckp5EX0yjPBQUIaSEp+B8ALLqjeXfawiDL9FiQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1wmiI9+V; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fIC/SAXuaviF4kGty41Kn3ZZ26v8zIm5FHzMRtfkfFc=; b=1wmiI9+VZjGjXVJSYgYQgrg6N1
-	t5dpCQ9cWL8kFMKwc19IlHoDP7CaQdDWJhrB8p7UjT/s0y+sKqjIWWZfy/VHNp3CoCXALSc7yKnbR
-	iI3qfxX9AFYNvdMABaL+ZQ3Wq94cBUX/4ZGjDQpEEqxbCkNaBG9X47Lx3OXVA+GBnEAhNjC+DC1lS
-	9h4zNL/fx2G2f6uOLH+8ehqAH5Byvo0FHJOm32VV0yA8YncZ/7GRtxSoOJwwDOOogrYawcbuA9HrH
-	c90vZ+beiRPDIl915nDJC97Vd1M1BlHuVnb/zBYhDVi4KK80b5b+/UQQCW5v/Dysa3Uuq8pCi69Sc
-	s79lkjwA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tvUiR-0000000DsQw-3ibf;
-	Fri, 21 Mar 2025 05:14:43 +0000
-Date: Thu, 20 Mar 2025 22:14:43 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, liam.howlett@oracle.com,
-	alexandru.elisei@arm.com, peterx@redhat.com, hannes@cmpxchg.org,
-	mhocko@kernel.org, m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com,
-	mina86@mina86.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, hch@infradead.org, jack@suse.cz,
-	hbathini@linux.ibm.com, sourabhjain@linux.ibm.com,
-	ritesh.list@gmail.com, aneesh.kumar@kernel.org, bhelgaas@google.com,
-	sj@kernel.org, fvdl@google.com, ziy@nvidia.com, yuzhao@google.com,
-	minchan@kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
-Subject: Re: [RFC 2/3] mm: introduce GCMA
-Message-ID: <Z9z1w2vHfJrwSgWW@infradead.org>
-References: <20250320173931.1583800-1-surenb@google.com>
- <20250320173931.1583800-3-surenb@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0mzCbA8iTvKXHjg8mvoV+wrVcDm1uv7qu/Djjgzlg5jyze16qr8H50VutIA8lAXoZ35RPC/Md79tIPq2I6sIhAZHCjIgqQ+D1xSVGb84Q+j0WElDqoQapm1HZs0xseiwZqMRTnTLyKzbwYsU6U1pZqXDteqwip3m72CnypB5cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=snLL6CxI; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 21 Mar 2025 06:22:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742534530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W3Cb0w4pXl6oKydKmRWXmTfgUw0p6eRvj8lJ0OG3Czg=;
+	b=snLL6CxI6mv8IwgsVERISDFNRPjP/XjxLsGS1tM9r06dFp9rnuBGbU8MDUEZorMaDomMX9
+	JSZFu6tD/7ZjP/5Zk/mp0Z67uJ6X0Q4t/NAeDHG3i466Su6N4uYU12SPcipu7nmcflrzL9
+	nYcj5cA9lnJIN2DUQ3KHihZhu5Bzh+c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ben Hutchings <ben@decadent.org.uk>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH] kbuild: deb-pkg: require debian_revision when creating
+ source package
+Message-ID: <20250321-proud-serious-kakapo-a6cdec@bergen>
+References: <20250311190124.634007-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,24 +58,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320173931.1583800-3-surenb@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250311190124.634007-1-masahiroy@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 20, 2025 at 10:39:30AM -0700, Suren Baghdasaryan wrote:
-> From: Minchan Kim <minchan@google.com>
+On Wed, Mar 12, 2025 at 04:00:26AM +0900, Masahiro Yamada wrote:
+> Debian Policy [1] specifies the version format as follows:
 > 
-> This patch introduces GCMA (Guaranteed Contiguous Memory Allocator)
-> cleacache backend which reserves some amount of memory at the boot
-> and then donates it to store clean file-backed pages in the cleancache.
-> GCMA aims to guarantee contiguous memory allocation success as well as
-> low and deterministic allocation latency.
+>     [epoch:]upstream_version[-debian_revision]
 > 
-> Notes:
-> Originally, the idea was posted by SeongJae Park and Minchan Kim [1].
-> Later Minchan reworked it to be used in Android as a reference for
-> Android vendors to use [2].
+> Here, the presence of the debian_revision part indicates a non-native
+> package, while its absence indicates a native package.
+> 
+> Kbuild adopts the source format 3.0 (quilt), meaning the kernel is a
+> non-native package and therefore requires the revision portion.
+> 
+> This commit prevents the creation of an invalid source package when
+> KDEB_PKGVERSION contains no hyphen.
+> 
+> [1]: https://www.debian.org/doc/debian-policy/ch-controlfields.html#version
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  scripts/package/mkdebian | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index b6dd98ca860b..193e33bcb989 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -94,6 +94,14 @@ set_debarch() {
+>  # Create debian/source/ if it is a source package build
+>  gen_source ()
+>  {
+> +	# The Debian Policy requires -debian_revision portion in the version.
+> +	# Since the source format 3.0 (quilt) is used here, a hyphen is
+> +	# required in the version.
+> +	if [ "${KDEB_PKGVERSION:+set}" ] && ! echo "${KDEB_PKGVERSION}" | grep -- '-..*'; then
 
-That is not a very good summay.  It needs to explain how you ensure
-that the pages do stay clean forever.
+Thanks.  At first, I thought that the check pattern could be enhanced,
+but testing with '--' as version suffix led to 
 
+    dpkg-buildpackage: warning:     debian/changelog(l1): version '6.14rc5+me--' is invalid: revision cannot be empty
+    LINE: linux-upstream (6.14rc5+avm--) trixie; urgency=low
+    dpkg-buildpackage: info: source package linux-upstream
+    dpkg-buildpackage: info: source version unknown
+    dpkg-buildpackage: error: version number does not start with digit
+
+thus this is great as it is.
+
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
