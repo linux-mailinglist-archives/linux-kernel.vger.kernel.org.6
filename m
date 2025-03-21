@@ -1,230 +1,113 @@
-Return-Path: <linux-kernel+bounces-572059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC07EA6C607
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:38:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27511A6C609
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E333B7D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC6848180D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CE7232379;
-	Fri, 21 Mar 2025 22:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C15231A3F;
+	Fri, 21 Mar 2025 22:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/b5e3Xw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvPDQUmQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B04A0C;
-	Fri, 21 Mar 2025 22:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8861F03D9;
+	Fri, 21 Mar 2025 22:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742596656; cv=none; b=CnHy5cxcQs2DpQCUKmTZ+qOiKzpt6YUR7hDr5bJBkmwjU//GmnYK9nqwd8TNgelNMRXI/0Q6wjMaoGMISQv2tMNx8KXL8MYxuwiIxwN3i5ffgI5PJz/u8PxfHD3m1SsBECH4cI2QUOG//oip/tlfRK6hXTP2qa+Jcj5GmbmNAHI=
+	t=1742596686; cv=none; b=a7Io25vqkdumK2N/sOUOuDj5yPxKXMozLWgen7NRCeTnQMwdub6bS7Ksvy2zuHNucGOrJxuaoDdN8Ysi3Qkd5bUkDJQrjpbi57BMLtJcf0NyjhJ2eHaOiFb5PfIC4EU7pEXFQpO+SOqBY3tUteoczZuciBcshqu7fl71Ti7eNVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742596656; c=relaxed/simple;
-	bh=ramSATIM6Gfyw9DQk/rIg5hUgUc4Aq61YIxEdbWpWAc=;
+	s=arc-20240116; t=1742596686; c=relaxed/simple;
+	bh=nrhlOP9d7PiSuMh7n2hu2MfcESZMoqXB6qfA5Gop3ag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbhvrZ1heUvoJRqXueUHhxPyAg18caQg5qoIe2QP6yJe+sGehLySt5eISC1KBqUzNKao1eufYh24Lp1qaUH8HWhEjHFJJfVsyv725SP6/Fgx2tp9Pr/eCLkzEJrK3qH9/RdxtbVAQ3zzgWb1sjExzTH5uqieiJOfKeVKLroZdes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/b5e3Xw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD08C4CEE3;
-	Fri, 21 Mar 2025 22:37:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ryGyiO+yOPlHqnkzl32BjQrVcWvY9myvkmJlHONnAZ2OY+1awvC9+vJIYIusZgR4RBjbrHGZ3x/1bJN+xY9+Po9exIXfAFEX/0OknI4RkkC0Pk9UcrBbCnk8zdhT0XpDo2uJWYbJeyJFHEwzP/h0SP2vSlRs0iOS+Pimr1vT8E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvPDQUmQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0678C4CEE3;
+	Fri, 21 Mar 2025 22:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742596655;
-	bh=ramSATIM6Gfyw9DQk/rIg5hUgUc4Aq61YIxEdbWpWAc=;
+	s=k20201202; t=1742596686;
+	bh=nrhlOP9d7PiSuMh7n2hu2MfcESZMoqXB6qfA5Gop3ag=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u/b5e3XwA10wQ0+gzZsAmrh+PYEPBTqOTPwQCOEJmGQ72ZsBAs4AUVs6sGkyH/oCm
-	 OWh72S7LLTL5DxzFvdSVgJM05lo4MiYSGkdaANNFI7HR/8FtIQh08BqBmmYhZP/ldO
-	 U3oL9HVf6BXs+eapmm7aKRLfGJQhcMI2zTLB7ahA4kLIvR71WujKLPNXhhxJ09PWNH
-	 dLlWWMcr/3JOadEK6bvLKreEPEgWRHTlPVHQKyqypBDzcPN1PYgvavIhgMIqlbIe4a
-	 Y26LDPTZ5wsqjo3Tn2S6/fmAZ82NZi6oHL8CNGEyRnkbS2KBvmAFiFSMTSn7PLiEhS
-	 6vAgxK49Xc4wA==
-Date: Fri, 21 Mar 2025 17:37:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v2 03/11] dt-bindings: clock: en7523: add Documentation
- for Airoha AN7581 SCU SSR
-Message-ID: <20250321223734.GA6837-robh@kernel.org>
-References: <20250320130054.4804-1-ansuelsmth@gmail.com>
- <20250320130054.4804-4-ansuelsmth@gmail.com>
+	b=kvPDQUmQaW0p9015fBnH8HZXdTLUkmdLADBqQKLbS7FlDRPFGH+4JfV0HVGw6KQAC
+	 wmwcwbEGwtCnCydbMEzrSt2Gz+tX8sOLIZwUEKHXNcV+D0Uj31YCyrPOutld6t5/jZ
+	 BSA8ezCJJTY0rIszLxTweXNzX2i4EqhVhsBAN4l2bQscz4zELe3XZY0yRvMzlMndYJ
+	 noWdHFhX/Dxt1YnYfGLd7iVzo6Px9LZ8Vw/CNrpAdASoSz9RSZia0ewtKKGq/vxbz2
+	 FnD9b/0Ugx4zOF9FNU6amX5e6449rfRPQyuhDkerWMASxsNOAaYde4I08qOFAhYbIa
+	 mO2VWaz+83vHA==
+Date: Fri, 21 Mar 2025 22:38:00 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Eric Lin <eric.lin@sifive.com>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	will@kernel.org, mark.rutland@arm.com, tglx@linutronix.de,
+	peterz@infradead.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	zong.li@sifive.com, greentime.hu@sifive.com,
+	vincent.chen@sifive.com, Nick Hu <nick.hu@sifive.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: riscv: sifive: Add SiFive Private L2
+ cache controller
+Message-ID: <20250321-spinal-endocrine-aabd38734c32@spud>
+References: <20230720135125.21240-1-eric.lin@sifive.com>
+ <20230720135125.21240-2-eric.lin@sifive.com>
+ <20230720-slept-guru-216e2803061e@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7UoAQXoEu0XzRgDv"
+Content-Disposition: inline
+In-Reply-To: <20230720-slept-guru-216e2803061e@spud>
+
+
+--7UoAQXoEu0XzRgDv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320130054.4804-4-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 02:00:26PM +0100, Christian Marangi wrote:
-> The Airoha AN7581 SoC have in the SCU register space particular
-> address that control how some peripheral are configured.
-> 
-> These are toggeled in the System Status Register and are used to
-> toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
-> or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
-> 
-> Modes are mutually exclusive and selecting one mode cause the
-> other feature to not work (example a mode in USB 3.0 cause PCIe
-> port 2 to not work) This depends also on what is physically
-> connected to the Hardware and needs to correctly reflect the
-> System Status Register bits.
-> 
-> Special care is needed for PCIe port 0 in 2 line mode that
-> requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
-> mode.
-> 
-> Expose these configuration as an enum of strings in the SCU node and
-> also add dt-bindings header to reference each serdes port in DT.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../bindings/clock/airoha,en7523-scu.yaml     | 101 ++++++++++++++++--
->  MAINTAINERS                                   |   7 ++
->  include/dt-bindings/soc/airoha,scu-ssr.h      |  11 ++
->  3 files changed, 110 insertions(+), 9 deletions(-)
->  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index fe2c5c1baf43..637ce0e06619 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> @@ -9,6 +9,7 @@ title: EN7523 Clock
->  maintainers:
->    - Felix Fietkau <nbd@nbd.name>
->    - John Crispin <nbd@nbd.name>
-> +  - Christian Marangi <ansuelsmth@gmail.com>
->  
->  description: |
->    This node defines the System Control Unit of the EN7523 SoC,
-> @@ -26,6 +27,23 @@ description: |
->  
->    The clocks are provided inside a system controller node.
->  
-> +  The System Control Unit may also set different mode for the Serdes ports
-> +  present on the SoC.
-> +
-> +  These are toggeled in the System Status Register and are used to
-> +  toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
-> +  or setup port for PCIe mode or Ethernet mode (HSGMII/USXGMII).
-> +
-> +  Modes are mutually exclusive and selecting one mode cause the
-> +  other feature to not work (example a mode in USB 3.0 cause PCIe
-> +  port 2 to not work) This depends also on what is physically
-> +  connected to the Hardware and needs to correctly reflect the
-> +  System Status Register bits.
-> +
-> +  Special care is needed for PCIe port 0 in 2 line mode that
-> +  requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
-> +  mode.
-> +
->  properties:
->    compatible:
->      items:
-> @@ -49,6 +67,40 @@ properties:
->      description: ID of the controller reset line
->      const: 1
->  
-> +  airoha,serdes-wifi1:
-> +    description: Configure the WiFi1 Serdes port
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - pcie0_x2
-> +      - pcie0_x1
-> +      - ethernet
-> +    default: pcie0_x1
-> +
-> +  airoha,serdes-wifi2:
-> +    description: Configure the WiFi2 Serdes port
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - pcie0_x2
-> +      - pcie1_x1
-> +      - ethernet
-> +    default: pcie1_x1
-> +
-> +  airoha,serdes-usb1:
-> +    description: Configure the USB1 Serdes port
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - usb3
-> +      - ethernet
-> +    default: usb3
-> +
-> +  airoha,serdes-usb2:
-> +    description: Configure the USB2 Serdes port
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - usb3
-> +      - pcie2_x1
-> +    default: usb3
+On Thu, Jul 20, 2023 at 06:10:51PM +0100, Conor Dooley wrote:
+> On Thu, Jul 20, 2023 at 09:51:19PM +0800, Eric Lin wrote:
 
-Couldn't you make this a phy provider and use the mode flags in the 
-phy cells?
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: sifive,pl2cache1
+> > +      - const: cache
+>=20
+> You omitted the pl2cache0 from here, that needs to come back! You'll end
+> up with 2 items entries.
+> Either way, I can't take this binding without a soc-specific compatible,
+> per sifive-blocks-ip-versioning.txt..
 
-> +
->  required:
->    - compatible
->    - reg
-> @@ -64,6 +116,12 @@ allOf:
->          reg:
->            minItems: 2
->  
-> +        airoha,serdes-wifi1: false
-> +        airoha,serdes-wifi2: false
-> +
-> +        airoha,serdes-usb1: false
-> +        airoha,serdes-usb2: false
-> +
->          '#reset-cells': false
->  
->    - if:
-> @@ -75,6 +133,24 @@ allOf:
->          reg:
->            maxItems: 1
->  
-> +  - if:
-> +      properties:
-> +        airoha,serdes-wifi1:
-> +          const: pcie0_x2
+On this last point, what Nick Hu has done for the clint2 would be
+acceptable, adding a {} entry to disallow the compatible in isolation
+without requiring a soc-specific compatible for hardware that does not
+yet exist:
+https://lore.kernel.org/all/20250321083507.25298-1-nick.hu@sifive.com/
 
-This is also true if airoha,serdes-wifi1 is not present. Probably not 
-what you intended.
+Maybe that'll allow you to submit a v3 of this work?
 
-> +    then:
-> +      properties:
-> +        airoha,serdes-wifi2:
-> +          const: pcie0_x2
-> +
-> +  - if:
-> +      properties:
-> +        airoha,serdes-wifi2:
-> +          const: pcie0_x2
-> +    then:
-> +      properties:
-> +        airoha,serdes-wifi1:
-> +          const: pcie0_x2
-> +
->  additionalProperties: false
+Cheers,
+Conor
+
+--7UoAQXoEu0XzRgDv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ93qSAAKCRB4tDGHoIJi
+0oUaAP9uzIey7liZb+Bjy1/CuZWjq+8Noa6ZaN/cM35WlmDg/AEA2z0nS1vm0ayX
+GW2I1IyVpUNSK01K1FIhOgrUeQuXTA4=
+=VwYy
+-----END PGP SIGNATURE-----
+
+--7UoAQXoEu0XzRgDv--
 
