@@ -1,194 +1,350 @@
-Return-Path: <linux-kernel+bounces-571878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC94A6C385
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:48:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C88A6C3AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50DC189915D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49B11174421
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CE11EB9E5;
-	Fri, 21 Mar 2025 19:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D12D231A2B;
+	Fri, 21 Mar 2025 19:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U29euwzB"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zj/Ch96k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F30518E76B;
-	Fri, 21 Mar 2025 19:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5BE230993
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742586498; cv=none; b=ihvqs4dnua+nyk/DeLabmx5NEBdbY835y9/AxW4ALRK8H8+3RZt5JZPnESsC6i/uXFpBIdGbiyNtOModeIlv/j7f+EjVdl70j0of1r+9g4BXSdNsdcw0pyiSPvRWRIJkxYfp16kw2zltv0QigaRb+YpmACP+j5wNZ5OhdeUjzNg=
+	t=1742586566; cv=none; b=TpgN2TZ/Cs2WORZeq6SiOX3d2he2eW/AxWyV4NpE0mU7+qHcpGN0cd/b1U/gFd0mf77lapqzF0hpDR0FpxplPPkd2QhzNyrRWeoQkyQzE+CIxfN6Mj5lRSdynGFJZc7/o3ZijbLMyAGC1u1EcKZAjwWChmcAb10H7Neizsa/YzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742586498; c=relaxed/simple;
-	bh=Ly0rkqyd4u96pt3sfW6/+4RipbpAyl94DbrB3bUCuwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UE0A6odr/AdnkjE4LfG9a/ifLK98YD604rtJlWifFHmIhplqBNrghQLf1xJo3sHr8hZZBML7AAXD+lQKl3pvM614S5Hn04YweDjv7FrYCG5NXh+PF5AFMxwc5f3KWHZ9TVCuJA71xrKkAgfKGYx6da2+ikyksN1XzLfswxTNFVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U29euwzB; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so2413578e87.1;
-        Fri, 21 Mar 2025 12:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742586492; x=1743191292; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ly0rkqyd4u96pt3sfW6/+4RipbpAyl94DbrB3bUCuwk=;
-        b=U29euwzBz72Mhc/YUYoO/rcpAdPVguIZTjBqlw6igKzkUOEh9XD9jwg90idfbVQANn
-         QYAfhBc515PCIfx3UAPLGnh7upsb5ifJYPxHxoFuHazCkcheZxi2Ks0fQCntcyyw5RJe
-         2ZbLLEdsuPrLSoJ0fbD9t6tDjIkdVPTO41mWsy70dlu94q3OccJ5PA9eO7ntLnkIkQ7i
-         WFuovzjli2TGpnj8OGaCgt95FosWdT90ZXAT6pePLDFRgXug3NoTpe3X6m2pZpSL60G3
-         Q/C9ret57HLCXOC9WTlpCMaC1wh29LuYAlEHr3d/UVNHtqldf0UIa6GSnGX+9o5SHjd5
-         M7eA==
+	s=arc-20240116; t=1742586566; c=relaxed/simple;
+	bh=FQVoAK1grhAv3nZByLs+uzRSU6UsJz/ykU8hQy3B+S4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U6Z9qDydXeS9obBCUO5+G9J+xlCkw8Fupv3UlsvcxdahIL9rXAZW5hz1K1s1fZhIc7dlQNq3EWihULk2jqXn6x33yiewsSC1MA37/dM+hImdYzdOsQudAmznMzvQBThG3GCuoL5sVbnuajn7MP6X55JjfbFj1CiyrzU1qvCBDwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zj/Ch96k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742586560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1wNhBnm2ReGLfeaXSKjzDT3Sr3/X+7bRy4uy/8cmkEY=;
+	b=Zj/Ch96kj2UTOIxpe0+9KH4Zv0p3ou3orEJRdxGDEdjp30Bdv1IIA/s3fOw6FIFHBHS8Yl
+	KO+XkcAe7p6uEvCqa5N/vuciuDNpeJymuUj8P8QGXUKaghgNMcxE4wtFicwaxM7q/CFHdo
+	izRD3sX3NGDtkCHNs53UCCrSnh9Vdlw=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-161-JXCd-jaIOZyn7rt7KNC6JQ-1; Fri, 21 Mar 2025 15:49:15 -0400
+X-MC-Unique: JXCd-jaIOZyn7rt7KNC6JQ-1
+X-Mimecast-MFC-AGG-ID: JXCd-jaIOZyn7rt7KNC6JQ_1742586552
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-abec83a498cso214472366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:49:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742586492; x=1743191292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ly0rkqyd4u96pt3sfW6/+4RipbpAyl94DbrB3bUCuwk=;
-        b=T50lggsAiFv/9S8xmZ5DgSnNFIuZLWTrjz/D0+kk122rtHRGuZan3MEwcgdpASPE17
-         yVzaIahawiUkcaK8eZhTzsIGHtGwyviUva8LqwDeJQGGJCsnR55lalGgk9Hnv7r7jmnY
-         /TqWuvmHltUo0tZl8kSTHyeNVVCDCnsG1LrdAqFbPwUDod36VvKPHqhS/jA/ZgscO5GN
-         jHJjky0syWbKRC5qJUQSlYf3+NFo0Ue3vHSTt3ttIA+7JB9y6ZQMKnZUhsF9qAVtvoFx
-         nrheZ6dFyC0nlCGngSNcGTFqIOALFvNzOUoTEPTRZusBTHOi0Fd+gPzOjiaaD3q07O9M
-         bWIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqPAHPFC3djVg7WPP/O7YnCN2PJHdEUO3GEZXqXRzpOifIl7xKkpG8phjbMjqwSeFkZRUzlYzLljxrUXk=@vger.kernel.org, AJvYcCX1Kp2gDxb9i7cMAOTp8cBIPi1w6fr6wBd13+E3u0nMdHJ1hQ9npxoJmxuhBw7wrcOWrmc1+td5Hn90JZ5eiT2D@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNv/ywvzsUVwL6KR52bqMg3dQFELkrv71MZ8HKhHVEucLuYU7t
-	7GiFMzsdYiUlfVCSXKEgSRBz/ShiTciihfsRHfxuRjWIvfTDiOUCYl3/ugD7uYHn2usuEetEtbl
-	eSPmLjV1bptXDWqV4Rz1M7GHnH9c=
-X-Gm-Gg: ASbGncvtcq4MJ4IHaQJxbtW6+6kAl3AZUOiH8p9jikDpsY48qehVzFY4qlwBHTXUD/B
-	fpIXosC/yQ7f6uIIjUefeC5ZPofwmUO/osPDa5bRf1sbSmpS4BiMVIHQfA9KOUELxdG8Y4Pm61t
-	CB9G5zhiLqJLfUdsyw2qDQJZK0lrBMxNtvfgNSwyRkEQ==
-X-Google-Smtp-Source: AGHT+IFBFgrCJ/bchlWOwIv9rI77Cq+9FheTeIgSI10PI3pRLX14sLGNW1KkGbOtKsmpfb5BqidS5A6BsnbPgS9nwoo=
-X-Received: by 2002:a05:6512:ea2:b0:544:ffbe:cd22 with SMTP id
- 2adb3069b0e04-54ad6500d8fmr1778451e87.46.1742586492037; Fri, 21 Mar 2025
- 12:48:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742586548; x=1743191348;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1wNhBnm2ReGLfeaXSKjzDT3Sr3/X+7bRy4uy/8cmkEY=;
+        b=Be14PoKnuMYahQmRC+/4hOZyRtRddXO4sr4sC0bUz3ct50SA/nSpESaU3SJq34K8fF
+         DusqDaH2OojfjrlROEGM/QkzBo/l39fLwIxYvmuRdNkqItn1y04Gntx6Z/Me31Q3he9h
+         ShaYVuqunJuVSO5KUoBf6meib2RAqWLJ9rcFaTmYNmnevuqeJ3Bbkb8RxCd9jrZjz/GT
+         pVzBST2dploXnkfa3cXoRZg55OoWW6TxWRpKFsnbm7bm2ijgqnKx5WJqP2fDfeoU2mWI
+         17hOI+QVnu7QB1SSqgzyKFp0ni3BxDuZulVEnfYX/UpIzN9Y1Rbno+QHaWvllwcrwK9I
+         AwRw==
+X-Forwarded-Encrypted: i=1; AJvYcCV02QwL18/a6o8w5Pf0A0SzsPk/GcOBXVLAtmxhTPNbd8hZBZ+SkLC7kdLI0uGSY7ieUgwFfCnGDETuomU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA3rtGOFPaS10Sx9c6qkN6C/ZqBZx7IR+wingVQR5yrNZUgXTB
+	QxReMSoJPRrLXMyKTXw+AJNHOGLATwfgyzOMC43Ae7IXlWEVF4ZjqAHHSW0weMs6e/IIuFS8tXy
+	QBN1CJznKCgJuuMKqX27hqUl8cewfMLjnPu5lg6jJCODhsdabpzY0GMWC4zCV
+X-Gm-Gg: ASbGncsh+EMK4YssdVBTK+C6dSxb9VtHI0ozQEDPNOssLKlZd3GpEIgFhoPjqfvcAJV
+	+1Bi71EuvMEpvN3QUOZt9ndT8e3Q2N3UuJIIUrBy1Zy7uRESoHDmdo3fJrXgeMfrZwOmIya1Gzy
+	ggOpfRKyGDnvr/wrnG4DMcVEK8PNdH7sxtY8OumwiANbV0h1yKEjukR8vur8r/8VZ+zmYEQ+JwJ
+	EstqqhNp1BRHRU4qC8Tqffm3+euJ68aKwYYjAAT3DmVh58c+6xoETkDZtS0w8wyYsxqntvTW0C8
+	uk3bfj/2gVYbvSAxMHVrepZBZF5E67v/srwsk4KrPw==
+X-Received: by 2002:a17:907:7dab:b0:ac2:7a6d:c927 with SMTP id a640c23a62f3a-ac3f251f252mr442159966b.50.1742586547686;
+        Fri, 21 Mar 2025 12:49:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIuU8NfxIMB+ef2e3eKHAzCm35NOLlzxTP1nDtQXGYf88xl+hzf++88iNdtamLPujW3TPHjA==
+X-Received: by 2002:a17:907:7dab:b0:ac2:7a6d:c927 with SMTP id a640c23a62f3a-ac3f251f252mr442156966b.50.1742586547062;
+        Fri, 21 Mar 2025 12:49:07 -0700 (PDT)
+Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8d3d38sm204412266b.39.2025.03.21.12.49.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 12:49:06 -0700 (PDT)
+From: Andrey Albershteyn <aalbersh@redhat.com>
+X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
+Subject: [PATCH v4 0/3] fs: introduce getfsxattrat and setfsxattrat
+ syscalls
+Date: Fri, 21 Mar 2025 20:48:39 +0100
+Message-Id: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207-bitmap-kunit-convert-v1-0-c520675343b6@gmail.com>
- <Z6eaDuXnT_rjVSNS@thinkpad> <CAMuHMdUsq_39kgBa8oanXeTzv44HuhS1e5MK7K2jxkVXQ7uWdw@mail.gmail.com>
- <bd71c705-5f57-4067-b200-fd80b98ddbc9@nvidia.com> <Z6pfomw-3LuWoQQo@thinkpad>
- <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
- <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com> <Z92w13L8v1MvPC8_@thinkpad>
-In-Reply-To: <Z92w13L8v1MvPC8_@thinkpad>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 21 Mar 2025 15:47:36 -0400
-X-Gm-Features: AQ5f1Jqo7tJbB2wPNw7jN7SKqpquKkjt9eOhuuAS5_i6zceZK37QYCYbQ3pr-GM
-Message-ID: <CAJ-ks9ktTpUaBPk9rEp8UX9P5dZPeDuuGWfuSiR+dL3jXVb1+g@mail.gmail.com>
-Subject: Re: distro support for CONFIG_KUNIT: [PATCH 0/3] bitmap: convert
- self-test to KUnit
-To: Yury Norov <yury.norov@gmail.com>
-Cc: David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-kselftest@vger.kernel.org, Brad Figg <bfigg@nvidia.com>, 
-	David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJjC3WcC/2XN0QqDIBTG8VcJr+fwHLPVrvYeYxeaVrKoUJEie
+ vdZDAbr8v/B+Z2VeOOs8eSercSZaL0dhxT5JSN1J4fWUKtTE2QoGEBOZxmCk4H6xdey72khAXi
+ hUStRkXQ1OdPY+RCfr9Sd9WF0y/Eg4r5+LcSTFZECFYoXTOeNqhU+3sYNpr+OriU7FvkPQIAzw
+ BMg2U2DaMqq/AO2bfsAGIg0CfAAAAA=
+X-Change-ID: 20250114-xattrat-syscall-6a1136d2db59
+To: Richard Henderson <richard.henderson@linaro.org>, 
+ Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+ selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>, 
+ Andrey Albershteyn <aalbersh@redhat.com>, linux-xfs@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7149; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=FQVoAK1grhAv3nZByLs+uzRSU6UsJz/ykU8hQy3B+S4=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIY0u8e2vB17Ur5VW0+Gx1C7pyq2fjopYGGydO9y6YW+
+ c/4/jCiIG1rRykLgxgXg6yYIss6aa2pSUVS+UcMauRh5rAygQxh4OIUgIlcSGZkaAtVCfd2P3uU
+ cQdTt4coF6++p8WE+2wb8xhWObiyr2E8y8jQURZRWfY081TjgR7tSktm7c+nv4iv0W9lm1se/Wa
+ T5xkGAGijRuY=
+X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
+ fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-On Fri, Mar 21, 2025 at 2:32=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
-rote:
->
-> On Fri, Mar 21, 2025 at 12:53:36PM -0400, Tamir Duberstein wrote:
-> > Hi all, now that the printf and scanf series have been taken via kees'
-> > tree[0] and sent in for v6.15-rc1[1], I wonder if we'd like to revisit
-> > this discussion.
-> >
-> > As I understand it, the primary objections to moving bitmap to KUnit we=
-re:
-> > - Unclear benefits.
-> > - Source churn.
-> > - Extra dependencies for benchmarks.
-> >
-> > Hopefully David's enumeration of the benefits of KUnit was compelling.
-> > Regarding source churn: it is inevitable, but I did pay attention to
-> > this and minimized the diff where possible.
-> >
-> > The last point is trickiest, because KUnit doesn't have first-class
-> > benchmark support, but nor is there a blessed benchmark facility in
-> > the kernel generally. I'd prefer not to tie this series to distros
-> > enabling KUNIT_CONFIG by default, which will take $time.
-> >
-> > I think the most sensible thing we can do - if we accept that KUnit
-> > has benefits to offer - is to split test_bitmap.c into
-> > benchmark_bitmap.c and bitmap_kunit.c.
-> >
-> > Please let me know your thoughts.
->
-> Sure, no problem.
->
-> I asked you to answer to 4 very simple and specific questions. You
-> didn't answer any of them. David sent a lengthy email that doesn't
-> address them, either.
+This patchset introduced two new syscalls getfsxattrat() and
+setfsxattrat(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
+except they use *at() semantics. Therefore, there's no need to open the
+file to get an fd.
 
-OK, that's fair I suppose. Let me try and address them now:
+These syscalls allow userspace to set filesystem inode attributes on
+special files. One of the usage examples is XFS quota projects.
 
-> - What do the tests miss now?
+XFS has project quotas which could be attached to a directory. All
+new inodes in these directories inherit project ID set on parent
+directory.
 
-The tests do not _miss_ anything. They are just inconvenient to run,
-particularly from automation, because they do not report success in a
-way that is trivially understood by automation. In other words, I'm
-not aware of something trivial I can run that will exit 0 if and only
-if the bitmap tests pass.
+The project is created from userspace by opening and calling
+FS_IOC_FSSETXATTR on each inode. This is not possible for special
+files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
+with empty project ID. Those inodes then are not shown in the quota
+accounting but still exist in the directory. This is not critical but in
+the case when special files are created in the directory with already
+existing project quota, these new inodes inherit extended attributes.
+This creates a mix of special files with and without attributes.
+Moreover, special files with attributes don't have a possibility to
+become clear or change the attributes. This, in turn, prevents userspace
+from re-creating quota project on these existing files.
 
-> - What do _you_ need from the tests? Describe your test scenario.
+Christian, if this get in some mergeable state, please don't merge it
+yet. Amir suggested these syscalls better to use updated struct fsxattr
+with masking from Pali Rohár patchset, so, let's see how it goes.
 
-I want kernel tests to be easier to run, and for more of them to be
-run by existing automation such as LKP[0]. I know for sure that KUnit
-tests are automatically run by LKP because other tests I converted to
-KUnit subsequently had warnings reported by LKP.
+NAME
 
-> - How exactly KUNIT helps you testing bitmaps and friends better?
+	getfsxattrat/setfsxattrat - get/set filesystem inode attributes
 
-KUnit reports test results in a standard protocol (KTAP) that is
-machine-friendly. It comes with userspace tools that understand this
-protocol and produce useful exit codes, as well as human-friendly
-output.
+SYNOPSIS
 
-> - Is there a way to meet your needs with a less invasive approach,
-> particularly without run-time dependencies?
+	#include <sys/syscall.h>    /* Definition of SYS_* constants */
+	#include <unistd.h>
 
-I'm not aware of such a way, but if you know of one, I would be very
-interested to learn.
+	long syscall(SYS_getfsxattrat, int dirfd, const char *pathname,
+		struct fsxattr *fsx, size_t size,
+		unsigned int at_flags);
+	long syscall(SYS_setfsxattrat, int dirfd, const char *pathname,
+		struct fsxattr *fsx, size_t size,
+		unsigned int at_flags);
 
-> None of you guys submitted anything to bitmaps - neither in library,
-> nor in tests. Your opinion about what is good for bitmap development
-> and what's not is purely theoretical.
->
-> Real contributors never concerned about current testing model.
->
-> I think that you don't care about bitmaps. If bitmaps testing will get
-> broken one day, or more complicated, you will not come to help. If I'm
-> wrong and you are willing to contribute, you're warmly welcome! I always
-> encourage people to increase testing coverage.
->
-> If you'd like to add new cases to existing tests - I'll be happy. If
-> you'd like to add completely new tests based on KUNITs or whatever
-> else - I'll be happy just as well.
+	Note: glibc doesn't provide for getfsxattrat()/setfsxattrat(),
+	use syscall(2) instead.
 
-I can't speak for David, but you are right about me; I do not have an
-interest in bitmap in particular. My interest is in kernel testing
-generally, which I hope I have adequately explained above. As for my
-willingness to help people obtain and keep good workflows, well,
-you're welcome to examine my history in OSS. I've contributed to
-dozens of projects, many for far longer than my professional goals
-required.
+DESCRIPTION
 
-Let's keep talking.
-Tamir
+	The syscalls take fd and path to the child together with struct
+	fsxattr. If path is absolute, fd is not used. If path is empty,
+	inode under fd is used to get/set attributes on.
 
-[0] https://github.com/intel/lkp-tests
+	This is an alternative to FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR
+	ioctl with a difference that file don't need to be open as we
+	can reference it with a path instead of fd. By having this we
+	can manipulated filesystem inode attributes not only on regular
+	files but also on special ones. This is not possible with
+	FS_IOC_FSSETXATTR ioctl as with special files we can not call
+	ioctl() directly on the filesystem inode using file descriptor.
+
+RETURN VALUE
+
+	On success, 0 is returned.  On error, -1 is returned, and errno
+	is set to indicate the error.
+
+ERRORS
+
+	EINVAL		Invalid at_flag specified (only
+			AT_SYMLINK_NOFOLLOW and AT_EMPTY_PATH is
+			supported).
+
+	EINVAL		Size was smaller than any known version of
+			struct fsxattr.
+
+	EINVAL		Invalid combination of parameters provided in
+			fsxattr for this type of file.
+
+	E2BIG		Size of input argument **struct fsxattr** is too
+			big.
+
+	EBADF		Invalid file descriptor was provided.
+
+	EPERM		No permission to change this file.
+
+	EOPNOTSUPP	Filesystem does not support setting attributes
+			on this type of inode
+
+HISTORY
+
+	Added in Linux 6.14.
+
+EXAMPLE
+
+Create directory and file "mkdir ./dir && touch ./dir/foo" and then
+execute the following program:
+
+	#include <fcntl.h>
+	#include <errno.h>
+	#include <string.h>
+	#include <linux/fs.h>
+	#include <stdio.h>
+	#include <sys/syscall.h>
+	#include <unistd.h>
+
+	int
+	main(int argc, char **argv) {
+		int dfd;
+		int error;
+		struct fsxattr fsx;
+
+		dfd = open("./dir", O_RDONLY);
+		if (dfd == -1) {
+			printf("can not open ./dir");
+			return dfd;
+		}
+
+		error = syscall(467, dfd, "./foo", &fsx, 0);
+		if (error) {
+			printf("can not call 467: %s", strerror(errno));
+			return error;
+		}
+
+		printf("dir/foo flags: %d\n", fsx.fsx_xflags);
+
+		fsx.fsx_xflags |= FS_XFLAG_NODUMP;
+		error = syscall(468, dfd, "./foo", &fsx, 0);
+		if (error) {
+			printf("can not call 468: %s", strerror(errno));
+			return error;
+		}
+
+		printf("dir/foo flags: %d\n", fsx.fsx_xflags);
+
+		return error;
+	}
+
+SEE ALSO
+
+	ioctl(2), ioctl_iflags(2), ioctl_xfs_fsgetxattr(2)
+
+---
+Changes in v4:
+- Use getname_maybe_null() for correct handling of dfd + path semantic
+- Remove restriction for special files on which flags are allowed
+- Utilize copy_struct_from_user() for better future compatibility
+- Add draft man page to cover letter
+- Convert -ENOIOCTLCMD to -EOPNOSUPP as more appropriate for syscall
+- Add missing __user to header declaration of syscalls
+- Link to v3: https://lore.kernel.org/r/20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org
+
+Changes in v3:
+- Remove unnecessary "dfd is dir" check as it checked in user_path_at()
+- Remove unnecessary "same filesystem" check
+- Use CLASS() instead of directly calling fdget/fdput
+- Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
+
+v1:
+https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
+
+Previous discussion:
+https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
+
+---
+Andrey Albershteyn (3):
+      lsm: introduce new hooks for setting/getting inode fsxattr
+      fs: split fileattr/fsxattr converters into helpers
+      fs: introduce getfsxattrat and setfsxattrat syscalls
+
+ arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
+ arch/arm/tools/syscall.tbl                  |   2 +
+ arch/arm64/tools/syscall_32.tbl             |   2 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |   2 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
+ arch/s390/kernel/syscalls/syscall.tbl       |   2 +
+ arch/sh/kernel/syscalls/syscall.tbl         |   2 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+ fs/inode.c                                  | 130 ++++++++++++++++++++++++++++
+ fs/ioctl.c                                  |  39 ++++++---
+ include/linux/fileattr.h                    |   2 +
+ include/linux/lsm_hook_defs.h               |   4 +
+ include/linux/security.h                    |  16 ++++
+ include/linux/syscalls.h                    |   6 ++
+ include/uapi/asm-generic/unistd.h           |   8 +-
+ include/uapi/linux/fs.h                     |   3 +
+ security/security.c                         |  32 +++++++
+ 25 files changed, 259 insertions(+), 13 deletions(-)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250114-xattrat-syscall-6a1136d2db59
+
+Best regards,
+-- 
+Andrey Albershteyn <aalbersh@kernel.org>
+
 
