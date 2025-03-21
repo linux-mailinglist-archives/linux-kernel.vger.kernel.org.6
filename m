@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-571256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04FBA6BAF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:43:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 407C7A6BAF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0F6483AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B440F484044
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF10225797;
-	Fri, 21 Mar 2025 12:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66602288F9;
+	Fri, 21 Mar 2025 12:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fMnk5s2c"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J286fOZ9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="//HKCAf4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ECB226CF8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9E0CA5A;
+	Fri, 21 Mar 2025 12:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560984; cv=none; b=MCjeDjgtO0+80/OHPRxsUINzE20I6RNxRDgYSZ8eo9aitY4CacJGt1ATSSV/BgzklUviNxW5XSGIc7HWb4hpTCgmtjz2eQGpgQBlKTsEuBre1QEohiGe6RhyQ4AKJQKcNk17FDheCPnEJV19uPU13Ynki9hF9nM6KYihxW9YkeA=
+	t=1742561071; cv=none; b=AUnxh3ZEtAkdNwtw/LnBnXRfMqcyUlRNVbmT9GKzH+WQvcdu/G0ALqDKFvAJSEjHsUrUzSRAzoXnLJsPbQCamgBtJATsRazOqgOQZ5q+XdX/HwpVl7zyYkTLruyGzsWnhOoAoZ6sJ0IiQHEwHWZVfaSEpwbjRGtJJ2razxJoKVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560984; c=relaxed/simple;
-	bh=eBQn892UZG+jcWZElqAh1wPIVMeJ5i+Xu+1Q2pde8hI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FxFb8y4BxtuyhGqgZtEAUcSA+Zb22mShRgiqCdbi9ePMpvWPdti5h5yauZQXzPb68f8mdv4sTogfmJDyqwht3tBTwlalzvxMMlc7J7lv6GKxq29XVlZrnUFY8sVf4tbTn2xF4xNtrbihxcafJxydIMuAD4/0B2S/DCo14u6EKzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fMnk5s2c; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bef9b04adso20727191fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742560980; x=1743165780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=twviCGxAniHlC3WUcKtYW6Ox7Z/6C3imNQV4imugJhg=;
-        b=fMnk5s2cYeSWsJq9AI7BdBlKtXh72hzsnhoBT6TaXHxtLYh4ulpF4vr5Mob06uWFPJ
-         sbB1/Fch+EoJOkWdjntHrbibbKieBf7h3VU0mQMgNX76PrRsGRa93J0O6GGz2Tcd21tQ
-         4pzkbeu+SEUDLobsYhGxXMD9PYtKsQaE9TSpmhpYUtmUDroHdsVj7zyDjbKkWq1CSDPj
-         ISPnxfwb5nlpVAGHV1NttL6AGa9qMx745GrfSjXo0N7yi+HJG4sd5gEwICbIQlBi5CIX
-         d7ChuUAXDrQrQXVF1GfoFWZxWIqFCyFY9Es9G765DCqQxW7BD4EFOCUPEgaGBxD1H7/B
-         67xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742560980; x=1743165780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=twviCGxAniHlC3WUcKtYW6Ox7Z/6C3imNQV4imugJhg=;
-        b=LVzqGe1ottzrafQLVc3oJpZIQOaIsMrfcNiucxzfrfzKheSd1m6yV8G+cG8T7GhaJ/
-         PD+xV8GV/2OWHoTVONcpUzFPawBEu/muNu41WdWJU5gqZsZyvrG9o4DQjJ5QHVQH7/Ip
-         C0jni0x+euba7+qXT/T2jS4coEu5el8m3TQrmGDu/mmTxCQI1IjuOn3N+ca/Dih6Aovc
-         ZhO0F0WCCgGZysrUGuDFniBmLuSQ5gQxlzZ4JvhkgFUX1Yp65NOq53/c1GrZv8FnXLVa
-         W3mqO8eR6xKjFk3Z/vDsPWcdJfo2jpKdZ0HobS8uCTLcUL3prFGptBMPz8UnPw8aCKJo
-         KRHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUzL4iu4EWGgNjbcDz/SV7sB8qNEaYKrCqKKgcKp20gLB0WPWKyVAs9vLgvUBJN4mA3fBZdpOVtKmluBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtqkSFQ0bIfWNKGZl6PPNnaezUb1RJOLsRhS66hClc/EaFGJUn
-	pTkiiM8G+7lvaJE+j+pQu2E1LQucii5idGcvt9tpBMVKk4z4yE/ojKnEA8O7qLgVfH5FruBkc+K
-	MXl1hs1OrN6s0eXijcJWPfcC0LloiocqQv7ZOQQ==
-X-Gm-Gg: ASbGnctyZvn8AYY29IO2t6odirrLXVOJ82hGFkWSgSV+Akqh0EySFgHjPZ/e8Wpe8ti
-	My1Ug1K9nedT0qygoSdTMyp9GQvuz4Ba4Crg8PBVvGUC0xQDjWJtxiz0VnY23xT9tLAbF/6csxx
-	soQ2Zr7vXdM5sGpxWc1UY3vWww6jQ8blRXCn+I3/vUAsLn6gTYavv35SvDuA==
-X-Google-Smtp-Source: AGHT+IF6bDeViMRm+F3GDiSCI8KFfXh2g6OPn8L/1naZxiDI5aTUCMM4Tf4b22Rl4qKBrOf4W2YTckl4OUZpJhc4CRs=
-X-Received: by 2002:a2e:a78a:0:b0:30c:4610:9e9e with SMTP id
- 38308e7fff4ca-30d7e2d9f69mr12592721fa.35.1742560980286; Fri, 21 Mar 2025
- 05:43:00 -0700 (PDT)
+	s=arc-20240116; t=1742561071; c=relaxed/simple;
+	bh=F9wq5b/9Z4dapIc7zXI602s+CF0Jvw8EUgIT8hhy2R4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jvkZ/OvsnfVKppaDOaKJJE4zgGWsvMNcbeHXQKTWf1w5/1pDvwstHb3LFOb92qSVa1Dz7zldOZ9US4E5psC6pcyGiecvQrzKYfk/LF9rATrlz3U7ZTSb3JSHSYcYWdC95DHk95OHzmhqqI8PjF8FHrD32WG/U10Ca9OwDwmpgjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J286fOZ9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=//HKCAf4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742561067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Am601bcXnuFlc/N4uLCf/HWK0YPPJaXK8WE1j4yk+iU=;
+	b=J286fOZ9VN5WGsx5h/T6XssjTTBzhwY718WOsyMRF77NVLajGd4GHl3cpyyPPLUUonwXVG
+	W6lVUXZtTdFpl9TkMiX+nMDT+REKuB2a6iMtXhJ86umfx14GhI8URiOVitvRrqTLWtE9u8
+	BZmjU7k9657UvunRzXPRFtrRBy4KP5Imqv/hrJx+t2dkYtpnlxx9pRXQ3IrdtozrJcWEKr
+	psGykefvLNEFBXKF6rjXfijwWxCyGqM34derkWZ6QV3QuQIopp54kU8b1ZD2FtV8JZX4sF
+	Ao/ERPPZ8Ee6kGxPGSutTcYW+LxLCZxVnk0ROdKNzYW63Bhyg/QY4r0JyB2a1w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742561067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Am601bcXnuFlc/N4uLCf/HWK0YPPJaXK8WE1j4yk+iU=;
+	b=//HKCAf4IS4MMPxsCNmcDmlzn4zZfIf6gE90eO9g92wxxQkvS6PbLjHpb6lEEhP0B/c3mj
+	JGkj0qat56ZrB8Ag==
+To: Borislav Petkov <bp@alien8.de>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+ dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, nikunj@amd.com,
+ Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+ Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+ hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
+ huibo.wang@amd.com, naveen.rao@amd.com
+Subject: Re: [RFC v2 01/17] x86/apic: Add new driver for Secure AVIC
+In-Reply-To: <20250320155150.GNZ9w5lh9ndTenkr_S@fat_crate.local>
+References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
+ <20250226090525.231882-2-Neeraj.Upadhyay@amd.com>
+ <20250320155150.GNZ9w5lh9ndTenkr_S@fat_crate.local>
+Date: Fri, 21 Mar 2025 13:44:26 +0100
+Message-ID: <87y0wy3651.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315164123.1855142-1-koichiro.den@canonical.com>
- <20250315164123.1855142-5-koichiro.den@canonical.com> <CAMRc=MdOSsakJm4H5=cqVzdKDrrMFO2t-wKVWRCU83saozepxQ@mail.gmail.com>
- <6mcl34zdx37gjh3a3y4lc5kgb2vv5notvs355oewiwogpgg5g7@jcuukymbifnm>
- <CAMRc=McpqUsEsMSfwo+WrzWdaW6YnMbptpj3fAoS-JfVhSm9mQ@mail.gmail.com> <oneoncbyv3iwb54kvjvmerv4xxhixgeqp44ubeikvy4yst3az3@g5c7uxgkonbx>
-In-Reply-To: <oneoncbyv3iwb54kvjvmerv4xxhixgeqp44ubeikvy4yst3az3@g5c7uxgkonbx>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 21 Mar 2025 13:42:49 +0100
-X-Gm-Features: AQ5f1Joi-n_6xI1YtplWveFaMKn6awkhJ4yLQwNvEy4Q5RoMmSRTfRJNj-KZBzk
-Message-ID: <CAMRc=Mfg1aNUQ+HeJurEH15+6e8dhmDS480SLOcmwOGP1u+iyg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/9] gpio: aggregator: introduce basic configfs interface
-To: Koichiro Den <koichiro.den@canonical.com>
-Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
-	linus.walleij@linaro.org, maciej.borzecki@canonical.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Mar 21, 2025 at 1:33=E2=80=AFPM Koichiro Den <koichiro.den@canonica=
-l.com> wrote:
+On Thu, Mar 20 2025 at 16:51, Borislav Petkov wrote:
+> On Wed, Feb 26, 2025 at 02:35:09PM +0530, Neeraj Upadhyay wrote:
+>> +static int x2apic_savic_probe(void)
+>> +{
+>> +	if (!cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
+>> +		return 0;
+>> +
+>> +	if (!x2apic_mode) {
+>> +		pr_err("Secure AVIC enabled in non x2APIC mode\n");
+>> +		snp_abort();
+>> +	}
+>> +
+>> +	pr_info("Secure AVIC Enabled\n");
 >
+> That's not necessary.
 >
-> Actually I wasn't aware of [1]. So let me summarize: does this match what
-> you have in mind?
+> Actually, you could figure out why that
 >
->   Before this patch series:
->   * forwarder:        gpiochip_fwd_* + gpio_fwd_*
->   * sysfs interface:  new_device/delete_device + aggr_*
->   * platform device:  gpio_aggregator_*
->   * module init/exit: gpio_aggregator_*
+> 	pr_info("Switched APIC routing to: %s\n", driver->name);
 >
->   After this patch series:
->   * common utils:     gpio_aggregator_*
->   * forwarder:        gpio_forwarder_*
+> doesn't come out in current kernels anymore:
+>
+> $ dmesg | grep -i "switched apic"
+> $
+>
+> and fix that as a separate patch.
+>
+> Looks like it broke in 6.10 or so:
+>
+> $ grep -E "Switched APIC" *
+> 10-rc1+:APIC: Switched APIC routing to: physical flat
+> 10-rc6+:APIC: Switched APIC routing to: physical flat
 
-Best don't change it in this series unless you touch the code. If you
-do, then yes, gpio_forwarder_ works.
+It's very simple. Before that the default driver was logical flat.
 
->   * configfs:         gpio_aggregator_*
->   * sysfs interface:  new_device/delete_device     <-- _Unchanged_
+838ba7733e4e ("x86/apic: Remove logical destination mode for 64-bit")
 
-Do change this one to also use the gpio_aggregator_ prefix.
+Removed logical destination mode and defaulted to physical flat.
 
->   * platform device:  gpio_aggregator_*            <-- _Unchanged_
->   * module init/exit: gpio_aggregator_*            <-- _Unchanged_
->
-> Thanks,
->
-> Koichiro
->
-> >
-> > Bartosz
-> >
-> > [1] https://lore.kernel.org/all/20250317-aaeon-up-board-pinctrl-support=
--v2-0-36126e30aa62@bootlin.com/
+So if you box does not switch to something else it keeps the default and
+does not print. See the first condition in apic_install_driver().
 
-Bartosz
+But that SNP thing will switch and print....
+
+Thanks,
+
+        tglx
 
