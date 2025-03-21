@@ -1,257 +1,168 @@
-Return-Path: <linux-kernel+bounces-570691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FC1A6B393
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:05:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7796BA6B3A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:27:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72E9485D6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA307189C700
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DB41E9B22;
-	Fri, 21 Mar 2025 04:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863401E51FF;
+	Fri, 21 Mar 2025 04:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FNBwuzTr"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018034120B;
-	Fri, 21 Mar 2025 04:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KxUvipl/"
+Received: from out.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ABCB664;
+	Fri, 21 Mar 2025 04:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742529900; cv=none; b=nRgOARy6mhcO+gNeaUuJe8zifKtsH5jhXB0A6k4WoF4dctC8DnMvKhevSmGxvTbfL63zpozF1/3ErVk1Cb6N5iz7oInust7g+2YzlJQnhiNlooPezrw6doXkSFkZxjgTur9fOnsSdTRSzV01l2UHy+VbHxG/+LUUns61SMUbDSw=
+	t=1742531270; cv=none; b=HMkS6pLZy1ZSVBTOCj48lgXaQTLjk/JW8+yB1R/5d8S6gbbCBP9F4X8XnLmymCdTxbXY83n8GFlrBrQdpmO+r9CDQ7hmYx34Y5Mh7FjshJLXVRHu7GzCsKKuoFrMPjvt3+aamfN8rzYwyJfF1cObCrKqo0k1SSWPP769MK3e4X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742529900; c=relaxed/simple;
-	bh=ZP1LnmM1wJ8Q8c+RdauO6Uvspm7StkLiS3ZFLjFWNOQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kKwUQlGjkYkPKyd+1Vb5pjJZDzXwJv1qMRqAA/s0BqGtZaH7rYHI89Ml++4eEiujFBzsEXxLSFVy+bqkvRMeoX9oSIofobzj5TYvNKgNl0A+xJ+io1qm/8Y4K0NJ0WevBZ5U1/OIwvz/m0OlA6Gc0ls57bh8rOOqVzCPf+OlTUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FNBwuzTr; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=EXYUe
-	p/C6tqg6uwYPvJkBc1WQ7MwpHH6OGJ1Ov8wF1w=; b=FNBwuzTr455lJdum5X3WK
-	ajAltHnUvWvNjIHgq+Yt/dge+poPJHvNfOiNI0vDhe0H9Pvr0To93bmsWbUBBAp7
-	dPw56nCALM9j48bf8cyCaSyrAT5FotrfsjfWqWbBfgtzdDnf6Ew8KsyRksJBJvtr
-	kms+1i/S8MbPe21hpVY6zo=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3Hxsw5dxnbYNpAw--.34788S6;
-	Fri, 21 Mar 2025 12:04:05 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org
-Cc: kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	jingoohan1@gmail.com,
-	thomas.richard@bootlin.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [v3 4/4] PCI: cadence: Use cdns_pcie_find_*capability to find capability offset instead of hardcore
-Date: Fri, 21 Mar 2025 12:03:58 +0800
-Message-Id: <20250321040358.360755-5-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250321040358.360755-1-18255117159@163.com>
-References: <20250321040358.360755-1-18255117159@163.com>
+	s=arc-20240116; t=1742531270; c=relaxed/simple;
+	bh=C7HXbRAAikkBwHspUHiehLT+PSVXQ2/fzwqlCI0p5vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WkWcEUYOp/z0NXwodu0xB+fIQJrnMERQuZQYJo8t5ja2ZVb0Iur0KHgkbhUk4AuwQx6iyGfKNA99jsZK2ghKAsa6wa4mcOxreKM7xENvQAmcONAgonxh+DjWUXzvGXjLmSLdSvydddHC6ShE5lMLH/LnR3MCxlI+dh48zdbpjrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KxUvipl/; arc=none smtp.client-ip=193.252.22.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id vTpqtuCVJpih5vTpvtXDey; Fri, 21 Mar 2025 05:18:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742530710;
+	bh=RfTovQ5pBBPXl/sQntAxGWbDNnwENYAK9Bt2Ch93r58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=KxUvipl/mBH9mc3/+Jxp2x1493gZQeZOd7O1dWUrPtM6thSRht5eemzsz0bAhoVki
+	 UK6CTEtCyIr0B2njVsiL/Rbr4irCB0+2uOw5H+lalCF9jyZTppgCSLooDDJSUxSqiP
+	 KLwOa3oQaBRKfU1w7HcWDEh8qDV9uKdiX8SEa3TJYLNcfQMoUqnv/Y+c4nKoVmstXw
+	 QtOzdhj2FmatopgmqctXNjsEuD+W5CATzJW4ecmjZKK+YxcyTexp8CHwQ510jgHD3x
+	 Q85cTm7l4Tdfae2YGjxEcK0z2m8NKPbDmVd5zGOqFiHSeZzl8e/qDzEFkGwqSLiRK8
+	 h/GCI4MlrBSDQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 21 Mar 2025 05:18:30 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <7805e0db-7c17-438d-9985-f4feec644da6@wanadoo.fr>
+Date: Fri, 21 Mar 2025 13:18:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] phy: can-transceiver: Re-instate "mux-states" property
+ presence check
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Rob Herring <robh@kernel.org>
+Cc: linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Marc Kleine-Budde <mkl@pengutronix.de>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Peter Rosin <peda@axentia.se>,
+ Aswath Govindraju <a-govindraju@ti.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>
+References: <3d7e0d723908284e8cf06ad1f7950c03173178f3.1742483710.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <3d7e0d723908284e8cf06ad1f7950c03173178f3.1742483710.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3Hxsw5dxnbYNpAw--.34788S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW3AryUXFWUtw17JFWkZF13urg_yoWxWF47pF
-	Z8uFySkF40qrW7uFsrAa15ZrnxtFnIv347Aa92k3W5uF129ryUGFyIva43KF1akrs7uF17
-	X3yDtrsa9a13trUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziSApOUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDw0Xo2fc32PkYwAAs2
 
-The offset address of capability or extended capability designed by
-different SOC design companies may not be the same. Therefore, a flexible
-public API is required to find the offset address of a capability or
-extended capability in the configuration space.
+On 21/03/2025 at 00:15, Geert Uytterhoeven wrote:
+> On the Renesas Gray Hawk Single development board:
+> 
+>     can-transceiver-phy can-phy0: /can-phy0: failed to get mux-state (0)
+> 
+> "mux-states" is an optional property for CAN transceivers.  However,
+> mux_get() always prints an error message in case of an error, including
+> when the property is not present, confusing the user.
+> 
+> Fix this by re-instating the property presence check (this time using
+> the proper API) in a wrapper around devm_mux_state_get().  When the
+> multiplexer subsystem gains support for optional muxes, the wrapper can
+> just be removed.
+> 
+> In addition, propagate all real errors upstream, instead of ignoring
+> them.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- .../pci/controller/cadence/pcie-cadence-ep.c  | 40 +++++++++++--------
- drivers/pci/controller/cadence/pcie-cadence.h |  5 ---
- 2 files changed, 23 insertions(+), 22 deletions(-)
+I would like to hear Rob's opinion on this. In d02dfd4ceb2e9f34 Rob
+purposely changed the function to ignore errors other than EPROBE_DEFER.
 
-diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-index e0cc4560dfde..aea53ddcaf9b 100644
---- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
-+++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-@@ -19,12 +19,13 @@
- 
- static u8 cdns_pcie_get_fn_from_vfn(struct cdns_pcie *pcie, u8 fn, u8 vfn)
- {
--	u32 cap = CDNS_PCIE_EP_FUNC_SRIOV_CAP_OFFSET;
- 	u32 first_vf_offset, stride;
-+	u16 cap;
- 
- 	if (vfn == 0)
- 		return fn;
- 
-+	cap = cdns_pcie_find_ext_capability(pcie, PCI_EXT_CAP_ID_SRIOV);
- 	first_vf_offset = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_SRIOV_VF_OFFSET);
- 	stride = cdns_pcie_ep_fn_readw(pcie, fn, cap +  PCI_SRIOV_VF_STRIDE);
- 	fn = fn + first_vf_offset + ((vfn - 1) * stride);
-@@ -36,10 +37,11 @@ static int cdns_pcie_ep_write_header(struct pci_epc *epc, u8 fn, u8 vfn,
- 				     struct pci_epf_header *hdr)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
--	u32 cap = CDNS_PCIE_EP_FUNC_SRIOV_CAP_OFFSET;
- 	struct cdns_pcie *pcie = &ep->pcie;
- 	u32 reg;
-+	u16 cap;
- 
-+	cap = cdns_pcie_find_ext_capability(pcie, PCI_EXT_CAP_ID_SRIOV);
- 	if (vfn > 1) {
- 		dev_err(&epc->dev, "Only Virtual Function #1 has deviceID\n");
- 		return -EINVAL;
-@@ -224,9 +226,10 @@ static int cdns_pcie_ep_set_msi(struct pci_epc *epc, u8 fn, u8 vfn, u8 mmc)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct cdns_pcie *pcie = &ep->pcie;
--	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
- 	u16 flags;
-+	u8 cap;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
- 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
- 
- 	/*
-@@ -246,9 +249,10 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn, u8 vfn)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct cdns_pcie *pcie = &ep->pcie;
--	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
- 	u16 flags, mme;
-+	u8 cap;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
- 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
- 
- 	/* Validate that the MSI feature is actually enabled. */
-@@ -269,9 +273,10 @@ static int cdns_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no, u8 vfunc_no)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct cdns_pcie *pcie = &ep->pcie;
--	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
- 	u32 val, reg;
-+	u8 cap;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
- 	func_no = cdns_pcie_get_fn_from_vfn(pcie, func_no, vfunc_no);
- 
- 	reg = cap + PCI_MSIX_FLAGS;
-@@ -290,9 +295,10 @@ static int cdns_pcie_ep_set_msix(struct pci_epc *epc, u8 fn, u8 vfn,
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct cdns_pcie *pcie = &ep->pcie;
--	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
- 	u32 val, reg;
-+	u8 cap;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
- 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
- 
- 	reg = cap + PCI_MSIX_FLAGS;
-@@ -379,11 +385,11 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
- 				     u8 interrupt_num)
- {
- 	struct cdns_pcie *pcie = &ep->pcie;
--	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
- 	u16 flags, mme, data, data_mask;
--	u8 msi_count;
- 	u64 pci_addr, pci_addr_mask = 0xff;
-+	u8 msi_count, cap;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
- 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
- 
- 	/* Check whether the MSI feature has been enabled by the PCI host. */
-@@ -431,14 +437,14 @@ static int cdns_pcie_ep_map_msi_irq(struct pci_epc *epc, u8 fn, u8 vfn,
- 				    u32 *msi_addr_offset)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
--	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
- 	struct cdns_pcie *pcie = &ep->pcie;
- 	u64 pci_addr, pci_addr_mask = 0xff;
- 	u16 flags, mme, data, data_mask;
--	u8 msi_count;
-+	u8 msi_count, cap;
- 	int ret;
- 	int i;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSI);
- 	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
- 
- 	/* Check whether the MSI feature has been enabled by the PCI host. */
-@@ -481,16 +487,16 @@ static int cdns_pcie_ep_map_msi_irq(struct pci_epc *epc, u8 fn, u8 vfn,
- static int cdns_pcie_ep_send_msix_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
- 				      u16 interrupt_num)
- {
--	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
- 	u32 tbl_offset, msg_data, reg;
- 	struct cdns_pcie *pcie = &ep->pcie;
- 	struct pci_epf_msix_tbl *msix_tbl;
- 	struct cdns_pcie_epf *epf;
- 	u64 pci_addr_mask = 0xff;
- 	u64 msg_addr;
-+	u8 bir, cap;
- 	u16 flags;
--	u8 bir;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
- 	epf = &ep->epf[fn];
- 	if (vfn > 0)
- 		epf = &epf->epf[vfn - 1];
-@@ -564,7 +570,9 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
- 	int max_epfs = sizeof(epc->function_num_map) * 8;
- 	int ret, epf, last_fn;
- 	u32 reg, value;
-+	u8 cap;
- 
-+	cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_EXP);
- 	/*
- 	 * BIT(0) is hardwired to 1, hence function 0 is always enabled
- 	 * and can't be disabled anyway.
-@@ -588,12 +596,10 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
- 				continue;
- 
- 			value = cdns_pcie_ep_fn_readl(pcie, epf,
--					CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET +
--					PCI_EXP_DEVCAP);
-+						      cap + PCI_EXP_DEVCAP);
- 			value &= ~PCI_EXP_DEVCAP_FLR;
--			cdns_pcie_ep_fn_writel(pcie, epf,
--					CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET +
--					PCI_EXP_DEVCAP, value);
-+			cdns_pcie_ep_fn_writel(pcie, epf, cap + PCI_EXP_DEVCAP,
-+					       value);
- 		}
- 	}
- 
-diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
-index 6f4981fccb94..d0fcf1b3549c 100644
---- a/drivers/pci/controller/cadence/pcie-cadence.h
-+++ b/drivers/pci/controller/cadence/pcie-cadence.h
-@@ -125,11 +125,6 @@
-  */
- #define CDNS_PCIE_EP_FUNC_BASE(fn)	(((fn) << 12) & GENMASK(19, 12))
- 
--#define CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET	0x90
--#define CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET	0xb0
--#define CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET	0xc0
--#define CDNS_PCIE_EP_FUNC_SRIOV_CAP_OFFSET	0x200
--
- /*
-  * Endpoint PF Registers
-  */
--- 
-2.25.1
+Right now, I do not see a reason not to propagate the other errors, so
+I am in favor of this roll back. But maybe we are missing something?
+
+Otherwise, the patch looks good to me. Nice improvement over the v1. I
+will wait for Rob's comment to give my review tag.
+
+> Fixes: d02dfd4ceb2e9f34 ("phy: can-transceiver: Drop unnecessary "mux-states" property presence check")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Alternatively, the multiplexer subsystem needs to gain support for
+> getting an optional mux...
+> 
+> v2:
+>   - Add and use devm_mux_state_get_optional(),
+>   - No given tags added, as the new solution is different.
+> ---
+>  drivers/phy/phy-can-transceiver.c | 22 +++++++++++++++-------
+>  1 file changed, 15 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-transceiver.c
+> index 2bec70615449f94d..f59caff4b3d4c267 100644
+> --- a/drivers/phy/phy-can-transceiver.c
+> +++ b/drivers/phy/phy-can-transceiver.c
+> @@ -93,6 +93,16 @@ static const struct of_device_id can_transceiver_phy_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, can_transceiver_phy_ids);
+>  
+> +/* Temporary wrapper until the multiplexer subsystem supports optional muxes */
+> +static inline struct mux_state *
+> +devm_mux_state_get_optional(struct device *dev, const char *mux_name)
+> +{
+> +	if (!of_property_present(dev->of_node, "mux-states"))
+> +		return NULL;
+> +
+> +	return devm_mux_state_get(dev, mux_name);
+> +}
+> +
+>  static int can_transceiver_phy_probe(struct platform_device *pdev)
+>  {
+>  	struct phy_provider *phy_provider;
+> @@ -114,13 +124,11 @@ static int can_transceiver_phy_probe(struct platform_device *pdev)
+>  	match = of_match_node(can_transceiver_phy_ids, pdev->dev.of_node);
+>  	drvdata = match->data;
+>  
+> -	mux_state = devm_mux_state_get(dev, NULL);
+> -	if (IS_ERR(mux_state)) {
+> -		if (PTR_ERR(mux_state) == -EPROBE_DEFER)> -			return PTR_ERR(mux_state);
+> -	} else {
+> -		can_transceiver_phy->mux_state = mux_state;
+> -	}
+> +	mux_state = devm_mux_state_get_optional(dev, NULL);
+> +	if (IS_ERR(mux_state))
+> +		return PTR_ERR(mux_state);
+> +
+> +	can_transceiver_phy->mux_state = mux_state;
+>  
+>  	phy = devm_phy_create(dev, dev->of_node,
+>  			      &can_transceiver_phy_ops);
+
+Yours sincerely,
+Vincent Mailhol
 
 
