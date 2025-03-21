@@ -1,90 +1,230 @@
-Return-Path: <linux-kernel+bounces-570951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2690EA6B6A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:07:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F16A6B6A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7088F18938F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB96E3B154B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0D91E571A;
-	Fri, 21 Mar 2025 09:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="NmK6I3eA"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83651F03C4;
+	Fri, 21 Mar 2025 09:09:40 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1DA1F03C4;
-	Fri, 21 Mar 2025 09:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3608BEE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742548010; cv=none; b=DTenUHv8yqcK+T5Ti5pL8Hs5OlP/4s1FB9gadqER+pvLUMZKUoPZeacJuE0fscTEoVT97kPPQ7ysqTEPiozFW2wsRKbDC7gdMdkBg4iqeLZv6cJzCc7CmmpAbgOQ/OnudZH+/qv/4hfqdQ0U8j7F54LbEmAhX45nOUW3gZ6BxBI=
+	t=1742548180; cv=none; b=kAj0TbnTyRShUSqmkic2uOYOHoCEgjmyb6Bjlt7KeC8cf/BeOOWxiTOGa4Z4rRP7q1AJJAAKUeXsBC7tK5+GiwFdfPtw7zocRqRY9mBuZZ+zsq7R63Awv7a2jZ5zrI6lD8kc17O1FqOj/9ExLvyM+9eZwfyEg6RgOe/zQoPdRLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742548010; c=relaxed/simple;
-	bh=nd7Hlijoo4SHjn4bvaDypRqs2ZkWHDVlmW2gwUcp7q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGI2qo5wUMD6zTbj+OzX+Tc2JpFKr9S7LSUz/k2TEMxz7Z2KjuoE2kQWPPRVwisVYq+2sqNRFQC7GNe8161SY2/WH8XML89Njj/1YVMaoCJs0etLk5Y76S8VLqXhRsQS971LSlO8cErd/wRbRf0G2OY4i1PezaJX6nCkxLn+3Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=NmK6I3eA; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DConofP6tD7c5xckB9jldT1Ij9v5gECOt17lWOu6Vm4=; b=NmK6I3eAcWD/vhe3JWXqBdQCA4
-	sJ/nFY4QORYXGTkrDXfeUAQ1VwEfSTpjt6j3fQlzQCe7PAZrDUY3ST4iz/+NfvwJGVG/V9IJUgqkO
-	8l96cE3GL68MMM9MMuQr5i4IZ6X3AhIufl9tBtZTVoN3GEgjTQqaoiNgy2LYZmtEzqaKNJdPlqyfT
-	GUGIVwTw9aZC/d1qF8J548YPBQJNpZDRRz9rulw5iGxUjgyNJUySWL2U8A1hWRXapG0qSP5YqVtXV
-	Osz+hhCckvcfzAvZNJLbT8yzfJ5hw4UkBwm3QNWEDKxQAQ+RNHv9vKUQirq1s25HA/XDhEex+zqWs
-	2rLDxoCw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tvYKl-008ya9-0K;
-	Fri, 21 Mar 2025 17:06:32 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Mar 2025 17:06:31 +0800
-Date: Fri, 21 Mar 2025 17:06:31 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thara Gopinath <thara.gopinath@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Md Sadre Alam <quic_mdalam@quicinc.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v7 0/8] dmaengine: qcom: bam_dma: add command descriptor
- support
-Message-ID: <Z90sF_1SporNMdIo@gondor.apana.org.au>
-References: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
+	s=arc-20240116; t=1742548180; c=relaxed/simple;
+	bh=Vj2rgL/pl+uODBwI9ctp5KVYlRMHr6SGhKRg88Ks6WM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IL7Zmh9QCwEv8eeDQw3nDuyX6zaCgpw97CyFBq7bZu+Hd7lZw41/ucAW3noQRDJ3fVrr/gwj9CfXzSyPseq+h4w/oitdjwXKTbpG2hNvq6AgWOW/SQnXjig0rGJzbFZKZTle6RCZV1045V3ZknvSw6tNlcKVpbz2TPIC5r+Bqyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7087B20452;
+	Fri, 21 Mar 2025 09:09:33 +0000 (UTC)
+Message-ID: <7556bdd0-1015-4175-a810-d2d53662ba64@ghiti.fr>
+Date: Fri, 21 Mar 2025 10:09:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] riscv: save the SR_SUM status over switches
+Content-Language: en-US
+To: Cyril Bur <cyrilbur@tenstorrent.com>, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, paul.walmsley@sifive.com, charlie@rivosinc.com,
+ jrtc27@jrtc27.com, ben.dooks@codethink.co.uk
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jszhang@kernel.org, syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
+References: <20250320224423.1838493-1-cyrilbur@tenstorrent.com>
+ <20250320224423.1838493-2-cyrilbur@tenstorrent.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250320224423.1838493-2-cyrilbur@tenstorrent.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedtjedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhlefhffeggfeftddvtdeukeelgfehkeehhfeuheehleefkeelgffglefghfffueenucffohhmrghinhepvghnthhrhidrshgsnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemleekgeekmeeksgdvudemheefudejmedugeehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemleekgeekmeeksgdvudemheefudejmedugeehuddphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemleekgeekmeeksgdvudemheefudejmedugeehudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddupdhrtghpthhtoheptgihrhhilhgsuhhrsehtvghnshhtohhrrhgvnhhtrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghou
+ hesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjrhhttgdvjeesjhhrthgtvdejrdgtohhmpdhrtghpthhtohepsggvnhdrughoohhkshestghouggvthhhihhnkhdrtghordhukhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Mar 11, 2025 at 10:25:31AM +0100, Bartosz Golaszewski wrote:
+Hi Cyril/Ben,
+
+On 20/03/2025 23:44, Cyril Bur wrote:
+> From: Ben Dooks <ben.dooks@codethink.co.uk>
 >
-> Testing:
-> 
->   insmod tcrypt.ko mode=101
+> When threads/tasks are switched we need to ensure the old execution's
+> SR_SUM state is saved and the new thread has the old SR_SUM state
+> restored.
+>
+> The issue is seen under heavy load especially with the syz-stress tool
+> running, with crashes as follows in schedule_tail:
+>
+> Unable to handle kernel access to user memory without uaccess routines
+> at virtual address 000000002749f0d0
+> Oops [#1]
+> Modules linked in:
+> CPU: 1 PID: 4875 Comm: syz-executor.0 Not tainted
+> 5.12.0-rc2-syzkaller-00467-g0d7588ab9ef9 #0
+> Hardware name: riscv-virtio,qemu (DT)
+> epc : schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
+>   ra : task_pid_vnr include/linux/sched.h:1421 [inline]
+>   ra : schedule_tail+0x70/0xb2 kernel/sched/core.c:4264
+> epc : ffffffe00008c8b0 ra : ffffffe00008c8ae sp : ffffffe025d17ec0
+>   gp : ffffffe005d25378 tp : ffffffe00f0d0000 t0 : 0000000000000000
+>   t1 : 0000000000000001 t2 : 00000000000f4240 s0 : ffffffe025d17ee0
+>   s1 : 000000002749f0d0 a0 : 000000000000002a a1 : 0000000000000003
+>   a2 : 1ffffffc0cfac500 a3 : ffffffe0000c80cc a4 : 5ae9db91c19bbe00
+>   a5 : 0000000000000000 a6 : 0000000000f00000 a7 : ffffffe000082eba
+>   s2 : 0000000000040000 s3 : ffffffe00eef96c0 s4 : ffffffe022c77fe0
+>   s5 : 0000000000004000 s6 : ffffffe067d74e00 s7 : ffffffe067d74850
+>   s8 : ffffffe067d73e18 s9 : ffffffe067d74e00 s10: ffffffe00eef96e8
+>   s11: 000000ae6cdf8368 t3 : 5ae9db91c19bbe00 t4 : ffffffc4043cafb2
+>   t5 : ffffffc4043cafba t6 : 0000000000040000
+> status: 0000000000000120 badaddr: 000000002749f0d0 cause:
+> 000000000000000f
+> Call Trace:
+> [<ffffffe00008c8b0>] schedule_tail+0x72/0xb2 kernel/sched/core.c:4264
+> [<ffffffe000005570>] ret_from_exception+0x0/0x14
+> Dumping ftrace buffer:
+>     (ftrace buffer empty)
+> ---[ end trace b5f8f9231dc87dda ]---
+>
+> The issue comes from the put_user() in schedule_tail
+> (kernel/sched/core.c)
+> doing the following:
+>
+> asmlinkage __visible void schedule_tail(struct task_struct *prev)
+> {
+> ...
+>          if (current->set_child_tid)
+>                  put_user(task_pid_vnr(current), current->set_child_tid);
+> ...
+> }
+>
+> the put_user() macro causes the code sequence to come out as follows:
+>
+> 1:	__enable_user_access()
+> 2:	reg = task_pid_vnr(current);
+> 3:	*current->set_child_tid = reg;
+> 4:	__disable_user_access()
+>
+> This means the task_pid_vnr() is being called with user-access enabled
+> which itself is not a good idea, but that is a separate issue. Here we
+> have a function that /might/ sleep being called with the SR_SUM and if
+> it does, then it returns with the SR_SUM flag possibly cleared thus
+> causing the above abort.
+>
+> To try and deal with this, and stop the SR_SUM leaking out into other
+> threads (this has also been tested and see under stress. It can rarely
+> happen but it /does/ under load) make sure the __switch_to() will save
+> and restore the SR_SUM flag, and clear it possibly for the next thread
+> if it does not need it.
+>
+> Note, test code to be supplied once other checks have been finished.
+>
+> There may be further issues with the mstatus flags with this, this
+> can be discussed further once some initial testing has been done.
 
-Please also enable CRYPTO_MANAGER_EXTRA_TESTS.  Those tests are
-a lot better than the fixed test vectors alone.
+
+The whole changelog is outdated, it needs to be reworded:
+
+"To prevent the evaluation of preemptible functions in 
+unsafe_get/put_XXX() which could clear SUM bit set by 
+get_user_access()... etc etc"
+
+
+>
+> Reported-by: syzbot+e74b94fe601ab9552d69@syzkaller.appspotmail.com
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+> ---
+>   arch/riscv/include/asm/processor.h | 1 +
+>   arch/riscv/kernel/asm-offsets.c    | 5 +++++
+>   arch/riscv/kernel/entry.S          | 8 ++++++++
+>   3 files changed, 14 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+> index 5f56eb9d114a..0de05d652e0f 100644
+> --- a/arch/riscv/include/asm/processor.h
+> +++ b/arch/riscv/include/asm/processor.h
+> @@ -103,6 +103,7 @@ struct thread_struct {
+>   	struct __riscv_d_ext_state fstate;
+>   	unsigned long bad_cause;
+>   	unsigned long envcfg;
+> +	unsigned long flags;
+
+
+I would prefer the use of status since it stores the sstatus csr.
+
+
+>   	u32 riscv_v_flags;
+>   	u32 vstate_ctrl;
+>   	struct __riscv_v_ext_state vstate;
+> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+> index e89455a6a0e5..556ebcbb7e22 100644
+> --- a/arch/riscv/kernel/asm-offsets.c
+> +++ b/arch/riscv/kernel/asm-offsets.c
+> @@ -34,6 +34,7 @@ void asm_offsets(void)
+>   	OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+>   	OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+>   	OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
+> +	OFFSET(TASK_THREAD_FLAGS, task_struct, thread.flags);
+>   
+>   	OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+>   	OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
+> @@ -347,6 +348,10 @@ void asm_offsets(void)
+>   		  offsetof(struct task_struct, thread.s[11])
+>   		- offsetof(struct task_struct, thread.ra)
+>   	);
+> +	DEFINE(TASK_THREAD_FLAGS_RA,
+> +		  offsetof(struct task_struct, thread.flags)
+> +		- offsetof(struct task_struct, thread.ra)
+> +	);
+>   
+>   	DEFINE(TASK_THREAD_F0_F0,
+>   		  offsetof(struct task_struct, thread.fstate.f[0])
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 33a5a9f2a0d4..c278b3ac37b9 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -397,9 +397,17 @@ SYM_FUNC_START(__switch_to)
+>   	REG_S s9,  TASK_THREAD_S9_RA(a3)
+>   	REG_S s10, TASK_THREAD_S10_RA(a3)
+>   	REG_S s11, TASK_THREAD_S11_RA(a3)
+> +
+> +	/* save (and disable the user space access flag) */
+> +	li    s0, SR_SUM
+> +	csrrc s1, CSR_STATUS, s0
+
+
+Here (again), I don't think we need to clear sstatus.
+
+
+> +	REG_S s1, TASK_THREAD_FLAGS_RA(a3)
+> +
+>   	/* Save the kernel shadow call stack pointer */
+>   	scs_save_current
+>   	/* Restore context from next->thread */
+> +	REG_L s0,  TASK_THREAD_FLAGS_RA(a4)
+> +	csrs  CSR_STATUS, s0
+>   	REG_L ra,  TASK_THREAD_RA_RA(a4)
+>   	REG_L sp,  TASK_THREAD_SP_RA(a4)
+>   	REG_L s0,  TASK_THREAD_S0_RA(a4)
+
 
 Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+Alex
+
 
