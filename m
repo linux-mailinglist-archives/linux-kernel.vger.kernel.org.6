@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-571014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FBB2A6B7DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:43:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EDAA6B7D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BFAB174C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:42:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91EF2174181
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B591F1517;
-	Fri, 21 Mar 2025 09:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7A81F131C;
+	Fri, 21 Mar 2025 09:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxeLXvA0"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R7/TWo3h"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226911F2BA7;
-	Fri, 21 Mar 2025 09:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E271F0E34
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742550126; cv=none; b=PK629PebHBljDRMUj4ONqZYs872TmTprFGaEoLsxANqjrLh10HzATIKOzgaksPBorDU03LArtVTtjQg0G2wSINIriBkT0UktY/XM52acfIB54HBwJXVWHNIKK/s1WTOGSkkv7oe0Nrp5Rod1gTt/Mnpy/6ieLUFL9wAVFenjVJM=
+	t=1742550120; cv=none; b=DXfn00VKYL4a0/2ig7ZpcZ2iv1hq2BAgWTpX1wK3cr6o9H0rmtAthfAwjGsTUxR49VxpLX/CEAcSO1CgmPHvtyvxwRY5wyAdPXrTyf0P9CtZJmyWYiEg2Smh4UdN91wvtUSDsd37rglgaM9Dy5MsbVP64CHezve299iHe3YNGrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742550126; c=relaxed/simple;
-	bh=+w3YyOe+koEjM1VaafgX1Vje1aaGPYCbmvv9MXnKfGI=;
+	s=arc-20240116; t=1742550120; c=relaxed/simple;
+	bh=0/BHrVNiKMhKVJtYLbtO3NF7YAfxWVkjde7Dn/8RHts=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oMEv5UG7LOSx1TJv7aEMvKoK3ZQMEF1jDBhsEtgkWKnip+l6aBnF+JsL+01/8rIi9UhWiNPnodkHU/+hje9n1BxKAiunDL3BQTL+VBPYzXlZhJKTvcZ8PcI7IqgzNcu21+YB68/QR+/2eHz2X/qoaQ9z3COKOVgZKjuHrvz1rtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxeLXvA0; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bae572157so18327001fa.3;
-        Fri, 21 Mar 2025 02:42:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=umtvYGSs2sXiroWuVgAuKKr++SLpqy0MxAf1aTunAbOeR7p4epgCaPdf7eVtx+roglrSiI9EXTDq+U7wMjyr9uEj8iIPRKnmwn3EIezX/xma1639XLve/K/d2Uikgm8wBZsc5dm5arI87T82OG/R3R76OmVbCxzHd5DzE4V8Azs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R7/TWo3h; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e4930eca0d4so1353463276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742550123; x=1743154923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Q4FPwmURHlffOb9OhV7hWFSsMazIY8Sr98tWaYEysE=;
-        b=gxeLXvA0qbbb0fS+JTbhRtB8QdfTrZcq+XF1emh+P/kbDNRltRAKer5ulTojuFLiIT
-         P7cXfBep9LAivVa0K1sqMdZHoQx8PplZHJ8mY7SSrq2eQnaaYp2tkAB6ibCK/k2WLnWi
-         mmG93nGBjYCbqzMFF/CRg5Tf1hlFn5q4DnXFlsPXW7R7vuS0klJ+4xi5ISMW5DZwUlx9
-         UeDJld9G+L6vChuF8sRLxCmBcC8lKSjzgKEP/XMzCMZrzrOhCuVM3i8rPyzx6uv/kbG+
-         zlu4+ch2n/1brNG9/lo9diLBfHBANJBowdb2BD7/evGElseYX7VHP3C2ERIM9GH3tXN5
-         5tFQ==
+        d=linaro.org; s=google; t=1742550117; x=1743154917; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZA5GK2sSb6ZRsHG3hwvFNz3la3AkAW84sO40my6/nvQ=;
+        b=R7/TWo3hxDDUhhXQF5LCwu5I43OLGrvlfK/NDJagQkQT7s/uvGfvxEZwLsfFCF28VT
+         lh5/WJ/FCT6i3r9dR1rWQcTlrADVRoW/e+ztZ1yMccLX4bxSJqG3WPsUl+2b+ayKT9JF
+         2nuys4YS1MfjzRmQNWbv8WkjoxU3RsB/ojf8w+bOHG5SXh7YcgU/GkCckPUWc4nNdrQ0
+         rwqxtZ8+cRf3mArAeEva1QWwwrH5cIneyG6igUW0dHG/waqRnqMSwDH9WFpgPDGGkEt2
+         2ddYYs1ifJyTFGGna+g3m9V6o3znX5wYN406VEEQ2c9FApHtAf+DdZXE2tjp2ToYuqq6
+         WLpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742550123; x=1743154923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Q4FPwmURHlffOb9OhV7hWFSsMazIY8Sr98tWaYEysE=;
-        b=vyYfOc8baaWFkRJMXSRjuT8W9e/cNH8FHDuNZNQ7+aTqpOsy0ME53qWTXSGkQ7F6Ja
-         zOujVbbTdJ14SiYlbEhvI03b4jaPERAclIYxPaAN/9Kx4okHOMHrr2hZ8C2xHg7PZqSV
-         7936HdlKebuHkRwFWX2g7tSFeecl8HVZkUo5iwZY5D5g9ldZelWoT1ALB4hYx7sb3VGY
-         OM9nJaNSIrr7oOovxtnPLV0wOAhcyjDQaKmU7QJTnANYinWzsu2PoIoJHMkvdpjGXCxy
-         Mws/xO3dxAkRQx1KZnnsl6cHYEnBlbYQKx7Cs48cn8quh5OmdLhayhPxvuJY9r/j+yap
-         hQ+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWterNkhvRvXUG9se2W7ad2x1D8ZxIwmWJU51UNZ/Rvk43ZgAtCwpSuTzjOrn58dpRHqUohueoGeFAdCZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWyea60JnNHeG24UWBVzHGtLmAfVHZWGS9WlOd/iYl5hR0xJw2
-	FziLzrKqoKTgtDR5nSMAna/Xul9R7oIGY+6q5oVCL+ebbs+QortCtwO0W/i0/+MjjDolGlHbuH3
-	rbKpUryau+Cyhtasisgvj5ehsIdA=
-X-Gm-Gg: ASbGncvxIe2Nvb31COqbTPk7T4CtRNMKjZKoXrXM2cItqsS3yEtHPxW0ipeyK679CoN
-	7/Iz2LlrXICM9kD1gfPbVQIBuW4nt+/dq8HUcIybWOm1XJFNjByQwosBLSB53TASAjRR6RSBMid
-	ryvMeO89Y/8bwtC2prYWjvNDGNLCqNUFPznxtyojGfLZnyf2firGImKaugepNyNp09PUn8LQ==
-X-Google-Smtp-Source: AGHT+IFbpfOSQucztrFGroIm51eYa1L2b4hgcmZIh3lh6p7CGExa1Cyq7b/aGjvypuc4U1w/TfgR69zktOfwDzmVCRI=
-X-Received: by 2002:a2e:bc1a:0:b0:30b:b908:ce06 with SMTP id
- 38308e7fff4ca-30d7e239f96mr9731251fa.19.1742550122932; Fri, 21 Mar 2025
- 02:42:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742550117; x=1743154917;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZA5GK2sSb6ZRsHG3hwvFNz3la3AkAW84sO40my6/nvQ=;
+        b=llXh2Crgc6+kertotIiX4D5rhzKoqag1q6SgqHGKfIq1msASpN43vOMmtzfAYiMllC
+         XJLVTNBbSwuXr2KikDoY+zC9klJrDugsfr/TadAyecEnPLs5zqMTukBq6US9IDk3r7OM
+         z6P6LNYN4+izzfUB1wiWuk+4dQheCJm8x9VJpiuWqCa1X5FpxKxvDDDnZZA5d+RvP854
+         Cipgokm59q0XtAzIewf12wUiivdVbaynj2xdkzejNpLD9r7yoGbXdXSqEETdi61FDfKf
+         5J3e/SF9bo72sYWGoYGREExeA2L9aZ3uBzOaos9220ku0FpCQF62yVXvbjGm+Mf6f8o5
+         sgUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWz1v3Vyv3HbL2AtKtnquda+4/F1yR+fbWZjoL93NII3yal8KDxjEcxmzUyLQeJXu8UAzsRm47FL5iEOCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnRj75xu3AzkZz1H9ZfkN0l+mEnTPKMGDzXIb7MJKFXDFeCWqn
+	iUV+zAjnlYkXuJwVAyv5M2inYsbmzp21nHKLu94Vo/f7zSmTvfzW8VYjJfH3TuwXy/9Z3mdqKAH
+	K/HD7yoq8K3FAcYznNrnORJJLYvKhH7JJ+q3EKg==
+X-Gm-Gg: ASbGncvUY7IDFZjFSbYyuohldfnCyoLQtFZH9x4xvbJcUjqt6DB4X2YwWYtBJxbv2x8
+	KUHympJ4AZUtY/wbVSz3264NoSDX2y/+JauBbs+h9svWNKq5p+mpBiWBFvJPUdufJBfVq8EBO2g
+	ehrVvb+5eLBCFfamgWJL+m7e55wdYIy5N27RfBiSAmWiMgLuD7gyjUUptLDA==
+X-Google-Smtp-Source: AGHT+IEKaaJUdWmWHL2646zO7DMaiUnsG3MqMZ6mxJfwIWA0tFEcKSPm+dF0TuzCNPd05glsw///D/MWdGV8rQY5GGU=
+X-Received: by 2002:a05:6902:1ac7:b0:e63:f1c4:4f0 with SMTP id
+ 3f1490d57ef6-e66a4fa30a7mr2740379276.37.1742550117306; Fri, 21 Mar 2025
+ 02:41:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319-rust-analyzer-host-v3-0-311644ee23d2@gmail.com>
-In-Reply-To: <20250319-rust-analyzer-host-v3-0-311644ee23d2@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 21 Mar 2025 05:41:26 -0400
-X-Gm-Features: AQ5f1JoU99qrk6ClDjbnWGh7Hc3SFv244Kd9xbJX-aSKzyqYfMt0O5Rawh5IHLA
-Message-ID: <CAJ-ks9nF3A+NZuvRJj_5KH=_4uCVmyLb-T8qQa8D3iyN2S-fVg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] rust: generate_rust_analyzer.py: define host crates
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Boris-Chengbiao Zhou <bobo1239@web.de>, Kees Cook <kees@kernel.org>, 
-	Fiona Behrens <me@kloenk.dev>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lukas Wirth <lukas.wirth@ferrous-systems.com>
+References: <20250320024011.2995837-1-pasha.tatashin@soleen.com>
+ <20250320024011.2995837-3-pasha.tatashin@soleen.com> <2025032058-reassure-veneering-0fdb@gregkh>
+ <CA+CK2bA8vLjODhM1puia-SOnk9kiFhd7WXHVemh+YBuN4kSgwQ@mail.gmail.com> <2025032054-voltage-compactly-7774@gregkh>
+In-Reply-To: <2025032054-voltage-compactly-7774@gregkh>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Fri, 21 Mar 2025 10:41:46 +0100
+X-Gm-Features: AQ5f1JpjMQda1_RjxuH92Rddt7a_4H_pPlQi456w2UPU6c0mKZPSX93OKxGjrXE
+Message-ID: <CACMJSevWnMgizuVYE3taZJO3tqXLJKOHhavU9VrD_aCN-PoaiQ@mail.gmail.com>
+Subject: Re: [RFC v1 2/3] luo: dev_liveupdate: Add device live update infrastructure
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, changyuanl@google.com, graf@amazon.com, 
+	rppt@kernel.org, rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, 
+	yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, jgowans@amazon.com, jgg@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 8:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
+On Thu, 20 Mar 2025 at 21:52, Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> This series updates rust-project.json to differentiate between host and
-> target crates, where the former are used as dependencies of the `macros`
-> crate. Please see individual commit messages for details.
+> On Thu, Mar 20, 2025 at 02:03:10PM -0400, Pasha Tatashin wrote:
+> > I absolutely agree that demonstrating a real use case is important.
+> > However, this is a complicated project that involves changes in many
+> > parts of the kernel, and we can't deliver everything in one large
+> > patchset; it has to be divided and addressed incrementally.
 >
-> The first 3 commits contain mechanical formatting changes and are
-> optional. The series can be taken without them.
+> Ok, but then don't expect us to be able to actually review it in any
+> sane way, sorry.
 >
-> I avoided more significant formatting or changes where possible to
-> reduce the diff. Unfortunately `scripts/generate_rust_analyzer.py` is
-> not consistently formatted before nor after this series.
+> Think about it from our side, what would you want to see if you had to
+> review this type of thing?  Remember, some of us get hundreds of things
+> to review a week, we don't have context for each and every new feature,
+> and your project does not have the "trust" in that we would even
+> consider taking anything without any real user both in the kernel and in
+> public userspace code.
 >
-> The 5th commit ("scripts: generate_rust_analyzer.py: use
-> str(pathlib.Path)") can also be considered optional. It removes an
-> inconsistency I noticed while working on this series and which occurs on
-> a line which churns in this series anyway.
+> Breaking up changes in a way that is acceptable upstream is a tough
+> task, usually harder than the original engineering effort to create the
+> feature in the first place.  But in the end, the result is a better
+> solution as it will evolve and change along the way based on reviews and
+> requirements from the different subsystems.
 >
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> Changes in v3:
-> - Rebase on linux-next. This is needed to pick up all the conflicts from
->   both rust-next and rust-fixes.
-> - Drop `uv` from `mypy` command. (Trevor Gross)
-> - Add `--python-version 3.8` to `mypy` command. (Trevor Gross)
-> - `from typings import ...` directly. (Trevor Gross)
-> - Extract `build_crate` and `register_crate` to avoid peeking into
->   `crates[-1]`. (Trevor Gross)
 
-I decided to put this in its own patch in v4, will respin later today.
+If I may suggest something: typically you'd want to post the whole
+working PoC on some public git tree for reference and to show the big
+picture and then start sending out individual bits and pieces for
+upstream review. This is how many big features have been done in the
+past. As the reviewed code changes, you adjust the rest of it that
+wasn't posted yet.
 
-> - Link to v2: https://lore.kernel.org/r/20250311-rust-analyzer-host-v2-0-=
-30220e116511@gmail.com
+Bartosz
 
