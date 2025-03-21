@@ -1,103 +1,73 @@
-Return-Path: <linux-kernel+bounces-571566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09394A6BED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:55:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF24A6BEE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4D5D188D6B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62BD3BA18A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968951E5713;
-	Fri, 21 Mar 2025 15:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4867122424E;
+	Fri, 21 Mar 2025 15:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XwOqSwML"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aVxc3JCV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA351E571B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D9E78F51
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572428; cv=none; b=H9w5HsLPyTJRGmDLPyl93oDcTFlP84fG0iyPBovsTirYJmbrkiv4rJ9pbYINq/OWp2qC1+rR/kwl7jv+64Sk3jDMDroB2mJAEy9P0EScf9JwFK9cMGeNW+EVGtskgYGqQznoxpqRHMfOVIO5+F5ei6hVG9lkHZsKNPH+cIybfJk=
+	t=1742572557; cv=none; b=XScsKDnzrEZvCm9X1kJHF9MaTo3DxfCmbodNP/N6fopznj457PtRtIXRkkLxVJMXWg0BTWt05UGFvxMpl8L7kH4o4TTGo3hYid7aPxemjy1IN2RrxSDXBflmbwCO9xmVHn/WunYvdwTJ9GFWRqPiClS39+PS7jQVH3H1YF5yhR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742572428; c=relaxed/simple;
-	bh=yw0rmi0N+1PoG1Vjfi94zYQFIsZ1jJ/dTZR2eWl8J5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrNJ8IW2hrolsXjbZ5U3M0+1+T+q7hEIyiFE1IwGRWAqnoM6RB6ZEelW7H6oXN/i+Ttw2RPNW3KkRdkibOBPoHhNC1rrJ4rcHIaWhsDFwp0VOS0IPmcfw0+IkHKoM8HASCGiOnh07FFjVlVYZmPojjfKCWMJM+kN0aVqJyammjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XwOqSwML; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATHIl001127
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:53:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=LptmSOduTXZdmxLfabby/f0q
-	YD+OOd89CLB3+Homj/E=; b=XwOqSwMLn6z4nHVnDSkjrjKFlzyirWWCntc4tipp
-	mdieX75XroXRDdyorNmXzvbcciaq9pQf0LkT+vPXhl1tTisgbArrLN6Ph6XSZ44v
-	PHwfbPbgHbs5PX8XZVoXC4/+yhO7XBakxe3gIuCGR3htwRDz22CgcWUycxORItcW
-	pA2ZMdE3ZJxmcxw750xmNfalecsyaLy8KbhYk5suDi2RT6GD2cPITOt0xOrs6PIl
-	xU5BZUQZ/bZ1e/a+8lfPk4uJljvvUX/DmuetZz8cAPTpO4klaZJdCdxxPAbl7H1x
-	QrAzjuAtzNmsEZ/dSBZICyAlxmsNm6/Nc10mLWvE0EK2KQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4u9s5w4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:53:45 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e91d8a7165so35616146d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:53:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742572424; x=1743177224;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LptmSOduTXZdmxLfabby/f0qYD+OOd89CLB3+Homj/E=;
-        b=hcIYGCPxkL0Hs6GyAkiFeHpBoqOzuOc9wJ8VSTRnc0s+oVebBIJpLilxKe6p1ZKvWG
-         0qlUUvyLZ0yVC3uFy7NEnHJCqUxoALK8cQxVOHVKLxV/FOoguFniwpcEcvuoWTsa8OFg
-         Q4W40tDz5T6ZmF+tL/BCx1KsuQeP0JJAF8wuUS/Fn1z1PGtvEyix7uXTuSk43YBOfA4B
-         DDHu5eOQnGn84a3ypuamAakdp7TQ7/Cq8N7NgJc9fokaw5mZ8cFlOkgmw3RpLXbt4lR4
-         IWKT6U6+UkZPM05JhtY90dDDO0pYlgvE7b6jU0hdIypApEKb0G4UuRk8e417JWs+5LjL
-         SFJA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5q2NBIz0CrJg4dOpMCZ/K9bKFrDiY9DLrsUlVXthKAB3EaJcQ2c3HYUVKidRRe6UWwR7yT13niQya4jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQXsuXN/m9JH5IxphewlIPkeLKKcPgQ1LcQAB8C536m6MWVAY/
-	i69Rb59Acv4tfzGuBKhkv6ZwgDlw56QjxbNWK9yyAoIuJSaqZTHfyEN6mEH9B1S/0+xi6IpXupJ
-	F0WeWs9v7jvphnWpstfiGZkxmno0Kf5poEI7eqCxop3LvtQMo26miQ/VT3PjZmXM=
-X-Gm-Gg: ASbGncswtk/AnUOJqaV+gVVdIlolq2iUMoTNRT1RHHlNtRWPAAsdIzZ9mjbdRAibEGf
-	h2BbKHRxApbTFGH9uYtoyLpBTe549M2dBA7dqf7E0uW8b+MChhT2yZmAgs+w4NOUnrhyREkBKr1
-	6X7+266ogPkdApdrXGpVmmSd6Z9wn9L8MqMHHQptuMJmfQNn/Y6IN/R0VabLC93/jO5pZidwS63
-	pgnKpyENYeNBZMKbeQrRIoiw+h5q3RAuGq0YJHsraaztvpPOxrc6qCoRf5kpa9tYx2Hv6b80gOJ
-	w2k7HOMztssEw4HblK0Isiydi0HVgPbgOagMG6tEDxuean18Qezz5nf360mCca0IgylpFxtoT6y
-	BEX0=
-X-Received: by 2002:ad4:5de7:0:b0:6e8:ea17:8587 with SMTP id 6a1803df08f44-6eb3f3b7b50mr46274806d6.42.1742572424186;
-        Fri, 21 Mar 2025 08:53:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNM19+y0wvr0/rSNbRv08Ya/wFMH3feSKKK/Zb7YMAXHSS6ZMZj7DV4uHlqvystkp4UnLvjQ==
-X-Received: by 2002:ad4:5de7:0:b0:6e8:ea17:8587 with SMTP id 6a1803df08f44-6eb3f3b7b50mr46274196d6.42.1742572423624;
-        Fri, 21 Mar 2025 08:53:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad651237fsm209084e87.242.2025.03.21.08.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 08:53:41 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:53:38 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 09/10] phy: phy-snps-eusb2: add support for exynos2200
-Message-ID: <wwvjm4576r437tf2thbqseca5fobedgrhjk52iegwz5qnlhfv4@pnsl3pvsefwq>
-References: <20250321135854.1431375-1-ivo.ivanov.ivanov1@gmail.com>
- <20250321135854.1431375-10-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1742572557; c=relaxed/simple;
+	bh=vQnCikzxwnaqeqF+Y3cBEBMNGEZaPJLE+R+RGfgHmFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O6zg2eZFOY5dmuJLTaFygH/XHFpxf95Xa3K98CWdkGnxCgAXb5A4PxLLQwOmDtBxCvQup5ZPj5w5mT89CAdgSmr57sTfzCWtSTyYVpokHPKYTDzwcsCYen8T1TXw43R9TW5p3TQfIi7lsqSJlRjtvMPECYns8BDyq2euhm0Zpc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aVxc3JCV; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742572556; x=1774108556;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vQnCikzxwnaqeqF+Y3cBEBMNGEZaPJLE+R+RGfgHmFU=;
+  b=aVxc3JCVW3RcUomVQTjPabi26Yx0QXiJCThvdqO9XWTXjbkTrGN3NcUs
+   jiMpbnwXD2cDE23qMOCTzOjHBlllSwjF6YAZ866Ncem6M3tthHHiAlaoZ
+   X1DCuaivHo2KqkC05P86pKFS5mJ6b6VB+HjyDbA05Y16sq1wxqhCfack6
+   4JP6UuFC7ey0MAUiIMcUAPsnNQyQcphBl89mIQ5sZ5w2UDiypkkYXk4w5
+   w7UpwoLMnos8fa/Xu1AXZF2msHCxm9/LxbM/0FcbfU4Uw3Rgxbna0tB9z
+   7lh8ax1xULujPlwBYam/pAEgOemh4t6JQOkbGBeYunxZq3qKWaf2HYMFq
+   A==;
+X-CSE-ConnectionGUID: 2s8Stx7cSYmztPMqMqQfgw==
+X-CSE-MsgGUID: JLIgDmbJRRCYHa1ccRJ2rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="46590969"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="46590969"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 08:55:55 -0700
+X-CSE-ConnectionGUID: HxeCHtJ+QI2hYrPtdxmtFw==
+X-CSE-MsgGUID: TkiRYomaRtqj8Aa0uFQB4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="160667141"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 21 Mar 2025 08:55:53 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tveir-0001S0-0V;
+	Fri, 21 Mar 2025 15:55:49 +0000
+Date: Fri, 21 Mar 2025 23:54:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [tip:master 10/26] vmlinux.o: error: objtool: handle_bug+0x160: call
+ to ftrace_likely_update() leaves .noinstr.text section
+Message-ID: <202503212305.DYXE8Njq-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,37 +76,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321135854.1431375-10-ivo.ivanov.ivanov1@gmail.com>
-X-Proofpoint-ORIG-GUID: DherVC7kHBG1efjnkM76onvwwrLYMEJp
-X-Authority-Analysis: v=2.4 cv=FYE3xI+6 c=1 sm=1 tr=0 ts=67dd8b89 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=VxB2ctdoYg6PJSLCJaAA:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: DherVC7kHBG1efjnkM76onvwwrLYMEJp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 mlxlogscore=669 mlxscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 spamscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210116
 
-On Fri, Mar 21, 2025 at 03:58:53PM +0200, Ivaylo Ivanov wrote:
-> The Exynos2200 SoC reuses the Synopsis eUSB2 PHY IP, alongside an
-> external repeater, for USB 2.0. Add support for it to the existing
-> driver, while keeping in mind that it requires enabled more than the
-> reference clock.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  drivers/phy/Kconfig          |   2 +-
->  drivers/phy/phy-snps-eusb2.c | 162 ++++++++++++++++++++++++++++++++++-
->  2 files changed, 159 insertions(+), 5 deletions(-)
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+head:   0ad3bae1c2d2da72845bae5e8703c86425ef7e43
+commit: 3e87b3b74e9c3ee3b978d1371fcdb67d42c54b60 [10/26] Merge branch into tip/master: 'objtool/core'
+config: x86_64-randconfig-077-20250321 (https://download.01.org/0day-ci/archive/20250321/202503212305.DYXE8Njq-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250321/202503212305.DYXE8Njq-lkp@intel.com/reproduce)
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503212305.DYXE8Njq-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   vmlinux.o: error: objtool: do_syscall_64+0x4b: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   do_syscall_64+0x25: (alt)
+   vmlinux.o: error: objtool:   do_syscall_64+0x349: (branch)
+   vmlinux.o: error: objtool:   do_syscall_64+0x1b: (alt)
+   vmlinux.o: error: objtool:   do_syscall_64+0x0: <=== (sym)
+   vmlinux.o: error: objtool: do_int80_emulation+0x30: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   do_int80_emulation+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_int80_emulation+0x3a: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_int80_emulation+0x14: (alt)
+   vmlinux.o: error: objtool:   fred_int80_emulation+0x0: <=== (sym)
+   vmlinux.o: error: objtool: do_fast_syscall_32+0x59: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   do_fast_syscall_32+0x35: (branch)
+   vmlinux.o: error: objtool:   do_fast_syscall_32+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_hwexc.constprop.0+0x2a: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_hwexc.constprop.0+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_extint.constprop.0+0x35: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_extint.constprop.0+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_entry_from_user+0xd3: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_entry_from_user+0x4d: (branch)
+   vmlinux.o: error: objtool:   fred_entry_from_user+0x29: (branch)
+   vmlinux.o: error: objtool:   fred_entry_from_user+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_entry_from_kernel+0x63: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_entry_from_kernel+0x25: (branch)
+   vmlinux.o: error: objtool:   fred_entry_from_kernel+0x0: <=== (sym)
+   vmlinux.o: error: objtool: __wrgsbase_inactive+0x76: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   __wrgsbase_inactive+0xd: (branch)
+   vmlinux.o: error: objtool:   __wrgsbase_inactive+0x0: <=== (sym)
+   vmlinux.o: error: objtool: __rdgsbase_inactive+0x77: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   __rdgsbase_inactive+0xd: (branch)
+   vmlinux.o: error: objtool:   __rdgsbase_inactive+0x0: <=== (sym)
+>> vmlinux.o: error: objtool: handle_bug+0x160: call to ftrace_likely_update() leaves .noinstr.text section
+>> vmlinux.o: error: objtool:   handle_bug+0x4d: (branch)
+   vmlinux.o: error: objtool:   handle_bug+0x13d: (branch)
+   vmlinux.o: error: objtool:   handle_bug+0x33: (branch)
+>> vmlinux.o: error: objtool:   handle_bug+0x0: <=== (sym)
+   vmlinux.o: error: objtool: exc_debug_user+0x2f: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   exc_debug_user+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fixup_bad_iret+0x92: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fixup_bad_iret+0x0: <=== (sym)
+   vmlinux.o: error: objtool: exc_nmi+0x27: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   exc_nmi+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_exc_nmi+0x23: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_exc_nmi+0x0: <=== (sym)
+   vmlinux.o: error: objtool: poke_int3_handler+0x3b: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   poke_int3_handler+0x0: <=== (sym)
+   vmlinux.o: error: objtool: native_sched_clock+0x76: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   native_sched_clock+0x4: (alt)
+   vmlinux.o: error: objtool:   native_sched_clock+0x0: <=== (sym)
+   vmlinux.o: error: objtool: __static_call_update_early+0x27: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   __static_call_update_early+0x0: <=== (sym)
+   vmlinux.o: error: objtool: mce_check_crashing_cpu+0x1b: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   mce_check_crashing_cpu+0x0: <=== (sym)
+   vmlinux.o: error: objtool: do_machine_check+0x68: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   do_machine_check+0x0: <=== (sym)
+   vmlinux.o: error: objtool: exc_machine_check+0x5b: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   exc_machine_check+0x2b: (branch)
+   vmlinux.o: error: objtool:   exc_machine_check+0xd: (alt)
+   vmlinux.o: error: objtool:   exc_machine_check+0x0: <=== (sym)
+   vmlinux.o: error: objtool: fred_exc_machine_check+0x76: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   fred_exc_machine_check+0x42: (branch)
+   vmlinux.o: error: objtool:   fred_exc_machine_check+0x29: (branch)
+   vmlinux.o: error: objtool:   fred_exc_machine_check+0xb: (alt)
+   vmlinux.o: error: objtool:   fred_exc_machine_check+0x0: <=== (sym)
+   vmlinux.o: error: objtool: pvclock_clocksource_read_nowd+0x7f: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   pvclock_clocksource_read_nowd+0x10c: (branch)
+   vmlinux.o: error: objtool:   pvclock_clocksource_read_nowd+0x140: (branch)
+   vmlinux.o: error: objtool:   pvclock_clocksource_read_nowd+0x107: (branch)
+   vmlinux.o: error: objtool:   pvclock_clocksource_read_nowd+0x3c: (branch)
+   vmlinux.o: error: objtool:   pvclock_clocksource_read_nowd+0x1d: (alt)
+   vmlinux.o: error: objtool:   pvclock_clocksource_read_nowd+0x0: <=== (sym)
+   vmlinux.o: error: objtool: local_clock_noinstr+0x43: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   local_clock_noinstr+0x1d: (alt)
+   vmlinux.o: error: objtool:   local_clock_noinstr+0x6: (branch)
+   vmlinux.o: error: objtool:   local_clock_noinstr+0x0: <=== (sym)
+   vmlinux.o: error: objtool: irqentry_nmi_enter+0x48: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   irqentry_nmi_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: irqentry_nmi_exit+0x4e: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   irqentry_nmi_exit+0x95: (branch)
+   vmlinux.o: error: objtool:   irqentry_nmi_exit+0x2f: (branch)
+   vmlinux.o: error: objtool:   irqentry_nmi_exit+0x7d: (branch)
+   vmlinux.o: error: objtool:   irqentry_nmi_exit+0xf: (branch)
+   vmlinux.o: error: objtool:   irqentry_nmi_exit+0x0: <=== (sym)
+   vmlinux.o: error: objtool: syscall_enter_from_user_mode_prepare+0x33: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   syscall_enter_from_user_mode_prepare+0xd: (alt)
+   vmlinux.o: error: objtool:   syscall_enter_from_user_mode_prepare+0x0: <=== (sym)
+   vmlinux.o: error: objtool: irqentry_enter_from_user_mode+0x33: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   irqentry_enter_from_user_mode+0xd: (alt)
+   vmlinux.o: error: objtool:   irqentry_enter_from_user_mode+0x0: <=== (sym)
+   vmlinux.o: error: objtool: irqentry_exit+0x8d: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   irqentry_exit+0x15: (branch)
+   vmlinux.o: error: objtool:   irqentry_exit+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_kernel_exit_state+0x25: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_kernel_exit_state+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_kernel_enter_state+0x25: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_kernel_enter_state+0x0: <=== (sym)
+   vmlinux.o: error: objtool: context_tracking_recursion_enter+0x9c: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   context_tracking_recursion_enter+0x2d: (branch)
+   vmlinux.o: error: objtool:   context_tracking_recursion_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_kernel_enter.constprop.0+0x14: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_kernel_enter.constprop.0+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_idle_exit+0x30: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_idle_exit+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_kernel_exit.constprop.0+0x3b: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_kernel_exit.constprop.0+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_idle_enter+0x14: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_idle_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: __ct_user_enter+0xf6: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   __ct_user_enter+0x14: (branch)
+   vmlinux.o: error: objtool:   __ct_user_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_nmi_enter+0x32: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_nmi_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_irq_enter+0x60: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_irq_enter+0xd: (branch)
+   vmlinux.o: error: objtool:   ct_irq_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: ct_irq_exit+0x60: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   ct_irq_exit+0xd: (branch)
+   vmlinux.o: error: objtool:   ct_irq_exit+0x0: <=== (sym)
+   vmlinux.o: error: objtool: check_preemption_disabled.constprop.0+0x21: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   check_preemption_disabled.constprop.0+0x0: <=== (sym)
+   vmlinux.o: error: objtool: mwait_idle+0x28: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   mwait_idle+0x0: <=== (sym)
+   vmlinux.o: error: objtool: acpi_processor_ffh_cstate_enter+0x78: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x4c: (alt)
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x40: (alt)
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x10f: (branch)
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x35: (branch)
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x123: (branch)
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x23: (branch)
+   vmlinux.o: error: objtool:   acpi_processor_ffh_cstate_enter+0x0: <=== (sym)
+   vmlinux.o: error: objtool: intel_idle+0x63: call to ftrace_likely_update() leaves .noinstr.text section
+   vmlinux.o: error: objtool:   intel_idle+0x37: (alt)
+   vmlinux.o: error: objtool:   intel_idle+0x2b: (alt)
+   vmlinux.o: error: objtool:   intel_idle+0xe1: (branch)
+   vmlinux.o: error: objtool:   intel_idle+0x17: (branch)
+   vmlinux.o: error: objtool:   intel_idle+0x0: <=== (sym)
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
