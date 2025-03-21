@@ -1,245 +1,157 @@
-Return-Path: <linux-kernel+bounces-570907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039DAA6B618
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:35:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDAFA6B61A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D273B7C70
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9677219C0543
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148151EFF9A;
-	Fri, 21 Mar 2025 08:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB301EFFA4;
+	Fri, 21 Mar 2025 08:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pW6AjuUd"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mMMvcy9n"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494101E991D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3F81E991D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546101; cv=none; b=dqSfnvfHmSLFHPDx5KPlsh82FmZ8yUjQCFO7ovkEywynJq2NAs/fSG5CLheSdMJr3EK2vUQPgOx8RjA5d1/akzMWUffuq8frUc0ffZQ3TT8C+LsZL6vceBxzx4SkFxNuw3YeNf0St+o/jFZSAWPSqWy0CQaNqCJmGP53/n5FR9w=
+	t=1742546121; cv=none; b=pY7NDHxRImnqSVLiK9neRwOx22M4/OrIAxGOzVq+/oNq+ViA7C8ykqzzwETtN9sJqmJptMmSRVj0OOcUVuTfj3ruryU/2TqLxoOVyP6uBEv0dOvzia8lfbR++gB+xjCMR7ICQ1UQex8zeua+Pf7O3GunI7fxJ+o2yHXm3ZyD6gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546101; c=relaxed/simple;
-	bh=IUiv1Dk4x0/LObgNv49UZn+EB6p1E/ZHSgHyUxvLB3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lB9hHXX/fqicXgUkxuV5WNlRZkKFYZZTzq/ZctRwY/1itwBDWSyqR9F4zCc3bFloWvgsFFRtSRKD2VMpeU8JbdfbtnOqpmfRRE13r22of2M35EamhiPWddQatRhyblAHn6C5aivRZBdwtSer4ztWafSQdP6RVAdhbT8JJ7+eWNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pW6AjuUd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742546097;
-	bh=IUiv1Dk4x0/LObgNv49UZn+EB6p1E/ZHSgHyUxvLB3o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pW6AjuUdgIH0Z0V77OFKYFq/5gZmwgoe5lL8gRzC4mG/a5aWmnj43KN2oUipyCT5n
-	 1sccBsd7m+uZrwp5p4rG4+aU6UNV+4rZQwy4dWxmGw770eXADlXXb7joipgGWBz3dx
-	 gfrLmY429N5H5Rvc5JirSS1TY9Q7DebwoIMJi61ju+yC/rjGbCaA6DRUIZFrXelnqT
-	 J8zueizXBwrD0AHg8vjRfpf8Ss+wawubSpuIIq3oAygBfLNKoCtagxcRhjKdvYQIMr
-	 NOZgjcU1UDYx6HDtMAZFXslj9syl7uSjOjvz4Dm9z4tGmVWDZYBdoNHgM/OZ7itnl4
-	 t6B1ig+KMRTPw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E995017E0C37;
-	Fri, 21 Mar 2025 09:34:56 +0100 (CET)
-Date: Fri, 21 Mar 2025 09:34:54 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/9] drm/panthor: Add support for Mali-G715 family of
- GPUs
-Message-ID: <20250321093454.685d5fb3@collabora.com>
-In-Reply-To: <20250320111741.1937892-7-karunika.choo@arm.com>
-References: <20250320111741.1937892-1-karunika.choo@arm.com>
-	<20250320111741.1937892-7-karunika.choo@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742546121; c=relaxed/simple;
+	bh=SHEPQMA7zsG0pcW3VUHnjFMKPkC+BT7CZDZhG145VOk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=iawWMKzMQrnmII9NiwPbOXsb8DD6oKCtP/w9f7wMhO0IPRPETn+eDF7A4tuViRqG8Hyo3pl5JpvXvEBytH6JC3+ERl4LxgL3JvZ4UFRi+TMJBmUNDx7cqM35Atp+qkxG6FgsE08hKM1720WodhLEnhFaP2OroNDw8HVLqMl1dc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=mMMvcy9n; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22401f4d35aso35115275ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1742546119; x=1743150919; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KNIYAxNTxrJgvNOeOr0z0lxXWvmJniaTC55sev3rziA=;
+        b=mMMvcy9nCG2qLE2Ll3jGTh4Eh2xfPFvaI9MUK0Rio+/iR3Cm5ev5SynZ9GrNdO+WPO
+         +cUFuCBN8WYoLxSsUTvSo8WzPL3ivYez0UKQUNsOqJm1J8mF4K/rFf93XvWNTQ0OTN1O
+         lHPSRo4o6xm8SuJ1pLGjtwyKfxNYyFBRyCCXlFCe56wI7aQA76dxuWUyTkbUI29+pKZm
+         I4ql+lprYOb0YeULbjCBM44GvUHalSpVo9K0B0CVLahAaumLYLXCW/Q1/uixazwcO/rU
+         /FqBE8NGYgE0lPEFwR4UPAbmJkIlLrA5B7bKak95L0XE7ZJnVGWlxljCsyOTNGofWU9B
+         hJ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742546119; x=1743150919;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KNIYAxNTxrJgvNOeOr0z0lxXWvmJniaTC55sev3rziA=;
+        b=HMTsgKFT/J7IXbqhUFbisI3ap54dq5FdOkXtX46QHF5VdcCDxXL+ZdlwjSfsdMHtpS
+         pJsmP4FmesRPifeSp7cwBfP2KU47LQTphXqaX7ZR2HQf/+2i2WAy7xJrfGxS09E/ZMk3
+         K2VmOwj8+rCujtFpo5JU0+CYvzNdLrLJCqw/LsiiW4qOP4niETYTLfzAA/6PilVk6JvQ
+         Sl476azt5lZFwZ+mP0OKlSG1JZcVC0wAasjSKct7Mvu9dfNc48HownXbOjDHQ01qDJct
+         xe7vgqwym5SYAKLbW9dYBvXlpylLB/t5bcLEg4Mzj2CnBu5QddHwTsiFb7AT/I0YwxfD
+         S9cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUP5cm3vKAmm+Bl2NfZ8s9+F5+rTeYOUU/QeAj9zl6mnzk8iCKI8+s/Cgw48eSqThbTLOqTFzyzweCcoyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgIB7xhabfJ/OUqZ5aSk4YUUzZfzdm4DAVtDtAQ52+FgAPb0wU
+	0mFat2K/M2NE9W9GswbOSXGzeOYOVcYDQkzz7mjdkfSKOg9UFAokFycNEqWYzMU=
+X-Gm-Gg: ASbGncuhCl4dvdKSoxJc6ywIgmiyUKZ6FAECy124+ETnFR5uMTWu49uZVZcsNq3Wzyj
+	V2DEhjcPpASr6PF/lRxSsUxC3jmR1KhIAZ+wlbFBmzaA8BR5RACD+D0yFakx6oZgI/qjCMoXvju
+	aWumNSdiqyz+TSiY7q0mD2MOlAEo2/V+S0byg26O4RxLYb963x48VqflSYuXEYhy11z2UmVV+NX
+	DM/rDQ2VP/YK4vbsImTxyj74tbdlRwjdIsm/b4E1WNh7IffvUsfEYavsueXBPeOpJhkx85UsSoV
+	hT56J1h4bvqnad3fHd6DBYL3bFsQgtB6gI/u+AlYArNlsfXPb3J7Fmoj7pI1TANtguxYRaAEPDw
+	ngw==
+X-Google-Smtp-Source: AGHT+IGXFGLuEoU/vQJUliqJjmPIq4zF6xy634F564ds+E0ZTlK8S163nLM7MaGqqNkry0aYcIfGgQ==
+X-Received: by 2002:a17:902:ebc9:b0:220:c63b:d93c with SMTP id d9443c01a7336-22780e234c5mr34978645ad.44.1742546119383;
+        Fri, 21 Mar 2025 01:35:19 -0700 (PDT)
+Received: from hsinchu26.internal.sifive.com ([210.176.154.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811f1462sm10857625ad.210.2025.03.21.01.35.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 01:35:19 -0700 (PDT)
+From: Nick Hu <nick.hu@sifive.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>
+Cc: Nick Hu <nick.hu@sifive.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v3] dt-bindings: timer: Add SiFive CLINT2
+Date: Fri, 21 Mar 2025 16:35:06 +0800
+Message-Id: <20250321083507.25298-1-nick.hu@sifive.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Mar 2025 11:17:38 +0000
-Karunika Choo <karunika.choo@arm.com> wrote:
+Add compatible string and property for the SiFive CLINT v2. The SiFive
+CLINT v2 is incompatible with the SiFive CLINT v0 due to differences
+in their control methods.
 
-> Mali-G715 introduces a new GPU_FEATURES register that provides
-> information about GPU-wide supported features. The register value will
-> be passed on to userspace via gpu_info. It also adds the following
-> registers that are specific to the kernel driver only:
-> - ASN_HASH_0~2
-> - DOORBELL_FEATURES
-> - PRFCNT_FEATURES
-> - SYSC_ALLOC0~7
-> - SYSC_PBHA_OVERRIDE0~3
-> 
-> Additionally, Mali-G715 presents an 'Immortalis' naming variant
-> depending on the shader core count and presence of Ray Intersection
-> feature support.
-> 
-> This patch adds:
-> - support for correctly identifying the model names for the Mali-G715
->   family of GPUs.
-> - arch 11.8 FW binary support
-> - reading and handling of GPU_FEATURES register
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_fw.c   |  1 +
->  drivers/gpu/drm/panthor/panthor_hw.c   | 26 ++++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_regs.h | 12 ++++++++++++
->  include/uapi/drm/panthor_drm.h         |  3 +++
->  4 files changed, 42 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index ecfbe0456f89..0b3fab95f26b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1398,3 +1398,4 @@ int panthor_fw_init(struct panthor_device *ptdev)
->  }
->  
->  MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index 12183c04cd21..d04c8723ac98 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -32,15 +32,34 @@ static void arch_10_8_gpu_info_init(struct panthor_device *ptdev)
->  	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
->  }
->  
-> +static void arch_11_8_gpu_info_init(struct panthor_device *ptdev)
-> +{
-> +	arch_10_8_gpu_info_init(ptdev);
-> +
-> +	ptdev->gpu_info.gpu_features = gpu_read64(ptdev, GPU_FEATURES_LO);
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+---
+- v3 changes:
+  - Add the reason for the incompatibility between sifive,clint2 and
+    sifive,clint0.
+- v2 changes:
+  - Don't allow sifive,clint2 by itself. Add '-{}' to the first entry
+  - Mark the sifive,fine-ctr-bits as the required property when
+    the compatible includes the sifive,clint2
 
-That's typically the sort of specialization I would have done directly
-in some csf_gpu_info_init() with a:
+ .../bindings/timer/sifive,clint.yaml          | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-	if (ARCH_MAJOR(gpu_id) > 11) {
-		ptdev->gpu_info.gpu_features =
-			gpu_read64(ptdev, GPU_FEATURES_LO);
-	}
-
-I do see a benefit in abstracting things away when the layout is
-completely different or when registers are conflicting, but that's not
-the case AFAICT. I think for this kind of tweaks, we'd rather stick to a
-single function with a few conditionals.
-
-Actually, if the registers were readable and returning 0 on v10, you
-don't even need the if (ARCH_MAJOR(gpu_id) > 11).
-
-> +}
-> +
->  static char *get_gpu_model_name(struct panthor_device *ptdev)
->  {
->  	const u32 gpu_id = ptdev->gpu_info.gpu_id;
->  	const u32 product_id = GPU_PROD_ID_MAKE(GPU_ARCH_MAJOR(gpu_id),
->  						GPU_PROD_MAJOR(gpu_id));
-> +	const bool ray_intersection = !!(ptdev->gpu_info.gpu_features &
-> +					 GPU_FEATURES_RAY_INTERSECTION);
-> +	const u8 shader_core_count = hweight64(ptdev->gpu_info.shader_present);
->  
->  	switch (product_id) {
->  	case GPU_PROD_ID_MAKE(10, 7):
->  		return "Mali-G610";
-> +	case GPU_PROD_ID_MAKE(11, 2):
-> +		if (shader_core_count > 10 && ray_intersection)
-> +			return "Mali-G715-Immortalis";
-> +		else if (shader_core_count >= 7)
-> +			return "Mali-G715";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(11, 3):
-> +		return "Mali-G615";
->  	}
->  
->  	return "(Unknown Mali GPU)";
-> @@ -84,6 +103,13 @@ static struct panthor_hw panthor_hw_devices[] = {
->  			.gpu_info_init = arch_10_8_gpu_info_init,
->  		},
->  	},
-> +	{
-> +		.arch_id = GPU_ARCH_ID_MAKE(11, 8, 0),
-> +		.arch_mask = GPU_ARCH_ID_MAKE(0xFF, 0xFF, 0),
-> +		.ops = {
-> +			.gpu_info_init = arch_11_8_gpu_info_init,
-> +		}
-> +	},
->  };
->  
->  static int init_gpu_id(struct panthor_device *ptdev)
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index d9e0769d6f1a..7bc2d838e704 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -74,6 +74,11 @@
->  #define GPU_PWR_OVERRIDE0				0x54
->  #define GPU_PWR_OVERRIDE1				0x58
->  
-> +#define GPU_FEATURES_LO					0x60
-> +#define GPU_FEATURES_HI					0x64
-> +#define   GPU_FEATURES_RAY_INTERSECTION			BIT(2)
-> +#define GPU_PRFCNT_FEATURES				0x68
-> +
->  #define GPU_TIMESTAMP_OFFSET_LO				0x88
->  #define GPU_TIMESTAMP_OFFSET_HI				0x8C
->  #define GPU_CYCLE_COUNT_LO				0x90
-> @@ -88,6 +93,8 @@
->  
->  #define GPU_TEXTURE_FEATURES(n)				(0xB0 + ((n) * 4))
->  
-> +#define GPU_DOORBELL_FEATURES				0xC0
-> +
->  #define GPU_SHADER_PRESENT_LO				0x100
->  #define GPU_SHADER_PRESENT_HI				0x104
->  #define GPU_TILER_PRESENT_LO				0x110
-> @@ -132,6 +139,8 @@
->  
->  #define GPU_REVID					0x280
->  
-> +#define GPU_ASN_HASH(n)					(0x2C0 + ((n) * 4))
-> +
->  #define GPU_COHERENCY_FEATURES				0x300
->  #define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
->  
-> @@ -140,6 +149,9 @@
->  #define   GPU_COHERENCY_ACE_LITE			1
->  #define   GPU_COHERENCY_NONE				31
->  
-> +#define GPU_SYSC_PBHA_OVERRIDE(n)			(0x320 + ((n) * 4))
-> +#define GPU_SYSC_ALLOC(n)				(0x340 + ((n) * 4))
-> +
->  #define MCU_CONTROL					0x700
->  #define MCU_CONTROL_ENABLE				1
->  #define MCU_CONTROL_AUTO				2
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index 97e2c4510e69..4aba8146af3b 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -307,6 +307,9 @@ struct drm_panthor_gpu_info {
->  
->  	/** @pad: MBZ. */
->  	__u32 pad;
-> +
-> +	/** @gpu_features: Bitmask describing supported GPU-wide features */
-> +	__u64 gpu_features;
->  };
->  
->  /**
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index 76d83aea4e2b..34684cda8b15 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -36,6 +36,12 @@ properties:
+               - starfive,jh7110-clint   # StarFive JH7110
+               - starfive,jh8100-clint   # StarFive JH8100
+           - const: sifive,clint0        # SiFive CLINT v0 IP block
++      - items:
++          - {}
++          - const: sifive,clint2        # SiFive CLINT v2 IP block
++        description:
++          SiFive CLINT v2 is the HRT that supports the Zicntr. The control of sifive,clint2
++          differs from that of sifive,clint0, making them incompatible.
+       - items:
+           - enum:
+               - allwinner,sun20i-d1-clint
+@@ -62,6 +68,22 @@ properties:
+     minItems: 1
+     maxItems: 4095
+ 
++  sifive,fine-ctr-bits:
++    maximum: 15
++    description: The width in bits of the fine counter.
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: sifive,clint2
++then:
++  required:
++    - sifive,fine-ctr-bits
++else:
++  properties:
++    sifive,fine-ctr-bits: false
++
+ additionalProperties: false
+ 
+ required:
+-- 
+2.17.1
 
 
