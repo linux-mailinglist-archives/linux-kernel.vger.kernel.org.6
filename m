@@ -1,152 +1,118 @@
-Return-Path: <linux-kernel+bounces-571266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4160EA6BB1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:51:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5E1A6BB20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011E34863E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D2F4A06C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C2F226D13;
-	Fri, 21 Mar 2025 12:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915BF22A80F;
+	Fri, 21 Mar 2025 12:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UfbRcMAg"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="L+OZKske"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7B41EA7D3;
-	Fri, 21 Mar 2025 12:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536DA22A7EC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742561320; cv=none; b=I9IjSh7ddInbeOerV4Cc2DE+v6yPrdCE7u6fJY7bz1nh8iLhWgYOw8RhvFo85B4yzEav2/CpicIZjdmuUJMuGYjI+B7X2cMlougU0kYrvI8npwydJB6Uq+VQh2yArrwPJkLIJj6L5zCvDsSZKLHKz/+RThOzwS8FK9J5VtSXO/o=
+	t=1742561327; cv=none; b=Bc5YqFiWZobEzgJT23vbb/rUBwpUyk6b+GnmOG4eNv7jN2mjdAXDdxe9n+trU/nAPE1fsWypSM+iisBnp4suFnB76fRf1vpi3/NeKy5YGDRYL+QJ75SFez0mJ8hXHU3OWFn8ieZTKjK6/S8evvSLJy3O1OS8dDxzbTRttjLR0mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742561320; c=relaxed/simple;
-	bh=XudOo+cZglIsbGiwel11rAkhMQCWQUZfsVX9Ut2ZFNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrjVP0YE37sroTWunWgrrjt0lQrMEwK77JtFZAt+nsXzc/Ro7YeeXo5Ipgo3sBUPr9rxCJelKixvSMaetKgwc3nooaWz7ROHvT8g9K1OnByP05C6R9ulI/xedazeHLDVfnj5RYRsMgShH8bV2PJnMJLnMVuwQ6Sp8I5yfgJSAmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UfbRcMAg; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 465F640E0169;
-	Fri, 21 Mar 2025 12:48:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IV7xfQy2WVID; Fri, 21 Mar 2025 12:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742561307; bh=3Pcumfa1RDZU2MCjeaWCfJYT0KdTPCzbavojRaOhIUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UfbRcMAgn26XjpY8zTKh9lHb692YZY7rFbVABdwM8Y02/siRvhBQgluR1pQXqxWy+
-	 iMDSZMIFhT2AXZY6MoOFO1LXUSt+FEk5ftaux6r8PMKedUTS6KFfGNLrN/TjFCNfUa
-	 hE6jaRHfLpnoePYo8CB1l5V719hh/B7U1iL2atM70v8/o79NkwtZsuIfUPPQS/wwEA
-	 nptydv0wQmlFTKRHOigBd01/ia53opLayFeEVv5HoQRn+HlnJy648ve4wYEPf3INB5
-	 OeffG2b/Euu5ZKvf6cjGT2Ick/EhdHyqBSkV4zE+RVQ3fABQ0VL4AroUdEBHnr66uk
-	 o/rAJbwnVq1TAQ3APj1nGZAAFgjqpPO+rmBvY+X09w2Pa9yzM2KKvC1jNZjvgyX5Y1
-	 kd8Akq8LflW1xBDbFHOjrxwhEJrYkZvvaFtVocoARjn0eapbwBfsPRjDfjMPAnYSHT
-	 Bkhs6wt5u/pgtDo86ByQzi1UfppJvMWoICRkbt8fexht3RKPVbvl9RwxPrSelOC9fG
-	 aRi66PaRiSzmxh3HgOy2E023pnisjpsRHwxf8F38Y7F3hV8+kCcQur+Uh/41V7izFz
-	 iyH31bQkH6CoV+tzSeKYwj+nB2CYISI2l8KLY0GU3vuhhpoqdOfyR5DPaIEWgesN19
-	 pWtQLgNbNxmQV8cdrBOaXcSU=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D362240E021F;
-	Fri, 21 Mar 2025 12:48:19 +0000 (UTC)
-Date: Fri, 21 Mar 2025 13:48:13 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>
-Cc: linux-tip-commits@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Subject: Re: [tip: x86/core] zstd: Increase DYNAMIC_BMI2 GCC version cutoff
- from 4.8 to 11.0 to work around compiler segfault
-Message-ID: <20250321124813.GAZ91gDUYB6TDsMJNv@fat_crate.local>
-References: <174254398939.14745.1644465295513159567.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1742561327; c=relaxed/simple;
+	bh=NYcHJNxyZ9+rvmxXGqAb0ox3MsNaXlPwV/4WXFK3lY8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i9w2TFtoGihdQqkKzHsMtv/NrWRKAhZHYX03gpHox78aLbgTRaU+Ge2GvNw2Mj5x5Wf8H1iGM2yB7HPf9SYR9/czzX+tJv0IjkRNO92R5sBXwydMyfuo+ZNv88s9TS0I6KHEw0OH4g1CtZGrQWczkeIeMynEPz+7tCrkmxk0TXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=L+OZKske; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=HN+q68AfhJlHYLdy8aJOhr17kmYyQWHhDqqu4ktSByQ=;
+  b=L+OZKskewizHh8c8ye2DG0WN1rJjlniH+DVXOOObfLltyPwtoyaeTbh9
+   axMankDwr5H0+JAa2bKnwsCxlJ1/x9uYLQ5yx6XqhAyw8qHRY5HmQORa0
+   Q98lQaA+5pzVYibzIcARmOOHHcITy/6qiJ0NCexKg0eQqFxk9cb7TaD8Y
+   E=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.14,264,1736809200"; 
+   d="scan'208";a="214125366"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 13:48:43 +0100
+Date: Fri, 21 Mar 2025 13:48:42 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: ErickKaranja <karanja99erick@gmail.com>
+cc: hvaibhav.linux@gmail.com, johan@kernel.org, elder@kernel.org, 
+    gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
+    greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: fix line length issue
+In-Reply-To: <20250321115545.24468-1-karanja99erick@gmail.com>
+Message-ID: <15e28afa-6faa-4e3e-d92a-b06a3e3b474@inria.fr>
+References: <20250321115545.24468-1-karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <174254398939.14745.1644465295513159567.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset=US-ASCII
 
-(cleanup the botched CC: line :))
 
-+ Nick.
 
-Interesting - we were looking at a similar issue recently:
+On Fri, 21 Mar 2025, ErickKaranja wrote:
 
-https://lore.kernel.org/r/20250317135539.GDZ9gp24DhTKBGmkd8@fat_crate.local
+> Fix line length exceeding 100 columns in arche-platform.c. The code now
+> follows Linux kernel coding style guidelines by keeping lines under the
+> maximum allowed length of 100 characters.
 
-and upgrading my toolchain fixed it.
+Thanks for the patch.
 
-Weird.
+In your log message you can try to avoid the word "Fix".  Probably most
+patches fix something, so it doesn't give much information.  And it
+doesn't say anything about how you fixed it.  Here it could be "Reduce a
+line that exceeds 100 columns".  You don't have to mention the file name,
+because one can easily see that from looking at the patch.
 
-On Fri, Mar 21, 2025 at 07:59:49AM -0000, tip-bot2 for Ingo Molnar wrote:
-> The following commit has been merged into the x86/core branch of tip:
-> 
-> Commit-ID:     1400c87e6cac47eb243f260352c854474d9a9073
-> Gitweb:        https://git.kernel.org/tip/1400c87e6cac47eb243f260352c854474d9a9073
-> Author:        Ingo Molnar <mingo@kernel.org>
-> AuthorDate:    Fri, 21 Mar 2025 08:38:43 +01:00
-> Committer:     Ingo Molnar <mingo@kernel.org>
-> CommitterDate: Fri, 21 Mar 2025 08:38:43 +01:00
-> 
-> zstd: Increase DYNAMIC_BMI2 GCC version cutoff from 4.8 to 11.0 to work around compiler segfault
-> 
-> Due to pending percpu improvements in -next, GCC9 and GCC10 are
-> crashing during the build with:
-> 
->     lib/zstd/compress/huf_compress.c:1033:1: internal compiler error: Segmentation fault
->      1033 | {
->           | ^
->     Please submit a full bug report,
->     with preprocessed source if appropriate.
->     See <file:///usr/share/doc/gcc-9/README.Bugs> for instructions.
-> 
-> The DYNAMIC_BMI2 feature is a known-challenging feature of
-> the ZSTD library, with an existing GCC quirk turning it off
-> for GCC versions below 4.8.
-> 
-> Increase the DYNAMIC_BMI2 version cutoff to GCC 11.0 - GCC 10.5
-> is the last version known to crash.
-> 
-> Reported-by: Michael Kelley <mhklinux@outlook.com>
-> Debugged-by: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Cc: https://lore.kernel.org/r/SN6PR02MB415723FBCD79365E8D72CA5FD4D82@SN6PR02MB4157.namprd02.prod.outlook.com
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>
+> Reported by checkpatch:
+>
+> CHECK: line length of 101 exceeds 100 columns
+>
+> Signed-off-by: ErickKaranja <karanja99erick@gmail.com>
+
+Here you should have Erick Karanja, not ErickKaranja.
+
+thanks,
+julia
+
 > ---
->  lib/zstd/common/portability_macros.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/zstd/common/portability_macros.h b/lib/zstd/common/portability_macros.h
-> index 0e3b2c0..0dde8bf 100644
-> --- a/lib/zstd/common/portability_macros.h
-> +++ b/lib/zstd/common/portability_macros.h
-> @@ -55,7 +55,7 @@
->  #ifndef DYNAMIC_BMI2
->    #if ((defined(__clang__) && __has_attribute(__target__)) \
->        || (defined(__GNUC__) \
-> -          && (__GNUC__ >= 5 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)))) \
-> +          && (__GNUC__ >= 11))) \
->        && (defined(__x86_64__) || defined(_M_X64)) \
->        && !defined(__BMI2__)
->    #  define DYNAMIC_BMI2 1
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>  drivers/staging/greybus/arche-platform.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+> index d48464390f58..1a82a7a3991c 100644
+> --- a/drivers/staging/greybus/arche-platform.c
+> +++ b/drivers/staging/greybus/arche-platform.c
+> @@ -179,8 +179,8 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
+>  				 */
+>  				if (arche_pdata->wake_detect_state !=
+>  						WD_STATE_COLDBOOT_START) {
+> -					arche_platform_set_wake_detect_state(arche_pdata,
+> -									     WD_STATE_COLDBOOT_TRIG);
+> +					arche_platform_set_wake_detect_state
+> +						(arche_pdata, WD_STATE_COLDBOOT_TRIG);
+>  					spin_unlock_irqrestore(&arche_pdata->wake_lock,
+>  							       flags);
+>  					return IRQ_WAKE_THREAD;
+> --
+> 2.43.0
+>
+>
+>
 
