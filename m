@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-570785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1586A6B479
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:35:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8F6A6B47F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00613B9136
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F2D3B88CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665601EB5E1;
-	Fri, 21 Mar 2025 06:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BBD1EB9ED;
+	Fri, 21 Mar 2025 06:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHD7Kq1t"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TsOwUOPV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF58C1E571A;
-	Fri, 21 Mar 2025 06:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C735184F;
+	Fri, 21 Mar 2025 06:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742538911; cv=none; b=h2GR5AfZXgKicJL7D2fr+0Mg5As3eY+YukVge2vi6Lz+A6bbYDoaLPkB3oDObq/FYIks74L0xOrsuaQPsvDLhPJruqigRU7lclTqxSJIzJDCWSGLFWwRuAHRpSrBKkhhtXT1h+u20etvGDwI1L0iTaheJIZN7HBRlwTZQCP7/fY=
+	t=1742538972; cv=none; b=o3I3MeGr9YMZ/dSB+2AK5E+sdbODl+7zuPlAsSeES6c5oB/nsOkG5MXyneBrqggWx36E1b5UcinvnInX5dUxg1NnTKUkiXdVcsc2NDfPqoJtA3hKMZybto7/LZOrWxsTM0IN3C1dP6igM+kCDhyPlBE6+SUJp/0KoVzcfs39jtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742538911; c=relaxed/simple;
-	bh=dQzBALqC5Ck2v6Lty2jY51d3uNVCdMbdVo0x35KjDuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c5j94+nnpkv2pUg6MzL/StaimJ6SAqIX6XnJ9k/l0DQaSg95KuIoZqjiIwIVespKdlJyRV/KAxXyqERtau+tb3qxZ2jRmbgRctOEjr5F0gRC8srPnoeeP4g2VOEtt9y+NrhuDW4RyvjFiOMaenZLYgioYQLmgmVDRWiTLUiRreg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHD7Kq1t; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30795988ebeso15480691fa.3;
-        Thu, 20 Mar 2025 23:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742538908; x=1743143708; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mABwJRF0qaiKxWbKLqj1MBFoPvsAgskTmp5VNWC/wR4=;
-        b=jHD7Kq1tedL016w4QxhrhNja3gnWrKnvfxSF29LAL4ZFa0HRL+7P+1BHamU5+2cI8S
-         FD1nVZefepYtvv1qeR8sLnRYECc4jj5Zn7ETrURcML6618Edt8vJrVGQ8pbEJsRbBIhU
-         nFEvRi5RZnMwoBm4tLdC7NhverEMIJqmOMkS5HoVOgMm0helY4/jfrzaZZc3d3to6Tcc
-         HxkMVsGaf6uv44QDNmmOY/CobcPykidSa97GKF5k1YtOSKof5CWp+BgVcuSis6tSW8fe
-         awODX2z9jIYVRPJU51OLxuHaGkweTCvefQySE9fVetUZVQ1OQZzolHeZ1HZ4ePdjy6+h
-         fM5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742538908; x=1743143708;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mABwJRF0qaiKxWbKLqj1MBFoPvsAgskTmp5VNWC/wR4=;
-        b=Nx+u8CGW0yrouOtYJuPOyaeJVMf+LM8+O2VTe7SOsgxGlu0s0CwCdfhy+vMgm32Cgx
-         18WpSJ3TcG1WQ1q0b+Th7knOTwS94SNXePBO1GagYXO5sTUL7yXPLXlZd1If1JTsEV6h
-         ztSKy6H1+tDzYv8StXhchTTGcF+MKk4JyAQsYdsQCwJyLsyVc7pqqGp1f5x7nagIXgkx
-         /N0PeCZn+tVjp577JAlQnY+RHL9nLH2Z9XuRy4cKN2eUHa93OyqvhPqyiIg+KKkkLo52
-         4BqSukLeW7QntY0YVWNDL07ez5aIh0yh26Ib1Z61zYhi1NCwea7qNZfdQ8AmQl0reH2X
-         x1Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWa8oeuLbUXxCaOiTmb3hik7WOBFjAGz0b4xmA3vfXNFncmrmJSzpDs/fFX4jg/SCPEbbwaanMkEaZuU0g=@vger.kernel.org, AJvYcCWwJINtA7mS56Jb62wgnLJBq6dChAmwR6atwmt7jAmUjK/mALRrKcr2uRqibLsU28ZBQ9Meo/GsWvy46zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1vemdCVt554QaAdKb5mpnDNU8lJ+eNRVMvHQxyW8dA/ewgoSr
-	O7QYaE9kb2OxBuUM9W4o6cyjwRYwOQY+azhWjwMEKwuwGObOdPs1
-X-Gm-Gg: ASbGncs3HszqMoTV7eCPEK6yrE8KOsF/6p8NPxwelPZUuHuwz1CtGKTfYhOSw8Xdkzq
-	m3mBM31KaD8pCz+vQwKTNbxERcXw63y9D/C+KDAeqZRUlxDt950GFx/3DijNQyg7Y4C4ZJ5U72d
-	EHojNxIa9C2t/nW3/XLNFbgmCfSxGyCk/AfnEwbPa5kuEJRkKyMU4b1llFv3zjIYTu8qPgNKnJ0
-	SYH7y8at8XcHrbIKVxoL0qav3xiMM152HOPnANQrMFJLpTqWwzxc/BQ+3z21mVaNqJM8F6pjxZW
-	NbtCpn/c5GNVmtwXsIY+wHxiZj68kt5orJ6znF3JNcC5MehjWQmr7hxSg0epxwJcRCMfC/xhb/r
-	qd/hdciqv6aiUJAMw4hRu5Pw8Tw==
-X-Google-Smtp-Source: AGHT+IEWrDcmg8oOaHL3GpUN9c65VEIxPZngtaBg7FF7PGHibcF+gg+MSldUTtVANBF0nfgIQ6nPlQ==
-X-Received: by 2002:a2e:be8b:0:b0:30c:50ff:1a4e with SMTP id 38308e7fff4ca-30d7e24579emr9300741fa.18.1742538907590;
-        Thu, 20 Mar 2025 23:35:07 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d914054sm1560791fa.108.2025.03.20.23.35.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Mar 2025 23:35:06 -0700 (PDT)
-Message-ID: <ffa5ae6d-a925-41da-9826-4bb376ca0fbe@gmail.com>
-Date: Fri, 21 Mar 2025 08:35:06 +0200
+	s=arc-20240116; t=1742538972; c=relaxed/simple;
+	bh=HaWvwtYJ/oU8MJuWlBp9GYIsMVjPAUFk2f+KucFWzzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S3ooDmtCYgvWHyAJIPKh4eXz5bIIcyolO01y5lJSfDIeN79Mr+yF88SFx2nxM8S+fVZ5BGkXXbGfrtivARybusfLWAWJtGoL3jao0yc6GcmiKyZ2rrwPbQ1iFm8+8lPADtuZpqjepp0deof9d27ueTsaZEEGD8BcqAjSLERbW1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TsOwUOPV; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742538970; x=1774074970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HaWvwtYJ/oU8MJuWlBp9GYIsMVjPAUFk2f+KucFWzzI=;
+  b=TsOwUOPVbJm6EL7zw9ZjdVBlo4UDIrrI0/a5OIbfwJyYebBGkfOXx0NQ
+   puB2nsiAwMXrUh7miIX89QTuGv6OobbzH2zYWRpYomQChgaeTf6T6+qxC
+   k2kyEJ4D1OwQ78oGWoj2osi5VVhQkHTlT0wwojGcRLbPZER3SyC197cL/
+   ynThNNfXBV9djq1Q61W5uZFE9A2kdXNXyaLnzwMsmmVzoF3paPTcyNSMU
+   EL9/YosGN1Bd5rgEp8BCLeKFRnPgzMPyUw/Ycp44ANMRicAKFx5JzfX8s
+   TZYeDCoebSChl+egmz4t1UMEfWKRZSS6vo4BI3om/Ts945Gf/EwwOgsQZ
+   A==;
+X-CSE-ConnectionGUID: 8nqMfzwXTha8XWxGp/6l7A==
+X-CSE-MsgGUID: pXGu5vz+SsGfhY6sIFUHew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="43985016"
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="43985016"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 23:36:09 -0700
+X-CSE-ConnectionGUID: YaSh7HXlQ+OnX5jNfa5gzA==
+X-CSE-MsgGUID: h72+9HCnRUyhlf7lh60ncg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="123830796"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 20 Mar 2025 23:36:05 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tvVz8-00016A-2R;
+	Fri, 21 Mar 2025 06:36:02 +0000
+Date: Fri, 21 Mar 2025 14:35:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@airoha.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: Re: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha
+ SoC
+Message-ID: <202503211416.eZCW1LF6-lkp@intel.com>
+References: <20250318235850.6411-6-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: thp7312: Don't require node availability
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Z9vTV7tS2ZI3tM6m@mva-rohm>
- <20250320142635.GA14394@pendragon.ideasonboard.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250320142635.GA14394@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318235850.6411-6-ansuelsmth@gmail.com>
 
-Hi dee Ho Laurent,
+Hi Christian,
 
-On 20/03/2025 16:26, Laurent Pinchart wrote:
-> Hi Matti,
-> 
-> On Thu, Mar 20, 2025 at 10:35:35AM +0200, Matti Vaittinen wrote:
->> It appears that the concept of available firmware nodes is not really
->> applicable to the scenarios where a specific name is required from a
->> node.
->>
->> As explained[1] by Sakari:
->> "OF only enumerates available nodes via the fwnode API, software nodes
->> don't have the concept but on ACPI I guess you could have a difference
->> in nodes where you have device sub-nodes that aren't available. Still,
->> these ACPI device nodes don't have meaningful names in this context
->> (they're 4-character object names) so you wouldn't use them like this
->> anyway."
->>
->> Use the fwnode_for_each_child_node() instead of the
->> fwnode_for_each_available_child_node() In order to make it clearly
->> visible that the 'availability' of the nodes does not need to be
->> considered here.
-> 
-> Why not ? Node availability is a concept that exists in DT, and this
-> driver has only been tested on DT-based systems.
+kernel test robot noticed the following build errors:
 
-I admit I need to study this then. I just took what Sakari said for 
-granted, without taking any further look at this.
+[auto build test ERROR on net-next/main]
 
-I mean following quote:
-"OF only enumerates available nodes via the fwnode API".
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/net-phylink-reset-PCS-Phylink-double-reference-on-phylink_stop/20250319-080303
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250318235850.6411-6-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH 5/6] net: pcs: airoha: add PCS driver for Airoha SoC
+config: i386-randconfig-007-20250321 (https://download.01.org/0day-ci/archive/20250321/202503211416.eZCW1LF6-lkp@intel.com/config)
+compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250321/202503211416.eZCW1LF6-lkp@intel.com/reproduce)
 
-I interpreted it as if, in the dt based systems, the nodes which aren't 
-available, wouldn't be enumerated and available via the fwnode APIs. If 
-this is not true, then we probably need to re-re-re-consider also the 
-need for the fwnode_for_each_available_named_child_node().
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503211416.eZCW1LF6-lkp@intel.com/
 
-> Why can't we keep the
-> code as-is ?
+All errors (new ones prefixed by >>):
 
-If I am mistaken and the 'availability' has a meaning - then we can and 
-should. If not, then this discussion should serve as a good example why 
-the code should be changed ;)
+>> ld.lld: error: undefined symbol: of_pcs_simple_get
+   >>> referenced by pcs-airoha.c:2818 (drivers/net/pcs/pcs-airoha.c:2818)
+   >>>               drivers/net/pcs/pcs-airoha.o:(airoha_pcs_probe) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: of_pcs_add_provider
+   >>> referenced by pcs-airoha.c:2818 (drivers/net/pcs/pcs-airoha.c:2818)
+   >>>               drivers/net/pcs/pcs-airoha.o:(airoha_pcs_probe) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: of_pcs_del_provider
+   >>> referenced by pcs-airoha.c:2828 (drivers/net/pcs/pcs-airoha.c:2828)
+   >>>               drivers/net/pcs/pcs-airoha.o:(airoha_pcs_remove) in archive vmlinux.a
 
-I hope Sakari can share his view :)
-
-Yours,
-	-- Matti
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
