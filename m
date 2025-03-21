@@ -1,186 +1,197 @@
-Return-Path: <linux-kernel+bounces-571766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7FFA6C1EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:54:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30ED2A6C1EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:55:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB687A5E01
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD254842EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02B422E415;
-	Fri, 21 Mar 2025 17:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDFA22F17C;
+	Fri, 21 Mar 2025 17:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ap9j5758"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyX+Bp5w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798F922F38C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E28C22A4C9;
+	Fri, 21 Mar 2025 17:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742579640; cv=none; b=sxzl0+8YQ2w5ORXJo433WFp6VUSQM1jUx7UKWH8UJ1LQ/U2K+JVoKQhkqfj0Pu5BPNjP4m4RqhMFdhOp6a6MKlS8Hs/gP0QfSphbxaXUSZFADRkWXCTuZueuqxgXyGI63ryoDniAQn1mBCjOFnVuJUDmMfDKsKXb+m7OS/eUtxM=
+	t=1742579657; cv=none; b=CS3X+Q2cdQPxRcRs3Aze+KDlkhlectA42Idg4pIVkXCie8SUOKOcXJerSvAmQ2WtP0FvHOqQx1o2ruRdSOG1+3mDmg2f1dKXiJW/hCSiVNK4Dz5JuE2BhEZWE5swCDQax6HpnUGJToakc6mAO5NjBFDghaY2MpCz+772xv/3h4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742579640; c=relaxed/simple;
-	bh=U6fktsyMuyMuZdm15c/lbWLdkSmOMUNXc8kCcIrjy5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sUdrUuHV45NdP2g167wmcthkhpETEf5a6dOFkq8rWL91HHxghXUYh9hfmVNF50/kaDLx6gkL0FYCH8NMNf/8NArjPEH8X9vvcVCicF/fKoVChEofYf5B9Od3S49KGUJdEsJ1KnMAFQ0Mg4DFv6fyd6pW0hqgFumMQaZfBYYNXD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ap9j5758; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742579636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O3nRKMratk622C9divVml2hIzMFZgLrlffCOuR6FHAA=;
-	b=ap9j5758KELZ4iWcVIeBWOgyDEkE3Kmc9F2iLmk4W01PxYY49AMG8X1SExB5PNA/jGnBJ0
-	Hb19lZ7VGC+H3/gzJCezgm+8DzrDDgxzSmeCL04kRuN81noSUTPGX3dXEimzPPs8CA2GJo
-	Yjs5egNl/m+CxnyQJMvvsYxpOecBpRU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-82-N-PnQE04M-WsRDoUdgSZZA-1; Fri, 21 Mar 2025 13:53:55 -0400
-X-MC-Unique: N-PnQE04M-WsRDoUdgSZZA-1
-X-Mimecast-MFC-AGG-ID: N-PnQE04M-WsRDoUdgSZZA_1742579634
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43cf172ffe1so16560445e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:53:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742579634; x=1743184434;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O3nRKMratk622C9divVml2hIzMFZgLrlffCOuR6FHAA=;
-        b=LGpUr7yrVnYRcIoQY/z4eOpACV5ZcoWlXXuiLZxPmlV+T/6HwNZhvpJDNcbINM7PfU
-         nGNVLqsa+nuMa0n/4Czkg+2XmgDzJRPZhkpYjPD9gSq3xNkyLnCKCJ7Oni0nKAFN/g5/
-         GOd1sSPUCyaYlrWwskdGW3PBTpZFSudKstTMoJfEnWz+Hl85DyIeLdLc8oyePoO4Pyls
-         gybCBm2OmliwoT2I2wABQYqmbM9Y5agle9kyxnl09NjHqHAEe6FDh/swLi5VizPkdnJA
-         mjeSAhCF8LhIrpXIZY/5oqSWxMLNuO19O26jCScvhTggzNsMiIRJICo7dnpM1MKLcWT+
-         ZG6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVL50Sfrv0CtNd93BqkJeocIsdo52PG3ZyYIDlqAN/dws4HoH9pNjVHGFdJEtVzHpBywrqtQMlpO6nfkzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjpO8bJZ+6Hu883xKJ2fBBGLjEevRKOyGrz+GM10Y5T/FVac/d
-	ZOnRpMfvW38elRxT0D6/YAPv8HR3NMcgCKni6i0UOVH7TYDIul4+TbTnj7sjT6NNZmXbgL/zgd6
-	ZOraAiI10XGFlStGRan6lFhDvQeXBpi5HDVEq6sMoeNWg/DacbwcS1PuABePgqg==
-X-Gm-Gg: ASbGncvmpKxmUS93vVkuF/6xZsQgxuebNAdxGf4YL7V3MdofDZih8dtAQufIagzFH5P
-	RlzrNdiMfsFotYem4b0T2MX0C1zXC7Z6zvjpmOk7XLFEAcwjTobAMKM49gnATeshp+G45wZH+Ex
-	ot2Ex2A42O0iTu+0jyDhgdPVbBlM+3ICZyoNDXexatNi9Ms2Rhk5gZS8KQg6WhDEQ6PrbZw4nHy
-	mE13E6gSH5XHjcshNPs5eOP0T2FTcZOnPv8abyeCAqpmtX1VEwn0AlzN4arz+jsHlrHhJJLAS9y
-	0qc2ZOKpD9Ihmj6Ug/AvAcQiS2nyypLN8Q5aGFx3dObvTg==
-X-Received: by 2002:a05:600c:c07:b0:43d:45a:8fc1 with SMTP id 5b1f17b1804b1-43d509e4640mr40035195e9.4.1742579633824;
-        Fri, 21 Mar 2025 10:53:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEi86ywD1M/RbAWOzMYKUQu56wBK07oi3Jw+JWYD17hgaWYXOejGMZOs7EmeoFI2yzpzEZPFA==
-X-Received: by 2002:a05:600c:c07:b0:43d:45a:8fc1 with SMTP id 5b1f17b1804b1-43d509e4640mr40034835e9.4.1742579633387;
-        Fri, 21 Mar 2025 10:53:53 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-77-210.dyn.eolo.it. [146.241.77.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed786sm83196635e9.38.2025.03.21.10.53.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 10:53:52 -0700 (PDT)
-Message-ID: <d86dd4a4-a56a-4d48-ad7d-182f6fed8781@redhat.com>
-Date: Fri, 21 Mar 2025 18:53:51 +0100
+	s=arc-20240116; t=1742579657; c=relaxed/simple;
+	bh=gKedzw4liLSwVmSnogIR9b155XLkCctysKV/UrrfMtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QVE1YUzqxHDiXEA9CPdW0ZV44b0KfibcczuL+aFPhreohrMTuCnS48PVHcIYK/f7mQCw5zF3eO3fzN7GEJ6s9iGunmLRoU/teJXTzDxxmFxo52u4YSQs78POHVdIYRnJZ7vR9qCo4b16yJi+Ry1pQBpSI3qb0m/kskj9E4ee6RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyX+Bp5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAD7C4CEE3;
+	Fri, 21 Mar 2025 17:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742579657;
+	bh=gKedzw4liLSwVmSnogIR9b155XLkCctysKV/UrrfMtU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=SyX+Bp5wqggD+Z8sARhajEpYUpC5IH8nfPIWoAWu6FG+CjkuAnRlnuumwltEC5gpf
+	 k4VEiR+tjVmS+MLXUIXLQ1NZwshuFPzySzV7Qqx7F2jhRbB3DsR4Px5j3/w4Kl0fZy
+	 3IyTTHqgQzV2OhMVS1hDFJB0A/98f8lbTH/XjE426FysDNbuBxRSHxfM+Fwod7Ltjv
+	 OhUQYMM4GPqnFHvJ1UDlpTl6ZQC1uiGBRN8Qtgt06oepc/+l7UNIXTZW3uzymiSEGD
+	 3nvuuD5l3vHQq/w5HJrjgtj2jYHRxgsknRolwdVSXeH9l5ffokfoRKKOOF8+nDZBCT
+	 qGhtkyxzX/qEQ==
+Date: Fri, 21 Mar 2025 12:54:15 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Lars Persson <lars.persson@axis.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@axis.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH RFC NOT TESTED 0/2] PCI: artpec6: Try to clean up
+ artpec6_pcie_cpu_addr_fixup()
+Message-ID: <20250321175415.GA1133870@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 2/2] net: mdio: mdio-i2c: Add support for
- single-byte SMBus operations
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
- Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Russell King <linux@armlinux.org.uk>,
- Heiner Kallweit <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Sean Anderson <sean.anderson@linux.dev>, =?UTF-8?Q?Bj=C3=B8rn_Mork?=
- <bjorn@mork.no>
-References: <20250314162319.516163-1-maxime.chevallier@bootlin.com>
- <20250314162319.516163-3-maxime.chevallier@bootlin.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250314162319.516163-3-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z92fNs31ybMO2Y1+@axis.com>
 
-On 3/14/25 5:23 PM, Maxime Chevallier wrote:
-> diff --git a/drivers/net/mdio/mdio-i2c.c b/drivers/net/mdio/mdio-i2c.c
-> index da2001ea1f99..202f486e71f1 100644
-> --- a/drivers/net/mdio/mdio-i2c.c
-> +++ b/drivers/net/mdio/mdio-i2c.c
-> @@ -106,6 +106,62 @@ static int i2c_mii_write_default_c22(struct mii_bus *bus, int phy_id, int reg,
->  	return i2c_mii_write_default_c45(bus, phy_id, -1, reg, val);
->  }
->  
-> +static int smbus_byte_mii_read_default_c22(struct mii_bus *bus, int phy_id,
-> +					   int reg)
-> +{
-> +	struct i2c_adapter *i2c = bus->priv;
-> +	union i2c_smbus_data smbus_data;
-> +	int val = 0, ret;
-> +
-> +	if (!i2c_mii_valid_phy_id(phy_id))
-> +		return 0;
-> +
-> +	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-> +			     I2C_SMBUS_READ, reg,
-> +			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	val = ((smbus_data.byte & 0xff) << 8);
+On Fri, Mar 21, 2025 at 06:17:42PM +0100, Jesper Nilsson wrote:
+> On Thu, Mar 20, 2025 at 04:54:05PM -0500, Bjorn Helgaas wrote:
+> > On Tue, Mar 18, 2025 at 10:01:48AM +0100, Niklas Cassel wrote:
+> > > On Mon, Mar 17, 2025 at 12:54:19PM -0500, Bjorn Helgaas wrote:
+> > > > On Mon, Mar 10, 2025 at 05:47:03PM +0100, Jesper Nilsson wrote:
+> > > > > I've now tested this patch-set together with your v9 on-top of the
+> > > > > next-branch of the pci tree, and seems to be working good on my
+> > > > > ARTPEC-6 set as RC:
+> > > > > 
+> > > > > # lspci
+> > > > > 00:00.0 PCI bridge: Renesas Technology Corp. Device 0024
+> > > > > 01:00.0 PCI bridge: Pericom Semiconductor PI7C9X2G304 EL/SL PCIe2 3-Port/4-Lane Packet Switch (rev 05)
+> > > > > 02:01.0 PCI bridge: Pericom Semiconductor PI7C9X2G304 EL/SL PCIe2 3-Port/4-Lane Packet Switch (rev 05)
+> > > > > 02:02.0 PCI bridge: Pericom Semiconductor PI7C9X2G304 EL/SL PCIe2 3-Port/4-Lane Packet Switch (rev 05)
+> > > > > 03:00.0 Non-Volatile memory controller: Phison Electronics Corporation E18 PCIe4 NVMe Controller (rev 01)
+> > > > > 
+> > > > > However, when running as EP, I found that the DT setup for pcie_ep
+> > > > > wasn't correct:
+> > > > > 
+> > > > > diff --git a/arch/arm/boot/dts/axis/artpec6.dtsi b/arch/arm/boot/dts/axis/artpec6.dtsi
+> > > > > index 399e87f72865..6d52f60d402d 100644
+> > > > > --- a/arch/arm/boot/dts/axis/artpec6.dtsi
+> > > > > +++ b/arch/arm/boot/dts/axis/artpec6.dtsi
+> > > > > @@ -195,8 +195,8 @@ pcie: pcie@f8050000 {
+> > > > >  
+> > > > >                 pcie_ep: pcie_ep@f8050000 {
+> > > > >                         compatible = "axis,artpec6-pcie-ep", "snps,dw-pcie";
+> > > > > -                       reg = <0xf8050000 0x2000
+> > > > > -                              0xf8051000 0x2000
+> > > > > +                       reg = <0xf8050000 0x1000
+> > > > > +                              0xf8051000 0x1000
+> > > > >                                0xf8040000 0x1000
+> > > > >                                0x00000000 0x20000000>;
+> > > > >                         reg-names = "dbi", "dbi2", "phy", "addr_space";
+> > > > > 
+> > > > > Even with this fix, I get a panic in dw_pcie_read_dbi() in EP-setup,
+> > > > > both with and without:
+> > > 
+> > > Your fix looks correct to me.
+> > > 
+> > > You should even be able keep dbi as 0x2000, and simply remove the dbi2
+> > > from "reg" and "reg-names", as the driver should be able to infer dbi2
+> > > automatically:
+> > > https://github.com/torvalds/linux/blob/v6.14-rc7/drivers/pci/controller/dwc/pcie-designware.c#L119-L128
+> > > 
+> > > But your fix seems more correct.
+> > > You should probably also change the size of "dbi" to 0x1000 in the RC node.
+> > 
+> > Just a ping to see if there's any chance of getting this into v6.15?
+> > 
+> > To do that, I think we'd need to confirm that:
+> > 
+> >   - the endpoint issue is fixed
+> 
+> Unfortunately, I've been unable to get any resolution to this problem.
+> 
+> - Tested on units without the PCIe switch - still fail
+> - Tested on another units - still fail
+> - Tested with 6.12-rc7 - fail
+> - Tested with 6.6-rc6 - fail
+> - Tested with 6.1 - fail
+> - Older kernels fail with toolchain or boot problems due to my hacky
+>   tools for booting upstream kernels so I can't easily test
+> - Tested with original bringup kernel 4.19 - no crash, but endpoint is
+>   not enumerated from RC. This contains lots of hacked around code
+>   which could also come into play, and there is an untested hardware
+>   adapter in between the two boards.
 
-External brackets not needed.
+So it sounds like current kernels are already broken for endpoints,
+regardless of Frank's series?
 
-> +
-> +	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-> +			     I2C_SMBUS_READ, reg,
-> +			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	val |= (smbus_data.byte & 0xff);
+If that's the case, I'd be open to merging the removal of
+artpec6_pcie_cpu_addr_fixup() because we wouldn't be breaking a
+currently-working configuration
 
-same here.
+And if we don't have artpec6_pcie_cpu_addr_fixup() in the mix, we'll
+have a better chance of fixing it nicely, by deriving intermediate
+addresses from the devicetree instead of forcing them with
+.cpu_addr_fixup().
 
-> +
-> +	return val;
-> +}
-> +
-> +static int smbus_byte_mii_write_default_c22(struct mii_bus *bus, int phy_id,
-> +					    int reg, u16 val)
-> +{
-> +	struct i2c_adapter *i2c = bus->priv;
-> +	union i2c_smbus_data smbus_data;
-> +	int ret;
-> +
-> +	if (!i2c_mii_valid_phy_id(phy_id))
-> +		return 0;
-> +
-> +	smbus_data.byte = ((val & 0xff00) >> 8);
+> The panic looks like this (with some minor variations due to kernel version)
 
-and here.
+If you had Frank's series included, it should log some useful debug
+about the intermediate address offset it derives.  But I don't think
+you're getting far enough for this to be the problem.
 
-> +
-> +	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-> +			     I2C_SMBUS_WRITE, reg,
-> +			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	smbus_data.byte = val & 0xff;
+> =============
+> [   16.601883] 8<--- cut here ---
+> [   16.604937] Unhandled fault: external abort on non-linefetch (0x008) at 0xf0bdd00e
 
-I would not have noted the above if even this one carried additional
-brackets...
+My guess is:
 
-Cheers,
+  artpec6_pcie_probe
+    dw_pcie_ep_init
+      dw_pcie_ep_get_resources
+        dw_pcie_get_resources
+          res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi")
+          pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res)
+      dw_pcie_ep_init_registers
+        dw_pcie_readb_dbi(PCI_HEADER_TYPE)    # 0x0e
+          dw_pcie_read_dbi
+            dw_pcie_read(addr = pci->dbi_base + PCI_HEADER_TYPE)
+              readb(addr)
 
-Paolo
+It looks like pci->dbi_base *should* be initialized by this time.  I
+assume the hardware does support single-byte, non-aligned reads?
 
+> [   16.612502] [f0bdd00e] *pgd=029d6811, *pte=f8050243, *ppte=f8050013
+> [   16.618775] Internal error: : 8 [#1] SMP ARM
+> [   16.623041] Modules linked in:
+> [   16.626092] CPU: 0 UID: 0 PID: 1 Comm: sh Not tainted 6.14.0-rc4-g98c0bcfef512-dirty #26
+> [   16.634181] Hardware name: Axis ARTPEC-6 Platform
+> [   16.638877] PC is at dw_pcie_read_dbi+0x60/0xa4
+> [   16.643414] LR is at 0x0
+> [   16.645942] pc : [<c05d9e64>]    lr : [<00000000>]    psr: 60000013
+> [   16.652203] sp : f0819bc0  ip : c1e2b840  fp : 00000000
+> [   16.657420] r10: c1d9f000  r9 : c1efdbc0  r8 : c1e2b930
+> [   16.662638] r7 : c0d2f188  r6 : c1e2b840  r5 : c1e2b930  r4 : 00000000
+> [   16.669159] r3 : 00000001  r2 : 00000000  r1 : f0bdd00e  r0 : c1e2b840
+> [   16.675679] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> [   16.682810] Control: 10c5387d  Table: 02bec04a  DAC: 00000051
+> ...
+
+> [   17.073818] Call trace:
+> [   17.073828]  dw_pcie_read_dbi from dw_pcie_ep_init_registers+0x2c/0x3bc
+> [   17.082978]  dw_pcie_ep_init_registers from artpec6_pcie_probe+0x164/0x1dc
+> [   17.089867]  artpec6_pcie_probe from platform_probe+0x5c/0xb0
+> [   17.095621]  platform_probe from really_probe+0xe0/0x3cc
 
