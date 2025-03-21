@@ -1,220 +1,182 @@
-Return-Path: <linux-kernel+bounces-570860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406CEA6B57D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:51:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D287A6B584
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB8213AA88B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A6A018934F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999D01EF087;
-	Fri, 21 Mar 2025 07:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491981EF08A;
+	Fri, 21 Mar 2025 07:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="J4TMQ/tQ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSM7m5X/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF041E9906
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882A326ACB;
+	Fri, 21 Mar 2025 07:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742543468; cv=none; b=DytGg9ISHla7eIoP+VBtq2qu8tO5PRDkhG1cmsvp4GWeQpB2lmI5H3EqjzaRh9ZXH4S89QSXDevNQy+N9BrMCPp2sUElE3wL3hWGWoEbhgso2mTCO6eo7XO2bsBWoklMZUMJYsxKM0fxafw0LCfLiRCFveCyvNN+B8NLHdUCv8w=
+	t=1742543512; cv=none; b=gjgwO469xH6+tci8kWg5oxCY3BF8AC+qJhJC0zGFf1bip2YyA4wem8weuUDDkAxjNIx16uexgk1rwqwMIoLKRn0PHLa57hpPTZouVw7utmsYrvEmkxhjRhDWICqMBodIBLQBwZg1uHOhCmj8/GS8rMTzjRqIZ0KHI5SaIfzOPZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742543468; c=relaxed/simple;
-	bh=y4dXpl3cvatt6fzahD+2xibQ5xvZLmqxOM6dGyrnOAY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=bv+1l998QIf8SrcJF4fOJH7+FzUu/SV2NKiWtAiCnaAQWraMERXzGq36w16ryvKvz2SDVyiLY+VqDhEJ8GBqscmMYzyhv8MWvj99wpC+f7chbwD9qSVQa5Xy+oBNLgSOo2JkZ6+m+N/7FlEk13qL61BkvfpGKrxEkm90SdjnWAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=J4TMQ/tQ; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39973c72e8cso235059f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1742543465; x=1743148265; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhIkdGys04hj0FOCl78FUSdH2+gL7DQzkmTGKMi3P1w=;
-        b=J4TMQ/tQ7kTYKGnisvf4KLzfcQHqt+wqQu+H0MR5iP6uE75MqTF12z1+TQWGyK6GWh
-         iD1Ej0oi4jTnCOoTxAhwTwR9NZ8ZstTQ+OOOzCeBLvaCTSxkoEGNXzm0zOF7zeStKgBu
-         PWyZWzReCQwiVnh5ouvRLebs7wWvp5DQAZ2DQN8FE1cY9L5SibTakRgjlLzmKw867CqO
-         atw4Q9I38DhYVh+t3HU68MeJQNSJIKQ8sqIk+T79lTfMDnGmI++iiSQMId8u2lN1MiP8
-         8xEuYMAvRSSnCyyuYYlkzjWLmU3zSXBh5NIgaB3rOZX/fkUaU4EjyGVPvFxOlQD73GGb
-         dRZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742543465; x=1743148265;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PhIkdGys04hj0FOCl78FUSdH2+gL7DQzkmTGKMi3P1w=;
-        b=tzBw1StaWB6qNvVBPZ2viLjtf4UxsxhqiqaXRBn+jossXc34fRIX1M/vEcptfguXOu
-         KP7/ZFqnPcvKrEcq3cgUlbPHb4M86G7fs3UF4s2ZfjeicVqB5nbfvGSQMr88axltiBuj
-         DO+REa9+zIua/YyQDhokoa7No6j6ljevXDYEwlZQmyajojzH7Z92DJKeHa+vtB/GsOdL
-         k+5JQ+gdyhQZeCUkTh0bU8+ya9vu1NGGTbO0Tf9X/8jUDJLy+TFOvlq6XvsFk4pJYpIs
-         PI1HTrrSGBgZv5JqlxGTTNiJWpZkQDmmAYzoajlhWB3xcHNY+YTCf4dWJfcdzwKeOfra
-         md+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVmrsdKnPfiab7x7KJvMT5Ken+1uN+qA/TFkwAzYbkqB859H3troS4+y81cQy7gWbFYBLsh3HHJKLqtv10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywob7opuMQml7zDWTNWXDpFS5fR4YSk8jkbM5XJdHoikvPq28Ko
-	Pwa6IVjU2/qbEpgZTn0eX7JmLOmf2oHewJ9LiKgyNOCbKsPbQzXbsxRMIMJa9ws=
-X-Gm-Gg: ASbGnct6rpOdjZDXkTk33nmVhlB+uCXnmDtHD0a573+MmwObC8eIjqwbH44heBb5gvb
-	gmQCgKGwKGz2hQUw7l99ruLeyyB1LZvUYme6x+hZxvuG4Bn+82CbSrNCLnyBjUsWhyo9wNBP2a0
-	CmRTzwt6Vy3CNB6EmdXMg1GK64iHkuTY/5WoEtrMV7BHWnwZGcp8XDBAGfvEa/8C9M2yYMMbc/B
-	IKO+81M1UEOjpVjFgU+2lZYFVK1NSbfk5E9UlhUnaOuTzIiZJdbOb6QTUlp1N4rNpbEvrvhVg2M
-	cWH1p7eti+mEoU7v9Eu0fYRpPsZ7wCYy93gXtwpjF2E0jjCjrsBOhwMm8yTVzpjktuew96DGAC+
-	wF/EE
-X-Google-Smtp-Source: AGHT+IGwi45hePFM2TZdMOTyXUgfdngf4+B913tg/H8YfeoX7CrwBIY2Kj9KlDmHfMfV0eRC+zYKag==
-X-Received: by 2002:a5d:598b:0:b0:38d:d743:7d36 with SMTP id ffacd0b85a97d-3997f93046emr899094f8f.10.1742543464931;
-        Fri, 21 Mar 2025 00:51:04 -0700 (PDT)
-Received: from localhost (ip-89-103-73-235.bb.vodafone.cz. [89.103.73.235])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdb06b9sm18758395e9.36.2025.03.21.00.51.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 00:51:04 -0700 (PDT)
+	s=arc-20240116; t=1742543512; c=relaxed/simple;
+	bh=eUqWIJcB3nSd/mXSYygUn6M3e1U2VTzoZUejWvBj2HU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NBnCbKFt502vSvC3f28yVpj2vrYmYCYhlq5RUYPQ0KDB4g1mR+GeHOWanKcVlyWX7OpB5Py5hBtyJxqe6NogiGe3iYq14TEqRwZ6WfrDlpTZ8pww7uC4N8Fwohv1EfKX+hq1LDbQyohpj33nbdG3pdHR3PMYWjtEYa3+bg3h5gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSM7m5X/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB1CC4CEE3;
+	Fri, 21 Mar 2025 07:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742543512;
+	bh=eUqWIJcB3nSd/mXSYygUn6M3e1U2VTzoZUejWvBj2HU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tSM7m5X/sYFP6LXrJRSTdDwt2LcAuSi/NbowmE7HCqzddAOieWE5YS0TfNr9wIg0I
+	 AGVEZRJrt+VbwkTIh90aVx86Rr2oN0yoR2uUY9wrwk/pZj174J35fL0seVaqCf3Rvv
+	 cSBqhCbyLj31KkLqd6j9BeBAPbhBSxK+1XClerEIAjXns3hVmnsqnPBwaC8GO9qEpz
+	 TzXd8DGFQV+7Jj2QTv7jruYJqRvjylgLH33whHVEgavMziPOqsYS2/kJnSai9fX+fn
+	 z/xfUz30MG8rKxg0LRzYWYVkAY8/q3a4MsdkWbAvaVOwiktgYDMOXWcBFq6r1np2Yf
+	 5ccvARZiKZqrw==
+Message-ID: <442bebf4-4de1-42d1-a14b-2bb509fea12f@kernel.org>
+Date: Fri, 21 Mar 2025 08:51:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] Add support for Battery Status & Battery Caps AMS in
+ TCPM
+To: Amit Sunil Dhamne <amitsd@google.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
+ Kyle Tso <kyletso@google.com>
+References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
+ <20250313-determined-wild-seahorse-f7871a@krzk-bin>
+ <914a0df4-96d0-4cd4-ac87-3826fa9c1440@google.com>
+ <3f65fe16-56f8-4887-bb91-994b181ce5a9@kernel.org>
+ <9852e5a8-843d-48ae-90d0-7991628e93b3@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <9852e5a8-843d-48ae-90d0-7991628e93b3@google.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 21 Mar 2025 08:51:04 +0100
-Message-Id: <D8LS3S6B9Y09.ZH6AQOD6UXRI@ventanamicro.com>
-Subject: Re: [PATCH v12 25/28] riscv: create a config for shadow stack and
- landing pad instr support
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
- <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
- <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
- <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
- "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
- Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
- <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
- <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
- <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
- <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
- <zong.li@sifive.com>, "linux-riscv"
- <linux-riscv-bounces@lists.infradead.org>
-To: "Deepak Gupta" <debug@rivosinc.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
- <20250314-v5_user_cfi_series-v12-25-e51202b53138@rivosinc.com>
- <D8LESTM58PV0.7F6M6XYSL4BU@ventanamicro.com>
- <CAKC1njQHu1UeSSApWHXedEURBezuQL1BDcrpsSfi=D0JmDFX8A@mail.gmail.com>
-In-Reply-To: <CAKC1njQHu1UeSSApWHXedEURBezuQL1BDcrpsSfi=D0JmDFX8A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-2025-03-20T15:29:55-07:00, Deepak Gupta <debug@rivosinc.com>:
-> On Thu, Mar 20, 2025 at 2:25=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
-mar@ventanamicro.com> wrote:
+On 20/03/2025 22:11, Amit Sunil Dhamne wrote:
+> On 3/16/25 9:52 AM, Krzysztof Kozlowski wrote:
+>> On 15/03/2025 01:49, Amit Sunil Dhamne wrote:
+>>> Hi Krzysztof,
+>>>
+>>> Thanks for the review!
+>>>
+>>> On 3/13/25 1:50 AM, Krzysztof Kozlowski wrote:
+>>>> On Wed, Mar 12, 2025 at 04:42:00PM -0700, Amit Sunil Dhamne wrote:
+>>>>> Support for Battery Status & Battery Caps messages in response to
+>>>>> Get_Battery_Status & Get_Battery_Cap request is required by USB PD devices
+>>>>> powered by battery, as per "USB PD R3.1 V1.8 Spec", "6.13 Message
+>>>>> Applicability" section. This patchset adds support for these AMSes
+>>>>> to achieve greater compliance with the spec.
+>>>> Which board uses it? I would be happy to see that connection between
+>>>> batteries and USB connector on the schematics of some real device. How
+>>>> does it look like?
+>>> Any board that uses a USB Type-C connector that supplies power into or
+>> If you keep responding like this, you will got nowhere, so let me
+>> re-iterate:
 >>
->> 2025-03-14T14:39:44-07:00, Deepak Gupta <debug@rivosinc.com>:
->> > This patch creates a config for shadow stack support and landing pad i=
-nstr
->> > support. Shadow stack support and landing instr support can be enabled=
- by
->> > selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` w=
-ires
->> > up path to enumerate CPU support and if cpu support exists, kernel wil=
-l
->> > support cpu assisted user mode cfi.
->> >
->> > If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS=
-`,
->> > `ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
->> >
->> > Reviewed-by: Zong Li <zong.li@sifive.com>
->> > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> > ---
->> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> > @@ -250,6 +250,26 @@ config ARCH_HAS_BROKEN_DWARF5
->> > +config RISCV_USER_CFI
->> > +     def_bool y
->> > +     bool "riscv userspace control flow integrity"
->> > +     depends on 64BIT && $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zi=
-cfiss)
->> > +     depends on RISCV_ALTERNATIVE
->> > +     select ARCH_HAS_USER_SHADOW_STACK
->> > +     select ARCH_USES_HIGH_VMA_FLAGS
->> > +     select DYNAMIC_SIGFRAME
->> > +     help
->> > +       Provides CPU assisted control flow integrity to userspace task=
-s.
->> > +       Control flow integrity is provided by implementing shadow stac=
-k for
->> > +       backward edge and indirect branch tracking for forward edge in=
- program.
->> > +       Shadow stack protection is a hardware feature that detects fun=
-ction
->> > +       return address corruption. This helps mitigate ROP attacks.
->> > +       Indirect branch tracking enforces that all indirect branches m=
-ust land
->> > +       on a landing pad instruction else CPU will fault. This mitigat=
-es against
->> > +       JOP / COP attacks. Applications must be enabled to use it, and=
- old user-
->> > +       space does not get protection "for free".
->> > +       default y
->>
->> A high level question to kick off my review:
->>
->> Why are landing pads and shadow stacks merged together?
->>
->> Apart from adding build flexibility, we could also split the patches
->> into two isolated series, because the features are independent.
->
-> Strictly from CPU extensions point of view they are independent features.
-> Although from a usability point of view they complement each other. A use=
-r
-> wanting to enable support for control flow integrity wouldn't be enabling
-> only landing pad and leaving return flow open for an attacker and vice-ve=
-rsa.
-> That's why I defined a single CONFIG for CFI.
->
-> From organizing patches in the patch series, shadow stack and landing
-> pad patches do not cross into each other and are different from each
-> other except dt-bindings, hwprobe, csr definitions. I can separate them
-> out as well if that's desired.
+>> Which upstream DTS (or upstream supported hardware) is going to use this
+>> binding, so I can see how you are going to implement it there in the
+>> entire system?
+> 
+> This is for maxim,max33359 Type-C controller.
 
-It would be my preference, but it's the maintainer's call.
+Stop deflecting the questions. max33359 is not a board. I already asked
+two times.
 
-I think that landing pads could be merged earlier if they were posted
-separately, but this series is already on v12, so I don't want to force
-anything.
+Apparently admitting "no upstream users" is impossible, so let's state
+the obvious:
 
-> Furthermore, I do not see an implementation only implementing zicfilp
-> while not implementing zicfiss. There is a case of a nommu case where
-> only zicfilp might be implemented and no zicfiss. However that's the case
-> which is anyways riscv linux kernel is not actively being tested. IIRC,
-> it was (nommu linux) considered to be phased out/not supported as well.
->
-> We could have two different configs but I don't see what would serve
-> apart from the ability to build support for landing pad and shadow stack
-> differently. As I said from a usability point of view both features
-> are complimenting
-> to each other rather than standing out alone and providing full protectio=
-n.
->
-> A kernel is built with support for enabling both features or none. Sure u=
-ser
-> can use either of the prctl to enable either of the features in whatever
-> combination they see fit.
+There are no upstream users of this.
 
-Yeah, it will be rare, but if for some reason one feature cannot be
-used, then having just one is better than none.
-We can easily add compile options later and if we start with separate
-kernel parameters, then the users won't even notice a difference.
+> 
+> This would property would have been present for the connector present in 
+> the typec device for gs101-oriole board (that uses the max33359 
+> controller).
+
+
+But it is not.
+
+
+> 
+> However, I will be exploring existing bindings to describe the 
+> relationship for now.
+> 
+>>> out of a battery while operating in sink or source mode respectively.
+>>> The VBUS is connected to the (battery + buck boost IC's CHGin/Vin) or a
+>>> companion IFPMIC connected to a battery.  In our board we have USB
+>>> Connector <-> IFPMIC <-> Battery.
+>> Which board is that?
+> 
+> gs101-oriole board.
+
+
+Then why this is not used? The board was released some years ago, so I
+do not see a problem in using it.
+
+Best regards,
+Krzysztof
 
