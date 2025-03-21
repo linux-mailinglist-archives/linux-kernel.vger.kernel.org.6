@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-571864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD69A6C356
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:30:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2724A6C357
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C293B0CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D241890A6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48A322FADE;
-	Fri, 21 Mar 2025 19:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C3522E3E1;
+	Fri, 21 Mar 2025 19:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lOvMhdo5"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MnQZNnFm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8209C1E5714
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07B818FC75
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742585345; cv=none; b=iJnmBz+ECg+Ypw7FC1V4nL1vWGVAWaY0pidDeUtrB+J59yTB2IknXH2QSclWJQ9AjPGzQXrrpOFVpRZpnghZ6Wl7qL/iucmuaPEgc4kze9pp+iPZ/D4rZ0KVzV79/25+GHkpbeJfWHamiFMLX1eLKVpQmOZTwDSTokkZY5aiJ2s=
+	t=1742585451; cv=none; b=QYz9nlep5YZx3NGPz4uFuoChb3/iThBZG9qZNX3grLLRLwBP/ozUiuS8QnhB6faOZuNMo+8tC9jCgnYWHDSlLsZU9PeRDpFy3BFMmTjxunt/GeuofsK27qyhE+8x/49kx8zDit0q7L1SIZP4ft9Dfh1EcMlKMvKHe/GpNb3ewE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742585345; c=relaxed/simple;
-	bh=BuvsGhJHZ8Xw+48Ecwh+fuc4DRA4GXHKSEgROs4+XPM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nHWf/JVsEDxPzh6Dv8eW0rDNywuENiGwfHI8NjEtljJwl/csIqgXTQfjd7q44n91wmObNhsaczygpmCsLLFl2+ifhWxB5xSEpKzgL8FnBh0+DUzt30DM7mHwfkJXroFzluWvurqfTN9KNOaHp9DXHCynOXWcabshh9V3Yz/Q6dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lOvMhdo5; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2c663a3daso469106666b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742585342; x=1743190142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2hED09Hatc/530rZzT/g3h0VUVivrA2PSH7ts/rtDc=;
-        b=lOvMhdo50fRX6nSvsQlhJQuPN52c3dL0fNH04653TLw3zjFSm0vlu7qnDA3+DgC81m
-         xW4Rg0iLiZfVCal055ily3TsMgG7vle2tAgQwpkUHHJw7hW5iOndyCkq/e0zP/X0wX1W
-         W0k7OcInwsaZeNCZTByjR7Y1w5rka/80yjSmLTxOpws+WPjHG+5TIm8vicmYJ2H/RNHG
-         dKK29CPlhyEjVJRMV3nfv/lh/UKP6TBx7odSWgm/57NeLs8TsD7BNs/vsLxrJqvH63Yg
-         G2cFfIC2dLBkVevHhBTqurpt2Z+pLozCVhcVIsMVW9yvdo2c9Tz0JOZq6l7MmZywD4FJ
-         IrOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742585342; x=1743190142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j2hED09Hatc/530rZzT/g3h0VUVivrA2PSH7ts/rtDc=;
-        b=lfLUqq4C6eFpwD3sxGz3VunFJHVvDmOLZdKwKPR8zOllSxsFgG4UCivaTGK4/RWPHc
-         KVtQyZ8hrijUTqWIREEZoSnQNUMY44/RP6VOmDK/iZ8dhlJxpvbMGNJMgiQUkzHNpH3h
-         sIK7WC66qv+SK9b6MXgSySdtt/RAEToK3azlHHbndDajDxASUy+Df/u+Vqa2VeDVLapz
-         jH0nmVrvj7xpNVi2Tjjt5sU/uqRXeGtk89o0x0ciKQ39XSzyflYuKP0u/1GGjMUVmd2C
-         2dCo6sR7nErdeZv1+Scvs7pZyFnscvkgMc14AGDFTn6xm5tfHLPpPKOq5kzsT19cEwIl
-         CZ1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXplrplY4PuQUvOx+gNQROYA29ALpYWV0TRvDZMQ2Ypygku9bnRIpO8fnl7yhnLU8hdAutmdq4WZkxfL4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynhVVyok1MvMavV4jaTps3UBw+3ETve6hywPiCbvLWxZaKcnua
-	yHYzAch1N07baXl2bs52uLakFLeX80hVpK1BGYKx4Viv81uZsPFnT2uyU9e2QVQv2P3dSMEoDMz
-	NDr/iva0s7HFMvu+1zbK6+7oVXUFptbR8Dfo=
-X-Gm-Gg: ASbGncvp80/fSuUzv4DBARrY/gTXdlPiv+Z2nUmzEErDZuALF+RmDoY2Gd3r/DtNDmJ
-	6SuSmcU+QAW78r8ZWmKbX7cQeg5n/acSt52scx5qRgW1/45DmkLsQPu71tyGO/jcE+Qf0MyTmzx
-	gVE9lJswJ2NE0dtpC1suQHAns=
-X-Google-Smtp-Source: AGHT+IFr6DHIIXCK2jv2tQeCJB9flyjvB19jQyVNG+m61yysVbGI2vUqrhw0CPy/4k7NDizCoPraQg+p9VazXzLcBqg=
-X-Received: by 2002:a17:907:c7cd:b0:ac3:da3:a1b1 with SMTP id
- a640c23a62f3a-ac3f2238346mr451667366b.26.1742585341652; Fri, 21 Mar 2025
- 12:29:01 -0700 (PDT)
+	s=arc-20240116; t=1742585451; c=relaxed/simple;
+	bh=E+DhP9Ym5+nIfAnV1TufHdck737gGEL1ECgnaI4jSTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EWD0D4/duh6aYBrzIP374QPPo72R/vphiD+D1hby6123bdlYk62fgwTGQ5VAo8CRDxGo3nNGuEhrt3xm0tRpNadxyKhaXTsYtJqXy6ZeL0vFELvtSAqmahS5qcy5gLuRiCYBCdZuaC6CQVY6htMFXE3Xwkr/pMrqzxGiUMGCnxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MnQZNnFm; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742585450; x=1774121450;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=E+DhP9Ym5+nIfAnV1TufHdck737gGEL1ECgnaI4jSTE=;
+  b=MnQZNnFmCGQzP1EoDrGskDMpLrNgkOdlZUrZMf46is8YR1lAQjlb+q9W
+   yXmvCqctgs7+MYk8/SmZrT85bacXcaYel1ZbMaSxQao47AA+rW1aPXNVQ
+   4aEETP1IofH6vRT9Kgkqcfi6+/sVIMZozecmZGbO0HI0fHT1AgdzS/bPS
+   kap8qkOb/SfbqEBOUiKBFtOaCX4gjdrWYLNo2aQDG4msZbCoEw45WYY9V
+   RkcVBpWDxNxtZ0K/i3VioZ+31wPL20js1D/eYrkoaTHsvVKF3h0lUrmMn
+   TzQwk+ebhWBGXbAlo9Goj3zVj/6pW7z0TCau4xVx7eQnKXhTlxa+VtF+9
+   w==;
+X-CSE-ConnectionGUID: 7ghAh+32SR2lccMBXLa6JA==
+X-CSE-MsgGUID: 6RllDrcRQSqGKzS3zelQkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43746516"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="43746516"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 12:30:49 -0700
+X-CSE-ConnectionGUID: BaSjNI3JSnyLE94B/nMkSA==
+X-CSE-MsgGUID: YZQLM8Q2SqOCiitmsyYiTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="127631808"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 21 Mar 2025 12:30:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3C2BC14B; Fri, 21 Mar 2025 21:30:45 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Frank Li <Frank.Li@nxp.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] i3c: master: Drop duplicate check before calling OF APIs
+Date: Fri, 21 Mar 2025 21:30:06 +0200
+Message-ID: <20250321193044.457649-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320235910.334620-1-changyuanl@google.com>
-In-Reply-To: <20250320235910.334620-1-changyuanl@google.com>
-From: Bill Wendling <morbo@google.com>
-Date: Fri, 21 Mar 2025 12:28:44 -0700
-X-Gm-Features: AQ5f1Jpu1bzXyoskz236qYXLKL_6cPSKwyh10XNtASrfDEnHoVGM76uniVMGG08
-Message-ID: <CAGG=3QUEY_Gmu-6K7rk6-y8AB7HVuV2V9sP5K3h379teAZXyHQ@mail.gmail.com>
-Subject: Re: [PATCH] clang-format: add for_each macros from libfdt
-To: Changyuan Lyu <changyuanl@google.com>
-Cc: ojeda@kernel.org, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
-	Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>, justinstitt@google.com, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 20, 2025 at 4:59=E2=80=AFPM Changyuan Lyu <changyuanl@google.co=
-m> wrote:
->
-> Add two for_each macros from scripts/dtc/libfdt/libfdt.h.
->
-> Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> ---
->  .clang-format | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/.clang-format b/.clang-format
-> index fe1aa1a30d40..4decda7474e1 100644
-> --- a/.clang-format
-> +++ b/.clang-format
-> @@ -210,6 +210,8 @@ ForEachMacros:
->    - 'evlist__for_each_entry_from'
->    - 'evlist__for_each_entry_reverse'
->    - 'evlist__for_each_entry_safe'
-> +  - 'fdt_for_each_property_offset'
-> +  - 'fdt_for_each_subnode'
+OF APIs are usually NULL-aware and returns an error in case when
+device node is not present or supported. We already have a check
+for the returned value, no need to check for the parameter.
 
-Could you alphabetize these please?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
->    - 'flow_action_for_each'
->    - 'for_each_acpi_consumer_dev'
->    - 'for_each_acpi_dev_match'
-> --
-> 2.49.0.395.g12beb8f557-goog
->
+v2: added missed updates (hit 'send' too early in v1)
+
+ drivers/i3c/master.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index d5dc4180afbc..fd26c4bb8b34 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -2276,7 +2276,7 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
+ 	u32 reg[3];
+ 	int ret;
+ 
+-	if (!master || !node)
++	if (!master)
+ 		return -EINVAL;
+ 
+ 	ret = of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
+@@ -2369,14 +2369,10 @@ static u8 i3c_master_i2c_get_lvr(struct i2c_client *client)
+ {
+ 	/* Fall back to no spike filters and FM bus mode. */
+ 	u8 lvr = I3C_LVR_I2C_INDEX(2) | I3C_LVR_I2C_FM_MODE;
++	u32 reg[3];
+ 
+-	if (client->dev.of_node) {
+-		u32 reg[3];
+-
+-		if (!of_property_read_u32_array(client->dev.of_node, "reg",
+-						reg, ARRAY_SIZE(reg)))
+-			lvr = reg[2];
+-	}
++	if (!of_property_read_u32_array(client->dev.of_node, "reg", reg, ARRAY_SIZE(reg)))
++		lvr = reg[2];
+ 
+ 	return lvr;
+ }
+@@ -2486,7 +2482,7 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
+ 	struct i2c_adapter *adap = i3c_master_to_i2c_adapter(master);
+ 	struct i2c_dev_desc *i2cdev;
+ 	struct i2c_dev_boardinfo *i2cboardinfo;
+-	int ret, id = -ENODEV;
++	int ret, id;
+ 
+ 	adap->dev.parent = master->dev.parent;
+ 	adap->owner = master->dev.parent->driver->owner;
+@@ -2497,9 +2493,7 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
+ 	adap->timeout = 1000;
+ 	adap->retries = 3;
+ 
+-	if (master->dev.of_node)
+-		id = of_alias_get_id(master->dev.of_node, "i2c");
+-
++	id = of_alias_get_id(master->dev.of_node, "i2c");
+ 	if (id >= 0) {
+ 		adap->nr = id;
+ 		ret = i2c_add_numbered_adapter(adap);
+-- 
+2.47.2
+
 
