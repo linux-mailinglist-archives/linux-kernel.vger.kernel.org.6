@@ -1,192 +1,211 @@
-Return-Path: <linux-kernel+bounces-571076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3509EA6B8CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:32:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4552A6B90D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E8C19C5153
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41B73B6A16
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2FF1FC7D9;
-	Fri, 21 Mar 2025 10:32:11 +0000 (UTC)
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2134.outbound.protection.outlook.com [40.107.117.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB578F5B;
-	Fri, 21 Mar 2025 10:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742553130; cv=fail; b=Ox+umyDZLELlwUJzG8TlfhdNUdhpXnmj3crgaABKhiS1NztdQeh2HejxZPt5+FrHOnDSKKy1jCfWHnvjRobVY0XpRlW1WfpvyoT7iyCRyOhM7imjcjM/SuAODtSp/E2vthSfVl7gKkx6/A6ay3tASfK80JW7G7wKC8Xecblzl4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742553130; c=relaxed/simple;
-	bh=LenNnK5QC+/ooz3QxvZw2OsYRWohlW8QzpKDEC8YJCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xm7pmXX1RJJOVQZAiI02uDOMvrIFdALOz0po/FNsqE5oxr79aKnT0bE0A8Q/N95nSDmnjeSajHxk1YgKnPPGn8FXYAeoB9GKJGlcygzQ2cdXjF/5kEwyyr/UG9GvQ8AWPJyMBxS32E1I5FlSllws9L34ZEd+pCtoNhCDMNvi/B8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.117.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eOx4OBIeQ1I8BK3adF3d2SDS5ip3zK/mCf8WEHnaB+9A8N2rnXNBB8yEhGO0nRNByoV9rdEpIXY3UhBGpc8Udp/xQJarB6XkSSf6U/6eWqIhAcUAlohGUE5QySAXd6iz04N88FsDRXtZkMANfeWgre9eNE/ObX9oewv0Cio+IOt5p3ODLvD4x7QPLr2iR0QM2vwmI/tQt4lKsNhIKnkahqtHXCo9zakKc7dM7AroVsGYGCKN/u60WlFcTx+KkegvpvaBzK8ibGOjVyduE0fGvhyzDAV0ViPsRmqpiGsXbkGf7ct+Rh6HCwYUJNhZzWYq2mfkdZiLpFe/gMfUqjl6PA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XRZ+XSjQ/3l77gzAWIABboWpdWXlzKhZWMQiOVr6X2o=;
- b=LXi4WD3XNiCnnsoRuPANFXjO/OASAEL9+Q4f6fkedm1ZpQzaxlIPWYdUIhV5LPRJwSLMxO/IZNWu820QGjmZK4lkia3A1lgK0Ildmg/ynuhH2v5My2YNpDDnG0NvS77yufE/YMw5n4M7kR9/s7z5dQDNq+AkZB3tNoD1VqGRC+UbaTJr5FSx8GVJrtFRMkVE3c/NPdyRROOf5hiJFREGV549X21WGZj7O8DT+lG3m2z23HND/Z9O31DEwJ10gd8UtPu5h2WHRBkZEsOrTtZ11fFhY+bm2wJH84ba52d6BGWJMCY8osLw++SFW3iUc5SBcM8sUWqYhtFqG0r404BgHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SI2PR06CA0006.apcprd06.prod.outlook.com (2603:1096:4:186::19)
- by TYSPR06MB6361.apcprd06.prod.outlook.com (2603:1096:400:42d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
- 2025 10:32:02 +0000
-Received: from SG2PEPF000B66CF.apcprd03.prod.outlook.com
- (2603:1096:4:186:cafe::c3) by SI2PR06CA0006.outlook.office365.com
- (2603:1096:4:186::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.36 via Frontend Transport; Fri,
- 21 Mar 2025 10:32:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66CF.mail.protection.outlook.com (10.167.240.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Fri, 21 Mar 2025 10:32:01 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 66FCF4160CA2;
-	Fri, 21 Mar 2025 18:32:00 +0800 (CST)
-Date: Fri, 21 Mar 2025 18:31:55 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
-	marcin@juszkiewicz.com.pl,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Fugang Duan <fugang.duan@cixtech.com>
-Subject: Re: [PATCH v4 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts
- support
-Message-ID: <Z91AG0lH1JNN7NHq@nchen-desktop>
-References: <20250305053823.2048217-1-peter.chen@cixtech.com>
- <20250305053823.2048217-6-peter.chen@cixtech.com>
- <86frj8m4be.wl-maz@kernel.org>
- <Z9vmeTj68LmwinPD@nchen-desktop>
- <86bjtun4an.wl-maz@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695381F3B8D;
+	Fri, 21 Mar 2025 10:50:12 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EE41EA7D3;
+	Fri, 21 Mar 2025 10:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742554211; cv=none; b=BQZXm42/jFNzIRcr14LDU4/suy4LXj6bMxhJQasOGTh1N882Vv2AlvkRoVTzEEpujRuWzOb5uES93MfAfQb7WRv3A0RSNkMnE7WQZYGXHa4YW4TuY6FrTsODgN8Pgm5E/fRE0xxkkotPkE41aLqp27gxmiwOe4ywnPVjjLeUdc4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742554211; c=relaxed/simple;
+	bh=qoDXzTaTrBe0hY9iTwEYkA57TTzzUEN2PdNsGqvsUV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CSZchc7Jc5DCWmEgjVccdfUK62FIpqhTWRgzWAlMvXwjOp+6MsVrTSfnaDExIrzjU3VGTbqdsoKDCBDOAISeHaCBfDGGpsTDbVA8TRZ3tinFZvk90YriU++MeroM97pMcL9VQK+dJuSAbJPlURuDUuHj2dLISScVEs12OFYYWOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZJzMg6ykhz9sSf;
+	Fri, 21 Mar 2025 11:34:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id P3GmTi5jJn-m; Fri, 21 Mar 2025 11:34:23 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJzMg5yTxz9sSZ;
+	Fri, 21 Mar 2025 11:34:23 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B08BC8B79C;
+	Fri, 21 Mar 2025 11:34:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id m9V4WbKxrQHq; Fri, 21 Mar 2025 11:34:23 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 747608B763;
+	Fri, 21 Mar 2025 11:34:22 +0100 (CET)
+Message-ID: <7cd87317-4f2a-45af-bd07-6e715406ff55@csgroup.eu>
+Date: Fri, 21 Mar 2025 11:34:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86bjtun4an.wl-maz@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CF:EE_|TYSPR06MB6361:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d733ee3-3e14-45c1-a9e9-08dd68639db2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HzjbeHE+DvtnOWAClnRLrKqGY2d+jgvnME/FU9irD7Arf4Pgz+jQuQKiVNeb?=
- =?us-ascii?Q?HQdLTkC7M6A6a8Ot95d3iJ/xuEKJbpeIQTkUPFyROGDIr6RZlgfbEvIA4/Oc?=
- =?us-ascii?Q?VyXFXHNebkceR5RIttiYWQW3qrRueUZ+EHdp+je5R/rShNGakQCxpstNM92L?=
- =?us-ascii?Q?2q+LP1Xeo2sqdN3Azdg67wg6qv352AoYk7/9YtnydEcTXXicqVpkkQD5/lJr?=
- =?us-ascii?Q?uYObdhxOcNNr/8EgrHbLv6SVzOTfcpXeFUAV0svL3mu+Ngea1aKImoKoXvtK?=
- =?us-ascii?Q?5UDMg3auWLxczSMNj0iXW/uHu1bQfTwC1ibsG136qNMGTxKfhqrGczxcnCKd?=
- =?us-ascii?Q?xtcQbmy0nxe3anoKk1ZEgWqv0h8fae+mhoIi6mhoCC8fNOMfj7nj+INGBGoq?=
- =?us-ascii?Q?cjD9mM8btXob6Nsk2wZYdwbvBSd7XI4z+nyFQzyJbCCvRXJnBveOU/7oZCtj?=
- =?us-ascii?Q?OEUk6+yLF9pgb2C9sG7xk7UdCqoYjuZXRlccNi7qk0P9to98izadFI0CWTnV?=
- =?us-ascii?Q?CcQHEx60RmoIFo9WFr9VompkLwMXWqJKgmNq5i32hgmqpuDFJjjH0uZESu6Q?=
- =?us-ascii?Q?D1A9ewHjyk5WTSA0st6qGsvqHLa+aYXxbZueDQjRnxUt17N2jtO6eeUzn4tn?=
- =?us-ascii?Q?sw72TsS+JIe4JGPP6Tc0N3aCAvxxYHZHbmShocnSY3sgnBqnJYnx7t4HL5Od?=
- =?us-ascii?Q?aMmbANLcBej3OeyYbFTW722ldvMIgzAVyMT0vknaeedE+6zb4hEHs/3HOuxf?=
- =?us-ascii?Q?X1pxgZpZHONHbHuYHLB/OTbonKl5qqsiEIUdO1KpMdcO/0+sw1VmO7mA8SK0?=
- =?us-ascii?Q?BNQ/WN9xQhxaP8/mvtKBk+u62Bfnuuq4Tb5sOQ4DUT16XK7klC3wP5+u3yB8?=
- =?us-ascii?Q?cWTPI4eJQFVEqs9bd5BdQsB1g3yhrMsBF2l0A8SR7BlOtzk1S7nyK0bXlXOb?=
- =?us-ascii?Q?AychQdF6Wg0ivW5Al2fxpeVcv+2zAFq8+/YaQS92sKkp1qdJJvL4onTrac1i?=
- =?us-ascii?Q?KbM5QK/nwBk2qpwRiVmsSjHP5OhfrHeOUY1KY+0tkG1wSD70e0/HFVwcYDnA?=
- =?us-ascii?Q?Wm743bxawiSt+nqaDl8CVnQqj2A5365I/3TjCHsV3ObEPc8oz2r9cQd4adTl?=
- =?us-ascii?Q?szGjH4fBX/Wm5TGaK0/lvktXvuIjKf5TV3oCrYYYqFQpmqCPs5MiBlFBO3hr?=
- =?us-ascii?Q?be4kVuBMEmG+X7z+1z3cvXF63LYUsmrHHR85n+aqIEFWVl/jleEycOdGSzSC?=
- =?us-ascii?Q?TnYnxfiaTHse8036k88zZsZVuJCJwPz9rQeh1nyNWuq48JaYoBoZHLiM5u2f?=
- =?us-ascii?Q?dzFowVzq/e+07A/91GPnl7dhfvdtylfH9YOBouT22XU8NqGbE4zfxp0rcupk?=
- =?us-ascii?Q?hIBcKD71lzM9hNkSKI2Re7T208HYcodeReRnQWxZTEOR2FYFVfllgdei05mO?=
- =?us-ascii?Q?5G0HqIixEAStcDtlk2fckq6fh1YeN/hpUckp1+C5SzYPjTkmrAdL7Yb13lC0?=
- =?us-ascii?Q?esIZy192tXYd/bc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 10:32:01.1386
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d733ee3-3e14-45c1-a9e9-08dd68639db2
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CF.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6361
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] tools/perf/powerpc/util: Add support to handle
+ compatible mode PVR for perf json events
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, irogers@google.com, akanksha@linux.ibm.com,
+ maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com,
+ acme@kernel.org, hbathini@linux.ibm.com, adrian.hunter@intel.com,
+ jolsa@kernel.org
+References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
+ <20241010145107.51211-2-atrajeev@linux.vnet.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241010145107.51211-2-atrajeev@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25-03-21 09:04:00, Marc Zyngier wrote:
-> > On 25-03-20 09:36:37, Marc Zyngier wrote:
-> > > Peter Chen <peter.chen@cixtech.com> wrote:
-> > > >
-> > > > +     pmu-a520 {
-> > > > +             compatible = "arm,cortex-a520-pmu";
-> > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition0>;
-> > > > +     };
-> > > > +
-> > > > +     pmu-a720 {
-> > > > +             compatible = "arm,cortex-a720-pmu";
-> > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition1>;
-> > > > +     };
-> > > > +
-> > > > +     pmu-spe {
-> > > > +             compatible = "arm,statistical-profiling-extension-v1";
-> > > > +             interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW 0>;
-> > > > +     };
-> > >
-> > > SPE should follow the same model as the PMU, as each CPU has its own
-> > > SPE implementation, exposing different micro-architectural details.
-> > >
-> >
-> > Hi Marc,
-> >
-> > Thanks for your reply. But there is only one compatible string
-> > "statistical-profiling-extension-v1" at drivers/perf/arm_spe_pmu.c,
-> > how could differentiate pmu-spe-a720 and pmu-spe-a520, do I need
-> > to change arm_spe_pmu.c as well?
+Hi,
+
+Le 10/10/2024 à 16:51, Athira Rajeev a écrit :
+> perf list picks the events supported for specific platform
+> from pmu-events/arch/powerpc/<platform>. Example power10 events
+> are in pmu-events/arch/powerpc/power10, power9 events are part
+> of pmu-events/arch/powerpc/power9. The decision of which
+> platform to pick is determined based on PVR value in powerpc.
+> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
 > 
-> I don't think there is a need to have different compatible. The driver
-> can probe which CPU this is on, and work out the implemented
-> subfeatures from the PMSIDR_EL1 register. New compatible strings are
-> better avoided when there is a way to probe/discover the HW (and in
-> most cases, there is).
+> Example:
 > 
-> Note that this equally applies to TRBE, which also explicitly deals
-> with interrupt partitioning and yet only has a single compatible.
-> Please consider adding TRBE support when you repost this series.
+> Format:
+> 	PVR,Version,JSON/file/pathname,Type
 > 
+> 0x004[bcd][[:xdigit:]]{4},1,power8,core
+> 0x0066[[:xdigit:]]{4},1,power8,core
+> 0x004e[[:xdigit:]]{4},1,power9,core
+> 0x0080[[:xdigit:]]{4},1,power10,core
+> 0x0082[[:xdigit:]]{4},1,power10,core
+> 
+> The code gets the PVR from system using get_cpuid_str function
+> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
+> with value from mapfile.csv
+> In case of compat mode, say when partition is booted in a power9
+> mode when the system is a power10, this picks incorrectly. Because
+> PVR will point to power10 where as it should pick events from power9
+> folder. To support generic events, add new folder
+> pmu-events/arch/powerpc/compat to contain the ISA architected events
+> which is supported in compat mode. Also return 0x00ffffff as pvr
+> when booted in compat mode. Based on this pvr value, json will
+> pick events from pmu-events/arch/powerpc/compat
+> 
+> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
 
-Hi Marc,
+I see this patch was merged into mainline allthough it had CI failures 
+and still has.
 
-Thanks for your comment, we need to discuss it internally. Since it
-is very initial dts support for CIX sky1 SoC, I will delete pmu-spe
-support at this time, and add better support for it when adding
-more components next time.
+Could you please fix it ?
 
--- 
+arch/powerpc/util/header.c: In function 'is_compat_mode':
+Error: arch/powerpc/util/header.c:20:14: error: cast to pointer from 
+integer of different size [-Werror=int-to-pointer-cast]
+    20 |  if (!strcmp((char *)platform, (char *)base_platform))
+       |              ^
+Error: arch/powerpc/util/header.c:20:32: error: cast to pointer from 
+integer of different size [-Werror=int-to-pointer-cast]
+    20 |  if (!strcmp((char *)platform, (char *)base_platform))
+       |                                ^
+cc1: all warnings being treated as errors
+make[6]: *** [/linux/tools/build/Makefile.build:86: 
+/output/arch/powerpc/util/header.o] Error 1
 
-Best regards,
-Peter
+
+The following fix but is maybe not the right one as in reality 
+getauxval() seems to return a long not a u64.
+
+diff --git a/tools/perf/arch/powerpc/util/header.c 
+b/tools/perf/arch/powerpc/util/header.c
+index c7df534dbf8f..1b045d410f31 100644
+--- a/tools/perf/arch/powerpc/util/header.c
++++ b/tools/perf/arch/powerpc/util/header.c
+@@ -17,7 +17,7 @@ static bool is_compat_mode(void)
+  	u64 base_platform = getauxval(AT_BASE_PLATFORM);
+  	u64 platform = getauxval(AT_PLATFORM);
+
+-	if (!strcmp((char *)platform, (char *)base_platform))
++	if (!strcmp((char *)(long)platform, (char *)(long)base_platform))
+  		return false;
+
+  	return true;
+
+
+Thanks
+Christophe
+
+> ---
+> changelog:
+> V1 -> V2:
+> Corrected commit message and subject line
+> 
+>   tools/perf/arch/powerpc/util/header.c | 32 ++++++++++++++++++++++++++-
+>   1 file changed, 31 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
+> index 6b00efd53638..adc82c479443 100644
+> --- a/tools/perf/arch/powerpc/util/header.c
+> +++ b/tools/perf/arch/powerpc/util/header.c
+> @@ -10,6 +10,18 @@
+>   #include "utils_header.h"
+>   #include "metricgroup.h"
+>   #include <api/fs/fs.h>
+> +#include <sys/auxv.h>
+> +
+> +static bool is_compat_mode(void)
+> +{
+> +	u64 base_platform = getauxval(AT_BASE_PLATFORM);
+> +	u64 platform = getauxval(AT_PLATFORM);
+> +
+> +	if (!strcmp((char *)platform, (char *)base_platform))
+> +		return false;
+> +
+> +	return true;
+> +}
+>   
+>   int
+>   get_cpuid(char *buffer, size_t sz)
+> @@ -33,8 +45,26 @@ char *
+>   get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+>   {
+>   	char *bufp;
+> +	unsigned long pvr;
+> +
+> +	/*
+> +	 * IBM Power System supports compatible mode. That is
+> +	 * Nth generation platform can support previous generation
+> +	 * OS in a mode called compatibile mode. For ex. LPAR can be
+> +	 * booted in a Power9 mode when the system is a Power10.
+> +	 *
+> +	 * In the compatible mode, care must be taken when generating
+> +	 * PVR value. When read, PVR will be of the AT_BASE_PLATFORM
+> +	 * To support generic events, return 0x00ffffff as pvr when
+> +	 * booted in compat mode. Based on this pvr value, json will
+> +	 * pick events from pmu-events/arch/powerpc/compat
+> +	 */
+> +	if (!is_compat_mode())
+> +		pvr = mfspr(SPRN_PVR);
+> +	else
+> +		pvr = 0x00ffffff;
+>   
+> -	if (asprintf(&bufp, "0x%.8lx", mfspr(SPRN_PVR)) < 0)
+> +	if (asprintf(&bufp, "0x%.8lx", pvr) < 0)
+>   		bufp = NULL;
+>   
+>   	return bufp;
+
 
