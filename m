@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-571048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596D2A6B87B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:06:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8685DA6B881
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99C8189DC23
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0193B9354
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D04F1F3D20;
-	Fri, 21 Mar 2025 10:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46C21F4C9B;
+	Fri, 21 Mar 2025 10:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="jw03Jjnd"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C0B1EBFF0;
-	Fri, 21 Mar 2025 10:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LhlkLEae"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AF51EBFF0;
+	Fri, 21 Mar 2025 10:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742551606; cv=none; b=GdRyHzVY6CNQgrATPZJZiKCUeKLYR1NOp90dBMkRzn3XEykVlK3Vd6GIGdrMDq2EjHI/zme6a7koFlRlsxMHgihZt7NC5nSp2eQwedIDo5tu2O7kJ0swsqbp+SNTJHm9m5q/1Gyg0snRKGjN2EwW+JedKgABPHkOdwKZmw8RDNc=
+	t=1742551687; cv=none; b=pHqZ0b4GsycK0WGP+Y/bqVWF0pTMw8zq0WBmLv2CwfgMSO4rBKwk01TWd/SJwkb35ABYqcxJpe41FGSEEbtrw1ZpGawvvftkep32pyAXh8gUn+hgQ562WXkFdtZ6Xyz0C48BrdDiYZExTX2SsYd/tC0UlWr9FXv0XuSMTqv+7IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742551606; c=relaxed/simple;
-	bh=xf5jgePRVrNAPJgRFo3kE61x88rMoUTorU0wBcZPvs8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=t5DLGTmfib+2mBq1FCrKJa+5+N38hSMcbjHTyJqIkLECBtYtFctAFaka6J6yKQebrcZh8j30rJGdcc8zt6dlHqirc86q4Ydc1fXSo4NqjG2hv91IS9HezVqv4Z2jWK+8GJHPI5ybXlinAUmsdFRpXTGQCs9N9h7biFqGv5b/Fao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=jw03Jjnd reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=taNGpSsT9yLqZwW/7TUK635vZZQRd6sl6eS/ZIQodwA=; b=j
-	w03JjndOyDU0V9XCF5Ag4w3qmFyQkKqaU3kNqxmn/cFJi4OFpH51NkPQnYRIqHqa
-	CxmaXjUO3jSwlm3LGwfN9yOltaMRuOSK9NjDjSCH1k5ikhaKyfcNICpKydysyEgE
-	vSjXCLy0yB+QX4ztKnRbPouB5dVR6pkXfe0Jrttrqo=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-111 (Coremail) ; Fri, 21 Mar 2025 18:05:33 +0800
- (CST)
-Date: Fri, 21 Mar 2025 18:05:33 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-Cc: lumag@kernel.org, neil.armstrong@linaro.org,
-	dri-devel@lists.freedesktop.org, dianders@chromium.org,
-	jani.nikula@intel.com, lyude@redhat.com, jonathanh@nvidia.com,
-	p.zabel@pengutronix.de, simona@ffwll.ch, victor.liu@nxp.com,
-	rfoss@kernel.org, chunkuang.hu@kernel.org,
-	cristian.ciocaltea@collabora.com, Laurent.pinchart@ideasonboard.com,
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
-	"Andy Yan" <andy.yan@rock-chips.com>
-Subject: Re:Re: [PATCH 1/1] drm/bridge: Pass down connector to drm bridge
- detect hook
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250321-optimistic-prompt-civet-bdcdba@houat>
-References: <20250321085345.136380-1-andyshrk@163.com>
- <20250321085345.136380-2-andyshrk@163.com>
- <20250321-optimistic-prompt-civet-bdcdba@houat>
-X-NTES-SC: AL_Qu2fAPmevk0o5SWebOkfmkcVgOw9UcO5v/Qk3oZXOJF8jDjp4xEhV2B6MH/20uOCARCyuyGufh9t7txYW6d3eJ0gIXOvsAZyJ0cP6n6VjAxo3w==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1742551687; c=relaxed/simple;
+	bh=JUyYZgvHnMkO5Pzm34Kcy4R92KbnKob5xAR4ZC5hkhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A7DnwopBs6aUhtyS2YBCpDVmMjZInG+SbiNDUiH5Asw+EtGwWLIlZrCSXV5kGThZxQJ1+QToTzIEQqRHkZC70d23sYGMD6J1+2GCabBqzgW8INoUpmSzSop/Eq+gme9uaXGXuh5c5lJj+LvhUROCoq4+/5lREssRfnvyUVuFMXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LhlkLEae; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L8k5KD014152;
+	Fri, 21 Mar 2025 10:07:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wohi0atRJyGxd3ZMz+5DEGmp/UcLqgSt0+cwzpEAn7Q=; b=LhlkLEaeYTL0lYbX
+	OeJ0IIyA3TpDzoGu6JdBSEp0PgMN44rbc6EFIldxsYRSl4gwyopG7W9+N8uQCyGn
+	htBBfvZZaDnQysgrvXSx36AeTfbdeUrMB/5pbp7ALpTdpyBF/BQNhLNYMOImYruU
+	6gJnqDOgatxboTIRyROnDIoZLvDbKIa5mROtGfzuxNhitWd2bNRb2YqiDRvMNGvW
+	7tTfFMrxM7REW3VzjT2dg+SYQyk3oWQBuCjFYmri6fDs/rP7Ryr1+lOGoNYUXieE
+	cktD0/ROrJeqCdcfhudcH4TA1CoBber6d/3KuAYTupJXKJULnIrajREzN3W+MhFk
+	HP35KA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4p1097v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 10:07:56 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52LA7tV3022850
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 10:07:55 GMT
+Received: from [10.152.207.135] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Mar
+ 2025 03:07:52 -0700
+Message-ID: <10fd0006-8428-4bc6-9578-2a05dc1382e0@quicinc.com>
+Date: Fri, 21 Mar 2025 15:37:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5a6bffa.a00e.195b82a4808.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:bygvCgD3T37tOd1nOPOCAA--.44580W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqAMXXmfdMFz-jgABsE
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH ath-next v11 00/13] wifi: ath12k: add Ath12k AHB driver
+ support for IPQ5332
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <ath12k@lists.infradead.org>, Johannes Berg <johannes@sipsolutions.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250317204639.1864742-1-quic_rajkbhag@quicinc.com>
+ <20250318-splendid-sceptical-gazelle-8abbef@krzk-bin>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <20250318-splendid-sceptical-gazelle-8abbef@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6M9rfQf7dbn492hdifADri3wc56cF0kc
+X-Proofpoint-ORIG-GUID: 6M9rfQf7dbn492hdifADri3wc56cF0kc
+X-Authority-Analysis: v=2.4 cv=NZjm13D4 c=1 sm=1 tr=0 ts=67dd3a7c cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=bsUYDfnVGbR25cQxC6AA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_04,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210074
 
-CkhpIE1heGltZe+8jAoKQXQgMjAyNS0wMy0yMSAxNzo0ODowNCwgIk1heGltZSBSaXBhcmQiIDxt
-cmlwYXJkQGtlcm5lbC5vcmc+IHdyb3RlOgo+T24gRnJpLCBNYXIgMjEsIDIwMjUgYXQgMDQ6NTM6
-MzhQTSArMDgwMCwgQW5keSBZYW4gd3JvdGU6Cj4+IEZyb206IEFuZHkgWWFuIDxhbmR5LnlhbkBy
-b2NrLWNoaXBzLmNvbT4KPj4gCj4+IEluIHNvbWUgYXBwbGljYXRpb24gc2NlbmFyaW9zLCB3ZSBo
-b3BlIHRvIGdldCB0aGUgY29ycmVzcG9uZGluZwo+PiBjb25uZWN0b3Igd2hlbiB0aGUgYnJpZGdl
-J3MgZGV0ZWN0IGhvb2sgaXMgaW52b2tlZC4KPj4gCj4+IEluIG1vc3QgY2FzZXMsIHdlIGNhbiBn
-ZXQgdGhlIGNvbm5lY3RvciBieSBkcm1fYXRvbWljX2dldF9jb25uZWN0b3JfZm9yX2VuY29kZXIK
-Pj4gaWYgdGhlIGVuY29kZXIgYXR0YWNoZWQgdG8gdGhlIGJyaWRnZSBpcyBlbmFibGVkLCBob3dl
-dmVyIHRoZXJlIHdpbGwKPj4gc3RpbGwgYmUgc29tZSBzY2VuYXJpb3Mgd2hlcmUgdGhlIGRldGVj
-dCBob29rIG9mIHRoZSBicmlkZ2UgaXMgY2FsbGVkCj4+IGJ1dCB0aGUgY29ycmVzcG9uZGluZyBl
-bmNvZGVyIGhhcyBub3QgYmVlbiBlbmFibGVkIHlldC4gRm9yIGluc3RhbmNlLAo+PiB0aGlzIG9j
-Y3VycyB3aGVuIHRoZSBkZXZpY2UgaXMgaG90IHBsdWcgaW4gZm9yIHRoZSBmaXJzdCB0aW1lLgo+
-PiAKPj4gU2luY2UgdGhlIGNhbGwgdG8gYnJpZGdlJ3MgZGV0ZWN0IGlzIGluaXRpYXRlZCBieSB0
-aGUgY29ubmVjdG9yLCBwYXNzaW5nCj4+IGRvd24gdGhlIGNvcnJlc3BvbmRpbmcgY29ubmVjdG9y
-IGRpcmVjdGx5IHdpbGwgbWFrZSB0aGluZ3Mgc2ltcGxlci4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6
-IEFuZHkgWWFuIDxhbmR5LnlhbkByb2NrLWNoaXBzLmNvbT4KPgo+RlRSLCBJJ20gYWdhaW5zdCBp
-dCBhbmQgd291bGQgaGF2ZSBhcHByZWNpYXRlZCB0aGF0IHlvdSB3YWl0IGZvciBhCj5tZWFuaW5n
-ZnVsIGNsb3N1cmUgdG8gdGhlIGRpc2N1c3Npb24gd2UndmUgaGFkIG9uIHRoaXMuCgpObyBwcm9i
-bGVtLiBJIGp1c3Qgd2FudCB0byBrbm93IGhvdyB0byBwcm9jZWVkIHdpdGggdGhpcy4KCgo+Cj5N
-YXhpbWUK
+On 3/18/2025 1:30 PM, Krzysztof Kozlowski wrote:
+> On Tue, Mar 18, 2025 at 02:16:26AM +0530, Raj Kumar Bhagat wrote:
+>> Currently, Ath12k driver only supports WiFi devices that are based on
+>> PCI bus. New Ath12k device IPQ5332 is based on AHB bus. Hence, add
+>> Ath12k AHB support for IPQ5332.
+>>
+>> IPQ5332 is IEEE802.11be 2 GHz 2x2 Wifi device. To bring-up IPQ5332
+>> device:
+>> - Add hardware parameters for IPQ5332.
+>> - CE register address space in IPQ5332 is separate from WCSS register
+>>   space. Hence, add logic to remap CE register address.
+>> - Add support for fixed QMI firmware memory for IPQ5332.
+>> - Support userPD handling for WCSS secure PIL driver to enable ath12k
+>>   AHB support.
+>>
+>> NOTE:
+>> The working upstream DTS changes for this series have been posted as a
+>> separate series.
+>> [PATCH v2] arm64: dts: qcom: add wifi node for IPQ5332 based RDP441
+>>
+>> v11:
+>> - Updated Kconfig for ATH12k AHB.
+>> - Replaced the API devm_ioremap_wc() with devm_memremap to fix ath12k-check
+>>   warning: "warning: cast removes address space '__iomem' of expression"
+>> - Rebased on latest ToT.
+>> - Removed tag "Reviewed-by: Vasanthakumar Thiagarajan", in the updated
+>>   patch [11/13] wifi: ath12k: Power up userPD
+> 
+> 
+> This is v11 and still sent in a way it messes with toolset:
+> 
+>   b4 diff -C 20250317204639.1864742-2-quic_rajkbhag@quicinc.com
+>   Grabbing thread from lore.kernel.org/all/20250317204639.1864742-2-quic_rajkbhag@quicinc.com/t.mbox.gz
+>   Checking for older revisions
+>     Added from v10: 14 patches
+>   ---
+>   Analyzing 135 messages in the thread
+>   Preparing fake-am for v11: dt-bindings: net: wireless: describe the ath12k AHB module for IPQ5332
+>   ERROR: Could not fake-am version v11
+>   ---
+>   Could not create fake-am range for upper series v11
+> 
+> Can you fix your process so the tools will be happy? Please read
+> carefully your internal guideline go/upstream before posting next
+> version.
+> 
+
+It may be because, I did not use b4 tool for this.
+Will send the next version with b4 tool.
 
