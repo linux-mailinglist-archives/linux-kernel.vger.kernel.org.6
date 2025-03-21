@@ -1,285 +1,163 @@
-Return-Path: <linux-kernel+bounces-571981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F89CA6C4FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:20:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E7EA6C501
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8363BAC25
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71AD2189F6B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744F4231CA5;
-	Fri, 21 Mar 2025 21:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2D233126;
+	Fri, 21 Mar 2025 21:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MQcp3/jJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L2bf4F7B";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="coug5XEB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C2722652E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C23A1E9B34
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742591954; cv=none; b=jqq4MctMlp8yBINwtdVN40Auiu2Daox9g3vifC9E5GNOkGXWBhgC4PBAG3OLp7MrfohSJiyEP2yVmoPDIcknEp7HLqlJPsGUAqqqRlsOp4NxYwnGQnSnV60vWMvy61GUOxfkH3DGt8XzrU/ZnM7auIuBYmcqOFdoe+ej7fz1z0w=
+	t=1742591955; cv=none; b=GQu23A1Mt9ECLywwjJhbMjsDHH0Talx6LpgtkbyPDL0n2MRlK0Njf+TCBqTpz4qfLJTtRFnkAEn/cybmXIe+HauzcWY9SAO9+GrSgnKsMVTRpD16gIkIr8ykRortM8L5NmRxvFCJ9hbP6RDs0aFytFG4lYZoeG6PMBeYiL1Wdjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742591954; c=relaxed/simple;
-	bh=16lo43WCQfU44b5Ay5yDBNRXZcA+X9cCSut2Zt/sS6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oJexIsZtEcXYdXkLcPaAc2DthrFbzuO2X1mrOeN/NTfFTrc9KWm9m2m+/OU8yXecrGgsvLQ8gcJfPHbsxTF9gl1IDQPlFByq48OZC41Nfl+Uts68yOXBh+jWPHv2WgBvdWqygy5/ZM7IIFTHQ4TTXZY327+w/qOoFrChk8eN1AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MQcp3/jJ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742591953; x=1774127953;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=16lo43WCQfU44b5Ay5yDBNRXZcA+X9cCSut2Zt/sS6o=;
-  b=MQcp3/jJ1Lk7Y3Xog4YfyuiNe+TcxpzLlqUHYMyk85zZ2qiUyFbhq2MP
-   J8RAolnOBXaWJXWO9Uns0zz32TyGZO4sDlb9MGpBI+RjpmApHN2AFDE2q
-   cy9hkKdsv51X/TwqSZ2iYQxiKy6im7Yhm5fPn/dK6cr4lp0N9B1d37cis
-   R7hXti3cvKjMWUpiH4znsgBFs7p7HnCxk33bi3mgKZeN3D+eoZUbduk4o
-   GKcgKE3hRPHMtekJZrA+tla3MPqVkC40H9gLubqIwplTBM+yNhVLJxU+l
-   2q9V0hCECjNq4gP0JSZHYmKWTzFsZGLe5xVmgHIRYPncYNiDrLlykIffZ
-   A==;
-X-CSE-ConnectionGUID: VvVcD/VCT7SOk/c+ETCniw==
-X-CSE-MsgGUID: YtxuS6a8T2Cu3yXTwN6vaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="54086275"
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="54086275"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 14:19:13 -0700
-X-CSE-ConnectionGUID: 1fN17sKyQF6YyLzpZ7Ym0A==
-X-CSE-MsgGUID: rDzy6drlQKy2S6UErLnnkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="124284608"
-Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.246.168.117])
-  by fmviesa009.fm.intel.com with ESMTP; 21 Mar 2025 14:19:12 -0700
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	colinmitchell@google.com,
-	chang.seok.bae@intel.com
-Subject: [PATCH v2a 4/6] x86/microcode/intel: Implement staging handler
-Date: Fri, 21 Mar 2025 14:19:09 -0700
-Message-ID: <20250321211909.13927-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <b01224ee-c935-4b08-a76f-5dc49341182d@intel.com>
-References: <b01224ee-c935-4b08-a76f-5dc49341182d@intel.com>
+	s=arc-20240116; t=1742591955; c=relaxed/simple;
+	bh=m99YHWB3W0eD8rLueYoxC2qfy0MyM7Bx0lb3jwxSVIE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c4WmLzTyXqFbJTUm2m5QEFZrDY2dPC5igR0tbF0uI/ufypUIydOfE94rLhlGKXPzDenJxiq7yUIqq/QzEepnAynJQoClNnIU8ifNvJImlx2MwrFysOT+KSqCzCGkmJsuN+BlpQaWz8arhsq6NTmj7acoOrdsCD2SSevhNk6jxQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L2bf4F7B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=coug5XEB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742591952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxNukZnvbEexk1o9TXm3QgKVkO67GfcWUgzxQMHhUIk=;
+	b=L2bf4F7BXgd0sgGXI0BkvWz8MjLZhrwuW0AD3sngNfHJVh7+YFzEtpuyxfCV7t44RGL/fC
+	zq72+6+IQfaIIeHt9PRJcpcUWyE/JSOKMIk9Q+684WaupVonnFuLi015wyWHi4nw+TCklJ
+	qIbS09R/CQ3VL48bkOmNJK0NuCIlOZVYUOWofH6Od5/fITj/4K5n5hbn3L6f5/BxSSq9C6
+	kg9yJIAsR1r20PCOAP/nnMIJKoShgpSD4W23Fwd/X4HFXDdRFDGeRHb2WdE+6RHVLc6qal
+	rGoTz9h6LLK3H1+tf9mIeVHxau33P6biuSmwmJc52uVmR0B5gjXUXGjlUxgImQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742591952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxNukZnvbEexk1o9TXm3QgKVkO67GfcWUgzxQMHhUIk=;
+	b=coug5XEB7XG7BCA5wK0zbA6sSWaA70HGlLT4r5AbrkkpZaLXLKjkvEkU7hXG9l4KW8S7xL
+	Fm69DUz3pDvqtRDA==
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, "H. Peter Anvin"
+ <hpa@zytor.com>, bp@alien8.de
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+ dave.hansen@linux.intel.com, kernel@gpiccoli.net, kernel-dev@igalia.com
+Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable
+ after boot
+In-Reply-To: <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com>
+References: <20250226132733.58327-1-gpiccoli@igalia.com>
+ <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+ <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
+ <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com>
+Date: Fri, 21 Mar 2025 22:19:11 +0100
+Message-ID: <87iko213qo.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Previously, per-package staging invocations were established for each
-MMIO space. The next step is to implement the staging handler according
-to the specified protocol. Below are key aspects to note:
+On Fri, Mar 21 2025 at 16:26, Guilherme G. Piccoli wrote:
+> On 17/03/2025 15:42, H. Peter Anvin wrote:
+>> To be honest I don't think this belongs in debugfs; rather it belongs in=
+ sysfs.
 
-  (a)  Each staging process must begin by resetting the staging hardware.
+No.
 
-  (b)  The staging hardware processes up to a page-sized chunk of the
-       microcode image per iteration, requiring software to submit data
-       incrementally.
+>> Debugfs should not be necessarily in serious production systems =E2=80=
+=93 it
+>> is way too large of an attack surface, which is a very good reason
+>> why it is its own filesystem =E2=80=93 but if this is a real issue on
+>> hardware then it may be needed.
 
-  (c)  Once a data chunk is processed, the hardware responds with an
-       offset in the image for the next chunk.
+There is ZERO reason to do that on a production system.
 
-  (d)  The offset may indicate completion or request retransmission of an
-       already transferred chunk. As long as the total transferred data
-       remains within the predefined limit (twice the image size),
-       retransmissions should be acceptable.
+If the in kernel detection does not work, then switching it over after
+someone detected the problem five hours after the fact does not help at
+all.
 
-With that, incorporate these code sequences to the staging handler:
+The admin can force the TSC to be removed from timekeeping, which is the
+really crucial part, already today by changing the clocksource via sysfs.
 
-  1.  Initialization: Map the MMIO space via ioremap(). Reset the staging
-      hardware and initialize software state, ensuring a fresh staging
-      process aligned with (a).
+> In other words, we have 2 options in my understanding:
+>
+> (a) Drop it;
+>
+> (b) Re-implement using sysfs entry instead of debugfs;
 
-  2.  Processing Loop: Introduce a loop iterating over data chunk,
-      following (b), with proper termination conditions established from
-      (d) -- stop staging when the hardware signals completion, or if the
-      total transmitted data exceeds the predefined limit.
+Neither (a) nor (b) nor the proposed implementation.
 
-  3.  Loop Body: Finally, compose the loop body with two steps --
-      transmitting a data chunk and retrieving the next offset from the
-      hardware response, aligning with (b) and (c).
+There is actually a good reason why a debug/validation mechanism of some
+sort makes sense, i.e. testing:
 
-Since data transmission and mailbox format handling require additional
-details, they are implemented separately in next changes.
+  1) The hardware, which exposed these issues frequently is starting to
+     get into museum or junkyard state, which reduces the test base
+     significantly.
 
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
----
-V2 -> V2a:
-* Adjust the code with the global variable removal (Dave [1]).
+  2) Modern hardware, which exposes this issue in large fleets
+     occasionally due to aging and misdirected neutrons, is not really a
+     good testbed either.
 
-Note: this quick revision is just intended to ensure that the feedback
-has been properly addressed.
+So we have no real test coverage for something, which can be crucial in
+the actual failure case.
 
-[1]: https://lore.kernel.org/lkml/b01224ee-c935-4b08-a76f-5dc49341182d@intel.com/
----
- arch/x86/kernel/cpu/microcode/intel.c | 122 +++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+), 4 deletions(-)
+Sure, it could be argued that this can be implemented in qemu, but that's
+fundamentally the wrong approach.
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 5d0216e9aee5..44b94d4d05f7 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -20,6 +20,8 @@
- #include <linux/cpu.h>
- #include <linux/uio.h>
- #include <linux/mm.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
- 
- #include <asm/cpu_device_id.h>
- #include <asm/processor.h>
-@@ -33,6 +35,29 @@ static const char ucode_path[] = "kernel/x86/microcode/GenuineIntel.bin";
- 
- #define UCODE_BSP_LOADED	((struct microcode_intel *)0x1UL)
- 
-+/* Defines for the microcode staging mailbox interface */
-+
-+#define MBOX_REG_NUM		4
-+#define MBOX_REG_SIZE		sizeof(u32)
-+
-+#define MBOX_CONTROL_OFFSET	0x0
-+#define MBOX_STATUS_OFFSET	0x4
-+
-+#define MASK_MBOX_CTRL_ABORT	BIT(0)
-+
-+/*
-+ * Each microcode image is divided into chunks, each at most
-+ * MBOX_XACTION_SIZE in size. A 10-chunk image would typically require
-+ * 10 transactions. However, the hardware managing the mailbox has
-+ * limited resources and may not cache the entire image, potentially
-+ * requesting the same chunk multiple times.
-+ *
-+ * To accommodate this behavior, allow up to twice the expected number of
-+ * transactions (i.e., a 10-chunk image can take up to 20 attempts).
-+ */
-+#define MBOX_XACTION_SIZE	PAGE_SIZE
-+#define MBOX_XACTION_MAX(imgsz)	((imgsz) * 2)
-+
- /* Current microcode patch used in early patching on the APs. */
- static struct microcode_intel *ucode_patch_va __read_mostly;
- static struct microcode_intel *ucode_patch_late __read_mostly;
-@@ -321,13 +346,102 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
- }
- 
- /*
-- * Handle the staging process using the mailbox MMIO interface.
-- * Return the result state.
-+ * Prepare for a new microcode transfer by resetting hardware and
-+ * initializing software states.
-+ */
-+static void init_stage(struct staging_state *ss)
-+{
-+	ss->ucode_ptr = ucode_patch_late;
-+	ss->ucode_len = get_totalsize(&ucode_patch_late->hdr);
-+
-+	/* Reset tracking variables */
-+	ss->offset = 0;
-+	ss->bytes_sent = 0;
-+
-+	/*
-+	 * Abort any ongoing process, effectively resetting the device.
-+	 * Unlike regular mailbox data processing requests, this
-+	 * operation does not require a status check.
-+	 */
-+	writel(MASK_MBOX_CTRL_ABORT, ss->mmio_base + MBOX_CONTROL_OFFSET);
-+}
-+
-+/*
-+ * Check if the staging process has completed. The hardware signals
-+ * completion by setting a unique end offset.
-+ */
-+static inline bool is_stage_complete(unsigned int offset)
-+{
-+	return offset == UINT_MAX;
-+}
-+
-+/*
-+ * Determine if the next data chunk can be sent. Each chunk is typically
-+ * one page unless the remaining data is smaller. If the total
-+ * transmitted data exceeds the defined limit, a timeout occurs.
-+ */
-+static bool can_send_next_chunk(struct staging_state *ss)
-+{
-+	WARN_ON_ONCE(ss->ucode_len < ss->offset);
-+	ss->chunk_size = min(MBOX_XACTION_SIZE, ss->ucode_len - ss->offset);
-+
-+	if (ss->bytes_sent + ss->chunk_size > MBOX_XACTION_MAX(ss->ucode_len)) {
-+		ss->state = UCODE_TIMEOUT;
-+		return false;
-+	}
-+	return true;
-+}
-+
-+/*
-+ * Transmit a chunk of the microcode image to the hardware.
-+ * Return true if the chunk is processed successfully.
-+ */
-+static bool send_data_chunk(struct staging_state *unused)
-+{
-+	pr_debug_once("Staging mailbox loading code needs to be implemented.\n");
-+	return false;
-+}
-+
-+/*
-+ * Retrieve the next offset from the hardware response.
-+ * Return true if the response is valid, false otherwise.
-+ */
-+static bool fetch_next_offset(struct staging_state *unused)
-+{
-+	pr_debug_once("Staging mailbox response handling code needs to be implemented.\n\n");
-+	return false;
-+}
-+
-+/*
-+ * Handle the staging process using the mailbox MMIO interface. The
-+ * microcode image is transferred in chunks until completion. Return the
-+ * result state.
-  */
- static enum ucode_state do_stage(u64 mmio_pa)
- {
--	pr_debug_once("Staging implementation is pending.\n");
--	return UCODE_ERROR;
-+	struct staging_state ss = {};
-+
-+	ss.mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * MBOX_REG_SIZE);
-+	if (WARN_ON_ONCE(!ss.mmio_base))
-+		return UCODE_ERROR;
-+
-+	init_stage(&ss);
-+
-+	/* Perform the staging process while within the retry limit */
-+	while (!is_stage_complete(ss.offset) && can_send_next_chunk(&ss)) {
-+		/* Send a chunk of microcode each time: */
-+		if (!send_data_chunk(&ss))
-+			break;
-+		/*
-+		 * Then, ask the hardware which piece of the image it
-+		 * needs next. The same piece may be sent more than once.
-+		 */
-+		if (!fetch_next_offset(&ss))
-+			break;
-+	}
-+
-+	iounmap(ss.mmio_base);
-+	return ss.state;
- }
- 
- static void stage_microcode(void)
--- 
-2.45.2
+This is something which must be easily available to developers and CI
+and not require to have a special setup with debug nonsense enabled in
+some external tool.
 
+The proposed implementation is just an ad hoc band aid as well. Why?
+
+  1) It has zero relation to the actual failure detection code paths.
+
+  2) It covers only a small part of the problem space. On all modern
+     systems, which have TSC_ADJUST the clocksource watchdog is disabled
+     and just asynchronously invoking TSC unstable is a hack which only
+     tests the unstable logic.
+
+So I rather want to see a more complete solution, which
+
+  1) lets the clocksource watchdog logic fail the test
+
+  2) lets the TSC sync (including TSC_ADJUST) logic on CPU hotplug fail
+
+  3) tweaks the TSC_ADJUST register and validates that the detection and
+     mitigation logic on systems w/o clocksource watchdog works
+     correctly.
+
+Ideally that's a kunit test for CI integration plus a debugfs interface
+for developers, which comes with a related selftest.
+
+Thanks,
+
+        tglx
+
+
+
+
+
+
+=20=20
+
+=20=20=20
 
