@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-570649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88789A6B2FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:31:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092AAA6B2FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059C48A3ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DA01893089
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7E61E5B70;
-	Fri, 21 Mar 2025 02:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D81E0E00;
+	Fri, 21 Mar 2025 02:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GTNzJB6k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="G7VBacue"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C62F1E51FF;
-	Fri, 21 Mar 2025 02:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43531876
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742524248; cv=none; b=ciXemGLmCiXC7jEJXxjvhkyX+VAFiFvmkvEFAPTifJNJlb5B72lsqiID4pNAeqOwtGriibBBZDwIslzE9IagRWZe8Lcum6yDF87wGQHit5kxCTgVqHzddZzqOXaukw5MmywMnlwh3nEfEN1tWaO0NXRZCS3gjmw8TlqynEK/mN8=
+	t=1742524396; cv=none; b=THud+0uhrhCZ45y9Ems7Q33IpYIBg7majk7iTMp9IcTNU0ccWfNhtWiyxduiws8kvJeoji84xJRtsR33XiKNdonGy1T0FXhiCUnM4m+DhJnHJRrFVW1HEjkU0I+wqWZHqQTztbT0i3ijP0sVDoo/snRC4XdLyNJG1CoarzgBW20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742524248; c=relaxed/simple;
-	bh=RPdN3+1lbuDMogBmWweMEZIwNXOQcQp4csM0z98xu9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gqXbHKnjBmxX22U4ZrVkYBCGu4mLePC2uKknanWTW/BdsgCtHY1D8SXicAGkjWj4DkWmrGL534hh5nYfV0frjH3PCKE0dFvmhwSAXdEYO7fEzl5rswfN9MXpM9Ecd+yAwyR4P108/Y0/C/YSRUnwccA4dT2Rw4K4AXT+ZbkBgu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GTNzJB6k; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742524247; x=1774060247;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RPdN3+1lbuDMogBmWweMEZIwNXOQcQp4csM0z98xu9E=;
-  b=GTNzJB6kbSJPat+DnhgNAhP/rX6n8D+9S0gRVDdqIbOhfo0ArcTnloJt
-   AsUKWLsXvjxUroNoBRRY45JTFxPcbPxgnb1IHT+s846MUPG1aMtYcbpFW
-   bZ3X6IOW7+uyMOCtinJzc5FNMLdL/J4e1KgQAufcWX44kKuyUGHw2AQxb
-   dsVHBSOy+S06bF5Hk+s6eLe/gETG07oo+wgAkc9jwNbrp9JEnk5mJ9wt8
-   YVw8ud9bSSepnW6e1aiParwI0/BOOj5WbN4KqWUvDhjiH0x1jbWx2/ir2
-   yZ6eGDf4Nxn2FgXkky7Q5k5vxFcxc2DqOFX2Q3+oCtmd6uiNcMrWvjhcp
-   A==;
-X-CSE-ConnectionGUID: p3SWZ/rZQIKFwFiaIfXZZw==
-X-CSE-MsgGUID: plGHG74eQse9rDWWlN1mog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="47557527"
-X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="47557527"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 19:30:47 -0700
-X-CSE-ConnectionGUID: VP/tF50mRcmzILyjdj0eTA==
-X-CSE-MsgGUID: 3hvKUXJlRdm3KKU23Rcr2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
-   d="scan'208";a="123446139"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.252])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 19:30:43 -0700
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	vkoul@kernel.org,
-	broonie@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: [PATCH 1/1] ASoC: SOF: Intel: Let SND_SOF_SOF_HDA_SDW_BPT select SND_HDA_EXT_CORE
-Date: Fri, 21 Mar 2025 10:30:32 +0800
-Message-ID: <20250321023032.7420-2-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321023032.7420-1-yung-chuan.liao@linux.intel.com>
-References: <20250321023032.7420-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1742524396; c=relaxed/simple;
+	bh=fh8/hKnhmAdMmulO3dOA/fUcq3ROAQN7CvfWvXaT2R0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7zohtygyL82h1NqOWOng7ZhuU9DcYJAkHBcn5ZSEdNi+LNSdKA08Wk7Y+9NYcC//Qc/Ubq61F39spBkYSUplyKuDlssekm6S2gPdzhuxP2A05uVJd6H5apDqrmflv4sYuc5klEy8i7K5EPYCgoWpvCEwkkFkpYNUTD9n/FHiQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=G7VBacue; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4710C3FCC7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742524384;
+	bh=yGdWxK9JVirSn2lLRI6kllOEuz1GJUXaDgPsY8xB3Nc=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=G7VBacueHBf7j1V+0EYTbxRmcoJVUOtLDBFxh7oxQUuXALmXATwit/UKk2JCWP28f
+	 2FFDnP/rLydtR+c3GjyelhnD48WAbIUIvtik14Qs5Ptg390ButZ+IM3njY6filITA8
+	 9zjvnGCCaPlnLWDTwMfxhGMAUiZIn2XDrCxj2rEchGKoPHRkjqLs5blM8hzRXX+eaR
+	 2sI2Kcc6lCjOtsNJWgsELyFSUT2o1ggZl/Hss8gcqsRSc/MNySINWf0vd3oF78cBuL
+	 BgyB5Q19bgZ+MW7npzq9MD526XXIJUQ/KgWHBvTB+zdMzIdP1Ps3PEaTz9OPaYF22m
+	 hdS0kPStG1QAw==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22403329f9eso19311605ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:33:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742524383; x=1743129183;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yGdWxK9JVirSn2lLRI6kllOEuz1GJUXaDgPsY8xB3Nc=;
+        b=iylGNwB8alOlBmxDlhdDGqc8ulbINildwijAFdgpFPw7O+zZzz7VpBi79kaN4rBdhe
+         8X5nKQWoW5/OFTTHJjJ5oRpVrXX36yOjpiZLlboyZY4D3k6SO/dtsU7xTkJustgzLWio
+         39dTbcfRLSxOlxfdZ1RIZSc2KE90Bivaq9xlowSC8tzFplRC7HTDbbYpjMwPB93rR0Ch
+         EZLtDFsBrrezdjNyhjVzDvfqrwKU2rho2Amidft9XHsj9Tu9KxSb7M8EUiGkLPSe9Y1m
+         uYIxpIrtf0PyzeMfGLjOi+pyQ5tHQz6suBxoExhfiwo7bx23ZCsVgQQw6tePWKbJKAgQ
+         vWkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6yPsIKjFACtLxckjdLNxSgZXbo+uZB37w0IA9lSrfv+0Svq/xrQ89IQPcVG6BTuAa+wkGlRLTkeyggYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbnKR3Ic5I+iVhrxYhUd74gldP7bTqRd2149sFgasRJwToiRSZ
+	W3D4gWtA8tKZRYqpEyizl9TW8FaPPybjsVgkF5e4zmrPg7BDV+uVpq9LO3Lhv5odJD+XBUmIMcO
+	xZhxrGbPyJwtSAV8EGcdq9zRFZmaQ6MI/b/2qn5z2D9TKOrO1HNNzjxNWq95HA2N4iUrybwLIA0
+	psnA==
+X-Gm-Gg: ASbGncvFd/6+TkhGzuIHNTm3msefYpF6ewYTyVKlwaXv2XvIPqHuUn+/frHchUfUFhz
+	sHwyJ9EU8FxEwGrNgpfKtJKpXrMOPrXswqzFId9J6AUIbl1yARCcZeFhXeWZnIG4ZgtCr7B9n9t
+	SCzgpBgql5+Xx2ENvsuYg2Ggru+xmAw41ZA7/xm3sRG2rGihrkbZ/N7qo15k9fCW0+ttsnh7Fzu
+	X9FkHeVT9FRbPQXQ7Ion7uo1mXoLelW1MHueqbsUx+CYadBhLkLS9Ql4KX+ubkHyR6uAVDZG9I3
+	RffO71xaDPw0gRdi+vrynFVOxP3L7eCJUbKSNs+gzw+nG+GfnRy2FXtEBffKGm+FuPM=
+X-Received: by 2002:a17:902:e78f:b0:224:c46:d162 with SMTP id d9443c01a7336-22780c7bfecmr26407565ad.20.1742524382842;
+        Thu, 20 Mar 2025 19:33:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGOUGS7kWShHwzPKCmuY0RVOFosLtvfv77lN3gqgOkwEjIa7sd9qLWWEZv2O+6vYApUGXhmw==
+X-Received: by 2002:a17:902:e78f:b0:224:c46:d162 with SMTP id d9443c01a7336-22780c7bfecmr26407305ad.20.1742524382384;
+        Thu, 20 Mar 2025 19:33:02 -0700 (PDT)
+Received: from acelan-precision5470 (220-135-95-34.hinet-ip.hinet.net. [220.135.95.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f39692sm5535345ad.44.2025.03.20.19.33.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 19:33:01 -0700 (PDT)
+Date: Fri, 21 Mar 2025 10:32:57 +0800
+From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
+To: Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: quirks: Add quirk for another Chicony Electronics
+ HP 5MP Camera
+Message-ID: <sgvhxwvrylxdev77hb4hlfcviopljj3i64vempkxaigioyvcki@2fgjvotmp6d4>
+Mail-Followup-To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250321022540.4016923-1-acelan.kao@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321022540.4016923-1-acelan.kao@canonical.com>
 
-CONFIG_SND_HDA_EXT_CORE is required for CONFIG_SND_SOF_SOF_HDA_SDW_BPT.
+On Fri, Mar 21, 2025 at 10:25:40AM +0800, Chia-Lin Kao (AceLan) wrote:
+> The Chicony Electronics HP 5MP Camera (USB ID 04F2:B824) reports a HID
+> sensor interface that is not actually implemented. Attempting to access
+> this non-functional sensor via iio_info causes system hangs as runtime PM
+> tries to wake up an unresponsive sensor.
+> 
+> Add this device to the HID ignore list since the sensor interface is
+> non-functional by design and should not be exposed to userspace.
+We found another Chicony device with the same issue.
+Please apply this patch after the previous submitted one.
+Thanks.
 
-Fixes: 5d5cb86fb46e ("ASoC: SOF: Intel: hda-sdw-bpt: add helpers for SoundWire BPT DMA")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503170249.iPSBJSf5-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202503162042.2cNgaBmC-lkp@intel.com/
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
----
- sound/soc/sof/intel/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/sof/intel/Kconfig b/sound/soc/sof/intel/Kconfig
-index fae3598fd601..dc1d21de4ab7 100644
---- a/sound/soc/sof/intel/Kconfig
-+++ b/sound/soc/sof/intel/Kconfig
-@@ -345,6 +345,7 @@ endif ## SND_SOC_SOF_HDA_GENERIC
- 
- config SND_SOF_SOF_HDA_SDW_BPT
- 	tristate
-+	select SND_HDA_EXT_CORE
- 	help
- 	  This option is not user-selectable but automagically handled by
- 	  'select' statements at a higher level.
--- 
-2.43.0
-
+https://lore.kernel.org/lkml/20250312063532.551938-1-acelan.kao@canonical.com/T/
+> 
+> Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
+> ---
+>  drivers/hid/hid-ids.h    | 1 +
+>  drivers/hid/hid-quirks.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 5fdea9116a3e..554dbed3f3ed 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -298,6 +298,7 @@
+>  #define USB_DEVICE_ID_CHICONY_TOSHIBA_WT10A	0x1408
+>  #define USB_DEVICE_ID_CHICONY_ACER_SWITCH12	0x1421
+>  #define USB_DEVICE_ID_CHICONY_HP_5MB_CAMERA	0xb82c
+> +#define USB_DEVICE_ID_CHICONY_HP_5MB_CAMERA2	0xb824
+>  
+>  #define USB_VENDOR_ID_CHUNGHWAT		0x2247
+>  #define USB_DEVICE_ID_CHUNGHWAT_MULTITOUCH	0x0001
+> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+> index 452fac15550b..91b3d121bb1f 100644
+> --- a/drivers/hid/hid-quirks.c
+> +++ b/drivers/hid/hid-quirks.c
+> @@ -371,6 +371,7 @@ static const struct hid_device_id hid_have_special_driver[] = {
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_ASUS_AK1D) },
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_ACER_SWITCH12) },
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_HP_5MB_CAMERA) },
+> +	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_HP_5MB_CAMERA2) },
+>  #endif
+>  #if IS_ENABLED(CONFIG_HID_CMEDIA)
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_CMEDIA, USB_DEVICE_ID_CM6533) },
+> -- 
+> 2.43.0
 
