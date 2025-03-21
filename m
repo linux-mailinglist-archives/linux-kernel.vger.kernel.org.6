@@ -1,180 +1,105 @@
-Return-Path: <linux-kernel+bounces-571664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9215A6C058
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:46:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C631A6C069
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:48:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971DF3A8874
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:44:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D2817CBB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A8A22D4DC;
-	Fri, 21 Mar 2025 16:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291BA22CBC4;
+	Fri, 21 Mar 2025 16:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="HZyv9eYa"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IZib4ih0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GEYGpQCM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C6922AE5D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306D722CBFD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742575459; cv=none; b=nkwA8bwMVofkw+IIALPBd0r2k6xlO08vixsA3KRs67O034DRoebMBjUxnGumeGkPOv25c9Y6RMpLSlP2Ny+3kf31HG97EBx5Aeu9QPr3cbF83m5PWSRdZWWtZRPpTtf5r0HL+BiTSV9SvHcgeEVkA1FGXbE23aC8ttOl/9eoLNQ=
+	t=1742575505; cv=none; b=o6nQBf9GipacJrP7xUdkHAFwwQiYj6lBnVlC+yWl640i5LKWKVn+14eYTuTCOWb1Yl3IYNil+ZGjWzR1fsoMhXPhBDGH7W4QRo9yWfy1bz7ZPRQZjHTE+m9I+Mqdjys5o4sMEHheADklUh0taQehl9CBuTOhrc6DYN3YujqaQmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742575459; c=relaxed/simple;
-	bh=IMeArOMSvV+SAUlYdgzoqB6lsnXPfljvOmj84MN0ick=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXtAGLgS0s0vkWzBRt5wK8i9Jxr4pOz3OHUEhsTLViVgt0MTCNGLoyrT+MjzIHzHA6YNEm1AMc7ycrF6vWbnyzPw8vczOjosEsGHPxUQ+SIU3Utx5t1PMevPM4SKL+IZ/nEv44oTlUiws6PatQAj2jLSJTLoV+gkDVWSj7v+8rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=HZyv9eYa; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223594b3c6dso52842965ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742575457; x=1743180257; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mdus/fJVv5Uld6yn8oFMkQzJNe6dHC2w9XvJ773goNA=;
-        b=HZyv9eYaGfAfS5TzyiAfne7e+Cj6w6knyN1bsuK0l23BH6/C2KhX2L3GiLz0dennJB
-         kK9slfnRaJ27l+T8IPNdM9DXo4h6Vj3Dth4GDHOzj+mBDaBhwYD0bkt3x8Lk51JO66uA
-         pgCNI/yZ0ZQ4pfX/PqXQ5YgmYZvQHpiDE/zXA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742575457; x=1743180257;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdus/fJVv5Uld6yn8oFMkQzJNe6dHC2w9XvJ773goNA=;
-        b=UPdDF5KvwsFWTAFrU6I8NXfsAdTHrQH+Rl8LIWVTV1DeNnCHALN+MZzwXmdsmCZKPm
-         apwCMeQCvR56s7Rtg/PkFg+G5Xp69++bkwGDbUaoDxiE7c68+7ks/dU19eO7FEEKRqWH
-         GZA3dF9L502ZZh/LBXt+ofo/mGYyzw+n6cVjO08BgCF8aXtHQ8hfuPNHHghl1j8GJOym
-         SaI/Cga6+fczlnpvn/SFjkUpbL2TFyR/Fmgm3h1eU14a4m2wfWsQz1L5W1nBSn64OXMr
-         aD71JrQVMJozkAnD205xCwJwGp+zNhcCfiv7Nx+3iesZG4fS9DqX1JWSjtMDylaaGJzJ
-         f3qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoO+xPX5zuJJfkMQ73/IL8QPQ3K8d2hCt8G2o3M62spzFeNFMVdBJ4KmI4GV9sPnkaV57wgkfhdEiwW5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDYlMxVafoi0Wkm5YVdAmBBXGIZu18S7/IvB2+X9BI8fw624ir
-	Txioxp7/+DMXFVrz5osci9DWTCT9mp7uiysUgxMOZUV2Qv8oxT/NgUWx+kIhNDE=
-X-Gm-Gg: ASbGnctoesRxxRd3SYWtUkJMa/zzy0h4GzNtX9vu+C22KLCSVyylrQNYq0/fjNnUpSF
-	lGGKxUjgekubnvfVz/2/teCpZAfNLPH6unWyJjIoWfH83pa152gs8TLzx9cYUm0DpNhnOHS3q6A
-	q/EboVelmQydBS2004iIatKUPSseQWhB9N5A1g/599xORQZsGs5mlinQtdS8lASfxGXOL2xUj/x
-	cSaB/CPnA876Wq1X7wpdXrlkVUlLNzJw11yK7x+c2vUTqf1SHPP9krkxtMtV+jvYFwdPMESwN8Q
-	BSbPMxT2sEbQiBwh1oM+1eLQnqyUhtM6GrXVa8wsy3huLq03rTeWiADSq1PDrpR2xS2Pi0C1RHz
-	JNNvyzEmtv8DPG67N
-X-Google-Smtp-Source: AGHT+IHNkHo8pQiFISfzkg8EmthIVkGNH6DyH204b4LoCrS28DjOE/rXN+w3HTspHp5hcO8dxdqoWw==
-X-Received: by 2002:a05:6a21:998b:b0:1f5:839e:ece8 with SMTP id adf61e73a8af0-1fe42f090e7mr7044509637.2.1742575456784;
-        Fri, 21 Mar 2025 09:44:16 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2843af9sm1984943a12.38.2025.03.21.09.44.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:44:16 -0700 (PDT)
-Date: Fri, 21 Mar 2025 09:44:12 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z92XXFDVz_5fU2YQ@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org>
- <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <Z9uuSQ7SrigAsLmt@infradead.org>
- <Z9xdPVQeLBrB-Anu@LQ3V64L9R2>
- <Z9z_f-kR0lBx8P_9@infradead.org>
+	s=arc-20240116; t=1742575505; c=relaxed/simple;
+	bh=n489pTkthD/IVo4vNeww2jBMm9ymO/XnkZtj8ojplPg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B5Mtg/+33+BcysTDZFK3nsgSYcbhNxOKvNc5VOKvvaHzyfoGf6lZ35uLeX1qJVQCjaTVQsgJQ6BK+IYHv6PKrtDEbCr3SLw/9SU9gdW0HgTqOZlq4ynSjDWb8pYrQxAGNIvyMGYogM6hLpWQ5HTSNSZmEwjYE7HbkExuz9abMYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IZib4ih0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GEYGpQCM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742575502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G+UWHetQY5W0wEpNt+ltL/woe+32rLHYPTXlYR/LExw=;
+	b=IZib4ih0AmQnAlfpAL9UldH+OcC/5Ao3DennVmTWpHigjRz53xeJfLj3MTzIqt44Icvglm
+	7qYoZLikDDsExYh9SoB13gQ94MvL7zrLD99NrSfxr017vepE/K1uundsmbmjeYYJuhASEa
+	uhf3BZg0lUF7Md8KOOoANCc4fopQLj8NUME0/5cNkFgJlYcMOm2jX2aJMHZ6VOVzIZidBw
+	nHSn5/AKmIbgPo+fqC84O6rZZjM0aRodyI9PIyEQheHPtI1wLPIibP7QVzz3+NefK4oKtG
+	HlT9nSiHJ3x/aYi44tCmqctrBeuzps9leZrKl87HzMCCjnAUlSErb18C/WNMTg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742575502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G+UWHetQY5W0wEpNt+ltL/woe+32rLHYPTXlYR/LExw=;
+	b=GEYGpQCMPHSnWAClp8t2I1S8kfCEmpHzCfC/t9QAcV377XSZhFJiEBofVBfxI2FeGg5WuY
+	DMhiiRteFDrk45Dw==
+To: cuiguoqi <cuiguoqi@kylinos.cn>, anna-maria@linutronix.de
+Cc: frederic@kernel.org, linux-kernel@vger.kernel.org,
+ bigeasy@linutronix.de, clrkwllms@kernel.org, rostedt@goodmis.org,
+ linux-rt-devel@lists.linux.dev, cuiguoqi <cuiguoqi@kylinos.cn>
+Subject: Re: [PATCH] hrtimer: Fix the incorrect initialization of
+ timer->is_hard
+In-Reply-To: <20250321020341.1404557-1-cuiguoqi@kylinos.cn>
+References: <20250321020341.1404557-1-cuiguoqi@kylinos.cn>
+Date: Fri, 21 Mar 2025 17:45:01 +0100
+Message-ID: <874izm2v02.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9z_f-kR0lBx8P_9@infradead.org>
+Content-Type: text/plain
 
-On Thu, Mar 20, 2025 at 10:56:15PM -0700, Christoph Hellwig wrote:
-> On Thu, Mar 20, 2025 at 11:23:57AM -0700, Joe Damato wrote:
-> > In my other message to Jens I proposed:
-> >   - SPLICE_F_ZC for splice to generate zc completion notifications
-> >     to the error queue
-> >   - Modifying sendfile so that if SO_ZEROCOPY (which already exists)
-> >     is set on a network socket, zc completion notifications are
-> >     generated.
-> > 
-> > In both cases no new system call is needed and both splice and
-> > sendfile become safer to use. 
-> > 
-> > At some point in the future a mechanism built on top of iouring
-> > introduced as new system calls (sendmsg2, sendfile2, splice2, etc)
-> > can be built.
-> 
-> I strongly disagree with this.  This is spreading the broken
-> SO_ZEROCOPY to futher places outside the pure networking realm.  Don't
-> do that.
+On Fri, Mar 21 2025 at 10:03, cuiguoqi@kylinos.cn wrote:
 
-OK. I won't proceed down that path. Thank you for the feedback.
- 
-> > > Because sendmsg should never have done that it certainly should not
-> > > spread beyond purely socket specific syscalls.
-> > 
-> > I don't know the entire historical context, but I presume sendmsg
-> > did that because there was no other mechanism at the time.
-> 
-> At least aio had been around for about 15 years at the point, but
-> networking folks tend to be pretty insular and reinvent things.
+I have no idea why you think that sending this patch to
+sales@linutronix.de makes any sense.
 
-Sorry, but whatever issue there is between networking and other
-folks is well beyond my understanding and historical context. I'm
-not a reviewer or maintainer or anything like that; I'm just a
-developer who saw a problem and wanted a solution.
+It's equally useful as me cc'ing sales@kylinos.cn on my reply.
 
-I've read your message loud and clear, though, and I won't proceed
-down the path I've proposed.
+> When PREEMPT_RT is disabled,there is a possibility that
+> timer->is_hard will be incorrectly initialized.
+> When creating a high-resolution timer and setting the mode to
+> HRTIMER_MODE_ABS,the timer->is_hard will be incorrectly initialized.
 
-I appreciate your feedback; this is precisely why I sent the RFC -
-to get comments - so thank you for taking a look and letting me
-know.
+What is the consequence, i.e. malfunction, of this being incorrectly
+initialized?
 
-> > As mentioned above and in other messages, it seems like it is
-> > possible to improve the networking parts of splice (and therefore
-> > sendfile) to make them safer to use without introducing a new system
-> > call.
-> > 
-> > Are you saying that you are against doing that, even if the code is
-> > network specific (but lives in fs/)?
-> 
-> Yes.
-> 
-> Please take the work and integrate it with the kiocb-based system
-> we use for all other in-kernel I/O that needs completion notifications
-> and which makes it trivial to integate with io_uring instead of
-> spreading an imcompatible and inferior event system.
+Nothing as far as I can tell.
 
-If you have any suggestions or pointers to code I should look at for
-inspiration I would very much appreciate the guidance.
+So what's incorrect? It's slightly inconsistent and confusing, but not
+incorrect in the way that it causes malfunction, right?
 
-Thanks for your time and energy in reviewing my RFC and responding.
+If so, then please say so. If it causes malfunction, then describe it.
 
-- Joe
+>  	timer->is_soft = softtimer;
+> -	timer->is_hard = !!(mode & HRTIMER_MODE_HARD);
+> +	timer->is_hard = !softtimer;
+
+Now timer->is_soft is always !timer->is_hard, right?
+
+Which means that one of those flags is superfluous, no?
+
+Thanks,
+
+        tglx
 
