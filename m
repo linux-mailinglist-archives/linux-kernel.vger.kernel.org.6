@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-571130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA9EA6B993
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:10:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0490CA6B990
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9142C3B46E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:08:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46692188B792
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CD222173E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2339221F0D;
 	Fri, 21 Mar 2025 11:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="k70HpNTv"
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="s9Nu6WHU"
 Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94AC1F09A8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8804B1F152E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742555302; cv=none; b=HEuGqXJjGGPAe4m65V80z3SvR+74kpKjF5UnqFW3AI/VhUsVHjy9E+SWmoDgmVwYgzJRzlzAHMlds1EasFEZrhdZe5VCI/jKWIgDKctRhcQ0/0903nkZtGuDckpi2JmvxXhDSrKG/Eo90L1lADXeO8eloNGm6DMdVK6Pc0DDzmE=
+	t=1742555303; cv=none; b=EpAcWBTgI2CnzeHbD0imTNinE3qd9kw6tXAH2e47mJNgAMbpCEq8rkB2dhUROjwDngtuBumKGkz1kqUuuMOW7d/hvP6vCSRz0rYLpvxmSzq4vUZh/g2s4iUq+2fB2O7Q2Dg9gUXvOVuXnAZJvdzTJEg/sQ3fCln/NfzmLvDKuUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742555302; c=relaxed/simple;
-	bh=YxheuH5qC+gbNFpr0EE4TkJ0s9iDCQtv8J9bv2AWTPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q+qIbvqwVYEtz7wwDa1fMW/krRpPFY7D1RZUchFscEcwKCq3N3sAguA61TbfIS4Gs60krTod19nHmc2Gw54lmkPT1uiTgaRuhTBocy2yzAlgtK5mSF7virRsc7vOb46Lx3TJUnxN321x07vamhV5Y7kUJB54rgUePHB5TQ55Mew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=k70HpNTv; arc=none smtp.client-ip=95.143.211.150
+	s=arc-20240116; t=1742555303; c=relaxed/simple;
+	bh=20CPGdQzPsjIaknmQRYWaju7DBTfaF0fWfsQ501jkeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Sus37oPC0IK7GIc74sBI40KfyUJ6+bdNAYd45yoGALCamNpbqvXmOGQFwsNp+uu95D8wZmQOPY37ccrFgM+bUj+doLJ6GoHgMsovus/yqzohU3ObOuQF//V2tc6C4tvF6jBBd30p7XQMDuxkErchPV+kGPsWmUVYqzMufrRpq4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=s9Nu6WHU; arc=none smtp.client-ip=95.143.211.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 From: Denis Arefev <arefev@swemel.ru>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1742555297;
+	t=1742555298;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gXu86VZaLBNYnHRfrq34BCX66En+zpOOpN6qaFsLboA=;
-	b=k70HpNTvLGIyji0//Mk9SdHtq06g3/dIKNx3dfql7tZVrwd0YfhtdScJ1GXgmZw5bcvpvz
-	cXOUyf93QvvsqlxfRownHK/770PC5ilYC7FWOZDL0iyGi1nYPkt7TGhqcVKNecjY1fXILQ
-	Dg9Y78D+Nyj+UWfP1AD4SNnxI6NWesI=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOHLqhbZu+0FzqwJ8kMgQJhnp8r0yDBwvY5KCd76JIs=;
+	b=s9Nu6WHUlp3vDbrlBDO3yruEW1r91JifOFZ1Ok83dX/exjvwYmPJua7rCJbK+5kl91cOX6
+	tDi4c5mqG3DXVupMLNRWVfUVcTQgEOVvgmphQggKM4slJusRDb+Mz3RIONvqRWLtVVITp/
+	RiIaJxJw3SysWuA9ncYEuwCtHMOjCdw=
 To: Kenneth Feng <kenneth.feng@amd.com>
 Cc: Alex Deucher <alexander.deucher@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -46,10 +48,13 @@ Cc: Alex Deucher <alexander.deucher@amd.com>,
 	Simona Vetter <simona@ffwll.ch>,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] drm/amd/pm: Prevent division by zero
-Date: Fri, 21 Mar 2025 14:08:15 +0300
-Message-ID: <20250321110817.10274-1-arefev@swemel.ru>
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5/5] drm/amd/pm: Prevent division by zero
+Date: Fri, 21 Mar 2025 14:08:16 +0300
+Message-ID: <20250321110817.10274-2-arefev@swemel.ru>
+In-Reply-To: <20250321110817.10274-1-arefev@swemel.ru>
+References: <20250321110817.10274-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,26 +71,28 @@ Found by Linux Verification Center (linuxtesting.org) with SVACE.
 Fixes: c52dcf49195d ("drm/amd/pp: Avoid divide-by-zero in fan_ctrl_set_fan_speed_rpm")
 Signed-off-by: Denis Arefev <arefev@swemel.ru>
 ---
- drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_thermal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_thermal.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_thermal.c
-index 379012494da5..56423aedf3fa 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_thermal.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_thermal.c
-@@ -307,10 +307,10 @@ int vega10_fan_ctrl_set_fan_speed_rpm(struct pp_hwmgr *hwmgr, uint32_t speed)
- 	int result = 0;
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_thermal.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_thermal.c
+index a8fc0fa44db6..4182ea06f241 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_thermal.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_thermal.c
+@@ -266,11 +266,11 @@ int smu7_fan_ctrl_set_fan_speed_rpm(struct pp_hwmgr *hwmgr, uint32_t speed)
  
  	if (hwmgr->thermal_controller.fanInfo.bNoFan ||
--	    speed == 0 ||
-+	    (!speed || speed > UINT_MAX/8) ||
- 	    (speed < hwmgr->thermal_controller.fanInfo.ulMinRPM) ||
- 	    (speed > hwmgr->thermal_controller.fanInfo.ulMaxRPM))
--		return -1;
+ 			(hwmgr->thermal_controller.fanInfo.
+-			ucTachometerPulsesPerRevolution == 0) ||
+-			speed == 0 ||
++			ucTachometerPulsesPerRevolution == 0) ||
++			(!speed || speed > UINT_MAX/8) ||
+ 			(speed < hwmgr->thermal_controller.fanInfo.ulMinRPM) ||
+ 			(speed > hwmgr->thermal_controller.fanInfo.ulMaxRPM))
+-		return 0;
 +		return -EINVAL;
  
  	if (PP_CAP(PHM_PlatformCaps_MicrocodeFanControl))
- 		result = vega10_fan_ctrl_stop_smc_fan_control(hwmgr);
+ 		smu7_fan_ctrl_stop_smc_fan_control(hwmgr);
 -- 
 2.43.0
 
