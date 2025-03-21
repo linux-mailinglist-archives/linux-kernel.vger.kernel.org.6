@@ -1,154 +1,231 @@
-Return-Path: <linux-kernel+bounces-571335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B20AA6BBE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:42:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A678A6BBDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189FE4648D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:42:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95BFB7A48E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E1122C34A;
-	Fri, 21 Mar 2025 13:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5B122B8B2;
+	Fri, 21 Mar 2025 13:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzHYr6/U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aOPiWavl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5160322A81D;
-	Fri, 21 Mar 2025 13:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742564504; cv=none; b=OZ/IyqdA5RcevDbXillrWuUtdL1jQua4Z0tFq/9cO6eS3Qy1q1JDF19A/NWKKHIaMGUN7kn7WcD5Af2tYgGBOMCxOyHybbPHjDhVLz1MXBj5Up32amIPEyPz/d/6jWZi+2tWxsbp3xNoieY/q9JwmWf+CX6DGa1Mye84IP00QRY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742564504; c=relaxed/simple;
-	bh=eq+z2NNjf7FTukWVpkQ2qGB887ccsImFLhwuR8Nvkig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lke9j9Y3onAs9/8ONHYYO+H4bGI89u8kisuHaHPIVQrXSmRrnIoGN6Ywsi7gGAHVTKmMltItzliME7iWM/HKoAnC6MDBgWqi2JuFthGTRD6j8bguCTMDvVoTgftxFw5aHN9RKcjpSyo1mnoBvB7jbW6WGWuTlKzc2uReFk16RHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzHYr6/U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 348FAC4CEE3;
-	Fri, 21 Mar 2025 13:41:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742564503;
-	bh=eq+z2NNjf7FTukWVpkQ2qGB887ccsImFLhwuR8Nvkig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OzHYr6/U/ZegOdlAf62w1ezW1sGmXONWKXfuFieNOPMJqwKJHtgyig3pZhX94c0ES
-	 7XtlQUDhKntSUlcrVgGUPR6aLFzafbJ372aIKmdgT6aUv5T9HMVCVfqt9tV14HcYoA
-	 rQs/E5mRdoOaczY4PFC6LspPLGY0caJtGl3hTwavq6fJnS71PlDL1ZS7Yx5NhY4ooN
-	 5OcLK1oHBol6POy9lF5riGyC5/xFFcWQij2uaTSEO/+4YkN+C29YrNLrFyPkVLakTx
-	 qK52FLMCkcTU9Jm1TdvG76AywsFvf8nVdxxIRIYYuzq9uDFE3YKTozaOHwNkP40s8s
-	 cY+0AYcTmBrJA==
-Date: Fri, 21 Mar 2025 13:41:36 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Min Lin <linmin@eswincomputing.com>,
-	Pritesh Patel <pritesh.patel@einfochips.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Yu Chien Peter Lin <peterlin@andestech.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Darshan Prajapati <darshan.prajapati@einfochips.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
-	"rafal@milecki.pl" <rafal@milecki.pl>,
-	Anup Patel <anup@brainfault.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/10] Basic device tree support for ESWIN EIC7700 RISC-V
- SoC
-Message-ID: <20250321-pacifier-varied-bbb1cae00182@spud>
-References: <20250311073432.4068512-1-pinkesh.vaghela@einfochips.com>
- <20250311-backdrop-porthole-440ae005e8fa@spud>
- <SA3PR04MB893164FCD6C4CB8924FC8DE583D82@SA3PR04MB8931.namprd04.prod.outlook.com>
- <20250320-uprising-couch-0af012a1fee6@spud>
- <f0dd950a-02a7-402b-a08e-015db458b273@kernel.org>
- <SA3PR04MB893147FE3E09B43DA41A7DF283DB2@SA3PR04MB8931.namprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D89122A81D;
+	Fri, 21 Mar 2025 13:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742564499; cv=fail; b=esz46liOtb+CW5wUBdgcIp7vTS4ogvE40/wBd76gdf3v9xO4wXRWV6xJuxZLnLoMJHPwziFhh9A0i655YIy0Eov15koeLPIQ54Dl/M61wkL+Sn1VHIpHKSwkXHN+KuYzsA7E9IqtPlZytWJVOfHS93DBLZDygBWh9RPtw/uvVS0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742564499; c=relaxed/simple;
+	bh=1ldajKprA4POSjWwza+ySugY6calZzMTUIUjMSGF9ss=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eKTyv4iNXIxi+/rw1ntLdU5hoZt/iE2ySDyGKIFjOYAjzAy211jk46n1SpHI4uNOO8dyTjjJ4ANJ2VOfFkOr9AUGjsvB81TKW7DNUqeoLb8Sic9EVdcnC67NbcUv+eAjLN1DnxlMkCO9iKHPoql1RHu9HF4MUxwAyJIFZXJsSp8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aOPiWavl; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742564497; x=1774100497;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=1ldajKprA4POSjWwza+ySugY6calZzMTUIUjMSGF9ss=;
+  b=aOPiWavlDhN+ppMXtOd9lV6pi83vtzzY/wvrKH4IxBUKPjulvpxCo+V9
+   Y2oC6zlZv/AzdPCj3EbVO1OujXN/CJ649FEcUz9u7jCXCBunsCakFMbae
+   LD4k5pdcM861hRsDb7YHOaC3jR4PM96Nv4auroJQKS5Vx12ajvN9DTCf5
+   uG7lDJHYkUAVP7vMLDvhdURR3Hsg5s91s4HMcsk1UGsSyz21HzmBaWzKG
+   ueCKu75fCY4/sdaN+3CHhBuRHcROT/5+/+czy4HuskEjyjDJyLaX5Nq+M
+   4rGatXm7A02YM2MX7kHR9zqO+Bv0xg4VqrzXs7MXnr4B08xlYaH5B7MTM
+   A==;
+X-CSE-ConnectionGUID: UfuL6za4SuyVhwylGJWchg==
+X-CSE-MsgGUID: ZofR0uQiS6uQrHsSMsRBVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43949476"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="43949476"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:41:37 -0700
+X-CSE-ConnectionGUID: Qp4zOncnT3yMy9qSRQVb9g==
+X-CSE-MsgGUID: 9HrQgk48STCRELSSkV6z4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="124347210"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:41:36 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Fri, 21 Mar 2025 06:41:36 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 21 Mar 2025 06:41:36 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 21 Mar 2025 06:41:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A/7mUQOK/Gx9XSLjbd1NpF1ZTd2EnubFurg5SeKp+uzHUAb6JA6Q+SDuw6ObViQlOIxI9NVKEMRIM+cc6q1EDnKonN/WtKsXxAAB+0IGjerrVMy3isFpQcJPKadYe31I58PH8EStg2/IbwIF/BC2OtJk/Mr6NWRY+AckqWSNeLlyd1IsZJhBUs0onD9TE3EQpP/jc7spRS5EAlGqekJz5Cy9CjW0G+Wyd1KrsG3wBmlSpJH4pdD6qCCc4u/2y2EZXhpTVamcqRXtrNED2Px43e55QMF8bbnqX0+iTuwmuATkHnEjY0tfUtPx4pgjMUmQxiBAa6UYwEPuvt8fTw8Zqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pRIMuJzbBzrS9dYpTMcJ8dFsy2hMZ6UksqLvhkfwPQE=;
+ b=anLL4eWxxfbgD0xcAQO6XqbGpkolGJfGrK9waBn6solocbhD806j0OEfIvMtTP7J3U4iSG8KwTwupcIGDsCABhfg4sJf26Ou83oTX5vV5bDz1dFIj8S4/+uCtWSNEZ3UTW8l7dOu9y4N7ZgBkmmjjeX3+j7gu7Q1hWLfikX/YjgGxwWRzAHwyZ/ijdPOVifIwP33FKBGroKJZOO1J8OVPhcBA0k/f2za7ZwwgeIdlveRMaOzp+aKpsoLE2pZRDn6hdEBHOR52WEeprtIiIXTNbjuhWLQvJMUq1FU3KsAU1A0DhL1V0fXkUYw1mL41rhdUgtW9K5zBCmNgEYCLo/0uA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by CH3PR11MB8703.namprd11.prod.outlook.com (2603:10b6:610:1cd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Fri, 21 Mar
+ 2025 13:41:34 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
+ 13:41:34 +0000
+Date: Fri, 21 Mar 2025 08:41:47 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Robert Richter <rrichter@amd.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Gregory
+ Price" <gourry@gourry.net>, Terry Bowman <terry.bowman@amd.com>, "Robert
+ Richter" <rrichter@amd.com>, Pankaj Gupta <pankaj.gupta@amd.com>,
+	<nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v2] libnvdimm/labels: Fix divide error in
+ nd_label_data_init()
+Message-ID: <67dd6c9b3727d_7836e2947@iweiny-mobl.notmuch>
+References: <20250320112223.608320-1-rrichter@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250320112223.608320-1-rrichter@amd.com>
+X-ClientProxiedBy: MW4PR03CA0250.namprd03.prod.outlook.com
+ (2603:10b6:303:b4::15) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jB7oSH4WdargtE72"
-Content-Disposition: inline
-In-Reply-To: <SA3PR04MB893147FE3E09B43DA41A7DF283DB2@SA3PR04MB8931.namprd04.prod.outlook.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|CH3PR11MB8703:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca0cf64f-a6e5-45a9-d686-08dd687e1841
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?f5L+yVN1aUhK9IFG13UJFZA7XRzWeXQDupBNwnx3aaBfGjxFoh4qNDVi/g2C?=
+ =?us-ascii?Q?QxZ2DZopr+L802//nNg2CCrx2iDGVySvH1JsDtisTZNeCg5UOLG1gCpsYqFs?=
+ =?us-ascii?Q?FsBXPhLzLeuBRErOjlCxr6olpcugcjELtYEHc2E/TVpLuPwbA1JzqqdEOEN7?=
+ =?us-ascii?Q?faCShV9GYU/1nPU20nuTCEy1ACrcbSuWtXwStAgEfM+UGkkwtJu0/WKPEz0C?=
+ =?us-ascii?Q?jG4fH/sFOE1UgUxyTIrosBOP6vzV46Zboi4TYVag9ealpnkg3bJ5FEkZ8h+A?=
+ =?us-ascii?Q?4D43j8aK/KcRxf/SxwJtXogIXZ2kINRFlkaidtWJs0b5fp3/D2eN1vQeeVHX?=
+ =?us-ascii?Q?V2lOli1hxR3zZkj8OR9+EqfFfizOkCJ1X2F1NZplasSxaOBoEck4+rtG9s5B?=
+ =?us-ascii?Q?DCu0PhLor0FkTJDbJWsm3LXS7i9uOREigWzGOyLqz5yXDUBKOElopzEkfJbY?=
+ =?us-ascii?Q?LSUc/Ojc6hN6AYWcpNypaU2YksIW5sJy1BLa/vPC/AblW9ZtppIiD77H9Ojl?=
+ =?us-ascii?Q?Dp9+L4LkzMfD7ae3I3zhW9CCgMcJ57a8x2aVv9pCw7jZ+Lau59fhjn+EsXbA?=
+ =?us-ascii?Q?9U9N5RFxPA2pblJY4GnMk5sxj1LZAwyjYn096l4B124PX7a1/u0kj58LXo3S?=
+ =?us-ascii?Q?Y8qIcGvuyzZLRCAbuhj73kArZvhBl1Notirk7x/ca8KadF6ZGlMui0tM5j/C?=
+ =?us-ascii?Q?utDhutpkfnDjHG9POPk9BPgFtTggzB9LKn1AfBF66Gy42K7g43oWlBCU+TIK?=
+ =?us-ascii?Q?KT3IE/iQJdZscL3BvZQ1e3Jd35xMIVqgCwOIC9btgZ/3h1dntQmVqqI3xiOF?=
+ =?us-ascii?Q?LqS1ewGGUfyubHmrXkNvVZEsNgJU1jcVsBGWZFLr2RZFSyUWLbnjwVqpiaZq?=
+ =?us-ascii?Q?i28/wx+4czDJ1rx45Zp5259ri+i2/UqXvyms4nK0/BlmiaBILj6XCjnZoLsm?=
+ =?us-ascii?Q?Zj0WEQ3hAF4LfEW0Mub2KFWA78Ek5kjZEv/EJBFdFuepZOokog5pZ3Iswdbv?=
+ =?us-ascii?Q?pO+cEbxLzHycJv66XXgnJ5Ah4ZxxA+J1TuO0sja8miPBrij8Tih+nZgQJR/Q?=
+ =?us-ascii?Q?RuJPwkMgVZ/RGw/otSJ6Pl9KqIoJph0qRLoYJw0DhDeFFHtLG+3O1+EvKIEk?=
+ =?us-ascii?Q?PeKwH43QgUlicqgTPY1q11X4Wo24RQs01dBKi5MxXkwLKdppA4lVZ48vz37w?=
+ =?us-ascii?Q?mCJWCr5G3ijGKXhAu51TzQ24EyKPBGGdqE7fLiSbPFDBVw04Va8uZNuLcaBa?=
+ =?us-ascii?Q?CM7sljxdSTQBd5ZBAeyRcLX7aq77/e92GpWos/sg1JiCBFM5JmGcqYeoFxAz?=
+ =?us-ascii?Q?LqCeaycGB14BNuK1sRtJ4finlcFgkfwkJZeFRMhfRo5luJGybIlRcp2Sy00u?=
+ =?us-ascii?Q?ndWiZ+sK2Wb7Oj3gxT2Sf2MNnZEv?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?M1TcLVhjhti6BlhnCCiEsiM6TG0RPpvXFEf+BaOIZuxM8SnNtGxqjGK9zWpC?=
+ =?us-ascii?Q?j+0y6Y+TxckiXyewhkwZaM0XqziZP2/4DawAmmTNNRhHxZVoHIraEHAIS13Y?=
+ =?us-ascii?Q?Rzbbywg8+OhXIrPMaSHY+Ipk9XZWS4lu7JGSstIMg5xrmyy0xnsdI432KA0P?=
+ =?us-ascii?Q?w6IcSHYBTOO6r2tB3ryj1swv+eWsjOKRYgDc3Y75+jCTrYkKuxOs5BYHL6/k?=
+ =?us-ascii?Q?i8GwxcUEeBf2r65BsmIXkZyibgYfyI73rebi8NlCXO7H5YYbI6LNNYSJEa1J?=
+ =?us-ascii?Q?RCCnU7CMp/l5Vqar5Gw9mLblW5JnQU+8BU+KkmKGaCnD33OX5N0XyGRLPAyb?=
+ =?us-ascii?Q?/WpLjLbgGO76FwKQ3tFJyy4WxUWB36B/ibh62JSpgoWi0CAJFhsZOAtXYDxI?=
+ =?us-ascii?Q?oUJy2Mnnau+zgDqIMV21dD9CSyUG74TjO8BRZmEx5srg6u1YUN9usAEufRKU?=
+ =?us-ascii?Q?2IkacsUhexCFLgIgB3SfoQ5xshlsBREkA9Jpk3Kx2KGxr8AVT0RerXLtjKwX?=
+ =?us-ascii?Q?U6wtrT/KCa1p3RGoCvVcEIl43MG6SRzZMOZ6qlvczT2Fp0SN4Q7vhbY4Va8k?=
+ =?us-ascii?Q?sSn8vdw6RbFohbC4vWEJp23ibYEIorWARuyzhvxM1y4boGKkJhERe089Enkc?=
+ =?us-ascii?Q?tODGycxzTuWqZ5Qn83K1QDJH2VR7HlXzrWcQbylE0TzhlrYxD5mMv15uoF8H?=
+ =?us-ascii?Q?3RrzBKFkqELJYB2TN7PHMeslpoWlJeWsyjTDiaucaUA6/yOkMXtviEg2CvUj?=
+ =?us-ascii?Q?RQOnMb9UVh2MiIZ3QkD2utO7uFAiH3TbGukW2YJ75jcnRU3Sb8YBTcNyORuH?=
+ =?us-ascii?Q?985bodNZTDDsVhDqSdp2fZ5k3KPaF0AO4B+HErzvT2IjFrNE/pfHX7E4SLS1?=
+ =?us-ascii?Q?KKwKzX3P6JyZoO49bsBcOhcWKNV45lxBBt5mZo/sthznxgNgQ2IKUmWjgsh8?=
+ =?us-ascii?Q?11FEN9sO/Vu4ZkpBcER3SX8UzjC3jMC+ScG5eSA3XuVJiKmW5fC45JdcuTeG?=
+ =?us-ascii?Q?j4sdo+JZtDVJCywa5ffaKe1VQSXgFhRT8SssyoWRvy349ox8rYpsta47YNWJ?=
+ =?us-ascii?Q?34whZOH9voqs3Jy8nFihOjsbOJ/wAJjxXaw1mygt4Le7rCoW9KiAP/Incf80?=
+ =?us-ascii?Q?AH6axcLojvSdfrjYpHGx3aWWc1bVrod8WPEybwe7f8Mdc973HUapK2jQUycP?=
+ =?us-ascii?Q?ste8hsU2CNyEW4oUSMNfYR9kkU4UoozpXpBytKI+IOO25bzCLZTVicRHu9b3?=
+ =?us-ascii?Q?B9IeDbGmY9x0wBwR9bnHDC92+UD4yTU11DHaExzvehQMv0/uKYZSc2O8MfDJ?=
+ =?us-ascii?Q?EzgU/vFgEz2N3WC/M9CbPrHVT6KEOGNWI33LMaY6ZNrRng+bULzd83V3Np3l?=
+ =?us-ascii?Q?Lv+gsMNH4BKMXrI+DThWIurWSJ1emO/nJXN/zd0HT7JmNzT4S0u8m4ISnA5c?=
+ =?us-ascii?Q?mNTzUs64x7wDDRrX+jZOBQRuCDw8728eJfeWMuiCljKfnUfnH938NRgzFHZC?=
+ =?us-ascii?Q?T8nwv+LEZAOUeD7cCwOdVlbXIcRmrwjyTZNoEs3UKVC/X/cO7OXYPaKW0wcU?=
+ =?us-ascii?Q?mL0X1fV3rjfqsDKLbYEGV2/FVSVs1R5cksR4BN3j?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca0cf64f-a6e5-45a9-d686-08dd687e1841
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 13:41:34.0395
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xocrks0E7UNvB0d4t6xbNtrN8CKyI1HpnOnf+HudOCSpn6LTwmegBQat9yU+6UfYIJ/vlnEQ5JuCnQwekS+fsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8703
+X-OriginatorOrg: intel.com
 
+Robert Richter wrote:
+> If a faulty CXL memory device returns a broken zero LSA size in its
+> memory device information (Identify Memory Device (Opcode 4000h), CXL
+> spec. 3.1, 8.2.9.9.1.1), a divide error occurs in the libnvdimm
+> driver:
+> 
+>  Oops: divide error: 0000 [#1] PREEMPT SMP NOPTI
+>  RIP: 0010:nd_label_data_init+0x10e/0x800 [libnvdimm]
+> 
+> Code and flow:
+> 
+> 1) CXL Command 4000h returns LSA size = 0
+> 2) config_size is assigned to zero LSA size (CXL pmem driver):
+> 
+> drivers/cxl/pmem.c:             .config_size = mds->lsa_size,
+> 
+> 3) max_xfer is set to zero (nvdimm driver):
+> 
+> drivers/nvdimm/label.c: max_xfer = min_t(size_t, ndd->nsarea.max_xfer, config_size);
+> 
+> 4) A subsequent DIV_ROUND_UP() causes a division by zero:
+> 
+> drivers/nvdimm/label.c: /* Make our initial read size a multiple of max_xfer size */
+> drivers/nvdimm/label.c: read_size = min(DIV_ROUND_UP(read_size, max_xfer) * max_xfer,
+> drivers/nvdimm/label.c-                 config_size);
+> 
+> Fix this by checking the config size parameter by extending an
+> existing check.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
---jB7oSH4WdargtE72
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to nvdimm/next
 
-On Fri, Mar 21, 2025 at 11:29:27AM +0000, Pinkesh Vaghela wrote:
-> On Fri, Mar 21, 2025 at 3:07 PM, Krzysztof Kozlowski wrote:
-> > > On Thu, Mar 20, 2025 at 10:39:52AM +0000, Pinkesh Vaghela wrote:
-> > >> On Tue, Mar 11, 2025 at 11:38 PM, Conor Dooley wrote:
-> > >>> On Tue, Mar 11, 2025 at 01:04:22PM +0530, Pinkesh Vaghela wrote:
-> > >>>> Add support for ESWIN EIC7700 SoC consisting of SiFive Quad-Core
-> > >>>> P550 CPU cluster and the first development board that uses it, the
-> > >>>> SiFive HiFive Premier P550.
-> > >>>>
-> > >>>> This patch series adds initial device tree and also adds ESWIN
-> > >>>> architecture support.
-> > >>>>
-> > >>>> Boot-tested using intiramfs with Linux 6.14.0-rc2 on HiFive Premier
-> > >>>> P550 board using U-Boot 2024.01 and OpenSBI 1.4.
-> > >>>
-> > >>> There's no git tree in your MAINTAINERS entry, nor mention here of
-> > >>> what the story is going to be in terms of sending patches to Arnd.
-> > >>> Who is going to be doing that?
-> > >>
-> > >> We are not currently set up for sending signed pull requests, so for
-> > >> now we plan to send changes to Arnd as separate patches.
-> > >
-> > > Undesirable, but sure. You didn't answer the first part of my question
-> >=20
-> > Just to clarify - separate patches as separate postings to soc@ after t=
-he review
-> > was done on the lists and then you applied them to the tree Conor asked
-> > below, right?
->=20
-> Correct. Once the patches are reviewed, will send separate patches to @soc
-> and then apply to the git tree.
+Thanks,
+Ira
 
-No, that's the wrong order. You apply reviewed patches to the git tree,
-they then appear in linux-next, after some time soaking there, you send
-a PR (or in your case patches) to soc@kernel.org, usually around rc6 or
-rc7. Fixes get applied to a different branch and can be sent at any
-time. I expect both branches to appear in linux-next.
-
-Bear in mind that patches for this SoC might be sent by other people,
-for example me if I find some issues, and you'll need to forward those
-on to soc@kernel.org on top of whatever work you're doing to bring up
-the SoC.
-
-> > > though, and there's no git tree listed in your v2 series. That part is
-> > > not negotiable, you have to have one and get it included in linux-nex=
-t.
-
---jB7oSH4WdargtE72
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ91skAAKCRB4tDGHoIJi
-0uEXAQCPJJkOErMXPJI1hMZw+JZzaLhhY2ew43wR9BFZRSWvTQD6A03L62ZGb0HW
-nyCNJA8Q+NY5eQpX+dyXYdiMkC6QAg4=
-=sX2X
------END PGP SIGNATURE-----
-
---jB7oSH4WdargtE72--
+[snip]
 
