@@ -1,152 +1,144 @@
-Return-Path: <linux-kernel+bounces-571552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C246EA6BEB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:52:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 369F0A6BEB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEE84844EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17FC483D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5926822D786;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634E722D787;
 	Fri, 21 Mar 2025 15:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0HM4ZdUr"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pN+Xp5gw"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FEB22B590
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B048A22B8C3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572196; cv=none; b=GkrcIUdsp2KHg35L1IyeXfIhTsJyfqLiggwkAbK1M0iwHoc4tanQCptNKKrFfckExoBJd92MoxB8hgQ29+hycdq4VJnEBALHejLRPHebQNQMLmKcJ6h+wQ5b+KhoCRvzAiwGJtIuBQm9TdKb6zSEhdR6wT7MF21ZzdZLxGzDEjA=
+	t=1742572196; cv=none; b=QTSlhNPusu7GcIC45QQcGnCyMTggkCZrrkjQceeompcAANCJM4NdjcbdV7GRo/EMIhFML7Le4O+dP4iMaEPMHS8KsZVO23w+sDGKyTMb8jmOCZbG6BTnbhXNQKmkx4YFCDV04F7SfDa/ja2XUCpvuWQ823kmv7VJMYO7FP57x70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742572196; c=relaxed/simple;
-	bh=7OKHQYItsHJqowDVAvvbjLqYjpAIU2xdGIEQwzoW4CU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kB1yljI/dV7p1WBWD2VUA/IBK33N9TOPjXTiHKK1BDlVRgiqNR9e1w3vmfwMUvt837JHyCe1rWmvrgOmSDi2yQmn0jj+7ok+9SKGjjf1P+Z3vqqt2FcRfB/HJqTKPnkSh1crMnxVUF45aOA9uIt4AEC/h6gdU0WvyEvVmv8wNoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0HM4ZdUr; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so1757705f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:49:53 -0700 (PDT)
+	bh=sHOyDHwMkEneP0INOZI10ERSSowktJ1Kc8KZRERfTRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJO/SecTnqGf9IkYad+4XPXBMNu4O6e8m6p0pjp+K9/QbGd+e4Czwfz3WBrSp9lAmNqjhndryBnh6BA4clh8SrhsEkQkmCkdPn8peJT5w0hZunkM3SQCdwEf1qacptgZvRTxtXu8GxCFEfZcp6yX7LLoYo9NOM2zyaQZReJ3NMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pN+Xp5gw; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so3173526a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742572191; x=1743176991; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LJRuevggM9BCuwKtfZ7IFoWvomRPS19U+6lJSmLRj9k=;
-        b=0HM4ZdUrW7caStmrIICgevWgLmgZDNYlJmuB6tsEn5yWaexDeO1XqdR+3DCkWasgmW
-         SG+q1Wvyn80KJVDUP2l33znW/wkxvoAZAtfp7c13pLL8nf2GF+An4EGvkKy8Kho/td+w
-         dmuD5fdwAyPTIskfteFEDMjdIswf+RUdAKvHXqQcb6H5k/LvZ6s1bi2Ws/jGLDCGMJxZ
-         0BeoCZeDEqpIs3+weU0muM/nHR+hHnyzkc6BsgKCvTej8xkEVUs+3fX5kEVPe0DeBFEr
-         xB4j1um2dotIjTNHXM9olSwBtOeOfYN3edPiLYhfnp92Gv1L+HdLJ+qI0Nd96LEdO0Ei
-         kjbg==
+        d=linaro.org; s=google; t=1742572193; x=1743176993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vklN2GaacEXLUQOf6jBxkKBFuSQd+uRdj0tkKRVQNtk=;
+        b=pN+Xp5gwvVjsxl0o8+Kfk/CLXkOflJc+zoVx3u40D/3tG0Pc+DRhze/kCpEuhtjyRI
+         2AdSeJzuyuIaYT1OS8HsdK5U7dcNq9iztNgLXo/UkI4d85u7D+2E4A0hTAzd/UkrURJH
+         3VtDTa/58lStRYuI1iBRpa/NXdpOc80diplIybQfhOmiNOTC+xQLiWFtNQtnjZzB0A7+
+         cYOkzeHAV8n08cLjyWmCzpx6rve1YoTaXosIA1WgfFIw16x/SwpCBQlF3h+FJSvzw06A
+         zDoRQ6H79V8IMiORqiPq7fCBDaS7O+mx3i2JqjxDX76AUxeo7jk1zTo0VU+CB9hITkV3
+         t2eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742572191; x=1743176991;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LJRuevggM9BCuwKtfZ7IFoWvomRPS19U+6lJSmLRj9k=;
-        b=Gf1W9qZH//lGjNmKo3jP23Fe284kXDUYb7tKqRbx9nKi9Q+T7JrMBEEIW8VpKK1+MB
-         XY4HiacqLu3I1fziXkrql0ReRuqZ5ps0g5ICUlXIXDqZkIcF+TdkKljZE3oLPzr02L3G
-         er7NPkOEPWmk0xkbjFDJm1wRhyvM5GnYBOB6jKM3yo+gREkN4GbGa6d0vqCtLnKlaVZU
-         LESPlfUdjfx2N+qW+tCpqMgZijdyxUHEFQHRbeFg7cw2RmvF95hQYk9vmzw4As7K/c2v
-         zjqBiPOV+gsJUdOur4Jyg0MAC3cngIVsYJnW1NIqP862IrgS41OPzEdCkll6uFjtKLcS
-         RleQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVR+M+rkeSaXXICYeRGchE+09yxM+pG9AaPpHKltWC1w/urhhNijQjptO5hgMri3yH4Sq2AdYF2PRrTrr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf1B8A3pW4tJnxVUvubhMwhxNRgIE8tOgestqSpRXl9jkcxN0T
-	LE+PzxIn9gIG9i5K/FRP4sYa/GbOoJnZNljZS5hmXJ68ANx+8VN2WCs6AwbDIYiwo288UQp/1g6
-	P
-X-Gm-Gg: ASbGncuY9xNKhkiUC3ynvr4EitwgIxbOGVA/AVXguXfteeFZjczuUXEtmpqmIKLDL5G
-	UCd80lmItij6FZ+k0zUS+9VltM3QxgK9d1K/d4uRFRo6GGk7HT4ZsuBRBnhHdIYwltplPAsvwJE
-	Hf/hC+zUZbHfCXNaplKLeBrrkQTvOZ4d/t66nRBiiiShV0XpV3XgOJtocNJ+KhnaSLQC6D6O80D
-	+daurTHuVR5zV5eC5ohfannkhfD0E5S3ugXJZO6mD4yDFRXkdCPQ/evD3eJVpoMLr9qiRW/9/Zm
-	Eqpn3+xPUTGzB1omQciXdikl4mcYuVQr4Hchfw==
-X-Google-Smtp-Source: AGHT+IGoMK71oHcnm8gGvUy7+eexqEWpSgYvAKRXst7E/Ia5gJhiHUVUXQvYPze1X3KyZ1IImHsKoQ==
-X-Received: by 2002:a05:6000:2cd:b0:391:3406:b4e1 with SMTP id ffacd0b85a97d-3997f900ef6mr4131661f8f.15.1742572191553;
-        Fri, 21 Mar 2025 08:49:51 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:1aa4:f3ec:847a:32d1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3b4bsm2664406f8f.25.2025.03.21.08.49.50
+        d=1e100.net; s=20230601; t=1742572193; x=1743176993;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vklN2GaacEXLUQOf6jBxkKBFuSQd+uRdj0tkKRVQNtk=;
+        b=IytxiVeu0KHKZ3iPwkzffuf/MKsIANQ6K7ndkRACj1k8lWvNZS0Px9et+x88agSQAR
+         X/9+ZQjc/f2TkiEfU15P1XO+yYwdjIl5LxZN6iQK2sBRYHQfb32x935MUq1LFLGZQMgt
+         l8lkquXcwdzTCW/tfsXZ4NF9SiMDII/EGQpspq6/do6ZoDDIGWGa/pz774arxz3zFabN
+         +suoZqXbsdq8UfNCzIwxaINNw5wHGjA3flpZldbx3fXR1+CvmsaXJ4XMBnoF5YLjdLCL
+         st3Y7sG6lKwks7aDvOHpZXvZSMK2jnAA4QGvKsm6zW3WJTbsQdjX+cw0Vl+OV520ezmx
+         R3yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrUX/k3LftR1P1a3e2C7GNzrsk9T2B/RhwORkr9bbWWOBcBPWrxbA7y8kn94QEVchAYYssFc+VQLSk90w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMY0zEXBORt2rBOpRvvpKFETgxs+VyR4+dN4qLSZ89jCkZYo8/
+	nZiRRa8ymzU/DITXuNijpcoMRXG5OSeA2njIZ4U7xaYw/JOBCs4xGV4tKSgdhXXZjH3/9hdHEZ3
+	pYOQ=
+X-Gm-Gg: ASbGncvCKd54oLR3WwzNDmaU19d8ZxBFGQG5sN7QglsF2VgXL7JumrqfsEXBwYkWkov
+	PlJ8dMe84tHM+N6fHLfZCg3kk5CTSvwE6xs1loKayK2yK/PUrbERzjcqAL9Tn/Y1hJzOjVhxbzX
+	lPP1doXqUQvMceQyJMbCSzvLdDgX/JVoOz58alwdyto2kbqE5JRDCWspdeBTQJaHCYKR/xOMho1
+	g5rvu9AkTCh6oKf3QLK924lvYFfm3ksLa9/9CMlmrKbwYWAuUayXUk9oZGxb6JZsJe/g6o94m2Y
+	8+295iRpzykz7XhVSN92jM4iAHoMOKd3x6uR+4xBVJ5OroU2lg==
+X-Google-Smtp-Source: AGHT+IH64Jd2L5c9Yzb2LgwV3I84SSyGpfTTprm50kscsUSR1fReJIULWFk4FLQWP6bo9iqncrYHrA==
+X-Received: by 2002:a05:6402:510c:b0:5de:dfde:c8b1 with SMTP id 4fb4d7f45d1cf-5ebcd40af26mr3083965a12.4.1742572192819;
+        Fri, 21 Mar 2025 08:49:52 -0700 (PDT)
+Received: from linaro.org ([151.41.27.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfafc1dsm1535650a12.39.2025.03.21.08.49.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 08:49:50 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 21 Mar 2025 16:49:38 +0100
-Subject: [PATCH 6/6] gpio: TODO: add an item to track reworking the sysfs
- interface
+        Fri, 21 Mar 2025 08:49:52 -0700 (PDT)
+Date: Fri, 21 Mar 2025 16:49:50 +0100
+From: Ettore Chimenti <ettore.chimenti@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Georg Gottleuber <ggo@tuxedocomputers.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, wse@tuxedocomputers.com, cs@tuxedocomputers.com
+Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
+ Gen1
+Message-ID: <p5dxsjp2xdl5esmpxseqiy4n2xsici5fvow6wtiquhq7ixmlkt@fty3ez75y5ld>
+References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+ <5e72992c-170c-48b9-8df4-2caf31c4ae44@oss.qualcomm.com>
+ <5hvghahezqms6x4pi3acgaujyhiql6mzl2xhzph5phhki2yiyq@oi3xjatj7r64>
+ <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
+ <l77iickvroov7crzg6s2i7nq3kakqgdtbqki74stavqkiwyjfs@rv2oegbwogxi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250321-gpio-todo-updates-v1-6-7b38f07110ee@linaro.org>
-References: <20250321-gpio-todo-updates-v1-0-7b38f07110ee@linaro.org>
-In-Reply-To: <20250321-gpio-todo-updates-v1-0-7b38f07110ee@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1584;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=oXnm7kFeWpxFuHmJEsF/8vqjoynKGvtwa0r5iOnzF38=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn3YqajgZ7/ioHcsB+lna5BBxd5JgJmhmErvNPc
- xMN3wPkHEKJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ92KmgAKCRARpy6gFHHX
- cozWD/99YTP37CBb+/F+umsRv41EwDFQ5yT321295LWC80OXMDkfntiLNtu4784iaRX6HgJEaPc
- BDoKB1L//OQHwsJ91n9yvYnYyzwd0XmzDzWCfmuMh4DMjaWkLv32D/+l7k6FqSpoTq/FXu8pdg7
- omxhRx6XQ/b+EaJq7syWKEBCvDAqO8wS9tX3DTh+ELRF4tKzIV1WBV9HuzzCog9TUXP2g7Pp8w0
- 8+ON8sEYBP4O7XtbiV+K1RZQLurqlkZyJPWu5wk1eCtIagsb/1r2Lhd7OW0QEYJKnitsUomUH6B
- i+TSyd2GEoK3jmVER8bnp2KKpOdMo5bLrh+585tplArzwPKGRLsC9W82M7j26ZQr8JIzg37opOH
- um3i2xfNLIHzFZBmx5V6Gj657MX3JgIz+Ox1VOFWeJo1EP8BwGjHuAlvWDV3rIvBvSZWV33Hbny
- niceejOmkhfC7BagUfT/BT3Copi6ns1EiLqnN9itUFB3T16pqf1MtVKFMdkwSPCXRQFPr+x9RNM
- wMMOEt1iqAeAzdUF7fZP7mhTsKDbv9HzkfYim98fmI7QDZVcG6oiDuOp6Sf1s8/GzC73M5z83v5
- bdSQqvNT7lnIASDvDbV7ywfUO/xv6Nv5l8mX0aFkm/So9krzW3gBB6gnHeBtv63FQcaS/I8Zf/9
- elTylKnoeEZtyHw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <l77iickvroov7crzg6s2i7nq3kakqgdtbqki74stavqkiwyjfs@rv2oegbwogxi>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Dmitry,
 
-It seems there really exists the need for a simple sysfs interface that
-can be easily used from minimal initramfs images that don't contain much
-more than busybox. However the current interface poses a challenge to
-the removal of global GPIO numberspace. Add an item that tracks
-extending the existing ABI with a per-chip export/unexport attribute
-pair.
+On Tue, Mar 18, 2025 at 11:36:32PM +0200, Dmitry Baryshkov wrote:
+> On Tue, Mar 18, 2025 at 04:24:27PM +0100, Georg Gottleuber wrote:
+> > Am 07.03.25 um 07:45 schrieb Dmitry Baryshkov:
+> > [...]
+> > >>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> > >>> new file mode 100644
+> > >>> index 000000000000..86bdec4a2dd8
+> > >>> --- /dev/null
+> > >>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> > >>
+> > >>> +&gpu {
+> > >>> +       status = "okay";
+> > >>> +
+> > >>> +       zap-shader {
+> > >>> +               firmware-name = "qcom/a740_zap.mbn";
+> > >>
+> > >> Are the laptop's OEM key/security fuses not blown?
+> > > 
+> > > Can this laptop use "qcom/x1e80100/gen70500_zap.mbn" which is already a
+> > > part of linux-firmware?
+> > 
+> > It seems so.
+> > 
+> > Because there were no logs about loading zap.mbn, I activated dyndbg
+> > (dyndbg="file drivers/base/firmware_loader/main.c +fmp"). See attachment
+> > for dmesg output. But GUI freezes after sddm login.
+> 
+> Does it happen only with this ZAP or does it happen with the ZAP from
+> WIndows too? Can you run some simple GPU workload, like kmscube from the
+> console?
+> 
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/TODO | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+It seems to work fine changing the `firmware-name` property to
+"qcom/x1e80100/gen70500_zap.mbn" and updating to latest mesa on Debian
+Sid (25.0.1).
 
-diff --git a/drivers/gpio/TODO b/drivers/gpio/TODO
-index 3abf4805335f1..b5f0a7a2e1bf1 100644
---- a/drivers/gpio/TODO
-+++ b/drivers/gpio/TODO
-@@ -173,3 +173,16 @@ value back to the caller.
- We've now added new variants - set_rv() and set_multiple_rv() that return an
- integer. Let's convert all GPIO drivers treewide to use the new callbacks,
- remove the old ones and finally rename the new ones back to the old names.
-+
-+-------------------------------------------------------------------------------
-+
-+Extend the sysfs ABI to allow exporting lines by their HW offsets
-+
-+The need to support the sysfs GPIO class is one of the main obstacles to
-+removing the global GPIO numberspace from the kernel. In order to wean users
-+off using global numbers from user-space, extend the existing interface with
-+new per-gpiochip export/unexport attributes that allow to refer to GPIOs using
-+their hardware offsets within the chip.
-+
-+Encourage users to switch to using them and eventually remove the existing
-+global export/unexport attribues.
+Also tried with linux-firmware binary blob.
 
--- 
-2.45.2
-
+--
+Best Regards,
+Ettore
 
