@@ -1,137 +1,167 @@
-Return-Path: <linux-kernel+bounces-572051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E978A6C5E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:24:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31AEA6C5EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D88E3B21E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:23:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225BB1B60458
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CB91F4183;
-	Fri, 21 Mar 2025 22:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE091F4198;
+	Fri, 21 Mar 2025 22:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EL+IrAaZ"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dF1GdA0h"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06101C3F0C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 22:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F601C3F0C;
+	Fri, 21 Mar 2025 22:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742595846; cv=none; b=u4TiUdsWmeOA99w1luXk8Oj/DtgVl5IN9Y9Kk46f/jbGy0G9f4wCVIMuwAq4sC4TSVGna3Oj8pYCemkFn7eTfdBYXI6s4PQbmlm+URnSGLfLrV+g8sKWD2GFx09eNJWE6ugJ2x/fcRHdHgDBYSAWRqvLLJ/UqXohnYrGB3l7e1U=
+	t=1742595852; cv=none; b=NlbQJJf3fXWLA1a65iSo6hSEYMHzIS7kGE/cT6VdQm5RHrORSka3WqYWG4wIJwqjX48zAoknYFzS7/LGIHTPbA6FvfTNnrQRkMhQwdR6PHlffhF8axorpnGyKGirNg288lGuCLvbtrwP7r0636GmyE3/r4QXfm1a38Z1KxMGmKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742595846; c=relaxed/simple;
-	bh=Pf80HbUr/DGQjCWPwmII0ZVFPKktGmOvnTdlRbkKMIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sn6BiIwSQYyXzcmSVB5NOAsskhoMPe3Aagms9tHi0fJKnO0Z4UIpTTYoFaAVP7QArG9skrWnS1OWmFGFK++zqdF7y7oLcrc3pWzRXgzAkkLmP14MXGRiX40hsUKfJgHRNoJDaODJUKU27B+DC80fdoPrv2ylfXvQ6YMSJMP7xS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EL+IrAaZ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac29fd22163so445187866b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:24:04 -0700 (PDT)
+	s=arc-20240116; t=1742595852; c=relaxed/simple;
+	bh=0YkPzCxkfOAlHN0wqWyLmmk4ddNfU4ie91D9ISjUL9Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DFNlb6Ylxby9DNC4RmpjR8R/RMgN3p06ZM4Od/y+Jpz6T4s15608DcfGz+pFknGV1YATvYTMJ68IxqscgOP6fS901gA8etebKPzk09HYT2cj68jF69vsuiq9KQyMvewIHRCJwN4WH6D+Slcd5tXaAev+zNy7vc1aWC8l2SF6Nyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dF1GdA0h; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2260c915749so35450265ad.3;
+        Fri, 21 Mar 2025 15:24:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742595843; x=1743200643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E8jrJyKxiHJsFpDm0e3XwO0Ld22rjdn+cIHQuSUcYus=;
-        b=EL+IrAaZ0etBEeFqvodr87jH6vKQEFcZutosQURa6y1XId2dG2QegfMEgKiMqJ9mzj
-         GU7NHD2RiR6SPafSBG/b2tPUUYy+mlCZSjk7rGsGaECb1jM5Aku2dp6aPJzquFxWnFYJ
-         TKuPxtNgbm89UiO0LNNQjAnGbkxsa2SUEgk9D4Dya3N1gC5T0r5nw13hTTNNG7OFMlFp
-         moS2uoq9bTb42fRUWFUyK37OmpO0klYjuaNLTQoQiQpV18Ymvev70vw2DZkyzv/ltNtU
-         q6XMLIRy0+CNzmXHTGlLIpifEC7azlSC8KxKzLUsmoRtZN9nF930MuTfpZszk0V4Rw6O
-         wQ9g==
+        d=gmail.com; s=20230601; t=1742595850; x=1743200650; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5tf2Ikh9NqR1U+q6oew+ZklnvlQHvC0og7D+/5iMioM=;
+        b=dF1GdA0hrJASxP3viZhZEGLQuBUrLnu+cXR4TJ4EMzhFtKJk4FO6tdywNW7BcfIusM
+         9L/Y4s0JBDJtZmmmgDDBhVBbYbZD2Yyb6gl6ZjuciAA82S8bgr/JHjUfMrijMNvQtq/K
+         VGAizbagKDPEGzOAmUaXbr9UtbxyaZTez/Hxf/RQQlCYeO/Dhuu4FbRDYodlZc4sKJIO
+         dmrvqIsL2zMxh7XgxW0vM4K1Q+eKw9fYrU5Te67wUGUAqYhOJvdGhCxDYjYstsZz6jiB
+         EqEIa2aDjg+BLTVzVHYghuXq02UanCWFejg2+tQup6UFHpFcDW1bibKYb+tJl8uHddvC
+         sKFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742595843; x=1743200643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E8jrJyKxiHJsFpDm0e3XwO0Ld22rjdn+cIHQuSUcYus=;
-        b=VrRG2dgd/ndedHb50RhmwmOC4Vq2KbKKs+JuhUkBMAa4dC1vkK9153mwZvpGqd8+/X
-         3V8xPVIw02HRbBZM8jZosMfggu8bpISaWqibLI3B/mKjzXsqpqZkcFG50jN2xWb750yU
-         I2dLSGjDNolv8SaTIX/nPjB321uOcAT2xuCUnMev11b0NKIXKET2vXyVxSM0eOU1wdeu
-         BbC+GhzuX1NenL17cKAKzzXkJkU8DIiAIWjlNpYHCTbItAQQ3mCcBuCPfDZ9GKychcvC
-         Pzi7oNXsGZ6HYbwBE4a1Vo+p5GvsR1/nmCrlgt7mtqa/ANPlkNhVM8/gMKWorxnQyyEb
-         6B8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUX0gXzKGUHeUqa3hfQ6qliFtWIuTmUdV25sph4WW6qi6OUnIZsNbP12gIv+38Fd7JPy11Gbh5ppGAR8OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQeB+FEUZlFI+bnWuBHS5+Zqw5ddabbVA5p9AgbMXk4KQq3SZm
-	UA9P1m0zvO0gUEXHQJdOw9UpkcKxoN6lanL3hPc1+JwFd9In+YOmBNm5AxvLaMsHe+yfFUtEu6m
-	bAni4u4hXlEwVA9nA+wapFQpPjbikMOhgP9kAB+lV0mO+tiKkYPA=
-X-Gm-Gg: ASbGncsBW7e5pIFku78PSoyADAjtEADoWavmX6lXp6+jsdW3zAsyaSF5JGBJt6rL0ZN
-	9axf++QXMVrOe0Iylvfyc+eKtnz4bBgrAXA3i/HZAueD2b/iSqXuZzr0fiTFYOfzfItH/48w2Lx
-	hEoLbMApxV7bnpsrP/t//fAIU=
-X-Google-Smtp-Source: AGHT+IGiBo0grQRUu2nHJCjMTQZmtRZhraKKNe/LaYS2ganDDjeQhCx9hOUZj3XHWnRGLvT0rflSbrILe4b94nHCEIA=
-X-Received: by 2002:a17:907:c88a:b0:ac3:f35c:755a with SMTP id
- a640c23a62f3a-ac3f35c78e6mr507778166b.15.1742595843070; Fri, 21 Mar 2025
- 15:24:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742595850; x=1743200650;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5tf2Ikh9NqR1U+q6oew+ZklnvlQHvC0og7D+/5iMioM=;
+        b=aT6vHUsyhyI2fwaqekYiOR9b8KsAnJHv5FGm/QFgz0Jzldqa1mv1TRc34VpRZxIy2U
+         /fcXbL/39f8KTmCSA0BYWIpvMYOdRf5xqyj6kHLC2cPzct97I9gjhO3taelly9m10AyA
+         wU03SQLeN6RQY/auhzNfBAVdj26Cf2V1+aS7JwBONFGBwiofXabykS//QsL1/LKZwWSW
+         MwpzjCWv3O9BFQDTrodGQYzYBB5geX8NuZZ1KgOAsQW4X8mK+FQRFe7crurGa5N2B88l
+         qwmBSAtkiJHwHFp+0eIj+8J66x8iKplmkVXsVdaDYhsqnpIb1QfG04BOFYkOrhv7VynH
+         vwDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK++8bGzYHPxS4r7d9nPTER2jN5quyBabOwNsCbjISYBa8O496ipNnSS0NOUqJ6ZByBso/gVTG6qY0xuKP@vger.kernel.org, AJvYcCVjrK6vsPWW4SImh8IzSy5lWHz5iP6uAkQMSjqpphUJrn/5GQBFy1REpR+1YQahoDZyFP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOvyZUXhK6b2FpGE6EV5PvjzLwq7SMqb30pZFVQJAAovA4UCgw
+	2sbNQaVP1oy1BGOoGj6J6qPNjW2vLbL02AQmLIwQ1GJoidKdyAo44VvxVQ==
+X-Gm-Gg: ASbGnctrJEFFTjSp0t2jQF59O5pWcgjaddkZSk1j62Ac2DrF2vPie/I0gZf/1bOQOha
+	f84aQTEApdygLkfmkGp3rUNZQwImGqqO3h7F5fprtuvMHc10KJy5wyMSqct1Ryibyd1CuwtrLsV
+	Wtky+S65HDoQV9+mTvqy6OOQ7qNtjL/65UZHFtHVAx5HiFsap2m4H+OqTjgkHvfzVHQOHaSTh0d
+	aH1K0bpqS54YNjYuK0zljE15qy/QKjdfzg+oPUYsReknSxpMgrbDt6vARyolB0kOJWTGnIxYIyw
+	1Evqv64E9nabarMlbbPZF3+Mz5YDeQMIvZwytx0m
+X-Google-Smtp-Source: AGHT+IHB+5AwTCUriSk+8m+jnYaDcxMN0yxif6zPGeg4oT8NcJaiOvkgjZx06CxF5bpaBiF7f3SxGg==
+X-Received: by 2002:a17:902:f64d:b0:223:47b4:aaf8 with SMTP id d9443c01a7336-22780e3f214mr73252335ad.52.1742595849969;
+        Fri, 21 Mar 2025 15:24:09 -0700 (PDT)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da369sm22930475ad.170.2025.03.21.15.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 15:24:09 -0700 (PDT)
+Message-ID: <65ff9c62d0d2c355121468b04c0701081d3275fd.camel@gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add selftests for
+ load-acquire/store-release when register number is invalid
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Kohei Enju <enjuk@amazon.com>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,  John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau	 <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Peilin Ye
+ <yepeilin@google.com>, Ilya Leoshkevich <iii@linux.ibm.com>, Kuniyuki
+ Iwashima	 <kuniyu@amazon.com>, kohei.enju@gmail.com
+Date: Fri, 21 Mar 2025 15:24:04 -0700
+In-Reply-To: <20250321110010.95217-6-enjuk@amazon.com>
+References: <20250321110010.95217-4-enjuk@amazon.com>
+	 <20250321110010.95217-6-enjuk@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGG=3QUEY_Gmu-6K7rk6-y8AB7HVuV2V9sP5K3h379teAZXyHQ@mail.gmail.com>
- <20250321220537.507917-1-changyuanl@google.com>
-In-Reply-To: <20250321220537.507917-1-changyuanl@google.com>
-From: Bill Wendling <morbo@google.com>
-Date: Fri, 21 Mar 2025 15:23:46 -0700
-X-Gm-Features: AQ5f1Jq0IhTuozvPpo_OHyjFNWZyGClQgpdIrwKlxghGJJyad_VMwGeLm_dK1fU
-Message-ID: <CAGG=3QUzJ_McPbJWkbcjHn_Uhw9OeBajH8h2u_4Bexc1x4G4zw@mail.gmail.com>
-Subject: Re: [PATCH] clang-format: add for_each macros from libfdt
-To: Changyuan Lyu <changyuanl@google.com>
-Cc: justinstitt@google.com, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
-	nishimura@mxp.nes.nec.co.jp, ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 3:05=E2=80=AFPM Changyuan Lyu <changyuanl@google.co=
-m> wrote:
->
-> Hi Bill,
->
-> On Fri, Mar 21, 2025 at 12:28:44 -0700, Bill Wendling <morbo@google.com> =
-wrote:
-> > On Thu, Mar 20, 2025 at 4:59=3DE2=3D80=3DAFPM Changyuan Lyu <changyuanl=
-@google.co=3D
-> > m> wrote:
-> > >
-> > > Add two for_each macros from scripts/dtc/libfdt/libfdt.h.
-> > >
-> > > Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> > > ---
-> > >  .clang-format | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/.clang-format b/.clang-format
-> > > index fe1aa1a30d40..4decda7474e1 100644
-> > > --- a/.clang-format
-> > > +++ b/.clang-format
-> > > @@ -210,6 +210,8 @@ ForEachMacros:
-> > >    - 'evlist__for_each_entry_from'
-> > >    - 'evlist__for_each_entry_reverse'
-> > >    - 'evlist__for_each_entry_safe'
-> > > +  - 'fdt_for_each_property_offset'
-> > > +  - 'fdt_for_each_subnode'
-> >
-> > Could you alphabetize these please?
-> >
-> > >    - 'flow_action_for_each'
-> > >    - 'for_each_acpi_consumer_dev'
-> > >    - 'for_each_acpi_dev_match'
-> > > --
-> > > 2.49.0.395.g12beb8f557-goog
-> > >
->
-> Thanks for taking a look, but I think the list `ForEachMacros`
-> is already sorted alphabetically.
-> Am I missing anything?
->
-Oh! I'm sorry. I tought that the 'd' (dee) in 'fdt_...' was an 'o' (oh). My=
- bad.
+On Fri, 2025-03-21 at 19:59 +0900, Kohei Enju wrote:
 
--bw
+Hi Kohei,
+
+Thank you for adding these tests.
+
+[...]
+
+> +SEC("socket")
+> +__description("load-acquire with invalid register R11")
+> +__failure __failure_unpriv __msg("R11 is invalid")
+> +__naked void load_acquire_with_invalid_reg(void)
+> +{
+> +	asm volatile (
+> +	".8byte %[load_acquire_insn];" // r0 =3D load_acquire((u64 *)(r11 + 0))=
+;
+> +	"exit;"
+> +	:
+> +	: __imm_insn(load_acquire_insn,
+> +		     BPF_ATOMIC_OP(BPF_DW, BPF_LOAD_ACQ, BPF_REG_0, 11 /* invalid reg =
+*/, 0))
+> +	: __clobber_all);
+> +}
+> +
+>  #else /* CAN_USE_LOAD_ACQ_STORE_REL */
+> =20
+>  SEC("socket")
+> diff --git a/tools/testing/selftests/bpf/progs/verifier_store_release.c b=
+/tools/testing/selftests/bpf/progs/verifier_store_release.c
+> index cd6f1e5f378b..2dc1d713b4a6 100644
+> --- a/tools/testing/selftests/bpf/progs/verifier_store_release.c
+> +++ b/tools/testing/selftests/bpf/progs/verifier_store_release.c
+> @@ -257,6 +257,20 @@ __naked void store_release_leak_pointer_to_map(void)
+>  	: __clobber_all);
+>  }
+> =20
+> +SEC("socket")
+> +__description("store-release with invalid register R11")
+> +__failure __failure_unpriv __msg("R11 is invalid")
+> +__naked void store_release_with_invalid_reg(void)
+> +{
+> +	asm volatile (
+> +	".8byte %[store_release_insn];" // store_release((u64 *)(r11 + 0), r1);
+> +	"exit;"
+> +	:
+> +	: __imm_insn(store_release_insn,
+> +		     BPF_ATOMIC_OP(BPF_DW, BPF_STORE_REL, 11 /* invalid reg */, BPF_RE=
+G_1, 0))
+
+On my machine / config, the value of 11 was too small to trigger the
+KASAN warning. Value of 12 was sufficient.
+Curious if it is my config, did you see KASAN warning locally when running =
+this test
+before applying the fix?
+Maybe set the value to 15 here and above to maximize probability of KASAN w=
+arning?
+
+> +	: __clobber_all);
+> +}
+> +
+>  #else
+> =20
+>  SEC("socket")
+
+
 
