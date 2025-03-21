@@ -1,303 +1,240 @@
-Return-Path: <linux-kernel+bounces-571614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC540A6BFAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:20:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D04A6BFC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB484642E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F7A3BA096
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D2922A7FF;
-	Fri, 21 Mar 2025 16:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B291722CBC7;
+	Fri, 21 Mar 2025 16:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xbR7U0FA"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="OJLKm1cE"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB6A1D86F2;
-	Fri, 21 Mar 2025 16:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742574013; cv=fail; b=Yhrs84WKkOeLrskLO+N/YI1lR5wRaeIz306DDZIdvCXTQtRVFo710uul+4fZAVsLwLpUAfcoiW+nUnJPmjTzAAjfNxw6N3ouJxO0ryZSlR1NoTxCxn4B1Tjs1XZVBMCENRaAS4ZFEG5oVkBuQVIyyAB6Z4tfD8VzHIKrtJjv7k8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742574013; c=relaxed/simple;
-	bh=fJWuEtJIg0BK2bqm4w7kgo7hVwX/+5q5tDYLOye9Yg0=;
-	h=Message-ID:Date:To:Cc:From:Subject:Content-Type:MIME-Version; b=XsFP9RsDGdos2ft+RbTTENe9FPx7tbWftEWdZVy/lZ3t0RIFeAOitrQk7cYAIHfIRYmWhY9xWUBZQRXnjLJobvpyo7L4/GZ4OcpO5j9sRcCWQzTtLwOTlq0ielBr6kNO3ZCTKl25PGvmOBbJYFodn+o8X4o4g06yhBIfy0aZr64=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xbR7U0FA; arc=fail smtp.client-ip=40.107.236.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PYRBG4+j6vITHinU83qNkOQADypwfR6c6bgQbyNrMtIV1XujCu5ZAAi1fAesBUGhK+kjwjTorSA2TNT/ojw500Jy43wLdXYGca+swqZQYWu4WL1qyYocmQ4RoOWWUkPMXqhEE0kGUaNDmDeycGX40U/pjj3eS5cdT5ZPiJsSWQJIhUYP5A+Rt/gPN4HjcJlyOU/RxZ3BTpqKhXl+oi9eV/UdAoPZGkqUnXc1z6Jdimr7bjAaRK7nSpgURBXnSAdYAru2qpYoW0AWKoyv9vWjrRbhXif9fUCP1jrP/NEqZYmTCxBDDX+yTEsZUzMdEymHSApFQOLKGYexxw4ThfdhdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZcmY8irwnosMxhikf4i92BLT3LfEkROFwMACCwDUZI8=;
- b=dInYabNLTzv6m1w+/ZSE0dU9nLVmDc/DWf2M38FZcL38dJGQ/NUeOZSG/KOH3cpqGAbHT4Cr9GTAE45GK80acmgFjle5I6d8ShslbEa+WUaVxloNkLRLgdoYjhmNb4lw8qhGchBpyc2xyxJbxXWlfE7o95fwl58BHLyWepvTClLVMw8eY4hrjmrSTIR++2RISxJAuoecc97wquGuG1ZBzs4Px8gfrGI9pVTx/s2dsEvE6+2s805ZeSExq+2HnYZCrG/MbbH1S8bMwO1LL49ED8NPVDQ5qiX6pU11xhANjrh28BqEIpWGNYoKyeSjoK0A2U2ZT2+0oA/iCyVqOiLG0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZcmY8irwnosMxhikf4i92BLT3LfEkROFwMACCwDUZI8=;
- b=xbR7U0FADWIUM3qTQHb6vXTuRb8Wd0NdJ9QBu7vIJdHvVK/HZ4WfCEYz/3Is0mUzDsBVhhZA1gjyHgG/JHEWozHpnbuUEbQY6foCb6SKUR4bkTKX8zbnWn0ANOTMehx0xio7cMHhgNFXVASwogX8Y2hVgVLvOWlrSj/b/X7fFhI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by MW4PR12MB6900.namprd12.prod.outlook.com (2603:10b6:303:20e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.35; Fri, 21 Mar
- 2025 16:20:08 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
- 16:20:07 +0000
-Message-ID: <67705551-7911-cabc-e839-8a3d5ddc29b5@amd.com>
-Date: Fri, 21 Mar 2025 11:20:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH] KVM: SVM: Fix SNP AP destroy race with VMRUN
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0081.namprd13.prod.outlook.com
- (2603:10b6:806:23::26) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8F91DEFC5;
+	Fri, 21 Mar 2025 16:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742574026; cv=none; b=nEspUjzhewhcSd+R6OrCPf/eEJSaVH5OcMzTI2NaZVjwz6zZL8LrCpa85uFjXv4wzCxN6JE8wkkpHMojcUGXqM5AX74QJFb2tD1ZxdH4ZjJoTFdiEGIs2NEQaKd1B4vUgr/NEAk+DSfnYczdfwkCJ1CIa9P96VAv4nIe2PrUC7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742574026; c=relaxed/simple;
+	bh=pw+m5se+pQEuMCaFj9AWsSaNGo1mpEzijJ6omJch4sk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pZw8xYc77qLugaTKKbjo0LkF5GzmMjfpHIYLvl+GdbTG+fHw6VcaKgRoOSpkHYG4Q448rBo/9ncAxGR9F5tuBNg+7goZ+BcqYo0pzDpvfdeekMK68sF/R/6R5vfw8q7nWe56eZw/tNnILN5cxKT//4bSuvLZ0hlK95vlLuEUd60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=OJLKm1cE; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZK72p0r5hzltM4s;
+	Fri, 21 Mar 2025 16:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742574016; x=1745166017; bh=9dyI6yv0FfobA2AHnFPAlTAe
+	x+wUcJGo91eWOYIZ7lo=; b=OJLKm1cENVXpFRHwXA6qt/2+2Kb/cQQIz7Lc4ZQD
+	5cvdfGq4C2wei0I7AY3lc2HgvODlhZ6bsMGL1mUpQGseJI46FLpx6nLaHUPH9ojw
+	hJa8OnC+MVaHQyTn1cgmzHHs6QcarLwyPT7dXYC+digMu0+cEvcD8b0Ub3I7Oo13
+	buLUy+NPtASuGkwZlwwKzleSh3I/Y775FuZRGaAM8qBhudSN1chrnmkBH9namIKS
+	4wTYvsX9c0WUpjufKPwLIyHuXnLciCIy24oWGgDjGpob+1yGohVJ6RnfXXP7pQoY
+	upB/iDOvS4R6PfBk+yHR0HBrGEF2Lx4Eeiq039J/lBoe5A==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id GnBwmSn9tA2a; Fri, 21 Mar 2025 16:20:16 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZK72c26gLzlschZ;
+	Fri, 21 Mar 2025 16:20:06 +0000 (UTC)
+Message-ID: <31b46812-72d5-4f9d-b55d-16a6e10afe7d@acm.org>
+Date: Fri, 21 Mar 2025 09:20:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MW4PR12MB6900:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21963849-4f39-4fdc-642e-08dd68943e63
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZDlLcDFhTE1BdkZHMVNTNVkxMkhIeVhBN2hteC9rcUJjSXU0aGZ0d3lycHFK?=
- =?utf-8?B?ZkVGM2RzeFZXbjJ1RnhGL3pyaEtORUkzQktHNDlTRC9FUkVLZWJ1bHFzalJZ?=
- =?utf-8?B?K0tQWDd4TEc0UnFSMHoyY0VIVUp4ZjdqM3BUZ0p2TUIya21Mb3p2RU92VUF2?=
- =?utf-8?B?SlF6UE9NRC9qYlBlTFlZSjIralptdDhPSkMxZVFGaGJ1WW01cmEraUo1OTNB?=
- =?utf-8?B?TDhVSG5tZytPdEppSnJkM0RqdnV3Ylo5RHkvYTl6RjBnTTErMmRRUEd2aWZV?=
- =?utf-8?B?ZW52VXhKb1RqVjRiUXd1OXZkZlZ0MWZ3ck5pY2V6bTZ6T0U2SGdML2F4Qzd5?=
- =?utf-8?B?MXljT281NTc0TG5GWUhlZC9pNnpEcjVFL3lPSzlheXJBN21qL3gvZ2lTS3Vs?=
- =?utf-8?B?UjdGZVAvc0R1azducVkxUThnVFNEaWFHQklXWEQ2T1htNkt5M1RIWERGS2xW?=
- =?utf-8?B?cVBHN1MwTmZrRllLbGJPdVhUTFJUbkFZN1F2OHZUeWRHZTBQaFFDL1FxNVY1?=
- =?utf-8?B?QWNqaE5kb1VMdHJrb1p5N0xZdUZkUHY4djdsQndNK1crV2hIa255OHpKRE1T?=
- =?utf-8?B?VWRwRHU5bjlDWGw3anFrdW9GNWxhYTNNeXNvYjRIK0lrRVJhVEdBdE1rd1Jh?=
- =?utf-8?B?dVZtOVFlVllZZzYySmhZZDZqTU9MK2V2N2ZkU0Y3eGozazhCZ0wrZ25LM1Y5?=
- =?utf-8?B?alRjWTdCcGFYMW00NXhHL3RaU3prbXpEVVpoSXVtSVBLUWJkSmFQWndFejBP?=
- =?utf-8?B?ZXBMNXBYQnZUOExkYkRvT3RHQzZZN1JMUE9JZlRnTTdnUDhDWDBuTm1ZZlVS?=
- =?utf-8?B?cEVmM21EOTF2VkV0K0RmWXdYemRueVQvUEp2ZTJYNW5nT2xyUEVrVnJKMldX?=
- =?utf-8?B?SHEza21BcmVXcmQzWmZEbjdoblMxYXZxNGsyb2VESnV1c0NoVHFNUW00VmdL?=
- =?utf-8?B?eHhDazJpQ2pNaCtZcmc3ejFJWFVwZnRZS3ZhMnNrWE5TWVRFNjc3a1Y0L3FL?=
- =?utf-8?B?QWxUWFFYSGkvQjRmUzZqWWV5UXVkRTZhdjJKVUhkVWY0MmxaRDNTdUc3emxo?=
- =?utf-8?B?RXNoa2NER3RJaUR6Z1RnUkNtSVJPZ0N2c3BqV201d1VzL1BZTTlURGhLbnh2?=
- =?utf-8?B?NXk0YkVqcUNRdEJBcWRuK2dFWG5TYisvRzZnSk5mYVhtZUQ1QkF2N0NmNVBY?=
- =?utf-8?B?OWYzNHZPZExSM0liZVpvMk5JRWVXT2NaQVpUKy9qTUcxMWpsQmtsSzVWSkFP?=
- =?utf-8?B?YkhIaUwvb0xYV2FLWVFodi8rM0VtRHRTZC9DM2xGSG9kK21jb0hJdExhalp0?=
- =?utf-8?B?NVF3MDFQNXBmN2dFcXc4QXJvSGduTjlRaUovNyt4ZmVmRDliY1pzbHFSSEVs?=
- =?utf-8?B?VWxaay92K1NubGZKQXhweldIekhXRVp0Qnd2ejZuSG9QNWRnMkFwSE5rdnRS?=
- =?utf-8?B?QXpVcWhTTWdEcnN2SkliODZ2d3I4Mmd3ZFQ1alFhaU1YT3Ywbm1haWs0aWxI?=
- =?utf-8?B?OUVnbjRrdFExR0h1RFhrUUc2anBsbEZLMUhLUjdOVmRQaTBDdFFRcFAzcWQ2?=
- =?utf-8?B?Z3cwZ0hjVVBPa1FwZ3JuQTlWT1A5c1UzM1BtNmZYN20vcnNoWC9laWFlZzFv?=
- =?utf-8?B?eXZBaW9GMkQvVmNwSFlZVzcrekJPOGdOZmhLdExQVmpGOU9lT0lEbkF4Mjh1?=
- =?utf-8?B?Q0ZFVk56YVR3SVU3U1FnUVZlSU15VW5ZRjlGVTdaMno0dWpuNHpvYUgyZXYv?=
- =?utf-8?B?VlVuak95b1NUN01MUll2TEgveGNGZEFXQU5vclAxOVNxY1FWVUd0TkxVd2Qz?=
- =?utf-8?B?TVAyNE5LNDgzaTZremNnV2Vidi9iS0dVbUhIWitLV2hQMDhRdFRJQ3lhaVFk?=
- =?utf-8?Q?9JnBVdGt/xtXU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bEdob05MRjNSOTdYMnNoK0VSYXpjd1dCaFhyUUYrbXgrb2p5NVV2QlMwNTND?=
- =?utf-8?B?a0RWOFVSMmQ2WHJ0MitjQm5CeWhJUVoyK1d2RUtuWGNGckJXT0g0amRya2xU?=
- =?utf-8?B?K3lWdVUxK0JsaXZCUHlPeFpvQzk1QTNwSTlJakpyeHc3a2E2TWhJdzBodktF?=
- =?utf-8?B?Q0xvME9NNE9kU2tCTzZrcUsyWlA3eENDWEg3cDBubllBZ2JHWEN1MkFJOUNj?=
- =?utf-8?B?RjdYRmZJeFBXUnlaYnlMcjdodyt4U2FJbTZWVU4wdVJwOWVORmovKzRGajBr?=
- =?utf-8?B?cFNOTS91cU1BaEJoUmxxdUxzdG9Fejc2ME44aXM3S0U1ZkZ2NFJRTTJNRkF2?=
- =?utf-8?B?QXI0V2VZYnplSll2SXBIbnJsUjJoMWZsRVljUlpJQTJSbmZJdTR3OWh0dkxP?=
- =?utf-8?B?amtrWk9nREpuS0RWVVpsU2hzM1B6bmJBbjlrVWd1a1FucFdaN1p2QUdHa0ZC?=
- =?utf-8?B?S2JoZVQ1anBYcW85UHo4TjhXczFibTJYM2VKK3NJc3B4bE03MDIvQjZhR3Zi?=
- =?utf-8?B?K2RhRGxiRVQ2TmhUaEZvOUk1WnhYNDRCMFVwQnAzNGR1T1VFZnY4U252dVR6?=
- =?utf-8?B?WDlqeExCWXhTTmdzb1RDTGVNTnN6TndNR2U2bFN4Z3dadnJ6dHlVWUhMYVVJ?=
- =?utf-8?B?U3dFdVZCK2ZpZGUxbDIycEQ1K0VpeUxQOFR4bFY4eDBMV0Z5ZkVNSExvM2gx?=
- =?utf-8?B?c092MGlHb0tiQ1dxeUJNRGVIa3QzdDgwOXNMdkRUMGd6TUFCSHdkZVFod3d6?=
- =?utf-8?B?NGZsaHVFejdpUEc1TXRqcTltZkJJOFhqdjVyWGg0STUrYzdYRXZBV002cGNo?=
- =?utf-8?B?aVNqOGwyNmJnM2U2ZmdHZHVxc1ZkcTdNN0JRdy90VkJVWjV0TEFYTUNXT2J3?=
- =?utf-8?B?bXhXUGtkTXB6d0phOUpGaVpqK2xDS2RrN0RmTkduVWg2VUNlWWR2MmJRM2g3?=
- =?utf-8?B?SXRveENYd0tLU1RjNjZEV2lGQ0FkUkxwZzhQbGZ5VER4dGw0MnZjWlNZSUxL?=
- =?utf-8?B?b1BVNGtyc3lrcnZLRytMOXVmQW9YR21VSm1KUk92Wmx5djRjbzZjcHNNdExK?=
- =?utf-8?B?Tmt6d2dGR0tNWW1HU2pjUklpU1RMNkJoNFh4QitYQTFadFpvNi9BOERTaE5p?=
- =?utf-8?B?N3VyTHNXT1BXcWxiY3VoUkU4ZUxnNVFGL2dVUi9YdStKR1VLaEtzR2d6L212?=
- =?utf-8?B?Rnh1VGNCREVMcUl3aG02eEp0eWhVaTZLclhxWG9vbm9wTXg4N1pmdzcrSXIv?=
- =?utf-8?B?ZzZMUHFmYnB3dUpLZSt1V2hlS2dXeVVJU2IxQ2VPeVk0ZmRNaDZSZms1TEtE?=
- =?utf-8?B?UEtkRVIzWWVrck5xVThEMFFFQzZ0SmVxSU9JVjVCaGV3ZnRjbGx0bnMvT0JE?=
- =?utf-8?B?RGtjWitLWFJjNmMrdFhXZW1ZRWhSdnRhV25NdENvUXNLa21nem5OU2syNEFG?=
- =?utf-8?B?VkFJaDMzc1hWR0lKTndDZmNURExwSm5meXZWemNvVjBScTVxcEFicVhIR3hn?=
- =?utf-8?B?TGFvd2NhRXptdHd1YWZ3MGxqalRJQzI3RTdTRUpBVFpCZGVibGM1R044d1VF?=
- =?utf-8?B?RGVraWNvMzJqTENQOG12Y0NLdmkvNk8wTEJnbXdDNkszeVowZHJORzRZaTBR?=
- =?utf-8?B?OTNKa1JuM1RtQkxyUE5Gd0JDZ2pvUjhtTkZLMnVFMEhxUGRwNGRxQ3VsTEZk?=
- =?utf-8?B?U0dIejFVeXpDVm9vVXJrYUdLdy9qMXN1dlIra0ZwaXZ4Q2FiNTU4ZE5SaDhs?=
- =?utf-8?B?N3V1bmJEdWRTeFJyaXI2ZFdLZ2VScm1obkdKK2J4aW42WFRPRDBsNS9LTFNp?=
- =?utf-8?B?c3QzNVRua2hMdGR3MHF3UEg5N1R2Z25sVzBmUURHeDNaZ01EdjNkYzZvaHlx?=
- =?utf-8?B?VVNTc2dFd2hwVTFrSHVCT0Fjb0R6MjlWVGlzcEtwblkwU3dJdTJMOHN2V3RV?=
- =?utf-8?B?UHZ2MUlSL0RBRUN5dlk3eWxNTHJDUllZMHVNdXdhbFNiVWZwVGZSdGdLRVU0?=
- =?utf-8?B?K0tnYXN4M0tqaUp3MFlMRnRaSFJOZEs5ZVJuczR4QVlEQTNZdllTZlVPRlBP?=
- =?utf-8?B?bFN6WHR0WGFMTWd0b2NUZFRVZkdMYjNPM2pNVkpuRTJlYis3TnJmMEkzUXBW?=
- =?utf-8?Q?psob/ThwzRu0odUNM+SAAVl6w?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21963849-4f39-4fdc-642e-08dd68943e63
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 16:20:07.0438
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BZPspdr7zG0P2BED4cVc9HRGnMDk5iakt25oHGjyO1FbTIRRe4456vW/GsUkj8kUiV6RkB8S0+PC7/PpEdYTjA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6900
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] ufs: delegate the interrupt service routine to a
+ threaded irq handler
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250321-topic-ufs-use-threaded-irq-v1-1-7a55816a4b1d@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250321-topic-ufs-use-threaded-irq-v1-1-7a55816a4b1d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 3/18/25 08:47, Tom Lendacky wrote:
-> On 3/18/25 07:43, Tom Lendacky wrote:
->> On 3/17/25 12:36, Tom Lendacky wrote:
->>> On 3/17/25 12:28, Sean Christopherson wrote:
->>>> On Mon, Mar 17, 2025, Tom Lendacky wrote:
->>>>> On 3/17/25 12:20, Tom Lendacky wrote:
->>>>>> An AP destroy request for a target vCPU is typically followed by an
->>>>>> RMPADJUST to remove the VMSA attribute from the page currently being
->>>>>> used as the VMSA for the target vCPU. This can result in a vCPU that
->>>>>> is about to VMRUN to exit with #VMEXIT_INVALID.
->>>>>>
->>>>>> This usually does not happen as APs are typically sitting in HLT when
->>>>>> being destroyed and therefore the vCPU thread is not running at the time.
->>>>>> However, if HLT is allowed inside the VM, then the vCPU could be about to
->>>>>> VMRUN when the VMSA attribute is removed from the VMSA page, resulting in
->>>>>> a #VMEXIT_INVALID when the vCPU actually issues the VMRUN and causing the
->>>>>> guest to crash. An RMPADJUST against an in-use (already running) VMSA
->>>>>> results in a #NPF for the vCPU issuing the RMPADJUST, so the VMSA
->>>>>> attribute cannot be changed until the VMRUN for target vCPU exits. The
->>>>>> Qemu command line option '-overcommit cpu-pm=on' is an example of allowing
->>>>>> HLT inside the guest.
->>>>>>
->>>>>> Use kvm_test_request() to ensure that the target vCPU sees the AP destroy
->>>>>> request before returning to the initiating vCPU.
->>>>>>
->>>>>> Fixes: e366f92ea99e ("KVM: SEV: Support SEV-SNP AP Creation NAE event")
->>>>>> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-
->>>>
->>>> Very off-the-cuff, but I assume KVM_REQ_UPDATE_PROTECTED_GUEST_STATE just needs
->>>> to be annotated with KVM_REQUEST_WAIT.
->>>
->>> Ok, nice. I wasn't sure if KVM_REQUEST_WAIT would be appropriate here.
->>> This is much simpler. Let me test it out and resend if everything goes ok.
->>
->> So that doesn't work. I can still get an occasional #VMEXIT_INVALID. Let
->> me try to track down what is happening with this approach...
+On 3/21/25 9:08 AM, Neil Armstrong wrote:
+> On systems with a large number request slots and unavailable MCQ,
+> the current design of the interrupt handler can delay handling of
+> other subsystems interrupts causing display artifacts, GPU stalls
+> or system firmware requests timeouts.
 > 
-> Looks like I need to use kvm_make_vcpus_request_mask() instead of just a
-> plain kvm_make_request() followed by a kvm_vcpu_kick().
+> Since the interrupt routine can take quite some time, it's
+> preferable to move it to a threaded handler and leave the
+> hard interrupt handler save the status and disable the irq
+> until processing is finished in the thread.
 > 
-> Let me try that and see how this works.
+> This fixes all encountered issued when running FIO tests
+> on the Qualcomm SM8650 platform.
+> 
+> Example of errors reported on a loaded system:
+>   [drm:dpu_encoder_frame_done_timeout:2706] [dpu error]enc32 frame done timeout
+>   msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1: hangcheck detected gpu lockup rb 2!
+>   msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1:     completed fence: 74285
+>   msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1:     submitted fence: 74286
+>   Error sending AMC RPMH requests (-110)
+> 
+> Reported bandwidth is not affected on various tests.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>   drivers/ufs/core/ufshcd.c | 43 ++++++++++++++++++++++++++++++++++++-------
+>   include/ufs/ufshcd.h      |  2 ++
+>   2 files changed, 38 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 0534390c2a35d0671156d79a4b1981a257d2fbfa..0fa3cb48ce0e39439afb0f6d334b835d9e496387 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -6974,7 +6974,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
+>   }
+>   
+>   /**
+> - * ufshcd_intr - Main interrupt service routine
+> + * ufshcd_intr - Threaded interrupt service routine
+>    * @irq: irq number
+>    * @__hba: pointer to adapter instance
+>    *
+> @@ -6982,7 +6982,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
+>    *  IRQ_HANDLED - If interrupt is valid
+>    *  IRQ_NONE    - If invalid interrupt
+>    */
+> -static irqreturn_t ufshcd_intr(int irq, void *__hba)
+> +static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
+>   {
+>   	u32 intr_status, enabled_intr_status = 0;
+>   	irqreturn_t retval = IRQ_NONE;
+> @@ -6990,8 +6990,6 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+>   	int retries = hba->nutrs;
+>   
+>   	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+> -	hba->ufs_stats.last_intr_status = intr_status;
+> -	hba->ufs_stats.last_intr_ts = local_clock();
+>   
+>   	/*
+>   	 * There could be max of hba->nutrs reqs in flight and in worst case
+> @@ -7000,8 +6998,7 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+>   	 * again in a loop until we process all of the reqs before returning.
+>   	 */
+>   	while (intr_status && retries--) {
+> -		enabled_intr_status =
+> -			intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
+> +		enabled_intr_status = intr_status & hba->intr_en;
+>   		ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
+>   		if (enabled_intr_status)
+>   			retval |= ufshcd_sl_intr(hba, enabled_intr_status);
+> @@ -7020,9 +7017,40 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+>   		ufshcd_dump_regs(hba, 0, UFSHCI_REG_SPACE_SIZE, "host_regs: ");
+>   	}
+>   
+> +	ufshcd_writel(hba, hba->intr_en, REG_INTERRUPT_ENABLE);
+> +
+>   	return retval;
+>   }
+>   
+> +/**
+> + * ufshcd_intr - Main interrupt service routine
+> + * @irq: irq number
+> + * @__hba: pointer to adapter instance
+> + *
+> + * Return:
+> + *  IRQ_WAKE_THREAD - If interrupt is valid
+> + *  IRQ_NONE	    - If invalid interrupt
+> + */
+> +static irqreturn_t ufshcd_intr(int irq, void *__hba)
+> +{
+> +	u32 intr_status, enabled_intr_status = 0;
+> +	irqreturn_t retval = IRQ_NONE;
+> +	struct ufs_hba *hba = __hba;
+> +	int retries = hba->nutrs;
+> +
+> +	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+> +	hba->ufs_stats.last_intr_status = intr_status;
+> +	hba->ufs_stats.last_intr_ts = local_clock();
+> +
+> +	if (unlikely(!intr_status))
+> +		return IRQ_NONE;
+> +
+> +	hba->intr_en = ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
+> +	ufshcd_writel(hba, 0, REG_INTERRUPT_ENABLE);
+> +
+> +	return IRQ_WAKE_THREAD;
+> +}
+> +
+>   static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
+>   {
+>   	int err = 0;
+> @@ -10581,7 +10609,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>   	ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
+>   
+>   	/* IRQ registration */
+> -	err = devm_request_irq(dev, irq, ufshcd_intr, IRQF_SHARED, UFSHCD, hba);
+> +	err = devm_request_threaded_irq(dev, irq, ufshcd_intr, ufshcd_threaded_intr,
+> +					IRQF_SHARED, UFSHCD, hba);
+>   	if (err) {
+>   		dev_err(hba->dev, "request irq failed\n");
+>   		goto out_disable;
+> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+> index e3909cc691b2a854a270279901edacaa5c5120d6..03a7216b89fd63c297479422d1213e497ce85d8e 100644
+> --- a/include/ufs/ufshcd.h
+> +++ b/include/ufs/ufshcd.h
+> @@ -893,6 +893,7 @@ enum ufshcd_mcq_opr {
+>    * @ufshcd_state: UFSHCD state
+>    * @eh_flags: Error handling flags
+>    * @intr_mask: Interrupt Mask Bits
+> + * @intr_en: Saved Interrupt Enable Bits
+>    * @ee_ctrl_mask: Exception event control mask
+>    * @ee_drv_mask: Exception event mask for driver
+>    * @ee_usr_mask: Exception event mask for user (set via debugfs)
+> @@ -1040,6 +1041,7 @@ struct ufs_hba {
+>   	enum ufshcd_state ufshcd_state;
+>   	u32 eh_flags;
+>   	u32 intr_mask;
+> +	u32 intr_en;
+>   	u16 ee_ctrl_mask;
+>   	u16 ee_drv_mask;
+>   	u16 ee_usr_mask;
 
-This appears to be working ok. The kvm_make_vcpus_request_mask() function
-would need to be EXPORT_SYMBOL_GPL, though, any objections to that?
-
-I could also simplify this a bit by creating a new function that takes a
-target vCPU and then calls kvm_make_vcpus_request_mask() from there.
-Thoughts?
-
-This is what the patch currently looks like:
-
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 32ae3aa50c7e..51aa63591b0a 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -123,7 +123,8 @@
- 	KVM_ARCH_REQ_FLAGS(31, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
- #define KVM_REQ_HV_TLB_FLUSH \
- 	KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
--#define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE	KVM_ARCH_REQ(34)
-+#define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE \
-+	KVM_ARCH_REQ_FLAGS(34, KVM_REQUEST_WAIT)
- 
- #define CR0_RESERVED_BITS                                               \
- 	(~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 6e3f5042d9ce..0c45cc0c0571 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4038,8 +4038,13 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
- 
- out:
- 	if (kick) {
--		kvm_make_request(KVM_REQ_UPDATE_PROTECTED_GUEST_STATE, target_vcpu);
--		kvm_vcpu_kick(target_vcpu);
-+		DECLARE_BITMAP(vcpu_bitmap, KVM_MAX_VCPUS);
-+
-+		bitmap_zero(vcpu_bitmap, KVM_MAX_VCPUS);
-+		bitmap_set(vcpu_bitmap, target_vcpu->vcpu_idx, 1);
-+		kvm_make_vcpus_request_mask(vcpu->kvm,
-+					    KVM_REQ_UPDATE_PROTECTED_GUEST_STATE,
-+					    vcpu_bitmap);
- 	}
- 
- 	mutex_unlock(&target_svm->sev_es.snp_vmsa_mutex);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ba0327e2d0d3..08c135f3d31f 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -268,6 +268,7 @@ bool kvm_make_vcpus_request_mask(struct kvm *kvm, unsigned int req,
- 
- 	return called;
- }
-+EXPORT_SYMBOL_GPL(kvm_make_vcpus_request_mask);
- 
- bool kvm_make_all_cpus_request(struct kvm *kvm, unsigned int req)
- {
-
+I don't like this patch because:
+- It reduces performance (IOPS) for systems on which MCQ is supported
+   and enabled. Please only use threaded interrupts if MCQ is not used.
+- It introduces race conditions on the REG_INTERRUPT_ENABLE register.
+   There are plenty of ufshcd_(enable|disable)_intr() calls in the UFS
+   driver. Please remove all code that modifies REG_INTERRUPT_ENABLE
+   from this patch.
+- Instead of retaining hba->ufs_stats.last_intr_status and
+   hba->ufs_stats.last_intr_ts, please remove both members and also
+   the debug code that reports the values of these member variables.
+   Please also remove hba->intr_en.
 
 Thanks,
-Tom
 
-> 
-> Thanks,
-> Tom
-> 
->>
->> Thanks,
->> Tom
->>
->>>
->>> Thanks,
->>> Tom
->>>
->>>>
->>>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->>>> index 04e6c5604bc3..67abfe97c600 100644
->>>> --- a/arch/x86/include/asm/kvm_host.h
->>>> +++ b/arch/x86/include/asm/kvm_host.h
->>>> @@ -124,7 +124,8 @@
->>>>         KVM_ARCH_REQ_FLAGS(31, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
->>>>  #define KVM_REQ_HV_TLB_FLUSH \
->>>>         KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
->>>> -#define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE   KVM_ARCH_REQ(34)
->>>> +#define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE \
->>>> +       KVM_ARCH_REQ_FLAGS(34, KVM_REQUEST_WAIT)
->>>>  
->>>>  #define CR0_RESERVED_BITS                                               \
->>>>         (~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
->>>>
->>>>
+Bart.
 
