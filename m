@@ -1,159 +1,127 @@
-Return-Path: <linux-kernel+bounces-571774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A376FA6C21E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:08:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 742FDA6C22B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4263B290C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:07:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2F87A9AEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B4B22F17C;
-	Fri, 21 Mar 2025 18:07:58 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D827522F3BD;
+	Fri, 21 Mar 2025 18:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GSRdmfC8"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2ED22DF96;
-	Fri, 21 Mar 2025 18:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D2322D4F1;
+	Fri, 21 Mar 2025 18:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742580478; cv=none; b=CSdaO+O85CQ4z3BBPGU8FHwvvink/1DL6HXG3WOxcH5IKnS8RcyyA/r1JN6gOGlBAdFBF/1Q0xsg1aLr6s15Dgmnktyw13vDCR70x6pjaw/EUADRTbiuEUff7Kc7uIM1KVkLNtkYWqq5LVh9Qldz//ZfBri7ZMId4JUppl9FJjE=
+	t=1742580627; cv=none; b=DzaTv96fp3tFYY15fNZOIzaoz4f0gm7rzBA9wJQStpjmyTcWBvVlC8PTJW3nhMgIAXd1wW6pzsOQPnDEm1a08l12vQLksUXfnfiOCV4u+EDVaQzoK1KtV6Rjt4GJvOMu/QDrMwBg4L9Jt0pMh9Uwkaj5gP/cI111xEHTp2lm4YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742580478; c=relaxed/simple;
-	bh=Fhfz8OLbMJGn2RhXYgEr4QUyo4HEVfdIWVl+nUy8CXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LcU7rH89cZFsAicYJcAwyqujdgxrZyF1WDLNXpwZILuRIHAaim4ODNyolqle2jUDNqf+bvYUl3hQujPeSMrzoQfV/hU6Apn4vNYZmKTjWVcsUtsygYRerbDp7eZBirzOFC4BpxtrFNM7qMOGy5HG8HqSxwkcUtwTrvG5TJChdXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 64B9028041578;
-	Fri, 21 Mar 2025 19:07:47 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 45E432CDCD; Fri, 21 Mar 2025 19:07:47 +0100 (CET)
-Date: Fri, 21 Mar 2025 19:07:47 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] PCI/hotplug: Don't enable HPIE in poll mode
-Message-ID: <Z92q84PdWVtftxI4@wunner.de>
-References: <20250321162114.3939-1-ilpo.jarvinen@linux.intel.com>
- <20250321170919.GA1130592@bhelgaas>
+	s=arc-20240116; t=1742580627; c=relaxed/simple;
+	bh=0GMyBgFgIU8OMphBQEuitGH4xaRXJZUVqbrCrD4NoDk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UuHLQ5JV0n//r4fNDeqXadxG0q2nP8G326t4NtIz8ktJHvtDqCsPIEpvZTp6CIzNwy6a+iTma2phQierp7NjxPKz7n0OFhCPWH3kr4UdKK8h5dhzBY59FM6PzmXME7uxF91ol/HcG24VGFha2w+odX+snG3O9DvIFtG126JU4vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GSRdmfC8; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7EAA420481;
+	Fri, 21 Mar 2025 18:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742580616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qO8SVWZzm28x0uUOfozdcQEEmEUOpSa6EXOznWkuxJE=;
+	b=GSRdmfC8EmLK74LNH9kn9+LksUdvV16M5bNPsCnJE89ewvaAtsaErv5zmSIbVzJKtCM6h/
+	BJHHtOtvOCFzY2uNEcXkBvtoloEyzTJLbtnDH0Y86GBqUVV3oL70P3Rl2wQbca3SBXXtCi
+	Tnm/5MOxeNQ7DxBhL/U/zyBw1EHuLrs+XjSpYsB8J504/JgPmmfbYJj4jUqQYznmA15Whs
+	sQTuGAEQUDkQNk53V+peyH4+6gv+0jTPffcpq5ICf/xltMIzOKj8IxNp60PaXe0Ir/BbR1
+	icEXbGH2kiBLqIrXitS1GylCuTOKOB/Y0mlFJGh4m5USWDYj4Kn6X8lrlOpjlg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Fri, 21 Mar 2025 19:10:00 +0100
+Subject: [PATCH] iio: light: opt3001: fix deadlock due to concurrent flag
+ access
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321170919.GA1130592@bhelgaas>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250321-opt3001-irq-fix-v1-1-6c520d851562@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAHer3WcC/x2MOwqAMBAFryJbu5CPInoVsZDkqdskmogI4t0Nl
+ jMw81BGEmQaqocSLskSQwFdV+S2Oaxg8YXJKNMqazTH/bRKaZZ08CI3Lx3gfAOD3lGp9oSi/+M
+ 4ve8HpxSJM2EAAAA=
+X-Change-ID: 20250321-opt3001-irq-fix-f7eecd4e2e9c
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Felipe Balbi <balbi@ti.com>
+Cc: Andreas Dannenberg <dannenberg@ti.com>, David Frey <dpfrey@gmail.com>, 
+ Emil Gedenryd <emil.gedenryd@axis.com>, 
+ Alexander Koch <mail@alexanderkoch.net>, Jiri Valek - 2N <valek@2n.cz>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedujeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfffgeekhfdtveffheeuudeltefhfeduteekleffvefgfffgkeevfeejtdekkeenucfkphepvddttddumegstdejmeeigeeileemtgeiugeimeegtgduleemfeefkegvmeejvgejvgemtgdtjedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumegstdejmeeigeeileemtgeiugeimeegtgduleemfeefkegvmeejvgejvgemtgdtjedupdhhvghloheplgduledvrdduieekrddurdeigegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegvmhhilhdrghgvuggvnhhrhigusegrgihishdrtghomhdprhgtphhtthhopehlihhnuhigqdhiihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgp
+ dhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrihhlsegrlhgvgigrnhguvghrkhhotghhrdhnvghtpdhrtghpthhtohepuggrnhhnvghnsggvrhhgsehtihdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Fri, Mar 21, 2025 at 12:09:19PM -0500, Bjorn Helgaas wrote:
->   - It does make me wonder why we have both pcie_enable_interrupt()
->     and pcie_enable_notification().  Apparently we don't need to
->     restore the other PCI_EXP_SLTCTL bits when resuming?  Maybe we
->     depend on some other restoration, e.g., pci_restore_pcie_state(),
->     that happens first?
+The threaded IRQ function in this driver is reading the flag twice: once to
+lock a mutex and once to unlock it. Even though the code setting the flag
+is designed to prevent it, there are subtle cases where the flag could be
+true at the mutex_lock stage and false at the mutex_unlock stage. This
+results in the mutex not being unlocked, resulting in a deadlock.
 
-Yes and yes.
+Fix it by making the opt3001_irq() code generally more robust, reading the
+flag into a variable and using the variable value at both stages.
 
-> 
->     That makes me worry that there's a window between
->     pci_restore_pcie_state() and pcie_enable_interrupt().  I suppose
->     we probably saved the pcie state after pcie_disable_interrupt(),
->     so HPIE would be disabled in the saved state.
+Fixes: 94a9b7b1809f ("iio: light: add support for TI's opt3001 light sensor")
+Cc: stable@vger.kernel.org
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/iio/light/opt3001.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Yes.
+diff --git a/drivers/iio/light/opt3001.c b/drivers/iio/light/opt3001.c
+index 65b295877b41588d40234ca7681bfee291e937c2..393a3d2fbe1d7320a243d3b6720e98b90f17baca 100644
+--- a/drivers/iio/light/opt3001.c
++++ b/drivers/iio/light/opt3001.c
+@@ -788,8 +788,9 @@ static irqreturn_t opt3001_irq(int irq, void *_iio)
+ 	int ret;
+ 	bool wake_result_ready_queue = false;
+ 	enum iio_chan_type chan_type = opt->chip_info->chan_type;
++	bool ok_to_ignore_lock = opt->ok_to_ignore_lock;
+ 
+-	if (!opt->ok_to_ignore_lock)
++	if (!ok_to_ignore_lock)
+ 		mutex_lock(&opt->lock);
+ 
+ 	ret = i2c_smbus_read_word_swapped(opt->client, OPT3001_CONFIGURATION);
+@@ -826,7 +827,7 @@ static irqreturn_t opt3001_irq(int irq, void *_iio)
+ 	}
+ 
+ out:
+-	if (!opt->ok_to_ignore_lock)
++	if (!ok_to_ignore_lock)
+ 		mutex_unlock(&opt->lock);
+ 
+ 	if (wake_result_ready_queue)
 
-> 
->   - I also wonder about the fact that pci_restore_pcie_state() doesn't
->     account for Command Completed events, so we might write to Slot
->     Control too fast.
+---
+base-commit: 250a4b882cf37d9719874253f055aad211f2c317
+change-id: 20250321-opt3001-irq-fix-f7eecd4e2e9c
 
-We don't. :)  See commit 469e764c4a3c ("PCI: pciehp: Obey compulsory
-command delay after resume").
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-So this is all a bit subtle and perhaps restoring the Slot Control
-registers should not be done in pci_restore_pcie_state() but rather
-in pciehp and pnv (which are the only hotplug drivers touching
-PCI_EXP_SLTCTL).
-
-In particular, if hotplug control was not granted by the platform,
-I don't think the kernel is supposed to touch the Slot Control
-registers at all.  So it probably shouldn't restore them either.
-
-We've been doing this since 2006 with commit b56a5a23bfec ("PCI:
-Restore PCI Express capability registers after PM event").
-Negotiation of _OSC wasn't added until 2010 with 75fb60f26bef
-("ACPI/PCI: Negotiate _OSC control bits before requesting them").
-But the OSC_PCI_EXPRESS_NATIVE_HP_CONTROL predates the introduction
-of git.  I guess noone ever realized that restoring Slot Control
-shouldn't be done if hotplug control wasn't granted.  I can't
-remember anyone ever reporting issues because of that though.
-
-On the other hand, changing something like this always risks
-regressions.
-
->   - It's annoying that pcie_enable_interrupt() and
->     pcie_disable_interrupt() are global symbols, a consequence of
->     pciehp being split across five files instead of being one, which
->     is also a nuisance for code browsing.
-
-Roughly,
-pciehp_core.c contains the interface to the PCI hotplug core
-  (registering the hotplug_slot_ops etc),
-pciehp_hpc.c contains the interaction with hardware registers,
-pciehp_core.c contains the state machine,
-pciehp_pci.c contains the interaction with the PCI core
-  (enumeration / de-enumeration of devices on slot bringup / bringdown).
-
-The only reason I've refrained from making major adjustments to this
-structure in the past was that it would make "git blame" a little more
-difficult and applying fixes to stable kernels would also become somewhat
-more painful as it would require backporting.
-
->     Also annoying that they are generically named, with no pciehp
->     connection (probably another consequence of being split into
->     several files).
-
-They can be renamed.  There's no good reason for using the "pcie_"
-prefix, it just appears to be a historic artifact.
-
->   - The eb34da60edee commit log hints at the reason for testing
->     pme_is_native().  Would be nice if there were also a comment in
->     the code about this because it's not 100% obvious why we test PME
->     support in the PCIe native hotplug driver.
-> 
->   - Also slightly weird that eb34da60edee added the pme_is_native()
->     tests in pciehp_suspend() and pciehp_resume(), but somewhere along
->     the line the suspend-side one got moved to
->     pciehp_disable_interrupt(), so they're no longer parallel for no
->     obvious reason.
-> 
->   - I forgot why we have both pcie_write_cmd() and
->     pcie_write_cmd_nowait() and how to decide which to use.
-
-pcie_write_cmd_nowait() is the "fire and forget" variant,
-whereas pcie_write_cmd() can be thought of as the "_sync" variant,
-i.e. the control flow doesn't continue until the command has been
-processed by the slot.
-
-E.g. pciehp_power_on_slot() waits for the slot command to complete
-before making sure the Link Disable bit is clear.  It wouldn't make
-much sense to do the latter when the former hasn't been completed yet.
-
-Thanks,
-
-Lukas
 
