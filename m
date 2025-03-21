@@ -1,102 +1,121 @@
-Return-Path: <linux-kernel+bounces-570714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4F9A6B3D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:52:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1317A6B3D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67AEE17055F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25EF3AF4AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDD01E3793;
-	Fri, 21 Mar 2025 04:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49101E5B70;
+	Fri, 21 Mar 2025 04:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M2v7/0GJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="jkMc9QBy"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC83184F;
-	Fri, 21 Mar 2025 04:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2371D516F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742532727; cv=none; b=Tid/efhBs1gUiTk1hYHFsbVUIaUDko1/PNFQSZ2KACE8rRbeLXiGsE3q5X24XjTZyCbAJap2JYTgVdLM0HBf4dT7s5mxIMtsM9b2GGj3tPBF+M79bM3DvdM+ZbGd1sY36KatQZd8T+dkVi5UBnh6VSTvU0QQQuvXfsEZL+buUcA=
+	t=1742532808; cv=none; b=Da/Q9c1FXnVdndb6/T8GO+RBwwAcCaFiB+KYx+D4Rcv5xH2muJy3Ho/yTAHWtG9THRypqVz1FpiqkQLlDgQYm9F7Y5/06vSXCYnekS2H8N36t7nh26FCgk5CcVukNfAIhPwSpTnNKDa4uU2bKBP0nEdt7ag6yjagRW0FkpVj2dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742532727; c=relaxed/simple;
-	bh=VpE+gT0a4UR1Jy94CKOKTOXH1wCUdAcsLY8o3iPt6cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qQvPFn7bCfu9EmkUHfjo8seQ0z8xd7THYcDCsT/5rmnTVZWkAY1XQNftKvhsg0vlgDpPSBhY6FQqy29+d/HH4lVFHAk0cwjDtsminakidWGB6XHvK8SEVLLjUfBVKArYW6g1GNG5JWR1yIQ2scnraw2rRTwxZVmflEe++b3immU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M2v7/0GJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742532722;
-	bh=6IX4fIC0pg4XhhuZD45G3Tg7HdfjyWWAGnmlZsJZeo0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=M2v7/0GJYcGpIKd0IURG2k5kKYGVad9ZcBK8yh3sG68Wo4PfDASBS3yQvKlkJmHWQ
-	 neOX0Fsf4Lh+Dd4Brv0NzyzyMrrR0YrEAVEGrkHzhUZ5ode3EAI0LKKLMbPhgCrsFA
-	 uTKF+UN9CB3tnn0SpzhZLhaFqE1iIXq99QnBiqw89u1UtV8PWdpSy5D8u570/CvCql
-	 jkCfgTKMixT3hFe9ZZ510xB+/XiCW2kv9EUbArwqrRm0i1EFigFWFeZHmiQOHdu2WE
-	 9xIfWVD1KaBstg3A4sX2rfQuFKrpF4eW9cAMjpo4+tHpRxe7eHkc4NkFtDBwtdphs9
-	 TQM2WG09S/baA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJqmf26Lxz4wy9;
-	Fri, 21 Mar 2025 15:52:02 +1100 (AEDT)
-Date: Fri, 21 Mar 2025 15:52:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the leds-lj tree
-Message-ID: <20250321155201.633e8aed@canb.auug.org.au>
+	s=arc-20240116; t=1742532808; c=relaxed/simple;
+	bh=8wjCsg0Dy294/vzOad6sb69pancKfSE93bXBiKtMzyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WByrdf1I2tVrrweNQvp3VpwatX3agRtQ4TFNAMadvv03EFmcZCj3q2qaYPUVvgKAJpX3e+iRde0bLD95wmShN6K7mWArT0lahqbj2V8eR7ix4q4glKEDIszcZjKrXhjQrkAcATs2EJp/yFkJDl5FxXBqm151UwegXvc3rc6qw8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=jkMc9QBy; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6eaf1b6ce9aso17212566d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 21:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1742532805; x=1743137605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nbzLWCTpNb9s8l8woW8btRsfZA3DuSpJz7B/kKMTLr4=;
+        b=jkMc9QByfL6lp4W3YYEK2k3zGZNFg2hc6BhghRqIgIXJSqLR3TxpTokS4FFUqfRD9/
+         QDUYkd0LDNJ+r5heTGk0XtNcli20mH9jRNfFRPWWDc+DIz6WMZIcXcsDJr+EYN0ykfCt
+         VjqoZM4IAHBGSk4Ng6Wk1/O9Wrj+/Gj9khRJszxKGxqt3FI3bCHqG4ZYoJlM2kO/bBgR
+         w908d3voUPKImFboN21p7hme75kBiVAgF1qZ6C/kFgSeq8N+Ot16rwpaeb1MrngK5/h9
+         W2DrXaBUhwi9Vr3b7slPdSLYh/FtrTRoYN2IQR+Dn9x4sN01T/vqpEG32npYy/A74ab8
+         IeiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742532805; x=1743137605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nbzLWCTpNb9s8l8woW8btRsfZA3DuSpJz7B/kKMTLr4=;
+        b=FmG+fZP28Tg4v9SYh7cXHyFaTnUfftrb8ITcKIH8UANWBGE5sog4XHQ6oinn93ZvQp
+         qoS+OD1989E1a79Vak4ebuqe/Z7y5DIsZRJxTK1Zmim/YVZibj59Q97vXYq8bJRAkE7o
+         k93VuDOowhwqh3s2yQitZ+6Dq77ek6lLhPwRHafOKOxx9e0INlDt8+vs5RFZO+1Z5jko
+         VEDRu19JqlcLdI8iwvzMzuRhv3BktLu8vBdsO70waPsXnwWU0hFRlpQw8t2B9qOoc4sj
+         R+/E2EjyI50aI+fVnWZh9Io1NcuWsGEXMqd5sktu5FOFsMPj1AGMK0pKVwZfyJcSHkB9
+         giGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMqS0QuFY3sAUDTAXLUtDxEAPVbdYvKqIH/j0H2AJwUHbom6df4KKyAHfbPDuJrPO3SqGOKTQ8S1V3jZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6a4MHT5Mq6BiZzY3+UCtmeXQFhO2PDW/PeB09awMP6jqMFJNw
+	QW6jdEh7Yo4HN6SrNw4rPHBtr/JMkzfoIOiMZEmyYQls6n3Bl1k4T5FtdP6CVmc=
+X-Gm-Gg: ASbGncsKSuPXyaDHFfI9f97Qk6wLL05oN+bE02FSH6RkC5y9z0KBvNCnqWhGg+KKa1K
+	LJ/vUBN3eJbVlVbhbgWebe8DUskLwYawwg3rRgO4EYsPzCYt4jncMYA1AgfnqAoYJYNAARLvg5h
+	V0Q5io/v8eORRYS2GGk/pICu0YzK2aSkzsd5M6e4xlkUmMDtTCw1UUOD3RmwikUrzL2BM1jQqMj
+	HBswJfSDsufUvwJ4KWk00pzzsS5xiCqNnpDymYpJFCnvkijvMqpqmc2sJ12CdOM7L9ia05kvjdn
+	n6S0dEkYzszc8qNKI1IDsL6rTH2EH1Gu50SMGVgv6gEsSbAM0dgxfBpYmZVFNsG5M63IqH7X28m
+	k+aRBHMBAt/KzE1smXCDhTif3Elw=
+X-Google-Smtp-Source: AGHT+IGVL/LUMypx3aMhAzZdqNqW3DtQ7i5EEKUs3LjZvTQziSUDTdQgaVCU0DtLDh9wUbOPLCMkLA==
+X-Received: by 2002:a05:6214:20c8:b0:6e1:6c94:b5c5 with SMTP id 6a1803df08f44-6eb3f26e984mr33048466d6.4.1742532805513;
+        Thu, 20 Mar 2025 21:53:25 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f5d8sm6903586d6.45.2025.03.20.21.53.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 21:53:25 -0700 (PDT)
+Date: Fri, 21 Mar 2025 00:53:23 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com, david@redhat.com,
+	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
+	honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted
+ interleave sysfs
+Message-ID: <Z9zww6ClrqH7lFom@gourry-fedora-PF4VCD3F>
+References: <Z9xJdP29XEz6CljB@gourry-fedora-PF4VCD3F>
+ <20250321043701.928-1-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0C+rp0DRIX/O0lW/75YQvMP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321043701.928-1-rakie.kim@sk.com>
 
---Sig_/0C+rp0DRIX/O0lW/75YQvMP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 21, 2025 at 01:36:55PM +0900, Rakie Kim wrote:
+> 
+> Patch 1 and Patch 2 are closely related, and I believe that both patches
+> need to be combined to fully support the functionality.
+> 
+> Initially, I thought that Patch 1 was the fix for the original issue and
+> considered it the candidate for a backport.
+> However, upon further reflection, I believe that all changes in Patch 1
+> through Patch 3 are necessary to fully address the underlying problem.
+> 
+> Therefore, I now think it makes more sense to merge Patch 1 and Patch 2
+> into a single patch, then renumber the current Patch 3 as Patch 2,
+> and treat the entire set as a proper -stable backport candidate.
+> 
+> I'd appreciate your thoughts on this suggestion.
+> 
+> Rakie
+> 
 
-Hi all,
+All of this is fine, but it doesn't fix the bug in LTS kernels :]
 
-After merging the leds-lj tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/leds/Kconfig:1027: can't open file "drivers/leds/simple/Kconfig"
-
-Caused by commit
-
-  f33c17919d44 ("leds: Rename simple directory to simatic")
-
-I have used the leds-lj tree from next-20250320 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0C+rp0DRIX/O0lW/75YQvMP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfc8HEACgkQAVBC80lX
-0GzNawf+N4oiu6e+myeu6SCKqwKGrQKYU6kvG+bZ9DUtDehALRQZDEVkR2rAEYWT
-1BisICNU6jrlUWNQ7AmeXEWPLpiKYY2/yqWNcdu/jFGvZNlKiuvYI1F8Lzyn7Bp8
-6ktSwRKNiQuV6JEC1MbTFmiLE63fu4k/qi+uoadWdAtvRVbNAwhGPHdD+vghgMnG
-aHueQJepNc2SdM5y++mxfAzgpHsXuIOUCGOIsaQ6OPkyZf3scwTAsXdPCa0alizE
-eDkdwDaOGGxkClfum4nmjL+NWRZPt3ixCaStc6bbBe5PaQ3Z6r0FmKk51k1+1tSw
-Go9JtjWAYOmmzM6jNnBqGo8MuPe5IA==
-=/FzK
------END PGP SIGNATURE-----
-
---Sig_/0C+rp0DRIX/O0lW/75YQvMP--
+It would be nice to do that too, since you identified it.
+~Gregory
 
