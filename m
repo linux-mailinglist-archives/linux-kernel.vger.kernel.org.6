@@ -1,143 +1,188 @@
-Return-Path: <linux-kernel+bounces-571205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926B7A6BA59
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:12:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274A9A6BA82
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062194A06D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE33B880A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CAF226CF5;
-	Fri, 21 Mar 2025 12:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D027B22D7A4;
+	Fri, 21 Mar 2025 12:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PazOPxuL"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxqkxxiJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216B822C35C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EA122D797;
+	Fri, 21 Mar 2025 12:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742559045; cv=none; b=IdRwKglLJDRBxkYoUaMsVeQmn/+9Qo5Y1cVHPUugSS/o03SDTHsT0YT0z10Kq+g4r6F9Fp0LCsjL/CGiNetT31eTjRRouuKW6nEQmbXHR2Lo3hLGuLrDnNgPWa5cGTvmYts7/T4hJzKtvg4KQ8X5d1P/thMCymYDq6iJqINUoGc=
+	t=1742559299; cv=none; b=FJmHGxEkM4mD/Mi006MjMiOkytPupXEtxhroiSWAnVS8WCTjiaiQWwisdNslt39k07o1aCpVIVug6OfZmiMUHmOWY/bA/r4kGIKa0Ticei2BI+/rmJkTuv0weKzs8Y6nlvp9skzfbCEAKPWtajWcEpPomVRUXcvN5n0zSY6MMDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742559045; c=relaxed/simple;
-	bh=op8FOXsG8eKuiuXoYyinweSNuAafqCPjsxLJhA3CuUA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kAYxg52SiwSaSVH6LeSTOBCq1JT9nB0V1Xx4sv1vJMiL4Y0DKzvCXhbsxJcy9rGe8jGYS4S/EANBeFJOG4/VD/pNVMIXjfVnVBoYRsnk+9VKdBUQiV0b5gvTHnnwSfyImmscaittdsGQtKyg60wxsTqUxZJgEvBHdNsz3VYq0w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PazOPxuL; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d51bd9b41so5664145e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742559042; x=1743163842; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=65EXsBa9VCEM2Xc9qqeAJo/ccGDFW5pMORs8L2NFvxE=;
-        b=PazOPxuLh5I4meT1Qb4aUQipXQyjRKmbUUx47on2b3Q2/Pf2j1rUEmmxAX3c6mzd/h
-         A7XugF8czcuFzo8hb3sndusEQDBUe18cPBYD/pMdfhvxSPGMdW/DnckDLCGOQhuk03GR
-         NTLqpJ31j74hsOqPYMAFRyHMWLQ16AKNhuCGZrL8bo5y6/9hmPHd5Twi8aHYfvNqDyVN
-         hk8U0ri1pLmZXoMUBEEXxre4hWHy6JQ9Yf2QCopjpkb6fSLOmp+j7C9DgtV6EAjHyA3l
-         FcWl0785LzaRUgkI5z9TpyLW71IvaSv7B3hy+Ca95xVnRfU23xotf3uoCs+gQqZOVLWr
-         HAjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742559042; x=1743163842;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=65EXsBa9VCEM2Xc9qqeAJo/ccGDFW5pMORs8L2NFvxE=;
-        b=mrLXYQcroXUJCkhkIwniP/eQCFM7iBZuRi+l6f7wTYVqA+x9LAzxBjlJYbQsfDB3MO
-         +p1sKnqwGRPRGR3G+sWhNnJxQbhraWuE64V5+EcJ2fo9NpkQYP+trV2RaNmS0scvWnWR
-         sHwT97dsmni457jGRzd6ywHmo5XWm8ax7m1ALZZUkdrNAbTwvbv7DP+Hc82WZslT/M5+
-         peBsA8EsTMYLT9QxLsOx6lTL0A+EinVAIRtuYvdq9XUVgB3F7iomOzuD6TXS5I95fqIv
-         X8OtzTlL+QRTHmQojsSssaicsr/9n72Jmwg/2NQWAKPcLHFvgzoP506Oi79GyVI4AKL2
-         mGjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUITTvzIHL9BwlrEGEInABk7sq+Nv7yKxXqsJ0kDlIH3KR6X48qsDL0I1xkPmi7xx9DUkSJ/gfrq5/hO2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzAwcTA0Bv8pBX++p3tyGQIjPbHNhgGe2ZZt4mwcJOyK+pWu32
-	cP6ePy4IAfIml8qLvnq16L/DV2mnOWik+wS+k1/xrOjEIuOuFnBU1CLYSBlVD4mNRTkEc2phIVz
-	7J2n1zIf1B1Dlnw==
-X-Google-Smtp-Source: AGHT+IFOO2Wy+xG5LzSEhSafYmkXsCDVc1uW2ONz8f494sMu+TmkfaiuuJVB8qhS6G8b2lOHhyxpCsyngE6rBVI=
-X-Received: from wmbhc9.prod.google.com ([2002:a05:600c:8709:b0:43d:1ef1:b314])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:468a:b0:43c:ef55:f1e8 with SMTP id 5b1f17b1804b1-43d509f4983mr25528385e9.13.1742559037417;
- Fri, 21 Mar 2025 05:10:37 -0700 (PDT)
-Date: Fri, 21 Mar 2025 12:10:02 +0000
-In-Reply-To: <20250321-vec-methods-v2-0-6d9c8a4634cb@google.com>
+	s=arc-20240116; t=1742559299; c=relaxed/simple;
+	bh=jy30EXuNa8upxpkBQWSMCwf+q4I7fePKwXreoaYc4f8=;
+	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
+	 MIME-Version:Content-Type; b=RHFCbaTn/Xa0GszadKpjFZlNaaiOY4kPkeTdSqqFaV0Dds2D7m4dez12Ye8qJ0E4qMPIMlOcFtI2+ZKE/4hnaCkaJODrYVPXSjN0z0oVchNgjpuP1q1AGULBUaKLttrvltC6blnnGnUthzGAPo7HNP1k1wx77Kst1NbL1ISkEWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxqkxxiJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ACB0C4CEE3;
+	Fri, 21 Mar 2025 12:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742559299;
+	bh=jy30EXuNa8upxpkBQWSMCwf+q4I7fePKwXreoaYc4f8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dxqkxxiJgMXNjR2nWBVTvRGUpThYQhgRtcoIJjBQC7sVl3js12k713F9ArXW/5rLu
+	 2BBcEiy6SRmotn+73UQ0Su+RQLBU+6t2q+CsrPVqiuXbfC+mM2dAxe3E+MPBtapsEa
+	 HpO5sEX/DtKHz8MYO1y2ybQJ3XNES7xu6HkB3Tzq/pdFSX4dTFhYwD2IOfhPrxGjJk
+	 fplF+b6HsLJVXpPXzEjcri6KxcRQ7DJftRSYlO7sNM+Y8K6qAaLzd1u36mXtepiqmv
+	 gI4WZQhUiePEg8q2T7V/ct1pZlhJh925NZ1yBe+OcCuRZFYtW+EHAj9l0uovzcJHm+
+	 J1jFZl5NqAYgg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,  "Frederic Weisbecker"
+ <frederic@kernel.org>,  "Thomas Gleixner" <tglx@linutronix.de>,
+  linux-kernel@vger.kernel.org,  "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [GIT PULL] Rust `hrtimer` support for v6.15
+In-Reply-To: <87pliljcvy.fsf@kernel.org> (Andreas Hindborg's message of "Thu,
+	13 Mar 2025 14:09:21 +0100")
+Message-ID: <87tt7md1s6.fsf@kernel.org>
+References: <87pliljcvy.fsf@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 21 Mar 2025 13:10:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250321-vec-methods-v2-0-6d9c8a4634cb@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1923; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=op8FOXsG8eKuiuXoYyinweSNuAafqCPjsxLJhA3CuUA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBn3VcqVJ3vDPsIBvOO+bI8RrCdXtJ8eKSCKt2ZG
- 1FdyCgakL6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ91XKgAKCRAEWL7uWMY5
- RqJYD/9Ofti/igTSpvAQmd2uQ3JHgyZhw12A/8M4zfIZKjmDKBjUMIYVWQ2+Ag6hY3qeuupROoW
- ki/qGeewtku66mr5Jt3Juka3HlZTOKw1fgf0i5XdHJNZDhYa2JcoCNYarO2XM1vJi9z3HwyzO2U
- JzF0ocNfDS0WdxoP2/VUBGY1qd4M43cVmiZ51ikYZte2NAKw671Nlz/dNJ34moDuSKkMdfjRevy
- SEfQdhYPHV0GxGoLudURQ90+S8Dx1cQzflup66zMatT+eKEd5gDNWdbMjqhgf+46Ex7DtQfKLyF
- BGxSYSy9rUhYejv4FZh9Nt2cV1S1jjcnMFCZT27JlcGY2t1lPDr+uuRGh0Wv4X1TIpUUQ6q30U0
- TKjkWNHsF5TFF16j8QqS6bcSLMN8teBXTkrn9/oW+1mrP9Sl6MRf+2Mcl4Rq0cBX64qB66L3hWi
- bh1ko1YxypBenbPu5CQ/K3FITQrF8v1MKff2hv5zrQEcuf4cb6QQtkb3FRIgKmOFSQHRtx20Rqo
- bnPfY1/3y66MGULXuOA/00/oQpMjlZWMu8kSQ7kROa5ueQ+L0UWKXU9QlRhqXZaRP/1nobASv+0
- PQ9k74QrNLAKtNJ/G0wFJgHqAcvuNTuqg872hXCKibOpTOQtGlDwbQ5ou/oSaj1YPWk2d9v8Ez3 2W+zQLS11op734g==
-X-Mailer: b4 0.14.2
-Message-ID: <20250321-vec-methods-v2-7-6d9c8a4634cb@google.com>
-Subject: [PATCH v2 7/7] rust: alloc: add Vec::insert_within_capacity
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-This adds a variant of Vec::insert that does not allocate memory. This
-makes it safe to use this function while holding a spinlock. Rust Binder
-uses it for the range allocator fast path.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/alloc/kvec.rs | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Hi Miguel,
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index f7f7f9c650f8167ad6f53b0d83e328203445aa1f..38ffd0cf2af6e375f8d4fc2f9afe9295b29e7db0 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -327,6 +327,27 @@ pub fn push_within_capacity(&mut self, v: T) -> Result<(), T> {
-         Ok(())
-     }
- 
-+    pub fn insert_within_capacity(&mut self, index: usize, element: T) -> Result<(), T> {
-+        assert!(index <= self.len());
-+
-+        if self.len() >= self.capacity() {
-+            return Err(element);
-+        }
-+
-+        // SAFETY: This is in bounds since `index <= len < capacity`.
-+        let p = unsafe { vec.as_mut_ptr().add(index) };
-+        // INVARIANT: This breaks the Vec invariants by making `index` contain an invalid element,
-+        // but we restore the invariants below.
-+        // SAFETY: Both the src and dst ranges end no later than one element after the length.
-+        // Since the length is less than the capacity, both ranges are in bounds of the allocation.
-+        unsafe { ptr::copy(p, p.add(1), len - index) };
-+        // INVARIANT: This restores the Vec invariants.
-+        // SAFETY: The pointer is in-bounds of the allocation.
-+        unsafe { ptr::write(p, element) };
-+        // SAFETY: Index `len` contains a valid element due to the above copy and write.
-+        unsafe { vec.set_len(len + 1) };
-+    }
-+
-     /// Removes the last element from a vector and returns it, or `None` if it is empty.
-     ///
-     /// # Examples
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
--- 
-2.49.0.395.g12beb8f557-goog
+> Hi Miguel,
+>
+> Please pull the Rust support for hrtimer for v6.15.
+>
+> This initial support allows for intrusive use of timers without
+> allocating when starting a timer. We support `Pin<Box<T>>`, `Arc<T>`,
+> `Pin<&T>` and `Pin<&mut T>` pointer types for working with these
+> intrusive timers. We support at most one `HrTimer` field in a struct for
+> use with this API.
+>
+> For now, the primary users will be the Rust null block driver, `rnull`,
+> and the Rust kernel mode setting driver `rkvms`. I expect us to add more
+> features to the API as the demands from users grow.
+>
+> The PR also includes two changes for the core rust and rust/alloc
+> subsytems that are dependencies of the hrtimer Rust API: `Arc::as_ptr`
+> and `Box::into_pin`. The alloc change was Ack'd by Danilo.
+>
+> The commits were in linux-next since next-20250313.
+
+Please find an updated pull request below.
+
+As discussed, I fixed the UB you fund in:
+
+  rust: hrtimer: allow timer restart from timer handler
+
+by casting to `u32` when assigning enum values. The commits below this
+commit are unchanged, the later commits were replayed on top of the
+changed commit.
+
+The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+
+  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/rust-for-linux/linux.git tags/rust-hrtimer-for-v6.15-v2
+
+for you to fetch changes up to ac4f9157e8d7f6a9793209a693cb3e3a6f840983:
+
+  rust: hrtimer: add maintainer entry (2025-03-21 12:56:38 +0100)
+
+
+Best regards,
+Andreas Hindborg
+
+
+- ----------------------------------------------------------------
+Rust hrtimer API for v6.15
+
+Introduce Rust support for the `hrtimer` subsystem:
+
+ - Add a way to use the `hrtimer` subsystem from Rust. Rust code can now set up
+   intrusive timers without allocating when starting the timer.
+
+ - Add support for `Pin<Box<_>>`, `Arc<_>`, `Pin<&_>` and `Pin<&mut _>` as
+   pointer types for use with timer callbacks.
+
+ - Add support for setting clock source and timer mode.
+
+`kernel` crate:
+
+ - Add `Arc::as_ptr` for converting an `Arc` to a raw pointer. This is a
+   dependency for the `hrtimer` API.
+
+ - Add `Box::into_pin` for converting a `Box<_>` into a `Pin<Box<_>>` to align
+   with Rust `alloc`. This is a dependency for the `hrtimer` API.
+
+- ----------------------------------------------------------------
+Andreas Hindborg (13):
+      rust: hrtimer: introduce hrtimer support
+      rust: sync: add `Arc::as_ptr`
+      rust: hrtimer: implement `HrTimerPointer` for `Arc`
+      rust: hrtimer: allow timer restart from timer handler
+      rust: hrtimer: add `UnsafeHrTimerPointer`
+      rust: hrtimer: add `hrtimer::ScopedHrTimerPointer`
+      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&T>`
+      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
+      rust: alloc: add `Box::into_pin`
+      rust: hrtimer: implement `HrTimerPointer` for `Pin<Box<T>>`
+      rust: hrtimer: add `HrTimerMode`
+      rust: hrtimer: add clocksource selection through `ClockId`
+      rust: hrtimer: add maintainer entry
+
+ MAINTAINERS                         |  15 ++
+ rust/kernel/alloc/kbox.rs           |   6 +
+ rust/kernel/sync/arc.rs             |  13 +-
+ rust/kernel/time.rs                 |  68 +++++
+ rust/kernel/time/hrtimer.rs         | 517 ++++++++++++++++++++++++++++++++++++
+ rust/kernel/time/hrtimer/arc.rs     | 100 +++++++
+ rust/kernel/time/hrtimer/pin.rs     | 104 ++++++++
+ rust/kernel/time/hrtimer/pin_mut.rs | 108 ++++++++
+ rust/kernel/time/hrtimer/tbox.rs    | 120 +++++++++
+ 9 files changed, 1049 insertions(+), 2 deletions(-)
+ create mode 100644 rust/kernel/time/hrtimer.rs
+ create mode 100644 rust/kernel/time/hrtimer/arc.rs
+ create mode 100644 rust/kernel/time/hrtimer/pin.rs
+ create mode 100644 rust/kernel/time/hrtimer/pin_mut.rs
+ create mode 100644 rust/kernel/time/hrtimer/tbox.rs
+-----BEGIN PGP SIGNATURE-----
+
+iQJKBAEBCAA0FiEEEsH5R1a/fCoV1sAS4bgaPnkoY3cFAmfdVykWHGEuaGluZGJv
+cmdAa2VybmVsLm9yZwAKCRDhuBo+eShjd18rD/0UMWTrZZRm/KPD2V9oZzoT/yYy
+cM9nANXm7FXJJMUaqzKv0rzKl7bxqo6wJwaNJPFBCSkVEKAQhuJo35+REiXTr7nU
+8UnTUtNWl8nhX9q1+fMmQqTwZpYGlydTFn0cjyFtqQe9ahPhfCR/iF+kvb/VtR/s
+3ow8v93epAXy01/4fwcWW7Iozu5GqvTyyz4H8n+6B8UNVSgQp+lo4sylfl27EtQn
+7i/hrAQYaLv765UrxYsQVNyxL2qU3XXKOlDKr0KY9GFXuMVSwm765rbobGNXeD4Q
+kEZ9BU70ebS29ZHHsTncUN0AuiE22iwL/dMdZaSvyjMrD4WgH3oLbtVIuRjLQNJ1
+D4hCryTc5gHvRHJ6ZYZJNv4dqRJ0CJ0GqdR3g19Yi6U8S8GD5HK7QGz84RusiM33
+6LoKEO/XauPPaHP/ZlyDIJmuwrKRz+t9SNiEMmDFtl6UjPq/N4ghqG4zsG3wRbWq
+VBFDKP3nxaOOKTXSF0D7yGec4eENuo6EuGswoXoS4OvC0c9i8KwKBkutoLVw1c4l
+OYrwDeloyAP6V/cKbVgvxKeq3j/MKiBfYsuJBV3iQe8L7r0qoLQrCtM+dzWTRaxT
+IVkKSBnRReVyVNsatf4jmBBwN1eAeNaWUCYy+w8AdCLoGggchjSNizW+FqorR3KQ
+u6wfok7Z9QtTDT4HOA==
+=B5KA
+-----END PGP SIGNATURE-----
 
 
