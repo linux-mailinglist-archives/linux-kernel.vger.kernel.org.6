@@ -1,85 +1,101 @@
-Return-Path: <linux-kernel+bounces-571905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56061A6C423
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:29:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E14A6C428
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B614E3B7D43
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:28:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796EE4640B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BCB22FF5F;
-	Fri, 21 Mar 2025 20:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84F123099C;
+	Fri, 21 Mar 2025 20:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oR+exgYs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="90a12UMb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCN0azzy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8DC4A00
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0255D4A00;
+	Fri, 21 Mar 2025 20:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742588939; cv=none; b=j5YmZlmDIUZCje2PxUCH6EodErlw881OfLNMzfjToIbvZt8MynkYYZBRwCSrGApNtpcAklnsCX7rrkIvPOsa+zJc3LihDRlqDSbUvASemaMHdNKhxqTBJ/0innwyk959zCYihg8GqUcheuurrrucuWW5JcIGlkBKAodV0F+DgYI=
+	t=1742588999; cv=none; b=umQdNM4NeWZMz9w6ddYTtbTuJrNz7XIycnPArKVrnRf0tIq2wHsXKRkIXqIX/ei7uCPR1unB/d6PuiNxmxFUEUpU4HslAy95C6ZYpD56EMggESX6r9/pzjOGiSgD9F6FIUcRrGTvKoifNYkAexgcn6hHThteleqc0LWHU3e3x+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742588939; c=relaxed/simple;
-	bh=MnMacZW/FLjev9kkv6FIEh8Gr4w3l2EixWuMgSkANF8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q71BnqgPDUh8ePME9VQWdXIlHWLOWJE/n23O3ThIMmP4tg9auiOpDeWTTOYdISHfQkwTSKP6vs23Kr712DmjjEPLwFGKTWQZxtg+59QhFI0/19PV33qF3J6bezfQNsFc9wtI8lRfxXIlvaIWvtWIIkpDswFYNg/SkIfYGeEhFvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oR+exgYs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=90a12UMb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742588935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnMacZW/FLjev9kkv6FIEh8Gr4w3l2EixWuMgSkANF8=;
-	b=oR+exgYs9jNCN7sQhjPVIZFnxbVkbdDUie+IGVtNNvc48yVyYbJK6Kfr5Gs6D5iVx4+eRr
-	zBupbIbvnaY5wQEk5fIH0yFyL0/rD8HqyJWXDKJsJyVDSf1v0IP2l0f9d3Rsb+/E/Tzuv8
-	I4iTKgrdCz2pg/exU0nzDa9Nl5ZnTb4WCLv4ZWWgFLkY0wU528cc6igAf2cOZxONMptUWq
-	OXB/Gsk9gv1STGcJKYRu6/1asySU2G3iC7ik0aISEPnbx6lvr2zMwZpGVjz5WgRmm4/5fD
-	+PiS6fRRoP43e2APJuRvefZdHPXfYZa69AA6IjRByu10HtpR1BAR4DSBbvtUtQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742588935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MnMacZW/FLjev9kkv6FIEh8Gr4w3l2EixWuMgSkANF8=;
-	b=90a12UMbA+i3IzgisRP5ZFsRkmSD4dccKI3EILZFjtfInLS60Q2BbnTpPj+TDiz6myCgkK
-	ZW6Yftg6e/3fsjAg==
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] tracing: Disable branch profiling in noinstr code
-In-Reply-To: <20250321131248.02114dd7@batman.local.home>
-References: <52a664ec9e14ef53c39c3d4fa400c2f1d29348c0.1742537096.git.jpoimboe@kernel.org>
- <871puq2uop.ffs@tglx> <20250321131248.02114dd7@batman.local.home>
-Date: Fri, 21 Mar 2025 21:28:55 +0100
-Message-ID: <87r02q162g.ffs@tglx>
+	s=arc-20240116; t=1742588999; c=relaxed/simple;
+	bh=ZZLmMZ289rqQhcr8NBJny5fTTa8Eof8bLWxFOCYlhbk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ItfqXLo65RWV5M7d+3zRxPm60IJh6S0HcHU7fC6zpVrQBF0P86K2+yKLfY4F5eKiSvRut+l53MqG5RRvbrPPW+U4WJn+dYh5+fK4F80JnCqEOqgpjKcflbu7OIp097q0bnBR0TQH1Ga1DbVGczAq/klQeq8d3x6pqdNklADY4ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCN0azzy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D0FC4CEE3;
+	Fri, 21 Mar 2025 20:29:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742588997;
+	bh=ZZLmMZ289rqQhcr8NBJny5fTTa8Eof8bLWxFOCYlhbk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MCN0azzyrqFhyjlSjdnAvdsMtpD4lNBu9VbwIFxtdXCBamCC4AFQj0VCPr/4EJFVm
+	 mnUnlZgemakyQq3+pvW5F/01Bfl2Qg3u49OT0Eb/zwThTy2j/LmrlXBA8eclFoS5nP
+	 wHiydX3EyeqcmKOKN5Gt3zZc0WahQq0Vo1BEtxuMoYd7Ae2R5sPJDFyj+/TlJsBm/X
+	 ZKQqZXTVu5V21d0ChRTgzOOLgZBNVHzoW/MNVi934TsnSHmgRoo63Q7TTeoKlXXARO
+	 1NgCCZrmpn41L5yQCBUo6z55GrCAq9/AV+TYzfcgd5Xmb5uZ9GFdwGzfZrwtXBnp5J
+	 g4+AjfQXr3e/A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AEAF03806659;
+	Fri, 21 Mar 2025 20:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next V2 0/4] mlx5e: Support recovery counter in reset
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174258903353.2613064.2638906472683771245.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Mar 2025 20:30:33 +0000
+References: <1742112876-2890-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1742112876-2890-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, andrew+netdev@lunn.ch, gal@nvidia.com,
+ leonro@nvidia.com, ychemla@nvidia.com, saeedm@nvidia.com, leon@kernel.org,
+ corbet@lwn.net, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kalesh-anakkur.purayil@broadcom.com, jacob.e.keller@intel.com,
+ stfomichev@gmail.com
 
-On Fri, Mar 21 2025 at 13:12, Steven Rostedt wrote:
+Hello:
 
-> On Fri, 21 Mar 2025 17:51:50 +0100
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->
->> Though the real fix would be to rip out this likely/unlikely tracer
->> hackery all together.
->
-> If you want, you could just disable it for all of arch/x86
->
-> In my tests, I'm more interested in the generic code anyway.
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Which is affected too as you can see from diffstat.
+On Sun, 16 Mar 2025 10:14:32 +0200 you wrote:
+> Hi,
+> 
+> This series by Yael adds a recovery counter in ethtool, for any recovery
+> type during port reset cycle.
+> Series starts with some cleanup and refactoring patches.
+> New counter is added and exposed to ethtool stats in patch #4.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,V2,1/4] net/mlx5e: Ensure each counter group uses its PCAM bit
+    https://git.kernel.org/netdev/net-next/c/8e6f6e92d3fe
+  - [net-next,V2,2/4] net/mlx5e: Access PHY layer counter group as other counter groups
+    https://git.kernel.org/netdev/net-next/c/da4fa5d8817d
+  - [net-next,V2,3/4] net/mlx5e: Get counter group size by FW capability
+    https://git.kernel.org/netdev/net-next/c/4c737ceb690c
+  - [net-next,V2,4/4] net/mlx5e: Expose port reset cycle recovery counter via ethtool
+    https://git.kernel.org/netdev/net-next/c/c3b999cad7ec
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
