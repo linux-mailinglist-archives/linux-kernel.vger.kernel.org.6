@@ -1,138 +1,232 @@
-Return-Path: <linux-kernel+bounces-570783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FA3A6B473
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:35:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90302A6B482
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A193B94FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D5C4825DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948181EA7CB;
-	Fri, 21 Mar 2025 06:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12A41EB5E3;
+	Fri, 21 Mar 2025 06:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1HcnKyP"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FN97etJi"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736631EA7C8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB526ACB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742538841; cv=none; b=Io+0WdRj2t6GJmxwoeYAaR4Kkp16521j456N4qwWAGps5Tv9E+MWtgSBGlKOof6DI8sb31l7AA+a68TSbPL+C6gSCLUxc1/uLbkDr7bHU9ivt4xjlh4a9Hr7oHsYDqNrQsxyluyPuv3z1FndL6kbEo8GpqE5KGQgdrL6IyCPhiw=
+	t=1742539088; cv=none; b=KjGZQJ+0rb/veHtmXfBQ1K9fNAsixv6/b1otLjzDQqjCaiAm6WuRYmeXvg+50KlyyKxcef3mXhZzTnk2Yr2xoPjk5WrUjLzSSTiMu3WtU17GSof9HmbYSuQgedTQJP0FfIX72Fnc+/pC5kpKz9p1qOhUxzrqtMnBLxypLDuW5z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742538841; c=relaxed/simple;
-	bh=p+BeBYr/HsChaQPBxFfb4II6h0aToEIbjR66q03/zjY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LN+j4g4os8Bo5oBkAOi5Hgv3fuXxxbYFWyvW3+WvaUNHK/7tyCpRucwbI8x88x7NldApYi2vd5IvuSkb+HyN3PpF4cS51Febo6veDxuk+klqtjBYXwNPbEDX0ypJpwaXEoHZcIzrzf6yL/CcrRdye/S+46X+eqsJz6Spmb0jXQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1HcnKyP; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff5296726fso4549354a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742538839; x=1743143639; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2vXAyj+GHzS7wqAccTE1NbTCMIzG8yR1/7SBWPdH7m8=;
-        b=f1HcnKyPwhB6MkZnuwVpEnjplSRSd0rLe3xdI5CXl0JaHyK3RTNmnIuue6bF0CGcIn
-         lTN6RSgUfDmGf9eFeKy+FjahHDA/+YdDoQlqj29PYHKYIi38F6P2u27JAikxASye1oJF
-         9f8RbdobPNslzwxlOarPTDH2xLytW7/8HgxghD9CKp98sZXGdoUHpwMDWrVM+E7iPbJT
-         H/4pDYkmiekiEc8Oz0pQtoxaYgbBfmh0SVZIYPaLn2eG86nxdFsFRLH0yweak/t2Qynt
-         Paay/8djMxAmua+wj5sx9S9Dym4n2lZqeRxzlCyeFXmexIWdTsLMLXja8rokU3z8w2O/
-         HUnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742538839; x=1743143639;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2vXAyj+GHzS7wqAccTE1NbTCMIzG8yR1/7SBWPdH7m8=;
-        b=LKqfqk9DnCqFweM//oYOXEV5X0kl6yyPABAF9NX/RJ5WxR/6n4377B85g9PgS2HPUo
-         ztLEeVxkShaGBBYq5Mk15ayuQfm9JgGnqlUrQxwJ14Ux31nCrtzV++gymc+FhHuHe4CN
-         AyNgDdhNAlyUGG2LRwGsAsHbgizzzW7H6y6A5KwanD4UlezFxPz5HlmcATDSo3DFUQcf
-         IdxeQRbO6THogWIv//INaRozxmoJ3vgBAlQA0w6oLhuTaOBz5YLAgeGJRdAkc0WL4UlG
-         vtXJTozhmGffUmxm789ZaIzhMGOcUcJSbRChSY+eYT+aslKRSllgL52phReyguA2/Y8O
-         xaSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVl5GqldwiZgTkzbBJvK+IqNSqAE296I2XweUfTQzHNhI291AFvZdRR2ec/9GKDeNjBjRdu/iG/ZzI6PDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhTPfUsgxkGDz8AgNI9N8fGw4t3g/ms8QOifrE7K0WzG8PF8un
-	qfAayUl5xLnFbaKu0s6p6N20fiGXFqkrtc06BSdkIJ8iVSU2MH6156pSGfMuskgPNPQPW8RRdM9
-	iahyduSbHKfF4Syos3A==
-X-Google-Smtp-Source: AGHT+IHzfqXaz88vnwbh1bU3QQ0eg9cO7MjTqz+i1yp3jt6YPQs5uqsY4Klq/6OgfyRjy5OLLCoj7DrCd0HOjDbw
-X-Received: from pjbsk8.prod.google.com ([2002:a17:90b:2dc8:b0:2fc:2ee0:d38a])
- (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:1848:b0:2ea:bf1c:1e3a with SMTP id 98e67ed59e1d1-3030fe9e646mr4063011a91.12.1742538838726;
- Thu, 20 Mar 2025 23:33:58 -0700 (PDT)
-Date: Thu, 20 Mar 2025 23:33:56 -0700
-In-Reply-To: <87wmcj69sg.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1742539088; c=relaxed/simple;
+	bh=meYjgWGxyLy6HJSfb0FdcX0Qg9YFgDlf0+iGbmC5AiA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=KMZDsxML42DRNs+H4yoZPzdWCQ8omtPxl9fLdhsDLg+3gUT2pH6OTc26ZB9YM/0NGf327noMWEevSxu/fymYYf551k1BfQN51hQMUpGD/IH0UQ0m31Mn8x/infX6o6XYsM+fhPpYiFhqj+HY/vdV0jqgIKMA0DMTMAj5qqb+k4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FN97etJi; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250321063803epoutp043025ad89e89aef6e43d0daae7a5ce32e~uvhB3xsz82431924319epoutp04T
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:38:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250321063803epoutp043025ad89e89aef6e43d0daae7a5ce32e~uvhB3xsz82431924319epoutp04T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1742539083;
+	bh=1NaBi+C3PclgJ/mik2KcHhq6pRjepmXkq91bXFQkaSM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=FN97etJilB83agYpgVeG6fB4CJVLrOtcBdX1Eac28evNXXSQpF8Zun1aMRgDoTW9s
+	 coT3ZVVEm4LQhYRSLu4g9tRcrZLJPQg65ByTtE2fK5T2ErZlcM9ATOslb0hO0SO+bX
+	 lOTpXfbx2BjjrXRV41ATivT0MavCOyAQjgnJuiBo=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20250321063803epcas1p323d78e004fb31160a2be117c1424eba5~uvhBZx-kU2185521855epcas1p3Y;
+	Fri, 21 Mar 2025 06:38:03 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4ZJt6z1jp6z4x9QB; Fri, 21 Mar
+	2025 06:38:03 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4~uveR3Y2Hk0882208822epcas1p21;
+	Fri, 21 Mar 2025 06:34:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250321063454epsmtrp14197eafd8fdbbb6baef97afa109a7ce0~uveR2oz5u3110531105epsmtrp1t;
+	Fri, 21 Mar 2025 06:34:54 +0000 (GMT)
+X-AuditID: b6c32a29-63df970000004929-f0-67dd088ed88d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9B.56.18729.E880DD76; Fri, 21 Mar 2025 15:34:54 +0900 (KST)
+Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
+	[10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250321063454epsmtip141edc3128a8e468552bbfa2505484223~uveRm9QBM1594915949epsmtip19;
+	Fri, 21 Mar 2025 06:34:54 +0000 (GMT)
+From: Sungjong Seo <sj1557.seo@samsung.com>
+To: linkinjeon@kernel.org, yuezhang.mo@sony.com
+Cc: sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cpgs@samsung.com, Sungjong Seo
+	<sj1557.seo@samsung.com>, stable@vger.kernel.org, Yeongjin Gil
+	<youngjin.gil@samsung.com>
+Subject: [PATCH v2] exfat: fix random stack corruption after get_block
+Date: Fri, 21 Mar 2025 15:34:42 +0900
+Message-Id: <158453976.61742539083228.JavaMail.epsvc@epcpadp2new>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <87wmcj69sg.fsf@trenco.lwn.net>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250321063356.381646-1-changyuanl@google.com>
-Subject: Re: [PATCH v5 16/16] Documentation: add documentation for KHO
-From: Changyuan Lyu <changyuanl@google.com>
-To: corbet@lwn.net
-Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, changyuanl@google.com, dave.hansen@linux.intel.com, 
-	devicetree@vger.kernel.org, dwmw2@infradead.org, ebiederm@xmission.com, 
-	graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org, 
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	luto@kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
-	pasha.tatashin@soleen.com, pbonzini@redhat.com, peterz@infradead.org, 
-	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org, rostedt@goodmis.org, 
-	rppt@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsWy7bCSnG4fx910g3kbtCxeHtK0mDhtKbPF
+	nr0nWSwu75rDZrHl3xFWixcfNrBZLNj4iNFixv6n7BbX3zxkdeD02DnrLrvHplWdbB59W1Yx
+	erRP2Mns8XmTXABrFJdNSmpOZllqkb5dAlfGvj83mQsmyFW8b5nN0sC4QbSLkZNDQsBEYvGr
+	mcxdjFwcQgK7GSVO3X3K1MXIAZSQkji4TxPCFJY4fLgYoqSVSWLvrOvMIL1sAtoSy5uWgdki
+	AoYSGxbvZQcpYha4xSgx7foEdpCEsICbxK3pO8CKWARUJRovrWMCsXkFbCWWnPzNCHGEvMTM
+	S9/ZIeKCEidnPmEBsZmB4s1bZzNPYOSbhSQ1C0lqASPTKkbJ1ILi3PTcYsMCw7zUcr3ixNzi
+	0rx0veT83E2M4LDV0tzBuH3VB71DjEwcjIcYJTiYlUR4RTpupwvxpiRWVqUW5ccXleakFh9i
+	lOZgURLnFX/RmyIkkJ5YkpqdmlqQWgSTZeLglGpgmnp5Ebu9/Qn5jecsssxnurTtX6Euu4K7
+	4N3BfKvuznfer/ZmpE1M5/iTVL2EYzf31szH8yO5S33Lru9ar/JGNre13+9J5ZnFTFqHX6UZ
+	Po2e/fjmb7P6Rdv4b7x6d4bjYUNR21afMy3m9U3tl4J3zChROrf46vWJd9T+zvhwU7pqk32o
+	+Z/zWxqXHqi8nX1i3XQey6/ftnNef7CvdGnOv3bXiRrFwv9d2cMzgrcckwl80iu4KFj2M2ug
+	/KlN/wUMqmT/hYUaGHbvFbCTurtYXPiW3bQkj81uwvGnX3Mya1+vsXwWwPHxq8yRD6kLpi0Q
+	y5rEkH3JOODd7g9SGaxWG/7vf2jpoXBcXchve9aCqUosxRmJhlrMRcWJAKi5uDPKAgAA
+X-CMS-MailID: 20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4
+References: <CGME20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4@epcas1p2.samsung.com>
 
-Hi Jonathan,
+When get_block is called with a buffer_head allocated on the stack, such
+as do_mpage_readpage, stack corruption due to buffer_head UAF may occur in
+the following race condition situation.
 
-On Thu, Mar 20, 2025 at 08:45:03 -0600, Jonathan Corbet <corbet@lwn.net> wrote:
-> Changyuan Lyu <changyuanl@google.com> writes:
->
-> > From: Alexander Graf <graf@amazon.com>
-> >
-> > With KHO in place, let's add documentation that describes what it is and
-> > how to use it.
-> >
-> > Signed-off-by: Alexander Graf <graf@amazon.com>
-> > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> > Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  25 ++++
-> >  Documentation/kho/concepts.rst                |  70 +++++++++++
-> >  Documentation/kho/fdt.rst                     |  62 +++++++++
-> >  Documentation/kho/index.rst                   |  14 +++
-> >  Documentation/kho/usage.rst                   | 118 ++++++++++++++++++
-> >  Documentation/subsystem-apis.rst              |   1 +
-> >  MAINTAINERS                                   |   1 +
-> >  7 files changed, 291 insertions(+)
-> >  create mode 100644 Documentation/kho/concepts.rst
-> >  create mode 100644 Documentation/kho/fdt.rst
-> >  create mode 100644 Documentation/kho/index.rst
-> >  create mode 100644 Documentation/kho/usage.rst
->
-> I will ask again: please let's not create another top-level docs
-> directory for this...?  It looks like it belongs in the admin guide to
-> me.
+     <CPU 0>                      <CPU 1>
+mpage_read_folio
+  <<bh on stack>>
+  do_mpage_readpage
+    exfat_get_block
+      bh_read
+        __bh_read
+	  get_bh(bh)
+          submit_bh
+          wait_on_buffer
+                              ...
+                              end_buffer_read_sync
+                                __end_buffer_read_notouch
+                                   unlock_buffer
+          <<keep going>>
+        ...
+      ...
+    ...
+  ...
+<<bh is not valid out of mpage_read_folio>>
+   .
+   .
+another_function
+  <<variable A on stack>>
+                                   put_bh(bh)
+                                     atomic_dec(bh->b_count)
+  * stack corruption here *
 
-Thanks for review the patch! Sure I will move usage.rst to
-Documentation/admin-guide in the next version.
+This patch returns -EAGAIN if a folio does not have buffers when bh_read
+needs to be called. By doing this, the caller can fallback to functions
+like block_read_full_folio(), create a buffer_head in the folio, and then
+call get_block again.
 
-However, I think concepts.rst and fdt.rst are not not end-user oriented,
-but for kernel developers of other subsystems to use KHO API (I also plan
-to include the kernel-doc generated from kernel/kexec_handover.c and
-include/linux/kexec_handover.h here in the next version).
-Should Documentation/core-api be a better choice?
+Let's do not call bh_read() with on-stack buffer_head.
 
-Best,
-Changyuan
+Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
+Cc: stable@vger.kernel.org
+Tested-by: Yeongjin Gil <youngjin.gil@samsung.com>
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+---
+v2:
+ - clear_buffer_mapped if there is any errors.
+ - remove unnecessary BUG_ON()
+---
+ fs/exfat/inode.c | 39 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
+
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 96952d4acb50..f3fdba9f4d21 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -344,7 +344,8 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 			 * The block has been partially written,
+ 			 * zero the unwritten part and map the block.
+ 			 */
+-			loff_t size, off, pos;
++			loff_t size, pos;
++			void *addr;
+ 
+ 			max_blocks = 1;
+ 
+@@ -355,17 +356,41 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 			if (!bh_result->b_folio)
+ 				goto done;
+ 
++			/*
++			 * No buffer_head is allocated.
++			 * (1) bmap: It's enough to fill bh_result without I/O.
++			 * (2) read: The unwritten part should be filled with 0
++			 *           If a folio does not have any buffers,
++			 *           let's returns -EAGAIN to fallback to
++			 *           per-bh IO like block_read_full_folio().
++			 */
++			if (!folio_buffers(bh_result->b_folio)) {
++				err = -EAGAIN;
++				goto done;
++			}
++
+ 			pos = EXFAT_BLK_TO_B(iblock, sb);
+ 			size = ei->valid_size - pos;
+-			off = pos & (PAGE_SIZE - 1);
++			addr = folio_address(bh_result->b_folio) +
++			       offset_in_folio(bh_result->b_folio, pos);
++
++			/* Check if bh->b_data points to proper addr in folio */
++			if (bh_result->b_data != addr) {
++				exfat_fs_error_ratelimit(sb,
++					"b_data(%p) != folio_addr(%p)",
++					bh_result->b_data, addr);
++				err = -EINVAL;
++				goto done;
++			}
+ 
+-			folio_set_bh(bh_result, bh_result->b_folio, off);
++			/* Read a block */
+ 			err = bh_read(bh_result, 0);
+ 			if (err < 0)
+-				goto unlock_ret;
++				goto done;
+ 
+-			folio_zero_segment(bh_result->b_folio, off + size,
+-					off + sb->s_blocksize);
++			/* Zero unwritten part of a block */
++			memset(bh_result->b_data + size, 0,
++			       bh_result->b_size - size);
+ 		} else {
+ 			/*
+ 			 * The range has not been written, clear the mapped flag
+@@ -376,6 +401,8 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 	}
+ done:
+ 	bh_result->b_size = EXFAT_BLK_TO_B(max_blocks, sb);
++	if (err < 0)
++		clear_buffer_mapped(bh_result);
+ unlock_ret:
+ 	mutex_unlock(&sbi->s_lock);
+ 	return err;
+-- 
+2.25.1
+
+
 
