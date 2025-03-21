@@ -1,161 +1,146 @@
-Return-Path: <linux-kernel+bounces-571936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46498A6C472
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:47:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934BBA6C47C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDF1B61011
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7D93B421E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056FD1EDA20;
-	Fri, 21 Mar 2025 20:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED4A231A3F;
+	Fri, 21 Mar 2025 20:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc61kHvd"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPOtGyXC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87664A00
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5144A00;
+	Fri, 21 Mar 2025 20:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590049; cv=none; b=IovSuWHqkezDcrNO7D2HiY5h7PwtDsSDfJhkbDfVgbpJguVSs41VFhLPD7WGi4sfxG2kqswlFiRuSA2FDheNCsCYP3BdrcIjoz+B8jLWQitA0bfJEvShchokJGUthseNGZQhFpdbXngo51MrKbha4NYAzE5MPs6YX7YnrN/vv4A=
+	t=1742590129; cv=none; b=EM6Ve5maES6vLqrMOWQV98dBfHNcWuYnaImGzPTbJXoKFsBwdzG7tXsTlscUZKsUpjIvXHcgm1ifyTli2m90QRDhaPFumAZg8eybRaBUbeN2oq/dJMoOP0pKFnPKYCI+E8GJOAaK0udmftWComelwHfvpRDxOOSqyFGUmdPNh1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590049; c=relaxed/simple;
-	bh=ehLx4BfcXIkstbQwTrBvBWDcNjLbE3ihDPBz7Pqh1xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xr5537DoUbYh5LsBYu5nyFaP3hRGnlxoH1zLd7xE5APvr73m7SjUjJ9uIcnEPw/pFEZmFbZlVjb3y196iIgW9VjoGM9YLJiXOGbDKV42E/FwoSvYkKcnC368zRIAotB5URhIe3KzaL7Us+/zrtV04y681in9+/qQ/f/91fK3SZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc61kHvd; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43948021a45so19048285e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742590046; x=1743194846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ND0e3RNSWvx5KkHJbkQWkYjoDHtfIfYJu6MphGZCA40=;
-        b=Xc61kHvdBTjIWvgV5KoOT2/Yahx2vzs3L3LjjZ6BHufRl4kBU+PdpXP18yUMH8b1O6
-         RPoSXtNB3IzCiwkvMz8K0BzdB58N/QyyJH4s/Xp+apjJxN/GsGn55h0Pew+hodrllC95
-         my3FXUQ5ERRS+SDg8GICGD7veDCH7ZmV9qRVuk31VzvVd1gGlb1a7K76qBCBGnrkOEfA
-         AIHzWPcsWRJ/avo+d287NlYotfbRAJ3LJBIYkjH030Dy9zG4oklxudwVF3AXhpB0HUHk
-         mjoIbJguN9A2QhoKx4YJeNkU4oMGUEitLSQ9+pKDpr55ltwcTyAYTQOSUB3UnzeWFEur
-         DJtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742590046; x=1743194846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ND0e3RNSWvx5KkHJbkQWkYjoDHtfIfYJu6MphGZCA40=;
-        b=b4yM25dR2QRcNrYUh9qRDGOJDQSz0Oc3v+S5TVVSfgkEmLglBaF7Rr9qzuvZzZA+Md
-         ZaXRUer0zI5DLs/LIODVPfL2fEP8egV2VGKUw04oZdbirQ2oS7whtzuWt3bLjNjpCjEl
-         DvyO9EN0UwnOg9npqxK2R/UOIcvQeSvzU+3uKSqdSbBY1DTuasIiJN+R8k3VmZyGtyPH
-         I8vlGMT/6c05z0qJ2N0iI5BHpHiJpMY5VbmdavbHCVryesJPzYr5I1pzR85dMMilzGGw
-         PHp+WLpRURrEBFOAplj0jUGh1cXDlMJzav5q0C1KSICuPph7INqva49GXcDriCuSSFaf
-         7AvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgJuHpQ8kbU32hM1f/AlssvBJ+gteBgUUQdToYEx/7FaKZFyq/WaW6AkJExwkT5M6J6Km9C0Y4E1UtINA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCFFnhjdbgYzvL7RnDbD2L8xaYuvPxv7pDh+IjShId9v55yFcM
-	y7Fxr7bM5/blyCH3YPI16GZmc4UvWfmV5EuAeT9FzLB2WhOi3HbY
-X-Gm-Gg: ASbGncvzVFc44h50px+PsAs2MIPOd6zicd0rRbOY1HQqjKK0qLmt+PBqHHS4bFGGWpQ
-	5jd7z3apO84CzBNQzDJyCZilOpYbNIGrluisw50wNJ+r0IcH648jxRg57x5ltI3EpEt2k4Bt4Li
-	1hpxeKIegvf26bFXsyVAdFGw6VEVQUU2k/9w4vC2WEKODw+leNkUc+d9kgdZtAYKLYr1z0E2BPN
-	/C/mKZgF7UvPhRGJTB5TUP0bxG/MyAvxyxnTDy4g+AtRvOzivDbkIS8H4PYZ/MIzhu9IWWFVSi4
-	jZZheRFIYP8/R62mrV0Qhww/GmDElM9NSwycGSvGziyzxTNjHv/nkn1YT/a3NJfyngpQqAm1Tra
-	pNV8Szyg=
-X-Google-Smtp-Source: AGHT+IEUY/YMDen58rtgjf2rDWUeHAUIuClJoBQZe1dZO5pGRH2VLewUMSXaKg2yQXYxdDhSMza5yA==
-X-Received: by 2002:a05:600c:1d15:b0:43c:f1cd:3d78 with SMTP id 5b1f17b1804b1-43d509ea2fcmr35004905e9.12.1742590045586;
-        Fri, 21 Mar 2025 13:47:25 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d42b8fcd4sm54024495e9.1.2025.03.21.13.47.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 13:47:24 -0700 (PDT)
-Date: Fri, 21 Mar 2025 20:47:23 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, x86@kernel.org, hkrzesin@redhat.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com,
- atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
- overlapping store
-Message-ID: <20250321204723.1e21cb23@pumpkin>
-In-Reply-To: <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
-References: <20250320190514.1961144-1-mjguzik@gmail.com>
-	<CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
-	<CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
-	<CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com>
-	<CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1742590129; c=relaxed/simple;
+	bh=CpTm/Ssh7UmOqET4ZoOlwg+ImY4NAduCep5IKrVt6F0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uQKEAal8nLD4ZskkahVRvGzZImmrvM1atE5Iky58KHqIImfyJnv7WI8NolmMW0ThAUYxp9fJkyFJWPg+dQjkjhG07DpZmEG/UvAaAl/LBDhI6O0SDKg4TZUNE0I9b5ZsMYRt+BPcN6C0mHFGYy3cIXZ99pNZmhNLuoqNASPxG8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPOtGyXC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 87538C4CEE3;
+	Fri, 21 Mar 2025 20:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742590128;
+	bh=CpTm/Ssh7UmOqET4ZoOlwg+ImY4NAduCep5IKrVt6F0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=kPOtGyXCQy2Yc7BkS47MZyVG8dEdvDZnxZYAG3B8IkR1CCOB6D5jVfsqkvmXQ5xcJ
+	 9R7dybAze0p+PkrkGAK0KOuO6tFZZS/nOFXyEobUGerVBearLiw/d7dS620Ie9/lJ/
+	 l1nrMYe09+sp3rygiToH8vo0WRU/FeWWXqiVrbbwsQ7ZH+DO/xPsRnXCASLaoRlwZo
+	 DL3P3XbbkeKt65XvFqNNi/+FD0VUN5Xe4u1W3lHYLzzaddMGx1t/bx+rOOe1NfNK+y
+	 2B4c7JFz7/DYuJP1ExuMx1kiXB1t4KBmrxzJjuIH+8XZs1QeVS9MXIOVzhVg9Gub/4
+	 dHEhP760w37+Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC3AC36002;
+	Fri, 21 Mar 2025 20:48:48 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v3 0/7] x86: Kconfig cleanups and help text improvements
+Date: Fri, 21 Mar 2025 21:48:42 +0100
+Message-Id: <20250321-x86_x2apic-v3-0-b0cbaa6fa338@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKrQ3WcC/43OSw6CMBSF4a2Qji1pL5WHI/dhiGnKRa5KS1pCQ
+ MLeLSTOHf6D8+WsLKAnDOySrMzjRIGcjZGdEmY6bR/IqYnNQMBZZCD4XOb3GfRAhhdYQSNaZVT
+ RsDgYPLY0H9itjt161/Ox86h/BIhKSlGqQspUZnmluOS9HtOns+azvK4O0uG9Ux2F0fnluDXBD
+ v4/r7dt+wITVH5d2AAAAA==
+X-Change-ID: 20250320-x86_x2apic-7e92d0f4c47d
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Kees Cook <kees@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+ linux-iio@vger.kernel.org, 
+ =?utf-8?q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1883; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=CpTm/Ssh7UmOqET4ZoOlwg+ImY4NAduCep5IKrVt6F0=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn3dCu7jynvXJK8lPJS6rk08IvynLIer67lxdKm
+ KnBsXrlZ5+JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ93QrgAKCRBgAj/E00kg
+ cpCfEACDlc7AojeczQKU7Rbtzv5C9OW1PHbmmUkO/kclLeIxRlj4FEwSCmqUKbSsDgLXPT35xl+
+ s4e0kajKOwaCE7BHBW0vlJsjKHpxOpMJH43hPLvsCoFzUpMfclQ6IJlktdZl3ckqPQAPnc1rr5B
+ RtP+w/5sj8I+z513WpRM8Ta9WngD6LdyMsG3Cd83qWmVYsrftURiZH8j0ukWWoWj+Ekau1Bq4wy
+ EPyrxqXGJtWpkqFmMiNQikO4fENYwYzynTnTE/XGGOSKL52w3Fv/yfy7YJnVHK2SsddSVu6d2GZ
+ pJ+1YzdmfzjkH4fLMRmoPGuow01DYWjRJydkX4vgs/OgLI1rgnnOlRNyCVJfbUnM1KGvtuUU/cM
+ s88ySZJ2cPQTEZDovxBoRfUjr3KEiXWuu5T/taK98wA2FsBYXtCdbnxDOJAHX3Wv+X7XydRo1nj
+ tGlZEMCyF4ykoFtYhQe3pcyAm5HwE0ODvBFlLp1roDKw385mQq6LuGlWK0CgEMji49LEE87EFXg
+ gneGtCI25l6A3sxISuYCYv/xdRrUNm78LDlaDwIUCYS1Y++mS7pzgEtH9ygMh/eXfckSJyidngr
+ RTOKihB4C5lXSlFnadYozaUDSJZUYDhPwn094iGa61R8VjqEcyhPCCMdjJmTfoCH2MZHCQL5pzR
+ ygzQhK/uzTmf40A==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Thu, 20 Mar 2025 16:53:32 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+I'm resending this mainly because of the first patch, but I find
+all other patches worthy too, so here is the rebased bulk.
 
-> On Thu, 20 Mar 2025 at 14:17, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Thu, 20 Mar 2025 at 12:33, Mateusz Guzik <mjguzik@gmail.com> wrote:  
-> > >
-> > > I have a recollection that handling the tail after rep movsq with an
-> > > overlapping store was suffering a penalty big enough to warrant a
-> > > "normal" copy instead, avoiding the just written to area.  
-> >
-> > Ahh. Good point. The rep movsq might indeed end up having odd effects
-> > with subsequent aliasing memory operations.
-> >
-> > Consider myself convinced.  
-> 
-> Actually, I think there's a solution for this.
-> 
-> Do not do the last 0-7 bytes as a word that overlaps with the tail of
-> the 'rep movs'
-> 
-> Do the last 8-15 bytes *non-overlapping* (well, they overlap each
-> other, but not the 'rep movs')
-> 
-> Something UNTESTED like the appended, in other words. The large case
-> then ends up without any conditionals, looking something like this:
-> 
->         mov    %rcx,%rax
->         shr    $0x3,%rcx
->         dec    %rcx
->         and    $0x7,%eax
->         rep movsq %ds:(%rsi),%es:(%rdi)
->         mov    (%rsi),%rcx
->         mov    %rcx,(%rdi)
->         mov    (%rsi,%rax,1),%rcx
->         mov    %rcx,(%rdi,%rax,1)
->         xor    %ecx,%ecx
->         ret
+ - David
+====
 
-I think you can save the 'tail end' copying the same 8 bytes twice by doing:
-	sub	$9,%rcx
-	mov	%rcx,%rax
-	shr	$3,%rcx
-	and	$7,%rax
-	inc	%rax
-before the 'rep movsq'.
+Hello,
 
-	David
-	
-> 
-> with some added complexity - but not a lot - in the exception fixup cases.
-> 
-> This is once again intentionally whitespace-damaged, because I don't
-> want people applying this mindlessly. Somebody needs to double-check
-> my logic, and verify that this also avoids the cost from the aliasing
-> with the rep movs.
-> 
->                    Linus
-...
+There are some problems with Kconfig help texts in the kernel. They are
+frequently confusing and use language that is difficult to understand
+for people unfamiliar with the feature. Sometimes, the help text was not
+updated after important kernel or ecosystem changes. References to
+something "future" or "old" are also usually given without specifying
+any dates.
+
+First version of this patch series was sent out in February 2022.
+
+Greetings,
+Mateusz
+
+Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Changes in v3:
+- Rebased against latest next-20250321.
+- Dropped deprecated patches:
+   2/10  "x86/apic: fix panic message when x2APIC is not supported"
+   4/10  "x86/Kconfig: drop X86_32_NON_STANDARD"
+- Dropped patch I was not very sure about, as there are other refs:
+   10/10 "x86/Kconfig: remove CONFIG_ISA_BUS"
+- Link to v2: https://lore.kernel.org/r/20220911084711.13694-1-mat.jonczyk@o2.pl
+
+---
+Mateusz Jończyk (7):
+      x86/Kconfig: Enable X86_X2APIC by default and improve help text
+      x86/Kconfig: Always enable ARCH_SPARSEMEM_ENABLE
+      x86/Kconfig: Move all X86_EXTENDED_PLATFORM options together
+      x86/Kconfig: Update lists in X86_EXTENDED_PLATFORM
+      x86/Kconfig: Document CONFIG_PCI_MMCONFIG
+      x86/Kconfig: Make CONFIG_PCI_CNB20LE_QUIRK depend on X86_32
+      x86/Kconfig: Document release year of glibc 2.3.3
+
+ arch/x86/Kconfig | 85 ++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 58 insertions(+), 27 deletions(-)
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250320-x86_x2apic-7e92d0f4c47d
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
+
+
 
