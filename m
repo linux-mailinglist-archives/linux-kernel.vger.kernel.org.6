@@ -1,121 +1,425 @@
-Return-Path: <linux-kernel+bounces-571363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073EEA6BC4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:00:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B42DA6BC3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9027A2A53
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399FC17F495
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263DB7D07D;
-	Fri, 21 Mar 2025 13:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEB3139579;
+	Fri, 21 Mar 2025 13:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aI8KtvSF"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DRHJtSUF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893742A94;
-	Fri, 21 Mar 2025 13:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4143A757EA;
+	Fri, 21 Mar 2025 13:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565488; cv=none; b=Ra6DlZ/nU/RW5B5IPXt4M3ExZQpL9WNvZkrm3Wj50+WC+Q3+a3BkJT28Xqq8xe8i+fmlqIlhrk2NR/1dzIrRvir3uortquiNf0x6vcj49xpFC77BAiDy87//Z7JzswvCQv1u4Tg6vVsKmYIVjg923MtN/Tlfl3yjSTawYxjKYSQ=
+	t=1742565503; cv=none; b=PLJeBJdg+lkCLf4qxKZmEilQINxMaPrPl+/6VvADd6nTe7IIVxreVm5FqdSRmECj/eHxXyKES7QY4HAGb3rpK8IfWZJJkNvfwaRMjCet8qkWGyp1esRbMHJ494KLWAQucVZ5L+o+Z8lhjontT9vJD/KWLnPfZER0v6GTx0uPkjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565488; c=relaxed/simple;
-	bh=DnU+Ee7KcE58TQf3t2cxWANpuCHzBrr69H7LZKjKk7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ieLg2Ox8xGyDMDdxvr587a2ImbbTunKRnhIYaNABMzkaF0dpVhoch/bwl6com6sPyMYqeioJhyOzrNXgD7+t8HZmSiCd9Xt7P11jqmiXSFng7FHvAopN88ppiEXCucjRzLMDAGmou0Z7irizqqg0shUvYlspLTO/hIc4EQoERs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aI8KtvSF; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742565481; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=srvsovFblQPzignnqMr8Ftv/qEnbQ9WLUcuRCMO/obE=;
-	b=aI8KtvSFDD8pS4VQo6R6dAilMbyc2Gcvh6/vZ/vdpp3jBHxN+JMOmrJV9CMF6vEaxi2p5C2YJf1RRNPzwNx4kRzP1d8JTXsTs2DkI7fD8ug4ayIJPdAfbeSoqp0veEBUJPZeTTTMXMqzd8S6Dt1sCs2LSpwfGuTY8x/g0EQT/Cw=
-Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WSIqpiI_1742565479 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 21 Mar 2025 21:58:00 +0800
-Message-ID: <934af3e3-3153-40c1-9a25-7a8d08fdb007@linux.alibaba.com>
-Date: Fri, 21 Mar 2025 21:57:59 +0800
+	s=arc-20240116; t=1742565503; c=relaxed/simple;
+	bh=6vAspCAiAB3DexjwsaE6SX9ZPw4xPF5SiOIgQi+Be5E=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=s7m4gzx68GJM6yX3Rzw8u6cM9rDJb9bqpAtId7ChuwqEzYPf7iav6sE72FxR6UxxybdEYAL45frM+kbQndwXbgznr0oaUq3uuJi+hEcxTVCLKg4x+hCSUD/xbIIRT0rvuZ0biWZLgzCMkSfIUxz4VQT6FusuRMBA1RGd5kakhJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DRHJtSUF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742565501; x=1774101501;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=6vAspCAiAB3DexjwsaE6SX9ZPw4xPF5SiOIgQi+Be5E=;
+  b=DRHJtSUFSljQWcrDa3sBh9qSAezRn2FZR0Nkd7y+kmHLcG7m01rcNn+9
+   urBwBnX9I1epbKZq11lYHIiZeUt13FdUzkJge8FhNJhdNqGpio8A7rQox
+   yvFr4eC9ErN5+XH9bO6E2RjzLvVYzBzeMrHA9JhZqJ8pumE1JdGI30Uxf
+   NAuYBEi6imEusOiuH/cVkXFaFlKjldWV8AeaqTA8AsXn1AdHIfDUTxi//
+   qQOmf6+Va6zRA9hvMj18h/QG+nRFDQPDhOzMMVkx+sArIIFWXbK+a/wOD
+   AZiRvDVk9lnT33uz8wqz+nKuMNOz08klV7S6BszadMzVrIyB9WdJR5FSC
+   A==;
+X-CSE-ConnectionGUID: nrOWR9qMTZqSNH6Daj0bKA==
+X-CSE-MsgGUID: 5TjKzZMyQqS66HuFGAbMew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43993393"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="43993393"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:58:20 -0700
+X-CSE-ConnectionGUID: Q+PrO1GQR+yDST8Ra7hiIA==
+X-CSE-MsgGUID: JFJ/dsUnQ32ArMb4RPMMhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="123426742"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 06:58:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 21 Mar 2025 15:58:09 +0200 (EET)
+To: Mario Limonciello <superm1@kernel.org>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
+    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
+    "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Huang Rui <ray.huang@amd.com>, 
+    "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, 
+    Viresh Kumar <viresh.kumar@linaro.org>, 
+    "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
+    "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+    "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>, 
+    Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PATCH v8 01/13] Documentation: x86: Add AMD Hardware Feedback
+ Interface documentation
+In-Reply-To: <a2e33d66-22ee-475b-817b-b52c6890859c@kernel.org>
+Message-ID: <58c49901-24b2-2209-9583-09e6b080cc08@linux.intel.com>
+References: <20250218190822.1039982-1-superm1@kernel.org> <20250218190822.1039982-2-superm1@kernel.org> <127a93b0-647f-bb0c-2bf4-649fc4d1f25e@linux.intel.com> <a2e33d66-22ee-475b-817b-b52c6890859c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] initrd: support erofs as initrd
-To: Julian Stecklina <julian.stecklina@cyberus-technology.de>,
- "hch@lst.de" <hch@lst.de>
-Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "rafael@kernel.org" <rafael@kernel.org>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
- <20250321050114.GC1831@lst.de>
- <582bc002-f0c8-4dbb-8fa5-4c10a479b518@linux.alibaba.com>
- <933797c385f2e222ade076b3e8fc5810fa47f5bd.camel@cyberus-technology.de>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <933797c385f2e222ade076b3e8fc5810fa47f5bd.camel@cyberus-technology.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1251599366-1742565489=:931"
 
-Hi Julian,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 2025/3/21 21:17, Julian Stecklina wrote:
-> On Fri, 2025-03-21 at 13:27 +0800, Gao Xiang wrote:
->> Hi Christoph,
->>
->> On 2025/3/21 13:01, Christoph Hellwig wrote:
->>> We've been trying to kill off initrd in favor of initramfs for about
->>> two decades.  I don't think adding new file system support to it is
->>> helpful.
->>>
->>
->> Disclaimer: I don't know the background of this effort so
->> more background might be helpful.
-> 
-> So erofs came up in an effort to improve the experience for users of NixOS on
-> smaller systems. We use erofs a lot and some people in the community just
-> consider it a "better" cpio at this point. A great property is that the contents
-> stays compressed in memory and there is no need to unpack anything at boot.
-> Others like that the rootfs is read-only by default. In short: erofs is a great
-> fit.
-> 
-> Of course there are some solutions to using erofs images at boot now:
-> https://github.com/containers/initoverlayfs
-> 
-> But this adds yet another step in the already complex boot process and feels
-> like a hack. It would be nice to just use erofs images as initrd. The other
-> building block to this is automatically sizing /dev/ram0:
-> 
-> https://lkml.org/lkml/2025/3/20/1296
-> 
-> I didn't pack both patches into one series, because I thought enabling erofs
-> itself would be less controversial and is already useful on its own. The
-> autosizing of /dev/ram is probably more involved than my RFC patch. I'm hoping
-> for some input on how to do it right. :)
+--8323328-1251599366-1742565489=:931
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Ok, my own thought is that cpio format is somewhat inflexible.  It
-seems that the main original reason for introducing initramfs and
-cpio was to avoid double caching, but it can be resolved with FSDAX
-now and initdax totally avoids unnecessary cpio parsing and unpacking.
-cpio format is much like tar which lacks of basic features like
-random access and xattrs which are useful for some use cases as
-I mentioned before.
+On Thu, 20 Mar 2025, Mario Limonciello wrote:
 
-The initrd image can even compressed as a whole and decompress in
-the current initramfs way.  If you really need on-demand
-decompression, you could leave some file compresssed since EROFS
-supports per-inode compression, but those files are still double
-caching since FSDAX mode should be uncompressed to support mmap.
-You could leave rare-used files compressed.
+> On 3/19/2025 09:01, Ilpo J=C3=A4rvinen wrote:
+> > On Tue, 18 Feb 2025, Mario Limonciello wrote:
+> >=20
+> > > From: Perry Yuan <Perry.Yuan@amd.com>
+> > >=20
+> > > Introduce a new documentation file, `amd_hfi.rst`, which delves into =
+the
+> > > implementation details of the AMD Hardware Feedback Interface and its
+> > > associated driver, `amd_hfi`. This documentation describes how the
+> > > driver provides hint to the OS scheduling which depends on the capabi=
+lity
+> > > of core performance and efficiency ranking data.
+> > >=20
+> > > This documentation describes
+> > > * The design of the driver
+> > > * How the driver provides hints to the OS scheduling
+> > > * How the driver interfaces with the kernel for efficiency ranking da=
+ta.
+> > >=20
+> > > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> > > Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> > > Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> > > ---
+> > >   Documentation/arch/x86/amd-hfi.rst | 127 ++++++++++++++++++++++++++=
++++
+> > >   Documentation/arch/x86/index.rst   |   1 +
+> > >   2 files changed, 128 insertions(+)
+> > >   create mode 100644 Documentation/arch/x86/amd-hfi.rst
+> > >=20
+> > > diff --git a/Documentation/arch/x86/amd-hfi.rst
+> > > b/Documentation/arch/x86/amd-hfi.rst
+> > > new file mode 100644
+> > > index 0000000000000..5d204688470e3
+> > > --- /dev/null
+> > > +++ b/Documentation/arch/x86/amd-hfi.rst
+> > > @@ -0,0 +1,127 @@
+> > > +.. SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > +Hardware Feedback Interface For Hetero Core Scheduling On AMD Platfo=
+rm
+> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > +
+> > > +:Copyright: 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+> > > +
+> > > +:Author: Perry Yuan <perry.yuan@amd.com>
+> > > +:Author: Mario Limonciello <mario.limonciello@amd.com>
+> > > +
+> > > +Overview
+> > > +--------
+> > > +
+> > > +AMD Heterogeneous Core implementations are comprised of more than on=
+e
+> > > +architectural class and CPUs are comprised of cores of various effic=
+iency
+> > > and
+> > > +power capabilities: performance-oriented *classic cores* and
+> > > power-efficient
+> > > +*dense cores*. As such, power management strategies must be designed=
+ to
+> > > +accommodate the complexities introduced by incorporating different c=
+ore
+> > > types.
+> > > +Heterogeneous systems can also extend to more than two architectural
+> > > classes as
+> > > +well. The purpose of the scheduling feedback mechanism is to provide
+> > > +information to the operating system scheduler in real time such that=
+ the
+> > > +scheduler can direct threads to the optimal core.
+> > > +
+> > > +The goal of AMD's heterogeneous architecture is to attain power bene=
+fit
+> > > by sending
+> > > +background thread to the dense cores while sending high priority thr=
+eads
+> > > to the classic
+> > > +cores. From a performance perspective, sending background threads to
+> > > dense cores can free
+> > > +up power headroom and allow the classic cores to optimally service
+> > > demanding threads.
+> > > +Furthermore, the area optimized nature of the dense cores allows for=
+ an
+> > > increasing
+> > > +number of physical cores. This improved core density will have posit=
+ive
+> > > multithreaded
+> > > +performance impact.
+> >=20
+> > Hi Mario,
+> >=20
+> > Please fold these paragraphs to 80 characters so that they're easier to
+> > read as textfiles (the table can obviously exceed that but there should=
+ be
+> > no reason for the text paragraphs to have excessively long lines).
+> >=20
+> > My apologies for taking so long to get to review this series.=20
+>=20
+> No problem.  Thanks for looking.  I'll get a new version ready to put out
+> after the next merge window.
+>=20
+> > Most of my
+> > comments are quite minor but there's also 1-2 things that seem more
+> > important. It seemed to me that there is some disconnetion between the
+> > promises made in the Kconfig description and what is provided by the pa=
+tch
+> > series.
+>=20
+> Some of the series was pared down to go in multiple parts to make it easi=
+er to
+> review with follow ups for the dynamic stuff planned for the next iterati=
+on.
+>=20
+> You see some artifacts of that comments and Kconfig.  I figured it was be=
+tter
+> to leave as is for those given they get to the intent, but I can change i=
+f you
+> think it's better to adjust them when the next part lands instead.
 
-Thanks,
-Gao Xiang
+Okay, I thought that might be because such a split to multiple series. I=20
+think you can leave those as is as I assume to intention is to immediately=
+=20
+follow up with the other parts (and not like wait a few kernel releases=20
+or so)?
+
+--=20
+ i.
+
+>=20
+> >=20
+> > --
+> >   i.
+> >=20
+> > > +
+> > > +AMD Heterogeneous Core Driver
+> > > +-----------------------------
+> > > +
+> > > +The ``amd_hfi`` driver delivers the operating system a performance a=
+nd
+> > > energy efficiency
+> > > +capability data for each CPU in the system. The scheduler can use th=
+e
+> > > ranking data
+> > > +from the HFI driver to make task placement decisions.
+> > > +
+> > > +Thread Classification and Ranking Table Interaction
+> > > +----------------------------------------------------
+> > > +
+> > > +The thread classification is used to select into a ranking table tha=
+t
+> > > describes
+> > > +an efficiency and performance ranking for each classification.
+> > > +
+> > > +Threads are classified during runtime into enumerated classes. The
+> > > classes represent
+> > > +thread performance/power characteristics that may benefit from speci=
+al
+> > > scheduling behaviors.
+> > > +The below table depicts an example of thread classification and a
+> > > preference where a given thread
+> > > +should be scheduled based on its thread class. The real time thread
+> > > classification is consumed
+> > > +by the operating system and is used to inform the scheduler of where=
+ the
+> > > thread should be placed.
+> > > +
+> > > +Thread Classification Example Table
+> > > +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > > ++----------+----------------+-------------------------------+-------=
+--------------+---------+
+> > > +| class ID | Classification | Preferred scheduling behavior | Preemp=
+tion
+> > > priority | Counter |
+> > > ++----------+----------------+-------------------------------+-------=
+--------------+---------+
+> > > +| 0        | Default        | Performant                    | Highes=
+t
+> > > |         |
+> > > ++----------+----------------+-------------------------------+-------=
+--------------+---------+
+> > > +| 1        | Non-scalable   | Efficient                     | Lowest
+> > > | PMCx1A1 |
+> > > ++----------+----------------+-------------------------------+-------=
+--------------+---------+
+> > > +| 2        | I/O bound      | Efficient                     | Lowest
+> > > | PMCx044 |
+> > > ++----------+----------------+-------------------------------+-------=
+--------------+---------+
+> > > +
+> > > +Thread classification is performed by the hardware each time that th=
+e
+> > > thread is switched out.
+> > > +Threads that don't meet any hardware specified criteria will be
+> > > classified as "default".
+> > > +
+> > > +AMD Hardware Feedback Interface
+> > > +--------------------------------
+> > > +
+> > > +The Hardware Feedback Interface provides to the operating system
+> > > information
+> > > +about the performance and energy efficiency of each CPU in the syste=
+m.
+> > > Each
+> > > +capability is given as a unit-less quantity in the range [0-255]. A
+> > > higher
+> > > +performance value indicates higher performance capability, and a hig=
+her
+> > > +efficiency value indicates more efficiency. Energy efficiency and
+> > > performance
+> > > +are reported in separate capabilities in the shared memory based ran=
+king
+> > > table.
+> > > +
+> > > +These capabilities may change at runtime as a result of changes in t=
+he
+> > > +operating conditions of the system or the action of external factors=
+=2E
+> > > +Power Management FW is responsible for detecting events that would
+> > > require
+> > > +a reordering of the performance and efficiency ranking. Table update=
+s
+> > > would
+> > > +happen relatively infrequently and occur on the time scale of second=
+s or
+> > > more.
+> > > +
+> > > +The following events trigger a table update:
+> > > +    * Thermal Stress Events
+> > > +    * Silent Compute
+> > > +    * Extreme Low Battery Scenarios
+> > > +
+> > > +The kernel or a userspace policy daemon can use these capabilities t=
+o
+> > > modify
+> > > +task placement decisions. For instance, if either the performance or
+> > > energy
+> > > +capabilities of a given logical processor becomes zero, it is an
+> > > indication that
+> > > +the hardware recommends to the operating system to not schedule any =
+tasks
+> > > on
+> > > +that processor for performance or energy efficiency reasons,
+> > > respectively.
+> > > +
+> > > +Implementation details for Linux
+> > > +--------------------------------
+> > > +
+> > > +The implementation of threads scheduling consists of the following s=
+teps:
+> > > +
+> > > +1. A thread is spawned and scheduled to the ideal core using the def=
+ault
+> > > +   heterogeneous scheduling policy.
+> > > +2. The processor profiles thread execution and assigns an enumerated
+> > > classification ID.
+> > > +   This classification is communicated to the OS via logical process=
+or
+> > > scope MSR.
+> > > +3. During the thread context switch out the operating system consume=
+s the
+> > > workload(WL)
+> > > +   classification which resides in a logical processor scope MSR.
+> > > +4. The OS triggers the hardware to clear its history by writing to a=
+n
+> > > MSR,
+> > > +   after consuming the WL classification and before switching in the=
+ new
+> > > thread.
+> > > +5. If due to the classification, ranking table, and processor
+> > > availability,
+> > > +   the thread is not on its ideal processor, the OS will then consid=
+er
+> > > scheduling
+> > > +   the thread on its ideal processor (if available).
+> > > +
+> > > +Ranking Table
+> > > +-------------
+> > > +The ranking table is a shared memory region that is used to communic=
+ate
+> > > the
+> > > +performance and energy efficiency capabilities of each CPU in the sy=
+stem.
+> > > +
+> > > +The ranking table design includes rankings for each APIC ID in the s=
+ystem
+> > > and
+> > > +rankings both for performance and efficiency for each workload
+> > > classification.
+> > > +
+> > > +.. kernel-doc:: drivers/platform/x86/amd/hfi/hfi.c
+> > > +   :doc: amd_shmem_info
+> > > +
+> > > +Ranking Table update
+> > > +---------------------------
+> > > +The power management firmware issues an platform interrupt after upd=
+ating
+> > > the ranking
+> > > +table and is ready for the operating system to consume it. CPUs rece=
+ive
+> > > such interrupt
+> > > +and read new ranking table from shared memory which PCCT table has
+> > > provided, then
+> > > +``amd_hfi`` driver parse the new table to provide new consume data f=
+or
+> > > scheduling decisions.
+> > > diff --git a/Documentation/arch/x86/index.rst
+> > > b/Documentation/arch/x86/index.rst
+> > > index 8ac64d7de4dc9..56f2923f52597 100644
+> > > --- a/Documentation/arch/x86/index.rst
+> > > +++ b/Documentation/arch/x86/index.rst
+> > > @@ -43,3 +43,4 @@ x86-specific Documentation
+> > >      features
+> > >      elf_auxvec
+> > >      xstate
+> > > +   amd-hfi
+> > >=20
+> >=20
+>=20
+>=20
+--8323328-1251599366-1742565489=:931--
 
