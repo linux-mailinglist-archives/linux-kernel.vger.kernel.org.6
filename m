@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-571068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B149DA6B8B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:24:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EA8A6B8B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D42B7A46D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CA93AE7C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398161F4E57;
-	Fri, 21 Mar 2025 10:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1425C214A7A;
+	Fri, 21 Mar 2025 10:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Aj8WzG1I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zly6AD+I"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lzlkxGZN";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lzlkxGZN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEB0200B0;
-	Fri, 21 Mar 2025 10:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4459212B1B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742552621; cv=none; b=e0p8wTkz0aJXA0iI3s5FJy0pVK2afKGrxO1vU7mVZYk0shXjPaQs9HksPRxxrT8F5QbKKU3EgOGjpMEq/RtLOnozLGWdCWhBmQrg6LyzK+3i3TEHWzXAR5noUOjO93m/C+2P4ZyXablwx+mDuX7ifgQk5DNpk/h44rBdRTiHOik=
+	t=1742552671; cv=none; b=Zl2//L8yzynpivVoeMaVe0ev4iUEmtSrOIIcKBtW9H3iah/yjCmAljEaWK+wXAaAmt8o0G31Le7j0LzJ4V53Ys90Rg7/gUgdJcV/OWp3lDhZ3T0llazY7i9DRKz23MLuI9f9qlhuHV1mFSpE1v4y7/SeXkFIuCLTdAcmsCVlM+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742552621; c=relaxed/simple;
-	bh=RMs/PSp53L6WgsMIE2/Hg0EtwHglh5WtXQO5Wsvdm8s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=f4ILBwi3GMskM2sj2OarNOWzHUW0jqmCzKayEVZvDzkTYH15la1mWMtBOriPfBoKmYoxyEhMJUvo+p6YeUJd0oC6PkDj8yxEyVeYuWy3UynOXVxrvxeYloh7uLeswsMkF6bUMlNKu6oEkyCZtlKYsj9HnQUdkKVunjE9+eIt2K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Aj8WzG1I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zly6AD+I; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CE17011400EE;
-	Fri, 21 Mar 2025 06:23:38 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Fri, 21 Mar 2025 06:23:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742552618;
-	 x=1742639018; bh=4UJevjEnua/hzuv6hukkiRL584yrJsU8XeWiL1LLMD8=; b=
-	Aj8WzG1IUqT3lWmRHOZ7RrH+yaiNF6O+b1ll6F8XwGji2k6T7Gq+RCxrn5gCNfZN
-	WC+mK6nvClR8BgcNVb8kyg/Gcju+HXbBPySim8hTNGG3rKYDQ1MJS+UKlNghWfbg
-	k0Y87P4xbfAUjqfMPiE2LXI0NI0h1YEUaZonDEUhdh8V69/ZJz5S2/xxceHUufsa
-	wf5WjhD3HJY/ZLbOPhOzozlk3XNA/EYAM8c8yluWzAij1FsHHFmXt5pqFHwbWS4A
-	RWS5G+nrNUmMhu7aczpNVc9VV9axKXtR+6iojehnhmfWzIfseVF3B2WU/mxKihwz
-	8m5c9cFOL79eZy64GPN0IA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742552618; x=
-	1742639018; bh=4UJevjEnua/hzuv6hukkiRL584yrJsU8XeWiL1LLMD8=; b=z
-	ly6AD+Ihs5gg7Xi6hEB+ltIrUd4lsTKMbCGVQ/Q6NwWP9muAIj3pTWDBT62AgYnK
-	RPwqvQ2tdI3D7WdEfWWiMCorOeYPtmJidLWSQqEJKaGVJiv1Du/khrli/hn32Lgo
-	RJsyufpWPdBFeOvlwN0+a02DMm/jJsT5b2XzajNffBnmfDMUMpBezXWXGYnChIbg
-	TRc2BJJ3Kz3N49oMp03R0aiVcSwlq+ylWqYx+5ITeKqQEPpi1vBMDjY5Cbkpu0uC
-	xU9TpPD4yvBoRPGHDZ3xMfnahGpiXp9Wre/LdRe8naQxSVgPskw2mQNtMaXASNLe
-	u3gkuh4YgzV7djzCCHNWg==
-X-ME-Sender: <xms:Kj7dZykJk9SsWjjvP9qQsveFNQdd4dHB9tl78p3Xz08gyY9DGmePzw>
-    <xme:Kj7dZ53Yl-Su9tLE2JAS8RYLxGdcIbp5Wq8PAz9xfaTPBDR21PK-JjLwR_g2VTOcv
-    hlBW3HMGRjGVHjaIcI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedtkeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    uddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehprghlmhgvrhesuggrsggsvg
-    hlthdrtghomhdprhgtphhtthhopegrlhgvgiesghhhihhtihdrfhhrpdhrtghpthhtohep
-    iihhihhhrghnghdrshhhrghordhishgtrghssehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epihhgnhgrtghiohesihgvnhgtihhnrghsrdgtohhmpdhrtghpthhtohepsghjohhrnhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggsihhgghgvrhhssehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehskhhhrghnsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggvsheslhhi
-    shhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:Kj7dZwqhYI8KVO9p2qwoKMwwDOBjgHGLyOa41iE_lI5pbFguaAmVWQ>
-    <xmx:Kj7dZ2n57kKHcok9q14JayhgRSuMMjUK0w-d3Be7gE0cpoFX4Oyb1Q>
-    <xmx:Kj7dZw1M5GoiRkOoXkgelQZpJdwWb9OnyMKpVsYf06QcTh6Jcus0Sg>
-    <xmx:Kj7dZ9uraoJ3pE9R4GYSmHJpFKQhkeBLbud9ZEDotc4ffIoECPq6sw>
-    <xmx:Kj7dZ1trPzB9iuKKEJApJowMAXKCYdRD4F601K1ruzXd1y-RkwcNDPzg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5311C2220072; Fri, 21 Mar 2025 06:23:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742552671; c=relaxed/simple;
+	bh=zSxV7n0+Ibej/HcUkLb/Ni7Bj2XB10ovlpZxrPUW51M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=er7esjA+hTKJMO9ytIX8osZP8jXN7J/GtRIh07L4xyKjYXQVRsTuohyHWDbP9IGow6kA335yiIQg5dNDvMjsIMc5vHy0Sv5eguXaMdHvR+cyXJoNYhtPTrZn2XmHmgeTubr1jo6QfaEkP83DwZ+AJEhze9+A5k45/eHc0s0Z+Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lzlkxGZN; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lzlkxGZN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E308F1F805;
+	Fri, 21 Mar 2025 10:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1742552667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Dn2O2mmtl/xizoePRAGekbdgff6shdA/fkvJ7bqBsKI=;
+	b=lzlkxGZNwo8w14o926SUBTewMCCvqlifMGei91n0KQ+C62t8Cmm3+68rC7HO5oCgCCFQwY
+	SAFrHl71vOH7sDC3qWwF1rhfrMLm/TIGUi0pu7LWTn4pI3g2H7MXPxPLtV3gZOvMq9X+hf
+	eFQ4snQXqav6EoFhcSYkX7za60SZkiw=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1742552667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Dn2O2mmtl/xizoePRAGekbdgff6shdA/fkvJ7bqBsKI=;
+	b=lzlkxGZNwo8w14o926SUBTewMCCvqlifMGei91n0KQ+C62t8Cmm3+68rC7HO5oCgCCFQwY
+	SAFrHl71vOH7sDC3qWwF1rhfrMLm/TIGUi0pu7LWTn4pI3g2H7MXPxPLtV3gZOvMq9X+hf
+	eFQ4snQXqav6EoFhcSYkX7za60SZkiw=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 527B213A2C;
+	Fri, 21 Mar 2025 10:24:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +nQQEVs+3WcvLQAAD6G6ig
+	(envelope-from <nik.borisov@suse.com>); Fri, 21 Mar 2025 10:24:27 +0000
+From: Nikolay Borisov <nik.borisov@suse.com>
+To: linux-security-module@vger.kernel.org
+Cc: paul@paul-moore.com,
+	serge@hallyn.com,
+	kees@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kirill.shutemov@linux.intel.com,
+	linux-coco@lists.linux.dev,
+	Nikolay Borisov <nik.borisov@suse.com>
+Subject: [PATCH 0/2] Allow individual features to be locked down
+Date: Fri, 21 Mar 2025 12:24:19 +0200
+Message-ID: <20250321102422.640271-1-nik.borisov@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T04d17f90b906d792
-Date: Fri, 21 Mar 2025 11:23:18 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ignacio Encinas" <ignacio@iencinas.com>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Alexandre Ghiti" <alex@ghiti.fr>
-Cc: "Eric Biggers" <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
- "Shuah Khan" <skhan@linuxfoundation.org>,
- "Zhihang Shao" <zhihang.shao.iscas@gmail.com>,
- =?UTF-8?Q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <583340a9-411d-406f-aee9-d3e2eb80ca43@app.fastmail.com>
-In-Reply-To: <ac0b1f3e-6abe-4de2-bf5a-a4b3207a22c3@iencinas.com>
-References: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
- <20250319-riscv-swab-v2-1-d53b6d6ab915@iencinas.com>
- <2afab9dc-e39c-4399-ac5a-87ade4da5ab0@app.fastmail.com>
- <4d45df0c-d44e-4bb6-8daa-0dba1b834bc4@iencinas.com>
- <07b8051b-9d5e-440e-b74d-1ca97402fe2a@app.fastmail.com>
- <ac0b1f3e-6abe-4de2-bf5a-a4b3207a22c3@iencinas.com>
-Subject: Re: [PATCH v2 1/2] include/uapi/linux/swab.h: move default implementation for
- swab macros into asm-generic
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Thu, Mar 20, 2025, at 23:36, Ignacio Encinas Rubio wrote:
-> On 19/3/25 22:49, Arnd Bergmann wrote:
->> On Wed, Mar 19, 2025, at 22:37, Ignacio Encinas Rubio wrote:
->>> On 19/3/25 22:12, Arnd Bergmann wrote:
->> Right, I do remember when we had a discussion about this maybe
->> 15 years ago when gcc didn't have the builtins on all architectures
->> yet, but those versions are long gone, and we never cleaned it up.
->
-> I just had a chance to look at this and it looks a bit more complex than
-> I initially thought. ___constant_swab macros are used in more places
-> than I expected, and {little,big}_endian.h define their own macros that
-> are used elsewhere, ...
->
-> It is not clear to me how to proceed here. I could:
->
->   1) Just remove ___constant_swab macros and replace them with
->   __builtin_swap everywhere
->
->   2) Go a step further and evaluate removing __constant_htonl and
->   relatives
->
-> Let me know what you think is the best option :)
+This simple change allows usecases where someone might want to  lock only specific
+feature at a finer granularity than integrity/confidentiality levels allows.
+The first likely user of this is the CoCo subsystem where certain features will be
+disabled.
 
-I think we can start enabling CONFIG_ARCH_USE_BUILTIN_BSWAP
-on all architectures and removing the custom versions
-from arch/*/include/uapi/asm/swab.h, which all seem to
-predate the compiler builtins and likely produce worse code.
+Nikolay Borisov (2):
+  lockdown: Switch implementation to using bitmap
+  lockdown/kunit: Introduce kunit tests
 
-    Arnd
+ security/lockdown/Kconfig         |  5 +++
+ security/lockdown/Makefile        |  1 +
+ security/lockdown/lockdown.c      | 24 +++++++++-----
+ security/lockdown/lockdown_test.c | 55 +++++++++++++++++++++++++++++++
+ 4 files changed, 77 insertions(+), 8 deletions(-)
+ create mode 100644 security/lockdown/lockdown_test.c
+
+--
+2.43.0
+
 
