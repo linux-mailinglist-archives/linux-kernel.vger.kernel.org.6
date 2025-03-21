@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-571595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFA4A6BF83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:17:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F18A6BF97
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DAB41B6112B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:15:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC521B61CC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ACE22D7B2;
-	Fri, 21 Mar 2025 16:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F143622836C;
+	Fri, 21 Mar 2025 16:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fv3+y9CY"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRS2Kd/2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF3F22D797
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB3E1DEFC5
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573679; cv=none; b=hDG/6zqzzFLdEJIM4C0EsJa3gVgZxJg/KaaA7VaMc5CxyDnu4ncOYsyrw3kDMij95jiZ/EVSGgZnlQwQCc6gPvlQhLzlpq6EYfvSFhltKpd35tTBH58d3rA8DZjeZA9oTQQg1qDii+pv35JpTm6y6T3iE8aZsINDfCuGt2GCa0s=
+	t=1742573783; cv=none; b=EVEny0C7d7IR0TLxwGbs0OMsuQJxPtZWeevKliBDxgixzJs5erauJ0i82eoQ1hx1hoNBm5v0J00JX2iPCXsu1a/kYqCAr73XaflbGhsVWTUoaIltfhjTsZmbF51rpybsPpnSxle+/D8jvuG/rHp8znwv0R5C3y1Cq+zNNc4R+ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573679; c=relaxed/simple;
-	bh=qXpYjnL6QzDKFF/vEA2avZLphl/BA8jmPIwzNSXeK7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iv6jrNfEaA/B7q0v9TXyL0tzTNavzb+zGskNwQB0xW3EtjDrlS352ranU6UBwHl56m4Odg0B1Q+5RmoA9q2EzmbE6fX3dKaK3O+elPUAG61bW6sxIjir25WVUxcG8Dp70C8Demr5k6jHa59r1+Ba7p2JjC3QGLj69TfZZzq1BU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fv3+y9CY; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47681dba807so242941cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742573677; x=1743178477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lr1NpamvodEP6MFP3VgS0Dk87IubpsnKUE/+euMf6QU=;
-        b=Fv3+y9CY8f2z8Zy2KI6pqFnQyV7BVUDrSAJNKGpTVdyOpcyNU4/FQUL4zz3+faPkaT
-         oTn39Aqr1rBjdcYFvzwokw8ucOYuOiR6qNpR0xhBxlofxuKBD2A17SWui721887+jErb
-         lueqHOTTfjYujWnpOrnpa5DUarH7F+TBIooG65jTgRsSgylaC3X874jRNb/uAZ/0UtEa
-         RHQJyMwwwLLgnmTfRdf4Mez+HL4viGgBfv77sFS0axbQKPdYfgZ1LoK8v6DYvcKsDWnT
-         5CIGlf3AVywZZKfZkUs3PSXud/k6UbXei63f8v/a3XWoKST+acnFS6g7cKySgNE6PqQF
-         4QKQ==
+	s=arc-20240116; t=1742573783; c=relaxed/simple;
+	bh=pFeQIM0elSHXudDzaZqSa3sSLY7KBkvo9aowDlPa0tY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XyLHhKx6c3awzf3C/yvF/+JNDO14vj023TpS8gML7l8epGkurGRUzIH641lkYZ9aT2TqguY6GU+QJx68N4HPab6bSCezF7fYK1uTGSpF4A9I+Nxdp3yPd9TVTQhnLHbwF6lgjQnXG5C2AVsuiCpNbcEOlvsTYE7m1AWspaKIQzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRS2Kd/2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742573781;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mC48yAiQls1tllwqU0y43QmgvHaHdh/HKhHrXStRZ/Q=;
+	b=TRS2Kd/2tcXJN1gFVKY79supQq6/2shlYtetOKIGyl+Ydzw8VRHhNy2eQMK8FcMBaW7Obh
+	yNHUuM6N95K90NTkQ/dhW2nibZihtI34Kuq5n5oFSlD+45aEMph5gdEbYz+ZnclDO6pj8t
+	skgRFvVwBNZjAcWkNe+gUeIZxvuvuus=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-N9C-eFN8PcyB-SoiNJS0Tw-1; Fri, 21 Mar 2025 12:16:19 -0400
+X-MC-Unique: N9C-eFN8PcyB-SoiNJS0Tw-1
+X-Mimecast-MFC-AGG-ID: N9C-eFN8PcyB-SoiNJS0Tw_1742573779
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85e15e32366so220662539f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:16:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573677; x=1743178477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lr1NpamvodEP6MFP3VgS0Dk87IubpsnKUE/+euMf6QU=;
-        b=m6ii102XEWqXa5TkVvv1QDDD0Qlw9T1P7DjSvmrnfvVg0Yq5xtr6DTvRqHbrOiUzhR
-         4IuZmExwcynoUBqF3enDA03lipeDqlF0Q2kRZ3Z7gXc6SbC16/Y8OcE9SK3yt9Ol3VDS
-         sz2SpHAdYAs7EOgVwsUl/Nj3+ptyEIFne1WGqfmJojICU2It3LrAkBy1yELpHH+5L7gU
-         59mkb37wUSx9Hovc06yNYbDZoYAie6CI8N4JHNvvjDivJijVauSGRq0gG0cp0q/i+wQy
-         0PfIVPRZx8fJ2e+mr2fmtrLZ8GDTT9lu4zCnYwvU3IIXkKKr9ym7cYmAN6bW/rh7uP2f
-         5gOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkECk3anEBBglsWGnwHht2Xo8/fD3IsfSmoWoVRnutc5eDfx2nioTrmrcpx0qrUf5IoEtnfupLVtrzvGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztAFJQUh5mpfRS1jJKELyYXCS7W1/eT7jwl8r1x4y+hW0nPw1k
-	LzuW9HtN54gLMhkgLYQMbt9JQLP6AD1N5eOKqZivWRS/F5znCBh2aFnI/EzGqXdY4XjortqXtdw
-	VPsg5yB/uezRJruS9opYxVOV+nhrfkFowA53P
-X-Gm-Gg: ASbGncubJCbwquq0BoCV7i53swRaZg78zUVJJ+Z0dbthqHKy1M8221LOkq4rX+370Yo
-	7yfcFxioFxmLy7+xYQKo4M3RFgHVKhQn/cWO2x1qCC/H78YJi/eLjVigB9l/YGuQa88qjpqDNjZ
-	Ore5aniM+UHH1XUEzgS1AFasjoQQ==
-X-Google-Smtp-Source: AGHT+IFtRdtnxmYqCiNGozdyiDRgbS5XVd2/jJNIMYaa9ildizNYGE8X3N7zH+w9Lm6oeOkoQXAJJ6yRGhxNC/i547Y=
-X-Received: by 2002:a05:622a:1c10:b0:476:77be:9102 with SMTP id
- d75a77b69052e-4771f510a8amr3527931cf.7.1742573676464; Fri, 21 Mar 2025
- 09:14:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742573779; x=1743178579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mC48yAiQls1tllwqU0y43QmgvHaHdh/HKhHrXStRZ/Q=;
+        b=kjeaAmYTIlJAq2NhJ1kquzKgZztrvZdUl9emmaSyWr4FwhKVlHzBqH9suJt4gCtc3w
+         PwO1/2d3TI3cYW14ryJGttXyjdjCAKtKS+Z5j2we6SOsaxXaBmJD0N+oDeHmYggRwhmR
+         +VF6Jp1bGjRL58UWWosUKve4QHTfYCyPml3ISRQwDzezLc+u7XIXuNKxjvqSQ3O4aa2N
+         GN9+qVYdphTE/okBv/rdlfs+puvH02GkvQFU1BnFVKl//J7x3VCW9uUAR6eoBVDEvTr5
+         z3FvzBOk1SYKy9K/MJfUEAFXHggpwiB0d+XyVGfM7TQDaP2ollgOo7Gm5Ji8yx5w/M4F
+         sRNA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+kNAgBpYg84Q3fEbTPWLJJDLwRW6dM711QKHGzNfvjZbBbDuCQ2BSat8+5Fj18T3gkaKIxBUzzVrKGf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUlP6/9Qa8UWFi0S6+hEtyopPySHNIcNm5oqxbfhnbQHvIy8Pw
+	Kam2dE6I2u3wnA9+g5NXDnE+Czj7+QJGztpTo+qMU9UiVlTCqzHxEXDCdDSB2PYo/Nud/3/n/oG
+	4Zxy1Up1KYRPVZRUJxnw+OD1HFTMBU3zoIkd3gi56gNvth2/snWCWIaKFyKlzWQ==
+X-Gm-Gg: ASbGncu6lkTJsf5sJFq9UOUzquX+5yg+6+hZ6DUXoO5wGauAnOtln+DQPrKG6KLarRt
+	JdqUB6BYlOUMsKYas8rnCoJzdKEdMv9Zfs7tQh6FfMJ7k72CFH8IE+Gj7P98ux8qfs7C0Nhl59W
+	MS4N8iDi6GraqBglWTCJD5y6zC7WMa332Ivlh8v+P0M0fLmhpgSSfio/uomgOgJiVJ34PCK0jZh
+	EBs9b1O6fNkocRagLxFoKD8fmCQg85mhdhbRGJ6Z7AiIjCFcpo4EGywesZj8d7nL5W2Og+6Tb4m
+	nuK02NLEXZdYWvChUpKzuV4iXOkBvg1hVgvN7u63JG0x+d9+Ax+e2c4R8+sX8D8tHE4kpYqOgyQ
+	=
+X-Received: by 2002:a05:6602:4088:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-85e2cb417c3mr499149739f.14.1742573778727;
+        Fri, 21 Mar 2025 09:16:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbaQHrqE43XUvLxfY1cyZCTiEOWEjd8FXpM95Z7lNYACE/IjdXtXMvElMRWZlz02YAI2fshQ==
+X-Received: by 2002:a05:6602:4088:b0:85d:b054:6eb9 with SMTP id ca18e2360f4ac-85e2cb417c3mr499145039f.14.1742573778344;
+        Fri, 21 Mar 2025 09:16:18 -0700 (PDT)
+Received: from rhdev.redhat.com (2603-9001-3d00-5353-0000-0000-0000-1422.inf6.spectrum.com. [2603:9001:3d00:5353::1422])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbeb565csm495653173.131.2025.03.21.09.16.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 09:16:17 -0700 (PDT)
+From: Jennifer Berringer <jberring@redhat.com>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jennifer Berringer <jberring@redhat.com>
+Subject: [PATCH v5] power: reset: nvmem-reboot-mode: support smaller magic
+Date: Fri, 21 Mar 2025 12:14:49 -0400
+Message-ID: <20250321161449.1175473-1-jberring@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320173931.1583800-1-surenb@google.com> <20250320173931.1583800-4-surenb@google.com>
- <20250321-unhelpful-doze-791895ca5b01@spud>
-In-Reply-To: <20250321-unhelpful-doze-791895ca5b01@spud>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 21 Mar 2025 09:14:24 -0700
-X-Gm-Features: AQ5f1Jp8UfxX8WOnw9385d8J0NeQgt0g6OSnoez6cTxiRd2n5Bydr6rryoZB6As
-Message-ID: <CAJuCfpEujbaSrk5+mR=+vWqwSu-t52fVmbPf5msnpduSB6AT2Q@mail.gmail.com>
-Subject: Re: [RFC 3/3] mm: integrate GCMA with CMA using dt-bindings
-To: Conor Dooley <conor@kernel.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com, 
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, liam.howlett@oracle.com, 
-	alexandru.elisei@arm.com, peterx@redhat.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com, 
-	mina86@mina86.com, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, hch@infradead.org, jack@suse.cz, hbathini@linux.ibm.com, 
-	sourabhjain@linux.ibm.com, ritesh.list@gmail.com, aneesh.kumar@kernel.org, 
-	bhelgaas@google.com, sj@kernel.org, fvdl@google.com, ziy@nvidia.com, 
-	yuzhao@google.com, minchan@kernel.org, linux-mm@kvack.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 7:06=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Thu, Mar 20, 2025 at 10:39:31AM -0700, Suren Baghdasaryan wrote:
-> > This patch introduces a new "guarantee" property for shared-dma-pool.
-> > With this property, admin can create specific memory pool as
-> > GCMA-based CMA if they care about allocation success rate and latency.
-> > The downside of GCMA is that it can host only clean file-backed pages
-> > since it's using cleancache as its secondary user.
-> >
-> > Signed-off-by: Minchan Kim <minchan@google.com>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  arch/powerpc/kernel/fadump.c |  2 +-
-> >  include/linux/cma.h          |  2 +-
-> >  kernel/dma/contiguous.c      | 11 ++++++++++-
-> >  mm/cma.c                     | 33 ++++++++++++++++++++++++++-------
-> >  mm/cma.h                     |  1 +
-> >  mm/cma_sysfs.c               | 10 ++++++++++
-> >  6 files changed, 49 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.=
-c
-> > index 4b371c738213..4eb7be0cdcdb 100644
-> > --- a/arch/powerpc/kernel/fadump.c
-> > +++ b/arch/powerpc/kernel/fadump.c
-> > @@ -111,7 +111,7 @@ void __init fadump_cma_init(void)
-> >               return;
-> >       }
-> >
-> > -     rc =3D cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump=
-_cma);
-> > +     rc =3D cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump=
-_cma, false);
-> >       if (rc) {
-> >               pr_err("Failed to init cma area for firmware-assisted dum=
-p,%d\n", rc);
-> >               /*
-> > diff --git a/include/linux/cma.h b/include/linux/cma.h
-> > index 62d9c1cf6326..3207db979e94 100644
-> > --- a/include/linux/cma.h
-> > +++ b/include/linux/cma.h
-> > @@ -46,7 +46,7 @@ extern int __init cma_declare_contiguous_multi(phys_a=
-ddr_t size,
-> >  extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
-> >                                       unsigned int order_per_bit,
-> >                                       const char *name,
-> > -                                     struct cma **res_cma);
-> > +                                     struct cma **res_cma, bool gcma);
-> >  extern struct page *cma_alloc(struct cma *cma, unsigned long count, un=
-signed int align,
-> >                             bool no_warn);
-> >  extern bool cma_pages_valid(struct cma *cma, const struct page *pages,=
- unsigned long count);
-> > diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> > index 055da410ac71..a68b3123438c 100644
-> > --- a/kernel/dma/contiguous.c
-> > +++ b/kernel/dma/contiguous.c
-> > @@ -459,6 +459,7 @@ static int __init rmem_cma_setup(struct reserved_me=
-m *rmem)
-> >       unsigned long node =3D rmem->fdt_node;
-> >       bool default_cma =3D of_get_flat_dt_prop(node, "linux,cma-default=
-", NULL);
-> >       struct cma *cma;
-> > +     bool gcma;
-> >       int err;
-> >
-> >       if (size_cmdline !=3D -1 && default_cma) {
-> > @@ -476,7 +477,15 @@ static int __init rmem_cma_setup(struct reserved_m=
-em *rmem)
-> >               return -EINVAL;
-> >       }
-> >
-> > -     err =3D cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->na=
-me, &cma);
-> > +     gcma =3D !!of_get_flat_dt_prop(node, "guarantee", NULL);
->
-> When this (or if I guess) this goes !RFC, you will need to document this
-> new property that you're adding.
+Some devices, such as Qualcomm sa8775p, have an nvmem reboot mode cell
+that is only 1 byte, which resulted in nvmem_reboot_mode_write() failing
+when it attempts to write a 4-byte magic. Checking the nvmem cell size
+and writing only the lower bits of the reboot mode magic is needed for
+these devices.
 
-Definitely. I'll document the cleancache and GCMA as well.
-Thanks!
+Signed-off-by: Jennifer Berringer <jberring@redhat.com>
+---
+This patch depends on [1].
+
+[1] https://lore.kernel.org/all/20250318094716.3053546-5-o.rempel@pengutronix.de/
+
+Changes v5:
+- Switch to using nvmem_cell_get_size() from the above linked patch
+  instead of introducing another function with the same purpose.
+---
+ drivers/power/reset/nvmem-reboot-mode.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/reset/nvmem-reboot-mode.c b/drivers/power/reset/nvmem-reboot-mode.c
+index 41530b70cfc4..6be178be4a58 100644
+--- a/drivers/power/reset/nvmem-reboot-mode.c
++++ b/drivers/power/reset/nvmem-reboot-mode.c
+@@ -20,11 +20,23 @@ static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
+ 				    unsigned int magic)
+ {
+ 	int ret;
++	u8 *magic_ptr = (u8 *) &magic;
++	size_t cell_size;
+ 	struct nvmem_reboot_mode *nvmem_rbm;
+ 
+ 	nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
+ 
+-	ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
++	ret = nvmem_cell_get_size(nvmem_rbm->cell, &cell_size, NULL);
++	if (ret < 0) {
++		dev_err(reboot->dev, "failed to get reboot mode nvmem cell size\n");
++		return ret;
++	}
++
++	/* Use magic's low-order bytes when writing to a smaller cell. */
++	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN) && cell_size < sizeof(magic))
++		magic_ptr += sizeof(magic) - cell_size;
++
++	ret = nvmem_cell_write(nvmem_rbm->cell, magic_ptr, MIN(cell_size, sizeof(magic)));
+ 	if (ret < 0)
+ 		dev_err(reboot->dev, "update reboot mode bits failed\n");
+ 
+-- 
+2.48.1
+
 
