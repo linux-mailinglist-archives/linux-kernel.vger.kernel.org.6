@@ -1,159 +1,237 @@
-Return-Path: <linux-kernel+bounces-571044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5642FA6B86C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:03:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03117A6B871
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80F2460FFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD593BA099
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607B120B20A;
-	Fri, 21 Mar 2025 10:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fh2ozByb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB53A1F4179;
+	Fri, 21 Mar 2025 10:03:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B7B1F03C4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179DB41C72;
+	Fri, 21 Mar 2025 10:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742551367; cv=none; b=VqdiQV+rI5SEOgIWrDL6LhCodBiXwq+ISJaXKKX+nzvSGDnLdBCLKaEuT0PqBW3v6apbutTOAktrjVfW24225jeewp/+CE9y74hT68JQpHXdhnN4EnJd3L5BPpWfqCxb6DhGhQ9eWMJl8GvaLA+g7JERGpWdRxLwFgGtygwloAA=
+	t=1742551395; cv=none; b=WTWgMYH+gcpIlxUoduSEPC0CcpDWXfIOPEI9Jj6des2bpSeh2EQPPQUl/xRHdScSj925C08Pl6pKT9jyoVQ1xZpjo+WQyV/t5dfySrxqpM2br9r101sKAvsgKDxECxtbIALy+psKxMD+lJVLgii9X6S/UIRBw1EOl6Jcfp9wwDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742551367; c=relaxed/simple;
-	bh=7FXB9MgUSNIAeCSTjixx/fGT1P/pEpqm6PYZY4ugldk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJckggFymqUdLuLsSTEFEmbcElhW2XozOsnF4rdQSKSNBXtanyYO4mB/LcgagVyTxz/e8OyBh2F5c36tAe6+0+zButfiXzKh+fEQ3UbEb7eOmyGvsAOfyLP1isNzoVM3Nvdz2Tm5hTqcGKxrswZPzR5RebzEkk1qnU89RhcFeMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fh2ozByb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742551363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z1fasRIza0+wiA592mMux1XtH5KpwcITkoYkMYOlXyU=;
-	b=fh2ozByb7XrKwBDe232od9RzU4T8w7G0yMGs6geOIeClm1OdZd5M1RFiAOPsb7z8nrZKQW
-	cya4Q6z4/LgJNScLmHjSjUDuke66TkB+7Z86XkiCYpldJ1iOWgBiAJ0PLhxLOuo2RBtNqR
-	zj79BGx3LkZGjSuwa0hAzPlhgRRvAFM=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-qdC2mx2XPb2H_Bs5UY7jEg-1; Fri, 21 Mar 2025 06:02:42 -0400
-X-MC-Unique: qdC2mx2XPb2H_Bs5UY7jEg-1
-X-Mimecast-MFC-AGG-ID: qdC2mx2XPb2H_Bs5UY7jEg_1742551361
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac21697a8ebso165223466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 03:02:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742551361; x=1743156161;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z1fasRIza0+wiA592mMux1XtH5KpwcITkoYkMYOlXyU=;
-        b=B53X+QSmvCvVJesau4S7rXEEQwiZ/IisM/91LBGAdQ+4Mm0duLn2fmXkx14Fn3rhUM
-         1btmLhRq78cNDSaaL02bta4mQUiM6HHOUTakn4VYwRQvsirptzHOVWkSqbFAGR4++Yji
-         ZkA1YLvyi+SQBEWCskb2Q2EblGQMaBSJ3MunTyO45tqxO1UXDB/pR/FHfBrFvIe4xXWR
-         GpsWqtkbBs1/0fytxU1ki5anlCi+utXHoAK7iDwBKxvvsJlMlZNyo5erCA/zzPlbUdWx
-         UXgZLmV2+uOCofqt4LwbofZ3JllgucG9KMZXI1mjWtuL9tAd8epkA+esTioASC4ObShj
-         /olw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxEgSyhpoDqv/L0zwdsPVYSVXcUk3QzrBVg7B66uyYVoFcpZ+wHVPQb76C3H0YsH3i3iwpTAHMbdOwORQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXDTLK/XTIHNxeaAPm56kXPk7DHH/Fb+MsHq+7200OquT4LMGC
-	javetB9cOr2ZzmoWpntQ5uqZA0Nx2iXdlsWcFi100wDd59Fk1yTsnGmwzuPcOByif1U2/RsotfS
-	aSodnLpNr+nBhED5L6/mEtdwQilLAPQsZ/7kReXLG0llslMykbGT8p7VlFtJ9wQ==
-X-Gm-Gg: ASbGncum3YrsvpB2cuVd6WJSRZnEcvZrDes9slILG70okTXCzxXMQDesFFrkrcIgLSb
-	aAOSY15xHXrlMLJRMkTw8vMLx5UcW/a7Jn4MDOVLyeEE7iy7lyiQ8AFmbNCovygJ8peEg++Usl8
-	F+WBpbelZplJ74z4wq3ECnJdFjXq5q190wEYF5AkRKWW/QK6KlnpSZdoZD0WNn/UoornvwtnLUN
-	I6Hlm/revkg5PY9qcw1l4h5a52gjMAlT0yvbvPplHg31eKCERmB2GdQ9XYJrR4f+WSn8oLBFopL
-	wKUY2AEq3cYyOAq4FrEAI9KVOAr9qUi2gD8W0LIsKQpxpxbp1YPF2ixbQcFB0tVd
-X-Received: by 2002:a17:907:d7c8:b0:ac3:9587:f2a1 with SMTP id a640c23a62f3a-ac3f20f2eadmr273956766b.20.1742551360986;
-        Fri, 21 Mar 2025 03:02:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHI1seRG9imWZDzSDGMTwRVM4KqTGFuBDv5cjB/u4qDI0LlvpoSZCACNxNmno6+XKEHNnW4Jg==
-X-Received: by 2002:a17:907:d7c8:b0:ac3:9587:f2a1 with SMTP id a640c23a62f3a-ac3f20f2eadmr273949266b.20.1742551360312;
-        Fri, 21 Mar 2025 03:02:40 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e50b9sm125525366b.55.2025.03.21.03.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 03:02:39 -0700 (PDT)
-Date: Fri, 21 Mar 2025 11:02:34 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Bryan Tan <bryan-bt.tan@broadcom.com>, 
-	Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller" <davem@davemloft.net>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] vhost/vsock: use netns of process that opens the
- vhost-vsock-netns device
-Message-ID: <aqkgzoo2yswmb52x72fwmch2k7qh2vzq42rju7l5puxc775jjj@duqqm4h3rmlh>
-References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
- <20250312-vsock-netns-v2-3-84bffa1aa97a@gmail.com>
- <09c84a94-85f3-4e28-8e7d-bdc227bf99ab@redhat.com>
- <nwksousz7f4pkzwefvrpbgmmq6bt5kimv4icdkvm7n2nlom6yu@e62c5gdzmamg>
- <Z9yDIl8taTAmG873@devvm6277.cco0.facebook.com>
+	s=arc-20240116; t=1742551395; c=relaxed/simple;
+	bh=mr6l2LLuKAGbHkCuYwjPvSvm/d7AOLglFWNvz7o9a+c=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mtnDZAeD3gsSZ0qW/kCt/vwgTZpr4iOiBmcLKQeXKzzH8EmokKukHjyd75rHlaOUUkkkoffWXTn9I3wGInObXGfzlRa65mrcEu1Twna/0VDShjoVhmUlt4+MEOlg7xgweuKYSddgOZ2lVTw7Qy9Q1Mw7fGY9mh5KkkguAuDwJNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZJyc82vtFz6K9V7;
+	Fri, 21 Mar 2025 18:00:08 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC66A140146;
+	Fri, 21 Mar 2025 18:03:08 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Mar
+ 2025 11:03:07 +0100
+Date: Fri, 21 Mar 2025 10:03:05 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-cxl@vger.kernel.org>, <dan.j.williams@intel.com>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
+	<Vilas.Sridharan@amd.com>, <linux-edac@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v2 2/8] EDAC: Update documentation for the CXL memory
+ patrol scrub control feature
+Message-ID: <20250321100305.000018d2@huawei.com>
+In-Reply-To: <20250320180450.539-3-shiju.jose@huawei.com>
+References: <20250320180450.539-1-shiju.jose@huawei.com>
+	<20250320180450.539-3-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z9yDIl8taTAmG873@devvm6277.cco0.facebook.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Mar 20, 2025 at 02:05:38PM -0700, Bobby Eshleman wrote:
->On Thu, Mar 20, 2025 at 10:08:02AM +0100, Stefano Garzarella wrote:
->> On Wed, Mar 19, 2025 at 10:09:44PM +0100, Paolo Abeni wrote:
->> > On 3/12/25 9:59 PM, Bobby Eshleman wrote:
->> > > @@ -753,6 +783,8 @@ static int vhost_vsock_dev_release(struct inode *inode, struct file *file)
->> > >  	virtio_vsock_skb_queue_purge(&vsock->send_pkt_queue);
->> > >
->> > >  	vhost_dev_cleanup(&vsock->dev);
->> > > +	if (vsock->net)
->> > > +		put_net(vsock->net);
->> >
->> > put_net() is a deprecated API, you should use put_net_track() instead.
->> >
->> > >  	kfree(vsock->dev.vqs);
->> > >  	vhost_vsock_free(vsock);
->> > >  	return 0;
->> >
->> > Also series introducing new features should also include the related
->> > self-tests.
->>
->> Yes, I was thinking about testing as well, but to test this I think we need
->> to run QEMU with Linux in it, is this feasible in self-tests?
->>
->> We should start looking at that, because for now I have my own ansible
->> script that runs tests (tools/testing/vsock/vsock_test) in nested VMs to
->> test both host (vhost-vsock) and guest (virtio-vsock).
->>
->
->Maybe as a baseline we could follow the model of
->tools/testing/selftests/bpf/vmtest.sh and start by reusing your
->vsock_test parameters from your Ansible script?
+On Thu, 20 Mar 2025 18:04:39 +0000
+<shiju.jose@huawei.com> wrote:
 
-Yeah, my playbooks are here: 
-https://github.com/stefano-garzarella/ansible-vsock
+> From: Shiju Jose <shiju.jose@huawei.com>
+>=20
+> Update the Documentation/edac/scrub.rst to include descriptions and
+> policies for CXL memory device-based and CXL region-based patrol scrub
+> control.
+>=20
+> Note: This may require inputs from CXL memory experts regarding
+> region-based scrubbing policies.
 
-Note: they are heavily customized on my env, I wrote some notes on how 
-to change various wired path.
+So I suggested the region interfaces in the first place.  It's all about
+usecases and 'why' we might increase the scrub rate.
+Ultimately the hardware is controlled in a device wide way, so we could
+have made it complex userspace problem to deal with it on a perf device.
+The region interfaces are there as a simplification not because they
+are strictly necessary.
 
->
->I don't mind writing the patches.
+Anyhow, the use cases:
 
-That would be great and very much appreciated.
-Maybe you can do it in a separate series and then here add just the 
-configuration we need.
+1) Scrubbing because a device is showing unexpectedly high errors.  That
+   control needs to be at device granularity.  If one device in an interlea=
+ve
+   set (backing a region) is dodgy, why make them all do more work?
 
-Thanks,
-Stefano
+2) Scrubbing may apply to memory that isn't online at all yet.  Nice to know
+   if we have a problem before we start using it!  Likely this is setting
+   system wide defaults on boot.
+
+3) Scrubbing at higher rate because software has decided that we want
+   more reliability for particular data.  I've been calling this
+   Differentiated Reliability.  That data sits in a region which
+   may cover part of multiple devices. The region interfaces are about
+   supporting this use case.
+
+So now the question is what do we do if both interfaces are poked
+because someone cares simultaneously about 1 and 3?
+
+I'd suggest just laying out a set for rules on how to set the scrub rates
+for any mixture of requirements, rather than making the driver work out
+the optimum combination.
+=20
+>=20
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  Documentation/edac/scrub.rst | 47 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>=20
+> diff --git a/Documentation/edac/scrub.rst b/Documentation/edac/scrub.rst
+> index daab929cdba1..d1c02bd90090 100644
+> --- a/Documentation/edac/scrub.rst
+> +++ b/Documentation/edac/scrub.rst
+> @@ -264,3 +264,51 @@ Sysfs files are documented in
+>  `Documentation/ABI/testing/sysfs-edac-scrub`
+> =20
+>  `Documentation/ABI/testing/sysfs-edac-ecs`
+> +
+> +Examples
+> +--------
+> +
+> +The usage takes the form shown in these examples:
+> +
+> +1. CXL memory device patrol scrubber
+> +
+> +1.1 Device based scrubbing
+> +
+> +CXL memory is exposed to memory management subsystem and ultimately user=
+space
+> +via CXL devices.
+> +
+> +For cases where hardware interleave controls do not directly map to regi=
+ons of
+> +Physical Address space, perhaps due to interleave the approach described=
+ in=A0
+> +1.2 Region based scrubbing section, which is specific to CXL regions sho=
+uld be
+> +followed.
+
+These sentences end up a bit unwieldy. Perhaps simply a forwards reference.
+
+When combining control via the device interfaces and region interfaces see
+1.2 Region bases scrubbing.
+
+
+=20
+> In those cases settings on the presented interface may interact with
+> +direct control via a device instance specific interface and care must be=
+ taken.
+> +
+> +Sysfs files for scrubbing are documented in
+> +`Documentation/ABI/testing/sysfs-edac-scrub`
+> +
+> +1.2. Region based scrubbing
+> +
+> +CXL memory is exposed to memory management subsystem and ultimately user=
+space
+> +via CXL regions. CXL Regions represent mapped memory capacity in system
+> +physical address space. These can incorporate one or more parts of multi=
+ple CXL
+> +memory devices with traffic interleaved across them. The user may want t=
+o control
+> +the scrub rate via this more abstract region instead of having to figure=
+ out the
+> +constituent devices and program them separately. The scrub rate for each=
+ device
+> +covers the whole device. Thus if multiple regions use parts of that devi=
+ce then
+> +requests for scrubbing of other regions may result in a higher scrub rat=
+e than
+> +requested for this specific region.
+> +
+> +1. When user sets scrub rate for a memory region, the scrub rate for all=
+ the CXL
+> +   memory devices interleaved under that region is updated with the same=
+ scrub
+> +   rate.=20
+
+Note that this may affect multiple regions.
+
+> +
+> +2. When user sets scrub rate for a memory device, only the scrub rate fo=
+r that
+> +   memory devices is updated though device may be part of a memory regio=
+n and
+> +   does not change scrub rate of other memory devices of that memory reg=
+ion.
+> +
+> +3. Scrub rate of a CXL memory device may be set via EDAC device or regio=
+n scrub
+> +   interface simultaneously. Care must be taken to prevent a race condit=
+ion, or
+> +   only region-based setting may be allowed.
+
+So is this saying if you want to mix and match, set region first then device
+next?  Can we just lay out the rules to set up a weird mixture.  We could
+add more smarts to the driver but do we care as mixing 1 and 3 above is pro=
+bably
+unusual?
+
+1. Taking each region in turn from lowest desired scrub rate to highest and=
+ set
+   their scrub rates.  Later regions may override the scrub rate on individ=
+ual
+   devices (and hence potentially whole regions).
+
+2. Take each device for which enhanced scrubbing is required (higher rate) =
+and
+   set those scrub rates.  This will override the scrub rates of individual=
+ devices
+   leaving any that are not specifically set to scrub at the maximum rate r=
+equired
+   for any of the regions they are involved in backing.
+  =20
+
+> +
+> +Sysfs files for scrubbing are documented in
+> +`Documentation/ABI/testing/sysfs-edac-scrub`
 
 
