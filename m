@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-570846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA0EA6B533
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:40:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71BDA6B57A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12893189F3E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:40:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC0017A82E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9EB1EF0AA;
-	Fri, 21 Mar 2025 07:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiAJLk7j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897012AF1B;
-	Fri, 21 Mar 2025 07:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57221EE02F;
+	Fri, 21 Mar 2025 07:50:07 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFA726ACB;
+	Fri, 21 Mar 2025 07:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742542755; cv=none; b=MH9dzIbzf1Cq2uu2QyuzgWfA79q4xl22eaPz0SaJ29LZYHgIsHS2A+dqoUZuE4cnLS93Oke8F4uhmH7+RbD0/RxhD6kESrSY9sPyoQFoTOkekQPur+nQqJEa7I1Bp6b1EbhblUl2SkQrYC19LbmF3HXJoktiRaU4QIXKtiWsrd4=
+	t=1742543407; cv=none; b=uPtQJxg/sw6WTilRssFVW3iHVsE1WkJxYmLPHrNRZUt7fD70fZ11ey7DUR9fdK/RudHo6NXQGNbMYMOEVY/G5JeMS43p/Ui1i0BEPIeWbM4LjeDVxIEJsN52CJUOyOSAFtXsHs77/610h1HUA6t2vDLQeicZi4exrofWeUU9c2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742542755; c=relaxed/simple;
-	bh=nlD8UfHxL6A1SIXp/p6NoZR/pJlgm3rdkZfgohR3koA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jDOYaefkkFeosO3SkI1WNF6N5GtlwiBCv9YoLguTMZtJGE0s/TfbI7OhKsUXzCkotk3BTJsux/50cIeZ8JVZWER3utGvQPpWzb4pDyXGZkS8EOuzBJoVVASGHY+CdasIO4nnClLL9aV2O01KHV6D8pKrt7yry372dp48fMvl5do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiAJLk7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9813C4CEE3;
-	Fri, 21 Mar 2025 07:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742542754;
-	bh=nlD8UfHxL6A1SIXp/p6NoZR/pJlgm3rdkZfgohR3koA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=iiAJLk7jR0FpJGamwJFBBypXRf8QpNqTnJd0fQHgdjcI0kroUJxPhMBEIB6wIHY1W
-	 6w3FD2J5ttYVIuroG49qYG1RLqLgKLvPSVp3r3GSObHsfZCEGYqS6LtNWHBg89L1Nq
-	 XNRwZfzYxC6Szkp0rKk42wng4CJwP75O7nqjXJdKmq7Nk7HE7LqLEDeYvTXbiUH9x2
-	 wnNlfwVJAgA6H/yuQHmCx34ca7TWJFU6MMbxYRmCvITdHvORAKRDlHVldbvvTstHuP
-	 EcgTqlvKHF/hbiORCRKvFPvlWoSKMX4hNZ+KsvBK7Y7YZYSxeW0RmqBHe8M75BtIWx
-	 Z3PbIf83k25qw==
-Message-ID: <8379e009-9619-4c2b-986a-8ccb9ebaa083@kernel.org>
-Date: Fri, 21 Mar 2025 08:39:07 +0100
+	s=arc-20240116; t=1742543407; c=relaxed/simple;
+	bh=6hI6HTb0SjrdNqP1YFqTh6hXn9ZSUNy1APKZfKSSCjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DBoC8pIpZswCPs8stqF06r3JQHt9gNBxu8fQwARvxEqIt5EGQ90G8XiG8/zUzl2uubNRmb/kmrgw0eMUQtii6QJ7SjfSb16dZpZTJm8TsiO3fwnF/lY4O3BBFnPrVUX+ze1ciM1dGFHkvtDFdq7A1ZR5aVF7MX7s1ngVaB3ZYbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZJvVF4Pn7z9sRy;
+	Fri, 21 Mar 2025 08:39:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id F-EBTBk1L9WD; Fri, 21 Mar 2025 08:39:49 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJvVF2zQJz9sRs;
+	Fri, 21 Mar 2025 08:39:49 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 427FB8B79C;
+	Fri, 21 Mar 2025 08:39:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 6L_KAMM1K10W; Fri, 21 Mar 2025 08:39:49 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 491FB8B763;
+	Fri, 21 Mar 2025 08:39:47 +0100 (CET)
+Message-ID: <eff21b9b-0b03-4dbc-aa0a-7d3771df9082@csgroup.eu>
+Date: Fri, 21 Mar 2025 08:39:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,97 +55,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100-qcp: Add power control
- and sideband signals for PCIe3
-To: Wenbin Yao <quic_wenbyao@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- catalin.marinas@arm.com, will@kernel.org, quic_qianyu@quicinc.com,
- sfr@canb.auug.org.au, linux-arm-kernel@lists.infradead.org
-References: <20250320055502.274849-1-quic_wenbyao@quicinc.com>
- <20250320055502.274849-4-quic_wenbyao@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250320055502.274849-4-quic_wenbyao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 0/8] cxl: support CXL memory RAS features
+To: shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
+ dan.j.williams@intel.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
+ ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com
+Cc: linux-edac@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+ tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+ leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+ jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+ naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+ somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+ duenwen@google.com, gthelen@google.com, wschwartz@amperecomputing.com,
+ dferguson@amperecomputing.com, wbs@os.amperecomputing.com,
+ nifan.cxl@gmail.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+ roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+ wanghuiqiang@huawei.com, linuxarm@huawei.com
+References: <20250320180450.539-1-shiju.jose@huawei.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250320180450.539-1-shiju.jose@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 20/03/2025 06:55, Wenbin Yao wrote:
-> From: Qiang Yu <quic_qianyu@quicinc.com>
+
+
+Le 20/03/2025 à 19:04, shiju.jose@huawei.com a écrit :
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> Add perst, wake and clkreq sideband signals and required regulators in
-> PCIe3 controller and PHY device tree node. Describe the voltage rails of
-> the x8 PCI slots for PCIe3 port.
+> Support for CXL memory RAS features: patrol scrub, ECS, soft-PPR and
+> memory sparing.
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 119 ++++++++++++++++++++++
->  1 file changed, 119 insertions(+)
+> This CXL series was part of the EDAC series [1].
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> index 28086a2bc..9cd313802 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> @@ -318,6 +318,48 @@ vreg_wcn_3p3: regulator-wcn-3p3 {
->  		regulator-boot-on;
->  	};
->  
-> +	vreg_pcie_12v: regulator-pcie_12v {
+> The code is based on cxl.git next branch [2] merged with ras.git edac-cxl
+> branch [3].
+> 
+> 1. https://lore.kernel.org/linux-cxl/20250212143654.1893-1-shiju.jose@huawei.com/
+> 2. https://web.git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git/log/?h=next
+> 3. https://web.git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git/log/?h=edac-cxl
+> 
+> Userspace code for CXL memory repair features [4] and
+> sample boot-script for CXL memory repair [5].
+> 
+> [4]: https://lore.kernel.org/lkml/20250207143028.1865-1-shiju.jose@huawei.com/
+> [5]: https://lore.kernel.org/lkml/20250207143028.1865-5-shiju.jose@huawei.com/
 
-Don't send the downstream code.
+The title for the series is quite confusing, CXL seems to be something 
+else. There is a series here [1] that removes CXL driver, but after 
+looking it seems to be something completely different.
 
-Underscore are not allowed in node names plus:
+[1] https://lore.kernel.org/all/20250219070007.177725-1-ajd@linux.ibm.com/
 
-Please use name for all fixed regulators which matches current format
-recommendation: 'regulator-[0-9]v[0-9]'
+Christophe
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml?h=v6.11-rc1#n46
 
-Best regards,
-Krzysztof
+> 
+> Changes
+> =======
+> v1 -> v2:
+> 1. Feedbacks from Dan Williams on v1,
+>     https://lore.kernel.org/linux-mm/20250307091137.00006a0a@huawei.com/T/
+>    - Fixed lock issues in region scrubbing, added local cxl_acquire()
+>      and cxl_unlock.
+>    - Replaced CXL examples using cat and echo from EDAC .rst docs
+>      with short description and ref to ABI docs. Also corrections
+>      in existing descriptions as suggested by Dan.
+>    - Add policy description for the scrub control feature.
+>      However this may require inputs from CXL experts.
+>    - Replaced CONFIG_CXL_RAS_FEATURES with CONFIG_CXL_EDAC_MEM_FEATURES.
+>    - Few changes to depends part of CONFIG_CXL_EDAC_MEM_FEATURES.
+>    - Rename drivers/cxl/core/memfeatures.c as drivers/cxl/core/edac.c
+>    - snprintf() -> kasprintf() in few places.
+>    
+> 2. Feedbacks from Alison on v1,
+>    - In cxl_get_feature_entry()(patch 1), return NULL on failures and
+>      reintroduced checks in cxl_get_feature_entry().
+>    - Changed logic in for loop in region based scrubbing code.
+>    - Replace cxl_are_decoders_committed() to cxl_is_memdev_memory_online()
+>      and add as a local function to drivers/cxl/core/edac.c
+>    - Changed few multiline comments to single line comments.
+>    - Removed unnecessary comments from the code.
+>    - Reduced line length of few macros in ECS and memory repair code.
+>    - In new files, changed "GPL-2.0-or-later" -> "GPL-2.0-only".
+>    - Ran clang-format for new files and updated.
+> 3. Changes for feedbacks from Jonathan on v1.
+>    - Changed few multiline comments to single line comments.
+> 
+> Shiju Jose (8):
+>    cxl: Add helper function to retrieve a feature entry
+>    EDAC: Update documentation for the CXL memory patrol scrub control
+>      feature
+>    cxl/edac: Add CXL memory device patrol scrub control feature
+>    cxl/edac: Add CXL memory device ECS control feature
+>    cxl/mbox: Add support for PERFORM_MAINTENANCE mailbox command
+>    cxl: Support for finding memory operation attributes from the current
+>      boot
+>    cxl/memfeature: Add CXL memory device soft PPR control feature
+>    cxl/memfeature: Add CXL memory device memory sparing control feature
+> 
+>   Documentation/edac/memory_repair.rst |   31 +
+>   Documentation/edac/scrub.rst         |   47 +
+>   drivers/cxl/Kconfig                  |   27 +
+>   drivers/cxl/core/Makefile            |    1 +
+>   drivers/cxl/core/core.h              |    2 +
+>   drivers/cxl/core/edac.c              | 1730 ++++++++++++++++++++++++++
+>   drivers/cxl/core/features.c          |   23 +
+>   drivers/cxl/core/mbox.c              |   45 +-
+>   drivers/cxl/core/memdev.c            |    9 +
+>   drivers/cxl/core/ras.c               |  145 +++
+>   drivers/cxl/core/region.c            |    5 +
+>   drivers/cxl/cxlmem.h                 |   73 ++
+>   drivers/cxl/mem.c                    |    4 +
+>   drivers/cxl/pci.c                    |    3 +
+>   drivers/edac/mem_repair.c            |    9 +
+>   include/linux/edac.h                 |    7 +
+>   16 files changed, 2159 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/cxl/core/edac.c
+> 
+
 
