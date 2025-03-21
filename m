@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-571931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8E0A6C468
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B329DA6C46B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFBA61B619D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:42:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3AD1B60C2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F8233D9C;
-	Fri, 21 Mar 2025 20:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C4A230BDA;
+	Fri, 21 Mar 2025 20:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYzyp0aL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZ10bVPP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D815230BFB;
-	Fri, 21 Mar 2025 20:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CE822FF5F;
+	Fri, 21 Mar 2025 20:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589672; cv=none; b=SP/jclsaq6C4o64SBfcl7YrM+MSmMqlV7/NjUB1c9Tf8WHL7vwcQxkHVUYOOM0j89pslUCE/HK/MyZ4PlwWx5+/jZsWsCt9+7lWFwBWtlvbHEmB10Qb7kaeu7y2ZyNk170XBPMsMs/avUoyB8GOYEEBNC1ck4yAHRZsSenYWvyQ=
+	t=1742589753; cv=none; b=QsYqnL1gKYhu9fEq5/Z70SgW1mDYFLlHlWWScRp0cvmVdg3LNaIKzLh+6vCCnogNS4jzjmug6J5tjb9d4uGbL8Ogc14ons6Onxvr5JlU8v2+gNd8iNc7lMrgGQHbqMIkcvz4aC3gR+kQHHU+funm6URCs0xCVomZlFAc3Y3re5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742589672; c=relaxed/simple;
-	bh=wsCETj06SFFwh38K8EPA2OIG7ZSdRNghUF4foeMZKA0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IBdNaCWqhew4xmt+Vpn+ql3y/ra6RkgKrYcQqlcUO7qia1YEyaJJjNabbMiLc9h3C7IouvI3+PcqNfpDj6bhdajvdc4Co9mVopTj+DGiv1uaz0zWvNnZqDbqKG6pDzamHtAyAup/eTor6dfuFJ75HjZ7rkI9LupiVT3hWy+riTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYzyp0aL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1762C4CEE3;
-	Fri, 21 Mar 2025 20:41:09 +0000 (UTC)
+	s=arc-20240116; t=1742589753; c=relaxed/simple;
+	bh=XsHupZXq9mP47xdssh7YIG1V2VG9jPjIpAnsYfLZZeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHzYgw6fK8VlwDhE11jdFM0vivsPdbIVECEgPr0EYsMdJznHU4mbrP5JLLS9K/SJkXTVZTe8MKaUB2+dUU5idqDxzTZmsWhscxVI0qLzMQhwwJnyCo9mvyevFagzd0GCnPZ+AJ8k1/k0bg0DIDkQ4M6Qbta4gV7mkc3c+yql6k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZ10bVPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F691C4CEE3;
+	Fri, 21 Mar 2025 20:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742589669;
-	bh=wsCETj06SFFwh38K8EPA2OIG7ZSdRNghUF4foeMZKA0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CYzyp0aLWgDl0chozGbeMXfTMMhk/SOYcfZdkjm35EMrTm3VeBv90LidlrwxCiInT
-	 namgg0O/WeBJmRe/N4ulBNHbUwZ8VjE6cjPYe7sBRXlz7qVGFp5eSGKmWw6y2cpxSe
-	 qA/8qqMlwf/C1+n12LCV/XaOphvs2/5TPUWIlDSqyiF/hu3aUu+SoMzuqFYYNSxcs4
-	 2MwBQCaqAvzjWPyCkgd95sfobXgphcIaJ9e+cTdtmnpjmBN12zZf2MzS8OAJWd81ty
-	 YZj7useSYKYdXG4Par3lBSq4ANcAPOEYyVGD6gPk24uWmvZcKP9HlEu4GBGDm6OkyZ
-	 KMUavJYMseCxw==
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Kees Cook <kees@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 5/5] [DEBUG] slab: Report number of NULLings
-Date: Fri, 21 Mar 2025 13:41:01 -0700
-Message-Id: <20250321204105.1898507-5-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250321202620.work.175-kees@kernel.org>
-References: <20250321202620.work.175-kees@kernel.org>
+	s=k20201202; t=1742589751;
+	bh=XsHupZXq9mP47xdssh7YIG1V2VG9jPjIpAnsYfLZZeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FZ10bVPP4aa+uN6spoypuceQTO8SP4QPWeccXxsIlYlhuZoJ1zdJeO97DazL3pHq8
+	 J/LoW3kqmiWfiAWymzcYpWcOyWFQSwDTe8Me1eYvjjv5XWRF2RLmn1BoZCYHf3QeAV
+	 pnh1JHINei16ioRte+fZdGRzVe+r4sNwPkQeR0l16Lw6ng+PXHGpmtXP0D+ts9smCJ
+	 JIpBRM7izWWBv3mb3ONwX8kKI22pDB+mv0VBX7cmyAj2KurPgMo78wqp/n2NvOl4s0
+	 Zp8AOrnTmQPpYCB3Dqa7hWUTC2picFAyqVgMfJYx7kxhniuJxg5l+dbRqR2WHZIyUk
+	 gLNVmPUkxAbHA==
+Date: Fri, 21 Mar 2025 15:42:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
+	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
+ spacemit,k1-ccu resets
+Message-ID: <20250321204230.GA3902727-robh@kernel.org>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2271; i=kees@kernel.org; h=from:subject; bh=wsCETj06SFFwh38K8EPA2OIG7ZSdRNghUF4foeMZKA0=; b=owGbwMvMwCVmps19z/KJym7G02pJDOl3z91590rZfsX3/KkRkz2Tr3/lvxS3c+Frkbx/J5+sf qA7OS3+QEcpC4MYF4OsmCJLkJ17nIvH2/Zw97mKMHNYmUCGMHBxCsBEbE0Z/unwiAjKzpU2NTzO nvHlE8OVdfGafqJGd9xSlqZW9TqXOjD8zyla8nTDqfSFWhVxl4Ne67d/+yrb8F3pns91jnMnnb+ 95AcA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321151831.623575-2-elder@riscstar.com>
 
-Just to get a sense of what's happening, report the number of NULL
-assignments that have been done. After booting an otherwise standard
-Ubuntu image, this shows about 240,000 NULLifications have been performed.
+On Fri, Mar 21, 2025 at 10:18:24AM -0500, Alex Elder wrote:
+> There are additional SpacemiT syscon CCUs whose registers control both
+> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
+> previously, these will initially support only resets.  They do not
+> incorporate power domain functionality.
+> 
+> Define the index values for resets associated with all SpacemiT K1
+> syscon nodes, including those with clocks already defined, as well as
+> the new ones (without clocks).
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+>  include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
+>  2 files changed, 143 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> index 07a6728e6f864..333c28e075b6c 100644
+> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> @@ -19,6 +19,9 @@ properties:
+>        - spacemit,k1-syscon-apbc
+>        - spacemit,k1-syscon-apmu
+>        - spacemit,k1-syscon-mpmu
+> +      - spacemit,k1-syscon-rcpu
+> +      - spacemit,k1-syscon-rcpu2
+> +      - spacemit,k1-syscon-apbc2
+>  
+>    reg:
+>      maxItems: 1
+> @@ -57,13 +60,15 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: spacemit,k1-syscon-apbc
+> +            enum:
+> +              - spacemit,k1-syscon-apmu
+> +              - spacemit,k1-syscon-mpmu
+>      then:
+> -      properties:
+> -        "#power-domain-cells": false
+> -    else:
+>        required:
+>          - "#power-domain-cells"
+> +    else:
+> +      properties:
+> +        "#power-domain-cells": false
+>  
+>  additionalProperties: false
+>  
+> diff --git a/include/dt-bindings/clock/spacemit,k1-ccu.h b/include/dt-bindings/clock/spacemit,k1-ccu.h
+> index 4a0c7163257e3..a1e1b1fe714ce 100644
+> --- a/include/dt-bindings/clock/spacemit,k1-ccu.h
+> +++ b/include/dt-bindings/clock/spacemit,k1-ccu.h
+> @@ -78,6 +78,9 @@
+>  #define CLK_APB			31
+>  #define CLK_WDT_BUS		32
+>  
+> +/*	MPMU resets	*/
+> +#define RST_WDT			0
+> +
+>  /*	APBC clocks	*/
+>  #define CLK_UART0		0
+>  #define CLK_UART2		1
+> @@ -109,6 +112,7 @@
+>  #define CLK_PWM17		27
+>  #define CLK_PWM18		28
+>  #define CLK_PWM19		29
+> +
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc: linux-mm@kvack.org
----
- include/linux/slab.h | 3 +++
- mm/slab_common.c     | 4 ++++
- 2 files changed, 7 insertions(+)
+Stray change?
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 2717ad238fa2..a4740c8b6ccb 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -469,6 +469,8 @@ void __kfree(const void *objp);
- void __kfree_sensitive(const void *objp);
- size_t __ksize(const void *objp);
- 
-+extern atomic_t count_nulled;
-+
- static inline void kfree_and_null(void **ptr)
- {
- 	__kfree(*ptr);
-@@ -487,6 +489,7 @@ static inline void kfree_sensitive_and_null(void **ptr)
- ({					\
- 	typeof(x) *__ptr = &(x);	\
- 	__how ## _and_null((void **)__ptr);	\
-+	atomic_inc(&count_nulled);	\
- })
- #define __free_and_maybe_null(__how, x)	\
- 	__builtin_choose_expr(__is_lvalue(x), \
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 9a82952ec266..0412cbab81f9 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -42,6 +42,9 @@ LIST_HEAD(slab_caches);
- DEFINE_MUTEX(slab_mutex);
- struct kmem_cache *kmem_cache;
- 
-+atomic_t count_nulled = ATOMIC_INIT(0);
-+EXPORT_SYMBOL(count_nulled);
-+
- /*
-  * Set of flags that will prevent slab merging
-  */
-@@ -1084,6 +1087,7 @@ static void print_slabinfo_header(struct seq_file *m)
- 	 * without _too_ many complaints.
- 	 */
- 	seq_puts(m, "slabinfo - version: 2.1\n");
-+	seq_printf(m, "# nulled: %d\n", atomic_read(&count_nulled));
- 	seq_puts(m, "# name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");
- 	seq_puts(m, " : tunables <limit> <batchcount> <sharedfactor>");
- 	seq_puts(m, " : slabdata <active_slabs> <num_slabs> <sharedavail>");
--- 
-2.34.1
+Otherwise,
 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
