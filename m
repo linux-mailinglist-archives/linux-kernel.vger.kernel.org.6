@@ -1,300 +1,150 @@
-Return-Path: <linux-kernel+bounces-571806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AF0A6C27C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:35:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29F6A6C291
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A514481BB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2032017D9ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B706C22FF32;
-	Fri, 21 Mar 2025 18:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52E22F395;
+	Fri, 21 Mar 2025 18:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZqN1OYzp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AfFiazIv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="LQr8od9E"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1553022F3B8;
-	Fri, 21 Mar 2025 18:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BECB22D4C3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742582113; cv=none; b=eKzEZANmd86pOswphtEEPECktL1Q4NcqNAiqecBMKxpOi8sTUKRgx3OiMyMHA9Hvl6iiHLIsKBmwkni0lEtr/qM426rbx5MYD1yjACiFpoCL5Y/AMwRfs/ETSIAQUmXCsbZMEFNsu+oiTu53EhUb1zZa6Z6kP4lg/XNtPCWy+dc=
+	t=1742582345; cv=none; b=D013UoXTy6c2kI1NTRaURICX6o/uX4VE86TjWW/3+/9FQsPQrGJknTFIlj+GOt6k0vIENKRJYDqc7EtdZm0mXxavyBbX8Gm427LA/0wGcgc/0Mn9UnqSu3D0xarhcZFc0WiUg/HnDzK3x31WKahVmzUxk6hckPr9R1eu0ib+vNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742582113; c=relaxed/simple;
-	bh=HC0OumCZtiGfAulSJu25VhJt1z5d95KtsOn94dfPZzs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=cnIkAyfjkWqWz8oFl0bgCdhuoqsr59j+Uk6VggNzNWBtkXkJygh8C89iuaQ39wCAyRV6nicWT7t8S/ORA+0LFfWmYKNtnoQv4Ul2FezswhF6vcvWgCa/XWwjrE23JhD6sVlPu8uSYyqiVbhe1wulP7q2D0VtK405vHPMzcWxPAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZqN1OYzp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AfFiazIv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Mar 2025 18:35:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742582107;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1742582345; c=relaxed/simple;
+	bh=n+K0u+Wd6us+fG8T0NJ0mq5za5Sn6Pp6ZvidZGcV8+4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IFFY/NcDWh36wWMJkmg88kDbrs1zj5W71f65+mWzw8/mgkfJGaTLz4Wr7k7QdTKQKfbh+c/896kf+1jxHcePwZQ2RlCAe6bHykGcPjPUw6LsW5xdYnAfaeDnlLVgREHQK2V3Nwfe8+kg/JjklQyiGk+9eiXSccwmH1DVmiXhiNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=LQr8od9E; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+Message-ID: <b3b59747-0484-4042-bdc4-c067688e3bfe@iencinas.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1742582339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x7ZGbMJi8bSnqJgnDDHOnL5kw3F6tgW4eUzHWdvLsz8=;
-	b=ZqN1OYzpUgQVHSUqpCg+XSeDnk4oQG28tqIZnbrzjZJZwaqRqQ6EQZh+H+QYMNhHQBM2QM
-	0cGsa0enbd8cAV/vSceCc/UI4NbEBnezWOgnUZSc9l/pU/oWgbiHCIkki0XSH/0sRHvxs9
-	KpuGZxyhDOOgQdcR/mlre3zz8NfOV9hq+7yN01J5n0vvpGTlIwbAWBYpp7lLPajWs3nwBe
-	+EtPmIg1vJ+Lax1vWhvI+t1kgOrCtJ4M2qguNKLC0+XruV/cbYh/Cm92gFdMQRrNZgzRUv
-	QwVdgX9Ocx8Ro8ZkO9VUW4pwZVTyDF73KMAtfpCPMHJst6PTXeEM0Af4djVArQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742582107;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x7ZGbMJi8bSnqJgnDDHOnL5kw3F6tgW4eUzHWdvLsz8=;
-	b=AfFiazIvn9J+2X9QXujLMSNb7QmF8f27I5UgEY4Wyw8uZUnxz8FRp8FzBFGX9JEnUbDg2B
-	CTKwP02Nc6UMD6CQ==
-From: "tip-bot2 for John Stultz" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timekeeping: Fix possible inconsistencies in
- _COARSE clockids
-Cc: Lei Chen <lei.chen@smartx.com>, John Stultz <jstultz@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250320200306.1712599-1-jstultz@google.com>
-References: <20250320200306.1712599-1-jstultz@google.com>
+	bh=/l61PMZ8ZONjm1VBcYbvcyTIE/eIAlBdEyNM703h8Wg=;
+	b=LQr8od9Eoo1BpEq7o+7c/an+WLbBfCL0f8tZSGR68BOyccf1eIvgALCsoOWT+7qHzhfGwd
+	yn0NDKfsiZoX26dbpZT1+rz9C9U1DMXK/0pTwtqI34yXRlZFbkzgqXuEjoyrlPlcJ0LJuK
+	Bj0fXQFBZAtzXpgmscYRilgQjjdj5++IwrQhlHkMVw+0ZodToECeslq47XrqyuM+WzjI7s
+	e352THyHY4+OVl7l9mLaOERKk71lq/DVWr2JrB3jTN03qYKQzUoP97bRvAVZ3lwq2pJX4v
+	6FZOSzOf/sskaOtvO/1ffD9W8jxenGDR/LxEDH+kkX3WyNCQKT/fE8xP6AJd/Q==
+Date: Fri, 21 Mar 2025 19:38:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174258210717.14745.3564869302280255157.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ignacio Encinas Rubio <ignacio@iencinas.com>
+Subject: Re: [PATCH v2 1/2] include/uapi/linux/swab.h: move default
+ implementation for swab macros into asm-generic
+To: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ Zhihang Shao <zhihang.shao.iscas@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+References: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
+ <20250319-riscv-swab-v2-1-d53b6d6ab915@iencinas.com>
+ <2afab9dc-e39c-4399-ac5a-87ade4da5ab0@app.fastmail.com>
+ <4d45df0c-d44e-4bb6-8daa-0dba1b834bc4@iencinas.com>
+ <07b8051b-9d5e-440e-b74d-1ca97402fe2a@app.fastmail.com>
+ <ac0b1f3e-6abe-4de2-bf5a-a4b3207a22c3@iencinas.com>
+ <583340a9-411d-406f-aee9-d3e2eb80ca43@app.fastmail.com>
+Content-Language: en-US
+In-Reply-To: <583340a9-411d-406f-aee9-d3e2eb80ca43@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     757b000f7b936edf79311ab0971fe465bbda75ea
-Gitweb:        https://git.kernel.org/tip/757b000f7b936edf79311ab0971fe465bbda75ea
-Author:        John Stultz <jstultz@google.com>
-AuthorDate:    Thu, 20 Mar 2025 13:03:00 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 21 Mar 2025 19:16:18 +01:00
 
-timekeeping: Fix possible inconsistencies in _COARSE clockids
+On 21/3/25 11:23, Arnd Bergmann wrote:
+> On Thu, Mar 20, 2025, at 23:36, Ignacio Encinas Rubio wrote:
+>> On 19/3/25 22:49, Arnd Bergmann wrote:
+>>> On Wed, Mar 19, 2025, at 22:37, Ignacio Encinas Rubio wrote:
+>>>> On 19/3/25 22:12, Arnd Bergmann wrote:
+>>> Right, I do remember when we had a discussion about this maybe
+>>> 15 years ago when gcc didn't have the builtins on all architectures
+>>> yet, but those versions are long gone, and we never cleaned it up.
+>>
+>> I just had a chance to look at this and it looks a bit more complex than
+>> I initially thought. ___constant_swab macros are used in more places
+>> than I expected, and {little,big}_endian.h define their own macros that
+>> are used elsewhere, ...
+>>
+>> It is not clear to me how to proceed here. I could:
+>>
+>>   1) Just remove ___constant_swab macros and replace them with
+>>   __builtin_swap everywhere
+>>
+>>   2) Go a step further and evaluate removing __constant_htonl and
+>>   relatives
+>>
+>> Let me know what you think is the best option :)
+> 
+> I think we can start enabling CONFIG_ARCH_USE_BUILTIN_BSWAP
+> on all architectures and removing the custom versions
+> from arch/*/include/uapi/asm/swab.h, which all seem to
+> predate the compiler builtins and likely produce worse code.
 
-Lei Chen raised an issue with CLOCK_MONOTONIC_COARSE seeing time
-inconsistencies.
+This seems fine for some architectures but I don't think we can use
+this approach for RISC-V. RISC-V code assumes that the bitmanip 
+extension might not be available (see arch/riscv/include/asm/bitops.h).
 
-Lei tracked down that this was being caused by the adjustment
+The current approach [1] is to detect this at boot and patch the kernel 
+to adapt it to the actual hardware running it (using specific 
+instructions or not).
 
-    tk->tkr_mono.xtime_nsec -= offset;
+On the other hand, I tried using __builtin_swap for the RISC-V version 
+as an alternative to the "optimized" one (instead of relying on
+___constant_swab, see [2]) and I immediately got compilation errors. 
 
-which is made to compensate for the unaccumulated cycles in offset when the
-multiplicator is adjusted forward, so that the non-_COARSE clockids don't
-see inconsistencies.
+Some architectures seem to require definitions for __bswapsi2 and 
+__bswapdi2 [3]. I'm guessing this happens for the architectures that
+don't require bit manipulation instructions but have them as extensions.
 
-However, the _COARSE clockid getter functions use the adjusted xtime_nsec
-value directly and do not compensate the negative offset via the
-clocksource delta multiplied with the new multiplicator. In that case the
-caller can observe time going backwards in consecutive calls.
+arm,csky,mips and xtensa seem to fit this description as they 
+feature their own __bswapsi2 implementations. Note that they simply
+call ___constant_swab or are ___constant_swab written in assembly
+language [4] [5].
 
-By design, this negative adjustment should be fine, because the logic run
-from timekeeping_adjust() is done after it accumulated approximately
+Unless I'm missing something, it seems to me that using compiler 
+builtins (at least for RISC-V, and potentially others) is even more 
+problematic than keeping ___constant_swab around. What do you think, 
+should we keep patch 1 after all?
 
-     multiplicator * interval_cycles
+We could remove __arch_swab for architectures that always assume bit 
+manipulation instructions availability, but then the kernel would fall
+back into ___constant_swab when CONFIG_ARCH_USE_BUILTIN_BSWAP=n. Turning
+their custom implementations into 
 
-into xtime_nsec.  The accumulated value is always larger then the
+	#define __arch_swabXY __builtin_bswapXY
 
-     mult_adj * offset
+would solve this issue, but I'm not sure it is an acceptable approach.
 
-value, which is subtracted from xtime_nsec. Both operations are done
-together under the tk_core.lock, so the net change to xtime_nsec is always
-always be positive.
+Thanks!
 
-However, do_adjtimex() calls into timekeeping_advance() as well, to to
-apply the NTP frequency adjustment immediately. In this case,
-timekeeping_advance() does not return early when the offset is smaller then
-interval_cycles. In that case there is no time accumulated into
-xtime_nsec. But the subsequent call into timekeeping_adjust(), which
-modifies the multiplicator, subtracts from xtime_nsec to correct
-for the new multiplicator.
-
-Here because there was no accumulation, xtime_nsec becomes smaller than
-before, which opens a window up to the next accumulation, where the _COARSE
-clockid getters, which don't compensate for the offset, can observe the
-inconsistency.
-
-To fix this, rework the timekeeping_advance() logic so that when invoked
-from do_adjtimex(), the time is immediately forwarded to accumulate also
-the sub-interval portion into xtime. That means the remaining offset
-becomes zero and the subsequent multiplier adjustment therefore does not
-modify xtime_nsec.
-
-There is another related inconsistency. If xtime is forwarded due to the
-instantaneous multiplier adjustment, the NTP error, which was accumulated
-with the previous setting, becomes meaningless.
-
-Therefore clear the NTP error as well, after forwarding the clock for the
-instantaneous multiplier update.
-
-Fixes: da15cfdae033 ("time: Introduce CLOCK_REALTIME_COARSE")
-Reported-by: Lei Chen <lei.chen@smartx.com>
-Signed-off-by: John Stultz <jstultz@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250320200306.1712599-1-jstultz@google.com
-Closes: https://lore.kernel.org/lkml/20250310030004.3705801-1-lei.chen@smartx.com/
----
- kernel/time/timekeeping.c | 94 +++++++++++++++++++++++++++-----------
- 1 file changed, 69 insertions(+), 25 deletions(-)
-
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 1e67d07..929846b 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -682,20 +682,19 @@ static void timekeeping_update_from_shadow(struct tk_data *tkd, unsigned int act
- }
- 
- /**
-- * timekeeping_forward_now - update clock to the current time
-+ * timekeeping_forward - update clock to given cycle now value
-  * @tk:		Pointer to the timekeeper to update
-+ * @cycle_now:  Current clocksource read value
-  *
-  * Forward the current clock to update its state since the last call to
-  * update_wall_time(). This is useful before significant clock changes,
-  * as it avoids having to deal with this time offset explicitly.
-  */
--static void timekeeping_forward_now(struct timekeeper *tk)
-+static void timekeeping_forward(struct timekeeper *tk, u64 cycle_now)
- {
--	u64 cycle_now, delta;
-+	u64 delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
-+				      tk->tkr_mono.clock->max_raw_delta);
- 
--	cycle_now = tk_clock_read(&tk->tkr_mono);
--	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
--				  tk->tkr_mono.clock->max_raw_delta);
- 	tk->tkr_mono.cycle_last = cycle_now;
- 	tk->tkr_raw.cycle_last  = cycle_now;
- 
-@@ -711,6 +710,21 @@ static void timekeeping_forward_now(struct timekeeper *tk)
- }
- 
- /**
-+ * timekeeping_forward_now - update clock to the current time
-+ * @tk:		Pointer to the timekeeper to update
-+ *
-+ * Forward the current clock to update its state since the last call to
-+ * update_wall_time(). This is useful before significant clock changes,
-+ * as it avoids having to deal with this time offset explicitly.
-+ */
-+static void timekeeping_forward_now(struct timekeeper *tk)
-+{
-+	u64 cycle_now = tk_clock_read(&tk->tkr_mono);
-+
-+	timekeeping_forward(tk, cycle_now);
-+}
-+
-+/**
-  * ktime_get_real_ts64 - Returns the time of day in a timespec64.
-  * @ts:		pointer to the timespec to be set
-  *
-@@ -2151,6 +2165,54 @@ static u64 logarithmic_accumulation(struct timekeeper *tk, u64 offset,
- 	return offset;
- }
- 
-+static u64 timekeeping_accumulate(struct timekeeper *tk, u64 offset,
-+				  enum timekeeping_adv_mode mode,
-+				  unsigned int *clock_set)
-+{
-+	int shift = 0, maxshift;
-+
-+	/*
-+	 * TK_ADV_FREQ indicates that adjtimex(2) directly set the
-+	 * frequency or the tick length.
-+	 *
-+	 * Accumulate the offset, so that the new multiplier starts from
-+	 * now. This is required as otherwise for offsets, which are
-+	 * smaller than tk::cycle_interval, timekeeping_adjust() could set
-+	 * xtime_nsec backwards, which subsequently causes time going
-+	 * backwards in the coarse time getters. But even for the case
-+	 * where offset is greater than tk::cycle_interval the periodic
-+	 * accumulation does not have much value.
-+	 *
-+	 * Also reset tk::ntp_error as it does not make sense to keep the
-+	 * old accumulated error around in this case.
-+	 */
-+	if (mode == TK_ADV_FREQ) {
-+		timekeeping_forward(tk, tk->tkr_mono.cycle_last + offset);
-+		tk->ntp_error = 0;
-+		return 0;
-+	}
-+
-+	/*
-+	 * With NO_HZ we may have to accumulate many cycle_intervals
-+	 * (think "ticks") worth of time at once. To do this efficiently,
-+	 * we calculate the largest doubling multiple of cycle_intervals
-+	 * that is smaller than the offset.  We then accumulate that
-+	 * chunk in one go, and then try to consume the next smaller
-+	 * doubled multiple.
-+	 */
-+	shift = ilog2(offset) - ilog2(tk->cycle_interval);
-+	shift = max(0, shift);
-+	/* Bound shift to one less than what overflows tick_length */
-+	maxshift = (64 - (ilog2(ntp_tick_length()) + 1)) - 1;
-+	shift = min(shift, maxshift);
-+	while (offset >= tk->cycle_interval) {
-+		offset = logarithmic_accumulation(tk, offset, shift, clock_set);
-+		if (offset < tk->cycle_interval << shift)
-+			shift--;
-+	}
-+	return offset;
-+}
-+
- /*
-  * timekeeping_advance - Updates the timekeeper to the current time and
-  * current NTP tick length
-@@ -2160,7 +2222,6 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
- 	struct timekeeper *tk = &tk_core.shadow_timekeeper;
- 	struct timekeeper *real_tk = &tk_core.timekeeper;
- 	unsigned int clock_set = 0;
--	int shift = 0, maxshift;
- 	u64 offset;
- 
- 	guard(raw_spinlock_irqsave)(&tk_core.lock);
-@@ -2177,24 +2238,7 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
- 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
- 		return false;
- 
--	/*
--	 * With NO_HZ we may have to accumulate many cycle_intervals
--	 * (think "ticks") worth of time at once. To do this efficiently,
--	 * we calculate the largest doubling multiple of cycle_intervals
--	 * that is smaller than the offset.  We then accumulate that
--	 * chunk in one go, and then try to consume the next smaller
--	 * doubled multiple.
--	 */
--	shift = ilog2(offset) - ilog2(tk->cycle_interval);
--	shift = max(0, shift);
--	/* Bound shift to one less than what overflows tick_length */
--	maxshift = (64 - (ilog2(ntp_tick_length())+1)) - 1;
--	shift = min(shift, maxshift);
--	while (offset >= tk->cycle_interval) {
--		offset = logarithmic_accumulation(tk, offset, shift, &clock_set);
--		if (offset < tk->cycle_interval<<shift)
--			shift--;
--	}
-+	offset = timekeeping_accumulate(tk, offset, mode, &clock_set);
- 
- 	/* Adjust the multiplier to correct NTP error */
- 	timekeeping_adjust(tk, offset);
+[1] https://lore.kernel.org/all/ce034f2b-2f6e-403a-81f1-680af4c72929@ghiti.fr/
+[2] https://lore.kernel.org/all/20250319-riscv-swab-v2-2-d53b6d6ab915@iencinas.com/
+[3] https://gcc.gnu.org/onlinedocs/gcc-13.3.0/gccint.pdf
+[4] https://lore.kernel.org/all/20230512164815.2150839-1-jcmvbkbc@gmail.com/
+[5] https://lore.kernel.org/all/1664437198-31260-3-git-send-email-yangtiezhu@loongson.cn/
 
