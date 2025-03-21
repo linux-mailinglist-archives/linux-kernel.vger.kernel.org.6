@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-571327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DE5A6BBCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:35:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34B3A6BBC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B3D6188C9A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:35:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F343A421D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCE422B8CF;
-	Fri, 21 Mar 2025 13:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15A022A7F4;
+	Fri, 21 Mar 2025 13:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1r9TSgs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtVj2fDX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0DC22A7F4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD38216E01
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742564097; cv=none; b=n48hQTSplqDNM2buzwRqVnUkDlUmUTgAD1k3mtDIEFV2ddY17cA7P9r59Jm1wrQ4sJI3BrVt/oCoydegY3mEowgIZKrXQrUKCvDVmkUEBnOtjAwEVUyz+qN+pgOZYE979idwj5VxZeiatJCj2MzmiR2FZhnwuZjWG1qRmxZgt+g=
+	t=1742564066; cv=none; b=D+p+c5q+Fgezf5Nnw0pSKtogJQhfXCRL3KXNdlSJQDUz6NQL87Q3qmppTC+eW1g6GfppHlSIzYwA9FAFgvEg4iruUWZYo1o9o6z3vIueXugVvatB8fNCe3JlmHkNMod2deK1MRi6XgTU12U0DUZ1jE2y+vC+of8fqyekdylTXn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742564097; c=relaxed/simple;
-	bh=rUggPb1dSqtWKpCSaWvzk+ZaY1JpEPBJvNpui/xayDA=;
+	s=arc-20240116; t=1742564066; c=relaxed/simple;
+	bh=izujH16hZ5B1lvNp9sMLIekrfi8CmtK+NCCtfVgxpJo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKCridDtj0LSU9pxv9c/v2Xc9EPsfzo0MGTtYLhWvEKzwlSDo8/hRYGGyyaFimk0fejSnyMbwOHl0BfMLodFT/WN3lIgB+370+zLPhFnnBaOH27VzoulH10ysDkdJlzleHdfDJtpORKhqgPPJ1rsjlA0LwehyXPpLbgQbvCbGyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1r9TSgs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742564095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rUggPb1dSqtWKpCSaWvzk+ZaY1JpEPBJvNpui/xayDA=;
-	b=G1r9TSgs9zlWFetoc2kF/vbkNVc3PG2/MAD1Wc9ijjBhf+IHEecZUQETRawrizVrJSazru
-	PC1E2mxa7VL1dVrQM5p6GFBaWkqv5BVVGj1NBrCnYJn7ue+ihbMVYzsuQpdQMV2WmpNM2V
-	TbTZkGEOZe1vmEan/Qdq7CWAckdCdAw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-438-ECMoH-jOMhmJiYnN0c7W3g-1; Fri,
- 21 Mar 2025 09:34:49 -0400
-X-MC-Unique: ECMoH-jOMhmJiYnN0c7W3g-1
-X-Mimecast-MFC-AGG-ID: ECMoH-jOMhmJiYnN0c7W3g_1742564086
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D01FB1800EC5;
-	Fri, 21 Mar 2025 13:34:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.60])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0D4B019560AF;
-	Fri, 21 Mar 2025 13:34:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 21 Mar 2025 14:34:12 +0100 (CET)
-Date: Fri, 21 Mar 2025 14:34:01 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Tong Tiangen <tongtiangen@huawei.com>
-Subject: Re: [PATCH v3 0/3] kernel/events/uprobes: uprobe_write_opcode()
- rewrite
-Message-ID: <20250321133401.GB4776@redhat.com>
-References: <20250321113713.204682-1-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hw4HUjypBx3UvI3UVS25IL5GJzRRlRZq91FTFRV3gcdl+zQU6Q0Df2/1mugObEqRCfe68z2dhjfzVyL2TCiy8vnL6FHJxTlRiZ23KPbiJXblQmwMTP/rBlFMWyJs2IfUopoDt1Bfb3Qky8ageoXvu+cD7PW+YSjE2vcP0SueLM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtVj2fDX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D066C4CEEA;
+	Fri, 21 Mar 2025 13:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742564065;
+	bh=izujH16hZ5B1lvNp9sMLIekrfi8CmtK+NCCtfVgxpJo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OtVj2fDXWCS1lJrLsECvEqszGMLHOL0P+gPjVilJ9GCb+GedRmocGDguG9N//5MAo
+	 Xb7lJIWxDNmLqF06FUKb9lnrcGrHZo/TORiJlyH6UNp35fArkvMgu2wWoGI639vBZl
+	 lDcemYMOTvBUsMUw1jldxhG22ksXRWu2wqnXYseMHJ1HaaiyFoBkm/sMHLoyMb+1u5
+	 +oZlYsNeQ98f+pdKnK/22RMSk1izAL6KAUm0Z0kFRIVS0ARa8+p5auRwX2A515rKiU
+	 RjHxW+QCJRMXJiR4lVJ0fH6JwuWLcn/1w9IPOmcmMllocRBiVDZHDNU7KQsytSmAdN
+	 Lf0MNMq1QiW2w==
+Date: Fri, 21 Mar 2025 13:34:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Petr Tesarik <ptesarik@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regmap: spi: Don't use spi_write_then_read()
+Message-ID: <Z91q17GaHDpJKLIV@finisterre.sirena.org.uk>
+References: <20250320-regmap-spi-write-read-v1-1-31666bc6ebe8@kernel.org>
+ <b32120b4-3805-43f0-956d-3c28810fc8b9@sirena.org.uk>
+ <31f54b9e-6140-4a21-bfb3-ce07febe4e36@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xF9td3uOK7nC68+R"
+Content-Disposition: inline
+In-Reply-To: <31f54b9e-6140-4a21-bfb3-ce07febe4e36@app.fastmail.com>
+X-Cookie: Well begun is half done.
+
+
+--xF9td3uOK7nC68+R
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321113713.204682-1-david@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 03/21, David Hildenbrand wrote:
->
-> Based on mm/unstable.
+On Fri, Mar 21, 2025 at 12:27:01PM +0100, Arnd Bergmann wrote:
+> On Fri, Mar 21, 2025, at 00:08, Mark Brown wrote:
 
-which has another fix from David in __replace_page() plus the fix from
-Tong in uprobe_write_opcode().
+> > I think this actually needs to be part of a wider series, but pushing it
+> > out there just now since there's the other regmap paths which also use
+> > spi_sync() and will need any adjustments anyway.
 
-So, Andrew, could you take this series as well? Peter, will you agree?
+> I can see some code paths that are potentially broken by this
+> patch on its own, e.g.
 
-> Currently, uprobe_write_opcode() implements COW-breaking manually, which is
-> really far from ideal.
+Yeah, I was pretty sure there were some but hadn't actually gone and
+found a specific example yet.
 
-It was never ideal, but today it is simply horrible ;)
-Thanks again for your work.
+> If your plan is to have _regmap_raw_read() always do its
+> own buffering (at least for unaligned buffers on noncoherent
+> devices), it will still work.
 
-Oleg.
+Either that or having some library that all the buses use (IIRC
+at least SoundWire can do DMA), yeah.  We also have I/O that regmap
+generates itself as part of cache sync potentially, especially with
+rbtree caches.
 
+I remembered what the difference between writes and reads I was thinking
+of was BTW - only reads use spi_write_then_read(), writes are already
+using spi_sync() directly for gather writes (which are the ones most
+likely to use DMA since they'll be for bigger blocks of data, non-gather
+writes are usually single register) or otherwise spi_write() which
+doesn't bother with a bounce buffer.
+
+--xF9td3uOK7nC68+R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfdatYACgkQJNaLcl1U
+h9B+gAf/ehimSDuGesZOB7uxoqw7WzpoaaTH3wXjnnNwd4X7e6WcLNccud2tByDN
+Ye1gK5nbwF/Wgge5gGcVhNJYLmMH12BAzHH+XkuwQH21uO8z9TTFdBlcr+OZIt34
+KjDEQdQp5rT4UTf03JZ1rf8C0gaXxC108TkbNximzTV+ly7+yLqR/6hDh9gtzuuX
+/51bnmTGzdUb75p10AS6M2SCVfeVu+8E6bhD/1QGa/N6V+99aLy+jOJE4IzflIL4
+G/KK29GBNqVvwNg67aKKPmLGU7AqDKCnLsQmXhsDvDbzZiXYVcgwZCqmd6CDSeA5
+AH5KD5/HvJQPHZuyS0X1PmxdryhhWg==
+=afIk
+-----END PGP SIGNATURE-----
+
+--xF9td3uOK7nC68+R--
 
