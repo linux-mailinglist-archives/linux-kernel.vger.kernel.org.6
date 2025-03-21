@@ -1,189 +1,164 @@
-Return-Path: <linux-kernel+bounces-571357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2CBA6BC2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:57:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C821CA6BC2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1DB1898305
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572584802ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A335386321;
-	Fri, 21 Mar 2025 13:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B71770E2;
+	Fri, 21 Mar 2025 13:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="BhFDFmz6";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="EfJcY/8X"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="nZuKH1NF"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF66778F32;
-	Fri, 21 Mar 2025 13:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565235; cv=fail; b=inafkadaW8Wp2QYYfT22QOsLySgSJg/5Jyt/nNxV+n0FnX6aI4aqxORISm7BDQj25PvnOUbpgA9zYxAAiMmbeQVtG3GNjvFn+sNwSyfozoay3JWjvtugjRl47ENlUu0p+GJ7WZMT6nzE0VTKsNJY3xvKwIrKtNU7P/XdPkihRM0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565235; c=relaxed/simple;
-	bh=r3OTvGsGBHnqbgr4dnH/+zfWG7B4CfAd1AFrJkHEGBk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Cy15b0MCk8Jj6O7lFANf+HoDfydNp/EMPFv7xFaqK2PEige3EgOwohVkYydQMIW8/MfVjIFcvHfu52x3Lc8iqA8ZTKZHiDbYjCRJkMawc0ZKYqPFGCnPDURviITwNKpMPRJZfUswJ1tYXHLeEPTpKALT4lD6KgYoZqluG/7GASM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=BhFDFmz6; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=EfJcY/8X; arc=fail smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L7m8O0023619;
-	Fri, 21 Mar 2025 08:53:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=jh3ac17y4vIkB+ti
-	h12OywwC5ENbzZ+qhh3ETULvIPg=; b=BhFDFmz6i0ZjQd3bBIZvIx2Q8S8E81Ey
-	ZzwLx4+T3TH/8boys1jbu63xjPwH2g3QXH1S1R5MvNUv8yws6YrPfNT4boxWTvYQ
-	3Ig9cEuzR00AT1Ox2xRd8rp6WgiVCztknVL1GvhCOeBQ+xNOgf76xbJ6dUjvAcZk
-	qkfy2f2Su9/LzYoLhQlWnmxdQarUKP5hl7yFosEpJaYU6OH0kSmEbenasE1AQHvP
-	dEPZLsXoJsRQRQ50TeT2kQ1DxFPeHbniuz8vB2Wy50mrc4HPEzE5hCcVJl6eIB2P
-	NLyEOsIPDYaTwBRR6v/kOA9xh/mfwE6c5VKnuP6nhk36HhrY3dNOMA==
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2049.outbound.protection.outlook.com [104.47.58.49])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 45h40m0nkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 08:53:34 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qzngeblD+xUgnSig8HrQcHvRrZ2KhUwG4TzTmiHtlc/NrHk64lzuIV83m9iN3oj63Lppa3AHCs/CdFtDXcb+xg9PgZP2TvO5SjodlQMyeM21Qa1g3gHVDXUxSW/FpXS/La4Ized00hVgKpSwo8SGtCVyJjFAlO2U65BVfqrdXWmDtmJdHZk22EiE3UhTu2g1fKMuiBaL9+DWQRq2T2lB/fQYER1crMwfKfoqNfEEBTLQcXa37GllvmCxQf1YIA7FXfXFFlP7CiZ11LiG7kKS4zHvKHRo5cE30ZFXg9MXEAVlRZ0kLqypSo9RS03CdKnV3seAfuQYKF3NGWZUa/VVew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jh3ac17y4vIkB+tih12OywwC5ENbzZ+qhh3ETULvIPg=;
- b=lpK64FkQDSLXHuW01ojK+LE+OwROy17fxYVyjhlGJkQoQd5RdYZRpe6s77VUWh4guyvIjIOQfJ2qBt15mYt/ZlDYyzqO/UwVaa1Pca3Qh03KO2H2OCKn0c20KEfpnj+ChRGkduBzrpkxTO9CdnexazuAN+9Uoa+utsV4GWpVehtM17+kjsOJzsuGWTCrOIEjXE98B7KXNdosN1HvGiyWLpzsQ6cNM+C3MAPF6B3P1/pxE+gEVfYA3Ts+tSoxCB/eTGsvhBcpN7K+nQ4By1RwZ8s3IJjXSXfeSTd36cxu7l7yi0TUGMAumoyGnDTrTDSwAJ9kUhQQ4t6AyeZsidXN3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
- dmarc=fail (p=reject sp=reject pct=100) action=oreject
- header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
- (0)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B9438FB9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742565334; cv=none; b=Cl8+0rWjU03W2TOz4Y0xY8s48Z/ubV2hLaHsFtJD1axKiYZ6iyLYHoA+VsDnQjN08i6geVscp96U3IEiGCRsrKP4Yeie7cij4Mq8cGbmP2p9mAlFf85iFVep0XsJdeESDPwCqg98IxMvgxyh+97gFxYQ5JvyNxGSsnkcAjxDC/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742565334; c=relaxed/simple;
+	bh=AdJuexWRzfAz86oxnne/IW4kJwTlZlMmB/BbN8hoPs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRB32k74n4THDhjGpHeuy1j5M64ucGm32a/iA7PY32GXkUxjHfn+aL+vwhFYpFJ0U2uvXIUsKVn0uQVueokWWGi8th9qHocNe6AwrrO8baVly/J5Ab59BxLMb051A0xcC4bgP/g1bOM4OtFtieYYb4I1Iz9we/8VYjXtze/ll4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=nZuKH1NF; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4769b16d4fbso10358771cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:55:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jh3ac17y4vIkB+tih12OywwC5ENbzZ+qhh3ETULvIPg=;
- b=EfJcY/8XdRy3/3TJftjmTZgskC0dBGhDB5VzT6snnMnwCpekXqA8zTBB6jMAy9MsPkdoEhinkmteiNDwCs006GFjvnGdlmK+gWKDd4/rxcri0RFS1x6K1sQCOFfH1IipmoQQ8h18DT/jymEhdgRKOpPhYycxEY6WgInXQAamtgE=
-Received: from SN7PR04CA0025.namprd04.prod.outlook.com (2603:10b6:806:f2::30)
- by DS7PR19MB6095.namprd19.prod.outlook.com (2603:10b6:8:82::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.33; Fri, 21 Mar 2025 13:53:27 +0000
-Received: from SA2PEPF000015CC.namprd03.prod.outlook.com
- (2603:10b6:806:f2:cafe::ed) by SN7PR04CA0025.outlook.office365.com
- (2603:10b6:806:f2::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.36 via Frontend Transport; Fri,
- 21 Mar 2025 13:53:27 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
- designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
- client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- SA2PEPF000015CC.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
- via Frontend Transport; Fri, 21 Mar 2025 13:53:25 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 37E3B406540;
-	Fri, 21 Mar 2025 13:53:24 +0000 (UTC)
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 11BB8820244;
-	Fri, 21 Mar 2025 13:53:24 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com, pierre-louis.bossart@linux.dev,
-        yung-chuan.liao@linux.intel.com, peter.ujfalusi@linux.intel.com,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: [PATCH] ASoC: SDCA: Correct handling of selected mode DisCo property
-Date: Fri, 21 Mar 2025 13:53:24 +0000
-Message-Id: <20250321135324.380237-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.5
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1742565330; x=1743170130; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zkaw5iQ5n3Q/0Lpyrz/8zsFxGsxzzffjeg2zbqFtr2Y=;
+        b=nZuKH1NFmye6NABmUiq/avz44ikpxhiz8Wo+Kw0OJRjPzNRaQAYDiQyQOFdB15Le2l
+         hMQxETLquYHNWLmHh0OIbMwzqmphxZ2GlnX7OYFAkYDjvUH7+ROww5gPKs/SucSdE/WH
+         wOKsLL8IV1fGN6V7GnNiCvgErnx+Al1fETz7z8Yrb6O6KivzXtws1AoApg/KKgcT15Hd
+         gPvryZmXNrWr270nblLA9juuEPWbiW/+UCaKdwkf5WPNnxxLScfcqaCVCJZ3dLco0Dcq
+         FAKsEzrwPz4Ug2PsdKilbnkSdxnMGrmlPQtdbvQoeBB0eUw5pawb4zEMRJlKl3awqUyo
+         j46g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742565330; x=1743170130;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zkaw5iQ5n3Q/0Lpyrz/8zsFxGsxzzffjeg2zbqFtr2Y=;
+        b=OMEOt/Wtwf1fmhP5D0+APMQs9nVIwQ/h/Kv4vBWD0SKriyRpk+pJhpn07P7A2WsDnS
+         Y32gpgyE/GKnCeisA2ug9t6qimk96CT6Q2mXAT8K4K9hfRDz3NdtVePXAkOiOY5OoJx0
+         V7ZGOTpLnJFgCzmj8TKKyJ34llA8ijkUWd48I/Hb0F6flO18Ggrn2r71JiyszyD4fpie
+         yybsHSW+OkUg2pz8xFsiBxM9NtRn4yOVJKMG8R3kiOLI3eTm6ER1KcmLkxifeHrmnxoG
+         jofq2AqdDm8Kj8ZKl53W0JjrQaShs61G1d4FPwbHsFzOOUPP4ByoUDh6npZGu6tRBm+V
+         B9jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdn7UZKtFanv0P2g3tCkwRktym3FyofNiOI26t2+6+DEM0EglzZZoQfMBRr+NuSck6sqBWICEURyjVM2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylHskTi8qCbz1SCg+50W7o3rYC5RpY09BZrnCp22ZmwMGeD0yw
+	MrN1od2v/jVocM/Yk8Xpe+m+xhQ2js7UspdzXpVi3pCTaiotey8QmV0lqKIdYmk=
+X-Gm-Gg: ASbGncuqRj6qd4z+Nz5seWVkLwk2CuI3A2j4W7s4Eve2JieQc2qmLEEy5BUi2esDnFD
+	a8Eg2gAATeKYl8sBgY2bNj5kzb54iQ2ekotqTsnhbuilcsQfuoib2bmEvMdgE0+iAHOv6vti73f
+	1w5Vx2xT3JRsr4ZqKcycfbga1lIfrZo/Di4wrrZU45Dmbh9Hvkk8+eC9nbexpqbz8pXwU+wp8Oh
+	i7kWtShhKxCl7ZNRnRChqNjox20+1GhOkM5NHhSfeoE7Q8yLKZjDO35fRo5K9IvSUT+Kdqr/zA0
+	jwKjfyse8lPI9dOmjvcNDc1JLHA3OZTnEX8yYfLFPZQ=
+X-Google-Smtp-Source: AGHT+IEbXh5FE8O7VAveIGhz62AHSuu58vMlCms/I/PLbVH2bCgBpWKIinMzMYIWRzFsFMsCidgO4g==
+X-Received: by 2002:a05:622a:2b0b:b0:476:8e85:2a2f with SMTP id d75a77b69052e-4771dd943f4mr53309741cf.20.1742565330289;
+        Fri, 21 Mar 2025 06:55:30 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4771d64d5f6sm12262101cf.81.2025.03.21.06.55.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 06:55:29 -0700 (PDT)
+Date: Fri, 21 Mar 2025 09:55:24 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH 1/5] mm: compaction: push watermark into
+ compaction_suitable() callers
+Message-ID: <20250321135524.GA1888695@cmpxchg.org>
+References: <20250313210647.1314586-2-hannes@cmpxchg.org>
+ <202503201604.a3aa6a95-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CC:EE_|DS7PR19MB6095:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 8115fffc-b47a-4230-66b1-08dd687fc0ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|61400799027|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JVKfF1ng5UNh/IxSx0LO1DXc2zHLebpqBhKDIShbkwG6KhYKU6TNfhs/xxaI?=
- =?us-ascii?Q?qS9V6ehFb42xmb6ZqQVQ8DQsDmj7fvn2cC8fNlfUOyv7nGROt91UnC3D4E3g?=
- =?us-ascii?Q?6ISoxtuyQAzSZG7fDN3gDXuRQOz1oBjkhc/uzxXx3mZxA8xwZfRFvU6taLSy?=
- =?us-ascii?Q?xymiyZZ/UXqF8YQUNbOYNFWfERX2bJB6EXsYOBzQqoZ05aNZ9fyqQuqbGU8P?=
- =?us-ascii?Q?RC/t56UETnJj2OGsu8UC484utGyGxADXOsH5KUYeLfB4fNlIpx9577k1BB/W?=
- =?us-ascii?Q?8/vJQJwtLZHdxT0k9cyipFL8uVOoWOdYAuxZ3l2l9oWkqKp44MLqNhdayiDC?=
- =?us-ascii?Q?riDB8xs89BdvQoH1XaX6BYyR6+3syV9QpV1rdwlnQYakUIaQuAuIe7t4rv69?=
- =?us-ascii?Q?C2j39pblUihk9dJPQCXxOMCfRhhiJx2Pa3pz7BqnPFy+GPQ3K/nIL1qsqDEb?=
- =?us-ascii?Q?Boxv6dnPunCniy2/GYmWR2wNKQnWenOLPrw86j9qpAZCyy1/sK3gsSt1TizJ?=
- =?us-ascii?Q?wS8RoGage5VUiZZoer3W2TKGpmyBdIhdK7zmaIruCWgpjQwCzc337BbrKksA?=
- =?us-ascii?Q?j4vEtG5eewMec7SQbST1a8y4r5cmBMEJ7r72lycpkTe0yymRucBCBHbDoX3g?=
- =?us-ascii?Q?XwjYRni6pLN0dVUbjSPWxZ3XeBD0yc6LhfAB6tuFNgJWU4p4WWEhZFLOf/Tt?=
- =?us-ascii?Q?bSgyli8p12rbhkSJMuP1y7R+1l4xfEPfaBx0gHCa8sAAr/Jui5dsvtfFd3CY?=
- =?us-ascii?Q?fpD3hV1o7rJ+os1H1x4KE/EXS0BmdDFIZ35dfSPu+iKHfvmU0J4+BCfXlF9d?=
- =?us-ascii?Q?9DCQpWe4cTmoyw7lxL8DmOxteOahCB/Yi6RC2O7iJeXVmFk9+LrRKnqwEYID?=
- =?us-ascii?Q?8y/k1Cl/7nrxQcqkRPFFQZaEWNVnH9MmHPJvnLutfW7HzGwVkRCDzhwt2d47?=
- =?us-ascii?Q?XVUklcTvhLpXFPnTNIewSpqYXhiLh2FL/Msr+G5Ydirv3LwMWHBsbOYMtl8E?=
- =?us-ascii?Q?mSLQG2FDbELh8bYajm2GO6skLoZK5DAb+IlY2K16FfDRXNeaFUiskeN3sqvA?=
- =?us-ascii?Q?EEHCuEpmYCZ8ztz493+jONqkL+OyCPblvzem9IGMQTVuc4dngj+1JOpnHwq5?=
- =?us-ascii?Q?FFNSKMTAP+nP7aX6yMYfQ+8m2RCoXvASasGFLI9wagAxsNCYVnyqGkSSoRvf?=
- =?us-ascii?Q?EwB/Ap+iYnNcvkcAiz6Fl2t/65MK66nQe6T1cGo8JIz4jQVgDz1MV/OHdyBk?=
- =?us-ascii?Q?hcXZY5zx9KIn6/TBJjKphE6lvSgl6ikz9JSoeRW9ZprdbghuVCSydFyRLsC4?=
- =?us-ascii?Q?P71iggt4M+Qzt+P0XxaWSavGLhvUexvydXrdOsKLfrhv80fThbFvXupBh9m6?=
- =?us-ascii?Q?gJcEw4Yi3IHTgZfB+mYV9hBR4/GkvTi9Y/M1S/QSy1NRrtyKq0q2bEWSdkzQ?=
- =?us-ascii?Q?1xxEv0YwnnAYPFueHZZVFpYEQ3KyQFi0BmvF3/tSd/NtDdIeMVuMbZpwIBLA?=
- =?us-ascii?Q?bxY3Vri1QJGSP9Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(61400799027)(376014)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 13:53:25.6390
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8115fffc-b47a-4230-66b1-08dd687fc0ad
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB6095
-X-Proofpoint-GUID: AI5xvY5BYkCLldCU91Crlf6xONtTmoM8
-X-Authority-Analysis: v=2.4 cv=DdkXqutW c=1 sm=1 tr=0 ts=67dd6f5e cx=c_pps a=SX8rmsjRxG1z7ITso5uGAQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=Vs1iUdzkB0EA:10 a=s63m1ICgrNkA:10
- a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=aFORnpe9vv2NHjhfobcA:9 a=BGLuxUZjE2igh1l4FkT-:22
-X-Proofpoint-ORIG-GUID: AI5xvY5BYkCLldCU91Crlf6xONtTmoM8
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503201604.a3aa6a95-lkp@intel.com>
 
-mipi-sdca-ge-selectedmode-controls-affected is actually required by the
-specification so the code should return an error if it is missing.
+On Fri, Mar 21, 2025 at 02:21:20PM +0800, kernel test robot wrote:
+> commit: 6304be90cf5460f33b031e1e19cbe7ffdcbc9f66 ("[PATCH 1/5] mm: compaction: push watermark into compaction_suitable() callers")
+> url: https://github.com/intel-lab-lkp/linux/commits/Johannes-Weiner/mm-compaction-push-watermark-into-compaction_suitable-callers/20250314-050839
+> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everything
+> patch link: https://lore.kernel.org/all/20250313210647.1314586-2-hannes@cmpxchg.org/
+> patch subject: [PATCH 1/5] mm: compaction: push watermark into compaction_suitable() callers
 
-Reported-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Fixes: d1cd13f80dc6 ("ASoC: SDCA: Add support for GE Entity properties")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- sound/soc/sdca/sdca_functions.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
 
-diff --git a/sound/soc/sdca/sdca_functions.c b/sound/soc/sdca/sdca_functions.c
-index c8efdc5301b53..493f390f087ad 100644
---- a/sound/soc/sdca/sdca_functions.c
-+++ b/sound/soc/sdca/sdca_functions.c
-@@ -1159,7 +1159,7 @@ static int find_sdca_entity_ge(struct device *dev,
- 
- 	num_affected = fwnode_property_count_u8(entity_node,
- 						"mipi-sdca-ge-selectedmode-controls-affected");
--	if (!num_affected || num_affected == -EINVAL) {
-+	if (!num_affected) {
- 		return 0;
- 	} else if (num_affected < 0) {
- 		dev_err(dev, "%s: failed to read affected controls: %d\n",
--- 
-2.39.5
+> [   24.321289][   T36] BUG: unable to handle page fault for address: ffff88844000c5f8
+> [   24.322631][   T36] #PF: supervisor read access in kernel mode
+> [   24.323577][   T36] #PF: error_code(0x0000) - not-present page
+> [   24.324482][   T36] PGD 3a01067 P4D 3a01067 PUD 0
+> [   24.325301][   T36] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+> [   24.326157][   T36] CPU: 1 UID: 0 PID: 36 Comm: kcompactd0 Not tainted 6.14.0-rc6-00559-g6304be90cf54 #1
+> [   24.327631][   T36] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [ 24.329194][ T36] RIP: 0010:__zone_watermark_ok (mm/page_alloc.c:3256) 
+> [ 24.330125][ T36] Code: 84 c0 78 14 4c 8b 97 48 06 00 00 45 31 db 4d 85 d2 4d 0f 4f da 4c 01 de 49 29 f1 41 f7 c0 38 02 00 00 0f 85 92 00 00 00 48 98 <48> 03 54 c7 38 49 39 d1 7e 7e b0 01 85 c9 74 7a 83 f9 0a 7f 73 48
+> All code
+> ========
+>    0:	84 c0                	test   %al,%al
+>    2:	78 14                	js     0x18
+>    4:	4c 8b 97 48 06 00 00 	mov    0x648(%rdi),%r10
+>    b:	45 31 db             	xor    %r11d,%r11d
+>    e:	4d 85 d2             	test   %r10,%r10
+>   11:	4d 0f 4f da          	cmovg  %r10,%r11
+>   15:	4c 01 de             	add    %r11,%rsi
+>   18:	49 29 f1             	sub    %rsi,%r9
+>   1b:	41 f7 c0 38 02 00 00 	test   $0x238,%r8d
+>   22:	0f 85 92 00 00 00    	jne    0xba
+>   28:	48 98                	cltq
+>   2a:*	48 03 54 c7 38       	add    0x38(%rdi,%rax,8),%rdx		<-- trapping instruction
 
+That would be the zone->lowmem_reserve[highest_zoneidx] deref:
+
+        long int                   lowmem_reserve[4];    /*  0x38  0x20 */
+
+>   2f:	49 39 d1             	cmp    %rdx,%r9
+>   32:	7e 7e                	jle    0xb2
+>   34:	b0 01                	mov    $0x1,%al
+>   36:	85 c9                	test   %ecx,%ecx
+>   38:	74 7a                	je     0xb4
+>   3a:	83 f9 0a             	cmp    $0xa,%ecx
+>   3d:	7f 73                	jg     0xb2
+>   3f:	48                   	rex.W
+> 
+> Code starting with the faulting instruction
+> ===========================================
+>    0:	48 03 54 c7 38       	add    0x38(%rdi,%rax,8),%rdx
+>    5:	49 39 d1             	cmp    %rdx,%r9
+>    8:	7e 7e                	jle    0x88
+>    a:	b0 01                	mov    $0x1,%al
+>    c:	85 c9                	test   %ecx,%ecx
+>    e:	74 7a                	je     0x8a
+>   10:	83 f9 0a             	cmp    $0xa,%ecx
+>   13:	7f 73                	jg     0x88
+>   15:	48                   	rex.W
+> [   24.333001][   T36] RSP: 0018:ffffc90000137cd0 EFLAGS: 00010246
+> [   24.334003][   T36] RAX: 00000000000036a8 RBX: 0000000000000001 RCX: 0000000000000000
+> [   24.335270][   T36] RDX: 0000000000000006 RSI: 0000000000000000 RDI: ffff88843fff1080
+
+and %rax and %rdx look like the swapped watermark and zoneidx (36a8 is
+14k pages, or 54M, which matches a min watermark on a 16G system).
+
+So this is the bug that Hugh fixed here:
+
+https://lore.kernel.org/all/005ace8b-07fa-01d4-b54b-394a3e029c07@google.com/
+
+It's resolved in the latest version of the patch in -mm.
 
