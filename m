@@ -1,323 +1,206 @@
-Return-Path: <linux-kernel+bounces-570881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFA7A6B5BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:03:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F93A6B5C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5A21899410
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D18C189A459
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5ED1F03F4;
-	Fri, 21 Mar 2025 08:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13281EFFA5;
+	Fri, 21 Mar 2025 08:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sxSbvNNc"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mIQIvL/b"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0391F03D8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F401DE2DF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742544140; cv=none; b=l9QZXCQjPY1b1SE01MiwkHRCDK50zpboYvpJ6aaf/XWnK534qo/SYcIzXCG7XFD7Hy5f3h8lwUe5Hbpas4TGhRfjL7Zwu6m622k0KE4xF0kiECOcIwC5sCWpbTOqksdinLi6HI6zp9oa8/iq0/+YzjatynDAlV/2b5USlZdMwt0=
+	t=1742544183; cv=none; b=sHzM0z9zIbUR5/+DVtSgNUx3wspN2Kbb6WpvtIsQblJbgLCz740zcEkFdqLjUr/7qXp6ncGRTdHdvdUMra9y1f8pId/6WpqqRnk8R+rpqpr9TwzBbrErUt8pa+Rw4jchEUACm8JkYZl/ZCoPw9bOXu0x6GjZX4rDN4OL+05HTec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742544140; c=relaxed/simple;
-	bh=RrnSN/CN2kZxgvV22FlvT89WAQGZ7oBHakES/ZqzmVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bRnHtMtQvrXSulvnM64kh+M3SvivogMV89WgAzqPQSVQZAd0BaEWCzBv+l+4qbFIf22nXeW5e327ZXq9gtHupuFZKPMpMXtvEtwzGEEm6/xd1cLE4/lWdvfEq5jap39F5EZ1osYlxP88zSQQfCOmmryVMtx4dee6r3VgnhmRUs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sxSbvNNc; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43938828d02so2444025e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742544137; x=1743148937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/paNAb4b5evHCNjWAz+ZF/7zT+ALWwpQj48R9FGXL6o=;
-        b=sxSbvNNc9jFwWIk8FRxAD+tz/GquRwB0LYjgk+5y9R67Ii1OXHz9hSxsiDcH9NG69f
-         tnDaZlyyavzbNK2WJiaIC8N1evf3PhA0wQLlrm7vYXQjyE8tWj/lX+1YWILdpxvSlBrE
-         5goSlp53pUImzaud5ZAH+aheqfbdW4D9KbmbPdKEPs0rt+rLXsU7Y1J0UAx30vXu+vGd
-         9OvqWEhXtVFVOW9zaKFqO56RrLLZ6Pff/vRzCujDkXFEAJ8y5n0KveCDu7GakHBb73Y0
-         RlvWxcrY/5HtmNeO6dX7I39poRqOZsrXHrKA0V2gg3mn/pqvIk05tiis61fxaA1JEaSC
-         mzSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742544137; x=1743148937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/paNAb4b5evHCNjWAz+ZF/7zT+ALWwpQj48R9FGXL6o=;
-        b=rEFVOhoHsdSpwZvBLy7tBVeb6agPtWTu7xAmG1Mj1VKSue1zI/HO6HTzY8VQAQXA38
-         PhATl0pFwKBkD/5ZFOZ+SCAzcxTmXguPn1QAWfooDQF1caBGjQzZs5CnLrwGgKxXsust
-         giL3dBsFW8D/5X4LPiPHzQD061TgciTTr6wBzdIEJWW9ltjAxb7o2jBOcuOM2/d9ikMs
-         z5TPJ+hjp7yLpvWwmZywusHssqSAv8eYrw+lp+i4/ZAYdiLSrSZBxr897JL+IckzBKav
-         6M6p40WbK2umlmkerxWKAwR6Nyyto6aW1rEvmi4kAhU7eVEVgPtH92EWKJSqug6Ols6Q
-         yA4A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1gZg0/YQFSKY0ei5Aoe6WE8t1a2h1BvLYM5jyf1Y3mgGU8edgiB4p+6E9MKDpgRQwnXB9EzZeI/RRMnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCEOgUaMXnnai21byajywoNXFi3PJr/kbpujj+fUq8jQyw9nlK
-	hTBovqqVoL63zYQC/R20mcoAG0ntb3gBQhnMS7ndR9pjWoBpbptWN2jrOoIlHOM=
-X-Gm-Gg: ASbGnctkrgmTdL39lmKB8L9u3lVDQzDdUVuNff4EFUVfVOdAsrUlKY3WwtdU3Td+gKr
-	17LF1AFop1Ypep3Tsc5jtdzgvWqznY52LhWOIwNLpr/zs7W1cPsdS5MB2lGOwI7rGcmMCLdHbY2
-	otG/NNTARuFSKQEc5qwWaLUVYR5YSz17XDU6gZm0VO+o98v6CdlYxewoQjyElesRrGz0ZLEVNU0
-	gOBBnvzYxL5mRsrHeyCYHBb2hm30gKIJqdHjdZsSDCIVNihSxZZ3xsD8fchoVqC5DgMHFfbj7Xz
-	oeSak4js8NGlNhLzSv8HbXCFo7TN4GFxORJ5xD8AnKqeRu/3TeGGgzo1CQ==
-X-Google-Smtp-Source: AGHT+IF2AHef/qkj99JoiBNbLQIBcqaey9hWmPacciUSVdx3y1EUY5tMwczXWozBM2SM6z3OiVGoQQ==
-X-Received: by 2002:a05:6000:2a4:b0:391:2acc:aadf with SMTP id ffacd0b85a97d-3997f904f52mr755069f8f.6.1742544136598;
-        Fri, 21 Mar 2025 01:02:16 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3f81sm1697775f8f.35.2025.03.21.01.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 01:02:15 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Zev Weiss <zev@bewilderbeest.net>,
-	Ban Feng <kcfeng0@nuvoton.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Luka Perkov <luka.perkov@sartura.hr>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Eric Tremblay <etremblay@distech-controls.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Florin Leotescu <florin.leotescu@oss.nxp.com>
-Subject: [PATCH] dt-bindings: hwmon: Drop stray blank line in the header
-Date: Fri, 21 Mar 2025 09:02:12 +0100
-Message-ID: <20250321080212.18013-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742544183; c=relaxed/simple;
+	bh=rhsDyrz4zR+5L67y8VXAF6e+qnJE23mVLj+8WRtBdTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g6P3FQA2lZ3tOKu8z5Q4PZK3l+B+BEo4dbfPmRUQr6ewxSKKUtBZIVsa+3xZi7yCJROj64Jt+7s0zSxHasUxiMkRh1LGtaRndMYX3Zf9+psFzVt1QgOJeUofIS5FcfoFAl1tDfDbLfi+eDNcGSYJcLKqZpSt96N7N10exDaWmRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mIQIvL/b; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742544179;
+	bh=rhsDyrz4zR+5L67y8VXAF6e+qnJE23mVLj+8WRtBdTc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mIQIvL/bkBGDqsvLGdO61e5lAjksHiMgYpD/lx7tojgtIrNFjo0CKMaqiAkFGiv7/
+	 d3UpG/rJFSKE8PATRzlp8EtqR+HniUSc7ZGoStM5zuXTTTwDeGZAVZ6iJQ8Ab6lbut
+	 DZS7kId9eHAm7QqV/MPsOWQ1JDpSjEJ/01Rh9ObQnjPY9gWF4rpem1QFRxt6nCvnCw
+	 2krctEMc8VLigDLiBMSb9r9H4D/mACaYE8sIiR7qZtwtBY0xe/TCEX49UZBu5jurD4
+	 6tYaJk/6hm4vwJ83ctA2KPy56IE2EZW8V4sw6hGXEzPNDrKCMHgv0tX0tcFkKkhpNW
+	 D2TMacjkNsIkQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AC18517E0C81;
+	Fri, 21 Mar 2025 09:02:58 +0100 (CET)
+Date: Fri, 21 Mar 2025 09:02:54 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/9] drm/panthor: Make getting GPU model name simple
+ and extensible
+Message-ID: <20250321090254.667a86cb@collabora.com>
+In-Reply-To: <20250320111741.1937892-6-karunika.choo@arm.com>
+References: <20250320111741.1937892-1-karunika.choo@arm.com>
+	<20250320111741.1937892-6-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There should be no blank line between the YAML opening header and the
-schema '$id'.
+On Thu, 20 Mar 2025 11:17:37 +0000
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-Reported-by: Florin Leotescu (OSS) <florin.leotescu@oss.nxp.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/hwmon/adi,ad741x.yaml      | 1 -
- Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml     | 1 -
- Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml     | 1 -
- Documentation/devicetree/bindings/hwmon/maxim,max20730.yaml  | 1 -
- Documentation/devicetree/bindings/hwmon/maxim,max6639.yaml   | 1 -
- Documentation/devicetree/bindings/hwmon/maxim,max6650.yaml   | 1 -
- Documentation/devicetree/bindings/hwmon/nuvoton,nct6775.yaml | 1 -
- Documentation/devicetree/bindings/hwmon/nuvoton,nct7363.yaml | 1 -
- Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.yaml | 1 -
- Documentation/devicetree/bindings/hwmon/ti,adc128d818.yaml   | 1 -
- Documentation/devicetree/bindings/hwmon/ti,ads7828.yaml      | 1 -
- Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml       | 1 -
- Documentation/devicetree/bindings/hwmon/ti,lm87.yaml         | 1 -
- Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml       | 1 -
- Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml     | 1 -
- Documentation/devicetree/bindings/hwmon/winbond,w83781d.yaml | 1 -
- 16 files changed, 16 deletions(-)
+> This patch replaces the previous panthor_model structure with a simple
+> switch case based on the product_id, which is in the format of:
+>         ((arch_major << 24) | product_major)
+> 
+> This not only simplifies the comparison, but also allows extending the
+> function to accommodate naming differences based on GPU features.
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_hw.c   | 63 +++++++-------------------
+>  drivers/gpu/drm/panthor/panthor_regs.h |  1 +
+>  2 files changed, 18 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
+> index 4cc4b0d5382c..12183c04cd21 100644
+> --- a/drivers/gpu/drm/panthor/panthor_hw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
+> @@ -5,40 +5,6 @@
+>  #include "panthor_hw.h"
+>  #include "panthor_regs.h"
+>  
+> -/**
+> - * struct panthor_model - GPU model description
+> - */
+> -struct panthor_model {
+> -	/** @name: Model name. */
+> -	const char *name;
+> -
+> -	/** @arch_major: Major version number of architecture. */
+> -	u8 arch_major;
+> -
+> -	/** @product_major: Major version number of product. */
+> -	u8 product_major;
+> -};
+> -
+> -/**
+> - * GPU_MODEL() - Define a GPU model. A GPU product can be uniquely identified
+> - * by a combination of the major architecture version and the major product
+> - * version.
+> - * @_name: Name for the GPU model.
+> - * @_arch_major: Architecture major.
+> - * @_product_major: Product major.
+> - */
+> -#define GPU_MODEL(_name, _arch_major, _product_major) \
+> -{\
+> -	.name = __stringify(_name),				\
+> -	.arch_major = _arch_major,				\
+> -	.product_major = _product_major,			\
+> -}
+> -
+> -static const struct panthor_model gpu_models[] = {
+> -	GPU_MODEL(g610, 10, 7),
+> -	{},
+> -};
+> -
+>  static void arch_10_8_gpu_info_init(struct panthor_device *ptdev)
+>  {
+>  	unsigned int i;
+> @@ -66,29 +32,34 @@ static void arch_10_8_gpu_info_init(struct panthor_device *ptdev)
+>  	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
+>  }
+>  
+> +static char *get_gpu_model_name(struct panthor_device *ptdev)
+> +{
+> +	const u32 gpu_id = ptdev->gpu_info.gpu_id;
+> +	const u32 product_id = GPU_PROD_ID_MAKE(GPU_ARCH_MAJOR(gpu_id),
+> +						GPU_PROD_MAJOR(gpu_id));
+> +
+> +	switch (product_id) {
+> +	case GPU_PROD_ID_MAKE(10, 7):
+> +		return "Mali-G610";
+> +	}
 
-diff --git a/Documentation/devicetree/bindings/hwmon/adi,ad741x.yaml b/Documentation/devicetree/bindings/hwmon/adi,ad741x.yaml
-index ce7f8ce9da0a..236d8b52ef85 100644
---- a/Documentation/devicetree/bindings/hwmon/adi,ad741x.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adi,ad741x.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/adi,ad741x.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml b/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml
-index fd79bf2e0d16..ddb72857c846 100644
---- a/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/adi,adm1275.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
-index 011e5b65c79c..1ff44cb22ef4 100644
---- a/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/adi,ltc2991.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max20730.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max20730.yaml
-index 93e86e3b4602..8af0d7458e62 100644
---- a/Documentation/devicetree/bindings/hwmon/maxim,max20730.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/maxim,max20730.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/maxim,max20730.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max6639.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max6639.yaml
-index 4f5837a30773..139a95e00fe5 100644
---- a/Documentation/devicetree/bindings/hwmon/maxim,max6639.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/maxim,max6639.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/maxim,max6639.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max6650.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max6650.yaml
-index 2c26104a5e16..24c7697fdc1a 100644
---- a/Documentation/devicetree/bindings/hwmon/maxim,max6650.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/maxim,max6650.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/maxim,max6650.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/nuvoton,nct6775.yaml b/Documentation/devicetree/bindings/hwmon/nuvoton,nct6775.yaml
-index e3db642878d4..244470282890 100644
---- a/Documentation/devicetree/bindings/hwmon/nuvoton,nct6775.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/nuvoton,nct6775.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/nuvoton,nct6775.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/nuvoton,nct7363.yaml b/Documentation/devicetree/bindings/hwmon/nuvoton,nct7363.yaml
-index c1e5dedc2f6a..625fcf5d3b54 100644
---- a/Documentation/devicetree/bindings/hwmon/nuvoton,nct7363.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/nuvoton,nct7363.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/nuvoton,nct7363.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.yaml b/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.yaml
-index cd8dcd797031..c16a33227e94 100644
---- a/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/nuvoton,nct7802.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,adc128d818.yaml b/Documentation/devicetree/bindings/hwmon/ti,adc128d818.yaml
-index a32035409cee..78e3d97e2ae5 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,adc128d818.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,adc128d818.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/ti,adc128d818.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,ads7828.yaml b/Documentation/devicetree/bindings/hwmon/ti,ads7828.yaml
-index 926be9a29044..fb80456120e1 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,ads7828.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,ads7828.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/ti,ads7828.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-index 05a9cb36cd82..afcb3dbf90dd 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/ti,ina2xx.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,lm87.yaml b/Documentation/devicetree/bindings/hwmon/ti,lm87.yaml
-index f553235a7321..63d8cf467806 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,lm87.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,lm87.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/ti,lm87.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml
-index 227858e76058..cba5b4a1b81f 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/ti,tmp513.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml b/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml
-index f58248c29e22..ee7de53e1918 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/ti,tps23861.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/hwmon/winbond,w83781d.yaml b/Documentation/devicetree/bindings/hwmon/winbond,w83781d.yaml
-index 31ce77a4b087..6971ecb314eb 100644
---- a/Documentation/devicetree/bindings/hwmon/winbond,w83781d.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/winbond,w83781d.yaml
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--
- $id: http://devicetree.org/schemas/hwmon/winbond,w83781d.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--- 
-2.43.0
+I a big fan of these ever growing switch statements with nested
+conditionals. Could we instead add an optional ::get_variant() callback
+in panthor_model and have the following formatting:
+
+	"Mali-%s%s%s", model->name,
+		       model->get_variant ? "-" : "",
+		       model->get_variant ? model->get_variant() : ""
+
+> +
+> +	return "(Unknown Mali GPU)";
+> +}
+> +
+>  static void panthor_gpu_init_info(struct panthor_device *ptdev)
+>  {
+> -	const struct panthor_model *model;
+> -	u32 arch_major, product_major;
+> +	const char *gpu_model_name = get_gpu_model_name(ptdev);
+>  	u32 major, minor, status;
+>  
+>  	ptdev->hw->ops.gpu_info_init(ptdev);
+>  
+> -	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
+> -	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
+>  	major = GPU_VER_MAJOR(ptdev->gpu_info.gpu_id);
+>  	minor = GPU_VER_MINOR(ptdev->gpu_info.gpu_id);
+>  	status = GPU_VER_STATUS(ptdev->gpu_info.gpu_id);
+>  
+> -	for (model = gpu_models; model->name; model++) {
+> -		if (model->arch_major == arch_major &&
+> -		    model->product_major == product_major)
+> -			break;
+> -	}
+> -
+>  	drm_info(&ptdev->base,
+> -		 "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
+> -		 model->name ?: "unknown", ptdev->gpu_info.gpu_id >> 16,
+> +		 "%s id 0x%x major 0x%x minor 0x%x status 0x%x",
+> +		 gpu_model_name, ptdev->gpu_info.gpu_id >> 16,
+>  		 major, minor, status);
+>  
+>  	drm_info(&ptdev->base,
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index ba452c1dd644..d9e0769d6f1a 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -20,6 +20,7 @@
+>  #define   GPU_VER_STATUS(x)				((x) & GENMASK(3, 0))
+>  
+>  #define GPU_ARCH_ID_MAKE(major, minor, rev)		(((major) << 16) | ((minor) << 8) | (rev))
+> +#define GPU_PROD_ID_MAKE(arch_major, prod_major)	(((arch_major) << 24) | (prod_major))
+>  
+>  #define GPU_L2_FEATURES					0x4
+>  #define  GPU_L2_FEATURES_LINE_SIZE(x)			(1 << ((x) & GENMASK(7, 0)))
 
 
