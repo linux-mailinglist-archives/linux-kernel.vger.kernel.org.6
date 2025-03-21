@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-571454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269CEA6BD51
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A10A6BD57
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9762F18904BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44BC1885B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516831E2007;
-	Fri, 21 Mar 2025 14:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA70224B01;
+	Fri, 21 Mar 2025 14:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqsZBDPc"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nwl.cc header.i=@nwl.cc header.b="j53Ogs/H"
+Received: from orbyte.nwl.cc (orbyte.nwl.cc [151.80.46.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492F1D9A70;
-	Fri, 21 Mar 2025 14:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70DB1D514B;
+	Fri, 21 Mar 2025 14:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.46.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568026; cv=none; b=gGZr1Qig/HiK42OO7t6O2q2WPrRuPoJDf8JZSJqnZ2PwU9E9l26vTqwnVwK5BhQjU48Hh9YThwSx8TC5K0RtSuIUV9GR16K2qMKxQVCKaIEQWVNZbclBxD57QLYK40aT/nXqTsPQBM3bBPuMYTbBhDA3GWCPXoQqr0yp+2TykcE=
+	t=1742568032; cv=none; b=MheTAQocF/zCgmGWIBsLWePFq8JdfeaoXJv7wi4Ht337lnG6+TbBVLYatwPwPokvU4Rne4Pe+2QLFPpR1YeeYzZR3YZxn2eWTSHFL1cSGVELSuW7hqu+TKn+v8WijAShtcGBzTC9dQfeIPa/o7ZQwVp1zy+tf7IARF0TB3Ts8bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568026; c=relaxed/simple;
-	bh=gHef/WiJIYxfSHBE8F247KxYLolP4gheBKJOWI5k8io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZTRb/imCvDSl9+vhTiGkiUHhxngD5wuBR8OLYZ0Auao4qnGZ309zgeaa6VhMyinKu72iLmXqCk3gYlIDb2QHOle9s9j53kA1H3e7JCITeYEL2PCCy3aXdSNBDIkPHC4Ze4miAi5rGWbIo0G+qvNWmzBhXUt4SmBZM2MoAboXB5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BqsZBDPc; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso2067798f8f.1;
-        Fri, 21 Mar 2025 07:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742568023; x=1743172823; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eglGoRr46S0QXsG3q/hnCjtc4IGj4qTm0VYKUvrdsl0=;
-        b=BqsZBDPcm7OXlXxJwne0VWprp2p9oiO22fovQxF5COh0lUJf0JFoBgkhyNxcz1hU8r
-         bjGvmGzBaRVywUrqEevQWpyQ1sl4bR+IKtWkiStqIdwMQCbWyoy+t4GeJTspVlMvC0g1
-         ngbHSRBnp3IF/KWGWq74s62YS/CH+fYAt9y5eRsFn2EzL3/7k51o8WNl8CeYVYyr7bcI
-         QKZTYPFHwhkBieiTmiTvQmg9XprONext//1g5u+SYlEpgx7UfsvyTJt+HPDL8njW6ytZ
-         jXTdex43v3ES0c9UYFCYhLD0Ro10ugK0LlfxLi8nn800vQVxRzRXibUGWJLigNbQZh7n
-         llUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742568023; x=1743172823;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eglGoRr46S0QXsG3q/hnCjtc4IGj4qTm0VYKUvrdsl0=;
-        b=TOJ4Hppr2p4KsWrN+BcqrUTaE4IuMjMzKSkbip37rrsRl05pPZEMlxq/KXIh2diS6r
-         vwuSDQuUhv9lQJsO+PJMfUL+xPyNlMpD2kARld/u3zNA1vVwwcnCZaOjtfsdta04Gngy
-         5YAWLNh9L9xE0wU4uKtA63RT8pdL5/oJsVy02cFN5KxRacHeTJpFa0MycmoyaVLIR/Ld
-         bGqeipKE4WJxte3ulWbrHEO2DFsXOTEy1EbBqWpTnErER+1x4I2cbrbYqDkeCrn1cYEs
-         NaM1Er9cQhFzhv/xJYooNMOeCk0ulMvn5KydIhrQmyEOxliHgo0brgNGUWgeD9qAeHqk
-         o+1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNmxjdTooh4Ry0R2/9DaPXkU2aMzus6IUrDp40A370WbjWmD8rjwwg5wW6qFYtqTbYyBE4MOpU3hW4I02oZr8GwFA=@vger.kernel.org, AJvYcCXmbmgYPw41d5rwo8mkWqTvx93EtMUXJSpLk3iGv/GTtoA2btis4gKMIqbhNhtVmS4Ixbf5u+FEsDsM5gE=@vger.kernel.org, AJvYcCXykKyJ6zjtBhwppfLvbkUNqh3QTjxzhp3D2KFoIjEQm6/seSwX8tPxhrZVCXz/tAFi3w+yzEBL4tUp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhAPhoOhVm47/rVB3LO4ONQrH+dGJeIYa+zYAoG/kwqgLXuQS6
-	s//B5oZ0clXz+K/3t/n53L7YcCC3Blos+fOZKeU+ah1SAq8S/Ne8
-X-Gm-Gg: ASbGncv7lIBiu9WB9Ceg7eLZzWcA6zf+qTBqMGB3oxoCUKx+BGMUikvnlivWWNMjWIx
-	XK3eIUpypwhQDc4sNfMCipNGA4x9HrLHQ+JHgd58uVZJbJR9JL4/haGIZ79G4AFaZ8ZYlbOK/dq
-	xN07v+CSAiAISP9GOl211Zs/jtxXP5/i7FK+5i6qe1RT4Ehe7M2RhHCWvge869EniqmCVObxfMW
-	FhN/apNt3uhhmI9vPbcBnaWSZl25Y3qdfl0oRKZ5GvRrcS6O75xcat1Mtk0o9RygIh/aC9X3DF/
-	JtZrPXMdP5s4DEGhmnOKR0NjBDKucc9y8IpRxe90hKbepxdrlzRAZiCvzKo3iMofdys6z7qMXFi
-	BNp5PuGQc1Up+7QaUGrx0
-X-Google-Smtp-Source: AGHT+IG09EROY+oEC6yp/vRny6rDAviKeZX0i4uUBWkSOh4NQpHpFy+lKrIENtHAQqslPIXneUrUTQ==
-X-Received: by 2002:a05:6000:186f:b0:38f:3224:65e5 with SMTP id ffacd0b85a97d-3997f90101bmr3184130f8f.12.1742568022883;
-        Fri, 21 Mar 2025 07:40:22 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e65d5sm2557156f8f.64.2025.03.21.07.40.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:40:22 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: devicetree@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 2/2] usb: dwc3: exynos: add support for Exynos2200 variant
-Date: Fri, 21 Mar 2025 16:40:16 +0200
-Message-ID: <20250321144016.1434848-3-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321144016.1434848-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250321144016.1434848-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1742568032; c=relaxed/simple;
+	bh=E2+FqgznUEnyWr4r8jGmtnjZVC3ujDGJrrzUcsUPLY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdUCq0xBAn1JXam7xjkUm9ckWypN27/sO+QTAkzelvxn1neVBMKvwF85u5+l2m7cHAlgkcWNk6sboJA8KQd4/UrFmHoVYwvaoEARRWe/oCZoGdXhXQ8QQI1BCxR0qFfQuDJaN3Yaw7wh9vbNtC+E2AnZ8uQuPtDFnY/O0tEMrwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nwl.cc; spf=pass smtp.mailfrom=nwl.cc; dkim=pass (2048-bit key) header.d=nwl.cc header.i=@nwl.cc header.b=j53Ogs/H; arc=none smtp.client-ip=151.80.46.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nwl.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwl.cc
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nwl.cc;
+	s=mail2022; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=273ZrHicthe524y60l8YzXOeWySzybOyGBG8piPpQfM=; b=j53Ogs/HYM8gv6m80/LKlzzCWv
+	MiPX9TVIujy06m/jUc4kRBI7ZCTIUceHk9yMjF3Hp+no9GfrpbnFo0CEq2KEsqZNdFXSn5y+JFIvq
+	/I/+Gx5cwLKNuryJ22XFwuTmOF+SuHJdvtgA3m9AmakvAxjlP3DC0/J5k0OMHEzJqQkkzAHWSIoU9
+	1HUGg0gcgoQqWfz2L3zF5JMyb/iPV/o+4jLaGqr4j01cvf4GG0aoWIbRnwkkeW+VJVxMGM2R7a64N
+	POFqrbfsNw5DZ0H38sqRzPt6AIFm3/+h1Xm8BB9yKOZIVJZe+56Ka9z3fud+2Kj2zXXS9cjfrMozZ
+	kyd+MZZQ==;
+Received: from n0-1 by orbyte.nwl.cc with local (Exim 4.97.1)
+	(envelope-from <phil@nwl.cc>)
+	id 1tvdXo-000000003pz-1Qsu;
+	Fri, 21 Mar 2025 15:40:20 +0100
+Date: Fri, 21 Mar 2025 15:40:20 +0100
+From: Phil Sutter <phil@nwl.cc>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 RESEND net-next 2/2] selftests: wireguard: update to
+ using nft for qemu test
+Message-ID: <Z916VMSCEtinZl54@orbyte.nwl.cc>
+Mail-Followup-To: Phil Sutter <phil@nwl.cc>,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20250106081043.2073169-1-liuhangbin@gmail.com>
+ <20250106081043.2073169-3-liuhangbin@gmail.com>
+ <Z9rtrVk-15Ts_BNp@zx2c4.com>
+ <Z91CGRP9QLdZONiZ@fedora>
+ <Z91QshzKRlmPdpv7@orbyte.nwl.cc>
+ <Z91fXURX3BQFDaq9@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z91fXURX3BQFDaq9@fedora>
 
-Add Exynos2200 compatible string and associated driver data. This SoC
-requires a Link interface AXI clock.
+On Fri, Mar 21, 2025 at 12:45:17PM +0000, Hangbin Liu wrote:
+> On Fri, Mar 21, 2025 at 12:42:42PM +0100, Phil Sutter wrote:
+> > Hi Hangbin,
+> > 
+> > On Fri, Mar 21, 2025 at 10:40:25AM +0000, Hangbin Liu wrote:
+> > > Hi Jason, Phil,
+> > > On Wed, Mar 19, 2025 at 05:15:41PM +0100, Jason A. Donenfeld wrote:
+> > > > On Mon, Jan 06, 2025 at 08:10:43AM +0000, Hangbin Liu wrote:
+> > > > > +	echo "file /bin/nft $(NFTABLES_PATH)/src/nft 755 0 0" >> $@
+> > > > > +	echo "file /lib/libmnl.so.0 $(TOOLCHAIN_PATH)/lib/libmnl.so.0 755 0 0" >> $@
+> > > > > +	echo "file /lib/libnftnl.so.11 $(TOOLCHAIN_PATH)/lib/libnftnl.so.11 755 0 0" >> $@
+> > > > 
+> > > > Can't these be statically linked into the nft binary?
+> > > 
+> > > If I omit these, I will got error like
+> > > 
+> > > mnl_attr_put: symbol not found
+> > > 
+> > > Even though I set `--enable-static` in nft build.
+> > > 
+> > > Do you know what's the reason?
+> > 
+> > I was able to have nft linked statically against built libmnl and
+> > libnftnl by passing '--disable-shared --enable-static' to configure
+> > calls of all three build systems. With --enable-shared in library
+> > configure calls, nftables build preferred to link against the DSOs and I
+> > did not find a way to change this.
+> 
+> The patch is using
+> "./configure --prefix=/ $(CROSS_COMPILE_FLAG) --enable-static \
+> --disable-shared --disable-debug --disable-man-doc --with-mini-gmp --without-cli"
+> to build nft.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
----
- drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Do you pass that to the configure calls for libnftnl and libmnl, too? I
+didn't find a way to force static linking in nftables build system, so I
+disabled building of shared libmnl/libnftnl libraries.
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index f5d963fae..aa22265c7 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -145,6 +145,12 @@ static void dwc3_exynos_remove(struct platform_device *pdev)
- 	regulator_disable(exynos->vdd10);
- }
- 
-+static const struct dwc3_exynos_driverdata exynos2200_drvdata = {
-+	.clk_names = { "link_aclk" },
-+	.num_clks = 1,
-+	.suspend_clk_idx = -1,
-+};
-+
- static const struct dwc3_exynos_driverdata exynos5250_drvdata = {
- 	.clk_names = { "usbdrd30" },
- 	.num_clks = 1,
-@@ -177,6 +183,9 @@ static const struct dwc3_exynos_driverdata gs101_drvdata = {
- 
- static const struct of_device_id exynos_dwc3_match[] = {
- 	{
-+		.compatible = "samsung,exynos2200-dwusb3",
-+		.data = &exynos2200_drvdata,
-+	}, {
- 		.compatible = "samsung,exynos5250-dwusb3",
- 		.data = &exynos5250_drvdata,
- 	}, {
--- 
-2.43.0
-
+Cheers, Phil
 
