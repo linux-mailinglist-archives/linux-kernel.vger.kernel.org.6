@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-571943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2445A6C482
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:50:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B882A6C4AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BEC97A8E24
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2143B2387
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57F7233D8E;
-	Fri, 21 Mar 2025 20:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540852327A1;
+	Fri, 21 Mar 2025 20:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9JppLeC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TGFtRI8s"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8BF230BE9;
-	Fri, 21 Mar 2025 20:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BF6221DA2;
+	Fri, 21 Mar 2025 20:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590129; cv=none; b=isjZNztWQbuY/jupwOhHfLBFSuCIYykMU9/CM9GrI7rB8zQBUu00B1Sb/nvVcwYBTeT0d0ex99DVVKKY76m5n+h4ngsJxTEFmRUTnHDD+6NqUsRdaZu42wLrhBJ+GwA54Wa74CkbFwCf87Sy0+G6OuQGZhyo7kylRd/pdqm0Rl4=
+	t=1742590212; cv=none; b=DdhCldJhg3x88lL6s4PHIafYqcw9584S0Hn5ZQEE1zukYWdhBJhI4Xe1bsf41s1Fb9L+cvgTcb5XAgHbtmUSMnDMazQKmRH+uSaEEdYZ8nxGVsrGg42IM/vTXZkUb/MO9hQQL/6jhA61hTugmZw4eweqrUnLUE31qCoBNWJ62bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590129; c=relaxed/simple;
-	bh=NYRafMSdGbGHF2wgz3nyBIvLnZNYTCdkh/71MBOgJdk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gyAcTYihcbjfLcYXFEItzm69JPSXfZrN2dOKOkeFhHRe1wLjoIlKLD/HACPFYEA1pZHm8uJ2SL7ucXlS0TqNVlVr8WfXxsXDkX2h3VClFF7jrMiWftcJ5Wx0+d+HnsYL49v/OLofvsKWW9hKNQM9KFEh5idXhoxylZKB/WNJg0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9JppLeC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F2D4AC4CEF2;
-	Fri, 21 Mar 2025 20:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742590129;
-	bh=NYRafMSdGbGHF2wgz3nyBIvLnZNYTCdkh/71MBOgJdk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=L9JppLeCto8aRVKMPYoHs8Qx+CA1cbOP/TG8skcBiOLmeLv/9Ix+8wFxwoLCEQNSL
-	 ogq4gfqU5W1k7uwthBjbicjlwltUVpSlkT4BpWKOdzJjyTJQcBDd5j9BEvA7Sn+n28
-	 c0l1mnsoRO4297q6D3pb9qHdZzd8cUbrLVzCWcng2eh+nEl+5dXkXJ3GXlQp63t0mU
-	 H8/4E8YkQcWy3XclPOqs3JcHlbnCWXwEw16VduLRwn3SnotVEwAgJi9uL2PBSxj83i
-	 ja5pU85Kpldv29rS9KkLEs9SaWHM5QWO0IjTJz1DERAYZaMSa+jkmytH9+cKkyP8qN
-	 inrFVw+PcKy7A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA65BC3600A;
-	Fri, 21 Mar 2025 20:48:48 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Fri, 21 Mar 2025 21:48:49 +0100
-Subject: [PATCH v3 7/7] x86/Kconfig: Document release year of glibc 2.3.3
+	s=arc-20240116; t=1742590212; c=relaxed/simple;
+	bh=NYDV0AH6VMybj+/Wwpfj6w3HLv/oqsj2RU5ib1yXgO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RgCFdOv3/FjSXBRCeFRimXq6nzQ1g+PXYrL13JPJL4NYM44ySieUYIUFK8wq40r9qi4y+XYLIDxz1m1JyvKmA7ABgeQJyDhT8+vXIEZlodCxy8cHFxgkNGZ9gTx6Hzw5NSGl4bREFUsfZn3tJkzvJzm1QMNCQGvQ/T7Rxyq1Y+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TGFtRI8s; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yFzOysCPLuMjK3qzNNnYKx7eqzyb8A3svd4W9fSzPuQ=; b=TGFtRI8spN1abBT9KlSGFueqQh
+	6/YP2EDo6BjswLesT6nGpeMQ9l84PUNmOlDHSQO43O70iL0m5u383PDralyj13qYDcr5D7CjO2NAZ
+	RltzmllqpVOG9toqHbT8+tzjdJcPirCbfOYaqh9GGwj5dM49R26FCx00XWpFfKRnRsoQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tvjJA-006eT6-Hj; Fri, 21 Mar 2025 21:49:36 +0100
+Date: Fri, 21 Mar 2025 21:49:36 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH net-next 01/13] dt-bindings: net: cdns,macb: add Mobileye
+ EyeQ5 ethernet interface
+Message-ID: <2dbbd6c0-84d0-4846-a48d-31891f395c7c@lunn.ch>
+References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
+ <20250321-macb-v1-1-537b7e37971d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250321-x86_x2apic-v3-7-b0cbaa6fa338@ixit.cz>
-References: <20250321-x86_x2apic-v3-0-b0cbaa6fa338@ixit.cz>
-In-Reply-To: <20250321-x86_x2apic-v3-0-b0cbaa6fa338@ixit.cz>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Kees Cook <kees@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
- linux-iio@vger.kernel.org, 
- =?utf-8?q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=813; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=9OvHfX7hjKPWyoFcg1JfBC1j93k9cRQ1pVfK3nHdJAs=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn3dCui3quEeZQO7ntSazprt9cEZVgq81Us4dJa
- OTGelM2MDKJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ93QrgAKCRBgAj/E00kg
- cniOD/48XqqJrrrAlESfe/SxdiR6zjYr5kHsGQkEcmRkUnYaP/g5B3MKUkMr7aAcgXKHbVEnbVO
- SInWdtQ6aGqNpatjC4G4CeEiw6MEqaRNrJbYYKsvarFpRSvfR2WBCCc4+HwYqK4NfFrUeH5P1kg
- 6ZQSGWCcnSuVoyMlw22owOb3NMaEHqXKFvsn3PqJNVIlzcu7s9cqGezC4Jjh4wzdYp0nDoRBcZA
- IhE7c5mG8JnDK5P4Y1M4dAyQ14Klp1YbLHh9a1OZJnbSNNL2g+hTvVH+4aN+YLrn/qn6ieQxopl
- Rq2ywqWI0seE54VsCp8jsM00FrFq6d/puV9qxZpK+CFZ9YY/nPIVmP8CnekzdgecFwkwIcZSKpr
- NMxOTPgarQOoYZ5FqlysJ4goTDRq0oIk3IMESK6GVW0Fc1HtqLDtLLfVOfKnlHIyIlzTdCxOdrE
- 0HMsi5+MOoOpTwA03izg0aXKhbVpzUroRpPraqbkIfjJXsbeH5+TN6c/IPharOUgZtIY1/KA+CY
- bIDVvzL90uhYHGtUqB/4Q9y0bYFI8pBKwy/0nnQo6dsGIfrpEdm9kHy79fgYbhikIdtJRspfvZz
- bwgEFEnqHraG2vZYDIOwKHj6/me8b4Mki9P4bMhzXeUCpGIGYwalRKI7zFLjeOTZ4xQzwzLC+S2
- kn1fpdXFwpseH9Q==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321-macb-v1-1-537b7e37971d@bootlin.com>
 
-From: Mateusz Jończyk <mat.jonczyk@o2.pl>
+>            - atmel,sama5d2-gem         # GEM IP (10/100) on Atmel sama5d2 SoCs
+>            - atmel,sama5d3-gem         # Gigabit IP on Atmel sama5d3 SoCs
+>            - atmel,sama5d4-gem         # GEM IP (10/100) on Atmel sama5d4 SoCs
+> +          - mobileye,eyeq5-gem        # Mobileye EyeQ5 SoCs
+>            - cdns,np4-macb             # NP4 SoC devices
+>            - microchip,sama7g5-emac    # Microchip SAMA7G5 ethernet interface
+>            - microchip,sama7g5-gem     # Microchip SAMA7G5 gigabit ethernet interface
 
-I wonder how many people were checking their glibc version when
-considering whether to enable this option.
+These are kind of sorted. Maybe put mobileye after microchip?
 
-Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ba6ba3a7011554d9cb58fb0acf48d541da8ed69b..22dd962f8e5c86741a512e12596bd940cd1dae97 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2225,7 +2225,7 @@ config HOTPLUG_CPU
- 
- config COMPAT_VDSO
- 	def_bool n
--	prompt "Disable the 32-bit vDSO (needed for glibc 2.3.3)"
-+	prompt "Workaround for glibc 2.3.2 / 2.3.3 (released in year 2003/2004)"
- 	depends on COMPAT_32
- 	help
- 	  Certain buggy versions of glibc will crash if they are
-
--- 
-2.49.0
-
-
+	Andrew
 
