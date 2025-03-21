@@ -1,321 +1,163 @@
-Return-Path: <linux-kernel+bounces-571749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39559A6C1B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:40:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB616A6C1B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CA33B22D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:38:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9943C7A980A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C95230BD1;
-	Fri, 21 Mar 2025 17:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7217622FE05;
+	Fri, 21 Mar 2025 17:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KbQMQx5E"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vp4vO6c7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915BA22FF55
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AA422DF8A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742578665; cv=none; b=oiM9mSwDwZpEkhM11Yh58BrGnXpo11lAvD74eoQR/hfGAReQB0E9BRW1bI/23e0POKSoGh4Szr02UjZwdJxg6sksncBgy8iKoJZ7ntRUmgyIkK9InMbmzmhL8mhngSdFM1O1SiGQZn2koQuid+SAkbdCuGYaj/7VgECzSeo4Odw=
+	t=1742578660; cv=none; b=rD2s5l09Jx9iy0z3j/EUtUnmwmIzdlyb4HhH6T3nDXc0h1YxS7W26M79z1bEUgbgQYGHtPjYDHmv73MXu7jL3rt3nDdXYgAQaaHHJOzfHMfSSrOebWG9EJs+3/2cDvdt9kKpKa72arto5+nDekycSOrBwk5KDbXSRm6wOn4tL3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742578665; c=relaxed/simple;
-	bh=IV5KDKRwIWWBaHx1XZgeNA+fBEOe7w8Yoh7U/uZjyGs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=A4XMVBoXpSn81zn0jlYw+f9Lz3ABP+TctUFier458bmIIbvQruCtXuGMzK0qGETRwHtLmznHFhI12qfoOfyICdCGLiyOdNuWDXEFm3b8KjwkIGnQldG+Ivr9TSHv6QxgLx9WfVQ/X0CZ3/2frHcYPSFdf9tuhybosYxDA+O+f8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KbQMQx5E; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so3394056a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742578663; x=1743183463; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vGIlFeRwp00cBGERgxxLQ4RbBbIFX2vI8pKUuAePCaE=;
-        b=KbQMQx5E4HCCI1O7oiTYw83/0AzF7pwXebfVq/i+dLfdtZm1bTNfcbeTtNQMMQ+Zbf
-         nurfb9JSYjGAYkkfqpqFxX5Upgm+lzAmM+yPfF/iJIhddZnyz9L6ZH+aJuAZLKlFx+KW
-         LIe3wWCp2P3x5AhEcvls4nKez3UQy9PaxIdl943204TtIVPL8/ErUTqgMLTsxe+LY09Q
-         QXMyrVrBFP//OLNXrXNwVzL/T70cSmPIk19q2yXjTNrR0/xAxtRZa359i/HGo6teqpn/
-         5RMlP4RztXeTHr+m8jnDvVPVcpdKamDo7xAbweubzZZ+F/DbZElvr60NddP4oQofBsl2
-         zTlg==
+	s=arc-20240116; t=1742578660; c=relaxed/simple;
+	bh=b4/ZBTK+EGfy2uuB1pDRH960vIq1os3y3NPLEjwQTaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lovti2KXXpX/lpckobGQMbHTQqW9O8z4Fum7QHczds7/LWQgxF+QVvS65jOz2AG36/XjtQ94rnAXoYb6lI2JSFCy+AD6y+t+7VjmxveB6KeM2ak94Zdngh22B7YnCXiOAjnNQER5uSYfPTe4YATA4Dxx3Jprs8syso4dX/4oaLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vp4vO6c7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATBrb016546
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:37:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5EPzIyilGqOZI5ta3x+QlI0t
+	ANS6zHW/9qVjSLgS1/A=; b=Vp4vO6c73kU5bmNKyEmP09Krk5Pv61VWGOqeDNFb
+	LmYIks7+mB2u+gNWcH1kBFBVPXA0Fl1JXqsM2ObXX3DLjh0BllYGJMr8TsD+IL8V
+	RWHGJlARaIlCdwP1BicyOWvsLRnbpcFuginyUV1V+GYSr6K9AdpuqHqcu9+IjGsq
+	9ZcNOFiG9L2lbdrojt0CH7ldJtdiIKRPn/98WNA6k3+KZffaQId3OgzEyky5ELnO
+	uSjqdWQfC+IEgUNK1tQZCBLpz5VLzAPw4IOWQLs3+qne7KJH5h/IeDI1G4AxCRJ/
+	M9e2oMooTPTRR0holz5WdSOormxc3Y2PZ35WNrHVLyzwig==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gcd1dmat-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:37:37 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8f9057432so42384576d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:37:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742578663; x=1743183463;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGIlFeRwp00cBGERgxxLQ4RbBbIFX2vI8pKUuAePCaE=;
-        b=WCpvWrypRJJWn3a6M0z3ijkbGKCUBgvzeyFRm3OmICL55+skaXNy0NOKbvxa6H/rK4
-         /mJVRBv83sZuKDKmhkzjWQoou7FnoyTLZAoIoxP3zR78cooCTDZr6nVb1y5yjZDyRAGH
-         0aInQMBOHofjfhilW+9BJa47aNQ+6GHFCvCDxdqX2qWgSMO0/JPwmcD4cOjDeKBtGgc0
-         e5Y301ndjJA/KK3RavLXk5kHkcn3ydEF6vDjm5cncKacu0dyue2B+Ui6C+25CYzbAM87
-         JHXW9yMHrBGIfhj1uBajl2KSpB3H+Va7LQLm0AXXH018zj+Fc3EhA8S8C+IKaJoyeziT
-         8v9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVaZCGTPDzc3vSe2chSgShMdBjvOJM/hOrNj4YlbMmFq9vZHOSwnVqnwCoPRkmdCXEGh/+INAOv4XLwkpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIGohQWzIJiXC8Mr+TaiMt7FV1N2NkawcMGoM8Q6zmAtl+SRQm
-	HkeezUIL9ZY97GH0zw7eBniRARrTkhezT6bFHsGQ+Dx0001iNhAtoy5deA1q1CxMyPPh8zVwUPc
-	Estd/iPWhTrucbJvtCK84/Q==
-X-Google-Smtp-Source: AGHT+IEi+XabJeuTZlJOMXJIuxzHgrE4b595XPIHNxfB9i6zloVLdGL4AH5NwI1Pnt5e4UJSRIwRL82NwESkLDRViQ==
-X-Received: from pjg4.prod.google.com ([2002:a17:90b:3f44:b0:301:2679:9aa])
- (user=souravpanda job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:280b:b0:2ee:d824:b559 with SMTP id 98e67ed59e1d1-3030fef09b9mr6204491a91.28.1742578662931;
- Fri, 21 Mar 2025 10:37:42 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:37:29 +0000
-In-Reply-To: <20250321173729.3175898-1-souravpanda@google.com>
+        d=1e100.net; s=20230601; t=1742578657; x=1743183457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5EPzIyilGqOZI5ta3x+QlI0tANS6zHW/9qVjSLgS1/A=;
+        b=pu3xLbEhDIIfToI5ZmFSTsaigJaaY0u907npidkVaw73IguRfZcA7le2IwRMFrFqmC
+         fn7B53Ar/iShYL1OaFdtvQbvkPbOdWHxYF5XiE29r6AohkZAQiLx70H1CtAri5UzA4WK
+         W23EvWHlyZmgHkAkvFjo8ekIdMhak7VQ+rufQCtC52IQ8ee4p2k4i3xLo3ekp6kD6VZa
+         CpwAPcBxCW6DyhBruF5EMIi+mg9gPIaGGH7DHF0Ymex+43pAwoyumw4CJR+Pe82SSbTE
+         igstSjfbe3hGGW0UbPRaH/tT4H26y6Z44IpL1WVj+8RpvZRM2CtOhhtdBPtu2TbY+1hZ
+         fC+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWNqtq7E3Bh7fWFPTzq++qTPshc6mvr5S2q7Zm4Z6RYB4fbIiXMB857LptQ8BLVylooWKxwZf/N5kcMzms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjYyqISWymqTTmrnL3oZYhxITpqVp5AULoR9cWv8Pd9Mz2yeus
+	n/bS2XScxqUtYIOXosTmTn8KDyUkcpGz7BwCu2UyRgxr6ATEOOTj+8CTt20M+fZcIoqc+2G/u9w
+	2pwJpgzM94LJlPMF9MpooGqB4IdaCtU4RMINPP8TtJXUurDG/WMbn+wQddd2F52M=
+X-Gm-Gg: ASbGnctd1z/laWvYmfP6xJHBr+6xJuyKM0v2FaB7SWq4WCMK5nKSqtPM5F3swfHDOT5
+	vpy6Vu4JYa40cHFISulfNl0VQxBJ3nENy8t9KVapmEvd+31AyA58vYy9O7vuXHkCk5L86XvjDuO
+	Z+dL8C3yfYCTa4DWmU74Qe4zISWnPS95TCIX5I5muWNfXr1nWocTsPR4vQASX9teZLn1cHPGlwQ
+	H1AA0s8CoDyC6ZDIBFtHkl0XA66e6/VHJL9iw7zym9rDnY3/n165kPSF2DhdH+fQid9nnX6vwI+
+	RMVUdF3Z7mLgsUhaBGE5U8RPj1sP+ASFLzv5rsqpefWu08SYp8Dtj13XaQ5KZBzQHIqQ8hIFpin
+	wJmg=
+X-Received: by 2002:a05:6214:cc8:b0:6e4:9b59:d9ce with SMTP id 6a1803df08f44-6eb3f2858e2mr61755066d6.5.1742578656897;
+        Fri, 21 Mar 2025 10:37:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGADBjRs3rs94/YLnkpOq24pSnDwxMlG2hCY2p4qMNbSXk/dzNtWVVKJ5jRUhsoAdgTEJUHRQ==
+X-Received: by 2002:a05:6214:cc8:b0:6e4:9b59:d9ce with SMTP id 6a1803df08f44-6eb3f2858e2mr61754516d6.5.1742578656395;
+        Fri, 21 Mar 2025 10:37:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6469104sm226950e87.20.2025.03.21.10.37.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 10:37:34 -0700 (PDT)
+Date: Fri, 21 Mar 2025 19:37:31 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
+        conor+dt@kernel.org, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
+        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
+        quic_jesszhan@quicinc.com
+Subject: Re: [PATCH v2 08/10] drm/bridge: anx7625: enable HPD interrupts
+Message-ID: <lkeezxmjs6qn36qzhmvmtngvrxuwng53rgcb75centx6ds5h4d@dx2iz4aqrcho>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-9-quic_amakhija@quicinc.com>
+ <5hvpacx3qeqhjqemhqizws4esdhwg7reli77qey2nin2fggljp@ykgyayj2v3e6>
+ <3abefb09-c1b6-4339-8cd9-cd86652c35d6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250321173729.3175898-1-souravpanda@google.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250321173729.3175898-7-souravpanda@google.com>
-Subject: [RFC PATCH 6/6] mm: syscall alternative for SELECTIVE_KSM
-From: Sourav Panda <souravpanda@google.com>
-To: mathieu.desnoyers@efficios.com, willy@infradead.org, david@redhat.com, 
-	pasha.tatashin@soleen.com, rientjes@google.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, weixugc@google.com, 
-	gthelen@google.com, souravpanda@google.com, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3abefb09-c1b6-4339-8cd9-cd86652c35d6@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=bfFrUPPB c=1 sm=1 tr=0 ts=67dda3e1 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=R25bk4NhV3WDM544LqcA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-GUID: qI8E6XxNpe40AeEzVTnXXgccg1GR8wR1
+X-Proofpoint-ORIG-GUID: qI8E6XxNpe40AeEzVTnXXgccg1GR8wR1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=763
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 adultscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210129
 
-Partition can be created or opened using:
+On Fri, Mar 21, 2025 at 02:36:21AM +0530, Ayushi Makhija wrote:
+> On 3/11/2025 9:09 PM, Dmitry Baryshkov wrote:
+> > On Tue, Mar 11, 2025 at 05:54:43PM +0530, Ayushi Makhija wrote:
+> >> When device enters the suspend state, it prevents
+> >> HPD interrupts from occurring. To address this,
+> >> add an additional PM runtime vote in hpd_enable().
+> >> This vote is removed in hpd_disable().
+> > 
+> > Is it really enough to toggle the HPD interrupts? Is there any kind of
+> > programming that should be moved to .hpd_enable() too (so that by
+> > default the bridge doesn't generate HPD interrupts)?
+> > 
+> 
+> Hi Dmirty,
+> 
+> I couldn't find the ANX7625 bridge driver datasheet, where all the registers information are present.
+> 
+> As per my understanding, we have anx7625_hpd_timer_config(), where debounce timer registers are getting set, which help to manage the detection and stability of the HPD signal.
+> 
+> anx7625_hpd_timer_config() is getting called from anx7625_runtime_pm_resume().
+> 
+> anx7625_runtime_pm_resume
+>    anx7625_power_on_init
+>        anx7625_ocm_loading_check
+>            anx7625_disable_pd_protocol
+>               anx7625_hpd_timer_config
+> 
+> So, I think HPD programming is already taken care in anx7625_hpd_timer_config(). anx7625_runtime_pm_resume() is getting called for both eDP and DP configuration. 
+> 
+> If you suggest then, I can move the anx7625_hpd_timer_config() from anx7625_disable_pd_protocol() to anx7625_bridge_hpd_enable().
 
-  int ksm_fd = ksm_open(ksm_name, flag);
-    name specifies the ksm partition to be created or opened.
-    flags:
-      O_CREAT
-        Create the ksm partition object if it does not exist.
-      O_EXCL
-        If O_CREAT was also specified, and a ksm partition object
-        with the given name already exists, return an error.
+This might result in HPD signal being generated after invalid or
+improper timings. If we can't get a feedback from Analogix on how to
+control HPD generation, then it's better to leave it as is.
 
-Trigger the merge using:
-  ksm_merge(ksm_fd, pid, start_addr, size);
-
-Limitation: Only supporting x86 syscall_64.
-
-Signed-off-by: Sourav Panda <souravpanda@google.com>
----
- arch/x86/entry/syscalls/syscall_64.tbl |   3 +-
- include/linux/ksm.h                    |   4 +
- mm/ksm.c                               | 156 ++++++++++++++++++++++++-
- 3 files changed, 161 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 5eb708bff1c7..352d747dbe33 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -390,7 +390,8 @@
- 464	common	getxattrat		sys_getxattrat
- 465	common	listxattrat		sys_listxattrat
- 466	common	removexattrat		sys_removexattrat
--
-+467	common	ksm_open		sys_ksm_open
-+468	common	ksm_merge		sys_ksm_merge
- #
- # Due to a historical design error, certain syscalls are numbered differently
- # in x32 as compared to native x86_64.  These syscalls have numbers 512-547.
-diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-index d73095b5cd96..a94c89403c29 100644
---- a/include/linux/ksm.h
-+++ b/include/linux/ksm.h
-@@ -14,6 +14,10 @@
- #include <linux/rmap.h>
- #include <linux/sched.h>
- 
-+#include <linux/anon_inodes.h>
-+#include <linux/syscalls.h>
-+#define MAX_KSM_NAME_LEN 128
-+
- #ifdef CONFIG_KSM
- int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		unsigned long end, int advice, unsigned long *vm_flags);
-diff --git a/mm/ksm.c b/mm/ksm.c
-index fd7626d5d8c9..71558120b034 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -147,7 +147,8 @@ struct ksm_scan {
- static struct kobject *ksm_base_kobj;
- 
- struct partition_kobj {
--	struct kobject *kobj;
-+	struct kobject *kobj;	/* Not required for the syscall interface */
-+	char name[MAX_KSM_NAME_LEN];
- 	struct list_head list;
- 	struct rb_root *root_stable_tree;
- 	struct rb_root *root_unstable_tree;
-@@ -166,6 +167,106 @@ static struct partition_kobj *find_partition_by_kobj(struct kobject *kobj)
- 	return NULL;
- }
- 
-+static struct partition_kobj *find_ksm_partition(char *partition_name)
-+{
-+	struct partition_kobj *partition;
-+
-+	list_for_each_entry(partition, &partition_list, list) {
-+		if (strcmp(partition->name, partition_name) == 0)
-+			return partition;
-+	}
-+	return NULL;
-+}
-+
-+static DEFINE_MUTEX(ksm_partition_lock);
-+
-+static int ksm_release(struct inode *inode, struct file *file)
-+{
-+	struct partition_kobj *ksm = file->private_data;
-+
-+	mutex_lock(&ksm_partition_lock);
-+	list_del(&ksm->list);
-+	mutex_unlock(&ksm_partition_lock);
-+
-+	kfree(ksm);
-+	return 0;
-+}
-+
-+static const struct file_operations ksm_fops = {
-+	.release = ksm_release,
-+};
-+
-+static struct partition_kobj *ksm_create_partition(char *ksm_name)
-+{
-+	struct partition_kobj *partition;
-+	struct rb_root *tree_root;
-+
-+	partition = kzalloc(sizeof(*partition), GFP_KERNEL);
-+	if (!partition)
-+		return NULL;
-+
-+	tree_root = kcalloc(nr_node_ids + nr_node_ids, sizeof(*tree_root),
-+			    GFP_KERNEL);
-+	if (!tree_root)
-+		return NULL;
-+
-+	partition->root_stable_tree = tree_root;
-+	partition->root_unstable_tree = tree_root + nr_node_ids;
-+	strncpy(partition->name, ksm_name, sizeof(partition->name));
-+
-+	list_add(&partition->list, &partition_list);
-+
-+	return partition;
-+}
-+
-+static int ksm_partition_fd(struct partition_kobj *partition)
-+{
-+	int fd;
-+	struct file *file;
-+	int ret;
-+
-+	file = anon_inode_getfile("ksm_partition", &ksm_fops, partition, O_RDWR);
-+	if (IS_ERR(file)) {
-+		ret = PTR_ERR(file);
-+		return ret;
-+	}
-+
-+	fd = get_unused_fd_flags(O_RDWR);
-+	if (fd < 0) {
-+		fput(file);
-+		return fd;
-+	}
-+	fd_install(fd, file);
-+	return fd;
-+}
-+
-+SYSCALL_DEFINE2(ksm_open, const char __user *, ksm_name, int, flags) {
-+	char name[MAX_KSM_NAME_LEN];
-+	struct partition_kobj *partition;
-+	int ret;
-+
-+	ret = strncpy_from_user(name, ksm_name, sizeof(name));
-+	if (ret < 0)
-+		return -EFAULT;
-+
-+	partition = find_ksm_partition(name);
-+
-+	if (flags & O_EXCL && partition) /* Partition already exists, return error */
-+		return -EEXIST;
-+
-+	if (flags & O_CREAT && !partition) {
-+		/* Partition does not exist, but we are allowed to create one */
-+		mutex_lock(&ksm_partition_lock);
-+		partition = ksm_create_partition(name);
-+		mutex_unlock(&ksm_partition_lock);
-+	}
-+
-+	if (!partition)
-+		return flags & O_CREAT ? -ENOMEM : -ENOENT;
-+
-+	return ksm_partition_fd(partition);
-+}
-+
- /**
-  * struct ksm_stable_node - node of the stable rbtree
-  * @node: rb node of this ksm page in the stable tree
-@@ -4324,6 +4425,59 @@ static int __init ksm_thread_sysfs_init(void)
- }
- #endif /* CONFIG_SELECTIVE_KSM */
- 
-+SYSCALL_DEFINE4(ksm_merge, int, ksm_fd, pid_t, pid, unsigned long, start, size_t, size) {
-+	unsigned long end = start + size;
-+	struct task_struct *task;
-+	struct mm_struct *mm;
-+	struct partition_kobj *partition;
-+	struct file *file;
-+
-+	file = fget(ksm_fd);
-+	if (!file)
-+		return -EBADF;
-+
-+	partition = file->private_data;
-+	if (!partition) {
-+		fput(file);
-+		return -EINVAL;
-+	}
-+
-+	if (start >= end) {
-+		fput(file);
-+		return -EINVAL;
-+	}
-+
-+	/* Find the mm_struct */
-+	rcu_read_lock();
-+	task = find_task_by_vpid(pid);
-+	if (!task) {
-+		fput(file);
-+		rcu_read_unlock();
-+		return -ESRCH;
-+	}
-+
-+	get_task_struct(task);
-+
-+	rcu_read_unlock();
-+	mm = get_task_mm(task);
-+	put_task_struct(task);
-+
-+	if (!mm) {
-+		fput(file);
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&ksm_thread_mutex);
-+	wait_while_offlining();
-+	ksm_sync_merge(mm, start, end, partition);
-+	mutex_unlock(&ksm_thread_mutex);
-+
-+	mmput(mm);
-+
-+	fput(file);
-+	return 0;
-+}
-+
- static int __init ksm_init(void)
- {
- 	int err;
 -- 
-2.49.0.395.g12beb8f557-goog
-
+With best wishes
+Dmitry
 
