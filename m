@@ -1,120 +1,84 @@
-Return-Path: <linux-kernel+bounces-571756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB849A6C1C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EECA6C1CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1FB3ADD1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCFD3ADF28
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B8422DF9E;
-	Fri, 21 Mar 2025 17:42:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D2A22E3FD;
+	Fri, 21 Mar 2025 17:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCk1oP/y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE944C80
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E9A22DF8A;
+	Fri, 21 Mar 2025 17:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742578966; cv=none; b=OPwMjTSZhSAz7gqzEFWa563mIBLUKTLWGwci3Ewb/a6KSYVl1uQrVb0Z5pdqlFi1zxVTWwF9jE5hBiaiwr57YTI2BfX/tUR6d5voAwn9TeEDITUM9J/gxnRLQEA35hMAu2D/+C61JatKqvlren5FS75RkyIa8aT7cCVX4B0GfJc=
+	t=1742579069; cv=none; b=WhqrRtHCydQMh43EsTOLtmHRgAwLxzxhmbB9y89nzJGHY5gNrZ/3tJ72YCeRjshhaCyGrCIzfTqZBl8E4iRXr6RglaspDJPiui3peuZySiEfvRsyBRa2LF/zo/QQNeGfwTHc5ld5I30y6nZiogvHXrj5FGXxBjdWvjua9wp3+Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742578966; c=relaxed/simple;
-	bh=gfWIaIrMy1GLDMTnMGkp8pmL07rpbHXzN4BabhJG/uo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hnj8/a3ObzFIKRlI1bfxI9uNsTtobhEr06MidCbc1sWd4bCqYOdRCMEg9YjKOTEnPtJwfr/TS/Feyt+HozjInYQOFqN/g7jK6R/LTHmJtNwbHMuvcoyd11dTSt3bwL3VCsZbKlmEjEyWaRf9UOUo/r76zZJyioK504YMBLxfFhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZK8pG1h8Rz6K91Z;
-	Sat, 22 Mar 2025 01:39:34 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8A96C140142;
-	Sat, 22 Mar 2025 01:42:35 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Mar
- 2025 18:42:33 +0100
-Date: Fri, 21 Mar 2025 17:42:32 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Hasan.Maruf@amd.com>,
-	<Michael.Day@amd.com>, <akpm@linux-foundation.org>, <bharata@amd.com>,
-	<dave.hansen@intel.com>, <david@redhat.com>, <dongjoo.linux.dev@gmail.com>,
-	<feng.tang@intel.com>, <gourry@gourry.net>, <hannes@cmpxchg.org>,
-	<honggyu.kim@sk.com>, <hughd@google.com>, <jhubbard@nvidia.com>,
-	<jon.grimm@amd.com>, <k.shutemov@gmail.com>, <kbusch@meta.com>,
-	<kmanaouil.dev@gmail.com>, <leesuyeon0506@gmail.com>, <leillc@google.com>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <mgorman@techsingularity.net>, <mingo@redhat.com>,
-	<nadav.amit@gmail.com>, <nphamcs@gmail.com>, <peterz@infradead.org>,
-	<riel@surriel.com>, <rientjes@google.com>, <rppt@kernel.org>,
-	<santosh.shukla@amd.com>, <shivankg@amd.com>, <shy828301@gmail.com>,
-	<sj@kernel.org>, <vbabka@suse.cz>, <weixugc@google.com>,
-	<willy@infradead.org>, <ying.huang@linux.alibaba.com>, <ziy@nvidia.com>,
-	<dave@stgolabs.net>
-Subject: Re: [RFC PATCH V1 09/13] mm: Add heuristic to calculate target node
-Message-ID: <20250321174232.000047fa@huawei.com>
-In-Reply-To: <20250319193028.29514-10-raghavendra.kt@amd.com>
-References: <20250319193028.29514-1-raghavendra.kt@amd.com>
-	<20250319193028.29514-10-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1742579069; c=relaxed/simple;
+	bh=DjlAGlHjS9GqXLhTgfhRah3yZAUnReyXOR1W3OIyrxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxCgiGo9Npu23KpmbSO7ZPJhRIC1afX93gy5mkWWOEiD3TsCcQ5L7GHCSijW0FnmJGeahkRHIjKk5CGmQhZN0Rcv35GaATut178ikZU0bEPp2e4kz1mHqvJCAaL7jJyx9/DPN7T+NQtkaLdzXn/yzYz1yR4ruc2/dXJkH3yp0Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCk1oP/y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF59C4CEE3;
+	Fri, 21 Mar 2025 17:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742579068;
+	bh=DjlAGlHjS9GqXLhTgfhRah3yZAUnReyXOR1W3OIyrxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nCk1oP/yRnZej5wtJYmlpz3pkfrlu08gHJtwK8Ez6JSDYv1l08/AvMUmXbHzEj5En
+	 hwuRgfIzjS0to+VfkTGL+9+8MMpKv+vuqRAHTISwt/aa7YodmycjIPJe+1Fj1smstR
+	 xfAmtOJb2ZLw4JWFto7fSrNrO4apTSYnxg/nW4o9BkQLvUgAN7pznvWWqJoWPiiG0/
+	 BFItQso3D1ogYUijpNbgQQiO+35ATVTK2ZljZs88c4WMt8/T+PI46Uh8bu5la8ZTP7
+	 FchI8JLRXIzDN5eFudIwk8quayaWmLY7TbUkun4aJFw6Ts4fkogjnxQbzUAboJSsgp
+	 0RG0wUa+68umA==
+Date: Fri, 21 Mar 2025 18:44:22 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <Z92ldvI4ihlm0HJd@cassiopeiae>
+References: <20250320222823.16509-4-dakr@kernel.org>
+ <202503220040.TDePlxma-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503220040.TDePlxma-lkp@intel.com>
 
-On Wed, 19 Mar 2025 19:30:24 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
+On Sat, Mar 22, 2025 at 12:56:58AM +0800, kernel test robot wrote:
+> >> error[E0133]: use of extern static is unsafe and requires unsafe block
+>    --> rust/kernel/pci.rs:473:43
+>    |
+>    473 |         if dev.bus_type_raw() != addr_of!(bindings::pci_bus_type) {
+>    |                                           ^^^^^^^^^^^^^^^^^^^^^^ use of extern static
+>    |
+>    = note: extern statics are not controlled by the Rust type system: invalid data, aliasing violations or data races will cause undefined behavior
 
-> One of the key challenges in PTE A bit based scanning is to find right
-> target node to promote to.
+This requires an unsafe block for compilers < 1.82. For compilers >= 1.82 it
+turns into a warning *if* using an unsafe block.
 
-I have the same problem with the CXL hotpage monitor so very keen to
-see solutions to this (though this particular one doesn't work for
-me unless A bit scanning is happening as well).
+*Not* requiring unsafe for this seems like the correct thing -- was this a
+bugfix in the compiler?
 
-> 
-> Here is a simple heuristic based approach:
->    While scanning pages of any mm we also scan toptier pages that belong
-> to that mm. We get an insight on the distribution of pages that potentially
-> belonging to particular toptier node and also its recent access.
-> 
-> Current logic walks all the toptier node, and picks the one with highest
-> accesses.
-
-Maybe talk through why this heuristic works?  What is the intuition behind it?
-
-I can see that on basis of first touch allocation, we should get a reasonable
-number of pages in the node where that CPU doing initialization is. 
-
-Is this relying on some other mechanism to ensure that the pages being touched
-are local to the CPUs touching them?
-
-Thanks,
-
-Jonathan
-
-
-> 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
-> ---
-> PS: There are many potential idea possible here.
-> 1. we can do a quick sort on toptier nodes scan and access info
->   and maintain the list of preferred nodes/fallback nodes
->  in case of current target_node is getting filled up
-> 
-> 2. We can also keep the history of access/scan information from last
-> scan used its decayed value to get a stable view etc etc.
-> 
-
+I guess to make it work for all compiler versions supported by the kernel we
+have to use unsafe and suppress the warning?
 
