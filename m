@@ -1,194 +1,129 @@
-Return-Path: <linux-kernel+bounces-571457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7EEA6BD5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:44:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B33A6BD80
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47F316FA02
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CC03ADC2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A913B1DC745;
-	Fri, 21 Mar 2025 14:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9942F5E;
+	Fri, 21 Mar 2025 14:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTbTqF9A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="NIhgSJe0"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68EC1BBBFD;
-	Fri, 21 Mar 2025 14:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C827615855E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568078; cv=none; b=fDjRvwUJtHkrM85Qy+XCFCO8Trtf3SPg4EY8d+AG/eFHfPW9U9U4UUSTXvJngQ3b8h5/Fkb2bFHwspmLjbyBqP8xRogOp7/nxaA+D5AsYCHIn+evULvHBlQ6Vn09vfa4U0mT/NezwMgS/IQqrjNNb57RUjVtNdayx9CM1gaWLIM=
+	t=1742568351; cv=none; b=CoWkfQxlAIdC5CI1G7fWe+cNJpD+GjK8waCp71S1DZQfZnBX3ZWahzzlKS/V3tAjWxU593ybVsn2Y1jM3O2+AoEx6AsrTyLAb4W6rCeSaH8b6s9guoSSw3sPA0tOJcylsAtKyo989LlZYJEuiuNFRvdUHcmlxjEyAX/J0U3cWzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568078; c=relaxed/simple;
-	bh=zyk/9qyf/13ksj1qkC9QTG9vOLXhbZDwkWpoHz2iK18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYBb2K+Q5opcV4di2wa9Hma5yzsZpDNQ7sVBmVRt0pbGJUeHzoVAdjT4nbcvTi9e+mimmekGIAuAXfO22WSbLB4SiIDVf/3FF4e+wnfqBSt83ZeZigeDjHCdXnCHDRoFUXVRBMIvhQ53BZ/01l+zWJWIoiKRi5S7N8ThMkCwtAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTbTqF9A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0AEAC4CEE3;
-	Fri, 21 Mar 2025 14:41:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742568076;
-	bh=zyk/9qyf/13ksj1qkC9QTG9vOLXhbZDwkWpoHz2iK18=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FTbTqF9A0FLqceBf4syWDKY56HuCVR74TupaXR6D9HFmArTZsSgKvWfRtcIWWUTVp
-	 KYwnoEvwJ4ehKuxQA75TeS4TtCkBaDMNCRa2l7VWjIe8bHoNU+2EEBmeMV2SC10vKZ
-	 bvo/wrUDgcYh5Xyy4+d0lVFlYFZNig4UpdeDv8YmgYhQIgiSfBK7NkzugWXNKMY1mf
-	 zRoMicEDYQvR5Flqedx0fXpIAZnCTHXhD3Dj0/KHtzmZXgySsniiV4PtfwDfEIertz
-	 m/QU0TALqgWvpL5onPngUmIf1vf+fMhsoESnePNUV3UVtheFW/DOFJPBq64HT8p2RS
-	 vNblR/Yq0RUZQ==
-Message-ID: <806cafb1-7bab-4001-9b28-3f412ca2fd89@kernel.org>
-Date: Fri, 21 Mar 2025 09:41:13 -0500
+	s=arc-20240116; t=1742568351; c=relaxed/simple;
+	bh=0k4WlE/9Tyqofqq6qU4Rq2nzt306TPjVYhaNxs0Bvcs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Jmp77iMe0PPeNjc6cocDeAz+XIqI1lT6r0ORbPN5LXB1b/ZfQqBcfQVlbxLiDw7Kl14UOiZU2bXo4FqK3KjuHtnaBo4SE/9dIXm5lPe7X8BYjub/hdQb07CqAv/M5e67qedooJtsjfqcOEDGMSlwYSsdBV8YZohauCKwTSmyu8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=NIhgSJe0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac25d2b2354so352707766b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1742568348; x=1743173148; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UfREiEIegsjqq2j/Wuwqi5NQffLWKjGNHk3ynXc28wY=;
+        b=NIhgSJe0xnaf5jKCrMK6BSd/D305UgFcyZWpz2rODjKRvWY/LVKabDP5NufS4q8DQP
+         HhMQxKdx9bNlng21gmeUj8ayfmnxRJ6V/SwuDqvE+m5E1CbJdYOmjdVHSaGxVhLDAjsI
+         TyDoCfIrLgnJ0PcAD/s5R7gR2GFxwKO4VsaL7AoJLLMy6zwrxN87vBj2jn3NXVHIcRTj
+         pUaYOBTQ5JsZWCJSopidjlZR/SrPY1t0HUR+ErwHMgdQB8rhH3Qa49aHflUAwFFTIzwZ
+         J5A7CsxZymW8XRsSdBigvmODl52Q5zjwp58hqVLHtlejyLq5rdkJbU5HGIWGgDX/h7+z
+         5MYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742568348; x=1743173148;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UfREiEIegsjqq2j/Wuwqi5NQffLWKjGNHk3ynXc28wY=;
+        b=cu3MPZ2hvVXpRZf+sYdpoArA7LvUZfrlJ8EbpOBMqXMI/Y1xwQ69gvaId12y1rYRUV
+         xgDHvPjjxRH4J3coerN142xh1Pf4+8OaSAXs69Pz4AJeH/qn8iAsMsdX0ixcdAJ9RkIP
+         8KUEET9VO3Iei7y7nbWjtcmMeolLOcPW9Q5AduzcTRCNDeXmf8VfrsOFRIdk8RPgzX7w
+         nGx6tw5Q1hgzY3mtez9dvLjqsrLgSiQUJpWWCyVuWGrVB8s1f7gpeWwZlQM52TsATcLO
+         V26mv8Q0L0o3wcEYImLE3PF330m1KOu6i868+OG+n8ffJ0HSXMVWl9PPAuVg2HxB/RhH
+         D5Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc04DmnFcTnBXdVZywLs3MLw3TIsz4fl6Wv35ppEvK5vjU8WrtzhL7danU8/pZVE52VyOE83cNXdfQfHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjhw0+8CGG5XpWZBQkCCE9UNjRCC83a1qjIimq1xWtd9pROSMJ
+	44LCPUieLas25XxQil1XWchfoOVi8UyWnUO5YlL8C4k7VXMff4rJgPNPNqaeLk8=
+X-Gm-Gg: ASbGnctf8oLaz/CiFytw0VK0lImEpS/heSSlAgo1cQOOK9k1lWOD2oLty6GgVwURt3f
+	TXt7uv7SQC02KL9y2M7dalBQaal5QhknFt8IkC2TMn3X7nD5MQ8gQbT+1KtflHRUcAhN+XH2hIb
+	//VWeGmWc4TekGQjWgSQbXA20s6ScAU74it9LECeDKeeTrw2Sm44YHrU1bPeUfNv28DGCCbnAUk
+	3sMej0vRxY43vfJqbptlk1CIkQqcsTihvSZroEHf49wYA+JpqV5m8J12vQFZEbzAAZ3CpWk4wbB
+	4V8G8WdXChWr+no1+AJm9g2FKrUL8fDMqw7uUNRMalM003EIAn6RjQM3injM7x/tbDCVDJPXTxD
+	+wVtCh+85QUyMJPkMDQ==
+X-Google-Smtp-Source: AGHT+IG5MlM9CgB175VZ3Vc4RH0qB2s7BEDKyYcPQFBlPYs47o+HPbEy2dUQI25i+CYb4c4VAAdkLQ==
+X-Received: by 2002:a17:907:ba0c:b0:ac0:6e7d:cd0b with SMTP id a640c23a62f3a-ac3f2268607mr442093266b.34.1742568347928;
+        Fri, 21 Mar 2025 07:45:47 -0700 (PDT)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb648acsm168092466b.98.2025.03.21.07.45.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:45:47 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/3] Add video clock controller for SM6350
+Date: Fri, 21 Mar 2025 15:44:58 +0100
+Message-Id: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/13] Documentation: x86: Add AMD Hardware Feedback
- Interface documentation
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
- Huang Rui <ray.huang@amd.com>, "Gautham R . Shenoy"
- <gautham.shenoy@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
- Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20250218190822.1039982-1-superm1@kernel.org>
- <20250218190822.1039982-2-superm1@kernel.org>
- <127a93b0-647f-bb0c-2bf4-649fc4d1f25e@linux.intel.com>
- <a2e33d66-22ee-475b-817b-b52c6890859c@kernel.org>
- <58c49901-24b2-2209-9583-09e6b080cc08@linux.intel.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <58c49901-24b2-2209-9583-09e6b080cc08@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGp73WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyND3eJcM2NTA92yzJTU/ORkXbPU5JQky8QkI3NTMyWgpoKi1LTMCrC
+ B0bG1tQB8vXnyYAAAAA==
+X-Change-ID: 20250321-sm6350-videocc-6ecdb9ab2756
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
 
-On 3/21/2025 08:58, Ilpo Järvinen wrote:
-> On Thu, 20 Mar 2025, Mario Limonciello wrote:
-> 
->> On 3/19/2025 09:01, Ilpo Järvinen wrote:
->>> On Tue, 18 Feb 2025, Mario Limonciello wrote:
->>>
->>>> From: Perry Yuan <Perry.Yuan@amd.com>
->>>>
->>>> Introduce a new documentation file, `amd_hfi.rst`, which delves into the
->>>> implementation details of the AMD Hardware Feedback Interface and its
->>>> associated driver, `amd_hfi`. This documentation describes how the
->>>> driver provides hint to the OS scheduling which depends on the capability
->>>> of core performance and efficiency ranking data.
->>>>
->>>> This documentation describes
->>>> * The design of the driver
->>>> * How the driver provides hints to the OS scheduling
->>>> * How the driver interfaces with the kernel for efficiency ranking data.
->>>>
->>>> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
->>>> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
->>>> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>>> ---
->>>>    Documentation/arch/x86/amd-hfi.rst | 127 +++++++++++++++++++++++++++++
->>>>    Documentation/arch/x86/index.rst   |   1 +
->>>>    2 files changed, 128 insertions(+)
->>>>    create mode 100644 Documentation/arch/x86/amd-hfi.rst
->>>>
->>>> diff --git a/Documentation/arch/x86/amd-hfi.rst
->>>> b/Documentation/arch/x86/amd-hfi.rst
->>>> new file mode 100644
->>>> index 0000000000000..5d204688470e3
->>>> --- /dev/null
->>>> +++ b/Documentation/arch/x86/amd-hfi.rst
->>>> @@ -0,0 +1,127 @@
->>>> +.. SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +======================================================================
->>>> +Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
->>>> +======================================================================
->>>> +
->>>> +:Copyright: 2024 Advanced Micro Devices, Inc. All Rights Reserved.
->>>> +
->>>> +:Author: Perry Yuan <perry.yuan@amd.com>
->>>> +:Author: Mario Limonciello <mario.limonciello@amd.com>
->>>> +
->>>> +Overview
->>>> +--------
->>>> +
->>>> +AMD Heterogeneous Core implementations are comprised of more than one
->>>> +architectural class and CPUs are comprised of cores of various efficiency
->>>> and
->>>> +power capabilities: performance-oriented *classic cores* and
->>>> power-efficient
->>>> +*dense cores*. As such, power management strategies must be designed to
->>>> +accommodate the complexities introduced by incorporating different core
->>>> types.
->>>> +Heterogeneous systems can also extend to more than two architectural
->>>> classes as
->>>> +well. The purpose of the scheduling feedback mechanism is to provide
->>>> +information to the operating system scheduler in real time such that the
->>>> +scheduler can direct threads to the optimal core.
->>>> +
->>>> +The goal of AMD's heterogeneous architecture is to attain power benefit
->>>> by sending
->>>> +background thread to the dense cores while sending high priority threads
->>>> to the classic
->>>> +cores. From a performance perspective, sending background threads to
->>>> dense cores can free
->>>> +up power headroom and allow the classic cores to optimally service
->>>> demanding threads.
->>>> +Furthermore, the area optimized nature of the dense cores allows for an
->>>> increasing
->>>> +number of physical cores. This improved core density will have positive
->>>> multithreaded
->>>> +performance impact.
->>>
->>> Hi Mario,
->>>
->>> Please fold these paragraphs to 80 characters so that they're easier to
->>> read as textfiles (the table can obviously exceed that but there should be
->>> no reason for the text paragraphs to have excessively long lines).
->>>
->>> My apologies for taking so long to get to review this series.
->>
->> No problem.  Thanks for looking.  I'll get a new version ready to put out
->> after the next merge window.
->>
->>> Most of my
->>> comments are quite minor but there's also 1-2 things that seem more
->>> important. It seemed to me that there is some disconnetion between the
->>> promises made in the Kconfig description and what is provided by the patch
->>> series.
->>
->> Some of the series was pared down to go in multiple parts to make it easier to
->> review with follow ups for the dynamic stuff planned for the next iteration.
->>
->> You see some artifacts of that comments and Kconfig.  I figured it was better
->> to leave as is for those given they get to the intent, but I can change if you
->> think it's better to adjust them when the next part lands instead.
-> 
-> Okay, I thought that might be because such a split to multiple series. I
-> think you can leave those as is as I assume to intention is to immediately
-> follow up with the other parts (and not like wait a few kernel releases
-> or so)?
-> 
+The driver for the SM6350 videocc has been lying around in some branches
+of my git tree for a long time, let's upstream it. It doesn't get any
+better by letting it age!
 
-The next part was going to be submitted by another team.  Let me check 
-offline with them on their intended timing and I will make a call what 
-to do.
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Konrad Dybcio (2):
+      dt-bindings: clock: add SM6350 QCOM video clock bindings
+      clk: qcom: Add video clock controller driver for SM6350
+
+Luca Weiss (1):
+      arm64: dts: qcom: sm6350: Add video clock controller
+
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  20 ++
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               |  14 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/videocc-sm6350.c                  | 355 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm6350-videocc.h    |  27 ++
+ 6 files changed, 426 insertions(+)
+---
+base-commit: 73b8c1dbc2508188e383023080ce6a582ff5f279
+change-id: 20250321-sm6350-videocc-6ecdb9ab2756
+
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
+
 
