@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-570885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A92A6B5CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:10:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00755A6B5CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 724E17A6D5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05D6188FF3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3961EF08A;
-	Fri, 21 Mar 2025 08:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359C81EF08A;
+	Fri, 21 Mar 2025 08:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IniCyGxc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YF2mgQ8J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155F379EA;
-	Fri, 21 Mar 2025 08:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7971EBFE3;
+	Fri, 21 Mar 2025 08:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742544630; cv=none; b=IS93wfXAJB9eyeYl2+teSd/tj2DbkAEykpt/6Egt4eD7trpWh0u/0/fY3RcYEOxV2MJJVpH8ySKaOSv7zyubquGrtwqo4CvrbnGNSeb6tKbpXxcBzNzTVQRwvV0rJNBqOwylwKKghSDV6ylbcCeaDLClytlVn5zTHN5D18U/bWU=
+	t=1742544649; cv=none; b=lADAR4eAGBFK+AFMUJ2bxvIH6ru6rxrW6SlI8krq+gpAi0tSHOEXh3sg2hzNvvASawwc0pXGScORoweM+7vArxEcE4Kkq8rDDMhXtcTjtycxT6LOsnpAEX9kwnSXd1qgTBOYnLZF4/4JXpAJA6Qd8aQJU+j6KahPolHMDdaqX/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742544630; c=relaxed/simple;
-	bh=CewbNIIS6U+waYSVoQrgh6okwCFZo0yqerVt8T81p3k=;
+	s=arc-20240116; t=1742544649; c=relaxed/simple;
+	bh=+rfm0VgNi58UlS6Mr9jdwghnEVpDGqTsgyDvBE7vOrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KU9uQbaZG1N2ZXO/Z8oDCEJ6/gTs/ucBj0Vio1IetoHjxMpUaO+PcCT5CpTpUl7Ui4Nk/83aqGyd1bQBMq61sPuXSUttnoKnd2k1NmSlgTHX++mpuLO9GMa9WZeUWFZXpvuy6B5YBsEJSAiVqGwSGXg2gK2ThPkOCnwOAzWQEHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IniCyGxc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B03AC4CEE3;
-	Fri, 21 Mar 2025 08:10:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADCIHG1KoGjFi/jTKjUmhAZ+DIzHNT5Xmz5Cgx+FOudVYf4zp51CVK4ILaBEsTM8chtjbPBTwmnRk/BMrFhDd25v8iLQP6zWXCPeebe7baj2VwT8x5msWQsU9q8e7aKn1ykhChnoMdYmVnL5WCxAOs/RFYPCcH0fk0Ioe83bw6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YF2mgQ8J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 077CCC4CEE3;
+	Fri, 21 Mar 2025 08:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742544629;
-	bh=CewbNIIS6U+waYSVoQrgh6okwCFZo0yqerVt8T81p3k=;
+	s=k20201202; t=1742544648;
+	bh=+rfm0VgNi58UlS6Mr9jdwghnEVpDGqTsgyDvBE7vOrI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IniCyGxckzZtWj+2dlbb0v64OvYg+bqfKE3IRnc0vd40Sch4Ao4rCs4gqE9RWBRmk
-	 agZy2UJsw0/6iXUdOtguUQIwjnkhzHR1T/8wjKqQqXeY5rmTsXmZsnGmhLewHWziqs
-	 S8okXkG1Zo0sS3kUSx/dV6erJKLVt6sV2gv9NNT7N4vAg2MKFJ2sudPOpC8gWE+ffR
-	 ogp+s89hcRX5EDW6CyTE2QYwczzCWfRdvLTsS8AJD76nvB8GHLgR7FL5BRdcxFAYWY
-	 GpPC4cCSkGuB6W1tFn28/gf96wrZDPkePQWPKLH+SvbOZO6B7Xw284VGdl5pmDamVS
-	 96L2717LMZRJA==
-Date: Fri, 21 Mar 2025 01:10:26 -0700
-From: Kees Cook <kees@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Oleg Nesterov <oleg@redhat.com>, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
- (4)
-Message-ID: <202503210019.F3C6D324@keescook>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <202503201225.92C5F5FB1@keescook>
- <20250321014423.GA2023217@ZenIV>
+	b=YF2mgQ8JjPnKzwus08IDSkCkivQKkXgZE6e+3yN1hLybBSFtVGiIWMlGQQcbZLzbv
+	 ZQuUxLQ65euXlF7MdP7Q1iPsc8Ez0c8XdhHWdu73kj1Pkpd2PTYSIGlJnTu+8yVzo+
+	 3NevVzi8mWz7j7XWEJ382MBTpt83nTTuPSEYAxEVusWz8i4cWoddYWOlmszThmjciU
+	 QIvgV2tVJ0tx4YeZ85yMyIYWm/wUsrKlQ2fclkP+lVXZYsIE289NlSw33RUZGRJ1mX
+	 Gg4qoMgIgmXF/4LHaZhPEMzRWtgV0XyCm4tM0O8GKDpX6uzDyy4wt5ts9pqkF6ZNOY
+	 znmnTomGgFDDg==
+Date: Fri, 21 Mar 2025 09:10:44 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, Alessio Belle <alessio.belle@imgtec.com>, 
+	Alexandru Dadu <alexandru.dadu@imgtec.com>
+Subject: Re: [PATCH v4 02/18] dt-bindings: gpu: img: Add BXS-4-64 devicetree
+ bindings
+Message-ID: <20250321-liberal-muskox-of-reputation-edd6c0@krzk-bin>
+References: <20250320-sets-bxs-4-64-patch-v1-v4-0-d987cf4ca439@imgtec.com>
+ <20250320-sets-bxs-4-64-patch-v1-v4-2-d987cf4ca439@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250321014423.GA2023217@ZenIV>
+In-Reply-To: <20250320-sets-bxs-4-64-patch-v1-v4-2-d987cf4ca439@imgtec.com>
 
-On Fri, Mar 21, 2025 at 01:44:23AM +0000, Al Viro wrote:
-> On Thu, Mar 20, 2025 at 01:09:38PM -0700, Kees Cook wrote:
-> 
-> > What I can imagine here is two failing execs racing a fork:
-> > 
-> > 	A start execve
-> > 	B fork with CLONE_FS
-> > 	C start execve, reach check_unsafe_exec(), set fs->in_exec
-> > 	A bprm_execve() failure, clear fs->in_exec
-> > 	B copy_fs() increment fs->users.
-> > 	C bprm_execve() failure, clear fs->in_exec
-> > 
-> > But I don't think this is a "real" flaw, though, since the locking is to
-> > protect a _successful_ execve from a fork (i.e. getting the user count
-> > right). A successful execve will de_thread, and I don't see any wrong
-> > counting of fs->users with regard to thread lifetime.
-> > 
-> > Did I miss something in the analysis? Should we perform locking anyway,
-> > or add data race annotations, or something else?
-> 
-> Umm...  What if C succeeds, ending up with suid sharing ->fs?
+On Thu, Mar 20, 2025 at 11:32:12AM +0000, Matt Coster wrote:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: img,img-bxs-4-64
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          minItems: 2
+> +        power-domain-names:
+> +          minItems: 2
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            anyOf:
 
-I still can't quite construct it -- fs->users is always correct, I
-think?
+Instead: enum
 
-Below would be the bad set of events, but it's wrong that "fs->users==1".
-If A and C are both running with CLONE_FS then fs->users==2. A would need to
-exit first, but it can't do that and also set fs->in_exec=0
+> +              - const: ti,am62-gpu
+> +              - const: ti,j721s2-gpu
 
-A execve, reaches bprm_execve() failure path
-B fork with CLONE_FS, reaches copy_fs()
-C execve, reaches check_unsafe_exec()
-C takes fs->lock, counts, finds safe fs->users==1, sets in_exec=1, unlocks
-A sets fs->in_exec=0
-B takes fs->lock, sees in_exec==0, does fs->users++, unlocks
-C goes setuid, sharing fs with unpriv B
+Best regards,
+Krzysztof
 
-Something still feels very weird, though. Does fs->in_exec not matter at
-all? Hmm, no, it stops fs->users++ happening after it was validated to be 1.
-
--- 
-Kees Cook
 
