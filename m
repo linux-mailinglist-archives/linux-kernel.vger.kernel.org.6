@@ -1,105 +1,325 @@
-Return-Path: <linux-kernel+bounces-572072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2C0A6C649
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:15:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55669A6C64A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2EB1899ED4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9581B60DA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAA01EF0AD;
-	Fri, 21 Mar 2025 23:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5221D3D4;
+	Fri, 21 Mar 2025 23:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcieY/Y/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PfPgt+am"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5E71ACED2;
-	Fri, 21 Mar 2025 23:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3304F1ACED2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742598940; cv=none; b=Vg0e5wcWVB4oTwvj5uXyqAlMvU5MULH1gkq8nWLDRvE8sccNziJ4eqCjqPT0hmh4RovTzVnsx05bEaCsViu44txsCUUTZghnQ9vmBfCWkQLxBqWnU81X91LnLDDJztlTd2Vit42dxGyhZ5igR/r7H2TwT+mroDE91Yes8VGo38M=
+	t=1742598981; cv=none; b=rDDDrP2Sta5+zGcAEzrGBiPjMVCsTVZMZFAFgH3EM9nVPzBQZJT9/fZX2dhWyvMRz83qbHQZcNShYxeVk/sY8IFdpq78plb0L212wcwjCpGmllNvSReviENwQGJU/M/u2x02qD20yqThsFW8/DGW32N9TTnegoWedKJ2We5APcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742598940; c=relaxed/simple;
-	bh=4/l0zHJK3QMkErAg/IuioCZM6Qu/eCsO8OfUJsP7z00=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rkhlXJDUh0wm7sQwrTEftUKHTsGm+L1LNFXYhUfY/jXGLm1CytAtOxBr+HHb/AG2TsfuMGCejqMwo5kcDCoYDGLV6DMoAJTYrMY7iikXxsZEb3WRPEL7Os2IOvupWYmzYrM6uuMaxvNjE5fjWbR0YXg8aF/jNdWsB1gMyK9/3ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcieY/Y/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A947C4CEE3;
-	Fri, 21 Mar 2025 23:15:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742598939;
-	bh=4/l0zHJK3QMkErAg/IuioCZM6Qu/eCsO8OfUJsP7z00=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=bcieY/Y/6M5M+IhOxP6WlyaVD8bCJw8fYIm9eV0ONB/XXRGGWbPzKhP6K3tQW6lg5
-	 t/WdivjP1QGEuctGPlMmB99s8NvVUGaFYszBiqvG05G0YChGm4PYRJBFvCaNfZ8XNz
-	 7rDyJfgk18SrVNAP53nzbGXqCGY6JtYrFkLN1MygQo6Zp5JH8yer4IPMq+Bg0sGucd
-	 Qje5hAiLZReZ9rEH6zOtHJ5uXHq4sPJv1wz4xmmOEELkCTwKQMJ39A0ddPUurRhIzs
-	 QfjD1PW+1Mr3zHhM5IX5NriAtGZT33uFq/kGxZgD0Jt2wgBSiITrGDIGKb5kUYMalK
-	 L8SnHOfvH8p1A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1EBDBCE0D1D; Fri, 21 Mar 2025 16:15:39 -0700 (PDT)
-Date: Fri, 21 Mar 2025 16:15:39 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, puranjay@kernel.org,
-	jonas.oberhauser@huaweicloud.com, akiyks@gmail.com
-Subject: [GIT PULL] LKMM changes for v6.15
-Message-ID: <dbfe09b5-e5a4-4bf8-96eb-9fb6b98e2fb6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1742598981; c=relaxed/simple;
+	bh=AP6py+8S4tbwuGd9mcSoB89Pl+xcgtiAcEFzV1nLXns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hDClZxadpnATz/mSaSKvvo5aOK0phGMoXukC0IP8k+QmWbYEstMnx1cBVf7O9luorXpv5uuX2Li4MHOOgVz51aE/i1npi1fBEDF0WwjO39EOMHEnYF9HeDHuCx/DO0qEniumySXQ34gYbR4c793gWZZR0TnXsDGsHAZx6EGY7Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PfPgt+am; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742598979; x=1774134979;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AP6py+8S4tbwuGd9mcSoB89Pl+xcgtiAcEFzV1nLXns=;
+  b=PfPgt+am7nd8r9Q6aDuiMY3KDNIwac3l7F58tXm+PYKVaqcZTb+F5a35
+   9OGK8j0xlo1LSaG6aq+ciLdnllp/mhVn7vRio8bPvUT23aplFTV4BRar6
+   9GGuBHxnmvYH3pta9ey8Uh3ACarYDudVMuaUC3W3DHjZbLnl7exUFqb/k
+   iCTlqkDTTfkoiEluvhPkBdroiU+HUEET9kiNBHlOlN0b7bkjzYgMhpLfV
+   yUq/WGyJIJY0EyQaJ0oPFpf1pJNotP7OAkbZlaQpNnRmHclhqm/F12W0U
+   qYBWuVebpz941391YUOXps0YOSThlwkkBjB7jU0rOeUg10UwIGlN9dD41
+   A==;
+X-CSE-ConnectionGUID: UUGNsOw9Ql20YlTpLyS3FA==
+X-CSE-MsgGUID: ys3yNaGjQS2wbLEwyUkWnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43604537"
+X-IronPort-AV: E=Sophos;i="6.14,266,1736841600"; 
+   d="scan'208";a="43604537"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 16:16:19 -0700
+X-CSE-ConnectionGUID: MFrosvWzQkOKCzYC7m/rhw==
+X-CSE-MsgGUID: cTql6A1TS/Ozizb+pHlPcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,266,1736841600"; 
+   d="scan'208";a="128354285"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 16:16:19 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghuay@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v2 00/16] x86/resctrl telemetry monitoring
+Date: Fri, 21 Mar 2025 16:15:50 -0700
+Message-ID: <20250321231609.57418-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello, Linus,
+First version posted as RFC here:
+Link: https://lore.kernel.org/all/20250303233340.333743-1-tony.luck@intel.com/
 
-When the v6.15 merge window opens, please pull this LKMM update from:
+This series is based on James Morse's "fs/resctrl/" snapshot.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu tags/lkmm.2025.03.21a
-  # HEAD: a2bfbf847c96196d62c9a59bd32e1fdafd1c205c: tools/memory-model: glossary.txt: Fix indents (2025-02-25 10:22:34 -0800)
+With Boris applying 30 patches from the monster series to tip x86/cache
+we are now close to the finish line of the BIG MOVE. So I moved this
+series to be on top of:
 
-----------------------------------------------------------------
-lkmm: Add more atomic operations, rework tags, and update documentation
+git://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v7
 
-Changes
--------
+My main goal in doing so is to shine a light on the FS / ARCH boundary
+as new things that aren't an easy match for existing things in order
+to figure out which new interfaces are needed. Also I expect the
+remainder of the big move to complete before this series is ready, so
+I might as well get it in shape to apply post-move.
 
-* Adds additional atomic operations (Puranjay Mohan)
-* Makes better use of herd7 tags (Jonas Oberhauser)
-* Updates documentation (Akira Yokosawa)
+A couple of items I noted:
 
-These changes require v7.58 of the herd7 and klitmus tools, up from v7.52.
+1) These counters are 63-bits, so wraparound isn't an issue. But
+space to save wider copies of counts is built into the filesystem
+layer with space allocated in the domains, and periodic polling.
 
-----------------------------------------------------------------
-Akira Yokosawa (2):
-      tools/memory-model/README: Fix typo
-      tools/memory-model: glossary.txt: Fix indents
+2) I have alloc/free of my domains in the filesystem layer. But this
+only works because I don't need any arch specific bits (see above).
 
-Jonas Oberhauser (5):
-      tools/memory-model: Legitimize current use of tags in LKMM macros
-      tools/memory-model: Define applicable tags on operation in tools/...
-      tools/memory-model: Define effect of Mb tags on RMWs in tools/...
-      tools/memory-model: Switch to softcoded herd7 tags
-      tools/memory-model: Distinguish between syntactic and semantic tags
+3) Some of my counters report fixed-point fractional values. So we
+need a way to communicate a "type" from arch code back up to
+rdtgroup_mondata_show(). My solution in this series doesn't feel
+very elegant.
 
-Puranjay Mohan (2):
-      tools/memory-model: Add atomic_and()/or()/xor() and add_negative
-      tools/memory-model: Add atomic_andnot() with its variants
+Other changes since the RFC:
 
- tools/memory-model/Documentation/glossary.txt      |  32 ++--
- .../Documentation/herd-representation.txt          |  49 +++---
- tools/memory-model/README                          |   4 +-
- tools/memory-model/linux-kernel.bell               |  33 ++--
- tools/memory-model/linux-kernel.cat                |  10 ++
- tools/memory-model/linux-kernel.cfg                |   1 +
- tools/memory-model/linux-kernel.def                | 169 ++++++++++++---------
- 7 files changed, 178 insertions(+), 120 deletions(-)
+1) Names changed. This feature is officially:
+	"Intel(R) Application Energy Telemetry"
+
+2) Many comments added to code
+
+3) James suggested resolving the "these counters can be read from any
+CPU" by providing "cpu_online_mask" and relying on smp_call*() functions
+to just pick the current CPU. So I did that.
+
+Remainder of this cover letter pasted from the V1/RFC
+===
+The first patch in the series just provides a fake copy of the
+enumeration interface that should show up in the OOBMSM driver in
+the near future. It allows building, and running, of this series
+on Intel (and perhaps AMD) systems that don't have h/w support.
+
+Background
+
+Telemetry features are being implemented in conjunction with the
+IA32_PQR_ASSOC.RMID value on each logical CPU. This is used to send
+counts for various events to a collector in a nearby OOMMSM device to be
+accumulated with counts for each <RMID, event> pair received from other
+CPUs. Cores send event counts when the RMID value changes, or after each
+2ms elapsed time.
+
+Each OOBMSM device may implement multiple event collectors with each
+servicing a subset of the logical CPUs on a package.  In the initial
+hardware implementation, there are two categories of events:
+
+1) Energy - Two counters
+core_energy: This is an estimate of Joules consumed by each core. It is
+calculated based on the types of instructions executed, not from a power
+meter. This counter is useful to understand how much energy a workload
+is consuming.
+
+activity: This measures "accumulated dynamic capacitance". Users who
+want to optimize energy consumption for a workload may use this rather
+than core_energy because it provides consistent results independent of
+any frequency or voltage changes that may occur during the runtime of
+the application (e.g. entry/exit from turbo mode).
+
+2) Performance - Seven counters
+These are similar events to those available via the Linux "perf" tool,
+but collected in a way with mush lower overhead (no need to collect data
+on every context switch).
+
+stalls_llc_hit - Counts the total number of unhalted core clock cycles
+when the core is stalled due to a demand load miss which hit in the LLC
+
+c1_res - Counts the total C1 residency across all cores. The underlying
+counter increments on 100MHz clock ticks
+
+unhalted_core_cycles - Counts the total number of unhalted core clock
+cycles
+
+stalls_llc_miss - Counts the total number of unhalted core clock cycles
+when the core is stalled due to a demand load miss which missed all the
+local caches
+
+c6_res - Counts the total C6 residency. The underlying counter increments
+on crystal clock (25MHz) ticks
+
+unhalted_ref_cycles - Counts the total number of unhalted reference clock
+(TSC) cycles
+
+uops_retired - Counts the total number of uops retired
+
+Enumeration
+
+The only CPUID based enumeration for this feature is the legacy
+CPUID(eax=7,ecx=0).ebx{12} that indicates the presence of the
+IA32_PQR_ASSOC MSR and the RMID field within it.
+
+The OOBMSM driver discovers which features are present via
+PCIe VSEC capabilities. Each feature is tagged with a unique
+identifier. These identifiers indicate which XML description file from
+https://github.com/intel/Intel-PMT describes which event counters are
+available and their layout within the MMIO BAR space of the OOBMSM device.
+
+Resctrl User Interface
+
+Because there may be multiple OOBMSM collection agents per processor
+package, resctrl accumulates event counts from all agents on a package
+and presents a single value to users. This will provide a consistent
+user interface on future platforms that vary the number of collectors,
+or the mappings from logical CPUs to collectors.
+
+Users will see the legacy monitoring files in the "L3" directories
+and the telemetry files in "PKG" directories (with each file
+providing the aggregated value from all OOBMSM collectors on that
+package).
+
+$ tree /sys/fs/resctrl/mon_data/
+/sys/fs/resctrl/mon_data/
+├── mon_L3_00
+│   ├── llc_occupancy
+│   ├── mbm_local_bytes
+│   └── mbm_total_bytes
+├── mon_L3_01
+│   ├── llc_occupancy
+│   ├── mbm_local_bytes
+│   └── mbm_total_bytes
+├── mon_PKG_00
+│   ├── activity
+│   ├── c1_res
+│   ├── c6_res
+│   ├── core_energy
+│   ├── stalls_llc_hit
+│   ├── stalls_llc_miss
+│   ├── unhalted_core_cycles
+│   ├── unhalted_ref_cycles
+│   └── uops_retired
+└── mon_PKG_01
+    ├── activity
+    ├── c1_res
+    ├── c6_res
+    ├── core_energy
+    ├── stalls_llc_hit
+    ├── stalls_llc_miss
+    ├── unhalted_core_cycles
+    ├── unhalted_ref_cycles
+    └── uops_retired
+
+Resctrl Implementation
+
+The OOBMSM driver exposes a function "intel_pmt_get_regions_by_feature()"
+that returns an array of structures describing the per-RMID groups it
+found from the VSEC enumeration. Linux looks at the unique identifiers
+for each group and enables resctrl for all groups with known unique
+identifiers.
+
+The memory map for the counters for each <RMID, event> pair is described
+by the XML file. This is too unwieldy to use in the Linux kernel, so a
+simplified representation is built into the resctrl code. Note that the
+counters are in MMIO space instead of accessed using the IA32_QM_EVTSEL
+and IA32_QM_CTR MSRs. This means there is no need for cross-processor
+calls to read counters from a CPU in a specific domain. The counters
+can be read from any CPU.
+
+High level description of code changes:
+
+1) New scope RESCTRL_PACKAGE
+2) New struct rdt_resource RDT_RESOURCE_INTEL_PMT
+3) Refactor monitor code paths to split existing L3 paths from new ones. In some cases this ends up with:
+        switch (r->rid) {
+        case RDT_RESOURCE_L3:
+                helper for L3
+                break;
+        case RDT_RESOURCE_INTEL_PMT:
+                helper for PKG
+                break;
+        }
+4) New source code file "intel_pmt.c" for the code to enumerate, configure, and report event counts.
+
+With only one platform providing this feature, it's tricky to tell
+exactly where it is going to go. I've made the event definitions
+platform specific (based on the unique ID from the VSEC enumeration). It
+seems possible/likely that the list of events may change from generation
+to generation.
+
+I've picked names for events based on the descriptions in the XML file.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+Tony Luck (16):
+  x86/rectrl: Fake OOBMSM interface
+  x86/resctrl: Move L3 initialization out of domain_add_cpu_mon()
+  x86/resctrl: Refactor domain_remove_cpu_mon() ready for new domain
+    types
+  x86/resctrl: Change generic monitor functions to use struct
+    rdt_domain_hdr
+  x86/resctrl: Add and initialize rdt_resource for package scope core
+    monitor
+  x86/resctrl: Prepare for resource specific event ids
+  x86/resctrl: Add initialization hook for Intel PMT events
+  x86/resctrl: Add Intel PMT domain specific code
+  x86/resctrl: Add detailed descriptions for Clearwater Forest events
+  x86/resctrl: Allocate per-package structures for known events
+  x86/resctrl: Link known events onto RDT_RESOURCE_INTEL_AET.evt_list
+  x86/resctrl: Build lookup table for package events
+  x86/resctrl: Add code to display core telemetry events
+  x86/resctrl: Add status files to info/PKG_MON
+  x86/resctrl: Enable package event monitoring
+  x86/resctrl: Update Documentation for package events
+
+ Documentation/filesystems/resctrl.rst         |  25 +-
+ include/linux/resctrl.h                       |  32 +-
+ include/linux/resctrl_types.h                 |  15 +
+ .../cpu/resctrl/fake_intel_aet_features.h     |  73 +++
+ arch/x86/kernel/cpu/resctrl/internal.h        |   8 +
+ fs/resctrl/internal.h                         |  28 +-
+ arch/x86/kernel/cpu/resctrl/core.c            | 123 +++--
+ .../cpu/resctrl/fake_intel_aet_features.c     |  65 +++
+ arch/x86/kernel/cpu/resctrl/intel_aet.c       | 488 ++++++++++++++++++
+ fs/resctrl/ctrlmondata.c                      |  23 +-
+ fs/resctrl/monitor.c                          |  23 +-
+ fs/resctrl/rdtgroup.c                         |  94 +++-
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/kernel/cpu/resctrl/Makefile          |   2 +
+ drivers/platform/x86/intel/pmt/Kconfig        |   3 +
+ 15 files changed, 915 insertions(+), 88 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.h
+ create mode 100644 arch/x86/kernel/cpu/resctrl/fake_intel_aet_features.c
+ create mode 100644 arch/x86/kernel/cpu/resctrl/intel_aet.c
+
+-- 
+2.48.1
+
 
