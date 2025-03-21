@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-570934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17455A6B668
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:55:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D911A6B676
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F403BDF33
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2FA4A1F60
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC901F0E4C;
-	Fri, 21 Mar 2025 08:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EBF1F0E34;
+	Fri, 21 Mar 2025 08:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms4pzBpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CB18BEE;
-	Fri, 21 Mar 2025 08:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Q2q+HaQb"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6321F03F0;
+	Fri, 21 Mar 2025 08:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547200; cv=none; b=WpiC754+8oiUE+1Fd3DIr1LNz0QVqa6p3rNeXMx5hK43VVMgI4Pgi3+F/26Q9tnRaFcOCPHea2WqPbYskdH7GuDru5dXoVuZ5kQZRJKaYLbaWvButnoIsxA6vU8ZXqOcK0T351iX+eziSc8sQqDLh1CZP/ySQL1FC9Knvdt6BBw=
+	t=1742547378; cv=none; b=n3Qn738e/SptasYxMLNOIXloFvcEtY5zu9OR4W6cEO4JKN/qVeEW8q1/g+6WLf2cJ1EQNODLm3YywFf2XLQEcoXN2spNSAt8PIVZ/xpxEe5MCqEShFbIuaOWTIHkI9nQiWLgYpaMLH2nACUON/UtgMvNCA0nSVr8ikd7f0MtN3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547200; c=relaxed/simple;
-	bh=t977FsMUBlc8ZNdRKWvO4yugH+jGz1A2sc1tshC8jrM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tujl0FtBII+53ldPirOpv/dq3qhE9vFGfVvQ0qZdhvDEw2bG0l1aAMIpwFBnIu+1fNRnwVmyQEUFfzV2blboOiIvy8sFhrZqKM6kT2ZSQL+d791QS8EalirDgfVbBtY9GvCNV3BWz5DKXacR0OrIuUI/oaKGy32p+J9LzvLGOyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms4pzBpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF8BC4CEE3;
-	Fri, 21 Mar 2025 08:53:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742547199;
-	bh=t977FsMUBlc8ZNdRKWvO4yugH+jGz1A2sc1tshC8jrM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ms4pzBpaF/ixuovfKG+R1TVujRf7aHWkE/tkeCd54XjmQ9qwc4CES7TSycue/7rKU
-	 myePBDQ+9MlZGEx/VvPcvtI3qucGbohG8rJz/8KQfs0aHTZkfpTPYbVplmuvgAvQB5
-	 kuT8K041TiNyMUM9CtTYlaH2wnw2MH9le98d3ykJLkqkSl5Dsm1LZ54K5H8qvhJTAh
-	 J0YShJegdRenxGw2pitUd5YrRvIxUE5n9J5wfRbpX9hsxFZVvZKrVIVM6Z0DdeU3kR
-	 65yCl++79NzULnmfVenZRkXWV2uO9q3lFnOcqGpjddk6R4IgGzLYrl0mkYOj5vhjVR
-	 iuL14M7aVO8lg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: kernel test robot <lkp@intel.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
+	s=arc-20240116; t=1742547378; c=relaxed/simple;
+	bh=NsY4euGIgxwpyzPru1ae1JJGSeLt5uv4n7wnQTC6mDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mPiNY1aUQ6c4esv+k9tYN9SxzPFscEPuzh5qkqa9pyr4WXjKMJo+EkPy1X1a2etYt505ff1odjGvcBGoG86KsMuQmlej55mCMxqiIZJ6tjyBfEQp66NL9IGjM4T0oXmKEW4NaX57wWQ6mmHdy46UoDP2PxWHPvbOU0v4K5zTIHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Q2q+HaQb; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=mZPiX
+	quyeyecb4DW24Tg2cMooYApUCDgOih/gW3Z9R0=; b=Q2q+HaQb6m1V6zhg2GZ3x
+	ApDdI20drvLGz5KHCSSpKrOwxl25P8rhpcPPnxSEP/op78ftR8pqOIIsIeYaj6Pa
+	fha7H2gzaIpVnuxuJNLhshBzJl818rFe7wmtfPvHhXGmgMagRItzF/HgZ0QW0AgX
+	yCXdpnqxIc6RaaN7ERPnRY=
+Received: from ProDesk.. (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgC3lmIbKd1nvVJ9AQ--.2326S2;
+	Fri, 21 Mar 2025 16:53:51 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: lumag@kernel.org
+Cc: mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	dianders@chromium.org,
+	jani.nikula@intel.com,
+	lyude@redhat.com,
+	jonathanh@nvidia.com,
+	p.zabel@pengutronix.de,
+	simona@ffwll.ch,
+	victor.liu@nxp.com,
+	rfoss@kernel.org,
+	chunkuang.hu@kernel.org,
+	cristian.ciocaltea@collabora.com,
+	Laurent.pinchart@ideasonboard.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] platform: cznic: fix function parameter names
-Date: Fri, 21 Mar 2025 09:53:07 +0100
-Message-Id: <20250321085315.915808-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	freedreno@lists.freedesktop.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 0/1] Pass down connector to drm bridge detect hook
+Date: Fri, 21 Mar 2025 16:53:37 +0800
+Message-ID: <20250321085345.136380-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,43 +68,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgC3lmIbKd1nvVJ9AQ--.2326S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAw48KrWfKF1UWr4UXr15twb_yoW5WF1rpF
+	W2gry3Ary8ZFWakayxAF18CF98A3Z7JFWFkrW2ywna93WruF1UArsxAayYqFyDWF17Jr1a
+	ywnrGrWxGF1xAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jvuWdUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkBcXXmfdIWPYKgAAsE
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Andy Yan <andy.yan@rock-chips.com>
 
-A invalid prototype made it into a previous patch, causing an clang warning:
 
-drivers/platform/cznic/turris-signing-key.c:25:55: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+In some application scenarios, we hope to get the corresponding
+connector when the bridge's detect hook is invoked.
 
-and a slightly different warning with gcc-11 and earlier but not gcc-12 and up:
+For example, we may want to call drm_dp_read_sink_count_cap(which needs
+a drm_connector) at the dp deteck hook, intel_dp and nouveau_dp do this
+at it's connector's detetc_ctx/detect hook.
 
-drivers/platform/cznic/turris-signing-key.c: In function 'turris_signing_key_instantiate':
-drivers/platform/cznic/turris-signing-key.c:25:43: error: parameter name omitted
+But for a bridge driver, it's detect hook is initiated by the connector,
+there is no connector passed down.
 
-Add the parameters to get a clean build with all compilers.
+In most cases, we can get the connector by drm_atomic_get_connector_for_encoder
+if the encoder attached to the bridge is enabled, however there will
+still be some scenarios where the detect hook of the bridge is called
+but the corresponding encoder has not been enabled yet. For instance,
+this occurs when the device is hot plug in for the first time.
 
-Fixes: 0b28b7080ef5 ("platform: cznic: Add keyctl helpers for Turris platform")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503210450.AoOpbJXC-lkp@intel.com/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/platform/cznic/turris-signing-key.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Since the call to bridge's detect is initiated by the connector, passing
+down the corresponding connector directly will make things simpler.
 
-diff --git a/drivers/platform/cznic/turris-signing-key.c b/drivers/platform/cznic/turris-signing-key.c
-index 3b12e5245fb7..3827178565e2 100644
---- a/drivers/platform/cznic/turris-signing-key.c
-+++ b/drivers/platform/cznic/turris-signing-key.c
-@@ -22,7 +22,8 @@
- 
- #include <linux/turris-signing-key.h>
- 
--static int turris_signing_key_instantiate(struct key *, struct key_preparsed_payload *)
-+static int turris_signing_key_instantiate(struct key *key,
-+					  struct key_preparsed_payload *payload)
- {
- 	return 0;
- }
+Before preparing this patch, we have had some discussions on the details
+here[0].
+
+[0]https://patchwork.freedesktop.org/patch/640712/?series=143573&rev=5
+
+
+Andy Yan (1):
+  drm/bridge: Pass down connector to drm bridge detect hook
+
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c          |  3 ++-
+ drivers/gpu/drm/bridge/analogix/anx7625.c             |  2 +-
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c   |  3 ++-
+ drivers/gpu/drm/bridge/chrontel-ch7033.c              |  2 +-
+ drivers/gpu/drm/bridge/display-connector.c            | 11 ++++++++---
+ drivers/gpu/drm/bridge/ite-it6263.c                   |  3 ++-
+ drivers/gpu/drm/bridge/ite-it6505.c                   |  2 +-
+ drivers/gpu/drm/bridge/ite-it66121.c                  |  3 ++-
+ drivers/gpu/drm/bridge/lontium-lt8912b.c              |  6 +++---
+ drivers/gpu/drm/bridge/lontium-lt9611.c               |  3 ++-
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c            |  3 ++-
+ .../gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c  |  3 ++-
+ drivers/gpu/drm/bridge/sii902x.c                      |  3 ++-
+ drivers/gpu/drm/bridge/simple-bridge.c                |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c          |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c             |  3 ++-
+ drivers/gpu/drm/bridge/tc358767.c                     |  5 +++--
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c                 |  3 ++-
+ drivers/gpu/drm/bridge/ti-tfp410.c                    |  2 +-
+ drivers/gpu/drm/bridge/ti-tpd12s015.c                 |  8 +++++++-
+ drivers/gpu/drm/display/drm_bridge_connector.c        |  2 +-
+ drivers/gpu/drm/drm_bridge.c                          |  5 +++--
+ drivers/gpu/drm/mediatek/mtk_dp.c                     |  3 ++-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                   |  3 ++-
+ drivers/gpu/drm/msm/dp/dp_drm.c                       |  3 ++-
+ drivers/gpu/drm/msm/hdmi/hdmi.h                       |  2 +-
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c                |  2 +-
+ drivers/gpu/drm/msm/hdmi/hdmi_hpd.c                   |  4 ++--
+ drivers/gpu/drm/xlnx/zynqmp_dp.c                      |  3 ++-
+ include/drm/drm_bridge.h                              |  6 ++++--
+ 30 files changed, 67 insertions(+), 38 deletions(-)
+
 -- 
-2.39.5
+2.43.0
 
 
