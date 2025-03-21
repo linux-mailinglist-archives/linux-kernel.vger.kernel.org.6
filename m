@@ -1,150 +1,90 @@
-Return-Path: <linux-kernel+bounces-571807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29F6A6C291
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:39:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17850A6C29B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2032017D9ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F128176FF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52E22F395;
-	Fri, 21 Mar 2025 18:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D45022FDEB;
+	Fri, 21 Mar 2025 18:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="LQr8od9E"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GLVmcijw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BECB22D4C3
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25952B664;
+	Fri, 21 Mar 2025 18:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742582345; cv=none; b=D013UoXTy6c2kI1NTRaURICX6o/uX4VE86TjWW/3+/9FQsPQrGJknTFIlj+GOt6k0vIENKRJYDqc7EtdZm0mXxavyBbX8Gm427LA/0wGcgc/0Mn9UnqSu3D0xarhcZFc0WiUg/HnDzK3x31WKahVmzUxk6hckPr9R1eu0ib+vNM=
+	t=1742582403; cv=none; b=WH9AJgoAsv1aeldp+CY0sNihQYWF14YeLVYeyXs7VSeJSfPrSA9E+2ub7dMFv5kCc2M2N8MtKACQ56bJvEn5Z6mEl89xx+Tq1dKv1ffTjMaYpQY4fGiBVj8DQ4fYUQX+3udVO9ZrmtV3uMBTz1UxxBoNUbn96OxrXPmeGuS0O+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742582345; c=relaxed/simple;
-	bh=n+K0u+Wd6us+fG8T0NJ0mq5za5Sn6Pp6ZvidZGcV8+4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IFFY/NcDWh36wWMJkmg88kDbrs1zj5W71f65+mWzw8/mgkfJGaTLz4Wr7k7QdTKQKfbh+c/896kf+1jxHcePwZQ2RlCAe6bHykGcPjPUw6LsW5xdYnAfaeDnlLVgREHQK2V3Nwfe8+kg/JjklQyiGk+9eiXSccwmH1DVmiXhiNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=LQr8od9E; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-Message-ID: <b3b59747-0484-4042-bdc4-c067688e3bfe@iencinas.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1742582339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/l61PMZ8ZONjm1VBcYbvcyTIE/eIAlBdEyNM703h8Wg=;
-	b=LQr8od9Eoo1BpEq7o+7c/an+WLbBfCL0f8tZSGR68BOyccf1eIvgALCsoOWT+7qHzhfGwd
-	yn0NDKfsiZoX26dbpZT1+rz9C9U1DMXK/0pTwtqI34yXRlZFbkzgqXuEjoyrlPlcJ0LJuK
-	Bj0fXQFBZAtzXpgmscYRilgQjjdj5++IwrQhlHkMVw+0ZodToECeslq47XrqyuM+WzjI7s
-	e352THyHY4+OVl7l9mLaOERKk71lq/DVWr2JrB3jTN03qYKQzUoP97bRvAVZ3lwq2pJX4v
-	6FZOSzOf/sskaOtvO/1ffD9W8jxenGDR/LxEDH+kkX3WyNCQKT/fE8xP6AJd/Q==
-Date: Fri, 21 Mar 2025 19:38:54 +0100
+	s=arc-20240116; t=1742582403; c=relaxed/simple;
+	bh=RP/WPvuCPwDrcACAq+X0WyuYTam2/ENf8fpNc3mXFiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PkKA/J42iO5w5s0DXPtSJ9VSk1F+F9UyXA06Qh/G7XrXhjla7Qh6t+Gqk9rIHYo+7ONx1GuCtJG5sd7ndq+KxGIieBEnXDINnlcv/4TxuzCrx7Qe9QEyX5zaMh01ARz62HS1q6bc0jazuNf2+k0LavQpT9UHoYgepsQybOBOOZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GLVmcijw; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742582401; x=1774118401;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RP/WPvuCPwDrcACAq+X0WyuYTam2/ENf8fpNc3mXFiM=;
+  b=GLVmcijwzKt919wCUty055JeVPO/Fo+VNl3J78NDBmOB+l1m3k42Vg8P
+   hgcMOy37q3FaCJJHwAtFx9ZlrCLd5z5hjyJUybttMV6ZirfKnUVnDR7+Y
+   5l4HkeuqxOYW4oybdFwwcrihJWyoplt9aQrEoAwRVgMEsgvKtQg0HyQic
+   e8tMltXBpvz7b+zxBKDV1F/J8uHxQKjGxnkbJKFx7KVStv6fSKo0OlLbN
+   8Dqbt9YKuQEaD8wadk6liBpd5sqCgLO1pKDn41d8DHrcUW9uA3P/nt/hH
+   8zFCMxNTM7Ukf7ogfbwM82xXg6HUKXY2DpCE0KvDzsX6FPAGc50m7iGpW
+   w==;
+X-CSE-ConnectionGUID: kq1uqGN5RkOG/a5kAFGvKA==
+X-CSE-MsgGUID: SgGNb50gS4u930I4QDUZYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43986455"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="43986455"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 11:40:00 -0700
+X-CSE-ConnectionGUID: JjWiXIZ3QWSaLj/erog0xw==
+X-CSE-MsgGUID: R9+/DjCtTjqdBOrjhzQ/8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="123282490"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 21 Mar 2025 11:39:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0430914B; Fri, 21 Mar 2025 20:39:57 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH v1 0/2] Input: wdt87xx_i2c - a couple of cleanups
+Date: Fri, 21 Mar 2025 20:39:16 +0200
+Message-ID: <20250321183957.455518-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ignacio Encinas Rubio <ignacio@iencinas.com>
-Subject: Re: [PATCH v2 1/2] include/uapi/linux/swab.h: move default
- implementation for swab macros into asm-generic
-To: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
- Shuah Khan <skhan@linuxfoundation.org>,
- Zhihang Shao <zhihang.shao.iscas@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
-References: <20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com>
- <20250319-riscv-swab-v2-1-d53b6d6ab915@iencinas.com>
- <2afab9dc-e39c-4399-ac5a-87ade4da5ab0@app.fastmail.com>
- <4d45df0c-d44e-4bb6-8daa-0dba1b834bc4@iencinas.com>
- <07b8051b-9d5e-440e-b74d-1ca97402fe2a@app.fastmail.com>
- <ac0b1f3e-6abe-4de2-bf5a-a4b3207a22c3@iencinas.com>
- <583340a9-411d-406f-aee9-d3e2eb80ca43@app.fastmail.com>
-Content-Language: en-US
-In-Reply-To: <583340a9-411d-406f-aee9-d3e2eb80ca43@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+A couple of cleanups related to ACPI ID table and probe function.
 
+Andy Shevchenko (2):
+  Input: wdt87xx_i2c - tidy up ACPI ID table
+  Input: wdt87xx_i2c - switch to use dev_err_probe()
 
-On 21/3/25 11:23, Arnd Bergmann wrote:
-> On Thu, Mar 20, 2025, at 23:36, Ignacio Encinas Rubio wrote:
->> On 19/3/25 22:49, Arnd Bergmann wrote:
->>> On Wed, Mar 19, 2025, at 22:37, Ignacio Encinas Rubio wrote:
->>>> On 19/3/25 22:12, Arnd Bergmann wrote:
->>> Right, I do remember when we had a discussion about this maybe
->>> 15 years ago when gcc didn't have the builtins on all architectures
->>> yet, but those versions are long gone, and we never cleaned it up.
->>
->> I just had a chance to look at this and it looks a bit more complex than
->> I initially thought. ___constant_swab macros are used in more places
->> than I expected, and {little,big}_endian.h define their own macros that
->> are used elsewhere, ...
->>
->> It is not clear to me how to proceed here. I could:
->>
->>   1) Just remove ___constant_swab macros and replace them with
->>   __builtin_swap everywhere
->>
->>   2) Go a step further and evaluate removing __constant_htonl and
->>   relatives
->>
->> Let me know what you think is the best option :)
-> 
-> I think we can start enabling CONFIG_ARCH_USE_BUILTIN_BSWAP
-> on all architectures and removing the custom versions
-> from arch/*/include/uapi/asm/swab.h, which all seem to
-> predate the compiler builtins and likely produce worse code.
+ drivers/input/touchscreen/wdt87xx_i2c.c | 40 ++++++++++++-------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-This seems fine for some architectures but I don't think we can use
-this approach for RISC-V. RISC-V code assumes that the bitmanip 
-extension might not be available (see arch/riscv/include/asm/bitops.h).
+-- 
+2.47.2
 
-The current approach [1] is to detect this at boot and patch the kernel 
-to adapt it to the actual hardware running it (using specific 
-instructions or not).
-
-On the other hand, I tried using __builtin_swap for the RISC-V version 
-as an alternative to the "optimized" one (instead of relying on
-___constant_swab, see [2]) and I immediately got compilation errors. 
-
-Some architectures seem to require definitions for __bswapsi2 and 
-__bswapdi2 [3]. I'm guessing this happens for the architectures that
-don't require bit manipulation instructions but have them as extensions.
-
-arm,csky,mips and xtensa seem to fit this description as they 
-feature their own __bswapsi2 implementations. Note that they simply
-call ___constant_swab or are ___constant_swab written in assembly
-language [4] [5].
-
-Unless I'm missing something, it seems to me that using compiler 
-builtins (at least for RISC-V, and potentially others) is even more 
-problematic than keeping ___constant_swab around. What do you think, 
-should we keep patch 1 after all?
-
-We could remove __arch_swab for architectures that always assume bit 
-manipulation instructions availability, but then the kernel would fall
-back into ___constant_swab when CONFIG_ARCH_USE_BUILTIN_BSWAP=n. Turning
-their custom implementations into 
-
-	#define __arch_swabXY __builtin_bswapXY
-
-would solve this issue, but I'm not sure it is an acceptable approach.
-
-Thanks!
-
-[1] https://lore.kernel.org/all/ce034f2b-2f6e-403a-81f1-680af4c72929@ghiti.fr/
-[2] https://lore.kernel.org/all/20250319-riscv-swab-v2-2-d53b6d6ab915@iencinas.com/
-[3] https://gcc.gnu.org/onlinedocs/gcc-13.3.0/gccint.pdf
-[4] https://lore.kernel.org/all/20230512164815.2150839-1-jcmvbkbc@gmail.com/
-[5] https://lore.kernel.org/all/1664437198-31260-3-git-send-email-yangtiezhu@loongson.cn/
 
