@@ -1,135 +1,89 @@
-Return-Path: <linux-kernel+bounces-570948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5A1A6B695
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:04:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902A3A6B697
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A123B34DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:03:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407803B7315
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EB71F03C5;
-	Fri, 21 Mar 2025 09:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CCF1F03D5;
+	Fri, 21 Mar 2025 09:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uruPfbQ6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bomm0v7m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4998B1EBA19;
-	Fri, 21 Mar 2025 09:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC608BEE;
+	Fri, 21 Mar 2025 09:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547844; cv=none; b=gsM98J52J9S0vAtxMZWtLexNlp29ogjrrw12xFCy6LmyeKZEAHLRvFEWPbUfCeQJC98K7SR2kGoXjEaitnAmMm+wMy86P0Z4CmPn6ajXOjg8jRLjvsL+jDd0jDISNGnaZ4dF6JxUx+6zOwps4L2G8R1byLJbQKWpX32L0e0vRQs=
+	t=1742547866; cv=none; b=g1KxdX5M0KKWPJKfYlwQQWngtVm5/iGzFkJQzBo3xb/Mg1FcVqVJBs/c11psBM1lWwEjtdOdyrF7ehNzI+BIL0sIyRQqsvbST5cDx/AKtgqNzRXLSImFpCFQeHwRxplk3bjtuqBloxQ5I5EWBG7JK8IkhTeTYkBMUMY+oRFRaEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547844; c=relaxed/simple;
-	bh=8fw7paiuFxV9WqkArmDeFOzxQ4fMfuMVsbglLpRjvSo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CkHSFphA/jqBZroezoWJJ/BCDeh08+vgAs3z1aD1c2InZY/e6SnJB0A/AzHH5DYz5j30S3W7PZ5qBU/UKMRNpxPeqnYJfpGDEM8vg9ITVWYgm7ZRxYOXOlVqIg2PdTjHtWGgbomVZL57fbNHMKi+kKgVh6ZyMbRWuzZjB2OFTEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uruPfbQ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B21C4CEE3;
-	Fri, 21 Mar 2025 09:04:03 +0000 (UTC)
+	s=arc-20240116; t=1742547866; c=relaxed/simple;
+	bh=gg9hEPqRWjLsC34kOaZebN3D3xciWD7Inmq5RpjuyTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7hYsh2ImjGz6AWzeNVLoZ0ZBp7+kofRgUt5GsVdojA9+/suKn+VGeei95NeZTMh6HGRl16imAyXTDJLxCQ3VCkbgK4dAkeZg/gJythie9EP6DtvTEp4O+KCDXl90EQp13if+pvpC37BceFMf0LAaLy02uCFm7LUYd9vr5QQ9X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bomm0v7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28552C4CEE8;
+	Fri, 21 Mar 2025 09:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742547843;
-	bh=8fw7paiuFxV9WqkArmDeFOzxQ4fMfuMVsbglLpRjvSo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uruPfbQ6Ibea2mcVkJwvG/qhmgSuVdvzisdlkwMcKGC6hKlt2si1BaTJeTK/6OlVB
-	 m28GTejQo3TqU+reqVJGB7NYZ/HF51FLsC6k8l1eaLdNZ3oPqU2Ji37CXJdLQQrzyf
-	 lREvAcAzWY0o6zRbRD2UlYTM6as5feGd/FZn5G6QGoD1KbbPDikWgEKGOpZ9kgEnjg
-	 t+SPN0fyj9SPehxUYikwQLWJvoCXfpQ0vTlCY/ICEdSZlxUmv/sFLdV+MBwDY12iZi
-	 E2KIvhPfxNikwT8MDC+7KnWnrS74YA7y3Vp+2ubZQh17Ijf2GPZV3qjFmomUbZXnat
-	 pZVhQx2PJ30SQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tvYIL-00FiXX-DQ;
-	Fri, 21 Mar 2025 09:04:01 +0000
-Date: Fri, 21 Mar 2025 09:04:00 +0000
-Message-ID: <86bjtun4an.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Peter Chen <peter.chen@cixtech.com>
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	marcin@juszkiewicz.com.pl,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Fugang Duan <fugang.duan@cixtech.com>
-Subject: Re: [PATCH v4 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
-In-Reply-To: <Z9vmeTj68LmwinPD@nchen-desktop>
-References: <20250305053823.2048217-1-peter.chen@cixtech.com>
-	<20250305053823.2048217-6-peter.chen@cixtech.com>
-	<86frj8m4be.wl-maz@kernel.org>
-	<Z9vmeTj68LmwinPD@nchen-desktop>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1742547866;
+	bh=gg9hEPqRWjLsC34kOaZebN3D3xciWD7Inmq5RpjuyTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bomm0v7m/qiXPg9sp+hvXCAusT7kty5EkAKNLho7jGZPNyaRWKA8VMpsqMEb9EXvu
+	 tiGo59MUtpYLLjNwnRJUlV5reWJa59uZKszehT9gaBGaQT+7MZZDJ4yxnyM0r65zDD
+	 SF2BR7v6wIbQT+uV9BYXEBz0mzXZAvbG5VEokv8/PmhehYzGM1obqUruvhmU7y6awM
+	 VJr2EuLpqc83C0GDCE5aaOx8/MTnoDXTKiyGVqCjDWfIA+qKWbvbquKZIHeZvbLfDk
+	 m35l9yyigN12aWBPPRNQIB2vLsPGWdAXsThgb1wIlGVxtAx6toEr1aWRU6zp56FKLg
+	 DOBu5SpYqmjgA==
+Date: Fri, 21 Mar 2025 10:04:20 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] rust: device: implement Device::parent()
+Message-ID: <Z90rlKC_S5WQzO8P@pollux>
+References: <20250320222823.16509-1-dakr@kernel.org>
+ <20250320222823.16509-2-dakr@kernel.org>
+ <2025032018-perceive-expectant-5c48@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: peter.chen@cixtech.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl, krzysztof.kozlowski@linaro.org, fugang.duan@cixtech.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025032018-perceive-expectant-5c48@gregkh>
 
-On Thu, 20 Mar 2025 09:57:13 +0000,
-Peter Chen <peter.chen@cixtech.com> wrote:
+On Thu, Mar 20, 2025 at 06:40:56PM -0700, Greg KH wrote:
+> On Thu, Mar 20, 2025 at 11:27:43PM +0100, Danilo Krummrich wrote:
+> > Device::parent() returns a reference to the device' parent device, if
+> > any.
 > 
-> On 25-03-20 09:36:37, Marc Zyngier wrote:
-> > Peter Chen <peter.chen@cixtech.com> wrote:
-> > >
-> > > +     pmu-a520 {
-> > > +             compatible = "arm,cortex-a520-pmu";
-> > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition0>;
-> > > +     };
-> > > +
-> > > +     pmu-a720 {
-> > > +             compatible = "arm,cortex-a720-pmu";
-> > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition1>;
-> > > +     };
-> > > +
-> > > +     pmu-spe {
-> > > +             compatible = "arm,statistical-profiling-extension-v1";
-> > > +             interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW 0>;
-> > > +     };
-> > 
-> > SPE should follow the same model as the PMU, as each CPU has its own
-> > SPE implementation, exposing different micro-architectural details.
-> > 
-> 
-> Hi Marc,
-> 
-> Thanks for your reply. But there is only one compatible string
-> "statistical-profiling-extension-v1" at drivers/perf/arm_spe_pmu.c,
-> how could differentiate pmu-spe-a720 and pmu-spe-a520, do I need
-> to change arm_spe_pmu.c as well?
+> Ok, but why?  You don't use it in this series, or did I miss it?
 
-I don't think there is a need to have different compatible. The driver
-can probe which CPU this is on, and work out the implemented
-subfeatures from the PMSIDR_EL1 register. New compatible strings are
-better avoided when there is a way to probe/discover the HW (and in
-most cases, there is).
+Indeed, it should rather be at the auxbus series.
 
-Note that this equally applies to TRBE, which also explicitly deals
-with interrupt partitioning and yet only has a single compatible.
-Please consider adding TRBE support when you repost this series.
+> A driver shouldn't care about the parent of a device, as it shouldn't
+> really know what it is.  So what is this needed for?
 
-Thanks,
+Generally, that's true. I use in the auxbus example and in nova-drm [1] (which
+is connected through the auxbus to nova-core) to gather some information about
+the device managed by nova-core.
 
-	M.
+Later on, since that's surely not enough, we'll have an interface to nova-core
+that takes the corresponding auxiliary device. nova-core can then check whether
+the given device originates from nova-core, and through the parent find its own
+device.
 
--- 
-Without deviation from the norm, progress is not possible.
+[1] https://gitlab.freedesktop.org/drm/nova/-/blob/staging/nova-drm/drivers/gpu/drm/nova/driver.rs
 
