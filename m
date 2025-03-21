@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-571448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DFAA6BD4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:42:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF887A6BD5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECDB1767F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4573BD4BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1862154426;
-	Fri, 21 Mar 2025 14:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E901D9A54;
+	Fri, 21 Mar 2025 14:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUbHDr3D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kz673sOF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7CA23BE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26201D9A49;
+	Fri, 21 Mar 2025 14:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567945; cv=none; b=eW7t2rxXw8CJyxHkTd452FB7xsFgtpChpOCec3XYXQBgxfIWiz8A+xCNT1FPH1gCZiVSqnB8Od3H/rbfD9QgO+RIE4ziDiqJPkJBJT5h9rCaKsg1vNZ6Y5nklhFrQM3aG/meV0uR7MU/KElkFn8AbcceT5G+j6dHrEvSKN/Cnj8=
+	t=1742567960; cv=none; b=WNFCT55BaVIaATEikzKw3LVPCpsOXUvXXovKe6gY5bJmIwIikDVAVhfaajhnk8wV1msdmIDUXs9lFuuSa+GwPLNnUSaFLi0KgqhDvBEbNt93Qx1E4P1lumk9GhdLcyeUn3OULdsHQI9tMcV/NS8iP3g8wJ7FoQyr7Xm+jLDgH24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567945; c=relaxed/simple;
-	bh=NCV1cJxcOeiaI+H+5yG6DqUsHaKoC9Jey0ChdsKpI9k=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=r+3zUq5xrtkI8J3fliFWyp0uYjIiEXCNdNXngw8E1cg/JY6kvqNKOBP/rDkMWoQvJ5dE6L3SdjZiuQRDx8+wSNaYX+U3E1cgSDEXK1dGBdJn6HkIRh7+JwWoxvavg7Hkix76AA5Rs9NLWgVhqYcH4uHVb2aMI5xPqwoKSaAtNNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUbHDr3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32630C4CEE3;
-	Fri, 21 Mar 2025 14:39:03 +0000 (UTC)
+	s=arc-20240116; t=1742567960; c=relaxed/simple;
+	bh=OzByUk6wcpOVnzKDjHdKCDH8vJtiuPw6fD6qEWqMJXc=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=d1GTqU16qYJM7Ojmm/4fl000miQvyuvdAD5hWJJ6+lLXYMEQfncJqf/WK6wbOAL0dzcw9t1Tcbszy9kLXlvpKNuU7gSYtG0+BORz1rYXLk9NtzA8UmrDZl7mqfi05tz6+lAb0vLvkA+iuRS5nhS+zOVMjM7Ia0OWtj/pL9rQqV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kz673sOF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB3B0C4CEE3;
+	Fri, 21 Mar 2025 14:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742567944;
-	bh=NCV1cJxcOeiaI+H+5yG6DqUsHaKoC9Jey0ChdsKpI9k=;
+	s=k20201202; t=1742567960;
+	bh=OzByUk6wcpOVnzKDjHdKCDH8vJtiuPw6fD6qEWqMJXc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=RUbHDr3Dujfg4IxQZii3RbgaATvIqvTBUCmLg55V30LI+5Kxpi0fFQ9zZsghWZorl
-	 vBlZ2OjVVRPDEFNuRRKuDenaYxkLqoV11hub/yNY2nUWJvC3cR7UVnaqe1e763cnp+
-	 TUGOheqqOZCZ6dS7dm/HFxKLS94Ni63bgxHGEBL0UJGL2RjIdVxmctMJe9Z5rP1WGh
-	 Y8ZkGAFvYPe9Jx4CoLxy2mrwOVjnusVV0zHeQBNmBQBafyXci/M8Ex/KqElCV+V/FF
-	 yGhh9YX5WOnYGJI4WquW54uNiJV9J0J5Kjj8vInTH1MiW7oOFjRo4bfENzDk7c3PpP
-	 xbmcFJh4Tabjg==
-Message-ID: <50c80a2096aa0f389fffb34dfffc82ba.broonie@kernel.org>
+	b=kz673sOFyDIw/iG+hs3LQqKaWIhpxDRzaqxp+NHjHR0KiH3SFlK7H+5v7sGMLLfKt
+	 PJiQsSt068JjW1iSwBzOOGeNKGoD5mOF2yLihan8TcyxFYrwQN5z+QQLu2+K6/JGQY
+	 8BfNekhf1UP/PlFOI1h5kgYm1NeM7EXNXHK2rkUeNGzm8PQm+ElyVzOctC8pTUAdtL
+	 YryQLY5E8yd+ISfr7YSVs324/7ymYZM4RBwulEohyZQnLRCIBD3+HuZ79hWGoZcxqz
+	 Bsiv5X05U4nNd6VVqMlT6aEIlkxEAtS/dfZOhxLyHHb0Xlswa+m80eZoCrg/rehe36
+	 tC8cKKvqolZUw==
+Message-ID: <a63096e1e044f828a77f611d7ef76140.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator fixes for v6.14-rc7
-Date: Fri, 21 Mar 2025 14:38:53 +0000
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.14-rc7
+Date: Fri, 21 Mar 2025 14:39:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
+The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
 
-  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
+  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.14-rc7
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.14-rc7
 
-for you to fetch changes up to b65439d9015024c37c6b8a17c0569ec44675a979:
+for you to fetch changes up to 176fda56d72a267731f82aa4a3aeca430394f10e:
 
-  regulator: rtq2208: Fix the LDO DVS capability (2025-03-17 12:45:37 +0000)
-
-----------------------------------------------------------------
-regulator: Fixes for v6.14
-
-More fixes than I'd like at this point, some of which is due to me
-cooking things in -next for a bit and resetting that cooking time as
-more fixes came in.
-
- - Christian Eggers fixed some race conditions with the dummy regulator
-   not being available very early in boot due to the use of asynchronous
-   probing, both the provider side (ensuring that it's availalbe) and
-   consumer side (handling things if that goes wrong) are fixed.
- - Ludvig Pärsson fixed some lockdep issues with the debugfs
-   registration for regulators holding more locks than it really needs
-   causing issues later when looking at the resulting debugfs.boot
- - Some device specific fixes for incorrect descriptions of the RTQ2208
-   from ChiYuan Huang.
+  spi: Fix reference count leak in slave_show() (2025-03-19 12:47:50 +0000)
 
 ----------------------------------------------------------------
-ChiYuan Huang (2):
-      regulator: rtq2208: Fix incorrect buck converter phase mapping
-      regulator: rtq2208: Fix the LDO DVS capability
+spi: Fix for v6.14
 
-Christian Eggers (2):
-      regulator: dummy: force synchronous probing
-      regulator: check that dummy regulator has been probed before using it
+This is a straightforward fix for a reference count leak in the rarely
+used SPI device mode functionality.
 
-Ludvig Pärsson (1):
-      regulator: core: Fix deadlock in create_regulator()
+----------------------------------------------------------------
+Miaoqian Lin (1):
+      spi: Fix reference count leak in slave_show()
 
- drivers/regulator/core.c              |  88 ++++++++------
- drivers/regulator/dummy.c             |   2 +-
- drivers/regulator/rtq2208-regulator.c | 216 +++++++++++++++++++---------------
- 3 files changed, 178 insertions(+), 128 deletions(-)
+ drivers/spi/spi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
