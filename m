@@ -1,143 +1,309 @@
-Return-Path: <linux-kernel+bounces-570743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F45A6B418
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:40:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BE5A6B419
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C2E37A781F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 839C348660E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5B41E7C1E;
-	Fri, 21 Mar 2025 05:40:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DAC12E7F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742535631; cv=none; b=M56yzAjFXvr5GJ3bbSvBypTA/DrKYscMXJtgT+3l5/VqS6voqTHcYgukx0pHDR6d83o/7sKQyphJUtOe51ek0yAjNgxjRTxeL7wMJwqqyifpvpyo9agMg0MYAagHv22dK1QGBY+h1DMqVF1PAYfit3t+kmGq1+ZyydXravcpXLA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742535631; c=relaxed/simple;
-	bh=v9mlHIVf03ghme1Xp2oa7igvwNmTaySCr7MbctpPrwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HjX+zh/Tt5By/qDiMFT0JEAY62wWhfVgbzETYO50TJQyU6qdSzEUNyzlCENQ5AfcfXu0FT1PmYELZthY9hMLLTFdB15aO6cOMMxOZbRpmUt9lDRWD1z7RtzLukTjdmZaJjERFxTlQPDDizlv7quzLg7BVbCCC38PwShptu+fZFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B28FF106F;
-	Thu, 20 Mar 2025 22:40:35 -0700 (PDT)
-Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 905973F694;
-	Thu, 20 Mar 2025 22:40:26 -0700 (PDT)
-Message-ID: <b7347fad-9ea8-424b-b000-e3d01dfe0dd1@arm.com>
-Date: Fri, 21 Mar 2025 11:10:23 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121D1E9B18;
+	Fri, 21 Mar 2025 05:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PT4EEB/q"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2063.outbound.protection.outlook.com [40.107.93.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E64312E7F;
+	Fri, 21 Mar 2025 05:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742535683; cv=fail; b=j4vS3kD5w66znqYOUKgrA4hcXu1wCOi5WG4c18azIYfCoXY1RnGYC5HnclroDOQrqS8KNy1Ud7oeyvhkRs3YWIGZdPARZK/q6B4LX3/xwXxDrz/YMWgJ/OAlzy6CgZWQs0lfyEojdd3ltJJYMjwcjUD6sn72NY1zLUxgw9F8Fz4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742535683; c=relaxed/simple;
+	bh=RY+yYO2JFeXU1+u86883zm2H1ELPkF5RaSZ/00V5/Ak=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=Eqo42X62sJL3PTlAC9h5IOY49ZvaRIZJwFXfTkES9oI2XYJg/IneqPGBz4F4oTbvMD4QDHdk2rD2b3WBR6cBntwqDoZywQxkX5V6wpvj54ywEQtGq0eV7b0mxnCNQzDd5rkVZzmU7C6O7kj1Z7R7kl2y5xdkVMJ0ZrTGQKHfv6E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PT4EEB/q; arc=fail smtp.client-ip=40.107.93.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W4pKR7coqvv/Ga76wkhcrK7uNV8+yQf6iio02sNSohzyTKrd8mUJT+guMQJOhODOd+owON0r1S+hvmXOH8JwAWM5m9dpaenKrfVJnuLJZZKDrlRyzHXyXBC1qz+KWFQsFpV5aGcGKTLIJdE1kN2KZ+uORl2l0Fbf6LBezg9snJSQ9vfnbguHtsTNurnq24RiBVyIiIXWQpS0koV037XS1dHRdwidsKccMtjcZKWW6tw3wFQsrc8eTjRM1gJYLj4HLjpBcAPVEb+HbXfYmB6iICZAY2Ky/oN1ek4LzubaRMBufgP1oeWyZpYKfXEQ+rBur+RnW9WkaWmpIjNNMU35Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WvACWfydYTWuo4PjHSwLirXdoY8GB/T+c+eaGffYwG0=;
+ b=I8NiizvjdU1yqqGqQWpgZvOD2vrwtZ+KxisSxiuXCZo24I7NS1hkEf9LDgyD3vQqMT6dReN+CtkMQ3JoxR+iunzzs1pwQoCkoe3InDjuiZoozjfB9laMvu+l82iUKGhuTyftvzN/OviOy22f8PSNKzMbHBlroN9HUyR8hhkjjzeswLpdUF0Zr9bHYSNcFkYsBeD7wTA8KvuZVVuEozoM73NNnU6Jciz4Xi0giBztol3mC3iv7FS6mSQeaosf+opryLxVavyjGZKvFArhojmD+lpBMqVYCafhkpH5BQ1ygx3NBtSl86iTe1snaWhjKADOAZl1XFjkVOtsUzHKjgHXqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WvACWfydYTWuo4PjHSwLirXdoY8GB/T+c+eaGffYwG0=;
+ b=PT4EEB/q3AXYwCo3WF/w3Akj5k7r7X6RnApnv9baLJiOiuSUcWoEnPv3WI9qc71M70GQzJ2aW77jkYGAkOFz5inr3gBdgirqKj4cTWIPhVS8psbYOTWDMpctlq1rSFoD/G9S8hqgcV2d+LTKca98a9ztoh9PGCmYeQ3TJRgX9CLQ6liYV6CBr+1Tebk839+7MY8NaJzoz6IDkPVZKIrrKapexkA38HVZaLWZVBDzOhdYxd9oxa3gXAXNhZP8Kx3XFDHkMNIDroJ4tLMcGh05aZ4aBJ3/pDseri7NE+Pdg27Uc9BSyxbaA4VLIqxkyQ0NUtu9VKNrb1/Mu/4X1msRKA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH7PR12MB7354.namprd12.prod.outlook.com (2603:10b6:510:20d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
+ 2025 05:41:16 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
+ 05:41:15 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 21 Mar 2025 14:41:12 +0900
+Message-Id: <D8LPCCP6JNYU.28DYTEK5BB74K@nvidia.com>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, "David Airlie"
+ <airlied@gmail.com>, "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs"
+ <bskeggs@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Simona Vetter" <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH RFC v3 6/7] gpu: nova-core: add basic timer device
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250320-nova_timer-v3-0-79aa2ad25a79@nvidia.com>
+ <20250320-nova_timer-v3-6-79aa2ad25a79@nvidia.com>
+ <Z9xb1r1x5tOzAIZT@boqun-archlinux>
+In-Reply-To: <Z9xb1r1x5tOzAIZT@boqun-archlinux>
+X-ClientProxiedBy: TYCP286CA0198.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:385::13) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/page_alloc: Consolidate unlikely handling in
- page_expected_state
-To: Ye Liu <ye.liu@linux.dev>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Ye Liu <liuye@kylinos.cn>
-References: <20250321011304.549908-1-ye.liu@linux.dev>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250321011304.549908-1-ye.liu@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB7354:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1bd4883d-9f07-4e5e-fd99-08dd683afede
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z1RVc29JODVrVkNCQWVzQldKMHc0d0xSNEUwK2RtY2ZiVUZkUHhqZldzNzkr?=
+ =?utf-8?B?cGFlbnhwMDB4MHY2Wk1hb0JpRE1PZ2lHWXVTUzkxRUhuaFlBNmdqQS9NMnFw?=
+ =?utf-8?B?ZlFVVGJFcWgrdzFUM3FkS1l0RkVhRTJpdS80RHBib3RldnkycHo0SUw4dWU2?=
+ =?utf-8?B?OUNGeUN2b2lhMGViOE4wSm1aT0FtaXRkSmw2b1dyS2FldEt4NzRKY2g1Vytt?=
+ =?utf-8?B?QzNpdnJFYmY1bU5BVnFZTTdsVis3MnFlMmhUSkJxU1lQcTNRTDJBbnVsNVN0?=
+ =?utf-8?B?cXRZSkd0OHc0THlIT0k3NGlyUW9zVDlieFlnN0JxaHB3TzFQWldUN2RyS0lH?=
+ =?utf-8?B?YXNHWUtSZWlqMkVTRjdQMm5IS2hPNG9DUHlSY1BHemUxNHdKNTRINk4yd1FB?=
+ =?utf-8?B?Z3JxeUlGZ25iaFkrbGtvMUE2Q09USUE1S21BQjFVSldqampET0l1bVZzZkxs?=
+ =?utf-8?B?VG1KTTFRUG0wOXFvWVRvMkZQK3M1QmZNcVBLWTVhRG9wdlkzYlVIWE92SmYy?=
+ =?utf-8?B?eG9YWkRHYURnc2gzbnJETGZ4Smh2OHRiQlNzQVNnUmZ3Qkk2RlU2eFVmQ2Nx?=
+ =?utf-8?B?SndCVUs4Yk9VL0k2VWpNcXo2aGxpc0s5ZUUrNlpkWW02ZmtPWDh0dG4zcTBu?=
+ =?utf-8?B?UlhwOEQyWTBNS0RoSHRsTXFkN2owcjVQdXNKVGJqSnJOZGRFY24rYmpGVFF1?=
+ =?utf-8?B?U2pxV1IrdmJMVVhrZW41OFZBS0orWnZJSWtKVWNvczh1NXFmZVNlbkwvSGh1?=
+ =?utf-8?B?dUllVm1HNi9VWXRuOVVhdkpRV2hWRFo5NnMzYTJFZ29wbXRmaHk0UDV5YXdM?=
+ =?utf-8?B?YWZnTVdVQ2NFOEhuOEIrU2xoU0VkT2d1ck41T2lvQk1sam5mY0VhYU1QYXZ3?=
+ =?utf-8?B?c2lpYWkycHU1amZPSHhlR29qZ2h0dlV1TFZIVTdLTWp1OHNDVTV3bTlBNWwx?=
+ =?utf-8?B?T3RYZTFsenJ0ekZzVFVTa2t3Z1hsVTJSYmdCNVFpL0xJOEJ0T1p1ZGpucVll?=
+ =?utf-8?B?anE2S2lyZlRjMVo4ZHZGSlpNSUh0bmsrUDMyUHVYL28zam5scTFtUytrVVc1?=
+ =?utf-8?B?dmlFekhHSDNOZ0ZmWi9NVm45VHV3S1g4UFRCeGR5S0tGYlpsc0VEUmYweXlG?=
+ =?utf-8?B?ZWZQRk1LT3RGem5sVkp4RHR3bEd2Y2RsbEd1c29VV0ZUZFhJd20rRzJKQzMz?=
+ =?utf-8?B?QnJ0Y3dLNWJCb21rOUJ5TmhTaDY2VkVGNnFSMFBBSGRxUFJlcDZEemNiWjRq?=
+ =?utf-8?B?UlFVVXU4RGVzbG5vSURMMnJ0ZEUwU1phRVdJMmxiYWh6SS95UDBtcHJIMldO?=
+ =?utf-8?B?NXdNWTVBVmFwemZrQm5Vb2IxSmJLUTZ4alRmVUlhM0dQR2xHSTZ6ZHZDUzBj?=
+ =?utf-8?B?VEFWVzM4dmFIN3ZpN1FGcEcwUFpsZ3V4VWFHb1hYU0NmUzViZWpjNU1rY2F4?=
+ =?utf-8?B?dXpCRm5nb2lqK0VCanVxd3NTTW9pSGNqYWdKSXI3TFVuZytPSjd1RGROR2hQ?=
+ =?utf-8?B?TWV3QkMxTDVSL00yVnovQ3RkRjYwYWJRTHZBSElGb2J0UWxBU29xVkcyK0dR?=
+ =?utf-8?B?cnhkNmlRcjJ2NWE1UVpIWkhEVFZyREU4emhYR0tWQzUxSDM1L0g0aW1ScWor?=
+ =?utf-8?B?ZCtvT0szNWRxV3RCN0dEQnY0VksyOUowQW5ES3ZpaDNqSTRLblF2RklqYUlm?=
+ =?utf-8?B?WDJJdHdqY2J0ZktzamJmMFc3WjhQdW5KOXdueG5NLzJOTXpwdkErazhFN1NJ?=
+ =?utf-8?B?OWlNVG1hbk5xNnZxaEllSWFEUXZkcjN1aVZUZGZJTVVqb2VFeW9mcTFwR05u?=
+ =?utf-8?B?RXNFaGZwNkNTYkJkeEFmQkorNUtpK1c3bmh5VW5YaTk4RTQ3bDN5bHpibGtz?=
+ =?utf-8?Q?jy5XJrKzu/073?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Tlc3Sk5Zb3ZiV1dVSzRPZVg4cVZUdFZXZkxTd1hDVmxubTE0dUVoU2poOThp?=
+ =?utf-8?B?dnoyaldYTlE0WXlNay82ajhhUDJNUm1BSGFOQW1tdnJDT0J1L0RaT2s4a2g0?=
+ =?utf-8?B?ODFtZWxlRkZwalNDSW0xMHh5WXVjZStnL3hVL2hBRUwvL0VtNnB6b2xqeXh4?=
+ =?utf-8?B?ZEREV0hNWm05VmM5MXRMWm1ZRmtVL3c4UThNRWdoZTFkbittdTFQSGFZQlhk?=
+ =?utf-8?B?RmNOaWxzRHljb3V0eHpYSUZRYStWQ1V2VjE2UmttWm9FekV4ZW13eDVlME82?=
+ =?utf-8?B?WHZmTlUrMVhxRXl1bFhVM05CV1JPVjRLQnhQN1crVFphOEtmMnplbHRvSkZ1?=
+ =?utf-8?B?OG5keEt0M0IwdVFRVDdBVy9mNnNqUU0zeFFaa2hocUtXRGpZM0lDOUYwSEhm?=
+ =?utf-8?B?RThodHU4bkwzY0wraUpibmpqK3hkV0gzcDdCZURIQ3Nnb3FYc3hvbFI5UWky?=
+ =?utf-8?B?YmlGVEVqUDNmTnlaOFlpTlhuR2crREIybkRlRGNDS2JUSm1GUDZ3enlRa1Zy?=
+ =?utf-8?B?RDYzS2R0UDdWZnRKNDE3clNQY0tiYTdqcHFBcVJQL1RWVlBEYU50ZjlZMnBC?=
+ =?utf-8?B?eWVHVUpRQXNhMW5xdGc3NWJlRjk5aXdoUml6TTVNU1VQNHhLRmZjYzZQKzhn?=
+ =?utf-8?B?UUh3bGp4TlA5WFhoRTl4dU13bm9TREd2KzhtaGV6UmtyMDVqcjVTYkhVZmtW?=
+ =?utf-8?B?YU5SVEw4a1dDMmdCWjVwcWhOVHZMcms0bjM5YnVjTWxrZGlsNjVaWnVSNUxl?=
+ =?utf-8?B?dndDRWRXeXY4ZDZLOGZpa2xzbTN0Qm1lb0ZXZlVuOGFtaUNPYTZzRGtWOFZ6?=
+ =?utf-8?B?eEFraG9PcEFyaHdtU3Azc0tLQ09SMmlhT25yMy9PUlNtL0hzZ25rVEtsamp4?=
+ =?utf-8?B?eGFya1VwdVEzLzNiSkc3YjNVV0F5RFBHTVpTL3BrUWVJdWp6SDZsZFZWWWRo?=
+ =?utf-8?B?Y1o1SHo3ekxoTDBENThrSzZpTkprUVdXMTFSY21zL09EVmZkVENndE93VDVs?=
+ =?utf-8?B?bTZqaE1lSGI2YmM0WFhpd2cyd0ZKZWpNSjVPUFEvWWM2enExQituOTU0WFdq?=
+ =?utf-8?B?RTd6S2pQMUFPelk0VHFaSGpEbU5XVkMzeTFyWXdiQ3pPQ1R1ZXVwTWtJTFZG?=
+ =?utf-8?B?eEhiTDlMMWZXREVzVDRORnNGYjVTT3dnUU9SMUNRTjlselkxcGNIeXpvazlE?=
+ =?utf-8?B?T3MwNnpCOFdrUE5CVzJmSXBuUDBzWXdWRlJHTmtIZXpmQUhEVWZIT3ZYL0M3?=
+ =?utf-8?B?dXUwVW9OOG5aeG1rYTRJRlBnaEFrUXZYUXk3bitrcDZWOTBYMWk1cTNFN0VR?=
+ =?utf-8?B?Z0dNeVl5VkpCNmdySGRMK3Rlc2ExOTJMaElmZVVtQWhWRmo2MkY0ekRkZWFj?=
+ =?utf-8?B?QjBDUGZaamx4eElOWEN2VlAzSXl5UzFEc21HWFNPMkNDV2pSdFZ2YnprTHN4?=
+ =?utf-8?B?MHpyV1QvSmJMOTRPZzc3UjFuN3hWN1VoNkZISUc1ZHV1cWR6dkpSREY5L2Jx?=
+ =?utf-8?B?OFNNNmd6d3pnSDlWdkdGZVVYVHE3NlE5Z2F5LzVhVnBKc09UeU5ZZ3J0YUo2?=
+ =?utf-8?B?Q2tYUnphUGlpOWVETzVHMkpiTllFOU5YUWRqOE5FYW0wcjBRTkNrcER0WkZF?=
+ =?utf-8?B?YUNqeFhQaXlQWERiaFdNZ0tkZWdkL0lXZlpwV1puK0ZSZjhndWtwQU81UlEw?=
+ =?utf-8?B?aFJ4bnBzYVFTVkE4cnhobHBlYkQxWHltY3lIS0ZWenpaWncxNGt2Q1o0cUtK?=
+ =?utf-8?B?Rmp1U00zYTVwMkZuYjBFbG1hT2w1ZE9lTVpZWDU4L1JoamFxVUJTbXozdHZB?=
+ =?utf-8?B?SXkxRzhBOVNLdjUxcTBkSjRIcHBMaTRBUVpMcTNjYzF3cHo4MHdidzRGY1pw?=
+ =?utf-8?B?UnFhTU92Q1JiVWVtRFd4bkdLREdFd2dwMjk0aHZ1OTJIOWRuT01jNzF1SDRm?=
+ =?utf-8?B?WVBvbmM5WlpCN29ZVXJXZWhNQjl0dkZxeFNza1VEWlo5Ky9Vb3owRnl2Zm1D?=
+ =?utf-8?B?YkpNby9jOHNxRmpzZU5md2FPS28wclVxMXZEZlZ2NnZKQUNoTDUzU0NwNTJ4?=
+ =?utf-8?B?UXduTzEwc0pwY3BCeDlRZGRmTFdta2E5Q3Fpcmk4dnlxUlRCTEZ6SjJYWk5T?=
+ =?utf-8?B?dDJ6NTVZbVU3MzBuR3R5d29BczZKb0ljWUR4bmpDcGx3OTBRQW9KLzRJc3BL?=
+ =?utf-8?Q?1h4TWoBGfzo9i2boNodBs52uXQgjDCp4Z+jUT3wGrk8u?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bd4883d-9f07-4e5e-fd99-08dd683afede
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 05:41:15.2274
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M2Ce/uTywGvK6EfFXfcyoXhnDf5kurj996JCQgbtvC85SbtFLDz1y+8SVx/W4k06/Ivc1PLzexZrRESRCmOxww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7354
 
+Hi Boqun,
 
+On Fri Mar 21, 2025 at 3:17 AM JST, Boqun Feng wrote:
+> Hi Alexandre,
+>
+> On Thu, Mar 20, 2025 at 10:39:14PM +0900, Alexandre Courbot wrote:
+>> Add a basic timer device and exercise it during device probing. This
+>> first draft is probably very questionable.
+>>=20
+>> One point in particular which should IMHO receive attention: the generic
+>> wait_on() method aims at providing similar functionality to Nouveau's
+>> nvkm_[num]sec() macros. Since this method will be heavily used with
+>> different conditions to test, I'd like to avoid monomorphizing it
+>> entirely with each instance ; that's something that is achieved in
+>> nvkm_xsec() using functions that the macros invoke.
+>>=20
+>> I have tried achieving the same result in Rust using closures (kept
+>> as-is in the current code), but they seem to be monomorphized as well.
+>> Calling extra functions could work better, but looks also less elegant
+>> to me, so I am really open to suggestions here.
+>>=20
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>>  drivers/gpu/nova-core/driver.rs    |   4 +-
+>>  drivers/gpu/nova-core/gpu.rs       |  55 +++++++++++++++-
+>>  drivers/gpu/nova-core/nova_core.rs |   1 +
+>>  drivers/gpu/nova-core/regs.rs      |  11 ++++
+>>  drivers/gpu/nova-core/timer.rs     | 132 ++++++++++++++++++++++++++++++=
++++++++
+>>  5 files changed, 201 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/dri=
+ver.rs
+>> index 63c19f140fbdd65d8fccf81669ac590807cc120f..0cd23aa306e4082405f480af=
+c0530a41131485e7 100644
+>> --- a/drivers/gpu/nova-core/driver.rs
+>> +++ b/drivers/gpu/nova-core/driver.rs
+>> @@ -10,7 +10,7 @@ pub(crate) struct NovaCore {
+>>      pub(crate) gpu: Gpu,
+>>  }
+>> =20
+>> -const BAR0_SIZE: usize =3D 8;
+>> +const BAR0_SIZE: usize =3D 0x9500;
+>>  pub(crate) type Bar0 =3D pci::Bar<BAR0_SIZE>;
+>> =20
+>>  kernel::pci_device_table!(
+>> @@ -42,6 +42,8 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo)=
+ -> Result<Pin<KBox<Self>>
+>>              GFP_KERNEL,
+>>          )?;
+>> =20
+>> +        let _ =3D this.gpu.test_timer();
+>> +
+>>          Ok(this)
+>>      }
+>>  }
+>> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+>> index d96901e5c8eace1e7c57c77da7def209e8149cd3..f010d3152530b1cec032ca62=
+0e59de51a2fc1a13 100644
+>> --- a/drivers/gpu/nova-core/gpu.rs
+>> +++ b/drivers/gpu/nova-core/gpu.rs
+>> @@ -6,8 +6,10 @@
+>> =20
+>>  use crate::driver::Bar0;
+>>  use crate::regs;
+>> +use crate::timer::Timer;
+>>  use crate::util;
+>>  use core::fmt;
+>> +use core::time::Duration;
+>> =20
+>
+> Since there is already a Delta type proposed to represent the timestamp
+> difference in kernel:
+>
+> 	https://lore.kernel.org/rust-for-linux/20250220070611.214262-4-fujita.to=
+monori@gmail.com/
+>
+> , could you please make your work based on that and avoid using
+> core::time::Duration. Thanks!
+>
+>>  macro_rules! define_chipset {
+>>      ({ $($variant:ident =3D $value:expr),* $(,)* }) =3D>
+>> @@ -179,6 +181,7 @@ pub(crate) struct Gpu {
+>>      /// MMIO mapping of PCI BAR 0
+>>      bar: Devres<Bar0>,
+>>      fw: Firmware,
+>> +    timer: Timer,
+>>  }
+>> =20
+> [...]
+>> +
+>> +/// A timestamp with nanosecond granularity obtained from the GPU timer=
+.
+>> +///
+>> +/// A timestamp can also be substracted to another in order to obtain a=
+ [`Duration`].
+>> +///
+>> +/// TODO: add Kunit tests!
+>> +#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+>> +pub(crate) struct Timestamp(u64);
+>> +
+>
+> Also an Instant type has been proposed and reviewed for a while:
+>
+> 	https://lore.kernel.org/rust-for-linux/20250220070611.214262-5-fujita.to=
+monori@gmail.com/
+>
+> we should use that type instead of re-inventing the wheel here. Of
+> course, it's currently not quite working because Instant is only for
+> CLOCK_MONOTONIC. But there was a proposal to make `Instant` generic over
+> clock:
+>
+> 	https://lore.kernel.org/rust-for-linux/20230714-rust-time-v2-1-f5aed8421=
+8c4@asahilina.net/
+>
+> if you follow that design, you can implement a `Instant<NovaGpu>`, where
+>
+>     ipml Now for NovaGpu {
+>         fn now() -> Instant<Self> {
+> 	    // your Timer::read() implementation.
+> 	}
+>     }
 
-On 3/21/25 06:43, Ye Liu wrote:
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> This patch consolidates the handling of unlikely conditions in the
-> page_expected_state function, reducing code duplication and improving
-> readability.
-> 
-> Previously, the check_new_page_bad function contained logic to handle
-> __PG_HWPOISON flags, which was called from check_new_page. This patch
-> moves the handling of __PG_HWPOISON flags into the page_expected_state
-> function and removes the check_new_page_bad function. The check_new_page
-> function now directly calls bad_page if the page has unexpected flags.
-> 
-> This change simplifies the code by reducing the number of functions and
-> centralizing the unlikely condition handling in one place.
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> ---
->  mm/page_alloc.c | 26 ++++++++++----------------
->  1 file changed, 10 insertions(+), 16 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 2842da893eea..d8d04ac1d709 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -892,6 +892,13 @@ static inline bool page_expected_state(struct page *page,
->  	if (unlikely(atomic_read(&page->_mapcount) != -1))
->  		return false;
->  
-> +	if (unlikely(PageHWPoison(page))) {
-> +		/* Don't complain about hwpoisoned pages */
-> +		if (PageBuddy(page))
-> +			__ClearPageBuddy(page);
-> +		return false;
+Ah, thanks for pointing this out. I'll keep track of these patches,
+hopefully they get merged soon!
 
-Should this be return 'true' instead ?
-
-Let's consider a scenario where PageHWPoison(page) is true.
-
-Previously bad_page() was not getting called as check_new_page_bad() will
-return earlier before reaching bad_page().
-
-But now with the proposed change here page_expected_state() returns false
-and hence bad_page() still gets called later on in check_new_page().
-
-There is a change in behaviour - or am I missing something here ?
-
-> +	}
-> +
->  	if (unlikely((unsigned long)page->mapping |
->  			page_ref_count(page) |
->  #ifdef CONFIG_MEMCG
-> @@ -1586,29 +1593,16 @@ static __always_inline void page_del_and_expand(struct zone *zone,
->  	account_freepages(zone, -nr_pages, migratetype);
->  }
->  
-> -static void check_new_page_bad(struct page *page)
-> -{
-> -	if (unlikely(PageHWPoison(page))) {
-> -		/* Don't complain about hwpoisoned pages */
-> -		if (PageBuddy(page))
-> -			__ClearPageBuddy(page);
-> -		return;
-> -	}
-> -
-> -	bad_page(page,
-> -		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_PREP));
-> -}
-> -
->  /*
->   * This page is about to be returned from the page allocator
->   */
->  static bool check_new_page(struct page *page)
->  {
-> -	if (likely(page_expected_state(page,
-> -				PAGE_FLAGS_CHECK_AT_PREP|__PG_HWPOISON)))
-> +	if (likely(page_expected_state(page, PAGE_FLAGS_CHECK_AT_PREP)))
->  		return false;
->  
-> -	check_new_page_bad(page);
-> +	bad_page(page,
-> +		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_PREP));
->  	return true;
->  }
-> 
 
