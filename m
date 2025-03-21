@@ -1,98 +1,88 @@
-Return-Path: <linux-kernel+bounces-571485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B44A6BDB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:56:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9048A6BDDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE82D188FB27
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5AC3BAC5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197D9226D1B;
-	Fri, 21 Mar 2025 14:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594C21D88A6;
+	Fri, 21 Mar 2025 14:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3fFdsKb"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HPx9SrcS"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6428D22423F;
-	Fri, 21 Mar 2025 14:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1051C863C;
+	Fri, 21 Mar 2025 14:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568839; cv=none; b=bjcq0+BzkeapPAYn8Lvrp/tL4k4wqjvaRd+0++roO38/vtAV4OARRJMgjCBrgpkVPepgcUmdvHBZxSRH4YmhIRryjVkuaZI5+XBbi1lhZ3jxIHXBcBFwRWugONmNzIaKKglXQbQM4OLNrQzcIrGqfplxdX08zlsEYsMh9gbk+Is=
+	t=1742568966; cv=none; b=iA3SweVT8aSDC6FauHVmp9354NOQsxsMVt3KtcJvHuFdECo0fKdjAD2OZoAexAOG+dfsblATIe7OP3GU+5bwdfhwoQDLjZ6idN1oJ6ahx6oXLtHLcZTLCUE2AmXJmH9Qc3mXZ96zGcMihADFV9NXHMtYNioHu+STXXEZPMo0qe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568839; c=relaxed/simple;
-	bh=LAZXLdh33TVoWxNdnrnsbyHRdRcyvTKSeX7w1LJ/e7I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HPC1JiIU5xcZmPKvD01ua6zeHd8/T6x6UfKtZwisoWDAisFAiAAGMajvIC9Ft4bEpS+Izzbp97bSA8twtOTUhYuv5BUWtCf2s742UcEqJO1KnGCW5hnhN3zzO3n79Zb0FDsgyRIqaXDpuMmesS9h4NCAuxeyin9EPFjHz+zOfls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3fFdsKb; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1742568966; c=relaxed/simple;
+	bh=9NjdffFcqoMUtLEWDBo5tVuRbkE/efHqE2sYv6kvsOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NgUK0SMhqt4qvXV+ko0RTMa4L2rfkP1xsBKs8gsT0cxuM6VprryFSVf3OIxjMxiXhTxpaVon0Xm7Mgr7bzR8QOzPhFz+wn+TZmhUbpHAr5N/pFEiOUQZb1/WRf/1FhZ+ru06If5uqi+LeqyGp+LvOE1572Wymp/2vcQolPrW63s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HPx9SrcS; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso3667220a12.3;
-        Fri, 21 Mar 2025 07:53:57 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so13009575e9.1;
+        Fri, 21 Mar 2025 07:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742568836; x=1743173636; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fe2kbPTwvVNBxhNjMkTSBSLSKQIjeOhcHFESCXzkbkM=;
-        b=S3fFdsKb5+9cwotDpPcW2IDeXckPWErw2yG7UrdUMxF5+uVPgz6OGocN7uDU7LZCrL
-         GFglHLJILT29eQn1v6C2MuvTjwf78XrN8aE6Ebl/rkhAydkOPBjTp1MJPZGnSTHb9psJ
-         B45zEk8JEf2qp+lccJrFVleoXD3RPQGgM89kc+QlXHmNdCgP6LooBTknAm6VlDLopA2n
-         Lht8r/TFWB/on+ZqNYIDcDs4eHC0Tpz52/p/f3+vK8sd8W1U+dOFSXZyot2liDo0sLin
-         KlPO7gPNlJ8+qOsrD9+i0iLkNXo8RkPODtg0KTnYPAfyuwhf4eM8ejFXqAHr5pHUdqHV
-         W6og==
+        d=gmail.com; s=20230601; t=1742568963; x=1743173763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0b1ZVK4FQBOKzIWDvZDBhV3e5RNA779GaFmuBBFBIPY=;
+        b=HPx9SrcSTu9ADtQsYv5QjuWAq0o/bmabL5+zVHLUsd2ZL3qqPlFfcVnS2QZqPvl3d3
+         sGexY+piKisM9SZdZpQ7yRV90136+c/7pFdKUOvkmKSQqMXo3dULV/egO76CsaMh07oI
+         g9DjlITmZtjqdTj+OrDwg3CJRY95nhfJ3rUinp+7/P/Za8rMmCvVUIVAwT6F+dlMqpPd
+         lDP4zmw2BCQSIH8iwjTov85sIGm5SOBzbxgtLP5kaWhOVdrZQPWQ8asvtDAVp8nlL2mW
+         WrNqOZww0jcAXGKHTkkubI9eeGE4rpsOLtnKFNRBs3UGtS1RnHDAjOprg2u1aYslyDJg
+         U81Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742568836; x=1743173636;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fe2kbPTwvVNBxhNjMkTSBSLSKQIjeOhcHFESCXzkbkM=;
-        b=bLY0oon9WSnxfWW/2HAtXFdbTz56oT18gz/0OlIGL0CkPe1Yz4xxcpFHY/KlWmPM9D
-         ITG3WAkpP36RHSIh9Oa8U50O8raJRW1HMA9re3yCE6YyCCMw9v46LYE6Cb0wgKqOZPRz
-         p1WVuCa/7hntRnCnFBawf7Ge8uf7WtcaCbVCP4vjWvHH6I0BuxMkRxVJCFZuUilFAag8
-         XNajn6UK1KFyMrSOtLHZpkKtDLYNVLnJpNR+Xv0lSYPfaitg+mPD9wuhhb/al3nCjTWj
-         QRZXHx9ezimPrprb941ZJhn5xlrPMJ2VcufM9rRz0NuR4J6j/YciYkM13ZsRjA53Jre2
-         Q2RA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqmPmv+YuAWlid1mqO+iC+wq8z1ijHcDM6vydTKWz2pX6cet9ctyDe3fojdhZ6CNZRbgYDd337HUIHNBM=@vger.kernel.org, AJvYcCVsKVxQE1Sru8rPFHTidTdKnsRaPHo5ttNd+1hnhfOeGJZ+uNXMw1hKAMajztov4ak3vrnv1kNuGAVa@vger.kernel.org, AJvYcCXdymBKluVesqLNcOppbz28hvZ6/n6ZirHnIXZDOZQcDSSGuBoV94G7qce4puMqyb+4u+DF8WJqAD7LUZok@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsBm1U/nbch+f+qj4lt8H0cGJ9lYJmhU+fzwlBtLGpi8d4EfB4
-	iBBR6eZBHOJ2k6Qicm/LappJ5zqgJecsxDDJDxgS9+f+Fsu/13GZ
-X-Gm-Gg: ASbGncs8B/i/3054Zx/o4T5fBqk3v+U+Csz8Q5gjkAXsoajLGqFSull60WmkyBr4YOy
-	AzGQFTBd8+ZRaFD8HZx8w4DNNORVFMJptsDE6CrrulMMMlD+zZZ/psezQbTvMvM7F+Xkyp5plYN
-	vslmFYz6JRAmpY5Qnf/NsdBKBs9REiEYD6ZAD+n61VO1Uaopjh78g78htFjoisfUl2U/3tQvjIX
-	OrQkUF9DRLcUlt2b/u1kQa50eVz1N1fMkEOp5Lxkn3qaoV571HPQINR3+xvxjmXh/JrAt67lwYS
-	PneXPK8x4LXmpZezRoZJI5rSvPACjq0bLMap
-X-Google-Smtp-Source: AGHT+IEUbbaGuykcwI2+6K7THB2Xr1pAs3mKKDYroo/RmpQx3kMBZkIbx7+47szKzFfZODxKlY7kvQ==
-X-Received: by 2002:a17:907:2d20:b0:ac2:af42:4719 with SMTP id a640c23a62f3a-ac3f226e059mr307664166b.21.1742568835416;
-        Fri, 21 Mar 2025 07:53:55 -0700 (PDT)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbe038dsm163224666b.138.2025.03.21.07.53.54
+        d=1e100.net; s=20230601; t=1742568963; x=1743173763;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0b1ZVK4FQBOKzIWDvZDBhV3e5RNA779GaFmuBBFBIPY=;
+        b=YIyaxsfrcGKsOzlYDiuZV4CfMBXKzDO9MUE9qb7nJgOBbVtF3woAGQAs8ZDLMDEJGQ
+         +4ZuH1loOBDiDlSVETs46ulNPt9ahEa9PbF1J3JbTEJXga+S52fJH8vUcKDye/0IhT/0
+         OapkiZ+wGQcEb+SwwJEivokzU67Mj36RhSpYqROaKEwCjxuunrYCbqIR6bddINiGpaDf
+         HCQuQl2jHx4dW7pB/bFnMOBB4LT0e7Ybu5xeoUXh1uDDhvj7HmyLac3TKATsQDiLxZVL
+         fTE3veLtFCQMiUFKl3gAmE0R9gcykwqbyCo21XqDeAZpvhIU43EKRsl2MYPewzWW2x04
+         8d4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUczLb6NmVzYpKMAyI2Hhy/6BNHAZdILxT3z+89mnnGV7hqFnWB30tIeWq3NGB//VIYi4S/Eekly5ULAW3t@vger.kernel.org, AJvYcCWsdBhVdODM8/5HT/o7UMTXliA7Ty4uB3QYWZNNjmwHLHzR2aTnC+QKdi342lK8BfGl7wTClL2BXulg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0xxAjWENodcBX0SELNHHSSSzJo0WQNOSZvFgHOcSVVu9GRfS4
+	Q0koR++l6L3is0IxX3Ib2hVlIWdfDtFqJRHyBMNyDNFPbMULJWCs
+X-Gm-Gg: ASbGncs7PBhVu0b7sqNXNXhSUnqvZY13BK38ikf9pD13vS2ALKfbk5ojWYzaYhnZEPv
+	zXOdSEJ9MrZZv7GY0UOFpgyZJGSctQANxTpukkkV46IEBcuI7oeLHiyJyU4RVcFuTXiZAP+Nzz8
+	EwJ3Fr8yKkaTYek8bxY5FP97j5CwYGdydXorHGJvs4CEMh7d/7nCBcQCKv9bkU+bvj56QoH7djs
+	IBe+4KCXS8oKvdeQbl5ERKYesPUJNE64Cu8kXir+1HXq9j/UnAJFGRwFyUACAGNZfw2fTt3tW2E
+	zwc1XNEa+hBKMR+N+QZ/3L+ukkODWxsotDmZ4a8iBOS2zjbBC4IzKWSy1Bmav/2OXhs25D2CDJv
+	NhOSKJc1u0RgXLpsEl6YE
+X-Google-Smtp-Source: AGHT+IGUoURGAWj8U3P960wJT/eiyLcta46A5WVi7nZH3W7YjqEoIAHw3UKw8FdD3W+LtY7DrmzUwA==
+X-Received: by 2002:a05:600c:cc:b0:43b:c592:7e16 with SMTP id 5b1f17b1804b1-43d4915e6bemr68811475e9.3.1742568962858;
+        Fri, 21 Mar 2025 07:56:02 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd28a46sm29217095e9.24.2025.03.21.07.56.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:53:55 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
+        Fri, 21 Mar 2025 07:56:02 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 5/5] ARM: tegra: Add SOCTHERM support on Tegra114
-Date: Fri, 21 Mar 2025 16:53:26 +0200
-Message-ID: <20250321145326.113211-6-clamor95@gmail.com>
+Subject: [PATCH v3 0/4] arm64: dts: exynos: add initial support for Samsung Galaxy S22+
+Date: Fri, 21 Mar 2025 16:55:52 +0200
+Message-ID: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321145326.113211-1-clamor95@gmail.com>
-References: <20250321145326.113211-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,274 +91,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add SOCTHERM and thermal zones nodes into common Tegra 4 device tree.
+Hey folks,
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 204 +++++++++++++++++++++++++
- 1 file changed, 204 insertions(+)
+This patchset adds device tree files for Exynos 2200 and Samsung
+Galaxy S22+.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index d95c1f99731e..7a4c5da76080 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/tegra114-car.h>
-+#include <dt-bindings/thermal/tegra124-soctherm.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
- #include "tegra114-peripherals-opp.dtsi"
-@@ -263,6 +264,7 @@ actmon: actmon@6000c800 {
- 		operating-points-v2 = <&emc_bw_dfs_opp_table>;
- 		interconnects = <&mc TEGRA114_MC_MPCORER &emc>;
- 		interconnect-names = "cpu-read";
-+		#cooling-cells = <2>;
- 	};
- 
- 	gpio: gpio@6000d000 {
-@@ -711,6 +713,48 @@ mipi: mipi@700e3000 {
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	soctherm: thermal-sensor@700e2000 {
-+		compatible = "nvidia,tegra114-soctherm";
-+		reg = <0x700e2000 0x600>, /* SOC_THERM reg_base */
-+		      <0x60006000 0x400>; /* CAR reg_base */
-+		reg-names = "soctherm-reg", "car-reg";
-+		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "thermal", "edp";
-+		clocks = <&tegra_car TEGRA114_CLK_TSENSOR>,
-+			 <&tegra_car TEGRA114_CLK_SOC_THERM>;
-+		clock-names = "tsensor", "soctherm";
-+		resets = <&tegra_car 78>;
-+		reset-names = "soctherm";
-+
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_TSENSOR>,
-+				  <&tegra_car TEGRA114_CLK_SOC_THERM>;
-+		assigned-clock-rates = <500000>, <51000000>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_CLK_M>,
-+					 <&tegra_car TEGRA114_CLK_PLL_P>;
-+
-+		#thermal-sensor-cells = <1>;
-+
-+		throttle-cfgs {
-+			throttle_heavy: heavy {
-+				nvidia,priority = <100>;
-+				nvidia,cpu-throt-percent = <80>;
-+				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
-+
-+				#cooling-cells = <2>;
-+			};
-+
-+			throttle_light: light {
-+				nvidia,priority = <80>;
-+				nvidia,cpu-throt-percent = <50>;
-+				nvidia,gpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_MED>;
-+
-+				#cooling-cells = <2>;
-+			};
-+		};
-+	};
-+
- 	dfll: clock@70110000 {
- 		compatible = "nvidia,tegra114-dfll";
- 		reg = <0x70110000 0x100>, /* DFLL control */
-@@ -875,24 +919,32 @@ cpu0: cpu@0 {
- 			clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
- 			/* FIXME: what's the actual transition time? */
- 			clock-latency = <300000>;
-+
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
-+
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <2>;
-+
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <3>;
-+
-+			#cooling-cells = <2>;
- 		};
- 	};
- 
-@@ -905,6 +957,158 @@ pmu {
- 		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
-+
-+			trips {
-+				cpu-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				cpu_throttle_trip: cpu-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				cpu_balanced_trip: cpu-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_throttle_trip>;
-+					cooling-device = <&throttle_heavy 1 1>;
-+				};
-+
-+				map1 {
-+					trip = <&cpu_balanced_trip>;
-+					cooling-device = <&throttle_light 1 1>;
-+				};
-+			};
-+		};
-+
-+		mem-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_MEM>;
-+
-+			trips {
-+				mem-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				mem_throttle_trip: mem-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				mem_balanced_trip: mem-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				/*
-+				 * There are currently no cooling maps,
-+				 * because there are no cooling devices.
-+				 */
-+			};
-+		};
-+
-+		gpu-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
-+
-+			trips {
-+				gpu-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				gpu_throttle_trip: gpu-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				gpu_balanced_trip: gpu-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu_throttle_trip>;
-+					cooling-device = <&throttle_heavy 1 1>;
-+				};
-+
-+				map1 {
-+					trip = <&gpu_balanced_trip>;
-+					cooling-device = <&throttle_light 1 1>;
-+				};
-+			};
-+		};
-+
-+		pllx-thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_PLLX>;
-+
-+			trips {
-+				pllx-shutdown-trip {
-+					temperature = <102000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+
-+				pllx_throttle_trip: pllx-throttle-trip {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "hot";
-+				};
-+
-+				pllx_balanced_trip: pllx-balanced-trip {
-+					temperature = <90000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+
-+			cooling-maps {
-+				/*
-+				 * There are currently no cooling maps,
-+				 * because there are no cooling devices.
-+				 */
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts =
+Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
+(r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
+including psci, pmu, chipid, architecture timer and mct, pinctrl,
+clocks and usb.
+
+The devices using this SoC suffer from an issue caused by the stock
+Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
+needed to hardcode the adequate frequency in the timer node,
+otherwise the kernel panics.
+
+Another issue is that cpu2 and cpu3 fail to come up consistently, which
+leads to a hang later in the boot process. As A510 cores are clustered
+by two, it makes sense for both of these cpus to fail if there is a
+power issue. Disable them until the problem is figured out.
+
+Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
+2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
+1080x2340 Dynamic AMOLED display.
+
+Further platform support will be added over time.
+
+I expect [1], [2] and [3] to be merged in next before this patchset
+because it depends on the aforementioned series for drivers and device
+tree bindings.
+
+Best regards,
+Ivaylo
+
+Changes in v3:
+- account for the usbdrd changes in the exynos2200 soc dtsi
+- drop usbcon driver from the MAINTAINERS patch
+
+Changes in v2:
+- mention the board codename in the first patch's commit message
+- make all reg values hex in device trees
+- reorder usb_con above usb_dwc3
+- drop regulators for usb_con
+- remodel usb_con_phy to take usb_hsphy phandle
+- include MAINTAINERS patch in this patchset
+
+[1] https://lore.kernel.org/all/20250321135854.1431375-1-ivo.ivanov.ivanov1@gmail.com/
+[2] https://lore.kernel.org/all/20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com/
+[3] https://lore.kernel.org/all/20250321144804.1435502-1-ivo.ivanov.ivanov1@gmail.com/
+
+Ivaylo Ivanov (4):
+  dt-bindings: arm: samsung: document g0s board binding
+  arm64: dts: exynos: add initial support for exynos2200 SoC
+  arm64: dts: exynos: add initial support for Samsung Galaxy S22+
+  MAINTAINERS: add entry for Samsung Exynos2200 SoC
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+ MAINTAINERS                                   |   10 +
+ arch/arm64/boot/dts/exynos/Makefile           |    1 +
+ arch/arm64/boot/dts/exynos/exynos2200-g0s.dts |  175 ++
+ .../boot/dts/exynos/exynos2200-pinctrl.dtsi   | 1765 +++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi    |  561 ++++++
+ 6 files changed, 2518 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos2200.dtsi
+
 -- 
 2.43.0
 
