@@ -1,81 +1,83 @@
-Return-Path: <linux-kernel+bounces-571963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E849A6C4BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:58:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF569A6C4B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B27F1B6118D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285183B69CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F422230BF9;
-	Fri, 21 Mar 2025 20:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFB2230BF4;
+	Fri, 21 Mar 2025 20:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fs2DLMpA"
-Received: from mail-yb1-f225.google.com (mail-yb1-f225.google.com [209.85.219.225])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DtTVifs6"
+Received: from mail-yw1-f228.google.com (mail-yw1-f228.google.com [209.85.128.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2F0230BEB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12507230BE7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590677; cv=none; b=PVnMShU9ecDC0qkXNyrXJ8ho+kmNMw53MduSpXkxGFpPLdnB2YBwq/8uv8he51PWBgXmZ1elIC0VJpaKlRGRnBZ7Zlutwvgj5vZ6CQN9SdgsgNJ3plGOA7b7Gjl2Osl+R5hUwzd/JZq9S+0Q/NI3i95yLJXL2l/mhRQJsA4H/N4=
+	t=1742590648; cv=none; b=LnYzvvcpE6kMk1Gp87D1C8r9YTJNYfGYtaBOmgmIyL5IZc85qPMFrA4fx1UmLcvDMsJaO6EUpdHPenW9CbdqjVtaNHMngVnOdvqmn3OEjx6SHGmurCehCazJcjVoi7ioDfK7xLlp0n8hM0LhazdKyx7Ur6z+190QfPW9Jwc/V5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590677; c=relaxed/simple;
-	bh=eEEzuF7d6T7hcnHB9cj+EdOT28oFZoy+E/XEnhCmXvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sqs3JNH3luoYtIKxhyREqggqYdHE+uR8n4C49hY1u9W2uH4hr1huzs22ZgV3vTHyhKBZxYp98sg/4OJ8STKYPy057Z6kzo3YmzivItQWlLqEdh+6Gv2QknvriZZk7Dd4xKw5VrgUkBeU9AYgrCUdgxEX44Av02t04e+odbBLPhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fs2DLMpA; arc=none smtp.client-ip=209.85.219.225
+	s=arc-20240116; t=1742590648; c=relaxed/simple;
+	bh=FqJVruJuk3jZA1jNU+P7yclz+mvpP/olvfNDLk1TT8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j0ipUg45bVIwBebqKFBuTBNScn2vuc9Yhq0jTj47p9Gmcr6tNBoOYF9YiCdSamZw1geWje9jfqcwTRbGjnFDuN/lnZCFmIqmGpBgz7OQ2/ofTXHOZuiTC2XpoHYdqCjIgQCwCwzluM3S7SNayS0Yji2lJ1NYzV/VthePGjmTdlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=DtTVifs6; arc=none smtp.client-ip=209.85.128.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-yb1-f225.google.com with SMTP id 3f1490d57ef6-e63a7403c4cso260345276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:57:55 -0700 (PDT)
+Received: by mail-yw1-f228.google.com with SMTP id 00721157ae682-6ff0a728a71so1416857b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:57:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1742590674; x=1743195474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P+z1St+MaEHLpVnvOhQgv+7CsD+vx1VwfbKyavT0lPs=;
-        b=fs2DLMpAlCBeGkfDLf29zrqSY93QK0uJZGQthQ1yhS1S1ikG0UYC01SLePDQcyXgAm
-         M6DLqm2kGtks4ulCQHNb0YoF7vgHzW7mYr1KD4As1S4f5T81uRlh+/YqCRfPoA/dGa4o
-         Ty4pXD0QhGpFHGouIAiDSKGQLUoa2vp7ack9i1x67LhSlWSSKgIDZrpvLyJ42757Oqn0
-         /Q8EG39r/0lL7elEqvkPGd733uA5Bvg9abTQSwhbZiwy43G0EnxtvVg0m8vmvk5iGC45
-         Jc3ixMIjulZPzoTjtsE7V7hCOLvjL0Db2pTa0kiCKT1Oe2gB4EHsMwmnrvBvZSIgIfnm
-         mVpg==
+        d=purestorage.com; s=google2022; t=1742590645; x=1743195445; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kfs9TktRKcTUn1O+77Hfraf6wVpzVMFzjRcu/Aef4Bk=;
+        b=DtTVifs6R3jjGZjeYT5OIPRiQmch23EDQQxnIzikcAG0XhPhVfHf6NQE/pcM+BV5ko
+         1tlobc+5YU72mWPzW9fGXfpFkq3ge+fZxyLABlGGNQolwC8hThdymVKxuIay2WztqOFk
+         tolrQIhe4Z3cqR/MZEcuAtOx21+Ip3ClLa2aDIQy6WvGMEhpPU+ICWOWpWIa/KnKiOQw
+         4+trO03R2KO03EV20xDHChpDS+lOOliJEx2EYd3gTy77M/BVMYHWquZFDv7m5EVMR4na
+         cPCa01s3WS3SKDL74DzD0Tkktanb4kyMdeBxKIpTpfRJYXkohjZcm7OMYp3hk+gz1EsS
+         myDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742590674; x=1743195474;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P+z1St+MaEHLpVnvOhQgv+7CsD+vx1VwfbKyavT0lPs=;
-        b=khrYv14MXLrqhpjqzxPGmxdBSZpzM+cT1ZOaWmvIooRKaJqOK6a6XkbUYgVOWM7W9u
-         Y467i3HcHrYiDfKyme/ZAZq8teUTfzN2cH53iHp/RTvgpPesrD5vPAMf5VNUkvppyyKh
-         JogDevMTDwvLgGxzt3qw7k56UhQtzhCriCY73t44SKxRtnP0KrTBdUz/7hRYdOOzUheD
-         0ceymvSMIiJM8Lfph/QIBqMYRh8Di9iPaMMhbde+R3pY6qJ3MzfOiqAJr9rApq6sv2IF
-         z6yMDf3Qk+FGHQ0FMiiu1LkluA2/fhATURVH6h3Tz24q25Y01bXIaOzndgOBO+gb+u/k
-         y/VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkt7o4GcjrHo9nG3QxvTSVQBbBy00jOsxXPooR93zy9SGJJY0klVTlRgsRveew4QFUCwMjbP2wFN7kLqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb55xaVmBRlVZpv7IwQopZ4nRZmGSrCe6B33sxJb8Wk+fMD/w3
-	uWuTEnRsmdVzDecMh7IS7rlsytRz/tJrEP6Z1d8L45uTEubb3s6C4HiNk4eszxV7uwHRR95vkW0
-	3QgWe9CGyyOCXydG2fR7YysT65k5DokDJ
-X-Gm-Gg: ASbGncuSRa9M1137h9A62pu6V1GuvM8RGTHZlIjRmPLgI4fZjpd2qQb/Qjp/z8SgU5d
-	oBnvm6KSOXEcKSqbpPVR2DdsUtHJxFFuN26e3UMUxsAHm9UEjso7372m8q3bY/C6pelzBit3YWW
-	Lwnj4Mx/0KG7uWIvtJ4AYAMY9RHQP7VKGXrBNflJ31Jd5fdo3uTveuEfYhlqcLgasx0bKX1hMdt
-	BQvb/ExG+/txC4yOH/GpV+5+SeoVdtorQLF0OiMh6wIkLcMrjiNdPvtJ9Hmi1i5pcStbcHAGmM/
-	CCG56WnjSK0xZ+yuQOlz/t54BKcPjQNS4TZOL3Z4XXNOb/hH
-X-Google-Smtp-Source: AGHT+IHMsqT+tAJGNYKBkEfX1KXe23paMLiNTT5TUzRzsaj2BpFKB8j3BMLeHqAIARAiOCl6or/l0Rhj+2TL
-X-Received: by 2002:a05:6902:480d:b0:e60:9821:3c with SMTP id 3f1490d57ef6-e66a4feab02mr2622892276.9.1742590674081;
-        Fri, 21 Mar 2025 13:57:54 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-e66a44272b0sm53193276.21.2025.03.21.13.57.53
+        d=1e100.net; s=20230601; t=1742590645; x=1743195445;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kfs9TktRKcTUn1O+77Hfraf6wVpzVMFzjRcu/Aef4Bk=;
+        b=XbyUZDmyo+0GjOYNo6CAg0It1/DbpaAoYubohSiGtON3lXM95Q8aO9bXZSA+cV5rn3
+         TEoLa9t5s34jowgPMD8dNK6ACQqlO9awMLaeKbHQ5PlGvZrxyVFuBR+q8D3RWIcM0vqQ
+         5dAbfayaIP5DjvGyRMKP/FOF0hQ+FKVAcdzD0ysUiY/u8tAEhixZNZe7OY/3dLj+Mzde
+         7nsOHbXTwQjrOVdcV2iMtL51k9+83QIKqj4ORQyRO50VtAlbFdpVb1jziL8ECWvVrj56
+         H9fkvrtRj83xGfcXcZP5SDbURqF7Cis+00W2qyF19XO5Zr5T+u0rZOeIximILHz2CWS0
+         oOXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPQV5KHTUvY6MLU3jxQ69LXtI8vGJrfWmNGtyKesnb542+tOCOEOZ/1WNo9dnP9BBc6PcMLgu3JP8KDaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwORQ193gdjHXtwKPXDwMyd6awRvs+CAnEI8QrIXEdpBRh3lF/k
+	E2h6xRsRC7EtG63vbMvQtNC13g6TOfswJUdCqYse6eTq85ca0E/mc4BVNHkXL+8fFyDSYITPbN2
+	FJovqgYkxv1YbbtaHdXmhHnGWmOKun7Cj
+X-Gm-Gg: ASbGncvLtGPJ8C2YTCm/2aniV6awoNfOn8ID2YnhIKApXuFMlziUx8JIN8yfcvQHOHO
+	R1qW8GclkJ3VCgyTYz4BSVwDQ0X5eDedqEfXJuEhGvApjnVYtraOQwsF9x/XCJnDgDFHBVHbAyn
+	Ry9Z8ClOYdWMPpbAKkIf/5py/iBUBXqtJkSc4ykn2nde+hEbOC+P5WM01sIAXaJu94e0sRvkHev
+	CMFuim3LeSO0rY+3A2wFKgIr6PgvlApaJUaO/n+pw/RlwlVmoUMEDh6GNrrqS2R99V6gnDaOzpV
+	vRztsOvapi2Ac0o+Vc6G1Y9KeuPGBxJCR8o/dpy5OJpfguE0
+X-Google-Smtp-Source: AGHT+IE3BtRl/WSh6iaNlwOEOXdQObIPCzquvtJGf00g7uu5DR/ectGIv8i7vMguwPF28H34WDvjPk15RDsW
+X-Received: by 2002:a05:690c:92:b0:6fe:c2e6:bc66 with SMTP id 00721157ae682-700c7681fbfmr8416197b3.2.1742590644709;
+        Fri, 21 Mar 2025 13:57:24 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-700ba6da1bfsm1624207b3.13.2025.03.21.13.57.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 13:57:54 -0700 (PDT)
+        Fri, 21 Mar 2025 13:57:24 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
 Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 2562C3400FE;
-	Fri, 21 Mar 2025 14:57:53 -0600 (MDT)
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id B9A6C3400FE;
+	Fri, 21 Mar 2025 14:57:23 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 1831CE41952; Fri, 21 Mar 2025 14:57:23 -0600 (MDT)
+	id B541AE4195A; Fri, 21 Mar 2025 14:57:23 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Keith Busch <kbusch@kernel.org>,
 	Jens Axboe <axboe@kernel.dk>,
@@ -84,10 +86,12 @@ To: Keith Busch <kbusch@kernel.org>,
 Cc: linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH v2 0/3] nvme_map_user_request() cleanup
-Date: Fri, 21 Mar 2025 14:57:19 -0600
-Message-ID: <20250321205722.3947901-1-csander@purestorage.com>
+Subject: [PATCH v2 1/3] nvme/ioctl: don't warn on vectorized uring_cmd with fixed buffer
+Date: Fri, 21 Mar 2025 14:57:20 -0600
+Message-ID: <20250321205722.3947901-2-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250321205722.3947901-1-csander@purestorage.com>
+References: <20250321205722.3947901-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,23 +100,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The first commit removes a WARN_ON_ONCE() checking userspace values.
-The last 2 move code out of nvme_map_user_request() that belongs better
-in its callers.
+The vectorized io_uring NVMe passthru opcodes don't yet support fixed
+buffers. But since userspace can trigger this condition based on the
+io_uring SQE parameters, it shouldn't cause a kernel warning.
 
-There will likely be conflicts with the parameter cleanup series Keith
-posted last month:
-https://lore.kernel.org/all/20250224182128.2042061-1-kbusch@meta.com/T/#u
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Fixes: 23fd22e55b76 ("nvme: wire up fixed buffer support for nvme passthrough")
+---
+ drivers/nvme/host/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Caleb Sander Mateos (3):
-  nvme/ioctl: don't warn on vectorized uring_cmd with fixed buffer
-  nvme/ioctl: don't call blk_mq_free_request() in
-    nvme_map_user_request()
-  nvme/ioctl: move fixed buffer lookup to nvme_uring_cmd_io()
-
- drivers/nvme/host/ioctl.c | 63 +++++++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 29 deletions(-)
-
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index 41907b4e1869..6c27d72e8cee 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -139,11 +139,11 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+ 
+ 	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
+ 		struct iov_iter iter;
+ 
+ 		/* fixedbufs is only for non-vectored io */
+-		if (WARN_ON_ONCE(flags & NVME_IOCTL_VEC)) {
++		if (flags & NVME_IOCTL_VEC) {
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+ 		ret = io_uring_cmd_import_fixed(ubuffer, bufflen,
+ 				rq_data_dir(req), &iter, ioucmd);
 -- 
 2.45.2
 
