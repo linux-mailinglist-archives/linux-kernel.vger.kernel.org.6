@@ -1,143 +1,175 @@
-Return-Path: <linux-kernel+bounces-570910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB199A6B625
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:41:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57640A6B626
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698B2188C6C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1101119C41FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3BA1EFFB6;
-	Fri, 21 Mar 2025 08:40:03 +0000 (UTC)
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159871EFFA3;
+	Fri, 21 Mar 2025 08:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YcCuxvUe"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A500B1E5739;
-	Fri, 21 Mar 2025 08:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E7B1E5739
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546403; cv=none; b=nmNvGY+QS9hzRn1Txjrzz10LnfWVLKMivxMe1ssWNrBdpanuYLY/7v2L9ljHe/7j3f0M0VOGFIGpjIeJ7mxYYz9USNcqCY1ZZdMAf/D+P+hZp3aI4S5W+FlvlaB3mY6MsMpuIXAW435lzOUzo13Q+jzfyMGaCQ50R60SAL1mdcY=
+	t=1742546478; cv=none; b=ka7K+TOjLRBYVlmbu+Bbk5mEF5D4dbu7Hp8ROD7gYNBS7yvHO6boQkenqdBRHeh+v/Waeg6zDFTNAoFrJaoa6M3/YmcVdQnhI/nGWByoZNb1ZcKpPpctuMG1tU15JMyUevEZ20sODJNNsroMetk6fzA7PsoFQK9kmLwocVIh42Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546403; c=relaxed/simple;
-	bh=EsV15d4XaElLZh9cc7vhzqYzwZExX7m6h/piCJGD2Ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkdEbJVzxIj/f6+47TBmgcu5JwE5OTTTVE58GQ0iab/A8y3Ber2QFwf7CWkdH0RYctzVIytZxQnywOqM7J5JfiHWtrXn9/UsxhoeSUfjtffqjUOBV9TkHf7fdOyYAsDBL34LfarAUNZViO4hhNKHYk0k2r4WH8JdZimCmMywbig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-	by gardel.0pointer.net (Postfix) with ESMTP id 17EDFE80188;
-	Fri, 21 Mar 2025 09:39:57 +0100 (CET)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id 50FF3160206; Fri, 21 Mar 2025 09:39:55 +0100 (CET)
-Date: Fri, 21 Mar 2025 09:39:55 +0100
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: lee joey <joeyli.kernel@gmail.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joeyli <jlee@suse.com>
-Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure
- boot be disabled"
-Message-ID: <Z90l26ADmS87tu0k@gardel-login>
-References: <Z9wDxeRQPhTi1EIS@gardel-login>
- <CAGLnvc_eyLEasc4tKYnYp2c1M+YYRxaoXt2BmJ3kgAec6YTmzg@mail.gmail.com>
+	s=arc-20240116; t=1742546478; c=relaxed/simple;
+	bh=jFD41Ga1a3ERHEQFFB9Ia0CbBpdK6p7SMSxtDffC8Jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o7/Fim65b7yJCuPLPCf4bfZEyYrwNZ9DmeORFPVTTx1mRB+wybQqeIGWNYjt8uX8L6D05kEs0ZOoWz/z5VifTUioUpx57Y0KI8GgufTcAmT0IURBIBIeHJvxz1vaI6bHf08ijPIE896j2HtYQ0J0WStR64BCo8cCB7kv0VMLp54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YcCuxvUe; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742546474;
+	bh=jFD41Ga1a3ERHEQFFB9Ia0CbBpdK6p7SMSxtDffC8Jg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YcCuxvUeYG37e/WVjVxRefcNzuE7LGgDwuFD3wUfinmTYt9J7wwIWe2G7wZVSg9uk
+	 hOnhtP1A5KE7UsrMd3sbvU0h4/sz1G8hTzkKe5TMhCPOsMO0RusSEM6ydCXSheTrI4
+	 HUVFhuJQkYv2ieQrK4+W0jioGtLvao2Pp5yHxqaCbkZqFIa2N7nkJMnwcJDothjTsa
+	 chpQNguAREeWsQsog5vntf15iK94niPYrv2Bmc3gyPaDn4aYTs6puRsUsIHJPSOapb
+	 QPPwKPrM5c+jaZ9qfD2YxqxwdNNdkUMaw7uNRXY59Xu81AxzfGHKQ0kXTd6cSyCZTr
+	 ybXRzop2xgu+g==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 34CF117E0147;
+	Fri, 21 Mar 2025 09:41:14 +0100 (CET)
+Date: Fri, 21 Mar 2025 09:41:09 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/9] drm/panthor: Support GPU_CONTROL cache flush
+ based on feature bit
+Message-ID: <20250321094109.116a6915@collabora.com>
+In-Reply-To: <20250320111741.1937892-8-karunika.choo@arm.com>
+References: <20250320111741.1937892-1-karunika.choo@arm.com>
+	<20250320111741.1937892-8-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGLnvc_eyLEasc4tKYnYp2c1M+YYRxaoXt2BmJ3kgAec6YTmzg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fr, 21.03.25 15:13, lee joey (joeyli.kernel@gmail.com) wrote:
+On Thu, 20 Mar 2025 11:17:39 +0000
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-> Hi Lennart,
->
-> Lennart Poettering <mzxreary@0pointer.de> 於 2025年3月20日 週四 下午8:02寫道：
-> >
-> > This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
-> >
-> > This original commit this reverts creates a strange situation: it
-> > ensures more restrictive behaviour if SecureBoot is off then when it
-> > is on, which is the opposite of what one would expect.
-> >
-> > Typically, one would expect that if SB is off the validation of
-> > resources during the pre-kernel and kernel initialization is less
-> > restrictive, not more restrictive. But this check turned the world on
-> > its head.
-> >
->
-> SB off means that the chain of trust is broken. Which means that all
-> mechanisms rely on SB are non-secure. Meanwhile, if the integrity of kernel
-> can be guaranteed by other mechanism (e.g. TPM), then mok should not
-> be loaded when SB off.
+> As the FLUSH_MEM and FLUSH_PT commands are deprecated in GPUs from
+> Mali-G720 onwards, this patch adds support for performing cache
+> maintenance via the FLUSH_CACHES command in GPU_CONTROL, in place of
+> FLUSH_MEM and FLUSH_PT based on PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH
+> feature bit.
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_hw.h  |  6 +++++
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 35 +++++++++++++++++++++++++++
+>  2 files changed, 41 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
+> index dfe0f86c5d76..4d67fdfe86f9 100644
+> --- a/drivers/gpu/drm/panthor/panthor_hw.h
+> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
+> @@ -16,6 +16,12 @@ struct panthor_device;
+>   * New feature flags will be added with support for newer GPU architectures.
+>   */
+>  enum panthor_hw_feature {
+> +	/**
+> +	 * @PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH: Perform cache maintenance
+> +	 * via GPU_CONTROL.
+> +	 */
+> +	PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH,
+> +
+>  	/** @PANTHOR_HW_FEATURES_END: Must be last. */
+>  	PANTHOR_HW_FEATURES_END
+>  };
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index a0a79f19bdea..4ac8bf36177e 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -29,7 +29,9 @@
+>  
+>  #include "panthor_device.h"
+>  #include "panthor_gem.h"
+> +#include "panthor_gpu.h"
+>  #include "panthor_heap.h"
+> +#include "panthor_hw.h"
+>  #include "panthor_mmu.h"
+>  #include "panthor_regs.h"
+>  #include "panthor_sched.h"
+> @@ -568,6 +570,35 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
+>  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
+>  }
+>  
+> +static int mmu_hw_do_flush_on_gpu_ctrl(struct panthor_device *ptdev, int as_nr,
+> +				       u32 op)
+> +{
+> +	const u32 l2_flush_op = CACHE_CLEAN | CACHE_INV;
+> +	u32 lsc_flush_op = 0;
+> +	int ret;
+> +
+> +	if (op == AS_COMMAND_FLUSH_MEM)
+> +		lsc_flush_op = CACHE_CLEAN | CACHE_INV;
+> +
+> +	ret = wait_ready(ptdev, as_nr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = panthor_gpu_flush_caches(ptdev, l2_flush_op, lsc_flush_op, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Explicitly unlock the region as the AS is not unlocked automatically
+> +	 * at the end of the GPU_CONTROL cache flush command, unlike
+> +	 * AS_COMMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT.
+> +	 */
+> +	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
+> +
+> +	/* Wait for the unlock command to complete */
+> +	return wait_ready(ptdev, as_nr);
+> +}
+> +
+>  static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+>  				      u64 iova, u64 size, u32 op)
+>  {
+> @@ -585,6 +616,10 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+>  	if (op != AS_COMMAND_UNLOCK)
+>  		lock_region(ptdev, as_nr, iova, size);
+>  
+> +	if (panthor_hw_supports(ptdev,PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH))
+> +		if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
+> +			return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
 
-Why not? as you say, chain of trust is broken: the kernel itself is
-not immediately integrity protected and neither is the firmware. Hence
-filtering out keys in this case is really pointless.
+Can't we use this sequence on v10 as well? The GPU flush_cache command
+exists there, so I'd rather switch all CSF HW to this sequence than
+diverge on v11+.
 
-> > I'd like to ask for this commit to be reverted. If SB is on all bets are
-> > off regarding integrity of boot loaders and stuff, hence it makes no
-> > sense to be restrictive here: you cannot regain integrity once you gave
-> > it up once, hence if all bets are off anyway we might as well import any
-> > Mok keys passed to us into the kernel keyring.
-> >
-> > Or to say this differently: if an attacker got control of the pre-kernel
-> > boot phase they might as well patch around in the firmware apis to make
-> > the kernel believe it is in SB mode even if it is not. Hence the check
-> > carries no value. It doesn't protect anything in any effective way.
->
-> If this is the case, the check of MokListTrustedRT can also be
-> removed.
+> +
+>  	/* Run the MMU operation */
+>  	write_cmd(ptdev, as_nr, op);
+>  
 
-I think it makes sense to honour explicit knobs, such as
-MokListTrustedRT: It has a very clear meaning: it indicates whether to
-import the keys or not.
-
-This is quite different from SB state, which is not explicit about
-importing keys at all, it just indicates whether firmware level
-validation of signatures is done or not.
-
-> All mok can directly be added to machine keyring then link with
-> secondary keyring.
-> Because attacker can create MokListTrusted/MokListTrusted variables to cheat
-> bootloader or kernel. The check of MokListTrustedRT is useless.
-
-Yeah, it does not carry immediate security value if SB is off. But it
-does allow finer-grained control by pre-boot code of how the kernel
-later sets up things. Hence I'd keep it.
-
-> > You might wonder what signed dm-verity gives me if I have SB off. If
-> > we authenticate the boot phase up to Linux userspace via TPM-based PCR
-> > policies (i.e. measured boot) we can be sure of the boot integrity
-> > without having to rely on SB. But then we'd still like to use
-> > dm-verity based code signing for userspace.
->
-> hm... I am a bit confused. So, this patch can help the above
-> scenario?
-
-The revert I posted will allow us to populate the kernel keyring used
-for dm-verity signature checks from pre-boot even if SB is off. Via
-local or remote attestation during boot we can later validate this
-chosen boot path, and hence can a-posteriori validate that everything
-is OK even if the a-priori SB check is not done. But once we have
-validated that we then have the key in the kernel keyring for later
-dm-verity validations, which is all we wanted.
-
-Lennart
-
---
-Lennart Poettering, Berlin
 
