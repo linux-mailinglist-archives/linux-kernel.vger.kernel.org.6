@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-571636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322EAA6BFFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:33:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE6FA6BFF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F153A5E99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D587A464D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368E2146A68;
-	Fri, 21 Mar 2025 16:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4BB22B8CE;
+	Fri, 21 Mar 2025 16:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="VnAb7wjr"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWoVjPcU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007081DDA09;
-	Fri, 21 Mar 2025 16:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D09146A68;
+	Fri, 21 Mar 2025 16:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742574743; cv=none; b=DSKaDEdNz/GFnSw2rfReHoPg56NboCjPfNzpiWk2oE6STh01kOeMHbebf8mDWw5yfjlmAPL+9dSuktw/mddGL+XUCWkBdh3EHyVHVsxCZxgwQkvZ1UJlzvH+iYtPQz+95pi0xymSqtJj10qnpXo2nrak+Rjzn5Gz54keMTlosfk=
+	t=1742574762; cv=none; b=U4J3AJLQEOE7WVu13UOPcncBvx9hs0o8SKEdc/ctZZDWdbYOz6snkt+0WguADdMVN656NMzM8byq/dpFVvIxm18Q8jMgLB9+Dmh6/mhZdqhaXD84jzhcE6JNLvGjfwU6F65VrMnDmSicHiJoON7Q42UxD5kaSW7uYPYkcM7lxjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742574743; c=relaxed/simple;
-	bh=+5t7JiGZ8ox7V6WMRNQOwYFA0BHvaRGlQ8zdBipXe24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XfO79qZDQY94+huQnBFX/Q5nZLN3SZn5vyNVpIhD2OHwAl6TutTN8ExImXFqrswaLCCRCtBf9mLVSWUFYLZDc91zPKdz72ZYai/JNYZ99F18p+snUPwh6ODyJx1l1vcsLaH0a7gkzVlr6yL8dv6aniJV78bgeWgH8VYU0HiA8eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=VnAb7wjr; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZK7JZ5ZXbzm20D0;
-	Fri, 21 Mar 2025 16:32:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742574731; x=1745166732; bh=UlxzR0XCJ6n7/EMEDMj0k4zb
-	JvMo8W17G4J+lkLDXOE=; b=VnAb7wjraE+UDMrObmRranb8RoRXA4fsK1ty4emt
-	NEeaHise91Jx56D4Aea7ZJ9liyuEOv+7+hQOrqYqpJDaY+SUM+X2CQkRwUllNyvR
-	t5e2jS+zalQ30COcnicw2cqrOH/e6WHY9epTqcAh6ebbL840ifjfR0WIeSVtQ9Re
-	N2Ul8pq2N3GN7clgxX+8tNWG5cOOeP+ZgaQgPadRpxNtpF92Qh/hrEwXwinwA46z
-	BpuBoOfj/2MRh6Y6MM9qFG07UIpJnKyjNszy7TCE08dMdFCkVovGUohkWthTmj+J
-	ZSw6+apTPIazlG8IMnAL7bDtRknL+uKLvTdk1cfLheAuZw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id S1yP9yQA0YLC; Fri, 21 Mar 2025 16:32:11 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZK7JD42sNzlyHFL;
-	Fri, 21 Mar 2025 16:31:55 +0000 (UTC)
-Message-ID: <6cc97521-aba1-439b-9c06-a5a06adea498@acm.org>
-Date: Fri, 21 Mar 2025 09:31:54 -0700
+	s=arc-20240116; t=1742574762; c=relaxed/simple;
+	bh=BqNAlk7rXAlcVOFBgEHRS+hiVmaJg6AYHU2f42U4Q6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=m/t8ABOe72Gp0xvv9qiezi0rx/2AbpxFPW2Jjk30O4OIT8HRObL/rii85a+W9nZeioeJYitY2V068YOaMMnrfVk6fSSrxHgDZ+rrV9RRU2IfbdoUuixjr7OAnoxHp97wm9rT6tYvy1lneKYcZ3evbMGnKwLVI4ndKUbfV0w12B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWoVjPcU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8A2C4CEE3;
+	Fri, 21 Mar 2025 16:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742574762;
+	bh=BqNAlk7rXAlcVOFBgEHRS+hiVmaJg6AYHU2f42U4Q6g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=GWoVjPcUuHiSvan9BqoVytjybeH1rUYg6Q+hO/Vd8LJ81fsr9P2d4YUocxgn0yxOZ
+	 vczmYLN/eMzwLzMenjR6rL9ISgVan1byWsapnm7/+8jovi5/0TVoqOBzphXfdRZP/9
+	 w+hwUmW8i4EEd0yY3RiyZkFu9lz2xJVZwyv2ES9vVQuf6Lm2/kBK81xGm5Pwrkm1uY
+	 4f+tNNn3LiTNdgSJWwIb+XaXhGXbSVt3Vldxsng0Q2xexz7cGxbu1Ykk7VDMy6U4Pz
+	 66ndKB4t+2pqvev2lAQwD9ltJHIZmKS5WyIyZdgCMEdKE+ve/LRVNWSdJhzdeDZcFT
+	 kQeu5OA4CGdZg==
+Date: Fri, 21 Mar 2025 11:32:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Toan Le <toan@os.amperecomputing.com>,
+	Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 07/57] irqdomain: pci: Switch to of_fwnode_handle()
+Message-ID: <20250321163240.GA1130095@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] scsi: ufs: core: add device level exception
- support
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
- quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
- manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
- adrian.hunter@intel.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bean Huo <beanhuo@micron.com>, Keoseong Park <keosung.park@samsung.com>,
- Ziqi Chen <quic_ziqichen@quicinc.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Gwendal Grignou <gwendal@chromium.org>, Eric Biggers <ebiggers@google.com>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/Mediatek SoC support:Keyword:mediatek"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support:Keyword:mediatek"
- <linux-mediatek@lists.infradead.org>
-References: <4370b3a3b5a5675bb3e75aaa48a273674c159339.1742526978.git.quic_nguyenb@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <4370b3a3b5a5675bb3e75aaa48a273674c159339.1742526978.git.quic_nguyenb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319092951.37667-8-jirislaby@kernel.org>
 
-On 3/20/25 8:18 PM, Bao D. Nguyen wrote:
-> The ufs device JEDEC specification version 4.1 adds support for the
-> device level exception events. To support this new device level
-> exception feature, expose two new sysfs nodes below to provide
-> the user space access to the device level exception information.
-> /sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_count
-> /sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
-> 
-> The device_lvl_exception_count sysfs node reports the number of
-> device level exceptions that have occurred since the last time
-> this variable is reset. Writing a value of 0 will reset it.
-> The device_lvl_exception_id reports the exception ID which is the
-> qDeviceLevelExceptionID attribute of the device JEDEC specifications
-> version 4.1 and later. The user space application can query these
-> sysfs nodes to get more information about the device level exception.
+On Wed, Mar 19, 2025 at 10:29:00AM +0100, Jiri Slaby (SUSE) wrote:
+> of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
+> defined of_fwnode_handle(). The former is in the process of being
+> removed, so use the latter instead.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+I'm fine with these and happy to apply via the PCI tree, but it sounds
+like you're planning a v3 with a few updates, so I'll hold off for
+now:
+
+https://lore.kernel.org/r/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org
 
