@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-571364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B3EA6BC3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:59:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073EEA6BC4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:00:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A778417202B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:58:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9027A2A53
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C6E80C02;
-	Fri, 21 Mar 2025 13:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263DB7D07D;
+	Fri, 21 Mar 2025 13:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jIXoe2XE"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4E78F30;
-	Fri, 21 Mar 2025 13:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aI8KtvSF"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893742A94;
+	Fri, 21 Mar 2025 13:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565501; cv=none; b=XChysODE+dqG+zk96OTKqRS838d3KwHRU+tARzwYvfuDXOzWy+uX3aQ5fgrGJEOWmwT/B4PFKsAIfNXHQknSG1LvddPZJ4k0dHS9kIOLiZHh97QP1TphBDA9wVokztUfi8L9ZBU13Tk1jCdCK69rlbA7GU0bUQketcWMCScnS5k=
+	t=1742565488; cv=none; b=Ra6DlZ/nU/RW5B5IPXt4M3ExZQpL9WNvZkrm3Wj50+WC+Q3+a3BkJT28Xqq8xe8i+fmlqIlhrk2NR/1dzIrRvir3uortquiNf0x6vcj49xpFC77BAiDy87//Z7JzswvCQv1u4Tg6vVsKmYIVjg923MtN/Tlfl3yjSTawYxjKYSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565501; c=relaxed/simple;
-	bh=u9+pCxJ+sZ+M8TFCYPDcfeJjTdyKSPr8xUSrtA8xXvs=;
+	s=arc-20240116; t=1742565488; c=relaxed/simple;
+	bh=DnU+Ee7KcE58TQf3t2cxWANpuCHzBrr69H7LZKjKk7E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OjFY7Bx37NqPXtqz2DHvMSWCUPnDYeo0g5jXia2a1USWS3AAErutpYV9HXsoKw+g+Z8jA7kJC8tl+0MLAi47xfNJ+9UiiEYYknZOrNvKQfhsnQfuJe+jJGAJw6kwDyIqquy9UqDpC7tMfPacHVZuvrqJrICD/ZJg05Nalprk4OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jIXoe2XE; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=0ySma77ZxxQ6aT+4clvHKO3TmdAoszwwa+Xa3O6R6WA=;
-	b=jIXoe2XEvdmHieMmZLKFmfn9bRsZ40xB9Xph0EmsS6hTbjmVUHa1zu4sA2psDY
-	zlEHxYbeSQyy+5K3sYXIDtNnZEG4ssuXHgDCk322wrJc3vs0vSHnOxtjtHA9UjXa
-	sX4ahOPrl6S8SG6jf/evgMeaI6vjnv5diWRIiL8TIBlvE=
-Received: from [192.168.60.52] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDnL39RcN1nGTTLAw--.57738S2;
-	Fri, 21 Mar 2025 21:57:38 +0800 (CST)
-Message-ID: <370e4055-c44b-460c-9ac3-ccac37527c8f@163.com>
-Date: Fri, 21 Mar 2025 21:57:37 +0800
+	 In-Reply-To:Content-Type; b=ieLg2Ox8xGyDMDdxvr587a2ImbbTunKRnhIYaNABMzkaF0dpVhoch/bwl6com6sPyMYqeioJhyOzrNXgD7+t8HZmSiCd9Xt7P11jqmiXSFng7FHvAopN88ppiEXCucjRzLMDAGmou0Z7irizqqg0shUvYlspLTO/hIc4EQoERs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aI8KtvSF; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742565481; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=srvsovFblQPzignnqMr8Ftv/qEnbQ9WLUcuRCMO/obE=;
+	b=aI8KtvSFDD8pS4VQo6R6dAilMbyc2Gcvh6/vZ/vdpp3jBHxN+JMOmrJV9CMF6vEaxi2p5C2YJf1RRNPzwNx4kRzP1d8JTXsTs2DkI7fD8ug4ayIJPdAfbeSoqp0veEBUJPZeTTTMXMqzd8S6Dt1sCs2LSpwfGuTY8x/g0EQT/Cw=
+Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WSIqpiI_1742565479 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 21 Mar 2025 21:58:00 +0800
+Message-ID: <934af3e3-3153-40c1-9a25-7a8d08fdb007@linux.alibaba.com>
+Date: Fri, 21 Mar 2025 21:57:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,80 +47,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v4 1/4] PCI: Introduce generic capability search functions
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
- bhelgaas@google.com, jingoohan1@gmail.com, thomas.richard@bootlin.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250321101710.371480-1-18255117159@163.com>
- <20250321101710.371480-2-18255117159@163.com>
- <20250321130010.s6svrtqlpdkgxmir@thinkpad>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250321130010.s6svrtqlpdkgxmir@thinkpad>
+Subject: Re: [PATCH] initrd: support erofs as initrd
+To: Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ "hch@lst.de" <hch@lst.de>
+Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "rafael@kernel.org" <rafael@kernel.org>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
+ <20250321050114.GC1831@lst.de>
+ <582bc002-f0c8-4dbb-8fa5-4c10a479b518@linux.alibaba.com>
+ <933797c385f2e222ade076b3e8fc5810fa47f5bd.camel@cyberus-technology.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <933797c385f2e222ade076b3e8fc5810fa47f5bd.camel@cyberus-technology.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDnL39RcN1nGTTLAw--.57738S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw18uF17ArWUJF43AF4UCFg_yoW8Gw4xpF
-	4rXFnayaykXr4SkF1qvF4UAFy3Gan7JrWxJF98G3sY9FnruF1Ig3yxt348uF9rJF17XF10
-	vF4jqrykuF1DZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UK1v3UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxAXo2fdalpqUwABsN
+Content-Transfer-Encoding: 8bit
 
+Hi Julian,
 
-
-On 2025/3/21 21:00, Manivannan Sadhasivam wrote:
-> On Fri, Mar 21, 2025 at 06:17:07PM +0800, Hans Zhang wrote:
->> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
->> duplicate logic for scanning PCI capability lists. This creates
->> maintenance burdens and risks inconsistencies.
+On 2025/3/21 21:17, Julian Stecklina wrote:
+> On Fri, 2025-03-21 at 13:27 +0800, Gao Xiang wrote:
+>> Hi Christoph,
 >>
->> To resolve this:
+>> On 2025/3/21 13:01, Christoph Hellwig wrote:
+>>> We've been trying to kill off initrd in favor of initramfs for about
+>>> two decades.  I don't think adding new file system support to it is
+>>> helpful.
+>>>
 >>
->> 1. Add pci_generic_find_capability() and pci_generic_find_ext_capability()
->> in drivers/pci/pci.c, accepting controller-specific read functions
->> and device data as parameters.
->>
+>> Disclaimer: I don't know the background of this effort so
+>> more background might be helpful.
 > 
-> I'd reword pci_generic* as pci_host_bridge* to reflect the fact that these APIs
-> are meant for host bridges.
+> So erofs came up in an effort to improve the experience for users of NixOS on
+> smaller systems. We use erofs a lot and some people in the community just
+> consider it a "better" cpio at this point. A great property is that the contents
+> stays compressed in memory and there is no need to unpack anything at boot.
+> Others like that the rootfs is read-only by default. In short: erofs is a great
+> fit.
 > 
-
-Hi Mani,
-
-Thanks your for reply. Will change.
-
->> 2. Refactor dwc_pcie_find_capability() and similar functions to utilize
->> these new generic interfaces.
->>
+> Of course there are some solutions to using erofs images at boot now:
+> https://github.com/containers/initoverlayfs
 > 
-> This is not part of this patch. So should be dropped.
-
-Will change.
-
->> 3. Update out-of-tree drivers to leverage the common implementation,
->> eliminating code duplication.
->>
+> But this adds yet another step in the already complex boot process and feels
+> like a hack. It would be nice to just use erofs images as initrd. The other
+> building block to this is automatically sizing /dev/ram0:
 > 
-> This also.
-
-Will change.
-
->> This approach:
->> - Centralizes critical PCI capability scanning logic
->> - Allows flexible adaptation to varied hardware access methods
->> - Reduces future maintenance overhead
->> - Aligns with kernel code reuse best practices
->>
->> Tested with DWC PCIe controller and CDNS PCIe drivers.
->>
+> https://lkml.org/lkml/2025/3/20/1296
 > 
-> This tested info is also not required since the DWC and CDNS changes are not
-> part of this patch.
+> I didn't pack both patches into one series, because I thought enabling erofs
+> itself would be less controversial and is already useful on its own. The
+> autosizing of /dev/ram is probably more involved than my RFC patch. I'm hoping
+> for some input on how to do it right. :)
 
-Will change.
+Ok, my own thought is that cpio format is somewhat inflexible.  It
+seems that the main original reason for introducing initramfs and
+cpio was to avoid double caching, but it can be resolved with FSDAX
+now and initdax totally avoids unnecessary cpio parsing and unpacking.
+cpio format is much like tar which lacks of basic features like
+random access and xattrs which are useful for some use cases as
+I mentioned before.
 
-Best regards,
-Hans
+The initrd image can even compressed as a whole and decompress in
+the current initramfs way.  If you really need on-demand
+decompression, you could leave some file compresssed since EROFS
+supports per-inode compression, but those files are still double
+caching since FSDAX mode should be uncompressed to support mmap.
+You could leave rare-used files compressed.
 
+Thanks,
+Gao Xiang
 
