@@ -1,229 +1,192 @@
-Return-Path: <linux-kernel+bounces-571075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACB6A6B8C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:30:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3509EA6B8CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E69716E23E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E8C19C5153
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0071F2361;
-	Fri, 21 Mar 2025 10:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lQsj3Ffq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2FF1FC7D9;
+	Fri, 21 Mar 2025 10:32:11 +0000 (UTC)
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2134.outbound.protection.outlook.com [40.107.117.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6EC1E3DDB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742553032; cv=none; b=FPQfTrHFCfAYlHUnSEl8lfKBp/81b2pM2GKvzOKsvhTlPysH6tPg775DJeHGbDYvf/hejYDTiPT+1J4oSzEBI4lhpCalJBR4FiB5V9eUGwnCmXkhzHJVyUVjiwSAtbRootRcIAyOOPBMExyccaqIXaFkyC2DJh3nOb/fRH55IGg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742553032; c=relaxed/simple;
-	bh=3220tbLZvMQJgycQ/BhCyBX+3nwC9mWgdofjrs97jlI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=JTmhcAGJtGPu77uV7df0sUzA2/E++ztg3UPXyXRVAtHxp7wMruV8NRkbe0bm7R0e77IRc3ZOeANXetJ0V2adEGhnbNWrA8L9RK5PTPimoPKHAf2nMdWggXgzUIjn+6tCiurAI8XYUgUoSIwGDOMeUMR3HSIfZVkA6EM1vRuwuS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lQsj3Ffq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L1KIHE030525;
-	Fri, 21 Mar 2025 10:30:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=qPrhNt
-	G5kUgPX7EY3IhX4pYwpWOMQOkxgK/1inO6WEE=; b=lQsj3FfqC+tKNMJRn5YDkJ
-	nu3Yw2RAxFNGKgDUQE5DDUyFpEkO8bq5bcZIN0glKEYDhSKl3w7lQaUKBCP94oQM
-	T1Uxs06B+ShEDArv2i+Wc0WZ5H+x6MuQ43vCytSiCZABEwJPArCxIKh2oQ02Ycbo
-	BIUgsi7LU+7LbSOSksohZ5OlgJMjm1BfHyrRzC+LdNKynTaTShBdmjLcMQyyZqgB
-	exy5NOwcBAO9GjBXLhny3QV4L9NHExow7fl5ZgQBeicR2kbURrRAOwaN7s6m4G1g
-	JSmm+BxZruQyYf6jWo3w7cQcvZfgH//xll5RFmlbW94o4U4R6Z6BZ8nm/FEzoZoA
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45gk21wvja-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 10:30:25 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52L8uP1O023208;
-	Fri, 21 Mar 2025 10:30:24 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3m4mqf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 10:30:24 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52LAUNLl32440620
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Mar 2025 10:30:23 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 315925805C;
-	Fri, 21 Mar 2025 10:30:23 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B84145806A;
-	Fri, 21 Mar 2025 10:30:21 +0000 (GMT)
-Received: from [9.61.240.173] (unknown [9.61.240.173])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Mar 2025 10:30:21 +0000 (GMT)
-Message-ID: <99ad46fd-71cf-4e3d-8632-f22960aec4a2@linux.ibm.com>
-Date: Fri, 21 Mar 2025 16:00:20 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB578F5B;
+	Fri, 21 Mar 2025 10:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.134
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742553130; cv=fail; b=Ox+umyDZLELlwUJzG8TlfhdNUdhpXnmj3crgaABKhiS1NztdQeh2HejxZPt5+FrHOnDSKKy1jCfWHnvjRobVY0XpRlW1WfpvyoT7iyCRyOhM7imjcjM/SuAODtSp/E2vthSfVl7gKkx6/A6ay3tASfK80JW7G7wKC8Xecblzl4o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742553130; c=relaxed/simple;
+	bh=LenNnK5QC+/ooz3QxvZw2OsYRWohlW8QzpKDEC8YJCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xm7pmXX1RJJOVQZAiI02uDOMvrIFdALOz0po/FNsqE5oxr79aKnT0bE0A8Q/N95nSDmnjeSajHxk1YgKnPPGn8FXYAeoB9GKJGlcygzQ2cdXjF/5kEwyyr/UG9GvQ8AWPJyMBxS32E1I5FlSllws9L34ZEd+pCtoNhCDMNvi/B8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.117.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eOx4OBIeQ1I8BK3adF3d2SDS5ip3zK/mCf8WEHnaB+9A8N2rnXNBB8yEhGO0nRNByoV9rdEpIXY3UhBGpc8Udp/xQJarB6XkSSf6U/6eWqIhAcUAlohGUE5QySAXd6iz04N88FsDRXtZkMANfeWgre9eNE/ObX9oewv0Cio+IOt5p3ODLvD4x7QPLr2iR0QM2vwmI/tQt4lKsNhIKnkahqtHXCo9zakKc7dM7AroVsGYGCKN/u60WlFcTx+KkegvpvaBzK8ibGOjVyduE0fGvhyzDAV0ViPsRmqpiGsXbkGf7ct+Rh6HCwYUJNhZzWYq2mfkdZiLpFe/gMfUqjl6PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XRZ+XSjQ/3l77gzAWIABboWpdWXlzKhZWMQiOVr6X2o=;
+ b=LXi4WD3XNiCnnsoRuPANFXjO/OASAEL9+Q4f6fkedm1ZpQzaxlIPWYdUIhV5LPRJwSLMxO/IZNWu820QGjmZK4lkia3A1lgK0Ildmg/ynuhH2v5My2YNpDDnG0NvS77yufE/YMw5n4M7kR9/s7z5dQDNq+AkZB3tNoD1VqGRC+UbaTJr5FSx8GVJrtFRMkVE3c/NPdyRROOf5hiJFREGV549X21WGZj7O8DT+lG3m2z23HND/Z9O31DEwJ10gd8UtPu5h2WHRBkZEsOrTtZ11fFhY+bm2wJH84ba52d6BGWJMCY8osLw++SFW3iUc5SBcM8sUWqYhtFqG0r404BgHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2PR06CA0006.apcprd06.prod.outlook.com (2603:1096:4:186::19)
+ by TYSPR06MB6361.apcprd06.prod.outlook.com (2603:1096:400:42d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
+ 2025 10:32:02 +0000
+Received: from SG2PEPF000B66CF.apcprd03.prod.outlook.com
+ (2603:1096:4:186:cafe::c3) by SI2PR06CA0006.outlook.office365.com
+ (2603:1096:4:186::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.36 via Frontend Transport; Fri,
+ 21 Mar 2025 10:32:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CF.mail.protection.outlook.com (10.167.240.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Fri, 21 Mar 2025 10:32:01 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 66FCF4160CA2;
+	Fri, 21 Mar 2025 18:32:00 +0800 (CST)
+Date: Fri, 21 Mar 2025 18:31:55 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+	marcin@juszkiewicz.com.pl,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v4 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts
+ support
+Message-ID: <Z91AG0lH1JNN7NHq@nchen-desktop>
+References: <20250305053823.2048217-1-peter.chen@cixtech.com>
+ <20250305053823.2048217-6-peter.chen@cixtech.com>
+ <86frj8m4be.wl-maz@kernel.org>
+ <Z9vmeTj68LmwinPD@nchen-desktop>
+ <86bjtun4an.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next-20250320][btrfs] Kernel OOPs while running btrfs/108
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-To: LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        Madhavan Srinivasan <maddy@linux.ibm.com>, riteshh@linux.ibm.com
-References: <e4b1ccf8-c626-4683-82db-219354a27e61@linux.ibm.com>
-In-Reply-To: <e4b1ccf8-c626-4683-82db-219354a27e61@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jYsY48JzYY32QnJSkkOKScWcM8Ijr4ZK
-X-Proofpoint-GUID: jYsY48JzYY32QnJSkkOKScWcM8Ijr4ZK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_04,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86bjtun4an.wl-maz@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CF:EE_|TYSPR06MB6361:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d733ee3-3e14-45c1-a9e9-08dd68639db2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HzjbeHE+DvtnOWAClnRLrKqGY2d+jgvnME/FU9irD7Arf4Pgz+jQuQKiVNeb?=
+ =?us-ascii?Q?HQdLTkC7M6A6a8Ot95d3iJ/xuEKJbpeIQTkUPFyROGDIr6RZlgfbEvIA4/Oc?=
+ =?us-ascii?Q?VyXFXHNebkceR5RIttiYWQW3qrRueUZ+EHdp+je5R/rShNGakQCxpstNM92L?=
+ =?us-ascii?Q?2q+LP1Xeo2sqdN3Azdg67wg6qv352AoYk7/9YtnydEcTXXicqVpkkQD5/lJr?=
+ =?us-ascii?Q?uYObdhxOcNNr/8EgrHbLv6SVzOTfcpXeFUAV0svL3mu+Ngea1aKImoKoXvtK?=
+ =?us-ascii?Q?5UDMg3auWLxczSMNj0iXW/uHu1bQfTwC1ibsG136qNMGTxKfhqrGczxcnCKd?=
+ =?us-ascii?Q?xtcQbmy0nxe3anoKk1ZEgWqv0h8fae+mhoIi6mhoCC8fNOMfj7nj+INGBGoq?=
+ =?us-ascii?Q?cjD9mM8btXob6Nsk2wZYdwbvBSd7XI4z+nyFQzyJbCCvRXJnBveOU/7oZCtj?=
+ =?us-ascii?Q?OEUk6+yLF9pgb2C9sG7xk7UdCqoYjuZXRlccNi7qk0P9to98izadFI0CWTnV?=
+ =?us-ascii?Q?CcQHEx60RmoIFo9WFr9VompkLwMXWqJKgmNq5i32hgmqpuDFJjjH0uZESu6Q?=
+ =?us-ascii?Q?D1A9ewHjyk5WTSA0st6qGsvqHLa+aYXxbZueDQjRnxUt17N2jtO6eeUzn4tn?=
+ =?us-ascii?Q?sw72TsS+JIe4JGPP6Tc0N3aCAvxxYHZHbmShocnSY3sgnBqnJYnx7t4HL5Od?=
+ =?us-ascii?Q?aMmbANLcBej3OeyYbFTW722ldvMIgzAVyMT0vknaeedE+6zb4hEHs/3HOuxf?=
+ =?us-ascii?Q?X1pxgZpZHONHbHuYHLB/OTbonKl5qqsiEIUdO1KpMdcO/0+sw1VmO7mA8SK0?=
+ =?us-ascii?Q?BNQ/WN9xQhxaP8/mvtKBk+u62Bfnuuq4Tb5sOQ4DUT16XK7klC3wP5+u3yB8?=
+ =?us-ascii?Q?cWTPI4eJQFVEqs9bd5BdQsB1g3yhrMsBF2l0A8SR7BlOtzk1S7nyK0bXlXOb?=
+ =?us-ascii?Q?AychQdF6Wg0ivW5Al2fxpeVcv+2zAFq8+/YaQS92sKkp1qdJJvL4onTrac1i?=
+ =?us-ascii?Q?KbM5QK/nwBk2qpwRiVmsSjHP5OhfrHeOUY1KY+0tkG1wSD70e0/HFVwcYDnA?=
+ =?us-ascii?Q?Wm743bxawiSt+nqaDl8CVnQqj2A5365I/3TjCHsV3ObEPc8oz2r9cQd4adTl?=
+ =?us-ascii?Q?szGjH4fBX/Wm5TGaK0/lvktXvuIjKf5TV3oCrYYYqFQpmqCPs5MiBlFBO3hr?=
+ =?us-ascii?Q?be4kVuBMEmG+X7z+1z3cvXF63LYUsmrHHR85n+aqIEFWVl/jleEycOdGSzSC?=
+ =?us-ascii?Q?TnYnxfiaTHse8036k88zZsZVuJCJwPz9rQeh1nyNWuq48JaYoBoZHLiM5u2f?=
+ =?us-ascii?Q?dzFowVzq/e+07A/91GPnl7dhfvdtylfH9YOBouT22XU8NqGbE4zfxp0rcupk?=
+ =?us-ascii?Q?hIBcKD71lzM9hNkSKI2Re7T208HYcodeReRnQWxZTEOR2FYFVfllgdei05mO?=
+ =?us-ascii?Q?5G0HqIixEAStcDtlk2fckq6fh1YeN/hpUckp1+C5SzYPjTkmrAdL7Yb13lC0?=
+ =?us-ascii?Q?esIZy192tXYd/bc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 10:32:01.1386
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d733ee3-3e14-45c1-a9e9-08dd68639db2
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CF.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6361
 
+On 25-03-21 09:04:00, Marc Zyngier wrote:
+> > On 25-03-20 09:36:37, Marc Zyngier wrote:
+> > > Peter Chen <peter.chen@cixtech.com> wrote:
+> > > >
+> > > > +     pmu-a520 {
+> > > > +             compatible = "arm,cortex-a520-pmu";
+> > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition0>;
+> > > > +     };
+> > > > +
+> > > > +     pmu-a720 {
+> > > > +             compatible = "arm,cortex-a720-pmu";
+> > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition1>;
+> > > > +     };
+> > > > +
+> > > > +     pmu-spe {
+> > > > +             compatible = "arm,statistical-profiling-extension-v1";
+> > > > +             interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW 0>;
+> > > > +     };
+> > >
+> > > SPE should follow the same model as the PMU, as each CPU has its own
+> > > SPE implementation, exposing different micro-architectural details.
+> > >
+> >
+> > Hi Marc,
+> >
+> > Thanks for your reply. But there is only one compatible string
+> > "statistical-profiling-extension-v1" at drivers/perf/arm_spe_pmu.c,
+> > how could differentiate pmu-spe-a720 and pmu-spe-a520, do I need
+> > to change arm_spe_pmu.c as well?
+> 
+> I don't think there is a need to have different compatible. The driver
+> can probe which CPU this is on, and work out the implemented
+> subfeatures from the PMSIDR_EL1 register. New compatible strings are
+> better avoided when there is a way to probe/discover the HW (and in
+> most cases, there is).
+> 
+> Note that this equally applies to TRBE, which also explicitly deals
+> with interrupt partitioning and yet only has a single compatible.
+> Please consider adding TRBE support when you repost this series.
+> 
 
-On 21/03/25 3:50 pm, Venkat Rao Bagalkote wrote:
-> Greetings!!!
->
->
-> I am observing Kernel oops while running brtfs/108 TC on IBM Power 
-> System.
->
-> Repo: Linux-Next (next-20250320)
+Hi Marc,
 
+Thanks for your comment, we need to discuss it internally. Since it
+is very initial dts support for CIX sky1 SoC, I will delete pmu-spe
+support at this time, and add better support for it when adding
+more components next time.
 
-Additional Info:
+-- 
 
-BTRFS tool: btrfs-progs v6.12
-
-BTRFS tool repo: 
-https://git.kernel.org/pub/scm/linux/kernel/git/kdave/btrfs-progs.git
-
-XFS Repo:https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/
-
->
-> Traces:
->
-> [  418.392604] run fstests btrfs/108 at 2025-03-21 05:11:21
-> [  418.560137] Kernel attempted to read user page (0) - exploit 
-> attempt? (uid: 0)
-> [  418.560156] BUG: Kernel NULL pointer dereference on read at 0x00000000
-> [  418.560161] Faulting instruction address: 0xc0000000010ef8b0
-> [  418.560166] Oops: Kernel access of bad area, sig: 11 [#1]
-> [  418.560169] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
-> [  418.560174] Modules linked in: btrfs blake2b_generic xor raid6_pq 
-> zstd_compress loop nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib 
-> nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct 
-> nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 bonding 
-> nf_defrag_ipv4 tls rfkill ip_set nf_tables nfnetlink sunrpc 
-> pseries_rng vmx_crypto fuse ext4 mbcache jbd2 sd_mod sg ibmvscsi 
-> scsi_transport_srp ibmveth
-> [  418.560212] CPU: 1 UID: 0 PID: 37583 Comm: rm Kdump: loaded Not 
-> tainted 6.14.0-rc7-next-20250320 #1 VOLUNTARY
-> [  418.560218] Hardware name: IBM,9080-HEX Power11
-> [  418.560223] NIP:  c0000000010ef8b0 LR: c00800000bb190ac CTR: 
-> c0000000010ef888
-> [  418.560227] REGS: c0000000a252f5a0 TRAP: 0300   Not tainted 
-> (6.14.0-rc7-next-20250320)
-> [  418.560232] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-> 44008444  XER: 20040000
-> [  418.560240] CFAR: c00800000bc1df84 DAR: 0000000000000000 DSISR: 
-> 40000000 IRQMASK: 1
-> [  418.560240] GPR00: c00800000bb190ac c0000000a252f840 
-> c0000000016a8100 0000000000000000
-> [  418.560240] GPR04: 0000000000000000 0000000000010000 
-> 0000000000000000 fffffffffffe0000
-> [  418.560240] GPR08: c00000010724aad8 0000000000000003 
-> 0000000000001000 c00800000bc1df70
-> [  418.560240] GPR12: c0000000010ef888 c000000affffdb00 
-> 0000000000000000 0000000000000000
-> [  418.560240] GPR16: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [  418.560240] GPR20: c0000000777a8000 c00000006a9c9000 
-> c00000010724a950 c0000000777a8000
-> [  418.560240] GPR24: fffffffffffffffe c00000010724aad8 
-> 0000000000010000 00000000000000a0
-> [  418.560240] GPR28: 0000000000010000 c00c00000048c3c0 
-> 0000000000000000 0000000000000000
-> [  418.560287] NIP [c0000000010ef8b0] _raw_spin_lock_irq+0x28/0x98
-> [  418.560294] LR [c00800000bb190ac] wait_subpage_spinlock+0x64/0xd0 
-> [btrfs]
-> [  418.560339] Call Trace:
-> [  418.560342] [c0000000a252f870] [c00800000bb205dc] 
-> btrfs_invalidate_folio+0xa8/0x4f0 [btrfs]
-> [  418.560384] [c0000000a252f930] [c0000000004cbcdc] 
-> truncate_cleanup_folio+0x110/0x14c
-> [  418.560391] [c0000000a252f960] [c0000000004ccc7c] 
-> truncate_inode_pages_range+0x100/0x4dc
-> [  418.560397] [c0000000a252fbd0] [c00800000bb20ba8] 
-> btrfs_evict_inode+0x74/0x510 [btrfs]
-> [  418.560437] [c0000000a252fc90] [c00000000065c71c] evict+0x164/0x334
-> [  418.560443] [c0000000a252fd30] [c000000000647c9c] 
-> do_unlinkat+0x2f4/0x3a4
-> [  418.560449] [c0000000a252fde0] [c000000000647da0] 
-> sys_unlinkat+0x54/0xac
-> [  418.560454] [c0000000a252fe10] [c000000000033498] 
-> system_call_exception+0x138/0x330
-> [  418.560461] [c0000000a252fe50] [c00000000000d05c] 
-> system_call_vectored_common+0x15c/0x2ec
-> [  418.560468] --- interrupt: 3000 at 0x7fffb1b366bc
-> [  418.560471] NIP:  00007fffb1b366bc LR: 00007fffb1b366bc CTR: 
-> 0000000000000000
-> [  418.560475] REGS: c0000000a252fe80 TRAP: 3000   Not tainted 
-> (6.14.0-rc7-next-20250320)
-> [  418.560479] MSR:  800000000280f033 
-> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44008804  XER: 00000000
-> [  418.560490] IRQMASK: 0
-> [  418.560490] GPR00: 0000000000000124 00007ffffcb4e2b0 
-> 00007fffb1c37d00 ffffffffffffff9c
-> [  418.560490] GPR04: 000000013d660380 0000000000000000 
-> 0000000000000000 0000000000000003
-> [  418.560490] GPR08: 0000000000000000 0000000000000000 
-> 0000000000000000 0000000000000000
-> [  418.560490] GPR12: 0000000000000000 00007fffb1dba5c0 
-> 00007ffffcb4e538 000000011972d0e8
-> [  418.560490] GPR16: 000000011972d098 000000011972d060 
-> 000000011972d020 000000011972cff0
-> [  418.560490] GPR20: 000000011972d298 000000011972cc10 
-> 0000000000000000 000000013d6615a0
-> [  418.560490] GPR24: 0000000000000002 000000011972d0b8 
-> 000000011972cf98 000000011972d1d0
-> [  418.560490] GPR28: 00007ffffcb4e538 000000013d6602f0 
-> 0000000000000000 0000000000100000
-> [  418.560532] NIP [00007fffb1b366bc] 0x7fffb1b366bc
-> [  418.560536] LR [00007fffb1b366bc] 0x7fffb1b366bc
-> [  418.560538] --- interrupt: 3000
-> [  418.560541] Code: 7c0803a6 4e800020 3c4c005c 38428878 7c0802a6 
-> 60000000 39200001 992d0932 a12d0008 3ce0fffe 5529083c 61290001 
-> <7d001829> 7d063879 40c20018 7d063838
-> [  418.560555] ---[ end trace 0000000000000000 ]---
->
->
-> If you happed to fix this, please add below tag.
->
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->
->
-> Regards,
->
-> Venkat.
->
->
+Best regards,
+Peter
 
