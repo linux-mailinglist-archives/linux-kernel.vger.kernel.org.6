@@ -1,205 +1,175 @@
-Return-Path: <linux-kernel+bounces-572025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686DFA6C58C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:58:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2BAA6C592
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBCE148531E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE77188B028
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F003232786;
-	Fri, 21 Mar 2025 21:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED026232373;
+	Fri, 21 Mar 2025 21:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GYP6fsDD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmnDSzR/"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F2D231C9F;
-	Fri, 21 Mar 2025 21:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944A61E51FF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742594222; cv=none; b=VSojLZpcC7JcvIyP+rxGOaHunUwkIeMdj9KVONOsPwOPyDxpyr9o+ulSqQEycPCl2m3JOArMo4NbUv7HlkY0dBmETmcH2dMsC/FSB66LGIiMeuCrjc4dtjFqdLc9JMbJyweOCmlOTXhohRfyiZSzbHd1175olfp8z5APWb3JENg=
+	t=1742594327; cv=none; b=V4B8M4uWg5I4IUM0OCmD2UcI1maVl8fNrwWEf94LdWEYuIcchpS15YL3TwF8HxPcbBQwgWjYVYNTvSpSkcn7VV2JXcDRekvwQwVGi0Bpv8uCNR2i9IMlEjBl3V1rDFB00BT6S2F057nBlhn/5HmKIw9gtout1qCxm0gdc7bLJGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742594222; c=relaxed/simple;
-	bh=XAGvWynXDWibkIhhVTdU5IuUHx6RupfoFAXHu1BGyqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B85+SyGYsHqZEaYoIjH5YlE1Pmmr0oOqbjT7MtxBUezWYzj1KnWDStdsmdubZXxkfIQLeX3sJ3uREz2/Jf0vJlU1KAMhzFkLxygL69Uqw+vPGKb+VuincBZITvwnuaT0R+RKxDOqjYMvzpHjYfoh7jFcD/wH319q/ciGz3VxUr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GYP6fsDD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [194.75.195.10])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7B0CB346;
-	Fri, 21 Mar 2025 22:55:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742594113;
-	bh=XAGvWynXDWibkIhhVTdU5IuUHx6RupfoFAXHu1BGyqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GYP6fsDDN5istxHehr7hViEXFogC6ddM1avVzyy71EUe0MI93LhKbSmAJXWc4suOU
-	 CDFKFHmLauYXh9bxWpNyeks+aSeWceXA3K/t/+i//ev6uDVcnBPADJXZeXSfuDJTdj
-	 POntF3JRH2F+9CPXEzwzTLZkuki+vqvr5y+U3Q1Q=
-Date: Fri, 21 Mar 2025 23:56:34 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v6 7/7] media: vsp1: pipe: Add RAW Bayer formats mapping
-Message-ID: <20250321215634.GB11255@pendragon.ideasonboard.com>
-References: <20250321-v4h-iif-v6-0-361e9043026a@ideasonboard.com>
- <20250321-v4h-iif-v6-7-361e9043026a@ideasonboard.com>
+	s=arc-20240116; t=1742594327; c=relaxed/simple;
+	bh=MIySeDb+kreajrIhiKfxcsuyDCEoR7Qs/Ro0Lou5eIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DsshHKx0QYAtaRZdeP3oEfnMxpDukbkmvb+NDrJxJl6I8pEy1rn5alzmETwoK+p0HVyTN5tQTYHgNEVkyqqd4Qxmufz6diBA3X2kM7YGDlKpBPKBWDNY7slm8J+NY02LEOwYcUidyRPKvpx45qSIFV9ml+xYIYdyNWOJsYeIgWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmnDSzR/; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so25680345e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742594324; x=1743199124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vmVdno9JiW66EUzziccNjwwwsJPLYydEw+984DnsTqU=;
+        b=MmnDSzR/Rp8OnHrUdd28FvtObKPf8vGbjQnEjfvBfHisShhnUC/T2kSkWoU9KE7A/W
+         BuONqpVNN5FjTtM9Bzb/8XWh8L1EPhUUEg7w3zG4qoOE4CEBwykAVhY7zfbYGqL9p+U/
+         ayzi5Ft08dg9hnDNZW6qq9FAT6Ru2XJZq6Z7huU/26KnFIpyd1UXR951MWpQ2SxugbeA
+         TU84lkTM0BHgCAWOqFoftj/21A7tSLkfc78SQ+I2Z5OUQyB45XEnE79JNAr7wzCAkAZ6
+         +qH7ENfe/AsfrIvBMoBox+KaLro/Gpov2hfZPLFt/l2Nb6TTb6KWsh37uoEAnynxUus5
+         5cKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742594324; x=1743199124;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vmVdno9JiW66EUzziccNjwwwsJPLYydEw+984DnsTqU=;
+        b=DVJaXn7GvWe/2Us5jvJQFQczIg/93pGP8jCiw+dc1LkI5PizIFeSGUdH1ozzQuAgL5
+         MEfFjuGitk9UrorGvlPFfrzq87zehC8wbBeppc0kLIRHmohDzABW+rYkKmgNC2JRQslP
+         SKu/Rmj7NMV+OXWFUp/LLqZSXR+Yf1LIufLAL4bnJM1wUpBS6kPPa00yalf84AZFuBaM
+         2CAt9RmKRB9AKZ4JO4EbFN+YKMpXA2MOwETCmBe1rSs6ZdvpGFmakizCn3lScNikHZ7z
+         5pfazPzbRQEqcvUHSRl+lJGWif5NVzTxmDuXb0ce06C7nWE103lnFs3Eho0STaOPgl5i
+         dkvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfYAzhUehWNjLal6PmxlvS87g30XEbYZ0RRkUUGmsN84tN53m4kLwo1aZ1cx+fX34PNzJdlhIQCH7Hx0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5c+WP1eLiZ0afPkf+t+LZQan1GMIAH66Ffz1/8UQmiRBIH5T
+	1LcN/jxUIuReLLDav4/JubsJzsHr/fDL8YEStosn/mB4gEQGhj8X
+X-Gm-Gg: ASbGncvjfwQWHwkfF7MKdQa1LOg2Si+SlS5w/YwFGJNrXP98koXv93fLTaRSR5VoreU
+	B9+IOPdOJksSpJBkPDa4JgIJ85rSyvaKYVovGbl/oeeOFote0icy0BkwH9rxM04BzIClK5Rk/9G
+	uvxywG7vjoyuWwheA3MykgWKBQmANX0TkCQ/jo0unIU3TMwLv6vk81sPWTfl+WXufP32ENLehs6
+	FSchVfZhxB2OwIoPo1jFGf6qjc7YFQn2Ohp0TAC4raABg75gS+C+gibp8TiFlWA5bu10eo2ooVO
+	XkxU0kA0oFcqdSnYcN///69SHZtyGN75eMbiSIthJXFLJwBrK8Ej7j/98P1tzjCth69Dyvb7LOo
+	3xkYZIWg=
+X-Google-Smtp-Source: AGHT+IFeHoHB22UQipfl9400C+XWuP+arx3zZ+LkvJtYR63KKKHnv/Wd4J+oKhJ/M4esH4T5ibKoiw==
+X-Received: by 2002:a05:600c:1d16:b0:43d:ac5:11e8 with SMTP id 5b1f17b1804b1-43d58db52e1mr6181575e9.21.1742594323421;
+        Fri, 21 Mar 2025 14:58:43 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43fdeb79sm89798935e9.25.2025.03.21.14.58.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 14:58:42 -0700 (PDT)
+Date: Fri, 21 Mar 2025 21:58:38 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Huang Ying <ying.huang@intel.com>, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: include/linux/minmax.h:93:30: warning: large integer implicitly
+ truncated to unsigned type
+Message-ID: <20250321215838.179be239@pumpkin>
+In-Reply-To: <202503201231.VrUIFcq2-lkp@intel.com>
+References: <202503201231.VrUIFcq2-lkp@intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321-v4h-iif-v6-7-361e9043026a@ideasonboard.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Jacopo,
+On Thu, 20 Mar 2025 12:16:57 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-Thank you for the patch.
-
-On Fri, Mar 21, 2025 at 04:45:39PM +0100, Jacopo Mondi wrote:
-> Add formats definition for RAW Bayer formats in vsp1_pipe.c.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   a7f2e10ecd8f18b83951b0bab47ddaf48f93bf47
+> commit: 99185c10d5d9214d0d0c8b7866660203e344ee3b resource, kunit: add test case for region_intersects()
+> date:   6 months ago
+> config: arm-randconfig-r063-20250320 (https://download.01.org/0day-ci/archive/20250320/202503201231.VrUIFcq2-lkp@intel.com/config)
+> compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503201231.VrUIFcq2-lkp@intel.com/reproduce)
 > 
-> 8-bits RAW Bayer pixel formats map on VSP format RGB332.
-
-s/map on/map to/
-
-> 10, 12 and 16 bits RAW Bayer pixel formats map on RGB565 insted.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503201231.VrUIFcq2-lkp@intel.com/
 > 
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> ---
-> v3->v4:
-> - Fix SWAP bits for RAW 10, 12 and 16
-> ---
->  drivers/media/platform/renesas/vsp1/vsp1_pipe.c | 72 ++++++++++++++++++++++++-
->  1 file changed, 71 insertions(+), 1 deletion(-)
+> All warnings (new ones prefixed by >>):
 > 
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> index 8e9be3ec1b4d..a51061738edc 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> @@ -30,10 +30,80 @@
->   */
->  
->  static const struct vsp1_format_info vsp1_video_formats[] = {
-> -	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-> +	/* Raw Bayer 8-bit: Maps on RGB332 */
-> +	{ V4L2_PIX_FMT_SBGGR8, MEDIA_BUS_FMT_Y8_1X8,
-> +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGBRG8, MEDIA_BUS_FMT_Y8_1X8,
-> +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGRBG8, MEDIA_BUS_FMT_Y8_1X8,
-> +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SRGGB8, MEDIA_BUS_FMT_Y8_1X8,
->  	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
->  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
->  	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+>    In file included from include/linux/ioport.h:15:0,
+>                     from kernel/resource.c:15:
+>    kernel/resource.c: In function 'gfr_start':
+> >> include/linux/minmax.h:93:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]  
+>      ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+>                                  ^
+>    include/linux/minmax.h:96:2: note: in expansion of macro '__cmp_once_unique'
+>      __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+>      ^~~~~~~~~~~~~~~~~
+>    include/linux/minmax.h:213:27: note: in expansion of macro '__cmp_once'
+>     #define min_t(type, x, y) __cmp_once(min, type, x, y)
+>                               ^~~~~~~~~~
+>    kernel/resource.c:1838:9: note: in expansion of macro 'min_t'
+>       end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
 
-Similarly to the media bus codes, could we have a single entry, using
-V4L2_PIX_FMT_GREY ? Same below with V4L2_PIX_FMT_Y10, V4L2_PIX_FMT_Y12
-and V4L2_PIX_FMT_Y16.
 
-This would still duplicate entries, as V4L2_PIX_FMT_Y1[026] are
-essentially treated the same, and they are identical to
-V4L2_PIX_FMT_RGB565. We could ask the ISP driver to use
-V4L2_PIX_FMT_RGB565 (and V4L2_PIX_FMT_RGB332 for 8-bit raw) when
-configuring the VSPX, but that's a bit of a hack.
+The error is because MAX_PHYS_ADDR is too large for resource_size_t.
+The constant seems to have been changed several times.
+But I don't see the patch that changes it from DIRECT_MAP_PHYSMEM_END to MAX_PHYS_ADDR.
+I'd guess this is a 32bit build and resource_size_t is 32 bits but MAX_PHYS_ADDR is 64.
 
-Another option would be to handle the translation in
-vsp1_vspx_rwpf_set_subdev_fmt(). I would still in that case only expect
-the V4L2_PIX_FMT_GREY and V4L2_PIX_FMT_Y* 4CCs from the ISP driver. This
-patch could then be dropped.
+Who knows what the code is supposed to do, but it is another case of min_t()
+discarding significant bits.
 
-What's your preference ?
+It might be that just using min() will fix the compilation and DTRT.
 
-> +
-> +	/* Raw Bayer 10/12/16-bit: Maps on RGB565 */
-> +	{ V4L2_PIX_FMT_SBGGR10, MEDIA_BUS_FMT_Y10_1X10,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+	David
 
-The bpp values are used to calculate memory offsets. Unless I'm
-mistaken, you should use 16 here, not 10.
 
-> +	{ V4L2_PIX_FMT_SGBRG10, MEDIA_BUS_FMT_Y10_1X10,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGRBG10, MEDIA_BUS_FMT_Y10_1X10,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SRGGB10, MEDIA_BUS_FMT_Y10_1X10,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-> +
-> +	{ V4L2_PIX_FMT_SBGGR12, MEDIA_BUS_FMT_Y12_1X12,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGBRG12, MEDIA_BUS_FMT_Y12_1X12,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGRBG12, MEDIA_BUS_FMT_Y12_1X12,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SRGGB12, MEDIA_BUS_FMT_Y12_1X12,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> +
-> +	{ V4L2_PIX_FMT_SBGGR16, MEDIA_BUS_FMT_Y16_1X16,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGBRG16, MEDIA_BUS_FMT_Y16_1X16,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SGRBG16, MEDIA_BUS_FMT_Y16_1X16,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_SRGGB16, MEDIA_BUS_FMT_Y16_1X16,
-> +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS,
-> +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> +
-> +	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-> +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
 
-This doesn't seem right, the patch is changing the V4L2_PIX_FMT_RGB332.
 
->  	{ V4L2_PIX_FMT_ARGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
->  	  VI6_FMT_ARGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
->  	  VI6_RPF_DSWAP_P_WDS,
+>             ^~~~~
+>    kernel/resource.c: In function 'gfr_continue':
+> >> include/linux/minmax.h:93:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]  
+>      ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+>                                  ^
+>    include/linux/minmax.h:96:2: note: in expansion of macro '__cmp_once_unique'
+>      __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+>      ^~~~~~~~~~~~~~~~~
+>    include/linux/minmax.h:213:27: note: in expansion of macro '__cmp_once'
+>     #define min_t(type, x, y) __cmp_once(min, type, x, y)
+>                               ^~~~~~~~~~
+>    kernel/resource.c:1855:11: note: in expansion of macro 'min_t'
+>       addr <= min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
+>               ^~~~~
+> 
+> 
+> vim +93 include/linux/minmax.h
+> 
+> d03eba99f5bf7c David Laight   2023-09-18  91  
+> 017fa3e8918784 Linus Torvalds 2024-07-28  92  #define __cmp_once_unique(op, type, x, y, ux, uy) \
+> 017fa3e8918784 Linus Torvalds 2024-07-28 @93  	({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
+> 017fa3e8918784 Linus Torvalds 2024-07-28  94  
+> 
+> :::::: The code at line 93 was first introduced by commit
+> :::::: 017fa3e89187848fd056af757769c9e66ac3e93d minmax: simplify and clarify min_t()/max_t() implementation
+> 
+> :::::: TO: Linus Torvalds <torvalds@linux-foundation.org>
+> :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+> 
 
--- 
-Regards,
-
-Laurent Pinchart
 
