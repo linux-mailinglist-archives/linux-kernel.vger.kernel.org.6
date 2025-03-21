@@ -1,115 +1,146 @@
-Return-Path: <linux-kernel+bounces-571975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0CEA6C4E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:14:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2759A6C4EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F02B7A5ABA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:12:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45E614626AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AC74A0C;
-	Fri, 21 Mar 2025 21:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF32230BF0;
+	Fri, 21 Mar 2025 21:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CVoMtSX8"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0DR3139"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793941EFFBA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AD41E9B34
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742591629; cv=none; b=ipC8j/CZEEQNO82lcZggbx/j0ByefY87y6bZS+JlNsKJJLGXu/onhatWQgIObTD0yf8ovUHLtSlq9nl3CTkrk6Iz29oU1D73HM0Na7G/OanBsWP2DhThcPfuKA6XDHrCKvKePx0OUH8qE1SZzi9gJwbp8U5BGxQSdPhDgCt9LOA=
+	t=1742591795; cv=none; b=ogqxxc5UBb03gyEDPLp7CUnG/sc05feWjpmVR3hjvOZcRHFdNvomsRRKHKQq+cF0X/oxycp2BSCbwKgVyZFgjc2Q8l9mmAHArtYxSRm7rO7wO8sT9T/6W3wOnTyPQhLDdM+Q/35fMavKemctKqtFv06g1c1GIXRtTJeCEnP4w9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742591629; c=relaxed/simple;
-	bh=vXCTGBNTu1ZhVw/3Q0kYcVmj5r+C9dLc8FPhH6o66uc=;
+	s=arc-20240116; t=1742591795; c=relaxed/simple;
+	bh=wJ3PcZFovR2+HuKsYgLMftJrP+jth1sq8pBzOIgwhgM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxxBaanXWZae0LYMPabsB/k0lKwcIO6XfY4CyrXQm/eapO2nNtuYe+VLx0CYiiAa9qIACCo0CaMn7VRTZZqMkh9E56ElTEpDnHFfT1bOohsGrPp2Toa6LjmwA7eUQhOBCU7+fwoRpMajhEjLF5zzl+onVVncmYnDXpgOPVFkkE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CVoMtSX8; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ff4faf858cso17727557b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:13:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=G/NtKshZNqCZb0+CCM1dGkWuOpDiD+Rbzk293DQG2UmpDzG53DvwBv6/dc3OXKwIQm3Xg87c9qrnyDysRCjN5w3Zld+qsRJTue2JxqgyyF4Nz24LGTGeoK/LCbE4/oD0435EGm8GOUxvmsQcTglg2l9vFoUeIHgrU/bqz6+h0A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0DR3139; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-523de5611a3so1146422e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:16:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742591626; x=1743196426; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742591793; x=1743196593; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3i2ew2LYxgleBNPrPHWYUPReaCgmTl0BEjHG0XlfsxM=;
-        b=CVoMtSX8aeCGHEIpipOw2bN3TUYw2kx91HSCAUn9jLQz3hfMF2Fy1gwK6/amNZ5Ozx
-         eOc5pSMN39mbNge0B26/WZ225Z80rbeIcxbwjVjG3MQsyHKNUK+k0S5t+JlooCPbLZgI
-         qpIHi72Q4uf2RX9aeAmMNAoFKVKdgEMiTifPxb59WsNjfQmviDYVftK5sV3fpMVExced
-         6n6cHSzj70C8MsPteIVtomOSDXYuJwOiIiPNh+tC/rr1ESUmPR1OVhC+DF2FZwa07Ccs
-         vjUEjS0gdAwP5lVScSpTaTEd/jGGWiKxX2gwvRkusFfVr76Ft2wdEdot3/XZgsDmSaAU
-         MxtQ==
+        bh=KrB+UnqLolCzuT8djao+tEQdgGyNcCnhT8UNOjKQIkw=;
+        b=k0DR3139s/c1ndO9Np9wwvnjffAnHVgGGX0YC4Nk1minyJFlu+b9jsGiWi8q/nFTpZ
+         6FjTtWScrs8/YsLckGmYJimIbiO3EeiTcLAeZVK2Rpj/2CcFPfWlTJ7pRp2yWNnCjh6l
+         1j+uPDu/zIiXLpQgXiuPLNfOJePkcvZm6pk9Aq1OvIfXfbHxQTz/u7tyAqHrKy3iSsM2
+         UGa6LURVXr0jHAYi6UaGyTNMWcXy8UOg/5qs10qQatASu0L/WqljvfzTBs8m47Uw2aXb
+         LL7bV9E4h1NEayGR+hOX8Ch7y7eLbjllkkSngYDC4LXP9tknE9VUISrNP38nC1aIjeqT
+         zU7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742591626; x=1743196426;
+        d=1e100.net; s=20230601; t=1742591793; x=1743196593;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3i2ew2LYxgleBNPrPHWYUPReaCgmTl0BEjHG0XlfsxM=;
-        b=fiVCOhgA7qUvn/ilZm1ZTB8NUquV8LTtd71zRArOolH1AkQg6oO24hIxd3/9AZFPBw
-         PSycvGKxbbSNCAjK6k62BAtM886dDz2NUle+HDbYmf99uFIUPXKfNsonWR0T431PDoKl
-         lFaqhglw6fbpjT4zSMosI+c81ad7o1kMP5F6o6iajuVyiWV5Da8MhCHHqjcmJJq4y9Ig
-         lrrJfuBC7G2apbyS2b0vjFAc1HIP7WXzMDUdT983o4elI9hUGitdRLjtHlvwjRb0YfIL
-         ve0zH+7BhtTheupPD3joGjloQtkRC/KqQ/0JjZQHrCxqDfQpd4g5gOBf/VCiJUd1T41C
-         e6aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIIhZw0d4JgwhAaXuicjs1LyM5/OBcd0El38TFedOjYjv//J2zenHDkCwan0NtLmo+W5Z6ULLe2610dFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKxEHj9YfeCbwAW86wT6DDECSLr45FcQcoXoEAOcN4cpNMMg8P
-	AGb/NlftnzqYQkGqi950YlxV5c83/vO9dyP0ZA7VVtrnxbvrX/82rsdHjxTOmcie+L3ZXWvlhZA
-	b3b1yL7P0/knRvffOa2pdEfQrHjdlCg2ameXH
-X-Gm-Gg: ASbGncugTNFcRhqsKJGJGJzXIpPWWv3ArMZE+wqBg9ZtHmZqrlkB+4MiPkc++WTUvVm
-	Is7Cy7zZwcFq03ITAjFFm2X/DqYK3cO7TWxgsdZQpSzQG2LbLHn66hNaVdGqTQ/3cFf7l8ESiqP
-	VeiAXlgmrOX65ywcZCg+i1JVQr2gJr2lv8E6Dr
-X-Google-Smtp-Source: AGHT+IEJdg9bvrmazKSaObyLFJyvWysTY9GZ1IrakNKlyqsc9PcsudY5cVnjW0AMjOxr//q3y/G2oTHH1ULQgsL6BR0=
-X-Received: by 2002:a05:690c:6e0e:b0:6fd:359a:8fd2 with SMTP id
- 00721157ae682-700baccc7famr70059317b3.26.1742591626216; Fri, 21 Mar 2025
- 14:13:46 -0700 (PDT)
+        bh=KrB+UnqLolCzuT8djao+tEQdgGyNcCnhT8UNOjKQIkw=;
+        b=NMQwPhNLlMr1Yu/vxuafgUo+llyolMWO8xAwJ+lyRPU687FJrtdCghIsx15fM2US9P
+         +x0Gaubbjc26f6d9kvElhBb5kMlruEKI438xuRge1EUMy/LEQAT3XxUoemwD8JHjUAUN
+         NJSnt5u1XAfP3/5umj4fsBfTfPsIQC2r8CbGfdnK/Qc4dtV+v5rcSSt/BSRuF3AqV5Bm
+         BULVP178KHDqlfkIdLFEClmCCXNScHWZuN3h4a3TsSNxf2+e5y/gEiCfzKGGDIg46tFy
+         vQ/ja7vkmaaQC4VQ646xWBJd5dQdOvzM8zMuq4WyAmRzanHQu8nYlkdD3MPXQHBmaCl6
+         q2tQ==
+X-Gm-Message-State: AOJu0Yx5ks27mqWS0tDrXmy6EaENf+N7M5sNHqAR1YkgbwoKh7aLCXyD
+	+uYM+HywRqba1XhKFkGGACnqv4rdkTZi79kH+zwmCsqakjtoarssYW6gnichNVSOGQR/0Y/xPSs
+	nsyRh/4ZNaz1+a5MGewf560+5f8s=
+X-Gm-Gg: ASbGncs+p9jQcaDGcfpikQ0NPkKgoPXnbiylxbq/9DxDp/0y5fjLLQMVLMtQ6+C4SdN
+	X66lA8J62djWPfaHYmgcepGUSXm+nY/MDL9u6RjdS/qReO6anGmxZoMHmnZQtwpbpn2+PXA8q+J
+	yZWbfGAqVOV5gELprMp0XUaAkHh5wbS+MG2YFoA5+FcXkpFtagM4ghaoeZX40=
+X-Google-Smtp-Source: AGHT+IHvsFdkFEAa9eO0IQCA1HOgDBxu4qKbvZx/tf6NJrTq009BFqrlAQC5xjZ+LuQRbFwwo+1TP7Nb3OLCG5AzT4E=
+X-Received: by 2002:a05:6122:1989:b0:520:5a87:66fa with SMTP id
+ 71dfb90a1353d-525a834239cmr4956406e0c.3.1742591792546; Fri, 21 Mar 2025
+ 14:16:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321102422.640271-1-nik.borisov@suse.com>
-In-Reply-To: <20250321102422.640271-1-nik.borisov@suse.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Mar 2025 17:13:35 -0400
-X-Gm-Features: AQ5f1Jp901Ps5YHdQiwmT3LZ4ohZiC6256GsYwktLVbiz-fabRCF7SyN3qruNTw
-Message-ID: <CAHC9VhSpgzde_xRiu9FApg59w6sR1FUWW-Pf7Ya6XG9eFHwTqQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Allow individual features to be locked down
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: linux-security-module@vger.kernel.org, serge@hallyn.com, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com, 
-	linux-coco@lists.linux.dev
+References: <20250317190809.678626-1-daeho43@gmail.com> <ea3988c6-7708-4da9-8009-85708a27275b@kernel.org>
+In-Reply-To: <ea3988c6-7708-4da9-8009-85708a27275b@kernel.org>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Fri, 21 Mar 2025 14:16:21 -0700
+X-Gm-Features: AQ5f1Jr6GrdhGsN2xcP0b4Yh2BAHbCIC2Xw4WIdrgQR3tTNnjyKGXUpV2KwDBGA
+Message-ID: <CACOAw_yhfZtmVkmuN0jNVxiEkcEdpmQrSZPiK2CTY6mjjcrUKw@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: support zero sized file truncate for
+ device aliasing files
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 6:24=E2=80=AFAM Nikolay Borisov <nik.borisov@suse.c=
-om> wrote:
+On Mon, Mar 17, 2025 at 8:45=E2=80=AFPM Chao Yu <chao@kernel.org> wrote:
 >
-> This simple change allows usecases where someone might want to  lock only=
- specific
-> feature at a finer granularity than integrity/confidentiality levels allo=
-ws.
-> The first likely user of this is the CoCo subsystem where certain feature=
-s will be
-> disabled.
+> On 3/18/25 03:08, Daeho Jeong wrote:
+> > From: Daeho Jeong <daehojeong@google.com>
+> >
+> > support a file truncation to zero size for device aliasing files.
+> >
+> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> > ---
+> >  fs/f2fs/file.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index f92a9fba9991..7ae5a5af5ed9 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1036,7 +1036,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct =
+dentry *dentry,
+> >
+> >       if ((attr->ia_valid & ATTR_SIZE)) {
+> >               if (!f2fs_is_compress_backend_ready(inode) ||
+> > -                             IS_DEVICE_ALIASING(inode))
+> > +                             (IS_DEVICE_ALIASING(inode) && attr->ia_si=
+ze))
+> >                       return -EOPNOTSUPP;
+> >               if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+> >                       !IS_ALIGNED(attr->ia_size,
+> > @@ -1117,6 +1117,9 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct =
+dentry *dentry,
+> >               if (err)
+> >                       return err;
 >
-> Nikolay Borisov (2):
->   lockdown: Switch implementation to using bitmap
->   lockdown/kunit: Introduce kunit tests
+> Daeho,
+>
+> If truncate(, 0) failed due to some reasons, maybe, the file was partiall=
+y
+> truncated, should we tag it as inconsistent status to avoid its later acc=
+ess?
+> thoughts?
 
-Hi Nikolay,
+Hmm, looks like I did it wrong.
+Instead of invoking f2fs_destroy_extent_tree(), I need to make the
+length of the extent to zero when truncating the file.
+Is it okay with you?
 
-Thanks for the patches!  With the merge window opening in a few days,
-it is too late to consider this for the upcoming merge window so
-realistically this patchset is two weeks out and I'm hopeful we'll
-have a dedicated Lockdown maintainer by then so I'm going to defer the
-ultimate decision on acceptance to them.
-
---=20
-paul-moore.com
+>
+> Thanks,
+>
+> >
+> > +             if (IS_DEVICE_ALIASING(inode))
+> > +                     f2fs_destroy_extent_tree(inode);
+> > +
+> >               spin_lock(&fi->i_size_lock);
+> >               inode_set_mtime_to_ts(inode, inode_set_ctime_current(inod=
+e));
+> >               fi->last_disk_size =3D i_size_read(inode);
+>
 
