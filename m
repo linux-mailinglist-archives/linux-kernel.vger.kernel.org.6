@@ -1,275 +1,137 @@
-Return-Path: <linux-kernel+bounces-571735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87678A6C15E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:25:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E5AA6C162
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D5C67A5B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A63517300A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAC21DEFFC;
-	Fri, 21 Mar 2025 17:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4740822FDE2;
+	Fri, 21 Mar 2025 17:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjeP4lDS"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i87AR01m"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655D422D7AD;
-	Fri, 21 Mar 2025 17:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1966722FDE4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742577869; cv=none; b=kvPwNumgcWfwdC5TlMrIxGXbJUtnZJAbU+cThmXaAYhFwfenygMwpTTbKD3afQG3waPrk+n0lOf7T/Xd/UEuv6DiKXGbBjtNuNRNuAcqrBUKFUKGvIGmn3MRwo1CnZXRRy8Eb+8emC8eORXFhTprBObWX48qS9NPfU88Sckl6RI=
+	t=1742577873; cv=none; b=JhzK3v95qKrqG0C934p/TR49Ar/rxYcxzqQpJBo60WmEdPGApC2Z8OsKpsq8yY5NRtOoDo/3SYDC2kGzgcxxoPFtTv3+CuiyGN6wLOTPj61Zn7DIWLVMaXRiKmsTzYdBZj3iCsTdbqtILyNZk2GG2YS6Vwe/EQ1pyBVmjxXsDgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742577869; c=relaxed/simple;
-	bh=U3+4/ASbWGUJRsSspefTkVi4q/LOTzkUuqbk6W4voOY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=opATwckTBAf5MOY/3w2Ii95tGCL6BM5BHyczqpNA6f++5PNX0fAI8tmHsQG+S0F5lFu6As4DaynGKx+kBotberHxjhB9+h4FPnsXSJVZWCUSM5qIF+PYSvT8ZBAFhYbhOIi4YXaBUw3URCtFrjlu/QCteHezVbotBZMCeB7VSxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjeP4lDS; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so7320944a91.1;
-        Fri, 21 Mar 2025 10:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742577866; x=1743182666; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=y/NHqYLciWdiqaCQgtvu2IZg4U/giDGdUChxb6BuJCU=;
-        b=fjeP4lDSWDqzdzhkNU3dfvkWmT8W5gsafd2NF6GeRKq5RSdAQbTbeh5JzYQRGeTRaH
-         fGWtAIIK3jTk3ygrEoa3SFKceGRTrGIJx44zwY5KGySxQhpF3QbaMPOvyJhGBAs73eKn
-         nb/Swknc5p2NptCXDJ/IMmNqikw/MtzEsNIT00o0d8RIy7RwiKbTdU+YKfWpigZDMwNY
-         aG/BppdEBYSJyMySYRfrS4u7COBVTuxugZyCawjIIo56+GMz9R1/wk5FHo8V39Da4TPx
-         4QmfVag9rJNNWPRIfA2KfAru6DitFKemkkAcHqHPnI6crWpXAa0/IkPysry3FjRTcl/8
-         GGSA==
+	s=arc-20240116; t=1742577873; c=relaxed/simple;
+	bh=wmgWDqUJvlikxwYSBQGbNkTJck+p4wsSLylUsigCs9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIHSTQgkiv1yDgwuHutsPro+W8huIbj20iIpSuzx/FhAcq6fJfPT9dcsj5ilEEDi/4EDweENqQgGFzEVCfIq9sLKUEe43MDnbSj2gdBymr0zqPnM/RNky/E4RLD3ED76Y7PDusxzTtVrWQuMMSJl2LRsowsAmRc/jsXyOun8U8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i87AR01m; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATBTY016514
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:24:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=fmyEdbwSj/HfKYKw0u3nOMsS
+	tnOViYSt8oyx8TwW7b8=; b=i87AR01mow3m5gEH55ckDnJpAaZZ9lHk5FbD2AR7
+	EE2nqJ/KQXV21AcN8xGx7FtunGIgNEyalQdKUGgb0RgnD3PW6JrmlzPU9E84hrZy
+	XomY/qV5A/MfVWn6bJz8O7LFG8Zks6wN/SuZwyQXzBCC8VPCx66w77HekUCX5Yvx
+	yOU8WzLYBJh6qgJkVXCl7VEcHbK59Qpa74GiatPXjOS7vwhYs6cmhWn5i6SizOpI
+	Ai4Ytx8H26+jXrR9AezXHFlEczRqqwIpPvbo+qOFgZEGvlZPklOymDq7c+9SP1Md
+	bWxT6A1esgHoiTbkORG9jsg7dL+yxdq3bq/TSayQKY3/5Q==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gcd1dk82-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:24:30 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8fb5a7183so38634026d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 10:24:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742577866; x=1743182666;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1742577869; x=1743182669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y/NHqYLciWdiqaCQgtvu2IZg4U/giDGdUChxb6BuJCU=;
-        b=pLx/6YlGmSmBFbFJ6Qp8T1/c/8VnTC2K79zEt+Ou5P5fdoYjHOCLlPF8AKX0m5kMjd
-         VI3xmBPEmWjvFGLD8NkWOL+NqlWGOcaS5hALAsg/M7RHnN0VsglJBbsdPPqDAxjT93zc
-         7qSh9NJUCzkGov+i6xz9ttcw9cBoCxmxc7yzLTcCDVn/L0eR4L1WeE6uQjyjmDHTRWkN
-         8PdyP2wB5TtwN5IJNIFzDnsQDk3MTEZws9Snu3FyU83aHYML7OHfnOcD8blLIebnZ/ml
-         lM80pvUOyWUiE4rIE8y0RytocRPnA9FhFthtLS6BLkOd6SEMA52byc5sKPTdkQhG/c5/
-         HtVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNFpKCHhdtBHT8xhq5ELmOTX9WJ84/mlHGjTMVMU6tMq+Xk3orXzXjYaAkFAEQhJEXcAVmpjrmdMot@vger.kernel.org, AJvYcCUU80YdgTbUTopPAsj6OTjYwVNkd654QvFm/nt6PYSyXbY6zgHspwyRNmjEKKpSMnKl0v6ibq69IFKyUX4=@vger.kernel.org, AJvYcCVLnMaSh4CUziz4jCHcgoxWpSUiVdaWoO5uZ2OttRojTL//1uGQF9Y9FvsfPHe78En7Os/EwHkW53jm@vger.kernel.org, AJvYcCWYQSwcyNJ+3NwRpF9KnOUCmoqtbw4RON/n9x24f5UQWbooNFkP5BkA0INrw3m7/2ITOEHoLHklveFVfqQv@vger.kernel.org, AJvYcCXCgxFr6xyXUY/Y2IDyFE7T31Vos/gnUOPDlsnzu6tKkJZo7I0OwJDU1Jx7moz2FIG88EYBCr6dGLFP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjA5f2WjVZjjOZqetwI2BEFfObNYqIHYkQcAcpHm6g8z88ti//
-	D8My5X0bU8vunQ8jK1IbIpTigKfjXjluA25CxUmEbZik8k1PDqRE
-X-Gm-Gg: ASbGncsDZCjnIfAi6PSMwSNPbBGtldpCnIZ5r6XnEM7YbTVFTJw3GnI1B1zdq19soJ7
-	IIKp/Y2oXIZK/G1mH+PP+Y6jBPCtm5SWV3+eR/D3UtI+qkNup8/lXxis00BoB9xn6/9Q6fPDPez
-	5XOWjTFkoQ2OA/T4VnFQkc1KD0x4QQBAQvrz7n7q4F4oezVXc6Ow9UD+Ibmp41WyEPYXB69qiAM
-	aLrGPoqVHSlmQBK4bejuHTk36vM89nFaoxAP8KL6wXrYfQLIj8ddW31fiJSKJ/g3GHOAwNajTfG
-	dKr47Dh1N/fzX9qfz3SOz1uhO/y4KjofR9GoZZPQQ2d8nr1pua473cCvwp0YsAi4Bzv/Qiu64aN
-	eOnN1/rYNly4Idsw0GA==
-X-Google-Smtp-Source: AGHT+IGmFUdskVpDqaqmcl8pptczuWmbp1SYS3fxjeHts1BDLHMGTQ5HPEtOq7WmGHrgADYdhHBT6A==
-X-Received: by 2002:a17:90b:4a8a:b0:2fa:17e4:b1cf with SMTP id 98e67ed59e1d1-3030e54fb12mr6914349a91.2.1742577866361;
-        Fri, 21 Mar 2025 10:24:26 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a579sm6412483a91.32.2025.03.21.10.24.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 10:24:25 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <16b6b98e-711e-40d5-970e-af1feb46ce91@roeck-us.net>
-Date: Fri, 21 Mar 2025 10:24:24 -0700
+        bh=fmyEdbwSj/HfKYKw0u3nOMsStnOViYSt8oyx8TwW7b8=;
+        b=XoyRfcj+SQXQyGlD+C7UNFtftoY5/10UOe191G0rO69+V8ZyYj26jJy+VfWgXwZ8mI
+         gVCeZDWhZgrqx/SfeiwcZA6nHqdrUnsY+mVn7BQgCvFY8iaGD3GM4uE4L5cDqKX0MT0+
+         Mm2ytkC8bXgpKBwkpE6dWoOykgVCks5gZeEsDYxPcu+jaiKt/RMSufMVXIxUIrE15goh
+         PYF0iEzDhFnzGkVn8tH5QaNcK/yAhLquULj8G5cPYCuAWRmzS+Xnyz2ObQAJXRhyQRbF
+         wGwf2znrofUCmF4GqzeJb99t2xW23cCSBQDG5cEa1v+XWhQxMqgR21RyS22Vuy9Dlq/I
+         wtXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUGAZi5WqPhnySZ5m5DtkbgRxuj1aKepwur1mi85/Xy1F7CHtiXpx2Ao9TO0RWo019smjoybJoVAbuUuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+NxxGk7BVEqsnNKXjp1gC/dNP3LZ1bjHJE1Saq/qKZBWtakpc
+	151fDulGxPS0+CDs9dTX6FDaSJ9IbsKgvw25hr/+Kg5o+sb1wb7Yumf0MYViHYXwpZo5rL8g7TV
+	4/pi44XPh62hgYzrqwCCSMYUvNoCa9RrZmoIEzGT+pGx9Zbv4QpxcOsZQA0LkoOs=
+X-Gm-Gg: ASbGncv3s8yCIJVTfzaveG6aEoGLZGYOK1erWPgeY4e/vuN/tltcGQWjtV5gESZZKl1
+	IuAnwzWEwzsE4WxTXvDykCumTupSIzXsOLcYDcV9u58u7zBafYzIneU9wh/4biweXq4JmSViB63
+	IQfJix8x4woibU6b7GB5ow0usuBDrYKbwvlEKrGrgE9PdaVpviyLD9ZbfVSNSkkJ5YF41NZHxPR
+	pcJDvZUF29OF8bKf5kP/tdebGExcOzK5fM17EPFrTN1ObewqTLEqcBT9iBDv4EiLVyDaMNUOYJG
+	QAD6Q/JPsI+rI1wS4axvXR23B01gm+xWRx8Xii+F22DWvFGZuNpdRQVmB5Tn7pON+qaXPYjNcDH
+	sOZA=
+X-Received: by 2002:a05:6214:d64:b0:6e8:9e8f:cfb with SMTP id 6a1803df08f44-6eb3f2e309bmr41689836d6.24.1742577869133;
+        Fri, 21 Mar 2025 10:24:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYPBMkBWN8m5K5k3xpn/3XXm87TYAnHC/7fY88pVAc/I3QngrdnmwHHeW81kaD1vdN8OD9hw==
+X-Received: by 2002:a05:6214:d64:b0:6e8:9e8f:cfb with SMTP id 6a1803df08f44-6eb3f2e309bmr41689466d6.24.1742577868651;
+        Fri, 21 Mar 2025 10:24:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d8f38b1sm2966901fa.84.2025.03.21.10.24.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 10:24:27 -0700 (PDT)
+Date: Fri, 21 Mar 2025 19:24:26 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sumit.garg@oss.qualcomm.com
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: sa8775p: add support for video
+ node
+Message-ID: <cp2uisloxbt3kxe2pnogyqwblp6cjg6srao6mzxozmwn2zmrlr@5vjgfeyosmza>
+References: <20250320-dtbinding-v3-0-2a16fced51d5@quicinc.com>
+ <20250320-dtbinding-v3-2-2a16fced51d5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
-From: Guenter Roeck <linux@roeck-us.net>
-To: "Encarnacion, Cedric justine" <Cedricjustine.Encarnacion@analog.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
- <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
- <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
- <20250226145931.GA2314060-robh@kernel.org>
- <3f7b031d-7b83-4a00-996d-aabb26278b67@roeck-us.net>
- <20250227-sceptical-phenomenal-wolverine-56e3cf@krzk-bin>
- <dbd9cc84-a0b6-4323-b343-6e80aaaf2d14@roeck-us.net>
- <PH0PR03MB69385BEFFD04ECF850311E988EDE2@PH0PR03MB6938.namprd03.prod.outlook.com>
- <15ce883f-444c-4b27-a48d-b17e3df5895d@roeck-us.net>
- <PH0PR03MB693831397416C4247F8BA58D8ED92@PH0PR03MB6938.namprd03.prod.outlook.com>
- <PH0PR03MB6938087B8F2EDB9899DD0F1D8EDB2@PH0PR03MB6938.namprd03.prod.outlook.com>
- <ab329813-2903-4bd1-8734-ab36466650c2@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <ab329813-2903-4bd1-8734-ab36466650c2@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320-dtbinding-v3-2-2a16fced51d5@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=bfFrUPPB c=1 sm=1 tr=0 ts=67dda0ce cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=MV23zIJfk3Kbbaa4CC4A:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 3Sn98UdzVNx3l4ZeoxSwIdj0fzNbhqtk
+X-Proofpoint-ORIG-GUID: 3Sn98UdzVNx3l4ZeoxSwIdj0fzNbhqtk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=822
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 adultscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210127
 
-On 3/21/25 10:09, Guenter Roeck wrote:
-> On 3/21/25 09:53, Encarnacion, Cedric justine wrote:
->>> -----Original Message-----
->>> From: Encarnacion, Cedric justine
->>> Sent: Wednesday, March 19, 2025 12:10 PM
->>> To: Guenter Roeck <linux@roeck-us.net>; Krzysztof Kozlowski <krzk@kernel.org>
->>> Cc: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>;
->>> Conor Dooley <conor+dt@kernel.org>; Jean Delvare <jdelvare@suse.com>;
->>> Jonathan Corbet <corbet@lwn.net>; Delphine CC Chiu
->>> <Delphine_CC_Chiu@wiwynn.com>; devicetree@vger.kernel.org; linux-
->>> kernel@vger.kernel.org; linux-hwmon@vger.kernel.org; linux-
->>> doc@vger.kernel.org; linux-i2c@vger.kernel.org
->>> Subject: RE: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
->>>
->>>> -----Original Message-----
->>>> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
->>>> Sent: Tuesday, March 18, 2025 11:17 PM
->>>> To: Encarnacion, Cedric justine
->>>> <Cedricjustine.Encarnacion@analog.com>;
->>>> Krzysztof Kozlowski <krzk@kernel.org>
->>>> Cc: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
->>>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jean Delvare
->>>> <jdelvare@suse.com>; Jonathan Corbet <corbet@lwn.net>; Delphine CC
->>>> Chiu <Delphine_CC_Chiu@wiwynn.com>; devicetree@vger.kernel.org; linux-
->>>> kernel@vger.kernel.org; linux-hwmon@vger.kernel.org; linux-
->>>> doc@vger.kernel.org; linux-i2c@vger.kernel.org
->>>> Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
->>>>
->>>> [External]
->>>>
->>>> On 3/18/25 03:03, Encarnacion, Cedric justine wrote:
->>>>>> -----Original Message-----
->>>>>> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
->>>>>> Sent: Friday, February 28, 2025 12:33 AM
->>>>>> To: Krzysztof Kozlowski <krzk@kernel.org>
->>>>>> Cc: Rob Herring <robh@kernel.org>; Encarnacion, Cedric justine
->>>>>> <Cedricjustine.Encarnacion@analog.com>; Krzysztof Kozlowski
->>>>>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jean
->>>>>> Delvare <jdelvare@suse.com>; Jonathan Corbet <corbet@lwn.net>;
->>>>>> Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>;
->>>>>> devicetree@vger.kernel.org; linux- kernel@vger.kernel.org;
->>>>>> linux-hwmon@vger.kernel.org; linux- doc@vger.kernel.org;
->>>>>> linux-i2c@vger.kernel.org
->>>>>> Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
->>>>>>
->>>>>> diff --git a/drivers/hwmon/pmbus/pmbus.h
->>>>>> b/drivers/hwmon/pmbus/pmbus.h index ddb19c9726d6..289767e5d599
->>>>>> 100644
->>>>>> --- a/drivers/hwmon/pmbus/pmbus.h
->>>>>> +++ b/drivers/hwmon/pmbus/pmbus.h
->>>>>> @@ -512,7 +512,6 @@ int pmbus_regulator_init_cb(struct
->>>>>> regulator_dev
->>>> *rdev,
->>>>>>        {                            \
->>>>>>            .name = (_name),                \
->>>>>>            .of_match = of_match_ptr(_name),        \
->>>>>> -        .regulators_node = of_match_ptr("regulators"),    \
->>>>>>            .ops = &pmbus_regulator_ops,            \
->>>>>>            .type = REGULATOR_VOLTAGE,            \
->>>>>>            .owner = THIS_MODULE,                \
->>>>>>
->>>>>> Maybe someone can check if that works.
->>>>>>
->>>>>> Thanks,
->>>>>> Guenter
->>>>>
->>>>> I'd like to follow up on this one. As of this writing, my
->>>>> understanding is that the dt-binding should not expect regulators
->>>>> subnodes for simple devices like this. There is already a similar
->>>>> binding as mentioned in this thread particularly
->>>>> "dt-bindings/regulator/infineon,ir38060". I think a binding without
->>>>> the subnodes should still work with or without the change above.
->>>>
->>>> Interesting. I am not sure if it really works, though. I looked into
->>>> the regulator code, and I don't immediately see the code path it would
->>>> take.
->>>>
->>>>> With this, I'd like to know what the specific next steps are to
->>>>> continue this patch series.
->>>>
->>>> Can you try on hardware using a devicetree file which doesn't have the
->>>> regulators node ? If the current code works, just submit an updated
->>>> (simplified) .yaml file and we should be good. If not, I have an
->>>> untested patch series introducing another macro which doesn't set the
->>>> regulators node.
->>>
->>> Okay. I'll test this and get back to you.
->>
->> The "simplified" dt file (without the regulators node) does not work with
->> the current regulator_desc macro. I have also tried simply removing the
->> regulators_node setting from the regulator_desc macro, and it does not
->> work too. of_match looks for a certain regulator name in dt, and it seems
->> like it must handle NULL cases as well as suggested previously. I would
->> appreciate if this would be also verified on other ends. For now, I think I'll
->> wait for another macro to be introduced in pmbus to support this kind of
->> bindings.
->>
+On Thu, Mar 20, 2025 at 11:36:51PM +0530, Vikash Garodia wrote:
+> Video node enables video on Qualcomm SA8775P platform.
 > 
-> Figured. As it turns out, there is also a patch series pending which tries
-> to fix the problem for ir38060 by changing its bindings.
-> 
-> I'll dig up my patch series to add a new macro and send it out as RFT.
+> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 71 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
 > 
 
-Question for DT maintainers:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Existing bindings, such as
-	Documentation/devicetree/bindings/regulator/mps,mpq2286.yaml
-expect a nested regulators node even though there is only a single
-regulator. What is the correct approach: Keep the nesting requirement
-for those regulators as is (even if there are no in-tree bindings
-using them), or update the code and the bindings to drop the nesting ?
-
-Thanks,
-Guenter
-
+-- 
+With best wishes
+Dmitry
 
