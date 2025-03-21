@@ -1,199 +1,87 @@
-Return-Path: <linux-kernel+bounces-571009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D971A6B7CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:42:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB0DA6B7DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A05A166CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BC23BE309
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0CC22069A;
-	Fri, 21 Mar 2025 09:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4118E1F151B;
+	Fri, 21 Mar 2025 09:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EyTJ5Bbc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWekec6k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8552212FB3;
-	Fri, 21 Mar 2025 09:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932701F1301;
+	Fri, 21 Mar 2025 09:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742549907; cv=none; b=bpL+RamiBV6spDRH8W3BN08/UFiYCUXhQkDaZ7uTTc62o62ndPrw6cpba/+NFGz4Rbe1CbVRB2dgqPV9aVIklralUcO9dA+Ip85Hrj3XdRRlcbrOzhGgbAsZOBVl2xmXeM6cVF5xds50bNMIG5TK2wn04S6aw+gtd9Rw0hNDCxw=
+	t=1742550059; cv=none; b=qs+1XHA2bZCP8dXaGSo1KoH152lPvaEfQXQ4PpirIKmlIqygEaqctpX5vaDQDUUPGEVqUDS9yqL37OdM33r+gFLprYkM84DBT7DgpilsEbfQoHrV9p7m6fc/Em7II/HTjODQwh6V63ygTcY7eM68Beq6bKYm17vVskpzwOKj2JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742549907; c=relaxed/simple;
-	bh=I+g5uyiO8BthO6kUgy4ZEHhW95DL2yo/6eN6vFueBUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cMQeVaUwQjq+5wiZpXlB9WK8nbn/LtmJal8hiB9Fl4+rFq6ip/SRTB+CeO1VJz4iCKDs1C8KQw3qeFkX4gqUCRowVxrEztT1yxkkbwfFbNmIkWvl7QvEY68IQMjJWdDlm8KeOJpfvhEcn30pfnw8hAahGCoX2UnYsYHbDUWUOnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EyTJ5Bbc; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742549906; x=1774085906;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=I+g5uyiO8BthO6kUgy4ZEHhW95DL2yo/6eN6vFueBUc=;
-  b=EyTJ5BbcPfOWV4sfyrPT4xypHJxdoiQqH8JGKR1h/IeM+mrC4z8TTolx
-   ZYNFJwztURpk5QCvBBkVrYEi9MOPjLiYZsYxwyL7jOvp7pOD2PVYZjvpX
-   ZSdW7z5tz5xZuuuPLYnZ/meHUwiF5/M07ZrbaAGO552fUOUU0n7R7cR+E
-   gTBAeWcy0z4Kvml5Tr6avv2nJohFfsUrAc8qT6vInGtQ3P3sZ667MU/zm
-   5q4hQsFFuo1EXCowv4aK+HwbKl1LUaPGjrc0HmcoMPvDSKNwUqv7UDk4b
-   NIAohZnP4NdgJL83XlR89v5tKzREOUmrGpRjJJF8ME8HPcq2TQiM3KJkF
-   A==;
-X-CSE-ConnectionGUID: IqXpbv3nQ3aFmsr/5LTl9g==
-X-CSE-MsgGUID: Q6qQAzHLTGy34LG4pzV9OA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="47692857"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="47692857"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 02:38:25 -0700
-X-CSE-ConnectionGUID: sUS3o+3GS4GAOYCitUd15g==
-X-CSE-MsgGUID: Fs09Uo8ASs6mt6Nt72E0Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="123872631"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.43])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 02:38:22 -0700
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: sakari.ailus@linux.intel.com,
-	laurent.pinchart@ideasonboard.com
-Cc: tomi.valkeinen@ideasonboard.com,
-	jacopo.mondi@ideasonboard.com,
-	hverkuil@xs4all.nl,
-	kieran.bingham@ideasonboard.com,
-	naush@raspberrypi.com,
-	mchehab@kernel.org,
-	hdegoede@redhat.com,
-	dave.stevenson@raspberrypi.com,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mehdi Djait <mehdi.djait@linux.intel.com>
-Subject: [RFC PATCH v3] media: v4l2-common: Add a helper for obtaining the clock producer
-Date: Fri, 21 Mar 2025 10:38:14 +0100
-Message-ID: <20250321093814.18159-1-mehdi.djait@linux.intel.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742550059; c=relaxed/simple;
+	bh=ZUR3lzcRBOLhjpUcQQNzMmdrN44+Szn9WQ+beag+iII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYiovPSZumKAr4k0clsbfPy5aG5rbFNwx5sGXGSX6oSX0101JOaObgpe25WTZjL2I3pudnAJ7tMK9lI8JriBFDJMFkPnNYgmB2EuFlouh6pTEr4OgpGFlzF3Uw1JgAQhUqpltRLCnEKTeVG9Dp/9NrBViXMamsSiz0S3Dm6ZfWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWekec6k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77739C4CEE3;
+	Fri, 21 Mar 2025 09:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742550059;
+	bh=ZUR3lzcRBOLhjpUcQQNzMmdrN44+Szn9WQ+beag+iII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KWekec6kxiYnlS7QZErXiNsPc/l2TByldwfMbfk5qxHUAVgfeyqbcy/No4TD6IzpW
+	 RPKF5LBKYJsHslyHY0Bzz4grHOOD50zPUyM/uSddpo615o0g4GUAgkenCW6q3wpPDk
+	 UAzZvSOJkj/s+iN8D8GT1SDzw4pZ6kzp855K5UF8OheTgbsMsmAZu0CHcBmV7JC15m
+	 Kq7RadEydjN8AudHG/NHMC1n72vg/6XWa3vTpVB7e713qzCx7q5nsqiGHRwRbQ3AA2
+	 6XYde8EJUS3Frl5/iEzVLcDKK8L94ffbnoigiT7PkTqMhfyQH4HD5JjNaWQaA0r23L
+	 qbDlQ3Jfx7O9g==
+Date: Fri, 21 Mar 2025 10:40:56 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Willie Thai <wthai@nvidia.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	joel@jms.id.au, andrew@codeconstruct.com.au, kees@kernel.org, 
+	tony.luck@intel.com, gpiccoli@igalia.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, openbmc@lists.ozlabs.org, leohu@nvidia.com, tingkaic@nvidia.com, 
+	dkodihalli@nvidia.com, Mars Yang <maryang@nvidia.com>
+Subject: Re: [PATCH v3 2/2] dt-bindings: arm: aspeed: add Nvidia's GB200NVL
+ BMC
+Message-ID: <20250321-romantic-gentle-octopus-4aacd4@krzk-bin>
+References: <20250320164633.101331-1-wthai@nvidia.com>
+ <20250320164633.101331-3-wthai@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250320164633.101331-3-wthai@nvidia.com>
 
-Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
-platforms to retrieve a reference to the clock producer from firmware.
+On Thu, Mar 20, 2025 at 04:46:33PM +0000, Willie Thai wrote:
+> This patch adds a binding for GB200NVL BMC.
 
-This helper behaves the same as clk_get_optional() except where there is
-no clock producer like in ACPI-based platforms.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-For ACPI-based platforms the function will read the "clock-frequency"
-ACPI _DSD property and register a fixed frequency clock with the frequency
-indicated in the property.
+> 
+> The GB200NVL BMC is an Aspeed Ast2600 based BMC for Nvidia Blackwell GB200NVL platform.
 
-Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
----
-Link for discussion (where this patch was proposed): https://lore.kernel.org/linux-media/20250220154909.152538-1-mehdi.djait@linux.intel.com/
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-v1 -> v2:
-Suggested by Sakari:
-    - removed clk_name
-    - removed the IS_ERR() check
-    - improved the kernel-doc comment and commit msg
-Link for v1: https://lore.kernel.org/linux-media/20250227092643.113939-1-mehdi.djait@linux.intel.com
+Usually this is just one line. Commit msgs should be concise. "Add
+binding for foo bar, an baz based board for making frubies".
 
-v2 -> v3:
-- Added #ifdef CONFIG_COMMON_CLK for the ACPI case
-
- drivers/media/v4l2-core/v4l2-common.c | 39 +++++++++++++++++++++++++++
- include/media/v4l2-common.h           | 18 +++++++++++++
- 2 files changed, 57 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
-index 0a2f4f0d0a07..4e30f8b777b7 100644
---- a/drivers/media/v4l2-core/v4l2-common.c
-+++ b/drivers/media/v4l2-core/v4l2-common.c
-@@ -34,6 +34,9 @@
-  * Added Gerd Knorrs v4l1 enhancements (Justin Schoeman)
-  */
- 
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
-@@ -636,3 +639,39 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(v4l2_link_freq_to_bitmap);
-+
-+struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
-+{
-+	struct clk_hw *clk_hw;
-+	struct clk *clk;
-+	u32 rate;
-+	int ret;
-+
-+	clk = devm_clk_get_optional(dev, id);
-+	if (clk)
-+		return clk;
-+
-+#ifdef CONFIG_COMMON_CLK
-+	if (!is_acpi_node(dev_fwnode(dev)))
-+		return ERR_PTR(-ENOENT);
-+
-+	ret = device_property_read_u32(dev, "clock-frequency", &rate);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	if (!id) {
-+		id = devm_kasprintf(dev, GFP_KERNEL, "clk-%s", dev_name(dev));
-+		if (!id)
-+			return ERR_PTR(-ENOMEM);
-+	}
-+
-+	clk_hw = devm_clk_hw_register_fixed_rate(dev, id, NULL, 0, rate);
-+	if (IS_ERR(clk_hw))
-+		return ERR_CAST(clk_hw);
-+
-+	return clk_hw->clk;
-+#else
-+	return ERR_PTR(-ENOENT);
-+#endif
-+}
-+EXPORT_SYMBOL_GPL(devm_v4l2_sensor_clk_get);
-diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
-index 63ad36f04f72..35b9ac698e8a 100644
---- a/include/media/v4l2-common.h
-+++ b/include/media/v4l2-common.h
-@@ -573,6 +573,24 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
- 			     unsigned int num_of_driver_link_freqs,
- 			     unsigned long *bitmap);
- 
-+/**
-+ * devm_v4l2_sensor_clk_get - lookup and obtain a reference to an optional clock
-+ *			      producer for a camera sensor.
-+ *
-+ * @dev: device for v4l2 sensor clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * This function behaves the same way as clk_get_optional() except where there
-+ * is no clock producer like in ACPI-based platforms.
-+ * For ACPI-based platforms, the function will read the "clock-frequency"
-+ * ACPI _DSD property and register a fixed-clock with the frequency indicated
-+ * in the property.
-+ *
-+ * Return:
-+ * * pointer to a struct clk on success or an error code on failure.
-+ */
-+struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id);
-+
- static inline u64 v4l2_buffer_get_timestamp(const struct v4l2_buffer *buf)
- {
- 	/*
--- 
-2.48.1
+Best regards,
+Krzysztof
 
 
