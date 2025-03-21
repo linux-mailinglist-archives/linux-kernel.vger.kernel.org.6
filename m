@@ -1,128 +1,144 @@
-Return-Path: <linux-kernel+bounces-571474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37458A6BD93
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:52:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5896AA6BDC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:56:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204A5485413
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:50:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E313BBA7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103791D6DDD;
-	Fri, 21 Mar 2025 14:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFD71DEFF3;
+	Fri, 21 Mar 2025 14:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R11z5zxD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="tIbopaX6"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1F11388;
-	Fri, 21 Mar 2025 14:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79F91DED49;
+	Fri, 21 Mar 2025 14:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568567; cv=none; b=Tc8Rx6JWRPdEXbNz+B7En3APZCZhuMpjAC1jvQ4lupuee87GhUACLv7rZHsdcIvqvKlu/osa9ud11ua7sPcz1d8amKNcQo3OfokjBiuV9TTJvKHNnKUKCSuJ8SMOad8RlwQ4jU1z3xjvskKdz2BYKt8ipW2fRfuhWznaMfLZb9U=
+	t=1742568649; cv=none; b=ujoSyfqrfWX8Q0r96gwQL86sCg+Sn/+HpBlR+RpSqoJuuU7noYQzi7kx/5z16ao4xKWFOBJEGkeF/zXL6lEGLAoZ4JqRBaIzTniBU6sl1P4vq28gTgzKLM7qQsil9kHJQAYKB+1V+5kbnBuSWHAgOHsbij/F2Pp/OmMydAEo/h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568567; c=relaxed/simple;
-	bh=aVhUuTJqUnb+X5iwVusMDvsLR5i0p7vUkHZcj+ddVAo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GzAapPoh8zwh6WhIBsLQUA5kcF33N6vyHg0co7SvTEpjLTeieYZOWmwqtYKvAsUAnjEhrJ2o6kO6CqQQe6UVihnMGG2sFYHeQbo2ecU7skAZfdnFmxTRiUx8KS0oWgYZzJ13zijauxL7z92l1DIuVCARj18/KMLHENQDU5mGmMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R11z5zxD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742568567; x=1774104567;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=aVhUuTJqUnb+X5iwVusMDvsLR5i0p7vUkHZcj+ddVAo=;
-  b=R11z5zxDnY5GpOb44Qq7a1FeYlwABT+TCPlsGuDZgWNXD1onUPyxhLaz
-   8chmKfr5qtYzyCEw3xLUkMvTo911pkr2P32423NyuBWWzsIpQI5nmO/AJ
-   zrpOGVCnxiZH0PmgK7zm4ZGcLPgbxqVzmwsaoJw0EnM3jUyHmNmtsvbdN
-   z9v2b2Cw5LcR5RgXm9mUNxnuFfy8sRP+3tQmqddckXpllYVn1M8WP5lVs
-   LUw4VKAgoWiVi9+YEefgsO9twi80QLh+jtZNXMKWAyXBeaqVcG4CXQ/Q1
-   gZNq8FBibj45jqgn2QJzSuij8weIaQ04xK67lFyQkPLK8mg1ZtlfSE7Vj
-   A==;
-X-CSE-ConnectionGUID: 3Otq0Na/QyybCJJvWQaBVw==
-X-CSE-MsgGUID: pPrrrp0rQJqL1I+IM1wcJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="55221023"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="55221023"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:49:26 -0700
-X-CSE-ConnectionGUID: TbVKqvsfSVmoccHibrQJoA==
-X-CSE-MsgGUID: hUyV+CN3To+ZGfYzKffOQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="160655390"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:49:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 21 Mar 2025 16:49:19 +0200 (EET)
-To: Xi Pardee <xi.pardee@linux.intel.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: intel/pmc: Fix iounmap call for valid
- addresses
-In-Reply-To: <20250319224410.788273-1-xi.pardee@linux.intel.com>
-Message-ID: <66c1a0f1-7d7a-da07-e80f-027964c503b8@linux.intel.com>
-References: <20250319224410.788273-1-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1742568649; c=relaxed/simple;
+	bh=/fke0FZvpYVr1VpmHVa1ygKLi+Vnc7JrixCJyNiA7Ro=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=dEemYuzaHE2rn0sHGUtRa2rYVltnbvRI5WX7jh2pMN9ZhBKUQfNLOwyJEd0qsXbHjkGvI4Lt1iZ4bR9vWrff9dIq+bWywdNHoDN9Qbwumid3jHxlfu2ezRw673T9p5Eln7tAsg1k5A3W6KokcBrn4O9D0cKEneKCdfqikwRS6z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=tIbopaX6; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LBNahF009105;
+	Fri, 21 Mar 2025 10:50:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=oSg1mqldn0GUtZnijpXisy8J008
+	1sPGcJiDUPXyz7ws=; b=tIbopaX6HGC8QCwC+dAD5so+fDyi3W8Txc7Kj3suLGK
+	6xAl/DZhVvzuPTmDs2yPkCdCNOqPirIb2VI6zzAzJOXqdA5yFyTUTf65Dx4YXWof
+	arBFUddYtfCvjV7FHUwPVl/H2crqVht4S3mdQRYj6n7IsdrFhqjyPoq/eAIIjUGr
+	J3553mhvH1vadTVWfGpmEhRcBNjalg+RdS6LKhj70ZbM5KYVI8CYP1naCc+1Rs05
+	eeNjc/9unqNT0KCNTfTnOITeivuJigOrQYJlbdmi5OyGbSesmz11fzo03ov0hStP
+	oWiOMbPy+tT6WI3nMIgRLalZD7EZOT2ubI6QBIdpNdw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45h76sgvv9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 10:50:14 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 52LEoD42057363
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Mar 2025 10:50:13 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 21 Mar 2025 10:50:13 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 21 Mar 2025 10:50:13 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 21 Mar 2025 10:50:13 -0400
+Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.44.3.52] (may be forged))
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52LEo1ca011710;
+	Fri, 21 Mar 2025 10:50:03 -0400
+From: Jorge Marques <jorge.marques@analog.com>
+Subject: [PATCH 0/2] Add sys-bus-iio ABI frequency options to events and
+ oversampling
+Date: Fri, 21 Mar 2025 15:50:00 +0100
+Message-ID: <20250321-abi-oversampling-events-frequency-v1-0-794c1ab2f079@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJh83WcC/x3NQQ6CMBBG4auQWTtJKcjCqxgXtfzFSbTgDDYaw
+ t1pXH6b9zYyqMDo0mykKGIy54r21FB8hDyBZawm7/zZdb7lcBeeC9TCa3lKnhgFeTVOivcHOf6
+ 474Y49CkiwlHtLIok3//jetv3A0oJp3BzAAAA
+X-Change-ID: 20250321-abi-oversampling-events-frequency-436c64fcece0
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+CC: <dlechner@baylibre.com>, <Michael.Hennerich@analog.com>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jorge Marques
+	<jorge.marques@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742568601; l=1384;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=/fke0FZvpYVr1VpmHVa1ygKLi+Vnc7JrixCJyNiA7Ro=;
+ b=oGmhiPlKHkAucSXkcrRtxLPvHxede8avNQEhNkVGfpR4Jzj1pj5RUvB6Sawr61bxsgTvBfyt+
+ 8Z3gKx5e12BCFN0O6pf/V/39gvLhOqoAPRRFiDy5Q3Xtyn0GjE05Zge
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: kDfaLNeq1FtB-ErZ3PxTjZcICSu206o-
+X-Authority-Analysis: v=2.4 cv=BpidwZX5 c=1 sm=1 tr=0 ts=67dd7ca6 cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=sbcHFVb_5Oqvkv0eGmQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: kDfaLNeq1FtB-ErZ3PxTjZcICSu206o-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 impostorscore=0
+ phishscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 spamscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210108
 
-On Wed, 19 Mar 2025, Xi Pardee wrote:
+Some device families such as Analog Device's max1363, ad7606, ad799x, and
+ad4052 contain internal clocks used by monitor modes and oversampling.
+Devices' monitor modes are exposed as IIO events.
+The max1363 driver included the events/sampling_frequency in
+commit 168c9d95a940 ("iio:adc:max1363 move from staging.")
+and ad799x in
+commit ba1d79613df3 ("staging:iio:ad799x: Use event spec for threshold
+hysteresis")
+but went undocumented so far.
 
-> pmc_core_clean_structure() is called when generic_core_init() fails.
-> generic_core_init() could fail before ioremap() is called to get
-> a valid regbase for pmc structure. The current code does not check
-> regbase before calling iounmap(). Add a check to fix it.
+The oversampling sampling frequency is a planned feature to be patched
+onto the ad7606 driver.
+In this particular device, it is called oversampling padding.
+The upcoming ad4052 linux driver will utilize both entries,
+it is worth noting, however, there is a single register for both
+options. Since the device is never concurrently in both modes, the
+values will be safely cached on the device state.
 
-Hi,
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+---
+Jorge Marques (2):
+      Documentation: ABI: add events sampling frequency in sysfs-bus-iio
+      Documentation: ABI: add oversampling frequency in sysfs-bus-iio
 
-The approach that calls the same "full cleanup" function as deinit uses 
-when init function fails midway is very error prone as once again is 
-demonstrated. Is this the only error handling problem? Are you 100% sure?
+ Documentation/ABI/testing/sysfs-bus-iio | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+---
+base-commit: 9f36acefb2621d980734a5bb7d74e0e24e0af166
+change-id: 20250321-abi-oversampling-events-frequency-436c64fcece0
 
-Think about it, init is x% (<100%) done when it fails, then it calls a 
-function that tries to undo 100%. One needs to add lots of special logic 
-to handle 0-100% rollback into that cleanup function. The init function, 
-on the other hand, knows exactly where it was so it can rollback just what 
-is needed and not even try to rollback for more.
-
-It's also very inconsistent to rollback ssram_pcidev in this file as ssram 
-code was moved into core_ssram so I think the ssram deinit should be moved 
-there too.
-
-I think these init functions should be converted to do proper rollback 
-within the init function(s) to avoid very hard to track error handling.
-I tried to check the error handling now in the pmc driver and after I 
-would have needed to jump between the files, I gave up.
-
-> Fixes: 1b8c7b843c00 ("platform/x86:intel/pmc: Discover PMC devices")
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/pmc/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-> index 7a1d11f2914f..de5fc06232e5 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -1471,7 +1471,7 @@ static void pmc_core_clean_structure(struct platform_device *pdev)
->  	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
->  		struct pmc *pmc = pmcdev->pmcs[i];
->  
-> -		if (pmc)
-> +		if (pmc && pmc->regbase)
->  			iounmap(pmc->regbase);
-
+Best regards,
 -- 
- i.
+Jorge Marques <jorge.marques@analog.com>
 
 
