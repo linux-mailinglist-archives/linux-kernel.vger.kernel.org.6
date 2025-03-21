@@ -1,207 +1,136 @@
-Return-Path: <linux-kernel+bounces-571674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAF3A6C08F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:51:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8273A6C091
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51DE3AAD65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0DB3A50D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D1F1E98EB;
-	Fri, 21 Mar 2025 16:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6372222CBD0;
+	Fri, 21 Mar 2025 16:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="B3A3UUcl"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ve6khhgh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C4B2AE84;
-	Fri, 21 Mar 2025 16:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C04155A25;
+	Fri, 21 Mar 2025 16:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742575772; cv=none; b=mcPyn/+72/J0dgpc46Og+toRnHGjOw+2/DfX/RtTAQOQbKoCpp35q3rY+OuWrE6c3FBkpmX6Vkt6qvX0s1qRRpVtp8N/zRAsYwYG9WZT3O4mtye+2VQKGU6rBXf4AJDc7GVsR6PmiHpqk18u8smxwEja+LkEg+gBDRxBpg7AtBU=
+	t=1742575796; cv=none; b=YI6L2duFqzLNhSesWK4Gab8ag9STN7IkhEtOr6pQWrK+jcG/yjO5Q3FkUAVF3LubsVgKxxZA0KpSIxUQqdZxuA9JRmgFmkP3EzDSG5sMczawBBeCOrDS6ONA4u3lg4NFvHiRcV40YzPpcuh5voSIEciND0MmJKU6EFNSL+2kRN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742575772; c=relaxed/simple;
-	bh=nii9VmHDsEAVisWEFrOJ25tH5S57fQqoG/+RCdSS60w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhvJwsdzBIAXoNq/gH3dJ28ilJi6A9iH00jH377dzByyxGO010SWzd8yizLkOkDYJ/IfSBDkJ2BsoCBZuLFvtKGx6h1LILQxchvu+l9ByafPx3tdO8ORSz/K3B/B6RLxYi1UL1DHuW8we9kJEsfbddVa2cYI5TbKUaS1lnTy0qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=B3A3UUcl; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tMR6h6WbX3gykTG6+F+ZNl0W3PO7iv0LEpOU8ndGoqY=; b=B3A3UUclkONidBQGy8SmraYKej
-	qYcZxBnGqEPWN2v2R7ciiksydGj78rh+Xt8NlF7KwXZNcfoBekzeWOcdAPJJzU8R//ZMOiELBbJ7u
-	MjonnF8VGzYD+uuPwNUb3+qkHfyyY8AGgFjqx4DKJNVZft/b+Q6ciNz7nw7jpHi70ghPKqn47coML
-	KVoaEoYvmJsRRHdeO4wbWywiNC+3jv6uxSkpzMvc1J07uOInYRNUJd9siGsujs/Yh4UBrXUNOoEkC
-	yh5TZuJvub3hWNGw+cGkTzhflDVENemuYZVJx5IpREaaQ2WvG77Mml5z2Batza9OOuTiOFoKQ2dIy
-	3XNOohaw==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1tvfYZ-00CUnZ-23;
-	Fri, 21 Mar 2025 16:49:15 +0000
-Date: Fri, 21 Mar 2025 16:49:15 +0000
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm, tpm_tis: Workaround failed command reception on
- Infineon devices
-Message-ID: <Z92YiwubEvzsm1SO@earth.li>
-References: <Z8lkSKOqBgt78pU2@earth.li>
- <Z8ogT_gERUYstPbK@kernel.org>
- <Z8sgfMmsfn894yLj@earth.li>
- <Z8sixTuKG5sxO-D1@kernel.org>
- <Z87Y69l5_GbzlLfp@earth.li>
+	s=arc-20240116; t=1742575796; c=relaxed/simple;
+	bh=iXRT/qes364OAhYPS5CBvBhBz7tLPO070NnwuD9TcqI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uX5Q6hkJ4WVuRGOn85XgcmnyxSvLc9d2cnmR1jwzaul8lSDUWnNrar2VLJjxysPOj5Hv5xuJ5AGsNVA+x4ttH2qFD0lPlVcGAywft2Woy0QE6PSo/HeOz+x1dBlMmCXd6t/Zjv+Hywy8mK9mZg1j2XXbNryI2A/X2ayIrUXkgl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ve6khhgh; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742575796; x=1774111796;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iXRT/qes364OAhYPS5CBvBhBz7tLPO070NnwuD9TcqI=;
+  b=Ve6khhghxj5jQn6B1dD1IZj9omNtTWR9IpbuTPHpgpb0xvYLZklz0i49
+   Hss2D2POL1/yuP34OYc4Hew2dviC8HVrcK+cNYFwVOPU5vKsHAfeVQjo3
+   /VH6W1LEkubgZ9qYEIR60TKysdetrB0A2m1CpMJ/BQXJjQg5Tj1hwbz+Q
+   6zquq59B7Z1XbBqppgcPz8p3ZFbhroVOjYgF5N7IuN+paianZ9OFVrtUA
+   N55ySJjDlkS7Er+gAoWssFJYttJmSL6I4sukZaX+g/frAIoaLUNgU1FaU
+   hlX+vhNtKOUglT3F4z4tW3sJQd1u48ljtGLk8VEZ5NNGiWhfxn4PKbsvv
+   A==;
+X-CSE-ConnectionGUID: 4suOlnuKTnunfGpmrcTdAQ==
+X-CSE-MsgGUID: 8ohNRyeMR4+J/ntj9XWoQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="66311540"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="66311540"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 09:49:55 -0700
+X-CSE-ConnectionGUID: JrWYtE5jRw6RDnx3o6BG2w==
+X-CSE-MsgGUID: Q3MpQSMoTfakReuZYcnBfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="123416334"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 21 Mar 2025 09:49:53 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 2771E14B; Fri, 21 Mar 2025 18:49:52 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v1 1/1] usb: Add checks for snprintf() calls in usb_alloc_dev()
+Date: Fri, 21 Mar 2025 18:49:49 +0200
+Message-ID: <20250321164949.423957-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z87Y69l5_GbzlLfp@earth.li>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Jarkko, I've realised I've somehow introduced a typo in the patch below 
-that means it doesn't fire correctly; I'm not sure how this happened as 
-my local copy I was testing on is definitely correct. Would you like a 
-one line fix up patch, or can you manually fix it up in your tree?
+When creating a device path in the driver the snprintf() takes
+up to 16 characters long argument along with the additional up to
+12 characters for the signed integer (as it can't see the actual limits)
+and tries to pack this into 16 bytes array. GCC complains about that
+when build with `make W=1`:
 
-This hunk:
+  drivers/usb/core/usb.c:705:25: note: ‘snprintf’ output between 3 and 28 bytes into a destination of size 16
 
->@@ -545,9 +551,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
-> 		if (rc >= 0)
-> 			/* Data transfer done successfully */
-> 			break;
->-		else if (rc != -EIO)
->+		else if (rc != EAGAIN && rc != -EIO)
-> 			/* Data transfer failed, not recoverable */
-> 			return rc;
->+
->+		usleep_range(priv->timeout_min, priv->timeout_max);
-> 	}
-> 	/* go and do it */
+Since everything works until now, let's just check for the potential
+buffer overflow and bail out. It is most likely a never happen situation,
+but at least it makes GCC happy.
 
-should be "rc != -EAGAIN" - the "-" sign has somehow been lost.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/usb/core/usb.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Apologies for this, let me know what's easiest for you in terms of 
-resolving it.
-
-On Mon, Mar 10, 2025 at 12:19:55PM +0000, Jonathan McDowell wrote:
->From: Jonathan McDowell <noodles@meta.com>
->
->Some Infineon devices have a issue where the status register will get
->stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
->simply a matter of requiring a longer timeout; the work around is to
->retry the command submission. Add appropriate logic to do this in the
->send path.
->
->This is fixed in later firmware revisions, but those are not always
->available, and cannot generally be easily updated from outside a
->firmware environment.
->
->Testing has been performed with a simple repeated loop of doing a
->TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
->at:
->
-> https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
->
->It can take several hours to reproduce, and several million operations.
->
->Signed-off-by: Jonathan McDowell <noodles@meta.com>
->---
->v2: Rename flag to TPM_TIS_STATUS_VALID_RETRY
->
-> drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
-> drivers/char/tpm/tpm_tis_core.h |  1 +
-> include/linux/tpm.h             |  1 +
-> 3 files changed, 16 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
->index c969a1793184..4ab69c3e103c 100644
->--- a/drivers/char/tpm/tpm_tis_core.c
->+++ b/drivers/char/tpm/tpm_tis_core.c
->@@ -463,7 +463,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
-> 		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-> 					&priv->int_queue, false) < 0) {
->-			rc = -ETIME;
->+			if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
->+				rc = -EAGAIN;
->+			else
->+				rc = -ETIME;
-> 			goto out_err;
-> 		}
-> 		status = tpm_tis_status(chip);
->@@ -480,7 +483,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
-> 	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-> 				&priv->int_queue, false) < 0) {
->-		rc = -ETIME;
->+		if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
->+			rc = -EAGAIN;
->+		else
->+			rc = -ETIME;
-> 		goto out_err;
-> 	}
-> 	status = tpm_tis_status(chip);
->@@ -545,9 +551,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
-> 		if (rc >= 0)
-> 			/* Data transfer done successfully */
-> 			break;
->-		else if (rc != -EIO)
->+		else if (rc != EAGAIN && rc != -EIO)
-> 			/* Data transfer failed, not recoverable */
-> 			return rc;
->+
->+		usleep_range(priv->timeout_min, priv->timeout_max);
-> 	}
-> 	/* go and do it */
->@@ -1143,6 +1151,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
-> 		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
-> 	}
->+	if (priv->manufacturer_id == TPM_VID_IFX)
->+		set_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags);
->+
-> 	if (is_bsw()) {
-> 		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
-> 					ILB_REMAP_SIZE);
->diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
->index 690ad8e9b731..970d02c337c7 100644
->--- a/drivers/char/tpm/tpm_tis_core.h
->+++ b/drivers/char/tpm/tpm_tis_core.h
->@@ -89,6 +89,7 @@ enum tpm_tis_flags {
-> 	TPM_TIS_INVALID_STATUS		= 1,
-> 	TPM_TIS_DEFAULT_CANCELLATION	= 2,
-> 	TPM_TIS_IRQ_TESTED		= 3,
->+	TPM_TIS_STATUS_VALID_RETRY	= 4,
-> };
-> struct tpm_tis_data {
->diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->index 20a40ade8030..6c3125300c00 100644
->--- a/include/linux/tpm.h
->+++ b/include/linux/tpm.h
->@@ -335,6 +335,7 @@ enum tpm2_cc_attrs {
-> #define TPM_VID_WINBOND  0x1050
-> #define TPM_VID_STM      0x104A
-> #define TPM_VID_ATML     0x1114
->+#define TPM_VID_IFX      0x15D1
-> enum tpm_chip_flags {
-> 	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
->-- 
->2.48.1
->
->
-
-J.
-
+diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+index 0b4685aad2d5..118fa4c93a79 100644
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -695,15 +695,16 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
+ 		device_set_of_node_from_dev(&dev->dev, bus->sysdev);
+ 		dev_set_name(&dev->dev, "usb%d", bus->busnum);
+ 	} else {
++		int n;
++
+ 		/* match any labeling on the hubs; it's one-based */
+ 		if (parent->devpath[0] == '0') {
+-			snprintf(dev->devpath, sizeof dev->devpath,
+-				"%d", port1);
++			n = snprintf(dev->devpath, sizeof(dev->devpath), "%d", port1);
+ 			/* Root ports are not counted in route string */
+ 			dev->route = 0;
+ 		} else {
+-			snprintf(dev->devpath, sizeof dev->devpath,
+-				"%s.%d", parent->devpath, port1);
++			n = snprintf(dev->devpath, sizeof(dev->devpath), "%s.%d",
++				     parent->devpath, port1);
+ 			/* Route string assumes hubs have less than 16 ports */
+ 			if (port1 < 15)
+ 				dev->route = parent->route +
+@@ -712,6 +713,11 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
+ 				dev->route = parent->route +
+ 					(15 << ((parent->level - 1)*4));
+ 		}
++		if (n >= sizeof(dev->devpath)) {
++			usb_put_hcd(bus_to_hcd(bus));
++			usb_put_dev(dev);
++			return NULL;
++		}
+ 
+ 		dev->dev.parent = &parent->dev;
+ 		dev_set_name(&dev->dev, "%d-%s", bus->busnum, dev->devpath);
 -- 
-101 things you can't have too much of : 7 - Memory.
+2.47.2
+
 
