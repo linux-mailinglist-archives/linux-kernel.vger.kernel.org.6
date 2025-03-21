@@ -1,368 +1,259 @@
-Return-Path: <linux-kernel+bounces-571219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694A4A6BA8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:20:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FCDA6BA91
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB2B7175F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6F846685A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C657C215F49;
-	Fri, 21 Mar 2025 12:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9BC2253FE;
+	Fri, 21 Mar 2025 12:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o2c6zws8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="VJYTYJRp";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="R5zk9b/K"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04F086250
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742559580; cv=none; b=cQac/tvZZ5RUh8xzppVFepSpgMjVLDgnOj22k+W2c0fCVGqNGkCO4OybUvZQQBhU2Zni6sJFHDX2tUekKT7aMaVCsK1LldWusdF0ceSYk7yTvCB7wxvLCuUP4U0f8JrvXowjScnMDE9WGSMcLdhzKD91wOfA6Wgif0faDKZcw0Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742559580; c=relaxed/simple;
-	bh=UxkQa0CNVdSrIjkU8CYOWQQQ/TPDCpWXYazJ8hVfrV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vq7vd+Y6Y8Ab+PRi1QZ1L7b9reWLYQFev2MU7txGaic0XIH4VnajA4ZzjovZOIaxfIYbZN2jjuK72wCS6xLGQ22eFQXbgakGP/V/2K5i7uOwqY/EBhr2ibWqJtku8jt3WKG3tTl9c43usHKButY3FdN28I78i2h8pDMJbW88w8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o2c6zws8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATDKn011513
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:19:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hasDN4p/a1W4nyEvoXqsuiWIpj77cv9FFKDtGgirZh4=; b=o2c6zws8uYfsTeiv
-	46g58J9uMZkjInCyKsmSwx/Yxc61JfRYQMS4rniI5BCCGaaFnSxG1zbTa38llL+M
-	GmjTf5dd3wdodRTkBSp+MAEwS/x61vKhYqfF8Sfze12yXvFQPWDDSitPUCx4NCDQ
-	0zbksxeIMypt1QXn+FBMcLhJvYXXq199diArnNXvpVJ1LucGelJHaBYXRCgjUrQq
-	jrGtzfUxgG5AQA9HzGbeUU+puodpQjHq01njn5ZmiTWKoAeNBU8hnpqV4J3/n2ri
-	lel1U0okoWFLaHmtGLQSFBi1oJt0U3ZSLvQmszq+O4T23ZcEvreW3NoyYlpQKACS
-	y5i4SQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g15y6cxt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:19:37 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5ba3b91b1so138565785a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:19:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742559576; x=1743164376;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hasDN4p/a1W4nyEvoXqsuiWIpj77cv9FFKDtGgirZh4=;
-        b=SttjC3ZF2FdIeoxZClPCkYsZYszwV4HaO3ooXepNBYMKBkA/JpGOn06NrzdAWgmnKL
-         8rHI4s/U+3EVKgwn5gFw4G8ecYbsgXkgQedWvGKmSjYtSmu1AFEnbPTcdGwkpnuzs+kW
-         g4XxwMRln3IhB8njoA3eHpsi/geUJkCgev71RkIb2nVMwnabOPHPiOV6Cf7/4AEBc7cv
-         l6OnqLnQhyVUddXOegvIbS7u+PxnMh7GtHTDjwDGoLSmnBM5CWl3NHZmkdrtRVrkNKEC
-         TClTXXB+N+fdT6CdPLppob3phqObAr4aahi4hbRACdGsuYl6lv1PDdSWnYAeRUp47XX9
-         251g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8klrlvdW1rIw0sG7efr77Gbm81S8GUHbaSh4Ap8lx9hi1khfkH13RYxLkyOfqBc9pHt6CdUKe1hTosvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyhQox1HufEJJEYexsyWhnjXpNxkHoeVIri8l/WPhUouN1C+BO
-	2DCDeRyaLYjQSgjkr7AVSSLFE8twAVA9e0WoWmMyXV7UCCrilSEzjLHMrIDBUhnsdDnEyj2BOJj
-	uteEhsF0PP1b2K+lXcxIAF4G4RkSNhpqapxWGI0guSaDEeuSU27KuL/GHonJE+FU=
-X-Gm-Gg: ASbGncu/CDpqkEGIyyxROsNXF7C1as9yNNZCmq7siySZO4EmArxAYIQ5TiMTR3gP8vt
-	cDrcJ0+GG+ozjy515Q6z+A+mRtnzaCVB1PhC8JlEhnJ8xRkGBM9PQoDimBGqe8l3sN2WASUh8OH
-	Dqhc0DQd92H1qq35bxOlpEku+3f1k3DyUmVfZni0h/zZtsYJnS4fYVuFRKqjqN2ebvNv3kW93U/
-	u2CMUmieowYBesDequoKH5oBr1XFd9GgikMRAYElhmhd36lqmbhrBpa+7rP36mIDuz3Ww5272jT
-	YmoHRruhB95qGXcShokTqriIiSnRW2RsXPMHzz4px28GbcrEwI+wAfTBRvbFyHecaBBrSIKS3N6
-	35W0=
-X-Received: by 2002:a05:620a:2495:b0:7b1:7508:9f38 with SMTP id af79cd13be357-7c5b0527d35mr1174223385a.16.1742559576335;
-        Fri, 21 Mar 2025 05:19:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3iWh33NZgqwz3Sb4nD2XgofXgNzfqbEkAFXjs0uQ1dNsvWPHe7INWA+p855zxzDr+khJ+8A==
-X-Received: by 2002:a05:620a:2495:b0:7b1:7508:9f38 with SMTP id af79cd13be357-7c5b0527d35mr1174217485a.16.1742559575771;
-        Fri, 21 Mar 2025 05:19:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6510635sm168988e87.211.2025.03.21.05.19.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 05:19:34 -0700 (PDT)
-Date: Fri, 21 Mar 2025 14:19:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com,
-        quic_fangez@quicinc.com, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 3/8] phy: qcom: qmp-usbc: Add DP phy mode support on
- QCS615
-Message-ID: <vi2lqsbu5yiak2xayq3xkpx5wtrd7fqvicaggzaklxdubclylq@j3nztszng7x7>
-References: <iqcofcntirmlwcpyfr4yabymqfcgyrij57bibf337tmxpa73t6@npkt6wquenf6>
- <527baded-f348-48a8-81cd-3f84c0ff1077@quicinc.com>
- <t5vcjlf44fhae4f2h75cfs3f7r6tdstw4ysmkapvvawj6xp23x@xnxqnxvyhshe>
- <d5151b82-5f05-4826-99b4-e925c20550b4@quicinc.com>
- <7vdaasc3flhpabnorjty5qjorlbp22honuscgpbteakgagg2tq@frqa6flk2mmv>
- <df1a4457-129e-452c-8089-ee1e6f9a3e12@quicinc.com>
- <jdw3xuknq2atcowl5xboimp3fol56t5nilefrxzpbdpwdoo5oc@pggif3lysjhh>
- <4c06aeec-161d-4e67-9a64-ac74991a0f73@quicinc.com>
- <m2dz6cw6eq7ztnfdispocvt2dxtumeazbgyts5em55n67cfxlz@fwirkughbj66>
- <b82afb57-1de3-489f-aa17-91496d0f6a48@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422891C2DB2;
+	Fri, 21 Mar 2025 12:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742559699; cv=fail; b=n4oGGxoETGjpoFL+TiMvnMXbF4P+d3TGXci5Kq2cYCo9aUKqM9gij8Gdk4Ao2ebT79NcdTrWxuHusB4cUf5Z/BexyhSXGMfNd4mN8/XIsKp/r2YvwjFZ/vIcS6TWCUj1ZZj3ilJHPEbjYjyTzsMNt4LpCrlfV2F0ixMjwYU2HaA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742559699; c=relaxed/simple;
+	bh=YFEmc+FhCdgfEN740J6QD1FKy28iUmqh8erxpH+IooI=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d9t7ECRVfkvsrxEsqlqBYqziTQKKwxKmqiUnibWo+r8tgd8Wc0m8Himh+AhLPCpsiY4xhhuFEXQWSgfKBArZjozbDjfhe/CWeBrPGKfMniBxjLHxuZgbQGcZZVDLY1tSxVO6JYfk4pxcMJnMhlVgd8+JkfJDByJqyviLE4vgoCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=VJYTYJRp; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=R5zk9b/K; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L4px0j019821;
+	Fri, 21 Mar 2025 07:21:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=zP5wtCkX9IYf+1Hp02TltGbXXRDF8Xlp/e1+8SZ4gyA=; b=
+	VJYTYJRpyj9S3NgWUiK53cdgI2gK9u6EK7psqHJXhfoqh8e9DklLiqmsSJzakd24
+	yrPXmrcxkqpPI3ylnHos53BYRRGPjU4hw2YchTPtLDOibciVUGJeYqEV9GjNq1gW
+	ZkHJON7e0O1iIyXZhau9YuRUdqz6b6i/B/rpWFGCD6V0Zmu22elyTV5MfaATJ4Ux
+	yFti6UoK4Qh4+PQvJKW42A2wjDe1UWIj48tnI9H9dMkFV8jFU8sNgoiofDDSjxXX
+	NmNbMmMWm4+4Lvf5nwNxCuPHo1loKgx0JbAQfkqKdYMP1Ji8GLrBZ+kdlOQHRZuT
+	ZrZK8sPvGXMnWOsZhWmX8g==
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2171.outbound.protection.outlook.com [104.47.55.171])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 45g9p6up0w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 07:21:18 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q8OSdEKviZ/iFh7S8SE3xHlj1+Qel8S2FAuFS2BNmYoNhtob7C+Ox9Zlxdauqu2D9jw9v3h2x8jrly2rVSyWvjaGhvvq5OzN8UbKRBLo+C4+bF52iC9b3aTUrsr9rTJTt4TYhoy/Sr4lrYZXDFEXPdSiA/Y5RYhICk+1CFMzXCR98kekrP4tXAkHLaLaxgh80FHiztOXGuGCVXSEAfa+U3tW89aZ7IOwTHKOua2wks5HzRt2HRPrQxRJx3CtkY9iXtRXReRhpPvJ3+cUenm1V3rLnVFaZ1nvoFDg1hZ2kwpgozciywidAlmtuV5gJ99ByFnYnLQXHvaYR2tiaCQLvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zP5wtCkX9IYf+1Hp02TltGbXXRDF8Xlp/e1+8SZ4gyA=;
+ b=UEMHczeWKAezyPFN6lSwbb8tG71qZPzIh6RvoW1l7i6pTQMhRJdjX64FiTxWYXORChDq4uNIO+wdSkpnxEylFs3dDMrIPewTZXxswYSAMPd8iVXIqEEIqkt3OI8kjYKFR0ofLxFcl29AyyvdHIpmo+M4LHZgT+FhRGSJJrvk5aJT/24vB+tZBoUA5EdA0f1gXhcqZj56XE6emr5nYQKJmcGo4jkzLQGYkKgJSr0sI+MTef1/aTWQ3zWsgSnmaiu0ZZFd6FjKeipG1YUnpAd4VZy1o69b0zr3p4HtxMfcUUpuihPmF+/alDRg9p3SSm+NYut++G5MUch1cUCxvhtFgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=canonical.com smtp.mailfrom=cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zP5wtCkX9IYf+1Hp02TltGbXXRDF8Xlp/e1+8SZ4gyA=;
+ b=R5zk9b/Kh50Ly746xsRp1Wpq2I4HaKllKwIEuKir7rc418Bou1hywMzWcnYhQNBKIXOoy+5/LEcpjOwwrVV3OpioACQRBkT10HqYQwQcp+h84CIq7exdDnjGXyolg3SK5qmhrwG1kI2to2MqpVYN8IdpDqQ5mhrVPmrFBS9/xHs=
+Received: from BN8PR07CA0023.namprd07.prod.outlook.com (2603:10b6:408:ac::36)
+ by CY5PR19MB6520.namprd19.prod.outlook.com (2603:10b6:930:34::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.37; Fri, 21 Mar
+ 2025 12:21:13 +0000
+Received: from BL02EPF00029927.namprd02.prod.outlook.com
+ (2603:10b6:408:ac:cafe::aa) by BN8PR07CA0023.outlook.office365.com
+ (2603:10b6:408:ac::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.34 via Frontend Transport; Fri,
+ 21 Mar 2025 12:21:11 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
+ designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
+ client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ BL02EPF00029927.mail.protection.outlook.com (10.167.249.52) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
+ via Frontend Transport; Fri, 21 Mar 2025 12:21:11 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id B7008406540;
+	Fri, 21 Mar 2025 12:21:09 +0000 (UTC)
+Received: from EDIN6ZZ2FY3 (EDIN6ZZ2FY3.ad.cirrus.com [198.90.188.28])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 794FA820244;
+	Fri, 21 Mar 2025 12:21:09 +0000 (UTC)
+From: "Simon Trimmer" <simont@opensource.cirrus.com>
+To: "'Chris Chiu'" <chris.chiu@canonical.com>, <tiwai@suse.com>,
+        <perex@perex.cz>
+Cc: <sbinding@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250321104914.544233-1-chris.chiu@canonical.com>
+In-Reply-To: <20250321104914.544233-1-chris.chiu@canonical.com>
+Subject: RE: [PATCH v2 1/2] ALSA: hda/realtek: fix micmute LEDs on HP Laptops with ALC3315
+Date: Fri, 21 Mar 2025 12:21:09 -0000
+Message-ID: <000e01db9a5b$ba553790$2effa6b0$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b82afb57-1de3-489f-aa17-91496d0f6a48@quicinc.com>
-X-Proofpoint-GUID: 00i3DiNJELYp3KzAERb7KyjC71_gYSbm
-X-Proofpoint-ORIG-GUID: 00i3DiNJELYp3KzAERb7KyjC71_gYSbm
-X-Authority-Analysis: v=2.4 cv=VaD3PEp9 c=1 sm=1 tr=0 ts=67dd5959 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=PvVr7vRqn70wVf-c534A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- bulkscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999 phishscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210091
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQInA7gw2D6OBt8zSf+61PVcPXbPp7Lmrlqw
+Content-Language: en-gb
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00029927:EE_|CY5PR19MB6520:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7b11677-4ce7-4416-2f8d-08dd6872ddc4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|61400799027|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YzRvdDB2Ymo0NmUzY1VlOHJHRmRNYzFjYU8rNDZ6K09vKzhjdDhsRFY4RXJ5?=
+ =?utf-8?B?S3NaMmlWRi9sT1V0RXdtVlBsMHM5UGsrWE9UcnRZRmhWT252Nk5RQlpkNDZ3?=
+ =?utf-8?B?VTdwQVpuTHhOQjl0UDRjWG55b0JhZy8vZ0dXNS9OSDZKWGI4ekJOaUhQL1lp?=
+ =?utf-8?B?UmE0cVErS0IrNjBJR1p5dVRFMEwwUjRkQ2ozRGllcm03TEJINHpxdkFCMXlY?=
+ =?utf-8?B?Qzk0VG1kbGRHVkpzMm91SEp1b1lBQnNsUmY4RFVUNWh6OHIwUzRCSk1qcldZ?=
+ =?utf-8?B?S29qTVp3SmdnekpCS1orNlg1VSswcDh2emJyUFFRamV1Z3hhTlY5N01WemlI?=
+ =?utf-8?B?Z1ZGQVl3Z1ZWQWRaSmtDUkJ6MUJYWXFjcjJuM3hrTnhRazBQbW0rK1NNN2Nj?=
+ =?utf-8?B?ODBNTnc1M2lBdDJSaGluWGQ5OStoOHZMMUFoWUw2RnlYeXdkUlpHSTJiM0dL?=
+ =?utf-8?B?UVUyblA3OElRMHhwOGplWVk1Qk1lYXVEdEhVTHBOaDhUUjV2UnM0VWFnc08r?=
+ =?utf-8?B?TXBLWmxYSHZDVmhzd2hSRnQwT01pZXN1WW9WMlNUZm55WlZCZUVTSGZJT09h?=
+ =?utf-8?B?bFRZNjBMbmR6dEhydTFhWk1mNlR1Z3lwL21UeWVKUUxLdUlYVlA4elp1VHNr?=
+ =?utf-8?B?R1RHSGhZQ3lFVmt3UThuNXRzWGdkTXA5ZG9uckNpajZiZHJITzRsRTErVmtp?=
+ =?utf-8?B?Z2V2eTFNdE9QNkxRSlh3YWVuY1o1OWlvNHJsVmMyK2VPcWpOejRRa2EvZjlQ?=
+ =?utf-8?B?OVFsOUIxTlhBbHdMTGxTVXQ0aDN3VitlZWJTT1dORnlsL0ZtQm1sb2lQQWtZ?=
+ =?utf-8?B?N1ArYkVTOFpBWS9wd2lkMjNkVkNGM0tBV0d2L1ExSng5c0k5VitYZ29jb2FK?=
+ =?utf-8?B?YWFMTEtIbVlJMmpEbGl1ZkVMYWV2cjJWV1FuMmdFY1B1VzQ5WURnajEvMFhS?=
+ =?utf-8?B?YlA4R0llM09uaUkyRWJkWUNVMUtwTlJYYmFhN2N1RlNkemtuZGhQVG9BWFk5?=
+ =?utf-8?B?Mk5lWWZZTDhhbFhCMlhhUGNKS0VnVm03QXFNQlBLYlF3cnNYYXo2Vjk1cndF?=
+ =?utf-8?B?ajJycndVdy9wTVBlWDk5Z3pGTkZsYTBoZEIvRDBqMnd2Y0E1R1pHVHRzY0gr?=
+ =?utf-8?B?L0NsbzVReUZoK0UzNmJDblBDSm5EQmoxclZWbmltbVNwblhpMS9LWVo3M2pR?=
+ =?utf-8?B?WldWQ2hnWEMwSjZrUzd6N3FhanFuODJFQ1YxbmlUTXlHVk1xTTNEQnZCTUFu?=
+ =?utf-8?B?MGFlQkM2eEErT21BSzlibDVwajRDVzJlaE9Kc2MwWVVJY1hDQ2h4SFBBTm9M?=
+ =?utf-8?B?THNJZnRyMkRocGd4MXRmVThrOTRpZzBPM3JmOW15Z1QwR0U2ak1ZTEpES2V0?=
+ =?utf-8?B?eWZKMnZmaU5mekpMTGh0SDdSYWVEVGRpblM0YW8rWUpqaFRNS2J5eWxFRDdv?=
+ =?utf-8?B?ZUwvTHZYWk9nWC8yYm5QOE9NckRwZDYrWXEzY0trNWUvY0FjRTRBQmZaanZv?=
+ =?utf-8?B?ckJIeGlKdSt5ZlRaakJVeHlvamFzVmxOZ1pPWU9hK1ZqNU0vbm5kWUVUL0lp?=
+ =?utf-8?B?WUpkV3ZiWkpZY29kZWlrUWs1MDNRMTJzRXZENHR1ajgzV0xrcjltSUNLTUJL?=
+ =?utf-8?B?WGxCMmR1SVdHTnVLTEFpQVVDcnVvTm00YjJhblRzZXJLbjFqNEdtYVNuOUxt?=
+ =?utf-8?B?YVRkYnp3aGpjd0F2UHhZNitSQlpSZ0l5ODAxODJRWVIxNjI2bE5NSGFvd2k5?=
+ =?utf-8?B?eHNXZ3o2dXFHZU10V1lneTdxZ3JydE9vZzhuTkRBa2dVUjJqRHQwSkdGYUNQ?=
+ =?utf-8?B?VUxiRnJ1aWFqbVdsdzkxbFhSYUl5aEgxZjVvaEtRaFhxa1QvTDEvdFBra25R?=
+ =?utf-8?B?dVRIdE5zZlhzVDZDWHJiR2FnYU0yTkRDU3NFamZJdTBsd1E5a1UrQ1ZxOFZm?=
+ =?utf-8?B?bjJCZ2hORC9OWTZnNHUzZjltVzQ4OVJUYTFtWWNtQUVlYzhuZE8rRkF6Y3hj?=
+ =?utf-8?Q?E1TCfwqIuEA3QmdeE+Zz8ClAZ6hC90=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(61400799027)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 12:21:11.0629
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7b11677-4ce7-4416-2f8d-08dd6872ddc4
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00029927.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR19MB6520
+X-Authority-Analysis: v=2.4 cv=Vcz3PEp9 c=1 sm=1 tr=0 ts=67dd59be cx=c_pps a=98TgpmV4a5moxWevO5qy4g==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10
+ a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=DfNHnWVPAAAA:8 a=w1d2syhTAAAA:8 a=5809KSv0kg3IaEw2gHkA:9 a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22 a=BGLuxUZjE2igh1l4FkT-:22
+X-Proofpoint-GUID: 11Abrt0bf2GtBsSKiN0lvttCBpWKZykm
+X-Proofpoint-ORIG-GUID: 11Abrt0bf2GtBsSKiN0lvttCBpWKZykm
+X-Proofpoint-Spam-Reason: safe
 
-On Fri, Mar 21, 2025 at 06:17:39PM +0800, Xiangxu Yin wrote:
-> 
-> 
-> On 3/6/2025 5:25 AM, Dmitry Baryshkov wrote:
-> > On Wed, Mar 05, 2025 at 06:20:45PM +0800, Xiangxu Yin wrote:
-> >>
-> >>
-> >> On 12/20/2024 8:01 AM, Dmitry Baryshkov wrote:
-> >>> On Wed, Dec 18, 2024 at 08:55:54PM +0800, Xiangxu Yin wrote:
-> >>>>
-> >>>>
-> >>>> On 12/12/2024 3:15 AM, Dmitry Baryshkov wrote:
-> >>>>> On Wed, Dec 11, 2024 at 08:50:02PM +0800, Xiangxu Yin wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 12/11/2024 5:46 PM, Dmitry Baryshkov wrote:
-> >>>>>>> On Wed, Dec 11, 2024 at 08:46:16AM +0800, Xiangxu Yin wrote:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 12/10/2024 11:09 PM, Dmitry Baryshkov wrote:
-> >>>>>>>>> On Thu, Dec 05, 2024 at 08:31:24PM +0200, Dmitry Baryshkov wrote:
-> >>>>>>>>>> On Thu, Dec 05, 2024 at 09:26:47PM +0800, Xiangxu Yin wrote:
-> >>>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>> On 11/29/2024 10:33 PM, Dmitry Baryshkov wrote:
-> >>>>>>>>>>>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Extended DP support for QCS615 USB or DP phy. Differentiated between
-> >>>>>>>>>>>>> USBC and DP PHY using the match table’s type, dynamically generating
-> >>>>>>>>>>>>> different types of cfg and layout attributes during initialization based
-> >>>>>>>>>>>>> on this type. Static variables are stored in cfg, while parsed values
-> >>>>>>>>>>>>> are organized into the layout structure.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> We didn't have an understanding / conclusion whether
-> >>>>>>>>>>>> qcom,usb-ssphy-qmp-usb3-or-dp PHYs are actually a single device / PHY
-> >>>>>>>>>>>> or two PHYs being placed next to each other. Could you please start
-> >>>>>>>>>>>> your commit message by explaining it? Or even better, make that a part
-> >>>>>>>>>>>> of the cover letter for a new series touching just the USBC PHY
-> >>>>>>>>>>>> driver. DP changes don't have anything in common with the PHY changes,
-> >>>>>>>>>>>> so you can split the series into two.
-> >>>>>>>>>>>>
-> >>>>>>>>>>> Before implement DP extension, we have discussed with abhinav and krishna about whether use combo, usbc or separate phy.
-> >>>>>>>>>>
-> >>>>>>>>>> What is "DP extension"?
-> >>>>>>>>>>
-> >>>>>>>> I'm sorry confusion casued by my description. It's means extend DP implemnt for USBC phy driver.
-> >>>>>>>>>>>
-> >>>>>>>>>>> We identified that DP and USB share some common controls for phy_mode and orientation.
-> >>>>>>>>>>> Specifically, 'TCSR_USB3_0_DP_PHYMODE' controls who must use the lanes - USB or DP,
-> >>>>>>>>>>> while PERIPH_SS_USB0_USB3PHY_PCS_MISC_TYPEC_CTRL controls the orientation.
-> >>>>>>>>>>> It would be more efficient for a single driver to manage these controls. 
-> >>>>>>>>>>
-> >>>>>>>>>> The question is about the hardware, not about the driver.
-> >>>>>>>>>>
-> >>>>>>>>>>> Additionally, this PHY does not support Alt Mode, and the two control registers are located in separate address spaces. 
-> >>>>>>>>>>> Therefore, even though the orientation for DP on this platform is always normal and connected to the video output board, 
-> >>>>>>>>>>> we still decided to base it on the USBC extension.
-> >>>>>>>>>>
-> >>>>>>>>>> Could you please clarify, do usb3-or-dp PHYs support DP-over-USB-C? I
-> >>>>>>>>>> thought that usbc-or-dp platforms support that, but they don't
-> >>>>>>>>>> support DP+USB pin configuration. Note, the question is broader than
-> >>>>>>>>>> just QCS615, it covers the PHY type itself.
-> >>>>>>>>>>
-> >>>>>>>>>> Also, is TCSR configuration read/write or read-only? Are we supposed to
-> >>>>>>>>>> set the register from OS or are we supposed to read it and thus detemine
-> >>>>>>>>>> the PHY mode?
-> >>>>>>>>>
-> >>>>>>>>> Any updates on these two topics?
-> >>>>>>>>>
-> >>>>>>>> Still confirming detail info with HW & design team.
-> >>>>>>>> I’ll update the information that has been confirmed so far.
-> >>>>>>>> This phy support DP-over-USB-C,but it's not support alt-mode which 2 lane work for DP, other 2 lane work for USB.
-> >>>>>>>> TCSR phy mode is read/write reg and we can read for determine phy mode.
-> >>>>>>>
-> >>>>>>> Ok, thanks for the explanation. From my point of view:
-> >>>>>>>
-> >>>>>>> - Implement the DP PHY to be a part of the same driver. Each device
-> >>>>>>>   supported by the usbc driver should get both PHYs.
-> >>>>>>>
-> >>>>>>> - Make sure not to break the ABI: #phy-cells = <0> should still work and
-> >>>>>>>   return USB PHY, keeping backwards compatibility. Newer devices or
-> >>>>>>>   upgraded DT for old devices should return USB PHY for <... 0> and DP
-> >>>>>>>   PHY for <... 1>.
-> >>>>>>>
-> >>>>>> Yes, currently we have implemented like your description,
-> >>>>>> Each deivce shoud get both PHYs, DP PHY for <... 1> and USB PHY for <... 0>.
-> >>>>>
-> >>>>> Please note the backwards compatibility clause.
-> >>>>>
-> >>>> For the USB node, we kept the same implementation as the original function interface, and the devicetree node definition also remains unchanged.
-> >>>> In subsequent patches, I will follow Krzysztof’s suggestion to use a separate DT-binding to describe the DP PHY configuration, 
-> >>>> without making changes to the USB devicetree and DT-binding implementation.
-> >>>>>>> - I'm not shure how to handle the USB and DP coexistence, especially in
-> >>>>>>>   your case of the USB-or-DP PHY.
-> >>>>>>>
-> >>>>>> For coexistence process:
-> >>>>>>
-> >>>>>> When we start implement DP part, usb driver team said only need config TCSR phy mode and orientation during switch in USB-C port.
-> >>>>>> Based on your previous comments avout SW_PWRDN, I'm confirming with the USB team whether SW_REST/SWPWRDN/START_CTRL registers might affect DP.
-> >>>>>
-> >>>>> Thanks!
-> >>>>>
-> >>>>>> Anyway, even though the original SoC design supports DP or USB over Type-C，
-> >>>>>> but on QCS615 ADP AIR platform, there are only four USB-A port which works with 'qcs615-qmp-usb3-phy' driver, and no USB-C port.
-> >>>>>> DP port is mappped from usb pin to the video out sub-board.
-> >>>>>> so we are unable to verify the switching case between DP and USB devices under USB-C.
-> >>>>>
-> >>>>> That's also fine. We will get to that point once MSM8998 / SDM660
-> >>>>> get USB-C support (the only current blocker is the support for the
-> >>>>> TYPEC block of the PMI8998).
-> >>>>>
-> >>>> I can't access MSM8998 / SDM660 documents now, but I have confirmed detail info about USB & DP phy design for sm6150.
-> >>>>
-> >>>> The 'usb-ssphy-qmp-usb3-or-dp PHY' on the current platform is essentially composed of three sub-PHYs, 
-> >>>> which can even be considered as three separate PHYs: USB3 primary PHY, USB3 secondary PHY, and USB3 DP PHY.
-> >>>
-> >>> I've looked at sm6150-usb.dtsi and now I'm completely puzzled by your
-> >>> answer. The msm-4.14 kernel lists a single USB QMP PHY at 0x88e6000,
-> >>> used for the primary USB3 host. It it defined as
-> >>> qcom,usb-ssphy-qmp-usb3-or-dp. Secondary USB host is listed as USB 2.0
-> >>> only. So what do you mean by the USB3 secondary PHY? Which PHY and which
-> >>> pins are connected to your video-out board?
-> >>>
-> >> Five PHYs are integrated into Talos SoC: two USB2 PHYs, two USB3 PHYs, and one DP PHY.
-> >> PERIPH_SS_QUSB2PHY_PRIM_QUSB2PHY_PRIM_CM_QUSB2_LQ_1EX (0x088E2000)
-> >> PERIPH_SS_QUSB2PHY_SEC_QUSB2PHY_SEC_CM_QUSB2_LQ_1EX (0x088E3000)
-> >> PERIPH_SS_USB0_USB3PHY_USB0_USB3PHY_CM_USB3_SW (0x088E6000)
-> >> PERIPH_SS_USB1_USB3PHY_USB1_USB3PHY_CM_USB3_SW (0x088E8000)
-> >> PERIPH_SS_DP_PHY_DP_PHY_CM_DP_4LN_SW (0x088E9000)
-> >>
-> >> The USB3 secondary PHY(0x088E8000) is the one mutually exclusive with the DP PHY, which controlled by the TCSR switch.
-> >> USB3 secondary PHY is not configed in qcs615 dtsi.
-> > 
-> > Okay, thanks for the explanation. I'm still puzzled by msm-4.14 defining
-> > primary USB3 PHY as 'qcom,usb-ssphy-qmp-usb3-or-dp', but it might be
-> > some kind of a hack or just a difference between QCS615 and SM6150.
-> > 
-> > If QCS615 follows other platforms of the same generation, I'd assume
-> > that the correct way to handle it would be:
-> > 
-> > - Keep the primary USB3 PHY as is (it needs to be reposted though, the
-> >   driver part didn't make it in).
-> > 
-> > - Extend the qmp-usbc driver to support USB+DP 'exclusive combo' PHYs by
-> >   registering two PHYs for a single device. Make sure to continue
-> >   supporting #phy-cells = 0 and region size = 0x1000. Use definitions
-> >   from include/dt-bindings/phy/phy-qcom-qmp.h .
-> > 
-> To avoid any misunderstandings, let me double-confirm these points.
-> 
-> 1.In this patch [PATCH 3/8], 
-> we didn't modify the USB driver logic; we only adjusted the structure and organizational relationships. 
-> Does the first point suggest splitting this patch and isolating the USB structure changes into a separate patch?
-> Or did I misunderstand?
+On Fri, Mar 21, 2025 at 10:49=E2=80=AFAM Chris Chiu wrote
+> More HP laptops with Realtek HDA codec ALC3315 with combined CS35L56
+> Amplifiers need quirk ALC285_FIXUP_HP_GPIO_LED to fix the micmute LED.
+>=20
+> Signed-off-by: Chris Chiu <chris.chiu@canonical.com>
+> ---
+>  sound/pci/hda/patch_realtek.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>=20
+> diff --git a/sound/pci/hda/patch_realtek.c =
+b/sound/pci/hda/patch_realtek.c
+> index 1d8caf791dbc..30d4cd93dae1 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -10723,13 +10723,27 @@ static const struct hda_quirk =
+alc269_fixup_tbl[]
+> =3D {
+>  	SND_PCI_QUIRK(0x103c, 0x8cf5, "HP ZBook Studio 16",
+> ALC245_FIXUP_CS35L41_SPI_4_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8d01, "HP ZBook Power 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8d84, "HP EliteBook X G1i",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d85, "HP EliteBook 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d86, "HP Elite X360 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d8c, "HP EliteBook 13 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d8d, "HP Elite X360 13 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d8e, "HP EliteBook 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d8f, "HP EliteBook 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8d90, "HP EliteBook 16 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8d91, "HP ZBook Firefly 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8d92, "HP ZBook Firefly 16 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8de8, "HP Gemtree",
+> ALC245_FIXUP_TAS2781_SPI_2),
+>  	SND_PCI_QUIRK(0x103c, 0x8de9, "HP Gemtree",
+> ALC245_FIXUP_TAS2781_SPI_2),
+> +	SND_PCI_QUIRK(0x103c, 0x8e14, "HP ZBook Firefly 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8e15, "HP ZBook Firefly 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8e16, "HP ZBook Firefly 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8e17, "HP ZBook Firefly 14 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8e18, "HP ZBook Firefly 14 G12A",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8e19, "HP ZBook Firefly 14 G12A",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8e1a, "HP ZBook Firefly 14 G12A",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8e1b, "HP EliteBook G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8e1c, "HP EliteBook G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8e2c, "HP EliteBook 16 G12",
+> ALC285_FIXUP_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA",
+> ALC256_FIXUP_ASUS_MIC),
+>  	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300",
+> ALC282_FIXUP_ASUS_TX300),
+>  	SND_PCI_QUIRK(0x1043, 0x1054, "ASUS G614FH/FM/FP",
+> ALC287_FIXUP_CS35L41_I2C_2),
+> --
+> 2.34.1
+>=20
 
-I don't understand your question. See below.
+Looks fine to me
 
-> 
-> 2. Does "two PHYs for a single device" means should define both usb PHY and DP PHY in dtsi, the USBC PHY driver's probe will run separately for both USB and DP?
-> Then USB PHY node can keep forward compatibility with prop '#clock-cells = <0>' & '#phy-cells = <0>',
-> and DP PHY will define with prop '#clock-cells = <1>' & '#phy-cells = <1>'.
+Reviewed-by: Simon Trimmer <simont@opensource.cirrus.com>
 
-No. It means replacing extending existing entries with bigger reg and
-#phy-cells = <1>. The driver must keep working with old node definitions
-as is to ensure backwards compatibility. New nodes should make it
-register two PHYs (USB3 and DP). On the driver side modify generic code
-paths, all platforms supported by the driver should be able to support
-USB3+DP combination.
+-Simon
 
-> 
-> > - Make sure that the PHY driver doesn't allow both PHYs to be powered
-> >   on. Add TCSR programming to the power_on / power_off callbacks,
-> >   implementing the switch between DP and USB3.
-> > 
-> Ok, I will add TCSR switch logic to DP power_on / power_off callbacks, 
-> During DP power off, default will reset to USB3 PHY.
-
-Not quite. Both USB3 and DP drivers should be calling power_on / _off.
-If USB3 is on, powering on DP PHY should fail. Vice versa, if DP is on,
-powering on USB should fail.
-
-> 
-> > At this point all PHYs in qmp-usbc can be switched to the new USB+DP
-> > configuration, still providing backwards compatibility with the existing
-> > board DTs.
-> > 
-> >> In Ride, DP PHY, DP lane 0~3 and DP aux pins are connected to video-out board.
-> >>>>
-> >>>> On the QCS615, the USB primary PHY is currently used to handle USB 3.0 communication for the previously mentioned four USB Type-A ports, 
-> >>>> while the USB3 secondary PHY and USB3 DP PHY are used for the output of the Type-C port,
-> >>>> but since the Type-C port is forcibly pin-to-pin configured to the video out board, the Type-C port will always configure as DP PHY.
-> >>>>
-> >>>> The internal registers of these three PHYs are independent of each other, Neither their respective SWPWR_DN nor SWRST will affect the other two PHYs.
-> >>>> Additionally, there was a misunderstanding about the orientation previously.
-> >>>> The USB orientation setting only affects the current PHY and does not impact the DP PHY. The DP PHY is configured in the DP_PHY_CFG_1.
-> >>>>
-> >>>> TSCR_PHY_MODE can specify which PHY outputs to the Type-C port, and the global reset will simultaneously reset the two associated PHYs. 
-> >>>> Therefore, the correct switching process is as follows.
-> >>>> When switching the inserted device:
-> >>>> 	1.Identify the PHY type.
-> >>>> 	2.Enable the regulator.
-> >>>> 	3.Trigger a reset.
-> >>>> 	4.Enable the clock.
-> >>>> 	5.Configure PHY type related orientation
-> >>>> 	6.switch the TCSR PHY mode.
-> >>>> 	7.Configure the registers of PHY.
-> >>>> During release:
-> >>>> 	1.Reset.
-> >>>> 	2.Disable the clock.
-> >>>> 	3.Disable the regulator.
-> >>>>
-> >>>> Our current design overall complies with this process, but it lacks the configuration for DP_PHY_CFG_1.
-> >>>>
-> >>>> Shall we continue the discussion to clarify remain comments of the USBC driver?
-> >>>>
-> >>>>>> However, I'm also confirming whether anything other will affect USB and DP each other.
-> >>>>>
-> >>>>
-> >>>
-> >>
-> > 
-> 
-
--- 
-With best wishes
-Dmitry
 
