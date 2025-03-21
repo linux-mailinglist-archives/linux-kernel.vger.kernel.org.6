@@ -1,90 +1,146 @@
-Return-Path: <linux-kernel+bounces-570892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2FFA6B5E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:16:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF89A6B5E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28CF9189C563
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BA2C7A86BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD1B1EFF93;
-	Fri, 21 Mar 2025 08:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6031EC009;
+	Fri, 21 Mar 2025 08:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="w0rYLhRJ"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ceBZO+6g"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774671E991D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C8D79EA
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742544930; cv=none; b=iKNiu6yp0eX4ZmhXfbKNnZlAI0pFAkzwN2pspl4kAYVAJ6Ph1dGSMnJz3gJ12uyJ6sX87iOlvAMMcz0Wvsc4lUhGWFA361aOF76kVUc0P82PIWO61uiBZbqTSNRT8+bzGlVKZP+fK4u7M1yLPvuruGZN2EaFO6kZ0ggtc0pzUYE=
+	t=1742544979; cv=none; b=E7g7wVDi6syLLzIZcArLkPAcbzmt2CMOlstNnqhDQnUOMs87HRB9A3wRFwqza2EI0b2cMb63+Pdmok9fNbSnzaJiyQMTt47tugNWfcdWdBePiR93ny5cgcCnatZIa9OtMXjTGLG5STtBSYMU4x3tU23eVoH/PaRY1/1SFgAGKh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742544930; c=relaxed/simple;
-	bh=d6ILCZZssy97zc5fURHqUsCaBvkhMm0Qn33u5P5AIrY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=JssQ/e9pFD92DbN/hqX79eFxmTODXKDMn0PD6+/OI0XlAWwXlPRS1JfW/HkSjweQjBNtOczvfabm74xWPkRx5zw84KzK/akq549ra4NsVixq9Wy4Il2CBlgZc/TuIvyQfFMzzlXRym9X/DDfm23+jY4k6UsZDHn8OPS/gvk0MsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=w0rYLhRJ; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52L8Euuv2541398
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 21 Mar 2025 01:14:57 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52L8Euuv2541398
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742544897;
-	bh=NxSlo284Cm1ijdBKAZxqPOJ6SDvYvA0rTpktQYQy2nM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=w0rYLhRJJJAGoia7Puqd8EzAX3UTgYCjWBki+1Du1iiixdfHWO7X8gszn+H5fn/Yg
-	 Cx+p1IlPTw+1e0MzLgpE+chc6YH7E3/PeRYqBrp6yMdbqTsOKkGWDmAxBlfqiaa/Xs
-	 oIua98g7L7JJZRrToqEHLRz2CPXjqkZgmHzlb0fml/Epby/VQjil+zdx+UbNJDDNMy
-	 JtErZNdYi97XaQaCkAnBTxx0m5JI/fsI9VsPXuuuouSst/B16X4C2374dcZNngktmo
-	 k6JTxCiBiuQ4AVdWrT+voHkeQuo2q7xZN2BOA5BPQTV2kPYyLBal9WnaDU8uzX1DTe
-	 I1iY2asmUAHSA==
-Date: Fri, 21 Mar 2025 01:14:54 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Xin Li <xin@zytor.com>, Brian Gerst <brgerst@gmail.com>
-CC: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterz@infradead.org
-Subject: Re: [PATCH v3 3/3] x86: Zap TOP_OF_KERNEL_STACK_PADDING on x86_64
-User-Agent: K-9 Mail for Android
-In-Reply-To: <8b920da6-0c9a-43b4-bd50-79c057a01932@zytor.com>
-References: <20250319071009.1390984-1-xin@zytor.com> <20250319071009.1390984-4-xin@zytor.com> <CAMzpN2jFv8KE97ymEWAX1setxdgXy0jZGn_7JVp9fFEBfZ2ynA@mail.gmail.com> <8b920da6-0c9a-43b4-bd50-79c057a01932@zytor.com>
-Message-ID: <1106B557-4AA2-410F-A990-C0C3BB7E675B@zytor.com>
+	s=arc-20240116; t=1742544979; c=relaxed/simple;
+	bh=YLHOV03L7VuMVxa4EUpKAXdoaHrmKGwNEaOBF+8UflY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6LXMaLg1g3y6feZn9WYn8PKFxeqUsNnU4vEa+C0kZVtJ1sFhC5NtgIt5AFtC1YXx7LZiZ/DAUTrsIJocJ59q/RAzWl8DnM6FBfwyczxDpeS53yrEwzUdn8/XWtWPIy/Q2IwOvd+KD2JownaomhjDbEvfqA0dPvF1ZdSk+LQqRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ceBZO+6g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742544976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nmO1kvLBJP1B2aKLuVg4GwQbIKEXPnUwaAJTPxGHvFk=;
+	b=ceBZO+6g2fY1MjdY+8C4/MwlCfpb7/C2oTO6yfUQgh908bIcaf9U0AVguUk4J9LWSaxvna
+	gk1zNZPXqLi19pRwGeaDMYxaGIwp0/zNkm0PdkL488pzfjbX6OZ/ZU92oviMJfx5pncvh8
+	FKnUzvPTm3OOPjOWvCIzuf4TNOLcmok=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-ARr3YHa-PSWP8y_eqIY_Pg-1; Fri,
+ 21 Mar 2025 04:16:13 -0400
+X-MC-Unique: ARr3YHa-PSWP8y_eqIY_Pg-1
+X-Mimecast-MFC-AGG-ID: ARr3YHa-PSWP8y_eqIY_Pg_1742544972
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C4EB18DB8C5;
+	Fri, 21 Mar 2025 08:16:12 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.45.225.99])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B94691800370;
+	Fri, 21 Mar 2025 08:16:08 +0000 (UTC)
+Date: Fri, 21 Mar 2025 09:16:04 +0100
+From: Phil Auld <pauld@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <llong@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+	Vishal Chourasia <vishalc@linux.ibm.com>,
+	Vineeth Reddy <vineethr@linux.ibm.com>,
+	Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v2] sched/isolation: Make use of more than one
+ housekeeping cpu
+Message-ID: <20250321081604.GA103187@pauld.westford.csb>
+References: <20250218184618.1331715-1-pauld@redhat.com>
+ <Z8b_A4YnOcNzGcaU@localhost.localdomain>
+ <20250305171441.GC51446@pauld.westford.csb>
+ <521d9ec6-9aab-46d9-82e6-dab9c52970af@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <521d9ec6-9aab-46d9-82e6-dab9c52970af@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On March 20, 2025 10:47:25 PM PDT, Xin Li <xin@zytor=2Ecom> wrote:
->On 3/19/2025 12:17 PM, Brian Gerst wrote:
->> I'm not sure it's worth fully removing TOP_OF_KERNEL_STACK_PADDING for
->> 64-bit if it results in needing separate definitions of
->> task_top_of_stack()=2E  Leaving it at zero is fine=2E  The other change=
-s
->> are fine though=2E
->
->Let's leave it to x86 maintainers ;-)
->
->But to me, TOP_OF_KERNEL_STACK_PADDING no longer makes sense on 64-bit,
->and it makes it simpler to remove it=2E  On the other side, 32-bit is to
->be zapped=2E=2E=2E
->
->Thanks!
->    Xin
->
+Hi Peter,
 
-For what it's worth, it was there as 0 before the FRED changes, so =2E=2E=
-=2E
+On Fri, Mar 14, 2025 at 07:38:22PM -0400 Waiman Long wrote:
+> On 3/5/25 12:14 PM, Phil Auld wrote:
+> > On Tue, Mar 04, 2025 at 02:24:19PM +0100 Frederic Weisbecker wrote:
+> > > Le Tue, Feb 18, 2025 at 06:46:18PM +0000, Phil Auld a écrit :
+> > > > The exising code uses housekeeping_any_cpu() to select a cpu for
+> > > > a given housekeeping task. However, this often ends up calling
+> > > > cpumask_any_and() which is defined as cpumask_first_and() which has
+> > > > the effect of alyways using the first cpu among those available.
+> > > > 
+> > > > The same applies when multiple NUMA nodes are involved. In that
+> > > > case the first cpu in the local node is chosen which does provide
+> > > > a bit of spreading but with multiple HK cpus per node the same
+> > > > issues arise.
+> > > > 
+> > > > We have numerous cases where a single HK cpu just cannot keep up
+> > > > and the remote_tick warning fires. It also can lead to the other
+> > > > things (orchastration sw, HA keepalives etc) on the HK cpus getting
+> > > > starved which leads to other issues.  In these cases we recommend
+> > > > increasing the number of HK cpus.  But... that only helps the
+> > > > userspace tasks somewhat. It does not help the actual housekeeping
+> > > > part.
+> > > > 
+> > > > Spread the HK work out by having housekeeping_any_cpu() and
+> > > > sched_numa_find_closest() use cpumask_any_and_distribute()
+> > > > instead of cpumask_any_and().
+> > > > 
+> > > > Signed-off-by: Phil Auld <pauld@redhat.com>
+> > > > Reviewed-by: Waiman Long <longman@redhat.com>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Cc: Juri Lelli <juri.lelli@redhat.com>
+> > > > Cc: Frederic Weisbecker <frederic@kernel.org>
+> > > > Cc: Waiman Long <longman@redhat.com>
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Link: https://lore.kernel.org/lkml/20250211141437.GA349314@pauld.westford.csb/
+> > > Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> > > 
+> > Thanks Frederic!
+> > 
+> > Anyone with commit powers willing to pick this up?
+> 
+> Is this patch eligible to be merged into sched/core for the current cycle or
+> will have to wait until the next one?
+> 
+> Thanks,
+> Longman
+> 
+
+This is the patch (in this thread somewhere...) I mentioned the other
+day at OSPM. 
+
+Thanks!
+
+
+Cheers,
+Phil
+
+-- 
+
 
