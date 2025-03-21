@@ -1,164 +1,340 @@
-Return-Path: <linux-kernel+bounces-571837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FB3A6C2F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:06:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5938A6C2F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 423D57A7AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A1D01B62253
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD9B22D4F1;
-	Fri, 21 Mar 2025 19:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6918A22DFA4;
+	Fri, 21 Mar 2025 19:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gXeRSXP8"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JA2dCgJo"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FB8154426
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75916154426;
+	Fri, 21 Mar 2025 19:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742583966; cv=none; b=Ms/HYrXgm8dKUps24EvFbU2AMiN8TGOl0DOsUJKTudIG5MqWVA5JaJy8bJxtfCALuRl14+Zeaa2DmUqcofd0ztsDKUF6L6X2veQnt/nusyW+nkloAD6W1Mn+LWN0POED47u3YNj6wpMUa/7xPaFU5ggPDovT0Zo4oQD61y6TFXw=
+	t=1742583976; cv=none; b=cgy0/8TSzg2iIjjeR7/eEb/pKWoTwUoJuefdyxL0IrKkzpAhhEAq3vN3HqKIjLFy/2okYlGZ2yD0LtzFeDP/BhdYVup0GcBEOUYpoOvZMRWj+KUBooA8PGg0ObI3x8zDjdLEsjxUYqXaSfJokZ8U0F0yexpsHaowqfNxYQYpEPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742583966; c=relaxed/simple;
-	bh=sPA3YMc7zB5fmsVIwEgENpeTURZ/iV7aheO5rZV+wXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=duut5WoEJV46B5J9NijY4B3tfI+w7xSDJlBkQW55Hf6G+FF7FMPXlgnLScOoodQ/BmqRM2Q/QQIQe8hA087KRcEp06RZKwIy7MmderqbYnKXTYsc6RyUHuDqqEtnB19+MXUvQRwtliDVlfRfo72zQsfA6S0z86zwe8wI1HFiSkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gXeRSXP8; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e6405e4ab4dso3012404276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742583964; x=1743188764; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4nSFzAgQaMCuwvxmSdJkfWwEiaWngP9LwXhsN0dSMzo=;
-        b=gXeRSXP8CvCeMqi8JRY6Yi1ynaSX2ubPjv4cZVo9lJ1KaE0hpliskj+dq/hb9lvA0a
-         0qY2B81JGVh/PLt1HbFDVP1t0iZ+rk3a3iF11Fe5MNVttoxjtqG3jp/+aC2rXQ1ptXzt
-         HtRaCP06kNfcHf3FlQ5aQy2pMenXZ6FYJAkhw6DcZaa9bw7W51BNBHJ1U4I47KepOuTW
-         M91CiaNmgPqI2w708nVgYHvFXnHgrvvv57Rmxo+lx2z6/ciB2dMyn8YYFq490fzuNFuQ
-         6ii/pFCvYtrUdffRNrhkfgSZ9rtTRyF0Up3UIPT+Kse+41Miv0mAoqlA+n0vCUc5gUhE
-         EO5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742583964; x=1743188764;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4nSFzAgQaMCuwvxmSdJkfWwEiaWngP9LwXhsN0dSMzo=;
-        b=V8bqQ1gGSld987kzaYnT5tOVAnqLjeOCPviUL12gKW10UyG7Bup13og0WQ6KlxI+1c
-         EKAcAC77njlqYazfIwRTUE/q2aBq5K3ZtAZwghN8mT0o5fvcBauSSn4yUG1CX+i+SmAy
-         GnWjiCeLUKs19ICWcEedqAm4FKDBLPnoAbD6p87KL3sygCimFhzUBmVxpnNv/RHMmBs2
-         Kmj18pSFjruaPUvukSjnuo6pXpAHuaA3yWXxlmor9UrhD0HAUlmGujB6RjiTNwTItxoD
-         xgMlgAwdS5twqpz8WNcgQtrGB5s136vILOorZytalaKusENbACSQc4pfkhejarfAVwfl
-         L5QA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8GtxcST8g6ya6G7SSptU/nXNg+nwT75w5mSlb4FIvrf9FkE8mjyQJOp4jlnNb15s5W1ce9vGYx81u2ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWsXxkaEyf+wbijyfC6ak36i2cBznCDeUVfU36GHUNpJktVwMj
-	1EDVhZ/ETASm1vrc4Rq4aTNO+FoppmsHpx7rpfodP22lSAdfk/yBpXAyYfaV+EkSPZZZYXHbSqy
-	48ZtlXR4vDgFOVaMPBEoicXIDEfonyaGvvjIv
-X-Gm-Gg: ASbGncv+SwtEtfdvUOiTm/vRI63GKQKTdlBomAKXHNx1xZ0VNHZfGqnUhznIj2NK6Cs
-	1oO974baQ3VHcJQxDkW9r+esEorB+6J2NnqG7r6724CH4hpVvhqx4Zi/hQ5g0kSybgPy2K+1doi
-	DZZEaUWhT8hN2POhON/rfmyoMIfQ==
-X-Google-Smtp-Source: AGHT+IH/+vybMPgjTy+Q/lR+WQGG9I7BYYRaZ8XGvbeWqhA0zAi7QHXEcXle+vpl3pUGz1AEgz4oOGz9sgmGVmlf3/8=
-X-Received: by 2002:a05:6902:4a8d:b0:e66:a274:7fff with SMTP id
- 3f1490d57ef6-e66a2748117mr6225899276.21.1742583948895; Fri, 21 Mar 2025
- 12:05:48 -0700 (PDT)
+	s=arc-20240116; t=1742583976; c=relaxed/simple;
+	bh=XQhRMao7IIt/6DRLieEod+aEidzzMi98vtZ3vLD3dNk=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=P3VkdoFacRin5sdtxjEsvFCygDL3TJtZ+ktaDAbwoAkDt+EF6igYj2JipM9fGwCZeH3FifC0747Oj+F7h2yewMBjYFGMirXDe+r4imvLMNc4XN7iN/KK9ySifUPSwmzXq8k6Z7lJDxtdbnGhObdPslKKfiABZCq+gBmDh1mOSaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JA2dCgJo; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 53E4D220;
+	Fri, 21 Mar 2025 20:04:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742583867;
+	bh=XQhRMao7IIt/6DRLieEod+aEidzzMi98vtZ3vLD3dNk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=JA2dCgJoqkADyajnRe40iMA8LOukmRZjsffnOBX1Dciv34ZpFJbkpSj9shLmELQ/M
+	 ECIb5uZ1wkZMzKE+8G5BW5nR421C4dN1hZ/+YSxbgsPZDgf/y3vePiMIGNXCi1ie0G
+	 UpkgMgOmayGxKob+u8E2HislxoylFMI/l+qVHA14=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
- <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
- <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
- <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com> <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
- <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com> <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com> <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
- <Z92gTQj6QkedbH0K@kernel.org>
-In-Reply-To: <Z92gTQj6QkedbH0K@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Mar 2025 15:05:38 -0400
-X-Gm-Features: AQ5f1JoCVuy6gH5pZ3qt9eL4_YTiGz_EbkGoV-AHORqyWmdnqKeKo0JNC59Hn0c
-Message-ID: <CAHC9VhSi06azJ+b5YgLuDM6xff2401ArMM6LoP0vsqsUgz6VNA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	David Howells <dhowells@redhat.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <TY3PR01MB11346C6C1EBF9896A47E9807086DB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250321172220.867165-1-kieran.bingham@ideasonboard.com> <TY3PR01MB11346C6C1EBF9896A47E9807086DB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH] drm: renesas: Extend RZ/G2L supported KMS formats
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Date: Fri, 21 Mar 2025 19:06:08 +0000
+Message-ID: <174258396885.1099553.5413524831101034269@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On Fri, Mar 21, 2025 at 1:22=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
-> On Thu, Mar 20, 2025 at 05:36:41PM -0400, Paul Moore wrote:
+Hi Biju,
 
-...
+Quoting Biju Das (2025-03-21 18:40:50)
+> Hi Kieran,
+>=20
+> Thanks for the patch.
+>=20
+> > -----Original Message-----
+> > From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> > Sent: 21 March 2025 17:22
+> > Subject: [PATCH] drm: renesas: Extend RZ/G2L supported KMS formats
+> >=20
+> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >=20
+> > The RZ/G2L driver utilises the VSPD to read data from input sources.
+> >=20
+> > The rzg2l_du_kms component lists a restricted subset of the capabilitie=
+s of the VSPd which prevents
+>=20
+> VSPD
+>=20
+> > additional formats from being used for display planes.
+> >=20
+> > The supported display plane formats are mapped in rzg2l_du_vsp_formats[=
+].
+> >=20
+> > Extend the rzg2l_du_format_infos[] table with the corresponding mapping=
+s between the supported DRM
+> > formats and the formats exposed by the VSP in rzg2l_du_vsp_formats, mai=
+ntaining the same ordering in
+> > both tables.
+> >=20
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > ---
+> >  drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c | 141 ++++++++++++++++++-
+> >  1 file changed, 136 insertions(+), 5 deletions(-)
+> >=20
+> > Prior to this patch, kmstest reports all of these formats as supported =
+by the Planes, but using them
+> > fails during rzg2l_du_fb_create() as the corresponding format isn't fou=
+nd in rzg2l_du_format_info.
+> >=20
+> > This patch now lets me capture and render pixelformats from the Mali-C5=
+5 direct to an attached DSI
+> > panel on the Kakip board.
+>=20
+> Previously I got a comment to remove all the formats from this table as D=
+SI supports only 3 formats.
 
-> > I want to address two things, the first, and most important, is that
-> > while I am currently employed by Microsoft, I do not speak for
-> > Microsoft and the decisions and actions I take as an upstream Linux
-> > kernel maintainer are not vetted by Microsoft in any way.  I think you
-> > will find that many upstream kernel maintainers operate in a similar
-> > way for a variety of very good reasons.
+Indeed, I can see that the DSI only supports the three RGB variant
+formats, but the RPF of the VPSD is very capable and does the pixel format
+conversion for us here as I understand it!
+
+
+> I agree VSPD has two planes(2 rpf-instances) which supports all these for=
+mats.
+>=20
+> Mali-C55(n formats)-->LCDC(VSPD n formats)->DSI(3 formats)-->Panel
+>=20
+> Am I missing anything w.r.to the comment that I received previously.
+> Otherwise patch LGTM.
+>=20
+
+I haven't looked completely, but as long as the VSPD is only configured
+to /output/ the RGB formats to the DSI then I think this is fine,
+
+> Cheers,
+> Biju
+
+Thanks,
+
+Kieran
+
+>=20
+> >=20
+> > Patch tested with kms-tests:
+> >=20
+> > PYTHONPATH=3D/usr/lib/aarch64-linux-gnu/python3.11/site-packages ./test=
+s/kms-test-formats.py Testing
+> > plane formats: SUCCESS
+> >=20
+> > admin@kakip:~/kms-tests$ cat FormatsTest.log U [66.967523] Testing plan=
+e formats U [66.975763] Testing
+> > connector DSI-1, CRTC 36, mode 720x1280 U [66.978480] Testing format Pi=
+xelFormat.RGB332 U [70.143998]
+> > Testing format PixelFormat.ARGB4444 U [73.357056] Testing format PixelF=
+ormat.XRGB4444 U [76.574944]
+> > Testing format PixelFormat.ARGB1555 U [79.805636] Testing format PixelF=
+ormat.XRGB1555 U [83.016599]
+> > Testing format PixelFormat.RGB565 U [86.230362] Testing format PixelFor=
+mat.BGR888 U [89.444673]
+> > Testing format PixelFormat.RGB888 U [92.677093] Testing format PixelFor=
+mat.BGRA8888 U [95.904745]
+> > Testing format PixelFormat.BGRX8888 U [99.119926] Testing format PixelF=
+ormat.ARGB8888 U [102.350298]
+> > Testing format PixelFormat.XRGB8888 U [105.579499] Testing format Pixel=
+Format.UYVY U [108.878654]
+> > Testing format PixelFormat.YUYV U [112.176515] Testing format PixelForm=
+at.YVYU U [115.470090] Testing
+> > format PixelFormat.NV12 U [118.767513] Testing format PixelFormat.NV21 =
+U [122.065851] Testing format
+> > PixelFormat.NV16 U [125.364001] Testing format PixelFormat.NV61 U [128.=
+662145] Testing format
+> > PixelFormat.YUV420 U [131.978102] Testing format PixelFormat.YVU420 U [=
+135.292284] Testing format
+> > PixelFormat.YUV422 U [138.623485] Testing format PixelFormat.YVU422 U [=
+141.955083] Testing format
+> > PixelFormat.YUV444 U [145.336759] Testing format PixelFormat.YVU444 U [=
+148.761832] Test completed
+> > successfully
+> >=20
+> >=20
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c b/drivers/gpu=
+/drm/renesas/rz-
+> > du/rzg2l_du_kms.c
+> > index b1266fbd9598..a5e96f863172 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+> > @@ -36,8 +36,61 @@
+> >=20
+> >  static const struct rzg2l_du_format_info rzg2l_du_format_infos[] =3D {
+> >       {
+> > -             .fourcc =3D DRM_FORMAT_XRGB8888,
+> > -             .v4l2 =3D V4L2_PIX_FMT_XBGR32,
+> > +             .fourcc =3D DRM_FORMAT_RGB332,
+> > +             .v4l2 =3D V4L2_PIX_FMT_RGB332,
+> > +             .bpp =3D 8,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_ARGB4444,
+> > +             .v4l2 =3D V4L2_PIX_FMT_ARGB444,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_XRGB4444,
+> > +             .v4l2 =3D V4L2_PIX_FMT_XRGB444,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_ARGB1555,
+> > +             .v4l2 =3D V4L2_PIX_FMT_ARGB555,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_XRGB1555,
+> > +             .v4l2 =3D V4L2_PIX_FMT_XRGB555,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_RGB565,
+> > +             .v4l2 =3D V4L2_PIX_FMT_RGB565,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_BGR888,
+> > +             .v4l2 =3D V4L2_PIX_FMT_RGB24,
+> > +             .bpp =3D 24,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_RGB888,
+> > +             .v4l2 =3D V4L2_PIX_FMT_BGR24,
+> > +             .bpp =3D 24,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_BGRA8888,
+> > +             .v4l2 =3D V4L2_PIX_FMT_ARGB32,
+> > +             .bpp =3D 32,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_BGRX8888,
+> > +             .v4l2 =3D V4L2_PIX_FMT_XRGB32,
+> >               .bpp =3D 32,
+> >               .planes =3D 1,
+> >               .hsub =3D 1,
+> > @@ -48,11 +101,89 @@ static const struct rzg2l_du_format_info rzg2l_du_=
+format_infos[] =3D {
+> >               .planes =3D 1,
+> >               .hsub =3D 1,
+> >       }, {
+> > -             .fourcc =3D DRM_FORMAT_RGB888,
+> > -             .v4l2 =3D V4L2_PIX_FMT_BGR24,
+> > -             .bpp =3D 24,
+> > +             .fourcc =3D DRM_FORMAT_XRGB8888,
+> > +             .v4l2 =3D V4L2_PIX_FMT_XBGR32,
+> > +             .bpp =3D 32,
+> >               .planes =3D 1,
+> >               .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_UYVY,
+> > +             .v4l2 =3D V4L2_PIX_FMT_UYVY,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YUYV,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YUYV,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YVYU,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YVYU,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 1,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_NV12,
+> > +             .v4l2 =3D V4L2_PIX_FMT_NV12M,
+> > +             .bpp =3D 12,
+> > +             .planes =3D 2,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_NV21,
+> > +             .v4l2 =3D V4L2_PIX_FMT_NV21M,
+> > +             .bpp =3D 12,
+> > +             .planes =3D 2,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_NV16,
+> > +             .v4l2 =3D V4L2_PIX_FMT_NV16M,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 2,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_NV61,
+> > +             .v4l2 =3D V4L2_PIX_FMT_NV61M,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 2,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YUV420,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YUV420M,
+> > +             .bpp =3D 12,
+> > +             .planes =3D 3,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YVU420,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YVU420M,
+> > +             .bpp =3D 12,
+> > +             .planes =3D 3,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YUV422,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YUV422M,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 3,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YVU422,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YVU422M,
+> > +             .bpp =3D 16,
+> > +             .planes =3D 3,
+> > +             .hsub =3D 2,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YUV444,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YUV444M,
+> > +             .bpp =3D 24,
+> > +             .planes =3D 3,
+> > +             .hsub =3D 1,
+> > +     }, {
+> > +             .fourcc =3D DRM_FORMAT_YVU444,
+> > +             .v4l2 =3D V4L2_PIX_FMT_YVU444M,
+> > +             .bpp =3D 24,
+> > +             .planes =3D 3,
+> > +             .hsub =3D 1,
+> >       }
+> >  };
+> >=20
+> > --
+> > 2.48.1
 >
-> This is understood. If one takes a kernel maintainer role, one should
-> unconditionally disobey any vetting by the employer (even at the cost of
-> the job, or alternatively at the cost of giving up the maintainership).
->
-> And with you in particular I don't think anyone has any trust issues,
-> no matter which group of villains you might be employed by ;-)
-
-Haha :D
-
-> > The second issue is that my main focus is on ensuring we have a
-> > secure, safe, and well maintained LSM subsystem within the upstream
-> > Linux kernel.  While I do care about downstream efforts, e.g. UEFI
-> > Secure Boot, those efforts are largely outside the scope of the
-> > upstream Linux kernel and not my first concern.  If the developer
-> > groups who are focused on things like UEFI SB want to rely on
-> > functionality within the upstream Linux kernel they should be prepared
-> > to stand up and contribute/maintain those features or else they may go
-> > away at some point in the future.  In very blunt terms, contribute
-> > upstream or Lockdown dies.
->
-> Could Lockdown functionality be re-implemented with that eBPF LSM? I
-> have not really looked into it so far...
-
-I haven't looked at it too closely, but the kernel code is very
-simplistic so I would be surprised if it couldn't be implemented in
-eBPF, although there might be some issues about *very* early boot
-(Lockdown can run as an "early" LSM) and integrity which would need to
-be addressed (there is work ongoing in that are, see the recent Hornet
-posting as one example of that work).  Beyond that there are
-policy/political issues around that would need to be worked out;
-nothing that couldn't be done, but it would be something that we would
-need to sort out.
-
-However, as I mentioned earlier, with Lockdown already present in the
-kernel, deprecation and removal is really only an option of last
-resort, and I'm hopeful we won't come to that.  We've seen some proper
-Lockdown patches submitted overnight (!!!) and I'm discussing
-maintainer roles with a couple of people off-list; with a bit of luck
-I'm thinking Lockdown might be properly maintained after this upcoming
-merge window.  Fingers crossed :)
-
---=20
-paul-moore.com
 
