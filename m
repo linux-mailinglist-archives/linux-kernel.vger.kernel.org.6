@@ -1,414 +1,104 @@
-Return-Path: <linux-kernel+bounces-571396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E23EA6BCA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:13:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACA6A6BCA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:11:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA33E480420
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A993B5827
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFE1156C6A;
-	Fri, 21 Mar 2025 14:11:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C295713C695;
+	Fri, 21 Mar 2025 14:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uwh+Xj8K"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0257D07D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA478F6B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742566267; cv=none; b=bx18+ZVZ+VxbrwZsWbN3VSxlybSN230PesJOPQMieRsdCnBTu+f+vBMBj8uCZR3joFAdDpKUQxwizzReWf3el9jCHO1nD4b0YxpbqYJn5ZdBz41ipL+dyvzRur6HyEU5rvMR7nc3HH0U5Z+CzLPwZTUjH/ioIJLtXtLTzxk6A/0=
+	t=1742566254; cv=none; b=E41MJ0ppDzXaslSRPg6QsvVIkiiLO+oxeyUpq6LCx8zjDE86IFNgTnnr1xnsP4CHihQbMpueSA62TmQTIwfFJPefbVgglH+F6NfZxDau6d71SlBtQNF7so5IkDP7E4azlA/izj+n5fpga9Q+TCZp6uALw5l9BGbdKy52LmYHycw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742566267; c=relaxed/simple;
-	bh=llcBPHfMZnyABw81/FCC3AgIL0fn4mqZk80JFddzQZs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QYWpRLAO6/h1vqKQj3PlFIrtKOrgT8sY5CpB4ept8w+b3zd3RfONJBsX+/016okq4S21P3kNr6yKJUjMZyqmM7TiJujlB1K6Wg+lKBMqO9QPZVyMZF3z+ozvdm4omR2+g5gsRgq1wkyQdKaoRIAXcCfKwKFgGEO9Xr6PmgDdNqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tvd5D-0007WQ-8U; Fri, 21 Mar 2025 15:10:47 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tvd5B-000vyX-1e;
-	Fri, 21 Mar 2025 15:10:45 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tvd5B-008x39-2j;
-	Fri, 21 Mar 2025 15:10:45 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
-Subject: [PATCH net v1 1/1] net: dsa: microchip: fix DCB apptrust configuration on KSZ88x3
-Date: Fri, 21 Mar 2025 15:10:44 +0100
-Message-Id: <20250321141044.2128973-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742566254; c=relaxed/simple;
+	bh=Bn8WmnLE1Xfs2Q5++tSyH6lu/aVCwD+OhBnLFKqtyH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fixGbXYBTqPGoYXmgKKJo3D236IrW4AvwI0EUfLhTHUM+hev34xlw3nvdNi70+ZFCUYjEiLSUxIULOYQHTnRtw493fiHLq4pSkA/7Io1fYEQQsj+Vk7gDzTzEIqtGEvQVXnJJVnbvakjA0jor0vALw/diYwe2ylDX3KZ6TalQ9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uwh+Xj8K; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742566252; x=1774102252;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bn8WmnLE1Xfs2Q5++tSyH6lu/aVCwD+OhBnLFKqtyH4=;
+  b=Uwh+Xj8K4JWmsBp8BiRVuPvkWsZXVKVgk52hnT5bcIlr4CYtQEpnaZW6
+   /8te1L6S2GrMc59OmmGjQtHxO2FanhR3pGLjhhFlktuapF0Q4akdFuQ3p
+   P+1s4ibmvVFLLAKYuSRbCnVi22ri+cgju2/O7zVFp7pwcQ0wq2RRp6cMR
+   i63uIcvqMqaCliFB+7SPDYPF6K20qauI9+spHbDmu0RozWVhgtBNFq26Q
+   eTXw2NNTbzXw1ORXAJfVEOCPt3+QQdpg61h0TA82eEH3b097ESa6A2If7
+   ri/gdJsB9LG43IxPJ/EoWMSK0D64aV8hIj9+C8y4qhL7RLMtfdfwjRkcf
+   w==;
+X-CSE-ConnectionGUID: XFYXAUVnT8esjafWQgPxsA==
+X-CSE-MsgGUID: MrpsN40BRda3TKTGVZK0aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="54828282"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="54828282"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:10:52 -0700
+X-CSE-ConnectionGUID: 4CujWF/QSief0PenwjJhzA==
+X-CSE-MsgGUID: buMhY2yDQneSTS7+VVSABA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="123389783"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:10:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tvd5D-00000004XCN-0DCV;
+	Fri, 21 Mar 2025 16:10:47 +0200
+Date: Fri, 21 Mar 2025 16:10:46 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Kees Cook <kees@kernel.org>, "tamird@gmail.com" <tamird@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] printf: add tests for generic FourCCs
+Message-ID: <Z91zZs_mvgR8EDZx@smile.fi.intel.com>
+References: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Remove KSZ88x3-specific priority and apptrust configuration logic that was
-based on incorrect register access assumptions. Also fix the register
-offset for KSZ8_REG_PORT_1_CTRL_0 to align with get_port_addr() logic.
+On Fri, Mar 14, 2025 at 03:45:01AM +0000, Aditya Garg wrote:
+> From: Aditya Garg <gargaditya08@live.com>
+> 
+> Format specifiers for printing generic 32-bit FourCCs were recently added
+> to vsprintf. They are going through the DRM tree alongwith the appletbdrm
+> driver. Since the printf tests are being converted to kunit, this separate
+> patch for the tests should make it easier to rebase when the merge window
+> opens.
 
-The KSZ88x3 switch family uses a different register layout compared to
-KSZ9477-compatible variants. Specifically, port control registers need
-offset adjustment through get_port_addr(), and do not match the datasheet
-values directly.
+I am always for the additional test cases!
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Commit a1ea57710c9d ("net: dsa: microchip: dcb: add special handling for
-KSZ88X3 family") introduced quirks based on datasheet offsets, which do
-not work with the driver's internal addressing model. As a result, these
-quirks addressed the wrong ports and caused unstable behavior.
-
-This patch removes all KSZ88x3-specific DCB quirks and corrects the port
-control register offset, effectively restoring working and predictable
-apptrust configuration.
-
-Fixes: a1ea57710c9d ("net: dsa: microchip: dcb: add special handling for KSZ88X3 family")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/dsa/microchip/ksz8.c    |  11 +-
- drivers/net/dsa/microchip/ksz_dcb.c | 231 +---------------------------
- 2 files changed, 9 insertions(+), 233 deletions(-)
-
-diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
-index da7110d67558..be433b4e2b1c 100644
---- a/drivers/net/dsa/microchip/ksz8.c
-+++ b/drivers/net/dsa/microchip/ksz8.c
-@@ -1625,7 +1625,6 @@ void ksz8_port_setup(struct ksz_device *dev, int port, bool cpu_port)
- 	const u16 *regs = dev->info->regs;
- 	struct dsa_switch *ds = dev->ds;
- 	const u32 *masks;
--	int queues;
- 	u8 member;
- 
- 	masks = dev->info->masks;
-@@ -1633,15 +1632,7 @@ void ksz8_port_setup(struct ksz_device *dev, int port, bool cpu_port)
- 	/* enable broadcast storm limit */
- 	ksz_port_cfg(dev, port, P_BCAST_STORM_CTRL, PORT_BROADCAST_STORM, true);
- 
--	/* For KSZ88x3 enable only one queue by default, otherwise we won't
--	 * be able to get rid of PCP prios on Port 2.
--	 */
--	if (ksz_is_ksz88x3(dev))
--		queues = 1;
--	else
--		queues = dev->info->num_tx_queues;
--
--	ksz8_port_queue_split(dev, port, queues);
-+	ksz8_port_queue_split(dev, port, dev->info->num_tx_queues);
- 
- 	/* replace priority */
- 	ksz_port_cfg(dev, port, P_802_1P_CTRL,
-diff --git a/drivers/net/dsa/microchip/ksz_dcb.c b/drivers/net/dsa/microchip/ksz_dcb.c
-index 30b4a6186e38..c3b501997ac9 100644
---- a/drivers/net/dsa/microchip/ksz_dcb.c
-+++ b/drivers/net/dsa/microchip/ksz_dcb.c
-@@ -10,7 +10,12 @@
- #include "ksz_dcb.h"
- #include "ksz8.h"
- 
--#define KSZ8_REG_PORT_1_CTRL_0			0x10
-+/* Port X Control 0 register.
-+ * The datasheet specifies: Port 1 - 0x10, Port 2 - 0x20, Port 3 - 0x30.
-+ * However, the driver uses get_port_addr(), which maps Port 1 to offset 0.
-+ * Therefore, we define the base offset as 0x00 here to align with that logic.
-+ */
-+#define KSZ8_REG_PORT_1_CTRL_0			0x00
- #define KSZ8_PORT_DIFFSERV_ENABLE		BIT(6)
- #define KSZ8_PORT_802_1P_ENABLE			BIT(5)
- #define KSZ8_PORT_BASED_PRIO_M			GENMASK(4, 3)
-@@ -181,49 +186,6 @@ int ksz_port_get_default_prio(struct dsa_switch *ds, int port)
- 	return (data & mask) >> shift;
- }
- 
--/**
-- * ksz88x3_port_set_default_prio_quirks - Quirks for default priority
-- * @dev: Pointer to the KSZ switch device structure
-- * @port: Port number for which to set the default priority
-- * @prio: Priority value to set
-- *
-- * This function implements quirks for setting the default priority on KSZ88x3
-- * devices. On Port 2, no other priority providers are working
-- * except of PCP. So, configuring default priority on Port 2 is not possible.
-- * On Port 1, it is not possible to configure port priority if PCP
-- * apptrust on Port 2 is disabled. Since we disable multiple queues on the
-- * switch to disable PCP on Port 2, we need to ensure that the default priority
-- * configuration on Port 1 is in agreement with the configuration on Port 2.
-- *
-- * Return: 0 on success, or a negative error code on failure
-- */
--static int ksz88x3_port_set_default_prio_quirks(struct ksz_device *dev, int port,
--						u8 prio)
--{
--	if (!prio)
--		return 0;
--
--	if (port == KSZ_PORT_2) {
--		dev_err(dev->dev, "Port priority configuration is not working on Port 2\n");
--		return -EINVAL;
--	} else if (port == KSZ_PORT_1) {
--		u8 port2_data;
--		int ret;
--
--		ret = ksz_pread8(dev, KSZ_PORT_2, KSZ8_REG_PORT_1_CTRL_0,
--				 &port2_data);
--		if (ret)
--			return ret;
--
--		if (!(port2_data & KSZ8_PORT_802_1P_ENABLE)) {
--			dev_err(dev->dev, "Not possible to configure port priority on Port 1 if PCP apptrust on Port 2 is disabled\n");
--			return -EINVAL;
--		}
--	}
--
--	return 0;
--}
--
- /**
-  * ksz_port_set_default_prio - Sets the default priority for a port on a KSZ
-  *			       switch
-@@ -239,18 +201,12 @@ static int ksz88x3_port_set_default_prio_quirks(struct ksz_device *dev, int port
- int ksz_port_set_default_prio(struct dsa_switch *ds, int port, u8 prio)
- {
- 	struct ksz_device *dev = ds->priv;
--	int reg, shift, ret;
-+	int reg, shift;
- 	u8 mask;
- 
- 	if (prio >= dev->info->num_ipms)
- 		return -EINVAL;
- 
--	if (ksz_is_ksz88x3(dev)) {
--		ret = ksz88x3_port_set_default_prio_quirks(dev, port, prio);
--		if (ret)
--			return ret;
--	}
--
- 	ksz_get_default_port_prio_reg(dev, &reg, &mask, &shift);
- 
- 	return ksz_prmw8(dev, port, reg, mask, (prio << shift) & mask);
-@@ -518,155 +474,6 @@ static int ksz_port_set_apptrust_validate(struct ksz_device *dev, int port,
- 	return -EINVAL;
- }
- 
--/**
-- * ksz88x3_port1_apptrust_quirk - Quirk for apptrust configuration on Port 1
-- *				  of KSZ88x3 devices
-- * @dev: Pointer to the KSZ switch device structure
-- * @port: Port number for which to set the apptrust selectors
-- * @reg: Register address for the apptrust configuration
-- * @port1_data: Data to set for the apptrust configuration
-- *
-- * This function implements a quirk for apptrust configuration on Port 1 of
-- * KSZ88x3 devices. It ensures that apptrust configuration on Port 1 is not
-- * possible if PCP apptrust on Port 2 is disabled. This is because the Port 2
-- * seems to be permanently hardwired to PCP classification, so we need to
-- * do Port 1 configuration always in agreement with Port 2 configuration.
-- *
-- * Return: 0 on success, or a negative error code on failure
-- */
--static int ksz88x3_port1_apptrust_quirk(struct ksz_device *dev, int port,
--					int reg, u8 port1_data)
--{
--	u8 port2_data;
--	int ret;
--
--	/* If no apptrust is requested for Port 1, no need to care about Port 2
--	 * configuration.
--	 */
--	if (!(port1_data & (KSZ8_PORT_802_1P_ENABLE | KSZ8_PORT_DIFFSERV_ENABLE)))
--		return 0;
--
--	/* We got request to enable any apptrust on Port 1. To make it possible,
--	 * we need to enable multiple queues on the switch. If we enable
--	 * multiqueue support, PCP classification on Port 2 will be
--	 * automatically activated by HW.
--	 */
--	ret = ksz_pread8(dev, KSZ_PORT_2, reg, &port2_data);
--	if (ret)
--		return ret;
--
--	/* If KSZ8_PORT_802_1P_ENABLE bit is set on Port 2, the driver showed
--	 * the interest in PCP classification on Port 2. In this case,
--	 * multiqueue support is enabled and we can enable any apptrust on
--	 * Port 1.
--	 * If KSZ8_PORT_802_1P_ENABLE bit is not set on Port 2, the PCP
--	 * classification on Port 2 is still active, but the driver disabled
--	 * multiqueue support and made frame prioritization inactive for
--	 * all ports. In this case, we can't enable any apptrust on Port 1.
--	 */
--	if (!(port2_data & KSZ8_PORT_802_1P_ENABLE)) {
--		dev_err(dev->dev, "Not possible to enable any apptrust on Port 1 if PCP apptrust on Port 2 is disabled\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--/**
-- * ksz88x3_port2_apptrust_quirk - Quirk for apptrust configuration on Port 2
-- *				  of KSZ88x3 devices
-- * @dev: Pointer to the KSZ switch device structure
-- * @port: Port number for which to set the apptrust selectors
-- * @reg: Register address for the apptrust configuration
-- * @port2_data: Data to set for the apptrust configuration
-- *
-- * This function implements a quirk for apptrust configuration on Port 2 of
-- * KSZ88x3 devices. It ensures that DSCP apptrust is not working on Port 2 and
-- * that it is not possible to disable PCP on Port 2. The only way to disable PCP
-- * on Port 2 is to disable multiple queues on the switch.
-- *
-- * Return: 0 on success, or a negative error code on failure
-- */
--static int ksz88x3_port2_apptrust_quirk(struct ksz_device *dev, int port,
--					int reg, u8 port2_data)
--{
--	struct dsa_switch *ds = dev->ds;
--	u8 port1_data;
--	int ret;
--
--	/* First validate Port 2 configuration. DiffServ/DSCP is not working
--	 * on this port.
--	 */
--	if (port2_data & KSZ8_PORT_DIFFSERV_ENABLE) {
--		dev_err(dev->dev, "DSCP apptrust is not working on Port 2\n");
--		return -EINVAL;
--	}
--
--	/* If PCP support is requested, we need to enable all queues on the
--	 * switch to make PCP priority working on Port 2.
--	 */
--	if (port2_data & KSZ8_PORT_802_1P_ENABLE)
--		return ksz8_all_queues_split(dev, dev->info->num_tx_queues);
--
--	/* We got request to disable PCP priority on Port 2.
--	 * Now, we need to compare Port 2 configuration with Port 1
--	 * configuration.
--	 */
--	ret = ksz_pread8(dev, KSZ_PORT_1, reg, &port1_data);
--	if (ret)
--		return ret;
--
--	/* If Port 1 has any apptrust enabled, we can't disable multiple queues
--	 * on the switch, so we can't disable PCP on Port 2.
--	 */
--	if (port1_data & (KSZ8_PORT_802_1P_ENABLE | KSZ8_PORT_DIFFSERV_ENABLE)) {
--		dev_err(dev->dev, "Not possible to disable PCP on Port 2 if any apptrust is enabled on Port 1\n");
--		return -EINVAL;
--	}
--
--	/* Now we need to ensure that default priority on Port 1 is set to 0
--	 * otherwise we can't disable multiqueue support on the switch.
--	 */
--	ret = ksz_port_get_default_prio(ds, KSZ_PORT_1);
--	if (ret < 0) {
--		return ret;
--	} else if (ret) {
--		dev_err(dev->dev, "Not possible to disable PCP on Port 2 if non zero default priority is set on Port 1\n");
--		return -EINVAL;
--	}
--
--	/* Port 1 has no apptrust or default priority set and we got request to
--	 * disable PCP on Port 2. We can disable multiqueue support to disable
--	 * PCP on Port 2.
--	 */
--	return ksz8_all_queues_split(dev, 1);
--}
--
--/**
-- * ksz88x3_port_apptrust_quirk - Quirk for apptrust configuration on KSZ88x3
-- *			       devices
-- * @dev: Pointer to the KSZ switch device structure
-- * @port: Port number for which to set the apptrust selectors
-- * @reg: Register address for the apptrust configuration
-- * @data: Data to set for the apptrust configuration
-- *
-- * This function implements a quirk for apptrust configuration on KSZ88x3
-- * devices. It ensures that apptrust configuration on Port 1 and
-- * Port 2 is done in agreement with each other.
-- *
-- * Return: 0 on success, or a negative error code on failure
-- */
--static int ksz88x3_port_apptrust_quirk(struct ksz_device *dev, int port,
--				       int reg, u8 data)
--{
--	if (port == KSZ_PORT_1)
--		return ksz88x3_port1_apptrust_quirk(dev, port, reg, data);
--	else if (port == KSZ_PORT_2)
--		return ksz88x3_port2_apptrust_quirk(dev, port, reg, data);
--
--	return 0;
--}
--
- /**
-  * ksz_port_set_apptrust - Sets the apptrust selectors for a port on a KSZ
-  *			   switch
-@@ -707,12 +514,6 @@ int ksz_port_set_apptrust(struct dsa_switch *ds, int port,
- 		}
- 	}
- 
--	if (ksz_is_ksz88x3(dev)) {
--		ret = ksz88x3_port_apptrust_quirk(dev, port, reg, data);
--		if (ret)
--			return ret;
--	}
--
- 	return ksz_prmw8(dev, port, reg, mask, data);
- }
- 
-@@ -799,21 +600,5 @@ int ksz_dcb_init_port(struct ksz_device *dev, int port)
-  */
- int ksz_dcb_init(struct ksz_device *dev)
- {
--	int ret;
--
--	ret = ksz_init_global_dscp_map(dev);
--	if (ret)
--		return ret;
--
--	/* Enable 802.1p priority control on Port 2 during switch initialization.
--	 * This setup is critical for the apptrust functionality on Port 1, which
--	 * relies on the priority settings of Port 2. Note: Port 1 is naturally
--	 * configured before Port 2, necessitating this configuration order.
--	 */
--	if (ksz_is_ksz88x3(dev))
--		return ksz_prmw8(dev, KSZ_PORT_2, KSZ8_REG_PORT_1_CTRL_0,
--				 KSZ8_PORT_802_1P_ENABLE,
--				 KSZ8_PORT_802_1P_ENABLE);
--
--	return 0;
-+	return ksz_init_global_dscp_map(dev);
- }
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
 
 
