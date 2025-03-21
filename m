@@ -1,39 +1,46 @@
-Return-Path: <linux-kernel+bounces-571672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56259A6C08A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:50:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D75EA6C08E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F1B83A700D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B42B6167994
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0039222D4D6;
-	Fri, 21 Mar 2025 16:48:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5681D155A25;
-	Fri, 21 Mar 2025 16:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BF222D793;
+	Fri, 21 Mar 2025 16:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IvJA4DLM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931A01E7C0B;
+	Fri, 21 Mar 2025 16:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742575737; cv=none; b=NFnmlNMkNd0Z6yU9UCuEhpTdsx/sq+6MK+PqytoXA0g34piRG0BUmUPY+AsBWj3Phk06kWjOSbRt9n08t+JgL3ywGHiuHOm0U2kPRv2unnKzyR9WgQnAhd5d7UzVh6Q0RaggQ6u5LbQm2rldv/vJCln7asKJXo/esk5/d9psqiM=
+	t=1742575743; cv=none; b=CM3FsRaNfrKxCtN+X/89PNCBUzDAyUxOAli7MkYmiC07ugWJTwQc2E1I8nirpLvEfNqaclEBLYCzUT1D3gfiN1tol0b3NhiORqim0cSSQglK1C1CpHSOQ3YIudiAKma+MxS5G7C7f0Y1IlG7wf56ss1ezx7fRw8Rd37x6ywPQlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742575737; c=relaxed/simple;
-	bh=JBdg7xMBLd5iIqOC0TaR5k4K2Igly/gZ0cV4AKosEWo=;
+	s=arc-20240116; t=1742575743; c=relaxed/simple;
+	bh=Jbefc2fy+6DSTbygMu6+1efbepZO0Okur+3ITUsewdU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=faBHcupuM+NTzWoSBngJksg4r107iWuLqMWum7fKufEsxANAYLMN/wLIvzHWlLTQAOCtCBmNRC4c9qfjRiTYsQngOttF96f/aK7CAayoM2Y45dO/ci4dEKeIYAshOG81iSD2Ut+YfwNz/rtKpqiZdO7sEFCJDOsWMxvwExd5f0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12A25106F;
+	 In-Reply-To:Content-Type; b=Nje6VTXI9aS11U99Bc3my0NuXvCDV3jhuoExZA1shH8MyIPngkmlO4mPWBR80wTeQ73m5XOK5HXfD8xAUHCcGk3m5BhbPFbExq8WuwPjCBUvFFR3XlwJiHeKf0EfCR84rcHk8v5zRGYG6JdqlBamtw8i5zRYV9jxCXsJtU36m7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IvJA4DLM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.97] (unknown [131.107.174.225])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 08ABD202538B;
 	Fri, 21 Mar 2025 09:49:01 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 791DD3F63F;
-	Fri, 21 Mar 2025 09:48:50 -0700 (PDT)
-Message-ID: <135390b1-c0c5-4595-a3f3-1fb376473872@arm.com>
-Date: Fri, 21 Mar 2025 16:48:46 +0000
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 08ABD202538B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742575741;
+	bh=EDq6dkjdVz/tPxpcBKVvaAVpNAoxeUkWXPEwHqJnTOc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IvJA4DLMQDjLEBNN5Nhuv+QYitK6B8t83wGQvVjWhT1X6P/Fvlq+E2Xk2q5aoW9Dm
+	 TmbtrjGdXmLx6HnR5qwD4vrrWd1J/eHWsSFZcW+NLcHbK97JhYZMrLGH/hDO8Ti3wc
+	 tjmCqBSfFKm/+fce2lTr7QQ8v5yOsmJcpZdqo8fE=
+Message-ID: <11de6e57-f307-4382-877e-566b5a4e855e@linux.microsoft.com>
+Date: Fri, 21 Mar 2025 09:49:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,196 +48,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
- path
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>,
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- Charan Teja Kalla <quic_charante@quicinc.com>
-References: <cover.1740753261.git.robin.murphy@arm.com>
- <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
- <CGME20250313095633eucas1p29cb55f2504b4bcf67c16b3bd3fa9b8cd@eucas1p2.samsung.com>
- <9b358d68-332e-404e-9a75-740297f7b28d@samsung.com>
- <417d6f59-0d78-4e81-ad0b-e06846f786b0@arm.com>
- <bf2adf5d-1432-4bb7-846c-e1bcfa84858b@samsung.com>
- <016bb7ca-f0d3-464e-ac74-46e6f78e90d7@arm.com>
- <b63ff6b4-9dc3-42ea-8b87-d4fdead8d0eb@arm.com>
- <cdc333e4-25bb-4171-9f6e-01f1de947db3@samsung.com>
- <d6cd5e64-e2c0-4c6e-9c89-ce8b3e0a4a5b@arm.com>
- <ace3a01f-4700-4455-ada3-0f88fc8ea4cd@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ace3a01f-4700-4455-ada3-0f88fc8ea4cd@samsung.com>
+Subject: Re: [PATCH v10 8/8] ima: measure kexec load and exec events as
+ critical data
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-9-chenste@linux.microsoft.com>
+ <b61fda41ec01e1fea80a8c09f2259df6821d620e.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <b61fda41ec01e1fea80a8c09f2259df6821d620e.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 21/03/2025 12:15 pm, Marek Szyprowski wrote:
-> On 17.03.2025 19:22, Robin Murphy wrote:
->> On 17/03/2025 7:37 am, Marek Szyprowski wrote:
->>> On 13.03.2025 15:12, Robin Murphy wrote:
->>>> On 2025-03-13 1:06 pm, Robin Murphy wrote:
->>>>> On 2025-03-13 12:23 pm, Marek Szyprowski wrote:
->>>>>> On 13.03.2025 12:01, Robin Murphy wrote:
->>>>>>> On 2025-03-13 9:56 am, Marek Szyprowski wrote:
->>>>>>> [...]
->>>>>>>> This patch landed in yesterday's linux-next as commit bcb81ac6ae3c
->>>>>>>> ("iommu: Get DT/ACPI parsing into the proper probe path"). In my
->>>>>>>> tests I
->>>>>>>> found it breaks booting of ARM64 RK3568-based Odroid-M1 board
->>>>>>>> (arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts). Here is the
->>>>>>>> relevant kernel log:
->>>>>>>
->>>>>>> ...and the bug-flushing-out begins!
->>>>>>>
->>>>>>>> Unable to handle kernel NULL pointer dereference at virtual address
->>>>>>>> 00000000000003e8
->>>>>>>> Mem abort info:
->>>>>>>>        ESR = 0x0000000096000004
->>>>>>>>        EC = 0x25: DABT (current EL), IL = 32 bits
->>>>>>>>        SET = 0, FnV = 0
->>>>>>>>        EA = 0, S1PTW = 0
->>>>>>>>        FSC = 0x04: level 0 translation fault
->>>>>>>> Data abort info:
->>>>>>>>        ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>>>>>>>        CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>>>>>>        GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>>>>>>> [00000000000003e8] user address but active_mm is swapper
->>>>>>>> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->>>>>>>> Modules linked in:
->>>>>>>> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc3+ #15533
->>>>>>>> Hardware name: Hardkernel ODROID-M1 (DT)
->>>>>>>> pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>>>>>> pc : devm_kmalloc+0x2c/0x114
->>>>>>>> lr : rk_iommu_of_xlate+0x30/0x90
->>>>>>>> ...
->>>>>>>> Call trace:
->>>>>>>>       devm_kmalloc+0x2c/0x114 (P)
->>>>>>>>       rk_iommu_of_xlate+0x30/0x90
->>>>>>>
->>>>>>> Yeah, looks like this is doing something a bit questionable which
->>>>>>> can't
->>>>>>> work properly. TBH the whole dma_dev thing could probably be
->>>>>>> cleaned up
->>>>>>> now that we have proper instances, but for now does this work?
->>>>>>
->>>>>> Yes, this patch fixes the problem I've observed.
->>>>>>
->>>>>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>>>
->>>>>> BTW, this dma_dev idea has been borrowed from my exynos_iommu driver
->>>>>> and
->>>>>> I doubt it can be cleaned up.
->>>>>
->>>>> On the contrary I suspect they both can - it all dates back to when
->>>>> we had the single global platform bus iommu_ops and the SoC drivers
->>>>> were forced to bodge their own notion of multiple instances, but with
->>>>> the modern core code, ops are always called via a valid IOMMU
->>>>> instance or domain, so in principle it should always be possible to
->>>>> get at an appropriate IOMMU device now. IIRC it was mostly about
->>>>> allocating and DMA-mapping the pagetables in domain_alloc, where the
->>>>> private notion of instances didn't have enough information, but
->>>>> domain_alloc_paging solves that.
->>>>
->>>> Bah, in fact I think I am going to have to do that now, since although
->>>> it doesn't crash, rk_domain_alloc_paging() will also be failing for
->>>> the same reason. Time to find a PSU for the RK3399 board, I guess...
->>>>
->>>> (Or maybe just move the dma_dev assignment earlier to match Exynos?)
->>>
->>> Well I just found that Exynos IOMMU is also broken on some on my test
->>> boards. It looks that the runtime pm links are somehow not correctly
->>> established. I will try to analyze this later in the afternoon.
+On 3/19/2025 7:59 PM, Mimi Zohar wrote:
+> On Mon, 2025-03-17 at 18:04 -0700, steven chen wrote:
+>> The amount of memory allocated at kexec load, even with the extra memory
+>> allocated, might not be large enough for the entire measurement list.  The
+>> indeterminate interval between kexec 'load' and 'execute' could exacerbate
+>> this problem.
 >>
->> Hmm, I tried to get an Odroid-XU3 up and running, but it seems unable
->> to boot my original 6.14-rc3-based branch - even with the IOMMU driver
->> disabled, it's consistently dying somewhere near (or just after) init
->> with what looks like some catastrophic memory corruption issue - very
->> occasionally it's managed to print the first line of various different
->> panics.
+>> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be
+>> measured as critical data at kexec 'load' and 'execute' respectively.
+>> Report the allocated kexec segment size, IMA binary log size and the
+>> runtime measurements count as part of those events.
 >>
->> Before that point though, with the IOMMU driver enabled it does appear
->> to show signs of working OK:
+>> These events, and the values reported through them, serve as markers in
+>> the IMA log to verify the IMA events are captured during kexec soft
+>> reboot.  The presence of a 'kexec_load' event in between the last two
+>> 'boot_aggregate' events in the IMA log implies this is a kexec soft
+>> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
+>> after kexec soft reboot implies missing events in that window which
+>> results in inconsistency with TPM PCR quotes, necessitating a cold boot
+>> for a successful remote attestation.
 >>
->> [    0.649703] exynos-sysmmu 14650000.sysmmu: hardware version: 3.3
->> [    0.654220] platform 14450000.mixer: Adding to iommu group 1
->> ...
->> [    2.680920] exynos-mixer 14450000.mixer:
->> exynos_iommu_attach_device: Attached IOMMU with pgtable 0x42924000
->> ...
->> [    5.196674] exynos-mixer 14450000.mixer:
->> exynos_iommu_identity_attach: Restored IOMMU to IDENTITY from pgtable
->> 0x42924000
->> [    5.207091] exynos-mixer 14450000.mixer:
->> exynos_iommu_attach_device: Attached IOMMU with pgtable 0x42884000
+>> These critical data events are displayed as hex encoded ascii in the
+>> ascii_runtime_measurement_list.  Verifying the critical data hash requires
+>> calculating the hash of the decoded ascii string.
 >>
+>> For example, to verify the 'kexec_load' data hash:
 >>
->> The multi-instance stuff in probe/release does look a bit suspect,
->> however - seems like the second instance probe would overwrite the
->> first instance's links, and then there would be a double-del() if the
->> device were ever actually released again? I may have made that much
->> more likely to happen, but I suspect it was already possible with
->> async driver probe...
-> 
-> That is really strange. My Odroid XU3 boots fine from commit
-> bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path"),
-> although the IOMMU seems not to be working correctly. I've tested this
-> with 14450000.mixer device (one need to attach HDMI cable to get it
-> activated) and it looks that the video data are not being read from
-> memory at all (the lack of VSYNC is reported, no IOMMU fault). However,
-> from time to time, everything initializes and works properly.
+>> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements
+>>> grep  kexec_load | cut -d' ' -f 6 | xxd -r -p | sha256sum
+>>
+>> To verify the 'kexec_execute' data hash:
+>>
+>> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements
+>>> grep kexec_execute | cut -d' ' -f 6 | xxd -r -p | sha256sum
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   security/integrity/ima/ima.h       |  6 ++++++
+>>   security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
+>>   security/integrity/ima/ima_queue.c |  5 +++++
+>>   3 files changed, 32 insertions(+)
+>>
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index 24d09ea91b87..34815baf5e21 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+>>   				   unsigned long flags, bool create);
+>>   #endif
+>>   
+>> +#ifdef CONFIG_IMA_KEXEC
+>> +void ima_measure_kexec_event(const char *event_name);
+>> +#else
+>> +static inline void ima_measure_kexec_event(const char *event_name) {}
+>> +#endif
+>> +
+>>   /*
+>>    * The default binary_runtime_measurements list format is defined as the
+>>    * platform native format.  The canonical format is defined as little-endian.
+>> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+>> index 0f214e41dd33..43223eb99046 100644
+>> --- a/security/integrity/ima/ima_kexec.c
+>> +++ b/security/integrity/ima/ima_kexec.c
+>> @@ -17,6 +17,8 @@
+>>   #include "ima.h"
+>>   
+>>   #ifdef CONFIG_IMA_KEXEC
+>> +#define IMA_KEXEC_EVENT_LEN 256
+>> +
+>>   static bool ima_kexec_update_registered;
+>>   static struct seq_file ima_kexec_file;
+>>   static size_t kexec_segment_size;
+>> @@ -36,6 +38,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
+>>   	ima_reset_kexec_file(sf);
+>>   }
+>>   
+>> +void ima_measure_kexec_event(const char *event_name)
+>> +{
+>> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
+>> +	size_t buf_size = 0;
+>> +	long len;
+>> +	int n;
+>> +
+>> +	buf_size = ima_get_binary_runtime_size();
+>> +	len = atomic_long_read(&ima_htable.len);
+>> +
+>> +	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
+>> +		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
+>> +		      "ima_runtime_measurements_count=%ld;",
+>> +		      kexec_segment_size, buf_size, len);
+>> +
+>> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, false, NULL, 0);
+>> +}
+>> +
+>>   static int ima_alloc_kexec_file_buf(size_t segment_size)
+>>   {
+>>   	/*
+>> @@ -58,6 +78,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
+>>   out:
+>>   	ima_kexec_file.read_pos = 0;
+>>   	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
+>> +	ima_measure_kexec_event("kexec_load");
+>>   
+>>   	return 0;
+>>   }
+>> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+>> index 83d53824aa98..590637e81ad1 100644
+>> --- a/security/integrity/ima/ima_queue.c
+>> +++ b/security/integrity/ima/ima_queue.c
+>> @@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
+>>   			       unsigned long action,
+>>   			       void *data)
+>>   {
+>> +#ifdef CONFIG_IMA_KEXEC
+>> +	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
+>> +		ima_measure_kexec_event("kexec_execute");
+>> +#endif
+> After a kexec execute, the measurement list does not verify properly and the
+> "kexec_execute" critical data does not appear in the measurement list.  This
+> makes me think the critical data IS being extended into the TPM, but the
+> measurement list is being copied before the "kexec_execute" critical data is
+> called.
+>
+> This actually makes sense since the reboot notifier ima_update_kexec_buffer()
+> priority is higher than ima_reboot_notifier().
+>
+> INT_MIN: runs the callback late
+> INT_MAX: runs the callback early
+>
+> Either reverse the callback priorities or revert moving the "kexec_execute"
+> critical data to ima_reboot_notifier().
+>
+> thanks,
+>
+> Mimi
 
-Urgh, seems my mistake was assuming exynos_defconfig was the right thing 
-to begin from - bcb81ac6ae3c with that still dies in the same way (this 
-time I saw a hint of spin_bug() being hit...), however a 
-multi_v7_defconfig build does get to userspace OK again with no obvious 
-signs of distress:
+Hi Mimi,
 
-[root@alarm ~]# grep -Hr . /sys/kernel/iommu_groups/*/type
-/sys/kernel/iommu_groups/0/type:identity
-/sys/kernel/iommu_groups/1/type:identity
-/sys/kernel/iommu_groups/10/type:identity
-/sys/kernel/iommu_groups/2/type:identity
-/sys/kernel/iommu_groups/3/type:identity
-/sys/kernel/iommu_groups/4/type:identity
-/sys/kernel/iommu_groups/5/type:identity
-/sys/kernel/iommu_groups/6/type:identity
-/sys/kernel/iommu_groups/7/type:identity
-/sys/kernel/iommu_groups/8/type:identity
-/sys/kernel/iommu_groups/9/type:identity
-
-Annoyingly I do have an adapter for the fiddly micro-HDMI, but it's at 
-home :(
-
-> It looks that this is somehow related to the different IOMMU/DMA-mapping
-> glue code, as the other boards (ARM64 based) with exactly the same
-> Exynos IOMMU driver always work fine. I've tried to figure out what
-> actually happens, but so far I didn't get anything for sure. Disabling
-> the call to dev->bus->dma_configure(dev) from iommu_init_device() seems
-> to be fixing this, but this is almost equal to the revert of the
-> $subject patch. I don't get why calling it in iommu_init_device() causes
-> problems. It also doesn't look that this is anyhow related to the
-> multi-instance stuff, as the same happens if I only leave a single
-> exynos-sysmmu instance and its client (only 14450000.mixer device in the
-> system).
-
-On a hunch I stuck a print in exynos_iommu_probe_device(), and it looks 
-like in fact device_link_add() isn't getting called at all, and indeed 
-your symptoms do sound like they could be explained by the IOMMU not 
-being reliably resumed... lemme stare at exynos_iommu_of_xlate() a bit 
-longer...
+I will reverse the callback priority.
 
 Thanks,
-Robin.
+
+Steven
+
+>> +
+>>   	ima_measurements_suspend();
+>>   
+>>   	return NOTIFY_DONE;
+
+
 
