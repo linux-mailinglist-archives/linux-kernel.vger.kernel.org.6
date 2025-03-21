@@ -1,262 +1,256 @@
-Return-Path: <linux-kernel+bounces-570675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B58A6B357
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:29:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB39BA6B359
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B10B17AECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84FAB3B4676
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BA41E7C07;
-	Fri, 21 Mar 2025 03:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E671E9900;
+	Fri, 21 Mar 2025 03:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="efsqqC+I"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="hbGNyzuo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pYQ0Uh2A"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AED78F5B;
-	Fri, 21 Mar 2025 03:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944FB1E5B76;
+	Fri, 21 Mar 2025 03:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742527744; cv=none; b=FvXDyIbzWeClD4lLg1e2jU5x0y5auNncrbIfRpcTUIVB51jwJTK2Ap4sZKEqlWgnIKYc0UlV8X/hydCoPyzydlSEqaa/WljSTOaeDMHl9jJTLWWy+5QnRscpYUGkPffXIqjZ5VKa/RqiC/J6q4zvPUkeW972BPr36P0f0ZS6KRw=
+	t=1742527748; cv=none; b=Lpj30HTalgpqZ2EZVAA23cXumToDFubzpUD3pWE3G6jH7snUJ+GzRlpRPIDLPo8v/OdFMdPQWTVy2oLX50kCqOsW9xlXdPgF4XbyKTmZ3nt/0Vi7xE4r5Fbsx0uyIEBE6QviqJC8hxDg8GlJiIHj6+P7qOCo96t5JPfBHwaMea4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742527744; c=relaxed/simple;
-	bh=VLdzNTb4ENqsioNfG08wfvdE6JVwxPuGTnBZHq6pp5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NbwqzEZul0icRR34EXHtg+fZL2u+UXtdEsYTQa1y0Yu159BtJfzddHq/zJs9mPrreAL7fkHOHTa6+cRofHB0PJqBKF03ZJakeea7rAqDlOhNxmYakpZmzR77HFApTnHl85kLiQQbMKVGWEcPYbh6wki5QNYeHsDad0iatrz4HJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=efsqqC+I; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1742527737;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TvimR6SKo0jtW7eTJ4niI635OpzUmByoQ1ePS3vCVMo=;
-	b=efsqqC+In51YqG17swWvtDJmtXPw/VfdVPNwfuCEPtWye0J0e3juf/qxyhpq6e38T9cmjx
-	psIlggfq4gYjKmDY12xsnKMfzBUyPvcDgPbzZboB5JpXzv6VValNa6hnK/5DCCsVU2Boag
-	+h3tq7LhyDyoFJSwTul01XrJ0ObfKkm1Nr4PP2YotgGcwntmOZdfNzN3J6aOX3vW0w0aEI
-	i0ONlST1c908yXV9jfKeBqHf/YKasM6poA8P3cSmzKLFzXB88OY2M6uVKETwFQCdTM6zx8
-	Yf3ZOuWUiCj4TujmlOBAdtgCmBsH4i6Sgojwu2rCOe5EOa239fQvs6/KIaSi9w==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	stable@vger.kernel.org,
-	Alexey Charkov <alchark@gmail.com>,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: [PATCH] arm64: dts: rockchip: Remove overdrive-mode OPPs from RK3588J SoC dtsi
-Date: Fri, 21 Mar 2025 04:28:49 +0100
-Message-Id: <f929da061de35925ea591c969f985430e23c4a7e.1742526811.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1742527748; c=relaxed/simple;
+	bh=oJ/c0LNpf9do/WkN0FAZ3Ro6m4kIvAJPlJykLxV3558=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ju4vRsyNV3KEWgkP2LMXQXt+cGpNSK4sIMO6k7YdjGE1wd19SK7vyu5JZi38pDFMBJoskm7dDPZZ9R6nNnaP6/YCAHF9c5xzw+MwrOxU6u1lZ08t4lsq3NC0pWBeQp90kh20NPnLhq/aCYn12XsAtMRfnQi0DIygF5XUWteymHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=hbGNyzuo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pYQ0Uh2A; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 57B1C1140180;
+	Thu, 20 Mar 2025 23:29:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 20 Mar 2025 23:29:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1742527743;
+	 x=1742614143; bh=UgpCivlD4erkuP0+cv6OC/cYz5YurYdtgdJAbyDw7yE=; b=
+	hbGNyzuoY7/Jvh4KZ1t7bkgIxBJAchIQX6th8hma0LmXjaXDuhiTKwIyBVeG68Bt
+	lBmTJ3mAxMksvs5gZdybZp5y8JIgUOxyGXF21HaYAo9M1uKHgZhtdjmJs5j+5wAJ
+	OSBbLe8rnjcyZA9z0VlbCykq/o22anMK9PjuMLrU5xYjebsg8HguqYMQUMlDV5A3
+	gLP9zyGcchC4gQvwS7GFQHSk/5qPJBPB5gRDB0HWi1Dfwlaw1B85IoC+J0jDQlYe
+	99K/SIZy6PEKCdPCxtfrFx/D2jw0V+1dzXcL/tHDBVeeQVoGx9Z9x1tytksPyjR8
+	sXTm8TLwwO3z82Xlye4iOg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742527743; x=
+	1742614143; bh=UgpCivlD4erkuP0+cv6OC/cYz5YurYdtgdJAbyDw7yE=; b=p
+	YQ0Uh2AEnB7LnJK4WX6hu+0dNRp2ytX1yMEcBu9oaEOrFFstvHrrqIQ+heH/A2rM
+	uxcKgj31+9UvkDV2gq3dZlX8y74Oqralj53Y2dPplL+SyNpW5YsJNrBHbHiW3och
+	hI3uLtJZWNvXfKzxzTsOLyUakkHztCF7gLdfFyxNQnCatpwpMtpfCeHQyK3ZsfEH
+	vmS84MtJjHlwVEtb+tJKnYISQmzpYuj6outS5zuExM8US11xr3qki0NdJK82M7G8
+	6x7FBvzU3UaDIQhH6rvUJxE2Gq78covvNZK7uqUXH5MWwhS40UGWUIlbHV3GytqI
+	haObgLo1AW0EROxjwwIdw==
+X-ME-Sender: <xms:_tzcZ-DxQZBvUBRNDNevboM4ZeCdJsbPdSvJCJp4usPr1kUAH9oeRg>
+    <xme:_tzcZ4hY2S38kUWko5kT6ikTLaQxs6aPOLWeNvuJQjoPHz2smMgG-U8H-rHKjv7aL
+    k_ewY8aJe0J7wRjfhM>
+X-ME-Received: <xmr:_tzcZxk61U_2mYwTo8GnGh71uEHd_Uz3_06J2qJ-ebzNsDLlWBD4bD0xRhsw7pCj3zlMMZHA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedttdduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
+    gvshdruggvvheqnecuggftrfgrthhtvghrnhepieegkeevveffleeftdeigeduhfekfedu
+    ueeludfhheffhfdtkefhkefffeetuddvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluhhk
+    vgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehlkhhmlhesrghnthhhvggrshdruggvvhdprhgtphhtthhopehp
+    lhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghn
+    thhishhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhrvghnthhinhdrtghhrg
+    hrhiesghhmrghilhdrtghomhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrght
+    rdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnth
+    gvlhdrtghomh
+X-ME-Proxy: <xmx:_tzcZ8ye6xHH2zqBiTnWpvHHPoq7R7aMKMiP4gQTaLTTiFbR6RWTTw>
+    <xmx:_tzcZzSpUdoCa1tfNmtY5xtJxvrLmcZ5TNAOy2twKCT1P45YQUjaBQ>
+    <xmx:_tzcZ3ZfoOfmwIYhh9mz4WAfATT-s5OdYjEU1QngxczbYwQbZz7m-Q>
+    <xmx:_tzcZ8Q6cnza_Q1hnhk6r5eTohNHYet5W7z4cr_6eDO8L3T_YxpJ1Q>
+    <xmx:_9zcZ-HamtrBxuXVyUKSVQ9BweudiWHXXzE6AX-4ISKPZtJiVg3IVVFH>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Mar 2025 23:28:57 -0400 (EDT)
+Message-ID: <08e4df7e-47c3-4744-a53c-c098eba6f61b@ljones.dev>
+Date: Fri, 21 Mar 2025 16:28:54 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/11] HID: Asus: Add RGB Support to Asus Z13, Ally, unify
+ backlight asus-wmi, and Z13 QOL
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250320220924.5023-1-lkml@antheas.dev>
+ <a9697222-59ed-4673-aff6-ae4ca50bb824@ljones.dev>
+ <CAGwozwF4BwRapZ2O0UR5-RyrdrO=_r29hWkSO5xEWc0aoKxJWA@mail.gmail.com>
+Content-Language: en-NZ
+From: "Luke D. Jones" <luke@ljones.dev>
+In-Reply-To: <CAGwozwF4BwRapZ2O0UR5-RyrdrO=_r29hWkSO5xEWc0aoKxJWA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The differences in the vendor-approved CPU and GPU OPPs for the standard
-Rockchip RK3588 variant [1] and the industrial Rockchip RK3588J variant [2]
-come from the latter, presumably, supporting an extended temperature range
-that's usually associated with industrial applications, despite the two SoC
-variant datasheets specifying the same upper limit for the allowed ambient
-temperature for both variants.  However, the lower temperature limit is
-specified much lower for the RK3588J variant. [1][2]
+On 21/03/25 13:23, Antheas Kapenekakis wrote:
+> On Fri, 21 Mar 2025 at 01:03, Luke D. Jones <luke@ljones.dev> wrote:
+>>
+>> On 21/03/25 11:09, Antheas Kapenekakis wrote:
+>>> This is a three part series which does the following:
+>>>     - Clean init sequence, fix the keyboard of the Z13 (touchpad,fan button)
+>>>     - Unifies backlight handling to happen under asus-wmi so that all Aura
+>>>       devices have synced brightness controls and the backlight button works
+>>>       properly when it is on a USB laptop keyboard instead of one w/ WMI.
+>>>     - Adds RGB support to hid-asus, solid colors only, and for the ROG Ally
+>>>       units and the Asus Z13 2025 first.
+>>>
+>>> For context, see cover letter of V1.
+>>>
+>>> The last two patches are still a bit experimental, the rest is getting to
+>>> be pretty stable by now. I will test my Ally in the weekend. Also, I am
+>>> not a fan of the asus-0003:0B05:1A30.0001-led name, so suggestions would
+>>> be appreciated.
+>>>
+>>> ---
+>>> V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
+>>
+>> Hi Antheas, just a very quick note before I review - did you forget to
+>> add `-v2` to git format-patch? Don't do it now, it's just a reminder for
+>> next version.
+> 
+> Yes I did. It's been a long day.
 
-To be on the safe side and to ensure maximum longevity of the RK3588J SoCs,
-only the CPU and GPU OPPs that are declared by the vendor to be always safe
-for this SoC variant may be provided.  As explained by the vendor [3] and
-according to its datasheet, [2] the RK3588J variant can actually run safely
-at higher CPU and GPU OPPs as well, but only when not enjoying the assumed
-extended temperature range that the RK3588J, as an SoC variant targeted
-specifically at industrial applications, is made (or binned) for.
+Fair enough mate, know how that feels.
 
-Thus, only the CPU and GPU OPPs that are specified by the vendor to be safe
-throughout the entire RK3588J's extended temperature range may be provided,
-while anyone who actually can ensure that their RK3588J-based board is
-never going to run within the extended temperature range, may probably
-safely apply a DT overlay that adds the higher CPU and GPU OPPs.  As we
-obviously can't know what will be the runtime temperature conditions for
-a particular board, we may provide only the always-safe OPPs.
+>> Also I guess asus_brt_ means asus_bright_, but maybe we can rename to
+>> asus_led_ or even asus_rgbw_? I think something a tad more descriptive
+>> while still keeping the length down would help future contributors
+>> quickly understand intent. I'll mention it again when I get to that
+>> actual patch during test and review.
+> 
+> I am not particularly happy with brt either, I chose it because the
+> events are named BRT. rgbw is a bit misleading, the notifier will
+> never do RGB. Since Aura devices can hotplug they need their own led
+> device. It will always passthrough brightness only. Perhaps led is
+> misleading for that reason as well. Bright seems a bit weird, and
+> brightness seems a bit long. So I am a bit stuck
+> 
+> What I think would be better is to refocus from leds, to maybe
+> hid_ref. As I'd like the fan key to passthrough to asus-wmi too to
+> cycle the profiles. I'd also like to tweak the profile cycling
+> behavior a bit and make it customizable. But very minor changes, just
+> to cycling behavior. Essentially, I want to get to a point where doing
+> Fn+Fan cycles the profiles properly without userspace, and then
+> userspace can take over the cycler and update the KDE slider live.
 
-With all this and the downstream RK3588(J) DT definitions [4][5] in mind,
-let's delete the RK3588J CPU and GPU OPPs that are not considered belonging
-to the normal operation mode for this SoC variant.  To quote the RK3588J
-datasheet [2], "normal mode means the chipset works under safety voltage
-and frequency;  for the industrial environment, highly recommend to keep in
-normal mode, the lifetime is reasonably guaranteed", while "overdrive mode
-brings higher frequency, and the voltage will increase accordingly;  under
-the overdrive mode for a long time, the chipset may shorten the lifetime,
-especially in high temperature condition".
+Personally I'd like to see that. I intended to do something similar last 
+year but just never got a round to it. I'd rather move everything that's 
+logical to move, from userspace to kernel. Custom ordering would be 
+great to see, a logical profile progression etc, lets get this series 
+landed first.
 
-To sum up the RK3588J datasheet [2] and the vendor-provided DTs, [4][5]
-the maximum allowed CPU core and GPU frequencies are as follows:
+> However, that refactor on 6.14 for platform profiles was brutal. So I
+> have to wait for fedora to get on 6.14 for me to even start thinking
+> about that. Otherwise I will not be able to deploy any changes on
 
-   IP core    | Normal mode | Overdrive mode
-  ------------+-------------+----------------
-   Cortex-A55 |   1,296 MHz |      1,704 MHz
-   Cortex-A76 |   1,608 MHz |      2,016 MHz
-   GPU        |     700 MHz |        850 MHz
+About that - I'm working on it also, as it needs to tie in with the PPT 
+stuff, plus fan-curves. I'll keep you informed. The recent asus-armoury 
+driver was a first step for it as I needed to get the PPT part in. Once 
+it lands I'll submit work on the platform_profile stuff including custom 
+profile.
 
-Unfortunately, when it comes to the actual voltages for the RK3588J CPU and
-GPU OPPs, there's a discrepancy between the RK3588J datasheet [2] and the
-downstream kernel code. [4][5]  The RK3588J datasheet states that "the max.
-working voltage of CPU/GPU/NPU is 0.75 V under the normal mode", while the
-downstream kernel code actually allows voltage ranges that go up to 0.95 V,
-which is still within the voltage range allowed by the datasheet.  However,
-the RK3588J datasheet also tells us to "strictly refer to the software
-configuration of SDK and the hardware reference design", so let's embrace
-the voltage ranges provided by the downstream kernel code, which also
-prevents the undesirable theoretical outcome of ending up with no usable
-OPPs on a particular board, as a result of the board's voltage regulator(s)
-being unable to deliver the exact voltages, for whatever reason.
+> Bazzite. I currently carry 287 patches (~100 is XDNA+NTSYNC+platform
+> profiles minus Kurt's series) for 6.13. I would also like try to
+> target Thinkpads too, and maybe the Legion Go with that, but it
+> depends on how much progress Derek makes on his driver by then.
 
-The above-described voltage ranges for the RK3588J CPU OPPs remain taken
-from the downstream kernel code [4][5] by picking the highest, worst-bin
-values, which ensure that all RK3588J bins will work reliably.  Yes, with
-some power inevitably wasted as unnecessarily generated heat, but the
-reliability is paramount, together with the longevity.  This deficiency
-may be revisited separately at some point in the future.
+Don't spread yourself too thin. I can take care of most of the (new 
+feature) asus stuff (that i have hardware for testing with) leaving you 
+to focus on other things if you need. Anyhow, I'll keep you in sync - 
+just be aware I'll be a little slow due to work and family demands.
 
-The provided RK3588J CPU OPPs follow the slightly debatable "provide only
-the highest-frequency OPP from the same-voltage group" approach that's been
-established earlier, [6] as a result of the "same-voltage, lower-frequency"
-OPPs being considered inefficient from the IPA governor's standpoint, which
-may also be revisited separately at some point in the future.
+> As far as the Z13 is concerned, it will be this patch series + 1-3
+> patches to tweak the ROG button on the side to stop acting like a wifi
+> killswitch.
 
-[1] https://wiki.friendlyelec.com/wiki/images/e/ee/Rockchip_RK3588_Datasheet_V1.6-20231016.pdf
-[2] https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403201054_Rockchip-RK3588J_C22364189.pdf
-[3] https://lore.kernel.org/linux-rockchip/e55125ed-64fb-455e-b1e4-cebe2cf006e4@cherry.de/T/#u
-[4] https://raw.githubusercontent.com/rockchip-linux/kernel/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-[5] https://raw.githubusercontent.com/rockchip-linux/kernel/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-[6] https://lore.kernel.org/all/20240229-rk-dts-additions-v3-5-6afe8473a631@gmail.com/
+Ack
 
-Fixes: 667885a68658 ("arm64: dts: rockchip: Add OPP data for CPU cores on RK3588j")
-Fixes: a7b2070505a2 ("arm64: dts: rockchip: Split GPU OPPs of RK3588 and RK3588j")
-Cc: stable@vger.kernel.org
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Alexey Charkov <alchark@gmail.com>
-Helped-by: Quentin Schulz <quentin.schulz@cherry.de>
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- arch/arm64/boot/dts/rockchip/rk3588j.dtsi | 53 ++++++++---------------
- 1 file changed, 17 insertions(+), 36 deletions(-)
+Cheers,
+Luke.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-index bce72bac4503..3045cb3bd68c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
-@@ -11,74 +11,59 @@ cluster0_opp_table: opp-table-cluster0 {
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
--		opp-1416000000 {
--			opp-hz = /bits/ 64 <1416000000>;
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
- 			opp-microvolt = <750000 750000 950000>;
- 			clock-latency-ns = <40000>;
- 			opp-suspend;
- 		};
--		opp-1608000000 {
--			opp-hz = /bits/ 64 <1608000000>;
--			opp-microvolt = <887500 887500 950000>;
--			clock-latency-ns = <40000>;
--		};
--		opp-1704000000 {
--			opp-hz = /bits/ 64 <1704000000>;
--			opp-microvolt = <937500 937500 950000>;
-+		opp-1296000000 {
-+			opp-hz = /bits/ 64 <1296000000>;
-+			opp-microvolt = <775000 775000 950000>;
- 			clock-latency-ns = <40000>;
- 		};
- 	};
- 
- 	cluster1_opp_table: opp-table-cluster1 {
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
-+		opp-1200000000{
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <750000 750000 950000>;
-+			clock-latency-ns = <40000>;
-+		};
- 		opp-1416000000 {
- 			opp-hz = /bits/ 64 <1416000000>;
--			opp-microvolt = <750000 750000 950000>;
-+			opp-microvolt = <762500 762500 950000>;
- 			clock-latency-ns = <40000>;
- 		};
- 		opp-1608000000 {
- 			opp-hz = /bits/ 64 <1608000000>;
- 			opp-microvolt = <787500 787500 950000>;
- 			clock-latency-ns = <40000>;
- 		};
--		opp-1800000000 {
--			opp-hz = /bits/ 64 <1800000000>;
--			opp-microvolt = <875000 875000 950000>;
--			clock-latency-ns = <40000>;
--		};
--		opp-2016000000 {
--			opp-hz = /bits/ 64 <2016000000>;
--			opp-microvolt = <950000 950000 950000>;
--			clock-latency-ns = <40000>;
--		};
- 	};
- 
- 	cluster2_opp_table: opp-table-cluster2 {
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
-+		opp-1200000000{
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <750000 750000 950000>;
-+			clock-latency-ns = <40000>;
-+		};
- 		opp-1416000000 {
- 			opp-hz = /bits/ 64 <1416000000>;
--			opp-microvolt = <750000 750000 950000>;
-+			opp-microvolt = <762500 762500 950000>;
- 			clock-latency-ns = <40000>;
- 		};
- 		opp-1608000000 {
- 			opp-hz = /bits/ 64 <1608000000>;
- 			opp-microvolt = <787500 787500 950000>;
- 			clock-latency-ns = <40000>;
- 		};
--		opp-1800000000 {
--			opp-hz = /bits/ 64 <1800000000>;
--			opp-microvolt = <875000 875000 950000>;
--			clock-latency-ns = <40000>;
--		};
--		opp-2016000000 {
--			opp-hz = /bits/ 64 <2016000000>;
--			opp-microvolt = <950000 950000 950000>;
--			clock-latency-ns = <40000>;
--		};
- 	};
- 
- 	gpu_opp_table: opp-table {
-@@ -104,10 +89,6 @@ opp-700000000 {
- 			opp-hz = /bits/ 64 <700000000>;
- 			opp-microvolt = <750000 750000 850000>;
- 		};
--		opp-850000000 {
--			opp-hz = /bits/ 64 <800000000>;
--			opp-microvolt = <787500 787500 850000>;
--		};
- 	};
- };
- 
+> Antheas
+> 
+>> Looks like good progress so far.
+>>
+>> Cheers,
+>> Luke.
+>>
+>>> Changes since V1:
+>>>     - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
+>>>     - Fix ifdef else having an invalid signature (reported by kernel robot)
+>>>     - Restore input arguments to init and keyboard function so they can
+>>>       be re-used for RGB controls.
+>>>     - Remove Z13 delay (it did not work to fix the touchpad) and replace it
+>>>       with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
+>>>       keyboard rename into it.
+>>>     - Unregister brightness listener before removing work queue to avoid
+>>>       a race condition causing corruption
+>>>     - Remove spurious mutex unlock in asus_brt_event
+>>>     - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
+>>>       relocking the mutex and causing a deadlock when unregistering leds
+>>>     - Add extra check during unregistering to avoid calling unregister when
+>>>       no led device is registered.
+>>>     - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
+>>>       the driver to create 4 RGB handlers per device. I also suspect some
+>>>       extra events sneak through (KDE had the @@@@@@).
+>>>
+>>> Antheas Kapenekakis (11):
+>>>     HID: asus: refactor init sequence per spec
+>>>     HID: asus: prevent binding to all HID devices on ROG
+>>>     HID: asus: add Asus Z13 2025 Fan key
+>>>     HID: Asus: add Z13 folio to generic group for multitouch to work
+>>>     platform/x86: asus-wmi: Add support for multiple kbd RGB handlers
+>>>     HID: asus: listen to the asus-wmi brightness device instead of
+>>>       creating one
+>>>     platform/x86: asus-wmi: remove unused keyboard backlight quirk
+>>>     platform/x86: asus-wmi: add keyboard brightness event handler
+>>>     HID: asus: add support for the asus-wmi brightness handler
+>>>     HID: asus: add basic RGB support
+>>>     HID: asus: add RGB support to the ROG Ally units
+>>>
+>>>    drivers/hid/hid-asus.c                     | 342 ++++++++++++++++-----
+>>>    drivers/hid/hid-ids.h                      |   2 +-
+>>>    drivers/platform/x86/asus-wmi.c            | 138 ++++++++-
+>>>    include/linux/platform_data/x86/asus-wmi.h |  67 ++--
+>>>    4 files changed, 411 insertions(+), 138 deletions(-)
+>>>
+>>>
+>>> base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+>>
+
 
