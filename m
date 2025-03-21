@@ -1,190 +1,237 @@
-Return-Path: <linux-kernel+bounces-570624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC29EA6B2B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:46:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C1BA6B2BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6103388106B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D82F3B525D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786CF1DF979;
-	Fri, 21 Mar 2025 01:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148EA1DFD95;
+	Fri, 21 Mar 2025 01:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UpO/J9ca"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C8615820C;
-	Fri, 21 Mar 2025 01:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SHNGNg9P"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60C74C85;
+	Fri, 21 Mar 2025 01:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742521606; cv=none; b=qIumh2lq7uJO7ceZwrLTWiGEoLz/w+FKHM7nxWwYGSklt1aSsbVKfsWKnC+svPIQs6Ugy1Ifu4+3IqhxUoNHFyhLwDCVxE/3elRqF5JFnpa80dExj5ZdoHXPMZ0Bm+5ngCJRnMmLyILulNsgeulL9SKW8FBGStDbgwxXaHSmGC4=
+	t=1742521788; cv=none; b=IltIzoy1hcTkEyKtV7DyeKsTCNEH+++673y28ppnW5M2TKamdD1A8iz28yVJHjneqWfyGzl56fmcwzxQYaRYrtyP97VFWewS9z7quK1Nd39JwAouGW6eUULNG8vtMuQlDrFod7PvpiR2Jt12iF/GBXwuFiSeTatD7la8GMSEB0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742521606; c=relaxed/simple;
-	bh=y5k+WGVbmLOx9zmwieFUjE+czP2TB3cI343tVDN4iyo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=LxFoFHzuDEsLMCFByfXqj4uJVckec8UtHhyKhcxBG1R5kq3n7Qa7vmePAvvsqchzSuXIrkF2excgicmNIuR0b/hKjjHSvvy4m3nRayqA87cMW6yo+P1it//+QMWDC1EACTPeniReoJqYVD7zCSHzZ8ZTr43p9hUyZw3VvYxMofk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UpO/J9ca; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L1Wd22010236;
-	Fri, 21 Mar 2025 01:46:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TZkanKkLeMm6zSZhEdPwL9
-	AeMOk6nmlwmWL5HpmB02Y=; b=UpO/J9caj7uVcjvXQY0iKYmxdDZB+VIdgX9CQ7
-	YoAPO+CdWuILhSsy1Ot9lYoJdDCYtFuwJDyfkK32hZ+t6LJhR7LVfVbwiZkdgAyD
-	s+vAba+YFzJMsu+v5fHjQfLTa/2cxtvwAQMA1MxJfJGoxoiVDiV4MV2SoecHIOLQ
-	h7s1vfJgoBcx7fnKYj4OAjO+GJD2v/eNbHMmp7ZoFlb3DSY65PXIRT/yQ9SGkzf7
-	KC4rukF1XSnKaj9fsN5cIb80PIetEeCslLAMSiyk07ZBygckW0KIgVWznNaBtm3N
-	AB6VmA1wmPk4Fv1oKJbAhqnkl8yx+fIiVg2ZJkQtalfmprQg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gt5kghcc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 01:46:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52L1kSba002944
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 01:46:28 GMT
-Received: from [127.0.1.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Mar
- 2025 18:46:26 -0700
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-Date: Fri, 21 Mar 2025 09:45:53 +0800
-Subject: [PATCH ath-next] wifi: ath12k: don't put ieee80211_chanctx_conf
- struct in ath12k_link_vif
+	s=arc-20240116; t=1742521788; c=relaxed/simple;
+	bh=jkcnqXtQ6bRucDa/VBKU6cIw/rMmmdIVunyIC7lQGyc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mQH6NYfIB8p5Fhnd6Sbn25oiKJ55Y6vrPC/9NEaF0GaRW5vI/zIEepcdZHuo9+gVEfGrJC/jcLi1tJf+i9dt7IY7mKcQk/UsHvs5zOcZ/Tk+sISmRTR4kCEpygz0l9woo40zbEM93eZP5v1n8jNHcegTkupuzPgLr6ftO+Cqigw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SHNGNg9P; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=RW/lK
+	wc5mAv8wYptSe1TwvhJZQCxGjlY/X606DamiTg=; b=SHNGNg9PUByvu0DUOVJE9
+	3YdcLyazvNJSBgDxJ12qOfZuLj6i79krdITJyBXSPv+HThuRcjYeYxRi1mvReJgb
+	8DZ2FwKRMmIVPCuMHZIXjvloba9LWjvjrWQzLimwNygjc88rfRNh2qVJtiwFKu1h
+	lQLQH/MXyg9Xx4nS61mA04=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wA3ocuRxdxn_rQiAw--.15122S2;
+	Fri, 21 Mar 2025 09:49:05 +0800 (CST)
+From: chenchangcheng <ccc194101@163.com>
+To: laurent.pinchart@ideasonboard.com,
+	hdegoede@redhat.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chenchangcheng <chenchangcheng@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v5] media: uvcvideo: Fix bandwidth issue for Alcor camera
+Date: Fri, 21 Mar 2025 09:49:04 +0800
+Message-Id: <20250321014904.129768-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANDE3GcC/x2N0QqDMAxFf0XyvEAarYP9ythDqXEGoUqbSUH89
- 3V7PHDPPScUySoFHt0JWQ4tuqUG7tZBXEJ6C+rUGJjYU88Ogy2OV5y2ZLh/DH+raBU1YciHzui
- JBj/c48jkoN3sWWat/8QTmo1JqsHrur69hoi0fAAAAA==
-X-Change-ID: 20250321-ath12k-dont-put-chanctx-in-arvif-5004547c6201
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva"
-	<gustavoars@kernel.org>,
-        Baochen Qiang <quic_bqiang@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: m3a0AwRBFXoZxNKtbvo5WHfYONWJJZn7
-X-Proofpoint-ORIG-GUID: m3a0AwRBFXoZxNKtbvo5WHfYONWJJZn7
-X-Authority-Analysis: v=2.4 cv=PsuTbxM3 c=1 sm=1 tr=0 ts=67dcc4f5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=bC-a23v3AAAA:8 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=pkFYjrFKJ6VnwjaiwVAA:9 a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10 a=FO4_E8m0qiDe52t0p3_H:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_01,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 clxscore=1011 malwarescore=0 suspectscore=0 impostorscore=0
- mlxlogscore=736 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210010
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wA3ocuRxdxn_rQiAw--.15122S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WFykXr1fKr47Jw1DuF45ZFb_yoW3uw45pa
+	45GrZYyr18JrW8Cw17Ja1kWFy5Gwsaka12krZxKa4DZrn8Ary8XF43G3y0qFWvk3ZrZrnx
+	ta4jqrWj934jyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jrwIDUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiwhoX3mfcw2pUFgAAsB
 
-ieee80211_chanctx_conf struct is not put at the end of ath12k_link_vif.
-Note ieee80211_chanctx_conf has flexible array member inside it, causing
-below warning with GCC-14:
+From: chenchangcheng <chenchangcheng@kylinos.cn>
 
-drivers/net/wireless/ath/ath12k/core.h:298:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+Some broken device return wrong dwMaxPayloadTransferSize fields,
+as follows:
+[  218.211425] [pid:20391,cpu4,guvcview,3]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+[  218.211425] [pid:20391,cpu4,guvcview,4]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+[  218.252532] [pid:20391,cpu4,guvcview,1]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+[  218.252532] [pid:20391,cpu4,guvcview,2]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+[  218.293426] [pid:20391,cpu7,guvcview,8]videobuf2_common: __setup_offsets: buffer 0, plane 0 offset 0x00000000
+[  218.294067] [pid:20391,cpu7,guvcview,9]videobuf2_common: __setup_offsets: buffer 1, plane 0 offset 0x000e1000
+[  218.294433] [pid:20391,cpu7,guvcview,0]videobuf2_common: __setup_offsets: buffer 2, plane 0 offset 0x001c2000
+[  218.294677] [pid:20391,cpu7,guvcview,1]videobuf2_common: __setup_offsets: buffer 3, plane 0 offset 0x002a3000
+[  218.294677] [pid:20391,cpu7,guvcview,2]videobuf2_common: __vb2_queue_alloc: allocated 4 buffers, 1 plane(s) each
+[  218.294738] [pid:20391,cpu7,guvcview,3]uvcvideo: uvc_v4l2_mmap
+[  218.294799] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_mmap: buffer 0, plane 0 successfully mapped
+[  218.294799] [pid:20391,cpu7,guvcview,5]uvcvideo: uvc_v4l2_mmap
+[  218.294830] [pid:20391,cpu7,guvcview,6]videobuf2_common: vb2_mmap: buffer 1, plane 0 successfully mapped
+[  218.294830] [pid:20391,cpu7,guvcview,7]uvcvideo: uvc_v4l2_mmap
+[  218.294830] [pid:20391,cpu7,guvcview,8]videobuf2_common: vb2_mmap: buffer 2, plane 0 successfully mapped
+[  218.294860] [pid:20391,cpu7,guvcview,9]uvcvideo: uvc_v4l2_mmap
+[  218.294860] [pid:20391,cpu7,guvcview,0]videobuf2_common: vb2_mmap: buffer 3, plane 0 successfully mapped
+[  218.294860] [pid:20391,cpu7,guvcview,1]videobuf2_common: vb2_core_qbuf: qbuf of buffer 0 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,2]videobuf2_common: vb2_core_qbuf: qbuf of buffer 1 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,3]videobuf2_common: vb2_core_qbuf: qbuf of buffer 2 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_core_qbuf: qbuf of buffer 3 succeeded
+[  218.294891] [pid:20391,cpu7,guvcview,5]uvcvideo: Setting frame interval to 1/25 (400000).
+[  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
+[  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
 
-Although there is no issue for now since the array is not getting used,
-this should be fixed to avoid any potential data corruption issue in the
-future.
+The maximum packet size of the device is 3 * 1024, according to the
+logs above, the device needs to apply for a bandwidth of 0x2a0000.
 
-Remove this struct from ath12k_link_vif, fetch it from ieee80211_bss_conf
-instead when needed.
-
-This change only applies to WCN7850, and should has no impact on other
-chipsets.
-
-This is an alternative to the solution proposed in [1].
-
-Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-
-Reported-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Link: https://msgid.link/Z8-Snz86Xfwdlyd7@kspp # [1]
-Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503191330.AveQs7tb-lkp@intel.com/
+Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
 ---
- drivers/net/wireless/ath/ath12k/core.h |  1 -
- drivers/net/wireless/ath/ath12k/mac.c  | 15 ++++++++++++---
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c |  9 ++++
+ drivers/media/usb/uvc/uvc_video.c  | 82 +++++++++++++++++-------------
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 3 files changed, 58 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
-index bed996919f040645fd8b474d9709539758a34150..4675648c7bcb1f282db7935c92bb6a46821e550a 100644
---- a/drivers/net/wireless/ath/ath12k/core.h
-+++ b/drivers/net/wireless/ath/ath12k/core.h
-@@ -295,7 +295,6 @@ struct ath12k_link_vif {
- 	int txpower;
- 	bool rsnie_present;
- 	bool wpaie_present;
--	struct ieee80211_chanctx_conf chanctx;
- 	u8 vdev_stats_id;
- 	u32 punct_bitmap;
- 	u8 link_id;
-diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-index 9fda97667d4e3468f28194bf55cc194fe123533c..842eda56c8b152b3303c83b43fbef400442c59fc 100644
---- a/drivers/net/wireless/ath/ath12k/mac.c
-+++ b/drivers/net/wireless/ath/ath12k/mac.c
-@@ -9550,16 +9550,26 @@ static int ath12k_start_vdev_delay(struct ath12k *ar,
- 	struct ath12k_base *ab = ar->ab;
- 	struct ath12k_vif *ahvif = arvif->ahvif;
- 	struct ieee80211_vif *vif = ath12k_ahvif_to_vif(arvif->ahvif);
-+	struct ieee80211_chanctx_conf *chanctx;
-+	struct ieee80211_bss_conf *link_conf;
- 	int ret;
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index deadbcea5e22..6d739c3cc88f 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -3188,6 +3188,15 @@ static const struct usb_device_id uvc_ids[] = {
+ 	  .bInterfaceSubClass	= 1,
+ 	  .bInterfaceProtocol	= 0,
+ 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
++	/* Alcor Corp. Slave camera */
++	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
++				| USB_DEVICE_ID_MATCH_INT_INFO,
++	  .idVendor		= 0x1b17,
++	  .idProduct		= 0x6684,
++	  .bInterfaceClass	= USB_CLASS_VIDEO,
++	  .bInterfaceSubClass	= 1,
++	  .bInterfaceProtocol	= 0,
++	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
+ 	/* Generic USB Video Class */
+ 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
+ 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
+diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+index e3567aeb0007..7af77bf1be9b 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -226,41 +226,55 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+ 	if ((ctrl->dwMaxPayloadTransferSize & 0xffff0000) == 0xffff0000)
+ 		ctrl->dwMaxPayloadTransferSize &= ~0xffff0000;
  
- 	if (WARN_ON(arvif->is_started))
- 		return -EBUSY;
- 
--	ret = ath12k_mac_vdev_start(arvif, &arvif->chanctx);
-+	link_conf = ath12k_mac_get_link_bss_conf(arvif);
-+	if (!link_conf) {
-+		ath12k_warn(ab, "failed to get link conf for vdev %u\n", arvif->vdev_id);
-+		return -EINVAL;
-+	}
+-	if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) &&
+-	    stream->dev->quirks & UVC_QUIRK_FIX_BANDWIDTH &&
+-	    stream->intf->num_altsetting > 1) {
+-		u32 interval;
+-		u32 bandwidth;
+-
+-		interval = (ctrl->dwFrameInterval > 100000)
+-			 ? ctrl->dwFrameInterval
+-			 : frame->dwFrameInterval[0];
+-
+-		/*
+-		 * Compute a bandwidth estimation by multiplying the frame
+-		 * size by the number of video frames per second, divide the
+-		 * result by the number of USB frames (or micro-frames for
+-		 * high- and super-speed devices) per second and add the UVC
+-		 * header size (assumed to be 12 bytes long).
+-		 */
+-		bandwidth = frame->wWidth * frame->wHeight / 8 * format->bpp;
+-		bandwidth *= 10000000 / interval + 1;
+-		bandwidth /= 1000;
+-		if (stream->dev->udev->speed >= USB_SPEED_HIGH)
+-			bandwidth /= 8;
+-		bandwidth += 12;
+-
+-		/*
+-		 * The bandwidth estimate is too low for many cameras. Don't use
+-		 * maximum packet sizes lower than 1024 bytes to try and work
+-		 * around the problem. According to measurements done on two
+-		 * different camera models, the value is high enough to get most
+-		 * resolutions working while not preventing two simultaneous
+-		 * VGA streams at 15 fps.
+-		 */
+-		bandwidth = max_t(u32, bandwidth, 1024);
++	if (stream->intf->num_altsetting > 1) {
++		if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) &&
++		    stream->dev->quirks & UVC_QUIRK_FIX_BANDWIDTH) {
++			u32 interval;
++			u32 bandwidth;
 +
-+	chanctx	= wiphy_dereference(ath12k_ar_to_hw(arvif->ar)->wiphy,
-+				    link_conf->chanctx_conf);
-+	ret = ath12k_mac_vdev_start(arvif, chanctx);
- 	if (ret) {
- 		ath12k_warn(ab, "failed to start vdev %i addr %pM on freq %d: %d\n",
- 			    arvif->vdev_id, vif->addr,
--			    arvif->chanctx.def.chan->center_freq, ret);
-+			    chanctx->def.chan->center_freq, ret);
- 		return ret;
- 	}
++			interval = (ctrl->dwFrameInterval > 100000)
++				 ? ctrl->dwFrameInterval
++				 : frame->dwFrameInterval[0];
++
++			/*
++			 * Compute a bandwidth estimation by multiplying the
++			 * frame size by the number of video frames per second,
++			 * divide the result by the number of USB frames (or
++			 * micro-frames for high- and super-speed devices) per
++			 * second and add the UVC header size (assumed to be
++			 * 12 bytes long).
++			 */
++			bandwidth = frame->wWidth * frame->wHeight / 8
++				    * format->bpp;
++			bandwidth *= 10000000 / interval + 1;
++			bandwidth /= 1000;
++			if (stream->dev->udev->speed >= USB_SPEED_HIGH)
++				bandwidth /= 8;
++			bandwidth += 12;
++
++			/*
++			 * The bandwidth estimate is too low for many cameras.
++			 * Don't use maximum packet sizes lower than 1024 bytes
++			 * to try and work around the problem. According to
++			 * measurements done on two different camera models,
++			 * the value is high enough to get most resolutions
++			 * working while not preventing two simultaneous VGA
++			 * streams at 15 fps.
++			 */
++			bandwidth = max_t(u32, bandwidth, 1024);
++
++			ctrl->dwMaxPayloadTransferSize = bandwidth;
++		}
  
-@@ -9622,7 +9632,6 @@ ath12k_mac_op_assign_vif_chanctx(struct ieee80211_hw *hw,
- 	    ahvif->vdev_type != WMI_VDEV_TYPE_AP &&
- 	    ahvif->vdev_type != WMI_VDEV_TYPE_MONITOR &&
- 	    !ath12k_peer_exist_by_vdev_id(ab, arvif->vdev_id)) {
--		memcpy(&arvif->chanctx, ctx, sizeof(*ctx));
- 		ret = 0;
- 		goto out;
+-		ctrl->dwMaxPayloadTransferSize = bandwidth;
++		if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
++		    stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
++		    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
++			dev_warn(&stream->intf->dev,
++				 "the max payload transmission size (%d) exceededs the size of the ep max packet (%d). use the default value of 1024 bytes.\n",
++				 ctrl->dwMaxPayloadTransferSize,
++				 stream->maxpsize);
++			ctrl->dwMaxPayloadTransferSize = 1024;
++		}
  	}
+ }
+ 
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 5e388f05f3fc..8b43d725c259 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -77,6 +77,7 @@
+ #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
+ #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
+ #define UVC_QUIRK_MJPEG_NO_EOF		0x00020000
++#define UVC_QUIRK_OVERFLOW_BANDWIDTH	0x00040000
+ 
+ /* Format flags */
+ #define UVC_FMT_FLAG_COMPRESSED		0x00000001
 
----
-base-commit: b6f473c96421b8b451a8df8ccb620bcd71d4b3f4
-change-id: 20250321-ath12k-dont-put-chanctx-in-arvif-5004547c6201
-
-Best regards,
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
 -- 
-Baochen Qiang <quic_bqiang@quicinc.com>
+2.25.1
 
 
