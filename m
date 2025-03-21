@@ -1,141 +1,183 @@
-Return-Path: <linux-kernel+bounces-571137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0C8A6B9AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:15:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C17A6B9AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D5748037E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:15:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4B31888FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC277221F26;
-	Fri, 21 Mar 2025 11:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9FF22157B;
+	Fri, 21 Mar 2025 11:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Iw2c3QWk"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I3eL+UbO"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6651221F1A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD62C1F03C1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742555704; cv=none; b=rgBkwgzzHfLH/S0ElQNM8IVv6jPqlYMiP72QFD/JTP+OqLwBH57xFDBy3nPfncKscSxJsmJS8NAPsSvaOPsYEFrVdT1w7PuGdnVOt//dKRMO5SKlYMQT8zqaGnV/d6zptkbWD7RBcNrTQwujNQVjOZF0B55YzGTwkVlLtk54Ew4=
+	t=1742555741; cv=none; b=uPPaJQPRMmouFrVcEUkDEhJioGJeupIdKzJE6TBYFA9tJMgkhGYc4x1QKD6EIasPMtjLcJtVltrf49CNYNReqphQD2V0V1krbJDnYEAYE6MjndXNIykNx7B7x4bA2eSQSq7MXmVLy4ivmZl32MmG+/T2Otuq3eZl6PdolzG1ay4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742555704; c=relaxed/simple;
-	bh=8R6APMOXHnSGsHWxrl6UGLerFw6XUN3eqFRa7zAvg/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CIi2K1CpKDdbDVnqi/YV6rPFSSXZP/q/cFbUEOn6cseE1DiAkaiF/O2VhJxOyZU5YC0LUWpNxcpT02hZhwLSTBRu8DVGrtYH+lgqbpJuR3OabGQr46tSAxClfJCLKfPw66AtP3YLCh81C4HHBx+STJHXqAFcubjZIJcRnEr3ZK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Iw2c3QWk; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85b43b60b6bso63987439f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:15:02 -0700 (PDT)
+	s=arc-20240116; t=1742555741; c=relaxed/simple;
+	bh=LyjkH2QySCOSXFplZGe3Yr1geWyES/LDmYVnuE8oHAw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MPgZ3E6X9xuFIpeHKnVveL+p1MumyZAiP7mqNVkN/SSSLBOsM46HaqJYStXGAMCJQLKN5JaYNhKc+eRnRO/kwF/9vX5VPyDTiHY9O/01HZPM6tJhHmZTGVb8N6a8C7Nmc972sVqZsARZJt3yvrPUn7HJDky3u72Q91WqLS2nDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I3eL+UbO; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-39134c762ebso850139f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742555702; x=1743160502; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kliUjv4+TXv1KW6sNWVHyeHcHrrjshrv681ijKNdLOI=;
-        b=Iw2c3QWka8kkhnOcLtELQiQELaeqZuUMgS7kb4ZffDPthFqQU3UQDlpY8iqcb3lUCO
-         GKiU26FrybIvWhJize1sjzcoBt/fFZ4EI5gmL1eYbygmKOOFOV3S05G6BqWzpEtclq3Q
-         wwqF55+fYuET9ydA9yszlebqAhBovv4pEK6oIuWjAVkuhBFiY8+vzz+0u+3duQajcyTH
-         vbXNd04PuBX2JNOWy0rOfPXwBbC9kqEnBufORUw/mt2FQa8SsEGFIN3268uERLv7P6wB
-         Xa2DU71NwH/dwcyCjpPH7E35IEo13ZQNAAzp9urqcv+H8JoTQ3YUonE/S4YI1eXC9Xcg
-         zbBg==
+        d=google.com; s=20230601; t=1742555738; x=1743160538; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qBvkAQAnHQym5/2Fqa0WauNlKK3Lda/hKmXyAeHcCFE=;
+        b=I3eL+UbOHZZCjxqzbFONrw+eD5eJccRsqLPxh9U6yzNdfZX1UDzxbfje12AozYqSLG
+         IMiho81RAjncxriUgbiDrLgYTcmNLAieGdzGdVv7xcxjcGAnw4RkTdfBZ7ILK96bYmQ3
+         Op/MYBmd0ruwYiLvvXY5wKAkca+8Az7D+8fh0aTwBYz7CV2dCqncyEQPkgpxgFNRy7/c
+         j89LTCla1xUHiwrc9xbWTCfO89kn3B9JJunHpUmDdNzMGTNJpeDaxof1NNYeELTzIEtJ
+         fv2A53xjGoGysSZ7je9EEQ2vNjFubE4enUUCyWxWQDo8t0opPf4tNR+V6H/yi9Od1fkv
+         rNMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742555702; x=1743160502;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kliUjv4+TXv1KW6sNWVHyeHcHrrjshrv681ijKNdLOI=;
-        b=XiZ/a7h1zm0Dk93Ca2yjDMJSGf3fO+i1BNybDJ9i8upt1lH7NLL+jnZNCr5Ppo/C4t
-         qsLX5UOq7iYVHUfH/phNQ++wGEOGbaeoJ1eOqJimjYSi4EvKNWGFkRWQa/zn7YmnrV6C
-         QD9FUKd/D7afLgOH5p/bjlwa1l2zGuZhg2IchuCaezcNxTUrmIlgjdEdKnpWwo+hfAtY
-         jrWYh3KqELzMrXyN4NkulfRSD7IPQ+SXnouxusONdup5eriv5sQZo4RiXa8QFC6ILy9s
-         CQpblvoJdlznaFoboXgXoFX2tFd8Gbb123Cmu80nbx4vzkfQKn6H5D1Rr9a2ftGIbeSJ
-         C3PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcwWNSBCtTbzrYIQbIOle3Cjy+5yu/IDC8AXhp44+ccmWLdPa7aBVVMvjl1TJp5lawmwelyFQsiKucUDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI/p8/BEz3aaFAYVTf21FKIw6RRPE/mLxj1hALjEr7wNxfsx9s
-	vnDmJ2saG0ne0RcWAUmXSgw4XUk64HgCRFM0tl3nwQU5rWm287Au0QIo9WdUJgk=
-X-Gm-Gg: ASbGncsLhxyuC0U1p/i9WEPm+8t6x9tQIrUuIYZiOIMr5jNdPPMV6DgZA4vrn0evJ+m
-	3pkEqEQq5spQOaZsEZDLZKfszETR9snUPpVWU+6Ffp7ccnoJ2K64LtsHZgNfVRvnbYLF/XGF8Iw
-	dyfox2IkAgRBfVJAzQKZV8UAM/MvU0/V/UKvlPP+PNqi/pl7VWLF71dPm6zd3wMWICrVRUfLgSe
-	mQYB6KLkhJaXnBlkZ3GOFDg0LXk84w/x/E4hEi2Ywz9eK7ku+FNwd8unfy8Fh5mYqlGIDW50Gyh
-	qLG91qeAjj3rSVA8Mxwgju8Q841o//WoCK79yb68tg==
-X-Google-Smtp-Source: AGHT+IGFd8BrZDNuk5Q4tM4bK6u6ZIejPv4ztHl8dw4HSNWePmW9h5bgFFsMA3e+W8P/94Uoju3uaw==
-X-Received: by 2002:a05:6602:3991:b0:85b:5869:b5f with SMTP id ca18e2360f4ac-85e2beed32fmr322406139f.5.1742555701856;
-        Fri, 21 Mar 2025 04:15:01 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bdb5495sm33739439f.46.2025.03.21.04.15.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 04:15:01 -0700 (PDT)
-Message-ID: <ca1fbeba-b749-4c34-b4be-c80056eccc3a@kernel.dk>
-Date: Fri, 21 Mar 2025 05:14:59 -0600
+        d=1e100.net; s=20230601; t=1742555738; x=1743160538;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qBvkAQAnHQym5/2Fqa0WauNlKK3Lda/hKmXyAeHcCFE=;
+        b=IcukaqsR9tpMMI7yTTGAakuhv4Nv146xO7hV23X7gVMNVie8ZnNeOH/G/iC9FF3gwM
+         p8EHhqjCkpz+EGzIfP3BpZV5D7xuV0VPLlBkHOBAo9leZkKrkc9Ak7kTK1lL6Wvquvts
+         9wn2NbyshmmYwkGXPImnuS+fJsucDvAsEnYr9SnKO0KzqnPptrqrHFQYAX28GfRC/MgP
+         XVTvoZxaOxGiKXsJepTzOD3kkHL1ZPEPKGqcjpAKFXzpsduVmUu20zs+Vs4Hi8gvXuZv
+         AfF+ngWH7l5vreJ88GlWwTxvAIsmDO4CAYqsxlnFTaQhA1UCX/qTfS7BNpLyQPWGHwRR
+         v3Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCfJZRpaBnxMO0JZxaer5X6B0qwTRdRMHGpEU8cqh8RbO0jYeJWBPcHpk2ehVYR5ZcNxQf9D9bT/OshDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM6YdD8cyHH7WEcYEHR2JzCWgZDuOPb0xaAXaUbCzIhP9OnUJ/
+	ZpoYY6wwMIpTJPhqARGPLOWJc2E1Ac+LG+u05WXCseIcezO08N+WCKvMuTw4AQJKFA==
+X-Google-Smtp-Source: AGHT+IGvGCNRv4Fwv9/22IwIwHSyIDpU5GhOukXbyPHIPAvB/yrxhXrGXLFYgGlFBizZci8CUEfYuBU=
+X-Received: from wmbbd5.prod.google.com ([2002:a05:600c:1f05:b0:43c:f6c0:3375])
+ (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:6da1:0:b0:391:10c5:d1c6
+ with SMTP id ffacd0b85a97d-3997f8ed9c9mr2425752f8f.2.1742555738222; Fri, 21
+ Mar 2025 04:15:38 -0700 (PDT)
+Date: Fri, 21 Mar 2025 11:15:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Christoph Hellwig <hch@infradead.org>, Joe Damato <jdamato@fastly.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- asml.silence@gmail.com, linux-fsdevel@vger.kernel.org, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
- linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com,
- arnd@arndb.de, brauner@kernel.org, akpm@linux-foundation.org,
- tglx@linutronix.de, jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2> <Z9uuSQ7SrigAsLmt@infradead.org>
- <Z9xdPVQeLBrB-Anu@LQ3V64L9R2> <Z9z_f-kR0lBx8P_9@infradead.org>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <Z9z_f-kR0lBx8P_9@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250321111535.3740332-1-bqe@google.com>
+Subject: [PATCH v5 0/4] rust: adds Bitmap API, ID pool and bindings
+From: Burak Emir <bqe@google.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/20/25 11:56 PM, Christoph Hellwig wrote:
->> I don't know the entire historical context, but I presume sendmsg
->> did that because there was no other mechanism at the time.
-> 
-> At least aio had been around for about 15 years at the point, but
-> networking folks tend to be pretty insular and reinvent things.
+This series adds a Rust bitmap API for porting the approach from 
+commit 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
+to Rust. The functionality in dbitmap.h makes use of bitmap and bitops.
 
-Yep...
+The Rust bitmap API provides a safe abstraction to underlying bitmap
+and bitops operations. For now, only includes method necessary for 
+dbitmap.h, more can be added later. We perform bounds checks for 
+hardening, violations are programmer errors that result in panics.
 
->> It seems like Jens suggested that plumbing this through for splice
->> was a possibility, but sounds like you disagree.
-> 
-> Yes, very strongly.
+This version includes an optimization to represent the bitmap inline,
+as suggested by Yury.
 
-And that is very much not what I suggested, fwiw.
+The Rust equivalent of dbitmap.h is included as id_pool.rs, which is
+tightly coupled to the bitmap API. Includes an example of usage
+that requires releasing a spinlock, as expected in Binder driver.
 
->> As mentioned above and in other messages, it seems like it is
->> possible to improve the networking parts of splice (and therefore
->> sendfile) to make them safer to use without introducing a new system
->> call.
->>
->> Are you saying that you are against doing that, even if the code is
->> network specific (but lives in fs/)?
-> 
-> Yes.
-> 
-> Please take the work and integrate it with the kiocb-based system
-> we use for all other in-kernel I/O that needs completion notifications
-> and which makes it trivial to integate with io_uring instead of
-> spreading an imcompatible and inferior event system.
+This is v5 of a patch introducing Rust bitmap API [v4]. Thanks
+for all the helpful comments, this series has improved significantly
+as a result of your work.
 
-Exactly, this is how we do async IO elsewhere, not sure why networking
-needs to be special here, and definitely not special in a good way.
+Changes v4 --> v5: (suggested by Yury and Alice)
+- rebased on next-20250318
+- split MAINTAINERS changes
+- no dependencies on [1] and [2] anymore - Viresh,
+  please do add a separate section if you want to maintain cpumask.rs
+  separately.
+- imports atomic and non-atomic variants, introduces a naming convention
+  set_bit and set_bit_atomic on the Rust side.
+- changed naming and comments. Keeping `new`.
+- change dynamic_id_pool to id_pool
+- represent bitmap inline when possible
+- add some more tests
+- add bqe@google.com as M: for the Rust abstractions
+
+Changes v3 --> v4:
+- Rebased on Viresh's v3 [2].
+- split into multiple patches, separate Rust and bindings. (Yury)
+- adds dynamic_id_pool.rs to show the Binder use case. (Yury)
+- include example usage that requires release of spinlock (Alice)
+- changed bounds checks to `assert!`, shorter (Yury)
+- fix param names in binding helpers. (Miguel)
+- proper rustdoc formatting, and use examples as kunit tests. (Miguel)
+- reduce number of Bitmap methods, and simplify API through
+  use Option<usize> to handle the "not found" case.
+- make Bitmap pointer accessors private, so Rust Bitmap API
+  provides an actual abstraction boundary (Tamir)
+- we still return `AllocError` in `Bitmap::new` in case client code
+  asks for a size that is too large. Intentionally
+  different from other bounds checks because it is not about
+  access but allocation, and we expect that client code need
+  never handle AllocError and nbits > u32::MAX situations
+  differently.
+
+Changes v2 --> v3:
+- change `bitmap_copy` to `copy_from_bitmap_and_extend` which
+  zeroes out extra bits. This enables dbitmap shrink and grow use
+  cases while offering a consistent and understandable Rust API for
+  other uses (Alice)
+
+Changes v1 --> v2:
+- Rebased on Yury's v2 [1] and Viresh's v3 [2] changes related to
+  bitmap.
+- Removed import of `bindings::*`, keeping only prefix (Miguel)
+- Renamed panic methods to make more explicit (Miguel)
+- use markdown in doc comments and added example/kunit test (Miguel)
+- Added maintainer section for BITOPS API BINDINGS [RUST] (Yury)
+- Added M: entry for bitmap.rs which goes to Alice (Viresh, Alice)
+- Changed calls from find_* to _find_*, removed helpers (Yury)
+- Use non-atomic __set_bit and __clear_bit from Bitmap Rust API (Yury)
+
+Link [1] https://lore.kernel.org/all/20250224233938.3158-1-yury.norov@gmail.com/
+Link [2] https://lore.kernel.org/rust-for-linux/cover.1742296835.git.viresh.kumar@linaro.org/
+Link [v4]: https://lore.kernel.org/lkml/20250318164221.1533590-1-bqe@google.com/
+
+Burak Emir (4):
+  rust: add bindings for bitmap.h
+  rust: add bindings for bitops.h
+  rust: add bitmap API.
+  rust: add dynamic ID pool abstraction for bitmap
+
+ MAINTAINERS                     |  14 ++
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/bitmap.c           |   9 +
+ rust/helpers/bitops.c           |  23 +++
+ rust/helpers/helpers.c          |   2 +
+ rust/kernel/bitmap.rs           | 293 ++++++++++++++++++++++++++++++++
+ rust/kernel/id_pool.rs          | 201 ++++++++++++++++++++++
+ rust/kernel/lib.rs              |   2 +
+ 8 files changed, 545 insertions(+)
+ create mode 100644 rust/helpers/bitmap.c
+ create mode 100644 rust/helpers/bitops.c
+ create mode 100644 rust/kernel/bitmap.rs
+ create mode 100644 rust/kernel/id_pool.rs
 
 -- 
-Jens Axboe
+2.49.0.395.g12beb8f557-goog
+
 
