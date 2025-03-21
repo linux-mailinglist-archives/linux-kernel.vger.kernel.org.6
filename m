@@ -1,173 +1,118 @@
-Return-Path: <linux-kernel+bounces-571791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89415A6C250
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:24:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1844A6C24C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 195417A94DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:22:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774B91B616E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9F2230277;
-	Fri, 21 Mar 2025 18:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0BB22FDF0;
+	Fri, 21 Mar 2025 18:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="Mzb0kVyL"
-Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M2+aLmXC"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226C22FF35
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE3F22D7B8
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581321; cv=none; b=Lx4PCLL5ThvfGnimbLnn2YTQylahiaoTuB0aKd0CsK37XJuvTsKf96WIc6mvjI5suxy7j8xqxz1Wx9awEEBZnxrJ4j1/oF3EqezngP1NFZGds1Vla3LK34umPm6G1qIS0Em9OjWlNkEvTW1xsdcuObwuOegyCaFtssmyT8Kn3rk=
+	t=1742581307; cv=none; b=PUIxsFUPgmQByGOmD0gsnUIZMfCfdqdyG4EqZjHQH6hzOMao9Wi9g3MipE2WhAurQHkmUW1oF12h5hSBfkiw4gXpn7lmJBZMm4tx8pv+VPfnlA4gALvoGejR86fxWVZN+FaIa/eT02swlgNUQnKYEFH6Q5JcR2qHb/27JBj2eQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581321; c=relaxed/simple;
-	bh=Km/lmJT7WXfeyoWCsjE3+40++PbnaxaMlPsWDIjYSO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kKh4+pKJ+BLQTvI7N+/1o119+PmggIW/jTUZyH8BE5GBxeL7m3MomtkLwIC5ADtl76QMt1aMLPQvMwVLC284LEPo3DI1RxFmE3Fn97SEiFJv8A8JN4Plw0bGb5ouYK162z9xnV3xtN81jKQxqjZVh24zTuthUd77kcLwObJRubg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=Mzb0kVyL; arc=none smtp.client-ip=195.133.245.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
-Received: from mail.nppct.ru (localhost [127.0.0.1])
-	by mail.nppct.ru (Postfix) with ESMTP id 9A87A1C17A6
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 21:21:50 +0300 (MSK)
-Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
-	reason="pass (just generated, assumed good)" header.d=nppct.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:to:from:from; s=
-	dkim; t=1742581309; x=1743445310; bh=Km/lmJT7WXfeyoWCsjE3+40++Pb
-	naxaMlPsWDIjYSO4=; b=Mzb0kVyLlMdhNBD8shJWDo+K4QEPcYSwgTSqMtQrqXW
-	eV4GnjTZg7OCrqm8uqE2jcMh73hS2fit/zrCu5mf+OECIOhQjMaazThG6R+/UgRl
-	NPd/haUtD0xmmiv4s5n08xvXsd6oFkVHYiYwe3wavqFi+l1yDGXkdpdU60AFfPm0
-	=
-X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
-Received: from mail.nppct.ru ([127.0.0.1])
-	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id rPJmzMRXk3cx for <linux-kernel@vger.kernel.org>;
-	Fri, 21 Mar 2025 21:21:49 +0300 (MSK)
-Received: from localhost.localdomain (unknown [87.249.24.51])
-	by mail.nppct.ru (Postfix) with ESMTPSA id 2E4521C0628;
-	Fri, 21 Mar 2025 21:21:49 +0300 (MSK)
-From: Alexey Nepomnyashih <sdl@nppct.ru>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
-	Jeremy Kerr <jk@ozlabs.org>,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	syzbot+246ea4feed277471958a@syzkaller.appspotmail.com
-Subject: [PATCH 5.10 2/2] efivarfs: Add efivars_lock to synchronize list operations
-Date: Fri, 21 Mar 2025 18:21:25 +0000
-Message-ID: <20250321182126.1716111-2-sdl@nppct.ru>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321182126.1716111-1-sdl@nppct.ru>
-References: <20250321182126.1716111-1-sdl@nppct.ru>
+	s=arc-20240116; t=1742581307; c=relaxed/simple;
+	bh=pwPdibPJQed9NnbhGERtZINYpVjrQKL+yWaUc0BWwYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ct9yjbVffyhpglz5VEkPrqLTQpF5ejWztST//0mw1urvfdbrlEM2ghYzycg5f6gGyY/6eDnMMCmGfCz38sffDrVzQbega5U81tqqzGLFTyaK85yQLSidWC1xD6BVX7oA7jDWfyP27EJeXnjhjd7G1bxxmQzLE08byPkw5bTynRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M2+aLmXC; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B82C4439E;
+	Fri, 21 Mar 2025 18:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742581298;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VT3j5ia3YM4BM/xg+Fw4hf8d8cAPlpEijn+7bl03zsE=;
+	b=M2+aLmXCuAkAtEzK22T1y229k0Hx/fEcdMCuVydJ1io66hFVPtiOn7GBAwEYaUnyhjxC94
+	ICATURZtPDmh1DBptvQBie4GII1Pm7bGnMArOcVEhyHMLfO4ZtUjzrVAzlXBmLaMCSQJ2o
+	v0QxoN+dfKbAxbDnacFwsJVtWQlxGKo8R8MnuogRDC52wuk3izUBlzY9ufJLExiD6tlnKM
+	k7rbUwm2fL8rKxFOLoxjROHPAz5M5QHE7vXqivbMecIsaf6TpBAaFZ10mpgP3P7z/SWpQB
+	MHkfpgxw9FAok9ZSgsZYepow4fZBN6nB79LgrwrwqCk9UkR+nfFWiaV9ElT8qw==
+Date: Fri, 21 Mar 2025 19:21:32 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: "Maxime Ripard" <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Andrzej Hajda" <andrzej.hajda@intel.com>, "Anusha Srivatsa"
+ <asrivats@redhat.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
+ Baryshkov" <lumag@kernel.org>, "Fabio Estevam" <festevam@gmail.com>,
+ =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, "Hui Pu"
+ <Hui.Pu@gehealthcare.com>, "Inki Dae" <inki.dae@samsung.com>, "Jagan Teki"
+ <jagan@amarulasolutions.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Jonas Karlman" <jonas@kwiboo.se>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Marek Vasut" <marex@denx.de>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Paul Kocialkowski" <paulk@sys-base.io>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Robert Foss"
+ <rfoss@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Simona Vetter" <simona@ffwll.ch>, "Stefan Agner"
+ <stefan@agner.ch>, "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>
+Subject: Re: [PATCH v8 2/5] drm/bridge: add support for refcounting
+Message-ID: <20250321192132.211893ec@booty>
+In-Reply-To: <400466cd3c229ea6c6cb25e2a58cee27@kernel.org>
+References: <20250320-drm-bridge-refcount-v8-2-b3ddaa9f1368@bootlin.com>
+	<400466cd3c229ea6c6cb25e2a58cee27@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedukedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvtddtudemsgdtjeemieegieelmegtieguieemgegtudelmeeffeekvgemjegvjegvmegttdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemsgdtjeemieegieelmegtieguieemgegtudelmeeffeekvgemjegvjegvmegttdejuddphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsr
+ dhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopegrshhrihhvrghtshesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-No upstream commit exists for this patch.
-    
-The bug was fixed by upstream commit cdb46a8aefbf ("efivarfs: Move
-efivarfs list into superblock s_fs_info") but it depends on major changes
-done in the mainline kernel and 5.10.y needs its own patch.
+Hello Maxime,
 
-Add locking around efivarfs_list operations to prevent race conditions
-during processing of multiple filesystem superblock instances.
+On Fri, 21 Mar 2025 09:54:55 +0000
+"Maxime Ripard" <mripard@kernel.org> wrote:
 
-list_del corruption. prev->next should be ffff0000d86d6828, but was ffff800016216e60. (prev=ffff800016216e60)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:61!
-Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 4299 Comm: syz-executor237 Not tainted 6.1.119-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __list_del_entry_valid+0x13c/0x158 lib/list_debug.c:59
-lr : __list_del_entry_valid+0x13c/0x158 lib/list_debug.c:59
-Call trace:
-__list_del_entry_valid+0x13c/0x158 lib/list_debug.c:59
-__list_del_entry include/linux/list.h:134 [inline]
-list_del include/linux/list.h:148 [inline]
-efivar_entry_remove+0x38/0x110 fs/efivarfs/vars.c:493
-efivarfs_destroy+0x20/0x3c fs/efivarfs/super.c:184
-efivar_entry_iter+0x94/0xdc fs/efivarfs/vars.c:720
-efivarfs_kill_sb+0x58/0x70 fs/efivarfs/super.c:258
-deactivate_locked_super+0xac/0x124 fs/super.c:332
-deactivate_super+0xf0/0x110 fs/super.c:363
-cleanup_mnt+0x394/0x41c fs/namespace.c:1186
-__cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+> On Thu, 20 Mar 2025 16:42:11 +0100, Luca Ceresoli wrote:
+> > DRM bridges are currently considered as a fixed element of a DRM card, and
+> > thus their lifetime is assumed to extend for as long as the card
+> > exists. New use cases, such as hot-pluggable hardware with video bridges,
+> > require DRM bridges to be added to and removed from a DRM card without
+> > tearing the card down. This is possible for connectors already (used by DP
+> > 
+> > [ ... ]  
+> 
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-Reported-by: syzbot+246ea4feed277471958a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=246ea4feed277471958a
-Fixes: e14ab23dde12 ("efivars: efivar_entry API")
-Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
----
- drivers/firmware/efi/vars.c | 11 +++++++----
- fs/efivarfs/super.c         |  4 ++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
+Thanks a lot for reviewing!
 
-diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
-index 010febd2ab6b..517bf886ba14 100644
---- a/drivers/firmware/efi/vars.c
-+++ b/drivers/firmware/efi/vars.c
-@@ -417,6 +417,7 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 	const struct efivar_operations *ops;
- 	unsigned long variable_name_size = 512;
- 	efi_char16_t *variable_name;
-+	bool var_present = false;
- 	efi_status_t status;
- 	efi_guid_t vendor_guid;
- 	int err = 0;
-@@ -451,8 +452,12 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 						&vendor_guid);
- 		switch (status) {
- 		case EFI_SUCCESS:
--			if (duplicates)
-+			if (duplicates) {
-+				var_present = variable_is_present(variable_name,
-+									&vendor_guid,
-+									head);
- 				up(&efivars_lock);
-+			}
- 
- 			variable_name_size = var_name_strnsize(variable_name,
- 							       variable_name_size);
-@@ -465,9 +470,7 @@ int efivar_init(int (*func)(efi_char16_t *, efi_guid_t, unsigned long, void *),
- 			 * we'll ever see a different variable name,
- 			 * and may end up looping here forever.
- 			 */
--			if (duplicates &&
--			    variable_is_present(variable_name, &vendor_guid,
--						head)) {
-+			if (duplicates && var_present) {
- 				dup_variable_bug(variable_name, &vendor_guid,
- 						 variable_name_size);
- 				status = EFI_NOT_FOUND;
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index 24a0c5ef4169..7a6e2676b312 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -212,7 +212,11 @@ static int efivarfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (!root)
- 		return -ENOMEM;
- 
-+	err = efivar_entry_iter_begin();
-+	if (err)
-+		return err;
- 	INIT_LIST_HEAD(&efivarfs_list);
-+	efivar_entry_iter_end();
- 
- 	err = efivar_init(efivarfs_callback, (void *)sb, true, &efivarfs_list);
- 	if (err)
+I noticed you haven't replied on patch 3. Being a change you had
+suggested, I was wondering whether haven't noticed that. If you are OK
+with that patch, the entire series would have a R-by, which would be
+great to unlock all the work depending on this series.
+
+Luca
+
 -- 
-2.43.0
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
