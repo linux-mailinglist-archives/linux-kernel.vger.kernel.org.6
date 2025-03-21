@@ -1,116 +1,193 @@
-Return-Path: <linux-kernel+bounces-570914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD878A6B636
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:46:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18942A6B63B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E043B39CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC91188DDA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B201EFFAF;
-	Fri, 21 Mar 2025 08:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D451EFFBB;
+	Fri, 21 Mar 2025 08:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xvl1KLvH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="PatojUrM"
+Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36BF1DDA39;
-	Fri, 21 Mar 2025 08:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1177B1E7C10
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546797; cv=none; b=JMI9kd+mynKhqJv7+XBklU9Ewk2G5mBtTsS9LR6Csiu7nwJw2dW4h2BQIhpcwvhzsxbaf59QeWw6dHm5NxufB7ORaWfHcGFFcxmt+5Z06Ws1G+volfDAf8xhu807g4zWbgtttR7n0GiszVSA31CpYkj3j7o8jxpVT9097qrnIME=
+	t=1742546833; cv=none; b=gbZc0twaLe0B1iW2cFAw7FhTkAhG+TNKw7mu9Vz/lsv693ema24FzsEMsO+C828EXFLXmzpuXQYTvSySCsnGcRna8KSNUd24HPLb/+EnL7XLOOQBUdi/IqWVktY1ugEiFvtKWtltLNFhSwMnUJTqprXiVEN8COU7aoirUJ3zMPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546797; c=relaxed/simple;
-	bh=SnjraZ75Q0RAHyyel2IKi19BojWhsBkxupdgGmBv0JE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lx65kaJtiG5dq5W5H+TQmup/C3jZM/fKo/D4NC3xUD7pnI8ME3XtPcIgkqlXNO9JqEndlbbSDyrVDLMOXwG9jiBc04hp7Kmicp0t8v8DOobgODpoFjL/GBclCgy/b26aDjYwnBfT7bg3vmLc8ErpWikX+HOW1ThR9/IP/6kFfXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xvl1KLvH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003C7C4CEE3;
-	Fri, 21 Mar 2025 08:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742546796;
-	bh=SnjraZ75Q0RAHyyel2IKi19BojWhsBkxupdgGmBv0JE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xvl1KLvHNlMZmSFbyjWoQ2cdB82HP7ohRZgTnbNhsF6AOqjl2sBfl97gh3zlMI+Gz
-	 luA06xKvI8CFzJjQJhh+YXf8WOro3Ys73PPhdWYk6B7ryTOZznjSzHN/eGBBkG43Mq
-	 6uDd6AqCdxUPrOzxuSW+3/gQRwdVvhu1rTpmWa3xSXXk/SDjGpxuaDsKfFJSXX5gco
-	 DuAr5bYNpScQCHS/Yf09Yz7c41u5Awc7OufBvs52Ws693baeUOoNvmk9ZYONhBofkR
-	 Yp05M/aRmgNz/crnguV8QWFc6ZcwiNgXrf5J7lVNsmSHyMuIETIDgYTmF+x5zj4bwI
-	 LtHT4nvTfFuGQ==
-Date: Fri, 21 Mar 2025 09:46:30 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: julian.stecklina@cyberus-technology.de, Christoph Hellwig <hch@lst.de>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] initrd: support erofs as initrd
-Message-ID: <20250321-komprimieren-dachgeschoss-75bc46d824d0@brauner>
-References: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
- <20250321020826.GB2023217@ZenIV>
+	s=arc-20240116; t=1742546833; c=relaxed/simple;
+	bh=M6FotxqtmdavVYyLKswlHnM+jqLmZsfU30b8Zccel+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P6jb1mcKheMVGws2lgyhwUceJDy0fgM/NEMqu+rQGA7bavlsfwTAUolpkMCECEzPFsyjk6f7rRHMAQbEUl7Zyxm9PZSkioccY+tl5h21DQWCHWwvEHLl7urJEDRvnbF3TW4Jgq7kVisyOOYjf4yBTGDaysl/5nLKXNMrb0lkrXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=PatojUrM; arc=none smtp.client-ip=209.85.128.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so11593255e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1742546830; x=1743151630; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bIPyhC1mQXfhzrv4tuYQo78989Vt+LnaUDryQAFr0iA=;
+        b=PatojUrMX0yrMKa8cUmLMJsvM3lS+MYNqLrk7SwQuBL6khw4v1lYJpj75RtnqhUaf3
+         EGflwNp9lWE/dg91KPRM6uEXEJ9wyrMJEmjxCJlv40bVLgggwTUMkhNGjptVUgacIWWP
+         pkQ4/Ut8LgDy8W2hdEHNE1VR0cm0QnuFtslJ+w2gf3V99A9kIG31QLr+kOoo8xTqH5dK
+         RiBXm+TI5CqaqWnOYogy37dbO8KiAnGmFMgCL4/urZ2LnH0zCfBCrehEkqZO+egCy9+E
+         Woxu0T2ScTnRje2gUJHYTKs97+SG8sdb3cTkuY0Xp0fMZdhzoAxJl/Ro1sH9LyCqA0LP
+         Cyuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742546830; x=1743151630;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bIPyhC1mQXfhzrv4tuYQo78989Vt+LnaUDryQAFr0iA=;
+        b=ZVtSBlLh7zj1uBGp0eFE+wpB8rvJqzGG6yiY93mQCYkY6TDSm1r+YAv4STq0ikFtTs
+         7qmm/o8Qejofq2lXKI3YwxfnS5+B+ErHGQcKOHiM2DL36ZJPD4MlyIS4S51Cow7HhtyO
+         eGy6FRJM6ERu1KVriVlMefv0OkYCQGbEEveieKQePtRSy+WoMOFnYV81LiKW4aDGmzX2
+         yrf8dqK9m30NORksZESkmH54dKICCcrE1MRr6LCbOGs9d5e2wGShkaPf492+bCQIkxzz
+         /a902uBYwzT2NeBz7VRLVL9jNmT1rXmwI/JS3Wxius2T/yorWPO8oJ2VYLHymCZT7jpC
+         JglA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRevv2nAoSNIYEJOooV1BoLNkSdRYps3STrYmpYk4ycckwQuC65/t6h/ZzkqSnNblKwvF5sJ63tE+l2rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUqZ8fgNdintNU6neDrM48RL86AhlZ9cG3OdqZYxZG3fIYUPW6
+	RRoedpbcaF4JWhH/O+RBjC5fQQwVc+gicxLdOM/q6fbc1S/wdvPjfcDuvhOhWYiX4BiLXOJh6Dy
+	OddlGIw==
+X-Gm-Gg: ASbGncu4SjWjaaP0daX0/KxCUgf+dyJ4RmbBaRttTnSfA9GHgyISwsjYYYJuh1OjYgO
+	XTCv0yt78nHsSwSeSL2rWr/G1rFATyRyuMVd2NT/WflhETpH6k7f2UnTFBFdyTUWyeolQ3fisua
+	kFB5zGjGUI+qSMO/t7kBzuA5Jyl299s5Rc0abUWuZCMl4EDlCKSi5KCgxy3MgPLuJnrKRSuueoH
+	EeZ8AU/nFCKzI6+4y5/DemgmN9wOvUAzVnrlZlgo2P2FfS1QxZrZ08ROp+Z9IpyRuhEguFP6BDi
+	AIKs9/+ZKrpBXPC53zbzy2HJ4E2P/glUM8+bCBKcS8Nwa7y+P/dLeZ13B5t9N+4yGe7XeVvkGTa
+	v
+X-Google-Smtp-Source: AGHT+IF5uQ2yTshrsDrGp62So7nEjMJNwK5T0pG9RVDW3pCpQP0pC5/YcQGWJV4LHQkA8pXUbJCnBg==
+X-Received: by 2002:a05:600c:4684:b0:43c:eec7:eabb with SMTP id 5b1f17b1804b1-43d509eccf1mr17666555e9.8.1742546829899;
+        Fri, 21 Mar 2025 01:47:09 -0700 (PDT)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3f76sm1794946f8f.37.2025.03.21.01.47.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 01:47:09 -0700 (PDT)
+Message-ID: <5512ee47-37ea-41b0-86b6-efdb4a2e10c4@blackwall.org>
+Date: Fri, 21 Mar 2025 10:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250321020826.GB2023217@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch net-next 0/3] Add support for mdb offload failure
+ notification
+To: Joseph Huang <joseph.huang.2024@gmail.com>,
+ Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Roopa Prabhu <roopa@nvidia.com>, Simon Horman <horms@kernel.org>,
+ linux-kernel@vger.kernel.org, bridge@lists.linux.dev
+References: <20250318224255.143683-1-Joseph.Huang@garmin.com>
+ <039a0673-6254-45a0-b511-69d2a15aa96d@blackwall.org>
+ <52b437bc-3f0e-4a5e-ae18-aea6576eb1ad@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <52b437bc-3f0e-4a5e-ae18-aea6576eb1ad@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 02:08:26AM +0000, Al Viro wrote:
-> On Thu, Mar 20, 2025 at 08:28:23PM +0100, Julian Stecklina via B4 Relay wrote:
-> > From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-> > 
-> > Add erofs detection to the initrd mount code. This allows systems to
-> > boot from an erofs-based initrd in the same way as they can boot from
-> > a squashfs initrd.
-> > 
-> > Just as squashfs initrds, erofs images as initrds are a good option
-> > for systems that are memory-constrained.
-> > 
-> > Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+On 3/20/25 23:14, Joseph Huang wrote:
+> On 3/20/2025 2:17 AM, Nikolay Aleksandrov wrote:
+>> On 3/19/25 00:42, Joseph Huang wrote:
+>>> Currently the bridge does not provide real-time feedback to user space
+>>> on whether or not an attempt to offload an mdb entry was successful.
+>>>
+>>> This patch set adds support to notify user space about successful and
+>>> failed offload attempts, and the behavior is controlled by a new knob
+>>> mdb_notify_on_flag_change:
+>>>
+>>> 0 - the bridge will not notify user space about MDB flag change
+>>> 1 - the bridge will notify user space about flag change if either
+>>>      MDB_PG_FLAGS_OFFLOAD or MDB_PG_FLAGS_OFFLOAD_FAILED has changed
+>>> 2 - the bridge will notify user space about flag change only if
+>>>      MDB_PG_FLAGS_OFFLOAD_FAILED has changed
+>>>
+>>> The default value is 0.
+>>>
+>>> A break-down of the patches in the series:
+>>>
+>>> Patch 1 adds offload failed flag to indicate that the offload attempt
+>>> has failed. The flag is reflected in netlink mdb entry flags.
+>>>
+>>> Patch 2 adds the knob mdb_notify_on_flag_change, and notify user space
+>>> accordingly in br_switchdev_mdb_complete() when the result is known.
+>>>
+>>> Patch 3 adds netlink interface to manipulate mdb_notify_on_flag_change
+>>> knob.
+>>>
+>>> This patch set was inspired by the patch series "Add support for route
+>>> offload failure notifications" discussed here:
+>>> https://lore.kernel.org/all/20210207082258.3872086-1-idosch@idosch.org/
+>>>
+>>> Joseph Huang (3):
+>>>    net: bridge: mcast: Add offload failed mdb flag
+>>>    net: bridge: mcast: Notify on offload flag change
+>>>    net: bridge: Add notify on flag change netlink i/f
+>>>
+>>>   include/uapi/linux/if_bridge.h |  9 +++++----
+>>>   include/uapi/linux/if_link.h   | 14 ++++++++++++++
+>>>   net/bridge/br_mdb.c            | 30 +++++++++++++++++++++++++-----
+>>>   net/bridge/br_multicast.c      | 25 +++++++++++++++++++++++++
+>>>   net/bridge/br_netlink.c        | 21 +++++++++++++++++++++
+>>>   net/bridge/br_private.h        | 26 +++++++++++++++++++++-----
+>>>   net/bridge/br_switchdev.c      | 31 ++++++++++++++++++++++++++-----
+>>>   7 files changed, 137 insertions(+), 19 deletions(-)
+>>>
+>>
+>> Hi,
+>> Could you please share more about the motivation - why do you need this and
+>> what will be using it? 
 > 
-> >  #include "do_mounts.h"
-> >  #include "../fs/squashfs/squashfs_fs.h"
-> > +#include "../fs/erofs/erofs_fs.h"
+> Hi Nik,
 > 
-> This is getting really unpleasant...
+> The API for a user space application to join a multicast group is write-only (and really best-efforts only), meaning that after an application calls setsockopt(), the application has no way to know whether the operation actually succeeded or not. Normally for soft bridges this is not an issue; however for switchdev-backed bridges, due to limited hardware resources, the failure rate is meaningfully higher.
 > 
-> Folks, could we do something similar to initcalls - add a section
-> (.init.text.rd_detect?) with array of pointers to __init functions
-> that would be called by that thing in turn?  With filesystems that
-> want to add that kind of stuff being about to do something like
+> With this patch set, the user space application will now get a notification about a failed attempt to join a multicast group. The user space application can then have the opportunity to mitigate the failure [1][2].
 > 
-> static int __init detect_minix(struct file *file, void *buf, loff_t *pos, int start_block)
-> {
-> 	struct minix_super_block *minixsb = buf;
-> 	initrd_fill_buffer(file, buf, pos, (start_block + 1) * BLOCK_SIZE);
-> 	if (minixsb->s_magic == MINIX_SUPER_MAGIC ||
-> 	    minixsb->s_magic == MINIX_SUPER_MAGIC2) {
-> 		printk(KERN_NOTICE
-> 			"RAMDISK: Minix filesystem found at block %d\n",
-> 			start_block);
-> 		return minixsb->s_nzones << minixsb->s_log_zone_size;
-> 	}
-> 	return -1;
-> }
-> 
-> initrd_detect(detect_minix);
-> 
-> with the latter emitting a pointer to detect_minix into that new
-> section?
-> 
-> initrd_fill_buffer() would be something along the lines of
-> 
-> 	if (*pos != wanted) {
-> 		*pos = wanted;
-> 		kernel_read(file, buf, 512, pos);
-> 	}
-> 
-> I mean, we can keep adding those pieces there, but...
 
-Very much agreed.
+Thanks for the pointers.
+
+>> Also why do you need an option with 3 different modes
+>> instead of just an on/off switch for these notifications?
+>>
+>> Thanks,
+>>   Nik
+>>
+> 
+> Some user space application might be interested in both successful and failed offload attempts (for example the application might want to keep an mdb database which is perfectly in sync with the hardware), while some other user space application might only be interested in failed attempts (so that it can retry the operation or choose a different group for example).
+> 
+> This knob is modeled after fib_notify_on_flag_change knob on route offload failure notification (see https://lore.kernel.org/all/20210207082258.3872086-4-idosch@idosch.org/). The rationale is that "Separate value (read: 2) is added for such notifications because there are less of them, so they do not impact performance and some users will find them more important."
+> 
+> Thanks,
+> Joseph
+> 
+
+Can we please not add features that don't have actual users? It seems you're interested
+in failed attempts, so you can just add a bridge boolopt on/off switch to notify about
+those events, if anyone becomes interested in all then we can extend it. Also it can
+have a more specific name like mdb_offload_fail_notification instead, saying that we
+notify on mdb flags change is misleading because there are more flags which can change.
+
+Also please drop all of the switchdev ifdefs and just always have this option available
+it will actually be used only with switchdev enabled so setting it in other
+cases is a noop, these flags will never be seen anyway.
+ 
+Cheers,
+ Nik
+
+
 
