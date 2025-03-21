@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-570608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D578DA6B282
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:07:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98751A6B284
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26EDA7B2693
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:06:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E605C3AC2FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8829405;
-	Fri, 21 Mar 2025 01:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0347E1EA65;
+	Fri, 21 Mar 2025 01:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="STmLaeeb"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X4NCCT0m"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829A8184F;
-	Fri, 21 Mar 2025 01:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F6B70820
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742519221; cv=none; b=K6xUBIDHiTcjtlNz1iFYhV+e70K6hvWzNA9u8+0XNmpB5avQQIv1E+HtzPkZl0aTLvQKbbQYp9A7Yk64HEG/wHxzvy/3Lp89eKSG7o8L/1XK3UEs2as97n6fHO6rJaWn2P3k7iyEvSft9VNp/SkUzfaC2Al+Np+V2gZ8Tr+ujTA=
+	t=1742519257; cv=none; b=Fj7OuEVoQdZ7Gnbh8K7k+EcjTJYN7DIgAxLKOJjtFqBEVfaXSXp49wjiiUlITr7cYWLqX+RjW8Tvl/q5C5GRhShobtHviDik87UlShvYl+ug6zl0v4+mobTnTXEDf5A9J05kIQBhFVFOCgjGihaylQ8kJefX7reHc5Jo8Q0XG0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742519221; c=relaxed/simple;
-	bh=pIdTixZuNmStjtltpSgBZZbYtUoRIdqSvZd1TvixVG4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HKHC8fK0cxsgXg1OludzjpmTaYnuFZyqTSrNNLhXSg+BGwvklEyFvut0Sg3uyQBX3sKlwuCZ+Jo5+RG0ZGFHmo5InHWRkOfm4MJdI7ip8UBHcZPud1Lhn2Ueay5cSqpK8K9N5LRQAIs5LorFNg31Ogy//CsIdl0NpCmbj40Sdss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=STmLaeeb; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1742519215;
-	bh=pIdTixZuNmStjtltpSgBZZbYtUoRIdqSvZd1TvixVG4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=STmLaeeb8JgIPPtTQkTrSNDqYPUrllXY1O8adMuBZaHXPzg3r7xposNnDqGupfi5X
-	 99Zta++gSDDl1g6lvrC8XT0hnuAKg1r3RC4z8Zo/QyDKqSgnfrSyFA2MJrdT4WBFl1
-	 RUmt/OZ6TxN7GeAG3cVCmiMKGwUSnxBv5Lv4WOi5kgsXZNcVhEykb5ll2kTsc+9Pa6
-	 BaiCS7bfJfQEDURlCP4T+9JpGc1mpUmY46UGjImGTinlAXe91pWEhhzlW3nyExDQS9
-	 gfDVgpD1XzfZxWWDXw/j4WUCiQMImKu63heMsVU2ep4csPM121OpZcNW44Zwo3oG/U
-	 7WLh87jddaPNg==
-Received: from [192.168.68.112] (unknown [180.150.112.225])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 6DB127AF35;
-	Fri, 21 Mar 2025 09:06:54 +0800 (AWST)
-Message-ID: <585c2b050a44f4009b3a61cab69f800c88a0cf5e.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v3 2/2] dt-bindings: arm: aspeed: add Nvidia's GB200NVL
- BMC
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Willie Thai <wthai@nvidia.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, joel@jms.id.au, kees@kernel.org, tony.luck@intel.com, 
-	gpiccoli@igalia.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	openbmc@lists.ozlabs.org
-Cc: leohu@nvidia.com, tingkaic@nvidia.com, dkodihalli@nvidia.com, Mars Yang
-	 <maryang@nvidia.com>
-Date: Fri, 21 Mar 2025 11:36:53 +1030
-In-Reply-To: <20250320164633.101331-3-wthai@nvidia.com>
-References: <20250320164633.101331-1-wthai@nvidia.com>
-	 <20250320164633.101331-3-wthai@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1742519257; c=relaxed/simple;
+	bh=VRRD680Q0kY20yZCwa56JFW69JF1rSXwfZpD+Pr+sQI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SxUu9ac7ILxKd9nxKnxDcAessPm0oeywxQBNxqmqtHPs53zmXg7WH2/H/6gGIagCA5oF5vAnXGAo9pSCF0oe9gp7OOIlRAKVIGurLMap53dxCyBLht6hcPd/RwZGykCX0IReNgPVroZrlbOlZASElLpKdgI/QWzwj8W1f1bJSy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X4NCCT0m; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742519252;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oKv6kzy1r+Z2q8HbnIAwNuqiBX6WfkJJspdk8MGx/EI=;
+	b=X4NCCT0m8yVvPld4nR2v3PrMAh/pWqGGO2LAre9fM6HvqDvhs10jYFX4g5rYhzo31QE3vo
+	Y0MGnqlrirEqMC0XiBcQmpdT6hRm1LBy2P+jmk/i7fnsP7zXcyUifvAs7LzIBarOsSa17w
+	GRhtc+Aof101ORw++Q4QTnlxZm7RE/E=
+From: Ye Liu <ye.liu@linux.dev>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Ye Liu <liuye@kylinos.cn>
+Subject: [PATCH] mm/page_alloc: Simplify free_page_is_bad by removing free_page_is_bad_report
+Date: Fri, 21 Mar 2025 09:07:10 +0800
+Message-Id: <20250321010710.548105-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Willie,
+From: Ye Liu <liuye@kylinos.cn>
 
-On Thu, 2025-03-20 at 16:46 +0000, Willie Thai wrote:
-> This patch adds a binding for GB200NVL BMC.
->=20
-> The GB200NVL BMC is an Aspeed Ast2600 based BMC for Nvidia Blackwell
-> GB200NVL platform.
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
->=20
-> Co-developed-by: Mars Yang <maryang@nvidia.com>
-> Signed-off-by: Mars Yang <maryang@nvidia.com>
-> Link: https://www.aspeedtech.com/server_ast2600/=C2=A0[1]
-> Link:
-> https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703=C2=A0[2]
-> Signed-off-by: Willie Thai <wthai@nvidia.com>
-> ---
-> =C2=A0Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> index 01333ac111fb..a3736f134130 100644
-> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> @@ -98,6 +98,7 @@ properties:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - inventec,starscream-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - inventec,transformer-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - jabil,rbp-bmc
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 - nvidia,gb200nvl-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - qcom,dc-scm-v1-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - quanta,s6q-bmc
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - ufispace,ncplite-bmc
+This patch refactors the free_page_is_bad function by directly calling
+bad_page() instead of using the intermediary function
+free_page_is_bad_report(). The removal of free_page_is_bad_report()
+reduces unnecessary indirection, making the code cleaner and easier to
+read.
 
-Please order this patch first in your series, before the devicetree.
+The functionality remains the same, as free_page_is_bad_report() was
+merely a wrapper for the bad_page() call. The patch also improves
+maintainability by reducing the function call depth.
 
-Andrew
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
+---
+ mm/page_alloc.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 61d6a3b1b286..2842da893eea 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -933,19 +933,14 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
+ 	return bad_reason;
+ }
+ 
+-static void free_page_is_bad_report(struct page *page)
+-{
+-	bad_page(page,
+-		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_FREE));
+-}
+-
+ static inline bool free_page_is_bad(struct page *page)
+ {
+ 	if (likely(page_expected_state(page, PAGE_FLAGS_CHECK_AT_FREE)))
+ 		return false;
+ 
+ 	/* Something has gone sideways, find it */
+-	free_page_is_bad_report(page);
++	bad_page(page,
++		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_FREE));
+ 	return true;
+ }
+ 
+-- 
+2.25.1
+
 
