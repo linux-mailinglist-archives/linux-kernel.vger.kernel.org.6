@@ -1,484 +1,340 @@
-Return-Path: <linux-kernel+bounces-571383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25923A6BC7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBF1A6BC7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646C01898991
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5752D189AE7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00717192584;
-	Fri, 21 Mar 2025 14:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872831C3BE9;
+	Fri, 21 Mar 2025 14:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NQFjviUz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khWlefwO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F8778F51;
-	Fri, 21 Mar 2025 14:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF30078F51;
+	Fri, 21 Mar 2025 14:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565690; cv=none; b=uO2mqdm2L8Flyw003VeND3f84VUSC/bnJ4C4wdVrfkxfuS8B8OzJ8VCTJlT1DHK1uHZgmfcfhB4fCr8xhASG2lR1MpvvkLoztJduiz0ocgUv+eARbOUjGqTeAoIS9ONtgR8QRCo0fFOzBeylZDyoF+I5r1daYNMl1oZplz4blWw=
+	t=1742565723; cv=none; b=Ji0EtrzHQITvBh3VNYnrP2qJoj6AfcmTW78OpWjVXQ+tpMj/iMZ9GVXclQbvxC1WZ89AZZn+RBqqBcX7wBxiiF1xP+ToTukPyKjncEs4QkP+E+AwPA8NoqBU6osvc9JzSlS54tatK8o2dT5BGEyNouFFI67hTO2ndOlLmeeylcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565690; c=relaxed/simple;
-	bh=r3YmTjNyrBOpZMbrxMuxwdILI1K2UHLZ+zzgbRIv8QM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XEI03O+kdRaQ6vsneBcYDMWgqNSghhCBC1xdCEjE+f0cBI9PIehD280/6lZ8NR1osX59b8oQyH2sWuQcp7DNQBqMxXK2cA9fFKO4L5DRiJje40aE9d4suX2X3lJJzEa8c+dZJTeu4S3rmwxDra7Zqh6CPoWR0oXHgbr7nO/fM9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NQFjviUz; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742565689; x=1774101689;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=r3YmTjNyrBOpZMbrxMuxwdILI1K2UHLZ+zzgbRIv8QM=;
-  b=NQFjviUz26IbPAdiRMAHDEQT5HMHhHzVObJs04V1+DLEfrBbeBI5vuTg
-   IVi/uhjqN5O/puAHtfRHYhSP6jYwWFwVjZF2Ajq3RaQSKhM9kVBKHN0wQ
-   V7VHSGi2elb047zzYD45skcTT4RjWEQGjfevvrXUChO87Z8NvgVGABWW+
-   xvWPe7ffJY5Uuaa4BzeYMYQso7Tnyy3V8eBkZ0wv7IIvKnuDJhMpRMS+4
-   2XJLRD6aJfPBgW/kjOG1rmFiEo0i1xJRLIHaC1M3+whTkbw2CdPeecd6y
-   27fIi9589LPuRsLW47krA2OYNeLekjQHdR02myIs2fT97JioyG3EN0hNa
-   Q==;
-X-CSE-ConnectionGUID: cuU2ykpzScqASV505D745A==
-X-CSE-MsgGUID: JdtzzFNQS5WCkNMTKQeVTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43951596"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="43951596"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:01:28 -0700
-X-CSE-ConnectionGUID: GL7PdLUfSIG2FC2c/ZhEEw==
-X-CSE-MsgGUID: t7lnO86JRA+TrgVx8D79Vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="128458992"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 07:01:21 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 21 Mar 2025 16:01:17 +0200 (EET)
-To: Mario Limonciello <superm1@kernel.org>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    Mario Limonciello <mario.limonciello@amd.com>, 
-    Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
-    "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Huang Rui <ray.huang@amd.com>, 
-    "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    Viresh Kumar <viresh.kumar@linaro.org>, 
-    "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
-    "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-    "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v8 04/13] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-In-Reply-To: <1b54afae-cb86-4022-b9f5-e5c1fc075be8@kernel.org>
-Message-ID: <b97df985-8545-9f8b-719b-3f8b6a19f2f5@linux.intel.com>
-References: <20250218190822.1039982-1-superm1@kernel.org> <20250218190822.1039982-5-superm1@kernel.org> <f90d49d6-e031-4722-b63f-26931eae1aa5@linux.intel.com> <1b54afae-cb86-4022-b9f5-e5c1fc075be8@kernel.org>
+	s=arc-20240116; t=1742565723; c=relaxed/simple;
+	bh=Qwd1OjDeGAqCbYwL7o5MutzvzBIW/CFy3NKOIVcCn8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfbFNic+qvVekq48XuDAn4RTKQaWq3RVINLNNbhJdURiFJfwiY9WpX7dFAS7rqVow8qAchXBeq0pqUwgdLqVNyHjFh5trCa3bdO8Ayy0vxINsP8ThCkO6eOSoVlsijeNIdMLg2T+LNEg23UyhreKZcpRM2ePzi1mCG+SsrU0fb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khWlefwO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4F3C4CEE3;
+	Fri, 21 Mar 2025 14:02:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742565723;
+	bh=Qwd1OjDeGAqCbYwL7o5MutzvzBIW/CFy3NKOIVcCn8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=khWlefwOsoylPZURq7kqnVa8gnSh4gGlyyrQTxNpmwR0ypkBHylbIa4SNkDc0FVjS
+	 tjup6w5tzsaTvdgc/pNsqBEBjocLL8IB/TM21LEsanaFN2nogKRUlZLn6qdqmGCkNG
+	 erJckZQShNBg9ySGpuVGTIYr6btTyrRSiw9xpeEfEzzghAcX8QbeLphgfstKn7rTkE
+	 ssKTN5Iv3L0xH0ZpkOihKSqyNNTc2YxtlUTGVeHjJwBkDggpZgjXsxC1gkhTzqRgkB
+	 7KbWBevmapajfIlLhVHbHRsLb70wq2qrqWMg8D4S0lAWfFIO1raAbLZkELe8RKWl3L
+	 rvcHqq+vpnJ0A==
+Date: Fri, 21 Mar 2025 09:02:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, christophe.kerello@foss.st.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 2/7] dt-bindings: memory-controllers: Add STM32 Octo
+ Memory Manager controller
+Message-ID: <20250321140200.GA3192411-robh@kernel.org>
+References: <20250321-upstream_ospi_v6-v6-0-37bbcab43439@foss.st.com>
+ <20250321-upstream_ospi_v6-v6-2-37bbcab43439@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-806251378-1742565677=:931"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321-upstream_ospi_v6-v6-2-37bbcab43439@foss.st.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Mar 21, 2025 at 10:32:22AM +0100, Patrice Chotard wrote:
+> Add bindings for STM32 Octo Memory Manager (OMM) controller.
+> 
+> OMM manages:
+>   - the muxing between 2 OSPI busses and 2 output ports.
+>     There are 4 possible muxing configurations:
+>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>         output is on port 2
+>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>         OSPI2 output is on port 1
+>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>   - the split of the memory area shared between the 2 OSPI instances.
+>   - chip select selection override.
+>   - the time between 2 transactions in multiplexed mode.
+> 
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> ---
+>  .../memory-controllers/st,stm32mp25-omm.yaml       | 227 +++++++++++++++++++++
+>  1 file changed, 227 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2f8fa7569009369ebd077e4c6f4ab409a91838a5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+> @@ -0,0 +1,227 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/st,stm32mp25-omm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STM32 Octo Memory Manager (OMM)
+> +
+> +maintainers:
+> +  - Patrice Chotard <patrice.chotard@foss.st.com>
+> +
+> +description: |
+> +  The STM32 Octo Memory Manager is a low-level interface that enables an
+> +  efficient OCTOSPI pin assignment with a full I/O matrix (before alternate
+> +  function map) and multiplex of single/dual/quad/octal SPI interfaces over
+> +  the same bus. It Supports up to:
+> +    - Two single/dual/quad/octal SPI interfaces
+> +    - Two ports for pin assignment
+> +
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp25-omm
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description: |
+> +      Reflects the memory layout with four integer values per OSPI instance.
 
---8323328-806251378-1742565677=:931
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+You say 4 here...
 
-On Thu, 20 Mar 2025, Mario Limonciello wrote:
+> +      Format:
+> +      <chip-select> 0 <registers base address> <size>
+> +    minItems: 2
+> +    maxItems: 2
 
-> On 3/19/2025 09:03, Ilpo J=C3=A4rvinen wrote:
-> > On Tue, 18 Feb 2025, Mario Limonciello wrote:
-> >=20
-> > > From: Perry Yuan <Perry.Yuan@amd.com>
-> > >=20
-> > > The AMD Heterogeneous core design and Hardware Feedback Interface (HF=
-I)
-> > > provide behavioral classification and a dynamically updated ranking t=
-able
-> > > for the scheduler to use when choosing cores for tasks.
-> > >=20
-> > > There are two CPU core types defined: `Classic Core` and `Dense Core`=
-=2E
-> > > "Classic" cores are the standard performance cores, while "Dense" cor=
-es
-> > > are optimized for area and efficiency.
-> > >=20
-> > > Heterogeneous compute refers to CPU implementations that are comprise=
-d
-> > > of more than one architectural class, each with two capabilities. Thi=
-s
-> > > means each CPU reports two separate capabilities: "perf" and "eff".
-> > >=20
-> > > Each capability lists all core ranking numbers between 0 and 255, whe=
-re
-> > > a higher number represents a higher capability.
-> > >=20
-> > > Heterogeneous systems can also extend to more than two architectural
-> > > classes.
-> > >=20
-> > > The purpose of the scheduling feedback mechanism is to provide inform=
-ation
-> > > to the operating system scheduler in real time, allowing the schedule=
-r to
-> > > direct threads to the optimal core during task scheduling.
-> > >=20
-> > > All core ranking data are provided by the PMFW via a shared memory ra=
-nking
-> > > table, which the driver reads and uses to update core capabilities to=
- the
-> > > scheduler. When the hardware updates the table, it generates a platfo=
-rm
-> > > interrupt to notify the OS to read the new ranking table.
-> > >=20
-> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D206537
-> > > Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> > > Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> > > Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> > > Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > > v8:
-> > >   * s,devm_kzalloc,devm_kcalloc,
-> > >   * fold newlines from patch 5 into this patch
-> > >   * Drop ->cpu member, push to later patch
-> > >   * s,for_each_present_cpu,for_each_possible_cpu,
-> > > v7:
-> > >   * Adjust Kconfig to 80 characters
-> > > ---
-> > >   drivers/platform/x86/amd/Kconfig      |   1 +
-> > >   drivers/platform/x86/amd/Makefile     |   1 +
-> > >   drivers/platform/x86/amd/hfi/Kconfig  |  20 ++++
-> > >   drivers/platform/x86/amd/hfi/Makefile |   7 ++
-> > >   drivers/platform/x86/amd/hfi/hfi.c    | 162 +++++++++++++++++++++++=
-+++
-> > >   5 files changed, 191 insertions(+)
-> > >   create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
-> > >   create mode 100644 drivers/platform/x86/amd/hfi/Makefile
-> > >   create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
-> > >=20
-> > > diff --git a/drivers/platform/x86/amd/Kconfig
-> > > b/drivers/platform/x86/amd/Kconfig
-> > > index c3e086ea64fc6..589d61ebf726b 100644
-> > > --- a/drivers/platform/x86/amd/Kconfig
-> > > +++ b/drivers/platform/x86/amd/Kconfig
-> > > @@ -6,6 +6,7 @@
-> > >   source "drivers/platform/x86/amd/hsmp/Kconfig"
-> > >   source "drivers/platform/x86/amd/pmf/Kconfig"
-> > >   source "drivers/platform/x86/amd/pmc/Kconfig"
-> > > +source "drivers/platform/x86/amd/hfi/Kconfig"
-> > >     config AMD_3D_VCACHE
-> > >   =09tristate "AMD 3D V-Cache Performance Optimizer Driver"
-> > > diff --git a/drivers/platform/x86/amd/Makefile
-> > > b/drivers/platform/x86/amd/Makefile
-> > > index 56f62fc9c97b4..c50e93c3334cf 100644
-> > > --- a/drivers/platform/x86/amd/Makefile
-> > > +++ b/drivers/platform/x86/amd/Makefile
-> > > @@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)=09=09+=3D pmc/
-> > >   obj-$(CONFIG_AMD_HSMP)=09=09+=3D hsmp/
-> > >   obj-$(CONFIG_AMD_PMF)=09=09+=3D pmf/
-> > >   obj-$(CONFIG_AMD_WBRF)=09=09+=3D wbrf.o
-> > > +obj-$(CONFIG_AMD_HFI)=09=09+=3D hfi/
-> > > diff --git a/drivers/platform/x86/amd/hfi/Kconfig
-> > > b/drivers/platform/x86/amd/hfi/Kconfig
-> > > new file mode 100644
-> > > index 0000000000000..532939eb08a6a
-> > > --- /dev/null
-> > > +++ b/drivers/platform/x86/amd/hfi/Kconfig
-> > > @@ -0,0 +1,20 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > +#
-> > > +# AMD Hardware Feedback Interface Driver
-> > > +#
-> > > +
-> > > +config AMD_HFI
-> > > +=09bool "AMD Hetero Core Hardware Feedback Driver"
-> > > +=09depends on ACPI
-> > > +=09depends on CPU_SUP_AMD
-> > > +=09help
-> > > +=09 Select this option to enable the AMD Heterogeneous Core Hardware
-> > > +=09 Feedback Interface. If selected, hardware provides runtime threa=
-d
-> > > +=09 classification guidance to the operating system on the performan=
-ce
-> > > and
-> > > +=09 energy efficiency capabilities of each heterogeneous CPU core. T=
-hese
-> > > +=09 capabilities may vary due to the inherent differences in the cor=
-e
-> > > types
-> > > +=09 and can also change as a result of variations in the operating
-> > > +=09 conditions of the system such as power and thermal limits. If
-> > > selected,
-> >=20
-> > This says the capabilities can change but metadata is only read and sco=
-res
-> > updated during probe?
-> >=20
-> > > +=09 the kernel relays updates in heterogeneous CPUs' capabilities to
-> > > +=09 userspace, allowing for more optimal task scheduling and resourc=
-e
-> > > +=09 allocation, leveraging the diverse set of cores available.
-> >=20
-> > How are the capabilities communicated to userspace as mentioned here? I=
-'m
-> > asking this because I only noted debugfs interface, and that commit
-> > claimed the debug fs interface was to troubleshoot scheduler issues.
->=20
-> This is one of those cases that the split into multiple parts shows. Thin=
-king
-> through I feel it makes more sense to adjust for now and then we can chan=
-ge it
-> again on the next part.
->=20
-> >=20
-> > > diff --git a/drivers/platform/x86/amd/hfi/Makefile
-> > > b/drivers/platform/x86/amd/hfi/Makefile
-> > > new file mode 100644
-> > > index 0000000000000..672c6ac106e95
-> > > --- /dev/null
-> > > +++ b/drivers/platform/x86/amd/hfi/Makefile
-> > > @@ -0,0 +1,7 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +#
-> > > +# AMD Hardware Feedback Interface Driver
-> > > +#
-> > > +
-> > > +obj-$(CONFIG_AMD_HFI) +=3D amd_hfi.o
-> > > +amd_hfi-objs :=3D hfi.o
-> > > diff --git a/drivers/platform/x86/amd/hfi/hfi.c
-> > > b/drivers/platform/x86/amd/hfi/hfi.c
-> > > new file mode 100644
-> > > index 0000000000000..426f7e520b76c
-> > > --- /dev/null
-> > > +++ b/drivers/platform/x86/amd/hfi/hfi.c
-> > > @@ -0,0 +1,162 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +/*
-> > > + * AMD Hardware Feedback Interface Driver
-> > > + *
-> > > + * Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserv=
-ed.
-> >=20
-> > 2025 ?
->=20
-> Ack.
->=20
-> Heh, earlier versions started in 2024!
->
-> > > + *
-> > > + * Authors: Perry Yuan <Perry.Yuan@amd.com>
-> > > + *          Mario Limonciello <mario.limonciello@amd.com>
-> > > + */
-> > > +
-> > > +#define pr_fmt(fmt)  "amd-hfi: " fmt
-> > > +
-> > > +#include <linux/acpi.h>
-> > > +#include <linux/cpu.h>
-> > > +#include <linux/cpumask.h>
-> > > +#include <linux/gfp.h>
-> > > +#include <linux/init.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/smp.h>
-> > > +
-> > > +#define AMD_HFI_DRIVER=09=09"amd_hfi"
-> > > +
-> > > +#define AMD_HETERO_CPUID_27=090x80000027
-> > > +
-> > > +static struct platform_device *device;
-> > > +
-> > > +struct amd_hfi_data {
-> > > +=09const char=09*name;
-> > > +=09struct device=09*dev;
-> > > +=09struct mutex=09lock;
-> >=20
-> > Please mention what this protects.
->=20
-> As a comment at the end like this, right?
->
-> struct mutex lock; /* lock the foo */
+And 2 here. I'm confused. From the example it doesn't look like you are 
+using ranges correctly. If you are parsing it yourself, that's wrong. 
+More below.
 
-Yes.
+> +
+> +  reg:
+> +    items:
+> +      - description: OMM registers
+> +      - description: OMM memory map area
+> +
+> +  reg-names:
+> +    items:
+> +      - const: regs
+> +      - const: memory_map
+> +
+> +  memory-region:
+> +    description: |
+> +      Memory region shared between the 2 OCTOSPI instance.
+> +      One or two phandle to a node describing a memory mapped region
+> +      depending of child number.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  memory-region-names:
+> +    description: |
 
---=20
- i.
+Don't need '|'.
 
+> +      OCTOSPI instance's name to which memory region is associated
 
+That doesn't really tell me anything.
 
->=20
-> >=20
-> > > +};
-> > > +
-> > > +struct amd_hfi_classes {
-> > > +=09u32=09perf;
-> > > +=09u32=09eff;
-> > > +};
-> > > +
-> > > +/**
-> > > + * struct amd_hfi_cpuinfo - HFI workload class info per CPU
-> > > + * @cpu:=09=09cpu index
-> > > + * @class_index:=09workload class ID index
-> > > + * @nr_class:=09=09max number of workload class supported
-> > > + * @amd_hfi_classes:=09current cpu workload class ranking data
-> > > + *
-> > > + * Parameters of a logical processor linked with hardware feedback c=
-lass
-> >=20
-> > missing .
->=20
-> Ack
->=20
-> >=20
-> > > + */
-> > > +struct amd_hfi_cpuinfo {
-> > > +=09int=09=09cpu;
-> > > +=09s16=09=09class_index;
-> > > +=09u8=09=09nr_class;
-> > > +=09struct amd_hfi_classes=09*amd_hfi_classes;
-> > > +};
-> > > +
-> > > +static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) =3D
-> > > {.class_index =3D -1};
-> > > +
-> > > +static int amd_hfi_alloc_class_data(struct platform_device *pdev)
-> > > +{
-> > > +=09struct amd_hfi_cpuinfo *hfi_cpuinfo;
-> > > +=09struct device *dev =3D &pdev->dev;
-> > > +=09int idx;
-> > > +=09int nr_class_id;
-> > > +
-> > > +=09nr_class_id =3D cpuid_eax(AMD_HETERO_CPUID_27);
-> > > +=09if (nr_class_id < 0 || nr_class_id > 255) {
-> >=20
-> > Is the signed type correct for this?
-> >=20
-> > > +=09=09dev_err(dev, "failed to get number of supported classes:
-> > > %d\n",
-> > > +=09=09=09nr_class_id);
-> >=20
-> > I'd reword the error message as the number of classes was just too
-> > large / outside the allowed range.
->=20
-> OK.
->=20
-> >=20
-> > > +=09=09return -EINVAL;
-> > > +=09}
-> > > +
-> > > +=09for_each_possible_cpu(idx) {
-> > > +=09=09struct amd_hfi_classes *classes;
-> > > +
-> > > +=09=09classes =3D devm_kcalloc(dev,
-> > > +=09=09=09=09       nr_class_id,
-> > > +=09=09=09=09       sizeof(struct amd_hfi_classes),
-> > > +=09=09=09=09       GFP_KERNEL);
-> > > +=09=09if (!classes)
-> > > +=09=09=09return -ENOMEM;
-> > > +=09=09hfi_cpuinfo =3D per_cpu_ptr(&amd_hfi_cpuinfo, idx);
-> > > +=09=09hfi_cpuinfo->amd_hfi_classes =3D classes;
-> > > +=09=09hfi_cpuinfo->nr_class =3D nr_class_id;
-> > > +=09}
-> > > +
-> > > +=09return 0;
-> > > +}
-> > > +
-> > > +static const struct acpi_device_id amd_hfi_platform_match[] =3D {
-> > > +=09{"AMDI0104", 0},
-> > > +=09{ }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(acpi, amd_hfi_platform_match);
-> > > +
-> > > +static int amd_hfi_probe(struct platform_device *pdev)
-> > > +{
-> > > +=09struct amd_hfi_data *amd_hfi_data;
-> > > +=09int ret;
-> > > +
-> > > +=09if (!acpi_match_device(amd_hfi_platform_match, &pdev->dev))
-> > > +=09=09return -ENODEV;
-> > > +
-> > > +=09amd_hfi_data =3D devm_kzalloc(&pdev->dev, sizeof(*amd_hfi_data),
-> > > GFP_KERNEL);
-> > > +=09if (!amd_hfi_data)
-> > > +=09=09return -ENOMEM;
-> > > +
-> > > +=09amd_hfi_data->dev =3D &pdev->dev;
-> > > +=09ret =3D devm_mutex_init(&pdev->dev, &amd_hfi_data->lock);
-> > > +=09if (ret)
-> > > +=09=09return ret;
-> > > +=09platform_set_drvdata(pdev, amd_hfi_data);
-> > > +
-> > > +=09ret =3D amd_hfi_alloc_class_data(pdev);
-> > > +=09if (ret)
-> > > +=09=09return ret;
-> > > +
-> > > +=09return 0;
-> > > +}
-> > > +
-> > > +static struct platform_driver amd_hfi_driver =3D {
-> > > +=09.driver =3D {
-> > > +=09=09.name =3D AMD_HFI_DRIVER,
-> > > +=09=09.owner =3D THIS_MODULE,
-> > > +=09=09.acpi_match_table =3D ACPI_PTR(amd_hfi_platform_match),
-> > > +=09},
-> > > +=09.probe =3D amd_hfi_probe,
-> > > +};
-> > > +
-> > > +static int __init amd_hfi_init(void)
-> > > +{
-> > > +=09int ret;
-> > > +
-> > > +=09if (acpi_disabled ||
-> > > +=09    !cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES) ||
-> > > +=09    !cpu_feature_enabled(X86_FEATURE_AMD_WORKLOAD_CLASS))
-> > > +=09=09return -ENODEV;
-> > > +
-> > > +=09device =3D platform_device_register_simple(AMD_HFI_DRIVER, -1, NU=
-LL, 0);
-> > > +=09if (IS_ERR(device)) {
-> > > +=09=09pr_err("unable to register HFI platform device\n");
-> > > +=09=09return PTR_ERR(device);
-> > > +=09}
-> > > +
-> > > +=09ret =3D platform_driver_register(&amd_hfi_driver);
-> > > +=09if (ret)
-> > > +=09=09pr_err("failed to register HFI driver\n");
-> > > +
-> > > +=09return ret;
-> > > +}
-> > > +
-> > > +static __exit void amd_hfi_exit(void)
-> > > +{
-> > > +=09platform_device_unregister(device);
-> > > +=09platform_driver_unregister(&amd_hfi_driver);
-> >=20
-> > Why are these not in the opposite order than in init?
->=20
-> Oversight.  Will fix it.
->=20
-> >=20
-> > > +}
-> > > +module_init(amd_hfi_init);
-> > > +module_exit(amd_hfi_exit);
-> > > +
-> > > +MODULE_LICENSE("GPL");
-> > > +MODULE_DESCRIPTION("AMD Hardware Feedback Interface Driver");
-> > >=20
-> >=20
->=20
---8323328-806251378-1742565677=:931--
+> +    items:
+> +      enum: [ospi1, ospi2]
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clocks:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      enum: [omm, ospi1, ospi2]
+
+Define the order.
+
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  resets:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  reset-names:
+> +    items:
+> +      enum: [omm, ospi1, ospi2]
+
+Define the order.
+
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  access-controllers:
+> +    maxItems: 1
+> +
+> +  st,syscfg-amcr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      The Address Mapping Control Register (AMCR) is used to split the 256MB
+> +      memory map area shared between the 2 OSPI instance. The Octo Memory
+> +      Manager sets the AMCR depending of the memory-region configuration.
+> +      The memory split bitmask description is:
+> +        - 000: OCTOSPI1 (256 Mbytes), OCTOSPI2 unmapped
+> +        - 001: OCTOSPI1 (192 Mbytes), OCTOSPI2 (64 Mbytes)
+> +        - 010: OCTOSPI1 (128 Mbytes), OCTOSPI2 (128 Mbytes)
+> +        - 011: OCTOSPI1 (64 Mbytes), OCTOSPI2 (192 Mbytes)
+> +        - 1xx: OCTOSPI1 unmapped, OCTOSPI2 (256 Mbytes)
+> +    items:
+> +      - description: phandle to syscfg
+> +      - description: register offset within syscfg
+> +      - description: register bitmask for memory split
+> +
+> +  st,omm-req2ack-ns:
+> +    description: |
+
+Don't need '|'.
+
+> +      In multiplexed mode (MUXEN = 1), this field defines the time in
+> +      nanoseconds between two transactions.
+> +    default: 0
+> +
+> +  st,omm-cssel-ovr:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Configure the chip select selector override for the 2 OCTOSPIs.
+> +      - 0: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS1
+> +      - 1: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS1
+> +      - 2: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS2
+> +      - 3: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS2
+> +    minimum: 0
+> +    maximum: 3
+> +    default: 0
+> +
+> +  st,omm-mux:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Configure the muxing between the 2 OCTOSPIs busses and the 2 output ports.
+> +      - 0: direct mode
+> +      - 1: mux OCTOSPI1 and OCTOSPI2 to port 1
+> +      - 2: swapped mode
+> +      - 3: mux OCTOSPI1 and OCTOSPI2 to port 2
+> +    minimum: 0
+> +    maximum: 3
+> +    default: 0
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  ^spi@[a-f0-9]+$:
+> +    type: object
+> +    $ref: /schemas/spi/st,stm32mp25-ospi.yaml#
+> +    description: Required spi child node
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - st,syscfg-amcr
+> +  - ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
+> +    ommanager@40500000 {
+> +      compatible = "st,stm32mp25-omm";
+> +      reg = <0x40500000 0x400>, <0x60000000 0x10000000>;
+> +      reg-names = "regs", "memory_map";
+> +      ranges = <0 0 0x40430000 0x400>,
+> +               <1 0 0x40440000 0x400>;
+
+> +      #address-cells = <2>;
+> +      #size-cells = <1>;
+> +
+
+> +      spi@40430000 {
+
+ranges is okay, but the unit-address is wrong here. It should be based 
+on reg below. So 'spi@0' or 'spi@0,0' since chip select is a distinct 
+field. It's up to you, but you need to define the format in the schema.
+
+> +        compatible = "st,stm32mp25-ospi";
+> +        reg = <0 0 0x400>;
+> +        memory-region = <&mm_ospi1>;
+> +        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+> +        dmas = <&hpdma 2 0x62 0x00003121 0x0>,
+> +               <&hpdma 2 0x42 0x00003112 0x0>;
+> +        dma-names = "tx", "rx";
+> +        clocks = <&scmi_clk CK_SCMI_OSPI1>;
+> +        resets = <&scmi_reset RST_SCMI_OSPI1>, <&scmi_reset RST_SCMI_OSPI1DLL>;
+> +        access-controllers = <&rifsc 74>;
+> +        power-domains = <&CLUSTER_PD>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        st,syscfg-dlyb = <&syscfg 0x1000>;
+> +      };
+> +
+> +      spi@40440000 {
+
+spi@1,0
+
+> +        compatible = "st,stm32mp25-ospi";
+> +        reg = <1 0 0x400>;
+> +        memory-region = <&mm_ospi1>;
+> +        interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+> +        dmas = <&hpdma 3 0x62 0x00003121 0x0>,
+> +               <&hpdma 3 0x42 0x00003112 0x0>;
+> +        dma-names = "tx", "rx";
+> +        clocks = <&scmi_clk CK_KER_OSPI2>;
+> +        resets = <&scmi_reset RST_SCMI_OSPI2>, <&scmi_reset RST_SCMI_OSPI1DLL>;
+> +        access-controllers = <&rifsc 75>;
+> +        power-domains = <&CLUSTER_PD>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        st,syscfg-dlyb = <&syscfg 0x1000>;
+> +      };
+> +    };
+> 
+> -- 
+> 2.25.1
+> 
 
