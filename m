@@ -1,164 +1,156 @@
-Return-Path: <linux-kernel+bounces-571005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5218A6B7C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:41:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E14EA6B7D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86493B5C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E111B60124
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9801F153E;
-	Fri, 21 Mar 2025 09:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEB11F55FB;
+	Fri, 21 Mar 2025 09:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUnhUQO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nSzHHFaz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C111F12F4;
-	Fri, 21 Mar 2025 09:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD37A1F3B82;
+	Fri, 21 Mar 2025 09:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742549847; cv=none; b=pZFcwgVHe5emuNbk3sY3t6Y9t6+0xxwclBI7BXUfi4HSQp/AzsT7UiiOcR973pVcvBnlKTvSdCByno3Co+FgHhoVR/qHTd9+h1ZP1t0yJoO6FdUkXOSOrTiogLmCNsCdLZcx5BwKvxqtXpSxTN0EP1OVE7oqoLsUhfM6indtTAo=
+	t=1742549887; cv=none; b=XczjzDjHP3qiiGj17lgwLmxU0yZ9OMYhNxREZr6O1Sng0QhkpgdjxxoUQz87HqE3QzyhJw2QzFhN7Fi3zB+/1bV5s+sfMW90MH8e9DjMc/MG2HQl4TAqfX39q1T0eAuEgjmgHIISSS2BxpIvcsPcHl4JR4yXj/fseVbDE77ImBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742549847; c=relaxed/simple;
-	bh=poV5m0XgApGdvCxNPJk25+DH7c6vk1mpZNIXwAz1Hlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PM8BBOzroNLwya8QcpiXovtET6HlJ1T3Q3KHt8iQVC3NjDRkY/RWxSR2Fx0BGx9UAdEBS7UWGY2eLP4vMgk1HOil53OgjSpZpdShJureAaz+fHWGi2nEbLRQwnrXwdRC6AE0tCdfDfz+HPB41K++S449y2621ojXvW3RAlBErrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUnhUQO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D46C4CEE3;
-	Fri, 21 Mar 2025 09:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742549847;
-	bh=poV5m0XgApGdvCxNPJk25+DH7c6vk1mpZNIXwAz1Hlg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CUnhUQO/ebvzor3VTHKrObpa6P6l0ILcwrfwZZSJSsgtQgNIhZ/aSJbfY4xkqL59g
-	 hMbFR9QxY71wLfIyAM452l78S7ZGTmIrux7IvRzZYi4O0LgZc0eXJ89tGDqX8qJkYY
-	 V0Wijd2uVX5Z/jlcUWVHZ6AbqqEKFsdYjX44oyZ9KxwTtRsHf/MYMegBqc8AFd+xYy
-	 xsOTeYMrCN/cwaLEEm8Ev/Qzwy44sagVJKfKEvbC41C9kv/MOv5jiWq3ZH8GH9vch3
-	 kQ/cO9c5dPYOhJm3Rnb3e1767IBsXAfmfKuUzACX61gzDKens6A7jNYfMLJfLHhgWR
-	 NcX20zkCl7uDw==
-Message-ID: <f0dd950a-02a7-402b-a08e-015db458b273@kernel.org>
-Date: Fri, 21 Mar 2025 10:37:18 +0100
+	s=arc-20240116; t=1742549887; c=relaxed/simple;
+	bh=R358JVjnvOlnGRXDLx0jNulZXye12NrgAdhLVQkGcbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q9dSE0bPEF5f0S/l1iUdkUeQ76lC4teL99T9NOW61sDqZnb5iwEV2tXkPl2B8R59J3Z1uXRP8K/Pi2V7Ng+SfooA7RLshtVCv7tP/r5lA13NbCoEq2DQZDwKZ1tUXQSI+Cv7eRzJP9jOAbHWs6LK64ft2I9XyEKaqgG87Xw7VsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nSzHHFaz; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742549885; x=1774085885;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R358JVjnvOlnGRXDLx0jNulZXye12NrgAdhLVQkGcbI=;
+  b=nSzHHFaztkW9ElYW8hXQM5oYRahpJ1zFQtgquu6/OnXWouuQMkULwJ7n
+   scL9KTH6aOjHNge9Acw3U8Q4/0IbCAnBmaafL0tdAPyamcew6YPrUQh0a
+   fdWK9eTsw3Ybaf35k2FO57Zy3pGYGpyXmoPE6x8FyygsWZHMXaLnNBxKQ
+   6MpJ7cqK4DpPMn7zd3IXNcCPWW0XjidXcuqevUvXM1E0rEEWBPa6Zj+X6
+   B1SAm3brJUgWja/OlYb8VkHi3voUkMGZrcqLFcAEjWVzjIkWH3oT+nUcQ
+   xwhYGT+U2MY8a5tRjfgIrm4STerA5i2UFTloVriroPp8aSfXPBvHTuSjj
+   g==;
+X-CSE-ConnectionGUID: +jqfVXIGRwOSACoqpGUOOw==
+X-CSE-MsgGUID: e74O+CoTQ+STV9lPqJ5jzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="47692789"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="47692789"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 02:38:04 -0700
+X-CSE-ConnectionGUID: 30JKucJ7T0mfLiiKPP80lA==
+X-CSE-MsgGUID: k0ToPpVGQ927T+xzT4r9Fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="124131266"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 21 Mar 2025 02:38:01 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tvYpD-0001ER-1V;
+	Fri, 21 Mar 2025 09:37:59 +0000
+Date: Fri, 21 Mar 2025 17:37:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hans Zhang <18255117159@163.com>
+Subject: Re: [v3 1/4] PCI: Introduce generic capability search functions
+Message-ID: <202503211726.DEvDBGk8-lkp@intel.com>
+References: <20250321040358.360755-2-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] Basic device tree support for ESWIN EIC7700 RISC-V
- SoC
-To: Conor Dooley <conor@kernel.org>,
- Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Min Lin <linmin@eswincomputing.com>,
- Pritesh Patel <pritesh.patel@einfochips.com>, Yangyu Chen
- <cyy@cyyself.name>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Yu Chien Peter Lin <peterlin@andestech.com>,
- Charlie Jenkins <charlie@rivosinc.com>,
- Kanak Shilledar <kanakshilledar@gmail.com>,
- Darshan Prajapati <darshan.prajapati@einfochips.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
- "rafal@milecki.pl" <rafal@milecki.pl>, Anup Patel <anup@brainfault.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250311073432.4068512-1-pinkesh.vaghela@einfochips.com>
- <20250311-backdrop-porthole-440ae005e8fa@spud>
- <SA3PR04MB893164FCD6C4CB8924FC8DE583D82@SA3PR04MB8931.namprd04.prod.outlook.com>
- <20250320-uprising-couch-0af012a1fee6@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250320-uprising-couch-0af012a1fee6@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321040358.360755-2-18255117159@163.com>
 
-On 20/03/2025 13:00, Conor Dooley wrote:
-> On Thu, Mar 20, 2025 at 10:39:52AM +0000, Pinkesh Vaghela wrote:
->> Hi Conor,
->>
->> On Tue, Mar 11, 2025 at 11:38 PM, Conor Dooley wrote:
->>> On Tue, Mar 11, 2025 at 01:04:22PM +0530, Pinkesh Vaghela wrote:
->>>> Add support for ESWIN EIC7700 SoC consisting of SiFive Quad-Core
->>>> P550 CPU cluster and the first development board that uses it, the
->>>> SiFive HiFive Premier P550.
->>>>
->>>> This patch series adds initial device tree and also adds ESWIN
->>>> architecture support.
->>>>
->>>> Boot-tested using intiramfs with Linux 6.14.0-rc2 on HiFive Premier
->>>> P550 board using U-Boot 2024.01 and OpenSBI 1.4.
->>>
->>> There's no git tree in your MAINTAINERS entry, nor mention here of what the
->>> story is going to be in terms of sending patches to Arnd. Who is going to be
->>> doing that?
->>
->> We are not currently set up for sending signed pull requests,
->> so for now we plan to send changes to Arnd as separate patches.
-> 
-> Undesirable, but sure. You didn't answer the first part of my question
+Hi Hans,
 
-Just to clarify - separate patches as separate postings to soc@ after
-the review was done on the lists and then you applied them to the tree
-Conor asked below, right?
+kernel test robot noticed the following build errors:
 
-> though, and there's no git tree listed in your v2 series. That part is
-> not negotiable, you have to have one and get it included in linux-next.
+[auto build test ERROR on a1cffe8cc8aef85f1b07c4464f0998b9785b795a]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Introduce-generic-capability-search-functions/20250321-120748
+base:   a1cffe8cc8aef85f1b07c4464f0998b9785b795a
+patch link:    https://lore.kernel.org/r/20250321040358.360755-2-18255117159%40163.com
+patch subject: [v3 1/4] PCI: Introduce generic capability search functions
+config: arc-randconfig-002-20250321 (https://download.01.org/0day-ci/archive/20250321/202503211726.DEvDBGk8-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250321/202503211726.DEvDBGk8-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503211726.DEvDBGk8-lkp@intel.com/
 
-Best regards,
-Krzysztof
+All error/warnings (new ones prefixed by >>):
+
+   In file included from drivers/nvme/host/nvme.h:11,
+                    from drivers/nvme/host/fc.c:13:
+>> include/linux/pci.h:2021:4: warning: no previous prototype for 'pci_generic_find_capability' [-Wmissing-prototypes]
+    2021 | u8 pci_generic_find_capability(void *priv, pci_generic_read_cfg read_cfg,
+         |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> include/linux/pci.h:2024:5: warning: no previous prototype for 'pci_generic_find_ext_capability' [-Wmissing-prototypes]
+    2024 | u16 pci_generic_find_ext_capability(void *priv, pci_generic_read_cfg read_cfg,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   arc-linux-ld: drivers/scsi/libsas/sas_phy.o: in function `pci_generic_find_capability':
+>> sas_phy.c:(.text+0x148): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_phy.o: in function `pci_generic_find_ext_capability':
+>> sas_phy.c:(.text+0x150): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_port.o: in function `pci_generic_find_capability':
+   sas_port.c:(.text+0x1c8): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_port.o: in function `pci_generic_find_ext_capability':
+   sas_port.c:(.text+0x1d0): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_event.o: in function `pci_generic_find_capability':
+   sas_event.c:(.text+0xf8): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_event.o: in function `pci_generic_find_ext_capability':
+   sas_event.c:(.text+0x100): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_discover.o: in function `pci_generic_find_capability':
+   sas_discover.c:(.text+0x874): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_discover.o: in function `pci_generic_find_ext_capability':
+   sas_discover.c:(.text+0x87c): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_expander.o: in function `pci_generic_find_capability':
+   sas_expander.c:(.text+0x2378): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_expander.o: in function `pci_generic_find_ext_capability':
+   sas_expander.c:(.text+0x2380): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_scsi_host.o: in function `pci_generic_find_capability':
+   sas_scsi_host.c:(.text+0x17c0): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_scsi_host.o: in function `pci_generic_find_ext_capability':
+   sas_scsi_host.c:(.text+0x17c8): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_task.o: in function `pci_generic_find_capability':
+   sas_task.c:(.text+0xd4): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_task.o: in function `pci_generic_find_ext_capability':
+   sas_task.c:(.text+0xdc): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_host_smp.o: in function `pci_generic_find_capability':
+   sas_host_smp.c:(.text+0x48): multiple definition of `pci_generic_find_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd18): first defined here
+   arc-linux-ld: drivers/scsi/libsas/sas_host_smp.o: in function `pci_generic_find_ext_capability':
+   sas_host_smp.c:(.text+0x50): multiple definition of `pci_generic_find_ext_capability'; drivers/scsi/libsas/sas_init.o:sas_init.c:(.text+0xd20): first defined here
+--
+   arc-linux-ld: drivers/pcmcia/cistpl.o: in function `pci_generic_find_capability':
+>> cistpl.c:(.text+0xfac): multiple definition of `pci_generic_find_capability'; drivers/pcmcia/pcmcia_resource.o:pcmcia_resource.c:(.text+0x1244): first defined here
+   arc-linux-ld: drivers/pcmcia/cistpl.o: in function `pci_generic_find_ext_capability':
+>> cistpl.c:(.text+0xfb4): multiple definition of `pci_generic_find_ext_capability'; drivers/pcmcia/pcmcia_resource.o:pcmcia_resource.c:(.text+0x124c): first defined here
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
