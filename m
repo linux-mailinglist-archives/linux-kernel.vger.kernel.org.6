@@ -1,263 +1,340 @@
-Return-Path: <linux-kernel+bounces-571703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D68A6C0F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:11:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B406A6C0FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 616681B605A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4144E483B01
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB5E22D7AB;
-	Fri, 21 Mar 2025 17:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F0B22D78D;
+	Fri, 21 Mar 2025 17:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZXwNoL6"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EEByzqBN"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59510229B26;
-	Fri, 21 Mar 2025 17:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742577004; cv=none; b=OxlFEDSYxUSd4V5dTlinKdr3cJ1I0zpkIPx6Ksu5ppVQAyzZDaFkqotFvZtrx5Kspap65b+gsTDLGiLgaJdCawP7aCRVKbvyweqr+hqJVRjxICScaNQMosmPS3fFIRvG3FRcS5NgTTAEol2Avb22f290RDVgzfZNnC7jvKvgDzY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742577004; c=relaxed/simple;
-	bh=Jf9O7KjMNA7NxwmRd31l+c7sfUh3Eaqc9SV8oiR4vQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oUKziZW3TrYz3fKULWQTqZMvuxFcThJb/U7lGXUXarFVWD85YQmAnypHC2Es3I9/oiO7WYtRP2PoCmv/xT565tHVJekXdd5a/WdbW7bnBVbbdYbU7ZhgES9ntUA8FYTlkZwc9q7Gd7K+F2ka8iz9mL0+6Efyr5zZFJqRMVywTGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZXwNoL6; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2260c915749so32383875ad.3;
-        Fri, 21 Mar 2025 10:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742577001; x=1743181801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=uztsJ7JzvIY981dArFAH0tUKF80EDOKJKLoCf65usL8=;
-        b=lZXwNoL65BjTcm6hc2GdLqorjndqIDKzzaYLHmlWmjmhVscRGC95MGHZ6xmLm2Ju4R
-         4AFzkFoAk66Xyg0o/K/dmQfIzervYu2o+G82LqvkI9Nw3x1nRX77TiRsjETGXiFSrvIU
-         vB+tNte/8V9D1RVGIP7eGGw/KfxQ3v0BXiZVS2UImiBaRSn6QY8XbTNS6kfL4v/pZMd+
-         qDj3PQpvXysvoMfe8vTe1vTkCgtq7N4oOnakZuDyefXZguPI4+QxxF9+tVtK8XtEAWkW
-         JvIGgyaJUtKh4vFwxBXJATpaL4KslAECg43p5DjIQUhvtxJlc+Vo/qgj7/C4uB3TBne9
-         h7jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742577001; x=1743181801;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uztsJ7JzvIY981dArFAH0tUKF80EDOKJKLoCf65usL8=;
-        b=ee7aOAkms3Nc7m2To+k2qWeGCh9C5jxJoKbJ3zt6bXIqEU/MEPD/uKag22JOdQjmnH
-         0ygULqFO9iAkhIYxWkMAY8x2442BoFzRRkxv82qRCz3t5gmEbGQjrENC1PBZQIF+KS0i
-         ybFkILQATgrYHFOv3RLkK27NX2DLmFJOTLzdwGLQybK2vuzTgeM7rJquGfYwTltT2BOL
-         xjgGLaWOCNZjSJAwIk7yzfjsmNnTsdxga9aRyprEuPbq5UJtzaxviaAcferIce0myV7S
-         l19aMVpsCF2G9EC39AEF4wGZ99c9myRTcCazKV6pngOx8MalL4g+AkdCmNkclhPi0fKy
-         bjTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU07vQ1HYTILz3qU0Wkt+Ty+N5ItBaSNtThrBwocKIEFH1+DOqMqcA/j2PAcXU2TJKH8q7u8iPTvjzFx7M=@vger.kernel.org, AJvYcCWM9VD9+AS6FB0fyo24EzU/bYWn/MMY9MF3AyC8DTGWJdypbJJ6i6dkekUpnACl4J9xM2nM6kuGnfo9@vger.kernel.org, AJvYcCWbdaPKTkt9jbrNmrNJ07hl6xf/r+JQijwpAaJUqHZN11i16nMBf2fY9KOG9sU4OSpiZqeVd45Y3JRXFsAZ@vger.kernel.org, AJvYcCXf6iQjVLvwgcZNHXnrvmn3MhYkOWq+XbSCLMqtDUMW/CnJeCAGB4OmydpWqqacqOvbZ2+Uzma+Sck5@vger.kernel.org, AJvYcCXpoQi/n3Hij5KDOFG0PKmbNf+KRBn2c8IVmhMMXhWmH0+hJ5lIstqlG+pmkCHpmV0LO7Nn7Z8Ignkn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9t1e167A55df+4DpEsc2wKK2Lk+0ImRsNGM9RABaSc1KaYaZs
-	6IlTtZHOAzfKyvM1t7eGB5sNf3RpwUFAE03WtuDZIm9ul2Tlsl1/
-X-Gm-Gg: ASbGnctyUZIeZLPZmgzTxQsrWrjqUSHYQqhfqOyKHWDYScdz+Ts8QChBjztWHRkNhkq
-	r5DyMoG5KZ8U4abWPPej38WsfVQymJEdWKEw8+7zzuKYpen4nqzbBE4L6TW1bnpeksMd772W6e4
-	coPrCSAC/fcPoRqjNPvuXfTW2uX2/vNwRMDH12lyQZ4rhR+jdZMu2HkpSs2c4jtUmy9IsLMCyE6
-	hPR9SyIIq8NssKQfIKooWvQ134xTTwjQTL8oGofhaLbgyB1rNoW7eQ6ylDSECNtaoPz8W/S35yj
-	1a69OP1k72Qh7sInQAf6V2OaS05Cortj4SaiEGqVBaSiea8hKqzrBXMJEEUf9PPGGSpWRv37+81
-	DdsPVerORKV8f+owWyw==
-X-Google-Smtp-Source: AGHT+IHtcpZdirGnF20GsQ/Lw15UUPPEPMY1zNwB4lkIWMtRuLnEhyFubklIvJ0hyQuY5L2tiR7fGQ==
-X-Received: by 2002:a17:902:dacd:b0:220:d257:cdbd with SMTP id d9443c01a7336-22780e2a4c4mr69685285ad.48.1742577001190;
-        Fri, 21 Mar 2025 10:10:01 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811d968asm19491495ad.162.2025.03.21.10.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 10:10:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ab329813-2903-4bd1-8734-ab36466650c2@roeck-us.net>
-Date: Fri, 21 Mar 2025 10:09:59 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64901D6DC8;
+	Fri, 21 Mar 2025 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742577059; cv=fail; b=Qk4FuFS53Z4X593qlBUrA/fcw8XUet1CrRMhbKdNlJPQRzNGLxehxwPykbC/VOZO2CxG1VB3IHlg6u7VIPD8bNiZnxC5qFeTHs5rBP2yPneAVUpLyNHFW8/cq9foDP2jJnIim6eJ+pH3k47rnfrQwJTR+q8Djx7zgt8DuTMi8h8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742577059; c=relaxed/simple;
+	bh=ISwNHPIbOvbvxqSENq+3CmnHDmfDTk0UinKlC/jb7gY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Wx7j9X2xuMuY0pIQD76ttkpOkC6CKBAjKyThny30DCeDBKG0oXDibvzpyrdjFeBvSbb+OjlHNKijFhHRNDmxNTeBU1BgMfZau1lmgbXFlevLkomE2OY8Zag5Xwnk364n2Tjsdzd1iV52kwzzgdx3XI2k55qF6T7OHx3Fb2I896I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EEByzqBN; arc=fail smtp.client-ip=40.107.92.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vRiaeraGe8kkmV2LWtZfBFIo6k7vlhm9y4V1O+RBAfyXiMBImYM1GNK9x2nT/zsbUP/SY/dt7A8kAmdeMnahCpwh2P9+nxnqAk+nWp5RRHEc1j8f+moYipllgnfKt4zYlB2ObloQoT4lJzGLrnn+ErTlgHGSrcC8IbJSMl10kmtd3cMaltfpratVUdUeSjlFR46SW328zG5IbcpnsQN5uPSm4Ci1AgIHUJtbu1S9HMp7m4nQVXGMcxSHbkQBZv+AW3uaGTZ6sYfPn7sipz65amfpln18iMend5Hp3IsKLR6/hE+JQgCaj/K4mPugQ9xi002UMXFs8yCH8gNY2lHd6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tlJjDtdhh9arbFZKX2iUxYlGD/7WM+qgwIm7ANdSqWE=;
+ b=hoA93DayAfWXwIghOfyC75ZPfz+UNWDLfu5VOhZlPllAE0+DCNRvBFE7pXMhzijapG0VVru9bkz6QelhSjLt9BSh3ulEqChjPFc9Xqs8yM+o7NGR91TOD1rgyVAEd14aJXTehzGRuUuR0zkNZ50gJbGV+wDtv/EUMevvmXAA8P+rDL5GnYFLm8R3g6gPJTILXTFH4RZOW7+C/aSK62lms3kOx+WdahpeIsUiAOkgyhen7BNnBVhQ0kmO15GWg8sYJnmQFRWmPfxv7pfLr2YRAbs4fQ0vLDho+puVxgAoxXYkhJmmIdhnRSjoDsuzzkQKrWFjB/uRcMXCu8xWMDtGfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tlJjDtdhh9arbFZKX2iUxYlGD/7WM+qgwIm7ANdSqWE=;
+ b=EEByzqBN4qitauDB4TeKlemreEMb5v8+vGUJZsEXMs7pRQ3eMzKGvjeLkzMBxHkaBRFz9CyYYNkW+H5hl+8ywapDuadJ+b5eokrhgJSb/Ip9kGqh/NioCi0URXba8zle1DyWJS2IE1CzjZyjC6JCFkt/3kJGjMww3fvb+Q0IkHQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ0PR12MB5662.namprd12.prod.outlook.com (2603:10b6:a03:429::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Fri, 21 Mar
+ 2025 17:10:51 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
+ 17:10:51 +0000
+Message-ID: <1da04bc6-a916-43dc-b46a-4485b90ffe6c@amd.com>
+Date: Fri, 21 Mar 2025 12:10:49 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] hid-asus: check ROG Ally MCU version and warn
+To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ bentiss@kernel.org, jikos@kernel.org, lkml@antheas.dev
+References: <20250321035106.26752-1-luke@ljones.dev>
+ <20250321035106.26752-2-luke@ljones.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250321035106.26752-2-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0237.namprd04.prod.outlook.com
+ (2603:10b6:806:127::32) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
-To: "Encarnacion, Cedric justine" <Cedricjustine.Encarnacion@analog.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
- <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
- <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
- <20250226145931.GA2314060-robh@kernel.org>
- <3f7b031d-7b83-4a00-996d-aabb26278b67@roeck-us.net>
- <20250227-sceptical-phenomenal-wolverine-56e3cf@krzk-bin>
- <dbd9cc84-a0b6-4323-b343-6e80aaaf2d14@roeck-us.net>
- <PH0PR03MB69385BEFFD04ECF850311E988EDE2@PH0PR03MB6938.namprd03.prod.outlook.com>
- <15ce883f-444c-4b27-a48d-b17e3df5895d@roeck-us.net>
- <PH0PR03MB693831397416C4247F8BA58D8ED92@PH0PR03MB6938.namprd03.prod.outlook.com>
- <PH0PR03MB6938087B8F2EDB9899DD0F1D8EDB2@PH0PR03MB6938.namprd03.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <PH0PR03MB6938087B8F2EDB9899DD0F1D8EDB2@PH0PR03MB6938.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ0PR12MB5662:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b8d0269-eb3c-42cf-cfa2-08dd689b54f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WmJXYnVvdXR0SldnUHRiL2dsMnlVV2VuZGRxK1U1Q0xLdW5wMi9Jdi9MK3cw?=
+ =?utf-8?B?TVorQkVnSEp1QmQ3S3QzWm52NEhHUXdNdEdHajBkMFhqRER3YXI2YWY3QXJX?=
+ =?utf-8?B?dzk0MHlSZml4d01IOGFuWjhyK1lEcGdrZkxUWWRybFlIR2NhRVZMNFEyK3N1?=
+ =?utf-8?B?NW5aOEFpYS9XcHNyREFoYUdGVXllM2s2VFo4bkVadTFsbXBLSXlnaDAyMnhv?=
+ =?utf-8?B?TUpCc2JyZ2ZFdjJWLzF6bmU3N3JEOEkySTQ1c0FqSlFLQmN1MkJNNkhVQ3Av?=
+ =?utf-8?B?NFlvcUszYkRQeE5HaDM1cmVMKzFFUmFNMTQxbHNwQ3Z4VVYrZkI5M1p4N1c3?=
+ =?utf-8?B?bVBBNnlFQkFxZXd2a2t2QlNhY01SL2VHUWczVlllaVo1ekRkVDUxWkRzYjdV?=
+ =?utf-8?B?cFhJUjc5djExSlUvQ1lGcC9oQllCQTNVa0s4MGN6ZkVtVjRHc0x1YTZBaW52?=
+ =?utf-8?B?SGtnK21zdEh1OERRdXg4ZFU1TU5kWENVbjNTWGg5MzZSY2lIbm5nVXhsTnR5?=
+ =?utf-8?B?ZWZhODQrVDNhRVIvMEs4ZWFyVkEzaWJTZnZ1MllHM0Z5ekJYVVVneElyUUR2?=
+ =?utf-8?B?RjgweEM4dGk1WDVQUUcxU1hBRDdvWUx5Y3BFS0FVMlduTlBJN2lNejN6U1Za?=
+ =?utf-8?B?L1JHNXpTUzJ0a3h5c2xkdTVzSVE0L0tGL1pISGljS0tBOW8wS21aazZUTUNx?=
+ =?utf-8?B?dVdveTdqTU9WSFljRnlZRWVoNWxlSnNWajhVeDc2bkRYQUFBUkQ5SzRWaVZE?=
+ =?utf-8?B?Q0V3b3hOTlVxQmZRVFcybjhFK3JEaUQ5RGZONEpDbWRFVjRGK0NjQVVTQVNO?=
+ =?utf-8?B?Qm5YY0VXaExjRDFFakR1SE4xYnlxQ3JSNDFycWRMU2swdjR1aXRZUlRlbndl?=
+ =?utf-8?B?cTF0QThqUkVpU0RUZys5YlJJem14MW1pL2sxdFc1eGRsbnV0UDlRMlFMV0dM?=
+ =?utf-8?B?Y3hhemZkVFBlMGMzWFcwMjZCRGp5aWNPckZNV3lmNXhhdThwQnBaK2YxQTAz?=
+ =?utf-8?B?TjVjOTZ0MndOalNSNzJUK2JjN0VGQ3pNZzdBVk9MSGo4ZzJvUlZKK0dEMGV0?=
+ =?utf-8?B?WEJvZnJraFcvdVhGVWQweFpBTlQ1MjVmNld6MWd2b0w3eWZ4OTMvOXBrNWRR?=
+ =?utf-8?B?VlpsalZKYktSUDA4L0NHbUU4WVZKUVJETDFxUWgvK2JOQlJ1MkFOUDBoOWtv?=
+ =?utf-8?B?dkRvN3I4OVRHUjhsTW9jT2ZHajg1czk4ZHBJNm04L1MxVzhSMkRwaklhVHF4?=
+ =?utf-8?B?ZzFhYi8xeXZSM2d3bXpjdnRIRkhKMTRNam1DVjR2emdlbzB0UTZxTWw0MElS?=
+ =?utf-8?B?Y3NkcXB6bWZCTm5hYkZkdkZieGprcXdCYUgvb1VIY0s2eW1tdEptNVM3OCtS?=
+ =?utf-8?B?c2NvMHIwWjZ0ZGxUdXpUci9lbFIrL0twS3d4S21aM20zVlM4OVVNSUlGYXhP?=
+ =?utf-8?B?bW5HbkJ1M1RLZWsrZnJ3dXIrSUVQWW9FbG43Q1JzbDF2UlI3L0gvc21DS0FX?=
+ =?utf-8?B?TUVZTzI1Vm5lck1iTFJ6Q0ZKcEVwSzVBYlRxa3VoTDNqa0pUYmh4MWk1S3d2?=
+ =?utf-8?B?OS9hY0dRTy9LeVNlWGdHOWE0M2dIOGFOWDFIRDdIU3U2Q0tXb0wybUxDQTgv?=
+ =?utf-8?B?QTdwRkdYeTdJNEZ2M2U3UENJTDdzSHRRZjNyZm5MWXJnNkhIclEwQ2NOT0Zt?=
+ =?utf-8?B?SjZlektaNzBVelhPOUdNOUVXcFR5VzlMYWEvUWRWSWxySmF1YmlsS0huUVdu?=
+ =?utf-8?B?dUpsSTZSc29mNzRmQ1dhV3JHNlhzN3JxZHJBY2xodVFOTWxhV1d3Nmt0Rmcr?=
+ =?utf-8?B?Q2RDL08xNEpJbUg2M3NxVnlsUGxvY0locVJEZ052TGN2Z2ZkakVMdG95RDYy?=
+ =?utf-8?Q?NlECE2yqip57u?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dndyMVJtdWN5WDllbE94QUhuSGMrWkhIWDQvTnZ6QjB2M0M4dGNPTThwS3p3?=
+ =?utf-8?B?QXE2UkgyZmV0a1FqZDl1RGc2TlVIWGRvUFdBWkZod0M3UzcxWmtnR1BlOUxa?=
+ =?utf-8?B?OHpSc2c4K1dET0xUZ3FSclp2eEN1amNzaTJXL3BCbVprb3VXQmVpNE5Yb1ov?=
+ =?utf-8?B?UWxvc2dpY0JRMWk1UUtyVE81MTB2Sm50S3Y0Sk9kWlFObVQ5S3MzSDlMQzIy?=
+ =?utf-8?B?Skc2b0lQeStIY0IrNlZPcURPWXFMNDIyOHVINEwzU0MyeTNwdmhJZElvRzhN?=
+ =?utf-8?B?NFkrVHNHdWhENTVTVUpqSi9pVnA1QzNVS21xNkpwa1VCUkFxOXFjdzY5TzNh?=
+ =?utf-8?B?ck9JZytJaEdiVk9MWHVZWUdoZ1dtUHVTOVdzUnFtMTZ2NTVDM0h2UVRGQWVK?=
+ =?utf-8?B?VzF0SzNGUTNwZGJuYnRkaS83cHRCMUFLbWFmczhkL0NWOVF6dnhUU21nVFNG?=
+ =?utf-8?B?TVEycDJ3WXVLK0ttL3FCb25pUjFNaXBJL1ZGLzZMM3c2VzYxTlVjMGp5M05D?=
+ =?utf-8?B?SmF1eXYxek5nQjlWMjVkU3NGNlM0eE40RDBlR2ttS1BsOHA1bEE3ak1MbjN1?=
+ =?utf-8?B?WjYrdGlHb0Jhd3ErVFV0bmE4Z3J0bEVxRlNkMlc0UzgwVG1MaFhTZFlTbDJi?=
+ =?utf-8?B?SmlPSE82M3MyR0ZQcUpoTkxreHZ4TlV2Smx4UHR6R0dua3ZRL3doY2xjcmV1?=
+ =?utf-8?B?bG1OVmJtVVBVcEZtRFBpTnZ1U3VRblp1VHhPUStmejhTMWRwQmhiMk53amlV?=
+ =?utf-8?B?cjVFbkw4SU1rVlFvMGV4cHI5Q3RMOEVRMDd4RS9YTEVhOEt3a0JpS3dnZFJ1?=
+ =?utf-8?B?anZVMFJaRllRYnFaYUJuUzl4em5UaEpuTldBSmJiMUtBL1VCQTFiSW5RZ1Fh?=
+ =?utf-8?B?Y3NBV2E0cVI3bVFOQ0FBSVNnNTJsQjRyS3VOam5Nb0o3b2pJaW1QZXBNOHJa?=
+ =?utf-8?B?Y3RDZnJRTndIMnJVblRpV05LaGNnZjRkL2w3U1E4bWpGOUMxMUJKbndBdytk?=
+ =?utf-8?B?bVJXeVlTeUVDY0pnMFR6U1g3NWFFMGRTZmU1TitKOG9LdStpQmh6ZWkvU3k3?=
+ =?utf-8?B?VmEvMUQ1Z2l3cXp3WjcyRGFPR3E3azlCSWxNeUNpTVVBLzFIanIwSVpkZXdj?=
+ =?utf-8?B?Qng2QnVzMDhTUEJsZ1U4dE8zVkprRGxnK1ZHOXVBR2Z6bGhieCtuQjFFcWNC?=
+ =?utf-8?B?VVN6WDVEL1VJNENSOWw3aEpGdU1XSjlaaHRDMWl6Y05pditjcXZyWGN6WUJk?=
+ =?utf-8?B?aTB3cWhtMGZwdllaWm1RWXFTbFpiZ2dEemN4NGRqQTVQRWZydnBNbDBsNHFO?=
+ =?utf-8?B?ZXFWeUh2YndyM0xpenFCeVBXZmRoK1I4dzVMKzdsWHlWL1MwQ3lIRy9aajI0?=
+ =?utf-8?B?dGZBckgrNkQzVFBHNDVmeWExT3NKbC91M2gyUzdiMFZmeUZsWkdRRGYwZmxm?=
+ =?utf-8?B?WkFVcW5iMFg4aWF2b1pNTnp2cjZOU1EzaE5tT1VEenlJckJya3Qvbjl2bWgr?=
+ =?utf-8?B?aHRLY2c0NHRyaDlNeFV2amxzZndwM0RRTXZGNy8rMVJrOHZiQnExV2RDeDBk?=
+ =?utf-8?B?QnRRc01KWUdhRnIyZkdBYzJuUHhLKzhDYVgyajZCVmNFcDQ4UXhXMFlpeVk2?=
+ =?utf-8?B?aWtrTlBCSGxVcFNOS2dPTzRCSlcxc1puRDd1ZjhaRHlMSzUzSlF5cDh2WUpJ?=
+ =?utf-8?B?R1dOVTNVRHhQQ0JoZ2RJOW5IQUdJaThrUldLUzdDRG40bVJJRllNd3NheWlY?=
+ =?utf-8?B?UUN5VWI5YzYvMUVJVSt5cENhTHF5ZFRWWVJSMlJoS0xncTN2dnVzSy9mLzM0?=
+ =?utf-8?B?eVVPb3hrT2I5NmhqZzhwWDZDUHNZVCtmYytWVWR0Q29INmtqQzlCVWFUaDht?=
+ =?utf-8?B?TFd6NHNXMW16UXhSRUt6dklnd3NmUFo0ai9qZVB6YjNRcVpDNExwMm9vaTN0?=
+ =?utf-8?B?RzdxdTZsUXlrK0ZBbkpTaXlHV01KUWhnMWJjZVd0L1E5T1hnQTBwelJzbDVm?=
+ =?utf-8?B?ZmFoUSsxT3cwQlpuTHYzQktiWDV1bTJ3ZTRpUnUwZ3pPdDMyMmZKVlhLTGtr?=
+ =?utf-8?B?c25uUjFBM0tpY0cwdVNSRW92Ukc4NEFGaGNIR1ZXdHFpazcvb05oYTBUM1Jj?=
+ =?utf-8?Q?ZYqWOlmxwQwVWPKKuoEcAPaj5?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b8d0269-eb3c-42cf-cfa2-08dd689b54f5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 17:10:51.2705
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uQbnmadsEvG52x9iSg0rNAIVMmfUD8pP9wD3Z0HygBcEqpSGOsE+Bq6F0TZ+zx664UZiqh92a4kfsMYGwL1bFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5662
 
-On 3/21/25 09:53, Encarnacion, Cedric justine wrote:
->> -----Original Message-----
->> From: Encarnacion, Cedric justine
->> Sent: Wednesday, March 19, 2025 12:10 PM
->> To: Guenter Roeck <linux@roeck-us.net>; Krzysztof Kozlowski <krzk@kernel.org>
->> Cc: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>;
->> Conor Dooley <conor+dt@kernel.org>; Jean Delvare <jdelvare@suse.com>;
->> Jonathan Corbet <corbet@lwn.net>; Delphine CC Chiu
->> <Delphine_CC_Chiu@wiwynn.com>; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-hwmon@vger.kernel.org; linux-
->> doc@vger.kernel.org; linux-i2c@vger.kernel.org
->> Subject: RE: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
->>
->>> -----Original Message-----
->>> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
->>> Sent: Tuesday, March 18, 2025 11:17 PM
->>> To: Encarnacion, Cedric justine
->>> <Cedricjustine.Encarnacion@analog.com>;
->>> Krzysztof Kozlowski <krzk@kernel.org>
->>> Cc: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
->>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jean Delvare
->>> <jdelvare@suse.com>; Jonathan Corbet <corbet@lwn.net>; Delphine CC
->>> Chiu <Delphine_CC_Chiu@wiwynn.com>; devicetree@vger.kernel.org; linux-
->>> kernel@vger.kernel.org; linux-hwmon@vger.kernel.org; linux-
->>> doc@vger.kernel.org; linux-i2c@vger.kernel.org
->>> Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
->>>
->>> [External]
->>>
->>> On 3/18/25 03:03, Encarnacion, Cedric justine wrote:
->>>>> -----Original Message-----
->>>>> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
->>>>> Sent: Friday, February 28, 2025 12:33 AM
->>>>> To: Krzysztof Kozlowski <krzk@kernel.org>
->>>>> Cc: Rob Herring <robh@kernel.org>; Encarnacion, Cedric justine
->>>>> <Cedricjustine.Encarnacion@analog.com>; Krzysztof Kozlowski
->>>>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jean
->>>>> Delvare <jdelvare@suse.com>; Jonathan Corbet <corbet@lwn.net>;
->>>>> Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>;
->>>>> devicetree@vger.kernel.org; linux- kernel@vger.kernel.org;
->>>>> linux-hwmon@vger.kernel.org; linux- doc@vger.kernel.org;
->>>>> linux-i2c@vger.kernel.org
->>>>> Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
->>>>>
->>>>> diff --git a/drivers/hwmon/pmbus/pmbus.h
->>>>> b/drivers/hwmon/pmbus/pmbus.h index ddb19c9726d6..289767e5d599
->>>>> 100644
->>>>> --- a/drivers/hwmon/pmbus/pmbus.h
->>>>> +++ b/drivers/hwmon/pmbus/pmbus.h
->>>>> @@ -512,7 +512,6 @@ int pmbus_regulator_init_cb(struct
->>>>> regulator_dev
->>> *rdev,
->>>>>    	{							\
->>>>>    		.name = (_name),				\
->>>>>    		.of_match = of_match_ptr(_name),		\
->>>>> -		.regulators_node = of_match_ptr("regulators"),	\
->>>>>    		.ops = &pmbus_regulator_ops,			\
->>>>>    		.type = REGULATOR_VOLTAGE,			\
->>>>>    		.owner = THIS_MODULE,				\
->>>>>
->>>>> Maybe someone can check if that works.
->>>>>
->>>>> Thanks,
->>>>> Guenter
->>>>
->>>> I'd like to follow up on this one. As of this writing, my
->>>> understanding is that the dt-binding should not expect regulators
->>>> subnodes for simple devices like this. There is already a similar
->>>> binding as mentioned in this thread particularly
->>>> "dt-bindings/regulator/infineon,ir38060". I think a binding without
->>>> the subnodes should still work with or without the change above.
->>>
->>> Interesting. I am not sure if it really works, though. I looked into
->>> the regulator code, and I don't immediately see the code path it would
->>> take.
->>>
->>>> With this, I'd like to know what the specific next steps are to
->>>> continue this patch series.
->>>
->>> Can you try on hardware using a devicetree file which doesn't have the
->>> regulators node ? If the current code works, just submit an updated
->>> (simplified) .yaml file and we should be good. If not, I have an
->>> untested patch series introducing another macro which doesn't set the
->>> regulators node.
->>
->> Okay. I'll test this and get back to you.
+On 3/20/2025 22:51, Luke Jones wrote:
+> From: "Luke D. Jones" <luke@ljones.dev>
 > 
-> The "simplified" dt file (without the regulators node) does not work with
-> the current regulator_desc macro. I have also tried simply removing the
-> regulators_node setting from the regulator_desc macro, and it does not
-> work too. of_match looks for a certain regulator name in dt, and it seems
-> like it must handle NULL cases as well as suggested previously. I would
-> appreciate if this would be also verified on other ends. For now, I think I'll
-> wait for another macro to be introduced in pmbus to support this kind of
-> bindings.
+> ASUS have fixed suspend issues arising from a flag not being cleared in
+> the MCU FW in both the ROG Ally 1 and the ROG Ally X.
 > 
-
-Figured. As it turns out, there is also a patch series pending which tries
-to fix the problem for ir38060 by changing its bindings.
-
-I'll dig up my patch series to add a new macro and send it out as RFT.
-
-Thanks,
-Guenter
+> Implement a check and a warning to encourage users to update the FW to
+> a minimum supported version.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/hid/hid-asus.c | 107 ++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 105 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 46e3e42f9eb5..599c836507ff 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -52,6 +52,10 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>   #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+>   #define FEATURE_KBD_LED_REPORT_ID2 0x5e
+>   
+> +#define ROG_ALLY_REPORT_SIZE 64
+> +#define ROG_ALLY_X_MIN_MCU 313
+> +#define ROG_ALLY_MIN_MCU 319
+> +
+>   #define SUPPORT_KBD_BACKLIGHT BIT(0)
+>   
+>   #define MAX_TOUCH_MAJOR 8
+> @@ -84,6 +88,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>   #define QUIRK_MEDION_E1239T		BIT(10)
+>   #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
+>   #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
+> +#define QUIRK_ROG_ALLY_XPAD		BIT(13)
+>   
+>   #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
+>   						 QUIRK_NO_INIT_REPORTS | \
+> @@ -534,9 +539,99 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+>   	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
+>   }
+>   
+> +/*
+> + * We don't care about any other part of the string except the version section.
+> + * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
+> + * The bytes "5a 05 03 31 00 1a 13" and possibly more come before the version
+> + * string, and there may be additional bytes after the version string such as
+> + * "75 00 74 00 65 00" or a postfix such as "_T01"
+> + */
+> +static int mcu_parse_version_string(const u8 *response, size_t response_size)
+> +{
+> +	const u8 *end = response + response_size;
+> +	const u8 *p = response;
+> +	int dots, err, version;
+> +	char buf[4];
+> +
+> +	dots = 0;
+> +	while (p < end && dots < 2) {
+> +		if (*p++ == '.')
+> +			dots++;
+> +	}
+> +
+> +	if (dots != 2 || p >= end || (p + 3) >= end)
+> +		return -EINVAL;
+> +
+> +	memcpy(buf, p, 3);
+> +	buf[3] = '\0';
+> +
+> +	err = kstrtoint(buf, 10, &version);
+> +	if (err || version < 0)
+> +		return -EINVAL;
+> +
+> +	return version;
+> +}
+> +
+> +static int mcu_request_version(struct hid_device *hdev)
+> +{
+> +	u8 *response __free(kfree) = kzalloc(ROG_ALLY_REPORT_SIZE, GFP_KERNEL);
+> +	const u8 request[] = { 0x5a, 0x05, 0x03, 0x31, 0x00, 0x20 };
+> +	int ret;
+> +
+> +	if (!response)
+> +		return -ENOMEM;
+> +
+> +	ret = asus_kbd_set_report(hdev, request, sizeof(request));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = hid_hw_raw_request(hdev, FEATURE_REPORT_ID, response,
+> +				ROG_ALLY_REPORT_SIZE, HID_FEATURE_REPORT,
+> +				HID_REQ_GET_REPORT);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = mcu_parse_version_string(response, ROG_ALLY_REPORT_SIZE);
+> +	if (ret < 0) {
+> +		pr_err("Failed to parse MCU version: %d\n", ret);
+> +		print_hex_dump(KERN_ERR, "MCU: ", DUMP_PREFIX_NONE,
+> +			      16, 1, response, ROG_ALLY_REPORT_SIZE, false);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void validate_mcu_fw_version(struct hid_device *hdev, int idProduct)
+> +{
+> +	int min_version, version;
+> +
+> +	version = mcu_request_version(hdev);
+> +	if (version < 0)
+> +		return;
+> +
+> +	switch (idProduct) {
+> +	case USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY:
+> +		min_version = ROG_ALLY_MIN_MCU;
+> +		break;
+> +	case USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X:
+> +		min_version = ROG_ALLY_X_MIN_MCU;
+> +		break;
+> +	default:
+> +		min_version = 0;
+> +	}
+> +
+> +	if (version < min_version) {
+> +		hid_warn(hdev,
+> +			"The MCU firmware version must be %d or greater to avoid issues with suspend.\n",
+> +			min_version);
+> +	}
+> +}
+> +
+>   static int asus_kbd_register_leds(struct hid_device *hdev)
+>   {
+>   	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> +	struct usb_interface *intf;
+> +	struct usb_device *udev;
+>   	unsigned char kbd_func;
+>   	int ret;
+>   
+> @@ -560,6 +655,14 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>   			if (ret < 0)
+>   				return ret;
+>   		}
+> +
+> +		if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> +			intf = to_usb_interface(hdev->dev.parent);
+> +			udev = interface_to_usbdev(intf);
+> +			validate_mcu_fw_version(hdev,
+> +				le16_to_cpu(udev->descriptor.idProduct));
+> +		}
+> +
+>   	} else {
+>   		/* Initialize keyboard */
+>   		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> @@ -1280,10 +1383,10 @@ static const struct hid_device_id asus_devices[] = {
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD},
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
+>   	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
 
 
