@@ -1,123 +1,147 @@
-Return-Path: <linux-kernel+bounces-572033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632D3A6C59F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:06:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A72A6C59C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACAD33B55A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:05:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 942DD7A8AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE38233148;
-	Fri, 21 Mar 2025 22:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE72231A2D;
+	Fri, 21 Mar 2025 22:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Jza1JHb9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5VzMwiJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AED22FE03;
-	Fri, 21 Mar 2025 22:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A058D1EB9E1;
+	Fri, 21 Mar 2025 22:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742594751; cv=none; b=eR/S9Pq8fbomAF6tcgXuiYVbRiyga548nxW2YMOQH4dJqPqhwm1fD4DhzO96QqSUz2yF7kDeYeQJfXF9M9aud/4J+pUqO6Wh5hXrQXL0xMQXbyc9AP8+QAGJixDLKI9GgX7AhhnUXVtRJiQJgHO9Fj9OL44YPKxZq7KCjatAS2w=
+	t=1742594726; cv=none; b=CWnNe3es2WPEPZluOBvIJoWE1XgbIH1ulObuHlboHr7sLWFH/ElsSMu7vP8FIdNfmFurTeFlmRJWdV+OCiWoSgV9ciWMxnmpOW5WM+u9YHZNymfOCVB3WpvVoupQc+PbbrwTTbIXlWjrPapTJYdusri3FSWYpHgbBnYwpGowXzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742594751; c=relaxed/simple;
-	bh=WEX2UAORnGyCNiA5AsfINcksrrjPKnMloADTiuGN7f4=;
+	s=arc-20240116; t=1742594726; c=relaxed/simple;
+	bh=9N9lKIA4T37ajX0PCeM9ksT3ycwji09uQfEuJmjCJLk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mEPIfEO0eliG7SA7bGxiDIrDNiA1Syya7HUIBb82crQ9mOOVZP/GVpetFWUJxNdjMbZO9OzpLbwz8uspWvHFPlTnCNcPIgzvp7Y7SKE3pm7CsWagRbr8wY03y8U8un6CxF7RR3ohELlK87JpTcH1r0HrXCVgOpC8ETN9BykvHRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Jza1JHb9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CA69140E0215;
-	Fri, 21 Mar 2025 22:05:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Y7T3YEG9j5Q1; Fri, 21 Mar 2025 22:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742594743; bh=C2LY7NQdB5HYRcH/kmFKQKhgmQluG/i4PkyOlfRE1lI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jza1JHb9Cjp7zdR8P0j2sa4jQgK5CdQAVRh6fvJIeD3UeR5Fj5AIVRI7+uMrd7+xd
-	 gRO8fzUKbiLrCj0dr13hFaEAWeXlTRB4X9wi6P92iyZzkLQKliJ/f26TAQSImYXZT/
-	 xkcRPhJ6ycPI1m8IWoxzKIFBNWt9oXaBa+frCy6hFZdNDfHUDdcItrUfVFb0ulBfCi
-	 X68h2lhWqZoWLS5qXE3apiy2EBbJ8U021+LfHSezwPfBXGbkZnc6r3fjyxtX6GR6KH
-	 rhzENopKUcWAygzCPkz/treBRHiwfJWXKzEVmOfPv2wvPK/v1fM9gCYXBLRNXliro7
-	 vvB/2RFTTJJvOz/y9utMYAKUw8PnSLx3TZxm4PsaYVjsnpMx6bRC33SGVAwR6phNN2
-	 +u+lJPYj3X12cZwrjw+3UlLiMDpzUaRHBvHQQRvevUUmbybZqBkIoUMkaUqzXijD10
-	 GrD33ZHBO24vhHTHVIgoREJLXae1puSNodcMNJ7UnA2TqFlNFx6F2N64WfjHOr0lKR
-	 bX1MsdsE5mbRVhOZM1pW66vYTiHi9YXjB+/43e9//oUV3fUdWG9M/mRquBEdA9SnmM
-	 cmQnrmOPtCn0+fOcx+WeCJP2Dy1tL6+RIzPK8gd9qdsTnN0gx+hSVch1FRlGQYmGYA
-	 aeWBZsnMF0kqeEOeNHWgrbMg=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1140E40E016E;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rx21SwZuDmvqzyv4F3J0tqqz1u6572S2JwnKySLW3VitTCEo9uCYtn/UImGMLLBzrNr1oME6nfp3yMeuiuY6VD6ea7mQp4N7abQFMN9zphT+syBX8EXecJctc/K1IZ/zrmPwBV6K2/VOATFbR5HYvHITupoeoG7cicBIZDSDv4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5VzMwiJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971E4C4CEE3;
 	Fri, 21 Mar 2025 22:05:25 +0000 (UTC)
-Date: Fri, 21 Mar 2025 23:05:20 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
- functions
-Message-ID: <20250321220520.GFZ93ioO0JtfhXCb1n@fat_crate.local>
-References: <20250311094225.35129-1-sgarzare@redhat.com>
- <20250311094225.35129-2-sgarzare@redhat.com>
- <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
- <Z9glWp6U6vyEmKQa@kernel.org>
- <7kuhiyy7gj4py323g5n2vy3ddlg666zwhtx3mjcklebgtlstdc@xgdyeecifwei>
- <Z9wuLVeP726Cssqp@kernel.org>
- <20250320171619.GOZ9xNY4W54avW2a-u@fat_crate.local>
- <Z9xQw8QpRKk26G6R@kernel.org>
- <rspkz663fg7i7jomvg5ehv3ldr6ayehttb7vgwwzsfsxafzb5y@uhqcadvsmw6f>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742594726;
+	bh=9N9lKIA4T37ajX0PCeM9ksT3ycwji09uQfEuJmjCJLk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c5VzMwiJJAAuof1zp8qtJWpsyDichBCO/8ItWHCQPanliBaA4Sz3+HB0m8WE0QYIa
+	 MoKUOpzwrcTtrHfDX7RAYkLMHK8JgwVJKf4kRzJee6/eAllb8wH+H0wj6YPy3LJrgE
+	 10gqDYNE7dG3TTGOVwnWY+MiPFOOWW9bdbK4EJBv/5ZrVMZlhS7k+jxcNOFF3TnLY7
+	 1drf9huoOFTsr5c2xGywVCzWJAP3ISN1iTT6xCYntE6CXKC+Ctd2h+V07mgQ0Ec+Bp
+	 1x4uo7CTf29h0+WCRvcOis1lMqGFVIOEiuu5GqftEUR81gfZ4lCzvjNwOUVn6yQdhJ
+	 obo+zHGwq7K3g==
+Date: Fri, 21 Mar 2025 23:05:23 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Gary Guo <gary@garyguo.net>, Alice Ryhl <aliceryhl@google.com>,
+	Fiona Behrens <me@kloenk.dev>, rust-for-linux@vger.kernel.org,
+	netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, anna-maria@linutronix.de,
+	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
+	sboyd@kernel.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com,
+	david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 5/8] rust: time: Add wrapper for fsleep() function
+Message-ID: <Z93io9rkpRMiXEKi@pavilion.home>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+ <20250220070611.214262-6-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <rspkz663fg7i7jomvg5ehv3ldr6ayehttb7vgwwzsfsxafzb5y@uhqcadvsmw6f>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250220070611.214262-6-fujita.tomonori@gmail.com>
 
-On Fri, Mar 21, 2025 at 10:01:17AM +0100, Stefano Garzarella wrote:
-> Just a note, patch 2 adds `include/linux/svsm_vtpm.h`, that file is
-> basically a translation of the AMD SVSM specification into structures and
-> functions used to communicate with SVSM in the way it is defined by the
-> specification.
+Le Thu, Feb 20, 2025 at 04:06:07PM +0900, FUJITA Tomonori a écrit :
+> Add a wrapper for fsleep(), flexible sleep functions in
+> include/linux/delay.h which typically deals with hardware delays.
 > 
-> I realized that the file does not fall under any section of MAINTAINERS.
-> How do you suggest we proceed?
+> The kernel supports several sleep functions to handle various lengths
+> of delay. This adds fsleep(), automatically chooses the best sleep
+> method based on a duration.
 > 
-> Should we create an SVSM section to maintain it, including the TPM driver
-> and future other drivers,etc.?
+> sleep functions including fsleep() belongs to TIMERS, not
+> TIMEKEEPING. They are maintained separately. rust/kernel/time.rs is an
+> abstraction for TIMEKEEPING. To make Rust abstractions match the C
+> side, add rust/kernel/time/delay.rs for this wrapper.
+> 
+> fsleep() can only be used in a nonatomic context. This requirement is
+> not checked by these abstractions, but it is intended that klint [1]
+> or a similar tool will be used to check it in the future.
+> 
+> Link: https://rust-for-linux.com/klint [1]
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-This all belongs to the TPM drivers, right?
+Sorry to make a late review. I don't mean to delay that any further
+but:
 
-I.e., drivers/char/tpm/
+> +/// `delta` must be within `[0, i32::MAX]` microseconds;
+> +/// otherwise, it is erroneous behavior. That is, it is considered a bug
+> +/// to call this function with an out-of-range value, in which case the function
+> +/// will sleep for at least the maximum value in the range and may warn
+> +/// in the future.
+> +///
+> +/// The behavior above differs from the C side [`fsleep()`] for which out-of-range
+> +/// values mean "infinite timeout" instead.
 
-So I guess add that header to the TPM DEVICE DRIVER section if the gents there
-are fine with it...
+And very important: the behaviour also differ in that the C side takes
+usecs while this takes nsecs. We should really disambiguate the situation
+as that might create confusion or misusage.
 
--- 
-Regards/Gruss,
-    Boris.
+Either this should be renamed to fsleep_ns() or fsleep_nsecs(), or this should
+take microseconds directly.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks.
+
+> +///
+> +/// This function can only be used in a nonatomic context.
+> +///
+> +/// [`fsleep`]: https://docs.kernel.org/timers/delay_sleep_functions.html#c.fsleep
+> +pub fn fsleep(delta: Delta) {
+> +    // The maximum value is set to `i32::MAX` microseconds to prevent integer
+> +    // overflow inside fsleep, which could lead to unintentional infinite sleep.
+> +    const MAX_DELTA: Delta = Delta::from_micros(i32::MAX as i64);
+> +
+> +    let delta = if (Delta::ZERO..=MAX_DELTA).contains(&delta) {
+> +        delta
+> +    } else {
+> +        // TODO: Add WARN_ONCE() when it's supported.
+> +        MAX_DELTA
+> +    };
+> +
+> +    // SAFETY: It is always safe to call `fsleep()` with any duration.
+> +    unsafe {
+> +        // Convert the duration to microseconds and round up to preserve
+> +        // the guarantee; `fsleep()` sleeps for at least the provided duration,
+> +        // but that it may sleep for longer under some circumstances.
+> +        bindings::fsleep(delta.as_micros_ceil() as c_ulong)
+> +    }
+> +}
+> -- 
+> 2.43.0
+> 
 
