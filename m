@@ -1,345 +1,233 @@
-Return-Path: <linux-kernel+bounces-571527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E5AA6BE60
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC647A6BE69
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756304652C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:36:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FCD3B0720
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E111E00B4;
-	Fri, 21 Mar 2025 15:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B70F224B01;
+	Fri, 21 Mar 2025 15:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PIQHcQR0"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2070.outbound.protection.outlook.com [40.107.223.70])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GJ+56TiP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAE49461;
-	Fri, 21 Mar 2025 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742571371; cv=fail; b=Jg0UKyfj7drooGb4l9qvYLvnkv+5a4nWJKHGrT6lMx3uogdenjjDFizRWXMUepun1I5ZreyVpYQRDXWVb/AVYY6/eOpvZdX3bd8c41UAXEJW9SZBhTkcNOG9m04DzXhTC+Q4Xi41cDlUDxytrEEqSQE1rVnPHMR/KBFlRowG2SU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742571371; c=relaxed/simple;
-	bh=YyYems16syuOLpThbpIe2IW2wIPHoEyR+EAuCna7hh8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=htHzrBDJzPmBmz4b2RVWUXu5MbxlUe4Dx/VtvLHjUnoBVS7O+E7qAJXuwGbEy7NHLxLHfBu0oze39CERqLhjzVILwFQLjMUZX+WgqTXZ73aVAC6jDiG1au3PE+8KmbSISMRbXtyKSP++qf+U2UtsB9bKGQsidy4U4s3JIqXZ2hw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PIQHcQR0; arc=fail smtp.client-ip=40.107.223.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y9wTPKtwqP2lUwBWCuKtUjruCJz7TVoatisxvnt+gl5q7EDQOBJGTRoHt//crBYRHCzpYWwXWhomAkAYpWtPqUasYfN9AXgVtKlzPs0CW3Z2gK+C78+pf8JLlK2K+XhgKA6OvEXg6Db98d6ypVjAkFdLpXvKV8Pr11wSsO0eCRimge8Rc8f4KrTrpjAbKBn7u9BYU1j9MCh74KV9+p+7UC44uBQoLC6J0ceX+CrupALudxDhmhotv01ZbVPQ/5Q+k6sTRtEojpOyhEvkZ042aOgP/y3eqxHboxAUNX9ig3/tLL3uOUXjd9+pDtMN4Kp3YIg7f67uhxwxoR5ubq9LRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CPGZHjYhG6Dy8tkk6aHc94806I4Z6LoPe6oj+3TqGTM=;
- b=QjGJOHesxipKfCh2lOa1Y0/vvE5j3wEoA/UMPwY2zcCTFRRPdyoh8f1/llu4i9cxW53EUA64+lNroYSB1LVKThurPDsjq66/6MnBoRFQimnTyBevhFKwqTuJ5LxH6iXW7zJRO/88le6xhVmClCO77ahFW2LvHyco4qVdwrweeBuZkiVAz1BOrxkjcggiZjZzbNQO6+Xl0gxwjf2hZsFdkL14NGOtnIxVJPTpZbkEuGlFQYkvofcJabWhh2QFnyW5S3qzGftjxF/7r8GbedvjxvFm6W9KxjR0CXXBvT7ixuz+VgW0PyGt0S1ceST+lmgD7vv6PmxxBK6qoOZFEPmVVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CPGZHjYhG6Dy8tkk6aHc94806I4Z6LoPe6oj+3TqGTM=;
- b=PIQHcQR0KCNXJ+zEeH2aYBHTLG93a534vR5x04JTRHRSNUXzZFlYni7r1R8n6QncARQ+dD5h0uwow3J6r0in1Av8rrbTHl1eHiqda0Yorm2hTYtseNTg6qYwBSQovwaPYf8mQFX+7utFUTTwibV/dKOkSXvavSQMr3HVibfTfIs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
- CY5PR12MB6621.namprd12.prod.outlook.com (2603:10b6:930:43::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.36; Fri, 21 Mar 2025 15:36:06 +0000
-Received: from DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
- ([fe80::b71d:8902:9ab3:f627%4]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
- 15:36:06 +0000
-Message-ID: <ecc20053-42ae-43ba-b1b3-748abe9d5b3b@amd.com>
-Date: Fri, 21 Mar 2025 21:05:56 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 05/17] x86/apic: Add update_vector callback for Secure
- AVIC
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
- huibo.wang@amd.com, naveen.rao@amd.com
-References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
- <20250226090525.231882-6-Neeraj.Upadhyay@amd.com> <87jz8i31dv.ffs@tglx>
-Content-Language: en-US
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-In-Reply-To: <87jz8i31dv.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2P153CA0030.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::15) To DS0PR12MB6608.namprd12.prod.outlook.com
- (2603:10b6:8:d0::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE92F2AE84;
+	Fri, 21 Mar 2025 15:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742571525; cv=none; b=rR9jg1Rdyq5Vvvmn7FOKz9KwDw/mv9JSJujQMpBR9Gy0NbMfsAS2vdz4XJSIau35QTcINO32cO0TFjJJ0E3qjyUjDzjhCNHdCU4ckWQcb6YIEq4+Z0XI8HyJUwDAms0swcGldy50q6XBgb2gbqmttn1LajzKDHnSzzMznGtkExI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742571525; c=relaxed/simple;
+	bh=Hur8klx0pto+bVUCorbe/IOiYL8Zq5fllI2zEDHUVww=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gUzG2zbqMC9CgfJoiQ3Fj3G5+FFtrbKiILcuceivodvvbU+VynKUAoCxarFwMreuNongjweFPAKdyX5a8egiToMeZePQ5zxj0FEE+t2xcnaW4l597T1ADzxKt/hRZV9gN/k33oJjbStovcJPog4D5oNnm82l2HLuXYyfw6LZnH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GJ+56TiP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Hur8klx0pto+bVUCorbe/IOiYL8Zq5fllI2zEDHUVww=; b=GJ+56TiPzAKgxjiUsu7mauybOy
+	n24fB07NZDlX1YLn/Tm3/N4fCjcNUQ9q0RU0sWYbKxHDHcjS49KGgsk2x5WIo4STNXFjF72GtZZpm
+	SmI61QXnTy2B0XeRn/xEReTWMAQ/b/53pzI5qCM0c8RBpEruAa+8A6+Ix6kvZ6n+TAq3+1cxhSwfM
+	O5/74zfEWktOgo18tPoPahIDx4gSX2d0mNRyW6SYmt5eFF1bCXEpsggXvv6AGz9qdAS7bCY5KNges
+	9SM9ftchBzqBmx35e5D9/mlfno/oC1Xu2k+dxzZDQ8u1EeE8nkQaMzN0i65R/q1YQ0ZVhXIQV2uwm
+	ISYDgY0g==;
+Received: from [172.31.31.145] (helo=u09cd745991455d.ant.amazon.com)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tveRn-00000004RSj-0sdp;
+	Fri, 21 Mar 2025 15:38:11 +0000
+Message-ID: <979b6a34ca5724ced1d4871b58bf227065d7da57.camel@infradead.org>
+Subject: Using Restricted DMA for virtio-pci
+From: David Woodhouse <dwmw2@infradead.org>
+To: Claire Chang <tientzu@chromium.org>, Rob Herring <robh+dt@kernel.org>, 
+ mpe@ellerman.id.au, Joerg Roedel <joro@8bytes.org>, Will Deacon
+ <will@kernel.org>,  Frank Rowand <frowand.list@gmail.com>, Konrad Rzeszutek
+ Wilk <konrad.wilk@oracle.com>,  boris.ostrovsky@oracle.com,
+ jgross@suse.com, Christoph Hellwig <hch@lst.de>,  Marek Szyprowski
+ <m.szyprowski@samsung.com>
+Cc: heikki.krogerus@linux.intel.com, peterz@infradead.org, 
+ benh@kernel.crashing.org, grant.likely@arm.com, paulus@samba.org,
+ mingo@kernel.org,  sstabellini@kernel.org, Saravana Kannan
+ <saravanak@google.com>,  xypron.glpk@gmx.de, "Rafael J . Wysocki"
+ <rafael.j.wysocki@intel.com>,  Bartosz Golaszewski
+ <bgolaszewski@baylibre.com>, xen-devel@lists.xenproject.org, Thierry Reding
+ <treding@nvidia.com>,  linux-devicetree <devicetree@vger.kernel.org>,
+ linuxppc-dev@lists.ozlabs.org, Nicolas Boichat <drinkcat@chromium.org>, 
+ Dan Williams <dan.j.williams@intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Greg KH <gregkh@linuxfoundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>, lkml <linux-kernel@vger.kernel.org>,
+ "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>, Jim
+ Quinlan <james.quinlan@broadcom.com>,  Robin Murphy <robin.murphy@arm.com>,
+ hch@infradead.org, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang
+ <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+ virtualization@lists.linux.dev, graf@amazon.de
+Date: Fri, 21 Mar 2025 15:38:10 +0000
+In-Reply-To: <20210209062131.2300005-1-tientzu@chromium.org>
+References: <20210209062131.2300005-1-tientzu@chromium.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-juy7yf7MhQovyScjrs78"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|CY5PR12MB6621:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e80e7d1-900d-408e-4c19-08dd688e188d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RG12TGFRS1Y0WCt3MTNoNnVXRUlsWThzMXZFbFVmUTRVcGZicVNyVnNXMjYz?=
- =?utf-8?B?eE5kbDFtWWhTVVc1N0pFZVA4a1diWkRVaXdlUGFrOW9VdkNLempDNEh2ZU5O?=
- =?utf-8?B?dE9JWnhycXVJT0g2RWdQMFNWNXBPUWsxRjQ2K2daT3ZONUpYN1lxTXUxRURT?=
- =?utf-8?B?Sk1CeExLcWZRM1E0QXZ2eFdtZXZJcTdyOU9qWXhtYzhxaGVTRHpLMjBPdkJI?=
- =?utf-8?B?b2NnY09OQ3ZqMkdlREZCbFNxNW5RS2dSSXpkakRPQnZvaGUrdE1oNkt1Z0Vp?=
- =?utf-8?B?bm5GOFBhcDJLd0MrQUVQQzRNalB4bU9JcDJGK1Arb0hHL1FqSzU0YTY5MEcr?=
- =?utf-8?B?SmF0dThrTlhGanArK2F5d1pGdVZLRTVSdDZROUprSW5rSkJUTkJyQno5SDdh?=
- =?utf-8?B?dXFsZzJiN3REUWFCSVRhR05PVFJMTTVTWGEvVjlKWEVUczduVnhvRjNYdFJi?=
- =?utf-8?B?RExBWmU1cUZmYWR3ZzRlZXlNemZDUWFURm0zN3loU0FtYmNBWkp3YmJBRGly?=
- =?utf-8?B?NFV5c1VLUEJ2UG8yTG9lOGs3dXRXM3hlcGwxWHJJNkRZNno4R2lGZlVMNnBW?=
- =?utf-8?B?K1dxWXdqKzBLd2dkRHByb2JPWjgxUmhxdWRmZ1N6YVRLY0krc0dxcHMzZUVu?=
- =?utf-8?B?Z0hTZzQvdTJRQjJ0U29NNURXaWova1BjQ0tyTGcxLzI4WFFwWFpyOXp5YmQ4?=
- =?utf-8?B?aWU0VEc3Yk5EMFF5SEIwcWg0YzhYMHhHdjQ2RzRwN2FuQWNiL2tRS3M3SVk4?=
- =?utf-8?B?QU9CTVJuYnlza3V0QWZNUmVJdC9sTnNVUDFjL1B2enpHdDhiQ1RIbU9QOVRv?=
- =?utf-8?B?eEdaa0xjWkFaVWNFZmhXZCtxTjlPdE5VU0cwT3FTL0FKb1JDamZPbmVWT1ND?=
- =?utf-8?B?WlBDTG9NazF5aitOaE5yNHlDQTA4RHlrZlBHMTMzRmYwTkdJV09BSTRPZm1o?=
- =?utf-8?B?SEpDek5Gam5YZ1EwTFQ3MWxXZ0lDL0drZ2QzNzdFNkVYOWZhcXFZSm11amtI?=
- =?utf-8?B?R3l5Sk5RdXdzRFlETXFaYlJLVlhNK3JNM0RoSG0yK3dzU1VFa3dNbk12NHNn?=
- =?utf-8?B?T0pNUWN4enJCNVZhclVhcHRrWThDR05KNUZTSGorZCt0dlAxMkxSOUpCOHIv?=
- =?utf-8?B?bllaYzgvK3ppNGJyTi8zdWpMZGJveVpsK3BZdE9pNlVtZHlSald0MzZ4VGZp?=
- =?utf-8?B?RmF2Skl0ckM5WVc0NVB1L21lWVE5aWV0TU5JVmZkVkw5WTREaEd6QTFtZnFp?=
- =?utf-8?B?VmRPOEtiV2l1Ny9udzdxTG5IU0o0V29zZmJKLy9OMkk0RFZ3L2VLMkppK3l4?=
- =?utf-8?B?RmFOc2t4Qy9aUFdnQnhRTHZpK2QvbnhUalRVdm0zSENmd2lxYlFYeUQ2YkQw?=
- =?utf-8?B?Q3BpY0M2Z1dhaExiakI1WWMxQWtHcU9VY0RlUjk3RndIY0xuTEorSUx6ejFj?=
- =?utf-8?B?OEVBakw4UEpGT0VkNGJFeWg5SjZWYTVHSXBxR0JoL0R2QmhxMEVjbGkvUjlr?=
- =?utf-8?B?U0h4SmxGZlJ6WE1NVG9iOTZGVUcxZ29YU2lpVi9VeXFuWlZLWHgwNnZFc0xM?=
- =?utf-8?B?NDc4NXVIYVh3bG92N29KY3BqZjVzelN3bklqdUdLK2s0NGl3aUdERm83Rmpy?=
- =?utf-8?B?THArN0M3RXUweWhySk9nVk9GWXYxZGNXTlg3cGlzTnBwS2dSY2RkeXh1Ritl?=
- =?utf-8?B?ZVFwSVVNa3VUOEVXeEU0NG9HWnpNcTdwTkh3L1dWelIyemxqZzJKSkx1bkJF?=
- =?utf-8?B?K0xRcnAxVEhmLzMwRGFvZ2FDSzJ2dHo2dXdVRkh2NjB4a2ttcEdQNld2OGpV?=
- =?utf-8?B?QlcwSGpzZ3ltTno0Q3c1dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWgzalJuQnRrNUk0WUJIUVJXWlpJZmNkSTlXeEx2YXNsVkpqVlFOZ3hBY0Nn?=
- =?utf-8?B?QzBPTW1mRXBVQUIxMWRnbU1Ndyt5RnQvOEJqZGlTWmlENnAyTWZFdk1hZENy?=
- =?utf-8?B?M1E5bDhVWkxCWkRSeVpQS2t1ZHZGQlJTUm5KTThaME1DQ1FoWHBaRjlrbEY3?=
- =?utf-8?B?RXk1UmViV0RoNTRnSm1pZmQ5WjRXejZHL0dBb3NxcXZJaXMvcmEzczU3TlJu?=
- =?utf-8?B?QzYrY1EwT0dIZ0pDYVJmTTNjdnJvaDBYaW53QUN4TG9jMmtyNHZ1OXVPQmhP?=
- =?utf-8?B?c0xqQ0ZEd3U5MHNoNm05UWpqL0tDV0hhVEpqYkx6WUJHYzVXVkwrVndySnhN?=
- =?utf-8?B?ODF1QUZJUHVPenVWOVNESEF2UlZCZTNNM3lmTEJVQ3Jxa2o0RTNLQzFpSjZu?=
- =?utf-8?B?Z2xhQWZUekxZN0J0T2F3a1cwa0l4ckhieklQZUNURlVqODBYTk9SNVpSa0xL?=
- =?utf-8?B?eUJvZ0FqV2E4SnVKeXNBeHFOc3NuMXFRWHEvNVZYZFhsVkZJSG1Ra2dJQ3NR?=
- =?utf-8?B?MFlHeGtXd3F3VVZNRExDZUM5OWpabU9XSjVobjVUTTQxTGJJN2dpeUdiN0lq?=
- =?utf-8?B?ekwvZk9ZdVFIaGY0NHF5N3lEamk0a1cxUVBOZVd6RG02bS9QSk51ZmN0UUNY?=
- =?utf-8?B?YWJ3Uno1QXNTRjZRNlJmQ0UzWFQ5b3VHMktjdUtvZUxKZHpSTGRXZjd3Vit5?=
- =?utf-8?B?M2ZvdXhpZ1JMSnVCWGlrMkR6WHhMbER1SDZLYUlDWjAzNFhMMUlNMFFhYk8x?=
- =?utf-8?B?aFBBMmF5ZVgxeFBUR1J3MEVzV1pnaXZReStBVXFDV2pwYlU0OUpid0o1U3J4?=
- =?utf-8?B?eFNjNzN0WUF6aGhKRjRPZlI1YmgwRlBlZ29JRmR2QktuOWFhbWVsRVJqZ1JC?=
- =?utf-8?B?L2NpbGhYKzA3YUhPcnA5aVE4TW9rbldnMG93alYvT1VEMnZXZDUrOCt4bG9k?=
- =?utf-8?B?OEI1MWlqZlFjVnJzTy9aTHBDb3czK0EzTWdDS05KYmMxdkFDMnh3S3ZrTnFL?=
- =?utf-8?B?OW1FZEhMei9OK3NWbHRVL1dZRzlhQ0VhZnl6Zm5BV0R0R1FRcUJCd3hRQkZ2?=
- =?utf-8?B?QmRIbVB4MXV0MnF4OFhLNEJ0S2o2czRnV3BsK2R0QjhwbG1aZ2c2amJBa0dE?=
- =?utf-8?B?L2I3VFhHN2JFSjFleXlCU1hjanN2T1RLdTZpOEZvbHNqSGJLZFp5L3pWR2Z5?=
- =?utf-8?B?VzI1TTFLQkVCS1pVaFVRcDBZK3ZlekQxaHFQODRBNG5RNTgyaTZpeWcvSWhl?=
- =?utf-8?B?REUxbkV1OHdDK0RWc1VqbmVuaEFwNGxSbHE0eU1jZ0hCUE5XRFo2YmFoak9U?=
- =?utf-8?B?TmE5cHNjOWpzV0NCOVlFWHNWdnJlallYNmZlSmVhTXNIR3hTdkJwYksxVGVu?=
- =?utf-8?B?cVc3bEZBcWZ5MEwybWhXNmZRYVVreEdKWGQzRlFzUmVZOVFleVVDNnJaQ2JD?=
- =?utf-8?B?bWhrbjQ4VUxia0lQZjdhTWNoOHBMTVBLZjVicy9PejR1Q3k0YWs1TkhCZzl5?=
- =?utf-8?B?bG9oejVJTDVDMUhoYnVJOWF1VTd5cUo1NExWNTZRSVZqTnNRZ0xBZlNDMkx5?=
- =?utf-8?B?R21ScXJsakwrcmwweTRST29QcXFvUXhzcUdtZDNYb3A1OVp4QXlhTlIvUjQx?=
- =?utf-8?B?RkdQQUdoKzdEUkdRcHZCTmFPb0xVazZ4NG5JV2JXY2Y4b1BCT3dWejJtc2lk?=
- =?utf-8?B?cisvTi9yam9ROGM2VzY1cVIwRHJRRGpSTmw4MlBmQ0lYbEZzeHozOWdlNEVM?=
- =?utf-8?B?c0xEWkc0SEdkTC9XbXFnaFg3U2JtMVBtVmF5NjNmUnRjTHVSdWZmN1NxT3Br?=
- =?utf-8?B?QTVGYitXMWFUWmg5S0c4cnRWZlV6UTZHSnpIcGtBM3F0RStxNUlaZU9yWk5I?=
- =?utf-8?B?UGk3VnBlT3Q1aTZHb0ZaRGwyZEgwSDdJNFU5S0R4bThUNkM1dTlZR2FjeHlD?=
- =?utf-8?B?Ukp3ZkRJdUJHNVhXdlFzUEx3cm9yLzU1enhMTWFvMGpUS3NjMUljZVdzN3p0?=
- =?utf-8?B?WHVhTGp1K3Mrb0poNlVHRWFYOU5pcE1pSmJCcUhyZDlGYmRxOGhYdWhjdHFm?=
- =?utf-8?B?dU9ZSFpDWXg2N2wxTTIzU045VzV4VXNEamQvd3hqcjhzNC9CYnd3K1pIYXph?=
- =?utf-8?Q?LiMuROgkn1W+goiJxwU6Z9GLG?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e80e7d1-900d-408e-4c19-08dd688e188d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 15:36:06.6266
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cQL6tinV9guMLy3lsY8yXHDKSxzYNR8Lp1GW/bl4Co8hOJUy3qM3zKCA8BYYNdAqOPwysGan5OMN/YazjySoQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6621
+X-Bad-Reply: References and In-Reply-To but no 'Re:' in Subject.
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
 
+--=-juy7yf7MhQovyScjrs78
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/21/2025 7:57 PM, Thomas Gleixner wrote:
-> On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
->> Add update_vector callback to set/clear ALLOWED_IRR field in
->> the APIC backing page. The ALLOWED_IRR field indicates the
->> interrupt vectors which the guest allows the hypervisor to
->> send (typically for emulated devices). Interrupt vectors used
->> exclusively by the guest itself (like IPI vectors) should not
->> be allowed to be injected into the guest for security reasons.
->> The update_vector callback is invoked from APIC vector domain
->> whenever a vector is allocated, freed or moved.
-> 
-> Your changelog tells a lot about the WHAT. Please read and follow the
-> documentation, which describes how a change log should be structured.
-> 
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
-> 
+On Tue, 2021-02-09 at 14:21 +0800, Claire Chang wrote:
+> This series implements mitigations for lack of DMA access control on
+> systems without an IOMMU, which could result in the DMA accessing the
+> system memory at unexpected times and/or unexpected addresses, possibly
+> leading to data leakage or corruption.
 
-Ok
+Replying to an ancient (2021) thread which has already been merged...
 
->> diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
->> index 72fa4bb78f0a..e0c9505e05f8 100644
->> --- a/arch/x86/kernel/apic/vector.c
->> +++ b/arch/x86/kernel/apic/vector.c
->> @@ -174,6 +174,8 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
->>  		apicd->prev_cpu = apicd->cpu;
->>  		WARN_ON_ONCE(apicd->cpu == newcpu);
->>  	} else {
->> +		if (apic->update_vector)
->> +			apic->update_vector(apicd->cpu, apicd->vector, false);
->>  		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
->>  				managed);
->>  	}
->> @@ -183,6 +185,8 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
->>  	apicd->cpu = newcpu;
->>  	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
->>  	per_cpu(vector_irq, newcpu)[newvec] = desc;
->> +	if (apic->update_vector)
->> +		apic->update_vector(apicd->cpu, apicd->vector, true);
-> 
-> A trivial
-> 
-> static inline void apic_update_vector(....)
-> {
->         if (apic->update_vector)
->            ....
-> }
-> 
-> would be too easy to read and add not enough line count, right?
-> 
+I'd like to be able to use this facility for virtio devices.
 
-Yes.
+Virtio already has a complicated relationship with the DMA API, because
+there were a bunch of early VMM bugs where the virtio devices where
+magically exempted from IOMMU protection, but the VMM lied to the guest
+and claimed they weren't.
 
->>  static void vector_assign_managed_shutdown(struct irq_data *irqd)
->> @@ -528,11 +532,15 @@ static bool vector_configure_legacy(unsigned int virq, struct irq_data *irqd,
->>  	if (irqd_is_activated(irqd)) {
->>  		trace_vector_setup(virq, true, 0);
->>  		apic_update_irq_cfg(irqd, apicd->vector, apicd->cpu);
->> +		if (apic->update_vector)
->> +			apic->update_vector(apicd->cpu, apicd->vector, true);
->>  	} else {
->>  		/* Release the vector */
->>  		apicd->can_reserve = true;
->>  		irqd_set_can_reserve(irqd);
->>  		clear_irq_vector(irqd);
->> +		if (apic->update_vector)
->> +			apic->update_vector(apicd->cpu, apicd->vector, false);
->>  		realloc = true;
-> 
-> This is as incomplete as it gets. None of the other code paths which
-> invoke clear_irq_vector() nor those which invoke free_moved_vector() are
-> mopping up the leftovers in the backing page.
-> 
-> And no, you don't sprinkle this nonsense all over the call sites. There
-> is only a very limited number of functions which are involed in setting
-> up and tearing down a vector. Doing this at the call sites is a
-> guarantee for missing out as you demonstrated.
-> 
+With the advent of confidential computing, and the VMM (or whatever's
+emulating the virtio device) not being *allowed* to arbitrarily access
+all of the guest's memory, the DMA API becomes necessary again.
 
-This is the part where I was looking for guidance. As ALLOWED_IRR (which
-tells if Hypervisor is allowed to inject a vector to guest vCPU) is per
-CPU, intent was to call it at places where vector's CPU affinity changes.
-I surely have missed cleaning up ALLOWED_IRR on previously affined CPU.
-I will follow your suggestion to do it during setup/teardown of vector (need
-to figure out those functions) and configure it for all CPUs in those
-functions.
+Either a virtual IOMMU needs to determine which guest memory the VMM
+may access, or the DMA API is wrappers around operations which
+share/unshare (or unencrypt/encrypt) the memory in question.
 
->> +#define VEC_POS(v)	((v) & (32 - 1))
->> +#define REG_POS(v)	(((v) >> 5) << 4)
-> 
-> This is unreadable, undocumented and incomprehensible garbage.
-> 
+All of which is complicated and slow, if we're looking at a minimal
+privileged hypervisor stub like pKVM which enforces the lack of guest
+memory access from VMM.
 
-I will update it.
+I'm thinking of defining a new type of virtio-pci device which cannot
+do DMA to arbitrary system memory. Instead it has an additional memory
+BAR which is used as a SWIOTLB for bounce buffering.
 
->>  static DEFINE_PER_CPU(void *, apic_backing_page);
->>  
->>  struct apic_id_node {
->> @@ -192,6 +195,22 @@ static void x2apic_savic_send_IPI_mask_allbutself(const struct cpumask *mask, in
->>  	__send_IPI_mask(mask, vector, APIC_DEST_ALLBUT);
->>  }
->>  
->> +static void x2apic_savic_update_vector(unsigned int cpu, unsigned int vector, bool set)
->> +{
->> +	void *backing_page;
->> +	unsigned long *reg;
->> +	int reg_off;
->> +
->> +	backing_page = per_cpu(apic_backing_page, cpu);
->> +	reg_off = SAVIC_ALLOWED_IRR_OFFSET + REG_POS(vector);
->> +	reg = (unsigned long *)((char *)backing_page + reg_off);
->> +
->> +	if (set)
->> +		test_and_set_bit(VEC_POS(vector), reg);
->> +	else
->> +		test_and_clear_bit(VEC_POS(vector), reg);
->> +}
-> 
-> What's the test_and_ for if you ignore the return value anyway?
->
+The driver for it would look much like the existing virtio-pci device
+except that it would register the restricted-dma region first (and thus
+the swiotlb dma_ops), and then just go through the rest of the setup
+like any other virtio device.
 
-To not set it again if it already set. I will switch to set_bit/clear_bit()
-as test_and_ is not necessary.
+That seems like it ought to be fairly simple, and seems like a
+reasonable way to allow an untrusted VMM to provide virtio devices with
+restricted DMA access.
 
- 
-> Als I have no idea what SAVIC_ALLOWED_IRR_OFFSET means. Whether it's
-> something from the datashit or a made up thing does not matter. It's
-> patently non-informative.
-> 
+While I start actually doing the typing... does anyone want to start
+yelling at me now? Christoph? mst? :)
 
-Ok, I had tried to give some details in the cover letter. These APIC
-regs are at offset APIC_IRR(n) + 4 and are used by guest to configure the
-interrupt vectors which can be injected by Hypervisor to Guest.
+--=-juy7yf7MhQovyScjrs78
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMyMTE1Mzgx
+MFowLwYJKoZIhvcNAQkEMSIEIMzvwGuFYEJKRSxHmKkMCVguzCHBQvnALBRSFyGrJ+lSMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIABPLb9Ua6E+xF
+1PrDaifxo/h6OjqZLGpZw733yaNekHxYptLTBxvHls/2AgI8UHAHHvKQZdd6ynqTN+qpeCIexM9D
+MIH4YePRqfwhrxjhFXYyyih3mjPUAxCaIYYx4jsU8D7AE/Ygt+aBhfeASwf4+rmAkQDEUNkSbhg6
+WVTbtlv86IkRo75QTEVXj4SmDKmcm9ttI466rqronnKP98XviA7id3g4Y1pOJZifQbWHAPCdmfk9
+qXJzqVdTHGkdr2a7ls5FprsYwVNWYFz1UBEJO2Na/8OV6OiCamx8TdkiLmOFPVlJVgQp7q7SgETd
+zjjO0hrnURu0NzmSAY7bsFyyYvCOSNIvm8CokF4Cw/7HGZMrPtc6IMWw4SC/qMdsP2ElOe0HBuud
+VbR5Rwi4Uym01UjlPFKgr3a/lIOHoBqWzVHjc3ofkF42mK3RPJxLH6opdzRsOs5Rf5ES/fsIrRHl
+g4Yosbn8bbqHIcL2ptkQrLz3LITDLgjj2XoZG+8n6rZOIgOTWN8+3q/gVNSRfzdG4xb+Rk17bOZT
+f5HMxL6CBKtzXFfc0q1+4sn7/8CylM6H8d1IyryNX/TJ/uaMR3U2sTi0ip+m6Ml+oeGT++3vBxoP
+YBVLthLg02Sc2fz52dRY9pYdxNHe7xOSRvtiO0q/wGsOzVPbkd8zKt4VW5T9bq8AAAAAAAA=
 
 
-> Again:
-> 
-> struct apic_page {
-> 	union {
-> 		u32	regs[NR_APIC_REGS];
-> 		u8	bytes[PAGE_SIZE];
-> 	};
-> };                
-> 
->        struct apic_page *ap = this_cpu_ptr(apic_page);
->        unsigned long *sirr;
-> 
->        /*
->         * apic_page.regs[SAVIC_ALLOWED_IRR_OFFSET...] is an array of
->         * consecutive 32-bit registers, which represents a vector bitmap.
->         */
->         sirr = (unsigned long *) &ap->regs[SAVIC_ALLOWED_IRR_OFFSET];
->         if (set)
->         	set_bit(sirr, vector);
->         else
->         	clear_bit(sirr, vector);
-> 
-> See how code suddenly becomes self explaining, obvious and
-> comprehensible?
-> 
-
-Yes, thank you!
-
-- Neeraj
-
-> Thanks,
-> 
->         tglx
-
+--=-juy7yf7MhQovyScjrs78--
 
