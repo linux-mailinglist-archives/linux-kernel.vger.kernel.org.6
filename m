@@ -1,541 +1,163 @@
-Return-Path: <linux-kernel+bounces-571172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CF8A6B9FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B308AA6B9FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC621893A71
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110001893771
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1E7227EB6;
-	Fri, 21 Mar 2025 11:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4DF22371B;
+	Fri, 21 Mar 2025 11:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZBH+OwSa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zyix/Twz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5E1226CEE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D043A2236E9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742557047; cv=none; b=lgz3KLAkJ2XkpTxJwBr3M1gE8+sIyVk69jxd39pLHrVbCLUkvYQytRu5nOg/KZcUhopOLqkdx8sSbShEQpDrLlBx3iE0umWHTZ2llhn3b1QsSRgq7RDpi6Gpf6MTyeFGTSq1hGclnePgRaFkZxcJw5I9RxzLwqu4lUqYbB/TVV0=
+	t=1742557101; cv=none; b=aGVYgwlLae4cQx+s6nQgMo6QyzSoIy/EvCiFmmTlOFyy2O8N/axhoxmDNsiWpQB+afbCiwEzye32X9Aocs5RK8H9Kekz/8E2skiu64PEO6xi6f7Pygyzmc4fbSFdYF8E/44H7CAmeEHD98E8GpcMYPoXlxHwpM9PO5e0/xyi+dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742557047; c=relaxed/simple;
-	bh=+8Vl4PNSwXiJI+gdFhFYs/aXgmf6RY6AKWNZGyV48ig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gTTZe6RJCVqDmDHsAI0n62P1bVIuvZ3N7mRWLQliZp8ELbtRwdc+8Bvs+2xbFfvam67sBTD/Wg4UR2tu0qY/whCOjIeYU8JDYQQc+3ztPNpb8JvBN44qVI7ILzkGtyRdCXD8h1agRxgXZP/bsFStQRYryTlWJEEAnjot5+MJzJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZBH+OwSa; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1742557101; c=relaxed/simple;
+	bh=7RyCmasSsEfxACG5VwHAY4+UkBtXil0L7+AhGUqIQPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i6dbtyUAaN/zm+1Mq5/DY30/YEWxAOQh9Ng13Bd1+82f4FM6EJXSdePeBycNjCJ8fv3BcWcdvaLU2Ie74fWwFdX9r2mPloJ3uF5mH20P/N8HbAPnmoGH+4kngjzrOyPzM62xOCVG4l0FsOkoa+/6Jo3LxM8LzjMDIPGQ7zTreNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zyix/Twz; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742557044;
+	s=mimecast20190719; t=1742557099;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rJdKl7eMVXp/E0C5Su96l6r1ubOFuz+HPNb8MwX5DOc=;
-	b=ZBH+OwSaQzuKxraGePuS8zTWqTXMkY5ijI23GOSyldDj8UtjlYzwXC+RSYPj8MU7B9yiuW
-	4Mvb6XJgWBqJfMwI50gi9A2n2Gzr7J7GEkeAOkB74Bh9JZyt3hUjPdwXRc/73g2BMs47lk
-	iWCLLvT7WUrpOuWdA/11xNptKW1tXpM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=wt+BFS9gqKRMofPgohFZmNx1aIY6jgeF2NC1PQqZP6c=;
+	b=Zyix/Twzc0fbVG8+qqtXaEMV3LGBtQjH5OysR9SMhwgApPUxLSltEZ/hmAzJshxsGpuxAM
+	s5K1+xj0cznppAjGpqEixwhI+kXcTFYHS3XldxCOb5mkBERtWJAzMRaWGvFvvZSI8JbUEs
+	KubTdA09S3udAxJjKY6GdxTABfsyRS0=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-VwJzulTuOP22MvtqDsGClw-1; Fri, 21 Mar 2025 07:37:23 -0400
-X-MC-Unique: VwJzulTuOP22MvtqDsGClw-1
-X-Mimecast-MFC-AGG-ID: VwJzulTuOP22MvtqDsGClw_1742557042
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3912aab7a36so728714f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:37:23 -0700 (PDT)
+ us-mta-513-Plk2af8bNEyu0HlezW-Evg-1; Fri, 21 Mar 2025 07:38:17 -0400
+X-MC-Unique: Plk2af8bNEyu0HlezW-Evg-1
+X-Mimecast-MFC-AGG-ID: Plk2af8bNEyu0HlezW-Evg_1742557097
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e572df6db3eso2522150276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:38:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742557042; x=1743161842;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742557097; x=1743161897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rJdKl7eMVXp/E0C5Su96l6r1ubOFuz+HPNb8MwX5DOc=;
-        b=dRW35U1yptJmEqzTNQ3UnJmUwMMu1oBs9oYsl4g0BibEkZ58w4khal1FfURe2c0fRb
-         y6rgh8hPhNgoXgi0tzioev0cOIDV/xmfy4L7cjeUc3hRV/FuouNH+kXePyZQA60ivgVu
-         hZtbgtovFoIlib+IDHpeplm5kew9Piq24X9OG3+0bwt2OBt6mfNZ05esxme+GLkI+GMG
-         pM739bRzFysqmTiGVlPcKYWMCgJAEk62YjFjsrgVtsb1PKnrPoSLJUQVyWaTZ/snG0RG
-         EKG21w0Wupanfd9iV2p1SWGSAfm8QhOAJkwCmAS7W+0LaUAumvuOQzSRG/hMMGVa4inr
-         g5MQ==
-X-Gm-Message-State: AOJu0YzFD1qajgPmS38djltK31J5Misu7VdnjdNbDElugEFjh/mYRsh0
-	kCOY8n3dQkFTOC/pHCWJlL0uxLzwZvDamcm07GQQjzaminklDCRLimLL1QP75Sid8sbFT+zZXtu
-	rsGDCdaGlEo4aNpgVAkgvHz37gL0GLDN+eRU8TItnHWBUpWluLr4J1ScPib23c091DIf2sqFBjt
-	42vo2I1kaYXV/lNi14K+k2yXP7HK10OQ8uCDd5EwL5kNRl
-X-Gm-Gg: ASbGncu7sfnTr4BJLoLjVertTmtNzEvtK/Bq+bckPoUx4UjczAnPjdDSBDvq7Nioc75
-	WMtYZOuVPQHp5zbgLreyjsZ2uyu8TXSEOryzxmXVGFO+ZfUvtFSTubyv1DvRjDxQdbxJSZVzUoi
-	wHgzXeSZr0v7Ceqxn5R60R4ioIYckfrbDuzZgfn70q3pM3aNpfsvf5Uhm/ATpYcGw1s2Q1rGwHn
-	Jc7jXkvWl2jVOsBW9zmcY+WNh7ODk2uJIS75QahLAMqqGSftpd0DW7TnwtVDHdQH7aa0wgy7Mxw
-	Ti98tweT4Xz7Nn6NkyWjczSd9+jpANauWOmPVJsx87rZhI9G2q0UJfojQmK/bmd1pZX1tgJuDcO
-	g
-X-Received: by 2002:a5d:6d08:0:b0:391:3261:ff48 with SMTP id ffacd0b85a97d-3997f92d06dmr3398994f8f.35.1742557041758;
-        Fri, 21 Mar 2025 04:37:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8Axp06fh0N+BXwj2bhaZ4JLVC+fk8FODg2R4HEdpHhstbeEn/gKETuIO/dmFqvvCgQmToHQ==
-X-Received: by 2002:a5d:6d08:0:b0:391:3261:ff48 with SMTP id ffacd0b85a97d-3997f92d06dmr3398923f8f.35.1742557041089;
-        Fri, 21 Mar 2025 04:37:21 -0700 (PDT)
-Received: from localhost (p200300cbc72a910023d23800cdcc90f0.dip0.t-ipconnect.de. [2003:cb:c72a:9100:23d2:3800:cdcc:90f0])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f99561dsm2182430f8f.12.2025.03.21.04.37.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 04:37:20 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Tong Tiangen <tongtiangen@huawei.com>
-Subject: [PATCH v3 3/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
-Date: Fri, 21 Mar 2025 12:37:13 +0100
-Message-ID: <20250321113713.204682-4-david@redhat.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250321113713.204682-1-david@redhat.com>
-References: <20250321113713.204682-1-david@redhat.com>
+        bh=wt+BFS9gqKRMofPgohFZmNx1aIY6jgeF2NC1PQqZP6c=;
+        b=O/tJfpQkTeQ2nHKGadPHHUqwW6SY00drOwKW8lHBIL3xFTS78qAZyZdjCX2GYFd6+Z
+         TF03vRBxlTH7KX4BabLNmNax8amcZ6GfEwuitPA+g3CrzwxZZGrlww0rLm87I3O9Md/f
+         7PzFrDY+cUaLeQrxExyL6EdOrjyujgO7+eDLGtVd0Z4S+S77WW4QJEu0ZsZjcc0iiY9k
+         S2vXA1zw7dZmhc9OBRRBrpJCpQBpJuUUyu7zzeDjW6EmWdABkWmPfiy7OVkNDmpNn/sn
+         hWcLUhACR5UElc9ingWVSya3PX7NM86ChMjHWvWlfFpwKl6vwYEbLm76YNZt3vkWARVM
+         jzTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKiWCzQJlbsGCA9YGxYTQ8lxM5LjDJNzCLjwYTk/0GM5nt4CHVi5cq2uGMAsaV4wtx00DOBhGrRsrbES8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEj4mvHQ3fxtTZUyGzwv7TuDWvZr2AoXHJAnZ7VARCzwn8y3E+
+	wxovUW+pSoVRbDMKUG5DBpoJLT2y/eJHsP321ShT+S1NnD2b3cJv8JwXLZP8zAPpeHSGO/03lX2
+	YFGCunBZyADVhXmu3SBJE+MsILpAY6ACp2th3PypxIZlDe0YP3W0PGpzdzZ0Tv9omg0Wo6BY30B
+	Y1osHXbOk6lEFdbei2MAXAEkk6Wxa44ljhwtui
+X-Gm-Gg: ASbGnctSKRy/yx+pXWduRzDqmv5y0ZIbVnK5f6YKP6b4zAGgLFhtHLuIUe2depOIDTp
+	mQvvWk0faVq5nvFBuR37er/JY5F9PfJP3d7o95M5NCw8X7brKURZYkcH+y+Z2JkVmasvxiYSckS
+	hbEWzIsirTo7k=
+X-Received: by 2002:a05:6902:2013:b0:e3c:9fb5:837a with SMTP id 3f1490d57ef6-e66a4fcae48mr3166461276.41.1742557096934;
+        Fri, 21 Mar 2025 04:38:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFG6ZiAbkH7cFfSc8gVNrbKtRo6NKlFgdvH5Ol4kuCTC3rTj0valzGa4Wsrdj/QIGQSqGGUHuir5bsGwTvBtKM=
+X-Received: by 2002:a05:6902:2013:b0:e3c:9fb5:837a with SMTP id
+ 3f1490d57ef6-e66a4fcae48mr3166428276.41.1742557096515; Fri, 21 Mar 2025
+ 04:38:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250319230539.140869-1-npache@redhat.com> <618b8578-1897-45e4-83eb-b725102ab27d@sirena.org.uk>
+ <CAA1CXcD4dOUWOXp0ODSEo4+g9_QQkJe1tmX3bVdcs3N_PPdSHQ@mail.gmail.com> <a0fdd818-a4be-446e-b18e-0c655bc94c9a@sirena.org.uk>
+In-Reply-To: <a0fdd818-a4be-446e-b18e-0c655bc94c9a@sirena.org.uk>
+From: Nico Pache <npache@redhat.com>
+Date: Fri, 21 Mar 2025 05:37:50 -0600
+X-Gm-Features: AQ5f1JpD38GF9Tuch-Icv4bAHf1Dxvy4GK2x83iHqPk_98ExGn4SB-B1ZnKh-SU
+Message-ID: <CAA1CXcDPg7Na9biCMOx4i_xwXZ5Y_qq-7SiYEU82v2a6TFpMJA@mail.gmail.com>
+Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling it
+To: Mark Brown <broonie@kernel.org>
+Cc: rf@opensource.cirrus.com, patches@opensource.cirrus.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, simont@opensource.cirrus.com, 
+	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev, davidgow@google.com, 
+	rmoar@google.com, johannes.berg@intel.com, sj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-uprobe_write_opcode() does some pretty low-level things that really, it
-shouldn't be doing: for example, manually breaking COW by allocating
-anonymous folios and replacing mapped pages.
+On Thu, Mar 20, 2025 at 4:49=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Thu, Mar 20, 2025 at 04:21:16PM -0600, Nico Pache wrote:
+> > On Thu, Mar 20, 2025 at 1:14=E2=80=AFPM Mark Brown <broonie@kernel.org>=
+ wrote:
+> > > On Wed, Mar 19, 2025 at 05:05:39PM -0600, Nico Pache wrote:
+>
+> > > >  config FW_CS_DSP_KUNIT_TEST
+> > > >       tristate "KUnit tests for Cirrus Logic cs_dsp" if !KUNIT_ALL_=
+TESTS
+> > > > -     depends on KUNIT && REGMAP
+> > > > +     depends on KUNIT && REGMAP && FW_CS_DSP
+> > > >       default KUNIT_ALL_TESTS
+> > > > -     select FW_CS_DSP
+>
+> > > This makes no sense to me, the select statement is forcing on the cod=
+e
+> > > it's testing which is a library and so is selected by it's users, thi=
+s
+>
+> > Similarly to eb5c79828cfa ("firmware: cs_dsp: FW_CS_DSP_KUNIT_TEST
+> > should not select REGMAP"), We shouldnt force a feature on when using
+> > KUNIT_ALL_TESTS.
+>
+> This feature is not user selectable, at an absolute minimum you would
+> need to make the library available in KUnit test builds.
+>
+> > > change will just stop the tests being run unless someone does the dan=
+ce
+> > > to enable a driver which relies on the library.  That is something th=
+at
+>
+> > My config also sets the UML wrapper to enable this FW_CS_DSP config so
+> > it will continue to work in that environment.
+>
+> Simply adding it to the all_tests.config will just result in it getting
+> turned off by Kconfig during the build since it's not a visible option
+> so that's not accomplishing anything.  all_tests.config is not UML
+> specific, it's for enabling all the KUnit tests that could run in UML no
+> matter how you're running them.
+>
+> > > seems unlikely to change the outcome of the tests when run from KUnit
+> > > which is independent of any hardware.
+>
+> > KUNIT is supported outside the UML environment, and some distros (like
+> > fedora, and downstream flavors), use KUNIT as modules, with
+> > KUNIT_ALL_TESTS=3Dm. We only want the tests that are supported by our
+> > config to be available, we dont want KUNIT going and enabling other
+> > features so the test works.
+>
+> The point is not that KUnit is frequently run in UML (personally I
+> mostly run it with emulated hardware instead) but rather that this is a
+> library which can be tested independently of having a relevant DSP.
 
-Further, it does seem to do some shaky things: for example, writing to
-possible COW-shared anonymous pages or zapping anonymous pages that might
-be pinned. We're also not taking care of uffd, uffd-wp, softdirty ...
-although rather corner cases here. Let's just get it right like ordinary
-ptrace writes would.
+Ok, thank you for the carifying message!
 
-Let's rewrite the code, leaving COW-breaking to core-MM, triggered by
-FOLL_FORCE|FOLL_WRITE (note that the code was already using FOLL_FORCE).
+So would the correct approach be allowing users to select FW_CS_DSP,
+then apply these changes?
 
-We'll use GUP to lookup/faultin the page and break COW if required. Then,
-we'll walk the page tables using a folio_walk to perform our page
-modification atomically by temporarily unmap the PTE + flushing the TLB.
-
-Likely, we could avoid the temporary unmap in case we can just
-atomically write the instruction, but that will be a separate project.
-
-Unfortunately, we still have to implement the zapping logic manually,
-because we only want to zap in specific circumstances (e.g., page
-content identical).
-
-Note that we can now handle large folios (compound pages) and the shared
-zeropage just fine, so drop these checks.
-
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- kernel/events/uprobes.c | 312 ++++++++++++++++++++--------------------
- 1 file changed, 158 insertions(+), 154 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index ac17c16f65d63..f098e8a4f24ee 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -29,6 +29,7 @@
- #include <linux/workqueue.h>
- #include <linux/srcu.h>
- #include <linux/oom.h>          /* check_stable_address_space */
-+#include <linux/pagewalk.h>
- 
- #include <linux/uprobes.h>
- 
-@@ -151,91 +152,6 @@ static loff_t vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
- 	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
- }
- 
--/**
-- * __replace_page - replace page in vma by new page.
-- * based on replace_page in mm/ksm.c
-- *
-- * @vma:      vma that holds the pte pointing to page
-- * @addr:     address the old @page is mapped at
-- * @old_page: the page we are replacing by new_page
-- * @new_page: the modified page we replace page by
-- *
-- * If @new_page is NULL, only unmap @old_page.
-- *
-- * Returns 0 on success, negative error code otherwise.
-- */
--static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
--				struct page *old_page, struct page *new_page)
--{
--	struct folio *old_folio = page_folio(old_page);
--	struct folio *new_folio;
--	struct mm_struct *mm = vma->vm_mm;
--	DEFINE_FOLIO_VMA_WALK(pvmw, old_folio, vma, addr, 0);
--	int err;
--	struct mmu_notifier_range range;
--	pte_t pte;
--
--	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, addr,
--				addr + PAGE_SIZE);
--
--	if (new_page) {
--		new_folio = page_folio(new_page);
--		err = mem_cgroup_charge(new_folio, vma->vm_mm, GFP_KERNEL);
--		if (err)
--			return err;
--	}
--
--	/* For folio_free_swap() below */
--	folio_lock(old_folio);
--
--	mmu_notifier_invalidate_range_start(&range);
--	err = -EAGAIN;
--	if (!page_vma_mapped_walk(&pvmw))
--		goto unlock;
--	VM_BUG_ON_PAGE(addr != pvmw.address, old_page);
--	pte = ptep_get(pvmw.pte);
--
--	/*
--	 * Handle PFN swap PTES, such as device-exclusive ones, that actually
--	 * map pages: simply trigger GUP again to fix it up.
--	 */
--	if (unlikely(!pte_present(pte))) {
--		page_vma_mapped_walk_done(&pvmw);
--		goto unlock;
--	}
--
--	if (new_page) {
--		folio_get(new_folio);
--		folio_add_new_anon_rmap(new_folio, vma, addr, RMAP_EXCLUSIVE);
--		folio_add_lru_vma(new_folio, vma);
--	} else
--		/* no new page, just dec_mm_counter for old_page */
--		dec_mm_counter(mm, MM_ANONPAGES);
--
--	if (!folio_test_anon(old_folio)) {
--		dec_mm_counter(mm, mm_counter_file(old_folio));
--		inc_mm_counter(mm, MM_ANONPAGES);
--	}
--
--	flush_cache_page(vma, addr, pte_pfn(pte));
--	ptep_clear_flush(vma, addr, pvmw.pte);
--	if (new_page)
--		set_pte_at(mm, addr, pvmw.pte,
--			   mk_pte(new_page, vma->vm_page_prot));
--
--	folio_remove_rmap_pte(old_folio, old_page, vma);
--	if (!folio_mapped(old_folio))
--		folio_free_swap(old_folio);
--	page_vma_mapped_walk_done(&pvmw);
--	folio_put(old_folio);
--
--	err = 0;
-- unlock:
--	mmu_notifier_invalidate_range_end(&range);
--	folio_unlock(old_folio);
--	return err;
--}
--
- /**
-  * is_swbp_insn - check if instruction is breakpoint instruction.
-  * @insn: instruction to be checked.
-@@ -463,6 +379,95 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
- 	return ret;
- }
- 
-+static bool orig_page_is_identical(struct vm_area_struct *vma,
-+		unsigned long vaddr, struct page *page, bool *pmd_mappable)
-+{
-+	const pgoff_t index = vaddr_to_offset(vma, vaddr) >> PAGE_SHIFT;
-+	struct folio *orig_folio = filemap_get_folio(vma->vm_file->f_mapping,
-+						    index);
-+	struct page *orig_page;
-+	bool identical;
-+
-+	if (IS_ERR(orig_folio))
-+		return false;
-+	orig_page = folio_file_page(orig_folio, index);
-+
-+	*pmd_mappable = folio_test_pmd_mappable(orig_folio);
-+	identical = folio_test_uptodate(orig_folio) &&
-+		    pages_identical(page, orig_page);
-+	folio_put(orig_folio);
-+	return identical;
-+}
-+
-+static int __uprobe_write_opcode(struct vm_area_struct *vma,
-+		struct folio_walk *fw, struct folio *folio,
-+		unsigned long opcode_vaddr, uprobe_opcode_t opcode)
-+{
-+	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
-+	const bool is_register = !!is_swbp_insn(&opcode);
-+	bool pmd_mappable;
-+
-+	/* For now, we'll only handle PTE-mapped folios. */
-+	if (fw->level != FW_LEVEL_PTE)
-+		return -EFAULT;
-+
-+	/*
-+	 * See can_follow_write_pte(): we'd actually prefer a writable PTE here,
-+	 * but the VMA might not be writable.
-+	 */
-+	if (!pte_write(fw->pte)) {
-+		if (!PageAnonExclusive(fw->page))
-+			return -EFAULT;
-+		if (unlikely(userfaultfd_pte_wp(vma, fw->pte)))
-+			return -EFAULT;
-+		/* SOFTDIRTY is handled via pte_mkdirty() below. */
-+	}
-+
-+	/*
-+	 * We'll temporarily unmap the page and flush the TLB, such that we can
-+	 * modify the page atomically.
-+	 */
-+	flush_cache_page(vma, vaddr, pte_pfn(fw->pte));
-+	fw->pte = ptep_clear_flush(vma, vaddr, fw->ptep);
-+	copy_to_page(fw->page, opcode_vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
-+
-+	/*
-+	 * When unregistering, we may only zap a PTE if uffd is disabled and
-+	 * there are no unexpected folio references ...
-+	 */
-+	if (is_register || userfaultfd_missing(vma) ||
-+	    (folio_ref_count(folio) != folio_mapcount(folio) + 1 +
-+	     folio_test_swapcache(folio) * folio_nr_pages(folio)))
-+		goto remap;
-+
-+	/*
-+	 * ... and the mapped page is identical to the original page that
-+	 * would get faulted in on next access.
-+	 */
-+	if (!orig_page_is_identical(vma, vaddr, fw->page, &pmd_mappable))
-+		goto remap;
-+
-+	dec_mm_counter(vma->vm_mm, MM_ANONPAGES);
-+	folio_remove_rmap_pte(folio, fw->page, vma);
-+	if (!folio_mapped(folio) && folio_test_swapcache(folio) &&
-+	     folio_trylock(folio)) {
-+		folio_free_swap(folio);
-+		folio_unlock(folio);
-+	}
-+	folio_put(folio);
-+
-+	return pmd_mappable;
-+remap:
-+	/*
-+	 * Make sure that our copy_to_page() changes become visible before the
-+	 * set_pte_at() write.
-+	 */
-+	smp_wmb();
-+	/* We modified the page. Make sure to mark the PTE dirty. */
-+	set_pte_at(vma->vm_mm, vaddr, fw->ptep, pte_mkdirty(fw->pte));
-+	return 0;
-+}
-+
- /*
-  * NOTE:
-  * Expect the breakpoint instruction to be the smallest size instruction for
-@@ -475,116 +480,115 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
-  * uprobe_write_opcode - write the opcode at a given virtual address.
-  * @auprobe: arch specific probepoint information.
-  * @vma: the probed virtual memory area.
-- * @vaddr: the virtual address to store the opcode.
-- * @opcode: opcode to be written at @vaddr.
-+ * @opcode_vaddr: the virtual address to store the opcode.
-+ * @opcode: opcode to be written at @opcode_vaddr.
-  *
-  * Called with mm->mmap_lock held for read or write.
-  * Return 0 (success) or a negative errno.
-  */
- int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
--		unsigned long vaddr, uprobe_opcode_t opcode)
-+		const unsigned long opcode_vaddr, uprobe_opcode_t opcode)
- {
-+	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
- 	struct mm_struct *mm = vma->vm_mm;
- 	struct uprobe *uprobe;
--	struct page *old_page, *new_page;
- 	int ret, is_register, ref_ctr_updated = 0;
--	bool orig_page_huge = false;
- 	unsigned int gup_flags = FOLL_FORCE;
-+	struct mmu_notifier_range range;
-+	struct folio_walk fw;
-+	struct folio *folio;
-+	struct page *page;
- 
- 	is_register = is_swbp_insn(&opcode);
- 	uprobe = container_of(auprobe, struct uprobe, arch);
- 
--retry:
-+	if (WARN_ON_ONCE(!is_cow_mapping(vma->vm_flags)))
-+		return -EINVAL;
-+
-+	/*
-+	 * When registering, we have to break COW to get an exclusive anonymous
-+	 * page that we can safely modify. Use FOLL_WRITE to trigger a write
-+	 * fault if required. When unregistering, we might be lucky and the
-+	 * anon page is already gone. So defer write faults until really
-+	 * required. Use FOLL_SPLIT_PMD, because __uprobe_write_opcode()
-+	 * cannot deal with PMDs yet.
-+	 */
- 	if (is_register)
--		gup_flags |= FOLL_SPLIT_PMD;
--	/* Read the page with vaddr into memory */
--	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags, &old_page, NULL);
--	if (ret != 1)
--		return ret;
-+		gup_flags |= FOLL_WRITE | FOLL_SPLIT_PMD;
- 
--	ret = verify_opcode(old_page, vaddr, &opcode);
-+retry:
-+	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags, &page, NULL);
- 	if (ret <= 0)
--		goto put_old;
--
--	if (is_zero_page(old_page)) {
--		ret = -EINVAL;
--		goto put_old;
--	}
-+		goto out;
-+	folio = page_folio(page);
- 
--	if (WARN(!is_register && PageCompound(old_page),
--		 "uprobe unregister should never work on compound page\n")) {
--		ret = -EINVAL;
--		goto put_old;
-+	ret = verify_opcode(page, opcode_vaddr, &opcode);
-+	if (ret <= 0) {
-+		folio_put(folio);
-+		goto out;
- 	}
- 
- 	/* We are going to replace instruction, update ref_ctr. */
- 	if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
- 		ret = update_ref_ctr(uprobe, mm, is_register ? 1 : -1);
--		if (ret)
--			goto put_old;
-+		if (ret) {
-+			folio_put(folio);
-+			goto out;
-+		}
- 
- 		ref_ctr_updated = 1;
- 	}
- 
- 	ret = 0;
--	if (!is_register && !PageAnon(old_page))
--		goto put_old;
--
--	ret = anon_vma_prepare(vma);
--	if (ret)
--		goto put_old;
--
--	ret = -ENOMEM;
--	new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma, vaddr);
--	if (!new_page)
--		goto put_old;
--
--	__SetPageUptodate(new_page);
--	copy_highpage(new_page, old_page);
--	copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
-+	if (unlikely(!folio_test_anon(folio))) {
-+		VM_WARN_ON_ONCE(is_register);
-+		folio_put(folio);
-+		goto out;
-+	}
- 
- 	if (!is_register) {
--		struct page *orig_page;
--		pgoff_t index;
--
--		VM_BUG_ON_PAGE(!PageAnon(old_page), old_page);
--
--		index = vaddr_to_offset(vma, vaddr & PAGE_MASK) >> PAGE_SHIFT;
--		orig_page = find_get_page(vma->vm_file->f_inode->i_mapping,
--					  index);
--
--		if (orig_page) {
--			if (PageUptodate(orig_page) &&
--			    pages_identical(new_page, orig_page)) {
--				/* let go new_page */
--				put_page(new_page);
--				new_page = NULL;
--
--				if (PageCompound(orig_page))
--					orig_page_huge = true;
--			}
--			put_page(orig_page);
--		}
-+		/*
-+		 * In the common case, we'll be able to zap the page when
-+		 * unregistering. So trigger MMU notifiers now, as we won't
-+		 * be able to do it under PTL.
-+		 */
-+		mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm,
-+					vaddr, vaddr + PAGE_SIZE);
-+		mmu_notifier_invalidate_range_start(&range);
-+	}
-+
-+	ret = -EAGAIN;
-+	/* Walk the page tables again, to perform the actual update. */
-+	if (folio_walk_start(&fw, vma, vaddr, 0)) {
-+		if (fw.page == page)
-+			ret = __uprobe_write_opcode(vma, &fw, folio, opcode_vaddr, opcode);
-+		folio_walk_end(&fw, vma);
- 	}
- 
--	ret = __replace_page(vma, vaddr & PAGE_MASK, old_page, new_page);
--	if (new_page)
--		put_page(new_page);
--put_old:
--	put_page(old_page);
-+	if (!is_register)
-+		mmu_notifier_invalidate_range_end(&range);
- 
--	if (unlikely(ret == -EAGAIN))
-+	folio_put(folio);
-+	switch (ret) {
-+	case -EFAULT:
-+		gup_flags |= FOLL_WRITE | FOLL_SPLIT_PMD;
-+		fallthrough;
-+	case -EAGAIN:
- 		goto retry;
-+	default:
-+		break;
-+	}
- 
-+out:
- 	/* Revert back reference counter if instruction update failed. */
--	if (ret && is_register && ref_ctr_updated)
-+	if (ret < 0 && is_register && ref_ctr_updated)
- 		update_ref_ctr(uprobe, mm, -1);
- 
- 	/* try collapse pmd for compound page */
--	if (!ret && orig_page_huge)
-+	if (ret > 0)
- 		collapse_pte_mapped_thp(mm, vaddr, false);
- 
--	return ret;
-+	return ret < 0 ? ret : 0;
- }
- 
- /**
--- 
-2.48.1
+It also looks like FW_CS_DSP_KUNIT_TEST_UTILS and FW_CS_DSP_KUNIT_TEST
+are redundant.
 
 
