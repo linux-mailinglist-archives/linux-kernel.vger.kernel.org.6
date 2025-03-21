@@ -1,169 +1,226 @@
-Return-Path: <linux-kernel+bounces-571893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608C5A6C3F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:11:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D9EA6C3FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C949467CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB1F18936F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0722FE1F;
-	Fri, 21 Mar 2025 20:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6522722FF37;
+	Fri, 21 Mar 2025 20:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEhrZuKf"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1571E7C0B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nvSStd5E"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDD51E7C0B;
+	Fri, 21 Mar 2025 20:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742587856; cv=none; b=EfQsMUZlfmhfi+6BImZHzF0EtB66MQ+8pJ/GI/VL3FLOLHHkAChMDik6YemrlNGTuW57YJ+2kHBA5wwcNtyatQhZYyTEVeLzXMGshdVpNbvt0plvxtlBmqjruaAGPunO4I1DDMJtRaX0JYWgCMXMJ1Ksh3MiSwAjWUWEv0vX4tw=
+	t=1742587890; cv=none; b=ctNwEECC6f6ZkxPUvgBk+qwCEs06U6UCvpdPHGIl/Qkc0olXNQIyTqs5MsD8pqp7EUaOX1yQ5Bko6T6vJULWJvgAi4ykB1vpnzfdHEbUqwvulkwvJMe+EhFt3dl8mmjcTLklMGzim1E6lIFr/j1Dkp/QF2EGniXCW58SgoOc8pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742587856; c=relaxed/simple;
-	bh=oBFmbXLTCOlolb4HJN8KpRNx8Ol2RR9NblxDlUHFW9A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LtVrWPath0ev6Zfs0IfPz5eKuGyeCg4Q4sZDWazrmDaoD4LXo0sfPPqk2ASBHxzfZ1yv7Gz3ndVq/HhX1GajjlP29tnqA0NeKMz9HxjxAtTwWXpTC5YwWqQcxDcgJkWoCgTuZbbElYMOP0TSkZXtquqoiXvZueXMPM2kiLL1iFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEhrZuKf; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso4172686a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742587853; x=1743192653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IIXEPjm+bWQMQJYnXAQ9zjO/eTYMnsh8kj9KsEqXiMk=;
-        b=fEhrZuKf8p32T+fyUdJ+/tFFLedGM6VKnkmpCk4mxQd+n/+WxqTdFsUGwaA/cDV7wK
-         ZgT9buJKKPOa4Bk4/CrXhMbP+wk1hvahKUmJVEZ9B0JXbrXAcQGvCmREkwfWPZ+AUcoC
-         nlIG0zrccW1BEAmwkRRRFd6i2Qu/dxhvp7eYGjvSr7gMk5FxltGB+KnMPw6L+Srdaemv
-         uB3TF/E8PfoUOxesRVpErd2ruiUNGFGHJHJ1zRU1bWnrz+fAVOkjXzWLzZWWALsIEO5V
-         j2liSZJIlt8wDviKUMoPbvWhW7pN+wvBXh6YEL/weLGKXq9EEDz3S+ZCIMaNYpn3+S7g
-         1PKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742587853; x=1743192653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IIXEPjm+bWQMQJYnXAQ9zjO/eTYMnsh8kj9KsEqXiMk=;
-        b=cHo0Uk1C1VWpLqnJNm+qONWOjJAd5yNezIbZRieIdXMDQhv3gGGTn8qJl7OLd/nvf3
-         neWK4DNxltxLcB/MJ5BHwlKXWd4L82j2s3/c8HHWxuh2Z4pWf6ZUKy1BvVJcF32u9+KY
-         EbUJ2Mfiz/fHxKPDbqiOd5//P9rdiQS3WZV7/Ig7hUctUuREStD/a0sGA3JxOXSpi2vM
-         +JKKIciCE4reHHaXEFjrN8/DrqrxhATr2yrhR5aLO/xkfMIvmK9ULdWeIz1R2CL5ko/5
-         nVgnEtg6sON6T6g1K7URGzdmJPmKDEQ79i91BQukQBKHK4gb17gH3WYz/Sf7FaOojZWH
-         Gejg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHtHb/3icbAXUuiE3wTIbSpb0SopJqKNByNmdPRZ6vpmYeNG5xbkTbmIHgAJ6XkULNkxJuDSrJ41PqId0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMVZATR2ilT7GcTiXdhcxarockyZq3H8sy4G3L/Stj7OhchWmf
-	UeBcpWh8pfylu2VOXWIqsYbXZwyZ/H4RRW315fZpmCCU+eftKLJOwDig4Pt0cU4M6xcJHOCcqvG
-	mEzDW8gQIx34WHIZFnc1jUBK6QHk=
-X-Gm-Gg: ASbGncs+N/+rk/nPaSrxDrVOfARuTtyTnIr/No7SerMxs3dcRm7zjvPrl9uZPkmdibe
-	H2PpCiwQMtt0O8eLic1Q1AyPUKM91PDtJSmzoGECIflhkb3fur2eU1RHFBckeSSjlK85ZgR41hH
-	Njh7aJLXVDtAHbHYwdits+PFuOTQ==
-X-Google-Smtp-Source: AGHT+IH30x1YkLwjN2HebhAwoyQ5GpENDgh5sMfBLXNJzGCiHLIlXgrbOS+6f2Q2h3VuJKHwht93h61HlX8RX21MmIY=
-X-Received: by 2002:a17:907:7292:b0:ac2:88df:6a5b with SMTP id
- a640c23a62f3a-ac3f251ba1emr468617766b.42.1742587852719; Fri, 21 Mar 2025
- 13:10:52 -0700 (PDT)
+	s=arc-20240116; t=1742587890; c=relaxed/simple;
+	bh=xsq4fMA9KErOYHpGLUUJOLylW+Xto3AugMKGT4drrrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hv1spOftKL4jFrnviB17lFMMxqKpD5utbYrs9bkfex/bMmKAiZrec0oS2fdJ8orAhST1/ahQF6+3rMwBFwSWqL9s8TtE1uiwTpLb025b7lK5E9HvFytk6YnYRLcr/QSVT0fBI8xaK6V6kiiC6G7VJyPMkSriMENBpVKZfsxtau4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nvSStd5E; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 353462025389;
+	Fri, 21 Mar 2025 13:11:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 353462025389
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742587888;
+	bh=ITpL14RmT7jWiNjR2GtSe0m1zpsnePBZKTOpKhGLiCU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nvSStd5EIPUCS1lGHYZ0GWov/8+OkkDrMUoX+9aDmf6yrWik1ywMI7mldvkqbHeqH
+	 BD+PFvVYsttpY06YF2fI0tZLy2OPKopSoMrBwtFLAqFMr9glMVJxlbaaSnhB4EMn7B
+	 Zxb+lEKFL/oz3QDhZbbZ02k7poz0h5+SF7i/ukzo=
+Message-ID: <bae5bb62-d480-46fd-837c-9267c0a30fae@linux.microsoft.com>
+Date: Fri, 21 Mar 2025 13:11:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320190514.1961144-1-mjguzik@gmail.com> <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
- <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
- <CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com> <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 21 Mar 2025 21:10:39 +0100
-X-Gm-Features: AQ5f1JqHE84S56Y_JvE-pFKA7cyBgBi1agxUj7cy2UZWE968t64_VPNtPP2j_Wc
-Message-ID: <CAGudoHHjk6PXU33CqAX6oitbEED-jzs2p=Dfm5-q_xMy5Cy_Uw@mail.gmail.com>
-Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
- overlapping store
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86@kernel.org, hkrzesin@redhat.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com, 
-	atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] Drivers: hv: Use hv_hvcall_*() to set up hypercall
+ arguments
+To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
+Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20250313061911.2491-1-mhklinux@outlook.com>
+ <20250313061911.2491-5-mhklinux@outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250313061911.2491-5-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 12:53=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 20 Mar 2025 at 14:17, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Thu, 20 Mar 2025 at 12:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> > >
-> > > I have a recollection that handling the tail after rep movsq with an
-> > > overlapping store was suffering a penalty big enough to warrant a
-> > > "normal" copy instead, avoiding the just written to area.
-> >
-> > Ahh. Good point. The rep movsq might indeed end up having odd effects
-> > with subsequent aliasing memory operations.
-> >
-> > Consider myself convinced.
->
-> Actually, I think there's a solution for this.
->
-> Do not do the last 0-7 bytes as a word that overlaps with the tail of
-> the 'rep movs'
->
-> Do the last 8-15 bytes *non-overlapping* (well, they overlap each
-> other, but not the 'rep movs')
->
-> Something UNTESTED like the appended, in other words. The large case
-> then ends up without any conditionals, looking something like this:
->
->         mov    %rcx,%rax
->         shr    $0x3,%rcx
->         dec    %rcx
->         and    $0x7,%eax
->         rep movsq %ds:(%rsi),%es:(%rdi)
->         mov    (%rsi),%rcx
->         mov    %rcx,(%rdi)
->         mov    (%rsi,%rax,1),%rcx
->         mov    %rcx,(%rdi,%rax,1)
->         xor    %ecx,%ecx
->         ret
->
-> with some added complexity - but not a lot - in the exception fixup cases=
-.
->
-> This is once again intentionally whitespace-damaged, because I don't
-> want people applying this mindlessly. Somebody needs to double-check
-> my logic, and verify that this also avoids the cost from the aliasing
-> with the rep movs.
->
+On 3/12/2025 11:19 PM, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> Update hypercall call sites to use the new hv_hvcall_*() functions
+> to set up hypercall arguments. Since these functions zero the
+> fixed portion of input memory, remove now redundant zero'ing of
+> input fields.
+> 
+> hv_post_message() requires additional updates. The payload area is
+> treated as an array to avoid wasting cycles on zero'ing it and
+> then overwriting with memcpy(). To allow treatment as an array,
+> the corresponding payload[] field is updated to have zero size.
+> 
+I'd prefer to leave the payload field as a fixed-sized array.
+Changing it to a flexible array makes it look like that input is
+for a variable-sized or rep hypercall, and it makes the surrounding
+code in hv_post_message() more complex and inscrutable as a result.
 
-I think the code works, but I find the idea to be questionable.
+I suggest leaving hv_post_message() alone, except for changing
+hyperv_pcpu_input_arg -> hyperv_pcpu_arg, and perhaps a comment
+explaining why hv_hvcall_input() isn't used there.
 
-I'm worried what happens when the consumer has a nicely aligned target
-buffer with a nice size (say, a multiple of a cache line) which this
-is now unconditionally messing with -- are some uarchs going to
-suffer?
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>  drivers/hv/hv.c           | 9 ++++++---
+>  drivers/hv/hv_balloon.c   | 4 ++--
+>  drivers/hv/hv_common.c    | 2 +-
+>  drivers/hv/hv_proc.c      | 8 ++++----
+>  drivers/hv/hyperv_vmbus.h | 2 +-
+>  5 files changed, 14 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index a38f84548bc2..e2dcbc816fc5 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -66,7 +66,8 @@ int hv_post_message(union hv_connection_id connection_id,
+>  	if (hv_isolation_type_tdx() && ms_hyperv.paravisor_present)
+>  		aligned_msg = this_cpu_ptr(hv_context.cpu_context)->post_msg_page;
+>  	else
+> -		aligned_msg = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +		hv_hvcall_in_array(&aligned_msg, sizeof(*aligned_msg),
+> +				   sizeof(aligned_msg->payload[0]));
+>  
+>  	aligned_msg->connectionid = connection_id;
+>  	aligned_msg->reserved = 0;
+> @@ -80,8 +81,10 @@ int hv_post_message(union hv_connection_id connection_id,
+>  						  virt_to_phys(aligned_msg), 0);
+>  		else if (hv_isolation_type_snp())
+>  			status = hv_ghcb_hypercall(HVCALL_POST_MESSAGE,
+> -						   aligned_msg, NULL,
+> -						   sizeof(*aligned_msg));
+> +						   aligned_msg,
+> +						   NULL,
+> +						   struct_size(aligned_msg, payload,
+> +							       HV_MESSAGE_PAYLOAD_QWORD_COUNT));
 
-That aside, this executes for any size >=3D 64 bytes. The start latency
-is pretty high and the 64 byte limit is probably too low even without
-the patch. For the 64 size in particular there will be only 48 bytes
-handled by rep movsq followed by 16 bytes of regular stores, largely
-defeating the point of avoiding the regular mov loop. If going this
-way, I would bump the threshold to punt to rep movsq by at least 16.
+See my comment above, I'd prefer to leave this function mostly
+alone to maintain readability.
 
-I would bench it myself, but don't have appropriate hw to do this sucker.
+>  		else
+>  			status = HV_STATUS_INVALID_PARAMETER;
+>  	} else {
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index fec2f18679e3..2def8b8794ee 100644
+> --- a/drivers/hv/hv_balloon.c
+> +++ b/drivers/hv/hv_balloon.c
+> @@ -1582,14 +1582,14 @@ static int hv_free_page_report(struct page_reporting_dev_info *pr_dev_info,
+>  	WARN_ON_ONCE(nents > HV_MEMORY_HINT_MAX_GPA_PAGE_RANGES);
+>  	WARN_ON_ONCE(sgl->length < (HV_HYP_PAGE_SIZE << page_reporting_order));
+>  	local_irq_save(flags);
+> -	hint = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +
+> +	hv_hvcall_in_array(&hint, sizeof(*hint), sizeof(hint->ranges[0]));
 
-All in all, for the time being I stand by not messing with this bit
-(i.e., sticking to just my patch). Serious benchmarking effort should
-instead accompany rewriting the routine to begin with (along with
-sorting out memset and memcpy to both use overlapping stores and rep
-as needed).
+We should ensure the returned batch size is large enough for
+"nents".
 
-However, if you are looking to commit this thing anyway, you can feel
-free to roll up my change into it without credit -- it is kind of
-stock standard for this kind of work.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+>  	if (!hint) {
+>  		local_irq_restore(flags);
+>  		return -ENOSPC;
+>  	}
+>  
+>  	hint->heat_type = HV_EXTMEM_HEAT_HINT_COLD_DISCARD;
+> -	hint->reserved = 0;
+>  	for_each_sg(sgl, sg, nents, i) {
+>  		union hv_gpa_page_range *range;
+>  
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 9804adb4cc56..a6b1cdfbc8d4 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -293,7 +293,7 @@ void __init hv_get_partition_id(void)
+>  	u64 status, pt_id;
+>  
+>  	local_irq_save(flags);
+> -	output = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	hv_hvcall_inout(NULL, 0, &output, sizeof(*output));
+>  	status = hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, &output);
+>  	pt_id = output->partition_id;
+>  	local_irq_restore(flags);
+> diff --git a/drivers/hv/hv_proc.c b/drivers/hv/hv_proc.c
+> index 2fae18e4f7d2..5c580ee1c23f 100644
+> --- a/drivers/hv/hv_proc.c
+> +++ b/drivers/hv/hv_proc.c
+> @@ -73,7 +73,8 @@ int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
+>  
+>  	local_irq_save(flags);
+>  
+> -	input_page = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	hv_hvcall_in_array(&input_page, sizeof(*input_page),
+> +			   sizeof(input_page->gpa_page_list[0]));
+
+We should ensure the returned batch size is large enough.
+
+>  
+>  	input_page->partition_id = partition_id;
+>  
+> @@ -124,9 +125,8 @@ int hv_call_add_logical_proc(int node, u32 lp_index, u32 apic_id)
+>  	do {
+>  		local_irq_save(flags);
+>  
+> -		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+>  		/* We don't do anything with the output right now */
+> -		output = *this_cpu_ptr(hyperv_pcpu_output_arg);
+> +		hv_hvcall_inout(&input, sizeof(*input), &output, sizeof(*output));
+>  
+>  		input->lp_index = lp_index;
+>  		input->apic_id = apic_id;
+> @@ -167,7 +167,7 @@ int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags)
+>  	do {
+>  		local_irq_save(irq_flags);
+>  
+> -		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +		hv_hvcall_in(&input, sizeof(*input));
+>  
+>  		input->partition_id = partition_id;
+>  		input->vp_index = vp_index;
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 29780f3a7478..44b5e8330d9d 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -101,7 +101,7 @@ struct hv_input_post_message {
+>  	u32 reserved;
+>  	u32 message_type;
+>  	u32 payload_size;
+> -	u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
+> +	u64 payload[];
+
+See my comment above, I'd prefer to keep this how it is.
+
+>  };
+>  
+>  
+
+Thanks
+Nuno
+
 
