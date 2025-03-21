@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-570930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECAFA6B661
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:54:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DC6A6B653
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C6A3AC1C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B993BBBE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2332206A6;
-	Fri, 21 Mar 2025 08:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5305E1F1311;
+	Fri, 21 Mar 2025 08:50:30 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BB51F09A8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3753A1EFFBB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547045; cv=none; b=BUDoCiOGYL1FKs6AtcVrjSTksVdljQR/km+TfxcudXMUtWJAcD2rZPJ3ZzOhyRP50K2tT9fWc05ayfwTc/2uVNqn23LWDu33XJIWnqiwHEuIRbxLWMALPyrsriMJSULh0UAyBII7oJlanP/smYniZkWzdsLAIx21mY5cIuifsFQ=
+	t=1742547029; cv=none; b=iGFGkfKpWEUlV+h2Wx++5v0Vgy8SqMqmwd2P4XyFUsByeUyHJXkOo2rg5wpLtlRwPPLq9OR/2lDKn+VSkc4p8gzu5Cz+Bmn/2Xk+Y//yQiGCXwjBB6WPFwwjMuJoBJNzE7qH19xju3krEdQxArnMSlcLXpDZLNczSEbxPf1MiEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547045; c=relaxed/simple;
-	bh=rpxFrAxcQEK5R4bnI18ngPLOw4ftcmp4UGCaE93X8Rg=;
+	s=arc-20240116; t=1742547029; c=relaxed/simple;
+	bh=vgSog7ia/akrXqtyaMhLsb1dQPWkb43Fj97lsrxPZIE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UpP3+MoEGjlwOGbWC53LA4CV0/LkslTm3b8XrUqwc4glAJK/+FT2rg0CqACa9uMyg6pBkgoXBzCD0Tsd7ppUhcduJfwdgGrvee2mDv2ngzQWe7HZf6aRNrxdaMKytrkH2OXezAUd00rIQ4/UFZa9KdnXh2ZZoRFl09WLe228mQU=
+	 In-Reply-To:To:Cc; b=h4tNBVFCL9wBi2c42J18O7LgoOBUdrUK80sxB0zIicZM/jonM5Ef76lgbjyvLwCWrf33jNFCp9QGlcdGd6roKtA241RkfPEnYSAlbdKenH0YQ/bxptq9mn8XkV8Eo8eVPJwgobejBIGSdwD0EwpfF5GVmJ05abS+f2chwdoduUw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tvY51-0001Lt-HE; Fri, 21 Mar 2025 09:50:15 +0100
+	id 1tvY51-0001Lu-Da; Fri, 21 Mar 2025 09:50:15 +0100
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tvY4z-000taR-2V;
+	id 1tvY4z-000taS-2Y;
 	Fri, 21 Mar 2025 09:50:14 +0100
 Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
 	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tvY50-003L3W-0D;
+	id 1tvY50-003L3W-0E;
 	Fri, 21 Mar 2025 09:50:14 +0100
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Fri, 21 Mar 2025 09:50:08 +0100
-Subject: [PATCH v4 08/10] wifi: mwifiex: make locally used function static
+Date: Fri, 21 Mar 2025 09:50:09 +0100
+Subject: [PATCH v4 09/10] wifi: mwifiex: move common settings out of
+ switch/case
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,21 +56,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250321-mwifiex-cleanup-1-v4-8-4a32b21e2553@pengutronix.de>
+Message-Id: <20250321-mwifiex-cleanup-1-v4-9-4a32b21e2553@pengutronix.de>
 References: <20250321-mwifiex-cleanup-1-v4-0-4a32b21e2553@pengutronix.de>
 In-Reply-To: <20250321-mwifiex-cleanup-1-v4-0-4a32b21e2553@pengutronix.de>
 To: Brian Norris <briannorris@chromium.org>, 
  Francesco Dolcini <francesco@dolcini.it>
 Cc: Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, 
  linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>, 
- kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>
+ kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742547013; l=1643;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742547014; l=2972;
  i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=rpxFrAxcQEK5R4bnI18ngPLOw4ftcmp4UGCaE93X8Rg=;
- b=lFYX9847wMR3XbFuZNi1dAmIx38qygg5ssdTtdK7d63VqgWJNr6wUWDMPIN0cvnV0tRsWbpMq
- s3DBsSA4pc8Awa7+GlQmNgV1zKsLss7hQobuCsHirDAYNIydvgPGquP
+ bh=vgSog7ia/akrXqtyaMhLsb1dQPWkb43Fj97lsrxPZIE=;
+ b=EABmz1BFvH+xCYrJ5SW7Jiivtu5790rI517Yw0e3M2yK7ahYF7z9jc9tEpbkKUYtBnRv5MrkG
+ rpiCjEC7KnHBWaVmVUsLHFrBcnU/Mn6QsnawZ2WVx0DZLZz3CVo/dYL
 X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
  pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -77,40 +77,87 @@ X-SA-Exim-Mail-From: s.hauer@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-mwifiex_is_tdls_off_chan() is only used locally. Make it static.
+In mwifiex_add_virtual_intf() several settings done in a switch/case
+are the same in all cases. Move them out of the switch/case to
+deduplicate the code.
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+bss_started is not initialized in all switch/case branches, but it is
+only used in AP mode in the driver, so it doesn't hurt to move its
+initialization out of the switch/case as well.
+
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Francesco Dolcini <francesco@dolcini.it>
 ---
- drivers/net/wireless/marvell/mwifiex/main.h | 1 -
- drivers/net/wireless/marvell/mwifiex/util.c | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index 5714ec22f97b5..a6e3dbfc76233 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1600,7 +1600,6 @@ mwifiex_add_sta_entry(struct mwifiex_private *priv, const u8 *mac);
- struct mwifiex_sta_node *
- mwifiex_get_sta_entry(struct mwifiex_private *priv, const u8 *mac);
- u8 mwifiex_is_tdls_chan_switching(struct mwifiex_private *priv);
--u8 mwifiex_is_tdls_off_chan(struct mwifiex_private *priv);
- u8 mwifiex_is_send_cmd_allowed(struct mwifiex_private *priv);
- int mwifiex_send_tdls_data_frame(struct mwifiex_private *priv, const u8 *peer,
- 				 u8 action_code, u8 dialog_token,
-diff --git a/drivers/net/wireless/marvell/mwifiex/util.c b/drivers/net/wireless/marvell/mwifiex/util.c
-index 1f1f6280a0f25..ea28d604ee69c 100644
---- a/drivers/net/wireless/marvell/mwifiex/util.c
-+++ b/drivers/net/wireless/marvell/mwifiex/util.c
-@@ -663,7 +663,7 @@ u8 mwifiex_is_tdls_chan_switching(struct mwifiex_private *priv)
- 	return false;
- }
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 1d9bc8f980c8d..5d6f4d2922b64 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -3007,7 +3007,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 			return ERR_PTR(-EFAULT);
+ 		}
  
--u8 mwifiex_is_tdls_off_chan(struct mwifiex_private *priv)
-+static u8 mwifiex_is_tdls_off_chan(struct mwifiex_private *priv)
- {
- 	struct mwifiex_sta_node *sta_ptr;
+-		priv->wdev.wiphy = wiphy;
+ 		priv->wdev.iftype = NL80211_IFTYPE_STATION;
  
+ 		if (type == NL80211_IFTYPE_UNSPECIFIED)
+@@ -3016,8 +3015,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 			priv->bss_mode = type;
+ 
+ 		priv->bss_type = MWIFIEX_BSS_TYPE_STA;
+-		priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
+-		priv->bss_priority = 0;
+ 		priv->bss_role = MWIFIEX_BSS_ROLE_STA;
+ 
+ 		break;
+@@ -3037,14 +3034,10 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 			return ERR_PTR(-EFAULT);
+ 		}
+ 
+-		priv->wdev.wiphy = wiphy;
+ 		priv->wdev.iftype = NL80211_IFTYPE_AP;
+ 
+ 		priv->bss_type = MWIFIEX_BSS_TYPE_UAP;
+-		priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
+-		priv->bss_priority = 0;
+ 		priv->bss_role = MWIFIEX_BSS_ROLE_UAP;
+-		priv->bss_started = 0;
+ 		priv->bss_mode = type;
+ 
+ 		break;
+@@ -3064,7 +3057,6 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 			return ERR_PTR(-EFAULT);
+ 		}
+ 
+-		priv->wdev.wiphy = wiphy;
+ 		/* At start-up, wpa_supplicant tries to change the interface
+ 		 * to NL80211_IFTYPE_STATION if it is not managed mode.
+ 		 */
+@@ -3077,10 +3069,7 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 		 */
+ 		priv->bss_type = MWIFIEX_BSS_TYPE_P2P;
+ 
+-		priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
+-		priv->bss_priority = 0;
+ 		priv->bss_role = MWIFIEX_BSS_ROLE_STA;
+-		priv->bss_started = 0;
+ 
+ 		if (mwifiex_cfg80211_init_p2p_client(priv)) {
+ 			memset(&priv->wdev, 0, sizeof(priv->wdev));
+@@ -3094,6 +3083,11 @@ struct wireless_dev *mwifiex_add_virtual_intf(struct wiphy *wiphy,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
++	priv->wdev.wiphy = wiphy;
++	priv->bss_priority = 0;
++	priv->bss_started = 0;
++	priv->frame_type = MWIFIEX_DATA_FRAME_TYPE_ETH_II;
++
+ 	dev = alloc_netdev_mqs(sizeof(struct mwifiex_private *), name,
+ 			       name_assign_type, ether_setup,
+ 			       IEEE80211_NUM_ACS, 1);
 
 -- 
 2.39.5
