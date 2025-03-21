@@ -1,403 +1,165 @@
-Return-Path: <linux-kernel+bounces-570572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90CEA6B216
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:16:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88328A6B20F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2577898311D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31A241894890
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 00:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738841E48A;
-	Fri, 21 Mar 2025 00:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CAD1EA84;
+	Fri, 21 Mar 2025 00:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAHPBi+7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mumznusb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E92C1DFF7;
-	Fri, 21 Mar 2025 00:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD7F1172A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742516033; cv=none; b=r5EbW0PKgjXo3YMLDgYzgwNSYBY1WvrZymymsoZ9aAPHekE08pRut51Hh2/Qbxr+TsvtCpAuZ2GjDvq8bKphqI8zpS97wgdRn2sJQcFL4JggZjIk/XKL1mojfVqnE/dxVIi4XobwTzWKg6/4EgpmJ7xidCdmtd2mPPnEwywSrSY=
+	t=1742516132; cv=none; b=tOoWP+xRQK4/KkvjzBU55wq4Tpyo/scc8nh+SOWYTE41RmiopkpO+Vhxp5ukV8sGANpQWkI+SbWv1rHmD8/7hEMMxLgj8eVeV/+BlFTxIWc8YkArU1eBWEszYU0xSfaHwPR3WPQWZxpSRIwu2RXAotxilW/hZ/GMbcbPH39VI4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742516033; c=relaxed/simple;
-	bh=TxL5oq+g4aisEn0NzMv/yMWV2fn7uSYmXwefFCudbjE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IM9l2poy35yXcx84i7OoAqF3H107ynilhgg59WKT5MkLXvl3oqVfPerkkWrN38qy+YV6+EVG8Cu/BsZApSBLDdUi3PoJFJgIM6ET5Z2UXbcWvy1jFovzwpaGMcEdLCvYD3be+j+r+D300i7mbuai7R7Y/pYx9f31GO/9sDFybb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAHPBi+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77963C4CEED;
-	Fri, 21 Mar 2025 00:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742516033;
-	bh=TxL5oq+g4aisEn0NzMv/yMWV2fn7uSYmXwefFCudbjE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fAHPBi+7L74IWJYC79endkEBXJZnGGQB2vzjjYqJIsOZdq2/jzowmNo0iRFPVGZEN
-	 mA9F05Fcvodkw58kCobEu9BGcdwvNz4SxHH9+VeWAxdTekkw0b2rcBKKtKoLm71FTd
-	 yQVt1qPm9KvoEv6oiT+ErfQYK2CLPswN1EvKrzPFxUqa6X6xhuEyMrhVZ5er3SXhCg
-	 cGh1n5z6gfh1yvSuYRvtqcNOEdLvJUBQDNbZSOk+HfnW0ZbFud28Gomnz59Yza9apb
-	 mlIgznEiW13ZShv3q3sKhQA45CU4HmZNO+36i52pYrwZW4EIk0P8agWoyRo4Vj83e5
-	 fnIUnyGPy6Vvw==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 21 Mar 2025 00:13:04 +0000
-Subject: [PATCH 6.12 v2 8/8] KVM: arm64: Eagerly switch ZCR_EL{1,2}
+	s=arc-20240116; t=1742516132; c=relaxed/simple;
+	bh=0Iicah5ZvEKkFis031bZch42/Kl1YGXoFLJhQWAI0to=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XU37vlJfC8hb0HwfZbSlXVV4MFwu9At/5YSUmT972LymRPthCzcPrv3UG60YBGh323ou97ktXPff3v/Q5tMhegDN0/aAhL3dRL/sNKBBnT7TXWIDUCyy8EF2evErU6ZPKchbB96jEVvtIr0g+Ux17fqcbtcnOrih27NSVALx05c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mumznusb; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742516131; x=1774052131;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0Iicah5ZvEKkFis031bZch42/Kl1YGXoFLJhQWAI0to=;
+  b=mumznusbaQlfv3k9MLNR8Q25oFfavAWqDgLcvmZLpmTZjXzDyXb7rY2U
+   o2QteVFDMAMjBB1sWGupqeGDpAP2rsLMUiqARqy6qYcNxWEuqmAWxhli4
+   tvM03pTVmV2xlRkIfnqbBvrhYhb1ktZqHFXfrwIonJbdMdwWYtlqPAQLO
+   YClTFdoOr1zCuKeerNse3roTF3dy+wUOmVM0cLQTlduz2XYMmV45s7vuB
+   P44yoyzW2vl+SZnqiT9HG/iNxaSP4rH4A4ocCFI8ORbm9XLggUyuOtcd7
+   qDzhO5ITN9aqj9MguFo2xsO/a/1S+L2XjIQ1p1FekgT8xtddm00LLKLFx
+   g==;
+X-CSE-ConnectionGUID: llcKQ5zjSMKyx8DyUJjm2A==
+X-CSE-MsgGUID: TaIcogobRs6iRxeE4D34lg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="31363703"
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="31363703"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 17:15:29 -0700
+X-CSE-ConnectionGUID: 6wfTUUpERS+D5qwU42Sntg==
+X-CSE-MsgGUID: veD7sy80TQCES4ZUWg4K7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="128473725"
+Received: from daliomra-mobl3.amr.corp.intel.com (HELO [10.124.221.56]) ([10.124.221.56])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 17:15:27 -0700
+Message-ID: <b01224ee-c935-4b08-a76f-5dc49341182d@intel.com>
+Date: Thu, 20 Mar 2025 17:15:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] x86/microcode/intel: Implement staging handler
+To: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, colinmitchell@google.com
+References: <20250320234104.8288-1-chang.seok.bae@intel.com>
+ <20250320234104.8288-5-chang.seok.bae@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250320234104.8288-5-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250321-stable-sve-6-12-v2-8-417ca2278d18@kernel.org>
-References: <20250321-stable-sve-6-12-v2-0-417ca2278d18@kernel.org>
-In-Reply-To: <20250321-stable-sve-6-12-v2-0-417ca2278d18@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Fuad Tabba <tabba@google.com>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11549; i=broonie@kernel.org;
- h=from:subject:message-id; bh=HToMeE+PHYgE/dGsLaSmZ5TLR8LKg8yZLMm+x3ahetc=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn3K8jWkjGaBfSpfdzk1MuVCgH1BMIJ/FwhYO7DiSg
- cVZT2byJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ9yvIwAKCRAk1otyXVSH0LxBB/
- 4p/J/Tq9YuuYSehx/3aDgyV0FZGMuW0sGP/Ej0G1bIh1bU0z6Cp1nW/b7YVSMB7TP8mnfT3DEe0pYF
- PE0tA7je0GUHahHk+w2OOojk+P1JImVdrsU/Rzp1iAnrPtFf4rcducjCiEk1Qtg0o797+kl0wRdghL
- je2QkbuVsxWnn3CCbsZQAMtsPttAUG7KUoCPJo26dML+50OZAYIBsPIpbFrEI1eRl/NvcDjqoqik/S
- XMInhLKwMnTHkYybJOu2/BAt4YDyYc7+9e0x6/3Zd6IhrhZ4jn5vB6b6oXJVr8W14lr+0lioh5RTIf
- 9tt5YhlkNZM/0RQXykH5xv9guEXMZf
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-From: Mark Rutland <mark.rutland@arm.com>
+On 3/20/25 16:40, Chang S. Bae wrote:
+>  static void do_stage(u64 mmio_pa)
+>  {
+> -	pr_debug_once("Staging implementation is pending.\n");
+> -	staging.state = UCODE_ERROR;
+> +	staging.mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * MBOX_REG_SIZE);
+> +	if (WARN_ON_ONCE(!staging.mmio_base)) {
+> +		staging.state = UCODE_ERROR;
+> +		return;
+> +	}
+> +
+> +	reset_stage();
 
-[ Upstream commit 59419f10045bc955d2229819c7cf7a8b0b9c5b59 ]
+This is purely a style thing, but I really dislike using global
+variables like this.
 
-In non-protected KVM modes, while the guest FPSIMD/SVE/SME state is live on the
-CPU, the host's active SVE VL may differ from the guest's maximum SVE VL:
+What is reset_stage() doing? What state is it resetting? What is locking
+this? What is its scope?
 
-* For VHE hosts, when a VM uses NV, ZCR_EL2 contains a value constrained
-  by the guest hypervisor, which may be less than or equal to that
-  guest's maximum VL.
+Now, imagine you have a function variable. It can be on the stack or static:
 
-  Note: in this case the value of ZCR_EL1 is immaterial due to E2H.
+static void do_stage(u64 mmio_pa)
+{
+	struct staging_state staging = {};
 
-* For nVHE/hVHE hosts, ZCR_EL1 contains a value written by the guest,
-  which may be less than or greater than the guest's maximum VL.
+Then you pass it around:
 
-  Note: in this case hyp code traps host SVE usage and lazily restores
-  ZCR_EL2 to the host's maximum VL, which may be greater than the
-  guest's maximum VL.
+	staging.mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * ...
+	if (WARN_ON_ONCE(!staging.mmio_base)) {
+		staging.state = UCODE_ERROR;
+		return;
+	}
 
-This can be the case between exiting a guest and kvm_arch_vcpu_put_fp().
-If a softirq is taken during this period and the softirq handler tries
-to use kernel-mode NEON, then the kernel will fail to save the guest's
-FPSIMD/SVE state, and will pend a SIGKILL for the current thread.
+	reset_stage(&staging);
 
-This happens because kvm_arch_vcpu_ctxsync_fp() binds the guest's live
-FPSIMD/SVE state with the guest's maximum SVE VL, and
-fpsimd_save_user_state() verifies that the live SVE VL is as expected
-before attempting to save the register state:
+Yeah, it means passing around _one_ function argument to a function
+that's not currently taking an argument. But it makes it a heck of a lot
+more clear what is going on. It also makes the lifetime and
+initialization state of 'staging' *MUCH* more obvious.
 
-| if (WARN_ON(sve_get_vl() != vl)) {
-|         force_signal_inject(SIGKILL, SI_KERNEL, 0, 0);
-|         return;
-| }
-
-Fix this and make this a bit easier to reason about by always eagerly
-switching ZCR_EL{1,2} at hyp during guest<->host transitions. With this
-happening, there's no need to trap host SVE usage, and the nVHE/nVHE
-__deactivate_cptr_traps() logic can be simplified to enable host access
-to all present FPSIMD/SVE/SME features.
-
-In protected nVHE/hVHE modes, the host's state is always saved/restored
-by hyp, and the guest's state is saved prior to exit to the host, so
-from the host's PoV the guest never has live FPSIMD/SVE/SME state, and
-the host's ZCR_EL1 is never clobbered by hyp.
-
-Fixes: 8c8010d69c132273 ("KVM: arm64: Save/restore SVE state for nVHE")
-Fixes: 2e3cf82063a00ea0 ("KVM: arm64: nv: Ensure correct VL is loaded before saving SVE state")
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Tested-by: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Fuad Tabba <tabba@google.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Will Deacon <will@kernel.org>
-Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
-Link: https://lore.kernel.org/r/20250210195226.1215254-9-mark.rutland@arm.com
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/kvm/fpsimd.c                 | 30 -----------------
- arch/arm64/kvm/hyp/entry.S              |  5 +++
- arch/arm64/kvm/hyp/include/hyp/switch.h | 59 +++++++++++++++++++++++++++++++++
- arch/arm64/kvm/hyp/nvhe/hyp-main.c      |  9 ++---
- arch/arm64/kvm/hyp/nvhe/switch.c        | 33 +++++++++++++++---
- arch/arm64/kvm/hyp/vhe/switch.c         |  4 +++
- 6 files changed, 100 insertions(+), 40 deletions(-)
-
-diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
-index f64724197958e0d8a4ec17deb1f9826ce3625eb7..3cbb999419af7bb31ce9cec2baafcad00491610a 100644
---- a/arch/arm64/kvm/fpsimd.c
-+++ b/arch/arm64/kvm/fpsimd.c
-@@ -136,36 +136,6 @@ void kvm_arch_vcpu_put_fp(struct kvm_vcpu *vcpu)
- 	local_irq_save(flags);
- 
- 	if (guest_owns_fp_regs()) {
--		if (vcpu_has_sve(vcpu)) {
--			u64 zcr = read_sysreg_el1(SYS_ZCR);
--
--			/*
--			 * If the vCPU is in the hyp context then ZCR_EL1 is
--			 * loaded with its vEL2 counterpart.
--			 */
--			__vcpu_sys_reg(vcpu, vcpu_sve_zcr_elx(vcpu)) = zcr;
--
--			/*
--			 * Restore the VL that was saved when bound to the CPU,
--			 * which is the maximum VL for the guest. Because the
--			 * layout of the data when saving the sve state depends
--			 * on the VL, we need to use a consistent (i.e., the
--			 * maximum) VL.
--			 * Note that this means that at guest exit ZCR_EL1 is
--			 * not necessarily the same as on guest entry.
--			 *
--			 * ZCR_EL2 holds the guest hypervisor's VL when running
--			 * a nested guest, which could be smaller than the
--			 * max for the vCPU. Similar to above, we first need to
--			 * switch to a VL consistent with the layout of the
--			 * vCPU's SVE state. KVM support for NV implies VHE, so
--			 * using the ZCR_EL1 alias is safe.
--			 */
--			if (!has_vhe() || (vcpu_has_nv(vcpu) && !is_hyp_ctxt(vcpu)))
--				sve_cond_update_zcr_vq(vcpu_sve_max_vq(vcpu) - 1,
--						       SYS_ZCR_EL1);
--		}
--
- 		/*
- 		 * Flush (save and invalidate) the fpsimd/sve state so that if
- 		 * the host tries to use fpsimd/sve, it's not using stale data
-diff --git a/arch/arm64/kvm/hyp/entry.S b/arch/arm64/kvm/hyp/entry.S
-index 4433a234aa9ba242f43b943d22011b5ddacd8af7..9f4e8d68ab505cf4a7aa8673643d9b47ca1bc7cb 100644
---- a/arch/arm64/kvm/hyp/entry.S
-+++ b/arch/arm64/kvm/hyp/entry.S
-@@ -44,6 +44,11 @@ alternative_if ARM64_HAS_RAS_EXTN
- alternative_else_nop_endif
- 	mrs	x1, isr_el1
- 	cbz	x1,  1f
-+
-+	// Ensure that __guest_enter() always provides a context
-+	// synchronization event so that callers don't need ISBs for anything
-+	// that would usually be synchonized by the ERET.
-+	isb
- 	mov	x0, #ARM_EXCEPTION_IRQ
- 	ret
- 
-diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-index c1ab31429a0e5fab97cd06c3b7b6e378170bd99d..cc9cb63959463a7ddb35d868b17e485b1223d507 100644
---- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-+++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-@@ -344,6 +344,65 @@ static inline void __hyp_sve_save_host(void)
- 			 true);
- }
- 
-+static inline void fpsimd_lazy_switch_to_guest(struct kvm_vcpu *vcpu)
-+{
-+	u64 zcr_el1, zcr_el2;
-+
-+	if (!guest_owns_fp_regs())
-+		return;
-+
-+	if (vcpu_has_sve(vcpu)) {
-+		/* A guest hypervisor may restrict the effective max VL. */
-+		if (vcpu_has_nv(vcpu) && !is_hyp_ctxt(vcpu))
-+			zcr_el2 = __vcpu_sys_reg(vcpu, ZCR_EL2);
-+		else
-+			zcr_el2 = vcpu_sve_max_vq(vcpu) - 1;
-+
-+		write_sysreg_el2(zcr_el2, SYS_ZCR);
-+
-+		zcr_el1 = __vcpu_sys_reg(vcpu, vcpu_sve_zcr_elx(vcpu));
-+		write_sysreg_el1(zcr_el1, SYS_ZCR);
-+	}
-+}
-+
-+static inline void fpsimd_lazy_switch_to_host(struct kvm_vcpu *vcpu)
-+{
-+	u64 zcr_el1, zcr_el2;
-+
-+	if (!guest_owns_fp_regs())
-+		return;
-+
-+	/*
-+	 * When the guest owns the FP regs, we know that guest+hyp traps for
-+	 * any FPSIMD/SVE/SME features exposed to the guest have been disabled
-+	 * by either fpsimd_lazy_switch_to_guest() or kvm_hyp_handle_fpsimd()
-+	 * prior to __guest_entry(). As __guest_entry() guarantees a context
-+	 * synchronization event, we don't need an ISB here to avoid taking
-+	 * traps for anything that was exposed to the guest.
-+	 */
-+	if (vcpu_has_sve(vcpu)) {
-+		zcr_el1 = read_sysreg_el1(SYS_ZCR);
-+		__vcpu_sys_reg(vcpu, vcpu_sve_zcr_elx(vcpu)) = zcr_el1;
-+
-+		/*
-+		 * The guest's state is always saved using the guest's max VL.
-+		 * Ensure that the host has the guest's max VL active such that
-+		 * the host can save the guest's state lazily, but don't
-+		 * artificially restrict the host to the guest's max VL.
-+		 */
-+		if (has_vhe()) {
-+			zcr_el2 = vcpu_sve_max_vq(vcpu) - 1;
-+			write_sysreg_el2(zcr_el2, SYS_ZCR);
-+		} else {
-+			zcr_el2 = sve_vq_from_vl(kvm_host_sve_max_vl) - 1;
-+			write_sysreg_el2(zcr_el2, SYS_ZCR);
-+
-+			zcr_el1 = vcpu_sve_max_vq(vcpu) - 1;
-+			write_sysreg_el1(zcr_el1, SYS_ZCR);
-+		}
-+	}
-+}
-+
- static void kvm_hyp_save_fpsimd_host(struct kvm_vcpu *vcpu)
- {
- 	/*
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index 4e757a77322c9efc59cdff501745f7c80d452358..75f7e386de75bc3d329a0e94ca50a043813979fc 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <hyp/adjust_pc.h>
-+#include <hyp/switch.h>
- 
- #include <asm/pgtable-types.h>
- #include <asm/kvm_asm.h>
-@@ -177,7 +178,9 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
- 		pkvm_put_hyp_vcpu(hyp_vcpu);
- 	} else {
- 		/* The host is fully trusted, run its vCPU directly. */
-+		fpsimd_lazy_switch_to_guest(host_vcpu);
- 		ret = __kvm_vcpu_run(host_vcpu);
-+		fpsimd_lazy_switch_to_host(host_vcpu);
- 	}
- 
- out:
-@@ -486,12 +489,6 @@ void handle_trap(struct kvm_cpu_context *host_ctxt)
- 	case ESR_ELx_EC_SMC64:
- 		handle_host_smc(host_ctxt);
- 		break;
--	case ESR_ELx_EC_SVE:
--		cpacr_clear_set(0, CPACR_ELx_ZEN);
--		isb();
--		sve_cond_update_zcr_vq(sve_vq_from_vl(kvm_host_sve_max_vl) - 1,
--				       SYS_ZCR_EL2);
--		break;
- 	case ESR_ELx_EC_IABT_LOW:
- 	case ESR_ELx_EC_DABT_LOW:
- 		handle_host_mem_abort(host_ctxt);
-diff --git a/arch/arm64/kvm/hyp/nvhe/switch.c b/arch/arm64/kvm/hyp/nvhe/switch.c
-index ee74006c47bc44ca1d9bdf1ce7d4d8a41cf8e494..a1245fa838319544f3770a05a58eeed5233f0324 100644
---- a/arch/arm64/kvm/hyp/nvhe/switch.c
-+++ b/arch/arm64/kvm/hyp/nvhe/switch.c
-@@ -40,6 +40,9 @@ static void __activate_cptr_traps(struct kvm_vcpu *vcpu)
- {
- 	u64 val = CPTR_EL2_TAM;	/* Same bit irrespective of E2H */
- 
-+	if (!guest_owns_fp_regs())
-+		__activate_traps_fpsimd32(vcpu);
-+
- 	if (has_hvhe()) {
- 		val |= CPACR_ELx_TTA;
- 
-@@ -48,6 +51,8 @@ static void __activate_cptr_traps(struct kvm_vcpu *vcpu)
- 			if (vcpu_has_sve(vcpu))
- 				val |= CPACR_ELx_ZEN;
- 		}
-+
-+		write_sysreg(val, cpacr_el1);
- 	} else {
- 		val |= CPTR_EL2_TTA | CPTR_NVHE_EL2_RES1;
- 
-@@ -62,12 +67,32 @@ static void __activate_cptr_traps(struct kvm_vcpu *vcpu)
- 
- 		if (!guest_owns_fp_regs())
- 			val |= CPTR_EL2_TFP;
-+
-+		write_sysreg(val, cptr_el2);
- 	}
-+}
- 
--	if (!guest_owns_fp_regs())
--		__activate_traps_fpsimd32(vcpu);
-+static void __deactivate_cptr_traps(struct kvm_vcpu *vcpu)
-+{
-+	if (has_hvhe()) {
-+		u64 val = CPACR_ELx_FPEN;
-+
-+		if (cpus_have_final_cap(ARM64_SVE))
-+			val |= CPACR_ELx_ZEN;
-+		if (cpus_have_final_cap(ARM64_SME))
-+			val |= CPACR_ELx_SMEN;
-+
-+		write_sysreg(val, cpacr_el1);
-+	} else {
-+		u64 val = CPTR_NVHE_EL2_RES1;
-+
-+		if (!cpus_have_final_cap(ARM64_SVE))
-+			val |= CPTR_EL2_TZ;
-+		if (!cpus_have_final_cap(ARM64_SME))
-+			val |= CPTR_EL2_TSM;
- 
--	kvm_write_cptr_el2(val);
-+		write_sysreg(val, cptr_el2);
-+	}
- }
- 
- static void __activate_traps(struct kvm_vcpu *vcpu)
-@@ -120,7 +145,7 @@ static void __deactivate_traps(struct kvm_vcpu *vcpu)
- 
- 	write_sysreg(this_cpu_ptr(&kvm_init_params)->hcr_el2, hcr_el2);
- 
--	kvm_reset_cptr_el2(vcpu);
-+	__deactivate_cptr_traps(vcpu);
- 	write_sysreg(__kvm_hyp_host_vector, vbar_el2);
- }
- 
-diff --git a/arch/arm64/kvm/hyp/vhe/switch.c b/arch/arm64/kvm/hyp/vhe/switch.c
-index 46c1f5caf007331cdbbc806a184e9b4721042fc0..496abfd3646b9858e95e06a79edec11eee3a5893 100644
---- a/arch/arm64/kvm/hyp/vhe/switch.c
-+++ b/arch/arm64/kvm/hyp/vhe/switch.c
-@@ -462,6 +462,8 @@ static int __kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
- 
- 	sysreg_save_host_state_vhe(host_ctxt);
- 
-+	fpsimd_lazy_switch_to_guest(vcpu);
-+
- 	/*
- 	 * Note that ARM erratum 1165522 requires us to configure both stage 1
- 	 * and stage 2 translation for the guest context before we clear
-@@ -486,6 +488,8 @@ static int __kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
- 
- 	__deactivate_traps(vcpu);
- 
-+	fpsimd_lazy_switch_to_host(vcpu);
-+
- 	sysreg_restore_host_state_vhe(host_ctxt);
- 
- 	if (guest_owns_fp_regs())
-
--- 
-2.39.5
-
+It also makes it clear what state reset_stage() needs to do its job.
 
