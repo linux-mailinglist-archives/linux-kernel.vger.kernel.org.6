@@ -1,168 +1,151 @@
-Return-Path: <linux-kernel+bounces-571423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64130A6BCF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:29:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D170A6BCF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:31:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB09189B163
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C6C189CEDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D9F19CC20;
-	Fri, 21 Mar 2025 14:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86F4191484;
+	Fri, 21 Mar 2025 14:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TwqldJdU"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHUlG41r"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC814C85
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCF1BA34;
+	Fri, 21 Mar 2025 14:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567357; cv=none; b=j4rtQk+z4r9u1ak00N52xkvP0z3z99VDVYHZxjxVsknQc1JI/er3Mqh1TpJwTJSlHogHmWwJodRF3wsTacjSvulCEkbvbs/3csvEpWDpSaawbp/wmXI/T+hiTB5L8Mx6nNe0LcKAM/G/gkLb/eQKrcctHBnPo2UjQfZCgD7ntDo=
+	t=1742567509; cv=none; b=ovQ1VxWHT3j/+a/OCjeal77z3R+4M7fYqFu0WrhFO1+vw3eO8kVTTaz/9yev4ToK2GAJM0x4i0PxICo8uvEQXIjTpPhgM/vR3b5rus0e55qTmV/z7sxGXN8igttb+d47/Pbkk1TkWFI8OPWRmBhyvBIoLeopKcBy0MkK5gWCLdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567357; c=relaxed/simple;
-	bh=sTYAUFclVZdLncU1+P/eN4/e7zBKr17UMTJxSmWMco4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IG9E+/ZfXLteMhqYJdYCR+FPRbMZzjpPg6/kgqVWvuTmef+8ilUEiF8oob8wQeFzZWXJ22yZAYC0MkHWWE1hHvePy+es0up4oYeomIFGJNZlHqjBQhwdh6cCoWk+Y5Gddl3kEwgvhZAxoG/A6YLSvcnQKWfqesa/NDvC3jHDsGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TwqldJdU; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZK4ZW1s0rz9spF;
-	Fri, 21 Mar 2025 15:29:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1742567347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vMXXI+E/Sbp6yE2srQIZ5UyRk/DPJ+o0tAoJuj3BRCY=;
-	b=TwqldJdUhainKtapBf+eSHFuKToyIyFA3rihZ/6ztaUjoe/1mhyu68rTfYX+bwyuAcPFWN
-	aumWZtaa41558Klb0UZrLe1Cz2VvkmPh/EWn2i7LaaNrk1kNJN+nNmFGSu45OGZB2Q+vVj
-	2B0eeej0AqVC22tb0yNkWxzcFWjdFhtG1kx6MOnmhhYKtrErxU7Qx4JBB4gz2NtPKtdMmj
-	N8vdXuwqVa+20JHW5u7FkoP7Z/XcIixwo8Tm5FU+aWOFsNUoEEBhHkFJbTkzrlOGrND6+v
-	W6JtEGCTHVfmnpwp7wYd0sh780iDCGKiR0lulYUMlWAonVwAqeAMumAdmFkM9g==
-From: Tor Vic <torvic9@mailbox.org>
-To: arnd@kernel.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: bp@alien8.de,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	hpa@zytor.com
-Subject: [PATCH] arch/x86: Add an option to build the kernel with '-march=native' on x86-64
-Date: Fri, 21 Mar 2025 15:28:58 +0100
-Message-ID: <20250321142859.13889-1-torvic9@mailbox.org>
+	s=arc-20240116; t=1742567509; c=relaxed/simple;
+	bh=RTQefJqTAzYLfZppY+wZsfkXVzM9bfIBw2SW56kizqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gew5QINE2FRoKEMc8Kn/dXslerqMD6iMTdqteiINbXkkbDbFn3gPkICj7a2xaTJWpnEe06Aw9+Gv2cfsKV5hElmyCQun8TxYjTTQfh3ptRvIjCPLQfU6iJpnwvPd8VXfplN8KuDut4IrcyoH3ZpvwfYU2OIsfePTd2sXXN6n8O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bHUlG41r; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22435603572so38640325ad.1;
+        Fri, 21 Mar 2025 07:31:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742567507; x=1743172307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/qMB4nk8UO6FCZc0IM6h+rgFVIvLZFIGvxML74AIHw=;
+        b=bHUlG41rJPmR2UpCcesppL8DoWMabBLQBkn3d2bgwFpozWk0Ex9XTIyXgVW866QvAN
+         R1I9fPDwKQI3Obsea+1hbggctM76VIE4ZZ8cdWIoFgHBfwoVqW6+7rqv7hfh+lL6dh5p
+         67zJTnfd4B/WDc3O/Bd+MidTKWh7ecCIUhap+DYET5JFKHyPE6HTfsMXFB20wMSVyIZj
+         luYYfuTHfuUJ8KW5dj/AhYSjoEgL2sUSJtvwfFbA6QYrwdZcvK/rL1335TqapCDrDJ/F
+         zPGAJFK5onlM1npCt+dyUnXkdQpy2Yf73KwmiGQk5PEVqL+CLYsPGDNgBynpP1ewpnfA
+         CHrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742567507; x=1743172307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G/qMB4nk8UO6FCZc0IM6h+rgFVIvLZFIGvxML74AIHw=;
+        b=UPIc/j18DsZ0Nqh7eOpvIP9pMCOC7zSBx1HlZinwlUu11ON+git2p11pKBXTxiKKzN
+         F5MVwo/srRNWsVDtojjidyAQmLhnFTlfq2gTdyigalWI56zvME0v7x2mIBocQ0qOVHkh
+         XfyCW/qWeBob7lCc+2qNLnKkakbrqGpGl8QMazJn9jC5Qislu+5C25M82RNhMBzxIi9D
+         GEvp4d0EDOHcj5dYSGr7R6cmmOBxYor29Zv6H5GO3Mn90IQSLGfv6ZDVC2XCrJ8jkiex
+         V1wOyTJI2/umucfm1W+CgpERgxT6fAeYpaJitsrTolDdBTT6Jw2vdtPGBMgdNdxnQH4m
+         ZOXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNUcYI2AziDX8+gaSN+JE0FlYl5i6nsqvFbq7gdS2ZMau7oLYJWQY8qsEYvDlAwAYKQzd5yN+kcpoJfPg=@vger.kernel.org, AJvYcCWuCvUGmB3YEt5AuUpA9njAjzYsto8EtgnVL4nwU3j1CNfgU1cadATN2DobV9u+D/kMrmz6zieFsJ4WIYDf1o0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6DI+4FTqikJ8zODS2wWpD/bWKn5ErXRQBmyCwqQEvaymsIZD4
+	VyOKkCTE88zpTDQgvruUA8yor+pOuu571CRG6c4N85FxM9AvdVxB
+X-Gm-Gg: ASbGncugIY0C97NSPw41tf75jg742SrGM0vblJhoWvZgzj1X+Qt5TCOS+MBDthtDXZ3
+	qaSWSk6Jw8Fy7woFm5H7cmv3zugwJ/xvabEKAdB7hJ0nfuJ1tIUutX45Q9TbVL7i+llW9Sih0XG
+	KLGvtzgOD/JQIQ2Z4yUnaAt1kGfCMsS7X6wq3tM9wLt/DZKzRe2+Jx/7XqXhEJgQkVegqIuDYn3
+	vC+H3n4+yRorALnQc5C7mNG8XNgGQwUmHg9bD7ItESfzwlyBZo6+pD/LAR5IQELKqLtJoNdKSIn
+	+VQ5O18zSfSzppyk/6MTd+9fU1WuqC/KGDLQfDDcCMzp
+X-Google-Smtp-Source: AGHT+IHA3SF38DceXUmvzTjbMwYvElk1EQpFK8FGNzT+iiLoZDAZeCHZ190P7REZ8AZ4jp/a/gcz5Q==
+X-Received: by 2002:aa7:8892:0:b0:728:e2cc:bfd6 with SMTP id d2e1a72fcca58-73905a3b9d0mr6169792b3a.18.1742567506741;
+        Fri, 21 Mar 2025 07:31:46 -0700 (PDT)
+Received: from localhost ([216.228.125.130])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a28059e8sm1781581a12.20.2025.03.21.07.31.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:31:45 -0700 (PDT)
+Date: Fri, 21 Mar 2025 10:31:43 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Burak Emir <bqe@google.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] rust: adds Bitmap API, ID pool and bindings
+Message-ID: <Z914T_oYHvV_Zk74@thinkpad>
+References: <20250321111535.3740332-1-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 7ce7796149f77df7e09
-X-MBO-RS-META: anjwshskwop1t1ss9yczbbtgpx78g5a4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321111535.3740332-1-bqe@google.com>
 
-Add a 'native' option that allows users to build an optimized kernel for
-their local machine (i.e. the machine which is used to build the kernel)
-by passing '-march=native' to the CFLAGS.
+On Fri, Mar 21, 2025 at 11:15:28AM +0000, Burak Emir wrote:
+> This series adds a Rust bitmap API for porting the approach from 
+> commit 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
+> to Rust. The functionality in dbitmap.h makes use of bitmap and bitops.
+> 
+> The Rust bitmap API provides a safe abstraction to underlying bitmap
+> and bitops operations. For now, only includes method necessary for 
+> dbitmap.h, more can be added later. We perform bounds checks for 
+> hardening, violations are programmer errors that result in panics.
+> 
+> This version includes an optimization to represent the bitmap inline,
+> as suggested by Yury.
 
-The idea comes from Linus' reply to Arnd's initial proposal in [1].
+We have a tag for it:
 
-This patch is based on Arnd's x86 cleanup series, which is now in -tip [2].
-
-[1] https://lore.kernel.org/all/CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com/
-[2] https://lore.kernel.org/all/20250226213714.4040853-1-arnd@kernel.org/
-
-Signed-off-by: Tor Vic <torvic9@mailbox.org>
----
-Here are some numbers comparing 'generic' to 'native' on a Skylake dual-core
-laptop (generic --> native):
-
-  - vmlinux and compressed modules size:
-      125'907'744 bytes --> 125'595'280 bytes  (-0.248 %)
-      18'810 kilobytes --> 18'770 kilobytes    (-0.213 %)
-
-  - phoronix, average of 3 runs:
-      ffmpeg:
-      130.99 --> 131.15                        (+0.122 %)
-      nginx:
-      10'650 --> 10'725                        (+0.704 %)
-      hackbench (lower is better):
-      102.27 --> 99.50                         (-2.709 %)
-
-  - xz compression of firefox tarball (lower is better):
-      319.57 seconds --> 317.34 seconds        (-0.698 %)
-
-  - stress-ng, bogoops, average of 3 15-second runs:
-      fork:
-      111'744 --> 115'509                      (+3.397 %)
-      bsearch:
-      7'211 --> 7'436                          (+3.120 %)
-      memfd:
-      3'591 --> 3'604                          (+0.362 %)
-      mmapfork:
-      630 --> 629                              (-0.159 %)
-      schedmix:
-      42'715 --> 43'251                        (+1.255 %)
-      epoll:
-      2'443'767 --> 2'454'413                  (+0.436 %)
-      vm:
-      1'442'256 --> 1'486'615                  (+3.076 %)
-
-  - schbench (two message threads), 30-second runs:
-      304 rps --> 305 rps                      (+0.329 %)
-
-There is little difference both in terms of size and of performance, however
-the native build comes out on top ever so slightly.
----
- arch/x86/Kconfig.cpu | 9 +++++++++
- arch/x86/Makefile    | 5 +++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 8fcb8ccee44b..057d7c28b794 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -245,6 +245,15 @@ config MATOM
+Suggested-by: Yury Norov <yury.norov@gmail.com>
  
- endchoice
- 
-+config NATIVE_CPU
-+	bool "Build for native CPU"
-+	depends on X86_64
-+	default n
-+	help
-+	  Optimize for the current CPU used to compile the kernel.
-+	  Use this option if you intend to build the kernel for your
-+	  local machine.
-+
- config X86_GENERIC
- 	bool "Generic x86 support"
- 	depends on X86_32
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 8120085b00a4..0075bace3ed9 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -178,8 +178,13 @@ else
- 	# Use -mskip-rax-setup if supported.
- 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
- 
-+ifdef CONFIG_NATIVE_CPU
-+        KBUILD_CFLAGS += -march=native
-+        KBUILD_RUSTFLAGS += -Ctarget-cpu=native
-+else
-         KBUILD_CFLAGS += -march=x86-64 -mtune=generic
-         KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
-+endif
- 
-         KBUILD_CFLAGS += -mno-red-zone
-         KBUILD_CFLAGS += -mcmodel=kernel
--- 
-2.49.0
+> The Rust equivalent of dbitmap.h is included as id_pool.rs, which is
+> tightly coupled to the bitmap API. Includes an example of usage
+> that requires releasing a spinlock, as expected in Binder driver.
 
+I don't think it's worth to refer the existing dbitmap.h, because:
+
+1. It's buggy;
+2. You limit yourself with committing to provide an 'equivalent' API.
+3. If you want to bring the existing dbitmaps.h, you'd just bring
+   bindings for them, not a re-implementation.
+
+Can you just say that you're adding dynamic bit arrays in rust?
+
+> This is v5 of a patch introducing Rust bitmap API [v4]. Thanks
+> for all the helpful comments, this series has improved significantly
+> as a result of your work.
+> 
+> Changes v4 --> v5: (suggested by Yury and Alice)
+> - rebased on next-20250318
+> - split MAINTAINERS changes
+> - no dependencies on [1] and [2] anymore - Viresh,
+>   please do add a separate section if you want to maintain cpumask.rs
+>   separately.
+> - imports atomic and non-atomic variants, introduces a naming convention
+>   set_bit and set_bit_atomic on the Rust side.
+> - changed naming and comments. Keeping `new`.
+> - change dynamic_id_pool to id_pool
+> - represent bitmap inline when possible
+> - add some more tests
+> - add bqe@google.com as M: for the Rust abstractions
+
+Instead of 'bqe@google.com' just say: myself.
+
+Thanks,
+Yury
 
