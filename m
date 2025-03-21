@@ -1,145 +1,121 @@
-Return-Path: <linux-kernel+bounces-570746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB6BA6B41F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:47:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83411A6B421
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B4357A8E0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA1919C32D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB171E9B21;
-	Fri, 21 Mar 2025 05:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43391E98E0;
+	Fri, 21 Mar 2025 05:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bWYByzfU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="NAFIpQZr"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9931DE4CC;
-	Fri, 21 Mar 2025 05:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF441208A7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742536029; cv=none; b=PvIUY1kNaN3CPVD1SioBeinp/uwbnUFmN0UM6s3h12Xn7RvBpzaAQCbmVHJ53Ec98UXwTYa1YPb2LDS4uCtO5UW3HbeigmBaKTeOJrJEJYt0lPV82oJQ2SwMV7y1844cWW8kl2GxrHm8FB0t8/V3/oW9jDCPpz6aoFga1y9yofo=
+	t=1742536080; cv=none; b=RA6H3dCFODDNH0dPtFoBgSr1py4qey2FjuV4RsHwpAkMkZ+9gvFTLXAyad+P9SM9FSjiePGCeTj6a4/ZEtouch35as0gDZpzFGsoq3wgTgj5yfk+xtcTaF7wSsw3oIpWYUyAyfreChsxUZMef0qyMB/JR5YP+rqWKfInofSxmD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742536029; c=relaxed/simple;
-	bh=NKtbqf6lFezlXMtA+N4DCNTwnUPZLO2yGFkpji4jYwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TTu6bYNoeHUr498LHNdvru277Hmnu9/YQFj8lh6mDLvoA6u+HDcIqHqxZIvMlHo/NYSUARHDD8nF5hD4L8A00lz9ZmFwtoKQOigRCQJRm5WTVryUEutFDyg0Ib/PkHf0dir8F1uF9qOTZvea2D2XFCsc/pf7j/NoNtpCbNMpTDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bWYByzfU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742536021;
-	bh=kONGa4+m4ViE0+PqSESHgF9ovmATMkDBLka3oGpfSwc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bWYByzfU2c/r3hPFLSROCmSnZycKsJeYcJ8cBT/XfPWdAirRyQUlZhmLCi9xbkFsp
-	 ufTqCL6snx3UinFSMuPa2lORmncRYK2wWHwL1ap7ZM3533485yOTB6nm0teabDaWBz
-	 Oud1ucGjTS7/dyofbilTZddEQfVnn58va8BXCUm4ysqep48w3YCk7u0c8S6WOobomz
-	 g4LxOtr9a4lqLm1iyYqPKbed4HmB/4PA1zVTxicX9mPYQWLLmO1MFd9+J3LPR5RzbQ
-	 XaMntEBr2b1UXsq7guAW7X0pu2H1U7xFhw6IqtxQ85ClR/y6HiNzyLoaub+igpMDqb
-	 6dlBPXzNJnRcQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJs055jJWz4wnp;
-	Fri, 21 Mar 2025 16:47:01 +1100 (AEDT)
-Date: Fri, 21 Mar 2025 16:47:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>
-Subject: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Message-ID: <20250321164700.477efe5c@canb.auug.org.au>
+	s=arc-20240116; t=1742536080; c=relaxed/simple;
+	bh=063TSuyFySZQVcxA85BpXxV9BthpOA28nMtuSi3UF64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wc//hsv18xlYRNPCMkzOxvw3sUHHKbpsTNGsghMHCujcyXAZSjRqvp0ZCm3buPMZnrOuwYrSOgM7P9KLvQyZEat42P8nTMP8x9AXCO8WdZtF7bQw0FX4yCwXgum0QPLJaOK7gJGL4uyAsQLpda1kVbIlkFrT6UwYzFbcT+Ihi0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=NAFIpQZr; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52L5lPOS2484071
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 20 Mar 2025 22:47:26 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52L5lPOS2484071
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742536046;
+	bh=2otJs/TCEZMMgc4khfCzHW146BaO1OkGu0D2RYRafuQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NAFIpQZrT/7ccRwmLxEMs2n3c2lE6Q/TuA6REe5+DFpTtfrNLYMkF+7a1mu9U9Gn5
+	 grXbQ1o0+RCpOeorxssesKuew8zGvshftLgu9MoBYuO1ipM3k5EZVktK8HuiO9nZr1
+	 gJEN2LJ1nGpoz612cUCHEts0GZ281ZYoo3pMIUn9UdDfuwQVTEpxfgiFxSSS7Eq4pS
+	 uZ117ygQUFAySbkk88ZpkgDccaLHCkCCy5XU/gG95GgXg6Kc6gauQY68pcQcT5zfA3
+	 Sm2QzAR7XMBABrqwIpGwFvTIKyzK/Y384pdE/5N4Jy1+a1/ABEH0hGrwX9zTfssxDR
+	 eJJ0EneR+mdAg==
+Message-ID: <8b920da6-0c9a-43b4-bd50-79c057a01932@zytor.com>
+Date: Thu, 20 Mar 2025 22:47:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_h7qjKGPRcrCgADM0q+in6u";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] x86: Zap TOP_OF_KERNEL_STACK_PADDING on x86_64
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, peterz@infradead.org
+References: <20250319071009.1390984-1-xin@zytor.com>
+ <20250319071009.1390984-4-xin@zytor.com>
+ <CAMzpN2jFv8KE97ymEWAX1setxdgXy0jZGn_7JVp9fFEBfZ2ynA@mail.gmail.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <CAMzpN2jFv8KE97ymEWAX1setxdgXy0jZGn_7JVp9fFEBfZ2ynA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/_h7qjKGPRcrCgADM0q+in6u
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/19/2025 12:17 PM, Brian Gerst wrote:
+> I'm not sure it's worth fully removing TOP_OF_KERNEL_STACK_PADDING for
+> 64-bit if it results in needing separate definitions of
+> task_top_of_stack().  Leaving it at zero is fine.  The other changes
+> are fine though.
 
-Hi all,
+Let's leave it to x86 maintainers ;-)
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+But to me, TOP_OF_KERNEL_STACK_PADDING no longer makes sense on 64-bit,
+and it makes it simpler to remove it.  On the other side, 32-bit is to
+be zapped...
 
-  drivers/ufs/core/ufshcd.c
+Thanks!
+     Xin
 
-between commit:
-
-  fe06b7c07f3f ("scsi: ufs: core: Set default runtime/system PM levels befo=
-re ufshcd_hba_init()")
-
-from Linus' tree and commit:
-
-  20b97acc4caf ("scsi: ufs: core: Fix a race condition related to device co=
-mmands")
-
-from the scsi-mkp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/ufs/core/ufshcd.c
-index 0534390c2a35,3288a7da73dc..000000000000
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@@ -10475,21 -10460,8 +10460,23 @@@ int ufshcd_init(struct ufs_hba *hba, vo
-  	 */
-  	spin_lock_init(&hba->clk_gating.lock);
- =20
- +	/*
- +	 * Set the default power management level for runtime and system PM.
- +	 * Host controller drivers can override them in their
- +	 * 'ufs_hba_variant_ops::init' callback.
- +	 *
- +	 * Default power saving mode is to keep UFS link in Hibern8 state
- +	 * and UFS device in sleep state.
- +	 */
- +	hba->rpm_lvl =3D ufs_get_desired_pm_lvl_for_dev_link_state(
- +						UFS_SLEEP_PWR_MODE,
- +						UIC_LINK_HIBERN8_STATE);
- +	hba->spm_lvl =3D ufs_get_desired_pm_lvl_for_dev_link_state(
- +						UFS_SLEEP_PWR_MODE,
- +						UIC_LINK_HIBERN8_STATE);
- +
-+ 	init_completion(&hba->dev_cmd.complete);
-+=20
-  	err =3D ufshcd_hba_init(hba);
-  	if (err)
-  		goto out_error;
-
---Sig_/_h7qjKGPRcrCgADM0q+in6u
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfc/VQACgkQAVBC80lX
-0Gy5BQgAng9v6BA+b2BvyDzhWrUYlc41SsIRuvt1TIK05YyQ97chJ0wuzC8seqvH
-adc0H+LZUrwO8oWLjgyFiCxPPwikjQ0M8TlvAsmyXgYbHZVQ+/lf7FXsPNRWjAKL
-XIu2c29XTpYLsxdnAzJsgjVZ1ScnzQR0euQreJlP2EdOtt9KsYTEtPa0aXuOCWlK
-Ja9NyocgiPtpA33rHc7wccMH6wmQtdibFV7+HZNF85oOSz2wITfLFoNGzl2CVv85
-IXkppOae04AQzbmq0f9EYk0qj7lNuOqLNaNYPEDlyPk6RkG1Dq7X5tKu6PqNh7Ih
-0j8aaGq3V5CjOT00rNYKdh+6QxvP1Q==
-=fO4Z
------END PGP SIGNATURE-----
-
---Sig_/_h7qjKGPRcrCgADM0q+in6u--
 
