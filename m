@@ -1,95 +1,116 @@
-Return-Path: <linux-kernel+bounces-570609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67D7A6B283
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:07:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D578DA6B282
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F77448829E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:07:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26EDA7B2693
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74522AE69;
-	Fri, 21 Mar 2025 01:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8829405;
+	Fri, 21 Mar 2025 01:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iEZbggtj"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="STmLaeeb"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749911F949
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829A8184F;
+	Fri, 21 Mar 2025 01:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742519240; cv=none; b=OdxCgCBjwQa3NG1BMdpkTmInUB/EdwLeQYpxLu/jpt963lhLYMZVh0IvuXrSsCa+CKY/kwbLgIsXMUzbDEVNOvLUw5OqO5BRkwuvUNlA6ishmEalubZUz++SO4wQDNMQBoPyIs/a5zr8+plybsFJhzSxSe/3sjpcKvVNgwnAu68=
+	t=1742519221; cv=none; b=K6xUBIDHiTcjtlNz1iFYhV+e70K6hvWzNA9u8+0XNmpB5avQQIv1E+HtzPkZl0aTLvQKbbQYp9A7Yk64HEG/wHxzvy/3Lp89eKSG7o8L/1XK3UEs2as97n6fHO6rJaWn2P3k7iyEvSft9VNp/SkUzfaC2Al+Np+V2gZ8Tr+ujTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742519240; c=relaxed/simple;
-	bh=LzjLWtNm8vIx5m/jeMY8e5F6Ay/oAnGOKZbPpKEEA3E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dCfA56PRNNLewGi9OW4dsq0ueSGu5hUs9emcV6sNhLh3V/ci23EKFJ67oQeesDwzyDoa+FO+TOZYln3iDOf8QbyFjw0/NtvbosTdYCDlCUvBxkkIYPRN78M6AhXqlE3qhv3BjGA8CCzDd0OOZSdidwGdLQ7rDImBEpVeSuWTEUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iEZbggtj; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742519223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=WVZwF7aFIAedNImI3f0zkPZlr8EcTIXGZ6tIWmPnltQ=;
-	b=iEZbggtjtl+3K2e42DqCYGW/GyIiFB1eviHiXmcOHdNnHVTGsDtK+ncpP/pFdql+jbPV8j
-	ZsulXdX62DHD/FDquYJyo9HMLNiyTvNmOREV+V9BjTAVFcabrKPveVmxgEo28V9zCZUn2f
-	UCoE9Gfir6xkq2NfyCMnhBJeN4WSEOQ=
-From: sunliming@linux.dev
-To: dpenkler@gmail.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	dan.carpenter@linaro.org,
-	everestkc@everestkc.com.np,
-	niharchaithanya@gmail.com,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: sunliming <sunliming@kylinos.cn>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] staging: gpib: warning: variable 'nec_priv' set but not used warning
-Date: Fri, 21 Mar 2025 09:06:49 +0800
-Message-Id: <20250321010649.10918-1-sunliming@linux.dev>
+	s=arc-20240116; t=1742519221; c=relaxed/simple;
+	bh=pIdTixZuNmStjtltpSgBZZbYtUoRIdqSvZd1TvixVG4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HKHC8fK0cxsgXg1OludzjpmTaYnuFZyqTSrNNLhXSg+BGwvklEyFvut0Sg3uyQBX3sKlwuCZ+Jo5+RG0ZGFHmo5InHWRkOfm4MJdI7ip8UBHcZPud1Lhn2Ueay5cSqpK8K9N5LRQAIs5LorFNg31Ogy//CsIdl0NpCmbj40Sdss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=STmLaeeb; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1742519215;
+	bh=pIdTixZuNmStjtltpSgBZZbYtUoRIdqSvZd1TvixVG4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=STmLaeeb8JgIPPtTQkTrSNDqYPUrllXY1O8adMuBZaHXPzg3r7xposNnDqGupfi5X
+	 99Zta++gSDDl1g6lvrC8XT0hnuAKg1r3RC4z8Zo/QyDKqSgnfrSyFA2MJrdT4WBFl1
+	 RUmt/OZ6TxN7GeAG3cVCmiMKGwUSnxBv5Lv4WOi5kgsXZNcVhEykb5ll2kTsc+9Pa6
+	 BaiCS7bfJfQEDURlCP4T+9JpGc1mpUmY46UGjImGTinlAXe91pWEhhzlW3nyExDQS9
+	 gfDVgpD1XzfZxWWDXw/j4WUCiQMImKu63heMsVU2ep4csPM121OpZcNW44Zwo3oG/U
+	 7WLh87jddaPNg==
+Received: from [192.168.68.112] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 6DB127AF35;
+	Fri, 21 Mar 2025 09:06:54 +0800 (AWST)
+Message-ID: <585c2b050a44f4009b3a61cab69f800c88a0cf5e.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 2/2] dt-bindings: arm: aspeed: add Nvidia's GB200NVL
+ BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Willie Thai <wthai@nvidia.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, joel@jms.id.au, kees@kernel.org, tony.luck@intel.com, 
+	gpiccoli@igalia.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	openbmc@lists.ozlabs.org
+Cc: leohu@nvidia.com, tingkaic@nvidia.com, dkodihalli@nvidia.com, Mars Yang
+	 <maryang@nvidia.com>
+Date: Fri, 21 Mar 2025 11:36:53 +1030
+In-Reply-To: <20250320164633.101331-3-wthai@nvidia.com>
+References: <20250320164633.101331-1-wthai@nvidia.com>
+	 <20250320164633.101331-3-wthai@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: sunliming <sunliming@kylinos.cn>
+Hi Willie,
 
-Fix below kernel warning:
-drivers/staging/gpib/eastwood/fluke_gpib.c:196:23: warning: variable 'nec_priv' set but not
-used [-Wunused-but-set-variable]
+On Thu, 2025-03-20 at 16:46 +0000, Willie Thai wrote:
+> This patch adds a binding for GB200NVL BMC.
+>=20
+> The GB200NVL BMC is an Aspeed Ast2600 based BMC for Nvidia Blackwell
+> GB200NVL platform.
+> Reference to Ast2600 SOC [1].
+> Reference to Blackwell GB200NVL Platform [2].
+>=20
+> Co-developed-by: Mars Yang <maryang@nvidia.com>
+> Signed-off-by: Mars Yang <maryang@nvidia.com>
+> Link: https://www.aspeedtech.com/server_ast2600/=C2=A0[1]
+> Link:
+> https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703=C2=A0[2]
+> Signed-off-by: Willie Thai <wthai@nvidia.com>
+> ---
+> =C2=A0Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 01333ac111fb..a3736f134130 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -98,6 +98,7 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - inventec,starscream-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - inventec,transformer-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - jabil,rbp-bmc
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - nvidia,gb200nvl-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - qcom,dc-scm-v1-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - quanta,s6q-bmc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - ufispace,ncplite-bmc
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: sunliming <sunliming@kylinos.cn>
----
- drivers/staging/gpib/eastwood/fluke_gpib.c | 2 --
- 1 file changed, 2 deletions(-)
+Please order this patch first in your series, before the devicetree.
 
-diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
-index 0304c5de4ccd..6854a745ccff 100644
---- a/drivers/staging/gpib/eastwood/fluke_gpib.c
-+++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
-@@ -194,10 +194,8 @@ static int fluke_line_status(const gpib_board_t *board)
- 	int status = ValidALL;
- 	int bsr_bits;
- 	struct fluke_priv *e_priv;
--	struct nec7210_priv *nec_priv;
- 
- 	e_priv = board->private_data;
--	nec_priv = &e_priv->nec7210_priv;
- 
- 	bsr_bits = fluke_paged_read_byte(e_priv, BUS_STATUS, BUS_STATUS_PAGE);
- 
--- 
-2.25.1
-
+Andrew
 
