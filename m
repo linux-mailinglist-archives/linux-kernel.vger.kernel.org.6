@@ -1,199 +1,98 @@
-Return-Path: <linux-kernel+bounces-571830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D3AA6C2E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:57:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C784A6C2E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE12C46172D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4E3460E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632F022FE05;
-	Fri, 21 Mar 2025 18:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F239322E41B;
+	Fri, 21 Mar 2025 18:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QC0JtafT"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iVBdVfbX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C132321859F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 18:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABED2B664;
+	Fri, 21 Mar 2025 18:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742583444; cv=none; b=CtiMh+AnPGOdARf1juj6/MDl7OlKAFTn2zLAGvlJ7iccZ7ur6bo/w7oMD65MAaS8FgnLLWWTa/yH6dRFdKLgto617wAYwlkvruB0Dy+UaV4hjzD/SI13OgYI+2uE+4kvcvEskI7QARUtKp80GCKSWJSKw2Tt1GsBMSlcq2HVetA=
+	t=1742583483; cv=none; b=LIjTcV5oQ4o6pOBBme5LRaPJ3kzLLS9gMLartDYiFeIdbTDfjux2dn5WS3IS8pVBBKRmJFJqCaJqrPPTejbfDUtmw1EXpk26McFkrpb8bIIPv2E72SBh+CimK/leNB4Tsfz6MKFIHs0/kmeRP7eJMJTv6+2O+5hl3PO7ZvIGGZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742583444; c=relaxed/simple;
-	bh=R9jLZ0JS/I/Nk0Iz0Fs5IHkSxU6QsL7aQ1XSqeyU8Gc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/he0+Ru7J72HVB2Kjuz1RgJ0r3AeeL37q4SitPPTz1Z+3LAoE7aAZARndArjlnud+RG/ZA/GVoko3EUz0Qzs7dnA+fx1q3blwn0irv4ZV6ZvEvpk22GOCWys2WHpdHgywHwa3yRmFBoBOuMzO4/Ka1MAqp3ErV6WAFmzjvG/2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QC0JtafT; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e4930eca0d4so1809387276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:57:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742583442; x=1743188242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PX53KeX8QdfdkHuGZL3pdegSXRrN5TG6dmB2yHiIl9U=;
-        b=QC0JtafTjLYnReunsyFX4LGaxjmtHg0EVVJEojotz08Zwhq5mKW92FvOugkwHGgZu5
-         0opXpQ0BpiZ7Hdtp3vRofn8pGNNdrAMPBX9dpi+Epn867rSu9t4Lo5J1C+p8LcKOO+GK
-         MSfIQ9YxN9Cp8f0EiiaxW7utlvt7B9mpLrmXAQU4IuzRVuLO6+ZWCGDwDc/fFT7Xh9cn
-         lz7NouYffWf7G2EhPJhOdBReWc+0wrNsGNp081zH1B0sgwSmm9GiKa5MTpA52Qq9//My
-         5MX5qRbeeAGQtu5BPtVZFOjPFXzhrpQKUQglS8/l06BOuPlr0pryogZbrXSOKrv7nbyF
-         AwKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742583442; x=1743188242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PX53KeX8QdfdkHuGZL3pdegSXRrN5TG6dmB2yHiIl9U=;
-        b=qmdORvcL8YqsBTu/gEZnUFEZHEpiLcvSdHlZkaVlaAJ1otDfhel/JoJTqE9pSqtqqa
-         XlJEsl8jHQbjSNCSdGu2nTmapNABAMQ0g8IbR6PcGdgKaTQIjdFsgd11btib4X4vk4VX
-         EDeVSlBGNEnNET7qyagkIjYZhc9B5a0TZWW7HBzhnB2ykUvc+LJyEgTgEehaIwn36hj5
-         Hn4yPMdfcTfzT4yUATDKmcQRJ6mhRVZn4F3QOhJFiQwXhbuJNjp/a3LdE7jZeY9nP2Fs
-         GLMbhsIGU5wOszVaz22FqsUEAoGYxlmpx39O5J4lQHQQiZcSgaZJsg1TP/VCMSYdJj8/
-         vFBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF37IHgCn33T4uHcfha8VMNT5X93KIwaOMWA9Gfxpnzi7qEn3ZIhMKBaE6z9bvFZ1rn1BC+p8eLuVCgb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBmxOt18hUyOk8xDW2asQHgSqzgQzewel8e+4E+tKC+cl/E1HN
-	qn+Sv2+oK+pqG6Y2yKWCgrkcB7gyglJqCFNicdT5mOFPDU0YwQXQORyHRNWfNz8gm57TTo6ZBaA
-	vasxF3hq7GOVtbk1HOe3TZ4ujhlKzFol+yKK+
-X-Gm-Gg: ASbGncsYMBUn0mRC9t7oWZsCnx3OFs2ZO313CV/tqqyR1/5/yjBuVaH2LS7/UIqx2lr
-	LHhQ18ylbuLOLRNyhStGx/v3m5Lcud9fN6WxrjnVdETewgiVXl2Tyz962moJj7WZjDUQ3VOHPvI
-	LMIYI9loK9rYbpEyXrKWvY1drjRA==
-X-Google-Smtp-Source: AGHT+IHWOfZuod7gXcYVT7pQNeKd7Yx7NruRIAvwDJwwJA0Zn5j0qTeOw7UV9AmgyOEamkLXhmLVnNJPDbaPxH+JWSw=
-X-Received: by 2002:a05:6902:2709:b0:e63:6f6a:ab03 with SMTP id
- 3f1490d57ef6-e66a4dbd62cmr6107284276.22.1742583441566; Fri, 21 Mar 2025
- 11:57:21 -0700 (PDT)
+	s=arc-20240116; t=1742583483; c=relaxed/simple;
+	bh=gGskX/EDyuM1cIMA8VOOs4nGmlFR8fI2S6yxYV1Dr1U=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvjzvJEksCiC00Am0A447ZU23MDrvnW1J4ZzSriUT+cLqX04POg0IoFUYkHJ/1C8qOnEDwUluTbszH544I5YC4wzSQVMdfhebnGXgrlaLqsHAgPxaTXAAsDvw1yo6zMJTA9lO1dkK582ELxcu8fjnft8c8FTKNOkK3RU+rc34cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iVBdVfbX; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742583481; x=1774119481;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=gGskX/EDyuM1cIMA8VOOs4nGmlFR8fI2S6yxYV1Dr1U=;
+  b=iVBdVfbX5NDv4F0O5Ixv3koWp6XbX6a/GVID+9FPg7zzOo/crsPbwM1E
+   tK3dzjZjvi3kYl1JDmLhjOtudFK8MrSmvvyGlGD1gxLz55ZtDHgXz+9Qa
+   Wz2Ys0UdqE4sFECawzr/pPZGqCxx4JissV2YgfdIYDLvqtlDxNeoUEyqg
+   DrUq877lQ9OXY1QEQE/At+ljQ3c52t6bndstBX/R0feh4ufV89uhSMjeW
+   AnBCkl3poPmLyjG6FrkYDaRKT5uLK/0HvO0t3QrjWWhQEkDjtjIs3pB2i
+   FbD1vpI4aPROsp/l68QBIPa6i15mTVW5nnGwd9+8FSt5Due/1tcFaL73v
+   g==;
+X-CSE-ConnectionGUID: hfM3rvIsRQiQlVA+v+T4iw==
+X-CSE-MsgGUID: MBJYYCK/Ry2IhiZLv92i/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="69214798"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="69214798"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 11:58:01 -0700
+X-CSE-ConnectionGUID: ew3y3JH6RcqCx9W5I5KNrg==
+X-CSE-MsgGUID: x8gyBdHJShCcVpni3QNn6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="146695512"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 11:58:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tvhZ7-00000004bLE-3QbL;
+	Fri, 21 Mar 2025 20:57:57 +0200
+Date: Fri, 21 Mar 2025 20:57:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/6] i2c: core: Do not dereference fwnode in struct
+ device
+Message-ID: <Z922tWnr4JH3hdlU@smile.fi.intel.com>
+References: <20250312185137.4154173-1-andriy.shevchenko@linux.intel.com>
+ <20250312185137.4154173-6-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
- <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
- <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
- <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
- <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
- <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
- <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com> <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
- <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
- <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com> <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
- <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com> <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com> <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
- <B89ED288-1A01-41D2-8ECF-285669139553@oracle.com>
-In-Reply-To: <B89ED288-1A01-41D2-8ECF-285669139553@oracle.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Mar 2025 14:57:10 -0400
-X-Gm-Features: AQ5f1JoZ0K8YLyq-d626n3YkVM423cC9evLtvBNR5_Xa6ss3FNArdL28zS4Umlo
-Message-ID: <CAHC9VhQb55+SmwmrsVpyw5X2Ys0oo6gJ_dbDf64mS5c008230A@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312185137.4154173-6-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Mar 21, 2025 at 12:37=E2=80=AFPM Eric Snowberg <eric.snowberg@oracl=
-e.com> wrote:
-> > On Mar 20, 2025, at 3:36=E2=80=AFPM, Paul Moore <paul@paul-moore.com> w=
-rote:
-> > On Thu, Mar 20, 2025 at 12:29=E2=80=AFPM Eric Snowberg <eric.snowberg@o=
-racle.com> wrote:
-> >>> On Mar 6, 2025, at 7:46=E2=80=AFPM, Paul Moore <paul@paul-moore.com> =
-wrote:
-> >>> On March 6, 2025 5:29:36 PM Eric Snowberg <eric.snowberg@oracle.com> =
-wrote:
-> >
-> > ...
-> >
-> >>>> Does this mean Microsoft will begin signing shims in the future with=
-out
-> >>>> the lockdown requirement?
-> >>>
-> >>> That's not a question I can answer, you'll need to discuss that with =
-the UEFI SB people.
-> >>
-> >> Based on your previous lockdown comments, I thought you might have
-> >> some new information.  Having lockdown enforcement has always been
-> >> a requirement to get a shim signed by Microsoft.
->
-> ...
->
-> >> The alternative "usage-oriented keyring" approach you've suggested
-> >> wouldn't align with the threat model that lockdown aims to achieve.
-> >
-> > That's a Lockdown problem, or more specifically a problem for the
-> > people who are freeloading on the Lockdown LSM and expecting it to be
-> > maintained without contributing anything meaningful.
->
-> There are past examples of previous contributions, but they don't seem to
-> go anywhere:
->
-> https://lkml.org/lkml/2023/5/26/1057
+On Wed, Mar 12, 2025 at 08:48:52PM +0200, Andy Shevchenko wrote:
+> In order to make the underneath API easier to change in the future,
+> prevent users from dereferencing fwnode from struct device.
+> Instead, use the specific device_set_node() API for that.
 
-Those patches proposed loosening Lockdown restrictions, which is
-particularly concerning given the intent behind Lockdown, and
-considering the author did not have any existing patches under
-security/ (they still do not, I just checked) there was room for
-concern.  If your first introduction to your neighbour includes
-proposing the removal of the locks on their front door, you have to
-understand that they might not consider this a valuable contribution
-and might bristle at the idea of handing over responsibility of their
-home's security to you.
+>  drivers/i2c/i2c-core-base.c | 18 ++++++++++--------
 
-You are welcome to continue to criticize me and my handling of things,
-that's the popular thing to do these days when you disagree with a
-maintainer, but I will note that I don't recall you offering to step
-up and maintain Lockdown anywhere in this thread.
+This missed i2c-core-of.c changes.
 
-> Which causes us to carry patches like this downstream.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Which is your choice, and I'm sure you have plenty more patches
-unrelated to Lockdown in your downstream repo.
 
-> >> With Clavis, I attempted to develop
-> >> an approach that would meet the lockdown threat model requirements
-> >> while allowing the end user to control key usage as they deem fit.
-> >
-> > As mentioned previously, the design/implementation choices you made
-> > for Clavis means it is better suited for inclusion in the key
-> > subsystem and not as a standalone LSM.  If you wanted to
-> > redesign/rework Clavis to stick to the traditional LSM security blobs
-> > perhaps that is something we could consider as a LSM, but it's
-> > probably worth seeing if David and Jarkko have any interest in
-> > including Clavis functionality in the key subsystem first.
->
-> The direction of creating a new LSM was based on this discussion ...
-
-Oh so we are going to repeat ourselves, are we?
-
-> A lot of time could have been saved had your concerns been
-> voiced in either the first or second round ...
-
-I'm still waiting for someone to connect the dots between a lack of
-"timely" review (feel free to define that however you like) and these
-never ending threads where we keep rehashing arguments over and over
-and over ...
-
---=20
-paul-moore.com
 
