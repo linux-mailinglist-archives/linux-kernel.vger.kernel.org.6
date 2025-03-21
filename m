@@ -1,59 +1,68 @@
-Return-Path: <linux-kernel+bounces-570949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902A3A6B697
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:05:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2690EA6B6A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407803B7315
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7088F18938F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CCF1F03D5;
-	Fri, 21 Mar 2025 09:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0D91E571A;
+	Fri, 21 Mar 2025 09:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bomm0v7m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="NmK6I3eA"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC608BEE;
-	Fri, 21 Mar 2025 09:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1DA1F03C4;
+	Fri, 21 Mar 2025 09:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547866; cv=none; b=g1KxdX5M0KKWPJKfYlwQQWngtVm5/iGzFkJQzBo3xb/Mg1FcVqVJBs/c11psBM1lWwEjtdOdyrF7ehNzI+BIL0sIyRQqsvbST5cDx/AKtgqNzRXLSImFpCFQeHwRxplk3bjtuqBloxQ5I5EWBG7JK8IkhTeTYkBMUMY+oRFRaEY=
+	t=1742548010; cv=none; b=DTenUHv8yqcK+T5Ti5pL8Hs5OlP/4s1FB9gadqER+pvLUMZKUoPZeacJuE0fscTEoVT97kPPQ7ysqTEPiozFW2wsRKbDC7gdMdkBg4iqeLZv6cJzCc7CmmpAbgOQ/OnudZH+/qv/4hfqdQ0U8j7F54LbEmAhX45nOUW3gZ6BxBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547866; c=relaxed/simple;
-	bh=gg9hEPqRWjLsC34kOaZebN3D3xciWD7Inmq5RpjuyTo=;
+	s=arc-20240116; t=1742548010; c=relaxed/simple;
+	bh=nd7Hlijoo4SHjn4bvaDypRqs2ZkWHDVlmW2gwUcp7q4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7hYsh2ImjGz6AWzeNVLoZ0ZBp7+kofRgUt5GsVdojA9+/suKn+VGeei95NeZTMh6HGRl16imAyXTDJLxCQ3VCkbgK4dAkeZg/gJythie9EP6DtvTEp4O+KCDXl90EQp13if+pvpC37BceFMf0LAaLy02uCFm7LUYd9vr5QQ9X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bomm0v7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28552C4CEE8;
-	Fri, 21 Mar 2025 09:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742547866;
-	bh=gg9hEPqRWjLsC34kOaZebN3D3xciWD7Inmq5RpjuyTo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bomm0v7m/qiXPg9sp+hvXCAusT7kty5EkAKNLho7jGZPNyaRWKA8VMpsqMEb9EXvu
-	 tiGo59MUtpYLLjNwnRJUlV5reWJa59uZKszehT9gaBGaQT+7MZZDJ4yxnyM0r65zDD
-	 SF2BR7v6wIbQT+uV9BYXEBz0mzXZAvbG5VEokv8/PmhehYzGM1obqUruvhmU7y6awM
-	 VJr2EuLpqc83C0GDCE5aaOx8/MTnoDXTKiyGVqCjDWfIA+qKWbvbquKZIHeZvbLfDk
-	 m35l9yyigN12aWBPPRNQIB2vLsPGWdAXsThgb1wIlGVxtAx6toEr1aWRU6zp56FKLg
-	 DOBu5SpYqmjgA==
-Date: Fri, 21 Mar 2025 10:04:20 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] rust: device: implement Device::parent()
-Message-ID: <Z90rlKC_S5WQzO8P@pollux>
-References: <20250320222823.16509-1-dakr@kernel.org>
- <20250320222823.16509-2-dakr@kernel.org>
- <2025032018-perceive-expectant-5c48@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGI2qo5wUMD6zTbj+OzX+Tc2JpFKr9S7LSUz/k2TEMxz7Z2KjuoE2kQWPPRVwisVYq+2sqNRFQC7GNe8161SY2/WH8XML89Njj/1YVMaoCJs0etLk5Y76S8VLqXhRsQS971LSlO8cErd/wRbRf0G2OY4i1PezaJX6nCkxLn+3Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=NmK6I3eA; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=DConofP6tD7c5xckB9jldT1Ij9v5gECOt17lWOu6Vm4=; b=NmK6I3eAcWD/vhe3JWXqBdQCA4
+	sJ/nFY4QORYXGTkrDXfeUAQ1VwEfSTpjt6j3fQlzQCe7PAZrDUY3ST4iz/+NfvwJGVG/V9IJUgqkO
+	8l96cE3GL68MMM9MMuQr5i4IZ6X3AhIufl9tBtZTVoN3GEgjTQqaoiNgy2LYZmtEzqaKNJdPlqyfT
+	GUGIVwTw9aZC/d1qF8J548YPBQJNpZDRRz9rulw5iGxUjgyNJUySWL2U8A1hWRXapG0qSP5YqVtXV
+	Osz+hhCckvcfzAvZNJLbT8yzfJ5hw4UkBwm3QNWEDKxQAQ+RNHv9vKUQirq1s25HA/XDhEex+zqWs
+	2rLDxoCw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tvYKl-008ya9-0K;
+	Fri, 21 Mar 2025 17:06:32 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Mar 2025 17:06:31 +0800
+Date: Fri, 21 Mar 2025 17:06:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Vinod Koul <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v7 0/8] dmaengine: qcom: bam_dma: add command descriptor
+ support
+Message-ID: <Z90sF_1SporNMdIo@gondor.apana.org.au>
+References: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,28 +71,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025032018-perceive-expectant-5c48@gregkh>
+In-Reply-To: <20250311-qce-cmd-descr-v7-0-db613f5d9c9f@linaro.org>
 
-On Thu, Mar 20, 2025 at 06:40:56PM -0700, Greg KH wrote:
-> On Thu, Mar 20, 2025 at 11:27:43PM +0100, Danilo Krummrich wrote:
-> > Device::parent() returns a reference to the device' parent device, if
-> > any.
+On Tue, Mar 11, 2025 at 10:25:31AM +0100, Bartosz Golaszewski wrote:
+>
+> Testing:
 > 
-> Ok, but why?  You don't use it in this series, or did I miss it?
+>   insmod tcrypt.ko mode=101
 
-Indeed, it should rather be at the auxbus series.
+Please also enable CRYPTO_MANAGER_EXTRA_TESTS.  Those tests are
+a lot better than the fixed test vectors alone.
 
-> A driver shouldn't care about the parent of a device, as it shouldn't
-> really know what it is.  So what is this needed for?
-
-Generally, that's true. I use in the auxbus example and in nova-drm [1] (which
-is connected through the auxbus to nova-core) to gather some information about
-the device managed by nova-core.
-
-Later on, since that's surely not enough, we'll have an interface to nova-core
-that takes the corresponding auxiliary device. nova-core can then check whether
-the given device originates from nova-core, and through the parent find its own
-device.
-
-[1] https://gitlab.freedesktop.org/drm/nova/-/blob/staging/nova-drm/drivers/gpu/drm/nova/driver.rs
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
