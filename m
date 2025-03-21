@@ -1,78 +1,176 @@
-Return-Path: <linux-kernel+bounces-571753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996B6A6C1BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:41:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA04A6C1C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818FB483346
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A7A188BF5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0382622F389;
-	Fri, 21 Mar 2025 17:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750C522E00A;
+	Fri, 21 Mar 2025 17:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsDxvCCs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="crSaDCX2"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6428622F16F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFF122D7B8;
+	Fri, 21 Mar 2025 17:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742578754; cv=none; b=oFRDmMkpeCYwLIAoktpFzRX+iCCfyRzHBdocJFvwc3OtFWFzVkDUOUqTscvm5Xrr4Z8k7+I0MGAWhZoiGK/IYufXRlc1j6QO119PO+qbKB+11TJoHgnYQt7eRGIwAwk8LNv+t1gkf7BmatX1rkZKOwcNcF9VL+uRiRJHv2mXFqI=
+	t=1742578906; cv=none; b=iGURbq95mTrk3pN+MAL8+NIjHLMDjgEff01ufAZVyZhBWfGJze57I0Z3Bw4XIE7nC83tMgilWln+yq/nWHqdU0CDAv7HmIzaAyNaY0CBFjxksBCoRQd5iAxujqkCswemWzhG9BPlXdpsk/6w7tv0PMTLFOniIkL7/tnRi4BeV5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742578754; c=relaxed/simple;
-	bh=pLb7+YPMuCyTjvWl9uPCaisWXl8mmNw/U/u0RPKhX7g=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=RMSjJXqM5nprR5OJT8LNl2PpilfEgv2TUsHdQ2e+H49N9Esx3bmWEslX6Suy8VHJmq1WMlKfpjZydf0ER/W8Zk0hzxb3nhkyV1njMozP+sM2eQR0tBsYhbLCB94M6JRN0yt2Fhh46NBdcH/SPQIser+4F0n52fx9WPRYwkrdjqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsDxvCCs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44850C4CEE3;
-	Fri, 21 Mar 2025 17:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742578754;
-	bh=pLb7+YPMuCyTjvWl9uPCaisWXl8mmNw/U/u0RPKhX7g=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=JsDxvCCsUNQTC4dzPzCJg5MlRrZJMl3sp4mSFqYXs6KdkRHTrmYLcUn3c9VdVkKg4
-	 OMo0fRrBKSWV75dn+fR3M+SWeIswPFdfsilGyC5MIfkWR2Iv6EhCX7NfXUvpRuDg2j
-	 mkgI7TxWUskY8y7asVtmpY5NXJJWzuRvCQNZsZsL0gDxELO+bFiMNm1PpKXkhvjZXM
-	 ig+JwiX43ky14t7FEMjih4VSfGYN6b1sOXdfd9dxRaB1wNeEaGfCpq+Olsipxwlgnm
-	 q+Sd1nQp/qR3BmDo6rB4rMDZbfFjnbdr6Wa3fYoaLf/oJM4xTsNIsXajFjn928Jbx+
-	 af+KLQC5Umbiw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FE73806659;
-	Fri, 21 Mar 2025 17:39:51 +0000 (UTC)
-Subject: Re: [GIT PULL] perf events fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z91B8ILV-cXRUULf@gmail.com>
-References: <Z91B8ILV-cXRUULf@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z91B8ILV-cXRUULf@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2025-03-21
-X-PR-Tracked-Commit-Id: 7e512f5ad24458e2c930b5be5d96ddf9e176e05d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5c7474b5449ccda2f0139e87425845baa2dae15a
-Message-Id: <174257878994.2568142.12500563567789188752.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Mar 2025 17:39:49 +0000
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kan Liang <kan.liang@linux.intel.com>
+	s=arc-20240116; t=1742578906; c=relaxed/simple;
+	bh=NocGHNwr7fbaBa9vD5pCQ2EV241hP5rGhMzIIHbSghg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VY4RRfOjIwwKq2KxXU7DA3YiY/Df0xtDWsMnal6ux1poiMq3pNRVB862IPEsGVe4kFXJDeWqLn17WNA87UFxRI4SWcGe4Vu1J4xLiO9MX4tOS84zdYwlRelagsWAGwx6MDi5POcVYNT0oYmozmYGwyFKulWj5TdruI8dSgQFTwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=crSaDCX2; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 48191442A0;
+	Fri, 21 Mar 2025 17:41:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742578897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zgcTJTisVN3vy6/bL+F8k2WTg0zNvDoQ8oR2IntnOkc=;
+	b=crSaDCX2QS/A8fp3+lpQfUl7fQ2tuBed4GX0wjlD9hs0nk0U4UOiKv9Vw9eaOp1e4jaPpl
+	vLAywACT9j/hM4KxHSbOIfiNJ5P3AdQqq+ni1fOlYTRqLYdFCfg38LQT2R6BBMuyVGaJ8k
+	657j3Jmk93EORXSYAWQ8UM+EjiJ+7NCWb6ctfOAAg1XroZokb3J5khrYGG+dKh+hHi168u
+	/org5gOdXv5VkqPrScb3W6f+BHKWTE9sY56ZsSmd05xKa/lqqaH++Kvhl/UXoIBiB5roSs
+	akJLMWzHgRsYK6wjPzoLTWvzmw+o7LhCI4GO8yjxj+oN363e07AoZPOfBDi98g==
+Date: Fri, 21 Mar 2025 18:41:34 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Piergiorgio Beruto
+ <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net-next v3 1/7] net: ethtool: netlink: Allow
+ per-netdevice DUMP operations
+Message-ID: <20250321184134.22311370@fedora.home>
+In-Reply-To: <c4e5bd2f-6216-4f74-b677-46c79343eb21@redhat.com>
+References: <20250313182647.250007-1-maxime.chevallier@bootlin.com>
+	<20250313182647.250007-2-maxime.chevallier@bootlin.com>
+	<c4e5bd2f-6216-4f74-b677-46c79343eb21@redhat.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedujedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheetveefiedvkeejfeekkefffefgtdduteejheekgeeileehkefgfefgveevfffhnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepk
+ hhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-The pull request you sent on Fri, 21 Mar 2025 11:39:44 +0100:
+On Fri, 21 Mar 2025 17:31:17 +0100
+Paolo Abeni <pabeni@redhat.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-2025-03-21
+> On 3/13/25 7:26 PM, Maxime Chevallier wrote:
+> > We have a number of netlink commands in the ethnl family that may have
+> > multiple objects to dump even for a single net_device, including :
+> > 
+> >  - PLCA, PSE-PD, phy: one message per PHY device
+> >  - tsinfo: one message per timestamp source (netdev + phys)
+> >  - rss: One per RSS context
+> > 
+> > To get this behaviour, these netlink commands need to roll a custom  
+> > ->dumpit().  
+> > 
+> > To prepare making per-netdev DUMP more generic in ethnl, introduce a
+> > member in the ethnl ops to indicate if a given command may allow
+> > pernetdev DUMPs (also referred to as filtered DUMPs).
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > ---
+> >  net/ethtool/netlink.c | 45 +++++++++++++++++++++++++++++--------------
+> >  net/ethtool/netlink.h |  2 ++
+> >  2 files changed, 33 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+> > index a163d40c6431..7adede5e4ff1 100644
+> > --- a/net/ethtool/netlink.c
+> > +++ b/net/ethtool/netlink.c
+> > @@ -587,21 +587,38 @@ static int ethnl_default_dumpit(struct sk_buff *skb,
+> >  	int ret = 0;
+> >  
+> >  	rcu_read_lock();  
+> 
+> Maintain the RCU read lock here is IMHO confusing...
+> 
+> > -	for_each_netdev_dump(net, dev, ctx->pos_ifindex) {
+> > -		dev_hold(dev);
+> > +	if (ctx->req_info->dev) {
+> > +		dev = ctx->req_info->dev;  
+> 
+> .. as this is refcounted.
+> 
+> I suggest to move the rcu_read_lock inside the if.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5c7474b5449ccda2f0139e87425845baa2dae15a
+Indeed, maybe not the best place indeed. I'll address that, thanks for
+pointing this out
 
-Thank you!
+> 
+> >  		rcu_read_unlock();
+> > +		/* Filtered DUMP request targeted to a single netdev. We already
+> > +		 * hold a ref to the netdev from ->start()
+> > +		 */
+> > +		ret = ethnl_default_dump_one(skb, dev, ctx,
+> > +					     genl_info_dump(cb));
+> > +		rcu_read_lock();
+> > +		netdev_put(ctx->req_info->dev, &ctx->req_info->dev_tracker);
+> >  
+> > -		ret = ethnl_default_dump_one(skb, dev, ctx, genl_info_dump(cb));
+> > +		if (ret < 0 && ret != -EOPNOTSUPP && likely(skb->len))
+> > +			ret = skb->len;
+> >  
+> > -		rcu_read_lock();
+> > -		dev_put(dev);
+> > +	} else {
+> > +		for_each_netdev_dump(net, dev, ctx->pos_ifindex) {
+> > +			dev_hold(dev);
+> > +			rcu_read_unlock();
+> > +
+> > +			ret = ethnl_default_dump_one(skb, dev, ctx,
+> > +						     genl_info_dump(cb));
+> > +
+> > +			rcu_read_lock();
+> > +			dev_put(dev);
+> >  
+> > -		if (ret < 0 && ret != -EOPNOTSUPP) {
+> > -			if (likely(skb->len))
+> > -				ret = skb->len;
+> > -			break;
+> > +			if (ret < 0 && ret != -EOPNOTSUPP) {
+> > +				if (likely(skb->len))
+> > +					ret = skb->len;  
+> 
+> IMHO a bit too many levels of indentation. It's possibly better to move
+> this code in a separate helper.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+That's true, not the prettiest piece of that patch. I'll refactor this
+better then.
+
+Thanks for the review,
+
+Maxime
 
