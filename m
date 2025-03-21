@@ -1,320 +1,163 @@
-Return-Path: <linux-kernel+bounces-570902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46937A6B60E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:28:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E826A6B610
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76127A4A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9303B405C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D8E1EF0A6;
-	Fri, 21 Mar 2025 08:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DE31EFF9A;
+	Fri, 21 Mar 2025 08:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c7yBHCqq"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfdPMNmM"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A9A17C210
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B965A17C210;
+	Fri, 21 Mar 2025 08:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742545704; cv=none; b=GM5ttWYztAEh32MVcPz5M1zBQcjQ/ysFtJh258K5NsDYlyZ1o1BkwGN1TBSAR3f0zxJb3AJzZh0CDQ5PF/hIONIWuOaxIFi2nD0JW+0x9HqHYlvQ9F5cQlkI4eFWEUseMaKP998R6pagRChLkTTHmkar2nQhYw1oru0CDI3FzY0=
+	t=1742545794; cv=none; b=iAlav6qt9BX0zIaKeLhbnl/JPK06sP24VRBJhLdfmX9wrghFOSRVqZ7Mp4u946xv0pxm5v5HrnwpUj7LSFQ/piSvI/KX8Ve9IdE5WKfmppGTqCIPp9OVz6r71jbKXjDBz3MhmlelQqdzYFvXA39TUwIuzrpCpAg0SE0ZECFhpeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742545704; c=relaxed/simple;
-	bh=3zmNVpWdo3j6NDIPP6/8TVQkTX3zooLzL7cRQn0r3PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SrSa7BiwgVOC34lZFNF/Ji92ZKOEB2qKBdqfQuCtI2Sa3UkoHQfDSTsq4/mtcH9/YDVOaydr+IHESh1mE2X7YvRdnEizc0IezaoZcLK14T0WxT+0vJUoZzZPMObFM0Rm2KfQ2aOdqYDSgGz9qsbSLHtOKsY6imC9GMnOfkeOh6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c7yBHCqq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742545700;
-	bh=3zmNVpWdo3j6NDIPP6/8TVQkTX3zooLzL7cRQn0r3PI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c7yBHCqqEcr7dG7McbMN5i359ZQyXBDAaTo1mzPtrMcbgh6IEs6GjMfySGGLF0Ni/
-	 PQshbqKHNcrjRxC5T7ycPpM+zp5TYEWLDktzpBOMVlv21M8dNAOg9qWwYfkOiAspYe
-	 /5WbWw2YDvev7h+ZAWEoyyBUdwUa8znxlPmwlhHGScgHbSnIgbkxpGiyeXrRL9picX
-	 CqemaURuKgGVU4X3+uNDfteO8MJfwqb0/k38Ce0+QIbu4HXQe+hp3YlNesvKCz/jhK
-	 bNS2LwPwrVG2AiIPf2dQQ22McG3DYoY7DuNLvwuveMQdvWe0zDiaSXEJAtEqn1bN6Z
-	 iNlnAMjPBgYEw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2BAC117E0147;
-	Fri, 21 Mar 2025 09:28:20 +0100 (CET)
-Date: Fri, 21 Mar 2025 09:28:15 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] drm/panthor: Add GPU specific initialization
- framework
-Message-ID: <20250321092815.66ab1798@collabora.com>
-In-Reply-To: <20250320111741.1937892-4-karunika.choo@arm.com>
-References: <20250320111741.1937892-1-karunika.choo@arm.com>
-	<20250320111741.1937892-4-karunika.choo@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742545794; c=relaxed/simple;
+	bh=tFTHM2RfGa+9ZilHqFk4mBtlQxBhVVTEjxZP6+s5It8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=g10AptGrQXSWRYZ097TDHXfyLpfO2jX7wZVckILnSpJIwm3q2ERUY1K04Ftr/FhT2mZEC6RMU96+uqlrSu/WALHj/ONFhpngA6JyS3Q/AerXwk+GcjkbkZfAo3JRrWMHOJwIhBmgc563gJBu0QwatSwuIJY11iNlMoiav7dV2Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfdPMNmM; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30b83290b7bso17711951fa.1;
+        Fri, 21 Mar 2025 01:29:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742545791; x=1743150591; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=aTmc+7B7r3Ct9Gn3PyZkUnvw0YMub17N1opATrNTSr4=;
+        b=ZfdPMNmMMg82E5fs8kLXfTly9TGTT5/PCokrE/7eCWbjv1D64gF88G0FlOcqLj8KJT
+         Vx0r69Io7qcA2D5F5Pl3eBkvUFxAL2L7KhSfHN9xUZn4jmt6Cbzmqkd7ZTI/MGM2v1qT
+         +wuKM8qZ1FZBRq4zQOsunN9ckv054LGQvywYoGKRqDxfN5w8eUnjqp6xN7tt17NVy+3h
+         RYAzpeFL+kakmwHLJtdMHT2hR1DMiT+DL9vsjsqzuIX5ht2nNeVZSPR7EZSGytO4XQ6d
+         4taXd4RfJhxF7AuFxyu+qCdH99qfQKQkEGFujyxgi04c50Er8cel/X2GoKsOr5JddG7g
+         MzBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742545791; x=1743150591;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aTmc+7B7r3Ct9Gn3PyZkUnvw0YMub17N1opATrNTSr4=;
+        b=xBp4mAaULcn4C5Zjn4MfhUg1UkurebDJRztCquYSKEJIFVsj9QU/IEEUiOeU7RWn5y
+         UJMicNw2NwFcgQ6vpjaJHP4rXhr9ZYFD5IJtJWn6q3GHjjqgZ/UZpRlG+/u8WxuC5I1/
+         LvFOE+mj1zVoUZ2Uh67+PPhrqidS/U95TYDCHzTUhMS9YT9g1ltx+pnRekc8/9fu4fy4
+         u7CiIq8mA0gHAAjhyGg7FqAMMFTfcqWj1SnSRjrTDGSNC6PIV/5jOS+WMTFPD7Bx+NjB
+         lucPjDQyqZ/WhlS9yQ6QXli9XFpGirmarhCSBrqSBzLWcPPEzkvlHufebS+wr5p8YlRr
+         733w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhsqd5Ncjuzt/hdk0DcDO3d5VqxcMsToNoD2kWmeYafi7vaYOh1//lJqs/Ht952XaOfhE/srUlb8cSk8s=@vger.kernel.org, AJvYcCXs7NZFpBPo3ef66+jQr56MDn6qssn1AzCZpl47wkMRoXRfI6CtlQj48jepcGlBZ88ysoQn9sGE+EI/HSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+9BNge8E12ilB0NyZwgo+kR80piVkGzJQ6In5yYtXgRIzRYKD
+	wMP31JIpr4FbR3moz+Z+4SQy3IZFNBcGAGwim4qxtm3kxVh+ZkP4SRoDOQ==
+X-Gm-Gg: ASbGncsFICyReH0QcFbsF3Pmg1rE1mGIk32hvYuz7XDzmM4DfKzHW8Pnf5apUe9SbRC
+	ghxRNqZ9d8PKIY2nr/CYfFMZTGE1WXHZilUTZbLr0R5n+6XZIQcdm4/nhiy/ccvOD8IBcT85WyP
+	5e0yoxAYhLe0dv2rFWb9o9H2I06e/w+1ZZOYAe8gydVlmzHN5Mh7iDzyw+/3EVPWoxMkYjOQVZ9
+	PsWkCtSQZQDubCqp2XgLWKqO5cINpKm5n1VVMT9j2lEocN7AgSyUzd1ZNBXfn5gAr34AYmIeIDK
+	12d4TVmzQ0t0SgK1ZZ7g5xglKhqv23D+gzqHG8+D/8s/tBeI5hcbPbQUQrCYIVBf/1K7pWKmH/C
+	QAGnIrxvGMs78ClN/Xle9DAFH3A==
+X-Google-Smtp-Source: AGHT+IEJDE8JKnE3YsZE14EVbF+C3BriIXmFsOZUR4/ra5Oiuj296mslD90UTgcom+giEc/obQU4RQ==
+X-Received: by 2002:a05:6512:3e0a:b0:549:9078:dd46 with SMTP id 2adb3069b0e04-54ad64fbda3mr803385e87.43.1742545790481;
+        Fri, 21 Mar 2025 01:29:50 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad650b89bsm126790e87.208.2025.03.21.01.29.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 01:29:48 -0700 (PDT)
+Message-ID: <7286121f-e3f4-48bb-9fea-1d14e695f203@gmail.com>
+Date: Fri, 21 Mar 2025 10:29:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: i2c: thp7312: Don't require node availability
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Paul Elder <paul.elder@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Z9vTV7tS2ZI3tM6m@mva-rohm>
+ <20250320142635.GA14394@pendragon.ideasonboard.com>
+ <ffa5ae6d-a925-41da-9826-4bb376ca0fbe@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+In-Reply-To: <ffa5ae6d-a925-41da-9826-4bb376ca0fbe@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Mar 2025 11:17:35 +0000
-Karunika Choo <karunika.choo@arm.com> wrote:
-
-> This patch aims to lay the foundation to provide support for multiple
-> Mali GPUs through a framework by which differences in registers,
-> functionality, and features can be managed.
+On 21/03/2025 08:35, Matti Vaittinen wrote:
+> Hi dee Ho Laurent,
 > 
-> It introduces the concept of the arch_id which is a 32-bit ID in the
-> format of ((arch_major << 16) | (arch_minor << 8) | arch_rev). The 8-bit
-> fields of the arch_id provides future proofing past the 4-bit fields of
-> the GPU_ID's arch_major, arch_minor, and arch_rev.
+> On 20/03/2025 16:26, Laurent Pinchart wrote:
+>> Hi Matti,
+>>
+>> On Thu, Mar 20, 2025 at 10:35:35AM +0200, Matti Vaittinen wrote:
+>>> It appears that the concept of available firmware nodes is not really
+>>> applicable to the scenarios where a specific name is required from a
+>>> node.
+>>>
+>>> As explained[1] by Sakari:
+>>> "OF only enumerates available nodes via the fwnode API, software nodes
+>>> don't have the concept but on ACPI I guess you could have a difference
+>>> in nodes where you have device sub-nodes that aren't available. Still,
+>>> these ACPI device nodes don't have meaningful names in this context
+>>> (they're 4-character object names) so you wouldn't use them like this
+>>> anyway."
+>>>
+>>> Use the fwnode_for_each_child_node() instead of the
+>>> fwnode_for_each_available_child_node() In order to make it clearly
+>>> visible that the 'availability' of the nodes does not need to be
+>>> considered here.
+>>
+>> Why not ? Node availability is a concept that exists in DT, and this
+>> driver has only been tested on DT-based systems.
 > 
-> The arch_id is used to select the correct abstraction for the GPU, such
-> as function pointers for operations specific to the GPU, base addresses
-> describing changes in register offsets, and supported features.
+> I admit I need to study this then. I just took what Sakari said for 
+> granted, without taking any further look at this.
 > 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
->  drivers/gpu/drm/panthor/Makefile         |  1 +
->  drivers/gpu/drm/panthor/panthor_device.c |  5 ++
->  drivers/gpu/drm/panthor/panthor_device.h |  3 +
->  drivers/gpu/drm/panthor/panthor_hw.c     | 70 ++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_hw.h     | 63 +++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_regs.h   |  2 +
->  6 files changed, 144 insertions(+)
->  create mode 100644 drivers/gpu/drm/panthor/panthor_hw.c
->  create mode 100644 drivers/gpu/drm/panthor/panthor_hw.h
-> 
-> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
-> index 15294719b09c..02db21748c12 100644
-> --- a/drivers/gpu/drm/panthor/Makefile
-> +++ b/drivers/gpu/drm/panthor/Makefile
-> @@ -8,6 +8,7 @@ panthor-y := \
->  	panthor_gem.o \
->  	panthor_gpu.o \
->  	panthor_heap.o \
-> +	panthor_hw.o \
->  	panthor_mmu.o \
->  	panthor_sched.o
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index a9da1d1eeb70..a6fca6b3fabd 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -18,6 +18,7 @@
->  #include "panthor_device.h"
->  #include "panthor_fw.h"
->  #include "panthor_gpu.h"
-> +#include "panthor_hw.h"
->  #include "panthor_mmu.h"
->  #include "panthor_regs.h"
->  #include "panthor_sched.h"
-> @@ -243,6 +244,10 @@ int panthor_device_init(struct panthor_device *ptdev)
->  			return ret;
->  	}
->  
-> +	ret = panthor_hw_init(ptdev);
-> +	if (ret)
-> +		goto err_rpm_put;
-> +
->  	ret = panthor_gpu_init(ptdev);
->  	if (ret)
->  		goto err_rpm_put;
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index da6574021664..82741bf1a49b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -120,6 +120,9 @@ struct panthor_device {
->  	/** @csif_info: Command stream interface information. */
->  	struct drm_panthor_csif_info csif_info;
->  
-> +	/** @hw: GPU specific data. */
-> +	struct panthor_hw *hw;
-> +
->  	/** @gpu: GPU management data. */
->  	struct panthor_gpu *gpu;
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> new file mode 100644
-> index 000000000000..234bfd50cf0d
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -0,0 +1,70 @@
-> +// SPDX-License-Identifier: GPL-2.0 or MIT
-> +/* Copyright 2025 ARM Limited. All rights reserved. */
-> +
-> +#include "panthor_device.h"
-> +#include "panthor_hw.h"
-> +#include "panthor_regs.h"
-> +
-> +static struct panthor_hw panthor_hw_devices[] = {
-> +	{
-> +		.arch_id = GPU_ARCH_ID_MAKE(10, 0, 0),
-> +		.arch_mask = GPU_ARCH_ID_MAKE(0xFF, 0, 0),
-> +	},
-> +};
-> +
-> +static int init_gpu_id(struct panthor_device *ptdev)
-> +{
-> +	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
-> +
-> +	if (!ptdev->gpu_info.gpu_id) {
-> +		drm_err(&ptdev->base, "Invalid GPU ID (0x0)");
-> +		return -ENXIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int panthor_hw_init(struct panthor_device *ptdev)
-> +{
-> +	struct panthor_hw *hdev = NULL;
-> +	u32 arch_id = 0;
-> +	int i, ret;
-> +
-> +	ret = init_gpu_id(ptdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	arch_id = GPU_ARCH_ID_MAKE(GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id),
-> +				   GPU_ARCH_MINOR(ptdev->gpu_info.gpu_id),
-> +				   GPU_ARCH_REV(ptdev->gpu_info.gpu_id));
-> +	if (!arch_id) {
-> +		drm_err(&ptdev->base, "Invalid arch_id (0x0)");
-> +		return -ENXIO;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(panthor_hw_devices); i++) {
-> +		u32 mask = panthor_hw_devices[i].arch_mask;
-> +		u32 hw_arch_id = panthor_hw_devices[i].arch_id;
-> +
-> +		if ((arch_id & mask) == (hw_arch_id & mask)) {
-> +			hdev = &panthor_hw_devices[i];
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!hdev) {
-> +		drm_err(&ptdev->base, "Unsupported GPU (arch 0x%x)", arch_id);
-> +		return -ENODEV;
-> +	}
-> +
-> +	ptdev->hw = hdev;
-> +
-> +	return 0;
-> +}
-> +
-> +bool panthor_hw_supports(struct panthor_device *ptdev,
-> +			 enum panthor_hw_feature feature)
-> +{
-> +	return test_bit(feature, ptdev->hw->features);
-> +}
-> +
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> new file mode 100644
-> index 000000000000..5eb0549ad333
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -0,0 +1,63 @@
-> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
-> +/* Copyright 2025 ARM Limited. All rights reserved. */
-> +
-> +#ifndef __PANTHOR_HW_H__
-> +#define __PANTHOR_HW_H__
-> +
-> +#include <linux/types.h>
-> +#include <linux/bitmap.h>
-> +
-> +struct panthor_device;
-> +
-> +/**
-> + * enum panthor_hw_feature - Bit position of each HW feature
-> + *
-> + * Used to define GPU specific features based on the GPU architecture ID.
-> + * New feature flags will be added with support for newer GPU architectures.
-> + */
-> +enum panthor_hw_feature {
-> +	/** @PANTHOR_HW_FEATURES_END: Must be last. */
-> +	PANTHOR_HW_FEATURES_END
-> +};
-> +
-> +/**
-> + * struct panthor_hw_regmap - Register offsets for specific register blocks
-> + */
-> +struct panthor_hw_regmap {
-> +
-> +};
-> +
-> +/**
-> + * struct panthor_hw_ops - HW operations that are specific to a GPU
-> + */
-> +struct panthor_hw_ops {
-> +
-> +};
-> +
-> +/**
-> + * struct panthor_hw - GPU specific register mapping and functions
-> + */
-> +struct panthor_hw {
-> +	/** @arch_id: Architecture id to match against */
-> +	u32 arch_id;
-> +
-> +	/** @arch_mask: Mask for architecture id comparison */
-> +	u32 arch_mask;
-> +
-> +	/** @features: Bitmap containing panthor_hw_feature */
-> +	DECLARE_BITMAP(features, PANTHOR_HW_FEATURES_END);
-> +
-> +	/** @map: Panthor regmap */
-> +	struct panthor_hw_regmap map;
-> +
-> +	/** @ops: Panthor HW specific operations */
-> +	struct panthor_hw_ops ops;
 
-Do we really need per minor arch specialization if we already have per
-GPU information through panthor_model?
+I took a peek in the 'availability' concept and found:
+https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/of/base.c#L468
 
-The way I see it, we can have a device operation specialization per
-major arch, then some tweaking done in the arch major init callback
-based on the minor version. And the final tweaks applied per GPU model.
+So, the availability indeed has a well defined meaning in the DT, 
+boiling down to the value of the 'status' -property.
 
-> +};
-> +
-> +int panthor_hw_init(struct panthor_device *ptdev);
-> +
-> +bool panthor_hw_supports(struct panthor_device *ptdev,
-> +			 enum panthor_hw_feature feature);
-> +
-> +#endif /* __PANTHOR_HW_H__ */
-> +
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index 7ec4a1d04e20..ba452c1dd644 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -19,6 +19,8 @@
->  #define   GPU_VER_MINOR(x)				(((x) & GENMASK(11, 4)) >> 4)
->  #define   GPU_VER_STATUS(x)				((x) & GENMASK(3, 0))
->  
-> +#define GPU_ARCH_ID_MAKE(major, minor, rev)		(((major) << 16) | ((minor) << 8) | (rev))
-> +
->  #define GPU_L2_FEATURES					0x4
->  #define  GPU_L2_FEATURES_LINE_SIZE(x)			(1 << ((x) & GENMASK(7, 0)))
->  
+Then I took further look at the fwnode_for_each_child_node(), and if I'm 
+not mistaken, it calls:
 
+fwnode_for_each_child_node()
+	fwnode_get_next_child_node()
+		fwnode_call_ptr_op(fwnode, get_next_child_node, child);
+			 of_fwnode_get_next_child_node() (dt-based)
+				of_get_next_available_child() (dt-based)
+
+where the of_get_next_available_child() skips all the disabled nodes.
+
+So, in that regard I agree with Sakari. On DT based systems, the
+
+fwnode_for_each_child_node() seems to equal the
+fwnode_for_each_available_child_node().
+
+And, since the 'thp7312' driver requires specific names for the nodes, 
+it indeed seems to me that only the device-tree use-case needs to be 
+considered.
+
+After all this I'd say this patch is still valid - but the commit 
+message is misleading. If no one objects I'll rewrite the commit msg and 
+respin :)
+
+Yours,
+	-- Matti
 
