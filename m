@@ -1,55 +1,136 @@
-Return-Path: <linux-kernel+bounces-571915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B906A6C448
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B45A6C449
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:35:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C009465B20
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265A446590D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9641E230BE3;
-	Fri, 21 Mar 2025 20:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2E52309A7;
+	Fri, 21 Mar 2025 20:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzFWRekB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rx7ivQuk"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13BD1514F6;
-	Fri, 21 Mar 2025 20:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A561514F6;
+	Fri, 21 Mar 2025 20:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589282; cv=none; b=uv134ij3bMm3Ea/1fBZA7CdHR5wk5GX8Z0eNHofPRk8HhGvMunPOtF9mfXoZKlRUbFVGJkFbOdhIW/ilHb2VzYA2sDd8EeDfBesoBGrLjPIEEWX6lCxBeZSNtkp2OQEqJUUfKSsehAmf0runC5dQIyNnobPPlWxRm+zNH61YLng=
+	t=1742589318; cv=none; b=Lh9W/6dMM1RO9lCRjFdMg1r9buwomNbgE6Ay8ScjqADRtK1hGZMWsRSMYb3OiOPvqgM7yxMARstoQqssY+EuQ5M2C3fyRNnXCPNA70xWvdc0gRi9WlQrzJG5NRQZFZaBANugaF8Cc0bvFG9B5/kosrs/FNq/lY6MM8V6VxYaJa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742589282; c=relaxed/simple;
-	bh=ESuQxc1uo2rrbnn2JcOtucq5e7Bg+IxPDoWM/kKHcd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pd/byEfQpbl2a1QIqp94mtDFGIZcBtfJq0LqigbXhKyZP6g0mf3ZN1ATvxzP9RiNe35sPsXTOJpzFqiJgBAzxhxS2QXPiV+VMMXwFeJzR2qzNeGFALv4Bf1sl9YI9A2pdB4zDCG1GaUhZA0h/bv1UELYxVHVwD5mlkdYDfhCFus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzFWRekB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADECAC4CEEA;
-	Fri, 21 Mar 2025 20:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742589280;
-	bh=ESuQxc1uo2rrbnn2JcOtucq5e7Bg+IxPDoWM/kKHcd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rzFWRekBJPwEGvbHtbrGUGtb8eplO2ree3EZf/OaCNzl5PY0Q/KAtSvAdXH+GtNAm
-	 T5A1Wtw1W2QZV0vBTiWfXF1ggx8kkylGKo7ElOdNQdD/hN1PPkpSR5+atMHpaFWhL5
-	 a6YkRlGyRn4TX/5C/0pNt6GQHiVeaQA/GcRvc9bhPasSSiKuW6pE5DyNBGOaqFeHDK
-	 Mw1W5EgxwAQ2lHU7NU5STndVPhO2nnnhVa0einiOVStpAicC5+F4DxYQM2UNRl3k9s
-	 p+Xssx8WC50e3srHz7eJu3abIHa5RgTOVVZJOydi3Zn83tVZ4+eS9Poo5Wok3hguRb
-	 re9bmBDf/ovaQ==
-Date: Fri, 21 Mar 2025 20:34:35 +0000
-From: sergeh@kernel.org
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com,
-	serge@hallyn.com, kees@kernel.org, linux-kernel@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev
-Subject: Re: [PATCH 1/2] lockdown: Switch implementation to using bitmap
-Message-ID: <Z93NW3za1ilzVxLK@lei>
-References: <20250321102422.640271-1-nik.borisov@suse.com>
- <20250321102422.640271-2-nik.borisov@suse.com>
+	s=arc-20240116; t=1742589318; c=relaxed/simple;
+	bh=h4sw0wQtemO1qmX+7Fh6qkhcSpjaUw8b8y2d1XyuhgA=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvP/CLU4d1/0/MCJBPX7GjQDQii/HN7YTrdJOsCVD99t4Kg/qmlZG59zYbp5/Wl7s7m+7cPIyGpaH+C2c58uhH8nqj1COaNIzFG31tvu23xH/PRV6hN+Hxtz1GVvWWSA1yK/tywzizwM/JApZFGyUPnijEdaP3afANMGWf/Fc3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rx7ivQuk; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6df83fd01cbso11555216d6.2;
+        Fri, 21 Mar 2025 13:35:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742589316; x=1743194116; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VrBEkpu60bCrmGKM5/a3BWaVmBhrw8nH6PBXojnyxOY=;
+        b=Rx7ivQukrVXVfdCgobfyv1HJ8WwZkieyEVUnJdZPgPd1fcjBpGX/muvZpssXStC6kJ
+         g/O6ZrTIixX4TtFwZmYJX26zS9IRmvFesbVrGJ6HADiCmEe9pd7H2kiVC1sAyXsM8h/X
+         Qcf36gW0a9NothttEK4v9LMSofYsIFK+6OKOEDOZOckNB9pY7tn11tiCSlIdb5lmDl/U
+         Md853kZ7K0Tzm1vhaTcAihMPKwBtncEBqzAsHmIw+8rd2Z5UwC/MLdKOHyOsreWom0Kn
+         3YldyyoQJAtdKuoa+xLj00/zvEtQkUAD1eapF6Vi9Wkg0tDEdfRY5wHngHP2f3vE6d2f
+         gjqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742589316; x=1743194116;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VrBEkpu60bCrmGKM5/a3BWaVmBhrw8nH6PBXojnyxOY=;
+        b=KJ3eFaWBK+2vLjFmnb8C2c8tkL17QIN/YVuh1kxHbKmxhSMcvF0zOiYSnePLqB7fkn
+         aki19Vf7bgrFslVt+Me2tg7hRgLTHfnYkgQz7nP/9adzNY57839L1pB0qZyYL4trhGLX
+         lLLKo6gR3Gj1b2fiZre+BMviwB25OIa7CAVAeF/i42FBD27dTly7TWAmtRoSj7/SEV7w
+         mPmx3YfgkADpEiLWFnd0xqk8/cHMrpMF7w4ZB7bNLswTV/UM4CL5QhQyq7eVQCBevapp
+         2FEn0QwawX4ilOIG9SymEvBOeMFwSValZLwHnc9Du4Hg/tFwjQFG4J5vW3RrbSJkavkQ
+         3YfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7o/1JFQjgWv9VGBr/QhQ3uYlkOOVlU6VZBYvafizq4djuLt6Zp2/udZ8UPn4EhhBNVBaUBb72gsTl0SD9heA=@vger.kernel.org, AJvYcCWg4ULFDuPJMLFGoF/c3xiXrDQfYPRAvM6zXc7CLr+1yGiiCAUSGvKSwUobmkmlyIigciTRQZjiXW9bQmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHDLpV00X9S3fuITpSR/OQ4SlH+y1tT2RW9+21rikoHWvnRb5q
+	XUBAhvuGnlZaPoUslgupvfegRCGtolr4kJBHkTo//2D6cNdzisDF
+X-Gm-Gg: ASbGncvjoKOVEek/JsB3bIFpYRDo7N0mkg2fAGD2TcEKo+pKMnWLLf+Yzxa5H3XydoY
+	FuTJPV24yp9ubjT4ISl3M2q06uBK/pSGfqYeGD0XXkRk5Vl8xN6bRjlcRdZ5gLBgIk2CRuPcQn9
+	P9+B2bTJ3TqXQTh4bk/KO4uwMyMKIP7LiFtC0v96A5CmT98aoW0+f9A9WFiD6Y3wAcwf/6eMBdZ
+	ZRT7x/xjWioa72ZTp5G4hjxe828X5YKA+zgyFNxDIZz8bDweepzmJr5xrAsJmA10Rkjurz+7mor
+	Ilv4apqCpKHONTqMAzGpbda6woAzTkB4CkS/mpEXhKEKufihG1S5jawCKqzfLwlxm7yQrLVI5zu
+	PSFYrzbgs3d1QxsnCso8sjaR2Zt0iXTYc+A8=
+X-Google-Smtp-Source: AGHT+IFteF0LVW82XPr7Bi8OGspyWiFAmnMcFic+fmEubgaNnMeFcMexlPO0YoI5x1XPcLecagGtQg==
+X-Received: by 2002:ad4:5c82:0:b0:6e8:9e9c:d212 with SMTP id 6a1803df08f44-6eb3f1a40f3mr78258286d6.0.1742589315386;
+        Fri, 21 Mar 2025 13:35:15 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efdc1b1sm14812276d6.110.2025.03.21.13.35.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 13:35:14 -0700 (PDT)
+Message-ID: <67ddcd82.050a0220.28d3cb.7630@mx.google.com>
+X-Google-Original-Message-ID: <Z93NgKC6Flr_AiqP@winterfell.>
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 3FE561200043;
+	Fri, 21 Mar 2025 16:35:14 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 21 Mar 2025 16:35:14 -0400
+X-ME-Sender: <xms:gs3dZxr_WutHJLxmKOcGxMkfRkF3VRvjodgQ0tfJs1tTUNcol1qqvw>
+    <xme:gs3dZzoW3vYEcqPS7g_TEKy8k9wg9QQ4DmXedEmCJWJeC2TUc6SIexwgtr4yVnpOu
+    eq0PyYxLBJTbNXzrA>
+X-ME-Received: <xmr:gs3dZ-PqX2UD6oK6m9diyOV53s4O409aSAl7-Rn8lcELBBdbOfXj0ObM1jg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedvtdeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeeuffffvefhleduvdevuddtudeivdeiiedv
+    ffeigeethffgveffgfeltdfhveekueenucffohhmrghinheptghpuhgprgguughrshdrrg
+    hsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsgho
+    qhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqd
+    dujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihm
+    vgdrnhgrmhgvpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepjhhgghesiihivghpvgdrtggrpdhrtghpthhtoheprggsughivghlrdhjrghn
+    uhhlghhuvgesghhmrghilhdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinh
+    hugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrrghl
+    mhgvihgurgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopegurghkrheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhm
+    pdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoh
+    epohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhho
+    rhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:gs3dZ85gBv_70Qyz2opHiafrm8KOhFcKR3npaZ0eewRTaAYIT5G3Mg>
+    <xmx:gs3dZw4Q3G5MkzG8E4R3SLd1nbU2pOjBAvZ9UERrUA5kL1Yk0X4BAg>
+    <xmx:gs3dZ0gG7lv4g3f06ZBYIOjPwSZW6qoj5Pvhd7o_Wot3irAQJ3qMKg>
+    <xmx:gs3dZy7u-qqDRu5ujOW0pnbZ6IvQAvuXZWf5JMfUSjhBlXeMp3eHFw>
+    <xmx:gs3dZ3KK7b24sapOURPO6HZMIF0hW30evzUi-q-02twgKBq66BwlMCTN>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Mar 2025 16:35:13 -0400 (EDT)
+Date: Fri, 21 Mar 2025 13:35:12 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com,
+	dakr@kernel.org, robin.murphy@arm.com, aliceryhl@google.com,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v14 02/11] rust: add dma coherent allocator abstraction.
+References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
+ <20250311174930.2348813-3-abdiel.janulgue@gmail.com>
+ <20250321182539.GP126678@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,116 +139,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321102422.640271-2-nik.borisov@suse.com>
+In-Reply-To: <20250321182539.GP126678@ziepe.ca>
 
-On Fri, Mar 21, 2025 at 12:24:20PM +0200, Nikolay Borisov wrote:
-> Tracking the lockdown at the depth granularity rather than at the
-> individual is somewhat inflexible as it provides an "all or nothing"
-> approach. Instead there are use cases where it  will be useful to be
-> able to lockdown individual features - TDX for example wants to disable
-> access to just /dev/mem.
+On Fri, Mar 21, 2025 at 03:25:39PM -0300, Jason Gunthorpe wrote:
+> On Tue, Mar 11, 2025 at 07:47:58PM +0200, Abdiel Janulgue wrote:
+> > +pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+> > +    dev: ARef<Device>,
+> > +    dma_handle: bindings::dma_addr_t,
+> > +    count: usize,
+> > +    cpu_addr: *mut T,
+> > +    dma_attrs: Attrs,
+> > +}
 > 
-> To accommodate this use case switch the internal implementation to using
-> a bitmap so that individual lockdown features can be turned on. At the
-> same time retain the existing semantic where
-> INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
-> everything below me".
+> I'd like to point out how memory wasteful this is from what real
+> drivers are doing today when they use the coherent API. Let's compare
+> against SMMUv3's use for the CD table..
 > 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
-
-Reviewed-by: Serge Hallyn <sergeh@kernel.org>
-
-but one comment below
-
-> ---
->  security/lockdown/lockdown.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
+> This would be the code in arm_smmu_alloc_cd_ptr()
 > 
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index cf83afa1d879..5014d18c423f 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -10,12 +10,13 @@
->   * 2 of the Licence, or (at your option) any later version.
->   */
->  
-> +#include <linux/bitmap.h>
->  #include <linux/security.h>
->  #include <linux/export.h>
->  #include <linux/lsm_hooks.h>
->  #include <uapi/linux/lsm.h>
->  
-> -static enum lockdown_reason kernel_locked_down;
-> +static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
->  
->  static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->  						 LOCKDOWN_INTEGRITY_MAX,
-> @@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->   */
->  static int lock_kernel_down(const char *where, enum lockdown_reason level)
->  {
-> -	if (kernel_locked_down >= level)
-> -		return -EPERM;
->  
-> -	kernel_locked_down = level;
-> +	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-> +		return -EINVAL;
-> +
-> +	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
-> +		bitmap_set(kernel_locked_down, 1, level);
-> +	else
-> +		bitmap_set(kernel_locked_down, level, 1);
-> +
->  	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
->  		  where);
->  	return 0;
-> @@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
->  		 "Invalid lockdown reason"))
->  		return -EPERM;
->  
-> -	if (kernel_locked_down >= what) {
-> +	if (test_bit(what, kernel_locked_down)) {
->  		if (lockdown_reasons[what])
->  			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
->  				  current->comm, lockdown_reasons[what]);
->  		return -EPERM;
->  	}
-> -
->  	return 0;
->  }
->  
-> @@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
-
-Context here is:
-
-static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
-                             loff_t *ppos)
-{
-        char temp[80] = "";
-        int i, offset = 0;
-
-        for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
-                enum lockdown_reason level = lockdown_levels[i];
-
-...
-
->  		if (lockdown_reasons[level]) {
->  			const char *label = lockdown_reasons[level];
->  
-> -			if (kernel_locked_down == level)
-> +			if (test_bit(level, kernel_locked_down))
-
-Right now this is still just looping over the lockdown_levels, and so
-it can't get longer than "none [integrity] [confidentiality]" which fits
-easily into the 80 chars of temp.  But I'm worried that someone will
-change this loop i a way that violates that.  Could you just switch
-this to a snprintf that checks its result for < 0 and >= n , or some
-other sanity check?
-
->  				offset += sprintf(temp+offset, "[%s] ", label);
->  			else
->  				offset += sprintf(temp+offset, "%s ", label);
-> -- 
-> 2.43.0
+> It is making a 2 level radix tree.
 > 
+> The cpu_addr is stored in a linear array of pointers:
+> 
+> 			struct arm_smmu_cdtab_l2 **l2ptrs;
+> 
+> The dma_addr is encoded into the HW data structure itself:
+> 
+> 		arm_smmu_write_cd_l1_desc(&cd_table->l2.l1tab[idx],
+> 						  l2ptr_dma);
+> 
+> The size of the allocation is fixed size:
+> 			*l2ptr = dma_alloc_coherent(smmu->dev, sizeof(**l2ptr),
+>                                                                 ^^^^^^^^^^^^
+> 						    &l2ptr_dma, GFP_KERNEL);
+> 
+> It doesn't need a struct device pointer or reference because this uses
+> the usual kernel 'fence' reasoning for destruction.
+> 
+> It doesn't even use dma_attrs. (why is this in a long term struct?)
+> 
+> So, smmu manages to do this with a single array of 8 bytes/entry to shadow
+> the CPU pointer, and recovers the dma_addr from the HW data structure:
+> 
+> 			dma_free_coherent(smmu->dev,
+> 					  sizeof(*cd_table->l2.l2ptrs[i]),
+> 					  cd_table->l2.l2ptrs[i],
+> 					  arm_smmu_cd_l1_get_desc(&cd_table->l2.l1tab[i]));
+> 
+> Basically, it was designed to be very memory efficient.
+> 
+> If we imagine driving the same HW in rust the array storing the CPU
+> pointer would have to expand to 40 bytes/entry to hold every
+> CoherentAllocation. This means rust would need a new high order memory
+> allocation to hold the CoherentAllocation memory array!
+> 
+
+Thanks for the example, it seems to me that your case needs a
+
+    pub struct CoherentAllocationVec<T: AsBytes + FromBytes> {
+        dev: ARef<Device>,
+        cpu_addrs: KVec<(*mut T, bindings::dma_addr_t)>,
+        dma_attrs: Attrs,
+    }
+
+of course, we can get rid of `bindings::dma_addr_t` if there is a
+method:
+
+    impl<T: ...> CoherentAllocationVec<T> {
+        pub fn get_dma_handle(&self, idx: usize) -> bindings::dma_addr_t { 
+	    ...
+	    // probably only availabe for a particular T or Vec.
+	}
+    }
+
+    // and drop of `CoherentAllocationVec` will be:
+
+    impl<T: ...> Drop for CoherentAllocationVec<T> {
+        fn drop(&mut self) {
+            for (i, cpu_addr) in self.cpu_addrs.as_slice().iter().enumerate() {
+	    	dma_free_coherent_attr(self.dev.as_raw(),
+		                       core::mem::size_of::<T>(),
+				       cpu_addr,
+				       self.get_dma_handle(i),
+				       self.attrs);
+	    }
+	    ...
+	}
+    }
+
+Then we have:
+
+    pub struct CoherentAllocationVec<T: AsBytes + FromBytes> {
+        dev: ARef<Device>,
+        cpu_addrs: KVec<*mut T>,
+        dma_attrs: Attrs,
+    }
+
+And we can make `dma_attrs` a const of the type:
+
+    pub struct CoherentAllocationVec<T: AsBytes + FromBytes, const ATTRS: Attrs = Attrs(0)> {
+        dev: ARef<Device>,
+        cpu_addr: KVec<*mut T>,
+    }
+
+As for getting rid of the `dev` pointer, the struct arm_smmu_device has
+a pointer to struct device as well, so it's all about how to organize
+the fields, at very least, you could do:
+
+    pub struct ArmSmmuDevice {
+        // avoid using an ARef<Device> here since we already has it in
+	// cdtable.
+
+        cdtable: CoherentAllocationVec<arm_smmu_cdtab_l2>,
+	...,
+    }
+
+and whenever you need to get a pointer/reference to the device, you can
+get it from:
+
+    .cdtable.dev
+
+it may not be the best organization of the fields, but we will see the
+real Rust use for a better design.
+
+Regards,
+Boqun
+
+> Jason
 
