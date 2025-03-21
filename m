@@ -1,381 +1,176 @@
-Return-Path: <linux-kernel+bounces-570894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D4FA6B5EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:17:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85C6A6B5EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:17:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACC8461A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC153AC425
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1151EDA09;
-	Fri, 21 Mar 2025 08:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E001EFFA4;
+	Fri, 21 Mar 2025 08:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WdvJiPOc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="H6GvZrsx"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2052.outbound.protection.outlook.com [40.107.105.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C911A841F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742545015; cv=none; b=YhCG/KiJhTUTckjL2TJA1am+ESNunR8l5pVVzQW6bRC2VR2AWWFd8TT4x+BmKtvAWSsgXCTkIAKh7hzm+7Qhq28GAzHRm9Bl63Q7iOKj+bUu10ggwwwxqTlDa9t4XvIoH+/zxiGreoj6DOjrki5AqIo0wenXHuZyV4+1EIgEiMs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742545015; c=relaxed/simple;
-	bh=cCE5oOPiACIOd4uyLLq5AwJQYfAxX91rUeu/sbR50mI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UBe07KXJ90pLTHMXTbkERpmR63J4myEV2RKH8/CmepLC6TIrGUD3icP/IevUtrl3lagZucwWcsaUKs6hCbynBDPUWC/hgHB7bn24ApKFsrZ4mDRdQ6N8WGydoK+BHS/woh1ePKrJbRAbm2yWCWV5niBUtEG4O85nDFlhdZzzCXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WdvJiPOc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742545011;
-	bh=cCE5oOPiACIOd4uyLLq5AwJQYfAxX91rUeu/sbR50mI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WdvJiPOcMKWXXqNxivV8Fo//+MIYyfu8uWRP0t3QVrRUDUMwn2iQ1SZvTJoEQPjl6
-	 k6UdKAHrRPwYlzBjOvPxK301ztdqakYNcheoeai+mKHsitnbb6KDNd7D11UFxuOgsZ
-	 VpJwdzv7qXv8byKArYT23XPquWzItCqIW8TucJTVNSnGMksE1gq6iSG1WxkbsKqlBI
-	 vCJhmwti4oDUbDzrh679lW4U+ue/ChT2Guu1Ev0CD8P3fVjl4ozuwJdq72fLroPT8j
-	 rLMOeZRQPQzjvCgiYnQelp1CilWerFuPAQqKeQN+Z3QlSEHhdj6EH6vTnhV8sz64PG
-	 fgmR45wV7Gk/A==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8237F17E0C38;
-	Fri, 21 Mar 2025 09:16:50 +0100 (CET)
-Date: Fri, 21 Mar 2025 09:16:45 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/9] drm/panthor: Move GPU info initialization into
- panthor_hw.c
-Message-ID: <20250321091645.0edec07a@collabora.com>
-In-Reply-To: <20250320111741.1937892-5-karunika.choo@arm.com>
-References: <20250320111741.1937892-1-karunika.choo@arm.com>
-	<20250320111741.1937892-5-karunika.choo@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2AC1DE2C6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742545017; cv=fail; b=J6D7I6/5Fom0NNgx2LOFFwcnC/kNvYRZcXhYXuu0v27C6QwKEIOoUYHOSMJYzHtt5tjrDknq+r+NfC8Hq+iNa9engkz1kmaTdf1aYK4V77dCse0gqqrmMJoUEIYB0t4tZ23RyS1eRQcZbFCUVazGrqEu6Pv4rceGPBTqpze1h4c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742545017; c=relaxed/simple;
+	bh=3Gq/n7u4h06k2yzaxCQgE24/mH5Axd0qOqo9AI5OWuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PyTM721BKkjc5t/5spvru56eZvTA9OM8QTzH6h9JKdTV/qU6hd9CRCSYrbKDypEoAnLv6uLApsmxERxG39NwRTz6rE6+Xegzj2vYk2r3cC2bg1s2JmhCiZfDMvdKI4ydcuyXdHKeacCaI+CXvqKM6g3gFvfqdcSWImFlt0b9JsY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=H6GvZrsx; arc=fail smtp.client-ip=40.107.105.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Uy7v2F5HjUvE7Z8N/1sqL+doHWCE1g3FVfApRzGhvDItl616cljjnLqB9imgxQFCoiplXLSPds8TPqeJ3CUZfWQkCguB2MkjqL+xlOdbjeUI5btN9RlIfWgBiZ5T5Cza8GiJ6yJ2nvtC1EaVppBDecL2XVyaKpWrMWhcyHmEa3tgjnEDKJDOiSwYb89hpWzrtYS018TT8Y8EIbvX8CmKWe0sTNgHirkX26P1TKrpA88BoX4P+bPn9AgA61E94vU/7o6ij8MsnAWrR9CS/QGiv3eftjmwTNFTbig5j50pTWf+ziEI3WvbbMHvdFAmpCuYa3d4nDpYWVCf0mGMuqiAGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5RvRkAKIVI9q9r+L/FzG/Y84uSgRTrWVxVq9ny+9Vaw=;
+ b=BWoYCxLUnq74/KsUZuu0HXOT1159h8k6HdCvMcIDTwe6H2ptDHzGM0otTIvB8Vhoe1tvp3euzbc7Rj6s/fLobUYWgboSkfO6RpO5wNw3IKz0T+S5W2xhSXKBVctljMobz+nchbQDqrQNevJPXCLO3dU7++ErhBC/t0nZcPoHBkcPv3YbcoUeRtl8NXJ3uG8ohk1D5xea1G+8lg6su0VBAsmKjOLlMO8QAzxEJFAGZ4nEktTIj3fYKmC+Bqessa1/L08mhF80jlByXXeHgJxV9edgjkhlrPHimcYJ9kzZiitHNI+bli3/YllvdygPaHXlpYyUGVbSrtXQJjSFnyc5Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5RvRkAKIVI9q9r+L/FzG/Y84uSgRTrWVxVq9ny+9Vaw=;
+ b=H6GvZrsx/a4y59LZwKz4p8X57C9QTt5blysudE5CLnQwDQY2bwyU5ixnorsM+RI2U3DGql1tBS5hgCq58sTIpLkJd0ZDYo1kN5v6a+RT7/vd4BLLUCEHzh7LDEXDjWxCLw2B+n+6cF963XrEOD8cEs0j36KgxawG0RTMNgChtLK9E5FJtiz6i+mDWL85nsbU7HWxTDqD/8YC1M/ugBEEoBgcL2Y1wdP5Pgqh2lUNM00EMUggxpwp1/4G/C4Nhy0cRuqWLSZ2CvtQnk3YcOHJySbAK/wiRmHPNS5M4+Ax2UMe3i0Jq7COl3UN0gf+C3vBqCGv78xgi/zIttwu3GkHMQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by GV1PR04MB10559.eurprd04.prod.outlook.com (2603:10a6:150:20b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.35; Fri, 21 Mar
+ 2025 08:16:52 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e%5]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
+ 08:16:52 +0000
+Date: Fri, 21 Mar 2025 10:16:49 +0200
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: linux@treblig.org
+Cc: stuyoder@gmail.com, christophe.leroy@csgroup.eu, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
+Message-ID: <jz2ci3idg7kabbfunyzklolsgc4d3yla2oatma7nxodfvgqnp6@2yzm3yti5ljz>
+References: <20241115152055.279732-1-linux@treblig.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115152055.279732-1-linux@treblig.org>
+X-ClientProxiedBy: ZR0P278CA0093.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:23::8) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|GV1PR04MB10559:EE_
+X-MS-Office365-Filtering-Correlation-Id: beb0a90d-b38d-47ea-e0c8-08dd6850bc31
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q2sChoWCG21wGRGAzMtMa5WAYObuGkIoHEUlb1LZ5rWZfkK95NKfA8zrQ3uB?=
+ =?us-ascii?Q?wld+8m7AbBcFqciYf9lDIskys+lYbhb+AkUH+DjgUhRmMoAZJl5Bs0+TY7jX?=
+ =?us-ascii?Q?WEecjb2bBDrPr2/n0gHrVAy09XPfH6Crp/Dib/9ZE2y/IHJyS6b7DBlnlxQx?=
+ =?us-ascii?Q?srFn2B31eNf0vDJRWhgONHYPktKUQTlzhyvlnsdk4D90pfV8iLMQt/MO1KAR?=
+ =?us-ascii?Q?FNUMJZbtgM4lFpYu4XnrbbgIC1vhhrfuaKJBILDHj3sx/YRwFUYJlohIJDVo?=
+ =?us-ascii?Q?WW1LekaoRZOLudYRxMRc3RK//fnWWpYgEolDT8KKCsg7hcMNdSOdfNmAx63a?=
+ =?us-ascii?Q?88BjocQf3zfg75sF6nrr9jyodoap2H8toO/hQ8aggpN+PItYF27ob+cGkGrb?=
+ =?us-ascii?Q?fuYLfszev62w1kz79Lby42377gntV85Dbi4iB2LRlxpYQ6WewQJkKPspJcSt?=
+ =?us-ascii?Q?ApoPX053xKhezd3JQ3gO95YZDUnXHI63fekAoWtFraA467c+EspLjzbyE3+z?=
+ =?us-ascii?Q?Mh0Zv2NCVRC0THxc6mm6h7ICKI60Uq93GcCQgJqirU0QMkfXxujde9NzI9cz?=
+ =?us-ascii?Q?HCjcAKnLgF+51shZTdnzhgd1vcT8a9ASpCRH5cbJ2NImcTxTzT1RPN+El35R?=
+ =?us-ascii?Q?4OhYNfTkQh3GTmfnzDXr77iqj2X557hPNW2t6AuCORgq3axPoCSn1+Ds2048?=
+ =?us-ascii?Q?AG+N/D+pfrHuqX5AwoX+9OHGMPQVoo1EE+mJ6lLycXB/yd5VOekYFV7HJNVB?=
+ =?us-ascii?Q?ROTkWCLl1h6a5H5YjfrIy26EmEDQpNwXZ2Qey+4PdrmbeIek+iwlRd5YtKEm?=
+ =?us-ascii?Q?VBTwLsRPJtvN7tpjVjsfAQa6/vU8UZHpbeZ+1BvqmJQ5SVCFX1TYjJuLEc0X?=
+ =?us-ascii?Q?zRp6wKGoCkLtd4V3JSkI5MwT8/r6A18TwUx2T/TB+WwUcxB9eP+Gd7ZeM0Vg?=
+ =?us-ascii?Q?Tt2Hle+XB/2ksv5Js/XExBzI0V6107/5MveP4zDWXpaAvdXrcoAjnPgR2NGS?=
+ =?us-ascii?Q?78yV6VezwhdY2xAU4Ago3ZBooStVsVQuW4BiuCWzxAkf+lGpKtBcXc7STIdm?=
+ =?us-ascii?Q?UAu0dHng8A97O4i0ch6en/XtnZnyMrb1/jvIlXMiAuQ6aCN/DaQH8e1gBgp8?=
+ =?us-ascii?Q?LKI8MkauHAR//m8sG/peeC6XP7E8zfoP5fCmHQm6qB1UJjRzH3A6oS4DueF1?=
+ =?us-ascii?Q?mfgLqn+G0BJF4e0nELSMdti48VdQ184JlEA16cAwE27eNB0Ly2vYvhtlbIR8?=
+ =?us-ascii?Q?PuvVQny6VT87b0HC3muJcUpfWh965c5iQ4YQCbLFxsmIGZJhBTGs/9MnfDAn?=
+ =?us-ascii?Q?IFRNjSsl0FEjn7YlpHEe19hJO9ccR69IOJ7U+8LtuDJIp4UfL1LLlN7VQmQe?=
+ =?us-ascii?Q?frFPzrp5UoN4Ofk1O8G/SqmdxFAr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+b8+wKxI89AYgzmg5GiK4HDQLZ0JB8d+iu5jxDmOvOT1yWECL1i9z0MUHrQv?=
+ =?us-ascii?Q?8Qoufa+QF5JD5HcVuuPzwGquXTqLPOp56Z5ShMwVccQLhXlhMXJ4EGocbxjL?=
+ =?us-ascii?Q?4Kk3PpWAnw2Rk6rls/gdZORD0TPqBVrOQrV2BlNGeaKLgG/ocHgoC/DIINmQ?=
+ =?us-ascii?Q?YGJYyPCl9LvYwbMKYJUbbTLtPIX56D/YiPdc40ER2F7x/ZmHh1OMyOYqfLBN?=
+ =?us-ascii?Q?TbpOAtTbS/6Cnlxjtv5F0Q7IjBfbMHuq/q6tzu8KZ1XyX7YppS/FC7Fro+Ac?=
+ =?us-ascii?Q?O1kTaah89WoCvnDprO7oiM7zfgEjJ80wNdAGcUyP9d+vZr35RvXCTG/AfPv3?=
+ =?us-ascii?Q?FIbLnl1F1BBgmBpTiFMdlX5AciP59GIlkSgOjksiB22lzlTw3t/O444w1kea?=
+ =?us-ascii?Q?vTKvfvf8M4MPi7rdnOW7uIHtH+Zk3fntDrLpa7kUXgSst2DMZIoTt6s0XnFY?=
+ =?us-ascii?Q?UyWS8bvVPKndJp9xlvKKcbSeQGlDe/A9R6D4G2/jHd3J81Q0q6isF+xV48Sd?=
+ =?us-ascii?Q?XxdrcmnViHwsPELOSfAvCJeQ62VR9akiQ5/oIZtBFitwNEtMJMQ6+/BgI0L4?=
+ =?us-ascii?Q?li5jVeuYKibW65LvtKDncC8R4cFezU7IrK1LwqLyvwke5JcmrlDqUsJqHv9f?=
+ =?us-ascii?Q?OmmflqNIVkIpii+da0GccFEaBXWcp0qOfkISVtf5ttdscEYjru9PAJTCxxCp?=
+ =?us-ascii?Q?He+Sezl1ts+dtBK/oRlVLYTpt9QfuOajtN70X9ilwwEyNMPZfNfuHlZ+S39t?=
+ =?us-ascii?Q?R1DEDgMSthKUZTZi2FXsCIqSUAaBDk91MT6/HgxPMiXg/borySwSRs50BvPU?=
+ =?us-ascii?Q?B1QtbCXw9mULHD/zZVxkDJDhDnIRVzk5iFkR7OzguE7b94Ve/nHExPrDW3io?=
+ =?us-ascii?Q?3LfMou6bU0eZ3LO+TFaZC9uachegPZbAy//Gx2WfybdnvI0UVd+fG9RXN3Ha?=
+ =?us-ascii?Q?N7sDjRh4/xCw2qTKCWXSpDLiruMMTtFqmLbzjH/mJjis2ZS1WPGzUQDmj0iy?=
+ =?us-ascii?Q?SJEOJklJUNSxd0zJov6N9TKlCDzxznYpGZhoYuSEAcD6GBmcJasCgGVR2n2I?=
+ =?us-ascii?Q?dpbSCcYRvn41iL/vVCtU7SZzekJCtGao2ZwW2mYa1pjSzOw2muhaTeDBnWJm?=
+ =?us-ascii?Q?okAoTuVFELIvSZMYOKAImZJ091RX764QJRjy/71CISTdEQB0jI43cFL0Z9EY?=
+ =?us-ascii?Q?AeYovNr/yYAgausmRi1MqEJ7hZsFFDKbMxkBTJuZNpcYcE98uTX4hJ906sOP?=
+ =?us-ascii?Q?ojYXGtmB1V9H0oEz/rgd1ellShb8ZH/tFyTHsGX7IWanRChiAlrGcV/goItn?=
+ =?us-ascii?Q?eMh97UmuVDSUErO44CRtcqbUg6SdnSSNQLH6GdqpczuVkXG3WGYcY0MjHJ/p?=
+ =?us-ascii?Q?QRzapUIBOISMxLDY56KopCPSnn5Vjs6lsBz+8NThxZeY5QqrAm6FM4OuCbyJ?=
+ =?us-ascii?Q?+UDyNVBRHwf0MWFojhK/9LuXdILvvkyYhUfGUGAw1hVuEy+lh6I9mS6MNlTy?=
+ =?us-ascii?Q?lhfKkopAfBDpyTAlwVwjnzzAz0q4Sg4MQN61m8U3wDVbf3KlyUspt0ffNhVU?=
+ =?us-ascii?Q?vAPplyBqQe+RtdVTVhkdsOoClJbv4EHgTAyUpSce?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: beb0a90d-b38d-47ea-e0c8-08dd6850bc31
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 08:16:52.2608
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0nS9q4i+KuC5L+oFDci5TKhVC25AiMbD8GkJMIcby1RXBl8gY9ciLaBhGvXycEDCPDh/yGSOTY8rJPR6AnykLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10559
 
-On Thu, 20 Mar 2025 11:17:36 +0000
-Karunika Choo <karunika.choo@arm.com> wrote:
-
-> This patch moves GPU info initialization into panthor_hw.c in
-> preparation of handling GPU register changes. The GPU register reading
-> operations to populate gpu_info are separated into an architecture
-> specific arch_*_gpu_info_init() function and is called via the new
-> function pointer abstraction under hw.ops.gpu_info_init().
+On Fri, Nov 15, 2024 at 03:20:55PM +0000, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Future GPU support will be performed by implementing a *_gpu_info_init()
-> function specific to that architecture version. It can call any existing
-> *_gpu_info_init() and extend it with additional register reads or
-> provide an entirely different implementation.
-
-Could you give us an insight into what the reg layout changes are? So
-far, they were mostly unchanged between GPU gens, and I'd really
-prefer we could keep the majority of them unchanged part of the commo 
-discovery, and only add the missing reads in the ->gpu_info_init()
-callback.
-
-Note that I'm also working on abstracting mali device operations to add
-JM support to panthor, and the only things I had to specialize are:
-
-- CSF ID for CSF
-- JS features/present masks for JM
-
-The rest is just common. So what I have is a common gpu_init_info()
-helper that reads all the regs excepts those two, and after that, I
-have a device ops selection based on the arch major of the GPU ID [1].
-The device-specific GPU info are then read as part of the
-panthor_device_ops::init().
-
+> fsl_mc_allocator_driver_exit() was added explicitly by
+> commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
+> but was never used.
 > 
-> This patch will enable Panthor to support GPUs with changes to register
-> offsets, size and fields.
+> Remove it.
 > 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_gpu.c |  95 -----------------------
->  drivers/gpu/drm/panthor/panthor_hw.c  | 105 ++++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_hw.h  |   3 +-
->  3 files changed, 107 insertions(+), 96 deletions(-)
+> fsl_mc_portal_reset() was added in 2015 by
+> commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
+> but was never used.
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index 0dee011fe2e9..fcdee8901482 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -37,40 +37,6 @@ struct panthor_gpu {
->  	wait_queue_head_t reqs_acked;
->  };
->  
-> -/**
-> - * struct panthor_model - GPU model description
-> - */
-> -struct panthor_model {
-> -	/** @name: Model name. */
-> -	const char *name;
-> -
-> -	/** @arch_major: Major version number of architecture. */
-> -	u8 arch_major;
-> -
-> -	/** @product_major: Major version number of product. */
-> -	u8 product_major;
-> -};
-> -
-> -/**
-> - * GPU_MODEL() - Define a GPU model. A GPU product can be uniquely identified
-> - * by a combination of the major architecture version and the major product
-> - * version.
-> - * @_name: Name for the GPU model.
-> - * @_arch_major: Architecture major.
-> - * @_product_major: Product major.
-> - */
-> -#define GPU_MODEL(_name, _arch_major, _product_major) \
-> -{\
-> -	.name = __stringify(_name),				\
-> -	.arch_major = _arch_major,				\
-> -	.product_major = _product_major,			\
-> -}
-> -
-> -static const struct panthor_model gpu_models[] = {
-> -	GPU_MODEL(g610, 10, 7),
-> -	{},
-> -};
-> -
->  #define GPU_INTERRUPTS_MASK	\
->  	(GPU_IRQ_FAULT | \
->  	 GPU_IRQ_PROTM_FAULT | \
-> @@ -83,66 +49,6 @@ static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
->  		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
->  }
->  
-> -static void panthor_gpu_init_info(struct panthor_device *ptdev)
-> -{
-> -	const struct panthor_model *model;
-> -	u32 arch_major, product_major;
-> -	u32 major, minor, status;
-> -	unsigned int i;
-> -
-> -	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
-> -	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
-> -	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
-> -	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
-> -	ptdev->gpu_info.l2_features = gpu_read(ptdev, GPU_L2_FEATURES);
-> -	ptdev->gpu_info.tiler_features = gpu_read(ptdev, GPU_TILER_FEATURES);
-> -	ptdev->gpu_info.mem_features = gpu_read(ptdev, GPU_MEM_FEATURES);
-> -	ptdev->gpu_info.mmu_features = gpu_read(ptdev, GPU_MMU_FEATURES);
-> -	ptdev->gpu_info.thread_features = gpu_read(ptdev, GPU_THREAD_FEATURES);
-> -	ptdev->gpu_info.max_threads = gpu_read(ptdev, GPU_THREAD_MAX_THREADS);
-> -	ptdev->gpu_info.thread_max_workgroup_size = gpu_read(ptdev, GPU_THREAD_MAX_WORKGROUP_SIZE);
-> -	ptdev->gpu_info.thread_max_barrier_size = gpu_read(ptdev, GPU_THREAD_MAX_BARRIER_SIZE);
-> -	ptdev->gpu_info.coherency_features = gpu_read(ptdev, GPU_COHERENCY_FEATURES);
-> -	for (i = 0; i < 4; i++)
-> -		ptdev->gpu_info.texture_features[i] = gpu_read(ptdev, GPU_TEXTURE_FEATURES(i));
-> -
-> -	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
-> -
-> -	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT_LO);
-> -	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT_LO);
-> -	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
-> -
-> -	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
-> -	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
-> -	major = GPU_VER_MAJOR(ptdev->gpu_info.gpu_id);
-> -	minor = GPU_VER_MINOR(ptdev->gpu_info.gpu_id);
-> -	status = GPU_VER_STATUS(ptdev->gpu_info.gpu_id);
-> -
-> -	for (model = gpu_models; model->name; model++) {
-> -		if (model->arch_major == arch_major &&
-> -		    model->product_major == product_major)
-> -			break;
-> -	}
-> -
-> -	drm_info(&ptdev->base,
-> -		 "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
-> -		 model->name ?: "unknown", ptdev->gpu_info.gpu_id >> 16,
-> -		 major, minor, status);
-> -
-> -	drm_info(&ptdev->base,
-> -		 "Features: L2:%#x Tiler:%#x Mem:%#x MMU:%#x AS:%#x",
-> -		 ptdev->gpu_info.l2_features,
-> -		 ptdev->gpu_info.tiler_features,
-> -		 ptdev->gpu_info.mem_features,
-> -		 ptdev->gpu_info.mmu_features,
-> -		 ptdev->gpu_info.as_present);
-> -
-> -	drm_info(&ptdev->base,
-> -		 "shader_present=0x%0llx l2_present=0x%0llx tiler_present=0x%0llx",
-> -		 ptdev->gpu_info.shader_present, ptdev->gpu_info.l2_present,
-> -		 ptdev->gpu_info.tiler_present);
-> -}
-> -
->  static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
->  {
->  	if (status & GPU_IRQ_FAULT) {
-> @@ -203,7 +109,6 @@ int panthor_gpu_init(struct panthor_device *ptdev)
->  	spin_lock_init(&gpu->reqs_lock);
->  	init_waitqueue_head(&gpu->reqs_acked);
->  	ptdev->gpu = gpu;
-> -	panthor_gpu_init_info(ptdev);
->  
->  	dma_set_max_seg_size(ptdev->base.dev, UINT_MAX);
->  	pa_bits = GPU_MMU_FEATURES_PA_BITS(ptdev->gpu_info.mmu_features);
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index 234bfd50cf0d..4cc4b0d5382c 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -5,10 +5,113 @@
->  #include "panthor_hw.h"
->  #include "panthor_regs.h"
->  
-> +/**
-> + * struct panthor_model - GPU model description
-> + */
-> +struct panthor_model {
-> +	/** @name: Model name. */
-> +	const char *name;
-> +
-> +	/** @arch_major: Major version number of architecture. */
-> +	u8 arch_major;
-> +
-> +	/** @product_major: Major version number of product. */
-> +	u8 product_major;
-> +};
-> +
-> +/**
-> + * GPU_MODEL() - Define a GPU model. A GPU product can be uniquely identified
-> + * by a combination of the major architecture version and the major product
-> + * version.
-> + * @_name: Name for the GPU model.
-> + * @_arch_major: Architecture major.
-> + * @_product_major: Product major.
-> + */
-> +#define GPU_MODEL(_name, _arch_major, _product_major) \
-> +{\
-> +	.name = __stringify(_name),				\
-> +	.arch_major = _arch_major,				\
-> +	.product_major = _product_major,			\
-> +}
-> +
-> +static const struct panthor_model gpu_models[] = {
-> +	GPU_MODEL(g610, 10, 7),
-> +	{},
-> +};
-> +
-> +static void arch_10_8_gpu_info_init(struct panthor_device *ptdev)
-> +{
-> +	unsigned int i;
-> +
-> +	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
-> +	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
-> +	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
-> +	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
-> +	ptdev->gpu_info.l2_features = gpu_read(ptdev, GPU_L2_FEATURES);
-> +	ptdev->gpu_info.tiler_features = gpu_read(ptdev, GPU_TILER_FEATURES);
-> +	ptdev->gpu_info.mem_features = gpu_read(ptdev, GPU_MEM_FEATURES);
-> +	ptdev->gpu_info.mmu_features = gpu_read(ptdev, GPU_MMU_FEATURES);
-> +	ptdev->gpu_info.thread_features = gpu_read(ptdev, GPU_THREAD_FEATURES);
-> +	ptdev->gpu_info.max_threads = gpu_read(ptdev, GPU_THREAD_MAX_THREADS);
-> +	ptdev->gpu_info.thread_max_workgroup_size = gpu_read(ptdev, GPU_THREAD_MAX_WORKGROUP_SIZE);
-> +	ptdev->gpu_info.thread_max_barrier_size = gpu_read(ptdev, GPU_THREAD_MAX_BARRIER_SIZE);
-> +	ptdev->gpu_info.coherency_features = gpu_read(ptdev, GPU_COHERENCY_FEATURES);
-> +	for (i = 0; i < 4; i++)
-> +		ptdev->gpu_info.texture_features[i] = gpu_read(ptdev, GPU_TEXTURE_FEATURES(i));
-> +
-> +	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
-> +
-> +	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT_LO);
-> +	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT_LO);
-> +	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT_LO);
-> +}
-> +
-> +static void panthor_gpu_init_info(struct panthor_device *ptdev)
-> +{
-> +	const struct panthor_model *model;
-> +	u32 arch_major, product_major;
-> +	u32 major, minor, status;
-> +
-> +	ptdev->hw->ops.gpu_info_init(ptdev);
-> +
-> +	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
-> +	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
-> +	major = GPU_VER_MAJOR(ptdev->gpu_info.gpu_id);
-> +	minor = GPU_VER_MINOR(ptdev->gpu_info.gpu_id);
-> +	status = GPU_VER_STATUS(ptdev->gpu_info.gpu_id);
-> +
-> +	for (model = gpu_models; model->name; model++) {
-> +		if (model->arch_major == arch_major &&
-> +		    model->product_major == product_major)
-> +			break;
-> +	}
-> +
-> +	drm_info(&ptdev->base,
-> +		 "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
-> +		 model->name ?: "unknown", ptdev->gpu_info.gpu_id >> 16,
-> +		 major, minor, status);
-> +
-> +	drm_info(&ptdev->base,
-> +		 "Features: L2:%#x Tiler:%#x Mem:%#x MMU:%#x AS:%#x",
-> +		 ptdev->gpu_info.l2_features,
-> +		 ptdev->gpu_info.tiler_features,
-> +		 ptdev->gpu_info.mem_features,
-> +		 ptdev->gpu_info.mmu_features,
-> +		 ptdev->gpu_info.as_present);
-> +
-> +	drm_info(&ptdev->base,
-> +		 "shader_present=0x%0llx l2_present=0x%0llx tiler_present=0x%0llx",
-> +		 ptdev->gpu_info.shader_present, ptdev->gpu_info.l2_present,
-> +		 ptdev->gpu_info.tiler_present);
-> +}
-> +
->  static struct panthor_hw panthor_hw_devices[] = {
->  	{
->  		.arch_id = GPU_ARCH_ID_MAKE(10, 0, 0),
->  		.arch_mask = GPU_ARCH_ID_MAKE(0xFF, 0, 0),
-> +		.ops = {
-> +			.gpu_info_init = arch_10_8_gpu_info_init,
-> +		},
->  	},
->  };
->  
-> @@ -59,6 +162,8 @@ int panthor_hw_init(struct panthor_device *ptdev)
->  
->  	ptdev->hw = hdev;
->  
-> +	panthor_gpu_init_info(ptdev);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> index 5eb0549ad333..dfe0f86c5d76 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -31,7 +31,8 @@ struct panthor_hw_regmap {
->   * struct panthor_hw_ops - HW operations that are specific to a GPU
->   */
->  struct panthor_hw_ops {
-> -
-> +	/** @gpu_info_init: Function pointer to initialize GPU info. */
-> +	void (*gpu_info_init)(struct panthor_device *ptdev);
->  };
->  
->  /**
+> Remove it.
+> 
+> fsl_mc_portal_reset() was the only caller of dpmcp_reset().
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+Acked-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 
 
