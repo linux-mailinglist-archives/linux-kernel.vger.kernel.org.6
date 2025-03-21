@@ -1,148 +1,174 @@
-Return-Path: <linux-kernel+bounces-571123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADC9A6B967
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:02:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C50A6B970
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025C67A871C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639731B61651
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56876221D92;
-	Fri, 21 Mar 2025 11:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgVG9l/5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5EA21D3F9;
-	Fri, 21 Mar 2025 11:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F7122157B;
+	Fri, 21 Mar 2025 11:02:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14EE215F49
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 11:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742554910; cv=none; b=uyRdp26p1dMe8kdTMwxy7cHgp3m/ZH8jncFrp3+4Tdqo2kbcBrbAM1duZSM5KwAETMQ/ayLa2GS4i1QBtkVxbY+Rx2GLz5YUi7YNDEw6zJfATSqycqDAzGtI5JrNNKUBcjqD2mS1pODGJ4ZbyPzF02IEv2QExQOwFBSBnmMvY5M=
+	t=1742554933; cv=none; b=HomK2B7Cv13t644JFzgJEUmY9Cy+0cHVooOzN2iXOY00SxHJfiYPIlcs55z/PjEC9zAxFRQ742f6/voynu/G8nUET9urL9vb11r4TPwYw3HsXFtlIOGAYdqQ/UzIZykN/3My6ICShd611Qm3PXijDJOwx0WbglmLmRefqSpmLn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742554910; c=relaxed/simple;
-	bh=lNYSQAqs2tXjdXifey+AJAEii2quKt+rJKsXZVd4dGU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d8nylUhL2HjF8LTM4AoUJUIZFN4QMHJSxwttrKoTWgHaBp/7kV6VOZsLz495p6db+LvXXWbM6LQ9dmsQpgFkObGdH2BhSHuuuOodGPtixh1hVxsp2iY9wCx/wAjFwu0e6PTCPAbc73TWEy8QyVTW5Ux1kg23bSJUzJXJc4gqppw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgVG9l/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8A9C4CEE7;
-	Fri, 21 Mar 2025 11:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742554910;
-	bh=lNYSQAqs2tXjdXifey+AJAEii2quKt+rJKsXZVd4dGU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RgVG9l/5vUv5+OhjcapFEIZgL1kox50pLgt3B2BDj5xzGWALY+nxxWPnDmpEcbEQz
-	 Sv86Cmi+aopHwYQikKq/FTFLwZpGUy0En/vZw86wQaN0kfLVQyR89Rqb4KVZtUhnZS
-	 10qF567Ed+rf+50P8azVfwlLBKn5e1nFaykjWw0qSufiFipXKkwKI+7PlDCVUuXuux
-	 ef5rUTeOxwT4NuCVG40PonuZl3xnSC6CNnrzNR/+YlLCK32T7koj6+aIu4SiUImSZu
-	 DSchYarx1vCJHoq+7Q10msNoOvMA5FZ0AKpHxBZx+fy+Wv1RIeR3wuEGHyTIZplH4w
-	 v3Dirc+F11qnQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tva8J-00Fl2b-Tk;
-	Fri, 21 Mar 2025 11:01:48 +0000
-Date: Fri, 21 Mar 2025 11:01:47 +0000
-Message-ID: <868qoymyuc.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Peter Chen <peter.chen@cixtech.com>
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	marcin@juszkiewicz.com.pl,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Fugang Duan <fugang.duan@cixtech.com>
-Subject: Re: [PATCH v4 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
-In-Reply-To: <Z91AG0lH1JNN7NHq@nchen-desktop>
-References: <20250305053823.2048217-1-peter.chen@cixtech.com>
-	<20250305053823.2048217-6-peter.chen@cixtech.com>
-	<86frj8m4be.wl-maz@kernel.org>
-	<Z9vmeTj68LmwinPD@nchen-desktop>
-	<86bjtun4an.wl-maz@kernel.org>
-	<Z91AG0lH1JNN7NHq@nchen-desktop>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742554933; c=relaxed/simple;
+	bh=I8m24RIucMfHg/wbXKMVoXA+I4DAVvlGYeS7caHUY6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxZprUtS1mhS4wEWsJt8DhoNw9cMk4lAO16MomPyKr4vWTQ8sLTxWWOpa8uQYHaUgPdDMedywDT+PvjJz6ACfI5CTT7/WMcHCBBxsHsmEXURKP2JNioOEbYrR+4OiIZrxq+kaHRuyNG2yRTnv7OU+PKzcoY4m+hj8Cp3ieJtUfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0417F1063;
+	Fri, 21 Mar 2025 04:02:12 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52A943F673;
+	Fri, 21 Mar 2025 04:02:03 -0700 (PDT)
+Message-ID: <3bbf8aee-7b84-405a-8a3f-648c74196c2c@arm.com>
+Date: Fri, 21 Mar 2025 11:02:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: peter.chen@cixtech.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl, krzysztof.kozlowski@linaro.org, fugang.duan@cixtech.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] coresight: Convert tag clear function to take a
+ struct cs_access
+To: James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, leo.yan@arm.com
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20250320-james-coresight-claim-tags-v3-0-d3145c153820@linaro.org>
+ <20250320-james-coresight-claim-tags-v3-1-d3145c153820@linaro.org>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250320-james-coresight-claim-tags-v3-1-d3145c153820@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Mar 2025 10:31:55 +0000,
-Peter Chen <peter.chen@cixtech.com> wrote:
+On 20/03/2025 14:34, James Clark wrote:
+> The self hosted claim tag will be reset on device probe in a later
+> commit. We'll want to do this before coresight_register() is called so
+> won't have a coresight_device and have to use cs_access instead.
 > 
-> On 25-03-21 09:04:00, Marc Zyngier wrote:
-> > > On 25-03-20 09:36:37, Marc Zyngier wrote:
-> > > > Peter Chen <peter.chen@cixtech.com> wrote:
-> > > > >
-> > > > > +     pmu-a520 {
-> > > > > +             compatible = "arm,cortex-a520-pmu";
-> > > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition0>;
-> > > > > +     };
-> > > > > +
-> > > > > +     pmu-a720 {
-> > > > > +             compatible = "arm,cortex-a720-pmu";
-> > > > > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &ppi_partition1>;
-> > > > > +     };
-> > > > > +
-> > > > > +     pmu-spe {
-> > > > > +             compatible = "arm,statistical-profiling-extension-v1";
-> > > > > +             interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_LOW 0>;
-> > > > > +     };
-> > > >
-> > > > SPE should follow the same model as the PMU, as each CPU has its own
-> > > > SPE implementation, exposing different micro-architectural details.
-> > > >
-> > >
-> > > Hi Marc,
-> > >
-> > > Thanks for your reply. But there is only one compatible string
-> > > "statistical-profiling-extension-v1" at drivers/perf/arm_spe_pmu.c,
-> > > how could differentiate pmu-spe-a720 and pmu-spe-a520, do I need
-> > > to change arm_spe_pmu.c as well?
-> > 
-> > I don't think there is a need to have different compatible. The driver
-> > can probe which CPU this is on, and work out the implemented
-> > subfeatures from the PMSIDR_EL1 register. New compatible strings are
-> > better avoided when there is a way to probe/discover the HW (and in
-> > most cases, there is).
-> > 
-> > Note that this equally applies to TRBE, which also explicitly deals
-> > with interrupt partitioning and yet only has a single compatible.
-> > Please consider adding TRBE support when you repost this series.
-> > 
+> Also make them public and create locked and unlocked versions for
+> later use.
 > 
-> Hi Marc,
+> These look functions look like they set the whole tags register as one
+> value, but they only set and clear the self hosted bit using a SET/CLR
+> bits mechanism so also rename the functions to reflect this better.
 > 
-> Thanks for your comment, we need to discuss it internally. Since it
-> is very initial dts support for CIX sky1 SoC, I will delete pmu-spe
-> support at this time, and add better support for it when adding
-> more components next time.
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>   drivers/hwtracing/coresight/coresight-core.c | 27 +++++++++++++++++++--------
+>   include/linux/coresight.h                    |  3 ++-
+>   2 files changed, 21 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index fb43ef6a3b1f..8471aefeac76 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -144,19 +144,30 @@ static inline bool coresight_is_claimed_any(struct coresight_device *csdev)
+>   	return coresight_read_claim_tags(csdev) != 0;
+>   }
+>   
+> -static inline void coresight_set_claim_tags(struct coresight_device *csdev)
+> +static inline void coresight_set_self_claim_tag(struct coresight_device *csdev)
 
-And therefore making this machine even less useful than it already is?
+nit: For consistency, this should be renamed to _unlocked ?
 
-<s> I think this is a great plan. </s>
+Rest looks fine to me
 
-	M.
+Suzuki
 
--- 
-Without deviation from the norm, progress is not possible.
+
+>   {
+>   	csdev_access_relaxed_write32(&csdev->access, CORESIGHT_CLAIM_SELF_HOSTED,
+>   				     CORESIGHT_CLAIMSET);
+>   	isb();
+>   }
+>   
+> -static inline void coresight_clear_claim_tags(struct coresight_device *csdev)
+> +void coresight_clear_self_claim_tag(struct csdev_access *csa)
+>   {
+> -	csdev_access_relaxed_write32(&csdev->access, CORESIGHT_CLAIM_SELF_HOSTED,
+> +	if (csa->io_mem)
+> +		CS_UNLOCK(csa->base);
+> +	coresight_clear_self_claim_tag_unlocked(csa);
+> +	if (csa->io_mem)
+> +		CS_LOCK(csa->base);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_clear_self_claim_tag);
+> +
+> +void coresight_clear_self_claim_tag_unlocked(struct csdev_access *csa)
+> +{
+> +	csdev_access_relaxed_write32(csa, CORESIGHT_CLAIM_SELF_HOSTED,
+>   				     CORESIGHT_CLAIMCLR);
+>   	isb();
+>   }
+> +EXPORT_SYMBOL_GPL(coresight_clear_self_claim_tag_unlocked);
+>   
+>   /*
+>    * coresight_claim_device_unlocked : Claim the device for self-hosted usage
+> @@ -176,11 +187,11 @@ int coresight_claim_device_unlocked(struct coresight_device *csdev)
+>   	if (coresight_is_claimed_any(csdev))
+>   		return -EBUSY;
+>   
+> -	coresight_set_claim_tags(csdev);
+> +	coresight_set_self_claim_tag(csdev);
+>   	if (coresight_is_claimed_self_hosted(csdev))
+>   		return 0;
+> -	/* There was a race setting the tags, clean up and fail */
+> -	coresight_clear_claim_tags(csdev);
+> +	/* There was a race setting the tag, clean up and fail */
+> +	coresight_clear_self_claim_tag_unlocked(&csdev->access);
+>   	return -EBUSY;
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_claim_device_unlocked);
+> @@ -201,7 +212,7 @@ int coresight_claim_device(struct coresight_device *csdev)
+>   EXPORT_SYMBOL_GPL(coresight_claim_device);
+>   
+>   /*
+> - * coresight_disclaim_device_unlocked : Clear the claim tags for the device.
+> + * coresight_disclaim_device_unlocked : Clear the claim tag for the device.
+>    * Called with CS_UNLOCKed for the component.
+>    */
+>   void coresight_disclaim_device_unlocked(struct coresight_device *csdev)
+> @@ -211,7 +222,7 @@ void coresight_disclaim_device_unlocked(struct coresight_device *csdev)
+>   		return;
+>   
+>   	if (coresight_is_claimed_self_hosted(csdev))
+> -		coresight_clear_claim_tags(csdev);
+> +		coresight_clear_self_claim_tag_unlocked(&csdev->access);
+>   	else
+>   		/*
+>   		 * The external agent may have not honoured our claim
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index d79a242b271d..00134a80d358 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -685,7 +685,8 @@ extern int coresight_timeout_action(struct csdev_access *csa, u32 offset,
+>   
+>   extern int coresight_claim_device(struct coresight_device *csdev);
+>   extern int coresight_claim_device_unlocked(struct coresight_device *csdev);
+> -
+> +void coresight_clear_self_claim_tag(struct csdev_access *csa);
+> +void coresight_clear_self_claim_tag_unlocked(struct csdev_access *csa);
+>   extern void coresight_disclaim_device(struct coresight_device *csdev);
+>   extern void coresight_disclaim_device_unlocked(struct coresight_device *csdev);
+>   extern char *coresight_alloc_device_name(struct coresight_dev_list *devs,
+> 
+
 
