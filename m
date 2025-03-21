@@ -1,69 +1,90 @@
-Return-Path: <linux-kernel+bounces-571274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBBAA6BB2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:52:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C3FA6BB3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D4EA7AB68E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B29B4481CEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB622A81A;
-	Fri, 21 Mar 2025 12:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28BE227EBD;
+	Fri, 21 Mar 2025 12:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="SfQ4S5k0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uY374mxh"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9325A226D04;
-	Fri, 21 Mar 2025 12:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420B227EB6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742561469; cv=none; b=crmXpWI7DbFkIMK5iGUAisds312iYRi5VElz9/fQvVnvhtM+yQ4QwInSPaNxVqMJBbhCxGCa5ip6ygzECAnLLeCFnDC7Z8/CY+Ivs+RaGBAY0uNU4nr/QHhXP883dZr0oPD49LLgtDuFvb5Qu4qmAB8RSPloksV+nFhy9XrrhXA=
+	t=1742561530; cv=none; b=L71o6O61pMowJXnoEZjk2FTaNaQ/m/gKQLNKFsxjeQ95yUpG9PvApxxVGkFmdWR1SvdCVZqm7UTlOlt4l0yoMuhLIucyVhAhL8wSthIRZkE91MNa2iq6/4GzUoYh+xIiA0CYsmhgEiA0DNiiDxofKHXzXTgF0/mP6HFD/1M/XCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742561469; c=relaxed/simple;
-	bh=frb61xLTauRJ1oYAsBn7KGB1v01AGxe7+8/rQqlvlJo=;
+	s=arc-20240116; t=1742561530; c=relaxed/simple;
+	bh=omo7++uwL5aCKwwOkOgkXq3mk5bdOuv6RRCIHDEgpqA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkS+0dxAv9bggULVrH/I+VvxYHauZFYwA2WXfbHpcOwAC0/TD1cJ99n0d8gyjEBxOtT/lQ5n6Xor3Dh9Dk1CkLgqmmokAjXDFAekQ+Kty04fJp3yk/mFsZRMGCBRdEFXCbY/ArxK9dUg9NK7HxnsMCAIskk7a2WFz3qApr0to1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=SfQ4S5k0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25DDAC4CEE3;
-	Fri, 21 Mar 2025 12:51:08 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="SfQ4S5k0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1742561466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1dUf+NuD25WdVcY/g4ihIatL9n9p+d1MPap8zY1l6+Y=;
-	b=SfQ4S5k0pTvKrxFXVspBerla/SbUp0Opfi1U//bwYh9m4JHnvyn19VfONZNdUhstjg+pCk
-	zg1c+e0ozExXfzaWwUGKFmjtnLhvIiLoFhAPuffwWmgYwiRkQbcVkRsehvpqwa9xn16W7I
-	ZSnCZbZpUksmk6EnYC1HPvZ+Gfcqo5Y=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4f1bf067 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 21 Mar 2025 12:51:05 +0000 (UTC)
-Date: Fri, 21 Mar 2025 13:51:02 +0100
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: Phil Sutter <phil@nwl.cc>, netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 RESEND net-next 2/2] selftests: wireguard: update to
- using nft for qemu test
-Message-ID: <Z91gtk_5nA76iYGw@zx2c4.com>
-References: <20250106081043.2073169-1-liuhangbin@gmail.com>
- <20250106081043.2073169-3-liuhangbin@gmail.com>
- <Z9rtrVk-15Ts_BNp@zx2c4.com>
- <Z91CGRP9QLdZONiZ@fedora>
- <Z91QshzKRlmPdpv7@orbyte.nwl.cc>
- <Z91fXURX3BQFDaq9@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oM7BVLUqfMrZm7u4dFD52XQq4gY8Dx9jIIZU12i5NQkXyzlBWh5z+Xlt162ymjWXBt2agRpNseHUxM25RHh5S3+hGJh91xfvQytbf8XC+QNYZGDi0zgwQiAUETTmU+wdnNVqxzKsu5u/OVIiBuZKOFh8lU45Xli3LbDTPAwvxEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uY374mxh; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2241053582dso1841255ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742561528; x=1743166328; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oSMguLk/NY450VoESU9bEhEakSFxqQn+/7jPnZETdtQ=;
+        b=uY374mxhDrUDIgLWQ5UadBLdebV+utlaJSWfKuMydnsBiA+cV1UKAvCDdbznlvJ+Dr
+         XU5uZRIYGBEVifrnW3pLn/fqV9DfUzBpVh/KQQtXuezu3DVE1U96RT11D+7kkNahwJDg
+         dij4jobtUTldX86xjF3dewyZetUGiYU3Gl+v7yH5mEia/eBFVt2gZXeuah/TNLThFX0V
+         vN5eag6sfHdilcMCO8f22bM5u8Ji9V1Acor7DLvTqo7qP6cX9FU8rBRvgA060SyOuTsN
+         Sb90r5JMrPY88shRjp5r90m0qJtLMeNMqmHaO/s3C9kQzb4oj3fBZU8mlxDWhz3vyVyP
+         C1rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742561528; x=1743166328;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oSMguLk/NY450VoESU9bEhEakSFxqQn+/7jPnZETdtQ=;
+        b=UlT2oiJiqENoRASulj+wvBJUptI5fVPJ8SS5EUpzNKpRSUB/GFA2wkXl1D0gRpHh/Y
+         f4tR5sTCS4X192//6+MuUcY1agCwxbpojyzpIE69LvrzslBQN6Xmtej5IpYrd39Ob1kY
+         RkM46rdWbM3Xgdd4P+HqOOvPC5biJuvyvguywSKQGRl87v2l9kbLC9Ftu7aBONtJteck
+         IbjrpH4c6ml1f58aEqDIYztefxb8DercfVVyAmXSz8VcjY2UETFWbulL0od1XqgRDex7
+         VInEAxW33ccCSuwwjZl+X5Al99mV+dUXeNzL0LIiFQEjLzrrj2Hhjm+NtrCGERJg6+FG
+         XXPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjvRtonob8yU9/a2UQ1IziGC5mi8T4zubRB0gI4FVxO/9G4SV0Ybc5ElOsqgf34Njvjl7cTcLkchg5pKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzDC2DeENe0kZTCAZvlMU8VDSP2XTr7Q2JesyzwjeWYx1kQ1RJ
+	nLjZ53wuAqYMEVxIGGzDfhk+1LqTRz+ej5N51L1n5ldLD7aJIqvX/71qMzWppA==
+X-Gm-Gg: ASbGncvjhOb5sqRZDBI6W/2aJLS0uEdMoePWal6z4KQEjm6rz2nGZEHxTV0fQKTTvvc
+	XwCuJ0EwrDSammGSxRs7xqtJDiAy5ha3Ck3HQZqDWzaRW5Y8NrE3U+XqVEgJ1S6bksZVo8Ypf0u
+	LFkZ6shbaE4cWmKdSsy1UL/HyBOd633KESN8Qvy+tkALHbITCOB0UlS52V9oW4iMaSq48l8k//p
+	pH3zo6wYJDMOXzORFGPxIpWWcqtF0mF3lHdk3KR2fAfflHsomrEIXJuhOO74xOedGmvTTWE0e1L
+	ELjY8bkNIdJk2MZ/HWoAgSfI2y+fh0Uy1y9MujuJeAMhd6WHRxoPJXKkhLq5cDHOl/IU
+X-Google-Smtp-Source: AGHT+IF0zPLlYeMl5R+KmmcWKZ5uqrU4n7zgCXtfPnd8npBg8qglifut7iSMwIOZCm1K+7HdX/RMMA==
+X-Received: by 2002:a17:90b:53d0:b0:2ee:df70:1ff3 with SMTP id 98e67ed59e1d1-3030fd36f80mr6475642a91.0.1742561528376;
+        Fri, 21 Mar 2025 05:52:08 -0700 (PDT)
+Received: from thinkpad ([2409:40f4:22:5799:90ea:bfc4:b1d2:dda2])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf6360besm5897432a91.43.2025.03.21.05.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 05:52:07 -0700 (PDT)
+Date: Fri, 21 Mar 2025 18:22:01 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Sai Krishna Musham <sai.krishna.musham@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	cassel@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
+	thippeswamy.havalige@amd.com
+Subject: Re: [PATCH v4 2/2] PCI: xilinx-cpm: Add support for PCIe RP PERST#
+ signal
+Message-ID: <20250321125201.2r6zcxwkivt7t6s3@thinkpad>
+References: <20250318092648.2298280-1-sai.krishna.musham@amd.com>
+ <20250318092648.2298280-3-sai.krishna.musham@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,42 +93,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z91fXURX3BQFDaq9@fedora>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318092648.2298280-3-sai.krishna.musham@amd.com>
 
-On Fri, Mar 21, 2025 at 12:45:17PM +0000, Hangbin Liu wrote:
-> On Fri, Mar 21, 2025 at 12:42:42PM +0100, Phil Sutter wrote:
-> > Hi Hangbin,
-> > 
-> > On Fri, Mar 21, 2025 at 10:40:25AM +0000, Hangbin Liu wrote:
-> > > Hi Jason, Phil,
-> > > On Wed, Mar 19, 2025 at 05:15:41PM +0100, Jason A. Donenfeld wrote:
-> > > > On Mon, Jan 06, 2025 at 08:10:43AM +0000, Hangbin Liu wrote:
-> > > > > +	echo "file /bin/nft $(NFTABLES_PATH)/src/nft 755 0 0" >> $@
-> > > > > +	echo "file /lib/libmnl.so.0 $(TOOLCHAIN_PATH)/lib/libmnl.so.0 755 0 0" >> $@
-> > > > > +	echo "file /lib/libnftnl.so.11 $(TOOLCHAIN_PATH)/lib/libnftnl.so.11 755 0 0" >> $@
-> > > > 
-> > > > Can't these be statically linked into the nft binary?
-> > > 
-> > > If I omit these, I will got error like
-> > > 
-> > > mnl_attr_put: symbol not found
-> > > 
-> > > Even though I set `--enable-static` in nft build.
-> > > 
-> > > Do you know what's the reason?
-> > 
-> > I was able to have nft linked statically against built libmnl and
-> > libnftnl by passing '--disable-shared --enable-static' to configure
-> > calls of all three build systems. With --enable-shared in library
-> > configure calls, nftables build preferred to link against the DSOs and I
-> > did not find a way to change this.
+On Tue, Mar 18, 2025 at 02:56:48PM +0530, Sai Krishna Musham wrote:
+> Add PCIe IP reset along with GPIO-based control for the PCIe Root
+> Port PERST# signal. Synchronizing the PCIe IP reset with the PERST#
+> signal's assertion and deassertion avoids Link Training failures.
 > 
-> The patch is using
-> "./configure --prefix=/ $(CROSS_COMPILE_FLAG) --enable-static \
-> --disable-shared --disable-debug --disable-man-doc --with-mini-gmp --without-cli"
-> to build nft.
+> Add clear firewall after Link reset for CPM5NC.
 > 
-> I don't know why it's not linked static.
+> Adapt to use GPIO framework and make reset optional to maintain
+> backward compatibility with existing DTBs.
+> 
+> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
+> ---
+> Changes for v4:
+> - Add PCIe PERST# support for CPM5NC.
+> - Add PCIe IP reset along with PERST# to avoid Link Training Errors.
+> - Remove PCIE_T_PVPERL_MS define and PCIE_T_RRS_READY_MS after
+>   PERST# deassert.
+> - Move PCIe PERST# assert and deassert logic to
+>   xilinx_cpm_pcie_init_port() before cpm_pcie_link_up(), since
+>   Interrupts enable and PCIe RP bridge enable should be done after
+>   Link up.
+> - Update commit message.
+> 
+> Changes for v3:
+> - Use PCIE_T_PVPERL_MS define.
+> 
+> Changes for v2:
+> - Make the request GPIO optional.
+> - Correct the reset sequence as per PERST#
+> - Update commit message
+> ---
+>  drivers/pci/controller/pcie-xilinx-cpm.c | 66 +++++++++++++++++++++++-
+>  1 file changed, 65 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
+> index d0ab187d917f..fd1fee2f614b 100644
+> --- a/drivers/pci/controller/pcie-xilinx-cpm.c
+> +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
+> @@ -6,6 +6,8 @@
+>   */
+>  
+>  #include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+>  #include <linux/irqchip.h>
+> @@ -21,6 +23,13 @@
+>  #include "pcie-xilinx-common.h"
+>  
+>  /* Register definitions */
+> +#define XILINX_CPM_PCIE0_RST		0x00000308
+> +#define XILINX_CPM5_PCIE0_RST		0x00000318
+> +#define XILINX_CPM5_PCIE1_RST		0x0000031C
+> +#define XILINX_CPM5NC_PCIE0_RST		0x00000324
+> +
+> +#define XILINX_CPM5NC_PCIE0_FW		0x00001140
+> +
+>  #define XILINX_CPM_PCIE_REG_IDR		0x00000E10
+>  #define XILINX_CPM_PCIE_REG_IMR		0x00000E14
+>  #define XILINX_CPM_PCIE_REG_PSCR	0x00000E1C
+> @@ -99,6 +108,7 @@ struct xilinx_cpm_variant {
+>  	u32 ir_status;
+>  	u32 ir_enable;
+>  	u32 ir_misc_value;
+> +	u32 cpm_pcie_rst;
+>  };
+>  
+>  /**
+> @@ -106,6 +116,8 @@ struct xilinx_cpm_variant {
+>   * @dev: Device pointer
+>   * @reg_base: Bridge Register Base
+>   * @cpm_base: CPM System Level Control and Status Register(SLCR) Base
+> + * @crx_base: CPM Clock and Reset Control Registers Base
+> + * @cpm5nc_base: CPM5NC Control and Status Registers Base
+>   * @intx_domain: Legacy IRQ domain pointer
+>   * @cpm_domain: CPM IRQ domain pointer
+>   * @cfg: Holds mappings of config space window
+> @@ -118,6 +130,8 @@ struct xilinx_cpm_pcie {
+>  	struct device			*dev;
+>  	void __iomem			*reg_base;
+>  	void __iomem			*cpm_base;
+> +	void __iomem			*crx_base;
+> +	void __iomem			*cpm5nc_base;
+>  	struct irq_domain		*intx_domain;
+>  	struct irq_domain		*cpm_domain;
+>  	struct pci_config_window	*cfg;
+> @@ -478,9 +492,42 @@ static int xilinx_cpm_setup_irq(struct xilinx_cpm_pcie *port)
+>  static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
+>  {
+>  	const struct xilinx_cpm_variant *variant = port->variant;
+> +	struct device *dev = port->dev;
+> +	struct gpio_desc *reset_gpio;
+> +
+> +	/* Request the GPIO for PCIe reset signal */
+> +	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(reset_gpio)) {
+> +		dev_err(dev, "Failed to request reset GPIO\n");
+> +		return;
+> +	}
+> +
+> +	/* Assert the reset signal */
+> +	gpiod_set_value(reset_gpio, 1);
+>  
+> -	if (variant->version == CPM5NC_HOST)
+> +	/* Assert the PCIe IP reset */
+> +	writel_relaxed(0x1, port->crx_base + variant->cpm_pcie_rst);
+> +
+> +	/* Controller specific delay */
+> +	udelay(50);
+> +
+> +	/* Deassert the PCIe IP reset */
+> +	writel_relaxed(0x0, port->crx_base + variant->cpm_pcie_rst);
+> +
+> +	/* Deassert the reset signal */
+> +	gpiod_set_value(reset_gpio, 0);
+> +	mdelay(PCIE_T_RRS_READY_MS);
+> +
+> +	if (variant->version == CPM5NC_HOST) {
+> +		/* Clear Firewall */
 
-All three DSOs...
+On top of Krzk's review:
+
+What does this 'firewall' mean? Clearly, not something defined in the PCIe spec.
+Also, you made it independent of PERST# line. So is it really needed for
+platforms not supporting PERST#?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
