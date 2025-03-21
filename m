@@ -1,177 +1,259 @@
-Return-Path: <linux-kernel+bounces-570636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D45A6B2E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:19:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F80DA6B2E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D99887598
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDD2189D674
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839401DF25C;
-	Fri, 21 Mar 2025 02:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930481E260A;
+	Fri, 21 Mar 2025 02:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="C/WRMxwJ"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzHSf57q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274521A7264
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6F71A7264;
+	Fri, 21 Mar 2025 02:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742523576; cv=none; b=bO9bVOS3RdgPrhVcGBHTscQiRVTezLvuBezlp99lSVcdYzW7UmSWsu6+l3q6VDfCC8ng4CO5QtQiG9BrB7zbGTpW57Yw1UI5d1WvEZXNv7bJ1zCHJeBevtoMt3fvFyQu9V2jluB63aJx715zuIX4e6dlRR5DMkwwKozY5uXlwjU=
+	t=1742523838; cv=none; b=P75AQe3RHakQj42cGA8Wk1d5PnwUVCafQ1MWWawu2aTICv8+adjXopqkkUZbOiL5v4M62X3WfNPMcCzkGQuFwCAvgWh8yfjGAbSDITXXBn5y/v2Za+H4PIowXmB9i8nP9Du5itSLoCyqOJveq8ew0L2G9Nv6g7tH5fzLaUSG3Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742523576; c=relaxed/simple;
-	bh=U38ru4dqR5hQ4gzJyuvQTyJf5yulhnnCi8NT5TSJXIc=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=C5xyqNiAXyXCTTccK8E1QOuqyyhIidJ4RnLmdtdWkef1hVHcUMEE/1hBXwmddYSsRkXIOKeoWXk/oW7rfMUfn3HPaoFRE/5k0niDtGZFU1YbDiBAWcAcxa7zcGWBpMU5bdVxmOgm11GFKcIfoA/ai1UTVzGQYSZxco5/KJ5Qdg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=C/WRMxwJ; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1742523838; c=relaxed/simple;
+	bh=8+YFngRA+RL4itCdSnDqokhyCF25uPzsqjoBvzUhdHI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZnCdaCTdpUFzAFT+rUKjvo3JyozLXxa0QRaMTj4DaI0HNo9N9d6RNwApG/Y0wsZb7N1W7pIuTBLFhHFOJXhgTjV+9QSn6tbuoi+S9WxDXoWQAtihZt7fVsa0VU+u3UzmIQEtVdPsvIUdfZxt9Dts8fNCc8E9y6ME4dwZIh4BINM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzHSf57q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3BE08C4CEDD;
+	Fri, 21 Mar 2025 02:23:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742523837;
+	bh=8+YFngRA+RL4itCdSnDqokhyCF25uPzsqjoBvzUhdHI=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=PzHSf57qgUf0FB7TATdmiJPPa16kAxxbeQBubmAv6ILpPwJ122YZbqrk1X3sZm0P9
+	 uYTzERiVqmRIg4+ruKUo/315IOkh83+bjOW9WxlSh8ShgcGv86JYxt/sCiGZzffVgB
+	 D86c3m9ZcKJB1PvS91lDdps3G6VYd4TauQqJJs+4w4tF014A79xqGuc57R8YiyFjlW
+	 KY/y0CcrhSUgQDzfcxOXOy0b0nNEh5tyOXMBrAsGfGr0UGsHrC1D57jChsaAvbGssF
+	 kgtxtyGK8941NGmLaxtZ9awMirQ319DxPHgkR9fkgldMd3dfcsPfxVb+VRDzUU8oHR
+	 IZ1ETZ1yHTacg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AA7C28B30;
+	Fri, 21 Mar 2025 02:23:57 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Fri, 21 Mar 2025 10:23:55 +0800
+Subject: [PATCH] arm64: dts: amlogic: a4: fix dtb compilation warning
+ issues
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1742523570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aJ63EbsH7vgI4jedsTSMWBQF77GuUGSswmmue0ryXcM=;
-	b=C/WRMxwJjPXsbmhSBUnFOPBeZ8PR30k6LyphZ584eFPiYvplv4IoRJbBy/hcfZjf4CHOjY
-	6Xxzm6ypTFO1FrCY94FEJ4NZROkJC33DKAF8CB4s469qH2c3b2lsFZJ0owdgVZEuuwdeAM
-	pqDuA6AYIBhquSRROOidRX2CUFAAb05wXwnlY2XrooeX3f3dM+i81U6hmLJTCZKlPDk3PU
-	v7zXLe6QwVGAH6OL2URiG0Veri5jGg/3tBFJg0R1PhkQe+YMD59sSRgK8T1E0ZKz8p5y5q
-	9yoB0JWtyJyXkdqaCwDaXqdkY82/PqBKH2Z765tzcAA1OxYQSZE1QCd0/UDECw==
-Date: Fri, 21 Mar 2025 03:19:30 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Daniel_Kukie=C5=82a?= <daniel@kukiela.pl>, Sven Rademakers
- <sven.rademakers@gmail.com>, Joshua Riek <jjriek@verizon.net>
-Subject: Re: [PATCH] arm64: dts: rockchip: Allow Turing RK1 cooling fan to
- spin down
-In-Reply-To: <CAH5Ym4hqkMMBsT7XEz_f+TCng+0X2m0nV_Kdr-LAPBqgENgr5A@mail.gmail.com>
-References: <20250315204852.1247992-1-CFSworks@gmail.com>
- <e1cdc3a39b9201cb115b12b559899aee@manjaro.org>
- <CAH5Ym4hqkMMBsT7XEz_f+TCng+0X2m0nV_Kdr-LAPBqgENgr5A@mail.gmail.com>
-Message-ID: <57bb477925efc74a0ea11b20321fa661@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250321-fix-a4-pinctrl-node-v1-1-5719f9f09932@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIALrN3GcC/x2MSQqAMAwAvyI5G6hacfmKeOgSNSBRWhGh+HeLx
+ 4GZSRApMEUYiwSBbo58SIaqLMBtRlZC9pmhVnWrmqrDhR80Gk8Wd4Ud5fCEgzV28VqT6lvI5Rk
+ oa/91mt/3A56PuNllAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742523835; l=4994;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=IChqhCiVUHKV/Al5PYyBFG4RW3XtS/W3OF9ZWLm5x5E=;
+ b=m1lud64/wUROGiLfKAlu7eDbYTf4Y/RBj9k8nVltMlE3s359FZ3sUFC3hN+43NIu5AYW0uFlA
+ lrPSd5xEnI7BMBENznF5Jnx4nBvPjA9G6DiGs92ZaYgeF6zaOd2etNW
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Hello Sam,
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-On 2025-03-21 02:20, Sam Edwards wrote:
-> On Thu, Mar 20, 2025 at 5:38 PM Dragan Simic <dsimic@manjaro.org> 
-> wrote:
->> On 2025-03-15 21:48, Sam Edwards wrote:
->> > The RK3588 thermal sensor driver only receives interrupts when a
->> > higher-temperature threshold is crossed; it cannot notify when the
->> > sensor cools back off. As a result, the driver must poll for
->> > temperature
->> > changes to detect when the conditions for a thermal trip are no longer
->> > met. However, it only does so if the DT enables polling.
->> >
->> > Before this patch, the RK1 DT did not enable polling, causing the fan
->> > to
->> > continue running at the speed corresponding to the highest temperature
->> > reached.
->> >
->> > Follow suit with similar RK3588 boards by setting a polling-delay of
->> > 1000ms, enabling the driver to detect when the sensor cools back off,
->> > allowing the fan speed to decrease as appropriate.
->> >
->> > Fixes: 7c8ec5e6b9d6 ("arm64: dts: rockchip: Enable automatic fan
->> > control on Turing RK1")
->> > Signed-off-by: Sam Edwards <CFSworks@gmail.com>
->> > ---
->> >  arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi | 2 ++
->> >  1 file changed, 2 insertions(+)
->> >
->> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
->> > b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
->> > index 6bc46734cc14..0270bffce195 100644
->> > --- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
->> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
->> > @@ -214,6 +214,8 @@ rgmii_phy: ethernet-phy@1 {
->> >  };
->> >
->> >  &package_thermal {
->> > +     polling-delay = <1000>;
->> > +
->> >       trips {
->> >               package_active1: trip-active1 {
->> >                       temperature = <45000>;
->> 
->> Thanks for the patch, it's looking good to me, with some related
->> thoughts below.  Please, feel free to include:
->> 
->> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
->> 
->> After a quick look at the RK3588 TRM Part 1, it seems possible
->> to actually generate additional interrupts when the TSADC channel
->> temperature readouts reach predefined low thresholds.  Moreover,
-> 
-> It seems to be as simple as adding a `.set_cooloff_temp = ...` that
-> writes the lower thresholds to TSADC_COMP#_LOW_INT and sets the
-> necessary bits in TSADC_LT_EN+TSADC_LT_INT_EN. Since the driver
-> already rescans all temperatures on any interrupt and acknowledges all
-> interrupt status bits indiscriminately, I don't anticipate any other
-> necessary changes.
+When use command 'make ARCH=arm64 dtbs_check W=1' to compile dtb,
+a warning message appears.
+"Warning (simple_bus_reg): /soc/bus@fe000000/pinctrl:
+missing or empty reg/ranges property"
 
-Hmm, I'm afraid it isn't that simple...  See, the entire thermal
-framework is rather complex and there may be hidden issues, because
-such handling of the cooldown events probably isn't the most common
-variant on all boards supported upstream.
+Add the unit address to the pinctrl node to fix it.
 
-Even if everything is fine there, with the dynamic reassigning of
-the cooldown thresholds and everything else, which hopefully is, :)
-generating and handling the LT_INT interrupts, at the first glance,
-requires rather major changes to the driver because it introduces
-a different class of interrupts, for which the amount of required
-changes isn't exactly small.
+Fixes: ce78f679e08c ("arm64: dts: amlogic: a4: add pinctrl node")
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 102 +++++++++++++++-------------
+ 1 file changed, 55 insertions(+), 47 deletions(-)
 
-> I can easily take care of that this weekend or next if that plan
-> sounds good to you. However, since *this* patch is a Fixes:, I'd
-> rather land it as-is first and handle the above separately. :)
+diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
+index fa80fa365f13..582e0043024b 100644
+--- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
++++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
+@@ -51,87 +51,52 @@ pwrc: power-controller {
+ };
+ 
+ &apb {
+-	gpio_intc: interrupt-controller@4080 {
+-		compatible = "amlogic,a4-gpio-intc",
+-			     "amlogic,meson-gpio-intc";
+-		reg = <0x0 0x4080 0x0 0x20>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-		amlogic,channel-interrupts =
+-			<10 11 12 13 14 15 16 17 18 19 20 21>;
+-	};
+-
+-	gpio_ao_intc: interrupt-controller@8e72c {
+-		compatible = "amlogic,a4-gpio-ao-intc",
+-			     "amlogic,meson-gpio-intc";
+-		reg = <0x0 0x8e72c 0x0 0x0c>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-		amlogic,channel-interrupts = <140 141>;
+-	};
+-
+-	periphs_pinctrl: pinctrl {
++	periphs_pinctrl: pinctrl@4000 {
+ 		compatible = "amlogic,pinctrl-a4";
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+-		ranges;
++		ranges = <0x0 0x0 0x0 0x4000 0x0 0x280>;
+ 
+-		gpiox: gpio@4100 {
+-			reg = <0 0x4100 0 0x40>, <0 0x400c 0 0xc>;
++		gpiox: gpio@100 {
++			reg = <0 0x100 0 0x40>, <0 0xc 0 0xc>;
+ 			reg-names = "gpio", "mux";
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_X<<8) 18>;
+ 		};
+ 
+-		gpiot: gpio@4140 {
+-			reg = <0 0x4140 0 0x40>, <0 0x402c 0 0xc>;
++		gpiot: gpio@140 {
++			reg = <0 0x140 0 0x40>, <0 0x2c 0 0xc>;
+ 			reg-names = "gpio", "mux";
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_T<<8) 23>;
+ 		};
+ 
+-		gpiod: gpio@4180 {
+-			reg = <0 0x4180 0 0x40>, <0 0x4040 0 0x8>;
++		gpiod: gpio@180 {
++			reg = <0 0x180 0 0x40>, <0 0x40 0 0x8>;
+ 			reg-names = "gpio", "mux";
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_D<<8) 16>;
+ 		};
+ 
+-		gpioe: gpio@41c0 {
+-			reg = <0 0x41c0 0 0x40>, <0 0x4048 0 0x4>;
++		gpioe: gpio@1c0 {
++			reg = <0 0x1c0 0 0x40>, <0 0x48 0 0x4>;
+ 			reg-names = "gpio", "mux";
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_E<<8) 2>;
+ 		};
+ 
+-		gpiob: gpio@4240 {
+-			reg = <0 0x4240 0 0x40>, <0 0x4000 0 0x8>;
++		gpiob: gpio@240 {
++			reg = <0 0x240 0 0x40>, <0 0 0 0x8>;
+ 			reg-names = "gpio", "mux";
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_B<<8) 14>;
+ 		};
+ 
+-		gpioao: gpio@8e704 {
+-			reg = <0 0x8e704 0 0x16>, <0 0x8e700 0 0x4>;
+-			reg-names = "gpio", "mux";
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_AO<<8) 7>;
+-		};
+-
+-		test_n: gpio@8e744 {
+-			reg = <0 0x8e744 0 0x20>;
+-			reg-names = "gpio";
+-			gpio-controller;
+-			#gpio-cells = <2>;
+-			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_TEST_N<<8) 1>;
+-		};
+-
+ 		func-uart-a {
+ 			uart_a_default: group-uart-a-pins1 {
+ 				pinmux = <AML_PINMUX(AMLOGIC_GPIO_X, 11, 1)>,
+@@ -186,4 +151,47 @@ uart_e_default: group-uart-e-pins {
+ 			};
+ 		};
+ 	};
++
++	gpio_intc: interrupt-controller@4080 {
++		compatible = "amlogic,a4-gpio-intc",
++			     "amlogic,meson-gpio-intc";
++		reg = <0x0 0x4080 0x0 0x20>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		amlogic,channel-interrupts =
++			<10 11 12 13 14 15 16 17 18 19 20 21>;
++	};
++
++	ao_pinctrl: pinctrl@8e700 {
++		compatible = "amlogic,pinctrl-a4";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges = <0x0 0x0 0x0 0x8e700 0x0 0x80>;
++
++		gpioao: gpio@4 {
++			reg = <0 0x4 0 0x16>, <0 0 0 0x4>;
++			reg-names = "gpio", "mux";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_AO<<8) 7>;
++		};
++
++		test_n: gpio@44 {
++			reg = <0 0x44 0 0x20>;
++			reg-names = "gpio";
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&periphs_pinctrl 0 (AMLOGIC_GPIO_TEST_N<<8) 1>;
++		};
++	};
++
++	gpio_ao_intc: interrupt-controller@8e72c {
++		compatible = "amlogic,a4-gpio-ao-intc",
++			     "amlogic,meson-gpio-intc";
++		reg = <0x0 0x8e72c 0x0 0x0c>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		amlogic,channel-interrupts = <140 141>;
++	};
++
+ };
 
-I totally agree that this patch needs to get merged first, perhaps
-even as a v2 that would include "Cc: stable" as well.
+---
+base-commit: 73a143e436311183186ab4b365a84c662f2c9651
+change-id: 20250317-fix-a4-pinctrl-node-9babfd44e085
 
-Regarding adding support for LT_INT interrupts, frankly, I'd much
-rather leave that do be done as part of my upcoming major rework
-of the OPPs by introducing the SoC binning.  As part of that, I'll
-do a whole lot of testing on different boards with different SoCs
-and their different variants, which should ensure that everything
-works as expected, including the LT_INT stuff.
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
->> avoiding the polling would actually help the SoC cool down a tiny
->> bit faster, which makes it worth detailed investigation in my book,
->> despite not being used by the downstream kernel code.
-> 
-> Do you mean "spin down the fan a tiny bit faster" (since it would
-> detect the cool-off without needing to poll for it), or are you
-> emphasizing saving CPU cycles that would otherwise be spent polling?
 
-Technically both, :) but of course, the primary goal would be to make
-the CPU not do what it doesn't really have to, and spinning down the
-fan faster would be just an additional benefit.  It isn't going to
-make some huge difference in the CPU load (or better said, in the
-"background noise"), but again, every tiny bit counts.
-
-When it comes to the HT_INT interrupts, they're obviously much more
-important, because there must not be any delays when (over)heating
-happens.  That isn't so critical with the LT_INT interrupts, which
-is probably the reason why the downstream kernel code uses HT_INT
-interrupts only.
 
