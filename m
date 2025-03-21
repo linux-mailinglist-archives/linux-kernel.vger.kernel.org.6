@@ -1,166 +1,240 @@
-Return-Path: <linux-kernel+bounces-571311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D5BA6BB99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:17:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC1AA6BB9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460EC3AF435
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB811171C29
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EF31CAA81;
-	Fri, 21 Mar 2025 13:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD9722A81F;
+	Fri, 21 Mar 2025 13:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CbU3lTRs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F3S2Cpri"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF751F03FB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8649E1F4181
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742563013; cv=none; b=TLshzL8AnHMonEvTtRQWWm6mOMTXw+tKQHq0pYIRlUQBx2R2ZulwGGHLIsAiZ/FDNQVOid/xU2bFQBi8n/hZAdAgNIdoIaWmjZLRpLbt4ce5SkbgJozsinK6bfRqcFVgMuGlxVObXWGzKB4rZvE89GG7oKHkfNwvtv2ZeK6b78s=
+	t=1742563040; cv=none; b=OXKa46N7Jjv7XVvKfNLk5y+wiY5tYSlj/gBKV0gtMN708bh2bAszlSDvk0sg4Qx4eB02xfIylisJjX0E7QTwUjgx5C19RFVYpSHVQEbpkltPzgHCLUOpc85VYbZLgjgdDDHsjxILRHgCE8UMRVxSm5kodF2UghnwnQVaZixAw0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742563013; c=relaxed/simple;
-	bh=5v0eCXSJKnOzt1bK7YTndfKX6eAKPgqOyM0NGeGssOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KSlDYxMxiyR50eiZxUF1/zs/fPVt9CmfIy6JOX/Ybg4CxmbQjpyzniZUKpzBax1UROvMk2RImMQWAvCGalr6f/PLi9J6FMVHdyd54XZ+6G9mGK/zvK77Ow0koWzYRD2sKw6KM+v/jJq0sdmV8p8ku5eF7Smk8HHE+A0YwoS6EGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CbU3lTRs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LAThQ1013634
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:16:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=rKDADviDBRmij4wqF3bNF8yg
-	rPd+aXcSkF8NWGkccV8=; b=CbU3lTRsUR+71/EMi+TdzS6oaA2BNI0uOMCfeHmb
-	3aionmkhue1FdweCXCzRZ2LNrmaPclCaL8r4OJszkaQTW6NDiGNfgkgUrTVybKNE
-	ZgCA4eDgmTeKfOBk7DDpw3JHBWc2auF5yU+/wMrGm9B4oI6nvq4jbGTojTKBu5Ny
-	lsjuLn44esjbrcBJnmrtgZmUIoPE6X5z2QL22JkN5U71qEG8HOyXjlCn2RvmuFdE
-	ErZ2BkF9gnHumRby7WS1Gkizi3LvifoW5xge1GDoZMmGLGmIY3hr48SsPm1Pm2Wz
-	7qd9YXuem7LacPPzJRz349PQ6s/6SitXU8KRnZoFgLTj1w==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g4t45yhb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:16:50 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff854a2541so3196302a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:16:50 -0700 (PDT)
+	s=arc-20240116; t=1742563040; c=relaxed/simple;
+	bh=lazFEoNVF0J8q0AJwAtXuwAMQUaLicT/WeFfRT2SoaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GuyW/r8R+UMPDBUNFCkA1h5CR8lXaBjh/gUWZ+ypZsnmEasrl7Ku21yiuFc4T7DjSuH2dvxlkkYuoCn+R81nIKQ3rnTf5VtEvv1ZZemUw0ZOrkuZbKn5o+PqaH/gVU4dJaFhseJNPpjC81Tf9QtfdJH7adhZGG3QF9LoSYUjLyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F3S2Cpri; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742563037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Dq3Hj8gPeDCA8YR5G45cntVoKw1hN2KoBbCsLCkkwSo=;
+	b=F3S2CpriR1xdy2NFYAJS/80OK7+YibUTyBnAAdQINFzmvaZJyq0fpbqauOL8YWGPxhtkjR
+	XBLuPzW6zEzTGqkbQ7g0fjb6wZH1H+ajW/e9XAd+RnYrCBQ6PWKFkdmEknYEFdFdS9PX4t
+	oIf3mLZUUWd94EDQY8ZsEXLmKLHzlUg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-bcMBki4PNX2_8dhvtV1zUg-1; Fri, 21 Mar 2025 09:17:16 -0400
+X-MC-Unique: bcMBki4PNX2_8dhvtV1zUg-1
+X-Mimecast-MFC-AGG-ID: bcMBki4PNX2_8dhvtV1zUg_1742563035
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43d51bd9b41so6336375e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:17:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742563010; x=1743167810;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rKDADviDBRmij4wqF3bNF8ygrPd+aXcSkF8NWGkccV8=;
-        b=brNuVe+TDGGGaUsiMF87wneJrjnmVAQQf9DKjiRuMVgQw1KJDG60DGAx3S1SPeZ/eE
-         WtJoFtLxZMYxvyRIkwBnS4NRXYU3fbzTi5F/1b/wS8iZq6A32HtSKcWg0D9SRG/PmNCE
-         vgIA9Iaz3mnC7CdSvVOk3FweDPxcfV6LZhBv38yklfUxnRFA9tsUWjmN9a1xYM+ezfVp
-         2sAd4i5+G6Tceb0hp99bZeykzEp3fjxepddT9pSsm21F4IWY17uoNElj6wRCN96QpWe+
-         ieRzWxoONex5sV5ft/Q+k1yGCm0VFPJibdhlZYGVy98fWLMWCvkha+nNh1gbmXlGVL1w
-         B6Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4ZvXtUr0w+SDLv5v1Z95ITpC9DEEahc0ohBkEzGEweCdD+ZGsGmuHCPbjqKe/VbsNoCI/dTLp9AsCURY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvOn13a+ZLzbjbYy3CMRU/Qbpfis2A6YbHjK6vbuZ4OYNv//+5
-	SG5DomO/UBGxwNItkjBgIfO7i2ZgBBIWCj+sb+ePvnQWf2k/DIKFcwGQcM9eEuOLwJG4Os0Ndoy
-	CUnY3noyIiI3Tpuv8uBb+NTMklK5DD0Twb3zzaNUvc+iiBE4Wj1djDSbNXrv3AE5DSM2YPG62uw
-	soDeoiiIgU5OYiYpaXaIg3HZdMSBQEMlN4bR5Lvw==
-X-Gm-Gg: ASbGncs8ksevDnrjjhTKZ2z0JjXp8e8V92/BDklnSX3lHpN5x8cDvujN6q/nBSxobhw
-	tvPHLIk0PTM02WGxEpNPJn7vzZNar7QcY5kwReV9omOLM0NpEQuClzSgDmSXJARZV/mJcC1kkzI
-	AhllEHcMj6OKea3lQX8ht2H6M3WR1s
-X-Received: by 2002:a17:90b:2ed0:b0:2ff:5e4e:864 with SMTP id 98e67ed59e1d1-3030ff108a6mr5526830a91.25.1742563009898;
-        Fri, 21 Mar 2025 06:16:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGr2mutO+YUR5/PARS6/TKZO8Ev2O8vO6eT7KZPndPdr3Py5PTyw8qRv2gkQufsIZf3sd6sgOq3hu/uvvAaFgw=
-X-Received: by 2002:a17:90b:2ed0:b0:2ff:5e4e:864 with SMTP id
- 98e67ed59e1d1-3030ff108a6mr5526785a91.25.1742563009246; Fri, 21 Mar 2025
- 06:16:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742563035; x=1743167835;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Dq3Hj8gPeDCA8YR5G45cntVoKw1hN2KoBbCsLCkkwSo=;
+        b=LskjXoNZF71w1eugr4MuLhPTua8h8WryYv7tlWOWt0a8wYtCwrM0nnY0gZz3ta7b1k
+         eGjSmqvgMmYop2JmloCFvtgGv/9dZBxuh65ANArSoqyWJ8KrGVXBfzkOZ/JdXj2o62lu
+         2l8ULzQNF53dHgorntNgKkUNFAeM+5zHR/4YNiZmG7fBV1N+//lN5R/0/bat51Pohkea
+         VTEKW6hsO0VsxxdlpAhU3/7dYnkOHIiS4vJIh5CMaE+i+fS+lNcCua4wYsRVK+o2Jsvi
+         Nn/woZeOvU9k0Lerxr+B2c/QFjb3kZerCO4jHgPvCmAIQkDj+oIH6lZp4rRvyR8oeHBe
+         PGKg==
+X-Gm-Message-State: AOJu0Yxyvgp8+6aWknP3qHgYkj/+c41JB1PK1lwr2OnI9BaPzh29TDLc
+	ScU5c4G8mPmXbpZnJRz9sZG6JlMEmo5u1nXpkL+Hj/0jW+EjnPy3uZUaqps7yA/XZAg2B33cvrj
+	/7j4oz3ogLXi04i0B4gC1915Sdfr+4Q5KvflGCIgyW5dsgd7d+aekF/04t3oE9rSMogr5nRXI
+X-Gm-Gg: ASbGnct/1c4xRLqlhtYTUlEThq1q7i+/ZVFQ8M4f/e1itGDtrpYZz5up3RgGLYxMVT2
+	7dJaaHP3MVbnbMvcTXxiIRvs6kXrv6K9UTnybLnzfXezegKCIbhqonGdoP69EOUr2AjyVqp3x4M
+	tmW3mXJ8LyVX4PhYHRRKJ32ptx2LLHyrHGv4fLQnZfq3SeXugeoyuoMFW5CHsQWFpPN2jF9qNWA
+	o2OGlavlTckPhZu7xaPE2oFdL+5dPkLmZ7VBcYb39taQuZdj0kDNLPftbNanLKMpwFmh51yElaX
+	DwcMMbpbPrh/xoOolL2AYW0YTBkQZGD8TcbwFB3LVrpiM4bcag0EVNKTCwJqABx/KtHQ5fQlDFz
+	0vNkz6LYJaU4EcjG8Aol3Ocj7nS8c2WyfsvFKqqyNdPU=
+X-Received: by 2002:a05:600c:1e0d:b0:43c:f689:88ce with SMTP id 5b1f17b1804b1-43d50a1d1b4mr32164135e9.20.1742563034968;
+        Fri, 21 Mar 2025 06:17:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0Zz8OTC0SBn9u7TvheCk2N+jYIOaRrdB9xOl+x7aeYutuqY8BRuH9FouxASHDSollfi9sWw==
+X-Received: by 2002:a05:600c:1e0d:b0:43c:f689:88ce with SMTP id 5b1f17b1804b1-43d50a1d1b4mr32163515e9.20.1742563034538;
+        Fri, 21 Mar 2025 06:17:14 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72a:9100:23d2:3800:cdcc:90f0? (p200300cbc72a910023d23800cdcc90f0.dip0.t-ipconnect.de. [2003:cb:c72a:9100:23d2:3800:cdcc:90f0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f47196sm77012285e9.16.2025.03.21.06.17.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 06:17:14 -0700 (PDT)
+Message-ID: <69256f08-1d1c-45ac-945a-495ef4ffc558@redhat.com>
+Date: Fri, 21 Mar 2025 14:17:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320115633.4248-1-srinivas.kandagatla@linaro.org>
- <20250320115633.4248-5-srinivas.kandagatla@linaro.org> <rdvsnxuc6by6sci56sh7thzpxo5cqi7q24fnmc7hi5yrfszwrg@kqjpiilko3xo>
- <b1aed195-b2e6-4f48-ba10-3049d74085a9@linaro.org>
-In-Reply-To: <b1aed195-b2e6-4f48-ba10-3049d74085a9@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 21 Mar 2025 15:16:36 +0200
-X-Gm-Features: AQ5f1JpCRwMtkjJDn9oo-cBhrY2GuyMxCFMeKp_-hQaIAlV_kqtTNCxsu0Mojn4
-Message-ID: <CAO9ioeWLRfzUOwjnFsi_yztdJo2Q25bhvjddh6D3naV_K5eShA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] ASoC: codecs: wcd938x: add mux control support for
- hp audio mux
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
-        krzk+dt@kernel.org, ivprusov@salutedevices.com,
-        luca.ceresoli@bootlin.com, zhoubinbin@loongson.cn,
-        paulha@opensource.cirrus.com, lgirdwood@gmail.com, robh@kernel.org,
-        conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz,
-        tiwai@suse.com, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, johan+linaro@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Authority-Analysis: v=2.4 cv=HMPDFptv c=1 sm=1 tr=0 ts=67dd66c2 cx=c_pps a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=2awXsTXn6f5pcYlzz10A:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: YIxiMJQR6v5Yf1I1zfx_yBDJwq4qRWlg
-X-Proofpoint-ORIG-GUID: YIxiMJQR6v5Yf1I1zfx_yBDJwq4qRWlg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- mlxlogscore=839 malwarescore=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503210098
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] kernel/events/uprobes: uprobe_write_opcode()
+ rewrite
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Tong Tiangen <tongtiangen@huawei.com>
+References: <20250321113713.204682-1-david@redhat.com>
+ <20250321113713.204682-4-david@redhat.com> <Z91j_UwNhi2DQB3N@krava>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Z91j_UwNhi2DQB3N@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Mar 2025 at 14:35, Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
->
->
-> On 20/03/2025 14:03, Dmitry Baryshkov wrote:
-> > On Thu, Mar 20, 2025 at 11:56:32AM +0000, srinivas.kandagatla@linaro.org wrote:
-> >> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >>
-> >> On some platforms to minimise pop and click during switching between
-> >> CTIA and OMTP headset an additional HiFi mux is used. Most common
-> >> case is that this switch is switched on by default, but on some
-> >> platforms this needs a regulator enable.
-> >>
-> >> move to using mux control to enable both regulator and handle gpios,
-> >> deprecate the usage of gpio.
-> >>
-> >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >> ---
-> >>   sound/soc/codecs/Kconfig   |  2 ++
-> >>   sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
-> >>   2 files changed, 32 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> >> index ee35f3aa5521..b04076282c8b 100644
-> >> --- a/sound/soc/codecs/Kconfig
-> >> +++ b/sound/soc/codecs/Kconfig
-> >> @@ -2226,6 +2226,8 @@ config SND_SOC_WCD938X
-> >>      tristate
-> >>      depends on SOUNDWIRE || !SOUNDWIRE
-> >>      select SND_SOC_WCD_CLASSH
-> >> +    select MULTIPLEXER
-> >> +    imply MUX_GPIO
-> >
-> > Why? This is true for a particular platform, isn't it?
->
-> We want to move the codec to use gpio mux instead of using gpios directly
->
-> So this become codec specific, rather than platform.
+On 21.03.25 14:05, Jiri Olsa wrote:
+> On Fri, Mar 21, 2025 at 12:37:13PM +0100, David Hildenbrand wrote:
+> 
+> SNIP
+> 
+>> +static int __uprobe_write_opcode(struct vm_area_struct *vma,
+>> +		struct folio_walk *fw, struct folio *folio,
+>> +		unsigned long opcode_vaddr, uprobe_opcode_t opcode)
+>> +{
+>> +	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
+>> +	const bool is_register = !!is_swbp_insn(&opcode);
+>> +	bool pmd_mappable;
+>> +
+>> +	/* For now, we'll only handle PTE-mapped folios. */
+>> +	if (fw->level != FW_LEVEL_PTE)
+>> +		return -EFAULT;
+>> +
+>> +	/*
+>> +	 * See can_follow_write_pte(): we'd actually prefer a writable PTE here,
+>> +	 * but the VMA might not be writable.
+>> +	 */
+>> +	if (!pte_write(fw->pte)) {
+>> +		if (!PageAnonExclusive(fw->page))
+>> +			return -EFAULT;
+>> +		if (unlikely(userfaultfd_pte_wp(vma, fw->pte)))
+>> +			return -EFAULT;
+>> +		/* SOFTDIRTY is handled via pte_mkdirty() below. */
+>> +	}
+>> +
+>> +	/*
+>> +	 * We'll temporarily unmap the page and flush the TLB, such that we can
+>> +	 * modify the page atomically.
+>> +	 */
+>> +	flush_cache_page(vma, vaddr, pte_pfn(fw->pte));
+>> +	fw->pte = ptep_clear_flush(vma, vaddr, fw->ptep);
+>> +	copy_to_page(fw->page, opcode_vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
+>> +
+>> +	/*
+>> +	 * When unregistering, we may only zap a PTE if uffd is disabled and
+>> +	 * there are no unexpected folio references ...
+>> +	 */
+>> +	if (is_register || userfaultfd_missing(vma) ||
+>> +	    (folio_ref_count(folio) != folio_mapcount(folio) + 1 +
+>> +	     folio_test_swapcache(folio) * folio_nr_pages(folio)))
+>> +		goto remap;
+>> +
+>> +	/*
+>> +	 * ... and the mapped page is identical to the original page that
+>> +	 * would get faulted in on next access.
+>> +	 */
+>> +	if (!orig_page_is_identical(vma, vaddr, fw->page, &pmd_mappable))
+>> +		goto remap;
+>> +
+>> +	dec_mm_counter(vma->vm_mm, MM_ANONPAGES);
+>> +	folio_remove_rmap_pte(folio, fw->page, vma);
+>> +	if (!folio_mapped(folio) && folio_test_swapcache(folio) &&
+>> +	     folio_trylock(folio)) {
+>> +		folio_free_swap(folio);
+>> +		folio_unlock(folio);
+>> +	}
+>> +	folio_put(folio);
+> 
+> hi,
+> it's probably ok and I'm missing something, but why do we call folio_put
+> in here, I'd think it's done by folio_put call in uprobe_write_opcode
 
-Not quite. "select MULTIPLEXER" is correct and is not questionable.
-I'm asking about the MUX_GPIO. The codec itself has nothing to do with
-the board using _GPIO_ to switch 4-pin modes. It is a board-level
-decision. A board can use an I2C-controlled MUX instead. I'd say, that
-at least you should describe rationale for this `imply` clause in the
-commit message.
+Hi!
+
+We're zapping a page table mapping mapping (folio_remove_rmap_pte()), so 
+we have to drop that reference.
+
+That's the folio_put(old_folio) in the old __replace_page().
+
+Thanks!
 
 -- 
-With best wishes
-Dmitry
+Cheers,
+
+David / dhildenb
+
 
