@@ -1,161 +1,263 @@
-Return-Path: <linux-kernel+bounces-571581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266DCA6BF25
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:07:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B488AA6BF28
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA04B188F529
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:08:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9329817A004
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E64A227BAD;
-	Fri, 21 Mar 2025 16:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8FA22A4EA;
+	Fri, 21 Mar 2025 16:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b="c5lSIsRs"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/SK1iO3"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E28B23BE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF151DE4C2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573270; cv=none; b=GkA2yqO6/Ni2tbuP9hmg1IudiWUqF2MU5nloNwErS3+TXGL0QHKgFeHiqsa1BsTb+wKlKhclxl1gpqpGN6xjBUVTRBP95pMwflEdiRN6jtLUOWqB1b76pOTBCl1Q6Os6Nme68Stfzukv09nC39BrV3jbR7Svn0QycuUE9SzWiL0=
+	t=1742573303; cv=none; b=i8WjBazHCISHyMMFIHsm8mr60F0TjLa2e9ID0cuLZXiisSdtARVhXvsK+OwYCs+09OQm8XTOnPpVsbQa3D7j8xueR4jqK7z3TF+KJTi2AbFMQXcN7UZV6/qDOIJNfDoyGiC8XHhfIHr0q8OCmNKy0Jk0pJgUvQg5nHNu1u1OFDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573270; c=relaxed/simple;
-	bh=SdiCIhrTBarDgLN9oEDarofNp34/gFdYUmSF4tTKMlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iG9TuzzxyL4RhSrGEOhvqwWnD3RA6/+Y2yc/1LdXbDAlcxjiLaC+vd30FT0RcZfzWxBmjCphpuqlwnWxkjK78mdBkNAERjlZxA47Ne3aWB6otamqf72fvIFWiT866EJEjcLxE7QmHd8/pb75Iu2w5ZS1559mUwW8k37S1UDjJiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net; spf=pass smtp.mailfrom=craftyguy.net; dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b=c5lSIsRs; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=craftyguy.net
-Message-ID: <981e83c5-6531-4939-b0ad-eebeb02d00af@craftyguy.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=craftyguy.net;
-	s=key1; t=1742573256;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Trfnl0mlXgOimQXZYhYIs6u/12k9GzhtwYKbj7vbYfU=;
-	b=c5lSIsRsfbLSTGbwlLgODbiZ+bgfgqhgVdijjJwwyoSX1UiL4s2gVslmK3rQdH0qaYySrZ
-	Ut/akmLHNDz++s8KB1kSWUMzGc3FkD/N8sv8TamHvuhqhIzJQz0SDc7ZlhTHXEtiJp/C6W
-	x4UfLKzmbCGUtjot79oDQNGIUdhbbo8FFmBa4stmbmSBErjlQEKno+oPb4fcvBwMCJB+Ub
-	Rnt7tXNvCZnH2C09upHIRMjAW6PNKwHR58uVbu1gJ82FITtTWDNeRek2odgRbE5rIryDnt
-	Ajl6vtcHLQ63KVVGlv49N7bYQjFGBiMBmQqmBhJz3gSBIi29oXxFDvt28MdHPg==
-Date: Fri, 21 Mar 2025 09:07:31 -0700
+	s=arc-20240116; t=1742573303; c=relaxed/simple;
+	bh=qqKZrfLDUAgL2szCwHv4faYCd/UR/f9PAk9LptxdbMY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LtWrGx0yFxPJq9It3lUuEl2CJIxxr7YKWm0f23pa6vOzl38eO6jPMyBtza1juN26lhZbdgtOt3jfhqeYaHJngbeYowNUwkswr7/SSd9kSm3UwYQ7CxTRCbkcu5oJruKoR/WHG1eVKcKfaL4IZot9IZVWcvYd5WgDHUsHMa3K/dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q/SK1iO3; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3996af42857so2168292f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742573299; x=1743178099; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJlE21NtQ+/WCeWlPhYZ2EkXPcDlOOCnP5PIfiKki4o=;
+        b=q/SK1iO3IgSfkYaumaXXdK0f0If/lnFGG1Vhb/1XEWAyzkBzaNilcKE/HYyTPeA8ii
+         U7eWsyIBE3R27R0pAP6MMl/qigVE9URohJJudIjZ8CIcuHHgbxyxU2qldnzKtdFg2cuX
+         yX9s6erfg9mxqghwicfvmKiVUZfUBdD77g5ftWXy0EEFZmNcg2AxUFUU90ScFG0c2WKX
+         iXs9GOpiWln1uGNM1pAs5aS036M+RtiZxxLciaTIRdSNnWaeJnkuMomH4SlRBa2ibzih
+         7Ib+J9fO9FcBSW8IqVe76cVkVYOkz57wkz1OwxcNlMB0KJ/35nNN+p2kMOEIxzT00L+F
+         7MXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742573299; x=1743178099;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HJlE21NtQ+/WCeWlPhYZ2EkXPcDlOOCnP5PIfiKki4o=;
+        b=Cdkbykg+McttMaPju9ZRAMmF8CXa/Ahoo/kTnXa61/ZRGihb2mpq7DKYc09JGvIQdb
+         gYq91qAg2FH2nX4jQb2iKdhgM6GVvk4nJ/GauFc8Nm5G/HlTlHKcttVa44Qsh+G4CNUs
+         tlSZ1mBDKMGv7gGmy1WhPZqjafIy3Otu+UQl8G/WuodQOoU2db0Qn5ga9INLBS6/ESid
+         cUlVjlwtWTdopP9HpsLnBGs6yOKEjGv6nbDyjOntrQ20I+GwmTwM9Bm918rBy4Yk7DTc
+         q50qxnKUFHOLYiBaBvixySnPe7I7yBvmyF8Wv1h8SeATB9jhOSohOCYvA4j3RoEMGjpG
+         +oFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD59uh4xZyxhY+rlBBWJMPkjwwA8+x1uh91t79DcmTquxVB6B6bIlKT9/pzL8uo2HNWXSloRoY/t9qOhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsAUQeK8O/s4jtzWpEAB7Rn/XEEXRqpbO+RpIw3UxIJoSKgc2r
+	qQKckiVNmfT7FCkGBA9zfJSLrgfEWhdNtklRGF6hgNPwJmY40z+d6f1gSbBkuvQ=
+X-Gm-Gg: ASbGncup3vCtTyuQRul4h/S4Nzbx45xxNm5SIU/woxPvfwOPG7RKQhtlun8QDtRQnWH
+	JTKvb1kuu0CT3I9dF3FibkrpRRyhVnxa8NTSxgXXitsprXnbfY0xWkhX1mFXVN63vhtq32P/5o4
+	zpLYObF/HwierPcM154uU3CKP4DSY22SOJrXD+ynmGsaVEWleR57LQgndImEi8JshnfVXbB09Rv
+	KKf6xwmH6EtuMm+5atp/yTbLFV2L5cQ8NwHSjXxuzBK1Oq4KZN915fiPelhi/Xjk8rQALN+ujm9
+	34UXTyPS/XzNw5KNLHwzXLFT+wPYqFRL80RxGUkyDrR7t//rFpoA34Q/wVIBBp7nWg==
+X-Google-Smtp-Source: AGHT+IFTq0YgELZyXjjN1VrdTEC3jyzyKHj/fkxB9o1IAbxsWzgbxUBKrT4kCbrIivdgEUdfIERyng==
+X-Received: by 2002:a05:6000:1565:b0:38d:b028:d906 with SMTP id ffacd0b85a97d-3997f933816mr3890433f8f.21.1742573299284;
+        Fri, 21 Mar 2025 09:08:19 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f99540bsm2705610f8f.2.2025.03.21.09.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 09:08:18 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Fri, 21 Mar 2025 17:08:15 +0100
+Subject: [PATCH RFC] ufs: delegate the interrupt service routine to a
+ threaded irq handler
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] wifi: ath11k: fix ring-buffer corruption
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
- Steev Klimaszewski <steev@kali.org>,
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250321094916.19098-1-johan+linaro@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Clayton Craft <clayton@craftyguy.net>
-In-Reply-To: <20250321094916.19098-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <20250321-topic-ufs-use-threaded-irq-v1-1-7a55816a4b1d@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAO6O3WcC/x3MsQqDQAwA0F+RzA2cOW6wq+AHdC0dDi+pWdQmW
+ griv/dwfMs7wNmUHe7NAcZfdV3mivbWwDjl+c2opRooUAqRWtyWVUfcxXF3xm0yzoULqn0wxSw
+ xCCXqBGqwGov+rvwJj6GH13n+Ae4AWX9xAAAA
+X-Change-ID: 20250321-topic-ufs-use-threaded-irq-53af30f2529f
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5604;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=qqKZrfLDUAgL2szCwHv4faYCd/UR/f9PAk9LptxdbMY=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBn3Y7yUu0Foc45zNxh92lwMOcLsLY8ldvYzNdErqF/
+ IFXhR2uJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ92O8gAKCRB33NvayMhJ0d4TD/
+ 46nLVEVNe72rd7ntxKZk8prswc2LeIoLBC7j1Y/BjcC9smsnHoqTmhT32gz80EoNNyqEfxHaY90M6v
+ CUYrn/2oVD6MlRTj1dpNdCvvliWfiuoLX+Fxy++l8GrC296Ke/+MYBJ1zLFn9jgIxEeVr+Yi8mFU0q
+ G3D/ooDq0HH6B4r3aXezNJ8YSvBX/qjvs26eNYj1M5a9wYQgMnzhsJ6C92arDv/dS3pOw6IpRGtgjJ
+ g3Z1M/LJkPjKldyevmEaezAIbHNfChpV8NwSnrbBjWpgt2KHyKgrJE2GPfD31VbpY30mp3Zg1Jl0Pd
+ 0m7xkiHz+LWB9kmws/09JgDFka4+Ffr7oXEo/ZRpyrpDZQLrIZxjqFe15U48kvxzoQfTnMxS6VI/ep
+ n58VkjGIG5+46mbF4swurp5qif6Vgt3DmiBmQBa3p2yhcbqEb2jg9C6CdUz3A99OB4sPawEmUO1x8q
+ z8k9ghj9g1f+66q6WNFoJ7XelsSyeO/fTtUA1tPm3Fm7JMb5TW5P0fcjAgu4m+QraBbiCMy/3H67my
+ yl3lTRYMFXO9Cq3e3nWIVbwaKm2hWBvVkGS9Npb6Fy78+y2avXC3emMwbEX5dMe4cubXaKml2waohs
+ JxSpuLrPxofeObKFH5DtnWi9wFZSBHRRVGtr4VQxIDK2RYbXlr483jj//LVA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On 3/21/25 02:49, Johan Hovold wrote:
-> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
-> breaks and the log fills up with errors like:
-> 
->      ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
->      ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
-> 
-> which based on a quick look at the driver seemed to indicate some kind
-> of ring-buffer corruption.
-> 
-> Miaoqing Pan tracked it down to the host seeing the updated destination
-> ring head pointer before the updated descriptor, and the error handling
-> for that in turn leaves the ring buffer in an inconsistent state.
-> 
-> Add the missing memory barrier to make sure that the descriptor is read
-> after the head pointer to address the root cause of the corruption while
-> fixing up the error handling in case there are ever any (ordering) bugs
-> on the device side.
-> 
-> Note that the READ_ONCE() are only needed to avoid compiler mischief in
-> case the ring-buffer helpers are ever inlined.
-> 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-> Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
-> Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> Cc: stable@vger.kernel.org	# 5.6
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->   drivers/net/wireless/ath/ath11k/ce.c  | 11 +++++------
->   drivers/net/wireless/ath/ath11k/hal.c |  4 ++--
->   2 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
-> index e66e86bdec20..9d8efec46508 100644
-> --- a/drivers/net/wireless/ath/ath11k/ce.c
-> +++ b/drivers/net/wireless/ath/ath11k/ce.c
-> @@ -393,11 +393,10 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
->   		goto err;
->   	}
->   
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->   	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
-> -	if (*nbytes == 0) {
-> -		ret = -EIO;
-> -		goto err;
-> -	}
->   
->   	*skb = pipe->dest_ring->skb[sw_index];
->   	pipe->dest_ring->skb[sw_index] = NULL;
-> @@ -430,8 +429,8 @@ static void ath11k_ce_recv_process_cb(struct ath11k_ce_pipe *pipe)
->   		dma_unmap_single(ab->dev, ATH11K_SKB_RXCB(skb)->paddr,
->   				 max_nbytes, DMA_FROM_DEVICE);
->   
-> -		if (unlikely(max_nbytes < nbytes)) {
-> -			ath11k_warn(ab, "rxed more than expected (nbytes %d, max %d)",
-> +		if (unlikely(max_nbytes < nbytes || nbytes == 0)) {
-> +			ath11k_warn(ab, "unexpected rx length (nbytes %d, max %d)",
->   				    nbytes, max_nbytes);
->   			dev_kfree_skb_any(skb);
->   			continue;
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
-> index 61f4b6dd5380..8cb1505a5a0c 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.c
-> +++ b/drivers/net/wireless/ath/ath11k/hal.c
-> @@ -599,7 +599,7 @@ u32 ath11k_hal_ce_dst_status_get_length(void *buf)
->   	struct hal_ce_srng_dst_status_desc *desc = buf;
->   	u32 len;
->   
-> -	len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, desc->flags);
-> +	len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, READ_ONCE(desc->flags));
->   	desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
->   
->   	return len;
-> @@ -829,7 +829,7 @@ void ath11k_hal_srng_access_begin(struct ath11k_base *ab, struct hal_srng *srng)
->   		srng->u.src_ring.cached_tp =
->   			*(volatile u32 *)srng->u.src_ring.tp_addr;
->   	} else {
-> -		srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
-> +		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
->   
->   		/* Try to prefetch the next descriptor in the ring */
->   		if (srng->flags & HAL_SRNG_FLAGS_CACHED)
+On systems with a large number request slots and unavailable MCQ,
+the current design of the interrupt handler can delay handling of
+other subsystems interrupts causing display artifacts, GPU stalls
+or system firmware requests timeouts.
 
-I was experiencing this issue several times per day, but haven't hit it 
-once in the last few days while testing this patch.
+Since the interrupt routine can take quite some time, it's
+preferable to move it to a threaded handler and leave the
+hard interrupt handler save the status and disable the irq
+until processing is finished in the thread.
 
-Tested-by: Clayton Craft <clayton@craftyguy.net>
+This fixes all encountered issued when running FIO tests
+on the Qualcomm SM8650 platform.
+
+Example of errors reported on a loaded system:
+ [drm:dpu_encoder_frame_done_timeout:2706] [dpu error]enc32 frame done timeout
+ msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1: hangcheck detected gpu lockup rb 2!
+ msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1:     completed fence: 74285
+ msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 67.5.20.1:     submitted fence: 74286
+ Error sending AMC RPMH requests (-110)
+
+Reported bandwidth is not affected on various tests.
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/ufs/core/ufshcd.c | 43 ++++++++++++++++++++++++++++++++++++-------
+ include/ufs/ufshcd.h      |  2 ++
+ 2 files changed, 38 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0534390c2a35d0671156d79a4b1981a257d2fbfa..0fa3cb48ce0e39439afb0f6d334b835d9e496387 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6974,7 +6974,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
+ }
+ 
+ /**
+- * ufshcd_intr - Main interrupt service routine
++ * ufshcd_intr - Threaded interrupt service routine
+  * @irq: irq number
+  * @__hba: pointer to adapter instance
+  *
+@@ -6982,7 +6982,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
+  *  IRQ_HANDLED - If interrupt is valid
+  *  IRQ_NONE    - If invalid interrupt
+  */
+-static irqreturn_t ufshcd_intr(int irq, void *__hba)
++static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
+ {
+ 	u32 intr_status, enabled_intr_status = 0;
+ 	irqreturn_t retval = IRQ_NONE;
+@@ -6990,8 +6990,6 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+ 	int retries = hba->nutrs;
+ 
+ 	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+-	hba->ufs_stats.last_intr_status = intr_status;
+-	hba->ufs_stats.last_intr_ts = local_clock();
+ 
+ 	/*
+ 	 * There could be max of hba->nutrs reqs in flight and in worst case
+@@ -7000,8 +6998,7 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+ 	 * again in a loop until we process all of the reqs before returning.
+ 	 */
+ 	while (intr_status && retries--) {
+-		enabled_intr_status =
+-			intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
++		enabled_intr_status = intr_status & hba->intr_en;
+ 		ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
+ 		if (enabled_intr_status)
+ 			retval |= ufshcd_sl_intr(hba, enabled_intr_status);
+@@ -7020,9 +7017,40 @@ static irqreturn_t ufshcd_intr(int irq, void *__hba)
+ 		ufshcd_dump_regs(hba, 0, UFSHCI_REG_SPACE_SIZE, "host_regs: ");
+ 	}
+ 
++	ufshcd_writel(hba, hba->intr_en, REG_INTERRUPT_ENABLE);
++
+ 	return retval;
+ }
+ 
++/**
++ * ufshcd_intr - Main interrupt service routine
++ * @irq: irq number
++ * @__hba: pointer to adapter instance
++ *
++ * Return:
++ *  IRQ_WAKE_THREAD - If interrupt is valid
++ *  IRQ_NONE	    - If invalid interrupt
++ */
++static irqreturn_t ufshcd_intr(int irq, void *__hba)
++{
++	u32 intr_status, enabled_intr_status = 0;
++	irqreturn_t retval = IRQ_NONE;
++	struct ufs_hba *hba = __hba;
++	int retries = hba->nutrs;
++
++	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
++	hba->ufs_stats.last_intr_status = intr_status;
++	hba->ufs_stats.last_intr_ts = local_clock();
++
++	if (unlikely(!intr_status))
++		return IRQ_NONE;
++
++	hba->intr_en = ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
++	ufshcd_writel(hba, 0, REG_INTERRUPT_ENABLE);
++
++	return IRQ_WAKE_THREAD;
++}
++
+ static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
+ {
+ 	int err = 0;
+@@ -10581,7 +10609,8 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 	ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
+ 
+ 	/* IRQ registration */
+-	err = devm_request_irq(dev, irq, ufshcd_intr, IRQF_SHARED, UFSHCD, hba);
++	err = devm_request_threaded_irq(dev, irq, ufshcd_intr, ufshcd_threaded_intr,
++					IRQF_SHARED, UFSHCD, hba);
+ 	if (err) {
+ 		dev_err(hba->dev, "request irq failed\n");
+ 		goto out_disable;
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index e3909cc691b2a854a270279901edacaa5c5120d6..03a7216b89fd63c297479422d1213e497ce85d8e 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -893,6 +893,7 @@ enum ufshcd_mcq_opr {
+  * @ufshcd_state: UFSHCD state
+  * @eh_flags: Error handling flags
+  * @intr_mask: Interrupt Mask Bits
++ * @intr_en: Saved Interrupt Enable Bits
+  * @ee_ctrl_mask: Exception event control mask
+  * @ee_drv_mask: Exception event mask for driver
+  * @ee_usr_mask: Exception event mask for user (set via debugfs)
+@@ -1040,6 +1041,7 @@ struct ufs_hba {
+ 	enum ufshcd_state ufshcd_state;
+ 	u32 eh_flags;
+ 	u32 intr_mask;
++	u32 intr_en;
+ 	u16 ee_ctrl_mask;
+ 	u16 ee_drv_mask;
+ 	u16 ee_usr_mask;
+
+---
+base-commit: ff7f9b199e3f4cc7d61df5a9a26a7cbb5c1492e6
+change-id: 20250321-topic-ufs-use-threaded-irq-53af30f2529f
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
