@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-570656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD171A6B308
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC9BA6B309
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 03:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3417189FAE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E8F189FA3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29801E5B68;
-	Fri, 21 Mar 2025 02:37:19 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC08208A7;
-	Fri, 21 Mar 2025 02:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED31E4110;
+	Fri, 21 Mar 2025 02:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kOqfawuj"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B211E2607
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742524639; cv=none; b=bGGtqtH97LAZDBzY6/MrP7wdE+zFmjEyOznC2xLt6/kGv+iWAd80vKgABIVatritHWqb75DIsV2z49OUeko69l9UFZYQNgp+gb2SJ6i+dZGy5aTC3ZgyhKxrCMclp6Y9HOjOvmx5h0mkfbGpvY5F+94gOjs92/wnESsLeZTwllI=
+	t=1742524662; cv=none; b=i/bhY6mW1mV/Ifswb/JbOVwOsqm5KOTQU1ZfP8xoN1ysf0Q5ImgduQxdbL4FYhhuECjRA6XKQ7EVumrCykpVorgQ7wvfad+WLhkK4n1vTucTDOVfYc5etlUQuhRgCOQDWZdZgFKZXm/pM405yAqQq8ll7c3kyERevMC5Au7aQxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742524639; c=relaxed/simple;
-	bh=gNa9WH3CbpnyjD0jwvZJ/5xvl2hPG86rsEve7RWuBlo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TKdJ5qnBeXizf4JKaI/YBYYOATZfaHS8dj64d8tlGpeXuP/3YgUVk99HTEJ/b4X7bYaI3moq99EREbVU0bYAuo8MiYo1yAjnzEOZdFIedyyLAtoXvH3L+Lto4h3meTLS2WDZdREz2wzpzvO2sI9eeSgdCyQpsoKpTUUVfKnkcCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwAnLa3R0NxnLZ27Cw--.15429S2;
-	Fri, 21 Mar 2025 10:37:05 +0800 (CST)
-Received: from phytium.com.cn (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwB3fIii0NxnWXpPAA--.1469S5;
-	Fri, 21 Mar 2025 10:36:57 +0800 (CST)
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com,
-	rppt@kernel.org,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	bfaccini@nvidia.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	dave@stgolabs.net,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	rrichter@amd.com,
-	haibo1.xu@intel.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenbaozi@phytium.com.cn,
-	Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Subject: [RFC PATCH v3 2/2] ACPI: NUMA: debug invalid unused PXM value for CFMWs
-Date: Fri, 21 Mar 2025 10:36:02 +0800
-Message-Id: <20250321023602.2609614-3-wangyuquan1236@phytium.com.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250321023602.2609614-1-wangyuquan1236@phytium.com.cn>
-References: <20250321023602.2609614-1-wangyuquan1236@phytium.com.cn>
+	s=arc-20240116; t=1742524662; c=relaxed/simple;
+	bh=NzL5MhoyxILoggYXwncLpBDKP6RUCP+scqKZXIhJJXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrgQsfoTT3F1ckq8slcAMj/4AhLGK5b6NqLF5Idh3xqkpimgjDPRldZKKaSdRsABU5MFtjluvPID1ZbefEJCjGf0q7f5a0WlHOMJLdA+B1tkB6qWdFt9hxuZjVscmfKYAmzkRMsChaemOala5BvCZ9NhtvFikWPU8bKZM0jnAaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kOqfawuj; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0884C3F22B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742524653;
+	bh=/TiJpfdGOANNODirv3oI1N0gAlEn2jC9qPa08xzAIEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=kOqfawujIVX5EAil70LGoFJQlkHBigluq7zraY7wB3rNgfvCYo5lbqKsSUs1zxGGC
+	 yU3fnw2fdjPMSZD5+ewde5ssKHWgsFkzmYMSJLWRgo1BxdoIJcSfsB5tG4zpjweWq4
+	 OR8wzUAX5vVgs/Sj1bTDp/80UEwV9vKNSF7FpczbyGuSGVF9/OXhie6jKAhoSP+FQl
+	 kArFgLqoCx/bMOnz2B/Io2hF6yDvsRW5XbbqM04AnW9Zn6x3YOW+05UWy11+BI29S0
+	 3LoNyPl3KYThrYdX1Hf9WN2z6UCBueuaR9RmzL7qrEjDRDrHxejM1NJ0RutaYlcV9U
+	 lhYgoTJ0p89LQ==
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff8c5d185aso4354695a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 19:37:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742524651; x=1743129451;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/TiJpfdGOANNODirv3oI1N0gAlEn2jC9qPa08xzAIEE=;
+        b=qa1NMoK0/aGYB2p5h5UgVMtbVVapTDfuwIZf60DIm6nWsbgY3TMv1x+DZ4hJRPdL2b
+         HqR0rZyZ/wl7oTwWVMY9jLcW1ZXhsF7uMPLLS/vg7MHm8ueq8oW7twArqQIvjdrbYJ+g
+         NGe0Zdk0wDPk8VZVL3mCQEdqFArAVXUvzTI+TrvMieukuSgRnUhjcen0bGcvnjS0Qrc5
+         pSPgDLcGuhBM85h77jFITA29RIsA+diLPvlIj6H1INasqixZLrs3GD7kq3k9hRQyu8Hr
+         21U/ps31n83XEZnBsyz/uSIJLkamM4oY6PpFXW2J6KdfLI+MediZQjnRPXQXnoUsPgNb
+         kwzg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8GF9JBcsBilgGeGwHhVlZ+VUzIvJ5yMnaa0Mh3a0HlxDvoj2cfRlsmqD+ZOCx8eZMXIEQBdlczXv6ly0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhmdaWv8zeTuULX+EMKXjb0gs1RjQia1ScJr+eqPOh9Qefmy7b
+	yPHBI0wHkdIGQvkcp/cTXmRJqoSzCZy3j/h8CxuVwVNDBGZaWAaoYxm1+Q4m95FemVUopehsXmR
+	N/gdwd63KiawyLo35yL2+xFtEAFnLAj3OsIJE0/sEC5O19Ybd1QXLp8JacEC4/FisHEiCfNXvdm
+	dJWw==
+X-Gm-Gg: ASbGnctxcNkS+V/eoFr6c/ZLQsJH19mz96uI51cDOCiOYKuXyTzNWLOsjBiscd/WM9w
+	VA7Md/STQipF0NIFp+qhh0CgL2J6dGuBdSMk2wEdvw3f9ewr3i8YwqF8B6+W+asvTMY2PgsIrer
+	vny0QuAFBnYeAPi1ChAfB94oEmAugy7teAdFfYLqrv2vOBVCY8TmJWvrrGGxfX1pf3z9SnzLSKU
+	eHmgq0vMpy5/mlNeZodRjKfyUmOtW6UPtGD8ghBrFVL6cutkRft99yNzqEAg2G+JlxRulxFP8um
+	zcKOKnz4VNKXgGJkdw==
+X-Received: by 2002:a05:6a21:6e43:b0:1ee:e24d:8fe3 with SMTP id adf61e73a8af0-1fe42f358d7mr2755643637.10.1742524651647;
+        Thu, 20 Mar 2025 19:37:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvh8o1abtTk5AEN91MvJywHrX4XvpZuDt/ZutsnhnUVS0aKDkLwlwV0igeqbDfx4zZcjJy2w==
+X-Received: by 2002:a05:6a21:6e43:b0:1ee:e24d:8fe3 with SMTP id adf61e73a8af0-1fe42f358d7mr2755616637.10.1742524651297;
+        Thu, 20 Mar 2025 19:37:31 -0700 (PDT)
+Received: from localhost ([240f:74:7be:1:2dba:1af7:27b6:24fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390617fa4bsm612699b3a.157.2025.03.20.19.37.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 19:37:30 -0700 (PDT)
+Date: Fri, 21 Mar 2025 11:37:29 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/9] gpio: aggregator: add aggr_alloc()/aggr_free()
+Message-ID: <llbybv6dpkfrtir75dveqnphrj6nuephvkoyywy6tx6vfbunl2@ft5io3thby6v>
+References: <20250315164123.1855142-1-koichiro.den@canonical.com>
+ <20250315164123.1855142-4-koichiro.den@canonical.com>
+ <CAMRc=Md8nB1U--qcZxpcKVzxTcON2hi-pmsUKFn+aBEqHuBzcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwB3fIii0NxnWXpPAA--.1469S5
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAQAWfcdA4BvAAAss
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7Kry7JrWxXFW5Zw43ZrWfAFb_yoW5JFWxpF
-	WIkF95JryxGrWxCa4Ivr4jv34fC3WxCFZ8KF9rCry3ZanxWry3Zr47JF9IvFyjy3y8ur10
-	vr4vvF15ua48ZFDanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+In-Reply-To: <CAMRc=Md8nB1U--qcZxpcKVzxTcON2hi-pmsUKFn+aBEqHuBzcQ@mail.gmail.com>
 
-The absence of SRAT would cause the fake_pxm to be -1 and increment
-to 0, then send to acpi_parse_cfmws(). If there exists CXL memory
-ranges that are defined in the CFMWS and not already defined in the
-SRAT, the new node (node0) for the CXL memory would be invalid, as
-node0 is already in "used", and all CXL memory might be online on
-node0.
+On Thu, Mar 20, 2025 at 04:51:04PM GMT, Bartosz Golaszewski wrote:
+> On Sat, Mar 15, 2025 at 5:41 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> >
+> > Prepare for the upcoming configfs interface. These functions will be
+> > used by both the existing sysfs interface and the new configfs
+> > interface, reducing code duplication.
+> >
+> > No functional change.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > ---
+> >  drivers/gpio/gpio-aggregator.c | 58 +++++++++++++++++++++-------------
+> >  1 file changed, 36 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
+> > index e026deb4ac64..2692a31e01ac 100644
+> > --- a/drivers/gpio/gpio-aggregator.c
+> > +++ b/drivers/gpio/gpio-aggregator.c
+> > @@ -36,12 +36,41 @@
+> >  struct gpio_aggregator {
+> >         struct gpiod_lookup_table *lookups;
+> >         struct platform_device *pdev;
+> > +       int id;
+> >         char args[];
+> >  };
+> >
+> >  static DEFINE_MUTEX(gpio_aggregator_lock);     /* protects idr */
+> >  static DEFINE_IDR(gpio_aggregator_idr);
+> >
+> > +static int aggr_alloc(struct gpio_aggregator **aggr, size_t arg_size)
+> > +{
+> > +       struct gpio_aggregator *new __free(kfree) = NULL;
+> > +       int ret;
+> > +
+> > +       new = kzalloc(sizeof(*new) + arg_size, GFP_KERNEL);
+> 
+> Please prefer declaring the auto variable and initializing it at the
+> same time. Should be:
+> 
+> struct gpio_aggregator *new __free(kfree) = kzalloc(...);
 
-This utilizes node_set(0, nodes_found_map) to set pxm&node map. With
-this setting, acpi_map_pxm_to_node() could return the expected node
-value even if no SRAT.
+Thanks for the review. Should I send v7 for this change?
 
-If SRAT is valid, the numa_memblks_init() would then utilize
-numa_move_tail_memblk() to move the numa_memblk from numa_meminfo to
-numa_reserved_meminfo in CFMWs fake node situation.
+Koichiro
 
-If SRAT is missing or bad, the numa_memblks_init() would fail since
-init_func() would fail. And it causes that no numa_memblk in
-numa_reserved_meminfo list and the following dax_cxl driver could
-find the expected fake node.
-
-Use numa_add_reserved_memblk() to replace numa_add_memblk(), since
-the cxl numa_memblk added by numa_add_memblk() would finally be moved
-to numa_reserved_meminfo, and numa_add_reserved_memblk() here could
-add cxl numa_memblk into reserved list directly. Hence, no matter
-SRAT is good or not, cxl numa_memblk could be allocated to reserved
-list.
-
-Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
----
- drivers/acpi/numa/srat.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 00ac0d7bb8c9..50bfecfb9c16 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -458,11 +458,12 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
- 		return -EINVAL;
- 	}
- 
--	if (numa_add_memblk(node, start, end) < 0) {
-+	if (numa_add_reserved_memblk(node, start, end) < 0) {
- 		/* CXL driver must handle the NUMA_NO_NODE case */
- 		pr_warn("ACPI NUMA: Failed to add memblk for CFMWS node %d [mem %#llx-%#llx]\n",
- 			node, start, end);
- 	}
-+
- 	node_set(node, numa_nodes_parsed);
- 
- 	/* Set the next available fake_pxm value */
-@@ -646,8 +647,12 @@ int __init acpi_numa_init(void)
- 		if (node_to_pxm_map[i] > fake_pxm)
- 			fake_pxm = node_to_pxm_map[i];
- 	}
--	last_real_pxm = fake_pxm;
--	fake_pxm++;
-+
-+	/* Make sure CFMWs fake node >= 1 */
-+	fake_pxm = max(fake_pxm, 0);
-+	last_real_pxm = fake_pxm++;
-+	node_set(0, nodes_found_map);
-+
- 	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
- 			      &fake_pxm);
- 
--- 
-2.34.1
-
+> 
+> > +       if (!new)
+> > +               return -ENOMEM;
+> > +
+> > +       mutex_lock(&gpio_aggregator_lock);
+> 
+> If adding new code, please use lock guards.
+> 
+> Bart
 
