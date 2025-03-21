@@ -1,208 +1,207 @@
-Return-Path: <linux-kernel+bounces-571758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73506A6C1DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:50:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD856A6C1E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9488F3BA7A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E56F3B9FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D1122E406;
-	Fri, 21 Mar 2025 17:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4DA22DF86;
+	Fri, 21 Mar 2025 17:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nBKV3R5s"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fZJNxrnb";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="hfWxaxLp"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D1D22A4F8;
-	Fri, 21 Mar 2025 17:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF9622E3FD;
+	Fri, 21 Mar 2025 17:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742579367; cv=fail; b=MgUn/h1L2v/ezuFCk7gkk0VWL+Zw9v4szWie2cz4T03zEu2hoWt4aFdqx6rRLDk1ezUyf676KGLJztxWxypyHa7dK5TFwcQsdNgOFreEQ7uHvUgJHznIo40Hlu167FVwhyxSO8UtsCz+Z0r5/4tRY0icrFAVHv2KaA21ld+88bo=
+	t=1742579465; cv=fail; b=RjZZpy+Yh31xnwSLve78asOTL2xFA2PWL877zoKz+7e0XKVsOGrMR9UIEW5GJ0T8UzS8fLB96WXaMxWgTuDv2fFIAjLhN/WncEftDZM2VkVcidAnBrjgtc0rTo02PBy8A9WeOULRcfr3CIXziuciXheSjwGO8Bw3FD4rdZ/B0cA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742579367; c=relaxed/simple;
-	bh=AVpQClKhLGaymu1VSTr4BCZtErlqLeKc5yHQaa+nhCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fbsrLLX/v9xL5SpcW91DiUTGF3hWWw6pbmuwDTnpf7hBtErNzq7Qdhv7MzFp0GGq+UIrfGIN4Fbf66jw1m2zQM1hcZqUQUgwUjDQtShw5w/jV76Ne3iJ5x6SKY/na4wCFI4ZYtm34RGl3kJbCj4uhreFhQNh+l7mg8Qw1qn9LAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nBKV3R5s; arc=fail smtp.client-ip=40.107.94.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1742579465; c=relaxed/simple;
+	bh=9hnX0S1g5yU+UQSYaYyClZ3iE+uTXodKNM+PKOGNmpA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bbrk4CSP1uLjjAwzdZTv79Ec6hxLRogIaM1aM0uSzZjbLfNEv5pwJPPay8xa4XL/ZXEcy6XfUT3EbnxKHLBRXmNBdbN83JhlzwChFoQprcjNNsMnVY0AC6+L3d4HN3lR6+XZNS7+C8hEyOWlqXlVXd5PQAKZjGY5DDzxYIL8jyg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fZJNxrnb; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=hfWxaxLp; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52L4puSc019814;
+	Fri, 21 Mar 2025 12:50:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=0XnsUegQxa0xmQpu
+	oLfV+FFdTaWdKPp2/v43sbp3WG4=; b=fZJNxrnbVaRoAP172Z12nHbYRkD87WAw
+	5NRPdG0z7beW5VOOoahogvj4YiblhkyYQuRzTGrqlHIvLndPzQAkFouDdIZ8T4bg
+	sh+j6oXOhu0gCr7mlLgK3K+mqlmx7M9rFmBWdFgm2nA1SP91G8ajqaPhaoQ9ma27
+	5MgLunNsOZgd3ZzBHgZGJ5bhY5Kdvs+XR9sIcOLQuOX9nKSwlC96fW8mzl3DTn93
+	MVss81v2gd9RVjC81A1Prk/Ze9hCn+nywanK6LUpCSgMclu4EK/3dkYJblQb/QRY
+	pCmMGGuGUmkUcZwC3JQwxYZnZNmFyzWDdhQeTs7xVIHHC0s2bEIs6A==
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2040.outbound.protection.outlook.com [104.47.55.40])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 45g9p6vbtq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 12:50:52 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Clp6sYvjaa34jHRDCFGn2GNZQnrL9XwApsKNtvcAHp5BzpPUrkxtnrVL0Hd7v2gj8aR0mUqw2ppdEBSsU/2ysjE1nNWuAuH+SKCVQ4+fCfIN53MO/j1haKlfJVuUxPjuXM6+WphU5kACH/oaVnA3lmIh+UMp8lNKZZ9cTesE09AbxFMJix4pfPeghq/wZjsS2qIYYx2rcBMAT3TCWG9l/McqnK0Y6Er8vo6pJdGBF3dIb5/80FSNw41WLGu/rksYoPeTXagCQXENOdZ30rrGGQn80GxhMviqPG/qUgsURZ4xni73GFr1kz6t5eornbMqVuQBIfTpj81ALEhn3eK3uQ==
+ b=g5McWsJsNReh/WO4ryg2s2JAvpRIY2YIXhKldpGo8bWZltz/88WAhPpzEdq+ecc2VcUCINJMb5Uw8o8xoYypMHvyTJbctCqrkNQo1Uz0JTF/k6hHpnBvpIGTGcSXR9WdpGhqe541OvvUic8YkyI0yxQ3wvwjx57aNNBnSD9zVyouNLbkASwif53YfFKISrwrr909H9FUmNGP+F5vQWQnloOmT4ISyUBs2TDJZpcLR0cuoZZfKLeX7kcRqSSo3NEitX+To0eka8eac19QtI6sHL4nF0t6Y0RvUF1zMgg+7zYg146hk9nCKirTVcCE0W/B4tYGWedUmIRwIKc93EPYvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AVpQClKhLGaymu1VSTr4BCZtErlqLeKc5yHQaa+nhCQ=;
- b=yo7X3jYwnrS+au73b8wngR7g2HFGbUx/+Z/N1Gh3DmD6W/MOefLZhJ6X0UH4H10yynL4Dk+bNF6Vieo8FLNk0TNfAq6AhsoljbS8xyR23VEa87QOLJSnP4Jax/IW96Z8TxfCEWQYsjAdZ0s6d0wuZf/jo4CaUqMEbutZVF8XiRBgFcoSpEpU81bNo2ayGvCaxW7K19xuCi311GKiOCSmlyeow7+j9CUjdPHx6vbM9tbZTk46r/V0VDajBD8IJyhHVfo01IRt3qbXIAXdzbTePZYjN3bfWVVQpVINtymbvvw7ajw5Hy6rCHhZ5gQJlRVK/12XXb5fG9kwX3DbNBVwYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=0XnsUegQxa0xmQpuoLfV+FFdTaWdKPp2/v43sbp3WG4=;
+ b=x8H6ZJwZiIZmSUOCLCeWDEKfEBwyQcuLPyR65rOLwPBXr2kTUhQTInM8eC8OYvmBPshtY4gVJblo0fyvjoLp2BkbwuPG1/Y5RJgLKDeZvoxmgrm2oTrMsKqdlQsTTENuG9BbtXv9LyiosqRk531fn4xqqo7/Ik3gDXCunpVziKV4EWZL9YavDUFEKZ7KKYz2u3Wfyf1JE+R2u2Ys1nxw+v8EhnNOAEAH/e3+7rUST+TZPI1O0dB75Zep3gl0/AiBOF6awKllG+hTqOvwcuBXKHkqkGOpGnylUj5M9KdPIsRFoT50SqQEb7rN1M8eN3tTKJVz74oFnit5wSCWyYP1aA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
+ dmarc=temperror action=none header.from=opensource.cirrus.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AVpQClKhLGaymu1VSTr4BCZtErlqLeKc5yHQaa+nhCQ=;
- b=nBKV3R5smaIhHYpgFrQ4+T6S4881UPFgcO2snSh+jfvYx77OdjKHhOXQHUEh9AOIfOzxMJRI0XPePlCUWu6K2uZAJGfzqbVEnjuBFfdszUe02rj6kDz9mZXbSjafv4/Gy5WBoPkp2KRdnTL8fD8jU5LjNk4Btd1E2cxmA6gV7oH+w11+WPkCdS79OF8UpgrqI0o+VsmSm4EgK6K1noJRwJkcthLv7XXORwW226HZRclFpPQOdDje5ifNcReOVnCHsEh71tvQJAlOSdtKqtfKv0BCs6i1+5vW9AGrSVXLoXNCX31t/tDJ0MoOKcmuEbRmPXVh8lPDBPMRItBJTcm5gg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by LV3PR12MB9354.namprd12.prod.outlook.com (2603:10b6:408:211::20) with
+ bh=0XnsUegQxa0xmQpuoLfV+FFdTaWdKPp2/v43sbp3WG4=;
+ b=hfWxaxLpIFC2UMWpcCxFc2vyhYYrYUuAoHhBaeWUdeD1NRDox8p34GA6GFvlalah+AG+bmjgjP6N3IsfGr8V5h6XRx3qTL0jHm4tKMnal7ci1zNfVKv910lZUEsvqUU2sERcqZVF7LkfFu9HXVh4RXlZ8S/9NPLnsrkyXhrvFfw=
+Received: from SA1P222CA0122.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c5::17)
+ by DS0PR19MB8489.namprd19.prod.outlook.com (2603:10b6:8:1a1::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 21 Mar
- 2025 17:49:21 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
- 17:49:21 +0000
-Date: Fri, 21 Mar 2025 14:49:20 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <20250321174920.GZ206770@nvidia.com>
-References: <20250306153236.GE354511@nvidia.com>
- <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
- <20250307123255.GK354511@nvidia.com>
- <Z8rv-DQuGdxye28N@phenom.ffwll.local>
- <20250307145557.GO354511@nvidia.com>
- <Z9LsbhzjI-P3-edQ@phenom.ffwll.local>
- <20250319172132.GL9311@nvidia.com>
- <Z91A_Dz-nY2iFqYb@phenom.ffwll.local>
- <20250321120416.GX206770@nvidia.com>
- <Z91XrltJYtJdkLUS@pollux>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z91XrltJYtJdkLUS@pollux>
-X-ClientProxiedBy: MN2PR08CA0030.namprd08.prod.outlook.com
- (2603:10b6:208:239::35) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Fri, 21 Mar
+ 2025 17:50:46 +0000
+Received: from SA2PEPF00001505.namprd04.prod.outlook.com
+ (2603:10b6:806:3c5:cafe::5f) by SA1P222CA0122.outlook.office365.com
+ (2603:10b6:806:3c5::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.37 via Frontend Transport; Fri,
+ 21 Mar 2025 17:50:46 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 84.19.233.75) smtp.mailfrom=cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=opensource.cirrus.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of cirrus.com: DNS Timeout)
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ SA2PEPF00001505.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
+ via Frontend Transport; Fri, 21 Mar 2025 17:50:44 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 69AD8406540;
+	Fri, 21 Mar 2025 17:50:43 +0000 (UTC)
+Received: from lonswws02.ad.cirrus.com (lonswws02.ad.cirrus.com [198.90.188.42])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1D50E820244;
+	Fri, 21 Mar 2025 17:50:43 +0000 (UTC)
+From: Stefan Binding <sbinding@opensource.cirrus.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        Stefan Binding <sbinding@opensource.cirrus.com>
+Subject: [PATCH v1] ALSA: hda/realtek: Add support for various HP Laptops using CS35L41 HDA
+Date: Fri, 21 Mar 2025 17:50:06 +0000
+Message-ID: <20250321175040.800963-1-sbinding@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV3PR12MB9354:EE_
-X-MS-Office365-Filtering-Correlation-Id: b97cdd80-6a9f-4950-4d40-08dd68a0b5e6
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001505:EE_|DS0PR19MB8489:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: a1596607-cfef-4073-c31d-08dd68a0e7df
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|61400799027|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Zes6DUxjXvmeYGX1WIK0sEy/Ef6dkgmrCyfUhHKNvtkYZM2BuWyh1Qy5GOXj?=
- =?us-ascii?Q?Yl8NpGZ1F5X53G1fRdVUJJdkWFLZjC6Uqbz64Eq0bZJdieTQdL/vzuVTdFH2?=
- =?us-ascii?Q?Wl2hq96dUlavqZyjeHurIm0lthEsrBwLVm+xu+otTKQZ8PH6Xy0AFp4f6fj8?=
- =?us-ascii?Q?ozLUFTa4dNG6yf1N2iIRhxT8144gDKFSrJA8ohBpuKxbCoebC0u01LKwPhhH?=
- =?us-ascii?Q?O/m4cEfDNOxciy6kmH0TYxi5HAov0+zF8LwFDc4KLQW8sT18WcJq+oGCyvnf?=
- =?us-ascii?Q?z3+m81a5U8a1Rlaelja+SedLHVTvAlputTSBBjpuVO/DTlczcbUUtiAyH0s6?=
- =?us-ascii?Q?8Ibz3cDeeVpTiWc9sZGqQ/U8gATGaEyvrcvl7KfdfLbZo2l4k4ksyvWYaLj3?=
- =?us-ascii?Q?wWLUwCixax5EB88GcyRBlhvn0YsCbkzp7aazqfa7yUCPzMVW8ypeOIUUAoPA?=
- =?us-ascii?Q?ZOX2eGdus6nNq2lC+HymVqMoFu4/QKzmbMfBX7E8y7x0VPKGjvT1HZx25aOL?=
- =?us-ascii?Q?oPp3VvacDdOmUJo7/4Fayn5FxqvI0pqNrOkmxbs0dUqk2/eGdy2ipmuYivIG?=
- =?us-ascii?Q?XQbq8U3Art6EjLvY/Nc1Wp7EfgV2IaO9Sv1KLL1QNDQrwSHnnWemM6JVv1Yh?=
- =?us-ascii?Q?ua0bfFzhPEiJ1fo1g1ZXVNSG5MqqOuh+y479996RE8Vlphxr5YPB54vo2gOX?=
- =?us-ascii?Q?IVWOqlTjnmXf8TknEKBSuhGRUEqRfCVhWgRTENndm4qxFQy2+NzmfAIKoKm9?=
- =?us-ascii?Q?kJGfivoNnYecfEbEgNOaxYGq+48EnJxnNa64hV60fk1yVA2Af9ukrmt7A62/?=
- =?us-ascii?Q?QRR7JhiP92KlTh7NK4Q0yRzHn8Qco8waoGUdyzKAtDACQumdRTzu17xg+b0t?=
- =?us-ascii?Q?EVVvdhNxAWswzXx0meqmTKx7KDvkBdS6nSoWyT5oaY2KABUvDQHd2T+gaONR?=
- =?us-ascii?Q?z4YIWg7pDG43AwqkMUfEkrVfuTedaBr3lMTyxLI+hi/utJbEoCFeNcRAk7kx?=
- =?us-ascii?Q?TxDqhhNz+451zqd+/bvI1HOiwf7XZJcZ4QwZWrIG3Yd2zQhy/BD7d4U0cV3k?=
- =?us-ascii?Q?uveTOGMYyVPtP/fVcFqmrXVjSk+lPdRZM5LKXd5vXhoT+LGR6UZuEvxc9o0B?=
- =?us-ascii?Q?T6jgnr6Ipf603D/2WijMFWnAUGnUfQhcmIUb9SpqlGBRYsH+s2+EOKV7wvpz?=
- =?us-ascii?Q?qQ+9wfD4+VCp5rX67LsgP238tLjHjhsle6/GrMS/Dzpp0m4BJWo97Xcder0p?=
- =?us-ascii?Q?Rtjv/hWR93PzumJXbVxBrXMqQdkXxj+pLgaeBL/mBbyAbI7lqS/fA20/cESD?=
- =?us-ascii?Q?4fNRFmAqIrIwm/csKgwmQg2Qnw0AMyULqb8Ct52+u/OsjNdIsbBVIcMGzRwC?=
- =?us-ascii?Q?faMawoQi7LLgmlyWbF4QnAFqmvIa?=
+	=?us-ascii?Q?YY0Mbz8YHK4xtMAt/+gLZRqt3gnaDKxlX9vkStz2/gIFMZxFbA7Az+be/wyZ?=
+ =?us-ascii?Q?kFcGgXBxKpsHrpSfWVL9+OusJPSxljonkMvWVqahI7f085UfCOVdZg0gPz07?=
+ =?us-ascii?Q?muVGt0T447CMKJEzb9/IYZs9pJfM33tjmryqiK6nNi3cQxVFJlFMuZDO/q2p?=
+ =?us-ascii?Q?LJRJdatofAcQsNIzL8vBT7x1fJbmOXNomj3T01He6nQ0r0K/3imoaYMP3tJb?=
+ =?us-ascii?Q?MmuHHJGwrqP4AVvQPHvIvxd52bn/Nnp3ZYVaPhbBUaIBQkOscRuKIp4Rb9CI?=
+ =?us-ascii?Q?PLr67hKAOeHRkfHXEmgCY91NNyMkpIbHIg/wD31GOnwXL678uE65o/w5Fo5U?=
+ =?us-ascii?Q?MK7AeLAWxyhuipH054vyRNRhc/wIsA89buQbov70kyipAVGIx0EitbWYIpTt?=
+ =?us-ascii?Q?bzS9mIUrXmST/F4E5M/zTxUB1EAiWnEd6GY8IKDEzo3XA/aiSf0XEioDCjMT?=
+ =?us-ascii?Q?e1nkCApDz8aSBqYgWTwBpjV7wTHyoqZYqk9ZWAfGQsez1vmwErt/sWIr1Zuq?=
+ =?us-ascii?Q?DHEXQxPvgxKpcPQCTbPbDKFU2XmkKdTCW8Aa0FZmjO+bVRQw8txTCh8ya0Tr?=
+ =?us-ascii?Q?sTVh0xe4RN2Gz47WQgteFFC1wwRKWZEd55aKMvIxlce6DD3qhAkONBnieuO6?=
+ =?us-ascii?Q?7ZI1KC40uAXLdrMXTIq1kUfnegeqx9Xi8BO32SBLu8yHXo0qm65R+SiCTJit?=
+ =?us-ascii?Q?/T8muSzIrHjaCHjiXOnHK0Sb0Wr04i+TeVdxsegQF9G3CpJJZdW8YbA1gImX?=
+ =?us-ascii?Q?FpY8ZG/LoZvMUuYOqUteyROmGP+pZXtcDSia9Imyh2eOECyc/sE4xFF2beIx?=
+ =?us-ascii?Q?uvv6y9TPODtJfwwCHQRRSVTDx+f6Ea923bWRs46OaKcodE1trBnHbBMvsImD?=
+ =?us-ascii?Q?6jTVdneenJlW2DuLvSARt9jUeJR9d3elzLa9PbkvPpCdMQjaBM5V/4Od/6e6?=
+ =?us-ascii?Q?3o+3PSKxKoGoH6GeJC5lGnpOI9L3yBYns2MsbfDMaOK/8sSYdujTNqFc8WKP?=
+ =?us-ascii?Q?aXrNMu6+lzhJl0WUVGUwjUW3SCtfsAjmDJnKxNhvqpEwWKpWtLaVszHyghRq?=
+ =?us-ascii?Q?w3waX5W3MOur3y4B8YnncvRzWV/HdLeVx4KxYHHeD4pv+bKSOUA0e2SGU2m5?=
+ =?us-ascii?Q?U/CWUbrefiak/8b2CHqqsKKHmU3dRjPw4KJ9TwpajW9cOOvLV7PUjM5tXx0C?=
+ =?us-ascii?Q?eORaNSMaiaoEOQbhWusIA+baU1+vF9EJYYy2POS9ew6qSdp8h7CPg5/cBY7o?=
+ =?us-ascii?Q?7e2Aa5CoxLMFar0MTM+fMh5dWVSPmjudZYIwaujr9RCX4BKmUmm4esvjklKj?=
+ =?us-ascii?Q?1RywIyBCNMPuRJlK+1Sk6NQi2re/LTLJGhCLHAhf+6yZSbUY86jHU/n1ub6Y?=
+ =?us-ascii?Q?kGdUWsxzP/gwPeNwAVdJRm6D2jSDC6RSkwqCV8JBUdCDGITZDJxQgmgeAhuF?=
+ =?us-ascii?Q?f8+2ZXca1fZgtrpQI97uzD8A6wuf0FIOa+aQQs73VPIGQugXnd5CrFzX6M6r?=
+ =?us-ascii?Q?jnokEuor5MVnyyI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7z4o93BwFY9H6A/yobi/KCXsTY+uZ5hykyPt1iAKwHc0/8nuN8Zv6w8bg/3h?=
- =?us-ascii?Q?VzmFQOO5ObyWC5TS7Kq2PtoX1jmFyk6p79vxflzNPDwG+BVC3o90R2aqSOzq?=
- =?us-ascii?Q?NjsoFpFswWxoVkBZvWQHq8gF92eYyz//uL5JeMsCHgsqfu7qqbnNpyhmvSHI?=
- =?us-ascii?Q?Q2auEzTbc1LzqPNlIPaTgfkrPvu1B07SIlBvoPVwOCCouscbkHTwyKkKt8pa?=
- =?us-ascii?Q?oLpTPEXVHLRrpnaES4RBqnShoVMoWpJISvvBy7VdwQ8Cvw9tlMeRNxKJCJtV?=
- =?us-ascii?Q?3FBHII79JYbptakvnIl8vPZ76oQvbN2XcTWSGdvAo4Asrx2L86A34NrkGO3v?=
- =?us-ascii?Q?wTPuxULJpTgF/9JY8WMXFBvBENpsYdaRDzdTwahF6ug70fTJCfz+3ySz9JBj?=
- =?us-ascii?Q?D4R6svpp6C0MM/WU3+o79n+txHhDOUAk79aUaZe9czMGL9vsPx+V8inDsylm?=
- =?us-ascii?Q?Ray9LY+Lcz69Zb23Uq39uLioRvjxvjjmwc1/1eXTXGT9GsEAlKwRlaRzQXWT?=
- =?us-ascii?Q?N/8zPXw2loG4Y7Zrcye8ZcPc8QrN/lCRU8pQS8oR6Tg3CAjiSPP9e2+9XU6Y?=
- =?us-ascii?Q?I+y7eTOXnqjSBF4Y8RKe1bXbaO6gvRfRc/XBuekJYH269KEJW2c2WiHoa3W2?=
- =?us-ascii?Q?00pizUqCcpPnCJCCOeNDTt+ZIKnDikdcldZyCig92MqRQSM2Me7OCBBdIMhL?=
- =?us-ascii?Q?YSl9+5VGuwEmF2ThhKv0kBBPd2pp+Xba5estQQTfpZPg5QLbujwho9fSK8a0?=
- =?us-ascii?Q?iBqCROs9twp6JcX3VUWy88XZ2nX1YlNwFWL3b7MW1JJF0BkjAGtcoNO0Kc3y?=
- =?us-ascii?Q?stdFsjnP+dq5k3WJ1fH+kqmuNwaax06GoqGpqcrx9sFnfcD+hkigHk3R70iW?=
- =?us-ascii?Q?Cr95wE/EMzwDbx7iyxVnBrzczLMfkHSzD1kxeRSE0P3Yeg9gSJqa3Bh4cepf?=
- =?us-ascii?Q?gTNIopBtUnmHOavH3i1gIiWCRs+ciLdW9aA8KI7kHSxzrpw4YF0PwXn2OeiG?=
- =?us-ascii?Q?626GB84wTOTfD8PA1CNLuCesxLeJPgIRBcNlZGgXdbVpWU5xvxbkBePkhYiz?=
- =?us-ascii?Q?ACNBS6OX6EcdJXTCndDrTL8yK0eKU+ul8m+sQz3Q69+XMJMDedWE/dKb0/Ll?=
- =?us-ascii?Q?/A9NVmf2FbQFjj2UkrBBngHdesFsVDx/6hgQ59JHbt40mY3qGczpG0NZxXYU?=
- =?us-ascii?Q?wg4akZpR7AVcj2zbch/M2jrYrXDXYqIW77y4Vesnda2KivSjChxT7WCVmzDF?=
- =?us-ascii?Q?aqXx/ds9+mnftw47DyqRN2zF/UvS0x5cTI2923sjvfFDCF6NkiJdu/8iEEpK?=
- =?us-ascii?Q?as4yztaa/lxIfKrhxoMMpoPxw+Hp00XDtoR8ohNv8G3g6d7qBk4oUN2Tp9+6?=
- =?us-ascii?Q?WFrmCqZmERL1+GrEQFDRzOKprrKM73AyEkJgl5Jw6yom5/ru5wmBgKGLwzpW?=
- =?us-ascii?Q?gu0Y1xKW3r1lYUojGI8h3tP8PxMqrYf/Izd4s485/03hZWfDI8Ev5RRaLYiL?=
- =?us-ascii?Q?RZs4NfKiaVzgRFCJq8OUhAYQoEI1QeaxI+49onC12L+Fp631Tm64FgZmkUAJ?=
- =?us-ascii?Q?AcAmIZ5ZjkdKX4Ne5MzVONXLTxeaJh/KSvdW9lQF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b97cdd80-6a9f-4950-4d40-08dd68a0b5e6
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 17:49:21.5516
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(61400799027)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 17:50:44.7923
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9w/xAWh5i1TkRqs9SKlEaXzMV8Vw7IKFOlzThsvD/6osKwiZDc+q1799Pa8fW117
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9354
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1596607-cfef-4073-c31d-08dd68a0e7df
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001505.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR19MB8489
+X-Authority-Analysis: v=2.4 cv=Vcz3PEp9 c=1 sm=1 tr=0 ts=67dda6fc cx=c_pps a=OemXRkCljtmPz/OzEC+nkg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=Vs1iUdzkB0EA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8
+ a=BaEw2aN_RTaRYA0e3hwA:9 a=BGLuxUZjE2igh1l4FkT-:22
+X-Proofpoint-GUID: RUrQm4-GKwAoC4jEh6sl3xhvoXJbhNIH
+X-Proofpoint-ORIG-GUID: RUrQm4-GKwAoC4jEh6sl3xhvoXJbhNIH
+X-Proofpoint-Spam-Reason: safe
 
-On Fri, Mar 21, 2025 at 01:12:30PM +0100, Danilo Krummrich wrote:
+Add support for HP Cadet, Clipper OmniBook, Turbine OmniBook, Trekker,
+Enstrom Onmibook, Piston Omnibook
 
-> Not all device resources are managed in the context of the subsystem, so
-> subsystem-level revokes do not apply.
+Laptops use 2 CS35L41 Amps with HDA, using Internal boost, with I2C
 
-They could, you could say that these rust APIs are only safe to use
-for device drivers with C code providing a fence semantic, eg through
-a subsystem.
+Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
+---
+ sound/pci/hda/patch_realtek.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-> For the DMA coherent allocations, please see my comment in [1]. Revoking the
-> device resources associated with a DMA coherent allocation should hence never
-> cause any overhead for accessing DMA memory.
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 1d8caf791dbc..8c90b87ec995 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10725,11 +10725,28 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8d84, "HP EliteBook X G1i", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8d91, "HP ZBook Firefly 14 G12", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8d92, "HP ZBook Firefly 16 G12", ALC285_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8d9b, "HP 17 Turbine OmniBook 7 UMA", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8d9c, "HP 17 Turbine OmniBook 7 DIS", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8d9d, "HP 17 Turbine OmniBook X UMA", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8d9e, "HP 17 Turbine OmniBook X DIS", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8d9f, "HP 14 Cadet (x360)", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8da0, "HP 16 Clipper OmniBook 7(X360)", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8da1, "HP 16 Clipper OmniBook X", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8da7, "HP 14 Enstrom OmniBook X", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8da8, "HP 16 Piston OmniBook X", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8de8, "HP Gemtree", ALC245_FIXUP_TAS2781_SPI_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8de9, "HP Gemtree", ALC245_FIXUP_TAS2781_SPI_2),
++	SND_PCI_QUIRK(0x103c, 0x8e11, "HP Trekker", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8e12, "HP Trekker", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8e13, "HP Trekker", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8e18, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8e19, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8e1a, "HP ZBook Firefly 14 G12A", ALC285_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8e36, "HP 14 Enstrom OmniBook X", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8e37, "HP 16 Piston OmniBook X", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8e60, "HP Trekker ", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8e61, "HP Trekker ", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8e62, "HP Trekker ", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x1054, "ASUS G614FH/FM/FP", ALC287_FIXUP_CS35L41_I2C_2),
+-- 
+2.43.0
 
-> [1] https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/dma.rs#L120
-
-I don't know what to make of this. You argued so much to support
-revocable for rust ideological reasons and in the end the proposal is
-to just completely gives up on all of that?
-
-Not even an optional runtime check? :(
-
-And I'm not sure about the comment written:
-
-> // However, it is neither desirable nor necessary to protect the allocated memory of the DMA
-> // allocation from surviving device unbind;
-
-There are alot of things on this path that depend on the struct
-device, there are two kinds of per-device coherent memory allocators
-and swiotlb as well.
-
-It looks like there are cases where the actual memory must not outlive
-the driver binding.
-
-So, I'd argue that it is necessary, and changing that on the C side
-looks like a big project.
-
-Jason
 
