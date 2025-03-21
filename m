@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-571799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F69CA6C260
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:30:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38BEA6C263
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09E54813E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:30:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088453AA590
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A755222FE03;
-	Fri, 21 Mar 2025 18:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B588230985;
+	Fri, 21 Mar 2025 18:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brLvl+kS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ni9zuw0G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0962022E3E9;
-	Fri, 21 Mar 2025 18:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA2522FF37;
+	Fri, 21 Mar 2025 18:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581808; cv=none; b=aZM5alQwTVfKchvcnUvEpTbDGKMmA75WTwOPqEUahLEULx51fyuuXzV7g9fll84XTgsF8nnZK2x/Lf20B1aDghYYDjJ5oIvded6oGU/i6X6bKHNroUUaoL/8vVaugZeusJeeWdXq03V67a6sritRSETh5EUPm0GeOSYRXlfDdLc=
+	t=1742581809; cv=none; b=GwYIuEAPLVoltXPFfZh/JuoKryWfgnekQqyZ+prLTQ8NBc26HjDOr4DXjVUrwe9jTqBXSI45HBWs8xWmqGWzDwVJ2wuJzUm5xKl3XD8RfTWkuUKgM+ERBJoxZPha1VxqrpHzC+A2Gpqf6ne+JwGw0i1VeYmV0QVroFMhbJOQWgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581808; c=relaxed/simple;
-	bh=T/S+1dcOLcMBe5RZO5eduTb7Lb0FyXwdceEDHiisI5A=;
+	s=arc-20240116; t=1742581809; c=relaxed/simple;
+	bh=yr0HsmTDZnI304hBonkyEV4widgyTxAQ69tprlnifKM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YdLC7Jw/+pIzewWkNMkjmtzJAIjBD1dGqBdZ6Ry2JEpkP6+WqLcYd/FlHTrSwbhY87l+xgr9lmgUq2VVlKSDvwzUHPn2nOrf5FhPPus8Me/0lkMA4sAoYFRLdwPwxHEow3i/6WbOMK3cwR51xqrFrU9N9Z2l90Zfko71z2oayZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brLvl+kS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C01DC4CEE3;
-	Fri, 21 Mar 2025 18:30:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=MspDbczJzamVzigX6uCfertNRVczgLLAPNh0uoS4Q3p1yQ6D0w1ZDjWB9a1+/toKURFVY6xZo91t5R4RNefPhCHRNJ8plb9nIwUIxPNkFHRpUavWGgxnbpGc3IWkySCaLGENlGgkFAC+Xeeo8vSfynd8vM1xBT3UNR3nqPxvxN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ni9zuw0G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EE5C4CEF2;
+	Fri, 21 Mar 2025 18:30:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742581807;
-	bh=T/S+1dcOLcMBe5RZO5eduTb7Lb0FyXwdceEDHiisI5A=;
+	s=k20201202; t=1742581809;
+	bh=yr0HsmTDZnI304hBonkyEV4widgyTxAQ69tprlnifKM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=brLvl+kSj9BXf3Ks5Tt2YY8hUX4PJNxxr40QoMEb8vahp5IdReJDFlLVmBT+BAZUJ
-	 KUCeZHgTWh3wm9QrLriEIK4fuY3SnqnW1ifQkAC0Uk8p5LmUmhC0xpvzWTU7qtNHTT
-	 /SgUNqF2NQJZHhFh0r35eSBFY7XwYn3arhkhINCEE41J9lBjwQQwa4PaS2IIAtzye8
-	 Qgb0sBtlOdkHacQF45dY6RWGyIBL2i3L5bQ5ryQsST/hs70PwqQi9laTSi+mlzaqhn
-	 IHWxxTwpfk6d9yGGHNpKT87D+lGxz/n6LI2oWWV9IFgmG2Oif4snYUHTQfEoyNrruo
-	 e33tP21sm2fDw==
+	b=ni9zuw0GoBvQ/nQmMiZoTDkaeyPusps56xz52dal3hCVmy6cOnaj7uA2oHk8nMuEg
+	 MF+egbCGjmN6YQKNDfI0zIIIf8A9WNsEpAqCOJxgwLwJ2OOeLQYIYpz6js/b5QAQsN
+	 75fPXXC86LJoFNgLjs3LK7BOH9gotB9ggCh54BIKsqVCTdjjiTE1aauT60bjNPt8SZ
+	 tTGCgtPKHGyRgqTIkU3a2VuZT695pdmaJ6XJnfVP4Nk3uN6YFjbzvXUIjdjHjbiUOY
+	 UJguw0i2deMRQ+NF5dFEbfgfu7+Awuor0BryFYx5+RKsiQu/VA7stk6fbToPXqntjD
+	 7GQcf1CSG+Lcg==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
- Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
- Dmitry Vyukov <dvyukov@google.com>
-In-Reply-To: <20250307080829.354947-1-namhyung@kernel.org>
-References: <20250307080829.354947-1-namhyung@kernel.org>
-Subject: Re: [PATCH 1/3] perf sort: Keep output fields in the same level
-Message-Id: <174258180714.163787.15010272622789563467.b4-ty@kernel.org>
-Date: Fri, 21 Mar 2025 11:30:07 -0700
+ Ian Rogers <irogers@google.com>, John Garry <john.g.garry@oracle.com>, 
+ Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ "Liang, Kan" <kan.liang@linux.intel.com>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250313201559.11332-1-ilkka@os.amperecomputing.com>
+References: <20250313201559.11332-1-ilkka@os.amperecomputing.com>
+Subject: Re: [PATCH 0/2] perf vendor events arm64: AmpereOne/AmpereOneX:
+ Add a new errata and fix metrics calculations
+Message-Id: <174258180865.163787.7449214813728278320.b4-ty@kernel.org>
+Date: Fri, 21 Mar 2025 11:30:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,25 +69,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Fri, 07 Mar 2025 00:08:27 -0800, Namhyung Kim wrote:
-> This is useful for hierarchy output mode where the first level is
-> considered as output fields.  We want them in the same level so that it
-> can show only the remaining groups in the hierarchy.
+On Thu, 13 Mar 2025 20:15:57 +0000, Ilkka Koskinen wrote:
+> Add an errata reference to a impacted event and fix metrics calculation
+> caused by a scaling issue.
 > 
-> Before:
->   $ perf report -s overhead,sample,period,comm,dso -H --stdio
->   ...
->   #          Overhead  Samples / Period / Command / Shared Object
->   # .................  ..........................................
->   #
->      100.00%           4035
->         100.00%           3835883066
->            100.00%           perf
->                99.37%           perf
->                 0.50%           ld-linux-x86-64.so.2
->                 0.06%           [unknown]
->                 0.04%           libc.so.6
->                 0.02%           libLLVM-16.so.1
+> Ilkka Koskinen (2):
+>   perf vendor events arm64: AmpereOne/AmpereOneX: Mark LD_RETIRED
+>     impacted by errata
+>   perf vendor events arm64 AmpereOneX: Fix frontend_bound calculation
 > 
 > [...]
 Applied to perf-tools-next, thanks!
