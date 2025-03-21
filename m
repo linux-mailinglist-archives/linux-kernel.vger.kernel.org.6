@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-571948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6B7A6C494
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:51:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFDEA6C4A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07DAA482041
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505561891A90
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49777231A2B;
-	Fri, 21 Mar 2025 20:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYk8PV1U"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542AC230BF8;
+	Fri, 21 Mar 2025 20:52:36 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26FA1E9B32;
-	Fri, 21 Mar 2025 20:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3220213C695
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590253; cv=none; b=QrFL3P7tiQy8CQ187FvGR49YHt4iI4UvRd29F0104pBLS8wgSfHYR1iGcEH59bgit+hNzkQYX1J1Kfzxf1q03YQ3ZMLyxogVUyNRPJHNc6LMUoJKh6/hTY18C9ZCElVPwSkPI7AtnDEzu3HzIJShUWsiCp88ZAx69iwnO/TVhMg=
+	t=1742590355; cv=none; b=jBjOF65Lcd4Y1Fx8UqVtf/lJZIcHTLn88HDS940SzfaItBAzL0fmNrr+27zkJShObYnbf4aXQ05pkvpASPS6z25s3n6TkSzA7EynBy7hqeY5wYXGJKDA+GWGnCZOMWSUIw4Gjml8jb3LIjFBn3rgBhtTaai4DZsGFVtZMAOdgoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590253; c=relaxed/simple;
-	bh=fvyqCqDcCaEX4mI7phytQuw5UOBiV1RnJVgwLEE5YY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cne4Pgm5KORLInBRRmiyPHgWS7ltjRTk40yCIxNkLzQUveLZppksRh7MMpCC8uZkDnTiFR4i2qub6sYpP1rOyeiWLgdfqU0h2kcQiRQJPyFnWmqbS8gQLx362fKqGmFLHq8JciKyg1rl6NQdIcWTKjDkmAlXmXdW3tRVkpZIidI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYk8PV1U; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2c663a3daso481684766b.2;
-        Fri, 21 Mar 2025 13:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742590250; x=1743195050; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JEdzPwVO0oWNN0wAc8zMe+O8cay5/vcOYcIsMyGQbi4=;
-        b=GYk8PV1UK2TdMhedUDB6F0q0vxX4SLyPLCfdY4Z2wL3aqqBmyX48qNfmMbdf/XN0jf
-         IJGJUm5TjWugDm/2E9EHMySYSR1Ry4yDUM4hjG99FUrUi/it5XwNmGqr5TZroEzbiQPC
-         P7wlkU33o78BnPrhSXJX1CQxpX/3Znf47T7SfOsUc7C19+oM8vDlDaI7LIIPNjZtS1s9
-         SKagdYwsUXxFhkEOnotvGT6bvEHBjpWJnJC2wKs5ZxfkJrb5zmXHCx70+B5gigqjDPVp
-         Z95BHgqkVm/puSDaGo/0psT76NROHWsjoTNBfOkj71wclwvM3z0D55SgW+yXN8ZiCobw
-         WlFA==
+	s=arc-20240116; t=1742590355; c=relaxed/simple;
+	bh=cEeHfF389YJJ77d+pLffUqBUg+SjwSCK7+5MeXmENsI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k3rI9ZVheYl7k3Jd3ZqppVAJOz/OgvM4vqy5KdcbuhwWaxl/uowk9SsB4JkkOdP+x/vcNRbpcaPF/PZDpoETPuT8ewStVyB9UnIRaAh5hdf3AgvUAjU1ycBebHmMngEydkqwQGt+tpoE5oDYiM9uCDccDwIkVcDeqsUxAFUhEj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so23085135ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:52:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742590250; x=1743195050;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JEdzPwVO0oWNN0wAc8zMe+O8cay5/vcOYcIsMyGQbi4=;
-        b=KDsx7xFkF+jwrO+LKlMovabfzZED/JO/D7bRI/do+kqFonbmf5ggvzAmgdzSzpTdmP
-         yYNc/Qs1XJm9rfkA+pd0QMzI9tCGRkaWb7vSC5nmBhGV5GOyLVmw8HtNXrjZ2CupK9xj
-         1b+yJhhRTnd/3nvNbMkWw8UPSI27SiuHuw36SAL3TPn2ZLuBCqrr5bzdelGDjaBA0nqy
-         kv0GHC1HIPhGISqO2ZLJTmk+jliFtGPtR3FwrYt23uPS8e7S9afNhzmkNnnYZ3/WNUEB
-         sG7Tq/WZM3IPpStVDzLRJZWg9+MtVLQ0jwgCNJ62m7mjj1WV6Lz/0YbmAeQ/zJO4cjJp
-         qCWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUO2vFSc9qJB3YB3KWwNWy0xwL+ABoEHQFZohEY6M00kIjbUU65wz1KMVIQ5nIGRMrh2Cy0aComS/eHLqOR@vger.kernel.org, AJvYcCUkkfrg5NQ260XxSytz8LJUP7H7vCE91Bh1wHPw0YKLta/EuFPZH3wQKLl0wv/nFhwiylXPJmTc@vger.kernel.org, AJvYcCVG4WmbyQKcrHo+8Rz42xv/+JjoZF5N9hAvXfEwpb/RrwtezWWPDXETAhoCKq9GLbvJbsGseXLPY714CQ==@vger.kernel.org, AJvYcCVP8P8V2drOUAOnnnyXCzGAfQ9jTU3MA6p151JqWwRoMsys+3fmwsICVDGrLtTCT4aDRkJAHWapZ+6DhmLj6Q==@vger.kernel.org, AJvYcCW55ufPwODavjErm0kf4aWFWeb/4NLlOwbdmiYVam4zGlf2gHMobKqD4TqaZSlR2Ow9fTSw05W1lg9UhciUKrXw@vger.kernel.org, AJvYcCWIFc9/3RHrpDKgNN6dNYeh/ar4WHBj7/nJLOn0j+UyjlGvSP1R+vol9pzH2jgm8Q8Y+/lTxqreJ5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKctUmZ7TJnD/805WILrckjv5l3Tspsj94Bw8xVN4iHelThGxZ
-	4UwakOQgQSYZK6CBBvbqVITJlsmr3as+ERSCMyO/xfCQjNhEWOPs
-X-Gm-Gg: ASbGncuokCnw8Dd7FkPt3FUimGmMRImVi3ED3mgyZuCgjZX577UOybCrPpcGRLHrnwW
-	MQopRMaebFpizgZ0pf04Cq6JEG2dL4Tk/oFvJbKo2qFjABoLPxJv4n2kvpw7O9VJDOExcwjm17w
-	WnaSxoahNJDeWKwsGUCfPBAtiVHETVFJ49V9YqqPaDwsIv8oofTKkQ8CWigqlEGqapuOt0OVSUj
-	REnZATjLiYB9pU1kv+xvk8VRRtDloIKbVxdjwnqPnlscqMr3SXlrdPNqHdu8fasMqLpICnacSTo
-	hvPo8p/oFk/c4XpkqzXzb77yls4npRS8uj6D4jzNtn7nEu8HllFYQg==
-X-Google-Smtp-Source: AGHT+IFnVEhxSIgWde7XpMHbJeBcjFQtRapjJMQGPcFXYnPNvOU7oIf092XK7zlewafDkwDIpcyxag==
-X-Received: by 2002:a17:907:7ea7:b0:ac4:4c9:c044 with SMTP id a640c23a62f3a-ac404c9c637mr147567866b.15.1742590249590;
-        Fri, 21 Mar 2025 13:50:49 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.236.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbd3d3esm211035166b.130.2025.03.21.13.50.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 13:50:48 -0700 (PDT)
-Message-ID: <f7c5a71e-b935-4e87-aa9a-e404b9a0bca0@gmail.com>
-Date: Fri, 21 Mar 2025 20:51:41 +0000
+        d=1e100.net; s=20230601; t=1742590353; x=1743195153;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h78MLdZ+nHhjTPfp8MYeVUe2SK0b8Rg0EhTM48s1c2U=;
+        b=FBj6rpdQz1cv7NOJHc/uvkhe+la3VMqMbOJkLUib+aa9v7BnsEsO3WAWtk/5k/92If
+         lUPAr4proydSBqYa4wr4FJmclIPSJFHUYV/ESyR0a1Y5lQPAJNV2HymxVkaf9yPjW4qs
+         7aGL1Au4rdCgjWoU2pEnd4kjpPVWH79t1BvfrbkugYrC9NHqj6FQQ1t+VPo71qOusUk5
+         bLUB8g3R8rj9ORiwC1xMvfRUvxWBGT4LWr5TjeIyOEhYhb2h7ou2RYd5WjihboByxFtB
+         pVKMSc67VGd+dLgrR3OzSlwpa8hNTxpFPYhTZP+I+phSB4J0jmDbX8MrAQOn+hq3AoZY
+         Ukig==
+X-Forwarded-Encrypted: i=1; AJvYcCUNAWNqRgTai5Qf0qgKU5mqFIPetmPKcGVKJmAgWJMpJOfXzUnZSIXSgQLoHgoOF1+uG7o+Fwyuq3y3jWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+hhqMgnu8tMUMsOjc0OotxK4A2+ryIC7cL7z/3oG3rRHxb1Vh
+	UbaZUSXXEtqiFiAqSXpiMObSIO/57cq3pXBKFXnxTZuO//mcryUVBM01VLzVy4voWsTc+CzAJuc
+	1Ax31xjossogm5zf4LrrxWUHm1ojMo9IqYFRInQfauZqAOlatiNNpGXA=
+X-Google-Smtp-Source: AGHT+IHNzs3AoAiAn+Jmmpq61eppd95WGDpwVLyXgU7nqyiiUH+UikNyqswo2o99q4HUv5sQuCgS9mFR1C3VWRgsfD6HijwewMPt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-To: Stefan Metzmacher <metze@samba.org>, Jens Axboe <axboe@kernel.dk>,
- Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org, shuah@kernel.org,
- sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
- akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: David Wei <dw@davidwei.uk>
-References: <20250319001521.53249-1-jdamato@fastly.com>
- <Z9p6oFlHxkYvUA8N@infradead.org> <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <dc3ebb86-f4b2-443a-9b0d-f5470fd773f1@kernel.dk>
- <356ce660-fc2e-4016-a0d9-6896936669c2@samba.org>
- <fbcd759e-2453-4570-a2a0-c9ad67ae9277@gmail.com>
- <0fc1032f-908c-4e59-8f64-f22b380ae639@samba.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <0fc1032f-908c-4e59-8f64-f22b380ae639@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1908:b0:3d0:47cf:869c with SMTP id
+ e9e14a558f8ab-3d59617bb79mr50728885ab.19.1742590353311; Fri, 21 Mar 2025
+ 13:52:33 -0700 (PDT)
+Date: Fri, 21 Mar 2025 13:52:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/21/25 07:55, Stefan Metzmacher wrote:
-> Am 20.03.25 um 11:46 schrieb Pavel Begunkov:
->> On 3/19/25 19:15, Stefan Metzmacher wrote:
->>> Am 19.03.25 um 19:37 schrieb Jens Axboe:
->>>> On 3/19/25 11:45 AM, Joe Damato wrote:
->>>>> On Wed, Mar 19, 2025 at 11:20:50AM -0600, Jens Axboe wrote:
->> ...
->>>> My argument would be the same as for other features - if you can do it
->>>> simpler this other way, why not consider that? The end result would be
->>>> the same, you can do fast sendfile() with sane buffer reuse. But the
->>>> kernel side would be simpler, which is always a kernel main goal for
->>>> those of us that have to maintain it.
->>>>
->>>> Just adding sendfile2() works in the sense that it's an easier drop in
->>>> replacement for an app, though the error queue side does mean it needs
->>>> to change anyway - it's not just replacing one syscall with another. And
->>>> if we want to be lazy, sure that's fine. I just don't think it's the
->>>> best way to do it when we literally have a mechanism that's designed for
->>>> this and works with reuse already with normal send zc (and receive side
->>>> too, in the next kernel).
->>>
->>> A few month (or even years) back, Pavel came up with an idea
->>> to implement some kind of splice into a fixed buffer, if that
->>> would be implemented I guess it would help me in Samba too.
->>> My first usage was on the receive side (from the network).
->>
->> I did it as a testing ground for infra needed for ublk zerocopy,
->> but if that's of interest I can resurrect the patches and see
->> where it goes, especially since the aforementioned infra just got
->> queued.
-> 
-> Would be great!
-> 
-> Have you posted the work in progress somewhere?
+Hello,
 
-Nope apart from a dirty hack I believe I posted back then.
+syzbot found the following issue on:
 
--- 
-Pavel Begunkov
+HEAD commit:    76b6905c11fd Merge tag 'mm-hotfixes-stable-2025-03-17-20-0..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16e3c5e4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d4644c4063c5098
+dashboard link: https://syzkaller.appspot.com/bug?extid=7ea0b96c4ddb49fd1a70
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10060a78580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137eb19b980000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/65bb985940e1/disk-76b6905c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0f4133d60a27/vmlinux-76b6905c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0ca5769b6e70/bzImage-76b6905c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d3375a361225/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=108c9068580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com
+
+BUG: KMSAN: uninit-value in _find_next_bit+0x11c/0x130 lib/find_bit.c:145
+ _find_next_bit+0x11c/0x130 lib/find_bit.c:145
+ find_next_bit include/linux/find.h:69 [inline]
+ ocfs2_recover_local_quota_file fs/ocfs2/quota_local.c:488 [inline]
+ ocfs2_finish_quota_recovery+0xc4f/0x3ea0 fs/ocfs2/quota_local.c:641
+ ocfs2_complete_recovery+0x229f/0x38a0 fs/ocfs2/journal.c:1357
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3319
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3400
+ kthread+0x6b9/0xef0 kernel/kthread.c:464
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4121 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_noprof+0x923/0x1230 mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ ocfs2_add_recovery_chunk fs/ocfs2/quota_local.c:305 [inline]
+ ocfs2_recovery_load_quota+0x415/0x1150 fs/ocfs2/quota_local.c:360
+ ocfs2_local_read_info+0x139e/0x2c10 fs/ocfs2/quota_local.c:753
+ dquot_load_quota_sb+0xa35/0xdc0 fs/quota/dquot.c:2459
+ dquot_load_quota_inode+0x662/0x9f0 fs/quota/dquot.c:2496
+ ocfs2_enable_quotas+0x1d4/0x6e0 fs/ocfs2/super.c:930
+ ocfs2_fill_super+0xa6b7/0xb550 fs/ocfs2/super.c:1140
+ get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
+ get_tree_bdev+0x37/0x50 fs/super.c:1659
+ ocfs2_get_tree+0x34/0x40 fs/ocfs2/super.c:1184
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 3555 Comm: kworker/u8:11 Not tainted 6.14.0-rc7-syzkaller-00067-g76b6905c11fd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: ocfs2_wq ocfs2_complete_recovery
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
