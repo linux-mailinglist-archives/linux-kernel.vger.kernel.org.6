@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-571781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD24A6C23C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:21:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD52A6C241
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775AC189E8DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F046189EF2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868F222F3B8;
-	Fri, 21 Mar 2025 18:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D7122FF41;
+	Fri, 21 Mar 2025 18:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0/cOQyX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HvpgrQwV"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863611E5B83;
-	Fri, 21 Mar 2025 18:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8A222E406;
+	Fri, 21 Mar 2025 18:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581290; cv=none; b=s1KF2mZh4aHWZdOhqwY5c2PmUGYLei8LdTI5J6gY+M96nod6GgqvzJt1LVcXWzK6zsAnDjYTa3N6KAoov3eivvVC9lCwBdUyKqax5kK26rYs/72nel9fadPPeSbSjEwUJIyS00anEBJ996mqd8Kjfvc3sJPSHMmWiv2e5msxk6s=
+	t=1742581291; cv=none; b=LPVSNVFL+JF1T7ikA4LOrX+Tso/DKwJB+CmHQfP7GVhhfqU/LnGpNrlDEi6icvKgcqf7TAfuh/iQOFuN83kG4GkaMPVCn6+5WT4Ok4FndtxqVAn9cv0bNOv2dzYhv0rKHguI1MEHrCDMYhhhOjxbCmCkNiWvmEk4tEEuorwULNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581290; c=relaxed/simple;
-	bh=J1ERQ49XFhRMmrZp0nFoXvG1e9ijz8mIl3/GdWKUuO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2JWvHFkc3T+1u/JQgjBpB+v7z0CdT19hzgoQkJUkK9pkiBTlwpG4y8LhtO4ZYlg+N0nB1MlX8b5Wh2+7aGVwryAoimPC/q67OtyM4g01Nj2bb+zl4bm4NVd49qnWyV5tVXM5kFVSBiHwht2bm1hWZUwL4/50F17c8A2gJwHASE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0/cOQyX; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1742581291; c=relaxed/simple;
+	bh=Z11NZgntq6KJfRIsKInfFfPgwQUCX5OufzcP3Pi8Gb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E0Bj3Y3PI2bV8VL+5BuB5R8Wg77v/pdOw9gR3kcEmzFBAqqkHmYd/saSsZ+AwYwZDPTyhEqFDs7fzSa8b6pMYtrV1aPT8WSpqUh5bqhMHibp4DEu6BeCY+QqWyyBM9jRU4L1l7Iww2VA/pdimq6RarcLxA/dmUxmU1rpGJJpk58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HvpgrQwV; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742581289; x=1774117289;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=J1ERQ49XFhRMmrZp0nFoXvG1e9ijz8mIl3/GdWKUuO4=;
-  b=b0/cOQyX0PcsR9/CWw0JAFRSTg3rK+Gi9IQpaOZJGrwhO6q8NYVt4b3+
-   OaofwFvsvPZlmCURJGxlEoiaHTlgp8DDXelErEeNubJYz4lXfvX1yf5Tc
-   CJZByrcRaAPLjaZHwlxxhz29U5WWfspjIvWrWPfi/GXNCvmCweZ+0PYfL
-   UFcwWOhP8ORNdI/8YFoppkLceU6J/U865tmLnR397z/NnOqibh+zYCslt
-   M4abLWm0h6lR7ujWAM9F17QgaAm67RvvBeWooVa0IFYiAEQZOXVy9mz5c
-   dVqn2WdIWKoowMsbpyNefUMg6cTcmexhKHExbowVFGZMPsXEd7Xgs+xzj
-   g==;
-X-CSE-ConnectionGUID: WtSuJHUzR6CFhRv2pszoTg==
-X-CSE-MsgGUID: Mh3ph7gTTFakdaRIBxT+jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="69212006"
+  t=1742581290; x=1774117290;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Z11NZgntq6KJfRIsKInfFfPgwQUCX5OufzcP3Pi8Gb0=;
+  b=HvpgrQwVwJ828i64RE6qjXIipRpiZHG6lIh1apfw3z1P6i/gBFTKw1f/
+   yNMVmRPPt2+fzqMFZMo12IR1rm2LSNr3EahkJOyB5g1/EEM7mFar84caX
+   ITAZPP44hrZL6DUylAk7z8mjv7/2tEhM8+xcc88wyOCk3zUxMmPhbs+kF
+   MtU3S8V1VmwhJEDNVS8ikapUGZIp8skGwOMoPsbJe1DvdZ+9Sx5MoSKFN
+   i2Kn+QbLzUqAHBh5L4EBitbVGx2U35cDO9Fr4xKjuq08xn5gfqucJ+X2u
+   mFUNyO1E5RJ+hlnSb8MJxUCZir0iu7j8c/khho7a+8uTVXu9/XjxNM3+j
+   w==;
+X-CSE-ConnectionGUID: ePQfS3q6TLKqq2+XZ4Iz5w==
+X-CSE-MsgGUID: TsDttR0bTRyjVnNkBbSJJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="69212010"
 X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="69212006"
+   d="scan'208";a="69212010"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
   by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 11:21:28 -0700
-X-CSE-ConnectionGUID: x+E9T7JVQoKELHzKuE+3Dg==
-X-CSE-MsgGUID: 6sBk/X3uQKG7LQNmG+EtvA==
+X-CSE-ConnectionGUID: H5I1NIKBRiefnbE5OVVBOQ==
+X-CSE-MsgGUID: YkYHpO/aSZmnHaG5L0+3Hg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="124423520"
+   d="scan'208";a="124423521"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa008.jf.intel.com with ESMTP; 21 Mar 2025 11:21:26 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 9BCB314B; Fri, 21 Mar 2025 20:21:24 +0200 (EET)
+	id ADCD0AF; Fri, 21 Mar 2025 20:21:24 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Chaitanya Vadrevu <chaitanya.vadrevu@emerson.com>,
@@ -65,10 +66,12 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>
-Subject: [PATCH v1 0/7] serial: 8250_ni: Clean up the driver
-Date: Fri, 21 Mar 2025 20:20:11 +0200
-Message-ID: <20250321182119.454507-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/7] serial: 8250_ni: Switch to use uart_read_port_properties()
+Date: Fri, 21 Mar 2025 20:20:12 +0200
+Message-ID: <20250321182119.454507-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250321182119.454507-1-andriy.shevchenko@linux.intel.com>
+References: <20250321182119.454507-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,22 +80,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The newly introduced driver inherited almost all same issues
-that 8250_platform had and others. Clean up the driver accordingly.
+Since we have now a common helper to read port properties
+use it instead of sparse home grown solution.
 
-Andy Shevchenko (7):
-  serial: 8250_ni: Switch to use uart_read_port_properties()
-  serial: 8250_ni: Remove duplicate mapping
-  serial: 8250_ni: Switch to use platform_get_mem_or_io()
-  serial: 8250_ni: Remove unneeded conditionals
-  serial: 8250_ni: use serial_port_in()/serial_port_out() helpers
-  serial: 8250_ni: Switch to use dev_err_probe()
-  serial: 8250_ni: Tidy up ACPI ID table
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/tty/serial/8250/8250_ni.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
- drivers/tty/serial/8250/8250_ni.c | 89 +++++++++++++------------------
- drivers/tty/serial/8250/Kconfig   |  2 +-
- 2 files changed, 38 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/tty/serial/8250/8250_ni.c b/drivers/tty/serial/8250/8250_ni.c
+index b10a42d2ad63..03e838f440be 100644
+--- a/drivers/tty/serial/8250/8250_ni.c
++++ b/drivers/tty/serial/8250/8250_ni.c
+@@ -285,7 +285,6 @@ static int ni16550_probe(struct platform_device *pdev)
+ 	const char *portmode;
+ 	bool rs232_property;
+ 	int ret;
+-	int irq;
+ 
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+@@ -293,10 +292,6 @@ static int ni16550_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&uart.port.lock);
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+ 	ret = ni16550_get_regs(pdev, &uart.port);
+ 	if (ret < 0)
+ 		return ret;
+@@ -307,10 +302,7 @@ static int ni16550_probe(struct platform_device *pdev)
+ 	info = device_get_match_data(dev);
+ 
+ 	uart.port.dev		= dev;
+-	uart.port.irq		= irq;
+-	uart.port.irqflags	= IRQF_SHARED;
+-	uart.port.flags		= UPF_SHARE_IRQ | UPF_BOOT_AUTOCONF
+-					| UPF_FIXED_PORT | UPF_FIXED_TYPE;
++	uart.port.flags		= UPF_BOOT_AUTOCONF | UPF_FIXED_PORT | UPF_FIXED_TYPE;
+ 	uart.port.startup	= ni16550_port_startup;
+ 	uart.port.shutdown	= ni16550_port_shutdown;
+ 
+@@ -332,12 +324,16 @@ static int ni16550_probe(struct platform_device *pdev)
+ 	/*
+ 	 * Declaration of the base clock frequency can come from one of:
+ 	 * - static declaration in this driver (for older ACPI IDs)
+-	 * - a "clock-frquency" ACPI
++	 * - a "clock-frequency" ACPI
+ 	 */
+ 	if (info->uartclk)
+ 		uart.port.uartclk = info->uartclk;
+-	if (device_property_read_u32(dev, "clock-frequency",
+-				     &uart.port.uartclk)) {
++
++	ret = uart_read_port_properties(&uart.port);
++	if (ret)
++		return ret;
++
++	if (!uart.port.uartclk) {
+ 		data->clk = devm_clk_get_enabled(dev, NULL);
+ 		if (!IS_ERR(data->clk))
+ 			uart.port.uartclk = clk_get_rate(data->clk);
 -- 
 2.47.2
 
