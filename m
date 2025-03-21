@@ -1,111 +1,180 @@
-Return-Path: <linux-kernel+bounces-571479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B34BA6BDA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:53:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D68A6BDC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFDF188ADD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AD3179E88
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1081F1D6DDC;
-	Fri, 21 Mar 2025 14:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549921D79BE;
+	Fri, 21 Mar 2025 14:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAVu5TtF"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fj1I1XTL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CCE1D514E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8A41D54D1;
+	Fri, 21 Mar 2025 14:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568801; cv=none; b=J8bvihtiwPBcN0IW5VMB1mapWrlD10p3NQTHXG4b9dN4/bU6OVWtQedYCIfTbl6OqfF0s9tHOvCmQzZYE6Bv6RYK6oTnMpdI5/wGRrDGzQnnXqsUmWH9ttKLlRwsL6YRSalvtfnrfElNgWIvj0B6W+aLTBvBcJJPOfexOYy7XAc=
+	t=1742568930; cv=none; b=o80Ycs6v2MX+g7vd9uJfZKNM8tlvYliGTAneDVXzKGiucAJ0DrhRU5JGTDDCEPtdfvX8uXHNpOhZm0UtdT9FZFEyiw8PY8NoHbcewzAKgXUqb6r4YY9xj65+6MySzPztE7wLG6GalYpvM6LMWw3Uz2k2HCFjYtDDjomyOq6vMJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568801; c=relaxed/simple;
-	bh=WsZaMEUQpMdYAbITySr5w6XbtX/sM1W7f9WSRsngGaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXhplnhJEXY2nVq1v9+SLj7vKb0JXqMRC1YJZkLWzpIXo1IUl5W9JUMOsHiK1PNc9To/GmP8713Qw4Vttx//Z1vSI42HZRex+V9vXnxNv9ZL5NSGuo/DUAbQ/bDj5vNiK77D39EFbfi/7Yz1cKV33051IyUe0P1SbDR9o/9WO1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAVu5TtF; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bef9b04adso22057741fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742568798; x=1743173598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WsZaMEUQpMdYAbITySr5w6XbtX/sM1W7f9WSRsngGaM=;
-        b=NAVu5TtFpoUSVtcS4BW8LL6TZfYemNVewvEvKx3LpwdGTecsED9BzGz7FjaLnOkOQK
-         ndVyAENedGdQjPBAmRcFGveLiDbflR8JjrlVDNPaOMUpNWLHmbCwHjadSO7ArWdPJKFB
-         WDjRaCcaXiWHi4cjmHrlW+JgQnFmG5EIWODW9+hpYecz4wa8qhKLhHr0v1rh7db6oN0j
-         1pdkSWbf347NOYBoAQq0IrQ/REzExTw6nq7xSrA4DnQdhb0RuQ/xQOEudBwmlsKhQ/bN
-         i1MfrVCHkeLS4G37afEemj8Ro5cn5lPCS7h5dwvQ/3bi+2eazYabzQFmQbSLw5f3HXVS
-         VmAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742568798; x=1743173598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WsZaMEUQpMdYAbITySr5w6XbtX/sM1W7f9WSRsngGaM=;
-        b=hHI11YUbMQuowtxFjNY7lTYQqWQMK7Vjh9m2ezwiGY5X6O/tihcr3Npklt5X6BDF/S
-         J2gSuH4YjwlDK+GYPcxY+swqNaA2hOW+D4Q/pEWPpYc6AlfnyRhNvEV8kOU/uBEezRH9
-         AoBk7mH635ctPtWkYWe3aJRIk15ZQP7V9vKPjXt4dA6VJ51jvJXhrsVMU4dfhPU3gVIT
-         CW87ImFqn4IpmqBW4lseTRvTbvWzRZYB/3qfkuz/BzGCIvJzGEG4RuCabM7qztGTENo1
-         Ww6eZgEU6jwRLLAbJSOYHpw2hRQLe8Beyff6OlJE76FSDSxB5Kt7sEWrmMcJDtc1jKQR
-         ERMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfeqn1D4qlFMeSWIkyleVkVMDnAIVhT0mzlYBB31mQsMJXz78G2f4zdgLoOkQPUYRhVjoxrdll1+EAKd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+++leukRB1jyf2VW6J1BOT0UAlqJO2hLebg1pUpUsVOGp9J0d
-	PknmRuJlJI3Jy9vqPz4rrFR6QgFBIqDWHZXAFpzALNg/buiPb65rlL7pgZIqja6+TJN9D9WNmPT
-	oaP60nUvZ5QlZbhE0ueesxMJTIfc=
-X-Gm-Gg: ASbGncvSvh7Cg6qnKJbCzUUxknMJygz6B4oQHBX0x/sfU+rOgnTbGW2XF7IJDWFbIzE
-	8OBMX0ro56LS5qr4dDxU0B2gbxWVqET1yp/xypgG3KMTq08V+VVcFYurYP2WIOowkYtt2AgpGhd
-	1PqoxLbubgrsWRrVriIRsnBF6gRxFVtH9+R8P9eGask5J/4hsGChXu
-X-Google-Smtp-Source: AGHT+IEoqAeCVxsaLpAMrnJ7GUtqvrVGP2riMgFX902orqt7evSDVSU8oxeVmyL6yJEZxwaUbM2vlN3sJxoZMnLHoas=
-X-Received: by 2002:a05:651c:50a:b0:30c:2da4:85fb with SMTP id
- 38308e7fff4ca-30d7e22171cmr14921951fa.12.1742568797671; Fri, 21 Mar 2025
- 07:53:17 -0700 (PDT)
+	s=arc-20240116; t=1742568930; c=relaxed/simple;
+	bh=ZcznbrIAimjf3k62jvVeyb7mB0mKsIZKqhT19/qFcrU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WXYQqd7p/TM2g+7Lde+f/eW13SEwdsdMtmH1bUUatfumElUkwkv91FpMobUIqmAjJWPlPxQD3Schg94OI1sQOybjM+4EV7JYf9eSleiLnGsItDmihprZp8aHRB/SCmtmEyDGEOPaWg9ndyipAk4BHUfAtB3QTmwTOQclz1Yec74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fj1I1XTL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26852C4CEE3;
+	Fri, 21 Mar 2025 14:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742568930;
+	bh=ZcznbrIAimjf3k62jvVeyb7mB0mKsIZKqhT19/qFcrU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fj1I1XTLpatdDoMn/FxSugWTyGK7E+FjNTLy4iZKkEMwiKi9c37fmNLq7tfYgKh6R
+	 jpSBCM0etC4El4sFneH3ypiwPBBxk2Zpm+0/6jKv162xZRI+1Xv0NJ/ohFNQxkXrj7
+	 bbJwwYLEM3OCnqatatjFMFp94Wnj3lBfGhdUA3bsMmfuGGesUFMFzUXvDGBiXo1fAV
+	 ExTl2webDHgNPiR6bJ+u6gS7E1K3oj9Ka5ZXdElp1Dag4lViA1smoGsFtXWEVFlzLB
+	 Putl9MXyEzh3pWVpEM2GxW66u1kb13LLjU9+WC2QU7gSLtSRNT7pso8qkPCo286Xji
+	 Z1+cn+kq/Jmnw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tvdmW-000000001IG-2WDN;
+	Fri, 21 Mar 2025 15:55:32 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
+	Steev Klimaszewski <steev@kali.org>,
+	Clayton Craft <clayton@craftyguy.net>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] wifi: ath11k: fix rx completion meta data corruption
+Date: Fri, 21 Mar 2025 15:53:02 +0100
+Message-ID: <20250321145302.4775-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
- <CAJ-ks9=zN0pUAt9ELckna+3GcnDfhjF3jgiM1FHXLji9pWc2wQ@mail.gmail.com> <PN3PR01MB95976F630E0E4004CDC5310DB8DB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-In-Reply-To: <PN3PR01MB95976F630E0E4004CDC5310DB8DB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 21 Mar 2025 10:52:40 -0400
-X-Gm-Features: AQ5f1JqQXgzNuJZ0okD1pSLH_L9kORmcIYy7VMdjprWpK9CpxKbY2jYbrLTSovY
-Message-ID: <CAJ-ks9mcuwSEQ=h1niGO5WkvNdkTwm0JeKtvp1RaioEb8WmuOQ@mail.gmail.com>
-Subject: Re: [PATCH] printf: add tests for generic FourCCs
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Kees Cook <kees@kernel.org>, Petr Mladek <pmladek@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 10:23=E2=80=AFAM Aditya Garg <gargaditya08@live.com=
-> wrote:
->
->
-> Can you give me some docs for running the Kunit tests? The patch is basic=
-ally a port of the original version.
+Add the missing memory barrier to make sure that the REO dest ring
+descriptor is read after the head pointer to avoid using stale data on
+weakly ordered architectures like aarch64.
 
-I use:
+This may fix the ring-buffer corruption worked around by commit
+f9fff67d2d7c ("wifi: ath11k: Fix SKB corruption in REO destination
+ring") by silently discarding data, and may possibly also address user
+reported errors like:
 
-tools/testing/kunit/kunit.py run --arch arm64 --make_options LLVM=3D1 print=
-f
+	ath11k_pci 0006:01:00.0: msdu_done bit in attention is not set
 
-You can probably just use:
+Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
 
-tools/testing/kunit/kunit.py run printf
+Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Cc: stable@vger.kernel.org	# 5.6
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=218005
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
 
-It would also be useful to see raw output:
+As I reported here:
 
-tools/testing/kunit/kunit.py run printf --raw_output
+	https://lore.kernel.org/lkml/Z9G5zEOcTdGKm7Ei@hovoldconsulting.com/
+
+the ath11k and ath12k appear to be missing a number of memory barriers
+that are required on weakly ordered architectures like aarch64 to avoid
+memory corruption issues.
+
+Here's a fix for one more such case which people already seem to be
+hitting.
+
+Note that I've seen one "msdu_done" bit not set warning also with this
+patch so whether it helps with that at all remains to be seen. I'm CCing
+Jens and Steev that see these warnings frequently and that may be able
+to help out with testing.
+
+Johan
+
+
+ drivers/net/wireless/ath/ath11k/dp_rx.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
+index 029ecf51c9ef..0a57b337e4c6 100644
+--- a/drivers/net/wireless/ath/ath11k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+@@ -2646,7 +2646,7 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
+ 	struct ath11k *ar;
+ 	struct hal_reo_dest_ring *desc;
+ 	enum hal_reo_dest_ring_push_reason push_reason;
+-	u32 cookie;
++	u32 cookie, info0, rx_msdu_info0, rx_mpdu_info0;
+ 	int i;
+ 
+ 	for (i = 0; i < MAX_RADIOS; i++)
+@@ -2659,11 +2659,14 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
+ try_again:
+ 	ath11k_hal_srng_access_begin(ab, srng);
+ 
++	/* Make sure descriptor is read after the head pointer. */
++	dma_rmb();
++
+ 	while (likely(desc =
+ 	      (struct hal_reo_dest_ring *)ath11k_hal_srng_dst_get_next_entry(ab,
+ 									     srng))) {
+ 		cookie = FIELD_GET(BUFFER_ADDR_INFO1_SW_COOKIE,
+-				   desc->buf_addr_info.info1);
++				   READ_ONCE(desc->buf_addr_info.info1));
+ 		buf_id = FIELD_GET(DP_RXDMA_BUF_COOKIE_BUF_ID,
+ 				   cookie);
+ 		mac_id = FIELD_GET(DP_RXDMA_BUF_COOKIE_PDEV_ID, cookie);
+@@ -2692,8 +2695,9 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
+ 
+ 		num_buffs_reaped[mac_id]++;
+ 
++		info0 = READ_ONCE(desc->info0);
+ 		push_reason = FIELD_GET(HAL_REO_DEST_RING_INFO0_PUSH_REASON,
+-					desc->info0);
++					info0);
+ 		if (unlikely(push_reason !=
+ 			     HAL_REO_DEST_RING_PUSH_REASON_ROUTING_INSTRUCTION)) {
+ 			dev_kfree_skb_any(msdu);
+@@ -2701,18 +2705,21 @@ int ath11k_dp_process_rx(struct ath11k_base *ab, int ring_id,
+ 			continue;
+ 		}
+ 
+-		rxcb->is_first_msdu = !!(desc->rx_msdu_info.info0 &
++		rx_msdu_info0 = READ_ONCE(desc->rx_msdu_info.info0);
++		rx_mpdu_info0 = READ_ONCE(desc->rx_mpdu_info.info0);
++
++		rxcb->is_first_msdu = !!(rx_msdu_info0 &
+ 					 RX_MSDU_DESC_INFO0_FIRST_MSDU_IN_MPDU);
+-		rxcb->is_last_msdu = !!(desc->rx_msdu_info.info0 &
++		rxcb->is_last_msdu = !!(rx_msdu_info0 &
+ 					RX_MSDU_DESC_INFO0_LAST_MSDU_IN_MPDU);
+-		rxcb->is_continuation = !!(desc->rx_msdu_info.info0 &
++		rxcb->is_continuation = !!(rx_msdu_info0 &
+ 					   RX_MSDU_DESC_INFO0_MSDU_CONTINUATION);
+ 		rxcb->peer_id = FIELD_GET(RX_MPDU_DESC_META_DATA_PEER_ID,
+-					  desc->rx_mpdu_info.meta_data);
++					  READ_ONCE(desc->rx_mpdu_info.meta_data));
+ 		rxcb->seq_no = FIELD_GET(RX_MPDU_DESC_INFO0_SEQ_NUM,
+-					 desc->rx_mpdu_info.info0);
++					 rx_mpdu_info0);
+ 		rxcb->tid = FIELD_GET(HAL_REO_DEST_RING_INFO0_RX_QUEUE_NUM,
+-				      desc->info0);
++				      info0);
+ 
+ 		rxcb->mac_id = mac_id;
+ 		__skb_queue_tail(&msdu_list[mac_id], msdu);
+-- 
+2.48.1
+
 
