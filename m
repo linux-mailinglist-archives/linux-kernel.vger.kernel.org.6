@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-571866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E27EA6C359
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:31:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3217BA6C366
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:36:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0316189BD17
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02B2A3B8CC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD730225A20;
-	Fri, 21 Mar 2025 19:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B3C22FE17;
+	Fri, 21 Mar 2025 19:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4PaQ799"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C8322C35D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="c/PbSQNi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4461D54CF;
+	Fri, 21 Mar 2025 19:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742585475; cv=none; b=UOg4I8KSOQSDng/GNSwP1Nl4TGFJA4B5LBgaKrTouQjF/F6dSp33N0ZyB/afv/xvljF9UXgU29fYobxL049VJbpFu+O/Z7fcTuT2znPi+HUdzRVd+XwzFjXYOfajneCrqW46YHfU7pluV+U40UblwElDLqGljSnIXJ5IUkW827U=
+	t=1742585766; cv=none; b=bYoEroNU1R9hkx1Y/u4M/rjMzF9vI4uvA3SpC85TC/2W1QSDa0WqfD9gIVX4L8w/m2qX775o0afHshUDVFTySS0Go9y7ULVIj7UMaYGEQI3YoIetiFIxvleAPTAXS0OTh8GxOGDiBjeEGFMf5fBOoLzjaxYtE+96Os9Ix6hJIeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742585475; c=relaxed/simple;
-	bh=TU+4P72CTJfVNP7+no4HhfCPdFLjeAD8PbJh0fR4i5c=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UH/f1PhILtIKGhrwcL7MQlE/z3d8MV7kgWXjTMqq9fyY5sGc1jQ8hRsMXhIlI6PjKtTh0ywBN9ZCstxpU6VZS95MhgPcegOgEu2n/es46GhhUZmSRBLKuqLhmff1Gwr6IyHxYILsYWgaJxE+6v2h1eRDbhhSeHxxLlGHmAiWkao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4PaQ799; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742585474; x=1774121474;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=TU+4P72CTJfVNP7+no4HhfCPdFLjeAD8PbJh0fR4i5c=;
-  b=f4PaQ7993+f/XXDTFb8cEZowM+uC+VXVyt1+yO4Z3wL0+11kDYommMeb
-   CRl3jCrPAmkEsZ82bv5CHzvD0ucdGxiqER7LxLfeWtS7K/NVtCjoR+08D
-   JC/yBvdcHYDdLhnICAm1SHjFBRFv0PrUnmvVrAGlaHK3SCfBfZtKEcNnU
-   6QrGmrLylS9VGQ6jK5KgHsgjma+z5QEgzpMt3dWESnXNPW3AePiVdDmUk
-   XC9KbsJ/d5YtnlwZK293l/skq9hdLbETeqkb4OmS1xLXrb/SVn2fe5BFg
-   RRuHylsKkbMk3hmM5P2ppjFXfD58zkJwUeyTWIGc2Yc3wh+g9EKgLBFNS
-   g==;
-X-CSE-ConnectionGUID: OPFhfyxHTiypbedtVDu5sQ==
-X-CSE-MsgGUID: GhxmNAp0QzSFfnjWW5T8DQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43879737"
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="43879737"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 12:31:13 -0700
-X-CSE-ConnectionGUID: h02yA1/HTkWDcX1DY1ghlw==
-X-CSE-MsgGUID: DAJqzZMRTCC4OTdRnbDCAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
-   d="scan'208";a="154383976"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 12:31:11 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tvi5F-00000004blC-0IBO;
-	Fri, 21 Mar 2025 21:31:09 +0200
-Date: Fri, 21 Mar 2025 21:31:08 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] i3c: master: Drop duplicate check before calling
- OF APIs
-Message-ID: <Z92-fNE5hrX7Oy0g@smile.fi.intel.com>
-References: <20250321192527.457324-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1742585766; c=relaxed/simple;
+	bh=C++Y8u3ya02o1vKzmoM0dnDY7A2chUdCqKyyJh4SfA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RtkCq3HF+pKugQTT5vIi/g+ECi8JWS2tckIqJaud+hx8RT20E9sCj48qPPRauRej/tAsNYMFicn+z9s8a8IzytnkSGBt5WFssoO4BFqDCsovdUxHl77GpbYgR7xy/ThscpktrYBASF7yf04+iPpJiAWLvtxgU/spiEtue8HJFWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=c/PbSQNi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9E7672025389;
+	Fri, 21 Mar 2025 12:36:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9E7672025389
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742585763;
+	bh=i3HSKurM5BztT+SIxfmwMikTCwCikJk6+44/qfduWSo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c/PbSQNi6xW7xt4qq/YZKnryb+JE1EPhc6+zDpfT6yk2I5a8iVpVIWvCazf9pjqjI
+	 qTi/0ZJr06K3vQ+l7bHQ90m7I2zIF+LEXr+wHsFQ3kvpMuVPaUjubkaBXnXnxHNbFc
+	 z5liRIDSpGRGa0jRI78+VxZ292ebAiKWTRi2KogM=
+Message-ID: <96f2c859-790a-4282-9eef-9863ffb42ee1@linux.microsoft.com>
+Date: Fri, 21 Mar 2025 12:35:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321192527.457324-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] x86/hyperv: Use hv_hvcall_*() to set up hypercall
+ arguments -- part 2
+To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, arnd@arndb.de
+Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20250313061911.2491-1-mhklinux@outlook.com>
+ <20250313061911.2491-4-mhklinux@outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250313061911.2491-4-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 09:25:26PM +0200, Andy Shevchenko wrote:
-> OF APIs are usually NULL-aware and returns an error in case when
-> device node is not present or supported. We already have a check
-> for the returned value, no need to check for the parameter.
+On 3/12/2025 11:19 PM, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> Update hypercall call sites to use the new hv_hvcall_*() functions
+> to set up hypercall arguments. Since these functions zero the
+> fixed portion of input memory, remove now redundant calls to memset()
+> and explicit zero'ing of input fields.
+> 
+> For hv_mark_gpa_visibility(), use the computed batch_size instead
+> of HV_MAX_MODIFY_GPA_REP_COUNT. Also update the associated gpa_page_list[]
+> field to have zero size, which is more consistent with other array
+> arguments to hypercalls. Due to the interaction with the calling
+> hv_vtom_set_host_visibility(), HV_MAX_MODIFY_GPA_REP_COUNT cannot be
+> completely eliminated without some further restructuring, but that's
+> for another patch set.
+> 
+> Similarly, for the nested flush functions, update the gpa_list[] to
+> have zero size. Again, separate restructuring would be required to
+> completely eliminate the need for HV_MAX_FLUSH_REP_COUNT.
+> 
+> Finally, hyperv_flush_tlb_others_ex() requires special handling
+> because the input consists of two arrays -- one for the hv_vp_set and
+> another for the gva list. The batch_size computed by hv_hvcall_in_array()
+> is adjusted to account for the number of entries in the hv_vp_set.
+> 
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+> 
+> Notes:
+>     Changes in v2:
+>     * In hyperv_flush_tlb_others_ex(), added check of the adjusted
+>       max_gvas to make sure it doesn't go to zero or negative, which would
+>       happen if there is insufficient space to hold the hv_vpset and have
+>       at least one entry in the gva list. Since an hv_vpset currently
+>       represents a maximum of 4096 CPUs, the hv_vpset size does not exceed
+>       512 bytes and there should always be sufficent space. But do the
+>       check just in case something changes. [Nuno Das Neves]
+> 
+>  arch/x86/hyperv/ivm.c       | 18 +++++++++---------
+>  arch/x86/hyperv/mmu.c       | 19 +++++--------------
+>  arch/x86/hyperv/nested.c    | 14 +++++---------
+>  include/hyperv/hvgdk_mini.h |  4 ++--
+>  4 files changed, 21 insertions(+), 34 deletions(-)
+> 
 
-Ignore this, it is partially done.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
