@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-571196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B495A6BA4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:10:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D864A6BA52
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CF13B9303
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A3684A05C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0039C22540A;
-	Fri, 21 Mar 2025 12:09:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70F622577C;
+	Fri, 21 Mar 2025 12:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BHahGHRf"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5062C33F6;
-	Fri, 21 Mar 2025 12:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D26C22576C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742558996; cv=none; b=DtZwPbInIuRfSVnWvvzHwNrKzNCGpMePyGxMi/r1PPLab6K2pjA/evNoEjtMXIhwv0hijpve8MqFmqbCqaKwyy5n8pyxm2WiDU1UxZVGuOuHaa7klraieI4pF2Z5u5zgULU43UQT/yAfreYfd4mj7x4i972yzw4vD6K09QtJ+tc=
+	t=1742559024; cv=none; b=LcrDpKsAdhNWPpPJGe6rn9/qUTbDFCekR7XwTip/jUNGs0dLbULf3qvFLMpAcZxwOUQUlkdzTYQN+muzxHuspE9MJzVx43gHnPNNGraasvjtNGmdF1b3KOg4z9uczuTsz4zHicuG1OGRuxvMQ2ZShGvJFL+MSQGzvwb6TZlIbiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742558996; c=relaxed/simple;
-	bh=iAvRp7hOhZgDHzu1tV5l1/1yvxZpaC4IobbGa6g5Qa0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AoXaKdVrxF8MD4IyO6h96FHONVovKvzcTpGtZOO+9eXl45cn5/AIzE9AJZ4vALqH/5dT4sN9rg27rPcF68oVE+hG5KvwgXktr1RNMA1pdndQlniK2jCXM931EM6qTxYEZ+4oDXL+mJQyJ3OCeDWxwO4YK5SJFEWnHlxhSTKHljo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZK1Py414mz6M4qn;
-	Fri, 21 Mar 2025 20:06:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id F4205140856;
-	Fri, 21 Mar 2025 20:09:51 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Mar
- 2025 13:09:51 +0100
-Date: Fri, 21 Mar 2025 12:09:50 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Li Ming <ming.li@zohomail.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC Patch v1 0/3] Fix using wrong GPF DVSEC location issue
-Message-ID: <20250321120950.000039ba@huawei.com>
-In-Reply-To: <0f537373-7a71-49a5-a4d3-8adb0ef41349@zohomail.com>
-References: <20250319035516.222054-1-ming.li@zohomail.com>
-	<20250321021441.vdmo5txhvb6kya3a@offworld>
-	<20250321035918.yyicfmvmpm7selin@offworld>
-	<0f537373-7a71-49a5-a4d3-8adb0ef41349@zohomail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1742559024; c=relaxed/simple;
+	bh=m77GtzyuRQyH9r1AhRKLOBDFfhXXm3iZOjUs15wpL+s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=bN+dx6mLlQukHTYdM9d7A2xGcUunXv3BrR0aeDpuTiigJd8/5qXOgwhWFXgeHZqy2WTFjP7WJd16CbrY8y+ot+wOORoxsjeoDXD7g1wJXgM4OJGx0JX/RbEXKkmRJH/QQDU2rj1TwOZBNluFyN6F4wmN33wkRo4ij7M6QV0maDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BHahGHRf; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3912d5f6689so1093956f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742559021; x=1743163821; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=niclr8+DoLpZdWNc9oriyXHlvdFbMf2iV3dQAVqT6ps=;
+        b=BHahGHRfxTkFvIMbVFp+5heh3oZCiWPpyaPwsBrpjtRwxMYBA8dmpWUcmvUcOlTPlQ
+         CDf3Pgi1VSJISaGAMJgTAloUukPg86EmDkRz5odgLkx2e6apZDmf5Vefc2nTk977wngA
+         TQ3d/UpMyVlEuFihRUl7AaMKIoOxglwRWEUxmnzIA9WZbX8XuIrXNainTuNbLjw7c834
+         W8A7x1Q9ijbdxrf7PlCdvBQZ6frsJYbFRPGY++Dq7jLAwjooB0Jj2ZNqwOKPn3o0GSXU
+         yr7bTyAuVufDg/H/ojIHUk60ND3VSzwnumavUZa9/AF4vQI7+BJ4kVhR6KI9CaJ+/X0X
+         topA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742559021; x=1743163821;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=niclr8+DoLpZdWNc9oriyXHlvdFbMf2iV3dQAVqT6ps=;
+        b=Ky/8AZrFiRKSqGKT4PcTGXiWv2IvwdPCmWwwRdd6+uw8mTMgpLSBOUBfpt2TxtjJs3
+         78KP1JY0rRNrekAfVNz0HVO1wFpcILj36QJvUVqBfW0GXf9SodEqPSjtMQxTnim3q5a0
+         4IqfIxBNSk/U95fxWditr+T+ar3r7J86jXSpXB5R1u9zGX5mh+I4hmUmBP5tvkOnDsT+
+         liZu3bROZYDasSqwmTjEkKNH1vnvTKfogVrbeKPlY/1T28MQ6NcQ3SRarnLN6ONzvOrw
+         x/Wk3Am7ZwT5i7kiwNFu8uJ921PPvSaZFv9tVGejZ4febx9lUI4IE3BZonqgjt//czdg
+         UzFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/w7SVcDZIvmfBo4V5AeZV/d+OoDTR0YBY7xW8XzoLIxxByEOYykF2fhbQ+klYYtGKXxeaoaUROGxm27w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1D3G0h4e2t1ggo9KOg4yN/4mVTHOGpvURzHC/CvTi3egCp1vE
+	DO+WMjMjw1icLYZKrTp3akV7MQprIKVUCJj7vhvzfPhM3tirRtDLPLJTscwXGMUSvZXnBJBNWel
+	78v1T8pc22i+QxQ==
+X-Google-Smtp-Source: AGHT+IFUnWcxjonRBINox1/nLtB0v8eeiJ7whsk3pcv1B6qRkzdqH7Y3jkCu3QtacO4RnclOGnfKAtSfRW+GlvY=
+X-Received: from wmpz15.prod.google.com ([2002:a05:600c:a0f:b0:43d:55cd:66bb])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:6d88:0:b0:391:29f:4f70 with SMTP id ffacd0b85a97d-3997f8f9259mr2879692f8f.3.1742559020693;
+ Fri, 21 Mar 2025 05:10:20 -0700 (PDT)
+Date: Fri, 21 Mar 2025 12:09:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIABNX3WcC/23MywrCMBCF4Vcps3YkSQ2KK9+jdBGSyQVsR5ISl
+ JJ3N3bt8j9wvh0K5UQF7sMOmWoqidce6jSAjWYNhMn1BiWUFqMSWMniQltkV9A4by6StB6lhP5 4ZfLpfWjT3DumsnH+HHiVv/W/UyUKvDrvtfVKe7o9AnN40tnyAnNr7QtXy9ORpwAAAA==
+X-Change-Id: 20250320-vec-methods-adfa41e55311
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1329; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=m77GtzyuRQyH9r1AhRKLOBDFfhXXm3iZOjUs15wpL+s=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBn3Vcaleg9wtsMTP1gG/5SVuhcKOhy/X/BW2oiO
+ JtO7u5HrTiJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ91XGgAKCRAEWL7uWMY5
+ RhFfEACzabiIIfDN4MB/FllsQTwoeC3CKWvpewtW0rc2FuQh7P2E7A0XNRwXagFTqP98EPBGpIP
+ IvoWAxlEymm3mPBair50ajtBnBw8rQhlupJfOnBc2xXCqhuqhDkiZmfw6PZuscPeZ1p9bw1pfZs
+ eKG/k852uG7wd1S6sj6nGE/ROqgTWb6ESS5SA+ek6pCMzXkirElGBevDS/gSX7w9Gn31ajUAV1j
+ +ipxJwbokxICnKdkJsm4K59YcET3OkUPj7cdxacoP8N4rnyQK7Y0KKXlGU8bmbZhsFNbwYWd+Y+
+ R7ZIBRKmmG0tvFbEf5s6nE5812dtToXiyR5KxULKKLK3QYC2sqSoUti9MjYVEO2jysSlH1XxtWe
+ vb6hVL5QoGrmsFuFjZNl53jRjE9gq9cUdpFuVcM+ZPFh4CY4a7mkkeBVtR1tD8ebJUNiXSpWKtL
+ 95Nryo40h4Ql4Tq9h/RgwfTapKgEnxKoxITBPiQUZ9BR7H3iWt7o5a7hBERjvwCcMIckGENsUY6
+ QSLbb+2ndl0UQ9pscB4298tpOUOdTI9K+jhZbRUsFdHPGxjj1+9mvFrGz7YUy6aA/WzYO4e+alo
+ 0Hbarc9pCq99E8UV703CJUKwr2d10mCuf75i+7RW5wBpY99L6RL9pt3TEVRh8JmswfEexsLUd9N G8S5SJxM3KEcIrQ==
+X-Mailer: b4 0.14.2
+Message-ID: <20250321-vec-methods-v2-0-6d9c8a4634cb@google.com>
+Subject: [PATCH v2 0/7] Additional methods for Vec
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Tamir Duberstein <tamird@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 21 Mar 2025 14:55:42 +0800
-Li Ming <ming.li@zohomail.com> wrote:
+This adds various Vec methods. Some of them are needed by Rust Binder,
+and others are needed in other places. Each commit explains where it is
+needed.
 
-> On 3/21/2025 11:59 AM, Davidlohr Bueso wrote:
-> > On Thu, 20 Mar 2025, Davidlohr Bueso wrote:
-> >  
-> >> On Wed, 19 Mar 2025, Li Ming wrote:
-> >>  
-> >>> But I am not sure if all dports under a same port will have same
-> >>> configuration space layout, if yes, that will not be a problem. If I am
-> >>> wrong, please let me know, thanks.  
-> >>
-> >> Yes, when caching the dvsec was suggested, it was my assumption that the
-> >> config space would be the same.  
-> >
-> > Ultimately I don't know what the expectation is here, but your updates
-> > do allow more flexibility from vendors, I guess(?). It's a bit late
-> > in the cycle, unfortunately, so if these are to go in for v6.15, they
-> > would be considered a fix imo, otherwise perhaps they are wanted for
-> > v6.16 or not at all (patch 3 does look useful regardless)?  
-> 
-> My understanding is that the expectation of the patchset is to avoid using a wrong GPF DVSEC in case of dports under a same port have different config space layout. And I think the change is more closely to the description of CXL spec.
-> 
-> If the case(dports under a same port have different config space layout) would not happen, maybe add a comment in cxl_gpf_port_setup() is another option.
-> 
-> Yes, if patch 1 & 2 are considered to be merged, they are worth a fix tag. And patch 3 is an obvious cleanup change.
+I'm not sure what we concluded on the set_len / dec_len changes, so I
+don't depend on that series for now.
 
-I think they can indeed have different layout (in theory).
-Seems moderately unlikely to occur in real devices, but you never know.
+This series is based on top of Vec::truncate from
+https://lore.kernel.org/rust-for-linux/20250316111644.154602-1-andrewjballance@gmail.com/
 
-So I think a fixes tag would be valid.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Add two more methods that I needed.
+- Introduce some uses of set_len.
+- Add example to retain.
+- Simplify pop.
+- Adjust 11 to 10 in push_within_capacity example.
+- Link to v1: https://lore.kernel.org/r/20250320-vec-methods-v1-0-7dff5cf25fe8@google.com
 
-Jonathan
+---
+Alice Ryhl (7):
+      rust: alloc: add Vec::clear
+      rust: alloc: add Vec::pop
+      rust: alloc: add Vec::push_within_capacity
+      rust: alloc: add Vec::drain_all
+      rust: alloc: add Vec::retain
+      rust: alloc: add Vec::remove
+      rust: alloc: add Vec::insert_within_capacity
 
-> 
-> >
-> > Based on some of the topologies listed in qemu, I did some testing (and
-> > this was also why the same dvsec config layout) and see things working as
-> > expected.  
-> 
-> Thanks for testing.
-> 
-> 
-> Ming
-> 
-> [snip]
-> 
+ rust/kernel/alloc/kvec.rs | 202 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+---
+base-commit: a337a03281efc4553191b432d757d4c04884bf4c
+change-id: 20250320-vec-methods-adfa41e55311
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
