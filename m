@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-570618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32DDEA6B2A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:25:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC86A6B28D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 02:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17458A51E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:25:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B37189EBD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 01:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDAF1BEF77;
-	Fri, 21 Mar 2025 01:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B982F29405;
+	Fri, 21 Mar 2025 01:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Xdx09bTZ"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDD318B46E;
-	Fri, 21 Mar 2025 01:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jLmr8YWD"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8096523BE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 01:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742520348; cv=none; b=i1a/tRtejf3VX7hklJBxdruUqLQ5+J0X+o3hFx9iKBePWV6RV+xuSRbEuNCf9HNZFmpdlbpIksY+u2f4FHIJOF6oJM/4X05SJ1lvsG03GD3SHB2dw7yhitX5dWxKivqreSNcp+4S146THIw0y7YjE7NlT96uAhZcyDpBQsw9i3U=
+	t=1742519604; cv=none; b=MFl61JU6rBuPFouA/ax7rvzIagMiiztnl62hPEy/DS9V4X1Vsvl5QaXmepzALbulLY1sRDBtmfMnkEzLJIgtzhHU/NPjzIk4hz4w+qHXFmwki3HN+fBNDuCxhgdPAJeMrh4lG71OOtH7moUXPLF5KY6hBFEhap4rzDfpFTZjTqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742520348; c=relaxed/simple;
-	bh=6hgxpbkpbDkO08ThuWTkTEfQW6T6S+pBE+Yj1FcHSyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MziRi7MQh4mYc36evbNdc0y8YIpxCM/abc5LloRxi1Qg7myiyHYrX2ynTUW7k+UzWNFgkOE99IkIdvZ8cIdS9n5CNMmJccKCDtPlQcepGHQUnS6sIjL1A+q+Nk8C9TzrTHq/x1z3Jei/j1m7pO1jYvkmFEDvDzLV4fEwMIbUqZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Xdx09bTZ; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=uifaMK3p4YAnBcl9nmuoOP+YgcB1Z+c6e7VzG3GyQBU=;
-	b=Xdx09bTZU0+ogotAFgMkAWY+Q6kdmizf+mBT3DkHwCEm+0ia9CM576pVxDjEx5
-	3gxaDXai82xiJJjMofUPyzIAqDP1A19neDjdAR9sAnWDM6Xt/7w7CorAfZ+QJ7s0
-	TxL+tFDJhyqGj6AKRiuq++v9aXzq40SSk9Wt46FkkdCiU=
-Received: from [192.168.60.52] (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDXNyZPvNxn7kA7Aw--.59013S2;
-	Fri, 21 Mar 2025 09:09:37 +0800 (CST)
-Message-ID: <0abc7fc9-3370-4f54-a230-ecc044928fcc@163.com>
-Date: Fri, 21 Mar 2025 09:09:35 +0800
+	s=arc-20240116; t=1742519604; c=relaxed/simple;
+	bh=i+QcUSTngAIqnWh6wyFn+z/B6VGWkQnDGRG/pCcvuMM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LVBz2I28er87Wx/4+QkeGPcuMm2MXVWqogOwXozyJ79eU29XcBADIh5Y7nhThd2252IlQHMjjOF0lJq27bHo4lnjg4kqTfJDre9OUKmwkUnmyotDvJBhaENtttDRqH4SRhnREshl3FW0D8M8Y2VGdSOLKkiEd6OEFaCFgocZATM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jLmr8YWD; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742519598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KbGMpgFUHUPbIp1VN0J4iVKPUjd5vasZbJUy7LDt1cs=;
+	b=jLmr8YWDNLmYeL1LOdLCsAn76LkpMSCCwveHYn87nMTiPL/GRgWzch+MIoWGFmeDSP32lh
+	9KumBFQY6VeWtX9ODPo9OJnprWYPCSmUs7/2sLj69WGHK0h/5mULfk0dZ+i2wGSXP3t6uI
+	/1qC7jk42GGRGiQiK40smHMY/muUShQ=
+From: Ye Liu <ye.liu@linux.dev>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Ye Liu <liuye@kylinos.cn>
+Subject: [PATCH] mm/page_alloc: Consolidate unlikely handling in page_expected_state
+Date: Fri, 21 Mar 2025 09:13:04 +0800
+Message-Id: <20250321011304.549908-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
- kw@linux.com, robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
- thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250320212853.GA1100504@bhelgaas>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250320212853.GA1100504@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wDXNyZPvNxn7kA7Aw--.59013S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar1rtryxGFW8Gw47uF18uFg_yoW8uF4xpr
-	WUXa45KF48JF1fCFn7Ka10qF1fK397XF97Xan8G3yUZws09r93KFWvy34YkasrXr13ZF4j
-	vF45Xas7X34YvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgAwsUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWwoXo2fctcL2XAAAsD
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Ye Liu <liuye@kylinos.cn>
 
+This patch consolidates the handling of unlikely conditions in the
+page_expected_state function, reducing code duplication and improving
+readability.
 
-On 2025/3/21 05:28, Bjorn Helgaas wrote:
-> On Sat, Mar 15, 2025 at 08:06:52AM +0800, Hans Zhang wrote:
->> On 2025/3/15 04:31, Bjorn Helgaas wrote:
->>> On Fri, Mar 14, 2025 at 06:35:11PM +0530, Manivannan Sadhasivam wrote:
->>>> ...
->>>
->>>> Even though this patch is mostly for an out of tree controller
->>>> driver which is not going to be upstreamed, the patch itself is
->>>> serving some purpose. I really like to avoid the hardcoded offsets
->>>> wherever possible. So I'm in favor of this patch.
->>>>
->>>> However, these newly introduced functions are a duplicated version
->>>> of DWC functions. So we will end up with duplicated functions in
->>>> multiple places. I'd like them to be moved (both this and DWC) to
->>>> drivers/pci/pci.c if possible. The generic function
->>>> *_find_capability() can accept the controller specific readl/ readw
->>>> APIs and the controller specific private data.
->>>
->>> I agree, it would be really nice to share this code.
->>>
->>> It looks a little messy to deal with passing around pointers to
->>> controller read ops, and we'll still end up with a lot of duplicated
->>> code between __pci_find_next_cap() and __cdns_pcie_find_next_cap(),
->>> etc.
->>>
->>> Maybe someday we'll make a generic way to access non-PCI "config"
->>> space like this host controller space and PCIe RCRBs.
->>>
->>> Or if you add interfaces that accept read/write ops, maybe the
->>> existing pci_find_capability() etc could be refactored on top of them
->>> by passing in pci_bus_read_config_word() as the accessor.
->>
->> I have already replied to an email, please help review whether it is
->> appropriate.
-> 
-> URL to the email on lore.kernel.org?
-> 
-> If you mean this:
-> https://lore.kernel.org/r/3cadf8d5-c4d8-4941-ae2e-8b00ceb83a8f@163.com,
-> just post it as a v3 patch with the usual commit log and motivation
-> for the change, and it will automatically get picked up in patchwork
-> so it doesn't get forgotten.
-> 
-> Right now the urgency seems fairly low since (IIUC) it doesn't fix an
-> existing bug in the upstream code.
+Previously, the check_new_page_bad function contained logic to handle
+__PG_HWPOISON flags, which was called from check_new_page. This patch
+moves the handling of __PG_HWPOISON flags into the page_expected_state
+function and removes the check_new_page_bad function. The check_new_page
+function now directly calls bad_page if the page has unexpected flags.
 
-Hi Bjorn,
+This change simplifies the code by reducing the number of functions and
+centralizing the unlikely condition handling in one place.
 
-Thanks your for reply. I will submit v3 patch.
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
+---
+ mm/page_alloc.c | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
 
-Best regards,
-Hans
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2842da893eea..d8d04ac1d709 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -892,6 +892,13 @@ static inline bool page_expected_state(struct page *page,
+ 	if (unlikely(atomic_read(&page->_mapcount) != -1))
+ 		return false;
+ 
++	if (unlikely(PageHWPoison(page))) {
++		/* Don't complain about hwpoisoned pages */
++		if (PageBuddy(page))
++			__ClearPageBuddy(page);
++		return false;
++	}
++
+ 	if (unlikely((unsigned long)page->mapping |
+ 			page_ref_count(page) |
+ #ifdef CONFIG_MEMCG
+@@ -1586,29 +1593,16 @@ static __always_inline void page_del_and_expand(struct zone *zone,
+ 	account_freepages(zone, -nr_pages, migratetype);
+ }
+ 
+-static void check_new_page_bad(struct page *page)
+-{
+-	if (unlikely(PageHWPoison(page))) {
+-		/* Don't complain about hwpoisoned pages */
+-		if (PageBuddy(page))
+-			__ClearPageBuddy(page);
+-		return;
+-	}
+-
+-	bad_page(page,
+-		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_PREP));
+-}
+-
+ /*
+  * This page is about to be returned from the page allocator
+  */
+ static bool check_new_page(struct page *page)
+ {
+-	if (likely(page_expected_state(page,
+-				PAGE_FLAGS_CHECK_AT_PREP|__PG_HWPOISON)))
++	if (likely(page_expected_state(page, PAGE_FLAGS_CHECK_AT_PREP)))
+ 		return false;
+ 
+-	check_new_page_bad(page);
++	bad_page(page,
++		 page_bad_reason(page, PAGE_FLAGS_CHECK_AT_PREP));
+ 	return true;
+ }
+ 
+-- 
+2.25.1
 
 
