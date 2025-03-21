@@ -1,160 +1,113 @@
-Return-Path: <linux-kernel+bounces-571273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D070A6BB1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:51:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBBAA6BB2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD883AD5A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:50:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D4EA7AB68E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA9122A7E5;
-	Fri, 21 Mar 2025 12:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB622A81A;
+	Fri, 21 Mar 2025 12:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bctwvL+C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="SfQ4S5k0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29D722A4EA;
-	Fri, 21 Mar 2025 12:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9325A226D04;
+	Fri, 21 Mar 2025 12:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742561424; cv=none; b=MMvR0hLWnn2Wy/7K/WxCWcPrhcDlGSMVrvUd6CV3vd0A4AEYALOqJ9fmVnHMwMDLptodi/Npv2eOPzslaDcvpVTPW5o5DRjjlzTQpWIskqorblYEg1goC5tO1N0Olm0jIwf1M3cedKEfuOnY292viMKTfh4oLlDTTPK7DJuU/xg=
+	t=1742561469; cv=none; b=crmXpWI7DbFkIMK5iGUAisds312iYRi5VElz9/fQvVnvhtM+yQ4QwInSPaNxVqMJBbhCxGCa5ip6ygzECAnLLeCFnDC7Z8/CY+Ivs+RaGBAY0uNU4nr/QHhXP883dZr0oPD49LLgtDuFvb5Qu4qmAB8RSPloksV+nFhy9XrrhXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742561424; c=relaxed/simple;
-	bh=YCZbCdaujvqbwmz2ipjD0KPfF3CSvRuZVV//bfj0y8g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=QdthDEL/mSUf2bmvDUMTkWFZEt9eFZ5SJDrb/AHFTMnDBHJo68G6KER4KKcHIeYyZtVsHPzBej3L9qZlz0sVllioZg0SeifEYYFiPCdiRp6iRvScKWlbTNSsD7Ku6QJDBOMiKZ5bHnEZZzj7WTmAFjuPT+b0MZdqkUtcjO7XPdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bctwvL+C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATEE5031798;
-	Fri, 21 Mar 2025 12:50:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ceEEWfeNutQwdH4EzkHNTHao9CVuKhuH4AIhLGcvf4Y=; b=bctwvL+CfSn9sw2C
-	xTVlBi9rtyalI/x6ibN2+l18oHBWiuEenoExG0S2OlXJjspP4twOz/ys5JNEZcvp
-	IehnthFiX3ngk+2KiBwBsOp7Grh16XkQo/boaq4ueXaQPu+lyMtXcduDP+/fy31D
-	ethScDbt2B9pp/8YRNTKEkFZn5rUmh88uuq90MtVKj4wIR0U6A7erMtz6xZqUFLB
-	qHpJjdXtmgDbRhZpwxTXXxQRShrsjR8SsCKxCL/vCpALw/XSTADRVzORtn7KUA8A
-	1KZnm+1G/VOvv8L0Ge9AH7TidWM/XZj0wk/7nRVaqFaTgXdhG2WGQ2Ay/fxnoOD+
-	3cvUfA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gt5kj5dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 12:50:19 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52LCoJlc018858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Mar 2025 12:50:19 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 21 Mar 2025 05:50:15 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Fri, 21 Mar 2025 20:49:55 +0800
-Subject: [PATCH 4/4] arm64: dts: qcom: Update IPQ5424 xo_board to use fixed
- factor clock
+	s=arc-20240116; t=1742561469; c=relaxed/simple;
+	bh=frb61xLTauRJ1oYAsBn7KGB1v01AGxe7+8/rQqlvlJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkS+0dxAv9bggULVrH/I+VvxYHauZFYwA2WXfbHpcOwAC0/TD1cJ99n0d8gyjEBxOtT/lQ5n6Xor3Dh9Dk1CkLgqmmokAjXDFAekQ+Kty04fJp3yk/mFsZRMGCBRdEFXCbY/ArxK9dUg9NK7HxnsMCAIskk7a2WFz3qApr0to1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=SfQ4S5k0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25DDAC4CEE3;
+	Fri, 21 Mar 2025 12:51:08 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="SfQ4S5k0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1742561466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1dUf+NuD25WdVcY/g4ihIatL9n9p+d1MPap8zY1l6+Y=;
+	b=SfQ4S5k0pTvKrxFXVspBerla/SbUp0Opfi1U//bwYh9m4JHnvyn19VfONZNdUhstjg+pCk
+	zg1c+e0ozExXfzaWwUGKFmjtnLhvIiLoFhAPuffwWmgYwiRkQbcVkRsehvpqwa9xn16W7I
+	ZSnCZbZpUksmk6EnYC1HPvZ+Gfcqo5Y=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4f1bf067 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 21 Mar 2025 12:51:05 +0000 (UTC)
+Date: Fri, 21 Mar 2025 13:51:02 +0100
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: Phil Sutter <phil@nwl.cc>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 RESEND net-next 2/2] selftests: wireguard: update to
+ using nft for qemu test
+Message-ID: <Z91gtk_5nA76iYGw@zx2c4.com>
+References: <20250106081043.2073169-1-liuhangbin@gmail.com>
+ <20250106081043.2073169-3-liuhangbin@gmail.com>
+ <Z9rtrVk-15Ts_BNp@zx2c4.com>
+ <Z91CGRP9QLdZONiZ@fedora>
+ <Z91QshzKRlmPdpv7@orbyte.nwl.cc>
+ <Z91fXURX3BQFDaq9@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250321-qcom_ipq5424_cmnpll-v1-4-3ea8e5262da4@quicinc.com>
-References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
-In-Reply-To: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, Luo Jie <quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742561400; l=1394;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=YCZbCdaujvqbwmz2ipjD0KPfF3CSvRuZVV//bfj0y8g=;
- b=UwIbbG7Nk2zDnxlLqTk4xw8UARv6jeU5yZNf51kiaIkHjsErAWhQfq/nQQ9B6ePiM09U2gZRb
- x0GrQrY8fBSDUsZW/hV19xkqceZJVDoCSX4Twp2C2aX3zCep3nJpoFj
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EigUQZgyKrffFWT6lVbkQSg-hidKrNQ-
-X-Proofpoint-ORIG-GUID: EigUQZgyKrffFWT6lVbkQSg-hidKrNQ-
-X-Authority-Analysis: v=2.4 cv=PsuTbxM3 c=1 sm=1 tr=0 ts=67dd608b cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=CPdYy-Otk887xBsD2wUA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 malwarescore=0 suspectscore=0 impostorscore=0
- mlxlogscore=907 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210094
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z91fXURX3BQFDaq9@fedora>
 
-xo_board is fixed to 24 MHZ, which is routed from WiFi output clock
-48 MHZ (also being the reference clock of CMN PLL) divided 2 by
-analog block routing channel.
+On Fri, Mar 21, 2025 at 12:45:17PM +0000, Hangbin Liu wrote:
+> On Fri, Mar 21, 2025 at 12:42:42PM +0100, Phil Sutter wrote:
+> > Hi Hangbin,
+> > 
+> > On Fri, Mar 21, 2025 at 10:40:25AM +0000, Hangbin Liu wrote:
+> > > Hi Jason, Phil,
+> > > On Wed, Mar 19, 2025 at 05:15:41PM +0100, Jason A. Donenfeld wrote:
+> > > > On Mon, Jan 06, 2025 at 08:10:43AM +0000, Hangbin Liu wrote:
+> > > > > +	echo "file /bin/nft $(NFTABLES_PATH)/src/nft 755 0 0" >> $@
+> > > > > +	echo "file /lib/libmnl.so.0 $(TOOLCHAIN_PATH)/lib/libmnl.so.0 755 0 0" >> $@
+> > > > > +	echo "file /lib/libnftnl.so.11 $(TOOLCHAIN_PATH)/lib/libnftnl.so.11 755 0 0" >> $@
+> > > > 
+> > > > Can't these be statically linked into the nft binary?
+> > > 
+> > > If I omit these, I will got error like
+> > > 
+> > > mnl_attr_put: symbol not found
+> > > 
+> > > Even though I set `--enable-static` in nft build.
+> > > 
+> > > Do you know what's the reason?
+> > 
+> > I was able to have nft linked statically against built libmnl and
+> > libnftnl by passing '--disable-shared --enable-static' to configure
+> > calls of all three build systems. With --enable-shared in library
+> > configure calls, nftables build preferred to link against the DSOs and I
+> > did not find a way to change this.
+> 
+> The patch is using
+> "./configure --prefix=/ $(CROSS_COMPILE_FLAG) --enable-static \
+> --disable-shared --disable-debug --disable-man-doc --with-mini-gmp --without-cli"
+> to build nft.
+> 
+> I don't know why it's not linked static.
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 7 ++++++-
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 3 ++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index b4d1aa00c944..e503b6677a3e 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -224,8 +224,13 @@ &ref_48mhz_clk {
- 	clock-mult = <1>;
- };
- 
-+/*
-+ * The frequency of xo_board is fixed to 24 MHZ, which is routed
-+ * from WiFi output clock 48 MHZ divided by 2.
-+ */
- &xo_board {
--	clock-frequency = <24000000>;
-+	clock-div = <2>;
-+	clock-mult = <1>;
- };
- 
- &xo_clk {
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 844788990f43..6974339c126f 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -30,7 +30,8 @@ sleep_clk: sleep-clk {
- 		};
- 
- 		xo_board: xo-board-clk {
--			compatible = "fixed-clock";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&ref_48mhz_clk>;
- 			#clock-cells = <0>;
- 		};
- 
-
--- 
-2.34.1
-
+All three DSOs...
 
