@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-570905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE0FCA6B614
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:31:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D204A6B616
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8473B4223
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EBE93B7A9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9E71EDA12;
-	Fri, 21 Mar 2025 08:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EB71EFF96;
+	Fri, 21 Mar 2025 08:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iTca1BuB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OdgZlRtq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5jimGfM"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14EA1E5B7A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B3B200B0;
+	Fri, 21 Mar 2025 08:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742545899; cv=none; b=mp2zJ2N8K4SMDFS5CckQZaGnkJlNWoczUKJNSbrKZPet6LlOKlr6RoPB02fzzDKtDH/4bfK8waDP7WZxAja/AqMJD8xWRU3V2CgHSMNKbOQiSAN5SjBXwVK+qPiWBk9YZDFoG0Akp+/AatBHxDcXmLnMHLLWdpAQEiS76eaQD8k=
+	t=1742546060; cv=none; b=bmlBk2D7CDWlgo07//Vrgej1BiP2hdKMOyKIjRUjMUjj/ExHYyEYI69U9qgdg7nha9+E++rGaVc+HngrCQ/lmP7Nh4RUibZfTl6Fuj12DScQ6Y2eJRsZcounVFMumHK+/BZH1rshy23MiqEikwwKV+pe0TiPN+ToeIUBtLSZHIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742545899; c=relaxed/simple;
-	bh=w67sV3RD+2GRSUy/DQRUHA5lQkEDkf+DskhxkbJH2TU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pnONpku+4RsMosgCNXUhs4Ez/+NdHnDn6pO6TRSpi8X/pfTIeaZSYTeM8JiWxt3vRVcyMNUxElX7I4zB/2hbTFpqgDM8W9UVR+NDreJO+AuR1Y9RS460FJDeIwabpw2jFvxHG0zBy9yAapi1uugJDhJR3j1qJQ7cVfVzLgarKak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iTca1BuB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OdgZlRtq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742545890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=u1AkDLAGIDODrtA3jsifi5T+wp1kqKH2Rd6dxGPn+j0=;
-	b=iTca1BuBF13GOmUd7mdJuHkulC16jBoqhpHDfulGVuiKyLkljPXh66uQowEKZp2vfPCA0t
-	hZ17mg24s4WJvVplN1GKO4GzzIlyN6Rb/RmTFOzjzaG7fItnyA7uapkMw5bf3Y2wIqsYLT
-	2xhbvIEFDoB70eUrreskRooqwEAzAjFimspmKDpN4QmM2ECccjkamBMQUashnsTFzn/Af3
-	u/HN+EfAi+9gRzgXqYGzpYF1Ibm5X8+97Ddx0rc6zZnnBRjyyc6tgeFdQXuTO3WGcVf97e
-	TQBI0B6NZ11pPK6sMQnwhoGDbh1AZs84tMcUOeV856FvKxwyNZLhkruGUO7gZA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742545890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=u1AkDLAGIDODrtA3jsifi5T+wp1kqKH2Rd6dxGPn+j0=;
-	b=OdgZlRtqcWH25bg8Qt1fp9CvT3DLAYe0YR8ZJLNiiOwuDPvgaEm119hp2cwn1gCpm2ELp7
-	A1iO6NG/Hk+FmdCQ==
-Date: Fri, 21 Mar 2025 09:31:17 +0100
-Subject: [PATCH] tools/include: make uapi/linux/types.h usable from
- assembly
+	s=arc-20240116; t=1742546060; c=relaxed/simple;
+	bh=XH25TSxJeIbYkdJcizSaqCRrErrT0Tg+slFQlHq2qkc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i7sLkLuUygNQuS17MaBhBTdMw6sjRWQPGuw1asbmqfcCSyIr4/jmy8/gIANWJfcf0NIxPjomLmCHBzYJNGh0kT1wy5UGuxviiQzN5vuyvmKGNQk3/i1FsUmGmI1MlfDnpAg+PnV5d58f3cfj+ZfnNFWEWTmeJyuzddPxNFRDdmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S5jimGfM; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913cf69784so1359171f8f.1;
+        Fri, 21 Mar 2025 01:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742546057; x=1743150857; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fcYNSB0t47gW922W6gqbVSX+TYjl+iLneTgJeaGGy1A=;
+        b=S5jimGfMR8mxx663Degb4PCP0KjWASQgA1Hz4KaXYkfJc9nJ+E9kgVd7JQzCWw/75x
+         QwnQr1GlOWvVGusy3+T3oym3R324T9Y7KEMTqO3v3YbG75aW9EPthXaOvqb1FsODl/36
+         O3DJ+XqFGlSuIG+7KIkPa+n4ZOZmR5gOkpwi4b/G3NDjoLy4i3L6FwPKODphcEl66wDD
+         PksU+mqt++jJ5lOhwflEh9XUYPSoCJ8vjLe174EEjCeNY8aiVluVwC6AAocurAezqkPc
+         f+WhFnK/elV9nIUhN7ZgOzcOYpEgn3pgGZCE/XQ+ktcPFnf17oJW0H5bDMU6CnvS+qT1
+         z36g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742546057; x=1743150857;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fcYNSB0t47gW922W6gqbVSX+TYjl+iLneTgJeaGGy1A=;
+        b=Zt1kxbzEhDS8bpl7evpBVAhXkzHYAV8mdgxHtoP7FGEsOl+wT6g8cjPJayZGlVd61g
+         /gqpnQR2H9EAeCIxoifymWhLlJkdEMvhvvIchp0zPPjDVHBGKbxsNlmTrJRE402U8RP5
+         H+di72UrUWfnQhTDQZ27hkSw5BqEfyVbMcBumorC2Epc7kBbWR6l7X3461LNW8+WTaf1
+         KTG3pCiXDKlr3d9a5hjsX52WBmXAp8uRXeYXx2h3tt6ql8y6jrJ9rMu7HfipR0xRT0Nk
+         Ql0ac/SqgmGFfbsaf+qoCHVfl8Qx4TQUxXRZlF6gbBmlsx6//9pQanW8sJdksNqTuLr1
+         j9Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvDYBXsJ1Dxsyu2fKxYYMSs8WVmJYGlQIU+/LyClGA6/h9NVzGytHkTHJdV68o/LYjcBguRsZlpGXMWZEk@vger.kernel.org, AJvYcCWTt9pLZ05Qed2FlhbDJumUtCvx7zTC7TF4DDT1D35bOV6xVeQc7ZZRiJHYpkcuDI1s4Z2PSKalHKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNbC8FDq8/M7WZPIWV1t7ytC0cBgYVdYelP/pMF7IpfhFiLgjl
+	PM86RoLlpEFt9mJ0gjPxNCyCfxRkXxc1/RzWPlAvQEagQ+wz+YY0
+X-Gm-Gg: ASbGncuBdS7pES7AQWEeseCPqozZg/fDqOY1cp/ppsGu4dTPQsfdFKB1MieCB8tj6aH
+	TnRz6gbjCvf21LQiqIV85MI2PsQfaAF3mD8p+GNv3b2hVETy4hsbjboGtEDM7NFT0WSgBNAlY46
+	FtesjI3dzc7li2vdSr5DS7pVYZxBP7QP9+F2kFaGZI4SaYElQ2ah0Z21xiHF4mUYeeiTsJtTH4x
+	C4Os4q2uvtysEHXRL8gp9/lqDK5AEDjrXT0Y7HjJnqhUDLXY+yRTibkrEoYbk5ysEovPoaFscO8
+	uEpMruvSZKXh80P2k6rVX2OGc3YkakYn0fW0Bpjifc+aC0dAZ/9dtEtkWgRcM4m1ouljMt0jfd0
+	yp9FcL9WTqUerwZdCD1w=
+X-Google-Smtp-Source: AGHT+IGMJkYoe1SC12xNZS8l5CpphWOtLUR1z7zxIbolsOA5/ZmEiT3GECxY5vBCziOdoX1rcTNNdQ==
+X-Received: by 2002:a5d:588b:0:b0:399:737f:4de6 with SMTP id ffacd0b85a97d-3997f8f8c35mr2035085f8f.3.1742546057258;
+        Fri, 21 Mar 2025 01:34:17 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f32fcdsm72414305e9.7.2025.03.21.01.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 01:34:16 -0700 (PDT)
+Message-ID: <4bc1e6d47a33ffa49a3e4f8668b9d804bfcad10c.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7380: disable offload before using SPI bus
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>,  linux-iio@vger.kernel.org
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-kernel@vger.kernel.org
+Date: Fri, 21 Mar 2025 08:34:32 +0000
+In-Reply-To: <20250320-iio-adc-ad7380-fix-spi-offload-buffer-predisable-v1-1-6912ac8c0ae0@baylibre.com>
+References: 
+	<20250320-iio-adc-ad7380-fix-spi-offload-buffer-predisable-v1-1-6912ac8c0ae0@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIANQj3WcC/x3MTQqAIBBA4avErBP8yZCuEi3CppqNilNRSHdPW
- n6L9wowZkKGoSmQ8SKmGCpU24Df57ChoKUatNRWGq3EOScSPgYmPjD4RxjXd25R2livoGYp40r
- 3vxyn9/0A4b+Es2IAAAA=
-X-Change-ID: 20250321-uapi-consistency-38648d1235c1
-To: Thomas Gleixner <tglx@linutronix.de>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742545889; l=1614;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=w67sV3RD+2GRSUy/DQRUHA5lQkEDkf+DskhxkbJH2TU=;
- b=NeZHrOruCOfCpqctrEtwL0GI653LhSDc56BWNxWDQZlikSUNW9eyZ5ZDxiMufD4srR/YqRaHe
- wF99uUBQd1YBncHmvtFQ6CNRCa5BiYeYCD85HlqpW3qwQsSRCKnRzPE
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The "real" linux/types.h UAPI header gracefully degrades to a NOOP when
-included from assembly code.
+On Thu, 2025-03-20 at 11:21 -0500, David Lechner wrote:
+> Move disabling of the SPI offload before attempting to use the SPI bus
+> to write a register in ad7380_offload_buffer_predisable().
+>=20
+> This caused a crash in the spi_engine_irq() interrupt handler due to
+> being in an invalid state.
+>=20
+> Fixes: bbeaec81a03e ("iio: ad7380: add support for SPI offload")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
-Mirror this behaviour in the tools/ variant.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Test for __ASSEMBLER__ over __ASSEMBLY__ as the former is provided by the
-toolchain automatically.
-
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/lkml/af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk/
-Fixes: c9fbaa879508 ("selftests: vDSO: parse_vdso: Use UAPI headers instead of libc headers")
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
-Intended to be merged through the tip tree to fix the arm64 selftest build
-failure there.
----
- tools/include/uapi/linux/types.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/include/uapi/linux/types.h b/tools/include/uapi/linux/types.h
-index 91fa51a9c31de1496db9a31c90fa95760adc664d..85aa327245c6874e673f9ed0466698487215c655 100644
---- a/tools/include/uapi/linux/types.h
-+++ b/tools/include/uapi/linux/types.h
-@@ -4,6 +4,8 @@
- 
- #include <asm-generic/int-ll64.h>
- 
-+#ifndef __ASSEMBLER__
-+
- /* copied from linux:include/uapi/linux/types.h */
- #define __bitwise
- typedef __u16 __bitwise __le16;
-@@ -20,4 +22,5 @@ typedef __u32 __bitwise __wsum;
- #define __aligned_be64 __be64 __attribute__((aligned(8)))
- #define __aligned_le64 __le64 __attribute__((aligned(8)))
- 
-+#endif /* __ASSEMBLER__ */
- #endif /* _UAPI_LINUX_TYPES_H */
-
----
-base-commit: 652262975db421767ada3f05b926854bbb357759
-change-id: 20250321-uapi-consistency-38648d1235c1
-
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> =C2=A0drivers/iio/adc/ad7380.c | 7 +++----
+> =C2=A01 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+> index
+> 4fcb49fdf56639784098f0147a9faef8dcb6b0f6..a2b41980c942e4cd1575bfe4f3846e2=
+97ad5d01d
+> 100644
+> --- a/drivers/iio/adc/ad7380.c
+> +++ b/drivers/iio/adc/ad7380.c
+> @@ -1211,6 +1211,9 @@ static int ad7380_offload_buffer_predisable(struct =
+iio_dev
+> *indio_dev)
+> =C2=A0	struct ad7380_state *st =3D iio_priv(indio_dev);
+> =C2=A0	int ret;
+> =C2=A0
+> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+> +	spi_unoptimize_message(&st->offload_msg);
+> +
+> =C2=A0	if (st->seq) {
+> =C2=A0		ret =3D regmap_update_bits(st->regmap,
+> =C2=A0					 AD7380_REG_ADDR_CONFIG1,
+> @@ -1222,10 +1225,6 @@ static int ad7380_offload_buffer_predisable(struct=
+ iio_dev
+> *indio_dev)
+> =C2=A0		st->seq =3D false;
+> =C2=A0	}
+> =C2=A0
+> -	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+> -
+> -	spi_unoptimize_message(&st->offload_msg);
+> -
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+>=20
+> ---
+> base-commit: 9f36acefb2621d980734a5bb7d74e0e24e0af166
+> change-id: 20250320-iio-adc-ad7380-fix-spi-offload-buffer-predisable-a801=
+dcfb9c00
+>=20
+> Best regards,
 
 
