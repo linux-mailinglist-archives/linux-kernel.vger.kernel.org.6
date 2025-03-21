@@ -1,126 +1,192 @@
-Return-Path: <linux-kernel+bounces-571216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA92FA6BA85
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:19:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26363A6BA7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:17:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877384A0DCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE133BEB39
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81806225761;
-	Fri, 21 Mar 2025 12:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F1F22A7FD;
+	Fri, 21 Mar 2025 12:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fs8B3OgP"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fo7LJsD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBB1227B9E;
-	Fri, 21 Mar 2025 12:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DB91EA7D3;
+	Fri, 21 Mar 2025 12:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742559307; cv=none; b=VKmnwhZI9BmftMadWHzb0l8l/QqYt++fwMQIg4IgeXUIO71MhQefo6zm1+tIy8K5IGXYhKuTjkfSYutUFGBbCEEhkiVirhDRM4RxZn+R0LWWdX28mX+e6HZxwoBSbWjCivRz77GC2Sg19V4lIOSuD8CbC8KO4Ch1L2otACJkiWE=
+	t=1742559286; cv=none; b=bYwhQOI8F7JZ4+wz0lNtACFCBvAGpB+3Avwp8RiCiIIgkNSuvD5wCkcMRXPxrv0aygF2TZZ64SEAWW1oGo7lqHsrWfK40hHMbnwuVemsmAHhlO0/dkWILLZ07siKf9cYezyfolszQPM6cyC5o+/HQLj4pCFu+toefqPI5VNvVSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742559307; c=relaxed/simple;
-	bh=e1THXeYInf9OC/0StrfPWjyovL28/PraOHgkB4d5imo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I87OSyzqkbUwhRAKZmiUkSLc9PlajPXHGynb7X8so8ThAlMuypw1xkb0/yuhBvzee8rClFqdHBT/LhJr/FKmWBjEMg3/JhBnWakoqSMctibm/y0MoRO1Vqj3XwCPvdJqfEhGT2DAxWiSDpbZ+Oek9YeTHt4+8SfRbOWheBQPfpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fs8B3OgP; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3912baafc58so1559713f8f.1;
-        Fri, 21 Mar 2025 05:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742559304; x=1743164104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXzU2WWyujDA3yR+efjM2p5MZNyfZHM31uPBCFVA36E=;
-        b=Fs8B3OgPn73KtCx6mShExIdrTNEN9binW7EeVsmBc9SdEMdc2TREWZgJV7w3fnh7Pi
-         bAib40lm20Ado5d4Lrb+zNng8CIeNVxG2GVlhmZLUKmVp7owD+HuEGfr8ctNsr+njoPh
-         oJs2R10o6ezbz2BRuXhS9c1mZMFv9c6AfHrJ0XYxRkIlFimsXPoiSYt8eRGmBXxI/ShK
-         QnWdYpWIyKsWLnTKZgxAVNaaPNI3MHTYbJy36Qo14zKJip48F3GTy/fU+jrJkvaOHe2g
-         ErrWojo6nanQnhh57wC6FeMNnd7zQQcWKaM/APXxb8Wy7H2gtSv8Ge8BJMRHW1tVd+At
-         GD6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742559304; x=1743164104;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pXzU2WWyujDA3yR+efjM2p5MZNyfZHM31uPBCFVA36E=;
-        b=WXLGy6M6q+5I/lTO9Fr0mw8JfgD0vF6KD3BsIvRFWx5X0YtJiUbBE77qw1nSVfsQ7c
-         cw3yDUrU3GGoku9/Rmyv/EvztytfeMVFX5RW+NCNyfsE7Fe6hoHH8wOQBL/x1LOHJY+u
-         pFrMgCJ+8IAIUM0u2G3JYr6lvc70UWgP3aHFAGixZ74fUYunegOT3PBUozgAdtnEvz2S
-         0/A4DdsxaV32or3ZujfWkzKZUXU+RfuUQi9TsUTOlHxRXZD/WtUZJX6t53Jk18VIpiep
-         QegTo7qfrT/CbN1AYyJ0wchXxy0tTymwqlzwpitUqKnMzYIOZIsxsPSm1O/2Qs4+ibf4
-         KRhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVL91mWzEdJpEfp2wQ3VSlcdPQCCnW6SVtJ9/+JVrA8nu3JUL/gfjd+Wzc41fIfSQ3H7r0Oft3DPCB8OHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC7lkoRCkauExSb+no8kW6G3rWqFkJEXxSh4OqDI2+kgq+nTg+
-	U6d0i4ysmicVkDHw9ysjyodZSHo8hWXGlDRjKitgJuKaAjOjruxO
-X-Gm-Gg: ASbGncsOevoMjSSEVdX5t0D/50L7tVRyNZUYoxJyIDcqNz7pT9Yt/ZW1tAjEclyqZsP
-	mYdy0bQ8SYC3x2gZMLyq+fBStLG0tM9VtI/XWp6KHq4UfVXHcWWpNOYB9pebTXDIRcFOUAmKpK1
-	zjJHT5JatSZgteFA0UQiU1ARvCb4N3v+dUIKRK8R9ut25AkYivzTT+IGndjY6OcsN2S8RL28Sby
-	XnpnsfC96YOR4VQWFUmIP3B3H2qka5otG+EgGFjDp6UcRwefUozgHHwP7VarT5IVyRkDy/X/DaI
-	JoE205WqWHnv/iDyYeGCuLy1BAQp05NjqmPhST8kbIGW2JYH6i4/8XZB
-X-Google-Smtp-Source: AGHT+IGpzvLxwbDVM+nwZxJxWqsz5xaoc4OkxCbdyWeU0adQyGAfRVNCvqF6KSCQQo/SxgJLGiYoMA==
-X-Received: by 2002:a05:6000:418a:b0:391:3fa7:bf77 with SMTP id ffacd0b85a97d-3997f9148eemr2422104f8f.31.1742559304211;
-        Fri, 21 Mar 2025 05:15:04 -0700 (PDT)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:9cfd:1254:7b85:f3f7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9957c3sm2286186f8f.18.2025.03.21.05.15.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 05:15:03 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	yyyynoom@gmail.com,
-	horms@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: dl2k: fix potential null deref in receive_packet()
-Date: Fri, 21 Mar 2025 12:13:52 +0000
-Message-Id: <20250321121352.29750-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1742559286; c=relaxed/simple;
+	bh=m1VPIuo5vZSZGVGPIyjDJGkECuuIKNQjt+mSRkRxpoQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uhH38QP0uUZsJY4NGI0zsmwfATShH4R9hFcmT3OUEsIExgUp/p711JIk0CWuwTLTK2BjhCfVG0WgI5xRJporVuS8CtuQWJHLLF4ljA7gYJb4fTb772n+tlz+703u/TG0TXKki2jjGZ3IXEditSnnzB1VOfrxbdArv1w7VpariIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fo7LJsD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C4653C4CEE3;
+	Fri, 21 Mar 2025 12:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742559285;
+	bh=m1VPIuo5vZSZGVGPIyjDJGkECuuIKNQjt+mSRkRxpoQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Fo7LJsD65aFXCdaMWiR9wJYJcNAQqRSEOTuFc5M7mDsESsGaj8KzuOIWrPLWZmrEd
+	 8qqO1NMzwYxIh/ilmv78vLmFL6KHZtMTblNq2XvaGicKcnq7pB7U8i3q5i3iB2JunR
+	 jMjq2QiKx4sboOlL2HZSCtFkthXCVoBBVjG0AM5HdFMInZHz+0bNk7F/+bT3SzJUFL
+	 tYoUqlTtsmzKYpqZ+IYHlqjASn5kznabs6RVUoQBb5+UVCN3z8ND8tkOmnr5qlhQ9c
+	 y2L6X25Rj9SxcVJBadXlS/v1SeilCqmN+ivienXZ6U4fafCi8ByUnRT5n7Blb0lKQu
+	 6yRL2coZCMZ6Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5CBC35FFF;
+	Fri, 21 Mar 2025 12:14:45 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v6 0/6] Enable IPQ5018 PCI support
+Date: Fri, 21 Mar 2025 16:14:38 +0400
+Message-Id: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC5Y3WcC/22OwQ6CMBBEf8X0bEl3oVI8AaI3E6NH46FCkUalt
+ SjREP5d4Gbi8U123mxHGuW0ashy1hGnWt1oUw+wmM9IXsn6oqguBibIkDMfgWr74AwEtblWFIo
+ gkOeSKSw5GSrWqVK/J93xNHClm6dxn8newpiS7BDu9hBtUyGEv0HuiyQJMxaEa/BXwDCNsgwx/
+ jnzanm3roDIs84Unnk9b8ZcvdzcybjS8sn8/8WWU0alVJhLCWUAIv6p933/BTWaCY4EAQAA
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nitheesh Sekar <quic_nsekar@quicinc.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
+ 20250317100029.881286-2-quic_varada@quicinc.com, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742559282; l=4765;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=m1VPIuo5vZSZGVGPIyjDJGkECuuIKNQjt+mSRkRxpoQ=;
+ b=tFK4Yh9hIxkOVHYsz+sbGqZw75VR3chKQwuSFrMLNjiMt+SM8beXcxTOxA7Gi5lkZliFIIvJ6
+ POKuhvr00yTAwodqbTjgnrtpDAnCpsnvwyPO66X67JzNXalJUjWsu/a
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-If the pkt_len is less than the copy_thresh the netdev_alloc_skb_ip_align()
-is called to allocate an skbuff, on failure it can return NULL. Since
-there is no NULL check a NULL deref can occur when setting
-skb->protocol.
+This patch series adds the relevant phy and controller
+DT configurations for enabling PCI gen2 support
+on IPQ5018. IPQ5018 has two phys and two controllers, 
+one dual-lane and one single-lane.
 
-Fix this by introducing a NULL check to handle allocation failure.
+Last patch series (v3) submitted dates back to August 30, 2024.
+As I've worked to add IPQ5018 platform support in OpenWrt, I'm
+continuing the efforts to add Linux kernel support.
 
-Fixes: 89d71a66c40d ("net: Use netdev_alloc_skb_ip_align()")
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- drivers/net/ethernet/dlink/dl2k.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Changes in v6:
+- Fixed issues reported by 'make dt_bindings_check' as per Rob's bot
+- Removed Krzysztof's Ack-tag on  
+- Link to v5: https://lore.kernel.org/r/20250321-ipq5018-pcie-v5-0-aae2caa1f418@outlook.com
 
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index d0ea92607870..22e9432adea0 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -968,6 +968,11 @@ receive_packet (struct net_device *dev)
- 							   np->rx_buf_sz,
- 							   DMA_FROM_DEVICE);
- 			}
-+
-+			if (unlikely(!skb)) {
-+				np->rx_ring[entry].fraginfo = 0;
-+				break;
-+			}
- 			skb->protocol = eth_type_trans (skb, dev);
- #if 0
- 			/* Checksum done by hw, but csum value unavailable. */
+Changes in v5:
+- Re-ordered reg and reg-names in dt-bindings and dts to align with
+  other IPQ SoCs
+- Corrected nr of interrupts in dt-bindings: phy: qcom: Add IPQ5018 SoC
+- Corrected ranges property of pcie controller nodes
+- Removed newlines between cells properties in pcie phy nodes
+- Modified dt bindings to add descriptions and separate conditions for
+  ipq5018 and ipq5332 as they have different nr of clocks and resets
+  As such, also removed Krzysztof's RB tag for validation
+- Ran dtbs_check and fixed:
+  interrupt-map property in pcie nodes:
+  /soc@0/pcie@80000000:interrupt-map: Cell 13 is not a phandle(0)
+  /soc@0/pcie@a0000000:interrupt-map: Cell 13 is not a phandle(0)
+- Added missing gpio header file to ipq5018-rdp432-c2.dts
+- Added MHI register requirement to bindings and to PCIe nodes as per:
+  Depends-on: <20250317100029.881286-2-quic_varada@quicinc.com>
+- Link to v4: https://lore.kernel.org/all/DS7PR19MB8883F2538AA7D047E13C102B9DD22@DS7PR19MB8883.namprd19.prod.outlook.com/
+
+Changes in v4:
+- removed dependency as the following have been applied:
+	dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
+	phy: qcom: Introduce PCIe UNIPHY 28LP driver
+	dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller
+  Link: https://lore.kernel.org/all/20250313080600.1719505-1-quic_varada@quicinc.com/
+- added Mani's RB tag to: PCI: qcom: Add support for IPQ5018
+- Removed power-domains property requirement in dt-bindings for IPQ5018
+  and removed Krzysztof's RB tag from:
+  dt-bindings: PCI: qcom: Add IPQ5018 SoC
+- fixed author chain and retained Sricharan Ramabadhran in SoB tags and
+  kept Nitheesh Sekar as the original author
+- Removed comments as per Konrad's comment in:
+  arm64: dts: qcom: ipq5018: Add PCIe related nodes
+- Link to v3 submitted by Sricharan Ramabadhran:
+  Link: https://lore.kernel.org/all/20240830081132.4016860-1-quic_srichara@quicinc.com/
+- Link to v3, incorrectly versioned:
+  Link: https://lore.kernel.org/all/DS7PR19MB8883BC190797BECAA78EC50F9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com/
+
+Changes in v3 (incorrectly versioned):
+- Depends on
+  Link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
+- Added 8 MSI SPI and 1 global interrupts (Thanks Mani for confirming)
+- Added hw revision (internal/synopsys) and nr of lanes in patch 4
+  commit msg
+- Sorted reg addresses and moved PCIe nodes accordingly
+- Moved to GIC based interrupts
+- Added rootport node in controller nodes
+- Tested on Linksys devices (MX5500/SPNMX56)
+- Link to v2: https://lore.kernel.org/all/20240827045757.1101194-1-quic_srichara com/
+
+Changes in v3:
+ - Added Reviewed-by tag for patch#1.
+ - Fixed dev_err_probe usage in patch#3.
+ - Added pinctrl/wak pins for pcie1 in patch#6.
+
+Changes in v2:
+ - Fixed all review comments from Krzysztof, Robert Marko,
+   Dmitry Baryshkov, Manivannan Sadhasivam, Konrad Dybcio.
+ - Updated the respective patches for their changes.
+ - Link to v1: https://lore.kernel.org/lkml/32389b66-48f3-8ee8-e2f1-1613feed3cc7@gmail.com/T/
+
+---
+Nitheesh Sekar (6):
+      dt-bindings: phy: qcom: uniphy-pcie: Add ipq5018 compatible
+      phy: qualcomm: qcom-uniphy-pcie 28LP add support for IPQ5018
+      dt-bindings: PCI: qcom: Add IPQ5018 SoC
+      PCI: qcom: Add support for IPQ5018
+      arm64: dts: qcom: ipq5018: Add PCIe related nodes
+      arm64: dts: qcom: ipq5018: Enable PCIe
+
+ .../devicetree/bindings/pci/qcom,pcie.yaml         |  50 +++++
+ .../bindings/phy/qcom,ipq5332-uniphy-pcie-phy.yaml |  49 ++++-
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  40 ++++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 234 ++++++++++++++++++++-
+ drivers/pci/controller/dwc/pcie-qcom.c             |   1 +
+ drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c   |  45 ++++
+ 6 files changed, 409 insertions(+), 10 deletions(-)
+---
+base-commit: 5744a64fddfc33629f3bcc9a06a646f7443077a7
+change-id: 20250321-ipq5018-pcie-1d44abf0e2f5
+
+Best regards,
 -- 
-2.39.5
+George Moussalem <george.moussalem@outlook.com>
+
 
 
