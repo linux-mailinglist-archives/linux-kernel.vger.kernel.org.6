@@ -1,211 +1,223 @@
-Return-Path: <linux-kernel+bounces-571095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4552A6B90D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:50:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85642A6B8CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 11:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41B73B6A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CB751892004
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695381F3B8D;
-	Fri, 21 Mar 2025 10:50:12 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EE41EA7D3;
-	Fri, 21 Mar 2025 10:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742554211; cv=none; b=BQZXm42/jFNzIRcr14LDU4/suy4LXj6bMxhJQasOGTh1N882Vv2AlvkRoVTzEEpujRuWzOb5uES93MfAfQb7WRv3A0RSNkMnE7WQZYGXHa4YW4TuY6FrTsODgN8Pgm5E/fRE0xxkkotPkE41aLqp27gxmiwOe4ywnPVjjLeUdc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742554211; c=relaxed/simple;
-	bh=qoDXzTaTrBe0hY9iTwEYkA57TTzzUEN2PdNsGqvsUV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CSZchc7Jc5DCWmEgjVccdfUK62FIpqhTWRgzWAlMvXwjOp+6MsVrTSfnaDExIrzjU3VGTbqdsoKDCBDOAISeHaCBfDGGpsTDbVA8TRZ3tinFZvk90YriU++MeroM97pMcL9VQK+dJuSAbJPlURuDUuHj2dLISScVEs12OFYYWOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZJzMg6ykhz9sSf;
-	Fri, 21 Mar 2025 11:34:23 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id P3GmTi5jJn-m; Fri, 21 Mar 2025 11:34:23 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJzMg5yTxz9sSZ;
-	Fri, 21 Mar 2025 11:34:23 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B08BC8B79C;
-	Fri, 21 Mar 2025 11:34:23 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id m9V4WbKxrQHq; Fri, 21 Mar 2025 11:34:23 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 747608B763;
-	Fri, 21 Mar 2025 11:34:22 +0100 (CET)
-Message-ID: <7cd87317-4f2a-45af-bd07-6e715406ff55@csgroup.eu>
-Date: Fri, 21 Mar 2025 11:34:22 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F242212FB3;
+	Fri, 21 Mar 2025 10:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Dw3oCsXp"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D383D1F1516;
+	Fri, 21 Mar 2025 10:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742553285; cv=fail; b=BQC1KdVHTXqIzwijvihsgRFeomnxTD29bFDjEQWt8qytSGm+zPRYFlRle92jFE3UVEcuEicQd9wKIMCBsnvOXpYofx/cNLPXnU0koFTrLQpJt6MWRiT1SCGSE1SI7Z1DNNFv2FYxl20RIAGoSx42N+adFQivqNB9mrr9AYBM19I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742553285; c=relaxed/simple;
+	bh=1J/Lv6Xi7wNDUStUOHmiF6cVVDK9OaUeJgt9TvrC+aU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=B0v3v4gJ2Vrdr5uKHM6B3Eao6MyRJFqoE6kQxeCFb5u2HXfUXoJOXkD88lydFaYeoB7Otlk62wcWYW2Z1Vsk13hYQmKyRdz6NvsEevsXUcvJhZxL4lYwd8u8vrXDeKbIIzRupK+zyCB8hcM03aapVnAJEU6G/PhsAIcVwRNG+4A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Dw3oCsXp; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BK+w0JLXss9np1A7DZvKfcWVlk+XBKkjOjjDK/WqUqyaVbnmZ6mAeZqhmzNcvBQ6bkXZYK8EA/sn759U6CZ+b205oerjpP3CwfiDoTdtAMAMsCRAoc2MNvaKmsSqcPK4BEkXAbKwnoNBm5uqCqM8J/Qqez9Zv867m1sBLwg+1xZdGj8rexReSGDHbDXuMxO3gbVqsVO3rX3qCehdVSipeGA3pyI7lw9n7kTP7JO+VyqsmzdzNshN5ytxNwN+aaLl/AeIQUX9AvkCBrkQFj+mCUVLOp/1DXiLeoeicFlpdZXja4c49MWIEDsP9NqrGd5zor9rVwN0uy3EiX7TJ2TS5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3FmwGz2tPoQmv5MPOEXimwZqMIhYNZrfT2aJfx2Kh1g=;
+ b=gPc29sisywnhrQrAHd9QbioI2xHIMwNjyl5eHK/0K18dHNyolkZO1mjrjwCwkHR/MLfSgD28heHbUd2OheCIuLG0t8RIoyfu/G4ozRVZg1/E/pBAIp1q2mqU+gjyaw4v9jjIZZctIl/veTcYqyChz8cBF6ClrvbhdY1h8zg4Vz43Xx+5c2A+oGhSDgAfEUhFSfk4P4Ht9c5N/xrec//EhZJcdkzm0KWYttuX+7KEjE/lmdeLjrWoOXFkiFbZwihZ8ex/Ttl9azE9mCEfEPc+4BBCLYfPS335gsm7XSQWabT5yomAgEfd4+mDhEc9zvFQqQR9ZGXQ73tE5qKkTgTCGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3FmwGz2tPoQmv5MPOEXimwZqMIhYNZrfT2aJfx2Kh1g=;
+ b=Dw3oCsXpcBKGbVSOSkw4XZplhZxuHy31DRw8nJhSi+7G5W8YJHNTNeaU8qQ5r4uk2LiB0CdmJirjhZ0IUF9YUFBKeNlO2p2653lfNSQiNj1DqWWCfETeVJ2804msCPkwnCU5hz/5+5jBZYkhplgA9GZ52T+DeWFYN8x7YIIlzqw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by DM6PR12MB4074.namprd12.prod.outlook.com (2603:10b6:5:218::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Fri, 21 Mar
+ 2025 10:34:41 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%7]) with mapi id 15.20.8534.036; Fri, 21 Mar 2025
+ 10:34:41 +0000
+Date: Fri, 21 Mar 2025 11:34:35 +0100
+From: Robert Richter <rrichter@amd.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, ming.li@zohomail.com,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Subject: Re: [PATCH 0/4 v3] cxl/core: Enable Region creation on x86 with Low
+ Mem Hole
+Message-ID: <Z91Au5en7r6D7IsW@rric.localdomain>
+References: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314113708.759808-1-fabio.m.de.francesco@linux.intel.com>
+X-ClientProxiedBy: FR4P281CA0151.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ba::17) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] tools/perf/powerpc/util: Add support to handle
- compatible mode PVR for perf json events
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, irogers@google.com, akanksha@linux.ibm.com,
- maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com,
- acme@kernel.org, hbathini@linux.ibm.com, adrian.hunter@intel.com,
- jolsa@kernel.org
-References: <20241010145107.51211-1-atrajeev@linux.vnet.ibm.com>
- <20241010145107.51211-2-atrajeev@linux.vnet.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241010145107.51211-2-atrajeev@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM6PR12MB4074:EE_
+X-MS-Office365-Filtering-Correlation-Id: e501428a-7764-420a-b04c-08dd6863fd35
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?E8Z1CHbO1jRyZiKtHKoxiIDygXrX/slQgVqtMgKwNdXpghmC9qvgaSkV0m4O?=
+ =?us-ascii?Q?dGeunbKs6JIMkDthDbFjSXOL5wIK6UKC6nnCKKYX7HM0Y5Q2Lw+L4A75txVw?=
+ =?us-ascii?Q?/pPSu06OARbCm1LRXPMOMYXbHY/srAiAq6a6bhJfDIyblj+053WTHh9tl6uk?=
+ =?us-ascii?Q?+JnOXntD/QCp3cPIarj9b5CEBFfxKgTWbSG5ZuelluKZjrYhtXXis1xAz2W+?=
+ =?us-ascii?Q?B6pLNriF+nFh1GeCwxxfJUOupcsHV/9esqiLNpShqe0Kxou9tMO4fHIBxuQI?=
+ =?us-ascii?Q?ewBJNzVkWTrP6qkXF7JMBFT03ua1EEUKny7mNLQrpowYbi+qCx73mkYP3nuq?=
+ =?us-ascii?Q?wbg08vxZl50wmXbb7EFMEV60qgsGV5Ns113GMX4rP29AWb7vJWtuApytyirt?=
+ =?us-ascii?Q?CdiUpwDBx8+ghFqkrofnNq3+mJTQ5tVv78xCgL8PG3//p1sTqlTw6c6lgDv+?=
+ =?us-ascii?Q?hW4w7QaffjZ3r9pD2nxC878hjAftUAiaIlZmHTAuTLZGvguci7za5QfWUJB6?=
+ =?us-ascii?Q?F/EQcT3tTpFl/B7GRXV+OsiJtMvQn8FhLL5FDroj2ixx2sby4aCKLBk8X9ym?=
+ =?us-ascii?Q?NaUrooYuz99mRkwP4GuGA1N/+6nuVaVHr3ccE+KGvhNoQ4q7Gwz0lcnyELak?=
+ =?us-ascii?Q?i0TYQyHTyvJsThHkq/By0humgCikkpJts5fxPfCQ6nqZewfsDX38TZ6bPRRv?=
+ =?us-ascii?Q?ErV7IiNNPdlZ8BV1IPrflcKNKjva0LKXHQCNZjS1il1bnpRXY5waHt7UZ/i0?=
+ =?us-ascii?Q?aeiqM42mMLzh9tyH0Ra5fZ01U0hfXgIlrtiVc6aFDkJYzWmr7T7FNUNrsNoz?=
+ =?us-ascii?Q?EieEBGVxPZAFoH0kRz+Ys162XZCl1vrNC06ovj+fIjOZxRdN5KI+W0smBBae?=
+ =?us-ascii?Q?MDtxIw2D1AwvBp73oRtsGR/dN2TEr9NQNwqvQA285cVC0XAvFFue103+QZYS?=
+ =?us-ascii?Q?e9RTEvKQpgrQrZI3UHcI+pxEJn2XFL/fuwIQddjECpsqJ1GDUW8nvju8yrDx?=
+ =?us-ascii?Q?UxZg/PlffWMX3YZGSp1gnZ92tEmec2IRVubZTbyFkk9SRwVCNx+tDXfeqc0S?=
+ =?us-ascii?Q?L2yofuxXL7NYgSCDAkyMMSpCZKip3A6qeIRkpMaT/4Re6GuH8J/ykjaZCEe4?=
+ =?us-ascii?Q?b9hSGBdw4bWUs6xadZARLZkIYTe5SLiZX0Nv78E7tQwa4aWXTHGLW1vRsjvm?=
+ =?us-ascii?Q?IZfLZmlduE+lODt9zCg6V8MqKMdvNZlv1uklLtBS//lXaTqX3MwSITbrxMWQ?=
+ =?us-ascii?Q?wSMfr4Ftm331LTQ/VcbjlrPTctZPNqaDy/kZs2pp1SAGQFq3PizlrQDQkRMN?=
+ =?us-ascii?Q?mtEuxl1mXr23e1qboI0F+9udksXuFtgV/kM+GWrcoDuWMa6CeY/Zmm3sekBq?=
+ =?us-ascii?Q?lzRj7oPbNDP+TK8ageBuf+3S0fau?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xFLUDevboZsPCkDEchn343Wig+oqLFlozaIVBcwv8Vuxqfx3ufbo1C5X7eXG?=
+ =?us-ascii?Q?hWjIXtPv4Bkx+yzYyKYiXvj3t3KxYkFekLXlil9YZNWDkC3AH4J07EdE7a3u?=
+ =?us-ascii?Q?2JBqQKbtsRzzCqGYpBDchoAGExbzbxGSUK91xTBmdpB9hQk1OWjQdqDYN7sF?=
+ =?us-ascii?Q?++n9R/KIC/6mgtl1X8N1NIJ2pJFzn0Dj3JSTSgVHy4hJr5wev2ZxbpeOQsZ7?=
+ =?us-ascii?Q?Sg4/qDG317V/iGvdGY2zcGl6r38/sasCA0AjidxQ0pgq01OBwEMzy/XLyb6D?=
+ =?us-ascii?Q?3Q/itbHxU7awM0T6/K8907MtnMbk57922Z0x0CeYzHgtRCSnte9qZ/AynwaN?=
+ =?us-ascii?Q?J/NNMZWByzswSuA1QhNiqQ7dwlJjebDv7x0IrxFaemPR0FOsTnt+NfXbIdN7?=
+ =?us-ascii?Q?VQY3i+JOIfpjbLLihRC8+MrfKA76ajfdOp5QZcyv4ZusRPE1V5zx12/c6b21?=
+ =?us-ascii?Q?RuoiUM9F9EoBenYRs/0YDqC10Q3xWii0TDi7BfYaMctkJvArCYNIgt3J6dh1?=
+ =?us-ascii?Q?7uI9rHNsMLSLUZyIAXjufq+z71wtC4K9+FltApgN7yq3lNpltss4l62aC3zU?=
+ =?us-ascii?Q?jwrjgN8Jr//ZUZbUqJFxI3FOQUk23594Ad4SHrxCcE+85Zi/0AoG3yvR7pTK?=
+ =?us-ascii?Q?mr/yKpMph7Z9bZZgXsvqfuRBBJRwzZv/PsQiYlc5TlzI9pM9h063obsj7yF3?=
+ =?us-ascii?Q?63ft5ah4snesu3tmHPWfMgRAANn22s2rhIT8xPnVOTTz+2vgnvyyyhp6AEpc?=
+ =?us-ascii?Q?6mIfOQ78yIjoZ68+8JrweZ9RGtcdOhTPdF8hMLMO54bngk+NKJ7M3FBiHOWV?=
+ =?us-ascii?Q?lM13FCgMp8eLOzpW5BFlt1xjnKvul21wShbTBX4rvgZtlUCrqkvObTY2q5oi?=
+ =?us-ascii?Q?4MoUfEatvx0xYBfq0kike/98a36+5TKugi6nK5b60wWjI0HCG9mmU2bbNBOs?=
+ =?us-ascii?Q?kgm5ilx0Pscme7sdKk9cqT5b/SkmzaTu6nGYOJ5HRN0TSN6SuWcrbeLVGKT/?=
+ =?us-ascii?Q?qCYctJBksJ7f+wxtOzbRHyoCRFHEIxmTpQ7Fz90NGH1CWzKltozYa7Qu5zG/?=
+ =?us-ascii?Q?tt7gw9gbMY+cvx/oGr2OLZrZoACckD9KVOB0P9CqULu7T8WBdEGtj/JKvtuC?=
+ =?us-ascii?Q?KmMRV4lkkOhNGjJD3mK1F84fdKJFBYHKPw2Gv1nE6Au/fRoyUGptP45CL8LI?=
+ =?us-ascii?Q?+YwcbERKpyANXg+CSIGJTMUJjFTo8UFj73kGuQn8sQiMUJZ+OqpWe/6o8ddJ?=
+ =?us-ascii?Q?dT+w9mjDQw/LBwe+XMvH/CkPleaObUt0ZLia+wH8OPKainuVVLMnYSCoIS9F?=
+ =?us-ascii?Q?ez3AAAUgqr7fVQhnVDs43wfbNXiNvnv3s2Gc5PglpncRTHou9t6ML0/RHiMG?=
+ =?us-ascii?Q?YFOJ9+olsZ2Mk+o1helodaSnXNh4uvtsU9dvrqUf1IQr2U3lQnKcXSbHsDth?=
+ =?us-ascii?Q?B05sYa0ZoiCOn17AZiBOumTdX4UtvsgprL6ll74tnxTw3mIihCAz4NLDEVOk?=
+ =?us-ascii?Q?UBmPj/ORqgGpt0/3E+GnZyCVZDtTbkkUEpVlBtAyZ66t3u/qrhVIY/Q7XcFF?=
+ =?us-ascii?Q?7EhAllgNHNkE22tXEQVxsqIySlYDhsTg8uj2NqJ8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e501428a-7764-420a-b04c-08dd6863fd35
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 10:34:41.6870
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IQY/sAvRnS0gDolsLXL0MXsXcMEgUJfjp+VvcyTNkwfJcdaCR5dZihwyZcWARU6GjjyZT+w1pZKvfv7LSKjIMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4074
 
-Hi,
+Fabio,
 
-Le 10/10/2024 à 16:51, Athira Rajeev a écrit :
-> perf list picks the events supported for specific platform
-> from pmu-events/arch/powerpc/<platform>. Example power10 events
-> are in pmu-events/arch/powerpc/power10, power9 events are part
-> of pmu-events/arch/powerpc/power9. The decision of which
-> platform to pick is determined based on PVR value in powerpc.
-> The PVR value is matched from pmu-events/arch/powerpc/mapfile.csv
+On 14.03.25 12:36:29, Fabio M. De Francesco wrote:
+> The CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
+> Physical Address (HPA) windows that are associated with each CXL Host
+> Bridge. Each window represents a contiguous HPA that may be interleaved
+> with one or more targets (CXL v3.1 - 9.18.1.3).
 > 
-> Example:
+> The Low Memory Hole (LMH) of x86 is a range of addresses of physical low
+> memory to which systems cannot send transactions. On those systems, BIOS
+> publishes CFMWS which communicate the active System Physical Address (SPA)
+> ranges that map to a subset of the Host Physical Address (HPA) ranges. The
+> SPA range trims out the hole, and capacity in the endpoint is lost with no
+> SPA to map to CXL HPA in that hole.
 > 
-> Format:
-> 	PVR,Version,JSON/file/pathname,Type
+> In the early stages of CXL Regions construction and attach on platforms
+> with Low Memory Holes, the driver fails and returns an error because it
+> expects that the CXL Endpoint Decoder range is a subset of the Root
+> Decoder's (SPA >= HPA). On x86 with LMH's, it happens that SPA < HPA.
 > 
-> 0x004[bcd][[:xdigit:]]{4},1,power8,core
-> 0x0066[[:xdigit:]]{4},1,power8,core
-> 0x004e[[:xdigit:]]{4},1,power9,core
-> 0x0080[[:xdigit:]]{4},1,power10,core
-> 0x0082[[:xdigit:]]{4},1,power10,core
+> Therefore, detect x86 Low Memory Holes, match CXL Root and Endpoint
+> Decoders or already made CXL Regions and Decoders to allow the
+> construction of new CXL Regions and the attachment of Endpoint Decoders,
+> even if SPA < HPA. If needed because of LMH's, adjust the Endpoint Decoder
+> range end to match Root Decoder's.
 > 
-> The code gets the PVR from system using get_cpuid_str function
-> in arch/powerpc/util/headers.c ( from SPRN_PVR ) and compares
-> with value from mapfile.csv
-> In case of compat mode, say when partition is booted in a power9
-> mode when the system is a power10, this picks incorrectly. Because
-> PVR will point to power10 where as it should pick events from power9
-> folder. To support generic events, add new folder
-> pmu-events/arch/powerpc/compat to contain the ISA architected events
-> which is supported in compat mode. Also return 0x00ffffff as pvr
-> when booted in compat mode. Based on this pvr value, json will
-> pick events from pmu-events/arch/powerpc/compat
+> - Patch 1/4 changes the calling conventions of three match_*_by_range()
+>   helpers in preparation of 3/4.
+> - Patch 2/4 Introduces helpers to detect LMH's and also one to adjust
+>   the HPA range end for CXL Regions construction.
+> - Patch 3/4 enables CXL Regions construction and Endpoint Decoders
+>   attachment by matching Root Decoders or Regions with Endpoint
+>   Decoders, adjusting Endpoint Decoders HPA range end, and relaxing
+>   constraints while Endpoints decoders' attachment.
+> - Patch 4/4 simulates a LMH for the CXL tests on patched CXL driver.
 > 
-> Suggested-by: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-
-I see this patch was merged into mainline allthough it had CI failures 
-and still has.
-
-Could you please fix it ?
-
-arch/powerpc/util/header.c: In function 'is_compat_mode':
-Error: arch/powerpc/util/header.c:20:14: error: cast to pointer from 
-integer of different size [-Werror=int-to-pointer-cast]
-    20 |  if (!strcmp((char *)platform, (char *)base_platform))
-       |              ^
-Error: arch/powerpc/util/header.c:20:32: error: cast to pointer from 
-integer of different size [-Werror=int-to-pointer-cast]
-    20 |  if (!strcmp((char *)platform, (char *)base_platform))
-       |                                ^
-cc1: all warnings being treated as errors
-make[6]: *** [/linux/tools/build/Makefile.build:86: 
-/output/arch/powerpc/util/header.o] Error 1
-
-
-The following fix but is maybe not the right one as in reality 
-getauxval() seems to return a long not a u64.
-
-diff --git a/tools/perf/arch/powerpc/util/header.c 
-b/tools/perf/arch/powerpc/util/header.c
-index c7df534dbf8f..1b045d410f31 100644
---- a/tools/perf/arch/powerpc/util/header.c
-+++ b/tools/perf/arch/powerpc/util/header.c
-@@ -17,7 +17,7 @@ static bool is_compat_mode(void)
-  	u64 base_platform = getauxval(AT_BASE_PLATFORM);
-  	u64 platform = getauxval(AT_PLATFORM);
-
--	if (!strcmp((char *)platform, (char *)base_platform))
-+	if (!strcmp((char *)(long)platform, (char *)(long)base_platform))
-  		return false;
-
-  	return true;
-
-
-Thanks
-Christophe
-
-> ---
-> changelog:
-> V1 -> V2:
-> Corrected commit message and subject line
+> Many thanks to Alison, Dan, and Ira for their help and for their reviews
+> of my RFC on Intel's internal ML.
 > 
->   tools/perf/arch/powerpc/util/header.c | 32 ++++++++++++++++++++++++++-
->   1 file changed, 31 insertions(+), 1 deletion(-)
+> Commenting on v1, Alison wrote a couple of observations on what users
+> will see. I suggest anyone interested to see how this series affect
+> users to take a look at her observations.[0] Thank you!
 > 
-> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
-> index 6b00efd53638..adc82c479443 100644
-> --- a/tools/perf/arch/powerpc/util/header.c
-> +++ b/tools/perf/arch/powerpc/util/header.c
-> @@ -10,6 +10,18 @@
->   #include "utils_header.h"
->   #include "metricgroup.h"
->   #include <api/fs/fs.h>
-> +#include <sys/auxv.h>
-> +
-> +static bool is_compat_mode(void)
-> +{
-> +	u64 base_platform = getauxval(AT_BASE_PLATFORM);
-> +	u64 platform = getauxval(AT_PLATFORM);
-> +
-> +	if (!strcmp((char *)platform, (char *)base_platform))
-> +		return false;
-> +
-> +	return true;
-> +}
->   
->   int
->   get_cpuid(char *buffer, size_t sz)
-> @@ -33,8 +45,26 @@ char *
->   get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
->   {
->   	char *bufp;
-> +	unsigned long pvr;
-> +
-> +	/*
-> +	 * IBM Power System supports compatible mode. That is
-> +	 * Nth generation platform can support previous generation
-> +	 * OS in a mode called compatibile mode. For ex. LPAR can be
-> +	 * booted in a Power9 mode when the system is a Power10.
-> +	 *
-> +	 * In the compatible mode, care must be taken when generating
-> +	 * PVR value. When read, PVR will be of the AT_BASE_PLATFORM
-> +	 * To support generic events, return 0x00ffffff as pvr when
-> +	 * booted in compat mode. Based on this pvr value, json will
-> +	 * pick events from pmu-events/arch/powerpc/compat
-> +	 */
-> +	if (!is_compat_mode())
-> +		pvr = mfspr(SPRN_PVR);
-> +	else
-> +		pvr = 0x00ffffff;
->   
-> -	if (asprintf(&bufp, "0x%.8lx", mfspr(SPRN_PVR)) < 0)
-> +	if (asprintf(&bufp, "0x%.8lx", pvr) < 0)
->   		bufp = NULL;
->   
->   	return bufp;
+> Changes for v3:
+> 
+>   Re-base the series on cxl/next.
+> 
+>   1/4 - 2/4:
+> 	Constify local variables.
+>   3/4:
+> 	Call arch_match_region() from region_res_match_cxl_range().
+>   4/4:
+> 	arch_match_region() - Check that region end is under start + 4G;
+> 	arch_match_spa() - Check that SPA range start is cfmws_range_start.
+
+I have sent comments for version 1 and suggested a simpler approach
+for this to implement. My comments haven't been addressed yet, but we
+need better isolation to reduce interference with other platforms and
+archs. Please take a look again.
+
+Many thanks,
+
+-Robert
 
 
