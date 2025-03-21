@@ -1,173 +1,194 @@
-Return-Path: <linux-kernel+bounces-571877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1AECA6C37B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:44:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC94A6C385
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08309177D58
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50DC189915D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EA122FDE8;
-	Fri, 21 Mar 2025 19:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CE11EB9E5;
+	Fri, 21 Mar 2025 19:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aprp1uGp"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U29euwzB"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E5522E3E1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F30518E76B;
+	Fri, 21 Mar 2025 19:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742586242; cv=none; b=f/HmtcCUeZFcil+0Vi501ART1a82gPflU/JuzJoh2wHCeDNnG0KKOoyo27HeoGAczCiFO48EWrg8c67+nUBJiIGnJ+IDdF5sC6gQxnqTXBEOS4JvDKMvyDy/ixtTzWDaP2hQ8AE5LIvQpXpCInmNirgrDBNprA/tDM8ekNpYS0I=
+	t=1742586498; cv=none; b=ihvqs4dnua+nyk/DeLabmx5NEBdbY835y9/AxW4ALRK8H8+3RZt5JZPnESsC6i/uXFpBIdGbiyNtOModeIlv/j7f+EjVdl70j0of1r+9g4BXSdNsdcw0pyiSPvRWRIJkxYfp16kw2zltv0QigaRb+YpmACP+j5wNZ5OhdeUjzNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742586242; c=relaxed/simple;
-	bh=KX74UepkMpw5bz1iVQ6k42eEFwgzte8CZclZOBGzCgk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jOp5lUkMEnZtqrvuvJ8nUWQTTUnTzwJZYbVMxkSX/yiwt4Kwch6NVWvbqIsRMQF5YtiL3kH0/oMpLLkkQtOw7MX0vFyfpGHYjf/KeNVqlQBCOqmwiqW5qVryooadOIAQ4mGsXiK+bG0jqflpYW2W2LugCbfZi2BhKX3zATp5V3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aprp1uGp; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff58318acaso6459098a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:43:59 -0700 (PDT)
+	s=arc-20240116; t=1742586498; c=relaxed/simple;
+	bh=Ly0rkqyd4u96pt3sfW6/+4RipbpAyl94DbrB3bUCuwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UE0A6odr/AdnkjE4LfG9a/ifLK98YD604rtJlWifFHmIhplqBNrghQLf1xJo3sHr8hZZBML7AAXD+lQKl3pvM614S5Hn04YweDjv7FrYCG5NXh+PF5AFMxwc5f3KWHZ9TVCuJA71xrKkAgfKGYx6da2+ikyksN1XzLfswxTNFVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U29euwzB; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so2413578e87.1;
+        Fri, 21 Mar 2025 12:48:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742586239; x=1743191039; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1P+LJHYJ4i1KwKCPQagp0c3nRK0DwbrZQ6UBlearO8Y=;
-        b=aprp1uGpl4vSH38yvRfv1K5HX8zM8xoXpvLK38p9wiYo/5HnXOMYFRT5XkiSMmfHDp
-         Nzq39QU/MA6PTPpy0m0+gtY0II8ZskrOeoFY4SFwk8V8jMYi+EpLTRwdtsdynHU21P5i
-         xjxJoogHj01wyuwSfAXVreBIZ9kFfkfbB0QVQ8721qE+M+W/jQrkDrdfzb8pQVDkoisf
-         vTdQ7E/PvXjSDs9lBoMSb403VQqmzE11PreoQGITk21I6svUpHKTx/0lv/NpguDcuOkg
-         HW4bM5AeI3/gUb2zmpoamOZYyRvvdF6sml7sJNGZHmP6YddRt2rOEq6f1qyi+RIUodJz
-         IdWw==
+        d=gmail.com; s=20230601; t=1742586492; x=1743191292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ly0rkqyd4u96pt3sfW6/+4RipbpAyl94DbrB3bUCuwk=;
+        b=U29euwzBz72Mhc/YUYoO/rcpAdPVguIZTjBqlw6igKzkUOEh9XD9jwg90idfbVQANn
+         QYAfhBc515PCIfx3UAPLGnh7upsb5ifJYPxHxoFuHazCkcheZxi2Ks0fQCntcyyw5RJe
+         2ZbLLEdsuPrLSoJ0fbD9t6tDjIkdVPTO41mWsy70dlu94q3OccJ5PA9eO7ntLnkIkQ7i
+         WFuovzjli2TGpnj8OGaCgt95FosWdT90ZXAT6pePLDFRgXug3NoTpe3X6m2pZpSL60G3
+         Q/C9ret57HLCXOC9WTlpCMaC1wh29LuYAlEHr3d/UVNHtqldf0UIa6GSnGX+9o5SHjd5
+         M7eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742586239; x=1743191039;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1P+LJHYJ4i1KwKCPQagp0c3nRK0DwbrZQ6UBlearO8Y=;
-        b=WYjswV0w3aHWn+TGQH6rJpq1uwEdwQnTx7jp0d3uuPjLhtFNqP1jDoSKBrVfQ0YYgY
-         6MlHVWGV3rxy/TKQkYO0pu1QZ1cl0oOiVSfN1hoNPdNGq5AH2vo3er0QkZDg5s1XIKru
-         gvfAKUBwAicLHAGbUiEHD6D6QwvME1wVklMpaJIxXQOtPvE4nGLSLEpBzvakOiRF+ux7
-         +G5HzWPk3+XWAAAP7q9wrWYlvoo4z8CKn9iL7KxeJ+2dejam5+AHemLVu8uoiKoNV+Dx
-         fZpg2tsBomAeUO7bdYhPSnFDU7hm0+MF7Ay9fgMvmGWQ/GD39JSisb1X5KkvXVu+Gd+n
-         lBnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIJtc+MozBNHk9lKYM5XCDqplSbTZV/cSkB0ecjxmN81U08xf33DFQzTsEoDfVxvtY1OP1klRveJfqMog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNFIju0GiKSD2kZl64LF6irDc1veXAG70RHMjM0D9qjPKgv6zQ
-	nQvPEe1fhKD8nhJ1rKMeDTR7aD/8YRxiNkyWEzhaWG8x917J5mFr+whhykzdhThMXTHj+71nJc1
-	60w==
-X-Google-Smtp-Source: AGHT+IF+j9rAdwMR5gemRh3P8wCOJuHO2S0smUMdVgrhe0fVugIbWc6qmCLLbRAvSSSjDdbxMGhZl2Ywltg=
-X-Received: from pjtd13.prod.google.com ([2002:a17:90b:4d:b0:301:b354:8d63])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d07:b0:2ff:69d4:6fe2
- with SMTP id 98e67ed59e1d1-3030fe9c932mr7741412a91.16.1742586238967; Fri, 21
- Mar 2025 12:43:58 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 21 Mar 2025 12:42:49 -0700
+        d=1e100.net; s=20230601; t=1742586492; x=1743191292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ly0rkqyd4u96pt3sfW6/+4RipbpAyl94DbrB3bUCuwk=;
+        b=T50lggsAiFv/9S8xmZ5DgSnNFIuZLWTrjz/D0+kk122rtHRGuZan3MEwcgdpASPE17
+         yVzaIahawiUkcaK8eZhTzsIGHtGwyviUva8LqwDeJQGGJCsnR55lalGgk9Hnv7r7jmnY
+         /TqWuvmHltUo0tZl8kSTHyeNVVCDCnsG1LrdAqFbPwUDod36VvKPHqhS/jA/ZgscO5GN
+         jHJjky0syWbKRC5qJUQSlYf3+NFo0Ue3vHSTt3ttIA+7JB9y6ZQMKnZUhsF9qAVtvoFx
+         nrheZ6dFyC0nlCGngSNcGTFqIOALFvNzOUoTEPTRZusBTHOi0Fd+gPzOjiaaD3q07O9M
+         bWIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqPAHPFC3djVg7WPP/O7YnCN2PJHdEUO3GEZXqXRzpOifIl7xKkpG8phjbMjqwSeFkZRUzlYzLljxrUXk=@vger.kernel.org, AJvYcCX1Kp2gDxb9i7cMAOTp8cBIPi1w6fr6wBd13+E3u0nMdHJ1hQ9npxoJmxuhBw7wrcOWrmc1+td5Hn90JZ5eiT2D@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNv/ywvzsUVwL6KR52bqMg3dQFELkrv71MZ8HKhHVEucLuYU7t
+	7GiFMzsdYiUlfVCSXKEgSRBz/ShiTciihfsRHfxuRjWIvfTDiOUCYl3/ugD7uYHn2usuEetEtbl
+	eSPmLjV1bptXDWqV4Rz1M7GHnH9c=
+X-Gm-Gg: ASbGncvtcq4MJ4IHaQJxbtW6+6kAl3AZUOiH8p9jikDpsY48qehVzFY4qlwBHTXUD/B
+	fpIXosC/yQ7f6uIIjUefeC5ZPofwmUO/osPDa5bRf1sbSmpS4BiMVIHQfA9KOUELxdG8Y4Pm61t
+	CB9G5zhiLqJLfUdsyw2qDQJZK0lrBMxNtvfgNSwyRkEQ==
+X-Google-Smtp-Source: AGHT+IFBFgrCJ/bchlWOwIv9rI77Cq+9FheTeIgSI10PI3pRLX14sLGNW1KkGbOtKsmpfb5BqidS5A6BsnbPgS9nwoo=
+X-Received: by 2002:a05:6512:ea2:b0:544:ffbe:cd22 with SMTP id
+ 2adb3069b0e04-54ad6500d8fmr1778451e87.46.1742586492037; Fri, 21 Mar 2025
+ 12:48:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250321194249.1217961-1-seanjc@google.com>
-Subject: [PATCH] iommu/vt-d: Wire up irq_ack() to irq_move_irq() for posted MSIs
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Robert Lippert <rlippert@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wentao Yang <wentaoyang@google.com>, Sean Christopherson <seanjc@google.com>
+MIME-Version: 1.0
+References: <20250207-bitmap-kunit-convert-v1-0-c520675343b6@gmail.com>
+ <Z6eaDuXnT_rjVSNS@thinkpad> <CAMuHMdUsq_39kgBa8oanXeTzv44HuhS1e5MK7K2jxkVXQ7uWdw@mail.gmail.com>
+ <bd71c705-5f57-4067-b200-fd80b98ddbc9@nvidia.com> <Z6pfomw-3LuWoQQo@thinkpad>
+ <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
+ <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com> <Z92w13L8v1MvPC8_@thinkpad>
+In-Reply-To: <Z92w13L8v1MvPC8_@thinkpad>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 21 Mar 2025 15:47:36 -0400
+X-Gm-Features: AQ5f1Jqo7tJbB2wPNw7jN7SKqpquKkjt9eOhuuAS5_i6zceZK37QYCYbQ3pr-GM
+Message-ID: <CAJ-ks9ktTpUaBPk9rEp8UX9P5dZPeDuuGWfuSiR+dL3jXVb1+g@mail.gmail.com>
+Subject: Re: distro support for CONFIG_KUNIT: [PATCH 0/3] bitmap: convert
+ self-test to KUnit
+To: Yury Norov <yury.norov@gmail.com>
+Cc: David Gow <davidgow@google.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-kselftest@vger.kernel.org, Brad Figg <bfigg@nvidia.com>, 
+	David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Set the posted MSI irq_chip's irq_ack() hook to irq_move_irq() instead of
-a dummy/empty callback so that posted MSIs process pending changes to the
-IRQ's SMP affinity.  Failure to honor a pending set-affinity results in
-userspace being unable to change the effective affinity of the IRQ, as
-IRQD_SETAFFINITY_PENDING is never cleared and so irq_set_affinity_locked()
-always defers moving the IRQ.
+On Fri, Mar 21, 2025 at 2:32=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
+rote:
+>
+> On Fri, Mar 21, 2025 at 12:53:36PM -0400, Tamir Duberstein wrote:
+> > Hi all, now that the printf and scanf series have been taken via kees'
+> > tree[0] and sent in for v6.15-rc1[1], I wonder if we'd like to revisit
+> > this discussion.
+> >
+> > As I understand it, the primary objections to moving bitmap to KUnit we=
+re:
+> > - Unclear benefits.
+> > - Source churn.
+> > - Extra dependencies for benchmarks.
+> >
+> > Hopefully David's enumeration of the benefits of KUnit was compelling.
+> > Regarding source churn: it is inevitable, but I did pay attention to
+> > this and minimized the diff where possible.
+> >
+> > The last point is trickiest, because KUnit doesn't have first-class
+> > benchmark support, but nor is there a blessed benchmark facility in
+> > the kernel generally. I'd prefer not to tie this series to distros
+> > enabling KUNIT_CONFIG by default, which will take $time.
+> >
+> > I think the most sensible thing we can do - if we accept that KUnit
+> > has benefits to offer - is to split test_bitmap.c into
+> > benchmark_bitmap.c and bitmap_kunit.c.
+> >
+> > Please let me know your thoughts.
+>
+> Sure, no problem.
+>
+> I asked you to answer to 4 very simple and specific questions. You
+> didn't answer any of them. David sent a lengthy email that doesn't
+> address them, either.
 
-The issue is most easily reproducible by setting /proc/irq/xx/smp_affinity
-multiple times in quick succession, as only the first update is likely to
-be handled in process context.
+OK, that's fair I suppose. Let me try and address them now:
 
-Fixes: ed1e48ea4370 ("iommu/vt-d: Enable posted mode for device MSIs")
-Cc: Robert Lippert <rlippert@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Reported-by: Wentao Yang <wentaoyang@google.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- drivers/iommu/intel/irq_remapping.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+> - What do the tests miss now?
 
-diff --git a/drivers/iommu/intel/irq_remapping.c b/drivers/iommu/intel/irq_remapping.c
-index ad795c772f21..333536c5259c 100644
---- a/drivers/iommu/intel/irq_remapping.c
-+++ b/drivers/iommu/intel/irq_remapping.c
-@@ -1278,43 +1278,44 @@ static struct irq_chip intel_ir_chip = {
- };
- 
- /*
-- * With posted MSIs, all vectors are multiplexed into a single notification
-- * vector. Devices MSIs are then dispatched in a demux loop where
-- * EOIs can be coalesced as well.
-+ * With posted MSIs, the MSI vectors are multiplexed into a single notification
-+ * vector, and only the notification vector is sent to the APIC IRR.  Device
-+ * MSIs are then dispatched in a demux loop that harvests the MSIs from the
-+ * CPU's Posted Interrupt Request bitmap.  I.e. Posted MSIs never get sent to
-+ * the APIC IRR, and thus do not need an EOI.  The notification handler instead
-+ * performs a single EOI after processing the PIR.
-  *
-- * "INTEL-IR-POST" IRQ chip does not do EOI on ACK, thus the dummy irq_ack()
-- * function. Instead EOI is performed by the posted interrupt notification
-- * handler.
-+ * Note!  Pending SMP/CPU affinity changes, which are per MSI, must still be
-+ * honored, only the APIC EOI is omitted.
-  *
-  * For the example below, 3 MSIs are coalesced into one CPU notification. Only
-- * one apic_eoi() is needed.
-+ * one apic_eoi() is needed, but each MSI needs to process pending changes to
-+ * its CPU affinity.
-  *
-  * __sysvec_posted_msi_notification()
-  *	irq_enter();
-  *		handle_edge_irq()
-  *			irq_chip_ack_parent()
-- *				dummy(); // No EOI
-+ *				irq_move_irq(); // No EOI
-  *			handle_irq_event()
-  *				driver_handler()
-  *		handle_edge_irq()
-  *			irq_chip_ack_parent()
-- *				dummy(); // No EOI
-+ *				irq_move_irq(); // No EOI
-  *			handle_irq_event()
-  *				driver_handler()
-  *		handle_edge_irq()
-  *			irq_chip_ack_parent()
-- *				dummy(); // No EOI
-+ *				irq_move_irq(); // No EOI
-  *			handle_irq_event()
-  *				driver_handler()
-  *	apic_eoi()
-  *	irq_exit()
-+ *
-  */
--
--static void dummy_ack(struct irq_data *d) { }
--
- static struct irq_chip intel_ir_chip_post_msi = {
- 	.name			= "INTEL-IR-POST",
--	.irq_ack		= dummy_ack,
-+	.irq_ack		= irq_move_irq,
- 	.irq_set_affinity	= intel_ir_set_affinity,
- 	.irq_compose_msi_msg	= intel_ir_compose_msi_msg,
- 	.irq_set_vcpu_affinity	= intel_ir_set_vcpu_affinity,
+The tests do not _miss_ anything. They are just inconvenient to run,
+particularly from automation, because they do not report success in a
+way that is trivially understood by automation. In other words, I'm
+not aware of something trivial I can run that will exit 0 if and only
+if the bitmap tests pass.
 
-base-commit: d07de43e3f05576fd275c8c82e413d91932119a5
--- 
-2.49.0.395.g12beb8f557-goog
+> - What do _you_ need from the tests? Describe your test scenario.
 
+I want kernel tests to be easier to run, and for more of them to be
+run by existing automation such as LKP[0]. I know for sure that KUnit
+tests are automatically run by LKP because other tests I converted to
+KUnit subsequently had warnings reported by LKP.
+
+> - How exactly KUNIT helps you testing bitmaps and friends better?
+
+KUnit reports test results in a standard protocol (KTAP) that is
+machine-friendly. It comes with userspace tools that understand this
+protocol and produce useful exit codes, as well as human-friendly
+output.
+
+> - Is there a way to meet your needs with a less invasive approach,
+> particularly without run-time dependencies?
+
+I'm not aware of such a way, but if you know of one, I would be very
+interested to learn.
+
+> None of you guys submitted anything to bitmaps - neither in library,
+> nor in tests. Your opinion about what is good for bitmap development
+> and what's not is purely theoretical.
+>
+> Real contributors never concerned about current testing model.
+>
+> I think that you don't care about bitmaps. If bitmaps testing will get
+> broken one day, or more complicated, you will not come to help. If I'm
+> wrong and you are willing to contribute, you're warmly welcome! I always
+> encourage people to increase testing coverage.
+>
+> If you'd like to add new cases to existing tests - I'll be happy. If
+> you'd like to add completely new tests based on KUNITs or whatever
+> else - I'll be happy just as well.
+
+I can't speak for David, but you are right about me; I do not have an
+interest in bitmap in particular. My interest is in kernel testing
+generally, which I hope I have adequately explained above. As for my
+willingness to help people obtain and keep good workflows, well,
+you're welcome to examine my history in OSS. I've contributed to
+dozens of projects, many for far longer than my professional goals
+required.
+
+Let's keep talking.
+Tamir
+
+[0] https://github.com/intel/lkp-tests
 
