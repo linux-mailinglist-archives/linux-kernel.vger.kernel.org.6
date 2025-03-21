@@ -1,159 +1,158 @@
-Return-Path: <linux-kernel+bounces-571192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AFAA6BA4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:06:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C964A6BA4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01F487A3AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:05:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D8DF7A55F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5942253A5;
-	Fri, 21 Mar 2025 12:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212A62236FC;
+	Fri, 21 Mar 2025 12:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KLB5k+if"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PXZzrSLB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B0433F6;
-	Fri, 21 Mar 2025 12:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EB533F6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742558806; cv=none; b=sRR/XvJyJLwW7omEGVNR46iHWC0HLrZiQUMb2w0WYhv6taNQ282v7owQSIbwhUe0VUF3emc2xSbbGRhgPE6SKahKAYFLPpUhvbn512My3GocNQJKclg3rtuxQwfUpI9zXNan2GWll5a73FEgJC0XdZBtlCgn+L2ZghCt4w1WSMs=
+	t=1742558832; cv=none; b=ruzDFyjN/kxu8wS5Efl9x8mpKAjG7ARufbiuFRrrLqYZ3uDt9LzhvPD13DsxmDV0p3yM0Hb+QUcE6ZC22wqYm3tXIUS0UAV+QgSaVK2l9OtKKGQ4qxOUtr9xEtLVTU4WMOuMQlaBxdJtyJSa25T3A76zwG1TSakKfGShjLiR0ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742558806; c=relaxed/simple;
-	bh=gh20v8vTVcSrM01YWowDc/Z0YrC4r9Dnb9qXCIOThtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Su1LiG2SDJbwzKj0T2sE6q1XCIYgBkhv93a6QAg/wFz+JvPG9DOk1rDp2aEYMgOK3FkMj4nROlTFbxSAWgoJGKk5OSpe/2hQDEoB2PMOLAjPN8KwDyyJLB7yYOiWRIvjS0i+ATlUstG/hVYTJUXjT8cFgaluzBngnv0F7hn3HRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KLB5k+if; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742558805; x=1774094805;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gh20v8vTVcSrM01YWowDc/Z0YrC4r9Dnb9qXCIOThtU=;
-  b=KLB5k+if8vqbtcg3OflAEsdXDToaUlTpofMNoj6bZqTQLbDqv0/16idR
-   E940CH9J9qfI1T8h/qADv3XJUqtOUJFO91diaqihCe7UYVXzR63sLRMoQ
-   zCjaC2iVgHx8Rdcwn/aZyPtOqW79DyXLn9L7hxzZMLQVkmGvBVSVHRg2z
-   AmVEYeQaBXVcOtRmjY+7EnmamQ5Fdj77PCsSSfXC3VKjnZvZFFZRAYn9o
-   M4hqdUbFPBM3sA4uDgUlOL0BgbKVtDr8FErPrKnJfRV+xf9nvT5ONXVwZ
-   C0Rp8vOutf6Sqsre1csSONfJJ5dKBvpRT1d/32fTbIz+am/UYO5yge2SS
-   Q==;
-X-CSE-ConnectionGUID: b3UiWn3JRC+M0LUCiwF4JQ==
-X-CSE-MsgGUID: KYhobKRXRPWS886dxMxrcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="54456257"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="54456257"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:06:44 -0700
-X-CSE-ConnectionGUID: xIftZmdnS0ejL06UuL1LXg==
-X-CSE-MsgGUID: U/wAjmTLQGu/Zvqnuqjq2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="123366528"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 05:06:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tvb91-00000004VS3-3k8I;
-	Fri, 21 Mar 2025 14:06:35 +0200
-Date: Fri, 21 Mar 2025 14:06:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v9 6/8] iio: adc: Support ROHM BD79124 ADC
-Message-ID: <Z91WS-DoKoIZhRNs@smile.fi.intel.com>
-References: <cover.1742457420.git.mazziesaccount@gmail.com>
- <544371135e5ff5647c3cd4bce6d21e1b278ac183.1742457420.git.mazziesaccount@gmail.com>
- <Z9wVQ8vgV8kQylqG@smile.fi.intel.com>
- <ae33de64-1ba1-4bd2-a139-3f0b5986f41e@gmail.com>
+	s=arc-20240116; t=1742558832; c=relaxed/simple;
+	bh=/RRmGWbZTVl5euMeGSXKzjOM9H0wUlVrg/ACIOgbN/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uPtP3dqIDBb7HsO0zThLnrFh0zUm/94vLtwu80aiUI+pBvKTAwadCTz/2T8S0a0BI8d+Y9klcIbbHRGCczCEwVIW0U44akJUIkAwyQYTdA2Vd6zja8pHh9vhEunbAowc2J3jOxIt9ccDZWrims8P3WWqQ5qIez6Zj8be7j0WWrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PXZzrSLB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742558829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fK8jbiRQUCuGzkEC8gp3HgeBh+Llwbi7i8xYVFzm5yM=;
+	b=PXZzrSLBeYDSsNJK8Zn+9C/XxnvNHJQi0akOl8NcQ2xPt6sr5rmo+x/uRFzW9+LXN5uiX1
+	v6qGG4wumpVeI3lwJp5xVn0tsgDYeJ6mjlCSy/mPdoIfTBL7jdFpXMCIeQZq3LUhJun82R
+	+69h1Xo6dyN54ZXs9BG6gLx1TTh2MH8=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-355-5Y2V34AnNtqd_H7FOOvO2g-1; Fri, 21 Mar 2025 08:07:08 -0400
+X-MC-Unique: 5Y2V34AnNtqd_H7FOOvO2g-1
+X-Mimecast-MFC-AGG-ID: 5Y2V34AnNtqd_H7FOOvO2g_1742558827
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22651aca434so30212915ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 05:07:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742558827; x=1743163627;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fK8jbiRQUCuGzkEC8gp3HgeBh+Llwbi7i8xYVFzm5yM=;
+        b=d4vmFB8HbWzixy3Gq8jGACv3mpDPIg9k4TxtzvPq9wq2Y5K2cVFaphYdv5HXG/WOjz
+         Igv8F8I4WscXamLTzjyhaznNmEgnBeiR9lAvKi/HO1KLS6bOs9PNLFvkoT5tYCuzcDyC
+         6l4nH1LlCS6CH45+Qx5CrFHCo6y6d9hpD0yKN8rw4mfFiRQMbJXNFmfEkodrZphqnC6b
+         ct+ARWUPMPdsFMZJVNSqxKn+3XIQrZTMX2cJqBOnd9MxrHvAvSnkdchXOxWpvn6bD1Mr
+         Okzc4ic5kmjPv1+j5Vf6GbTgeOjfT9AX+KRLY9s//5WnW0tR/1pj4DmqpsCv3lmav8/6
+         OChA==
+X-Gm-Message-State: AOJu0YzJ4+XTiapw6pMRdYoB2u7BntMhYN/V9AmcczeMHJqhz5FMq4o7
+	x+QEvvwk+dqMDOeeNjYnxhqPijrCdl6hYkp1FNn3CPVfOKhiJAO602/MkOmWc3XujoG5XC9VgCN
+	jMKm90qE6hJ9vqvbYh9+m43Yibew+pJ/m8yCKOQ364sElpO3IucONQ5EDQGDnNw==
+X-Gm-Gg: ASbGncuuFypeZZcbWpzbqqxRSXbey6e/IdNGcAWVfx6Fj/TNqa9V4P2Q7Rx1gsDfnQe
+	/Mcw9gLgzSs+zY/eU4CnVq8Cc1B3y3vP9eQAgMC2jvFAj/d7lJi+vYJNphJ1b3ReCglQVMvkwcx
+	Vd4yoLLzN1jf/LUVpA4B7pByH6RFetsVt8nrPbMKK8V+3Qzo8d7QnPtStginCDxmOsQFJxXfUGA
+	yL0ZoupvxRD1TXOFKNsQA66WcruhaBANPObLnurBxYpJfIw+GUcBbeiWAflitqIDKqCiPIi1+2j
+	uBIVPaapfhYw/kxcMw==
+X-Received: by 2002:a17:902:ecd0:b0:223:325c:89de with SMTP id d9443c01a7336-22780c5467fmr41490515ad.1.1742558827086;
+        Fri, 21 Mar 2025 05:07:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPb2qv80bENSnWkHhgutNgJ7//gOod+EBH9idCsQBHHTDdPiAgWXiHA2ICcyAwYDDRfp7asw==
+X-Received: by 2002:a17:902:ecd0:b0:223:325c:89de with SMTP id d9443c01a7336-22780c5467fmr41490255ad.1.1742558826586;
+        Fri, 21 Mar 2025 05:07:06 -0700 (PDT)
+Received: from [192.168.68.55] ([180.233.125.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3bbedsm14789115ad.3.2025.03.21.05.07.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 05:07:06 -0700 (PDT)
+Message-ID: <ebf97543-ee25-4944-9990-c0c21c180213@redhat.com>
+Date: Fri, 21 Mar 2025 22:07:01 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae33de64-1ba1-4bd2-a139-3f0b5986f41e@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Fix parameter passed to page_mapcount_is_type()
+To: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ willy@infradead.org, osalvador@suse.de, gehao@kylinos.cn,
+ shan.gavin@gmail.com
+References: <20250321053148.1434076-1-gshan@redhat.com>
+ <b9e1269e-e79b-446b-9483-4fdbc1ee42f4@suse.cz>
+ <0d096764-302f-4b80-a867-22f5302b8045@redhat.com>
+ <5ec97dd6-6561-4687-ac94-41c63ffc82cf@redhat.com>
+ <fb1f1b70-6c6e-4b68-b3bb-fef45b8e8581@suse.cz>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <fb1f1b70-6c6e-4b68-b3bb-fef45b8e8581@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 10:01:00AM +0200, Matti Vaittinen wrote:
-> On 20/03/2025 15:16, Andy Shevchenko wrote:
-> > On Thu, Mar 20, 2025 at 10:22:00AM +0200, Matti Vaittinen wrote:
+On 3/21/25 9:33 PM, Vlastimil Babka wrote:
+> On 3/21/25 12:25, Gavin Shan wrote:
+>> On 3/21/25 8:11 PM, David Hildenbrand wrote:
+>>> On 21.03.25 10:23, Vlastimil Babka wrote:
+>>>> On 3/21/25 06:31, Gavin Shan wrote:
+>>>>> Found by code inspection. There are two places where the parameter
+>>>>> passed to page_mapcount_is_type() is (page->__mapcount), which is
+>>>>> correct since it should be one more than the value, as explained in
+>>>>> the comments to page_mapcount_is_type(): (a) page_has_type() in
+>>>>> page-flags.h (b) __dump_folio() in mm/debug.c
+>>>>
+>>>> IIUC you are right. Luckily thanks to the the PGTY_mapcount_underflow limit,
+>>>> this off-by-one error doesn't currently cause visible issues i.e.
+>>>> misclassifications legitimate mapcount as page type and vice versa, right?
+>>>> We'd have to have a mapcount underflown severely right to the limit to make
+>>>> that off-by-one error cross it?
+>>>
+>>> Agreed. Likely not stable material because it isn't actually fixing anything (because of the safety gaps).
+>>>
+>>
+>> Yes, it shouldn't cause any visible impacts so far due to the gap.
+> 
+> Thanks for confirming, please state that in the commit log/cover letter too.
+> 
 
+Yes, the commit log and cover letter has been improved for this in v2.
 
-...
+>> I just found the issue by code inspection. Lets drop the fix tags
+>> in v2.
+> 
+> Fixes: tag is fine and correct, just Cc: stable is unnecessary.
+> 
 
-> > > +struct bd79124_raw {
-> > > +	u8 val_bit0_3; /* Is set in high bits of the byte */
-> > > +	u8 val_bit4_11;
-> > > +};
-> > 
-> > Again, this is confusing.
-> > 
-> > Just put a bit order map in the comment as I suggested previously.
-> > When I see variable name containing bit range like above I think
-> > about the same bit order, i.e. with your comment it makes like this
-> > 
-> > bit number	7 6 5 4 3 2 1 0
-> > data bit	0 1 2 3 x x x x
-> 
-> Gah. I think I now understand what you're after. And, I agree, I haven't
-> been as clear as I could've been.
-> 
-> The pit numbers in the struct members:
-> 	u8 val_bit0_3; and u8 val_bit4_11;
-> 
-> are _not_ intended to represent the bit ordering - only the bit positions.
-> Like, bits from bit 0 to bit 3 are stored in high bits of this u8 - where
-> the "0 to 3" was just picked as order based on it being from the smaller to
-> greater (which I believe is grammatically typical) - not based on how the
-> bits are ordered in the register. If the order of the bits was indeed
-> reverted, then we should see much more complex conversions than what is
-> presented in these macros.
-> 
-> I will update the variable names to:
-> 
-> val_bit3_0; and val_bit11_4; I think it should sort out the confusion. I
-> won't go to bit level representation of the full registers:
-> 
-> > bit number	7 6 5 4 3 2 1 0
-> > data bit	3 2 1 0 x x x x
-> 
-> and
-> 
-> > bit number	7 6 5 4 3 2 1 0
-> > data bit	b a 9 8 7 6 5 4
-> 
-> because it suggests there is something very strange in the registers (which
-> is not the case) - and it is hard to spot if some bits have indeed changed
-> the place.
+Thanks for the hints. The 'Cc: stable' tag has been dropped, but the
+'Fixes:' tag is kept in v2, which was posted.
 
-You can get rid of all of these by simply using __le16. I do not understand why
-it's not used so far. I thought that bits are mirrored, that may explain the
-case, but now I do not see any problem to use __le16 directly.
+https://lore.kernel.org/linux-mm/20250321120222.1456770-1-gshan@redhat.com/T/#t
 
--- 
-With Best Regards,
-Andy Shevchenko
+>>>>
+>>>> I wonder if a more future-proof solution would be to redefine
+>>>> page_mapcount_is_type() instead to not subtract. But I'll leave that to willy.
+>>>
+>>> With upcoming changes around that, likely best to leave that alone. I expect page_mapcount_is_type() to completely vanish.
+>>>
+>>
+>> +1 to remove page_mapcount_is_type(). After Willy confirms, I can post
+>> an extra series to do it if needed.
+>>
 
+Thanks,
+Gavin
 
 
