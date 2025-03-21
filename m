@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-571600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D069FA6BF94
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:18:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68561A6BF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49C11890EEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE526172AE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB80822CBD0;
-	Fri, 21 Mar 2025 16:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A4C22B8C4;
+	Fri, 21 Mar 2025 16:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="uGVAE8PB"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="RIEU0z+p"
+Received: from p00-icloudmta-asmtp-us-central-1k-100-percent-8.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster2-host3-snip4-1.eps.apple.com [57.103.88.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5C61E00B4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D101D6195
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.88.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573773; cv=none; b=auEtt/IJHUGtnBn9l4TfALbTmt4YW/+Yu6sEnNufuq/bohkKgBGxKoL5bgMH0KOaumxdh26EG9uX6HXE17Qdp1ew06yGkFuFTWsP0vLwfyk4gNduVSKHyBEw9L0J1Cf+3CngRZFPQavCGkVMepnRIXcbrxDDpT1pnUIEmStTMQU=
+	t=1742573850; cv=none; b=HNw/aDTV5da6CJb1rKFvugNe26BMBymMiodop3U80IDK8vg+lhl3sq1l8Cw2lkB4bYd1FBZb81NfmvIsq24vdOcPtLwM/MIof5Pg396jXvfBEpUkgVEsb8dlpuNzSY2+w9EruPvkghpMljlIsg6yhIv14LQOf6AeDpAxg15i7sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573773; c=relaxed/simple;
-	bh=Qmq+IIeW7g+9CyCIBj9m9ESzvYm18bl+IM9u6txU21A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=neZnIBXiDPouQnL8WK60N9AUXaX3QtFx5ekHrPn1kbAqKT2NKiEu4CTVvbxh5EXLREgZVxuojv6YUmyIeg5qVlIGNNnm/NQ11xxcvjUjxX31Ol79yibTL4j3xBHj1x38ZVaF99/h9A021M0EdZhhHQcEO25A7OOnWH4lwTKnxls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=uGVAE8PB; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab78e6edb99so333976466b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1742573769; x=1743178569; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ltF0A24cHxopXYW1+MzGLMtAYxZ2JVfXqEYIh6iUalE=;
-        b=uGVAE8PBGtIQNltl5ur9C2SCvBKHnGvJWqZVkx2fdW+Yw9VfyVb8d47R5lnI+EEe8P
-         iF2a3m1+JYI5UgPh4dDWlzWQLgRR0fqmUT7pXaQO5PkCttrFZR29gEzU61ev9pL9NlzI
-         TAF6k9k/WrM6OTuDnRpYK23Y+OoxfkE9EdcVYlbPIq2e+BhFXvG5idRF4+2q9mHgtCi3
-         G9O5d5iKhVnQIVcu4/aDjldJUsBpmL0SVYgkiCgTObVahuyBQRX6HMPOKkK6dmU2NMBn
-         qXc22r2qAtS5UvP/k22r9jdBBWr86Ryy4uXj091wr8Db7nR+WaqAnnFWypyZQLq6H+k9
-         9OcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573769; x=1743178569;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ltF0A24cHxopXYW1+MzGLMtAYxZ2JVfXqEYIh6iUalE=;
-        b=XwXHZLwU0MEUtFmwu6Wu3DhWmkt5zW+Z/fsFdgVWk6bxnW2pP+leejWls+MED+4nv3
-         bj/MHubRgz3CzaLuy0mVIsW0gKgcYhcMPLXzJOle+H0wzRZz8NTfl7Bs/hmkJPQtERMZ
-         gUoRV/siUw0A/GNxFoZMQuRQ2aNvipROhZkRmtVXNWQJGfb/dsdXWiPtQzXYJyggMD3g
-         JZrYREmOJCEmINsSw0zBoVCXZwfMoa2MewqEIQInMCv6TGmQ3NKaurPQSOYiJcxWrz5M
-         lHFB2EJLgWPWlQwerdk7mWmuJdzSWcGldjwEvdlRkfBtzd/uqGe3TlKLVMo5I/P3WktF
-         klBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVchVjmwi2BW6QeDbSvNRJtBTvMKiMEApnC8XNPJen01XHb3K5scTnMcUUpeWiNsMte+I4yNPUVV336Y0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH+jmSG7tnwwS03ecfHJCZHPbez+d32N7lJlqLYeQ0TUcDPEAy
-	EN8ry3k0SeM8QlhVy3cvG5o92CJ+7VraRQ8g2dW5FCkzOH0eCExcMt1dc7Ct4kw=
-X-Gm-Gg: ASbGncvI6jL5wznxxoDk6QVFXqfEOKMYInT7EaWOkEOfNkJ3AxPiQUqutPbMhSDIuH/
-	7YrZbLk12RiK+XZxr+thX0Noybc0nwIzUVPWPg+s6V9DE7+D3z3dCV3owySRueofeKH7MCbqSqa
-	ysnPGgqNNUQyHA5CjvZml4CMQo9qwLFTrxDk9TUeXxVR6sscLMIclE85GRRgM4J5hZcoA+Wgcd5
-	29pCd8RCGjf3MDy5lnHJaARoZp4fTHd6X1mE5tL9UF0DsrEf01sNLegXy4dvbYp5+rlb2UlDRCX
-	QNFrNh7+kREcGhL77d+kF2mQ/95qb/Kch7ME8ylYDErI1ub4rdU3af4fQR6T6ahQmhxYmMR00J0
-	qin2FAn1VKc1i2puj2OhfOdhp
-X-Google-Smtp-Source: AGHT+IFmQRpczSkNyyOfrjuw6J3EmbsHDKfFAxtFhB+1mO1JwxQr4UBgvHRHJp6Da2DG5aHbMNCDNA==
-X-Received: by 2002:a17:906:4795:b0:ac1:e6b9:57ce with SMTP id a640c23a62f3a-ac3f208ab90mr381700166b.7.1742573768555;
-        Fri, 21 Mar 2025 09:16:08 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0dfe4esm1546076a12.73.2025.03.21.09.16.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 09:16:08 -0700 (PDT)
+	s=arc-20240116; t=1742573850; c=relaxed/simple;
+	bh=OeIjux2L+VD6vXxq8q41IkwVOrxAsgrjCtTRW+6pDr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MeJeKUwHQwgL9Ex/PIcfGR+zBJ0aSYyCqNK8Y0S2giM3fKgOfgUVAdjxwmSfMSzL09qPDVPqZab0Jx0iKAARcWBi/Hu4JSFdEw/V3hGcldzpK2647xgLSEvmK8Uz5X88kvvoGDS0O4kvRP9WOJtWriCp706aFrX2IGaIgnPPwCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=RIEU0z+p; arc=none smtp.client-ip=57.103.88.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
+	bh=YVvZ4UL0bFTiJFwO9+ZDas4+KDymXBDJvT0ZeYG903g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
+	b=RIEU0z+pvlB1ltSuS8t3rOQ6U13ryJA9kAqfq8LoV3H1i0Bm4BEngIec1m2AkJLAQ
+	 v4KeIagjFybg48sxu1/dNpDGypCCtN0NiTxL8aKyNbbu6kf1cOaOV3IQtZKHGpgQf5
+	 lh8BFvIiYUgGL7luc6Ou7i+i2TbmgyMerFZ7A4TopqBciRRKL/UwWC2x3c+W+Gezot
+	 CpvNs7UC3urWXE1S3kb0nwuTMsoYHmtEl4kD/HDbdiOt7ql0/kJgs1o7hTOKzYnb4G
+	 C1ZiTtWy3wWV4BWNxxv6qrrmzCTgQeAqayXN5cMWT5Aha5CQte0gQUBBJRB7NcPm5e
+	 88ksjTGgWHdPQ==
+Received: from localhost.localdomain (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
+	by p00-icloudmta-asmtp-us-central-1k-100-percent-8.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id 131D618004B3;
+	Fri, 21 Mar 2025 16:17:22 +0000 (UTC)
+From: Sergio Perez <sergio@pereznus.es>
+To: Tomasz Duszynski <tduszyns@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Sergio Perez <sergio@pereznus.es>
+Subject: [PATCH v5 1/2] dt-bindings: iio: light: bh1750: Add reset-gpios property
+Date: Fri, 21 Mar 2025 17:16:08 +0100
+Message-ID: <20250321161609.3662-1-sergio@pereznus.es>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 21 Mar 2025 17:16:07 +0100
-Message-Id: <D8M2UHJQ86Q5.2EKUIIDRE3P73@fairphone.com>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Taniya Das" <quic_tdas@quicinc.com>,
- "Konrad Dybcio" <konradybcio@kernel.org>,
- <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] clk: qcom: Add video clock controller driver for
- SM6350
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
- <20250321-sm6350-videocc-v1-2-c5ce1f1483ee@fairphone.com>
- <pzevgib37fgdupythk3mawmeuki6dflpw5bze4ujb6jcjvj7ar@jmjuzeabvq7y>
-In-Reply-To: <pzevgib37fgdupythk3mawmeuki6dflpw5bze4ujb6jcjvj7ar@jmjuzeabvq7y>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 5VrYs6qDqU4-cOfEbqjs0JNSdM9txB9Q
+X-Proofpoint-ORIG-GUID: 5VrYs6qDqU4-cOfEbqjs0JNSdM9txB9Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 bulkscore=0 spamscore=0 adultscore=0 suspectscore=0
+ clxscore=1030 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2503210119
 
-On Fri Mar 21, 2025 at 4:55 PM CET, Dmitry Baryshkov wrote:
-> On Fri, Mar 21, 2025 at 03:45:00PM +0100, Luca Weiss wrote:
->> From: Konrad Dybcio <konradybcio@kernel.org>
->>=20
->> Add support for the video clock controller found on SM6350 based
->> devices.
->>=20
->> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
->> Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->>  drivers/clk/qcom/Kconfig          |   9 +
->>  drivers/clk/qcom/Makefile         |   1 +
->>  drivers/clk/qcom/videocc-sm6350.c | 355 +++++++++++++++++++++++++++++++=
-+++++++
->>  3 files changed, 365 insertions(+)
->>=20
->> +
->> +/* 600 MHz */
->> +static const struct alpha_pll_config video_pll0_config =3D {
->> +	.l =3D 0x1F,
->
-> Nit: lowercase hex please. No need to repost just for the sake of this
-> single line.
+Some BH1750 sensors require a hardware reset via GPIO before they can
+be properly detected on the I2C bus. Add a new reset-gpios property
+to the binding to support this functionality.
 
-Sounds like there'll be a v2 anyways with dts changes, so I'll fix it!
+The reset-gpios property allows specifying a GPIO that will be toggled
+during driver initialization to reset the sensor.
 
-Regards
-Luca
+Signed-off-by: Sergio Perez <sergio@pereznus.es>
+---
+Revision history:
+v4 => v5:
+ - Update description to reflect "active low" on reset signal as indicated by Krzysztof Kozlowski
+ - Update description to clarify what pin of sensor is used to do reset (DVI) as mentioned by Krzysztof Kozlowski
+ - Edit example to be coherent with "active low" as informed by Krzysztof Kozlowski
+ - Added necessary include on example
+v3 => v4:
+ - No changes
+v2 => v3:
+ - Split in two patches: dtbinding and code
+ - Ensure list off mantainers following instructions by Krzysztof Kozlowski
+ - Delete redundant details on description as suggested by Jonathan Cameron
+ - Added related example to existing one as suggested by Jonathan Cameron
+v1 => v2:
+ - Ensure check tests as commented by Rob Herring
+ - Fixes some whitespaces and end lines
+---
+ Documentation/devicetree/bindings/iio/light/bh1750.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->
->
->> +	.alpha =3D 0x4000,
->> +	.config_ctl_val =3D 0x20485699,
->> +	.config_ctl_hi_val =3D 0x00002067,
->> +	.test_ctl_val =3D 0x40000000,
->> +	.test_ctl_hi_val =3D 0x00000002,
->> +	.user_ctl_val =3D 0x00000101,
->> +	.user_ctl_hi_val =3D 0x00004005,
->> +};
->> +
->>=20
+diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.yaml b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
+index 1a88b3c253d5..e388610d3741 100644
+--- a/Documentation/devicetree/bindings/iio/light/bh1750.yaml
++++ b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
+@@ -24,6 +24,10 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  reset-gpios:
++    description: GPIO connected to the DVI reset pin (active low)
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
+@@ -36,9 +40,12 @@ examples:
+       #address-cells = <1>;
+       #size-cells = <0>;
+ 
++      #include <dt-bindings/gpio/gpio.h>
++
+       light-sensor@23 {
+         compatible = "rohm,bh1750";
+         reg = <0x23>;
++        reset-gpios = <&gpio2 17 GPIO_ACTIVE_LOW>;
+       };
+     };
+ 
+-- 
+2.43.0
 
 
