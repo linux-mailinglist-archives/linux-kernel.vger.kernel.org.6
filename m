@@ -1,216 +1,207 @@
-Return-Path: <linux-kernel+bounces-570953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488BEA6B6A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:09:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E88A6B6B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:11:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC32467DB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 525093B75A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0471F0E3C;
-	Fri, 21 Mar 2025 09:09:47 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF8D1F4179;
+	Fri, 21 Mar 2025 09:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3ne9z+p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716C18BEE;
-	Fri, 21 Mar 2025 09:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4138486250;
+	Fri, 21 Mar 2025 09:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742548186; cv=none; b=lKkXbK25oTMtcCbmFD3hBFtzUoyceVrqD9mSlnJyLn8hbsFmJkyOUjuyuNQqRAlahFidR8yN/9gEqpvYeCX24YLcWyon54lIUNGlFI4It4yewcdWGYmRNiAuX/7DyIYqAfv18g0t5Fmbau7uSrLow+aPcuIKybDcrdITk4Z0RUE=
+	t=1742548196; cv=none; b=lc2SeSttiqKjgkOq5AxQ4kjOKUIpgShC1SnAfeCQTzgMp5PHh/xp4K8pLA1PzBqBCrcFPukr3hi8T5ZMJFy8UMcyzXjHxIQdPyZhPKK1XTEVAPcwqP8VGLmV8iLdoqPzWYNqrdPFxpUCuchCXPuNqPsnG54AKSa97o8nh0UzJ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742548186; c=relaxed/simple;
-	bh=2v+lA3zOEELM/COQfmiYSRjZAJvI16Nu1Zgv3fJoHU4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rqE7Pp3oPwpfRT+vKiDRpTLaPtnD6Y7WnnvoaIBUoL3m2aPLcLJtV+xZQ6YRX/AoBdYkFrsW/y8FOhTsCNZowC8U1pOV/5hO25/wD7WebxyKM6L087TOLiGGeI6sM80ayarD+WjzWFzinNizt6yy0TJXxhK40X0NAb+9SXBl0oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZJxRw3GwQz1c0RN;
-	Fri, 21 Mar 2025 17:07:56 +0800 (CST)
-Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8CF8714010C;
-	Fri, 21 Mar 2025 17:09:41 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 21 Mar 2025 17:09:41 +0800
-Subject: Re: [PATCH v6 1/5] hisi_acc_vfio_pci: fix XQE dma address error
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>
-References: <20250318064548.59043-1-liulongfang@huawei.com>
- <20250318064548.59043-2-liulongfang@huawei.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <d04df7e6-468e-6e44-97a7-8dd371226289@huawei.com>
-Date: Fri, 21 Mar 2025 17:09:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1742548196; c=relaxed/simple;
+	bh=SQrVa5hcvNGbT7b8PFbqplfHsajPW5GpR0t3KiUbwo8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=njgi3Dq2Mp7OQ2lgSuUZt4TAgMCsdjWb/c2FZjZdBmLESV+zFQGCsP12vTsPJSFPZlN5mUbD71/7L3WdaJGNlMceIBVNHqHPd42wE0uJxXcbdEeU2OMK7/1LClX6snMU1IF1Iaglnbd3qLAYRZdZ5TlWSQAWPvu3lGQXNUg3E8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3ne9z+p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 94790C4CEE8;
+	Fri, 21 Mar 2025 09:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742548195;
+	bh=SQrVa5hcvNGbT7b8PFbqplfHsajPW5GpR0t3KiUbwo8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=r3ne9z+pmjUoFlKaB/8XwvuCP1U3eYoGOyIdyliMA8cx5lNjBc41LZpE4wjj6hTwI
+	 yps2M5aaM1CVmPq9wZ8SVWFc3JN6Iuemn+eUxdFZ0u83Xfo9bIH1llMnEYhL+r1D33
+	 4maZBcbygHfTBgSpoF7qUblsdixfVhRegh5j+0im3xW5EEoapHPb7aC6gHDERa6aIE
+	 eyd1wpFoUcS+BgJSDtB0h8OBAVcuAO2HW8yNy2aBYsrzw11Oloi1VZtjT37fARc6/9
+	 qldlRHeLRwZmxXaLD77Eg9vBGRWFFNvRkQDb28tZsiq4A7m/nV0r88bPPANo9L07IC
+	 GxiD5RDIHGE3w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876F3C35FFF;
+	Fri, 21 Mar 2025 09:09:55 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v5 0/6] Enable IPQ5018 PCI support
+Date: Fri, 21 Mar 2025 13:09:49 +0400
+Message-Id: <20250321-ipq5018-pcie-v5-0-aae2caa1f418@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250318064548.59043-2-liulongfang@huawei.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg500006.china.huawei.com (7.202.181.43)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAN0s3WcC/1WMuw6CMABFf4V0tk0fNBQnQXQzMToaBqRFGoXWF
+ omG8O9WNsdzc8+ZgFdOKw/W0QScGrXXpg/AVxGo26q/KahlYEAx5ZhRArV9ckwEtLVWkMg4rq4
+ NVrThICjWqUa/l9ylDNxqPxj3Weoj+a2gOCfHE0kPuRCC7SlnIsuSAsfJjrAtwTRPi4LSzd8N9
+ VVnnSQpss5IZF7Dw5g7qk0Hynmev42qZl7FAAAA
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nitheesh Sekar <quic_nsekar@quicinc.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
+ 20250317100029.881286-2-quic_varada@quicinc.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742548192; l=5246;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=SQrVa5hcvNGbT7b8PFbqplfHsajPW5GpR0t3KiUbwo8=;
+ b=cRcavix89+BN+5gtWvU3+jeOnLSD0aAOOOX8Lkq/7qD9/H5WqUxx7ptJUukvrkeqaFOL0Adpq
+ QboYMBEdN79AFz3m67U/uwyriFL5ccRI+nHIJMP+oBKW0Uuv5wiu0Wk
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On 2025/3/18 14:45, Longfang Liu wrote:
-> The dma addresses of EQE and AEQE are wrong after migration and
-> results in guest kernel-mode encryption services  failure.
-> Comparing the definition of hardware registers, we found that
-> there was an error when the data read from the register was
-> combined into an address. Therefore, the address combination
-> sequence needs to be corrected.
-> 
-> Even after fixing the above problem, we still have an issue
-> where the Guest from an old kernel can get migrated to
-> new kernel and may result in wrong data.
-> 
-> In order to ensure that the address is correct after migration,
-> if an old magic number is detected, the dma address needs to be
-> updated.
-> 
-> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live migration")
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> 
-> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
+This patch series adds the relevant phy and controller
+DT configurations for enabling PCI gen2 support
+on IPQ5018. IPQ5018 has two phys and two controllers, 
+one dual-lane and one single-lane.
 
-Hello, Alex.
-Could you spend some time helping me review this patchset?
-It has already undergone internal review and revisions.
+Last patch series (v3) submitted dates back to August 30, 2024.
+As I've worked to add IPQ5018 platform support in OpenWrt, I'm
+continuing the efforts to add Linux kernel support.
 
-Thank you.
-Longfang.
+To: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Nitheesh Sekar <quic_nsekar@quicinc.com>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Krzysztof Wilczyński <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-phy@lists.infradead.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 41 ++++++++++++++++---
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    | 14 ++++++-
->  2 files changed, 47 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 451c639299eb..304dbdfa0e95 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -350,6 +350,32 @@ static int vf_qm_func_stop(struct hisi_qm *qm)
->  	return hisi_qm_mb(qm, QM_MB_CMD_PAUSE_QM, 0, 0, 0);
->  }
->  
-> +static int vf_qm_version_check(struct acc_vf_data *vf_data, struct device *dev)
-> +{
-> +	switch (vf_data->acc_magic) {
-> +	case ACC_DEV_MAGIC_V2:
-> +		if (vf_data->major_ver != ACC_DRV_MAJOR_VER) {
-> +			dev_info(dev, "migration driver version<%u.%u> not match!\n",
-> +				 vf_data->major_ver, vf_data->minor_ver);
-> +			return -EINVAL;
-> +		}
-> +		break;
-> +	case ACC_DEV_MAGIC_V1:
-> +		/* Correct dma address */
-> +		vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
-> +		vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
-> +		vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
-> +		vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
-> +		vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
-> +		vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->  			     struct hisi_acc_vf_migration_file *migf)
->  {
-> @@ -363,7 +389,8 @@ static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->  	if (migf->total_length < QM_MATCH_SIZE || hisi_acc_vdev->match_done)
->  		return 0;
->  
-> -	if (vf_data->acc_magic != ACC_DEV_MAGIC) {
-> +	ret = vf_qm_version_check(vf_data, dev);
-> +	if (ret) {
->  		dev_err(dev, "failed to match ACC_DEV_MAGIC\n");
->  		return -EINVAL;
->  	}
-> @@ -418,7 +445,9 @@ static int vf_qm_get_match_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->  	int vf_id = hisi_acc_vdev->vf_id;
->  	int ret;
->  
-> -	vf_data->acc_magic = ACC_DEV_MAGIC;
-> +	vf_data->acc_magic = ACC_DEV_MAGIC_V2;
-> +	vf_data->major_ver = ACC_DRV_MAJOR_VER;
-> +	vf_data->minor_ver = ACC_DRV_MINOR_VER;
->  	/* Save device id */
->  	vf_data->dev_id = hisi_acc_vdev->vf_dev->device;
->  
-> @@ -496,12 +525,12 @@ static int vf_qm_read_data(struct hisi_qm *vf_qm, struct acc_vf_data *vf_data)
->  		return -EINVAL;
->  
->  	/* Every reg is 32 bit, the dma address is 64 bit. */
-> -	vf_data->eqe_dma = vf_data->qm_eqc_dw[1];
-> +	vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
->  	vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
-> -	vf_data->eqe_dma |= vf_data->qm_eqc_dw[0];
-> -	vf_data->aeqe_dma = vf_data->qm_aeqc_dw[1];
-> +	vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
-> +	vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
->  	vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
-> -	vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[0];
-> +	vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
->  
->  	/* Through SQC_BT/CQC_BT to get sqc and cqc address */
->  	ret = qm_get_sqc(vf_qm, &vf_data->sqc_dma);
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> index 245d7537b2bc..91002ceeebc1 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
-> @@ -39,6 +39,9 @@
->  #define QM_REG_ADDR_OFFSET	0x0004
->  
->  #define QM_XQC_ADDR_OFFSET	32U
-> +#define QM_XQC_ADDR_LOW	0x1
-> +#define QM_XQC_ADDR_HIGH	0x2
-> +
->  #define QM_VF_AEQ_INT_MASK	0x0004
->  #define QM_VF_EQ_INT_MASK	0x000c
->  #define QM_IFC_INT_SOURCE_V	0x0020
-> @@ -50,10 +53,15 @@
->  #define QM_EQC_DW0		0X8000
->  #define QM_AEQC_DW0		0X8020
->  
-> +#define ACC_DRV_MAJOR_VER 1
-> +#define ACC_DRV_MINOR_VER 0
-> +
-> +#define ACC_DEV_MAGIC_V1	0XCDCDCDCDFEEDAACC
-> +#define ACC_DEV_MAGIC_V2	0xAACCFEEDDECADEDE
-> +
->  struct acc_vf_data {
->  #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
->  	/* QM match information */
-> -#define ACC_DEV_MAGIC	0XCDCDCDCDFEEDAACC
->  	u64 acc_magic;
->  	u32 qp_num;
->  	u32 dev_id;
-> @@ -61,7 +69,9 @@ struct acc_vf_data {
->  	u32 qp_base;
->  	u32 vf_qm_state;
->  	/* QM reserved match information */
-> -	u32 qm_rsv_state[3];
-> +	u16 major_ver;
-> +	u16 minor_ver;
-> +	u32 qm_rsv_state[2];
->  
->  	/* QM RW regs */
->  	u32 aeq_int_mask;
-> 
+v5:
+  *) Re-ordered reg and reg-names in dt-bindings and dts to align with
+     other IPQ SoCs
+  *) Corrected nr of interrupts in dt-bindings: phy: qcom: Add IPQ5018 SoC
+  *) Corrected ranges property of pcie controller nodes
+  *) Removed newlines between cells properties in pcie phy nodes
+  *) Modified dt bindings to add descriptions and separate conditions for
+     ipq5018 and ipq5332 as they have different nr of clocks and resets
+     As such, also removed Krzysztof's RB tag for validation
+  *) Ran dtbs_check and fixed:
+     interrupt-map property in pcie nodes:
+     /soc@0/pcie@80000000:interrupt-map: Cell 13 is not a phandle(0)
+     /soc@0/pcie@a0000000:interrupt-map: Cell 13 is not a phandle(0)
+  *) Added missing gpio header file to ipq5018-rdp432-c2.dts
+  *) Added MHI register requirement to bindings and to PCIe nodes as per:
+     Depends-on: <20250317100029.881286-2-quic_varada@quicinc.com>
+
+v4:
+  *) removed dependency as the following have been applied:
+	dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
+	phy: qcom: Introduce PCIe UNIPHY 28LP driver
+	dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller
+     Link: https://lore.kernel.org/all/20250313080600.1719505-1-quic_varada@quicinc.com/
+  *) added Mani's RB tag to: PCI: qcom: Add support for IPQ5018
+  *) Removed power-domains property requirement in dt-bindings for IPQ5018
+     and removed Krzysztof's RB tag from:
+     dt-bindings: PCI: qcom: Add IPQ5018 SoC
+  *) fixed author chain and retained Sricharan Ramabadhran in SoB tags and
+     kept Nitheesh Sekar as the original author
+  *) Removed comments as per Konrad's comment in:
+     arm64: dts: qcom: ipq5018: Add PCIe related nodes
+  *) Link to v3 submitted by Sricharan Ramabadhran:
+     Link: https://lore.kernel.org/all/20240830081132.4016860-1-quic_srichara@quicinc.com/
+  *) Link to v3, incorrectly versioned:
+     Link: https://lore.kernel.org/all/DS7PR19MB8883BC190797BECAA78EC50F9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com/
+
+v3 (incorrectly versioned):
+  *) Depends on
+     Link: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
+  *) Added 8 MSI SPI and 1 global interrupts (Thanks Mani for confirming)
+  *) Added hw revision (internal/synopsys) and nr of lanes in patch 4
+     commit msg
+  *) Sorted reg addresses and moved PCIe nodes accordingly
+  *) Moved to GIC based interrupts
+  *) Added rootport node in controller nodes
+  *) Tested on Linksys devices (MX5500/SPNMX56)
+  *) Link to v2:
+     Link: https://lore.kernel.org/all/20240827045757.1101194-1-quic_srichara@quicinc.com/
+
+v3:
+  Added Reviewed-by tag for patch#1.
+  Fixed dev_err_probe usage in patch#3.
+  Added pinctrl/wak pins for pcie1 in patch#6.
+
+v2:
+  Fixed all review comments from Krzysztof, Robert Marko,
+  Dmitry Baryshkov, Manivannan Sadhasivam, Konrad Dybcio.
+  Updated the respective patches for their changes.
+
+v1:
+
+Link: https://lore.kernel.org/lkml/32389b66-48f3-8ee8-e2f1-1613feed3cc7@gmail.com/T/
+---
+Nitheesh Sekar (6):
+      dt-bindings: phy: qcom: uniphy-pcie: Add ipq5018 compatible
+      phy: qualcomm: qcom-uniphy-pcie 28LP add support for IPQ5018
+      dt-bindings: PCI: qcom: Add IPQ5018 SoC
+      PCI: qcom: Add support for IPQ5018
+      arm64: dts: qcom: ipq5018: Add PCIe related nodes
+      arm64: dts: qcom: ipq5018: Enable PCIe
+
+ .../devicetree/bindings/pci/qcom,pcie.yaml         |  50 +++++
+ .../bindings/phy/qcom,ipq5332-uniphy-pcie-phy.yaml |  57 ++++-
+ arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  40 ++++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 234 ++++++++++++++++++++-
+ drivers/pci/controller/dwc/pcie-qcom.c             |   1 +
+ drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c   |  45 ++++
+ 6 files changed, 417 insertions(+), 10 deletions(-)
+---
+base-commit: 5744a64fddfc33629f3bcc9a06a646f7443077a7
+change-id: 20250321-ipq5018-pcie-1d44abf0e2f5
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
+
 
