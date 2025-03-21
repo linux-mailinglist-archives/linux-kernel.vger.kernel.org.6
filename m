@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-570735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B36A6B40D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:28:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55681A6B40F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528D83AFD79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB760189C4B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16471E9B02;
-	Fri, 21 Mar 2025 05:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B71E9B0D;
+	Fri, 21 Mar 2025 05:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UkwqT/xf"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AiE75BYb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323BD46B5;
-	Fri, 21 Mar 2025 05:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACFD1E98E1;
+	Fri, 21 Mar 2025 05:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742534885; cv=none; b=rJc+yzOcbBmZyBML35V3w88wPlnyR67T+3yhOOShBtdgnBxmvN1l/TArxLXZq3SG9SsUO3xKK/UmKf5eHWt7JPvq6YEW8NdF5Kmtcs1iIfi/Ci2P+Dz7gX5a8qUntSNKPR9tMDmTHoAH687gR8zqrxI86NRjzLvBvS6xeq+q1Tg=
+	t=1742534910; cv=none; b=qY7+19jKm+zoBr064ikXOMr7oH1cQCgrvGQ7HHEFTYbt98E/b7FP3Il/Mt+77UD4QsZne2yTtYrUS04Zgp2rj5zRjpRHnUQTQTJRP+BTLonBElTYwZ2VigXgrlQyIyKrcr09yl1P47tf2lerPRtL3XO1H/Ih0M7cgp4Ph6yejGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742534885; c=relaxed/simple;
-	bh=gFRZr495JWgz8tsTRUKs87yDTDwYoQ25vCxHnnHJi4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFbv7XpLS+4YJVk9coFockYP/Jp5vbUGF1b6eJ4nUvyOVd1O9iVTDzvZN2vncwOMVmASPnDHxbG8Vs5r3XqPgSDj1YcgNQliXNzNTp0+g6rIMayoNEHXkJuDIOLDg0aoOqxpfCrQMlGnZBCeVd26X5aoMqECDqQLtBFjJ5qDePw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UkwqT/xf; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742534874; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=3OjmVg3hNieyiJXK/kdh6TLgZvVamdZ07Qi4mofSePI=;
-	b=UkwqT/xfOpQwBAypx5eiAlILfAEPOMadCoeHoJlWViU4RvHyzwZqLblzPQBirHyBKBiYMQ0inoEbU+DJLKa0PoWWXkTzZ5RY+JLEq+51z4x+JGoMB0hHdUAuXXj1K/mCh/871LG1c6/+l/dYgogygQ2ABqcundcS+lOYtQsMs1Y=
-Received: from 30.74.129.101(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WSGDxm1_1742534873 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 21 Mar 2025 13:27:54 +0800
-Message-ID: <582bc002-f0c8-4dbb-8fa5-4c10a479b518@linux.alibaba.com>
-Date: Fri, 21 Mar 2025 13:27:53 +0800
+	s=arc-20240116; t=1742534910; c=relaxed/simple;
+	bh=d+A5v4z1VqwkPwIlnIMnSoB4JUMGjeiiC2p4W11Hlww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfRL+t4vIzl9Z5aymkPaQ/qxM50Ev9And4vLnBmtds6lO5MynEHUYg8hT1ImceSYQ6GF6sr5MqSl5gcjLKXgUA+fsN0tlB17FdZQU8mHX2YeL34/kmvKyivn21Dzxr7D9OoqtmpexDOtv4vb1FkBjl1KU0/Ph6xe6bwNfQma0jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AiE75BYb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742534908; x=1774070908;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d+A5v4z1VqwkPwIlnIMnSoB4JUMGjeiiC2p4W11Hlww=;
+  b=AiE75BYbEJkx2x0lZHN81l9WzmL4CZ5LTaQzKPPWAXClC4FKDra0GQ+g
+   WwRGgCIy2YL5cr/RnVdg8y/PyXwNXfygPbBOVC8Z/vSC+pNAHHqtt+Ih5
+   NqNkiHLuMIEBVODN6sKahGr025kZZ+qRxLy1z1fs/tqO+wiqEMy1Qwdqu
+   8Do/HiNpPzb47MYVNYZtdNjk3LY4HCSlqzLT+PuXC/X7ea3SELwo7jD/L
+   csCaihOxlMmZ7GExK8N1o3/9s67tulhAFho51XGQa5z6K7aFpCJnALW59
+   0tlIi7Lpiwanx9v1362MlmAFLhjzUkRNKi4y6dLmRliIYTFas4ekIGXkV
+   Q==;
+X-CSE-ConnectionGUID: FKsb3bujTEmud+llxeHj4w==
+X-CSE-MsgGUID: dTxaLozIRQ65eAlJvJ61ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="69147786"
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="69147786"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 22:28:27 -0700
+X-CSE-ConnectionGUID: /dR2s6RTQGqG7aWieZDvUg==
+X-CSE-MsgGUID: BrGvTM65RZyb7AdyVEGsaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,263,1736841600"; 
+   d="scan'208";a="124255137"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2025 22:28:26 -0700
+Date: Fri, 21 Mar 2025 07:28:22 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Lee Jones <lee@kernel.org>, gregkh@linuxfoundation.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	giometti@enneenne.com, raymond.tan@intel.com,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
+ Lake PSE GPIO and TIO
+Message-ID: <Z9z49lfWV6LjUnaI@black.fi.intel.com>
+References: <20250307052231.551737-1-raag.jadav@intel.com>
+ <20250307052231.551737-2-raag.jadav@intel.com>
+ <20250314124450.GP3890718@google.com>
+ <Z9QxqH3DJvyW3sjo@smile.fi.intel.com>
+ <20250314135735.GQ3890718@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] initrd: support erofs as initrd
-To: Christoph Hellwig <hch@lst.de>, julian.stecklina@cyberus-technology.de
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250320-initrd-erofs-v1-1-35bbb293468a@cyberus-technology.de>
- <20250321050114.GC1831@lst.de>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250321050114.GC1831@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314135735.GQ3890718@google.com>
 
-Hi Christoph,
+On Fri, Mar 14, 2025 at 01:57:35PM +0000, Lee Jones wrote:
+> On Fri, 14 Mar 2025, Andy Shevchenko wrote:
+> > On Fri, Mar 14, 2025 at 12:44:50PM +0000, Lee Jones wrote:
+> > > On Fri, 07 Mar 2025, Raag Jadav wrote:
 
-On 2025/3/21 13:01, Christoph Hellwig wrote:
-> We've been trying to kill off initrd in favor of initramfs for about
-> two decades.  I don't think adding new file system support to it is
-> helpful.
+...
+
+> > > > +static void ehl_pse_gpio_remove(struct pci_dev *pdev)
+> > > > +{
+> > > > +	mfd_remove_devices(&pdev->dev);
+> > > > +	pci_free_irq_vectors(pdev);
+> > > > +}
+> > 
+> > Same here.
 > 
+> Also, Greg has been quite vocal about converting PCI devices to Platform
+> ones in the past.  We may wish to run this past him before continuing.
 
-Disclaimer: I don't know the background of this effort so
-more background might be helpful.
+Greg, any objections on moving forward with platform device?
 
-Two years ago, I once thought if using EROFS + FSDAX to directly
-use the initrd image from bootloaders to avoid the original initrd
-double caching issue (which is what initramfs was proposed to
-resolve) and initramfs unnecessary tmpfs unpack overhead:
-https://lore.kernel.org/r/ZXgNQ85PdUKrQU1j@infradead.org
-
-Also EROFS supports xattrs so the following potential work (which
-the cpio format doesn't support) is no longer needed although I
-don't have any interest to follow either):
-https://lore.kernel.org/r/20190523121803.21638-1-roberto.sassu@huawei.com
-
-Anyway, personally I have no time slot or even input on those.
-
-Thanks,
-Gao Xiang
+Raag
 
