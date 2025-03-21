@@ -1,140 +1,335 @@
-Return-Path: <linux-kernel+bounces-571017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CD1A6B7DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:43:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B813A6B7F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 784F77A5F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457DC16EE98
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D931F09A1;
-	Fri, 21 Mar 2025 09:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBBD1F1524;
+	Fri, 21 Mar 2025 09:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AVcq+OYW"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="myS5bosg"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4511F130C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EB386250
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742550211; cv=none; b=C8uwMGZdmQ7Q+o7NZP+qIVG8I+Ne4LIvKqTNJZa7y/oy3IKNPM3kBTZR+AjqW+3ScTxl6eDNsQ2iTgQ8p+fkoo4Sgnl//5Ut3yQPqCmD6NkVT+YxtPO6CABZwZo5rBTuB2d4jaLO0rnEw5g2NPTawRiNqPCbgFIHWcNTcmsPiic=
+	t=1742550250; cv=none; b=LDS4wIcbYKucdSWnUBSbUaLJDUFBNaI0/DggMZ+n7/3xOrYlUKnD7wM/OBI9VCEO7p4+u6Md6GgY/BQ50Vb48NfcpQFs4gx0KUHxMrgJO5MnFdXtMdIURJh/gNhi8OVMbsTQ/0ixiSrmEaZezhgdzNWndOjV0wnYcOpcfHVDQiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742550211; c=relaxed/simple;
-	bh=DRBplq8aKI0ku9BkKb564kLsXB+P8qItF8OLlfaPMoI=;
+	s=arc-20240116; t=1742550250; c=relaxed/simple;
+	bh=ATigMA0a/MlF8JyYwM1f7DKgjphs05xuS1/j4qKoTcw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=drYQUlSIqwBL5KQh9lNfiRsXYw1F5N62cvov5FXHeePrszq/dgrZaQi5yxQlOrHyNdh6+u5c6W3uRV/e7ckIwAx1psTvZSHcHn7SM8H63SOeJNNfOMP1gaC1pCz8rQ2YWKSaktaOthoBCcgAprlIQcVBMutHQWhszGwd02fapS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AVcq+OYW; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54ad1e75f49so1537438e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:43:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=T3Uj0rmOA5Kw7T5fuErj3Sq7ZF12ULrab+xIeKY8Wyl768ykcIODurkwFLrrYuqYFow9ZNkZqXw0XhVOa1zOmld6/6q6/bKHuyQXwmpxoBmWtfx3bUAVOqfzxobW2wB1AeafpM8nJxruNpLRTQY9KULDw6wn7xfdHmyBpZBU088=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=myS5bosg; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54963160818so2248901e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:44:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742550207; x=1743155007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CgGaJaPa/jEPScVXsjWC4390D+TFpvglNfRjMg/X9O0=;
-        b=AVcq+OYWi/89Ti7sWHSrHWkZa3upXFtsa/m5545IZ4yJYvzOiwML6YtJXaQ9EJzdB+
-         LyBxyAlLqMv8bgggp9x3nOyO5bOb/nwMYNO6x0p/z3TIjLIWWXlnCiZE/7ZVwvMiaybg
-         1GSRQamA+vlciqfq+Cr8e8OplikPoSG2nt8WrAZoTA5OOsqlko7aL+UAluwyzKlSiPPo
-         zXQ3XDQklNMqpilNXE51Nw7HISdlPQ6OQXNTaR8Jpr+FZ/O6h0i6G8rkzcOHM/ogLlRm
-         3VvCOfXLq/e+YNv0rfJ9ZbKCETLGzRdQ4GOJwjHM1C6XZUMCpxkg9qmPCcbRr0wHrhpQ
-         OdaQ==
+        d=chromium.org; s=google; t=1742550247; x=1743155047; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7KzR4/KTCc1hHx0bVWFwybI1sqREbxFze/GsdIhnkQs=;
+        b=myS5bosgWwvE+svIBBVlPtAd+qH3osr+uWMKOuK+/UKSf70+37mHA/VGJc8EFbihyi
+         vq1VO4pGsHQ8FLueR+2pPfFaxf9/JLodKjQZozQMnHfnhZRLiPJlbl7+0MVNOJ1TYikj
+         2horRS2MIV1olCL/TRDNwu5dwdESsXfhSDuUE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742550207; x=1743155007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CgGaJaPa/jEPScVXsjWC4390D+TFpvglNfRjMg/X9O0=;
-        b=Dbg9KimTGH9Gi7C7mlK3xCK4NLzLBQ/u4XP0x1drTQMm50aQjomr4aDgVG0y/jTI9a
-         Le7xfApJKvZYvyp7bVKfrvk2qiBfIxR3lbZh+cwkCFK7xJNNZKSfz2Uw9iUS4xJBWzxk
-         gHa1zyyF0SDyaZ6qosYAhDScAtB4GHeiHjS57k9fBznllMyVDHtOUzHmp4Po6UMlOuJB
-         bny3cPXpq2YxrfR4PGDb0tB79NwlbTe1El5H/H7z+o+MELm1zr3sigT0rm1Wu9VsaKZw
-         YddbLehaVlM9FzHwScZ8aXyrc0uQaonVpCgGLFcXvTumG5i/wBA/qP1Cz+NDSw51xI74
-         itxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMj3qa6jdRfJIHxY6TziIY3y+xnhgZWzlDvdoE7D3IRCW8U1lDWabSh8pgA8VRkSp2WX+2Ik6uTCuia6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmpwq1iFe2rWxBsA9e6i25tgEK6KxLwZ/Z0JyWcG81Lphwoz0r
-	CIomedrcWhYcoI1x8v7lwfB0h3gkbdIzU2AFgNlPNBr3WGqEB8ka1eEGadcqolpLN3rKbiexBfj
-	G6DngIn4VVgtB27Vu9dzxxmXh57bqIW/khD6SZw==
-X-Gm-Gg: ASbGncv/SjXhYP9zYcved8ps5aOY+jx1MqHenpd2ijZ9//tgIc5S7PSMb2umJrfX5io
-	MO8LbFKpq6kk4mxQagAFti4SSTwbjqmbB2vvrB2LHlBamJjXkTRb3sJcC1WE3nbWqoXGgwBN9ts
-	LeWWE/BGVQ2zTMvAybErgRO7YtI6XVxrW+7WIJq9b6dA0ceknTlzBkV4uZdQ==
-X-Google-Smtp-Source: AGHT+IEDdJoaJq6teyJiW13G+bIfvvL5/3c4aVZ249NYoi9wkGLc1z6wYCrInzpYKLkQcy/ueE7DfYIIW3z1gg4d79A=
-X-Received: by 2002:a05:6512:1314:b0:54a:cbfb:b62e with SMTP id
- 2adb3069b0e04-54ad64f6791mr932986e87.35.1742550207212; Fri, 21 Mar 2025
- 02:43:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742550247; x=1743155047;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7KzR4/KTCc1hHx0bVWFwybI1sqREbxFze/GsdIhnkQs=;
+        b=Q4xNkMEPdw7rYlr1vRfdaaLpxqONsyfXpcv40BPXcJo71ikrnT4hW1QIvWl72lQn1H
+         4wcirKle4MApRRqCzDwJyBTvSOBUz3pIoxNdRPe6mo7Idt34kDQlWthwyJxy7nLjeApj
+         CTBwBGygpxcRX0Fntsgyw5pBso2k18uhbxgYHXHc+Gn+iOiKOsEhS47NGhxp3q24MtKB
+         LXnhwPbho6ovM8Y3A3UdFilv887D51nZdGE2SH4h1wH+YrTXIuKMYE6pyBHlJYIn3fs7
+         zrlIBqFP1fXcwKLAR9Iazpd548Y6IWcEG1+YCnScUUIB9ItbMAieXigdcSQ9+BueTrUX
+         f2bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgm0NLnA4ZFiQedRVxWTTvsRNePA38jGv/WxxGWHJb1AQMxkb8ZSw/sZ0wzFSxrpdpVqZdHmzSSVcMj6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMwdwl9XsPPeDwiKdonNcdaqH2x+7WcDB41DfSt6axNTz7pBiQ
+	/p6AM6bL/SYoSu4lkO1QqjLVQIMjQcch7KHhQSTvB//T0Vco+iSdYLGsK/8T8wkHyGWC8m7l9co
+	=
+X-Gm-Gg: ASbGncs+hizVDDmZ1wC8WD6z0GAKX+4NhPIarYBlA12CRq+YU/pAi9hCRBqDtZ4cR/0
+	O19an/PLuWHg4vB7a4SM47h+a+B+AebNMOjgoOsWqEn4+XvhfgmxH6i69D24zq1sN0/AYdlMznE
+	suZJzDQg+B+TAs8BSo7X3Vbigwk0TD7VBLhAeHtGOILHqrowH+XPWB3RRLQ/a0yHnqXxwsYlznp
+	PDHP21XeNxVT+tiynyTXrLAyf9rMinvlCZV1yrWNCMkXWwiaXN02qaX9FpgUzzwBqMrxicfYUsl
+	1U1Lfk3VOYOAEto+7q++w/I3KK9N6q1V9/3qSnGAr86NSCIw9GjWig7a9zmzht8gj4SdxmDJv6L
+	xnkN76ThWe6I=
+X-Google-Smtp-Source: AGHT+IFq7B/5wKJOzzSQFWeOwEwTSUt9RXT7s4B97790ZwKv3qjexF81he7mm/0SE7KM+Pws64NQtw==
+X-Received: by 2002:a05:6512:1256:b0:549:8c8a:6cb4 with SMTP id 2adb3069b0e04-54ad64768ebmr1011262e87.11.1742550246492;
+        Fri, 21 Mar 2025 02:44:06 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad651245dsm141644e87.239.2025.03.21.02.44.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 02:44:05 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30c05fd126cso16061041fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 02:44:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnadF1cUoRutix+iNuIhqGGjCEv+Yva5FL+ubDw4Sx3PuM9XvdGN1N5nnOswNt7ckoap1kf3VTU0rXNOQ=@vger.kernel.org
+X-Received: by 2002:a2e:a7ca:0:b0:30b:feb4:ed4 with SMTP id
+ 38308e7fff4ca-30d7e2ba516mr9130741fa.31.1742550244669; Fri, 21 Mar 2025
+ 02:44:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320055502.274849-1-quic_wenbyao@quicinc.com>
- <20250320055502.274849-2-quic_wenbyao@quicinc.com> <694b6638-92b2-4ac0-a175-bd29aea6cba9@kernel.org>
-In-Reply-To: <694b6638-92b2-4ac0-a175-bd29aea6cba9@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 21 Mar 2025 10:43:16 +0100
-X-Gm-Features: AQ5f1Jo9naRtRxBQvHi76DCGdYFDD5Qh6BXFBrW4RyaSHcjfJlIGHOXa5xvXdjg
-Message-ID: <CAMRc=MfZrRp=VuEOLuMY_04JdyRrD+joGL56LwRFQ-+D-8Z_6w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] arm64: defconfig: enable PCI Power Control for PCIe3
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Wenbin Yao <quic_wenbyao@quicinc.com>, andersson@kernel.org, konradybcio@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org, 
-	quic_qianyu@quicinc.com, sfr@canb.auug.org.au, 
-	linux-arm-kernel@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250321014904.129768-1-ccc194101@163.com>
+In-Reply-To: <20250321014904.129768-1-ccc194101@163.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 21 Mar 2025 10:43:52 +0100
+X-Gmail-Original-Message-ID: <CANiDSCs9p=JkGs8w8_n8oPkYg5J3rQFF2RT1bbdme_sNKuzwmg@mail.gmail.com>
+X-Gm-Features: AQ5f1JonmDYWYcHzcO8vXYDfya0NXyjJ0hXUe4izsg4TP3Bz07BroK5N3AChmWk
+Message-ID: <CANiDSCs9p=JkGs8w8_n8oPkYg5J3rQFF2RT1bbdme_sNKuzwmg@mail.gmail.com>
+Subject: Re: [PATCH v5] media: uvcvideo: Fix bandwidth issue for Alcor camera
+To: chenchangcheng <ccc194101@163.com>
+Cc: laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, mchehab@kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	chenchangcheng <chenchangcheng@kylinos.cn>, kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 8:37=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+Hi Chenchangcheng
+
+On Fri, 21 Mar 2025 at 02:51, chenchangcheng <ccc194101@163.com> wrote:
 >
-> On 20/03/2025 06:55, Wenbin Yao wrote:
-> > From: Qiang Yu <quic_qianyu@quicinc.com>
-> >
-> > Enable the pwrctrl driver, which is utilized to manage the power suppli=
-es
-> > of the devices connected to the PCI slots. This ensures that the voltag=
-e
-> > rails of the x8 PCI slots on the X1E80100 - QCP can be correctly turned
-> > on/off if they are described under PCIe port device tree node.
-> >
-> > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-> > ---
-> >  arch/arm64/configs/defconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
-g
-> > index 85ec2fba1..de86d1121 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -245,6 +245,7 @@ CONFIG_PCIE_LAYERSCAPE_GEN4=3Dy
-> >  CONFIG_PCI_ENDPOINT=3Dy
-> >  CONFIG_PCI_ENDPOINT_CONFIGFS=3Dy
-> >  CONFIG_PCI_EPF_TEST=3Dm
-> > +CONFIG_PCI_PWRCTL_SLOT=3Dy
-> Bartosz,
+> From: chenchangcheng <chenchangcheng@kylinos.cn>
 >
-> Wasn't the intention to select it the same way as PCI_PWRCTL_PWRSEQ is
-> selected?
+> Some broken device return wrong dwMaxPayloadTransferSize fields,
+> as follows:
+> [  218.211425] [pid:20391,cpu4,guvcview,3]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+> [  218.211425] [pid:20391,cpu4,guvcview,4]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+> [  218.252532] [pid:20391,cpu4,guvcview,1]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
+> [  218.252532] [pid:20391,cpu4,guvcview,2]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
+> [  218.293426] [pid:20391,cpu7,guvcview,8]videobuf2_common: __setup_offsets: buffer 0, plane 0 offset 0x00000000
+> [  218.294067] [pid:20391,cpu7,guvcview,9]videobuf2_common: __setup_offsets: buffer 1, plane 0 offset 0x000e1000
+> [  218.294433] [pid:20391,cpu7,guvcview,0]videobuf2_common: __setup_offsets: buffer 2, plane 0 offset 0x001c2000
+> [  218.294677] [pid:20391,cpu7,guvcview,1]videobuf2_common: __setup_offsets: buffer 3, plane 0 offset 0x002a3000
+> [  218.294677] [pid:20391,cpu7,guvcview,2]videobuf2_common: __vb2_queue_alloc: allocated 4 buffers, 1 plane(s) each
+> [  218.294738] [pid:20391,cpu7,guvcview,3]uvcvideo: uvc_v4l2_mmap
+> [  218.294799] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_mmap: buffer 0, plane 0 successfully mapped
+> [  218.294799] [pid:20391,cpu7,guvcview,5]uvcvideo: uvc_v4l2_mmap
+> [  218.294830] [pid:20391,cpu7,guvcview,6]videobuf2_common: vb2_mmap: buffer 1, plane 0 successfully mapped
+> [  218.294830] [pid:20391,cpu7,guvcview,7]uvcvideo: uvc_v4l2_mmap
+> [  218.294830] [pid:20391,cpu7,guvcview,8]videobuf2_common: vb2_mmap: buffer 2, plane 0 successfully mapped
+> [  218.294860] [pid:20391,cpu7,guvcview,9]uvcvideo: uvc_v4l2_mmap
+> [  218.294860] [pid:20391,cpu7,guvcview,0]videobuf2_common: vb2_mmap: buffer 3, plane 0 successfully mapped
+> [  218.294860] [pid:20391,cpu7,guvcview,1]videobuf2_common: vb2_core_qbuf: qbuf of buffer 0 succeeded
+> [  218.294891] [pid:20391,cpu7,guvcview,2]videobuf2_common: vb2_core_qbuf: qbuf of buffer 1 succeeded
+> [  218.294891] [pid:20391,cpu7,guvcview,3]videobuf2_common: vb2_core_qbuf: qbuf of buffer 2 succeeded
+> [  218.294891] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_core_qbuf: qbuf of buffer 3 succeeded
+> [  218.294891] [pid:20391,cpu7,guvcview,5]uvcvideo: Setting frame interval to 1/25 (400000).
+> [  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
+> [  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
+You can copy the whole log messages in the cover letter. I think the
+commit message should only contain:
+
+uvcvideo: Device requested 2752512 B/frame bandwidth.
+uvcvideo: No fast enough alt setting for requested bandwidth.
+
+Please also add the out of lsusb -v -d 1b17:6684 to the cover letter
+
+
+
 >
-> Best regards,
-> Krzysztof
+> The maximum packet size of the device is 3 * 1024, according to the
+> logs above, the device needs to apply for a bandwidth of 0x2a0000.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202503191330.AveQs7tb-lkp@intel.com/
+The code has not landed, please remove the previous two lines.
+
+
+> Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c |  9 ++++
+>  drivers/media/usb/uvc/uvc_video.c  | 82 +++++++++++++++++-------------
+>  drivers/media/usb/uvc/uvcvideo.h   |  1 +
+>  3 files changed, 58 insertions(+), 34 deletions(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index deadbcea5e22..6d739c3cc88f 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -3188,6 +3188,15 @@ static const struct usb_device_id uvc_ids[] = {
+>           .bInterfaceSubClass   = 1,
+>           .bInterfaceProtocol   = 0,
+>           .driver_info          = UVC_INFO_META(V4L2_META_FMT_D4XX) },
+> +       /* Alcor Corp. Slave camera */
+> +       { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+> +                               | USB_DEVICE_ID_MATCH_INT_INFO,
+> +         .idVendor             = 0x1b17,
+> +         .idProduct            = 0x6684,
+> +         .bInterfaceClass      = USB_CLASS_VIDEO,
+> +         .bInterfaceSubClass   = 1,
+> +         .bInterfaceProtocol   = 0,
+> +         .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
+
+The quirks are ordered by vid:pid. Please move this element to its
+correct position
+
+>         /* Generic USB Video Class */
+>         { USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
+>         { USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index e3567aeb0007..7af77bf1be9b 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -226,41 +226,55 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+>         if ((ctrl->dwMaxPayloadTransferSize & 0xffff0000) == 0xffff0000)
+>                 ctrl->dwMaxPayloadTransferSize &= ~0xffff0000;
+>
+> -       if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) &&
+> -           stream->dev->quirks & UVC_QUIRK_FIX_BANDWIDTH &&
+> -           stream->intf->num_altsetting > 1) {
+> -               u32 interval;
+> -               u32 bandwidth;
+> -
+> -               interval = (ctrl->dwFrameInterval > 100000)
+> -                        ? ctrl->dwFrameInterval
+> -                        : frame->dwFrameInterval[0];
+> -
+> -               /*
+> -                * Compute a bandwidth estimation by multiplying the frame
+> -                * size by the number of video frames per second, divide the
+> -                * result by the number of USB frames (or micro-frames for
+> -                * high- and super-speed devices) per second and add the UVC
+> -                * header size (assumed to be 12 bytes long).
+> -                */
+> -               bandwidth = frame->wWidth * frame->wHeight / 8 * format->bpp;
+> -               bandwidth *= 10000000 / interval + 1;
+> -               bandwidth /= 1000;
+> -               if (stream->dev->udev->speed >= USB_SPEED_HIGH)
+> -                       bandwidth /= 8;
+> -               bandwidth += 12;
+> -
+> -               /*
+> -                * The bandwidth estimate is too low for many cameras. Don't use
+> -                * maximum packet sizes lower than 1024 bytes to try and work
+> -                * around the problem. According to measurements done on two
+> -                * different camera models, the value is high enough to get most
+> -                * resolutions working while not preventing two simultaneous
+> -                * VGA streams at 15 fps.
+> -                */
+> -               bandwidth = max_t(u32, bandwidth, 1024);
+> +       if (stream->intf->num_altsetting > 1) {
+> +               if (!(format->flags & UVC_FMT_FLAG_COMPRESSED) &&
+> +                   stream->dev->quirks & UVC_QUIRK_FIX_BANDWIDTH) {
+> +                       u32 interval;
+> +                       u32 bandwidth;
+> +
+> +                       interval = (ctrl->dwFrameInterval > 100000)
+> +                                ? ctrl->dwFrameInterval
+> +                                : frame->dwFrameInterval[0];
+> +
+> +                       /*
+> +                        * Compute a bandwidth estimation by multiplying the
+> +                        * frame size by the number of video frames per second,
+> +                        * divide the result by the number of USB frames (or
+> +                        * micro-frames for high- and super-speed devices) per
+> +                        * second and add the UVC header size (assumed to be
+> +                        * 12 bytes long).
+> +                        */
+> +                       bandwidth = frame->wWidth * frame->wHeight / 8
+> +                                   * format->bpp;
+> +                       bandwidth *= 10000000 / interval + 1;
+> +                       bandwidth /= 1000;
+> +                       if (stream->dev->udev->speed >= USB_SPEED_HIGH)
+> +                               bandwidth /= 8;
+> +                       bandwidth += 12;
+> +
+> +                       /*
+> +                        * The bandwidth estimate is too low for many cameras.
+> +                        * Don't use maximum packet sizes lower than 1024 bytes
+> +                        * to try and work around the problem. According to
+> +                        * measurements done on two different camera models,
+> +                        * the value is high enough to get most resolutions
+> +                        * working while not preventing two simultaneous VGA
+> +                        * streams at 15 fps.
+> +                        */
+> +                       bandwidth = max_t(u32, bandwidth, 1024);
+> +
+> +                       ctrl->dwMaxPayloadTransferSize = bandwidth;
+> +               }
+>
+> -               ctrl->dwMaxPayloadTransferSize = bandwidth;
+> +               if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
+
+Why only for compressed formats?
+> +                   stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
+> +                   ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
+> +                       dev_warn(&stream->intf->dev,
+> +                                "the max payload transmission size (%d) exceededs the size of the ep max packet (%d). use the default value of 1024 bytes.\n",
+exceeds
+The max
+. Use
+> +                                ctrl->dwMaxPayloadTransferSize,
+> +                                stream->maxpsize);
+> +                       ctrl->dwMaxPayloadTransferSize = 1024;
+
+Why did you decided 1024 to be the correct transfer Size? Wouldn;t it
+be more generic to use stream->maxpsize
+
+
+> +               }
+
+Maybe a bit nicer:
+
+diff --git a/drivers/media/usb/uvc/uvc_video.c
+b/drivers/media/usb/uvc/uvc_video.c
+index e3567aeb0007..b50e6a4048f0 100644
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -262,6 +262,16 @@ static void uvc_fixup_video_ctrl(struct
+uvc_streaming *stream,
+
+                ctrl->dwMaxPayloadTransferSize = bandwidth;
+        }
++
++       /* Proper comment.... bla bla bla */
++       if (stream->intf->num_altsetting > 1 &&
++           ctrl->dwMaxPayloadTransferSize > stream->maxpsize &&
++           stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH) {
++               dev_warn(&stream->intf->dev,
++                        "the max payload transmission size (%d)
+exceeds the size of the ep max packet (%d). Using the max size.\n",
++                        ctrl->dwMaxPayloadTransferSize, stream->maxpsize);
++               ctrl->dwMaxPayloadTransferSize = stream->maxpsize;
++       }
+ }
+
+
+
+>         }
+>  }
+>
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 5e388f05f3fc..8b43d725c259 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -77,6 +77,7 @@
+>  #define UVC_QUIRK_DISABLE_AUTOSUSPEND  0x00008000
+>  #define UVC_QUIRK_INVALID_DEVICE_SOF   0x00010000
+>  #define UVC_QUIRK_MJPEG_NO_EOF         0x00020000
+> +#define UVC_QUIRK_OVERFLOW_BANDWIDTH   0x00040000
+>
+>  /* Format flags */
+>  #define UVC_FMT_FLAG_COMPRESSED                0x00000001
+>
+> base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+> --
+> 2.25.1
+>
 >
 
-For sure. I would expect there to be something like:
 
-select PCI_PWRCTL_SLOT if ARCH_QCOM
-
-in Kconfig and nothing in defconfig.
-
-Bartosz
+-- 
+Ricardo Ribalda
 
