@@ -1,55 +1,71 @@
-Return-Path: <linux-kernel+bounces-570755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9B3A6B437
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:01:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C35A6B42C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:56:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278CF7AA377
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267D817E15A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944401E5018;
-	Fri, 21 Mar 2025 06:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881A81EA7D2;
+	Fri, 21 Mar 2025 05:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="NuP/my9U"
-Received: from out0-220.mail.aliyun.com (out0-220.mail.aliyun.com [140.205.0.220])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rtEvPPct"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859A223A0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360E033F6;
+	Fri, 21 Mar 2025 05:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742536872; cv=none; b=hDrX9wkMK8fmIp7EFNjrUbsIxfgJIn8YLfGVI447J3ZiXa1BeAefXyLJLDHUEnJ3h3hnXOQF1oyeWz1du3mIJebHgTxn9BnDq4jVjC+cdHRI5qKBVQRBmA2xSzko94Vf0mfKfrHW6zhQ/FrYU756kAMuc9QX6hn19GhkLsS3nEY=
+	t=1742536579; cv=none; b=femxJQwuo224gZ5Jh+5Hot2pMlbfM76x+pQPMO8I7yJTaPmD+Wzes3ZQNdgH6eSVYXyY/tiLJmRMoqjk9vywP2Fom0Zm8C3eQj7Pe/RL2XpkBLhhDSUijher4mhmo3Sfs8NUOOuQ2I5gnGHBh5dxABih8l6D/nsrNKjLl4XSKsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742536872; c=relaxed/simple;
-	bh=FbY384U4AIiNQT7l+/RyX7DT5qoatdg+MioJ5G+W+kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbfWViwAbLlEGJtpHfLE4u9eg43S2S/vCP428XriuV5BxbATvexQQtIsyyHHl4KYTeJBVV8rLB9sRtj1MyxWEOKSq+PEk0ViUvz0yLmK++nDD0e3QZeIAE5gNKAZIbp1zw1QAvk9OvHebKsMbFKVApG4lUduFCsLNeuwerErf/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=NuP/my9U; arc=none smtp.client-ip=140.205.0.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1742536866; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=PLYvBPGd9h5DA4RD534WQAbTFa/R8xVYc1BIWnbzphY=;
-	b=NuP/my9UPR9Rc/FWViTRF7vaDGZZ8hsjwIR+0p6hoA3yP1iZe2MqIvxqrk50RQIhpNT8PkNCxvdtn+vN92wEfWkaXEwDuGvRyG3bfgElUBry5dW2qJjGB8IK+HOz1EFsHG0tr02EF7CX87XzkRJkPjSddsdGzgtFyUXbLm07fnU=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.c-QVnc9_1742536548 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 21 Mar 2025 13:55:49 +0800
-Date: Fri, 21 Mar 2025 13:55:48 +0800
-From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	D Scott Phillips <scott@os.amperecomputing.com>,
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] char: misc: register chrdev region with all possible
- minors
-Message-ID: <20250321055548.GA106825@k08j02272.eu95sqa>
-References: <20250317-misc-chrdev-v1-1-6cd05da11aef@igalia.com>
+	s=arc-20240116; t=1742536579; c=relaxed/simple;
+	bh=rakOtM9qjCQHkqBpgJGi83hrWXwvmBdKuX7OU7VwvKc=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZ/Ccn8/O9uv7IU02iD+qjogQmEdhn8WJUj6Y73LcALGTBhVRsF1fjCImRd0cGe2vqJSGqwNQRWcMbJAJX+9fVaYo1c7UoslmgIypLlckSUUKGonTcteUAgACJ5rT3P/EOAsrdpVVNPI2HBykVWltHL+uhU6qCk6dh4ILrAGamg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rtEvPPct; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4b1rZoFjUmC82SICohDGJF5TYEnTu/ZO1nB8POqr7Q0=; b=rtEvPPctHs4DFbvPx/CFLoyoym
+	6shRxW1IEni3BZVrGEpigNTI4fFOotZtAwTzg7t3/heKPPgWop8SQgg8ayjoSHdZKuc21WHScvUlY
+	DOacoBbESG0gjX1w9ySCeVX/fRv+0YXIMtQuzFUuMVT6y1NsbK59hYbVFFnS2R6/X7kEAgNbnAm8M
+	d/qjZun2Kfpxi/TWhJTu30swVFU8UXKiZnDH5cib3qyqPaKVZETBMKR6mnUr5+7AzzkVtS0Jghu4y
+	9e8GMKlGu1NoqqmHBw4RFC1Hn+f33autaSrS+5JkBAmynbDc8GF3PNeIvCwxJSJH4ffQ8CzqDDv9C
+	Lw+g9dEA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tvVMd-0000000DvYO-33Wf;
+	Fri, 21 Mar 2025 05:56:15 +0000
+Date: Thu, 20 Mar 2025 22:56:15 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joe Damato <jdamato@fastly.com>, Christoph Hellwig <hch@infradead.org>,
+	Jens Axboe <axboe@kernel.dk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
+	linux-fsdevel@vger.kernel.org, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
+	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
+	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
+Message-ID: <Z9z_f-kR0lBx8P_9@infradead.org>
+References: <20250319001521.53249-1-jdamato@fastly.com>
+ <Z9p6oFlHxkYvUA8N@infradead.org>
+ <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
+ <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
+ <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
+ <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
+ <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
+ <Z9uuSQ7SrigAsLmt@infradead.org>
+ <Z9xdPVQeLBrB-Anu@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,58 +74,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317-misc-chrdev-v1-1-6cd05da11aef@igalia.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <Z9xdPVQeLBrB-Anu@LQ3V64L9R2>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Mar 17, 2025 at 10:59:55AM -0300, Thadeu Lima de Souza Cascardo wrote:
-> register_chrdev will only register the first 256 minors of a major chrdev.
-> That means that dynamically allocated misc devices with minor above 255
-> will fail to open with -ENXIO.
+On Thu, Mar 20, 2025 at 11:23:57AM -0700, Joe Damato wrote:
+> In my other message to Jens I proposed:
+>   - SPLICE_F_ZC for splice to generate zc completion notifications
+>     to the error queue
+>   - Modifying sendfile so that if SO_ZEROCOPY (which already exists)
+>     is set on a network socket, zc completion notifications are
+>     generated.
 > 
-> This was found by kernel test robot when testing a different change that
-> makes all dynamically allocated minors be above 255. This has, however,
-> been separately tested by creating 256 serio_raw devices with the help of
-> userio driver.
+> In both cases no new system call is needed and both splice and
+> sendfile become safer to use. 
 > 
-> Ever since allowing misc devices with minors above 128, this has been
-> possible.
-> 
-> Fix it by registering all minor numbers from 0 to MINORMASK + 1 for
-> MISC_MAJOR.
-> 
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202503171507.6c8093d0-lkp@intel.com
-> Fixes: ab760791c0cf ("char: misc: Increase the maximum number of dynamic misc devices to 1048448")
-> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> ---
->  drivers/char/misc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-> index f7dd455dd0dd3c7c9956e772b5ab8bd83a67a4a6..dda466f9181acf76564b5e41ed6e858928e56182 100644
-> --- a/drivers/char/misc.c
-> +++ b/drivers/char/misc.c
-> @@ -315,7 +315,7 @@ static int __init misc_init(void)
->  		goto fail_remove;
->  
->  	err = -EIO;
-> -	if (register_chrdev(MISC_MAJOR, "misc", &misc_fops))
-> +	if (__register_chrdev(MISC_MAJOR, 0, MINORMASK + 1, "misc", &misc_fops))
->  		goto fail_printk;
->  	return 0;
->  
-> 
-> ---
-> base-commit: 2dc25093218f5d42391549de6fe45e1aa9325676
-> change-id: 20250317-misc-chrdev-b26b572a47fc
-> 
-> Best regards,
-> -- 
-> Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> 
->
-Thank you for the fixes; we encountered the same problem in our
-environment as well.
+> At some point in the future a mechanism built on top of iouring
+> introduced as new system calls (sendmsg2, sendfile2, splice2, etc)
+> can be built.
 
-Tested-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+I strongly disagree with this.  This is spreading the broken
+SO_ZEROCOPY to futher places outside the pure networking realm.  Don't
+do that.
+
+It also doesn't help that more than 7 years after adding it,
+SO_ZEROCOPY is still completely undocumented.
+
+> > Because sendmsg should never have done that it certainly should not
+> > spread beyond purely socket specific syscalls.
+> 
+> I don't know the entire historical context, but I presume sendmsg
+> did that because there was no other mechanism at the time.
+
+At least aio had been around for about 15 years at the point, but
+networking folks tend to be pretty insular and reinvent things.
+
+> It seems like Jens suggested that plumbing this through for splice
+> was a possibility, but sounds like you disagree.
+
+Yes, very strongly.
+
+> As mentioned above and in other messages, it seems like it is
+> possible to improve the networking parts of splice (and therefore
+> sendfile) to make them safer to use without introducing a new system
+> call.
+> 
+> Are you saying that you are against doing that, even if the code is
+> network specific (but lives in fs/)?
+
+Yes.
+
+Please take the work and integrate it with the kiocb-based system
+we use for all other in-kernel I/O that needs completion notifications
+and which makes it trivial to integate with io_uring instead of
+spreading an imcompatible and inferior event system.
 
