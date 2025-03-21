@@ -1,134 +1,111 @@
-Return-Path: <linux-kernel+bounces-571857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFABA6C334
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:17:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDAAA6C305
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16AB189AD0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E53C17634D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E61E23956A;
-	Fri, 21 Mar 2025 19:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F7C22FDF2;
+	Fri, 21 Mar 2025 19:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WuxxUnIC"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaLAEti+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D042376F4;
-	Fri, 21 Mar 2025 19:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2214A33F6;
+	Fri, 21 Mar 2025 19:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742584460; cv=none; b=P0mLHRQ2HyQqRKiOS2vH8IUD6m78cuKBH9bHGXzP7nOYpovBwU0jmW5Omp7FJLvpGs3lhw1mbio7QAfFj6SnkpfdFzUQiRKBV038QvbWdYy99zd0EVktsz1bjKwDduwNLevEZ1uI+HP53DE1f99bFsduPEogSnn9Mjs7Lc/gCTs=
+	t=1742584293; cv=none; b=Lrl/Vpr29yD9c/S8yueVTLEymssUjx28fLe4geFK5URf2m1FHgcG0OgzFgHUSstZHg9gMZJG+06UUZgtlC0SP9IawUnsZiCOZswVkvBZNnyVd6RqsUcOEvhEnVrKEWHsGxlLbk1VoPs1Oh+WQhoxgR6T2Jw6jWlD7snn5W6nhis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742584460; c=relaxed/simple;
-	bh=E7bIiNOZWrSZNz4nukeMsgV0KF90MCOpuuix6iX2JgI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aDMjQzXLfy5JQUtsun4xlZXOAScJddqWEKewoF2KcJsKY97nJUFm5wdunW4xv0SsfQHz2YhzdElzTcd2tvPhvBhN9hy3aK58A0/WjlGMUqYLiUPPEkIJDMHvw4w/2M+s4Y8DvgLSdCyqjf7sbNaSkUQ/arKNexSvNeFsFiYj1lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WuxxUnIC; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C67D443F3;
-	Fri, 21 Mar 2025 19:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742584456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qV/BzZ4NMUb9fMiduuWLEtJE4+30wNUTrCBlJGz+oF0=;
-	b=WuxxUnICXSYDWDNEhubsFgp0e4HvOPccnGNoiLnGr9kRIoIxhvfPzMd6Azpwa6bktYkRzd
-	6eyoGfu7aSmQ5iBAGsbNacbfC4kaRlQ+0H1s6himQcuxwhh82b0VNA+UELdV54HFLpeRYa
-	oO2BSLtDm9wy6ochWMu60mspuWef+eN4MDMNNYQLuGAs/NrJlfoluAW11IqYZLWUmkLYNH
-	a7Oj+RDrg6VA/OPl1lyKijheOEhPA3J2m/ESfV5H1kbPlFHshcoN3X7qUshuiQfGHa4AtV
-	9Klm+Y1fzIvdZ4IjXSNnGwGnEYSRwOqGAdxXDECOQHz4cF5NH1pfwpKLaWsJhQ==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 21 Mar 2025 20:09:44 +0100
-Subject: [PATCH net-next 13/13] MIPS: mobileye: eyeq5-epm: add two Cadence
- GEM Ethernet PHYs
+	s=arc-20240116; t=1742584293; c=relaxed/simple;
+	bh=om62yFqtTyaPvTqnRyURq8QIvc3LzSjTBlVhbsZ+dDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+pgUIX74fm7CWSKmNnVs74owZfgZMUXjaD0YvmQacS2f7Xnobq/5+pScbfyq5FIqw4ODMFgKJUFC6pTBaOrViRNqAylqTCwCB0xDYExITFOnOYFDqBVk4nczVMiu86bgGZ3rXlDUSiJce12LdKW9jBPCX+ASVy4VmvbMFsyTps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaLAEti+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3105C4CEE3;
+	Fri, 21 Mar 2025 19:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742584292;
+	bh=om62yFqtTyaPvTqnRyURq8QIvc3LzSjTBlVhbsZ+dDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PaLAEti+W+gMojK9uHU3RrbbH7KVHJ9vF663D+GGlDGmO26ohTtm6xIp3NO+FuQHh
+	 829H8Txs3j4+MDZjfPnmwpqA4iYwmpVGvtFnK4JjbN8cRlWZIn8PNCh9oGvRbOk5/G
+	 BFgaP729YWPIxRrwfjJ1fTzK4LtvDdmBIONJSZFtX1W1SCKfI4bCNjAjwqKVNS+Wx4
+	 pUPHjH5Q5PYxlda8Fu0aoAb3noNRDdU6uXkOEIe+AEm/c4Zs4EJa16R5KIbqQy1wKo
+	 fvEDfXY4jORVDp2IBHeZBarYBJFXSgj4hzLtAPckwSdRRM465Et9OMF2zMVznky1P/
+	 7dyaej3FcicIw==
+Date: Fri, 21 Mar 2025 20:11:26 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, bhelgaas@google.com,
+	gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <Z9253sEI_cRS3mtN@pollux>
+References: <20250320222823.16509-4-dakr@kernel.org>
+ <202503220040.TDePlxma-lkp@intel.com>
+ <Z92ldvI4ihlm0HJd@cassiopeiae>
+ <CANiq72=s3rQwRt-TOr0_n=EKHwJSQSGmKfu_4TtoEhSTc2Fvqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250321-macb-v1-13-537b7e37971d@bootlin.com>
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
-In-Reply-To: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheduledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthekredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelvefhkeeufedvkefghefhgfdukeejlefgtdehtdeivddtteetgedvieelieeuhfenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgepuddunecurfgrrhgrmhepihhnvghtpeejjedrudefhedrkedurdeihedphhgvlhhopegludelvddrudeikedruddrfedtngdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepkhhusggrs
- ehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihgtohhlrghsrdhfvghrrhgvsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
-X-GND-Sasl: theo.lebrun@bootlin.com
+In-Reply-To: <CANiq72=s3rQwRt-TOr0_n=EKHwJSQSGmKfu_4TtoEhSTc2Fvqg@mail.gmail.com>
 
-The Mobileye EyeQ5 eval board (EPM) embeds two MDIO PHYs.
+On Fri, Mar 21, 2025 at 07:59:08PM +0100, Miguel Ojeda wrote:
+> On Fri, Mar 21, 2025 at 6:44 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > This requires an unsafe block for compilers < 1.82. For compilers >= 1.82 it
+> > turns into a warning *if* using an unsafe block.
+> >
+> > *Not* requiring unsafe for this seems like the correct thing -- was this a
+> > bugfix in the compiler?
+> >
+> > I guess to make it work for all compiler versions supported by the kernel we
+> > have to use unsafe and suppress the warning?
+> 
+> It was a feature, but it has been fairly annoying -- it affected
+> several series, e.g. the latest KUnit one as well as:
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- arch/mips/boot/dts/mobileye/eyeq5-epm5.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+From the second link:
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts b/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-index 6898b2d8267dfadeea511a84d1df3f70744f17bb..20dfc85681bb03330981ca0f11b2edfff3fa57bc 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-+++ b/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-@@ -21,3 +21,29 @@ memory@0 {
- 		      <0x8 0x02000000 0x0 0x7E000000>;
- 	};
- };
-+
-+&macb0 {
-+	phy-mode = "sgmii";
-+	phy-handle = <&macb0_phy>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		macb0_phy: ethernet-phy@e {
-+			reg = <0xE>;
-+		};
-+	};
-+};
-+
-+&macb1 {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&macb1_phy>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		macb1_phy: ethernet-phy@e {
-+			reg = <0xE>;
-+		};
-+	};
-+};
+"Previously, the compiler's safety checks were not aware that the raw ref
+operator did not actually affect the operand's place, treating it as a possible
+read or write to a pointer. No unsafety is actually present, however, as it just
+creates a pointer.
 
--- 
-2.48.1
+That sounds like it was a bug, or do I miss anything?
 
+> 
+>     https://lore.kernel.org/rust-for-linux/CANiq72kuebpOa4aPxmTXNMA0eo-SLL+Ht9u1SGHymXBF5_92eA@mail.gmail.com/
+> 
+> Please see:
+> 
+>     https://blog.rust-lang.org/2024/10/17/Rust-1.82.0.html#safely-addressing-unsafe-statics
+> 
+> So, yeah, we use `allow(unused_unsafe)` (no `expect`, since it depends
+> on the version).
+> 
+> I hope that helps.
+
+Yeah, thanks a lot. Especially for the second link, I couldn't find it even
+after quite a while of searching.
+
+I will respin right away, since otherwise the patches of v3 are reviewed.
 
