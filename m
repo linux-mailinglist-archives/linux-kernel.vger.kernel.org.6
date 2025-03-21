@@ -1,136 +1,160 @@
-Return-Path: <linux-kernel+bounces-571571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8E4A6BEF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:02:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E19A6BEFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00722189DE23
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F34189E0D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D001D2253A5;
-	Fri, 21 Mar 2025 16:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8522786321;
+	Fri, 21 Mar 2025 16:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ErGCfkJ2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBbVtFEb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB83686321
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91DE22ACFA;
+	Fri, 21 Mar 2025 16:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572954; cv=none; b=f45rOZlADGg+3fTY7jarWCly0LJHnnvvG0kCbHyi+09wBFhtNDMft74y+hguuux0EpSsa+erdltxMLGbGGhgxVSn1ET8iUGGCa9GuNxSNyJMFegeXBeHasN1XNo+ZZiNkjerWWFlnx9G/UlqvloXrB7/N/tsA2V7l84LPbk0M3c=
+	t=1742572957; cv=none; b=btpj9nPMzlfj/gi4Np0fUwxqEA+iSQ/4e19Ey7HMMuPYmeYA30X590lWrGGMGnfMqzfPpCS5KRn2TeJArWoURGdOJeuIQOY/gdQrqetwahjFWmQ18fekLdR7cSMpO7ogPBBRSzdo7xpQhwJtWd+QCmTr+BS8JZ6k/488kI9wxe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742572954; c=relaxed/simple;
-	bh=ay6GQChADei4tJLPKRE+6TMFEI/gSwtngn7T+xOVYWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RvIlxnVpuLAeeycunkSUjm6F9gRDPwYRDH99Os6NzZO9NtpaOu0jq2bzA7gl6ux+kNnm9lOaJ8fIlwEbtVCMqv3dEVVyvQFGgIgQf4/weN4xYf5Ntjgovt59lqW64gqoCNQedlAPn2eCSdtpnOu07VdAtu2V41BmkcM83i8DfHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ErGCfkJ2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATEtk001626
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:02:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vCbcORBD7TYTk+XKpRjnplu+uBcKKY/kXvr0Jk5Isao=; b=ErGCfkJ2qMEFeXqk
-	UC6l3H8dLAHsfzb1ZcqgKMAcqIXxd1mg90Dt6wUrb4v/+kjl7J9QM8OAiQNlgi16
-	heDzJw1s5Cx6pg2e95+DyHxENBc4AzO6LFS/05aOZ20OBC6FF99fGpFePUaymPLo
-	z4ldDaUgfYs4+SUwlgGHl3Wr0XoIXdatQHoMs2ml5Akou6I+aoecjcohNE2k0k+j
-	MZbzmwwA3DYhsTGYwM9Mcxz3dKdMvbrh0zu4Cl2rsf0xiiIF8dLdMkyJcaLUCQU1
-	YyR4ePNXfB5AQXDgQwBGXZSkfigHCz13fWQsOljLdxkl8aHElgjisq83HpLFOP6Z
-	1Uza0A==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g3sf6g5v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:02:31 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so3261779a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:02:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742572950; x=1743177750;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCbcORBD7TYTk+XKpRjnplu+uBcKKY/kXvr0Jk5Isao=;
-        b=EzG/MarJkCcVRnHlyj0UqH92UW0WWUewAWrLbLAeA1NzovIJA/nucpkebqSGPLPu4J
-         apHG+MdxZuxAtOcBuOKtYIv75M/8it7ZXp2OW7l4op9+pyMAjkWdkrDU+TB1Dn1SXpls
-         m+mvIkmu6BuLTq6fUCJ9PdE2SMGtB2CaK8jqyWLU3afk2gR6YtTB1XUv/ieA3fhZiS4R
-         mREZIlfedsBdfVVrOYu3dCoQuwYVDxWVebc1fAp79HsmA7IhZszMmFKneRPkth9bsvqC
-         R+qr7uF3YGp7tnkJ0bXecoNylS/AWn8szvFkAu0gcvL/vZ17vjoV5bFlTn+WH6sq32dk
-         xRLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTakR3tVheqKKSIMsVozBzYYbqPpn3jidp+OJoE3pyURiOJ36bpiE3EwJ4rgA8C+8//cuMTSLtGq4fxbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx44O8Tz+TU9eArX+PCCC9yLkqF1l/cK/KFqOf7R1mmNRDM5jn8
-	n4TTFzGqraeLleYeAoZzq51CmQVPzkwNyOTVVtMhY05ZzGhFn+SrdISgNeRaIUh5pvS5xNJuK84
-	DEbP2GuJfkmth+Vuc0O/fNXnRDNkEfw8hqKAtFZT5+Wcr3jZq3G/pdKwTgsFUMhthA3CWFOM=
-X-Gm-Gg: ASbGncv0BwdzYDFWMX6pdg/SAoi9uTUIKYQ7AiemRMMu0+SA2N86vjBte/vXHAPsmgX
-	LssY08+p5GtGgoZAsOOC+CJlOssntKu+Y36QY5afr6sKyIxjwMurQj9pHhyU23ovHaFLuII8hNw
-	E3Bc4McSOEQ/PzUBSLX/6VpMQUJGCFnwd4oAfXJIYy8FUyq3KvAJOth9bA+HpbRt2sRqVNycMml
-	u+8Kjg9yBXMVnwQO//I3+YcbH0Rkc1LweW5Nls902xUN4ZhCNtlVhxebyBSkL0U95fekroH2ez/
-	Cxb7VS+pJOfDFhkoKCULrqE8DMXk/t6Iic4/uDDUnREUtSPPiBx9QLFkO6YoNiPq28XmU79VrEV
-	CiyYbaSyp
-X-Received: by 2002:a05:6a20:7347:b0:1ee:e2ac:5159 with SMTP id adf61e73a8af0-1fe42f53152mr6623754637.19.1742572950025;
-        Fri, 21 Mar 2025 09:02:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcQ2r97XLcVjprlkXYBQ4t6SFERPXbBeumuUB0GSNO6WM4PH5u+Dkl5/WJ+KpfvQZJ1YN3/g==
-X-Received: by 2002:a05:6a20:7347:b0:1ee:e2ac:5159 with SMTP id adf61e73a8af0-1fe42f53152mr6623691637.19.1742572949501;
-        Fri, 21 Mar 2025 09:02:29 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a29177sm1911891a12.62.2025.03.21.09.02.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Mar 2025 09:02:29 -0700 (PDT)
-Message-ID: <72e9ddb1-c0eb-4eea-aa11-3f24ed0caea2@oss.qualcomm.com>
-Date: Fri, 21 Mar 2025 09:02:26 -0700
+	s=arc-20240116; t=1742572957; c=relaxed/simple;
+	bh=resnADRUm3B6YICfc7C0t17uPShmPUu14X1Oc5NkELU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r6f4tmt/hSiUanMd5u31JscwJDldw65EohmJqbLPuxtu4KIDk32YViGhG5yenOB2TvfdsyxTXdUniF4U+XXnX5kIsSWJSZ9nUA5F6MSyNA2vD1QB3CNAqRn8vo6ApgTAzYDe2gjFkna9x9sCiJL1qAiFphypIYD8j1BAcUVkgs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBbVtFEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EB7C4CEE8;
+	Fri, 21 Mar 2025 16:02:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742572956;
+	bh=resnADRUm3B6YICfc7C0t17uPShmPUu14X1Oc5NkELU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VBbVtFEbNQeeUapwx6R6GebJvWo83vLLP3PhO7XPdqY0zK0e42RjDqj8Y6o6sJH8e
+	 y/ipEUN5MgIXaP7Tk0aKQvNKBdiGf5TEnUJEvOaPPgEZtetivUqZsicIoFMnZkJZsW
+	 KgYaALmHleb0S9BF/VRyMbqBpdih7F5b87W3l+flOFeKub9PzcNIfTGlXEjocHvXo/
+	 3krqiUrbRUBndqI8meOa7mvAQJHTOuj4kTQtg47wOip2LnTbByhOflXCm2uZzGxS3+
+	 ha7qDJYedDKnZ9mUZRNhxG8QwSNvsdvuNoy/zhcKrHYnstQwFK8gClh1PYbWC2TDUV
+	 LkqiFLB6G1pcw==
+Date: Fri, 21 Mar 2025 11:02:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: display: tegra: document EPP, ISP,
+ MPE and TSEC for Tegra114 and Tegra124
+Message-ID: <20250321160234.GA3372208-robh@kernel.org>
+References: <20250314074557.16367-1-clamor95@gmail.com>
+ <20250314074557.16367-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-next v12 07/13] wifi: ath12k: add support for fixed
- QMI firmware memory
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
-        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-References: <20250321-ath12k-ahb-v12-0-bb389ed76ae5@quicinc.com>
- <20250321-ath12k-ahb-v12-7-bb389ed76ae5@quicinc.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250321-ath12k-ahb-v12-7-bb389ed76ae5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 6nSpnxAux3_L2c3ch-zujWICUojqLnPp
-X-Proofpoint-ORIG-GUID: 6nSpnxAux3_L2c3ch-zujWICUojqLnPp
-X-Authority-Analysis: v=2.4 cv=R9IDGcRX c=1 sm=1 tr=0 ts=67dd8d97 cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=e70TP3dOR9hTogukJ0528Q==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=bC-a23v3AAAA:8 a=VwQbUJbxAAAA:8 a=7wgTMAlwxEMamJX448IA:9 a=QEXdDO2ut3YA:10
- a=-FEs8UIgK8oA:10 a=iS9zxrgQBfv6-_F4QbHw:22 a=FO4_E8m0qiDe52t0p3_H:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0 adultscore=0
- suspectscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 malwarescore=0
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314074557.16367-2-clamor95@gmail.com>
 
-On 3/21/2025 3:52 AM, Raj Kumar Bhagat wrote:
-> IPQ5332 firmware supports only fixed QMI firmware memory.
+On Fri, Mar 14, 2025 at 09:45:55AM +0200, Svyatoslav Ryhel wrote:
+> The current EPP, ISP and MPE schemas are largely compatible with Tegra114
+> and Tegra124, requiring only minor adjustments. Additionally, the TSEC
+> schema for the Security engine, which is available from Tegra114 onwards,
+> is included.
 > 
-> Hence, add support to read reserved fixed memory region from
-> device-tree and provide the reserved memory segments for
-> firmware to use during QMI firmware memory request.
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra114-tsec.yaml   | 66 +++++++++++++++++++
+>  .../display/tegra/nvidia,tegra20-epp.yaml     | 14 ++--
+>  .../display/tegra/nvidia,tegra20-isp.yaml     | 14 ++--
+>  .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
+>  4 files changed, 99 insertions(+), 13 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> new file mode 100644
+> index 000000000000..c66ac6a6538e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra114-tsec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra Security co-processor
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +description: Tegra Security co-processor, an embedded security processor used
+> +  mainly to manage the HDCP encryption and keys on the HDMI link.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra114-tsec
+> +          - nvidia,tegra124-tsec
+> +
+> +      - items:
+> +          - const: nvidia,tegra132-tsec
+> +          - const: nvidia,tegra124-tsec
 
-Be aware that new memory-region helpers are being introduced by Rob:
-https://msgid.link/20250317232426.952188-1-robh@kernel.org
+nvidia,tegra210-tsec appears to be about the same, already in use, and 
+undocumented, so please add it to this binding.
 
-/jeff
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: tsec
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  operating-points-v2: true
+> +
+> +  power-domains:
+> +    items:
+> +      - description: phandle to the core power domain
+> +
+> +additionalProperties: false
+
+required properties?
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra114-car.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    tsec@54500000 {
+> +        compatible = "nvidia,tegra114-tsec";
+> +        reg = <0x54500000 0x00040000>;
+> +        interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&tegra_car TEGRA114_CLK_TSEC>;
+> +        resets = <&tegra_car TEGRA114_CLK_TSEC>;
+> +        reset-names = "tsec";
+> +    };
 
