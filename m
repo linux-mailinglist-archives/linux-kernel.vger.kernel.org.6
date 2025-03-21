@@ -1,120 +1,273 @@
-Return-Path: <linux-kernel+bounces-570695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21158A6B3A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:22:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BDBA6B3AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 05:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105433B6AF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51024828DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 04:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A91E5B66;
-	Fri, 21 Mar 2025 04:22:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B419BB664
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 04:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69401E98F9;
+	Fri, 21 Mar 2025 04:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DVEpDhE+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74C1B664;
+	Fri, 21 Mar 2025 04:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742530922; cv=none; b=amZq1Gm1vsLGuvEvcGF4By6CNZ2lVp4lUSIEBnNlXXXtyYuJ5HB954IlS/fPZebDsSWo9EmAcrN4wXoYGSWRnOVYHl9hGr0WgCvPOWxM/KL7OUP/4otEp7csLe03vtC7WjStEYNWMihPfBrNhd6sNwMydJkzALU6hLLZxUn8M94=
+	t=1742531405; cv=none; b=Ue468iubYQA9UPxFSJ4Uu7lxzTIcRYrqWxp9+OCH1jaK9cgEwlj3z+A5WhA8htKnhUNx5vW/qM4LaqqRbIGgy8p/1PddCBBZT8/gBgSPpOnBZId17Zzjiq6hoOA0fvsGr5tvdCBwTx3X17K0XXLbD1CzKEIlPHIR48m2O15IHrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742530922; c=relaxed/simple;
-	bh=2+btny2MzHlBk/WLxrebfCC8c5LLyxPS+kp5sPwlIHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R1zP6baMWc0nBYpDIyRX0P3QOoQPtxRMxcpTBX6EaZkL3pUm7kv+ePxfea99frKb6zMrez2o5MSXepysGWRCXvMwsGaJ3CLfCK1df3x8JPZdOIWXmVPwo1+xyFvHNdtJJMTcpIZm+BavAL/TmQsk41/GIwy4jhwZZOywHh1Vcok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D27A106F;
-	Thu, 20 Mar 2025 21:22:06 -0700 (PDT)
-Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3A893F673;
-	Thu, 20 Mar 2025 21:21:55 -0700 (PDT)
-Message-ID: <f3868f40-961d-4db5-af2a-7b4b32b3d86e@arm.com>
-Date: Fri, 21 Mar 2025 09:51:52 +0530
+	s=arc-20240116; t=1742531405; c=relaxed/simple;
+	bh=K3uz40tk8l4FQvHosvvh3hDNWs8nec3XOBvNz8AMz6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KWJYy6JsWg7t0dkchcM/ncUHkhNtVw78fd0cJoqsNLZglJUD6CST6g2G+cy1kC2Co1Y5KA/B6T+h7s/bcWKK7QoZglepcW7n3NSooK3+4CyGTUYBAh6fxnZdEkl1RwlDcODvdjIcFy/3VfjEFdGvYUcGC9+aOdwFClAlMgdaiO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DVEpDhE+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742531397;
+	bh=9LPlOVa7EM6+dhZWS2UYDtcUeCmZ1BJ3Bl4/7DTmRgg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DVEpDhE+fL2UmmQfJw5P5is/GrG4YuxFubvQ0Q0wxwSkYRtQHcHoJiVZJxNjNDtsx
+	 02gaNKl2nL+yb4coNGY6n8Ps/U32T2k/vqUAgI00S6AsHEGy3z43maGl1TWwOJiMRQ
+	 86e2UDR+8W5PW8lxqOOpHe4CRQvvSRVPmq7Y0oJ4DMEcqug0d7PV1G8ouGU7UGdtQ5
+	 v0ifiUN2AfzTDvb1qjcwNVLPfvxqJCGuj/01wEVjzoPSAN3l2BKrdF/C1POsH+rPU3
+	 jhM4yM3AoY7Hc9HX4GTKt7zsZVsk1jq89TwPcTPLfHYYzy+6NOpixCY/SaK5Uk7hsy
+	 ibcgsKxRBKe0w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZJqH84gNkz4wnp;
+	Fri, 21 Mar 2025 15:29:56 +1100 (AEDT)
+Date: Fri, 21 Mar 2025 15:29:55 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
+ Douglas Anderson <dianders@chromium.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, KVM
+ <kvm@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64
+ tree
+Message-ID: <20250321152955.18426a1d@canb.auug.org.au>
+In-Reply-To: <20250317171701.71c8677a@canb.auug.org.au>
+References: <20250317171701.71c8677a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/arm64: Drop dead code for pud special bit handling
-To: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Donald Dutile <ddutile@redhat.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Keith Busch <kbusch@kernel.org>
-References: <20250320183405.12659-1-peterx@redhat.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250320183405.12659-1-peterx@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/W=n.2.FLSeUV4GP3L4eaeWE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 3/21/25 00:04, Peter Xu wrote:
-> Keith Busch observed some incorrect macros defined in arm64 code [1].
-> 
-> It turns out the two lines should never be needed and won't be exposed to
-> anyone, because aarch64 doesn't select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD,
-> hence ARCH_SUPPORTS_PUD_PFNMAP is always N.  The only archs that support
-> THP PUDs so far are x86 and powerpc.
+--Sig_/W=n.2.FLSeUV4GP3L4eaeWE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Correct.
+Hi all,
 
-> 
-> Instead of fixing the lines (with no way to test it..), remove the two
-> lines that are in reality dead code, to avoid confusing readers.
+On Mon, 17 Mar 2025 17:17:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Today's linux-next merge of the kvm-arm tree got a conflict in:
+>=20
+>   arch/arm64/kernel/proton-pack.c
+>=20
+> between commits:
+>=20
+>   e403e8538359 ("arm64: errata: Assume that unknown CPUs _are_ vulnerable=
+ to Spectre BHB")
+>   a5951389e58d ("arm64: errata: Add newer ARM cores to the spectre_bhb_lo=
+op_affected() lists")
+>=20
+> from the arm64 tree and commit:
+>=20
+>   e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVID=
+R internally")
+>=20
+> from the kvm-arm tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc arch/arm64/kernel/proton-pack.c
+> index 0f51fd10b4b0,a573fa40d4b6..000000000000
+> --- a/arch/arm64/kernel/proton-pack.c
+> +++ b/arch/arm64/kernel/proton-pack.c
+> @@@ -845,86 -845,52 +845,86 @@@ static unsigned long system_bhb_mitigat
+>    * This must be called with SCOPE_LOCAL_CPU for each type of CPU, befor=
+e any
+>    * SCOPE_SYSTEM call will give the right answer.
+>    */
+>  -u8 spectre_bhb_loop_affected(int scope)
+>  +static bool is_spectre_bhb_safe(int scope)
+>  +{
+>  +	static const struct midr_range spectre_bhb_safe_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A510),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A520),
+>  +		MIDR_ALL_VERSIONS(MIDR_BRAHMA_B53),
+>  +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_2XX_SILVER),
+>  +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_3XX_SILVER),
+>  +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_SILVER),
+>  +		{},
+>  +	};
+>  +	static bool all_safe =3D true;
+>  +
+>  +	if (scope !=3D SCOPE_LOCAL_CPU)
+>  +		return all_safe;
+>  +
+> - 	if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_safe_list))
+> ++	if (is_midr_in_range_list(spectre_bhb_safe_list))
+>  +		return true;
+>  +
+>  +	all_safe =3D false;
+>  +
+>  +	return false;
+>  +}
+>  +
+>  +static u8 spectre_bhb_loop_affected(void)
+>   {
+>   	u8 k =3D 0;
+>  -	static u8 max_bhb_k;
+>  =20
+>  -	if (scope =3D=3D SCOPE_LOCAL_CPU) {
+>  -		static const struct midr_range spectre_bhb_k32_list[] =3D {
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78AE),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
+>  -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
+>  -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+>  -			{},
+>  -		};
+>  -		static const struct midr_range spectre_bhb_k24_list[] =3D {
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
+>  -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+>  -			{},
+>  -		};
+>  -		static const struct midr_range spectre_bhb_k11_list[] =3D {
+>  -			MIDR_ALL_VERSIONS(MIDR_AMPERE1),
+>  -			{},
+>  -		};
+>  -		static const struct midr_range spectre_bhb_k8_list[] =3D {
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+>  -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+>  -			{},
+>  -		};
+>  +	static const struct midr_range spectre_bhb_k132_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
+>  +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
+>  +	};
+>  +	static const struct midr_range spectre_bhb_k38_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A715),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
+>  +	};
+>  +	static const struct midr_range spectre_bhb_k32_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78AE),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
+>  +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
+>  +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+>  +		{},
+>  +	};
+>  +	static const struct midr_range spectre_bhb_k24_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A76AE),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
+>  +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+>  +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_GOLD),
+>  +		{},
+>  +	};
+>  +	static const struct midr_range spectre_bhb_k11_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_AMPERE1),
+>  +		{},
+>  +	};
+>  +	static const struct midr_range spectre_bhb_k8_list[] =3D {
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+>  +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+>  +		{},
+>  +	};
+>  =20
+> - 	if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k132_list))
+>  -		if (is_midr_in_range_list(spectre_bhb_k32_list))
+>  -			k =3D 32;
+>  -		else if (is_midr_in_range_list(spectre_bhb_k24_list))
+>  -			k =3D 24;
+>  -		else if (is_midr_in_range_list(spectre_bhb_k11_list))
+>  -			k =3D 11;
+>  -		else if (is_midr_in_range_list(spectre_bhb_k8_list))
+>  -			k =3D  8;
+>  -
+>  -		max_bhb_k =3D max(max_bhb_k, k);
+>  -	} else {
+>  -		k =3D max_bhb_k;
+>  -	}
+> ++	if (is_midr_in_range_list(spectre_bhb_k132_list))
+>  +		k =3D 132;
+> - 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k38_list))
+> ++	else if (is_midr_in_range_list(spectre_bhb_k38_list))
+>  +		k =3D 38;
+> - 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k32_list))
+> ++	else if (is_midr_in_range_list(spectre_bhb_k32_list))
+>  +		k =3D 32;
+> - 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k24_list))
+> ++	else if (is_midr_in_range_list(spectre_bhb_k24_list))
+>  +		k =3D 24;
+> - 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k11_list))
+> ++	else if (is_midr_in_range_list(spectre_bhb_k11_list))
+>  +		k =3D 11;
+> - 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k8_list))
+> ++	else if (is_midr_in_range_list(spectre_bhb_k8_list))
+>  +		k =3D  8;
+>  =20
+>   	return k;
+>   }
 
-Agreed. Because ARCH_SUPPORTS_PUD_PFNMAP is always N and hence these lines
-are never reachable. So removing these lines will be preferred than fixing.
+This is now a conflict between the kvm tree and the arm64 tree.
 
-> 
-> Fixes tag is attached to reflect where the wrong macros were introduced,
-> but explicitly not copying stable, because there's no real issue to be
-> fixed.  So it's only about removing the dead code so far.
+--=20
+Cheers,
+Stephen Rothwell
 
-Makes sense.
+--Sig_/W=n.2.FLSeUV4GP3L4eaeWE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> 
-> [1] https://lore.kernel.org/all/Z9tDjOk-JdV_fCY4@kbusch-mbp.dhcp.thefacebook.com/#t
-> 
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Donald Dutile <ddutile@redhat.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Fixes: 3e509c9b03f9 ("mm/arm64: support large pfn mappings")
+-----BEGIN PGP SIGNATURE-----
 
-The commit ID checks out.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfc60MACgkQAVBC80lX
+0Gx1KQf/QakLQJaI3LaakUKeYthZeFl4BCWmch4uy7UcxqvQTqqmwyFR61rE9cNn
+V9D2H1hW4226U1Ms76XRp8ujypxWHgh7851QfyU36EY24fhrsHUSp3TTJu9vWAur
+q3mpufSvqgDf7uLZQGPiaI28NLnHLyJCsSVcZuy6xUtFEPCGcrTOSZccOQtjXoKt
+TlHk+oBTfBRUw0mLfAr/WXGl9D9Vh0BGZu2ftXIS9hnfhXGl3c+HPUWHlEMCVFnK
+1yGQP4p+wvP1nPUsKn/AMmyaGefS0Fc4dCU0UCC4BUDLeQcNmvfrf7zbdpcSy39i
+Y+2ou91gQSPFLksK4bXItdLFtpB0Sw==
+=QH2I
+-----END PGP SIGNATURE-----
 
-> Reported-by: Keith Busch <kbusch@kernel.org>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  arch/arm64/include/asm/pgtable.h | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 0b2a2ad1b9e8..15211f74b035 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -620,11 +620,6 @@ static inline pmd_t pmd_mkspecial(pmd_t pmd)
->  #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
->  #define pfn_pud(pfn,prot)	__pud(__phys_to_pud_val((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot))
->  
-> -#ifdef CONFIG_ARCH_SUPPORTS_PUD_PFNMAP
-> -#define pud_special(pte)	pte_special(pud_pte(pud))
-> -#define pud_mkspecial(pte)	pte_pud(pte_mkspecial(pud_pte(pud)))
-> -#endif
-> -
->  #define pmd_pgprot pmd_pgprot
->  static inline pgprot_t pmd_pgprot(pmd_t pmd)
->  {
-
-LGTM
-
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+--Sig_/W=n.2.FLSeUV4GP3L4eaeWE--
 
