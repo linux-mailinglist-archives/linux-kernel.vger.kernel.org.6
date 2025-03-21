@@ -1,96 +1,92 @@
-Return-Path: <linux-kernel+bounces-570899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD03A6B601
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:21:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1BBA6B600
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EEBC460DFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0A33AE2A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462A31EFF80;
-	Fri, 21 Mar 2025 08:21:43 +0000 (UTC)
-Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14E11EF0B2;
+	Fri, 21 Mar 2025 08:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ImfLWmO/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E5D1E98ED;
-	Fri, 21 Mar 2025 08:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E461E98ED;
+	Fri, 21 Mar 2025 08:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742545302; cv=none; b=fX5YLeCG8Nj29vj3D9Rr40f4gwYmAYWcewNcKomcBsXlo2PaDQ4mTiPIBBJ4WsmmxnISbDAra1+GSjoYr2EtiVS5tx584bhdnP1KLHPt3JP7XONpwbqfsUkQYa1mY7i/YSTrSK6gyMa99mZSkWeTPB5OJ4A6/hEyWienbHkcDaE=
+	t=1742545253; cv=none; b=J0DJeGYEgKmaOYGFUZM2Vag3SQAyJemOCw0RjvrDIHwY4BOja3lwXbX5GYiJCrTRoJrX24iQ/17Yarczq4wwe2+eGLQjPzkCGIjix8AyXc/Dyx77u2yBgvh6b4SmopuNZupM0ELIsFaVZ1rgBfm5iW3dqkc8OSIqS1y5eeN7Vfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742545302; c=relaxed/simple;
-	bh=9cor238+ev5CH9KBLqifaFnVrdxvygrcxfuimxP/sRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kd2Rug86VhgzEiXkSUC/6nO+g2mfUPIEqJJAVnkXVWreL1KawtN1yZDyJL0rlZThFtZIkz04gx+osgRNjwDqIeNn+WQaQD8Meaz62hnIjKOtY/qjiiwZnyXPgPhxWza1Uo1ZopZt9A+o8ASCBz/Og8q/FYDklc1IOVaz2iGkgo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
-Received: from tux.applied-asynchrony.com (p5b07e9b7.dip0.t-ipconnect.de [91.7.233.183])
-	by mail.itouring.de (Postfix) with UTF8SMTPSA id 5B1EC158D;
-	Fri, 21 Mar 2025 09:21:31 +0100 (CET)
-Received: from localhost (ragnarok.applied-asynchrony.com [192.168.100.223])
-	by tux.applied-asynchrony.com (Postfix) with UTF8SMTP id 32FA360187F25;
-	Fri, 21 Mar 2025 09:21:31 +0100 (CET)
-From: =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
-Subject: [PATCH v2] perf build: filter all combinations of -flto for libperl
-Date: Fri, 21 Mar 2025 09:20:39 +0100
-Message-ID: <20250321082038.27901-2-holger@applied-asynchrony.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742545253; c=relaxed/simple;
+	bh=EV9CBzjf600nW+rcD5Nj7CVDfSsbZ9nJjWhRPymGwSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ja50ZHyvycO+8L32GLW1HQXIIntRxHpX2/0VHPGP4OBRFp3JJElC3MWVXBfaJ4s6ZG6sHOvt1zwWNbExsyqBUQ69h24rczRJFn7HkXecGsh8Vfp17eq1ojcnerQI+byWILXIuwTGJx8koCaqrT9cvzMEh9cra3JonVUV3BL/548=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ImfLWmO/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EA2C4CEE3;
+	Fri, 21 Mar 2025 08:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742545252;
+	bh=EV9CBzjf600nW+rcD5Nj7CVDfSsbZ9nJjWhRPymGwSo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ImfLWmO/9Xxg543MM7ZzDe4lXCPXj+0YBv29x/4tYwW7b7G7tKUki/TnZaeeGDk8u
+	 UhVyttA8keQtM8LljgaMeOwl6dKXfRaqkjBXfNVdYwsID9oAmeyrtuUmAN9Hl3Ynj8
+	 /o+ZrVjGBPwsWnkXUl2CqrMAZq2HdpUuwiLu7RbeVzilnD9oaLYkyv4GmV4UPzasI6
+	 e5wmRHLnoy3OGwti45sWOfLexZUsxS7UBcOtHxPsP36Z1R5eay4NQq3D6uaJxnDTsJ
+	 5BqxU8ak0NLbxM7a3fS1E3omhZyvG0rlXtiKieRxCm2VI7q/sAnhExdjmhMCVpXB8M
+	 GHjuw0u5I6kBw==
+Date: Fri, 21 Mar 2025 09:20:48 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: i2c-host-fixes for v6.14-rc8
+Message-ID: <pe5su4wqtac6oo7deqkuzihrm6oorqsonhksb2lshujaocyimk@ed3kwddo7ci6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When enabling the libperl feature the build uses perl's build flags
-(ccopts) but filters out various flags, e.g. for LTO.
-While this is conceptually correct, it is insufficient in practice,
-since only "-flto=auto" is filtered out. When perl itself is built with
-"-flto" this can cause parts of perf being built with LTO and others
-without, giving exciting build errors like e.g.:
+Hi Wolfram,
 
-   ../tools/perf/pmu-events/pmu-events.c:72851:(.text+0xb79): undefined
-   reference to `strcmp_cpuid_str' collect2: error: ld returned 1 exit status
+No new fixes arrived last week, but I fished out this one from
+a couple of years ago. Thanks to Shyam for acking it!
 
-Fix this by filtering all matching flag values of -flto{=n,auto,..}.
+See you later with the pull request for the merge window.
 
-Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
----
- tools/perf/Makefile.config | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Andi
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index a148ca9ef..4f5a40ab8 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -820,7 +820,7 @@ else
-   PERL_EMBED_LIBADD = $(call grep-libs,$(PERL_EMBED_LDOPTS))
-   PERL_EMBED_CCOPTS = $(shell perl -MExtUtils::Embed -e ccopts 2>/dev/null)
-   PERL_EMBED_CCOPTS := $(filter-out -specs=%,$(PERL_EMBED_CCOPTS))
--  PERL_EMBED_CCOPTS := $(filter-out -flto=auto -ffat-lto-objects, $(PERL_EMBED_CCOPTS))
-+  PERL_EMBED_CCOPTS := $(filter-out -flto% -ffat-lto-objects, $(PERL_EMBED_CCOPTS))
-   PERL_EMBED_LDOPTS := $(filter-out -specs=%,$(PERL_EMBED_LDOPTS))
-   FLAGS_PERL_EMBED=$(PERL_EMBED_CCOPTS) $(PERL_EMBED_LDOPTS)
- 
--- 
-2.49.0
+The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
 
+  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.14-rc8
+
+for you to fetch changes up to 6ea39cc388899a121b5b19b6968692e9460ee4a3:
+
+  i2c: amd-mp2: drop free_irq() of devm_request_irq() allocated irq (2025-03-20 14:37:47 +0100)
+
+----------------------------------------------------------------
+i2c-host-fixes for v6.14-rc8
+
+amd-mp2: fix double free of irq.
+
+----------------------------------------------------------------
+Yang Yingliang (1):
+      i2c: amd-mp2: drop free_irq() of devm_request_irq() allocated irq
+
+ drivers/i2c/busses/i2c-amd-mp2-pci.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
