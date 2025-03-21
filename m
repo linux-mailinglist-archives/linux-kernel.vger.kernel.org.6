@@ -1,136 +1,161 @@
-Return-Path: <linux-kernel+bounces-571935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E00A6C46E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:45:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46498A6C472
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 21:47:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4341B60467
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDF1B61011
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0D9230BD2;
-	Fri, 21 Mar 2025 20:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056FD1EDA20;
+	Fri, 21 Mar 2025 20:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3PjzLhS"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc61kHvd"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B5328E7
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87664A00
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 20:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742589891; cv=none; b=hH3doCyKQNEaftnUSy5AwajFNUjc9yVAaUINZ8Exs/tskmeQR2eDh8ZrOX40jRrEN3b8cy0QpWTIkg6J3iu2w39gXVK/UzBcGDowhfOyFIcsLZZKEEirybf7qOhY7le7inTvO1NQfDIOijQrU5zCFr79ko054vtyetvAIfAcyKM=
+	t=1742590049; cv=none; b=IovSuWHqkezDcrNO7D2HiY5h7PwtDsSDfJhkbDfVgbpJguVSs41VFhLPD7WGi4sfxG2kqswlFiRuSA2FDheNCsCYP3BdrcIjoz+B8jLWQitA0bfJEvShchokJGUthseNGZQhFpdbXngo51MrKbha4NYAzE5MPs6YX7YnrN/vv4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742589891; c=relaxed/simple;
-	bh=54tcRDgahcG66vhxHIRsWfMsMsPcgCWCIQX1MVxe0Nw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c9Hjlc6JjUPfeZtVcbTwBC/kv2o26zuu4Qev6j2DAWG+d+JUstFa1PAyAK5hcPTUMKtlhuv3bf1fKNB27KKwLzp5klFn0gGupEjg/plYW4y9jRU55g2cbd2lefSPpYkpmj0WGfkNbWkBkQDjlPLmm95XR6Jx18fQ/Pw2TnyzIYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X3PjzLhS; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2264e5b2b7cso34648805ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:44:49 -0700 (PDT)
+	s=arc-20240116; t=1742590049; c=relaxed/simple;
+	bh=ehLx4BfcXIkstbQwTrBvBWDcNjLbE3ihDPBz7Pqh1xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xr5537DoUbYh5LsBYu5nyFaP3hRGnlxoH1zLd7xE5APvr73m7SjUjJ9uIcnEPw/pFEZmFbZlVjb3y196iIgW9VjoGM9YLJiXOGbDKV42E/FwoSvYkKcnC368zRIAotB5URhIe3KzaL7Us+/zrtV04y681in9+/qQ/f/91fK3SZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc61kHvd; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43948021a45so19048285e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 13:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742589889; x=1743194689; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEMU6p1y8XG7aTq5OrE99edboR3QeK6rt4oPFIwBxB0=;
-        b=X3PjzLhSY/XeGFNVtQGVAPW9mC/+udcR/gtQGn8VK4Jh/+NqjBb5sMqRUlApSfzP/A
-         Z98vLBspz/R3iLANvT0ogFM5RtCiq7mBSq5GlkhUm4qdqTeRfmIGloEVyN5NkjyhOIUM
-         163VCTgOfOsudDMHVLn9N7WWZvJLjQ+3BbiCxLB4LE1OwuxmfVWhMgCDaQDQ17HWchQB
-         C5D9simFVxgPJFg/jNypf1SCanWqdlIbIKwxt8ghBxBisDZO41jolkjN19RoE0VEwait
-         L8WKh6/RSKOzbcAn4lVAZuLJuY+kt9ID4tcqMq6e0OE5AvbbyqmIXjkykNocqmIm8NKM
-         tzew==
+        d=gmail.com; s=20230601; t=1742590046; x=1743194846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ND0e3RNSWvx5KkHJbkQWkYjoDHtfIfYJu6MphGZCA40=;
+        b=Xc61kHvdBTjIWvgV5KoOT2/Yahx2vzs3L3LjjZ6BHufRl4kBU+PdpXP18yUMH8b1O6
+         RPoSXtNB3IzCiwkvMz8K0BzdB58N/QyyJH4s/Xp+apjJxN/GsGn55h0Pew+hodrllC95
+         my3FXUQ5ERRS+SDg8GICGD7veDCH7ZmV9qRVuk31VzvVd1gGlb1a7K76qBCBGnrkOEfA
+         AIHzWPcsWRJ/avo+d287NlYotfbRAJ3LJBIYkjH030Dy9zG4oklxudwVF3AXhpB0HUHk
+         mjoIbJguN9A2QhoKx4YJeNkU4oMGUEitLSQ9+pKDpr55ltwcTyAYTQOSUB3UnzeWFEur
+         DJtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742589889; x=1743194689;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEMU6p1y8XG7aTq5OrE99edboR3QeK6rt4oPFIwBxB0=;
-        b=FKWWJLd5axyOSCeUo3WzCISabfaobU8qfaEPq9bFkQBytuBH1RBWqKAqoJGJtjbfdB
-         nzr9pdA2Oufn0VGj5oX4xklk9aKPiYwp1Ax3eR/YqsZbmpJ7AVIQ8v4UD/P5ravm4gkG
-         xiV6S8w/0YmjAZ7PnU358sgHgTkoHidulsgXd5vA/A1Z+kPs4gLV4c2IflxU0tII8U3r
-         4nPH3ifciljcgg/EEEjhG7YxkVqPy6T+b5Hhtu/ivsonkxCTdNqo5fSZ07kuDQmrX7p/
-         H9cwn/oe3iuAr6UtGXmrmRgssnHmrISGKdtIVbiHZpNyfTZFRwirXkyC25mv0qMwl9Jh
-         0wng==
-X-Forwarded-Encrypted: i=1; AJvYcCU1340Azt3wORl4WcV5qL0qZbY4eE2h0kgTyCrgJmPxuzZEXzrTt7H1WmxfD60npCW/rrRDx52580pn30s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysL5O5NYLFydaB9F5ey6wOj38M0WaLznAAfNn6Q+8FJAxvWlUz
-	gjPIbtcS8xnuAxikg9S9iYSWK9U94iWUZ0rohA02dNjyZTTO5g8/NNdK9PTS2mn44Ug6CUElO+K
-	Hpg==
-X-Google-Smtp-Source: AGHT+IF09wFzorMUM4Gi7oaYBSS+7g0HTnWRlVNYWepX7kLirX/lzxgzzddN7SGhZH0LCUn3aRIezx8SRCU=
-X-Received: from pjbsc7.prod.google.com ([2002:a17:90b:5107:b0:2ff:5fee:5e17])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c949:b0:220:da88:2009
- with SMTP id d9443c01a7336-22780e23fcfmr60355015ad.45.1742589889236; Fri, 21
- Mar 2025 13:44:49 -0700 (PDT)
-Date: Fri, 21 Mar 2025 13:44:47 -0700
-In-Reply-To: <Z9zHju4PIJ+eunli@intel.com>
+        d=1e100.net; s=20230601; t=1742590046; x=1743194846;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ND0e3RNSWvx5KkHJbkQWkYjoDHtfIfYJu6MphGZCA40=;
+        b=b4yM25dR2QRcNrYUh9qRDGOJDQSz0Oc3v+S5TVVSfgkEmLglBaF7Rr9qzuvZzZA+Md
+         ZaXRUer0zI5DLs/LIODVPfL2fEP8egV2VGKUw04oZdbirQ2oS7whtzuWt3bLjNjpCjEl
+         DvyO9EN0UwnOg9npqxK2R/UOIcvQeSvzU+3uKSqdSbBY1DTuasIiJN+R8k3VmZyGtyPH
+         I8vlGMT/6c05z0qJ2N0iI5BHpHiJpMY5VbmdavbHCVryesJPzYr5I1pzR85dMMilzGGw
+         PHp+WLpRURrEBFOAplj0jUGh1cXDlMJzav5q0C1KSICuPph7INqva49GXcDriCuSSFaf
+         7AvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgJuHpQ8kbU32hM1f/AlssvBJ+gteBgUUQdToYEx/7FaKZFyq/WaW6AkJExwkT5M6J6Km9C0Y4E1UtINA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCFFnhjdbgYzvL7RnDbD2L8xaYuvPxv7pDh+IjShId9v55yFcM
+	y7Fxr7bM5/blyCH3YPI16GZmc4UvWfmV5EuAeT9FzLB2WhOi3HbY
+X-Gm-Gg: ASbGncvzVFc44h50px+PsAs2MIPOd6zicd0rRbOY1HQqjKK0qLmt+PBqHHS4bFGGWpQ
+	5jd7z3apO84CzBNQzDJyCZilOpYbNIGrluisw50wNJ+r0IcH648jxRg57x5ltI3EpEt2k4Bt4Li
+	1hpxeKIegvf26bFXsyVAdFGw6VEVQUU2k/9w4vC2WEKODw+leNkUc+d9kgdZtAYKLYr1z0E2BPN
+	/C/mKZgF7UvPhRGJTB5TUP0bxG/MyAvxyxnTDy4g+AtRvOzivDbkIS8H4PYZ/MIzhu9IWWFVSi4
+	jZZheRFIYP8/R62mrV0Qhww/GmDElM9NSwycGSvGziyzxTNjHv/nkn1YT/a3NJfyngpQqAm1Tra
+	pNV8Szyg=
+X-Google-Smtp-Source: AGHT+IEUY/YMDen58rtgjf2rDWUeHAUIuClJoBQZe1dZO5pGRH2VLewUMSXaKg2yQXYxdDhSMza5yA==
+X-Received: by 2002:a05:600c:1d15:b0:43c:f1cd:3d78 with SMTP id 5b1f17b1804b1-43d509ea2fcmr35004905e9.12.1742590045586;
+        Fri, 21 Mar 2025 13:47:25 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d42b8fcd4sm54024495e9.1.2025.03.21.13.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 13:47:24 -0700 (PDT)
+Date: Fri, 21 Mar 2025 20:47:23 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, x86@kernel.org, hkrzesin@redhat.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com,
+ atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
+ overlapping store
+Message-ID: <20250321204723.1e21cb23@pumpkin>
+In-Reply-To: <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
+References: <20250320190514.1961144-1-mjguzik@gmail.com>
+	<CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
+	<CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
+	<CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com>
+	<CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250320142022.766201-1-seanjc@google.com> <20250320142022.766201-4-seanjc@google.com>
- <Z9xXd5CoHh5Eo2TK@google.com> <Z9zHju4PIJ+eunli@intel.com>
-Message-ID: <Z93Pv0HWYvq9Nz2h@google.com>
-Subject: Re: [PATCH v2 3/3] KVM: x86: Add a module param to control and
- enumerate device posted IRQs
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025, Chao Gao wrote:
-> On Thu, Mar 20, 2025 at 10:59:19AM -0700, Sean Christopherson wrote:
-> >@@ -9776,8 +9777,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
-> >        if (r != 0)
-> >                goto out_mmu_exit;
-> > 
-> >-       enable_device_posted_irqs &= enable_apicv &&
-> >-                                    irq_remapping_cap(IRQ_POSTING_CAP);
-> >+       enable_device_posted_irqs = allow_device_posted_irqs && enable_apicv &&
-> >+                                   irq_remapping_cap(IRQ_POSTING_CAP);
-> 
-> Can we simply drop this ...
-> 
-> > 
-> >        kvm_ops_update(ops);
-> > 
-> >@@ -14033,6 +14034,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_rmp_fault);
-> > 
-> > static int __init kvm_x86_init(void)
-> > {
-> >+       allow_device_posted_irqs = enable_device_posted_irqs;
-> >+
-> >        kvm_init_xstate_sizes();
-> > 
-> >        kvm_mmu_x86_module_init();
-> >
-> >
-> >Option #2 is to shove the module param into vendor code, but leave the variable
-> >in kvm.ko, like we do for enable_apicv.
-> >
-> >I'm leaning toward option #2, as it's more flexible, arguably more intuitive, and
-> >doesn't prevent putting the logic in kvm_x86_vendor_init().
-> >
-> 
-> and do
-> 
-> bool kvm_arch_has_irq_bypass(void)
-> {
-> 	return enable_device_posted_irqs && enable_apicv &&
-> 	       irq_remapping_cap(IRQ_POSTING_CAP);
-> }
+On Thu, 20 Mar 2025 16:53:32 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-That would avoid the vendor module issues, but it would result in
-allow_device_posted_irqs not reflecting the state of KVM.  We could partially
-address that by having the variable incorporate irq_remapping_cap(IRQ_POSTING_CAP)
-but not enable_apicv, but that's still a bit funky.
+> On Thu, 20 Mar 2025 at 14:17, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Thu, 20 Mar 2025 at 12:33, Mateusz Guzik <mjguzik@gmail.com> wrote:  
+> > >
+> > > I have a recollection that handling the tail after rep movsq with an
+> > > overlapping store was suffering a penalty big enough to warrant a
+> > > "normal" copy instead, avoiding the just written to area.  
+> >
+> > Ahh. Good point. The rep movsq might indeed end up having odd effects
+> > with subsequent aliasing memory operations.
+> >
+> > Consider myself convinced.  
+> 
+> Actually, I think there's a solution for this.
+> 
+> Do not do the last 0-7 bytes as a word that overlaps with the tail of
+> the 'rep movs'
+> 
+> Do the last 8-15 bytes *non-overlapping* (well, they overlap each
+> other, but not the 'rep movs')
+> 
+> Something UNTESTED like the appended, in other words. The large case
+> then ends up without any conditionals, looking something like this:
+> 
+>         mov    %rcx,%rax
+>         shr    $0x3,%rcx
+>         dec    %rcx
+>         and    $0x7,%eax
+>         rep movsq %ds:(%rsi),%es:(%rdi)
+>         mov    (%rsi),%rcx
+>         mov    %rcx,(%rdi)
+>         mov    (%rsi,%rax,1),%rcx
+>         mov    %rcx,(%rdi,%rax,1)
+>         xor    %ecx,%ecx
+>         ret
 
-Given that enable_apicv already has the "variable in kvm.ko, module param in
-kvm-{amd,intel}.ko" behavior, and that I am planning on giving enable_ipiv the
-same treatment (long story), my strong vote is to go with option #2 as it's the
-most flexibile, most accurate, and consistent with existing knobs.
+I think you can save the 'tail end' copying the same 8 bytes twice by doing:
+	sub	$9,%rcx
+	mov	%rcx,%rax
+	shr	$3,%rcx
+	and	$7,%rax
+	inc	%rax
+before the 'rep movsq'.
+
+	David
+	
+> 
+> with some added complexity - but not a lot - in the exception fixup cases.
+> 
+> This is once again intentionally whitespace-damaged, because I don't
+> want people applying this mindlessly. Somebody needs to double-check
+> my logic, and verify that this also avoids the cost from the aliasing
+> with the rep movs.
+> 
+>                    Linus
+...
 
