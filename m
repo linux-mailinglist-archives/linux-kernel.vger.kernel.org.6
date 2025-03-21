@@ -1,328 +1,161 @@
-Return-Path: <linux-kernel+bounces-571580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526A1A6BF1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 266DCA6BF25
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8725189EF9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA04B188F529
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A035B229B23;
-	Fri, 21 Mar 2025 16:06:37 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E64A227BAD;
+	Fri, 21 Mar 2025 16:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b="c5lSIsRs"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298D31E22FA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E28B23BE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573197; cv=none; b=UG1Xi9bpEQz2KJB79riJCNOhTta6RxvXgm+KEMEcX7pCUa8DyxR01GtTfSkMysDdBSG+Fl/nmlGQvKkXimoytKcpDMdFaO47QdWdLvBOdB1oF78mnSOt8TxqClmTVYux5eLZgizXA1mmUBkBbjglToc7fFyhZK2slLlxeuWipoc=
+	t=1742573270; cv=none; b=GkA2yqO6/Ni2tbuP9hmg1IudiWUqF2MU5nloNwErS3+TXGL0QHKgFeHiqsa1BsTb+wKlKhclxl1gpqpGN6xjBUVTRBP95pMwflEdiRN6jtLUOWqB1b76pOTBCl1Q6Os6Nme68Stfzukv09nC39BrV3jbR7Svn0QycuUE9SzWiL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573197; c=relaxed/simple;
-	bh=lLBcSr6Rag8IypS0xGuQXJIvIXTE0qwJoViXLFmhHqw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kjkYb7KEPVRnwrA4HKSraDRzdNt+OBbjVpvLZphxJdNIeBad7ZobI3w5IRZvARd98pOKOW+3w+ZgGH7us/BdAqfA+OEvr/dp4UJM4+2m1m6fRdYULitJ/6VOX9fNkNoLALIECokSUaRRWbb31T2ZNHh8RNhUMQSQu7yC54EjiOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZK6gQ3lzcz6K5p4;
-	Sat, 22 Mar 2025 00:03:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A238914038F;
-	Sat, 22 Mar 2025 00:06:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Mar
- 2025 17:06:30 +0100
-Date: Fri, 21 Mar 2025 16:06:28 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Hasan.Maruf@amd.com>,
-	<Michael.Day@amd.com>, <akpm@linux-foundation.org>, <bharata@amd.com>,
-	<dave.hansen@intel.com>, <david@redhat.com>, <dongjoo.linux.dev@gmail.com>,
-	<feng.tang@intel.com>, <gourry@gourry.net>, <hannes@cmpxchg.org>,
-	<honggyu.kim@sk.com>, <hughd@google.com>, <jhubbard@nvidia.com>,
-	<jon.grimm@amd.com>, <k.shutemov@gmail.com>, <kbusch@meta.com>,
-	<kmanaouil.dev@gmail.com>, <leesuyeon0506@gmail.com>, <leillc@google.com>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <mgorman@techsingularity.net>, <mingo@redhat.com>,
-	<nadav.amit@gmail.com>, <nphamcs@gmail.com>, <peterz@infradead.org>,
-	<riel@surriel.com>, <rientjes@google.com>, <rppt@kernel.org>,
-	<santosh.shukla@amd.com>, <shivankg@amd.com>, <shy828301@gmail.com>,
-	<sj@kernel.org>, <vbabka@suse.cz>, <weixugc@google.com>,
-	<willy@infradead.org>, <ying.huang@linux.alibaba.com>, <ziy@nvidia.com>,
-	<dave@stgolabs.net>
-Subject: Re: [RFC PATCH V1 01/13] mm: Add kmmscand kernel daemon
-Message-ID: <20250321160628.000033a9@huawei.com>
-In-Reply-To: <20250319193028.29514-2-raghavendra.kt@amd.com>
-References: <20250319193028.29514-1-raghavendra.kt@amd.com>
-	<20250319193028.29514-2-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1742573270; c=relaxed/simple;
+	bh=SdiCIhrTBarDgLN9oEDarofNp34/gFdYUmSF4tTKMlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iG9TuzzxyL4RhSrGEOhvqwWnD3RA6/+Y2yc/1LdXbDAlcxjiLaC+vd30FT0RcZfzWxBmjCphpuqlwnWxkjK78mdBkNAERjlZxA47Ne3aWB6otamqf72fvIFWiT866EJEjcLxE7QmHd8/pb75Iu2w5ZS1559mUwW8k37S1UDjJiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net; spf=pass smtp.mailfrom=craftyguy.net; dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b=c5lSIsRs; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=craftyguy.net
+Message-ID: <981e83c5-6531-4939-b0ad-eebeb02d00af@craftyguy.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=craftyguy.net;
+	s=key1; t=1742573256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Trfnl0mlXgOimQXZYhYIs6u/12k9GzhtwYKbj7vbYfU=;
+	b=c5lSIsRsfbLSTGbwlLgODbiZ+bgfgqhgVdijjJwwyoSX1UiL4s2gVslmK3rQdH0qaYySrZ
+	Ut/akmLHNDz++s8KB1kSWUMzGc3FkD/N8sv8TamHvuhqhIzJQz0SDc7ZlhTHXEtiJp/C6W
+	x4UfLKzmbCGUtjot79oDQNGIUdhbbo8FFmBa4stmbmSBErjlQEKno+oPb4fcvBwMCJB+Ub
+	Rnt7tXNvCZnH2C09upHIRMjAW6PNKwHR58uVbu1gJ82FITtTWDNeRek2odgRbE5rIryDnt
+	Ajl6vtcHLQ63KVVGlv49N7bYQjFGBiMBmQqmBhJz3gSBIi29oXxFDvt28MdHPg==
+Date: Fri, 21 Mar 2025 09:07:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Subject: Re: [PATCH] wifi: ath11k: fix ring-buffer corruption
+To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
+ Steev Klimaszewski <steev@kali.org>,
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250321094916.19098-1-johan+linaro@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Clayton Craft <clayton@craftyguy.net>
+In-Reply-To: <20250321094916.19098-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 19 Mar 2025 19:30:16 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
-
-> Add a skeleton to support scanning and migration.
-> Also add a config option for the same.
+On 3/21/25 02:49, Johan Hovold wrote:
+> Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
+> breaks and the log fills up with errors like:
 > 
-> High level design:
+>      ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
+>      ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
 > 
-> While (1):
->   scan the slowtier pages belonging to VMAs of a task.
->   Add to migation list
+> which based on a quick look at the driver seemed to indicate some kind
+> of ring-buffer corruption.
 > 
-> Separate thread:
->   migrate scanned pages to a toptier node based on heuristics
+> Miaoqing Pan tracked it down to the host seeing the updated destination
+> ring head pointer before the updated descriptor, and the error handling
+> for that in turn leaves the ring buffer in an inconsistent state.
 > 
-> The overall code is heavily influenced by khugepaged design.
+> Add the missing memory barrier to make sure that the descriptor is read
+> after the head pointer to address the root cause of the corruption while
+> fixing up the error handling in case there are ever any (ordering) bugs
+> on the device side.
 > 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
-
-
-I'm really bad and reading code and not commenting on the 'small'
-stuff.  So feel free to ignore this given the RFC status!
-This sort of read through helps me get my head around a series.
-
+> Note that the READ_ONCE() are only needed to avoid compiler mischief in
+> case the ring-buffer helpers are ever inlined.
+> 
+> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> 
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
+> Link: https://lore.kernel.org/20250310010217.3845141-3-quic_miaoqing@quicinc.com
+> Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> Cc: stable@vger.kernel.org	# 5.6
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
->  mm/Kconfig    |   8 +++
->  mm/Makefile   |   1 +
->  mm/kmmscand.c | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 185 insertions(+)
->  create mode 100644 mm/kmmscand.c
+>   drivers/net/wireless/ath/ath11k/ce.c  | 11 +++++------
+>   drivers/net/wireless/ath/ath11k/hal.c |  4 ++--
+>   2 files changed, 7 insertions(+), 8 deletions(-)
 > 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 1b501db06417..5a4931633e15 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -783,6 +783,14 @@ config KSM
->  	  until a program has madvised that an area is MADV_MERGEABLE, and
->  	  root has set /sys/kernel/mm/ksm/run to 1 (if CONFIG_SYSFS is set).
->  
-> +config KMMSCAND
-> +	bool "Enable PTE A bit scanning and Migration"
-> +	depends on NUMA_BALANCING
-> +	help
-> +	  Enable PTE A bit scanning of page. CXL pages accessed are migrated to
+> diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
+> index e66e86bdec20..9d8efec46508 100644
+> --- a/drivers/net/wireless/ath/ath11k/ce.c
+> +++ b/drivers/net/wireless/ath/ath11k/ce.c
+> @@ -393,11 +393,10 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
+>   		goto err;
+>   	}
+>   
+> +	/* Make sure descriptor is read after the head pointer. */
+> +	dma_rmb();
+> +
+>   	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
+> -	if (*nbytes == 0) {
+> -		ret = -EIO;
+> -		goto err;
+> -	}
+>   
+>   	*skb = pipe->dest_ring->skb[sw_index];
+>   	pipe->dest_ring->skb[sw_index] = NULL;
+> @@ -430,8 +429,8 @@ static void ath11k_ce_recv_process_cb(struct ath11k_ce_pipe *pipe)
+>   		dma_unmap_single(ab->dev, ATH11K_SKB_RXCB(skb)->paddr,
+>   				 max_nbytes, DMA_FROM_DEVICE);
+>   
+> -		if (unlikely(max_nbytes < nbytes)) {
+> -			ath11k_warn(ab, "rxed more than expected (nbytes %d, max %d)",
+> +		if (unlikely(max_nbytes < nbytes || nbytes == 0)) {
+> +			ath11k_warn(ab, "unexpected rx length (nbytes %d, max %d)",
+>   				    nbytes, max_nbytes);
+>   			dev_kfree_skb_any(skb);
+>   			continue;
+> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+> index 61f4b6dd5380..8cb1505a5a0c 100644
+> --- a/drivers/net/wireless/ath/ath11k/hal.c
+> +++ b/drivers/net/wireless/ath/ath11k/hal.c
+> @@ -599,7 +599,7 @@ u32 ath11k_hal_ce_dst_status_get_length(void *buf)
+>   	struct hal_ce_srng_dst_status_desc *desc = buf;
+>   	u32 len;
+>   
+> -	len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, desc->flags);
+> +	len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, READ_ONCE(desc->flags));
+>   	desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
+>   
+>   	return len;
+> @@ -829,7 +829,7 @@ void ath11k_hal_srng_access_begin(struct ath11k_base *ab, struct hal_srng *srng)
+>   		srng->u.src_ring.cached_tp =
+>   			*(volatile u32 *)srng->u.src_ring.tp_addr;
+>   	} else {
+> -		srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
+> +		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
+>   
+>   		/* Try to prefetch the next descriptor in the ring */
+>   		if (srng->flags & HAL_SRNG_FLAGS_CACHED)
 
-Trivial but don't mention CXL.  "Other memory tier solutions are available"
+I was experiencing this issue several times per day, but haven't hit it 
+once in the last few days while testing this patch.
 
-> +	  a regular NUMA node. The option creates a separate kthread for
-> +	  scanning and migration.
-> +
-
-> diff --git a/mm/kmmscand.c b/mm/kmmscand.c
-> new file mode 100644
-> index 000000000000..6c55250b5cfb
-> --- /dev/null
-> +++ b/mm/kmmscand.c
-
-> +
-> +struct kmmscand_scan kmmscand_scan = {
-> +	.mm_head = LIST_HEAD_INIT(kmmscand_scan.mm_head),
-> +};
-> +
-> +static int kmmscand_has_work(void)
-> +{
-
-Unless this is going to get more complex, I'd just put
-the implementation inline.  Kind of obvious what is doing
-so the wrapper doesn't add much.
-
-> +	return !list_empty(&kmmscand_scan.mm_head);
-> +}
-> +
-> +static bool kmmscand_should_wakeup(void)
-> +{
-> +	bool wakeup =  kthread_should_stop() || need_wakeup ||
-
-bonus space after =
-
-> +	       time_after_eq(jiffies, kmmscand_sleep_expire);
-> +	if (need_wakeup)
-> +		need_wakeup = false;
-
-Why not set it unconditionally?  If it is false already, no
-harm done and removes need to check.
-
-> +
-> +	return wakeup;
-> +}
-> +
-> +static void kmmscand_wait_work(void)
-> +{
-> +	const unsigned long scan_sleep_jiffies =
-> +		msecs_to_jiffies(kmmscand_scan_sleep_ms);
-> +
-> +	if (!scan_sleep_jiffies)
-> +		return;
-> +
-> +	kmmscand_sleep_expire = jiffies + scan_sleep_jiffies;
-> +	wait_event_timeout(kmmscand_wait,
-> +			kmmscand_should_wakeup(),
-> +			scan_sleep_jiffies);
-
-strange wrap.  Maybe add a comment on why we don't care if
-this timed out or not.
-
-> +	return;
-> +}
-> +
-> +static unsigned long kmmscand_scan_mm_slot(void)
-> +{
-> +	/* placeholder for scanning */
-
-I guess this will make sense later in series!
-
-> +	msleep(100);
-> +	return 0;
-> +}
-> +
-> +static void kmmscand_do_scan(void)
-> +{
-> +	unsigned long iter = 0, mms_to_scan;
-> +
-
-	unsigned long mms_to_scan = READ_ONCE(kmmscand_mms_to_scan);
-
-> +	mms_to_scan = READ_ONCE(kmmscand_mms_to_scan);
-> +
-> +	while (true) {
-> +		cond_resched();
-
-Odd to do this at start. Maybe at end of loop?
-
-> +
-> +		if (unlikely(kthread_should_stop()) ||
-> +			!READ_ONCE(kmmscand_scan_enabled))
-> +			break;
-return;  Then we don't need to read on to see if anything else happens.
-> +
-> +		if (kmmscand_has_work())
-> +			kmmscand_scan_mm_slot();
-> +
-> +		iter++;
-> +		if (iter >= mms_to_scan)
-> +			break;
-			return;
-Same argument as above.
-
-> +	}
-> +}
-> +
-> +static int kmmscand(void *none)
-> +{
-> +	for (;;) {
-
-while (true) maybe.  Feels more natural to me for a loop
-with no terminating condition.   Obviously same thing in practice.
-
-> +		if (unlikely(kthread_should_stop()))
-			return;
-> +			break;
-> +
-> +		kmmscand_do_scan();
-> +
-> +		while (!READ_ONCE(kmmscand_scan_enabled)) {
-> +			cpu_relax();
-> +			kmmscand_wait_work();
-> +		}
-> +
-> +		kmmscand_wait_work();
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int start_kmmscand(void)
-> +{
-> +	int err = 0;
-> +
-> +	guard(mutex)(&kmmscand_mutex);
-> +
-> +	/* Some one already succeeded in starting daemon */
-> +	if (kmmscand_thread)
-return 0;
-> +		goto end;
-> +
-> +	kmmscand_thread = kthread_run(kmmscand, NULL, "kmmscand");
-> +	if (IS_ERR(kmmscand_thread)) {
-> +		pr_err("kmmscand: kthread_run(kmmscand) failed\n");
-> +		err = PTR_ERR(kmmscand_thread);
-> +		kmmscand_thread = NULL;
-
-Use a local variable instead and only assign on success. That
-way you don't need to null it out in this path.
-
-> +		goto end;
-
-return PTR_ERR(kmmscand_thread_local);
-
-> +	} else {
-> +		pr_info("kmmscand: Successfully started kmmscand");
-No need for else give the other path exits.
-
-> +	}
-> +
-> +	if (!list_empty(&kmmscand_scan.mm_head))
-> +		wake_up_interruptible(&kmmscand_wait);
-> +
-> +end:
-> +	return err;
-> +}
-> +
-> +static int stop_kmmscand(void)
-> +{
-> +	int err = 0;
-
-No point in err if always 0.
-
-> +
-> +	guard(mutex)(&kmmscand_mutex);
-> +
-> +	if (kmmscand_thread) {
-> +		kthread_stop(kmmscand_thread);
-> +		kmmscand_thread = NULL;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static int __init kmmscand_init(void)
-> +{
-> +	int err;
-> +
-> +	err = start_kmmscand();
-> +	if (err)
-> +		goto err_kmmscand;
-
-start_kmmscand() should be side effect free if it is returning an
-error.  Not doing that makes for hard to read code.
-
-Superficially looks like it is already side effect free so you
-can probably just return here.
-
-
-> +
-> +	return 0;
-> +
-> +err_kmmscand:
-> +	stop_kmmscand();
-> +
-> +	return err;
-> +}
-> +subsys_initcall(kmmscand_init);
-
+Tested-by: Clayton Craft <clayton@craftyguy.net>
 
