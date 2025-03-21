@@ -1,128 +1,166 @@
-Return-Path: <linux-kernel+bounces-571385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEC4A6BC8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:07:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5867EA6BC87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BED3172FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205D918942C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC68886358;
-	Fri, 21 Mar 2025 14:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDF4139579;
+	Fri, 21 Mar 2025 14:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="GyCZ7mdQ"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtomZVYe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22C878F30
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671AE78F4F;
+	Fri, 21 Mar 2025 14:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742565814; cv=none; b=klEF1h9rPYNPmAIuF2alIVvojHfCw5e2LAg/U7OhmJd0trHkNljeJtbOaVYPBnrhWwRfYotFe57UP5nmHUR1x5TxPvLFQKMmuivavsuGIXeK+wWm310DtAaV2JBMFAjxLKETvDDHOIuJvyYiZWez8x5Qyh4wa+nwLWrfPYfKICw=
+	t=1742565967; cv=none; b=oggcR3ozITnKIK7UsEMWxFKe7+g7tdVuvNIwoaWzi0GfwSPivl26jasmzmVY/cmAg4PQhgjuHGr63uBiFKy9uckN2g35HfXi9ATLbtDYrrfVb0bslWzjMTJ+HkWRWmVXMgJMvGL/X+R94V4BLD9pFvLj2ltYCq8LqV3Ovch6jxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742565814; c=relaxed/simple;
-	bh=dmQtTS/HM5impIz+F6T6ur8Go17p7rMrlpLMnE5hxNo=;
+	s=arc-20240116; t=1742565967; c=relaxed/simple;
+	bh=Efp2oPA71k6HAIzm+TmV+Ye55dV032TIttlnUM1IzOA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDKZ6mj5gX5MVEPL0KjunmRhnHMep23OPsBOOmHPGZ7Gvs6WmohjJbEwvqsNzVXGcNk6nXpU+0LAaAtQXgOHzQ1vJi8ag/npaJ6p7tGiLn1PH2NEuzweZsfq8WAiSg5IUQefTFiSxLCbrZMQgY2Z0PZD3zuB4RadEidZ+HCw2NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=GyCZ7mdQ; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e8fc176825so16639396d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1742565811; x=1743170611; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uh0IrT1w8SpjDCYcv9mtaMhDrGwZvUvL6QFs1cEwHMU=;
-        b=GyCZ7mdQRxRwPbuQfvVlFj6b3BNM2f3j6LLTIgdu4DetZOUor9yfYRjZWweiWBNkF3
-         /WYZkgoOua5v8Yuk5BIKoRbh2HHdKHrM97eMf8+NDgt530yvksUcwVZCLtAeZHbOLwQa
-         EaZwKyzsz4swiJclXXGEPPN0BknkIFerXr0abpuJMCrr2LzguKq2hS2F07YaWPqbrTDk
-         FDms3nog+WoDmaNaHBLs8fZdS1Ubqx0sCBG6JJ7+Iv5SfVinvCH5Iu5RjlnDktizn5uJ
-         Tee4ZijZiShbzvMDvhrRGGvZWr/6Tyqdt692hYbUCxIsgS386H7JaaKdcDoOmA6WxEih
-         GZ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742565811; x=1743170611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uh0IrT1w8SpjDCYcv9mtaMhDrGwZvUvL6QFs1cEwHMU=;
-        b=lsVCazl2td85p3oN8NX+kCQ84oSHMJUW/5PvJALmmfyD94X26G5n+2/pfPOLFFA0Ja
-         wZW2/qQaxMTKEFarMtEx/b36ZWTZ3G4XBqu5F7lVlYArt1iVSqYTITR2YBC7GidgsxBj
-         /+7tIALG0nSaRh3Fo4+0Pjcbo8CjGpjSaJb+u6vwPAeP2mwj7sra0SPPNOxb2H0xO/OU
-         nOYjYoCmUUY26MqP2lm+w6rD941DvjB2BtD1ADNcX4fUI1ghUyB/i7LNvAgE2z8jVxv3
-         brCyfckkMkswJiIIzO/VN0HvCyoz9Grl3OlC48P9eVWEcnyPpA/tN0CcNLoXnUPv++OP
-         LoEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVubA/fZyWbhTW7nIcMP2u6x97V/BsiOTnjyu/I4GNdb/HUFZ5hzdeXvNd7AetttXFMBSSbRmRiZOp7Ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwq22grDY/27nYjTb1PSmPGb9XIqA5xZjrueIKcoz7wtz+tWjI
-	RsMB7FJ41/JLewS1bgNsiQ0n3PAljMeG4Dsrsfnws1QC5sWRKbDi2HBYqy1i2EM=
-X-Gm-Gg: ASbGnctBU64mCtUwwAHPhnBORBlmNzh5kMigFeBifUEdOMCdQQePp9Bd8LwJPICzLUE
-	jSMznj1o6Ttrwvh5sfDD+ZesH6FuYsJKd6spF5ssUKJW7dIYtiCcc8gRy6iuzo3dXvAO/iByxEa
-	BhJQdA7/QTSbEv376zf01FyxXVDdY5W/neIRVF/dmw5vW1JEs+WayjYPxN4/1mQAftJIusgXVJU
-	7XuEhbQpZOpFz8+6gA3JBmOhbm1BVVv0nYmntq2b3p5cNbeVNpecRkOMA3eqSAO9QiqhOmxbRT7
-	BAHw5yFDB8tlO/saT6ohwHvNc2/r2AzUlZlvIcNF0X8Q9KzcYuwjYAZgvNnr0PLy+ygEf9SyZaA
-	r6ioveOlgNZH+odLRTE0tmiNDggc=
-X-Google-Smtp-Source: AGHT+IEsR9SqinX2KEraGDeefNZOjnaeKRUcenWDJRbEfEjhwa6N5Cjx0RY1yuslTrclVtYFfhgnzA==
-X-Received: by 2002:a05:6214:b6d:b0:6e4:4164:8baa with SMTP id 6a1803df08f44-6eb3f27f5f3mr39953556d6.6.1742565811373;
-        Fri, 21 Mar 2025 07:03:31 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f51esm11628666d6.26.2025.03.21.07.03.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:03:30 -0700 (PDT)
-Date: Fri, 21 Mar 2025 10:03:29 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com, david@redhat.com,
-	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
-	honggyu.kim@sk.com, yunjeong.mun@sk.com
-Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted
- interleave sysfs
-Message-ID: <Z91xsVv98wp7TVrq@gourry-fedora-PF4VCD3F>
-References: <20250320164532.1313581-1-joshua.hahnjy@gmail.com>
- <20250321043729.939-1-rakie.kim@sk.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RP4dZjge06WWZVIETqAXnWV1kh9tzKgjIBL6HpV0w4wCAMoKdy7qUC1EzZp729cT96zLBqw7kI+CiWR7K+o10SlhjsSbh9yYxAFCOLfMng5iP9dlWLWZdDC0AkF++08zSaXsTP4axRG4UqGaybzxu6GPk47qdFLLhSQfNP9OJZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtomZVYe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F51FC4CEE9;
+	Fri, 21 Mar 2025 14:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742565966;
+	bh=Efp2oPA71k6HAIzm+TmV+Ye55dV032TIttlnUM1IzOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TtomZVYeDy8wuAU9Z1FLMBCNPF80tqxAb9OYMid0PPJqMYM3GP6Y13h3xTFT3duda
+	 EsZJtubJ4eo1f27/8eijbytMXypXK9OpAQvtR6SSvixcT5H5Vii2MhLoL5SLtzb/Lu
+	 0s/caJoC/vby0Y1EP4mDAykVW2LxQXapv6BFXtpmQyPrxZgK6STqVkdLGCyTYHu8Vm
+	 mCCFPWNOppzziuF3ByXKJs3Ie2dXyK1dl1rP19u8nYcVc1S745ZPh8fdb1rtan7e9q
+	 Du4G1UQee+eAtGBrbvm+tFS9gYh0kewyZAIG31l16DPgHomybi/A7b0/1WpyBnZYBO
+	 txFCMNNUxYjnQ==
+Date: Fri, 21 Mar 2025 14:05:58 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com,
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, liam.howlett@oracle.com,
+	alexandru.elisei@arm.com, peterx@redhat.com, hannes@cmpxchg.org,
+	mhocko@kernel.org, m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com,
+	mina86@mina86.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hch@infradead.org, jack@suse.cz,
+	hbathini@linux.ibm.com, sourabhjain@linux.ibm.com,
+	ritesh.list@gmail.com, aneesh.kumar@kernel.org, bhelgaas@google.com,
+	sj@kernel.org, fvdl@google.com, ziy@nvidia.com, yuzhao@google.com,
+	minchan@kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
+Subject: Re: [RFC 3/3] mm: integrate GCMA with CMA using dt-bindings
+Message-ID: <20250321-unhelpful-doze-791895ca5b01@spud>
+References: <20250320173931.1583800-1-surenb@google.com>
+ <20250320173931.1583800-4-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fM541kW8FgR5YYtY"
+Content-Disposition: inline
+In-Reply-To: <20250320173931.1583800-4-surenb@google.com>
+
+
+--fM541kW8FgR5YYtY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321043729.939-1-rakie.kim@sk.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 01:37:22PM +0900, Rakie Kim wrote:
-> As you mentioned, I agree that Patch 1 may be a bit unclear.
-> In fact, Patch 1 and Patch 2 share similar goals, and in my view,
-> they only provide complete functionality when applied together.
-> 
-> Initially, I thought that Patch 1 was the fix for the original issue and
-> considered it the candidate for a backport.
-> However, upon further reflection, I believe that all changes in Patch 1
-> through Patch 3 are necessary to fully address the underlying problem.
-> 
+On Thu, Mar 20, 2025 at 10:39:31AM -0700, Suren Baghdasaryan wrote:
+> This patch introduces a new "guarantee" property for shared-dma-pool.
+> With this property, admin can create specific memory pool as
+> GCMA-based CMA if they care about allocation success rate and latency.
+> The downside of GCMA is that it can host only clean file-backed pages
+> since it's using cleancache as its secondary user.
+>=20
+> Signed-off-by: Minchan Kim <minchan@google.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  arch/powerpc/kernel/fadump.c |  2 +-
+>  include/linux/cma.h          |  2 +-
+>  kernel/dma/contiguous.c      | 11 ++++++++++-
+>  mm/cma.c                     | 33 ++++++++++++++++++++++++++-------
+>  mm/cma.h                     |  1 +
+>  mm/cma_sysfs.c               | 10 ++++++++++
+>  6 files changed, 49 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+> index 4b371c738213..4eb7be0cdcdb 100644
+> --- a/arch/powerpc/kernel/fadump.c
+> +++ b/arch/powerpc/kernel/fadump.c
+> @@ -111,7 +111,7 @@ void __init fadump_cma_init(void)
+>  		return;
+>  	}
+> =20
+> -	rc =3D cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma);
+> +	rc =3D cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma, =
+false);
+>  	if (rc) {
+>  		pr_err("Failed to init cma area for firmware-assisted dump,%d\n", rc);
+>  		/*
+> diff --git a/include/linux/cma.h b/include/linux/cma.h
+> index 62d9c1cf6326..3207db979e94 100644
+> --- a/include/linux/cma.h
+> +++ b/include/linux/cma.h
+> @@ -46,7 +46,7 @@ extern int __init cma_declare_contiguous_multi(phys_add=
+r_t size,
+>  extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+>  					unsigned int order_per_bit,
+>  					const char *name,
+> -					struct cma **res_cma);
+> +					struct cma **res_cma, bool gcma);
+>  extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsi=
+gned int align,
+>  			      bool no_warn);
+>  extern bool cma_pages_valid(struct cma *cma, const struct page *pages, u=
+nsigned long count);
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 055da410ac71..a68b3123438c 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -459,6 +459,7 @@ static int __init rmem_cma_setup(struct reserved_mem =
+*rmem)
+>  	unsigned long node =3D rmem->fdt_node;
+>  	bool default_cma =3D of_get_flat_dt_prop(node, "linux,cma-default", NUL=
+L);
+>  	struct cma *cma;
+> +	bool gcma;
+>  	int err;
+> =20
+>  	if (size_cmdline !=3D -1 && default_cma) {
+> @@ -476,7 +477,15 @@ static int __init rmem_cma_setup(struct reserved_mem=
+ *rmem)
+>  		return -EINVAL;
+>  	}
+> =20
+> -	err =3D cma_init_reserved_mem(rmem->base, rmem->size, 0, rmem->name, &c=
+ma);
+> +	gcma =3D !!of_get_flat_dt_prop(node, "guarantee", NULL);
 
-Patch 1 does address the immediate issue of calling kfree instead of the
-appropriate put() routine, so it is fine to keep this separate.
+When this (or if I guess) this goes !RFC, you will need to document this
+new property that you're adding.
 
-> Therefore, I now think it makes more sense to merge Patch 1 and Patch 2
-> into a single patch, then renumber the current Patch 3 as Patch 2,
-> and treat the entire set as a proper -stable backport candidate.
->
+--fM541kW8FgR5YYtY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The set adds functionality and changes the original behavior of the
-interface - I'm not clear on the rules on backports in this way.
+-----BEGIN PGP SIGNATURE-----
 
-Would need input from another maintainer on that.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ91yRgAKCRB4tDGHoIJi
+0vghAQCIfI8+ZQNSSUJvyG5N5hCisJl/fWg9Vm7F5uQooGdzzwD/TYcjtjBBKsJv
+aa6VSuGFaENELpO0FBTADe4awZ04uA0=
+=vA0y
+-----END PGP SIGNATURE-----
 
-Either way, I would keep it separate for now in case just the first
-patch is desired for backport.  Maintainers can always pick up the set
-if that's desired.
-
-(It also makes these changes easier to review)
-~Gregory
+--fM541kW8FgR5YYtY--
 
