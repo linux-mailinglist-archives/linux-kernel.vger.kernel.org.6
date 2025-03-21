@@ -1,221 +1,136 @@
-Return-Path: <linux-kernel+bounces-571610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F24A6BF9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:19:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8E4A6BEF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE10017BE13
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00722189DE23
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFD422836C;
-	Fri, 21 Mar 2025 16:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D001D2253A5;
+	Fri, 21 Mar 2025 16:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ed9n3XtZ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ErGCfkJ2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBE54207A;
-	Fri, 21 Mar 2025 16:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB83686321
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573922; cv=none; b=Ktk7dSJZn7+kfz1mA/+AZiPuvjwflZVMU//dd0z7CHB1eSzI/rZru8pIejXzY4Rd4ee1/dY0vYZQ0jIDHlQOmg+xgWPKhlb6tQIr4mwZn9389n3oEIacWtbwIurcTZKHp8tN0A5ZDNnRjPDC2sMUaTjMm8LDEGVJtLLcmET40Mo=
+	t=1742572954; cv=none; b=f45rOZlADGg+3fTY7jarWCly0LJHnnvvG0kCbHyi+09wBFhtNDMft74y+hguuux0EpSsa+erdltxMLGbGGhgxVSn1ET8iUGGCa9GuNxSNyJMFegeXBeHasN1XNo+ZZiNkjerWWFlnx9G/UlqvloXrB7/N/tsA2V7l84LPbk0M3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573922; c=relaxed/simple;
-	bh=2DG5Ut4XCmcz1sW92eSTl6+27VN/JzPJpmes4DvEGik=;
-	h=From:To:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-version:Content-type; b=gOe3XmakcjMHspy0x5Cw87P0cR4jXoKKwSedKY8tM0Ai0NLmriGskOtSGPJHqUoo6t2xGTCCw1ChfatWmhKFAfTk92ndyhzJyUDh/2WsxGMGmB5e/hcFBWMxujkldxTjUtK8DIA5WIqw9i1eMerI9e9FbYYP0GXHaA+w4iKovC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ed9n3XtZ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224019ad9edso54629205ad.1;
-        Fri, 21 Mar 2025 09:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742573920; x=1743178720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aa/oeSqu9j7ZG2jk5B9U7UubDFHfuN9VI7rabr0YyHM=;
-        b=Ed9n3XtZtHYACk5MFJdIwwuwfATK5gUX2J69NC3mXTrr6sLwKAj0eJpE8oeJMlTfvB
-         4YmFRULD+DWcVE//v1Jf02YQLxhcRb1YoJSSqco4SbqIdH3ZQQ6dCKjFwOZi3jskTFFp
-         BUG7cR+4PBxS4oXuvQN9n3ixVXId0tKS2WF+YQGvcOePTj2yfwJvdhC1Mt7/UqxV9OxB
-         kB3TcIXPYXOIxb+GlZHE4paqoA91TeJCLPIWtTD7eRrp5BccA+YMHyJyuhAi2TVrSWMd
-         ClXZohPc9ltq8L06Nbzrto8YyqlJOQOSMNa4Y0l56pcaGLMmAjl3eYJyuiFb+hoFq5Bo
-         ngiA==
+	s=arc-20240116; t=1742572954; c=relaxed/simple;
+	bh=ay6GQChADei4tJLPKRE+6TMFEI/gSwtngn7T+xOVYWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RvIlxnVpuLAeeycunkSUjm6F9gRDPwYRDH99Os6NzZO9NtpaOu0jq2bzA7gl6ux+kNnm9lOaJ8fIlwEbtVCMqv3dEVVyvQFGgIgQf4/weN4xYf5Ntjgovt59lqW64gqoCNQedlAPn2eCSdtpnOu07VdAtu2V41BmkcM83i8DfHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ErGCfkJ2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATEtk001626
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:02:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vCbcORBD7TYTk+XKpRjnplu+uBcKKY/kXvr0Jk5Isao=; b=ErGCfkJ2qMEFeXqk
+	UC6l3H8dLAHsfzb1ZcqgKMAcqIXxd1mg90Dt6wUrb4v/+kjl7J9QM8OAiQNlgi16
+	heDzJw1s5Cx6pg2e95+DyHxENBc4AzO6LFS/05aOZ20OBC6FF99fGpFePUaymPLo
+	z4ldDaUgfYs4+SUwlgGHl3Wr0XoIXdatQHoMs2ml5Akou6I+aoecjcohNE2k0k+j
+	MZbzmwwA3DYhsTGYwM9Mcxz3dKdMvbrh0zu4Cl2rsf0xiiIF8dLdMkyJcaLUCQU1
+	YyR4ePNXfB5AQXDgQwBGXZSkfigHCz13fWQsOljLdxkl8aHElgjisq83HpLFOP6Z
+	1Uza0A==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45g3sf6g5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:02:31 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so3261779a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:02:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742573920; x=1743178720;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aa/oeSqu9j7ZG2jk5B9U7UubDFHfuN9VI7rabr0YyHM=;
-        b=IAXh518chOSCW4taU8JkDoLDNTJXiCUsYZ/e3ycg9OPuqHCTB+RcxyOPhH98hclY7a
-         EAIlYhwP4vtgwF7SWweJPAseHxNXC2Kl5lo92PQzFsQSAy6Wex6UC+kNgK79dgWGtFgm
-         a+SoaXS+tcywk16yDNYlUEju2JSMsjJOysyTADdxCkfOSy4p6W7jj0BShWrm7u/Lk+9u
-         mUSIYOgqxBORQTX8GqkRBV0l4xC129aRdST9wU98QaWt68YgEIGWoyAjBaWDeZQYyrkE
-         91q30xf+0bEDCQ4bGwBV8Ob51/vyQmoZF+sNa+3Pfw9FYUiTCWLySf0vqoLVJuYs4sMi
-         VNNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjY+5EDMlZCfcSYriXDgXzAEGx0Wtqn/+Iu4Te9kYnBn4UjbEHVQppckShj7V8jt5AKbpLZwOtLAiKxvyV@vger.kernel.org, AJvYcCVyRt4ebjq7djZB4cYUE2457PKeS2ShceaehCTluqp+Z/kaIcEz60ZL2WKRAuDVZBrCINKe/sbF+Bl6pw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5gZBRxBh5TUUW3SBytAc7iQP3+GRj7LrsCvxiSECdIFNeGFS0
-	vw5TWo2CKcOh4OaCe/3pdydXJGHAYTq9n7sjESlVK77/kCXjERAv
-X-Gm-Gg: ASbGnctFWuZKzRgxdwk6fQBSA767FXf9DbuJNMOK1uNwv9kpMFCAyKc81LYUlG7NwpK
-	Kds7zoCLp66+RwBHfib2nmYH6ma/29tVQORiiG5DB438IeazjXM3Cz3mxPAi+5Noz7tXGufctms
-	mkxtS0bAqH/SPZliW++UHz/YFnDTp+esAaGdvJt0C8fDo4fxzNPHlNwjDfTRQEF2ZgwK3veF+qG
-	AKWeGYaogJOyON1B7fMTJs3kecEcWZCdyUQcrD1+giaaj7jIgrT/1Kee7gD+lzChdg8Aw71xVMc
-	JqT4USbOSVTHbpj41DhnQlkiGKa1QNK+K7OhZw==
-X-Google-Smtp-Source: AGHT+IHXK9ihuIUg5cGB2ifPWnnFjgVEW5WEuE0I3f27Sirj3sdGKbFJ6aKgD/fM7L49KZ3goFwL7w==
-X-Received: by 2002:a05:6a00:3c95:b0:736:eb7e:df39 with SMTP id d2e1a72fcca58-73905a54b96mr7338183b3a.24.1742573919427;
-        Fri, 21 Mar 2025 09:18:39 -0700 (PDT)
-Received: from dw-tp ([171.76.82.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fd54d5sm2132885b3a.39.2025.03.21.09.18.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:18:38 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>, linux-btrfs@vger.kernel.org, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: Re: [linux-next-20250320][btrfs] Kernel OOPs while running btrfs/108
-In-Reply-To: <e4b1ccf8-c626-4683-82db-219354a27e61@linux.ibm.com>
-Date: Fri, 21 Mar 2025 21:26:43 +0530
-Message-ID: <87h63ms7gk.fsf@gmail.com>
-References: <e4b1ccf8-c626-4683-82db-219354a27e61@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1742572950; x=1743177750;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vCbcORBD7TYTk+XKpRjnplu+uBcKKY/kXvr0Jk5Isao=;
+        b=EzG/MarJkCcVRnHlyj0UqH92UW0WWUewAWrLbLAeA1NzovIJA/nucpkebqSGPLPu4J
+         apHG+MdxZuxAtOcBuOKtYIv75M/8it7ZXp2OW7l4op9+pyMAjkWdkrDU+TB1Dn1SXpls
+         m+mvIkmu6BuLTq6fUCJ9PdE2SMGtB2CaK8jqyWLU3afk2gR6YtTB1XUv/ieA3fhZiS4R
+         mREZIlfedsBdfVVrOYu3dCoQuwYVDxWVebc1fAp79HsmA7IhZszMmFKneRPkth9bsvqC
+         R+qr7uF3YGp7tnkJ0bXecoNylS/AWn8szvFkAu0gcvL/vZ17vjoV5bFlTn+WH6sq32dk
+         xRLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTakR3tVheqKKSIMsVozBzYYbqPpn3jidp+OJoE3pyURiOJ36bpiE3EwJ4rgA8C+8//cuMTSLtGq4fxbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx44O8Tz+TU9eArX+PCCC9yLkqF1l/cK/KFqOf7R1mmNRDM5jn8
+	n4TTFzGqraeLleYeAoZzq51CmQVPzkwNyOTVVtMhY05ZzGhFn+SrdISgNeRaIUh5pvS5xNJuK84
+	DEbP2GuJfkmth+Vuc0O/fNXnRDNkEfw8hqKAtFZT5+Wcr3jZq3G/pdKwTgsFUMhthA3CWFOM=
+X-Gm-Gg: ASbGncv0BwdzYDFWMX6pdg/SAoi9uTUIKYQ7AiemRMMu0+SA2N86vjBte/vXHAPsmgX
+	LssY08+p5GtGgoZAsOOC+CJlOssntKu+Y36QY5afr6sKyIxjwMurQj9pHhyU23ovHaFLuII8hNw
+	E3Bc4McSOEQ/PzUBSLX/6VpMQUJGCFnwd4oAfXJIYy8FUyq3KvAJOth9bA+HpbRt2sRqVNycMml
+	u+8Kjg9yBXMVnwQO//I3+YcbH0Rkc1LweW5Nls902xUN4ZhCNtlVhxebyBSkL0U95fekroH2ez/
+	Cxb7VS+pJOfDFhkoKCULrqE8DMXk/t6Iic4/uDDUnREUtSPPiBx9QLFkO6YoNiPq28XmU79VrEV
+	CiyYbaSyp
+X-Received: by 2002:a05:6a20:7347:b0:1ee:e2ac:5159 with SMTP id adf61e73a8af0-1fe42f53152mr6623754637.19.1742572950025;
+        Fri, 21 Mar 2025 09:02:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcQ2r97XLcVjprlkXYBQ4t6SFERPXbBeumuUB0GSNO6WM4PH5u+Dkl5/WJ+KpfvQZJ1YN3/g==
+X-Received: by 2002:a05:6a20:7347:b0:1ee:e2ac:5159 with SMTP id adf61e73a8af0-1fe42f53152mr6623691637.19.1742572949501;
+        Fri, 21 Mar 2025 09:02:29 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a29177sm1911891a12.62.2025.03.21.09.02.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Mar 2025 09:02:29 -0700 (PDT)
+Message-ID: <72e9ddb1-c0eb-4eea-aa11-3f24ed0caea2@oss.qualcomm.com>
+Date: Fri, 21 Mar 2025 09:02:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH ath-next v12 07/13] wifi: ath12k: add support for fixed
+ QMI firmware memory
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+References: <20250321-ath12k-ahb-v12-0-bb389ed76ae5@quicinc.com>
+ <20250321-ath12k-ahb-v12-7-bb389ed76ae5@quicinc.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250321-ath12k-ahb-v12-7-bb389ed76ae5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 6nSpnxAux3_L2c3ch-zujWICUojqLnPp
+X-Proofpoint-ORIG-GUID: 6nSpnxAux3_L2c3ch-zujWICUojqLnPp
+X-Authority-Analysis: v=2.4 cv=R9IDGcRX c=1 sm=1 tr=0 ts=67dd8d97 cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=e70TP3dOR9hTogukJ0528Q==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=bC-a23v3AAAA:8 a=VwQbUJbxAAAA:8 a=7wgTMAlwxEMamJX448IA:9 a=QEXdDO2ut3YA:10
+ a=-FEs8UIgK8oA:10 a=iS9zxrgQBfv6-_F4QbHw:22 a=FO4_E8m0qiDe52t0p3_H:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0 adultscore=0
+ suspectscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 malwarescore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210117
 
+On 3/21/2025 3:52 AM, Raj Kumar Bhagat wrote:
+> IPQ5332 firmware supports only fixed QMI firmware memory.
+> 
+> Hence, add support to read reserved fixed memory region from
+> device-tree and provide the reserved memory segments for
+> firmware to use during QMI firmware memory request.
 
-+linux-btrfs
+Be aware that new memory-region helpers are being introduced by Rob:
+https://msgid.link/20250317232426.952188-1-robh@kernel.org
 
-Venkat Rao Bagalkote <venkat88@linux.ibm.com> writes:
-
-> Greetings!!!
->
->
-> I am observing Kernel oops while running brtfs/108 TC on IBM Power System.
->
-> Repo: Linux-Next (next-20250320)
-
-Looks like this next tag had many btrfs related changes -
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/fs/btrfs?h=next-20250320
-
->
-> Traces:
->
-> [  418.392604] run fstests btrfs/108 at 2025-03-21 05:11:21
-> [  418.560137] Kernel attempted to read user page (0) - exploit attempt? 
-> (uid: 0)
-> [  418.560156] BUG: Kernel NULL pointer dereference on read at 0x00000000
-
-NULL pointer dereference... 
-
-> [  418.560161] Faulting instruction address: 0xc0000000010ef8b0
-> [  418.560166] Oops: Kernel access of bad area, sig: 11 [#1]
-> [  418.560169] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
-> [  418.560174] Modules linked in: btrfs blake2b_generic xor raid6_pq 
-> zstd_compress loop nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib 
-> nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct 
-> nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 bonding nf_defrag_ipv4 
-> tls rfkill ip_set nf_tables nfnetlink sunrpc pseries_rng vmx_crypto fuse 
-> ext4 mbcache jbd2 sd_mod sg ibmvscsi scsi_transport_srp ibmveth
-> [  418.560212] CPU: 1 UID: 0 PID: 37583 Comm: rm Kdump: loaded Not 
-> tainted 6.14.0-rc7-next-20250320 #1 VOLUNTARY
-> [  418.560218] Hardware name: IBM,9080-HEX Power11
-> [  418.560223] NIP:  c0000000010ef8b0 LR: c00800000bb190ac CTR: 
-> c0000000010ef888
-> [  418.560227] REGS: c0000000a252f5a0 TRAP: 0300   Not tainted 
-> (6.14.0-rc7-next-20250320)
-> [  418.560232] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
-> 44008444  XER: 20040000
-> [  418.560240] CFAR: c00800000bc1df84 DAR: 0000000000000000 DSISR: 
-> 40000000 IRQMASK: 1
-> [  418.560240] GPR00: c00800000bb190ac c0000000a252f840 c0000000016a8100 
-> 0000000000000000
-> [  418.560240] GPR04: 0000000000000000 0000000000010000 0000000000000000 
-> fffffffffffe0000
-> [  418.560240] GPR08: c00000010724aad8 0000000000000003 0000000000001000 
-> c00800000bc1df70
-> [  418.560240] GPR12: c0000000010ef888 c000000affffdb00 0000000000000000 
-> 0000000000000000
-> [  418.560240] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [  418.560240] GPR20: c0000000777a8000 c00000006a9c9000 c00000010724a950 
-> c0000000777a8000
-> [  418.560240] GPR24: fffffffffffffffe c00000010724aad8 0000000000010000 
-> 00000000000000a0
-> [  418.560240] GPR28: 0000000000010000 c00c00000048c3c0 0000000000000000 
-> 0000000000000000
-> [  418.560287] NIP [c0000000010ef8b0] _raw_spin_lock_irq+0x28/0x98
-> [  418.560294] LR [c00800000bb190ac] wait_subpage_spinlock+0x64/0xd0 [btrfs]
-
-
-btrfs is working on subpage size support for a while now.
-Adding +linux-btrfs, in case if they are already aware of this problem.
-
-I am not that familiar with btrfs code. But does this look like that the
-subpage (folio->private became NULL here) somehow?
-
--ritesh
-
-> [  418.560339] Call Trace:
-> [  418.560342] [c0000000a252f870] [c00800000bb205dc] 
-> btrfs_invalidate_folio+0xa8/0x4f0 [btrfs]
-> [  418.560384] [c0000000a252f930] [c0000000004cbcdc] 
-> truncate_cleanup_folio+0x110/0x14c
-> [  418.560391] [c0000000a252f960] [c0000000004ccc7c] 
-> truncate_inode_pages_range+0x100/0x4dc
-> [  418.560397] [c0000000a252fbd0] [c00800000bb20ba8] 
-> btrfs_evict_inode+0x74/0x510 [btrfs]
-> [  418.560437] [c0000000a252fc90] [c00000000065c71c] evict+0x164/0x334
-> [  418.560443] [c0000000a252fd30] [c000000000647c9c] do_unlinkat+0x2f4/0x3a4
-> [  418.560449] [c0000000a252fde0] [c000000000647da0] sys_unlinkat+0x54/0xac
-> [  418.560454] [c0000000a252fe10] [c000000000033498] 
-> system_call_exception+0x138/0x330
-> [  418.560461] [c0000000a252fe50] [c00000000000d05c] 
-> system_call_vectored_common+0x15c/0x2ec
-> [  418.560468] --- interrupt: 3000 at 0x7fffb1b366bc
-> [  418.560471] NIP:  00007fffb1b366bc LR: 00007fffb1b366bc CTR: 
-> 0000000000000000
-> [  418.560475] REGS: c0000000a252fe80 TRAP: 3000   Not tainted 
-> (6.14.0-rc7-next-20250320)
-> [  418.560479] MSR:  800000000280f033 
-> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 44008804  XER: 00000000
-> [  418.560490] IRQMASK: 0
-> [  418.560490] GPR00: 0000000000000124 00007ffffcb4e2b0 00007fffb1c37d00 
-> ffffffffffffff9c
-> [  418.560490] GPR04: 000000013d660380 0000000000000000 0000000000000000 
-> 0000000000000003
-> [  418.560490] GPR08: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [  418.560490] GPR12: 0000000000000000 00007fffb1dba5c0 00007ffffcb4e538 
-> 000000011972d0e8
-> [  418.560490] GPR16: 000000011972d098 000000011972d060 000000011972d020 
-> 000000011972cff0
-> [  418.560490] GPR20: 000000011972d298 000000011972cc10 0000000000000000 
-> 000000013d6615a0
-> [  418.560490] GPR24: 0000000000000002 000000011972d0b8 000000011972cf98 
-> 000000011972d1d0
-> [  418.560490] GPR28: 00007ffffcb4e538 000000013d6602f0 0000000000000000 
-> 0000000000100000
-> [  418.560532] NIP [00007fffb1b366bc] 0x7fffb1b366bc
-> [  418.560536] LR [00007fffb1b366bc] 0x7fffb1b366bc
-> [  418.560538] --- interrupt: 3000
-> [  418.560541] Code: 7c0803a6 4e800020 3c4c005c 38428878 7c0802a6 
-> 60000000 39200001 992d0932 a12d0008 3ce0fffe 5529083c 61290001 
-> <7d001829> 7d063879 40c20018 7d063838
-> [  418.560555] ---[ end trace 0000000000000000 ]---
->
->
-> If you happed to fix this, please add below tag.
->
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->
->
-> Regards,
->
-> Venkat.
+/jeff
 
