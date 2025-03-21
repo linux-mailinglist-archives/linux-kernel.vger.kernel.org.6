@@ -1,101 +1,90 @@
-Return-Path: <linux-kernel+bounces-571389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E6AA6BC8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:08:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CADBA6BC96
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAD0A1894D56
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4780E18915AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46E313B284;
-	Fri, 21 Mar 2025 14:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AD513635C;
+	Fri, 21 Mar 2025 14:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z//dnnHj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Bn1/FXCL"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD3D78F29
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AED7288BA
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742566064; cv=none; b=jL22E5sXWhHFzsRXOGI1PqCJDx77GiQu/WRgZR2dfyC0ie3ZgbGH/tOi11f9SZ5EHakzhRDY82DzH+uY247hQL191ZT4UjXOvL9WNpSrj/Ovq4hhGUq4XO7soQpd3tVdUDcQwH4LwVHxs5brPUINgcW2fbtI8zj4BzDBcePzrFQ=
+	t=1742566158; cv=none; b=P5yw2Q0jAelitEYl+yXpBAlchdagA8MSQbfpUbzuKyjwnDuu24Ud1iEX+NrCh+nO4eEtRKl2FpkDMUb1tqhzBfosGGke83lgegPvuxMFIj3qBw13ThwZb8deKb1kK9bj3Ue6H2L3i7dCGJ/8zN7jhFaJMJBoEtB4t+0i8McDFOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742566064; c=relaxed/simple;
-	bh=VQ6uT463iY5nWfGzJJw8UhAvf7TtU5jaMLmXMDvVQvY=;
+	s=arc-20240116; t=1742566158; c=relaxed/simple;
+	bh=CZKwgwIIXJK5jYXBnZ/QYDErx6q9q+UM57HllJCNgIw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMMb98MkddBBU1RABd6ap9g5oR1e/ha0id1gVMOf7O/YIvaG8tkDq/2lTt/jFVbDp9wKoUB9MBDU5V91ry6PT/9jB4lAhtbbPUgV3+K3QvtKHn6eSaBp5m1zV8m8E2X7IqF6mnLPItTLdFl3UwH+lRikrlIjvlmTnQGJt5/KqZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z//dnnHj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATBLw000776
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:07:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6Lj3Z0nr75RSpAKjWGnP9fZL
-	3PNA1cnRFr4d9rHGNsk=; b=Z//dnnHjV1USlmiQGf37yOyUhg4DIQvaFXtWQLtN
-	cE4i/0Pb+XDOU34kh0XgAUjpTq0GIJWtaWay1mOMl/ylIa68msrs31se6HztnLPg
-	qlcm1TxEMgth9pWvv54Sq4WpVwDB3LN5lS0zgIBpWNxR5JMZf3aB77JGErg4331z
-	3Bc+OXn5U75ajxjSiiPcsCamTNbguOU2DVrFuLdNaqMmHljWoFAaF3EOzG2g8z3m
-	4nv9AZED2dGPI9Syh6XvOom+HXqERexyuSp4HXtc5ShHx091J1B/LYlsNFgghlnd
-	ZeUvRMVhqXpF+7aBnXlvQ82+7o5g3ztbC0C7H/UPinNENw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4u9rwc5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 14:07:41 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4769273691dso38435821cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:07:41 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmGA7d+XYs/AFUCIhWjo1Fz+Fl5bfi3GaMngp9Nol6Sk+MHfPckI0HS70IEQciLyipiC64GypGALAWn7FZqldHA5JpKwqJluFgvOImXu0GDX4cddD+VHm9WgQ+n/Wq9fDKbUK2g5yOA+hhK25f4u//XRLpeOsRbKEAf0nNTkREI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Bn1/FXCL; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c53b9d66fdso267652785a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1742566155; x=1743170955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O+nhgTbLeJKhDFnNTQysneSWHNY3+PqAlhMu5LglW/M=;
+        b=Bn1/FXCLuTYk901fwQCPcEGDnJRDDlsRs35vV9xZqVfW5csR8bjZA0iyqeLGBfWNa8
+         Tu9iDR0B0ymso4BDupJKSUpb/LzcqX2Yd5dE0UUrpusvkZrSmI7ndPX3H89cf3nFaMOZ
+         cpZP+Hc7BQDhiliD6O9HJiIQihtvjA8Bzy5pnwOlVgV63B8TA35UVKVhLWjGqEc/8BVq
+         EQL2yGbBphWGh3PliDxquMmGdMZLeLXNZDMx0kGN2Gt84IfYz0dtJkDm5GhZVcVtpr2K
+         UyE9LwUIfYaVe3dpZdSGvdS31EnPre8nltUYvNeYmdVz9VTvqRuRo/C2C1r+8Eh0e48H
+         KuyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742566060; x=1743170860;
+        d=1e100.net; s=20230601; t=1742566155; x=1743170955;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Lj3Z0nr75RSpAKjWGnP9fZL3PNA1cnRFr4d9rHGNsk=;
-        b=LyvkuOVy3egXmEGmj7/h/ED7qPSihKr+3PzE0PWOcH99dXynSpES2al1tbgFSy1dhR
-         z8IIifPhefddsnYYjDmGooM8eq+JE1bETqXOvT4X6ACD028v88fMa7T1XtPZyj1AXOMC
-         9zz/gZhGfwnYvuD99JSN9iLeUNwD+SOWrkVIJtutfNHdwDiPW0Fq3TL9+wfCuc/HGcmm
-         whCfP3dfnVbvU/Wuq4OYDEEqfS10A5Z9PD/Lc4qh0qpDbdFHUQjVYAAcyJfWmZ4aOGNY
-         kiiLT/a3BxSpCXnZms1goLF/diDJO9O93x05WrYpJAhoLda/oGFTJFaJfFqkNKpl5GQ2
-         069g==
-X-Forwarded-Encrypted: i=1; AJvYcCV2udDcdg2mbyVMWEgFPXX6jfk65a5jfMQ3m2fcKI3mljq9ZzZCZGe7rMHfwKJ4+7w4e3j2CglI/ePLuwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSLKIhmj6xGHI6zcQ4pa+iOmfy9Z8iwj7ySdiCH8TXdc8mZByq
-	LRL+j2dA9pICtU/218ksfVSWlZakGeEyhJERaNbi2Xk8a/r87SmrMnHdW8BKZeuVjly/SXUHG1V
-	m8IzfgSrIfqGl1k5265cSIvnTPJvTITHmCz3t/B8TucHav8TvTeszzxnNY3WyYDw=
-X-Gm-Gg: ASbGnctH2FlSd6IU78avfJXpLIgilEErNZ5EOivbBoUqiL2aqZNvlNqi0RWyhhiqs3a
-	VdhzvP8aBfmexiAUxDAoKaYRmlI+NkKnGIIcg5WrcDTOzkotTxE8ipmc5OonSzbAq6gdOMUwV0W
-	g81xFlVW0i+0dSwtHO6sOJrGWyPnLG4jIbG8MSFbLHq/RdE+JBnfzErGyuNmrglPcz7pbRDCMdo
-	h4leml8f+7VzRPgLN0aiG0qzk0zByE5bVNC7tQFxSKAxhz4vHGKWUMVZLewUjWfgh4ejtI/2n0F
-	RB8Xw68lFPlkgQ7yLeOlsckkmFbwpndKEaM/YTXT+L0NkhLPz1WxShwg8pEk0HlThX02/cMZmzF
-	l/FY=
-X-Received: by 2002:a05:620a:4051:b0:7c5:9a4f:adf0 with SMTP id af79cd13be357-7c5ba1846e8mr427731885a.33.1742566060335;
-        Fri, 21 Mar 2025 07:07:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEN2Hi2Iq/wisLHL4FDbRqBoRtFKfhIdoGegXlkIOLj6uMrHc7E55BfjIOutxbvmBBa/wCXtQ==
-X-Received: by 2002:a05:620a:4051:b0:7c5:9a4f:adf0 with SMTP id af79cd13be357-7c5ba1846e8mr427724885a.33.1742566059734;
-        Fri, 21 Mar 2025 07:07:39 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647b8dbsm188937e87.61.2025.03.21.07.07.38
+        bh=O+nhgTbLeJKhDFnNTQysneSWHNY3+PqAlhMu5LglW/M=;
+        b=oBdBAN1mgyDtCW+Dmlzo8+NpPMCWE1rEV2S7Q+3L4bF1gMrTs2n8N1ZTL7FnS/p/eC
+         Y+4cRqrEVnA3g9PcIPj1fC60vl79KHGk5wHdxZd5DhPxVVa9COj9zOR+aOVsZIezmpuV
+         c94UUiGAAhGDCTL8/TXp7ekyMce7dIKKYY4pv4ceachCzEsN7aPsqFvioVKnXCSRaiJ8
+         h8nVp8cWl+uqvS8Qnu5A/23WyfTURXETQPuIyA44guUnMtCHPstdxfeCNeqsa6Yoem1s
+         krCL9lErV/R4JnWo1gbKZ+7PIWTBCPmgafdycUYrJWqa++/dadcbdqEeKZFS6n1ifMh4
+         scIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA0VaLxMpGyYzp3I8b+ihW5fk6cAcTogCeyMxfj1TYmg94mTvFZIpk8SCW+gBLJzxpcMLDtlMs2/MIrI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/qw7RifAnE07Ea8rfaCW+jq9xnF/2Fy9esP67uIOmCKnN/9Vy
+	mFGCFWhy4dkcw9KVK75AuysZQm+1M608s2leDOscPCzfepnMmDYPdGocQoWrq0c=
+X-Gm-Gg: ASbGnctUW40+TsOVy+eVX9xZ3wZF3XCYan0gb5smfCOMdAVmO/DM2RU9D0EzYvoNno1
+	COU4jCqkDaO8FRUHSux7aBZA9EEW58SkIhAep4Y5XGoeNzJj3v3/HdLkyRzEVL1r8RpyAMn4eBE
+	uEzHSXI/yNr9YiT79TzWSuGFGymdSITFmTG4eH56zUNV1C0B+t9UzTdoZqBGcGzKYPgcXx/8XRJ
+	tOqHN/XCeraYmxKwy2QVuYfc9VaukhD4x08D4jX2aWi9Mfckw2AcPqsKZwsbYlRlEH81kCjzooR
+	8Kt9ZjkTM4jw09dUP9pQ70yvCV/RgRrXwIuRrTWy1JUFSaGgDaQZEfIvD1u3oBdhOETHioNIZfT
+	BUFb/1ocoyruBArxLcCGWWRzfc5E=
+X-Google-Smtp-Source: AGHT+IHYL5PtE1l5A53doJXJiyZ0pMLxq3g63BRJBYsQxz2bFKxwUqG2PxozWwwqOpZAZvNY+68OCw==
+X-Received: by 2002:a05:620a:2727:b0:7c5:3c0a:ab77 with SMTP id af79cd13be357-7c5ba1337f0mr490684885a.4.1742566155122;
+        Fri, 21 Mar 2025 07:09:15 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b93484d7sm134529085a.81.2025.03.21.07.09.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:07:39 -0700 (PDT)
-Date: Fri, 21 Mar 2025 16:07:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Ling Xu <quic_lxu5@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, amahesh@qti.qualcomm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, quic_kuiw@quicinc.com,
-        quic_ekangupt@quicinc.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 2/3] misc: fastrpc: add support for gpdsp remoteproc
-Message-ID: <rjfccsym3sziidac5l4ecxsjy3rdulbf5ewhfksdqp35oxcimi@brvgpgme5wpf>
-References: <20250320091446.3647918-1-quic_lxu5@quicinc.com>
- <20250320091446.3647918-3-quic_lxu5@quicinc.com>
- <30bba296-8e6f-41ee-880e-2d5ecc8fe5a4@linaro.org>
- <qhriqbm6fcy5vcclfounaaepxcvnck2lb7k2gcpbtrojqzehua@khv5lwdgbysc>
- <9962c517-5c0e-4d46-ac0c-2a7bab550156@linaro.org>
+        Fri, 21 Mar 2025 07:09:14 -0700 (PDT)
+Date: Fri, 21 Mar 2025 10:09:12 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com, david@redhat.com,
+	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
+	honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH v3 2/3] mm/mempolicy: Support dynamic sysfs updates for
+ weighted interleave
+Message-ID: <Z91zCELAdts-l3Zp@gourry-fedora-PF4VCD3F>
+References: <20250320041749.881-1-rakie.kim@sk.com>
+ <20250320041749.881-3-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,65 +93,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9962c517-5c0e-4d46-ac0c-2a7bab550156@linaro.org>
-X-Proofpoint-ORIG-GUID: XQVREzEMglbD_hk8faySmOY2ABcZAmj1
-X-Authority-Analysis: v=2.4 cv=FYE3xI+6 c=1 sm=1 tr=0 ts=67dd72ad cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=d_F73D8V8anS-nGMN7cA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: XQVREzEMglbD_hk8faySmOY2ABcZAmj1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-21_05,2025-03-20_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 mlxlogscore=934 mlxscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 spamscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503210103
+In-Reply-To: <20250320041749.881-3-rakie.kim@sk.com>
 
-On Fri, Mar 21, 2025 at 12:23:15PM +0000, Srinivas Kandagatla wrote:
+On Thu, Mar 20, 2025 at 01:17:47PM +0900, Rakie Kim wrote:
+> Previously, the weighted interleave sysfs structure was statically
+> managed, preventing dynamic updates when nodes were added or removed.
 > 
+> This patch restructures the weighted interleave sysfs to support
+> dynamic insertion and deletion. The sysfs that was part of
+> the 'weighted_interleave_group' is now globally accessible,
+> allowing external access to that sysfs.
 > 
-> On 20/03/2025 18:43, Dmitry Baryshkov wrote:
-> > On Thu, Mar 20, 2025 at 05:11:20PM +0000, Srinivas Kandagatla wrote:
-> > > 
-> > > 
-> > > On 20/03/2025 09:14, Ling Xu wrote:
-> > > > The fastrpc driver has support for 5 types of remoteprocs. There are
-> > > > some products which support GPDSP remoteprocs. Add changes to support
-> > > > GPDSP remoteprocs.
-> > > > 
-> > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > > Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> > > > ---
-> > > >    drivers/misc/fastrpc.c | 10 ++++++++--
-> > > >    1 file changed, 8 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> > > > index 7b7a22c91fe4..80aa554b3042 100644
-> > > > --- a/drivers/misc/fastrpc.c
-> > > > +++ b/drivers/misc/fastrpc.c
-> > > > @@ -28,7 +28,9 @@
-> > > >    #define SDSP_DOMAIN_ID (2)
-> > > >    #define CDSP_DOMAIN_ID (3)
-> > > >    #define CDSP1_DOMAIN_ID (4)
-> > > > -#define FASTRPC_DEV_MAX		5 /* adsp, mdsp, slpi, cdsp, cdsp1 */
-> > > > +#define GDSP0_DOMAIN_ID (5)
-> > > > +#define GDSP1_DOMAIN_ID (6)
-> > > 
-> > > We have already made the driver look silly here, Lets not add domain ids for
-> > > each instance, which is not a scalable.
-> > > 
-> > > Domain ids are strictly for a domain not each instance.
-> > 
-> > Then CDSP1 should also be gone, correct?
-> Its already gone as part of the patch that I shared in this discussion.
+> With this change, sysfs management for weighted interleave is
+> more flexible, supporting hotplug events and runtime updates
+> more effectively.
 > 
-> I will send a proper patch to list once Ling/Ekansh has agree with it.
+> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
 
-I see. For some reason mobile gmail decided that your patch is a quoted
-message and ignored it.
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
--- 
-With best wishes
-Dmitry
+1 nit
+
+> ---
+>  mm/mempolicy.c | 70 ++++++++++++++++++++++----------------------------
+>  1 file changed, 30 insertions(+), 40 deletions(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 5950d5d5b85e..6c8843114afd 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3388,6 +3388,13 @@ struct iw_node_attr {
+>  	int nid;
+>  };
+>  
+> +struct sysfs_wi_group {
+> +	struct kobject wi_kobj;
+> +	struct iw_node_attr *nattrs[];
+> +};
+> +
+> +static struct sysfs_wi_group *sgrp;
+> +
+
+sgrp -> wi_group?  Or something similar, sgrp is not very descriptive
+for a global.
+
+~Gregory
 
