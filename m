@@ -1,92 +1,65 @@
-Return-Path: <linux-kernel+bounces-571490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D796A6BDE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:01:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E2CA6BDD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5496C3BB614
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B52A17ACAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9C01D79A0;
-	Fri, 21 Mar 2025 14:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3861D9688;
+	Fri, 21 Mar 2025 14:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aliz6sLI"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lga23/nq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F2B1DEFF3;
-	Fri, 21 Mar 2025 14:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DE723BE;
+	Fri, 21 Mar 2025 14:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568971; cv=none; b=fKzG3tjdBAlm4GmILnrVkVvp6YVHnE9SXcpSjgZ/Cdsw4QUDSBoMF7hVB1KDT3qrkcvXGXad6cTyEAwDhIlEdXtxokpPr98xcoMtGGdBRiAGmbnnKKDlqUSYr3WMgg5feqQw2XB6Zqt9Ye8A+1sQoh3Aaj+gsim5P6UE4fPLMes=
+	t=1742569153; cv=none; b=pqvv1c8TO6lJ0gWrKQaoh7YtRrefrWhEvRdbcYLKMrIU0x/WkoFBHuAifzGvxAsDXAqEJBXT0yoGnNOVWvrklVPu9P2x2tTmajsp2FZ82UkomeWzlamaF6D2ObPYsAZnCSoc4vTpTwrGJWUg/bTqWQvWvBXS7ffqz/S8OVS9XlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568971; c=relaxed/simple;
-	bh=C7fbBFc93J6SbCnqmFoRCxSI2+LhANmijsjoqSXn7js=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fx8ggh0eYHioFSIYYZgkR0i75/5bhaDm3Y8KuBsv43PQMHwcD1z8SF7BHEttlHVDdHF7g6I9tK/OlhJg54Qct2gbafYx6vc/EOmbg3sxtOtDxmBhW2KWNMBJHbkyr92LqzvLJPDC8DcvuQFnrZWSKwCtMSecC9abzMH5gECWiC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aliz6sLI; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso15387235e9.2;
-        Fri, 21 Mar 2025 07:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742568968; x=1743173768; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HUZ6WT9xaTB6U8uX2ZQ4bJClS2cOzeuW4hOfPq1GbHQ=;
-        b=aliz6sLIhfciDdpvq46feFOAczgRcsWWEI+G5ZkmcMpGres41JgPOe/Cf18iFcXsvq
-         5IxLZztm16U6+8TSldYyX7y5qpUaegai8RRtCtGO9irs8mfNuNYZwQI9Q9GnIzvf5JcI
-         +ffrWgbrvILb/+0wwI77IAbIwp49ORLsXwK/exMPL/h9Snm9WMxBcR8AduYZVzmGBxzY
-         lcB6v4kgYenY0mUw0UDwW4pbRdDIefR4UQxmldPgVHdUO0NRjlONZRJ0Nj1XaadkCnfh
-         YmoR2ProO56hOtKqyc9+fhuH9MrXX2EzoPoVwRcpi88Ns6g6Dxk3NLhZ6Cpzc301pWfh
-         paEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742568968; x=1743173768;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HUZ6WT9xaTB6U8uX2ZQ4bJClS2cOzeuW4hOfPq1GbHQ=;
-        b=bevv960gGGf4xdoGhLwLnruoPmcK1ewwtnFpqBqGCxL1Qk0j6L9wmfDPnxExkTUaDZ
-         wbvb6UKvbPbj8u6TG2z6o58ZZ2YevcS8sFVaT7B2+tqchiXkeo3AMEIF1pdHw1800rJF
-         e66OTsX+1jcu8DNgNKpOY456umgFWNPxWuP+Mn7IGBa0o86m980BugWWCzW62qtMiSpx
-         oPC3ydwJbx/hCqiNLfRfbYTxX8Kw+F6VkT+9eHwoWfwz7S+Qe36vqxqAF8f7MSWwXI5d
-         bYXNAl1JvemgU06DNYGhc6RpblSpSsFMs/8BrYYqIZIQ1E5IE3vJbG8SAEyN+n+CRlzX
-         zTKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJktsI9lzNGeeX4C5Rnj35KLf7YNmkVY+KCG2fZvNoTJgARoTksfnIMOcN3o2l4oxpQ/+RMC/UhgISZoqA@vger.kernel.org, AJvYcCWXpoVngQ2fq+WOuAw9SMV4gZtdG/C8CEbLi+nnbTPHdLTKA8VeTEv+QlCjk0rUkv6ZiLkoZxAT5G5N@vger.kernel.org
-X-Gm-Message-State: AOJu0YymbNArltBveWczx6CEcDhwEmbK5HDF+yS+dT7Tu3SC6Aka/8EQ
-	6+LTshutQhLbVsqylOa2d0+57uhzovtE75ItTMRqvlytihdvKkuV
-X-Gm-Gg: ASbGncvaUqjwysXBXSMeKLF3Y6dgjTTrN/h1OBRqjp3FQhkcfsCS7CQOAmFl2XNIVJL
-	b9/mn07rW8iwwjNkC9WH9Ggpy+ROKRof6WqAVSxc3XY3WxPh+sf69bPLpAy/4ybLDRK/aVdy9BU
-	Jy//vJw9kKm6Qh2Jm4ZSEl/bkvu3pVRFqfg+Meh5fQzEdAHB88/e3YduHvrxCwmlKn07FOaLiq1
-	QSO98yRAnp+Q6EaK57VcwQ3LsAuj/VwiO7do+1bdDMzebvwGAz9WQu0CQKkbWIHlSnYcFLLUsva
-	BnqYMlVpBLyjhr/dCFGKQvwWwLyGBPPsHTyFBWVa/jHhBiVLNEMBs8oqp8E2YXgP3z9C/jf8Cbx
-	kJEl8EbIFb1JoptPdt63t
-X-Google-Smtp-Source: AGHT+IE3QMyFT0D9MvVR4njoTTNE4SagQmeQKwO7Dkym3v+KnikA8kDn6rCGTzWMbtXD4HGpHjc9pQ==
-X-Received: by 2002:a05:600c:3b9f:b0:43c:ec4c:25b4 with SMTP id 5b1f17b1804b1-43d509ea8e7mr33219225e9.10.1742568967875;
-        Fri, 21 Mar 2025 07:56:07 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd28a46sm29217095e9.24.2025.03.21.07.56.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:56:07 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] MAINTAINERS: add entry for Samsung Exynos2200 SoC
-Date: Fri, 21 Mar 2025 16:55:56 +0200
-Message-ID: <20250321145556.1436201-5-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250321145556.1436201-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1742569153; c=relaxed/simple;
+	bh=SasuqPXrFlUPpeyM81uLeoCDXlTTlAtVkXYfMgQo80c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZAzG57Ajf7MNa6JqbW6rerWgTk+airfUNOLxUwQiHI2fsjm/4sK/KiGxWLRIGHA46jASEROxKRguHmdv1+WzyjlvjR5Coz4SsPt9nTNDEisKduBSD7kl26UWXEEDOMVJZrREGY3VhxQYMDNrihfT4QVpCwNy7LCpLCAwwS84DT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lga23/nq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F331C4CEE3;
+	Fri, 21 Mar 2025 14:59:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742569152;
+	bh=SasuqPXrFlUPpeyM81uLeoCDXlTTlAtVkXYfMgQo80c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Lga23/nqLzxWhjrx5cfw3S6Xd2X+2W86ZX7hz5jj6PoQWuvJI0tiqLuix5NUZz5CX
+	 sGOBDpApnQyAelCVn+mO6Ni9qwM1FNIve6YnBerORaHHXJ0/JvSen5VEtE87241BiP
+	 9gZm/QDfu8g/4HayZ72glwEOTALAUO4nq+upGU6WPNKpXHy4YUDinPDNgBNeQbfyz/
+	 2Fx9EW6EI3ERK0zWkZv4+NBA3niefhJdhom+djk6W+ONzbvIqMBfh3fRcJ+nfCd6Nr
+	 D/kyebCE+8Ax6Q5XNtpZcmf0aP1AzN6AyzitcIqRlA+YGBy7OvPGxuEQ9KWSVMBb+p
+	 kPOCCBZRN4tuw==
+From: Danilo Krummrich <dakr@kernel.org>
+To: bhelgaas@google.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v3 0/3] Implement TryFrom<&Device> for bus specific devices
+Date: Fri, 21 Mar 2025 15:57:55 +0100
+Message-ID: <20250321145906.3163-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,35 +68,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add maintainers entry for the Samsung Exynos2200 SoC based platforms.
+This series provides a mechanism to safely convert a struct device into its
+corresponding bus specific device instance, if any.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+In C a generic struct device is typically converted to a specific bus device
+with container_of(). This requires the caller to know whether the generic struct
+device is indeed embedded within the expected bus specific device type.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4f5d8f68..f3ef6f862 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20937,6 +20937,16 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
- F:	Documentation/devicetree/bindings/sound/samsung*
- F:	sound/soc/samsung/
- 
-+SAMSUNG EXYNOS2200 SoC SUPPORT
-+M:	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/samsung,exynos2200-cmu.yaml
-+F:	arch/arm64/boot/dts/exynos/exynos2200*
-+F:	drivers/clk/samsung/clk-exynos2200.c
-+F:	include/dt-bindings/clock/samsung,exynos2200-cmu.h
-+
- SAMSUNG EXYNOS850 SoC SUPPORT
- M:	Sam Protsenko <semen.protsenko@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+In Rust we can do the same thing by implementing the TryFrom trait, e.g.
+
+        impl TryFrom<&Device> for pci::Device
+
+This is a safe operation, since we can check whether dev->bus equals the the
+expected struct bus_type.
+
+A branch containing the patches can be found in [1].
+
+This is needed for the auxiliary bus abstractions and connecting nova-core with
+nova-drm. [2]
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+[2] https://gitlab.freedesktop.org/drm/nova/-/tree/staging/nova-drm
+
+Changes in v3:
+  - drop patch to add Device::parent(), will make it crate private and part of
+    the auxbus series
+  - safety comment: clarify that a device' bus type is guaranteed to be set
+    correctly by the corresponding C code
+
+Changes in v2:
+  - s/unsafe { *self.as_raw() }.parent/unsafe { (*self.as_raw()).parent }/
+  - expand safety comment on Device::bus_type_raw()
+
+Danilo Krummrich (3):
+  rust: device: implement bus_type_raw()
+  rust: pci: impl TryFrom<&Device> for &pci::Device
+  rust: platform: impl TryFrom<&Device> for &platform::Device
+
+ rust/kernel/device.rs   |  9 +++++++++
+ rust/kernel/pci.rs      | 22 ++++++++++++++++++++--
+ rust/kernel/platform.rs | 22 ++++++++++++++++++++--
+ 3 files changed, 49 insertions(+), 4 deletions(-)
+
+
+base-commit: 51d0de7596a458096756c895cfed6bc4a7ecac10
 -- 
-2.43.0
+2.48.1
 
 
