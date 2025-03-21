@@ -1,160 +1,117 @@
-Return-Path: <linux-kernel+bounces-571572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E19A6BEFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:02:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA55A6BEFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F34189E0D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:03:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707917A8BFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8522786321;
-	Fri, 21 Mar 2025 16:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9C0227E9B;
+	Fri, 21 Mar 2025 16:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBbVtFEb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QPgdE8kr"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91DE22ACFA;
-	Fri, 21 Mar 2025 16:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F06986321
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572957; cv=none; b=btpj9nPMzlfj/gi4Np0fUwxqEA+iSQ/4e19Ey7HMMuPYmeYA30X590lWrGGMGnfMqzfPpCS5KRn2TeJArWoURGdOJeuIQOY/gdQrqetwahjFWmQ18fekLdR7cSMpO7ogPBBRSzdo7xpQhwJtWd+QCmTr+BS8JZ6k/488kI9wxe4=
+	t=1742573033; cv=none; b=HHx+eQWNHu+mluwPloURBbCpiLd77RhZ4KT4h5la1aqJc2/efnxCVwrwg8cmbaGLEatymFhYEy8Du3xxbReSd7wro/LAq9SpTGUsCbTXdwQpWIG3ZyMu/WR//TeIyvuKzHtLHfkiGbW+l4A8zwRHqGKbYjx4XwDrOq+oSFcQINk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742572957; c=relaxed/simple;
-	bh=resnADRUm3B6YICfc7C0t17uPShmPUu14X1Oc5NkELU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6f4tmt/hSiUanMd5u31JscwJDldw65EohmJqbLPuxtu4KIDk32YViGhG5yenOB2TvfdsyxTXdUniF4U+XXnX5kIsSWJSZ9nUA5F6MSyNA2vD1QB3CNAqRn8vo6ApgTAzYDe2gjFkna9x9sCiJL1qAiFphypIYD8j1BAcUVkgs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBbVtFEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EB7C4CEE8;
-	Fri, 21 Mar 2025 16:02:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742572956;
-	bh=resnADRUm3B6YICfc7C0t17uPShmPUu14X1Oc5NkELU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VBbVtFEbNQeeUapwx6R6GebJvWo83vLLP3PhO7XPdqY0zK0e42RjDqj8Y6o6sJH8e
-	 y/ipEUN5MgIXaP7Tk0aKQvNKBdiGf5TEnUJEvOaPPgEZtetivUqZsicIoFMnZkJZsW
-	 KgYaALmHleb0S9BF/VRyMbqBpdih7F5b87W3l+flOFeKub9PzcNIfTGlXEjocHvXo/
-	 3krqiUrbRUBndqI8meOa7mvAQJHTOuj4kTQtg47wOip2LnTbByhOflXCm2uZzGxS3+
-	 ha7qDJYedDKnZ9mUZRNhxG8QwSNvsdvuNoy/zhcKrHYnstQwFK8gClh1PYbWC2TDUV
-	 LkqiFLB6G1pcw==
-Date: Fri, 21 Mar 2025 11:02:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: display: tegra: document EPP, ISP,
- MPE and TSEC for Tegra114 and Tegra124
-Message-ID: <20250321160234.GA3372208-robh@kernel.org>
-References: <20250314074557.16367-1-clamor95@gmail.com>
- <20250314074557.16367-2-clamor95@gmail.com>
+	s=arc-20240116; t=1742573033; c=relaxed/simple;
+	bh=Cu6cOimHwJqoR7VawNoCeLQ/UDK3IeeGCSIVPpFBjWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L8MlNNBEpYgNxNaTdWqT8Zn+gs+1OLt8om+26BsV/bW2USDAqR5zoLOUvQQkfvPxJdkQc3u8kPgo836ydGnxJY/yU5CwcbUwNaWEP+KS5rlWwDGATE1gZ9cf8QcWAbCdJUlXedHp3KfxTQH7BtxpiF9SToSQthFp0jBtiKHzR4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QPgdE8kr; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47681dba807so240801cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742573031; x=1743177831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YeJPwSaX6HIdUR8KTOVsZ8Feg++HqdiUbFfhCHyoTMI=;
+        b=QPgdE8krql5p54KhyRmjDHFZQMv1l/NEoJDfj+Kci2gf8eWErH/wmbwqwZb5HvRj2J
+         6ILCM0WbQe59W+1GRF49kQKA0FQfK1j296eEii16dy8l3qH1/dSZgmHaX2THz8pcfw3e
+         ij6oWsONldlhgRUTBKXNMW9DJWHMCI/7Moz20Tu2nJwc/W4LaYIKiUV+Ygh7n5dTEgl5
+         fGsdFmRwNGdo+gcqJmJ/Gd2qKg6XvQF4CauyJe5lhw69vSbR0H0phppMkDe3JH1VKQ9l
+         RuU+oFn+ytmZfAyNVhVvtm6VNt6zNEdCCZOoL9AuQmwlhkvq6EE0nQPEYLEdUYxFxjLk
+         yLhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742573031; x=1743177831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YeJPwSaX6HIdUR8KTOVsZ8Feg++HqdiUbFfhCHyoTMI=;
+        b=ibWBfasVus1qHQaHty7IVWmDCYJOgUJvwczFFWGuzjGDNXpO2MaPDVv/OxtkD+VhIr
+         p2KOYsNPQispdA+Jyq0V1G5k9pxzwYVS/sHTGQ2KVcBuesUy8SX1QvXRM6T6kv7nC6Fu
+         I2QWE0RAdGqe8A1dQiaELxoqOrj3YYFAs8EDeEwfpM2QtWz95+7Z3hrXiLlcIghDXArq
+         sHJNvHG/wZitiHgQJ4RPEbvqXa7aKhT9DrvnPlwUvm8Br4B/VvZYmlCKmUZj1W/2V2ur
+         df8EgGQqdZcO4WBzHiCtYWVVXhhzN6GLRkdxTBE/NAnvZjSejSyP5h2JDTRPQscY/2Ec
+         pnAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPKXP8IZ3/047LcJ8yzgNselimIJH1MV6St2UpvKx+NFzR9lM3FMsRt0GFAqr/Lh63QEUkIQbdXNynh5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZgC//FXaDHIQllvJoKDQ050Zu5EVe/q7s0vmwRyiQhPrioBKJ
+	hwGdtSJZFTTig6+1Rl/2CcDV7hZy/Ah6kiIeWBJxD6si+NqOjGXmBun7Lk33jg3WFJiO9HXdXL/
+	+B6JuVKoC3sRKOFno+B/XX9bpN6x3fJXlNRMI
+X-Gm-Gg: ASbGncvXcTA74j7qePI1rVjhRDOCTnJC87Lk/ZMkV5bi9z+fuprYis9VHLl2V+Tbie4
+	5Njy2X1bIgJ07vrub9X8rXr5WIoF9h5wxnXwDNmJ3mUVLU5QfzPj3wbAm9ZqNMdXAa984WtXpIR
+	F/NdCpJ/rcWF+lk7FCv8iBtidwzw==
+X-Google-Smtp-Source: AGHT+IFkXczES/4I5kcNrRXzjxrEN1n1yI01ly+4cs5jHTsrsjRGc5j6UaG3BY/6xhutMfdEGFSNPo3rGZczVOmOkmw=
+X-Received: by 2002:a05:622a:1f17:b0:466:8887:6751 with SMTP id
+ d75a77b69052e-4771f55786emr3998701cf.23.1742573030713; Fri, 21 Mar 2025
+ 09:03:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314074557.16367-2-clamor95@gmail.com>
+References: <20250320173931.1583800-1-surenb@google.com> <20250320173931.1583800-2-surenb@google.com>
+ <Z9z1lC9ppphUhDjk@infradead.org>
+In-Reply-To: <Z9z1lC9ppphUhDjk@infradead.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 21 Mar 2025 09:03:37 -0700
+X-Gm-Features: AQ5f1JrBg768vc8VQCwRG29x43voyrYWFfgAzMuHmylUPx3zi7H160snG2PZn8A
+Message-ID: <CAJuCfpG9apLCrF0DXjzVtCJoPAa=5BLxArHC6SCKkfPNdpZ1wg@mail.gmail.com>
+Subject: Re: [RFC 1/3] mm: implement cleancache
+To: Christoph Hellwig <hch@infradead.org>
+Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com, 
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, liam.howlett@oracle.com, 
+	alexandru.elisei@arm.com, peterx@redhat.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, m.szyprowski@samsung.com, iamjoonsoo.kim@lge.com, 
+	mina86@mina86.com, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, hbathini@linux.ibm.com, 
+	sourabhjain@linux.ibm.com, ritesh.list@gmail.com, aneesh.kumar@kernel.org, 
+	bhelgaas@google.com, sj@kernel.org, fvdl@google.com, ziy@nvidia.com, 
+	yuzhao@google.com, minchan@kernel.org, linux-mm@kvack.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Minchan Kim <minchan@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 09:45:55AM +0200, Svyatoslav Ryhel wrote:
-> The current EPP, ISP and MPE schemas are largely compatible with Tegra114
-> and Tegra124, requiring only minor adjustments. Additionally, the TSEC
-> schema for the Security engine, which is available from Tegra114 onwards,
-> is included.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra114-tsec.yaml   | 66 +++++++++++++++++++
->  .../display/tegra/nvidia,tegra20-epp.yaml     | 14 ++--
->  .../display/tegra/nvidia,tegra20-isp.yaml     | 14 ++--
->  .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
->  4 files changed, 99 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
-> new file mode 100644
-> index 000000000000..c66ac6a6538e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra114-tsec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra Security co-processor
-> +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +
-> +description: Tegra Security co-processor, an embedded security processor used
-> +  mainly to manage the HDCP encryption and keys on the HDMI link.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra114-tsec
-> +          - nvidia,tegra124-tsec
-> +
-> +      - items:
-> +          - const: nvidia,tegra132-tsec
-> +          - const: nvidia,tegra124-tsec
+On Thu, Mar 20, 2025 at 10:14=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
+>
+> On Thu, Mar 20, 2025 at 10:39:29AM -0700, Suren Baghdasaryan wrote:
+> > Cleancache can be thought of as a page-granularity victim cache for cle=
+an
+>
+> Please implement your semantics directly instea of with a single user
+> abstraction.  If we ever need an abstraction we can add it once we have
+> multiple consumers and know what they need.
 
-nvidia,tegra210-tsec appears to be about the same, already in use, and 
-undocumented, so please add it to this binding.
+If after the conference no other users emerge I will fold it into
+GCMA. That's quite easy to do.
+Thanks,
+Suren.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: tsec
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  operating-points-v2: true
-> +
-> +  power-domains:
-> +    items:
-> +      - description: phandle to the core power domain
-> +
-> +additionalProperties: false
-
-required properties?
-
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra114-car.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    tsec@54500000 {
-> +        compatible = "nvidia,tegra114-tsec";
-> +        reg = <0x54500000 0x00040000>;
-> +        interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&tegra_car TEGRA114_CLK_TSEC>;
-> +        resets = <&tegra_car TEGRA114_CLK_TSEC>;
-> +        reset-names = "tsec";
-> +    };
+>
 
