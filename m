@@ -1,232 +1,334 @@
-Return-Path: <linux-kernel+bounces-570789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90302A6B482
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:38:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74419A6B47B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D5C4825DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DC8481C6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 06:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12A41EB5E3;
-	Fri, 21 Mar 2025 06:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87AA1EB18C;
+	Fri, 21 Mar 2025 06:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FN97etJi"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="DahfNvnQ"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB526ACB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630561E571A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742539088; cv=none; b=KjGZQJ+0rb/veHtmXfBQ1K9fNAsixv6/b1otLjzDQqjCaiAm6WuRYmeXvg+50KlyyKxcef3mXhZzTnk2Yr2xoPjk5WrUjLzSSTiMu3WtU17GSof9HmbYSuQgedTQJP0FfIX72Fnc+/pC5kpKz9p1qOhUxzrqtMnBLxypLDuW5z4=
+	t=1742538898; cv=none; b=LjI/W/xoIg7twm8QjQJcJBMSzNzI+MD4mMVYOG6L5Smt567iOvZEdZnAjtUkHW0T3RIUR9xsQcAO3HEgEt7pd7eoVOKSkyQ4i6qVzGwSbpU6jo88HQq90o1ZDRWhPPScSWkkPISVRWgT19DuP5mh4Cm8KbYNu9q+YbR4L8Pw9XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742539088; c=relaxed/simple;
-	bh=meYjgWGxyLy6HJSfb0FdcX0Qg9YFgDlf0+iGbmC5AiA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=KMZDsxML42DRNs+H4yoZPzdWCQ8omtPxl9fLdhsDLg+3gUT2pH6OTc26ZB9YM/0NGf327noMWEevSxu/fymYYf551k1BfQN51hQMUpGD/IH0UQ0m31Mn8x/infX6o6XYsM+fhPpYiFhqj+HY/vdV0jqgIKMA0DMTMAj5qqb+k4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FN97etJi; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250321063803epoutp043025ad89e89aef6e43d0daae7a5ce32e~uvhB3xsz82431924319epoutp04T
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 06:38:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250321063803epoutp043025ad89e89aef6e43d0daae7a5ce32e~uvhB3xsz82431924319epoutp04T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742539083;
-	bh=1NaBi+C3PclgJ/mik2KcHhq6pRjepmXkq91bXFQkaSM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=FN97etJilB83agYpgVeG6fB4CJVLrOtcBdX1Eac28evNXXSQpF8Zun1aMRgDoTW9s
-	 coT3ZVVEm4LQhYRSLu4g9tRcrZLJPQg65ByTtE2fK5T2ErZlcM9ATOslb0hO0SO+bX
-	 lOTpXfbx2BjjrXRV41ATivT0MavCOyAQjgnJuiBo=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20250321063803epcas1p323d78e004fb31160a2be117c1424eba5~uvhBZx-kU2185521855epcas1p3Y;
-	Fri, 21 Mar 2025 06:38:03 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4ZJt6z1jp6z4x9QB; Fri, 21 Mar
-	2025 06:38:03 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4~uveR3Y2Hk0882208822epcas1p21;
-	Fri, 21 Mar 2025 06:34:54 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250321063454epsmtrp14197eafd8fdbbb6baef97afa109a7ce0~uveR2oz5u3110531105epsmtrp1t;
-	Fri, 21 Mar 2025 06:34:54 +0000 (GMT)
-X-AuditID: b6c32a29-63df970000004929-f0-67dd088ed88d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9B.56.18729.E880DD76; Fri, 21 Mar 2025 15:34:54 +0900 (KST)
-Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
-	[10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250321063454epsmtip141edc3128a8e468552bbfa2505484223~uveRm9QBM1594915949epsmtip19;
-	Fri, 21 Mar 2025 06:34:54 +0000 (GMT)
-From: Sungjong Seo <sj1557.seo@samsung.com>
-To: linkinjeon@kernel.org, yuezhang.mo@sony.com
-Cc: sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cpgs@samsung.com, Sungjong Seo
-	<sj1557.seo@samsung.com>, stable@vger.kernel.org, Yeongjin Gil
-	<youngjin.gil@samsung.com>
-Subject: [PATCH v2] exfat: fix random stack corruption after get_block
-Date: Fri, 21 Mar 2025 15:34:42 +0900
-Message-Id: <158453976.61742539083228.JavaMail.epsvc@epcpadp2new>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742538898; c=relaxed/simple;
+	bh=y882Rtbh0gclCFUkunekfew1pkcBtCjli262lS87qMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BJpWe6Q7k9KT+SWR4NqxoMf+1NCweQ5ix09O/mnjoiJGxTo67P4pNcZxB+IexbP4E42bPFRExDzu9P+5m55eeHjQnWjBbbK63O2Qt4NcA8qfKO3IzBAA/k/6H7bfmMKCX+BjHBV3Mu3QhvZsI0jT9GJgPg/yXI3ATQrdzvMKS2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=DahfNvnQ; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff784dc055so2883342a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Mar 2025 23:34:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742538896; x=1743143696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uafTKOsaCIikV+c8UvWUp6BwtWloI140yiuOWUXgKTA=;
+        b=DahfNvnQ0JAT40LBM7j/HR29rtGlucDTOrMwX8t+ohPzUV8/REsJat2Kr/MVszwm6r
+         hPu92AzfPEVvpEgriwLeCRSkkywCBv7qGHsPIg2OAIx8zia9vTYmYJ4NDPz5OnhUjQgT
+         jCyUts0e0L5xj3FlL1VuPORfVwET1m5sS1O7e7EW5KLojAAYAPwmRNbYa/evy/rxDw7k
+         wkvM9ipgTRqcP3+sRdrTbYlLriJ8FnV0iRIK1JBV56fV/UqyhckvQRTPqEj2VPI8EfYH
+         Y/uErLMPAFNfLH6DC+TUT19Hxi/ZGPfwFOKeZ5cwL3hrNZjfHYrJX+kxs8fpYXZ9Xo3v
+         Cpsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742538896; x=1743143696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uafTKOsaCIikV+c8UvWUp6BwtWloI140yiuOWUXgKTA=;
+        b=GbyFvtVzoV8aQxC+X74zFITC2DxVtpreP5cbBTXz/Xftp6TAeMypwnDPxQPk0MpB4O
+         U0Y9VUO7PywZOrBubpC5S5ZyLvZxzpYGIg03ZWFLYJ9Ogwov+WJZuE84jw9vCEkg38pZ
+         wP/2cbasYt/ZbmPSsfR0HJ3sq0oVR996k1bfqFu17VZE1+1B4xLhtzyIzki5QmvRpW7K
+         B3EqmmxAY3SJCcdRW3s+6aJDiZNifHItQtA0yHOIGvCfO9bXhf9iyGR43MhWdFE7VTLE
+         IUujC40hbc92YXWg91e7LVdcLE5R8iB/mxmppgFPipikqhxnGe/eS0CvcXDXCbyTa2Jz
+         NmgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXtYh8edS0sGYkDJBeBaaLy1w1cVmKdwaJiBfDVtujgLqnDRWd0CADZ/HZMeIP/77mxx5BmMwVNHa5KOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6zLo9K1px/C7+f5+ERO8D6tHqLYWWAuj/ZqG3NmcqDTi5R5PV
+	pvZY7Dqv5qNuzT1VYbjwE1T28t96CmdYy0LKm0xG8aRQ2ZvokdFtHvrXhjz6Vns=
+X-Gm-Gg: ASbGncsxk1RIGmXEHwnxeYiHZ1T7dSUE960V6E3UmkyQAL8lioqUjv+n9TCyd14md9+
+	iA+kc7jjD9uhWfJQ+lxtUihvZvTuDzvGWBrgDPGFOu8OW7NprMoYngPS7QBJZhEd04TDaAn7WiZ
+	mSNzRhWQPmapDswju8XrizaCQALFvGmZzjxaJsT5al3l1swFj3NE6ezroKqJ6dMCP+XnqZKCKJJ
+	VJbQNnpR4LCF9+SWGPfJHx04UQaGtD5VtB3WXyyY1Yd57mHeus5aTSAXfDsMdmiO5fWQTzmMSpQ
+	aOqZOU83JczwRv5IxiJhJZETe08LcD156hV9sbqblLONYicCgiOJDum3jw==
+X-Google-Smtp-Source: AGHT+IGQVN3o4Y3JQIGLvpNGSXsqiPjZVz0H6qn9ptgw9m9KV/akv0pTHLxtLksgFN+CcPsxV/ptcQ==
+X-Received: by 2002:a17:90b:2647:b0:2fe:8902:9ecd with SMTP id 98e67ed59e1d1-3030fe7223bmr3129925a91.1.1742538895628;
+        Thu, 20 Mar 2025 23:34:55 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f806fb9sm1052012a91.45.2025.03.20.23.34.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 23:34:55 -0700 (PDT)
+Message-ID: <764ca4a4-3587-4dd4-93a4-23542b32dbf9@daynix.com>
+Date: Fri, 21 Mar 2025 15:34:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/4] virtio_net: Use new RSS config structs
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>,
+ Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
+References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
+ <20250318-virtio-v1-3-344caf336ddd@daynix.com>
+ <CACGkMEv1TTXHd_JGb_vyN8pfTAMLbsTE6oU9_phrdpaZBrE97Q@mail.gmail.com>
+ <b6eec81d-618f-4a59-8680-8e22f1a798bf@daynix.com>
+ <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
+ <83a5ab7b-7b29-413e-a854-31c7893f3c4a@daynix.com>
+ <CACGkMEvbs9NnHhjaiiD4hc-bOAm9+-ry3xfdZET3HqJ=_1k6Lg@mail.gmail.com>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEvbs9NnHhjaiiD4hc-bOAm9+-ry3xfdZET3HqJ=_1k6Lg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsWy7bCSnG4fx910g3kbtCxeHtK0mDhtKbPF
-	nr0nWSwu75rDZrHl3xFWixcfNrBZLNj4iNFixv6n7BbX3zxkdeD02DnrLrvHplWdbB59W1Yx
-	erRP2Mns8XmTXABrFJdNSmpOZllqkb5dAlfGvj83mQsmyFW8b5nN0sC4QbSLkZNDQsBEYvGr
-	mcxdjFwcQgK7GSVO3X3K1MXIAZSQkji4TxPCFJY4fLgYoqSVSWLvrOvMIL1sAtoSy5uWgdki
-	AoYSGxbvZQcpYha4xSgx7foEdpCEsICbxK3pO8CKWARUJRovrWMCsXkFbCWWnPzNCHGEvMTM
-	S9/ZIeKCEidnPmEBsZmB4s1bZzNPYOSbhSQ1C0lqASPTKkbJ1ILi3PTcYsMCw7zUcr3ixNzi
-	0rx0veT83E2M4LDV0tzBuH3VB71DjEwcjIcYJTiYlUR4RTpupwvxpiRWVqUW5ccXleakFh9i
-	lOZgURLnFX/RmyIkkJ5YkpqdmlqQWgSTZeLglGpgmnp5Ebu9/Qn5jecsssxnurTtX6Euu4K7
-	4N3BfKvuznfer/ZmpE1M5/iTVL2EYzf31szH8yO5S33Lru9ar/JGNre13+9J5ZnFTFqHX6UZ
-	Po2e/fjmb7P6Rdv4b7x6d4bjYUNR21afMy3m9U3tl4J3zChROrf46vWJd9T+zvhwU7pqk32o
-	+Z/zWxqXHqi8nX1i3XQey6/ftnNef7CvdGnOv3bXiRrFwv9d2cMzgrcckwl80iu4KFj2M2ug
-	/KlN/wUMqmT/hYUaGHbvFbCTurtYXPiW3bQkj81uwvGnX3Mya1+vsXwWwPHxq8yRD6kLpi0Q
-	y5rEkH3JOODd7g9SGaxWG/7vf2jpoXBcXchve9aCqUosxRmJhlrMRcWJAKi5uDPKAgAA
-X-CMS-MailID: 20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-X-ArchiveUser: EV
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4
-References: <CGME20250321063454epcas1p2194c3e69371dd4f025202d727bfb93a4@epcas1p2.samsung.com>
 
-When get_block is called with a buffer_head allocated on the stack, such
-as do_mpage_readpage, stack corruption due to buffer_head UAF may occur in
-the following race condition situation.
+On 2025/03/21 9:35, Jason Wang wrote:
+> On Thu, Mar 20, 2025 at 1:36 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>
+>> On 2025/03/20 10:50, Jason Wang wrote:
+>>> On Wed, Mar 19, 2025 at 12:48 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2025/03/19 10:43, Jason Wang wrote:
+>>>>> On Tue, Mar 18, 2025 at 5:57 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> The new RSS configuration structures allow easily constructing data for
+>>>>>> VIRTIO_NET_CTRL_MQ_RSS_CONFIG as they strictly follow the order of data
+>>>>>> for the command.
+>>>>>>
+>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>>>> ---
+>>>>>>     drivers/net/virtio_net.c | 117 +++++++++++++++++------------------------------
+>>>>>>     1 file changed, 43 insertions(+), 74 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>>>>>> index d1ed544ba03a..4153a0a5f278 100644
+>>>>>> --- a/drivers/net/virtio_net.c
+>>>>>> +++ b/drivers/net/virtio_net.c
+>>>>>> @@ -360,24 +360,7 @@ struct receive_queue {
+>>>>>>            struct xdp_buff **xsk_buffs;
+>>>>>>     };
+>>>>>>
+>>>>>> -/* This structure can contain rss message with maximum settings for indirection table and keysize
+>>>>>> - * Note, that default structure that describes RSS configuration virtio_net_rss_config
+>>>>>> - * contains same info but can't handle table values.
+>>>>>> - * In any case, structure would be passed to virtio hw through sg_buf split by parts
+>>>>>> - * because table sizes may be differ according to the device configuration.
+>>>>>> - */
+>>>>>>     #define VIRTIO_NET_RSS_MAX_KEY_SIZE     40
+>>>>>> -struct virtio_net_ctrl_rss {
+>>>>>> -       __le32 hash_types;
+>>>>>> -       __le16 indirection_table_mask;
+>>>>>> -       __le16 unclassified_queue;
+>>>>>> -       __le16 hash_cfg_reserved; /* for HASH_CONFIG (see virtio_net_hash_config for details) */
+>>>>>> -       __le16 max_tx_vq;
+>>>>>> -       u8 hash_key_length;
+>>>>>> -       u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+>>>>>> -
+>>>>>> -       __le16 *indirection_table;
+>>>>>> -};
+>>>>>>
+>>>>>>     /* Control VQ buffers: protected by the rtnl lock */
+>>>>>>     struct control_buf {
+>>>>>> @@ -421,7 +404,9 @@ struct virtnet_info {
+>>>>>>            u16 rss_indir_table_size;
+>>>>>>            u32 rss_hash_types_supported;
+>>>>>>            u32 rss_hash_types_saved;
+>>>>>> -       struct virtio_net_ctrl_rss rss;
+>>>>>> +       struct virtio_net_rss_config_hdr *rss_hdr;
+>>>>>> +       struct virtio_net_rss_config_trailer rss_trailer;
+>>>>>> +       u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
+>>>>>>
+>>>>>>            /* Has control virtqueue */
+>>>>>>            bool has_cvq;
+>>>>>> @@ -523,23 +508,16 @@ enum virtnet_xmit_type {
+>>>>>>            VIRTNET_XMIT_TYPE_XSK,
+>>>>>>     };
+>>>>>>
+>>>>>> -static int rss_indirection_table_alloc(struct virtio_net_ctrl_rss *rss, u16 indir_table_size)
+>>>>>> +static size_t virtnet_rss_hdr_size(const struct virtnet_info *vi)
+>>>>>>     {
+>>>>>> -       if (!indir_table_size) {
+>>>>>> -               rss->indirection_table = NULL;
+>>>>>> -               return 0;
+>>>>>> -       }
+>>>>>> +       u16 indir_table_size = vi->has_rss ? vi->rss_indir_table_size : 1;
+>>>>>>
+>>>>>> -       rss->indirection_table = kmalloc_array(indir_table_size, sizeof(u16), GFP_KERNEL);
+>>>>>> -       if (!rss->indirection_table)
+>>>>>> -               return -ENOMEM;
+>>>>>> -
+>>>>>> -       return 0;
+>>>>>> +       return struct_size(vi->rss_hdr, indirection_table, indir_table_size);
+>>>>>>     }
+>>>>>>
+>>>>>> -static void rss_indirection_table_free(struct virtio_net_ctrl_rss *rss)
+>>>>>> +static size_t virtnet_rss_trailer_size(const struct virtnet_info *vi)
+>>>>>>     {
+>>>>>> -       kfree(rss->indirection_table);
+>>>>>> +       return struct_size(&vi->rss_trailer, hash_key_data, vi->rss_key_size);
+>>>>>>     }
+>>>>>>
+>>>>>>     /* We use the last two bits of the pointer to distinguish the xmit type. */
+>>>>>> @@ -3576,15 +3554,16 @@ static void virtnet_rss_update_by_qpairs(struct virtnet_info *vi, u16 queue_pair
+>>>>>>
+>>>>>>            for (; i < vi->rss_indir_table_size; ++i) {
+>>>>>>                    indir_val = ethtool_rxfh_indir_default(i, queue_pairs);
+>>>>>> -               vi->rss.indirection_table[i] = cpu_to_le16(indir_val);
+>>>>>> +               vi->rss_hdr->indirection_table[i] = cpu_to_le16(indir_val);
+>>>>>>            }
+>>>>>> -       vi->rss.max_tx_vq = cpu_to_le16(queue_pairs);
+>>>>>> +       vi->rss_trailer.max_tx_vq = cpu_to_le16(queue_pairs);
+>>>>>>     }
+>>>>>>
+>>>>>>     static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>>>>>>     {
+>>>>>>            struct virtio_net_ctrl_mq *mq __free(kfree) = NULL;
+>>>>>> -       struct virtio_net_ctrl_rss old_rss;
+>>>>>> +       struct virtio_net_rss_config_hdr *old_rss_hdr;
+>>>>>> +       struct virtio_net_rss_config_trailer old_rss_trailer;
+>>>>>>            struct net_device *dev = vi->dev;
+>>>>>>            struct scatterlist sg;
+>>>>>>
+>>>>>> @@ -3599,24 +3578,28 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>>>>>>             * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
+>>>>>>             */
+>>>>>>            if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+>>>>>> -               memcpy(&old_rss, &vi->rss, sizeof(old_rss));
+>>>>>> -               if (rss_indirection_table_alloc(&vi->rss, vi->rss_indir_table_size)) {
+>>>>>> -                       vi->rss.indirection_table = old_rss.indirection_table;
+>>>>>> +               old_rss_hdr = vi->rss_hdr;
+>>>>>> +               old_rss_trailer = vi->rss_trailer;
+>>>>>> +               vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
+>>>>>> +               if (!vi->rss_hdr) {
+>>>>>> +                       vi->rss_hdr = old_rss_hdr;
+>>>>>>                            return -ENOMEM;
+>>>>>>                    }
+>>>>>>
+>>>>>> +               *vi->rss_hdr = *old_rss_hdr;
+>>>>>>                    virtnet_rss_update_by_qpairs(vi, queue_pairs);
+>>>>>>
+>>>>>>                    if (!virtnet_commit_rss_command(vi)) {
+>>>>>>                            /* restore ctrl_rss if commit_rss_command failed */
+>>>>>> -                       rss_indirection_table_free(&vi->rss);
+>>>>>> -                       memcpy(&vi->rss, &old_rss, sizeof(old_rss));
+>>>>>> +                       kfree(vi->rss_hdr);
+>>>>>> +                       vi->rss_hdr = old_rss_hdr;
+>>>>>> +                       vi->rss_trailer = old_rss_trailer;
+>>>>>>
+>>>>>>                            dev_warn(&dev->dev, "Fail to set num of queue pairs to %d, because committing RSS failed\n",
+>>>>>>                                     queue_pairs);
+>>>>>>                            return -EINVAL;
+>>>>>>                    }
+>>>>>> -               rss_indirection_table_free(&old_rss);
+>>>>>> +               kfree(old_rss_hdr);
+>>>>>>                    goto succ;
+>>>>>>            }
+>>>>>>
+>>>>>> @@ -4059,28 +4042,12 @@ static int virtnet_set_ringparam(struct net_device *dev,
+>>>>>>     static bool virtnet_commit_rss_command(struct virtnet_info *vi)
+>>>>>>     {
+>>>>>>            struct net_device *dev = vi->dev;
+>>>>>> -       struct scatterlist sgs[4];
+>>>>>> -       unsigned int sg_buf_size;
+>>>>>> +       struct scatterlist sgs[2];
+>>>>>>
+>>>>>>            /* prepare sgs */
+>>>>>> -       sg_init_table(sgs, 4);
+>>>>>> -
+>>>>>> -       sg_buf_size = offsetof(struct virtio_net_ctrl_rss, hash_cfg_reserved);
+>>>>>> -       sg_set_buf(&sgs[0], &vi->rss, sg_buf_size);
+>>>>>> -
+>>>>>> -       if (vi->has_rss) {
+>>>>>> -               sg_buf_size = sizeof(uint16_t) * vi->rss_indir_table_size;
+>>>>>> -               sg_set_buf(&sgs[1], vi->rss.indirection_table, sg_buf_size);
+>>>>>> -       } else {
+>>>>>> -               sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved, sizeof(uint16_t));
+>>>>>> -       }
+>>>>>> -
+>>>>>> -       sg_buf_size = offsetof(struct virtio_net_ctrl_rss, key)
+>>>>>> -                       - offsetof(struct virtio_net_ctrl_rss, max_tx_vq);
+>>>>>> -       sg_set_buf(&sgs[2], &vi->rss.max_tx_vq, sg_buf_size);
+>>>>>> -
+>>>>>> -       sg_buf_size = vi->rss_key_size;
+>>>>>> -       sg_set_buf(&sgs[3], vi->rss.key, sg_buf_size);
+>>>>>> +       sg_init_table(sgs, 2);
+>>>>>> +       sg_set_buf(&sgs[0], vi->rss_hdr, virtnet_rss_hdr_size(vi));
+>>>>>> +       sg_set_buf(&sgs[1], &vi->rss_trailer, virtnet_rss_trailer_size(vi));
+>>>>>
+>>>>> So I still see this:
+>>>>>
+>>>>>            if (vi->has_rss || vi->has_rss_hash_report) {
+>>>>>                    if (!virtnet_commit_rss_command(vi)) {
+>>>>>
+>>>>> Should we introduce a hash config helper instead?
+>>>>
+>>>> I think it's fine to use virtnet_commit_rss_command() for hash
+>>>> reporting. struct virtio_net_hash_config and struct
+>>>> virtio_net_rss_config are defined to have a common layout to allow
+>>>> sharing this kind of logic.
+>>>
+>>> Well, this trick won't work if the reserved field in hash_config is
+>>> used in the future.
+>>
+>> Right, but we can add a hash config helper when that happens. It will
+>> only result in a duplication of logic for now.
+>>
+>> Regards,
+>> Akihiko Odaki
+> 
+> That's tricky as the cvq commands were designed to be used separately.
+> Let's use a separate helper and virtio_net_hash_config uAPIs now.
 
-     <CPU 0>                      <CPU 1>
-mpage_read_folio
-  <<bh on stack>>
-  do_mpage_readpage
-    exfat_get_block
-      bh_read
-        __bh_read
-	  get_bh(bh)
-          submit_bh
-          wait_on_buffer
-                              ...
-                              end_buffer_read_sync
-                                __end_buffer_read_notouch
-                                   unlock_buffer
-          <<keep going>>
-        ...
-      ...
-    ...
-  ...
-<<bh is not valid out of mpage_read_folio>>
-   .
-   .
-another_function
-  <<variable A on stack>>
-                                   put_bh(bh)
-                                     atomic_dec(bh->b_count)
-  * stack corruption here *
+It's not tricky but is explicitly stated in the spec. 5.1.6.5.6.4 "Hash 
+calculation" says:
+ > Field reserved MUST contain zeroes. It is defined to make the
+ > structure to match the layout of virtio_net_rss_config structure,
+ > defined in 5.1.6.5.7.
 
-This patch returns -EAGAIN if a folio does not have buffers when bh_read
-needs to be called. By doing this, the caller can fallback to functions
-like block_read_full_folio(), create a buffer_head in the folio, and then
-call get_block again.
+By the way, I found it says field reserved MUST contain zeros but we do 
+nothing to ensure that. I'll write a fix for that.
 
-Let's do not call bh_read() with on-stack buffer_head.
+Regards,
+Akihiko Odaki
 
-Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
-Cc: stable@vger.kernel.org
-Tested-by: Yeongjin Gil <youngjin.gil@samsung.com>
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
-v2:
- - clear_buffer_mapped if there is any errors.
- - remove unnecessary BUG_ON()
----
- fs/exfat/inode.c | 39 +++++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
-
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 96952d4acb50..f3fdba9f4d21 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -344,7 +344,8 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 			 * The block has been partially written,
- 			 * zero the unwritten part and map the block.
- 			 */
--			loff_t size, off, pos;
-+			loff_t size, pos;
-+			void *addr;
- 
- 			max_blocks = 1;
- 
-@@ -355,17 +356,41 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 			if (!bh_result->b_folio)
- 				goto done;
- 
-+			/*
-+			 * No buffer_head is allocated.
-+			 * (1) bmap: It's enough to fill bh_result without I/O.
-+			 * (2) read: The unwritten part should be filled with 0
-+			 *           If a folio does not have any buffers,
-+			 *           let's returns -EAGAIN to fallback to
-+			 *           per-bh IO like block_read_full_folio().
-+			 */
-+			if (!folio_buffers(bh_result->b_folio)) {
-+				err = -EAGAIN;
-+				goto done;
-+			}
-+
- 			pos = EXFAT_BLK_TO_B(iblock, sb);
- 			size = ei->valid_size - pos;
--			off = pos & (PAGE_SIZE - 1);
-+			addr = folio_address(bh_result->b_folio) +
-+			       offset_in_folio(bh_result->b_folio, pos);
-+
-+			/* Check if bh->b_data points to proper addr in folio */
-+			if (bh_result->b_data != addr) {
-+				exfat_fs_error_ratelimit(sb,
-+					"b_data(%p) != folio_addr(%p)",
-+					bh_result->b_data, addr);
-+				err = -EINVAL;
-+				goto done;
-+			}
- 
--			folio_set_bh(bh_result, bh_result->b_folio, off);
-+			/* Read a block */
- 			err = bh_read(bh_result, 0);
- 			if (err < 0)
--				goto unlock_ret;
-+				goto done;
- 
--			folio_zero_segment(bh_result->b_folio, off + size,
--					off + sb->s_blocksize);
-+			/* Zero unwritten part of a block */
-+			memset(bh_result->b_data + size, 0,
-+			       bh_result->b_size - size);
- 		} else {
- 			/*
- 			 * The range has not been written, clear the mapped flag
-@@ -376,6 +401,8 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 	}
- done:
- 	bh_result->b_size = EXFAT_BLK_TO_B(max_blocks, sb);
-+	if (err < 0)
-+		clear_buffer_mapped(bh_result);
- unlock_ret:
- 	mutex_unlock(&sbi->s_lock);
- 	return err;
--- 
-2.25.1
-
+> 
+> Thanks
+> 
+>>
+>>>
+>>> Thanks
+>>>
+>>>>
+>>>> Regards,
+>>>> Akihiko Odaki
+>>>>
+>>>>>
+>>>>> Thanks
+>>>>>
+>>>>
+>>>
+>>
+> 
 
 
