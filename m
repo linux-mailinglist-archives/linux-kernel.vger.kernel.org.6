@@ -1,262 +1,345 @@
-Return-Path: <linux-kernel+bounces-571526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F660A6BE5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:33:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E5AA6BE60
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1A273AF718
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756304652C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B73D1DE2C2;
-	Fri, 21 Mar 2025 15:33:32 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E111E00B4;
+	Fri, 21 Mar 2025 15:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PIQHcQR0"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2070.outbound.protection.outlook.com [40.107.223.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA80842A94
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 15:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742571211; cv=none; b=dTeQiMv6P+QgPSw/mHyCZXhw0YaWdsz8hyjVdZlwqoW8stfIe1cj/SFFo7RGLr0Ts6Yjb06RJAxvoREsougaU8BiUXqIm+2dFx4ptblndw2UIPzGgx1I0frZ7lBbD8XtliBU4HxK/U0cL2l2FrX47F6Wyquq822zy+rXjMBgrBo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742571211; c=relaxed/simple;
-	bh=ZqWZgfF19wn0F9D/bfZgvrICxRQvmxpuCjufT4+0OiY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JQNTLPVX6EjrLsuSRHaf61HDrN4be+OXiEuRQdCAAcRUTZLkt2sXzRCp39Vm1K9tXTDRsKetIGiQWqbA4LRQxPS7Eob5hT7D4DUj3mAmY5V4x/KOz3huGhduSpz97yamkYUmODlyuZx6Ue2IncJgsiMODXUigKHA97YSt5gkxqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d2a379bbf0so41937205ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:33:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742571209; x=1743176009;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lw7ghwuumnNph7RdlZoulnuNS45H4wnBjy+efPtZXF0=;
-        b=ZmgA6BrdLhixGv6RiOQ/Cqh5E+gZ/GSPi7bdFrRPjA8Rq6iHFRER078PbRjbCA7rud
-         325mY+2QPQmtsy2+j+2HYfy52hcdfotez452tUD7GDpFhwLwmLOHsZkiPpSuBGPGvtnk
-         JOt4ciOAYH3mUeqfdBz0UwP4QHyW81zu+DzCBTvVi2bVQ6mWb41yIkV4H4jFMIWVLbvx
-         tmyt4xorSKlfaqXH2fNosmmDN56ZR8UJlutJBVVvVUa4BVY9/rLyBASzMIjIdQAcKnS5
-         FU/+1v3z5vWNAZ1he+lx6RVKOANWb5WV5x91MTwQLH+JPS0/gzIElYYE2E22G2AF7KCt
-         572A==
-X-Gm-Message-State: AOJu0YxvWYRKfHjx4yjBKE6u85TIbwAP+u+BCE2AaAjlWVTnPm/2DQl2
-	DkZ3hiMFXQa/RnIWrFRyesNNKulv+3YTCX4rE+j0tIrm96XOSrObdYBsKodYWHT06aAEjl3RD9A
-	P3nQr/a0vxgUSVqWnIUj/9zIG4s3rcHN9uTs/+mFWvL70pGpoRKMz6oxXxw==
-X-Google-Smtp-Source: AGHT+IFNYF70C2xwEdEWnGCyzSRudUPaZiVmSQZkFZvC3rKaQ34Qxsqiqeb+dd5XUoSYQ4oKuqRctNEJi8f9vz85t6/Zsk4BOTR8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAE49461;
+	Fri, 21 Mar 2025 15:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742571371; cv=fail; b=Jg0UKyfj7drooGb4l9qvYLvnkv+5a4nWJKHGrT6lMx3uogdenjjDFizRWXMUepun1I5ZreyVpYQRDXWVb/AVYY6/eOpvZdX3bd8c41UAXEJW9SZBhTkcNOG9m04DzXhTC+Q4Xi41cDlUDxytrEEqSQE1rVnPHMR/KBFlRowG2SU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742571371; c=relaxed/simple;
+	bh=YyYems16syuOLpThbpIe2IW2wIPHoEyR+EAuCna7hh8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=htHzrBDJzPmBmz4b2RVWUXu5MbxlUe4Dx/VtvLHjUnoBVS7O+E7qAJXuwGbEy7NHLxLHfBu0oze39CERqLhjzVILwFQLjMUZX+WgqTXZ73aVAC6jDiG1au3PE+8KmbSISMRbXtyKSP++qf+U2UtsB9bKGQsidy4U4s3JIqXZ2hw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PIQHcQR0; arc=fail smtp.client-ip=40.107.223.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y9wTPKtwqP2lUwBWCuKtUjruCJz7TVoatisxvnt+gl5q7EDQOBJGTRoHt//crBYRHCzpYWwXWhomAkAYpWtPqUasYfN9AXgVtKlzPs0CW3Z2gK+C78+pf8JLlK2K+XhgKA6OvEXg6Db98d6ypVjAkFdLpXvKV8Pr11wSsO0eCRimge8Rc8f4KrTrpjAbKBn7u9BYU1j9MCh74KV9+p+7UC44uBQoLC6J0ceX+CrupALudxDhmhotv01ZbVPQ/5Q+k6sTRtEojpOyhEvkZ042aOgP/y3eqxHboxAUNX9ig3/tLL3uOUXjd9+pDtMN4Kp3YIg7f67uhxwxoR5ubq9LRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CPGZHjYhG6Dy8tkk6aHc94806I4Z6LoPe6oj+3TqGTM=;
+ b=QjGJOHesxipKfCh2lOa1Y0/vvE5j3wEoA/UMPwY2zcCTFRRPdyoh8f1/llu4i9cxW53EUA64+lNroYSB1LVKThurPDsjq66/6MnBoRFQimnTyBevhFKwqTuJ5LxH6iXW7zJRO/88le6xhVmClCO77ahFW2LvHyco4qVdwrweeBuZkiVAz1BOrxkjcggiZjZzbNQO6+Xl0gxwjf2hZsFdkL14NGOtnIxVJPTpZbkEuGlFQYkvofcJabWhh2QFnyW5S3qzGftjxF/7r8GbedvjxvFm6W9KxjR0CXXBvT7ixuz+VgW0PyGt0S1ceST+lmgD7vv6PmxxBK6qoOZFEPmVVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CPGZHjYhG6Dy8tkk6aHc94806I4Z6LoPe6oj+3TqGTM=;
+ b=PIQHcQR0KCNXJ+zEeH2aYBHTLG93a534vR5x04JTRHRSNUXzZFlYni7r1R8n6QncARQ+dD5h0uwow3J6r0in1Av8rrbTHl1eHiqda0Yorm2hTYtseNTg6qYwBSQovwaPYf8mQFX+7utFUTTwibV/dKOkSXvavSQMr3HVibfTfIs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ CY5PR12MB6621.namprd12.prod.outlook.com (2603:10b6:930:43::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.36; Fri, 21 Mar 2025 15:36:06 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%4]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
+ 15:36:06 +0000
+Message-ID: <ecc20053-42ae-43ba-b1b3-748abe9d5b3b@amd.com>
+Date: Fri, 21 Mar 2025 21:05:56 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 05/17] x86/apic: Add update_vector callback for Secure
+ AVIC
+To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org, kirill.shutemov@linux.intel.com,
+ huibo.wang@amd.com, naveen.rao@amd.com
+References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
+ <20250226090525.231882-6-Neeraj.Upadhyay@amd.com> <87jz8i31dv.ffs@tglx>
+Content-Language: en-US
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <87jz8i31dv.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2P153CA0030.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::15) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:3cf:fe21:af8 with SMTP id
- e9e14a558f8ab-3d59612bcd5mr39148115ab.4.1742571208805; Fri, 21 Mar 2025
- 08:33:28 -0700 (PDT)
-Date: Fri, 21 Mar 2025 08:33:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dd86c8.050a0220.25ae54.0059.GAE@google.com>
-Subject: [syzbot] [sound?] possible deadlock in __snd_timer_user_ioctl
-From: syzbot <syzbot+2b96f44164236dda0f3b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    4701f33a1070 Linux 6.14-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ed844c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7f1ab0f4f8e33050
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b96f44164236dda0f3b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2dc8c7f3ede3/disk-4701f33a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b19e548eea76/vmlinux-4701f33a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0316f25ab8ca/bzImage-4701f33a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2b96f44164236dda0f3b@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.14.0-rc7-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.0.488/8394 is trying to acquire lock:
-ffff888028e09fe0 (&mm->mmap_lock){++++}-{4:4}, at: __might_fault mm/memory.c:6839 [inline]
-ffff888028e09fe0 (&mm->mmap_lock){++++}-{4:4}, at: __might_fault+0xe3/0x190 mm/memory.c:6832
-
-but task is already holding lock:
-ffffffff8fdaf688 (register_mutex){+.+.}-{4:4}, at: class_mutex_constructor include/linux/mutex.h:201 [inline]
-ffffffff8fdaf688 (register_mutex){+.+.}-{4:4}, at: snd_timer_user_next_device sound/core/timer.c:1526 [inline]
-ffffffff8fdaf688 (register_mutex){+.+.}-{4:4}, at: __snd_timer_user_ioctl.isra.0+0xa0c/0x2640 sound/core/timer.c:2247
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (register_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       snd_timer_open+0x90/0x1020 sound/core/timer.c:307
-       loopback_snd_timer_open+0xaca/0x1020 sound/drivers/aloop.c:1202
-       loopback_open+0x2bf/0x13a0 sound/drivers/aloop.c:1268
-       snd_pcm_open_substream+0xa50/0x17c0 sound/core/pcm_native.c:2753
-       snd_pcm_oss_open_file sound/core/oss/pcm_oss.c:2439 [inline]
-       snd_pcm_oss_open+0x754/0x1400 sound/core/oss/pcm_oss.c:2520
-       soundcore_open+0x409/0x580 sound/sound_core.c:594
-       chrdev_open+0x237/0x6a0 fs/char_dev.c:414
-       do_dentry_open+0x735/0x1c40 fs/open.c:956
-       vfs_open+0x82/0x3f0 fs/open.c:1086
-       do_open fs/namei.c:3830 [inline]
-       path_openat+0x1e88/0x2d80 fs/namei.c:3989
-       do_filp_open+0x20c/0x470 fs/namei.c:4016
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
-       do_sys_open fs/open.c:1443 [inline]
-       __do_sys_openat fs/open.c:1459 [inline]
-       __se_sys_openat fs/open.c:1454 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1454
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&loopback->cable_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       rule_format+0x111/0x3b0 sound/drivers/aloop.c:982
-       constrain_params_by_rules+0x547/0xca0 sound/core/pcm_native.c:436
-       snd_pcm_hw_refine sound/core/pcm_native.c:567 [inline]
-       snd_pcm_hw_refine+0x7e8/0xad0 sound/core/pcm_native.c:545
-       snd_pcm_hw_param_mask sound/core/oss/pcm_oss.c:190 [inline]
-       snd_pcm_oss_change_params_locked+0x645/0x3a60 sound/core/oss/pcm_oss.c:886
-       snd_pcm_oss_change_params sound/core/oss/pcm_oss.c:1105 [inline]
-       snd_pcm_oss_mmap+0x603/0x7c0 sound/core/oss/pcm_oss.c:2914
-       call_mmap include/linux/fs.h:2245 [inline]
-       mmap_file mm/internal.h:124 [inline]
-       __mmap_new_file_vma mm/vma.c:2296 [inline]
-       __mmap_new_vma mm/vma.c:2360 [inline]
-       __mmap_region+0x181f/0x2760 mm/vma.c:2461
-       mmap_region+0x1ab/0x3f0 mm/vma.c:2539
-       do_mmap+0xd8d/0x11b0 mm/mmap.c:561
-       vm_mmap_pgoff+0x279/0x440 mm/util.c:578
-       ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:607
-       __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
-       __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
-       __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&mm->mmap_lock){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain kernel/locking/lockdep.c:3906 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
-       __might_fault mm/memory.c:6839 [inline]
-       __might_fault+0x11b/0x190 mm/memory.c:6832
-       _inline_copy_to_user include/linux/uaccess.h:192 [inline]
-       _copy_to_user+0x2d/0xd0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:225 [inline]
-       snd_timer_user_gstatus sound/core/timer.c:1699 [inline]
-       __snd_timer_user_ioctl.isra.0+0xd47/0x2640 sound/core/timer.c:2256
-       snd_timer_user_ioctl+0x72/0xb0 sound/core/timer.c:2291
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &mm->mmap_lock --> &loopback->cable_lock --> register_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(register_mutex);
-                               lock(&loopback->cable_lock);
-                               lock(register_mutex);
-  rlock(&mm->mmap_lock);
-
- *** DEADLOCK ***
-
-2 locks held by syz.0.488/8394:
- #0: ffff8880332c2568 (&tu->ioctl_lock){+.+.}-{4:4}, at: class_mutex_constructor include/linux/mutex.h:201 [inline]
- #0: ffff8880332c2568 (&tu->ioctl_lock){+.+.}-{4:4}, at: snd_timer_user_ioctl+0x4a/0xb0 sound/core/timer.c:2290
- #1: ffffffff8fdaf688 (register_mutex){+.+.}-{4:4}, at: class_mutex_constructor include/linux/mutex.h:201 [inline]
- #1: ffffffff8fdaf688 (register_mutex){+.+.}-{4:4}, at: snd_timer_user_next_device sound/core/timer.c:1526 [inline]
- #1: ffffffff8fdaf688 (register_mutex){+.+.}-{4:4}, at: __snd_timer_user_ioctl.isra.0+0xa0c/0x2640 sound/core/timer.c:2247
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 8394 Comm: syz.0.488 Not tainted 6.14.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x490/0x760 kernel/locking/lockdep.c:2076
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2208
- check_prev_add kernel/locking/lockdep.c:3163 [inline]
- check_prevs_add kernel/locking/lockdep.c:3282 [inline]
- validate_chain kernel/locking/lockdep.c:3906 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
- __might_fault mm/memory.c:6839 [inline]
- __might_fault+0x11b/0x190 mm/memory.c:6832
- _inline_copy_to_user include/linux/uaccess.h:192 [inline]
- _copy_to_user+0x2d/0xd0 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:225 [inline]
- snd_timer_user_gstatus sound/core/timer.c:1699 [inline]
- __snd_timer_user_ioctl.isra.0+0xd47/0x2640 sound/core/timer.c:2256
- snd_timer_user_ioctl+0x72/0xb0 sound/core/timer.c:2291
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdbb2f8d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fdbb3d93038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fdbb31a6080 RCX: 00007fdbb2f8d169
-RDX: 0000400000000140 RSI: 00000000c0145401 RDI: 0000000000000003
-RBP: 00007fdbb300e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fdbb31a6080 R15: 00007ffee7e06528
- </TASK>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|CY5PR12MB6621:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e80e7d1-900d-408e-4c19-08dd688e188d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RG12TGFRS1Y0WCt3MTNoNnVXRUlsWThzMXZFbFVmUTRVcGZicVNyVnNXMjYz?=
+ =?utf-8?B?eE5kbDFtWWhTVVc1N0pFZVA4a1diWkRVaXdlUGFrOW9VdkNLempDNEh2ZU5O?=
+ =?utf-8?B?dE9JWnhycXVJT0g2RWdQMFNWNXBPUWsxRjQ2K2daT3ZONUpYN1lxTXUxRURT?=
+ =?utf-8?B?Sk1CeExLcWZRM1E0QXZ2eFdtZXZJcTdyOU9qWXhtYzhxaGVTRHpLMjBPdkJI?=
+ =?utf-8?B?b2NnY09OQ3ZqMkdlREZCbFNxNW5RS2dSSXpkakRPQnZvaGUrdE1oNkt1Z0Vp?=
+ =?utf-8?B?bm5GOFBhcDJLd0MrQUVQQzRNalB4bU9JcDJGK1Arb0hHL1FqSzU0YTY5MEcr?=
+ =?utf-8?B?SmF0dThrTlhGanArK2F5d1pGdVZLRTVSdDZROUprSW5rSkJUTkJyQno5SDdh?=
+ =?utf-8?B?dXFsZzJiN3REUWFCSVRhR05PVFJMTTVTWGEvVjlKWEVUczduVnhvRjNYdFJi?=
+ =?utf-8?B?RExBWmU1cUZmYWR3ZzRlZXlNemZDUWFURm0zN3loU0FtYmNBWkp3YmJBRGly?=
+ =?utf-8?B?NFV5c1VLUEJ2UG8yTG9lOGs3dXRXM3hlcGwxWHJJNkRZNno4R2lGZlVMNnBW?=
+ =?utf-8?B?K1dxWXdqKzBLd2dkRHByb2JPWjgxUmhxdWRmZ1N6YVRLY0krc0dxcHMzZUVu?=
+ =?utf-8?B?Z0hTZzQvdTJRQjJ0U29NNURXaWova1BjQ0tyTGcxLzI4WFFwWFpyOXp5YmQ4?=
+ =?utf-8?B?aWU0VEc3Yk5EMFF5SEIwcWg0YzhYMHhHdjQ2RzRwN2FuQWNiL2tRS3M3SVk4?=
+ =?utf-8?B?QU9CTVJuYnlza3V0QWZNUmVJdC9sTnNVUDFjL1B2enpHdDhiQ1RIbU9QOVRv?=
+ =?utf-8?B?eEdaa0xjWkFaVWNFZmhXZCtxTjlPdE5VU0cwT3FTL0FKb1JDamZPbmVWT1ND?=
+ =?utf-8?B?WlBDTG9NazF5aitOaE5yNHlDQTA4RHlrZlBHMTMzRmYwTkdJV09BSTRPZm1o?=
+ =?utf-8?B?SEpDek5Gam5YZ1EwTFQ3MWxXZ0lDL0drZ2QzNzdFNkVYOWZhcXFZSm11amtI?=
+ =?utf-8?B?R3l5Sk5RdXdzRFlETXFaYlJLVlhNK3JNM0RoSG0yK3dzU1VFa3dNbk12NHNn?=
+ =?utf-8?B?T0pNUWN4enJCNVZhclVhcHRrWThDR05KNUZTSGorZCt0dlAxMkxSOUpCOHIv?=
+ =?utf-8?B?bllaYzgvK3ppNGJyTi8zdWpMZGJveVpsK3BZdE9pNlVtZHlSald0MzZ4VGZp?=
+ =?utf-8?B?RmF2Skl0ckM5WVc0NVB1L21lWVE5aWV0TU5JVmZkVkw5WTREaEd6QTFtZnFp?=
+ =?utf-8?B?VmRPOEtiV2l1Ny9udzdxTG5IU0o0V29zZmJKLy9OMkk0RFZ3L2VLMkppK3l4?=
+ =?utf-8?B?RmFOc2t4Qy9aUFdnQnhRTHZpK2QvbnhUalRVdm0zSENmd2lxYlFYeUQ2YkQw?=
+ =?utf-8?B?Q3BpY0M2Z1dhaExiakI1WWMxQWtHcU9VY0RlUjk3RndIY0xuTEorSUx6ejFj?=
+ =?utf-8?B?OEVBakw4UEpGT0VkNGJFeWg5SjZWYTVHSXBxR0JoL0R2QmhxMEVjbGkvUjlr?=
+ =?utf-8?B?U0h4SmxGZlJ6WE1NVG9iOTZGVUcxZ29YU2lpVi9VeXFuWlZLWHgwNnZFc0xM?=
+ =?utf-8?B?NDc4NXVIYVh3bG92N29KY3BqZjVzelN3bklqdUdLK2s0NGl3aUdERm83Rmpy?=
+ =?utf-8?B?THArN0M3RXUweWhySk9nVk9GWXYxZGNXTlg3cGlzTnBwS2dSY2RkeXh1Ritl?=
+ =?utf-8?B?ZVFwSVVNa3VUOEVXeEU0NG9HWnpNcTdwTkh3L1dWelIyemxqZzJKSkx1bkJF?=
+ =?utf-8?B?K0xRcnAxVEhmLzMwRGFvZ2FDSzJ2dHo2dXdVRkh2NjB4a2ttcEdQNld2OGpV?=
+ =?utf-8?B?QlcwSGpzZ3ltTno0Q3c1dz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NWgzalJuQnRrNUk0WUJIUVJXWlpJZmNkSTlXeEx2YXNsVkpqVlFOZ3hBY0Nn?=
+ =?utf-8?B?QzBPTW1mRXBVQUIxMWRnbU1Ndyt5RnQvOEJqZGlTWmlENnAyTWZFdk1hZENy?=
+ =?utf-8?B?M1E5bDhVWkxCWkRSeVpQS2t1ZHZGQlJTUm5KTThaME1DQ1FoWHBaRjlrbEY3?=
+ =?utf-8?B?RXk1UmViV0RoNTRnSm1pZmQ5WjRXejZHL0dBb3NxcXZJaXMvcmEzczU3TlJu?=
+ =?utf-8?B?QzYrY1EwT0dIZ0pDYVJmTTNjdnJvaDBYaW53QUN4TG9jMmtyNHZ1OXVPQmhP?=
+ =?utf-8?B?c0xqQ0ZEd3U5MHNoNm05UWpqL0tDV0hhVEpqYkx6WUJHYzVXVkwrVndySnhN?=
+ =?utf-8?B?ODF1QUZJUHVPenVWOVNESEF2UlZCZTNNM3lmTEJVQ3Jxa2o0RTNLQzFpSjZu?=
+ =?utf-8?B?Z2xhQWZUekxZN0J0T2F3a1cwa0l4ckhieklQZUNURlVqODBYTk9SNVpSa0xL?=
+ =?utf-8?B?eUJvZ0FqV2E4SnVKeXNBeHFOc3NuMXFRWHEvNVZYZFhsVkZJSG1Ra2dJQ3NR?=
+ =?utf-8?B?MFlHeGtXd3F3VVZNRExDZUM5OWpabU9XSjVobjVUTTQxTGJJN2dpeUdiN0lq?=
+ =?utf-8?B?ekwvZk9ZdVFIaGY0NHF5N3lEamk0a1cxUVBOZVd6RG02bS9QSk51ZmN0UUNY?=
+ =?utf-8?B?YWJ3Uno1QXNTRjZRNlJmQ0UzWFQ5b3VHMktjdUtvZUxKZHpSTGRXZjd3Vit5?=
+ =?utf-8?B?M2ZvdXhpZ1JMSnVCWGlrMkR6WHhMbER1SDZLYUlDWjAzNFhMMUlNMFFhYk8x?=
+ =?utf-8?B?aFBBMmF5ZVgxeFBUR1J3MEVzV1pnaXZReStBVXFDV2pwYlU0OUpid0o1U3J4?=
+ =?utf-8?B?eFNjNzN0WUF6aGhKRjRPZlI1YmgwRlBlZ29JRmR2QktuOWFhbWVsRVJqZ1JC?=
+ =?utf-8?B?L2NpbGhYKzA3YUhPcnA5aVE4TW9rbldnMG93alYvT1VEMnZXZDUrOCt4bG9k?=
+ =?utf-8?B?OEI1MWlqZlFjVnJzTy9aTHBDb3czK0EzTWdDS05KYmMxdkFDMnh3S3ZrTnFL?=
+ =?utf-8?B?OW1FZEhMei9OK3NWbHRVL1dZRzlhQ0VhZnl6Zm5BV0R0R1FRcUJCd3hRQkZ2?=
+ =?utf-8?B?QmRIbVB4MXV0MnF4OFhLNEJ0S2o2czRnV3BsK2R0QjhwbG1aZ2c2amJBa0dE?=
+ =?utf-8?B?L2I3VFhHN2JFSjFleXlCU1hjanN2T1RLdTZpOEZvbHNqSGJLZFp5L3pWR2Z5?=
+ =?utf-8?B?VzI1TTFLQkVCS1pVaFVRcDBZK3ZlekQxaHFQODRBNG5RNTgyaTZpeWcvSWhl?=
+ =?utf-8?B?REUxbkV1OHdDK0RWc1VqbmVuaEFwNGxSbHE0eU1jZ0hCUE5XRFo2YmFoak9U?=
+ =?utf-8?B?TmE5cHNjOWpzV0NCOVlFWHNWdnJlallYNmZlSmVhTXNIR3hTdkJwYksxVGVu?=
+ =?utf-8?B?cVc3bEZBcWZ5MEwybWhXNmZRYVVreEdKWGQzRlFzUmVZOVFleVVDNnJaQ2JD?=
+ =?utf-8?B?bWhrbjQ4VUxia0lQZjdhTWNoOHBMTVBLZjVicy9PejR1Q3k0YWs1TkhCZzl5?=
+ =?utf-8?B?bG9oejVJTDVDMUhoYnVJOWF1VTd5cUo1NExWNTZRSVZqTnNRZ0xBZlNDMkx5?=
+ =?utf-8?B?R21ScXJsakwrcmwweTRST29QcXFvUXhzcUdtZDNYb3A1OVp4QXlhTlIvUjQx?=
+ =?utf-8?B?RkdQQUdoKzdEUkdRcHZCTmFPb0xVazZ4NG5JV2JXY2Y4b1BCT3dWejJtc2lk?=
+ =?utf-8?B?cisvTi9yam9ROGM2VzY1cVIwRHJRRGpSTmw4MlBmQ0lYbEZzeHozOWdlNEVM?=
+ =?utf-8?B?c0xEWkc0SEdkTC9XbXFnaFg3U2JtMVBtVmF5NjNmUnRjTHVSdWZmN1NxT3Br?=
+ =?utf-8?B?QTVGYitXMWFUWmg5S0c4cnRWZlV6UTZHSnpIcGtBM3F0RStxNUlaZU9yWk5I?=
+ =?utf-8?B?UGk3VnBlT3Q1aTZHb0ZaRGwyZEgwSDdJNFU5S0R4bThUNkM1dTlZR2FjeHlD?=
+ =?utf-8?B?Ukp3ZkRJdUJHNVhXdlFzUEx3cm9yLzU1enhMTWFvMGpUS3NjMUljZVdzN3p0?=
+ =?utf-8?B?WHVhTGp1K3Mrb0poNlVHRWFYOU5pcE1pSmJCcUhyZDlGYmRxOGhYdWhjdHFm?=
+ =?utf-8?B?dU9ZSFpDWXg2N2wxTTIzU045VzV4VXNEamQvd3hqcjhzNC9CYnd3K1pIYXph?=
+ =?utf-8?Q?LiMuROgkn1W+goiJxwU6Z9GLG?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e80e7d1-900d-408e-4c19-08dd688e188d
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 15:36:06.6266
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cQL6tinV9guMLy3lsY8yXHDKSxzYNR8Lp1GW/bl4Co8hOJUy3qM3zKCA8BYYNdAqOPwysGan5OMN/YazjySoQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6621
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 3/21/2025 7:57 PM, Thomas Gleixner wrote:
+> On Wed, Feb 26 2025 at 14:35, Neeraj Upadhyay wrote:
+>> Add update_vector callback to set/clear ALLOWED_IRR field in
+>> the APIC backing page. The ALLOWED_IRR field indicates the
+>> interrupt vectors which the guest allows the hypervisor to
+>> send (typically for emulated devices). Interrupt vectors used
+>> exclusively by the guest itself (like IPI vectors) should not
+>> be allowed to be injected into the guest for security reasons.
+>> The update_vector callback is invoked from APIC vector domain
+>> whenever a vector is allocated, freed or moved.
+> 
+> Your changelog tells a lot about the WHAT. Please read and follow the
+> documentation, which describes how a change log should be structured.
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+> 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Ok
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>> diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+>> index 72fa4bb78f0a..e0c9505e05f8 100644
+>> --- a/arch/x86/kernel/apic/vector.c
+>> +++ b/arch/x86/kernel/apic/vector.c
+>> @@ -174,6 +174,8 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+>>  		apicd->prev_cpu = apicd->cpu;
+>>  		WARN_ON_ONCE(apicd->cpu == newcpu);
+>>  	} else {
+>> +		if (apic->update_vector)
+>> +			apic->update_vector(apicd->cpu, apicd->vector, false);
+>>  		irq_matrix_free(vector_matrix, apicd->cpu, apicd->vector,
+>>  				managed);
+>>  	}
+>> @@ -183,6 +185,8 @@ static void apic_update_vector(struct irq_data *irqd, unsigned int newvec,
+>>  	apicd->cpu = newcpu;
+>>  	BUG_ON(!IS_ERR_OR_NULL(per_cpu(vector_irq, newcpu)[newvec]));
+>>  	per_cpu(vector_irq, newcpu)[newvec] = desc;
+>> +	if (apic->update_vector)
+>> +		apic->update_vector(apicd->cpu, apicd->vector, true);
+> 
+> A trivial
+> 
+> static inline void apic_update_vector(....)
+> {
+>         if (apic->update_vector)
+>            ....
+> }
+> 
+> would be too easy to read and add not enough line count, right?
+> 
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Yes.
 
-If you want to undo deduplication, reply with:
-#syz undup
+>>  static void vector_assign_managed_shutdown(struct irq_data *irqd)
+>> @@ -528,11 +532,15 @@ static bool vector_configure_legacy(unsigned int virq, struct irq_data *irqd,
+>>  	if (irqd_is_activated(irqd)) {
+>>  		trace_vector_setup(virq, true, 0);
+>>  		apic_update_irq_cfg(irqd, apicd->vector, apicd->cpu);
+>> +		if (apic->update_vector)
+>> +			apic->update_vector(apicd->cpu, apicd->vector, true);
+>>  	} else {
+>>  		/* Release the vector */
+>>  		apicd->can_reserve = true;
+>>  		irqd_set_can_reserve(irqd);
+>>  		clear_irq_vector(irqd);
+>> +		if (apic->update_vector)
+>> +			apic->update_vector(apicd->cpu, apicd->vector, false);
+>>  		realloc = true;
+> 
+> This is as incomplete as it gets. None of the other code paths which
+> invoke clear_irq_vector() nor those which invoke free_moved_vector() are
+> mopping up the leftovers in the backing page.
+> 
+> And no, you don't sprinkle this nonsense all over the call sites. There
+> is only a very limited number of functions which are involed in setting
+> up and tearing down a vector. Doing this at the call sites is a
+> guarantee for missing out as you demonstrated.
+> 
+
+This is the part where I was looking for guidance. As ALLOWED_IRR (which
+tells if Hypervisor is allowed to inject a vector to guest vCPU) is per
+CPU, intent was to call it at places where vector's CPU affinity changes.
+I surely have missed cleaning up ALLOWED_IRR on previously affined CPU.
+I will follow your suggestion to do it during setup/teardown of vector (need
+to figure out those functions) and configure it for all CPUs in those
+functions.
+
+>> +#define VEC_POS(v)	((v) & (32 - 1))
+>> +#define REG_POS(v)	(((v) >> 5) << 4)
+> 
+> This is unreadable, undocumented and incomprehensible garbage.
+> 
+
+I will update it.
+
+>>  static DEFINE_PER_CPU(void *, apic_backing_page);
+>>  
+>>  struct apic_id_node {
+>> @@ -192,6 +195,22 @@ static void x2apic_savic_send_IPI_mask_allbutself(const struct cpumask *mask, in
+>>  	__send_IPI_mask(mask, vector, APIC_DEST_ALLBUT);
+>>  }
+>>  
+>> +static void x2apic_savic_update_vector(unsigned int cpu, unsigned int vector, bool set)
+>> +{
+>> +	void *backing_page;
+>> +	unsigned long *reg;
+>> +	int reg_off;
+>> +
+>> +	backing_page = per_cpu(apic_backing_page, cpu);
+>> +	reg_off = SAVIC_ALLOWED_IRR_OFFSET + REG_POS(vector);
+>> +	reg = (unsigned long *)((char *)backing_page + reg_off);
+>> +
+>> +	if (set)
+>> +		test_and_set_bit(VEC_POS(vector), reg);
+>> +	else
+>> +		test_and_clear_bit(VEC_POS(vector), reg);
+>> +}
+> 
+> What's the test_and_ for if you ignore the return value anyway?
+>
+
+To not set it again if it already set. I will switch to set_bit/clear_bit()
+as test_and_ is not necessary.
+
+ 
+> Als I have no idea what SAVIC_ALLOWED_IRR_OFFSET means. Whether it's
+> something from the datashit or a made up thing does not matter. It's
+> patently non-informative.
+> 
+
+Ok, I had tried to give some details in the cover letter. These APIC
+regs are at offset APIC_IRR(n) + 4 and are used by guest to configure the
+interrupt vectors which can be injected by Hypervisor to Guest.
+
+
+> Again:
+> 
+> struct apic_page {
+> 	union {
+> 		u32	regs[NR_APIC_REGS];
+> 		u8	bytes[PAGE_SIZE];
+> 	};
+> };                
+> 
+>        struct apic_page *ap = this_cpu_ptr(apic_page);
+>        unsigned long *sirr;
+> 
+>        /*
+>         * apic_page.regs[SAVIC_ALLOWED_IRR_OFFSET...] is an array of
+>         * consecutive 32-bit registers, which represents a vector bitmap.
+>         */
+>         sirr = (unsigned long *) &ap->regs[SAVIC_ALLOWED_IRR_OFFSET];
+>         if (set)
+>         	set_bit(sirr, vector);
+>         else
+>         	clear_bit(sirr, vector);
+> 
+> See how code suddenly becomes self explaining, obvious and
+> comprehensible?
+> 
+
+Yes, thank you!
+
+- Neeraj
+
+> Thanks,
+> 
+>         tglx
+
 
