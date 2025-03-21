@@ -1,156 +1,328 @@
-Return-Path: <linux-kernel+bounces-571579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB0EA6BF1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:07:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526A1A6BF1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71D12460747
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8725189EF9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EEE22B8C3;
-	Fri, 21 Mar 2025 16:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NvGalA/i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A035B229B23;
+	Fri, 21 Mar 2025 16:06:37 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331401DE4C2;
-	Fri, 21 Mar 2025 16:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298D31E22FA
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742573186; cv=none; b=gEnUNae3wa4xi6f2ces2Q61CkdgJfoBVGrp8eaJ07S9AmZeEBlffta5pnP0YnUfio8TVYtzenehObOREp8JWk5GUcKuTjDKXnD83sslP/EeCBK4EX2Rmf88aT1oerMHfb4iF92GOJrhOW3i49wsrgjSeZLFY69ddisAKj+nIN4E=
+	t=1742573197; cv=none; b=UG1Xi9bpEQz2KJB79riJCNOhTta6RxvXgm+KEMEcX7pCUa8DyxR01GtTfSkMysDdBSG+Fl/nmlGQvKkXimoytKcpDMdFaO47QdWdLvBOdB1oF78mnSOt8TxqClmTVYux5eLZgizXA1mmUBkBbjglToc7fFyhZK2slLlxeuWipoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742573186; c=relaxed/simple;
-	bh=WgBVYTr0URRl3zJspKTAryBSC/YiYErKzgv7WS4Rg/s=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fJoKGR3W3Q57YTby4gOkViWWAZYQGgRP4WXCGkwxoW+qEM2Rmq1yRYL39BRFUe+ENF1cwAmveTDwcwGla6fcZOfrUPwSbuLA/z+sBYL/NW8AAS4AMucvLZ8iG6BOUJPwdcwyUMywYtLi/9JPlxZNX7EHjQT8Mq/1ejneVX5+MJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NvGalA/i; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742573184; x=1774109184;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=WgBVYTr0URRl3zJspKTAryBSC/YiYErKzgv7WS4Rg/s=;
-  b=NvGalA/ikOrL5oPJYs+QnTxjGygBeYWWOIvfFHc3OkbJX2AwHpopTwqS
-   OrJ7JGqvsLvcwKeP1prZM7mVJTOfER54Pu75l/Fxr9j8e/jK3wFjwN7qC
-   SK/5ji+VMYsX0/5AhSQhmE9n8DiGMEF7b+LjyblXx5blGM0B6v0DiKpB9
-   7qQZ9t3oQhCYinN742ZwcgN+X4JUGCey/94l/s0aWmz+DeK3rMLdvIdAr
-   VOz0V9xhnp8gPVoJI15e8EZBeavaDkLOepeFPGKjHBbFPdNQ3UOf5upEx
-   k4Kt0Ju3dJwZMJUlGC8aC6kaTxjBeWUEXBcxhuhtx35JSY0kXfzmt0vxz
-   A==;
-X-CSE-ConnectionGUID: uCVdhp/3So2cYbOJXCtPug==
-X-CSE-MsgGUID: onEv0mKKQBKLcJNtxbhz7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="43726622"
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="43726622"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 09:06:23 -0700
-X-CSE-ConnectionGUID: g7UgcbV4QTih6n+cWYD8tQ==
-X-CSE-MsgGUID: 1EcrVXRMQNGo+fC3Vk/4zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
-   d="scan'208";a="123417648"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 09:06:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 21 Mar 2025 18:06:02 +0200 (EET)
-To: Easwar Hariharan <eahariha@linux.microsoft.com>, 
-    Andrew Morton <akpm@linux-foundation.org>
-cc: Yaron Avizrat <yaron.avizrat@intel.com>, Oded Gabbay <ogabbay@kernel.org>, 
-    Julia Lawall <Julia.Lawall@inria.fr>, 
-    Nicolas Palix <nicolas.palix@imag.fr>, 
-    James Smart <james.smart@broadcom.com>, 
-    Dick Kennedy <dick.kennedy@broadcom.com>, 
-    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-    "Martin K. Petersen" <martin.petersen@oracle.com>, 
-    Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-    Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-    David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
-    Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, 
-    Xiubo Li <xiubli@redhat.com>, Damien Le Moal <dlemoal@kernel.org>, 
-    Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>, 
-    "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-    Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-    Sagi Grimberg <sagi@grimberg.me>, Frank Li <Frank.Li@nxp.com>, 
-    Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-    Sascha Hauer <s.hauer@pengutronix.de>, 
-    Pengutronix Kernel Team <kernel@pengutronix.de>, 
-    Fabio Estevam <festevam@gmail.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Selvin Xavier <selvin.xavier@broadcom.com>, 
-    Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-    cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
-    linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-    linux-sound@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-    ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
-    linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org, 
-    linux-pm@vger.kernel.org, linux-nvme@lists.infradead.org, 
-    linux-spi@vger.kernel.org, imx@lists.linux.dev, 
-    linux-arm-kernel@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
-    ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH v3 15/16] platform/x86: thinkpad_acpi: convert timeouts
- to secs_to_jiffies()
-In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-15-a43967e36c88@linux.microsoft.com>
-Message-ID: <9e761e10-eb4d-0a34-79b5-ef4507f002c5@linux.intel.com>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com> <20250225-converge-secs-to-jiffies-part-two-v3-15-a43967e36c88@linux.microsoft.com>
+	s=arc-20240116; t=1742573197; c=relaxed/simple;
+	bh=lLBcSr6Rag8IypS0xGuQXJIvIXTE0qwJoViXLFmhHqw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kjkYb7KEPVRnwrA4HKSraDRzdNt+OBbjVpvLZphxJdNIeBad7ZobI3w5IRZvARd98pOKOW+3w+ZgGH7us/BdAqfA+OEvr/dp4UJM4+2m1m6fRdYULitJ/6VOX9fNkNoLALIECokSUaRRWbb31T2ZNHh8RNhUMQSQu7yC54EjiOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZK6gQ3lzcz6K5p4;
+	Sat, 22 Mar 2025 00:03:30 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A238914038F;
+	Sat, 22 Mar 2025 00:06:31 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Mar
+ 2025 17:06:30 +0100
+Date: Fri, 21 Mar 2025 16:06:28 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Hasan.Maruf@amd.com>,
+	<Michael.Day@amd.com>, <akpm@linux-foundation.org>, <bharata@amd.com>,
+	<dave.hansen@intel.com>, <david@redhat.com>, <dongjoo.linux.dev@gmail.com>,
+	<feng.tang@intel.com>, <gourry@gourry.net>, <hannes@cmpxchg.org>,
+	<honggyu.kim@sk.com>, <hughd@google.com>, <jhubbard@nvidia.com>,
+	<jon.grimm@amd.com>, <k.shutemov@gmail.com>, <kbusch@meta.com>,
+	<kmanaouil.dev@gmail.com>, <leesuyeon0506@gmail.com>, <leillc@google.com>,
+	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <mgorman@techsingularity.net>, <mingo@redhat.com>,
+	<nadav.amit@gmail.com>, <nphamcs@gmail.com>, <peterz@infradead.org>,
+	<riel@surriel.com>, <rientjes@google.com>, <rppt@kernel.org>,
+	<santosh.shukla@amd.com>, <shivankg@amd.com>, <shy828301@gmail.com>,
+	<sj@kernel.org>, <vbabka@suse.cz>, <weixugc@google.com>,
+	<willy@infradead.org>, <ying.huang@linux.alibaba.com>, <ziy@nvidia.com>,
+	<dave@stgolabs.net>
+Subject: Re: [RFC PATCH V1 01/13] mm: Add kmmscand kernel daemon
+Message-ID: <20250321160628.000033a9@huawei.com>
+In-Reply-To: <20250319193028.29514-2-raghavendra.kt@amd.com>
+References: <20250319193028.29514-1-raghavendra.kt@amd.com>
+	<20250319193028.29514-2-raghavendra.kt@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 25 Feb 2025, Easwar Hariharan wrote:
+On Wed, 19 Mar 2025 19:30:16 +0000
+Raghavendra K T <raghavendra.kt@amd.com> wrote:
 
-> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-> secs_to_jiffies().  As the value here is a multiple of 1000, use
-> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
+> Add a skeleton to support scanning and migration.
+> Also add a config option for the same.
 > 
-> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-> the following Coccinelle rules:
+> High level design:
 > 
-> @depends on patch@
-> expression E;
-> @@
+> While (1):
+>   scan the slowtier pages belonging to VMAs of a task.
+>   Add to migation list
 > 
-> -msecs_to_jiffies
-> +secs_to_jiffies
-> (E
-> - * \( 1000 \| MSEC_PER_SEC \)
-> )
+> Separate thread:
+>   migrate scanned pages to a toptier node based on heuristics
 > 
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> The overall code is heavily influenced by khugepaged design.
+> 
+> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
 
-Applied to the review-ilpo-next branch.
+
+I'm really bad and reading code and not commenting on the 'small'
+stuff.  So feel free to ignore this given the RFC status!
+This sort of read through helps me get my head around a series.
 
 > ---
->  drivers/platform/x86/thinkpad_acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  mm/Kconfig    |   8 +++
+>  mm/Makefile   |   1 +
+>  mm/kmmscand.c | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 185 insertions(+)
+>  create mode 100644 mm/kmmscand.c
 > 
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> index ab1cade5ef231e9a9a520bc0cca82384c911a331..d269e791f7fbc2a8ccf96f28cb476beccb57c9a7 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -8512,7 +8512,7 @@ static void fan_watchdog_reset(void)
->  	if (fan_watchdog_maxinterval > 0 &&
->  	    tpacpi_lifecycle != TPACPI_LIFE_EXITING)
->  		mod_delayed_work(tpacpi_wq, &fan_watchdog_task,
-> -			msecs_to_jiffies(fan_watchdog_maxinterval * 1000));
-> +			secs_to_jiffies(fan_watchdog_maxinterval));
->  	else
->  		cancel_delayed_work(&fan_watchdog_task);
->  }
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 1b501db06417..5a4931633e15 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -783,6 +783,14 @@ config KSM
+>  	  until a program has madvised that an area is MADV_MERGEABLE, and
+>  	  root has set /sys/kernel/mm/ksm/run to 1 (if CONFIG_SYSFS is set).
+>  
+> +config KMMSCAND
+> +	bool "Enable PTE A bit scanning and Migration"
+> +	depends on NUMA_BALANCING
+> +	help
+> +	  Enable PTE A bit scanning of page. CXL pages accessed are migrated to
 
--- 
- i.
+Trivial but don't mention CXL.  "Other memory tier solutions are available"
+
+> +	  a regular NUMA node. The option creates a separate kthread for
+> +	  scanning and migration.
+> +
+
+> diff --git a/mm/kmmscand.c b/mm/kmmscand.c
+> new file mode 100644
+> index 000000000000..6c55250b5cfb
+> --- /dev/null
+> +++ b/mm/kmmscand.c
+
+> +
+> +struct kmmscand_scan kmmscand_scan = {
+> +	.mm_head = LIST_HEAD_INIT(kmmscand_scan.mm_head),
+> +};
+> +
+> +static int kmmscand_has_work(void)
+> +{
+
+Unless this is going to get more complex, I'd just put
+the implementation inline.  Kind of obvious what is doing
+so the wrapper doesn't add much.
+
+> +	return !list_empty(&kmmscand_scan.mm_head);
+> +}
+> +
+> +static bool kmmscand_should_wakeup(void)
+> +{
+> +	bool wakeup =  kthread_should_stop() || need_wakeup ||
+
+bonus space after =
+
+> +	       time_after_eq(jiffies, kmmscand_sleep_expire);
+> +	if (need_wakeup)
+> +		need_wakeup = false;
+
+Why not set it unconditionally?  If it is false already, no
+harm done and removes need to check.
+
+> +
+> +	return wakeup;
+> +}
+> +
+> +static void kmmscand_wait_work(void)
+> +{
+> +	const unsigned long scan_sleep_jiffies =
+> +		msecs_to_jiffies(kmmscand_scan_sleep_ms);
+> +
+> +	if (!scan_sleep_jiffies)
+> +		return;
+> +
+> +	kmmscand_sleep_expire = jiffies + scan_sleep_jiffies;
+> +	wait_event_timeout(kmmscand_wait,
+> +			kmmscand_should_wakeup(),
+> +			scan_sleep_jiffies);
+
+strange wrap.  Maybe add a comment on why we don't care if
+this timed out or not.
+
+> +	return;
+> +}
+> +
+> +static unsigned long kmmscand_scan_mm_slot(void)
+> +{
+> +	/* placeholder for scanning */
+
+I guess this will make sense later in series!
+
+> +	msleep(100);
+> +	return 0;
+> +}
+> +
+> +static void kmmscand_do_scan(void)
+> +{
+> +	unsigned long iter = 0, mms_to_scan;
+> +
+
+	unsigned long mms_to_scan = READ_ONCE(kmmscand_mms_to_scan);
+
+> +	mms_to_scan = READ_ONCE(kmmscand_mms_to_scan);
+> +
+> +	while (true) {
+> +		cond_resched();
+
+Odd to do this at start. Maybe at end of loop?
+
+> +
+> +		if (unlikely(kthread_should_stop()) ||
+> +			!READ_ONCE(kmmscand_scan_enabled))
+> +			break;
+return;  Then we don't need to read on to see if anything else happens.
+> +
+> +		if (kmmscand_has_work())
+> +			kmmscand_scan_mm_slot();
+> +
+> +		iter++;
+> +		if (iter >= mms_to_scan)
+> +			break;
+			return;
+Same argument as above.
+
+> +	}
+> +}
+> +
+> +static int kmmscand(void *none)
+> +{
+> +	for (;;) {
+
+while (true) maybe.  Feels more natural to me for a loop
+with no terminating condition.   Obviously same thing in practice.
+
+> +		if (unlikely(kthread_should_stop()))
+			return;
+> +			break;
+> +
+> +		kmmscand_do_scan();
+> +
+> +		while (!READ_ONCE(kmmscand_scan_enabled)) {
+> +			cpu_relax();
+> +			kmmscand_wait_work();
+> +		}
+> +
+> +		kmmscand_wait_work();
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int start_kmmscand(void)
+> +{
+> +	int err = 0;
+> +
+> +	guard(mutex)(&kmmscand_mutex);
+> +
+> +	/* Some one already succeeded in starting daemon */
+> +	if (kmmscand_thread)
+return 0;
+> +		goto end;
+> +
+> +	kmmscand_thread = kthread_run(kmmscand, NULL, "kmmscand");
+> +	if (IS_ERR(kmmscand_thread)) {
+> +		pr_err("kmmscand: kthread_run(kmmscand) failed\n");
+> +		err = PTR_ERR(kmmscand_thread);
+> +		kmmscand_thread = NULL;
+
+Use a local variable instead and only assign on success. That
+way you don't need to null it out in this path.
+
+> +		goto end;
+
+return PTR_ERR(kmmscand_thread_local);
+
+> +	} else {
+> +		pr_info("kmmscand: Successfully started kmmscand");
+No need for else give the other path exits.
+
+> +	}
+> +
+> +	if (!list_empty(&kmmscand_scan.mm_head))
+> +		wake_up_interruptible(&kmmscand_wait);
+> +
+> +end:
+> +	return err;
+> +}
+> +
+> +static int stop_kmmscand(void)
+> +{
+> +	int err = 0;
+
+No point in err if always 0.
+
+> +
+> +	guard(mutex)(&kmmscand_mutex);
+> +
+> +	if (kmmscand_thread) {
+> +		kthread_stop(kmmscand_thread);
+> +		kmmscand_thread = NULL;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static int __init kmmscand_init(void)
+> +{
+> +	int err;
+> +
+> +	err = start_kmmscand();
+> +	if (err)
+> +		goto err_kmmscand;
+
+start_kmmscand() should be side effect free if it is returning an
+error.  Not doing that makes for hard to read code.
+
+Superficially looks like it is already side effect free so you
+can probably just return here.
+
+
+> +
+> +	return 0;
+> +
+> +err_kmmscand:
+> +	stop_kmmscand();
+> +
+> +	return err;
+> +}
+> +subsys_initcall(kmmscand_init);
 
 
