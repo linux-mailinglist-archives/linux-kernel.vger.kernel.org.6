@@ -1,125 +1,104 @@
-Return-Path: <linux-kernel+bounces-571685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C3DA6C0AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:56:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82653A6C0A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 716267A856C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:53:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1D147A6A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4725722DF8A;
-	Fri, 21 Mar 2025 16:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB2C22D7A0;
+	Fri, 21 Mar 2025 16:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOBvVxl6"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0410522D7A3;
-	Fri, 21 Mar 2025 16:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HVQ+YsqO"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5511F33F6;
+	Fri, 21 Mar 2025 16:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742576056; cv=none; b=Tav6eigutfMppbmedTwKpVi9S0jNOHUrECWBNWvPYAj8AyCrH9/crDo4kLuSI2XSo/CX5s4DxpK1eo32WPZ4JI4KDMCenAB5ghN/Y1P1113gd8Djdm+riHqBvO/gv+MzRdzprOunmANCEq8y4N2CxER25/vmPdcwAesyVRXOZWc=
+	t=1742576032; cv=none; b=ndzCuyRfUUesP3QTOJzo1yBTcq/tloJB7Eq0Udz1J9qSY9w8wevS7GG+njFJlgOXyi2ZyQuC8+06kocKSP69xaVqhS8q15G10SQ5Tl82a1c6pFhEZGyfWsggV3Vz8EnAi6otwI+DoNEz3oIlIzA5ysrpoawLQBokN3Fz3vqM5qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742576056; c=relaxed/simple;
-	bh=UOuUAOdU6fzwILEwoTUwQrZ3IxBywdm7PqAVnZyzNrk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jrgj8FyaS1jnSyBPGdoXMGFqk4Jvos1TJP7YvvxSp1e0tWIG2qFwWlufhunVed36qUE9b9ahJ+CU0V1QLRXQaTc79fo5aSvltx/cnJldLJGBoNjzOfs1lUO/2JxDbvQb2V2BWoFIB7g6iKWJKM736uHE3WA2UVzPnWBqW7KPk6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOBvVxl6; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30613802a04so23839261fa.2;
-        Fri, 21 Mar 2025 09:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742576053; x=1743180853; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UOuUAOdU6fzwILEwoTUwQrZ3IxBywdm7PqAVnZyzNrk=;
-        b=JOBvVxl6Vde0N4Bm2kv6VGe/Xk+jPiCbd1TAvk0jtQy+FufC706GIjMSgYf9FRPMsp
-         JjW2Ce7FWtr36shqr+Do1faBLRJX1CCUO37qXQ4YXFqfNmoor1Tc60OWuZitXODCQP/r
-         t/azjwCZrznsBgCGBIFt5YVhhGuJnES0hz80mPvkvhr0i8Z8iYxPI5bwHu95czw2Sb9C
-         DhZoC3n6/1XeG/R7yGV1i12HteQ45v1tQcuAVp1AvN2oXRvNFVHn+Ldp/jrzUC2WupsB
-         vmo7OHHfcjjtwQomaGUf6NzA6nggiINNjJATlU7y1/GkkEDag/k86Wodt0S98Dx4433d
-         hRgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742576053; x=1743180853;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UOuUAOdU6fzwILEwoTUwQrZ3IxBywdm7PqAVnZyzNrk=;
-        b=MQ7HYHz+WQvtUe2g12RRHmujzot4iRF6t3e8mo3Diuey3z1YSHwiQYz7+l4sqgz2Qb
-         5W5slYwykM0QmgHTW7KK4kSvKvebDmx06CwBSa31q2GolkhhUr/GgeuXZXF+VRPP0VN0
-         gUPERUOK/em/yUuRGoNDP1tXUDbhHyhGiuL8/0Amb7hiT8vvosxleiF+mR5sWddlDiFT
-         ctJQ8jq/D+zM3SvpphdbvmkIgdOOiFG2SPSO2vTShcIJAHDEVwJA6W2r/1Tx+bKbyqlX
-         GQslty6P5fKrVJD3WVqwcF0qYhWFV37xV98FgM2C7YWrf1XMrXHyvsZxP0FZgKH6qDEq
-         yy1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCtszRXmBpmUem8C3aBGC23JnWh/DC2RGUWCafACiGuIPYtjjM7avhlnsD++xNGemfe9WjXr/Jb1eVjDk=@vger.kernel.org, AJvYcCUEqyaHypGHOIAJgkhjKnpEyKzQbGhB9IvzHd6oszyZpB6RxDF5YS+eTUhsLWBrK57gGLHvA7lYmBzEBm6d/40t@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+1NKyFQzVJ2FHvKuYX4LyLl2eMZj4bILvKwFhFF6OYEJBIlFe
-	Jc3qJ6HMuDbpFBPozMg04Eh97bsz/lbqhGcaIH0HyCJWyuR68B9Hvjrm2HWWkAsnUJBGRIvBFma
-	gZn2Kp1r4i+1xtyC09FVx/AYkBEs=
-X-Gm-Gg: ASbGncurLdftT1XxI2ZCsQNMbm0vQcC8NVOmmgkpo6YxddUe5tz9akY/CyXdfPxYAXy
-	h7vtfIi9vy1E7ywPxjvRl56FQTn5kbTifrGyL/Z9Ra3mEFKDl3gRPqFq2KQhF+WOCTbOv9okUP5
-	ulq1caLe9Cz6QBD5bF6qn1fkmUalKGVx332Wa0RmqMGw==
-X-Google-Smtp-Source: AGHT+IG4olNJH+a7c6RlZFJF8zMksT58/wvmA/7TP25sQDIbCAdnPDYZgYQ8vKGk1x10x0tRVyTKoEGU45fo+N4bqok=
-X-Received: by 2002:a2e:8e73:0:b0:30b:b7c3:949a with SMTP id
- 38308e7fff4ca-30d7e2383b9mr16939331fa.18.1742576052901; Fri, 21 Mar 2025
- 09:54:12 -0700 (PDT)
+	s=arc-20240116; t=1742576032; c=relaxed/simple;
+	bh=xuJm0HidAoKCnfhW1666JHCJSDxcYwFRLD2LCiqgF2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QatxP4D0Rra+Mfn3uJrsl/2vIBd7c66YvIK3vq5zOwZeMCoi2iGRQILqCsIwyWzJVJCekl6EOVTIgPTZYLSdCkV5JXLl8F9osCyQuniLwcxC/0UUwbKhI8S/4pH6MUHewNK8iB2+oCeaNiSBdDD5AfHJTY12bFJbkHCLkuwMZ4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HVQ+YsqO; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BA974202538B;
+	Fri, 21 Mar 2025 09:53:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BA974202538B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742576030;
+	bh=Duhj4TbM5w1MlE9r7LL9/Dhla+NioJQGxxo6x7CC9bA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HVQ+YsqO6ehTWh31vb+VHSj1QeTFi4EoW56Ph5X0g6i2U4I9Fg7FTJ3FKIn7LYgME
+	 MLJ9tk4UOzhhGWD/7l0Xi+KPFd8bO19hLrDm4nqx1qUGyJwE4uKDRCYrA7hiTrFVTa
+	 DwtJLbUcaAnqFWDTszZgRPkktSHujZYTfNAeuDsI=
+Message-ID: <38525f8a-823c-4a79-ac55-68a2ef569a85@linux.microsoft.com>
+Date: Fri, 21 Mar 2025 09:53:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207-bitmap-kunit-convert-v1-0-c520675343b6@gmail.com>
- <Z6eaDuXnT_rjVSNS@thinkpad> <CAMuHMdUsq_39kgBa8oanXeTzv44HuhS1e5MK7K2jxkVXQ7uWdw@mail.gmail.com>
- <bd71c705-5f57-4067-b200-fd80b98ddbc9@nvidia.com> <Z6pfomw-3LuWoQQo@thinkpad> <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
-In-Reply-To: <CABVgOS=KZrM2dWyp1HzVS0zh7vquLxmTY2T2Ti53DQADrW+sJg@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 21 Mar 2025 12:53:36 -0400
-X-Gm-Features: AQ5f1JocXlnKOaYntHf6DffQI-TKvt-QvytM7DCEc6s7gdq0Tj17rR69Ljw6v-g
-Message-ID: <CAJ-ks9mevv68v1Mh0GdGd9Y2EEp3_kdV6FygOiAenYG0=e4=Tw@mail.gmail.com>
-Subject: Re: distro support for CONFIG_KUNIT: [PATCH 0/3] bitmap: convert
- self-test to KUnit
-To: David Gow <davidgow@google.com>
-Cc: Yury Norov <yury.norov@gmail.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-kselftest@vger.kernel.org, Brad Figg <bfigg@nvidia.com>, 
-	David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] Drivers: hv: mshv: Prevent potential NULL
+ dereference
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Praveen K Paladugu <prapal@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi all, now that the printf and scanf series have been taken via kees'
-tree[0] and sent in for v6.15-rc1[1], I wonder if we'd like to revisit
-this discussion.
+On 3/21/2025 7:35 AM, Dan Carpenter wrote:
+> Move the NULL check on "partition" before the dereference.
+> 
+> Fixes: f5288d14069b ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/hv/mshv_synic.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hv/mshv_synic.c b/drivers/hv/mshv_synic.c
+> index a3daedd680ff..88949beb5e37 100644
+> --- a/drivers/hv/mshv_synic.c
+> +++ b/drivers/hv/mshv_synic.c
+> @@ -151,13 +151,12 @@ static bool mshv_async_call_completion_isr(struct hv_message *msg)
+>  	rcu_read_lock();
+>  
+>  	partition = mshv_partition_find(partition_id);
+> -	partition->async_hypercall_status = async_msg->status;
+> -
+>  	if (unlikely(!partition)) {
+>  		pr_debug("failed to find partition %llu\n", partition_id);
+>  		goto unlock_out;
+>  	}
+>  
+> +	partition->async_hypercall_status = async_msg->status;
+>  	complete(&partition->async_hypercall);
+>  
+>  	handled = true;
 
-As I understand it, the primary objections to moving bitmap to KUnit were:
-- Unclear benefits.
-- Source churn.
-- Extra dependencies for benchmarks.
+Thanks for catching this one!
+Wei could you please apply or squash this into the driver patch?
 
-Hopefully David's enumeration of the benefits of KUnit was compelling.
-Regarding source churn: it is inevitable, but I did pay attention to
-this and minimized the diff where possible.
-
-The last point is trickiest, because KUnit doesn't have first-class
-benchmark support, but nor is there a blessed benchmark facility in
-the kernel generally. I'd prefer not to tie this series to distros
-enabling KUNIT_CONFIG by default, which will take $time.
-
-I think the most sensible thing we can do - if we accept that KUnit
-has benefits to offer - is to split test_bitmap.c into
-benchmark_bitmap.c and bitmap_kunit.c.
-
-Please let me know your thoughts.
-Tamir
-
-[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=move-lib-kunit-v6.15-rc1
-[1] https://lore.kernel.org/all/202503170842.FFEE75351@keescook/
+Thanks
+Nuno
 
