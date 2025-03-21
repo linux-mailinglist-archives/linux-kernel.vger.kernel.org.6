@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-571739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C48CA6C19E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:33:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED72CA6C1A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 18:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3DA3B8B61
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D36853B8C9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC46722DFB5;
-	Fri, 21 Mar 2025 17:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22F122DF9A;
+	Fri, 21 Mar 2025 17:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DLLkrbjx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ui4Dx6rw"
-Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxU3eWCo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEA678F52;
-	Fri, 21 Mar 2025 17:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167BA33FE;
+	Fri, 21 Mar 2025 17:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742578426; cv=none; b=l/A27Zqh3lo4dTbMzOCqbYN5XGIM7NFQLcZNGDGx3+3Ez9U0O8VW2pCxI1cAIMXcy+s/vloIgvXaw4rr0WnqC2SsvMgPkX4QkUSfk38z+fosNVp4N2WuG+mj42oJ2aHhyBD8JrDlGBuuaBLJYMAPEMOmIXECriG5KWqxbi3REpI=
+	t=1742578500; cv=none; b=YIsAH3VXntqsQ6XzwvykAt8M7ZdWsvkMs9ootl0H197l+Gjy2tGQiwauX6feNmfhVoXnVbMxWHErW5J9MVclN4BoIaNTp7HYBcGWIkDpUZddOfoQ0c7mflmZs6yuI3ddZvZ4qytkW0TmWkyHd0p4zLrdKP73BthlLi1/iXQvNy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742578426; c=relaxed/simple;
-	bh=GoduICvSWMNnvmCK1a97gNxQC7pQOAUrZGAEO6pXgYg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=UUxU4koMJZ7bXdsYbVfBvTk6h+/q5ZrF2g6DS9T4eDeZumoSgx4kuvOIiEc5Mhg/wSZBbotGwminlChDK6U9ZxKpJIJGnm/UQohNVZGgT0E/NnBqzGzb9zeJbFG1EIOUKCvN10h8HSYX4nmet0LxGWHTDCl1Zu3cFgInmD6XJpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DLLkrbjx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ui4Dx6rw; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailflow.phl.internal (Postfix) with ESMTP id F0255202146;
-	Fri, 21 Mar 2025 13:33:42 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Fri, 21 Mar 2025 13:33:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742578422;
-	 x=1742585622; bh=jcHwQGpQOx6GZtNDddAxOwDOWSoyBujaJTuqoyGqXDA=; b=
-	DLLkrbjxdeZ5VZIGvPAZd4NM/kpOB5yjaRA2bvhlRZZqiAajItla9WOumvbn54t1
-	awAa2WdDiftQwM9VUrrdOy2B8L6rbJZP1L2CHyFMjUo2bYV5jiVdUCBJ+txYzcyX
-	YfNdALHqJ8vA1g0fKqj/rYooeIPG8pW0+DKZ5pjBDdQ/ov2TUOQvQoS7XX0pmiXf
-	E0jtTwHqb2w3VcZDUJJbENArof3r2e/WJIEaKvPw8kCHgD/xH5vt/Oaa41CisOOt
-	aLby2QkmaE23J33Sau22v+uw207knEJBvxfygvvXmXMkokkBEsxQ+juulQzszHxF
-	prI/sAddxyIp9Iv/S2/Rhw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742578422; x=
-	1742585622; bh=jcHwQGpQOx6GZtNDddAxOwDOWSoyBujaJTuqoyGqXDA=; b=U
-	i4Dx6rw8n6KelCD0qaTj5zmZdQsre1O+uqLIzcbok/RNBBKaWZy4PEX4GXch+Jbj
-	lGeF4rm/KmmivV4flBuVWpy9M3ugVKbWVfcXdHTDAu4/CJgKdGaPnkWToVcfc1Hw
-	pGV6HAeXLkOX5OanKtfkRnUF8XHkfi0qbIavNs+iHqhH4TTY1MrqulMRfI/e6DwS
-	PJXbL6UQXAhfw+r1cX0pjR9yekCg707nyiuGR2GY3F0MLay1n+DxG8jMS6OyEQen
-	5c7eHiflpY3UpwHTif8k8jnnl5jgO/iJjoATUB+TYxcGJdukz4ej7g5g44pnW5D5
-	wL+dD+0XGM01ti8O6vuyQ==
-X-ME-Sender: <xms:9aLdZ1FWQqOziPqqoohR2Ek7ZIBNYbxHCOcRkjf-xbQHxvCD9abBXw>
-    <xme:9aLdZ6WibTWFxk_WdQPYzwJQ8ENd3FCvBOXO81gFbAz0-NmJ4fiVzoewL77Jow-f_
-    b8Bs0S4SK0muK6g9C8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedujedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    feejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehkvggvshgtohhokhestghhrh
-    homhhiuhhmrdhorhhgpdhrtghpthhtohepuggrnhhivghlsehffhiflhhlrdgthhdprhgt
-    phhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghlvghssh
-    grnhgurhhordgtrghrmhhinhgrthhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggr
-    vhhiughgohifsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhhnihhtqdguvghvse
-    hgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehmtggrnhgrlhesihhgrghl
-    ihgrrdgtohhmpdhrtghpthhtohepjhgrnhhirdhnihhkuhhlrgesihhnthgvlhdrtghomh
-    dprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9aLdZ3LWSj3ee0DpgDBVQgR9N6em0f5-W_bT607OLi8J56P-PHjwdg>
-    <xmx:9aLdZ7EmgyfsMK79595Ji4fqyaEgzpUx28qERgbScF30VauOkMTTZA>
-    <xmx:9aLdZ7VDCg0me11XgjTCMnOtsbEkwp9VdJtw9WRuZpovB9sSdPMWvQ>
-    <xmx:9aLdZ2MO9qdvK_ExIyuwHK5jCpMbl8MVknK5QRVW7ddiQcxb6VhGrQ>
-    <xmx:9qLdZ7URYi_A7oI0zqTv7Ebk9x9UFrrUdpb50OelwEli-e3q19QxBoz_>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1F6E52220072; Fri, 21 Mar 2025 13:33:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742578500; c=relaxed/simple;
+	bh=5IK+fayIXGO1J9siJYn4pomELX8YNlKg+TiE6LBatcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qP3bEgdQQE+ydPl0Ltjj+JIyHhMKbr2NVXtnTk/BVuT3DTbphMeooOeisEnXsqxCzEjRLjWC85iVs0XlwMUGbUYfSboszL+0pH3OTKBiu6fCkWVcRI5W671++HToC03V0mzm3EwDWUIYcDwRET1G1aBFuJqp80XtI9XoewrnD6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxU3eWCo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE18C4CEE8;
+	Fri, 21 Mar 2025 17:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742578499;
+	bh=5IK+fayIXGO1J9siJYn4pomELX8YNlKg+TiE6LBatcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YxU3eWCokZN60a0lgjphfYzWcxFyAxmaKTdSW8cF0XVek18Q9bePNebKW64HPz2Hi
+	 jHqAvUiRuGymOWc/cNNMrYnx+0IPIZT71xDjcfqgp1DE/CzX8LZc+TGvMoiLCubzuo
+	 xpTmq+5DgD0/44c6xPANSt+n6PIrvftqz6iA40gACipG0x1zFygExKNNurzgRbWBzb
+	 vVf7QTnca/zciEuJrU0QOR6Z1T3YXI6/255fblR+knrXPc1bBiaYjRY6PYJCoNds/E
+	 dGxAQW3l5tMXSrgoq8So1ZLTDDLScAWj62ZzKKcNc5IDbP1oUctARtc0uYRRODEePT
+	 dLkfsUbWwgr7w==
+Date: Fri, 21 Mar 2025 18:34:53 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com,
+	robin.murphy@arm.com, aliceryhl@google.com,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v13 2/7] rust: add dma coherent allocator abstraction.
+Message-ID: <Z92jPXvMOqhgv04k@pollux>
+References: <20250307110821.1703422-1-abdiel.janulgue@gmail.com>
+ <20250307110821.1703422-3-abdiel.janulgue@gmail.com>
+ <20250321172353.GO126678@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T46bf3c12e1d9de2d
-Date: Fri, 21 Mar 2025 18:33:19 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Guenter Roeck" <linux@roeck-us.net>,
- "Alessandro Carminati" <acarmina@redhat.com>, linux-kselftest@vger.kernel.org
-Cc: "Dave Airlie" <airlied@gmail.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Kees Cook" <keescook@chromium.org>,
- =?UTF-8?Q?Daniel_D=C3=ADaz?= <daniel.diaz@linaro.org>,
- "David Gow" <davidgow@google.com>,
- "Arthur Grillo" <arthurgrillo@riseup.net>,
- "Brendan Higgins" <brendan.higgins@linux.dev>,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Maxime Ripard" <mripard@kernel.org>,
- =?UTF-8?Q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
- "Daniel Vetter" <daniel@ffwll.ch>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Alessandro Carminati" <alessandro.carminati@gmail.com>,
- "Jani Nikula" <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org,
- kunit-dev@googlegroups.com, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- loongarch@lists.linux.dev, x86@kernel.org,
- "Linaro Kernel Functional Testing" <lkft@linaro.org>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>
-Message-Id: <a6f90bdb-8459-4d33-8874-7e724bd22d9f@app.fastmail.com>
-In-Reply-To: <b6bb68f0-7e93-4db2-9fe6-f615f06ddeb1@roeck-us.net>
-References: <20250313114329.284104-1-acarmina@redhat.com>
- <20250313114329.284104-11-acarmina@redhat.com>
- <b6bb68f0-7e93-4db2-9fe6-f615f06ddeb1@roeck-us.net>
-Subject: Re: [PATCH v4 10/14] s390: Add support for suppressing warning backtraces
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321172353.GO126678@ziepe.ca>
 
-On Fri, Mar 21, 2025, at 18:05, Guenter Roeck wrote:
-> On 3/13/25 04:43, Alessandro Carminati wrote:
->
-> gcc 10.3.0 and later do not have this problem. I also tried s390 builds 
-> with gcc 9.4
-> and 9.5 but they both crash for unrelated reasons.
->
-> If this is a concern, the best idea I have is to make KUNIT_SUPPRESS_BACKTRACE
-> depend on, say,
-> 	depends on CC_IS_CLANG || (CC_IS_GCC && GCC_VERSION >= 100300)
->
-> A more complex solution might be to define an architecture flag such
-> as HAVE_SUPPRESS_BACKTRACE, make that conditional on the gcc version
-> for s390 only, and make KUNIT_SUPPRESS_BACKTRACE depend on it.
+On Fri, Mar 21, 2025 at 02:23:53PM -0300, Jason Gunthorpe wrote:
+> On Fri, Mar 07, 2025 at 01:06:19PM +0200, Abdiel Janulgue wrote:
+> 
+> > +        // SAFETY: Device pointer is guaranteed as valid by the type invariant on `Device`.
+> > +        let ret = unsafe {
+> > +            bindings::dma_alloc_attrs(
+> > +                dev.as_raw(),
+> > +                size,
+> > +                &mut dma_handle,
+> > +                gfp_flags.as_raw(),
+> > +                dma_attrs.as_raw(),
+> > +            )
+> 
+> This is not the correct safety statement, the device must have a driver
+> bound to call this function, a struct device reference is not
+> sufficient.
+> 
+> I belive Danilo was suggesting to ignore this unsafety for now, but if
+> so it should be documented correctly.
 
-That is probably fine, there are very few users on s390 that build
-their own kernels, and they likely all have modern compilers anyway.
+If just landed patches [1], which are the foundation of addressing this issue.
 
-I should still send a patch to raise the minimum compiler version to
-gcc-8.1, but unfortunately that is not enough here.
+With the next cycle, this will be ensured by the type system.
 
-     Arnd
+> 
+> Also think the use of devres here is going to be very problematic for
+> drivers to use as I said in other emails. :(
+
+In an earlier reply today in a different thread already gave you the link [2] of
+what we landed, which, besides explaining the situation, also makes clear that
+there is *no* Devres wrapper around a CoherentAllocation and why.
+
+[1] https://lore.kernel.org/lkml/20250314160932.100165-1-dakr@kernel.org/
+[2] https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/dma.rs#L120
 
