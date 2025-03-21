@@ -1,86 +1,199 @@
-Return-Path: <linux-kernel+bounces-571010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90C3A6B7DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:43:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D971A6B7CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 10:42:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82E11B60C49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A05A166CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5392B22171C;
-	Fri, 21 Mar 2025 09:38:31 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757CF210192;
-	Fri, 21 Mar 2025 09:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0CC22069A;
+	Fri, 21 Mar 2025 09:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EyTJ5Bbc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8552212FB3;
+	Fri, 21 Mar 2025 09:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742549910; cv=none; b=DeECEZD6gYAlo24mf1bOd2JnmgdXu2jNSnmXZoJc8E3HStHfYyaxj9HGMXXmFJ/whzF1rO4dcl1vzm6uOFIclDC0wAFl1JJzbyHmcJTTjX4llET+BoCIn48RFIGdQkhdXeHHauvvERk0Bu2ASYwOZy2JzroiF65H2zdNZi48QJU=
+	t=1742549907; cv=none; b=bpL+RamiBV6spDRH8W3BN08/UFiYCUXhQkDaZ7uTTc62o62ndPrw6cpba/+NFGz4Rbe1CbVRB2dgqPV9aVIklralUcO9dA+Ip85Hrj3XdRRlcbrOzhGgbAsZOBVl2xmXeM6cVF5xds50bNMIG5TK2wn04S6aw+gtd9Rw0hNDCxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742549910; c=relaxed/simple;
-	bh=1huO00OkX0Vakm7rr7rzZ8OBPfeAzXVRpl8jPbeH2ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGOGMzbqkBvGCshiFhcS1uPeLrK9N75PC185NJdiq2dXfxcfetJVRdPFw6lXnoMMaCpzFyO1hQC/JVvBvg/1aBViam7YQqwUEVO9/OF9Ep9BJyMGNB6LSs+IiWI9MUW9akm5bo3uLjyTywLEurkMwcr5DvzQk9NF8MzW/IXr2dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tvYpU-0006y1-00; Fri, 21 Mar 2025 10:38:16 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id F2DD4C0135; Fri, 21 Mar 2025 10:38:01 +0100 (CET)
-Date: Fri, 21 Mar 2025 10:38:01 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, linux-mips@vger.kernel.org,
+	s=arc-20240116; t=1742549907; c=relaxed/simple;
+	bh=I+g5uyiO8BthO6kUgy4ZEHhW95DL2yo/6eN6vFueBUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cMQeVaUwQjq+5wiZpXlB9WK8nbn/LtmJal8hiB9Fl4+rFq6ip/SRTB+CeO1VJz4iCKDs1C8KQw3qeFkX4gqUCRowVxrEztT1yxkkbwfFbNmIkWvl7QvEY68IQMjJWdDlm8KeOJpfvhEcn30pfnw8hAahGCoX2UnYsYHbDUWUOnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EyTJ5Bbc; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742549906; x=1774085906;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=I+g5uyiO8BthO6kUgy4ZEHhW95DL2yo/6eN6vFueBUc=;
+  b=EyTJ5BbcPfOWV4sfyrPT4xypHJxdoiQqH8JGKR1h/IeM+mrC4z8TTolx
+   ZYNFJwztURpk5QCvBBkVrYEi9MOPjLiYZsYxwyL7jOvp7pOD2PVYZjvpX
+   ZSdW7z5tz5xZuuuPLYnZ/meHUwiF5/M07ZrbaAGO552fUOUU0n7R7cR+E
+   gTBAeWcy0z4Kvml5Tr6avv2nJohFfsUrAc8qT6vInGtQ3P3sZ667MU/zm
+   5q4hQsFFuo1EXCowv4aK+HwbKl1LUaPGjrc0HmcoMPvDSKNwUqv7UDk4b
+   NIAohZnP4NdgJL83XlR89v5tKzREOUmrGpRjJJF8ME8HPcq2TQiM3KJkF
+   A==;
+X-CSE-ConnectionGUID: IqXpbv3nQ3aFmsr/5LTl9g==
+X-CSE-MsgGUID: Q6qQAzHLTGy34LG4pzV9OA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11379"; a="47692857"
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="47692857"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 02:38:25 -0700
+X-CSE-ConnectionGUID: sUS3o+3GS4GAOYCitUd15g==
+X-CSE-MsgGUID: Fs09Uo8ASs6mt6Nt72E0Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,264,1736841600"; 
+   d="scan'208";a="123872631"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.43])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 02:38:22 -0700
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com
+Cc: tomi.valkeinen@ideasonboard.com,
+	jacopo.mondi@ideasonboard.com,
+	hverkuil@xs4all.nl,
+	kieran.bingham@ideasonboard.com,
+	naush@raspberrypi.com,
+	mchehab@kernel.org,
+	hdegoede@redhat.com,
+	dave.stevenson@raspberrypi.com,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-Message-ID: <Z90zebpJE4Y9SbkK@alpha.franken.de>
-References: <20250315194002.13778-1-marco.crivellari@suse.com>
- <20250315194002.13778-2-marco.crivellari@suse.com>
- <Z9qlW81QikxeVzQa@alpha.franken.de>
- <Z9rYAT9i3Ko92uUo@p200300d06f3e987545685175b554ae65.dip0.t-ipconnect.de>
- <Z9rjZf0ZT7iejVlA@alpha.franken.de>
- <CAAofZF7XPm+tzPpwAPu0oDZem+EOVY18oAbVwAXzkGmtstnBQg@mail.gmail.com>
+	Mehdi Djait <mehdi.djait@linux.intel.com>
+Subject: [RFC PATCH v3] media: v4l2-common: Add a helper for obtaining the clock producer
+Date: Fri, 21 Mar 2025 10:38:14 +0100
+Message-ID: <20250321093814.18159-1-mehdi.djait@linux.intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAofZF7XPm+tzPpwAPu0oDZem+EOVY18oAbVwAXzkGmtstnBQg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 20, 2025 at 09:44:23AM +0100, Marco Crivellari wrote:
-> Hi,
-> 
-> yesterday I made this changes:
-> 
-> @@ -128,7 +128,11 @@ LEAF(__r4k_wait)
->         */
->        wait
->        /* End of idle interrupt region. */
-> -1:
-> +SYM_INNER_LABEL(__r4k_wait_exit, SYM_L_LOCAL)
+Introduce a helper for v4l2 sensor drivers on both DT- and ACPI-based
+platforms to retrieve a reference to the clock producer from firmware.
 
-do we really need that for a symbol local to that file ?
+This helper behaves the same as clk_get_optional() except where there is
+no clock producer like in ACPI-based platforms.
 
-> +       /* Check idle interrupt region size. */
-> +       .ifne   __r4k_wait_exit - __r4k_wait - 36
+For ACPI-based platforms the function will read the "clock-frequency"
+ACPI _DSD property and register a fixed frequency clock with the frequency
+indicated in the property.
 
-I have to say, that I prefer my .if statement, since this clearly spells out
-the comparision in the expression. Is there a reason for your version ?
+Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+---
+Link for discussion (where this patch was proposed): https://lore.kernel.org/linux-media/20250220154909.152538-1-mehdi.djait@linux.intel.com/
 
-Thomas.
+v1 -> v2:
+Suggested by Sakari:
+    - removed clk_name
+    - removed the IS_ERR() check
+    - improved the kernel-doc comment and commit msg
+Link for v1: https://lore.kernel.org/linux-media/20250227092643.113939-1-mehdi.djait@linux.intel.com
 
+v2 -> v3:
+- Added #ifdef CONFIG_COMMON_CLK for the ACPI case
+
+ drivers/media/v4l2-core/v4l2-common.c | 39 +++++++++++++++++++++++++++
+ include/media/v4l2-common.h           | 18 +++++++++++++
+ 2 files changed, 57 insertions(+)
+
+diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+index 0a2f4f0d0a07..4e30f8b777b7 100644
+--- a/drivers/media/v4l2-core/v4l2-common.c
++++ b/drivers/media/v4l2-core/v4l2-common.c
+@@ -34,6 +34,9 @@
+  * Added Gerd Knorrs v4l1 enhancements (Justin Schoeman)
+  */
+ 
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+@@ -636,3 +639,39 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_link_freq_to_bitmap);
++
++struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
++{
++	struct clk_hw *clk_hw;
++	struct clk *clk;
++	u32 rate;
++	int ret;
++
++	clk = devm_clk_get_optional(dev, id);
++	if (clk)
++		return clk;
++
++#ifdef CONFIG_COMMON_CLK
++	if (!is_acpi_node(dev_fwnode(dev)))
++		return ERR_PTR(-ENOENT);
++
++	ret = device_property_read_u32(dev, "clock-frequency", &rate);
++	if (ret)
++		return ERR_PTR(ret);
++
++	if (!id) {
++		id = devm_kasprintf(dev, GFP_KERNEL, "clk-%s", dev_name(dev));
++		if (!id)
++			return ERR_PTR(-ENOMEM);
++	}
++
++	clk_hw = devm_clk_hw_register_fixed_rate(dev, id, NULL, 0, rate);
++	if (IS_ERR(clk_hw))
++		return ERR_CAST(clk_hw);
++
++	return clk_hw->clk;
++#else
++	return ERR_PTR(-ENOENT);
++#endif
++}
++EXPORT_SYMBOL_GPL(devm_v4l2_sensor_clk_get);
+diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+index 63ad36f04f72..35b9ac698e8a 100644
+--- a/include/media/v4l2-common.h
++++ b/include/media/v4l2-common.h
+@@ -573,6 +573,24 @@ int v4l2_link_freq_to_bitmap(struct device *dev, const u64 *fw_link_freqs,
+ 			     unsigned int num_of_driver_link_freqs,
+ 			     unsigned long *bitmap);
+ 
++/**
++ * devm_v4l2_sensor_clk_get - lookup and obtain a reference to an optional clock
++ *			      producer for a camera sensor.
++ *
++ * @dev: device for v4l2 sensor clock "consumer"
++ * @id: clock consumer ID
++ *
++ * This function behaves the same way as clk_get_optional() except where there
++ * is no clock producer like in ACPI-based platforms.
++ * For ACPI-based platforms, the function will read the "clock-frequency"
++ * ACPI _DSD property and register a fixed-clock with the frequency indicated
++ * in the property.
++ *
++ * Return:
++ * * pointer to a struct clk on success or an error code on failure.
++ */
++struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id);
++
+ static inline u64 v4l2_buffer_get_timestamp(const struct v4l2_buffer *buf)
+ {
+ 	/*
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.48.1
+
 
