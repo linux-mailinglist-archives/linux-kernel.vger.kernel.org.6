@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-571888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C46A6C3C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:55:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E30A6C3CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 20:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE380188B148
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C976A3B8FBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 19:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE62122CBF1;
-	Fri, 21 Mar 2025 19:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895DB1EF0A3;
+	Fri, 21 Mar 2025 19:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCNZ6FgK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdOr7Mjk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C641EB9E5;
-	Fri, 21 Mar 2025 19:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA5B18FC75
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 19:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742586918; cv=none; b=k/pkKszDyUhAATfSZQrY7Dnml4LNabCrVjoiYNNlDdufxnYlDehbP6SCCIfVIp319jHMSeu1wB26X0UNgEPbQnazo+3HisjnYx8R5fhtFJ3DOlWItRuM22jWTWPs1gxTgoK2KCaHh4Ogo8bDfy920nx+Jx9ZixJtUGUdXE2I7Ak=
+	t=1742586964; cv=none; b=RZSUNWB/8XccQXMdcTo7wWLdcDbV3sJ6Fwsa3wrfIqdHGUYA7jr8g/7hmxH8V8v05V4OuMIjJL+zLwx958nyiICcrFcjBRjEs7+1UhjjfUjaNwF8D5FWBmaJsy/bFpEauFwH17wuvosPwuBn0L/WDZzV+OgwLOdbX2IOS9Bzv2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742586918; c=relaxed/simple;
-	bh=tIog+CGELQ0s2081J61AkjpCpIfX2TI8undKZgLm9WA=;
+	s=arc-20240116; t=1742586964; c=relaxed/simple;
+	bh=bC8TSVlRON3LqQUSt3OtaGYZWwx5+m0uikuyUnj7dzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RYcetoTKPK5yrSLY3/4KNejfbaFh2AJtksEC4EKNz2xxj0Ip8G7sQ80cj8fnAu8Oy7wdU4fsUdXDOFDZo1k+xYc0tAg4jhuPeaylU1Q7beyOw+cUw9+mWdePXgJglQg5L4oiM2JU5tlWM7fVyuIhwnfEBZumCtTwUaap8v5mV90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCNZ6FgK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA3BC4CEE3;
-	Fri, 21 Mar 2025 19:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742586917;
-	bh=tIog+CGELQ0s2081J61AkjpCpIfX2TI8undKZgLm9WA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=RCNZ6FgKFhqXc5Cch2P/yDJbGh9sMVfLk2ZyKxENlnancR1NrsJWZ8WWyxIPTBMS4
-	 Cal3RErz3TlMo5RfUU1PeRCUzAkxcWPHmkgo1qdN/k64hMj/yBS53vJiUZ6LEQBor/
-	 7vKn68jxUrH6zrlHdbvLaizXYgI9iKPffYWTY7+8huezOUZDzI8qilbh8/s+hrxexH
-	 JQL6zGsltIE9k7BHGUzlJtEyY4HNdmZXPLzOOwFSMjbaw+DGDhaqaTmcfUGldVe0CY
-	 4pK1qJuulmTpE5nBYzywL3nRolHnm3ehvaRrrQTwsYrPz+BlA15ib4bW1+PK4PYrC3
-	 a4sDum8btJMuQ==
-Date: Fri, 21 Mar 2025 14:55:15 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shay Drory <shayd@nvidia.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, leonro@nvidia.com,
-	linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v2] PCI: Fix NULL dereference in SR-IOV VF creation error
- path
-Message-ID: <20250321195515.GA1142211@bhelgaas>
+	 Content-Disposition; b=RXC5Nl37/pGUfEBZc0bPYIhmKahRQCXH4xIWy2PcuEDcCJcamszyGlA9IIQoKJQnzk1glmsA23az/RPKGgXJZpCJw5+LU0xZcixi+m/ZBKCbC+Rjhzr8U8A/kVc/cFs3Tk9uc4LcyonDXui+GJTAprxU6ZB/tMem7rrMHtX6raY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdOr7Mjk; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742586963; x=1774122963;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=bC8TSVlRON3LqQUSt3OtaGYZWwx5+m0uikuyUnj7dzk=;
+  b=kdOr7MjkLjj0Lj7Uvzait6JxIzthI/7VhCgFtmTOoKG90kEJijVyzW1V
+   Qc5d36p+xXtfvV9345RJx2RooeG6xphHBshq/G0oqhTeVTb/1afW5WkiA
+   xb2Zl5TDuZEJ/S3QM7Xv1c5oxl7bxLzjky/wQETEp/kp8+ngyamiLAehF
+   vjgRr9dTXgCwesMlRmlzF1I5n6H2Ze4omTu9wDiUnr8x5bKm9DuD7ZIVF
+   NAk75Zp2oOhbGNqweQNoMzgwEyv1+M2UPoQ8l4k3owB1FZkOaiwGM91cr
+   N0egJ3ESHJrVfjH9oKZAEqyIAleo5rcQrpL4U5neLL/AYv2VHfA+U7/YL
+   Q==;
+X-CSE-ConnectionGUID: R0V6QqPySmSgEc1dnG08Kw==
+X-CSE-MsgGUID: SQD1KSCiT5GYTmGYkXcwuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11380"; a="47643510"
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="47643510"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2025 12:56:02 -0700
+X-CSE-ConnectionGUID: 4E7WU/thRviGP37eYq1EfQ==
+X-CSE-MsgGUID: jp6IeV3UQcCAuLsLxBu5oQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,265,1736841600"; 
+   d="scan'208";a="124009463"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 21 Mar 2025 12:56:01 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tviTB-0001eX-20;
+	Fri, 21 Mar 2025 19:55:55 +0000
+Date: Sat, 22 Mar 2025 03:55:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: s390-linux-ld: Error: unable to disambiguate: -no-pie (did you mean
+ --no-pie ?)
+Message-ID: <202503220342.T3fElO9L-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,131 +76,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310084524.599225-1-shayd@nvidia.com>
 
-On Mon, Mar 10, 2025 at 10:45:24AM +0200, Shay Drory wrote:
-> Add proper cleanup when virtfn setup fails to prevent NULL pointer
-> dereference during device removal. The kernel oops[1] occurred due to
-> Incorrect error handling flow when pci_setup_device() fails.
-> 
-> Fix it by introducing pci_iov_scan_device() which handle virtfn
-> allocation and setup properly, instead of invoking
-> pci_stop_and_remove_bus_device() whenever pci_setup_device is failed.
-> This prevents accessing partially initialized virtfn devices during
-> removal.
-> 
-> [1]
-> BUG: kernel NULL pointer dereference, address: 00000000000000d0
-> PGD 0 P4D 0
-> Oops: Oops: 0000 [#1] SMP
-> CPU: 22 UID: 0 PID: 1151 Comm: bash Not tainted 6.13.0+ #1
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
-> RIP: 0010:device_del+0x3d/0x3d0
-> Call Trace:
->  <TASK>
->  ? __die+0x20/0x60
->  ? page_fault_oops+0x150/0x3e0
->  ? exc_page_fault+0x74/0x130
->  ? asm_exc_page_fault+0x22/0x30
->  ? device_del+0x3d/0x3d0
->  pci_remove_bus_device+0x7c/0x100
->  pci_iov_add_virtfn+0xfa/0x200
->  sriov_enable+0x208/0x420
->  mlx5_core_sriov_configure+0x6a/0x160 [mlx5_core]
->  sriov_numvfs_store+0xae/0x1a0
->  kernfs_fop_write_iter+0x109/0x1a0
->  vfs_write+0x2c0/0x3e0
->  ksys_write+0x62/0xd0
->  do_syscall_64+0x4c/0x100
->  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> 
-> Fixes: e3f30d563a38 ("PCI: Make pci_destroy_dev() concurrent safe")
-> CC: Keith Busch <kbusch@kernel.org>
-> Change-Id: I7cee1123c90ce184661470dcafab45cec919bc72
-> Signed-off-by: Shay Drory <shayd@nvidia.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b3ee1e4609512dfff642a96b34d7e5dfcdc92d05
+commit: 00cda11d3b2ea07295490b7d67942014f1cbc5c1 s390: Compile kernel with -fPIC and link with -no-pie
+date:   11 months ago
+config: s390-randconfig-002-20250321 (https://download.01.org/0day-ci/archive/20250322/202503220342.T3fElO9L-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250322/202503220342.T3fElO9L-lkp@intel.com/reproduce)
 
-Applied to pci/resource for v6.15, thanks!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503220342.T3fElO9L-lkp@intel.com/
 
-I like how pci_iov_scan_device() turned out.
+All errors (new ones prefixed by >>):
 
----
-> changes from v1:
-> - add pci_iov_scan_device() helper (Bjorn)
-> ---
->  drivers/pci/iov.c | 47 +++++++++++++++++++++++++++++++++--------------
->  1 file changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> index 9e4770cdd4d5..9f08df0e7208 100644
-> --- a/drivers/pci/iov.c
-> +++ b/drivers/pci/iov.c
-> @@ -285,23 +285,16 @@ const struct attribute_group sriov_vf_dev_attr_group = {
->  	.is_visible = sriov_vf_attrs_are_visible,
->  };
->  
-> -int pci_iov_add_virtfn(struct pci_dev *dev, int id)
-> +static struct pci_dev *pci_iov_scan_device(struct pci_dev *dev, int id,
-> +					   struct pci_bus *bus)
->  {
-> -	int i;
-> -	int rc = -ENOMEM;
-> -	u64 size;
-> -	struct pci_dev *virtfn;
-> -	struct resource *res;
->  	struct pci_sriov *iov = dev->sriov;
-> -	struct pci_bus *bus;
-> -
-> -	bus = virtfn_add_bus(dev->bus, pci_iov_virtfn_bus(dev, id));
-> -	if (!bus)
-> -		goto failed;
-> +	struct pci_dev *virtfn;
-> +	int rc = -ENOMEM;
->  
->  	virtfn = pci_alloc_dev(bus);
->  	if (!virtfn)
-> -		goto failed0;
-> +		return ERR_PTR(rc);
->  
->  	virtfn->devfn = pci_iov_virtfn_devfn(dev, id);
->  	virtfn->vendor = dev->vendor;
-> @@ -314,8 +307,34 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
->  		pci_read_vf_config_common(virtfn);
->  
->  	rc = pci_setup_device(virtfn);
-> -	if (rc)
-> -		goto failed1;
-> +	if (rc) {
-> +		pci_dev_put(dev);
-> +		pci_bus_put(virtfn->bus);
-> +		kfree(virtfn);
-> +		return ERR_PTR(rc);
-> +	}
-> +
-> +	return virtfn;
-> +}
-> +
-> +int pci_iov_add_virtfn(struct pci_dev *dev, int id)
-> +{
-> +	int i;
-> +	int rc = -ENOMEM;
-> +	u64 size;
-> +	struct pci_dev *virtfn;
-> +	struct resource *res;
-> +	struct pci_bus *bus;
-> +
-> +	bus = virtfn_add_bus(dev->bus, pci_iov_virtfn_bus(dev, id));
-> +	if (!bus)
-> +		goto failed;
-> +
-> +	virtfn = pci_iov_scan_device(dev, id, bus);
-> +	if (IS_ERR(virtfn)) {
-> +		rc = PTR_ERR(virtfn);
-> +		goto failed0;
-> +	}
->  
->  	virtfn->dev.parent = dev->dev.parent;
->  	virtfn->multifunction = 0;
-> -- 
-> 2.38.1
-> 
+>> s390-linux-ld: Error: unable to disambiguate: -no-pie (did you mean --no-pie ?)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
