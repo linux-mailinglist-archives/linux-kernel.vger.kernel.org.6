@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-571463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC16A6BD8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:50:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B31AA6BD7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 15:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC483B23C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:46:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3306188A598
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 14:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8430F1D63C4;
-	Fri, 21 Mar 2025 14:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7DE1D63F5;
+	Fri, 21 Mar 2025 14:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4DmdkiW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbnFS9Dy"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB8A2F5E;
-	Fri, 21 Mar 2025 14:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D4578F44;
+	Fri, 21 Mar 2025 14:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568400; cv=none; b=d1CvZkTdBqVWl2FtsZS/lOrfhYx+ZsRadnBvvapDavIA7/fOoICt9YWGJ/7IFcoQu8XwFdoo6tYA6zQIU7tO0k7U+zspMe4D5E6y7dippWRJ4P2lSFCO72+YdKd6Q0fDE/yrR2SxraAqKPVCh6gUxm4kQlVCdKcJC5TMcBAiJnc=
+	t=1742568490; cv=none; b=MEgM6oMa5k8MI4/9aA3St59YvCarGrb3lINEY8dpJ8bu7SQwyZTH7aBbsKKxKmNNOjLTL7021uFGJR+iS7E8r+ResZBTKh/4GlkFmXj1BszU3g5bFwUspFqeYDtUjHM05Gvj7pxazDNxf/BH9DaqY+0E81b1e7/GArc3W4x5JG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568400; c=relaxed/simple;
-	bh=yw7+2jN/GCF4iIWTOg/rehmkSfqCNgjoVhCNNeY6xbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1eKJqgnYv3pBOCeghYEqmoVviWVdEhwGWH8yiKQv2QKe/Z9q48kvilaypyoRtkiuisZXCm7DD1XsOn+EqeEKQxId5L7cmrDnloVvhMLQVng/Ab5SplMtxnxzsqXNJAo84CFI7UVVj9eVHN1feIuDGo1L+ZeV0zEJDfwBlX5pCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4DmdkiW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD0BC4CEE3;
-	Fri, 21 Mar 2025 14:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742568399;
-	bh=yw7+2jN/GCF4iIWTOg/rehmkSfqCNgjoVhCNNeY6xbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e4DmdkiW9Fzc61G0ig9yNIdat7zDH4GUSkrZYJX3Vu+//jn8h0Vp9ppcEBM79Vx3F
-	 Uo4p98aIFpISOY3JspBrOSwDImR2RSCUC0CkMh8oV+E2YjvPk1jGNSQJg+tOUwNhiN
-	 r3FlTNUeYS2Mk+tmPK+RunAvJTKjgxJlRMZdZ0ZqrgIHWtQIN9Y4tVpRPWb3ZhY34T
-	 93zk9ZxvqJPxS+DqtpexfcD6FaC77ssqR2a6f+Ifrwe6+ioUCU2IOQI7LMjdCSo2iZ
-	 ooKLlcP6OrCYZeaHUFkkxvRy7+CJED3pKbd6K1jQs5sR0q615GENG1hHnwvgQtmjpn
-	 pF1P8SNuD9Icg==
-Date: Fri, 21 Mar 2025 15:46:33 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] rust: device: implement Device::parent()
-Message-ID: <Z917yQdlWYo6GrkG@pollux>
-References: <20250320222823.16509-1-dakr@kernel.org>
- <20250320222823.16509-2-dakr@kernel.org>
- <Z916eZ1_Jd3VQz3Y@Mac.home>
+	s=arc-20240116; t=1742568490; c=relaxed/simple;
+	bh=t3fDjgF3ceIQsaADOh2IiEkthEMpZFM/HyWawVv7I6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dsbn2zWEyVIelwTAJHSdQBYUgb69+Ol4Zp2/mLtT5Ia/igMV9Slk/Ou/DvlFOMUZ6jMlEdcOE7uCxWyUpk1aL1fOTKS4yF1nfztZ70my7dV16pBBIkLQ6HlSxZUyI00FEPbBurKGTCcb+VvemF2vVe+xRqs2hGf88gwqTyP0qbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbnFS9Dy; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390cf7458f5so1546114f8f.2;
+        Fri, 21 Mar 2025 07:48:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742568487; x=1743173287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwi3wAIpyCTSApBj4aSaPLa/2MoFwC9M++68JcsFwCQ=;
+        b=YbnFS9DyqL3UVcg0L+4c98binUIsm4IpmlVXo21o9M6Er9rF/TdM3lQ/S3LhLzR5mz
+         qwB7yyVOcbSBFc+8hA9R0AUW4czQHxSR2U+mq9eGCgYuWne2r3RjfSe8ffSbu55F7TOu
+         BLO5EcDTs+TNbGEzNcdU2KhzvZoVe5q2XrkOnV8PpvmS4RyJBOHWj+WSgLkLeA8NZBrE
+         vHUsXKxcBZe81CS13j0ExSy2ZP+0DkU1TtbTlYMP4z7t1ynzm6xW1uGAGv0M6YAc9fX3
+         id4PsM0mzzVIzn0XhutfkYohSfC0R77AHHTEsxqSEtcAgt25FlF7Cm8IidqqwDNpbrvm
+         KHaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742568487; x=1743173287;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wwi3wAIpyCTSApBj4aSaPLa/2MoFwC9M++68JcsFwCQ=;
+        b=jckYM+Gf/Rqv4pwJZdWP8S+fTvThgTGPBvUCiUa2xG10GHEyRpLIkOWYTYilXxeu7L
+         VwPMT22bcnV2xc2pwJp92eImVr8EnNVzFLc3OsM/WFnJgG5BnjHDgV2P7c1vsAvDqprB
+         8OSC6hbGg2XjQS0tBjczXf1rhlxkayTTcQ5Re3QpbCD8JoTP0afdXdidem8jPTTmJEvc
+         zqs5fhBSHTDWC86JkdzzaXQEkBa+h7GMjNEfc0zzPoLGh9RGngxShCdA6ObBfd6ToyAr
+         gdh0eScKNn4iEEHFHiPBXtQZpF7qUr+XjSPWSrdgJvRStegSvKv0RbcQeRoqWhh8WqN1
+         Ab/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbfaYcsibndJuVfAHC/gnOhwvEMhZbToBIrsz8CR6TEpqWB+vqtyaHz/qZrk3zzbEOiygZ8lKVMAVOtGE=@vger.kernel.org, AJvYcCVSZVEiQIqeALG6NDoM38YFo3Hvp4fT1+S/qrZ3HY33wHugcJbCmIRzzuOeb00dAx5Jm49mnSZcwFtn@vger.kernel.org, AJvYcCWV8NSkdNCTgyyDPeKH1MOE2tijvLYV4g6me19AkaIAdMz2uATx6NWLjTPFoCdaYmrktWkXkCOc9juzbFy1vJGdJ0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3PZd4GkR/zKgoR4HX0QDoCLvdykwbAp4nxigmuP1Jtm6KMHHu
+	HgXjToelnZZVdBOoCYhHawdCDdeZVawHtMTLvo1IV7BM7ZJ6AeT6Ar0QsQ==
+X-Gm-Gg: ASbGnct7/yhzsANGiynNVXMw2GQXV5FUaSYgy8Q0pIPTOR1JvkPaeMIA+oVAbQ9P+be
+	iiUV7ba+Y3s/CQeHuMZ4oNjR8y1UysQgGDFCaqhEYp6aZZAdpYpu8p+CP+OCjzRb18Ql1Z3LToQ
+	xw47b0f7PQEoYGKY1K83Z6nXct46V3lB5LZ8DlWoolfcnoG/nh1ufAtDUT+F9lhHcGp9I7f5v7/
+	o5uKIAXLLd1fazDc0sJEhNO6jLpSQj19Wl8D/aaTP38YY7NFu98JPE/YCrLwzqhOQFqVEIDiCX/
+	l7ZCDmEShIQiOTkeTVzJ90WQAIF1sKKvgRnSoJypawGlAihNN00tpyiTWRMEGSvNm3SOx0rjR4Z
+	U5aiE6MKexTUc16HI5dcumHkbjdd5Zvg=
+X-Google-Smtp-Source: AGHT+IG9ozHnjVC76ueR/+PL/g8GBD50uBvVPNeNxV965xi/LKWBDRHMHz2jEIzfTLpWAF7nbTflmg==
+X-Received: by 2002:a05:6000:1f8d:b0:390:ee34:228b with SMTP id ffacd0b85a97d-3997f910522mr2973972f8f.24.1742568487046;
+        Fri, 21 Mar 2025 07:48:07 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3dd5sm2533851f8f.45.2025.03.21.07.48.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:48:06 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: devicetree@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 0/2] usb: dwc3: exynos: add support for Exynos2200 variant
+Date: Fri, 21 Mar 2025 16:48:01 +0200
+Message-ID: <20250321144804.1435502-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z916eZ1_Jd3VQz3Y@Mac.home>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 07:40:57AM -0700, Boqun Feng wrote:
-> On Thu, Mar 20, 2025 at 11:27:43PM +0100, Danilo Krummrich wrote:
-> > Device::parent() returns a reference to the device' parent device, if
-> > any.
-> > 
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/kernel/device.rs | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> > index 21b343a1dc4d..f6bdc2646028 100644
-> > --- a/rust/kernel/device.rs
-> > +++ b/rust/kernel/device.rs
-> > @@ -65,6 +65,21 @@ pub(crate) fn as_raw(&self) -> *mut bindings::device {
-> >          self.0.get()
-> >      }
-> >  
-> > +    /// Returns a reference to the parent device, if any.
-> > +    pub fn parent<'a>(&self) -> Option<&'a Self> {
-> > +        // SAFETY:
-> > +        // - By the type invariant `self.as_raw()` is always valid.
-> > +        // - The parent device is only ever set at device creation.
-> > +        let parent = unsafe { (*self.as_raw()).parent };
-> > +
-> > +        if parent.is_null() {
-> > +            None
-> > +        } else {
-> > +            // SAFETY: Since `parent` is not NULL, it must be a valid pointer to a `struct device`.
-> > +            Some(unsafe { Self::as_ref(parent) })
-> 
-> The safety comment also needs to explain why the parent device won't be
-> gone, I assume a struct device holds a refcount of its parent?
+Hey folks,
 
-Correct, this is taken generically in device_add().
+This patchset adds support for the Exynos 2200 to the exynos-dwc3 glue
+code. It takes one clock - the link_aclk, and the dwc3 refclk is passed
+to the dwc3 subnode, as with gs101.
 
-> Therefore
-> the borrow checker would ensure the parent exists as long as the Device
-> is borrowed.
+Best regards,
+Ivaylo
 
-Yes.
+Changes in v3:
+- fix partial r-b tag from the dt bindings commit message
+
+Changes in v2:
+- add sob and r-b tags
+- drop minitems from binding patch
+
+Ivaylo Ivanov (2):
+  dt-bindings: usb: samsung,exynos-dwc3: add exynos2200 compatible
+  usb: dwc3: exynos: add support for Exynos2200 variant
+
+ .../bindings/usb/samsung,exynos-dwc3.yaml          | 14 ++++++++++++++
+ drivers/usb/dwc3/dwc3-exynos.c                     |  9 +++++++++
+ 2 files changed, 23 insertions(+)
+
+-- 
+2.43.0
+
 
