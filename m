@@ -1,135 +1,147 @@
-Return-Path: <linux-kernel+bounces-570850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B91A6B537
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:40:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6452A6B543
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E01437A613C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC514825CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 07:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB72A1EEA3C;
-	Fri, 21 Mar 2025 07:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A81E1EEA32;
+	Fri, 21 Mar 2025 07:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2SekQdf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u/wQqvcX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G7TZegAX"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7211F03D3;
-	Fri, 21 Mar 2025 07:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF71D5CD7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 07:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742542800; cv=none; b=ebzI9ZBQSMWZH/zob4uHKsTHA4I/DB/aMb7y0J6HAxgTUlVMWkEuTaL7o2yQemG7AKqbSHV+mgQLGH9kyIrJNg0yx6OATlb3avPWkqgoYCb2jDwLWEefXzdPxJSSdlrC+GJwqcu0eqG3oGP0IJJSQNETOo1EngnWGgz6/2HHm7g=
+	t=1742542917; cv=none; b=nYT/zF9vRn3hdu2epmHeQhaqMWyYbR5oztARqHI7lfprd/8oFsNiRQpuE05G2Givanxiol4D17YeEVCBCgmHK1rfJvzsMSG0aUtrKVhvOD6Pc07T3xRKVxcRpAuJsfBpaEgYhKfrtQzL/fmMPCblId4lq1HKcTCaekn8Xebx6zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742542800; c=relaxed/simple;
-	bh=M/+eZ5lVO5z4rBDZ8+V56xB92NTtV3vo53oaABvrfKA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=JdMgXcz23qerGwRL3m4Fe4X3+0dZoUvnn7m/uNJt78QUeB77XybDt0OXt892HHYGvJfj/BGCp+mqiP5vtgh2bocYcaKBKizDTFAQyLrBT+vP3VYsYCL/PNplxryP1JZem55SmKp6i1/Pi2IG4hck3EaVtzKu89DQqSnPtwUKmpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2SekQdf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u/wQqvcX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Mar 2025 07:39:51 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742542796;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VmBGQjNyvd/nLic8kqXgsMfJob7UrQShSqhL2/poYI=;
-	b=N2SekQdfqUxJ4B8ClbMc9ONBo5gkoi7273GEv1EQeSZVL7NdA6xiVhWLRPXkKhXU4aohPn
-	d3CQqTfY8XkFO+9TqpA80a41XTx+tc9KZqvnkfEy2JrjVyjrOjl2Su4K4GBbyrrLYE9WYm
-	FkIIZ+oglkxGqX5fGmSRw839nLwU/Gn6Z9NMugyVDbXbjesHvYd8cblrKYkduXLbJKvWoO
-	lUIbffgNGB5DjOUhhhc7K1ePEV2XxKD/TQq4igGd2Po1Nt+JAO0gNwbcKrCrseFJfQF52V
-	/DMKiEJoAb6OYbhLSFHPjO9xDJdj0a9SXdhQVbHOQWjA0kTTlwz/h5WKd3arAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742542796;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VmBGQjNyvd/nLic8kqXgsMfJob7UrQShSqhL2/poYI=;
-	b=u/wQqvcXko55u0rBO90xAWYIg/NPZQoO+RyTT9cL9huJ6+szLzyDSD3qFsmaSksDavdbqo
-	25AbMNlmKIgOChDA==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] x86/asm: Make asm export of __ref_stack_chk_guard
- unconditional
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250320213238.4451-2-ardb@kernel.org>
-References: <20250320213238.4451-2-ardb@kernel.org>
+	s=arc-20240116; t=1742542917; c=relaxed/simple;
+	bh=KtWrpnvUfUVYTX/5d9w7k3jQmT7JPaJMUddvlbWeGXU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bYOdyfAsf2tK+ZT72/JPoERuVAlK8UMxBBdzyiW+i0HlfxV9LLJbxESyObXn79E7El1zHY2Bd95m1MQvMPA0/gUyTJ7FTIxrOWLinWvGM+Zr0DrvdttbyAa07dJUxL9Hp21h2z3uGH+MgriGfOHcXrTD0aalLOheA4GvUytSn/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G7TZegAX; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c489babso7041945e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 00:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742542914; x=1743147714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6QDkKTpJk58Ktx+9rOT3NOwy69eQow/Xtda/ZJYwLaY=;
+        b=G7TZegAXetPCojWkSui7UhGwJtHurcxr+C3/1TEZGCku7tqiYHaKK2u4veJEJvr5Jo
+         h8jlxnYEjE4WHNCCUgEZKllAZTqzI+egj3mNA9Ik+ey4kPjec4zYUlYJNXIEn406wWxw
+         ce8jMboSUQuCGzAgSxe3HdyGchN1dni7VzV2/u9qXnR9/JJGMRAgqGIGanXpeTl6PTTn
+         HUU5d67dGdCXyq6KzVHKPR1ieuuRPr/svHod7+DAGqn9twvtgZFLLPofF7l9+AMJLJPi
+         cIWDVjnWxaKoWBG3A+YLkubOT2cbUuGJ7Vs03lj74rMvjYTulMH1sHD2yL4Zn7ebrvx0
+         Bymg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742542914; x=1743147714;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6QDkKTpJk58Ktx+9rOT3NOwy69eQow/Xtda/ZJYwLaY=;
+        b=QPH7RMcVtK5J5XzkvC3Ja6dAVDAjDqm6ywJv/quJK0Mq4JP3UQlMUs9uinv9fAyIeV
+         aqQH2a89Fq4EBVw+TaeYnA+eW8HLSCbwQ2EtsL7vHiVXddcjdBaQumtd/7F+rl8RZ28s
+         ZZ0wr4OD/FLVT+jTVJ9Qru9XkxSEZr9xLkI3mRtzyRi0DsVyrJrxI5X6y0NejZDLNWra
+         DzbhSQjmg3aq+2XHnf7r2evAxrbNbQ5yGFE5GfzCSQeaQu+oRviUkVoqFCN27ucEl5hB
+         A/hyJz8UxYgx6zGYCD573y1ic0crq2jRzVFyeTrTA7Dfn4qElFcMjjZNYK8EbtyokJyS
+         shdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFOKx+iFbpyy3GA/RggmpuQV7bxCNifFb7sZPFd19afAv/l2vdAYZY5f8LgskYg+pax07y9UFm7N8rGCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6DlXVdOqP50HJRfgE8p5u4Hg7EjknK8pxVztbB2XNqra/2wkM
+	Jveh71T7bNCmRUH2IvdaLZY4y7oZ0q2S1Pc0KyCviT+IeDNmiKl6z8FSjEyw2GTBAMmIyGHljqI
+	oH861xYKT7vtr9w==
+X-Google-Smtp-Source: AGHT+IGo9HK+CggSLT/xUlTNs1Ruo5T9zJS8QlsV4cOXsH823z1KcgJ6bloqShrzPtyywpLJq/NVddIOoxOR7PE=
+X-Received: from wmbbd27.prod.google.com ([2002:a05:600c:1f1b:b0:43d:4055:98e3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1f92:b0:43b:d0fe:b8ac with SMTP id 5b1f17b1804b1-43d50a4c4b6mr15640135e9.30.1742542914331;
+ Fri, 21 Mar 2025 00:41:54 -0700 (PDT)
+Date: Fri, 21 Mar 2025 07:41:52 +0000
+In-Reply-To: <CAJ-ks9mM6cb_b0G_ZZh+tnijOPo1imWv-bzhgrLpGcNXMsMjBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <174254279155.14745.9731038935192070573.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
+Mime-Version: 1.0
+References: <20250320-vec-methods-v1-0-7dff5cf25fe8@google.com>
+ <20250320-vec-methods-v1-4-7dff5cf25fe8@google.com> <CAJ-ks9mM6cb_b0G_ZZh+tnijOPo1imWv-bzhgrLpGcNXMsMjBA@mail.gmail.com>
+Message-ID: <Z90YQGxdEFAKznHN@google.com>
+Subject: Re: [PATCH 4/5] rust: alloc: add Vec::drain_all
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/core branch of tip:
+On Thu, Mar 20, 2025 at 06:12:50PM -0400, Tamir Duberstein wrote:
+> On Thu, Mar 20, 2025 at 9:56=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > This is like the stdlib method drain, except that it's hard-coded to us=
+e
+> > the entire vector's range. Rust Binder uses it in the range allocator t=
+o
+> > take ownership of everything in a vector in a case where reusing the
+> > vector is desirable.
+> >
+> > Implementing `DrainAll` in terms of `slice::IterMut` lets us reuse some
+> > nice optimizations in core for the case where T is a ZST.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/alloc/kvec.rs | 57 +++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 57 insertions(+)
+> >
+> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > index df930ff0d0b85b8b03c9b7932a2b31dfb62612ed..303198509885f5e24b74da5=
+a92382b518de3e1c0 100644
+> > --- a/rust/kernel/alloc/kvec.rs
+> > +++ b/rust/kernel/alloc/kvec.rs
+> > @@ -564,6 +564,30 @@ pub fn truncate(&mut self, len: usize) {
+> >          //   len, therefore we have exclusive access to [`new_len`, `o=
+ld_len`)
+> >          unsafe { ptr::drop_in_place(ptr) };
+> >      }
+> > +
+> > +    /// Takes ownership of all items in this vector without consuming =
+the allocation.
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// let mut v =3D kernel::kvec![0, 1, 2, 3]?;
+> > +    ///
+> > +    /// for (i, j) in v.drain_all().enumerate() {
+> > +    ///     assert_eq!(i, j);
+> > +    /// }
+> > +    ///
+> > +    /// assert!(v.capacity() >=3D 4);
+> > +    /// ```
+> > +    pub fn drain_all(&mut self) -> DrainAll<'_, T> {
+> > +        let len =3D self.len();
+> > +        // INVARIANT: The first 0 elements are valid.
+> > +        self.len =3D 0;
+>=20
+> Could you use `self.dec_len(self.len)` here? Then you'd have a &mut
+> [T] rather than `MaybeUninit`. Provided you agree `dec_len` is sound,
+> of course.
 
-Commit-ID:     3e57612561138d7142721a83743fb8eb2bf09ec5
-Gitweb:        https://git.kernel.org/tip/3e57612561138d7142721a83743fb8eb2bf09ec5
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Thu, 20 Mar 2025 22:32:39 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 21 Mar 2025 08:34:28 +01:00
+I think that `&mut MaybeUninit<T>` is better in this case. Calling
+assume_init_read on a `&mut MaybeUninit<T>` does not leave the
+MaybeUninit in an invalid state in the same way that calling `ptr::read`
+on an `&mut T` does.
 
-x86/asm: Make asm export of __ref_stack_chk_guard unconditional
-
-Clang does not tolerate the use of non-TLS symbols for the per-CPU stack
-protector very well, and to work around this limitation, the symbol
-passed via the -mstack-protector-guard-symbol= option is never defined
-in C code, but only in the linker script, and it is exported from an
-assembly file. This is necessary because Clang will fail to generate the
-correct %GS based references in a compilation unit that includes a
-non-TLS definition of the guard symbol being used to store the stack
-cookie.
-
-This problem is only triggered by symbol definitions, not by
-declarations, but nonetheless, the declaration in <asm/asm-prototypes.h>
-is conditional on __GENKSYMS__ being #define'd, so that only genksyms
-will observe it, but for ordinary compilation, it will be invisible.
-
-This is causing problems with the genksyms alternative gendwarfksyms,
-which does not #define __GENKSYMS__, does not observe the symbol
-declaration, and therefore lacks the information it needs to version it.
-Adding the #define creates problems in other places, so that is not a
-straight-forward solution. So take the easy way out, and drop the
-conditional on __GENKSYMS__, as this is not really needed to begin with.
-
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-Link: https://lore.kernel.org/r/20250320213238.4451-2-ardb@kernel.org
----
- arch/x86/include/asm/asm-prototypes.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
-index 8d9e627..11c6fec 100644
---- a/arch/x86/include/asm/asm-prototypes.h
-+++ b/arch/x86/include/asm/asm-prototypes.h
-@@ -20,6 +20,6 @@
- extern void cmpxchg8b_emu(void);
- #endif
- 
--#if defined(__GENKSYMS__) && defined(CONFIG_STACKPROTECTOR)
-+#ifdef CONFIG_STACKPROTECTOR
- extern unsigned long __ref_stack_chk_guard;
- #endif
+Alice
 
