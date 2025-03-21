@@ -1,108 +1,89 @@
-Return-Path: <linux-kernel+bounces-571642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702F6A6C006
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:36:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8F6A6C015
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 17:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19E4D7A9801
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:35:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF829463D42
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 16:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A037F1EBA1E;
-	Fri, 21 Mar 2025 16:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7E822CBC0;
+	Fri, 21 Mar 2025 16:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="MZHWkbQV"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sQDh2FHd"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A36E1E3774
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1AA22B5AB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 16:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742575001; cv=none; b=AzR+6FtaCC7bCsjOGRZ/3TD2Mg0iug+K2rxOWL300p7rNiL9dQlcilo5GtRLCW/QqfYAnJ0aBU2JggaPXAJkc3aQhRHU4sgl/52eVjKVqgkfyMbPeuVp/dmJdHibx3Ii0cS51QCRUX+DcU1uUeAvR+OhW9eggue7Q2UV/EThl3s=
+	t=1742575011; cv=none; b=VBaE17/H0C8BAP4t/Vh9ML5j8EYtZN4hfEdakDEhq6QkU3ynERf+3ac01PaH7ARoBgJE07B/M0YrB39u4RAiYAKqvZ1U76hOuNSbgpk0LONo7rvfwftUmYeSM+XAJUbF746f4jPzYz1bETE/YpOied+PhCQKlgd+LEAoci0wui4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742575001; c=relaxed/simple;
-	bh=Hjm+6X18HfhpHIGsOF0Wa+HjL7J2VCrd/SOk7TvJe8g=;
+	s=arc-20240116; t=1742575011; c=relaxed/simple;
+	bh=EYXvUxlOmseeifJZO5lf+exAGIwHnoh8eUMozDOfeNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfGG/omqY/8nmmpe8FKiKedOYqDDLiR1yEekEZIgHQ1cCgvIhcDqXpuWVfFPusu7DL9GMRRJof9DZIcg5/abosoVfmOgS//baq8pTERZLY7K4oE+H5s5KnQNab9Z9Oj+Gx/6Djg47PvfPCwv36yYIFHzPup5BiG2XgbgKxbAGho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=MZHWkbQV; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22435603572so43054265ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:36:39 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nj3IMQKxE3ZB5ZQt/L1iWAMXpziXTZoXLsbO5jcb5Olzq6XcYP7IiuNabUzhkay3bj+lNJQWZBbH8Dd/6hyU1TsQRWCyx5JUdvMlHxpzaY7YHzFiVgItJIGZrvZaXGhzkjMhqp+bc8+Z5wZNciOJKCfxyxeX88KXIcjL2nLH3dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sQDh2FHd; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3913958ebf2so1862117f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 09:36:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1742574999; x=1743179799; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YALLnLfNqwU57i7wtFxN8i/4pwzBbw+w8xRGUYxzetU=;
-        b=MZHWkbQV4x7bg/O4wFFFfRPlZtESaA0v8NXS4bwNrJ6AjgL6ju53tkdph3LJaiNMme
-         Uzvt2rfsKBGYwXhkxusFMsVdUZtocME/uedeyElNWYuFM0pXYRhGn+chWuHm1avPkY+e
-         bLTWDD3vMSIqEuSER+745abq7dnQ3YJWC0/HI=
+        d=linaro.org; s=google; t=1742575007; x=1743179807; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dfJ83Y79NwDQ+8qNzxM+p5WkOeUg86p4gkdxrYkNv4=;
+        b=sQDh2FHdP1ifr+hdjjuM9zb3UOf2lzxVRZCMxlPXwICKwVkXF5ByDKUUpo2NO+xsa7
+         rHT3koL2aeIK96CpVBS5u53o7hsXSZvTs/O41DuuQpbHdseDfiQmYBgUci4c4n3nyEI3
+         56C0yjvCtML7NVVUNvu67hsdK5xgb+MLl0cg2paN6lsmFLjyuv4XXAon2DoeVexv0AH4
+         FfI5q4srAwJnjqgnIvc+xlMrgiL6QxA4hbvRJxYEqe8tVuiqv5OPYS7j/XSQP5XmZTTs
+         pV3//M6X6skmM/G094GIVDpl5UUIa/4DGgHIQtqwHTE3lUveBRM7Ob7136u6bUpWU1Ca
+         nIzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742574999; x=1743179799;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YALLnLfNqwU57i7wtFxN8i/4pwzBbw+w8xRGUYxzetU=;
-        b=sc0VzPjQK6P7Rz6VHnqwvbpY51IeGAIvCBiIIyn+hU6YhQbS7NkZIgWlwVU7iw+IGw
-         trBYb6bfOeppW+5pxqMHF++nG66DfU/m16GHvXtmWyHrOHwrhbldH6sLbJ11MKO+mCS9
-         /rvUcBvtkfekh7V8JeHz1ccBknSQ6ONUudSSpGUbWq+xHWkutvHNi6iM6pSu2m/wgC6p
-         +0hHNn8xtc4BYeirsvM2dRBCMVEZHA/AoA69YvfSIAxU3JorqaSN4zS0+wXNQ/Put09Y
-         2EHRHq/GWeJ1dC0vgGXeH8MYiFR+9U9RAkVvarK/49Ke2aUi/cMVZDuMQnUor+FNzKOc
-         DEkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVC1kiFrUPstMB419hS+fGHAL44Z0xlIMJkF3Cuy7b2HjoZ2mARdbd9LESc3fGyVKrHmRdxi3sVGE6yQQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzViXQui2H31w8dma3KMTIPdfHcrlzdmhrjLagR8lkXYM4SozVx
-	mFfb7Z9PdTTGtIC4NfoJE6R79U7kLmfKXW4L9R0rC+8SjeJaxM1+Gt2UxnTdVdI=
-X-Gm-Gg: ASbGncuGTUH3+yOIWCjxV4DODhT1nnSb9ElkWOAk+65FrS4dNBqqnhsK1PC3px9s+LA
-	VHiAQwxkJdhR4y6iZye+h+mnrHZBSVlHjuOBugoaG6ndxX6w9Z+UPs0JKXy48AQmyPb48Z3grbj
-	6uvMCjynT/4MongMgeFTR1/v1Z1IvNZI6cijW5TSH62mEm9mEUtodT6POwJjiO7ZumSKOJ11+gh
-	hu76HtE47P1qsjkXiANM7fdIHH6no9rrHYineN6KjBW+EjfOgllGeFwB8SRNpdxeHyFK2KvrKa+
-	v8QyeqOtvPfUnNPecUXvRgNb1+yjk09rJtOIW3ORvsN68Asyw0ddvAhZ7HrifRY9qm5pq/nbGdK
-	36SXNSt1bLBIHHbRx
-X-Google-Smtp-Source: AGHT+IHqu8khKPmdrz5ZxNhApg6woYn1wpjz3geiCjpfYxV9ENASu0IFRk3+3jTmUaVHH2l595zxFg==
-X-Received: by 2002:a17:903:46d0:b0:224:160d:3f54 with SMTP id d9443c01a7336-22780da858bmr63728105ad.31.1742574998924;
-        Fri, 21 Mar 2025 09:36:38 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f39772sm19205225ad.25.2025.03.21.09.36.36
+        d=1e100.net; s=20230601; t=1742575007; x=1743179807;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5dfJ83Y79NwDQ+8qNzxM+p5WkOeUg86p4gkdxrYkNv4=;
+        b=VYlwg7ugTtgEYbN6P+LD74hay4twQ1dMAjopxeSsx6cfQP6HyqimMUtMLdQm1hyrk1
+         7/ItDWvmK10whCEN+MFjW59/w5oiQzYlJXBBpeAj0Li//bCMEoBFX1CbHPfiAT/SRgwn
+         8HYN4sj4OPI9oWw+wwe6+LNSVcvFHPj7zGH+23OatqQO4xCmFWEPS5CmAAOY/pyfDEvJ
+         U1KRIvpD+ZuTfUqRJHJFQ7XHg/YenxwqYF6vX0cd3lsbCBilkkwyG3vjO1IvYVpB17zp
+         JYAfih1u023CKW6PIaTBNjqNfwopmN0EiXaGOzKi+Ck/i6a6CpcyfEp+HXxoNqIEcr+a
+         FRiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyqy6pms2DYiAlDP0USA1HCg0zfkoPMTmXYuI+n9LrYKWh09yEArOGfn08IIMQHjwg2F1wic/cnXxkAyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ0UGNk0LNrGre3U0F/exvSex6UPylkEfOGgKxCk73pBAD26O9
+	5JhVIqdbyx4+CzomUqIjlyLRPQYdB8+YPnnWpkmamPc7P6SfwMgxt+k9Ia4F5KY=
+X-Gm-Gg: ASbGncsrumBS7F1oF16ZBVHzXd7ex+Ma0pVic/QgLljaDufQBhJYo3V+I46m0390Rxu
+	gO+xzGthY3mHuS0FUbbXdkpnTzeRzioA8E+R+uheyALbgeiUo5H+pkiKcTI6z1h4lFzNqz6USe2
+	kfq5I7ITFR71/Y5eYQG+tlrTDEpxUn0nTo4qOjhdXQUWXsA5ox1ttmobED6dawtCD9bvhQf2RzL
+	U4BIurIb+a+LJboxN4oUAc40PeWyRUo61mvqdEF+vDfRzRfhfGLjqOLFQB8QwUeMP6/yCAMKNQo
+	2QgkpL5DKU4QBLEVHfVwTIlFOtQGrc3pTxUWSXFBAjYBTOk6xQ==
+X-Google-Smtp-Source: AGHT+IH1Gh+yAviT4FQBLCA4J0rbTJcI0EGBOTqg0d19KW+FNDv9FqBQEn8luqW5P6A+FmDu+T7bTA==
+X-Received: by 2002:a5d:6485:0:b0:391:4231:414 with SMTP id ffacd0b85a97d-3997f9397e6mr4352017f8f.40.1742575007313;
+        Fri, 21 Mar 2025 09:36:47 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d440eda26sm82421375e9.36.2025.03.21.09.36.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 09:36:38 -0700 (PDT)
-Date: Fri, 21 Mar 2025 09:36:34 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asml.silence@gmail.com,
-	linux-fsdevel@vger.kernel.org, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	kuba@kernel.org, shuah@kernel.org, sdf@fomichev.me,
-	mingo@redhat.com, arnd@arndb.de, brauner@kernel.org,
-	akpm@linux-foundation.org, tglx@linutronix.de, jolsa@kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [RFC -next 00/10] Add ZC notifications to splice and sendfile
-Message-ID: <Z92VkgwS1SAaad2Q@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, kuba@kernel.org,
-	shuah@kernel.org, sdf@fomichev.me, mingo@redhat.com, arnd@arndb.de,
-	brauner@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
-	jolsa@kernel.org, linux-kselftest@vger.kernel.org
-References: <Z9p6oFlHxkYvUA8N@infradead.org>
- <Z9rjgyl7_61Ddzrq@LQ3V64L9R2>
- <2d68bc91-c22c-4b48-a06d-fa9ec06dfb25@kernel.dk>
- <Z9r5JE3AJdnsXy_u@LQ3V64L9R2>
- <19e3056c-2f7b-4f41-9c40-98955c4a9ed3@kernel.dk>
- <Z9sCsooW7OSTgyAk@LQ3V64L9R2>
- <Z9uuSQ7SrigAsLmt@infradead.org>
- <Z9xdPVQeLBrB-Anu@LQ3V64L9R2>
- <Z9z_f-kR0lBx8P_9@infradead.org>
- <ca1fbeba-b749-4c34-b4be-c80056eccc3a@kernel.dk>
+        Fri, 21 Mar 2025 09:36:46 -0700 (PDT)
+Date: Fri, 21 Mar 2025 19:36:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	chui-hao.chiu@mediatek.com, Bo.Jiao@mediatek.com,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] wifi: mt76: mt7996: prevent uninit return in
+ mt7996_mac_sta_add_links
+Message-ID: <46a714fb-8a14-4d24-a0a6-a22cc9d45768@stanley.mountain>
+References: <20250320201914.48159-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,44 +92,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca1fbeba-b749-4c34-b4be-c80056eccc3a@kernel.dk>
+In-Reply-To: <20250320201914.48159-1-qasdev00@gmail.com>
 
-On Fri, Mar 21, 2025 at 05:14:59AM -0600, Jens Axboe wrote:
-> On 3/20/25 11:56 PM, Christoph Hellwig wrote:
-> >> I don't know the entire historical context, but I presume sendmsg
-> >> did that because there was no other mechanism at the time.
-> > 
-> > At least aio had been around for about 15 years at the point, but
-> > networking folks tend to be pretty insular and reinvent things.
+On Thu, Mar 20, 2025 at 08:19:14PM +0000, Qasim Ijaz wrote:
+> If link_conf_dereference_protected() or mt7996_vif_link() 
+> or link_sta_dereference_protected() fail the code jumps to
+> the error_unlink label and returns ret which is uninitialised.
 > 
-> Yep...
+> Fix this by setting err before jumping to error_unlink.
 > 
-> >> It seems like Jens suggested that plumbing this through for splice
-> >> was a possibility, but sounds like you disagree.
-> > 
-> > Yes, very strongly.
+> Fixes: c7e4fc362443 ("wifi: mt76: mt7996: Update mt7996_mcu_add_sta to MLO support")
+> Fixes: dd82a9e02c05 ("wifi: mt76: mt7996: Rely on mt7996_sta_link in sta_add/sta_remove callbacks")
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> ---
+>  drivers/net/wireless/mediatek/mt76/mt7996/main.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> And that is very much not what I suggested, fwiw.
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+> index 91c64e3a0860..78f7f1fc867e 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+> @@ -998,16 +998,22 @@ mt7996_mac_sta_add_links(struct mt7996_dev *dev, struct ieee80211_vif *vif,
+>  			continue;
 
-Your earlier message said:
+What about if the list is empty or we hit this continue on every link?
 
-  If the answer is "because splice", then it would seem saner to
-  plumb up those bits only. Would be much simpler too...
+regards,
+dan carpenter
 
-wherein I interpreted "plumb those bits" to mean plumbing the error
-queue notifications on TX completions.
-
-My sincere apologies that I misunderstood your prior message and/or
-misconstrued what you said -- it was not clear to me what you meant.
-
-It is clear to me now, though, that adding a flag to splice as
-previously proposed and extending sendfile based on the SO_ZEROCOPY
-sock flag being set are both unacceptable solutions.
-
-If you happen to have a suggestion of some piece of code that I
-should read (other than the iouring implementation) to inform how I
-might build an RFCv2, I would appreciate the pointer.
-
-Thanks for your time and energy,
-Joe
+>  
+>  		link_conf = link_conf_dereference_protected(vif, link_id);
+> -		if (!link_conf)
+> +		if (!link_conf) {
+> +			err = -EINVAL;
+>  			goto error_unlink;
+> +		}
+>  
+>  		link = mt7996_vif_link(dev, vif, link_id);
+> -		if (!link)
+> +		if (!link) {
+> +			err = -EINVAL;
+>  			goto error_unlink;
+> +		}
+>  
+>  		link_sta = link_sta_dereference_protected(sta, link_id);
+> -		if (!link_sta)
+> +		if (!link_sta) {
+> +			err = -EINVAL
+>  			goto error_unlink;
+> +		}
+>  
+>  		err = mt7996_mac_sta_init_link(dev, link_conf, link_sta, link,
+>  					       link_id);
+> -- 
+> 2.39.5
+> 
 
