@@ -1,321 +1,230 @@
-Return-Path: <linux-kernel+bounces-572058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E8AA6C603
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:34:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC07EA6C607
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59FDE1899554
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E333B7D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 22:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBA022CBE9;
-	Fri, 21 Mar 2025 22:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CE7232379;
+	Fri, 21 Mar 2025 22:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iIDbYpwP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/b5e3Xw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BCE4690;
-	Fri, 21 Mar 2025 22:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B04A0C;
+	Fri, 21 Mar 2025 22:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742596429; cv=none; b=l4vEJdxFX6g4WsJoFoRanR93kqAfwryvVjMf05NPsv/9NkpJb3VRmkAwJ2qnYVI4I3KBSw+1lg4JfPsyDWSpQiShVfYW4kEgs++bLa+xQm3c68zrqT+AmSptEqRbX5TaeBQJ9+fMQXYWM/3xOxW3ScY+s+NEMobD73CTo2KAdNY=
+	t=1742596656; cv=none; b=CnHy5cxcQs2DpQCUKmTZ+qOiKzpt6YUR7hDr5bJBkmwjU//GmnYK9nqwd8TNgelNMRXI/0Q6wjMaoGMISQv2tMNx8KXL8MYxuwiIxwN3i5ffgI5PJz/u8PxfHD3m1SsBECH4cI2QUOG//oip/tlfRK6hXTP2qa+Jcj5GmbmNAHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742596429; c=relaxed/simple;
-	bh=1QP3m2vfNW8WjNMDF8OqYegzPYF7ftevMUsOjQz758o=;
+	s=arc-20240116; t=1742596656; c=relaxed/simple;
+	bh=ramSATIM6Gfyw9DQk/rIg5hUgUc4Aq61YIxEdbWpWAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIE3dV78hvhS1qlBxt5ZHGCxtNXFxCZiftuqMLNa2+7DT6NGuVXQdws7MHh1syiBZpJnG5wk5VCSKgNsRh3qku98el30gZornebMUHN+6hoyU+TI75lDaMTSffX1rYERpqdpFeB5QSSUGLsG5STuUUpZ9xOzpQI3hHDQuBqNwKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iIDbYpwP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [194.75.195.10])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EC550220;
-	Fri, 21 Mar 2025 23:31:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742596319;
-	bh=1QP3m2vfNW8WjNMDF8OqYegzPYF7ftevMUsOjQz758o=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbhvrZ1heUvoJRqXueUHhxPyAg18caQg5qoIe2QP6yJe+sGehLySt5eISC1KBqUzNKao1eufYh24Lp1qaUH8HWhEjHFJJfVsyv725SP6/Fgx2tp9Pr/eCLkzEJrK3qH9/RdxtbVAQ3zzgWb1sjExzTH5uqieiJOfKeVKLroZdes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/b5e3Xw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD08C4CEE3;
+	Fri, 21 Mar 2025 22:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742596655;
+	bh=ramSATIM6Gfyw9DQk/rIg5hUgUc4Aq61YIxEdbWpWAc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iIDbYpwPfIUBR3x4H2j2WWiPRQN7o3bI9vTtj+L20o8DKl38RXIhKVvpBUDS2U3ZD
-	 YQkTDpGiT1w/PJf5gseO3Xgj3dsnLVBt8TVQJkRE/tc2Ib6c3AI5nlYT3u8URO77Yg
-	 LzqHzsduFnDzbA7uZ8hclHX+dszXQwSoFQEmvYoI=
-Date: Sat, 22 Mar 2025 00:33:20 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH] drm: renesas: Extend RZ/G2L supported KMS formats
-Message-ID: <20250321223320.GC11255@pendragon.ideasonboard.com>
-References: <20250321172220.867165-1-kieran.bingham@ideasonboard.com>
+	b=u/b5e3XwA10wQ0+gzZsAmrh+PYEPBTqOTPwQCOEJmGQ72ZsBAs4AUVs6sGkyH/oCm
+	 OWh72S7LLTL5DxzFvdSVgJM05lo4MiYSGkdaANNFI7HR/8FtIQh08BqBmmYhZP/ldO
+	 U3oL9HVf6BXs+eapmm7aKRLfGJQhcMI2zTLB7ahA4kLIvR71WujKLPNXhhxJ09PWNH
+	 dLlWWMcr/3JOadEK6bvLKreEPEgWRHTlPVHQKyqypBDzcPN1PYgvavIhgMIqlbIe4a
+	 Y26LDPTZ5wsqjo3Tn2S6/fmAZ82NZi6oHL8CNGEyRnkbS2KBvmAFiFSMTSn7PLiEhS
+	 6vAgxK49Xc4wA==
+Date: Fri, 21 Mar 2025 17:37:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v2 03/11] dt-bindings: clock: en7523: add Documentation
+ for Airoha AN7581 SCU SSR
+Message-ID: <20250321223734.GA6837-robh@kernel.org>
+References: <20250320130054.4804-1-ansuelsmth@gmail.com>
+ <20250320130054.4804-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321172220.867165-1-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20250320130054.4804-4-ansuelsmth@gmail.com>
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Fri, Mar 21, 2025 at 05:22:19PM +0000, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Thu, Mar 20, 2025 at 02:00:26PM +0100, Christian Marangi wrote:
+> The Airoha AN7581 SoC have in the SCU register space particular
+> address that control how some peripheral are configured.
 > 
-> The RZ/G2L driver utilises the VSPD to read data from input sources.
+> These are toggeled in the System Status Register and are used to
+> toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+> or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
 > 
-> The rzg2l_du_kms component lists a restricted subset of the capabilities
-> of the VSPd which prevents additional formats from being used for
-
-s/VSPd/VSPD/
-
-> display planes.
+> Modes are mutually exclusive and selecting one mode cause the
+> other feature to not work (example a mode in USB 3.0 cause PCIe
+> port 2 to not work) This depends also on what is physically
+> connected to the Hardware and needs to correctly reflect the
+> System Status Register bits.
 > 
-> The supported display plane formats are mapped in rzg2l_du_vsp_formats[].
+> Special care is needed for PCIe port 0 in 2 line mode that
+> requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+> mode.
 > 
-> Extend the rzg2l_du_format_infos[] table with the corresponding mappings
-> between the supported DRM formats and the formats exposed by the VSP in
-> rzg2l_du_vsp_formats, maintaining the same ordering in both tables.
-
-Given the other replies to this patch, you may want to extend the commit
-message to explain why this is fine, and how the VSPD will convert YUV
-formats to RGB.
-
-Now this makes realize we should implement support for colorspace in the
-VSPD driver... It's a separate issue.
-
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Expose these configuration as an enum of strings in the SCU node and
+> also add dt-bindings header to reference each serdes port in DT.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c | 141 ++++++++++++++++++-
->  1 file changed, 136 insertions(+), 5 deletions(-)
+>  .../bindings/clock/airoha,en7523-scu.yaml     | 101 ++++++++++++++++--
+>  MAINTAINERS                                   |   7 ++
+>  include/dt-bindings/soc/airoha,scu-ssr.h      |  11 ++
+>  3 files changed, 110 insertions(+), 9 deletions(-)
+>  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
 > 
-> Prior to this patch, kmstest reports all of these formats as supported
-> by the Planes, but using them fails during rzg2l_du_fb_create() as the
-> corresponding format isn't found in rzg2l_du_format_info.
-> 
-> This patch now lets me capture and render pixelformats from the Mali-C55
-> direct to an attached DSI panel on the Kakip board.
-> 
-> Patch tested with kms-tests:
-> 
-> PYTHONPATH=/usr/lib/aarch64-linux-gnu/python3.11/site-packages ./tests/kms-test-formats.py 
-> Testing plane formats: SUCCESS
-> 
-> admin@kakip:~/kms-tests$ cat FormatsTest.log 
-> U [66.967523] Testing plane formats
-> U [66.975763] Testing connector DSI-1, CRTC 36, mode 720x1280
-> U [66.978480] Testing format PixelFormat.RGB332
-> U [70.143998] Testing format PixelFormat.ARGB4444
-> U [73.357056] Testing format PixelFormat.XRGB4444
-> U [76.574944] Testing format PixelFormat.ARGB1555
-> U [79.805636] Testing format PixelFormat.XRGB1555
-> U [83.016599] Testing format PixelFormat.RGB565
-> U [86.230362] Testing format PixelFormat.BGR888
-> U [89.444673] Testing format PixelFormat.RGB888
-> U [92.677093] Testing format PixelFormat.BGRA8888
-> U [95.904745] Testing format PixelFormat.BGRX8888
-> U [99.119926] Testing format PixelFormat.ARGB8888
-> U [102.350298] Testing format PixelFormat.XRGB8888
-> U [105.579499] Testing format PixelFormat.UYVY
-> U [108.878654] Testing format PixelFormat.YUYV
-> U [112.176515] Testing format PixelFormat.YVYU
-> U [115.470090] Testing format PixelFormat.NV12
-> U [118.767513] Testing format PixelFormat.NV21
-> U [122.065851] Testing format PixelFormat.NV16
-> U [125.364001] Testing format PixelFormat.NV61
-> U [128.662145] Testing format PixelFormat.YUV420
-> U [131.978102] Testing format PixelFormat.YVU420
-> U [135.292284] Testing format PixelFormat.YUV422
-> U [138.623485] Testing format PixelFormat.YVU422
-> U [141.955083] Testing format PixelFormat.YUV444
-> U [145.336759] Testing format PixelFormat.YVU444
-> U [148.761832] Test completed successfully
-> 
-> 
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
-> index b1266fbd9598..a5e96f863172 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
-> @@ -36,8 +36,61 @@
+> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> index fe2c5c1baf43..637ce0e06619 100644
+> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> @@ -9,6 +9,7 @@ title: EN7523 Clock
+>  maintainers:
+>    - Felix Fietkau <nbd@nbd.name>
+>    - John Crispin <nbd@nbd.name>
+> +  - Christian Marangi <ansuelsmth@gmail.com>
 >  
->  static const struct rzg2l_du_format_info rzg2l_du_format_infos[] = {
->  	{
-> -		.fourcc = DRM_FORMAT_XRGB8888,
-> -		.v4l2 = V4L2_PIX_FMT_XBGR32,
-> +		.fourcc = DRM_FORMAT_RGB332,
-> +		.v4l2 = V4L2_PIX_FMT_RGB332,
-> +		.bpp = 8,
-> +		.planes = 1,
-> +		.hsub = 1,
-
-hsub isn't used in the driver, should it be removed (in a separate patch
-of course) ? Or is that a sign there's a bug somewhere ?
-
-Actually, bpp isn't used either. Biju, could you look into this, and
-check if we should remove the fields or use them ?
-
-Regardless, with the commit message expanded,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> +	}, {
-> +		.fourcc = DRM_FORMAT_ARGB4444,
-> +		.v4l2 = V4L2_PIX_FMT_ARGB444,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_XRGB4444,
-> +		.v4l2 = V4L2_PIX_FMT_XRGB444,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_ARGB1555,
-> +		.v4l2 = V4L2_PIX_FMT_ARGB555,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_XRGB1555,
-> +		.v4l2 = V4L2_PIX_FMT_XRGB555,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_RGB565,
-> +		.v4l2 = V4L2_PIX_FMT_RGB565,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_BGR888,
-> +		.v4l2 = V4L2_PIX_FMT_RGB24,
-> +		.bpp = 24,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_RGB888,
-> +		.v4l2 = V4L2_PIX_FMT_BGR24,
-> +		.bpp = 24,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_BGRA8888,
-> +		.v4l2 = V4L2_PIX_FMT_ARGB32,
-> +		.bpp = 32,
-> +		.planes = 1,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_BGRX8888,
-> +		.v4l2 = V4L2_PIX_FMT_XRGB32,
->  		.bpp = 32,
->  		.planes = 1,
->  		.hsub = 1,
-> @@ -48,11 +101,89 @@ static const struct rzg2l_du_format_info rzg2l_du_format_infos[] = {
->  		.planes = 1,
->  		.hsub = 1,
->  	}, {
-> -		.fourcc = DRM_FORMAT_RGB888,
-> -		.v4l2 = V4L2_PIX_FMT_BGR24,
-> -		.bpp = 24,
-> +		.fourcc = DRM_FORMAT_XRGB8888,
-> +		.v4l2 = V4L2_PIX_FMT_XBGR32,
-> +		.bpp = 32,
->  		.planes = 1,
->  		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_UYVY,
-> +		.v4l2 = V4L2_PIX_FMT_UYVY,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YUYV,
-> +		.v4l2 = V4L2_PIX_FMT_YUYV,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YVYU,
-> +		.v4l2 = V4L2_PIX_FMT_YVYU,
-> +		.bpp = 16,
-> +		.planes = 1,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_NV12,
-> +		.v4l2 = V4L2_PIX_FMT_NV12M,
-> +		.bpp = 12,
-> +		.planes = 2,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_NV21,
-> +		.v4l2 = V4L2_PIX_FMT_NV21M,
-> +		.bpp = 12,
-> +		.planes = 2,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_NV16,
-> +		.v4l2 = V4L2_PIX_FMT_NV16M,
-> +		.bpp = 16,
-> +		.planes = 2,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_NV61,
-> +		.v4l2 = V4L2_PIX_FMT_NV61M,
-> +		.bpp = 16,
-> +		.planes = 2,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YUV420,
-> +		.v4l2 = V4L2_PIX_FMT_YUV420M,
-> +		.bpp = 12,
-> +		.planes = 3,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YVU420,
-> +		.v4l2 = V4L2_PIX_FMT_YVU420M,
-> +		.bpp = 12,
-> +		.planes = 3,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YUV422,
-> +		.v4l2 = V4L2_PIX_FMT_YUV422M,
-> +		.bpp = 16,
-> +		.planes = 3,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YVU422,
-> +		.v4l2 = V4L2_PIX_FMT_YVU422M,
-> +		.bpp = 16,
-> +		.planes = 3,
-> +		.hsub = 2,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YUV444,
-> +		.v4l2 = V4L2_PIX_FMT_YUV444M,
-> +		.bpp = 24,
-> +		.planes = 3,
-> +		.hsub = 1,
-> +	}, {
-> +		.fourcc = DRM_FORMAT_YVU444,
-> +		.v4l2 = V4L2_PIX_FMT_YVU444M,
-> +		.bpp = 24,
-> +		.planes = 3,
-> +		.hsub = 1,
->  	}
->  };
+>  description: |
+>    This node defines the System Control Unit of the EN7523 SoC,
+> @@ -26,6 +27,23 @@ description: |
 >  
+>    The clocks are provided inside a system controller node.
+>  
+> +  The System Control Unit may also set different mode for the Serdes ports
+> +  present on the SoC.
+> +
+> +  These are toggeled in the System Status Register and are used to
+> +  toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+> +  or setup port for PCIe mode or Ethernet mode (HSGMII/USXGMII).
+> +
+> +  Modes are mutually exclusive and selecting one mode cause the
+> +  other feature to not work (example a mode in USB 3.0 cause PCIe
+> +  port 2 to not work) This depends also on what is physically
+> +  connected to the Hardware and needs to correctly reflect the
+> +  System Status Register bits.
+> +
+> +  Special care is needed for PCIe port 0 in 2 line mode that
+> +  requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+> +  mode.
+> +
+>  properties:
+>    compatible:
+>      items:
+> @@ -49,6 +67,40 @@ properties:
+>      description: ID of the controller reset line
+>      const: 1
+>  
+> +  airoha,serdes-wifi1:
+> +    description: Configure the WiFi1 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - pcie0_x2
+> +      - pcie0_x1
+> +      - ethernet
+> +    default: pcie0_x1
+> +
+> +  airoha,serdes-wifi2:
+> +    description: Configure the WiFi2 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - pcie0_x2
+> +      - pcie1_x1
+> +      - ethernet
+> +    default: pcie1_x1
+> +
+> +  airoha,serdes-usb1:
+> +    description: Configure the USB1 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - usb3
+> +      - ethernet
+> +    default: usb3
+> +
+> +  airoha,serdes-usb2:
+> +    description: Configure the USB2 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - usb3
+> +      - pcie2_x1
+> +    default: usb3
 
--- 
-Regards,
+Couldn't you make this a phy provider and use the mode flags in the 
+phy cells?
 
-Laurent Pinchart
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -64,6 +116,12 @@ allOf:
+>          reg:
+>            minItems: 2
+>  
+> +        airoha,serdes-wifi1: false
+> +        airoha,serdes-wifi2: false
+> +
+> +        airoha,serdes-usb1: false
+> +        airoha,serdes-usb2: false
+> +
+>          '#reset-cells': false
+>  
+>    - if:
+> @@ -75,6 +133,24 @@ allOf:
+>          reg:
+>            maxItems: 1
+>  
+> +  - if:
+> +      properties:
+> +        airoha,serdes-wifi1:
+> +          const: pcie0_x2
+
+This is also true if airoha,serdes-wifi1 is not present. Probably not 
+what you intended.
+
+> +    then:
+> +      properties:
+> +        airoha,serdes-wifi2:
+> +          const: pcie0_x2
+> +
+> +  - if:
+> +      properties:
+> +        airoha,serdes-wifi2:
+> +          const: pcie0_x2
+> +    then:
+> +      properties:
+> +        airoha,serdes-wifi1:
+> +          const: pcie0_x2
+> +
+>  additionalProperties: false
 
