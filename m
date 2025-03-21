@@ -1,161 +1,205 @@
-Return-Path: <linux-kernel+bounces-571231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-571233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B428BA6BAAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:29:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54209A6BAB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 13:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8F637A8AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1FE83BCD6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 12:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28286226CF8;
-	Fri, 21 Mar 2025 12:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D591227599;
+	Fri, 21 Mar 2025 12:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i57tvl4V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lT051Oi2"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Py/SqAmk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5FF1E98EB;
-	Fri, 21 Mar 2025 12:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4042922579E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 12:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560153; cv=none; b=pPv104fR+xjrsgdzd4JE4DowEThDnjeeiYYWaRZ3qpQl/ndDCGtd3+KHYQP/RNH8G4/6zDAhC0tBHYsZ8fOhwhS6GTklBcBI1EjjzGYJ2ctswLO+RlBa2a5ESyqwHkT0FPtV+WQEjX6kpIdA/0s1O9NUkMdjlsL+9Pzf8BNMTsE=
+	t=1742560179; cv=none; b=OGTiWH1dO44qOslaQUU11mR0vIJxbyy51P99A6yzsN5Uj14gpZBVljSuXV2yEfOnBiEFG0qqDk6T4sprrbBXJBoK2QbTouU5H932IHH2K+oLRQztMew/gUxbGTT/YD9lhE13z5xvWoLr1IZyOheT6nTs4mxnGIa67nj8VRu59A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560153; c=relaxed/simple;
-	bh=lfdiISzEEgrO+slIfnGzPTZpHHwZmhdB5j/bOmU0rqs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=g0+RmCgQAKFVfXNrn4mYD7fiej19PSnYZ9xpfec8KvffpvAhD1Jcg3l5QeTWWTJcD+1dAWT0YPcFz3ZZwDY+bOfHaL+HPqA7LH1UyfYCs+k2nPAXQBXSYphhV1UPt/E2xAKOk3uMqdjDswzUdkHaagF1WXxO0Rgq/paRe2bGYkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i57tvl4V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lT051Oi2; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id BBD171383770;
-	Fri, 21 Mar 2025 08:29:08 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-09.internal (MEProxy); Fri, 21 Mar 2025 08:29:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742560148;
-	 x=1742646548; bh=N6kPZ0cFTmXIpixMnN6tF81nr1APN9wNYIh/tOxWbbw=; b=
-	i57tvl4VKDF5ha2G2v+8lAQuw6M4b1rAcdwypJljRX1jdQIIhzz0E6CEgVlFkLRO
-	QtFqzhLS998HFqJWRmkKelAQcaTcK0YLNtn49PmynzG8d5BS7EsoRVNiuYIoIn9I
-	cOiZVhYwtpQWmD2njqRcpGywgdu5+SQt/nPTb4yf8gMJbbwX9oQWrK8AkMTvoVOB
-	L9FmDRNfEoZgW12ShA0klsJ9QMNk9FrVQlr6W4xkhkSf5eGpp8IdkbpOJuEE/Qmg
-	lCPFhIGP50Wykl2lHlJ8xEpJHVYiNbUhYAS/6s/Ue5lmvLZ1GGZpHTY+Et+Yq5tZ
-	OE8D5fzFZEcdRDWUcd+hqQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742560148; x=
-	1742646548; bh=N6kPZ0cFTmXIpixMnN6tF81nr1APN9wNYIh/tOxWbbw=; b=l
-	T051Oi2UrKbm70CTM0+WU3RQEBl8O2InYlf0qdnaHHzwk5G/DKmvmQY4V+YoDLdm
-	QJB0kaHQp9VLye/2Xf+xPqSWKQXyi08/ivcZ8uo6Mjm7/UXyd4jeDd8oB94FhdAa
-	aC2Y99wIkKUoxgxQP84BNTei34kdy6grBEl3jybYMlOFcPhV2LExykGvfGQg7QXH
-	P5QYIGouVKBsllY6pY33yrQvIxGDFhPJFKGTV00z6bwu67sOPPpsFCxVuqIIVKfM
-	Qs66jVGIffYzvn79RakI8Q67HJVtLeA8bZT2RhUYwT+Cx7EXXNC2exbfSZPdwyak
-	fA7bufMcB9yyYIgUYf9Bg==
-X-ME-Sender: <xms:kVvdZ-dvlNxtgCueP5K-X9LrgmPY6bqsjmhT2RPPYtEaSwAWAGAdAQ>
-    <xme:kVvdZ0gcXISmmqq1VzvW-zdk0qyp2ODnRZoy7qxoIXaKjL5LU_X1LWe1jWEw4F8_G
-    dd1P2hZMkrAJWbSSTA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheduudduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    feeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinh
-    hugidrohhrghdruhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhr
-    tghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtoheprg
-    hnuhhpsegsrhgrihhnfhgruhhlthdrohhrghdprhgtphhtthhopegstghmqdhkvghrnhgv
-    lhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtoh
-    epfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphht
-    thhopehrjhhuihessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepshgsrhgrnhguvg
-    hnsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehhvghinhhrihgthhdrshgthhhu
-    tghhrghrughtsegtrghnohhnihgtrghlrdgtohhm
-X-ME-Proxy: <xmx:kVvdZyTE_63LDgMM7nvl4LCgcIFqy_9iCOFIBpOZarDifNQuZnO2iA>
-    <xmx:kVvdZ9x64sGPKdZ2VIrCvWv-1MNkOWAp6cmotk7ZALObl9LtLLnk7A>
-    <xmx:kVvdZ9ft6EbGWl4xG5AO97oQzboLTu8b0zu7dl5RWqGY1OfLFgpFBA>
-    <xmx:kVvdZ5K36lITbTqEtI95TI43l1OeBmYuUxwKKiur1-FWuKwrE3_V5Q>
-    <xmx:lFvdZ0kCqZVFDyJTIxAcWCLqQ8EY8hX7Vh8b8wygXH59ssdCdw-ftcuY>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id CB0352220073; Fri, 21 Mar 2025 08:29:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742560179; c=relaxed/simple;
+	bh=PF0H1yleBcdzKQCUKN2tjThzP3QOfirGFp2mYWdYP2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2XW84qsAkvC7Xh8PwbSzJGPsw6pEV3wAVdSzIja6iieiPcdN4ZjQUCI0iZotygVCWt1GFeoyZ6bhu+LumL3V7oSvzGijgbl5PdV/pQjZ6q8+kUtxyXdfHmFcFmOYWcZaHpFmf77pawOBxd+cPA0AQvHM5zCO8uGmWUjZKD9fV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Py/SqAmk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742560176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JH1JMEX1U03GwFlhmPqH+QBmMArUZbpV1nyS6EyqGXg=;
+	b=Py/SqAmkC5IZv0Gj2okceuz+O8Gitsk0sFsEjzEf0GL1oE/+cjRXbnkqCAIy16owkmzAZx
+	los4vYC/dRcXvoDysobNN5/rtMyDTXFxvIDDUyuKBxaweoi+jKXYJa74UXvtHARkOwrUPe
+	9byn7dzxXOVDAjUN1LlbTJbf77TC9UI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-khO1C2dVOFKOcwOL3oRfBg-1; Fri,
+ 21 Mar 2025 08:29:33 -0400
+X-MC-Unique: khO1C2dVOFKOcwOL3oRfBg-1
+X-Mimecast-MFC-AGG-ID: khO1C2dVOFKOcwOL3oRfBg_1742560171
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0349C190308B;
+	Fri, 21 Mar 2025 12:29:31 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.60])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 82168195609D;
+	Fri, 21 Mar 2025 12:29:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 21 Mar 2025 13:28:58 +0100 (CET)
+Date: Fri, 21 Mar 2025 13:28:50 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Penglei Jiang <superman.xpt@gmail.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] uprop: Add new verification condition to verify_opcode
+Message-ID: <20250321122850.GA4776@redhat.com>
+References: <20250321105652.21711-1-superman.xpt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Td2a26421dc1a91fa
-Date: Fri, 21 Mar 2025 13:28:43 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thierry Reding" <thierry.reding@gmail.com>
-Cc: "Celeste Liu" <uwu@coelacanthus.name>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>, guoren <guoren@kernel.org>,
- "Anup Patel" <anup@brainfault.org>,
- "Heinrich Schuchardt" <heinrich.schuchardt@canonical.com>,
- "Huacai Chen" <chenhuacai@kernel.org>, "WANG Xuerui" <kernel@xen0n.name>,
- "Yoshinori Sato" <ysato@users.sourceforge.jp>,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Russell King" <linux@armlinux.org.uk>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Broadcom internal kernel review list"
- <bcm-kernel-feedback-list@broadcom.com>, "Ray Jui" <rjui@broadcom.com>,
- "Scott Branden" <sbranden@broadcom.com>,
- "Tony Lindgren" <tony@atomide.com>, "Jon Hunter" <jonathanh@nvidia.com>,
- "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Andreas Kemnade" <andreas@kemnade.info>,
- "Kevin Hilman" <khilman@baylibre.com>,
- "Roger Quadros" <rogerq@kernel.org>,
- "Palmer Dabbelt" <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org,
- Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org,
- "Stefan Wahren" <wahrenst@gmx.net>,
- "Thierry Reding" <treding@nvidia.com>, soc@lists.linux.dev
-Message-Id: <5fd4f314-e570-4b37-b7c2-af5b4bc85a39@app.fastmail.com>
-In-Reply-To: 
- <t2dustbykx2qd24wazjeiw5hch5nwr6z2ewmaf4srg6r2grwrf@rdw47chzkef2>
-References: 
- <20250115-fix-riscv-rt_group_sched-v4-0-607606fe73a5@coelacanthus.name>
- <20250115-fix-riscv-rt_group_sched-v4-4-607606fe73a5@coelacanthus.name>
- <t2dustbykx2qd24wazjeiw5hch5nwr6z2ewmaf4srg6r2grwrf@rdw47chzkef2>
-Subject: Re: [PATCH v4 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2835/tegra/omap2plus
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321105652.21711-1-superman.xpt@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Mar 6, 2025, at 20:19, Thierry Reding wrote:
-> On Wed, Jan 15, 2025 at 04:41:23AM +0800, Celeste Liu wrote:
->> ---
->>  arch/arm/configs/bcm2835_defconfig   | 1 -
->>  arch/arm/configs/omap2plus_defconfig | 1 -
->>  arch/arm/configs/tegra_defconfig     | 1 -
->>  3 files changed, 3 deletions(-)
+Hi Penglei,
+
+On 03/21, Penglei Jiang wrote:
 >
-> Hi Arnd,
->
-> is this something that you could pick up? I think so far only the RISC-V
-> patch was picked up, but nobody seems to feel responsible for the ARM
-> patch here.
+> If, during probe registration, the instruction at the probe point
+> differs between the file and memory (due to self-modifying code),
+> and the probe registration succeeds, the following errors occur:
 
-I've merged it now after going through stuff in my inbox. It's
-generally ok for patches like this one to be forwarded to
-soc@lists.linux.dev where they end up in patchwork for me to apply,
-in case you don't want it to get lost.
+Thanks for the patch, but I'd say we do not care.
 
-     Arnd
+uprobes.c assumes that user-space should not modify the probed memory.
+
+And I don't think your patch can really help. What if user-space
+modifies the probed insn right after verify_opcode() succeeds?
+
+Oleg.
+
+>   1. When unregistering the probe, it restores the wrong original
+>      instruction.
+>      - If the instruction crosses a page boundary: it restores only
+>        part of the instruction fetched from the file (the part saved
+>        in the first page) to the probe point, and does not restore
+>        the remaining part that crosses the page boundary, which can
+>        lead to unknown instruction.
+>      - If the instruction does not cross a page boundary: it restores
+>        the instruction fetched from the file to the probe point.
+> 
+>   2. The code logic changes because the saved original instruction
+>      is fetched from the file.
+> 
+> Fix:
+> 
+>   Add an extra check in the registration branch of verify_opcode.
+>   If the instruction at the probe point differs between the file
+>   and memory, the verification fails.
+> 
+> Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+> ---
+>  kernel/events/uprobes.c | 47 +++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 45 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index b4ca8898fe17..580dd9fe4015 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -264,10 +264,46 @@ static void copy_to_page(struct page *page, unsigned long vaddr, const void *src
+>  	kunmap_atomic(kaddr);
+>  }
+>  
+> -static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t *new_opcode)
+> +static int copy_insn_from_mem(struct page *p, unsigned long vaddr,
+> +		struct arch_uprobe *dst, struct mm_struct *mm)
+> +{
+> +	pgoff_t offset = offset_in_page(vaddr);
+> +	void *dst_insn = &dst->insn;
+> +	size_t size = sizeof(dst->insn);
+> +	size_t first_size;
+> +	int err;
+> +
+> +	first_size = min_t(size_t, size, PAGE_SIZE - offset);
+> +	copy_from_page(p, offset, dst_insn, first_size);
+> +	vaddr += first_size;
+> +	dst_insn += first_size;
+> +	size -= first_size;
+> +
+> +	/*
+> +	 * If the instruction spans the page boundary, continue copying
+> +	 * the remaining instruction from the second page.
+> +	 */
+> +	if (size) {
+> +		err = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &p, NULL);
+> +		if (err < 0)
+> +			return err;
+> +		if (err == 0)
+> +			return -EBUSY;
+> +
+> +		copy_from_page(p, 0, dst_insn, size);
+> +		put_page(p);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int verify_opcode(struct page *page, unsigned long vaddr,
+> +		uprobe_opcode_t *new_opcode, const struct arch_uprobe *auprobe,
+> +		struct mm_struct *mm)
+>  {
+>  	uprobe_opcode_t old_opcode;
+>  	bool is_swbp;
+> +	struct arch_uprobe current_insn;
+>  
+>  	/*
+>  	 * Note: We only check if the old_opcode is UPROBE_SWBP_INSN here.
+> @@ -284,6 +320,13 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
+>  	if (is_swbp_insn(new_opcode)) {
+>  		if (is_swbp)		/* register: already installed? */
+>  			return 0;
+> +
+> +		if (copy_insn_from_mem(page, vaddr, &current_insn, mm))
+> +			return 0;
+> +					/* register: was it changed by self-modifying code? */
+> +		if (memcmp(&current_insn.insn, &auprobe->insn,
+> +			sizeof(current_insn.insn)))
+> +			return 0;
+>  	} else {
+>  		if (!is_swbp)		/* unregister: was it changed by us? */
+>  			return 0;
+> @@ -491,7 +534,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>  	if (IS_ERR(old_page))
+>  		return PTR_ERR(old_page);
+>  
+> -	ret = verify_opcode(old_page, vaddr, &opcode);
+> +	ret = verify_opcode(old_page, vaddr, &opcode, auprobe, mm);
+>  	if (ret <= 0)
+>  		goto put_old;
+>  
+> -- 
+> 2.17.1
+> 
+
 
