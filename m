@@ -1,184 +1,203 @@
-Return-Path: <linux-kernel+bounces-570920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-570913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DA2A6B646
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:50:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A26A6B631
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 09:46:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7350119C0CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD003B39CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 08:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED761EFFB9;
-	Fri, 21 Mar 2025 08:50:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE2A1E571A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194841EFFB9;
+	Fri, 21 Mar 2025 08:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ib9fjPVr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6820C1E7C10;
+	Fri, 21 Mar 2025 08:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742547005; cv=none; b=bn6UJ/XYiTtVLLddLouFFKp9P/mdxCN0DKdWZh2aITXEva9wXdGiG5EuglotCDGA3h8XDxDqhAzrN4WqF3gDLsOh/3DSOoBezk4ReQir5DNXmicMxDCkA4fV+Aa881A0tA0Xp+0B8kalrTq4pQ+8bC+0APJ+sA74LF/H0jmNgS8=
+	t=1742546756; cv=none; b=oVwmqRmoNoUWEPPIvn/OIGZsl4c/En2jLjErohFa5zqk426fXw84ZHPgSaOHuU5SM5LyXNFrxa+02bpZCxQ1KkL+uDZNRFf82CNk5ntiatdENPiinJ8gdk2Bscx8ZUoo9kXgmWVXfYpIPIA8FXK5vB3S4ERFtvKZbRhfhTgwCgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742547005; c=relaxed/simple;
-	bh=Yt2xqwz8bT8+3vtDi7huaR6B5ilaTZyiIYjySeGUU+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=APN2MtntMV3dfinKznawhZEBIr9TJc/+kz+bXfC5PeXWqiuNQrTd6CmahLrDbsbUDDcPS/zhW91aT7qlr7AkFUvFV6Zc8cbm8nQbAISxmo6OA7bx6xFNgy2UOsmqWI56hGwtIqkgHTF5lY4uapqH8QaMdy0EdGpzzWvPAwal/sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZJwwr01Hdz9sTL;
-	Fri, 21 Mar 2025 09:44:28 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3l0nmMf_J-b8; Fri, 21 Mar 2025 09:44:27 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZJwwq6BCCz9sSg;
-	Fri, 21 Mar 2025 09:44:27 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BBED18B79C;
-	Fri, 21 Mar 2025 09:44:27 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id oOgqbaLveOw1; Fri, 21 Mar 2025 09:44:27 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 08EA08B763;
-	Fri, 21 Mar 2025 09:44:26 +0100 (CET)
-Message-ID: <49ecd313-887d-4839-93b1-027f14c26174@csgroup.eu>
-Date: Fri, 21 Mar 2025 09:44:26 +0100
+	s=arc-20240116; t=1742546756; c=relaxed/simple;
+	bh=0ZJMZv78OUXA4YZqXXMtIlqDz6jl8IDBTlX/dQ5d9/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9pdJ/AOmgjntsqrCjGqOlUrYBk1gKvgUxF9yusMtgdXREKMCR3Sj2LJj5fdIK4Mf8sDhhlk3ScQxpjq+2fF0OoZ+r1ReXPF+V+QuFsVBN1o+ZQlpdwRz4WsX9W1l69XtF3tD4LDDD+VPzO9I92unQIOIJAd8BIwE+7MUtCPIhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ib9fjPVr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA967C4CEE3;
+	Fri, 21 Mar 2025 08:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742546755;
+	bh=0ZJMZv78OUXA4YZqXXMtIlqDz6jl8IDBTlX/dQ5d9/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ib9fjPVrIakwcP8a9139b0y2inR+7c4ztUo6gwVQfpYOquLU2p4nChdI0ielEDm8T
+	 Ls9dQAhF7uhV6Px5dk3rc2dqfbVNyxqDmCbzCRoXu6xHgTJRDgEaR9kJB78xg0v26g
+	 eLtz+y6bEcKV4QgG14ISJa9JV0/uR+btCetrnCMB9Pb9TFKTpmJiDjVir9JcTeknl/
+	 5lnVc6D02a5Vu9k8PZ6pf0ea5+jLx0nG9NT9EV8YOu7rC3g1nscF62pHr8CuBBp6IK
+	 5ntJPf9z+UrHKZG3EabBmpsGT0aKVqS9+SbIFQnsrtZemh07zLBI2ldbM5o0UR/zX+
+	 nX6ZSlQwbmCgA==
+Date: Fri, 21 Mar 2025 09:45:39 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
+ (4)
+Message-ID: <20250321-abdecken-infomaterial-2f373f8e3b3c@brauner>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <202503201225.92C5F5FB1@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 34/57] irqdomain: soc: Switch to irq_domain_create_*()
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, tglx@linutronix.de
-Cc: maz@kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn
- <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Qiang Zhao <qiang.zhao@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-References: <20250319092951.37667-1-jirislaby@kernel.org>
- <20250319092951.37667-35-jirislaby@kernel.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250319092951.37667-35-jirislaby@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202503201225.92C5F5FB1@keescook>
 
-
-
-Le 19/03/2025 à 10:29, Jiri Slaby (SUSE) a écrit :
-> irq_domain_add_*() interfaces are going away as being obsolete now.
-> Switch to the preferred irq_domain_create_*() ones. Those differ in the
-> node parameter: They take more generic struct fwnode_handle instead of
-> struct device_node. Therefore, of_fwnode_handle() is added around the
-> original parameter.
+On Thu, Mar 20, 2025 at 01:09:38PM -0700, Kees Cook wrote:
+> Hey look another threaded exec bug. :|
 > 
-> Note some of the users can likely use dev->fwnode directly instead of
-> indirect of_fwnode_handle(dev->of_node). But dev->fwnode is not
-> guaranteed to be set for all, so this has to be investigated on case to
-> case basis (by people who can actually test with the HW).
+> On Thu, Mar 20, 2025 at 12:09:36PM -0700, syzbot wrote:
+> > ==================================================================
+> > BUG: KCSAN: data-race in bprm_execve / copy_fs
+> > 
+> > write to 0xffff8881044f8250 of 4 bytes by task 13692 on cpu 0:
+> >  bprm_execve+0x748/0x9c0 fs/exec.c:1884
 > 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Qiang Zhao <qiang.zhao@nxp.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-
-
-Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu> # For soc/fsl
-
-> ---
->   drivers/soc/dove/pmu.c     | 4 ++--
->   drivers/soc/fsl/qe/qe_ic.c | 4 ++--
->   drivers/soc/qcom/smp2p.c   | 2 +-
->   drivers/soc/qcom/smsm.c    | 2 +-
->   drivers/soc/tegra/pmc.c    | 5 +++--
->   5 files changed, 9 insertions(+), 8 deletions(-)
+> This is:
 > 
-> diff --git a/drivers/soc/dove/pmu.c b/drivers/soc/dove/pmu.c
-> index 6202dbcd20a8..cfc0efab27d7 100644
-> --- a/drivers/soc/dove/pmu.c
-> +++ b/drivers/soc/dove/pmu.c
-> @@ -274,8 +274,8 @@ static int __init dove_init_pmu_irq(struct pmu_data *pmu, int irq)
->   	writel(0, pmu->pmc_base + PMC_IRQ_MASK);
->   	writel(0, pmu->pmc_base + PMC_IRQ_CAUSE);
->   
-> -	domain = irq_domain_add_linear(pmu->of_node, NR_PMU_IRQS,
-> -				       &irq_generic_chip_ops, NULL);
-> +	domain = irq_domain_create_linear(of_fwnode_handle(pmu->of_node), NR_PMU_IRQS,
-> +					  &irq_generic_chip_ops, NULL);
->   	if (!domain) {
->   		pr_err("%s: unable to add irq domain\n", name);
->   		return -ENOMEM;
-> diff --git a/drivers/soc/fsl/qe/qe_ic.c b/drivers/soc/fsl/qe/qe_ic.c
-> index bbae3d39c7be..e5831c298ad6 100644
-> --- a/drivers/soc/fsl/qe/qe_ic.c
-> +++ b/drivers/soc/fsl/qe/qe_ic.c
-> @@ -446,8 +446,8 @@ static int qe_ic_init(struct platform_device *pdev)
->   		high_handler = NULL;
->   	}
->   
-> -	qe_ic->irqhost = irq_domain_add_linear(node, NR_QE_IC_INTS,
-> -					       &qe_ic_host_ops, qe_ic);
-> +	qe_ic->irqhost = irq_domain_create_linear(of_fwnode_handle(node), NR_QE_IC_INTS,
-> +						  &qe_ic_host_ops, qe_ic);
->   	if (qe_ic->irqhost == NULL) {
->   		dev_err(dev, "failed to add irq domain\n");
->   		return -ENODEV;
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index a3e88ced328a..8c8878bc87f5 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -399,7 +399,7 @@ static int qcom_smp2p_inbound_entry(struct qcom_smp2p *smp2p,
->   				    struct smp2p_entry *entry,
->   				    struct device_node *node)
->   {
-> -	entry->domain = irq_domain_add_linear(node, 32, &smp2p_irq_ops, entry);
-> +	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smp2p_irq_ops, entry);
->   	if (!entry->domain) {
->   		dev_err(smp2p->dev, "failed to add irq_domain\n");
->   		return -ENOMEM;
-> diff --git a/drivers/soc/qcom/smsm.c b/drivers/soc/qcom/smsm.c
-> index e803ea342c97..021e9d1f61dc 100644
-> --- a/drivers/soc/qcom/smsm.c
-> +++ b/drivers/soc/qcom/smsm.c
-> @@ -456,7 +456,7 @@ static int smsm_inbound_entry(struct qcom_smsm *smsm,
->   		return ret;
->   	}
->   
-> -	entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
-> +	entry->domain = irq_domain_create_linear(of_fwnode_handle(node), 32, &smsm_irq_ops, entry);
->   	if (!entry->domain) {
->   		dev_err(smsm->dev, "failed to add irq_domain\n");
->   		return -ENOMEM;
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 51b9d852bb6a..e0d67bfe955c 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -2500,8 +2500,9 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
->   	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
->   	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
->   
-> -	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
-> -					       &tegra_pmc_irq_domain_ops, pmc);
-> +	pmc->domain = irq_domain_create_hierarchy(parent, 0, 96,
-> +						  of_fwnode_handle(pmc->dev->of_node),
-> +						  &tegra_pmc_irq_domain_ops, pmc);
->   	if (!pmc->domain) {
->   		dev_err(pmc->dev, "failed to allocate domain\n");
->   		return -ENOMEM;
+>         current->fs->in_exec = 0;
+> 
+> And is part of the execve failure path:
+> 
+> out:
+> 	...
+>         if (bprm->point_of_no_return && !fatal_signal_pending(current))
+>                 force_fatal_sig(SIGSEGV);
+> 
+>         sched_mm_cid_after_execve(current);
+>         current->fs->in_exec = 0;
+>         current->in_execve = 0;
+> 
+>         return retval;
+> }
+> 
+> >  do_execveat_common+0x769/0x7e0 fs/exec.c:1966
+> >  do_execveat fs/exec.c:2051 [inline]
+> >  __do_sys_execveat fs/exec.c:2125 [inline]
+> >  __se_sys_execveat fs/exec.c:2119 [inline]
+> >  __x64_sys_execveat+0x75/0x90 fs/exec.c:2119
+> >  x64_sys_call+0x291e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:323
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > 
+> > read to 0xffff8881044f8250 of 4 bytes by task 13686 on cpu 1:
+> >  copy_fs+0x95/0xf0 kernel/fork.c:1770
+> 
+> This is:
+> 
+>                 if (fs->in_exec) {
+> 
+> Which is under lock:
+> 
+>         struct fs_struct *fs = current->fs;
+>         if (clone_flags & CLONE_FS) {
+>                 /* tsk->fs is already what we want */
+>                 spin_lock(&fs->lock);
+>                 /* "users" and "in_exec" locked for check_unsafe_exec() * */
+>                 if (fs->in_exec) {
+>                         spin_unlock(&fs->lock);
+>                         return -EAGAIN;
+>                 }
+>                 fs->users++;
+>                 spin_unlock(&fs->lock);
+> 
+> 
+> Does execve need to be taking this lock? The other thing touching it is
+> check_unsafe_exec(), which takes the lock. It looks like the bprm_execve()
+> lock was removed in commit 8c652f96d385 ("do_execve() must not clear
+> fs->in_exec if it was set by another thread") which used the return
+> value from check_unsafe_exec():
+> 
+>     When do_execve() succeeds, it is safe to clear ->in_exec unconditionally.
+>     It can be set only if we don't share ->fs with another process, and since
+>     we already killed all sub-threads either ->in_exec == 0 or we are the
+>     only user of this ->fs.
+> 
+>     Also, we do not need fs->lock to clear fs->in_exec.
+> 
+> This logic was updated in commit 9e00cdb091b0 ("exec:check_unsafe_exec:
+> kill the dead -EAGAIN and clear_in_exec logic"), which includes this
+> rationale:
+> 
+>             2. "out_unmark:" in do_execve_common() is either called
+>                under ->cred_guard_mutex, or after de_thread() which
+>                kills other threads, so we can't race with sub-thread
+>                which could set ->in_exec. And if ->fs is shared with
+>                another process ->in_exec should be false anyway.
+> 
+> The de_thread() is part of the "point of no return" in exec_binprm(),
+> called via exec_binprm(). But the bprm_execve() error path is reachable
+> from many paths prior to the point of no return.
+> 
+> What I can imagine here is two failing execs racing a fork:
+> 
+> 	A start execve
+> 	B fork with CLONE_FS
+> 	C start execve, reach check_unsafe_exec(), set fs->in_exec
+> 	A bprm_execve() failure, clear fs->in_exec
+> 	B copy_fs() increment fs->users.
+> 	C bprm_execve() failure, clear fs->in_exec
+> 
+> But I don't think this is a "real" flaw, though, since the locking is to
+> protect a _successful_ execve from a fork (i.e. getting the user count
+> right). A successful execve will de_thread, and I don't see any wrong
+> counting of fs->users with regard to thread lifetime.
+> 
+> Did I miss something in the analysis? Should we perform locking anyway,
+> or add data race annotations, or something else?
+
+Afaict, the only way this data race can happen is if we jump to the
+cleanup label and then reset current->fs->in_exec. If the execve was
+successful there's no one to race us with CLONE_FS obviously because we
+took down all other threads.
+
+I think the logic in commit 9e00cdb091b0 ("exec:check_unsafe_exec: kill
+the dead -EAGAIN and clear_in_exec logic") is sound.
+
+This is a harmless data race that can only happen if the execve fails.
+The worst that can happen is that a subthread does clone(CLONE_FS) and
+gets a spurious error because it raced with the exec'ing subthread
+resetting fs->in_exec. So I think all we need is:
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 506cd411f4ac..177acaf196a9 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1881,7 +1881,13 @@ static int bprm_execve(struct linux_binprm *bprm)
+                force_fatal_sig(SIGSEGV);
+
+        sched_mm_cid_after_execve(current);
+-       current->fs->in_exec = 0;
++       /*
++        * If this execve failed before de_thread() and another
++        * subthread is concurrently forking with CLONE_FS they race
++        * with us resetting current->fs->in_exec. This is fine,
++        * annotate it.
++        */
++       data_race(current->fs->in_exec = 1);
+        current->in_execve = 0;
+
+        return retval;
+
 
 
