@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-572670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECED1A6CCEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:56:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CF0A6CCED
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1301B61D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4D01753E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B94A1E9B06;
-	Sat, 22 Mar 2025 21:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58BF1EDA03;
+	Sat, 22 Mar 2025 21:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUVJJQMa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hijyaLZf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EE91BBBF7;
-	Sat, 22 Mar 2025 21:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5AC1BC5C;
+	Sat, 22 Mar 2025 21:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742680483; cv=none; b=eV6bMg4vdkn8VitEoooT2ioP1amKX6z+NJ3GJs2YVc6+0qOu4L+R+WctEBQX3a+lZIjk6ZaEBQzmiEsKbXwxc4UX5mQjKUE2QOMYPqVCf3+Yv8yfhb9Y0hAXf+uG978xXsydmLOlPBQl+iH5vEyksxKjAwaHI37PpuWDqNc9Opo=
+	t=1742680500; cv=none; b=UXp1gcuZT403vTcKIkQNb9fGQBKB4ikYpMnuRnzhhg1cJbT8iVuWUR5gjYNxc+z9OVjQ5w4KYiSNGtBzY+54EpwxF/qh4Z0TnXsNPwLwxYVRTuIUs2ZxxLdJrh0n1b5XDtjyXfbmbRaooYxOZWmYrEOqbu0ho0B5/tBAF0U2Yaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742680483; c=relaxed/simple;
-	bh=0ZxExuljQvj3DUUB7dPOGCtNe9zxUAHutoDT6fytzDE=;
+	s=arc-20240116; t=1742680500; c=relaxed/simple;
+	bh=U71RNqUGZ+Lus/4E2mE5hWToUl3/b+yqzqc/fKz+QTE=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q18g0Z2JvTYubgoossLKx76XGfZ5+1DukUnp4PIv5Ib+lZaD07m4+B7AI62eTk40kUUeOmXFw+U7ap8V0HelnRKN8/JX5uOf8vM2FyQtRMCXevWMvNr7sDVWxEkIsPuRlg01sbUECOvFIqqOI6KXeaQCfuB7HQhMe8DdS2fAarw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUVJJQMa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E52C4CEDD;
-	Sat, 22 Mar 2025 21:54:24 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Fct8N0b3btOB9v/2kZn0OAiB6g7AXTmOkU761sCEIkphj3+cnCuumEJ4KbGyvg1S2YGxD5RFp5E6I74n/Qw0wOCWHFCz7yWEAXhTaDjRKwXwA0LGSAt8130XUUN9GkGo5ViJ6vDauUcY3oRrd0zDWTpAjCTHIWGfCyZMA/Wt7Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hijyaLZf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379E2C4CEE4;
+	Sat, 22 Mar 2025 21:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742680481;
-	bh=0ZxExuljQvj3DUUB7dPOGCtNe9zxUAHutoDT6fytzDE=;
+	s=k20201202; t=1742680500;
+	bh=U71RNqUGZ+Lus/4E2mE5hWToUl3/b+yqzqc/fKz+QTE=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AUVJJQMaYVD2s0ElzQkI+RxxG+N5PVRlhdFhBnEESjijtstC3Aia/kAuI7JoUd2Li
-	 KgP1rzCdcwfFJM8HmgFtlKzYi8B12JFgka4L9Iq72ntEJ+dR8J+gkmVpmJyzBmy086
-	 9qmqXilHiAL9ChUlLwfrSilGyIQeeeoAeyWyeXh1MEb/NdB2kJmaNblhQU/bq5leAW
-	 LjzJYuAutTk4Q2lbUoWpp9ZoieJJB3eTszy4pBCkdCLwIuCxll7bJ/xe5G/60bFu3b
-	 4DC2XeH9FdD1EIvcIOeoQaKxUsCVlpNwEwhQb5InyUdU7Z3WFSzeVckBQ62D+G87QZ
-	 d1hIWImiewp4w==
+	b=hijyaLZftH9iS/29xIBvicM0ykjnjPGUS3cGeYlej/4P9fD7sJvWkoNswOuyevcjH
+	 XfV540VdPyr/lcT9e9qDCIs3nY4rS2NB599gcThSGTDbhkmuJ5MNLnCEg1u7Sy7vsX
+	 x7dcZdU5C7F4ZWTmtwSHcK/ADglPKCven2v9pNJsV4nxK7Lkb6EQ7aaSeGoP2k9xFD
+	 caMHB9iLEpqacv/TMMBP9Ntpu9QDfFjly0cYXbyFILZCn5t03yxzcVduV3jJkYmp+d
+	 aB91bKfjxF+EKwEsy0+jBPvaPb4ZeN0JSIO7AkrFd0jydtsAnaBw6NmrfZw+CATGr0
+	 Bvv/PFpoxHiJg==
 From: Andreas Hindborg <a.hindborg@kernel.org>
 To: FUJITA Tomonori <fujita.tomonori@gmail.com>
 Cc: linux-kernel@vger.kernel.org,  Daniel Almeida
- <daniel.almeida@collabora.com>,  Boqun Feng <boqun.feng@gmail.com>,  Gary
- Guo <gary@garyguo.net>,  Fiona Behrens <me@kloenk.dev>,
+ <daniel.almeida@collabora.com>,  Gary Guo <gary@garyguo.net>,  Alice Ryhl
+ <aliceryhl@google.com>,  Fiona Behrens <me@kloenk.dev>,
   rust-for-linux@vger.kernel.org,  netdev@vger.kernel.org,  andrew@lunn.ch,
   hkallweit1@gmail.com,  tmgross@umich.edu,  ojeda@kernel.org,
   alex.gaynor@gmail.com,  bjorn3_gh@protonmail.com,
-  benno.lossin@proton.me,  a.hindborg@samsung.com,  aliceryhl@google.com,
+  benno.lossin@proton.me,  a.hindborg@samsung.com,
   anna-maria@linutronix.de,  frederic@kernel.org,  tglx@linutronix.de,
   arnd@arndb.de,  jstultz@google.com,  sboyd@kernel.org,  mingo@redhat.com,
   peterz@infradead.org,  juri.lelli@redhat.com,
   vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
   rostedt@goodmis.org,  bsegall@google.com,  mgorman@suse.de,
   vschneid@redhat.com,  tgunders@redhat.com,  david.laight.linux@gmail.com
-Subject: Re: [PATCH v11 4/8] rust: time: Introduce Instant type
-In-Reply-To: <20250220070611.214262-5-fujita.tomonori@gmail.com> (FUJITA
-	Tomonori's message of "Thu, 20 Feb 2025 16:06:06 +0900")
+Subject: Re: [PATCH v11 5/8] rust: time: Add wrapper for fsleep() function
+In-Reply-To: <20250220070611.214262-6-fujita.tomonori@gmail.com> (FUJITA
+	Tomonori's message of "Thu, 20 Feb 2025 16:06:07 +0900")
 References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
-	<20250220070611.214262-5-fujita.tomonori@gmail.com>
+	<20250220070611.214262-6-fujita.tomonori@gmail.com>
 User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Sat, 22 Mar 2025 14:58:16 +0100
-Message-ID: <87iko1b213.fsf@kernel.org>
+Date: Sat, 22 Mar 2025 15:10:17 +0100
+Message-ID: <87a59db1h2.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,146 +73,30 @@ Content-Type: text/plain
 
 FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
 
-> Introduce a type representing a specific point in time. We could use
-> the Ktime type but C's ktime_t is used for both timestamp and
-> timedelta. To avoid confusion, introduce a new Instant type for
-> timestamp.
+> Add a wrapper for fsleep(), flexible sleep functions in
+> include/linux/delay.h which typically deals with hardware delays.
 >
-> Rename Ktime to Instant and modify their methods for timestamp.
+> The kernel supports several sleep functions to handle various lengths
+> of delay. This adds fsleep(), automatically chooses the best sleep
+> method based on a duration.
 >
-> Implement the subtraction operator for Instant:
+> sleep functions including fsleep() belongs to TIMERS, not
+> TIMEKEEPING. They are maintained separately. rust/kernel/time.rs is an
+> abstraction for TIMEKEEPING. To make Rust abstractions match the C
+> side, add rust/kernel/time/delay.rs for this wrapper.
 >
-> Delta = Instant A - Instant B
+> fsleep() can only be used in a nonatomic context. This requirement is
+> not checked by these abstractions, but it is intended that klint [1]
+> or a similar tool will be used to check it in the future.
 >
+> Link: https://rust-for-linux.com/klint [1]
 > Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 > Reviewed-by: Gary Guo <gary@garyguo.net>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 > Reviewed-by: Fiona Behrens <me@kloenk.dev>
 > Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-
 Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-
-As Boqun mentioned, we should make this generic over `ClockId` when the
-hrtimer patches land.
-
-One question regarding overflow below.
-
-> ---
->  rust/kernel/time.rs | 77 +++++++++++++++++++++++----------------------
->  1 file changed, 39 insertions(+), 38 deletions(-)
->
-> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-> index 622cd01e24d7..d64a05a4f4d1 100644
-> --- a/rust/kernel/time.rs
-> +++ b/rust/kernel/time.rs
-> @@ -5,6 +5,22 @@
->  //! This module contains the kernel APIs related to time and timers that
->  //! have been ported or wrapped for usage by Rust code in the kernel.
->  //!
-> +//! There are two types in this module:
-> +//!
-> +//! - The [`Instant`] type represents a specific point in time.
-> +//! - The [`Delta`] type represents a span of time.
-> +//!
-> +//! Note that the C side uses `ktime_t` type to represent both. However, timestamp
-> +//! and timedelta are different. To avoid confusion, we use two different types.
-> +//!
-> +//! A [`Instant`] object can be created by calling the [`Instant::now()`] function.
-> +//! It represents a point in time at which the object was created.
-> +//! By calling the [`Instant::elapsed()`] method, a [`Delta`] object representing
-> +//! the elapsed time can be created. The [`Delta`] object can also be created
-> +//! by subtracting two [`Instant`] objects.
-> +//!
-> +//! A [`Delta`] type supports methods to retrieve the duration in various units.
-> +//!
->  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
->  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
->  
-> @@ -31,59 +47,44 @@ pub fn msecs_to_jiffies(msecs: Msecs) -> Jiffies {
->      unsafe { bindings::__msecs_to_jiffies(msecs) }
->  }
->  
-> -/// A Rust wrapper around a `ktime_t`.
-> +/// A specific point in time.
-> +///
-> +/// # Invariants
-> +///
-> +/// The `inner` value is in the range from 0 to `KTIME_MAX`.
->  #[repr(transparent)]
->  #[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
-> -pub struct Ktime {
-> +pub struct Instant {
->      inner: bindings::ktime_t,
->  }
->  
-> -impl Ktime {
-> -    /// Create a `Ktime` from a raw `ktime_t`.
-> -    #[inline]
-> -    pub fn from_raw(inner: bindings::ktime_t) -> Self {
-> -        Self { inner }
-> -    }
-> -
-> +impl Instant {
->      /// Get the current time using `CLOCK_MONOTONIC`.
->      #[inline]
-> -    pub fn ktime_get() -> Self {
-> -        // SAFETY: It is always safe to call `ktime_get` outside of NMI context.
-> -        Self::from_raw(unsafe { bindings::ktime_get() })
-> -    }
-> -
-> -    /// Divide the number of nanoseconds by a compile-time constant.
-> -    #[inline]
-> -    fn divns_constant<const DIV: i64>(self) -> i64 {
-> -        self.to_ns() / DIV
-> -    }
-> -
-> -    /// Returns the number of nanoseconds.
-> -    #[inline]
-> -    pub fn to_ns(self) -> i64 {
-> -        self.inner
-> +    pub fn now() -> Self {
-> +        // INVARIANT: The `ktime_get()` function returns a value in the range
-> +        // from 0 to `KTIME_MAX`.
-> +        Self {
-> +            // SAFETY: It is always safe to call `ktime_get()` outside of NMI context.
-> +            inner: unsafe { bindings::ktime_get() },
-> +        }
->      }
->  
-> -    /// Returns the number of milliseconds.
-> +    /// Return the amount of time elapsed since the [`Instant`].
->      #[inline]
-> -    pub fn to_ms(self) -> i64 {
-> -        self.divns_constant::<NSEC_PER_MSEC>()
-> +    pub fn elapsed(&self) -> Delta {
-> +        Self::now() - *self
->      }
->  }
->  
-> -/// Returns the number of milliseconds between two ktimes.
-> -#[inline]
-> -pub fn ktime_ms_delta(later: Ktime, earlier: Ktime) -> i64 {
-> -    (later - earlier).to_ms()
-> -}
-> -
-> -impl core::ops::Sub for Ktime {
-> -    type Output = Ktime;
-> +impl core::ops::Sub for Instant {
-> +    type Output = Delta;
->  
-> +    // By the type invariant, it never overflows.
->      #[inline]
-> -    fn sub(self, other: Ktime) -> Ktime {
-> -        Self {
-> -            inner: self.inner - other.inner,
-> +    fn sub(self, other: Instant) -> Delta {
-> +        Delta {
-> +            nanos: self.inner - other.inner,
-
-If this never overflows by invariant, would it make sense to use
-`unchecked_sub` or `wraping_sub`? That would remove the overflow check.
 
 
 Best regards,
