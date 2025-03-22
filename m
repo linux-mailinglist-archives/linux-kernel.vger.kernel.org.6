@@ -1,198 +1,120 @@
-Return-Path: <linux-kernel+bounces-572523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE83A6CB18
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D87A6CB19
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:04:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27109815CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:52:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BCA8A4524
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1F622FAF4;
-	Sat, 22 Mar 2025 14:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1BF21C9FE;
+	Sat, 22 Mar 2025 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zz/9oNGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hzj7A0ol"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C9622D7A1;
-	Sat, 22 Mar 2025 14:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEE21C84B6
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742655047; cv=none; b=Br1L1zj9waR1vh9tmGfQvfdjMy+ybGJJQIxoHdT8Hig1v6PfTdnmMX2xZCU+Xsochm5Tw3RqvRF9N3z9/VWKKFtUU2gfcmltc37axsI7dUFHvzUmRBSlg815Vj00CigQwKaZCUnE+0YU3zMA9awVJoWHsBBmwrTslE1jkVFWF7A=
+	t=1742655301; cv=none; b=HXjoKM7PGniQurtI4UJNn8CJGH+XrqjzKZxNSaLh5NZaWCGnxFya6R88QH3WUlEiRI3SQp9yJIRcLii0lsVLuxbv6ZWn+LBIrMLdRh0qNtJDHttdzEpt9qbUsPz/aokjZOT534aTtWAYdVBIse3dbWeEmDdC9uKqeoIDPOB29p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742655047; c=relaxed/simple;
-	bh=MRoAVc2GDCJCO/s0k4oaM7vuQUpM1BiL16QTCzZwOdQ=;
+	s=arc-20240116; t=1742655301; c=relaxed/simple;
+	bh=BwrWfrlKH9V5dEXgKEnM79/SUo4/kUvCZIBuFhDDsQM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q1q0fAvkouzcxYBKcZvTrKC1moDavkb39WxBS89U2LVDySWGaFYbiXGuP8pTspc/SfrWiPvYVZdwIWYLsAdOtSfR4A84FiRmtyXYKqP6vrSzdxu4n7ChoI5HNmjdx+ZydcaiScdQgapPKruBvZCG4v3wNQ2uMeCGx+Qh8pJMaU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zz/9oNGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A150EC4CEDD;
-	Sat, 22 Mar 2025 14:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742655046;
-	bh=MRoAVc2GDCJCO/s0k4oaM7vuQUpM1BiL16QTCzZwOdQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Zz/9oNGodvJX6CxhRbiX/ESk4X/siHPrlbtUTAz6w+P/AZgwBRmrPu2UMFlgXKKDm
-	 UYmoV1TXRAdZY0oRbQNM3qXXvkfSXEcL90fmNFe9IPUdWfYdZ6h09QUy5gLLIefdXk
-	 ai5Wtl/+hmefJhy2HBZDjTyy5koN5Ne1w2x0jcU9UvCHPhtODjLzUlcdBzQng1WIIa
-	 LLVY9CfYyFRdPZV5tOTzbZtftcYD5mtAtFM35SvvhzVhStAGm9o8c+qkjDy32FGUU+
-	 McFfO+ojOmdnhwqhDRTegI82KYM+c171UA3dBV11bnfOGP3sE6WcBwxVPmdVg9gpPO
-	 UOiz1kGlFLPuw==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30c2d427194so31489201fa.0;
-        Sat, 22 Mar 2025 07:50:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPicXoo76ptE1b++5Hj+qgFnW/1WDx0GUt+bFzq8uQhGBL4P5aSwlvHHFAxDej6iVeQzE=@vger.kernel.org, AJvYcCVzruTomzDCyl6XXXLjDAv2fSwR4tRansT7y1+VDsgVeWMOq2SCsFXPCqvnFMs+uoNiKwEybE/5cgAvxj1n@vger.kernel.org, AJvYcCW/AowKlxuc6x0qAldQUCEzbE7KYw+G3WUql7hiF2p0hPlujRHJwcZcNhbVZHSlPqxThoWMhay4CjIu+NwD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTLPzoQWkMAiEx6Pfe0uHbimQRoFKT+JS1m2KnRl12u+51jUy/
-	DfEw2yQUxkZ4y8ft0pnxQfVzr6AfLhlZnXF+koMDoXRraqLK/i/LsrRqjNIqVUAcPMts5pOyxp/
-	J0+P5+NPqwJjMiO0lrx+oPv3HCxA=
-X-Google-Smtp-Source: AGHT+IEPyO40RHCkLyep+QoZo8ZSD7sl3b6ajVdYBN9FpCfSyatfhQvpbVV5r8atteZQ5BPsfIfnbfg4mVa5S/o2PPU=
-X-Received: by 2002:a2e:a595:0:b0:30c:4be7:1d42 with SMTP id
- 38308e7fff4ca-30d7e2226b8mr23222091fa.12.1742655045343; Sat, 22 Mar 2025
- 07:50:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=IWhB2CDGHmYk0VGx6VgDOR3RPIbymA/3+tn04CihRmON/AlQRr68L3s/9/UbrUNhmlSxeP5RFle8Ai9d934L1C/xTPUL8XlfTKZEh0PfrK/X0P6dKuWQ7tlEIrPk3SUsmXOE7DMrnGa8X1dEXkNXC8K74v+zzdgFBYYsTyGTmqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hzj7A0ol; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so17638985e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742655298; x=1743260098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CVsv+7+7z707eTgNMAV7D+lcTv5OJ3d2IoxGrmJvKw0=;
+        b=Hzj7A0olfl4AMIzWH4jMxTTYfQmfJEStmE3nSlt0WwLxZ9lT4DqUx0AsJgdRp2Meia
+         ddnYroSAhlpimeDzyQjhZWdwrS4iZnYo3AEY/6SO9ACWsaqtuyvdRYJHCPMJEId38f/o
+         vxKb+UoBSfEaPY4M2pxhVZFmD0ZNZUHQTvKJTYu75u0uBmy2f0ZbhkMJkEjvzpz/Ro7K
+         RR98OXppn9/7BdNj5aRPRY2joYd75ZMKSoXTTk219VH0+WQUFqSH89PRfHI1fR9HN5do
+         2QtVrPY0NLQgwkCexZjLcw2RLyQFwZ85AGO/rozSvV3XPq1Ahe1B6KSSQYkYNcz9EEQ3
+         TSqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742655298; x=1743260098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CVsv+7+7z707eTgNMAV7D+lcTv5OJ3d2IoxGrmJvKw0=;
+        b=TtMfaYyLQ9BJk9YIR6ktbmWuwAEHzEpAUYDzx7/tfdPdTi5vjuwGeXPnpo+sSMhCCv
+         NrDMbINVxcNmtbPKmM9cMiX2kXnzO/TJ/ndPxZDULx7fj3a7KUngC257rLYF0+7GHNwb
+         sYe1rOeWj8KnFpsE0IrBV78haN+MLONea5s3IQqT8o7mVWUfUvxxSw2yrU8noGRa2P9k
+         L78HSDwPsL0u/bKYTLYsaVSzO2wlWLvVMaKSdXojxzJzBasET1g1E13IVfAmAmTfJ2hk
+         /GKDE0sv6pCEPDQ4w5V1WYI0wfWkhnPB6pBGsucly+lT7KwZamrpepiZllAWJflGkALj
+         5iYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEkQqaZxTyOK1uat6qncox76Tv/J4xZ1Kmpo6aVKQp5XHxgtHmUK48FbncYjim/xNCZHv3vlP4ImgmO5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwRRUG5yoKphipkmMqdHDS5BM444sQ5rrpHdde3LJp5f15XlUn
+	XvyBuBLvibzU+p7esNC+FC8S99Ps2OYAnbCHuFJCjU+FFmi63QcxnPePXuDJGUjxp9xAasj0HYT
+	A2Fq4H+MdZXUzbyG12bAo42LsZaA=
+X-Gm-Gg: ASbGnctL04slxXIS4rUpt7nchUCCKg96BgM8lJgKIyBWd0GM9khX1wTFZQQbGTQnKiS
+	b6zYUCEzgLLVHfQl51cTEhMur0CIn6OAbNUv1nu30XjE8MzJj9yBDxOM15NEiTcb0Yc3mMHxiNi
+	0oJ3/1oTDV+I2HI98L40oyA/9NhXc4u2laPb/xzUQ=
+X-Google-Smtp-Source: AGHT+IHOTXz6vU2UJzXZ1h1hF0qjSMg+BhN4y1f0FSW0ekLWWxEwX3enrSuwJUq000bqT2KVcv8R9mh2dJxA71DufVg=
+X-Received: by 2002:a05:600c:ac6:b0:439:91c7:895a with SMTP id
+ 5b1f17b1804b1-43d49172281mr97741715e9.7.1742655298050; Sat, 22 Mar 2025
+ 07:54:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211002930.1865689-1-masahiroy@kernel.org> <CAD=FV=V19pgzU8NSyWwHSEs85kU_Fbofcn8uJVj-TE2DNKfUHQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=V19pgzU8NSyWwHSEs85kU_Fbofcn8uJVj-TE2DNKfUHQ@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 22 Mar 2025 23:50:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQX03w=AVkntA=8KmSAmX91Z3BdB4Z8H5oDt3iPsJNXfg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp60oEhyRreLddsPUneE01Rm0Mr3qS0ImcRA2yELUdXSRJR5g-xQkGj3ys
-Message-ID: <CAK7LNAQX03w=AVkntA=8KmSAmX91Z3BdB4Z8H5oDt3iPsJNXfg@mail.gmail.com>
-Subject: Re: [PATCH] tools: fix annoying "mkdir -p ..." logs when building
- tools in parallel
-To: Doug Anderson <dianders@chromium.org>
-Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
-	linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Borislav Petkov <bp@suse.de>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>
+References: <Z97Bl9RyFRGZUXNM@HP-650> <alpine.DEB.2.22.394.2503221510230.12345@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2503221510230.12345@hadrien>
+From: Samuel Abraham <abrahamadekunle50@gmail.com>
+Date: Sat, 22 Mar 2025 15:54:46 +0100
+X-Gm-Features: AQ5f1JqAXalsgn30MCSXP4SELVQNOiGgBWkb-rypE_PW3Skgrm8Qwl5TBxRuuKM
+Message-ID: <CADYq+fboc+_cncOdrBh-2sDNSz9YAFvTqREmV+mmKOHy5QV5gA@mail.gmail.com>
+Subject: Re: [PATCH] staging: bcm2835-camera: Modify function call formatting
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: outreachy@lists.linux.dev, gregkh@linuxfoundation.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 1:41=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Mon, Feb 10, 2025 at 4:30=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
-.org> wrote:
-> >
-> > When CONFIG_OBJTOOL=3Dy or CONFIG_DEBUG_INFO_BTF=3Dy, parallel builds
-> > show awkward "mkdir -p ..." logs.
-> >
-> >   $ make -j16
-> >     [ snip ]
-> >   mkdir -p /home/masahiro/ref/linux/tools/objtool && make O=3D/home/mas=
-ahiro/ref/linux subdir=3Dtools/objtool --no-print-directory -C objtool
-> >   mkdir -p /home/masahiro/ref/linux/tools/bpf/resolve_btfids && make O=
-=3D/home/masahiro/ref/linux subdir=3Dtools/bpf/resolve_btfids --no-print-di=
-rectory -C bpf/resolve_btfids
-> >
-> > Defining MAKEFLAGS=3D<value> on the command line wipes out command line
-> > switches from the resultant MAKEFLAGS definition, even though the comma=
-nd
-> > line switches are active. [1]
-> >
-> > The first word of $(MAKEFLAGS) is a possibly empty group of characters
-> > representing single-letter options that take no argument. However, this
-> > breaks if MAKEFLAGS=3D<value> is given on the command line.
-> >
-> > The tools/ and tools/% targets set MAKEFLAGS=3D<value> on the command
-> > line, which breaks the following code in tools/scripts/Makefile.include=
-:
-> >
-> >     short-opts :=3D $(firstword -$(MAKEFLAGS))
-> >
-> > If MAKEFLAGS really needs modification, it should be done through the
-> > environment variable, as follows:
-> >
-> >     MAKEFLAGS=3D<value> $(MAKE) ...
-> >
-> > That said, I question whether modifying MAKEFLAGS is necessary here.
-> > The only flag we might want to exclude is --no-print-directory, as the
-> > tools build system changes the working directory. However, people might
-> > find the "Entering/Leaving directory" logs annoying.
-> >
-> > I simply removed the offending MAKEFLAGS=3D.
-> >
-> > [1]: https://savannah.gnu.org/bugs/?62469
-> >
-> > Fixes: a50e43332756 ("perf tools: Honor parallel jobs")
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  Makefile | 9 ++-------
-> >  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> I happened to sync up to mainline today and noticed that my build was
-> broken. I bisected it to this change and reverting this change fixes
-> my build on mainline.
->
-> In my case I'm building in a ChromeOS environment and using clang as
-> my compiler. I'm also cross-compiling an arm64 kernel on x86 host.
-> ...but the pure mainline kernel should work there. Presumably the
-> environment is a bit different compared to the typical one, though?
->
-> The error comes up when doing a clean build and the first error messages =
-are:
->
-> In file included from libbpf.c:36:
-> .../tools/include/uapi/linux/bpf_perf_event.h:14:21: error: field has
-> incomplete type
->       'bpf_user_pt_regs_t' (aka 'struct user_pt_regs')
->    14 |         bpf_user_pt_regs_t regs;
->       |                            ^
-> .../tools/include/../../arch/arm64/include/uapi/asm/bpf_perf_event.h:7:16=
-:
-> note: forward
->       declaration of 'struct user_pt_regs'
->     7 | typedef struct user_pt_regs bpf_user_pt_regs_t;
->       |                ^
->
-> btf_dump.c:1860:10: error: cast to smaller integer type 'uintptr_t'
-> (aka 'unsigned int') from 'const void *'
->       [-Werror,-Wvoid-pointer-to-int-cast]
->  1860 |         return ((uintptr_t)data) % alignment =3D=3D 0;
->       |                 ^~~~~~~~~~~~~~~
-> btf_dump.c:2045:4: error: format specifies type 'ssize_t' (aka 'long')
-> but the argument has type 'ssize_t' (aka 'int')
->       [-Werror,-Wformat]
->  2044 |                 pr_warn("unexpected elem size %zd for array
-> type [%u]\n",
->       |                                               ~~~
->       |                                               %d
->  2045 |                         (ssize_t)elem_size, id);
->       |                         ^~~~~~~~~~~~~~~~~~
-> ./libbpf_internal.h:171:52: note: expanded from macro 'pr_warn'
->   171 | #define pr_warn(fmt, ...)       __pr(LIBBPF_WARN, fmt, ##__VA_ARG=
-S__)
->       |                                                   ~~~    ^~~~~~~~=
-~~~
+On Sat, Mar 22, 2025 at 3:11=E2=80=AFPM Julia Lawall <julia.lawall@inria.fr=
+> wrote:
 >
 >
-> I don't have time to dig right now, but I figured I'd at least post in
-> case the problem is obvious to someone else.
+>
+> On Sat, 22 Mar 2025, Abraham Samuel Adekunle wrote:
+>
+> > The line is a function call which ends with an opening parenthesis
+> > thereby not adhering to the Linux kernel coding style.
+> >
+> > Modify the function call to include parameters on the same line as
+> > the opening parenthesis to improve readability and consistency while
+> > adhering to Linux coding styles.
+> >
+> > Reported by checkpatch:
+> >
+> > CHECK: Lines should not end with '('
+>
+> Please check the get_maintainer script (see tutorial).  It looks like
+> there are some other people who should receive patches on this driver.
+>
+> julia
+>
+Thank you very much for your review.
 
-I do not understand how to reproduce this.
+Please just to be sure, do I include the emails of the people I
+initially sent the patch to or
+I should only send the patch again to the other people I did not
+include initially?
 
-Your build machine is Chrome OS, or other distributions?
-Did you build the upstream kernel or downstream one?
-What is the build command?  Just "make" ?
-
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Adekunle.
 
