@@ -1,56 +1,67 @@
-Return-Path: <linux-kernel+bounces-572153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3651DA6C76B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:27:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB733A6C76C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7F13BC7DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:26:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44199189819F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB3813A265;
-	Sat, 22 Mar 2025 03:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9437213635E;
+	Sat, 22 Mar 2025 03:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QQixpt1p"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mUYVwEye"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CEC2AE68;
-	Sat, 22 Mar 2025 03:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6F33D8;
+	Sat, 22 Mar 2025 03:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742614016; cv=none; b=Quilq8kPbysUZKToA4jGARCCOXHPEGaikhh9i37b3oBaJQqGTEI9wyS2BXf5sfPJZXy+9rpput+FQ1kgPt+A67nk0ifKiKCypqyWX8mz/J+PJ8AD70uNKeZr/11YSgXBkFZpw4f3qvUIK8kjgpnC+Ex2pNTYtVqKyLuSW5fa0Lw=
+	t=1742614392; cv=none; b=k/a9AiBLsMPLvsGD2JKuw+guS9kA3ay4epLxHiIY05GKwuDPRfFDTaeI+9g5RHHnkRiAAqTNypKTtnpmzIOZsjYEhSai4LQ1/xo4BN6xxsOSmP68vbyZXa/EjX5vdHpGhvGU3yHdeJChRnogCSxEqK9Yzk8DMl74LzDPu8aaFnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742614016; c=relaxed/simple;
-	bh=j/LLCUoHPTXw6oYdSB1Eys5I0Z51vRy6sNGAztxMUVA=;
+	s=arc-20240116; t=1742614392; c=relaxed/simple;
+	bh=ceGLH2OtSdendbouHLsqHGgZ+QIApJ9DTY98Efe95Y8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+NeSDvO3VSDLAwYnHmXt25o8CWr5O2tDlj7uNe58T9Mxu6CpUHPDBOgFFjaFxqEgAZrDtQlRiUWh46Wcewl/Ffri3yLShsJQblZhPIMTFhQH1uR0JLr4FwpxOTCe6b32GommlcdtzpzooPRN/4f/60Eo/fcAQyDUYOnp6PcFj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QQixpt1p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 039DEC4CEDD;
-	Sat, 22 Mar 2025 03:26:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSZSc3X9TkA9bCa8ybWL3bk38WKTuC4Od7RvZK2KpVJ1pbNczPLfM2aQGtOcN7tIjJt5nyZANZcjrIM0ldBud0tSjksNfNgKubew/eRFZcwv5T6pIVzi5aVX9MWPF7+/QCmjUE7D+664XQ1zVM5LwRfKBw9u0hCVddkkf4k1mbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mUYVwEye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15ED9C4CEDD;
+	Sat, 22 Mar 2025 03:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742614016;
-	bh=j/LLCUoHPTXw6oYdSB1Eys5I0Z51vRy6sNGAztxMUVA=;
+	s=korg; t=1742614391;
+	bh=ceGLH2OtSdendbouHLsqHGgZ+QIApJ9DTY98Efe95Y8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QQixpt1pTaqRE8oX75cQB/vvVlCL9Oja8tOWjGN9uwR7jMwNuXv/8OIMmwmH+Wcli
-	 gtIAh1t+pS99Uws30XLJ29IvO6rQ2l6MdutL6mXeOIOlxSf2WKDMS5wENAb18X78qY
-	 4GcuRtnTl3JglbuBJ5tn9SD1/6s2dPih+wPBagW8=
-Date: Fri, 21 Mar 2025 20:25:34 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] rust: platform: impl TryFrom<&Device> for
- &platform::Device
-Message-ID: <2025032112-defendant-devourer-db5b@gregkh>
-References: <20250321214826.140946-1-dakr@kernel.org>
- <20250321214826.140946-4-dakr@kernel.org>
+	b=mUYVwEyeG7U805rVloJImuzfUgeuOHtqFrcsMTFLpCD8BjC7PYHtEM59/P+Yjka3Y
+	 qdWJBqw8VX0MnVfwNBM2xKhUpnw3pDwefzhyFDoW9i7WHC5T2fn5ELv/6Cgi8RM8WX
+	 PW4iAnvbgWnIzYy3JxZFxQKnFgq5LdgN8zdCrK2k=
+Date: Fri, 21 Mar 2025 20:31:49 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
+	mcanal@igalia.com, Alice Ryhl <aliceryhl@google.com>,
+	Simona Vetter <sima@ffwll.ch>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC v3 10/33] rust: drm/kms: Add
+ ConnectorGuard::add_modes_noedid()
+Message-ID: <2025032142-handsaw-gumming-40db@gregkh>
+References: <20250305230406.567126-1-lyude@redhat.com>
+ <20250305230406.567126-11-lyude@redhat.com>
+ <20250314-observant-cyber-chowchow-bfe5f9@houat>
+ <dea3218eb31f3e91d2a10f93a7bc6cfa674546e6.camel@redhat.com>
+ <2d39187892737438c35791aa59681b1af7e62de7.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,26 +70,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321214826.140946-4-dakr@kernel.org>
+In-Reply-To: <2d39187892737438c35791aa59681b1af7e62de7.camel@redhat.com>
 
-On Fri, Mar 21, 2025 at 10:47:55PM +0100, Danilo Krummrich wrote:
-> Implement TryFrom<&device::Device> for &Device.
+On Fri, Mar 21, 2025 at 07:52:23PM -0400, Lyude Paul wrote:
+> On Fri, 2025-03-21 at 19:50 -0400, Lyude Paul wrote:
+> > On Fri, 2025-03-14 at 13:02 +0100, Maxime Ripard wrote:
+> > > On Wed, Mar 05, 2025 at 05:59:26PM -0500, Lyude Paul wrote:
+> > > > A simple binding for drm_add_modes_noedid() using the ConnectorGuard type
+> > > > we just added.
+> > > > 
+> > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > > ---
+> > > >  rust/bindings/bindings_helper.h  |  1 +
+> > > >  rust/kernel/drm/kms/connector.rs | 11 +++++++++++
+> > > >  2 files changed, 12 insertions(+)
+> > > > 
+> > > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> > > > index 27828dd36d4f2..846eb6eb8fc4c 100644
+> > > > --- a/rust/bindings/bindings_helper.h
+> > > > +++ b/rust/bindings/bindings_helper.h
+> > > > @@ -13,6 +13,7 @@
+> > > >  #include <drm/drm_crtc.h>
+> > > >  #include <drm/drm_device.h>
+> > > >  #include <drm/drm_drv.h>
+> > > > +#include <drm/drm_edid.h>
+> > > >  #include <drm/drm_encoder.h>
+> > > >  #include <drm/drm_file.h>
+> > > >  #include <drm/drm_fbdev_dma.h>
+> > > > diff --git a/rust/kernel/drm/kms/connector.rs b/rust/kernel/drm/kms/connector.rs
+> > > > index 14de3b0529f89..855a47b189a91 100644
+> > > > --- a/rust/kernel/drm/kms/connector.rs
+> > > > +++ b/rust/kernel/drm/kms/connector.rs
+> > > > @@ -446,6 +446,17 @@ fn deref(&self) -> &Self::Target {
+> > > >      }
+> > > >  }
+> > > >  
+> > > > +impl<'a, T: DriverConnector> ConnectorGuard<'a, T> {
+> > > > +    /// Add modes for a [`ConnectorGuard`] without an EDID.
+> > > > +    ///
+> > > > +    /// Add the specified modes to the connector's mode list up to the given maximum resultion.
+> > > > +    /// Returns how many modes were added.
+> > > > +    pub fn add_modes_noedid(&self, (max_h, max_v): (i32, i32)) -> i32 {
+> > > 
+> > > Why do we need a tuple of i32 there instead of two u32/usize parameter?
+> > > 
+> > > And the return type should be unsigned as well.
+> > 
+> > I think I was just copying C (or whatever the bindings here translate the C
+> > type to), but I don't see any issue with changing this to u32.
 > 
-> This allows us to get a &platform::Device from a generic &Device in a safe
-> way; the conversion fails if the device' bus type does not match with
-> the platform bus type.
+> ...wait. Now I remember why I did this: it's not that we expect it to be
+> unsigned, it's that the largest possible u32 value cannot be expressed in a
+> i32, and I think the C side of things uses i32. Days like this I really wish
+> we had a u31...
 > 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/platform.rs | 25 +++++++++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
+> think it would be OK for us to convert this to unsigned on the C side of
+> things?
 
-Same comment as on the pci one, let's figure out if we really want this
-before it gets merged please.
-
-thanks,
-
-greg k-h
+Yes please.
 
