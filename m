@@ -1,164 +1,92 @@
-Return-Path: <linux-kernel+bounces-572130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E967A6C6F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:31:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92CE9A6C6F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53823B7E36
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08075464336
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52852E630;
-	Sat, 22 Mar 2025 01:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C7B1BF37;
+	Sat, 22 Mar 2025 01:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="dWlcz99P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X977S+bV"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kN61HcqU"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F509258A;
-	Sat, 22 Mar 2025 01:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE3B4C6C
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 01:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742607106; cv=none; b=gVrrxLPwiMcrPy99kg+Libc22YixVhNSTZLjRms6BHWJU3MYGWCzGOQY3nNVjgCX9oDv8vRgM50XW5TsbqXCdCzrEIQeFYX0MeWpz6f9z0cNvGTZFdfLFQSZWHYwVmQCxpW14LlmHMwK+HekwDF/tXidyHXb5B8i6MgiZt1LGrA=
+	t=1742608015; cv=none; b=un+7MaxZ0RpyKgo941+/bzRPtbf27kQZdU0ljse6xUrMnKX7ehbVjOeWKjt2ID+LFklrOi/N2bcHDWTRy9GN+RRhoHpF5m0RyeXZv9OY0sdD/gIcIs5exTMSy2H1dqemA57tAu3GiAMDx4c2NlVLjjn05kjKgM4Bw1NBtwdsAa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742607106; c=relaxed/simple;
-	bh=OYnA3JyfWazDaBC5rsgE12wzV8ZoqYbBHOXA4cJgxDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSu1wiJOWmSsJ9sHg+9Ke9Bqp3n/8ViQE4tFWgDfGgUzjie8kexLdufnzbGDLatwExp0zkifOV4VAGj6GabkywSYm7QRqBr5WTLVZPopSgQQLsv1/by5b2zZaXDHHxM7hyRss03KbARVLNtgK4Weyd+sXP5hcg2M1aAmWlv5oaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=dWlcz99P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X977S+bV; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id EB3D011400F5;
-	Fri, 21 Mar 2025 21:31:42 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Fri, 21 Mar 2025 21:31:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742607102;
-	 x=1742693502; bh=QfeiCm/jbhV2+/8QZqsamnLkMHeChIyhwx0F6Pfi/FI=; b=
-	dWlcz99PpnkFmZUzg0aGhRaQ2nwxJ4AuWp/yklfOsZS6jeYyZfsJiGAAKFMsOt8l
-	LRsoBvr4aS2lXQRpOTTcoOyzSmctlRSMrBlYrewAbEQS0p22p9jrbb0U3Jv08nsq
-	TpyjshJEg83xNEyA7grglow2ifmwl9hNNlOCMCnodwokTSA1Lxad6TdJzfj6AUdo
-	VWSBYS+6RJtkg63wDmUrJfRWswHau7j7ZkYkQLfTJ8z7TzRjHRWv5GBroaY0Ahpv
-	94RSLMbUfPntXKNjV+u3GK25W55Dp8yT8F0qfV8+9Bd+LgwPyaCbCjzKTYwKzl+i
-	xvyAsOlynUUxgLk40ewJ+w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742607102; x=
-	1742693502; bh=QfeiCm/jbhV2+/8QZqsamnLkMHeChIyhwx0F6Pfi/FI=; b=X
-	977S+bV6aV2/yPoQt0WKlFgTJnNAnT4sVdbKfgDUN2BMU4fUUPcyaet0PMPCpK9E
-	e+dMQrDBJ1MbsUQLHidXtj41IPcawRChSFqDjY3eTtjgDjQQhgFP7yddk8j2cLP4
-	2qMCNaCxPINAulDwk8CO9wQct//UisiaSMaHSTDNTMgiUkI9vb2EthHHGojscu/O
-	7+hBWTZEXhAVuY0L7apW0yraN7byB6VvUDWLrh7/UtYvRF6FQ41VbhNgdPjbTpKA
-	wBXtL33JjpqnI7BN+4IYBdZZzD2Kwy3XDcyNTuE8QR23LuwR3Y9mxyrfc48tzKBc
-	fJvLgEWBpX4toGmizXMow==
-X-ME-Sender: <xms:_hLeZ7UG_-Fwld98PzmGLu4_NU_zb3JUg8FEorWTDbut-Bo1PJq7OQ>
-    <xme:_hLeZzmVbsZvOhuSXPAYzuGxfXB7QyrWUexObZlCB1jbJLFxpmIvVrmyLAs1Mum7E
-    aFeMAzGKyZvZjsFRbo>
-X-ME-Received: <xmr:_hLeZ3YXE82Ma_F--cV74JxneweA9NurXg0yJZ8dajkBnecrVX2MIYGdt0et28YLbPAvUb_Z>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedvieeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
-    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
-    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
-    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:_hLeZ2Vt4LE06p7tWePoWLOC1MMKIuLycWm0rpDZ8kmUbg1FLcPdzw>
-    <xmx:_hLeZ1kWNwoq6uvoqjCLSTb310wn8QBnZMxY9avMLj4B16gQmNBpXA>
-    <xmx:_hLeZzcWeyC0oNXTdSYwVdpUboVdKD150Sw2bS2FYGuzoYilQkRR3A>
-    <xmx:_hLeZ_FwrwlVLZKpgpEM0vNgP9EuRQpthOp2-pHUFfk9vpyvXrfvQg>
-    <xmx:_hLeZ37JLlH16It7Bxay5mK_gVOh0vXIgl0WbXxvu2acvt2KFc_Rl4Jp>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Mar 2025 21:31:38 -0400 (EDT)
-Message-ID: <aeacafa2-2155-4cd1-9a1b-cd2ee7634497@ljones.dev>
-Date: Sat, 22 Mar 2025 14:31:36 +1300
+	s=arc-20240116; t=1742608015; c=relaxed/simple;
+	bh=/5psgy0rCLw4CT+nCNS3iW5/pvkqFDYd47LPvQHNTU0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=HYVrir2f5/bk4+l0rMg4hQ0PJMKm3jcipAO8zfJEWpQTbnOi5mzQuYXhoPFSgHq50y61gIgjeMBmfUwTlHMDI5luoNpdxAeaptCzok1nDqfqTPJc5/52OzmckezFG18mWmNgWpJqiHnOMg0Zds/DQnDVusHNjkteR1j2Bw/U+IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kN61HcqU; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1742608001; bh=C44m/BUfxEtb4vgFulHVWGq13NMf+AJYwIZ2/k54gqA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=kN61HcqU2p+1WKpcJUqoqXoP3vg5Y8jf/DVKQn5b2UUSjw6vXmHwi7fKG8ZPPmPN3
+	 qHaQanrg4pFGZVJbAwvQBvPIEv36K3R8n7PYjFI8SLBl4gRyuiumhLdwYSWZ6GTDUo
+	 cR2/4NHI0ibBKEdN6/XaQ3vz4OvYccM/6PeugihM=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id A1F252FE; Sat, 22 Mar 2025 09:40:31 +0800
+X-QQ-mid: xmsmtpt1742607631tpmd13a43
+Message-ID: <tencent_688C7427774F66123C313646971437C04A09@qq.com>
+X-QQ-XMAILINFO: MbMMSJ8sGwqs6PERxS64Z5WO42ISphgLpWXKoL9S/9frHgCoQhiMrD/ApS2Jco
+	 u8il7vRQFSVmN7+u+Vd0msw34/+J5MmQ8+qou2bKn710mA4Jj6w/MSSu89eon0ztgLIN9TQhILsd
+	 QcqUN7dLBN6ZVYPgd7bkesb7YW8c5m6qoYqCEVXFhogw6OlAWAtGqq8xjCRi7tXc1NodD/OMN+p4
+	 +4B0Pvrm/MuQdaH/3DuWvFp1Z3I+vk0KNQZsJTDgI6IqT5INaSsubzBh3LD1MaBu7EKlXbAvOyLf
+	 0j6LHWIymUwS8e3Db3cV2lgRLW3mL0Hkwq8nodiNaiIpmU0wcsU30b7y/B6/9dCH4a7chn2YzF5t
+	 8g3CX8yUsBkl/uEJZqbzaE56+7mogA78M7v59xKm1L+TgtN8NF/4pDIGK9tK7bnvb1JNfr2V4PBF
+	 4azzfIsRrySOoa9nbly/Wq7sBzrIVDGQRYJeO8FUZGSvL7zPaFgfeWzilev1qLfzDedadUNAV8fw
+	 464GuLW7IIvc6BS/rOoRDwT4CRZgZWIn7R931UVoy6G0fDnuDQ+Nb7YAvjZhRJs6CMcwZ/2sA5X3
+	 gIsbyGluh+jyfz8XAEdtIgXG7gc199dilIoXWC8WyXBOKCk8LNSyFaZ89095IqWtdFGlrdfw8FyV
+	 OAokIYkyD0QEqXtrjQPJ2mNCiFyqwfLTSFCLXjbaa+MpipzZyA5lg16XocFfyBwr6dfArWfA7Og0
+	 jUQ4HWgBYl0asPMy10WmIcCUCSuatymEnx2+wGIo58xHYq1iFGl4YskgBpDbNglSW/SNBwB1AXmj
+	 vWX5xvY3eRN2bRYzh2jL1qNpTyqX1T0kdvpEPeJfzVfyPgzMRLb6z5B0LqEYfrCO20wcbCk3lrEX
+	 gw3wSyvO5szLkwKME/SWT87CEZ+Ap0bw==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+Date: Sat, 22 Mar 2025 09:40:31 +0800
+X-OQ-MSGID: <20250322014030.29324-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+References: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/11] HID: asus: rename keyboard3 to Z13_FOLIO
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <20250319191320.10092-5-lkml@antheas.dev>
-Content-Language: en-US
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <20250319191320.10092-5-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/03/25 08:13, Antheas Kapenekakis wrote:
-> Rename the generic keyboard3 to Z13_FOLIO as it refers to the folio of
-> the Z13. Both 2023 and 2025 variants.
-> 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/hid/hid-asus.c | 2 +-
->   drivers/hid/hid-ids.h  | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 490a7ea369961..cdd9d9c4fc95f 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -1332,7 +1332,7 @@ static const struct hid_device_id asus_devices[] = {
->   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
->   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> -	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3),
-> +	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO),
->   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> index 7e400624908e3..b1fe7582324ff 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -209,7 +209,7 @@
->   #define USB_DEVICE_ID_ASUSTEK_ROG_KEYBOARD3 0x1822
->   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD	0x1866
->   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2	0x19b6
-> -#define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3	0x1a30
-> +#define USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO		0x1a30
+#syz test
 
-Hi Antheas,
-
-I checked history of the Z13 and use of the 0x1a30 PID and it appears 
-only the Z13 folio ever used this PID.
-
-
-Reviewed-by: Luke D. Jones <luke@ljones.dev>
-
-
->   #define USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR		0x18c6
->   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY		0x1abe
->   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X		0x1b4c
+diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
+index 2956d888c131..c1c52571b0ed 100644
+--- a/fs/ocfs2/quota_local.c
++++ b/fs/ocfs2/quota_local.c
+@@ -485,7 +485,7 @@ static int ocfs2_recover_local_quota_file(struct inode *lqinode,
+ 			break;
+ 		}
+ 		dchunk = (struct ocfs2_local_disk_chunk *)hbh->b_data;
+-		for_each_set_bit(bit, rchunk->rc_bitmap, ol_chunk_entries(sb)) {
++		for_each_set_bit(bit, rchunk->rc_bitmap, (ol_chunk_entries(sb) + 7) >> 3) {
+ 			qbh = NULL;
+ 			status = ocfs2_read_quota_block(lqinode,
+ 						ol_dqblk_block(sb, chunk, bit),
 
 
