@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-572506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1082A6CB02
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:57:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD86A6CB07
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F93B521E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A4C8A62F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF92237168;
-	Sat, 22 Mar 2025 14:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72ED230D0F;
+	Sat, 22 Mar 2025 14:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ya.ru header.i=@ya.ru header.b="G6UITqIl"
-Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	dkim=pass (1024-bit key) header.d=ya.ru header.i=@ya.ru header.b="euJzr8cf"
+Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEA922DFA7;
-	Sat, 22 Mar 2025 14:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355F822F150;
+	Sat, 22 Mar 2025 14:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742654620; cv=none; b=TDiOmaZpzBOfrBjfB0pJSUpUO4TZp53zZu1W+r64vQ1ccQsSDREEreR0237ambGIV9D6/jCKTMzl32NvsDVwpGclwTWY1FCIlv4mD5cmtQPsjkxk/u1bciBL9eNX4qHaB38owNF9E8wZo0PW5mjl/wcF7AHvSbdX2DOgdXIa4hk=
+	t=1742654629; cv=none; b=YB0jGZOgKP72WcUxH3JrK1pNZfGLfHbebGMptafBrBfQUJ0mpWV/33lxkEqSBleSEW3y2J1Da1ZCXC7hSW3nHcd3eGcJ/YnNXaI6kXkIuFNwWYScSzo1wY6PHe5HSnUCy7iNs8DitHpbEsZs4qGYx081x/gRkyUxQFNGqPrYG6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742654620; c=relaxed/simple;
-	bh=7yG/PXfDqwyI4cGBCoEIAcdeDS7CWAFlIQcXhywI514=;
+	s=arc-20240116; t=1742654629; c=relaxed/simple;
+	bh=VbPOLiZGFhs/dnM9GRqxHeyClazPP3Jwszk1hlGy1cU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ruwGtdvOxugpHg5JHWNQ0Gc7k4uS7B4baxAj/8BEZi0uz6nb9eD17ZDptQT+U6mBB/GEtLjoQy++Z+fa/luPKi/Uo0aPVDCIb3ruoF77+QIvxN/faeoaUcq+oKVUHdrWnG3e1xUoe0ITAwY2P7A2vcjatZLap1hhzGCm4fT0EuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ya.ru; spf=pass smtp.mailfrom=ya.ru; dkim=pass (1024-bit key) header.d=ya.ru header.i=@ya.ru header.b=G6UITqIl; arc=none smtp.client-ip=178.154.239.84
+	 MIME-Version:Content-Type; b=NNYzxNwaa9PW5DTrJ9HwfLxgeT/RxjpFwQTzi25n9AQTtFCHO5Ngu18J92D4o1PLlj6fvv6PEp7O5jO/R9JrFM9N6AdqqxNXDSESGW6Aa2OF97qA65Ne2lhpPIpNk8sjDZSKoq1YYFz5lquuuYEPsgN9brEBq+m85d4iMfmr/ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ya.ru; spf=pass smtp.mailfrom=ya.ru; dkim=pass (1024-bit key) header.d=ya.ru header.i=@ya.ru header.b=euJzr8cf; arc=none smtp.client-ip=178.154.239.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ya.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ya.ru
-Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:4795:0:640:c576:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id C1D9360C65;
-	Sat, 22 Mar 2025 17:43:36 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id YhN37KXLaqM0-YnNXQIWB;
-	Sat, 22 Mar 2025 17:43:36 +0300
+Received: from mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:5b1c:0:640:ee42:0])
+	by forward100a.mail.yandex.net (Yandex) with ESMTPS id F3D1C472D2;
+	Sat, 22 Mar 2025 17:43:44 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id fhNjW2XLdCg0-Ia2XVoYN;
+	Sat, 22 Mar 2025 17:43:43 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ya.ru; s=mail;
-	t=1742654616; bh=rxAS9CPftJgSLLRDAiW0KeAGjWyu0a/SCLO12hf8k7Q=;
+	t=1742654623; bh=rXNdV4eDcKtTa7fQdd2S0RbtuIcq+/dV5+m0pfB7cYk=;
 	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=G6UITqIlY3O+MyMTpCbanCqEmM6UaTdmp8FF7f3RLuhTlyK7EJAq0168xiDCF/Aet
-	 +SgMYR4CMP/37sbcd9yCDLHsjaXFURKDvq5ll519VC9tPWbxXF6HJpYNL7n83sWYCg
-	 nzisc2pgCDHzckuAw6NL8XinYi0Y17SNBPF9AGdU=
-Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@ya.ru
+	b=euJzr8cfjpJAGslkA43abi1Vp1kfqwQ4vWf8HqDnjoqWuEd/iHcM+kUBpUbBzfXNu
+	 vgM/3jwgXLmQ4mFMZfl3920SMMU/neTKfS2w9h+a5pk/osGOoh0LwE1rDllG5CJVFc
+	 04TA9NJ8MJbCl/A7Dy1Hd9KQEUv2eh72i2R5nEwM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net; dkim=pass header.i=@ya.ru
 From: Kirill Tkhai <tkhai@ya.ru>
 To: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: tkhai@ya.ru
-Subject: [PATCH NET-PREV 46/51] 6lowpan: Use __unregister_netdevice()
-Date: Sat, 22 Mar 2025 17:43:34 +0300
-Message-ID: <174265461407.356712.9206164277601393221.stgit@pro.pro>
+Subject: [PATCH NET-PREV 47/51] netvsc: Call dev_change_net_namespace() under nd_lock
+Date: Sat, 22 Mar 2025 17:43:41 +0300
+Message-ID: <174265462185.356712.4688744451151879026.stgit@pro.pro>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <174265415457.356712.10472727127735290090.stgit@pro.pro>
 References: <174265415457.356712.10472727127735290090.stgit@pro.pro>
@@ -63,37 +63,39 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-->dellink is going to be called with nd_lock is held
+We want to provide "nd_lock is locked" context during
+NETDEV_REGISTER (and later for NETDEV_UNREGISTER)
+events. When calling from __register_netdevice(),
+notifiers are already in that context, and we do the
+same for dev_change_net_namespace() here.
 
 Signed-off-by: Kirill Tkhai <tkhai@ya.ru>
 ---
- net/6lowpan/core.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc_drv.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/6lowpan/core.c b/net/6lowpan/core.c
-index b5cbf85b291c..bd77076b125e 100644
---- a/net/6lowpan/core.c
-+++ b/net/6lowpan/core.c
-@@ -71,15 +71,19 @@ EXPORT_SYMBOL(lowpan_register_netdev);
- 
- void lowpan_unregister_netdevice(struct net_device *dev)
- {
--	unregister_netdevice(dev);
-+	__unregister_netdevice(dev);
- 	lowpan_dev_debugfs_exit(dev);
- }
- EXPORT_SYMBOL(lowpan_unregister_netdevice);
- 
- void lowpan_unregister_netdev(struct net_device *dev)
- {
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index be8038e6393f..cc9f07f8d499 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2365,6 +2365,7 @@ static int netvsc_register_vf(struct net_device *vf_netdev, int context)
+ 	struct netvsc_device *netvsc_dev;
+ 	struct bpf_prog *prog;
+ 	struct net_device *ndev;
 +	struct nd_lock *nd_lock;
-+
- 	rtnl_lock();
-+	lock_netdev(dev, &nd_lock);
- 	lowpan_unregister_netdevice(dev);
-+	unlock_netdev(nd_lock);
- 	rtnl_unlock();
- }
- EXPORT_SYMBOL(lowpan_unregister_netdev);
+ 	int ret;
+ 
+ 	if (vf_netdev->addr_len != ETH_ALEN)
+@@ -2384,8 +2385,10 @@ static int netvsc_register_vf(struct net_device *vf_netdev, int context)
+ 	 * done again in that context.
+ 	 */
+ 	if (!net_eq(dev_net(ndev), dev_net(vf_netdev))) {
++		lock_netdev(vf_netdev, &nd_lock);
+ 		ret = dev_change_net_namespace(vf_netdev,
+ 					       dev_net(ndev), "eth%d");
++		unlock_netdev(nd_lock);
+ 		if (ret)
+ 			netdev_err(vf_netdev,
+ 				   "could not move to same namespace as %s: %d\n",
 
 
