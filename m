@@ -1,333 +1,128 @@
-Return-Path: <linux-kernel+bounces-572238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91752A6C81D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:42:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B78A6C81F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091C217D076
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6923ADB9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4993718FC6B;
-	Sat, 22 Mar 2025 07:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6E31ADC86;
+	Sat, 22 Mar 2025 07:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4itEqZW2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LZmjtscw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ipw7TbEB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CF82868B;
-	Sat, 22 Mar 2025 07:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9798918A6CF
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742629320; cv=none; b=MxsVxaw+Vc6AlzjU8it7lncgerCa1gGlakp5RFTjmsutREbysiveoDFNK9tAgiZ4T5ogQBRwiyvHxiqag2bzrUYKxXCSXVMMe4N7/uRzUjdkRBhUU794hDNr3JUeDm43SVwSbtaTuwPYPCd0qwAHy1H1vhIdt7F8vSX3OLfuT84=
+	t=1742629363; cv=none; b=PiKFdvXNmCpRPuVfGKbhxz9dOQocLyRC45McQMnP5a4TQbu5DenMnmC7jPCF3mQfKa6oVPN41Z/CiINke5nfg56APhPAzmQsyUx3iRWmja5Bq3DOvYDdVF5/NxepHQpmBvu4TwcwmAK5/14LM8QBjmakWLF7byjcJMn/lt+AXfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742629320; c=relaxed/simple;
-	bh=Uw9/gC9Zg+3dVzws4MAEK3b5DOnbroOmD/qTvzXt30E=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=q5r7PpCDgHVsXruwRlLAROlVZtl7t/rc/D+XLMiXEo5RIdRNXwy2kqTvpw0DTowRA7xHOrPf236FIxxN++cvQ2QwkdlDRdg4Lg2GEi6PSPxOsjGLXJmdngXablV62tDtdp0UU7Xq3NbhSWXvUYWUEvN1H09jljPTspBB4tRQTdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4itEqZW2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LZmjtscw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 22 Mar 2025 07:41:55 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742629316;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1742629363; c=relaxed/simple;
+	bh=MCdKmMKBoyyUMRKRf7hO+90afl2SCZ5ynOJsDkhJ9mQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smRq/jPry8hFEOotFLNK09c8300tKLfX20B/+Zbh4HolYkSvo3bcBgXToGVB+qKjY9/4x+eFf4ukx4WInAk2x5dMsAegM70aqrehHFvO9xave7xsnX3idKh3f9K6ciV4NgTN2fj5+tVLbpGan/dC7cTlVmFcSprqBX4dmiLOqD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ipw7TbEB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742629360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gdlJKnOkZ6PTszVGWvmmRWsLkA/cQ3OAOFvnDSMODBI=;
-	b=4itEqZW2H0e1uI/hpaBtg89L+pwPKre6H2AU4xG9IbgrHOw2AEkj2+uC6q3QktxauNLIXo
-	26aNIBIhyCbYl+l+dSMkQvTQorbvyliYn7GMbsMzq+9mfjpdj26O5+pFRIhfKxL4iMsvNv
-	CAMLIkCEU0lEZjoMDAerWNI3nqyPWK8M5OoqCiP0skYAePxc9X07PV8/HDARd8gf9/lPyi
-	63aZRfEcSkAsXnNuIxgTXJBAR9VnDDSRr254vsuLUAX2K1LTVrv6GWKYjwEX8DBrXZ2QDL
-	A4Hwztb8Sz3YoTmt4a36S2ktCDo9ANwAth2NIcgtJZ/Y9KnwqihN4vOWhlbvrA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742629316;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gdlJKnOkZ6PTszVGWvmmRWsLkA/cQ3OAOFvnDSMODBI=;
-	b=LZmjtscwkwNJ9r6wnv18BtKonEgZ5rfDV652pr3qKaxpS7cZrBxxslUt4VUMhLJFURCQNJ
-	tZRxBn1vj9uJ87Dw==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] tracing: Disable branch profiling in noinstr code
-Cc: Ingo Molnar <mingo@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <fb94fc9303d48a5ed370498f54500cc4c338eb6d.1742586676.git.jpoimboe@kernel.org>
-References:
- <fb94fc9303d48a5ed370498f54500cc4c338eb6d.1742586676.git.jpoimboe@kernel.org>
+	bh=eSfN4adD6Yy/dTw2Fx1VYIssqdlx2Rs6iAavKyg5Vos=;
+	b=ipw7TbEBHQgg/kGmITyf8Rc3fWyDt/mJYyhqbaai3efz2G0P1vgu9h9cox83N8FR3SUrgP
+	wvirDeaJl/KyBgxf8cJ/WGa48p+4y9O8U0kEsFwWcLtKw4jv/qUR64SRHgQuE2bmK7A3ZK
+	mW+UlBtNTjAlBe94n1RSFswlFoe0hJM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-7JhKs1JWPs2MMRscdvmx2Q-1; Sat,
+ 22 Mar 2025 03:42:34 -0400
+X-MC-Unique: 7JhKs1JWPs2MMRscdvmx2Q-1
+X-Mimecast-MFC-AGG-ID: 7JhKs1JWPs2MMRscdvmx2Q_1742629353
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 491C6180882E;
+	Sat, 22 Mar 2025 07:42:33 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.5])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B375230001A1;
+	Sat, 22 Mar 2025 07:42:25 +0000 (UTC)
+Date: Sat, 22 Mar 2025 15:42:19 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Xinyu Zhang <xizhang@purestorage.com>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going async
+Message-ID: <Z95p25fOUY6X7lbX@fedora>
+References: <20250321184819.3847386-1-csander@purestorage.com>
+ <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174262931532.14745.2071511367338932162.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The following commit has been merged into the x86/core branch of tip:
+On Fri, Mar 21, 2025 at 08:24:43PM +0000, Pavel Begunkov wrote:
+> On 3/21/25 18:48, Caleb Sander Mateos wrote:
+> > To use ublk zero copy, an application submits a sequence of io_uring
+> > operations:
+> > (1) Register a ublk request's buffer into the fixed buffer table
+> > (2) Use the fixed buffer in some I/O operation
+> > (3) Unregister the buffer from the fixed buffer table
+> > 
+> > The ordering of these operations is critical; if the fixed buffer lookup
+> > occurs before the register or after the unregister operation, the I/O
+> > will fail with EFAULT or even corrupt a different ublk request's buffer.
+> > It is possible to guarantee the correct order by linking the operations,
+> > but that adds overhead and doesn't allow multiple I/O operations to
+> > execute in parallel using the same ublk request's buffer. Ideally, the
+> > application could just submit the register, I/O, and unregister SQEs in
+> > the desired order without links and io_uring would ensure the ordering.
+> > This mostly works, leveraging the fact that each io_uring SQE is prepped
+> > and issued non-blocking in order (barring link, drain, and force-async
+> > flags). But it requires the fixed buffer lookup to occur during the
+> > initial non-blocking issue.
+> 
+> In other words, leveraging internal details that is not a part
+> of the uapi, should never be relied upon by the user and is fragile.
+> Any drain request or IOSQE_ASYNC and it'll break, or for any reason
+> why it might be desirable to change the behaviour in the future.
+> 
+> Sorry, but no, we absolutely can't have that, it'll be an absolute
+> nightmare to maintain as basically every request scheduling decision
+> now becomes a part of the uapi.
+> 
+> There is an api to order requests, if you want to order them you
+> either have to use that or do it in user space. In your particular
+> case you can try to opportunistically issue them without ordering
+> by making sure the reg buffer slot is not reused in the meantime
+> and handling request failures.
 
-Commit-ID:     559bd31518390f80993cd7481cc70fedbfde1c73
-Gitweb:        https://git.kernel.org/tip/559bd31518390f80993cd7481cc70fedbfde1c73
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 21 Mar 2025 12:53:32 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 22 Mar 2025 08:31:10 +01:00
+I agree, the order should be provided from UAPI/syscall level.
 
-tracing: Disable branch profiling in noinstr code
+SQE group does address this order issue, and now it can work with
+fixed buffer registering OP together.
 
-CONFIG_TRACE_BRANCH_PROFILING inserts a call to ftrace_likely_update()
-for each use of likely() or unlikely().  That breaks noinstr rules if
-the affected function is annotated as noinstr.
+If no one objects, I will post out the patch for review.
 
-Disable branch profiling for files with noinstr functions.  In addition
-to some individual files, this also includes the entire arch/x86
-subtree, as well as the kernel/entry, drivers/cpuidle, and drivers/idle
-directories, all of which are noinstr-heavy.
 
-Due to the nature of how sched binaries are built by combining multiple
-.c files into one, branch profiling is disabled more broadly across the
-sched code than would otherwise be needed.
+Thanks, 
+Ming
 
-This fixes many warnings like the following:
-
-  vmlinux.o: warning: objtool: do_syscall_64+0x40: call to ftrace_likely_update() leaves .noinstr.text section
-  vmlinux.o: warning: objtool: __rdgsbase_inactive+0x33: call to ftrace_likely_update() leaves .noinstr.text section
-  vmlinux.o: warning: objtool: handle_bug.isra.0+0x198: call to ftrace_likely_update() leaves .noinstr.text section
-  ...
-
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/fb94fc9303d48a5ed370498f54500cc4c338eb6d.1742586676.git.jpoimboe@kernel.org
----
- arch/x86/Kbuild                    | 4 ++++
- arch/x86/coco/sev/core.c           | 2 --
- arch/x86/kernel/head64.c           | 2 --
- arch/x86/mm/kasan_init_64.c        | 1 -
- arch/x86/mm/mem_encrypt_amd.c      | 2 --
- arch/x86/mm/mem_encrypt_identity.c | 2 --
- drivers/acpi/Makefile              | 4 ++++
- drivers/cpuidle/Makefile           | 3 +++
- drivers/idle/Makefile              | 5 ++++-
- kernel/Makefile                    | 5 +++++
- kernel/entry/Makefile              | 3 +++
- kernel/sched/Makefile              | 5 +++++
- kernel/time/Makefile               | 6 ++++++
- lib/Makefile                       | 5 +++++
- 14 files changed, 39 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-index cf0ad89..f7fb3d8 100644
---- a/arch/x86/Kbuild
-+++ b/arch/x86/Kbuild
-@@ -1,4 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
-+
-+# Branch profiling isn't noinstr-safe.  Disable it for arch/x86/*
-+subdir-ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
-+
- obj-$(CONFIG_ARCH_HAS_CC_PLATFORM) += coco/
- 
- obj-y += entry/
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 96c7bc6..d14bce0 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -9,8 +9,6 @@
- 
- #define pr_fmt(fmt)	"SEV: " fmt
- 
--#define DISABLE_BRANCH_PROFILING
--
- #include <linux/sched/debug.h>	/* For show_regs() */
- #include <linux/percpu-defs.h>
- #include <linux/cc_platform.h>
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 05f8b8a..fa9b633 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -5,8 +5,6 @@
-  *  Copyright (C) 2000 Andrea Arcangeli <andrea@suse.de> SuSE
-  */
- 
--#define DISABLE_BRANCH_PROFILING
--
- /* cpu_feature_enabled() cannot be used this early */
- #define USE_EARLY_PGTABLE_L5
- 
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index 9dddf19..0539efd 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--#define DISABLE_BRANCH_PROFILING
- #define pr_fmt(fmt) "kasan: " fmt
- 
- /* cpu_feature_enabled() cannot be used this early */
-diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
-index b56c5c0..7490ff6 100644
---- a/arch/x86/mm/mem_encrypt_amd.c
-+++ b/arch/x86/mm/mem_encrypt_amd.c
-@@ -7,8 +7,6 @@
-  * Author: Tom Lendacky <thomas.lendacky@amd.com>
-  */
- 
--#define DISABLE_BRANCH_PROFILING
--
- #include <linux/linkage.h>
- #include <linux/init.h>
- #include <linux/mm.h>
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index e6c7686..4e991de 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -7,8 +7,6 @@
-  * Author: Tom Lendacky <thomas.lendacky@amd.com>
-  */
- 
--#define DISABLE_BRANCH_PROFILING
--
- /*
-  * Since we're dealing with identity mappings, physical and virtual
-  * addresses are the same, so override these defines which are ultimately
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index 40208a0..797070f 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -5,6 +5,10 @@
- 
- ccflags-$(CONFIG_ACPI_DEBUG)	+= -DACPI_DEBUG_OUTPUT
- 
-+ifdef CONFIG_TRACE_BRANCH_PROFILING
-+CFLAGS_processor_idle.o += -DDISABLE_BRANCH_PROFILING
-+endif
-+
- #
- # ACPI Boot-Time Table Parsing
- #
-diff --git a/drivers/cpuidle/Makefile b/drivers/cpuidle/Makefile
-index d103342..1de9e92 100644
---- a/drivers/cpuidle/Makefile
-+++ b/drivers/cpuidle/Makefile
-@@ -3,6 +3,9 @@
- # Makefile for cpuidle.
- #
- 
-+# Branch profiling isn't noinstr-safe
-+ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
-+
- obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
- obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
- obj-$(CONFIG_DT_IDLE_STATES)		  += dt_idle_states.o
-diff --git a/drivers/idle/Makefile b/drivers/idle/Makefile
-index 0a3c375..a34af1b 100644
---- a/drivers/idle/Makefile
-+++ b/drivers/idle/Makefile
-@@ -1,3 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_INTEL_IDLE)			+= intel_idle.o
- 
-+# Branch profiling isn't noinstr-safe
-+ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
-+
-+obj-$(CONFIG_INTEL_IDLE)			+= intel_idle.o
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 87866b0..434929d 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -21,6 +21,11 @@ ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_irq_work.o = $(CC_FLAGS_FTRACE)
- endif
- 
-+# Branch profiling isn't noinstr-safe
-+ifdef CONFIG_TRACE_BRANCH_PROFILING
-+CFLAGS_context_tracking.o += -DDISABLE_BRANCH_PROFILING
-+endif
-+
- # Prevents flicker of uninteresting __do_softirq()/__local_bh_disable_ip()
- # in coverage traces.
- KCOV_INSTRUMENT_softirq.o := n
-diff --git a/kernel/entry/Makefile b/kernel/entry/Makefile
-index 095c775..d4b8bd0 100644
---- a/kernel/entry/Makefile
-+++ b/kernel/entry/Makefile
-@@ -6,6 +6,9 @@ KASAN_SANITIZE := n
- UBSAN_SANITIZE := n
- KCOV_INSTRUMENT := n
- 
-+# Branch profiling isn't noinstr-safe
-+ccflags-$(CONFIG_TRACE_BRANCH_PROFILING) += -DDISABLE_BRANCH_PROFILING
-+
- CFLAGS_REMOVE_common.o	 = -fstack-protector -fstack-protector-strong
- CFLAGS_common.o		+= -fno-stack-protector
- 
-diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
-index 976092b..8ae8637 100644
---- a/kernel/sched/Makefile
-+++ b/kernel/sched/Makefile
-@@ -22,6 +22,11 @@ ifneq ($(CONFIG_SCHED_OMIT_FRAME_POINTER),y)
- CFLAGS_core.o := $(PROFILING) -fno-omit-frame-pointer
- endif
- 
-+# Branch profiling isn't noinstr-safe
-+ifdef CONFIG_TRACE_BRANCH_PROFILING
-+CFLAGS_build_policy.o += -DDISABLE_BRANCH_PROFILING
-+CFLAGS_build_utility.o += -DDISABLE_BRANCH_PROFILING
-+endif
- #
- # Build efficiency:
- #
-diff --git a/kernel/time/Makefile b/kernel/time/Makefile
-index fe0ae82..e6e9b85 100644
---- a/kernel/time/Makefile
-+++ b/kernel/time/Makefile
-@@ -1,4 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
-+
-+# Branch profiling isn't noinstr-safe
-+ifdef CONFIG_TRACE_BRANCH_PROFILING
-+CFLAGS_sched_clock.o += -DDISABLE_BRANCH_PROFILING
-+endif
-+
- obj-y += time.o timer.o hrtimer.o sleep_timeout.o
- obj-y += timekeeping.o ntp.o clocksource.o jiffies.o timer_list.o
- obj-y += timeconv.o timecounter.o alarmtimer.o
-diff --git a/lib/Makefile b/lib/Makefile
-index d5cfc7a..4f3d00a 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -5,6 +5,11 @@
- 
- ccflags-remove-$(CONFIG_FUNCTION_TRACER) += $(CC_FLAGS_FTRACE)
- 
-+# Branch profiling isn't noinstr-safe
-+ifdef CONFIG_TRACE_BRANCH_PROFILING
-+CFLAGS_smp_processor_id.o += -DDISABLE_BRANCH_PROFILING
-+endif
-+
- # These files are disabled because they produce lots of non-interesting and/or
- # flaky coverage that is not a function of syscall inputs. For example,
- # rbtree can be global and individual rotations don't correlate with inputs.
 
