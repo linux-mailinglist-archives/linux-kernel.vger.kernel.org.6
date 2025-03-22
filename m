@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-572630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E51A6CC5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:37:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE408A6CC60
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 671407AA364
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D29189B1BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B89A239584;
-	Sat, 22 Mar 2025 20:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC0823534F;
+	Sat, 22 Mar 2025 20:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJJeHfYl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="tel4EGsR"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5FD23535E;
-	Sat, 22 Mar 2025 20:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39F8145A03
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 20:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742675715; cv=none; b=BCNSieuudBGqKiPkjhR8QVK5aCYdXlDNAcjOSne7eRxTY1Of/fdyCN4yGDZXOfdoS2ziO3VsPH/P5Q5qsls+nGk8OOqbsw4XkK9kfSQ9H1YXooSfVABFRBJxnX7FeZf4ZDNOLx/MFpRO++Ege7AGuCGdrfMIz1zNBrAy1AUKXhQ=
+	t=1742675780; cv=none; b=KBOIIDUMdJFHFeOqLlFI6NaXCfLRGbKfKyraRX7PwqVo5hnAipEU0jmGumAuhrtfGRVpFtMf1n2ZbrMVXENqPJpNk7lDZRoQacHut+hybbB7cMyV/adFP/JRT2fuuku6VL0TYm59pZKp02YXLe++9j5kP0IP9FIqM1WpAT74TUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742675715; c=relaxed/simple;
-	bh=p8v3JQ4emsUMjjvSBjOOzwZTgB1SvlkW9F+SuuyZM1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pvAHUSUcJTNGaYAwvqelvHUg2f8WvWhO8FjJ4xT4RT5zsar8qRjEilSZ/eAgvTAu+5QF7WDli3pqBdWm9J9emhBpKaZ+WRRnjIDq8KThg5HXd/NADUvFd0DHO47K/edtQwttQ0gL840BlfTsvplwdg07YAu4j8De6JcDuRkz/A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJJeHfYl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A1643C116C6;
-	Sat, 22 Mar 2025 20:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742675715;
-	bh=p8v3JQ4emsUMjjvSBjOOzwZTgB1SvlkW9F+SuuyZM1o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=KJJeHfYl3yzGUIwImmqR8xWDh/xoz41CsGa2N3ZvJ2+Uzr9yIFnrtV8JlkuUcu0YQ
-	 Ouy2RN/TdTY0RARXo6QMN15NBmtZcraSr7+++reLI0GQatQ2TyP+c5ShKH7ZlhQLYQ
-	 FGjHO4/bBEz4+ZPz1PClqYTh1gnR0t3CyDrJJF6o76jHw8qDRlrbPotMmzleV6W7po
-	 rFBm5TmGLxlp3tpY6CgnOUWJAl84hVyGVBOhpURoeF55YpqwGaazTzEakbPTaho18u
-	 OPt6mO/stFa+IIWM2wA+mfY/PmSmHIzKhBoWIWvx/pJfMWrCr7lz4PASfk8GEBS5bm
-	 gddTVp2bOti0w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 955E4C36008;
-	Sat, 22 Mar 2025 20:35:15 +0000 (UTC)
-From: Julian Stecklina via B4 Relay <devnull+julian.stecklina.cyberus-technology.de@kernel.org>
-Date: Sat, 22 Mar 2025 21:34:21 +0100
-Subject: [PATCH v2 9/9] fs: erofs: register an initrd fs detector
+	s=arc-20240116; t=1742675780; c=relaxed/simple;
+	bh=/zm0caTFpa5mQQPIid8qQMt0SVoU13C1ydN1hUjgYNk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d1yX+V3w4gDVS1oRxRJx+6pj7mUdgXtne3yTUBw7fENi4Ab8dPU7oYvuBLqQcZ5S2u9JzH7T6lg6xsaTytFV9Gq4kZA61yVqQs3ZtS9RYqyWnKeBcex54yi89gxr769sVi6B2ny6pQJ2tT/jVQtpMq7H11sNdtYPuF4x3Yl2O9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=tel4EGsR; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3012a0c8496so3956418a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 13:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1742675778; x=1743280578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RBCRJIfeoI4+hYoyENJ+XtmGOK3o3ECSkLKYl4KE6xM=;
+        b=tel4EGsRZ9i0Mp5lyCT2l7sHMN8qBGw4+M31Xa0xkDQ+MbR0Zq/7ldE15b6VMKOSA9
+         cvxrbjEZD0+3cV8XJwRroptZPoeFkcE2ggo2nEiZI2orL+MyyHj7TZs7D1qfi84bZJIM
+         4Dxen3IrC12Si3RWJw+8bKQ8M4KP1iFajXpEE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742675778; x=1743280578;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RBCRJIfeoI4+hYoyENJ+XtmGOK3o3ECSkLKYl4KE6xM=;
+        b=GA+yKUGmbai40/fsl1OYMezd0O9020c+N06oByn15yIFurhP+kRdvOM/k8SmV405/y
+         0UQNX5G8PgQyf0mPl/JO2KqsM4zeBFMTx9cUxKQY1k8cRdVFW60Upd/kx72ia8amrpTT
+         Zu+Q2NTUv8L3NWQEJQy3rug+AWSaZi7xwYJAVCw/IrgdoPpKCxKgM8hyAGyYUI0unK05
+         fBinYqCoIYOaaj96LeDwIAWN/DHLuqfl3TPT/DvzejLKaNwCCIapC5fO250WeewP9oJW
+         JCJHSxbRhY66Px8a5uC7yObAPl6HabjS3TpPyPKNu1omTrtID/I/e/nQvWDjJdb9GN7T
+         eTew==
+X-Forwarded-Encrypted: i=1; AJvYcCXiVObbUL44J++xqsqGSYV8fHJ17kIUm9RmmJHjwS5lQ2XEV609nkDmezMd+8BIAQ0QNVKoxvAN87ljzsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk6HBAinWmqn33VuP/+SBQ8ZD2TR1vz9qDdEhIdmLLLX401ETb
+	RVUOO5lc54eprvZRdkUei5jti8exkOTYurNbGmQY/2wywZ+FnLLj178XBmloPVk=
+X-Gm-Gg: ASbGncvcZjmA16R9ZhRWYuBV1eFkLT3fW6hpsvIUaMQ+Agg3NAvQW+4k2VfvCH3EoEs
+	vhBmBeezXmEJznSCM7v8iGd1U9/3uI/0VkQuxSXp75D5y45Yz2C5DnaAyXibq3kLKxnCS5xTXEd
+	HM6nnsXADoxTw+ZYjNC758NoOtP71gpHuPmAQ1E96yvtXyjGLcZ9l2muZ8vFjlHaCsFLTlaC74H
+	7FmIRQi7cgTjjOGq8eNBoBsYMA/jwsOfFYvVqJ1XTnSye4DV7tWIRBHyoNOR1qGhzB63tPhF2LO
+	jJ2NkdksKt3dAGI4tVsr2RnkX7vznHxkl3tRJ95mt8q4POUVHQML2sDdAnfucGo=
+X-Google-Smtp-Source: AGHT+IE37OrujyxGFgxAEo8ctQ3AWaU9G2PByR+MB79aOMDqG+16a9oIBZcx1WW8S9MeG/hspBAWTA==
+X-Received: by 2002:a17:90b:4ccf:b0:2ff:64a0:4a57 with SMTP id 98e67ed59e1d1-3030feeb744mr10822043a91.26.1742675777943;
+        Sat, 22 Mar 2025 13:36:17 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a579sm8711798a91.32.2025.03.22.13.36.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 13:36:17 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	brauner@kernel.org,
+	asml.silence@gmail.com,
+	hch@infradead.org,
+	axboe@kernel.dk,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH vfs/for-next 0/3] Move splice_to_socket to net/socket.c
+Date: Sat, 22 Mar 2025 20:35:43 +0000
+Message-ID: <20250322203558.206411-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250322-initrd-erofs-v2-9-d66ee4a2c756@cyberus-technology.de>
-References: <20250322-initrd-erofs-v2-0-d66ee4a2c756@cyberus-technology.de>
-In-Reply-To: <20250322-initrd-erofs-v2-0-d66ee4a2c756@cyberus-technology.de>
-To: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Gao Xiang <xiang@kernel.org>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-erofs@lists.ozlabs.org, 
- Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
- Niklas Sturm <niklas.sturm@secunet.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742675713; l=1748;
- i=julian.stecklina@cyberus-technology.de; s=20250320;
- h=from:subject:message-id;
- bh=3yTdTgTHrBXPDCzHQY85SoPI2ekHfJ9SwSVLMJjjpHc=;
- b=gbKgVEbkExOOnYyBMICxer+0rrpqPN7L6a11TGtSHg9nUJDPcH1Az1Dcltfti9MOJD2CWO7NM
- iXnPdA1cJA4Ct+v+ehZ5rvSbO6BmO84OPaQLlG31oC9XmPYYKZEvguk
-X-Developer-Key: i=julian.stecklina@cyberus-technology.de; a=ed25519;
- pk=m051/8gQfs5AmkACfykwRcD6CUr2T7DQ9OA5eBgyy7c=
-X-Endpoint-Received: by B4 Relay for
- julian.stecklina@cyberus-technology.de/20250320 with auth_id=363
-X-Original-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Reply-To: julian.stecklina@cyberus-technology.de
+Content-Transfer-Encoding: 8bit
 
-From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Greetings:
 
-Allow erofs to be used as a filesystem for initrds. It offers similar
-advantages as squashfs, but with higher performance and arguably nicer
-tooling. If we support squashfs, there is no reason not to support
-erofs as well.
+While reading through the splice and socket code I noticed that some
+splice helpers (like sock_splice_read and sock_splice_eof) live in
+net/socket.c, but splice_to_socket does not.
 
-Suggested-by: Niklas Sturm <niklas.sturm@secunet.com>
-Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
----
- fs/erofs/Makefile |  5 +++++
- fs/erofs/initrd.c | 19 +++++++++++++++++++
- 2 files changed, 24 insertions(+)
+I am not sure if there is a reason for this, but it seems like moving
+this code provides some advantages:
+  - Eliminates the #ifdef CONFIG_NET from fs/splice.c
+  - Keeps the socket related splice helpers together in net/socket.c
+    where it seems (IMHO) more logical for them to live
 
-diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
-index 4331d53c7109550a0518f2ed8df456deecdd2f8c..cea46a51dea2b9e22e4ba1478dd30de3262fe6cb 100644
---- a/fs/erofs/Makefile
-+++ b/fs/erofs/Makefile
-@@ -9,3 +9,8 @@ erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
- erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
- erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
- erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
-+
-+# If we are built-in, we provide support for erofs on initrds.
-+ifeq ($(CONFIG_EROFS_FS),y)
-+erofs-objs += initrd.o
-+endif
-diff --git a/fs/erofs/initrd.c b/fs/erofs/initrd.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..e2bb313f55211a305e201f529d7da810898252ac
---- /dev/null
-+++ b/fs/erofs/initrd.c
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/initrd.h>
-+
-+#include "internal.h"
-+
-+static size_t __init detect_erofs(void *block_data)
-+{
-+	struct erofs_super_block *erofsb = block_data;
-+
-+	BUILD_BUG_ON(sizeof(*erofsb) > BLOCK_SIZE);
-+
-+	if (le32_to_cpu(erofsb->magic) != EROFS_SUPER_MAGIC_V1)
-+		return 0;
-+
-+	return le32_to_cpu(erofsb->blocks) << erofsb->blkszbits;
-+}
-+
-+initrd_fs_detect(detect_erofs, EROFS_SUPER_OFFSET);
+This change is essentially cleanup; no functional changes to splice are
+introduced.
 
+I based this change on vfs/for-next since 2 of the 3 patches are vfs,
+but I am happy to rebase this on another tree if necessary.
+
+Thanks,
+Joe
+
+Joe Damato (3):
+  pipe: Move pipe wakeup helpers out of splice
+  splice: Move splice_to_socket to net/socket.c
+  net: splice_to_socket: RCT declaration cleanup
+
+ fs/pipe.c                 |  16 ++++
+ fs/splice.c               | 170 ++------------------------------------
+ include/linux/pipe_fs_i.h |   4 +
+ include/linux/splice.h    |   3 -
+ net/socket.c              | 140 +++++++++++++++++++++++++++++++
+ 5 files changed, 167 insertions(+), 166 deletions(-)
+
+
+base-commit: 2e72b1e0aac24a12f3bf3eec620efaca7ab7d4de
 -- 
-2.47.0
-
+2.43.0
 
 
