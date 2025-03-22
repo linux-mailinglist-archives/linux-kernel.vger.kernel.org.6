@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-572541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8FEA6CB43
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:46:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD77A6CB44
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1273C189AFDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B9E178CB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23F7231A24;
-	Sat, 22 Mar 2025 15:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65244231A2D;
+	Sat, 22 Mar 2025 15:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b="MzHAif0d"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jefi2Hly"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6994A05
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7C4A05;
+	Sat, 22 Mar 2025 15:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742658372; cv=none; b=bIVlvYMNUDQu1vcJY73nKFtS1MtXlnobfppjacGEBPxl8pTwZe0uMOr8ZWrg9CEH09dHqGGNPdxqvoWwO2ui8222VJLJjsyyM+5lgYKPzJQCPcvIJXmhP08yxAlBCvbf4GvlT4lG9UBSxPKvPxcZFXdZaMdxs/LkeZ4qQHGsh+U=
+	t=1742658392; cv=none; b=H5QaaYNFIeuHhUAn1MRMuQdWjiM0/9AVZzGPNeOzXTbd82/uqQT5PkZfXMVMZoNCcEH5JaGNiQKG006TSzJvxyYXSLv5FqF5Y0ln4C9oo+SGCILulAURbmURak4FoCJknRRr/bCZ8ysLxTsUcqc/QB+kln0c//Do6969JUeU1lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742658372; c=relaxed/simple;
-	bh=SuzvMPktzoydjCyL0FwpRFaRBIUwk4cAP6JvclOH7xw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U4XW9v2B/S4AHIfwztViYXLwn3axI5QXh+gks2ckhXWisi9Kg2wDaMC3OCYEJvdAn0OlybWl8WFwqHZZ7NHoAl+Yjlo2NpPmmvZYvQdHvykH9O2npfcEiiczUs7EAcoI+CXIU995lWdQ4T9Jgbbc/rP05FsySfwHGByAiS3tUG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b=MzHAif0d; arc=none smtp.client-ip=193.222.135.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 45669 invoked from network); 22 Mar 2025 16:46:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=20241105;
-          t=1742658366; bh=RrZUUnezMD9sA4ZZ1DlOQpAlOKevEYBgM8pi3Xou/vg=;
-          h=From:To:Cc:Subject;
-          b=MzHAif0d8A70zpmtUSoD5/fqBHlZ8anW+VUNUxeeuAiKYzuV+etj7+tqeRcaxz6wS
-           PMZ7dUCfgTdKo+xxlRz+uWDuMmPz2HgFg85d2HTJiU08t48uqJRZ60ZCXC7rF9SNlU
-           q1WgjEArHzgKYKGuxrH14nlH1NOx8lzIDPOS3kLmdc3uI4fH3yH9Qsj873ssT0XwrA
-           NKa4+QBg6BuhX2y/xNaYfFyxsYhcu8nYgwfyOX4OQdhuNQxWYFIvhqnfWgSAG0r4Na
-           oudzYrME4w9ODhvF26L8FET6xdSkUuYnRMcgK85/qkT2VQutPm3eSzJLRHUvEDn3K0
-           2cyJ8Ds3FC2KA==
-Received: from apn-78-30-75-41.dynamic.gprs.plus.pl (HELO localhost.localdomain) (mat.jonczyk@o2.pl@[78.30.75.41])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with SMTP
-          for <x86@kernel.org>; 22 Mar 2025 16:46:06 +0100
-From: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
-	David Heidelberg <david@ixit.cz>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/Kconfig: correct X86_X2APIC help text
-Date: Sat, 22 Mar 2025 16:45:41 +0100
-Message-Id: <20250322154541.40325-1-mat.jonczyk@o2.pl>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250321-x86_x2apic-v3-1-b0cbaa6fa338@ixit.cz>
-References: <20250321-x86_x2apic-v3-1-b0cbaa6fa338@ixit.cz>
+	s=arc-20240116; t=1742658392; c=relaxed/simple;
+	bh=XXbDFIx29aMLjfpj/7JWyxtg4oa7yjJE0pcef4MAIFM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cFP/v+OYD7FZ8SnOMTAJkA+tqg78Ku4Ea/tihebV3bl1bS9G12IAJLwWB+6amW2Ggnefs0a+ZrsCYbiK8w614Sreysl1s1OFZrMBYY6q3mcjIh+XxSbdEB23/AdPUuoGxIrOOe0Uaa9HKR2BLIprx+KAxTSsSNrsN5cLoQ3pfD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jefi2Hly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AA0C4CEDD;
+	Sat, 22 Mar 2025 15:46:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742658392;
+	bh=XXbDFIx29aMLjfpj/7JWyxtg4oa7yjJE0pcef4MAIFM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Jefi2Hly3SGho9fmr0TTAaVFe5z4i8RNqyWyBYx+qm30ORkfK2lLEqP3Q65fM4pC2
+	 hHrrLdNkbaxUj9J9ltyyDKG5eRzAtY39DejFabtFcDpScXcivboeoRhZWoQbL/Lcgl
+	 BUoD0jNvE8GcjvNUvPGTM5TF3MxdE3uRorHfXk6zDRP3fJRkEqWSSAI9XQf/FoVuCJ
+	 CO0lILjZK1V1nqlHLOowaWA0pX8wzaMkKWIxArUoCNOmOsjQAjrc3vBaKRB6yNaFHi
+	 5m3nuzJ7h+kfKPD+noWkKCU6VVN9QXZfzG50/YG1T83C25kbvt+XqYHgY4Vsx1n6qn
+	 6rRX9SM2Yp0NA==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30beedb99c9so29545351fa.3;
+        Sat, 22 Mar 2025 08:46:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnQ5IJqkhshfx1MS2taQ5Xj/NlBos4syWATwhEUfE+csvvJ2FZ+CxjecW1HUzDWVQqDvHxtTWJiOfWFtRz@vger.kernel.org, AJvYcCW25qzcbFaN/DY4mYsQNmRPxdZEN30B4y6USGrQlgYQhaIWrehg2k0muL28cdMg9+d9oiK3rb48aKYFJC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV6BZpglV17sfAmFj91mS5QkQLtDI5fCpvPPiluVvvpqiAtjwl
+	f8IGtbQyC8e90YPO5URZ6KZvDGiM2ejSsoeS4LQYNng7eHI6S23xu8ro9jyX1GYgVMtWb8bU7OJ
+	diOD0ckn4qGqfXsDjhcCXI3sgIio=
+X-Google-Smtp-Source: AGHT+IG4OpWVkpTPVkIM5P/6i78csCRcHirWW0I4sYThZn2lb6mP6HgI/MUCcqw/j8bpulugWirtQLNT8OFaGeePHmg=
+X-Received: by 2002:a05:6512:31c3:b0:549:9044:94ac with SMTP id
+ 2adb3069b0e04-54ad648ee45mr3060451e87.23.1742658390836; Sat, 22 Mar 2025
+ 08:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: 3b34c97aa0aaf5ce3c954b86151f96a9
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000005 [Qaat]                               
+References: <20250311-moddesc-error-v1-1-79adedf48d0e@oss.qualcomm.com> <CAK7LNASYFEFFbnqwDuJNf4ngU9uLavJuQqknOimpYeAeHyk1zQ@mail.gmail.com>
+In-Reply-To: <CAK7LNASYFEFFbnqwDuJNf4ngU9uLavJuQqknOimpYeAeHyk1zQ@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 23 Mar 2025 00:45:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARi0gF9dr+bU8nhovBWygsghB7CD_pWUgb3KBH4C1StyQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jro2ostLXtsJURSYO2vWefMV__2XA8fEQYnTYnNEZwzeN5B1j6WacESAyA
+Message-ID: <CAK7LNARi0gF9dr+bU8nhovBWygsghB7CD_pWUgb3KBH4C1StyQ@mail.gmail.com>
+Subject: Re: [PATCH] script: modpost: require a MODULE_DESCRIPTION()
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Arnd Bergmann <arnd@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, it is not true that the kernel will panic with CONFIG_X86_X2APIC=n
-on systems that require it; it will try to disable the APIC and run without
-it to at least give the user a clear warning message. See the second
-variant of check_x2apic() in arch/x86/kernel/apic/apic.c .
+On Thu, Mar 13, 2025 at 9:34=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Wed, Mar 12, 2025 at 4:49=E2=80=AFAM Jeff Johnson
+> <jeff.johnson@oss.qualcomm.com> wrote:
+> >
+> > Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> > description is missing"), a module without a MODULE_DESCRIPTION() has
+> > resulted in a warning with make W=3D1. Since that time, all known
+> > instances of this issue have been fixed. Therefore, now make it an
+> > error if a MODULE_DESCRIPTION() is not present.
+> >
+> > Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+> > ---
+> > did my treewide cleanup for v6.11, Arnd had a few more stragglers that
+> > he was going to fix. I hope that by posting, some of the 0-day bots
+> > will pick it up and hopefully provide some feedback.
+>
+>
+> I pushed this patch to a separate branch,
+> so that 0day bot can compile-test it.
+>
+> If there is no error reported, I will move it to
+> the for-next branch.
 
-Also massage some other parts of the help text.
+I have not got any build error report.
+Moved to for-next.
 
-Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
-Fixes: 9232c49ff31c ("x86/Kconfig: Enable X86_X2APIC by default and improve help text")
-Cc: David Heidelberg <david@ixit.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
 
----
 
-This patch fixes a patch currently in tip.git master and depends on it.
-
-I have not verified recently that the kernel will work at all without
-CONFIG_X86_X2APIC on systems which force enable it - but it was working
-in 2022.
----
- arch/x86/Kconfig | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index e72cb7779038..ef48584c8889 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -471,14 +471,15 @@ config X86_X2APIC
- 	  in 2019, but it can be disabled by the BIOS. It is also frequently
- 	  emulated in virtual machines, even when the host CPU does not support
- 	  it. Support in the CPU can be checked by executing
--		cat /proc/cpuinfo | grep x2apic
-+		grep x2apic /proc/cpuinfo
- 
--	  If this configuration option is disabled, the kernel will not boot on
--	  some platforms that have x2APIC enabled.
-+	  If this configuration option is disabled, the kernel will boot with
-+	  very reduced functionality and performance on some platforms that
-+	  have x2APIC enabled. On the other hand, on hardware that does not
-+	  support x2APIC, a kernel with this option enabled will just fallback
-+	  to older APIC implementations.
- 
--	  Say N if you know that your platform does not have x2APIC.
--
--	  Otherwise, say Y.
-+	  If in doubt, say Y.
- 
- config X86_POSTED_MSI
- 	bool "Enable MSI and MSI-x delivery by posted interrupts"
--- 
-2.25.1
-
+--=20
+Best Regards
+Masahiro Yamada
 
