@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-572117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC26A6C6AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:30:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8C6A6C6B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAE01B61B2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 605A31B61B58
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BE5442C;
-	Sat, 22 Mar 2025 00:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B46522A;
+	Sat, 22 Mar 2025 00:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jLrVt2n9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDR+mbG9"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88EF10E3
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 00:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F295729A9
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 00:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742603431; cv=none; b=FjGAma+Xac5mezKeCcfOy5Ep+ajwHZQhPEk5f8nb32GObqEXdA1agM4bqsbL49aEL0bcYiBC/VyJfxkOxUMSPbtlIGd/S+L8Ibd1UcdsIEKZRuCgPIjrV+RNHCgSpADxa44UrWL95kNkig8rui1PSCeggAqqU6JCtRy3jWVmgtE=
+	t=1742603568; cv=none; b=XpT0FPf1H8A9mDOAZwUoXxo2+uYG68tzcwxsidRG5TsVONwGmXrHqe2AlDLlGreDGypMwDeZz5gGcoCnq6tlYkt2FEcOG8MpCqlEB6x9sWYxSZHRNb5wT/xYQfxK0NWJA1rW+oMn7U6/A06yxy781U4kCujB8MPIWbJQWwqfHn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742603431; c=relaxed/simple;
-	bh=7SdFDQYeZjv11JLX3MiOymGenvE9jIHe54bGvjM9ZuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dgz+ln5Uj4rTE7ylAMPTLVY5yoYpxwfswnuqBC8eDohXAsDvooP9ydJuId1zQH/Tgksl2urIdZQmI2fw37hkzaZBWZlVpCTB2SeaLSfEtiId8D27QJlAQsw/kGDmnE9sXdnup+SvFfQ9QToTeKjTeqnubR6dIXm3qT86EJqsl9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jLrVt2n9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742603428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CWlkvk1KBetht7Ag+Rj3C+3gwynOXUnhWtcvGTCPH9g=;
-	b=jLrVt2n9uHzHId3mmOFi2Elvb+D6B3tMXdqlAbjPBbLQqwyP5Wrg5krf6WELlxHtLapnZf
-	JCkcikUleFRIiY8QWXmIdsM6rIJsMzNX247nxBo4yS6ZiwL8g8V/kwIDd6IyzGsBYY63Xs
-	6cQ4SanMyi8aHbkY/DH6+0NV1wICXAk=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-Y9GCRZT5M960hwWQwzCs9Q-1; Fri, 21 Mar 2025 20:30:26 -0400
-X-MC-Unique: Y9GCRZT5M960hwWQwzCs9Q-1
-X-Mimecast-MFC-AGG-ID: Y9GCRZT5M960hwWQwzCs9Q_1742603426
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d44ba1c2b5so24652545ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:30:26 -0700 (PDT)
+	s=arc-20240116; t=1742603568; c=relaxed/simple;
+	bh=KpilHOOJo67Z4VWOQXgm4x9QaziC64Nge4Tp+ZLbApY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GsDZoIAb0VZVq61U7BHl7oSTEhaeZ7D/jm0ie6BEYt2s+N25F6uv+Z63+TZqqd/aKki5E7nFzpcjyaONdaiSIto0xjXXd1VpYwJhCz5Y3c82bgIIS7Hi9N5QSDZ5CxwtI5tpfiVFZHdiZt2rhDkxuHfuQ7LA+0kw2X77cMJ+/O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDR+mbG9; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso295708166b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742603565; x=1743208365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUyR3Oe6iYVQ9/r3ijgRJfklg/wMi4nHhN2lq9dus2Q=;
+        b=mDR+mbG9CXP8Zq+9NGEukt3OaRi5cCvjjOqt0TOmPOQq/tYWVOESDhRhXacYYOIMt/
+         e9q+gzKaMdSzXIHX9d17GbmzR32EJl392vVrH4b/+Kvcbhc1bXhp46V5Zor+5hR9OmJ4
+         3sKY+1bR3XQR2G/nELThSCHavv7Ul6u7vm8fqehxaZK+yBpGuSh4VrWzE2nSQkNI9XgG
+         PNe3+FSsxKiYoLrvg2YSH7AP0VdnykZtZ97gYrY6q/9/TOfaBgt7GYvUBdnC+3I5JTP5
+         r7MLG7tRSaKa3PLXMKbyj1UuP3RtxNrkZZq81C/TF8JnJM131UQUnqre+mGi5J2RXttO
+         q5vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742603426; x=1743208226;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWlkvk1KBetht7Ag+Rj3C+3gwynOXUnhWtcvGTCPH9g=;
-        b=qroxAq/CKF1GcGBWOhULshx7P1wp/uBvzw9GERt1Ld/0EREvKe0TUiU1hs/SzUi1AG
-         EEz/DYUUVkuUJPcYdsVCPsa9nEbDHIZBj8DvtBs+vLgozbM78UVnXTRoSBumdu/A9Y7F
-         ru3r5H6A5qVlciF/Kb9zi7sKbQ/6mnWW3vTimRB60UktNAUjdffmneRiU8VG5CigvNJJ
-         CSlAmqoFroKMqk1OwkFEM7617y+cH53Wl6kRoIADQs+fFvIrS4E8MzzM23dSRBpHn5qQ
-         EvH/kCFDFk7uwLrp0kLTFq6EZGCc0Vl4JwxkDn24ETe2IyRrNIR2NCVkEcSIXaw5TFqS
-         7Qpw==
-X-Forwarded-Encrypted: i=1; AJvYcCX027LCebhlquuHWWQdQLRYNI2xLSQwqJi6Qs+UfLujhg+qC9AjB0SmN8Bd3N9rSEeIDwIXNUMb4p0zUQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD8KG9EPDbvzfVfzbcA32x0abjwQBmfi75KE4ZOSIfM+FZYG90
-	/OY7H+kZfi7yKo1YQgG/zq4fgmjaF1DR4RtYZW+G1PTWcbIg5CifvxuulVfP3wByTJ3js2Var1C
-	oKw7+6FvS6wNmYgGL8iRbfi7/BqrVailvjGEzpeyoxpiMQI22zlEFJ95tfOvm6w==
-X-Gm-Gg: ASbGncv2xa1TtQDDVjW5isQLSA0N2GTCGatwxN+ppxotnV9sYuWsc12PMRZweL//Ora
-	SzK6ICWGLAGv7x0FJtJ5+/arbkoaHYyai5PVWCUrS6lOCIrwUeFZQCoeKPF8xCtrD5d0C0YztdS
-	oSqV0EYodZs+uCe4Yj1QCvYIn3r8YnWZVc9xw9GYXqXpgLbpPiBLsmvVhR0wupz/weaQVPXAgLD
-	1z0XEiendmsZ/xhfz5h6hiTVm95VU2MuCvlDSrIMNOjXsPLswjwWvq1NQ8IpKqpqKNy9b8gZboq
-	xQ3dGV0=
-X-Received: by 2002:a05:6e02:1fed:b0:3d1:97dc:2f93 with SMTP id e9e14a558f8ab-3d596186300mr62395145ab.20.1742603426010;
-        Fri, 21 Mar 2025 17:30:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHz+fdg6EnsNjYRzuN4tmC+mxNsl6fpbM1aMJ0TwbL+kR0iHWiiNNJUAdfLRTjLeppDFKFSzA==
-X-Received: by 2002:a05:6e02:1fed:b0:3d1:97dc:2f93 with SMTP id e9e14a558f8ab-3d596186300mr62394955ab.20.1742603425546;
-        Fri, 21 Mar 2025 17:30:25 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdb3aa9sm690364173.17.2025.03.21.17.30.24
+        d=1e100.net; s=20230601; t=1742603565; x=1743208365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dUyR3Oe6iYVQ9/r3ijgRJfklg/wMi4nHhN2lq9dus2Q=;
+        b=sAhsFMxLjWgxl0jjWdEl/EI7SkoAmXh3VOlRedditEhsq+HyGzk9PN5uwvI0H9a37F
+         3qVhIwlrSDOFZlgAYnwP6i201vmO2yPkxR6MpBSySrLxWHWaSQN+mt+B3C6fQfRWmSy2
+         H2DdGhXNpdB9gvrcTc2W4SKwy6W4CSu+toiet81d5hgak/FRlElLS2vC5HCa7qmiI/wM
+         WxakYdQWxeTLSe5k5Xamf4UEotAsbE/4HWoycouRatHIFys3qETY/tGuJtXLh2E7LbSC
+         2CgIA8m1DPn3IEqDDEvzo4+Q541tOSgTdTkadYjPVNcMZ2BBulpsRsxOeetIEXUUEuAp
+         aYKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAuHFUlI4UPTs1TzY7Mmd8jTGB2sY6jAaglMS+mNoSFTO+fNOCac8jKAUTEO1PzUz/9796M2F6k7lM1Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbGUYY91Br9XxXDyOSyA2zkRDu8P0PvkB3eiakw6ZaNXtYWXC9
+	AG9cJw5x/5BkLoM9txeHAEztMOk1Yt3LppjvwxwMBbNmku9q75vO
+X-Gm-Gg: ASbGnctPCTTJgeNlEfIAn8t7w1+1BOXdaPtzy2XsT2kg5IJjG1Aio2XkVUs7tN+HQh/
+	vS8w8UN36qoDF0ojPIBVzvyvtzwYLe12WzIV1ZKUo6pac7nCP40fxedz8tWW6iyubtV15sinFJO
+	PhTUgO6jxYGChFdWPB1T96HCyoYJ2gC12EdlWmM18UL7qvBHzzW/0BBFrMVboqU/4b7Z8Vyj4Hv
+	XM7F/0RnWwK09QzVITxOfFrYKaN87Wrtq5uFP9+uCLZSwXNOb52OgZJ1+akb1aNSBDuajwgjvS9
+	4eVitdFSIUBfyS96e82rltChLs2WzZsKS/lBpkGjR3j9prtV+tQEpw==
+X-Google-Smtp-Source: AGHT+IHIkZl1HZ3bargOGIgRuUMDY14pB1ok3aEaaqULlgerkBIsFuLlNFDNNZ7Ob1Cav44bb3EPlg==
+X-Received: by 2002:a17:907:3e8b:b0:ac3:d0e4:3a9e with SMTP id a640c23a62f3a-ac3f251f1fbmr502782566b.43.1742603564527;
+        Fri, 21 Mar 2025 17:32:44 -0700 (PDT)
+Received: from localhost.localdomain ([41.90.66.126])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbdfcc7sm236983166b.146.2025.03.21.17.32.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 17:30:24 -0700 (PDT)
-Date: Fri, 21 Mar 2025 20:30:22 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.15] mm/vma: add give_up_on_oom option on modify/merge,
- use in uffd release
-Message-ID: <Z94EnmSpBO2L-Mv1@x1.local>
-References: <20250321100937.46634-1-lorenzo.stoakes@oracle.com>
- <233o4lohzhriye27szk6mucduneuvosmnp6pmnjepz3enxjgtt@id6kwhjgysbj>
- <owmqbntgrnwzbjuyzq7r2it7isqjvskq5svvdiosfd6mjpiowx@gm2lu3gol34x>
- <494b3b71-4331-4365-838c-84974bbed32f@lucifer.local>
+        Fri, 21 Mar 2025 17:32:43 -0700 (PDT)
+From: nancyenos <nicymimz@gmail.com>
+To: "outreachy @ lists . linux . dev Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: nancyenos <nicymimz@gmail.com>
+Subject: [PATCH] staging: octeon: Fix unused macro Argument 'x'
+Date: Fri, 21 Mar 2025 17:32:18 -0700
+Message-Id: <20250322003218.14134-1-nicymimz@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <494b3b71-4331-4365-838c-84974bbed32f@lucifer.local>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 05:16:44PM +0000, Lorenzo Stoakes wrote:
-> On Fri, Mar 21, 2025 at 11:27:34AM -0400, Liam R. Howlett wrote:
-> > +cc Peter due to uffd interests
-> 
-> Gentle nudge for Peter to make himself uffd maintainer :) I am not a fan of
-> this 'happen to know person X often touches Y' stuff, this is what
-> MAINTAINERS is for. If you're not there, good chance I won't cc you...
-> 
-> I also strongly feel we need somebody to take overall responsibility for
-> uffd at this point.
-> 
-> Pints will be bought for this person in Montreal ;)
+warning found by checkpath.pl
 
-Thanks for the offer, though I will be absent from lsfmm this year.  I sent
-a maintainer file change here, though:
+Signed-off-by: nancyenos <nicymimz@gmail.com>
+---
+ drivers/staging/octeon/octeon-stubs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://lore.kernel.org/linux-mm/20250322002124.131736-1-peterx@redhat.com/
-
-Maybe someone would like to be the 2nd reviewer, and if he/she would be at
-the conference maybe the pints will still count? :)
-
-[...]
-
-> > I hate both of them, and I (mostly) blame uffd.  Some blame is on syzbot
-> > for exposing me to this unreachable failure. ;-)
-> 
-> So do I.
-
-I agree with Jann; AFAIU, userfaultfd is innocent, if it used to work.
-
-I don't think I have followed much on the recent vma mgmt changes.  So I am
-almost of no use here.. I'll leave that to you experts.  Beers indeed might
-help.
-
-Said that, it'll definitely be very appreciated if the old behavior can be
-fully recovered, so release() will never fail at such -ENOMEM.
-
-Thanks,
-
+diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+index 44cced319c11..0155f3c41657 100644
+--- a/drivers/staging/octeon/octeon-stubs.h
++++ b/drivers/staging/octeon/octeon-stubs.h
+@@ -8,8 +8,8 @@
+ #define OCTEON_IRQ_WORKQ0 0
+ #define OCTEON_IRQ_RML 0
+ #define OCTEON_IRQ_TIMER1 0
+-#define OCTEON_IS_MODEL(x) 0
+-#define octeon_has_feature(x)	0
++#define OCTEON_IS_MODEL(x) ((void)(x), 0)
++#define octeon_has_feature(x) ((void)(x), 0)
+ #define octeon_get_clock_rate()	0
+ 
+ #define CVMX_SYNCIOBDMA		do { } while (0)
 -- 
-Peter Xu
+2.25.1
 
 
