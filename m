@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-572531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C07A6CB26
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:23:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BA8A6CB29
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E584801E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:23:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07BFC7A496A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7898230270;
-	Sat, 22 Mar 2025 15:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9B0230BDF;
+	Sat, 22 Mar 2025 15:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="t0q7bNKk"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GSwE/MeU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194D729A9;
-	Sat, 22 Mar 2025 15:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F61531C8;
+	Sat, 22 Mar 2025 15:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742656992; cv=none; b=T2wbVwpQNHVMfORFgEXYwQiNMWjw5FhUWZCIhuMjnOLAb/WnxQxYjXAdKMzuKcO+hLi+JsFb55OCvuYuc9eBuQGMxHbIGnU9HiL/kmiww7sJcrRMuIOlBSFxUVY+UeJzUFtdeGwPN9yl/UIy02etBJ9e+LM7BQcrVHlFY/pO4U8=
+	t=1742657349; cv=none; b=ByW7aK3mZH90YciP83qvAu/h1HjC8ceILTJcf5QTKeL6cleQ3mWW6TEMleoXwe/SYY/OlMcuc/ffyaJ+ycRYJjroKYS8bCONETOnOzcbTcgEZ/WqkEJOOCbOifZKUJ0K2nTKKMpIjGgGZUMg9xLUHZ6N/JbNwcvvMrbssdfIMC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742656992; c=relaxed/simple;
-	bh=rPuK3FBZ0Pg5TMPok6C26mXt6MVvMYdW5NMwzIfayRA=;
+	s=arc-20240116; t=1742657349; c=relaxed/simple;
+	bh=LX1DsUp4v2j/eiwibU3yVN9Ap65ACr+CkNOOgJvvI80=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpmLkS7Lfba3R7SJ3AK9umdpHkRMEX3djOi8j1mN69ZDCSPF0gNw8EG8w/VHzjW37ThlYuitp5axR7iXZwS5Yeuvc5SvW7uwhit2/wvoYZnCh/8uvZmYhYDATjJmP9VET/Jx2UgY3uq2SmD1f1EguQ59g2+S0bAKE2LhzRLRL+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=t0q7bNKk; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1742656985;
-	bh=rPuK3FBZ0Pg5TMPok6C26mXt6MVvMYdW5NMwzIfayRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t0q7bNKkstXGZU5/gOev7hhE6ZjNyck981LEGWfLVbr9UeA9ZhZ7DqKRoSoK3z0qn
-	 xUelJT95rbIcaKlKQz5x9PJEZUw7p+vc3F04DWN9T9C1X1Y6Z8N+7nkKxFxre2p5Qj
-	 bbHdHyTyFJq2ESMRFspJBSLZsatrXxeJJWfntpgI=
-Date: Sat, 22 Mar 2025 16:23:05 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Sung-Chi Li <lschyi@chromium.org>, Jean Delvare <jdelvare@suse.com>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] hwmon: (cros_ec) Add set and get target fan RPM
- function
-Message-ID: <780ce6e8-11fc-42be-b4a7-9cffbf811d78@t-8ch.de>
-References: <20250318-extend_ec_hwmon_fan-v3-1-4c886385861f@chromium.org>
- <e4da28be-66ca-45d3-9ccf-34819460b463@t-8ch.de>
- <f50221fd-1d76-465b-ba53-62c08c6f8536@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u4NmjFPs/snAbfW6bA4JuERY7wulb/1TRuaDwICNBJ0NPpg7ZSs9vPxN2KcDTAshIMwDvOwRNCFlDQXZKO2l3hylY6vwQ9av3ha4wR6txRa1Taa7vzjnlpMsdXILIHE0vXwn8oNOLRBhisl4n65LLMceVQvNdmHSLiceh+keJco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GSwE/MeU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=F6DnPCoCwNoNSr0FXhPtLlu4rkM00mEhuf5ucwx1PcY=; b=GSwE/MeU9A3ANNnVLNzEWtwzhe
+	b/US4Gz2qoOEuOy10s1SViRbA3OhvDr19oHsqR2y7mI6B/gnMYG3mu8t9ZtgWRpPPthhRYjo0A34k
+	fLgiLW01Ma/T1LavEHLFlsuuO5ESVCH8KGv4ZuKYKdQ0NiW4SgYvSVnJdi6j2t/jex/8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tw0mN-006jYL-MG; Sat, 22 Mar 2025 16:28:55 +0100
+Date: Sat, 22 Mar 2025 16:28:55 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
+Subject: Re: [PATCH net-next v4 1/2] net: phy: sfp: Add support for SMBus
+ module access
+Message-ID: <24cff763-8312-4502-9e86-b20883ad616b@lunn.ch>
+References: <20250322075745.120831-1-maxime.chevallier@bootlin.com>
+ <20250322075745.120831-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f50221fd-1d76-465b-ba53-62c08c6f8536@roeck-us.net>
+In-Reply-To: <20250322075745.120831-2-maxime.chevallier@bootlin.com>
 
-On 2025-03-22 07:12:48-0700, Guenter Roeck wrote:
-> On 3/22/25 06:55, Thomas Weißschuh wrote:
-> > On 2025-03-18 15:45:23+0800, Sung-Chi Li wrote:
-> > > The ChromeOS embedded controller (EC) supports closed loop fan speed
-> > > control, so add the fan target attribute under hwmon framework, such
-> > > that kernel can expose reading and specifying the desired fan RPM for
-> > > fans connected to the EC.
-> > > 
-> > > When probing the cros_ec hwmon module, we also check the supported
-> > > command version of setting target fan RPM. This commit implements the
-> > > version 0 of getting the target fan RPM, which can only read the target
-> > > RPM of the first fan. This commit also implements the version 1 of
-> > > setting the target fan RPM to each fan respectively.
-> > > 
-> > > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> > > ---
-> > > ChromeOS embedded controller (EC) supports closed-loop fan control. We
-> > > anticipate to have the fan related control from the kernel side, so this
-> > > series register the HWMON_F_TARGET attribute, and implement the read and
-> > > write function for setting/reading the target fan RPM from the EC side.
-> > 
-> > Should it be possible to switch back to automatic control?
-> > I can't find anything in the hwmon ABI about it.
-> > And neither in the CrOS EC source.
-> > 
-> > Am I missing something?
-> > 
+On Sat, Mar 22, 2025 at 08:57:44AM +0100, Maxime Chevallier wrote:
+> The SFP module's eeprom and internals are accessible through an i2c bus.
 > 
-> Not sure I understand the context, but the fan control method is normally
-> selected with pwmX_enable, which is defined as
+> It is possible that the SFP might be connected to an SMBus-only
+> controller, such as the one found in some PHY devices in the VSC85xx
+> family.
 > 
->                 Fan speed control method:
+> Introduce a set of sfp read/write ops that are going to be used if the
+> i2c bus is only capable of doing smbus byte accesses.
 > 
->                 - 0: no fan speed control (i.e. fan at full speed)
->                 - 1: manual fan speed control enabled (using `pwmY`)
->                 - 2+: automatic fan speed control enabled
+> As Single-byte SMBus transaction go against SFF-8472 and breaks the
+> atomicity for diagnostics data access, hwmon is disabled in the case
+> of SMBus access.
+> 
+> Moreover, as this may cause other instabilities, print a warning at
+> probe time to indicate that the setup may be unreliable because of the
+> hardware design.
+> 
+> As hwmon may be disabled for both broken EEPROM and smbus, the warnings
+> are udpated accordingly.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-So far I associated pwmY_enable = 1 with the pwmY attribute.
-Also controlling it through fanY_target does make sense though.
-It could be clearer from the docs IMHO.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-That also means that the patch under discussion needs to implement the
-pwmY_enable attribute.
-
-One more thing I have wondered about before:
-Is pwmY always refering to the same thing as the matching fanY?
-
-
-Thanks,
-Thomas
+    Andrew
 
