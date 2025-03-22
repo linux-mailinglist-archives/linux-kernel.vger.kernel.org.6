@@ -1,64 +1,68 @@
-Return-Path: <linux-kernel+bounces-572641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CFEA6CC93
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:05:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECED1A6CCEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F1D3B544A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1301B61D72
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0725233D99;
-	Sat, 22 Mar 2025 21:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B94A1E9B06;
+	Sat, 22 Mar 2025 21:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ao6jD+ma";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BM/cU9Wt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUVJJQMa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF4A6AAD
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 21:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EE91BBBF7;
+	Sat, 22 Mar 2025 21:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742677446; cv=none; b=PAVpHJbIivsGGePn4GMAaKWO5fEsIFZyz0HHMfhgkUAd46jDXG38FkwIA1cFqlklv73eZ639gi14qqLdVP+CAVR9qczanEWPlOnep4FVT+PKFMq127z0yY1Fxn0UNfEkptqH5u45bMlxDox0o6OjGM3nWiQZfcV95cO9AF4vKW8=
+	t=1742680483; cv=none; b=eV6bMg4vdkn8VitEoooT2ioP1amKX6z+NJ3GJs2YVc6+0qOu4L+R+WctEBQX3a+lZIjk6ZaEBQzmiEsKbXwxc4UX5mQjKUE2QOMYPqVCf3+Yv8yfhb9Y0hAXf+uG978xXsydmLOlPBQl+iH5vEyksxKjAwaHI37PpuWDqNc9Opo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742677446; c=relaxed/simple;
-	bh=yDUCWyiLRUUKAJJ5jKAuhTCJG2rZwkqVO6tul24XQYE=;
+	s=arc-20240116; t=1742680483; c=relaxed/simple;
+	bh=0ZxExuljQvj3DUUB7dPOGCtNe9zxUAHutoDT6fytzDE=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oyor66dIPcqKL5iLSpBZn6ERpFLa1Ou1NZENlJtpWlTjHPjOSmZ03wFlyrD6/pvMlRUflQeiLDYJ/IDTsb1smbyl/yqF9hTneEu/m2yJfnNECqQXYVGvWamPqyYxvpHVItwnj0VLDbhWLe9Cxzo2ii2rSjXmZbrcSCiJ5Bmvf/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ao6jD+ma; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BM/cU9Wt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742677442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pM9vLebllQghQbND97wqUp00Uf5kZppdIdNy+FWYMvc=;
-	b=Ao6jD+maG2AyhVkdqyHx3qauJvKFaFcrIhpgCwPf5nmg1yS78gC235uTL4d5HSMUbG/yQI
-	pYPbsAYhP5Qfdf2t8/8qboWrglX6BPuzpvVofQYzvOSa9q657oMHicigOuSVCJiXuUpXBP
-	ZAXwaXms3vHvjpq7u2ld8t0aX00304j4pGEKb00RLgT1qpJPPoRCGSUmz3m7BZOwS69v8L
-	AN5Tvt9mTX+cGf1jzbJ8pHV8nAg8i6n0ChgZ3c/6sOKNNYUwSR748CRvmdEPAcbClDgwEZ
-	l0FpPV0lz4vVtY3m1L6m+wguEs4lk1ozR73sTEISmE+YnBm4jQSBJfqj5KdgNg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742677442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pM9vLebllQghQbND97wqUp00Uf5kZppdIdNy+FWYMvc=;
-	b=BM/cU9Wt+vkTnRYv0tA6Cf+1FrYUmvuD0rM+IU4rojWTWleWpdLMDnAnH7gs8vbgzCjLoh
-	w/cJHDZ4LFFJN9Dw==
-To: richard clark <richard.xnu.clark@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: hrtimer precision issue/question??
-In-Reply-To: <CAJNi4rPaPeVWzBve6Toi8hhrxP6GROAGRug7+c3zg1crDeOt7Q@mail.gmail.com>
-References: <CAJNi4rPaPeVWzBve6Toi8hhrxP6GROAGRug7+c3zg1crDeOt7Q@mail.gmail.com>
-Date: Sat, 22 Mar 2025 22:04:01 +0100
-Message-ID: <875xk022wu.ffs@tglx>
+	 MIME-Version:Content-Type; b=Q18g0Z2JvTYubgoossLKx76XGfZ5+1DukUnp4PIv5Ib+lZaD07m4+B7AI62eTk40kUUeOmXFw+U7ap8V0HelnRKN8/JX5uOf8vM2FyQtRMCXevWMvNr7sDVWxEkIsPuRlg01sbUECOvFIqqOI6KXeaQCfuB7HQhMe8DdS2fAarw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUVJJQMa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E52C4CEDD;
+	Sat, 22 Mar 2025 21:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742680481;
+	bh=0ZxExuljQvj3DUUB7dPOGCtNe9zxUAHutoDT6fytzDE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=AUVJJQMaYVD2s0ElzQkI+RxxG+N5PVRlhdFhBnEESjijtstC3Aia/kAuI7JoUd2Li
+	 KgP1rzCdcwfFJM8HmgFtlKzYi8B12JFgka4L9Iq72ntEJ+dR8J+gkmVpmJyzBmy086
+	 9qmqXilHiAL9ChUlLwfrSilGyIQeeeoAeyWyeXh1MEb/NdB2kJmaNblhQU/bq5leAW
+	 LjzJYuAutTk4Q2lbUoWpp9ZoieJJB3eTszy4pBCkdCLwIuCxll7bJ/xe5G/60bFu3b
+	 4DC2XeH9FdD1EIvcIOeoQaKxUsCVlpNwEwhQb5InyUdU7Z3WFSzeVckBQ62D+G87QZ
+	 d1hIWImiewp4w==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org,  Daniel Almeida
+ <daniel.almeida@collabora.com>,  Boqun Feng <boqun.feng@gmail.com>,  Gary
+ Guo <gary@garyguo.net>,  Fiona Behrens <me@kloenk.dev>,
+  rust-for-linux@vger.kernel.org,  netdev@vger.kernel.org,  andrew@lunn.ch,
+  hkallweit1@gmail.com,  tmgross@umich.edu,  ojeda@kernel.org,
+  alex.gaynor@gmail.com,  bjorn3_gh@protonmail.com,
+  benno.lossin@proton.me,  a.hindborg@samsung.com,  aliceryhl@google.com,
+  anna-maria@linutronix.de,  frederic@kernel.org,  tglx@linutronix.de,
+  arnd@arndb.de,  jstultz@google.com,  sboyd@kernel.org,  mingo@redhat.com,
+  peterz@infradead.org,  juri.lelli@redhat.com,
+  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
+  rostedt@goodmis.org,  bsegall@google.com,  mgorman@suse.de,
+  vschneid@redhat.com,  tgunders@redhat.com,  david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 4/8] rust: time: Introduce Instant type
+In-Reply-To: <20250220070611.214262-5-fujita.tomonori@gmail.com> (FUJITA
+	Tomonori's message of "Thu, 20 Feb 2025 16:06:06 +0900")
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+	<20250220070611.214262-5-fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sat, 22 Mar 2025 14:58:16 +0100
+Message-ID: <87iko1b213.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,67 +71,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Sat, Mar 22 2025 at 11:20, richard clark wrote:
-> With diff below under the 'cyclictest -a 0 -t 1 -m -p99' trigger from
-> the arm64-based linux box, the interval is 1000us and the arch_timer
-> in the system is: arch_timer: cp15 timer(s) running at 31.25MHz
-> (phys).  1tick = 32ns for the arch timer, I am not sure if those
-> durations less than 1000us are expected?
+FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
 
-With your method of measurement yes. There is a german saying, which
-describes this. It roughly translates to:
+> Introduce a type representing a specific point in time. We could use
+> the Ktime type but C's ktime_t is used for both timestamp and
+> timedelta. To avoid confusion, introduce a new Instant type for
+> timestamp.
+>
+> Rename Ktime to Instant and modify their methods for timestamp.
+>
+> Implement the subtraction operator for Instant:
+>
+> Delta = Instant A - Instant B
+>
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-   "Who measures a lot, might measure a lot of garbage."
 
-But it accurately describes, what you are measuring here. You do:
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-    t1 = ktime_get();
-    arm_timer(T);
-    schedule();
-    t2 = ktime_get();
 
-and then look at t2 - t1. That only tells you how long the task actually
-slept. But that's ignoring the most important information here:
+As Boqun mentioned, we should make this generic over `ClockId` when the
+hrtimer patches land.
 
-    arm_timer(T);
+One question regarding overflow below.
 
-cyclictest uses:
+> ---
+>  rust/kernel/time.rs | 77 +++++++++++++++++++++++----------------------
+>  1 file changed, 39 insertions(+), 38 deletions(-)
+>
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 622cd01e24d7..d64a05a4f4d1 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -5,6 +5,22 @@
+>  //! This module contains the kernel APIs related to time and timers that
+>  //! have been ported or wrapped for usage by Rust code in the kernel.
+>  //!
+> +//! There are two types in this module:
+> +//!
+> +//! - The [`Instant`] type represents a specific point in time.
+> +//! - The [`Delta`] type represents a span of time.
+> +//!
+> +//! Note that the C side uses `ktime_t` type to represent both. However, timestamp
+> +//! and timedelta are different. To avoid confusion, we use two different types.
+> +//!
+> +//! A [`Instant`] object can be created by calling the [`Instant::now()`] function.
+> +//! It represents a point in time at which the object was created.
+> +//! By calling the [`Instant::elapsed()`] method, a [`Delta`] object representing
+> +//! the elapsed time can be created. The [`Delta`] object can also be created
+> +//! by subtracting two [`Instant`] objects.
+> +//!
+> +//! A [`Delta`] type supports methods to retrieve the duration in various units.
+> +//!
+>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
+>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
+>  
+> @@ -31,59 +47,44 @@ pub fn msecs_to_jiffies(msecs: Msecs) -> Jiffies {
+>      unsafe { bindings::__msecs_to_jiffies(msecs) }
+>  }
+>  
+> -/// A Rust wrapper around a `ktime_t`.
+> +/// A specific point in time.
+> +///
+> +/// # Invariants
+> +///
+> +/// The `inner` value is in the range from 0 to `KTIME_MAX`.
+>  #[repr(transparent)]
+>  #[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
+> -pub struct Ktime {
+> +pub struct Instant {
+>      inner: bindings::ktime_t,
+>  }
+>  
+> -impl Ktime {
+> -    /// Create a `Ktime` from a raw `ktime_t`.
+> -    #[inline]
+> -    pub fn from_raw(inner: bindings::ktime_t) -> Self {
+> -        Self { inner }
+> -    }
+> -
+> +impl Instant {
+>      /// Get the current time using `CLOCK_MONOTONIC`.
+>      #[inline]
+> -    pub fn ktime_get() -> Self {
+> -        // SAFETY: It is always safe to call `ktime_get` outside of NMI context.
+> -        Self::from_raw(unsafe { bindings::ktime_get() })
+> -    }
+> -
+> -    /// Divide the number of nanoseconds by a compile-time constant.
+> -    #[inline]
+> -    fn divns_constant<const DIV: i64>(self) -> i64 {
+> -        self.to_ns() / DIV
+> -    }
+> -
+> -    /// Returns the number of nanoseconds.
+> -    #[inline]
+> -    pub fn to_ns(self) -> i64 {
+> -        self.inner
+> +    pub fn now() -> Self {
+> +        // INVARIANT: The `ktime_get()` function returns a value in the range
+> +        // from 0 to `KTIME_MAX`.
+> +        Self {
+> +            // SAFETY: It is always safe to call `ktime_get()` outside of NMI context.
+> +            inner: unsafe { bindings::ktime_get() },
+> +        }
+>      }
+>  
+> -    /// Returns the number of milliseconds.
+> +    /// Return the amount of time elapsed since the [`Instant`].
+>      #[inline]
+> -    pub fn to_ms(self) -> i64 {
+> -        self.divns_constant::<NSEC_PER_MSEC>()
+> +    pub fn elapsed(&self) -> Delta {
+> +        Self::now() - *self
+>      }
+>  }
+>  
+> -/// Returns the number of milliseconds between two ktimes.
+> -#[inline]
+> -pub fn ktime_ms_delta(later: Ktime, earlier: Ktime) -> i64 {
+> -    (later - earlier).to_ms()
+> -}
+> -
+> -impl core::ops::Sub for Ktime {
+> -    type Output = Ktime;
+> +impl core::ops::Sub for Instant {
+> +    type Output = Delta;
+>  
+> +    // By the type invariant, it never overflows.
+>      #[inline]
+> -    fn sub(self, other: Ktime) -> Ktime {
+> -        Self {
+> -            inner: self.inner - other.inner,
+> +    fn sub(self, other: Instant) -> Delta {
+> +        Delta {
+> +            nanos: self.inner - other.inner,
 
-           clock_nanosleep(clockid, ABSTIME, &T);
+If this never overflows by invariant, would it make sense to use
+`unchecked_sub` or `wraping_sub`? That would remove the overflow check.
 
-and T is maintained in absolute time on a periodic time line.
 
-    T = starttime + N * interval;
+Best regards,
+Andreas Hindborg
 
-So the only interesting information here is at which time the task
-returns from schedule(), i.e. you want to look at:
 
-        t2 - T
-
-Why? Because that gives you the latency of the wakeup. That's what
-cyclictest is looking at in user space:
-
-           clock_nanosleep(... &T);
-           clock_gettime(..., &T2);
-           latency = T2 - T;
-
-Now what you are looking at is the time at which the cyclictest task
-comes back into the kernel to sleep, which is obviously
-
-           t1 = T[N] + latency[N-1] + execution_time;
-
-But the timer is armed for T[N], so your t2 is:
-
-           t2 = T[N] + latency[N];
-
-You surely can do the remaining math and map that to the output:
-
-> [  165.555795] [ 0- 0]t0=165550399226,t1=165551394303,d=995 us
-> [  165.556802] [ 0- 0]t0=165551398751,t1=165552400997,d=1002 us
-
-Right?
-
-Thanks,
-
-        tglx
 
