@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-572581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B455AA6CBCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:31:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12139A6CBD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169C93B2DE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:31:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18641893688
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AAA1A0B15;
-	Sat, 22 Mar 2025 18:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9D1A0B15;
+	Sat, 22 Mar 2025 18:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="BlTEPn2Q"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="VnU7vVG8"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A1B13C695
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588FE186284
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742668268; cv=pass; b=Ti53/VAgLnKa7j/7u0SX9or8QqKb3aOdDFegyQTXowVz1jAO/iTznm77vf0Gyg0HB9/NrSU4zd1ut+PB9i4/TRkazvyWabzE9NGWdEbRU3TQZxhfJOZ45Zp6BbB5FKYwZyPLQ4J8ywdHPL0DldUgw4HygHYyPIc/KZDiZSY9Rr0=
+	t=1742668292; cv=pass; b=X9IKzTobEqEyUE2dJsLY8Uu2ehY7tz9GNv2yTXs2jnscdS1eNyEEGWRbbTWc095Iyp48NqASve6CXPVMF53rhKG+3opsqUFHtEhoMKl258bZxhAyet/tDqmLNujaF03NbMrS7af0Jhj8Vsyjqm8V917/JcCWkLGZRHI8zvOCUyw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742668268; c=relaxed/simple;
-	bh=P19WB1RsvtsR2BRs70uIR1rI+OkfiekUANJDZU46X70=;
+	s=arc-20240116; t=1742668292; c=relaxed/simple;
+	bh=xsjJb/sSlCBlCE2A0bTA4nV1LtyEpjTSlK3Bk4yQnVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=na7kh+DrTD67alTU8ZoOdqdXX65Z8sqBagCFnGy/lu12lBmRCryp409ddHDposD+nQWyERVHZCOt7g6v25RJMCtFEGmMglCd2g/Ff7aJcOSQQVX70ZjXqWtzq0+1hvPJp/mfUOtYSe4CQTeLUWC6O/5dJroG8il38nXokKwAEKQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=BlTEPn2Q; arc=pass smtp.client-ip=136.143.188.112
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2JIkYZU8zrm/CEk7uDQ/x/DcpkihYEFc64aRoYmLykK5WK22+WOG/DOYSqvi3reTDvAvHXCESjLZHkSFfymrDdYzl+nQNcEDJZwmGiCux4PNuNht5lTElP0zvgZxwRlhr/QnqkOX4rUlivJOVt6A1nQhZil0l3CAGeEw1+5m0M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=VnU7vVG8; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742668224; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1742668274; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=JzTCSNHHLPywezjRAd1z0IvAt6354yVhCUSvK6SMMua83Q2ibwz/AcyaQNETiy47Zf0Z989t9hO3u5d5DaGjupRiEWzEfmu8u5qa04knfaq8QGCY1nm28LmP0QSpQjMMRTzN3lkoFUAii6W/popLm1G19v3LF0yvKyPaXcN/Gf8=
+	b=NG1yQk9rEzgilleO/l9rGC5Fjw8Q18sBHiq5GuGnfDdXn3fWb5AMGvipLYXmUcmgiQKRb4wTWf4YBZAL0abLpP6Uu8kguDQ9uOwauqKbf69CYV5n4/6r5w2G+CKk7N0NSx1XfYRopQ8yL2vwJp+kakOLFGIYu/VXpwtfowt9sts=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742668224; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7QIHF3NjHt3xn4pZK4qJww9kq+qlDqM7MmGL3/fOx8M=; 
-	b=VRDPM/3DQZGeLqXtaJ5RTLrBUxZ5LQhKEycR0nP5bKxHPkxIAyRO1EwtuSGzXJhzsnw8L5/6PoaOejZ3am0YCAd0W7R7At5qlmULsKWhaptE3s7Q0b9SutQmmKWLqF2oAPmymm8DKMEb7LD8gL0F2yWT0hwLg/unifu9bKh+UwU=
+	t=1742668274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VplHcLOIy2d7XjXbeKaOE5oRAedseybBbUhrpgGYDxQ=; 
+	b=PNQm6WHsVvSnL2lI/I56scUzsRjLWx+XoTh9/wFSBy1B3Tf2cWgi78rER4JGHoVjG+ZZ77t5BKgG78yjXnmgWHRK64xyiy5EGDX3w6aFhGRQ2RlhdlV3o9wVabtbOwv7hkJzEO5ab5iiNwwWj4L5uiNIQ02mSSWGP3e6HxWwdgw=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
 	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742668224;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742668274;
 	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
 	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=7QIHF3NjHt3xn4pZK4qJww9kq+qlDqM7MmGL3/fOx8M=;
-	b=BlTEPn2Q2kfEk9Jw+oEZMH5XEjKGoZBlRkTUy9MftNTykd1tQomiKTHqu6V+0srQ
-	xYnnI3feVQ7sh3r0VyvjGsnYmpvuThjcilDzdEX/CrmX1MbpmvDKLGgvZvIZebLTNhx
-	mNrpdsPgk5XKxiECWAofPTlKdMarv9ZEbLT01N+U=
-Received: by mx.zohomail.com with SMTPS id 1742668222927774.9008803686191;
-	Sat, 22 Mar 2025 11:30:22 -0700 (PDT)
-Date: Sat, 22 Mar 2025 18:30:13 +0000
+	bh=VplHcLOIy2d7XjXbeKaOE5oRAedseybBbUhrpgGYDxQ=;
+	b=VnU7vVG8kMkdNNg/C7pSVIwlCGi9OWMGP1xrSKv/4eU1bC0sEaa3/93LhsS6o3Xm
+	SD+IOCfkxcI3dBK9Iy+YFATYb2Gexvbe6MPYZOS0d0OlHy8BY21f4w/rLM2ty1i+p0x
+	w3qII0xrhcpPIaUkTKFV/EzD6khTLvgbW7dSBM14=
+Received: by mx.zohomail.com with SMTPS id 1742668273032573.7649825558158;
+	Sat, 22 Mar 2025 11:31:13 -0700 (PDT)
+Date: Sat, 22 Mar 2025 18:31:03 +0000
 From: Adrian Larumbe <adrian.larumbe@collabora.com>
 To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
@@ -58,10 +58,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
 	simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org, 
 	linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com, angelogioacchino.delregno@collabora.com
-Subject: Re: [PATCH v4 1/6] drm/panfrost: Set IOMMU_CACHE flag
-Message-ID: <7qixyvz7ll7sk53vqys74kncf6advxcuctfymmve7msygekygg@vwxzowjwm5bz>
+Subject: Re: [PATCH v4 2/6] drm/panfrost: Use
+ GPU_MMU_FEATURES_VA_BITS/PA_BITS macros
+Message-ID: <ebm6kwkhyiql2kh3ekyfpyvchs3mbnbq26ssvpkttxjuw5meo2@gqggqnosvou6>
 References: <20250317145245.910566-1-ariel.dalessandro@collabora.com>
- <20250317145245.910566-2-ariel.dalessandro@collabora.com>
+ <20250317145245.910566-3-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,45 +72,61 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250317145245.910566-2-ariel.dalessandro@collabora.com>
+In-Reply-To: <20250317145245.910566-3-ariel.dalessandro@collabora.com>
 
 On 17.03.2025 11:52, Ariel D'Alessandro wrote:
-> Panfrost does not support uncached mappings, so flag them properly. Also
-> flag the pages that are mapped as response to a page fault as cached.
+> As done in panthor, define and use these GPU_MMU_FEATURES_* macros,
+> which makes code easier to read and reuse.
 >
-> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
 > Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 > Reviewed-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
 > ---
->  drivers/gpu/drm/panfrost/panfrost_mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c  | 6 ++++--
+>  drivers/gpu/drm/panfrost/panfrost_regs.h | 2 ++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> index b91019cd5acb1..9e6f198ef5c1b 100644
+> index 9e6f198ef5c1b..294f86b3c25e7 100644
 > --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
 > +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> @@ -327,7 +327,7 @@ int panfrost_mmu_map(struct panfrost_gem_mapping *mapping)
->  	struct drm_gem_object *obj = &shmem->base;
->  	struct panfrost_device *pfdev = to_panfrost_device(obj->dev);
->  	struct sg_table *sgt;
-> -	int prot = IOMMU_READ | IOMMU_WRITE;
-> +	int prot = IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE;
+> @@ -615,6 +615,8 @@ static void panfrost_drm_mm_color_adjust(const struct drm_mm_node *node,
 >
->  	if (WARN_ON(mapping->active))
->  		return 0;
-> @@ -528,7 +528,7 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
->  		goto err_map;
+>  struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>  {
+> +	u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev->features.mmu_features);
+> +	u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev->features.mmu_features);
+>  	struct panfrost_mmu *mmu;
 >
->  	mmu_map_sg(pfdev, bomapping->mmu, addr,
-> -		   IOMMU_WRITE | IOMMU_READ | IOMMU_NOEXEC, sgt);
-> +		   IOMMU_WRITE | IOMMU_READ | IOMMU_CACHE | IOMMU_NOEXEC, sgt);
+>  	mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
+> @@ -633,8 +635,8 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
 >
->  	bomapping->active = true;
->  	bo->heap_rss_size += SZ_2M;
+>  	mmu->pgtbl_cfg = (struct io_pgtable_cfg) {
+>  		.pgsize_bitmap	= SZ_4K | SZ_2M,
+> -		.ias		= FIELD_GET(0xff, pfdev->features.mmu_features),
+> -		.oas		= FIELD_GET(0xff00, pfdev->features.mmu_features),
+> +		.ias		= va_bits,
+> +		.oas		= pa_bits,
+>  		.coherent_walk	= pfdev->coherent,
+>  		.tlb		= &mmu_tlb_ops,
+>  		.iommu_dev	= pfdev->dev,
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> index c7bba476ab3f3..b5f279a19a084 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
+> @@ -16,6 +16,8 @@
+>  #define   GROUPS_L2_COHERENT		BIT(0)	/* Cores groups are l2 coherent */
+>
+>  #define GPU_MMU_FEATURES		0x014	/* (RO) MMU features */
+> +#define  GPU_MMU_FEATURES_VA_BITS(x)	((x) & GENMASK(7, 0))
+> +#define  GPU_MMU_FEATURES_PA_BITS(x)	(((x) >> 8) & GENMASK(7, 0))
+>  #define GPU_AS_PRESENT			0x018	/* (RO) Address space slots present */
+>  #define GPU_JS_PRESENT			0x01C	/* (RO) Job slots present */
+>
 > --
 > 2.47.2
 
