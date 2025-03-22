@@ -1,283 +1,183 @@
-Return-Path: <linux-kernel+bounces-572417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3DCA6CA25
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:30:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE8BA6CA29
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0AA17656F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A525A189CE3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FB11FCFF9;
-	Sat, 22 Mar 2025 12:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2432A1FBE9B;
+	Sat, 22 Mar 2025 12:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IAXC+Ym5"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNFs3QyW"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6842AD21
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE93199FA8;
+	Sat, 22 Mar 2025 12:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742646615; cv=none; b=hFdrdDsDJfx7v1AcHO16vloJUvsjfmLLKLZkuHnIgFrWOtk+FvpDYvCnVDh9L2G+cWinvJnG65YTv3wWYQlSOPQUW+ortlboXf15rlK8NmdbHLQ89/QKtw/JPGHf9dHJpKKx/lgo8WJDP0bQBFV/PDNjiKyWnNOzb4IP8njMxIo=
+	t=1742646745; cv=none; b=K3kbFieTLVeHw6K93L4CG91CEuT2KUrCN5BpWttob0RMRia3s0r5c16AIGkPcJ2o9yZ9WNTG6lzx3akQNsYdi0JYcUr/anBZ6CewEtu3xp/ZlwlI+jyJQSUZel0MeTiDiluPG0S101+V2a/WdYBSH+UEoWbHvR1yBpP+w+K1yb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742646615; c=relaxed/simple;
-	bh=QUGx4dCY8/tgal3QRY5pUyGAdjuiqwTT+LhsulM4JMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Liiydd0qfy8NEq0b4qpnr6LRS6shZH9NXkzY7exd0eeKaG4LiNswa2hRshE327CQyxuPDqMbpaWdRZy+QQrHgp98y1VcgxxJoGQ5QAdn+U+AVS7w+PHXXFHRL8GvGVSrr5S1HdMsqxibfK3O7Uo/e5y1Skc53ht/Z/LafwD3KGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IAXC+Ym5; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso20173605e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 05:30:13 -0700 (PDT)
+	s=arc-20240116; t=1742646745; c=relaxed/simple;
+	bh=pK7rxh+vGXwiECvtIO/iUyR/P1io+Iqb7WVxHoUthw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFx1hE2hN8Sm212PxsLXJGhiupWepggzw6IPimM6ezuXAkZ7Ws++R93Z9TppBDn/Roi7rRFZgTyuaEDJ3e40kSBFavrrfAvgYwxcwLqgwfwH01++orj0pin/lPNBIjeASgW96oRsyFyTEnodrpaPOJKH/ykuMJGZe/QYDhj6TPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNFs3QyW; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so4323018a12.3;
+        Sat, 22 Mar 2025 05:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1742646612; x=1743251412; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XK2TAqZG341EzHEinXnSfJT8xoYCNibzBDqkY726Y1s=;
-        b=IAXC+Ym5dURzYvBmBTyPDwL2aHOHSMjIZUIsvnKIY5mNtSpL/n9TMz2fU+2gbkhYBp
-         NpuCnt6lgR6e8OqlwnUFcwtiHCRK7mR6VabEtEMExu+d7TxLwXh6Bd97+ukfXf9V2Jl9
-         kDZbr4FbOnj6ZfZOdbkdlZg8dBxn5lVTvapDw+DdzH/om+JtdqZ4HW8u/pwleXXX/3kN
-         Fv4n6Il+jV5UXtneKMOk7Kw8obM1xDeZIaZie3hh734ZlQPEMqd2KoNOm4gyYjh8nbBY
-         Dbrw6f6M8IcXTVUM/2upSByEqbwjT1lBWhWfbrQ0cuq9l2uk+GBQxPwzyeU7Kjs1Jtet
-         4wuA==
+        d=gmail.com; s=20230601; t=1742646742; x=1743251542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pW4CgvyO8E8d5aodvOYqRFyiScdqSUa2dn7Pkrdkp8Y=;
+        b=NNFs3QyWAVzkcARkYgoV4W8yYOWuznNicxGyxm7RQTxd8z8qLvwxX+ez7J+/pfKlNi
+         +PbR4/h1OW0uqkKN4+zibApTl9gIKkVpsqzGl6nkw/fW2k5W7xVcy2RJ6MzOVsyqAk8x
+         fvGq/VUbG9FRcIfcw7zfjtIUDyhDYWl7jNsaW6MT1pAt8ppc9nqJeAdS5EuCscMDntxT
+         vVKuX1l1cyJ+77YU17iF2OvlMGCvIH68QyAjot8iqqnfpKPxk9akfs5aYeWh3qhTYiR5
+         pX1FcYcvak8V74Ll+PsbOhn2Tibsuj6okMuuiiQj5kC7HGRXGkbCz0JGr5XD8giPgoo8
+         WceA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742646612; x=1743251412;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1742646742; x=1743251542;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XK2TAqZG341EzHEinXnSfJT8xoYCNibzBDqkY726Y1s=;
-        b=It5ez6CTW3vvSl5qcLTSYFh8rb8apByY3KH740c/Lw4XDkygyE/bzpXCvAbOBD9jnN
-         VeJY+QxyxzJVkpu4N7NkANGNiwPYDaaqp7qJRtdJtJ8FboYl/1AsjDqDRn2B/l7wFQNp
-         Pf9qMhkjNev0rrlyxGxDHHMQE1QU4HUJ5LkuwIyOf3aDM8SoDIpUgsxjWPW8RfRfDH2x
-         8dWFyrQeqzA5dM15EJrYna44XEtkW9xz77pN9KMXW35/zNyfIqaNsqync6tA65s50Nzr
-         1Qlpxim+cjvxAUNrjaJmiC9c7wZqHgAjknnTFfbdJCGHUvWOSUggLrq34kD/NFhWBKsC
-         TUqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfyVz0I5PVdhy9MYPiWNTociUVowfdgza1fQrjvHnhlbwaYULl5Op6rkI/qSRBj8pwvGeXfhKpQ/vLw2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3ggI52wPLU8CcajS4qM+OGvq7FFkbqCY0L1CvSFuU9srVSr+C
-	wFtiBy6RhdUUW45RI0cwWn6jRHZw/6gnaTThPiysqupx+EaLhxxIwLm0TZpUcVw=
-X-Gm-Gg: ASbGncuCEvZB97UccbmC92UWuZWppkOYmsZOpGI2e7xQmDu3Njt1J5D/5ZjyxIMqWi2
-	MQ90489awAnlxs8NeguYIZ1mesCXpAE/syTtUjGKpN4MLJd420+L1Zh9rMqo4ss8iIOmfOhM2c+
-	H4tZJgqc5WvCzgss2wrVvfZ6mclsNO1VxU9wS4UxEpaIO2YY/NzuufyzrJx5Kurrt2Fcc5rVp55
-	b0mU/d/iEBH40z1AYmqmgSe8K7orlApnhwhK+Cjg7tcwiZs1EmG3fc3GKiVlJHQ7RZhnS3pLBBn
-	5NFbJZI4FxFAmBOV6p/SMmhqFMGvQIj4qJFuuV+hQWgBqQioQrmT2JyC3D9TSIic/lcABga5oA=
-	=
-X-Google-Smtp-Source: AGHT+IG8oeOIoiATGf2n/eErF/v1UJz5jBt3u89DGuQOGIaGoIkUZOrdT8f7P/SGIIjTK+RAQA8QjA==
-X-Received: by 2002:a05:600c:83c4:b0:43c:fffc:7886 with SMTP id 5b1f17b1804b1-43d509ec52fmr59753085e9.8.1742646611632;
-        Sat, 22 Mar 2025 05:30:11 -0700 (PDT)
-Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440eda26sm106789645e9.36.2025.03.22.05.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 05:30:11 -0700 (PDT)
-Date: Sat, 22 Mar 2025 13:30:10 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH v4 17/18] RISC-V: KVM: add support for FWFT SBI extension
-Message-ID: <20250322-c4eaee71aa9c1f0b13ca8fef@orel>
-References: <20250317170625.1142870-1-cleger@rivosinc.com>
- <20250317170625.1142870-18-cleger@rivosinc.com>
+        bh=pW4CgvyO8E8d5aodvOYqRFyiScdqSUa2dn7Pkrdkp8Y=;
+        b=POgmU6B+BhQolDnsqV39Jpw8P85F6gnVrNQA3W5tfde4DSc2d7aNL9GHIJ5DF7zZio
+         1HwhDrXP2Bo9ITrrMINFsyK8urbmGabd62xKvorgzs4+oTjHLgo6JR+ppinCsNwudYmE
+         F3PK/m0SgL8CCj3/skHn5bjirNtow5xzPxkWtAT6IyyHVIuw/B4Ml41rhmK0yV5ydlK+
+         cS0XugfyoqrLezMzmjitkjPqgUqEEiOxOVAYHtTuiQaQ4PHIHqBPAtieSuD/GxnWx5l9
+         m8RYKIVhrGKBulahq54wAVv2CjvWBYwnzopWmEyFc7wdTrcyStORe2R3TRJBbV/0I7fK
+         yYDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBcH3zfjEOeh7iE8SIHzLS60S04hwz2sZ4yfd2+cnicTTf5WenPYtsxO/G56kSU405Xk+n4A3KlQ==@vger.kernel.org, AJvYcCX0PdahMUzB+u9MUcSmcFIDyDd9YWvBoS+xAhWZX86QLYuOUsNVyWm5Ae5/HMZr1xAcEhz+SEGeA8UbnbFZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTFhCWMZQNfQQwibgdWAkRQSCXuGii/v3ruaTxYH7D9zvIMoFI
+	Gf0yFjvfHaqY+eTvdlHQNsM0xnfnDhLe/Do37UwHPveU/zRvDDpL
+X-Gm-Gg: ASbGncu+RhtmJULdUqnoMsyNDtXklE5gRbw4e8RocCNUOACyVl2rpTRcNO4k9+deqb7
+	JVsIDBj9iHCwiFItMaPSjlArDIUt8go0m/W1LnZdiRC7WH5Qp5gX11olL+jJXBE7+jmTyGj9y8P
+	gAAgLQYh4pciVLreDSYFBTyIBOgQ6CvHz8gPj3VZlUq/HfS/xdBrTcuG+7FmAyuDd/ap/A+10o9
+	ZlkHlwR/ciiK6IjdCreWLmSRoBY+ebRGVmzjNDh+ck8LuLpyggDjuTA7FjP0mPZEzuU+T+nMaYN
+	xA091+k8R4gJXOjmwWzRCS6U4tUpCWT8X9AJqOsNKwZDHLGKlo2+
+X-Google-Smtp-Source: AGHT+IHJAD6ahRLJfliFILL9MhKgl55JdXEMg4d/m5h9z2bwL6EhEJ1WElQ80YTk2VaHYjmxB8orNg==
+X-Received: by 2002:a05:6402:270d:b0:5e6:17fb:d3c6 with SMTP id 4fb4d7f45d1cf-5ebcd4f3827mr5389659a12.25.1742646741523;
+        Sat, 22 Mar 2025 05:32:21 -0700 (PDT)
+Received: from [192.168.8.100] ([85.255.234.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0dfdcesm2999752a12.65.2025.03.22.05.32.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Mar 2025 05:32:19 -0700 (PDT)
+Message-ID: <814281f1-3b8c-4cb8-943b-0edb818168dd@gmail.com>
+Date: Sat, 22 Mar 2025 12:33:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going async
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Xinyu Zhang <xizhang@purestorage.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+References: <20250321184819.3847386-1-csander@purestorage.com>
+ <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
+ <CADUfDZo5qKymN515sFKma1Eua0bUxThM5yr_LeQHR=ahQuS_wg@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CADUfDZo5qKymN515sFKma1Eua0bUxThM5yr_LeQHR=ahQuS_wg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250317170625.1142870-18-cleger@rivosinc.com>
 
-On Mon, Mar 17, 2025 at 06:06:23PM +0100, Clément Léger wrote:
-> Add basic infrastructure to support the FWFT extension in KVM.
+On 3/21/25 21:24, Caleb Sander Mateos wrote:
+> On Fri, Mar 21, 2025 at 1:23â€¯PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>>
+>> On 3/21/25 18:48, Caleb Sander Mateos wrote:
+>>> To use ublk zero copy, an application submits a sequence of io_uring
+>>> operations:
+>>> (1) Register a ublk request's buffer into the fixed buffer table
+>>> (2) Use the fixed buffer in some I/O operation
+>>> (3) Unregister the buffer from the fixed buffer table
+>>>
+>>> The ordering of these operations is critical; if the fixed buffer lookup
+>>> occurs before the register or after the unregister operation, the I/O
+>>> will fail with EFAULT or even corrupt a different ublk request's buffer.
+>>> It is possible to guarantee the correct order by linking the operations,
+>>> but that adds overhead and doesn't allow multiple I/O operations to
+>>> execute in parallel using the same ublk request's buffer. Ideally, the
+>>> application could just submit the register, I/O, and unregister SQEs in
+>>> the desired order without links and io_uring would ensure the ordering.
+>>> This mostly works, leveraging the fact that each io_uring SQE is prepped
+>>> and issued non-blocking in order (barring link, drain, and force-async
+>>> flags). But it requires the fixed buffer lookup to occur during the
+>>> initial non-blocking issue.
+>>
+>> In other words, leveraging internal details that is not a part
+>> of the uapi, should never be relied upon by the user and is fragile.
+>> Any drain request or IOSQE_ASYNC and it'll break, or for any reason
+>> why it might be desirable to change the behaviour in the future.
+>>
+>> Sorry, but no, we absolutely can't have that, it'll be an absolute
+>> nightmare to maintain as basically every request scheduling decision
+>> now becomes a part of the uapi.
 > 
-> Signed-off-by: Clément Léger <cleger@rivosinc.com>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->  arch/riscv/include/asm/kvm_host.h          |   4 +
->  arch/riscv/include/asm/kvm_vcpu_sbi.h      |   1 +
->  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  29 +++
->  arch/riscv/include/uapi/asm/kvm.h          |   1 +
->  arch/riscv/kvm/Makefile                    |   1 +
->  arch/riscv/kvm/vcpu_sbi.c                  |   4 +
->  arch/riscv/kvm/vcpu_sbi_fwft.c             | 216 +++++++++++++++++++++
->  7 files changed, 256 insertions(+)
->  create mode 100644 arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
->  create mode 100644 arch/riscv/kvm/vcpu_sbi_fwft.c
+> I thought we discussed this on the ublk zero copy patchset, but I
+> can't seem to find the email. My recollection is that Jens thought it
+> was reasonable for userspace to rely on the sequential prep + issue of
+> each SQE as long as it's not setting any of these flags that affect
+> their order. (Please correct me if that's not what you remember.)
+
+Well, my opinions are my own. I think it's reasonable to assume that
+for optimisation purposes IFF the user space can sanely handle
+errors when the assumption fails.
+
+In your case, the user space should expect that an unregistration
+op can happen before a read/write had resolved the buffer (node), in
+which case the rw request will find that the buffer slot is empty
+and fail. And that should be handled in the user space, e.g.
+by reissuing the rw request of failing.
+
+> I don't have a strong opinion about whether or not io_uring should
+> provide this guarantee, but I was under the impression this had
+> already been decided. I was just trying to fix the few gaps in this
+
+I don't think so, it's a major uapi change, and a huge burden
+for many future core io_uring changes.
+
+> guarantee, but I'm fine dropping the patches if Jens also feels
+> userspace shouldn't rely on this io_uring behavior.
 > 
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index bb93d2995ea2..c0db61ba691a 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -19,6 +19,7 @@
->  #include <asm/kvm_vcpu_fp.h>
->  #include <asm/kvm_vcpu_insn.h>
->  #include <asm/kvm_vcpu_sbi.h>
-> +#include <asm/kvm_vcpu_sbi_fwft.h>
->  #include <asm/kvm_vcpu_timer.h>
->  #include <asm/kvm_vcpu_pmu.h>
->  
-> @@ -281,6 +282,9 @@ struct kvm_vcpu_arch {
->  	/* Performance monitoring context */
->  	struct kvm_pmu pmu_context;
->  
-> +	/* Firmware feature SBI extension context */
-> +	struct kvm_sbi_fwft fwft_context;
-> +
->  	/* 'static' configurations which are set only once */
->  	struct kvm_vcpu_config cfg;
->  
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> index cb68b3a57c8f..ffd03fed0c06 100644
-> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> @@ -98,6 +98,7 @@ extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_hsm;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_dbcn;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_susp;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_sta;
-> +extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_fwft;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_experimental;
->  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_vendor;
->  
-> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> new file mode 100644
-> index 000000000000..9ba841355758
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
-> @@ -0,0 +1,29 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2025 Rivos Inc.
-> + *
-> + * Authors:
-> + *     Clément Léger <cleger@rivosinc.com>
-> + */
-> +
-> +#ifndef __KVM_VCPU_RISCV_FWFT_H
-> +#define __KVM_VCPU_RISCV_FWFT_H
-> +
-> +#include <asm/sbi.h>
-> +
-> +struct kvm_sbi_fwft_feature;
-> +
-> +struct kvm_sbi_fwft_config {
-> +	const struct kvm_sbi_fwft_feature *feature;
-> +	bool supported;
-> +	unsigned long flags;
-> +};
-> +
-> +/* FWFT data structure per vcpu */
-> +struct kvm_sbi_fwft {
-> +	struct kvm_sbi_fwft_config *configs;
-> +};
-> +
-> +#define vcpu_to_fwft(vcpu) (&(vcpu)->arch.fwft_context)
-> +
-> +#endif /* !__KVM_VCPU_RISCV_FWFT_H */
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-> index f06bc5efcd79..fa6eee1caf41 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -202,6 +202,7 @@ enum KVM_RISCV_SBI_EXT_ID {
->  	KVM_RISCV_SBI_EXT_DBCN,
->  	KVM_RISCV_SBI_EXT_STA,
->  	KVM_RISCV_SBI_EXT_SUSP,
-> +	KVM_RISCV_SBI_EXT_FWFT,
->  	KVM_RISCV_SBI_EXT_MAX,
->  };
->  
-> diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
-> index 4e0bba91d284..06e2d52a9b88 100644
-> --- a/arch/riscv/kvm/Makefile
-> +++ b/arch/riscv/kvm/Makefile
-> @@ -26,6 +26,7 @@ kvm-y += vcpu_onereg.o
->  kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o
->  kvm-y += vcpu_sbi.o
->  kvm-y += vcpu_sbi_base.o
-> +kvm-y += vcpu_sbi_fwft.o
->  kvm-y += vcpu_sbi_hsm.o
->  kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_sbi_pmu.o
->  kvm-y += vcpu_sbi_replace.o
-> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-> index 50be079b5528..0748810c0252 100644
-> --- a/arch/riscv/kvm/vcpu_sbi.c
-> +++ b/arch/riscv/kvm/vcpu_sbi.c
-> @@ -78,6 +78,10 @@ static const struct kvm_riscv_sbi_extension_entry sbi_ext[] = {
->  		.ext_idx = KVM_RISCV_SBI_EXT_STA,
->  		.ext_ptr = &vcpu_sbi_ext_sta,
->  	},
-> +	{
-> +		.ext_idx = KVM_RISCV_SBI_EXT_FWFT,
-> +		.ext_ptr = &vcpu_sbi_ext_fwft,
-> +	},
->  	{
->  		.ext_idx = KVM_RISCV_SBI_EXT_EXPERIMENTAL,
->  		.ext_ptr = &vcpu_sbi_ext_experimental,
-> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> new file mode 100644
-> index 000000000000..8a7cfe1fe7a7
-> --- /dev/null
-> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
-> @@ -0,0 +1,216 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2025 Rivos Inc.
-> + *
-> + * Authors:
-> + *     Clément Léger <cleger@rivosinc.com>
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/err.h>
-> +#include <linux/kvm_host.h>
-> +#include <asm/cpufeature.h>
-> +#include <asm/sbi.h>
-> +#include <asm/kvm_vcpu_sbi.h>
-> +#include <asm/kvm_vcpu_sbi_fwft.h>
-> +
-> +struct kvm_sbi_fwft_feature {
-> +	/**
-> +	 * @id: Feature ID
-> +	 */
-> +	enum sbi_fwft_feature_t id;
-> +
-> +	/**
-> +	 * @supported: Check if the feature is supported on the vcpu
-> +	 *
-> +	 * This callback is optional, if not provided the feature is assumed to
-> +	 * be supported
-> +	 */
-> +	bool (*supported)(struct kvm_vcpu *vcpu);
-> +
-> +	/**
-> +	 * @set: Set the feature value
-> +	 *
-> +	 * Return SBI_SUCCESS on success or an SBI error (SBI_ERR_*)
-> +	 *
-> +	 * This callback is mandatory
-> +	 */
-> +	long (*set)(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf, unsigned long value);
-> +
-> +	/**
-> +	 * @get: Get the feature current value
-> +	 *
-> +	 * Return SBI_SUCCESS on success or an SBI error (SBI_ERR_*)
-> +	 *
-> +	 * This callback is mandatory
-> +	 */
-> +	 long (*get)(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf, unsigned long *value);
-        ^ 
-	extra space here
+>>
+>> There is an api to order requests, if you want to order them you
+>> either have to use that or do it in user space. In your particular
+>> case you can try to opportunistically issue them without ordering
+>> by making sure the reg buffer slot is not reused in the meantime
+>> and handling request failures.
+> 
+> Yes, I am aware of the other options. Unfortunately, io_uring's linked
+> operation interface isn't rich enough to express an arbitrary
+> dependency graph. We have multiple I/O operations operating on the
+> same ublk request's buffer, so we would either need to link the I/O
+> operations (which would prevent them from executing in parallel), or
+> use a separate register/unregister operation for every I/O operation
+> (which has considerable overhead). We can also wait for the completion
+> of the I/O operations before submitting the unregister operation, but
+> that adds latency to the ublk request and requires another
+> io_uring_enter syscall.
+> 
+> We are using separate registered buffer indices for each ublk request
+> so at least this scenario doesn't lead to data corruption. And we can
+> certainly handle the EFAULT when the operation goes asynchronous, but
+> it would be preferable not to need to do that.
 
+-- 
+Pavel Begunkov
 
-Thanks,
-drew
 
