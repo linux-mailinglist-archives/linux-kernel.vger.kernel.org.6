@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-572201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42248A6C7DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0830DA6C7DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757E73B64AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C0053BA365
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3BF1EDA07;
-	Sat, 22 Mar 2025 06:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEAA1C84B6;
+	Sat, 22 Mar 2025 06:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxPsN0wz"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vDK+UP40"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276B31E7C27
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0D41E8824
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742625315; cv=none; b=r2Oc80vN2cL3Dub2iMlTsqEonssyUzhWNQhzk2julkq3Sj0TfIpppSbr0bq1VkTboMWTS4puitactEv0PHV0evSEHSKqfZHg59qVrQEXBTffMYiM8eikXzaMxuz+9J8mTkRmdrVDiQjX1zoOyDKRklQGNExgCwqbOc+VEmlXqJQ=
+	t=1742625317; cv=none; b=IiWdbYSziGWHlJa5qZVUwwhdYiSclyEKRGKnKjNLu1L+zLwGj7MCTUUTJuH26166n1UmezBe27UspQ39WUth23WEZKZKntP4bm3r8i9t/zfgpRd9s/iSd8NNefag5WgJIgaTr7rVezbd6dDreEXkScVqCpMV5whEsHX4MAt/4pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742625315; c=relaxed/simple;
-	bh=VCgSUoDyn8HKLqzmgh7KL88mTyxyID3ZHa2mEWl9iLg=;
+	s=arc-20240116; t=1742625317; c=relaxed/simple;
+	bh=CnuQSxx5Yu1wyHO5RngC24AJ1X96YzXrl2hjW0dNQbI=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=brlfmDr06G0OtcFWpznP7bgC4sLtYTVWFF8y6zapsbV7DpLWy5ACFuqPDvo6PjjbTKxO9R5zTmdP+1kl4bmleBYa9fLOGNItnJGa5roirawisSLUojjfDrEhn6+0L+8HqOfBFw1X2M3ennv98ITtr5SL3pTiR8UIRMUCgadovI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oxPsN0wz; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=O5ykZMUbBeB0QgrTtMNEOvG0MWPHlPSuK2DIpcLsExfmTlTn+IDXIeYPbOEvO9qeYo2uUIGARibcPAZw95yp6z8BE4f5RLhw90INWK9Sz3HXSJ+mReOkI3wwr+Xjh8VTKw3SLktLbhmOx5VVWx7dQL2uhyYsFyRs2gGEjABL4EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vDK+UP40; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e6432a0dad8so3932048276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:35:09 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fee49e26bcso32309757b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742625309; x=1743230109; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742625311; x=1743230111; darn=vger.kernel.org;
         h=content-transfer-encoding:to:from:subject:references:mime-version
          :message-id:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ni4SJHLrRP3Qlhbq7D+TPU+znQiai8CoM4wEG4fVdKI=;
-        b=oxPsN0wzBDMWBaGK7wEFccwS2CZY/Nwfdh0BZb1nj902be6aft/ycDgov7gOn45IYN
-         GJ7ZR9FuURAtaGkTa2JkDcwrdy8t30tJ7660uX76pzCGwZtIupjnxxaVSZluaJF+XPb1
-         WJlwg/c4v9EJpxygwJEfsELvjauMYXqw8Q8ckYN7tE4DQDzx1shcW9gk2iRdRqUUAEjy
-         op1g8g/LvFJlaiRbu/qeGZrUB58GXnjGC4tzxN+BnyMS/I7GUOcQidlJtt7neftaQH4S
-         qUP9bqiyQzbnUNr3Y78jamkKLO4iyT6LJfW7Tx+aqbYQ8rMl+167qideUQr6fKBLAEls
-         Mung==
+        bh=s+cdTdHDpZF3mMROwANPX8DYhSkxmnBHZWoA/0TRdpI=;
+        b=vDK+UP40+q4ubBmdijGHA5d4zzRLywtPnt/BGNOu7TpIrASUPNyxG7xBheNyfmSgyh
+         RFGumdctgXS1PT/2jgIc1CUCB15VcjKwL/cj5UPp64LXDDJOfXM9osEdzivqljkg7SWl
+         s8UI2xhgoeMtcUvxyMdK+aRNVLabkA/4uWEozvr+Ka3g1zQMIpKxEknIt8oj+IUKty2T
+         BdWLBhUA9VIe8/qyx+UG3cqmt3dUcl/wmZcRSdg/W/aTmswTqyGRM0eKWdkk1kY7fJni
+         PRt14C2sUFnFIUsAf+bUoq61ZIpLMM5Di7FvmLf/tqaELuqsnjtul4aVhmOJkccojqaa
+         Hp+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742625309; x=1743230109;
+        d=1e100.net; s=20230601; t=1742625311; x=1743230111;
         h=content-transfer-encoding:to:from:subject:references:mime-version
          :message-id:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ni4SJHLrRP3Qlhbq7D+TPU+znQiai8CoM4wEG4fVdKI=;
-        b=nuM9xfw5H/74WtBu1So+oUC20fwQQshk/nmDNJq+uuikWwEcqET364/L70LWMDi7VR
-         Xsq2r4n67ekjLAJUa0OuP6kqjwzLvvPXJ3kEKWSM5wUiQaaeuzq3/FI0CG+2IQWlm82G
-         cnS+W//EEa/2Fo2+v1G78kVvrpR0YxdL1uu/VFHOjaNVQiM3yLWrhPkzX5TPjohDAANa
-         pe13Tc5y0+eotv6/tqdSA13vsvjm77KL1g5qB4IxlZIxqulUWkeLTRYwu6rEwBvAq94k
-         1Hl75jasSQrPGCRF2mqqa8BQhGoms+k7G2kxdB3MiqEcwEkZZpCbMiWZysM7IOZhb792
-         3/0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXEpe81eMvc2D90ust5LnkjMix0qQd0K4+gWCd6/sMoNkJcmSg5ENCLDU0kPTPZtflFw6ufUD+c+zfHyT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhJskH1Y4WVyssc154tx6jLENKY8lPT4VLhrqXwWY+FP3CrEfy
-	MMNtH8TO3WG1tX1+Wh0dWxVi9WUuijVTMTKa19jGkne1ECVKtTrZFPV1lpWjaU5xL3hFksHSPNX
-	c//CBjw==
-X-Google-Smtp-Source: AGHT+IHvwinJlbMhYiLzL178dTkg0JCt1CZurTaztxeZL3irBUL9epBecdZEEgn2U5sgX0zcvhxtVcZSlOPA
+        bh=s+cdTdHDpZF3mMROwANPX8DYhSkxmnBHZWoA/0TRdpI=;
+        b=bzt7LLLvFZBpV+Q1siwJs3+0QeQunqgdcliKkwjf9+ScXbSggK9vxLYN9SGH0Ay75g
+         E1UAPtGhWkBetMtgqmLPuepBbUWFDtOfl80OMEdxjd0gJCYh0mmtoPZPBUBVpOtTgMfg
+         R7TQyxbZP9AjnJgIzZgi/JoanFlYbz+A9ttJMHG+CcPy19BnlBb3LFrWHKaxDQ3+Ni+F
+         dGI7NIp/ga+Hv57LawbDr2m2p0k/YGD6BSabF+SDM8/mN2FLamcemBAgnu9c+RkvNnaI
+         SH8hjYvNLolC2H5vpwZY2QmJhPy7fLZSgdqoYgycYzZyPUjFdL1gRwnFijsgiZG6zYrC
+         Kx8g==
+X-Forwarded-Encrypted: i=1; AJvYcCX0yVuJ3JAhbNkcr9oodxpKrcvKrgECV7DmIP5mh/SVId64YaCr1arjWA+mRIYBEK3W58WUAq+d34dOjKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJSRW3+NTHgjz0wY5uz5nDTykJRGj5yjaEDjFFOyFGNsPA7+C/
+	NE7oixcsOCwmDqdT65eH58F1hIpPxhdRGUHWO+L8heWCrummzS85Rf6WOXbUpcit2zXGVowoe9B
+	aM6/HmQ==
+X-Google-Smtp-Source: AGHT+IFQm7maxnYzH20p96ymeTVTLJ2XVAbqJoMR25n85GpbiTtWNZ6q9NNqkhfcoLk4gn920dkeXLkUAaJL
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:c16d:a1c1:1823:1d0e])
- (user=irogers job=sendgmr) by 2002:a25:abc4:0:b0:e5b:f74:f5a with SMTP id
- 3f1490d57ef6-e66a4fe2989mr5888276.8.1742625308637; Fri, 21 Mar 2025 23:35:08
- -0700 (PDT)
-Date: Fri, 21 Mar 2025 23:33:46 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:6801:b0:6fd:29b5:fcb2 with SMTP
+ id 00721157ae682-700bad0acfemr36057b3.5.1742625311110; Fri, 21 Mar 2025
+ 23:35:11 -0700 (PDT)
+Date: Fri, 21 Mar 2025 23:33:47 -0700
 In-Reply-To: <20250322063403.364981-1-irogers@google.com>
-Message-Id: <20250322063403.364981-19-irogers@google.com>
+Message-Id: <20250322063403.364981-20-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250322063403.364981-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Subject: [PATCH v1 18/35] perf vendor events: Update ivybridge metrics
+Subject: [PATCH v1 19/35] perf vendor events: Update ivytown metrics
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -96,15 +96,15 @@ Update TMA metrics from 4.8 to 5.02.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- .../arch/x86/ivybridge/ivb-metrics.json       | 76 +++++++++++++------
- .../arch/x86/ivybridge/metricgroups.json      |  5 ++
- 2 files changed, 56 insertions(+), 25 deletions(-)
+ .../arch/x86/ivytown/ivt-metrics.json         | 80 ++++++++++++-------
+ .../arch/x86/ivytown/metricgroups.json        |  5 ++
+ 2 files changed, 58 insertions(+), 27 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json b/to=
-ols/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json
-index 77d37db98b70..de651ff9f846 100644
---- a/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/ivybridge/ivb-metrics.json
+diff --git a/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json b/tool=
+s/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json
+index 8fe0512c938f..714d5e6d21e7 100644
+--- a/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/ivytown/ivt-metrics.json
 @@ -151,7 +151,7 @@
          "BriefDescription": "This metric estimates fraction of cycles whil=
 e the memory subsystem was handling synchronizations due to contested acces=
@@ -114,11 +114,15 @@ ses",
  + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LOAD=
 _UOPS_RETIRED.LLC_HIT + MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_HIT + MEM_LOAD_U=
 OPS_LLC_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_MISS + M=
-EM_LOAD_UOPS_RETIRED.LLC_MISS))) + 43 * (MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP=
-_MISS * (1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT =
-+ MEM_LOAD_UOPS_RETIRED.LLC_HIT + MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_HIT + =
-MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSN=
-P_MISS + MEM_LOAD_UOPS_RETIRED.LLC_MISS)))) / tma_info_thread_clks",
+EM_LOAD_UOPS_LLC_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_LLC_MISS_RETIRED.R=
+EMOTE_DRAM + MEM_LOAD_UOPS_LLC_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_LLC=
+_MISS_RETIRED.REMOTE_FWD))) + 43 * (MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_MISS=
+ * (1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM=
+_LOAD_UOPS_RETIRED.LLC_HIT + MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_HIT + MEM_L=
+OAD_UOPS_LLC_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_LLC_HIT_RETIRED.XSNP_MIS=
+S + MEM_LOAD_UOPS_LLC_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_LLC_MISS_RETI=
+RED.REMOTE_DRAM + MEM_LOAD_UOPS_LLC_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOP=
+S_LLC_MISS_RETIRED.REMOTE_FWD)))) / tma_info_thread_clks",
 -        "MetricGroup": "BvMS;DataSharing;Offcore;Snoop;TopdownL4;tma_L4_gr=
 oup;tma_issueSyncxn;tma_l3_bound_group",
 +        "MetricGroup": "BvMS;DataSharing;LockCont;Offcore;Snoop;TopdownL4;=
@@ -157,8 +161,9 @@ ith: ARITH.DIVIDER_ACTIVE",
      {
          "BriefDescription": "This metric roughly estimates how often CPU w=
 as handling synchronizations due to False Sharing",
-         "MetricExpr": "60 * OFFCORE_RESPONSE.DEMAND_RFO.LLC_HIT.HITM_OTHER=
-_CORE / tma_info_thread_clks",
+         "MetricExpr": "(200 * OFFCORE_RESPONSE.DEMAND_RFO.LLC_MISS.REMOTE_=
+HITM + 60 * OFFCORE_RESPONSE.DEMAND_RFO.LLC_HIT.HITM_OTHER_CORE) / tma_info=
+_thread_clks",
 -        "MetricGroup": "BvMS;DataSharing;Offcore;Snoop;TopdownL4;tma_L4_gr=
 oup;tma_issueSyncxn;tma_store_bound_group",
 +        "MetricGroup": "BvMS;DataSharing;LockCont;Offcore;Snoop;TopdownL4;=
@@ -345,10 +350,10 @@ _info_system_time",
      {
          "BriefDescription": "Average external Memory Bandwidth Use for rea=
 ds and writes [GB / sec]",
--        "MetricExpr": "64 * (UNC_ARB_TRK_REQUESTS.ALL + UNC_ARB_COH_TRK_RE=
-QUESTS.ALL) / 1e6 / duration_time / 1e3",
-+        "MetricExpr": "64 * (UNC_ARB_TRK_REQUESTS.ALL + UNC_ARB_COH_TRK_RE=
-QUESTS.ALL) / 1e6 / tma_info_system_time / 1e3",
+-        "MetricExpr": "64 * (UNC_M_CAS_COUNT.RD + UNC_M_CAS_COUNT.WR) / 1e=
+9 / duration_time",
++        "MetricExpr": "64 * (UNC_M_CAS_COUNT.RD + UNC_M_CAS_COUNT.WR) / 1e=
+9 / tma_info_system_time",
          "MetricGroup": "HPC;MemOffcore;MemoryBW;SoC;tma_issueBW",
          "MetricName": "tma_info_system_dram_bw_use",
          "PublicDescription": "Average external Memory Bandwidth Use for re=
@@ -370,9 +375,22 @@ CKED_SINGLE) / 1e9 / tma_info_system_time",
          "PublicDescription": "Giga Floating Point Operations Per Second. A=
 ggregate across all supported options of: FP precisions, scalar and vector =
 instructions, vector-width"
-@@ -618,6 +624,19 @@
-         "MetricName": "tma_info_system_kernel_utilization",
-         "MetricThreshold": "tma_info_system_kernel_utilization > 0.05"
+@@ -627,11 +633,24 @@
+     },
+     {
+         "BriefDescription": "Average latency of data read request to exter=
+nal memory (in nanoseconds)",
+-        "MetricExpr": "1e9 * (UNC_C_TOR_OCCUPANCY.MISS_OPCODE@filter_opc\\=
+=3D0x182@ / UNC_C_TOR_INSERTS.MISS_OPCODE@filter_opc\\=3D0x182@) / (tma_inf=
+o_system_socket_clks / duration_time)",
++        "MetricExpr": "1e9 * (UNC_C_TOR_OCCUPANCY.MISS_OPCODE@filter_opc\\=
+=3D0x182@ / UNC_C_TOR_INSERTS.MISS_OPCODE@filter_opc\\=3D0x182@) / (tma_inf=
+o_system_socket_clks / tma_info_system_time)",
+         "MetricGroup": "Mem;MemoryLat;SoC",
+         "MetricName": "tma_info_system_mem_read_latency",
+         "PublicDescription": "Average latency of data read request to exte=
+rnal memory (in nanoseconds). Accounts for demand loads and L1/L2 prefetche=
+s. ([RKL+]memory-controller only)"
      },
 +    {
 +        "BriefDescription": "PerfMon Event Multiplexing accuracy indicator=
@@ -386,8 +404,8 @@ x < 0.9"
 +    },
 +    {
 +        "BriefDescription": "Total package Power in Watts",
-+        "MetricExpr": "power@energy\\-pkg@ * 15.6 / (tma_info_system_time =
-* 1e6)",
++        "MetricExpr": "(power@energy\\-pkg@ + power@energy\\-ram@) * 15.6 =
+/ (duration_time * 1e6)",
 +        "MetricGroup": "Power;SoC",
 +        "MetricName": "tma_info_system_power"
 +    },
@@ -396,7 +414,7 @@ x < 0.9"
 l Processors were active",
          "MetricExpr": "(1 - CPU_CLK_UNHALTED.ONE_THREAD_ACTIVE / (CPU_CLK_=
 UNHALTED.REF_XCLK_ANY / 2) if #SMT_on else 0)",
-@@ -630,6 +649,13 @@
+@@ -644,6 +663,13 @@
          "MetricGroup": "SoC",
          "MetricName": "tma_info_system_socket_clks"
      },
@@ -411,7 +429,18 @@ UNHALTED.REF_XCLK_ANY / 2) if #SMT_on else 0)",
          "BriefDescription": "Average Frequency Utilization relative nomina=
 l frequency",
          "MetricExpr": "tma_info_thread_clks / CPU_CLK_UNHALTED.REF_TSC",
-@@ -691,12 +717,12 @@
+@@ -652,7 +678,7 @@
+     },
+     {
+         "BriefDescription": "Measured Average Uncore Frequency for the SoC=
+ [GHz]",
+-        "MetricExpr": "tma_info_system_socket_clks / 1e9 / duration_time",
++        "MetricExpr": "tma_info_system_socket_clks / 1e9 / tma_info_system=
+_time",
+         "MetricGroup": "SoC",
+         "MetricName": "tma_info_system_uncore_frequency"
+     },
+@@ -711,12 +737,12 @@
          "ScaleUnit": "100%"
      },
      {
@@ -450,7 +479,7 @@ a_ms_switches, tma_ports_utilized_1",
          "ScaleUnit": "100%"
      },
      {
-@@ -761,7 +787,7 @@
+@@ -790,7 +816,7 @@
          "BriefDescription": "This metric represents fraction of cycles the=
  CPU spent handling cache misses due to lock operations",
          "MetricConstraint": "NO_GROUP_EVENTS",
@@ -469,7 +498,7 @@ e CPU spent handling cache misses due to lock operations. Due to the microa=
 rchitecture handling of locks; they are classified as L1_Bound regardless o=
 f what memory source satisfied them. Sample with: MEM_UOPS_RETIRED.LOCK_LOA=
 DS_PS. Related metrics: tma_store_latency",
-@@ -781,7 +807,7 @@
+@@ -810,7 +836,7 @@
      {
          "BriefDescription": "This metric estimates fraction of cycles wher=
 e the core's performance was likely hurt due to approaching bandwidth limit=
@@ -493,7 +522,7 @@ ther non-IA devices like GPU; hence the maximum external memory bandwidth l=
 imits may or may not be approached when this metric is flagged (see Uncore =
 counters for that). Related metrics: tma_fb_full, tma_info_system_dram_bw_u=
 se, tma_sq_full",
-@@ -840,7 +866,7 @@
+@@ -869,7 +895,7 @@
          "MetricGroup": "Compute;TopdownL6;tma_L6_group;tma_alu_op_utilizat=
 ion_group;tma_issue2P",
          "MetricName": "tma_port_0",
@@ -511,7 +540,7 @@ b, tma_port_1, tma_port_5, tma_port_6, tma_ports_utilized_2",
          "ScaleUnit": "100%"
      },
      {
-@@ -849,7 +875,7 @@
+@@ -878,7 +904,7 @@
          "MetricGroup": "TopdownL6;tma_L6_group;tma_alu_op_utilization_grou=
 p;tma_issue2P",
          "MetricName": "tma_port_1",
@@ -529,7 +558,7 @@ t_6, tma_ports_utilized_2",
          "ScaleUnit": "100%"
      },
      {
-@@ -949,7 +975,7 @@
+@@ -997,7 +1023,7 @@
          "MetricExpr": "13 * LD_BLOCKS.NO_SR / tma_info_thread_clks",
          "MetricGroup": "TopdownL4;tma_L4_group;tma_l1_bound_group",
          "MetricName": "tma_split_loads",
@@ -541,7 +570,7 @@ dling memory load split accesses - load that cross 64-byte cache line bound=
 ary. Sample with: MEM_UOPS_RETIRED.SPLIT_LOADS_PS",
          "ScaleUnit": "100%"
      },
-@@ -965,7 +991,7 @@
+@@ -1013,7 +1039,7 @@
      {
          "BriefDescription": "This metric measures fraction of cycles where=
  the Super Queue (SQ) was full taking into account all request-types and bo=
@@ -559,7 +588,7 @@ a_memory_bound > 0.2 & tma_backend_bound > 0.2))",
 e the Super Queue (SQ) was full taking into account all request-types and b=
 oth hardware SMT threads (Logical Processors). Related metrics: tma_fb_full=
 , tma_info_system_dram_bw_use, tma_mem_bandwidth",
-@@ -993,7 +1019,7 @@
+@@ -1041,7 +1067,7 @@
          "BriefDescription": "This metric estimates fraction of cycles the =
 CPU spent handling L1D store misses",
          "MetricConstraint": "NO_GROUP_EVENTS",
@@ -579,11 +608,11 @@ roup;tma_issueRFO;tma_issueSL;tma_store_bound_group",
 t-of-order core performance; however; holding resources for longer time can=
  lead into undesired implications (e.g. contention on L1D fill-buffer entri=
 es - see FB_Full). Related metrics: tma_fb_full, tma_lock_latency",
-diff --git a/tools/perf/pmu-events/arch/x86/ivybridge/metricgroups.json b/t=
-ools/perf/pmu-events/arch/x86/ivybridge/metricgroups.json
+diff --git a/tools/perf/pmu-events/arch/x86/ivytown/metricgroups.json b/too=
+ls/perf/pmu-events/arch/x86/ivytown/metricgroups.json
 index 4193c90c3459..0863375bdead 100644
---- a/tools/perf/pmu-events/arch/x86/ivybridge/metricgroups.json
-+++ b/tools/perf/pmu-events/arch/x86/ivybridge/metricgroups.json
+--- a/tools/perf/pmu-events/arch/x86/ivytown/metricgroups.json
++++ b/tools/perf/pmu-events/arch/x86/ivytown/metricgroups.json
 @@ -9,6 +9,7 @@
      "BvCB": "Grouping from Top-down Microarchitecture Analysis Metrics spr=
 eadsheet",
