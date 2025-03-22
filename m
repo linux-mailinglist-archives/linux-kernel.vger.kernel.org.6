@@ -1,151 +1,249 @@
-Return-Path: <linux-kernel+bounces-572552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F163A6CB5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:56:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9A4A6CB5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBAD8189FC41
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:56:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424D417EA5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C13233153;
-	Sat, 22 Mar 2025 15:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C497022F392;
+	Sat, 22 Mar 2025 16:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K5ovL/pg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCaG7S53"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16CE233136
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0FB137923;
+	Sat, 22 Mar 2025 16:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742658985; cv=none; b=EVZS2Cf2WFoi8u6TKejQGHkhhryZKWr/eYT46h98jen1Zdptwp7HRMaMkGZuXk+MzFzkVlYIksbtAbMHU7D8sLkTzPx6NItKZT+tH+OF2OENKghDIkOlaNlczDuDAHeGL7NV+9M7D5IJ3PVYygZUT6kmXL+BREvlvqVolIlKQEY=
+	t=1742659576; cv=none; b=t1hsqmOGNZ2Pv5Tzed2+0Q6cYsL/QfN7rLvRORqBZURANSWXsL1UXXY8Lm4uoxJdyi6djAQyzdfQaGASh/t4SmjXcKIYr+//rIr8ZmWC/Qo+TlGlB9Wesh611/vxi+oOGPKqYXp0Yrc1RxFHufrT38jZNW2Pfv1koJxuGqm2ly8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742658985; c=relaxed/simple;
-	bh=doeceN/js06TXAI4aTf34GgmZWBpDr+yOG2Ab1HJcDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0Yig4iilqPU4bCEdufejqplUgPocjkS4/ebGjHxl6vT/BDoY7wF2ej0wr4g5RlDl3CuHpKtd2kyDH+c6K+/TqwASu6Fcli6YZQQnXpYvIgMTvGHkSOIZZs/XsW2sNlgkjIHNpEnjwJHeEZ8Qp5rJDbbjT8Juu0ATrAsiHVTikI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K5ovL/pg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742658982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/jqIbltbOrjNEWpqd7XmuT8nnchsL9eSWGcr4/X0ZMY=;
-	b=K5ovL/pgA1W1YgoKHeDqc2TRhTxvoodNB0PCCSfRtMoooc2Bg8P7sk6g6VpivQipH6fD3M
-	IwZ+b2/58yNhdpslMGFA1oXuutaGnb8Vtw3WOPe+LqWSgS2p3tNqD/viebO9Bfim5/BNth
-	RPtnxyIBFtokntKWph8IvLqOLltsLmo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-287-XZvqU3npP-eF51G90MxKQw-1; Sat,
- 22 Mar 2025 11:56:18 -0400
-X-MC-Unique: XZvqU3npP-eF51G90MxKQw-1
-X-Mimecast-MFC-AGG-ID: XZvqU3npP-eF51G90MxKQw_1742658977
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E088E1800EC5;
-	Sat, 22 Mar 2025 15:56:16 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.40])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A731D19560AF;
-	Sat, 22 Mar 2025 15:56:13 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat, 22 Mar 2025 16:55:44 +0100 (CET)
-Date: Sat, 22 Mar 2025 16:55:39 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
- (4)
-Message-ID: <20250322155538.GA16736@redhat.com>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <202503201225.92C5F5FB1@keescook>
- <20250321-abdecken-infomaterial-2f373f8e3b3c@brauner>
- <20250322010008.GG2023217@ZenIV>
+	s=arc-20240116; t=1742659576; c=relaxed/simple;
+	bh=dbdQwyvphXuExkL/c1dTdWHb6ZTyIyn2zmq2K0XguOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ebUY3lbwa3reQPgJCA/g7k7LzBTlbufz6Hr+YfyRU3LiWtsKyhL1jwQ5oEH8SPGFHCIG5VAqdb9Xtgqrnz+lWAqCrgPGJPfchBkK0OY5QI+e4lz22iHHavMuMKp/+7qz1aicYJIgz1ml1a4YPTFb0Qm3lmBXHI/+Qh+ODr0x6eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCaG7S53; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223fb0f619dso62112575ad.1;
+        Sat, 22 Mar 2025 09:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742659574; x=1743264374; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=NwqWoBDMZJvpzZ7us8+VfOO19kDyN06FFsnMhV0YC6A=;
+        b=jCaG7S5337CRETXSE76ehbkfsgKbi5B7NtKpYQ4uOcACcYtf+omNI+uWg3cC65hKYr
+         zcnDGmd+zMLXdvQGhjmPJZqWDny+CGtJ/YPLavmOhUfpnwYF73RGl0dFakxmibmSDTpm
+         oosC3q1ujLPVXEMf1g5DPbXpOlVN/jU8WzaOOTnmEU7zdbUD96/N9mgUvIAzPJGAuhdv
+         +rI0o80n4uuenMvHvIrg86X0SIQJsWQOnInU3j1jkkGEAigb35khnRov5h5+qQrnq/43
+         ++c4TxNm+U6AudPACIOYJGw3CLAmPrihazZSfku2fQJXQfXLjn+D/Xj00/LajYR2nZh+
+         jnhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742659574; x=1743264374;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NwqWoBDMZJvpzZ7us8+VfOO19kDyN06FFsnMhV0YC6A=;
+        b=IP5nNuTkImEEzwT6WwJPU3ZhNi+Y0q5mH9FpF9RQOhosFRcwizzryQc8b27PIWIssP
+         ltNKcMWNPvbwZvf+p+piGPRoaCiAJnNjSDdVzfII8skFid4x4nftXSYSJ50JyiWUrpay
+         FBWqSahXrLFsfOaFy+NJZWOdCNHv4Xf5U5TxdoySJHdKwa9n5bGlNA2+dqYfyj5hn/a7
+         oZZBft4AGMsLP0E1bDXIW+BVGfCsOkIJm1GCjkVsYKDDt04RHuX/qQl9jGnIJTeS2fP7
+         sDgUgIdlowjxi3im2ni+cJLiKFaf9K5KfAO7QTcVVaahwzx+/IsudMw+ON/SNvwZOQ5M
+         xJHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGbgVXuled4OQz71kBM6z8MzmViG2LzMyXxUIXWPfCZGleksQ0d5YT5EHhpAS8yQN8d3rGGfBAwus/WQ==@vger.kernel.org, AJvYcCXyFmOuIvEAmMRPqCOhjRgljaibjmu/DxbvH0so+z0IyBE9JwpPfCYHmfctIfe+FlREkBDQ9LrURIGA3cpk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHk1hcoBoABy1monyPGvtpZbjHhe2hlo0RIMM/opWyLz5PZ7lL
+	WcXRKb0QL8Mz6R/Trn/aJIlAioxZkAkQxsFq39MDPAuOcYelvy8C0qvaXA==
+X-Gm-Gg: ASbGncuOjF6rXq2bg/Ric3CLwekQalORPjC+or9IJOE3PGdRZoSD8vV48WzYD59ch07
+	EsdMk4f3GqJxFz2A7GEh7tWF0dMN0rw+cwVyCNfgCWrONczJAmKJ1yVM1+GnUkYHSoyCbG6xxuc
+	wcb8UHOtLKN3rcAYU1jcOLUohqGFJ1KUOS30hxJwz3rrmRghKTKC41sIqfeHN57LElO2W3Byb82
+	lQw5thANcmzyWsp1G6t4yRy82K3kAL98a9CDJEK/93Cb+M18YCgzJJ6IiZvku2rote2UNj6xwH4
+	gYxNKJBpaqJWJsFpC9pKH2vbBpRknMIYCAebV+k++cE+wKc49ORDi0grhe8qsf7PMIOS/CE8rBX
+	IF+mRqrLpnZAFjbyq4Q==
+X-Google-Smtp-Source: AGHT+IFXugbBXBczmWRmGl4feG49YIQJiZ7AHHntNMJ2oMLxtpYdoKHM1YK2Dd8hyVCjdXq0YRE5nQ==
+X-Received: by 2002:a05:6a21:b92:b0:1f3:4427:74ae with SMTP id adf61e73a8af0-1fe42f58575mr12241760637.25.1742659573391;
+        Sat, 22 Mar 2025 09:06:13 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73906186433sm4183301b3a.159.2025.03.22.09.06.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Mar 2025 09:06:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6465be6e-432f-4b58-8dd0-508369bb7f7a@roeck-us.net>
+Date: Sat, 22 Mar 2025 09:06:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250322010008.GG2023217@ZenIV>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hwmon: (cros_ec) Add set and get target fan RPM
+ function
+To: Sung-Chi Li <lschyi@chromium.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
+ Jean Delvare <jdelvare@suse.com>, Benson Leung <bleung@chromium.org>
+Cc: Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250318-extend_ec_hwmon_fan-v3-1-4c886385861f@chromium.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250318-extend_ec_hwmon_fan-v3-1-4c886385861f@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quite possibly I am wrong, I need to recall this code, but at first
-glance...
+On 3/18/25 00:45, Sung-Chi Li wrote:
+> The ChromeOS embedded controller (EC) supports closed loop fan speed
+> control, so add the fan target attribute under hwmon framework, such
+> that kernel can expose reading and specifying the desired fan RPM for
+> fans connected to the EC.
+> 
+> When probing the cros_ec hwmon module, we also check the supported
+> command version of setting target fan RPM. This commit implements the
+> version 0 of getting the target fan RPM, which can only read the target
+> RPM of the first fan. This commit also implements the version 1 of
+> setting the target fan RPM to each fan respectively.
+> 
+> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> ---
+> ChromeOS embedded controller (EC) supports closed-loop fan control. We
+> anticipate to have the fan related control from the kernel side, so this
+> series register the HWMON_F_TARGET attribute, and implement the read and
+> write function for setting/reading the target fan RPM from the EC side.
+> ---
+> Changes in v3:
+> - Drop support of v0 setting target fan RPM, thus also simplify
+>    implementations.
+> - Align coding style to existing code, including using if-else rather
+>    than switch-case, and ensure little endian conversion from read data.
+> - Only log warning for failed probing get fan target command version
+>    instead of fail the whole driver.
+> - Link to v2: https://lore.kernel.org/r/20250317-extend_ec_hwmon_fan-v2-1-13670557afe5@chromium.org
+> 
+> Changes in v2:
+> - Squash the read, write, and register of fan target attribute to 1
+>    commit, as they are the same topic.
+> - Probe the supported command version from EC for setting the target fan
+>    RPM, and perform the set fan target RPM based on the supported
+>    version.
+> - Update the used variable type to kernel types (i.e., u32).
+> - Link to v1: https://lore.kernel.org/r/20250313-extend_ec_hwmon_fan-v1-0-5c566776f2c4@chromium.org
+> ---
+>   drivers/hwmon/cros_ec_hwmon.c | 90 ++++++++++++++++++++++++++++++++++++++++---
+>   1 file changed, 85 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> index 9991c3fa020ac859cbbff29dfb669e53248df885..d54fd85ccb4350fc297bde62a2d98f386ce1a8de 100644
+> --- a/drivers/hwmon/cros_ec_hwmon.c
+> +++ b/drivers/hwmon/cros_ec_hwmon.c
+> @@ -21,6 +21,7 @@ struct cros_ec_hwmon_priv {
+>   	struct cros_ec_device *cros_ec;
+>   	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
+>   	u8 usable_fans;
+> +	int set_fan_target_rpm_version;
+>   };
+>   
+>   static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+> @@ -36,6 +37,21 @@ static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index
+>   	return 0;
+>   }
+>   
+> +static int cros_ec_hwmon_read_fan_target(struct cros_ec_device *cros_ec,
+> +					 u32 *speed)
+> +{
+> +	struct ec_response_pwm_get_fan_rpm r;
+> +	int ret;
+> +
+> +	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_PWM_GET_FAN_TARGET_RPM, NULL, 0,
+> +			  &r, sizeof(r));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*speed = le32_to_cpu((__force __le32)r.rpm);
+> +	return 0;
+> +}
+> +
+>   static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8 *temp)
+>   {
+>   	unsigned int offset;
+> @@ -52,6 +68,31 @@ static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8
+>   	return 0;
+>   }
+>   
+> +static int cros_ec_hwmon_set_fan_rpm(struct cros_ec_device *cros_ec, u8 index,
+> +				     u16 val)
+> +{
+> +	struct ec_params_pwm_set_fan_target_rpm_v1 req = {
+> +		.rpm = val,
+> +		.fan_idx = index,
+> +	};
+> +	int ret;
+> +
+> +	ret = cros_ec_cmd(cros_ec, 1, EC_CMD_PWM_SET_FAN_TARGET_RPM, &req,
+> +			  sizeof(req), NULL, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +	return 0;
+> +}
+> +
+> +static int cros_ec_hwmon_write_fan(struct cros_ec_hwmon_priv *priv, u32 attr,
+> +				   int channel, long rpm)
+> +{
+> +	if (attr == hwmon_fan_target)
+> +		return cros_ec_hwmon_set_fan_rpm(priv->cros_ec, channel, rpm);
+> +	else
 
-On 03/22, Al Viro wrote:
->
-> Not really.
+Static analyzers will report lots of "else after return is unnecessary"
+with this code, and they do have a point.
 
-I agree, it is really racy. But,
-
-> 1) A enters check_unsafe_execve(), sets ->in_exec to 1
-> 2) B enters check_unsafe_execve(), sets ->in_exec to 1
-
-No, check_unsafe_execve() is called with cred_guard_mutex held,
-see prepare_bprm_creds()
-
-> 3) A calls exec_binprm(), fails (bad binary)
-> 4) A clears ->in_exec
-
-So (2) can only happen after A fails and drops cred_guard_mutex.
-
-And this means that we just need to ensure that ->in_exec is cleared
-before this mutex is dropped, no? Something like below?
-
-Oleg.
----
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 506cd411f4ac..f8bf3c96e181 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1233,6 +1233,7 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	 * Make this the only thread in the thread group.
- 	 */
- 	retval = de_thread(me);
-+	current->fs->in_exec = 0;
- 	if (retval)
- 		goto out;
- 
-@@ -1497,6 +1498,8 @@ static void free_bprm(struct linux_binprm *bprm)
- 	}
- 	free_arg_pages(bprm);
- 	if (bprm->cred) {
-+		// for the case exec fails before de_thread()
-+		current->fs->in_exec = 0;
- 		mutex_unlock(&current->signal->cred_guard_mutex);
- 		abort_creds(bprm->cred);
- 	}
-@@ -1862,7 +1865,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 
- 	sched_mm_cid_after_execve(current);
- 	/* execve succeeded */
--	current->fs->in_exec = 0;
- 	current->in_execve = 0;
- 	rseq_execve(current);
- 	user_events_execve(current);
-@@ -1881,7 +1883,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 		force_fatal_sig(SIGSEGV);
- 
- 	sched_mm_cid_after_execve(current);
--	current->fs->in_exec = 0;
- 	current->in_execve = 0;
- 
- 	return retval;
+Guenter
 
 
