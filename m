@@ -1,65 +1,130 @@
-Return-Path: <linux-kernel+bounces-572318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB957A6C905
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB57A6C906
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A566E1B6279B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C903B1B63F34
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEB31F5830;
-	Sat, 22 Mar 2025 10:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE131F542B;
+	Sat, 22 Mar 2025 10:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2ZOej8X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DC51F5438
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9699C1F4E59;
+	Sat, 22 Mar 2025 10:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742638469; cv=none; b=QAAFlre6Ha3Xutl5vuS+rCI1d6gdfxikBuCdQ5e2/ckM68d8hIJUNahTjFUJheLM4OtXPyDtYGjO41yAwxUitoqDj7ZOc3bJGPD+Oy4W7Qs7v0v5/Wvya1J/4oUIU786MOmvYgdLlhgMz3GzksaM8K2Egju8qS/hrDUyuVw8MQ8=
+	t=1742638484; cv=none; b=hieqix0uheW1bsMMt7inq/dMLSCg0NHH9cCM3rkMt+89ifprajdQEZbbBaazEWa8LrSDViasi0CRVshat+tvWuhIWwi4UR3eVXsobbhzGQYVAW1XR7Ps2juNbs4qJC1y1X/TxybqcbErfuOmRzdHQMN1TxtDIuxpELnXuObakfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742638469; c=relaxed/simple;
-	bh=mZi8xDtj9Ulb2p6EqnPEnR1PSP099gr/qXbaJZ1EUZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eKZm1jOwDCjyzqxe9GcJ58VyL0nikPm1J7xXTgI82DKCVkQ6doiXCSZeqxUf+u1iEac62vl+4J3H+bMq6v8xwjgTgJhLW98wi5CfmFHUq6rnPYILPzcflbfRFzVIUNG80w9uYIN1rFV3JebEt4388nXfIeiDVwW+HDEBgAKtrDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F786C4CEE9;
-	Sat, 22 Mar 2025 10:14:27 +0000 (UTC)
-Date: Sat, 22 Mar 2025 06:14:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>
-Subject: Re: [PATCH 0/2] Scheduler time extension
-Message-ID: <20250322061422.2b24f021@batman.local.home>
-In-Reply-To: <821926D8-ABED-4B66-9E2D-39594DB82FA1@oracle.com>
-References: <20250215005414.224409-1-prakash.sangappa@oracle.com>
-	<20250217120000.5ae1201a@gandalf.local.home>
-	<821926D8-ABED-4B66-9E2D-39594DB82FA1@oracle.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742638484; c=relaxed/simple;
+	bh=KoaBZiU24zoOJqndFMsPFyx7tsJlmHpdRY86je/cZac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BwBfznzcy1D6bOjAEfmJ1Ld3fzO8NEDfgiKTJn1DfUDZah3PkwpboqYDEuTY9yHH/sOcFntJRYVv2bo+sn8CMNJMxjYthaLl8/8bjeA1K8169PzOsqdo0vYkoizsh+IQkz0MO2d34mDIiJ0F2w1idiJvhsU7BG79YzEycBjekNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2ZOej8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07989C4CEDD;
+	Sat, 22 Mar 2025 10:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742638484;
+	bh=KoaBZiU24zoOJqndFMsPFyx7tsJlmHpdRY86je/cZac=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D2ZOej8XEYjE/lG2q7rG3WjEKq4ZtGcy4nK7umd1DBLSLmJoPw+GsSo0dpsi68oNa
+	 dBoDfMdBLkTrXAkVzkvMnTM/w1qKhvO4s53fBEWO6rRsWj/VEfAVBHwPWbGWJ5E5VS
+	 CetVNIgC76Fv/MQYKZOwczHbwaId8y1gjOwmJcZ4fOJpgt2b3QE150tEGgt0B9QQtO
+	 rkrX5UFAFYTp9kC4iWzZJSJ+z9X0fDh2Yrt98uVDYt+7ytldkSEWUbtAkKFsCycF78
+	 CMHebk+axHzVV9VpplHL/XZAYdiwGEBJPvKu0MfxDHGZ6NTXQtqrZsmAU+FXPG0nAG
+	 mi+sW5cwTlRPw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs mount api
+Date: Sat, 22 Mar 2025 11:14:34 +0100
+Message-ID: <20250322-vfs-mount-api-04accc00c1fa@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2134; i=brauner@kernel.org; h=from:subject:message-id; bh=KoaBZiU24zoOJqndFMsPFyx7tsJlmHpdRY86je/cZac=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf6+3lYUl5WPJW65Kwmoqaxm7bavemqIuVXof62iasX O6w6YxJRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETmzGH4Z1khd9uJvcspXyp6 mbS970zGXwJvfUqOOovGyzxK5TirwsiwzOvDsRerRd9M2y3Q3NHitG7z1zu8ofOnO9nvbF/Ty9v FAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Mar 2025 16:10:09 +0000
-Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
+Hey Linus,
 
-> How do we proceed on this feature? 
-> Are we leaning towards enabling this feature for SCHED_OTHER only under PREEMPT_LAZY?
+/* Summary */
 
-The merge window is about to open and I'm way behind in what needs to go in.
+This converts the remaining pseudo filesystems to the new mount api. The
+sysv conversion is a bit gratuitous because we remove sysv in another
+pull request. But if we have to revert the removal we at least will have
+it converted to the new mount api already.
 
-Let's continue this discussion after rc1 comes out.
+/* Testing */
 
--- Steve
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.mount.api
+
+for you to fetch changes up to 00dac020ca2a2d82c3e4057a930794cca593ea77:
+
+  sysv: convert sysv to use the new mount api (2025-02-06 15:26:12 +0100)
+
+Please consider pulling these changes from the signed vfs-6.15-rc1.mount.api tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.15-rc1.mount.api
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "fs: last of the pseudofs mount api conversions"
+
+David Howells (1):
+      vfs: Convert devpts to use the new mount API
+
+Eric Sandeen (4):
+      pstore: convert to the new mount API
+      devtmpfs: replace ->mount with ->get_tree in public instance
+      vfs: remove some unused old mount api code
+      sysv: convert sysv to use the new mount api
+
+ drivers/base/devtmpfs.c    |  81 ++++++++++++---
+ fs/devpts/inode.c          | 251 ++++++++++++++++++++-------------------------
+ fs/pstore/inode.c          | 109 +++++++++++++-------
+ fs/super.c                 |  55 ----------
+ fs/sysv/super.c            |  57 ++++++----
+ include/linux/fs.h         |   3 -
+ include/linux/fs_context.h |   2 -
+ 7 files changed, 287 insertions(+), 271 deletions(-)
 
