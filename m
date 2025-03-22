@@ -1,119 +1,189 @@
-Return-Path: <linux-kernel+bounces-572379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F83EA6C9BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:44:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FF9A6C9C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 798F6189511C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795A21B66704
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FEE1F8EF6;
-	Sat, 22 Mar 2025 10:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED2F1FCCFB;
+	Sat, 22 Mar 2025 10:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pe6nHEN4"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQ8tuJcN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E38F20EB;
-	Sat, 22 Mar 2025 10:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0146D78F32;
+	Sat, 22 Mar 2025 10:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742640201; cv=none; b=nqQ4fEbwf6JXs+KVEN3mJ6DFaykokLMs2wXcL7JFMBSGok7uh78yIgt3wuVK9DUTtg84WZi8XjWqNqhkXMAok+TtQgCoGUIDDDSTLUOLd8HNDi69A+pnyfxZ4mTZPRpUjDS1GRslZIBe8ik92wmEJhs5hCURVk1xuw/aE6UTVUU=
+	t=1742640369; cv=none; b=UxuHClYsfd9PcXLB3eWvzNNej21UvflC8j2R+KB1Hh8a8qpWPQfQHGaWD9piXwm0EvsEsAMpGXp+b/cX/e8yWFVT7/8FNFt2D5TZuYHOWYWyl1k65HAdQMPz3fFkBiiVCDnWyoINVEPQ3S99/t0MZjorD9lTg6K2WmBAxveLfIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742640201; c=relaxed/simple;
-	bh=YkMRAD9WlCYn1xOedFDEZ4kBwzZAibmza3SX4Cxq/dQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lAWtvODlvdmcLj9/9Zc4HlNfGDT2AQ3349Zp7CHdN9d/NclH28Ze66RUYXS4krzojYVlPtztdfj+UPoLiMbqoiLsx733LLKPTmvjo42+PaKmQ4HS+VzRYbpfb8pYQKNjH7W+M2GfKohT2xI7zOnvQxKKnHq08hlwft8cgFixooA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pe6nHEN4; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742640191; x=1743244991; i=markus.elfring@web.de;
-	bh=YkMRAD9WlCYn1xOedFDEZ4kBwzZAibmza3SX4Cxq/dQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pe6nHEN443O7V290nCMNqYFbUgzsFFTjoyl3Wvqbwnzf4w+p6zpK7BS8UhSmffsL
-	 ytu6vkmtKI46ys4CuejZ8O3NfzlnfpkzXq21WjmgnkvTppBZFi/Da182mZOKCP+yD
-	 SJo5LedQ2w0i/cE3gqelDZd2z3Fv4qx34jI2pszdZFuXj5/2OgslotItEXzN+DUwm
-	 zlTv2mq6Uk12nFst4Sj9/YVT5g2RPJomoDfzDsKlmziZQVJ5zTK6ivkp34kD5k9hz
-	 TZg72zAZyTG2ECGn5aova03xZ/QOahFG2QVTpvoAg9YZltklVN7J0361U5pXU2ESx
-	 nMC71wFJIWlof2J5eA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.73]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqqTb-1tRIWF3nrl-00cVNO; Sat, 22
- Mar 2025 11:43:10 +0100
-Message-ID: <68543b3c-2004-43e8-999c-a6579b6aeb23@web.de>
-Date: Sat, 22 Mar 2025 11:43:09 +0100
+	s=arc-20240116; t=1742640369; c=relaxed/simple;
+	bh=dy7hnpEpmljpvnmL7VUaERJFKqdCMUh00qJI84ZH+hY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XpeQJOAEfrvnfKZWzpGKhfmM4JvA0Rgw4SgfogMigg+cUOYmh1Yhh4xAeF5RO9BAOsXntvza8LedunaDXEX5Azf8vZnVgQuTOAwJiowrFchMsZUAt5l7XA8hY9fUEqlMD5ncgQ7W2JZGCYOVzpK2m9bUMBxsjOjSH+8cJoixzrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQ8tuJcN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 70EDCC4CEDD;
+	Sat, 22 Mar 2025 10:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742640368;
+	bh=dy7hnpEpmljpvnmL7VUaERJFKqdCMUh00qJI84ZH+hY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=LQ8tuJcNcRoakCH+5YNtfGQ22Wn5A0UfA5vBvDxjJMieBP7sa6UqVY0QwFc1AaVdq
+	 Ow0yE4mic34YRXq8DA6rLgZQCwIINe5fG4rkVNvqokt9bsJzQow3YrrmUs1PzAsj7a
+	 v2zQynJ327MNH+yn/GgcQuqJNHHNd+I/ALKV00V1pRV0UR2H8T8Yd209t5j+kXMjjW
+	 DtPIA/RMIIFSu0zBZPBL5U+6cR9GcnrepUjX1CVjTznp0ubz3mHIMVFKz85JZLhspO
+	 9Od5S2n8mBd/ehx0Ox8izUAkl86VEbL8rMsLkqc8ZQcZISGjbHYqGUDhgKS4xqlanN
+	 NUk9vueWQxfRA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B836C35FFC;
+	Sat, 22 Mar 2025 10:46:08 +0000 (UTC)
+From: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
+Subject: [PATCH net-next v7 0/7] net: tn40xx: add support for AQR105 based
+ cards
+Date: Sat, 22 Mar 2025 11:45:51 +0100
+Message-Id: <20250322-tn9510-v3a-v7-0-672a9a3d8628@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: wifi: mt76: mt7996: prevent uninit return in
- mt7996_mac_sta_add_links
-To: Johannes Berg <johannes@sipsolutions.net>, Qasim Ijaz
- <qasdev00@gmail.com>, linux-wireless@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bo Jiao <bo.jiao@mediatek.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>
-References: <20250320201914.48159-1-qasdev00@gmail.com>
- <061ebbe3-557b-46d7-acb8-308ae87105dd@web.de>
- <631977c57b2236edfefb8db7a28885ff6888c823.camel@sipsolutions.net>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <631977c57b2236edfefb8db7a28885ff6888c823.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UOKGF5y3H0aWty2Ge0EpsSI/+m+zx9k401Kz+ZPa+Cty5ktLW31
- aihaZWCSZQ8UUJgs2fdMpbXv4M4sIsk5Bxl7nEJPGy2WBVUKBFYy8wi7tWGf1oEjpgsZixk
- /zt7z4uFGe47bHkQS5dpSgKfXmZtmxhcfnfQudPNSGBUUn7ZG5GyaLLRocR95xZtOmtgqLQ
- zBz2rpg5XWYDmenTzovSw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ds9ibI0GWBM=;KJP8Mkrg79VhvVfIdkUcJpe2zWw
- P4FSt08PPWUj2iQAHDT2ruL4CnVguLWR/EwQmh5ySL8KLQV8wvvPPVc3Pg5XjgT6UfndggAIt
- crBf/FF+ra359BEX3+RFfoAmwLY1bsSWK8LtYzcC4Xo8nSJmfoT8YGG0va8RVeCZXPTfZ1JyE
- fo77rKDX/dwZquTpr5HkJvexItJty5X70gKOOej1U+/DHlFGWoScPyE+TC4xld/8+MsnmX/+C
- fS9MYGnhSt3p2xDG0Q3IavWIFDjOvFVv8IMug8R1gjEzHoovQXGk9iiukvMi4NhPN3zPbE+Rp
- jjSZCA5ECkkD8ZCHKS+0BgfdrrAjCvewf0Ewxw5S074ft/P6hQJweWl+z14Jl1ZpECe95hHNh
- RuU1q67X5ijvKU22JtCBh7Zpu8sbOmqCQiCGJlAk9lkYdjEZKFwUcaTmJJ0C2XvScqn1h6OAA
- czaWdhbakIwsDa90vnrdYhoS5di/DlGlDmb+DLfFn+toh9+XRuiF/ku5Y1HOSudYPso7Mn5Vo
- RHKLkqF5B3cV5IGJZvP/dQdeabUJilc10MCeVWUwIxG92W7Ldbf8YF7QleC1sySfx0Gt/P+BF
- 46vrloA2HHBuW/3tv0uYPFHEawnA59KCxdzO3Uhg9nlciIzKRmeC1+a0M6I/8zBvCMKuS7oh2
- U0+f9TuhXbB6EWYZ4dqtoDFiu26hxSHHR2kyYd80zi744upWndXlH6OqBthdIwIZCSXaHD6dF
- XsHbKPrlOrFtNCwRIx7QJuaWp8gF/j/D3gpS5HvdbFQuE6hspgsN8b61VVNgtL7oordRAnBnG
- y0WzoBoywS1+WF67aj9zp30yldJg9IGz1AmE+LS1/4n/xQpIHHcjdsWFrPWsEETZlnJ11j9xX
- v8G2Ix86kmrXvondv5Y9wXIyAj9PfYWcsi8Wys/fM4K69DcKqrEvYaEOdeA857urm7Pzf6V8B
- J1OOe4YBOuAeRU0qVeNOVK/bWGj1I/iWqCO3L1O3ITV4wCU25pnC04nHFmFlHPAqqecKpdDij
- yxhzYnGs548fLEEN6yf94h2DwlgcOIgFZWpEo0V+Ul3U0GCztOCIZIAyVRecOTT72DB5BKpxc
- N0FJtx2mwxxI83c4hPAYNJ2PWCRmcEB0Pgi/HJ/BPlF8oH++LwF+JnF4SsnM8M3fHhWS9neF2
- RGz1jn5avDfjjineWyQKkpHiU8eE9QHFe+EfiQsM0uRH7g9CyN89bsp+U3M7l42H1VH0MwDDO
- YeS+2yh+Fx/GxiU8meTZYKpNXVTkjJMO5VJVuUYzrlw8MMIB8EXAJrSdVcYkJ4g9QD/CjtRlB
- FONI1G0+X+O/lwgsREGWmEesogl5yX1XtrB0I6MKB4J38f62JTBpoqX3pRd+BU20oBd1jmuzq
- Ysv+X7Na/mNoWxfoBBrLJLZZ9n849354WbPMd/JpqdAf/O3Xa1hdYwGlHrq0itSbb6P0a79hX
- QuI+5Trhw9lfwEUS6aej6VmRaj53xRJfUD9pXjzpQQ0fj2DCt
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN+U3mcC/1XNTW7DIBCG4atErEs1/ENXvUfVBTZDzCIkAgu5i
+ nz3EqtVwnI0er73TiqWhJV8nO6kYEs1XXM/zNuJzIvPZ6Qp9Jtw4JJxpumanWJAm/CUz3FmVgV
+ tIZIObgVj2o6xL5JxpRm3lXz3z+Qr0qn4PC+PsYtP+QGWVNdr+TniTRzsr2NeO01QoDIojDpqq
+ xE+z5ftvQeO7SZfIGcDlB0GH2O0bvLGmxGqf6iAcz5A1aFzQiuQBgW4EeonFMwOUHdowXoH1gU
+ upyfc9/0XHJhj424BAAA=
+X-Change-ID: 20241216-tn9510-v3a-2cfc185d680f
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Hans-Frieder Vogt <hfdevel@gmx.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742640367; l=5168;
+ i=hfdevel@gmx.net; s=20240915; h=from:subject:message-id;
+ bh=dy7hnpEpmljpvnmL7VUaERJFKqdCMUh00qJI84ZH+hY=;
+ b=b2krxJvHp5+OhOArQcSFecb2wM4Tk2k+Uo9UyRO0v0MSxwvczVKs3kSNbk9Ca0NsfM92qR9W9
+ GKlKin1KN6KCkD+DvT0F4xxh7/XCpQt1kg5DOeoRxzh5xqybcUkUiok
+X-Developer-Key: i=hfdevel@gmx.net; a=ed25519;
+ pk=s3DJ3DFe6BJDRAcnd7VGvvwPXcLgV8mrfbpt8B9coRc=
+X-Endpoint-Received: by B4 Relay for hfdevel@gmx.net/20240915 with
+ auth_id=209
+X-Original-From: Hans-Frieder Vogt <hfdevel@gmx.net>
+Reply-To: hfdevel@gmx.net
 
->> I suggest to avoid such repeated error code assignments.
->> Can an additional label be applied instead for this purpose?
->
-> Please stop your "suggestions" on this list. None have really been
-> helpful.
-It seems that you care less then for the avoidance of duplicate source cod=
-e
-also for affected error/exception handling.
+This patch series adds support to the Tehuti tn40xx driver for TN9510 cards
+which combine a TN4010 MAC with an Aquantia AQR105.
+It is an update of the patch series "net: tn40xx: add support for AQR105
+based cards", addressing review comments and generally cleaning up the series.
 
-Regards,
-Markus
+The patch was tested on a Tehuti TN9510 card (1fc9:4025:1fc9:3015).
+
+---
+Changes in v7:
+- change function name aqr105_config_speed to aqr105_setup_forced, in line with
+  naming of generic functions
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+- replace device id 0x4025 with symbolic name PCI_DEVICE_ID_TEHUTI_TN9510
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+- because of last change, remove the Reviewed-by: entries for PATCH 7/7
+- Link to v6: https://lore.kernel.org/r/20250318-tn9510-v3a-v6-0-808a9089d24b@gmx.net
+
+Changes in v6:
+- rebaseline to net-next
+- remove unneeded loop timing ability advertisment in aquantia_main.c
+  (highlighted by Maxime Chevallier <maxime.chevallier@bootlin.com>)
+- add failure path in tn40_mdio.c if device_add_software_node fails
+  (suggested by Ratheesh Kannoth <rkannoth@marvell.com>)
+- Link to v5: https://lore.kernel.org/r/20250222-tn9510-v3a-v5-0-99365047e309@gmx.net
+
+Changes in v5:
+- changed version because "b4 send --resend v4" did not succeed
+- used opportunity to rebaseline to net-next
+- only source code change is merging a split string in tn40_mdio.c, removing
+  a warning from b4 prep --check
+- changed format of cover letter in line with b4 (sequence of changes from
+  latest to oldest)
+- Link to v4: https://lore.kernel.org/r/20241221-tn9510-v3a-v4-0-dafff89ba7a7@gmx.net
+
+Changes in v4:
+- use separate aqr105 specific functions instead of adding aqr105 functionality
+  in common functions, with need of "chip generation" parameter
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+- make generation and cleanup of swnodes more symmetric
+  (suggested by Andrew Lunn <andrew@lunn.ch>)
+- add MDIO/PHY software nodes only for devices that have an aqr105 PHY
+  (suggested by FUJITA Tomonori <fujita.tomonori@gmail.com>)
+- Link to v3: https://lore.kernel.org/r/20241217-tn9510-v3a-v3-0-4d5ef6f686e0@gmx.net
+
+Changes in v3:
+- aquantia_firmware: remove call to of_property_read_string. It should be
+  called from the more generic function device_property_read_string
+- add more AQR105-specific function, to support proper advertising and auto-
+  negotiation
+- re-organize the patches about the mdio speed and TN40_REG_MDIO_CMD_STAT,
+  skipping the 1MHz intermediate speed step
+- re-organized the sequence of the patches:
+    1. changes to the general support functions (net/phy/mdio_bus.c)
+    2. changes to the aquantia PHY driver
+    3. changes to the tn40xx MAC driver, required to support the TN9510 cards
+- Link to v2: https://lore.kernel.org/netdev/trinity-602c050f-bc76-4557-9824-252b0de48659-1726429697171@3c-app-gmx-bap07/
+
+Changes in v2:
+- simplify the check for a firmware-name in a swnode in the aquantia PHY driver
+(comment from Andrew Lunn)
+- changed the software node definition to an mdio node with phy child nodes, to
+be more in line with a typical device tree definition (also comment from
+Andrew Lunn)
+This also solves the problem with several TN4010-based cards that FUJITA
+Tomonori reported
+- clarified the cleanup calls, now calling fwnode_handle_put instead of
+software_node_unregister (comment by FUJITA Tomonori)
+- updated the function mdiobus_scan to support swnodes (following hint of
+Andrew Lunn)
+- remove the small patch to avoid failing after aqr_wait_reset_complete, now
+that a proper patch by Vladimir Oltean is available
+- replace setting of bit 3 in TN40_REG_MDIO_CMD_STAT by calling of
+tn40_mdio_set_speed (suggestion by FUJITA Tomonori)
+- cleaning up the distributed calls to set the MDIO speed in the tn40xx driver
+- define supported PCI-IDs including subvendor IDs to prevent loading on
+unsupported card
+- Link to v1: https://lore.kernel.org/netdev/trinity-33332a4a-1c44-46b7-8526-b53b1a94ffc2-1726082106356@3c-app-gmx-bs04/
+
+---
+Hans-Frieder Vogt (7):
+      net: phy: Add swnode support to mdiobus_scan
+      net: phy: aquantia: add probe function to aqr105 for firmware loading
+      net: phy: aquantia: search for firmware-name in fwnode
+      net: phy: aquantia: add essential functions to aqr105 driver
+      net: tn40xx: create swnode for mdio and aqr105 phy and add to mdiobus
+      net: tn40xx: prepare tn40xx driver to find phy of the TN9510 card
+      net: tn40xx: add pci-id of the aqr105-based Tehuti TN4010 cards
+
+ drivers/net/ethernet/tehuti/tn40.c           |   9 +-
+ drivers/net/ethernet/tehuti/tn40.h           |  33 ++++
+ drivers/net/ethernet/tehuti/tn40_mdio.c      |  84 +++++++++-
+ drivers/net/phy/aquantia/aquantia_firmware.c |   7 +-
+ drivers/net/phy/aquantia/aquantia_main.c     | 240 ++++++++++++++++++++++++++-
+ drivers/net/phy/mdio_bus.c                   |  14 ++
+ 6 files changed, 378 insertions(+), 9 deletions(-)
+---
+base-commit: 23c9ff659140f97d44bf6fb59f89526a168f2b86
+change-id: 20241216-tn9510-v3a-2cfc185d680f
+
+Best regards,
+-- 
+Hans-Frieder Vogt <hfdevel@gmx.net>
+
+
 
