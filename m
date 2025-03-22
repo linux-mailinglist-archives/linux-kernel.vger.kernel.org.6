@@ -1,163 +1,306 @@
-Return-Path: <linux-kernel+bounces-572427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1787A6CA3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:19:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 982FDA6CA42
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2EA17C4D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:19:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C4C883753
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2CA214A7A;
-	Sat, 22 Mar 2025 13:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B295B224237;
+	Sat, 22 Mar 2025 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bw74U9zP"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCFrJ0NM"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103641DEFE7
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 13:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87361DF26B;
+	Sat, 22 Mar 2025 13:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742649538; cv=none; b=RjTy9j4jQ/jCSQXjMmPg/soCPc64/fu52nCohS5N91Y+4kxxF3PC2h5wV2yRollRjtW6JAaF89RW6LSCQDo3y4Bsg0iH8MvIUjA6ZXHVgTgIFBeC3vGwf6Z7S1G9/8luJMtxmF6fUZooBYeBXr/g57+FS54kHRcWsfzuD/TM8hs=
+	t=1742649616; cv=none; b=aiqJlCrg0AihKUP21SN34QIvZ6QlrO8sO3Wnl1QGU5VgS1eEwbSpsiAMHVOE91SLT7yOrk9kXPaSzUL+Y4yMqis3K5pIz8sAmgooCPjly7ywikux498/8PaV1IaNri4n5RuWlRYSK5otEQCson3NcwXx/esZYg+p0obnKAe0CZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742649538; c=relaxed/simple;
-	bh=ILCuVKSOTBP79PnFCQ3Cyhks0aKrZLJDaSr6atJRR/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D+UiLfWcRQJ6L5NPzNF+ZIg/t93W4WbpldVz+hIfT3jRhBT9ZxhWP4TkGnEwK/qnSUCtfhPIo7gijJHF5QRGwG13qSie6hj1PAV9iGr8Hgx0vMp2kNgpbS2zIR6v8wTv2ZDd0a6f3rF4tWFlXip0sHABsUOj9+kKC9TK230GBlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bw74U9zP; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1742649616; c=relaxed/simple;
+	bh=gU66PZIjoL0vfIa5/SPWENmJ3tbY3g/2K5m2f5e3WXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTRkOhdr2yZ8QnIt2rRi4TjU3hOo8wIWDg7cTC03JUKkGkEUIaXC3OUDh51wRQ+rRXBWl8E613TmCbeqD6h1oWDTnCa9WWq31auU2a9OaEaYt1Wa/hgFjY+/7CkwmHHorgXUY1DWb6GNW3FVV9bcaPhUDJQdrGLEAxEJP1QbeJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCFrJ0NM; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2239c066347so67036855ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:18:56 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22622ddcc35so38112505ad.2;
+        Sat, 22 Mar 2025 06:20:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742649536; x=1743254336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JyG3zo+vFR7f6YerLE6AKOm4hKRWC9oAJUiqrkXH91Y=;
-        b=bw74U9zPPSqZkMV4OvWNCtirxfNwV1bjsa+aK/7K6fcSHnuMzPxUEq1sw8DCZ+6g80
-         9aJQ7T0kYxdxvHDHw6FHwIUhVXNPi7Pa+u/LfEGKK3xZQB6MH4gVEcsaxx37XvUUkqIT
-         Hx/ovSvghURvNzw9zblFLDo/ijVKD5p/BbRShLAhnZIO0ZY+p8+G5/lc5Ke93sVXVIAR
-         NCyMpPiXj2X7HLSYoz7OS+TNN7GWF+FSrRNOYnwNuJSgrq5HfdM9d22kFHXTFuiRAA4q
-         PgDeuA5VtQTXmpPGlSPYhOojxUKahfgEpV4LYB8N/sR82ivVHbxHMp0VV4fqWtBbkrhE
-         5SUQ==
+        d=gmail.com; s=20230601; t=1742649613; x=1743254413; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4tDxSmnhnc08HaMIT1ctnJ5ExmMVePI21NkKL7vi+w=;
+        b=PCFrJ0NMYe7Ngnx4lpkAsOdZEx6jcGv/rUjXx9Cct2a1siPPyS4TxFaeBwIAm6ckoX
+         OYqLLy72UNb9B09LsenlsZiBqF+R00Pv+lpmb1jFqQeMxYLmx4sQm5LyOjimSy82aVma
+         SsQPTcg1LFL5jKrZ2WfWrPEgCB+ilJXVTv6Aye9ORKrowu9tZmiPjlqTnmR64M7pD4Bz
+         VRw3H7Ij1nHwPC2ePTSvQfwcpRm8NSDKVySf1FrsjhJxcikf8cV838Dqx2FeeavgwPat
+         o6fCNuP4R16jGb2JLg5/q8TCpWbHj4+7olAGXUv0LwaiCNBRJP+UYT9M49aT7AnOkG1Z
+         B3rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742649536; x=1743254336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JyG3zo+vFR7f6YerLE6AKOm4hKRWC9oAJUiqrkXH91Y=;
-        b=fWrsV7NY4B8WmNjbCJhKh5wI17KMGzLvf2WPfIlQsQH7BvmunxcnQ0Zkw4s80AsXk/
-         Sdeck0Ga3qFhJYESL49i4Jh6SnLww/KzLx3ZgUlWSV9Fpg+Vkw+hWOJ6u0D6B4L/QbUA
-         TiYlvA61LoZSHsI0AotHLPn7S1FirdPTSIwKK4QyDAlR1ROtkOgYRAC78W/OtDVdXA9V
-         2m8ygmH5hsJQgLih85AZP/dLK4Ke8xoESgMEkkcFIr/3ZY1TPI/2d28qn7zFrd3uwkwU
-         PEZ09Zkxo9mJlUZzKcvD0D0deHGDAK5lJlBCg2euNwGQN41SmQHOMSbZMud3kbRvYj4f
-         oYnw==
-X-Gm-Message-State: AOJu0YwDPACMJgrRI5RdNP+kAhO4gSMZqPFN/EyOropKI6pF9jOKFuhI
-	nm6AUkqU3KEWiTBzAR2XKdzYARu4qw2EHs/x/eZUEF0CduLsyOhY
-X-Gm-Gg: ASbGnctKD5bn3IweA+AbKmJ9ylGp0eYaAP83T/CEv0vEDd86h/uxo6W3TIaMqf9Hpfe
-	0XOsUWuGeAZp+vT1pWFKTnFwzoWvnaX2JfIFSS1Cbp+r85t4muwHoAzwiC3bz15TAM+MPWEo5Uo
-	OtiBZEObNH+eeEzX7o2Jwy3GeCOXluoLt5BssvnM4Bn3urfD/6J7P4FDI7mYLpZW+Z6Y3y9Z5fK
-	DiNH2Lr5xPEHATxik1/gJzLz9shomswsHE+6u5XlZgiK+P5yWoHR3NLdo52EzWD/fGtFgMUjvON
-	fJnTFpsVry42Zil8pZk1d9JIoMTsTzlg2baV0MTjR21r32DpuCO9dXzz8Cuiqd6FqltlwaXTFnx
-	8xdVYyefa/062GA==
-X-Google-Smtp-Source: AGHT+IEDhR2fDkvf9/6Xm+Kiiv8KkExPS9/jfEokltp1cj6oglViHFnvlzl0RGVQ9EerZq6uh7BwJg==
-X-Received: by 2002:a17:902:f645:b0:223:f408:c3f8 with SMTP id d9443c01a7336-22780d8c2c6mr130115555ad.14.1742649536085;
-        Sat, 22 Mar 2025 06:18:56 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4080:215:18d5:84f8:e760:1d0f:700b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f60b919sm4053035a91.27.2025.03.22.06.18.53
+        d=1e100.net; s=20230601; t=1742649613; x=1743254413;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+4tDxSmnhnc08HaMIT1ctnJ5ExmMVePI21NkKL7vi+w=;
+        b=t0ZoEq24CGJlmivYuq5ZDK1EyK0UpGweZ1jXjZUoXJ/cbyoUpL4hs7Swt3DJ2fvfjl
+         aGAvbcqNt0zZi7FbUhQLzFB9PdHN0YFXo7+Zo3dmwWWPj+HSM6R0JlI7x9dYN8LsML+3
+         UzwgboVmTwa66jeQaiR/zW5aIIRyKd4cP/kVPVJ8WApKdOogd8ji9Kl/C2tBB1lDo+CB
+         2Q+d/jyi4wJaimyPDBBkRVCg3MHcua3DU4h3A2LRpYu3zOcq6vtPeveu5opzE7Y4lrvE
+         2Q9ZC8OXBf2fcsXGeuWptdufK/Yq+r3pylpDcTwFO7dTSPW4XqRVOvMo21pHcAMR29Xa
+         AwMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHvvD22cMevvxvuHmlXV6OaGgZ3fqfcDZA+XTcADll3JttrDA3ECzYnvEMNYCJ0kfCfKWkDASiAzx9MtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7oD/PFoZMwRlwWQ1iAtFO6BWonWUws/sVTD7uFNo96z+UYt/o
+	juXO4mUI/QgtER9rZ5PS1Q++Ey0kx7Yh92cblgb4DomuV+qoxhME
+X-Gm-Gg: ASbGnctiUUzKTtJYwIBV5ACHYQDI8ROGdOeDNQ/QBSTp/ICAQmxDE8Y5xnkrFu3TtlX
+	KDasKe8N8h9fAM+/w+IN8nN628m224PzFmsze5/ApX82MVL2zFL0SS+ZFUNLee10TkJSvTEunt2
+	hOxyw3HeZz2lkQxHS8LEBpM1eE1ik4jopyRrltVNvzlv2nS64EXv2m4shV7lE2FUkCP+7C7DjbB
+	hl2VyRekHpbLnnoTm1HF9h6YwIUwc8zDz5+Fpa10CrwCcaCimzL3O1swqIgbY1QEi0WvQCAa4yC
+	SHDnSOcsLXsDsHbvdEqB8CtPYsAAVrsRgANNZ73aHr+/pYy1tl/qYMGdvz38S7/I
+X-Google-Smtp-Source: AGHT+IHDzu+qDrJOQOQlCsVGujdFP7L17ORFTahxosCFINpmHzjhjtz4m4kTJ6I37qsCqO77Nez/Cg==
+X-Received: by 2002:a17:902:d491:b0:224:1074:63a0 with SMTP id d9443c01a7336-22780e0305dmr124616035ad.34.1742649612801;
+        Sat, 22 Mar 2025 06:20:12 -0700 (PDT)
+Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3030f5d7fc6sm4048828a91.20.2025.03.22.06.20.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 06:18:55 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: Peter Tyser <ptyser@xes-inc.com>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>
-Subject: [PATCH] mfd: lpc_ich: Fix ARRAY_SIZE usage for apl_gpio_resources
-Date: Sat, 22 Mar 2025 18:48:41 +0530
-Message-Id: <20250322131841.31711-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 22 Mar 2025 06:20:11 -0700 (PDT)
+Date: Sat, 22 Mar 2025 10:21:11 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-iio@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3] iio: frequency: ad9832: Use FIELD_PREP macro to set
+ bit fields
+Message-ID: <Z965Rz8NuXhbHrgy@debian-BULLSEYE-live-builder-AMD64>
+References: <20250319045212.72650-1-simeddon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319045212.72650-1-simeddon@gmail.com>
 
-Fix warning detected by smatch tool:
-drivers/mfd/lpc_ich.c:194:34: error: strange non-value function or array
-drivers/mfd/lpc_ich.c:194:34: error: missing type information
-drivers/mfd/lpc_ich.c:201:34: error: strange non-value function or array
-drivers/mfd/lpc_ich.c:201:34: error: missing type information
-drivers/mfd/lpc_ich.c:208:34: error: strange non-value function or array
-drivers/mfd/lpc_ich.c:208:34: error: missing type information
-drivers/mfd/lpc_ich.c:215:34: error: strange non-value function or array
-drivers/mfd/lpc_ich.c:215:34: error: missing type information
+Hello Siddharth,
 
-Use of the ARRAY_SIZE macro on the two-dimensional array apl_gpio_resources
-led to incorrect calculations of num_resources, as ARRAY_SIZE only works
-for one-dimensional arrays. It attempts to determine the size of the inner
-array but does not correctly compute the total number of elements, leading
-to incorrect indexing and potential out-of-bounds access.
+I think the proposed changes look better now.
+Still, some additional comments inline.
 
-This resulted in incorrect resource allocation, causing errors.
+On 03/19, Siddharth Menon wrote:
+> Refactor code to use the FIELD_PREP macro for setting bit fields
+> instead of manual bit manipulation.
 
-Replace ARRAY_SIZE(apl_gpio_resources[APL_GPIO_NORTH]) with ARRAY2D_SIZE,
-which correctly calculates the number of elements in a 2D array by
-considering both rows and columns, ensuring num_resources is assigned the
-correct value.
+The word 'refactor' by itself isn't very appealing.
+Instead, maybe promote how the patch improves code readability saying something
+like 'Use bitfield macros to clearly specify AD9832 SPI command fields and to 
+make register write code more readable.' Use that exact text if you want.
 
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
- drivers/mfd/lpc_ich.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+> ---
+>  This one compiles and loads without issue
+>  Should I eliminate the use of FIELD_PREP to avoid bit shifting
+>  alltogether?
+Not sure I'm getting your question here but some bitshift will be inevitable
+due to the structure of AD9832 SPI command. The difference is now the shifting
+is done by macros declared in bitfield.h. That makes it easier for us to focus
+on aspects that are more specific to the chip in the IIO driver. By the way, I
+think AD9832_PHASE and RES_MASK could also be declared as a mask, but maybe that
+change can be made on a separate patch.
 
-diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
-index 4b7d0cb9340f..f0b8ff9ed177 100644
---- a/drivers/mfd/lpc_ich.c
-+++ b/drivers/mfd/lpc_ich.c
-@@ -187,32 +187,34 @@ static struct resource *apl_gpio_mem_resources[APL_GPIO_NR_RESOURCES] = {
- 	[APL_GPIO_SOUTHWEST] = &apl_gpio_resources[APL_GPIO_SOUTHWEST][0],
- };
- 
-+#define ARRAY2D_SIZE(arr) (sizeof(arr) / sizeof((arr)[0][0]) / (sizeof((arr)[0]) / sizeof((arr)[0][0])))
-+
- static const struct mfd_cell apl_gpio_devices[APL_GPIO_NR_DEVICES] = {
- 	[APL_GPIO_NORTH] = {
- 		.name = "apollolake-pinctrl",
- 		.id = APL_GPIO_NORTH,
--		.num_resources = ARRAY_SIZE(apl_gpio_resources[APL_GPIO_NORTH]),
-+		.num_resources = ARRAY2D_SIZE(apl_gpio_resources),
- 		.resources = apl_gpio_resources[APL_GPIO_NORTH],
- 		.ignore_resource_conflicts = true,
- 	},
- 	[APL_GPIO_NORTHWEST] = {
- 		.name = "apollolake-pinctrl",
- 		.id = APL_GPIO_NORTHWEST,
--		.num_resources = ARRAY_SIZE(apl_gpio_resources[APL_GPIO_NORTHWEST]),
-+		.num_resources = ARRAY2D_SIZE(apl_gpio_resources),
- 		.resources = apl_gpio_resources[APL_GPIO_NORTHWEST],
- 		.ignore_resource_conflicts = true,
- 	},
- 	[APL_GPIO_WEST] = {
- 		.name = "apollolake-pinctrl",
- 		.id = APL_GPIO_WEST,
--		.num_resources = ARRAY_SIZE(apl_gpio_resources[APL_GPIO_WEST]),
-+		.num_resources = ARRAY2D_SIZE(apl_gpio_resources),
- 		.resources = apl_gpio_resources[APL_GPIO_WEST],
- 		.ignore_resource_conflicts = true,
- 	},
- 	[APL_GPIO_SOUTHWEST] = {
- 		.name = "apollolake-pinctrl",
- 		.id = APL_GPIO_SOUTHWEST,
--		.num_resources = ARRAY_SIZE(apl_gpio_resources[APL_GPIO_SOUTHWEST]),
-+		.num_resources = ARRAY2D_SIZE(apl_gpio_resources),
- 		.resources = apl_gpio_resources[APL_GPIO_SOUTHWEST],
- 		.ignore_resource_conflicts = true,
- 	},
--- 
-2.34.1
+>  v1->v2:
+>  - removed CMD_SHIFT and ADD_SHIFT
+>  - use GENMASK
+>  - store regval in an array and iterate through it
+>  v2->v3:
+>  - add missing header
+>  - refactor code in the previously introduced loops
+>  drivers/staging/iio/frequency/ad9832.c | 58 +++++++++++++++-----------
+>  1 file changed, 33 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+> index 140ee4f9c137..9a27acd88926 100644
+> --- a/drivers/staging/iio/frequency/ad9832.c
+> +++ b/drivers/staging/iio/frequency/ad9832.c
+> @@ -16,6 +16,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/spi/spi.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/unaligned.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> @@ -65,11 +68,12 @@
+>  #define AD9832_SLEEP		BIT(13)
+>  #define AD9832_RESET		BIT(12)
+>  #define AD9832_CLR		BIT(11)
+> -#define CMD_SHIFT		12
+> -#define ADD_SHIFT		8
+>  #define AD9832_FREQ_BITS	32
+>  #define AD9832_PHASE_BITS	12
+>  #define RES_MASK(bits)		((1 << (bits)) - 1)
+> +#define AD9832_CMD_MSK   GENMASK(15, 12)
+> +#define AD9832_ADD_MSK   GENMASK(11, 8)
+> +#define AD9832_DAT_MSK  GENMASK(7, 0)
+Use tabs to separate mask name and definiiton?
+#define AD9832_CMD_MSK		GENMASK(15, 12)
+#define AD9832_ADD_MSK		GENMASK(11, 8)
+#define AD9832_DAT_MSK		GENMASK(7, 0)
 
+>  
+>  /**
+>   * struct ad9832_state - driver instance specific data
+> @@ -131,6 +135,8 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  {
+>  	unsigned long clk_freq;
+>  	unsigned long regval;
+> +	u16 freq_cmd;
+> +	u8 regval_bytes[4];
+Prefer reverse xmas tree order. i.e.
+	u8 regval_bytes[4];
+	u16 freq_cmd;
+
+>  
+>  	clk_freq = clk_get_rate(st->mclk);
+>  
+> @@ -138,19 +144,15 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  		return -EINVAL;
+>  
+>  	regval = ad9832_calc_freqreg(clk_freq, fout);
+> +	put_unaligned_be32(regval, regval_bytes);
+>  
+> -	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					(addr << ADD_SHIFT) |
+> -					((regval >> 24) & 0xFF));
+> -	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 1) << ADD_SHIFT) |
+> -					((regval >> 16) & 0xFF));
+> -	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					((addr - 2) << ADD_SHIFT) |
+> -					((regval >> 8) & 0xFF));
+> -	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 3) << ADD_SHIFT) |
+> -					((regval >> 0) & 0xFF));
+> +	for (int i = 0; i < 4; i++) {
+Use ARRAY_SIZE() when possible.
+	for (int i = 0; i < ARRAY_SIZE(st->freq_data); i++) {
+
+> +		freq_cmd = (i % 2 == 0) ? AD9832_CMD_FRE8BITSW : AD9832_CMD_FRE16BITSW;
+> +
+> +		st->freq_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, freq_cmd) |
+> +			FIELD_PREP(AD9832_ADD_MSK, addr - i) |
+> +			FIELD_PREP(AD9832_DAT_MSK, regval_bytes[i]));
+Strange checkpatch didn't complain about that. Would expect the arguments be aligned
+		st->freq_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, freq_cmd) |
+					       FIELD_PREP(AD9832_ADD_MSK, addr - i) |
+					       FIELD_PREP(AD9832_DAT_MSK, regval_bytes[i]));
+although code now exceeds 80 columns by a few characters. Not sure which version
+would look better to Jonathan.
+
+> +	}
+>  
+>  	return spi_sync(st->spi, &st->freq_msg);
+>  }
+> @@ -158,15 +160,21 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  static int ad9832_write_phase(struct ad9832_state *st,
+>  			      unsigned long addr, unsigned long phase)
+>  {
+> +	u8 phase_bytes[2];
+> +	u16 phase_cmd;
+> +
+>  	if (phase >= BIT(AD9832_PHASE_BITS))
+>  		return -EINVAL;
+>  
+> -	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
+> -					(addr << ADD_SHIFT) |
+> -					((phase >> 8) & 0xFF));
+> -	st->phase_data[1] = cpu_to_be16((AD9832_CMD_PHA16BITSW << CMD_SHIFT) |
+> -					((addr - 1) << ADD_SHIFT) |
+> -					(phase & 0xFF));
+> +	put_unaligned_be16(phase, phase_bytes);
+> +
+> +	for (int i = 0; i < 2; i++) {
+Use ARRAY_SIZE() here too.
+
+> +		phase_cmd = (i % 2 == 0) ? AD9832_CMD_PHA8BITSW : AD9832_CMD_PHA16BITSW;
+> +
+> +		st->phase_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, phase_cmd) |
+> +			FIELD_PREP(AD9832_ADD_MSK, addr - i) |
+> +			FIELD_PREP(AD9832_DAT_MSK, phase_bytes[i]));
+Would suggest to align with the first cpu_to_be16 argument here too, but better
+wait for Jonathan's opinion about this.
+
+> +	}
+>  
+>  	return spi_sync(st->spi, &st->phase_msg);
+>  }
+> @@ -201,7 +209,7 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+>  			st->ctrl_ss &= ~AD9832_SELSRC;
+>  		else
+>  			st->ctrl_ss |= AD9832_SELSRC;
+> -		st->data = cpu_to_be16((AD9832_CMD_SYNCSELSRC << CMD_SHIFT) |
+> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SYNCSELSRC) |
+>  					st->ctrl_ss);
+Not sure about this assignment with mix of FIELD_PREP and non-FIELD_PREP value.
+Maybe have 
+				       FIELD_PREP(AD9832_DAT_MSK, st->ctrl_ss));
+?
+
+
+>  		ret = spi_sync(st->spi, &st->msg);
+>  		break;
+> @@ -214,7 +222,7 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+>  			ret = -EINVAL;
+>  			break;
+>  		}
+> -		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
+> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
+>  					st->ctrl_fp);
+Same would apply to these other cases.
+
+>  		ret = spi_sync(st->spi, &st->msg);
+>  		break;
+> @@ -227,7 +235,7 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+>  		st->ctrl_fp &= ~AD9832_PHASE(3);
+>  		st->ctrl_fp |= AD9832_PHASE(val);
+>  
+> -		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
+> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
+>  					st->ctrl_fp);
+>  		ret = spi_sync(st->spi, &st->msg);
+>  		break;
+> @@ -238,7 +246,7 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+>  		else
+>  			st->ctrl_src |= AD9832_RESET;
+>  
+> -		st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
+> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
+>  					st->ctrl_src);
+>  		ret = spi_sync(st->spi, &st->msg);
+>  		break;
+> @@ -396,7 +404,7 @@ static int ad9832_probe(struct spi_device *spi)
+>  	spi_message_add_tail(&st->phase_xfer[1], &st->phase_msg);
+>  
+>  	st->ctrl_src = AD9832_SLEEP | AD9832_RESET | AD9832_CLR;
+> -	st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
+> +	st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
+>  					st->ctrl_src);
+>  	ret = spi_sync(st->spi, &st->msg);
+>  	if (ret) {
+> -- 
+> 2.48.1
+> 
 
