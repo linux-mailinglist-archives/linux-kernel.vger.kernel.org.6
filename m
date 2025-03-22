@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-572112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD62A6C699
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22707A6C69B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744B13BA8F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177C73B3C66
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6619F258A;
-	Sat, 22 Mar 2025 00:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1CB258A;
+	Sat, 22 Mar 2025 00:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ef1JJ3uH"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kE5W964+"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1B2AD24;
-	Sat, 22 Mar 2025 00:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A162173;
+	Sat, 22 Mar 2025 00:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742602080; cv=none; b=Jn0MaKkFapdOBn8n9pI/I6ZV8uDrnDLvtSz/56fH60vGmWBmxplDe6XjqamlbSuwL4vpeCUD3Qv4CeuUykGU1aDEiC8/OXwQJHa3Y57bjYGdiqaOrwu3ZmifED4QcEhR20S5THo42JSbOfeOE+LtUGcJF3FWkL4ooNza2AzcAD8=
+	t=1742602190; cv=none; b=lJ0CIxYXR2cX1xuTofXHJG1J1R8udWTvptpdpshWkfwM7vPrWyx4DA8e58P7GznOntW+EJfvtSXwQ5oHz9l9+FOCVsdF/mDfgGSphqhlj03w+h9ouMtC2N/JCs3JUSVTWWDjqu4JKMP9YSRYZcS94SkJrlWmbJ/MnoY8owGjnMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742602080; c=relaxed/simple;
-	bh=3QKaKPMSJD+/egJfzRapWYRtqycA3II4RLMgHhqVCHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKH+msKvgo+KD57166x/pTR5UeVPh5Z8wAc77qJ6F3ysFzLbvsTAWETDZ0nAxsFk+KRh+oZjWwhngUldAGjELt+KpeljguygRLZGzRQboiBlmkffdYmWWbHry+kUq7HaDt/DK6dtk+TuXBzIzvFUy6s6HObN1AtILo3tawhIdeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ef1JJ3uH; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1742602190; c=relaxed/simple;
+	bh=1Ger/8ipWfTQ2dLT+NxwG72j/YzBfH/+Dx2GDs4+hJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UlJO3zqYIoHHZm0OaAnNbtmRMi9clNouIf9H6EYhtoMef0N1Bw+HnQJX3rVrS5Cffg2tNzJLkOfcpXtqV1C1FObKiSAiiL0d3+IzXq69aDHtJ9CqUTnf5nH6V1c0Q1yDCgAo4bpALSqv/1Sebdu/p3EzgqCqz7YndA9sX+LcFfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kE5W964+; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22409077c06so33755815ad.1;
-        Fri, 21 Mar 2025 17:07:59 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224341bbc1dso52050575ad.3;
+        Fri, 21 Mar 2025 17:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742602079; x=1743206879; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8EXV+liqXecF19/95E6X4B8HYwLOUANKAp4Chr+5IZE=;
-        b=Ef1JJ3uHz/SCeQr225QUNTYzYikh0wdp/SEkeH//Oa+KMSsO5VcVybqeeJ+bP0zi5R
-         nk06PVVWpbtSwQB4UG/OqATtJwNTejQfDydVBD6JL6HOLqVvAXA1DmOW4yYcuhJQBzL0
-         iiGc1hNg4GAOHJFTy/tlQYuGioo8TQC8lH5Tz22qevfXHhzMU+WqN1ISnN5FSzsdPGUI
-         vX8WH38VRE2qMUCQzAJVqHBqaWMjY44t4at4NaGDblLMb6VFVyMqx5makdAwb4NogQuf
-         8ArzEI5GVe5qZN6PIm1FxTkv7pCabU3kzJX9M4tOcrg6j7Z8tqRAFhBElu6SZ95mK7Er
-         +h/w==
+        d=gmail.com; s=20230601; t=1742602189; x=1743206989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHpkR59C6RKys5u9ygyvaiRu0tqY4gKg18uFdCfjZV4=;
+        b=kE5W964+d9gK+7N9qqu8sgUVVkFwMo0yzE3NCaZmsohATZ/hb6RmpEuvfc5pA3CzsX
+         OC9xocTZtx1KPyILz5qWN8ETcHpjH9Wi7alIESRdAfJKVBPVEZANPrzLLktJuVXctNu+
+         nCbPxikUe6ynb4gEmTbDurM2h3J6CSLYkmjDOtnnIki/+CIqfajJq4G39USLbBDLoBEm
+         CfLKjHvMXx6yvgstAFRvTZ0RiBxJNiHtLzOhCNVOKA1l0sYPwgrz346aJ1H53uZvbsMF
+         /kdb3jzS2EEwSwuiy9VwKI5SA1ACtpknshlF4RskaJivhZNKnSHxO5TQJJA64H4jYRYp
+         Gy2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742602079; x=1743206879;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8EXV+liqXecF19/95E6X4B8HYwLOUANKAp4Chr+5IZE=;
-        b=NpH36C+HuqbCVzc5P0pPzzkeUYtTn+AiDc4pTse8Vf42A890u1nO2vVVe0LXmMyGnB
-         FxDshg79odHbIFZ5hGEjzXwoLvUYyzya+7/ejPTKTdBC9KKTD/a5+84phDNWyIKVj5ee
-         +ESCQ25boVJ5i91PKrb01FsoQbvSJreyTYjdYt5xTfjNmxot5fWLmB1SV1tPNpoOX/aF
-         +OI8eqd22qF6haI/GqD+AhUr240DPuVvcwhaTUzbJudSZoAi+epEIKsGr4PILxxh2Lp6
-         zvsBBffLC8uLPG2X2N3WLMdL/PU+J+G9aP4o7hkYVxz3NxdLL2ChMRwb6EWyDcIQH8J3
-         vBgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1UeQldmJ8WMAMdZk6aD66x4JUiCVm9v4hkB9w6UbcA/UTZphd0FCm632Lw6jBu+7rMNn1Lbt14vrS@vger.kernel.org, AJvYcCWvHpyulqpK9b4bKZn/I3M2mzINxzc5BWyXv/C1kA5p3UoPmZeleSsHCNq677OmINjl4VLGuv8xP1/V+dya@vger.kernel.org, AJvYcCXtzrLtdSlYtKK+3vO0sM3RYd+74OiQxRpk905yC1GGhNL2sJIASX4pUxwxR6GmX+zWyZw6LVO0vFk9P5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv2pnbhGbhO9Y4GVgjPFLPvmJxyvak+fOEd9OJQRKkcln3QsZX
-	MEffvQCUVxgdv5/HlqonVlUi4qycsv2v1JFRhGGhvmy1WbbL1c4oKXHDAg==
-X-Gm-Gg: ASbGncvZa2rnPN6sHqJWyb25t/drquMy7WmI+fUelgevUnD02x/5uYIdUiOtGPY5VCa
-	Zhxr93/YJT+HvPIUxkxWRiqwQ2oX4gTkESTbKM62zuTM1vqFBwykLuo4rWLK+GJXwAazjJWaHEk
-	GI0ZeBUNzKYsx/I7p4hZdulzMct/11IZeWBn/GtTrnaWQAaXigEUyWEKvdwHJInkKfbjc1MkKFu
-	roE1z6oZgNNjMuHz7Vmnw8bycgYvJeHGE4+Ci11CYUmafsyHZszz5OIhDzTeOXHj8+c5YnRGZW/
-	TujdbSVoIzDc7vU0DE0Qkarxj3AFtuuwC5MTvJw2trP4Hvqk6wdtXdRc6w==
-X-Google-Smtp-Source: AGHT+IFG3IzHoUnF4Irysf7rShLOoFBmDOITsQx3iVCYXu5PXAFkhXgqbngY+idRPjClaq9zGMWhOw==
-X-Received: by 2002:a17:903:32c3:b0:224:1774:1ecd with SMTP id d9443c01a7336-22780c5599amr67690555ad.4.1742602078632;
-        Fri, 21 Mar 2025 17:07:58 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811bd143sm23906575ad.150.2025.03.21.17.07.57
+        d=1e100.net; s=20230601; t=1742602189; x=1743206989;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VHpkR59C6RKys5u9ygyvaiRu0tqY4gKg18uFdCfjZV4=;
+        b=dXWTK5u8yOtAIhahDUtVG2U2CU/4+AD1dnsnv4rA3rSQHe516ThNLzsMNYk39wgDeH
+         SOU96rKXFpJY1w2sWLf1+KtVXqvV+1oX0ddjAufcK1KCGKhD+L8YHlS0E5xwbNAm7zxE
+         I4EouEaNYMR3/H0AJLVxmJloRFSPjwr9gJQbP4MFYR678s/4DdtoCvDddY/jimKfsnjt
+         4+3YyHH1Fb/ticrMS4S1JDbg6Ee1BAIVvsnfM3O5TYHxh18LGkDXdVX12A28Cgxeig6r
+         8KlYOfyv6lapTEpXAuffc0EF7k6a3E3GmAAUjfrNE37yzc2JPVvvv/1/yjnImN7I8XLV
+         pDIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCQpgCWiMJs7XArKKMKaHUL4GRDDUVEeWH8ShB4f4mnsHyZIXuyCPScFjJQFOAKW5jxscp02A9@vger.kernel.org, AJvYcCXeSxSfZxJ6lRxegJcPoOTyk6HHZfXq3oWg+TEs/OhBeTaHlheK+P4qCCYCNG9AdwL0nVppMGKi27H+oBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNBufJBNCjmtt9NZf6nYlAWlQOSfo9PytfK4I8u7K4IXydpxqT
+	r3sunHYGnvdBzzQaVpwy47bAzgY6IhJuuHJzoCrxFXX66vp93HI84pACud76
+X-Gm-Gg: ASbGncuPYmbB5vm3Hwc+8ZxXAkieXr6OWAzfVpQo1fY6BwWOKUNuBIbdbYh/K8mP58I
+	xnunEL2McMRmj6tFaLwcCQDeJ06GQQ/iAXiGeCOax5vKzJyXd8r64o2wyYo9hcF2QIiaaWpDN1j
+	YgP5udZjGBsCAYNSnPN4ECxRQX8gq9jzPe+TZhKxurzQ7JwViDgQjETey1Kehopn4liLjLLTaMJ
+	7FLJVoXW1Y188nBZBDWSliWumTqDaWQbSiYuxUtE1fTAi2W6/HP49A7E6AgNep7hgPmDDM1D4rs
+	dxkEh7NabFoh5jTJuJL8GEttIMmguG1DOw+L8tXgsomk1RM=
+X-Google-Smtp-Source: AGHT+IEm0KgQcRX1l3WnbOC3hmSkrET5i49w2ngKlS+vA7nAkpx+VAqPc1ifPVvGl7DOCPUYGfTZsA==
+X-Received: by 2002:a17:903:46c3:b0:223:49cb:5eaa with SMTP id d9443c01a7336-22780e0a7dbmr94479655ad.35.1742602188641;
+        Fri, 21 Mar 2025 17:09:48 -0700 (PDT)
+Received: from apollo.localdomain ([2601:646:8201:fd20::ac74])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da95dsm24022985ad.194.2025.03.21.17.09.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 17:07:58 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 21 Mar 2025 17:07:57 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: florin.leotescu@oss.nxp.com
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Shych <michaelsh@nvidia.com>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	viorel.suman@nxp.com, carlos.song@nxp.com,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	festevam@gmail.com, Florin Leotescu <florin.leotescu@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v6 3/3] hwmon: emc2305: Use
- devm_thermal_of_cooling_device_register
-Message-ID: <f9982a05-5104-426d-b9ac-de4b5c4d465e@roeck-us.net>
-References: <20250321143308.4008623-1-florin.leotescu@oss.nxp.com>
- <20250321143308.4008623-4-florin.leotescu@oss.nxp.com>
+        Fri, 21 Mar 2025 17:09:48 -0700 (PDT)
+From: Khem Raj <raj.khem@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Kees Cook <kees@kernel.org>
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Khem Raj <raj.khem@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mips: Add '-std=gnu11' to vdso CFLAGS
+Date: Fri, 21 Mar 2025 17:09:40 -0700
+Message-ID: <20250322000940.778730-1-raj.khem@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321143308.4008623-4-florin.leotescu@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 04:33:08PM +0200, florin.leotescu@oss.nxp.com wrote:
-> From: Florin Leotescu <florin.leotescu@nxp.com>
-> 
-> Prepare the emc2305 driver to use configuration from Device Tree nodes.
-> Switch to devm_thermal_of_cooling_device_register to simplify the
-> cleanup procedure, allowing the removal of emc2305_unset_tz and
-> emc2305_remove, which are no longer needed.
-> 
-> Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+GCC 15 changed the default C standard dialect from gnu17 to gnu23,
+which should not have impacted the kernel because it explicitly requests
+the gnu11 standard in the main Makefile. However, mips/vdso code uses
+its own CFLAGS without a '-std=' value, which break with this dialect
+change because of the kernel's own definitions of bool, false, and true
+conflicting with the C23 reserved keywords.
 
-Applied.
+  include/linux/stddef.h:11:9: error: cannot use keyword 'false' as enumeration constant
+     11 |         false   = 0,
+        |         ^~~~~
+  include/linux/stddef.h:11:9: note: 'false' is a keyword with '-std=c23' onwards
+  include/linux/types.h:35:33: error: 'bool' cannot be defined via 'typedef'
+     35 | typedef _Bool                   bool;
+        |                                 ^~~~
+  include/linux/types.h:35:33: note: 'bool' is a keyword with '-std=c23' onwards
 
-Thanks,
-Guenter
+Add '-std=gnu11' to the decompressor and purgatory CFLAGS to eliminate
+these errors and make the C standard version of these areas match the
+rest of the kernel.
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Cc: stable@vger.kernel.org
+---
+ arch/mips/vdso/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
+index b289b2c1b294..15521004c563 100644
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -30,7 +30,7 @@ cflags-vdso := $(ccflags-vdso) \
+ 	-O3 -g -fPIC -fno-strict-aliasing -fno-common -fno-builtin -G 0 \
+ 	-mrelax-pic-calls $(call cc-option, -mexplicit-relocs) \
+ 	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
+-	$(call cc-option, -fno-asynchronous-unwind-tables)
++	$(call cc-option, -fno-asynchronous-unwind-tables) -std=gnu11
+ aflags-vdso := $(ccflags-vdso) \
+ 	-D__ASSEMBLY__ -Wa,-gdwarf-2
+ 
 
