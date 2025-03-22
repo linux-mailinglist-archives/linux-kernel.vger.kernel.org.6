@@ -1,183 +1,89 @@
-Return-Path: <linux-kernel+bounces-572418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE8BA6CA29
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:32:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F50A6CA2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A525A189CE3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E243AD2A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2432A1FBE9B;
-	Sat, 22 Mar 2025 12:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNFs3QyW"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE99221DA6;
+	Sat, 22 Mar 2025 12:44:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE93199FA8;
-	Sat, 22 Mar 2025 12:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2185712B17C
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742646745; cv=none; b=K3kbFieTLVeHw6K93L4CG91CEuT2KUrCN5BpWttob0RMRia3s0r5c16AIGkPcJ2o9yZ9WNTG6lzx3akQNsYdi0JYcUr/anBZ6CewEtu3xp/ZlwlI+jyJQSUZel0MeTiDiluPG0S101+V2a/WdYBSH+UEoWbHvR1yBpP+w+K1yb4=
+	t=1742647444; cv=none; b=koux/Ym1PF2ATktPnMSGfocuUtP/Mv4Lh50hitOAY1Wlv1ZaBLfDFdeTU04WnZxbG9SdhBJhgUTzle/i/YngQhEhNb0WwpB/C6QuXTdXPIBF+zvdNZEa7AWYEYI3RbDDUN9UD29hiVgsDarV8BPBN1ys3p8ZCPFql6BlO2fON3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742646745; c=relaxed/simple;
-	bh=pK7rxh+vGXwiECvtIO/iUyR/P1io+Iqb7WVxHoUthw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFx1hE2hN8Sm212PxsLXJGhiupWepggzw6IPimM6ezuXAkZ7Ws++R93Z9TppBDn/Roi7rRFZgTyuaEDJ3e40kSBFavrrfAvgYwxcwLqgwfwH01++orj0pin/lPNBIjeASgW96oRsyFyTEnodrpaPOJKH/ykuMJGZe/QYDhj6TPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNFs3QyW; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so4323018a12.3;
-        Sat, 22 Mar 2025 05:32:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742646742; x=1743251542; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pW4CgvyO8E8d5aodvOYqRFyiScdqSUa2dn7Pkrdkp8Y=;
-        b=NNFs3QyWAVzkcARkYgoV4W8yYOWuznNicxGyxm7RQTxd8z8qLvwxX+ez7J+/pfKlNi
-         +PbR4/h1OW0uqkKN4+zibApTl9gIKkVpsqzGl6nkw/fW2k5W7xVcy2RJ6MzOVsyqAk8x
-         fvGq/VUbG9FRcIfcw7zfjtIUDyhDYWl7jNsaW6MT1pAt8ppc9nqJeAdS5EuCscMDntxT
-         vVKuX1l1cyJ+77YU17iF2OvlMGCvIH68QyAjot8iqqnfpKPxk9akfs5aYeWh3qhTYiR5
-         pX1FcYcvak8V74Ll+PsbOhn2Tibsuj6okMuuiiQj5kC7HGRXGkbCz0JGr5XD8giPgoo8
-         WceA==
+	s=arc-20240116; t=1742647444; c=relaxed/simple;
+	bh=4sDLsXDAw4pHa4Bir6qC04E9rkcUjQd4sAQBFW78vKc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sGtpoMok6xULYbqLcDIIAQEj2BMFGGfyNYXP70ky1JAvnHokHLAs1S9zeWM5MoYXIhe0rKfz14zzhqRj9wMtBBLHTsJCeIX1n1MVdbzgGGo2wmcWXo4w58IgR8hTLJG1h/sH3SGettaMHHiffCbTfpZVRtEtvyut0qdx/9W/8a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d43b460970so59688925ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 05:44:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742646742; x=1743251542;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1742647442; x=1743252242;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pW4CgvyO8E8d5aodvOYqRFyiScdqSUa2dn7Pkrdkp8Y=;
-        b=POgmU6B+BhQolDnsqV39Jpw8P85F6gnVrNQA3W5tfde4DSc2d7aNL9GHIJ5DF7zZio
-         1HwhDrXP2Bo9ITrrMINFsyK8urbmGabd62xKvorgzs4+oTjHLgo6JR+ppinCsNwudYmE
-         F3PK/m0SgL8CCj3/skHn5bjirNtow5xzPxkWtAT6IyyHVIuw/B4Ml41rhmK0yV5ydlK+
-         cS0XugfyoqrLezMzmjitkjPqgUqEEiOxOVAYHtTuiQaQ4PHIHqBPAtieSuD/GxnWx5l9
-         m8RYKIVhrGKBulahq54wAVv2CjvWBYwnzopWmEyFc7wdTrcyStORe2R3TRJBbV/0I7fK
-         yYDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBcH3zfjEOeh7iE8SIHzLS60S04hwz2sZ4yfd2+cnicTTf5WenPYtsxO/G56kSU405Xk+n4A3KlQ==@vger.kernel.org, AJvYcCX0PdahMUzB+u9MUcSmcFIDyDd9YWvBoS+xAhWZX86QLYuOUsNVyWm5Ae5/HMZr1xAcEhz+SEGeA8UbnbFZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTFhCWMZQNfQQwibgdWAkRQSCXuGii/v3ruaTxYH7D9zvIMoFI
-	Gf0yFjvfHaqY+eTvdlHQNsM0xnfnDhLe/Do37UwHPveU/zRvDDpL
-X-Gm-Gg: ASbGncu+RhtmJULdUqnoMsyNDtXklE5gRbw4e8RocCNUOACyVl2rpTRcNO4k9+deqb7
-	JVsIDBj9iHCwiFItMaPSjlArDIUt8go0m/W1LnZdiRC7WH5Qp5gX11olL+jJXBE7+jmTyGj9y8P
-	gAAgLQYh4pciVLreDSYFBTyIBOgQ6CvHz8gPj3VZlUq/HfS/xdBrTcuG+7FmAyuDd/ap/A+10o9
-	ZlkHlwR/ciiK6IjdCreWLmSRoBY+ebRGVmzjNDh+ck8LuLpyggDjuTA7FjP0mPZEzuU+T+nMaYN
-	xA091+k8R4gJXOjmwWzRCS6U4tUpCWT8X9AJqOsNKwZDHLGKlo2+
-X-Google-Smtp-Source: AGHT+IHJAD6ahRLJfliFILL9MhKgl55JdXEMg4d/m5h9z2bwL6EhEJ1WElQ80YTk2VaHYjmxB8orNg==
-X-Received: by 2002:a05:6402:270d:b0:5e6:17fb:d3c6 with SMTP id 4fb4d7f45d1cf-5ebcd4f3827mr5389659a12.25.1742646741523;
-        Sat, 22 Mar 2025 05:32:21 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.234.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0dfdcesm2999752a12.65.2025.03.22.05.32.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Mar 2025 05:32:19 -0700 (PDT)
-Message-ID: <814281f1-3b8c-4cb8-943b-0edb818168dd@gmail.com>
-Date: Sat, 22 Mar 2025 12:33:13 +0000
+        bh=gVF+PwONIaTJdkFX0hhjlzVj5s/XoXR24BPkRfJDqIA=;
+        b=V5rrHistr+LadS2Psqal5/rc+yZnsjhwsB67ABfcIJ15ACkOeekeBfx5zSsLpp3YCV
+         wz5TQkVupwYPwCI9z0zMbwSTwKz4mN/ffj3V3GDebs5MGcggDuKc0mNmUDU+XCS6ycmp
+         lSCp0QHG0OTUfB25idSE7YJX3yyt8TkM71d2xpHH3gY+Ag+Ydu/PzXgacKNqGW2hCFcK
+         75xwywqkOeIFBe33F1bGqeKGOhPoZ+zQSd7EH7NzI7xQgueWcskTnq6JgqPxiHGOepuD
+         yuG7NkvRs8MWjYLTiNSrIQZlYXv62sX8YBG7ZwQIp6Q5oiUsJxph45P0Z2FecOqEoTJk
+         8MDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqKNjs8DsedeH00ON18L8TCh8YkEte0JcUB/qu5ogLzSEaNkm8AVPjOq/BDH2cBuhaDBCbgdkdxIvndZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfobaSI3APp9x9bmu1TlDbvfMRMWkZjhw7CagQ/C6pml6+nzBN
+	zYptThYcwNjY2PASTd8Ryep41ESH2tpSdYTM3IGuLJ/WXWmtXCHSbEaP8XoX96gqNWXP58JWJv0
+	M+joiZcbbxzB96cuM4jF+rCWJ0PdK8aDdd77W1UoCfIxI2ztfI/uwZ1c=
+X-Google-Smtp-Source: AGHT+IEXA/MzJF+RIcAtENhkT/H575Y1nUCgQruEQpzFyIBHuJiMFT7lE+2HMIwkv1oUnuLpBKoKAPZ/2cKAzbbNH6aEZYDwzdRA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going async
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Xinyu Zhang <xizhang@purestorage.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <20250321184819.3847386-1-csander@purestorage.com>
- <5588f0fe-c7dc-457f-853a-8687bddd2d36@gmail.com>
- <CADUfDZo5qKymN515sFKma1Eua0bUxThM5yr_LeQHR=ahQuS_wg@mail.gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <CADUfDZo5qKymN515sFKma1Eua0bUxThM5yr_LeQHR=ahQuS_wg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:ca45:0:b0:3d4:244b:db1d with SMTP id
+ e9e14a558f8ab-3d5960f5b15mr63113585ab.6.1742647442222; Sat, 22 Mar 2025
+ 05:44:02 -0700 (PDT)
+Date: Sat, 22 Mar 2025 05:44:02 -0700
+In-Reply-To: <20250322122233.218306-1-duttaditya18@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67deb092.050a0220.31a16b.0039.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in add_missing_indices
+From: syzbot <syzbot+b974bd41515f770c608b@syzkaller.appspotmail.com>
+To: duttaditya18@gmail.com, jfs-discussion@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/21/25 21:24, Caleb Sander Mateos wrote:
-> On Fri, Mar 21, 2025 at 1:23 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 3/21/25 18:48, Caleb Sander Mateos wrote:
->>> To use ublk zero copy, an application submits a sequence of io_uring
->>> operations:
->>> (1) Register a ublk request's buffer into the fixed buffer table
->>> (2) Use the fixed buffer in some I/O operation
->>> (3) Unregister the buffer from the fixed buffer table
->>>
->>> The ordering of these operations is critical; if the fixed buffer lookup
->>> occurs before the register or after the unregister operation, the I/O
->>> will fail with EFAULT or even corrupt a different ublk request's buffer.
->>> It is possible to guarantee the correct order by linking the operations,
->>> but that adds overhead and doesn't allow multiple I/O operations to
->>> execute in parallel using the same ublk request's buffer. Ideally, the
->>> application could just submit the register, I/O, and unregister SQEs in
->>> the desired order without links and io_uring would ensure the ordering.
->>> This mostly works, leveraging the fact that each io_uring SQE is prepped
->>> and issued non-blocking in order (barring link, drain, and force-async
->>> flags). But it requires the fixed buffer lookup to occur during the
->>> initial non-blocking issue.
->>
->> In other words, leveraging internal details that is not a part
->> of the uapi, should never be relied upon by the user and is fragile.
->> Any drain request or IOSQE_ASYNC and it'll break, or for any reason
->> why it might be desirable to change the behaviour in the future.
->>
->> Sorry, but no, we absolutely can't have that, it'll be an absolute
->> nightmare to maintain as basically every request scheduling decision
->> now becomes a part of the uapi.
-> 
-> I thought we discussed this on the ublk zero copy patchset, but I
-> can't seem to find the email. My recollection is that Jens thought it
-> was reasonable for userspace to rely on the sequential prep + issue of
-> each SQE as long as it's not setting any of these flags that affect
-> their order. (Please correct me if that's not what you remember.)
+Hello,
 
-Well, my opinions are my own. I think it's reasonable to assume that
-for optimisation purposes IFF the user space can sanely handle
-errors when the assumption fails.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-In your case, the user space should expect that an unregistration
-op can happen before a read/write had resolved the buffer (node), in
-which case the rw request will find that the buffer slot is empty
-and fail. And that should be handled in the user space, e.g.
-by reissuing the rw request of failing.
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 
-> I don't have a strong opinion about whether or not io_uring should
-> provide this guarantee, but I was under the impression this had
-> already been decided. I was just trying to fix the few gaps in this
 
-I don't think so, it's a major uapi change, and a huge burden
-for many future core io_uring changes.
+Tested on:
 
-> guarantee, but I'm fine dropping the patches if Jens also feels
-> userspace shouldn't rely on this io_uring behavior.
-> 
->>
->> There is an api to order requests, if you want to order them you
->> either have to use that or do it in user space. In your particular
->> case you can try to opportunistically issue them without ordering
->> by making sure the reg buffer slot is not reused in the meantime
->> and handling request failures.
-> 
-> Yes, I am aware of the other options. Unfortunately, io_uring's linked
-> operation interface isn't rich enough to express an arbitrary
-> dependency graph. We have multiple I/O operations operating on the
-> same ublk request's buffer, so we would either need to link the I/O
-> operations (which would prevent them from executing in parallel), or
-> use a separate register/unregister operation for every I/O operation
-> (which has considerable overhead). We can also wait for the completion
-> of the I/O operations before submitting the unregister operation, but
-> that adds latency to the ublk request and requires another
-> io_uring_enter syscall.
-> 
-> We are using separate registered buffer indices for each ublk request
-> so at least this scenario doesn't lead to data corruption. And we can
-> certainly handle the EFAULT when the operation goes asynchronous, but
-> it would be preferable not to need to do that.
-
--- 
-Pavel Begunkov
+commit:         9388ec57 Add linux-next specific files for 20250321
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=147b043f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b4f3153a0a8b9aaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=b974bd41515f770c608b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1054b004580000
 
 
