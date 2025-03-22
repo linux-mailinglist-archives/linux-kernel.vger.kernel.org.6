@@ -1,66 +1,76 @@
-Return-Path: <linux-kernel+bounces-572171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747FAA6C799
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 05:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A54A6C79B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 05:54:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015D91B61B85
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42318189ABFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD421487F4;
-	Sat, 22 Mar 2025 04:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFCA149C7D;
+	Sat, 22 Mar 2025 04:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="g22LYAh2"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="hbpM0eCH"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0772A1CF;
-	Sat, 22 Mar 2025 04:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78852E339B;
+	Sat, 22 Mar 2025 04:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742619134; cv=none; b=gW+UiQuWRsC0hA5UU0IGVdUXEFagRANFRSNLpbDIZKtjT0YPzUugJQEorsTF0xldpw4MRHhrqDjTE2hQP6aK5n6kCkzcRhN5xpMiYZwicvioKqaZ+7iF7cYfU9cYcRUXr5GvsOwWP67xE5L4oOepYpVIm3KiJ11WK06p84BpVKU=
+	t=1742619243; cv=none; b=EpPg4Eydflb2jisbRblx5hOQ+AiC1uU1ZiSvIpnLC8Kmj+V+ny37aZAdZXqcsByy4wCN7FEl1LCrI2D6G19GfV/VCvDtDDUWdg6nvdocSo9sMrBZnBoCH0bTuCICEi4vQBcoIAMBUHfYe0N1QtgA5blGeBaeOcjbhrbur0D9L3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742619134; c=relaxed/simple;
-	bh=ZqVUq25vtch3NJeA9V7qRbEw121ffeWJF0AaEbjIsIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rVxOpyBGkR7NoYdRNRmQdZ0sM34eMJN6/PTyMEODgukpu/aJNY2MX7TrskGcVqcm8ll3XuwLIzdjbw9pLpHrCr+Hub+rNS24TpaXaFiPXEK3imTfvPxkWDSrjE8BGMg8gBlJylYWDDmz7IPp+344Yr0zFMDpeoYNXjfX7+v8yEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=g22LYAh2; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1742619066;
-	bh=fVbG1ZybPjQGplyq0kjx9MEJAhkFMUZGQ0sNVT/4SNU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=g22LYAh26vTaA2Mwq44pPL8lcuuTUZ5w+VoONF8eFm+F4KwfFDc44ZJ/1Yzff/KUJ
-	 ca/5JNieJEuHZ7c1BhYG3h6EOu3RYBGbRWOEr9FMJ7B0F6SGjlaUxmb9a2BtTqV3Ve
-	 Z9SbhEwXkehlP12/YL9+tHociaiP3k3wo0cn+VZA=
-X-QQ-mid: bizesmtpip3t1742619052tkyi4b5
-X-QQ-Originating-IP: w/M2VUTH20i9uV+YShiougwZMCayxu44nfhBTm/ds7g=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 22 Mar 2025 12:50:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5458398049186991101
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de
-Cc: wangyuli@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Felix Yan <felixonmars@archlinux.org>,
-	Mingcong Bai <jeffbai@aosc.io>
-Subject: [RFC PATCH] MIPS: KGDB: Remove the useless "nop"
-Date: Sat, 22 Mar 2025 12:50:34 +0800
-Message-ID: <4621EB3971C7BB9D+20250322045034.297491-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742619243; c=relaxed/simple;
+	bh=ZJgQeKyxTTzfAeXRGE4wTBC+AL7c9MPzmPtv0+52ID8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a3dFETzZ3f1h8daJKDIjkQccZ6uHB4oNmrotRXtqq4xDmc1nV2Qb9U50GFimFzmKT0O4oI6YX5vLJ9bzvv+HJm50K39hIUpFd9qsFCmZHw5CahT4EX0k3AQiNPj9iT9OBFtIUm3t4J9MoChE3D9C7E6DSdMPQdGuKCM+JNYfYR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=hbpM0eCH; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1742619241; x=1774155241;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mwMhIpOwdTY8b8egTfnClW+BLSI90Ie+Jj6s1J1nYAI=;
+  b=hbpM0eCHidaD0+EjxbFLUPraZDHYPEAoxtG+x0QmbnQ+IJpHzIRKDI1C
+   RpfHHlqKv+5XhsByGsKN6ncQdLyrHyE3DKfrgtF6emH+tzVNnu/2ms4nd
+   RIcXh0RE52Q8qU1tBk4KQzRsNzt3jTBkkqANx8IsYlIgRVTqq9ytqgc1K
+   M=;
+X-IronPort-AV: E=Sophos;i="6.14,266,1736812800"; 
+   d="scan'208";a="184158914"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2025 04:53:59 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:47781]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.56.45:2525] with esmtp (Farcaster)
+ id 332547ea-fffb-4b5c-862c-c0278ae9cb70; Sat, 22 Mar 2025 04:53:59 +0000 (UTC)
+X-Farcaster-Flow-ID: 332547ea-fffb-4b5c-862c-c0278ae9cb70
+Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 22 Mar 2025 04:53:57 +0000
+Received: from b0be8375a521.amazon.com (10.37.245.7) by
+ EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 22 Mar 2025 04:53:51 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Andrii
+ Nakryiko" <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+	"Eduard Zingerman" <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong
+ Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+	<jolsa@kernel.org>, Peilin Ye <yepeilin@google.com>, Ilya Leoshkevich
+	<iii@linux.ibm.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+	<kohei.enju@gmail.com>, Kohei Enju <enjuk@amazon.com>,
+	<syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
+Subject: [PATCH v3 bpf-next 0/2] bpf: Fix OOB read and add tests for load-acquire/store-release
+Date: Sat, 22 Mar 2025 13:52:54 +0900
+Message-ID: <20250322045340.18010-4-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,79 +78,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M8Li3la+wnbNEMPwE2ICO7DlZu2V8P+//HPSdP6KQPdLbKkXcoy39CsM
-	zNMH32InHcy3rDI8uOLPoyn9A7eJBfxavLP4X6QGisG2QdyqKBI4eP2J+VU3KlQaBGVgX94
-	phn6GClHCrExmSeqgb+CG671UFq5tul2x8SCTpvmyQBbaNeSK7QwSVIo6OI/1p9EwppOFek
-	OkXJKFrxjukq+xIM9Gfzex9zz3zHaHPTl2ZHpNafUXUM6p5A1i0gtpH0b9Ey82oxHnya48z
-	gEpqGkSc6QydNNTOEWCDQHqqGuNi3SMX7TrUTYKl2yFSM1wesHaZx1FJUoVuIkslka0kO4c
-	eOT1mHrfDbIH1/YeYS9ciDQrX1h7zhRN+4EE1EjKPyhJYnqbIOcB5aqtUGaUQuU6IEsSfLR
-	O486Rmaskfk+QPX5G/iWypYeoucrUfiAokLGaLHPaR4KfX1OSfg9nM2f84Rf6nmObrzcspD
-	Zs0OG/z0hzX6ERmfaEsktp/XjQ07hCZN6GVRVNbIDbZTHBMxjaPlLLZxFGpSbg6zaznoAe7
-	cskSWpv2zKvVEAKDsatDvaJ5yobPQyAj3lg4xzNvSj6NbFF3qfVuNG7rBoDpOPolcCD7P/7
-	Nvsh9e6cyCwOND/IHlQ3uvjbOGeUS761uqtqfWBvw2Jh0z5A+v7TwGV1TjkqrDjNfJpCLPn
-	EI5INq9Chm0Tdj2nNidUrq0VRihjE+TX3CcZCedBtQSyXQyAIVH9tEv8Rzwe4D5FXBMbctq
-	/elL6z8+gHhOxHaqH4JaPOWGjHRmEYAc2UAnhe6t7p0iT2qEhV2l4jvLeTq0aG2oy6+Abug
-	SfN4b+ZIEEQ60WAMSzQMZMP9KeowyxpsoJo/eykIcFZICXIWLQiEeqh2nh2ojmHvnY/Hupv
-	roVUUPeI4cY0rcRlYgMslknSm887TNLxcXYsaxdEgs62mqpjsL7U0gvcYtZ4b9q6t+QeWO2
-	hlmcVrY06AYv+gGu3mkPUm+0jdUZ4ffGDOfwybjC+ivgy1YRFg1ZCOAMsoMfM7HjwRfuF9f
-	TBuBcg3JbMUNw2gNfJ
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWC001.ant.amazon.com (10.13.139.223) To
+ EX19D003ANC003.ant.amazon.com (10.37.240.197)
 
-The nop instruction surrounding "breakinst:\tbreak\n\t" appears to
-serve no real purpose.
+This patch series addresses an out-of-bounds read issue in 
+check_atomic_load/store() reported by syzkaller when an invalid register 
+number (MAX_BPF_REG or greater) is used.
 
-Its introduction can be traced back to commit 51c6022fdb ("[PATCH]
-MIPS update") within the Linux history tree [1]. This commit was
-substantial, comprising 41010 lines, and provides no justification
-for the insertion of this nop instruction.
+The first patch fixes the actual bug by changing the order of validity 
+checks, ensuring register validity is checked before atomic_ptr_type_ok() 
+is called.
+It also updates some tests that were assuming the previous order of checks.
 
-Based on the MIPS architecture specification, delay slots are only
-present after jump instructions or MIPS1 load instructions.
-Consequently, the nop here is not intended to satisfy a delay slot
-requirement.
+The second patch adds new tests specifically for the invalid register 
+number case to prevent regression in the future.
 
-Thus, this instruction is suspicious and should probably be removed.
+Changes:
+  v3:
+    - Change invalid register from R11 to R15 in new tests
+  v2: https://lore.kernel.org/all/20250321110010.95217-4-enjuk@amazon.com/
+    - Just swap atomic_ptr_type_ok() and check_load_mem()/check_store_reg()
+    - Update some tests that were assuming the previous order of checks
+    - Add new tests specifically for the invalid register number
+  v1: https://lore.kernel.org/bpf/20250314195619.23772-2-enjuk@amazon.com/
 
-[1]. https://web.git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+Reported-by: syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a5964227adc0f904549c
 
-Cc: Maciej W. Rozycki <macro@orcam.me.uk>
-Cc: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>
-Cc: Felix Yan <felixonmars@archlinux.org>
-Cc: Mingcong Bai <jeffbai@aosc.io>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
-NOTE:
-  This patch is submitted as an RFC due to my incomplete knowledge
-of the extensive history of MIPS.
-  The nop instruction in question may indeed have a valid reason for
-its existence, but its origins are likely too far in the past to
-easily ascertain.
-  I would be grateful if anyone with relevant historical information
-could take the time to elaborate on the background, such as specific
-models or microarchitectures that might be impacted by this change.
-  Thank you all very much for your assistance.
----
- arch/mips/kernel/kgdb.c | 2 --
- 1 file changed, 2 deletions(-)
+Kohei Enju (2):
+  bpf: Fix out-of-bounds read in check_atomic_load/store()
+  selftests/bpf: Add selftests for load-acquire/store-release when
+    register number is invalid
 
-diff --git a/arch/mips/kernel/kgdb.c b/arch/mips/kernel/kgdb.c
-index 09a2d7bb9eef..d6ccc7d2d34f 100644
---- a/arch/mips/kernel/kgdb.c
-+++ b/arch/mips/kernel/kgdb.c
-@@ -201,9 +201,7 @@ void arch_kgdb_breakpoint(void)
- 	__asm__ __volatile__(
- 		".globl breakinst\n\t"
- 		".set\tnoreorder\n\t"
--		"nop\n"
- 		"breakinst:\tbreak\n\t"
--		"nop\n\t"
- 		".set\treorder");
- }
- 
+ kernel/bpf/verifier.c                         | 16 +++++++++--
+ .../bpf/progs/verifier_load_acquire.c         | 26 +++++++++++++++--
+ .../bpf/progs/verifier_store_release.c        | 28 +++++++++++++++++--
+ 3 files changed, 63 insertions(+), 7 deletions(-)
+
 -- 
 2.49.0
 
