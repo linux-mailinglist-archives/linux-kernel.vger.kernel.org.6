@@ -1,150 +1,110 @@
-Return-Path: <linux-kernel+bounces-572255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54690A6C848
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:24:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C75EA6C849
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C054417F1C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:24:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1778B7A89A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA611D7E31;
-	Sat, 22 Mar 2025 08:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ieHacYSb"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DFB18DF9D;
+	Sat, 22 Mar 2025 08:24:17 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36471922C0;
-	Sat, 22 Mar 2025 08:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BE41D516A
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 08:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742631835; cv=none; b=pQEmSAjYN1xewknxnKW6xAcZl1pypONCt0Wfyd6TaOdELmWnhZIzv0QasZl8Qn8uiavyGf221gxKcjQqKdHyCf8A04we+gOb+DunhErFChSGI9jWCCTRBJoUFvkLfdMNkRqFyq4VrDPMnfLc/uVLmlBH+xc3HGzs/2B2nBArl94=
+	t=1742631856; cv=none; b=XfmN+cKrSCuAkCR9+8RgDXl6Kl1UEw3zztHLrJbgE4Nr8/UdmP1ST2elL2L/RAcd8SfUwxcuRSD2KPBsnJeG/zvNp3cD0cHEf/Dw4NhAL0QYT8+a/Z5w4ZsVGxHN0zgIHLAYhyBGFQDO7NyT3tRh5D7USRldGd5qIQaZhV1RYSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742631835; c=relaxed/simple;
-	bh=1JtflKyowsrny4ccNJCHAmNyNDlmwMx7iwJtiAM/nUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QzM/+3MonUc7NN5qtyPrr4tZOHWEegQzonRJDk8ExYlFTtYa3sE7u9750Q6Zjtp4HP4UU0WL2YJ6CzS7od2vyxcDnv7IMwCQXm3Uwa8B/MbTCL99oOMkmCLo7ZY0NQO7IywdnZqloroZwT7/qebyq8rz03polLvVZfplIg6dJY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ieHacYSb; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1742631830;
-	bh=1JtflKyowsrny4ccNJCHAmNyNDlmwMx7iwJtiAM/nUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ieHacYSblP1rXFXNlq5KdNwhsLxdwYdLZKMC4361xBtkcU/m/XU4UY3jN1IfsO7DA
-	 055e3C/5ao8WDHkypz4xGGwvrxC96YNEqtIE6vck218veniHGOKILA9tZXySo6mUYa
-	 9PdeqRp8z3e7sN0PJtTdM9WEiUVperKrsnRFS2RE=
-Date: Sat, 22 Mar 2025 09:23:49 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Joaquin Ignacio Aramendia <samsagax@gmail.com>, Derek J Clark <derekjohn.clark@gmail.com>, 
-	Kevin Greenberg <kdgreenberg234@protonmail.com>, Joshua Tam <csinaction@pm.me>, 
-	Parth Menon <parthasarathymenon@gmail.com>, Eileen <eileen@one-netbook.com>, linux-kernel@vger.kernel.org, 
-	sre@kernel.org, ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, 
-	mario.limonciello@amd.com
-Subject: Re: [PATCH v6 11/14] platform/x86: oxpec: Adhere to
- sysfs-class-hwmon and enable pwm on 2
-Message-ID: <96d19837-167a-43d6-93ea-cd24844cff7f@t-8ch.de>
-References: <20250319175512.27059-1-lkml@antheas.dev>
- <20250319175512.27059-12-lkml@antheas.dev>
+	s=arc-20240116; t=1742631856; c=relaxed/simple;
+	bh=QmLK7E6LjzoFcr9A36fhxaE0X4NXRh1U31tLEUsyrqw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Y9EX+lLf9Fabpl2BB2K7BYuvxPiFybKdmE2DOB2OYuFIdoK26lh6eqAFkcTD4AdOQFbSVLkHj9l7BvIj01inx1g/RTjcvkNSJu2eo38i6R1jUpAQcvQXdtr8vFOszaMvcwiBA50OP5oV71xqwf15gSWavdUfCzTfqjJrN/T7QW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 0540f2dc06f711f0a216b1d71e6e1362-20250322
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:088af14f-fe15-4cdc-901c-0b6ec7d6250e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6493067,CLOUDID:33e42e5cd915982f0189e228a26dcbe8,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|50,EDM:5,I
+	P:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+	,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 50,UGT
+X-CID-BAS: 50,UGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 0540f2dc06f711f0a216b1d71e6e1362-20250322
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <cuiguoqi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 19815541; Sat, 22 Mar 2025 16:24:06 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 24249E008902;
+	Sat, 22 Mar 2025 16:24:06 +0800 (CST)
+X-ns-mid: postfix-67DE73A6-38861
+Received: from localhost.localdomain (unknown [10.41.103.97])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 857C3E008901;
+	Sat, 22 Mar 2025 16:24:04 +0800 (CST)
+From: cuiguoqi <cuiguoqi@kylinos.cn>
+To: tglx@linutronix.de
+Cc: anna-maria@linutronix.de,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	cuiguoqi@kylinos.cn,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	rostedt@goodmis.org
+Subject: Re: [PATCH] hrtimer: Fix the incorrect initialization of timer->is_hard
+Date: Sat, 22 Mar 2025 16:24:03 +0800
+Message-Id: <20250322082403.3126947-1-cuiguoqi@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <874izm2v02.ffs@tglx>
+References: <874izm2v02.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319175512.27059-12-lkml@antheas.dev>
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-03-19 18:55:06+0100, Antheas Kapenekakis wrote:
-> Currently, the driver does not adhere to the sysfs-class-hwmon
-> specification: 0 is used for auto fan control and 1 is used for manual
-> control. However, it is expected that 0 sets the fan to full speed,
-> 1 sets the fan to manual, and then 2 is used for automatic control.
-> 
-> Therefore, change the sysfs API to reflect this and enable pwm on 2.
-> 
-> As we are breaking the ABI for this driver, rename oxpec to oxp_ec,
-> reflecting the naming convention used by other drivers, to allow for
-> a smooth migration in current userspace programs.
+Hi tglx,
+=20
+First of all, I'd like to thank you for your reply and for pointing out t=
+he email issue.=20
 
-Where is the renaming being done?
+As you've accurately noted, when PREEMPT_RT is disabled, it introduces a =
+certain
+degree of ambiguity for kernel developers. So far, no malfunctions have b=
+een
+observed as a direct consequence of this.
+=20
+This issue came to light during kernel development when using the is_hard=
+ flag,=20
+where the expected logic was not achieved.Naturally, we opted for the mor=
+e reliable=20
+is_soft flag to address the situation.
+=20
+Consequently, when PREEMPT_RT is disabled, there is a potential risk if d=
+evelopers
+choose to use the is_hard flag. I firmly believe this risk should not be =
+overlooked.
 
-> Closes: https://lore.kernel.org/linux-hwmon/20241027174836.8588-1-derekjohn.clark@gmail.com/
-> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/oxpec.c | 35 ++++++++++++++++++++++++++++++++---
->  1 file changed, 32 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
-> index e84afc5f53379..680fa537babf6 100644
-> --- a/drivers/platform/x86/oxpec.c
-> +++ b/drivers/platform/x86/oxpec.c
-> @@ -731,7 +731,27 @@ static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
->  		case hwmon_pwm_input:
->  			return oxp_pwm_input_read(val);
->  		case hwmon_pwm_enable:
-> -			return oxp_pwm_read(val);
-> +			ret = oxp_pwm_read(val);
-> +			if (ret)
-> +				return ret;
-> +
-> +			/* Check for auto and return 2 */
-> +			if (!*val) {
-> +				*val = 2;
-> +				return 0;
-> +			}
-> +
-> +			/* Return 0 if at full fan speed, 1 otherwise */
-> +			ret = oxp_pwm_fan_speed(val);
-> +			if (ret)
-> +				return ret;
-> +
-> +			if (*val == 255)
-> +				*val = 0;
-> +			else
-> +				*val = 1;
-> +
-> +			return 0;
->  		default:
->  			break;
->  		}
-> @@ -745,15 +765,24 @@ static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
->  static int oxp_platform_write(struct device *dev, enum hwmon_sensor_types type,
->  			      u32 attr, int channel, long val)
->  {
-> +	int ret;
-> +
->  	switch (type) {
->  	case hwmon_pwm:
->  		switch (attr) {
->  		case hwmon_pwm_enable:
->  			if (val == 1)
->  				return oxp_pwm_enable();
-> -			else if (val == 0)
-> +			else if (val == 2)
->  				return oxp_pwm_disable();
-> -			return -EINVAL;
-> +			else if (val != 0)
-> +				return -EINVAL;
-> +
-> +			/* Enable PWM and set to max speed */
-> +			ret = oxp_pwm_enable();
-> +			if (ret)
-> +				return ret;
-> +			return oxp_pwm_input_write(255);
->  		case hwmon_pwm_input:
->  			return oxp_pwm_input_write(val);
->  		default:
-> -- 
-> 2.48.1
-> 
+I concur with your analysis that one of these flags is redundant. In fact=
+,
+it might be possible to consolidate them based on the overall requirement=
+s.=20
+=20
+Thanks.
+=20
+
+Cui Guoqi
 
