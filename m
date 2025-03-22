@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-572555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A972EA6CB62
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:09:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A161A6CB60
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8313AE960
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101CC16C9D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF27123315A;
-	Sat, 22 Mar 2025 16:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ri4rRLfx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A8C223709;
-	Sat, 22 Mar 2025 16:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C7230264;
+	Sat, 22 Mar 2025 16:08:42 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296F800;
+	Sat, 22 Mar 2025 16:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742659746; cv=none; b=OMeA2v69SITvQESDkHtXkj5qSGRo0ttPugg/Nl0aBeixUO/f1vczV8NQTviwFn6oPTWESxs1MBdv/SUujAGWrELf5cz6lXwOqThX+s7w5Wer3jH5xkSxuQypLjej2ikGd6CAJxNHzcQzRn3H7CYE/7OgkPY7x7MW9XR1O1d50GM=
+	t=1742659722; cv=none; b=YVRabFeB9HcTQayM6w1Tk4vaKVtn8kb1KK1pBnJ3XCpfEcKrXyqTDCgEU+whD28mceO7dKV/B+Gbu8ruobhpbA57JmjWka2Ossp3qgmmAAR0aBh86S1UVsXsIrAUoe639RXzZ+GPytDmqZe3TuyHkikMqdcVEZDZxCbvC+zo8hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742659746; c=relaxed/simple;
-	bh=ogiup8WnQslTGUZU0BFHkkJFFWNXpnnTIqwzlBuFulU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kU8NELaZJEQHkkBGUecZYL1lWVJIixjCMAOdgkIsrHeCrLEa3YHdUIMx1HXJ4F1QZ+6z7StISpKCtgUng2nWbU2o/W7ovP7wSSvR+HO2LWLO4RkQqhZGDh4jeac8T9bbSuX5G0iLXecw7kNi6N82KqSh6CS6UnVM4HpuyThHfVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ri4rRLfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7927DC4CEED;
-	Sat, 22 Mar 2025 16:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742659744;
-	bh=ogiup8WnQslTGUZU0BFHkkJFFWNXpnnTIqwzlBuFulU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ri4rRLfxX7aIjGdZAAhS9qz7ccVBs5oNk/dIcBLue0hMc7mCHXw3jQcmnsvJkGXmT
-	 aouPq4Av7yAWEzOROtPnuRvFClbUt/mQI05eds5Y6ia1SWPfWNAzCwx/b8NjXKcPzN
-	 VweTjel+vYKN6LXlcMdE8wEnPBdcKjmGBond/75w2N7zPgvdQjkswNH3SzMQVT2nF/
-	 XrgowwjqQOUl+DOWqerKIUws6AQ+/lQHlzL9QU4aC2ve7Z3ltd+VOt+5JthKZc4z9d
-	 Zoo3+Fo/dMJYPFYqe6/MNWvgp6KwwTLXYzy5tJceC6qxxbnYZX8U8qd+usVfbG0KNm
-	 qIrKLby/W3mLQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54963160818so3624787e87.2;
-        Sat, 22 Mar 2025 09:09:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlYuVP7kjupH1LLv3BOKUflS9wv9uz8ckXyRigCCymo/2MU/WQDb79FuZZBac2+zo8mNbeZJ9c0d2IAZw=@vger.kernel.org, AJvYcCW+HMNWdgo/ihVkEZphppxd5ifd0IGSMFRzDQJDwLVLkfo7me7Zu1V7UQxTQjqDNo/GF1SueTFJ@vger.kernel.org, AJvYcCW/s78pjDecgxQowzcuRULzn4oAbSNqzcYUlRNI4USYs8KFac2jxSBNJwa1kd45JDTY7YGhSJI4adyVtUsU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm/ES+wGzaH3vBuBXp0Q5m2StlH+9cBqXUc//s69+XgyXEYgBn
-	OknH24X34fxVql4zsQi1Myfr9cqTXYUJffiEZ5XOnxblN/lsnT9Ej0VOE0DMWk61m78O0TDMvzW
-	1rX4nva/Y2RqtJl19MExeEiWLFFs=
-X-Google-Smtp-Source: AGHT+IHCu2qN8+d+VY8tTgzZzAo4gDNQdYleZGDJ/W5aoEZnsWS/CKUr4A91/bE5y84QOhQBiRXO2CUU/oBb2M7QUyI=
-X-Received: by 2002:a05:6512:304f:b0:542:91a5:2478 with SMTP id
- 2adb3069b0e04-54ad64ef057mr2786069e87.32.1742659743092; Sat, 22 Mar 2025
- 09:09:03 -0700 (PDT)
+	s=arc-20240116; t=1742659722; c=relaxed/simple;
+	bh=alYlhJ9jojWIsrw4svfYuHpf6a7KMSPUhMqoXUXZya8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=irKUjxF58OJGL0fzIDeCXeGmb3mHJ+7+9YDtWixBXAIizDjbeOBdtcx8BlFJcT3U/rDEb0BEB8Rp+KUifgb5M97jmsx4PPB16sdYophEq4WYC31+1UTzgWg4Wme/173TSTRWUYg/092tEqlWZ0Ue9AeTCyQXYwtzBa4wByQfAT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 97C0A92009C; Sat, 22 Mar 2025 17:08:31 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 8954192009B;
+	Sat, 22 Mar 2025 16:08:31 +0000 (GMT)
+Date: Sat, 22 Mar 2025 16:08:31 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Frederic Weisbecker <frederic@kernel.org>
+cc: Marco Crivellari <marco.crivellari@suse.com>, linux-mips@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
+Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
+In-Reply-To: <Z93Vj7BLTEvgWwda@pavilion.home>
+Message-ID: <alpine.DEB.2.21.2503221516450.35806@angie.orcam.me.uk>
+References: <20250315194002.13778-1-marco.crivellari@suse.com> <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk> <Z93Vj7BLTEvgWwda@pavilion.home>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314131053.23360-1-alexandru.gagniuc@hp.com>
-In-Reply-To: <20250314131053.23360-1-alexandru.gagniuc@hp.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 23 Mar 2025 01:08:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASL=t4Lm5kdTqiLeBnB8dsZ81EK52Nw7=sHOvPdpW7r5A@mail.gmail.com>
-X-Gm-Features: AQ5f1JpFKM1999iqmiY1vCfrOJKxjfEvsR-BTXIsQnOoZXOP4gjqQX9TgEfFZqk
-Message-ID: <CAK7LNASL=t4Lm5kdTqiLeBnB8dsZ81EK52Nw7=sHOvPdpW7r5A@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: deb-pkg: don't set KBUILD_BUILD_VERSION unconditionally
-To: Alexandru Gagniuc <alexandru.gagniuc@hp.com>
-Cc: nathan@kernel.org, linux-kbuild@vger.kernel.org, nicolas@fjasle.eu, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Mar 18, 2025 at 7:42=E2=80=AFAM Alexandru Gagniuc
-<alexandru.gagniuc@hp.com> wrote:
->
-> In ThinPro, we use the convention <upstream_ver>+hp<patchlevel> for
-> the kernel package. This does not have a dash in the name or version.
-> This is built by editing ".version" before a build, and setting
-> EXTRAVERSION=3D"+hp" and KDEB_PKGVERSION make variables:
->
->     echo 68 > .version
->     make -j<n> EXTRAVERSION=3D"+hp" bindeb-pkg KDEB_PKGVERSION=3D6.12.2+h=
-p69
->
->     .deb name: linux-image-6.12.2+hp_6.12.2+hp69_amd64.deb
->
-> Since commit 7d4f07d5cb71 ("kbuild: deb-pkg: squash
-> scripts/package/deb-build-option to debian/rules"), this no longer
-> works. The deb build logic changed, even though, the commit message
-> implies that the logic should be unmodified.
->
-> Before, KBUILD_BUILD_VERSION was not set if the KDEB_PKGVERSION did
-> not contain a dash. After the change KBUILD_BUILD_VERSION is always
-> set to KDEB_PKGVERSION. Since this determines UTS_VERSION,the uname
-> output to look off:
->
->     (now)      uname -a: version 6.12.2+hp ... #6.12.2+hp69
->     (expected) uname -a: version 6.12.2+hp ... #69
->
-> Update the debian/rules logic to restore the original behavior.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: 7d4f07d5cb71 ("kbuild: deb-pkg: squash scripts/package/deb-build-o=
-ption to debian/rules")
-> Signed-off-by: Alexandru Gagniuc <alexandru.gagniuc@hp.com>
-> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
-> ---
-> Changes since v1:
->  * Rework logic so that dpkg-parsechangelog is invoked just once
->  * Adjust commit message to reflect review feedback
->
->  scripts/package/debian/rules | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
-> index ca07243bd5cd..d1f400685682 100755
-> --- a/scripts/package/debian/rules
-> +++ b/scripts/package/debian/rules
-> @@ -21,9 +21,11 @@ ifeq ($(origin KBUILD_VERBOSE),undefined)
->      endif
->  endif
->
-> -revision =3D $(lastword $(subst -, ,$(shell dpkg-parsechangelog -S Versi=
-on)))
-> +revision =3D $(shell dpkg-parsechangelog -S Version | sed -n 's/.*-//p')
->  CROSS_COMPILE ?=3D $(filter-out $(DEB_BUILD_GNU_TYPE)-, $(DEB_HOST_GNU_T=
-YPE)-)
-> -make-opts =3D ARCH=3D$(ARCH) KERNELRELEASE=3D$(KERNELRELEASE) KBUILD_BUI=
-LD_VERSION=3D$(revision) $(addprefix CROSS_COMPILE=3D,$(CROSS_COMPILE))
-> +make-opts =3D ARCH=3D$(ARCH) KERNELRELEASE=3D$(KERNELRELEASE) $(addprefi=
-x \
-> +               KBUILD_BUILD_VERSION=3D,$(revision)) $(addprefix \
-> +               CROSS_COMPILE=3D,$(CROSS_COMPILE))
+On Fri, 21 Mar 2025, Frederic Weisbecker wrote:
 
+> > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> > > index a572ce36a24f..4e012421d00f 100644
+> > > --- a/arch/mips/kernel/genex.S
+> > > +++ b/arch/mips/kernel/genex.S
+> > > @@ -104,27 +104,30 @@ handle_vcei:
+> > >  
+> > >  	__FINIT
+> > >  
+> > > -	.align	5	/* 32 byte rollback region */
+> > > +	.align	5
+> > >  LEAF(__r4k_wait)
+> > >  	.set	push
+> > >  	.set	noreorder
+> > > -	/* start of rollback region */
+> > > -	LONG_L	t0, TI_FLAGS($28)
+> > > -	nop
+> > > -	andi	t0, _TIF_NEED_RESCHED
+> > > -	bnez	t0, 1f
+> > > -	 nop
+> > > -	nop
+> > > -	nop
+> > > -#ifdef CONFIG_CPU_MICROMIPS
+> > > -	nop
+> > > -	nop
+> > > -	nop
+> > > -	nop
+> > > -#endif
+> > > +	/* Start of idle interrupt region. */
+> > > +	MFC0	t0, CP0_STATUS
+> > > +	/* Enable interrupt. */
+> > > +	ori 	t0, 0x1f
+> > 
+> >  This instruction sequence still suffers from the coprocessor move delay 
+> > hazard.  How many times do I need to request to get it fixed (counting 
+> > three so far)?
+> 
+> This is because your request had follow-ups from Huacai and Marco that
+> were left unanswered:
+> 
+>      https://lore.kernel.org/all/CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com/
 
+ The conclusion made there is however wrong: `local_irq_enable' code 
+plays no tricks with instruction scheduling and lets the toolchain 
+resolve any pipeline hazards automatically, while `__r4k_wait' arranges 
+for instructions to be scheduled by hand and any hazards resolved by the 
+human writer of the code.  There's even explicit `.set reorder' in 
+`local_irq_enable', which is redundant, because it's the default mode 
+for inline assembly.
 
-Applied to linux-kbuild.
+ And I can't emphasise it enough: manual instruction scheduling is tough
+and ought to be restricted to cases where there is no other way really, 
+such as for placing an instruction in a branch delay slot where there is 
+a data antidependency between the branch and the delay-slot instruction.  
+Yet this approach has often been used by code authors for other reasons 
+(or I daresay no reason at all), leaving it up to the maintainers to 
+keep the code working in the changing conditions while the submitter has 
+long gone.  I converted some of such code in the past, but it also takes 
+time and effort that does not come for free.
 
-I fixed the place for wrapping for readability.
-(In my previous reply, the code was wrapped by Gmail
- in unintended places)
+>      https://lore.kernel.org/all/CAAofZF4HAczyRmuRe-JmQ2wcZatevLwGTOMLf1V1okGbj7q5Wg@mail.gmail.com/
 
-Thanks.
+ I missed that one, sorry.  A ping would have helped, and I never have 
+an issue with being pinged.  I do hope I have now addressed that concern 
+with my other reply.
 
+ Thank you for the pointers.
 
+> We have detected this longstanding architecture specific timer handling bug on
+> loongson and MIPS and we could have just dropped a report and let you guys deal with
+> it. Instead we decided to spend time ourselves (especially Marco) working on
+> fixes for these architectures we don't run and which we are not familiar with,
+> alongway taking reviews seriously and patiently re-iterating accordingly.
 
+ Thank you for your effort, really appreciated.  Any fixes need to be 
+technically correct however, it makes no sense to get one bug replaced 
+with another one.  We've got enough technical debt accumulated already 
+with a platform that no longer has any commercial support and relies 
+solely on voluteers keeping it alive in their limited spare time.  I do 
+have a long list of outstanding issues to address and ever so little 
+time to take care of them, with hardware problems additionally kicking 
+in and distracting every so often too.
 
+> So please be gentle with us.
 
+ As always, but also emphatic on this occasion.  We're in the same boat 
+really, striving against the lack of resources and issues piling, and 
+now we've made some progress.  Thank you for your understanding.
 
->  binary-targets :=3D $(addprefix binary-, image image-dbg headers libc-de=
-v)
->
-> --
-> 2.48.1
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+  Maciej
 
