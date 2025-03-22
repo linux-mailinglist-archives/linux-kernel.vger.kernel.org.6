@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-572308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C66BA6C8EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:09:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7985EA6C8F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2040C3AFDF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:08:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0818189F5D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047A01F4618;
-	Sat, 22 Mar 2025 10:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5541F4618;
+	Sat, 22 Mar 2025 10:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkocB804"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="As+i6puU"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3491F03F0
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4561B1EBFE4;
+	Sat, 22 Mar 2025 10:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742638137; cv=none; b=VNY0BhedV7n6QOqA2Q5gfTdbavWIrxnWzXsbm2ymfDgCnnxNjFANKUbEdX1cR9NlZ/izv0xD97HzvMZCbz1K/NRLzfd3kntwg6Px/550D38g2XkBSAsw5QDOFpo9IDkh0YeCsVb6JTdZLzJmoM7CxHalm91JGQyG9pPr9vDXjGs=
+	t=1742638150; cv=none; b=rN9+mkeCJ1DLfJujsDWGfW5K+ovLlLARxGynYpAgN6ZBvB/BpM+goVB5o9y0va6t/zaTJRT1qNgQbRWGFfGMrJ1RvSBu0Fl+QtPCv7K/2IePSq6e70l7TUtqd/cE3BHRVgCOwHXdQ5LujcG0qSI11kLqmKNLYbh0e2V+G2Bo3W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742638137; c=relaxed/simple;
-	bh=NCPR077FKAC5MwREaEfvvvQ/11UcvKcxUf9q0stCgcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m7lfp660WUfvqhIOP4WnQTDTDffeWg7BeX0sgKJktUIUL3eg6R/q6iCOgkifnupOl1vZ+SMkK6BWZxndgyLY1aSNY5RwVSaRH4b9Z8ehtK2kHUbiFWU04nGgwU+ifAmjbVVywcOZ9E4N36J/764QvIh8Ty/+G7Tu7Y946hbUq9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkocB804; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913d45a148so2283795f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 03:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742638133; x=1743242933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dJpr/pvMHK3FYU9qqOfhhd94i4g6sSMuiDO+7fqaR2w=;
-        b=OkocB804qskMIi/fuNplvj+gX8gMPYO9LnJ8O9TZZLetsffYf2mZaStpzmjFYmg32O
-         gYnJb33XDCJ/C2ABPOYSGk/iLhr7GBzeTzdWSk4aHNp147FxHNTzCRiIg7TyYECjiMSo
-         2z6/M9YsnLFLFMJhqm4se7HLmAXVHuJbbHnnQjBgoSbY4sCdbMc1TN5X7/OJdPIakZXp
-         gN1Fnc7G9TzM06R3gaub/h5Yrapvpzp4+IiTu/nbtMFHSlA4b2Q7ZsPesDXLgvCZcoQ3
-         DWVYkesXJIvMhLDwV9JKO5YpuRY1CdC4QnguuWqpATLCEaCPjgkY8BSR9eFpEm22UTy7
-         Ac6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742638133; x=1743242933;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dJpr/pvMHK3FYU9qqOfhhd94i4g6sSMuiDO+7fqaR2w=;
-        b=euRy/c6wbVFw77cpi5Gsem9h8TJHkeYb7K99r+qTxZfQT/Khc31l5rSgiHaf7dKnpq
-         a85MD6ZVyVgqYp9zjiljS8n/Q+LH7kNViKTMdfx0UmHDObsMqEQWBJkIQevAqVGC7kZ6
-         kur41aFebSlJxRycKIMQxEg34e1fEmA9hxDNHY6xuIC/LESAflCYW5JhgswYZ/mWorR/
-         a3wknlWpC974aJkk+fBV8RSaSmsv2a9M+oDVBu1otPOSUk5uutaYsZ0VGjX3D53rLsLa
-         sKgEHSXzKx3zD6jnaTY1V/Sk8Chm8IIZc12e+lPhUrvy+DB0wVzWO1+1nN06v0YgTDDi
-         zh/g==
-X-Gm-Message-State: AOJu0Yzu+2h+9jEqZ6GwWamityzoAEgyaVPCF6LNozSVvb2QTC2Sk2st
-	8d9p6o/wLERVCcPf/kWEIQ+23ni60BQTaPjdLem/u1tzihB0bGoL8Ir0GA==
-X-Gm-Gg: ASbGncvZxTb0K0pYFpMpTe9lSadoKrZggDVSg/5i86wJF2GGpfi/7W38BJCzKFrPoyw
-	CDhACScsoRfrMFe0janIp/Vt0NXxCyJRFIbLKr/tBkf8an2ZjS+fymqF52ASpqBPdrZRBdjC2yu
-	WLadsklLGkp0Wm00oP3cxa8kFPglcjUV/uiJJ9SSPFYFP/BkuAC3uEoQu20+mr6erPDufKUUDs2
-	DqVbQAdYjV7QnHKSjs/4LRb+CIIpx2817MkGiJ95G9AvzljvqjCP0WuOpmXa3Lhm7QGa+sytYbl
-	wr56/Eykh0iMjV8t0Nd9daGxvtyLoVsd7d9SzX2MjmnfdIoZVIGVLvNMSS3TDdi3zdzbWlNX3ay
-	bQ4pQO3Q=
-X-Google-Smtp-Source: AGHT+IHPJkdln29RI+b8WTeD3CA8zpJFMPzl7tDjyIq3NTWjlZovhyz9CYWkGkhMo5vtY9NhU4qgNQ==
-X-Received: by 2002:a5d:64af:0:b0:391:2bcc:11f2 with SMTP id ffacd0b85a97d-3997f8f8321mr6326209f8f.1.1742638132743;
-        Sat, 22 Mar 2025 03:08:52 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9955fbsm4721360f8f.5.2025.03.22.03.08.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 03:08:52 -0700 (PDT)
-Date: Sat, 22 Mar 2025 10:08:51 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, David
- Howells <dhowells@redhat.com>, Matthew Wilcox <willy@infradead.org>, Andrew
- Morton <akpm@linux-foundation.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH next 0/3] iov: Optimise user copies
-Message-ID: <20250322100851.39c9eb33@pumpkin>
-In-Reply-To: <CAHk-=whs5oVkHMrNP=xkJP4Z4fObn=6Mz3fYp4wWMNQWtyjo9w@mail.gmail.com>
-References: <20250321224557.3847-1-david.laight.linux@gmail.com>
-	<CAHk-=whs5oVkHMrNP=xkJP4Z4fObn=6Mz3fYp4wWMNQWtyjo9w@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1742638150; c=relaxed/simple;
+	bh=Hdv42PI+SQv5JUjnRTSo8idtKkWDywJe2XkqlGKHXbk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h1z8UkmyJhPqzjsfZn2JuCkdbyXbuZJfrxEVB2JmHC7F9q0tK5IH90y+2FzhljjzfAt3aJUTlVYi5H8NS9iB9vgGVb/Ap7lfMOBmEdPapgznWNc067MjIN8KsZsMyrTuqiN4v45pFg+qoOEY9Fv5wrAQVkT9Li7aAeii9aJ2M6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=As+i6puU; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742638138; x=1742897338;
+	bh=ZFFKz10EMacfDB3xAKr3jPI1Qcnx3CwnTAUEEkeCMJo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=As+i6puUOChqNYwjfuQbipHqiHnACG+UwFrA+edTl42+0UFiXWTzD4tcgdaGwMqLU
+	 8cu8mBWPDyKg4fu5zvg8aLH9COXNyWd7D2vEiQU5hr0UKwsuFq9qAjD1z8N1sUvZ6p
+	 sRYKDRiub1ZX2qHx1VV7djzTwPKnP1N8Ha6VtRrOMJ9PUiapxHj/T/tqxr04TRPBfk
+	 MJZt0KwVBayBmwVaQCOuqnh1ZTGu5+gzqYjSi/3dj/+jto6XCYlfFAw+CkNg4fqrfT
+	 44rcKBAZomTosmwdCDQhkwJXCf0iOK8jidYdlPUkFKq76bnI9PmW2LRcHX7dxTHuRe
+	 V5zRzmShxw5+g==
+Date: Sat, 22 Mar 2025 10:08:53 +0000
+To: kernel test robot <lkp@intel.com>, Danilo Krummrich <dakr@kernel.org>, bhelgaas@google.com, gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <D8MPNRAYNZIS.T7U3XLKHN523@proton.me>
+In-Reply-To: <202503220040.TDePlxma-lkp@intel.com>
+References: <20250320222823.16509-4-dakr@kernel.org> <202503220040.TDePlxma-lkp@intel.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: dfc469007ca1960c05e3b75300ee8c8b99f6f5a4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 21 Mar 2025 16:35:52 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Fri Mar 21, 2025 at 5:56 PM CET, kernel test robot wrote:
+> Hi Danilo,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on 51d0de7596a458096756c895cfed6bc4a7ecac10]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Danilo-Krummrich/r=
+ust-device-implement-Device-parent/20250321-063101
+> base:   51d0de7596a458096756c895cfed6bc4a7ecac10
+> patch link:    https://lore.kernel.org/r/20250320222823.16509-4-dakr%40ke=
+rnel.org
+> patch subject: [PATCH v2 3/4] rust: pci: impl TryFrom<&Device> for &pci::=
+Device
+> config: x86_64-buildonly-randconfig-005-20250321 (https://download.01.org=
+/0day-ci/archive/20250322/202503220040.TDePlxma-lkp@intel.com/config)
+> compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c=
+2d9b7e4de40d0804dd374721e6411c27d1d1)
+> rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20250322/202503220040.TDePlxma-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503220040.TDePlxma-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    ***
+>    *** Rust bindings generator 'bindgen' < 0.69.5 together with libclang =
+>=3D 19.1
+>    *** may not work due to a bug (https://github.com/rust-lang/rust-bindg=
+en/pull/2824),
+>    *** unless patched (like Debian's).
+>    ***   Your bindgen version:  0.65.1
+>    ***   Your libclang version: 20.1.1
+>    ***
+>    ***
+>    *** Please see Documentation/rust/quick-start.rst for details
+>    *** on how to set up the Rust support.
+>    ***
+>>> error[E0133]: use of extern static is unsafe and requires unsafe block
+>    --> rust/kernel/pci.rs:473:43
+>    |
+>    473 |         if dev.bus_type_raw() !=3D addr_of!(bindings::pci_bus_ty=
+pe) {
+>    |                                           ^^^^^^^^^^^^^^^^^^^^^^ use=
+ of extern static
+>    |
+>    =3D note: extern statics are not controlled by the Rust type system: i=
+nvalid data, aliasing violations or data races will cause undefined behavio=
+r
 
-> On Fri, 21 Mar 2025 at 15:46, David Laight <david.laight.linux@gmail.com> wrote:
-> >
-> > The speculation barrier in access_ok() is expensive.
-> >
-> > The first patch removes the initial checks when reading the iovec[].
-> > The checks are repeated before the actual copy.
-> >
-> > The second patch uses 'user address masking' if supported.
-> >
-> > The third removes a lot of code for single entry iovec[].  
-> 
-> Ack, except I'd really like to see numbers for things that claim to
-> remove expensive stuff.
+This is just a minor annoyance with these error reports, but I would
+very much like the error to have the correct indentation:
 
-Testing readv() of /dev/zero or writev() of /dev/null probably show
-most gain.
+>> error[E0133]: use of extern static is unsafe and requires unsafe block
+    --> rust/kernel/pci.rs:473:43
+        |
+    473 |         if dev.bus_type_raw() !=3D addr_of!(bindings::pci_bus_typ=
+e) {
+        |                                           ^^^^^^^^^^^^^^^^^^^^^^ =
+use of extern static
+        |
 
-I did do some allmodconfig builds and got no change, but I might have the
-lfence compiled out of access_ok().
-In any case kernel builds are pretty much user space limited.
+Would that be possible to fix? That way the `^^^^` align with the item
+they are referencing.
 
-	David
+Otherwise they are very helpful!
 
-> 
-> But yeah, the patches look sane.
-> 
->           Linus
+---
+Cheers,
+Benno
 
 
