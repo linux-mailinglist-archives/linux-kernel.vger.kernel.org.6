@@ -1,209 +1,183 @@
-Return-Path: <linux-kernel+bounces-572595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706B1A6CBFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:13:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F22CA6CBF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEA22462A46
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC04E7AA434
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47185204584;
-	Sat, 22 Mar 2025 19:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938C8233712;
+	Sat, 22 Mar 2025 19:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c//He83t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="NKkRKj1k"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD54A4C6C
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 19:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5314D1AA791
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 19:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742670800; cv=none; b=aq9NfXPKs1Jm4iD6XbOyQoMfsa1rRkbI6qMis9FKWFe3XdDaC9FdTYMBDDyxEpPD/MtGlsfxfWexcA92kpy2/t6+nkDhDVyJqgPTU0D6tQnMst5HAlUgAE/LcY/PCftshRZT2eY0tSKeuXohCESQywR4oWtSBgH6KPKcGQJOCEs=
+	t=1742670741; cv=none; b=CBWRx13PROLhN2vKQ9H82/EfkBrLZZV+8Wwrx6+Vsz5KZT2Rb3Zw52FQx7aZ8BUWkWNeU69T2XFGB7XQVrd6B8I7t1y+zScEaHDdtoonY1PTdkxphq7ijlbZkvVxNq9a9veHA3nwbYhT6GYPmeQeuhWe+FHruB9F49ZccftFrsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742670800; c=relaxed/simple;
-	bh=/VYCh2z+M9uqZGO2z6Eutoe6NLYf208teXmt3R0zrzE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=tIFPtJXIP6Lv7F5lPARnWi//H4MltEDmwgijyRjsy930+4Wj73ZXUP14cMBGvHbx0fs74qzoWrwGkzIKQg0X00pt3s2pV98Iy+dinB+PgyLmTYjEGbXkPJrJ8knLNkUVSwSc/ifmdKUOONQwCkzTuJTw+7xW+fAQUfU/R+YOoaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c//He83t; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742670798; x=1774206798;
-  h=date:from:to:cc:subject:message-id;
-  bh=/VYCh2z+M9uqZGO2z6Eutoe6NLYf208teXmt3R0zrzE=;
-  b=c//He83t//yx4NuwiKZ+K3e29xxM2gjMzQV8s5lu2IRoYlaKuaVMDt2y
-   MJSuolljpCZH6WprXhBxLC2ADQw+/448YVgzP9LOKDxv9Q9pdQ/gKwT1x
-   ANOvohlVO89phB2T1BCJj1KPAaN5FeJU89comAy1Vi8rXLCiN/eR8HoiL
-   0CuWe0pPq5ERQkD1BxxmOvLvRBs179ZRNOs04fZ14U8VudBl0NhXcU//a
-   TPUorUzUi7Iwu9tW78rGPLJZCHjhC99t9IWMQT4rwBbydIMTbPEsgwn9y
-   BCoJB9AsQ5j/8dJLpHllANsv4biIEufiMu42v0dOHfcsmYJoJcW/cG1z0
-   w==;
-X-CSE-ConnectionGUID: qjVGIYx4QEeHt7SxUcGdlw==
-X-CSE-MsgGUID: gHLsxQAyQEOglzRQ6WiTug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11381"; a="46659581"
-X-IronPort-AV: E=Sophos;i="6.14,268,1736841600"; 
-   d="scan'208";a="46659581"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2025 12:13:18 -0700
-X-CSE-ConnectionGUID: JDHg6AZNRYGyUZzY1d+Z6Q==
-X-CSE-MsgGUID: HtLQBk7qTTWSQMn7sLFPSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,268,1736841600"; 
-   d="scan'208";a="127824034"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 22 Mar 2025 12:13:17 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tw4HN-0002Lx-0N;
-	Sat, 22 Mar 2025 19:13:10 +0000
-Date: Sun, 23 Mar 2025 03:12:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/core] BUILD SUCCESS
- e40d3709c0225f5f681fd300f65a65ac63b10f83
-Message-ID: <202503230359.hstWBcn6-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1742670741; c=relaxed/simple;
+	bh=Ms3GzoMd0rlk4O2lv0P7VKB/JXaNBBDottrVBUZkhXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aJniLYoj3cKzoMoY4wo19eUPrvyfiQFRjGqWJZmBNa5v7sGQqV7lp2nl6k1OP25k8Z/TITuwDk1NiIcaRGtHqsz72qVk02b6FkkBlbWxdgOrtrGMpyiHoZJc8/t1T/w31SU8OQ913v04Mcane3k+yCx3LRZYUylPwR5E0iLS+JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=NKkRKj1k; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=antoniohickey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6feaa0319d8so22733547b3.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:12:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742670738; x=1743275538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+xc66qLysPvi281ZD9mTakiRweaXqO3hMAEWrZlpzBs=;
+        b=NKkRKj1kiT/HQmu7ibaWo0/LNpusXk8Ar/5FeSLeH+saNcYNMyJWURQX2Iv+IXbltR
+         44TwBxHyYkNmkaiFLCLKFTL3uzOhknmC974TPHuyPHL+8qe83Zpl4TTtKahg/syAyefj
+         G1Exhd3VOx7FFCIa2Honz/z67Tor/gkCr7Q/aTv3ytcWpM/1OvI8KFfP4T3lVWNq82Dt
+         RjyqrarQJskwFIue9SlxnRHQ0JSVL/89g8rzO3tHNMqAWDY9Rc+O3K/i0HAq5XViqBqC
+         keaZ2w9i8MFb6shtt11rKJn3PvvZ+PuGXJehe2N4CSgFCdNxEzTwFAdoTWC6TVWbs+XE
+         L8IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742670738; x=1743275538;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xc66qLysPvi281ZD9mTakiRweaXqO3hMAEWrZlpzBs=;
+        b=LFzZOstcQbxnbx34VbmCSxasBY79mUx9GfHS08g7cJWePgq7QiMi1kkYEsa2jdWmMN
+         WX8/4NgE0SmBB71iWnoVVUdXS+/CDVn9qZpuq8Tb5FmV0MatGHl3e9rRVO8dXZFfMwYE
+         lXFEdn9G8bMcPK4xWHlobnk88FDOLhD17a5iBf4mpwtCyxYP2wSu2Syv5saaa4oNaVce
+         tNizHRLMx3m66VGqdN1KyRH7W9YxK7KOTGjS2gVRnneb/3T+qxROBECytK8V1LY/RH34
+         fAs1tseK+v9RXPxMj2vsWl9rQFjpIyKuxO1dPn5vblBv57DH+xMXGa65pvTVj0A4avSX
+         pz5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUa/UU8MiuuGTU1WPdDRYeVn5uV5sfnJvaZLhz54ijdfG59FuwtEeegpKV2dJo4r1iijwzvXirzzcJFgyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSxgDGsK6zlmBZqJj3aB3F0/J/dZBvZ4dz9b1sbntOL/DRLW2X
+	+pFAc1E2GQlu6S/wQY+yYKzq4Qu19EvbRO/1DGFrMpUEFLiwAVZjQH5n4fs3SnfeaQoZGRs5iVA
+	4gBI=
+X-Gm-Gg: ASbGnctSPav1PrTMKXuXHHn5ScQOChqoJVL6K+lUA4NdrNnbR3poMC2ah2ZBuQ5gVtv
+	rLJkiAP49MN706zkqBOO+fW8QQ6Y40jbdLRAlJ2s+AD2JZDO20qVEHqI64Mb2J8ldI4WHm4uqcW
+	RJgVx5AhL+wZIS22Ni7zByL1aH0u3ClMgfgJC2WIkFME4Q6pgv/RckVANHWxt8xGLTJhTw1kvvF
+	tWa7NiAJRkdHp11j21g8g1tgK/2AP4jKtUSRXX/ZYd13pEc4iyW7RnxCN9oXBGvuAoM13UVsDbG
+	hLn96QxvHFOIUcwhC5frKgjxOaCpWW/zU6MrbVk4zlkivTYXvYDXZFu/KbcAZxhFdn1ZdYopRQ1
+	n42Gh04MJDCzfcoYdExIO6c4sVBYHROBTAC1UPuQd
+X-Google-Smtp-Source: AGHT+IGKshaTgbMcpr9UNssd5GQF9rWZ6akyX1Lym+sKao77CEU4NvOIGlBPRgaIF+zI1BiKem6ung==
+X-Received: by 2002:a05:690c:fca:b0:6fd:2321:567f with SMTP id 00721157ae682-700babed947mr87056967b3.8.1742670737953;
+        Sat, 22 Mar 2025 12:12:17 -0700 (PDT)
+Received: from Machine.lan (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-700ba7938e6sm8572027b3.64.2025.03.22.12.12.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 12:12:17 -0700 (PDT)
+From: Antonio Hickey <contact@antoniohickey.com>
+To: tamird@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	contact@antoniohickey.com,
+	dakr@kernel.org,
+	gary@garyguo.net,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH v5 01/17] rust: enable `raw_ref_op` feature 
+Date: Sat, 22 Mar 2025 15:12:09 -0400
+Message-ID: <20250322191210.1926380-1-contact@antoniohickey.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <CAJ-ks9=GHVfd=iRT73DviOD=6dio3U7wQWLaXAhKr3UG5-ivvw@mail.gmail.com>
+References: <CAJ-ks9=GHVfd=iRT73DviOD=6dio3U7wQWLaXAhKr3UG5-ivvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-branch HEAD: e40d3709c0225f5f681fd300f65a65ac63b10f83  selftests/timers: Improve skew_consistency by testing with other clockids
+On Sat, Mar 22, 2025 at 02:24:30PM -0400, Tamir Duberstein wrote:
+> On Sat, Mar 22, 2025 at 11:08 AM Antonio Hickey
+> <contact@antoniohickey.com> wrote:
+> >
+> > On Sat, Mar 22, 2025 at 10:16:01AM +0000, Benno Lossin wrote:
+> > > On Thu Mar 20, 2025 at 3:07 AM CET, Antonio Hickey wrote:
+> > > > Since Rust 1.82.0 the `raw_ref_op` feature is stable.
+> > > >
+> > > > By enabling this feature we can use `&raw const place` and
+> > > > `&raw mut place` instead of using `addr_of!(place)` and
+> > > > `addr_of_mut!(place)` macros.
+> > > >
+> > > > Allowing us to reduce macro complexity, and improve consistency
+> > > > with existing reference syntax as `&raw const`, `&raw mut` are
+> > > > similar to `&`, `&mut` making it fit more naturally with other
+> > > > existing code.
+> > > >
+> > > > Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> > > > Link: https://github.com/Rust-for-Linux/linux/issues/1148
+> > > > Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+> > >
+> > > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> > >
+> > > > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> > > > index 993708d11874..a73aaa028e34 100644
+> > > > --- a/scripts/Makefile.build
+> > > > +++ b/scripts/Makefile.build
+> > > > @@ -224,9 +224,9 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+> > > >     $(call if_changed_dep,cc_lst_c)
+> > > >
+> > > >  # Compile Rust sources (.rs)
+> > > > -# ---------------------------------------------------------------------------
+> > > > +# --------------------------------------------------------------------------------------
+> > >
+> > > Not sure about this change.
+> >
+> > This change is so I could enable the `raw_ref_op` feature for doctests
+> > since the minimum Rust version 1.78 still has `raw_ref_op` as an
+> > expiramental feature, and will throw errors at compile if a doctest uses
+> > it. Is there a better way to do this?
+> 
+> I think Benno is just asking about the extension of the dashed line.
 
-elapsed time: 1443m
+Ahh ok yea that makes sense, thanks Tamir, sorry Benno I misunderstood.
 
-configs tested: 117
-configs skipped: 3
+So the reason I extended the dashed line was because before my change 
+the dashed line perfectly aligned with number of characters in the line
+I changed. I figured it was supposed to match the amount of characters
+of the line.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Giving this a deeper look it looks like the all the other dashed lines
+are maxed at 77 characters. 
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                   randconfig-001-20250322    gcc-10.5.0
-arc                   randconfig-002-20250322    gcc-8.5.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250322    gcc-7.5.0
-arm                   randconfig-002-20250322    gcc-7.5.0
-arm                   randconfig-003-20250322    clang-21
-arm                   randconfig-004-20250322    clang-19
-arm                           sama7_defconfig    clang-21
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250322    clang-21
-arm64                 randconfig-002-20250322    clang-21
-arm64                 randconfig-003-20250322    gcc-8.5.0
-arm64                 randconfig-004-20250322    clang-21
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250322    gcc-14.2.0
-csky                  randconfig-002-20250322    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250322    clang-21
-hexagon               randconfig-002-20250322    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250322    clang-20
-i386        buildonly-randconfig-002-20250322    gcc-12
-i386        buildonly-randconfig-003-20250322    gcc-12
-i386        buildonly-randconfig-004-20250322    clang-20
-i386        buildonly-randconfig-005-20250322    clang-20
-i386        buildonly-randconfig-006-20250322    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250322    gcc-14.2.0
-loongarch             randconfig-002-20250322    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                        m5307c3_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                           jazz_defconfig    clang-17
-mips                           xway_defconfig    clang-21
-nios2                         10m50_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250322    gcc-6.5.0
-nios2                 randconfig-002-20250322    gcc-10.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250322    gcc-5.5.0
-parisc                randconfig-002-20250322    gcc-13.3.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                   bluestone_defconfig    clang-21
-powerpc                      ep88xc_defconfig    gcc-14.2.0
-powerpc                    ge_imp3a_defconfig    gcc-14.2.0
-powerpc                      katmai_defconfig    clang-21
-powerpc               randconfig-001-20250322    clang-21
-powerpc               randconfig-002-20250322    gcc-8.5.0
-powerpc               randconfig-003-20250322    clang-21
-powerpc64             randconfig-001-20250322    clang-21
-powerpc64             randconfig-002-20250322    gcc-8.5.0
-powerpc64             randconfig-003-20250322    gcc-8.5.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250322    gcc-8.5.0
-riscv                 randconfig-002-20250322    clang-21
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250322    gcc-9.3.0
-s390                  randconfig-002-20250322    gcc-6.5.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250322    gcc-10.5.0
-sh                    randconfig-002-20250322    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250322    gcc-9.3.0
-sparc                 randconfig-002-20250322    gcc-9.3.0
-sparc64               randconfig-001-20250322    gcc-5.5.0
-sparc64               randconfig-002-20250322    gcc-5.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250322    clang-21
-um                    randconfig-002-20250322    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250322    clang-20
-x86_64      buildonly-randconfig-002-20250322    clang-20
-x86_64      buildonly-randconfig-003-20250322    clang-20
-x86_64      buildonly-randconfig-004-20250322    gcc-12
-x86_64      buildonly-randconfig-005-20250322    clang-20
-x86_64      buildonly-randconfig-006-20250322    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250322    gcc-14.2.0
-xtensa                randconfig-002-20250322    gcc-14.2.0
+I will update this.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Antonio
+
+> 
+> > > >
+> > > > -rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons
+> > > > +rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons,raw_ref_op
+> 
+> This looks correct to me.
+> 
+> > > >
+> > > >  # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+> > > >  # current working directory, which may be not accessible in the out-of-tree
+> > >
+> > >
+> 
+> Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+
 
