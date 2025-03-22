@@ -1,54 +1,94 @@
-Return-Path: <linux-kernel+bounces-572109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A87EA6C68E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:58:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D0CA6C691
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868BD17C368
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Mar 2025 23:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ECEA189E543
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634EF221F33;
-	Fri, 21 Mar 2025 23:58:38 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B8315E90;
+	Sat, 22 Mar 2025 00:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwFlfxzS"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EE31EF39F;
-	Fri, 21 Mar 2025 23:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCC31372;
+	Sat, 22 Mar 2025 00:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742601518; cv=none; b=tsg4H8ASwXFOequfB1M1R+Xn/jAVlHK4ZdEbPVElNW6JCkqr29ZJZIPcO08RpKh7fiRmxyzv5iQWuAnoW5V9BRI4BI6M6Fy6QAKhLLiPXnmS0mxMa+yQVV1A1ubbvzGBF/lqG50GsxXlKgD6NT1+JqTtUq5bcRGXuJjCaVVWHyI=
+	t=1742601636; cv=none; b=ViuuwUseY5QNJuPd5UeGB95tWHl8PsxqQ9nVWp3CJWFtCa8J3pOGS30rSP/xz6WRaUtjGVrinZk6PlqbzEArERqxBg46nysqwt+/zvxAXLlpRegP2EtMBmGPE1QPj8O+bvHqa25MwI1o+oYwfKv/WjM/OC8X0kBvjt010UwXf2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742601518; c=relaxed/simple;
-	bh=m6UkBiq2OBDMQY/NyxsU5FKMcCkOsNgG/0k+DWls0wk=;
+	s=arc-20240116; t=1742601636; c=relaxed/simple;
+	bh=9nkuod8/Dnbh5yTJSbve8NQJf6vSO9Dh3fIlEmHv/Ps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4+GgGM/NZKZ0qpUUbTI4uZPfn1no3uIte608wBgCHW88G1+apgPnM0FVLQtteOq0LEVZb47bGbKajVUMuY/qem4hZvWWTwcZ67dc4fHT+B8ftXw9sq51C00nRN3yMwHvEy9iAnJPY7dJCt8BnSKKe51JFRHZXFvJ6Sndgw4xx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 3CC7F343162;
-	Fri, 21 Mar 2025 23:58:34 +0000 (UTC)
-Date: Fri, 21 Mar 2025 23:58:30 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnLIAXiJCcAzcLtJyqqkVo/RSxNHG1SPkFCBbFq4gaUHpUgscHPl2A2HoerQtH9u0WAdWIBaIN+p1xxbABwuJmj6WPEZRholnM3nuCKF4hg0uJcYe5/O+Q1hIAsTaKzaOaUqrRMXKUxMIn+JuMsfOGw9heg5+7FEOB5Rgrqcz1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwFlfxzS; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239c066347so60297805ad.2;
+        Fri, 21 Mar 2025 17:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742601634; x=1743206434; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E0bz72reqaQ/H0ufrjl/XM53e5Ks3hOCkEwgmqzh2C4=;
+        b=NwFlfxzSjdLa1WHvB663rO9Chi/gl7mHJ+wQFd3Rqr9Zesk2ssF83fPJY6MHPkC5/u
+         dR6zNP+euH5lbi9P3TOKnNHTYshsNFp77VKdBNqQqtOPoGWmLXTVlq2ZzCBWPZ1UxRmD
+         BOAVI/aNGT81LxZaSz06DcqDx8wo2gg0zCuYL7tYjBe3hySJiFq0m+dWmZ11Ap5i7MCA
+         GpWZouWGKxtmElGOYiwqoj6SOAUjkIOxjPx2AHlZYQcGiXQzp0QBeQzhtMTeHP3rqhBu
+         a5rF8izeOncV4YWqiLOkpHAZODigsLyjNLO4EPsYCj1pHhO+hBCVrYiXtkSWd+Ka13OE
+         Qugw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742601634; x=1743206434;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E0bz72reqaQ/H0ufrjl/XM53e5Ks3hOCkEwgmqzh2C4=;
+        b=WrQbd16sqNK3RZHCkrkle3ppg7lrj/HkhD7PDQKnec4aZGVh3JMhU9E1d+qDdQUrNM
+         T1gnlhO1wZZBYqKZK2VpAA43jHOIN22l3DDYlpzuISnh7Ek9BHOaw8oVoKorll14g2qq
+         7hicQDDyAHTw7Oa9JIHOeBox8Te+XZlq7iuSjSw0omlP+gUXL4E4ATEwJNdrADWqjHxJ
+         KKSdX0s2yl9TY4oZCKzQYlf3C6svA2+vxQec0bhBo7W8PJTAEfmumZI5auprZGpYHm+C
+         EU1kGIX213BnhJwqpGulcCPkBHwlQ+HkjfnyC+vHj0n6xjcG7zlVrSJ/IH9g8of7WLNZ
+         5GoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhzA6lG7xFdRbXNXvU48gVjE+4dzsTRRnsUi7D6UmxHPNUM94ZlmVE2aM/JFfQu4BXqupQD9dqZswl2X9z@vger.kernel.org, AJvYcCWFAnLs39DcK0lwiMpW/q3p1Ufbr2s30nUlVSm6YxnInTBaa00O3CjWTlDeHwmqM0j0JJ5n0okX1/I6@vger.kernel.org, AJvYcCXQBwN1Rwq756Io2K5zdI284xfoxx6jR14Jw3UQST7up0A9iWbBpsPKrifRBV92NEek2rM9VCVkABAvVSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywypwr+05z9mELd4HLLKcrx6Aai5y0PPlmFpMd4mWpQhJXIyPnH
+	vuOT9Cj+Puvel1pZBnKNm3WYINTGeGcz50Qk6e/ocEOcJamOyiw1
+X-Gm-Gg: ASbGnct4jh3Gto83wjCKNm4AZ798gFtCf+DIgw7Ym93UkPu5jlFo5j80iI5o8t2DXYe
+	yC/6zj0hMp/6S1OFVCEBgRN6l95gUFYJ4taGUfn7wzJjfprUxBh/CrX/64vsB/cHhvqb1Zc44WS
+	qbMH91w8OkHqs/+JyIMgEL2z8E8+tSElSPh4nlFzz/PBtDHyk39FOhm75s/HarAggQzyyUpK3PE
+	N3XDqSCsaI67qyZiAfETnOBvp3YX5hccJ3ZPMP+RxP9azlB+VL1hK71pFSIDokimZO5NY4wos70
+	/KP9+ffSlaYt11VHKE6ywQPXi8dZO3r82uIXe8TPyfB2JHnUO9i1Jyn9/g==
+X-Google-Smtp-Source: AGHT+IFj0ZbpdzJ3fOyHNqk79NMnaiYgxK/9tCAa9k8zoUUAbUTFn4ESNw1AVqIEpEFRcJAovc328w==
+X-Received: by 2002:a05:6a00:b4e:b0:736:34a2:8a20 with SMTP id d2e1a72fcca58-73905a2300cmr8976502b3a.21.1742601633562;
+        Fri, 21 Mar 2025 17:00:33 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73906159f8bsm2697861b3a.155.2025.03.21.17.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 17:00:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 21 Mar 2025 17:00:31 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: florin.leotescu@oss.nxp.com
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/2] mmc: sdhci-of-k1: add support for SpacemiT K1 SoC
-Message-ID: <20250321235830-GYA13359@gentoo>
-References: <20250213-20-k1-sdhci-v1-0-1f4362a980cd@gentoo.org>
- <20250213-20-k1-sdhci-v1-2-1f4362a980cd@gentoo.org>
- <b0583550-eb2c-4918-b9e7-7041d3fd2e9e@riscstar.com>
+	Michael Shych <michaelsh@nvidia.com>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	viorel.suman@nxp.com, carlos.song@nxp.com,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	festevam@gmail.com, Florin Leotescu <florin.leotescu@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v6 1/3] dt-bindings: hwmon: Add Microchip emc2305 support
+Message-ID: <cf20e703-5770-4bfa-bb5a-a1f5f03f56c0@roeck-us.net>
+References: <20250321143308.4008623-1-florin.leotescu@oss.nxp.com>
+ <20250321143308.4008623-2-florin.leotescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,206 +97,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b0583550-eb2c-4918-b9e7-7041d3fd2e9e@riscstar.com>
+In-Reply-To: <20250321143308.4008623-2-florin.leotescu@oss.nxp.com>
 
-Hi Alex:
+On Fri, Mar 21, 2025 at 04:33:06PM +0200, florin.leotescu@oss.nxp.com wrote:
+> From: Florin Leotescu <florin.leotescu@nxp.com>
+> 
+> Introduce yaml schema for Microchip emc2305 pwm fan controller.
+> 
+> Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-On 11:51 Fri 21 Mar     , Alex Elder wrote:
-> On 2/13/25 4:58 AM, Yixun Lan wrote:
-> > The SDHCI controller found in SpacemiT K1 SoC features SD,
-> > SDIO, eMMC support, such as:
-> > 
-> > - Compatible for 4-bit SDIO 3.0 UHS-I protocol, up to SDR104
-> > - Compatible for 4-bit SD 3.0 UHS-I protocol, up to SDR104
-> > - Compatible for 8bit eMMC5.1, up to HS400
-> > 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> 
-> Why is this RFC? Have you tested it?
-> 
-I'd explicitly mark it as RFC before clock/reset driver merged,
-in case there is anything changed break this driver, and also
- notify maintainer to only review the code but not merge it.
+Applied, after making the changes requested by Rob.
 
-Yes, I've tested, it works
-
-> I have a few minor comments but this seems reasonable to me.
-> 
-> > ---
-> >   drivers/mmc/host/Kconfig       |  14 ++
-> >   drivers/mmc/host/Makefile      |   1 +
-> >   drivers/mmc/host/sdhci-of-k1.c | 320 +++++++++++++++++++++++++++++++++++++++++
-> >   3 files changed, 335 insertions(+)
-> 
-> . . .
-> 
-> > +#define SDHC_PHY_DLLCFG			0x168
-> > +#define  DLL_PREDLY_NUM			0x04
-> > +#define  DLL_FULLDLY_RANGE		0x10
-> > +#define  DLL_VREG_CTRL			0x40
-> > +#define  DLL_ENABLE			0x80000000
-> > +#define  DLL_REFRESH_SWEN_SHIFT		0x1C
-> > +#define  DLL_REFRESH_SW_SHIFT		0x1D
-> > +
-> > +#define SDHC_PHY_DLLCFG1		0x16C
-> > +#define  DLL_REG2_CTRL			0x0C
-> > +#define  DLL_REG3_CTRL_MASK		0xFF
-> 
-> As Adrian said, please use GENMASK() (or BIT()) to define
-> these masks, and FIELD_GET() or similar to manipulate them.
-> I prefer lower-case hex digits too.
-> 
-ok, will fix in next version
-
-> > +#define  DLL_REG3_CTRL_SHIFT		0x10
-> > +#define  DLL_REG2_CTRL_MASK		0xFF
-> > +#define  DLL_REG2_CTRL_SHIFT		0x08
-> > +#define  DLL_REG1_CTRL			0x92
-> > +#define  DLL_REG1_CTRL_MASK		0xFF
-> > +#define  DLL_REG1_CTRL_SHIFT		0x00
-> > +
-> > +#define SDHC_PHY_DLLSTS			0x170
-> > +#define  DLL_LOCK_STATE			0x01
-> > +
-> > +#define SDHC_PHY_DLLSTS1		0x174
-> > +#define  DLL_MASTER_DELAY_MASK		0xFF
-> > +#define  DLL_MASTER_DELAY_SHIFT		0x10
-> > +
-> > +#define SDHC_PHY_PADCFG_REG		0x178
-> > +#define  RX_BIAS_CTRL			BIT(5)
-> > +#define  PHY_DRIVE_SEL_MASK		0x7
-> > +#define  PHY_DRIVE_SEL_DEFAULT		0x4
-> > +
-> > +struct spacemit_sdhci_host {
-> > +	struct clk *clk_core;
-> > +	struct clk *clk_io;
-> > +};
-> > +
-> 
-> I don't think the next few functions add any real value.
-> 
-> Just call sdhci_writel() and sdhci_readl() directly.  It
-> might even take fewer characters (but above all, I think
-> it's clearer without the function hiding what's done).
-> 
-on the opposite, I thought introducing a helper function make it more readable
-1) give a function name as setbits(), clrbits(), we know clearly what's doing here
-2) without helper, we either need to break the code into several lines -
-read first, then write, or if put them into one line, then reg variable usually
-come as macro which quite long and need to repeat twice which easily exceed max line number
-
-
-> > +static inline void spacemit_sdhci_setbits(struct sdhci_host *host, u32 val, int reg)
-> > +{
-> > +	sdhci_writel(host, sdhci_readl(host, reg) | val, reg);
-> > +}
-> > +
-> > +static inline void spacemit_sdhci_clrbits(struct sdhci_host *host, u32 val, int reg)
-> > +{
-> > +	sdhci_writel(host, sdhci_readl(host, reg) & ~val, reg);
-> > +}
-> > +
-> 
-> This too, just open-code this function in the two places it's used.
-> 
-> > +static inline void spacemit_sdhci_clrsetbits(struct sdhci_host *host, u32 clr, u32 set, int reg)
-> > +{
-> > +	u32 val = sdhci_readl(host, reg);
-> > +
-> > +	val = (val & ~clr) | set;
-> > +	sdhci_writel(host, val, reg);
-> > +}
-> > +
-> > +static void spacemit_sdhci_reset(struct sdhci_host *host, u8 mask)
-> > +{
-> > +	struct platform_device *pdev;
-> > +
-> 
-> . . .
-> 
-> > +	udelay(5);
-> > +
-> > +	spacemit_sdhci_setbits(host, PHY_FUNC_EN | PHY_PLL_LOCK, SDHC_PHY_CTRL_REG);
-> > +}
-> > +
-> 
-> I don't feel as strongly about this, but...
-> 
-> Here too, what the next function does is very typical and all
-> of it could go in the probe function.  I do understand that it
-> groups the clock-related code though.
-> 
-I would like to keep it as is if possible, or if other maintainer has objection?
-
-the motivation here is breaking the logic into more small parts, then 
-people review probe() can move more quickly, and if want to further audit
-clock (maybe reset - plan to group them together), then can do it separately
-
-> But aside from that, I think assigning pltfm_host->clock could
-> be done in the probe function rather than hiding it in here.
-> 
-I'd consider all clock related, so reasonable to put them together
-
-in another perspective, introducing spacemit_sdhci_host which only 
-contain clk_core, clk_io sounds not necessary in current stage as they
-are not used in later functions, but will eventually do when implement
-suspend/resume functionality.
-
-> > +static inline int spacemit_sdhci_get_clocks(struct device *dev,
-> > +					    struct sdhci_pltfm_host *pltfm_host)
-> > +{
-> > +	struct spacemit_sdhci_host *sdhst = sdhci_pltfm_priv(pltfm_host);
-> > +
-> > +	sdhst->clk_core = devm_clk_get_enabled(dev, "core");
-> > +	if (IS_ERR(sdhst->clk_core))
-> > +		return -EINVAL;
-> > +
-> > +	sdhst->clk_io = devm_clk_get_enabled(dev, "io");
-> > +	if (IS_ERR(sdhst->clk_io))
-> > +		return -EINVAL;
-> > +
-> > +	pltfm_host->clk = sdhst->clk_io;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct sdhci_ops spacemit_sdhci_ops = {
-> > +	.get_max_clock		= spacemit_sdhci_clk_get_max_clock,
-> > +	.reset			= spacemit_sdhci_reset,
-> > +	.set_bus_width		= sdhci_set_bus_width,
-> > +	.set_clock		= spacemit_sdhci_set_clock,
-> > +	.set_uhs_signaling	= spacemit_sdhci_set_uhs_signaling,
-> > +};
-> > +
-> 
-> I think you should make the next structure be used as platform
-> data for "spacemit,k1-sdhci", rather than just a global.  That
-> way you could conceivably use the same driver with slightly
-> different (or even the same) quirks for future hardware.
-> 
-I'm not sure if we should do it now, or postpone later in future
- when we really come to it (lazy implementation).
-
-As I have no idea of how future hardware is, they may change to 
-use another IP.
-
-> 					-Alex
-> 
-> > +static const struct sdhci_pltfm_data spacemit_sdhci_k1_pdata = {
-> > +	.ops = &spacemit_sdhci_ops,
-> > +	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-> > +		  SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
-> > +		  SDHCI_QUIRK_32BIT_ADMA_SIZE |
-> > +		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-> > +		  SDHCI_QUIRK_BROKEN_CARD_DETECTION |
-> > +		  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL,
-> > +	.quirks2 = SDHCI_QUIRK2_BROKEN_64_BIT_DMA |
-> > +		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> > +};
-> > +. . .
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Thanks,
+Guenter
 
