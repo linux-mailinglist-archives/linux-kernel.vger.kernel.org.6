@@ -1,228 +1,283 @@
-Return-Path: <linux-kernel+bounces-572416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E13A6CA21
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:24:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3DCA6CA25
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEA73AE1A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:24:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0AA17656F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C31021B9D5;
-	Sat, 22 Mar 2025 12:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FB11FCFF9;
+	Sat, 22 Mar 2025 12:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="XzX09J07"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IAXC+Ym5"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5941BD9C6
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6842AD21
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742646249; cv=none; b=HTu4VNq7QA0xsOrPyeYb/BEA394r+3Y3Ul/Y2ElrYw64Moq771BDNc92x9XjNelzTYSTcullVGL2au30OdmeLWt/f8YHe22REhYWsTlNSu6eHSxgg7T5B0iZ/L9XMQ7rYaEEsORrrChP/oMZ6lgFCJy/z/O4vwogYbonYZFzMtI=
+	t=1742646615; cv=none; b=hFdrdDsDJfx7v1AcHO16vloJUvsjfmLLKLZkuHnIgFrWOtk+FvpDYvCnVDh9L2G+cWinvJnG65YTv3wWYQlSOPQUW+ortlboXf15rlK8NmdbHLQ89/QKtw/JPGHf9dHJpKKx/lgo8WJDP0bQBFV/PDNjiKyWnNOzb4IP8njMxIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742646249; c=relaxed/simple;
-	bh=LtXKUFITKx/5AE9vczJ/kQIbvMqXvAsLm3q/nzV8STM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sMS9f4wEOiGMd4nhBb6u9vXuINUtzEDlKhdWZoDsmNbY4s7AcDEkSADAyX6x9O4YQb8+KwBWO97tcGoIgjq8jAd7fJk94z3gwg2rxwqDRn50TV5a9dOidw14EwDgZtRn6JeLiMdYC8XJzaueWzqdVEfgnSYMvd7+k4k88iKNCaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=XzX09J07; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742646236; x=1743251036; i=spasswolf@web.de;
-	bh=9ijOm03zH9pvCrE3DLbQdiRmGtSkUn8cIZSt9Jn3RYU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XzX09J07MtujBsFWdUpWUCuOkLt8CT20seIoMazZoiS1EnZqlBpTXMYjBrRE89Ob
-	 NVNbBuPvBnyhqyGY6xEErxwckBaVhOBBTO0AMJrHszykACZ1yZPZGab3+SWLQfOPq
-	 Pn80/XAl/Ex1+pK4mOZ05lngHnJ1NBQutsk+dND1n+tGK8xWfXEdAi4Y6bkYAAh1Z
-	 kreSoTmYUs6dx/j0KNF9908+PvjXBV/Zp4pX00gmaUZeuctxQ5F5xJJWHwbSlKrwb
-	 uaDSixj+Ldy8WtwH7p7WCZJUaBK0piPJ4CuEMpLKrg5XzHsoiP9sRk4eW4Eenf1eo
-	 E+Lr/Q8mXP8GSHcbrw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
- (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1MxHU2-1syVXg0UxM-0115V8; Sat, 22 Mar 2025 13:23:56 +0100
-From: Bert Karwatzki <spasswolf@web.de>
-To: Balbir Singh <balbirs@nvidia.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	linux-kernel@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org
-Subject: RE: commit 7ffb791423c7 breaks steam game
-Date: Sat, 22 Mar 2025 13:23:48 +0100
-Message-ID: <20250322122351.3268-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: c5e5b3a7-e8ab-42c8-a33c-ce2c0dd21344@nvidia.com
-References: 
+	s=arc-20240116; t=1742646615; c=relaxed/simple;
+	bh=QUGx4dCY8/tgal3QRY5pUyGAdjuiqwTT+LhsulM4JMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Liiydd0qfy8NEq0b4qpnr6LRS6shZH9NXkzY7exd0eeKaG4LiNswa2hRshE327CQyxuPDqMbpaWdRZy+QQrHgp98y1VcgxxJoGQ5QAdn+U+AVS7w+PHXXFHRL8GvGVSrr5S1HdMsqxibfK3O7Uo/e5y1Skc53ht/Z/LafwD3KGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IAXC+Ym5; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso20173605e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 05:30:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1742646612; x=1743251412; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XK2TAqZG341EzHEinXnSfJT8xoYCNibzBDqkY726Y1s=;
+        b=IAXC+Ym5dURzYvBmBTyPDwL2aHOHSMjIZUIsvnKIY5mNtSpL/n9TMz2fU+2gbkhYBp
+         NpuCnt6lgR6e8OqlwnUFcwtiHCRK7mR6VabEtEMExu+d7TxLwXh6Bd97+ukfXf9V2Jl9
+         kDZbr4FbOnj6ZfZOdbkdlZg8dBxn5lVTvapDw+DdzH/om+JtdqZ4HW8u/pwleXXX/3kN
+         Fv4n6Il+jV5UXtneKMOk7Kw8obM1xDeZIaZie3hh734ZlQPEMqd2KoNOm4gyYjh8nbBY
+         Dbrw6f6M8IcXTVUM/2upSByEqbwjT1lBWhWfbrQ0cuq9l2uk+GBQxPwzyeU7Kjs1Jtet
+         4wuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742646612; x=1743251412;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XK2TAqZG341EzHEinXnSfJT8xoYCNibzBDqkY726Y1s=;
+        b=It5ez6CTW3vvSl5qcLTSYFh8rb8apByY3KH740c/Lw4XDkygyE/bzpXCvAbOBD9jnN
+         VeJY+QxyxzJVkpu4N7NkANGNiwPYDaaqp7qJRtdJtJ8FboYl/1AsjDqDRn2B/l7wFQNp
+         Pf9qMhkjNev0rrlyxGxDHHMQE1QU4HUJ5LkuwIyOf3aDM8SoDIpUgsxjWPW8RfRfDH2x
+         8dWFyrQeqzA5dM15EJrYna44XEtkW9xz77pN9KMXW35/zNyfIqaNsqync6tA65s50Nzr
+         1Qlpxim+cjvxAUNrjaJmiC9c7wZqHgAjknnTFfbdJCGHUvWOSUggLrq34kD/NFhWBKsC
+         TUqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfyVz0I5PVdhy9MYPiWNTociUVowfdgza1fQrjvHnhlbwaYULl5Op6rkI/qSRBj8pwvGeXfhKpQ/vLw2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3ggI52wPLU8CcajS4qM+OGvq7FFkbqCY0L1CvSFuU9srVSr+C
+	wFtiBy6RhdUUW45RI0cwWn6jRHZw/6gnaTThPiysqupx+EaLhxxIwLm0TZpUcVw=
+X-Gm-Gg: ASbGncuCEvZB97UccbmC92UWuZWppkOYmsZOpGI2e7xQmDu3Njt1J5D/5ZjyxIMqWi2
+	MQ90489awAnlxs8NeguYIZ1mesCXpAE/syTtUjGKpN4MLJd420+L1Zh9rMqo4ss8iIOmfOhM2c+
+	H4tZJgqc5WvCzgss2wrVvfZ6mclsNO1VxU9wS4UxEpaIO2YY/NzuufyzrJx5Kurrt2Fcc5rVp55
+	b0mU/d/iEBH40z1AYmqmgSe8K7orlApnhwhK+Cjg7tcwiZs1EmG3fc3GKiVlJHQ7RZhnS3pLBBn
+	5NFbJZI4FxFAmBOV6p/SMmhqFMGvQIj4qJFuuV+hQWgBqQioQrmT2JyC3D9TSIic/lcABga5oA=
+	=
+X-Google-Smtp-Source: AGHT+IG8oeOIoiATGf2n/eErF/v1UJz5jBt3u89DGuQOGIaGoIkUZOrdT8f7P/SGIIjTK+RAQA8QjA==
+X-Received: by 2002:a05:600c:83c4:b0:43c:fffc:7886 with SMTP id 5b1f17b1804b1-43d509ec52fmr59753085e9.8.1742646611632;
+        Sat, 22 Mar 2025 05:30:11 -0700 (PDT)
+Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440eda26sm106789645e9.36.2025.03.22.05.30.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 05:30:11 -0700 (PDT)
+Date: Sat, 22 Mar 2025 13:30:10 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v4 17/18] RISC-V: KVM: add support for FWFT SBI extension
+Message-ID: <20250322-c4eaee71aa9c1f0b13ca8fef@orel>
+References: <20250317170625.1142870-1-cleger@rivosinc.com>
+ <20250317170625.1142870-18-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hAJLFKPTY6o5LmMrec62vbRj/07P3N7vmOupj0k9rmY5Q712+CA
- Mnb7oVQNPa6p29Cex9Le/HpfoY01c29xV68KqMNfj71p5qhsGUz43bu2FgMxlhJQPsTAOok
- Rf1s5orfFVIl1RBCRzb6Ve4GPnyJgno5IfdtBQ4hARp0TVEpW1FKFw63LFZ/vvFCPBuSJEC
- TrLlVuFWlCE1DDvPxIu0w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Eg18juMOxcc=;nkxu0HFBMatDv853sg2R/F555pN
- fhmgp6Vn5g7hFSdAixnHnFkJ+Jq4UkPosyeHvEvOLQC4D4d6CwJqG2Y3hBoNHpIN2UON8EKpN
- zg/Z/r9ufRw1xZF9jxEaahslOAqYKkT1geuCnjWYD6CTePCUZKr+wAIzUTaMsAPOd5Tm+qaAK
- nlPzh85d0RCF0gsCpz+MQxNst+oc9DLJe4By67YfvWw/tV+gcfhnWUfbLGrFGbV7IcIWm6oqR
- y/MRlKCZzzDjRWYb5feuVEBM5GVshvQi/nMqZhbYh1X+YJxrvAQl8Xkm7m+/WD4B/MXTr8VBS
- JjxNxCeNNsRbdexx9TRVi8KfQE4sqPEK/p4D5/RQCc1u1+iVlWTGHRZdlR9KAZsVJajOtlhQ2
- d38C7NMG5W1YA4b10aT8v/5miNsaVyXuA1wimdaHOwDHoHOLWmF8D6qBQLk1kgSBEFHv3tcME
- pX2xOoV2qJzp9nbYa15fl66B8GBzL/ReM1eLNWKI2nrdteIfkqaAY/5Mx6E0Sl8nIY+6MjK2R
- ZkaPJnLhuaXtGNRmnpQT4JoZZpcDxn858LaRMAZIu5SlEsEwD52Nfl15PbEbD+s8D1epwGHYo
- aonUwC+DV9faQ8LdqusR6NHexuoGH0BqOgBiUM1rYW67ny9e4KZdlSq8L+9YDnNxTX9jfl71f
- t2qOMvrIOd8UVMeSKXGUJ/Ev75ojGhtPuhjQYrpnPpkWKx3U0E8lgo01478TRvdyj0C5xUCdM
- RPcqjjg3S8WUKcpnvdrtk8thiPkdMXx5fpXyc0S0eaV9mUNxBS2zfuW/cpbWbWxqSnqPyGcQz
- U0MKElkrBlbt89HpDv/bkZN2cxADfxt3Ewk9TceKP+sGKbJ5xUhJYA/PIaMzCXXxkySWqwFRD
- JXNjSorgVDgTnjsQmTBUqMuBwkIxyh4V2zT6Y3w0Ej6V+NyCs+aydEQlI6OM6ypQbrRbaW0cU
- uSB0dFJf7wyLXIV0TCDlfZS3C73QS/wG9KwoiBvnVGLftJQACSLDLZM4L6RTuB4ihVajDjcw5
- ELArBwbgEo38VxKhgBQYx1Z+KTDvrIQH7fqDLsxgfwHBFmerYOAoG3cXKlkN0Lc+TIq0it7Wr
- jh/fW1kh0FNRjxMUv3/RuuzC2p/Bx95lWrxG4ps0SgU6m2D15WKdgllBsL8LDSgmfjDIaH/Nb
- D9YNe9r586ByuLfpy5F/k37G99cbgqv0wMNYmf8J8FEoArBuzS9bBUz7W7uXyOXWC+JH96maT
- 2XgGX6o05bczvdnZzqeEbzUwXFG+McdR4oQHMDhwau2RIibpMa/PbYiiZIe5BkbNA8n8rUxIz
- sr48q+Wyoc6iQCW8cySetc8Liufr9PimAZ7ep3875q7Ee8B9kxhFu7okjGnchGuejsaDczP38
- +Lt7i2gSmXigKO6QTotMLubLtdh6h3lyGhzusJn6bxei6Jf7pkhs+h9vaQs5B1M9DqZEgK6v2
- aq8sk9cT4qWdLH14ljTRvOrt6Y2s=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250317170625.1142870-18-cleger@rivosinc.com>
 
-The problem occurs in this part of ttm_tt_populate(), in the nokaslr case
-the loop is entered and repeatedly run because ttm_dma32_pages allocated e=
-xceeds
-the ttm_dma32_pages_limit which leads to lots of calls to ttm_global_swapo=
-ut().
+On Mon, Mar 17, 2025 at 06:06:23PM +0100, Clément Léger wrote:
+> Add basic infrastructure to support the FWFT extension in KVM.
+> 
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> ---
+>  arch/riscv/include/asm/kvm_host.h          |   4 +
+>  arch/riscv/include/asm/kvm_vcpu_sbi.h      |   1 +
+>  arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h |  29 +++
+>  arch/riscv/include/uapi/asm/kvm.h          |   1 +
+>  arch/riscv/kvm/Makefile                    |   1 +
+>  arch/riscv/kvm/vcpu_sbi.c                  |   4 +
+>  arch/riscv/kvm/vcpu_sbi_fwft.c             | 216 +++++++++++++++++++++
+>  7 files changed, 256 insertions(+)
+>  create mode 100644 arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+>  create mode 100644 arch/riscv/kvm/vcpu_sbi_fwft.c
+> 
+> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
+> index bb93d2995ea2..c0db61ba691a 100644
+> --- a/arch/riscv/include/asm/kvm_host.h
+> +++ b/arch/riscv/include/asm/kvm_host.h
+> @@ -19,6 +19,7 @@
+>  #include <asm/kvm_vcpu_fp.h>
+>  #include <asm/kvm_vcpu_insn.h>
+>  #include <asm/kvm_vcpu_sbi.h>
+> +#include <asm/kvm_vcpu_sbi_fwft.h>
+>  #include <asm/kvm_vcpu_timer.h>
+>  #include <asm/kvm_vcpu_pmu.h>
+>  
+> @@ -281,6 +282,9 @@ struct kvm_vcpu_arch {
+>  	/* Performance monitoring context */
+>  	struct kvm_pmu pmu_context;
+>  
+> +	/* Firmware feature SBI extension context */
+> +	struct kvm_sbi_fwft fwft_context;
+> +
+>  	/* 'static' configurations which are set only once */
+>  	struct kvm_vcpu_config cfg;
+>  
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> index cb68b3a57c8f..ffd03fed0c06 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -98,6 +98,7 @@ extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_hsm;
+>  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_dbcn;
+>  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_susp;
+>  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_sta;
+> +extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_fwft;
+>  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_experimental;
+>  extern const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_vendor;
+>  
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+> new file mode 100644
+> index 000000000000..9ba841355758
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2025 Rivos Inc.
+> + *
+> + * Authors:
+> + *     Clément Léger <cleger@rivosinc.com>
+> + */
+> +
+> +#ifndef __KVM_VCPU_RISCV_FWFT_H
+> +#define __KVM_VCPU_RISCV_FWFT_H
+> +
+> +#include <asm/sbi.h>
+> +
+> +struct kvm_sbi_fwft_feature;
+> +
+> +struct kvm_sbi_fwft_config {
+> +	const struct kvm_sbi_fwft_feature *feature;
+> +	bool supported;
+> +	unsigned long flags;
+> +};
+> +
+> +/* FWFT data structure per vcpu */
+> +struct kvm_sbi_fwft {
+> +	struct kvm_sbi_fwft_config *configs;
+> +};
+> +
+> +#define vcpu_to_fwft(vcpu) (&(vcpu)->arch.fwft_context)
+> +
+> +#endif /* !__KVM_VCPU_RISCV_FWFT_H */
+> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
+> index f06bc5efcd79..fa6eee1caf41 100644
+> --- a/arch/riscv/include/uapi/asm/kvm.h
+> +++ b/arch/riscv/include/uapi/asm/kvm.h
+> @@ -202,6 +202,7 @@ enum KVM_RISCV_SBI_EXT_ID {
+>  	KVM_RISCV_SBI_EXT_DBCN,
+>  	KVM_RISCV_SBI_EXT_STA,
+>  	KVM_RISCV_SBI_EXT_SUSP,
+> +	KVM_RISCV_SBI_EXT_FWFT,
+>  	KVM_RISCV_SBI_EXT_MAX,
+>  };
+>  
+> diff --git a/arch/riscv/kvm/Makefile b/arch/riscv/kvm/Makefile
+> index 4e0bba91d284..06e2d52a9b88 100644
+> --- a/arch/riscv/kvm/Makefile
+> +++ b/arch/riscv/kvm/Makefile
+> @@ -26,6 +26,7 @@ kvm-y += vcpu_onereg.o
+>  kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o
+>  kvm-y += vcpu_sbi.o
+>  kvm-y += vcpu_sbi_base.o
+> +kvm-y += vcpu_sbi_fwft.o
+>  kvm-y += vcpu_sbi_hsm.o
+>  kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_sbi_pmu.o
+>  kvm-y += vcpu_sbi_replace.o
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index 50be079b5528..0748810c0252 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -78,6 +78,10 @@ static const struct kvm_riscv_sbi_extension_entry sbi_ext[] = {
+>  		.ext_idx = KVM_RISCV_SBI_EXT_STA,
+>  		.ext_ptr = &vcpu_sbi_ext_sta,
+>  	},
+> +	{
+> +		.ext_idx = KVM_RISCV_SBI_EXT_FWFT,
+> +		.ext_ptr = &vcpu_sbi_ext_fwft,
+> +	},
+>  	{
+>  		.ext_idx = KVM_RISCV_SBI_EXT_EXPERIMENTAL,
+>  		.ext_ptr = &vcpu_sbi_ext_experimental,
+> diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> new file mode 100644
+> index 000000000000..8a7cfe1fe7a7
+> --- /dev/null
+> +++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
+> @@ -0,0 +1,216 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 Rivos Inc.
+> + *
+> + * Authors:
+> + *     Clément Léger <cleger@rivosinc.com>
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/err.h>
+> +#include <linux/kvm_host.h>
+> +#include <asm/cpufeature.h>
+> +#include <asm/sbi.h>
+> +#include <asm/kvm_vcpu_sbi.h>
+> +#include <asm/kvm_vcpu_sbi_fwft.h>
+> +
+> +struct kvm_sbi_fwft_feature {
+> +	/**
+> +	 * @id: Feature ID
+> +	 */
+> +	enum sbi_fwft_feature_t id;
+> +
+> +	/**
+> +	 * @supported: Check if the feature is supported on the vcpu
+> +	 *
+> +	 * This callback is optional, if not provided the feature is assumed to
+> +	 * be supported
+> +	 */
+> +	bool (*supported)(struct kvm_vcpu *vcpu);
+> +
+> +	/**
+> +	 * @set: Set the feature value
+> +	 *
+> +	 * Return SBI_SUCCESS on success or an SBI error (SBI_ERR_*)
+> +	 *
+> +	 * This callback is mandatory
+> +	 */
+> +	long (*set)(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf, unsigned long value);
+> +
+> +	/**
+> +	 * @get: Get the feature current value
+> +	 *
+> +	 * Return SBI_SUCCESS on success or an SBI error (SBI_ERR_*)
+> +	 *
+> +	 * This callback is mandatory
+> +	 */
+> +	 long (*get)(struct kvm_vcpu *vcpu, struct kvm_sbi_fwft_config *conf, unsigned long *value);
+        ^ 
+	extra space here
 
-if (!strcmp(get_current()->comm, "stellaris"))
-	printk(KERN_INFO "%s: ttm_pages_allocated=3D0x%llx ttm_pages_limit=3D0x%l=
-x ttm_dma32_pages_allocated=3D0x%llx ttm_dma32_pages_limit=3D0x%lx\n",
-			__func__, ttm_pages_allocated.counter, ttm_pages_limit, ttm_dma32_pages=
-_allocated.counter, ttm_dma32_pages_limit);
-while (atomic_long_read(&ttm_pages_allocated) > ttm_pages_limit ||
-       atomic_long_read(&ttm_dma32_pages_allocated) >
-       ttm_dma32_pages_limit) {
 
-	if (!strcmp(get_current()->comm, "stellaris"))
-	printk(KERN_INFO "%s: count=3D%d ttm_pages_allocated=3D0x%llx ttm_pages_l=
-imit=3D0x%lx ttm_dma32_pages_allocated=3D0x%llx ttm_dma32_pages_limit=3D0x=
-%lx\n",
-			__func__, count++, ttm_pages_allocated.counter, ttm_pages_limit, ttm_dm=
-a32_pages_allocated.counter, ttm_dma32_pages_limit);
-	ret =3D ttm_global_swapout(ctx, GFP_KERNEL);
-	if (ret =3D=3D 0)
-		break;
-	if (ret < 0)
-		goto error;
-}
-
-In the case without nokaslr on the number of ttm_dma32_pages_allocated is =
-0 because
-use_dma32 =3D=3D false in this case.
-
-So why is use_dma32 enabled with nokaslr? Some more printk()s give this re=
-sult:
-
-The GPUs:
-built-in:
-08:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] =
-Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] (rev c5)
-discrete:
-03:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi 23=
- [Radeon RX 6600/6600 XT/6600M] (rev c3)
-
-With nokaslr:
-[    1.266517] [    T328] dma_addressing_limited: mask =3D 0xfffffffffff b=
-us_dma_limit =3D 0x0 required_mask =3D 0xfffffffff
-[    1.266519] [    T328] dma_addressing_limited: ops =3D 0000000000000000=
- use_dma_iommu(dev) =3D 0
-[    1.266520] [    T328] dma_direct_all_ram_mapped: returning true
-[    1.266521] [    T328] dma_addressing_limited: returning ret =3D 0
-[    1.266521] [    T328] amdgpu 0000:03:00.0: amdgpu: amdgpu_ttm_init: ca=
-lling ttm_device_init() with use_dma32 =3D 0
-[    1.266525] [    T328] entering ttm_device_init, use_dma32 =3D 0
-[    1.267115] [    T328] entering ttm_pool_init, use_dma32 =3D 0
-
-[    3.965669] [    T328] dma_addressing_limited: mask =3D 0xfffffffffff b=
-us_dma_limit =3D 0x0 required_mask =3D 0x3fffffffffff
-[    3.965671] [    T328] dma_addressing_limited: returning true
-[    3.965672] [    T328] amdgpu 0000:08:00.0: amdgpu: amdgpu_ttm_init: ca=
-lling ttm_device_init() with use_dma32 =3D 1
-[    3.965674] [    T328] entering ttm_device_init, use_dma32 =3D 1
-[    3.965747] [    T328] entering ttm_pool_init, use_dma32 =3D 1
-
-Without nokaslr:
-[    1.300907] [    T351] dma_addressing_limited: mask =3D 0xfffffffffff b=
-us_dma_limit =3D 0x0 required_mask =3D 0xfffffffff
-[    1.300909] [    T351] dma_addressing_limited: ops =3D 0000000000000000=
- use_dma_iommu(dev) =3D 0
-[    1.300910] [    T351] dma_direct_all_ram_mapped: returning true
-[    1.300910] [    T351] dma_addressing_limited: returning ret =3D 0
-[    1.300911] [    T351] amdgpu 0000:03:00.0: amdgpu: amdgpu_ttm_init: ca=
-lling ttm_device_init() with use_dma32 =3D 0
-[    1.300915] [    T351] entering ttm_device_init, use_dma32 =3D 0
-[    1.301210] [    T351] entering ttm_pool_init, use_dma32 =3D 0
-
-[    4.000602] [    T351] dma_addressing_limited: mask =3D 0xfffffffffff b=
-us_dma_limit =3D 0x0 required_mask =3D 0xfffffffffff
-[    4.000603] [    T351] dma_addressing_limited: ops =3D 0000000000000000=
- use_dma_iommu(dev) =3D 0
-[    4.000604] [    T351] dma_direct_all_ram_mapped: returning true
-[    4.000605] [    T351] dma_addressing_limited: returning ret =3D 0
-[    4.000606] [    T351] amdgpu 0000:08:00.0: amdgpu: amdgpu_ttm_init: ca=
-lling ttm_device_init() with use_dma32 =3D 0
-[    4.000610] [    T351] entering ttm_device_init, use_dma32 =3D 0
-[    4.000687] [    T351] entering ttm_pool_init, use_dma32 =3D 0
-
-So with nokaslr the reuqired mask for the built-in GPU changes from 0xffff=
-fffffff
-to 0x3fffffffffff which causes dma_addressing_limited to return true which=
- causes
-the ttm_device init to be called with use_dma32 =3D true.
- It also show that for the discreate GPU nothing changes so the bug does n=
-ot occur
-there.
-
-I also was able to work around the bug by calling ttm_device_init() with u=
-se_dma32=3Dfalse
-from amdgpu_ttm_init()  (drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c) but I'm =
-not sure if this
-has unwanted side effects.
-
-int amdgpu_ttm_init(struct amdgpu_device *adev)
-{
-	uint64_t gtt_size;
-	int r;
-
-	mutex_init(&adev->mman.gtt_window_lock);
-
-	dma_set_max_seg_size(adev->dev, UINT_MAX);
-	/* No others user of address space so set it to 0 */
-	dev_info(adev->dev, "%s: calling ttm_device_init() with use_dma32 =3D 0 i=
-gnoring %d\n", __func__, dma_addressing_limited(adev->dev));
-	r =3D ttm_device_init(&adev->mman.bdev, &amdgpu_bo_driver, adev->dev,
-			       adev_to_drm(adev)->anon_inode->i_mapping,
-			       adev_to_drm(adev)->vma_offset_manager,
-			       adev->need_swiotlb,
-			       false /* use_dma32 */);
-	if (r) {
-		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
-		return r;
-	}
-
-
-Bert Karwatzki
+Thanks,
+drew
 
