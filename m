@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-572537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E21AA6CB3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:41:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29A3A6CB3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:43:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26D7174B65
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4FC174C86
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6678B230BE6;
-	Sat, 22 Mar 2025 15:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE22230BF7;
+	Sat, 22 Mar 2025 15:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KkibrdrM"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KuxLY5IH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCEF1FC111;
-	Sat, 22 Mar 2025 15:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA341DAC95;
+	Sat, 22 Mar 2025 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742658081; cv=none; b=LHNe1akpJYfmFdHdAbZBawHbwB+z/e4fW768M/qlPeeiv+Va8VmNN0Z0Cdaj+Ez74WB0+bLkdMmEv2hQwC4azEEhHb/BhKyltXFEjp2MWo8ww5AScU8hXs2xCGKKvh62I8uhkyF+X22IBUlWPi+BJRxseiE4s11CooyeCLz9nwU=
+	t=1742658192; cv=none; b=BhOzV04YLoUdo86IyN4NHWSMIe9ZkSdsuLpG+OKh2yztqRnUtYlWy3D+d04viLbXFfDgFxPyyIQDxSrD3s+Yo4NXMxWqQ1nenH1oG3Poh2e4U1DLcoC7yGahWMcH+PRhWMlPN6v9ufBPLsjYBILuTtkQ5nPFMexzdxMYIvEhgd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742658081; c=relaxed/simple;
-	bh=yBsJdEaL0lHYY7uQaEKOkXXNSi/IF0RzWIcvS08y2bk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LKtvw8VjbdQN4nBYUUHQoOu19E+kigEZwF00DXROtJJC717cw8zUbU9VUSJCv6bViHjSOFVdP2bX4CAwOGNXB2XarDoofH/b89+vynwH2uwoe+rxt8rQztm+jIU6LaGaALt39Xw43C8NXSRfC0LzRMZS7lnfCDiEF8+sIDb7Q/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KkibrdrM; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742658062; x=1743262862; i=markus.elfring@web.de;
-	bh=yBsJdEaL0lHYY7uQaEKOkXXNSi/IF0RzWIcvS08y2bk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KkibrdrMZ1SOaDOGeJ1RFcgLHg2kqt0XvdNbkpGyn0jWSOMXgBT3xAR/xkZfnH3m
-	 Nc4lYxk5+9FQLfD9UqCOGmbij63q9x8+HpKTWLdbHXzvjCZBVya3YFXIdMsoH5E25
-	 BHXlXVy9CDgu233WZZLC9bx0Df6gH8CmuoXgetkqzQ9Cm56GukvwCI9KwuCnXu6z0
-	 3G1lal3na2d9CwbqiFXPInXt3JjqlEmUauqsIlXQb9ZmTmfojC9nfyuIMVwgNjzwx
-	 63Oe98we03cEpmVWsx3pDHWdFfufueYoX6UwnqKWYXIWGDkgRjo/os9suuB7frFo/
-	 qfIUKqgWDpBSTVo0sg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.73]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mpl4x-1tO4Kx3Fhl-00ZCpW; Sat, 22
- Mar 2025 16:41:02 +0100
-Message-ID: <b5374b26-ccff-4ce9-8500-8b3da427be83@web.de>
-Date: Sat, 22 Mar 2025 16:40:59 +0100
+	s=arc-20240116; t=1742658192; c=relaxed/simple;
+	bh=CWWe4PstEF4d9tne4DiFX6uP4PFTSFPxDhi2YS6OAUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCnLOISdvIzmGvyYmCzHqsR0i6+QedLcXmbsakMUU83HvWspUoSjS8tMEBLqL0AKsK1YaG78pohdneBF6V/vMxkoldAIY/b1GMcTmStGBMQCQH4N+0Ku58e9eMcKSZL8mSGodx7b2XxornuriOyCL0IEm6N8qz9UKXA4Ih5RooU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KuxLY5IH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=N0HV37I62AuU/oXEFaKF0jaHXmJrWxfQnCxCHmR/Kuk=; b=KuxLY5IHQmDc6wRqAcP1v9Qo4F
+	h0DnzaNAlR9s53B3tKz19V0AOKFis8h+VkomO91CRj5qJZILgKteRpibtf9u1HVmkpVcvkPUaGTGO
+	SB5UNQwst4KzKVR++5SEU4eVTjwm25TQe6rdEwRRfNiLf6N5kTKfdGF1lWbwkRiM3pCo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tw104-006jac-DL; Sat, 22 Mar 2025 16:43:04 +0100
+Date: Sat, 22 Mar 2025 16:43:04 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
+Subject: Re: [PATCH net-next v4 2/2] net: mdio: mdio-i2c: Add support for
+ single-byte SMBus operations
+Message-ID: <78b99da9-1e0e-4024-a4cb-b649caf0a5d2@lunn.ch>
+References: <20250322075745.120831-1-maxime.chevallier@bootlin.com>
+ <20250322075745.120831-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Sahil Siddiq <sahilcdq@proton.me>, linux-openrisc@vger.kernel.org
-Cc: Sahil Siddiq <icegambit91@gmail.com>, LKML
- <linux-kernel@vger.kernel.org>, Jonas Bonn <jonas@southpole.se>,
- Stafford Horne <shorne@gmail.com>,
- Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-References: <20250315203937.77017-1-sahilcdq@proton.me>
-Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250315203937.77017-1-sahilcdq@proton.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:d+eZTTnpFfK8HwrJ8q+nM6IOgyDfuwp/7EZO1EPNQSGrZsC8wG8
- MqFQ+tboD9BDNgbwlsQBxNfeEQXwGJsRdM7xDfRYiLtfi0tmSip0vOVn08t6tq5/f238eGy
- ilH/8waD1l7FgeRVRvO3BXSP/FzI8oCAE1dUBhggTB/MTlCERHmBMQqPGKEY8KyDYfCSFEp
- k1o+vcpW6+l+SIiNvNrKw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5yR82eWG0/I=;zjWMpkCK/BOmwmIPc2Py6J2sKTq
- 7pBxf0elnUbE9bl7lgSrcOt1sMM3oeVlng2BCId/fWTkNvR+ZE6P8G2DjcqYmJBWsQZp0qiTl
- 1c414wGlzHyx1GynQbsMoxEVKLEU2CCF+ErbFbikUow6Gqyo303d7dzIsMZ9VOhboxUbPvqes
- xk0tBCmGu1l9s2Du5IfpFw8IFjriM/Wpg96IDRduKBfYrkSfpMWPln3nmz1RqpfXiXLk0OoN1
- 7CeFJzQ8XuuYFkRHXoq73R8kpUGN/20f4JjvES1Wwu6s6mUbQVZb673TjXN4KBTh7ZoZoQb+/
- lTR5wYTkIi2Nxd/SLtaqIFww/tU3Y5Ory/gQ5zMyC56zKXoUe7MNry3LQenj9wOEOM/Y/cFh6
- QUBff6tHOlgUMWgF4xpCfadFNQyLjf8Htrilq/7KxKRamYf18POjBoWpHRWKYShhZ4gohKuS0
- Az4ytJ8veIH9HQTaemGGXE1z1PBgX8cLIe9huw9xU/d0kbKrB+SKXrT95c22W0G+qg4tmgnkE
- FZ6oKDK/C4vcBxg+9YSzyhki7msaV7ZcAk77sYr4DJ1ITyaBHbNQUGDrzcniyLj/C8ilv//FS
- 3m1RJEMz653M56EoJRDLCAiu7NZMpSJp6P5It65joFMr5y4HF3iwUstWdc+yUPUMsRcrA9ZyQ
- FYRCb0n1K+LVsx1KtfWzwXvzOkEl7bh0lDfoEHwr/c2uccNYJp01OHCBWop+9uHG7lK8OrqWI
- SCpv9GOu0ldalIuqDoSh6cGUzs1Y2lP7wFeEDutv2vxPSoUI2wZVNSomgztD7vClaShUjWTtg
- lij4cZIsXTdBLlA5aHWDH3UGhTdjskVshuefuhFtqopTtcHKajDSTS4+fjmN1IAIG1jLgfo9H
- TfmKzzR4Vu5qufqd1W1VnZXmVoa9/UNPqPp/ASoNbQKne1jdKVAOWX+JyLXUv2lni2RsnMBXs
- wxpZfisjHko03zQL+ePfcN0WiBdvYDDuLiWteypBLfC7nGkaxYnA3xbIdczg8srAtexwXthT8
- E6iLpHdBM/YzfWqS6tB4YdeZDtFXhLQHC2Ul+msvOYYPzrBtbUkbPw879ZtIJvcSgLLE7XDJF
- 9mADt932n2BUwg+dgnu0YghcIPlQvATRmyIpHSmifYPI2FeC1xbPHpSZvBoRfAqysl3GPz88r
- FHEWfgUYX6u8RA6pC8P+fjBYIlghcUnx/D+Qlpnw8Cxp01+Qel34p70EuyDAw63RbcnyCo+Ei
- PmP4CsyXcY1oJ428+KkAIpN/c1GzxGiKXAPvbxZIUQNXU8ap3DElpgmJKtHEYSdyOXbeyNglC
- Tj/vIkE1nHbiQdqeFV/BzbCPJTs0wYGzR2we0lnSQ5GCq8oNiUvZ5WWhocxtYJtlJi4OgqvgI
- 0EzN/jA+e51BTJeplPQKh3yQU2IFwl7q0Xaalp0YlEAUYMPUmv6tQoU0Ig2h2JeNPaWXvUPdA
- OAP2f8iFYpOfAQnLByUxlFCNmeQOHurgHYfcOXl/ITi47ymz49bhR558s43SylS/YNy+xnw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250322075745.120831-3-maxime.chevallier@bootlin.com>
 
-=E2=80=A6
-> This patch provides a mechanism =E2=80=A6
+On Sat, Mar 22, 2025 at 08:57:45AM +0100, Maxime Chevallier wrote:
+> PHYs that are within copper SFP modules have their MDIO bus accessible
+> through address 0x56 (usually) on the i2c bus. The MDIO-I2C bridge is
+> desgned for 16 bits accesses, but we can also perform 8bits accesses by
+> reading/writing the high and low bytes sequentially.
+> 
+> This commit adds support for this type of accesses, thus supporting
+> smbus controllers such as the one in the VSC8552.
+> 
+> This was only tested on Copper SFP modules that embed a Marvell 88e1111
+> PHY.
+> 
+> Tested-by: Sean Anderson <sean.anderson@linux.dev>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-> The patch also moves =E2=80=A6
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-See also:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc7#n94
-
-Regards,
-Markus
+    Andrew
 
