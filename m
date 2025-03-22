@@ -1,154 +1,193 @@
-Return-Path: <linux-kernel+bounces-572414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DA8A6CA1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:23:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7ABA6CA1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D73448007B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45C43B75A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A024210F53;
-	Sat, 22 Mar 2025 12:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203AE21D59A;
+	Sat, 22 Mar 2025 12:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krHmuajY"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="YyJtbzao"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591A11BD9C6
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79991EBA1C
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742646192; cv=none; b=LpUtOKzBoGFTj4SY+zVk2YnwRKXL0AoHlwc4Z9FynVAVsAPTp7juCMqAdCPS/o51DGjF1orgwTsF8L++QFeDSExuF4S/jg7B5YJtEVGmyFq95WGwvjBOXdHgzCCut15JIAABpWxKe+SZE9BumcafyX/T/t7Q+0OGoyIptiX2BoY=
+	t=1742646220; cv=none; b=BqYqVRnwrJP9Bvuad7496eqZ7B0WsB9nQV31+K/5Yy1l9f1CgBNOBWKSg64VstusXndGWQor/tPj38MgTDaCw5dTVr9uUS/YJeU10StmVcQeIcK8VBwGZ+wfyD5XatgSbncFFmclpTYV74fG36K/WNB2JD5VpW9y+IfTVptivh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742646192; c=relaxed/simple;
-	bh=d8JWowr8kapn+ItQ75V7lDUdSp55ahF3wxgME/NB5PM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J2mtgm2ewWwnibUASZpNz1/oSQSCUC+KTsbI3gq8eotEcuKGObPBIIRzNOmCRfia5J6nL8JpRXdeJ5FwqbvmnQxGGGxhc+ZiT+pVciCzHE4kD+g10Z3EauCNZ9LsFTqSFVRyw3Z+R0XNtEakcQiFYGoFiXLlmXCa4K9FFMWd4Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krHmuajY; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-225df540edcso79838865ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 05:23:11 -0700 (PDT)
+	s=arc-20240116; t=1742646220; c=relaxed/simple;
+	bh=JGkkKKzAxa4ZMpAR8zJFpRuqjYnoAHWm22u5I3jTZTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C76IqsBYJC3/AOdfSG668bcfAH3pYruPjnKhZFpO4VEFyAJlrtZJqDlTo8iOPrjDQJd44fzyxOwpiujzNfArvw35pM07Efce+Nr9+CLmxDh8JdTiiCdqe7ZqDCQlafy9D1OsXxhoRovNVF7o9yo0Uvn+nUjOcwPBlA56pcY28vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=YyJtbzao; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-399676b7c41so1538482f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 05:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742646190; x=1743250990; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8RReRKppMWF+uD20FTGYQunGgSKM48G7FV/uL2ubzV4=;
-        b=krHmuajYeyVbTKCPNEkboXvDK+ScdR/27GSgDNAvDWMKJdJeA9Hz6kONPWMfuN2HLf
-         GBe6+jno1/Y5tP4GECyTCz3DR1EDExhTfm8dbR2a5tNbZjStBDt+tFZjvXDeS+a8757E
-         k57Iz3pHizVoDT+FQME0IgpzR3RA5hHRimRALGaiRs3hyZPire7s6uf3C2e4FZovDUZM
-         vkX+CsQZipmKDZrlIxuF8HbV4X91/KVp/VMnqRAXYSjuW8iWo6Y/8/NGjUeW4IVMM0Pr
-         VhTJgp5YwOmypCGpK3mywv+FYaj+SJO6GiVJrpdQQD0p1UURpl2lg6daBcWeippks6G2
-         SDdQ==
+        d=ventanamicro.com; s=google; t=1742646217; x=1743251017; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KTzyaulL1cxveyrERlwqgSXFqrJfmGbcSuyVzNJ2WH4=;
+        b=YyJtbzaoe6ctVGSUzIRnUBgVJa2zt6p1TKepjQBtKVrfD7scbWaZM0W6Ntinxemkxr
+         ew3YqRPlRxgPBLDMnXJioX7wrg5oKfD+nLqoyGha83SsofWi7XRtnVKoBfXlMm7aK+AU
+         +rF+EzM6YPMLBmndAzf8i5MPqr00HbGuTiYAYZxlULyBwXLr3mryBRgovjoILazbHC7P
+         9lE2Gf2UJo6z7vxmpLEe65FcG0s01kW5zxhjVK6pJfFoVEPWdD2Mnb1UCAz5GKo2pxGv
+         e+euxaGbUHk/1l2GB8WrZGpWgz/PjhjbspQ4mnQBVLOZK7didHgrNrTrgF/qNSB01ssE
+         vXyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742646190; x=1743250990;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8RReRKppMWF+uD20FTGYQunGgSKM48G7FV/uL2ubzV4=;
-        b=QHS46Dl1mh/z4MDWWxXTcdN+oz/UcrDGwvZKFTWRWnXF++7d4ft+V9DV/u7v/D0HeM
-         arRZydf3k4IcB7hWht1UYV4MipA9iaAXdkBiICwqtiYQdU99zjTAtkNC0R709duwtp01
-         VxgrsiELuGszfekvJEeJaRjJPXIQpAWkEZqr56ON6pEqSSUIewMK1myzpLm99iDkh1Mt
-         ZN6aIanquhtgIAYyc2AW2ATIb3bhaXkjdgCClPR+8IdVyyKudAHuILNPgZHGT9PFfp8o
-         v0eJH70I7+QGHLSNYEq0BzpxpaWxP1qXmbPs5totCgUXqHvV9m8CjnGH/N9A89LksQ0z
-         psRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxSc78dQpTEE3xbHVmBVcQPhXLtkeeCwu9DqYxHORzcE2TyEEYR7uqSObg2iN8m9veTES3Y0pIZajEJNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZNq5xH2v+P+FqJRrBwxOphErE88+QWt5/n+tR7Uh1q9KefHZN
-	oTQHPo30PUAP/GOMIlZaiIQxBE/KfQ/8B/DuEUmgzjA5PHVDf3i8
-X-Gm-Gg: ASbGncsI4R9sidA7dVmto0yNit2eLC3RjJ7AaAdWRIwKhd1O+jlIEmxbewx6HJczcvz
-	QLFtAwCxvp56ouTTz95nkeD/mXLisXwNw2OCAa7APVKuxbwKqNrc8U5HUwiz/+x4IxJtpjg9RNl
-	0h3au2EJWNirTKeGI9JL3u/EGrAODjgg23/UIU5P+lWGIYyWyE/acAgHtD6G5LDByXAdy9lwrwV
-	d6KVNWLsydt/3wDN4lRcXupw0kJaald0KHA/evuhjMoc0wAauZbMPzZpnKqOBpMU+rLmqCwVDWG
-	9lUsPhKzFJkCl9kNxJdN4tQw6V0dT3GTUq5PPgmMtxOemSA=
-X-Google-Smtp-Source: AGHT+IFM6C6nsADkgGmSagtKIrEtTJsOZ73L79oOwyzmajb4Oh5MtqhqzzRCf/RiRGLEbixg+ziq9g==
-X-Received: by 2002:a17:902:f603:b0:216:271d:e06c with SMTP id d9443c01a7336-2278067c0b2mr108319725ad.4.1742646190356;
-        Sat, 22 Mar 2025 05:23:10 -0700 (PDT)
-Received: from pop-os.. ([2409:40f2:1044:5619:882a:31f8:4de1:77f1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811d968asm34198795ad.162.2025.03.22.05.23.03
+        d=1e100.net; s=20230601; t=1742646217; x=1743251017;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KTzyaulL1cxveyrERlwqgSXFqrJfmGbcSuyVzNJ2WH4=;
+        b=RwzJYzL9LXSAW546ZIbBT7lEa9qA+my4WkTKkmUt83f5MLY8thDfm3kG6B6U6P8aFb
+         2Ex7T6nFTnK/1dOnIRbBUlMREilsgCSeaTcDMhGILfbVW2c3/s5RLPLDMKGTMbocF2I6
+         Shu2+R4HrsuDbrGM9X6C9L/Cew8CKva08o/RAfxT1NQ7jeZ7FgvcE3f+uDPtrd1/hasc
+         r+yXK/R6VSxYOLZkUoo3QxsXnwkn7II/QbkWbjdEpT/p5+t40N4hqI2NKmJIyD9eL4jL
+         Znt23CwY5Y51QbZaMikm9XSNrPEhRBTkqOeZIQFMThyALk3uToplRzb7zZb8h74fmpjq
+         kKrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiZCjeNvSLOyF9bhHa6Y9B+sNiZHDYSa5dF0w4DF7MqnPK5LLULeZWKAZhP0R7OhFzS5GpA5edDn84Tz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT/EYCJNkGirfAcaF43iwScMnPy1jPBiK04Wbnf0K2GC1CWEsD
+	FfOUTWgcXzM1GRAFhAPae0hR0nrcG6i5Q1lyh9o/VwwvuCyZnSBtDGyHk0voENA=
+X-Gm-Gg: ASbGncsYyxc5+x6gpGsciZ7VMk0Ymy+zy40++bZ0MIvYZ/rLeQhxVaTzGRZnIeEv6Z9
+	FXA+fh0Bk5mpz6DFQhqGw1a0Od6H+h4lUQLhYzTK+gqPfHSnX4sGrYR22vV2ZGodLV217GLsJXZ
+	DiBg+o/55GEab6Z9chYtQGJnA7ZtGYLX6JJc50Le4YrsIpTBd9WcMa9dv5Yqf0MhHMn0EeWUOsv
+	my+R3RmYV2PbmQiq5y1U4GasOpQJoDTwPo8fSqa66LH5lGY4RzzQ6cbZzwwmVvE/SKe3gdk9dMg
+	RgSvDsyfdliY+wIuJUv7jGGpH11jfrLrFIMwfCpMRMdN70IhkNRgMDMSzT5ghMxOgA2ZdYl6zt1
+	lyZ3lElQJ
+X-Google-Smtp-Source: AGHT+IE52/go+hfWqaafAsUjbEtclhpDIHNnMSaVERxClIrOt/FGAA02DZDghiLFtwTeL9nKBPSrqg==
+X-Received: by 2002:a5d:6da1:0:b0:38d:dd52:1b5d with SMTP id ffacd0b85a97d-3997f8ef06dmr5373282f8f.4.1742646216874;
+        Sat, 22 Mar 2025 05:23:36 -0700 (PDT)
+Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e66a7sm5001809f8f.76.2025.03.22.05.23.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 05:23:10 -0700 (PDT)
-From: Aditya Dutt <duttaditya18@gmail.com>
-To: syzbot+b974bd41515f770c608b@syzkaller.appspotmail.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in add_missing_indices
-Date: Sat, 22 Mar 2025 17:52:33 +0530
-Message-Id: <20250322122233.218306-1-duttaditya18@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <6745ebeb.050a0220.21d33d.001a.GAE@google.com>
-References: <6745ebeb.050a0220.21d33d.001a.GAE@google.com>
+        Sat, 22 Mar 2025 05:23:36 -0700 (PDT)
+Date: Sat, 22 Mar 2025 13:23:35 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH v4 15/18] RISC-V: KVM: add SBI extension init()/deinit()
+ functions
+Message-ID: <20250322-79de477d27a2a75eb89616d1@orel>
+References: <20250317170625.1142870-1-cleger@rivosinc.com>
+ <20250317170625.1142870-16-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250317170625.1142870-16-cleger@rivosinc.com>
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+On Mon, Mar 17, 2025 at 06:06:21PM +0100, Clément Léger wrote:
+> The FWFT SBI extension will need to dynamically allocate memory and do
+> init time specific initialization. Add an init/deinit callbacks that
+> allows to do so.
+> 
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/kvm_vcpu_sbi.h |  9 +++++++++
+>  arch/riscv/kvm/vcpu.c                 |  2 ++
+>  arch/riscv/kvm/vcpu_sbi.c             | 26 ++++++++++++++++++++++++++
+>  3 files changed, 37 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> index 4ed6203cdd30..bcb90757b149 100644
+> --- a/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> +++ b/arch/riscv/include/asm/kvm_vcpu_sbi.h
+> @@ -49,6 +49,14 @@ struct kvm_vcpu_sbi_extension {
+>  
+>  	/* Extension specific probe function */
+>  	unsigned long (*probe)(struct kvm_vcpu *vcpu);
+> +
+> +	/*
+> +	 * Init/deinit function called once during VCPU init/destroy. These
+> +	 * might be use if the SBI extensions need to allocate or do specific
+> +	 * init time only configuration.
+> +	 */
+> +	int (*init)(struct kvm_vcpu *vcpu);
+> +	void (*deinit)(struct kvm_vcpu *vcpu);
+>  };
+>  
+>  void kvm_riscv_vcpu_sbi_forward(struct kvm_vcpu *vcpu, struct kvm_run *run);
+> @@ -69,6 +77,7 @@ const struct kvm_vcpu_sbi_extension *kvm_vcpu_sbi_find_ext(
+>  bool riscv_vcpu_supports_sbi_ext(struct kvm_vcpu *vcpu, int idx);
+>  int kvm_riscv_vcpu_sbi_ecall(struct kvm_vcpu *vcpu, struct kvm_run *run);
+>  void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu);
+> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu);
+>  
+>  int kvm_riscv_vcpu_get_reg_sbi_sta(struct kvm_vcpu *vcpu, unsigned long reg_num,
+>  				   unsigned long *reg_val);
+> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+> index 60d684c76c58..877bcc85c067 100644
+> --- a/arch/riscv/kvm/vcpu.c
+> +++ b/arch/riscv/kvm/vcpu.c
+> @@ -185,6 +185,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+>  
+>  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+>  {
+> +	kvm_riscv_vcpu_sbi_deinit(vcpu);
+> +
+>  	/* Cleanup VCPU AIA context */
+>  	kvm_riscv_vcpu_aia_deinit(vcpu);
+>  
+> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
+> index d1c83a77735e..3139f171c20f 100644
+> --- a/arch/riscv/kvm/vcpu_sbi.c
+> +++ b/arch/riscv/kvm/vcpu_sbi.c
+> @@ -508,5 +508,31 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu)
+>  		scontext->ext_status[idx] = ext->default_disabled ?
+>  					KVM_RISCV_SBI_EXT_STATUS_DISABLED :
+>  					KVM_RISCV_SBI_EXT_STATUS_ENABLED;
+> +
+> +		if (ext->init && ext->init(vcpu) != 0)
+> +			scontext->ext_status[idx] = KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
+> +	}
+> +}
+> +
+> +void kvm_riscv_vcpu_sbi_deinit(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm_vcpu_sbi_context *scontext = &vcpu->arch.sbi_context;
+> +	const struct kvm_riscv_sbi_extension_entry *entry;
+> +	const struct kvm_vcpu_sbi_extension *ext;
+> +	int idx, i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(sbi_ext); i++) {
+> +		entry = &sbi_ext[i];
+> +		ext = entry->ext_ptr;
+> +		idx = entry->ext_idx;
+> +
+> +		if (idx < 0 || idx >= ARRAY_SIZE(scontext->ext_status))
+> +			continue;
+> +
+> +		if (scontext->ext_status[idx] == KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE ||
+> +		    !ext->deinit)
+> +			continue;
+> +
+> +		ext->deinit(vcpu);
+>  	}
+>  }
+> -- 
+> 2.47.2
+>
 
-diff --git i/fs/jfs/jfs_dtree.c w/fs/jfs/jfs_dtree.c
-index 93db6eec4465..de33026d18d2 100644
---- i/fs/jfs/jfs_dtree.c
-+++ w/fs/jfs/jfs_dtree.c
-@@ -2613,7 +2613,7 @@ void dtInitRoot(tid_t tid, struct inode *ip, u32 idotdot)
-  *	     fsck.jfs should really fix this, but it currently does not.
-  *	     Called from jfs_readdir when bad index is detected.
-  */
--static void add_missing_indices(struct inode *inode, s64 bn)
-+static int add_missing_indices(struct inode *inode, s64 bn)
- {
- 	struct ldtentry *d;
- 	struct dt_lock *dtlck;
-@@ -2622,7 +2622,7 @@ static void add_missing_indices(struct inode *inode, s64 bn)
- 	struct lv *lv;
- 	struct metapage *mp;
- 	dtpage_t *p;
--	int rc;
-+	int rc = 0;
- 	s8 *stbl;
- 	tid_t tid;
- 	struct tlock *tlck;
-@@ -2647,6 +2647,16 @@ static void add_missing_indices(struct inode *inode, s64 bn)
- 
- 	stbl = DT_GETSTBL(p);
- 	for (i = 0; i < p->header.nextindex; i++) {
-+		if (stbl[i] < 0) {
-+			jfs_err("jfs: add_missing_indices: Invalid stbl[%d] = %d for inode %ld, block = %lld",
-+				i, stbl[i], (long)inode->i_ino, (long long)bn);
-+			rc = -EIO;
-+
-+			DT_PUTPAGE(mp);
-+			txAbort(tid, 0);
-+			goto end;
-+		}
-+
- 		d = (struct ldtentry *) &p->slot[stbl[i]];
- 		index = le32_to_cpu(d->index);
- 		if ((index < 2) || (index >= JFS_IP(inode)->next_index)) {
-@@ -2664,6 +2674,7 @@ static void add_missing_indices(struct inode *inode, s64 bn)
- 	(void) txCommit(tid, 1, &inode, 0);
- end:
- 	txEnd(tid);
-+	return rc;
- }
- 
- /*
-@@ -3017,7 +3028,10 @@ int jfs_readdir(struct file *file, struct dir_context *ctx)
- 		}
- 
- 		if (fix_page) {
--			add_missing_indices(ip, bn);
-+			if ((rc = add_missing_indices(ip, bn))) {
-+				jfs_err("jfs_readdir: add_missing_indices returned %d", rc);
-+				goto out;
-+			}
- 			page_fixed = 1;
- 		}
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
