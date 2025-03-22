@@ -1,455 +1,366 @@
-Return-Path: <linux-kernel+bounces-572304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8FAA6C8E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:05:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5597BA6C8E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A33188E71A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A71C1893C72
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EB61C5F1E;
-	Sat, 22 Mar 2025 10:04:09 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886071F3BAA;
+	Sat, 22 Mar 2025 10:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="CYeUI+Rx"
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011038.outbound.protection.outlook.com [52.103.67.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF2172BD5
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742637848; cv=none; b=D5ys5hh+IdUOjo0NdNjaGc8iz4LV+AQoXaFSXFZh1lksZnXpsdTeSVsYuDuhq3jMvs3olK0Og0cpaoeG9nQCUkLOemX+kvcAKS77pMTobnlKxnaiej/tqUhWsHytmUzwZzrOFox6xrKSrM9GQ3sCqkCG6B4nZDlFFEGYsU69968=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742637848; c=relaxed/simple;
-	bh=oj1Igs3QBEvZNrFATGpIPFCLMe1BUEtx8R4spYLcQJA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=t8+I49KGb74p/dtC7hE4DeFajXXIOK06t47PukMWZN0Web8ZIvM/yn9uBh8MZZ+DaDqEJ/T2IIPJAN8Eh2k/Qw0m6XK5/qFsWs4/aLckr8V/jmj/IgKBeICRvPVTPHYpoa3FdJoCciA3vPcYwGK1QeoPgKwa+DhrFj6xEHPwfoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso39094745ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 03:04:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742637845; x=1743242645;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ZRJmdxwfLQndDnqf46lPRgckqAQZVABmugO9bO2/o8=;
-        b=qRnXuU4hHCA7Q3V+/AT3XX5MBThvIt3vlTtdLW80Hx3qYxfC9+V5H1QNERSzGuAh/3
-         xGnyO0llwl4CGrz0oHLFTZsFtsfEuGg0XjVC2p/5CEIbKeJHUHPnb11AAlXnnbKzCa6D
-         4hjd3R+CXmxtI9eznsB3OfdrbOHtb8glfi+l30LcFy413DmGjvamw6A8nVKzNNqqNKjY
-         ago23h9rz9PgUXlH2FJGR2HSTtml1HAgiPVTr6gehfcE+BfAv5yUe4hEMGwo+gn+lqgb
-         a56BU3lNs09fSEcxO0vCKUz9ovTUwL6+jiWmx+5Y/f7Ba1dYMgCkaxkVodKA7G/lrcvk
-         L8wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQeLkSesDO85Ouey+jiAWFqL9hQ4G8gZ4iJEun1dFCNr0bcA6cpJGnBOzoes81eMl18BXEH3n4dCzVhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Pq3J6DW1Bnqh5zNLxCM0eENkrx8QvTeeM2bBsWQu9zfBjwEN
-	B+gpTvzfb4nFJ5TeLlnTHw9R+4iLRB1wQx32oMxFRSj5lD/zXgPt2Q/vmnWxlA8pc5z1SG6MSCx
-	wltRzyiW9RhaYimjCo1I/ytX6L1bxYoIDNt68xjjN+IV9CuLL1+93jRY=
-X-Google-Smtp-Source: AGHT+IEHPg92hC6eejgLC9X1pcfhxQzBhKzRtkctlmGmRSN/iRZWx+0GazE/lsA4SSAsDOkxMLA2ebDZgmLKKU5gIjohupvcNrGq
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FD4172BD5
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742637877; cv=fail; b=OWcqLijlEokHG13SAwKemYIesyp4Ycg78x/n5AH3+MoxNIvjNeqp5eDqR6zv32+9Z9yUqsFoFs0vxhnv+urtqn0pfBk+LyHNc1yWinEQl5v+Yx442nIhKwfmfHK1b4QSzCCFJsTPLGpdbArvsh377O1B0NIgE9ZsYD5cyDC0K0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742637877; c=relaxed/simple;
+	bh=MVYBXba509i576X+wN7JkolbC1wpVmM1P79RhYT0t70=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=S758l6zH6lj4oe2dYusPC9/fgiuvOeOQeCDl+XcgxU4pn5mG6ugOYpOeKKVPZ1t+DZyFTYXzs09IAsMssGMSzunccB+pz4rcL6V4AHWKp6tRcSZQehwKiI93IJbRU3c+3rBAr8q5cYDVi6r8VQVwXold+8mmLRSSxw4XbV0QIRg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=CYeUI+Rx; arc=fail smtp.client-ip=52.103.67.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g4ArFPJeYz3sGljEXDBtJxxFEiNSPbkrIN2MFYxZ1pW9tgAEjyy7seBXywZk3Bs6PRTI6nmNh5uj85jz0tsES9Tf8/6zoBJtlajEvGmhdqNWA7Y475t2NpyoPEDc1whYx+mjZ8dsM9+jD/6Za8OmjwXWeYe89QuJ/crN93E+XJRqcbW3Jno02+T0hPkXrOI7zG8DdPE6W2cRrsqGc2QHcjfqj74BJx+zx/RzkF4XHFC0szsz8F4ZAw0+oayBoAmVlqoVRDH+pmutPwmqhss6pmso1q6z1Kllus5Fg71J1EOMKcvOxOaTxBDl2ZwYXAgx872xCQOTBaki1p1onoXY0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MVYBXba509i576X+wN7JkolbC1wpVmM1P79RhYT0t70=;
+ b=pa+B8sJpptNLpRg7gxlecd51upitNlzg2XE3FDr2vGIVXds6jgoUrcCD0wzlCmSf92Yge0FV9JdUtl9hI5IyXJOKWi2zhOwX0KN7c/8q8YE+bR3GtKnV0k7kwnXpagi74FBP2qpvEK4iYgCR9P7IiDOhCLJ+DFdWTBMOLNkiRckCOD2Z9Y71YpRpG3b30Ax0rmV43VQdCkgAAWzDRwN82XPdJTVYnigcQwTUXULKR4xTyx3NFybM2WRObBaBKdMzESna5y6PYRoLXaC2t90FgIT/JqhO8txF2smgxj9ywvmasgT2CQM5FRifoF3aJa9Aw0wYIN+OexNTjouZRXfGDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MVYBXba509i576X+wN7JkolbC1wpVmM1P79RhYT0t70=;
+ b=CYeUI+RxtjNBBvSosmWWC1XkeUR/ycTdVcD9fRYXeU8UKBauoQbzEgy1pmIT8bCZtxj3Iwmn7+/2WpQNNxsCc26LIQItmMcfhuu25gXZoWu6/faynbPwZhdA+W3iHF/GxAHF1W8tBpnG9nky+V6wwuK/MnTnLZFpxwH2k83ubfulwmu2SdL+F/HLL8a40C7mw4/Cm3OQzjg5gq/iTK2CQckZgsxaUx/NHoI/PQXZqWxyCVDDiCQibIv9914UPvaSQ64XLth2MGOxvLSpRisYf8rayWTKsNeYSfTnud1acxYHgRfZBPvwHfc8yjLVCQUPRB3QgvRKFR8Je+5rJMxMBA==
+Received: from PN0PR01MB9588.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:10c::9)
+ by PN3PR01MB5434.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:6f::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.40; Sat, 22 Mar
+ 2025 10:04:29 +0000
+Received: from PN0PR01MB9588.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::5b05:29d:5646:39aa]) by PN0PR01MB9588.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::5b05:29d:5646:39aa%3]) with mapi id 15.20.8534.036; Sat, 22 Mar 2025
+ 10:04:29 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Tamir Duberstein <tamird@gmail.com>
+CC: Kees Cook <kees@kernel.org>, Petr Mladek <pmladek@suse.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] printf: add tests for generic FourCCs
+Thread-Topic: [PATCH] printf: add tests for generic FourCCs
+Thread-Index: AQHblJN29TpfMnJ0tk2R2endOOpYG7N9rp6AgAAB9u2AAAgOAIABQcKA
+Date: Sat, 22 Mar 2025 10:04:29 +0000
+Message-ID: <93CEB4B8-818B-4302-93C3-6EA25717D617@live.com>
+References: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
+ <CAJ-ks9=zN0pUAt9ELckna+3GcnDfhjF3jgiM1FHXLji9pWc2wQ@mail.gmail.com>
+ <PN3PR01MB95976F630E0E4004CDC5310DB8DB2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <CAJ-ks9mcuwSEQ=h1niGO5WkvNdkTwm0JeKtvp1RaioEb8WmuOQ@mail.gmail.com>
+In-Reply-To:
+ <CAJ-ks9mcuwSEQ=h1niGO5WkvNdkTwm0JeKtvp1RaioEb8WmuOQ@mail.gmail.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN0PR01MB9588:EE_|PN3PR01MB5434:EE_
+x-ms-office365-filtering-correlation-id: 1d33d398-03a7-4382-6125-08dd6928efc5
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|8060799006|19110799003|15080799006|7092599003|461199028|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?RnpaTEswbU1HQWl0bmNnbjcrYW81bnNuRW4rcncwc25EMlJURDBYTHRjVnNs?=
+ =?utf-8?B?U3RsQ1Yva2hibngzQmJjQ05mWGwzR3U2SlRMMVpnVFQvRzRBRkdrbnp5MXlZ?=
+ =?utf-8?B?aHMwTldUSnNndG1lV01JY1p2QlBIVWVUQ1hZbG10MGlHell5ZWIyYXdJdkR4?=
+ =?utf-8?B?VFZLQThHNnBlOFU1c2VIVjVRcTZDNTVwZFJYNXh1Ui95QlpnVFRyVmZrT3Yr?=
+ =?utf-8?B?ZW9HS2dyQlJJREREUVpmbzdHZGhRRFg4eHJUR21ia0dxcFQrT2tJSERzOHdn?=
+ =?utf-8?B?Q2dGRXpMakpDaWcvVXU4WTltcE1VY2pjdUxsZDQ1NUZSVW1uemdrc0tMeEwx?=
+ =?utf-8?B?dFZKcDhmMEM3YytELzlGanlNVWkvSHZydjd0bWlySS92TVIrSTBiZUZIT28w?=
+ =?utf-8?B?Q2VSWEpGMzVQd0ltSCtqd1ZKN0FuOXI1REp1a20zQjAzd21uZE9HeEVHVGY2?=
+ =?utf-8?B?LzFSMTk2QkkvbkZBL0FEQml4dkxMeWMxaElFa0RDRTQ1VldOMlJkN1NuTFgr?=
+ =?utf-8?B?akF6WmM1bHJTU1hYYklkZmtHTzhLSk5KbEFpVWhjVDdWclcvUzd1bFo0cHpG?=
+ =?utf-8?B?blBMeWNzYVhLVXhUazhsanNSaTZuRVpWaExROTF0amFnRDRrQmhwMUJkaFUw?=
+ =?utf-8?B?NjJzendMa21yeXVxR1RMZjJMTVZrQjFxRUxQT3lsK2I1V0x0WDhFL3BtTlRj?=
+ =?utf-8?B?K1dSMU8zZjZHWkJNcTEwZTY0LzgwejlLc1RJaEx4ME5wYlk5eW5IZjN3R3ZX?=
+ =?utf-8?B?SnpGaVp3ZUt6VWZJd1hRRC9wODZLcm5IU3NscWZ0b000aXJMSGptNXNGcXl5?=
+ =?utf-8?B?K1RQQi96ZXlQN3lvNDNyWVViQVBkN1BqRU1HeEhjWUx5ZkFsQjlnSTl1cTQ5?=
+ =?utf-8?B?dEQwVW5kSWRwNDhUZUJVSXZjak9mbklzMUxGTjdoR25uUjgwdHlCQjQ2Ry94?=
+ =?utf-8?B?aHJ2TE5DZW1uLzNvZllZbUZNdTlRRllycFVIN2xIZGt0bFRDUDVkTUpjTnFj?=
+ =?utf-8?B?QWVkbXQ0NDEwc2xMRDJGZmZTc1dxTDZ5Tm5pdWNROVBSdDF5SnZvOXo2TkNQ?=
+ =?utf-8?B?TWttUlFjNDgxSEYvMHVTZDJBSFM4b0JTR1FqTVJSZG4yMWgxOTZsWDcwdVRH?=
+ =?utf-8?B?U0lBZHU3cks0YVlDL24rdE1qeDBhTkRhbXVvNFVKOGlMaTBvck8xdDVDdVll?=
+ =?utf-8?B?NURTSkhKSzEvK1FkMU1pQVNyVkgvVTRQVnVGOHVtZmVlZy9FY0d0VW5IN3JR?=
+ =?utf-8?B?cXpDbms0bUJFSUY4dllrZ3JXMC8yOEtDdnhZZTVjN0dWck1UMHcrcFBjWjQ0?=
+ =?utf-8?B?ZHUxVWlGQ2JVOUc4WmhqaUt3VHgwaDFPbjNpdERYdE1NN3JidEZqY0x2bVJ2?=
+ =?utf-8?B?ZmxxVTlsMXIzR0kvWDhMWGxrLy9RMFl2V1ZMZTVMczBoaW1vd3dUd3RrSncr?=
+ =?utf-8?B?a0xvN0YzSmpEbG9LY0ZYaFlFQjRVWnJjc2hrYlJtdmtkOHdzY1B5TjRkK2tQ?=
+ =?utf-8?Q?VRx0uQ=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?a0lqb2VHaXdNaWt1akd2RUVnRThsdHRaUmgrTzhCdkpQeUtiTVE5YXBtd09I?=
+ =?utf-8?B?U1hFWm9FakxJVmJ0NXJ4Y1VUQURGL2lZQU5IcXAzUzhRUG0xam90bGh3bDFC?=
+ =?utf-8?B?a2ZPbFp3aS9LNjgzVjJRWlJ3aEJIQWk0cXJORVZjc25TUFRSVXlOUlYzUlNp?=
+ =?utf-8?B?TnZXQ2VacTYzM2hpdzd5UjUvOXJrbnpjZ29RcG84M3VOL2Uzd0ZWcXZ2NVo2?=
+ =?utf-8?B?T1FLaVl1bitvdW54eW9IMTNGdzZZR3oxTERKT1FhaG10SE1ORTBwRHA1S3U4?=
+ =?utf-8?B?bDJhcFF6VmtkaUw3MVZpUHVNL2pGQjZVeFVIU3NDWmNrcmF6ZnY5cGdrN3Z3?=
+ =?utf-8?B?WG9SK1luSjNGNzAyL3VxMWJUR1RhTFY5T01zUkpKQUdtVWZjOWVvYldaMVJv?=
+ =?utf-8?B?NG1jb1FyK0hIbzJsT2tEN2l1RE15SU9CeWlhTmQrRmN6VlBTaXhvNTl6NlRa?=
+ =?utf-8?B?LzBlOURFRjVDZ2N0ZkRFOXErQWtGa2tMbDY0TmpaN1hLS1ZkTWVEVk5ENll0?=
+ =?utf-8?B?SWI4U2pzckZIQ0xGcytZejEvdXEvbzFTVDZ6bWpkSi8zMGZ6N245SlFEV0Qz?=
+ =?utf-8?B?N3R1MlFFSGJHU0FvVzRnMER6ZXI2dFhHK2dSSXdEbmJaa3BMSjNoazNiN3Ji?=
+ =?utf-8?B?OTFVZG43Q3JjcDZ4SXFmU1FNWDRlV05nSjJ4ZFdXdWRQR29nUWZaQXNXMDJW?=
+ =?utf-8?B?b3JmbkEvYURvM2l1UlR3emNxNnRodHRNVVh3c2pvM0xGT3BTNUZscFdwYkxn?=
+ =?utf-8?B?ekN1WGFQb2FYdW1FaUR0bW5maVpMTFNiYk9VZllDOFpxSk1tbm9QRkdid1RZ?=
+ =?utf-8?B?MXpxS0tveWZQaXk5R1grMXV0Q29RZ0o0YWZDQ0V2TmtlOGo5UjVhQ2FqK3NF?=
+ =?utf-8?B?ZUw2bFZ4YlFNeG1Bc1dhK3dXK2hOVExaTVI5cXlpei9PQW5CWGg1YXBMVTFK?=
+ =?utf-8?B?UzNoOXlEQllnR000T3ZDWlQvbldYV3JkUmppVWVUbWNYcVNmWHFYMG9zajl1?=
+ =?utf-8?B?aTcwT01Fc3FhSzJnL25mOU9Sa0JLUzdJOFIrSWl5SmxVVnI1RWtMN2hyaDZv?=
+ =?utf-8?B?QzRxMExtTEVXaG1BY0ZDRFBnVnoyQnlyV0JEYUJOdTlTcVFkM3luemJXa084?=
+ =?utf-8?B?ZXkvKzIvV2dzNHorQzluU0RuTGZoZmFvbDMrZjZydTZxQ093TXd5YmZ0aTA3?=
+ =?utf-8?B?dmJ4eERSelcrL0xyMnVMMWxNTU93UEFuem5VdERScWExMnlZRmRmSXZtcG12?=
+ =?utf-8?B?alNwTnJFQ1dlTTcyNWU2dXhNSTNSRlFBbHVQS2g5dkVlbkpqMlUxbDBqZnl0?=
+ =?utf-8?B?ZENuaWVxRmJLWjVLNlBTQTdmeDJ2T0d6djMxb2liT3dxMDZTOUh1TGR5QnJ4?=
+ =?utf-8?B?b2ZWdWpBM29qaE01SmdEQlNhY3pyejFIU01uNU9EbnVvTm5rS3FVbkhCTUZH?=
+ =?utf-8?B?Vmsvd0crQ24zWVM1L1BWbmptTjcxRldaS3hiZWdOZXl5ZS9rdmw3c1VsTlhL?=
+ =?utf-8?B?ODlpSERpeWUxdWpnRWFNajJlTTVtTTY4d2U4eFJOcnRtWE0wdElzemRpbUgz?=
+ =?utf-8?B?VWJSWW1xNkhJZk9iLzZyNWREeEU3U2R5TFVnM05taTR2dUxnQkFWOEVicFVv?=
+ =?utf-8?B?M0YvVExYa0hkMjI1ZENrOTcrUUlkTEF1ZkFPQy8wdDZKZTYybzFZSWtraHJh?=
+ =?utf-8?B?cll0bnM1K0FTc0liMEpFNWZ1YTZYK1lCcjhjR3M0dzBTK2hlcitldmMwMjNS?=
+ =?utf-8?Q?tfwHsPc/kLUQJvi9hYfQwAvlKuVUmDHtJSX9UOt?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F87E126D7DE94E4885307A25B2229EF6@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:318a:b0:3d5:890b:d9e1 with SMTP id
- e9e14a558f8ab-3d595ec52f0mr70596655ab.1.1742637843551; Sat, 22 Mar 2025
- 03:04:03 -0700 (PDT)
-Date: Sat, 22 Mar 2025 03:04:03 -0700
-In-Reply-To: <20250322093737.197101-1-duttaditya18@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67de8b13.050a0220.31a16b.0030.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in add_missing_indices
-From: syzbot <syzbot+b974bd41515f770c608b@syzkaller.appspotmail.com>
-To: duttaditya18@gmail.com, jfs-discussion@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN0PR01MB9588.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d33d398-03a7-4382-6125-08dd6928efc5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2025 10:04:29.8219
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB5434
 
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-7.299426][ T6437]  evict+0x444/0x978
-[   57.300436][ T6437]  iput+0x740/0x8e8
-[   57.301425][ T6437]  dentry_unlink_inode+0x3a0/0x4e0
-[   57.302787][ T6437]  __dentry_kill+0x178/0x5e8
-[   57.303966][ T6437]  shrink_kill+0xd4/0x2cc
-[   57.305091][ T6437]  shrink_dentry_list+0x31c/0x768
-[   57.306403][ T6437]  shrink_dcache_parent+0xc4/0x374
-[   57.307725][ T6437]  do_one_tree+0x30/0xfc
-[   57.308817][ T6437]  shrink_dcache_for_umount+0xd8/0x188
-[   57.310208][ T6437]  generic_shutdown_super+0x68/0x2bc
-[   57.311588][ T6437]  kill_litter_super+0x74/0xb8
-[   57.312815][ T6437]  binderfs_kill_super+0x44/0x9c
-[   57.314091][ T6437]  deactivate_locked_super+0xc4/0x12c
-[   57.315477][ T6437]  deactivate_super+0xe0/0x100
-[   57.316708][ T6437]  cleanup_mnt+0x34c/0x3dc
-[   57.317880][ T6437]  __cleanup_mnt+0x20/0x30
-[   57.319022][ T6437]  task_work_run+0x230/0x2e0
-[   57.320203][ T6437]  do_exit+0x4e8/0x1acc
-[   57.321325][ T6437]  do_group_exit+0x194/0x22c
-[   57.322516][ T6437]  get_signal+0x1418/0x1534
-[   57.323687][ T6437]  do_signal+0x22c/0x39e4
-[   57.324803][ T6437]  do_notify_resume+0x74/0x1f4
-[   57.326054][ T6437]  el0_svc+0xac/0x168
-[   57.327137][ T6437]  el0t_64_sync_handler+0x84/0x108
-[   57.328474][ T6437]  el0t_64_sync+0x198/0x19c
-[   57.329650][ T6437]=20
-[   57.330236][ T6437] The buggy address belongs to the object at ffff0000c=
-6dd0800
-[   57.330236][ T6437]  which belongs to the cache kmalloc-512 of size 512
-[   57.333883][ T6437] The buggy address is located 8 bytes inside of
-[   57.333883][ T6437]  freed 512-byte region [ffff0000c6dd0800, ffff0000c6=
-dd0a00)
-[   57.337465][ T6437]=20
-[   57.338058][ T6437] The buggy address belongs to the physical page:
-[   57.339720][ T6437] page: refcount:0 mapcount:0 mapping:0000000000000000=
- index:0xffff0000c6dd3000 pfn:0x106dd0
-[   57.342360][ T6437] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_=
-mapped:0 pincount:0
-[   57.344585][ T6437] anon flags: 0x5ffc00000000040(head|node=3D0|zone=3D2=
-|lastcpupid=3D0x7ff)
-[   57.346663][ T6437] page_type: f5(slab)
-[   57.347694][ T6437] raw: 05ffc00000000040 ffff0000c0001c80 0000000000000=
-000 0000000000000001
-[   57.349947][ T6437] raw: ffff0000c6dd3000 000000000010000c 00000000f5000=
-000 0000000000000000
-[   57.352181][ T6437] head: 05ffc00000000040 ffff0000c0001c80 000000000000=
-0000 0000000000000001
-[   57.354462][ T6437] head: ffff0000c6dd3000 000000000010000c 00000000f500=
-0000 0000000000000000
-[   57.356780][ T6437] head: 05ffc00000000002 fffffdffc31b7401 ffffffffffff=
-ffff 0000000000000000
-[   57.359060][ T6437] head: 0000000000000004 0000000000000000 00000000ffff=
-ffff 0000000000000000
-[   57.361371][ T6437] page dumped because: kasan: bad access detected
-[   57.363069][ T6437]=20
-[   57.363674][ T6437] Memory state around the buggy address:
-[   57.365143][ T6437]  ffff0000c6dd0700: fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc fc fc
-[   57.367267][ T6437]  ffff0000c6dd0780: fc fc fc fc fc fc fc fc fc fc fc =
-fc fc fc fc fc
-[   57.369405][ T6437] >ffff0000c6dd0800: fa fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb fb
-[   57.371514][ T6437]                       ^
-[   57.372638][ T6437]  ffff0000c6dd0880: fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb fb
-[   57.374759][ T6437]  ffff0000c6dd0900: fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb fb
-[   57.376899][ T6437] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[   57.383599][ T6437] Disabling lock debugging due to kernel taint
-[   58.115605][ T4279] wlan0: Created IBSS using preconfigured BSSID 50:50:=
-50:50:50:50
-[   58.117733][ T4279] wlan0: Creating new IBSS network, BSSID 50:50:50:50:=
-50:50
-[   58.126718][   T13] wlan1: Created IBSS using preconfigured BSSID 50:50:=
-50:50:50:50
-[   58.128688][   T13] wlan1: Creating new IBSS network, BSSID 50:50:50:50:=
-50:50
-[   58.244921][ T6478] chnl_net:caif_netlink_parms(): no params data found
-[   58.262999][ T6478] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   58.265000][ T6478] bridge0: port 1(bridge_slave_0) entered disabled sta=
-te
-[   58.266851][ T6478] bridge_slave_0: entered allmulticast mode
-[   58.268702][ T6478] bridge_slave_0: entered promiscuous mode
-[   58.271065][ T6478] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   58.273065][ T6478] bridge0: port 2(bridge_slave_1) entered disabled sta=
-te
-[   58.274890][ T6478] bridge_slave_1: entered allmulticast mode
-[   58.276725][ T6478] bridge_slave_1: entered promiscuous mode
-[   58.284565][ T6478] bond0: (slave bond_slave_0): Enslaving as an active =
-interface with an up link
-[   58.287976][ T6478] bond0: (slave bond_slave_1): Enslaving as an active =
-interface with an up link
-[   58.301618][ T6478] team0: Port device team_slave_0 added
-[   58.304562][ T6478] team0: Port device team_slave_1 added
-[   58.311150][ T6478] batman_adv: batadv0: Adding interface: batadv_slave_=
-0
-[   58.313047][ T6478] batman_adv: batadv0: The MTU of interface batadv_sla=
-ve_0 is too small (1500) to handle the transport of batman-adv packets. Pac=
-kets going over this interface will be fragmented on layer2 which could imp=
-act the performance. Setting the MTU to 1560 would solve the problem.
-[   58.319801][ T6478] batman_adv: batadv0: Not using interface batadv_slav=
-e_0 (retrying later): interface not active
-[   58.323279][ T6478] batman_adv: batadv0: Adding interface: batadv_slave_=
-1
-[   58.325087][ T6478] batman_adv: batadv0: The MTU of interface batadv_sla=
-ve_1 is too small (1500) to handle the transport of batman-adv packets. Pac=
-kets going over this interface will be fragmented on layer2 which could imp=
-act the performance. Setting the MTU to 1560 would solve the problem.
-[   58.331871][ T6478] batman_adv: batadv0: Not using interface batadv_slav=
-e_1 (retrying later): interface not active
-[   58.342983][ T6478] hsr_slave_0: entered promiscuous mode
-[   58.344857][ T6478] hsr_slave_1: entered promiscuous mode
-[   58.524904][ T6478] netdevsim netdevsim0 netdevsim0: renamed from eth0
-[   58.527825][ T6478] netdevsim netdevsim0 netdevsim1: renamed from eth1
-[   58.531091][ T6478] netdevsim netdevsim0 netdevsim2: renamed from eth2
-[   58.534071][ T6478] netdevsim netdevsim0 netdevsim3: renamed from eth3
-[   58.545093][ T6478] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   58.546954][ T6478] bridge0: port 2(bridge_slave_1) entered forwarding s=
-tate
-[   58.548836][ T6478] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   58.550658][ T6478] bridge0: port 1(bridge_slave_0) entered forwarding s=
-tate
-[   58.574099][ T6478] 8021q: adding VLAN 0 to HW filter on device bond0
-[   58.579075][   T13] bridge0: port 1(bridge_slave_0) entered disabled sta=
-te
-[   58.581405][   T13] bridge0: port 2(bridge_slave_1) entered disabled sta=
-te
-[   58.588160][ T6478] 8021q: adding VLAN 0 to HW filter on device team0
-[   58.592344][   T13] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   58.594257][   T13] bridge0: port 1(bridge_slave_0) entered forwarding s=
-tate
-[   58.604549][   T13] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   58.606435][   T13] bridge0: port 2(bridge_slave_1) entered forwarding s=
-tate
-[   58.652607][ T6478] 8021q: adding VLAN 0 to HW filter on device batadv0
-[   58.794002][ T6478] veth0_vlan: entered promiscuous mode
-[   58.797290][ T6478] veth1_vlan: entered promiscuous mode
-[   58.805304][ T6478] veth0_macvtap: entered promiscuous mode
-[   58.808030][ T6478] veth1_macvtap: entered promiscuous mode
-[   58.812929][ T6478] batman_adv: batadv0: Interface activated: batadv_sla=
-ve_0
-[   58.816774][ T6478] batman_adv: batadv0: Interface activated: batadv_sla=
-ve_1
-[   58.819924][ T6478] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   58.822355][ T6478] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   58.824638][ T6478] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   58.826870][ T6478] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   59.181587][ T6504] Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > =
-1
-[   59.183994][ T6504] Bluetooth: hci0: unexpected cc 0x1003 length: 249 > =
-9
-[   59.186180][ T6504] Bluetooth: hci0: unexpected cc 0x1001 length: 249 > =
-9
-[   59.188548][ T6504] Bluetooth: hci0: unexpected cc 0x0c23 length: 249 > =
-4
-[   59.190979][ T6504] Bluetooth: hci0: unexpected cc 0x0c25 length: 249 > =
-3
-[   59.193973][ T6504] Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > =
-2
-[   59.553232][  T257] netdevsim netdevsim0 netdevsim3 (unregistering): uns=
-et [1, 0] type 2 family 0 port 6081 - 0
-[   59.653590][  T257] netdevsim netdevsim0 netdevsim2 (unregistering): uns=
-et [1, 0] type 2 family 0 port 6081 - 0
-1970/01/01 00:00:59 executed programs: 0
-[   59.716294][ T5990] Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > =
-1
-[   59.718426][ T5990] Bluetooth: hci0: unexpected cc 0x1003 length: 249 > =
-9
-[   59.720378][ T5990] Bluetooth: hci0: unexpected cc 0x1001 length: 249 > =
-9
-[   59.722847][ T5990] Bluetooth: hci0: unexpected cc 0x0c23 length: 249 > =
-4
-[   59.725079][ T5990] Bluetooth: hci0: unexpected cc 0x0c25 length: 249 > =
-3
-[   59.727126][ T5990] Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > =
-2
-[   59.742863][  T257] netdevsim netdevsim0 netdevsim1 (unregistering): uns=
-et [1, 0] type 2 family 0 port 6081 - 0
-[   59.781899][ T6514] chnl_net:caif_netlink_parms(): no params data found
-[   59.799281][ T6514] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   59.801138][ T6514] bridge0: port 1(bridge_slave_0) entered disabled sta=
-te
-[   59.803268][ T6514] bridge_slave_0: entered allmulticast mode
-[   59.805074][ T6514] bridge_slave_0: entered promiscuous mode
-[   59.807421][ T6514] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   59.809257][ T6514] bridge0: port 2(bridge_slave_1) entered disabled sta=
-te
-[   59.811156][ T6514] bridge_slave_1: entered allmulticast mode
-[   59.813176][ T6514] bridge_slave_1: entered promiscuous mode
-[   59.820939][ T6514] bond0: (slave bond_slave_0): Enslaving as an active =
-interface with an up link
-[   59.824994][ T6514] bond0: (slave bond_slave_1): Enslaving as an active =
-interface with an up link
-[   59.833658][ T6514] team0: Port device team_slave_0 added
-[   59.835905][ T6514] team0: Port device team_slave_1 added
-[   59.843368][ T6514] batman_adv: batadv0: Adding interface: batadv_slave_=
-0
-[   59.845253][ T6514] batman_adv: batadv0: The MTU of interface batadv_sla=
-ve_0 is too small (1500) to handle the transport of batman-adv packets. Pac=
-kets going over this interface will be fragmented on layer2 which could imp=
-act the performance. Setting the MTU to 1560 would solve the problem.
-[   59.852280][ T6514] batman_adv: batadv0: Not using interface batadv_slav=
-e_0 (retrying later): interface not active
-[   59.856347][ T6514] batman_adv: batadv0: Adding interface: batadv_slave_=
-1
-[   59.858065][ T6514] batman_adv: batadv0: The MTU of interface batadv_sla=
-ve_1 is too small (1500) to handle the transport of batman-adv packets. Pac=
-kets going over this interface will be fragmented on layer2 which could imp=
-act the performance. Setting the MTU to 1560 would solve the problem.
-[   59.864869][ T6514] batman_adv: batadv0: Not using interface batadv_slav=
-e_1 (retrying later): interface not active
-[   59.877687][ T6514] hsr_slave_0: entered promiscuous mode
-[   59.879458][ T6514] hsr_slave_1: entered promiscuous mode
-[   59.881038][ T6514] debugfs: Directory 'hsr0' with parent 'hsr' already =
-present!
-[   59.883460][ T6514] Cannot create hsr debugfs directory
-[   61.232999][  T257] netdevsim netdevsim0 netdevsim0 (unregistering): uns=
-et [1, 0] type 2 family 0 port 6081 - 0
-[   61.761844][ T6504] Bluetooth: hci0: command tx timeout
-[   62.710778][  T257] bridge_slave_1: left allmulticast mode
-[   62.712502][  T257] bridge_slave_1: left promiscuous mode
-[   62.714043][  T257] bridge0: port 2(bridge_slave_1) entered disabled sta=
-te
-[   62.716970][  T257] bridge_slave_0: left allmulticast mode
-[   62.718466][  T257] bridge_slave_0: left promiscuous mode
-[   62.719970][  T257] bridge0: port 1(bridge_slave_0) entered disabled sta=
-te
-[   63.841936][ T6504] Bluetooth: hci0: command tx timeout
-[   64.293085][  T257] bond0 (unregistering): (slave bond_slave_0): Releasi=
-ng backup interface
-[   64.333054][  T257] bond0 (unregistering): (slave bond_slave_1): Releasi=
-ng backup interface
-[   64.392493][  T257] bond0 (unregistering): Released all slaves
-[   64.469913][  T257] hsr_slave_0: left promiscuous mode
-[   64.472182][  T257] hsr_slave_1: left promiscuous mode
-[   64.474029][  T257] batman_adv: batadv0: Interface deactivated: batadv_s=
-lave_0
-[   64.476001][  T257] batman_adv: batadv0: Removing interface: batadv_slav=
-e_0
-[   64.478226][  T257] batman_adv: batadv0: Interface deactivated: batadv_s=
-lave_1
-[   64.480195][  T257] batman_adv: batadv0: Removing interface: batadv_slav=
-e_1
-[   64.482596][ T2353] ieee802154 phy0 wpan0: encryption failed: -22
-[   64.484280][ T2353] ieee802154 phy1 wpan1: encryption failed: -22
-[   64.486954][  T257] veth1_macvtap: left promiscuous mode
-[   64.488498][  T257] veth0_macvtap: left promiscuous mode
-[   64.489971][  T257] veth1_vlan: left promiscuous mode
-[   64.491353][  T257] veth0_vlan: left promiscuous mode
-[   65.921776][ T6504] Bluetooth: hci0: command tx timeout
-[   66.482380][  T257] team0 (unregistering): Port device team_slave_1 remo=
-ved
-[   66.683057][  T257] team0 (unregistering): Port device team_slave_0 remo=
-ved
-
-
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.22.7'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build1032201832=3D/tmp/go-build -gno-record-gc=
-c-switches'
-
-git status (err=3D<nil>)
-HEAD detached at 6e87cfa299
-nothing to commit, working tree clean
-
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-go fmt ./sys/... >/dev/null
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Darm64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D6e87cfa299c98d36e79e8b8718a4126899a3ba2f -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20250120-133027'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_arm64 " -o ./bin/linux_arm64/syz-execpr=
-og github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_arm64
-aarch64-linux-gnu-g++ -o ./bin/linux_arm64/syz-executor executor/executor.c=
-c \
-	-O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wframe-l=
-arger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-format-ove=
-rflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -stati=
-c-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH_arm6=
-4=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"6e87cfa299c98d36e79e8b8718a4126899=
-a3ba2f\"
-/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
-d: /tmp/ccpnBTge.o: in function `Connection::Connect(char const*, char cons=
-t*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0xd8): warning: Using 'gethostbyname' in statically linked applicati=
-ons requires at runtime the shared libraries from the glibc version used fo=
-r linking
-
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D114d043f980000
-
-
-Tested on:
-
-commit:         a8dfb216 jfs: add index corruption check to DT_GETPAGE()
-git tree:       https://github.com/kleikamp/linux-shaggy.git jfs-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2ad2ff9db77be52=
-5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Db974bd41515f770c6=
-08b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D16b895e45800=
-00
-
+SGkNCg0KPiBPbiAyMSBNYXIgMjAyNSwgYXQgODoyMuKAr1BNLCBUYW1pciBEdWJlcnN0ZWluIDx0
+YW1pcmRAZ21haWwuY29tPiB3cm90ZToNCj4gDQo+IE9uIEZyaSwgTWFyIDIxLCAyMDI1IGF0IDEw
+OjIz4oCvQU0gQWRpdHlhIEdhcmcgPGdhcmdhZGl0eWEwOEBsaXZlLmNvbT4gd3JvdGU6DQo+PiAN
+Cj4+IA0KPj4gQ2FuIHlvdSBnaXZlIG1lIHNvbWUgZG9jcyBmb3IgcnVubmluZyB0aGUgS3VuaXQg
+dGVzdHM/IFRoZSBwYXRjaCBpcyBiYXNpY2FsbHkgYSBwb3J0IG9mIHRoZSBvcmlnaW5hbCB2ZXJz
+aW9uLg0KPiANCj4gSSB1c2U6DQo+IA0KPiB0b29scy90ZXN0aW5nL2t1bml0L2t1bml0LnB5IHJ1
+biAtLWFyY2ggYXJtNjQgLS1tYWtlX29wdGlvbnMgTExWTT0xIHByaW50Zg0KPiANCj4gWW91IGNh
+biBwcm9iYWJseSBqdXN0IHVzZToNCj4gDQo+IHRvb2xzL3Rlc3Rpbmcva3VuaXQva3VuaXQucHkg
+cnVuIHByaW50Zg0KPiANCj4gSXQgd291bGQgYWxzbyBiZSB1c2VmdWwgdG8gc2VlIHJhdyBvdXRw
+dXQ6DQo+IA0KPiB0b29scy90ZXN0aW5nL2t1bml0L2t1bml0LnB5IHJ1biBwcmludGYg4oCUcmF3
+X291dHB1dA0KDQoNCkhlcmUgYXJlIHRoZSByZXF1ZXN0ZWQgb3V0cHV0czoNCg0KLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0NCkZhaWxlZCB0ZXN0Og0KDQphZGl0eWFATWFjQm9vazp+L2tlZXMkIHB5dGhvbjMgdG9v
+bHMvdGVzdGluZy9rdW5pdC9rdW5pdC5weSBydW4gcHJpbnRmDQpbMTU6MjE6NDNdIENvbmZpZ3Vy
+aW5nIEtVbml0IEtlcm5lbCAuLi4NClJlZ2VuZXJhdGluZyAuY29uZmlnIC4uLg0KUG9wdWxhdGlu
+ZyBjb25maWcgd2l0aDoNCiQgbWFrZSBBUkNIPXVtIE89Lmt1bml0IG9sZGRlZmNvbmZpZw0KWzE1
+OjIyOjE5XSBCdWlsZGluZyBLVW5pdCBLZXJuZWwgLi4uDQpQb3B1bGF0aW5nIGNvbmZpZyB3aXRo
+Og0KJCBtYWtlIEFSQ0g9dW0gTz0ua3VuaXQgb2xkZGVmY29uZmlnDQpCdWlsZGluZyB3aXRoOg0K
+JCBtYWtlIGFsbCBjb21waWxlX2NvbW1hbmRzLmpzb24gQVJDSD11bSBPPS5rdW5pdCAtLWpvYnM9
+MTINCi4uL2xpYi9pb21hcC5jOjE1Njo1OiB3YXJuaW5nOiBubyBwcmV2aW91cyBwcm90b3R5cGUg
+Zm9yIOKAmGlvcmVhZDY0X2xvX2hp4oCZIFstV21pc3NpbmctcHJvdG90eXBlc10NCiAgMTU2IHwg
+dTY0IGlvcmVhZDY0X2xvX2hpKGNvbnN0IHZvaWQgX19pb21lbSAqYWRkcikNCiAgICAgIHwgICAg
+IF5+fn5+fn5+fn5+fn5+DQouLi9saWIvaW9tYXAuYzoxNjM6NTogd2FybmluZzogbm8gcHJldmlv
+dXMgcHJvdG90eXBlIGZvciDigJhpb3JlYWQ2NF9oaV9sb+KAmSBbLVdtaXNzaW5nLXByb3RvdHlw
+ZXNdDQogIDE2MyB8IHU2NCBpb3JlYWQ2NF9oaV9sbyhjb25zdCB2b2lkIF9faW9tZW0gKmFkZHIp
+DQogICAgICB8ICAgICBefn5+fn5+fn5+fn5+fg0KLi4vbGliL2lvbWFwLmM6MTcwOjU6IHdhcm5p
+bmc6IG5vIHByZXZpb3VzIHByb3RvdHlwZSBmb3Ig4oCYaW9yZWFkNjRiZV9sb19oaeKAmSBbLVdt
+aXNzaW5nLXByb3RvdHlwZXNdDQogIDE3MCB8IHU2NCBpb3JlYWQ2NGJlX2xvX2hpKGNvbnN0IHZv
+aWQgX19pb21lbSAqYWRkcikNCiAgICAgIHwgICAgIF5+fn5+fn5+fn5+fn5+fn4NCi4uL2xpYi9p
+b21hcC5jOjE3ODo1OiB3YXJuaW5nOiBubyBwcmV2aW91cyBwcm90b3R5cGUgZm9yIOKAmGlvcmVh
+ZDY0YmVfaGlfbG/igJkgWy1XbWlzc2luZy1wcm90b3R5cGVzXQ0KICAxNzggfCB1NjQgaW9yZWFk
+NjRiZV9oaV9sbyhjb25zdCB2b2lkIF9faW9tZW0gKmFkZHIpDQogICAgICB8ICAgICBefn5+fn5+
+fn5+fn5+fn5+DQouLi9saWIvaW9tYXAuYzoyNjQ6Njogd2FybmluZzogbm8gcHJldmlvdXMgcHJv
+dG90eXBlIGZvciDigJhpb3dyaXRlNjRfbG9faGnigJkgWy1XbWlzc2luZy1wcm90b3R5cGVzXQ0K
+ICAyNjQgfCB2b2lkIGlvd3JpdGU2NF9sb19oaSh1NjQgdmFsLCB2b2lkIF9faW9tZW0gKmFkZHIp
+DQogICAgICB8ICAgICAgXn5+fn5+fn5+fn5+fn5+DQouLi9saWIvaW9tYXAuYzoyNzI6Njogd2Fy
+bmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZvciDigJhpb3dyaXRlNjRfaGlfbG/igJkgWy1X
+bWlzc2luZy1wcm90b3R5cGVzXQ0KICAyNzIgfCB2b2lkIGlvd3JpdGU2NF9oaV9sbyh1NjQgdmFs
+LCB2b2lkIF9faW9tZW0gKmFkZHIpDQogICAgICB8ICAgICAgXn5+fn5+fn5+fn5+fn5+DQouLi9s
+aWIvaW9tYXAuYzoyODA6Njogd2FybmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZvciDigJhp
+b3dyaXRlNjRiZV9sb19oaeKAmSBbLVdtaXNzaW5nLXByb3RvdHlwZXNdDQogIDI4MCB8IHZvaWQg
+aW93cml0ZTY0YmVfbG9faGkodTY0IHZhbCwgdm9pZCBfX2lvbWVtICphZGRyKQ0KICAgICAgfCAg
+ICAgIF5+fn5+fn5+fn5+fn5+fn5+DQouLi9saWIvaW9tYXAuYzoyODg6Njogd2FybmluZzogbm8g
+cHJldmlvdXMgcHJvdG90eXBlIGZvciDigJhpb3dyaXRlNjRiZV9oaV9sb+KAmSBbLVdtaXNzaW5n
+LXByb3RvdHlwZXNdDQogIDI4OCB8IHZvaWQgaW93cml0ZTY0YmVfaGlfbG8odTY0IHZhbCwgdm9p
+ZCBfX2lvbWVtICphZGRyKQ0KICAgICAgfCAgICAgIF5+fn5+fn5+fn5+fn5+fn5+DQoNClsxNToy
+MzoyOF0gU3RhcnRpbmcgS1VuaXQgS2VybmVsICgxLzEpLi4uDQpbMTU6MjM6MjhdID09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KUnVu
+bmluZyB0ZXN0cyB3aXRoOg0KJCAua3VuaXQvbGludXgga3VuaXQuZmlsdGVyX2dsb2I9cHJpbnRm
+IGt1bml0LmVuYWJsZT0xIG1lbT0xRyBjb25zb2xlPXR0eSBrdW5pdF9zaHV0ZG93bj1oYWx0DQpb
+MTU6MjM6MjhdID09PT09PT09PT09PT09PT09PT0gcHJpbnRmICgyOCBzdWJ0ZXN0cykgPT09PT09
+PT09PT09PT09PT09PQ0KWzE1OjIzOjI4XSBbUEFTU0VEXSB0ZXN0X2Jhc2ljDQpbMTU6MjM6Mjhd
+IFtQQVNTRURdIHRlc3RfbnVtYmVyDQpbMTU6MjM6MjhdIFtQQVNTRURdIHRlc3Rfc3RyaW5nDQpb
+MTU6MjM6MjhdIFtQQVNTRURdIGhhc2hfcG9pbnRlcg0KWzE1OjIzOjI4XSBbUEFTU0VEXSBudWxs
+X3BvaW50ZXINClsxNToyMzoyOF0gW1BBU1NFRF0gZXJyb3JfcG9pbnRlcg0KWzE1OjIzOjI4XSBb
+UEFTU0VEXSBpbnZhbGlkX3BvaW50ZXINClsxNToyMzoyOF0gW1BBU1NFRF0gc3ltYm9sX3B0cg0K
+WzE1OjIzOjI4XSBbUEFTU0VEXSBrZXJuZWxfcHRyDQpbMTU6MjM6MjhdIFtQQVNTRURdIHN0cnVj
+dF9yZXNvdXJjZQ0KWzE1OjIzOjI4XSBbUEFTU0VEXSBzdHJ1Y3RfcmFuZ2UNClsxNToyMzoyOF0g
+W1BBU1NFRF0gYWRkcg0KWzE1OjIzOjI4XSBbUEFTU0VEXSBlc2NhcGVkX3N0cg0KWzE1OjIzOjI4
+XSBbUEFTU0VEXSBoZXhfc3RyaW5nDQpbMTU6MjM6MjhdIFtQQVNTRURdIG1hYw0KWzE1OjIzOjI4
+XSBbUEFTU0VEXSBpcDQNClsxNToyMzoyOF0gW1BBU1NFRF0gaXA2DQpbMTU6MjM6MjhdIFtQQVNT
+RURdIHV1aWQNClsxNToyMzoyOF0gW1BBU1NFRF0gZGVudHJ5DQpbMTU6MjM6MjhdIFtQQVNTRURd
+IHN0cnVjdF92YV9mb3JtYXQNClsxNToyMzoyOF0gW1BBU1NFRF0gdGltZV9hbmRfZGF0ZQ0KWzE1
+OjIzOjI4XSBbUEFTU0VEXSBzdHJ1Y3RfY2xrDQpbMTU6MjM6MjhdIFtQQVNTRURdIGJpdG1hcA0K
+WzE1OjIzOjI4XSBbUEFTU0VEXSBuZXRkZXZfZmVhdHVyZXMNClsxNToyMzoyOF0gW1BBU1NFRF0g
+ZmxhZ3MNClsxNToyMzoyOF0gW1BBU1NFRF0gZXJycHRyDQpbMTU6MjM6MjhdIFtQQVNTRURdIGZ3
+bm9kZV9wb2ludGVyDQpbMTU6MjM6MjhdICAgICAjIGZvdXJjY19wb2ludGVyOiBFWFBFQ1RBVElP
+TiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjU2DQpbMTU6MjM6MjhdIGxpYi90
+ZXN0cy9wcmludGZfa3VuaXQuYzo3MTU6IHZzbnByaW50ZihidWYsIDI1NiwgIiVwNGNoIiwgLi4u
+KSByZXR1cm5lZCA2LCBleHBlY3RlZCAxNw0KWzE1OjIzOjI4XSAgICAgIyBmb3VyY2NfcG9pbnRl
+cjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KWzE1
+OjIzOjI4XSBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NzE1OiB2c25wcmludGYoYnVmLCAzLCAi
+JXA0Y2giLCAuLi4pIHJldHVybmVkIDYsIGV4cGVjdGVkIDE3DQpbMTU6MjM6MjhdICAgICAjIGZv
+dXJjY19wb2ludGVyOiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5p
+dC5jOjU2DQpbMTU6MjM6MjhdIGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3MTU6IHZzbnByaW50
+ZihidWYsIDAsICIlcDRjaCIsIC4uLikgcmV0dXJuZWQgNiwgZXhwZWN0ZWQgMTcNClsxNToyMzoy
+OF0gICAgICMgZm91cmNjX3BvaW50ZXI6IEVYUEVDVEFUSU9OIEZBSUxFRCBhdCBsaWIvdGVzdHMv
+cHJpbnRmX2t1bml0LmM6MTQxDQpbMTU6MjM6MjhdIGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3
+MTU6IGt2YXNwcmludGYoLi4uLCAiJXA0Y2giLCAuLi4pIHJldHVybmVkICcoJXA0PyknLCBleHBl
+Y3RlZCAnQUJDRCAoMHg0MTQyNDM0NCknDQpbMTU6MjM6MjhdICAgICAjIGZvdXJjY19wb2ludGVy
+OiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjU2DQpbMTU6
+MjM6MjhdIGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3MTU6IHZzbnByaW50ZihidWYsIDI1Niwg
+IiVwNGNuIiwgLi4uKSByZXR1cm5lZCA2LCBleHBlY3RlZCAxNw0KWzE1OjIzOjI4XSAgICAgIyBm
+b3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3Vu
+aXQuYzo1Ng0KWzE1OjIzOjI4XSBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NzE1OiB2c25wcmlu
+dGYoYnVmLCA1LCAiJXA0Y24iLCAuLi4pIHJldHVybmVkIDYsIGV4cGVjdGVkIDE3DQpbMTU6MjM6
+MjhdICAgICAjIGZvdXJjY19wb2ludGVyOiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3Rz
+L3ByaW50Zl9rdW5pdC5jOjU2DQpbMTU6MjM6MjhdIGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3
+MTU6IHZzbnByaW50ZihidWYsIDAsICIlcDRjbiIsIC4uLikgcmV0dXJuZWQgNiwgZXhwZWN0ZWQg
+MTcNClsxNToyMzoyOF0gICAgICMgZm91cmNjX3BvaW50ZXI6IEVYUEVDVEFUSU9OIEZBSUxFRCBh
+dCBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6MTQxDQpbMTU6MjM6MjhdIGxpYi90ZXN0cy9wcmlu
+dGZfa3VuaXQuYzo3MTU6IGt2YXNwcmludGYoLi4uLCAiJXA0Y24iLCAuLi4pIHJldHVybmVkICco
+JXA0PyknLCBleHBlY3RlZCAnRENCQSAoMHg0NDQzNDI0MSknDQpbMTU6MjM6MjhdICAgICAjIGZv
+dXJjY19wb2ludGVyOiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5p
+dC5jOjU2DQpbMTU6MjM6MjhdIGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3MTU6IHZzbnByaW50
+ZihidWYsIDI1NiwgIiVwNGNsIiwgLi4uKSByZXR1cm5lZCA2LCBleHBlY3RlZCAxNw0KWzE1OjIz
+OjI4XSAgICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0
+cy9wcmludGZfa3VuaXQuYzo1Ng0KWzE1OjIzOjI4XSBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6
+NzE1OiB2c25wcmludGYoYnVmLCAxMSwgIiVwNGNsIiwgLi4uKSByZXR1cm5lZCA2LCBleHBlY3Rl
+ZCAxNw0KWzE1OjIzOjI4XSAgICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVE
+IGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KWzE1OjIzOjI4XSBsaWIvdGVzdHMvcHJp
+bnRmX2t1bml0LmM6NzE1OiB2c25wcmludGYoYnVmLCAwLCAiJXA0Y2wiLCAuLi4pIHJldHVybmVk
+IDYsIGV4cGVjdGVkIDE3DQpbMTU6MjM6MjhdICAgICAjIGZvdXJjY19wb2ludGVyOiBFWFBFQ1RB
+VElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjE0MQ0KWzE1OjIzOjI4XSBs
+aWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NzE1OiBrdmFzcHJpbnRmKC4uLiwgIiVwNGNsIiwgLi4u
+KSByZXR1cm5lZCAnKCVwND8pJywgZXhwZWN0ZWQgJ0FCQ0QgKDB4NDE0MjQzNDQpJw0KWzE1OjIz
+OjI4XSAgICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0
+cy9wcmludGZfa3VuaXQuYzo1Ng0KWzE1OjIzOjI4XSBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6
+NzE1OiB2c25wcmludGYoYnVmLCAyNTYsICIlcDRjYiIsIC4uLikgcmV0dXJuZWQgNiwgZXhwZWN0
+ZWQgMTcNClsxNToyMzoyOF0gICAgICMgZm91cmNjX3BvaW50ZXI6IEVYUEVDVEFUSU9OIEZBSUxF
+RCBhdCBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NTYNClsxNToyMzoyOF0gbGliL3Rlc3RzL3By
+aW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMTYsICIlcDRjYiIsIC4uLikgcmV0dXJu
+ZWQgNiwgZXhwZWN0ZWQgMTcNClsxNToyMzoyOF0gICAgICMgZm91cmNjX3BvaW50ZXI6IEVYUEVD
+VEFUSU9OIEZBSUxFRCBhdCBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NTYNClsxNToyMzoyOF0g
+bGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMCwgIiVwNGNiIiwg
+Li4uKSByZXR1cm5lZCA2LCBleHBlY3RlZCAxNw0KWzE1OjIzOjI4XSAgICAgIyBmb3VyY2NfcG9p
+bnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzoxNDEN
+ClsxNToyMzoyOF0gbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNToga3Zhc3ByaW50ZiguLi4s
+ICIlcDRjYiIsIC4uLikgcmV0dXJuZWQgJyglcDQ/KScsIGV4cGVjdGVkICdBQkNEICgweDQxNDI0
+MzQ0KScNClsxNToyMzoyOF0gW0ZBSUxFRF0gZm91cmNjX3BvaW50ZXINClsxNToyMzoyOF0gICAg
+ICMgbW9kdWxlOiBwcmludGZfa3VuaXQNClsxNToyMzoyOF0gICAgICMgcHJpbnRmOiByYW4gNDY0
+IHRlc3RzDQpbMTU6MjM6MjhdICMgcHJpbnRmOiBwYXNzOjI3IGZhaWw6MSBza2lwOjAgdG90YWw6
+MjgNClsxNToyMzoyOF0gIyBUb3RhbHM6IHBhc3M6MjcgZmFpbDoxIHNraXA6MCB0b3RhbDoyOA0K
+WzE1OjIzOjI4XSA9PT09PT09PT09PT09PT09PT09PT0gW0ZBSUxFRF0gcHJpbnRmID09PT09PT09
+PT09PT09PT09PT09PT0NClsxNToyMzoyOF0gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpbMTU6MjM6MjhdIFRlc3RpbmcgY29tcGxl
+dGUuIFJhbiAyOCB0ZXN0czogcGFzc2VkOiAyNywgZmFpbGVkOiAxDQpbMTU6MjM6MjhdIEVsYXBz
+ZWQgdGltZTogMTA1LjMwNXMgdG90YWwsIDM2LjA3MXMgY29uZmlndXJpbmcsIDY5LjAyNnMgYnVp
+bGRpbmcsIDAuMTEwcyBydW5uaW5nDQoNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KUmF3IG91dHB1dA0KDQphZGl0
+eWFATWFjQm9vazp+L2tlZXMkIHRvb2xzL3Rlc3Rpbmcva3VuaXQva3VuaXQucHkgcnVuIHByaW50
+ZiAtLXJhd19vdXRwdXQNClsxNToyNjoyMV0gQ29uZmlndXJpbmcgS1VuaXQgS2VybmVsIC4uLg0K
+WzE1OjI2OjIxXSBCdWlsZGluZyBLVW5pdCBLZXJuZWwgLi4uDQpQb3B1bGF0aW5nIGNvbmZpZyB3
+aXRoOg0KJCBtYWtlIEFSQ0g9dW0gTz0ua3VuaXQgb2xkZGVmY29uZmlnDQpCdWlsZGluZyB3aXRo
+Og0KJCBtYWtlIGFsbCBjb21waWxlX2NvbW1hbmRzLmpzb24gQVJDSD11bSBPPS5rdW5pdCAtLWpv
+YnM9MTINClsxNToyNjoyNF0gU3RhcnRpbmcgS1VuaXQgS2VybmVsICgxLzEpLi4uDQpSdW5uaW5n
+IHRlc3RzIHdpdGg6DQokIC5rdW5pdC9saW51eCBrdW5pdC5maWx0ZXJfZ2xvYj1wcmludGYga3Vu
+aXQuZW5hYmxlPTEgbWVtPTFHIGNvbnNvbGU9dHR5IGt1bml0X3NodXRkb3duPWhhbHQNCktUQVAg
+dmVyc2lvbiAxDQoxLi4xDQogICAgS1RBUCB2ZXJzaW9uIDENCiAgICAjIFN1YnRlc3Q6IHByaW50
+Zg0KICAgICMgbW9kdWxlOiBwcmludGZfa3VuaXQNCiAgICAxLi4yOA0KICAgIG9rIDEgdGVzdF9i
+YXNpYw0KICAgIG9rIDIgdGVzdF9udW1iZXINCiAgICBvayAzIHRlc3Rfc3RyaW5nDQogICAgb2sg
+NCBoYXNoX3BvaW50ZXINCiAgICBvayA1IG51bGxfcG9pbnRlcg0KICAgIG9rIDYgZXJyb3JfcG9p
+bnRlcg0KICAgIG9rIDcgaW52YWxpZF9wb2ludGVyDQogICAgb2sgOCBzeW1ib2xfcHRyDQogICAg
+b2sgOSBrZXJuZWxfcHRyDQogICAgb2sgMTAgc3RydWN0X3Jlc291cmNlDQogICAgb2sgMTEgc3Ry
+dWN0X3JhbmdlDQogICAgb2sgMTIgYWRkcg0KICAgIG9rIDEzIGVzY2FwZWRfc3RyDQogICAgb2sg
+MTQgaGV4X3N0cmluZw0KICAgIG9rIDE1IG1hYw0KICAgIG9rIDE2IGlwNA0KICAgIG9rIDE3IGlw
+Ng0KICAgIG9rIDE4IHV1aWQNCiAgICBvayAxOSBkZW50cnkNCiAgICBvayAyMCBzdHJ1Y3RfdmFf
+Zm9ybWF0DQogICAgb2sgMjEgdGltZV9hbmRfZGF0ZQ0KICAgIG9rIDIyIHN0cnVjdF9jbGsNCiAg
+ICBvayAyMyBiaXRtYXANCiAgICBvayAyNCBuZXRkZXZfZmVhdHVyZXMNCiAgICBvayAyNSBmbGFn
+cw0KICAgIG9rIDI2IGVycnB0cg0KICAgIG9rIDI3IGZ3bm9kZV9wb2ludGVyDQogICAgIyBmb3Vy
+Y2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQu
+Yzo1Ng0KbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMjU2LCAi
+JXA0Y2giLCAuLi4pIHJldHVybmVkIDYsIGV4cGVjdGVkIDE3DQogICAgIyBmb3VyY2NfcG9pbnRl
+cjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KbGli
+L3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMTQsICIlcDRjaCIsIC4u
+LikgcmV0dXJuZWQgNiwgZXhwZWN0ZWQgMTcNCiAgICAjIGZvdXJjY19wb2ludGVyOiBFWFBFQ1RB
+VElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjU2DQpsaWIvdGVzdHMvcHJp
+bnRmX2t1bml0LmM6NzE1OiB2c25wcmludGYoYnVmLCAwLCAiJXA0Y2giLCAuLi4pIHJldHVybmVk
+IDYsIGV4cGVjdGVkIDE3DQogICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVE
+IGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzoxNDENCmxpYi90ZXN0cy9wcmludGZfa3VuaXQu
+Yzo3MTU6IGt2YXNwcmludGYoLi4uLCAiJXA0Y2giLCAuLi4pIHJldHVybmVkICcoJXA0PyknLCBl
+eHBlY3RlZCAnQUJDRCAoMHg0MTQyNDM0NCknDQogICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNU
+QVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KbGliL3Rlc3RzL3By
+aW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMjU2LCAiJXA0Y24iLCAuLi4pIHJldHVy
+bmVkIDYsIGV4cGVjdGVkIDE3DQogICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJ
+TEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KbGliL3Rlc3RzL3ByaW50Zl9rdW5p
+dC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMTEsICIlcDRjbiIsIC4uLikgcmV0dXJuZWQgNiwgZXhw
+ZWN0ZWQgMTcNCiAgICAjIGZvdXJjY19wb2ludGVyOiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGli
+L3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjU2DQpsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NzE1OiB2
+c25wcmludGYoYnVmLCAwLCAiJXA0Y24iLCAuLi4pIHJldHVybmVkIDYsIGV4cGVjdGVkIDE3DQog
+ICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmlu
+dGZfa3VuaXQuYzoxNDENCmxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3MTU6IGt2YXNwcmludGYo
+Li4uLCAiJXA0Y24iLCAuLi4pIHJldHVybmVkICcoJXA0PyknLCBleHBlY3RlZCAnRENCQSAoMHg0
+NDQzNDI0MSknDQogICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxp
+Yi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNTog
+dnNucHJpbnRmKGJ1ZiwgMjU2LCAiJXA0Y2wiLCAuLi4pIHJldHVybmVkIDYsIGV4cGVjdGVkIDE3
+DQogICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNUQVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9w
+cmludGZfa3VuaXQuYzo1Ng0KbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRm
+KGJ1ZiwgMywgIiVwNGNsIiwgLi4uKSByZXR1cm5lZCA2LCBleHBlY3RlZCAxNw0KICAgICMgZm91
+cmNjX3BvaW50ZXI6IEVYUEVDVEFUSU9OIEZBSUxFRCBhdCBsaWIvdGVzdHMvcHJpbnRmX2t1bml0
+LmM6NTYNCmxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo3MTU6IHZzbnByaW50ZihidWYsIDAsICIl
+cDRjbCIsIC4uLikgcmV0dXJuZWQgNiwgZXhwZWN0ZWQgMTcNCiAgICAjIGZvdXJjY19wb2ludGVy
+OiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjE0MQ0KbGli
+L3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjcxNToga3Zhc3ByaW50ZiguLi4sICIlcDRjbCIsIC4uLikg
+cmV0dXJuZWQgJyglcDQ/KScsIGV4cGVjdGVkICdBQkNEICgweDQxNDI0MzQ0KScNCiAgICAjIGZv
+dXJjY19wb2ludGVyOiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5p
+dC5jOjU2DQpsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NzE1OiB2c25wcmludGYoYnVmLCAyNTYs
+ICIlcDRjYiIsIC4uLikgcmV0dXJuZWQgNiwgZXhwZWN0ZWQgMTcNCiAgICAjIGZvdXJjY19wb2lu
+dGVyOiBFWFBFQ1RBVElPTiBGQUlMRUQgYXQgbGliL3Rlc3RzL3ByaW50Zl9rdW5pdC5jOjU2DQps
+aWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6NzE1OiB2c25wcmludGYoYnVmLCA5LCAiJXA0Y2IiLCAu
+Li4pIHJldHVybmVkIDYsIGV4cGVjdGVkIDE3DQogICAgIyBmb3VyY2NfcG9pbnRlcjogRVhQRUNU
+QVRJT04gRkFJTEVEIGF0IGxpYi90ZXN0cy9wcmludGZfa3VuaXQuYzo1Ng0KbGliL3Rlc3RzL3By
+aW50Zl9rdW5pdC5jOjcxNTogdnNucHJpbnRmKGJ1ZiwgMCwgIiVwNGNiIiwgLi4uKSByZXR1cm5l
+ZCA2LCBleHBlY3RlZCAxNw0KICAgICMgZm91cmNjX3BvaW50ZXI6IEVYUEVDVEFUSU9OIEZBSUxF
+RCBhdCBsaWIvdGVzdHMvcHJpbnRmX2t1bml0LmM6MTQxDQpsaWIvdGVzdHMvcHJpbnRmX2t1bml0
+LmM6NzE1OiBrdmFzcHJpbnRmKC4uLiwgIiVwNGNiIiwgLi4uKSByZXR1cm5lZCAnKCVwND8pJywg
+ZXhwZWN0ZWQgJ0FCQ0QgKDB4NDE0MjQzNDQpJw0KICAgIG5vdCBvayAyOCBmb3VyY2NfcG9pbnRl
+cg0KICAgICMgcHJpbnRmOiByYW4gNDY0IHRlc3RzDQojIHByaW50ZjogcGFzczoyNyBmYWlsOjEg
+c2tpcDowIHRvdGFsOjI4DQojIFRvdGFsczogcGFzczoyNyBmYWlsOjEgc2tpcDowIHRvdGFsOjI4
+DQpub3Qgb2sgMSBwcmludGYNClsxNToyNjoyNF0gRWxhcHNlZCB0aW1lOiAyLjY0OXMgdG90YWws
+IDAuMDAxcyBjb25maWd1cmluZywgMi41ODNzIGJ1aWxkaW5nLCAwLjA2MHMgcnVubmluZw0KDQo=
 
