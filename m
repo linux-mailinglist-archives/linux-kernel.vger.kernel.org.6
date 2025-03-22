@@ -1,134 +1,224 @@
-Return-Path: <linux-kernel+bounces-572273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4726BA6C878
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:05:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7245A6C93A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:28:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26697188C9AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897E73AFAD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE381DBB13;
-	Sat, 22 Mar 2025 09:05:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBEC1F91C8;
+	Sat, 22 Mar 2025 10:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAixLSS3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B04D187550
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 09:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FD22AD20;
+	Sat, 22 Mar 2025 10:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742634306; cv=none; b=cV5nsYKr+vtg7iKg/Pp7ZpVKZdsoRGl0+mBZuKESpKyYbbwYe2fAXnvIzCcwYN02uMfr5cuyyJBQlgjaorcSCkr06PRC+XQZzuHOHPVKfJK+AN40pUQh1Lqv4V8kOhcVlm4CtrToJs3ra9CWtzIPV5SkCOxNs7Ehh1eCcyvKaK0=
+	t=1742639276; cv=none; b=CHGjch9HbZGZ33c7zu9rzSVCnA78ohs/SnGlASFBhUJxWmoJL9kwxyvP1YzO9NqhhbO7Qq0gV3KleGXszRZRyXMeiqd1KLy0879AnyEIXm7ax81cZ+5rfk+vJth/s7oJOq56kh1doGH4w/77sW9aStQW/w6gPJHqxx9boerJLdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742634306; c=relaxed/simple;
-	bh=fvC87F3YUiEQxEElPGuptnR3EYPtjVSmwI4/ZZKhZdY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j8gx6+u9GA3WtAx8srjG3M1ulpLgbqYoQ80w1jpc8d9XMCf1BeyKVTMpE/8XVLcsXyydIu7eA2RNLnrjd0jcl1Ajlmwi0j9OFphCGJu98DHYIFbVmGE36MiMpbmt5QjfLRCGcGv4GY2eBfRwEOx3EhJgfLTr/SeKVc0D6ekgcwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d443811f04so25297435ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 02:05:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742634303; x=1743239103;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jGVaarRB/L0i+F7Cnq1M1dqOGn52GYljV2EOw47H1/8=;
-        b=D2NEp921SYZJso71jD6tg7Rhcu7Oyq/zxvl1u8//RHpCL55IC7XtJVDvXXqtykQG1c
-         LaxD4fw4BU85ciQ2WwJTo/CnBd4oZ2803QizIeZme3QRPZqDPX4az4oVBOoedApZuBcO
-         /8c9kBAcS8tDZvRIVwzVLK4y63YwqeLMrPAdNCez0opT8NNKLMozzN0gJeVdL5+NUhVs
-         NXbWLWaSHpOrSWIYwE6DWa2vwkfoMIuWnV+IHM+QmcY0GEJNzYp9dWgQiRaCnUsLwrW2
-         MVCkLSVLRVLFCFKupYKU5O3tzj/xMfivuejuVWJFXR6pqOO0aJYVlN00qSHuRjEY7NW0
-         bzqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW88ayQaf+U1hU7hqYRZEsCJvSn8wkOwkm6rp7mylTDUHH/hpVFSyrl8PI2y+9XXkDGnsj5l0+oawuM3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3SMB0LJm1vjBgIaDMR4weSguYCeemi0oqixTjWz+XpOAKRPnf
-	GiFuXcJeMCDsotO186u1cKJbEJ04+42TGQjT0OFGFpl5LA1kKa31ENYTY6UhHnor0DcuSd7R+DM
-	Y+d+jYjy+zBD2LNECz9UCiCCn6D2Csw5Cb2faCPOhpkJQL0xampmaIfA=
-X-Google-Smtp-Source: AGHT+IHBpkTVZVpNf/oHAEd5id+2hbFFgAODAUvj+UsUhsqcbfqd+9wwtNefKqJo2ni4u46S72AprUE9Hgqp+1eI4bdcL4GUeWbC
+	s=arc-20240116; t=1742639276; c=relaxed/simple;
+	bh=vLWfAQEsX8V/JhXcponrpJXR7sIl61gCbFDK1wZH7ZU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ikjh1Siyvt50XA9kXhdqYSLuD9Ui05JLDVsNn0pxOboitC+he0tZ83O5Sn0yWz6Zn35w8bUQmLLIsJpG/0nopfix6hI3ROKxB/PtmDZ/Qybn2TozQRpeNNOkbrpcjQhKMT58JZsV/HK1EpwkBrwr/I710EKkq8fONsULqH8wDuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAixLSS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01179C4CEED;
+	Sat, 22 Mar 2025 10:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742639275;
+	bh=vLWfAQEsX8V/JhXcponrpJXR7sIl61gCbFDK1wZH7ZU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=XAixLSS3Kmb4bav7wKHDl16DBJM+KOO8A1Bj/akdC/Rzi1ifuKnKjFghzXtjyc31j
+	 1QGOm5p8+750FEnvGEKGFSZSs+sb3r+qilu9Q5r42c077uabw2PyWotudk8ghDD9mt
+	 3TKwbIgxeq7yLYHIMhMN/uvUMXa5SBu4X2ty7dcChKjB6xpj5gxTG1j4w2Ha9JlFLr
+	 yrMGjbzDGkjLCF1fUqIwNi9nc4Hqno9eQmhzxphwAUQRBH4Agy1YMLt8IRNjvL22xL
+	 3+C1YHVx9vZT4v0zMKCTiim1St6IHeVZwHHrfQ0aPUH8kszrF3fA0VYIcVkXMbQbPm
+	 UEK1sYxZzMFyA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: linux-kernel@vger.kernel.org,  Daniel Almeida
+ <daniel.almeida@collabora.com>,  Andrew Lunn <andrew@lunn.ch>,  Alice Ryhl
+ <aliceryhl@google.com>,  Gary Guo <gary@garyguo.net>,  Fiona Behrens
+ <me@kloenk.dev>,  rust-for-linux@vger.kernel.org,  netdev@vger.kernel.org,
+  hkallweit1@gmail.com,  tmgross@umich.edu,  ojeda@kernel.org,
+  alex.gaynor@gmail.com,  bjorn3_gh@protonmail.com,
+  benno.lossin@proton.me,  a.hindborg@samsung.com,
+  anna-maria@linutronix.de,  frederic@kernel.org,  tglx@linutronix.de,
+  arnd@arndb.de,  jstultz@google.com,  sboyd@kernel.org,  mingo@redhat.com,
+  peterz@infradead.org,  juri.lelli@redhat.com,
+  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
+  rostedt@goodmis.org,  bsegall@google.com,  mgorman@suse.de,
+  vschneid@redhat.com,  tgunders@redhat.com,  david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 3/8] rust: time: Introduce Delta type
+In-Reply-To: <20250220070611.214262-4-fujita.tomonori@gmail.com> (FUJITA
+	Tomonori's message of "Thu, 20 Feb 2025 16:06:05 +0900")
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+	<20250220070611.214262-4-fujita.tomonori@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sat, 22 Mar 2025 09:50:48 +0100
+Message-ID: <8734f5cutz.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a43:b0:3cf:c7d3:e4b with SMTP id
- e9e14a558f8ab-3d596186625mr74862335ab.21.1742634303618; Sat, 22 Mar 2025
- 02:05:03 -0700 (PDT)
-Date: Sat, 22 Mar 2025 02:05:03 -0700
-In-Reply-To: <tencent_FFC5C6E792E24668C997EEDB6ED34CA52706@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67de7d3f.050a0220.31a16b.002d.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
-From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+FUJITA Tomonori <fujita.tomonori@gmail.com> writes:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in _find_next_bit
-
-ocfs2: Finishing quota recovery on device (7,0) for slot 0
-ents: 3990, sb: ffff888042873800, chunk: 0, blksize: 512, rcb: ffff88804b966800, offset: -1, ocfs2_recover_local_quota_file
-=====================================================
-BUG: KMSAN: uninit-value in _find_next_bit+0x11c/0x130 lib/find_bit.c:145
- _find_next_bit+0x11c/0x130 lib/find_bit.c:145
- find_next_bit include/linux/find.h:69 [inline]
- ocfs2_recover_local_quota_file fs/ocfs2/quota_local.c:493 [inline]
- ocfs2_finish_quota_recovery+0xcc4/0x3fd0 fs/ocfs2/quota_local.c:646
- ocfs2_complete_recovery+0x229f/0x38a0 fs/ocfs2/journal.c:1357
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3319
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3400
- kthread+0x6b9/0xef0 kernel/kthread.c:464
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4121 [inline]
- slab_alloc_node mm/slub.c:4164 [inline]
- __do_kmalloc_node mm/slub.c:4293 [inline]
- __kmalloc_noprof+0x923/0x1230 mm/slub.c:4306
- kmalloc_noprof include/linux/slab.h:905 [inline]
- ocfs2_add_recovery_chunk fs/ocfs2/quota_local.c:305 [inline]
- ocfs2_recovery_load_quota+0x415/0x1450 fs/ocfs2/quota_local.c:363
- ocfs2_local_read_info+0x139e/0x2c10 fs/ocfs2/quota_local.c:758
- dquot_load_quota_sb+0xa35/0xdc0 fs/quota/dquot.c:2459
- dquot_load_quota_inode+0x662/0x9f0 fs/quota/dquot.c:2496
- ocfs2_enable_quotas+0x1d4/0x6e0 fs/ocfs2/super.c:930
- ocfs2_fill_super+0xa6b7/0xb550 fs/ocfs2/super.c:1140
- get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
- get_tree_bdev+0x37/0x50 fs/super.c:1659
- ocfs2_get_tree+0x34/0x40 fs/ocfs2/super.c:1184
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
- path_mount+0x742/0x1f10 fs/namespace.c:3887
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6462 Comm: kworker/u8:0 Not tainted 6.14.0-rc7-syzkaller-g88d324e69ea9-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: ocfs2_wq ocfs2_complete_recovery
-=====================================================
+> Introduce a type representing a span of time. Define our own type
+> because `core::time::Duration` is large and could panic during
+> creation.
+>
+> time::Ktime could be also used for time duration but timestamp and
+> timedelta are different so better to use a new type.
+>
+> i64 is used instead of u64 to represent a span of time; some C drivers
+> uses negative Deltas and i64 is more compatible with Ktime using i64
+> too (e.g., ktime_[us|ms]_delta() APIs return i64 so we create Delta
+> object without type conversion.
+>
+> i64 is used instead of bindings::ktime_t because when the ktime_t
+> type is used as timestamp, it represents values from 0 to
+> KTIME_MAX, which is different from Delta.
+>
+> as_millis() method isn't used in this patchset. It's planned to be
+> used in Binder driver.
+>
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
 
-Tested on:
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-commit:         88d324e6 Merge tag 'spi-fix-v6.14-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b095e4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d4644c4063c5098
-dashboard link: https://syzkaller.appspot.com/bug?extid=7ea0b96c4ddb49fd1a70
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d9043f980000
+Two suggestions below, take or leave.
+
+> ---
+>  rust/kernel/time.rs | 88 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+>
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 48b71e6641ce..622cd01e24d7 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -8,9 +8,15 @@
+>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
+>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
+>  
+> +/// The number of nanoseconds per microsecond.
+> +pub const NSEC_PER_USEC: i64 = bindings::NSEC_PER_USEC as i64;
+> +
+>  /// The number of nanoseconds per millisecond.
+>  pub const NSEC_PER_MSEC: i64 = bindings::NSEC_PER_MSEC as i64;
+>  
+> +/// The number of nanoseconds per second.
+> +pub const NSEC_PER_SEC: i64 = bindings::NSEC_PER_SEC as i64;
+> +
+>  /// The time unit of Linux kernel. One jiffy equals (1/HZ) second.
+>  pub type Jiffies = crate::ffi::c_ulong;
+>  
+> @@ -81,3 +87,85 @@ fn sub(self, other: Ktime) -> Ktime {
+>          }
+>      }
+>  }
+> +
+> +/// A span of time.
+> +///
+> +/// This struct represents a span of time, with its value stored as nanoseconds.
+> +/// The value can represent any valid i64 value, including negative, zero, and
+> +/// positive numbers.
+> +#[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Debug)]
+> +pub struct Delta {
+> +    nanos: i64,
+> +}
+> +
+> +impl Delta {
+> +    /// A span of time equal to zero.
+> +    pub const ZERO: Self = Self { nanos: 0 };
+> +
+> +    /// Create a new [`Delta`] from a number of microseconds.
+> +    ///
+> +    /// The `micros` can range from -9_223_372_036_854_775 to 9_223_372_036_854_775.
+
+To make these numbers truly useful, it would be nice to have them as
+constants, for example `Delta::MAX_MICROS`, `Delta::MIN_MICROS`.
+
+> +    /// If `micros` is outside this range, `i64::MIN` is used for negative values,
+> +    /// and `i64::MAX` is used for positive values due to saturation.
+> +    #[inline]
+> +    pub const fn from_micros(micros: i64) -> Self {
+> +        Self {
+> +            nanos: micros.saturating_mul(NSEC_PER_USEC),
+> +        }
+> +    }
+> +
+> +    /// Create a new [`Delta`] from a number of milliseconds.
+> +    ///
+> +    /// The `millis` can range from -9_223_372_036_854 to 9_223_372_036_854.
+> +    /// If `millis` is outside this range, `i64::MIN` is used for negative values,
+> +    /// and `i64::MAX` is used for positive values due to saturation.
+> +    #[inline]
+> +    pub const fn from_millis(millis: i64) -> Self {
+> +        Self {
+> +            nanos: millis.saturating_mul(NSEC_PER_MSEC),
+> +        }
+> +    }
+> +
+> +    /// Create a new [`Delta`] from a number of seconds.
+> +    ///
+> +    /// The `secs` can range from -9_223_372_036 to 9_223_372_036.
+> +    /// If `secs` is outside this range, `i64::MIN` is used for negative values,
+> +    /// and `i64::MAX` is used for positive values due to saturation.
+> +    #[inline]
+> +    pub const fn from_secs(secs: i64) -> Self {
+> +        Self {
+> +            nanos: secs.saturating_mul(NSEC_PER_SEC),
+> +        }
+> +    }
+> +
+> +    /// Return `true` if the [`Delta`] spans no time.
+> +    #[inline]
+> +    pub fn is_zero(self) -> bool {
+> +        self.as_nanos() == 0
+> +    }
+> +
+> +    /// Return `true` if the [`Delta`] spans a negative amount of time.
+> +    #[inline]
+> +    pub fn is_negative(self) -> bool {
+> +        self.as_nanos() < 0
+> +    }
+> +
+> +    /// Return the number of nanoseconds in the [`Delta`].
+> +    #[inline]
+> +    pub const fn as_nanos(self) -> i64 {
+> +        self.nanos
+> +    }
+> +
+> +    /// Return the smallest number of microseconds greater than or equal
+> +    /// to the value in the [`Delta`].
+> +    #[inline]
+> +    pub const fn as_micros_ceil(self) -> i64 {
+> +        self.as_nanos().saturating_add(NSEC_PER_USEC - 1) / NSEC_PER_USEC
+> +    }
+> +
+> +    /// Return the number of milliseconds in the [`Delta`].
+
+We might consider adding "rounded towards zero" to this doc string.
+
+
+Best regards,
+Andreas Hindborg
+
 
 
