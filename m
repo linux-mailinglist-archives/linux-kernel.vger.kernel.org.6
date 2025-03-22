@@ -1,87 +1,101 @@
-Return-Path: <linux-kernel+bounces-572645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CF6A6CC99
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:14:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA46A6CC9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4DC3B6DA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97938188FF4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89B923535E;
-	Sat, 22 Mar 2025 21:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAD322A81F;
+	Sat, 22 Mar 2025 21:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0scgQiN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C553D158D8B;
-	Sat, 22 Mar 2025 21:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qr/+QTY7"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510B51D5176;
+	Sat, 22 Mar 2025 21:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742678031; cv=none; b=pKLcpVcnEKII9KIOpytOMY3I9B35qETUWumxIm1dJD0SM1BTR2MhwhgwvsEYVCRJAQdt8T4NhiFPqJraY9C5Y4OQ7DhLAH+DbjN2F2Bs0bDaCA6K/pZCowKXied5hSTyCMTLMjDNiqSq/a9o/YICMRL7heVnXAeGhIllzbEUuD8=
+	t=1742678445; cv=none; b=BSiV9nPv0ysoLjbhxKrYRMY873gwu2tFEzR/wtROvvIcmfQQEm0GxBepQhz1L3Iy4NzTe/X6hUXEddZG6MzgKcWKUeLWOSw0M8fypAvpVUEyORN7ia6EtlBml8zy7qnt3BRSZgKubUOhbtJ2T0IV/yayh5gphiSpLersW45Xlcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742678031; c=relaxed/simple;
-	bh=z6Kb0zH8nQcvLTFP1HgxUUraOMcBI6i3DEzgydeSca4=;
+	s=arc-20240116; t=1742678445; c=relaxed/simple;
+	bh=cyFNK89NgMLZ3xDWkwxzV2SM3xQXavlfGlrHVOrvwmQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZmZSBeHit4yE3KGfii1d9Z4T7EyTs1NqwEdqpZWRggjPul0qey45RqYz/QXxUpgPhCWADa2nl3Vl9J+9+QPILoO+LP07qbL2mX3kUmHp/Ug0WmD4yQfVT4EXOBwIgF7cZ7Qq/zMC/HUIKDgOdBePdUA9hzk2uGD2zXRtO/T1NAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m0scgQiN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jw4nRoBv7YvGHs2GxEuwE6E/Q8bCcDDx4GQysHcomdY=; b=m0scgQiNuoD5yPnuFu0bD4acmd
-	7Zlo/jvG7RNVmecORw+43mRCw8GjWi0NUBFsEnqzroN4seI1rscu3MRdkxqZnZwMPuUhN6NuL0I9H
-	cIESWsscc/n7z0SWwuI3gfTQaBCblcGGy2rKACT90wKqjg+4EvpIKv2r4R5QCUc1/C6OmGlqH6Q8g
-	81oSZ0WzNXLHcfqRNVKhkeQCIc0LvBqKthNaE66NFqKOYXvxXn2+1KBMYmC/bV07ve/WrrD145jyu
-	OymivnxU8lm2PCxI0dy4KEXPjEEVun3Yw0tTBZk8F4GSpAgdEa8B15pz3vXedxnXKupDrLyant1tF
-	u0fAiToA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tw6A6-00000005qST-1h6Y;
-	Sat, 22 Mar 2025 21:13:46 +0000
-Date: Sat, 22 Mar 2025 21:13:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
-Message-ID: <Z98oChgU7Z9wyTw1@casper.infradead.org>
-References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N//7ZSt6vP5gT9deXfuCbdVM7T2lrTdMqxvHEfNusRte/MhnYA4JLHxllrjPaNYYK3LJwGADCeHBZBkHMDTYM3hJvR93lf4+2jgVhIGRhM/o0SNDTT9Ub+IQrBqoLWzgJkI+NL+5ObU6U1sH3UVRO92sZ8nIoQC//+cwsIeV9kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qr/+QTY7; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 7195614C2DB;
+	Sat, 22 Mar 2025 22:20:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1742678433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e0TjEf7FGRwFB0dAZVdeDg8D+prsnYkCAo5szH4wkaU=;
+	b=qr/+QTY7h9M8K+P97DGzWaAdHE/R8xPrJW5EugVRavIhoJNuQTPW1tarPA6fWVUYFVGmRZ
+	FadvjOTVEktYqP9UdA/lko52/QS+bUnU6eBEGNA/B7vI/BiwGEWW6QYKpxcdXDg3ZmiQJD
+	CPJ4kWl8a4GMDy3Wh2zhxRKINNPWGHwmsya2jost7HOqQZpp9WeM+8DLKj8WdJjSWB7H2B
+	K0MtFnPtyQNFioTM+vo2V9Vy9zgjwZXHJpasjgeUsVQ4MVME6bTTyOlI4ZGuXXL3KMttA3
+	fOKV6C7kPK+HiVxXGi6Wu2MdN+ZC39fqt8iLgAEcR3+goHV5Rlzrorpb2LpPQw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e68e2ca7;
+	Sat, 22 Mar 2025 21:20:29 +0000 (UTC)
+Date: Sun, 23 Mar 2025 06:20:14 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Tuomas Ahola <taahol@utu.fi>
+Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] Documentation/fs/9p: fix broken link
+Message-ID: <Z98pjo6ptwNee8d7@codewreck.org>
+References: <20250322153639.4917-1-taahol@utu.fi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
+In-Reply-To: <20250322153639.4917-1-taahol@utu.fi>
+X-Spam: Yes
 
-On Fri, Mar 21, 2025 at 10:17:08PM -0400, Tamir Duberstein wrote:
-> Partially revert commit 6684aba0780d ("XArray: Add extra debugging check
-> to xas_lock and friends"), fixing test failures in check_xa_alloc.
+Tuomas Ahola wrote on Sat, Mar 22, 2025 at 05:36:39PM +0200:
+> In b529c06f9dc7 (Update the documentation referencing Plan 9 from User
+> Space., 2020-04-26), another instance of the link was left unfixed.
+> Fix that as well.
+
+Thank you, applied to 9p tree
+
+> Signed-off-by: Tuomas Ahola <taahol@utu.fi>
+> ---
+>  Documentation/filesystems/9p.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and friends")
+> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
+> index 2bbf68b56b0d..28871200e87c 100644
+> --- a/Documentation/filesystems/9p.rst
+> +++ b/Documentation/filesystems/9p.rst
+> @@ -40,7 +40,7 @@ For remote file server::
+>  
+>  	mount -t 9p 10.10.1.2 /mnt/9
+>  
+> -For Plan 9 From User Space applications (http://swtch.com/plan9)::
+> +For Plan 9 From User Space applications (https://9fans.github.io/plan9port/)::
+>  
+>  	mount -t 9p `namespace`/acme /mnt/9 -o trans=unix,uname=$USER
+>  
+> 
+> base-commit: 88d324e69ea9f3ae1c1905ea75d717c08bdb8e15
 
-This doesn't fix anything.  The first failure is:
-
-#6  0x0000555555649979 in XAS_INVALID (xas=xas@entry=0x7ffff4a003a0)
-    at ../shared/linux/../../../../include/linux/xarray.h:1434
-#7  0x000055555564f545 in check_xas_retry (xa=xa@entry=0x55555591ba00 <array>)
---Type <RET> for more, q to quit, c to continue without paging--
-    at ../../../lib/test_xarray.c:131
-#8  0x0000555555663869 in xarray_checks () at ../../../lib/test_xarray.c:2221
-#9  0x00005555556639ab in xarray_tests () at xarray.c:15
-
-That has nothing to do with xa_destroy().  What on earth are you doing?
-
-Anyway, I'm at LSFMM and it'a Saturday.  I shan't be looking at this
-until the 27th.  There's clearly no urgency since you're the first one
-to notice in six months.
+-- 
+Dominique Martinet | Asmadeus
 
