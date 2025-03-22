@@ -1,180 +1,119 @@
-Return-Path: <linux-kernel+bounces-572378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31FFA6C9B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:42:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F83EA6C9BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C567ACD61
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 798F6189511C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328D81FAC5F;
-	Sat, 22 Mar 2025 10:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FEE1F8EF6;
+	Sat, 22 Mar 2025 10:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNYAJqDu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pe6nHEN4"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0A41F891F
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E38F20EB;
+	Sat, 22 Mar 2025 10:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742640108; cv=none; b=POunclYTSqcY1ch0SfUUhxIM2yXED2bZizuPcctTGe2g4RSYd1EZn5yxxsfifuNNaZbUHapmIRawCNHxWnJAHa7/2U/7dEvGEIt/GzsKQ5v1yVvqFsql/wJWoUl27wAqvycZSjK3SSIaq6xiTsyCrHZDR21Yqqilot3YKTBoRTc=
+	t=1742640201; cv=none; b=nqQ4fEbwf6JXs+KVEN3mJ6DFaykokLMs2wXcL7JFMBSGok7uh78yIgt3wuVK9DUTtg84WZi8XjWqNqhkXMAok+TtQgCoGUIDDDSTLUOLd8HNDi69A+pnyfxZ4mTZPRpUjDS1GRslZIBe8ik92wmEJhs5hCURVk1xuw/aE6UTVUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742640108; c=relaxed/simple;
-	bh=aTXRkE0XydaINgQyfs8slD4zaVmOP6d03DD2R/YidBc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KpblbRD7YGRifEu5v+ZOEybBbI5edEbXZl7A4oI2Pz+/OesYDjsdmqBYSqL9psxaKsSzpxYnARKQVXz2yGNNkJ/3AHmuHSuolf55ykYNG7aQLnDb58e0aOj3UdvebnTUq5FZCOowv32oe24Cn6TgWIC154BWUF9KvzXIl17n7ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNYAJqDu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F29F9C4CEED;
-	Sat, 22 Mar 2025 10:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742640108;
-	bh=aTXRkE0XydaINgQyfs8slD4zaVmOP6d03DD2R/YidBc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=eNYAJqDuLl2hihiBMvXZv4XT0dBnp5Pv0vakB/rZau63lv6kAu8cg27VOrxs1JH7h
-	 CTDhZdPiM5wQ2LXV5cwcLrwLfI/hzBUkFMB/8UVRNyN8iNONMB86aC2vsrgekjc6W0
-	 1yB3DgrDtj0HHRfFbGT9lwiF1DFWHKGUZrQ0CFJFV5P0mHBHa9tG59teRwdfVw34v0
-	 NZ0Mk6HZhmWIEaPik8EbR/FpNuURaGWUl5xxGdti7I8cBTyIPwiQtJefArZwEWsrjp
-	 t8GVelUZpORe0AbDP5ewsMi/u2NpXcLStSroO0hiH3tjeWMahHczfSPsMU1g1rg3Vr
-	 gYOkWTAA7w/jg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B91C3600B;
-	Sat, 22 Mar 2025 10:41:47 +0000 (UTC)
-From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
-Date: Sat, 22 Mar 2025 19:39:38 +0900
-Subject: [PATCH 3/3] test_bits: add tests for __GENMASK() and
- __GENMASK_ULL()
+	s=arc-20240116; t=1742640201; c=relaxed/simple;
+	bh=YkMRAD9WlCYn1xOedFDEZ4kBwzZAibmza3SX4Cxq/dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lAWtvODlvdmcLj9/9Zc4HlNfGDT2AQ3349Zp7CHdN9d/NclH28Ze66RUYXS4krzojYVlPtztdfj+UPoLiMbqoiLsx733LLKPTmvjo42+PaKmQ4HS+VzRYbpfb8pYQKNjH7W+M2GfKohT2xI7zOnvQxKKnHq08hlwft8cgFixooA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pe6nHEN4; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742640191; x=1743244991; i=markus.elfring@web.de;
+	bh=YkMRAD9WlCYn1xOedFDEZ4kBwzZAibmza3SX4Cxq/dQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=pe6nHEN443O7V290nCMNqYFbUgzsFFTjoyl3Wvqbwnzf4w+p6zpK7BS8UhSmffsL
+	 ytu6vkmtKI46ys4CuejZ8O3NfzlnfpkzXq21WjmgnkvTppBZFi/Da182mZOKCP+yD
+	 SJo5LedQ2w0i/cE3gqelDZd2z3Fv4qx34jI2pszdZFuXj5/2OgslotItEXzN+DUwm
+	 zlTv2mq6Uk12nFst4Sj9/YVT5g2RPJomoDfzDsKlmziZQVJ5zTK6ivkp34kD5k9hz
+	 TZg72zAZyTG2ECGn5aova03xZ/QOahFG2QVTpvoAg9YZltklVN7J0361U5pXU2ESx
+	 nMC71wFJIWlof2J5eA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.73]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqqTb-1tRIWF3nrl-00cVNO; Sat, 22
+ Mar 2025 11:43:10 +0100
+Message-ID: <68543b3c-2004-43e8-999c-a6579b6aeb23@web.de>
+Date: Sat, 22 Mar 2025 11:43:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250322-consolidate-genmask-v1-3-54bfd36c5643@wanadoo.fr>
-References: <20250322-consolidate-genmask-v1-0-54bfd36c5643@wanadoo.fr>
-In-Reply-To: <20250322-consolidate-genmask-v1-0-54bfd36c5643@wanadoo.fr>
-To: Yury Norov <yury.norov@gmail.com>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>, 
- David Laight <David.Laight@ACULAB.COM>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2838;
- i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
- bh=lw0j5DDbt4xHaeCFRpUyWkzpSYATbilmvUEdK3pbE0k=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDOn3Jj//niLufKnD3jTC6+n72Eu/sp3jVnzS4C22PT/zU
- +SzKbdXd5SyMIhxMciKKbIsK+fkVugo9A479NcSZg4rE8gQBi5OAZiI91dGhquce67s/1Dt4Som
- 2sKexbNwZ4nZwgOVMjz6jEdmm+yuPsfI0Hf4ssP59z3mJ9r3ra3NPvpc/8wnRbvTZS3Hf+Va+gl
- 8YQcA
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
- with auth_id=291
-X-Original-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reply-To: mailhol.vincent@wanadoo.fr
+User-Agent: Mozilla Thunderbird
+Subject: Re: wifi: mt76: mt7996: prevent uninit return in
+ mt7996_mac_sta_add_links
+To: Johannes Berg <johannes@sipsolutions.net>, Qasim Ijaz
+ <qasdev00@gmail.com>, linux-wireless@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Bo Jiao <bo.jiao@mediatek.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>
+References: <20250320201914.48159-1-qasdev00@gmail.com>
+ <061ebbe3-557b-46d7-acb8-308ae87105dd@web.de>
+ <631977c57b2236edfefb8db7a28885ff6888c823.camel@sipsolutions.net>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <631977c57b2236edfefb8db7a28885ff6888c823.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UOKGF5y3H0aWty2Ge0EpsSI/+m+zx9k401Kz+ZPa+Cty5ktLW31
+ aihaZWCSZQ8UUJgs2fdMpbXv4M4sIsk5Bxl7nEJPGy2WBVUKBFYy8wi7tWGf1oEjpgsZixk
+ /zt7z4uFGe47bHkQS5dpSgKfXmZtmxhcfnfQudPNSGBUUn7ZG5GyaLLRocR95xZtOmtgqLQ
+ zBz2rpg5XWYDmenTzovSw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ds9ibI0GWBM=;KJP8Mkrg79VhvVfIdkUcJpe2zWw
+ P4FSt08PPWUj2iQAHDT2ruL4CnVguLWR/EwQmh5ySL8KLQV8wvvPPVc3Pg5XjgT6UfndggAIt
+ crBf/FF+ra359BEX3+RFfoAmwLY1bsSWK8LtYzcC4Xo8nSJmfoT8YGG0va8RVeCZXPTfZ1JyE
+ fo77rKDX/dwZquTpr5HkJvexItJty5X70gKOOej1U+/DHlFGWoScPyE+TC4xld/8+MsnmX/+C
+ fS9MYGnhSt3p2xDG0Q3IavWIFDjOvFVv8IMug8R1gjEzHoovQXGk9iiukvMi4NhPN3zPbE+Rp
+ jjSZCA5ECkkD8ZCHKS+0BgfdrrAjCvewf0Ewxw5S074ft/P6hQJweWl+z14Jl1ZpECe95hHNh
+ RuU1q67X5ijvKU22JtCBh7Zpu8sbOmqCQiCGJlAk9lkYdjEZKFwUcaTmJJ0C2XvScqn1h6OAA
+ czaWdhbakIwsDa90vnrdYhoS5di/DlGlDmb+DLfFn+toh9+XRuiF/ku5Y1HOSudYPso7Mn5Vo
+ RHKLkqF5B3cV5IGJZvP/dQdeabUJilc10MCeVWUwIxG92W7Ldbf8YF7QleC1sySfx0Gt/P+BF
+ 46vrloA2HHBuW/3tv0uYPFHEawnA59KCxdzO3Uhg9nlciIzKRmeC1+a0M6I/8zBvCMKuS7oh2
+ U0+f9TuhXbB6EWYZ4dqtoDFiu26hxSHHR2kyYd80zi744upWndXlH6OqBthdIwIZCSXaHD6dF
+ XsHbKPrlOrFtNCwRIx7QJuaWp8gF/j/D3gpS5HvdbFQuE6hspgsN8b61VVNgtL7oordRAnBnG
+ y0WzoBoywS1+WF67aj9zp30yldJg9IGz1AmE+LS1/4n/xQpIHHcjdsWFrPWsEETZlnJ11j9xX
+ v8G2Ix86kmrXvondv5Y9wXIyAj9PfYWcsi8Wys/fM4K69DcKqrEvYaEOdeA857urm7Pzf6V8B
+ J1OOe4YBOuAeRU0qVeNOVK/bWGj1I/iWqCO3L1O3ITV4wCU25pnC04nHFmFlHPAqqecKpdDij
+ yxhzYnGs548fLEEN6yf94h2DwlgcOIgFZWpEo0V+Ul3U0GCztOCIZIAyVRecOTT72DB5BKpxc
+ N0FJtx2mwxxI83c4hPAYNJ2PWCRmcEB0Pgi/HJ/BPlF8oH++LwF+JnF4SsnM8M3fHhWS9neF2
+ RGz1jn5avDfjjineWyQKkpHiU8eE9QHFe+EfiQsM0uRH7g9CyN89bsp+U3M7l42H1VH0MwDDO
+ YeS+2yh+Fx/GxiU8meTZYKpNXVTkjJMO5VJVuUYzrlw8MMIB8EXAJrSdVcYkJ4g9QD/CjtRlB
+ FONI1G0+X+O/lwgsREGWmEesogl5yX1XtrB0I6MKB4J38f62JTBpoqX3pRd+BU20oBd1jmuzq
+ Ysv+X7Na/mNoWxfoBBrLJLZZ9n849354WbPMd/JpqdAf/O3Xa1hdYwGlHrq0itSbb6P0a79hX
+ QuI+5Trhw9lfwEUS6aej6VmRaj53xRJfUD9pXjzpQQ0fj2DCt
 
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+>> I suggest to avoid such repeated error code assignments.
+>> Can an additional label be applied instead for this purpose?
+>
+> Please stop your "suggestions" on this list. None have really been
+> helpful.
+It seems that you care less then for the avoidance of duplicate source cod=
+e
+also for affected error/exception handling.
 
-The definitions of GENMASK() and GENMASK_ULL() do not depend any more
-on __GENMASK() and __GENMASK_ULL(). Duplicate the existing unit tests
-so that __GENMASK{,ULL}() are still covered.
-
-Because __GENMASK() and __GENMASK_ULL() do use GENMASK_INPUT_CHECK(),
-drop the TEST_GENMASK_FAILURES negative tests.
-
-It would be good to have a small assembly test case for GENMASK*() in
-case somebody decides to unify both in the future. However, I lack
-expertise in assembly to do so. Instead add a FIXME message to
-highlight the absence of the asm unit test.
-
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
-This patch previously belonged to this series:
-
-  bits: Fixed-type GENMASK_U*() and BIT_U*()
-  Link: https://lore.kernel.org/r/20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr
-
-Below changelog also contains the history from the previous series.
-
-Changelog:
-
-  v6 (previous series) -> v1 (new series):
-
-    - Add a message in the commit description to explain why the
-      negative tests are dropped.
-
-    - Add Lucas's Reviewed-by tag.
-
-  v5 -> v6:
-
-    - Add a FIXME message to highlight the absence of the asm
-      GENMASK*() unit tests.
-
-  v4 -> v5:
-
-    - No changes.
-
-  v3 -> v4:
-
-    - New patch.
----
- lib/test_bits.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/lib/test_bits.c b/lib/test_bits.c
-index 47325b41515fde2c3ed434ed6f4094925c98886b..ab88e50d2edfa2b011f07d50460ac8ea6ff99923 100644
---- a/lib/test_bits.c
-+++ b/lib/test_bits.c
-@@ -26,6 +26,23 @@ static_assert(assert_type(u16, GENMASK_U16(15, 0)) == U16_MAX);
- static_assert(assert_type(u32, GENMASK_U32(31, 0)) == U32_MAX);
- static_assert(assert_type(u64, GENMASK_U64(63, 0)) == U64_MAX);
- 
-+/* FIXME: add a test case written in asm for GENMASK() and GENMASK_ULL() */
-+
-+static void __genmask_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 1ul, __GENMASK(0, 0));
-+	KUNIT_EXPECT_EQ(test, 3ul, __GENMASK(1, 0));
-+	KUNIT_EXPECT_EQ(test, 6ul, __GENMASK(2, 1));
-+	KUNIT_EXPECT_EQ(test, 0xFFFFFFFFul, __GENMASK(31, 0));
-+}
-+
-+static void __genmask_ull_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 1ull, __GENMASK_ULL(0, 0));
-+	KUNIT_EXPECT_EQ(test, 3ull, __GENMASK_ULL(1, 0));
-+	KUNIT_EXPECT_EQ(test, 0x000000ffffe00000ull, __GENMASK_ULL(39, 21));
-+	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, __GENMASK_ULL(63, 0));
-+}
- 
- static void genmask_test(struct kunit *test)
- {
-@@ -123,6 +140,8 @@ static void genmask_input_check_test(struct kunit *test)
- 
- 
- static struct kunit_case bits_test_cases[] = {
-+	KUNIT_CASE(__genmask_test),
-+	KUNIT_CASE(__genmask_ull_test),
- 	KUNIT_CASE(genmask_test),
- 	KUNIT_CASE(genmask_ull_test),
- 	KUNIT_CASE(genmask_u128_test),
-
--- 
-2.48.1
-
-
+Regards,
+Markus
 
