@@ -1,107 +1,302 @@
-Return-Path: <linux-kernel+bounces-572542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD77A6CB44
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:46:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6076A6CB47
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5B9E178CB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A200189AB89
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65244231A2D;
-	Sat, 22 Mar 2025 15:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B17A231A24;
+	Sat, 22 Mar 2025 15:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jefi2Hly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7C4A05;
-	Sat, 22 Mar 2025 15:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oyoyh6Fs"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2547370809;
+	Sat, 22 Mar 2025 15:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742658392; cv=none; b=H5QaaYNFIeuHhUAn1MRMuQdWjiM0/9AVZzGPNeOzXTbd82/uqQT5PkZfXMVMZoNCcEH5JaGNiQKG006TSzJvxyYXSLv5FqF5Y0ln4C9oo+SGCILulAURbmURak4FoCJknRRr/bCZ8ysLxTsUcqc/QB+kln0c//Do6969JUeU1lo=
+	t=1742658505; cv=none; b=aqVrlW+C9IM+IVSzn3bDzJf/Qr6eTP21PhBFKqE99u3sUpnbZcFlYAguxuqHuLLFU5oY6+6AafxcjHc5bRa2muZbvq/1C19YwLEJWBrfMqOHmx4dWWXD24kH2T0CXx5vcxOKBQpSerJPsgX4rtDKguFEjfR4jZa0PKtmKARR06c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742658392; c=relaxed/simple;
-	bh=XXbDFIx29aMLjfpj/7JWyxtg4oa7yjJE0pcef4MAIFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cFP/v+OYD7FZ8SnOMTAJkA+tqg78Ku4Ea/tihebV3bl1bS9G12IAJLwWB+6amW2Ggnefs0a+ZrsCYbiK8w614Sreysl1s1OFZrMBYY6q3mcjIh+XxSbdEB23/AdPUuoGxIrOOe0Uaa9HKR2BLIprx+KAxTSsSNrsN5cLoQ3pfD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jefi2Hly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AA0C4CEDD;
-	Sat, 22 Mar 2025 15:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742658392;
-	bh=XXbDFIx29aMLjfpj/7JWyxtg4oa7yjJE0pcef4MAIFM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Jefi2Hly3SGho9fmr0TTAaVFe5z4i8RNqyWyBYx+qm30ORkfK2lLEqP3Q65fM4pC2
-	 hHrrLdNkbaxUj9J9ltyyDKG5eRzAtY39DejFabtFcDpScXcivboeoRhZWoQbL/Lcgl
-	 BUoD0jNvE8GcjvNUvPGTM5TF3MxdE3uRorHfXk6zDRP3fJRkEqWSSAI9XQf/FoVuCJ
-	 CO0lILjZK1V1nqlHLOowaWA0pX8wzaMkKWIxArUoCNOmOsjQAjrc3vBaKRB6yNaFHi
-	 5m3nuzJ7h+kfKPD+noWkKCU6VVN9QXZfzG50/YG1T83C25kbvt+XqYHgY4Vsx1n6qn
-	 6rRX9SM2Yp0NA==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30beedb99c9so29545351fa.3;
-        Sat, 22 Mar 2025 08:46:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnQ5IJqkhshfx1MS2taQ5Xj/NlBos4syWATwhEUfE+csvvJ2FZ+CxjecW1HUzDWVQqDvHxtTWJiOfWFtRz@vger.kernel.org, AJvYcCW25qzcbFaN/DY4mYsQNmRPxdZEN30B4y6USGrQlgYQhaIWrehg2k0muL28cdMg9+d9oiK3rb48aKYFJC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV6BZpglV17sfAmFj91mS5QkQLtDI5fCpvPPiluVvvpqiAtjwl
-	f8IGtbQyC8e90YPO5URZ6KZvDGiM2ejSsoeS4LQYNng7eHI6S23xu8ro9jyX1GYgVMtWb8bU7OJ
-	diOD0ckn4qGqfXsDjhcCXI3sgIio=
-X-Google-Smtp-Source: AGHT+IG4OpWVkpTPVkIM5P/6i78csCRcHirWW0I4sYThZn2lb6mP6HgI/MUCcqw/j8bpulugWirtQLNT8OFaGeePHmg=
-X-Received: by 2002:a05:6512:31c3:b0:549:9044:94ac with SMTP id
- 2adb3069b0e04-54ad648ee45mr3060451e87.23.1742658390836; Sat, 22 Mar 2025
- 08:46:30 -0700 (PDT)
+	s=arc-20240116; t=1742658505; c=relaxed/simple;
+	bh=VBkmpeQ7g9OmfYDFzv64N3Z6kRDpYLs+wsHhcnMPoDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GORP+g5wTaqc7DEsmHrxLEzuZUqLTGRcaKxED05yxNfaIRlrSTYN/G7jYyYBSFjlPw212lzmDtQf/ht4x8wh4RldcqfNoUpyJoMZxrd4hUKqnmifAUs5UTcnHiPaQ9Fvv5Yi2fZ+WhVVYsDU/OorIDpjkUgFVbmqmaC5QTW8EDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oyoyh6Fs; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=xpIbc3XOZFI1mfYHn62nlUutMFubuOBIPr/N/KynrOM=;
+	b=oyoyh6Fst9UhsbXoiUQriRACoandjqLLSw3hqZF0eMk6iLeycTPr8WxMnl5/KU
+	yKmHV0r9eem7k5L8o2oxPuslIhn2ssSwHsHpVq2xRmvuzd8bR/NJmYIhI3z+YdOT
+	TWuztLnXU1ugjck/gkgp1WVJHv2UTrTTHHtJc37wBuBBg=
+Received: from [192.168.71.89] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3TJeG295nDAOOBA--.59311S2;
+	Sat, 22 Mar 2025 23:47:19 +0800 (CST)
+Message-ID: <e6e808b6-302b-4f3e-ad2d-5f9c4dce7394@163.com>
+Date: Sat, 22 Mar 2025 23:47:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311-moddesc-error-v1-1-79adedf48d0e@oss.qualcomm.com> <CAK7LNASYFEFFbnqwDuJNf4ngU9uLavJuQqknOimpYeAeHyk1zQ@mail.gmail.com>
-In-Reply-To: <CAK7LNASYFEFFbnqwDuJNf4ngU9uLavJuQqknOimpYeAeHyk1zQ@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 23 Mar 2025 00:45:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARi0gF9dr+bU8nhovBWygsghB7CD_pWUgb3KBH4C1StyQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jro2ostLXtsJURSYO2vWefMV__2XA8fEQYnTYnNEZwzeN5B1j6WacESAyA
-Message-ID: <CAK7LNARi0gF9dr+bU8nhovBWygsghB7CD_pWUgb3KBH4C1StyQ@mail.gmail.com>
-Subject: Re: [PATCH] script: modpost: require a MODULE_DESCRIPTION()
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Arnd Bergmann <arnd@kernel.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 13, 2025 at 9:34=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Wed, Mar 12, 2025 at 4:49=E2=80=AFAM Jeff Johnson
-> <jeff.johnson@oss.qualcomm.com> wrote:
-> >
-> > Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-> > description is missing"), a module without a MODULE_DESCRIPTION() has
-> > resulted in a warning with make W=3D1. Since that time, all known
-> > instances of this issue have been fixed. Therefore, now make it an
-> > error if a MODULE_DESCRIPTION() is not present.
-> >
-> > Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-> > ---
-> > did my treewide cleanup for v6.11, Arnd had a few more stragglers that
-> > he was going to fix. I hope that by posting, some of the 0-day bots
-> > will pick it up and hopefully provide some feedback.
->
->
-> I pushed this patch to a separate branch,
-> so that 0day bot can compile-test it.
->
-> If there is no error reported, I will move it to
-> the for-next branch.
-
-I have not got any build error report.
-Moved to for-next.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 1/4] PCI: Introduce generic capability search functions
+To: Lukas Wunner <lukas@wunner.de>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250321163803.391056-1-18255117159@163.com>
+ <20250321163803.391056-2-18255117159@163.com> <Z92cgXEGwgYD2gau@wunner.de>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <Z92cgXEGwgYD2gau@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3TJeG295nDAOOBA--.59311S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xw47WFW8ZFWkZFW7Cr43Awb_yoWxtF4DpF
+	ZYy34fCF18JF4avanIv3W8Ka43Xan7J3yUJ397GwnxZF17u3W7u3sFka4rtF17Ar47Xr15
+	tF45t3Z5CF1DJ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3-B_UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhEYo2fe2DI2wAAAs1
 
 
 
---=20
-Best Regards
-Masahiro Yamada
+On 2025/3/22 01:06, Lukas Wunner wrote:
+> On Sat, Mar 22, 2025 at 12:38:00AM +0800, Hans Zhang wrote:
+>> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
+>> duplicate logic for scanning PCI capability lists. This creates
+>> maintenance burdens and risks inconsistencies.
+>>
+>> To resolve this:
+>>
+>> Add pci_host_bridge_find_*capability() in drivers/pci/pci.c, accepting
+>> controller-specific read functions and device data as parameters.
+> [...]
+>>   drivers/pci/pci.c   | 86 +++++++++++++++++++++++++++++++++++++++++++++
+> 
+> Please put this in a .c file which is only compiled and linked if
+> one of the controller drivers using those new helpers is enabled
+> in .config.
+> 
+> If you put the helpers in drivers/pci/pci.c, they unnecessarily
+> enlarge the kernel's .text section even if it's known already
+> at compile time that they're never going to be used (e.g. on x86).
+> 
+
+Hi Lukas,
+
+Thanks your for reply. Increasing the size of the .text section was not 
+my intention. I see what you mean.
+
+
+> You could put them in drivers/pci/controller/pci-host-common.c
+> and then select PCI_HOST_COMMON for each driver using them.
+> Or put them in a separate completely new file.
+> 
+
+
+I add a drivers/pci/controller/pci-host-helpers.c file, how do you like 
+it? Below, I have rearranged the patch, please kindly review it, thank 
+you very much.
+
+> 
+>>   include/linux/pci.h | 16 ++++++++-
+> 
+> Helpers that are only used internally in the PCI core should be
+> declared in drivers/pci/pci.h.  I'd assume this also applies to
+> helpers used by controller drivers.
+> 
+
+Will change.
+
+> Thanks,
+> 
+> Lukas
+
+Next version patch:
+
+  drivers/pci/controller/Kconfig            | 16 ++++
+  drivers/pci/controller/Makefile           |  1 +
+  drivers/pci/controller/pci-host-helpers.c | 98 +++++++++++++++++++++++
+  drivers/pci/pci.h                         |  7 ++
+  4 files changed, 122 insertions(+)
+  create mode 100644 drivers/pci/controller/pci-host-helpers.c
+
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index 9800b7681054..662c775999a1 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -132,6 +132,22 @@ config PCI_HOST_GENERIC
+  	  Say Y here if you want to support a simple generic PCI host
+  	  controller, such as the one emulated by kvmtool.
+
++config PCI_HOST_HELPERS
++ 	bool "PCI Host Controller Helper Functions"
++ 	help
++	  This provides common infrastructure for PCI host controller drivers to
++	  handle PCI capability scanning and other shared operations. The helper
++	  functions eliminate code duplication across controller drivers.
++
++	  These functions are used by PCI controller drivers that need to scan
++	  PCI capabilities using controller-specific access methods (e.g. when
++	  the controller is behind a non-standard configuration space).
++
++	  If you are using any PCI host controller drivers that require these
++	  helpers (such as DesignWare, Cadence, etc), this will be
++	  automatically selected. Say N unless you are developing a custom PCI
++	  host controller driver.
++
+  config PCIE_HISI_ERR
+  	depends on ACPI_APEI_GHES && (ARM64 || COMPILE_TEST)
+  	bool "HiSilicon HIP PCIe controller error handling driver"
+diff --git a/drivers/pci/controller/Makefile 
+b/drivers/pci/controller/Makefile
+index 038ccbd9e3ba..e80091eb7597 100644
+--- a/drivers/pci/controller/Makefile
++++ b/drivers/pci/controller/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_PCIE_RCAR_HOST) += pcie-rcar.o 
+pcie-rcar-host.o
+  obj-$(CONFIG_PCIE_RCAR_EP) += pcie-rcar.o pcie-rcar-ep.o
+  obj-$(CONFIG_PCI_HOST_COMMON) += pci-host-common.o
+  obj-$(CONFIG_PCI_HOST_GENERIC) += pci-host-generic.o
++obj-$(CONFIG_PCI_HOST_HELPERS) += pci-host-helpers.o
+  obj-$(CONFIG_PCI_HOST_THUNDER_ECAM) += pci-thunder-ecam.o
+  obj-$(CONFIG_PCI_HOST_THUNDER_PEM) += pci-thunder-pem.o
+  obj-$(CONFIG_PCIE_XILINX) += pcie-xilinx.o
+diff --git a/drivers/pci/controller/pci-host-helpers.c 
+b/drivers/pci/controller/pci-host-helpers.c
+new file mode 100644
+index 000000000000..cd261a281c60
+--- /dev/null
++++ b/drivers/pci/controller/pci-host-helpers.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PCI Host Controller Helper Functions
++ *
++ * Copyright (C) 2025 Hans Zhang
++ *
++ * Author: Hans Zhang <18255117159@163.com>
++ */
++
++#include <linux/pci.h>
++
++#include "../pci.h"
++
++/*
++ * These interfaces resemble the pci_find_*capability() interfaces, but 
+these
++ * are for configuring host controllers, which are bridges *to* PCI 
+devices but
++ * are not PCI devices themselves.
++ */
++static u8 __pci_host_bridge_find_next_cap(void *priv,
++					  pci_host_bridge_read_cfg read_cfg,
++					  u8 cap_ptr, u8 cap)
++{
++	u8 cap_id, next_cap_ptr;
++	u16 reg;
++
++	if (!cap_ptr)
++		return 0;
++
++	reg = read_cfg(priv, cap_ptr, 2);
++	cap_id = (reg & 0x00ff);
++
++	if (cap_id > PCI_CAP_ID_MAX)
++		return 0;
++
++	if (cap_id == cap)
++		return cap_ptr;
++
++	next_cap_ptr = (reg & 0xff00) >> 8;
++	return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_ptr,
++					       cap);
++}
++
++u8 pci_host_bridge_find_capability(void *priv,
++				   pci_host_bridge_read_cfg read_cfg, u8 cap)
++{
++	u8 next_cap_ptr;
++	u16 reg;
++
++	reg = read_cfg(priv, PCI_CAPABILITY_LIST, 2);
++	next_cap_ptr = (reg & 0x00ff);
++
++	return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_ptr,
++					       cap);
++}
++EXPORT_SYMBOL_GPL(pci_host_bridge_find_capability);
++
++static u16 pci_host_bridge_find_next_ext_capability(
++	void *priv, pci_host_bridge_read_cfg read_cfg, u16 start, u8 cap)
++{
++	u32 header;
++	int ttl;
++	int pos = PCI_CFG_SPACE_SIZE;
++
++	/* minimum 8 bytes per capability */
++	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
++
++	if (start)
++		pos = start;
++
++	header = read_cfg(priv, pos, 4);
++	/*
++	 * If we have no capabilities, this is indicated by cap ID,
++	 * cap version and next pointer all being 0.
++	 */
++	if (header == 0)
++		return 0;
++
++	while (ttl-- > 0) {
++		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
++			return pos;
++
++		pos = PCI_EXT_CAP_NEXT(header);
++		if (pos < PCI_CFG_SPACE_SIZE)
++			break;
++
++		header = read_cfg(priv, pos, 4);
++	}
++
++	return 0;
++}
++
++u16 pci_host_bridge_find_ext_capability(void *priv,
++					pci_host_bridge_read_cfg read_cfg,
++					u8 cap)
++{
++	return pci_host_bridge_find_next_ext_capability(priv, read_cfg, 0, cap);
++}
++EXPORT_SYMBOL_GPL(pci_host_bridge_find_ext_capability);
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 01e51db8d285..8d1c919cbfef 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -1034,4 +1034,11 @@ void pcim_release_region(struct pci_dev *pdev, 
+int bar);
+  	(PCI_CONF1_ADDRESS(bus, dev, func, reg) | \
+  	 PCI_CONF1_EXT_REG(reg))
+
++typedef u32 (*pci_host_bridge_read_cfg)(void *priv, int where, int size);
++u8 pci_host_bridge_find_capability(void *priv,
++				   pci_host_bridge_read_cfg read_cfg, u8 cap);
++u16 pci_host_bridge_find_ext_capability(void *priv,
++					pci_host_bridge_read_cfg read_cfg,
++					u8 cap);
++
+  #endif /* DRIVERS_PCI_H */
+
+
+Best regards,
+Hans
+
 
