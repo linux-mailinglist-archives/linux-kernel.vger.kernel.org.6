@@ -1,945 +1,615 @@
-Return-Path: <linux-kernel+bounces-572175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85DAA6C7A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:00:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D630EA6C7A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065063B82A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2646E1897419
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 05:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AEC149C7D;
-	Sat, 22 Mar 2025 05:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D1F15748F;
+	Sat, 22 Mar 2025 05:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N1vNZlC9"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="c4AsMJXE"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7F02E339B
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 04:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742619599; cv=fail; b=VLHpsGKUS1Fsgtuldt87TwSTCmybE/l5V91766Wtgpb29OgTYwQKVGhBPqfg28JdKSXwfVZrI9tGaOgCm3fCRduQ4JavGelsc+yfHwDocrHuHTOHHwLbZfw0McfaEkRXfeetQy4Mm3Nd5WJpxafwO1/RugPHbJOpm4ZbekOia6c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742619599; c=relaxed/simple;
-	bh=MjiFSN/FqKUyDpK1AF1E9D6srH49KsSze62b+qzoUTo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BHTdewtxGWchyx/FD6O3ZrVCBcg48VNV75pwEXSoTiaCVqFCHFYD8jJ9iMjcC2O5HrcJgzoH5idNNShZ15YDJ5jZHElOAlZ41yW0e+8aKJOC8CofsMg+gZ66ZbGFZHAkOtHo0dlArs+UKb81bF0sB5DzE0TJk/btzDP2nd0iy0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N1vNZlC9; arc=fail smtp.client-ip=40.107.237.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E9AW2XffbXUuwC87qT+aPOi7/FbefxBpD53NwfJXbdqwwtOnNc7H8YwfEtMTNBZI/M6grkYz9pHntC8HdVVG4l3e8Lpg+LTqg27rC0sXnGhETxJ20uHP/GCPP8EGlupWH0eumS3fEV0QIhj+ZP1YvwobEPyYH57ny82lm4qtzW+jXW0yT2hmCMv9Pzohmttp4pFDJMBYNN8ahfL6A9v1bARd3sTV92RNVpKMUIcC9mGaWzsE49vsTh9KEgl44uYwg9E7cNS9OdTArNKjqf8XGrOzfeV9QJuigBER+/IvHnv0EkK+ydBbire/v2lC9p0kD9kkHssslkqrYsay08jBOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H7ju9KBUFHPTIvfz0kWMhucfM0fHM+UAf6I1WyG+GdE=;
- b=LvaVNchKjyX65CThIZXroX1ZJYvZBjghT95WVKPQEtSS8YzP4VVwxwUYmKfbwoEOIpOr9arjY7JjwoNsE2GK7IdbqMY/YT26MqEOwuvPMIIiDjhOKRzd5NdOvAZP1aSmyAFA3qL7BN/oH3aoELhOsYnVBKiHu+tfB+/ZTPZoKztt0/abwzHyL0FXoqEr882Z3R3Q6TGgBHA0pLZPnMG0or+M1qbkZQnLsYcRj+Hz+Xo7qvihY68Q+jqlTXfae8buxRuu7ehZDDZZzYEx3pomQDR8vyKZqMeGwqKykfG6a/GeGWK8rgOL2s0xz4gE+R6p39vlawaJpHvOwNAhclE8lA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H7ju9KBUFHPTIvfz0kWMhucfM0fHM+UAf6I1WyG+GdE=;
- b=N1vNZlC9+Qa/rwO2WaDAhY8Rvc5B1cxPjh3PEX2qbPRQZoS1Z2ERiLclBYG2O2DaFeph8kSe7sYzKiNk+G2+6XCuDvPX6PqhDSjSh5fNq7CIud+KnqaW0uKEo4/iuwTDtkLL3YCu8ceAufi7YEcNOU3P12mRQ7TA7IIVcmVlUsU=
-Received: from CH0PR03CA0381.namprd03.prod.outlook.com (2603:10b6:610:119::16)
- by PH7PR12MB9256.namprd12.prod.outlook.com (2603:10b6:510:2fe::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.37; Sat, 22 Mar
- 2025 04:59:48 +0000
-Received: from DS3PEPF000099D8.namprd04.prod.outlook.com
- (2603:10b6:610:119:cafe::db) by CH0PR03CA0381.outlook.office365.com
- (2603:10b6:610:119::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.37 via Frontend Transport; Sat,
- 22 Mar 2025 04:59:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099D8.mail.protection.outlook.com (10.167.17.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Sat, 22 Mar 2025 04:59:47 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Mar
- 2025 23:59:46 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Mar
- 2025 23:59:46 -0500
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 21 Mar 2025 23:59:45 -0500
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<jacek.lawrynowicz@linux.intel.com>, <mario.limonciello@amd.com>,
-	<dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<king.tam@amd.com>
-Subject: [PATCH V2] accel/amdxdna: Add BO import and export
-Date: Fri, 21 Mar 2025 21:59:06 -0700
-Message-ID: <20250322045906.1438227-1-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2C07081C;
+	Sat, 22 Mar 2025 05:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742620075; cv=none; b=nkBbLmDM/vZ/oQI381T4Gz5R3KWA69UsmwL7rZxISm8ekbWHBPQiWtsW88lTq41PFmzw/8kf//zsqFmiGvKGBgBzTObZR6gcXof1PaA2zE8E18lN4yjXV64dboB2h4DhZgi7PwUiTKKAyPsAhzc41y0U0ftkW3RbJEed0PsDnoA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742620075; c=relaxed/simple;
+	bh=oTtw1uPDA28VnKk/IBc3M14aPhWw9M3mOUJIQ0eozVc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HO7zJkvx/9z9yzEbYidb9oyXOJlwcyWIebEjldPUNnyIcpgpI9uxP+HhMJxbyfWXHMEioS6tnaaDaf1SpC8Ao7py1ND5fKgUjbRaL8kw9pouR1PqnbZMTNoZSaq0Zt/cRYjYf+J3aIy+qG4ymGqIiSzvgGy04g1y8uj/ktJB7Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=c4AsMJXE; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 39B2A2E03D57;
+	Sat, 22 Mar 2025 07:07:48 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742620069;
+	bh=oXCYoZ9sU/Uw8rnQ346WsotMUZ8vIYxHwgTQmnnKbuQ=;
+	h=Received:From:Subject:To;
+	b=c4AsMJXEavh19p1BfoJjAfgc96IndlFM9jsWAMzwCbJhCheu3jQ8xbIR5FwA+IfCI
+	 x8dRrhfuZB/A1XbIJgGjFVjqHkY0XSL5eZ1j7AY1tkWmaaiBLrIyn90EKmWokvzRFv
+	 wwAyLjVgRAywSa6Ve1hoxX+33NYYC9Dw7bNTKMaI=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.167.49) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f49.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lf1-f49.google.com with SMTP id
+ 2adb3069b0e04-5498d2a8b89so3026584e87.1;
+        Fri, 21 Mar 2025 22:07:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVFdc1zXsZ2SCEa9KuW0InyLvOgJaEzvMOz8/uFekHW6hKUvvGSkDCd0jgkkUahEX9onnekeRhJdswgquSuEV6NvD8ayA==@vger.kernel.org,
+ AJvYcCXh6xS3N02As9rv+emBnys8gmq0GCTzyFVxxmoa0SGvPj70xHuI2zkK1u4XDZ8YcH39n36AMV5p/ql+MQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/vBEUiwdfXiU6f8bC2sdGjjmG+fsU/A4NRDiSdEqfhdUtUJnB
+	Ss/aHFpywnCbhpdU2Szi8N4aRXzklPqsg7BUY54gNs45a32A0LPrwTIQ1wcShYRQHsfCtxFonBH
+	6HINFOGG4TulV3kWv4bN6tNQHZRg=
+X-Google-Smtp-Source: 
+ AGHT+IHq07kEYBSK9KGrVufS/h1yon3RJeqBPQH+R6Eycq6JKwzJFK0rdOoH6f1nve/YW5EV0H/0p/3yj0yf9s1OjP8=
+X-Received: by 2002:ac2:568d:0:b0:549:8c36:592 with SMTP id
+ 2adb3069b0e04-54ad647b545mr2181101e87.5.1742620067214; Fri, 21 Mar 2025
+ 22:07:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D8:EE_|PH7PR12MB9256:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33dc1d51-0ffd-45a1-cda9-08dd68fe5eb1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CM+tx0wAaRccUjzxSzSyrYz6lEaSnb/WeNnxJfcbNV5trRYNp3f0FpyImoq0?=
- =?us-ascii?Q?RU9pbd16Guyu+3TdIHDx/jYjlXHYtrYQqJPxXIoQOpUQtlssM56vJ5fv+V+F?=
- =?us-ascii?Q?wck4WXQrY9MKymfZHd1+WqbGitOwn64hxzmQ7bjayG5Mbn3fjK5l8ZFVRLxo?=
- =?us-ascii?Q?zJksxxvurnSB0jH9roR951OExWHImsV4fntC4o4LJH59sBJFy/Yv2JJsAOiV?=
- =?us-ascii?Q?AilRydlCVSE6ZUmHYurmcZ4N0fj6sk/3YDPzesfYirmDIghIqcKBMzBHIWQE?=
- =?us-ascii?Q?X+U98MDp0seE9TORwYoGInX5Ax4GlMkz2bU2qdwqGrIXyUkXBoHw5DKyLJk8?=
- =?us-ascii?Q?riFxxSQAUI9hjPEqq4LBN8T4H3CimbH0ctZC12UgaTdtvJWqaBnrjc2YixhQ?=
- =?us-ascii?Q?LpBb8cq6KwzT/KxsS14GUTNsyjFy7N5ct1JCRHlNf94vk4PYkb0VodUVdDnb?=
- =?us-ascii?Q?TDWMD8RwnGwJaQcHXQnxgFuBJLMbIUFiItaBRlERCYMeKjyGE015Q5NBMh5L?=
- =?us-ascii?Q?wbhFKXVJiCuxolUVewSPjQz+0bNuuTsv0BVg33TKYwF4Aezo45pgQmjpHru6?=
- =?us-ascii?Q?nCJZcWbBRxyu84RkFLYsgaPGLYMCp7nR5u4kD2oLH9K4WTcTlNgbu2ihn3Fd?=
- =?us-ascii?Q?0YipnqmyZs9of07aEKiNRXXyj15ek556HVrOgW0q+7HUyAJZzuVM5pv7qLdQ?=
- =?us-ascii?Q?bGtKEeS9QpTjt+blOswpJ/ncKVZuI3++K9lpWU+IpsC1/eliuOooSM2DQzd2?=
- =?us-ascii?Q?izKy6pPXESvMX4oUwZ1CD80aFp+AygZAUuLMl44QOqxANP3UZ7XH39c/ZFF9?=
- =?us-ascii?Q?AP78TBZNmt78bL4+qkG3/SMgHlZMYFzfc1HUmHYhuqnfcWGEf5un3+ExXU4E?=
- =?us-ascii?Q?RnHB+8s3asWsSfuZf79m5fnssr9PpxGrW41ZL8EErCMULNBQATrwt9cDrPOT?=
- =?us-ascii?Q?pcrnZMcj+Ur5+JDKXEaRN7rQEl3oTExNUufdUgs8CcWlbtPgHY3PNOaVuzBh?=
- =?us-ascii?Q?ZpfEByoauhJ9IcmxwTLy5ktWkC4TEGWCEWwc9qaFQwcdnLERaSHbH1swfAco?=
- =?us-ascii?Q?K7flzjoZ6QPteKB2OJc1KmcV2nMVZKza2FWluLw1N3YqRoeoJe2jJWfYSaSm?=
- =?us-ascii?Q?+5evgLcETu8ifMsMIsgTcKhzb9KT7seUMEP2lZDsZtdVQ9XD3HJTcvp1ZsnL?=
- =?us-ascii?Q?H/79swk9BNnFECj72S7/XaAC3Ch2XzL9jqvFO4Jv61DZ0etInrUyFpHJyv39?=
- =?us-ascii?Q?TFE6T35YGuKy0lLJ5D+TvvmgXrp9cq+6kZ5XmoX/CC+jJ5DkQDHIeT1sSE+q?=
- =?us-ascii?Q?xS3FtVPtC7zyhnXf/gQF/u5q61D1dHAJXVOeGlG3f1FZeZ2SL/98zO4+CIoR?=
- =?us-ascii?Q?IJQ4QuVm8dmkWgpcmgPHKSc2ewi1ML9nBuMTbf33aBTz4JI5pqQFnfRAC0PN?=
- =?us-ascii?Q?ukEvVYUadHCGG8lyNE0vzcrBK/xej8uR3IvzljxvLmBGrJHWArY6YyDOOwFf?=
- =?us-ascii?Q?xkNDmi2y99TYHwQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2025 04:59:47.5233
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33dc1d51-0ffd-45a1-cda9-08dd68fe5eb1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D8.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9256
+References: <20250321035106.26752-1-luke@ljones.dev>
+ <20250321035106.26752-3-luke@ljones.dev>
+ <CAGwozwFxbzpHhmWGAjWFB49Mc5Pdo4Xj76kghB-D_b5a2c7s_w@mail.gmail.com>
+ <81c9f2a5-a875-442a-8890-be39c8d416c3@ljones.dev>
+In-Reply-To: <81c9f2a5-a875-442a-8890-be39c8d416c3@ljones.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sat, 22 Mar 2025 06:07:36 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwE-GAjXnR-anoeLa94TrS02U8PQQEAC+BB6ZE06+KSJmQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr1FbomLcY9uvYnlgUBsdZdaKPteMHyEMHX94vaiaWsASAPg20fz9sP1rg
+Message-ID: 
+ <CAGwozwE-GAjXnR-anoeLa94TrS02U8PQQEAC+BB6ZE06+KSJmQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] platform/x86: asus-wmi: Refactor Ally
+ suspend/resume
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
+	mario.limonciello@amd.com
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174262006864.18418.3788550014090072063@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Add amdxdna_gem_prime_export() and amdxdna_gem_prime_import() for BO
-import and export. Register mmu notifier for imported BO as well. When
-MMU_NOTIFIER_UNMAP event is received, queue work to remove the notifier.
+Let me reply to this real quick so you have something to work on. The
+rest I can reply in a few hours
 
-The same BO could be mapped multiple times if it is exported and imported
-by an application. Use a link list to track VMAs the BO been mapped.
+On Sat, 22 Mar 2025 at 01:33, Luke D. Jones <luke@ljones.dev> wrote:
+>
+>
+> On 22/03/25 07:55, Antheas Kapenekakis wrote:
+> > This series would benefit from some pr_info as it does important stuff
+> > for bug reporting. I had to add some myself.
+>
+> I did have some but was asked to remove it.
+>
+> > On Fri, 21 Mar 2025 at 04:51, Luke Jones <luke@ljones.dev> wrote:
+> >>
+> >> From: "Luke D. Jones" <luke@ljones.dev>
+> >>
+> >> Adjust how the CSEE direct call hack is used.
+> >>
+> >> The results of months of testing combined with help from ASUS to
+> >> determine the actual cause of suspend issues has resulted in this
+> >> refactoring which immensely improves the reliability for devices which
+> >> do not have the following minimum MCU FW version:
+> >> - ROG Ally X: 313
+> >> - ROG Ally 1: 319
+> >>
+> >> For MCU FW versions that match the minimum or above the CSEE hack is
+> >> disabled and mcu_powersave set to on by default as there are no
+> >> negatives beyond a slightly slower device reinitialization due to the
+> >> MCU being powered off.
+> >>
+> >> As this is set only at module load time, it is still possible for
+> >> mcu_powersave sysfs attributes to change it at runtime if so desired.
+> >>
+> >> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> >> ---
+> >>   drivers/hid/hid-asus.c                     |   4 +
+> >>   drivers/platform/x86/asus-wmi.c            | 130 ++++++++++++++-------
+> >>   include/linux/platform_data/x86/asus-wmi.h |  13 +++
+> >>   3 files changed, 108 insertions(+), 39 deletions(-)
+> >>
+> >> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> >> index 599c836507ff..66bae5cea4f9 100644
+> >> --- a/drivers/hid/hid-asus.c
+> >> +++ b/drivers/hid/hid-asus.c
+> >> @@ -624,6 +624,9 @@ static void validate_mcu_fw_version(struct hid_device *hdev, int idProduct)
+> >>                  hid_warn(hdev,
+> >>                          "The MCU firmware version must be %d or greater to avoid issues with suspend.\n",
+> >>                          min_version);
+> >> +       } else {
+> >> +               set_ally_mcu_hack(false);
+> >> +               set_ally_mcu_powersave(true);
+> >>          }
+> >>   }
+> >>
+> >> @@ -1430,4 +1433,5 @@ static struct hid_driver asus_driver = {
+> >>   };
+> >>   module_hid_driver(asus_driver);
+> >>
+> >> +MODULE_IMPORT_NS("ASUS_WMI");
+> >>   MODULE_LICENSE("GPL");
+> >> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> >> index 38ef778e8c19..10936a091c42 100644
+> >> --- a/drivers/platform/x86/asus-wmi.c
+> >> +++ b/drivers/platform/x86/asus-wmi.c
+> >> @@ -142,16 +142,20 @@ module_param(fnlock_default, bool, 0444);
+> >>   #define ASUS_MINI_LED_2024_STRONG      0x01
+> >>   #define ASUS_MINI_LED_2024_OFF         0x02
+> >>
+> >> -/* Controls the power state of the USB0 hub on ROG Ally which input is on */
+> >>   #define ASUS_USB0_PWR_EC0_CSEE "\\_SB.PCI0.SBRG.EC0.CSEE"
+> >> -/* 300ms so far seems to produce a reliable result on AC and battery */
+> >> -#define ASUS_USB0_PWR_EC0_CSEE_WAIT 1500
+> >> +/*
+> >> + * The period required to wait after screen off/on/s2idle.check in MS.
+> >> + * Time here greatly impacts the wake behaviour. Used in suspend/wake.
+> >> + */
+> >> +#define ASUS_USB0_PWR_EC0_CSEE_WAIT    600
+> >> +#define ASUS_USB0_PWR_EC0_CSEE_OFF     0xB7
+> >> +#define ASUS_USB0_PWR_EC0_CSEE_ON      0xB8
+> >>
+> >>   static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
+> >>
+> >>   static int throttle_thermal_policy_write(struct asus_wmi *);
+> >>
+> >> -static const struct dmi_system_id asus_ally_mcu_quirk[] = {
+> >> +static const struct dmi_system_id asus_rog_ally_device[] = {
+> >>          {
+> >>                  .matches = {
+> >>                          DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> >> @@ -274,9 +278,6 @@ struct asus_wmi {
+> >>          u32 tablet_switch_dev_id;
+> >>          bool tablet_switch_inverted;
+> >>
+> >> -       /* The ROG Ally device requires the MCU USB device be disconnected before suspend */
+> >> -       bool ally_mcu_usb_switch;
+> >> -
+> >>          enum fan_type fan_type;
+> >>          enum fan_type gpu_fan_type;
+> >>          enum fan_type mid_fan_type;
+> >> @@ -335,6 +336,9 @@ struct asus_wmi {
+> >>          struct asus_wmi_driver *driver;
+> >>   };
+> >>
+> >> +/* Global to allow setting externally without requiring driver data */
+> >> +static bool use_ally_mcu_hack;
+> >> +
+> >>   /* WMI ************************************************************************/
+> >>
+> >>   static int asus_wmi_evaluate_method3(u32 method_id,
+> >> @@ -549,7 +553,7 @@ static int asus_wmi_get_devstate(struct asus_wmi *asus, u32 dev_id, u32 *retval)
+> >>          return 0;
+> >>   }
+> >>
+> >> -static int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
+> >> +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
+> >>                                   u32 *retval)
+> >>   {
+> >>          return asus_wmi_evaluate_method(ASUS_WMI_METHODID_DEVS, dev_id,
+> >> @@ -1343,6 +1347,44 @@ static ssize_t nv_temp_target_show(struct device *dev,
+> >>   static DEVICE_ATTR_RW(nv_temp_target);
+> >>
+> >>   /* Ally MCU Powersave ********************************************************/
+> >> +
+> >> +/*
+> >> + * The HID driver needs to check MCU version and set this to false if the MCU FW
+> >> + * version is >= the minimum requirements. New FW do not need the hacks.
+> >> + */
+> >> +void set_ally_mcu_hack(bool enabled)
+> >> +{
+> >> +       use_ally_mcu_hack = enabled;
+> >> +       pr_debug("%s Ally MCU suspend quirk\n",
+> >> +                enabled ? "Enabled" : "Disabled");
+> >> +}
+> >> +EXPORT_SYMBOL_NS_GPL(set_ally_mcu_hack, "ASUS_WMI");
+> >> +
+> >> +/*
+> >> + * mcu_powersave should be enabled always, as it is fixed in MCU FW versions:
+> >> + * - v313 for Ally X
+> >> + * - v319 for Ally 1
+> >> + * The HID driver checks MCU versions and so should set this if requirements match
+> >> + */
+> >> +void set_ally_mcu_powersave(bool enabled)
+> >
+> > I just AB tested setting powersave on boot and it seems the behavior
+> > is similar. Since this will only happen on new firmware, it should be
+> > OK even though I would rather distros use a udev rule. Note the MCU
+> > difference in the OG Ally might cause different behavior and there
+> > might be other smaller issues with longer term testing.
+>
+> I have both the OG, and the X so I've thoroughly tested both, and others
+> have tested also. I'm against the udev rule as IMO powersave should be
+> the default since it has such big powersaving benefits. The main issue
+> though is that it needs exposure in userspace in a way for users to
+> easily change it - if they run steamos or similar that won't happen so I
+> do prefer making it default in driver and let other distros handle it.
 
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/TODO              |   1 -
- drivers/accel/amdxdna/aie2_ctx.c        |  65 ++--
- drivers/accel/amdxdna/amdxdna_gem.c     | 397 +++++++++++++++++++-----
- drivers/accel/amdxdna/amdxdna_gem.h     |  22 +-
- drivers/accel/amdxdna/amdxdna_pci_drv.c |  11 +-
- drivers/accel/amdxdna/amdxdna_pci_drv.h |   2 +
- 6 files changed, 388 insertions(+), 110 deletions(-)
+The option is sticky so even without setting it it defers to the
+user's previous choice with windows. IMO it somewhat goes somewhat the
+other way. Because powersave affects suspend behavior (ie resume takes
+longer) and linux does not have a lockscreen, it is a lot more
+debateable. You also cause a flip flop in case the user does not want
+it, where it goes from false to true and that might cause issues as it
+is a sensitive attributte.
 
-diff --git a/drivers/accel/amdxdna/TODO b/drivers/accel/amdxdna/TODO
-index 5119bccd1917..ad8ac6e315b6 100644
---- a/drivers/accel/amdxdna/TODO
-+++ b/drivers/accel/amdxdna/TODO
-@@ -1,3 +1,2 @@
--- Add import and export BO support
- - Add debugfs support
- - Add debug BO support
-diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-index 00d215ac866e..e04549f64d69 100644
---- a/drivers/accel/amdxdna/aie2_ctx.c
-+++ b/drivers/accel/amdxdna/aie2_ctx.c
-@@ -758,27 +758,42 @@ int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *bu
- static int aie2_populate_range(struct amdxdna_gem_obj *abo)
- {
- 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
--	struct mm_struct *mm = abo->mem.notifier.mm;
--	struct hmm_range range = { 0 };
-+	struct amdxdna_umap *mapp;
- 	unsigned long timeout;
-+	struct mm_struct *mm;
-+	bool found;
- 	int ret;
- 
--	XDNA_INFO_ONCE(xdna, "populate memory range %llx size %lx",
--		       abo->mem.userptr, abo->mem.size);
--	range.notifier = &abo->mem.notifier;
--	range.start = abo->mem.userptr;
--	range.end = abo->mem.userptr + abo->mem.size;
--	range.hmm_pfns = abo->mem.pfns;
--	range.default_flags = HMM_PFN_REQ_FAULT;
-+	timeout = jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
-+again:
-+	found = false;
-+	down_write(&xdna->notifier_lock);
-+	list_for_each_entry(mapp, &abo->mem.umap_list, node) {
-+		if (mapp->invalid) {
-+			found = true;
-+			break;
-+		}
-+	}
- 
--	if (!mmget_not_zero(mm))
-+	if (!found) {
-+		abo->mem.map_invalid = false;
-+		up_write(&xdna->notifier_lock);
-+		return 0;
-+	}
-+	kref_get(&mapp->refcnt);
-+	up_write(&xdna->notifier_lock);
-+
-+	XDNA_DBG(xdna, "populate memory range %lx %lx",
-+		 mapp->vma->vm_start, mapp->vma->vm_end);
-+	mm = mapp->notifier.mm;
-+	if (!mmget_not_zero(mm)) {
-+		amdxdna_umap_put(mapp);
- 		return -EFAULT;
-+	}
- 
--	timeout = jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
--again:
--	range.notifier_seq = mmu_interval_read_begin(&abo->mem.notifier);
-+	mapp->range.notifier_seq = mmu_interval_read_begin(&mapp->notifier);
- 	mmap_read_lock(mm);
--	ret = hmm_range_fault(&range);
-+	ret = hmm_range_fault(&mapp->range);
- 	mmap_read_unlock(mm);
- 	if (ret) {
- 		if (time_after(jiffies, timeout)) {
-@@ -786,21 +801,27 @@ static int aie2_populate_range(struct amdxdna_gem_obj *abo)
- 			goto put_mm;
- 		}
- 
--		if (ret == -EBUSY)
-+		if (ret == -EBUSY) {
-+			amdxdna_umap_put(mapp);
- 			goto again;
-+		}
- 
- 		goto put_mm;
- 	}
- 
--	down_read(&xdna->notifier_lock);
--	if (mmu_interval_read_retry(&abo->mem.notifier, range.notifier_seq)) {
--		up_read(&xdna->notifier_lock);
-+	down_write(&xdna->notifier_lock);
-+	if (mmu_interval_read_retry(&mapp->notifier, mapp->range.notifier_seq)) {
-+		up_write(&xdna->notifier_lock);
-+		amdxdna_umap_put(mapp);
- 		goto again;
- 	}
--	abo->mem.map_invalid = false;
--	up_read(&xdna->notifier_lock);
-+	mapp->invalid = false;
-+	up_write(&xdna->notifier_lock);
-+	amdxdna_umap_put(mapp);
-+	goto again;
- 
- put_mm:
-+	amdxdna_umap_put(mapp);
- 	mmput(mm);
- 	return ret;
- }
-@@ -908,10 +929,6 @@ void aie2_hmm_invalidate(struct amdxdna_gem_obj *abo,
- 	struct drm_gem_object *gobj = to_gobj(abo);
- 	long ret;
- 
--	down_write(&xdna->notifier_lock);
--	abo->mem.map_invalid = true;
--	mmu_interval_set_seq(&abo->mem.notifier, cur_seq);
--	up_write(&xdna->notifier_lock);
- 	ret = dma_resv_wait_timeout(gobj->resv, DMA_RESV_USAGE_BOOKKEEP,
- 				    true, MAX_SCHEDULE_TIMEOUT);
- 	if (!ret || ret == -ERESTARTSYS)
-diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
-index 606433d73236..b145284bbe11 100644
---- a/drivers/accel/amdxdna/amdxdna_gem.c
-+++ b/drivers/accel/amdxdna/amdxdna_gem.c
-@@ -9,7 +9,10 @@
- #include <drm/drm_gem.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/gpu_scheduler.h>
-+#include <linux/dma-buf.h>
-+#include <linux/dma-direct.h>
- #include <linux/iosys-map.h>
-+#include <linux/pagemap.h>
- #include <linux/vmalloc.h>
- 
- #include "amdxdna_ctx.h"
-@@ -18,6 +21,8 @@
- 
- #define XDNA_MAX_CMD_BO_SIZE	SZ_32K
- 
-+MODULE_IMPORT_NS("DMA_BUF");
-+
- static int
- amdxdna_gem_insert_node_locked(struct amdxdna_gem_obj *abo, bool use_vmap)
- {
-@@ -55,57 +60,38 @@ amdxdna_gem_insert_node_locked(struct amdxdna_gem_obj *abo, bool use_vmap)
- 	return 0;
- }
- 
--static void amdxdna_gem_obj_free(struct drm_gem_object *gobj)
--{
--	struct amdxdna_dev *xdna = to_xdna_dev(gobj->dev);
--	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
--	struct iosys_map map = IOSYS_MAP_INIT_VADDR(abo->mem.kva);
--
--	XDNA_DBG(xdna, "BO type %d xdna_addr 0x%llx", abo->type, abo->mem.dev_addr);
--	if (abo->pinned)
--		amdxdna_gem_unpin(abo);
--
--	if (abo->type == AMDXDNA_BO_DEV) {
--		mutex_lock(&abo->client->mm_lock);
--		drm_mm_remove_node(&abo->mm_node);
--		mutex_unlock(&abo->client->mm_lock);
--
--		vunmap(abo->mem.kva);
--		drm_gem_object_put(to_gobj(abo->dev_heap));
--		drm_gem_object_release(gobj);
--		mutex_destroy(&abo->lock);
--		kfree(abo);
--		return;
--	}
--
--	if (abo->type == AMDXDNA_BO_DEV_HEAP)
--		drm_mm_takedown(&abo->mm);
--
--	drm_gem_vunmap_unlocked(gobj, &map);
--	mutex_destroy(&abo->lock);
--	drm_gem_shmem_free(&abo->base);
--}
--
--static const struct drm_gem_object_funcs amdxdna_gem_dev_obj_funcs = {
--	.free = amdxdna_gem_obj_free,
--};
--
- static bool amdxdna_hmm_invalidate(struct mmu_interval_notifier *mni,
- 				   const struct mmu_notifier_range *range,
- 				   unsigned long cur_seq)
- {
--	struct amdxdna_gem_obj *abo = container_of(mni, struct amdxdna_gem_obj,
--						   mem.notifier);
--	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
-+	struct amdxdna_umap *mapp = container_of(mni, struct amdxdna_umap, notifier);
-+	struct amdxdna_gem_obj *abo = mapp->abo;
-+	struct amdxdna_dev *xdna;
- 
--	XDNA_DBG(xdna, "Invalid range 0x%llx, 0x%lx, type %d",
--		 abo->mem.userptr, abo->mem.size, abo->type);
-+	xdna = to_xdna_dev(to_gobj(abo)->dev);
-+	XDNA_DBG(xdna, "Invalidating range 0x%lx, 0x%lx, type %d",
-+		 mapp->vma->vm_start, mapp->vma->vm_end, abo->type);
- 
- 	if (!mmu_notifier_range_blockable(range))
- 		return false;
- 
-+	down_write(&xdna->notifier_lock);
-+	abo->mem.map_invalid = true;
-+	mapp->invalid = true;
-+	mmu_interval_set_seq(&mapp->notifier, cur_seq);
-+	up_write(&xdna->notifier_lock);
-+
- 	xdna->dev_info->ops->hmm_invalidate(abo, cur_seq);
- 
-+	if (range->event == MMU_NOTIFY_UNMAP) {
-+		down_write(&xdna->notifier_lock);
-+		if (!mapp->unmapped) {
-+			queue_work(xdna->notifier_wq, &mapp->hmm_unreg_work);
-+			mapp->unmapped = true;
-+		}
-+		up_write(&xdna->notifier_lock);
-+	}
-+
- 	return true;
- }
- 
-@@ -113,102 +99,296 @@ static const struct mmu_interval_notifier_ops amdxdna_hmm_ops = {
- 	.invalidate = amdxdna_hmm_invalidate,
- };
- 
--static void amdxdna_hmm_unregister(struct amdxdna_gem_obj *abo)
-+static void amdxdna_hmm_unregister(struct amdxdna_gem_obj *abo,
-+				   struct vm_area_struct *vma)
- {
- 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
-+	struct amdxdna_umap *mapp;
-+
-+	down_read(&xdna->notifier_lock);
-+	list_for_each_entry(mapp, &abo->mem.umap_list, node) {
-+		if (!vma || mapp->vma == vma) {
-+			if (!mapp->unmapped) {
-+				queue_work(xdna->notifier_wq, &mapp->hmm_unreg_work);
-+				mapp->unmapped = true;
-+			}
-+			if (vma)
-+				break;
-+			break;
-+		}
-+	}
-+	up_read(&xdna->notifier_lock);
-+}
- 
--	if (!xdna->dev_info->ops->hmm_invalidate)
--		return;
-+static void amdxdna_umap_release(struct kref *ref)
-+{
-+	struct amdxdna_umap *mapp = container_of(ref, struct amdxdna_umap, refcnt);
-+	struct vm_area_struct *vma = mapp->vma;
-+	struct amdxdna_dev *xdna;
-+
-+	mmu_interval_notifier_remove(&mapp->notifier);
-+	if (is_import_bo(mapp->abo) && vma->vm_file && vma->vm_file->f_mapping)
-+		mapping_clear_unevictable(vma->vm_file->f_mapping);
-+
-+	xdna = to_xdna_dev(to_gobj(mapp->abo)->dev);
-+	down_write(&xdna->notifier_lock);
-+	list_del(&mapp->node);
-+	up_write(&xdna->notifier_lock);
-+
-+	kvfree(mapp->range.hmm_pfns);
-+	kfree(mapp);
-+}
-+
-+void amdxdna_umap_put(struct amdxdna_umap *mapp)
-+{
-+	kref_put(&mapp->refcnt, amdxdna_umap_release);
-+}
- 
--	mmu_interval_notifier_remove(&abo->mem.notifier);
--	kvfree(abo->mem.pfns);
--	abo->mem.pfns = NULL;
-+static void amdxdna_hmm_unreg_work(struct work_struct *work)
-+{
-+	struct amdxdna_umap *mapp = container_of(work, struct amdxdna_umap,
-+						 hmm_unreg_work);
-+
-+	amdxdna_umap_put(mapp);
- }
- 
--static int amdxdna_hmm_register(struct amdxdna_gem_obj *abo, unsigned long addr,
--				size_t len)
-+static int amdxdna_hmm_register(struct amdxdna_gem_obj *abo,
-+				struct vm_area_struct *vma)
- {
- 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
-+	unsigned long len = vma->vm_end - vma->vm_start;
-+	unsigned long addr = vma->vm_start;
-+	struct amdxdna_umap *mapp;
- 	u32 nr_pages;
- 	int ret;
- 
- 	if (!xdna->dev_info->ops->hmm_invalidate)
- 		return 0;
- 
--	if (abo->mem.pfns)
--		return -EEXIST;
-+	mapp = kzalloc(sizeof(*mapp), GFP_KERNEL);
-+	if (!mapp)
-+		return -ENOMEM;
- 
- 	nr_pages = (PAGE_ALIGN(addr + len) - (addr & PAGE_MASK)) >> PAGE_SHIFT;
--	abo->mem.pfns = kvcalloc(nr_pages, sizeof(*abo->mem.pfns),
--				 GFP_KERNEL);
--	if (!abo->mem.pfns)
--		return -ENOMEM;
-+	mapp->range.hmm_pfns = kvcalloc(nr_pages, sizeof(*mapp->range.hmm_pfns),
-+					GFP_KERNEL);
-+	if (!mapp->range.hmm_pfns) {
-+		ret = -ENOMEM;
-+		goto free_map;
-+	}
- 
--	ret = mmu_interval_notifier_insert_locked(&abo->mem.notifier,
-+	ret = mmu_interval_notifier_insert_locked(&mapp->notifier,
- 						  current->mm,
- 						  addr,
- 						  len,
- 						  &amdxdna_hmm_ops);
- 	if (ret) {
- 		XDNA_ERR(xdna, "Insert mmu notifier failed, ret %d", ret);
--		kvfree(abo->mem.pfns);
-+		goto free_pfns;
- 	}
--	abo->mem.userptr = addr;
- 
-+	mapp->range.notifier = &mapp->notifier;
-+	mapp->range.start = vma->vm_start;
-+	mapp->range.end = vma->vm_end;
-+	mapp->range.default_flags = HMM_PFN_REQ_FAULT;
-+	mapp->vma = vma;
-+	mapp->abo = abo;
-+	kref_init(&mapp->refcnt);
-+
-+	if (abo->mem.userptr == AMDXDNA_INVALID_ADDR)
-+		abo->mem.userptr = addr;
-+	INIT_WORK(&mapp->hmm_unreg_work, amdxdna_hmm_unreg_work);
-+	if (is_import_bo(abo) && vma->vm_file && vma->vm_file->f_mapping)
-+		mapping_set_unevictable(vma->vm_file->f_mapping);
-+
-+	down_write(&xdna->notifier_lock);
-+	list_add_tail(&mapp->node, &abo->mem.umap_list);
-+	up_write(&xdna->notifier_lock);
-+
-+	return 0;
-+
-+free_pfns:
-+	kvfree(mapp->range.hmm_pfns);
-+free_map:
-+	kfree(mapp);
- 	return ret;
- }
- 
-+static int amdxdna_insert_pages(struct amdxdna_gem_obj *abo,
-+				struct vm_area_struct *vma)
-+{
-+	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
-+	unsigned long num_pages = vma_pages(vma);
-+	unsigned long offset = 0;
-+	int ret;
-+
-+	if (!is_import_bo(abo)) {
-+		ret = drm_gem_shmem_mmap(&abo->base, vma);
-+		if (ret) {
-+			XDNA_ERR(xdna, "Failed shmem mmap %d", ret);
-+			return ret;
-+		}
-+
-+		/* The buffer is based on memory pages. Fix the flag. */
-+		vm_flags_mod(vma, VM_MIXEDMAP, VM_PFNMAP);
-+		ret = vm_insert_pages(vma, vma->vm_start, abo->base.pages,
-+				      &num_pages);
-+		if (ret) {
-+			XDNA_ERR(xdna, "Failed insert pages %d", ret);
-+			vma->vm_ops->close(vma);
-+			return ret;
-+		}
-+
-+		return 0;
-+	}
-+
-+	vma->vm_private_data = NULL;
-+	vma->vm_ops = NULL;
-+	ret = dma_buf_mmap(to_gobj(abo)->dma_buf, vma, 0);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Failed to mmap dma buf %d", ret);
-+		return ret;
-+	}
-+
-+	do {
-+		vm_fault_t fault_ret;
-+
-+		fault_ret = handle_mm_fault(vma, vma->vm_start + offset,
-+					    FAULT_FLAG_WRITE, NULL);
-+		if (fault_ret & VM_FAULT_ERROR) {
-+			vma->vm_ops->close(vma);
-+			XDNA_ERR(xdna, "Fault in page failed");
-+			return -EFAULT;
-+		}
-+
-+		offset += PAGE_SIZE;
-+	} while (--num_pages);
-+
-+	/* Drop the reference drm_gem_mmap_obj() acquired.*/
-+	drm_gem_object_put(to_gobj(abo));
-+
-+	return 0;
-+}
-+
- static int amdxdna_gem_obj_mmap(struct drm_gem_object *gobj,
- 				struct vm_area_struct *vma)
- {
-+	struct amdxdna_dev *xdna = to_xdna_dev(gobj->dev);
- 	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
--	unsigned long num_pages;
- 	int ret;
- 
--	ret = amdxdna_hmm_register(abo, vma->vm_start, gobj->size);
-+	ret = amdxdna_hmm_register(abo, vma);
- 	if (ret)
- 		return ret;
- 
-+	ret = amdxdna_insert_pages(abo, vma);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Failed insert pages, ret %d", ret);
-+		goto hmm_unreg;
-+	}
-+
-+	XDNA_DBG(xdna, "BO map_offset 0x%llx type %d userptr 0x%lx size 0x%lx",
-+		 drm_vma_node_offset_addr(&gobj->vma_node), abo->type,
-+		 vma->vm_start, gobj->size);
-+	return 0;
-+
-+hmm_unreg:
-+	amdxdna_hmm_unregister(abo, vma);
-+	return ret;
-+}
-+
-+static int amdxdna_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *vma)
-+{
-+	struct drm_gem_object *gobj = dma_buf->priv;
-+	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
-+	unsigned long num_pages = vma_pages(vma);
-+	int ret;
-+
-+	vma->vm_ops = &drm_gem_shmem_vm_ops;
-+	vma->vm_private_data = gobj;
-+
-+	drm_gem_object_get(gobj);
- 	ret = drm_gem_shmem_mmap(&abo->base, vma);
- 	if (ret)
--		goto hmm_unreg;
-+		goto put_obj;
- 
--	num_pages = gobj->size >> PAGE_SHIFT;
--	/* Try to insert the pages */
-+	/* The buffer is based on memory pages. Fix the flag. */
- 	vm_flags_mod(vma, VM_MIXEDMAP, VM_PFNMAP);
--	ret = vm_insert_pages(vma, vma->vm_start, abo->base.pages, &num_pages);
-+	ret = vm_insert_pages(vma, vma->vm_start, abo->base.pages,
-+			      &num_pages);
- 	if (ret)
--		XDNA_ERR(abo->client->xdna, "Failed insert pages, ret %d", ret);
-+		goto close_vma;
- 
- 	return 0;
- 
--hmm_unreg:
--	amdxdna_hmm_unregister(abo);
-+close_vma:
-+	vma->vm_ops->close(vma);
-+put_obj:
-+	drm_gem_object_put(gobj);
- 	return ret;
- }
- 
--static vm_fault_t amdxdna_gem_vm_fault(struct vm_fault *vmf)
--{
--	return drm_gem_shmem_vm_ops.fault(vmf);
--}
-+static const struct dma_buf_ops amdxdna_dmabuf_ops = {
-+	.attach = drm_gem_map_attach,
-+	.detach = drm_gem_map_detach,
-+	.map_dma_buf = drm_gem_map_dma_buf,
-+	.unmap_dma_buf = drm_gem_unmap_dma_buf,
-+	.release = drm_gem_dmabuf_release,
-+	.mmap = amdxdna_gem_dmabuf_mmap,
-+	.vmap = drm_gem_dmabuf_vmap,
-+	.vunmap = drm_gem_dmabuf_vunmap,
-+};
- 
--static void amdxdna_gem_vm_open(struct vm_area_struct *vma)
-+static struct dma_buf *amdxdna_gem_prime_export(struct drm_gem_object *gobj, int flags)
- {
--	drm_gem_shmem_vm_ops.open(vma);
-+	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-+
-+	exp_info.ops = &amdxdna_dmabuf_ops;
-+	exp_info.size = gobj->size;
-+	exp_info.flags = flags;
-+	exp_info.priv = gobj;
-+	exp_info.resv = gobj->resv;
-+
-+	return drm_gem_dmabuf_export(gobj->dev, &exp_info);
- }
- 
--static void amdxdna_gem_vm_close(struct vm_area_struct *vma)
-+static void amdxdna_gem_obj_free(struct drm_gem_object *gobj)
- {
--	struct drm_gem_object *gobj = vma->vm_private_data;
-+	struct amdxdna_dev *xdna = to_xdna_dev(gobj->dev);
-+	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
-+	struct iosys_map map = IOSYS_MAP_INIT_VADDR(abo->mem.kva);
-+
-+	XDNA_DBG(xdna, "BO type %d xdna_addr 0x%llx", abo->type, abo->mem.dev_addr);
-+
-+	amdxdna_hmm_unregister(abo, NULL);
-+	flush_workqueue(xdna->notifier_wq);
- 
--	amdxdna_hmm_unregister(to_xdna_obj(gobj));
--	drm_gem_shmem_vm_ops.close(vma);
-+	if (abo->pinned)
-+		amdxdna_gem_unpin(abo);
-+
-+	if (abo->type == AMDXDNA_BO_DEV) {
-+		mutex_lock(&abo->client->mm_lock);
-+		drm_mm_remove_node(&abo->mm_node);
-+		mutex_unlock(&abo->client->mm_lock);
-+
-+		vunmap(abo->mem.kva);
-+		drm_gem_object_put(to_gobj(abo->dev_heap));
-+		drm_gem_object_release(gobj);
-+		mutex_destroy(&abo->lock);
-+		kfree(abo);
-+		return;
-+	}
-+
-+	if (abo->type == AMDXDNA_BO_DEV_HEAP)
-+		drm_mm_takedown(&abo->mm);
-+
-+	drm_gem_vunmap_unlocked(gobj, &map);
-+	mutex_destroy(&abo->lock);
-+	drm_gem_shmem_free(&abo->base);
- }
- 
--static const struct vm_operations_struct amdxdna_gem_vm_ops = {
--	.fault = amdxdna_gem_vm_fault,
--	.open = amdxdna_gem_vm_open,
--	.close = amdxdna_gem_vm_close,
-+static const struct drm_gem_object_funcs amdxdna_gem_dev_obj_funcs = {
-+	.free = amdxdna_gem_obj_free,
- };
- 
- static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
-@@ -220,7 +400,8 @@ static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
- 	.vmap = drm_gem_shmem_object_vmap,
- 	.vunmap = drm_gem_shmem_object_vunmap,
- 	.mmap = amdxdna_gem_obj_mmap,
--	.vm_ops = &amdxdna_gem_vm_ops,
-+	.vm_ops = &drm_gem_shmem_vm_ops,
-+	.export = amdxdna_gem_prime_export,
- };
- 
- static struct amdxdna_gem_obj *
-@@ -239,6 +420,7 @@ amdxdna_gem_create_obj(struct drm_device *dev, size_t size)
- 	abo->mem.userptr = AMDXDNA_INVALID_ADDR;
- 	abo->mem.dev_addr = AMDXDNA_INVALID_ADDR;
- 	abo->mem.size = size;
-+	INIT_LIST_HEAD(&abo->mem.umap_list);
- 
- 	return abo;
- }
-@@ -258,6 +440,49 @@ amdxdna_gem_create_object_cb(struct drm_device *dev, size_t size)
- 	return to_gobj(abo);
- }
- 
-+struct drm_gem_object *
-+amdxdna_gem_prime_import(struct drm_device *dev, struct dma_buf *dma_buf)
-+{
-+	struct dma_buf_attachment *attach;
-+	struct drm_gem_object *gobj;
-+	struct sg_table *sgt;
-+	int ret;
-+
-+	get_dma_buf(dma_buf);
-+
-+	attach = dma_buf_attach(dma_buf, dev->dev);
-+	if (IS_ERR(attach)) {
-+		ret = PTR_ERR(attach);
-+		goto put_buf;
-+	}
-+
-+	sgt = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
-+	if (IS_ERR(sgt)) {
-+		ret = PTR_ERR(sgt);
-+		goto fail_detach;
-+	}
-+
-+	gobj = drm_gem_shmem_prime_import_sg_table(dev, attach, sgt);
-+	if (IS_ERR(gobj)) {
-+		ret = PTR_ERR(gobj);
-+		goto fail_unmap;
-+	}
-+
-+	gobj->import_attach = attach;
-+	gobj->resv = dma_buf->resv;
-+
-+	return gobj;
-+
-+fail_unmap:
-+	dma_buf_unmap_attachment_unlocked(attach, sgt, DMA_BIDIRECTIONAL);
-+fail_detach:
-+	dma_buf_detach(dma_buf, attach);
-+put_buf:
-+	dma_buf_put(dma_buf);
-+
-+	return ERR_PTR(ret);
-+}
-+
- static struct amdxdna_gem_obj *
- amdxdna_drm_alloc_shmem(struct drm_device *dev,
- 			struct amdxdna_drm_create_bo *args,
-@@ -483,6 +708,9 @@ int amdxdna_gem_pin_nolock(struct amdxdna_gem_obj *abo)
- 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
- 	int ret;
- 
-+	if (is_import_bo(abo))
-+		return 0;
-+
- 	switch (abo->type) {
- 	case AMDXDNA_BO_SHMEM:
- 	case AMDXDNA_BO_DEV_HEAP:
-@@ -515,6 +743,9 @@ int amdxdna_gem_pin(struct amdxdna_gem_obj *abo)
- 
- void amdxdna_gem_unpin(struct amdxdna_gem_obj *abo)
- {
-+	if (is_import_bo(abo))
-+		return;
-+
- 	if (abo->type == AMDXDNA_BO_DEV)
- 		abo = abo->dev_heap;
- 
-@@ -606,7 +837,9 @@ int amdxdna_drm_sync_bo_ioctl(struct drm_device *dev,
- 		goto put_obj;
- 	}
- 
--	if (abo->type == AMDXDNA_BO_DEV)
-+	if (is_import_bo(abo))
-+		drm_clflush_sg(abo->base.sgt);
-+	else if (abo->type == AMDXDNA_BO_DEV)
- 		drm_clflush_pages(abo->mem.pages, abo->mem.nr_pages);
- 	else
- 		drm_clflush_pages(abo->base.pages, gobj->size >> PAGE_SHIFT);
-diff --git a/drivers/accel/amdxdna/amdxdna_gem.h b/drivers/accel/amdxdna/amdxdna_gem.h
-index 8ccc0375dd9d..88d9f9c4ea85 100644
---- a/drivers/accel/amdxdna/amdxdna_gem.h
-+++ b/drivers/accel/amdxdna/amdxdna_gem.h
-@@ -6,6 +6,20 @@
- #ifndef _AMDXDNA_GEM_H_
- #define _AMDXDNA_GEM_H_
- 
-+#include <linux/hmm.h>
-+
-+struct amdxdna_umap {
-+	struct vm_area_struct		*vma;
-+	struct mmu_interval_notifier	notifier;
-+	struct hmm_range		range;
-+	struct work_struct		hmm_unreg_work;
-+	struct amdxdna_gem_obj		*abo;
-+	struct list_head		node;
-+	struct kref			refcnt;
-+	bool				invalid;
-+	bool				unmapped;
-+};
-+
- struct amdxdna_mem {
- 	u64				userptr;
- 	void				*kva;
-@@ -13,8 +27,7 @@ struct amdxdna_mem {
- 	size_t				size;
- 	struct page			**pages;
- 	u32				nr_pages;
--	struct mmu_interval_notifier	notifier;
--	unsigned long			*pfns;
-+	struct list_head		umap_list;
- 	bool				map_invalid;
- };
- 
-@@ -34,6 +47,7 @@ struct amdxdna_gem_obj {
- };
- 
- #define to_gobj(obj)    (&(obj)->base.base)
-+#define is_import_bo(obj) (to_gobj(obj)->import_attach)
- 
- static inline struct amdxdna_gem_obj *to_xdna_obj(struct drm_gem_object *gobj)
- {
-@@ -47,8 +61,12 @@ static inline void amdxdna_gem_put_obj(struct amdxdna_gem_obj *abo)
- 	drm_gem_object_put(to_gobj(abo));
- }
- 
-+void amdxdna_umap_put(struct amdxdna_umap *mapp);
-+
- struct drm_gem_object *
- amdxdna_gem_create_object_cb(struct drm_device *dev, size_t size);
-+struct drm_gem_object *
-+amdxdna_gem_prime_import(struct drm_device *dev, struct dma_buf *dma_buf);
- struct amdxdna_gem_obj *
- amdxdna_drm_alloc_dev_bo(struct drm_device *dev,
- 			 struct amdxdna_drm_create_bo *args,
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-index f5b8497cf5ad..f2bf1d374cc7 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-@@ -226,6 +226,7 @@ const struct drm_driver amdxdna_drm_drv = {
- 	.num_ioctls = ARRAY_SIZE(amdxdna_drm_ioctls),
- 
- 	.gem_create_object = amdxdna_gem_create_object_cb,
-+	.gem_prime_import = amdxdna_gem_prime_import,
- };
- 
- static const struct amdxdna_dev_info *
-@@ -266,12 +267,16 @@ static int amdxdna_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		fs_reclaim_release(GFP_KERNEL);
- 	}
- 
-+	xdna->notifier_wq = alloc_ordered_workqueue("notifier_wq", 0);
-+	if (!xdna->notifier_wq)
-+		return -ENOMEM;
-+
- 	mutex_lock(&xdna->dev_lock);
- 	ret = xdna->dev_info->ops->init(xdna);
- 	mutex_unlock(&xdna->dev_lock);
- 	if (ret) {
- 		XDNA_ERR(xdna, "Hardware init failed, ret %d", ret);
--		return ret;
-+		goto destroy_notifier_wq;
- 	}
- 
- 	ret = amdxdna_sysfs_init(xdna);
-@@ -301,6 +306,8 @@ static int amdxdna_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	mutex_lock(&xdna->dev_lock);
- 	xdna->dev_info->ops->fini(xdna);
- 	mutex_unlock(&xdna->dev_lock);
-+destroy_notifier_wq:
-+	destroy_workqueue(xdna->notifier_wq);
- 	return ret;
- }
- 
-@@ -310,6 +317,8 @@ static void amdxdna_remove(struct pci_dev *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct amdxdna_client *client;
- 
-+	destroy_workqueue(xdna->notifier_wq);
-+
- 	pm_runtime_get_noresume(dev);
- 	pm_runtime_forbid(dev);
- 
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-index 37848a8d8031..ab79600911aa 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-@@ -6,6 +6,7 @@
- #ifndef _AMDXDNA_PCI_DRV_H_
- #define _AMDXDNA_PCI_DRV_H_
- 
-+#include <linux/workqueue.h>
- #include <linux/xarray.h>
- 
- #define XDNA_INFO(xdna, fmt, args...)	drm_info(&(xdna)->ddev, fmt, ##args)
-@@ -98,6 +99,7 @@ struct amdxdna_dev {
- 	struct list_head		client_list;
- 	struct amdxdna_fw_ver		fw_ver;
- 	struct rw_semaphore		notifier_lock; /* for mmu notifier*/
-+	struct workqueue_struct		*notifier_wq;
- };
- 
- /*
--- 
-2.34.1
+> > By the way, why not turn off powersave on old firmware instead? That
+> > would be where the regression is. If anything hid-asus should check
+> > and disable it on lower firmware versions, not enable it on new ones.
+> > Ideally before sleep, just like you had it last march.
+>
+> As above I really think it has big benefits, and the hack does still
+> work for those older FW.
 
+Older firmware does not support powersave with your series. But if the
+user uses older firmware, you leave powersave on so the controller
+breaks
+
+> >> +{
+> >> +       int result, err;
+> >> +
+> >> +       err = asus_wmi_set_devstate(ASUS_WMI_DEVID_MCU_POWERSAVE, enabled, &result);
+> >> +       if (err) {
+> >> +               pr_warn("Failed to set MCU powersave: %d\n", err);
+> >> +               return;
+> >> +       }
+> >> +       if (result > 1) {
+> >> +               pr_warn("Failed to set MCU powersave (result): 0x%x\n", result);
+> >> +               return;
+> >> +       }
+> >> +
+> >> +       pr_debug("%s MCU Powersave\n",
+> >> +                enabled ? "Enabled" : "Disabled");
+> >> +}
+> >> +EXPORT_SYMBOL_NS_GPL(set_ally_mcu_powersave, "ASUS_WMI");
+> >> +
+> >>   static ssize_t mcu_powersave_show(struct device *dev,
+> >>                                     struct device_attribute *attr, char *buf)
+> >>   {
+> >> @@ -4711,6 +4753,18 @@ static int asus_wmi_add(struct platform_device *pdev)
+> >>          if (err)
+> >>                  goto fail_platform;
+> >>
+> >> +       use_ally_mcu_hack = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
+> >> +                               && dmi_check_system(asus_rog_ally_device);
+> >> +       if (use_ally_mcu_hack && dmi_match(DMI_BOARD_NAME, "RC71")) {
+> >> +               /*
+> >> +                * These steps ensure the device is in a valid good state, this is
+> >> +                * especially important for the Ally 1 after a reboot.
+> >> +                */
+> >> +               acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE,
+> >> +                                          ASUS_USB0_PWR_EC0_CSEE_ON);
+> >> +               msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> >> +       }
+> >> +
+> >>          /* ensure defaults for tunables */
+> >>          asus->ppt_pl2_sppt = 5;
+> >>          asus->ppt_pl1_spl = 5;
+> >> @@ -4723,8 +4777,6 @@ static int asus_wmi_add(struct platform_device *pdev)
+> >>          asus->egpu_enable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_EGPU);
+> >>          asus->dgpu_disable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
+> >>          asus->kbd_rgb_state_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
+> >> -       asus->ally_mcu_usb_switch = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
+> >> -                                               && dmi_check_system(asus_ally_mcu_quirk);
+> >>
+> >>          if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_MINI_LED_MODE))
+> >>                  asus->mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
+> >> @@ -4910,34 +4962,6 @@ static int asus_hotk_resume(struct device *device)
+> >>          return 0;
+> >>   }
+> >>
+> >> -static int asus_hotk_resume_early(struct device *device)
+> >> -{
+> >> -       struct asus_wmi *asus = dev_get_drvdata(device);
+> >> -
+> >> -       if (asus->ally_mcu_usb_switch) {
+> >> -               /* sleep required to prevent USB0 being yanked then reappearing rapidly */
+> >> -               if (ACPI_FAILURE(acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE, 0xB8)))
+> >> -                       dev_err(device, "ROG Ally MCU failed to connect USB dev\n");
+> >> -               else
+> >> -                       msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> >> -       }
+> >> -       return 0;
+> >> -}
+> >> -
+> >> -static int asus_hotk_prepare(struct device *device)
+> >> -{
+> >
+> > Using prepare is needed for old firmware, you are correct. The s2idle
+> > quirk does not work prior to suspend but it works after. But if that's
+> > the case, why not keep the previous quirk and just allow disabling it?
+> > You still call CSEE on both.
+>
+> The change is just the result of a dozen or so people testing many many
+> scenarios while I worked with ASUS to find the root cause of the issues.
+> I am *so* glad we were able to get it properly fixed in FW.
+
+Can you justify it as being better than the previous one though?
+
+> >> -       struct asus_wmi *asus = dev_get_drvdata(device);
+> >> -
+> >> -       if (asus->ally_mcu_usb_switch) {
+> >> -               /* sleep required to ensure USB0 is disabled before sleep continues */
+> >> -               if (ACPI_FAILURE(acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE, 0xB7)))
+> >> -                       dev_err(device, "ROG Ally MCU failed to disconnect USB dev\n");
+> >> -               else
+> >> -                       msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> >> -       }
+> >> -       return 0;
+> >> -}
+> >> -
+> >>   static int asus_hotk_restore(struct device *device)
+> >>   {
+> >>          struct asus_wmi *asus = dev_get_drvdata(device);
+> >> @@ -4978,11 +5002,34 @@ static int asus_hotk_restore(struct device *device)
+> >>          return 0;
+> >>   }
+> >>
+> >> +static void asus_ally_s2idle_restore(void)
+> >> +{
+> >> +       if (use_ally_mcu_hack) {
+> >> +               acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE,
+> >> +                                          ASUS_USB0_PWR_EC0_CSEE_ON);
+> >> +               msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> >> +       }
+> >> +}
+> >> +
+> >> +static int asus_hotk_prepare(struct device *device)
+> >> +{
+> >> +       if (use_ally_mcu_hack) {
+> >
+> > For some reason on my device, even though I go through the
+> > compatibility check with a custom log
+> >
+> >> Mar 21 19:00:29 arch-dev-tools kernel: asus 0003:0B05:1B4C.0003: MCU firmware version 313 is compatible.
+> >> Mar 21 19:00:29 arch-dev-tools kernel: asus_wmi: Enabled MCU Powersave
+> >
+> > During sleep the quirk is still active. So behavior is OK.
+> >
+> > Again, with custom log in quirk:
+> > Mar 21 19:03:24 arch-dev-tools kernel: asus_wmi: Ally device detected,
+> > disabling USB0_PWR_EC0_CSEE
+> >
+> > So the previous quirk is still active. It is also obvious because you
+> > can see the light fade, which does not happen without the quirk, where
+> > it just cuts.
+> >
+> > I think you have a race condition here, where asus-wmi enables it
+> > after you disable it.
+>
+> I'm a little confused. By previous quirk do you mean the older one
+> before this refactor? asus-wmi doesn't enable anything, it only sets a
+> bool on module load, and since the hid-asus module requires some symbols
+> from asus-wmi the module load order is set in concrete to be asus-wmi
+> first, with hid-asus making the correct calls after verifying the
+> firmware version..
+
+Let me rephrase. "previous quirk" -> "older firmware quirk".
+
+> from asus-wmi the module load order is set in concrete to be asus-wmi
+> first, with hid-asus making the correct calls after verifying the
+
+The module LOAD, not the WMI PROBE. I tested 2 restarts with this and
+in both the probe of hid-asus happened both times BEFORE the probe of
+asus-wmi. So you end up using the older firmware quirk on newer
+firmware.
+
+This is a very big bug, since the quirk improves the MCU behavior a
+lot and it means that on most of your testing/users testing of this
+series the quirk has been active. As it is a race condition, maybe it
+is active on eg 70% of the boots. But that still improves the
+perceived reliability of this series. To fix this you might need a
+second var.
+
+> > So I force disable it.
+> >
+> > When I do force disable it, with powersave on, the light cuts after
+> > the screen turns off, as the USB gets put into D3 before the CSEE
+> > call. Other than that powersave behavior is similar.
+> >
+> > Powersave off regresses (at least visually) a lot. First, it blinks
+> > before sleep, as the controller gets confused and restarts after
+> > receiving the Display Off call even though it is supposed to be in D3.
+> > It also flashes a previous color which is weird. Then it flickers
+> > after suspend. It also seems to not disconnect and reconnect, which
+> > might increase standby consumption. On the original Ally, as Denis had
+> > said, the XInput MCU might stay awake, so key presses might wake the
+> > device too.
+>
+> The Ally OG has two MCU yes, one is for the gamepad only, and that one
+> does stay powered. With powersave enabled only the RGB/keyboard MCU has
+> power removed. ASUS never made it clear to me which was primary and
+> secondary, not that it matters here.
+>
+>  > Powersave off regresses
+>
+> Yes this is the standard behaviour of powersave-off. It's essentially
+> the exact same as laptops (and the Z13). Cutting power to the MCU is
+> unique to the Ally and they added it in bios/fw revisions while bringing
+> up all the features over time.
+
+It is not. With the quirk it is much nicer as the light fades properly and once.
+
+For the last 6 months I have been using my series, where it also does the same.
+
+> > But RGB does not seem to get stuck anymore in my ah 30 min testing?
+> > Perhaps over a longer play session with hours inbetween suspends there
+> > are other regressions.
+> >
+> > So if I compare it to the previous quirk, I find it a bit of a mixed
+> > bag. The previous quirk is very solid and never fails, on all
+> > firmwares. The new quirk makes sleep and suspend faster on new
+> > firmware, but at the cost of some visual blemishes (at my current
+> > testing; there might be other regressions).
+>
+> I'll make sure I do some further testing this weekend. But I no-longer
+> have older FW on the MCU and I'm not going to go through the process of
+> downgrading it when we should be encouraging everyone to update since
+> there are very real improvements.
+
+That is OK, especially if you end up using the previous quirk which
+has been very thoroughly tested on the older firmwares.
+
+> > If you still want to go through with this series, IMO you should keep
+> > the hid check and the previous quirk. Then, on new firmwares, you can
+> > tighten the delay. 500ms prior to suspend and removing the quirk after
+> > suspend completely should do it. As you see from my previous email
+> > timestamp I spent more than an hour on this testing, so I might not be
+> > able to test again (I did most of the testing without any userspace
+> > software running, only turning it on for the RGB if powersave turned
+> > it off)
+>
+> Thank you for taking the time to test, it is appreciated. I assume you
+> tested on newest FW? If you can, I'd love a little more detail on your
+> sceanrios so i know what to check.
+
+Yes, newer firmware. Test setup was a KDE arch build, no gamescope
+with no userspace touching the controller running on firmware 313 as
+you see in the log.
+
+To make sure RGB was on/working I flipped hhd on/off before/after suspends
+
+> On new FW the patch fully disables the CSEE calls and delays making it a
+> NO-OP essentially. I'd much rather fully remove the hacks and have only
+> a version check with warning but there's still folks on older fw. TBH as
+> bazzite has a much larger reach than I in handheld, it would be
+> wonderfully helpfull if bazzite encouraged users to fully update their
+> Ally devices - it can be done through a win2go usb safely.
+>
+> > On the series I developed I kept 500ms before D3, the controller needs
+> > 300ms to shutdown otherwise it causes the above. Yes, it has other
+> > (structural) issues, but I'd like to completely rewrite it and resend
+> > closer to 6.16. The powerprofiles + hidden choices stuff gave me some
+> > ideas.
+> >
+> > Whatever you end up doing, make sure to test the RGB, as powersave
+> > turns to force it off.
+>
+>
+> Speaking of RGB, I found that userspace control of it could run in to
+> issues with powersave - something like racing against enablement vs MCU
+> being ready. With the hid-asus-ally driver I moved RGB control in to it
+> and exposed the LEDs as "RGB RGB RGB RGB" in the mcled class dev. Making
+> userspace use that instead works really well and means that it could use
+> the "device ready" check.
+>
+> So I suspect that might be what you're seeing, I assume you're still
+> using hidraw calls for it in HHD?
+>
+> I'll clean that series up this weekend and send (tagging you ofc). Maybe
+> there's some ideas in it that could be useful for your recent LED patchwork.
+
+What I see is that once powersave triggers a controller restart after
+suspend, the RGB stays off until it is set again. Not the end of the
+world but not the prettiest. However, that means that to be able to
+see what the MCU is doing, you need to reenable RGB after suspend.
+
+As for what I found in my testing, perhaps there is a ready check for
+Aura, but the other mode works fine without one. Yes it is a bit
+tricky though. Because of the controller restart/reinit, if userspace
+is not aware of it it can set the rgb color before that finishes so it
+gets lost. But all of that has been dealt with long ago.
+
+Powersave on/off, all firmware levels, back buttons, RGB, all work on
+bazzite pretty much always. Which is why I was never in a rush to tell
+people to update their firmware. But yes, doing that reorder in s2idle
+is something that will take a lot of thought and care to upstream.
+
+Antheas
+
+> Cheers,
+> Luke.
+>
+> > Best,
+> > Antheas
+> >
+> >> +               acpi_execute_simple_method(NULL, ASUS_USB0_PWR_EC0_CSEE,
+> >> +                                          ASUS_USB0_PWR_EC0_CSEE_OFF);
+> >> +               msleep(ASUS_USB0_PWR_EC0_CSEE_WAIT);
+> >> +       }
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +/* Use only for Ally devices due to the wake_on_ac */
+> >> +static struct acpi_s2idle_dev_ops asus_ally_s2idle_dev_ops = {
+> >> +       .restore = asus_ally_s2idle_restore,
+> >> +};
+> >> +
+> >>   static const struct dev_pm_ops asus_pm_ops = {
+> >>          .thaw = asus_hotk_thaw,
+> >>          .restore = asus_hotk_restore,
+> >>          .resume = asus_hotk_resume,
+> >> -       .resume_early = asus_hotk_resume_early,
+> >>          .prepare = asus_hotk_prepare,
+> >>   };
+> >>
+> >> @@ -5010,6 +5057,10 @@ static int asus_wmi_probe(struct platform_device *pdev)
+> >>                          return ret;
+> >>          }
+> >>
+> >> +       ret = acpi_register_lps0_dev(&asus_ally_s2idle_dev_ops);
+> >> +       if (ret)
+> >> +               pr_warn("failed to register LPS0 sleep handler in asus-wmi\n");
+> >> +
+> >>          return asus_wmi_add(pdev);
+> >>   }
+> >>
+> >> @@ -5042,6 +5093,7 @@ EXPORT_SYMBOL_GPL(asus_wmi_register_driver);
+> >>
+> >>   void asus_wmi_unregister_driver(struct asus_wmi_driver *driver)
+> >>   {
+> >> +       acpi_unregister_lps0_dev(&asus_ally_s2idle_dev_ops);
+> >>          platform_device_unregister(driver->platform_device);
+> >>          platform_driver_unregister(&driver->platform_driver);
+> >>          used = false;
+> >> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> >> index 783e2a336861..9ca408480502 100644
+> >> --- a/include/linux/platform_data/x86/asus-wmi.h
+> >> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> >> @@ -158,8 +158,21 @@
+> >>   #define ASUS_WMI_DSTS_LIGHTBAR_MASK    0x0000000F
+> >>
+> >>   #if IS_REACHABLE(CONFIG_ASUS_WMI)
+> >> +void set_ally_mcu_hack(bool enabled);
+> >> +void set_ally_mcu_powersave(bool enabled);
+> >> +int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval);
+> >>   int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+> >>   #else
+> >> +static inline void set_ally_mcu_hack(bool enabled)
+> >> +{
+> >> +}
+> >> +static inline void set_ally_mcu_powersave(bool enabled)
+> >> +{
+> >> +}
+> >> +static inline int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval)
+> >> +{
+> >> +       return -ENODEV;
+> >> +}
+> >>   static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+> >>                                             u32 *retval)
+> >>   {
+> >> --
+> >> 2.49.0
+> >>
+>
 
