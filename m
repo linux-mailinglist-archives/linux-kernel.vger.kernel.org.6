@@ -1,208 +1,563 @@
-Return-Path: <linux-kernel+bounces-572576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B941A6CBA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:26:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BC3A6CBB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43F4C7ADDD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:24:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D927B16F6D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9132C233712;
-	Sat, 22 Mar 2025 17:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D137234970;
+	Sat, 22 Mar 2025 17:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QA8Ngd+d"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHmXJoWX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C9D3FD1
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 17:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873782E3384;
+	Sat, 22 Mar 2025 17:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742664346; cv=none; b=Vgj0Bff+F7wdTa4G4Vab6LtZSCT3yh1fZDl6fF49AUPpyYbygrDQASwZEGjTrvMeYuXax7wbExMoyhtMfg0LgX6GDMSwXGQwss0VlDRUNz/HlqTbbrgE5dPZCpa/aM7nqPSIke8eyOZX9RiVjn9ihvGlnmIv39zhmQTVorY/KVc=
+	t=1742664427; cv=none; b=Mm3MFDWT9rVWShiUgpYleXxJjgqIj8u6Lsbrn8gASkEG3ZLGqQsnSZjr23mYA182KmZtKXi7oLZFZG8CwKW54iwGpRHLCZiokWFeegnt+SIg17w2Z+9bdBERZtLUKPCe91PisWBboeHK2q4LIyVSI/2OVx3ul1MxHfEczjr0V1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742664346; c=relaxed/simple;
-	bh=KVVLbJ1zXJko3vgx6YQzBovfOIgGOqxXxDsSp81uYyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=USz9qd8KSeP4p2YtFt+9f6JRV5+COW7UpPoo8k5MNAbpVzxmc9DeAZpsPZ6vRdNF5gnWG7Bm/4KznAKvQC70x+ToSkbr2xJeMzyQZya+hpTV9MviK9Y4eXM8JUAwzU8w3wBJJObP0L8+MftFfMFJTn3Wy/1UrjI178zsrwJ0hcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QA8Ngd+d; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso30233125e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742664343; x=1743269143; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6maXy0URBuJqvOhBuuvKx2+7wYA7mqrbNOfziAWZLY=;
-        b=QA8Ngd+dvbtVFLhtcvrzigX61KxqTaGdnAOK62tzSJKLpyKkS7g+Bc6RG5Jf0hZQgn
-         fGnHFB+A0hhFmSs6gXWa2F6Ikwh3ppVR0xOHZtl6oKXkXz1k6SjJxSe5ANtYo1R1kZg1
-         aeADeIQpjMoLjBj/v7SRGgQyJmKdkMxtEKQv7z6RAJI1tpR7suGMvtq24UTBwFzCanPS
-         lw9AqiuLJkAlJP6NKq2pymgX8c9uY16/+ekjA52CoCnsssmbl88FT/St4/dcyc6rymjy
-         BwKFFipJunc5qyosr3mvilNxP5f6E2ASO8PjtzOj594aF4kpU7eJG/Tr1iUefP7LxpV/
-         5jlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742664343; x=1743269143;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F6maXy0URBuJqvOhBuuvKx2+7wYA7mqrbNOfziAWZLY=;
-        b=GxZE8GZEsKSGjUOafz/Mn4F6tGcD/8Hsgq0Y7aGd+efKnwk6WoqLGPEhFvjSJwlEPN
-         5fwUZTzY0OcsMrXN1CV7pheJ0RhfxAvPSL+PefxUqBe/2xJ6LRZa5+bGSA9b5a5aLcQB
-         ioY/9OMsu+bSsuUlD9GeRczxnGpczDcZzCESV/ZYb5hbU9m4W/6ebqTYXkPEiPGyhHI7
-         Jf2HW+H9wbRf+1NWtTdU+aVYR1MTXXTJjcVQWETFxP8jJO9ZcKDIerPNKqnPeHFnBJtY
-         Y9S4yRpSfQALrS4ryMx09uIFL2U2+QlTWWYUZS1NMMSN1JYUtazC4rmKaibfkyHIce/I
-         iujQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxwXIPMaSFuluwgHqRs3krLz3tpGI3Xd2XAXUaqT7fFZCIwjrVIX1vupXvgpMP5g7iKP4Ic1VAcLoKqWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMShWp7KMBNX9ixUkrqmyfK/7WoiNrnguCxQjke9gkq/77ePYc
-	Retu/0Yd974NTLMOEzLwlW0ueAq1YVHXIhIT/hSpaSu9zRNEoezo8bDS8ePhj8s=
-X-Gm-Gg: ASbGncukEkfe6r485cnNGae0Vljr78Nv35qrj0QDChRhXlaoZWCOaYwoLrA3aeOm08I
-	s0O9pipv3cSrDxEOsmdryT4KHyn1/K3GfXKSLGOnKxqhRf0J3cVdFjYsGXEMuNYUG4HmX4gZHEt
-	jen6fBybpQMDrw4NTuWeACDEapzKOzlhWPDV2kN/ijRN4mooTa4Bb8pLvACsFHETaT4OhslEad8
-	jnwxFOf8Okq8FZ0eDtxlrSnvwkrx7bjOE86kOlUFNA3Y23dsNaCrQ1D0S2taVbF5vvIVNEfCkOB
-	ohBuKWtoMsTpIHrE1E3glMYw60m+77Nodl5leCU07Omt6iVUWQ==
-X-Google-Smtp-Source: AGHT+IHwieQKergX1rC+mWOvJOQ5sn9Ft8OV5mIRdJ/Pxfgl8ge9rxEOgVtIeqtby3893whER7DmRQ==
-X-Received: by 2002:a05:600c:5742:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-43d510fff60mr50928825e9.19.1742664342720;
-        Sat, 22 Mar 2025 10:25:42 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd26cecsm61977195e9.17.2025.03.22.10.25.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 10:25:42 -0700 (PDT)
-Date: Sat, 22 Mar 2025 20:25:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Angelo Dureghello <adureghello@baylibre.com>,
-	Alexandru Ardelean <aardelean@baylibre.com>,
-	Beniamin Bia <beniamin.bia@analog.com>,
-	Stefan Popa <stefan.popa@analog.com>, linux-kernel@vger.kernel.org,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Subject: Re: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel
- info
-Message-ID: <72d776ae-4373-4a78-ba00-fa809478b453@stanley.mountain>
+	s=arc-20240116; t=1742664427; c=relaxed/simple;
+	bh=Nfu6wNvCL+EzJpl6IHOf3pX6YzXpe81WwXFFqLz9FIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2fjWFaspgReuoS8OsSqTzCF1A7WJ77YlZgMhAEAjnVJ9j9dg7dv4ipe1d5QGUcoAZuJKyx5DbU6GqRZdnt4ImkIde0mBUhBTatQkLWjRA1eBGlq2j/yqjRH7Gz80A3Wf9FYgo/8yB9PniQWislfgWlOcxymYzPMvXd1IR7OVDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHmXJoWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633ECC4CEDD;
+	Sat, 22 Mar 2025 17:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742664426;
+	bh=Nfu6wNvCL+EzJpl6IHOf3pX6YzXpe81WwXFFqLz9FIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CHmXJoWXa14FCMnhmEJd056qw1hLG4PKWrMBDU6/T0xcmDywnvJwSntc+thdh6rgI
+	 fFWZ14ay1leAC8ZW5kspPZ6C9BB4+7RidNw0KhZFZPYngqYn7IDI79VA9xhW+Vndnu
+	 V8XU3rfLbcw9VNYgQalchwASQEJfquCxOWWdZN24GHo6ZDxl8TLpN4RrzKjK9HduLC
+	 vRhwij99Rgwr5I6CO/NmVlWWWAsgdcZad2iSI0A9hIKboTmTxHXdTy4rVjT/se/5Qh
+	 YT4pdZp/bdoUWu2/yxxRLXuaWQg8blGaLPeZNq7y9KJhUjVftqJlf2X+/MvxroD95t
+	 KrDVNsbRAkpWg==
+Date: Sat, 22 Mar 2025 19:27:03 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+	llvm@lists.linux.dev, nkapron@google.com, teknoraver@meta.com,
+	roberto.sassu@huawei.com, xiyou.wangcong@gmail.com
+Subject: Re: [RFC PATCH security-next 2/4] hornet: Introduce sign-ebpf
+Message-ID: <Z97y578XhzkTt0mK@kernel.org>
+References: <20250321164537.16719-1-bboscaccy@linux.microsoft.com>
+ <20250321164537.16719-3-bboscaccy@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250318-iio-adc-ad7606-improvements-v2-9-4b605427774c@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250321164537.16719-3-bboscaccy@linux.microsoft.com>
 
-Hi David,
+On Fri, Mar 21, 2025 at 09:45:04AM -0700, Blaise Boscaccy wrote:
+> This introduces the sign-ebpf tool. It is very similar to the existing
+> sign-file script, with one key difference, it will sign a file with
+> with a signature computed off of arbitrary input data. This can used
+> to sign an ebpf light skeleton loader program for verification via
+> hornet.
+> 
+> Typical usage is to provide a payload containing the lskel ebpf
+> syscall program binary and it's associated maps, which can be
+> extracted from the auto-generated skel header.
+> 
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> ---
+>  scripts/Makefile           |   1 +
+>  scripts/hornet/Makefile    |   5 +
+>  scripts/hornet/sign-ebpf.c | 420 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 426 insertions(+)
+>  create mode 100644 scripts/hornet/Makefile
+>  create mode 100644 scripts/hornet/sign-ebpf.c
+> 
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 46f860529df5e..a2cace05d7342 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -57,6 +57,7 @@ subdir-$(CONFIG_GENKSYMS) += genksyms
+>  subdir-$(CONFIG_GENDWARFKSYMS) += gendwarfksyms
+>  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
+>  subdir-$(CONFIG_SECURITY_IPE) += ipe
+> +subdir-$(CONFIG_SECURITY_HORNET) += hornet
+>  
+>  # Let clean descend into subdirs
+>  subdir-	+= basic dtc gdb kconfig mod
+> diff --git a/scripts/hornet/Makefile b/scripts/hornet/Makefile
+> new file mode 100644
+> index 0000000000000..ab71dbb8688e4
+> --- /dev/null
+> +++ b/scripts/hornet/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +hostprogs-always-y	:= sign-ebpf
+> +
+> +HOSTCFLAGS_sign-ebpf.o = $(shell $(HOSTPKG_CONFIG) --cflags libcrypto 2> /dev/null)
+> +HOSTLDLIBS_sign-ebpf = $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
+> diff --git a/scripts/hornet/sign-ebpf.c b/scripts/hornet/sign-ebpf.c
+> new file mode 100644
+> index 0000000000000..ff98fddb79a15
+> --- /dev/null
+> +++ b/scripts/hornet/sign-ebpf.c
+> @@ -0,0 +1,420 @@
+> +/* Sign ebpf programs and skeletons using the given key.
+> + *
+> + * This program is heavily based on the kernel's sign-file tool
+> + * with some minor additions to support the signing of eBPF lskels.
+> + *
+> + * Copyright © 2014-2016 Red Hat, Inc. All Rights Reserved.
+> + * Copyright © 2015      Intel Corporation.
+> + * Copyright © 2016      Hewlett Packard Enterprise Development LP
+> + * Copyright © 2025      Microsoft Corporation.
+> + *
+> + * Authors: David Howells <dhowells@redhat.com>
+> + *          David Woodhouse <dwmw2@infradead.org>
+> + *          Juerg Haefliger <juerg.haefliger@hpe.com>
+> + *          Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 
-kernel test robot noticed the following build warnings:
+I don't think that for new code ad-hoc authors lists in source code
+make any sense.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7606-check-for-NULL-before-calling-sw_mode_config/20250319-065737
-base:   9f36acefb2621d980734a5bb7d74e0e24e0af166
-patch link:    https://lore.kernel.org/r/20250318-iio-adc-ad7606-improvements-v2-9-4b605427774c%40baylibre.com
-patch subject: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel info
-config: arm64-randconfig-r071-20250322 (https://download.01.org/0day-ci/archive/20250322/202503222246.RafigmhQ-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202503222246.RafigmhQ-lkp@intel.com/
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU Lesser General Public License
+> + * as published by the Free Software Foundation; either version 2.1
+> + * of the licence, or (at your option) any later version.
 
-smatch warnings:
-drivers/iio/adc/ad7606.c:1270 ad7606_probe_channels() warn: potentially one past the end of array 'channels[i]'
+Redundant given SPDX.
 
-vim +1270 drivers/iio/adc/ad7606.c
+> + */
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <stdint.h>
+> +#include <stdbool.h>
+> +#include <string.h>
+> +#include <getopt.h>
+> +#include <err.h>
+> +#include <arpa/inet.h>
+> +#include <openssl/opensslv.h>
+> +#include <openssl/bio.h>
+> +#include <openssl/evp.h>
+> +#include <openssl/pem.h>
+> +#include <openssl/err.h>
+> +#if OPENSSL_VERSION_MAJOR >= 3
+> +# define USE_PKCS11_PROVIDER
+> +# include <openssl/provider.h>
+> +# include <openssl/store.h>
+> +#else
+> +# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
+> +#  define USE_PKCS11_ENGINE
+> +#  include <openssl/engine.h>
+> +# endif
+> +#endif
+> +#include "../ssl-common.h"
+> +
+> +/*
+> + * Use CMS if we have openssl-1.0.0 or newer available - otherwise we have to
+> + * assume that it's not available and its header file is missing and that we
+> + * should use PKCS#7 instead.  Switching to the older PKCS#7 format restricts
+> + * the options we have on specifying the X.509 certificate we want.
+> + *
+> + * Further, older versions of OpenSSL don't support manually adding signers to
+> + * the PKCS#7 message so have to accept that we get a certificate included in
+> + * the signature message.  Nor do such older versions of OpenSSL support
+> + * signing with anything other than SHA1 - so we're stuck with that if such is
+> + * the case.
+> + */
+> +#if defined(LIBRESSL_VERSION_NUMBER) || \
+> +	OPENSSL_VERSION_NUMBER < 0x10000000L || \
+> +	defined(OPENSSL_NO_CMS)
+> +#define USE_PKCS7
+> +#endif
+> +#ifndef USE_PKCS7
+> +#include <openssl/cms.h>
+> +#else
+> +#include <openssl/pkcs7.h>
+> +#endif
+> +
+> +struct module_signature {
+> +	uint8_t		algo;		/* Public-key crypto algorithm [0] */
+> +	uint8_t		hash;		/* Digest algorithm [0] */
+> +	uint8_t		id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
+> +	uint8_t		signer_len;	/* Length of signer's name [0] */
+> +	uint8_t		key_id_len;	/* Length of key identifier [0] */
+> +	uint8_t		__pad[3];
+> +	uint32_t	sig_len;	/* Length of signature data */
+> +};
+> +
+> +#define PKEY_ID_PKCS7 2
+> +
+> +static char magic_number[] = "~eBPF signature appended~\n";
+> +
+> +static __attribute__((noreturn))
+> +void format(void)
+> +{
+> +	fprintf(stderr,
+> +		"Usage: scripts/sign-ebpf [-dp] <hash algo> <key> <x509> <bin> <loader> [<dest>]\n");
+> +	exit(2);
+> +}
+> +
+> +static const char *key_pass;
+> +
+> +static int pem_pw_cb(char *buf, int len, int w, void *v)
+> +{
+> +	int pwlen;
+> +
+> +	if (!key_pass)
+> +		return -1;
+> +
+> +	pwlen = strlen(key_pass);
+> +	if (pwlen >= len)
+> +		return -1;
+> +
+> +	strcpy(buf, key_pass);
+> +
+> +	/* If it's wrong, don't keep trying it. */
+> +	key_pass = NULL;
+> +
+> +	return pwlen;
+> +}
+> +
+> +static EVP_PKEY *read_private_key_pkcs11(const char *private_key_name)
+> +{
+> +	EVP_PKEY *private_key = NULL;
+> +#ifdef USE_PKCS11_PROVIDER
+> +	OSSL_STORE_CTX *store;
+> +
+> +	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
+> +		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
+> +	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
+> +		ERR(1, "OSSL_PROVIDER_try_load(default)");
+> +
+> +	store = OSSL_STORE_open(private_key_name, NULL, NULL, NULL, NULL);
+> +	ERR(!store, "OSSL_STORE_open");
+> +
+> +	while (!OSSL_STORE_eof(store)) {
+> +		OSSL_STORE_INFO *info = OSSL_STORE_load(store);
+> +
+> +		if (!info) {
+> +			drain_openssl_errors(__LINE__, 0);
+> +			continue;
+> +		}
+> +		if (OSSL_STORE_INFO_get_type(info) == OSSL_STORE_INFO_PKEY) {
+> +			private_key = OSSL_STORE_INFO_get1_PKEY(info);
+> +			ERR(!private_key, "OSSL_STORE_INFO_get1_PKEY");
+> +		}
+> +		OSSL_STORE_INFO_free(info);
+> +		if (private_key)
+> +			break;
+> +	}
+> +	OSSL_STORE_close(store);
+> +#elif defined(USE_PKCS11_ENGINE)
+> +	ENGINE *e;
+> +
+> +	ENGINE_load_builtin_engines();
+> +	drain_openssl_errors(__LINE__, 1);
+> +	e = ENGINE_by_id("pkcs11");
+> +	ERR(!e, "Load PKCS#11 ENGINE");
+> +	if (ENGINE_init(e))
+> +		drain_openssl_errors(__LINE__, 1);
+> +	else
+> +		ERR(1, "ENGINE_init");
+> +	if (key_pass)
+> +		ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
+> +	private_key = ENGINE_load_private_key(e, private_key_name, NULL, NULL);
+> +	ERR(!private_key, "%s", private_key_name);
+> +#else
+> +	fprintf(stderr, "no pkcs11 engine/provider available\n");
+> +	exit(1);
+> +#endif
+> +	return private_key;
+> +}
+> +
+> +static EVP_PKEY *read_private_key(const char *private_key_name)
+> +{
+> +	if (!strncmp(private_key_name, "pkcs11:", 7)) {
+> +		return read_private_key_pkcs11(private_key_name);
+> +	} else {
+> +		EVP_PKEY *private_key;
+> +		BIO *b;
+> +
+> +		b = BIO_new_file(private_key_name, "rb");
+> +		ERR(!b, "%s", private_key_name);
+> +		private_key = PEM_read_bio_PrivateKey(b, NULL, pem_pw_cb,
+> +						      NULL);
+> +		ERR(!private_key, "%s", private_key_name);
+> +		BIO_free(b);
+> +
+> +		return private_key;
+> +	}
+> +}
+> +
+> +static X509 *read_x509(const char *x509_name)
+> +{
+> +	unsigned char buf[2];
+> +	X509 *x509;
+> +	BIO *b;
+> +	int n;
+> +
+> +	b = BIO_new_file(x509_name, "rb");
+> +	ERR(!b, "%s", x509_name);
+> +
+> +	/* Look at the first two bytes of the file to determine the encoding */
+> +	n = BIO_read(b, buf, 2);
+> +	if (n != 2) {
+> +		if (BIO_should_retry(b)) {
+> +			fprintf(stderr, "%s: Read wanted retry\n", x509_name);
+> +			exit(1);
+> +		}
+> +		if (n >= 0) {
+> +			fprintf(stderr, "%s: Short read\n", x509_name);
+> +			exit(1);
+> +		}
+> +		ERR(1, "%s", x509_name);
+> +	}
+> +
+> +	ERR(BIO_reset(b) != 0, "%s", x509_name);
+> +
+> +	if (buf[0] == 0x30 && buf[1] >= 0x81 && buf[1] <= 0x84)
+> +		/* Assume raw DER encoded X.509 */
+> +		x509 = d2i_X509_bio(b, NULL);
+> +	else
+> +		/* Assume PEM encoded X.509 */
+> +		x509 = PEM_read_bio_X509(b, NULL, NULL, NULL);
+> +
+> +	BIO_free(b);
+> +	ERR(!x509, "%s", x509_name);
+> +
+> +	return x509;
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	struct module_signature sig_info = { .id_type = PKEY_ID_PKCS7 };
+> +	char *hash_algo = NULL;
+> +	char *private_key_name = NULL, *raw_sig_name = NULL;
+> +	char *x509_name, *bin_name, *loader_name, *dest_name;
+> +	bool save_sig = false, replace_orig;
+> +	bool sign_only = false;
+> +	bool raw_sig = false;
+> +	unsigned char buf[4096];
+> +	unsigned long loader_size, sig_size;
+> +	unsigned int use_signed_attrs;
+> +	const EVP_MD *digest_algo;
+> +	EVP_PKEY *private_key;
+> +#ifndef USE_PKCS7
+> +	CMS_ContentInfo *cms = NULL;
+> +	unsigned int use_keyid = 0;
+> +#else
+> +	PKCS7 *pkcs7 = NULL;
+> +#endif
+> +	X509 *x509;
+> +	BIO *bd, *bm, *bl;
+> +	int opt, n;
+> +	OpenSSL_add_all_algorithms();
+> +	ERR_load_crypto_strings();
+> +	ERR_clear_error();
+> +
+> +	key_pass = getenv("KBUILD_SIGN_PIN");
+> +
+> +#ifndef USE_PKCS7
+> +	use_signed_attrs = CMS_NOATTR;
+> +#else
+> +	use_signed_attrs = PKCS7_NOATTR;
+> +#endif
+> +
+> +	do {
+> +		opt = getopt(argc, argv, "sdpk");
+> +		switch (opt) {
+> +		case 's': raw_sig = true; break;
+> +		case 'p': save_sig = true; break;
+> +		case 'd': sign_only = true; save_sig = true; break;
+> +#ifndef USE_PKCS7
+> +		case 'k': use_keyid = CMS_USE_KEYID; break;
+> +#endif
+> +		case -1: break;
+> +		default: format();
+> +		}
+> +	} while (opt != -1);
+> +
+> +	argc -= optind;
+> +	argv += optind;
+> +	if (argc < 5 || argc > 6)
+> +		format();
+> +
+> +	if (raw_sig) {
+> +		raw_sig_name = argv[0];
+> +		hash_algo = argv[1];
+> +	} else {
+> +		hash_algo = argv[0];
+> +		private_key_name = argv[1];
+> +	}
+> +	x509_name = argv[2];
+> +	bin_name = argv[3];
+> +	loader_name = argv[4];
+> +	if (argc == 6 && strcmp(argv[4], argv[5]) != 0) {
+> +		dest_name = argv[5];
+> +		replace_orig = false;
+> +	} else {
+> +		ERR(asprintf(&dest_name, "%s.~signed~", loader_name) < 0,
+> +		    "asprintf");
+> +		replace_orig = true;
+> +	}
+> +
+> +#ifdef USE_PKCS7
+> +	if (strcmp(hash_algo, "sha1") != 0) {
+> +		fprintf(stderr, "sign-file: %s only supports SHA1 signing\n",
+> +			OPENSSL_VERSION_TEXT);
+> +		exit(3);
+> +	}
+> +#endif
+> +
+> +	/* Open the bin file */
+> +	bm = BIO_new_file(bin_name, "rb");
+> +	ERR(!bm, "%s", bin_name);
+> +
+> +	if (!raw_sig) {
+> +		/* Read the private key and the X.509 cert the PKCS#7 message
+> +		 * will point to.
+> +		 */
+> +		private_key = read_private_key(private_key_name);
+> +		x509 = read_x509(x509_name);
+> +
+> +		/* Digest the module data. */
+> +		OpenSSL_add_all_digests();
+> +		drain_openssl_errors(__LINE__, 0);
+> +		digest_algo = EVP_get_digestbyname(hash_algo);
+> +		ERR(!digest_algo, "EVP_get_digestbyname");
+> +
+> +#ifndef USE_PKCS7
+> +		/* Load the signature message from the digest buffer. */
+> +		cms = CMS_sign(NULL, NULL, NULL, NULL,
+> +			       CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY |
+> +			       CMS_DETACHED | CMS_STREAM);
+> +		ERR(!cms, "CMS_sign");
+> +
+> +		ERR(!CMS_add1_signer(cms, x509, private_key, digest_algo,
+> +				     CMS_NOCERTS | CMS_BINARY |
+> +				     CMS_NOSMIMECAP | use_keyid |
+> +				     use_signed_attrs),
+> +		    "CMS_add1_signer");
+> +		ERR(CMS_final(cms, bm, NULL, CMS_NOCERTS | CMS_BINARY) != 1,
+> +		    "CMS_final");
+> +
+> +#else
+> +		pkcs7 = PKCS7_sign(x509, private_key, NULL, bm,
+> +				   PKCS7_NOCERTS | PKCS7_BINARY |
+> +				   PKCS7_DETACHED | use_signed_attrs);
+> +		ERR(!pkcs7, "PKCS7_sign");
+> +#endif
+> +
+> +		if (save_sig) {
+> +			char *sig_file_name;
+> +			BIO *b;
+> +
+> +			ERR(asprintf(&sig_file_name, "%s.p7s", bin_name) < 0,
+> +			    "asprintf");
+> +			b = BIO_new_file(sig_file_name, "wb");
+> +			ERR(!b, "%s", sig_file_name);
+> +#ifndef USE_PKCS7
+> +			ERR(i2d_CMS_bio_stream(b, cms, NULL, 0) != 1,
+> +			    "%s", sig_file_name);
+> +#else
+> +			ERR(i2d_PKCS7_bio(b, pkcs7) != 1,
+> +			    "%s", sig_file_name);
+> +#endif
+> +			BIO_free(b);
+> +		}
+> +
+> +		if (sign_only) {
+> +			BIO_free(bm);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	/* Open the destination file now so that we can shovel the loader data
+> +	 * across as we read it.
+> +	 */
+> +	bd = BIO_new_file(dest_name, "wb");
+> +	ERR(!bd, "%s", dest_name);
+> +
+> +	bl = BIO_new_file(loader_name, "rb");
+> +	ERR(!bl, "%s", loader_name);
+> +
+> +
+> +	/* Append the marker and the PKCS#7 message to the destination file */
+> +	ERR(BIO_reset(bm) < 0, "%s", bin_name);
+> +	ERR(BIO_reset(bl) < 0, "%s", loader_name);
+> +	while ((n = BIO_read(bl, buf, sizeof(buf))),
+> +	       n > 0) {
+> +		ERR(BIO_write(bd, buf, n) < 0, "%s", dest_name);
+> +	}
+> +	BIO_free(bl);
+> +	BIO_free(bm);
+> +	ERR(n < 0, "%s", loader_name);
+> +	loader_size = BIO_number_written(bd);
+> +
+> +	if (!raw_sig) {
+> +#ifndef USE_PKCS7
+> +		ERR(i2d_CMS_bio_stream(bd, cms, NULL, 0) != 1, "%s", dest_name);
+> +#else
+> +		ERR(i2d_PKCS7_bio(bd, pkcs7) != 1, "%s", dest_name);
+> +#endif
+> +	} else {
+> +		BIO *b;
+> +
+> +		/* Read the raw signature file and write the data to the
+> +		 * destination file
+> +		 */
+> +		b = BIO_new_file(raw_sig_name, "rb");
+> +		ERR(!b, "%s", raw_sig_name);
+> +		while ((n = BIO_read(b, buf, sizeof(buf))), n > 0)
+> +			ERR(BIO_write(bd, buf, n) < 0, "%s", dest_name);
+> +		BIO_free(b);
+> +	}
+> +
+> +	sig_size = BIO_number_written(bd) - loader_size;
+> +	sig_info.sig_len = htonl(sig_size);
+> +	ERR(BIO_write(bd, &sig_info, sizeof(sig_info)) < 0, "%s", dest_name);
+> +	ERR(BIO_write(bd, magic_number, sizeof(magic_number) - 1) < 0, "%s", dest_name);
+> +
+> +	ERR(BIO_free(bd) != 1, "%s", dest_name);
+> +
+> +	/* Finally, if we're signing in place, replace the original. */
+> +	if (replace_orig)
+> +		ERR(rename(dest_name, loader_name) < 0, "%s", dest_name);
+> +
+> +	return 0;
+> +}
+> -- 
+> 2.48.1
+> 
 
-87cf5705725eeb David Lechner      2025-03-18  1196  static int ad7606_probe_channels(struct iio_dev *indio_dev)
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1197  {
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1198  	struct ad7606_state *st = iio_priv(indio_dev);
-87cf5705725eeb David Lechner      2025-03-18  1199  	struct device *dev = indio_dev->dev.parent;
-87cf5705725eeb David Lechner      2025-03-18  1200  	struct iio_chan_spec *channels;
-87cf5705725eeb David Lechner      2025-03-18  1201  	bool slow_bus;
-87cf5705725eeb David Lechner      2025-03-18  1202  	int ret, i;
-87cf5705725eeb David Lechner      2025-03-18  1203  
-87cf5705725eeb David Lechner      2025-03-18  1204  	slow_bus = !st->bops->iio_backend_config;
-87cf5705725eeb David Lechner      2025-03-18  1205  	indio_dev->num_channels = st->chip_info->num_adc_channels;
-87cf5705725eeb David Lechner      2025-03-18  1206  
-87cf5705725eeb David Lechner      2025-03-18  1207  	/* Slow buses also get 1 more channel for soft timestamp */
-87cf5705725eeb David Lechner      2025-03-18  1208  	if (slow_bus)
-87cf5705725eeb David Lechner      2025-03-18  1209  		indio_dev->num_channels++;
-87cf5705725eeb David Lechner      2025-03-18  1210  
-87cf5705725eeb David Lechner      2025-03-18  1211  	channels = devm_kcalloc(dev, indio_dev->num_channels, sizeof(*channels),
-87cf5705725eeb David Lechner      2025-03-18  1212  				GFP_KERNEL);
-87cf5705725eeb David Lechner      2025-03-18  1213  	if (!channels)
-f3838e934dfff2 Alexandru Ardelean 2024-09-19  1214  		return -ENOMEM;
-f3838e934dfff2 Alexandru Ardelean 2024-09-19  1215  
-87cf5705725eeb David Lechner      2025-03-18  1216  	for (i = 0; i < indio_dev->num_channels; i++) {
-87cf5705725eeb David Lechner      2025-03-18  1217  		struct iio_chan_spec *chan = &channels[i];
-87cf5705725eeb David Lechner      2025-03-18  1218  
-87cf5705725eeb David Lechner      2025-03-18  1219  		chan->type = IIO_VOLTAGE;
-87cf5705725eeb David Lechner      2025-03-18  1220  		chan->indexed = 1;
-87cf5705725eeb David Lechner      2025-03-18  1221  		chan->channel = i;
-87cf5705725eeb David Lechner      2025-03-18  1222  		chan->scan_index = i;
-87cf5705725eeb David Lechner      2025-03-18  1223  		chan->scan_type.sign = 's';
-87cf5705725eeb David Lechner      2025-03-18  1224  		chan->scan_type.realbits = st->chip_info->bits;
-87cf5705725eeb David Lechner      2025-03-18  1225  		chan->scan_type.storagebits = st->chip_info->bits > 16 ? 32 : 16;
-87cf5705725eeb David Lechner      2025-03-18  1226  		chan->scan_type.endianness = IIO_CPU;
-f3838e934dfff2 Alexandru Ardelean 2024-09-19  1227  
-87cf5705725eeb David Lechner      2025-03-18  1228  		if (indio_dev->modes & INDIO_DIRECT_MODE)
-87cf5705725eeb David Lechner      2025-03-18  1229  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
-87cf5705725eeb David Lechner      2025-03-18  1230  
-87cf5705725eeb David Lechner      2025-03-18  1231  		if (st->sw_mode_en) {
-87cf5705725eeb David Lechner      2025-03-18  1232  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
-87cf5705725eeb David Lechner      2025-03-18  1233  			chan->info_mask_separate_available |=
-87cf5705725eeb David Lechner      2025-03-18  1234  				BIT(IIO_CHAN_INFO_SCALE);
-87cf5705725eeb David Lechner      2025-03-18  1235  
-87cf5705725eeb David Lechner      2025-03-18  1236  			/*
-87cf5705725eeb David Lechner      2025-03-18  1237  			 * All chips with software mode support oversampling,
-87cf5705725eeb David Lechner      2025-03-18  1238  			 * so we skip the oversampling_available check. And the
-87cf5705725eeb David Lechner      2025-03-18  1239  			 * shared_by_type instead of shared_by_all on slow
-87cf5705725eeb David Lechner      2025-03-18  1240  			 * buses is for backward compatibility.
-87cf5705725eeb David Lechner      2025-03-18  1241  			 */
-87cf5705725eeb David Lechner      2025-03-18  1242  			if (slow_bus)
-87cf5705725eeb David Lechner      2025-03-18  1243  				chan->info_mask_shared_by_type |=
-87cf5705725eeb David Lechner      2025-03-18  1244  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-87cf5705725eeb David Lechner      2025-03-18  1245  			else
-87cf5705725eeb David Lechner      2025-03-18  1246  				chan->info_mask_shared_by_all |=
-87cf5705725eeb David Lechner      2025-03-18  1247  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-87cf5705725eeb David Lechner      2025-03-18  1248  
-87cf5705725eeb David Lechner      2025-03-18  1249  			chan->info_mask_shared_by_all_available |=
-87cf5705725eeb David Lechner      2025-03-18  1250  				BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-87cf5705725eeb David Lechner      2025-03-18  1251  		} else {
-87cf5705725eeb David Lechner      2025-03-18  1252  			chan->info_mask_shared_by_type |=
-87cf5705725eeb David Lechner      2025-03-18  1253  				BIT(IIO_CHAN_INFO_SCALE);
-87cf5705725eeb David Lechner      2025-03-18  1254  
-87cf5705725eeb David Lechner      2025-03-18  1255  			if (st->chip_info->oversampling_avail)
-87cf5705725eeb David Lechner      2025-03-18  1256  				chan->info_mask_shared_by_all |=
-87cf5705725eeb David Lechner      2025-03-18  1257  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-87cf5705725eeb David Lechner      2025-03-18  1258  		}
-87cf5705725eeb David Lechner      2025-03-18  1259  
-87cf5705725eeb David Lechner      2025-03-18  1260  		if (!slow_bus)
-87cf5705725eeb David Lechner      2025-03-18  1261  			chan->info_mask_shared_by_all |=
-87cf5705725eeb David Lechner      2025-03-18  1262  				BIT(IIO_CHAN_INFO_SAMP_FREQ);
-87cf5705725eeb David Lechner      2025-03-18  1263  
-87cf5705725eeb David Lechner      2025-03-18  1264  		ret = st->chip_info->scale_setup_cb(indio_dev, chan);
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1265  		if (ret)
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1266  			return ret;
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1267  	}
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1268  
-87cf5705725eeb David Lechner      2025-03-18  1269  	if (slow_bus)
-87cf5705725eeb David Lechner      2025-03-18 @1270  		channels[i] = (struct iio_chan_spec)IIO_CHAN_SOFT_TIMESTAMP(i);
-                                                                ^^^^^^^^^^^
-i is == indio_dev->num_channels so this is out of bounds by one element.
-
-87cf5705725eeb David Lechner      2025-03-18  1271  
-87cf5705725eeb David Lechner      2025-03-18  1272  	indio_dev->channels = channels;
-87cf5705725eeb David Lechner      2025-03-18  1273  
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1274  	return 0;
-e571c1902116a3 Alexandru Ardelean 2024-09-19  1275  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+BR, Jarkko
 
