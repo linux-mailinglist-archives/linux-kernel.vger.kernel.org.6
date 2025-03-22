@@ -1,143 +1,147 @@
-Return-Path: <linux-kernel+bounces-572288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DFCA6C8B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D12A6C8B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:26:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FF5466373
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:25:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3111F4656E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA9F1F03DC;
-	Sat, 22 Mar 2025 09:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EE21EB193;
+	Sat, 22 Mar 2025 09:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1I0eTjV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8j/zwb0"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DBC1E9B2E
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 09:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784341E9907;
+	Sat, 22 Mar 2025 09:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742635452; cv=none; b=bAEHxB0ClXO/6zxcXQtVYYdSwRT8GAcQ7OjisVJ1q8Wb3tHpYn5p01eUzHcaK6ECeUTaqfpoZPWTFkQYpLxICm5RMgdiEhxpEAQLLzJwYe6CqD6sgE7NCHx0hIM3I3WlfeGkI2Vf6NVmEgR1yn966CMJMN6jfbDtpXVNeePK8Jw=
+	t=1742635528; cv=none; b=JirsG45PXTKQWCkXWP6huHEx8nXCilxa+tCxIP6mr8A5zT8vu25RwEGK6PtV0a6ju8aCrDlixV0uUBqZavONxGpkbKhKgMBlQwI6J40EB4OUezzpgZkfBcBMLcab12GELHsqqztDa56JqEyhQIYi8yndY4ptiqNRCW7gJAwTkEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742635452; c=relaxed/simple;
-	bh=Y7zQjBaegFJhwUNUGu7PUSXMtq4gex8Nbhd+r7fKwtE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CDg1wbLo+S6Vp5LTAskNo0jT1po5n0BbzhHtKQNiy2jIiN2EaUXQddo4tZq259C2C3RlkWjYDP1g8gH2ivNdezlGqR+J9Y1+AAImOSX9FplmJY8Hndt6aVrrgBrh3ksntHuwqcDXAi8f/xjERoZ++GkIGIRfyNSff3AtdrBR8+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1I0eTjV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5A442C4CEF0;
-	Sat, 22 Mar 2025 09:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742635452;
-	bh=Y7zQjBaegFJhwUNUGu7PUSXMtq4gex8Nbhd+r7fKwtE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=A1I0eTjVQ8TQYyspxKYglNxp0+iAR6/dOWXOMq6z73QJXZehRO6pbrJe62bGL3lSS
-	 OrXCB8hWrKRw296eTovakcdFm0FSYXASI2abwLMOC0m7c9UB+WGSjsuB4j8hY0mtkv
-	 0y0OZZzgXUOteyhEvXd4t5rfkp9+NIyIYZk1rJN2htyBY115ThI7TJEIxeRmL24wKJ
-	 DfIcgU4CvOgAV0n8nIZwZlCD68aOzvwHidNtuVnak4a8XUnyuM7Vg4fBv9dTJao+9z
-	 ZFulVLNmBtNcx/HW8oA2vnbd7RYHX+Keu1VMe9EwmkKSWs+pTurJ+JpCverVyBZwB1
-	 D22bSO5kaKDmA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540A7C36007;
-	Sat, 22 Mar 2025 09:24:12 +0000 (UTC)
-From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
-Date: Sat, 22 Mar 2025 18:23:16 +0900
-Subject: [PATCH v7 5/5] test_bits: add tests for BIT_U*()
+	s=arc-20240116; t=1742635528; c=relaxed/simple;
+	bh=zXysE9+eZmHFbPbkVxXeKnl96KXqFxCLHJZD2dVakVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEfsrOHomYbLxnl6rvW2F/Y5R7NBhBnE+Y0ASprgci069o1J1BKpZC6jQ9YynnCQGEkh4+pzAlEuuJWeQ95BIIST+/K2k6QhHMP0qgCeS5C6L+ibusbrsA0Vk1pxM6X95eQoVNVYs88obU9NTllyrVUW86N0A87cm2KC9Myn8aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8j/zwb0; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2239c066347so65130835ad.2;
+        Sat, 22 Mar 2025 02:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742635526; x=1743240326; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CAxmjD+4ShrH2qVul5h8U6ZQKpv0SeH27W7krvXTAuY=;
+        b=Q8j/zwb0Mg0pQA3ua9J3X3jGEhWLIEEyBGM/UEEnOF/sMGDsj1TV1DYcTjj5jOylJh
+         +MN5Nfbm+qbfZI6xwMH3Efyv+PUYeWDeKvJZurd9H3edORcYhPXD/lNIb5wTV/KavI0Q
+         pQ7QVqp4YTT4q6bDOUAX5cBkBGDlP0/GRGqmTiVXKKdKyX2Np+59F8mQQyVcuPK/Dftu
+         +smXJt2+4CGHiIEWgy6pauCVK5sOOLlVa/ZJPhckMuhl48OcSrKe1sCzm85yFnIwq42U
+         XD8mGpMuBmDi5Ke2fNtPfJniag5v2HuM7yWdwcB3HSChq/uhx3U5NpaZLlEk7HFnUauQ
+         w6rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742635526; x=1743240326;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CAxmjD+4ShrH2qVul5h8U6ZQKpv0SeH27W7krvXTAuY=;
+        b=MfJC94sUp7p6dtlGOFI2yZF95XZbdois1kR4OmBtD7FHiFHzrNPfGiHcJfzmNPuUkL
+         m3vXYz6uwL9K3Ly7Puc6unfJZ12HrWHpHf2x98fYgE9L4fX3TUXvhkOXFLyLWkMfRAEI
+         i2q1xXYw62hhYVZGKsQMJ/HLLsh8rwiw7jujuF/WD2uza92IH21KaOl+DGlwLVoWNaCh
+         bS1zWaCsI8Zq9dEUj23glKIeBAfyj+hrR/FaPyrxpAaMrAq6lxpFIDHSqCV1DACpfTnt
+         As6+/LVChwkqCgJTL9IEUmOJyRYWIGCpn/itbP3UTvSD2xN41fzVsE2UKmfDAVIcDDhT
+         Ai1A==
+X-Forwarded-Encrypted: i=1; AJvYcCURCzda0XDB7trjzMGCBf68FhxNYvM+RscVNNR7eJcpui6Q/HnlCpumnIfnSwAyLZVWHVg5ZnKNRNzF6ama@vger.kernel.org, AJvYcCVREvE5U7pt1yJzvjChC3vBQz1aopThKRR+WZiFFTjQ2AWommME+VT9GvUf0S1O926/f64ojw6DYrnA1mjBlnPR@vger.kernel.org, AJvYcCW6qznKGl5xNY1aH26HrilTKDXVRFqWntMdy3ZLBz6DFGFAdNEIOeUGbmCn2a4SaKrqhHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPgX4RSLD+0NsHWtiC9IWo/TWkh2NamyPnUMPVrQOrRSbuSemZ
+	P5XXrvKbcbQ+wxx9Owzv6fFeBpUgQAcSIf0MRoSiuZcEFqnqnN0W
+X-Gm-Gg: ASbGncunB2ZrsxQ+X6wI5+Q5bxHpoTsgqx0G+K0URSOuadg2XNM8L2J5nz7FTNalNbq
+	ANqDulV7gE6GtYsBY3mHO/PHiDVttdwZ7lrexy08sWVklbtark+wNeIix7kKCElymF95UyeFLxY
+	FObmXPq0XGKfiPGz9BOOBeQOBtspFJApYPIYcYFCfONmxzeE7f7+7qV7q8pR7QOZLzwmA1rAUQU
+	2Ionj23zEzM3yi3sCj+W8eLJ8sqMtMEOs7ipYH95RZghczURn4gGjhwYT7/xNu83skNQvFuy1lM
+	dlCviUkU+6FPAG0VyvsspCgNuk1kv6JfL3wNormOqXrIlHp+Ow==
+X-Google-Smtp-Source: AGHT+IFSu+bGGQRjawLHDtslf0SzwTbnDI1kjP5psSX/njED57/1HtiodD8whtxKMq7t1GftztQyIg==
+X-Received: by 2002:a05:6a20:72a0:b0:1f5:889c:3ccc with SMTP id adf61e73a8af0-1fe42f74ff5mr11146522637.14.1742635526324;
+        Sat, 22 Mar 2025 02:25:26 -0700 (PDT)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a27dbb2fsm3230302a12.9.2025.03.22.02.25.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 02:25:25 -0700 (PDT)
+Date: Sat, 22 Mar 2025 09:25:17 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Phil Sutter <phil@nwl.cc>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 RESEND net-next 2/2] selftests: wireguard: update to
+ using nft for qemu test
+Message-ID: <Z96B_VRDHZHPn-2w@fedora>
+References: <20250106081043.2073169-1-liuhangbin@gmail.com>
+ <20250106081043.2073169-3-liuhangbin@gmail.com>
+ <Z9rtrVk-15Ts_BNp@zx2c4.com>
+ <Z91CGRP9QLdZONiZ@fedora>
+ <Z91QshzKRlmPdpv7@orbyte.nwl.cc>
+ <Z91fXURX3BQFDaq9@fedora>
+ <Z916VMSCEtinZl54@orbyte.nwl.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250322-fixed-type-genmasks-v7-5-da380ff1c5b9@wanadoo.fr>
-References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
-In-Reply-To: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
-To: Yury Norov <yury.norov@gmail.com>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>, 
- David Laight <David.Laight@ACULAB.COM>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1486;
- i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
- bh=ZIzsmwCR7M/9F3S6iGoR6o+XM+b50ACvCduIf3sMObs=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDOn3Gncc3C0demDBd7u6H+w84pwPnFzdLFeuCRYy/8x59
- obxQv5jHaUsDGJcDLJiiizLyjm5FToKvcMO/bWEmcPKBDKEgYtTACZy5DMjQ5NU+Z3di0y1pwis
- XFu1tZOjb/8hVmc3i6DCHW7i15yipBj+WS7aV3/p9RSFTofNiXGKKvWZRnl6hmur2UX7trO8mr+
- TAwA=
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
- with auth_id=291
-X-Original-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reply-To: mailhol.vincent@wanadoo.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z916VMSCEtinZl54@orbyte.nwl.cc>
 
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+On Fri, Mar 21, 2025 at 03:40:20PM +0100, Phil Sutter wrote:
+> On Fri, Mar 21, 2025 at 12:45:17PM +0000, Hangbin Liu wrote:
+> > On Fri, Mar 21, 2025 at 12:42:42PM +0100, Phil Sutter wrote:
+> > > Hi Hangbin,
+> > > 
+> > > On Fri, Mar 21, 2025 at 10:40:25AM +0000, Hangbin Liu wrote:
+> > > > Hi Jason, Phil,
+> > > > On Wed, Mar 19, 2025 at 05:15:41PM +0100, Jason A. Donenfeld wrote:
+> > > > > On Mon, Jan 06, 2025 at 08:10:43AM +0000, Hangbin Liu wrote:
+> > > > > > +	echo "file /bin/nft $(NFTABLES_PATH)/src/nft 755 0 0" >> $@
+> > > > > > +	echo "file /lib/libmnl.so.0 $(TOOLCHAIN_PATH)/lib/libmnl.so.0 755 0 0" >> $@
+> > > > > > +	echo "file /lib/libnftnl.so.11 $(TOOLCHAIN_PATH)/lib/libnftnl.so.11 755 0 0" >> $@
+> > > > > 
+> > > > > Can't these be statically linked into the nft binary?
+> > > > 
+> > > > If I omit these, I will got error like
+> > > > 
+> > > > mnl_attr_put: symbol not found
+> > > > 
+> > > > Even though I set `--enable-static` in nft build.
+> > > > 
+> > > > Do you know what's the reason?
+> > > 
+> > > I was able to have nft linked statically against built libmnl and
+> > > libnftnl by passing '--disable-shared --enable-static' to configure
+> > > calls of all three build systems. With --enable-shared in library
+> > > configure calls, nftables build preferred to link against the DSOs and I
+> > > did not find a way to change this.
+> > 
+> > The patch is using
+> > "./configure --prefix=/ $(CROSS_COMPILE_FLAG) --enable-static \
+> > --disable-shared --disable-debug --disable-man-doc --with-mini-gmp --without-cli"
+> > to build nft.
+> 
+> Do you pass that to the configure calls for libnftnl and libmnl, too? I
+> didn't find a way to force static linking in nftables build system, so I
+> disabled building of shared libmnl/libnftnl libraries.
+> 
 
-Add some additional tests in lib/test_bits.c to cover the expected
-results of the fixed type BIT_U*() macros.
+It works after pass that to libnftnl and libmnl.
 
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
-Changelog:
-
-  v6 -> v7:
-
-    - Add Lucas's Reviewed-by tag.
-
-  v5 -> v6:
-
-    - No changes.
-
-  v4 -> v5:
-
-    - BIT_U8()/BIT_U16() are now back to u8/u16.
-
-  v3 -> v4:
-
-    - New patch.
----
- lib/test_bits.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/lib/test_bits.c b/lib/test_bits.c
-index f443476f3265c463c1219b13c1ef9663d238d58b..47325b41515fde2c3ed434ed6f4094925c98886b 100644
---- a/lib/test_bits.c
-+++ b/lib/test_bits.c
-@@ -9,6 +9,16 @@
- 
- #define assert_type(t, x) _Generic(x, t: x, default: 0)
- 
-+static_assert(assert_type(u8, BIT_U8(0)) == 1u);
-+static_assert(assert_type(u16, BIT_U16(0)) == 1u);
-+static_assert(assert_type(u32, BIT_U32(0)) == 1u);
-+static_assert(assert_type(u64, BIT_U64(0)) == 1ull);
-+
-+static_assert(assert_type(u8, BIT_U8(7)) == 0x80u);
-+static_assert(assert_type(u16, BIT_U16(15)) == 0x8000u);
-+static_assert(assert_type(u32, BIT_U32(31)) == 0x80000000u);
-+static_assert(assert_type(u64, BIT_U64(63)) == 0x8000000000000000ull);
-+
- static_assert(assert_type(unsigned long, GENMASK(31, 0)) == U32_MAX);
- static_assert(assert_type(unsigned long long, GENMASK_ULL(63, 0)) == U64_MAX);
- static_assert(assert_type(u8, GENMASK_U8(7, 0)) == U8_MAX);
-
--- 
-2.48.1
-
-
+Thanks
+Hangbin
 
