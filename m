@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-572272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8BCA6C877
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:04:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4726BA6C878
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4AB3BA8FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26697188C9AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78811DE4CD;
-	Sat, 22 Mar 2025 09:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeNcQz4g"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE381DBB13;
+	Sat, 22 Mar 2025 09:05:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFFF1D5150;
-	Sat, 22 Mar 2025 09:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B04D187550
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 09:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742634249; cv=none; b=nTssPOanw2lC8HfhnjffA6CYo0JU72NlaOveEpLZwFN96p/z1yqIcBXWVSWt9h+7V3+jiQvEMyM5tGpycdKcsUuJanrgZfe/0fx0Fp0usOcvA0md1tReijnHR+FDls4Ee8WTpsu/JPWFCYe/7heTAOMYQTHWfMIbh7AOH+0E4iw=
+	t=1742634306; cv=none; b=cV5nsYKr+vtg7iKg/Pp7ZpVKZdsoRGl0+mBZuKESpKyYbbwYe2fAXnvIzCcwYN02uMfr5cuyyJBQlgjaorcSCkr06PRC+XQZzuHOHPVKfJK+AN40pUQh1Lqv4V8kOhcVlm4CtrToJs3ra9CWtzIPV5SkCOxNs7Ehh1eCcyvKaK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742634249; c=relaxed/simple;
-	bh=zIjQ0cg5IqIYk981aMy87lHSgY0ETLH+gn+iWicm35E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Z4kMGLb6XhsYGLyQ3daxjNuZpWtqhMgRO54s3Xf2Tvg3xJita4pH8qWyzqM0xm+DTHWK9mVYO4zKVMgIQ2BTz3Aelgi2IGdhrKRtV5q25C/Gqaft3tz0Df98hatKsDZ7/FW4/I93uD5v/SeOlJrifxoztQT84bI4X3vUU5gFpQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeNcQz4g; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so4175967a12.3;
-        Sat, 22 Mar 2025 02:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742634246; x=1743239046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0WEFLg15YuRe24Thp6xqZzaXDWK7siM/NvEMGctFLYg=;
-        b=CeNcQz4gZi+IK5GzskwBmxc57klkGRsjoq5OUS2gl9MxVGuMKnj+ExNO0YRgTXYGuY
-         7VacE98C2WQm49o/NTRjDIwaGbXwYsGu8DR9rcEXVc7e8B5MAL90ZA8+u6TC/lb41zkK
-         0LyJ/4bY55kS9o7l7eW3vJZ5I/YzWi4gm6X9yK4nk2CANx13d9O2EtIfJufj0DRTDVS4
-         0xBj390zi9vU7qg90zNhj0VlBIntDo/J19wHPirrb5Qa7q2G75XKdxe9DO4vR0IJoPql
-         CXL3LxkxqDnqxBDs5vJsRyhZYEWpyLULolYlV9m/YImRMnS6zZDqVL8KJcgmZbY8ckmS
-         1QRg==
+	s=arc-20240116; t=1742634306; c=relaxed/simple;
+	bh=fvC87F3YUiEQxEElPGuptnR3EYPtjVSmwI4/ZZKhZdY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j8gx6+u9GA3WtAx8srjG3M1ulpLgbqYoQ80w1jpc8d9XMCf1BeyKVTMpE/8XVLcsXyydIu7eA2RNLnrjd0jcl1Ajlmwi0j9OFphCGJu98DHYIFbVmGE36MiMpbmt5QjfLRCGcGv4GY2eBfRwEOx3EhJgfLTr/SeKVc0D6ekgcwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d443811f04so25297435ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 02:05:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742634246; x=1743239046;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1742634303; x=1743239103;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0WEFLg15YuRe24Thp6xqZzaXDWK7siM/NvEMGctFLYg=;
-        b=tKq16O+8bPjlpAw7wVxGgAUvMmTbKCEjnhTc4Du8R//rvVJ4MHqUEyqyMgPa2UHBw3
-         gew3+zUGhOMGsG3laLuggtQvXhMTJJAOp2nfvlqxQSmrzr9VhK8ciSSZD9A5LuK0XrEp
-         ftriFYWCUTiA5n/l2N4xPcz8A7ToN0HvnldCwVdyScWA7y0eiOW1Hp3zRjahWm93g3xX
-         851wIb/VmzLXSvihrfVzdCiUAqWIdpn5UZmstr0VBaKjQ31Zl6x7IB6wBojuLRfr3WHP
-         nD8hwjwAwyC75gO0llTGidqjIZm0tyPa1YtuibedojU5veGBIAYT/det0oTpBDiffZAr
-         5yxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfrqWzWsGFJ8Z8uDg0GnX0MtLNae9Wm9+WjBSRuRczFp4tExjucQ79dAr6b8fusyzaw2zSkUbTVMviwCPx@vger.kernel.org, AJvYcCVW07dd008mqoIwyNghLYZqklVFUa4NHeYhggf/kYUtZ2GvnK/BoIXyDt36kNzxXjPD8CYHCGx9Fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFx46aSTD1Fz46HSybq9RGKyDXiVjbqYyEcXE7zaW+u8x6eGC6
-	hvVxBpA0KsCof7sa9C+uW+bN+yaMd5C4eo8zeNxUqDfHayVWEZmvCO05Zg==
-X-Gm-Gg: ASbGncseSZiONzS0tHb6bro5iBIYvrwENXPhz2Mb3XpdWSo3Jum2mDRao7sVCZij38o
-	ByF41wVB6lcsEiXEqcCNJGwbIl6HZfWYwupY0++FDqT2cv16eQI3BWk0FQ5MTWfP07vYxYD0hhy
-	ctrbEs2nbJCKfrrr7zC3SEf4OunDiKr7EcxfWeigdgTGhrlKoy0TNEk0gn08C+v075m0+P3Dwnh
-	Cku3nE3wRJbtWEAdqCSCQUZ4nJo0TE5x4XGF3wP5sH1wyh1wwYxPCVksOZ+88136jEjfkgdlgzC
-	0zvmrIowlkm/J92G0hoUzLuxWCSysOq+H9Wr9NI9rd947geTvvWw
-X-Google-Smtp-Source: AGHT+IFP9ujnHjmjshZeTc91ysg4uZGIc326Y2yqI/cgoniP+AIRlORhe5RjfRk2QcWAFdPbWYP/Bg==
-X-Received: by 2002:a05:6402:2349:b0:5e4:cbee:234c with SMTP id 4fb4d7f45d1cf-5ebcd426839mr5193159a12.10.1742634245427;
-        Sat, 22 Mar 2025 02:04:05 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.234.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd56a09sm307877366b.172.2025.03.22.02.04.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Mar 2025 02:04:04 -0700 (PDT)
-Message-ID: <fde4a18e-0376-4c3f-9b27-b644c211618e@gmail.com>
-Date: Sat, 22 Mar 2025 09:04:58 +0000
+        bh=jGVaarRB/L0i+F7Cnq1M1dqOGn52GYljV2EOw47H1/8=;
+        b=D2NEp921SYZJso71jD6tg7Rhcu7Oyq/zxvl1u8//RHpCL55IC7XtJVDvXXqtykQG1c
+         LaxD4fw4BU85ciQ2WwJTo/CnBd4oZ2803QizIeZme3QRPZqDPX4az4oVBOoedApZuBcO
+         /8c9kBAcS8tDZvRIVwzVLK4y63YwqeLMrPAdNCez0opT8NNKLMozzN0gJeVdL5+NUhVs
+         NXbWLWaSHpOrSWIYwE6DWa2vwkfoMIuWnV+IHM+QmcY0GEJNzYp9dWgQiRaCnUsLwrW2
+         MVCkLSVLRVLFCFKupYKU5O3tzj/xMfivuejuVWJFXR6pqOO0aJYVlN00qSHuRjEY7NW0
+         bzqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW88ayQaf+U1hU7hqYRZEsCJvSn8wkOwkm6rp7mylTDUHH/hpVFSyrl8PI2y+9XXkDGnsj5l0+oawuM3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3SMB0LJm1vjBgIaDMR4weSguYCeemi0oqixTjWz+XpOAKRPnf
+	GiFuXcJeMCDsotO186u1cKJbEJ04+42TGQjT0OFGFpl5LA1kKa31ENYTY6UhHnor0DcuSd7R+DM
+	Y+d+jYjy+zBD2LNECz9UCiCCn6D2Csw5Cb2faCPOhpkJQL0xampmaIfA=
+X-Google-Smtp-Source: AGHT+IHBpkTVZVpNf/oHAEd5id+2hbFFgAODAUvj+UsUhsqcbfqd+9wwtNefKqJo2ni4u46S72AprUE9Hgqp+1eI4bdcL4GUeWbC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] WARNING: refcount bug in io_send_zc_cleanup
- (2)
-To: syzbot <syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com>,
- axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <67de616f.050a0220.31a16b.002b.GAE@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <67de616f.050a0220.31a16b.002b.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a43:b0:3cf:c7d3:e4b with SMTP id
+ e9e14a558f8ab-3d596186625mr74862335ab.21.1742634303618; Sat, 22 Mar 2025
+ 02:05:03 -0700 (PDT)
+Date: Sat, 22 Mar 2025 02:05:03 -0700
+In-Reply-To: <tencent_FFC5C6E792E24668C997EEDB6ED34CA52706@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67de7d3f.050a0220.31a16b.002d.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/22/25 07:06, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    d07de43e3f05 Merge tag 'io_uring-6.14-20250321' of git://g..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14223004580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=620facf12ff15d10
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cf285a028ffba71b2ef5
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16be1c4c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12223004580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a241563b93db/disk-d07de43e.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/6c435395db14/vmlinux-d07de43e.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/59fc4b510cae/bzImage-d07de43e.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com
+Hello,
 
-#syz test: https://github.com/isilence/linux.git syz/sendzc-cleanup
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in _find_next_bit
+
+ocfs2: Finishing quota recovery on device (7,0) for slot 0
+ents: 3990, sb: ffff888042873800, chunk: 0, blksize: 512, rcb: ffff88804b966800, offset: -1, ocfs2_recover_local_quota_file
+=====================================================
+BUG: KMSAN: uninit-value in _find_next_bit+0x11c/0x130 lib/find_bit.c:145
+ _find_next_bit+0x11c/0x130 lib/find_bit.c:145
+ find_next_bit include/linux/find.h:69 [inline]
+ ocfs2_recover_local_quota_file fs/ocfs2/quota_local.c:493 [inline]
+ ocfs2_finish_quota_recovery+0xcc4/0x3fd0 fs/ocfs2/quota_local.c:646
+ ocfs2_complete_recovery+0x229f/0x38a0 fs/ocfs2/journal.c:1357
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3319
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3400
+ kthread+0x6b9/0xef0 kernel/kthread.c:464
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4121 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_noprof+0x923/0x1230 mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ ocfs2_add_recovery_chunk fs/ocfs2/quota_local.c:305 [inline]
+ ocfs2_recovery_load_quota+0x415/0x1450 fs/ocfs2/quota_local.c:363
+ ocfs2_local_read_info+0x139e/0x2c10 fs/ocfs2/quota_local.c:758
+ dquot_load_quota_sb+0xa35/0xdc0 fs/quota/dquot.c:2459
+ dquot_load_quota_inode+0x662/0x9f0 fs/quota/dquot.c:2496
+ ocfs2_enable_quotas+0x1d4/0x6e0 fs/ocfs2/super.c:930
+ ocfs2_fill_super+0xa6b7/0xb550 fs/ocfs2/super.c:1140
+ get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
+ get_tree_bdev+0x37/0x50 fs/super.c:1659
+ ocfs2_get_tree+0x34/0x40 fs/ocfs2/super.c:1184
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6462 Comm: kworker/u8:0 Not tainted 6.14.0-rc7-syzkaller-g88d324e69ea9-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: ocfs2_wq ocfs2_complete_recovery
+=====================================================
 
 
--- 
-Pavel Begunkov
+Tested on:
+
+commit:         88d324e6 Merge tag 'spi-fix-v6.14-rc7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b095e4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d4644c4063c5098
+dashboard link: https://syzkaller.appspot.com/bug?extid=7ea0b96c4ddb49fd1a70
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d9043f980000
 
 
