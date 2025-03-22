@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-572652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC1AA6CCB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:30:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADCCA6CCB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6B5E18964EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD9C172231
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BFB2356C3;
-	Sat, 22 Mar 2025 21:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2C9236456;
+	Sat, 22 Mar 2025 21:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="cJX8QWM2"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="XX1OXok4"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD2B23535E
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 21:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281A1236445
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 21:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742678976; cv=pass; b=VFHNdNXpZaHVbGan+a89rtxjrbnkOgew2IwGytQ6ku5gT1s8LObYNpQJBKIjydgUvq/PaK8/nz8r9T1KtzaCl0zSVYrNJRgHrKiX4gg44s2XAyM13wIO+yTitskEMV5tTaq60A5W5KaHaGKjmjbk4stCTAERmCZbjJejugt1a0c=
+	t=1742678983; cv=pass; b=V9/x4bUnTt9/l8JaRTfeVJpVAOWXLtTzg4S0cQC+QZRdRQdj7zdFXm2YdlyBKsVaA0qvY3rrUxz5RqGatJO/Fr3ie0Vascv2LlwjrYb8rM8JcR7Esf3rKgoP35A9IFGua17tzCCorcBh6XAy23hk711RgEq5i26SuaUsKHRefAQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742678976; c=relaxed/simple;
-	bh=Uh9RPQ87tYeVB1bi8SmQ5YEdI3HjH7dnQ/k0r4MKxtg=;
+	s=arc-20240116; t=1742678983; c=relaxed/simple;
+	bh=wJUw8CEwCBpd8/n5oMSDfVTJeI//ksdz1lICtY3Qxk0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RHAavyqKhpfAQSRGVttddDfmlgj66KaSyWE7qomlfLfpE73/KEdiGNRw8zZjXDSJk8RHeaugtV4qqRpQoXPWt1FJktcZ7L3Kou6CHzSTreXH2Pmh5omuXjPFXxD+S+3ii7AcSOrh+tSJtJ4dg4e6oel23YIuFuScfTedDMjWOrI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=cJX8QWM2; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version; b=fQB0GkMoa17J5dLn9BTeNtd6o6Wr55hjUoSbH3B5ov9XXfO6jB00nWvygUESkOeyxs3rLnnpy96Dkd9Ls3GN6c3BsCpIDKBy4LxxiIgQpuG/kLoZ1rduZsuErXibHSg4QHwwizMHWAb6jBW4yLWQZis6V/5b/4ySi411MTRCzkM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=XX1OXok4; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742678957; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1742678961; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=PxmBOtoUQ1rdT24uVCjGSSfEHPsdKqi2aGZFFk1fnQgmup2R5/mxjL6vNn7+k76Jbt8pp8o9FfTIaNnzRYWDQ4I+Wbavqy89VryRuy7Nn9d+yD32ovpQ4rOtBzJO6jf4oYMvH/BfKzUpLVTIwBILrnmdTeOcuJHF7WoivAlgmOE=
+	b=OpEbS8G9gvCiSuf6FMNzU1NhcNS67IfkUCfl8COpJRyE1LFPl2VGyAIFnAo+F8uqVUcW6fSvltqO5cBGPuDssV2wI0z6AT3x5kZ5wdyIUDtLSjCFFYaaGwLn+Sfpi3GaWYGJrTTLjbXvwG2h+sF/4KvqFbB6LNBzmIwqabVW7Jw=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742678957; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fdyz8/DZzJvpb8TDk4Fb/UsrzBg8Xohwoz871V+3KR4=; 
-	b=Kk5f9XbQFmuC3CW3fnM9xE0uUf5+J6hG8u3S7S+8PzLxKvWmxpQQJ5/VUDn2e5orJmz1sLYkSoDDxlg2DBLxbsX+jmVe+drLWSp0F2KocFPPIwdP8hIDzKJvWAx7OC5BsbeedEW/gmC0RJEEaXEzP2/nPOqbwkF/rPZEt85vc9E=
+	t=1742678961; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eEUouV2acFUuLu+TzNveWrlkZ7fzrOon+eQdIQR+dqo=; 
+	b=eArLIXI3dJgdZU4IdcfeIH0CKBFAP6wXiXPYJZTVqs3D1CdQs2IV6h1eb22x1hc7c44gzmPiU/kzUQ1s5Kzv59gXj+vCwhrSqVJH4ntlx4r60LwKBx3ASsK+RJwWqRCIvaURZWsIv/rwRdBEQ7IR03Zao2+IxFUsEg5E5JYC0EU=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
 	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742678957;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742678961;
 	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=fdyz8/DZzJvpb8TDk4Fb/UsrzBg8Xohwoz871V+3KR4=;
-	b=cJX8QWM2khneIW0/ZGr/a4js75Fvi903tqM5LrGDKlxr+MEiVS3y11bGLoBJu6JQ
-	O6PsfQnHges5OnWNeuCpoUwoBu2lUyVYFzjzRgxXBRczC8+MPcXUbE9S45nmpnHhL82
-	DKN1pIORw7EXgp1hFlYVAqKnsMutSwRUM8gvW558=
-Received: by mx.zohomail.com with SMTPS id 1742678957017363.1392509416396;
-	Sat, 22 Mar 2025 14:29:17 -0700 (PDT)
+	bh=eEUouV2acFUuLu+TzNveWrlkZ7fzrOon+eQdIQR+dqo=;
+	b=XX1OXok44GcbZ+ZUwiZt84HVWMqXcsbG5MuTW4OBatIYYDzZCDKB2EpqALFqn654
+	rFoxmNZ5stRMnn5I0wxqpHqrF35M+Zhssky4BKn8s7p6No+ZOoarWh/igIAjWmPSCT7
+	/PiNhBu3+2eKwwCtYpt0CQC+oJUbArH0MkaUo8gQ=
+Received: by mx.zohomail.com with SMTPS id 1742678960850190.5623409219578;
+	Sat, 22 Mar 2025 14:29:20 -0700 (PDT)
 From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 To: David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
@@ -66,9 +66,9 @@ To: David Airlie <airlied@gmail.com>,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH v20 03/10] drm/gem: Document locking rule of vmap and evict callbacks
-Date: Sun, 23 Mar 2025 00:26:01 +0300
-Message-ID: <20250322212608.40511-4-dmitry.osipenko@collabora.com>
+Subject: [PATCH v20 04/10] drm/shmem-helper: Make all exported symbols GPL
+Date: Sun, 23 Mar 2025 00:26:02 +0300
+Message-ID: <20250322212608.40511-5-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
 References: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
@@ -81,49 +81,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-The vmap/vunmap/evict GEM callbacks are always invoked with a held GEM's
-reservation lock. Document this locking rule for clarity.
+Make all drm-shmem exported symbols GPL to make them consistent with
+the rest of drm-shmem symbols.
 
+Acked-by: Maxime Ripard <mripard@kernel.org>
 Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- include/drm/drm_gem.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-index 43cf3c2c7ca0..9b71f7a9f3f8 100644
---- a/include/drm/drm_gem.h
-+++ b/include/drm/drm_gem.h
-@@ -159,7 +159,8 @@ struct drm_gem_object_funcs {
- 	 * @vmap:
- 	 *
- 	 * Returns a virtual address for the buffer. Used by the
--	 * drm_gem_dmabuf_vmap() helper.
-+	 * drm_gem_dmabuf_vmap() helper. Called with a held GEM reservation
-+	 * lock.
- 	 *
- 	 * This callback is optional.
- 	 */
-@@ -169,7 +170,8 @@ struct drm_gem_object_funcs {
- 	 * @vunmap:
- 	 *
- 	 * Releases the address previously returned by @vmap. Used by the
--	 * drm_gem_dmabuf_vunmap() helper.
-+	 * drm_gem_dmabuf_vunmap() helper. Called with a held GEM reservation
-+	 * lock.
- 	 *
- 	 * This callback is optional.
- 	 */
-@@ -192,7 +194,8 @@ struct drm_gem_object_funcs {
- 	 * @evict:
- 	 *
- 	 * Evicts gem object out from memory. Used by the drm_gem_object_evict()
--	 * helper. Returns 0 on success, -errno otherwise.
-+	 * helper. Returns 0 on success, -errno otherwise. Called with a held
-+	 * GEM reservation lock.
- 	 *
- 	 * This callback is optional.
- 	 */
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index d99dee67353a..98c68999d61a 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -247,7 +247,7 @@ void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+ 			  shmem->pages_mark_accessed_on_put);
+ 	shmem->pages = NULL;
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_put_pages);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_put_pages);
+ 
+ int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+ {
+@@ -296,7 +296,7 @@ int drm_gem_shmem_pin(struct drm_gem_shmem_object *shmem)
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_pin);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_pin);
+ 
+ /**
+  * drm_gem_shmem_unpin - Unpin backing pages for a shmem GEM object
+@@ -315,7 +315,7 @@ void drm_gem_shmem_unpin(struct drm_gem_shmem_object *shmem)
+ 	drm_gem_shmem_unpin_locked(shmem);
+ 	dma_resv_unlock(shmem->base.resv);
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_unpin);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_unpin);
+ 
+ /*
+  * drm_gem_shmem_vmap - Create a virtual mapping for a shmem GEM object
+@@ -385,7 +385,7 @@ int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_vmap);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_vmap);
+ 
+ /*
+  * drm_gem_shmem_vunmap - Unmap a virtual mapping for a shmem GEM object
+@@ -421,7 +421,7 @@ void drm_gem_shmem_vunmap(struct drm_gem_shmem_object *shmem,
+ 
+ 	shmem->vaddr = NULL;
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_vunmap);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_vunmap);
+ 
+ static int
+ drm_gem_shmem_create_with_handle(struct drm_file *file_priv,
+@@ -460,7 +460,7 @@ int drm_gem_shmem_madvise(struct drm_gem_shmem_object *shmem, int madv)
+ 
+ 	return (madv >= 0);
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_madvise);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_madvise);
+ 
+ void drm_gem_shmem_purge(struct drm_gem_shmem_object *shmem)
+ {
+@@ -492,7 +492,7 @@ void drm_gem_shmem_purge(struct drm_gem_shmem_object *shmem)
+ 
+ 	invalidate_mapping_pages(file_inode(obj->filp)->i_mapping, 0, (loff_t)-1);
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_purge);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_purge);
+ 
+ /**
+  * drm_gem_shmem_dumb_create - Create a dumb shmem buffer object
+@@ -670,7 +670,7 @@ void drm_gem_shmem_print_info(const struct drm_gem_shmem_object *shmem,
+ 	drm_printf_indent(p, indent, "vmap_use_count=%u\n", shmem->vmap_use_count);
+ 	drm_printf_indent(p, indent, "vaddr=%p\n", shmem->vaddr);
+ }
+-EXPORT_SYMBOL(drm_gem_shmem_print_info);
++EXPORT_SYMBOL_GPL(drm_gem_shmem_print_info);
+ 
+ /**
+  * drm_gem_shmem_get_sg_table - Provide a scatter/gather table of pinned
 -- 
 2.49.0
 
