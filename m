@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-572198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA76A6C7D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:38:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E81AA6C7DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682571B60AE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF033B5FD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AF41C1ADB;
-	Sat, 22 Mar 2025 06:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB551EB5F4;
+	Sat, 22 Mar 2025 06:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AaXFJEAI"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nzHKjVt4"
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F9C1DC046
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAD11AF0BB
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742625306; cv=none; b=bKlrCzArDL3k+ba4FNnaARXqt+cGRbfv77vIyq1he2g0TxR3r+pcIvJznJMZgyLfWnUn6qpSXqrXvCofPFnYMXxM3e6wU3AxJ5czBaTWmsuBNZDuoHdro8icQGevgOZ+PPkphTRhXa/cYbgdPLJxaAku2U/jcw6wkqqUX4S3JJA=
+	t=1742625311; cv=none; b=ItCvQ+mqfmXwRmseYUa4Sm/9S1mV9ge4rKJZnS2CiJlWOBXtTGzHzoSJd8w6sI9irsLI3aG+HdvKmci8mCgLf1K80KWDyybOfgRmxxaG7VXa2WDWu4dDYjyEJRWAQQcfEfrS6YiFDUK+BwFjaisw8CeZDZQ+XEih1KEn/lKcFdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742625306; c=relaxed/simple;
-	bh=KMrcEmWjay1vuPIKNWGmAQ7ellmM1MUzgyJMlgx3QDo=;
+	s=arc-20240116; t=1742625311; c=relaxed/simple;
+	bh=wTU5XM3LI5p+dSGarl/OC9mxlNqTvrUAVBHbQX7VLT4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=QSw6F21j5/ISfbKDPLZIvDQL2V2LvaH6heJd9H0wqANQpOoEp8pLSEQtYk7i+6AJWG01hf84vs0k/Z1rcK10+vUhqzDjVl+g0Z87gW3FIOJNZwK5G0j2rjYPmrg4wiUU4PeWopK+Mvz1yEZaz2shSij+b4r7tc7DM8Oc4dTOGEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AaXFJEAI; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=hhx9Tq3KnbvQStYktLnqMEoj3+Yf4YTddxGtfjDRsIzuGKpbGkCLdxRm8qQYL/mjMKS3O+ErrLtGV9BPGiPmz4zLkRQG7PDYQQncHmUT9eI9g3u2syQNnFz4w0hWaRR1/ZV5flUK0TiblWx8oFEKNSXFEDYW5/fkUmK0n779LWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nzHKjVt4; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fda4eaca22so25432867b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:34:59 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6f2a2ab50f6so32988837b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:35:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742625298; x=1743230098; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742625301; x=1743230101; darn=vger.kernel.org;
         h=content-transfer-encoding:to:from:subject:references:mime-version
          :message-id:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/xU0wBAsl4jlEkSKnJ2JM7pI7tPOhIu8nmWNVPVFxSY=;
-        b=AaXFJEAICEKoEruUWkSIp1a0AsBvE4guv9QBHCj0bhh1tlY1xOey5fU9RnM6V4m5T7
-         De3hbxNfKK8GT95hpT/pbD3bmKX4zHkDHqj0tKQmRxKXRg/n4V6CR/VpYz0HoXSSozPE
-         XR2Fa5PMEBLg7d8i7OgPsluNDHWx/406a3U69ZA/Xz268LpuhYiJyVKW2AnXhKtO7xAj
-         l23jqhpWgBRg1h7Axjo8dRcsjPociKXgNZsg3z24Pn8UtoCzme2LvfRi7RQzmLuTkRsG
-         T3PkiAzeGSHKtWMkicifrYbumAj3MFyokIVIxFRjr+Y8+O+9Dg16wD8459iDW+PV8r1L
-         TMbQ==
+        bh=oUFxYjBrTebQnEtyzKgARQbe01ALjiE4LybwOB+BCD4=;
+        b=nzHKjVt4RLKeMOLnbj+dPN+4vy8XB9iHmmMQGm2A4gbq1waphlSCO8OxsVpPEo0Ttl
+         Z/eQQkvwV6BOCjjR67sX+hnXw1mE4szcSIiept9PNsx4WKpAGbtoFqrE2E6xTx4Gsvhu
+         SX+Z5w+Dy9gmkgCpNaganE3GMuRjYmtVuaB6wJ0IG62B15HIQa+qaBipHtIzq1TfnnR/
+         cGSvtyQUQ3XNGyZQyDnxImYgtaI7LlrKuT1MRtQG0Wl4LJERzfVaiNaMvJfcEzyvuL3U
+         YhZ4CbRE8TCDcpo1rQFrsEGbK5xZJes0nupbE3zRmcLgLbf6cDTEKWfY8f+eIwPzZ8L/
+         6NMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742625298; x=1743230098;
+        d=1e100.net; s=20230601; t=1742625301; x=1743230101;
         h=content-transfer-encoding:to:from:subject:references:mime-version
          :message-id:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=/xU0wBAsl4jlEkSKnJ2JM7pI7tPOhIu8nmWNVPVFxSY=;
-        b=rLgRsNWdXhhDXuAk+olnNFM5WDpk3EJAsVMHXE06VGvJLAA4u6YnqHIbNHZaonFLnz
-         lG8Mn8ltpdrEK0/+m554thNVL8KoXaRqH2zfN8ZP3qCArf6pNqZcMOp1btOTF+W5dcJx
-         LGFJ7z1Z8vmUtrDb4jxYbfx2kz7Cn5JM4clIM5Cn+DTMiMDdyOmRpGp8BbT/TORIUJjn
-         aB86qyX45IkjMpii9XvjFB4xUAoUQY/3mTi8sxdJj/qmKQCuVEjZ1Bf1+3gxWoPr5MGi
-         MwhgxPp5e74TOB36lUdfCDO8XEUeWhp9lLnkNvYlOqC0075kSbbVY0AOb9AaY7/QvXto
-         EL9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOZ7czlj6XioDyMRpHXkEZ19+VPTsoqeEfY5Q+DiUempYbuXcUhU/uW0f3wdfAm2ijlcncAULMuErVvJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkWULp7L0tWx/MUa39YLhlyPeomPQA/ndii9FO36zPCLH+p1Gz
-	IRg1ZpHYNjPrMo6oAuL1T93IFzVxr/NXw6XUC1YgxKrYAa5noWzBqB6+fiV/6YTQJs3FbqCBJKH
-	y4lW0qw==
-X-Google-Smtp-Source: AGHT+IGsFOtHoau+2RzUCDtLJLzZqmnakD8PydqB2k0GQSXmogInHxWHEB6a/nq4x5k6lxrI+Dif445iqq5S
+        bh=oUFxYjBrTebQnEtyzKgARQbe01ALjiE4LybwOB+BCD4=;
+        b=q6TCKDb+Q97qfmCXzvAEvY36vZ1vl+1cGe8uEKf+85amLfXjAqnfPFlX8wjOn5Ptdk
+         TdT4ukBsYN8jFbewD0JOmr8m94t+B8dU9MpZ32oLh73VH1x0pWugyhSUB78Kpq5An4N1
+         aI2BGdye1twBixbgp3yeSkw7YunnTzm2JUtcS1qgLcFum0eaClDihgixVY7rfNj+FxgE
+         O6kdmc1QQzG7fayKdZW047dusGIFcKZIxZMhXfK/fkW6ncFdOzAWMGy9z39nb6UDjaxE
+         8SxJlckQ5gTNjkmhlGoaBFb7BC78aHbXRYjZrz040Ep9+ytDPBXJMXfszOh0YJytrNee
+         wZKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjuvIpoSn9/t5I+Kw3bHCrR2n8VSgcE0QXGpIMB16gUB763kLh5YyqJITDCTI/FpE328gaCU0Dp0BNyoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1dTUXCaeUjZaJYRzJCR5OwBBR7zwpGInsXBpfHCnBqR2GQ1eK
+	8bX7oXwhVa9Td7HIFyEk68LZXzPMfXhG2vsXi/J0J7Cjk6f6u5N7Uawk4SHG2+x4UdioDpQ7JBd
+	Xy1Y32w==
+X-Google-Smtp-Source: AGHT+IESbEXgey+ybxNPW1tIeMc86+Kx1V+q6aq91Crrja8n1LiP9iir1Qx9ziTwDag9PaM26inWVxwrg0vr
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:c16d:a1c1:1823:1d0e])
- (user=irogers job=sendgmr) by 2002:a05:690c:5a8f:b0:6fe:afd0:2083 with SMTP
- id 00721157ae682-700bacc4c78mr78357b3.3.1742625298179; Fri, 21 Mar 2025
- 23:34:58 -0700 (PDT)
-Date: Fri, 21 Mar 2025 23:33:42 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:5605:b0:6fb:7772:a978 with SMTP
+ id 00721157ae682-700bad35bf2mr26937b3.7.1742625300766; Fri, 21 Mar 2025
+ 23:35:00 -0700 (PDT)
+Date: Fri, 21 Mar 2025 23:33:43 -0700
 In-Reply-To: <20250322063403.364981-1-irogers@google.com>
-Message-Id: <20250322063403.364981-15-irogers@google.com>
+Message-Id: <20250322063403.364981-16-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250322063403.364981-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Subject: [PATCH v1 14/35] perf vendor events: Update haswell metrics
+Subject: [PATCH v1 15/35] perf vendor events: Update haswellx metrics
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -97,15 +97,15 @@ simplification.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- .../arch/x86/haswell/hsw-metrics.json         | 206 +++++++++---------
- 1 file changed, 102 insertions(+), 104 deletions(-)
+ .../arch/x86/haswellx/hsx-metrics.json        | 222 +++++++++---------
+ 1 file changed, 110 insertions(+), 112 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json b/tool=
-s/perf/pmu-events/arch/x86/haswell/hsw-metrics.json
-index 0c1040b7e38c..b26ea70a3628 100644
---- a/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/haswell/hsw-metrics.json
-@@ -74,12 +74,12 @@
+diff --git a/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json b/too=
+ls/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json
+index 1a05b74be575..8245a98ad4b9 100644
+--- a/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/haswellx/hsx-metrics.json
+@@ -276,12 +276,12 @@
          "MetricExpr": "LD_BLOCKS_PARTIAL.ADDRESS_ALIAS / tma_info_thread_c=
 lks",
          "MetricGroup": "TopdownL4;tma_L4_group;tma_l1_bound_group",
@@ -141,7 +141,7 @@ s CPU dispatched uops on execution ports for ALU operations.",
 info_thread_slots",
          "MetricGroup": "TopdownL5;tma_L5_group;tma_ports_utilized_3m_group=
 ",
-@@ -92,8 +92,8 @@
+@@ -294,8 +294,8 @@
          "MetricExpr": "66 * OTHER_ASSISTS.ANY_WB_ASSIST / tma_info_thread_=
 slots",
          "MetricGroup": "BvIO;TopdownL4;tma_L4_group;tma_microcode_sequence=
@@ -176,7 +176,7 @@ Y",
          "ScaleUnit": "100%"
      },
      {
-@@ -104,7 +104,7 @@
+@@ -306,7 +306,7 @@
          "MetricName": "tma_backend_bound",
          "MetricThreshold": "tma_backend_bound > 0.2",
          "MetricgroupNoGroup": "TopdownL1",
@@ -201,7 +201,7 @@ d and Core Bound.",
          "ScaleUnit": "100%"
      },
      {
-@@ -114,7 +114,7 @@
+@@ -316,7 +316,7 @@
          "MetricName": "tma_bad_speculation",
          "MetricThreshold": "tma_bad_speculation > 0.15",
          "MetricgroupNoGroup": "TopdownL1",
@@ -222,7 +222,7 @@ es is another example.",
          "ScaleUnit": "100%"
      },
      {
-@@ -125,7 +125,7 @@
+@@ -327,7 +327,7 @@
          "MetricName": "tma_branch_mispredicts",
          "MetricThreshold": "tma_branch_mispredicts > 0.1 & tma_bad_specula=
 tion > 0.15",
@@ -241,7 +241,7 @@ eculative path. Sample with: BR_MISP_RETIRED.ALL_BRANCHES. Related metrics:=
          "ScaleUnit": "100%"
      },
      {
-@@ -133,8 +133,8 @@
+@@ -335,8 +335,8 @@
          "MetricExpr": "12 * (BR_MISP_RETIRED.ALL_BRANCHES + MACHINE_CLEARS=
 .COUNT + BACLEARS.ANY) / tma_info_thread_clks",
          "MetricGroup": "FetchLat;TopdownL3;tma_L3_group;tma_fetch_latency_=
@@ -268,7 +268,7 @@ NCHES",
          "ScaleUnit": "100%"
      },
      {
-@@ -143,8 +143,8 @@
+@@ -345,8 +345,8 @@
          "MetricExpr": "max(0, tma_microcode_sequencer - tma_assists)",
          "MetricGroup": "TopdownL4;tma_L4_group;tma_microcode_sequencer_gro=
 up",
@@ -292,16 +292,20 @@ ot imply sub-optimal use of machine resources.",
          "ScaleUnit": "100%"
      },
      {
-@@ -153,8 +153,8 @@
+@@ -355,8 +355,8 @@
          "MetricExpr": "(60 * (MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HITM * (1 =
 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LOAD_=
 UOPS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_UOPS=
 _L3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM_LO=
-AD_UOPS_RETIRED.L3_MISS))) + 43 * (MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS *=
- (1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_L=
-OAD_UOPS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_=
-UOPS_L3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + ME=
-M_LOAD_UOPS_RETIRED.L3_MISS)))) / tma_info_thread_clks",
+AD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_D=
+RAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_RET=
+IRED.REMOTE_FWD))) + 43 * (MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS * (1 + ME=
+M_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LOAD_UOPS=
+_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_UOPS_L3_=
+HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM_LOAD_U=
+OPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_DRAM =
++ MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_RETIRED=
+.REMOTE_FWD)))) / tma_info_thread_clks",
          "MetricGroup": "BvMS;DataSharing;LockCont;Offcore;Snoop;TopdownL4;=
 tma_L4_group;tma_issueSyncxn;tma_l3_bound_group",
          "MetricName": "tma_contested_accesses",
@@ -315,7 +319,7 @@ re read by another Logical Processor on a different Physical Core. Examples=
 aring such as modified locked variables; and false sharing. Sample with: ME=
 M_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HITM, MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MIS=
 S. Related metrics: tma_data_sharing, tma_false_sharing, tma_machine_clears=
-",
+, tma_remote_cache",
 +        "MetricThreshold": "tma_contested_accesses > 0.05 & (tma_l3_bound =
 > 0.05 & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2))",
 +        "PublicDescription": "This metric estimates fraction of cycles whi=
@@ -330,7 +334,7 @@ _remote_cache",
          "ScaleUnit": "100%"
      },
      {
-@@ -165,7 +165,7 @@
+@@ -367,7 +367,7 @@
          "MetricName": "tma_core_bound",
          "MetricThreshold": "tma_core_bound > 0.1 & tma_backend_bound > 0.2=
 ",
@@ -352,12 +356,14 @@ hained long-latency arithmetic operations).",
          "ScaleUnit": "100%"
      },
      {
-@@ -174,8 +174,8 @@
+@@ -376,8 +376,8 @@
          "MetricExpr": "43 * (MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT * (1 + =
 MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LOAD_UO=
 PS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_UOPS_L=
 3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM_LOAD=
-_UOPS_RETIRED.L3_MISS))) / tma_info_thread_clks",
+_UOPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_DRA=
+M + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_RETIR=
+ED.REMOTE_FWD))) / tma_info_thread_clks",
          "MetricGroup": "BvMS;Offcore;Snoop;TopdownL4;tma_L4_group;tma_issu=
 eSyncxn;tma_l3_bound_group",
          "MetricName": "tma_data_sharing",
@@ -369,7 +375,7 @@ ccesses. Data shared by multiple Logical Processors (even just read shared)=
  may cause increased access latency due to cache coherency. Excessive data =
 sharing can drastically harm multithreaded performance. Sample with: MEM_LO=
 AD_UOPS_L3_HIT_RETIRED.XSNP_HIT. Related metrics: tma_contested_accesses, t=
-ma_false_sharing, tma_machine_clears",
+ma_false_sharing, tma_machine_clears, tma_remote_cache",
 +        "MetricThreshold": "tma_data_sharing > 0.05 & (tma_l3_bound > 0.05=
  & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2))",
 +        "PublicDescription": "This metric estimates fraction of cycles whi=
@@ -382,7 +388,7 @@ _false_sharing, tma_machine_clears, tma_remote_cache",
          "ScaleUnit": "100%"
      },
      {
-@@ -183,8 +183,8 @@
+@@ -385,8 +385,8 @@
          "MetricExpr": "10 * ARITH.DIVIDER_UOPS / tma_info_core_core_clks",
          "MetricGroup": "BvCB;TopdownL3;tma_L3_group;tma_core_bound_group",
          "MetricName": "tma_divider",
@@ -403,7 +409,7 @@ ith: ARITH.DIVIDER_ACTIVE",
          "ScaleUnit": "100%"
      },
      {
-@@ -193,8 +193,8 @@
+@@ -395,8 +395,8 @@
          "MetricExpr": "(1 - MEM_LOAD_UOPS_RETIRED.L3_HIT / (MEM_LOAD_UOPS_=
 RETIRED.L3_HIT + 7 * MEM_LOAD_UOPS_RETIRED.L3_MISS)) * CYCLE_ACTIVITY.STALL=
 S_L2_PENDING / tma_info_thread_clks",
@@ -425,7 +431,7 @@ TIRED.L3_MISS_PS",
          "ScaleUnit": "100%"
      },
      {
-@@ -203,7 +203,7 @@
+@@ -405,7 +405,7 @@
          "MetricGroup": "DSB;FetchBW;TopdownL3;tma_L3_group;tma_fetch_bandw=
 idth_group",
          "MetricName": "tma_dsb",
@@ -441,7 +447,7 @@ bank conflict when reading from it; are categorized here.",
          "ScaleUnit": "100%"
      },
      {
-@@ -211,7 +211,7 @@
+@@ -413,7 +413,7 @@
          "MetricExpr": "DSB2MITE_SWITCHES.PENALTY_CYCLES / tma_info_thread_=
 clks",
          "MetricGroup": "DSBmiss;FetchLat;TopdownL3;tma_L3_group;tma_fetch_=
@@ -461,7 +467,7 @@ de pipeline). Switching between the two pipelines can cause penalties hence=
 idth, tma_info_frontend_dsb_coverage, tma_info_inst_mix_iptb, tma_lcp",
          "ScaleUnit": "100%"
      },
-@@ -220,8 +220,8 @@
+@@ -422,8 +422,8 @@
          "MetricExpr": "(8 * DTLB_LOAD_MISSES.STLB_HIT + DTLB_LOAD_MISSES.W=
 ALK_DURATION) / tma_info_thread_clks",
          "MetricGroup": "BvMT;MemoryTLB;TopdownL4;tma_L4_group;tma_issueTLB=
@@ -494,7 +500,7 @@ ma_dtlb_store",
          "ScaleUnit": "100%"
      },
      {
-@@ -229,8 +229,8 @@
+@@ -431,8 +431,8 @@
          "MetricExpr": "(8 * DTLB_STORE_MISSES.STLB_HIT + DTLB_STORE_MISSES=
 .WALK_DURATION) / tma_info_thread_clks",
          "MetricGroup": "BvMT;MemoryTLB;TopdownL4;tma_L4_group;tma_issueTLB=
@@ -521,9 +527,10 @@ ith: MEM_UOPS_RETIRED.STLB_MISS_STORES_PS. Related metrics: tma_dtlb_load",
          "ScaleUnit": "100%"
      },
      {
-@@ -238,18 +238,18 @@
-         "MetricExpr": "60 * OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.HITM_OTHER_=
-CORE / tma_info_thread_clks",
+@@ -440,18 +440,18 @@
+         "MetricExpr": "(200 * OFFCORE_RESPONSE.DEMAND_RFO.LLC_MISS.REMOTE_=
+HITM + 60 * OFFCORE_RESPONSE.DEMAND_RFO.LLC_HIT.HITM_OTHER_CORE) / tma_info=
+_thread_clks",
          "MetricGroup": "BvMS;DataSharing;LockCont;Offcore;Snoop;TopdownL4;=
 tma_L4_group;tma_issueSyncxn;tma_store_bound_group",
          "MetricName": "tma_false_sharing",
@@ -533,9 +540,10 @@ tma_L4_group;tma_issueSyncxn;tma_store_bound_group",
 was handling synchronizations due to False Sharing. False Sharing is a mult=
 ithreading hiccup; where multiple Logical Processors contend on different d=
 ata-elements mapped into the same cache line. Sample with: MEM_LOAD_UOPS_L3=
-_HIT_RETIRED.XSNP_HITM, OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.HITM_OTHER_CORE.=
- Related metrics: tma_contested_accesses, tma_data_sharing, tma_machine_cle=
-ars",
+_HIT_RETIRED.XSNP_HITM, MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM, OFFCORE_=
+RESPONSE.DEMAND_RFO.LLC_HIT.HITM_OTHER_CORE, OFFCORE_RESPONSE.DEMAND_RFO.LL=
+C_MISS.REMOTE_HITM. Related metrics: tma_contested_accesses, tma_data_shari=
+ng, tma_machine_clears, tma_remote_cache",
 +        "MetricThreshold": "tma_false_sharing > 0.05 & (tma_store_bound > =
 0.2 & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2))",
 +        "PublicDescription": "This metric roughly estimates how often CPU =
@@ -577,7 +585,7 @@ ndwidth, tma_sq_full, tma_store_latency, tma_streaming_stores",
          "ScaleUnit": "100%"
      },
      {
-@@ -279,33 +279,33 @@
+@@ -481,33 +481,33 @@
          "MetricName": "tma_frontend_bound",
          "MetricThreshold": "tma_frontend_bound > 0.15",
          "MetricgroupNoGroup": "TopdownL1",
@@ -660,7 +668,7 @@ RE_SLOTS / UOPS_ISSUED.ANY * BR_MISP_EXEC.INDIRECT)",
      {
          "BriefDescription": "Number of Instructions per non-speculative Br=
 anch Misprediction (JEClear) (lower number means higher occurrence rate)",
-@@ -316,7 +316,7 @@
+@@ -518,7 +518,7 @@
      },
      {
          "BriefDescription": "Core actual clocks when any Logical Processor=
@@ -673,7 +681,7 @@ U_CLK_UNHALTED.THREAD_ANY / 2 if #SMT_on else tma_info_thread_clks))",
          "MetricGroup": "SMT",
          "MetricName": "tma_info_core_core_clks"
      },
-@@ -328,7 +328,7 @@
+@@ -530,7 +530,7 @@
      },
      {
          "BriefDescription": "Instruction-Level-Parallelism (average number=
@@ -689,7 +697,7 @@ U_CLK_UNHALTED.THREAD_ANY / 2 if #SMT_on else tma_info_thread_clks))",
          "MetricGroup": "Backend;Cor;Pipeline;PortsUtil",
          "MetricName": "tma_info_core_ilp"
      },
-@@ -353,7 +353,7 @@
+@@ -555,7 +555,7 @@
          "MetricName": "tma_info_frontend_tbpc"
      },
      {
@@ -699,7 +707,7 @@ U_CLK_UNHALTED.THREAD_ANY / 2 if #SMT_on else tma_info_thread_clks))",
 _TAKEN",
          "MetricGroup": "Branches;Fed;PGO",
          "MetricName": "tma_info_inst_mix_bptkbranch"
-@@ -398,7 +398,7 @@
+@@ -600,7 +600,7 @@
          "MetricExpr": "INST_RETIRED.ANY / BR_INST_RETIRED.NEAR_TAKEN",
          "MetricGroup": "Branches;Fed;FetchBW;Frontend;PGO;tma_issueFB",
          "MetricName": "tma_info_inst_mix_iptb",
@@ -710,7 +718,7 @@ cs: tma_dsb_switches, tma_fetch_bandwidth, tma_info_frontend_dsb_coverage, =
 tma_lcp"
      },
      {
-@@ -502,8 +502,8 @@
+@@ -704,8 +704,8 @@
          "MetricThreshold": "tma_info_memory_tlb_page_walks_utilization > 0=
 .5"
      },
@@ -726,7 +734,7 @@ _SLOTS\\,cmask\\=3D1@",
          "MetricGroup": "Pipeline;Ret",
          "MetricName": "tma_info_pipeline_retire"
      },
-@@ -537,14 +537,13 @@
+@@ -739,14 +739,13 @@
          "MetricExpr": "INST_RETIRED.ANY / BR_INST_RETIRED.FAR_BRANCH:u",
          "MetricGroup": "Branches;OS",
          "MetricName": "tma_info_system_ipfarbranch",
@@ -746,8 +754,36 @@ em (OS) Kernel mode",
      {
          "BriefDescription": "Fraction of cycles spent in the Operating Sys=
 tem (OS) Kernel mode",
-@@ -592,7 +591,7 @@
-         "MetricName": "tma_info_system_turbo_utilization"
+@@ -757,14 +756,14 @@
+     },
+     {
+         "BriefDescription": "Average number of parallel data read requests=
+ to external memory",
+-        "MetricExpr": "cbox@UNC_C_TOR_OCCUPANCY.MISS_OPCODE\\,filter_opc\\=
+=3D0x182@ / cbox@UNC_C_TOR_OCCUPANCY.MISS_OPCODE\\,filter_opc\\=3D0x182@",
++        "MetricExpr": "UNC_C_TOR_OCCUPANCY.MISS_OPCODE@filter_opc\\=3D0x18=
+2@ / UNC_C_TOR_OCCUPANCY.MISS_OPCODE@filter_opc\\=3D0x182\\,thresh\\=3D1@",
+         "MetricGroup": "Mem;MemoryBW;SoC",
+         "MetricName": "tma_info_system_mem_parallel_reads",
+         "PublicDescription": "Average number of parallel data read request=
+s to external memory. Accounts for demand loads and L1/L2 prefetches"
+     },
+     {
+         "BriefDescription": "Average latency of data read request to exter=
+nal memory (in nanoseconds)",
+-        "MetricExpr": "1e9 * (cbox@UNC_C_TOR_OCCUPANCY.MISS_OPCODE\\,filte=
+r_opc\\=3D0x182@ / cbox@UNC_C_TOR_INSERTS.MISS_OPCODE\\,filter_opc\\=3D0x18=
+2@) / (tma_info_system_socket_clks / tma_info_system_time)",
++        "MetricExpr": "1e9 * (UNC_C_TOR_OCCUPANCY.MISS_OPCODE@filter_opc\\=
+=3D0x182@ / UNC_C_TOR_INSERTS.MISS_OPCODE@filter_opc\\=3D0x182@) / (tma_inf=
+o_system_socket_clks / tma_info_system_time)",
+         "MetricGroup": "Mem;MemoryLat;SoC",
+         "MetricName": "tma_info_system_mem_read_latency",
+         "PublicDescription": "Average latency of data read request to exte=
+rnal memory (in nanoseconds). Accounts for demand loads and L1/L2 prefetche=
+s. ([RKL+]memory-controller only)"
+@@ -814,7 +813,7 @@
+         "MetricName": "tma_info_system_uncore_frequency"
      },
      {
 -        "BriefDescription": "Per-Logical Processor actual clocks when the =
@@ -757,7 +793,7 @@ Logical Processor is active.",
          "MetricExpr": "CPU_CLK_UNHALTED.THREAD",
          "MetricGroup": "Pipeline",
          "MetricName": "tma_info_thread_clks"
-@@ -601,8 +600,7 @@
+@@ -823,8 +822,7 @@
          "BriefDescription": "Cycles Per Instruction (per Logical Processor=
 )",
          "MetricExpr": "1 / tma_info_thread_ipc",
@@ -769,7 +805,7 @@ Logical Processor is active.",
      {
          "BriefDescription": "Instructions Per Cycle (per Logical Processor=
 )",
-@@ -628,14 +626,14 @@
+@@ -850,14 +848,14 @@
          "MetricExpr": "UOPS_RETIRED.RETIRE_SLOTS / BR_INST_RETIRED.NEAR_TA=
 KEN",
          "MetricGroup": "Branches;Fed;FetchBW",
@@ -794,7 +830,7 @@ e CPU was stalled due to Instruction TLB (ITLB) misses. Sample with: ITLB_M=
 ISSES.WALK_COMPLETED",
          "ScaleUnit": "100%"
      },
-@@ -644,8 +642,8 @@
+@@ -866,8 +864,8 @@
          "MetricExpr": "max((min(CPU_CLK_UNHALTED.THREAD, CYCLE_ACTIVITY.ST=
 ALLS_LDM_PENDING) - CYCLE_ACTIVITY.STALLS_L1D_PENDING) / tma_info_thread_cl=
 ks, 0)",
@@ -828,7 +864,7 @@ a_ms_switches, tma_ports_utilized_1",
          "ScaleUnit": "100%"
      },
      {
-@@ -653,8 +651,8 @@
+@@ -875,8 +873,8 @@
          "MetricExpr": "(CYCLE_ACTIVITY.STALLS_L1D_PENDING - CYCLE_ACTIVITY=
 .STALLS_L2_PENDING) / tma_info_thread_clks",
          "MetricGroup": "BvML;CacheHits;MemoryBound;TmaL3mem;TopdownL3;tma_=
@@ -849,7 +885,7 @@ th: MEM_LOAD_UOPS_RETIRED.L2_HIT_PS",
          "ScaleUnit": "100%"
      },
      {
-@@ -663,8 +661,8 @@
+@@ -885,8 +883,8 @@
          "MetricExpr": "MEM_LOAD_UOPS_RETIRED.L3_HIT / (MEM_LOAD_UOPS_RETIR=
 ED.L3_HIT + 7 * MEM_LOAD_UOPS_RETIRED.L3_MISS) * CYCLE_ACTIVITY.STALLS_L2_P=
 ENDING / tma_info_thread_clks",
@@ -871,12 +907,14 @@ d increase performance. Sample with: MEM_LOAD_UOPS_RETIRED.L3_HIT_PS",
          "ScaleUnit": "100%"
      },
      {
-@@ -673,8 +671,8 @@
-         "MetricExpr": "29 * (MEM_LOAD_UOPS_RETIRED.L3_HIT * (1 + MEM_LOAD_=
+@@ -895,8 +893,8 @@
+         "MetricExpr": "41 * (MEM_LOAD_UOPS_RETIRED.L3_HIT * (1 + MEM_LOAD_=
 UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LOAD_UOPS_RETIRE=
 D.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_UOPS_L3_HIT_RET=
-IRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM_LOAD_UOPS_RET=
-IRED.L3_MISS))) / tma_info_thread_clks",
+IRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM_LOAD_UOPS_L3_=
+MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_DRAM + MEM_L=
+OAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE=
+_FWD))) / tma_info_thread_clks",
          "MetricGroup": "BvML;MemoryLat;TopdownL4;tma_L4_group;tma_issueLat=
 ;tma_l3_bound_group",
          "MetricName": "tma_l3_hit_latency",
@@ -901,7 +939,7 @@ s: tma_mem_latency",
          "ScaleUnit": "100%"
      },
      {
-@@ -682,18 +680,18 @@
+@@ -904,18 +902,18 @@
          "MetricExpr": "ILD_STALL.LCP / tma_info_thread_clks",
          "MetricGroup": "FetchLat;TopdownL3;tma_L3_group;tma_fetch_latency_=
 group;tma_issueFB",
@@ -958,7 +996,34 @@ T",
          "ScaleUnit": "100%"
      },
      {
-@@ -712,8 +710,8 @@
+@@ -933,8 +931,8 @@
+         "MetricExpr": "200 * (MEM_LOAD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM * (=
+1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LOA=
+D_UOPS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_UO=
+PS_L3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM_=
+LOAD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE=
+_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_R=
+ETIRED.REMOTE_FWD))) / tma_info_thread_clks",
+         "MetricGroup": "Server;TopdownL5;tma_L5_group;tma_mem_latency_grou=
+p",
+         "MetricName": "tma_local_mem",
+-        "MetricThreshold": "tma_local_mem > 0.1 & tma_mem_latency > 0.1 & =
+tma_dram_bound > 0.1 & tma_memory_bound > 0.2 & tma_backend_bound > 0.2",
+-        "PublicDescription": "This metric estimates fraction of cycles whi=
+le the memory subsystem was handling loads from local memory. Caching will =
+improve the latency and increase performance. Sample with: MEM_LOAD_UOPS_L3=
+_MISS_RETIRED.LOCAL_DRAM",
++        "MetricThreshold": "tma_local_mem > 0.1 & (tma_mem_latency > 0.1 &=
+ (tma_dram_bound > 0.1 & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2)=
+))",
++        "PublicDescription": "This metric estimates fraction of cycles whi=
+le the memory subsystem was handling loads from local memory. Caching will =
+improve the latency and increase performance. Sample with: MEM_LOAD_UOPS_L3=
+_MISS_RETIRED.LOCAL_DRAM_PS",
+         "ScaleUnit": "100%"
+     },
+     {
+@@ -943,8 +941,8 @@
          "MetricExpr": "MEM_UOPS_RETIRED.LOCK_LOADS / MEM_UOPS_RETIRED.ALL_=
 STORES * min(CPU_CLK_UNHALTED.THREAD, OFFCORE_REQUESTS_OUTSTANDING.CYCLES_W=
 ITH_DEMAND_RFO) / tma_info_thread_clks",
@@ -982,7 +1047,7 @@ DS_PS. Related metrics: tma_store_latency",
          "ScaleUnit": "100%"
      },
      {
-@@ -724,15 +722,15 @@
+@@ -955,15 +953,15 @@
          "MetricName": "tma_machine_clears",
          "MetricThreshold": "tma_machine_clears > 0.1 & tma_bad_speculation=
  > 0.15",
@@ -994,7 +1059,7 @@ chine needs to recover its state after the clear. For example; this can hap=
 pen due to memory ordering Nukes (e.g. Memory Disambiguation) or Self-Modif=
 ying-Code (SMC) nukes. Sample with: MACHINE_CLEARS.COUNT. Related metrics: =
 tma_contested_accesses, tma_data_sharing, tma_false_sharing, tma_l1_bound, =
-tma_microcode_sequencer, tma_ms_switches",
+tma_microcode_sequencer, tma_ms_switches, tma_remote_cache",
 +        "PublicDescription": "This metric represents fraction of slots the=
  CPU has wasted due to Machine Clears.  These slots are either wasted by uo=
 ps fetched prior to the clear; or stalls the out-of-order portion of the ma=
@@ -1033,7 +1098,7 @@ counters for that). Related metrics: tma_fb_full, tma_info_system_dram_bw_u=
 se, tma_sq_full",
          "ScaleUnit": "100%"
      },
-@@ -741,19 +739,19 @@
+@@ -972,19 +970,19 @@
          "MetricExpr": "min(CPU_CLK_UNHALTED.THREAD, OFFCORE_REQUESTS_OUTST=
 ANDING.CYCLES_WITH_DATA_RD) / tma_info_thread_clks - tma_mem_bandwidth",
          "MetricGroup": "BvML;MemoryLat;Offcore;TopdownL4;tma_L4_group;tma_=
@@ -1101,7 +1166,7 @@ hen many of them get buffered at the same time (less common out of the two)=
          "ScaleUnit": "100%"
      },
      {
-@@ -762,7 +760,7 @@
+@@ -993,7 +991,7 @@
          "MetricGroup": "MicroSeq;TopdownL3;tma_L3_group;tma_heavy_operatio=
 ns_group;tma_issueMC;tma_issueMS",
          "MetricName": "tma_microcode_sequencer",
@@ -1124,7 +1189,7 @@ be avoided. Sample with: IDQ.MS_UOPS. Related metrics: tma_clears_resteers,=
          "ScaleUnit": "100%"
      },
      {
-@@ -771,7 +769,7 @@
+@@ -1002,7 +1000,7 @@
          "MetricGroup": "DSBmiss;FetchBW;TopdownL3;tma_L3_group;tma_fetch_b=
 andwidth_group",
          "MetricName": "tma_mite",
@@ -1142,7 +1207,7 @@ f long immediate or LCP can manifest as MITE fetch bandwidth bottleneck.",
          "ScaleUnit": "100%"
      },
      {
-@@ -779,8 +777,8 @@
+@@ -1010,8 +1008,8 @@
          "MetricExpr": "2 * IDQ.MS_SWITCHES / tma_info_thread_clks",
          "MetricGroup": "FetchLat;MicroSeq;TopdownL3;tma_L3_group;tma_fetch=
 _latency_group;tma_issueMC;tma_issueMS;tma_issueMV;tma_issueSO",
@@ -1177,7 +1242,7 @@ ing_vectors, tma_serializing_operation",
          "ScaleUnit": "100%"
      },
      {
-@@ -789,7 +787,7 @@
+@@ -1020,7 +1018,7 @@
          "MetricGroup": "Compute;TopdownL6;tma_L6_group;tma_alu_op_utilizat=
 ion_group;tma_issue2P",
          "MetricName": "tma_port_0",
@@ -1194,7 +1259,7 @@ b, tma_port_1, tma_port_5, tma_port_6, tma_ports_utilized_2",
          "ScaleUnit": "100%"
      },
      {
-@@ -798,7 +796,7 @@
+@@ -1029,7 +1027,7 @@
          "MetricGroup": "TopdownL6;tma_L6_group;tma_alu_op_utilization_grou=
 p;tma_issue2P",
          "MetricName": "tma_port_1",
@@ -1211,7 +1276,7 @@ t_6, tma_ports_utilized_2",
          "ScaleUnit": "100%"
      },
      {
-@@ -834,7 +832,7 @@
+@@ -1065,7 +1063,7 @@
          "MetricGroup": "TopdownL6;tma_L6_group;tma_alu_op_utilization_grou=
 p;tma_issue2P",
          "MetricName": "tma_port_5",
@@ -1228,7 +1293,7 @@ es CPU dispatched uops on execution port 5 ([SNB+] Branches and ALU; [HSW+]=
          "ScaleUnit": "100%"
      },
      {
-@@ -843,7 +841,7 @@
+@@ -1074,7 +1072,7 @@
          "MetricGroup": "TopdownL6;tma_L6_group;tma_alu_op_utilization_grou=
 p;tma_issue2P",
          "MetricName": "tma_port_6",
@@ -1245,7 +1310,7 @@ e ALU). Sample with: UOPS_DISPATCHED.PORT_1. Related metrics: tma_fp_scalar=
          "ScaleUnit": "100%"
      },
      {
-@@ -858,46 +856,46 @@
+@@ -1089,46 +1087,46 @@
      {
          "BriefDescription": "This metric estimates fraction of cycles the =
 CPU performance was potentially limited due to Core computation issues (non=
@@ -1412,7 +1477,73 @@ zation > 0.15 & (tma_core_bound > 0.1 & tma_backend_bound > 0.2))",
          "ScaleUnit": "100%"
      },
      {
-@@ -917,7 +915,7 @@
+@@ -1137,8 +1135,8 @@
+         "MetricExpr": "(200 * (MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM *=
+ (1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_L=
+OAD_UOPS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_=
+UOPS_L3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + ME=
+M_LOAD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMO=
+TE_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS=
+_RETIRED.REMOTE_FWD))) + 180 * (MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_FWD * =
+(1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LO=
+AD_UOPS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_U=
+OPS_L3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM=
+_LOAD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOT=
+E_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_=
+RETIRED.REMOTE_FWD)))) / tma_info_thread_clks",
+         "MetricGroup": "Offcore;Server;Snoop;TopdownL5;tma_L5_group;tma_is=
+sueSyncxn;tma_mem_latency_group",
+         "MetricName": "tma_remote_cache",
+-        "MetricThreshold": "tma_remote_cache > 0.05 & tma_mem_latency > 0.=
+1 & tma_dram_bound > 0.1 & tma_memory_bound > 0.2 & tma_backend_bound > 0.2=
+",
+-        "PublicDescription": "This metric estimates fraction of cycles whi=
+le the memory subsystem was handling loads from remote cache in other socke=
+ts including synchronizations issues. This is caused often due to non-optim=
+al NUMA allocations. Sample with: MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM=
+, MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_FWD. Related metrics: tma_contested_=
+accesses, tma_data_sharing, tma_false_sharing, tma_machine_clears",
++        "MetricThreshold": "tma_remote_cache > 0.05 & (tma_mem_latency > 0=
+.1 & (tma_dram_bound > 0.1 & (tma_memory_bound > 0.2 & tma_backend_bound > =
+0.2)))",
++        "PublicDescription": "This metric estimates fraction of cycles whi=
+le the memory subsystem was handling loads from remote cache in other socke=
+ts including synchronizations issues. This is caused often due to non-optim=
+al NUMA allocations. #link to NUMA article. Sample with: MEM_LOAD_UOPS_L3_M=
+ISS_RETIRED.REMOTE_HITM_PS;MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_FWD_PS. Rel=
+ated metrics: tma_contested_accesses, tma_data_sharing, tma_false_sharing, =
+tma_machine_clears",
+         "ScaleUnit": "100%"
+     },
+     {
+@@ -1146,8 +1144,8 @@
+         "MetricExpr": "310 * (MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_DRAM * =
+(1 + MEM_LOAD_UOPS_RETIRED.HIT_LFB / (MEM_LOAD_UOPS_RETIRED.L2_HIT + MEM_LO=
+AD_UOPS_RETIRED.L3_HIT + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_HIT + MEM_LOAD_U=
+OPS_L3_HIT_RETIRED.XSNP_HITM + MEM_LOAD_UOPS_L3_HIT_RETIRED.XSNP_MISS + MEM=
+_LOAD_UOPS_L3_MISS_RETIRED.LOCAL_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOT=
+E_DRAM + MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_HITM + MEM_LOAD_UOPS_L3_MISS_=
+RETIRED.REMOTE_FWD))) / tma_info_thread_clks",
+         "MetricGroup": "Server;Snoop;TopdownL5;tma_L5_group;tma_mem_latenc=
+y_group",
+         "MetricName": "tma_remote_mem",
+-        "MetricThreshold": "tma_remote_mem > 0.1 & tma_mem_latency > 0.1 &=
+ tma_dram_bound > 0.1 & tma_memory_bound > 0.2 & tma_backend_bound > 0.2",
+-        "PublicDescription": "This metric estimates fraction of cycles whi=
+le the memory subsystem was handling loads from remote memory. This is caus=
+ed often due to non-optimal NUMA allocations. Sample with: MEM_LOAD_UOPS_L3=
+_MISS_RETIRED.REMOTE_DRAM",
++        "MetricThreshold": "tma_remote_mem > 0.1 & (tma_mem_latency > 0.1 =
+& (tma_dram_bound > 0.1 & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2=
+)))",
++        "PublicDescription": "This metric estimates fraction of cycles whi=
+le the memory subsystem was handling loads from remote memory. This is caus=
+ed often due to non-optimal NUMA allocations. #link to NUMA article. Sample=
+ with: MEM_LOAD_UOPS_L3_MISS_RETIRED.REMOTE_DRAM_PS",
+         "ScaleUnit": "100%"
+     },
+     {
+@@ -1167,7 +1165,7 @@
          "MetricGroup": "TopdownL4;tma_L4_group;tma_l1_bound_group",
          "MetricName": "tma_split_loads",
          "MetricThreshold": "tma_split_loads > 0.3",
@@ -1425,7 +1556,7 @@ ary. Sample with: MEM_UOPS_RETIRED.SPLIT_LOADS_PS",
          "ScaleUnit": "100%"
      },
      {
-@@ -925,8 +923,8 @@
+@@ -1175,8 +1173,8 @@
          "MetricExpr": "2 * MEM_UOPS_RETIRED.SPLIT_STORES / tma_info_core_c=
 ore_clks",
          "MetricGroup": "TopdownL4;tma_L4_group;tma_issueSpSt;tma_store_bou=
@@ -1445,7 +1576,7 @@ ccesses.  Consider aligning your data to the 64-byte cache line granularity=
          "ScaleUnit": "100%"
      },
      {
-@@ -934,7 +932,7 @@
+@@ -1184,7 +1182,7 @@
          "MetricExpr": "(OFFCORE_REQUESTS_BUFFER.SQ_FULL / 2 if #SMT_on els=
 e OFFCORE_REQUESTS_BUFFER.SQ_FULL) / tma_info_core_core_clks",
          "MetricGroup": "BvMB;MemoryBW;Offcore;TopdownL4;tma_L4_group;tma_i=
@@ -1461,7 +1592,7 @@ oth hardware SMT threads (Logical Processors). Related metrics: tma_fb_full=
 , tma_info_system_dram_bw_use, tma_mem_bandwidth",
          "ScaleUnit": "100%"
      },
-@@ -943,8 +941,8 @@
+@@ -1193,8 +1191,8 @@
          "MetricExpr": "RESOURCE_STALLS.SB / tma_info_thread_clks",
          "MetricGroup": "MemoryBound;TmaL3mem;TopdownL3;tma_L3_group;tma_me=
 mory_bound_group",
@@ -1485,7 +1616,7 @@ alls. This metric will be flagged should RFO stores be a bottleneck. Sample=
          "ScaleUnit": "100%"
      },
      {
-@@ -952,8 +950,8 @@
+@@ -1202,8 +1200,8 @@
          "MetricExpr": "13 * LD_BLOCKS.STORE_FORWARD / tma_info_thread_clks=
 ",
          "MetricGroup": "TopdownL4;tma_L4_group;tma_l1_bound_group",
@@ -1513,7 +1644,7 @@ ore is writing a smaller region than the load is reading.",
          "ScaleUnit": "100%"
      },
      {
-@@ -962,8 +960,8 @@
+@@ -1212,8 +1210,8 @@
          "MetricExpr": "(L2_RQSTS.RFO_HIT * 9 * (1 - MEM_UOPS_RETIRED.LOCK_=
 LOADS / MEM_UOPS_RETIRED.ALL_STORES) + (1 - MEM_UOPS_RETIRED.LOCK_LOADS / M=
 EM_UOPS_RETIRED.ALL_STORES) * min(CPU_CLK_UNHALTED.THREAD, OFFCORE_REQUESTS=
