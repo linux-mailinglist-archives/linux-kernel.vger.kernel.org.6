@@ -1,163 +1,106 @@
-Return-Path: <linux-kernel+bounces-572681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE9DA6CD07
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:51:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986D4A6CD08
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2B53AF7C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9805171D1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E91E573B;
-	Sat, 22 Mar 2025 22:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E571EA7F4;
+	Sat, 22 Mar 2025 22:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtGN1GCl"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HtFHuJ/y"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE65114386D;
-	Sat, 22 Mar 2025 22:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742683904; cv=none; b=nGD0zCxy9tSbSS7stZJtql3d8PlQTjR8qTQy0Q+RcwemetPPNJlCoxgtn0Y1QcaycQplg6Hi/ilLxNgucnqNN/3p1H47XNGMeWineNnyx9JA2qVDv6O/GyUF5p6ZvQE3H6T6HYacHbD2hvPaJhW4kQUwTEmp2R5z/m8PqRLXk0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742683904; c=relaxed/simple;
-	bh=/T6fIJ/31Cw18UV0ZROcFTr6Z4CwQrGMBwrIiprMO+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLwpA/B5bVPTHuwh72fP0RO/TFKjCGWiznxdhIlwmC7rfLJgM+cAjZEWQchq6A19k5o56BVBxXlHaDOsAlmUIvuACTti+oaX+zAB3pol+H/twGwhtGXUYvznitdXX4nHpoSUOLdyIm4RtTDL8e7N3PorrGthcqkhkABZM0Q/6NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtGN1GCl; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39149bccb69so2915393f8f.2;
-        Sat, 22 Mar 2025 15:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742683899; x=1743288699; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3Jt14YxismGrzSFIUTNtRc9HQQUaY0k4x/qsI+lQ69o=;
-        b=UtGN1GCl0GgpDDv2imRIzoq3eV74def9Dko9lyLIrqGYOrIA5mIwniFtI6QMHSgr8H
-         95QLvGdbsVh4mm1Wj6CNHkWgNMylr3H+d63kK2+XPjQLO7gl7gcG/gEnCgOVowhsp0X6
-         zN/+MCRQ90CgOwRCJx6MSXw/zOdt30RuultqQcPtdndvNbP2ND6JxidByQN8NTAZ+WWH
-         tZK45EgvJlj6afMYDti6EzpGjAI7UKqu+BrxPvIn1WlciIMLWEVYf9axDFIcoubYJi3K
-         ikIJKZQ8FTeoAvxVJHPFRnNItgWbDYDDTv6t3hlDb6O9hfY671Fb1nuJ4bUyKX1wqJH/
-         gVlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742683899; x=1743288699;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Jt14YxismGrzSFIUTNtRc9HQQUaY0k4x/qsI+lQ69o=;
-        b=KyXgfxwJ91RLlf4FloSuEI5uhdZJbB8E0FggCVKkkxeyLi8H/dvOMLASzbi+Q21Aey
-         jUMRA79IPYWnYFasUB+HBnUwpEaUX2j/twdNr430Sf5KBcSaqZwSTQUE+00fdsvv6oIJ
-         p1HIEy6Q8U65QeHkmhlX5ZwyWH22ZNZviOypPvK8u2ZnkibvQTdlQqXp037ZHyKOoxm5
-         1J+/41dMsv2wNVcQTFQEcOHfwMQYDDjEMWzZ8363c2QrTJfNWqQWYlFYI2ckZ0JniZv2
-         SDPE2680qr4bW5P0Jtm+gNS3SS8QCdAH/3wPAWEJl7gO025Ub26gNgxi55uEG8HHO+hH
-         OSQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDVDL2noIRSmyEnPUjk49KxO+P76GbhpYxV5iiRaAWDSn6KNT66O789bVjjX9AFTq2zWqR9XnS44j2FyM=@vger.kernel.org, AJvYcCXc6fXkrw9N0j9h4k6rrLDbeMGYfwykjDu1i+cw2Y9LuYlvtcjCmTPzvmhwfHOqBbrDl/PDoGdDpAChnrEgGVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeHP0eVA1vb/KXIVDiH0p0r+850gRjgYiZ3R1qb0DOyybTA9pp
-	DKaGMn5AKriPmu6UbJHUp66wR1inz43E/aEepjBZQp1sJJToODBg
-X-Gm-Gg: ASbGnctwmVYf/Yj0PXg8p4vG8YsYJVRGM5XLoObTzcTlzwTPYyos3NKdEJS9dB6TKlt
-	puaqk/qb0T2DT7VkjyjdZS1paAH3mV899hDw/yGIZhOX4ySIecPEFOHaGYzqrjkxaUQ9tVEd7MR
-	QmNREzwhVXcQsHPifA3c+lri6ZGnHqyl4GWtCFtZKpTVzAT2C0UiQ3HMccETmNwpzkjQt8RT6js
-	3nKiW9QNkRqp8RGddCbOsf8XViXVg99JCTzpZBRZkjesMtjSlyz/Em/A4TgsXdmExsOdzAnMTYH
-	Y/KJyoY0bSk1e+OYuf5KUiP1pq7fmWNDeB+haWoywttYsJbq
-X-Google-Smtp-Source: AGHT+IGxXIu9gFWA5FTHPGshtlN1jdaNgj6n+gV081Jt+w3afTixlCPB5LoK8q8g2bwFmjRD4hWrlA==
-X-Received: by 2002:a05:6000:1547:b0:391:2d61:4542 with SMTP id ffacd0b85a97d-3997f8f2855mr7155076f8f.11.1742683898800;
-        Sat, 22 Mar 2025 15:51:38 -0700 (PDT)
-Received: from qasdev.system ([2a02:c7c:6696:8300:ec99:3da1:428d:90b1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9eef37sm6054754f8f.85.2025.03.22.15.51.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 15:51:38 -0700 (PDT)
-Date: Sat, 22 Mar 2025 22:51:22 +0000
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com, sean.wang@mediatek.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	chui-hao.chiu@mediatek.com, Bo.Jiao@mediatek.com,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] wifi: mt76: mt7996: prevent uninit return in
- mt7996_mac_sta_add_links
-Message-ID: <Z98-6kXoYdSaFtVR@qasdev.system>
-References: <20250320201914.48159-1-qasdev00@gmail.com>
- <CAOiHx==UCeMQpywQJCLPQqipEW0tK9youRxdR5+_T1LuGp_EHA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238A279FE;
+	Sat, 22 Mar 2025 22:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742684352; cv=pass; b=JyCwLIQqE/2M1mmNWIwK3lDIy24H182VQyDyIPXx/KTUmLcLb+U4juXbwjSQ5gspArr9685bX8IyAziTxaw5yK9hZH+X2rseEIWsTLPqfECGwNEqqUhpP0B/iHElGZ4iRq0nuZmdzJKEyD0VehlM19mT3GEd063aFYYYiYMQgi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742684352; c=relaxed/simple;
+	bh=XGMy3jFc28cA7rlCTbGV1UPJPidx244D4ob7iNMHZbM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=BU47eAQVQiPC2inbMcgSbqDkg8/XhZ4f48x/ufIihzrF7eM3ZtiaDTawq9zGy8cCmHKaeERvZ5eRMI+wL0vU3BtmWfQ5NXIzNv7MoJ73hGenR/JKC0qhO61EPtvhxm+DDYIwjSDOMWUdvE++GMtfxCpN2mrPcBlq5svKB1iKSPo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HtFHuJ/y; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742684321; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FGSgKYahcumdct7tO4Kou17nnccLE7Q4MyHMCJ0YrcvILiz/cdIhXOhGTH4gXtHlQpeCSN7R8SK+LDfGLYAjOQMy6J5ONoeZJxGl/MWu9k/q8p87amJEvMeRqJxpoR4kvaBdyLVd++qVRbIX/UF2OSVrLMcd/whedDROcshRf50=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742684321; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XGMy3jFc28cA7rlCTbGV1UPJPidx244D4ob7iNMHZbM=; 
+	b=N8Du4+oTWX6MdWwvuRbxFsixJzNgk3xwICKtfjXcnzalat6NKhPwRow9Is/oca2ho3zvk+iaC1/WucIclHMYZVdzT4vwDYJBQlCcdMlhj+4Ao09JwQTIt0YZYbXv6UvdAVENy/FbV0b3IFtWyiPVPL75Lds97zFIczkfwlzh/kM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742684321;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=XGMy3jFc28cA7rlCTbGV1UPJPidx244D4ob7iNMHZbM=;
+	b=HtFHuJ/ygUT1MMWsqK4fbndOIlinZvqptI7rOSjJqXZPMTyC0pPEff3eOq/CyNxG
+	I6GFI+tRAfs3qjCzIkuiOBypwznzQpxTijK7p0RtvimVpUdkthup9+WRz1glHo5xlm/
+	rcKElWYxGmpqyyJ6kU12HYtg42WRNYiXpfQMXfsE=
+Received: by mx.zohomail.com with SMTPS id 174268432081031.2758976306327;
+	Sat, 22 Mar 2025 15:58:40 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOiHx==UCeMQpywQJCLPQqipEW0tK9youRxdR5+_T1LuGp_EHA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v15 02/11] rust: add dma coherent allocator abstraction.
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <87senajxlv.fsf@kernel.org>
+Date: Sat, 22 Mar 2025 19:58:24 -0300
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ rust-for-linux@vger.kernel.org,
+ dakr@kernel.org,
+ robin.murphy@arm.com,
+ aliceryhl@google.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com,
+ iommu@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2A60CB2E-E6C2-44C9-85DD-914638CA77BC@collabora.com>
+References: <20250317185345.2608976-1-abdiel.janulgue@gmail.com>
+ <UiefwZ9WcVV7q7YyERsbNIYqOxTWUWEO9aZNxThH7uRFkjE4LDSUtaVdiLeShk_JYe5RJLD5MgFC9IxGUuzTEw==@protonmail.internalid>
+ <20250317185345.2608976-3-abdiel.janulgue@gmail.com>
+ <87senajxlv.fsf@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On Sat, Mar 22, 2025 at 12:51:57PM +0100, Jonas Gorski wrote:
-> Hi,
-> 
-> On Thu, Mar 20, 2025 at 9:19 PM Qasim Ijaz <qasdev00@gmail.com> wrote:
-> >
-> > If link_conf_dereference_protected() or mt7996_vif_link()
-> > or link_sta_dereference_protected() fail the code jumps to
-> > the error_unlink label and returns ret which is uninitialised.
-> >
-> > Fix this by setting err before jumping to error_unlink.
-> >
-> > Fixes: c7e4fc362443 ("wifi: mt76: mt7996: Update mt7996_mcu_add_sta to MLO support")
-> > Fixes: dd82a9e02c05 ("wifi: mt76: mt7996: Rely on mt7996_sta_link in sta_add/sta_remove callbacks")
-> > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> > ---
-> >  drivers/net/wireless/mediatek/mt76/mt7996/main.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-> > index 91c64e3a0860..78f7f1fc867e 100644
-> > --- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-> > +++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-> > @@ -998,16 +998,22 @@ mt7996_mac_sta_add_links(struct mt7996_dev *dev, struct ieee80211_vif *vif,
-> >                         continue;
-> >
-> >                 link_conf = link_conf_dereference_protected(vif, link_id);
-> > -               if (!link_conf)
-> > +               if (!link_conf) {
-> > +                       err = -EINVAL;
-> >                         goto error_unlink;
-> > +               }
-> >
-> >                 link = mt7996_vif_link(dev, vif, link_id);
-> > -               if (!link)
-> > +               if (!link) {
-> > +                       err = -EINVAL;
-> >                         goto error_unlink;
-> > +               }
-> >
-> >                 link_sta = link_sta_dereference_protected(sta, link_id);
-> > -               if (!link_sta)
-> > +               if (!link_sta) {
-> > +                       err = -EINVAL
-> 
-> You are missing a semicolon at the end of the line.
-> 
+Hi Andreas,
 
-Good spot! not sure how that happened but I will resend a v2 patch.
+>=20
+> I think consistent and coherent are used interchangeably in the =
+kernel.
+> If so, can we settle on just one of the terms in the rust code?
+>=20
 
-> To also do some bike shedding, you could initialize err (with 0 or
-> -EINVAL), and then change the err return to return err ? : -EINVAL;.
-> But your way has an explicit error code assigned to each failure, even
-> if it is always the same. So I won't claim my suggestion is better.
-> 
+I=E2=80=99d say let=E2=80=99s keep the `coherent` nomenclature. It =
+immediately shows that dma_alloc_coherent() is being used.
 
-Thanks for the suggestion, I think this could work however I think my 
-current approach is more a bit more readable, so I will leave it as is.
 
-Thanks,
-Qasim
-
-> Best regards,
-> Jonas
+=E2=80=94 Daniel=
 
