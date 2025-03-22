@@ -1,91 +1,147 @@
-Return-Path: <linux-kernel+bounces-572461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D142FA6CA89
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:21:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C05A6CA8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09827882DD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD17882E9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADC222B8B1;
-	Sat, 22 Mar 2025 14:21:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A86D21A43C;
+	Sat, 22 Mar 2025 14:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6J1UhYf"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A8317E0
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 14:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B435F17E0
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 14:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742653267; cv=none; b=AeTPJHQNxAWrSMNr654e2myrskp6jG7pFsarZe1Y8O9Ufs9/hz9usC7x1Fsj5B832bheulxk6YBKACrxtMxmGXZDBPuHAL7tMOQG4QpRAHggR8Ldi6V8r5Gdcjg1UlrTMuU21ca/J1Y/ROzTwiFtuEtBHNp/L/qjl4D/MAKoWAI=
+	t=1742653316; cv=none; b=BW2X36MYAgLRRtgVo2L/1VJWDmXZGtdhSZUrvcEQ1RmvoriA9Z+mEoiOvBL8elwFygBelxSc833POCkEG4kt8KcJ/1M9YQkg9U0ZPM0ojTxIf6i3JwI9I9oea165lseVbMi6EPcuwOpsJKAz0UERfXrcHqMGlPYH9gWTX5vVZf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742653267; c=relaxed/simple;
-	bh=GV5ScpaW94JpIvrpJFW1esYd0UofIMH6efGT6ajycpU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QkZrvT206x/cDsFVi9bgoIiTViQurMQRnTpNa9gBfsMmMFGDgO1vMrjT2r1tIk0fl6PxKaRGy0JIGHWjxBOMpmv2kr/kll0VEXXH3Syecqb+fEelAp/mNAEqkMVj3ldoMeQEfOIKL5TGIGQFEHTNvTL2pmDVgCkcjQte7CNWjpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d2a6b4b2d4so57635845ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:21:05 -0700 (PDT)
+	s=arc-20240116; t=1742653316; c=relaxed/simple;
+	bh=zylf9gMtY9TZ36hq8YodEV7cPIRb1Iwy/ePAIm1AKBg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Su2a1if/BnimmxJ73sqd2HHXpIL73C8YGAfWNYnoeNKr4EQ8SXY8gMACIrI4wXqGqW5zxceS/WSsUEluFAvs4Grq3LeB3eeF9pzTjN9vNTAi+VE/EQ7NK+q9IBEdFuhdbdKq8eUz8NY5rbQ3UbTimXXpH9EA0302VL3bj9fWQU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6J1UhYf; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301493f45aeso4954171a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:21:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742653314; x=1743258114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBSQsRnQ4TfM2tTeKw5HNlKo6byh7HY//NkZMVTFY8I=;
+        b=I6J1UhYfvFkb91xvVrwXos9kg6Q8BfLaK7jrjhVDlyCGYqAGtYOO9Q12ToCpFIZjfi
+         rsgpuD5YW8v5dLviDaFnc4Jy/rMfJVgmtynMpFXmBuaWFjU9p/cPcrWWU2dl57TYhm9N
+         fSn+SGlvbF0Q2RljjCw/xPaFJa6FgooQiraBGOfNp9y+eaolH0ZZT4z7aMLr/pMd2qic
+         CY81ZTHYGTzJiM6KbF4CQU+JQ9ihQgcAoSN1PcCQD5ATtAxQhxzNszK+xK8hnln5qg9S
+         lN9McF1lSGL5Qh7+fG4VFRBg4HD/2k3qJNIN7PO0VrUelOo2NDtxayGbdZLdCz4n1sLA
+         ZL+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742653264; x=1743258064;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JK5ZXI6vbQAIZxy13h5qPA6KYskAYkIUEuDZySyhb0A=;
-        b=aMmW3qkpyN1dZLOZbLiWOt2Sn6i7c+9BwDDnzcNyEM4fSHEGpR7LrK9d8MQ/VmCaY2
-         BntQ13nBTw3BmP9VATJ+PXv0OQZu/lyfhtB72MszHOOhPlypaJ97nddigCLHAQJML8Xf
-         nXhWlHng5Vtp+bHB36P5Fic9KaaM/VVa/6L2l4LLWW85Lqq8rbb1MCdQdqxEuxqvNatB
-         Rf8KmR3PqXbfff1IqqrFyA60IpDUtuMtT57S6UVmLuA6LF6XIWU71oEqxFdz9xIBEhyI
-         v/pudwhmls8lcXovtgq24vsX121sOsDx43+518gC1BOzq3Bjc9G8934HnIkFKSRkDRp/
-         6ojw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLxyEp0dVLuiVVmtysVzYWwMuiybDAdnl0QOCockSmOPoZGC78fQC2qQfRpufuLCx/YMbcny/LMJZla/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzxv/itZMBq/4AVvGvdQaY4chzwzYN2o9n7SdmvJbJEhrpYjLp
-	tWXSqcom6kVNHddtWQtbas/P7W05TCj1bCIDWW8W88KBg4nFI2w3avuvKoV6qyett2Gw7XwggVb
-	7HNoM1N71Av0EI6YmY461RXgV3/2qCPUF+Uvk4hNeIDyQ9TuQnf2eUjs=
-X-Google-Smtp-Source: AGHT+IGCFPzSPPNaIKguvkQ1WT+OSMolQs7AmmRdajAqaldrzDzcQ1lTxjFWUpRhGeR0zPfdvEhekvGPfOClbBndJbI8tYg3c2c8
+        d=1e100.net; s=20230601; t=1742653314; x=1743258114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cBSQsRnQ4TfM2tTeKw5HNlKo6byh7HY//NkZMVTFY8I=;
+        b=Q4l+lBCOkeiP1q8OQuqWnr1+I47uF8sfGdBbv62JWIJNVW1HBrRxIBNlu+/lJAWLmq
+         Dno3Ezj7xPzEaOR8deWn8IGvo3NuNaaOMXYfP8BM6zkl3T+bQ5NScq8unxbMm3/C3owP
+         LkG+wwNS+GKtMlftXOYAUYyVBzUi90F6EaSbPgXNrLegU7k4ZDnZygAYhGjUPnKB1cYw
+         i4f87ZZ4CIv/5iyaqtKlmfurlfQ1FbAjPkvikfaewiaHVVrzH8dl8XZu8V6fjNDQ1z6H
+         LVGpYxvi5vDgsBpD7RdKDJvKK0kHg1YQ4c/pVogFYeqQJHvshduhrOm9ULJ1pZPzhzZS
+         JV1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWny7xpiLo74gcNb4HSfeYfTuRkKfsnfGobjnHBkqun+otNS1rlQgzAlVeHy4dpsS30B1I5vU8ukAfPJX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ1ggh8hBGtQ9vVOHVkyc4BZxoxMwg4hlE/EAGgItHNEVOkoSw
+	6NOVkjdd6ZEcM2dyWhpmXup7eNA0oryBXJe88tz1BIFMBsDNHduP
+X-Gm-Gg: ASbGncsmz20vqlo8mbdBZa7G8z6B9WFa9cZnQSf7WO2kSHSBcw9QMZf8q+YkS1pJtrT
+	LQXiXv1XUgXVb7YJWFRu1EeY5hkf3/MQHAqduPDgUntbVAPER5zO402WNE2JByvqIlPW5tPAYex
+	ty8C47NK1L+zkL5JXp1sfsrZwXjRPBpCbgxvbCTxQLDcqCBNBhAyPdnkMH7xnNBvdluHz4BZRqO
+	WMiVo9Wwfk7HdqxATquuWNLnCnKw/3IZCNE8DlD9LpWpEAMrq58iAcKi/AaOKv9CWESNYuFLlfR
+	uae7vRicSOnSf4N02K+72zkpbZMWuSubLfYWFZ+vxNgY5NdOhIrqcKnOTcmsaWKjR5+ecqW1z4s
+	jsSM=
+X-Google-Smtp-Source: AGHT+IGws1/9iRhkXC7aE71u9g4HMMNT2JBajE79EbnG73qOrwoibxoVv6T+IuIZEpjcoyEUslDBkQ==
+X-Received: by 2002:a17:90b:1d46:b0:2fa:1851:a023 with SMTP id 98e67ed59e1d1-3030ff11268mr11568556a91.35.1742653313676;
+        Sat, 22 Mar 2025 07:21:53 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4080:215:18d5:84f8:e760:1d0f:700b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3bbedsm36231605ad.3.2025.03.22.07.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 07:21:53 -0700 (PDT)
+From: Purva Yeshi <purvayeshi550@gmail.com>
+To: Dave Kleikamp <shaggy@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Purva Yeshi <purvayeshi550@gmail.com>,
+	syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
+Subject: [PATCH] fs: jfs: Avoid sleeping function call in softirq
+Date: Sat, 22 Mar 2025 19:51:34 +0530
+Message-Id: <20250322142134.35325-1-purvayeshi550@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c21:b0:3d0:237e:c29c with SMTP id
- e9e14a558f8ab-3d59615d8bdmr91271625ab.12.1742653264601; Sat, 22 Mar 2025
- 07:21:04 -0700 (PDT)
-Date: Sat, 22 Mar 2025 07:21:04 -0700
-In-Reply-To: <67de616f.050a0220.31a16b.002b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dec750.050a0220.31a16b.003e.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING: refcount bug in io_send_zc_cleanup (2)
-From: syzbot <syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+Bug detected by Syzbot:
+BUG: sleeping function called from invalid context in jfs_fsync
 
-commit cc34d8330e036b6bffa88db9ea537bae6b03948f
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Thu Mar 20 18:25:12 2025 +0000
+Fix jfs_fsync() to avoid sleeping in softirq/atomic, preventing crash.
+Skip execution in softirq/atomic and return -EWOULDBLOCK to prevent issues.
+Correct generic_file_fsync() call to pass the required arguments properly.
 
-    io_uring/net: don't clear REQ_F_NEED_CLEANUP unconditionally
+Reported-by: syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=219127d0a3bce650e1b6
+Tested-by: syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
+Fixes: 5955102c9984 ("wrappers for ->i_mutex access")
+Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+---
+ fs/jfs/file.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15ef043f980000
-start commit:   d07de43e3f05 Merge tag 'io_uring-6.14-20250321' of git://g..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17ef043f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ef043f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=620facf12ff15d10
-dashboard link: https://syzkaller.appspot.com/bug?extid=cf285a028ffba71b2ef5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16be1c4c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12223004580000
+diff --git a/fs/jfs/file.c b/fs/jfs/file.c
+index 93a3e7a45b0f..fc93376eb1e6 100644
+--- a/fs/jfs/file.c
++++ b/fs/jfs/file.c
+@@ -19,25 +19,17 @@
+ int jfs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ {
+ 	struct inode *inode = file->f_mapping->host;
+-	int rc = 0;
+ 
+-	rc = file_write_and_wait_range(file, start, end);
+-	if (rc)
+-		return rc;
+-
+-	inode_lock(inode);
+-	if (!(inode->i_state & I_DIRTY_ALL) ||
+-		(datasync && !(inode->i_state & I_DIRTY_DATASYNC))) {
+-		/* Make sure committed changes hit the disk */
+-		jfs_flush_journal(JFS_SBI(inode->i_sb)->log, 1);
+-		inode_unlock(inode);
+-		return rc;
++	if (in_softirq() || in_atomic()) {
++		pr_warn("jfs_fsync() called in softirq/atomic context, skipping execution.\n");
++		return -EWOULDBLOCK;
+ 	}
+ 
+-	rc |= jfs_commit_inode(inode, 1);
++	inode_lock(inode);
++	generic_file_fsync(file, start, end, datasync);
+ 	inode_unlock(inode);
+ 
+-	return rc ? -EIO : 0;
++	return 0;
+ }
+ 
+ static int jfs_open(struct inode *inode, struct file *file)
+-- 
+2.34.1
 
-Reported-by: syzbot+cf285a028ffba71b2ef5@syzkaller.appspotmail.com
-Fixes: cc34d8330e03 ("io_uring/net: don't clear REQ_F_NEED_CLEANUP unconditionally")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
