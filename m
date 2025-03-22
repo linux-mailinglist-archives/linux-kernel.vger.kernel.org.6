@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-572529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2847EA6CB21
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:15:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C07A6CB26
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC2417D92A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E584801E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B43F757F3;
-	Sat, 22 Mar 2025 15:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7898230270;
+	Sat, 22 Mar 2025 15:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIcVlj5m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="t0q7bNKk"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FE71BDCF
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194D729A9;
+	Sat, 22 Mar 2025 15:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742656524; cv=none; b=bBTKak2uixRKc7ycsuMx/kvGWBH94pN7lnL5QhuMj99GC9d6TAPcspMevk2lqLIt5hoQkeX/jlD0VaN1sg6xBThiMWhBes+sSGaQGnxrhS+RB/bUAWwOzvjeKDz+4gf5r0UpptRmqNkmQMVUeUPBKopgG0tqFJJIzAHJ4Mnu+Qk=
+	t=1742656992; cv=none; b=T2wbVwpQNHVMfORFgEXYwQiNMWjw5FhUWZCIhuMjnOLAb/WnxQxYjXAdKMzuKcO+hLi+JsFb55OCvuYuc9eBuQGMxHbIGnU9HiL/kmiww7sJcrRMuIOlBSFxUVY+UeJzUFtdeGwPN9yl/UIy02etBJ9e+LM7BQcrVHlFY/pO4U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742656524; c=relaxed/simple;
-	bh=WD20/rrDwgVxbxUEGKxmjIwO8A5tb2yY3ykyeJNqvQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KtBkSbko63a60iaRIF5iJquz43bNHAtKrHKa44jx1PRH+ikKA9wX9McFvMBOwTSNUkeW2ox2Bgn4Wyw29KQE1cGpULAKHcobE9bO7wJGaTXLBJgOYqxvMmVY92HDAMMbqG64qd5+fmTh/rQrRLf1277traEE8moSiwDJ4lxICBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIcVlj5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23152C4CEED
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742656524;
-	bh=WD20/rrDwgVxbxUEGKxmjIwO8A5tb2yY3ykyeJNqvQM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sIcVlj5mL7nJiqrTJLSh6YkmHFeSKOX7DwFIVgtoH9GCl1mTOsgzdc+sfDRcumhCv
-	 h656cGeRIChdZ61+myNH4nMlQJ4ca0g7xiUajlZTyPeex/rSdQGKRvoiD2ZVMl3f1q
-	 ZsRQDqrTfFmCWyLI84ni34tIaUY40VWqRSXqT79rL+mWV5fbIqVdyp4/rQ0FHZHS0C
-	 UaPNn+CcpBcn/VcGJuHigjYLjKqn7If5pOXHSA7uSd4lQ7snHI+rZokJE24N/AyyZ8
-	 V31BVdbf5UUGwepuOEgf2U8gT8aIlLfmPO1v51P7DDkLJGCpTyFoCz6VzBTyyPOI5j
-	 /sYdgEj0Jrxnw==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bef9b04adso31661371fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 08:15:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0BXTN09z4LcqTTSCB9BqSSJAYVg0TkGoh/XYnzhSC7z31LedaXdZqpZVt7p/vdae/nvVFj0Gb6KAcmX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcLMEh5sn1KrMNXMXK51ChRLmeBpOgF8cdEJL7tXF7L1tKCGC/
-	v8lb43TPakmWFjQKOYbQUL3/AeOE3Ud2t2k+AYymFZ3jrotWd2UKjd8VBoHjjMzg+hjjngd7YQ6
-	PfaoKLkZhnF13GZJHpj46saPotCk=
-X-Google-Smtp-Source: AGHT+IFhe3uVW7iXi9gGdCxHnPJvi3M6RTDXdAtRK1P2cDOSCCAe6psE9iCOcfwPIGdV70SxYHQcOb1qIAPmP+n8tgI=
-X-Received: by 2002:a05:6512:138f:b0:545:fc8:e155 with SMTP id
- 2adb3069b0e04-54ad647d115mr2589882e87.20.1742656522771; Sat, 22 Mar 2025
- 08:15:22 -0700 (PDT)
+	s=arc-20240116; t=1742656992; c=relaxed/simple;
+	bh=rPuK3FBZ0Pg5TMPok6C26mXt6MVvMYdW5NMwzIfayRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CpmLkS7Lfba3R7SJ3AK9umdpHkRMEX3djOi8j1mN69ZDCSPF0gNw8EG8w/VHzjW37ThlYuitp5axR7iXZwS5Yeuvc5SvW7uwhit2/wvoYZnCh/8uvZmYhYDATjJmP9VET/Jx2UgY3uq2SmD1f1EguQ59g2+S0bAKE2LhzRLRL+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=t0q7bNKk; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1742656985;
+	bh=rPuK3FBZ0Pg5TMPok6C26mXt6MVvMYdW5NMwzIfayRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t0q7bNKkstXGZU5/gOev7hhE6ZjNyck981LEGWfLVbr9UeA9ZhZ7DqKRoSoK3z0qn
+	 xUelJT95rbIcaKlKQz5x9PJEZUw7p+vc3F04DWN9T9C1X1Y6Z8N+7nkKxFxre2p5Qj
+	 bbHdHyTyFJq2ESMRFspJBSLZsatrXxeJJWfntpgI=
+Date: Sat, 22 Mar 2025 16:23:05 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Sung-Chi Li <lschyi@chromium.org>, Jean Delvare <jdelvare@suse.com>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] hwmon: (cros_ec) Add set and get target fan RPM
+ function
+Message-ID: <780ce6e8-11fc-42be-b4a7-9cffbf811d78@t-8ch.de>
+References: <20250318-extend_ec_hwmon_fan-v3-1-4c886385861f@chromium.org>
+ <e4da28be-66ca-45d3-9ccf-34819460b463@t-8ch.de>
+ <f50221fd-1d76-465b-ba53-62c08c6f8536@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNASqYkDTPNo20Bj1knwsJMrp=nbQyh__=Do67eWq4CKU3A@mail.gmail.com>
- <20250318005900.2256921-1-elsk@google.com>
-In-Reply-To: <20250318005900.2256921-1-elsk@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 23 Mar 2025 00:14:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARA7_3W5CRhW+sKXuqdANjczVbaTO+y1tGTRzAxiJGUzA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrvuq5PCuCtIM0MbIfS4ZzSK2OTG7wLiC2ZksO7Gx-zzxpRM9NeSwwcsWA
-Message-ID: <CAK7LNARA7_3W5CRhW+sKXuqdANjczVbaTO+y1tGTRzAxiJGUzA@mail.gmail.com>
-Subject: Re: [PATCH v2] setlocalversion: use ${objtree}/include/config/auto.conf
-To: HONG Yifan <elsk@google.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux@rasmusvillemoes.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f50221fd-1d76-465b-ba53-62c08c6f8536@roeck-us.net>
 
-On Tue, Mar 18, 2025 at 9:59=E2=80=AFAM HONG Yifan <elsk@google.com> wrote:
->
-> setlocalversion reads include/config/auto.conf, which is located below
-> $(objtree) with commit 214c0eea43b2 ("kbuild: add $(objtree)/ prefix to
-> some in-kernel build artifacts").
->
-> To be consistent, the setlocalversion script should use
+On 2025-03-22 07:12:48-0700, Guenter Roeck wrote:
+> On 3/22/25 06:55, Thomas Weißschuh wrote:
+> > On 2025-03-18 15:45:23+0800, Sung-Chi Li wrote:
+> > > The ChromeOS embedded controller (EC) supports closed loop fan speed
+> > > control, so add the fan target attribute under hwmon framework, such
+> > > that kernel can expose reading and specifying the desired fan RPM for
+> > > fans connected to the EC.
+> > > 
+> > > When probing the cros_ec hwmon module, we also check the supported
+> > > command version of setting target fan RPM. This commit implements the
+> > > version 0 of getting the target fan RPM, which can only read the target
+> > > RPM of the first fan. This commit also implements the version 1 of
+> > > setting the target fan RPM to each fan respectively.
+> > > 
+> > > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> > > ---
+> > > ChromeOS embedded controller (EC) supports closed-loop fan control. We
+> > > anticipate to have the fan related control from the kernel side, so this
+> > > series register the HWMON_F_TARGET attribute, and implement the read and
+> > > write function for setting/reading the target fan RPM from the EC side.
+> > 
+> > Should it be possible to switch back to automatic control?
+> > I can't find anything in the hwmon ABI about it.
+> > And neither in the CrOS EC source.
+> > 
+> > Am I missing something?
+> > 
+> 
+> Not sure I understand the context, but the fan control method is normally
+> selected with pwmX_enable, which is defined as
+> 
+>                 Fan speed control method:
+> 
+>                 - 0: no fan speed control (i.e. fan at full speed)
+>                 - 1: manual fan speed control enabled (using `pwmY`)
+>                 - 2+: automatic fan speed control enabled
 
-"To be consistent" is too weak because we do not add
-$(objtree)/ to include/config/auto.conf
+So far I associated pwmY_enable = 1 with the pwmY attribute.
+Also controlling it through fanY_target does make sense though.
+It could be clearer from the docs IMHO.
 
-Just run "git grep include/config/auto.conf"
+That also means that the patch under discussion needs to implement the
+pwmY_enable attribute.
 
-You will see more include/config/auto.conf instances
-that lack $(objtree)/ prefix.
-
-So, "To be consistent" is not a reason.
-
-You described why Google needs to have this
-specifically scripts/setlocalversion.
-
-Without that explained, I do not understand _why_.
-
-
-
-> ${objtree}/include/config/auto.conf as well.
->
-> Signed-off-by: HONG Yifan <elsk@google.com>
-> ---
-> v1: https://lore.kernel.org/lkml/20250312021154.102262-2-elsk@google.com/
-> v1 -> v2: fixed the other two locations of include/config/auto.conf in
-> setlocalversion script; also removed incorrect claim in commit message.
->
->  scripts/setlocalversion | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-> index 28169d7e143b..c13fe6e585e9 100755
-> --- a/scripts/setlocalversion
-> +++ b/scripts/setlocalversion
-> @@ -186,16 +186,16 @@ if ${no_local}; then
->         exit 0
->  fi
->
-> -if ! test -e include/config/auto.conf; then
-> +if ! test -e ${objtree}/include/config/auto.conf; then
+One more thing I have wondered about before:
+Is pwmY always refering to the same thing as the matching fanY?
 
 
-Please quote
-
-"${objtree}/include/config/auto.conf"
-
-to avoid a shellcheck warning.
-
-
-
-
->         echo "Error: kernelrelease not valid - run 'make prepare' to upda=
-te it" >&2
->         exit 1
->  fi
->
->  # version string from CONFIG_LOCALVERSION
-> -config_localversion=3D$(sed -n 's/^CONFIG_LOCALVERSION=3D\(.*\)$/\1/p' i=
-nclude/config/auto.conf)
-> +config_localversion=3D$(sed -n 's/^CONFIG_LOCALVERSION=3D\(.*\)$/\1/p' $=
-{objtree}/include/config/auto.conf)
->
->  # scm version string if not at the kernel version tag or at the file_loc=
-alversion
-> -if grep -q "^CONFIG_LOCALVERSION_AUTO=3Dy$" include/config/auto.conf; th=
-en
-> +if grep -q "^CONFIG_LOCALVERSION_AUTO=3Dy$" ${objtree}/include/config/au=
-to.conf; then
->         # full scm version string
->         scm_version=3D"$(scm_version)"
->  elif [ "${LOCALVERSION+set}" !=3D "set" ]; then
-> --
-> 2.49.0.rc1.451.g8f38331e32-goog
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks,
+Thomas
 
