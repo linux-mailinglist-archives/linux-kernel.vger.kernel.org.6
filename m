@@ -1,158 +1,100 @@
-Return-Path: <linux-kernel+bounces-572123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517D6A6C6C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:54:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EA4A6C6C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B1D47A9259
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACC83BC570
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FE2F507;
-	Sat, 22 Mar 2025 00:54:18 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE523FFD;
+	Sat, 22 Mar 2025 01:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uBjMFXhd"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B9BA42
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 00:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE55944F;
+	Sat, 22 Mar 2025 01:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742604858; cv=none; b=QF2oFqQro1bJv2M+1/bTlNSjFjoxpbRmOzk7AnQXhdehS825plBITVoFy/ybopAQhpr5VM0cVXqnpXswQ6AIbav+PoiHSfsTO3rVm1WR2SuSoA7Z6NwUEztKD6Jk1UI/IOW/p/+VBDrDw8fIKGnmJwgyc2QB12iOqHAJZkPFypo=
+	t=1742605214; cv=none; b=LVVnZcUYoO53UdpXyt8SrHNcn80ayb/5rqjhhyC2t0JcCaCeL5MOsfpZyK3BPteJWukBjC51N2x2AUAIYAkyL5xwZNvBLA30SdVOAlliFTMhERUEJ0TnRDV/eJg659Nu2Q3+i5G+V7QWwexizUoMPg90tLm1xUMhTkZzq0Y5dnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742604858; c=relaxed/simple;
-	bh=FNz8ToESztnmuyyIUT6c2xRymqpqtINQMT3FlbHl1aI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uiqJR8MsJZPvNBn9LWdjBWTCnO5sxZoF126zET2+DWiOT9PVNuZrcZodiB1Yf7BWtRYgqhbKjaD1elSfN39fDYIFZOT0FaYl5CY1V9Ix3dzZzH2+ng/3teAbZCPrrV0j29RivzcRjYvWNt+xXLMxxi/oq99SeTXUPcg0nblCC8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZKLM315P7zvWrq;
-	Sat, 22 Mar 2025 08:50:07 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id F39791800B2;
-	Sat, 22 Mar 2025 08:54:01 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 22 Mar 2025 08:54:01 +0800
-Message-ID: <b235f795-3e1d-4a91-88dd-651bf9d75a17@huawei.com>
-Date: Sat, 22 Mar 2025 08:54:00 +0800
+	s=arc-20240116; t=1742605214; c=relaxed/simple;
+	bh=gYMB5a3/Rpk0ckAEqrG50bQbFpr8Q2IQbHkSLcyjiBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MGKPwumEmfpuR2RmffBPylcaIw8A12V2gsVx8o2ePjPEUJIpFziiIMQYhyDE9sc07TlgDfDQS/85dlOHmwKaXCU8JmZp09vFJ8uT8wpfRpfZutnkWC/ZfPStH9epYkbYWO9cslisZ0mPC1UVsuOGF4wCzqS5fNl7r0jdEsyrTB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uBjMFXhd; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=brVpSmMBxEBHe/mauCDyz1l9dPAg6klXWq2o5u4LmD0=; b=uBjMFXhdb8kmVGniBWcZRkdmka
+	uPsjak1F4yycbmRSvzN4HYfZUCWqgHRiryKh2BtTL6rEI6XrJXCDb/oxMqnyvFrPP4WWaSGuuR36J
+	4fz7V6XnJddzdPMl6WjJeF2LxdM/n8cgdPZU+AGQB7MB2KoZVig1D6lGagBxS4SP5+H0WngvB4f94
+	26igtjOdyFJvUnrEfyhisD0R66Wf7u4out/AV6b85NAKWoiTuD/P7QGiFmnXNMf9xUQ729FYP/okA
+	apSO1mpMlL5rQ0HViIQEBMIcVoc67k40HQSglhtrk1JbUsyLb+Nau6FsLZ4umzp0gc4XSxmLVP5aK
+	S2+pOOcA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tvnDc-0000000BHcc-410J;
+	Sat, 22 Mar 2025 01:00:09 +0000
+Date: Sat, 22 Mar 2025 01:00:08 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
+ (4)
+Message-ID: <20250322010008.GG2023217@ZenIV>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <202503201225.92C5F5FB1@keescook>
+ <20250321-abdecken-infomaterial-2f373f8e3b3c@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v6 1/7] erofs: move `struct erofs_anon_fs_type` to
- super.c
-To: Hongzhen Luo <hongzhen@linux.alibaba.com>, <linux-erofs@lists.ozlabs.org>
-CC: <linux-kernel@vger.kernel.org>
-References: <20250301145002.2420830-1-hongzhen@linux.alibaba.com>
- <20250301145002.2420830-2-hongzhen@linux.alibaba.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20250301145002.2420830-2-hongzhen@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321-abdecken-infomaterial-2f373f8e3b3c@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Fri, Mar 21, 2025 at 09:45:39AM +0100, Christian Brauner wrote:
 
+> Afaict, the only way this data race can happen is if we jump to the
+> cleanup label and then reset current->fs->in_exec. If the execve was
+> successful there's no one to race us with CLONE_FS obviously because we
+> took down all other threads.
 
-On 2025/3/1 22:49, Hongzhen Luo wrote:
-> Move the `struct erofs_anon_fs_type` to the super.c and
-> expose it in preparation for the upcoming page cache share
-> feature.
-> 
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+Not really.
 
-Looks good. Feel free to add:
+1) A enters check_unsafe_execve(), sets ->in_exec to 1
+2) B enters check_unsafe_execve(), sets ->in_exec to 1
+3) A calls exec_binprm(), fails (bad binary)
+4) A clears ->in_exec
+5) C calls clone(2) with CLONE_FS and spawns D - ->in_exec is 0
+6) B gets through exec_binprm(), kills A and C, but not D.
+7) B clears ->in_exec, returns
 
-Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+Result: B and D share ->fs, B runs suid binary.
 
-> ---
->   fs/erofs/fscache.c  | 13 -------------
->   fs/erofs/internal.h |  2 ++
->   fs/erofs/super.c    | 13 +++++++++++++
->   3 files changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-> index ce3d8737df85..ae7bd9ebff38 100644
-> --- a/fs/erofs/fscache.c
-> +++ b/fs/erofs/fscache.c
-> @@ -3,7 +3,6 @@
->    * Copyright (C) 2022, Alibaba Cloud
->    * Copyright (C) 2022, Bytedance Inc. All rights reserved.
->    */
-> -#include <linux/pseudo_fs.h>
->   #include <linux/fscache.h>
->   #include "internal.h"
->   
-> @@ -13,18 +12,6 @@ static LIST_HEAD(erofs_domain_list);
->   static LIST_HEAD(erofs_domain_cookies_list);
->   static struct vfsmount *erofs_pseudo_mnt;
->   
-> -static int erofs_anon_init_fs_context(struct fs_context *fc)
-> -{
-> -	return init_pseudo(fc, EROFS_SUPER_MAGIC) ? 0 : -ENOMEM;
-> -}
-> -
-> -static struct file_system_type erofs_anon_fs_type = {
-> -	.owner		= THIS_MODULE,
-> -	.name           = "pseudo_erofs",
-> -	.init_fs_context = erofs_anon_init_fs_context,
-> -	.kill_sb        = kill_anon_super,
-> -};
-> -
->   struct erofs_fscache_io {
->   	struct netfs_cache_resources cres;
->   	struct iov_iter		iter;
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 686d835eb533..47004eb89838 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -379,6 +379,8 @@ extern const struct file_operations erofs_dir_fops;
->   
->   extern const struct iomap_ops z_erofs_iomap_report_ops;
->   
-> +extern struct file_system_type erofs_anon_fs_type;
-> +
->   /* flags for erofs_fscache_register_cookie() */
->   #define EROFS_REG_COOKIE_SHARE		0x0001
->   #define EROFS_REG_COOKIE_NEED_NOEXIST	0x0002
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 827b62665649..eb052a770088 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -11,6 +11,7 @@
->   #include <linux/fs_parser.h>
->   #include <linux/exportfs.h>
->   #include <linux/backing-dev.h>
-> +#include <linux/pseudo_fs.h>
->   #include "xattr.h"
->   
->   #define CREATE_TRACE_POINTS
-> @@ -850,6 +851,18 @@ static struct file_system_type erofs_fs_type = {
->   };
->   MODULE_ALIAS_FS("erofs");
->   
-> +static int erofs_anon_init_fs_context(struct fs_context *fc)
-> +{
-> +	return init_pseudo(fc, EROFS_SUPER_MAGIC) ? 0 : -ENOMEM;
-> +}
-> +
-> +struct file_system_type erofs_anon_fs_type = {
-> +	.owner		= THIS_MODULE,
-> +	.name           = "pseudo_erofs",
-> +	.init_fs_context = erofs_anon_init_fs_context,
-> +	.kill_sb        = kill_anon_super,
-> +};
-> +
->   static int __init erofs_module_init(void)
->   {
->   	int err;
+Had (5) happened prior to (2), (2) wouldn't have set ->in_exec;
+had (5) happened prior to (4), clone() would've failed; had
+(5) been delayed past (6), there wouldn't have been a thread
+to call clone().
+
+But in the window between (4) and (6), clone() doesn't see
+execve() in progress and check_unsafe_execve() has already
+been done, so it hadn't seen the extra thread.
+
+IOW, it really is racy.  It's a counter, not a flag.
 
