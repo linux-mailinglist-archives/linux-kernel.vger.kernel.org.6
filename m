@@ -1,116 +1,132 @@
-Return-Path: <linux-kernel+bounces-572385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933DBA6C9CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:48:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD64A6C9D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7993AB8D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:47:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED7237ADDDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06AA22DFAB;
-	Sat, 22 Mar 2025 10:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB881F9F73;
+	Sat, 22 Mar 2025 10:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sokCtSAy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezbYVJ7n"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6246D1FBCB8;
-	Sat, 22 Mar 2025 10:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAD01F3B83;
+	Sat, 22 Mar 2025 10:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742640369; cv=none; b=EEFCDTRU76NbRkytUY4idTwx+iUp76Z8eyeMMgHlnF5us1qmUWGjrRIy01zVL1NJ0iLwB/zhIu9CQ8kbXykbMfBfiwh529PuSU8rWIcpk7n19eeb9e2I/8WCcs52tg8PryqIyral4teIJI+QbGUhb639w8ldCUS4+Cu/qcNyEhk=
+	t=1742640667; cv=none; b=RABBNxM9Cuv2J07LkzL+yIKFAzc0CuwNpbpId8m1rxUIN+Un4Jb8qEeiENokbqpQgaYXQaQFJyE1r7m2aHYBkyj98MUfLFf21g4ITf5ji+5ZRWEW9Qpf31NQ28Ym//SaCgNJASsFv5HDAilCew/z1fr/a/6K20Qttz6JAPdZ3NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742640369; c=relaxed/simple;
-	bh=WvsfIMCgFBv4pVF1dShM5iom4fQh6xwiwk9nAbHBOws=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WdwTBfNu+hvJ/OJDP6U3qxqyZmQmUG+bJNwPYIhFpwFpwmEd13VxOnzoI2o64FphO5ooiz3UDvJ3GpW9zg8Hc58GKV/zoXQI2n9ufiXwioyyXjySL9pBOzN0zfjBy9diKd/qJ0EftNGGuT+ZN3vbd+CD5RUTreEJ7Wpki6N89WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sokCtSAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7597C4CEE9;
-	Sat, 22 Mar 2025 10:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742640368;
-	bh=WvsfIMCgFBv4pVF1dShM5iom4fQh6xwiwk9nAbHBOws=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=sokCtSAyV0oNiaHrxRyRH98M5aC+ElLAfurhvpG6jAfln73dsqObCOg1TP+YJHRzL
-	 Hx+gWDQQJiTIO3nlOIQuP7zGuB0Cz4qp+BRIQWtlJFEaDkGfbslMluSQ4/uUkQ5xha
-	 y54L9eqmV82wNRGz5YFgQL7dPQy6XNtnRioDgvSkIJ0Fx7i0PyM+LAX8BoBeTLYBAT
-	 p9H85tQ9JjxWp4AMXbYGwYZhTbjkSR/sQuH3dvycjPnctSxNGyF4xH3R4IixlE8vSS
-	 2/xvGvGN+stn1geuXWfsbLYdz9o5fWyG0lnQjtQJ11vwNPjsz2xgHxhleaQxrb6mGN
-	 2IocdklnVhlhw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6EBC35FFC;
-	Sat, 22 Mar 2025 10:46:08 +0000 (UTC)
-From: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
-Date: Sat, 22 Mar 2025 11:45:58 +0100
-Subject: [PATCH net-next v7 7/7] net: tn40xx: add pci-id of the
- aqr105-based Tehuti TN4010 cards
+	s=arc-20240116; t=1742640667; c=relaxed/simple;
+	bh=JYyPCCShCHfqLDYAr7Vse/ZmJyZOdOWrV3Z1YVZd7hM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dw6BGh3owKwgwaUmvNJr2SeyN/pJnhG40IlUf5KPBfcq9Cu3PySNssUxvZZ7dnGnwrlZccOEh9i0ylNtjPP1ALzY08QwVTaXi0qnjr6gGImYcwBeW42H6rAql4PGVWtXc+s0zWgScMWzdowS1acSUWcQlEVen3gk5+L2aOpdHWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezbYVJ7n; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3913d45a148so2299178f8f.3;
+        Sat, 22 Mar 2025 03:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742640663; x=1743245463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KrpT+jmLuV0pMig4xoM27D18t14gkY3tPjFQzNc4T6g=;
+        b=ezbYVJ7npzl65MrNr32HdyVNZgATQNAYGPZZHTqAwCdKx8dQ7VDOvhisL2h5Yr2Vn9
+         sc/9deXTMryldnEJCenoiU57RKWdCjlC6v6XmVa9J49V95hAo5dHikvQpvnTxseuFAy0
+         YrU7i/kH7G85/lmgpQNmvs/JkVPBoqVH6CMkw8Db2Hkz3mWm3s28RBxZuezntEvwRobY
+         QuLMPKNDtSu+uH3Gt2n0hrMX3vNsPAHrfhQz/SeCBKQgminhoawL7DlYAAEAb9isVvj4
+         0u4Dg/zt4AXewgkHmGGStHEVqk7MRDYCu256fRh3Mv0ByvkD0hOUSD7SWmjsWeYRctgJ
+         XJnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742640663; x=1743245463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KrpT+jmLuV0pMig4xoM27D18t14gkY3tPjFQzNc4T6g=;
+        b=BNnZPwXQnxSHPdK2hMupb8AYyAH66Hp0Jmy0Gwl+AcflAEeTLSavQSp29kDgSMo6q+
+         POL1JlwPV9dHrz2w9LBE/iHkWxAOJuNkQaH40EyYXZjshB0x/jqmw7e8QCkhO+cC4gBJ
+         Vv1duabiAa+iSiTwwFJEWhW0K6dQjRfj+jKoQzLTVNRP6JmmMiln8f7fUYmTc/5Q4RRf
+         fXuAOzehwv7aDkHYpnmQRYD2H1VJsKyQIbMzyp8pRcQAR7zVb2LAqq8SaT6W+QogLSEU
+         6pT7UyqT++Ii/zjyuoiPBNOy+7C38zMOQ2w5PKtLd1fVP0QDI6HHAornN7d6zMjKt5LZ
+         i8DA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwA6ZBs9L/bI0mjwnUPI1xzjRi1hsAdeEeb5srJp64zVZvtCGFRE8LAAGG738TJX24Y5TgxLQZK2Og3vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywps8T/L3WF6AN3y8c/nDjj6km4TRwwq5ocqlaNpwgrWu8Z99gS
+	LOKd9j6URtz+W432tq25uqorYINR9ocji6OsBpmufGVhuRWZBPaJ
+X-Gm-Gg: ASbGncsboOpcrlLdKhzT2mXSwXmDfBewUFic9Vxvjl3whhxcEOlTHBLLuiv3q4GTjJR
+	OvexpRbx8BTAQBIZ8osDzbEYs3l9kWGlBqPURUQth8uxHj16gyEC3YCGaKPyyFj+TJQU38wlS8D
+	50bfUg8076RFPUsS0FAVjeVV3V6IdcG1A18Uw+DAcdTnM+UkCE74+W0Bos09GFd9K8xUSbI+CFw
+	prk23wyWRhd1aWjYNs1V/AFndhu7VXBtYo1oS64m7Qldxf1L/HkixADpN8uHHxGKa2dRdmzvTkH
+	+kbEUTlUKFAPDjzYAQQUEP4VRzpQtrAJv6WlKEIMieN41Q==
+X-Google-Smtp-Source: AGHT+IEEaToUvEuqHUrucs2Mab5X6FQNEQACh4ItoD1rm1rGxrSkcKlwnmFnT1AV+XPhtU7H5TrVBg==
+X-Received: by 2002:a5d:47a2:0:b0:391:47d8:de25 with SMTP id ffacd0b85a97d-3997f937634mr5851686f8f.41.1742640663277;
+        Sat, 22 Mar 2025 03:51:03 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:924e:a190:c73a:b6bc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9efe61sm4906161f8f.97.2025.03.22.03.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 03:51:02 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	chui-hao.chiu@mediatek.com,
+	Bo.Jiao@mediatek.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] wifi: mt76: mt7996: avoid NULL pointer dereference in mt7996_set_monitor()
+Date: Sat, 22 Mar 2025 10:50:52 +0000
+Message-Id: <20250322105052.19136-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250322-tn9510-v3a-v7-7-672a9a3d8628@gmx.net>
-References: <20250322-tn9510-v3a-v7-0-672a9a3d8628@gmx.net>
-In-Reply-To: <20250322-tn9510-v3a-v7-0-672a9a3d8628@gmx.net>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans-Frieder Vogt <hfdevel@gmx.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742640367; l=1270;
- i=hfdevel@gmx.net; s=20240915; h=from:subject:message-id;
- bh=PWNMuGZpqBv+vmVUoj6REOMISB+bfZAmxP1coZ2ZFQg=;
- b=WsBBv9kNz/emyE5iuDsO6UJOghCNbGwmqJVuOZp841cWIRa7zZxzy6WrMmt3e/iine+x06AW8
- ihuJiJ3RUROCV3Z9hDqKXud8C4+3vVOEnREANMaRAApB/55tLe67Uf6
-X-Developer-Key: i=hfdevel@gmx.net; a=ed25519;
- pk=s3DJ3DFe6BJDRAcnd7VGvvwPXcLgV8mrfbpt8B9coRc=
-X-Endpoint-Received: by B4 Relay for hfdevel@gmx.net/20240915 with
- auth_id=209
-X-Original-From: Hans-Frieder Vogt <hfdevel@gmx.net>
-Reply-To: hfdevel@gmx.net
+Content-Transfer-Encoding: 8bit
 
-From: Hans-Frieder Vogt <hfdevel@gmx.net>
+The function mt7996_set_monitor() dereferences phy before 
+the NULL sanity check.
 
-Add the PCI-ID of the AQR105-based Tehuti TN4010 cards to allow loading
-of the tn40xx driver on these cards. Here, I chose the detailed definition
-with the subvendor ID similar to the QT2025 cards with the PCI-ID
-TEHUTI:0x4022, because there is a card with an AQ2104 hiding amongst the
-AQR105 cards, and they all come with the same PCI-ID (TEHUTI:0x4025). But
-the AQ2104 is currently not supported.
+Fix this to avoid NULL pointer dereference by moving the 
+dereference after the check.
 
-Signed-off-by: Hans-Frieder Vogt <hfdevel@gmx.net>
+Fixes: 69d54ce7491d ("wifi: mt76: mt7996: switch to single multi-radio wiphy")
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 ---
- drivers/net/ethernet/tehuti/tn40.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/mediatek/mt76/mt7996/main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/tehuti/tn40.c b/drivers/net/ethernet/tehuti/tn40.c
-index a4dd04fc6d89e7f7efd77145a5dd883884b30c4b..558b791a97edddc86923f121f5fd75d9f910ac79 100644
---- a/drivers/net/ethernet/tehuti/tn40.c
-+++ b/drivers/net/ethernet/tehuti/tn40.c
-@@ -1835,6 +1835,10 @@ static const struct pci_device_id tn40_id_table[] = {
- 			 PCI_VENDOR_ID_ASUSTEK, 0x8709) },
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4022,
- 			 PCI_VENDOR_ID_EDIMAX, 0x8103) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, PCI_DEVICE_ID_TEHUTI_TN9510,
-+			 PCI_VENDOR_ID_TEHUTI, 0x3015) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, PCI_DEVICE_ID_TEHUTI_TN9510,
-+			 PCI_VENDOR_ID_EDIMAX, 0x8102) },
- 	{ }
- };
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+index 91c64e3a0860..66575698aef1 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+@@ -414,11 +414,13 @@ static void mt7996_phy_set_rxfilter(struct mt7996_phy *phy)
  
-
+ static void mt7996_set_monitor(struct mt7996_phy *phy, bool enabled)
+ {
+-	struct mt7996_dev *dev = phy->dev;
++	struct mt7996_dev *dev;
+ 
+ 	if (!phy)
+ 		return;
+ 
++	dev = phy->dev;
++	
+ 	if (enabled == !(phy->rxfilter & MT_WF_RFCR_DROP_OTHER_UC))
+ 		return;
+ 
 -- 
-2.47.2
-
+2.39.5
 
 
