@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-572694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A56A6CD4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 00:32:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC12A6CD4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 00:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AF5B7ACE0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260103B81F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EB61EEA28;
-	Sat, 22 Mar 2025 23:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EED1EEA38;
+	Sat, 22 Mar 2025 23:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="UFhzpOit"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGbs2Tlk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482861EA7FD;
-	Sat, 22 Mar 2025 23:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CF31EA7FD;
+	Sat, 22 Mar 2025 23:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742686337; cv=none; b=cw/87OKPCfkk5PKrmD/1Sf3VpWAFAXLA/VIqp/QKKErCEUC8ZynloCPPpWWSgdMqOLqdmpOty187yNCYevwyU9N5pJBkEbm8cOsL/PHboKzBrQb+F1Js6bQtDGgbfKbXKku6V6Lb8Guk2PBj3fxc8hnOLecsck9OQ07sIiBsmzw=
+	t=1742686637; cv=none; b=lYe5cIwPdzCJJm9iua+kpI6IHtOx99dcXFStX724Bap3C/4l04IblSbeKVoIlgCJAbBt5csome0VuuDEnhFCUxkYOoOttvO0/U2BQvnzIkmoK1YMKk/WewrZk91qlynXoGtvCQwieqjVoygYRWtGykzcz/oEaw7Z+GT1MhJRmP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742686337; c=relaxed/simple;
-	bh=B7kvouWcMS8vWC8JAFe2meSkaukQwomnR8y/Em5MP9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKULRKo8soKhnGFe8KFJ97WPL88LqtZCbE8OwE76siA8ynnumPBWKXgzi9trr739WTtbIb+YOIc1GHv9joIhkb/fJ75t8sRuB+2w4EKcwZuMe8exPDUjxDfVrW48o507yq1746GVt0UR8aSlAeZgK0vCxz1MGh3LI79GvxQ8FPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=UFhzpOit; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 84C792E09BDE;
-	Sun, 23 Mar 2025 01:32:12 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742686333;
-	bh=MkMtCFnV0WUgPplCdeNTEtxTYc7sriDFgML1UlgqpQg=;
-	h=Received:From:Subject:To;
-	b=UFhzpOitCGbOP7OixUFLm9FNJh5mChjIt9S1jSOMYYQcJn6vJ+od4VmJs8EkI7EYs
-	 g8cn+lR7k6P5z53aTDXlDpf2LumpfH+gXpiKMAkLR/69a83WXXabg+U2k6aLeA6Po9
-	 2u2Djsff1K+FedVfdUh5hnKRhAbcznHJvIR7gNHw=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f180.google.com with SMTP id
- 38308e7fff4ca-30bd11bfec6so34879131fa.0;
-        Sat, 22 Mar 2025 16:32:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVE/LyJYOsy1toa+X3Kg62xKwxZdiW7cjWcWnJmZMvz+Rfa/O5hCyP+f214u3Jbv289InzewP8O6DXq4Q==@vger.kernel.org,
- AJvYcCVdt2ko+GEeFFJs2ryyl9nlHd208nVi8gksvvBKd9PAwO+0O0jgHRvkrnJMcMDL8LxcnQpTXYpqUm/gBJAP@vger.kernel.org
-X-Gm-Message-State: AOJu0YywBOhRcaFn+xgTcbBIbjRz7Q/fCxau7Ybt1o4VtRiBdwx66b0w
-	32HmSPV49w0Njl5yPRlcjzgWWhTiTmEqgKgoarwyifNEFCBwaCktNhaUw0kfe4U0woRa/Aucj5c
-	KObOn1ZdLvvtgZCM6rCipCha0HOk=
-X-Google-Smtp-Source: 
- AGHT+IFXB9ikOPlMbNlWEBqExSGgXa6raWiOIVTgCfq7Ru1fl80HMilKLPvamqlvR9lKHmpfH1opBwY+D0hhYl3it08=
-X-Received: by 2002:a2e:a542:0:b0:30c:518e:452 with SMTP id
- 38308e7fff4ca-30d7e22175cmr28813951fa.13.1742686331797; Sat, 22 Mar 2025
- 16:32:11 -0700 (PDT)
+	s=arc-20240116; t=1742686637; c=relaxed/simple;
+	bh=/fL38PohfZNzoYeO4e3wD60/qTiXOlKjNyMjNKu+IRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LxdRS89zfkXO068vvT/Q7Ssmzo4RHUPcRIqNqhZK1S3smpV5iaIW6oZrSp7PdUOYZX2KekyOyI1MXx/Mwly/5s5NqPXm+llvZ0/amj1mIzlxBnYWqZoonW/vEdX51UBRVvuT9QgSfnPbvAYCNTsdOjIc/1xEJyoYF8dQYuZpCFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGbs2Tlk; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742686636; x=1774222636;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/fL38PohfZNzoYeO4e3wD60/qTiXOlKjNyMjNKu+IRc=;
+  b=IGbs2Tlk3Y5kngOGHK+DRtMRydCzJ7gAAQDRbgI4KBdifMEgXIF4IiZM
+   vJ+X9fvlUgMvUXKGoY/vO/4quD2+ByDwglS/zsZZM+z+egSg3bZNiY1uJ
+   lWsFD/VVltjHc4/VjXOrJZzUzt1A7tQz7XON1Ltqo4JknZEjRHg51BquP
+   fo1iKwkqp/3gWufL9Aoc+qHVea6IOVebbCmtKQ/eng+diQ7pYZ6AmyjTu
+   zmBfgcOPuhMWTHqhYb3S5C5tYfvl2Rj/oLD2NcjHudTeoaiyUvCaBOV3I
+   RSqyj3QbuWgXypMn/fp0fcs5dRHSnpGFcnU4AOP4stDZ75G+Z0wgVcYh1
+   Q==;
+X-CSE-ConnectionGUID: bNr/et0oRNGtPtIFRUmxhw==
+X-CSE-MsgGUID: gh8ePYCvRAukqLDkObn42g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11381"; a="54553323"
+X-IronPort-AV: E=Sophos;i="6.14,268,1736841600"; 
+   d="scan'208";a="54553323"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2025 16:37:11 -0700
+X-CSE-ConnectionGUID: Q4gcij9bRf6YlCYCu1aUrA==
+X-CSE-MsgGUID: T10ovpUaTTKIen4JafwWaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,268,1736841600"; 
+   d="scan'208";a="128530006"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 22 Mar 2025 16:37:08 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tw8On-0002SR-1u;
+	Sat, 22 Mar 2025 23:37:05 +0000
+Date: Sun, 23 Mar 2025 07:36:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Julian Stecklina via B4 Relay <devnull+julian.stecklina.cyberus-technology.de@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Gao Xiang <xiang@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Subject: Re: [PATCH v2 8/9] fs: ext2, ext4: register an initrd fs detector
+Message-ID: <202503230718.5DYAbNZO-lkp@intel.com>
+References: <20250322-initrd-erofs-v2-8-d66ee4a2c756@cyberus-technology.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322102804.418000-1-lkml@antheas.dev>
- <20250322102804.418000-4-lkml@antheas.dev>
- <7d366439-72be-401f-af5b-01547cbfecd8@ljones.dev>
-In-Reply-To: <7d366439-72be-401f-af5b-01547cbfecd8@ljones.dev>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Sun, 23 Mar 2025 00:32:00 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwF0txWtwg3RC3a92c5+cWiwfa_OSoHd6EMp7=1dGswAmA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrjC8eRGfSGeqBPVbfgUFmZ3C7qU1BhVre8Kyq_7lD7WwGwU1hJShOPkZM
-Message-ID: 
- <CAGwozwF0txWtwg3RC3a92c5+cWiwfa_OSoHd6EMp7=1dGswAmA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/10] HID: Asus: add Z13 folio to generic group for
- multitouch to work
-To: "Luke D. Jones" <luke@ljones.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174268633286.3359.7158646274630571542@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250322-initrd-erofs-v2-8-d66ee4a2c756@cyberus-technology.de>
 
-On Sun, 23 Mar 2025 at 00:31, Luke D. Jones <luke@ljones.dev> wrote:
->
-> On 22/03/25 23:27, Antheas Kapenekakis wrote:
-> > The Asus Z13 folio has a multitouch touchpad that needs to bind
-> > to the hid-multitouch driver in order to work properly. So bind
-> > it to the HID_GROUP_GENERIC group to release the touchpad and
-> > move it to the bottom so that the comment applies to it.
-> >
-> > While at it, change the generic KEYBOARD3 name to Z13_FOLIO.
-> >
-> > Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
->
-> Never been clear on tag order but I've always put authors at top. Just
-> something I noticed as it's different to what i do.
+Hi Julian,
 
-Tag was added by b4
+kernel test robot noticed the following build errors:
 
-Antheas
+[auto build test ERROR on 88d324e69ea9f3ae1c1905ea75d717c08bdb8e15]
 
-> >   drivers/hid/hid-asus.c | 6 +++---
-> >   drivers/hid/hid-ids.h  | 2 +-
-> >   2 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index 96461321c191c..e97fb76eda619 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -1319,9 +1319,6 @@ static const struct hid_device_id asus_devices[] = {
-> >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> >           USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
-> >         QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> > -     { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> > -         USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3),
-> > -       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> >           USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
-> >         QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> > @@ -1351,6 +1348,9 @@ static const struct hid_device_id asus_devices[] = {
-> >        * Note bind to the HID_GROUP_GENERIC group, so that we only bind to the keyboard
-> >        * part, while letting hid-multitouch.c handle the touchpad.
-> >        */
-> > +     { HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-> > +             USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO),
-> > +       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> >       { HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-> >               USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD) },
-> >       { }
-> > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> > index 7e400624908e3..b1fe7582324ff 100644
-> > --- a/drivers/hid/hid-ids.h
-> > +++ b/drivers/hid/hid-ids.h
-> > @@ -209,7 +209,7 @@
-> >   #define USB_DEVICE_ID_ASUSTEK_ROG_KEYBOARD3 0x1822
-> >   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD     0x1866
-> >   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2    0x19b6
-> > -#define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3     0x1a30
-> > +#define USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO          0x1a30
-> >   #define USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR              0x18c6
-> >   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY         0x1abe
-> >   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X               0x1b4c
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Julian-Stecklina-via-B4-Relay/initrd-remove-ASCII-spinner/20250323-043649
+base:   88d324e69ea9f3ae1c1905ea75d717c08bdb8e15
+patch link:    https://lore.kernel.org/r/20250322-initrd-erofs-v2-8-d66ee4a2c756%40cyberus-technology.de
+patch subject: [PATCH v2 8/9] fs: ext2, ext4: register an initrd fs detector
+config: i386-buildonly-randconfig-001-20250323 (https://download.01.org/0day-ci/archive/20250323/202503230718.5DYAbNZO-lkp@intel.com/config)
+compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250323/202503230718.5DYAbNZO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503230718.5DYAbNZO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/ext2/initrd.c:27:33: error: too many arguments provided to function-like macro invocation
+      27 | initrd_fs_detect(detect_ext2fs, BLOCK_SIZE);
+         |                                 ^
+   include/linux/initrd.h:63:9: note: macro 'initrd_fs_detect' defined here
+      63 | #define initrd_fs_detect(detectfn)
+         |         ^
+>> fs/ext2/initrd.c:27:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+      27 | initrd_fs_detect(detect_ext2fs, BLOCK_SIZE);
+         | ^
+         | int
+   2 errors generated.
+
+
+vim +27 fs/ext2/initrd.c
+
+    26	
+  > 27	initrd_fs_detect(detect_ext2fs, BLOCK_SIZE);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
