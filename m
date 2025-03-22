@@ -1,159 +1,164 @@
-Return-Path: <linux-kernel+bounces-572129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615C4A6C6E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:25:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E967A6C6F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A318189B144
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53823B7E36
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1346835947;
-	Sat, 22 Mar 2025 01:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52852E630;
+	Sat, 22 Mar 2025 01:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvb0h8dX"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="dWlcz99P";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X977S+bV"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B271173;
-	Sat, 22 Mar 2025 01:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F509258A;
+	Sat, 22 Mar 2025 01:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742606700; cv=none; b=WAFI6KGi5XgoUxOU2YwxVGrlbCGM3wFrr7aIBko57T7vuKnEqUG4uh8ozA9ibgrcfCPkITQuuo3nYuQB+E9XlGOJ1rqmrjzwSegLX1gc5vbP7VZYfaNWIFMuw8JDspJMBKu0grpnCM8UA93kyosThHuIrb/EjWuS64uMPgoRKUU=
+	t=1742607106; cv=none; b=gVrrxLPwiMcrPy99kg+Libc22YixVhNSTZLjRms6BHWJU3MYGWCzGOQY3nNVjgCX9oDv8vRgM50XW5TsbqXCdCzrEIQeFYX0MeWpz6f9z0cNvGTZFdfLFQSZWHYwVmQCxpW14LlmHMwK+HekwDF/tXidyHXb5B8i6MgiZt1LGrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742606700; c=relaxed/simple;
-	bh=bZI2WcaPPjMe4WlNfTFDih3vqy+KHHXblGdZAs/TyK0=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=W54pBCz+iYFq5N0oaQbsRu7CIrtl82uYjMNZZKVtkKA192aq+7lLqr3mrP03cL9vknkpWLPULljTmEaSa8DC7qLvNGmgRFOnjurCdEl1VTfARIQQQAUfnXeVdUof+guJbdU6Q5kR2kKfLeaoIBcSASxurOmSfAprYBZGws8D+18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvb0h8dX; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22409077c06so34826845ad.1;
-        Fri, 21 Mar 2025 18:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742606698; x=1743211498; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bZI2WcaPPjMe4WlNfTFDih3vqy+KHHXblGdZAs/TyK0=;
-        b=mvb0h8dX5nhLGxPpKeLPdb+vt9mBYIS0ZsPg07j8HnzeB10lMzVgU3myoekEt2Wth6
-         JQPFAnnZN5nHtkcmXtsZcyx6euvv59E/sINWrxHOFFPedWz7J9/nP9/U6+fH6htufGCS
-         4AeVWvwkFz6PtyjGVinPQPmBO4BILEbEG1o4avM9Qntz4z7w6Uv4yFgLjPBITrRW6n5S
-         mMxYpHf97mc+g5IiOPOEiYqRKX16rX3JCuidaHN4vxSTskwngeg6ZZGH7PY7xKNyIr/n
-         lhfHkmkPh+OrYRFGGWrjwv/NqRH/6fRS7+wcZLr3RF5tY3A9NKuz6CmwPG1ZxWLlQvzu
-         oKGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742606698; x=1743211498;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bZI2WcaPPjMe4WlNfTFDih3vqy+KHHXblGdZAs/TyK0=;
-        b=YHjHyT55af7OFqggEy7ZxH6JkPKW+AxBhpAImzHlPRX/NeQeOPSSjJoIBRNX0GtmpA
-         n5JmQWI5rSw6ydP1ARddNLf64rTivi6SK7fG+LhPquc+CPKy/IhTXvjoSZmw0eWVH/xK
-         BF3GWURTvQYP0Lgq99G2Nf0G1MievJ3/kTFmXlcL5UCrFBu7qG2BWErOYKRkgXDrWv6b
-         3n7iCSf8BODSrQpOr72aFYAXYXaIB7SAs3ibHjtlGQyzXrw9c/nOOas6a7a+IwvsLhDR
-         8FUEvkgzAxn02yW3DY9+Cwpp3vViQNENp+maToqR23Rcn3v60Op4Zok01gWPDY84ovm4
-         Hwwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8PSPEkZyPZPe3jg3ohYocVo3AzpZfIq2zbxJ2XoFRNMjY8vamOyxtBCoE+Ja9cM9Bdpq7HTWd@vger.kernel.org, AJvYcCVYRx0ShYlFg4osDlvQu0O8NUwLrrNzDgvH0WqNFa7g168SBcCGRmn6C0kLJSB1zRX0pA//oWnJrOaR7N7LfIg=@vger.kernel.org, AJvYcCXmJIxDWFEVIRKfsxLZHH0Soms62ALbmBAjZ/RrZr2dbzPcAyTLhWrdF3cKlVAoJiXNVQ4gdqVUoqgV/8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9kgSQaNQaX67/nRMAT6whbuhx+dVZyVpx+xDjCtdgnWGYSelB
-	pmmi3eawF+0Q8R2TP4SbIFdTaXQB1vbVIoBLoJA9Bu4EaXFhyhT2
-X-Gm-Gg: ASbGncuGQXR+AUt3CbISumOYflboZhksOJHD/KRePGMwsyP2t7VmT+USXSPwtpiOXjv
-	DQ+SRpci8Nn2qTnAzW1Nx14yNoUR/s567IdKRf5CoTS9XnwLMCbinEbeHl4keLkakMJ2QbnaRJB
-	FD5P+pDb1pbgaI4TzLREBzQ0qVH+L5gDMcNFrZrXxbDvDetBBqyir2G5McPt881HrSRNJm3xZ/2
-	THpcl8vGIEar+Mp+iQFKvUSKog2ZJyUxBiCNe29DJyHV/ESRGWWymEk93DRnyZQLzuXPzPiqGxg
-	KGoEErr5uhFo+cwSeefU4aZEvBgcvWfJWEoRJkgv4LfVwg/1Mr4nQgd05eYY+P2AVireKaEYdyU
-	2fCSHOXlgzxGSu7kB7WP+yEk2Pg0=
-X-Google-Smtp-Source: AGHT+IG+KGbqcApHBMLseQN6Ms7E0RNkF5fm0apwIKTM6zyD46K6uqb2NA3RjCl67LPHQjaxn66Bqg==
-X-Received: by 2002:a17:902:da8f:b0:224:1219:934b with SMTP id d9443c01a7336-22780e23677mr76423335ad.50.1742606697560;
-        Fri, 21 Mar 2025 18:24:57 -0700 (PDT)
-Received: from localhost (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3a2e0sm24866285ad.39.2025.03.21.18.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 18:24:57 -0700 (PDT)
-Date: Sat, 22 Mar 2025 10:24:49 +0900 (JST)
-Message-Id: <20250322.102449.895174336060649075.fujita.tomonori@gmail.com>
-To: frederic@kernel.org
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- daniel.almeida@collabora.com, gary@garyguo.net, aliceryhl@google.com,
- me@kloenk.dev, rust-for-linux@vger.kernel.org, netdev@vger.kernel.org,
- andrew@lunn.ch, hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
- alex.gaynor@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, anna-maria@linutronix.de, tglx@linutronix.de,
- arnd@arndb.de, jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com,
- david.laight.linux@gmail.com
-Subject: Re: [PATCH v11 5/8] rust: time: Add wrapper for fsleep() function
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Z93io9rkpRMiXEKi@pavilion.home>
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
-	<20250220070611.214262-6-fujita.tomonori@gmail.com>
-	<Z93io9rkpRMiXEKi@pavilion.home>
+	s=arc-20240116; t=1742607106; c=relaxed/simple;
+	bh=OYnA3JyfWazDaBC5rsgE12wzV8ZoqYbBHOXA4cJgxDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XSu1wiJOWmSsJ9sHg+9Ke9Bqp3n/8ViQE4tFWgDfGgUzjie8kexLdufnzbGDLatwExp0zkifOV4VAGj6GabkywSYm7QRqBr5WTLVZPopSgQQLsv1/by5b2zZaXDHHxM7hyRss03KbARVLNtgK4Weyd+sXP5hcg2M1aAmWlv5oaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=dWlcz99P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X977S+bV; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id EB3D011400F5;
+	Fri, 21 Mar 2025 21:31:42 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 21 Mar 2025 21:31:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1742607102;
+	 x=1742693502; bh=QfeiCm/jbhV2+/8QZqsamnLkMHeChIyhwx0F6Pfi/FI=; b=
+	dWlcz99PpnkFmZUzg0aGhRaQ2nwxJ4AuWp/yklfOsZS6jeYyZfsJiGAAKFMsOt8l
+	LRsoBvr4aS2lXQRpOTTcoOyzSmctlRSMrBlYrewAbEQS0p22p9jrbb0U3Jv08nsq
+	TpyjshJEg83xNEyA7grglow2ifmwl9hNNlOCMCnodwokTSA1Lxad6TdJzfj6AUdo
+	VWSBYS+6RJtkg63wDmUrJfRWswHau7j7ZkYkQLfTJ8z7TzRjHRWv5GBroaY0Ahpv
+	94RSLMbUfPntXKNjV+u3GK25W55Dp8yT8F0qfV8+9Bd+LgwPyaCbCjzKTYwKzl+i
+	xvyAsOlynUUxgLk40ewJ+w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742607102; x=
+	1742693502; bh=QfeiCm/jbhV2+/8QZqsamnLkMHeChIyhwx0F6Pfi/FI=; b=X
+	977S+bV6aV2/yPoQt0WKlFgTJnNAnT4sVdbKfgDUN2BMU4fUUPcyaet0PMPCpK9E
+	e+dMQrDBJ1MbsUQLHidXtj41IPcawRChSFqDjY3eTtjgDjQQhgFP7yddk8j2cLP4
+	2qMCNaCxPINAulDwk8CO9wQct//UisiaSMaHSTDNTMgiUkI9vb2EthHHGojscu/O
+	7+hBWTZEXhAVuY0L7apW0yraN7byB6VvUDWLrh7/UtYvRF6FQ41VbhNgdPjbTpKA
+	wBXtL33JjpqnI7BN+4IYBdZZzD2Kwy3XDcyNTuE8QR23LuwR3Y9mxyrfc48tzKBc
+	fJvLgEWBpX4toGmizXMow==
+X-ME-Sender: <xms:_hLeZ7UG_-Fwld98PzmGLu4_NU_zb3JUg8FEorWTDbut-Bo1PJq7OQ>
+    <xme:_hLeZzmVbsZvOhuSXPAYzuGxfXB7QyrWUexObZlCB1jbJLFxpmIvVrmyLAs1Mum7E
+    aFeMAzGKyZvZjsFRbo>
+X-ME-Received: <xmr:_hLeZ3YXE82Ma_F--cV74JxneweA9NurXg0yJZ8dajkBnecrVX2MIYGdt0et28YLbPAvUb_Z>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedvieeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
+    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
+    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
+    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
+    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
+    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:_hLeZ2Vt4LE06p7tWePoWLOC1MMKIuLycWm0rpDZ8kmUbg1FLcPdzw>
+    <xmx:_hLeZ1kWNwoq6uvoqjCLSTb310wn8QBnZMxY9avMLj4B16gQmNBpXA>
+    <xmx:_hLeZzcWeyC0oNXTdSYwVdpUboVdKD150Sw2bS2FYGuzoYilQkRR3A>
+    <xmx:_hLeZ_FwrwlVLZKpgpEM0vNgP9EuRQpthOp2-pHUFfk9vpyvXrfvQg>
+    <xmx:_hLeZ37JLlH16It7Bxay5mK_gVOh0vXIgl0WbXxvu2acvt2KFc_Rl4Jp>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Mar 2025 21:31:38 -0400 (EDT)
+Message-ID: <aeacafa2-2155-4cd1-9a1b-cd2ee7634497@ljones.dev>
+Date: Sat, 22 Mar 2025 14:31:36 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] HID: asus: rename keyboard3 to Z13_FOLIO
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250319191320.10092-1-lkml@antheas.dev>
+ <20250319191320.10092-5-lkml@antheas.dev>
+Content-Language: en-US
+From: "Luke D. Jones" <luke@ljones.dev>
+In-Reply-To: <20250319191320.10092-5-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gRnJpLCAyMSBNYXIgMjAyNSAyMzowNToyMyArMDEwMA0KRnJlZGVyaWMgV2Vpc2JlY2tlciA8
-ZnJlZGVyaWNAa2VybmVsLm9yZz4gd3JvdGU6DQoNCj4gTGUgVGh1LCBGZWIgMjAsIDIwMjUgYXQg
-MDQ6MDY6MDdQTSArMDkwMCwgRlVKSVRBIFRvbW9ub3JpIGEgw6ljcml0IDoNCj4+IEFkZCBhIHdy
-YXBwZXIgZm9yIGZzbGVlcCgpLCBmbGV4aWJsZSBzbGVlcCBmdW5jdGlvbnMgaW4NCj4+IGluY2x1
-ZGUvbGludXgvZGVsYXkuaCB3aGljaCB0eXBpY2FsbHkgZGVhbHMgd2l0aCBoYXJkd2FyZSBkZWxh
-eXMuDQo+PiANCj4+IFRoZSBrZXJuZWwgc3VwcG9ydHMgc2V2ZXJhbCBzbGVlcCBmdW5jdGlvbnMg
-dG8gaGFuZGxlIHZhcmlvdXMgbGVuZ3Rocw0KPj4gb2YgZGVsYXkuIFRoaXMgYWRkcyBmc2xlZXAo
-KSwgYXV0b21hdGljYWxseSBjaG9vc2VzIHRoZSBiZXN0IHNsZWVwDQo+PiBtZXRob2QgYmFzZWQg
-b24gYSBkdXJhdGlvbi4NCj4+IA0KPj4gc2xlZXAgZnVuY3Rpb25zIGluY2x1ZGluZyBmc2xlZXAo
-KSBiZWxvbmdzIHRvIFRJTUVSUywgbm90DQo+PiBUSU1FS0VFUElORy4gVGhleSBhcmUgbWFpbnRh
-aW5lZCBzZXBhcmF0ZWx5LiBydXN0L2tlcm5lbC90aW1lLnJzIGlzIGFuDQo+PiBhYnN0cmFjdGlv
-biBmb3IgVElNRUtFRVBJTkcuIFRvIG1ha2UgUnVzdCBhYnN0cmFjdGlvbnMgbWF0Y2ggdGhlIEMN
-Cj4+IHNpZGUsIGFkZCBydXN0L2tlcm5lbC90aW1lL2RlbGF5LnJzIGZvciB0aGlzIHdyYXBwZXIu
-DQo+PiANCj4+IGZzbGVlcCgpIGNhbiBvbmx5IGJlIHVzZWQgaW4gYSBub25hdG9taWMgY29udGV4
-dC4gVGhpcyByZXF1aXJlbWVudCBpcw0KPj4gbm90IGNoZWNrZWQgYnkgdGhlc2UgYWJzdHJhY3Rp
-b25zLCBidXQgaXQgaXMgaW50ZW5kZWQgdGhhdCBrbGludCBbMV0NCj4+IG9yIGEgc2ltaWxhciB0
-b29sIHdpbGwgYmUgdXNlZCB0byBjaGVjayBpdCBpbiB0aGUgZnV0dXJlLg0KPj4gDQo+PiBMaW5r
-OiBodHRwczovL3J1c3QtZm9yLWxpbnV4LmNvbS9rbGludCBbMV0NCj4+IFRlc3RlZC1ieTogRGFu
-aWVsIEFsbWVpZGEgPGRhbmllbC5hbG1laWRhQGNvbGxhYm9yYS5jb20+DQo+PiBSZXZpZXdlZC1i
-eTogR2FyeSBHdW8gPGdhcnlAZ2FyeWd1by5uZXQ+DQo+PiBSZXZpZXdlZC1ieTogQWxpY2UgUnlo
-bCA8YWxpY2VyeWhsQGdvb2dsZS5jb20+DQo+PiBSZXZpZXdlZC1ieTogRmlvbmEgQmVocmVucyA8
-bWVAa2xvZW5rLmRldj4NCj4+IFNpZ25lZC1vZmYtYnk6IEZVSklUQSBUb21vbm9yaSA8ZnVqaXRh
-LnRvbW9ub3JpQGdtYWlsLmNvbT4NCj4gDQo+IFNvcnJ5IHRvIG1ha2UgYSBsYXRlIHJldmlldy4g
-SSBkb24ndCBtZWFuIHRvIGRlbGF5IHRoYXQgYW55IGZ1cnRoZXINCj4gYnV0Og0KDQpObyBwcm9i
-bGVtIGF0IGFsbC4gVGhhbmtzIGZvciByZXZpZXdpbmchDQoNCg0KPj4gKy8vLyBgZGVsdGFgIG11
-c3QgYmUgd2l0aGluIGBbMCwgaTMyOjpNQVhdYCBtaWNyb3NlY29uZHM7DQo+PiArLy8vIG90aGVy
-d2lzZSwgaXQgaXMgZXJyb25lb3VzIGJlaGF2aW9yLiBUaGF0IGlzLCBpdCBpcyBjb25zaWRlcmVk
-IGEgYnVnDQo+PiArLy8vIHRvIGNhbGwgdGhpcyBmdW5jdGlvbiB3aXRoIGFuIG91dC1vZi1yYW5n
-ZSB2YWx1ZSwgaW4gd2hpY2ggY2FzZSB0aGUgZnVuY3Rpb24NCj4+ICsvLy8gd2lsbCBzbGVlcCBm
-b3IgYXQgbGVhc3QgdGhlIG1heGltdW0gdmFsdWUgaW4gdGhlIHJhbmdlIGFuZCBtYXkgd2Fybg0K
-Pj4gKy8vLyBpbiB0aGUgZnV0dXJlLg0KPj4gKy8vLw0KPj4gKy8vLyBUaGUgYmVoYXZpb3IgYWJv
-dmUgZGlmZmVycyBmcm9tIHRoZSBDIHNpZGUgW2Bmc2xlZXAoKWBdIGZvciB3aGljaCBvdXQtb2Yt
-cmFuZ2UNCj4+ICsvLy8gdmFsdWVzIG1lYW4gImluZmluaXRlIHRpbWVvdXQiIGluc3RlYWQuDQo+
-IA0KPiBBbmQgdmVyeSBpbXBvcnRhbnQ6IHRoZSBiZWhhdmlvdXIgYWxzbyBkaWZmZXIgaW4gdGhh
-dCB0aGUgQyBzaWRlIHRha2VzDQo+IHVzZWNzIHdoaWxlIHRoaXMgdGFrZXMgbnNlY3MuIFdlIHNo
-b3VsZCByZWFsbHkgZGlzYW1iaWd1YXRlIHRoZSBzaXR1YXRpb24NCj4gYXMgdGhhdCBtaWdodCBj
-cmVhdGUgY29uZnVzaW9uIG9yIG1pc3VzYWdlLg0KPiANCj4gRWl0aGVyIHRoaXMgc2hvdWxkIGJl
-IHJlbmFtZWQgdG8gZnNsZWVwX25zKCkgb3IgZnNsZWVwX25zZWNzKCksIG9yIHRoaXMgc2hvdWxk
-DQo+IHRha2UgbWljcm9zZWNvbmRzIGRpcmVjdGx5Lg0KDQpZb3UgbWVhbnQgdGhhdCBgRGVsdGFg
-IHR5cGUgaW50ZXJuYWxseSB0cmFja3MgdGltZSBpbiBuYW5vc2Vjb25kcz8NCg0KSXQncyB0cnVl
-IGJ1dCBEZWx0YSB0eXBlIGlzIGEgdW5pdC1hZ25vc3RpYyB0aW1lIGFic3RyYWN0aW9uLCBkZXNp
-Z25lZA0KdG8gcmVwcmVzZW50IGR1cmF0aW9ucyBhY3Jvc3MgZGlmZmVyZW50IGdyYW51bGFyaXRp
-ZXMg4oCUIHNlY29uZHMsDQptaWxsaXNlY29uZHMsIG1pY3Jvc2Vjb25kcywgbmFub3NlY29uZHMu
-IFRoZSBSdXN0IGFic3RyYWN0aW9uIGFsd2F5cw0KdHJpZXMgdG8gdXMgRGVsdGEgdHlwZSB0byBy
-ZXByZXNlbnQgZHVyYXRpb25zLg0KDQpSdXN0J3MgZnNsZWVwIHRha2VzIERlbHRhLCBpbnRlcm5h
-bGx5IGNvbnZlcnRzIGl0IGluIHVzZWNzLCBhbmQgY2FsbHMNCkMncyBmc2xlZXAuDQoNClVzdWFs
-bHksIGRyaXZlcnMgY29udmVydCBmcm9tIGEgY2VydGFpbiB0aW1lIHVuaXQgdG8gRGVsdGEgYmVm
-b3JlDQpjYWxsaW5nIGZzbGVlcCBsaWtlIHRoZSBmb2xsb3dpbmcsIHNvIG1pc3VzZSBvciBjb25m
-dXNpb24gaXMgdW5saWtlbHkNCnRvIG9jY3VyLCBJIHRoaW5rLg0KDQpmc2xlZXAoRGVsdGE6OmZy
-b21fbWljcm9zKDUwKSk7DQoNCkhvd2V2ZXIsIGFzIHlvdSBwb2ludGVkIG91dCwgdGhlcmUgaXMg
-YSBkaWZmZXJlbmNlOyBDJ3MgZnNsZWVwIHRha2VzDQp1c2VjcyB3aGlsZSBSdXN0J3MgZnNsZWVw
-IHRha2VzIGEgdW5pdC1hZ25vc3RpYyB0aW1lIHR5cGUuIFRha2luZyB0aGlzDQpkaWZmZXJlbmNl
-IGludG8gYWNjb3VudCwgaWYgd2Ugd2VyZSB0byByZW5hbWUgZnNsZWVwIGZvciBSdXN0LCBJIHRo
-aW5rDQp0aGF0IGEgbmFtZSB0aGF0IGlzIGFnbm9zdGljIHRvIHRoZSB0aW1lIHVuaXQgd291bGQg
-c2VlbSBtb3JlDQphcHByb3ByaWF0ZS4gU2ltcGx5IHNsZWVwKCksIHBlcmhhcHM/DQo=
+On 20/03/25 08:13, Antheas Kapenekakis wrote:
+> Rename the generic keyboard3 to Z13_FOLIO as it refers to the folio of
+> the Z13. Both 2023 and 2025 variants.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/hid/hid-asus.c | 2 +-
+>   drivers/hid/hid-ids.h  | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 490a7ea369961..cdd9d9c4fc95f 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -1332,7 +1332,7 @@ static const struct hid_device_id asus_devices[] = {
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> -	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3),
+> +	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO),
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 7e400624908e3..b1fe7582324ff 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -209,7 +209,7 @@
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_KEYBOARD3 0x1822
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD	0x1866
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2	0x19b6
+> -#define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3	0x1a30
+> +#define USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO		0x1a30
+
+Hi Antheas,
+
+I checked history of the Z13 and use of the 0x1a30 PID and it appears 
+only the Z13 folio ever used this PID.
+
+
+Reviewed-by: Luke D. Jones <luke@ljones.dev>
+
+
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR		0x18c6
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY		0x1abe
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X		0x1b4c
+
 
