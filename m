@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel+bounces-572263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30DEA6C862
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1683A6C863
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641DD3BAAAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F3073B0225
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030581D7E37;
-	Sat, 22 Mar 2025 08:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74971D5173;
+	Sat, 22 Mar 2025 08:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fJ+jkRci"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LD9Shthh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0FC22612
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 08:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E8741760
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 08:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742633010; cv=none; b=Dx370Cp8LC8tS9D3B0h5VubIlLjmlS3UofE6/UWgHW7T86NX4UjAyeSrwqqlaJxEXbo6v9oKOBYk1jhO1o1XJOIzSN1hjaWbxNYtylVGu6wzr7Y5S63/ELXTZB/NEey46COgAPYpCQe7e/CR+NUNh6578CXvi7MlNRmWHH/l5Lg=
+	t=1742633324; cv=none; b=hHXPEyU3e2JoskIrMBkMCcHiPp2coZLvwikEsRH81VQ1CJFXnho2CBolQkNAGJsNHfDKnjTaOz7EYZqZQILPtDLwomTnUc+gffL0lDTJUTWKfmal3QXkvRZ/hlm2WvFhBCRNXoprZE/wQd1vCt9b91+dPxTmdag/gC1Z4SwKpwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742633010; c=relaxed/simple;
-	bh=79q86sP47+TMIn/uTfCtYiovB97H76IMWYtEB91sf2s=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=YY2eZhR/Sh79MD5dyd3zlu3G+WySZlbjsdG1BR0jwVFSIss0eSxIamKi/DNYkb7DcwrGyW7IqoBagE0blBmqNYeZSocZrjO5vUAIPrfBTRhdElIOaoOJk9ijPxxBlzadKQ9C6o83EBGWj/ADjPgpgF+mmVGEGsbVlmw07u05fO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fJ+jkRci; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742633000; bh=ffcFwV994HQStTPFaMJwa1Yx3W96Xv9TQasgZeexpx8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fJ+jkRcib6MSiAhauee5rNud4Y5h9RCOi7wPS5wNYYl3zzfNUSYCYEaGLw9KdTAPj
-	 NiHEwXQGJk3elLLHpICv/1ELvdbGQONEa7ZfjfAwLgly8M5zKB8jrQ6uQsQonlS2ZW
-	 rrnnaBWywK/sA2bIJsb9SqaH2PFAqKNjdzbmmZAg=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id A7ABACFD; Sat, 22 Mar 2025 16:41:58 +0800
-X-QQ-mid: xmsmtpt1742632918tp4zxp4g9
-Message-ID: <tencent_FFC5C6E792E24668C997EEDB6ED34CA52706@qq.com>
-X-QQ-XMAILINFO: NDgMZBR9sMmaueLbjxtaREgkqd+Kf1xYZIuXKOhdwsrA/tFdRVCT6cRzxg4IIS
-	 oKJcgVT8AomRohBiVMtIRmuUk8utL7mD5lN+5h6ZZYHxSNHKHpS2pa6qZGwizC+nsom/et6wHGS5
-	 CFZb+h/VSp+NKyfm4m1kiAgTHQVGsJC935JyqOhvYFIp5EquzVpebTrHyzE/3y5lT54VRQ091FpG
-	 omsE03TFjNIvz3sxcIeRr+0OD64heR+nRDb98jeb0B7dxnFDGAHiVThT4KpF6gPTNBoFOESNdkP9
-	 b+ASbubp/w8Fsxn+tmUFDbekk43tsg6NNaDyTaE0/HnKtdsMrbYS0vqXXdIPjOgl907q3hrVkhu7
-	 iAralRBzSsjJXHJf/6bw8fEw9wV4+ihW/pLjFPbtCWWemQPWhF6mraxg8MbACbM4Sn7DuPwhETfJ
-	 WkcBdtYxa4swUgiwAR9J07vYMYlfCieO3xaDVS0mxVoX67Mf88m6KogQ5moDhKJsdGfD92u9eE9+
-	 TAxczPv8ouQkLLIOwwa6tEyC9e9VCBhLb7Z4t9H2UwCwtqQsiYQSpsvL2NGDr+xEVBkrrDWxKLt2
-	 Cn1xkGYO3KhN8ukPNKY/53acwHSsbcoPjzcsqlgc0uX1yn2dEEmA+Xma/Y28BFclzM58H1T0x+KX
-	 QK8kuR3qjiltmCp30hDZt/4VOhYzRnOahnIzGKxotQcNx/6rq9SU/mSd6KqEr118WcyGfw/SOQb4
-	 CHVp5lYsQAGFK2N3zSlPcXhOccMp3Fig+EAVpQ3zbtSw9hxOW16HZf17l/GhEDI/XN8A9edukc/A
-	 66BiradKkAK9oZvx5By4Uw9OfnOfvSaAlezy+blflSw1wVBKe+sC+sqDRnjpl1GIKMXEPbzmDI39
-	 PaUAWq1G8LIgHFJADXB4gaIzUAEry57Ljsf9YgEJda
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
-Date: Sat, 22 Mar 2025 16:41:59 +0800
-X-OQ-MSGID: <20250322084158.394153-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
-References: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+	s=arc-20240116; t=1742633324; c=relaxed/simple;
+	bh=Mg7CoJ36wS1S9Z91TB/5G45uF/7bSTpwB/G1GxmgE4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QP9CP0PrurAhj/+/QXcw9ivBwU6KBvSdN6nrQTEaNdvkqvnaBNzIPmfSeuwZu0DO2kk3TtNcq5ATJLFWJwLnoJKJfHeWXEPHsABjDZebDpnz3DTGkvJP4l5gGaPi9qjJZr+TJCwE1L1At/c36KsQDBbDkW9Z6xfto2vDd5PJ/jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LD9Shthh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6414AC4CEDD;
+	Sat, 22 Mar 2025 08:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742633323;
+	bh=Mg7CoJ36wS1S9Z91TB/5G45uF/7bSTpwB/G1GxmgE4k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LD9ShthhJ/ReFT7QCtGpQk2wszA/rw/j7AwK9lHbLDBSUYxAcON1XiEFkiQDJFgtJ
+	 cw9ITVTgRfnEBYfT2S1LcB2Jom+FHu8nZEHG/2s/DPyJnWs7fRjjG6aMgXNdwbYjnW
+	 nR2aMWHFyf4V+VlY7qqZtpI3cM2J0utfrguZ2Z/Gx+VgwgxP9zG06m38x5zZ2MSAM0
+	 Rb4iLh1vUCO6+0py9SexQx75x8PfzscaobEge+F4enew+DTBQ8frt9Dn0wMCEDDzOR
+	 18SmQNanONfSc3N+X/rmkPL5//i+UHbxzOD6vxBPs5R0EGQdiWzNXSBei/fxCn5fTe
+	 VWgFO2VII4JzA==
+Date: Sat, 22 Mar 2025 09:48:39 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>
+Subject: [GIT PULL] locking changes for v6.15
+Message-ID: <Z955ZyIi-tum55pL@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-#syz test
+Linus,
 
-diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
-index 2956d888c131..03a66d75be8b 100644
---- a/fs/ocfs2/quota_local.c
-+++ b/fs/ocfs2/quota_local.c
-@@ -307,6 +307,9 @@ static int ocfs2_add_recovery_chunk(struct super_block *sb,
- 		kfree(rc);
- 		return -ENOMEM;
- 	}
-+	printk("ents: %u, sb: %p, chunk: %d, blksize: %lu, rcb: %p, inited size: %d, %s\n",
-+               ol_chunk_entries(sb), sb, chunk, sb->s_blocksize, rc->rc_bitmap,
-+               (ol_chunk_entries(sb) + 7) >> 3, __func__);
- 	memcpy(rc->rc_bitmap, dchunk->dqc_bitmap,
- 	       (ol_chunk_entries(sb) + 7) >> 3);
- 	list_add_tail(&rc->rc_list, head);
-@@ -485,6 +488,8 @@ static int ocfs2_recover_local_quota_file(struct inode *lqinode,
- 			break;
- 		}
- 		dchunk = (struct ocfs2_local_disk_chunk *)hbh->b_data;
-+		printk("ents: %u, sb: %p, chunk: %d, blksize: %lu, rcb: %p, offset: %d, %s\n",
-+                       ol_chunk_entries(sb), sb, chunk, sb->s_blocksize, rchunk->rc_bitmap, bit, __func__);
- 		for_each_set_bit(bit, rchunk->rc_bitmap, ol_chunk_entries(sb)) {
- 			qbh = NULL;
- 			status = ocfs2_read_quota_block(lqinode,
+Please pull the latest locking/core Git tree from:
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-2025-03-22
+
+   # HEAD: 35e6b537af85d97e0aafd8f2829dfa884a22df20 lockdep: Remove disable_irq_lockdep()
+
+Locking changes for v6.15:
+
+  Locking primitives:
+
+    - Micro-optimize percpu_{,try_}cmpxchg{64,128}_op() and {,try_}cmpxchg{64,128}
+      on x86 (Uros Bizjak)
+
+    - mutexes: extend debug checks in mutex_lock() (Yunhui Cui)
+
+    - Misc cleanups (Uros Bizjak)
+
+  Lockdep:
+
+    - Fix might_fault() lockdep check of current->mm->mmap_lock (Peter Zijlstra)
+
+    - Don't disable interrupts on RT in disable_irq_nosync_lockdep.*()
+      (Sebastian Andrzej Siewior)
+
+    - Disable KASAN instrumentation of lockdep.c (Waiman Long)
+
+    - Add kasan_check_byte() check in lock_acquire() (Waiman Long)
+
+    - Misc cleanups (Sebastian Andrzej Siewior)
+
+  Rust runtime integration:
+
+    - Use Pin for all LockClassKey usages (Mitchell Levy)
+    - sync: Add accessor for the lock behind a given guard (Alice Ryhl)
+    - sync: condvar: Add wait_interruptible_freezable() (Alice Ryhl)
+    - sync: lock: Add an example for Guard:: Lock_ref() (Boqun Feng)
+
+  Split-lock detection feature (x86):
+
+    - Fix warning mode with disabled mitigation mode (Maksim Davydov)
+
+  Locking events:
+
+    - Add locking events for rtmutex slow paths (Waiman Long)
+    - Add locking events for lockdep (Waiman Long)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Alice Ryhl (2):
+      rust: sync: Add accessor for the lock behind a given guard
+      rust: sync: condvar: Add wait_interruptible_freezable()
+
+Boqun Feng (1):
+      rust: sync: lock: Add an example for Guard:: Lock_ref()
+
+Maksim Davydov (1):
+      x86/split_lock: Fix the delayed detection logic
+
+Mitchell Levy (1):
+      rust: lockdep: Use Pin for all LockClassKey usages
+
+Peter Zijlstra (1):
+      lockdep/mm: Fix might_fault() lockdep check of current->mm->mmap_lock
+
+Sebastian Andrzej Siewior (2):
+      lockdep: Don't disable interrupts on RT in disable_irq_nosync_lockdep.*()
+      lockdep: Remove disable_irq_lockdep()
+
+Uros Bizjak (3):
+      x86/locking: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
+      x86/locking: Use asm_inline for {,try_}cmpxchg{64,128} emulations
+      x86/locking: Remove semicolon from "lock" prefix
+
+Waiman Long (4):
+      locking/lock_events: Add locking events for rtmutex slow paths
+      locking/lock_events: Add locking events for lockdep
+      locking/lockdep: Disable KASAN instrumentation of lockdep.c
+      locking/lockdep: Add kasan_check_byte() check in lock_acquire()
+
+Yunhui Cui (1):
+      locking/mutex: Add MUTEX_WARN_ON() into fast path
+
+
+ arch/x86/include/asm/alternative.h |  2 +-
+ arch/x86/include/asm/barrier.h     |  8 ++--
+ arch/x86/include/asm/cmpxchg.h     |  4 +-
+ arch/x86/include/asm/cmpxchg_32.h  | 36 ++++++++++--------
+ arch/x86/include/asm/edac.h        |  2 +-
+ arch/x86/include/asm/percpu.h      | 77 ++++++++++++++++++--------------------
+ arch/x86/include/asm/sync_bitops.h | 12 +++---
+ arch/x86/kernel/cpu/bus_lock.c     | 20 ++++++++--
+ include/linux/interrupt.h          | 16 ++------
+ kernel/locking/Makefile            |  3 +-
+ kernel/locking/lock_events_list.h  | 28 ++++++++++++++
+ kernel/locking/lockdep.c           | 17 ++++++++-
+ kernel/locking/mutex.c             |  2 +
+ kernel/locking/rtmutex.c           | 29 +++++++++++---
+ mm/memory.c                        |  2 -
+ rust/helpers/helpers.c             |  1 +
+ rust/helpers/sync.c                | 13 +++++++
+ rust/kernel/sync.rs                | 57 ++++++++++++++++++++++++++--
+ rust/kernel/sync/condvar.rs        | 28 ++++++++++++--
+ rust/kernel/sync/lock.rs           | 35 +++++++++++++++--
+ rust/kernel/sync/lock/global.rs    |  5 ++-
+ rust/kernel/sync/poll.rs           |  2 +-
+ rust/kernel/task.rs                |  2 +
+ rust/kernel/workqueue.rs           |  2 +-
+ 24 files changed, 294 insertions(+), 109 deletions(-)
+ create mode 100644 rust/helpers/sync.c
 
