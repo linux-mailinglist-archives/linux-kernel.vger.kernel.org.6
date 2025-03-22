@@ -1,83 +1,124 @@
-Return-Path: <linux-kernel+bounces-572146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B3FA6C75A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:12:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE65A6C75D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 04:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6886466689
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:12:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033F47A1F6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F838127E18;
-	Sat, 22 Mar 2025 03:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121312CD88;
+	Sat, 22 Mar 2025 03:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TQwfddbw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zam5Wuyz"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6E045948;
-	Sat, 22 Mar 2025 03:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D27E2E339B;
+	Sat, 22 Mar 2025 03:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742613138; cv=none; b=K/gmlKvT0f/bifr0TfvcsmQIAabjTk4KrBgxs0g6tGQbUMw4e/+QN8HfyVoRFysODl953140KQQLi8AavsKZtwShyyOLEcVQ2zjLGsx1a7BfYQnoy/ut45HPfFdPZFTYTAWqtKz/ayo3oz4cFTGkbZhui8QwwJTas6r3Lq2ALlc=
+	t=1742613454; cv=none; b=FMCJtlid0MDs6TLdk8Il/k3bzn1LECFxqTB3i5I+sxVVasM3lTbvtO+mtrut4+NBk2DAOK2FO+oTok2YmGxCaKsBkNnvzxdU1DdprIYFpq0bR1BdkHu8v/9/Y8Iavqans+u4ZXyGBJ29EprDpVnjxcwvpSfBqzWcvGTCHqhmivs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742613138; c=relaxed/simple;
-	bh=orPYceWxiHgkYJwbJVPCl3phtsDWG98+sHSKgf0KnDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GI0CdlHpOc9QO9P2gJm1jkLg8xoPGomZdF89ZFdGlYnWa+JYQASC+trjt16siJyw1G8h5DO34l38YAdudy12AufxwtsWUIA73eDWMKeKtwbLwyNe9f0VLqQX/I079RHKvfees0X9vRyc1W30m/kf1rpg4IdWfkuIQRDmNAesx/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TQwfddbw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88549C4CEE3;
-	Sat, 22 Mar 2025 03:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742613138;
-	bh=orPYceWxiHgkYJwbJVPCl3phtsDWG98+sHSKgf0KnDE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TQwfddbwKgw5+RZTphYdSUmpF7XqPi8gNuzUyhz9/DHfbnyeAuQuD+FH95BAtafU3
-	 WgwOGzQumxuwJj2tc8XJQmIZ4wan2jcPLXbKHCqWk0T3Ngjk9Dj5Eb9yXVwL98wUvD
-	 2o1nj8dwRpCRZN/vzTV0mrNMZZZjV9RfPxrTfrDA=
-Date: Fri, 21 Mar 2025 20:10:55 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] rust: device: implement bus_type_raw()
-Message-ID: <2025032146-cubicle-fringe-8078@gregkh>
-References: <20250321214826.140946-1-dakr@kernel.org>
- <20250321214826.140946-2-dakr@kernel.org>
+	s=arc-20240116; t=1742613454; c=relaxed/simple;
+	bh=WmIYri5geIA6iz6zSAryOlx0KnSOfaMzZ5okPJ46L0o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p7oUwnMpqBx8EGhDAYF60bfenB8AF2VhZonu3OQ2GSVhLB/NaV6s71WaOCmP5Q/RaVkPRMQiBp7jl4mdIpyTMM8ECLiQTZQ4Y21w5Dd8K2kMxV+ff3MCFNPmRZmZkE9c0ReaCcXT3iWNNjOYzt9QjrF1uIyco6ccHZdu9RlohM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zam5Wuyz; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-224171d6826so23392895ad.3;
+        Fri, 21 Mar 2025 20:17:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742613452; x=1743218252; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WmIYri5geIA6iz6zSAryOlx0KnSOfaMzZ5okPJ46L0o=;
+        b=Zam5WuyzCgE7+Kciz4L9eBYqqlPFjlKYl5KAYBPI3lGO2cWhu7eAYzgsSw1W3ZcqdI
+         kRMRhWCdYB+XMY1hISlZtOKgh+lazyg9jhrKL1DePJWOjdnp1dG7+5pJSq0IAXafsYXT
+         ZWickIDRcKLsQpS0tvKuW1zMZS0Bl3k1x5CzyfZtUAMGgsFtcM5pCSDN3XsegNpwPfuD
+         BZd375O3y8WoeraZZMqaBP5uxkmp64M2vufBqhTfRx672OL4agS6gtnBFmARblDXc7j3
+         fFuDB7mgCyTwBfZQbKChCpi38DZwmNcfNMPXTSl+IhBl8DJcJ7JMQ/umnfed7TBcoZUc
+         lt/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742613452; x=1743218252;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WmIYri5geIA6iz6zSAryOlx0KnSOfaMzZ5okPJ46L0o=;
+        b=WgJ4ljo8P5shIYNOI1aSwhq0rGMLWyBa9P50M3m+rZ+RP/HPTMTe9xa5be8Tp9DmXl
+         HbseFBPiNAXzFyW+CF4U5TglbMYWBwhGW0Vwo++w5aWRlQ7K1EQ2Tdg7r7Ha3ae9T+m9
+         HfM6UYw45BVPR4IFE6ZAk95i/3DaPuSnC73UYptPlqh92ScOQBATm8hCrgybe8SOjvzi
+         A0BMjXjDbwYAxMV2Rfp75Hc+VSk5gEi5o5g1PMlnoXqPTKWtU6oAeTZgDjsCOD4VO5xY
+         Mly2QW+iFsDtZox+zDW4GETd01Hz0TvxQ4WKaHr2fHmosOpxddG7Iq8KCEZ1MCAdjobg
+         g1iw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9vaXZWU8KY0kFUJVIbNbu8ZOesh9RPx8Ml1brSS2fDr0phpdO9FgRhU7GOUXHMvLfoVY=@vger.kernel.org, AJvYcCUcv+my11mBblT6HTcJ6AwrbZr3H2U+45SZ16dTB1IEBT2i7crBZ+qHZtbajJS5AEJ+XWy8go5GOM21D/LC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV07Iu6gK9LBBJoogjEtZuU8C2ta3oQN6KPSaj5mUrOZCJ0RFA
+	1KioXG7GYnYNnnmWBD49/D5ird+ScgTgJ/WbcGEa4uXbVL0grMwT
+X-Gm-Gg: ASbGnctIjtWhfgMeLRMCH8aeYWKgI/BYq4t+MYSP0LQEs4bzGVRc+yHhZNey5qB3GZV
+	37hcaSV1mKPiepyL8CUPglswFQBhmP5YS7Qki+eZS0h0AU8MtbX2fsVCRI1oamMsarxkSPsjPMA
+	aeXEhkcKvayxzPHKmDAoqHHZtL4is8LhrOFyukJ8DguRIMQEGH9WvvIgp4j6PeNMyuCueKxz5//
+	62255TTco4qX9YxmAmBVFjWNTwVAmL47GVqWG2S+8UC+HCOgu3f0/XS5RWA5TCVjZ7N6SefEVat
+	nZdaZunewTdPezKmItCZA4VrpB3BbJODMGSAMKJr
+X-Google-Smtp-Source: AGHT+IFbWw5Wo8cyq6P6QMBtmDT8WXm7+AfSVecP5ctBT93NTLbN8af1L5YITFrWMx1MPJSIjOgZcA==
+X-Received: by 2002:a05:6a00:2d90:b0:730:9752:d02a with SMTP id d2e1a72fcca58-7390593b9c5mr7683129b3a.4.1742613452284;
+        Fri, 21 Mar 2025 20:17:32 -0700 (PDT)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611d21dsm2916811b3a.118.2025.03.21.20.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 20:17:31 -0700 (PDT)
+Message-ID: <cd4c961ef54cc3a03d5f8eb709699a476b7a1300.camel@gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add selftests for
+ load-acquire/store-release when register number is invalid
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Kohei Enju <enjuk@amazon.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, 	haoluo@google.com, iii@linux.ibm.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, 	kohei.enju@gmail.com,
+ kpsingh@kernel.org, kuniyu@amazon.com, 	linux-kernel@vger.kernel.org,
+ martin.lau@linux.dev, sdf@fomichev.me, 	song@kernel.org,
+ yepeilin@google.com, yonghong.song@linux.dev
+Date: Fri, 21 Mar 2025 20:17:27 -0700
+In-Reply-To: <20250322025013.76028-1-enjuk@amazon.com>
+References: <65ff9c62d0d2c355121468b04c0701081d3275fd.camel@gmail.com>
+	 <20250322025013.76028-1-enjuk@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321214826.140946-2-dakr@kernel.org>
 
-On Fri, Mar 21, 2025 at 10:47:53PM +0100, Danilo Krummrich wrote:
-> Implement bus_type_raw(), which returns a raw pointer to the device'
-> struct bus_type.
-> 
-> This is useful for bus devices, to implement the following trait.
-> 
-> 	impl TryFrom<&Device> for &pci::Device
-> 
-> With this a caller can try to get the bus specific device from a generic
-> device in a safe way. try_from() will only succeed if the generic
-> device' bus type pointer matches the pointer of the bus' type.
-> 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/device.rs | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+On Sat, 2025-03-22 at 11:48 +0900, Kohei Enju wrote:
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[...]
+
+> I chose the minimum invalid register regardless of the actual occurrence=
+=20
+> of the splat, since the validity check of this type might be `regno >=3D=
+=20
+> MAX_BPF_REG` or not.
+> Sorry for my confusing choice.
+>=20
+> Since I'm not attached to that particular choice, I'll change it to R15.
+> Thank you for reviewing and providing feedback!
+
+Hi Kohei,
+
+Thank you for detailed explanation.
+Please add 'Acked-by: Eduard Zingerman <eddyz87@gmail.com>'
+for the next revision.
+
+Thanks,
+Eduard
+
+[...]
+
 
