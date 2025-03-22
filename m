@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-572580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58394A6CBCC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B455AA6CBCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22219189E3DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:25:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169C93B2DE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA187233D88;
-	Sat, 22 Mar 2025 18:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AAA1A0B15;
+	Sat, 22 Mar 2025 18:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUAcD0ka"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="BlTEPn2Q"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4989443;
-	Sat, 22 Mar 2025 18:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742667910; cv=none; b=mBgl+TjCf1UgKs4U0x6ROsEwyoF7tKnuqidoXfs3imyNYdk8d2TLLakZUpmTblhKKrL+LyQ1dXDPhONa0YLQL/6xJZAl5+l5bOoU6FspYooz3icRJXYp7fOHY68FhRB3UESKx1he56aP+TWI0TSD4BLm2NCtTDr3jv4Oj8VaWJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742667910; c=relaxed/simple;
-	bh=sqwPs4TUCqi74GTS9yLChoE5rp3ZANM17jlum7yt8bY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=et+hqfCuJNslwuZDnxK90EeghimlOcDJmfr8T/SYJ8Pd0b7keSX8BddXWcGe8X/VwkLDj6QXS6SIzieN6at1osCH+pfMTiNzdUTGtOH7Bh9mptvMRRXTit+2XkMuyVvMwQ5xCGBr7SpHUjvhzyB1nWIKNleg0RasPiZxmf4OShc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUAcD0ka; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf8f5dde5so28979721fa.2;
-        Sat, 22 Mar 2025 11:25:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742667906; x=1743272706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qxEol1WRj8Ro+73zfFO/S9VSYOmTOWDoGmUM3zsjeI8=;
-        b=gUAcD0kaJW2ZQje5BnWSclwSRs8hgdkmaPblkaANZruslzRGR5/1tggQ7cJjxZLQ7X
-         am3i41+/IHiAC22VeTxE4dcS52Xdng1QK09ZtBu6Z+2TqT2ecG4sgLwwNmm7sIdhWbA0
-         NygnQEeuA4PyTWjHiuvqrUwt01rQMyx+Gu9hckAwjHyn2BpY5dsvQc89WwzM5/Cu7d/X
-         PzH1pgCshl1LPMNB/BWi5pdx8DECnarDj+jLaCrQlSa93dbKomDtV6HYAKXcSZxY+QeE
-         /qquFhYIsR6VHtuc7W/incGMuVRxmSWJ0rTU9pV6ipQIJMQB/G/CpEsgQxXfAZJSyA2q
-         EiSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742667906; x=1743272706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qxEol1WRj8Ro+73zfFO/S9VSYOmTOWDoGmUM3zsjeI8=;
-        b=Ce7bq/4ww/tuY2iOt3NJNvOUqZ3y1qEU3AiIax/M7GqmG0YdWPv7Pn24ddOUvtDkHS
-         0g2dPCvO17zcbwa7aT8/llXYLKQiZv5kZyeIzZSo15tSp+lVC5vqW1J5vpnjEWvBc1tv
-         psG7u9IDhgxjgl5Wx7KYfrwuUe108l4CQH8jEi/23nIQ6RTP3oM8AGXuNcR1mtpex6xq
-         Grc52KROALf4Ou3ypLNsdpp+75baOU2AbzVKb5zLZMJwsPFayuXnL2wetxPD5SYG/OgI
-         FlPqdBeo2HBaME8/Cka9Iw9KQOhZsvrVQ/CEu4G9KsKQB2u/QbEXz8XGNf+OZwwdW/Ou
-         +Myg==
-X-Forwarded-Encrypted: i=1; AJvYcCW79o6rtb+a/Qlv+ednNq7TlZ3BvMtNpmBFQIxPflJ6fMGBco6sbEQYK+HckBe/5hHReGKTXqLANXJ84sOr@vger.kernel.org, AJvYcCWS6uL/Jm3n430tPdeftoEhL5u8Wk1Z+LOjTThU54JzHCJbGnI7M4xYOq2RPM/EG9OmddPIZY86Zj093Vg=@vger.kernel.org, AJvYcCWdFZQ1arUkbVW/jFS2nDq0tJdIyycL3HPQF0GZwQVFNH0NQrtnQEOJEDZpV2ZSVUDAI489nI8mjKn63PX6iXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmANTxflOQKu3vokeuzxah5x3WxmnDVmMJQTE/eWstI66AAYqX
-	s/zki7Gp51mEesf89NZ5QFHSkd2SBrWI3yczciK/AbCJGs5ocN6EqHtLDAUci8L4EzwhWRXOYw8
-	F7B/6gepe+pUHPNOn2ec0tyGXMac=
-X-Gm-Gg: ASbGnctXZb/yD5lrOYv2E3Q6ArnSqVPK4NU/7q8992XTWL+Gscu5rkCHd8mxY6UMhk9
-	hAwkbxow22lc1nV8GIezDgbPTsr4NhuId7mDojUQz5x2Hc5ZKch+boc2tELzdb6J/0z4OX3QSfZ
-	/odBCNJMQf4Sct2rvg7x2x9nY1lJAjlHay9pgitPNYX/JLeLgoK8rTb/55bcA=
-X-Google-Smtp-Source: AGHT+IHBMMOTh5PcvxuHFy8Zof2H0Is8JsStyn3DiC9wZXxLT//XQKyGjen33k6PzAu4nqsYvemykkTaQyPh2in0/80=
-X-Received: by 2002:a2e:6a05:0:b0:308:ec25:9004 with SMTP id
- 38308e7fff4ca-30d7e2bb98dmr28144611fa.35.1742667906015; Sat, 22 Mar 2025
- 11:25:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A1B13C695
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742668268; cv=pass; b=Ti53/VAgLnKa7j/7u0SX9or8QqKb3aOdDFegyQTXowVz1jAO/iTznm77vf0Gyg0HB9/NrSU4zd1ut+PB9i4/TRkazvyWabzE9NGWdEbRU3TQZxhfJOZ45Zp6BbB5FKYwZyPLQ4J8ywdHPL0DldUgw4HygHYyPIc/KZDiZSY9Rr0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742668268; c=relaxed/simple;
+	bh=P19WB1RsvtsR2BRs70uIR1rI+OkfiekUANJDZU46X70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=na7kh+DrTD67alTU8ZoOdqdXX65Z8sqBagCFnGy/lu12lBmRCryp409ddHDposD+nQWyERVHZCOt7g6v25RJMCtFEGmMglCd2g/Ff7aJcOSQQVX70ZjXqWtzq0+1hvPJp/mfUOtYSe4CQTeLUWC6O/5dJroG8il38nXokKwAEKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=BlTEPn2Q; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742668224; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JzTCSNHHLPywezjRAd1z0IvAt6354yVhCUSvK6SMMua83Q2ibwz/AcyaQNETiy47Zf0Z989t9hO3u5d5DaGjupRiEWzEfmu8u5qa04knfaq8QGCY1nm28LmP0QSpQjMMRTzN3lkoFUAii6W/popLm1G19v3LF0yvKyPaXcN/Gf8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742668224; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7QIHF3NjHt3xn4pZK4qJww9kq+qlDqM7MmGL3/fOx8M=; 
+	b=VRDPM/3DQZGeLqXtaJ5RTLrBUxZ5LQhKEycR0nP5bKxHPkxIAyRO1EwtuSGzXJhzsnw8L5/6PoaOejZ3am0YCAd0W7R7At5qlmULsKWhaptE3s7Q0b9SutQmmKWLqF2oAPmymm8DKMEb7LD8gL0F2yWT0hwLg/unifu9bKh+UwU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742668224;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=7QIHF3NjHt3xn4pZK4qJww9kq+qlDqM7MmGL3/fOx8M=;
+	b=BlTEPn2Q2kfEk9Jw+oEZMH5XEjKGoZBlRkTUy9MftNTykd1tQomiKTHqu6V+0srQ
+	xYnnI3feVQ7sh3r0VyvjGsnYmpvuThjcilDzdEX/CrmX1MbpmvDKLGgvZvIZebLTNhx
+	mNrpdsPgk5XKxiECWAofPTlKdMarv9ZEbLT01N+U=
+Received: by mx.zohomail.com with SMTPS id 1742668222927774.9008803686191;
+	Sat, 22 Mar 2025 11:30:22 -0700 (PDT)
+Date: Sat, 22 Mar 2025 18:30:13 +0000
+From: Adrian Larumbe <adrian.larumbe@collabora.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	boris.brezillon@collabora.com, robh@kernel.org, steven.price@arm.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com, angelogioacchino.delregno@collabora.com
+Subject: Re: [PATCH v4 1/6] drm/panfrost: Set IOMMU_CACHE flag
+Message-ID: <7qixyvz7ll7sk53vqys74kncf6advxcuctfymmve7msygekygg@vwxzowjwm5bz>
+References: <20250317145245.910566-1-ariel.dalessandro@collabora.com>
+ <20250317145245.910566-2-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <D8MPT9V5JAEN.JZ5APEZ4TYPA@proton.me> <20250322150235.1851241-1-contact@antoniohickey.com>
-In-Reply-To: <20250322150235.1851241-1-contact@antoniohickey.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 22 Mar 2025 14:24:30 -0400
-X-Gm-Features: AQ5f1JrSG0Q712HRrrfHsCQZG3sVktkbzIrHFVwgJtWOJX3VxI-tCQfYhe-_FpA
-Message-ID: <CAJ-ks9=GHVfd=iRT73DviOD=6dio3U7wQWLaXAhKr3UG5-ivvw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/17] rust: enable `raw_ref_op` feature
-To: Antonio Hickey <contact@antoniohickey.com>
-Cc: benno.lossin@proton.me, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
-	aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	dakr@kernel.org, gary@garyguo.net, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
-	nicolas@fjasle.eu, ojeda@kernel.org, rust-for-linux@vger.kernel.org, 
-	tmgross@umich.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250317145245.910566-2-ariel.dalessandro@collabora.com>
 
-On Sat, Mar 22, 2025 at 11:08=E2=80=AFAM Antonio Hickey
-<contact@antoniohickey.com> wrote:
+On 17.03.2025 11:52, Ariel D'Alessandro wrote:
+> Panfrost does not support uncached mappings, so flag them properly. Also
+> flag the pages that are mapped as response to a page fault as cached.
 >
-> On Sat, Mar 22, 2025 at 10:16:01AM +0000, Benno Lossin wrote:
-> > On Thu Mar 20, 2025 at 3:07 AM CET, Antonio Hickey wrote:
-> > > Since Rust 1.82.0 the `raw_ref_op` feature is stable.
-> > >
-> > > By enabling this feature we can use `&raw const place` and
-> > > `&raw mut place` instead of using `addr_of!(place)` and
-> > > `addr_of_mut!(place)` macros.
-> > >
-> > > Allowing us to reduce macro complexity, and improve consistency
-> > > with existing reference syntax as `&raw const`, `&raw mut` are
-> > > similar to `&`, `&mut` making it fit more naturally with other
-> > > existing code.
-> > >
-> > > Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> > > Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> > > Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> >
-> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> >
-> > > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > > index 993708d11874..a73aaa028e34 100644
-> > > --- a/scripts/Makefile.build
-> > > +++ b/scripts/Makefile.build
-> > > @@ -224,9 +224,9 @@ $(obj)/%.lst: $(obj)/%.c FORCE
-> > >     $(call if_changed_dep,cc_lst_c)
-> > >
-> > >  # Compile Rust sources (.rs)
-> > > -# ------------------------------------------------------------------=
----------
-> > > +# ------------------------------------------------------------------=
---------------------
-> >
-> > Not sure about this change.
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Steven Price <steven.price@arm.com>
+
+Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> This change is so I could enable the `raw_ref_op` feature for doctests
-> since the minimum Rust version 1.78 still has `raw_ref_op` as an
-> expiramental feature, and will throw errors at compile if a doctest uses
-> it. Is there a better way to do this?
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index b91019cd5acb1..9e6f198ef5c1b 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -327,7 +327,7 @@ int panfrost_mmu_map(struct panfrost_gem_mapping *mapping)
+>  	struct drm_gem_object *obj = &shmem->base;
+>  	struct panfrost_device *pfdev = to_panfrost_device(obj->dev);
+>  	struct sg_table *sgt;
+> -	int prot = IOMMU_READ | IOMMU_WRITE;
+> +	int prot = IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE;
+>
+>  	if (WARN_ON(mapping->active))
+>  		return 0;
+> @@ -528,7 +528,7 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
+>  		goto err_map;
+>
+>  	mmu_map_sg(pfdev, bomapping->mmu, addr,
+> -		   IOMMU_WRITE | IOMMU_READ | IOMMU_NOEXEC, sgt);
+> +		   IOMMU_WRITE | IOMMU_READ | IOMMU_CACHE | IOMMU_NOEXEC, sgt);
+>
+>  	bomapping->active = true;
+>  	bo->heap_rss_size += SZ_2M;
+> --
+> 2.47.2
 
-I think Benno is just asking about the extension of the dashed line.
 
-> > >
-> > > -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,l=
-int_reasons
-> > > +rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,l=
-int_reasons,raw_ref_op
-
-This looks correct to me.
-
-> > >
-> > >  # `--out-dir` is required to avoid temporaries being created by `rus=
-tc` in the
-> > >  # current working directory, which may be not accessible in the out-=
-of-tree
-> >
-> >
-
-Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+Adrian Larumbe
 
