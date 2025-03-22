@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-572560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63846A6CB72
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:22:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD9FA6CB7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8576D3B4BFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF65616E196
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B50233714;
-	Sat, 22 Mar 2025 16:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8743233701;
+	Sat, 22 Mar 2025 16:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dfEZ08Kf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KUEo3ZsP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DhOAG2JU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nTV5l7uh"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xal+4vcN"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EDF1EBA19
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 16:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC4BF507;
+	Sat, 22 Mar 2025 16:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742660516; cv=none; b=I8zj6HXqWUOo0vrPA7oVgLANb3+QNTiYQFF7oq3/L1xzTKRouAA9wuN6gQhMGhtNKP1SdOM1w3u0HCEBA62jPsRoeLZlOmJfdnkGnl429jNQmbc4gPP988rMNJJOSaMw59HKgjMEXAwzP4CPEYHylPGk1awU+C2U+8BYb3snJBY=
+	t=1742661229; cv=none; b=SxYCkNK9ySWqM4jYByBCY+WGikT3KHI+b8PBF3h4keJjnYowq7tGn+i/XWYYViYY68e0tr9/X6LYynPFJXzvHQjBZMcBqQ7kfDpJTSeMFWXcvEK85XjD27g4mDSJH76v+NygpmxeSgCI7mGltB9wVswucwBIf2ZY5tK6UEAY85w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742660516; c=relaxed/simple;
-	bh=TDOPyX4RredP+eHc98Bn3kwBpMzKBWGoxfgC8FQDuh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWWP/x5b9n3xWJGLEKp0+8Qx72iK39p28pkt+BCSgeL6+ZuELVYRt08r1XjGleih/2RojPgvGXhedU0YVZAOLdzzgPZtxbqnEtdJvHVpZzNkudheINsxf6MWNVYAe9c+GmrJmxBw0oShe5TNxr0TNrwn5EzZypzCZeXvgVfF2Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dfEZ08Kf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KUEo3ZsP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DhOAG2JU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nTV5l7uh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C713421186;
-	Sat, 22 Mar 2025 16:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742660506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=dfEZ08Kf64CxXPKglswEt41eRIpno8JA9LWPzF+kjny6dV50tMEI2/QbfS+YFIXy8B6coc
-	VKOdoRXhpQtTZYU1NhcLi853k5wnAyc0iqb226zqqPcnizCzFKtFZphmYZdvTOzdOnmIMb
-	BVwrRDkURRZzQma5dUqHzAN6qx3w4TM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742660506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=KUEo3ZsPgSrqvpsaqb23444z2qLmThgDMU0hXBGJbTxGmLC8ah3Si7iOC7JMnGxNTU2AK5
-	r+UZ/MU/nllPHhAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742660505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=DhOAG2JU1jTpJCCgrzKAeimnJrvTCw2xDDg6Dz+ddzFDPqAkX2EH58l4jy40BearfKGaRj
-	uI02x4mWYcuqZaEWtOtZVHoYJ0XLOM7X/gj0GOaEPjdBAgQHiVKv7rzOCVCaNkkUN3ffSS
-	qhOoLR1ZBbvrG7mJwbk9DH3QIaQbPYs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742660505;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wK/exj5N83u3i2QYOzuHN0D+7nQ1TTHf2Xgu8IGmwmw=;
-	b=nTV5l7uhYhzJo6A9tAPiS1JIhU0KP1YwovnxncCUe/sp3tv9NQ+5Pr5FYNLEVmHvjjB3AS
-	JcUNIhHbawQP3yAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38C5413A38;
-	Sat, 22 Mar 2025 16:21:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mmRpCpnj3mfvBQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Sat, 22 Mar 2025 16:21:45 +0000
-Date: Sat, 22 Mar 2025 16:21:43 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tamir Duberstein <tamird@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
-Message-ID: <blhrpa6do6ishcimnskwqjndu75cnv6ky7k3tznp7pczrsig65@ky6yo4upky6m>
-References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
- <20250321213733.b75966312534184c6d46d6aa@linux-foundation.org>
+	s=arc-20240116; t=1742661229; c=relaxed/simple;
+	bh=epmdvcBgUanvI6wdPZu88ilV2evqCFFzXuIN1GcCsmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QtlIHZOeqdab6NWVEBFhAHzuCLKJqCvJlF1CkKLIiIPNuslboL7RlSR82b/NLDuXdDFz89CR0T11SafqaDsPIwKt52w+hmt0IAfLgSZrwLwTdfCXEcojMyqKRp9rURKknhaFhPyJFd0BMdhmWV983q7qqJeZeojJOZW/lODQxnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xal+4vcN; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227aaa82fafso1408425ad.2;
+        Sat, 22 Mar 2025 09:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742661227; x=1743266027; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lxd+tOwn8e/o7grBip1jXB4LMTIMBCnYXyU0gFmpfs=;
+        b=Xal+4vcN7SeLs1+Jxz3fuTqK/DYBOyE3aFkGBRHlmfEZUZ5Ye1xBB1jbGvT2xraJfn
+         GiIdMmqJ2NykRuaw0GaKcpLVaCTVV9/ryU5GlLlMYZtEn/tKdnVMwYryYrcU8G2gXW1r
+         CPaBMX9n+l9efopbzXfhP9vkRQXLHrCUIX/Vqdf9QHwr3eQuEh9LN2HgzoFzVjKDtrtm
+         hpWAIOE2vWG5v/rGku6j7/usOCtdzXasOhhVajwxEzIM3qJFjnqcor0FqEDviMklyzGh
+         WgC/g1CFNy/BkroB3Ci1ZnKyO1F7cz9VO0QUAmNwHVqwlHSpko9PyaSWP16S/7NNuXAs
+         VYMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742661227; x=1743266027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4lxd+tOwn8e/o7grBip1jXB4LMTIMBCnYXyU0gFmpfs=;
+        b=JI8uEcKlMDuU8Bk4u0BGH5zO/NUBJQVyR2+r3vei+oCqK4fbn8Jg7UrpBuzdf0QVBc
+         YsTGfKIjf6oPG7sJRAj/OY7cZ34fD4Tl1EF8gVHk/SAang1lPr1xpEzcp7rcvHA/0Wr0
+         AwdtGhHUxqGdWIfY+tLwvbadtYrUik+KAJV6vedS78u2xCBurqI9xhoXYeKvGBFJl4Dh
+         QEJdvnJ2DNuLo3m4Z/ymH/u0UbaUPGXY5NEIP6HAKV3Ai16ufHGGOvPXTsF4YGykpltj
+         ex1eeXFuI2LsLW3M47SeIGyaLmqwwZZwwpYdmxbPixS4FtrEc42vxFUn9WFBVpzQKRwh
+         XqHA==
+X-Gm-Message-State: AOJu0YzPmz0E7emmuxsAx19NZo+NzySUB+rpL6ei+dQNJgNTErB41ixc
+	RiriCiwotpJgQUhsMAEz+7hspDVbmpUCUV2Vc9qYRZTJ/sa1Wzf5jxHkmUMHbew=
+X-Gm-Gg: ASbGncvAwd+9hnIsKxgJ+L2/cVw9pjN68widwApZr/ooJGophPM0N5AoZdMhdTuYdFy
+	vkWx6tscO7hbbPZ5RlnFXUEBvD2wYPv4Enzh1zfyWdy0PsQcpH14sXgPbwtxtgiqubIHSgh6xlx
+	lfUWwkCZJANFSKeFR7w4awS8tcZPDQwZVNwaCKYauZ0MGDR4WfGw89sQ042i/6+tBdFe9Y4p2DL
+	HL2fpuCfUl//m43/DKMyGXBW8cmrGeXlvjvRc0NkQkVEXmrYYf5re6Cyev3uIwlO9H1kM8qa6x2
+	2CPqdv8qekEkAzG9Qm9Bd5kqhEXbUlqXQYO1gq7O2d8=
+X-Google-Smtp-Source: AGHT+IH4CHkfGbiwWX4r0WBCSBmcdbIgUSaaT+sHhmfhWqHiDv/CxFN/ZQPy1h/6Ri/ibAktf50eig==
+X-Received: by 2002:a05:6a00:3927:b0:736:ab1e:7775 with SMTP id d2e1a72fcca58-7390562ad7fmr13594642b3a.0.1742661226828;
+        Sat, 22 Mar 2025 09:33:46 -0700 (PDT)
+Received: from fedora.. ([2409:40f3:20df:7495:662f:ad70:6f52:57ff])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73906159fa1sm4213634b3a.151.2025.03.22.09.33.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 09:33:46 -0700 (PDT)
+From: Siddharth Menon <simeddon@gmail.com>
+To: linux-iio@vger.kernel.org,
+	lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	marcelo.schmitt1@gmail.com,
+	Siddharth Menon <simeddon@gmail.com>
+Subject: [PATCH v2] iio: frequency: ad9832: devicetree probing support
+Date: Sat, 22 Mar 2025 21:58:11 +0530
+Message-ID: <20250322163211.253009-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321213733.b75966312534184c6d46d6aa@linux-foundation.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,infradead.org,canb.auug.org.au,vger.kernel.org,kvack.org];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,infradead.org:url];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 09:37:33PM -0700, Andrew Morton wrote:
-> On Fri, 21 Mar 2025 22:17:08 -0400 Tamir Duberstein <tamird@gmail.com> wrote:
-> 
-> > Partially revert commit 6684aba0780d ("XArray: Add extra debugging check
-> > to xas_lock and friends"), fixing test failures in check_xa_alloc.
-> > 
-> > Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and friends")
-> 
-> Thanks.
-> 
-> 6684aba0780d appears to be only in linux-next.  It has no Link: and my
-> efforts to google its origin story failed.  Help?
-> 
+Introduce struct for device match of_device_id to avoid relying on fallback
+mechanisms, which could lead to false matches against other AD9832 variants
+in the future.
 
-It was added back in september to willy's tree due to an XFS data corruption bug.
-See https://lore.kernel.org/linux-mm/ZvLhrF5lj3x596Qm@casper.infradead.org/ and
-https://git.infradead.org/?p=users/willy/xarray.git;a=commitdiff;h=6684aba0780da9f505c202f27e68ee6d18c0aa66.
+Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+---
+ v1->v2:
+ - updated commit message to be more informative
+ - minor changes to code formatting
+ drivers/staging/iio/frequency/ad9832.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
+diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+index 140ee4f9c137..7d4f655f6df1 100644
+--- a/drivers/staging/iio/frequency/ad9832.c
++++ b/drivers/staging/iio/frequency/ad9832.c
+@@ -431,6 +431,13 @@ static int ad9832_probe(struct spi_device *spi)
+ 	return devm_iio_device_register(&spi->dev, indio_dev);
+ }
+ 
++static const struct of_device_id ad9832_of_match[] = {
++	{ .compatible = "adi,ad9832" },
++	{ .compatible = "adi,ad9835" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ad9832_of_match);
++
+ static const struct spi_device_id ad9832_id[] = {
+ 	{"ad9832", 0},
+ 	{"ad9835", 0},
+@@ -441,6 +448,7 @@ MODULE_DEVICE_TABLE(spi, ad9832_id);
+ static struct spi_driver ad9832_driver = {
+ 	.driver = {
+ 		.name	= "ad9832",
++		.of_match_table = ad9832_of_match,
+ 	},
+ 	.probe		= ad9832_probe,
+ 	.id_table	= ad9832_id,
 -- 
-Pedro
+2.48.1
+
 
