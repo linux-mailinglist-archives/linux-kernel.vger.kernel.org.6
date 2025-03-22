@@ -1,168 +1,204 @@
-Return-Path: <linux-kernel+bounces-572402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3C9A6CA01
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:00:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E150A6CA03
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 13:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA15D1899F6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:00:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E0D883BB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB261EF38A;
-	Sat, 22 Mar 2025 12:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9AC1EF38A;
+	Sat, 22 Mar 2025 12:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSBC/1E2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRmr/0z4"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3C517E0
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA6D17E0
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 12:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742644825; cv=none; b=XELLdlo9KAifCuMZzyviGGcqbHGOpiszR2iHn6gG7B0SzLVtIpwniofoH2MJJofa+0oy41eKxKsgx+iOu5LCceA79UnIUWzEASG/54/vAo0mJVCfnffkH3/3WMEePhhaCFFac4i3qSr+EFpNdgXqkS/ITSzPDhUshAbaFQOinoo=
+	t=1742644942; cv=none; b=OmxXUVFMXmPg5kXrzF/TMW04VqQmohyzRw8HGOrgyZQhNN5e52A2WM8Dp9PFq9lB3SKzBoGYnaFw6F6dpebnA2NCAkuOuJOLo5sAGnVWFHyaO5AXerSWxQaIvBfv9M1HGd8uM9Qh/2T4nz1Kds22SeAZUNEReyud4Lr1TGOsCnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742644825; c=relaxed/simple;
-	bh=EkOsRHq1DyYqghCpDgd2/RB0ULvElsS3G/3InV58vJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jItDOW+cp2ZMBgOZQgymQtQSCLLkNNU9piJY+3zGAXI4enMMuMJYufTkV8xSGvkMFe+6rIT2bq+baQwJqPyYrt6Cr9WKcxp/klIOPToOthMbT9NWUMJ57SfnERTJ7KToBN+jXDcBZSei/NHGoATl3DJRpAbAZbVEOl7N08oY9RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSBC/1E2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF95FC4CEDD;
-	Sat, 22 Mar 2025 12:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742644825;
-	bh=EkOsRHq1DyYqghCpDgd2/RB0ULvElsS3G/3InV58vJ4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aSBC/1E2zXhPdpEglVtbMyKRzJqWwII8Kog5CjVSQsnjZSUiBU8urp8Stp8EBOYCW
-	 who+D4muGAMXByqfSn90whs5PgQdHJlN7nbGDx/WzR3uEb+A4Q+AkmtScK+jhdzUII
-	 wOd83iJ2CljnpwJ4TpADt+S1n00h3oM0NgBygmrD81ShRykBo4ejVHcH8yiBR3DAuz
-	 xVz9d87VX2s8/Ck0oX7bCMV3q8zJG5onONY8EJgF+ZHpAWcXrhObzMwwda4ZJETIbf
-	 9DD9t4FN/qsx3UsVZPDVbKOBb/HpAlt020Qtjw6NCp0OIxGYtmzt1Mj/B2kg7HEzxB
-	 Z00uaGLZSFL7Q==
-Date: Sat, 22 Mar 2025 13:00:21 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	"Chang S. Bae" <chang.seok.bae@intel.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: [GIT PULL] x86/fpu updates for v6.15
-Message-ID: <Z96mVT2u3MMMbtN0@gmail.com>
+	s=arc-20240116; t=1742644942; c=relaxed/simple;
+	bh=dJbr/+xbd2tD9DFz+WgFGuMH+D5ajrVlrfrLESKBtaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F8i7yezQNHV5FzR2gfGzbWwTPnLcwRpbeQCWoApJpCqOF8X97ktEMz1CNneu/AybOJDcDlaGw3VkXdjLOk5dHTuxP5Tf2LcLwhw8IuxTFB57I5TRbZkq7qdJ2xTvtv1D+BHQMpyUt/x23ZrBAaceewqfnMas2j0LlVt11JdxdS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRmr/0z4; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394a823036so28258505e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 05:02:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742644939; x=1743249739; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VYbsuPyU4m6K394Fk+cbUBhjL1OliK8MPdiQnerVR+k=;
+        b=LRmr/0z4aBHWprHAHRWXJUp/aIJLE9v0JivMA8UVJBYjP/e5pZs5Xi8odaX8Q8+JXA
+         zFaUcRE9B8hEArpvK+kFRDjwSWMuto4bOuG/d+a7aOVMo38rNOuaxkaxlE3cbZftHdt0
+         BA6yclLqrOo35foj+9Raj///kJ5kJiP+3rDS03LBtRSKw7Ah9i1g/StrYCSv+qvuispf
+         2snFkBbGGfLoZ3ZOCpVilw+y00nMVpB6W5ZGtV5B6vESyRr5X9HrhBaf1JvD8yYR1jBq
+         k3m7ZVYUSjPi22mg/j2Fuc+5/KVDbdnsXvfoVrg5arvZbMwI6Jczs9HaruGrwph+MP4X
+         evjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742644939; x=1743249739;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VYbsuPyU4m6K394Fk+cbUBhjL1OliK8MPdiQnerVR+k=;
+        b=k+2+ucvIjQblJsYKKXmqyEVnHk4TsfsSyw0wjlJXBrkJj0aoYdnIeX6IPybVw8aoH3
+         glxDLCu4IYPBVwbbAQSYy2RrCXKDIEH//dRMVO1p4Li6Cy7k4b1Nfp+clDY2No3bguvS
+         0zr7eLKMb40qjHy5GZ1o7j048GobG+iRntSk4dK+85ecwa0SXp8zc/eQ04PX71/PawFU
+         OmGFKnELkltoKcACrktj9rD+wUrUYoASuyt+lS23xRpaL/gkUU29xAKEfps/ZBlv6Fm9
+         w8vjCEnfkeyr4ebF/5tN2vrPACR/DlUu96FA/M169/VcqYzP4a7xDfsGawLTVGoR19KQ
+         QpDg==
+X-Forwarded-Encrypted: i=1; AJvYcCX48g+KyjRV/oRastRNy6tA3Qx0MuK209tZCo0Wn0aj5hyY2MTAnhJJBkqh3ypgsQ5DnXoFafsue7BcRzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBqqyGzwjlY1w6vo5l35esZt3x8PNK1efPoEC+/F1ZDwyzK7RX
+	MiUa7/6CPeBVX+qDLpid4RT7lh8Xm9qLi0unU8f4CdZCDxhwgbze
+X-Gm-Gg: ASbGncuhEqUit9rrmvZrPr3wZ0HM51u5UwtEfYMJ7MKkMDuZ+PmtZKoOkhu17BqRsEN
+	gENIImHFltHQey/+pWRx2y3bMiYmkxrvFhEWdrCUQtfTUXj4LmMEquPyrvZle3e+N2dCr7okZuO
+	Kaneh+dHrMXACBnmor8d33+Z1NdCkyVXrrvU/qSQkx/FHAHRXe9s5Zf/pnQpeS2el/YP3NBNRKQ
+	aifhonif8l4EljCVTrT7/0lcaz7cIr6keTI7OfIJLXuUD1NKtLHboQfHoXVvNL0h4Pl58LvjTT9
+	4W0rz2KokEyz9qYAmEENIRKJQGyOLD4zsJ1FsNxQOcJRrko4Hq7JFEBQpm+sGXpow+DlnNK2l4n
+	QS5m7Mac=
+X-Google-Smtp-Source: AGHT+IHawvyD/6qm9CmF5fyE4A/k5X8DwcgLZa0UiCzozXfHeWI1TD8+7xmEItYKcPg/g14Dna16mg==
+X-Received: by 2002:a05:600c:4f55:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-43d568cdf1bmr43793395e9.3.1742644938659;
+        Sat, 22 Mar 2025 05:02:18 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed5e0sm104921415e9.37.2025.03.22.05.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 05:02:18 -0700 (PDT)
+Date: Sat, 22 Mar 2025 12:02:13 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ hkrzesin@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com,
+ atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
+ overlapping store
+Message-ID: <20250322120213.1420450a@pumpkin>
+In-Reply-To: <CAGudoHFqGfiGPf2ZkVeAqco+0BD2G72_TSGCz29dP_tvwQN0NQ@mail.gmail.com>
+References: <20250320190514.1961144-1-mjguzik@gmail.com>
+	<CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
+	<CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
+	<CAGudoHFqGfiGPf2ZkVeAqco+0BD2G72_TSGCz29dP_tvwQN0NQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 20 Mar 2025 21:24:38 +0100
+Mateusz Guzik <mjguzik@gmail.com> wrote:
 
-Linus,
+> On Thu, Mar 20, 2025 at 8:33=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>=
+ wrote:
+> >
+> > On Thu, Mar 20, 2025 at 8:23=E2=80=AFPM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote: =20
+> > >
+> > > On Thu, 20 Mar 2025 at 12:06, Mateusz Guzik <mjguzik@gmail.com> wrote=
+: =20
+> > > >
+> > > > Sizes ranged <8,64> are copied 8 bytes at a time with a jump out to=
+ a
+> > > > 1 byte at a time loop to handle the tail. =20
+> > >
+> > > I definitely do not mind this patch, but I think it doesn't go far en=
+ough.
+> > >
+> > > It gets rid of the byte-at-a-time loop at the end, but only for the
+> > > short-copy case of 8-63 bytes.
+> > > =20
+> >
+> > This bit I can vouch for.
+> > =20
+> > > The .Llarge_movsq ends up still doing
+> > >
+> > >         testl %ecx,%ecx
+> > >         jne .Lcopy_user_tail
+> > >         RET
+> > >
+> > > and while that is only triggered by the non-ERMS case, that's what
+> > > most older AMD CPU's will trigger, afaik.
+> > > =20
+> >
+> > This bit I can't.
+> >
+> > Per my other e-mail it has been several years since I was seriously
+> > digging in the area (around 7 by now I think) and details are rather
+> > fuzzy.
+> >
+> > I have a recollection that handling the tail after rep movsq with an
+> > overlapping store was suffering a penalty big enough to warrant a
+> > "normal" copy instead, avoiding the just written to area. I see my old
+> > routine $elsewhere makes sure to do it. I don't have sensible hw to
+> > bench this on either at the moment.
+> > =20
+>=20
+> So I did some testing on Sapphire Rapids vs movsq (it is an
+> FSRM-enabled sucker so I had to force it to use it) and the penalty I
+> remembered is still there.
+>=20
+> I patched read1 from will-it-scale to do 128 and 129 byte reads.
+>=20
+> On the stock kernel I get about 5% throughput drop rate when adding
+> just the one byte.
+>=20
+> On a kernel patched to overlap these with prior movsq stores I get a 10% =
+drop.
+>=20
+> While a CPU without ERMS/FSRM could have a different penalty, this
+> very much lines up with my prior experiments back in the day, so I'm
+> gonna have to assume this still is still a problem for others.
 
-Please pull the latest x86/fpu Git tree from:
+A different penalty for ERMS/FSRM wouldn't surprise me.
+If you tested on an Intel cpu it probably supported ERMS/FSRM
+(you have to go back to 'core-2' to not have the support).
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-fpu-2025-03-22
+So I suspect you'd need to have tested an AMD cpu for it to matter.
+And the report of slow misaligned writes was for a fairly recent
+AMD cpu - I think one that didn't report ERMS/FSRM support.
+I've only got a zen-5, although I might 'borrow' a piledriver from work.
+Definitely no access to anything amd in between.
 
-   # HEAD: dda366083e5ff307a4a728757db874bbfe7550be x86/fpu/xstate: Fix inconsistencies in guest FPU xfeatures
+I do wonder if the 'medium length' copy loop is needed at all.
+The non ERMS/FSRM case needs 'short copy' and aligned 'rep movsq'
+copies, but is the setup cost for 'rep movsq' significant enough
+for the 'copy loop' to be worth while?
 
-x86/fpu updates for v6.15:
+I also suspect the copy loop is 'over unrolled'.
+The max throughput is 8 bytes/clock and Intel cpu will execute
+2 clock loops, so if you can reduce the loop control (etc) instructions
+to ones that will run in two clocks you can do 16 bytes per iteration.
+That should be achievable using negative offsets from the end of the
+buffer - the loop control is 'add $16,%rcx; js 10b'.
+(I've mentioned that before ...)
 
- - Improve crypto performance by making kernel-mode FPU reliably usable
-   in softirqs ((Eric Biggers)
+I've just done some more searching and found a comment that FRMS is
+very slow on zen3 for misaligned destinations.
+(Possibly to the level of dropping back to byte copies.)
+That means that the 'rep movsq' also needs to be aligned.
+Which is what started all this.
 
- - Fully optimize out WARN_ON_FPU() (Eric Biggers)
+I'm going to have to see if my Sandy bridge system still works.
 
- - Initial steps to support Support Intel APX (Advanced Performance Extensions)
-   (Chang S. Bae)
+	David
 
- - Fix KASAN for arch_dup_task_struct() (Benjamin Berg)
+>=20
+> So I stand by only patching the short range for the time being.
+>=20
+> Note that should someone(tm) rework this to use overlapping stores
+> with bigger ranges (like memcpy), this will become less of an issue as
+> there will be no per-byte copying.
 
- - Refine and simplify the FPU magic number check during signal return
-   (Chang S. Bae)
-
- - Fix inconsistencies in guest FPU xfeatures (Chao Gao, Stanislav Spassov)
-
- - selftests/x86/xstate: Introduce common code for testing extended states
-   (Chang S. Bae)
-
- - Misc fixes and cleanups (Borislav Petkov, Colin Ian King, Uros Bizjak)
-
- Thanks,
-
-	Ingo
-
------------------->
-Benjamin Berg (2):
-      vmlinux.lds.h: Remove entry to place init_task onto init_stack
-      x86/fpu: Avoid copying dynamic FP state from init_task in arch_dup_task_struct()
-
-Borislav Petkov (AMD) (1):
-      x86/fpu: Clarify the "xa" symbolic name used in the XSTATE* macros
-
-Chang S. Bae (11):
-      selftests/x86: Consolidate redundant signal helper functions
-      selftests/x86/xstate: Refactor XSAVE helpers for general use
-      selftests/x86/xstate: Enumerate and name xstate components
-      selftests/x86/xstate: Refactor context switching test
-      selftests/x86/xstate: Refactor ptrace ABI test
-      selftests/x86/xstate: Introduce signal ABI test
-      selftests/x86/xstate: Consolidate test invocations into a single entry
-      selftests/x86/xstate: Clarify supported xstates
-      selftests/x86/avx: Add AVX tests
-      x86/fpu: Refine and simplify the magic number check during signal return
-      x86/fpu/xstate: Simplify print_xstate_features()
-
-Chao Gao (1):
-      x86/fpu/xstate: Fix inconsistencies in guest FPU xfeatures
-
-Colin Ian King (1):
-      selftests/x86/xstate: Fix spelling mistake "hader" -> "header"
-
-Eric Biggers (2):
-      x86/fpu: Fully optimize out WARN_ON_FPU()
-      x86/fpu: Improve crypto performance by making kernel-mode FPU reliably usable in softirqs
-
-Stanislav Spassov (1):
-      x86/fpu: Fix guest FPU state buffer allocation size
-
-Uros Bizjak (1):
-      x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
-
-
- arch/x86/include/asm/fpu/api.h                     |  17 +-
- arch/x86/kernel/fpu/core.c                         |  23 +-
- arch/x86/kernel/fpu/internal.h                     |   2 +-
- arch/x86/kernel/fpu/signal.c                       |  11 +-
- arch/x86/kernel/fpu/xstate.c                       |  30 +-
- arch/x86/kernel/fpu/xstate.h                       |  31 +-
- arch/x86/kernel/process.c                          |   7 +-
- include/asm-generic/vmlinux.lds.h                  |   1 -
- tools/testing/selftests/x86/Makefile               |   6 +-
- tools/testing/selftests/x86/amx.c                  | 442 +------------------
- tools/testing/selftests/x86/avx.c                  |  12 +
- .../testing/selftests/x86/corrupt_xstate_header.c  |  14 +-
- tools/testing/selftests/x86/entry_from_vm86.c      |  24 +-
- tools/testing/selftests/x86/fsgsbase.c             |  24 +-
- tools/testing/selftests/x86/helpers.h              |  28 ++
- tools/testing/selftests/x86/ioperm.c               |  25 +-
- tools/testing/selftests/x86/iopl.c                 |  25 +-
- tools/testing/selftests/x86/ldt_gdt.c              |  18 +-
- tools/testing/selftests/x86/mov_ss_trap.c          |  14 +-
- tools/testing/selftests/x86/ptrace_syscall.c       |  24 +-
- tools/testing/selftests/x86/sigaltstack.c          |  26 +-
- tools/testing/selftests/x86/sigreturn.c            |  24 +-
- tools/testing/selftests/x86/single_step_syscall.c  |  22 -
- tools/testing/selftests/x86/syscall_arg_fault.c    |  12 -
- tools/testing/selftests/x86/syscall_nt.c           |  12 -
- tools/testing/selftests/x86/sysret_rip.c           |  24 +-
- tools/testing/selftests/x86/test_vsyscall.c        |  13 -
- tools/testing/selftests/x86/unwind_vdso.c          |  12 -
- tools/testing/selftests/x86/xstate.c               | 477 +++++++++++++++++++++
- tools/testing/selftests/x86/xstate.h               | 195 +++++++++
- 30 files changed, 812 insertions(+), 783 deletions(-)
- create mode 100644 tools/testing/selftests/x86/avx.c
- create mode 100644 tools/testing/selftests/x86/xstate.c
- create mode 100644 tools/testing/selftests/x86/xstate.h
 
