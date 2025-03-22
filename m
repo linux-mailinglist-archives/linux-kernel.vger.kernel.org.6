@@ -1,207 +1,163 @@
-Return-Path: <linux-kernel+bounces-572680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED1FA6CD03
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:41:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE9DA6CD07
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95B018957CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2B53AF7C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481E71EE7AA;
-	Sat, 22 Mar 2025 22:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E91E573B;
+	Sat, 22 Mar 2025 22:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csIFGbR7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtGN1GCl"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0711DF72C;
-	Sat, 22 Mar 2025 22:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE65114386D;
+	Sat, 22 Mar 2025 22:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742683249; cv=none; b=R7mfpxN0U8BxeMtSl7RbphCywXmxqw71CyaUsHmwhZxvGX1IrzpnSW/XXCyopMU7ffuvHZXshhqad0B+lEos5wyhzgxFiMakvsE79bd2rC0X6kLKfy6QXwkZmEXfjJVosgImrFJAGTSgNT670nxXfo9eCXSUCZnSRX+Ch7C6VP0=
+	t=1742683904; cv=none; b=nGD0zCxy9tSbSS7stZJtql3d8PlQTjR8qTQy0Q+RcwemetPPNJlCoxgtn0Y1QcaycQplg6Hi/ilLxNgucnqNN/3p1H47XNGMeWineNnyx9JA2qVDv6O/GyUF5p6ZvQE3H6T6HYacHbD2hvPaJhW4kQUwTEmp2R5z/m8PqRLXk0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742683249; c=relaxed/simple;
-	bh=kaGJw1UN+eBP3ZezlrS616HN8vMDvS2SbeAfdkGtfyU=;
-	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
-	 MIME-Version:Content-Type; b=LuIHcScY216tyLn/oBSSWPSqIBOA8F2P2zMdkmCIciHpybXtM4r//2LWv73C9KvBQXNpdbcS65YifpmwmhbgyU6RuFfEB5xS6iKJg3LWLWWjfv6A6fR14qsMJrgdo/M6sgkB6Befqo+PwhY8ZmGFVDuIMy4p56YqkqI8QaJGJrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csIFGbR7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2FB5C4CEDD;
-	Sat, 22 Mar 2025 22:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742683249;
-	bh=kaGJw1UN+eBP3ZezlrS616HN8vMDvS2SbeAfdkGtfyU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=csIFGbR7M0A7dEy3uy8Zts0U0jDb7wD8qDsOFpPkH50/PQTuuwjSY7kJZMN3T2pyL
-	 E0D2fMGpS2rWoof3KuDQ6RS1f3EEW46SRVzlMS/+inRzr/YP4nvB6rmnWfvQlMq60d
-	 MfbRqTh0+npCq73qO34o11jfTqCOBUqAdNbEK5B+C7u4H2gnWyMBRqIYNwyNYOIzBr
-	 b2SpMf2adOKXJeKykbxZFTVXbiRv0DbJdsNY98YBXygcRCGG+VVuLY2Tl3cNvbtR3w
-	 tfcgOEGULR7X5vFaS2ur/nLyGaJ9e26wUOFo6nekS0J9FWOR9347KxZzyHkb3B5JH3
-	 c09h0y3klkTxA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>,  <tglx@linutronix.de>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <netdev@vger.kernel.org>,  <andrew@lunn.ch>,  <hkallweit1@gmail.com>,
-  <tmgross@umich.edu>,  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,
-  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
-  <benno.lossin@proton.me>,  <a.hindborg@samsung.com>,
-  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
-  <frederic@kernel.org>,  <arnd@arndb.de>,  <jstultz@google.com>,
-  <sboyd@kernel.org>,  <mingo@redhat.com>,  <peterz@infradead.org>,
-  <juri.lelli@redhat.com>,  <vincent.guittot@linaro.org>,
-  <dietmar.eggemann@arm.com>,  <rostedt@goodmis.org>,
-  <bsegall@google.com>,  <mgorman@suse.de>,  <vschneid@redhat.com>,
-  <tgunders@redhat.com>,  <me@kloenk.dev>,  <david.laight.linux@gmail.com>
-Subject: Re: [PATCH v11 6/8] MAINTAINERS: rust: Add new sections for
- DELAY/SLEEP and TIMEKEEPING API
-In-Reply-To: <Z96zstZIiPsP4mSF@Mac.home> (Boqun Feng's message of "Sat, 22 Mar
-	2025 05:57:22 -0700")
-Message-ID: <871puoelnj.fsf@kernel.org>
-References: <87jz8ichv5.fsf@kernel.org> <87o6xu15m1.ffs@tglx>
-	<67ddd387.050a0220.3229ca.921c@mx.google.com>
-	<20250322.110703.1794086613370193338.fujita.tomonori@gmail.com>
-	<8n9Iwb8Z00ljHvj7jIWUybn9zwN_JLhLSWrljBKG9RE7qQx4MTMqUkTJeVeBZtexynIlqH1Lgt6g0ofLLwnoyQ==@protonmail.internalid>
-	<Z96zstZIiPsP4mSF@Mac.home>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Sat, 22 Mar 2025 23:40:21 +0100
+	s=arc-20240116; t=1742683904; c=relaxed/simple;
+	bh=/T6fIJ/31Cw18UV0ZROcFTr6Z4CwQrGMBwrIiprMO+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLwpA/B5bVPTHuwh72fP0RO/TFKjCGWiznxdhIlwmC7rfLJgM+cAjZEWQchq6A19k5o56BVBxXlHaDOsAlmUIvuACTti+oaX+zAB3pol+H/twGwhtGXUYvznitdXX4nHpoSUOLdyIm4RtTDL8e7N3PorrGthcqkhkABZM0Q/6NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtGN1GCl; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39149bccb69so2915393f8f.2;
+        Sat, 22 Mar 2025 15:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742683899; x=1743288699; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3Jt14YxismGrzSFIUTNtRc9HQQUaY0k4x/qsI+lQ69o=;
+        b=UtGN1GCl0GgpDDv2imRIzoq3eV74def9Dko9lyLIrqGYOrIA5mIwniFtI6QMHSgr8H
+         95QLvGdbsVh4mm1Wj6CNHkWgNMylr3H+d63kK2+XPjQLO7gl7gcG/gEnCgOVowhsp0X6
+         zN/+MCRQ90CgOwRCJx6MSXw/zOdt30RuultqQcPtdndvNbP2ND6JxidByQN8NTAZ+WWH
+         tZK45EgvJlj6afMYDti6EzpGjAI7UKqu+BrxPvIn1WlciIMLWEVYf9axDFIcoubYJi3K
+         ikIJKZQ8FTeoAvxVJHPFRnNItgWbDYDDTv6t3hlDb6O9hfY671Fb1nuJ4bUyKX1wqJH/
+         gVlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742683899; x=1743288699;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Jt14YxismGrzSFIUTNtRc9HQQUaY0k4x/qsI+lQ69o=;
+        b=KyXgfxwJ91RLlf4FloSuEI5uhdZJbB8E0FggCVKkkxeyLi8H/dvOMLASzbi+Q21Aey
+         jUMRA79IPYWnYFasUB+HBnUwpEaUX2j/twdNr430Sf5KBcSaqZwSTQUE+00fdsvv6oIJ
+         p1HIEy6Q8U65QeHkmhlX5ZwyWH22ZNZviOypPvK8u2ZnkibvQTdlQqXp037ZHyKOoxm5
+         1J+/41dMsv2wNVcQTFQEcOHfwMQYDDjEMWzZ8363c2QrTJfNWqQWYlFYI2ckZ0JniZv2
+         SDPE2680qr4bW5P0Jtm+gNS3SS8QCdAH/3wPAWEJl7gO025Ub26gNgxi55uEG8HHO+hH
+         OSQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDVDL2noIRSmyEnPUjk49KxO+P76GbhpYxV5iiRaAWDSn6KNT66O789bVjjX9AFTq2zWqR9XnS44j2FyM=@vger.kernel.org, AJvYcCXc6fXkrw9N0j9h4k6rrLDbeMGYfwykjDu1i+cw2Y9LuYlvtcjCmTPzvmhwfHOqBbrDl/PDoGdDpAChnrEgGVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeHP0eVA1vb/KXIVDiH0p0r+850gRjgYiZ3R1qb0DOyybTA9pp
+	DKaGMn5AKriPmu6UbJHUp66wR1inz43E/aEepjBZQp1sJJToODBg
+X-Gm-Gg: ASbGnctwmVYf/Yj0PXg8p4vG8YsYJVRGM5XLoObTzcTlzwTPYyos3NKdEJS9dB6TKlt
+	puaqk/qb0T2DT7VkjyjdZS1paAH3mV899hDw/yGIZhOX4ySIecPEFOHaGYzqrjkxaUQ9tVEd7MR
+	QmNREzwhVXcQsHPifA3c+lri6ZGnHqyl4GWtCFtZKpTVzAT2C0UiQ3HMccETmNwpzkjQt8RT6js
+	3nKiW9QNkRqp8RGddCbOsf8XViXVg99JCTzpZBRZkjesMtjSlyz/Em/A4TgsXdmExsOdzAnMTYH
+	Y/KJyoY0bSk1e+OYuf5KUiP1pq7fmWNDeB+haWoywttYsJbq
+X-Google-Smtp-Source: AGHT+IGxXIu9gFWA5FTHPGshtlN1jdaNgj6n+gV081Jt+w3afTixlCPB5LoK8q8g2bwFmjRD4hWrlA==
+X-Received: by 2002:a05:6000:1547:b0:391:2d61:4542 with SMTP id ffacd0b85a97d-3997f8f2855mr7155076f8f.11.1742683898800;
+        Sat, 22 Mar 2025 15:51:38 -0700 (PDT)
+Received: from qasdev.system ([2a02:c7c:6696:8300:ec99:3da1:428d:90b1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9eef37sm6054754f8f.85.2025.03.22.15.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 15:51:38 -0700 (PDT)
+Date: Sat, 22 Mar 2025 22:51:22 +0000
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	chui-hao.chiu@mediatek.com, Bo.Jiao@mediatek.com,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] wifi: mt76: mt7996: prevent uninit return in
+ mt7996_mac_sta_add_links
+Message-ID: <Z98-6kXoYdSaFtVR@qasdev.system>
+References: <20250320201914.48159-1-qasdev00@gmail.com>
+ <CAOiHx==UCeMQpywQJCLPQqipEW0tK9youRxdR5+_T1LuGp_EHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOiHx==UCeMQpywQJCLPQqipEW0tK9youRxdR5+_T1LuGp_EHA@mail.gmail.com>
 
-Hi All,
+On Sat, Mar 22, 2025 at 12:51:57PM +0100, Jonas Gorski wrote:
+> Hi,
+> 
+> On Thu, Mar 20, 2025 at 9:19 PM Qasim Ijaz <qasdev00@gmail.com> wrote:
+> >
+> > If link_conf_dereference_protected() or mt7996_vif_link()
+> > or link_sta_dereference_protected() fail the code jumps to
+> > the error_unlink label and returns ret which is uninitialised.
+> >
+> > Fix this by setting err before jumping to error_unlink.
+> >
+> > Fixes: c7e4fc362443 ("wifi: mt76: mt7996: Update mt7996_mcu_add_sta to MLO support")
+> > Fixes: dd82a9e02c05 ("wifi: mt76: mt7996: Rely on mt7996_sta_link in sta_add/sta_remove callbacks")
+> > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> > ---
+> >  drivers/net/wireless/mediatek/mt76/mt7996/main.c | 12 +++++++++---
+> >  1 file changed, 9 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+> > index 91c64e3a0860..78f7f1fc867e 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
+> > @@ -998,16 +998,22 @@ mt7996_mac_sta_add_links(struct mt7996_dev *dev, struct ieee80211_vif *vif,
+> >                         continue;
+> >
+> >                 link_conf = link_conf_dereference_protected(vif, link_id);
+> > -               if (!link_conf)
+> > +               if (!link_conf) {
+> > +                       err = -EINVAL;
+> >                         goto error_unlink;
+> > +               }
+> >
+> >                 link = mt7996_vif_link(dev, vif, link_id);
+> > -               if (!link)
+> > +               if (!link) {
+> > +                       err = -EINVAL;
+> >                         goto error_unlink;
+> > +               }
+> >
+> >                 link_sta = link_sta_dereference_protected(sta, link_id);
+> > -               if (!link_sta)
+> > +               if (!link_sta) {
+> > +                       err = -EINVAL
+> 
+> You are missing a semicolon at the end of the line.
+> 
 
-"Boqun Feng" <boqun.feng@gmail.com> writes:
+Good spot! not sure how that happened but I will resend a v2 patch.
 
-> On Sat, Mar 22, 2025 at 11:07:03AM +0900, FUJITA Tomonori wrote:
->> Thank you all!
->>
->> On Fri, 21 Mar 2025 14:00:52 -0700
->> Boqun Feng <boqun.feng@gmail.com> wrote:
->>
->> > On Fri, Mar 21, 2025 at 09:38:46PM +0100, Thomas Gleixner wrote:
->> >> On Fri, Mar 21 2025 at 20:18, Andreas Hindborg wrote:
->> >> >> Could you add me as a reviewer in these entries?
->> >> >>
->> >> >
->> >> > I would like to be added as well.
->> >>
->> >> Please add the relevant core code maintainers (Anna-Maria, Frederic,
->> >> John Stultz and myself) as well to the reviewers list, so that this does
->> >> not end up with changes going in opposite directions.
->> >>
->> >
->> > Make sense, I assume you want this to go via rust then (althought we
->> > would like it to go via your tree if possible ;-))?
->>
->
-> Given Andreas is already preparing the pull request of the hrtimer
-> abstraction to Miguel, and delay, timekeeping and hrtimer are related,
-> these timekeeping/delay patches should go via Andreas (i.e.
-> rust/hrtimer-next into rust/rust-next) if Thomas and Miguel are OK with
-> it. Works for you, Andreas? If so...
->
->> Once the following review regarding fsleep() is complete, I will submit
->> patches #2 through #6 as v12 for rust-next:
->>
->> https://lore.kernel.org/linux-kernel/20250322.102449.895174336060649075.fujita.tomonori@gmail.com/
->>
->> The updated MAINTAINERS file will look like the following.
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index cbf84690c495..858e0b34422f 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -10370,6 +10370,18 @@ F:	kernel/time/timer_list.c
->>  F:	kernel/time/timer_migration.*
->>  F:	tools/testing/selftests/timers/
->>
->> +DELAY AND SLEEP API [RUST]
->> +M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
->> +R:	Boqun Feng <boqun.feng@gmail.com>
->> +R:	Andreas Hindborg <a.hindborg@kernel.org>
->
-> ... this "R:" entry would be "M:",
->
->> +R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
->> +R:	Frederic Weisbecker <frederic@kernel.org>
->> +R:	Thomas Gleixner <tglx@linutronix.de>
->> +L:	rust-for-linux@vger.kernel.org
->> +L:	linux-kernel@vger.kernel.org
->
-> +T:	git https://github.com/Rust-for-Linux/linux.git hrtimer-next
->
->> +S:	Maintained
->
-> I will let Andreas decide whether this is a "Supported" entry ;-)
->
->> +F:	rust/kernel/time/delay.rs
->> +
->>  HIGH-SPEED SCC DRIVER FOR AX.25
->>  L:	linux-hams@vger.kernel.org
->>  S:	Orphan
->> @@ -23944,6 +23956,17 @@ F:	kernel/time/timekeeping*
->>  F:	kernel/time/time_test.c
->>  F:	tools/testing/selftests/timers/
->>
->> +TIMEKEEPING API [RUST]
->
-> and similar things for this entry as well.
->
->> +M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
->> +R:	Boqun Feng <boqun.feng@gmail.com>
->> +R:	Andreas Hindborg <a.hindborg@kernel.org>
->> +R:	John Stultz <jstultz@google.com>
->> +R:	Thomas Gleixner <tglx@linutronix.de>
->
-> +R:      Stephen Boyd <sboyd@kernel.org>
->
-> ?
->
->> +L:	rust-for-linux@vger.kernel.org
->> +L:	linux-kernel@vger.kernel.org
->> +S:	Maintained
->> +F:	rust/kernel/time.rs
->> +
->
-> Tomo, let's wait for Andreas' rely and decide how to change these
-> entries. Thanks!
+> To also do some bike shedding, you could initialize err (with 0 or
+> -EINVAL), and then change the err return to return err ? : -EINVAL;.
+> But your way has an explicit error code assigned to each failure, even
+> if it is always the same. So I won't claim my suggestion is better.
+> 
 
-My recommendation would be to take all of `rust/kernel/time` under one
-entry for now. I suggest the following, folding in the hrtimer entry as
-well:
+Thanks for the suggestion, I think this could work however I think my 
+current approach is more a bit more readable, so I will leave it as is.
 
-DELAY, SLEEP, TIMEKEEPING, TIMERS [RUST]
-M:	Andreas Hindborg <a.hindborg@kernel.org>
-R:	Boqun Feng <boqun.feng@gmail.com>
-R:	FUJITA Tomonori <fujita.tomonori@gmail.com>
-R:	Lyude Paul <lyude@redhat.com>
-R:	Frederic Weisbecker <frederic@kernel.org>
-R:	Thomas Gleixner <tglx@linutronix.de>
-R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
-R:	John Stultz <jstultz@google.com>
-L:	rust-for-linux@vger.kernel.org
-S:	Supported
-W:	https://rust-for-linux.com
-B:	https://github.com/Rust-for-Linux/linux/issues
-T:	git https://github.com/Rust-for-Linux/linux.git rust-timekeeping-next
-F:	rust/kernel/time.rs
-F:	rust/kernel/time/
+Thanks,
+Qasim
 
-If that is acceptable to everyone, it is very likely that I can pick 2-6
-for v6.16.
-
-I assume patch 1 will go through the sched/core tree, and then Miguel
-can pick 7.
-
-Best regards,
-Andreas Hindborg
-
-
+> Best regards,
+> Jonas
 
