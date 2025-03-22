@@ -1,153 +1,126 @@
-Return-Path: <linux-kernel+bounces-572570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8416A6CB8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:49:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161FEA6CB90
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208383A7E22
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133153AF67D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4F622E3F1;
-	Sat, 22 Mar 2025 16:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gK7Ju5lB"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A515123372A;
+	Sat, 22 Mar 2025 16:51:49 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AC12288D2
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 16:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5852F2E;
+	Sat, 22 Mar 2025 16:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742662133; cv=none; b=Prx/M1+l7x4lpoP7qNireT7M/8ec/LMrl12GsMdlvYVy+kFp+v+85HgGsucI5O3TqjQNK9Z2ha3NMI6fTrKZvm/Fef026PC8y1pA54SqCQo4mIIH19V1rOb+5mBQNyRRfuM9FM0WTS+DKTnMP5R3+0i+a5DJTEzxy4RYk7ydHJg=
+	t=1742662309; cv=none; b=e5LWC6sqLFgFzHgybBCi8OjZZAGxTXYuToDKz0ZkF/94vKO/9+3gXxDz9GPmHL8vFAWj90OfUqWh5y8MNP3xWy0DkqYgWv+8Tr5LWcuLeFRaGlUhCAX22aDlnTblE3CoVpczewOBhley2nOesUwDFVQv5swV/u/QC9SVD9n3Nes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742662133; c=relaxed/simple;
-	bh=ilKLdO+D3DKL/L6xnctvKY9xHtbWegWhEkBTUTLsBII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T71GtfNfnCDmkUbGygm336u1b0d+q/tFpA4nA1i6sffL2fkqK3JsrZ972iUOO8T6FGEGBLqw3odWuYODl0k+Ud7+Lgdv4DLMiBtSs8WbAx5YugOEwaa5Tszm9WNEMAb6up1AdkDF3MnGC6Kol3WWc+bhegKWxHW56hoeUCfqgPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gK7Ju5lB; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf825f46bso1332885e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 09:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742662130; x=1743266930; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xNd0llC71oEP5dO+YkYFkjDGY4TNNnT/LXyyySQQdI=;
-        b=gK7Ju5lBIcRUSIAKEaXF8ObpuhHOxw4qgMm6ld74ICOiBBmeqxHcDG7QtJu0jJfhqd
-         13XGDXpMaRz/zP68mXauV9YckVSxVrxZxGD2qdyMMnNePJsSiSUm/ozkLm200pUOI9GN
-         INYU6CkWyR1luKhhCs28FV863bEj+xL9ManjWstDs60K4B+WlPYtAIM1DOBWaqT7z4p9
-         yX7vPkxR02rBXm/88rAm4WIihkSJOMFClu4uWAZURdeW/qz0zszCIMzvrl/1Tr7wDJdv
-         zjJk/UZwBBg+BKWDgXWStkwqpBMYzJ3+EHqZr99ThWo5XFPAR/jXE8DGYeiCd+VSr/BX
-         4CgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742662130; x=1743266930;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6xNd0llC71oEP5dO+YkYFkjDGY4TNNnT/LXyyySQQdI=;
-        b=ZkWHXZWbgBUdE2uvyiTReLWFHuY1fzHKa3+/PiFF1oI2fzUfyeCYNKnDrxs2RZgShH
-         3ONiF4qcihK9k7hHlFN4A6Z2puqS7y/ozjfZQEfObeZ8gziA6Qf3zvsTUzyin7P9VK5N
-         cAcmxURKrQa1s7f/JpQFLK4tgG7I1Uz/jL7zfmXoC2VpbEDwnOkTlhdq5EWJsiWl7nIS
-         59sVBy/9XaqDeFSYKQ+BBXV87pRVCWlbVZeUf2NYE7vDUXbGuezaiP87inHM3bPTvUlu
-         cKIxd2Kd7EO82FGpYDhiLUzGX776veR0UylBvORWfKEgicrCu6z5oteX7Ayq/2f1s7rO
-         HbbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAlxt91DBjh1MHSv4j54OxEnunMZQAQXI001MXPib6WdxlzOkUPB33ncQubjMDJD12IMS3SylGixkscHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAxwt1/Ojl0RWdurtVqNMJS1TMhcVCf/D6Wwz9VwabgKFStVei
-	rw6Bv01uwGPNspIZCyH80aPMT4RYcaZuVp6OxFjkBi49zRT5pxC/+hSFcmEGnnU=
-X-Gm-Gg: ASbGnctIXgylew51ldo45APVnPuVwqMMSenKDyW0A3DFAt/PjJ5GY7A5zN723152YP/
-	eKw7DmEm+wV9Hr9g7n9GW6dS8u3mAhGFrFKESK+/HXdrTUyk8VwsWG8GSHC443XXGSupR1g6r3W
-	eDD2V9FkXQ05b4IdPIqRUMBoNCVkcc/ZcZejURiJlFNyyeRjbd7owrxfbFQN2wBBTGFOqig/2WD
-	X/3qhS1oJ4UnItpo6LJrs2rKYYnemiEkMsYFb1Q9cAGzmSfbfVlncpjEjSBJIQ3f1wAEIqa5qj2
-	kPeNUIPXWmxQAnJ4hXsoqnuWyQkg6nb1RE5k71//+IDBelICXNSedj9MRsxDsdM=
-X-Google-Smtp-Source: AGHT+IFUj2d07WLhxhUz5wMUXxLFUNTKUJDduvrDArOmD/C/JPJ4VD5gTOfUIQ9x1XQDS8u72+38Ng==
-X-Received: by 2002:a05:600c:698e:b0:43d:2318:ed7f with SMTP id 5b1f17b1804b1-43d519b63bemr25616455e9.0.1742662129679;
-        Sat, 22 Mar 2025 09:48:49 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd277d5sm61567425e9.19.2025.03.22.09.48.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Mar 2025 09:48:49 -0700 (PDT)
-Message-ID: <9477218a-7dfd-41b9-904c-a1c90490b9c9@linaro.org>
-Date: Sat, 22 Mar 2025 17:48:47 +0100
+	s=arc-20240116; t=1742662309; c=relaxed/simple;
+	bh=YY0zwQFccafI0e+UieGhfuVrKOH9vs96kL6/Y4+N8aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nw67nqLUPpevfIGzG8E+FneICwIBZGYZgvQlP/505EcSmRI88bK/yF4vzWB65Xg9htGsqYmPJo1TMhO+iKosMWd/SdK1GyF/jp3qCeROGNt4yXHIUuk9YqpMyvtfBY4kIuPW2n9rt9HYnGrraAJG1SNS6Rdk7E6wP5VEeuMzMIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id C4C90343231;
+	Sat, 22 Mar 2025 16:51:45 +0000 (UTC)
+Date: Sat, 22 Mar 2025 16:51:40 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
+ spacemit,k1-ccu resets
+Message-ID: <20250322165140-GYF11633@gentoo>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-2-elder@riscstar.com>
+ <20250321222546-GYA11633@gentoo>
+ <1d79fb7e-4501-4c62-8379-f00515dec3e4@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] power: supply: max77705: Fix workqueue error handling
- in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <547656e3-4a5f-4f2e-802b-4edcb7c576b0@stanley.mountain>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <547656e3-4a5f-4f2e-802b-4edcb7c576b0@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d79fb7e-4501-4c62-8379-f00515dec3e4@riscstar.com>
 
-On 21/03/2025 15:34, Dan Carpenter wrote:
-> The create_singlethread_workqueue() doesn't return error pointers, it
-> returns NULL.  Also cleanup the workqueue on the error paths.
+Hi Alex:
+
+On 09:27 Sat 22 Mar     , Alex Elder wrote:
+> On 3/21/25 5:25 PM, Yixun Lan wrote:
+> > hi Alex:
+> > 
+> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
+> >> There are additional SpacemiT syscon CCUs whose registers control both
+> >> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
+> >> previously, these will initially support only resets.  They do not
+> >> incorporate power domain functionality.
+> >>
+> >> Define the index values for resets associated with all SpacemiT K1
+> >> syscon nodes, including those with clocks already defined, as well as
+> >> the new ones (without clocks).
+> >>
+> >> Signed-off-by: Alex Elder <elder@riscstar.com>
+> >> ---
+> >>   .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+> >>   include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
+> >>   2 files changed, 143 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> >> index 07a6728e6f864..333c28e075b6c 100644
+> >> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> >> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> >> @@ -19,6 +19,9 @@ properties:
+> >>         - spacemit,k1-syscon-apbc
+> >>         - spacemit,k1-syscon-apmu
+> >>         - spacemit,k1-syscon-mpmu
+> >> +      - spacemit,k1-syscon-rcpu
+> >> +      - spacemit,k1-syscon-rcpu2
+> >> +      - spacemit,k1-syscon-apbc2
+> >>   
+> >>     reg:
+> >>       maxItems: 1
 > 
-> Fixes: a6a494c8e3ce ("power: supply: max77705: Add charger driver for Maxim 77705")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+> . . .
+> 
+> 32
+> >> @@ -180,6 +184,60 @@
+> >>   #define CLK_TSEN_BUS		98
+> >>   #define CLK_IPC_AP2AUD_BUS	99
+> >>   
+> >> +/*	APBC resets	*/
+> >> +
+> > I'd also suggest to drop above blank line, keep style consistent
+> > with others in this file, some same below that I won't comment
+> 
+> OK, I'll fix the weird extra line and will drop these blank
+> lines as you suggest in v2.  I'll post another version after
+> Sunday.  I recognize the merge window means I can't expect
+> reviews during that time, but this code is waiting for the
+> clock code to get accepted anyway.
+> 
+no need to hurry, we will postpone clock to next merge window,
+let's give more time for people to review, thanks
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
