@@ -1,163 +1,265 @@
-Return-Path: <linux-kernel+bounces-572184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C3EA6C7C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB96FA6C7C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D7117D656
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:31:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242B8173647
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 06:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAF41519BA;
-	Sat, 22 Mar 2025 06:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42B0189BAF;
+	Sat, 22 Mar 2025 06:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="QA4cWYam"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tTB6FVb6"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFDEBA53
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1C97081C
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 06:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742625106; cv=none; b=HE81gjtzBt76vTyhbiBPnbNG09utfX7DGofcJgx4wjWldl3OrUKuoHPxchwsQ6l14zMfofx8ivk43rJATnnSYHvR/l/hs7oKf8jv/LQGpQ0EGfE+JW7/zHRaYcJFDyGmcMfxP8jHwGA8OKFydCaueIVACy8q8Nlt9cb9SX3IF2A=
+	t=1742625264; cv=none; b=U/k/8ApyQ1qyQ55pOSTAwi0gSfhCXybLiSdWDK385AWoz97sdyGPr+RTl2dNyMlGcM0z7d424OvkDtgKjXR6Ohe9brRLzR3mb8l7afHh2XBClWjiMVxnm0tOx5hGWpvVPlgVCVsA+T9lAvyvwoimO/mbvUrMwv2z2KkN4JnNhPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742625106; c=relaxed/simple;
-	bh=aAKSCPfQsXwLsVjuqIbNofPDvVHYRvE7xrzl3M3z7/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KX55H3EDgbnN0UOzQ62lxEdr3df+R0C/0c3sm4u1cxCMMdX/gHnrX9muHbSmjIUbHZl0aHFSTS0SbFXXUFG5ANjRO6Nfml7nMlkNZ+w0eAKswEpmkZ/HeaGovwm24lbeH+XsKX/OofIEuai8DdQsbRVwr255YmDVsEqTVCEhe00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=QA4cWYam; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1742624935;
-	bh=ZUwDzUOO8B21ZdXUlMK7jpoccKcRIaUuh/idrOVRgTQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QA4cWYam8yzPDtPEzOJuX43jOD38n1L5/af5QmkDeQESy8vpfw72Wwfq2aejupf9V
-	 9UTYj8cBb2QCIWSXvrtVWTn4cLMpULYP8X5fuIIhVsdmaBSGdnuHSEm4WX2+YrOBEB
-	 wLPMyFim7FXk4kCDvYk07OuDTJqkIAy4gH1Yzfms=
-X-QQ-mid: bizesmtpip2t1742624924t25799d
-X-QQ-Originating-IP: EoFty24JGgb8Uv27sxTo45Myx+tTjSV1ie5YhBKGeFM=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 22 Mar 2025 14:28:42 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6533944679590139330
-From: WangYuli <wangyuli@uniontech.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: wangyuli@uniontech.com,
-	chenhuacai@kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	vincent.chen@sifive.com,
-	palmerdabbelt@google.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] riscv: KGDB: Do not inline arch_kgdb_breakpoint()
-Date: Sat, 22 Mar 2025 14:28:36 +0800
-Message-ID: <CEF1937DAC500D66+20250322062836.362600-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742625264; c=relaxed/simple;
+	bh=aIrHN9trJCMzVOJNMS+6/v1uOKF/BjWsMtPTT4T93Zk=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=f3NbFd9I8iHsq+fa3KmfPck5svuGXl7hmLn7O4zT3Q6wEhmWQCR0/cbGhe+ux83rH4Vty9ORTMtD+e4YEzgjv5mBvwV1kkWhMBCC335Nz10ItwlY8fwSVetuZf6DFctg3oVdKFW67M+5Bu5GhCGLI2qAp6r7jxB1eYBgOPx08m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tTB6FVb6; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6f3ff1ff117so32345287b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 23:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742625261; x=1743230061; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m4k6cMs9MIjpmZAhY+5WPi6bjxoE3QuGYwtgS/v+tBM=;
+        b=tTB6FVb65YdJ6xP9asdDbiGJyrKUQPadzYiXubmPijInhMTOIbqh4S7nGjpcipKWKJ
+         AWAfn138bGcTLOYrBaqt7/U3335xPVtIq6GuWyjec3QVkYW6bIlXKL3HKH+SMbQpYPbp
+         WJHBj7wbwB86FgVQjNzITmSyNd8s1OvSKa+C4B2JLsIajQ3U9HKnMt5/v389VsSkEpEa
+         CQ/j7sb1NcLflte1L+ZYfOYeGnXg/oFWqhZbqVl6uqYUpKh1eY66dlRx705tD++9OuX9
+         GtQVCnw0wGY6kM+mA9W/MMNqWNOQpF0enoutPlIw1gzOWfS//JCteDaaUoB1gtDIfgea
+         7Y3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742625261; x=1743230061;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m4k6cMs9MIjpmZAhY+5WPi6bjxoE3QuGYwtgS/v+tBM=;
+        b=CVqFeVgtsInonnbz0lpmU6tpTS6En3kW5msP0iKsPILwWT1yXuELO7i1hymbT+FnAN
+         ybNz6h0++ehBHwDDwJPpZ7KLIAwD2ePfMJnKcbgUzGYgyh7CNtcNUXHVsqVIuQfbK2qk
+         SkfvvvnO0clsJbLO/EPbDJdMJ462uUkBlISCtB0EKysker7m9DKpm8czNQK/XvJ6NOZq
+         Xff0/gNu9WT8KEuK6md+cVY1zRqDGZNHF2gwTVzf0Xb9Bd0eP10q3Dv3OGXdd5KOkmOH
+         M6acI8r4Tzq7AatS1FFSNKasSHuj5jYNh1ZFTkLkq2pHtr8a1vje0TgShBWIs+yFcW2P
+         KVTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnBIso1ulSX6MUCGNGHe7tZ26sNiczqWP6E/RAURfu7dsBjYWzEJr2XxumbXMyaKbgc/32vbSPuwY2Gxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwppSEfDXodmNyDb0rrmJv2BKqkY55lE+Xs+nAPcP3yDeGMR6+r
+	9vltu4frB9Tfq3jE7Eyr43YCa5WQBS6C8dJPK9fMd9GtmSIrY3UgNuaUH8ADe/rrUm2x5g85W2Q
+	FSxmi6g==
+X-Google-Smtp-Source: AGHT+IHHwN5JNBd02nLevE01Zxx/K4eyQLt+IGdFYSO+xToTPTv6fHO9U0R9GvP5kMgBPmWb71Xng309awX3
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:c16d:a1c1:1823:1d0e])
+ (user=irogers job=sendgmr) by 2002:a05:6902:101:b0:e57:3500:2294 with SMTP id
+ 3f1490d57ef6-e66a4d42cc0mr2296276.3.1742625261177; Fri, 21 Mar 2025 23:34:21
+ -0700 (PDT)
+Date: Fri, 21 Mar 2025 23:33:28 -0700
+Message-Id: <20250322063403.364981-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N7JihbTpIyPvPSrqEYLxHxCEbLmgFfxpOk0S8bgDnTJ1m/Ve+qZ4zuEE
-	7yw+yIa+3MlOlVYi0utsKQJC8+xvbxpJ0yyjx6dmrObwh/72ZVljJukZge1adwURJJs9zeP
-	CjTJi/EwFpcFgZMpsyJ2uYHQ/OAd6zEGAxrPm0rSUVTmG9mjiaryxdv2VwYaMxLzU5jeR/8
-	+ZQyP9xiffkbgxuALF+4rgWrvvZf2JD0EZNItXLBfRSsVOYuPfvg2Ujrkeozr+UOzFU5KpH
-	Gy6+ejvSyVp/zp7eN0sq5xp2EunDzuj0w7yKj7gRJHK9fhwWAmWDqHpr/cRU4MPWjTi8H6P
-	ywjNyShDsqNAEvbTLHj87yWTauYG1v6aHbf0eca1eiUZNko7RrGzyRu5H90yDCjZvfk8cF/
-	R4GHtoNLDJgLFxTqmwHHtcU1d6qd+a8/jW7h5IkKrsTecgJfAZCkFn+x0s01WVxsbAPjfzJ
-	95PhANTZJXcDuCHAtKlQMMtZ7j53K/71XssbsD6xmN/ko+dTHMap11G3fdzbq7W99MP60mh
-	ZtHNynnsGyBspxPgX65QxIKSZGTSMfEmmTYWr5m794hJk17ezoTIC01hQnzYqKGDKlP4YC9
-	2y1NsYatqhf5ayG75q99Mr/wtekTg413k0aemr5PCduaz4JyT6L0JPOmmXzzapg+WgKGHuF
-	ui9/z8wPlMyClsH/3AGjltbvoK5jymXdmxwpMx8/QE6iekZtTpTnVIx9EjDatk8qZfcROHS
-	RwApEfmkFvy4LTFM3T8ErWoD9HEvgictjWbeXtyft0e5iKUzGGsBa2NXgjQP5IEDPdp52Js
-	3QDq3BQ0r8l8RLUKnnGMWt1h6JAqBRTGYEXe6HcqAdxTA+n93u/PzrnoS1BL5uLygQUVlYM
-	wAcSjK4+Wnn6ATAtoie6Zy3jpmzkHru/ffyzan5qT+dn/JzNJjjEMYHEa89i1R2pGxjKLVa
-	hJyULdpKKo30O5xYTyUkFMT30Q7B9GgVhkpl5h8yYiQq+rpFBHh6UtubRqibM4a/Iw5GIdW
-	F5fwKZpj09b8DckLzI
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Subject: [PATCH v1 00/35] GNR retirement latencies, topic and metric updates
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>, Weilin Wang <weilin.wang@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Thomas Falcon <thomas.falcon@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The arch_kgdb_breakpoint() function defines the kgdb_compiled_break
-symbol using inline assembly.
+Add default mean, min and max retirement latency values to GNR
+events. Update the topics on a number of events previously
+"other". Switch TMA metrics to the generated version. Add TMA 5.02
+metrics for sandybridge, ivytown, ivybridge and jaketown.
 
-There's a potential issue where the compiler might inline
-arch_kgdb_breakpoint(), which would then define the kgdb_breakinst
-symbol multiple times, leading to fail to link vmlinux.o.
+Events and metrics generated from the data and scripts in:
+https://github.com/intel/perfmon
+and:
+https://github.com/intel/perfmon/pull/298
 
-This isn't merely a potential compilation problem. The intent here
-is to determine the global symbol address of kgdb_compiled_break,
-and if this function is inlined multiple times, it would logically
-be a grave error.
+Ian Rogers (35):
+  perf vendor events: Update alderlake events/metrics
+  perf vendor events: Update AlderlakeN events/metrics
+  perf vendor events: Update arrowlake events/metrics
+  perf vendor events: Update bonnell events
+  perf vendor events: Update broadwell metrics
+  perf vendor events: Update broadwellde metrics
+  perf vendor events: Update broadwellx metrics
+  perf vendor events: Update cascadelakex events/metrics
+  perf vendor events: Update clearwaterforest events
+  perf vendor events: Update elkhartlake events
+  perf vendor events: Update emeraldrapids events/metrics
+  perf vendor events: Update grandridge events/metrics
+  perf vendor events: Add graniterapids retirement latencies
+  perf vendor events: Update haswell metrics
+  perf vendor events: Update haswellx metrics
+  perf vendor events: Update icelake events/metrics
+  perf vendor events: Update icelakex events/metrics
+  perf vendor events: Update ivybridge metrics
+  perf vendor events: Update ivytown metrics
+  perf vendor events: Update jaketown metrics
+  perf vendor events: Update lunarlake events/metrics
+  perf vendor events: Update meteorlake events/metrics
+  perf vendor events: Update nehalemep events
+  perf vendor events: Update nehalemex events
+  perf vendor events: Update rocketlake events/metrics
+  perf vendor events: Update sandybridge metrics
+  perf vendor events: Update sapphirerapids events/metrics
+  perf vendor events: Update sierraforest events
+  perf vendor events: Update skylake metrics
+  perf vendor events: Update skylakex events/metrics
+  perf vendor events: Update snowridgex events
+  perf vendor events: Update tigerlake metrics
+  perf vendor events: Update westmereep-dp events
+  perf vendor events: Update westmereep-dp events
+  perf vendor events: Update westmereep-dp events
 
-Fixes: fe89bd2be866 ("riscv: Add KGDB support")
-Co-developed-by: Huacai Chen <chenhuacai@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/riscv/include/asm/kgdb.h | 13 +------------
- arch/riscv/kernel/kgdb.c      |  8 ++++++++
- 2 files changed, 9 insertions(+), 12 deletions(-)
+ .../arch/x86/alderlake/adl-metrics.json       | 485 ++++++++-------
+ .../pmu-events/arch/x86/alderlake/cache.json  |  77 +++
+ .../pmu-events/arch/x86/alderlake/memory.json |  55 ++
+ .../pmu-events/arch/x86/alderlake/other.json  | 196 ------
+ .../arch/x86/alderlake/pipeline.json          |  67 ++-
+ .../arch/x86/alderlaken/adln-metrics.json     |  54 +-
+ .../pmu-events/arch/x86/alderlaken/cache.json |  50 ++
+ .../arch/x86/alderlaken/memory.json           |  40 ++
+ .../pmu-events/arch/x86/alderlaken/other.json |  98 ---
+ .../arch/x86/alderlaken/pipeline.json         |  11 +-
+ .../arch/x86/arrowlake/arl-metrics.json       | 566 +++++++++---------
+ .../pmu-events/arch/x86/arrowlake/cache.json  | 148 +++++
+ .../pmu-events/arch/x86/arrowlake/memory.json |  11 +
+ .../pmu-events/arch/x86/arrowlake/other.json  | 193 ------
+ .../arch/x86/arrowlake/pipeline.json          | 163 ++++-
+ .../pmu-events/arch/x86/bonnell/other.json    |   8 -
+ .../pmu-events/arch/x86/bonnell/pipeline.json |   8 +
+ .../arch/x86/broadwell/bdw-metrics.json       | 256 ++++----
+ .../arch/x86/broadwellde/bdwde-metrics.json   | 180 +++---
+ .../arch/x86/broadwellx/bdx-metrics.json      | 268 ++++-----
+ .../arch/x86/cascadelakex/cache.json          | 404 +++++++++++++
+ .../arch/x86/cascadelakex/clx-metrics.json    | 389 ++++++------
+ .../arch/x86/cascadelakex/other.json          | 404 -------------
+ .../arch/x86/clearwaterforest/cache.json      |  20 +
+ .../arch/x86/clearwaterforest/other.json      |  22 -
+ .../arch/x86/elkhartlake/cache.json           | 192 ++++++
+ .../arch/x86/elkhartlake/memory.json          | 202 +++++++
+ .../arch/x86/elkhartlake/other.json           | 394 ------------
+ .../arch/x86/emeraldrapids/cache.json         | 100 ++++
+ .../arch/x86/emeraldrapids/emr-metrics.json   | 471 ++++++++-------
+ .../arch/x86/emeraldrapids/memory.json        | 170 ++++++
+ .../arch/x86/emeraldrapids/other.json         | 328 ----------
+ .../arch/x86/emeraldrapids/pipeline.json      |  58 ++
+ .../pmu-events/arch/x86/grandridge/cache.json | 150 ++++-
+ .../arch/x86/grandridge/counter.json          |   2 +-
+ .../arch/x86/grandridge/frontend.json         |   8 +
+ .../arch/x86/grandridge/grr-metrics.json      | 521 +---------------
+ .../pmu-events/arch/x86/grandridge/other.json |  28 -
+ .../arch/x86/grandridge/pipeline.json         |  51 +-
+ .../arch/x86/grandridge/uncore-cache.json     |  45 +-
+ .../arch/x86/grandridge/uncore-memory.json    | 338 +++++++++++
+ .../arch/x86/graniterapids/cache.json         | 122 ++++
+ .../arch/x86/graniterapids/counter.json       |   5 +
+ .../arch/x86/graniterapids/frontend.json      |  21 +
+ .../arch/x86/graniterapids/gnr-metrics.json   | 483 ++++++++-------
+ .../arch/x86/graniterapids/memory.json        | 130 ++++
+ .../arch/x86/graniterapids/other.json         | 237 --------
+ .../arch/x86/graniterapids/pipeline.json      |  52 ++
+ .../arch/x86/graniterapids/uncore-cache.json  |  42 ++
+ .../graniterapids/uncore-interconnect.json    |  90 ++-
+ .../arch/x86/graniterapids/uncore-memory.json | 240 ++++++++
+ .../arch/x86/haswell/hsw-metrics.json         | 206 ++++---
+ .../arch/x86/haswellx/hsx-metrics.json        | 222 ++++---
+ .../pmu-events/arch/x86/icelake/cache.json    |  60 ++
+ .../arch/x86/icelake/icl-metrics.json         | 385 ++++++------
+ .../pmu-events/arch/x86/icelake/memory.json   | 160 +++++
+ .../pmu-events/arch/x86/icelake/other.json    | 220 -------
+ .../pmu-events/arch/x86/icelakex/cache.json   | 273 +++++++++
+ .../arch/x86/icelakex/icx-metrics.json        | 399 ++++++------
+ .../pmu-events/arch/x86/icelakex/memory.json  | 190 ++++++
+ .../pmu-events/arch/x86/icelakex/other.json   | 463 --------------
+ .../arch/x86/ivybridge/ivb-metrics.json       |  76 ++-
+ .../arch/x86/ivybridge/metricgroups.json      |   5 +
+ .../arch/x86/ivytown/ivt-metrics.json         |  80 ++-
+ .../arch/x86/ivytown/metricgroups.json        |   5 +
+ .../arch/x86/jaketown/frontend.json           |   8 +
+ .../arch/x86/jaketown/jkt-metrics.json        |  40 +-
+ .../arch/x86/jaketown/metricgroups.json       |   5 +
+ .../pmu-events/arch/x86/jaketown/other.json   |   8 -
+ .../pmu-events/arch/x86/lunarlake/cache.json  | 122 ++++
+ .../arch/x86/lunarlake/lnl-metrics.json       | 556 +++++++++--------
+ .../pmu-events/arch/x86/lunarlake/memory.json |  44 ++
+ .../pmu-events/arch/x86/lunarlake/other.json  | 353 -----------
+ .../arch/x86/lunarlake/pipeline.json          | 187 ++++++
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |  14 +-
+ .../pmu-events/arch/x86/meteorlake/cache.json | 179 ++++++
+ .../arch/x86/meteorlake/memory.json           |  44 ++
+ .../arch/x86/meteorlake/mtl-metrics.json      | 549 +++++++++--------
+ .../pmu-events/arch/x86/meteorlake/other.json | 140 -----
+ .../arch/x86/meteorlake/pipeline.json         |  44 +-
+ .../arch/x86/meteorlake/uncore-memory.json    |  18 +
+ .../pmu-events/arch/x86/nehalemep/cache.json  |  32 +
+ .../pmu-events/arch/x86/nehalemep/other.json  |  40 --
+ .../arch/x86/nehalemep/virtual-memory.json    |   8 +
+ .../pmu-events/arch/x86/nehalemex/cache.json  |  32 +
+ .../pmu-events/arch/x86/nehalemex/other.json  |  40 --
+ .../arch/x86/nehalemex/virtual-memory.json    |   8 +
+ .../pmu-events/arch/x86/rocketlake/cache.json |  60 ++
+ .../arch/x86/rocketlake/memory.json           | 160 +++++
+ .../pmu-events/arch/x86/rocketlake/other.json | 220 -------
+ .../arch/x86/rocketlake/rkl-metrics.json      | 385 ++++++------
+ .../arch/x86/sandybridge/frontend.json        |   8 +
+ .../arch/x86/sandybridge/metricgroups.json    |   5 +
+ .../arch/x86/sandybridge/other.json           |   8 -
+ .../arch/x86/sandybridge/snb-metrics.json     |  36 +-
+ .../arch/x86/sapphirerapids/cache.json        | 150 +++++
+ .../arch/x86/sapphirerapids/memory.json       | 170 ++++++
+ .../arch/x86/sapphirerapids/other.json        | 378 ------------
+ .../arch/x86/sapphirerapids/pipeline.json     |  58 ++
+ .../arch/x86/sapphirerapids/spr-metrics.json  | 465 +++++++-------
+ .../arch/x86/sierraforest/cache.json          |  20 +
+ .../arch/x86/sierraforest/memory.json         |  20 +
+ .../arch/x86/sierraforest/other.json          |  48 --
+ .../arch/x86/sierraforest/pipeline.json       |   8 +
+ .../arch/x86/sierraforest/uncore-cache.json   |  32 +
+ .../arch/x86/sierraforest/uncore-memory.json  | 240 ++++++++
+ .../arch/x86/skylake/skl-metrics.json         | 367 ++++++------
+ .../pmu-events/arch/x86/skylakex/cache.json   |  74 +++
+ .../pmu-events/arch/x86/skylakex/other.json   |  74 ---
+ .../arch/x86/skylakex/skx-metrics.json        | 385 ++++++------
+ .../pmu-events/arch/x86/snowridgex/cache.json | 192 ++++++
+ .../arch/x86/snowridgex/memory.json           | 202 +++++++
+ .../pmu-events/arch/x86/snowridgex/other.json | 394 ------------
+ .../arch/x86/tigerlake/tgl-metrics.json       | 383 ++++++------
+ .../arch/x86/westmereep-dp/cache.json         |  32 +
+ .../arch/x86/westmereep-dp/other.json         |  40 --
+ .../x86/westmereep-dp/virtual-memory.json     |   8 +
+ .../arch/x86/westmereep-sp/cache.json         |  32 +
+ .../arch/x86/westmereep-sp/other.json         |  40 --
+ .../x86/westmereep-sp/virtual-memory.json     |   8 +
+ .../pmu-events/arch/x86/westmereex/cache.json |  32 +
+ .../pmu-events/arch/x86/westmereex/other.json |  40 --
+ .../arch/x86/westmereex/virtual-memory.json   |   8 +
+ 123 files changed, 9868 insertions(+), 8782 deletions(-)
+ delete mode 100644 tools/perf/pmu-events/arch/x86/clearwaterforest/other.json
 
-diff --git a/arch/riscv/include/asm/kgdb.h b/arch/riscv/include/asm/kgdb.h
-index 46677daf708b..566ab1bc66fa 100644
---- a/arch/riscv/include/asm/kgdb.h
-+++ b/arch/riscv/include/asm/kgdb.h
-@@ -17,20 +17,9 @@
- #define BREAK_INSTR_SIZE	4
- #endif
- 
--#ifndef	__ASSEMBLY__
--
-+extern void arch_kgdb_breakpoint(void);
- extern unsigned long kgdb_compiled_break;
- 
--static inline void arch_kgdb_breakpoint(void)
--{
--	asm(".global kgdb_compiled_break\n"
--	    ".option norvc\n"
--	    "kgdb_compiled_break: ebreak\n"
--	    ".option rvc\n");
--}
--
--#endif /* !__ASSEMBLY__ */
--
- #define DBG_REG_ZERO "zero"
- #define DBG_REG_RA "ra"
- #define DBG_REG_SP "sp"
-diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
-index 2e0266ae6bd7..5d1ce8dacaf5 100644
---- a/arch/riscv/kernel/kgdb.c
-+++ b/arch/riscv/kernel/kgdb.c
-@@ -254,6 +254,14 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
- 	regs->epc = pc;
- }
- 
-+noinline void arch_kgdb_breakpoint(void)
-+{
-+	asm(".global kgdb_compiled_break\n"
-+	    ".option norvc\n"
-+	    "kgdb_compiled_break: ebreak\n"
-+	    ".option rvc\n");
-+}
-+
- void kgdb_arch_handle_qxfer_pkt(char *remcom_in_buffer,
- 				char *remcom_out_buffer)
- {
 -- 
-2.49.0
+2.49.0.395.g12beb8f557-goog
 
 
