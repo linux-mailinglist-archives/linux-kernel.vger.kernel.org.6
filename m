@@ -1,160 +1,150 @@
-Return-Path: <linux-kernel+bounces-572254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78351A6C845
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:21:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54690A6C848
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:24:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2533463579
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:21:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C054417F1C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285D61D516A;
-	Sat, 22 Mar 2025 08:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA611D7E31;
+	Sat, 22 Mar 2025 08:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xXcqbj0X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bOx4GZyd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ieHacYSb"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BFE35947;
-	Sat, 22 Mar 2025 08:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36471922C0;
+	Sat, 22 Mar 2025 08:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742631654; cv=none; b=n2vPBJ+qJX8Pl+paDEoKpUh4liTsGVVngG5lB1UYvS22WIBzyCtN7iPpIYqjYJCkC2DNtA8D7s7RFLcIsE8x8nH/LN4SoM+K0/Ec0HTSSrDDBk+oHdwid6cH5bUXfQaeXgDsUuXmJx6hJdZpURBvDQNHObaYQhoqIJ1Mk5yZwqw=
+	t=1742631835; cv=none; b=pQEmSAjYN1xewknxnKW6xAcZl1pypONCt0Wfyd6TaOdELmWnhZIzv0QasZl8Qn8uiavyGf221gxKcjQqKdHyCf8A04we+gOb+DunhErFChSGI9jWCCTRBJoUFvkLfdMNkRqFyq4VrDPMnfLc/uVLmlBH+xc3HGzs/2B2nBArl94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742631654; c=relaxed/simple;
-	bh=ljM+15jZBa7WIlkLmPXRJVAaKt3T1zsiNAikYNJyo18=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pPsrTzJkIhTomxz8lCGr6fi86Rx4zcjEqf+09Cj0DZKh7dPjf/XRgt09DfUKrrZOWgx5wO19PhIomlY2Ijo0Ib/P/bMNPYnqr4I3pD8nGXNlH50m8PTmxw3M1CwCfTwlMo++4l1HXWxsa9XSYASGGbbv0oHF12/tLE1V+QX0pXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xXcqbj0X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bOx4GZyd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742631651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vX3BOi74PvX4kfihHfQZdKLL1ZfIRDEjSR1PAGGmBW4=;
-	b=xXcqbj0XtAiz0HyXaDtJdq2je/svPI4E6gTOkJECRi3tvMEunyczYg4vcOoAduxyKdAL3R
-	CRjOXQIi0YC2adq1ntSA91m64PVf+YGGP1sPJSCxkKCDg4/GTs1NKXfmziDUGNA+DSFDVI
-	Q1A1icZWBbmSzuqbBLTqBJnl5e73vkGKz6p8fLbONfwazaUl0Tpc6mPgeHLQBls9YWdnwN
-	aul+z6HtTFgeQzfmOXBmC/w1r9rp1j7eFbhQuNastzXtqvHwMf5i4hwDGLPtOD0aMikJHs
-	uL48n/wL76EXEFT9M4YsJPGexC38M8jpTHnUCh0+3jbMs69cMshJgLLczUY/gg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742631651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vX3BOi74PvX4kfihHfQZdKLL1ZfIRDEjSR1PAGGmBW4=;
-	b=bOx4GZydX5giUKAbKX8dkzpgMLXku6/jPtR04RVYDuzvyCKHwCw8ad8WoISPuc3DFZYESE
-	zzCjy4C6mAhP2jBg==
-To: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin.larsson@genexis.eu
-Subject: Re: [PATCH v1 3/8] irqchip: Add EcoNet EN751221 INTC
-In-Reply-To: <ce72abfe-e822-48d6-9fc7-3cf9faffdc76@cjdns.fr>
-References: <20250321134633.2155141-1-cjd@cjdns.fr>
- <20250321134633.2155141-4-cjd@cjdns.fr> <87tt7m1664.ffs@tglx>
- <ce72abfe-e822-48d6-9fc7-3cf9faffdc76@cjdns.fr>
-Date: Sat, 22 Mar 2025 09:20:50 +0100
-Message-ID: <87bjtt1nod.ffs@tglx>
+	s=arc-20240116; t=1742631835; c=relaxed/simple;
+	bh=1JtflKyowsrny4ccNJCHAmNyNDlmwMx7iwJtiAM/nUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QzM/+3MonUc7NN5qtyPrr4tZOHWEegQzonRJDk8ExYlFTtYa3sE7u9750Q6Zjtp4HP4UU0WL2YJ6CzS7od2vyxcDnv7IMwCQXm3Uwa8B/MbTCL99oOMkmCLo7ZY0NQO7IywdnZqloroZwT7/qebyq8rz03polLvVZfplIg6dJY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ieHacYSb; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1742631830;
+	bh=1JtflKyowsrny4ccNJCHAmNyNDlmwMx7iwJtiAM/nUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ieHacYSblP1rXFXNlq5KdNwhsLxdwYdLZKMC4361xBtkcU/m/XU4UY3jN1IfsO7DA
+	 055e3C/5ao8WDHkypz4xGGwvrxC96YNEqtIE6vck218veniHGOKILA9tZXySo6mUYa
+	 9PdeqRp8z3e7sN0PJtTdM9WEiUVperKrsnRFS2RE=
+Date: Sat, 22 Mar 2025 09:23:49 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Joaquin Ignacio Aramendia <samsagax@gmail.com>, Derek J Clark <derekjohn.clark@gmail.com>, 
+	Kevin Greenberg <kdgreenberg234@protonmail.com>, Joshua Tam <csinaction@pm.me>, 
+	Parth Menon <parthasarathymenon@gmail.com>, Eileen <eileen@one-netbook.com>, linux-kernel@vger.kernel.org, 
+	sre@kernel.org, ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, 
+	mario.limonciello@amd.com
+Subject: Re: [PATCH v6 11/14] platform/x86: oxpec: Adhere to
+ sysfs-class-hwmon and enable pwm on 2
+Message-ID: <96d19837-167a-43d6-93ea-cd24844cff7f@t-8ch.de>
+References: <20250319175512.27059-1-lkml@antheas.dev>
+ <20250319175512.27059-12-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319175512.27059-12-lkml@antheas.dev>
 
-On Fri, Mar 21 2025 at 23:20, Caleb James DeLisle wrote:
-> On 21/03/2025 21:26, Thomas Gleixner wrote:
->> Caleb!
->>
->> On Fri, Mar 21 2025 at 13:46, Caleb James DeLisle wrote:
->>> ---
->>> If CPU_MIPSR2_IRQ_EI / CPU_MIPSR2_IRQ_VI are enabled in the build, this
->>> device switches to sending all interrupts as vectored - which IRQ_MIPS_CPU
->>> is not prepared to handle. If anybody knows how to either disable this
->>> behavior, or handle vectored interrupts without ugly code that breaks
->>> cascading, please let me know and I will implement that and add
->>> MIPS_MT_SMP in a future patchset.
->> This must be addressed before this driver can be merged, but that's a
->> topic for the MIPS wizards and out of my area of expertise, except for
->> the obvious:
->>
->>      For a start you can exclude this platform from being enabled in
->>      Kconfig when the EI/VI muck is enabled. That's what 'depends on' is
->>      for,
->
-> Maybe my message was misleading everything has been tested and works correctly
-> on multiple SoCs because ECONET_SOC_EN751221 does not select EI/VI. Answering
-> this question will allow me to enable them, thus also getting
-> MIPS_MT_SMP.
+On 2025-03-19 18:55:06+0100, Antheas Kapenekakis wrote:
+> Currently, the driver does not adhere to the sysfs-class-hwmon
+> specification: 0 is used for auto fan control and 1 is used for manual
+> control. However, it is expected that 0 sets the fan to full speed,
+> 1 sets the fan to manual, and then 2 is used for automatic control.
+> 
+> Therefore, change the sysfs API to reflect this and enable pwm on 2.
+> 
+> As we are breaking the ABI for this driver, rename oxpec to oxp_ec,
+> reflecting the naming convention used by other drivers, to allow for
+> a smooth migration in current userspace programs.
 
-It does not select it, but it can be enabled independently or through
-some other magic config knob, right? And if it gets enabled, then it
-does not work, right?
+Where is the renaming being done?
 
-> I could look at forbidding them in the driver, but I'm not sure that's
-> appropriate as this seems like more of an SoC issue than an INTC
-> issue. But I'll follow your guidance.
-
-What's not appropriate? If it does not work, then it's very appropriate
-to do
-
-   config ECONET
-          depends on !EI && !VI
-
-on the principle of least surprise, no?
-
->> So this patch clearly should have been tagged with 'RFC'.
->
-> Given the patchset works correctly in testing, does this comment
-> stand?
-
-Until the EI/VI issue is resolved so that it either works or cannot
-happen.
-
->>> +static int econet_intc_map(struct irq_domain *d, u32 irq, irq_hw_number_t hwirq)
->>> +{
->>> +	int ret;
->>> +
->>> +	if (hwirq >= INTC_IRQ_COUNT) {
->>> +		pr_err("%s: hwirq %lu out of range\n", __func__, hwirq);
->>> +		return -EINVAL;
->>> +	} else if (econet_intc_rai.shadow_interrupts[hwirq] == INTC_IS_SHADOW) {
->>> +		pr_err("%s: can't map hwirq %lu, it is a shadow interrupt\n",
->>> +		       __func__, hwirq);
->> No newline
-> If I understand correctly, you prefer:
-> .....interrupt\n", __func__, hwirq);
-> for a 96 char line?
-
-You have 100 characters in drivers/irqchip/
-
->>> +	.domain_ops = {
->>> +		.xlate = irq_domain_xlate_onecell,
->>> +		.map = econet_intc_map,
->> See documention.
-> I suppose this is tab alignment, but I will in any case make a point
-> of reading it all carefully.
-
-Yes. The aligned tabular view is way simpler to read and parse. Reading
-is based on pattern recognition. Irregular patterns disturb the reading
-flow, which means the focus is shifted from understanding to decoding
-the irregular pattern.
-
-> In case of any doubt, I wasn't trying to sneak bad code past you.
-
-I did not assume malice here at all.
-
-Thanks,
-
-        tglx
+> Closes: https://lore.kernel.org/linux-hwmon/20241027174836.8588-1-derekjohn.clark@gmail.com/
+> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  drivers/platform/x86/oxpec.c | 35 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+> index e84afc5f53379..680fa537babf6 100644
+> --- a/drivers/platform/x86/oxpec.c
+> +++ b/drivers/platform/x86/oxpec.c
+> @@ -731,7 +731,27 @@ static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
+>  		case hwmon_pwm_input:
+>  			return oxp_pwm_input_read(val);
+>  		case hwmon_pwm_enable:
+> -			return oxp_pwm_read(val);
+> +			ret = oxp_pwm_read(val);
+> +			if (ret)
+> +				return ret;
+> +
+> +			/* Check for auto and return 2 */
+> +			if (!*val) {
+> +				*val = 2;
+> +				return 0;
+> +			}
+> +
+> +			/* Return 0 if at full fan speed, 1 otherwise */
+> +			ret = oxp_pwm_fan_speed(val);
+> +			if (ret)
+> +				return ret;
+> +
+> +			if (*val == 255)
+> +				*val = 0;
+> +			else
+> +				*val = 1;
+> +
+> +			return 0;
+>  		default:
+>  			break;
+>  		}
+> @@ -745,15 +765,24 @@ static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
+>  static int oxp_platform_write(struct device *dev, enum hwmon_sensor_types type,
+>  			      u32 attr, int channel, long val)
+>  {
+> +	int ret;
+> +
+>  	switch (type) {
+>  	case hwmon_pwm:
+>  		switch (attr) {
+>  		case hwmon_pwm_enable:
+>  			if (val == 1)
+>  				return oxp_pwm_enable();
+> -			else if (val == 0)
+> +			else if (val == 2)
+>  				return oxp_pwm_disable();
+> -			return -EINVAL;
+> +			else if (val != 0)
+> +				return -EINVAL;
+> +
+> +			/* Enable PWM and set to max speed */
+> +			ret = oxp_pwm_enable();
+> +			if (ret)
+> +				return ret;
+> +			return oxp_pwm_input_write(255);
+>  		case hwmon_pwm_input:
+>  			return oxp_pwm_input_write(val);
+>  		default:
+> -- 
+> 2.48.1
+> 
 
