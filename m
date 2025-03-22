@@ -1,182 +1,135 @@
-Return-Path: <linux-kernel+bounces-572599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BE9A6CC03
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:37:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89691A6CC06
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45647ACB55
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:36:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E15017344E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F26233715;
-	Sat, 22 Mar 2025 19:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B3C233715;
+	Sat, 22 Mar 2025 19:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Ck3tfQ4j"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Tdc+X3Ns"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3C8376F1;
-	Sat, 22 Mar 2025 19:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81F4191484;
+	Sat, 22 Mar 2025 19:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742672222; cv=none; b=g5FKjwk3CbUIAIQUDPgK7nxdCxYAly3NCW3VlANS2S7cXS9IatStnxA7YC/wuckG5BZ+eihAH/b0WfWgytslWe95ExpRgXt1zyHDjDuO1hvuHB4Zup4ENe30F0K2IGGSAXaFrCsyRBobk3X7ne/FGcrTh0+TWFAAo7A7aSHhNgA=
+	t=1742672396; cv=none; b=N6EUXj8rf2c8WkF06eAQRcrfmD/Qhaz5iWUBJAA6qeO6aOmuuHgBzncDYN0cVnmVs5uhznhujP2nNJ9OrUVaqx0Zq2OpMp4zE6zxicA08Hg8zu6WkBRUGtR8E37thNnXpjhpbmQYf9bg2LK+VIn9QZv2r/nVGOmc2lWg8+C0/Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742672222; c=relaxed/simple;
-	bh=6P/5M3cfeO70SoAkSbikp264g04xNxCwVXnkhgsl85I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z25lzN65m/qneTpdB8N85ODTgiCvPDNZ86OCwk0XOUcUQOrFb879sKPn2kh8oB5rUoV8IeMx/4umvtDwTwHzyVn5iMzunnAisyQmrDF7pl19H7ZvaWzYgiEKiFz5gLEUHK4OiWJu63u7S05Ija/Hcz3PAp3I7/ezO86t1bu8kk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Ck3tfQ4j; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 40A1FA02DE;
-	Sat, 22 Mar 2025 20:36:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=3AynJL+dhUM+xX7FNGAWHa5xmA3IueurXqDLGr7/TpI=; b=
-	Ck3tfQ4jZZJAybDWC18HN2SNgDmRFwISNwopn5TsMhMGNReE0xdJIWUyzOaVOy5Y
-	hc/16gA3bWHtFqqkW2znbGRXq4NnuUjof3gk7ivQEgaCWSGGrEQ5TqrhszH7J4J2
-	QSCmNDtTbBymVE06ufzqRO8g0rxoi4RqJK5OBCPuHCDZUc2aBgDMFP7ha4t16J1F
-	vbU7aCdVauWKVqpeMwgrscOgE61u3XaMPpqot5JwxjaeKeOJgo9EphCLluMye18a
-	EmUueOaRlWTU1NdbZjtQHhoCRSjJY+5KID6Yr//8iUyMHm7sNYpG01e+87l+ec+J
-	Wqvg0QxTImQRA3msNkbBhYSQFvnDbz8SBhJtJf8NUWPJRmBuMX5xWl59tAHOiHJU
-	LP0PORBhd1YxFroqBtqPX3WSHjaT08gttgVJ+9qkbOdKqsT5hRCSsYOy3JE6olPu
-	t1L9+OofRkUoFSEpGnKlMI52bHkL7Al6HxZe4TrP1hj1kgP3FdYRgNnB6aV7UYxY
-	7ORCBdgLmC5pJHE/vYqUKljpX6McFNxdjeEeQUZfDoryBHdA8cUSuyKYF/GR5pnq
-	gfG+eL4X0TDBPPfqF4XEOseodiJFGxVgWUGdzHOtmNW+gjkO3FO05j6rDAJz+zZf
-	PFlbRmyzEJfSSQad0YoeBbn5vSUWnA6QBx2wx2P1BpY=
-From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Markus
- Elfring" <Markus.Elfring@web.de>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, Chen-Yu Tsai <wens@kernel.org>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Vinod Koul
-	<vkoul@kernel.org>, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v5] dma-engine: sun4i: Use devm functions in probe()
-Date: Sat, 22 Mar 2025 20:36:40 +0100
-Message-ID: <20250322193640.246382-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742672396; c=relaxed/simple;
+	bh=8OIq+Wo2/zDD1QwxwJjjI9ONHTCHeAVVjhcHDxNT/AU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E0Kj3uHufeNIxLigE/WbsN3wPvxvFGDPCaUCTi8FDTJkuK1UoSPtxKVBevOka2Ub+CpYfjpiRPoQbI9xZ17nQTI5KqbXCoCXYU/Ti5ZtF2Q+ez3mOkrhyRx6+CmAJ/KkeWhFcw6fJ59VKcxhWnD8Q78pu8pvuiLHNNf+90WIVCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Tdc+X3Ns; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742672383; x=1742931583;
+	bh=hAdqcXvwa0PQGT2crMzS062EBahsO4Cp53FtPgBMQZI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Tdc+X3NsaC/WuIS59HZy6te+B+06GuQWHBQXdUcndBy/u6joaYcjAoVjieJ2A4XIg
+	 6AvJn4swmcuLe4WCHlp8qhllPqfo+sRRbAbGiWV9j4x+FJazFazOOBIAU1j5gOKzbX
+	 IfBfYsSWEfL6bq5XNPyCd2Zy+V4E56AqVm6UrK5f2QKtlVpIAj1W2jsREz6NdtdgjU
+	 I60IQMTXviGPREE4et/bp4EWPMKHrKFgztX+avQpXM+17YMstpRkQNQVNY/W+l8UPZ
+	 UdV0z4vCH6BflMoFJPv1+keHVbMCrDv8IjKiYWa4IPbt94z6Gkibrigrm0Up8lqe/F
+	 rNltqkVlfZ9HQ==
+Date: Sat, 22 Mar 2025 19:39:35 +0000
+To: Antonio Hickey <contact@antoniohickey.com>, tamird@gmail.com
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, gary@garyguo.net, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu
+Subject: Re: [PATCH v5 01/17] rust: enable `raw_ref_op` feature
+Message-ID: <D8N1SQ8V7WAQ.21T9FK0YDMKLK@proton.me>
+In-Reply-To: <20250322191210.1926380-1-contact@antoniohickey.com>
+References: <CAJ-ks9=GHVfd=iRT73DviOD=6dio3U7wQWLaXAhKr3UG5-ivvw@mail.gmail.com> <20250322191210.1926380-1-contact@antoniohickey.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 185d5a219f79634731a58c4f9b2a4c4e5134d453
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1742672217;VERSION=7987;MC=1970532306;ID=72972;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D948526D7266
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Clean up error handling by using devm functions and dev_err_probe(). This
-should make it easier to add new code, as we can eliminate the "goto
-ladder" in probe().
+On Sat Mar 22, 2025 at 8:12 PM CET, Antonio Hickey wrote:
+> On Sat, Mar 22, 2025 at 02:24:30PM -0400, Tamir Duberstein wrote:
+>> On Sat, Mar 22, 2025 at 11:08=E2=80=AFAM Antonio Hickey
+>> <contact@antoniohickey.com> wrote:
+>> > On Sat, Mar 22, 2025 at 10:16:01AM +0000, Benno Lossin wrote:
+>> > > On Thu Mar 20, 2025 at 3:07 AM CET, Antonio Hickey wrote:
+>> > > > Since Rust 1.82.0 the `raw_ref_op` feature is stable.
+>> > > >
+>> > > > By enabling this feature we can use `&raw const place` and
+>> > > > `&raw mut place` instead of using `addr_of!(place)` and
+>> > > > `addr_of_mut!(place)` macros.
+>> > > >
+>> > > > Allowing us to reduce macro complexity, and improve consistency
+>> > > > with existing reference syntax as `&raw const`, `&raw mut` are
+>> > > > similar to `&`, `&mut` making it fit more naturally with other
+>> > > > existing code.
+>> > > >
+>> > > > Suggested-by: Benno Lossin <benno.lossin@proton.me>
+>> > > > Link: https://github.com/Rust-for-Linux/linux/issues/1148
+>> > > > Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+>> > >
+>> > > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+>> > >
+>> > > > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+>> > > > index 993708d11874..a73aaa028e34 100644
+>> > > > --- a/scripts/Makefile.build
+>> > > > +++ b/scripts/Makefile.build
+>> > > > @@ -224,9 +224,9 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+>> > > >     $(call if_changed_dep,cc_lst_c)
+>> > > >
+>> > > >  # Compile Rust sources (.rs)
+>> > > > -# ---------------------------------------------------------------=
+------------
+>> > > > +# ---------------------------------------------------------------=
+-----------------------
+>> > >
+>> > > Not sure about this change.
+>> >
+>> > This change is so I could enable the `raw_ref_op` feature for doctests
+>> > since the minimum Rust version 1.78 still has `raw_ref_op` as an
+>> > expiramental feature, and will throw errors at compile if a doctest us=
+es
+>> > it. Is there a better way to do this?
+>>=20
+>> I think Benno is just asking about the extension of the dashed line.
+>
+> Ahh ok yea that makes sense, thanks Tamir, sorry Benno I misunderstood.
 
-Suggested-by: Chen-Yu Tsai <wens@kernel.org>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+No worries, it is exactly as Tamir said.
+
+> So the reason I extended the dashed line was because before my change=20
+> the dashed line perfectly aligned with number of characters in the line
+> I changed. I figured it was supposed to match the amount of characters
+> of the line.
+>
+> Giving this a deeper look it looks like the all the other dashed lines
+> are maxed at 77 characters.=20
+
+Yeah that's also what I thought, so I wouldn't change it.
+
+> I will update this.
+
+If you send another version, you can update this, but Miguel might pick
+the patch early, he can then remove the change above when taking the
+patch (so I wouldn't send a new version just to change this single
+line).
+
 ---
-
-Notes:
-    Changes in v2:
-    * rebase on current next
-    Changes in v3:
-    * rebase on current next
-    * collect Jernej's tag
-    Changes in v4:
-    * rebase on current next
-    * collect Chen-Yu's tag
-    Changes in v5:
-    * reformat msg to 75 cols
-    * keep `\n`s in error messages
-
- drivers/dma/sun4i-dma.c | 31 ++++++-------------------------
- 1 file changed, 6 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
-index 24796aaaddfa..59ecebfc8eed 100644
---- a/drivers/dma/sun4i-dma.c
-+++ b/drivers/dma/sun4i-dma.c
-@@ -1249,10 +1249,9 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 	if (priv->irq < 0)
- 		return priv->irq;
- 
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
-+	priv->clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(priv->clk)) {
--		dev_err(&pdev->dev, "No clock specified\n");
--		return PTR_ERR(priv->clk);
-+		return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk), "Couldn't start the clock\n");
- 	}
- 
- 	if (priv->cfg->has_reset) {
-@@ -1328,12 +1327,6 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 		vchan_init(&vchan->vc, &priv->slave);
- 	}
- 
--	ret = clk_prepare_enable(priv->clk);
--	if (ret) {
--		dev_err(&pdev->dev, "Couldn't enable the clock\n");
--		return ret;
--	}
--
- 	/*
- 	 * Make sure the IRQs are all disabled and accounted for. The bootloader
- 	 * likes to leave these dirty
-@@ -1344,32 +1337,23 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 	ret = devm_request_irq(&pdev->dev, priv->irq, sun4i_dma_interrupt,
- 			       0, dev_name(&pdev->dev), priv);
- 	if (ret) {
--		dev_err(&pdev->dev, "Cannot request IRQ\n");
--		goto err_clk_disable;
-+		return dev_err_probe(&pdev->dev, ret, "Cannot request IRQ\n");
- 	}
- 
--	ret = dma_async_device_register(&priv->slave);
-+	ret = dmaenginem_async_device_register(&priv->slave);
- 	if (ret) {
--		dev_warn(&pdev->dev, "Failed to register DMA engine device\n");
--		goto err_clk_disable;
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register DMA engine device\n");
- 	}
- 
- 	ret = of_dma_controller_register(pdev->dev.of_node, sun4i_dma_of_xlate,
- 					 priv);
- 	if (ret) {
--		dev_err(&pdev->dev, "of_dma_controller_register failed\n");
--		goto err_dma_unregister;
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register translation function\n");
- 	}
- 
- 	dev_dbg(&pdev->dev, "Successfully probed SUN4I_DMA\n");
- 
- 	return 0;
--
--err_dma_unregister:
--	dma_async_device_unregister(&priv->slave);
--err_clk_disable:
--	clk_disable_unprepare(priv->clk);
--	return ret;
- }
- 
- static void sun4i_dma_remove(struct platform_device *pdev)
-@@ -1380,9 +1364,6 @@ static void sun4i_dma_remove(struct platform_device *pdev)
- 	disable_irq(priv->irq);
- 
- 	of_dma_controller_free(pdev->dev.of_node);
--	dma_async_device_unregister(&priv->slave);
--
--	clk_disable_unprepare(priv->clk);
- }
- 
- static struct sun4i_dma_config sun4i_a10_dma_cfg = {
--- 
-2.49.0
-
+Cheers,
+Benno
 
 
