@@ -1,220 +1,139 @@
-Return-Path: <linux-kernel+bounces-572567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBEBA6CB83
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:43:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A47DA6CB88
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F65316FB6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 965271724DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3256323372A;
-	Sat, 22 Mar 2025 16:42:55 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9951F8BD0;
+	Sat, 22 Mar 2025 16:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlyUtzfg"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E64F2F2E;
-	Sat, 22 Mar 2025 16:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9213C42A95;
+	Sat, 22 Mar 2025 16:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742661774; cv=none; b=J0U9d7Um29fn++HnkijmDEEtSLJBtQZxB9j1Zodwm8sC0VyKsh5X6i9au9c0vNHPz0DnT23IVZ8ciOcUrLU3Qlu/2sXRiJHfUhHAKZ2eyeO1nXRThAdybG6q67vfyCcIpuRnZwzj1DmH7oWBK8+xl6OrXBsAtLkiSK2WdTjUjxw=
+	t=1742662042; cv=none; b=kJwqeOMW3k1VQgjUZ1GAJg8Xnme8Lc9CV4a/te69LWPI6bcroabOlnK0yZ4gzRVhHzJ0P22LyMSL5x7J/mWYHwf9+Pm8B008z1IaavVVJhfOr3UWZNgBg9qT4fO26X0QuGLcuzS4euz57S3GkXsaDzUnQkt6C336ZIGiTxjux/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742661774; c=relaxed/simple;
-	bh=eEJciwGcXOknmhCKjfQULd+ZNQAEWgF8sDK4JSzkNXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kXDafkgEPtRP9+i+/Sc8uoUsQkHcp22OUEoPVlGkNFMni1/qVdNKUGR5scLdD/mXFhNw1V5k+O4WQEwj/m7eoBDArx6ao5dr8t+Ea7qbS4//HlMkN08pylasaFjL+OG4iBB3eX0jgfdz/dA58vSmk1Viln2x3WG2USeIOyTYuos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 3E8703431B5;
-	Sat, 22 Mar 2025 16:42:51 +0000 (UTC)
-Date: Sat, 22 Mar 2025 16:42:47 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heylenay@4d2.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 6/7] clk: spacemit: define new syscons with only
- resets
-Message-ID: <20250322164247-GYD11633@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-7-elder@riscstar.com>
+	s=arc-20240116; t=1742662042; c=relaxed/simple;
+	bh=x1Hxu2NqB091ZMTTEHQh3QdoMEAvMoFfMHZylr0YIDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IBeDP+cOVFP6im/A2Oj24DPB4cTtnp3p593cOPgFpt9VUea9/hLWlGh5C7h71TWwa0m/mZAhWNQzPzSgw8HH8hlBr8R2DBCexx7JpdfUEqbC6ByZFbn5ua8l54qSn8SITnThB/x4w1sfxS19aLQC4PIM/c8G/Kxu9qq3lyZl+ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JlyUtzfg; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224171d6826so33023855ad.3;
+        Sat, 22 Mar 2025 09:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742662041; x=1743266841; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4oZWghiNjAlrtNJFVehbVZflo2MEg7y9K6aALaJ0B68=;
+        b=JlyUtzfglolmMlOmn4qDoQT66HQeD6HwRz+PdAcAMfaxSmnMHD+bf3es0set89QdvB
+         ggmYRil4Eu7O8++wzjPtrcKnMjs1ZYQjKESzYbQ5gD0rWEzdnj8P4tziPtYD5ENGLy29
+         PPtEDYiefeAuDYAmb6JpFOPkoOCaN2F0GQxnmuxZPNgCtAomDGNFHPystLKCCZF1e6M1
+         Kl5BccdcBVTNJPlYsuDqcx7DHGTWPn86/Do292ApBxGU4eSCkhEp5vFifuSx0l5eeLX0
+         NE6Uwcwqw8FCKPHEhwLI/3pGXLBa7pGZwHm3TBhTDUfR+mFFdLfxxaceZuURVvu5fLd8
+         RivQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742662041; x=1743266841;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4oZWghiNjAlrtNJFVehbVZflo2MEg7y9K6aALaJ0B68=;
+        b=MLkh8IGjg/2i1bkBvFd9FuAj/KsRWNDKXHNr57UizK9V8BxqId3dNx0OLJ7Qxdtm8Y
+         LsgJAN+DPvWKiZHAhG73okg9Q3MIF+tnG+Bdie/eKwtUSyz3r5byU08Ab2kHA4VfhUk1
+         4yJ5TPFbC7kS8Mshbxrri1m5mC+gUNa/XnplkByBBM7ExqRU7smmVfRipYc9ri9nLvFQ
+         zvOvJx4MCtdE2b+SccQn8hFKXKMMnvYauxiMZviiQJYxD/qP6L5gH15i1JT/cT0vdAej
+         niORcq8kNCDWVJ5/g3ZNvVWKDZwzP3JtA9G0HeCAQpRcQAV11hvfintH+KuKk6avSwas
+         GMcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMpNh8WY9W4Xa1O1b0DeJKo+7XtGFXkH5rhaa9nggxQxNo07mEmp0K3WqCqKnURCX5AjZ3ZPng1BksbkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxV/+xc9O+iLQWnshz++6oneE5J2PnPD5YpNZb3B6F+8hq3F6e
+	BNzNIAsxMUdjw9x837Cx6kFZfsXIOlFc2QmCvQazz33vivGHHkNQ
+X-Gm-Gg: ASbGncvuIaV1h1gWnCNrKXqtOtpQeM/qlrJWKs5PGHJ0VpEFR51XWylX+7d3gkNh/Kb
+	wR5kZIAMxKMzeP36L0Q9R0sjYMBpE29fEKRVPrsMYQqOAvcD+moK9zGV2iELxrUIA12a9sgHfM9
+	oI/G1W4yPhpOtu22EV2ubrQSZcfZSVK/8zMjzfgmXTkUlSh35D6L26WJstrMiFCSxOvVOi4tmF1
+	NSb2vARgUyhDB6R25Cw/jKmtyL0pdE7mz1HAJiqx475Sw/RkfF8yB96buqNVJV7TwHwplPm+UZG
+	bw9ADeFkUs135lAJqU4DP8mB2rQpPeZAyYUvilGF3bFUqCoLJB7AOIum2Y8CHgnLEpB3u1XkpDj
+	1JitJXoiNN+vaHPUKj1/sXlRYhnY=
+X-Google-Smtp-Source: AGHT+IF9f+O6T6I/yyZTflx572MZ3X35rrNAF1uc+QEq5g6l1n1zYIC84y61RNeO5oIZdK4izvg0lg==
+X-Received: by 2002:a05:6a00:1393:b0:736:3d7c:236c with SMTP id d2e1a72fcca58-73905999e30mr9691143b3a.14.1742662040423;
+        Sat, 22 Mar 2025 09:47:20 -0700 (PDT)
+Received: from malayaVM.mrout-thinkpadp16vgen1.punetw6.csb ([103.133.229.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390618e5c2sm4381645b3a.172.2025.03.22.09.47.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 09:47:19 -0700 (PDT)
+From: Malaya Kumar Rout <malayarout91@gmail.com>
+To: malayarout91@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	linux-hyperv@vger.kernel.org
+Subject: [PATCH] tools/hv: Memory Leak on realloc
+Date: Sat, 22 Mar 2025 22:16:47 +0530
+Message-ID: <20250322164709.500340-1-malayarout91@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321151831.623575-7-elder@riscstar.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Alex:
+Static analysis for hv_kvp_daemon.c with cppcheck : error:
 
-It occur to me it's a little odd to implemnt reset driver
-for RCPU block, but after check with vendor the RCPU region can
-be accessed both by ACPU and RCPU, then I'm fine with this.
+hv_kvp_daemon.c:359:3: error: Common realloc mistake:
+'record' nulled but not freed upon failure [memleakOnRealloc]
+record = realloc(record, sizeof(struct kvp_record) *
 
-ACPU - RISC-V Main CPU, with mmu, running Linux
-RCPU - real time CPU, without mmu, running RT-OS
+If realloc() fails, record is now NULL.
+If we directly assign this NULL to record, the reference to the previously allocated memory is lost.
+This causes a memory leak because the old allocated memory remains but is no longer accessible.
 
-On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> Enable support for three additional syscon CCUs which support reset
-> controls but no clocks:  ARCPU, RCPU2, and APBC2.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c | 106 ++++++++++++++++++++++++++++++++++
->  1 file changed, 106 insertions(+)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 17e321c25959a..bf5a3e2048619 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -130,6 +130,37 @@
->  #define APMU_EMAC0_CLK_RES_CTRL		0x3e4
->  #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
->  
-> +/* RCPU register offsets */
-> +#define RCPU_SSP0_CLK_RST		0x0028
-> +#define RCPU_I2C0_CLK_RST		0x0030
-> +#define RCPU_UART1_CLK_RST		0x003c
-> +#define RCPU_CAN_CLK_RST		0x0048
-> +#define RCPU_IR_CLK_RST			0x004c
-> +#define RCPU_UART0_CLK_RST		0x00d8
-> +/* XXX Next one is part of the AUD_AUDCLOCK region @ 0xc0882000 */
-this comment looks odd, XXX?
-> +#define AUDIO_HDMI_CLK_CTRL		0x2044
-> +
-> +/* RCPU2 register offsets */
-> +#define RCPU2_PWM0_CLK_RST		0x0000
-> +#define RCPU2_PWM1_CLK_RST		0x0004
-> +#define RCPU2_PWM2_CLK_RST		0x0008
-> +#define RCPU2_PWM3_CLK_RST		0x000c
-> +#define RCPU2_PWM4_CLK_RST		0x0010
-> +#define RCPU2_PWM5_CLK_RST		0x0014
-> +#define RCPU2_PWM6_CLK_RST		0x0018
-> +#define RCPU2_PWM7_CLK_RST		0x001c
-> +#define RCPU2_PWM8_CLK_RST		0x0020
-> +#define RCPU2_PWM9_CLK_RST		0x0024
-> +
-> +/* APBC2 register offsets */
-> +#define APBC2_UART1_CLK_RST		0x0000
-> +#define APBC2_SSP2_CLK_RST		0x0004
-> +#define APBC2_TWSI3_CLK_RST		0x0008
-> +#define APBC2_RTC_CLK_RST		0x000c
-> +#define APBC2_TIMERS0_CLK_RST		0x0010
-> +#define APBC2_KPC_CLK_RST		0x0014
-> +#define APBC2_GPIO_CLK_RST		0x001c
-> +
->  struct spacemit_ccu_clk {
->  	int id;
->  	struct clk_hw *hw;
-> @@ -1781,6 +1812,69 @@ static const struct k1_ccu_data k1_ccu_apmu_data = {
->  	.rst_data	= &apmu_reset_controller_data,
->  };
->  
-> +static const struct ccu_reset_data rcpu_reset_data[] = {
-> +	[RST_RCPU_SSP0]		= RST_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
-> +	[RST_RCPU_I2C0]		= RST_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
-> +	[RST_RCPU_UART1]	= RST_DATA(RCPU_UART1_CLK_RST,	0, BIT(0)),
-> +	[RST_RCPU_IR]		= RST_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
-> +	[RST_RCPU_CAN]		= RST_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
-> +	[RST_RCPU_UART0]	= RST_DATA(RCPU_UART0_CLK_RST,	0, BIT(0)),
-> +	[RST_RCPU_HDMI_AUDIO]	= RST_DATA(AUDIO_HDMI_CLK_CTRL,	0, BIT(0)),
-> +};
-> +
-> +static const struct ccu_reset_controller_data rcpu_reset_controller_data = {
-> +	.count		= ARRAY_SIZE(rcpu_reset_data),
-> +	.data		= rcpu_reset_data,
-> +};
-> +
-> +static struct k1_ccu_data k1_ccu_rcpu_data = {
-> +	/* No clocks in the RCPU CCU */
-> +	.rst_data	= &rcpu_reset_controller_data,
-> +};
-> +
-> +static const struct ccu_reset_data rcpu2_reset_data[] = {
-> +	[RST_RCPU2_PWM0]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM1]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM2]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM3]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM4]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM5]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM6]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM7]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM8]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +	[RST_RCPU2_PWM9]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> +};
-> +
-> +static const struct ccu_reset_controller_data rcpu2_reset_controller_data = {
-> +	.count		= ARRAY_SIZE(rcpu2_reset_data),
-> +	.data		= rcpu2_reset_data,
-> +};
-> +
-> +static struct k1_ccu_data k1_ccu_rcpu2_data = {
-> +	/* No clocks in the RCPU2 CCU */
-> +	.rst_data	= &rcpu2_reset_controller_data,
-> +};
-> +
-> +static const struct ccu_reset_data apbc2_reset_data[] = {
-> +	[RST_APBC2_UART1]	= RST_DATA(APBC2_UART1_CLK_RST,	BIT(2), (0)),
-> +	[RST_APBC2_SSP2]	= RST_DATA(APBC2_SSP2_CLK_RST,	BIT(2), (0)),
-> +	[RST_APBC2_TWSI3]	= RST_DATA(APBC2_TWSI3_CLK_RST,	BIT(2), (0)),
-> +	[RST_APBC2_RTC]		= RST_DATA(APBC2_RTC_CLK_RST,	BIT(2), (0)),
-> +	[RST_APBC2_TIMERS0]	= RST_DATA(APBC2_TIMERS0_CLK_RST, BIT(2), (0)),
-> +	[RST_APBC2_KPC]		= RST_DATA(APBC2_KPC_CLK_RST,	BIT(2), (0)),
-> +	[RST_APBC2_GPIO]	= RST_DATA(APBC2_GPIO_CLK_RST,	BIT(2), (0)),
-> +};
-> +
-> +static const struct ccu_reset_controller_data apbc2_reset_controller_data = {
-> +	.count		= ARRAY_SIZE(apbc2_reset_data),
-> +	.data		= apbc2_reset_data,
-> +};
-> +
-> +static struct k1_ccu_data k1_ccu_apbc2_data = {
-> +	/* No clocks in the RCPU2 CCU */
-> +	.rst_data	= &apbc2_reset_controller_data,
-> +};
-> +
->  static struct ccu_reset_controller *
->  rcdev_to_controller(struct reset_controller_dev *rcdev)
->  {
-> @@ -1959,6 +2053,18 @@ static const struct of_device_id of_k1_ccu_match[] = {
->  		.compatible	= "spacemit,k1-syscon-apmu",
->  		.data		= &k1_ccu_apmu_data,
->  	},
-> +	{
-> +		.compatible	= "spacemit,k1-syscon-rcpu",
-> +		.data		= &k1_ccu_rcpu_data,
-> +	},
-> +	{
-> +		.compatible	= "spacemit,k1-syscon-rcpu2",
-> +		.data		= &k1_ccu_rcpu2_data,
-> +	},
-> +	{
-> +		.compatible	= "spacemit,k1-syscon-apbc2",
-> +		.data		= &k1_ccu_apbc2_data,
-> +	},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
-> -- 
-> 2.43.0
-> 
+A temporary pointer was utilized when invoking realloc() to prevent
+the loss of the original allocation in the event of a failure
 
+CC: linux-kernel@vger.kernel.org
+    linux-hyperv@vger.kernel.org
+Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
+---
+ tools/hv/hv_kvp_daemon.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index 04ba035d67e9..6807832209f0 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -356,11 +356,14 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
+ 	 */
+ 	if (num_records == (ENTRIES_PER_BLOCK * num_blocks)) {
+ 		/* Need to allocate a larger array for reg entries. */
+-		record = realloc(record, sizeof(struct kvp_record) *
+-			 ENTRIES_PER_BLOCK * (num_blocks + 1));
+-
+-		if (record == NULL)
++		struct kvp_record *temp = realloc(record, sizeof(struct kvp_record) *
++				ENTRIES_PER_BLOCK * (num_blocks + 1));
++		if (!temp) {
++			free(record);
++			record = NULL;
+ 			return 1;
++		}
++		record = temp;
+ 		kvp_file_info[pool].num_blocks++;
+ 
+ 	}
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+2.43.0
+
 
