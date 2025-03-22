@@ -1,69 +1,73 @@
-Return-Path: <linux-kernel+bounces-572611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2207DA6CC28
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:16:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA0BA6CC2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:17:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BAA3A7E54
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:16:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877817A81D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DA234977;
-	Sat, 22 Mar 2025 20:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68B322CBE4;
+	Sat, 22 Mar 2025 20:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtX7M70j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJ7Qyioq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1664C6C;
-	Sat, 22 Mar 2025 20:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067754C6C;
+	Sat, 22 Mar 2025 20:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742674579; cv=none; b=k/J929wVUDl4hq8FoJJ8thSB+pIx+TrsvhPfiDhO5IehdtnxbWhSunEND8wF32nXKEE4G/lbE9XzyoETwUoeW+/aXh2QY+i521jDHeGwQHFWeZstzHcdeckJVlAbZJfwMb87eRVTRnEdHZI2OdV05YCZgAjXz/Toc35OmQieoIw=
+	t=1742674628; cv=none; b=OlohidXNuYeQxvHA4Jnly2A+LLinp63rt+09wUJMXig9A1Xrg/4s99w1opc5rhTFw+kCXaB5fYwng01srFFXd3epPEUzTFJfzjxbeW67AwnTT6hJlu5sHhIO6ooK0JcwUDYGwms+HexbeA9ZczwjqlmZ7nszvaYosQqZve8ff3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742674579; c=relaxed/simple;
-	bh=wG6yAeIvUo6cSeHVafODK9l9ixZ9Z1WMTlZDD5+ozSg=;
+	s=arc-20240116; t=1742674628; c=relaxed/simple;
+	bh=CbPGXZSRddE8tuYZ2t+93jHASg0DsRREKTOYcW5uStc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9YzDAd3Q4jrF8rzN19OnuR/sj6646qsbd6ntmuq0kODHn8ba3sIn2CVl3QREk+wBaMM2PBojwrMLWqhpc1ZjEPNtgjrcNaPYvGYEGq2gP88X2ZkolhXpdBaVcS8mVEJycMMYklBdb6gigj/lVlcM/Hj7ClakKcfVFjQdKS7s9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtX7M70j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD3A2C4CEDD;
-	Sat, 22 Mar 2025 20:16:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=E5Hx2EyGDTb6i/oINniBnHNhSFyJc0LoEOsxXNzcWqrs8XG7EFP3gINbL6fWDegxW2A/5pnj6TRu5j5foGSsq5m5Bca0bQDUPptRjLA2fuUlezFLdZzDo8o7Ta04VFSzHJP+jDdAgOSwAqxoDNAdgOmnuU+B+lvs8EiY5z7rhhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJ7Qyioq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1F8C4CEDD;
+	Sat, 22 Mar 2025 20:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742674574;
-	bh=wG6yAeIvUo6cSeHVafODK9l9ixZ9Z1WMTlZDD5+ozSg=;
+	s=k20201202; t=1742674627;
+	bh=CbPGXZSRddE8tuYZ2t+93jHASg0DsRREKTOYcW5uStc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EtX7M70jBfnFvZxZYHEHqcW1hrL/wSrQ2OerVfeABCqaRzjfX/lolndYDCTi+SExi
-	 Gmkp+tgxoIPavEepxwiUTjh5AxJyaD53cpkrByFt0wIjVHvzfLdKmu2nFnYgJlgs4h
-	 auauWj0I39DLdf04e9GLeL94RLYT8HNCO006oka5KrfxBYjH7LacCBbX1FpVl/Q2dN
-	 CNMRC7S+R7MkMT+AdLuD7xyXUcKZRB3GuqVCaQfpix+MwcbHkB5JlM+MNXVW2ze1pU
-	 bLAlYZFWAuzXjq+OyKO54fiZY1u1WOwsNy1Y8v9wGcOOsuX3w+ocSfEY5dxPA5iMEb
-	 Kb3tCRaECrvfw==
-Date: Sat, 22 Mar 2025 15:16:13 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Nitheesh Sekar <quic_nsekar@quicinc.com>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	20250317100029.881286-2-quic_varada@quicinc.com,
-	linux-kernel@vger.kernel.org,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Subject: Re: [PATCH v6 1/6] dt-bindings: phy: qcom: uniphy-pcie: Add ipq5018
- compatible
-Message-ID: <174267455671.1906457.16602134107538739913.robh@kernel.org>
-References: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
- <20250321-ipq5018-pcie-v6-1-b7d659a76205@outlook.com>
+	b=jJ7QyioqHtC4meGbFzh8pnXG/Ic4GpqbDmVvI2sIHyYtiysvIYgegNVrV62vv70nM
+	 yYDBN5LvCXtGKE5UNach+zw0aURrml7OacAI+W2h2PN9vL1ib8Sgg2I8GvEGF6kjS0
+	 R7/68SzkS+yqegyMZhpi50OO0CGkdxwQx79QaoKUoW8lrqeh9PddGcfy1NdrAvmhyL
+	 qlMjomnbyEWs7wPKc0WeVxoUR96+M71l93RlWe8zaGAI+hNu+toSs5DjMNIFeUt/9M
+	 rW0cANLP4tkJP8L+R4wQL5fcsoynfhhwm7skjmzeuoHxGMO1N+dU7VrIjCS8YpvNm9
+	 YS52ci7lpG3mw==
+Date: Sat, 22 Mar 2025 22:17:03 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
+ functions
+Message-ID: <Z98av2cbURhSy6Rk@kernel.org>
+References: <20250311094225.35129-1-sgarzare@redhat.com>
+ <20250311094225.35129-2-sgarzare@redhat.com>
+ <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
+ <Z9glWp6U6vyEmKQa@kernel.org>
+ <7kuhiyy7gj4py323g5n2vy3ddlg666zwhtx3mjcklebgtlstdc@xgdyeecifwei>
+ <Z9wuLVeP726Cssqp@kernel.org>
+ <20250320171619.GOZ9xNY4W54avW2a-u@fat_crate.local>
+ <Z9xQw8QpRKk26G6R@kernel.org>
+ <rspkz663fg7i7jomvg5ehv3ldr6ayehttb7vgwwzsfsxafzb5y@uhqcadvsmw6f>
+ <20250321220520.GFZ93ioO0JtfhXCb1n@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,23 +76,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321-ipq5018-pcie-v6-1-b7d659a76205@outlook.com>
+In-Reply-To: <20250321220520.GFZ93ioO0JtfhXCb1n@fat_crate.local>
 
-
-On Fri, 21 Mar 2025 16:14:39 +0400, George Moussalem wrote:
-> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+On Fri, Mar 21, 2025 at 11:05:20PM +0100, Borislav Petkov wrote:
+> On Fri, Mar 21, 2025 at 10:01:17AM +0100, Stefano Garzarella wrote:
+> > Just a note, patch 2 adds `include/linux/svsm_vtpm.h`, that file is
+> > basically a translation of the AMD SVSM specification into structures and
+> > functions used to communicate with SVSM in the way it is defined by the
+> > specification.
+> > 
+> > I realized that the file does not fall under any section of MAINTAINERS.
+> > How do you suggest we proceed?
+> > 
+> > Should we create an SVSM section to maintain it, including the TPM driver
+> > and future other drivers,etc.?
 > 
-> The IPQ5018 SoC contains a Gen2 1 and 2-lane PCIe UNIPHY which is the
-> same as the one found in IPQ5332. As such, add IPQ5018 compatible.
+> This all belongs to the TPM drivers, right?
 > 
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
->  .../bindings/phy/qcom,ipq5332-uniphy-pcie-phy.yaml | 49 ++++++++++++++++++----
->  1 file changed, 41 insertions(+), 8 deletions(-)
+> I.e., drivers/char/tpm/
+> 
+> So I guess add that header to the TPM DEVICE DRIVER section if the gents there
+> are fine with it...
+
+It's fine for me but I'd suggest to rename the header as "tpm_svsm.h".
+Then this will already provide coverage:
+
+https://web.git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=a2fbcecc7027944a2ce447d4dd72725c5822321f
+
+
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+BR, Jarkko
 
