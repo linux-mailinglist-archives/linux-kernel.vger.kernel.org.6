@@ -1,73 +1,90 @@
-Return-Path: <linux-kernel+bounces-572575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1618DA6CBA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:25:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B941A6CBA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916A51B62E6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:25:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43F4C7ADDD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9B42343C1;
-	Sat, 22 Mar 2025 17:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9132C233712;
+	Sat, 22 Mar 2025 17:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKc6cP3N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QA8Ngd+d"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998581F55EB;
-	Sat, 22 Mar 2025 17:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C9D3FD1
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 17:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742664335; cv=none; b=sT8HpVTMH875pB4qBN8yVYJcwCFHNMJtS2qjwvHcBZbR/8Cyo7mWtXE6Owjs9E7SgiqWJjfAZVZWjei/gTCQ4Gplsizoew+34JBZbVq3x/wdMVKSMBu+CR43NMpDdcO4UuWULlLaYabpLiLHvWxkYmSZvRvob37KM7LHmt1ZqdE=
+	t=1742664346; cv=none; b=Vgj0Bff+F7wdTa4G4Vab6LtZSCT3yh1fZDl6fF49AUPpyYbygrDQASwZEGjTrvMeYuXax7wbExMoyhtMfg0LgX6GDMSwXGQwss0VlDRUNz/HlqTbbrgE5dPZCpa/aM7nqPSIke8eyOZX9RiVjn9ihvGlnmIv39zhmQTVorY/KVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742664335; c=relaxed/simple;
-	bh=bjDpxSKcnPu0+pzY23LNYW7pSEhfX3YSIpEfSZvb9sU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=opekfzYAPmT5Rbxt+dKPtGY8vMZs9uPr+TB0380eLgnLPrE2pbkRuPf7ATg/j2NJsXXDEUUquP3UnE6wnk5Vavv18IWwqvfDNnycCYc9xF05BfpFBPWdLVlN/P5YMPiosYw7ZgjFkeiTGWCkKgSam81ykfPM0e1nbChp8t3FTz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKc6cP3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84907C4CEDD;
-	Sat, 22 Mar 2025 17:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742664335;
-	bh=bjDpxSKcnPu0+pzY23LNYW7pSEhfX3YSIpEfSZvb9sU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KKc6cP3Nl35qxWAUTOE15kH6VX6SRBGiDe30WmISTRAspYjVvccVwIYZ4nz1eycsu
-	 5urS4MTxNWCvBQSv3agXlCpNtMGxFZfVaJf1kIaGdtY4+il7HxGtTHJ7OeoyNyP7Fq
-	 qVDNrIBHorIhw5jCreteU874jxpv/3RjP7Vu/DaeOJlOwEjdo9XTGbuvJQfkXSjBxW
-	 x8iscSTAilJVFRoJDhTZwgsSBMpHsuDJmQYFdl8h/r9wH/WWuxEgjVVmVnwsww3eyJ
-	 uD0OlS47bANRUpnY1lUrpK+a4HVaMURAAn9LWqchboM6IX4MXZALoIM7Pz3lwaALDG
-	 SrEVBm0r48yDQ==
-Date: Sat, 22 Mar 2025 19:25:31 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev, nkapron@google.com, teknoraver@meta.com,
-	roberto.sassu@huawei.com, xiyou.wangcong@gmail.com
-Subject: Re: [RFC PATCH security-next 3/4] hornet: Add an example lskel data
- extactor script
-Message-ID: <Z97yiwQwzHmVy2p9@kernel.org>
-References: <20250321164537.16719-1-bboscaccy@linux.microsoft.com>
- <20250321164537.16719-4-bboscaccy@linux.microsoft.com>
+	s=arc-20240116; t=1742664346; c=relaxed/simple;
+	bh=KVVLbJ1zXJko3vgx6YQzBovfOIgGOqxXxDsSp81uYyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=USz9qd8KSeP4p2YtFt+9f6JRV5+COW7UpPoo8k5MNAbpVzxmc9DeAZpsPZ6vRdNF5gnWG7Bm/4KznAKvQC70x+ToSkbr2xJeMzyQZya+hpTV9MviK9Y4eXM8JUAwzU8w3wBJJObP0L8+MftFfMFJTn3Wy/1UrjI178zsrwJ0hcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QA8Ngd+d; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso30233125e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 10:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742664343; x=1743269143; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6maXy0URBuJqvOhBuuvKx2+7wYA7mqrbNOfziAWZLY=;
+        b=QA8Ngd+dvbtVFLhtcvrzigX61KxqTaGdnAOK62tzSJKLpyKkS7g+Bc6RG5Jf0hZQgn
+         fGnHFB+A0hhFmSs6gXWa2F6Ikwh3ppVR0xOHZtl6oKXkXz1k6SjJxSe5ANtYo1R1kZg1
+         aeADeIQpjMoLjBj/v7SRGgQyJmKdkMxtEKQv7z6RAJI1tpR7suGMvtq24UTBwFzCanPS
+         lw9AqiuLJkAlJP6NKq2pymgX8c9uY16/+ekjA52CoCnsssmbl88FT/St4/dcyc6rymjy
+         BwKFFipJunc5qyosr3mvilNxP5f6E2ASO8PjtzOj594aF4kpU7eJG/Tr1iUefP7LxpV/
+         5jlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742664343; x=1743269143;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F6maXy0URBuJqvOhBuuvKx2+7wYA7mqrbNOfziAWZLY=;
+        b=GxZE8GZEsKSGjUOafz/Mn4F6tGcD/8Hsgq0Y7aGd+efKnwk6WoqLGPEhFvjSJwlEPN
+         5fwUZTzY0OcsMrXN1CV7pheJ0RhfxAvPSL+PefxUqBe/2xJ6LRZa5+bGSA9b5a5aLcQB
+         ioY/9OMsu+bSsuUlD9GeRczxnGpczDcZzCESV/ZYb5hbU9m4W/6ebqTYXkPEiPGyhHI7
+         Jf2HW+H9wbRf+1NWtTdU+aVYR1MTXXTJjcVQWETFxP8jJO9ZcKDIerPNKqnPeHFnBJtY
+         Y9S4yRpSfQALrS4ryMx09uIFL2U2+QlTWWYUZS1NMMSN1JYUtazC4rmKaibfkyHIce/I
+         iujQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxwXIPMaSFuluwgHqRs3krLz3tpGI3Xd2XAXUaqT7fFZCIwjrVIX1vupXvgpMP5g7iKP4Ic1VAcLoKqWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMShWp7KMBNX9ixUkrqmyfK/7WoiNrnguCxQjke9gkq/77ePYc
+	Retu/0Yd974NTLMOEzLwlW0ueAq1YVHXIhIT/hSpaSu9zRNEoezo8bDS8ePhj8s=
+X-Gm-Gg: ASbGncukEkfe6r485cnNGae0Vljr78Nv35qrj0QDChRhXlaoZWCOaYwoLrA3aeOm08I
+	s0O9pipv3cSrDxEOsmdryT4KHyn1/K3GfXKSLGOnKxqhRf0J3cVdFjYsGXEMuNYUG4HmX4gZHEt
+	jen6fBybpQMDrw4NTuWeACDEapzKOzlhWPDV2kN/ijRN4mooTa4Bb8pLvACsFHETaT4OhslEad8
+	jnwxFOf8Okq8FZ0eDtxlrSnvwkrx7bjOE86kOlUFNA3Y23dsNaCrQ1D0S2taVbF5vvIVNEfCkOB
+	ohBuKWtoMsTpIHrE1E3glMYw60m+77Nodl5leCU07Omt6iVUWQ==
+X-Google-Smtp-Source: AGHT+IHwieQKergX1rC+mWOvJOQ5sn9Ft8OV5mIRdJ/Pxfgl8ge9rxEOgVtIeqtby3893whER7DmRQ==
+X-Received: by 2002:a05:600c:5742:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-43d510fff60mr50928825e9.19.1742664342720;
+        Sat, 22 Mar 2025 10:25:42 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd26cecsm61977195e9.17.2025.03.22.10.25.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 10:25:42 -0700 (PDT)
+Date: Sat, 22 Mar 2025 20:25:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Angelo Dureghello <adureghello@baylibre.com>,
+	Alexandru Ardelean <aardelean@baylibre.com>,
+	Beniamin Bia <beniamin.bia@analog.com>,
+	Stefan Popa <stefan.popa@analog.com>, linux-kernel@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Subject: Re: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel
+ info
+Message-ID: <72d776ae-4373-4a78-ba00-fa809478b453@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,61 +93,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321164537.16719-4-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250318-iio-adc-ad7606-improvements-v2-9-4b605427774c@baylibre.com>
 
-On Fri, Mar 21, 2025 at 09:45:05AM -0700, Blaise Boscaccy wrote:
-> This script eases lskel developments against hornet by generating the
+Hi David,
 
-1. What iskel?
-2. Why hornet is here in lower case?
+kernel test robot noticed the following build warnings:
 
-> data payload used for code signing. It extracts the data out of the
-> autogenerated lskel header that gets created via bpftool.
-> 
-> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> ---
->  scripts/hornet/extract-skel.sh | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100755 scripts/hornet/extract-skel.sh
-> 
-> diff --git a/scripts/hornet/extract-skel.sh b/scripts/hornet/extract-skel.sh
-> new file mode 100755
-> index 0000000000000..9ace78794b85e
-> --- /dev/null
-> +++ b/scripts/hornet/extract-skel.sh
-> @@ -0,0 +1,29 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Copyright (c) 2025 Microsoft Corporation
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of version 2 of the GNU General Public
-> +# License as published by the Free Software Foundation.
-> +
-> +function usage() {
-> +    echo "Sample script for extracting instructions and map data out of"
-> +    echo "autogenerated eBPF lskel headers"
-> +    echo ""
-> +    echo "USAGE: header_file output_file"
-> +    exit
-> +}
-> +
-> +ARGC=$#
-> +
-> +EXPECTED_ARGS=2
-> +
-> +if [ $ARGC -ne $EXPECTED_ARGS ] ; then
-> +    usage
-> +else
-> +    printf $(gcc -E $1 | grep "static const char opts_insn" | \
-> +		 awk -F"=" '{print $2}' | sed 's/;\+$//' | sed 's/\"//g') > $2
-> +    printf $(gcc -E $1 | grep "static const char opts_data" | \
-> +		 awk -F"=" '{print $2}' | sed 's/;\+$//' | sed 's/\"//g') >> $2
-> +fi
-> -- 
-> 2.48.1
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7606-check-for-NULL-before-calling-sw_mode_config/20250319-065737
+base:   9f36acefb2621d980734a5bb7d74e0e24e0af166
+patch link:    https://lore.kernel.org/r/20250318-iio-adc-ad7606-improvements-v2-9-4b605427774c%40baylibre.com
+patch subject: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel info
+config: arm64-randconfig-r071-20250322 (https://download.01.org/0day-ci/archive/20250322/202503222246.RafigmhQ-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
 
-BR, Jarkko
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202503222246.RafigmhQ-lkp@intel.com/
+
+smatch warnings:
+drivers/iio/adc/ad7606.c:1270 ad7606_probe_channels() warn: potentially one past the end of array 'channels[i]'
+
+vim +1270 drivers/iio/adc/ad7606.c
+
+87cf5705725eeb David Lechner      2025-03-18  1196  static int ad7606_probe_channels(struct iio_dev *indio_dev)
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1197  {
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1198  	struct ad7606_state *st = iio_priv(indio_dev);
+87cf5705725eeb David Lechner      2025-03-18  1199  	struct device *dev = indio_dev->dev.parent;
+87cf5705725eeb David Lechner      2025-03-18  1200  	struct iio_chan_spec *channels;
+87cf5705725eeb David Lechner      2025-03-18  1201  	bool slow_bus;
+87cf5705725eeb David Lechner      2025-03-18  1202  	int ret, i;
+87cf5705725eeb David Lechner      2025-03-18  1203  
+87cf5705725eeb David Lechner      2025-03-18  1204  	slow_bus = !st->bops->iio_backend_config;
+87cf5705725eeb David Lechner      2025-03-18  1205  	indio_dev->num_channels = st->chip_info->num_adc_channels;
+87cf5705725eeb David Lechner      2025-03-18  1206  
+87cf5705725eeb David Lechner      2025-03-18  1207  	/* Slow buses also get 1 more channel for soft timestamp */
+87cf5705725eeb David Lechner      2025-03-18  1208  	if (slow_bus)
+87cf5705725eeb David Lechner      2025-03-18  1209  		indio_dev->num_channels++;
+87cf5705725eeb David Lechner      2025-03-18  1210  
+87cf5705725eeb David Lechner      2025-03-18  1211  	channels = devm_kcalloc(dev, indio_dev->num_channels, sizeof(*channels),
+87cf5705725eeb David Lechner      2025-03-18  1212  				GFP_KERNEL);
+87cf5705725eeb David Lechner      2025-03-18  1213  	if (!channels)
+f3838e934dfff2 Alexandru Ardelean 2024-09-19  1214  		return -ENOMEM;
+f3838e934dfff2 Alexandru Ardelean 2024-09-19  1215  
+87cf5705725eeb David Lechner      2025-03-18  1216  	for (i = 0; i < indio_dev->num_channels; i++) {
+87cf5705725eeb David Lechner      2025-03-18  1217  		struct iio_chan_spec *chan = &channels[i];
+87cf5705725eeb David Lechner      2025-03-18  1218  
+87cf5705725eeb David Lechner      2025-03-18  1219  		chan->type = IIO_VOLTAGE;
+87cf5705725eeb David Lechner      2025-03-18  1220  		chan->indexed = 1;
+87cf5705725eeb David Lechner      2025-03-18  1221  		chan->channel = i;
+87cf5705725eeb David Lechner      2025-03-18  1222  		chan->scan_index = i;
+87cf5705725eeb David Lechner      2025-03-18  1223  		chan->scan_type.sign = 's';
+87cf5705725eeb David Lechner      2025-03-18  1224  		chan->scan_type.realbits = st->chip_info->bits;
+87cf5705725eeb David Lechner      2025-03-18  1225  		chan->scan_type.storagebits = st->chip_info->bits > 16 ? 32 : 16;
+87cf5705725eeb David Lechner      2025-03-18  1226  		chan->scan_type.endianness = IIO_CPU;
+f3838e934dfff2 Alexandru Ardelean 2024-09-19  1227  
+87cf5705725eeb David Lechner      2025-03-18  1228  		if (indio_dev->modes & INDIO_DIRECT_MODE)
+87cf5705725eeb David Lechner      2025-03-18  1229  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
+87cf5705725eeb David Lechner      2025-03-18  1230  
+87cf5705725eeb David Lechner      2025-03-18  1231  		if (st->sw_mode_en) {
+87cf5705725eeb David Lechner      2025-03-18  1232  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
+87cf5705725eeb David Lechner      2025-03-18  1233  			chan->info_mask_separate_available |=
+87cf5705725eeb David Lechner      2025-03-18  1234  				BIT(IIO_CHAN_INFO_SCALE);
+87cf5705725eeb David Lechner      2025-03-18  1235  
+87cf5705725eeb David Lechner      2025-03-18  1236  			/*
+87cf5705725eeb David Lechner      2025-03-18  1237  			 * All chips with software mode support oversampling,
+87cf5705725eeb David Lechner      2025-03-18  1238  			 * so we skip the oversampling_available check. And the
+87cf5705725eeb David Lechner      2025-03-18  1239  			 * shared_by_type instead of shared_by_all on slow
+87cf5705725eeb David Lechner      2025-03-18  1240  			 * buses is for backward compatibility.
+87cf5705725eeb David Lechner      2025-03-18  1241  			 */
+87cf5705725eeb David Lechner      2025-03-18  1242  			if (slow_bus)
+87cf5705725eeb David Lechner      2025-03-18  1243  				chan->info_mask_shared_by_type |=
+87cf5705725eeb David Lechner      2025-03-18  1244  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+87cf5705725eeb David Lechner      2025-03-18  1245  			else
+87cf5705725eeb David Lechner      2025-03-18  1246  				chan->info_mask_shared_by_all |=
+87cf5705725eeb David Lechner      2025-03-18  1247  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+87cf5705725eeb David Lechner      2025-03-18  1248  
+87cf5705725eeb David Lechner      2025-03-18  1249  			chan->info_mask_shared_by_all_available |=
+87cf5705725eeb David Lechner      2025-03-18  1250  				BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+87cf5705725eeb David Lechner      2025-03-18  1251  		} else {
+87cf5705725eeb David Lechner      2025-03-18  1252  			chan->info_mask_shared_by_type |=
+87cf5705725eeb David Lechner      2025-03-18  1253  				BIT(IIO_CHAN_INFO_SCALE);
+87cf5705725eeb David Lechner      2025-03-18  1254  
+87cf5705725eeb David Lechner      2025-03-18  1255  			if (st->chip_info->oversampling_avail)
+87cf5705725eeb David Lechner      2025-03-18  1256  				chan->info_mask_shared_by_all |=
+87cf5705725eeb David Lechner      2025-03-18  1257  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+87cf5705725eeb David Lechner      2025-03-18  1258  		}
+87cf5705725eeb David Lechner      2025-03-18  1259  
+87cf5705725eeb David Lechner      2025-03-18  1260  		if (!slow_bus)
+87cf5705725eeb David Lechner      2025-03-18  1261  			chan->info_mask_shared_by_all |=
+87cf5705725eeb David Lechner      2025-03-18  1262  				BIT(IIO_CHAN_INFO_SAMP_FREQ);
+87cf5705725eeb David Lechner      2025-03-18  1263  
+87cf5705725eeb David Lechner      2025-03-18  1264  		ret = st->chip_info->scale_setup_cb(indio_dev, chan);
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1265  		if (ret)
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1266  			return ret;
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1267  	}
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1268  
+87cf5705725eeb David Lechner      2025-03-18  1269  	if (slow_bus)
+87cf5705725eeb David Lechner      2025-03-18 @1270  		channels[i] = (struct iio_chan_spec)IIO_CHAN_SOFT_TIMESTAMP(i);
+                                                                ^^^^^^^^^^^
+i is == indio_dev->num_channels so this is out of bounds by one element.
+
+87cf5705725eeb David Lechner      2025-03-18  1271  
+87cf5705725eeb David Lechner      2025-03-18  1272  	indio_dev->channels = channels;
+87cf5705725eeb David Lechner      2025-03-18  1273  
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1274  	return 0;
+e571c1902116a3 Alexandru Ardelean 2024-09-19  1275  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
