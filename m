@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-572646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA46A6CC9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:20:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB18A6CCA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97938188FF4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA0B170841
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAD322A81F;
-	Sat, 22 Mar 2025 21:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CE023372F;
+	Sat, 22 Mar 2025 21:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qr/+QTY7"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510B51D5176;
-	Sat, 22 Mar 2025 21:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n63KfsxJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA584522A;
+	Sat, 22 Mar 2025 21:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742678445; cv=none; b=BSiV9nPv0ysoLjbhxKrYRMY873gwu2tFEzR/wtROvvIcmfQQEm0GxBepQhz1L3Iy4NzTe/X6hUXEddZG6MzgKcWKUeLWOSw0M8fypAvpVUEyORN7ia6EtlBml8zy7qnt3BRSZgKubUOhbtJ2T0IV/yayh5gphiSpLersW45Xlcw=
+	t=1742678702; cv=none; b=gpLUTCZnfyIt6lreaA3ksrXd/n55iY6WhCls8nPRxlZBifAzjVfI1qqEpM4JtoZ5NGOprE1QAVOG0vppp/OH4BaKpC0jK/ug8gNGYjlFCfvMwTdJGRG91u4KQWSC+m7vkoUZPa7MtsgzH73f0DEEFxQ7DjHSfXFJAZTp+YUdzLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742678445; c=relaxed/simple;
-	bh=cyFNK89NgMLZ3xDWkwxzV2SM3xQXavlfGlrHVOrvwmQ=;
+	s=arc-20240116; t=1742678702; c=relaxed/simple;
+	bh=iXfQco7kSe8vhMA9nzpstt2Zcp6VqukJOUYA5gnQp/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N//7ZSt6vP5gT9deXfuCbdVM7T2lrTdMqxvHEfNusRte/MhnYA4JLHxllrjPaNYYK3LJwGADCeHBZBkHMDTYM3hJvR93lf4+2jgVhIGRhM/o0SNDTT9Ub+IQrBqoLWzgJkI+NL+5ObU6U1sH3UVRO92sZ8nIoQC//+cwsIeV9kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qr/+QTY7; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 7195614C2DB;
-	Sat, 22 Mar 2025 22:20:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1742678433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e0TjEf7FGRwFB0dAZVdeDg8D+prsnYkCAo5szH4wkaU=;
-	b=qr/+QTY7h9M8K+P97DGzWaAdHE/R8xPrJW5EugVRavIhoJNuQTPW1tarPA6fWVUYFVGmRZ
-	FadvjOTVEktYqP9UdA/lko52/QS+bUnU6eBEGNA/B7vI/BiwGEWW6QYKpxcdXDg3ZmiQJD
-	CPJ4kWl8a4GMDy3Wh2zhxRKINNPWGHwmsya2jost7HOqQZpp9WeM+8DLKj8WdJjSWB7H2B
-	K0MtFnPtyQNFioTM+vo2V9Vy9zgjwZXHJpasjgeUsVQ4MVME6bTTyOlI4ZGuXXL3KMttA3
-	fOKV6C7kPK+HiVxXGi6Wu2MdN+ZC39fqt8iLgAEcR3+goHV5Rlzrorpb2LpPQw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e68e2ca7;
-	Sat, 22 Mar 2025 21:20:29 +0000 (UTC)
-Date: Sun, 23 Mar 2025 06:20:14 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Tuomas Ahola <taahol@utu.fi>
-Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] Documentation/fs/9p: fix broken link
-Message-ID: <Z98pjo6ptwNee8d7@codewreck.org>
-References: <20250322153639.4917-1-taahol@utu.fi>
+	 Content-Type:Content-Disposition:In-Reply-To; b=htEAYzqREih1bU+lR/lyoYRVNQLWLaIwyTVppv6XxHFJRAQ6M9birzhh1jsjsrkh8pA0BD1mT6FoX+kn99ph9WavKI82DwoTptxbIq+Mb3NLulpgaylAAkncZBJJxgjsTA3dgWmiX23n2e+v9LF5+3Zufmjon9U5rx1XyWdqTpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n63KfsxJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9076C4CEDD;
+	Sat, 22 Mar 2025 21:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742678701;
+	bh=iXfQco7kSe8vhMA9nzpstt2Zcp6VqukJOUYA5gnQp/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n63KfsxJoK5AsxCVKgpH+MR7lM0aQCdxbL3zoo3tAfiFXXO8yIp6ZrP+Cmka8UzRd
+	 OXX13BuQkA3pp4MwCwe2s0C6T7Bi3FQ708Kb+xc3tuREkvsgbgU0mxfzMZUmLAl/ae
+	 5BJmqCLyFNoeSCpI4tGJldykmCwIFbXtxL7WRuYLPBkqnuvGhwcgtcpaQh5VQP32Kh
+	 h6Sx+kav/D5ZbqpseJc40naSmAh90JfbyWfuTPqgQfbX69jPzTseONEF6buJFqhiOb
+	 +rZ1ljIYrd2OEAdk2RbT+kurrb1lC0rBVEdtvaJ8Aokg9F51g2vUWwA0kX8B37eGR0
+	 /vQWX/JDlArPA==
+Date: Sat, 22 Mar 2025 23:24:57 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Lennart Poettering <mzxreary@0pointer.de>
+Cc: lee joey <joeyli.kernel@gmail.com>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joeyli <jlee@suse.com>
+Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure
+ boot be disabled"
+Message-ID: <Z98qqSoZ-ZkVa1qv@kernel.org>
+References: <Z9wDxeRQPhTi1EIS@gardel-login>
+ <CAGLnvc_eyLEasc4tKYnYp2c1M+YYRxaoXt2BmJ3kgAec6YTmzg@mail.gmail.com>
+ <Z90l26ADmS87tu0k@gardel-login>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,37 +66,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250322153639.4917-1-taahol@utu.fi>
-X-Spam: Yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z90l26ADmS87tu0k@gardel-login>
 
-Tuomas Ahola wrote on Sat, Mar 22, 2025 at 05:36:39PM +0200:
-> In b529c06f9dc7 (Update the documentation referencing Plan 9 from User
-> Space., 2020-04-26), another instance of the link was left unfixed.
-> Fix that as well.
-
-Thank you, applied to 9p tree
-
-> Signed-off-by: Tuomas Ahola <taahol@utu.fi>
-> ---
->  Documentation/filesystems/9p.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Mar 21, 2025 at 09:39:55AM +0100, Lennart Poettering wrote:
+> On Fr, 21.03.25 15:13, lee joey (joeyli.kernel@gmail.com) wrote:
 > 
-> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-> index 2bbf68b56b0d..28871200e87c 100644
-> --- a/Documentation/filesystems/9p.rst
-> +++ b/Documentation/filesystems/9p.rst
-> @@ -40,7 +40,7 @@ For remote file server::
->  
->  	mount -t 9p 10.10.1.2 /mnt/9
->  
-> -For Plan 9 From User Space applications (http://swtch.com/plan9)::
-> +For Plan 9 From User Space applications (https://9fans.github.io/plan9port/)::
->  
->  	mount -t 9p `namespace`/acme /mnt/9 -o trans=unix,uname=$USER
->  
+> > Hi Lennart,
+> >
+> > Lennart Poettering <mzxreary@0pointer.de> 於 2025年3月20日 週四 下午8:02寫道：
+> > >
+> > > This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
+> > >
+> > > This original commit this reverts creates a strange situation: it
+> > > ensures more restrictive behaviour if SecureBoot is off then when it
+> > > is on, which is the opposite of what one would expect.
+> > >
+> > > Typically, one would expect that if SB is off the validation of
+> > > resources during the pre-kernel and kernel initialization is less
+> > > restrictive, not more restrictive. But this check turned the world on
+> > > its head.
+> > >
+> >
+> > SB off means that the chain of trust is broken. Which means that all
+> > mechanisms rely on SB are non-secure. Meanwhile, if the integrity of kernel
+> > can be guaranteed by other mechanism (e.g. TPM), then mok should not
+> > be loaded when SB off.
 > 
-> base-commit: 88d324e69ea9f3ae1c1905ea75d717c08bdb8e15
+> Why not? as you say, chain of trust is broken: the kernel itself is
+> not immediately integrity protected and neither is the firmware. Hence
+> filtering out keys in this case is really pointless.
 
--- 
-Dominique Martinet | Asmadeus
+The way I look at this is that unless there is an actual threat scenario
+that we protect against by hiding MOK keys, then we should not hide
+those keys.
+
+Since I don't find any threat scenarios my reviewed-by holds. Pointless
+checks is security by obfuscation, which is not really security.
+
+BR, Jarkko
 
