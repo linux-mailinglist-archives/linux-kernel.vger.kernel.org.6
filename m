@@ -1,209 +1,103 @@
-Return-Path: <linux-kernel+bounces-572399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC69A6C9F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:47:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FD7A6C9FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 12:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D3B48257B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E579A882C79
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 11:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DAC20C019;
-	Sat, 22 Mar 2025 11:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC5121B9D5;
+	Sat, 22 Mar 2025 11:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TOvo37+N"
-Received: from out.smtpout.orange.fr (out-72.smtpout.orange.fr [193.252.22.72])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpP1mLtc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BD41FAC4A
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997FB1FC10F
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 11:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742644038; cv=none; b=WdgDKsG9SZTmWcZOeke4uwbEkenPvDXKoqc77wvXOTYFWLJOq4WaRk6Lr9wx+Z84FTlunVU3gob7f4EW9dmrD3cHdahqGKzrdqtPUdGyDt5Yj+x7IMlwAUFd3gPyqiuu84Gh7VOwoXThhJPJDUfICk/jqLWnwMPTu4hd2x2WtwI=
+	t=1742644219; cv=none; b=L/X5Pq6THzAas5jgiWxVNJM3XAq2viz6b7ZERuYGU5QwDIQrCPQDrdea5vZu3Fesir3200UOSJosI7xEzbD8aBjvDUKWENNgex2aaaiKKAK8Cts+2F8o9kJ3YJsmU4QB9l7lodD52IqwGDmEeC0rESs7RiWy5TWhOHuLl3aUhaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742644038; c=relaxed/simple;
-	bh=7id5ZiyhBgOok04EdSYv3DPQIlusRiKY0jLoVzWzzck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N6u29R3OG+zm8QqwBizS6KB7zfjC/xfyJPKGk79q8oI2x4PNkWncVt9OizBUIIq+1/QF4jTzjHiFI48+vg6Cm6Qsm91r2ApU5J4qrbYUlR055+CPx9aSDhsqdBKD/rZKHJYjtpCfQJi5MLqpqD0u5DDTvbpEqn8y74VcuRl2FhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TOvo37+N; arc=none smtp.client-ip=193.252.22.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id vxJVt69rhpih5vxJZtV7CB; Sat, 22 Mar 2025 12:47:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742644026;
-	bh=UTGUGbQUE2yBy6fNmytOVRCkloT3VUILyaQFDzsliS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=TOvo37+NuAbEYBETmhToZGFCO3XSA5A1TrbT/NKcYuQv0poRsQ5d7DFMcFpNEvptu
-	 3LL0OJhePxXiuXBgCAq6ScWL0H6AYnx2YCTTtueGLcwm1YT1Nv9om3ykr+qlV8qKBv
-	 t3aIsgQnpWbcyCI5DAJu4u/Q4X/3CEhDjyg0+aHS7opuCUb2WVNvDbhYiSoyf35X4p
-	 VVuWK0ILd6Ftj1bXvaaLNXWhWOubtzjBnkGf7ULseUgH8rV/J1CfHOwvTYcGAmu7pT
-	 liTnqE7rhR4C2PE4UICzKxE1RQPABxi1Oqvg31DicrVppqpBX7o0h+zCM7o0oYuGar
-	 Wmpz5nqaTnLeA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 22 Mar 2025 12:47:06 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <5d2af209-46bd-4a40-b82f-7772ed0b825d@wanadoo.fr>
-Date: Sat, 22 Mar 2025 20:46:52 +0900
+	s=arc-20240116; t=1742644219; c=relaxed/simple;
+	bh=5K0i6pUYI725Vj79p5Hip9iPFXRRT4dUsWv1J2KuDEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R5oRmS4wBns4mUj8zOggBj8JzsHxdQU/Yf3OVOZCj5hShB7bdDOKIs0s3d9KV7xCf26ddq0XZ9oMsCzGognp7gbZwc5e0K+H7oXV5RM/+oBr5Y6xQZVUfoD0h55iVM4UmAkRXIzopB2ngGzGWuZ73esEVYimtd5tj9YV5RhgFHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpP1mLtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E8DC4CEDD;
+	Sat, 22 Mar 2025 11:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742644219;
+	bh=5K0i6pUYI725Vj79p5Hip9iPFXRRT4dUsWv1J2KuDEw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TpP1mLtcbvEJgMeZgBE7rTRwAySrI4QumMJO3i0L5I3g7ktW7K/UOZEchFBZan5wk
+	 8wF2+5T/OCJ3CMM2vFOSspj64eie0mX1WdpnXuWGOsOb4L9baZCZdcvAMMc/E16nvB
+	 nQVOXpGqUtdRfcQQVM2HQRrFPp+Kj8V5sDI4PS5oNNzp0kOA6S4jlW1/4h2zEiRzbh
+	 MjOLw8ruw7Py1A5bbXHxXpFrl928KBXxBX0WizYdz75KASW9yn8vuPzST2EHOEn7wS
+	 Id2OgO7E5R7vtTFNxRVn8kxfJ9CWYkx9zf1EXRIA2AdYnhDtDnFprAWUoJ36RFrGtq
+	 o/IQorNOEwDrQ==
+Date: Sat, 22 Mar 2025 12:50:15 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
+Subject: [GIT PULL] x86/cleanups for v6.15
+Message-ID: <Z96j9-AVdkmXKnId@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
-To: Yury Norov <yury.norov@gmail.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
- <Z8hsRJvpjYoqh9RG@thinkpad> <Z9oiEkQEcHhA0a80@thinkpad>
- <5cbaefa8-e51f-415f-a9b3-4841e69bb3fa@arm.com>
- <1aba17f1-0cd2-429c-8338-28387ec16314@arm.com> <Z92cThxAyXu9JJdk@thinkpad>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z92cThxAyXu9JJdk@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 22/03/2025 at 02:05, Yury Norov wrote:
-> On Wed, Mar 19, 2025 at 09:43:06AM +0530, Anshuman Khandual wrote:
->> 
->> 
->> On 3/19/25 09:04, Anshuman Khandual wrote:
->>> On 3/19/25 07:16, Yury Norov wrote:
->>>> + Catalin Marinas, ARM maillist
+Linus,
 
-(...)
+Please pull the latest x86/cleanups Git tree from:
 
->>> These were moved into uapi subsequently via the following 
->>> commit.
->>> 
->>> 21a3a3d015aee ("tools headers: Synchronize {uapi/}linux/bits.h 
->>> with the kernel sources")
->>> 
->>> But in general GENMASK_U128() is needed for generating 128 bit 
->>> page table entries, related flags and masks whether in kernel or
->>> in user space for writing kernel test cases etc.
->> 
->> In the commit 947697c6f0f7 ("uapi: Define GENMASK_U128"), 
->> GENMASK_U128() gets defined using __GENMASK_U128() which in turn 
->> calls __BIT128() - both of which are defined in UAPI headers 
->> inside (include/uapi/linux/).
->> 
->> Just wondering - are you suggesting to move these helpers from 
->> include/uapi/linux/ to include/linux/bits.h instead ?
-> 
-> Vincent is working on fixed-width GENMASK_Uxx() based on 
-> GENMASK_TYPE().
-> 
-> https://lore.kernel.org/lkml/20250308-fixed-type-genmasks-v6-0- 
-> f59315e73c29@wanadoo.fr/T/
-> 
-> The series adds a general GENMASK_TYPE() in the linux/bits.h. I'd 
-> like all fixed-widh genmasks to be based on it. The implementation 
-> doesn't allow to move GENMASK_TYPE() the to uapi easily.
-> 
-> There was a discussion regarding that, and for now the general 
-> understanding is that userspace doesn't need GENMASK_Uxx().
-> 
-> Are your proposed tests based on the in-kernel tools/ ? If so, 
-> linux/ bits.h will be available for you.
-> 
-> Vincent,
-> 
-> Can you please experiment with moving GENMASK_U128() to linux/ 
-> bits.h and switching it to GENMASK_TYPE()-based implementation?
-> 
-> If it works, we can do it after merging of GENMASK_TYPE() and 
-> ancestors.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cleanups-2025-03-22
 
-I sent the new version with the split as you asked in a separate message.
+   # HEAD: ec73859d76db768da97ee799a91eb9c7d28974fe x86/coco: Replace 'static const cc_mask' with the newly introduced cc_get_mask() function
 
-I switched GENMASK_U128() from using __GENMASK_U128() to using
-GENMASK_TYPE() in this patch of the second series:
+Miscellaneous x86 cleanups by Arnd Bergmann, Charles Han,
+Mirsad Todorovac, Randy Dunlap, Thorsten Blum and Zhang Kunbo.
 
-https://lore.kernel.org/all/20250322-consolidate-genmask-
-v1-2-54bfd36c5643@wanadoo.fr/
+ Thanks,
 
-After this, the genmask_u128_test() unit tests from lib/test_bits.c are
-all green, so this looks good. Note that because it is not yet used,
-there isn't much more things to test aside from that unit test.
+	Ingo
 
-To be precise, I am not yet *moving* it. For now, I decoupled
-GENMASK_U128() from __GENMASK_U128(). To complete the move, all what is
-left is to remove __GENMASK_U128() from the uapi. To be honest, I am not
-keen on touching either of the uapi or the asm variants myself. But, if
-my work gets merged, that last step should be easy for you.
+------------------>
+Arnd Bergmann (1):
+      x86/coco: Replace 'static const cc_mask' with the newly introduced cc_get_mask() function
+
+Charles Han (1):
+      x86/delay: Fix inconsistent whitespace
+
+Mirsad Todorovac (1):
+      selftests/x86/syscall: Fix coccinelle WARNING recommending the use of ARRAY_SIZE()
+
+Randy Dunlap (1):
+      x86/usercopy: Fix kernel-doc func param name in clean_cache_range()'s description
+
+Thorsten Blum (1):
+      x86/apic: Use str_disabled_enabled() helper in print_ipi_mode()
+
+Zhang Kunbo (2):
+      x86/irq: Fix missing declaration of 'io_apic_irqs'
+      x86/platform: Fix missing declaration of 'x86_apple_machine'
 
 
-
-On a side note, at first glance, I was disturbed by the current
-__GENMASK_U128() implementation:
-
-  #define __GENMASK_U128(h, l) \
-  	((_BIT128((h)) << 1) - (_BIT128(l)))
-
-If calling __GENMASK_U128(127, x), the macro does a:
-
-  _BIT128(127) << 1
-
-which expands to:
-
-  (unsigned __int128)1 << 127 << 1
-
-So, while (unsigned __int128)1 << 128 is an undefined behaviour, doing
-it in two steps: << 127 and << 1 is well defined and gives zero. Then,
-when doing the subtraction, the unsigned integer wraparound restores the
-most significant bits making things go back to normal.
-
-
-The same applies to all the other variants. If doing:
-
-  #define GENMASK_TYPE(t, h, l)				\
-  	((t)(GENMASK_INPUT_CHECK(h, l) +		\
-  	     (((t)1 << (h) << 1) - ((t)1 << (l)))))
-
-The unit tests pass for everything and you even still get the warning if
-h is out of bound.
-
-But then, bloat-o-meter (x86_64, defconfig, GCC 12.4.1) shows a small
-increase:
-
-  Total: Before=22723482, After=22724586, chg +0.00%
-
-So, probably not worth the change anyway. I am keeping the current version.
-
-
-Yours sincerely,
-Vincent Mailhol
+ arch/x86/include/asm/coco.h                     | 10 +++++++++-
+ arch/x86/include/asm/pgtable_types.h            |  2 +-
+ arch/x86/kernel/apic/ipi.c                      |  3 ++-
+ arch/x86/kernel/i8259.c                         |  1 +
+ arch/x86/kernel/quirks.c                        |  2 ++
+ arch/x86/lib/delay.c                            |  2 +-
+ arch/x86/lib/usercopy_64.c                      |  2 +-
+ tools/testing/selftests/x86/syscall_numbering.c |  3 ++-
+ 8 files changed, 19 insertions(+), 6 deletions(-)
 
