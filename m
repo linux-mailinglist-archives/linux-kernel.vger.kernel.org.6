@@ -1,157 +1,207 @@
-Return-Path: <linux-kernel+bounces-572139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B87A6C71E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:30:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C73A6C747
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967D17A8A31
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBD217F933
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0670078F2B;
-	Sat, 22 Mar 2025 02:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616E27080D;
+	Sat, 22 Mar 2025 02:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="2Fto3Gjj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hgo2aGNb"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ArGwcii+"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700EBAD5E;
-	Sat, 22 Mar 2025 02:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AC5258A;
+	Sat, 22 Mar 2025 02:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742610637; cv=none; b=J9/tJHtOWQtMkFe1H7Xrwvmzcq3i5YP33eH1NqzdUGY+uMbvAVL/55q83m4ET5OOj6kPVk2UkNHuWNgShaXS2pr8ws78tN7Is8YDa/VXRd55Bx2pAYGABXVT6p4yWQYbOZ+2Oo9e/Tq3GSJWbZ1qvbwvaNhYflqoofmSu9ZA78g=
+	t=1742611834; cv=none; b=t7/+GdN/7F5bB6nOGrteVyjuirPYO6bFxy8w644EKKtjx/5s46dvzXIy3JHOpx/6pgzxwzE6IE/GXlvONRDM4UCer+AwGhhrK6Fc1Tl92lp3qW7qH2MDPkkI3pWCaUqhl/cojSThOt3tDzM1iw+AzzzI6szZzxJm8P2z4QnrWLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742610637; c=relaxed/simple;
-	bh=xW+ygZomg26f+TkgZWHGziyITQA+nu/AiVMmDk8CFXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMe3pyAsLNreOV/MCVt2aBDVB+k7LKOGEx/Y4zrU3STblYP74O3tgBxh9KP0IsFAxg7JPrEbN7wYUEfCwjXbd8waSm/iClHYs9LZr74T+WS3jjeo/s6eq90Gxu30IliDvEeAL3Y1yzr3nZu+ELk5oW9dxD0Ez8jE8bmkH/Zhi4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=2Fto3Gjj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hgo2aGNb; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 544361140184;
-	Fri, 21 Mar 2025 22:30:34 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 21 Mar 2025 22:30:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742610634;
-	 x=1742697034; bh=2V/xbG/szpCiF4YR+lGYDgKjTrDPFQARh1ObRca62jg=; b=
-	2Fto3GjjAoL+lYWDFaOYSA2e9OnpEG23ydD83uayY0I53l92Y10dAJv0V5EV+jBX
-	p0kIEWyHGSHEVoYU0V0PO8Y/glHarLBggKPdXIuumT2DKcrJg0oN5TyspnYVJAEF
-	JHgjkKKStuVoSbgZSFBjT6IPX39WtdyfsoLzcBD37RUCfKwR3Ak9EYOVvkpCtAp6
-	Vjgm4w3ura9VMStxSxvVzCdECy0E05gbJNJFVf9hglFZyK+CTU3AQKgPR8OhoNqd
-	U+4EEOkH4XGqkrI3Nj4XZFKI/ptyU64wXtZwFOM9kr0L0XTwy68Mw0uKX5WVLGYV
-	8d6v+TDmtrJmd9KTYE1TUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742610634; x=
-	1742697034; bh=2V/xbG/szpCiF4YR+lGYDgKjTrDPFQARh1ObRca62jg=; b=h
-	go2aGNbbFWU6NFXSQSodgQNnVS5ooKj1u16KKhjI1vZRGxJ+1lUPKMu1L7FnZ1Mt
-	P/+X13g8+V4jkplg6Y6wALhU1fQRyd1vkQ0Rakyj9Yr8tmI0E85Tto2D8GvCMgNT
-	MNnBPeHVyAn9XlFzCA9iKv2WdEgsP3Il+Xokw0SHEsaKvFEhBrl1g8+0pxLmwHyc
-	cuDpr4Gw9rCjXZEOUo145q/R8lfPxxts6zcyskmzk7fujHmNkp+ibJCrbA/Eq6yg
-	5lL1kbHX3BgR4AADIyrNJqlP1BovdgmYcNJM1wANwtkSqw48KjXVVc1BRx5qhbLh
-	DVYWr4SKJCMBOM7Wwe87w==
-X-ME-Sender: <xms:ySDeZ_E0I_0wU5XHfNYzIxfPRRZf4ed7UmsmizMdkb0qjTx6r6p7Tw>
-    <xme:ySDeZ8UssH1v54TAPTjDVn0Q7D6Ne-_79bebP-oP17u7uQVkqG8vrQPI9PHxVm5yq
-    u125pb1_nqi4_kZ3hs>
-X-ME-Received: <xmr:ySDeZxJmON-zmHYh23wmQFWuUvnGMf-J3MWxvM_58d3GaJ3ep-D2FL45HjJz7SDuNkyB6gEH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedvjeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
-    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
-    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
-    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:ySDeZ9ENM7C7CQUeJSpMfnr6koN5Fe6w5vZw5DhZrNr2ZsC3paL3jw>
-    <xmx:ySDeZ1VsFhutqaF7JKqxlDiu-KBVnXqsvmvTCrZpiq5VBgSF7Ys_Lg>
-    <xmx:ySDeZ4MaI8NHm7qxFjFrVwrx9nFGp_GaW53FuLc_gVI-dF1rTXUEWQ>
-    <xmx:ySDeZ02NJR3rQRUymBELaBNbQRX1Ut5raSctOoiQhA0Om25wQbl95A>
-    <xmx:yiDeZ9RE2-LfyHjaeGrSp7l8273V08_ym7aPMJ6brtvH8TMHEi4_4BmU>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 21 Mar 2025 22:30:30 -0400 (EDT)
-Message-ID: <d2746ddf-92d5-4ac8-b361-60d1ec9aabb5@ljones.dev>
-Date: Sat, 22 Mar 2025 15:30:28 +1300
+	s=arc-20240116; t=1742611834; c=relaxed/simple;
+	bh=1BiFl53oc1kpxx5ey5R66T3DEw8hBTtgDLrRn9rgAp0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=imP0gJn4ILfNFE96HZ7n/lYS2Q/CKckw8QPdulxT88b4k6/OOC9ucdkMUxLQjhQGbrFo1ps2r7heyjYE+5tkBdMFoHuCR9OrnJosEs7cEjfwDqluQk1R515IH4U+Lq3L0r1Z3/INlOi5BTVdeLIPfHU1fYf9NgSfcGA7aPl3mjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ArGwcii+; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1742611833; x=1774147833;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3NTXoE812gxhkh6ZaJaWv3L2T+sfHWpWaHGpsXz0hn4=;
+  b=ArGwcii+0TfZAOzdf2zs6iXnoTxs0fop2YlZqmklML7y1Oulm+jPbujr
+   igIM7U6zfmvm4RLz2P3kksmCR2xPN8VWMFGn5wKi0GAqe2yBxPPeyibWy
+   yV0T2J7ZqKbwI/birUWe9j/z+3+o0a34srUt7Y35WoJmeARDHKGRJy7FB
+   U=;
+X-IronPort-AV: E=Sophos;i="6.14,266,1736812800"; 
+   d="scan'208";a="477254702"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2025 02:50:29 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:51031]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.36:2525] with esmtp (Farcaster)
+ id beeba110-8be0-460e-a2d7-bfdc7e614639; Sat, 22 Mar 2025 02:50:28 +0000 (UTC)
+X-Farcaster-Flow-ID: beeba110-8be0-460e-a2d7-bfdc7e614639
+Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 22 Mar 2025 02:50:27 +0000
+Received: from b0be8375a521.amazon.com (10.37.244.8) by
+ EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 22 Mar 2025 02:50:21 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <eddyz87@gmail.com>
+CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
+	<daniel@iogearbox.net>, <enjuk@amazon.com>, <haoluo@google.com>,
+	<iii@linux.ibm.com>, <john.fastabend@gmail.com>, <jolsa@kernel.org>,
+	<kohei.enju@gmail.com>, <kpsingh@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <martin.lau@linux.dev>, <sdf@fomichev.me>,
+	<song@kernel.org>, <yepeilin@google.com>, <yonghong.song@linux.dev>
+Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add selftests for load-acquire/store-release when register number is invalid
+Date: Sat, 22 Mar 2025 11:48:56 +0900
+Message-ID: <20250322025013.76028-1-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <65ff9c62d0d2c355121468b04c0701081d3275fd.camel@gmail.com>
+References: <65ff9c62d0d2c355121468b04c0701081d3275fd.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] HID: asus: add RGB support to the ROG Ally units
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20250320220924.5023-1-lkml@antheas.dev>
- <20250320220924.5023-12-lkml@antheas.dev>
-Content-Language: en-US
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <20250320220924.5023-12-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
+ EX19D003ANC003.ant.amazon.com (10.37.240.197)
 
-On 21/03/25 11:09, Antheas Kapenekakis wrote:
-> Apply the RGB quirk to the QOG Ally units to enable basic RGB support.
+> [...]
 > 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/hid/hid-asus.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> > +SEC("socket")
+> > +__description("load-acquire with invalid register R11")
+> > +__failure __failure_unpriv __msg("R11 is invalid")
+> > +__naked void load_acquire_with_invalid_reg(void)
+> > +{
+> > +	asm volatile (
+> > +	".8byte %[load_acquire_insn];" // r0 = load_acquire((u64 *)(r11 + 0));
+> > +	"exit;"
+> > +	:
+> > +	: __imm_insn(load_acquire_insn,
+> > +		     BPF_ATOMIC_OP(BPF_DW, BPF_LOAD_ACQ, BPF_REG_0, 11 /* invalid reg */, 0))
+> > +	: __clobber_all);
+> > +}
+> > +
+> >  #else /* CAN_USE_LOAD_ACQ_STORE_REL */
+> >  
+> >  SEC("socket")
+> > diff --git a/tools/testing/selftests/bpf/progs/verifier_store_release.c b/tools/testing/selftests/bpf/progs/verifier_store_release.c
+> > index cd6f1e5f378b..2dc1d713b4a6 100644
+> > --- a/tools/testing/selftests/bpf/progs/verifier_store_release.c
+> > +++ b/tools/testing/selftests/bpf/progs/verifier_store_release.c
+> > @@ -257,6 +257,20 @@ __naked void store_release_leak_pointer_to_map(void)
+> >  	: __clobber_all);
+> >  }
+> >  
+> > +SEC("socket")
+> > +__description("store-release with invalid register R11")
+> > +__failure __failure_unpriv __msg("R11 is invalid")
+> > +__naked void store_release_with_invalid_reg(void)
+> > +{
+> > +	asm volatile (
+> > +	".8byte %[store_release_insn];" // store_release((u64 *)(r11 + 0), r1);
+> > +	"exit;"
+> > +	:
+> > +	: __imm_insn(store_release_insn,
+> > +		     BPF_ATOMIC_OP(BPF_DW, BPF_STORE_REL, 11 /* invalid reg */, BPF_REG_1, 0))
 > 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 5e87923b35520..589b32b508bbf 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -1449,10 +1449,10 @@ static const struct hid_device_id asus_devices[] = {
->   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
-> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
-> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
->   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
->   	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
->   	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
+> On my machine / config, the value of 11 was too small to trigger the
+> KASAN warning. Value of 12 was sufficient.
+> Curious if it is my config, did you see KASAN warning locally when running this test
+> before applying the fix?
 
-I need to NACK this one sorry, if only because I added the RGB control 
-in hid-asus-ally as a per-LED control and it works very well. You'll see 
-it once I submit that series upstream again.
+Yes, as you pointed out, R11 doesn't trigger the KASAN splat in practice. 
+For the splat, we need a value of 12 or larger.
 
-The distinction between MCU mode and Software mode for RGB is frankly a 
-pain in the arse. For Ally we will want software mode (per-led) as that 
-allows just one USB write for all LEDs, and no need to do a set/apply to 
-make the LEDs change. The benefit being that the LEDs can change rapidly 
-and there will be no "blink".
+The sizes of struct bpf_reg_state and bpf_func_state are 120 and 1368 
+respectively.[1]
+In the bpf_func_state, the member `regs` ranges from 0 to 1320 bytes (each 
+120 bytes for each R0 to R10).
+Also, the member `type`, which is accessed in is_ctx_reg(), is the first 
+member of struct bpf_reg_state.
 
-I'll write more on patch 10
+Therefore, when the register is R11, `regs->type` reads 4 bytes from 1320.
+Since the size of bpf_func_state is 1368 and it doesn't exceed the end of 
+the allocated memory, it doesn't trigger the KASAN splat.
 
-Cheers,
-Luke.
+OTOH, when the register is R12, `regs->type` reads 4 bytes from 1440 (120 
+* 12 + 0).
+This triggers the KASAN splat since it's larger than bpf_func_state's size.
+
+Here is a part of the splat I saw in my environment when specifying R12. 
+This says that the buggy address is 1440 (1368 + 72) and also matches 
+previous analysis.
+
+    The buggy address belongs to the object at ffff888112603800
+     which belongs to the cache kmalloc-2k of size 2048
+    The buggy address is located 72 bytes to the right of
+     allocated 1368-byte region [ffff888112603800, ffff888112603d58)
+    ...
+    Memory state around the buggy address:
+     ffff888112603c80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     ffff888112603d00: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+    >ffff888112603d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                   ^
+     ffff888112603e00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+     ffff888112603e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+> Maybe set the value to 15 here and above to maximize probability of KASAN warning?
+
+Understood. Thank you for the feedback.
+
+I chose the minimum invalid register regardless of the actual occurrence 
+of the splat, since the validity check of this type might be `regno >= 
+MAX_BPF_REG` or not.
+Sorry for my confusing choice.
+
+Since I'm not attached to that particular choice, I'll change it to R15.
+Thank you for reviewing and providing feedback!
+
+> 
+> > +	: __clobber_all);
+> > +}
+> > +
+> >  #else
+> >  
+> >  SEC("socket")
+
+Regards,
+Kohei
+
+---
+[1]
+struct bpf_reg_state {
+        enum bpf_reg_type          type;                 /*     0     4 */
+...
+
+        /* size: 120, cachelines: 2, members: 19 */
+        /* padding: 3 */
+        /* last cacheline: 56 bytes */
+};
+
+struct bpf_func_state {
+        struct bpf_reg_state       regs[11];             /*     0  1320 */
+...
+        int                        allocated_stack;      /*  1360     4 */
+
+        /* size: 1368, cachelines: 22, members: 12 */
+        /* sum members: 1363, holes: 1, sum holes: 1 */
+        /* padding: 4 */
+        /* last cacheline: 24 bytes */
+};
 
