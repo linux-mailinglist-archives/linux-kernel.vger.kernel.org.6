@@ -1,154 +1,87 @@
-Return-Path: <linux-kernel+bounces-572644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3408CA6CC98
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:11:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CF6A6CC99
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:14:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712923B6A13
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4DC3B6DA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B9C37160;
-	Sat, 22 Mar 2025 21:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89B923535E;
+	Sat, 22 Mar 2025 21:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VZS1nKi3"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0scgQiN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742EC1EF38A
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 21:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C553D158D8B;
+	Sat, 22 Mar 2025 21:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742677887; cv=none; b=AOxCNAZyz0Rybcwi1JZjI6jFgyoxdbuVEceEWnIX9qZqboZcxqySBvi0EzYzt8qBO1IGOb5rUm3aXH+SPjW4gdI4AT1xzGXnWEDArmhWRfc9MKf17wI/mPaHt/vTtHhITgqg8Y0p0+Tj7w1k2IHmahr0mAMuZ3IeXRnOGnUnnnE=
+	t=1742678031; cv=none; b=pKLcpVcnEKII9KIOpytOMY3I9B35qETUWumxIm1dJD0SM1BTR2MhwhgwvsEYVCRJAQdt8T4NhiFPqJraY9C5Y4OQ7DhLAH+DbjN2F2Bs0bDaCA6K/pZCowKXied5hSTyCMTLMjDNiqSq/a9o/YICMRL7heVnXAeGhIllzbEUuD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742677887; c=relaxed/simple;
-	bh=zivpWO9gs+FtiuWU1lkLPt+QVn2ZMwhs6Ty/iDt1wyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VFE5NlWZ0XnW1HeexxbWjOYy9L50ekPvlxQjutNd53KJeohDy/bHYcHLhA/fhKX7cFK03hv5/UN6vA1oG8U93Ml8Qc/RGBsfkHMkxSji+7+voR+cegFOJZmHPJs70O/Ln81I2XdzZ6ObxceevyLqK7TBtXsifwswQNbuEvptUcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VZS1nKi3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52MJkYnr005489;
-	Sat, 22 Mar 2025 21:11:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=bVVfrCJK+T/Fv+x04n5fAAuE5E9U
-	gEqfzfsAU4caubo=; b=VZS1nKi3WBhbPJy2VuAfNzXnvGFABjyCKIPZ4n7M2EXb
-	FkS/L0V/lubE1+rP/4Wc/Kxx6oAlD//jMyMHQw8fo5HKtl/i71HJOiZGZNwmr+uW
-	7Qt86VJ1ZPkkIhQv1mxQjcYcL4JzG4kjMtB2YIsfy9qDC6L1r1/bWBhfrjBA97L7
-	lNHTNAM84mEulF7Xr//BuY/7oyk4RSDz1z1yYvgUFgmhfnGNapAg5eSyJ5P3/4HB
-	rY/sMmwub+Hd2WwlvNA9ufDxp/5zcZLsqm50w3709ddcC72vnNYmhdSl8IPk5Z8X
-	zX7b0TOjzSP3xIvm4Jj5elt49mcUsGwHPOQ/mHvj4g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45hxmns5nx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Mar 2025 21:11:12 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52MLBCHK026265;
-	Sat, 22 Mar 2025 21:11:12 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45hxmns5nu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Mar 2025 21:11:12 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52MJ6aGH003480;
-	Sat, 22 Mar 2025 21:11:11 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45hn8d2xr5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 22 Mar 2025 21:11:10 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52MLB6f050069822
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 22 Mar 2025 21:11:06 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE0A420043;
-	Sat, 22 Mar 2025 21:11:06 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6974620040;
-	Sat, 22 Mar 2025 21:11:05 +0000 (GMT)
-Received: from ltcden6-lp1.aus.stglabs.ibm.com (unknown [9.3.101.155])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 22 Mar 2025 21:11:05 +0000 (GMT)
-From: Misbah Anjum N <misanjum@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] arch/powerpc: Remove redundant typedef for bool
-Date: Sat, 22 Mar 2025 16:11:04 -0500
-Message-ID: <20250322211104.231795-1-misanjum@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742678031; c=relaxed/simple;
+	bh=z6Kb0zH8nQcvLTFP1HgxUUraOMcBI6i3DEzgydeSca4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmZSBeHit4yE3KGfii1d9Z4T7EyTs1NqwEdqpZWRggjPul0qey45RqYz/QXxUpgPhCWADa2nl3Vl9J+9+QPILoO+LP07qbL2mX3kUmHp/Ug0WmD4yQfVT4EXOBwIgF7cZ7Qq/zMC/HUIKDgOdBePdUA9hzk2uGD2zXRtO/T1NAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m0scgQiN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jw4nRoBv7YvGHs2GxEuwE6E/Q8bCcDDx4GQysHcomdY=; b=m0scgQiNuoD5yPnuFu0bD4acmd
+	7Zlo/jvG7RNVmecORw+43mRCw8GjWi0NUBFsEnqzroN4seI1rscu3MRdkxqZnZwMPuUhN6NuL0I9H
+	cIESWsscc/n7z0SWwuI3gfTQaBCblcGGy2rKACT90wKqjg+4EvpIKv2r4R5QCUc1/C6OmGlqH6Q8g
+	81oSZ0WzNXLHcfqRNVKhkeQCIc0LvBqKthNaE66NFqKOYXvxXn2+1KBMYmC/bV07ve/WrrD145jyu
+	OymivnxU8lm2PCxI0dy4KEXPjEEVun3Yw0tTBZk8F4GSpAgdEa8B15pz3vXedxnXKupDrLyant1tF
+	u0fAiToA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tw6A6-00000005qST-1h6Y;
+	Sat, 22 Mar 2025 21:13:46 +0000
+Date: Sat, 22 Mar 2025 21:13:46 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
+Message-ID: <Z98oChgU7Z9wyTw1@casper.infradead.org>
+References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ukyu0jHVoQlVmz2zErze3Diy-8U7OqBB
-X-Proofpoint-GUID: ckjNjkZ-Ay5mhKq30Y2qB9xrL7Bsd4Iw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-22_09,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- impostorscore=0 phishscore=0 mlxlogscore=415 lowpriorityscore=0
- malwarescore=0 suspectscore=0 mlxscore=0 priorityscore=1501 clxscore=1011
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503220158
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com>
 
-The custom 'bool' typedef in arch/powerpc/boot/types.h is incompatible with
-the C23 standard, where 'bool', 'true', and 'false' are now reserved keywords.
-With newer GCC versions (such as GCC 15), redefining 'bool' leads to compilation
-errors. For example:
-    error: 'bool' cannot be defined via 'typedef'
+On Fri, Mar 21, 2025 at 10:17:08PM -0400, Tamir Duberstein wrote:
+> Partially revert commit 6684aba0780d ("XArray: Add extra debugging check
+> to xas_lock and friends"), fixing test failures in check_xa_alloc.
+> 
+> Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and friends")
 
-Since 'stdbool.h' is already included and provides a standard definition for
-'bool', this typedef is redundant and can be removed to avoid conflicts.
+This doesn't fix anything.  The first failure is:
 
-Compilation Error:
-    $ make -j$(nproc)
-    ....
-    In file included from arch/powerpc/boot/ops.h:13,
-                     from arch/powerpc/boot/cuboot.c:12:
-    arch/powerpc/boot/types.h:43:13: error: ‘bool’ cannot be defined via ‘typedef’
-    43 | typedef int bool;
-        |             ^~~~
-    arch/powerpc/boot/types.h:43:13: note: ‘bool’ is a keyword with ‘-std=c23’ onwards
-    arch/powerpc/boot/types.h:43:1: warning: useless type name in empty declaration
-    43 | typedef int bool;
-        | ^~~~~~~
-    ....
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/devtree.o] Error 1
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/ofconsole.o] Error 1
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/ns16550.o] Error 1
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/main.o] Error 1
-    make[1]: *** [arch/powerpc/Makefile:236: zImage] Error 2
-    make: *** [Makefile:251: __sub-make] Error 2
+#6  0x0000555555649979 in XAS_INVALID (xas=xas@entry=0x7ffff4a003a0)
+    at ../shared/linux/../../../../include/linux/xarray.h:1434
+#7  0x000055555564f545 in check_xas_retry (xa=xa@entry=0x55555591ba00 <array>)
+--Type <RET> for more, q to quit, c to continue without paging--
+    at ../../../lib/test_xarray.c:131
+#8  0x0000555555663869 in xarray_checks () at ../../../lib/test_xarray.c:2221
+#9  0x00005555556639ab in xarray_tests () at xarray.c:15
 
-Signed-off-by: Misbah Anjum N <misanjum@linux.ibm.com>
----
- arch/powerpc/boot/types.h | 2 --
- 1 file changed, 2 deletions(-)
+That has nothing to do with xa_destroy().  What on earth are you doing?
 
-diff --git a/arch/powerpc/boot/types.h b/arch/powerpc/boot/types.h
-index 8a4c418b7..abae1e93a 100644
---- a/arch/powerpc/boot/types.h
-+++ b/arch/powerpc/boot/types.h
-@@ -40,8 +40,6 @@ typedef s64 int64_t;
- #define min_t(type, a, b) min(((type) a), ((type) b))
- #define max_t(type, a, b) max(((type) a), ((type) b))
- 
--typedef int bool;
--
- #ifndef true
- #define true 1
- #endif
--- 
-2.49.0
-
+Anyway, I'm at LSFMM and it'a Saturday.  I shan't be looking at this
+until the 27th.  There's clearly no urgency since you're the first one
+to notice in six months.
 
