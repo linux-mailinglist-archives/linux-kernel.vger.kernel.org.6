@@ -1,389 +1,262 @@
-Return-Path: <linux-kernel+bounces-572250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5C3A6C839
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:11:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4544FA6C83E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7073BA331
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2ABA46072C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62601D7984;
-	Sat, 22 Mar 2025 08:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711F21D5CE8;
+	Sat, 22 Mar 2025 08:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="eEz0AwM5"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="c8RFP964"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6610542052;
-	Sat, 22 Mar 2025 08:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4911B6CE0;
+	Sat, 22 Mar 2025 08:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742631075; cv=none; b=EibdhtZTE3ONahVoFsBz7U42VcbeKOkCzOhTG2VI1Y/OkUPDbEUKk6N9qKzQ8TF4xdRn8PlYddQegAQ5MwVP2QM1eUTizdr0L53ZlXCEKjQUBU1RCW93mwXqLSF1k68b6rWHkfHZ2fWnhNQYqMfxe5s6mcatdIBNUHfwmOwPrXE=
+	t=1742631194; cv=none; b=pzUIBBnrt5IlOl8xBvxGxa325xqafckwIKzUnpogmCDi0jsHI/ZBQ5KMzzNl9dBi8RERk5Cdw4IqN1jLHRaNdq12PUjP258CKYHSL9d7hs2+6Ah5M58Lq9L0PKf4NrtWWV0eAwcbchZEqKKMkjlYJQgpUBm0eo+9MUN2KV9b4cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742631075; c=relaxed/simple;
-	bh=3mJRJDHMlrPaF9fpdmO1kBL5+Ko/Wd4L7orgR9YZccw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LDnXhIqmAB44QfASmaOMVvIphMOoUdwoguGSj5MH3lm6V4VLXDs31O5mROAfdaMGGi/YIxQx9A5LXqtDzKyxePzoGP1H8oGwqNMw/K87bxNjsmSisKrKfrVOiH/ZzeLp6Xbkxz95KNLqwHA6FUva4QLF+SLPnNhs2gT7k4jK2hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=eEz0AwM5; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1742631061;
-	bh=3mJRJDHMlrPaF9fpdmO1kBL5+Ko/Wd4L7orgR9YZccw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=eEz0AwM50djTkRrmR5FEWelcF3YI/orDa6XvFqllfqyL1ylJd5J4plpJIVFid2YrF
-	 ozOgFwCs2GTWERpetuLjPbtENxYK2ZOIDTkeY3eCnTZwE7EhNhN7iAryUVDx+ervzX
-	 0nXQ68WOtNLRdJ9A2jdGAZRcehcj3q/YGmytWDBM=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 22 Mar 2025 09:10:51 +0100
-Subject: [PATCH v2] tools/nolibc: Add support for SPARC
+	s=arc-20240116; t=1742631194; c=relaxed/simple;
+	bh=JAnbRP6XM4tAuChv2P7cUtiCbiPzbTkZx5tSDakSrII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5V+oaONMhpZRVZjpjiXsIYmBfwkjCehsbSNwIwh1a1XySgWqQOquYl+9itwR/bvxjxjCrg0EmloHLXiQtUdvMdD7QF3q0TVcEMuOJqjz8F4iQrL6RQuwm2fleMPxi0UVddrmUJsrTJn2UeThuSyQMlcFBL23tvjyhDA6gTh5Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=c8RFP964; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id ABB562E07B1B;
+	Sat, 22 Mar 2025 10:13:03 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742631189;
+	bh=7cBjueBxbh26ugimwmSV3S4SbS8FAmhY3jIT1+5zfsc=;
+	h=Received:From:Subject:To;
+	b=c8RFP964uObEUqW2VWF6E6lyDEJbGz6GWi4k2kQh3AQnsZgxlacvVQsXKax1ZbMpc
+	 4x4H3knYDTzoR7HpUpHg7Th9SpRcXFO3BIsERqi9TXYZ8i1PO+GNpzfe8O1f5SjEuF
+	 23iInjodgZ+TEdrK4ehlaZOeGhL7Ccdcvg5aNBLM=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.167.51) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f51.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-549b116321aso2938432e87.3;
+        Sat, 22 Mar 2025 01:13:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPfSAZqcYBuW8XBc5VqClzXRKmHXqIT5MuItIVsw8R3mAm3r8ztBxNlamtLvtK42j5OXDgXhe21q+KUQ==@vger.kernel.org, AJvYcCXA+GRoED+8LAHaR3byyNmr8jMDMMbP9pIXvwhepCdyzOBA7t4e0r39OBv7+VZHUrYq1ND3sR7QM/BBbmh3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXwJVH3eOfz4SFQSq/ZXIMoNR/C28/eX6JD0G8fD+ITypi3bfJ
+	ps64/LS6ExNyrijLPp4G0BHWPuNcZ/GG9uLhxGz/nmqOQY+fMAKE/5RwI26zyGux4An7jir8eQD
+	/ZyZBZB2E2rS5jYG38+Q8R3ae2as=
+X-Google-Smtp-Source: AGHT+IFBtyDdGPt9tnhNRhqaNtHZRkE0IbsqbTbCSl1v5+opxDKgSJNmQcjzDQPFedI6l/FRpH5fkG9EE3GEWwMdGZM=
+X-Received: by 2002:a05:6512:3d94:b0:549:c1e6:cbb9 with SMTP id
+ 2adb3069b0e04-54ad6470679mr2244701e87.9.1742631182459; Sat, 22 Mar 2025
+ 01:13:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250322-nolibc-sparc-v2-1-89af018c6296@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAIpw3mcC/13NwQ6CMAzG8VchPTvDiohy8j0MhzGKa2I2siJqy
- N7diTeP/y/prysIRSaBtlgh0sLCwefAXQHWGX8jxUNuwBLrEvGofLhzb5VMJlpl+vHQNPVgT7q
- CfDJFGvm1cdcut2OZQ3xv+qK/6w+q9B+0aKUV0rnJP4aa0F6exCJi3cPtPc3QpZQ+v+sQla0AA
- AA=
-X-Change-ID: 20250226-nolibc-sparc-abf4775dc813
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- sparclinux@vger.kernel.org, Chris Torek <chris.torek@gmail.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742631061; l=14265;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=3mJRJDHMlrPaF9fpdmO1kBL5+Ko/Wd4L7orgR9YZccw=;
- b=msqva+7I3IzpEBW/Xw49b7MmcH72i58+ObkVc/OstVs9m7IlSeyauXcXgvmsw7j4aCWLSY/PS
- Agvh8qCze6hA9reQhHNCH7zVmCc0vjG943Rs7oa5f2tww4Tku7eTI5g
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20250320220924.5023-1-lkml@antheas.dev> <20250320220924.5023-9-lkml@antheas.dev>
+ <9be2c01e-190b-4d55-8ff8-3d89be52fc84@ljones.dev>
+In-Reply-To: <9be2c01e-190b-4d55-8ff8-3d89be52fc84@ljones.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sat, 22 Mar 2025 09:12:50 +0100
+X-Gmail-Original-Message-ID: <CAGwozwFDeneALZ_-kOXQ70kg3OQ5BK8ANJrj+32hLHK_PMqVNQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jod4D_nxhCFB4XvUxl03loi48p2sBnV6C4z3A4nwkBt_rEfaN8_FF8T9LA
+Message-ID: <CAGwozwFDeneALZ_-kOXQ70kg3OQ5BK8ANJrj+32hLHK_PMqVNQ@mail.gmail.com>
+Subject: Re: [PATCH 08/11] platform/x86: asus-wmi: add keyboard brightness
+ event handler
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Corentin Chary <corentin.chary@gmail.com>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Add support for 32bit and 64bit SPARC to nolibc.
+On Sat, 22 Mar 2025 at 05:31, Luke D. Jones <luke@ljones.dev> wrote:
+>
+> On 21/03/25 11:09, Antheas Kapenekakis wrote:
+> > Currenlty, the keyboard brightness control of Asus WMI keyboards is
+> > handled in the kernel, which leads to the shortcut going from
+> > brightness 0, to 1, to 2, and 3.
+> >
+> > However, for HID keyboards it is exposed as a key and handled by the
+> > user's desktop environment. For the toggle button, this means that
+> > brightness control becomes on/off. In addition, in the absence of a
+> > DE, the keyboard brightness does not work.
+> >
+> > Therefore, expose an event handler for the keyboard brightness control
+> > which can then be used by hid-asus.
+> >
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >   drivers/platform/x86/asus-wmi.c            | 38 ++++++++++++++++++++++
+> >   include/linux/platform_data/x86/asus-wmi.h | 11 +++++++
+> >   2 files changed, 49 insertions(+)
+> >
+> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> > index 21e034be71b2f..45999dda9e7ed 100644
+> > --- a/drivers/platform/x86/asus-wmi.c
+> > +++ b/drivers/platform/x86/asus-wmi.c
+> > @@ -1529,6 +1529,44 @@ void asus_brt_unregister_listener(struct asus_brt_listener *bdev)
+> >   }
+> >   EXPORT_SYMBOL_GPL(asus_brt_unregister_listener);
+> >
+> > +static void do_kbd_led_set(struct led_classdev *led_cdev, int value);
+> > +
+> > +int asus_brt_event(enum asus_brt_event event)
+> > +{
+> > +     int brightness;
+> > +
+> > +     mutex_lock(&asus_brt_lock);
+> > +     if (!asus_brt_ref || !asus_brt_ref->kbd_led_registered) {
+> > +             mutex_unlock(&asus_brt_lock);
+> > +             return -EBUSY;
+> > +     }
+> > +     brightness = asus_brt_ref->kbd_led_wk;
+> > +
+> > +     switch (event) {
+> > +     case ASUS_BRT_UP:
+> > +             brightness += 1;
+> > +             break;
+> > +     case ASUS_BRT_DOWN:
+> > +             brightness -= 1;
+> > +             break;
+> > +     case ASUS_BRT_TOGGLE:
+> > +             if (brightness >= 3)
+> > +                     brightness = 0;
+> > +             else
+> > +                     brightness += 1;
+> > +             break;
+> > +     }
+> > +
+> > +     do_kbd_led_set(&asus_brt_ref->kbd_led, brightness);
+> > +     led_classdev_notify_brightness_hw_changed(&asus_brt_ref->kbd_led,
+> > +                                               asus_brt_ref->kbd_led_wk);
+> > +
+> > +     mutex_unlock(&asus_brt_lock);
+> > +
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(asus_brt_event);
+> > +
+>
+> I quick test on 6.14-rc7 gives me this:
+>
+> [  288.039255] BUG: sleeping function called from invalid context at
+> kernel/locking/mutex.c:258
+> [  288.039262] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 0,
+> name: swapper/17
+> [  288.039263] preempt_count: 101, expected: 0
+> [  288.039264] RCU nest depth: 0, expected: 0
+> [  288.039266] CPU: 17 UID: 0 PID: 0 Comm: swapper/17 Tainted: G
+> W          6.14.0-rc7+ #164
+> [  288.039268] Tainted: [W]=WARN
+> [  288.039269] Hardware name: ASUSTeK COMPUTER INC. ROG Zephyrus M16
+> GU604VY_GU604VY_00130747B/GU604VY, BIOS GU604VY.313 08/13/2024
+> [  288.039270] Call Trace:
+> [  288.039272]  <IRQ>
+> [  288.039273]  dump_stack_lvl+0x5d/0x80
+> [  288.039277]  __might_resched.cold+0xba/0xc9
+> [  288.039282]  mutex_lock+0x19/0x40
+> [  288.039285]  asus_brt_event+0x13/0xb0 [asus_wmi]
+> [  288.039292]  asus_event+0x91/0xa0 [hid_asus]
+> [  288.039295]  hid_process_event+0xae/0x120
+> [  288.039298]  hid_input_array_field+0x132/0x180
+> [  288.039300]  hid_report_raw_event+0x360/0x4e0
+> [  288.039302]  __hid_input_report.constprop.0+0xf1/0x180
+> [  288.039304]  hid_irq_in+0x17f/0x1b0
+> [  288.039306]  __usb_hcd_giveback_urb+0x98/0x110
+> [  288.039308]  usb_giveback_urb_bh+0xbd/0x150
+> [  288.039310]  process_one_work+0x171/0x290
+> [  288.039312]  bh_worker+0x1ac/0x210
+> [  288.039314]  tasklet_hi_action+0xe/0x30
+> [  288.039315]  handle_softirqs+0xdb/0x1f0
+> [  288.039317]  __irq_exit_rcu+0xc2/0xe0
+> [  288.039318]  common_interrupt+0x85/0xa0
+> [  288.039320]  </IRQ>
+> [  288.039320]  <TASK>
+> [  288.039321]  asm_common_interrupt+0x26/0x40
+> [  288.039323] RIP: 0010:cpuidle_enter_state+0xb9/0x2c0
+> [  288.039325] Code: 40 0f 84 1b 01 00 00 e8 35 e8 13 ff e8 40 f2 ff ff
+> 31 ff 49 89 c5 e8 c6 f0 12 ff 45 84 f6 0f 85 f2 00 00 00 fb 0f 1f 44 00
+> 00 <45> 85 ff 0f 88 cf 00 00 00 49 63 f7 48 8d 04 76 48 8d 04 86 49 8d
+> [  288.039326] RSP: 0018:ffffc90000253e90 EFLAGS: 00000246
+> [  288.039328] RAX: ffff888890680000 RBX: 0000000000000003 RCX:
+> 0000000000000000
+> [  288.039329] RDX: 00000043107862af RSI: fffffffd616e8210 RDI:
+> 0000000000000000
+> [  288.039329] RBP: ffff8888906ba370 R08: 0000000000000000 R09:
+> 0000000000000007
+> [  288.039330] R10: ffff88888ffa6098 R11: 0000000000000008 R12:
+> ffffffff82fd4140
+> [  288.039331] R13: 00000043107862af R14: 0000000000000000 R15:
+> 0000000000000003
+> [  288.039332]  cpuidle_enter+0x28/0x40
+> [  288.039334]  do_idle+0x1a8/0x200
+> [  288.039336]  cpu_startup_entry+0x24/0x30
+> [  288.039337]  start_secondary+0x11e/0x140
+> [  288.039340]  common_startup_64+0x13e/0x141
+> [  288.039342]  </TASK>
+>
+> I think you need to swap the mutex to a spin_lock_irqsave and associated
+> spin_unlock_irqrestore plus DEFINE_SPINLOCK(asus_brt_lock).
+>
+> I'm out of time tonight but I'll apply the above to your patches and
+> report back tomorrow if you don't get to it before I do.
+>
+> It might be worth checking any other mutex uses in the LED path too.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Acked-by: Willy Tarreau <w@1wt.eu>
-Tested-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc> # UltraSparc T4 (Niagara4)
----
-This is only tested on QEMU.
-Any tests on real hardware would be very welcome.
----
-Changes in v2:
-- Pick up tags
-- Fix comment about syscall return register
-- Reword comment about stackpointer offsets
-- Link to v1: https://lore.kernel.org/r/20250316-nolibc-sparc-v1-1-2e97022d5e2c@weissschuh.net
----
- tools/include/nolibc/arch-sparc.h           | 191 ++++++++++++++++++++++++++++
- tools/include/nolibc/arch.h                 |   2 +
- tools/testing/selftests/nolibc/Makefile     |  11 ++
- tools/testing/selftests/nolibc/run-tests.sh |   2 +
- 4 files changed, 206 insertions(+)
+Thank you for catching that, I will replace the mutex with a spinlock.
+Might have to do with the WMI method being active as I got no such
+issue in my device.
 
-diff --git a/tools/include/nolibc/arch-sparc.h b/tools/include/nolibc/arch-sparc.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..1435172f3dfe33566cd8c61d726455702c804f6a
---- /dev/null
-+++ b/tools/include/nolibc/arch-sparc.h
-@@ -0,0 +1,191 @@
-+/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
-+/*
-+ * SPARC (32bit and 64bit) specific definitions for NOLIBC
-+ * Copyright (C) 2025 Thomas Weißschuh <linux@weissschuh.net>
-+ */
-+
-+#ifndef _NOLIBC_ARCH_SPARC_H
-+#define _NOLIBC_ARCH_SPARC_H
-+
-+#include <linux/unistd.h>
-+
-+#include "compiler.h"
-+#include "crt.h"
-+
-+/*
-+ * Syscalls for SPARC:
-+ *   - registers are native word size
-+ *   - syscall number is passed in g1
-+ *   - arguments are in o0-o5
-+ *   - the system call is performed by calling a trap instruction
-+ *   - syscall return value is in o0
-+ *   - syscall error flag is in the carry bit of the processor status register
-+ */
-+
-+#ifdef __arch64__
-+
-+#define _NOLIBC_SYSCALL "t	0x6d\n"                                       \
-+			"bcs,a	%%xcc, 1f\n"                                  \
-+			"sub	%%g0, %%o0, %%o0\n"                           \
-+			"1:\n"
-+
-+#else
-+
-+#define _NOLIBC_SYSCALL "t	0x10\n"                                       \
-+			"bcs,a	1f\n"                                         \
-+			"sub	%%g0, %%o0, %%o0\n"                           \
-+			"1:\n"
-+
-+#endif /* __arch64__ */
-+
-+#define my_syscall0(num)                                                      \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0");                                   \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_num)                                                   \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define my_syscall1(num, arg1)                                                \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0") = (long)(arg1);                    \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_num)                                                   \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define my_syscall2(num, arg1, arg2)                                          \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0") = (long)(arg1);                    \
-+	register long _arg2 __asm__ ("o1") = (long)(arg2);                    \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_arg2), "r"(_num)                                       \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define my_syscall3(num, arg1, arg2, arg3)                                    \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0") = (long)(arg1);                    \
-+	register long _arg2 __asm__ ("o1") = (long)(arg2);                    \
-+	register long _arg3 __asm__ ("o2") = (long)(arg3);                    \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_arg2), "r"(_arg3), "r"(_num)                           \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define my_syscall4(num, arg1, arg2, arg3, arg4)                              \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0") = (long)(arg1);                    \
-+	register long _arg2 __asm__ ("o1") = (long)(arg2);                    \
-+	register long _arg3 __asm__ ("o2") = (long)(arg3);                    \
-+	register long _arg4 __asm__ ("o3") = (long)(arg4);                    \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_num)               \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define my_syscall5(num, arg1, arg2, arg3, arg4, arg5)                        \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0") = (long)(arg1);                    \
-+	register long _arg2 __asm__ ("o1") = (long)(arg2);                    \
-+	register long _arg3 __asm__ ("o2") = (long)(arg3);                    \
-+	register long _arg4 __asm__ ("o3") = (long)(arg4);                    \
-+	register long _arg5 __asm__ ("o4") = (long)(arg5);                    \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5), "r"(_num)   \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define my_syscall6(num, arg1, arg2, arg3, arg4, arg5, arg6)                  \
-+({                                                                            \
-+	register long _num  __asm__ ("g1") = (num);                           \
-+	register long _arg1 __asm__ ("o0") = (long)(arg1);                    \
-+	register long _arg2 __asm__ ("o1") = (long)(arg2);                    \
-+	register long _arg3 __asm__ ("o2") = (long)(arg3);                    \
-+	register long _arg4 __asm__ ("o3") = (long)(arg4);                    \
-+	register long _arg5 __asm__ ("o4") = (long)(arg5);                    \
-+	register long _arg6 __asm__ ("o5") = (long)(arg6);                    \
-+									      \
-+	__asm__ volatile (                                                    \
-+		_NOLIBC_SYSCALL                                               \
-+		: "+r"(_arg1)                                                 \
-+		: "r"(_arg2), "r"(_arg3), "r"(_arg4), "r"(_arg5), "r"(_arg6), \
-+		  "r"(_num)                                                   \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+/* startup code */
-+void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector _start(void)
-+{
-+	__asm__ volatile (
-+		/*
-+		 * Save argc pointer to o0, as arg1 of _start_c.
-+		 * Account for the window save area, which is 16 registers wide.
-+		 */
-+#ifdef __arch64__
-+		"add %sp, 128 + 2047, %o0\n" /* on sparc64 / v9 the stack is offset by 2047 */
-+#else
-+		"add %sp, 64, %o0\n"
-+#endif
-+		"b,a _start_c\n"     /* transfer to c runtime */
-+	);
-+	__nolibc_entrypoint_epilogue();
-+}
-+
-+static pid_t getpid(void);
-+
-+static __attribute__((unused))
-+pid_t sys_fork(void)
-+{
-+	pid_t parent, ret;
-+
-+	parent = getpid();
-+	ret = my_syscall0(__NR_fork);
-+
-+	/* The syscall returns the parent pid in the child instead of 0 */
-+	if (ret == parent)
-+		return 0;
-+	else
-+		return ret;
-+}
-+#define sys_fork sys_fork
-+
-+#endif /* _NOLIBC_ARCH_SPARC_H */
-diff --git a/tools/include/nolibc/arch.h b/tools/include/nolibc/arch.h
-index 8a2c143c0fba288147e5a7bf9db38ffb08367616..b8c1da9a88d1593d5a97f60909ede5d0c17699eb 100644
---- a/tools/include/nolibc/arch.h
-+++ b/tools/include/nolibc/arch.h
-@@ -33,6 +33,8 @@
- #include "arch-s390.h"
- #elif defined(__loongarch__)
- #include "arch-loongarch.h"
-+#elif defined(__sparc__)
-+#include "arch-sparc.h"
- #else
- #error Unsupported Architecture
- #endif
-diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
-index 58bcbbd029bc3ad9ccac968191b703ccf5df0717..5060e189dc842d761dd13d70b8afdb2ff3390bc5 100644
---- a/tools/testing/selftests/nolibc/Makefile
-+++ b/tools/testing/selftests/nolibc/Makefile
-@@ -56,6 +56,8 @@ ARCH_mips32be    = mips
- ARCH_riscv32     = riscv
- ARCH_riscv64     = riscv
- ARCH_s390x       = s390
-+ARCH_sparc32     = sparc
-+ARCH_sparc64     = sparc
- ARCH            := $(or $(ARCH_$(XARCH)),$(XARCH))
- 
- # kernel image names by architecture
-@@ -76,6 +78,8 @@ IMAGE_riscv64    = arch/riscv/boot/Image
- IMAGE_s390x      = arch/s390/boot/bzImage
- IMAGE_s390       = arch/s390/boot/bzImage
- IMAGE_loongarch  = arch/loongarch/boot/vmlinuz.efi
-+IMAGE_sparc32    = arch/sparc/boot/image
-+IMAGE_sparc64    = arch/sparc/boot/image
- IMAGE            = $(objtree)/$(IMAGE_$(XARCH))
- IMAGE_NAME       = $(notdir $(IMAGE))
- 
-@@ -97,6 +101,8 @@ DEFCONFIG_riscv64    = defconfig
- DEFCONFIG_s390x      = defconfig
- DEFCONFIG_s390       = defconfig compat.config
- DEFCONFIG_loongarch  = defconfig
-+DEFCONFIG_sparc32    = sparc32_defconfig
-+DEFCONFIG_sparc64    = sparc64_defconfig
- DEFCONFIG            = $(DEFCONFIG_$(XARCH))
- 
- EXTRACONFIG           = $(EXTRACONFIG_$(XARCH))
-@@ -122,6 +128,8 @@ QEMU_ARCH_riscv64    = riscv64
- QEMU_ARCH_s390x      = s390x
- QEMU_ARCH_s390       = s390x
- QEMU_ARCH_loongarch  = loongarch64
-+QEMU_ARCH_sparc32    = sparc
-+QEMU_ARCH_sparc64    = sparc64
- QEMU_ARCH            = $(QEMU_ARCH_$(XARCH))
- 
- QEMU_ARCH_USER_ppc64le = ppc64le
-@@ -152,6 +160,8 @@ QEMU_ARGS_riscv64    = -M virt -append "console=ttyS0 panic=-1 $(TEST:%=NOLIBC_T
- QEMU_ARGS_s390x      = -M s390-ccw-virtio -append "console=ttyS0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
- QEMU_ARGS_s390       = -M s390-ccw-virtio -append "console=ttyS0 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
- QEMU_ARGS_loongarch  = -M virt -append "console=ttyS0,115200 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
-+QEMU_ARGS_sparc32    = -M SS-5 -m 256M -append "console=ttyS0,115200 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
-+QEMU_ARGS_sparc64    = -M sun4u -append "console=ttyS0,115200 panic=-1 $(TEST:%=NOLIBC_TEST=%)"
- QEMU_ARGS            = -m 1G $(QEMU_ARGS_$(XARCH)) $(QEMU_ARGS_BIOS) $(QEMU_ARGS_EXTRA)
- 
- # OUTPUT is only set when run from the main makefile, otherwise
-@@ -174,6 +184,7 @@ CFLAGS_s390x = -m64
- CFLAGS_s390 = -m31
- CFLAGS_mips32le = -EL -mabi=32 -fPIC
- CFLAGS_mips32be = -EB -mabi=32
-+CFLAGS_sparc32 = $(call cc-option,-m32)
- CFLAGS_STACKPROTECTOR ?= $(call cc-option,-mstack-protector-guard=global $(call cc-option,-fstack-protector-all))
- CFLAGS  ?= -Os -fno-ident -fno-asynchronous-unwind-tables -std=c89 -W -Wall -Wextra \
- 		$(call cc-option,-fno-stack-protector) $(call cc-option,-Wmissing-prototypes) \
-diff --git a/tools/testing/selftests/nolibc/run-tests.sh b/tools/testing/selftests/nolibc/run-tests.sh
-index 0299a0912d4049dd12217f9835b81d231e1d2bfd..040956a9f5b8dda3e78abc0d4b6073f4fcd9e3ee 100755
---- a/tools/testing/selftests/nolibc/run-tests.sh
-+++ b/tools/testing/selftests/nolibc/run-tests.sh
-@@ -25,6 +25,7 @@ all_archs=(
- 	riscv32 riscv64
- 	s390x s390
- 	loongarch
-+	sparc32 sparc64
- )
- archs="${all_archs[@]}"
- 
-@@ -111,6 +112,7 @@ crosstool_arch() {
- 	loongarch) echo loongarch64;;
- 	mips*) echo mips;;
- 	s390*) echo s390;;
-+	sparc*) echo sparc64;;
- 	*) echo "$1";;
- 	esac
- }
+ I guess I will try to do a v3 today as that will hold back our kernel too.
 
----
-base-commit: bceb73904c855c78402dca94c82915f078f259dd
-change-id: 20250226-nolibc-sparc-abf4775dc813
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+> Cheers,
+> Luke.
+>
+> >   /*
+> >    * These functions actually update the LED's, and are called from a
+> >    * workqueue. By doing this as separate work rather than when the LED
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> > index add04524031d8..2ac7912d8acd3 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -162,11 +162,18 @@ struct asus_brt_listener {
+> >       void (*notify)(struct asus_brt_listener *listener, int brightness);
+> >   };
+> >
+> > +enum asus_brt_event {
+> > +     ASUS_BRT_UP,
+> > +     ASUS_BRT_DOWN,
+> > +     ASUS_BRT_TOGGLE,
+> > +};
+> > +
+> >   #if IS_REACHABLE(CONFIG_ASUS_WMI)
+> >   int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+> >
+> >   int asus_brt_register_listener(struct asus_brt_listener *cdev);
+> >   void asus_brt_unregister_listener(struct asus_brt_listener *cdev);
+> > +int asus_brt_event(enum asus_brt_event event);
+> >   #else
+> >   static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+> >                                          u32 *retval)
+> > @@ -181,6 +188,10 @@ static inline int asus_brt_register_listener(struct asus_brt_listener *bdev)
+> >   static inline void asus_brt_unregister_listener(struct asus_brt_listener *bdev)
+> >   {
+> >   }
+> > +static inline int asus_brt_event(enum asus_brt_event event)
+> > +{
+> > +     return -ENODEV;
+> > +}
+> >   #endif
+> >
+> >   #endif      /* __PLATFORM_DATA_X86_ASUS_WMI_H */
+>
 
