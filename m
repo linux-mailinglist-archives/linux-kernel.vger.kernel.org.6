@@ -1,147 +1,204 @@
-Return-Path: <linux-kernel+bounces-572554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A161A6CB60
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:08:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0963AA6CB65
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101CC16C9D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:08:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E82AA7A8CDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C7230264;
-	Sat, 22 Mar 2025 16:08:42 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296F800;
-	Sat, 22 Mar 2025 16:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3A7233150;
+	Sat, 22 Mar 2025 16:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCCyqS0D"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B57022D4F9;
+	Sat, 22 Mar 2025 16:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742659722; cv=none; b=YVRabFeB9HcTQayM6w1Tk4vaKVtn8kb1KK1pBnJ3XCpfEcKrXyqTDCgEU+whD28mceO7dKV/B+Gbu8ruobhpbA57JmjWka2Ossp3qgmmAAR0aBh86S1UVsXsIrAUoe639RXzZ+GPytDmqZe3TuyHkikMqdcVEZDZxCbvC+zo8hQ=
+	t=1742659844; cv=none; b=croWRGgwfz3rlGuC1CUQd+wC02HR/QcRA2uC4fS8OTBJ6rkBaw0xCVYGgnr+iOesp1XImR2Koq70CWzNZm2QBFvxtLm8s/GKblBujk5iNtX90j0LFxYVfiqWMMn4fCmySru61TuI4Yzl787+SyeJN3z5a/QB140bfAFhDP5z0MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742659722; c=relaxed/simple;
-	bh=alYlhJ9jojWIsrw4svfYuHpf6a7KMSPUhMqoXUXZya8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=irKUjxF58OJGL0fzIDeCXeGmb3mHJ+7+9YDtWixBXAIizDjbeOBdtcx8BlFJcT3U/rDEb0BEB8Rp+KUifgb5M97jmsx4PPB16sdYophEq4WYC31+1UTzgWg4Wme/173TSTRWUYg/092tEqlWZ0Ue9AeTCyQXYwtzBa4wByQfAT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 97C0A92009C; Sat, 22 Mar 2025 17:08:31 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 8954192009B;
-	Sat, 22 Mar 2025 16:08:31 +0000 (GMT)
-Date: Sat, 22 Mar 2025 16:08:31 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Frederic Weisbecker <frederic@kernel.org>
-cc: Marco Crivellari <marco.crivellari@suse.com>, linux-mips@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-    Thomas Gleixner <tglx@linutronix.de>, 
-    Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-In-Reply-To: <Z93Vj7BLTEvgWwda@pavilion.home>
-Message-ID: <alpine.DEB.2.21.2503221516450.35806@angie.orcam.me.uk>
-References: <20250315194002.13778-1-marco.crivellari@suse.com> <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk> <Z93Vj7BLTEvgWwda@pavilion.home>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1742659844; c=relaxed/simple;
+	bh=HaG1QQpWowV3zqOZgL6LReoscnDOkJHO/+T7PqNBxe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eJE98UHBk5S5TH+LvQdrrrbZn+VKiy1DdSHNFLbautOR23OLxZBW6/IUpHvlF27+bnRtCaNsonpaHOauxF/EBgwJMvaZuYSz+i+f9jduM0YdelqEFDsBJz0KkQLr3UiSmszkn+wGxfIYHEWg8ADxNrjg80cS0Vn1hwqS3GixGVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCCyqS0D; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-301d6cbbd5bso5244092a91.3;
+        Sat, 22 Mar 2025 09:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742659842; x=1743264642; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEjOAl7KxYpthTONAdqNUvrFWmX1LTq5WeO+Al3OX6A=;
+        b=bCCyqS0Dl0Zn6fRy1DBJl7An63Uz8vYrnuPYjGnOOLZwxcQlD2DTWyF2qCmAdMDY41
+         R3PPijpGyUgye1wgRTL5goS5RN1anpDCjCvsgNX5/N4vqpyCmif62BiWRhbMJonQJPPr
+         OB6IMrefpmLkmIXvo9xXF2t3dQ470wU5zmJQL5Jrz9FEZ2iPYgnwIAroRi7CndIvmsGM
+         j/sCE8scXXM6VUdNFSrUvCgBOPvZjPSx884y/tMwkXQs9nnZNUK3WYJqly+1RjSH+LgN
+         79RBjPTvGXGXGYdF3X4LyK2K5UldbOhlOtCux35xt5Lg7iqlJGvAQ4Y8dzhlFgA1H+5+
+         bc+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742659842; x=1743264642;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nEjOAl7KxYpthTONAdqNUvrFWmX1LTq5WeO+Al3OX6A=;
+        b=V23FxMH1cRh/LVAckUzmdfjISc6+bqEOPCRJrx86QJMOQhpNmp+kfROvYo5qNULw7O
+         cl4L3sLVdbUMLpHbVYd4HwVM/+ZNhgQYmZDM5GHIsjQ1vUPCTTE0GZ+9Wr0zU5F5LTUw
+         ZojNPvfni6LVlCdfjXsUXzcFV8Im4t6aYINHIFBJikBw8IbuV9+jZQyGkig+iuRLc/AK
+         U39dNccHjEOGV//skcOB9UFV6mzr0Vxn0/8hACHm+4ZakfbBuKTsIT8jxih0vgs0umqW
+         d7uT0JEGRxdrrRqF5Y4q1sZfnmh1OQlL+gsB0oSCS30QB9X0lPg5yvS17XVt4ubYJfmG
+         HHZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCqS4Alo10cgH2Hd+psMreWn+n5QIlY237RxC58yV4ttIba/Asf3LdRPsL8haxEgDUvGMGgKol4LwPlB7v@vger.kernel.org, AJvYcCWu9akWtrDUi+StbWTXR671y/XH8S/wNycB2LZsd/Grg5KUm7CQKebkEcgD0NP6cbUMM1pvIUyJs7Bviw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyShWubmROSWkgKTlPlWcBELvPodOvSj/O9Ss/ysVuNnchMMGew
+	Lk4pfdUKhXPD6YZYAJxd+zNlDnbA/sufHIJ4ZahflmpfqGhJhakx
+X-Gm-Gg: ASbGncusX59+Unq6V1b7lu8G+isgG3IWZgK6c+1SOH0wDioyQ6WFhPFPjprcamWMczQ
+	eJfhf2soBQiaBPLTSLTrBYl5O/j2GoIzBA0mXxPipDkxsHHSDyvHHbPpaciMqGWoaqBeXouTL3d
+	qc0yqptblttAm7q4e/ZYou2Vw2KIJOFsk7SSafQBjJxCf0RfyT92Lxe90vHLbrRvF3YvGi2Tq+X
+	0NmjL3QjzJEDUL4eeSFU7d9x+uOK3Ko0yRJGT3bBKDgmlDOkFVQwtz46VkpNXZA2TeAQFfDmKhq
+	MtpvVF2vSdTJ+1mtmE/sHQREBEZ8v5qPj4e5gqS4/0k2FVNA6Nhdoz7maR6VK0VKQlFatMLoI3y
+	rvGSnqrCpdS57aFHEiQ==
+X-Google-Smtp-Source: AGHT+IE6f4ijZ6TPZFbBvByWuGNtIewjAThqJES6BbZ3s5whFhV4Cv/NAe7MGSdaXuDEj96TeplsqQ==
+X-Received: by 2002:a17:90b:3883:b0:2ff:5ed8:83d1 with SMTP id 98e67ed59e1d1-3030fea76cdmr9380645a91.19.1742659842150;
+        Sat, 22 Mar 2025 09:10:42 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301a39efc5bsm9175942a91.0.2025.03.22.09.10.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Mar 2025 09:10:41 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <42c49b0b-cef0-49ca-a5b2-5bb05eae8dec@roeck-us.net>
+Date: Sat, 22 Mar 2025 09:10:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hwmon: (cros_ec) Add set and get target fan RPM
+ function
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+Cc: Sung-Chi Li <lschyi@chromium.org>, Jean Delvare <jdelvare@suse.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250318-extend_ec_hwmon_fan-v3-1-4c886385861f@chromium.org>
+ <e4da28be-66ca-45d3-9ccf-34819460b463@t-8ch.de>
+ <f50221fd-1d76-465b-ba53-62c08c6f8536@roeck-us.net>
+ <780ce6e8-11fc-42be-b4a7-9cffbf811d78@t-8ch.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <780ce6e8-11fc-42be-b4a7-9cffbf811d78@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 21 Mar 2025, Frederic Weisbecker wrote:
-
-> > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
-> > > index a572ce36a24f..4e012421d00f 100644
-> > > --- a/arch/mips/kernel/genex.S
-> > > +++ b/arch/mips/kernel/genex.S
-> > > @@ -104,27 +104,30 @@ handle_vcei:
-> > >  
-> > >  	__FINIT
-> > >  
-> > > -	.align	5	/* 32 byte rollback region */
-> > > +	.align	5
-> > >  LEAF(__r4k_wait)
-> > >  	.set	push
-> > >  	.set	noreorder
-> > > -	/* start of rollback region */
-> > > -	LONG_L	t0, TI_FLAGS($28)
-> > > -	nop
-> > > -	andi	t0, _TIF_NEED_RESCHED
-> > > -	bnez	t0, 1f
-> > > -	 nop
-> > > -	nop
-> > > -	nop
-> > > -#ifdef CONFIG_CPU_MICROMIPS
-> > > -	nop
-> > > -	nop
-> > > -	nop
-> > > -	nop
-> > > -#endif
-> > > +	/* Start of idle interrupt region. */
-> > > +	MFC0	t0, CP0_STATUS
-> > > +	/* Enable interrupt. */
-> > > +	ori 	t0, 0x1f
-> > 
-> >  This instruction sequence still suffers from the coprocessor move delay 
-> > hazard.  How many times do I need to request to get it fixed (counting 
-> > three so far)?
+On 3/22/25 08:23, Thomas Weißschuh wrote:
+> On 2025-03-22 07:12:48-0700, Guenter Roeck wrote:
+>> On 3/22/25 06:55, Thomas Weißschuh wrote:
+>>> On 2025-03-18 15:45:23+0800, Sung-Chi Li wrote:
+>>>> The ChromeOS embedded controller (EC) supports closed loop fan speed
+>>>> control, so add the fan target attribute under hwmon framework, such
+>>>> that kernel can expose reading and specifying the desired fan RPM for
+>>>> fans connected to the EC.
+>>>>
+>>>> When probing the cros_ec hwmon module, we also check the supported
+>>>> command version of setting target fan RPM. This commit implements the
+>>>> version 0 of getting the target fan RPM, which can only read the target
+>>>> RPM of the first fan. This commit also implements the version 1 of
+>>>> setting the target fan RPM to each fan respectively.
+>>>>
+>>>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+>>>> ---
+>>>> ChromeOS embedded controller (EC) supports closed-loop fan control. We
+>>>> anticipate to have the fan related control from the kernel side, so this
+>>>> series register the HWMON_F_TARGET attribute, and implement the read and
+>>>> write function for setting/reading the target fan RPM from the EC side.
+>>>
+>>> Should it be possible to switch back to automatic control?
+>>> I can't find anything in the hwmon ABI about it.
+>>> And neither in the CrOS EC source.
+>>>
+>>> Am I missing something?
+>>>
+>>
+>> Not sure I understand the context, but the fan control method is normally
+>> selected with pwmX_enable, which is defined as
+>>
+>>                  Fan speed control method:
+>>
+>>                  - 0: no fan speed control (i.e. fan at full speed)
+>>                  - 1: manual fan speed control enabled (using `pwmY`)
+>>                  - 2+: automatic fan speed control enabled
 > 
-> This is because your request had follow-ups from Huacai and Marco that
-> were left unanswered:
+> So far I associated pwmY_enable = 1 with the pwmY attribute.
+> Also controlling it through fanY_target does make sense though.
+> It could be clearer from the docs IMHO.
 > 
->      https://lore.kernel.org/all/CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com/
+> That also means that the patch under discussion needs to implement the
+> pwmY_enable attribute.
+> 
 
- The conclusion made there is however wrong: `local_irq_enable' code 
-plays no tricks with instruction scheduling and lets the toolchain 
-resolve any pipeline hazards automatically, while `__r4k_wait' arranges 
-for instructions to be scheduled by hand and any hazards resolved by the 
-human writer of the code.  There's even explicit `.set reorder' in 
-`local_irq_enable', which is redundant, because it's the default mode 
-for inline assembly.
+Does it ? Does setting the target fan speed automatically change the fan
+control method ? Normally that is orthogonal: One does not necessarily
+want to enable a specific fan control method after setting a single related
+attribute, but do that only after all attributes have been set.
 
- And I can't emphasise it enough: manual instruction scheduling is tough
-and ought to be restricted to cases where there is no other way really, 
-such as for placing an instruction in a branch delay slot where there is 
-a data antidependency between the branch and the delay-slot instruction.  
-Yet this approach has often been used by code authors for other reasons 
-(or I daresay no reason at all), leaving it up to the maintainers to 
-keep the code working in the changing conditions while the submitter has 
-long gone.  I converted some of such code in the past, but it also takes 
-time and effort that does not come for free.
+For example, there could be another attribute specifying how fast the fan
+speed should be adjusted, or there could be minimum and/or maximum permitted
+pwm values. I am not saying that this is the case here, but setting a target
+fan speed should not automatically change the fan control method.
 
->      https://lore.kernel.org/all/CAAofZF4HAczyRmuRe-JmQ2wcZatevLwGTOMLf1V1okGbj7q5Wg@mail.gmail.com/
+Guenter
 
- I missed that one, sorry.  A ping would have helped, and I never have 
-an issue with being pinged.  I do hope I have now addressed that concern 
-with my other reply.
-
- Thank you for the pointers.
-
-> We have detected this longstanding architecture specific timer handling bug on
-> loongson and MIPS and we could have just dropped a report and let you guys deal with
-> it. Instead we decided to spend time ourselves (especially Marco) working on
-> fixes for these architectures we don't run and which we are not familiar with,
-> alongway taking reviews seriously and patiently re-iterating accordingly.
-
- Thank you for your effort, really appreciated.  Any fixes need to be 
-technically correct however, it makes no sense to get one bug replaced 
-with another one.  We've got enough technical debt accumulated already 
-with a platform that no longer has any commercial support and relies 
-solely on voluteers keeping it alive in their limited spare time.  I do 
-have a long list of outstanding issues to address and ever so little 
-time to take care of them, with hardware problems additionally kicking 
-in and distracting every so often too.
-
-> So please be gentle with us.
-
- As always, but also emphatic on this occasion.  We're in the same boat 
-really, striving against the lack of resources and issues piling, and 
-now we've made some progress.  Thank you for your understanding.
-
-  Maciej
 
