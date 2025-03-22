@@ -1,147 +1,206 @@
-Return-Path: <linux-kernel+bounces-572462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C05A6CA8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:22:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098C8A6CA8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:22:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD17882E9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:21:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1C637A9899
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A86D21A43C;
-	Sat, 22 Mar 2025 14:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BFF22155E;
+	Sat, 22 Mar 2025 14:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6J1UhYf"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1tyYzkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B435F17E0
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 14:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F9C1D5CD4;
+	Sat, 22 Mar 2025 14:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742653316; cv=none; b=BW2X36MYAgLRRtgVo2L/1VJWDmXZGtdhSZUrvcEQ1RmvoriA9Z+mEoiOvBL8elwFygBelxSc833POCkEG4kt8KcJ/1M9YQkg9U0ZPM0ojTxIf6i3JwI9I9oea165lseVbMi6EPcuwOpsJKAz0UERfXrcHqMGlPYH9gWTX5vVZf0=
+	t=1742653322; cv=none; b=b6Bo2I1pt2qIQelbkST5vnfRRtcVtulC8ukd+WAb5MnLwnnGYN9Agk3Ue1OQ9Vbhbg0pgbnp3XLWsOxLHvOi/IPfTYFB1Lj9Z79MkdWc4rT1pDGTZuM8dn1HiQK8UFaOVLLavvQkanEShYhBAb/LNx/EvOcoxFcxQo5L7Q0KOEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742653316; c=relaxed/simple;
-	bh=zylf9gMtY9TZ36hq8YodEV7cPIRb1Iwy/ePAIm1AKBg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Su2a1if/BnimmxJ73sqd2HHXpIL73C8YGAfWNYnoeNKr4EQ8SXY8gMACIrI4wXqGqW5zxceS/WSsUEluFAvs4Grq3LeB3eeF9pzTjN9vNTAi+VE/EQ7NK+q9IBEdFuhdbdKq8eUz8NY5rbQ3UbTimXXpH9EA0302VL3bj9fWQU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6J1UhYf; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301493f45aeso4954171a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:21:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742653314; x=1743258114; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBSQsRnQ4TfM2tTeKw5HNlKo6byh7HY//NkZMVTFY8I=;
-        b=I6J1UhYfvFkb91xvVrwXos9kg6Q8BfLaK7jrjhVDlyCGYqAGtYOO9Q12ToCpFIZjfi
-         rsgpuD5YW8v5dLviDaFnc4Jy/rMfJVgmtynMpFXmBuaWFjU9p/cPcrWWU2dl57TYhm9N
-         fSn+SGlvbF0Q2RljjCw/xPaFJa6FgooQiraBGOfNp9y+eaolH0ZZT4z7aMLr/pMd2qic
-         CY81ZTHYGTzJiM6KbF4CQU+JQ9ihQgcAoSN1PcCQD5ATtAxQhxzNszK+xK8hnln5qg9S
-         lN9McF1lSGL5Qh7+fG4VFRBg4HD/2k3qJNIN7PO0VrUelOo2NDtxayGbdZLdCz4n1sLA
-         ZL+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742653314; x=1743258114;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cBSQsRnQ4TfM2tTeKw5HNlKo6byh7HY//NkZMVTFY8I=;
-        b=Q4l+lBCOkeiP1q8OQuqWnr1+I47uF8sfGdBbv62JWIJNVW1HBrRxIBNlu+/lJAWLmq
-         Dno3Ezj7xPzEaOR8deWn8IGvo3NuNaaOMXYfP8BM6zkl3T+bQ5NScq8unxbMm3/C3owP
-         LkG+wwNS+GKtMlftXOYAUYyVBzUi90F6EaSbPgXNrLegU7k4ZDnZygAYhGjUPnKB1cYw
-         i4f87ZZ4CIv/5iyaqtKlmfurlfQ1FbAjPkvikfaewiaHVVrzH8dl8XZu8V6fjNDQ1z6H
-         LVGpYxvi5vDgsBpD7RdKDJvKK0kHg1YQ4c/pVogFYeqQJHvshduhrOm9ULJ1pZPzhzZS
-         JV1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWny7xpiLo74gcNb4HSfeYfTuRkKfsnfGobjnHBkqun+otNS1rlQgzAlVeHy4dpsS30B1I5vU8ukAfPJX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ1ggh8hBGtQ9vVOHVkyc4BZxoxMwg4hlE/EAGgItHNEVOkoSw
-	6NOVkjdd6ZEcM2dyWhpmXup7eNA0oryBXJe88tz1BIFMBsDNHduP
-X-Gm-Gg: ASbGncsmz20vqlo8mbdBZa7G8z6B9WFa9cZnQSf7WO2kSHSBcw9QMZf8q+YkS1pJtrT
-	LQXiXv1XUgXVb7YJWFRu1EeY5hkf3/MQHAqduPDgUntbVAPER5zO402WNE2JByvqIlPW5tPAYex
-	ty8C47NK1L+zkL5JXp1sfsrZwXjRPBpCbgxvbCTxQLDcqCBNBhAyPdnkMH7xnNBvdluHz4BZRqO
-	WMiVo9Wwfk7HdqxATquuWNLnCnKw/3IZCNE8DlD9LpWpEAMrq58iAcKi/AaOKv9CWESNYuFLlfR
-	uae7vRicSOnSf4N02K+72zkpbZMWuSubLfYWFZ+vxNgY5NdOhIrqcKnOTcmsaWKjR5+ecqW1z4s
-	jsSM=
-X-Google-Smtp-Source: AGHT+IGws1/9iRhkXC7aE71u9g4HMMNT2JBajE79EbnG73qOrwoibxoVv6T+IuIZEpjcoyEUslDBkQ==
-X-Received: by 2002:a17:90b:1d46:b0:2fa:1851:a023 with SMTP id 98e67ed59e1d1-3030ff11268mr11568556a91.35.1742653313676;
-        Sat, 22 Mar 2025 07:21:53 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4080:215:18d5:84f8:e760:1d0f:700b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3bbedsm36231605ad.3.2025.03.22.07.21.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 07:21:53 -0700 (PDT)
-From: Purva Yeshi <purvayeshi550@gmail.com>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Purva Yeshi <purvayeshi550@gmail.com>,
-	syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
-Subject: [PATCH] fs: jfs: Avoid sleeping function call in softirq
-Date: Sat, 22 Mar 2025 19:51:34 +0530
-Message-Id: <20250322142134.35325-1-purvayeshi550@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742653322; c=relaxed/simple;
+	bh=TIu42g6hbijrCcZuE/1tP1wo0BubLGFRertECUWE7Sc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ObSYCsBEnEXZXxx0QQrYUKfjujbLYwvsuVlXq0lXHMcoMnUThYjrvO4XWFqRn7vBAKRLQkMXv2S+nRCmDTBwWbOvJorquET0/tOjNETdc39diLGqfa+iDjMHG4JHqYZyAIq+l7/SX6zkUodEA0FPgxIZWpU234DuxSWeq22w87E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1tyYzkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7A76C4CEDD;
+	Sat, 22 Mar 2025 14:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742653321;
+	bh=TIu42g6hbijrCcZuE/1tP1wo0BubLGFRertECUWE7Sc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=p1tyYzkFurPMBJ5WfGDti97Xz1uPdqJvT14/QgesVhBtdPv/I6K5ERDiVIW5eHztK
+	 UGusDr084KFRmpkqC7oHJQnegzcbG8ZNj2ZRCHA1GqoUjJ+iOrsLvykIDPkLTnkIfU
+	 9v7ylu/BlXKjqESOr20cJGuRoSGb1kYqq9GY/oOof5HGAydPj0QRkGdChoA2bfMutB
+	 dNA68QN2vwNDP+BlRwMOseEm4Vtci/QlcyGTCVWu7K1uLM3s6V1jm6/GP96Ff1Cdej
+	 k4mend9OVs0ggZkbfsqgzgETk6P+wybinScXonfPODBcLVX/xQQtnmJ6vt6zo9nxRe
+	 sCR6huekN9VSw==
+Received: from 82-132-213-7.dab.02.net ([82.132.213.7] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tvzjb-00G7Qc-3m;
+	Sat, 22 Mar 2025 14:21:59 +0000
+Date: Sat, 22 Mar 2025 14:21:55 +0000
+Message-ID: <87bjttqh6k.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Justin He <Justin.He@arm.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Colton Lewis
+	<coltonlewis@google.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	Zenghui Yu
+	<yuzenghui@huawei.com>,
+	Catalin Marinas <Catalin.Marinas@arm.com>,
+	Will
+ Deacon <will@kernel.org>,
+	"linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KVM: arm64: pmu: Avoid initializing KVM PMU when KVM is not initialised
+In-Reply-To: <GV2PR08MB920679CA30617D465B69D79DF7DA2@GV2PR08MB9206.eurprd08.prod.outlook.com>
+References: <20250322035115.118048-1-justin.he@arm.com>
+	<867c4hml8v.wl-maz@kernel.org>
+	<GV2PR08MB920679CA30617D465B69D79DF7DA2@GV2PR08MB9206.eurprd08.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 82.132.213.7
+X-SA-Exim-Rcpt-To: Justin.He@arm.com, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Joey.Gouly@arm.com, coltonlewis@google.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com, Catalin.Marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Bug detected by Syzbot:
-BUG: sleeping function called from invalid context in jfs_fsync
+On Sat, 22 Mar 2025 13:54:17 +0000,
+Justin He <Justin.He@arm.com> wrote:
+>=20
+> Hi Marc,
+>=20
+> > -----Original Message-----
+> > From: Marc Zyngier <maz@kernel.org>
+> > Sent: Saturday, March 22, 2025 6:08 PM
+> > To: Justin He <Justin.He@arm.com>
+> > Cc: Oliver Upton <oliver.upton@linux.dev>; linux-arm-
+> > kernel@lists.infradead.org; kvmarm@lists.linux.dev; Joey Gouly
+> > <Joey.Gouly@arm.com>; Suzuki Poulose <Suzuki.Poulose@arm.com>;
+> > Zenghui Yu <yuzenghui@huawei.com>; Catalin Marinas
+> > <Catalin.Marinas@arm.com>; Will Deacon <will@kernel.org>; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH] KVM: arm64: pmu: Avoid initializing KVM PMU when
+> > KVM is not initialised
+> >=20
+> > On Sat, 22 Mar 2025 03:51:15 +0000,
+> > Jia He <justin.he@arm.com> wrote:
+> > >
+> > > Currently, `kvm_host_pmu_init()` does not check if KVM has been
+> > > successfully initialized before proceeding. This can lead to
+> > > unintended behavior if the function is called in an environment where
+> > > KVM is not
+> >=20
+> > Which unintended behaviour? Other than the pointless allocation of a ti=
+ny
+> > amount of memory? Does anything really go wrong?
+> >=20
+> Sorry for the confusion --- I should explain more clearly.
+> I noticed the usage of host_data_ptr in Colton Lewis's RFC patch [1]. Aft=
+er
+> applying the patch, the guest VM fails to boot.Upon investigating the root
+> cause, I found that host_data_ptr can trigger a kernel panic if KVM is not
+> initialized.
 
-Fix jfs_fsync() to avoid sleeping in softirq/atomic, preventing crash.
-Skip execution in softirq/atomic and return -EWOULDBLOCK to prevent issues.
-Correct generic_file_fsync() call to pass the required arguments properly.
+How relevant is this for upstream?
 
-Reported-by: syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=219127d0a3bce650e1b6
-Tested-by: syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
-Fixes: 5955102c9984 ("wrappers for ->i_mutex access")
-Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
----
- fs/jfs/file.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+>=20
+> [1] https://patchwork.kernel.org/project/kvm/patch/20250213180317.3205285=
+-6-coltonlewis@google.com/
+> > > available, e.g., kernel is landed in EL1.
+> >=20
+> > s/landed in/booted from/
+> >=20
+> > >
+> > > Signed-off-by: Jia He <justin.he@arm.com>
+> > > ---
+> > >  arch/arm64/kvm/pmu.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/kvm/pmu.c b/arch/arm64/kvm/pmu.c index
+> > > 7169c1a24dd6..e39c48d12b81 100644
+> > > --- a/arch/arm64/kvm/pmu.c
+> > > +++ b/arch/arm64/kvm/pmu.c
+> > > @@ -227,6 +227,13 @@ void kvm_host_pmu_init(struct arm_pmu *pmu)
+> >=20
+> > Huh:
+> >=20
+> > maz@valley-girl:~/hot-poop/arm-platforms$ git grep -l kvm_host_pmu_init
+> > arch/arm64/kvm/pmu-emul.c drivers/perf/arm_pmu.c
+> > include/linux/perf/arm_pmu.h
+> >=20
+> > Amusingly, arch/arm64/kvm/pmu.c is nowhere to be seen in this list.
+> > I have no idea what this patch applies to, but that's neither 6.13, the=
+ current
+> > upstream, nor kvmarm/next.
+> Sorry for the mistake, the patch is based on Colton Lewis's series.
+> I=E2=80=99ll need to respin it if you're interested in the fix =F0=9F=98=
+=8A
 
-diff --git a/fs/jfs/file.c b/fs/jfs/file.c
-index 93a3e7a45b0f..fc93376eb1e6 100644
---- a/fs/jfs/file.c
-+++ b/fs/jfs/file.c
-@@ -19,25 +19,17 @@
- int jfs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- {
- 	struct inode *inode = file->f_mapping->host;
--	int rc = 0;
- 
--	rc = file_write_and_wait_range(file, start, end);
--	if (rc)
--		return rc;
--
--	inode_lock(inode);
--	if (!(inode->i_state & I_DIRTY_ALL) ||
--		(datasync && !(inode->i_state & I_DIRTY_DATASYNC))) {
--		/* Make sure committed changes hit the disk */
--		jfs_flush_journal(JFS_SBI(inode->i_sb)->log, 1);
--		inode_unlock(inode);
--		return rc;
-+	if (in_softirq() || in_atomic()) {
-+		pr_warn("jfs_fsync() called in softirq/atomic context, skipping execution.\n");
-+		return -EWOULDBLOCK;
- 	}
- 
--	rc |= jfs_commit_inode(inode, 1);
-+	inode_lock(inode);
-+	generic_file_fsync(file, start, end, datasync);
- 	inode_unlock(inode);
- 
--	return rc ? -EIO : 0;
-+	return 0;
- }
- 
- static int jfs_open(struct inode *inode, struct file *file)
--- 
-2.34.1
+I'm interested in a patch if:
 
+- the patch applies to an upstream or a kvmarm tag
+- the patch fixes *something* in the upstream code
+- the commit message accurately describes the problem
+
+Otherwise, no, thank you.
+
+> > >  {
+> > >  	struct arm_pmu_entry *entry;
+> > >
+> > > +	/*
+> > > +	 * Prevent unintended behavior where KVM is not available or not
+> > > +	 * successfully initialised, e.g., kernel is landed in EL1.
+> >=20
+> > Same comment here.
+> >=20
+> > > +	 */
+> > > +	if (!is_kvm_arm_initialised())
+> >=20
+> > This is definitely the wrong thing to check for, as it relies on the pr=
+obe
+> > ordering between the PMU drivers and KVM. Relying on that is not
+> > acceptable.
+> >=20
+> Indeed, would is_hyp_mode_available() be a proper replacement for
+> is_kvm_arm_initialised() here?
+
+Looks more appropriate, at least for upstream.
+> Or should we add a prevention condition in host_data_ptr instead?
+
+I can't comment about a series that I haven't reviewed and that is not
+yet targeting upstream. But using host_data_ptr() from outside of KVM
+is plain wrong, as it falls into the same trap as above. Checking for
+random init flags is not going to help with that.
+
+Instead of posting random patches that make no sense for upstream, why
+don't you instead reply to Colton's series outlining your concerns and
+findings? It sounds to me like a more useful way to make progress.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
