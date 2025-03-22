@@ -1,119 +1,207 @@
-Return-Path: <linux-kernel+bounces-572679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B5CA6CD01
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:40:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED1FA6CD03
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 23:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505D516EF36
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95B018957CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F481EB193;
-	Sat, 22 Mar 2025 22:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481E71EE7AA;
+	Sat, 22 Mar 2025 22:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO22zueR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csIFGbR7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E96417BEB6;
-	Sat, 22 Mar 2025 22:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0711DF72C;
+	Sat, 22 Mar 2025 22:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742683214; cv=none; b=DCDxnKdAYm9R+3+cicA1avT0KmZx8yV2SrV3lf4Cd9IewnW4iCYYZUld0Yr44rgt/bU+QfHYaKogPoPYLmodsvPd3GepOaLkkL21x5uFfvrZ4KkFxc30L92DtSad4GmgLRT7+NryoP2Qc+qLeas9XVgTAvniNR36RCxVDw9aoCs=
+	t=1742683249; cv=none; b=R7mfpxN0U8BxeMtSl7RbphCywXmxqw71CyaUsHmwhZxvGX1IrzpnSW/XXCyopMU7ffuvHZXshhqad0B+lEos5wyhzgxFiMakvsE79bd2rC0X6kLKfy6QXwkZmEXfjJVosgImrFJAGTSgNT670nxXfo9eCXSUCZnSRX+Ch7C6VP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742683214; c=relaxed/simple;
-	bh=k0RMfzIK44lnIUZqkCOSsSj3l6l0m4YWwTIV4C2RYq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bsMtbpvprk+2ancI3UxsFyGcqB96oEujO21N5QTFFC7t5N9TDfm/FEXJOUydhhhtrrBQ1TFvbdkmZnfv2ac+SpUdw/D+WS4x7DI20Qn6xIbR1ROKq8wbNWngiKZ1khXxvVO9lhzQhSjauQF+YAkJmkEW8JKoBmBktNkuQ4AJEsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO22zueR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B8DC4CEDD;
-	Sat, 22 Mar 2025 22:40:13 +0000 (UTC)
+	s=arc-20240116; t=1742683249; c=relaxed/simple;
+	bh=kaGJw1UN+eBP3ZezlrS616HN8vMDvS2SbeAfdkGtfyU=;
+	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
+	 MIME-Version:Content-Type; b=LuIHcScY216tyLn/oBSSWPSqIBOA8F2P2zMdkmCIciHpybXtM4r//2LWv73C9KvBQXNpdbcS65YifpmwmhbgyU6RuFfEB5xS6iKJg3LWLWWjfv6A6fR14qsMJrgdo/M6sgkB6Befqo+PwhY8ZmGFVDuIMy4p56YqkqI8QaJGJrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csIFGbR7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2FB5C4CEDD;
+	Sat, 22 Mar 2025 22:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742683214;
-	bh=k0RMfzIK44lnIUZqkCOSsSj3l6l0m4YWwTIV4C2RYq8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DO22zueRnS6QT9WBFkXGNpOEWC9ByDqcP9u9K5uJ6fs9GUGkeaZAw8m7C8TGWdM0E
-	 fNg/VCIKEY9/bGg87a6RALdrl/xgYuXVQ89AuNmnI/qnpC7P/I9vV7s+A0kMveloBa
-	 sw206w4cQBTFDufy/NOgd5ifkd3wbD70PqtSfOJAEaOYyKRI3J0AsodxSt/BLM+lcl
-	 18uP+qLpRpW9p3z/QortACxi1JVxKbRgTpL3g6ufX08i33LqhJ9hXp/qSWQ01HsmQh
-	 zYnus4O42nlGVfbfhpMcltpisidyYMqQLpxEmQ6r+wvf+GbzZVHLA1w/bmWJTF7yWM
-	 I9cc5ov7BJ+CQ==
-Date: Sat, 22 Mar 2025 23:40:09 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.14-rc8
-Message-ID: <Z988SQUTmI1q7TlO@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=k20201202; t=1742683249;
+	bh=kaGJw1UN+eBP3ZezlrS616HN8vMDvS2SbeAfdkGtfyU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=csIFGbR7M0A7dEy3uy8Zts0U0jDb7wD8qDsOFpPkH50/PQTuuwjSY7kJZMN3T2pyL
+	 E0D2fMGpS2rWoof3KuDQ6RS1f3EEW46SRVzlMS/+inRzr/YP4nvB6rmnWfvQlMq60d
+	 MfbRqTh0+npCq73qO34o11jfTqCOBUqAdNbEK5B+C7u4H2gnWyMBRqIYNwyNYOIzBr
+	 b2SpMf2adOKXJeKykbxZFTVXbiRv0DbJdsNY98YBXygcRCGG+VVuLY2Tl3cNvbtR3w
+	 tfcgOEGULR7X5vFaS2ur/nLyGaJ9e26wUOFo6nekS0J9FWOR9347KxZzyHkb3B5JH3
+	 c09h0y3klkTxA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>,  <tglx@linutronix.de>,
+  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <netdev@vger.kernel.org>,  <andrew@lunn.ch>,  <hkallweit1@gmail.com>,
+  <tmgross@umich.edu>,  <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,
+  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
+  <benno.lossin@proton.me>,  <a.hindborg@samsung.com>,
+  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
+  <frederic@kernel.org>,  <arnd@arndb.de>,  <jstultz@google.com>,
+  <sboyd@kernel.org>,  <mingo@redhat.com>,  <peterz@infradead.org>,
+  <juri.lelli@redhat.com>,  <vincent.guittot@linaro.org>,
+  <dietmar.eggemann@arm.com>,  <rostedt@goodmis.org>,
+  <bsegall@google.com>,  <mgorman@suse.de>,  <vschneid@redhat.com>,
+  <tgunders@redhat.com>,  <me@kloenk.dev>,  <david.laight.linux@gmail.com>
+Subject: Re: [PATCH v11 6/8] MAINTAINERS: rust: Add new sections for
+ DELAY/SLEEP and TIMEKEEPING API
+In-Reply-To: <Z96zstZIiPsP4mSF@Mac.home> (Boqun Feng's message of "Sat, 22 Mar
+	2025 05:57:22 -0700")
+Message-ID: <871puoelnj.fsf@kernel.org>
+References: <87jz8ichv5.fsf@kernel.org> <87o6xu15m1.ffs@tglx>
+	<67ddd387.050a0220.3229ca.921c@mx.google.com>
+	<20250322.110703.1794086613370193338.fujita.tomonori@gmail.com>
+	<8n9Iwb8Z00ljHvj7jIWUybn9zwN_JLhLSWrljBKG9RE7qQx4MTMqUkTJeVeBZtexynIlqH1Lgt6g0ofLLwnoyQ==@protonmail.internalid>
+	<Z96zstZIiPsP4mSF@Mac.home>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Sat, 22 Mar 2025 23:40:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2hUaXQj6WLFQGRoV"
-Content-Disposition: inline
+Content-Type: text/plain
+
+Hi All,
+
+"Boqun Feng" <boqun.feng@gmail.com> writes:
+
+> On Sat, Mar 22, 2025 at 11:07:03AM +0900, FUJITA Tomonori wrote:
+>> Thank you all!
+>>
+>> On Fri, 21 Mar 2025 14:00:52 -0700
+>> Boqun Feng <boqun.feng@gmail.com> wrote:
+>>
+>> > On Fri, Mar 21, 2025 at 09:38:46PM +0100, Thomas Gleixner wrote:
+>> >> On Fri, Mar 21 2025 at 20:18, Andreas Hindborg wrote:
+>> >> >> Could you add me as a reviewer in these entries?
+>> >> >>
+>> >> >
+>> >> > I would like to be added as well.
+>> >>
+>> >> Please add the relevant core code maintainers (Anna-Maria, Frederic,
+>> >> John Stultz and myself) as well to the reviewers list, so that this does
+>> >> not end up with changes going in opposite directions.
+>> >>
+>> >
+>> > Make sense, I assume you want this to go via rust then (althought we
+>> > would like it to go via your tree if possible ;-))?
+>>
+>
+> Given Andreas is already preparing the pull request of the hrtimer
+> abstraction to Miguel, and delay, timekeeping and hrtimer are related,
+> these timekeeping/delay patches should go via Andreas (i.e.
+> rust/hrtimer-next into rust/rust-next) if Thomas and Miguel are OK with
+> it. Works for you, Andreas? If so...
+>
+>> Once the following review regarding fsleep() is complete, I will submit
+>> patches #2 through #6 as v12 for rust-next:
+>>
+>> https://lore.kernel.org/linux-kernel/20250322.102449.895174336060649075.fujita.tomonori@gmail.com/
+>>
+>> The updated MAINTAINERS file will look like the following.
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index cbf84690c495..858e0b34422f 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -10370,6 +10370,18 @@ F:	kernel/time/timer_list.c
+>>  F:	kernel/time/timer_migration.*
+>>  F:	tools/testing/selftests/timers/
+>>
+>> +DELAY AND SLEEP API [RUST]
+>> +M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
+>> +R:	Boqun Feng <boqun.feng@gmail.com>
+>> +R:	Andreas Hindborg <a.hindborg@kernel.org>
+>
+> ... this "R:" entry would be "M:",
+>
+>> +R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
+>> +R:	Frederic Weisbecker <frederic@kernel.org>
+>> +R:	Thomas Gleixner <tglx@linutronix.de>
+>> +L:	rust-for-linux@vger.kernel.org
+>> +L:	linux-kernel@vger.kernel.org
+>
+> +T:	git https://github.com/Rust-for-Linux/linux.git hrtimer-next
+>
+>> +S:	Maintained
+>
+> I will let Andreas decide whether this is a "Supported" entry ;-)
+>
+>> +F:	rust/kernel/time/delay.rs
+>> +
+>>  HIGH-SPEED SCC DRIVER FOR AX.25
+>>  L:	linux-hams@vger.kernel.org
+>>  S:	Orphan
+>> @@ -23944,6 +23956,17 @@ F:	kernel/time/timekeeping*
+>>  F:	kernel/time/time_test.c
+>>  F:	tools/testing/selftests/timers/
+>>
+>> +TIMEKEEPING API [RUST]
+>
+> and similar things for this entry as well.
+>
+>> +M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
+>> +R:	Boqun Feng <boqun.feng@gmail.com>
+>> +R:	Andreas Hindborg <a.hindborg@kernel.org>
+>> +R:	John Stultz <jstultz@google.com>
+>> +R:	Thomas Gleixner <tglx@linutronix.de>
+>
+> +R:      Stephen Boyd <sboyd@kernel.org>
+>
+> ?
+>
+>> +L:	rust-for-linux@vger.kernel.org
+>> +L:	linux-kernel@vger.kernel.org
+>> +S:	Maintained
+>> +F:	rust/kernel/time.rs
+>> +
+>
+> Tomo, let's wait for Andreas' rely and decide how to change these
+> entries. Thanks!
+
+My recommendation would be to take all of `rust/kernel/time` under one
+entry for now. I suggest the following, folding in the hrtimer entry as
+well:
+
+DELAY, SLEEP, TIMEKEEPING, TIMERS [RUST]
+M:	Andreas Hindborg <a.hindborg@kernel.org>
+R:	Boqun Feng <boqun.feng@gmail.com>
+R:	FUJITA Tomonori <fujita.tomonori@gmail.com>
+R:	Lyude Paul <lyude@redhat.com>
+R:	Frederic Weisbecker <frederic@kernel.org>
+R:	Thomas Gleixner <tglx@linutronix.de>
+R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
+R:	John Stultz <jstultz@google.com>
+L:	rust-for-linux@vger.kernel.org
+S:	Supported
+W:	https://rust-for-linux.com
+B:	https://github.com/Rust-for-Linux/linux/issues
+T:	git https://github.com/Rust-for-Linux/linux.git rust-timekeeping-next
+F:	rust/kernel/time.rs
+F:	rust/kernel/time/
+
+If that is acceptable to everyone, it is very likely that I can pick 2-6
+for v6.16.
+
+I assume patch 1 will go through the sched/core tree, and then Miguel
+can pick 7.
+
+Best regards,
+Andreas Hindborg
 
 
---2hUaXQj6WLFQGRoV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
-
-  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc8
-
-for you to fetch changes up to 807d47a6dc054859eef90066516ae4f44fe22e6d:
-
-  Merge tag 'i2c-host-fixes-6.14-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-03-21 16:18:59 +0100)
-
-----------------------------------------------------------------
-i2c-for-6.14-rc8
-
-amd-mp2 driver: fix double free of irq
-
-----------------------------------------------------------------
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.14-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-Yang Yingliang (1):
-      i2c: amd-mp2: drop free_irq() of devm_request_irq() allocated irq
-
- drivers/i2c/busses/i2c-amd-mp2-pci.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
---2hUaXQj6WLFQGRoV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmffPEkACgkQFA3kzBSg
-KbZwFA//TZ6NwH1KUwXmhhyjmORYTqmf29BNtB1jLpN0UjI85NDyNV4UOko4yUUd
-mwQPaC0q7STrrQBhwwPbYe3uOeTWXxMh0Vg8yu8cdM6C0KxcFKtQHFwHmPLpRQAO
-4Sx/JlBpP1zYIwgdm/nxEoygfRC8W7MrvvgFIltVJHn2IzQJfNXyfS1/gREzDoNk
-KmgIQlTm1L2uFLWywIAG4txj4jr33cVT7FieCJ8V4UEEciT1QHs9747LEdYSjUkU
-2napRttSgZX9gNu3TXNg8iqT7Eex79uLoWcJcrfCdJO/w+ol8Z4aZ0zlyOdHkEOz
-8a/ICHwLTndx6VbXsVmmeZjrf8zi2StgN4kW1NmxTvhA13IXoost38DRZ/3/bnTr
-BHKRhME+5VuHSUpep4DMWTQZBcR90tSIghQecRgO1OPGBj92L4aPLgj32w2rGWBk
-jgwetpqRqJSzChaybVlq+lLeTFKaxrudSrlFWfvwKB4KLpbRsVFA0KZ9Uejj5/8r
-3aC3XxakH8BF4eXNZ3Bks8mOlk6qrQ2IPw7xibx4vjl304LCeCx+VNzrSQOQ8Fv5
-29DyibLu6bOOPa4xZrTkmEmCkmOP67FohO/qlpe9BTntdvrByWo8zK6IZv8iohPB
-WV3ks/s7EKrGq5BmiACxJBbh7xkiJ89r6njdM7uMYxTVD4UNZ64=
-=4AT/
------END PGP SIGNATURE-----
-
---2hUaXQj6WLFQGRoV--
 
