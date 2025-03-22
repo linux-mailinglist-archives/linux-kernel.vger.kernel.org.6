@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-572270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC05BA6C873
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:03:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F75A6C876
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 10:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E183BAE7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80C14188854C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 09:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A413194080;
-	Sat, 22 Mar 2025 09:03:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148AA1DBB13;
+	Sat, 22 Mar 2025 09:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="X66se4FO"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E42199FA8;
-	Sat, 22 Mar 2025 09:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C504194080;
+	Sat, 22 Mar 2025 09:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742634186; cv=none; b=VagXmDqUTmBoFdvMD1qX9uZ/QdERYCONPpyx93LEQAJPUZSU6+eLMir2Wjav45aOutecONFLPcextUv2y2TzOdOnJqfzlNukm9Zg+hiqcdskGs4oMfxWM9mqYc1BQdnQ046F1K/8F8Vl0QeKrYsHsbQHG7B7P/JRuBYj4aMJTag=
+	t=1742634225; cv=none; b=EwepRj9qkbhkzRtqEX3hI0hS5Qi2pSSapj329fHFjJvGe/TnjNXxLN06Umtyoqb46U+xkzP+tIZYzBqaVVyP/4tg0IULFBBONzXY+AHE9tkrYgYu+RHz5cnxBr8XgYxT4sJKkJClflGfjUpNCGmBnbBwpjR8W4bW1KL6s6StBxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742634186; c=relaxed/simple;
-	bh=Jsw3ITARuCPViYmaZEDXSUbjem35YyRrAqGXhw8UeOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QAvio4KcAYU2daXInnEzyeceGW91k6ElJvMxAPW6pwR+shQNzqzABtYrkvyqQIc3kMoJGkVC9/eLXCFwChkhsn4OpqbLSMF3IFEz6bSUSPH11w2Gl4DNeIGm+S250fzjLO+X6PpE+5kmyddJbBMfp7Ks+M4+cEEaXWmsJiO6MVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7BDC4CEDD;
-	Sat, 22 Mar 2025 09:03:04 +0000 (UTC)
-Date: Sat, 22 Mar 2025 05:03:00 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Martin Liu <liumartin@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/3] mm/page_alloc: Add trace event for per-zone
- lowmem reserve setup
-Message-ID: <20250322050300.3c470f61@batman.local.home>
-In-Reply-To: <20250308034606.2036033-3-liumartin@google.com>
-References: <20250308034606.2036033-1-liumartin@google.com>
-	<20250308034606.2036033-3-liumartin@google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742634225; c=relaxed/simple;
+	bh=bsI0XC6yZ+fRlOjsKHtAGIs+6HvxTp+zi1L92GfUnqI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=i9AG3k4BjeuEkgo4J4YPCvMKP2B0M3gzhM+2thPMyq+sdOFDBrgITlFJXeOvC1fh8b1jSkJozZDFGeSA7HrfrOYO2v7i/ZlToAXtdbuGZTsgobDUBHlPRzEZbtXcQvCn0ygXVS9BtVgXu5E4TBi0pcEgDMzK3xMypWN5XaV1vxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=X66se4FO; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1742634220;
+	bh=bsI0XC6yZ+fRlOjsKHtAGIs+6HvxTp+zi1L92GfUnqI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=X66se4FOCejD2rdihIPGxopfsyuDMsN54qRWIG3j7AHqOASsAQDYphld84dRhLSXg
+	 1bTLzgOgeEMpF8n62kbj1C0ZUsYJZ8Fbmgx64QqF3cqHRKl6vDijSvqIGCQHFHz/lb
+	 9e0ItTAm2Tw/04Wn1FzwX9rk8S3XF6zGue7NPOsE=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 22 Mar 2025 10:03:16 +0100
+Subject: [PATCH] kbuild, x86: drop unnecessary prefix map configuration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250322-asm-prefix-map-v1-1-ffe92c80b4d4@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIANN83mcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMj3cTiXN2CotS0zArd3MQCXQMjizQDE5MUC/MkYyWgJogU2MDo2Np
+ aAKDXc69gAAAA
+X-Change-ID: 20250322-asm-prefix-map-028f044d87b3
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>, Ben Hutchings <ben@decadent.org.uk>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742634220; l=2534;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=bsI0XC6yZ+fRlOjsKHtAGIs+6HvxTp+zi1L92GfUnqI=;
+ b=IiogChuEhKvaTzh4V/KlrrNYiPBXGVn8RWfZ6c89EPOjeX3ffrEiX1uUXM+/Y/RHiOonsakgd
+ RipZyr+vel1CP/7kBbQuaIALro317n/NPHwwUfHiKeGidB7zf/MmBak
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sat,  8 Mar 2025 03:46:01 +0000
-Martin Liu <liumartin@google.com> wrote:
+The toplevel Makefile already provides -ffile-prefix-map as part of
+KBUILD_CPPFLAGS. In contrast to the KBUILD_CFLAGS and KBUILD_AFLAGS
+variables, KBUILD_CPPFLAGS is not redefined in the architecture specific
+Makefiles. Therefore the toplevel KBUILD_CPPFLAGS do apply just fine, to
+both C and ASM sources.
 
-> ---
->  include/trace/events/kmem.h | 27 +++++++++++++++++++++++++++
->  mm/page_alloc.c             |  2 ++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-> index 5fd392dae503..9623e68d4d26 100644
-> --- a/include/trace/events/kmem.h
-> +++ b/include/trace/events/kmem.h
-> @@ -375,6 +375,33 @@ TRACE_EVENT(mm_setup_per_zone_wmarks,
->  		  __entry->watermark_promo)
->  );
->  
-> +TRACE_EVENT(mm_setup_per_zone_lowmem_reserve,
-> +
-> +	TP_PROTO(struct zone *zone, struct zone *upper_zone, long lowmem_reserve),
-> +
-> +	TP_ARGS(zone, upper_zone, lowmem_reserve),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(int, node_id)
-> +		__string(name, zone->name)
-> +		__string(upper_name, upper_zone->name)
-> +		__field(long, lowmem_reserve)
+The custom configuration was necessary when it was added in
+commit 9e2276fa6eb3 ("arch/x86/boot: Use prefix map to avoid embedded paths")
+but has since become unnecessary in
+commit a716bd743210 ("kbuild: use -fmacro-prefix-map for .S sources")
 
-Nit, but may be useful. If you want to remove "holes" from the trace
-event, I would move the lowmem_reserve to the top. The __string() macro
-adds a 4 byte meta data into the structure (that defines the size and
-offset of where the string is). That means you can think of __string()
-as the same as "int".
+Drop the now unnecessary custom prefix map configuration.
 
-The above has three int's followed by a long which on 64bit, would
-leave a 4 byte hole just before lowmem_reserve.
+Link: https://lore.kernel.org/lkml/d250e864d6d81cc02e2599f710872f72d58a3c29.camel@decadent.org.uk/
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Intended to go through the kbuild tree.
 
--- Steve
+It would have been nice to have this before
+"kbuild: make all file references relative to source root",
+but I guess it's really not worth a rebase and the complexity.
+---
+ arch/x86/boot/Makefile            | 1 -
+ arch/x86/boot/compressed/Makefile | 1 -
+ 2 files changed, 2 deletions(-)
 
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index f500f82864aae80deb74faa3df9a8b6333d6c4ca..75e7a76deee1541ffed05953eb0574f14fe193a9 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -54,7 +54,6 @@ targets += cpustr.h
+ 
+ KBUILD_CFLAGS	:= $(REALMODE_CFLAGS) -D_SETUP
+ KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
+-KBUILD_CFLAGS	+= $(call cc-option,-ffile-prefix-map=$(srctree)/=)
+ KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+ KBUILD_CFLAGS	+= $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+ 
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index ad324978b2e5b1b6f8be82647769c99db8257ac7..4d3f714ad8717db2235a707269d26565a9671187 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -38,7 +38,6 @@ KBUILD_CFLAGS += -fno-stack-protector
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+ KBUILD_CFLAGS += -Wno-pointer-sign
+-KBUILD_CFLAGS += $(call cc-option,-ffile-prefix-map=$(srctree)/=)
+ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+ KBUILD_CFLAGS += -D__DISABLE_EXPORTS
+ # Disable relocation relaxation in case the link is not PIE.
 
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->node_id = zone->zone_pgdat->node_id;
-> +		__assign_str(name);
-> +		__assign_str(upper_name);
-> +		__entry->lowmem_reserve = lowmem_reserve;
-> +	),
-> +
-> +	TP_printk("node_id=%d zone name=%s upper_zone name=%s lowmem_reserve_pages=%ld",
-> +		  __entry->node_id,
-> +		  __get_str(name),
-> +		  __get_str(upper_name),
-> +		  __entry->lowmem_reserve)
-> +);
-> +
+---
+base-commit: 1a78774bb35068bb143d2299da3f8a0b87807cdb
+change-id: 20250322-asm-prefix-map-028f044d87b3
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
