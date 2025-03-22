@@ -1,173 +1,176 @@
-Return-Path: <linux-kernel+bounces-572136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16B3A6C713
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:07:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FD4A6C714
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 03:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3D77A94E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A361A460FC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 02:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7429578F37;
-	Sat, 22 Mar 2025 02:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5FA7405A;
+	Sat, 22 Mar 2025 02:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULavpZtf"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="cPjiKEVr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RWVNg52N"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82DA70813;
-	Sat, 22 Mar 2025 02:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2BCB644;
+	Sat, 22 Mar 2025 02:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742609241; cv=none; b=M4z7pZzyxIIsKLUwUW0STvUnOjUvqBDiK6AnrdK1Lcbne8+xb7bqMxrh5YrrfgyVgLesggH4cvbxv1D8zqcZS6W8t8IGCykDdbSUes8jXdCcmHmpnhsZqXMAdSMIoZpIxl7cePGV+OQFUeF0D4Fu65v2gqNFjFvyyZvZq/YXFXM=
+	t=1742609329; cv=none; b=kJfxNeepQO7pVdW1We7vEzkqkPfJTY4mVILW7dS1p4HXKAlyut+tYNDt4JwSyUFSyyeDvk21jzEbVmE3XHuv3WBV/XFAOiVM/+kdMhnUzwxC80KRn655RKYoul4GIngnpa3GlOM4MBE6NG0MzOiEYl12YfsO52Xd/HUcdYUnzg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742609241; c=relaxed/simple;
-	bh=o+3A0+n4HCzWRjzZsDtvzIcEBqGn5AvcKHAl64U86Yw=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sQsVtpJZZCtGr1nRTjv5lblWL3JKF8F+BTTLMlEgNIRI48DSaRBUF/tmAHtG7udsNL5h0ezm/mjzHx3FSEnFhpShToq+4r6RLc2GV6YAqHnbkfGm0khQTsl6RLLjO80NIqCsg5lHWdOw1mo0Kif1l8kExPFhbSnru4/v2Ud1ipM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULavpZtf; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225477548e1so49806085ad.0;
-        Fri, 21 Mar 2025 19:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742609239; x=1743214039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cgUGa8Zy4HnL9nENKrVNGHly8oBEx0+3uIbx2Khl3+4=;
-        b=ULavpZtfYLzdal2RFrk1moqYZVRw8Qepg0Z++totlPLJAmJUr2hwlebFIuE/1SATHE
-         9pLRLPPKAO7sKNLeGd+3/wuh6UJ1pAIlvaJhTZfKDWxbseFo55cAoLwscAPLYCI8mdF3
-         MvAUEYonqo+nnHddSaUYGNjvUBPa1f5+iHSPh6QHS4+QNwR+uO218Sq4pNTdPeuEUH+H
-         byf+YH9ehX54UImSr/ox4ERrB9bqDSRUjX/AVt8ga1L1gM8u/XOgGy6KylD5cR7OsfJg
-         sldlXSgJvS7Tu3jVGPEJhBPGXOL4vzRqgW9qUcy5G+VlbcwBQShNtV7BWx3TZyuNn4nR
-         CQ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742609239; x=1743214039;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cgUGa8Zy4HnL9nENKrVNGHly8oBEx0+3uIbx2Khl3+4=;
-        b=tPQFdtY4CZt1ygEaXq6RuEhGAZQW8uC4lrmLdssZd86LOFP4D4ZuZteJdroO3Erj1N
-         R/NHExbiqNN82+/LrTpiVPnUGrWq4UIasqUjCaqqAjV3UkLT6kQRf7khUYl8EpD5/PsI
-         EaViLc5hgzSfUhMexyLIDtLcTOn6VdCeHzMqp5zppTIhfrdjb2jXfV2OIpAqnBUs9fso
-         111FH7deGwTirvyyOIENPo7ftrDqhBlJ2ddr+2ks1HJnPB1P7wU//bUC70UpyunboTOZ
-         Lc9OWYGuNNZes/dsvhSftC2lufnYmYcBrP1a+F9Z4Or763Sooo+EYA9DrUfjAVkx040U
-         1cQA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8CoaksI61q5574KfJEBCyFmusEHzjzW4NeQ3s7ynp7lgJilUO3SQ3K6egwTE+gW/dY1Iev/zZq0UWro4=@vger.kernel.org, AJvYcCWcafuFfo+7MuqA23XHlIRoV4+V0x9IugOWM4KZgfV5yYFfR3w3vqdomMkjuZ46pKgueGHssYxm@vger.kernel.org, AJvYcCWo7PUOrP5JLpa2pLGjVTuHpL7G0J8olXv+UhtUgfUdTBu4yfh03PIv6r2JHnlBMdJlY2Yz/+VlLml0cUHjHeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymPxZz4VBPlaBfAOU9GPVWj//xuHtTVMmZy02u86+AW6obkPHe
-	cqUli4rZJHTJwoe0O9W2YBc6HkK+bkHAvKq3qCt9M3oaOfEy49bv
-X-Gm-Gg: ASbGncsciM8fIsBWTiquBTZsLiO8S4HCSjXTrGKSg6fWgOVpUl4mSDQBiK5nXCi4CDz
-	5BrVaLKzDGCmMlaXakZF2uySKEFNPJOcHw+6/7l0pSHAHk9vILJAScZCe+yOWXBx0NNnx5PwfX4
-	tIQcKGQAhoCDQvSCcYta2TDPgrQI6jyQKP/Dox4eZkM0TrDAAYBEfLR/ZVowqtbCj02oLHL6+x5
-	+YDjMENIEAK7AAsXUcAL/N5G+axm1rmbkTndv8/ZBxYSvCrAVzp2joOzsqhwFNEDBrt3P5hdbpk
-	dg9zLZLKcd92RG443pgKOI0jn+CbyLiCLIfifNKM5xv6pSHC/A7oiGSqOHYI+51Av2nbo5DL/ZE
-	i23cy9bpBUuW5sEo4M50Q5MVp/Lw=
-X-Google-Smtp-Source: AGHT+IGLVg32rMmKIzPpVWs9HZPMlOJIabBOGSAsw0vabqJF4egHETEku6hjipIWKkKg6BlmY1UAzw==
-X-Received: by 2002:a05:6a20:d809:b0:1f5:709d:e0b7 with SMTP id adf61e73a8af0-1fe42f08f6amr10162334637.6.1742609239106;
-        Fri, 21 Mar 2025 19:07:19 -0700 (PDT)
-Received: from localhost (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a27db8e5sm2612747a12.14.2025.03.21.19.07.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 19:07:18 -0700 (PDT)
-Date: Sat, 22 Mar 2025 11:07:03 +0900 (JST)
-Message-Id: <20250322.110703.1794086613370193338.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com
-Cc: tglx@linutronix.de, a.hindborg@kernel.org, fujita.tomonori@gmail.com,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
- frederic@kernel.org, arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- tgunders@redhat.com, me@kloenk.dev, david.laight.linux@gmail.com
-Subject: Re: [PATCH v11 6/8] MAINTAINERS: rust: Add new sections for
- DELAY/SLEEP and TIMEKEEPING API
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <67ddd387.050a0220.3229ca.921c@mx.google.com>
-References: <87jz8ichv5.fsf@kernel.org>
-	<87o6xu15m1.ffs@tglx>
-	<67ddd387.050a0220.3229ca.921c@mx.google.com>
+	s=arc-20240116; t=1742609329; c=relaxed/simple;
+	bh=+TIQCuUr6qUCQofdlwG6N/RgKB2xFGYaX+9vbcjNrtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c9I8b7tTcVG5paV7smFdYBHBkr0qQfT955RFSVhxBlNLODMDjWTe+7rNu1hCNqgPk8zt4HdXUccm8EUdnSj0In754QmF4N1zgyFS9Xc8SCszwzMNe87seGmWxfVPO0MMOiS9KFGyeEqsDMyqgZRW0JEoKplQ3HNV3BM8kiXSiPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=cPjiKEVr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RWVNg52N; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 055A81140100;
+	Fri, 21 Mar 2025 22:08:45 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Fri, 21 Mar 2025 22:08:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1742609325;
+	 x=1742695725; bh=owzLzdJ7aAL8ofWb+RHv5TBKWPaz6GLE9l6Q8vhDBhI=; b=
+	cPjiKEVrg9ip03905n3YOc+yn4Yi1t5EdpbB/NY0idcAa1Nq85GgVo0Y0F9T2H/8
+	FfCrZBLUr0DYhVVpDC2jHp8svyQGF1KFuMIB8HZ8Xpv0DWIPhQmf0LzFng90HafI
+	Mb4h+iPtEuYRLOenzwbKMv3RFZHpZNaP3/YQmtX+IqsC3wY64fSy/jQrciyYcX6W
+	PN8Qg9MuXUXYLYbh1KJoyIpnTWb3uouyS20D+zAmRy4szTh5xtV8tnjk/rRfxdig
+	TQZaov64Qi55SDDgtLF8jiP5lx+QQkKou5nYTRM+JJqB5OcrLfu0rDKoFMEXPkz1
+	JYEisSWLtsIs1WQXOt0j6g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742609325; x=
+	1742695725; bh=owzLzdJ7aAL8ofWb+RHv5TBKWPaz6GLE9l6Q8vhDBhI=; b=R
+	WVNg52N/cXrUAjSwzHyiEV2wmK8hqeIsOIw48E7mLH6sGYpKqW3dcA2bHLiw5Wnf
+	+Ypdbb3DmYOsAevREFWzen7ohUZD5HljSs02doQWN0A8xR3MDK2b5ZgIAlaXFDVp
+	zFNn7Sj6wriQ32jmfDWPYhJw+AZecUdv3rOIWIENMHH6Uols1I3fgL2r22eOQKcI
+	B5uJqMNnpeIN0DdxMLxx2YIErc9AIjRQrKX2BE76AHzhZESVlqjrDOdzu6xcQCD3
+	Td980YV5TNyjhqkoH4PaxGjGXaexq84DUyDb71qgYkcHkDHX/wZCJH7G+sd05kdS
+	P3hH0Xum3iF4tdhkL8QMQ==
+X-ME-Sender: <xms:rRveZ1ZN9V2zco4z7J6iEolhyoFJYSvszl-1-Y43HCrQTIcXv1yyYQ>
+    <xme:rRveZ8ZNK4zPWqs3fPvjbzXyum2NellkW8SwJZpYIemnMjCevV_Qf1w9EqWr8rT4S
+    YQdsSjiIVns820JJE0>
+X-ME-Received: <xmr:rRveZ39ZOPR1vLEkXTKSoG6GVi-tK0-pPBZi1DB675pSz2UZamI6KCjjW-xuUqyG_0FMtF1q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduhedvjeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
+    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
+    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
+    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
+    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
+    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:rRveZzqhXYQnr_w1oRf5r3PJkueFiz_lcOEr4oce1wRuo0sxzD2j0g>
+    <xmx:rRveZwqGc6QpAzu6QB1KaxRX8ufUa-ARsEcB2WUeNeKlwEcuasjfQg>
+    <xmx:rRveZ5Squ42yWPFWLv9RYCqCO9V0L8saN87fv8iQjg2_bNk_zx31Sw>
+    <xmx:rRveZ4oqNv8yLXVtGg1MYT1ePYmIn1aGFXxRjMaXO8KeJE2NNdFxHg>
+    <xmx:rRveZ8efPNgUISyublK3Ul9Os_5d08587bREmbszwkjHWy1t2ni8fiBk>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 21 Mar 2025 22:08:41 -0400 (EDT)
+Message-ID: <ceae02cf-0f5e-49b6-a42d-607416a9cc0f@ljones.dev>
+Date: Sat, 22 Mar 2025 15:08:39 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/11] HID: Asus: add Z13 folio to generic group for
+ multitouch to work
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250320220924.5023-1-lkml@antheas.dev>
+ <20250320220924.5023-5-lkml@antheas.dev>
+Content-Language: en-US
+From: "Luke D. Jones" <luke@ljones.dev>
+In-Reply-To: <20250320220924.5023-5-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Thank you all!
-
-On Fri, 21 Mar 2025 14:00:52 -0700
-Boqun Feng <boqun.feng@gmail.com> wrote:
-
-> On Fri, Mar 21, 2025 at 09:38:46PM +0100, Thomas Gleixner wrote:
->> On Fri, Mar 21 2025 at 20:18, Andreas Hindborg wrote:
->> >> Could you add me as a reviewer in these entries?
->> >>
->> >
->> > I would like to be added as well.
->> 
->> Please add the relevant core code maintainers (Anna-Maria, Frederic,
->> John Stultz and myself) as well to the reviewers list, so that this does
->> not end up with changes going in opposite directions.
->> 
+On 21/03/25 11:09, Antheas Kapenekakis wrote:
+> The Asus Z13 folio has a multitouch touchpad that needs to bind
+> to the hid-multitouch driver in order to work properly. So bind
+> it to the HID_GROUP_GENERIC group to release the touchpad and
+> move it to the bottom so that the comment applies to it.
 > 
-> Make sense, I assume you want this to go via rust then (althought we
-> would like it to go via your tree if possible ;-))?
+> While at it, change the generic KEYBOARD3 name to Z13_FOLIO.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/hid/hid-asus.c | 6 +++---
+>   drivers/hid/hid-ids.h  | 2 +-
+>   2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index b61b53d5ef240..beb7df823b18e 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -1335,9 +1335,6 @@ static const struct hid_device_id asus_devices[] = {
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> -	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> -	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> @@ -1367,6 +1364,9 @@ static const struct hid_device_id asus_devices[] = {
+>   	 * Note bind to the HID_GROUP_GENERIC group, so that we only bind to the keyboard
+>   	 * part, while letting hid-multitouch.c handle the touchpad.
+>   	 */
+> +	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+> +		USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO),
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>   	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+>   		USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD) },
+>   	{ }
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 7e400624908e3..b1fe7582324ff 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -209,7 +209,7 @@
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_KEYBOARD3 0x1822
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD	0x1866
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2	0x19b6
+> -#define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3	0x1a30
+> +#define USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO		0x1a30
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR		0x18c6
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY		0x1abe
+>   #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X		0x1b4c
 
-Once the following review regarding fsleep() is complete, I will submit
-patches #2 through #6 as v12 for rust-next:
+Sorry, I got mixed up in Thunderbird since the V2 prefix is missing and 
+was reviewing wrong series, I'll archive the last series to prevent 
+confusing myself.
 
-https://lore.kernel.org/linux-kernel/20250322.102449.895174336060649075.fujita.tomonori@gmail.com/
+Reviewed-by: Luke D. Jones <luke@ljones.dev>
 
-The updated MAINTAINERS file will look like the following.
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cbf84690c495..858e0b34422f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10370,6 +10370,18 @@ F:	kernel/time/timer_list.c
- F:	kernel/time/timer_migration.*
- F:	tools/testing/selftests/timers/
- 
-+DELAY AND SLEEP API [RUST]
-+M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+R:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	Anna-Maria Behnsen <anna-maria@linutronix.de>
-+R:	Frederic Weisbecker <frederic@kernel.org>
-+R:	Thomas Gleixner <tglx@linutronix.de>
-+L:	rust-for-linux@vger.kernel.org
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	rust/kernel/time/delay.rs
-+
- HIGH-SPEED SCC DRIVER FOR AX.25
- L:	linux-hams@vger.kernel.org
- S:	Orphan
-@@ -23944,6 +23956,17 @@ F:	kernel/time/timekeeping*
- F:	kernel/time/time_test.c
- F:	tools/testing/selftests/timers/
- 
-+TIMEKEEPING API [RUST]
-+M:	FUJITA Tomonori <fujita.tomonori@gmail.com>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+R:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	John Stultz <jstultz@google.com>
-+R:	Thomas Gleixner <tglx@linutronix.de>
-+L:	rust-for-linux@vger.kernel.org
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	rust/kernel/time.rs
-+
- TIPC NETWORK LAYER
- M:	Jon Maloy <jmaloy@redhat.com>
- L:	netdev@vger.kernel.org (core kernel code)
 
