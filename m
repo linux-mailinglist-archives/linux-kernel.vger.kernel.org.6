@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-572654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38BF7A6CCBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:31:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD36A6CCA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AE837A376B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7ED318949B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E449B236A6A;
-	Sat, 22 Mar 2025 21:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF6322F3B8;
+	Sat, 22 Mar 2025 21:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="Rh7Z7SZc";
-	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="kkWEfGs8";
-	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="i2dRR+8j"
-Received: from e2i673.smtp2go.com (e2i673.smtp2go.com [103.2.142.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5BA1DE2DC
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 21:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.142.161
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="sxlAqcxb"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B5F1DE2DC
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 21:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742678980; cv=none; b=ZByeFq4fvaEriguvUHfGyOjwos7q9IGhmei4okmEIQNupQqqgy7GVX6zDwgBJDumipC6wWPMzkXv33M2VW69VztG64Y5/ESUnJK6h9QijysB6OSuG482bE0tVWh+T6sn3whKPmGWfWkqQlgzJJfKE/l18Ilw/ajMZUsu3mtP6HM=
+	t=1742678802; cv=none; b=ZtP97JIiiGiUKVAng7WUGTgUFFizNzNztX7nYYhfk2GKJh3Fk27UEH0DIVZdT1da84IXZqQYj5kXt78Di6o52kcNEMVdLIXWlGkow114lHbcmArNb/ItfZWOtkg0gp5w3ZzmLvEAw1URDd1axB7TcV5CFe0YoBJfEvzgOF3+FU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742678980; c=relaxed/simple;
-	bh=Mb79DNtCDH+YprnnK7anYxnTAMJUcCMlahmLdHiruXo=;
+	s=arc-20240116; t=1742678802; c=relaxed/simple;
+	bh=aJKrk8AhFU5inmvC5FMnFgltEpcRhKTMhWxISXywHho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlgcpwkBLVmQ4KMhQB76ZVogG6pDIwkMrmU330k0CF+VXEUVbE0drL2mIwVl1zC79twq7amVpA7hVZwSGV/EHaZSZjcpq1u3Tpr3vqKK+k06dSmWehH249nMjsQCVYY2gdvlIR+sDrL5MU0psQp1oQIKAjvrgjPMZLs9AJIigJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=Rh7Z7SZc reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=kkWEfGs8; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=i2dRR+8j; arc=none smtp.client-ip=103.2.142.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1742679870; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=ZkOds2VlnsYuYQLmdf8w6Ep7Uph1rKBP3ZEzdDiDdsg=; b=Rh7Z7SZcCdvGCKtdIMzLxg460J
-	4OCVJT3Q+mpYDou1L4xMENfWhiCHNLenhI1xaTUlis0Y4h/qp2rW9dZI247hFMzMv35VxSDCipymP
-	HAIEnxc1CjfMtcTAXUtOVmu2KGXKOKfhvMpb0TsY6xGjDELWfHQFV/zMjm4XiK67PDwlSl6gTIydc
-	iqsLQRMQzTnjVFMgVHS5+EOanC6jZ//3sY///fZyA1//vVTpKUSBOZ9HjKjLmvF8/i+dTfWyZY5cS
-	W0g7cG0HcyS1DW2xcu2BqVZBJ0nV/ISOFBoW53KVD5scLTCBxcCCWjfsX5HPVzacwp89rkzL+pp3P
-	AMC87r3g==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
- i=@fjasle.eu; q=dns/txt; s=s1174286; t=1742678970; h=from : subject :
- to : message-id : date;
- bh=ZkOds2VlnsYuYQLmdf8w6Ep7Uph1rKBP3ZEzdDiDdsg=;
- b=kkWEfGs8/BV0V7/2iXCUc1hD2L/cTQF0o053ShCFViRL1ewRDRAHl9DUt1dQ+NDPOPPh8
- ioKFOsVbsA8YOJdrglPoeIkA1L3h8hym84/CT+ZdBFz6S9/ddE1Y7XWRNQe4TtdR6CUM9qD
- O4iIoujATgfDQEl8vw7TzWZYYpswqw8giaLw7ud4mC1IcPGi4CcpbPgKkVm8021HBJGIPiY
- VQPChZmYiQcigV8CUDNXBb4fdlUXiDeQU58sR0ZoKVW41JpFlleDCh8HJpQBOZAASAMUi71
- c+P40C7LzMhJWgZ1JdbLAzrjeT2uoKwNPOfgJdrN8Q7JMT+N++q2okOQk9Uw==
-Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1tw6MF-qt4Caj-2k; Sat, 22 Mar 2025 21:26:20 +0000
-Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
- by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1tw6ME-4o5NDgrqv8S-km5i; Sat, 22 Mar 2025 21:26:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
- t=1742678776; bh=Mb79DNtCDH+YprnnK7anYxnTAMJUcCMlahmLdHiruXo=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=i2dRR+8j6qpe7Lr05Ew/b/2waRuShb9V6VCoVHZHZQzdHQa0Vu6l0QnxuHdPs9pTD
- K32Ymx+ZJJZw3kdfQ310kflq/waV3fcLieVrlLXL2kUckhY7IIU75tlWkuxp3bFtfe
- VKWIFWQcF0HrGMa2a9FiDxgKOe9LZ9D4mTEZbRQM=
-Received: by leknes.fjasle.eu (Postfix, from userid 1000)
- id 65D913CBC9; Sat, 22 Mar 2025 22:26:16 +0100 (CET)
-Date: Sat, 22 Mar 2025 22:26:16 +0100
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Khem Raj <raj.khem@gmail.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>,
- linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] mips: Add '-std=gnu11' to vdso CFLAGS
-Message-ID: <Z98q-CurZoru9Qr3@fjasle.eu>
-References: <20250322000940.778730-1-raj.khem@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=seJh6332fJj+YbNfNJJTcJUX6uakSlfv2jdTP4+82CDW7iTQl2HiUpSZg4dLKI09Yth4yBwKB49lEmmbB6oK01zmogIFkWuDTKkzYvAkMLnCfUlQs0CH1wupVsfCMCb4Ig2h60D9orndXT2zWVnyhWqsptr+al2nNHbIc8i6OQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=sxlAqcxb; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id A920214C2DB;
+	Sat, 22 Mar 2025 22:26:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1742678799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nlQXDT9qjPMuCQRb2y5j+QqB42E7sudAvA1QZKSwl8U=;
+	b=sxlAqcxbFegzN+9/JA3Mq4pLML+DTcOv4PDeAh8rfbDiwM0e6B0ULM3xOyLhY//CwgEVTU
+	8+ph1HJqs5NsACoSbYCA1Ct/oabash214Ghlb6+GO0aARvLAlNm5PGmN452+u6rtQOegHf
+	6CaumImpLCQqgPPP709YExp4o4V5ir/T1rAxHBwJH0wEC16mjW/m/a8WlLrPg35OHJYS7I
+	TPTdx1RlYVEtb6RM+I7eEybFlxD1cnfYG4GZUzcbygFObFB6aB6IqIiVi7+WDUNQgtqOuk
+	mTPzXo3h3/O5Bkp2gK6um0NJN3pcED3f5YUe+n/biVStLKdyi5Zv9vkZDMDBJg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 00e7e8d0;
+	Sat, 22 Mar 2025 21:26:35 +0000 (UTC)
+Date: Sun, 23 Mar 2025 06:26:20 +0900
+From: asmadeus@codewreck.org
+To: Sasha Levin <sashal@kernel.org>
+Cc: ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: Use hashtable.h for hash_errmap
+Message-ID: <Z98q_K71xueitBeB@codewreck.org>
+References: <20250320145200.3124863-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250322000940.778730-1-raj.khem@gmail.com>
-X-Smtpcorp-Track: ElQxUPQjLANj.TgeDsMgFKsxW.-d5b1Q_lA4g
-Feedback-ID: 1174286m:1174286a9YXZ7r:1174286smZycWegRd
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+In-Reply-To: <20250320145200.3124863-1-sashal@kernel.org>
 
-On Fri, Mar 21, 2025 at 05:09:40PM -0700 Khem Raj wrote:
-> GCC 15 changed the default C standard dialect from gnu17 to gnu23,
-> which should not have impacted the kernel because it explicitly requests
-> the gnu11 standard in the main Makefile. However, mips/vdso code uses
-> its own CFLAGS without a '-std=' value, which break with this dialect
-> change because of the kernel's own definitions of bool, false, and true
-> conflicting with the C23 reserved keywords.
+Sasha Levin wrote on Thu, Mar 20, 2025 at 10:52:00AM -0400:
+> Convert hash_errmap in error.c to use the generic hashtable
+> implementation from hashtable.h instead of the manual hlist_head array
+> implementation.
 > 
->   include/linux/stddef.h:11:9: error: cannot use keyword 'false' as enumeration constant
->      11 |         false   = 0,
->         |         ^~~~~
->   include/linux/stddef.h:11:9: note: 'false' is a keyword with '-std=c23' onwards
->   include/linux/types.h:35:33: error: 'bool' cannot be defined via 'typedef'
->      35 | typedef _Bool                   bool;
->         |                                 ^~~~
->   include/linux/types.h:35:33: note: 'bool' is a keyword with '-std=c23' onwards
+> This simplifies the code and makes it more maintainable by using the
+> standard hashtable API and removes the need for manual hash table
+> management.
+
+I'm not entierly convinced this is simpler from my little island (that's
+one more API to learn about vs code that doesn't look all that
+different), but I guess I can see the point from an overall perspective.
+
+I see no problem with this, I'll pick it up for -next
+Note this code is not used for 9p2000l iirc so I currently don't have
+any test for it :/
+(but it's simple enough that I'm willing to take the risk)
+
+Thanks,
+Dominique
 > 
-> Add '-std=gnu11' to the decompressor and purgatory CFLAGS to eliminate
-> these errors and make the C standard version of these areas match the
-> rest of the kernel.
-> 
-> Signed-off-by: Khem Raj <raj.khem@gmail.com>
-> Cc: stable@vger.kernel.org
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->  arch/mips/vdso/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  net/9p/error.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
 > 
-> diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
-> index b289b2c1b294..15521004c563 100644
-> --- a/arch/mips/vdso/Makefile
-> +++ b/arch/mips/vdso/Makefile
-> @@ -30,7 +30,7 @@ cflags-vdso := $(ccflags-vdso) \
->  	-O3 -g -fPIC -fno-strict-aliasing -fno-common -fno-builtin -G 0 \
->  	-mrelax-pic-calls $(call cc-option, -mexplicit-relocs) \
->  	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
-> -	$(call cc-option, -fno-asynchronous-unwind-tables)
-> +	$(call cc-option, -fno-asynchronous-unwind-tables) -std=gnu11
->  aflags-vdso := $(ccflags-vdso) \
->  	-D__ASSEMBLY__ -Wa,-gdwarf-2
+> diff --git a/net/9p/error.c b/net/9p/error.c
+> index 8da744494b683..8ba8afc91482d 100644
+> --- a/net/9p/error.c
+> +++ b/net/9p/error.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/list.h>
+>  #include <linux/jhash.h>
+>  #include <linux/errno.h>
+> +#include <linux/hashtable.h>
+>  #include <net/9p/9p.h>
 >  
+>  /**
+> @@ -33,8 +34,8 @@ struct errormap {
+>  	struct hlist_node list;
+>  };
+>  
+> -#define ERRHASHSZ		32
+> -static struct hlist_head hash_errmap[ERRHASHSZ];
+> +#define ERRHASH_BITS 5
+> +static DEFINE_HASHTABLE(hash_errmap, ERRHASH_BITS);
+>  
+>  /* FixMe - reduce to a reasonable size */
+>  static struct errormap errmap[] = {
+> @@ -176,18 +177,14 @@ static struct errormap errmap[] = {
+>  int p9_error_init(void)
+>  {
+>  	struct errormap *c;
+> -	int bucket;
+> -
+> -	/* initialize hash table */
+> -	for (bucket = 0; bucket < ERRHASHSZ; bucket++)
+> -		INIT_HLIST_HEAD(&hash_errmap[bucket]);
+> +	u32 hash;
+>  
+>  	/* load initial error map into hash table */
+>  	for (c = errmap; c->name; c++) {
+>  		c->namelen = strlen(c->name);
+> -		bucket = jhash(c->name, c->namelen, 0) % ERRHASHSZ;
+> +		hash = jhash(c->name, c->namelen, 0);
+>  		INIT_HLIST_NODE(&c->list);
+> -		hlist_add_head(&c->list, &hash_errmap[bucket]);
+> +		hash_add(hash_errmap, &c->list, hash);
+>  	}
+>  
+>  	return 1;
+> @@ -205,12 +202,12 @@ int p9_errstr2errno(char *errstr, int len)
+>  {
+>  	int errno;
+>  	struct errormap *c;
+> -	int bucket;
+> +	u32 hash;
+>  
+>  	errno = 0;
+>  	c = NULL;
+> -	bucket = jhash(errstr, len, 0) % ERRHASHSZ;
+> -	hlist_for_each_entry(c, &hash_errmap[bucket], list) {
+> +	hash = jhash(errstr, len, 0);
+> +	hash_for_each_possible(hash_errmap, c, list, hash) {
+>  		if (c->namelen == len && !memcmp(c->name, errstr, len)) {
+>  			errno = c->val;
+>  			break;
 
-Thanks for the patch.  Did you evaluate adding a line like
-
-    $(filter -std=%,$(KBUILD_CFLAGS)) \
-
-to the assignment of ccflags-vdso?  Then MIPS VDSO C standard keeps aligned
-with top-level.
-
-Nevertheless,
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
-
+-- 
+Dominique Martinet | Asmadeus
 
