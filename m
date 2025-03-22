@@ -1,80 +1,51 @@
-Return-Path: <linux-kernel+bounces-572591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF06A6CBF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:05:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8618DA6CBF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 20:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEE61895631
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06B4317C907
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A201F8BBD;
-	Sat, 22 Mar 2025 19:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5D722F3BD;
+	Sat, 22 Mar 2025 19:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJQExcOf"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b="MnzIXJGb"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108701922E7;
-	Sat, 22 Mar 2025 19:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7602542AB0;
+	Sat, 22 Mar 2025 19:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742670254; cv=none; b=BZ4rGz1mK63HNXJWPNfpWXBZgeWfO4zdMSf35RNhHSz/b5w6XX64zd+GhfDODXJY9GRhlnoPV9uN2xw8PzOJycUrfvT57yqyKRPTVTvPKdPyX0D9AwRZAfBOJ187eq876Da/F6WXU+jsll21jDDzdmYSioHd3Pe3Xa+/nQRer6Y=
+	t=1742670719; cv=none; b=GFsyNL7r4IGh3PgO9hHWbXhLxTrhgwsq4GSku/XdU2/np1FsTOV3uYQ4DdmsUVadGLYAww+lXn8FEGWfA4iXRR/vb7ZtcUWyplk55dyf9ZzIZpCxleyqprnOLOoLpdqZ3+CGyhNWRNau0kX2xwWcA76hR3+aQ2kWdF/hmzlQehI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742670254; c=relaxed/simple;
-	bh=akUtIh4fJ/NTloDbJE5X/4fCQR0gEfzJhOxmWP0OaG0=;
+	s=arc-20240116; t=1742670719; c=relaxed/simple;
+	bh=rl7XHTSALGkshOTWUCTsRWgHWs7NO3dE7n+XvjAhlzk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VSJcIKToGV/N+wMEEyzJaxnk1ZyWVjCp8M1mK1fDc4dbC+oeH4JcqZmdgA5tYzdAfHfAL1Ur2MGsViIMzwf2ottQ5IinhpdXHOanhvpzX3A8CQYMuB7PuWaUD73SXaeXrf2jyOwwNbOWaglvsr1ZECGojSbtJwuyWPvb7Nh0EJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJQExcOf; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240b4de12bso37052785ad.2;
-        Sat, 22 Mar 2025 12:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742670252; x=1743275052; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjfS2J9/6jaC+LhxfaVAJBnn4qRMz60NNh1Gzm5/iZ8=;
-        b=RJQExcOfWI8tTRPCOhhWi7QYmePILO/ZEMf+RHo9dTYvsv3t+djgfDDfr7oSxNg56U
-         9n6zWcxvcGsHmSzdqSBRc2ELTtSAN0ZVHTkV2N4d0Oju+/P5coN0AlAo9Yi/kiuNHfEG
-         qIYF3/yHPuazYQp0YzAsaNR7c1dQHsmb+nJ4LIn/tfbEtedKdGoJoPbghSbPYK+lPNAr
-         YRCOzgh7U2btHRWnnGQW3UozFbINlWKlU+ufb06SJeM+WEJDInW6g639r6iQ6ogphDKp
-         0t7u63kFQy1dLHWl9rAJJdC601aGZt2CdgdnQLC2QlqOfJ9mrL9VtzjxTOd0vKV0zZlL
-         Bmaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742670252; x=1743275052;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hjfS2J9/6jaC+LhxfaVAJBnn4qRMz60NNh1Gzm5/iZ8=;
-        b=e/VZauD4+xiwOxMV8KP9ULxJgJEtbvSNkUAT7D28IGGy9v94bSs9bOyt7KWJLzDyAP
-         PQ2Rpdpfg3iJFOZZK/biv7MBi+WawrZk0fzv01POdhN+mE0y1+CpI1SuKSYDRtxpsfq3
-         00WdUM4D3ksTTc08eQdr/0J2XypxdTsLBKoi3Tb+a1Kjcih/V3p2R7ySFcwxWFEr93wk
-         38G4A5eng6wSBqzZ5oKz/iCgjZODQRqSnUKS+s9Se/94jzLXjFpjrqCp+smy+yQySCPL
-         4SmyKXWdF7L8IMVppLoWl21gItyvd40ab7pfxSRGYugoY/QM+cqgyoxUFJK4g/TQ9BYa
-         Tvsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVui1LJFSeB/Xpt2SPHHVRkxdDwEpPnmH3MfnCGRKodeUcylaJ1F+crwbef7i3m7gAb+0R2qAlrz9hwrSDZQmA=@vger.kernel.org, AJvYcCWbeejxL0S3I+i4mIldYLOHZaOnP9nXA3cnVdtkG/QmeUaytCsdAbezm6Enp3bx1K5Le3rjbGuRuuFnIhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVhbWWMRpiZcOaad5w4LloJ30c5TBXhsG90d9tmlUf1Q8oJWC3
-	Mz2VbOWnqacDwjQnEq8CGQ9CfHYa8BTeivjyhc3dy2BSCYdshSYZX8K7RQ==
-X-Gm-Gg: ASbGncu/ifp46zkuS/K9YgpDKlIkARvZYEmYwv9YNNxtCsIueuv4UjIezykRpEq5fNY
-	cTBYFdrBtruVeElrSyCA3RN8MTE0OoFwziCNK7g0vtITdKluYaDHeIeNKp8Ks0KtFN+7Skl9vfn
-	21UU+8qdezTNiK6DN3JE4NSNmODPHq7QiuoAkpsx6KmO2ePEn2cYcWVzV8FRZqEE/IcYh9TU/nd
-	xS52g4SThN8Oy0v/wrZ8Bu99fSIG4zCIhInitLunvqtym4fFLfq+PdXsK5xNbn9/ObJSsY9FZCB
-	NgOUBe2kHQ2Sjv1MzVP+RtfNHyuk3tzC3HSwlxcUT1UnT3kV0mcr9dh+8rI35kceD9PY5RbAWiz
-	pKoWZ5XsWbvPj
-X-Google-Smtp-Source: AGHT+IGNBne868F6ZrgKdD9z9yU5M6G0K2giARvuwBrovY/nxaUuPjc7rgwwLnI7xaHp1DDNmFNJuw==
-X-Received: by 2002:a17:902:cec4:b0:220:c143:90a0 with SMTP id d9443c01a7336-22780d96ac7mr126763515ad.24.1742670252016;
-        Sat, 22 Mar 2025 12:04:12 -0700 (PDT)
-Received: from ?IPV6:2401:4900:1c45:ad2a:889a:b085:dc4f:7d7b? ([2401:4900:1c45:ad2a:889a:b085:dc4f:7d7b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811f443asm38859295ad.228.2025.03.22.12.04.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Mar 2025 12:04:11 -0700 (PDT)
-Message-ID: <1838f997-f3ec-4df2-bee2-20e1dbe35b3d@gmail.com>
-Date: Sun, 23 Mar 2025 00:34:08 +0530
+	 In-Reply-To:Content-Type; b=NyFbWAjJorLmTeXQ7m8zzSgkJgIL/sgjxibeh+zdZN5teeM0rFYZ6DlSxIDEXgJFxQ/F4JHrMQ6S3gEanQUsFgmA6iQUWyeUmq+JZCgeO2QVFePcougZh7k5aGzxsM0/cNhZvAVB3rDc1r8uwaLTHvaudlu9ELygjQRRaGvv3i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr; spf=pass smtp.mailfrom=grabatoulnz.fr; dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b=MnzIXJGb; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grabatoulnz.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5423D42D43;
+	Sat, 22 Mar 2025 19:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grabatoulnz.fr;
+	s=gm1; t=1742670709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rl7XHTSALGkshOTWUCTsRWgHWs7NO3dE7n+XvjAhlzk=;
+	b=MnzIXJGbzH9aBGTWVzWft+nr4lWZuKKQAQIclR6n/qrpJ0bsbiQGO6XARftEd0+fptD9I5
+	dU3zfFp+VFxNVI7rG7884Cttz/kBQIGFWD3AHtS61jDH0E5E7v0vZT/rwCrrxvbnzh6+xn
+	FV19y39qcy/iWr9qJPgFlrTUhCwqPLIqWgoz6aap6ATa8Az/xbbJqKxe9iu7LppFdEBggp
+	FNrTHglsS6F5zVXLaze07yGtNRPUePz/vcDhOWII23/ZIVl7M5dMqx89E3jUb9GxP9sdI2
+	h+zZ1wtSzZO2Pb21qLKZy2QK2B4JoaSfkGwVyw/ckeNngzltr25F74pdixECkg==
+Message-ID: <4c0764e6-586d-42c1-9d6b-5283097f96ec@grabatoulnz.fr>
+Date: Sat, 22 Mar 2025 20:11:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,138 +53,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
-To: Stafford Horne <shorne@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, jonas@southpole.se,
- stefan.kristiansson@saunalahti.fi, linux-openrisc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Sahil Siddiq <sahilcdq@proton.me>
-References: <20250315203937.77017-1-sahilcdq@proton.me>
- <Z9Z2sjWQHKgGJyGo@antec>
- <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
- <Z9gOwYl6kmoPY9-C@antec> <d54849db-956b-4c1a-ab93-4705394af637@gmail.com>
- <Z9kkE3uQru_VxLqA@antec> <10b01724-d47f-4f0f-87ea-2793e67b18b9@gmail.com>
- <Z97lUpoTXVccaCeN@antec>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ Salvatore Bonaccorso <carnil@debian.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Jian-Hong Pan <jhp@endlessos.org>,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-ide@vger.kernel.org,
+ Dieter Mummenschanz <dmummenschanz@web.de>
+References: <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
+ <Z9BFSM059Wj2cYX5@ryzen> <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
+ <Z9LUH2IkwoMElSDg@ryzen> <d5470665-4fee-432a-9cb7-fff9813b3e97@redhat.com>
+ <Z9L5p6hTp6MATJ80@ryzen> <6d125c69-35b2-45b5-9790-33f3ea06f171@redhat.com>
+ <Z9hXRYQw1-fX0_PY@ryzen>
+ <06f76ca1-1a07-4df5-ba50-e36046f58d88@grabatoulnz.fr>
+ <5fe0557a-b9ec-4600-a10f-20c494aa2339@grabatoulnz.fr>
+ <Z9k4ic4nSkbUMAPA@ryzen>
 Content-Language: en-US
-From: Sahil Siddiq <icegambit91@gmail.com>
-Autocrypt: addr=icegambit91@gmail.com; keydata=
- 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
- rPgMe6IIvn24UuW2f6fIt0AaqOWq
-In-Reply-To: <Z97lUpoTXVccaCeN@antec>
+From: Eric <eric.4.debian@grabatoulnz.fr>
+In-Reply-To: <Z9k4ic4nSkbUMAPA@ryzen>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheegjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepgfhrihgtuceovghrihgtrdegrdguvggsihgrnhesghhrrggsrghtohhulhhniidrfhhrqeenucggtffrrghtthgvrhhnpeffgfdufeeigedtleelteetvefhgffguedtueejvdelueekieduiefggeejgfeikeenucfkphepvdgrtddumegtsgdtgeemleegudemsgdutddtmeegvdduieemjegvfhhfmehfvgdvheemleehrgdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtgeemleegudemsgdutddtmeegvdduieemjegvfhhfmehfvgdvheemleehrgdupdhhvghloheplgfkrfggieemvdgrtddumegtsgdtgeemleegudemsgdutddtmeegvdduieemjegvfhhfmehfvgdvheemleehrgdungdpmhgrihhlfhhrohhmpegvrhhitgdrgedruggvsghirghnsehgrhgrsggrthhouhhlnhiirdhfrhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheptggrshhsvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptggrrhhnihhls
+ eguvggsihgrnhdrohhrghdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhkrgdrfigvshhtvghrsggvrhhgsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepughlvghmohgrlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhhphesvghnughlvghsshhoshdrohhrgh
+X-GND-Sasl: eric.degenetais@grabatoulnz.fr
 
-Hi,
+Hi Niklas, hi Hans
 
-On 3/22/25 9:59 PM, Stafford Horne wrote:
-> On Sat, Mar 22, 2025 at 07:21:18PM +0530, Sahil Siddiq wrote:
->> On 3/18/25 1:13 PM, Stafford Horne wrote:
->>> On Tue, Mar 18, 2025 at 12:06:30AM +0530, Sahil Siddiq wrote:
->>>> On 3/17/25 1:55 PM, Geert Uytterhoeven wrote:
->>>>> On Sun, 16 Mar 2025 at 07:59, Stafford Horne <shorne@gmail.com> wrote:
->>>>> [...]
->>>>>> @@ -176,8 +177,11 @@ void __init paging_init(void)
->>>>>>     	barrier();
->>>>>>     	/* Invalidate instruction caches after code modification */
->>>>>> -	mtspr(SPR_ICBIR, 0x900);
->>>>>> -	mtspr(SPR_ICBIR, 0xa00);
->>>>>> +	upr = mfspr(SPR_UPR);
->>>>>> +	if (upr & SPR_UPR_UP & SPR_UPR_ICP) {
->>>>>> +		mtspr(SPR_ICBIR, 0x900);
->>>>>> +		mtspr(SPR_ICBIR, 0xa00);
->>>>>> +	}
->>>>> Here we could use new utilities such as local_icache_range_inv(0x900,
->>>>> L1_CACHE_BYTES);
->>>>>
->>>>> Or something like local_icache_block_inv(0x900).  This only needs to flush a
->>>>> single block as the code it is invalidating is just 2 instructions 8 bytes:
->>>>>
->>>>>        .org 0x900
->>>>> 	l.j     boot_dtlb_miss_handler
->>>>> 	 l.nop
->>>>>
->>>>>        .org 0xa00
->>>>> 	l.j     boot_itlb_miss_handler
->>>>> 	 l.nop
->>>>
->>>> Given that there'll be generic local_(i|d)cache_range_inv(start, stop) utility
->>>> functions, would it make sense to simply have a macro defined as:
->>>>
->>>> #define local_icache_block_inv(addr) local_icache_range_inv(start, L1_CACHE_BYTES)
->>>>
->>>> instead of having a separate function for invalidating a single cache line? This would
->>>> still use cache_loop() under the hood. The alternative would be to use
->>>> local_icache_range_inv(start, L1_CACHE_BYTES) directly but using the macro might be
->>>> more readable.
->>>
->>> Yes, I think a macro would be fine.  Should we use cache_desc.block_size or
->>> L1_CACHE_BYTES?  It doesn't make much difference as L1_CACHE_BYTES is defined as
->>> 16 bytes which is the minimum block size and using that will always invalidate a
->>> whole block.  It would be good to have a comment explaining why using
->>> L1_CACHE_BYTES is enough.
->>>
+Le 18/03/2025 à 10:10, Niklas Cassel a écrit :
+> Hello Eric,
+>
+> On Tue, Mar 18, 2025 at 01:04:48AM +0100, Eric wrote:
+>> Hi Niklas, hi Hans,
 >>
->> While working on the patch's v3, I realized I am a bit unclear here. Is the ".org"
->> macro used to set the address at which the instructions are stored in memory? If so,
->> the first two instructions should occupy the memory area 0x900 through 0x907, right?
->> Similarly, the next two instructions will occupy 0xa00-0xa07.
+>> [...]
+>> The test is a success as far as I am concerned. With this new patch, DIPM is
+>> disabled on the Samsung SSD, but not the Maxtor disk on the same controller:
 >>
->> Since the two instructions are 256 bytes apart, they shouldn't be cached in the same
->> cache line, right? Maybe one cache line will have 16 bytes starting from 0x900 while
->> another cache line will have 16 bytes starting from 0xa00.
-> 
-> Yes, to invalidate the cache we will need to do:
-> 
-> 	local_icache_block_inv(0x900);
-> 	local_icache_block_inv(0xa00);
-> 
-> This will then compile down to the pretty much same as, (but with checks to
-> validate the caches exist first):
-> 
-> 	mtspr(0x900);
-> 	mtspr(0xa00);
+>>
+>> [...]
+>>
+>>
+>> and the SSD is successfully detected at reboot by both the UEFI and the
+>> linux kernel.
+> Thank you for all your perseverance!
+>
+> Hopefully, your efforts will make sure that others with ATI AHCI do not
+> encounter the same issue that you faced.
+Thank you for your work !
+>
+> Kind regards,
+> Niklas
 
-Ok, this makes sense. I misunderstood the comments in the previous email.
 
->> If the above is true, I think it'll be better to simply call mtspr() for each address
->> individually.
-> 
-> Thats right, but I figured the local_icache_block_inv function/macro would be
-> more useful other than just this block.
-> 
+Kind regards,
 
-Right, I'll replace this with a macro.
+Eric
 
-Thanks,
-Sahil
 
