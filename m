@@ -1,162 +1,79 @@
-Return-Path: <linux-kernel+bounces-572121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81EA2A6C6C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:41:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8915A6C6C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 01:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87B347A9404
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD85A3BC350
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 00:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01621171C9;
-	Sat, 22 Mar 2025 00:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF37EAD0;
+	Sat, 22 Mar 2025 00:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="R7B8UWhJ"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="prqnxbkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7571579FE
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 00:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034299443
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 00:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742604094; cv=none; b=HXR9AQ3oVu5pG5zWZxxm/3cFDg1nHMnKKx9TChhjfWXg35RnPQM9Zi4caautZXmSrzwzmedIlHWOh11I0i5aBSLF//cJYC7bav+JkrD0ZTufPsoTlXJGzwrt9s5SuZpdy/76q/tJ8na423mYxv6JIHJUS2kq9PF08rxtjzcRLJ8=
+	t=1742604821; cv=none; b=EIzXm4U/zdcXIvylRVJSR9MwZY1gjV3922gzz0XfH3sTV/tZncdo3CuKb8PZcMhH58YxUqbTVLWzNjkC6g9zqbv8JEsNyXMh0dafcUXxVi9lj1Z+t2wjDhtiVubSr8Al9dBCEkZ9fZgAhez7hOrwmUMW1hyOufqxYN2qZEmbZAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742604094; c=relaxed/simple;
-	bh=hqoJRCdWhjuEg7TGBkaWxPiFOMvAutcwW1byYHxtnno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5RqYTR1XXEixaxXElr+AUr0CfLMMX52Q+BoLDMffG2G9KM4k80754pchmnPbUTUXR1q0caVwOnOPXgy+rU/mx2VgLrv1traA5lnqEq56t39ds63SwvTxu4N+lgX53H1fCaIeysSJpZuJOSsHEH1Lf1FDHPyFDTk8f4nyP2hEDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=R7B8UWhJ; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-47677b77725so22765931cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Mar 2025 17:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1742604091; x=1743208891; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7w18pLCxgYQdbgr4L7Ilx5M+dDme30Hw40dLx2kJ/Cs=;
-        b=R7B8UWhJvzY42pvGEXzc6g/CCpxVufGWlUhFok38uou2OkWlLPGuDJtZw2zv0X4g2t
-         8J5H7J4iv1COZfvtScYcLqv9UYzmPga9O/PMs2PLCjtHMbt/F0sr/E5TOwdCISHFdnc8
-         exaOwDFrFSeER/EDk/U5R5I4ss8/9qVJpHWvlC5zpAs/igjUOeO+/BxSk93pH1UXx+SP
-         LgqpLAQwbAZ0onbxeHG4Mp3udUsn+AaBi8XeRFKkfmStyPwJPUKi1tgDkHRXr9OXgZbx
-         VNuHyNVmP70zXrP/aA9tz91BGWewef+tcco1OglHPjxMOipK+QxDWUYAtcqogWNoxQ8a
-         yiYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742604091; x=1743208891;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7w18pLCxgYQdbgr4L7Ilx5M+dDme30Hw40dLx2kJ/Cs=;
-        b=Oq7txRIEhSaYEZLuIBKD4dxNRy7UHKNsyronMLFvXimdaOxFJKHsZKwRX7adrVonNM
-         CvRSZGN94Sc6W3QZzr6W/A9UBhK4Rcr4N4/SM7s0Fh3k2o548Dja+pEZmbWpPLBkuNFA
-         BImUMG+jEiKo4rpsrzx8E+UAzVkGOCvHwc8CXq29pQI3apucHJrraPtsNPqU2lh3vfOU
-         KKX9mBgji1EMkMUGhLQD5IEC75+BdJr4oVOQf+hi02USm/WqFu+gbidfAWHJRlKntrym
-         gDIljYFpWn22WhIQIUCz3EL1qnKzAOmUhVombYlLnNHhau4DXAlgZQn0x+rzbIdwehUS
-         4PRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtBtD4S/osUG/0dYqLBnZ+NDMK0pkhy3UBVDct396ro1EVwaig1wb5gV0630b7OMOLoR+Rls14OR2qlN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgfuCRy17LMur2EHNRMb6SMjzZoLh4n207spMR7L8wj1kr6LRA
-	lGOIjf148BwaMKgGwMaXVDJzrvfSYrCwvKfwOo7UWLVAXRaUEjhMtv32bwEtdPs=
-X-Gm-Gg: ASbGnctdYIJhF9+1gtXXZ/ZREDQy9kKzavFn7oWYg37ZADUwaQXuYzfyLbvdYT5WQVj
-	UCWX/nd5pan/rPaaqaLQxkAeRgZJYV8sFAYXjzIvA5yKfd2uFUF/hmBB/kQP2mclvIRuvsRHX9Y
-	Yo31fNNaayFUGihKjV2te43cYZioCJ8R2N4KdW30BnCjwNsMmNvdTrLs4YMtkPW0lT9w1YkOV6c
-	yS8unGhAKx5Om4UcEwe2RNRYshlVwUv5S37CCSrV3b6Ew41oYQnGm+H64KD7lKC7aV9201eYTUJ
-	UxlgNU/3Z3Gel0udJw1OmQpTxORvCa13h+3HjpVkBwShJF/rdw/mIPDqlCBYs3GeNVot+YM50Xt
-	zfI4FWFstY2MsdRS8AjVbygw=
-X-Google-Smtp-Source: AGHT+IF3UkobCdIF7lNWuu9KRAhdJDE5q4DcYOtKKTS+FcoMl1AlUzXXVqHHTKDK0VlDF9Mdifo+AQ==
-X-Received: by 2002:a05:622a:480c:b0:476:b7e2:385c with SMTP id d75a77b69052e-4771dd5d0e6mr84261721cf.2.1742604091376;
-        Fri, 21 Mar 2025 17:41:31 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d0ad87esm18121731cf.0.2025.03.21.17.41.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 17:41:30 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tvmva-00000001CZm-0pDT;
-	Fri, 21 Mar 2025 21:41:30 -0300
-Date: Fri, 21 Mar 2025 21:41:30 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
-Message-ID: <20250322004130.GS126678@ziepe.ca>
-References: <cover.1738765879.git.leonro@nvidia.com>
- <20250220124827.GR53094@unreal>
- <CGME20250228195423eucas1p221736d964e9aeb1b055d3ee93a4d2648@eucas1p2.samsung.com>
- <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
- <d408b1c7-eabf-4a1e-861c-b2ddf8bf9f0e@samsung.com>
- <20250312193249.GI1322339@unreal>
- <adb63b87-d8f2-4ae6-90c4-125bde41dc29@samsung.com>
- <20250319175840.GG10600@ziepe.ca>
- <1034b694-2b25-4649-a004-19e601061b90@samsung.com>
+	s=arc-20240116; t=1742604821; c=relaxed/simple;
+	bh=+CF3vr8DE+bHK2WCcftcSUttYfoGPAboQBuJMb7Z1xc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GLPKSJyi2CucryQTnAGPT54JwWh5fYyJFNFCNR0+kOggHzidYo+Pfxw4yjlidw6Ob6K7RWLildmm9r5rYgQbH/br5irKzcYvKm99D4ndYXnYO+kG1x1HJMclyU5zQjTbzOSL1UsWmNO4UBipZzYy6eZJCLHrskTn7IBgkLLJNVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=prqnxbkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B4CFC4CEE3;
+	Sat, 22 Mar 2025 00:53:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1742604820;
+	bh=+CF3vr8DE+bHK2WCcftcSUttYfoGPAboQBuJMb7Z1xc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=prqnxbkAYyMdSTosYM4qFLTFY/AZSIZhbW/bBl65aP/ljOX4mqxJvnRPeMj5LuGtB
+	 RbrBjhh9bWfRLtyGQcBAWBZLCx4NUbElFi3Zlnsko9GboNEmUGojM5eskGhG5Iz3gp
+	 2vWVWgJTflfLX90aQXqfw5WzoBuHs15J3YNj8rE8=
+Date: Fri, 21 Mar 2025 17:53:39 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Axel Rasmussen
+ <axelrasmussen@google.com>, Mike Rapoport <rppt@kernel.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Andrea Arcangeli
+ <aarcange@redhat.com>, Lorenzo Stoakes <lstoakes@gmail.com>, David
+ Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as userfaultfd reviewer
+Message-Id: <20250321175339.e8de6020fec6ea62f3b179d3@linux-foundation.org>
+In-Reply-To: <20250322002124.131736-1-peterx@redhat.com>
+References: <20250322002124.131736-1-peterx@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1034b694-2b25-4649-a004-19e601061b90@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 21, 2025 at 12:52:30AM +0100, Marek Szyprowski wrote:
-> > Christoph's vision was to make a performance DMA API path that could
-> > be used to implement any scatterlist-like data structure very
-> > efficiently without having to teach the DMA API about all sorts of
-> > scatterlist-like things.
+On Fri, 21 Mar 2025 20:21:24 -0400 Peter Xu <peterx@redhat.com> wrote:
+
+> Add an entry for userfaultfd and make myself a reviewer of it, just in case
+> it helps people manage the cc list.
 > 
-> Thanks for explaining one more motivation behind this patchset!
+> I named it MEMORY USERFAULTFD, could be a bad name, but then it can be
+> together with the MEMORY* entries when everything is in alphabetic order,
+> which is definitely a benefit.
+> 
+> The line may not change much on how I'd work with userfaultfd; I think I'll
+> do the same as before..  But maybe it still, more or less, adds some
+> responsibility on top, indeed.
 
-Sure, no problem.
+Thanks.  If anyone else would like a cc on userfaultfd emails, please
+lmk or send a patch.
 
-To close the loop on the bigger picture here..
 
-When you put the parts together:
-
- 1) dma_map_sg is the only API that is both performant and fully
-    functional
-
- 2) scatterlist is a horrible leaky design and badly misued all over
-    the place. When Logan added SG_DMA_BUS_ADDRESS it became quite
-    clear that any significant changes to scatterlist are infeasible,
-    or at least we'd break a huge number of untestable legacy drivers
-    in the process.
-
- 3) We really want to do full featured performance DMA *without* a
-    struct page. This requires changing scatterlist, inventing a new
-    scatterlist v2 and DMA map for it, or this idea here of a flexible
-    lower level DMA API entry point.
-
-    Matthew has been talking about struct-pageless for a long time now
-    from the block/mm direction using folio & memdesc and this is
-    meeting his work from the other end of the stack by starting to
-    build a way to do DMA on future struct pageless things. This is 
-    going to be huge multi-year project but small parts like this need
-    to be solved and agreed to make progress.
-
- 4) In the immediate moment we still have problems in VFIO, RDMA, and
-    DRM managing P2P transfers because dma_map_resource/page() don't
-    properly work, and we don't have struct pages to use
-    dma_map_sg(). Hacks around the DMA API have been in the kernel for
-    a long time now, we want to see a properly architected solution.
-
-Jason
 
