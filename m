@@ -1,135 +1,154 @@
-Return-Path: <linux-kernel+bounces-572582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12139A6CBD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:31:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68ED3A6CBDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 19:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18641893688
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5AB172CA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 18:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9D1A0B15;
-	Sat, 22 Mar 2025 18:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="VnU7vVG8"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341351FC0FF;
+	Sat, 22 Mar 2025 18:40:21 +0000 (UTC)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588FE186284
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742668292; cv=pass; b=X9IKzTobEqEyUE2dJsLY8Uu2ehY7tz9GNv2yTXs2jnscdS1eNyEEGWRbbTWc095Iyp48NqASve6CXPVMF53rhKG+3opsqUFHtEhoMKl258bZxhAyet/tDqmLNujaF03NbMrS7af0Jhj8Vsyjqm8V917/JcCWkLGZRHI8zvOCUyw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742668292; c=relaxed/simple;
-	bh=xsjJb/sSlCBlCE2A0bTA4nV1LtyEpjTSlK3Bk4yQnVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2JIkYZU8zrm/CEk7uDQ/x/DcpkihYEFc64aRoYmLykK5WK22+WOG/DOYSqvi3reTDvAvHXCESjLZHkSFfymrDdYzl+nQNcEDJZwmGiCux4PNuNht5lTElP0zvgZxwRlhr/QnqkOX4rUlivJOVt6A1nQhZil0l3CAGeEw1+5m0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=VnU7vVG8; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742668274; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NG1yQk9rEzgilleO/l9rGC5Fjw8Q18sBHiq5GuGnfDdXn3fWb5AMGvipLYXmUcmgiQKRb4wTWf4YBZAL0abLpP6Uu8kguDQ9uOwauqKbf69CYV5n4/6r5w2G+CKk7N0NSx1XfYRopQ8yL2vwJp+kakOLFGIYu/VXpwtfowt9sts=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742668274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VplHcLOIy2d7XjXbeKaOE5oRAedseybBbUhrpgGYDxQ=; 
-	b=PNQm6WHsVvSnL2lI/I56scUzsRjLWx+XoTh9/wFSBy1B3Tf2cWgi78rER4JGHoVjG+ZZ77t5BKgG78yjXnmgWHRK64xyiy5EGDX3w6aFhGRQ2RlhdlV3o9wVabtbOwv7hkJzEO5ab5iiNwwWj4L5uiNIQ02mSSWGP3e6HxWwdgw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742668274;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=VplHcLOIy2d7XjXbeKaOE5oRAedseybBbUhrpgGYDxQ=;
-	b=VnU7vVG8kMkdNNg/C7pSVIwlCGi9OWMGP1xrSKv/4eU1bC0sEaa3/93LhsS6o3Xm
-	SD+IOCfkxcI3dBK9Iy+YFATYb2Gexvbe6MPYZOS0d0OlHy8BY21f4w/rLM2ty1i+p0x
-	w3qII0xrhcpPIaUkTKFV/EzD6khTLvgbW7dSBM14=
-Received: by mx.zohomail.com with SMTPS id 1742668273032573.7649825558158;
-	Sat, 22 Mar 2025 11:31:13 -0700 (PDT)
-Date: Sat, 22 Mar 2025 18:31:03 +0000
-From: Adrian Larumbe <adrian.larumbe@collabora.com>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	boris.brezillon@collabora.com, robh@kernel.org, steven.price@arm.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com, angelogioacchino.delregno@collabora.com
-Subject: Re: [PATCH v4 2/6] drm/panfrost: Use
- GPU_MMU_FEATURES_VA_BITS/PA_BITS macros
-Message-ID: <ebm6kwkhyiql2kh3ekyfpyvchs3mbnbq26ssvpkttxjuw5meo2@gqggqnosvou6>
-References: <20250317145245.910566-1-ariel.dalessandro@collabora.com>
- <20250317145245.910566-3-ariel.dalessandro@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7CA13AA3E;
+	Sat, 22 Mar 2025 18:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742668820; cv=none; b=Pams9eHSSovuqPYP073tb+vpgS8kLU5qHfalF3CA/62QeFRv/fRAaoJwLHwmObcrj50Tv0A7dFR9P9a6AwZzVxcGxZaqnxNauI3L7hwpCEXgaTUs5lFokCPHHQq/IxHoT5XjUP2UGM0aiKGzlmBi3LENDjJbhgVIl93B6jVqPA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742668820; c=relaxed/simple;
+	bh=v3IXLPjfdjY5DazaIWNFKX52u0XISPphYLNliCnlMsA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=V9drjejmNOVS85iH90FoZGPC7OSmLHpswBkKzJTMGgYyT3qGM2/U0+ftrqg4TA5v1fCsmkfT/m38B/F9+6DdH6EKySTtdM0mzndSAU0r8B5qqjOWKHeYjy1schBwpAotHu2zwJQG3/x3dj264olwuxWq1NqTc8Poi2mk9dynHg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f2f391864so1681741f8f.3;
+        Sat, 22 Mar 2025 11:40:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742668816; x=1743273616;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRZDk7bvL6uYFZ1R6UFx7FmgxRahWKilPMlgJyJmggU=;
+        b=StqgcDrqbb4otvEtas1QHCxzLWl6pmnAYQa/t2KXRjBqWxF2Yn4PMAbnvpFln5q+23
+         YgpU5Z/u7vTq8ABdxYQOpSOArkVEDV21Yx08hPj7esSSt4BlRGGPJ9z5NUZ4VPyPAsvn
+         7vNXR9xQKPCyzzQxVQT6wxhFduMSRgTprCgXY8wCDZisUL4wIrrIuaPEcpclU/t29YPX
+         1zyEP2PIdTjeYCxu6sugtpFMrg05A7bNVSmcP5VMvjion+neuJgKlWQsEp5uFUwFq1qf
+         4MLgiH8COAIXrWvijcsdA1OAqPvWD3DLtJihMw9rIa3hDcn58FLuXJMslJGXztG+x0f/
+         TOOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb9+MEt8xkMJx6Jo0Fro/u1pYz+nwmL7wKxgr4+wgTOdS4AAoYYVCH4H0a290qP6smYLEJ/ny/uxVbnOQ=@vger.kernel.org, AJvYcCW13609cOVjQlRsVqot1K+R+kkQayTSsK/FSPV9ZIOCWlt/6mmtDVtHEwArAfV8T7zIrjreShykPMmLIuQRwJO5dbdy@vger.kernel.org
+X-Gm-Message-State: AOJu0YznWmZ2t4SMOXl98D2xxNvAyAYb335Ttw9FUOEMJtZFei3gDSa/
+	N7byyIeYva/IwbtTdE7H9thFrczLEuZgZZkEzUlcBbTgPjaiy2xK
+X-Gm-Gg: ASbGncsC9cPRHuAlhtK5dZMThnCIBGl5/MdzHhCm6KQu243rNuMErm/RAdGvnimMxI1
+	e872PxgIko/L3Cg/ApnaldJsM/y1HKT/B1y/Ob5sjIABDiZwdnfOxhHLykmgaIAOIVuJMbrvZMY
+	NZm4zGdzdulsdXQ/mFH5ldBz+MK9sYfcjlHuZMD1FmHC9AywE4TRcBMlHtyYoA+pzBbG1t1I00i
+	35ifzXZpimYmAWTubGYnch5WPO0+oX41ls3TPMqGVd4rwDEXmyjnoC2c3CX3VCOmHpf11Vb2SN3
+	Y1zap+ROH3MXXvMczlQjhTMagt9QIE8xUIoQD8mBahTXHwdD5yS3BG1akT0=
+X-Google-Smtp-Source: AGHT+IGrmjS83pS5U8IiUahOsv5euyd/fSaJqbmmkZDTbLnbai5PsBWImJFbtBBsEyZ4mjtBLwLGgw==
+X-Received: by 2002:a5d:59ad:0:b0:391:3cb7:d441 with SMTP id ffacd0b85a97d-3997f90d30fmr7211616f8f.25.1742668816192;
+        Sat, 22 Mar 2025 11:40:16 -0700 (PDT)
+Received: from costa-tp.bos2.lab ([2a00:a041:e280:5300:f8dc:acb8:77bb:8cf8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f43ecbsm113941315e9.10.2025.03.22.11.40.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 11:40:15 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	John Kacur <jkacur@redhat.com>,
+	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Eder Zulian <ezulian@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] rtla: Fix crash due to NULL record dereference
+Date: Sat, 22 Mar 2025 20:34:16 +0200
+Message-ID: <20250322183439.393533-2-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250317145245.910566-3-ariel.dalessandro@collabora.com>
 
-On 17.03.2025 11:52, Ariel D'Alessandro wrote:
-> As done in panthor, define and use these GPU_MMU_FEATURES_* macros,
-> which makes code easier to read and reuse.
->
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Reviewed-by: Steven Price <steven.price@arm.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+The previous patch introduced a crash by dereferencing record,
+which can be NULL.
 
-Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Add checks to prevent the crash.
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_mmu.c  | 6 ++++--
->  drivers/gpu/drm/panfrost/panfrost_regs.h | 2 ++
->  2 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> index 9e6f198ef5c1b..294f86b3c25e7 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
-> @@ -615,6 +615,8 @@ static void panfrost_drm_mm_color_adjust(const struct drm_mm_node *node,
->
->  struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
->  {
-> +	u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev->features.mmu_features);
-> +	u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev->features.mmu_features);
->  	struct panfrost_mmu *mmu;
->
->  	mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
-> @@ -633,8 +635,8 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
->
->  	mmu->pgtbl_cfg = (struct io_pgtable_cfg) {
->  		.pgsize_bitmap	= SZ_4K | SZ_2M,
-> -		.ias		= FIELD_GET(0xff, pfdev->features.mmu_features),
-> -		.oas		= FIELD_GET(0xff00, pfdev->features.mmu_features),
-> +		.ias		= va_bits,
-> +		.oas		= pa_bits,
->  		.coherent_walk	= pfdev->coherent,
->  		.tlb		= &mmu_tlb_ops,
->  		.iommu_dev	= pfdev->dev,
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_regs.h b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> index c7bba476ab3f3..b5f279a19a084 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_regs.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_regs.h
-> @@ -16,6 +16,8 @@
->  #define   GROUPS_L2_COHERENT		BIT(0)	/* Cores groups are l2 coherent */
->
->  #define GPU_MMU_FEATURES		0x014	/* (RO) MMU features */
-> +#define  GPU_MMU_FEATURES_VA_BITS(x)	((x) & GENMASK(7, 0))
-> +#define  GPU_MMU_FEATURES_PA_BITS(x)	(((x) >> 8) & GENMASK(7, 0))
->  #define GPU_AS_PRESENT			0x018	/* (RO) Address space slots present */
->  #define GPU_JS_PRESENT			0x01C	/* (RO) Job slots present */
->
-> --
-> 2.47.2
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+---
+ tools/tracing/rtla/src/osnoise_hist.c  | 3 ++-
+ tools/tracing/rtla/src/osnoise_top.c   | 3 ++-
+ tools/tracing/rtla/src/timerlat_hist.c | 3 ++-
+ tools/tracing/rtla/src/timerlat_top.c  | 3 ++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
+diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
+index 7c6ef67ef3e6c..f94c7c049406d 100644
+--- a/tools/tracing/rtla/src/osnoise_hist.c
++++ b/tools/tracing/rtla/src/osnoise_hist.c
+@@ -983,7 +983,8 @@ int osnoise_hist_main(int argc, char *argv[])
+ 
+ 	if (osnoise_trace_is_off(tool, record)) {
+ 		printf("rtla osnoise hit stop tracing\n");
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		if (record)
++			save_trace_to_file(record->trace.inst, params->trace_output);
+ 	}
+ 
+ out_hist:
+diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
+index 0eeefbbbf3173..003c0f76b1ada 100644
+--- a/tools/tracing/rtla/src/osnoise_top.c
++++ b/tools/tracing/rtla/src/osnoise_top.c
+@@ -813,7 +813,8 @@ int osnoise_top_main(int argc, char **argv)
+ 
+ 	if (osnoise_trace_is_off(tool, record)) {
+ 		printf("osnoise hit stop tracing\n");
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		if (record)
++			save_trace_to_file(record->trace.inst, params->trace_output);
+ 	}
+ 
+ out_top:
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index 93d0c9e450204..f91efe8804586 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -1473,7 +1473,8 @@ int timerlat_hist_main(int argc, char *argv[])
+ 		if (!params->no_aa)
+ 			timerlat_auto_analysis(params->stop_us, params->stop_total_us);
+ 
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		if (record)
++			save_trace_to_file(record->trace.inst, params->trace_output);
+ 	}
+ 
+ out_hist:
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index 3894ac37d81ca..f082f8b91afef 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -1295,7 +1295,8 @@ int timerlat_top_main(int argc, char *argv[])
+ 		if (!params->no_aa)
+ 			timerlat_auto_analysis(params->stop_us, params->stop_total_us);
+ 
+-		save_trace_to_file(record->trace.inst, params->trace_output);
++		if (record)
++			save_trace_to_file(record->trace.inst, params->trace_output);
+ 	} else if (params->aa_only) {
+ 		/*
+ 		 * If the trace did not stop with --aa-only, at least print the
+-- 
+2.48.1
 
-Adrian Larumbe
 
