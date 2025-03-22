@@ -1,178 +1,159 @@
-Return-Path: <linux-kernel+bounces-572530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A75A6CB23
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:20:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2847EA6CB21
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3A3B7AD29F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:19:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC2417D92A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540A91FBEB3;
-	Sat, 22 Mar 2025 15:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B43F757F3;
+	Sat, 22 Mar 2025 15:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b="wX3DUzqk"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIcVlj5m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B002E1531C8
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FE71BDCF
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742656810; cv=none; b=PL7hPF6m4SdLmlLu2LFplZ8FpwCWKh8IzqbfiPS3QypwwA4sqzHusnc4Hd2SADeyejdxgc0u3SmWZ/tDuCJiXvqfvK1UqiyhZBWEEuy1aDrJfz+QQAzyWxktc/IaMjF1zXVSLrJGbxaWwn91m50sxl/9Lk3lawgfsjM2rBXA3IU=
+	t=1742656524; cv=none; b=bBTKak2uixRKc7ycsuMx/kvGWBH94pN7lnL5QhuMj99GC9d6TAPcspMevk2lqLIt5hoQkeX/jlD0VaN1sg6xBThiMWhBes+sSGaQGnxrhS+RB/bUAWwOzvjeKDz+4gf5r0UpptRmqNkmQMVUeUPBKopgG0tqFJJIzAHJ4Mnu+Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742656810; c=relaxed/simple;
-	bh=lbnWtlHDwmQu+U4pYCrRSnISSwQxw4/w+NG/FpA+ePA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXypIxMl9MqZIMTz5sVy435AOMaMmxGbPdRJgNJ+FbRooovAkrISKuUyfrNb5AfpfIANgDu5K0w3eqFExsnQ7Aakxegi3lJ8a/AEPSPNdP93uwrffkRatiaFZCTg1M8Y+J95X8n7ayKoMYvEQG6kwaiDJUstxmg8rhynM2jR7ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b=wX3DUzqk; arc=none smtp.client-ip=193.222.135.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 4294 invoked from network); 22 Mar 2025 16:13:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=20241105;
-          t=1742656406; bh=Gj7aLWvFrMBjZ/TgcFCJw3zewFcRX+wjHcjwWaIyWGk=;
-          h=Subject:To:Cc:From;
-          b=wX3DUzqkz2NJWMI31FK2U7X1MKwgwwCoX9J+t/X7SLU5w1Htj+23YeOPZvSYkxdYx
-           7Io9r/BEH2YAn92J0H5VRuxQpawqi7Loccub2AGb+uU934DdHXquEDI/1TN5aoMocP
-           5zApmJsQO/HDVQVedqXzXa9+pkc0oJJ2Fhm1BC6Iwk/IuxuW7dwHoA8kTpHHa55ucB
-           aa4a8y//zW5bFW3o5U8WbGiCKTv18AFyj2SeI18GMprF1H2NxbUIF+riGKg6E5omyv
-           ODbdXr2KXB7SziCOvJMpLYbipvsFyHt/r2J6vBCfaCxz0VN0P5sycRGTTXFAnbaLmT
-           fMDXQtFp4MVUg==
-Received: from apn-78-30-75-41.dynamic.gprs.plus.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[78.30.75.41])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <david@ixit.cz>; 22 Mar 2025 16:13:26 +0100
-Message-ID: <5642f2cb-ce34-4474-bb32-50f028a007ad@o2.pl>
-Date: Sat, 22 Mar 2025 16:13:23 +0100
+	s=arc-20240116; t=1742656524; c=relaxed/simple;
+	bh=WD20/rrDwgVxbxUEGKxmjIwO8A5tb2yY3ykyeJNqvQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KtBkSbko63a60iaRIF5iJquz43bNHAtKrHKa44jx1PRH+ikKA9wX9McFvMBOwTSNUkeW2ox2Bgn4Wyw29KQE1cGpULAKHcobE9bO7wJGaTXLBJgOYqxvMmVY92HDAMMbqG64qd5+fmTh/rQrRLf1277traEE8moSiwDJ4lxICBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIcVlj5m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23152C4CEED
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 15:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742656524;
+	bh=WD20/rrDwgVxbxUEGKxmjIwO8A5tb2yY3ykyeJNqvQM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sIcVlj5mL7nJiqrTJLSh6YkmHFeSKOX7DwFIVgtoH9GCl1mTOsgzdc+sfDRcumhCv
+	 h656cGeRIChdZ61+myNH4nMlQJ4ca0g7xiUajlZTyPeex/rSdQGKRvoiD2ZVMl3f1q
+	 ZsRQDqrTfFmCWyLI84ni34tIaUY40VWqRSXqT79rL+mWV5fbIqVdyp4/rQ0FHZHS0C
+	 UaPNn+CcpBcn/VcGJuHigjYLjKqn7If5pOXHSA7uSd4lQ7snHI+rZokJE24N/AyyZ8
+	 V31BVdbf5UUGwepuOEgf2U8gT8aIlLfmPO1v51P7DDkLJGCpTyFoCz6VzBTyyPOI5j
+	 /sYdgEj0Jrxnw==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bef9b04adso31661371fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 08:15:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0BXTN09z4LcqTTSCB9BqSSJAYVg0TkGoh/XYnzhSC7z31LedaXdZqpZVt7p/vdae/nvVFj0Gb6KAcmX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcLMEh5sn1KrMNXMXK51ChRLmeBpOgF8cdEJL7tXF7L1tKCGC/
+	v8lb43TPakmWFjQKOYbQUL3/AeOE3Ud2t2k+AYymFZ3jrotWd2UKjd8VBoHjjMzg+hjjngd7YQ6
+	PfaoKLkZhnF13GZJHpj46saPotCk=
+X-Google-Smtp-Source: AGHT+IFhe3uVW7iXi9gGdCxHnPJvi3M6RTDXdAtRK1P2cDOSCCAe6psE9iCOcfwPIGdV70SxYHQcOb1qIAPmP+n8tgI=
+X-Received: by 2002:a05:6512:138f:b0:545:fc8:e155 with SMTP id
+ 2adb3069b0e04-54ad647d115mr2589882e87.20.1742656522771; Sat, 22 Mar 2025
+ 08:15:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] x86: Kconfig cleanups and help text improvements
-To: david@ixit.cz, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
- linux-iio@vger.kernel.org
-References: <20250321-x86_x2apic-v3-0-b0cbaa6fa338@ixit.cz>
-Content-Language: en-GB, pl
-From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
- 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
- TANkZ3QqXNX2
-In-Reply-To: <20250321-x86_x2apic-v3-0-b0cbaa6fa338@ixit.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: 6ec931b71409fd83336a765f8d20eaaa
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000002 [cYEt]                               
+References: <CAK7LNASqYkDTPNo20Bj1knwsJMrp=nbQyh__=Do67eWq4CKU3A@mail.gmail.com>
+ <20250318005900.2256921-1-elsk@google.com>
+In-Reply-To: <20250318005900.2256921-1-elsk@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 23 Mar 2025 00:14:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARA7_3W5CRhW+sKXuqdANjczVbaTO+y1tGTRzAxiJGUzA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jrvuq5PCuCtIM0MbIfS4ZzSK2OTG7wLiC2ZksO7Gx-zzxpRM9NeSwwcsWA
+Message-ID: <CAK7LNARA7_3W5CRhW+sKXuqdANjczVbaTO+y1tGTRzAxiJGUzA@mail.gmail.com>
+Subject: Re: [PATCH v2] setlocalversion: use ${objtree}/include/config/auto.conf
+To: HONG Yifan <elsk@google.com>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux@rasmusvillemoes.dk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-W dniu 21.03.2025 o 21:48, David Heidelberg via B4 Relay pisze:
-> I'm resending this mainly because of the first patch, but I find
-> all other patches worthy too, so here is the rebased bulk.
+On Tue, Mar 18, 2025 at 9:59=E2=80=AFAM HONG Yifan <elsk@google.com> wrote:
 >
->   - David
+> setlocalversion reads include/config/auto.conf, which is located below
+> $(objtree) with commit 214c0eea43b2 ("kbuild: add $(objtree)/ prefix to
+> some in-kernel build artifacts").
+>
+> To be consistent, the setlocalversion script should use
 
-Hello,
+"To be consistent" is too weak because we do not add
+$(objtree)/ to include/config/auto.conf
 
-Well, thank you for taking care of this. I have quite a lot of unfinished
-projects and not so much time for kernel dev now. I'd also like to apologise
-for not having responded to your latest e-mail.
+Just run "git grep include/config/auto.conf"
 
-Greetings,
+You will see more include/config/auto.conf instances
+that lack $(objtree)/ prefix.
 
-Mateusz
+So, "To be consistent" is not a reason.
 
-> ====
+You described why Google needs to have this
+specifically scripts/setlocalversion.
+
+Without that explained, I do not understand _why_.
+
+
+
+> ${objtree}/include/config/auto.conf as well.
 >
-> Hello,
->
-> There are some problems with Kconfig help texts in the kernel. They are
-> frequently confusing and use language that is difficult to understand
-> for people unfamiliar with the feature. Sometimes, the help text was not
-> updated after important kernel or ecosystem changes. References to
-> something "future" or "old" are also usually given without specifying
-> any dates.
->
-> First version of this patch series was sent out in February 2022.
->
-> Greetings,
-> Mateusz
->
-> Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: HONG Yifan <elsk@google.com>
 > ---
-> Changes in v3:
-> - Rebased against latest next-20250321.
-> - Dropped deprecated patches:
->     2/10  "x86/apic: fix panic message when x2APIC is not supported"
->     4/10  "x86/Kconfig: drop X86_32_NON_STANDARD"
-> - Dropped patch I was not very sure about, as there are other refs:
->     10/10 "x86/Kconfig: remove CONFIG_ISA_BUS"
-> - Link to v2: https://lore.kernel.org/r/20220911084711.13694-1-mat.jonczyk@o2.pl
+> v1: https://lore.kernel.org/lkml/20250312021154.102262-2-elsk@google.com/
+> v1 -> v2: fixed the other two locations of include/config/auto.conf in
+> setlocalversion script; also removed incorrect claim in commit message.
 >
-> ---
-> Mateusz Jończyk (7):
->        x86/Kconfig: Enable X86_X2APIC by default and improve help text
->        x86/Kconfig: Always enable ARCH_SPARSEMEM_ENABLE
->        x86/Kconfig: Move all X86_EXTENDED_PLATFORM options together
->        x86/Kconfig: Update lists in X86_EXTENDED_PLATFORM
->        x86/Kconfig: Document CONFIG_PCI_MMCONFIG
->        x86/Kconfig: Make CONFIG_PCI_CNB20LE_QUIRK depend on X86_32
->        x86/Kconfig: Document release year of glibc 2.3.3
+>  scripts/setlocalversion | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
->   arch/x86/Kconfig | 85 ++++++++++++++++++++++++++++++++++++++------------------
->   1 file changed, 58 insertions(+), 27 deletions(-)
-> ---
-> base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
-> change-id: 20250320-x86_x2apic-7e92d0f4c47d
+> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+> index 28169d7e143b..c13fe6e585e9 100755
+> --- a/scripts/setlocalversion
+> +++ b/scripts/setlocalversion
+> @@ -186,16 +186,16 @@ if ${no_local}; then
+>         exit 0
+>  fi
 >
-> Best regards,
+> -if ! test -e include/config/auto.conf; then
+> +if ! test -e ${objtree}/include/config/auto.conf; then
+
+
+Please quote
+
+"${objtree}/include/config/auto.conf"
+
+to avoid a shellcheck warning.
+
+
+
+
+>         echo "Error: kernelrelease not valid - run 'make prepare' to upda=
+te it" >&2
+>         exit 1
+>  fi
+>
+>  # version string from CONFIG_LOCALVERSION
+> -config_localversion=3D$(sed -n 's/^CONFIG_LOCALVERSION=3D\(.*\)$/\1/p' i=
+nclude/config/auto.conf)
+> +config_localversion=3D$(sed -n 's/^CONFIG_LOCALVERSION=3D\(.*\)$/\1/p' $=
+{objtree}/include/config/auto.conf)
+>
+>  # scm version string if not at the kernel version tag or at the file_loc=
+alversion
+> -if grep -q "^CONFIG_LOCALVERSION_AUTO=3Dy$" include/config/auto.conf; th=
+en
+> +if grep -q "^CONFIG_LOCALVERSION_AUTO=3Dy$" ${objtree}/include/config/au=
+to.conf; then
+>         # full scm version string
+>         scm_version=3D"$(scm_version)"
+>  elif [ "${LOCALVERSION+set}" !=3D "set" ]; then
+> --
+> 2.49.0.rc1.451.g8f38331e32-goog
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
