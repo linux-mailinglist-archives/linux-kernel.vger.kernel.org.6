@@ -1,91 +1,53 @@
-Return-Path: <linux-kernel+bounces-572561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3969A6CB78
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:30:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5BAA6CB77
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C681887673
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A32D7A771B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258B323371E;
-	Sat, 22 Mar 2025 16:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGzWtpfa"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8533233D8E;
+	Sat, 22 Mar 2025 16:29:16 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7498231A2D;
-	Sat, 22 Mar 2025 16:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BED233706;
+	Sat, 22 Mar 2025 16:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742660954; cv=none; b=uUrXx3NAD1z0Kc6F08vaYAbLCSG5i8Ki6awQ50qdYK1HhcMh/sGga3Xe9p4PI7s+wP5E8Wl+yH0uGf0DwcMLaLYTLWaMYtvuMYDvvUOOaj+PfKWLeoX1Xrm96uy9AwflD9gPzG2WZFGaeWURlBTwckwJvwW6e/06/uLKaDFspi4=
+	t=1742660956; cv=none; b=Ml8IcI+WJNRDMBaDRS2z8uW8Exn4heSvlEfx+zkclyw5NYKccwLWgEgRHxC+o+xwsKf9Z+mBUU1WhL8+5QhZfGBTKbmi8RP9LN/t017nX8s+lajxYTHYZEdwMbIMnYm2uF00iNWlLPrChUg7JoGxk0gveTIGHArZgv3VTsV7jmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742660954; c=relaxed/simple;
-	bh=dSX1hlD8JlR6cQLjXz4aNKYoO15uc2ktXL2PwK/NCKY=;
+	s=arc-20240116; t=1742660956; c=relaxed/simple;
+	bh=7EE6vIpUcyQPZK1CM24kJahIOAIJLtKfSAeoLvRUwdY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJHCo+5QLNDzCQvFTT8UEyk1ODSE+7CAZIMPnCN4veWL/utpytH+JNIaNZcrTk96NHi3KDuJJHAwVzCDXjo5ekw07OzRtqDgv4JMpJ2mmdFSUrQeSz+/IGEAT86HwjvH0W+0pMfVhsYR1K43eCXRFLdDONKpFOiT9SzkfLulv0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGzWtpfa; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4394a823036so29795285e9.0;
-        Sat, 22 Mar 2025 09:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742660951; x=1743265751; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cmGR1LbtL4J3t71evUykuzeSOw/JJ1sOFslRh5h/mjs=;
-        b=YGzWtpfaoexS2kJOtvXDX2Ik4j0eR85VgWPDhyTotjgtLDMyAmM1izIB2dmYbIB2ax
-         Cy0ijy7UZMzYEnhMgXO7jtGBvjQSH0Ks7pwhwMtWwWQ3SuRUClulwBwFQ4Qe+mRjR0Ur
-         14qfa5/Ysu8324kXYbPwWgf7kT6rvVXLAV+Fr/1C4xhH1gutVULFtaiDs7nhpZD3c/GL
-         8dWzYlI6M0YoXrLCNsI36SrzepyCts/tjotn9T4vZZEw0hWL3ulg2/NtDNV/lAmN/vKW
-         Qe5pzezaV5KhpsRCdIkCxC9yEu3yfp/Q4aUIh1T8+wGQwGJK+BBx/1jRKHpYtrkaWwHr
-         IMrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742660951; x=1743265751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cmGR1LbtL4J3t71evUykuzeSOw/JJ1sOFslRh5h/mjs=;
-        b=Qilym9e6KVMxXfSJ051Z/HatWe6QPH2D4zsVJGZINH6MJ7LBpjruVNfeihzln3BZXF
-         1n5jOgTiXfba7Bb64R/UnAadPTEEiQrdAGjUCd9zYs6846O8iuyR2IcTAwK5hNiJYw7n
-         RIJhiGciteQz6lMRucKGN3pMXc/QS10lVocZZ3vmYD3ZdJPqa2yptP9u+3vpQy61xmGa
-         ScD1kg+rvpJfg7fincauBbp5QU1pdlIfnC7WwQV9G0xfGNEqL5fsVGYVVIiT6NMiPCQ9
-         uPyD+vCeSs7S85pW8jHvU+jvuLTpziuvC+P3+8JlvwmPokNxSgiKrkcoD3wL4drFNw64
-         dqEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd4OnsQH1P3BjzI/cxwLz1PAG/+wjswpKxHNFlNYwm8hBe9M/zLwO5RuYJ+J8cQOB2xYpRQIcxJG0cKQA=@vger.kernel.org, AJvYcCVp+iA9Vr0eK3ZzgjhOVP+KjpQy7XDnvJtq0MlDjda+rJS7ERBhhLZr+HoZJbmcFECYQHMTKzoeHNt6LCnwygw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywPitVZRACvUBEOML0yLJ2jgo57+pfMcumiWVc00D4ABcH/1Iz
-	pw71by1YJAd00GwO+/qq96QJD9spzI7Gm0VMuxNvmwXctQTmXril
-X-Gm-Gg: ASbGncuD7qH+pRMaWGvubaIdCcmjJtmMz14viF8t6mnE7PcyOOdAYmG/HoPlyB/s+SU
-	SelUNpKHvSyIdka+aZMitnImyyDUdi4zTaL+aMEk4xrTnZdQltefrXQ1Qz66ixxa8W1An+OCY7S
-	xqY/xVmCdDaTRGh18oUPlTTIg72oXL4bQDJFQmLBpifMiF63gS0vGIJis/fGOBwunUehEcJQbIx
-	5ztrtHy2c/QwmJCyg2Xp96JZiB+a5aQ9udWqW0pkJ0BKR7fYPcPH7+tP4YYKya5f4RpGcPTF4m8
-	6eg8b8xMQHj+6a505lcHXu6c3CfOxS3nZNnT5mNpbAINHpTLXYmWlN1Rl59ijlioDIuuWrGpmfI
-	HsuNiAKZq
-X-Google-Smtp-Source: AGHT+IGcZ30m5rPc0OUpnWOu5jkqU14bSxURCwLJlz4cPqVUZMYOVNFcLgoAsfm44aBEBzsQCbwccg==
-X-Received: by 2002:a05:600c:1547:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-43d509ec734mr65143995e9.8.1742660950606;
-        Sat, 22 Mar 2025 09:29:10 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd17cfesm61192345e9.10.2025.03.22.09.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 09:29:08 -0700 (PDT)
-Date: Sat, 22 Mar 2025 16:29:06 +0000
-From: Stafford Horne <shorne@gmail.com>
-To: Sahil Siddiq <icegambit91@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, jonas@southpole.se,
-	stefan.kristiansson@saunalahti.fi, linux-openrisc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sahil Siddiq <sahilcdq@proton.me>
-Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
-Message-ID: <Z97lUpoTXVccaCeN@antec>
-References: <20250315203937.77017-1-sahilcdq@proton.me>
- <Z9Z2sjWQHKgGJyGo@antec>
- <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
- <Z9gOwYl6kmoPY9-C@antec>
- <d54849db-956b-4c1a-ab93-4705394af637@gmail.com>
- <Z9kkE3uQru_VxLqA@antec>
- <10b01724-d47f-4f0f-87ea-2793e67b18b9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TER1Wdnzg2VLCsNE/v7XZOcvWBp/wlC3jAZNiVUJerbN/PfLoIBfDp3N0G4yBWFHNA3/Wwnwr5hjjI781KwVQ03gx2476+48s4tokhUw4UUWDrUL52ud/Nm1Nvgvp1cIgEGmakBqrW5DSEseYkXo0aNQ71SdiNHfdJPCc2waGxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id BF8073430C1;
+	Sat, 22 Mar 2025 16:29:13 +0000 (UTC)
+Date: Sat, 22 Mar 2025 16:29:09 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 4/7] clk: spacemit: define existing syscon resets
+Message-ID: <20250322162909-GYA15267@gentoo>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-5-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,82 +56,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <10b01724-d47f-4f0f-87ea-2793e67b18b9@gmail.com>
+In-Reply-To: <20250321151831.623575-5-elder@riscstar.com>
 
-On Sat, Mar 22, 2025 at 07:21:18PM +0530, Sahil Siddiq wrote:
-> Hi Stafford,
+On 10:18 Fri 21 Mar     , Alex Elder wrote:
+> Define reset controls associated with the MPMU, APBC, and APMU
+> SpacemiT K1 CCUs.  These already have clocks associated with them.
 > 
-> On 3/18/25 1:13 PM, Stafford Horne wrote:
-> > On Tue, Mar 18, 2025 at 12:06:30AM +0530, Sahil Siddiq wrote:
-> > > On 3/17/25 1:55 PM, Geert Uytterhoeven wrote:
-> > > > On Sun, 16 Mar 2025 at 07:59, Stafford Horne <shorne@gmail.com> wrote:
-> > > > [...]
-> > > > > @@ -176,8 +177,11 @@ void __init paging_init(void)
-> > > > >    	barrier();
-> > > > >    	/* Invalidate instruction caches after code modification */
-> > > > > -	mtspr(SPR_ICBIR, 0x900);
-> > > > > -	mtspr(SPR_ICBIR, 0xa00);
-> > > > > +	upr = mfspr(SPR_UPR);
-> > > > > +	if (upr & SPR_UPR_UP & SPR_UPR_ICP) {
-> > > > > +		mtspr(SPR_ICBIR, 0x900);
-> > > > > +		mtspr(SPR_ICBIR, 0xa00);
-> > > > > +	}
-> > > > Here we could use new utilities such as local_icache_range_inv(0x900,
-> > > > L1_CACHE_BYTES);
-> > > > 
-> > > > Or something like local_icache_block_inv(0x900).  This only needs to flush a
-> > > > single block as the code it is invalidating is just 2 instructions 8 bytes:
-> > > > 
-> > > >       .org 0x900
-> > > > 	l.j     boot_dtlb_miss_handler
-> > > > 	 l.nop
-> > > > 
-> > > >       .org 0xa00
-> > > > 	l.j     boot_itlb_miss_handler
-> > > > 	 l.nop
-> > > 
-> > > Given that there'll be generic local_(i|d)cache_range_inv(start, stop) utility
-> > > functions, would it make sense to simply have a macro defined as:
-> > > 
-> > > #define local_icache_block_inv(addr) local_icache_range_inv(start, L1_CACHE_BYTES)
-> > > 
-> > > instead of having a separate function for invalidating a single cache line? This would
-> > > still use cache_loop() under the hood. The alternative would be to use
-> > > local_icache_range_inv(start, L1_CACHE_BYTES) directly but using the macro might be
-> > > more readable.
-> > 
-> > Yes, I think a macro would be fine.  Should we use cache_desc.block_size or
-> > L1_CACHE_BYTES?  It doesn't make much difference as L1_CACHE_BYTES is defined as
-> > 16 bytes which is the minimum block size and using that will always invalidate a
-> > whole block.  It would be good to have a comment explaining why using
-> > L1_CACHE_BYTES is enough.
-> > 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 132 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 132 insertions(+)
 > 
-> While working on the patch's v3, I realized I am a bit unclear here. Is the ".org"
-> macro used to set the address at which the instructions are stored in memory? If so,
-> the first two instructions should occupy the memory area 0x900 through 0x907, right?
-> Similarly, the next two instructions will occupy 0xa00-0xa07.
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index 6d879411c6c05..be8abd27753cb 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
+..  
+> +static const struct ccu_reset_data apmu_reset_data[] = {
+> +	[RST_CCIC_4X]	= RST_DATA(APMU_CCIC_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_CCIC1_PHY] = RST_DATA(APMU_CCIC_CLK_RES_CTRL,	0, BIT(2)),
+> +	[RST_SDH_AXI]	= RST_DATA(APMU_SDH0_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_SDH0]	= RST_DATA(APMU_SDH0_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_SDH1]	= RST_DATA(APMU_SDH1_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_SDH2]	= RST_DATA(APMU_SDH2_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_USBP1_AXI] = RST_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(4)),
+> +	[RST_USB_AXI]	= RST_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(0)),
+..
+> +	[RST_USB3_0]	= RST_DATA(APMU_USB_CLK_RES_CTRL,	0, 
+> +				      BIT(9)|BIT(10)|BIT(11)),
+100 column if possible, also add one space between "BIT(9) | BIT(10) .."
+continuous bits can just use GENMASK for short?
+but may result slightly unreadable, anyway, either way is fine by me
+
+> +	[RST_QSPI]	= RST_DATA(APMU_QSPI_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_QSPI_BUS] = RST_DATA(APMU_QSPI_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_DMA]	= RST_DATA(APMU_DMA_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_AES]	= RST_DATA(APMU_AES_CLK_RES_CTRL,	0, BIT(4)),
+> +	[RST_VPU]	= RST_DATA(APMU_VPU_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_GPU]	= RST_DATA(APMU_GPU_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_EMMC]	= RST_DATA(APMU_PMUA_EM_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_EMMC_X]	= RST_DATA(APMU_PMUA_EM_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_AUDIO]	= RST_DATA(APMU_AUDIO_CLK_RES_CTRL,	0,
+> +				   BIT(0) | BIT(2) | BIT(3)),
+> +	[RST_HDMI]	= RST_DATA(APMU_HDMI_CLK_RES_CTRL,	0, BIT(9)),
+> +	[RST_PCIE0]	= RST_DATA(APMU_PCIE_CLK_RES_CTRL_0,	BIT(8),
+> +				   BIT(3) | BIT(4) | BIT(5)),
+> +	[RST_PCIE1]	= RST_DATA(APMU_PCIE_CLK_RES_CTRL_1,	BIT(8),
+> +				   BIT(3) | BIT(4) | BIT(5)),
+> +	[RST_PCIE2]	= RST_DATA(APMU_PCIE_CLK_RES_CTRL_2,	BIT(8),
+> +				   BIT(3) | BIT(4) | BIT(5)),
+> +	[RST_EMAC0]	= RST_DATA(APMU_EMAC0_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_EMAC1]	= RST_DATA(APMU_EMAC1_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_JPG]	= RST_DATA(APMU_JPG_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_CCIC2PHY]	= RST_DATA(APMU_CSI_CCIC2_CLK_RES_CTRL,	0, BIT(2)),
+> +	[RST_CCIC3PHY]	= RST_DATA(APMU_CSI_CCIC2_CLK_RES_CTRL,	0, BIT(29)),
+> +	[RST_CSI]	= RST_DATA(APMU_CSI_CCIC2_CLK_RES_CTRL,	0, BIT(1)),
+> +	[RST_ISP]	= RST_DATA(APMU_ISP_CLK_RES_CTRL,	0, BIT(0)),
+> +	[RST_ISP_CPP]	= RST_DATA(APMU_ISP_CLK_RES_CTRL,	0, BIT(27)),
+> +	[RST_ISP_BUS]	= RST_DATA(APMU_ISP_CLK_RES_CTRL,	0, BIT(3)),
+> +	[RST_ISP_CI]	= RST_DATA(APMU_ISP_CLK_RES_CTRL,	0, BIT(16)),
+> +	[RST_DPU_MCLK]	= RST_DATA(APMU_LCD_CLK_RES_CTRL2,	0, BIT(9)),
+> +	[RST_DPU_ESC]	= RST_DATA(APMU_LCD_CLK_RES_CTRL1,	0, BIT(3)),
+> +	[RST_DPU_HCLK]	= RST_DATA(APMU_LCD_CLK_RES_CTRL1,	0, BIT(4)),
+> +	[RST_DPU_SPIBUS] = RST_DATA(APMU_LCD_SPI_CLK_RES_CTRL,	0, BIT(4)),
+> +	[RST_DPU_SPI_HBUS] = RST_DATA(APMU_LCD_SPI_CLK_RES_CTRL, 0, BIT(2)),
+> +	[RST_V2D]	= RST_DATA(APMU_LCD_CLK_RES_CTRL1,	0, BIT(27)),
+> +	[RST_MIPI]	= RST_DATA(APMU_LCD_CLK_RES_CTRL1,	0, BIT(15)),
+> +	[RST_MC]	= RST_DATA(APMU_PMUA_MC_CTRL,		0, BIT(0)),
+> +};
+> +
+> +static const struct ccu_reset_controller_data apmu_reset_controller_data = {
+> +	.count		= ARRAY_SIZE(apmu_reset_data),
+> +	.data		= apmu_reset_data,
+> +};
+> +
+>  static const struct k1_ccu_data k1_ccu_apmu_data = {
+>  	.clk		= k1_ccu_apmu_clks,
+> +	.rst_data	= &apmu_reset_controller_data,
+>  };
+>  
+>  static struct ccu_reset_controller *
+> -- 
+> 2.43.0
 > 
-> Since the two instructions are 256 bytes apart, they shouldn't be cached in the same
-> cache line, right? Maybe one cache line will have 16 bytes starting from 0x900 while
-> another cache line will have 16 bytes starting from 0xa00.
 
-Yes, to invalidate the cache we will need to do:
-
-	local_icache_block_inv(0x900);
-	local_icache_block_inv(0xa00);
-
-This will then compile down to the pretty much same as, (but with checks to
-validate the caches exist first):
-
-	mtspr(0x900);
-	mtspr(0xa00);
-
-> If the above is true, I think it'll be better to simply call mtspr() for each address
-> individually.
-
-Thats right, but I figured the local_icache_block_inv function/macro would be
-more useful other than just this block.
-
--Stafford
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
