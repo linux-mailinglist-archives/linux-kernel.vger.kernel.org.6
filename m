@@ -1,187 +1,153 @@
-Return-Path: <linux-kernel+bounces-572662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F47BA6CCC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F75A6CCCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 22:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8549E1891ABD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD303ADA96
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 21:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1C620C028;
-	Sat, 22 Mar 2025 21:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F421230BE6;
+	Sat, 22 Mar 2025 21:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jmU14P3a"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/49ssj4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BF8481A3;
-	Sat, 22 Mar 2025 21:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C121622A81F;
+	Sat, 22 Mar 2025 21:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742679556; cv=none; b=keOZOMSqKVgez5eK90F96pjo9fvoxXt99e9FDGMvytiOIymH18iShwkzLorT78ynw8lmEK/tbfYbZMYrQtewhwd1upfDLccaDMEtQcBZhxQ/NDFAWZ1zm8flLKWTf49PeWDW8daJZA8wqWYoz3PYpRt21sKilHJcE17GzmLZB6A=
+	t=1742679751; cv=none; b=W/BwCjJyWfRaiHyNlBhYA+6G6pCR/JgIbNWN7fqRB7CGEsM/yEmn6TiDFu/SSkvvm5lJJXBMlxVlqO5WnzSoj/lD09JwT0yz/GGYtyS0b/NT0Jpz8FSvvh/H8/Rbh9yubGDMLmg75QMnpgbEo2wP1dT0Kzy1Ba7wmund9zDWBJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742679556; c=relaxed/simple;
-	bh=ey3g6nGUBCIH6tf4twd1/6puXRbl6nW4ZWV5q1/KhPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MMT7cYr/SlQKfsNQodpZ6cgJrXWMmDOW2FBeh/SUbx2KfS9IpAiCmvs32gMAq5bPopRR3cAsK+qzuqwChFXwqjqW/Qt4v4jFPl2UqrKZgGZE+O8/MbInzOLmNTnvcXDJT0b0mwgldfz0xcWOZOoql3lUVYZaRXlbSrqUorpFvdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jmU14P3a; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id w6XTtGGb67I4cw6XWtwDSM; Sat, 22 Mar 2025 22:38:02 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742679482;
-	bh=1jP1iD/XB5t52+KeZ1FsE4W0vWyW8Ips9m8Lf+NGpwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=jmU14P3aY7umyeNggwmyo3m3SSEPB7x7iI9RakbnjWSc7xkOvb1vVF4ih0Mw0PHwJ
-	 jCRI/cSo9UCOV8YFL4MGU01vkq2IA63Vo7PXpMRBlJq3uPNc94NJfhYu9vtSvQeVDS
-	 3bz0TDBvtHn+2m3Di7r/BMKo2lI30qENa+N/v2ST4GUUJ5GVjQ1X0KA2NKiDXdOcfN
-	 A2Q+AjZNvVfPqheMeUWb/Q7z2wQIdUVDPX2us8iLwNRjVfn8Y2SRPExz2Oh1+SfX03
-	 UqufGvWPz4SHYI1PCpPXfAgEPMOHGpf3TN19VQTsNmw8p2C+FqDX1DxbQCnu2ILpmd
-	 y4YU0IykOxLTw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 22 Mar 2025 22:38:02 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <071b4cf6-df18-4232-b2ae-6b8bee48899d@wanadoo.fr>
-Date: Sat, 22 Mar 2025 22:37:55 +0100
+	s=arc-20240116; t=1742679751; c=relaxed/simple;
+	bh=exq6iWzoUThYOY0optbQ3p6M5BiGjaqnyiIoG504lPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxIn1+FAeMnA4AQvFS3pgU8+hsnSBMg8c2Kz8L9+axGTTemYylu0sL89pEtR4NzBacaEBbmwPGFOZ+iKXneNHiMTr6aOh+sOfnuYVptVzEvGWZM4YfpOH7fbOmspwvm06zHyeeSBKTiVNWIHWdfSHLCsF3JXh2CuPpnmwp0EwSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/49ssj4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9722C4CEDD;
+	Sat, 22 Mar 2025 21:42:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742679750;
+	bh=exq6iWzoUThYOY0optbQ3p6M5BiGjaqnyiIoG504lPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z/49ssj4d1Luorycc97EbgRyUWPSujwRGtWM9LvwFdZ4BfQiKo5V700eg7gSFP2dk
+	 aIUQMT3pCGAvLq+9+lpFY4xzNiJhBGNV+Ed716WJHWUrWa6hp7C0Lb9EPR9AkzpEoz
+	 DWlQAiRSwgmstJR5WpUXuADjy0LVZLAvks5QpoSnBW4OuQyS4aSnuHNn0PomQU+4ZB
+	 EfrWhFUiSfW7qY4EtWMVcwTRmx1CmjcYJVYfqbdkMNXBuTd/i6ESIyPM4cax3GEIiu
+	 jQJ0TBSaYxab0DLXzKgf6ZEcXbpG61+G1CKCPynSzwnDd176YMkTyEJTHq5LCyxtL8
+	 bFOkYc4chu9FQ==
+Date: Sat, 22 Mar 2025 23:42:26 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+	llvm@lists.linux.dev, nkapron@google.com, teknoraver@meta.com,
+	roberto.sassu@huawei.com, xiyou.wangcong@gmail.com
+Subject: Re: [RFC PATCH security-next 0/4] Introducing Hornet LSM
+Message-ID: <Z98uwvHOTleafw-9@kernel.org>
+References: <20250321164537.16719-1-bboscaccy@linux.microsoft.com>
+ <Z97xvUul1ObkmulE@kernel.org>
+ <CAHC9VhQ4a4Dinq+WLxM88KqJF8ruQ_rOdQx7UNrKcJqTpGGG+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] dma-engine: sun4i: Use devm functions in probe()
-To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
- dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: Markus Elfring <Markus.Elfring@web.de>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Vinod Koul <vkoul@kernel.org>, Samuel Holland <samuel@sholland.org>
-References: <20250322193640.246382-2-csokas.bence@prolan.hu>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250322193640.246382-2-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQ4a4Dinq+WLxM88KqJF8ruQ_rOdQx7UNrKcJqTpGGG+w@mail.gmail.com>
 
-Le 22/03/2025 à 20:36, Bence Csókás a écrit :
-> Clean up error handling by using devm functions and dev_err_probe(). This
-> should make it easier to add new code, as we can eliminate the "goto
-> ladder" in probe().
+On Sat, Mar 22, 2025 at 04:44:13PM -0400, Paul Moore wrote:
+> On Sat, Mar 22, 2025 at 1:22 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > On Fri, Mar 21, 2025 at 09:45:02AM -0700, Blaise Boscaccy wrote:
+> > > This patch series introduces the Hornet LSM.
+> > >
+> > > Hornet takes a simple approach to light-skeleton-based eBPF signature
+> >
+> > Can you define "light-skeleton-based" before using the term.
+> >
+> > This is the first time in my life when I hear about it.
 > 
-> Suggested-by: Chen-Yu Tsai <wens@kernel.org>
-> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
-> ---
+> I was in the same situation a few months ago when I first heard about it :)
 > 
-> Notes:
->      Changes in v2:
->      * rebase on current next
->      Changes in v3:
->      * rebase on current next
->      * collect Jernej's tag
->      Changes in v4:
->      * rebase on current next
->      * collect Chen-Yu's tag
->      Changes in v5:
->      * reformat msg to 75 cols
->      * keep `\n`s in error messages
+> Blaise can surely provide a much better answer that what I'm about to
+> write, but since Blaise is going to be at LSFMMBPF this coming week I
+> suspect he might not have a lot of time to respond to email in the
+> next few days so I thought I would do my best to try and answer :)
+
+Yeah, I don't think there is anything largely wrong in the feature
+itself but it speaks language that would fit to eBPF subsystem list,
+not here :-)
+
+I.e. assume only very basic knowledge of eBPF and explain what stuff
+mentioned actually does. Like bpftool statement should be opened up
+fully.
+
 > 
->   drivers/dma/sun4i-dma.c | 31 ++++++-------------------------
->   1 file changed, 6 insertions(+), 25 deletions(-)
+> An eBPF "light skeleton" is basically a BPF loader program and while
+> I'm sure there are several uses for a light skeleton, or lskel for
+> brevity, the single use case that we are interested in here, and the
+> one that Hornet deals with, is the idea of using a lskel to enable
+> signature verification of BPF programs as it seems to be the one way
+> that has been deemed acceptable by the BPF maintainers.
+
+I got some grip but the term only should be used IMHO in the commit
+message, if it is defined at first :-)
+
 > 
-> diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
-> index 24796aaaddfa..59ecebfc8eed 100644
-> --- a/drivers/dma/sun4i-dma.c
-> +++ b/drivers/dma/sun4i-dma.c
-> @@ -1249,10 +1249,9 @@ static int sun4i_dma_probe(struct platform_device *pdev)
->   	if (priv->irq < 0)
->   		return priv->irq;
->   
-> -	priv->clk = devm_clk_get(&pdev->dev, NULL);
-> +	priv->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->   	if (IS_ERR(priv->clk)) {
-> -		dev_err(&pdev->dev, "No clock specified\n");
-> -		return PTR_ERR(priv->clk);
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk), "Couldn't start the clock\n");
+> Once again, skipping over a lot of details, the basic idea is that you
+> take your original BPF program (A), feed it into a BPF userspace tool
+> to encapsulate the original program A into a BPF map and generate a
+> corresponding light skeleton BPF program (B), and then finally sign
+> the resulting binary containing the lskel program (B) and map
+> corresponding to the original program A.  At runtime, the lskel binary
+> is loaded into the kernel, and if Hornet is enabled, the signature of
+> both the lskel program A and original program B is verified.  If the
+> signature verification passes, lskel program A performs the necessary
+> BPF CO-RE transforms on BPF program A stored in the BPF map and then
+> attempts to load the original BPF program B, all from within the
+> kernel, and with the map frozen to prevent tampering from userspace.
 
-I think that it would be better to keep the message on another line, to 
-avoid too long lines.
+When you speak about corresponding lskel program what does that
+program contain? Is it some kind of new version of the same
+program with modifications, or?
 
->   	}
+I neither did not know what BPF CO-RE is but I googled it ;-)
 
-In several places, now {} around a single statement looks unneeded.
+> 
+> Hopefully that helps fill in some gaps until someone more
+> knowledgeable can provide a better answer and/or correct any mistakes
+> in my explanation above ;)
 
-CJ
+Sure... Thanks for the explanations!
 
->   
->   	if (priv->cfg->has_reset) {
-> @@ -1328,12 +1327,6 @@ static int sun4i_dma_probe(struct platform_device *pdev)
->   		vchan_init(&vchan->vc, &priv->slave);
->   	}
->   
-> -	ret = clk_prepare_enable(priv->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Couldn't enable the clock\n");
-> -		return ret;
-> -	}
-> -
->   	/*
->   	 * Make sure the IRQs are all disabled and accounted for. The bootloader
->   	 * likes to leave these dirty
-> @@ -1344,32 +1337,23 @@ static int sun4i_dma_probe(struct platform_device *pdev)
->   	ret = devm_request_irq(&pdev->dev, priv->irq, sun4i_dma_interrupt,
->   			       0, dev_name(&pdev->dev), priv);
->   	if (ret) {
-> -		dev_err(&pdev->dev, "Cannot request IRQ\n");
-> -		goto err_clk_disable;
-> +		return dev_err_probe(&pdev->dev, ret, "Cannot request IRQ\n");
->   	}
->   
-> -	ret = dma_async_device_register(&priv->slave);
-> +	ret = dmaenginem_async_device_register(&priv->slave);
->   	if (ret) {
-> -		dev_warn(&pdev->dev, "Failed to register DMA engine device\n");
-> -		goto err_clk_disable;
-> +		return dev_err_probe(&pdev->dev, ret, "Failed to register DMA engine device\n");
->   	}
->   
->   	ret = of_dma_controller_register(pdev->dev.of_node, sun4i_dma_of_xlate,
->   					 priv);
->   	if (ret) {
-> -		dev_err(&pdev->dev, "of_dma_controller_register failed\n");
-> -		goto err_dma_unregister;
-> +		return dev_err_probe(&pdev->dev, ret, "Failed to register translation function\n");
->   	}
->   
->   	dev_dbg(&pdev->dev, "Successfully probed SUN4I_DMA\n");
->   
->   	return 0;
-> -
-> -err_dma_unregister:
-> -	dma_async_device_unregister(&priv->slave);
-> -err_clk_disable:
-> -	clk_disable_unprepare(priv->clk);
-> -	return ret;
->   }
->   
->   static void sun4i_dma_remove(struct platform_device *pdev)
-> @@ -1380,9 +1364,6 @@ static void sun4i_dma_remove(struct platform_device *pdev)
->   	disable_irq(priv->irq);
->   
->   	of_dma_controller_free(pdev->dev.of_node);
-> -	dma_async_device_unregister(&priv->slave);
-> -
-> -	clk_disable_unprepare(priv->clk);
->   }
->   
->   static struct sun4i_dma_config sun4i_a10_dma_cfg = {
+> 
+> -- 
+> paul-moore.com
 
+BR, Jarkko
 
