@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-572234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5ABAA6C814
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:34:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF33A6C817
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 08:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAB067A6FDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2368174C03
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 07:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EF1193079;
-	Sat, 22 Mar 2025 07:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65471B2186;
+	Sat, 22 Mar 2025 07:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QTrRL3jK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="d5CnVdSE"
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AC2187554
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742628834; cv=none; b=jG0M73a4TIGSuOdPwqDhC/lcoX39QBon2yf08+Hc6ElIKEjaV9MOvcoHQa+nVoRJTJ0nltBF3qm1wB0ic76me7AC1uYfLqZ0PJnGzKvRT6u80EI2bUdV/zR6HIsdeJZxWeWMX6l/TP4rwyAE1SZPa8dVXBtSaPmGJ0/tBUstUGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742628834; c=relaxed/simple;
-	bh=hGu8+u0b1DLw8e28+tuafsDLk5i+SSFEYTwazDx4bI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/N12Jfekn6jKPiZNUNDadGCd5hQYSJSstiRNzAG5KwnfnJDj7wzEFjuAfRPmLY46HP9iAjdov9gbaG3arXedlt6CUXvDRUoKNDwUTqMdgt8H8JKNLvW3NJRx8HnuLptArY8KUYqLihWK7k7qxXGXI3x2aGDzFvJMqz5cLCnWFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QTrRL3jK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742628830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B2+qeq0JgnGOpt+C/CZ/JR6EIs1Cxtjx4y7+UO1YN5s=;
-	b=QTrRL3jKqC4iVTePUOH046DQ8PT34WPNyoj2/uWr/cGdqImz0uFk3dNjf40Awbw3xHwDaH
-	Cen/oKrFcRNp7AMhscEwocBpZqSH9eTZmO+JPCa0SIdO8lnbLAcFFhwc2S09Tsw+89b2Zi
-	diLD6kxNAPM4hcpm5pGcpHVkUN/gVvU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-61-zJ8_zrk0MiuB6v8_0t0EuQ-1; Sat,
- 22 Mar 2025 03:33:47 -0400
-X-MC-Unique: zJ8_zrk0MiuB6v8_0t0EuQ-1
-X-Mimecast-MFC-AGG-ID: zJ8_zrk0MiuB6v8_0t0EuQ_1742628825
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3FF681809CA6;
-	Sat, 22 Mar 2025 07:33:45 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.5])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0644E19560AF;
-	Sat, 22 Mar 2025 07:33:36 +0000 (UTC)
-Date: Sat, 22 Mar 2025 15:33:31 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Xinyu Zhang <xizhang@purestorage.com>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 0/3] Consistently look up fixed buffers before going async
-Message-ID: <Z95nyw8LUw0aHKCu@fedora>
-References: <20250321184819.3847386-1-csander@purestorage.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B084378F5D;
+	Sat, 22 Mar 2025 07:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742628868; cv=pass; b=JIv0Yy4PSyTcPPQF5da/e1Z0apvLIUISCzjqI7mvu+AEdnB29npp8c8nFDUxks6NJ8HiRporlE7FYZWlsybwiAfmwM6hJrc+TGDCI3bYeW+G5/eUyQZbuIxsfDG3pCxlfwfY4iyhsJQthxJ50YIkPADQ8rCvciPt1m7L4TWBSDo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742628868; c=relaxed/simple;
+	bh=WO9frYXIjdeKQzbEORdqprTmqqP1aAQE1WQNb6A7X6I=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=H00SPRnoF0a3tINX6bRqRcvfIZXqSvXEDjNT0gjr5He1sx3jyd8aHA6DPFYrIso1meAov52dG2P2L6ugkH5pTeaSMiOkvRsgVUuyzxIDJ0EPK3Jlf1BkBzixKjgCzE2iVWwviNEeL4xvqoCq4SaSOT191s4dillHxafKFGUOygM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=d5CnVdSE; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742628846; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BbVHTg/lXZ0/BfmT52We84mtU0Sd2e+gWxZ4rY/zNeXSTTzdPVm/X9Q0CiHKJNzvc8M+aM+vU47LQYofHK19phDaTCCmTK5Y5sLB6AKzhONja+thhK77Q62tsRpp/WTXN0lc+rfftS6oa1ukU6EPkUuWaf71ygVaKQw50VR5rtg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742628846; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=UJWGwSmM6R2Fl1f2HJVagURPx9n2oq24WYtXhSh6rlM=; 
+	b=Xwq4mGIxp1fKgljJX+Y7wjw0kLz603t0FcoXg98tKRshrso8t/7KEZAaUUPrr8vELTm13CZ4332xLapVkU6MxdznkNdquxDmjIUgA5T5U8HHAU1PnrphpdofKwuFpgxiFH4a1GnJrJTOEflqo6lJeKIs3Lls2/4EZqShAWQzY2E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742628846;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=UJWGwSmM6R2Fl1f2HJVagURPx9n2oq24WYtXhSh6rlM=;
+	b=d5CnVdSEG3aE6HJKi9kFODNnC+xAeRE8GlAldZNrKcXmXEev2runk+w1XWOZfST5
+	bl2EYsNgKG/rs6K5JRkebvLBbRAnwJ0cJk3d6Og3T9mEnSZbgCOQAoTNIW2RzEfKpEf
+	QUo6KgnpWzmQY44qHAeAdBz7qlTwu5DXXR51Dq9g=
+Received: by mx.zohomail.com with SMTPS id 1742628844944113.08852694491645;
+	Sat, 22 Mar 2025 00:34:04 -0700 (PDT)
+Message-ID: <ef7a6ae8-4cc7-401a-81f1-0975c939176c@zohomail.com>
+Date: Sat, 22 Mar 2025 15:33:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321184819.3847386-1-csander@purestorage.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: Re: [PATCH RESEND v5 2/3] clk: canaan: Add clock driver for Canaan
+ K230
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Conor Dooley <conor@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com>
+ <20250320-b4-k230-clk-v5-2-0e9d089c5488@zohomail.com>
+ <fb9dba11-5a23-48a2-8b11-a544580eeaca@gmail.com>
+Content-Language: en-US
+In-Reply-To: <fb9dba11-5a23-48a2-8b11-a544580eeaca@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr08011227694213b15691645fc5dee3060000846e6e90dc712a730651b5c0ca9f16e2afeab99011fa1f2ba5:zu08011227dc4ba870fae43f0f7d64d01a00000c05db20beae40b21e1fd964d227b011bc3a6ebef9c7cddc49:rf0801122b7e97f2d734872b03f8d1bba2000082c89c112c6e9e32b5b1c613199179b3fbcd8322557d58bc50111f3322:ZohoMail
+X-ZohoMailClient: External
 
-On Fri, Mar 21, 2025 at 12:48:16PM -0600, Caleb Sander Mateos wrote:
-> To use ublk zero copy, an application submits a sequence of io_uring
-> operations:
-> (1) Register a ublk request's buffer into the fixed buffer table
-> (2) Use the fixed buffer in some I/O operation
-> (3) Unregister the buffer from the fixed buffer table
-> 
-> The ordering of these operations is critical; if the fixed buffer lookup
-> occurs before the register or after the unregister operation, the I/O
-> will fail with EFAULT or even corrupt a different ublk request's buffer.
-> It is possible to guarantee the correct order by linking the operations,
-> but that adds overhead and doesn't allow multiple I/O operations to
-> execute in parallel using the same ublk request's buffer. Ideally, the
-> application could just submit the register, I/O, and unregister SQEs in
-> the desired order without links and io_uring would ensure the ordering.
+On 2025/3/20 15:09, Troy Mitchell wrote:
+> On 2025/3/20 11:25, Xukai Wang wrote:
+> ...
+>> +struct k230_clk {
+>> +	int id;
+>> +	struct k230_sysclk *ksc;
+>> +	struct clk_hw hw;
+>> +};
+>> +
+>> +#define to_k230_clk(_hw)	container_of(_hw, struct k230_clk, hw)
+>> +
+>> +/* K230 SYSCLK. */
+> Check other places and remove unnecessary comments.
+OK, I get it.
+>> +
+>> +static unsigned long k230_pll_get_rate(struct clk_hw *hw, unsigned long parent_rate)
+>> +{
+>> +	struct k230_pll *pll = to_k230_pll(hw);
+>> +	struct k230_sysclk *ksc = pll->ksc;
+>> +	u32 reg;
+>> +	u32 r, f, od;
+>> +
+>> +	reg = readl(pll->bypass);
+>> +	if (reg & K230_PLL_BYPASS_ENABLE)
+>> +		return parent_rate;
+>> +
+>> +	reg = readl(pll->lock);
+>> +	if (!(reg & (K230_PLL_STATUS_MASK))) { /* unlocked */
+> unnecessary comment and wrong position.
+I'll modify it.
+>> +		dev_err(&ksc->pdev->dev, "%s is unlock.\n", clk_hw_get_name(hw));
+>> +		return 0;
+>> +	}
+>> +
+>> +	reg = readl(pll->div);
+>> +	r = ((reg >> K230_PLL_R_SHIFT) & K230_PLL_R_MASK) + 1;
+>> +	f = ((reg >> K230_PLL_F_SHIFT) & K230_PLL_F_MASK) + 1;
+>> +	od = ((reg >> K230_PLL_OD_SHIFT) & K230_PLL_OD_MASK) + 1;
+>> +
+>> +	return mul_u64_u32_div(parent_rate, f, r * od);
+>> +}
+>> +
+> ...
+>
+>> +
+>> +static int k230_clk_probe(struct platform_device *pdev)
+>> +{
+>> +	int ret;
+>> +	struct k230_sysclk *ksc;
+>> +
+>> +	ksc = devm_kzalloc(&pdev->dev, sizeof(struct k230_sysclk), GFP_KERNEL);
+> you can use `sizeof(*ksc)` instead. same below.
+OK, I get it.
 
-So far there are only two ways to provide the order guarantee in io_uring
-syscall viewpoint:
-
-1) IOSQE_IO_LINK
-
-2) submit register_buffer operation and wait its completion, then submit IO
-operations
-
-Otherwise, you may just depend on the implementation, and there isn't such
-order guarantee, and it is hard to write generic io_uring application.
-
-I posted sqe group patchset for addressing this particular requirement in
-API level.
-
-https://lore.kernel.org/linux-block/20241107110149.890530-1-ming.lei@redhat.com/
-
-Now I'd suggest to re-consider this approach for respecting the order
-in API level, so both application and io_uring needn't play trick for
-addressing this real problem.
-
-With sqe group, just two OPs are needed:
-
-- provide_buffer OP(group leader)
-
-- other generic OPs(group members)
-
-group leader won't be completed until all group member OPs are done.
-
-The whole group share same IO_LINK/IO_HARDLINK flag.
-
-That is all the concept, and this approach takes less SQEs, and application
-will become simpler too.
-
-
-Thanks,
-Ming
+And thanks for your review.
 
 
