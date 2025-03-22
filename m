@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-572564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD9FA6CB7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:33:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3969A6CB78
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 17:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF65616E196
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C681887673
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 16:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8743233701;
-	Sat, 22 Mar 2025 16:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258B323371E;
+	Sat, 22 Mar 2025 16:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xal+4vcN"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YGzWtpfa"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC4BF507;
-	Sat, 22 Mar 2025 16:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7498231A2D;
+	Sat, 22 Mar 2025 16:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742661229; cv=none; b=SxYCkNK9ySWqM4jYByBCY+WGikT3KHI+b8PBF3h4keJjnYowq7tGn+i/XWYYViYY68e0tr9/X6LYynPFJXzvHQjBZMcBqQ7kfDpJTSeMFWXcvEK85XjD27g4mDSJH76v+NygpmxeSgCI7mGltB9wVswucwBIf2ZY5tK6UEAY85w=
+	t=1742660954; cv=none; b=uUrXx3NAD1z0Kc6F08vaYAbLCSG5i8Ki6awQ50qdYK1HhcMh/sGga3Xe9p4PI7s+wP5E8Wl+yH0uGf0DwcMLaLYTLWaMYtvuMYDvvUOOaj+PfKWLeoX1Xrm96uy9AwflD9gPzG2WZFGaeWURlBTwckwJvwW6e/06/uLKaDFspi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742661229; c=relaxed/simple;
-	bh=epmdvcBgUanvI6wdPZu88ilV2evqCFFzXuIN1GcCsmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QtlIHZOeqdab6NWVEBFhAHzuCLKJqCvJlF1CkKLIiIPNuslboL7RlSR82b/NLDuXdDFz89CR0T11SafqaDsPIwKt52w+hmt0IAfLgSZrwLwTdfCXEcojMyqKRp9rURKknhaFhPyJFd0BMdhmWV983q7qqJeZeojJOZW/lODQxnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xal+4vcN; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1742660954; c=relaxed/simple;
+	bh=dSX1hlD8JlR6cQLjXz4aNKYoO15uc2ktXL2PwK/NCKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJHCo+5QLNDzCQvFTT8UEyk1ODSE+7CAZIMPnCN4veWL/utpytH+JNIaNZcrTk96NHi3KDuJJHAwVzCDXjo5ekw07OzRtqDgv4JMpJ2mmdFSUrQeSz+/IGEAT86HwjvH0W+0pMfVhsYR1K43eCXRFLdDONKpFOiT9SzkfLulv0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YGzWtpfa; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227aaa82fafso1408425ad.2;
-        Sat, 22 Mar 2025 09:33:47 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4394a823036so29795285e9.0;
+        Sat, 22 Mar 2025 09:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742661227; x=1743266027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lxd+tOwn8e/o7grBip1jXB4LMTIMBCnYXyU0gFmpfs=;
-        b=Xal+4vcN7SeLs1+Jxz3fuTqK/DYBOyE3aFkGBRHlmfEZUZ5Ye1xBB1jbGvT2xraJfn
-         GiIdMmqJ2NykRuaw0GaKcpLVaCTVV9/ryU5GlLlMYZtEn/tKdnVMwYryYrcU8G2gXW1r
-         CPaBMX9n+l9efopbzXfhP9vkRQXLHrCUIX/Vqdf9QHwr3eQuEh9LN2HgzoFzVjKDtrtm
-         hpWAIOE2vWG5v/rGku6j7/usOCtdzXasOhhVajwxEzIM3qJFjnqcor0FqEDviMklyzGh
-         WgC/g1CFNy/BkroB3Ci1ZnKyO1F7cz9VO0QUAmNwHVqwlHSpko9PyaSWP16S/7NNuXAs
-         VYMQ==
+        d=gmail.com; s=20230601; t=1742660951; x=1743265751; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmGR1LbtL4J3t71evUykuzeSOw/JJ1sOFslRh5h/mjs=;
+        b=YGzWtpfaoexS2kJOtvXDX2Ik4j0eR85VgWPDhyTotjgtLDMyAmM1izIB2dmYbIB2ax
+         Cy0ijy7UZMzYEnhMgXO7jtGBvjQSH0Ks7pwhwMtWwWQ3SuRUClulwBwFQ4Qe+mRjR0Ur
+         14qfa5/Ysu8324kXYbPwWgf7kT6rvVXLAV+Fr/1C4xhH1gutVULFtaiDs7nhpZD3c/GL
+         8dWzYlI6M0YoXrLCNsI36SrzepyCts/tjotn9T4vZZEw0hWL3ulg2/NtDNV/lAmN/vKW
+         Qe5pzezaV5KhpsRCdIkCxC9yEu3yfp/Q4aUIh1T8+wGQwGJK+BBx/1jRKHpYtrkaWwHr
+         IMrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742661227; x=1743266027;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4lxd+tOwn8e/o7grBip1jXB4LMTIMBCnYXyU0gFmpfs=;
-        b=JI8uEcKlMDuU8Bk4u0BGH5zO/NUBJQVyR2+r3vei+oCqK4fbn8Jg7UrpBuzdf0QVBc
-         YsTGfKIjf6oPG7sJRAj/OY7cZ34fD4Tl1EF8gVHk/SAang1lPr1xpEzcp7rcvHA/0Wr0
-         AwdtGhHUxqGdWIfY+tLwvbadtYrUik+KAJV6vedS78u2xCBurqI9xhoXYeKvGBFJl4Dh
-         QEJdvnJ2DNuLo3m4Z/ymH/u0UbaUPGXY5NEIP6HAKV3Ai16ufHGGOvPXTsF4YGykpltj
-         ex1eeXFuI2LsLW3M47SeIGyaLmqwwZZwwpYdmxbPixS4FtrEc42vxFUn9WFBVpzQKRwh
-         XqHA==
-X-Gm-Message-State: AOJu0YzPmz0E7emmuxsAx19NZo+NzySUB+rpL6ei+dQNJgNTErB41ixc
-	RiriCiwotpJgQUhsMAEz+7hspDVbmpUCUV2Vc9qYRZTJ/sa1Wzf5jxHkmUMHbew=
-X-Gm-Gg: ASbGncvAwd+9hnIsKxgJ+L2/cVw9pjN68widwApZr/ooJGophPM0N5AoZdMhdTuYdFy
-	vkWx6tscO7hbbPZ5RlnFXUEBvD2wYPv4Enzh1zfyWdy0PsQcpH14sXgPbwtxtgiqubIHSgh6xlx
-	lfUWwkCZJANFSKeFR7w4awS8tcZPDQwZVNwaCKYauZ0MGDR4WfGw89sQ042i/6+tBdFe9Y4p2DL
-	HL2fpuCfUl//m43/DKMyGXBW8cmrGeXlvjvRc0NkQkVEXmrYYf5re6Cyev3uIwlO9H1kM8qa6x2
-	2CPqdv8qekEkAzG9Qm9Bd5kqhEXbUlqXQYO1gq7O2d8=
-X-Google-Smtp-Source: AGHT+IH4CHkfGbiwWX4r0WBCSBmcdbIgUSaaT+sHhmfhWqHiDv/CxFN/ZQPy1h/6Ri/ibAktf50eig==
-X-Received: by 2002:a05:6a00:3927:b0:736:ab1e:7775 with SMTP id d2e1a72fcca58-7390562ad7fmr13594642b3a.0.1742661226828;
-        Sat, 22 Mar 2025 09:33:46 -0700 (PDT)
-Received: from fedora.. ([2409:40f3:20df:7495:662f:ad70:6f52:57ff])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73906159fa1sm4213634b3a.151.2025.03.22.09.33.41
+        d=1e100.net; s=20230601; t=1742660951; x=1743265751;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cmGR1LbtL4J3t71evUykuzeSOw/JJ1sOFslRh5h/mjs=;
+        b=Qilym9e6KVMxXfSJ051Z/HatWe6QPH2D4zsVJGZINH6MJ7LBpjruVNfeihzln3BZXF
+         1n5jOgTiXfba7Bb64R/UnAadPTEEiQrdAGjUCd9zYs6846O8iuyR2IcTAwK5hNiJYw7n
+         RIJhiGciteQz6lMRucKGN3pMXc/QS10lVocZZ3vmYD3ZdJPqa2yptP9u+3vpQy61xmGa
+         ScD1kg+rvpJfg7fincauBbp5QU1pdlIfnC7WwQV9G0xfGNEqL5fsVGYVVIiT6NMiPCQ9
+         uPyD+vCeSs7S85pW8jHvU+jvuLTpziuvC+P3+8JlvwmPokNxSgiKrkcoD3wL4drFNw64
+         dqEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd4OnsQH1P3BjzI/cxwLz1PAG/+wjswpKxHNFlNYwm8hBe9M/zLwO5RuYJ+J8cQOB2xYpRQIcxJG0cKQA=@vger.kernel.org, AJvYcCVp+iA9Vr0eK3ZzgjhOVP+KjpQy7XDnvJtq0MlDjda+rJS7ERBhhLZr+HoZJbmcFECYQHMTKzoeHNt6LCnwygw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywPitVZRACvUBEOML0yLJ2jgo57+pfMcumiWVc00D4ABcH/1Iz
+	pw71by1YJAd00GwO+/qq96QJD9spzI7Gm0VMuxNvmwXctQTmXril
+X-Gm-Gg: ASbGncuD7qH+pRMaWGvubaIdCcmjJtmMz14viF8t6mnE7PcyOOdAYmG/HoPlyB/s+SU
+	SelUNpKHvSyIdka+aZMitnImyyDUdi4zTaL+aMEk4xrTnZdQltefrXQ1Qz66ixxa8W1An+OCY7S
+	xqY/xVmCdDaTRGh18oUPlTTIg72oXL4bQDJFQmLBpifMiF63gS0vGIJis/fGOBwunUehEcJQbIx
+	5ztrtHy2c/QwmJCyg2Xp96JZiB+a5aQ9udWqW0pkJ0BKR7fYPcPH7+tP4YYKya5f4RpGcPTF4m8
+	6eg8b8xMQHj+6a505lcHXu6c3CfOxS3nZNnT5mNpbAINHpTLXYmWlN1Rl59ijlioDIuuWrGpmfI
+	HsuNiAKZq
+X-Google-Smtp-Source: AGHT+IGcZ30m5rPc0OUpnWOu5jkqU14bSxURCwLJlz4cPqVUZMYOVNFcLgoAsfm44aBEBzsQCbwccg==
+X-Received: by 2002:a05:600c:1547:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-43d509ec734mr65143995e9.8.1742660950606;
+        Sat, 22 Mar 2025 09:29:10 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd17cfesm61192345e9.10.2025.03.22.09.29.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 09:33:46 -0700 (PDT)
-From: Siddharth Menon <simeddon@gmail.com>
-To: linux-iio@vger.kernel.org,
-	lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	marcelo.schmitt1@gmail.com,
-	Siddharth Menon <simeddon@gmail.com>
-Subject: [PATCH v2] iio: frequency: ad9832: devicetree probing support
-Date: Sat, 22 Mar 2025 21:58:11 +0530
-Message-ID: <20250322163211.253009-1-simeddon@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        Sat, 22 Mar 2025 09:29:08 -0700 (PDT)
+Date: Sat, 22 Mar 2025 16:29:06 +0000
+From: Stafford Horne <shorne@gmail.com>
+To: Sahil Siddiq <icegambit91@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, jonas@southpole.se,
+	stefan.kristiansson@saunalahti.fi, linux-openrisc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sahil Siddiq <sahilcdq@proton.me>
+Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
+Message-ID: <Z97lUpoTXVccaCeN@antec>
+References: <20250315203937.77017-1-sahilcdq@proton.me>
+ <Z9Z2sjWQHKgGJyGo@antec>
+ <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
+ <Z9gOwYl6kmoPY9-C@antec>
+ <d54849db-956b-4c1a-ab93-4705394af637@gmail.com>
+ <Z9kkE3uQru_VxLqA@antec>
+ <10b01724-d47f-4f0f-87ea-2793e67b18b9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10b01724-d47f-4f0f-87ea-2793e67b18b9@gmail.com>
 
-Introduce struct for device match of_device_id to avoid relying on fallback
-mechanisms, which could lead to false matches against other AD9832 variants
-in the future.
+On Sat, Mar 22, 2025 at 07:21:18PM +0530, Sahil Siddiq wrote:
+> Hi Stafford,
+> 
+> On 3/18/25 1:13 PM, Stafford Horne wrote:
+> > On Tue, Mar 18, 2025 at 12:06:30AM +0530, Sahil Siddiq wrote:
+> > > On 3/17/25 1:55 PM, Geert Uytterhoeven wrote:
+> > > > On Sun, 16 Mar 2025 at 07:59, Stafford Horne <shorne@gmail.com> wrote:
+> > > > [...]
+> > > > > @@ -176,8 +177,11 @@ void __init paging_init(void)
+> > > > >    	barrier();
+> > > > >    	/* Invalidate instruction caches after code modification */
+> > > > > -	mtspr(SPR_ICBIR, 0x900);
+> > > > > -	mtspr(SPR_ICBIR, 0xa00);
+> > > > > +	upr = mfspr(SPR_UPR);
+> > > > > +	if (upr & SPR_UPR_UP & SPR_UPR_ICP) {
+> > > > > +		mtspr(SPR_ICBIR, 0x900);
+> > > > > +		mtspr(SPR_ICBIR, 0xa00);
+> > > > > +	}
+> > > > Here we could use new utilities such as local_icache_range_inv(0x900,
+> > > > L1_CACHE_BYTES);
+> > > > 
+> > > > Or something like local_icache_block_inv(0x900).  This only needs to flush a
+> > > > single block as the code it is invalidating is just 2 instructions 8 bytes:
+> > > > 
+> > > >       .org 0x900
+> > > > 	l.j     boot_dtlb_miss_handler
+> > > > 	 l.nop
+> > > > 
+> > > >       .org 0xa00
+> > > > 	l.j     boot_itlb_miss_handler
+> > > > 	 l.nop
+> > > 
+> > > Given that there'll be generic local_(i|d)cache_range_inv(start, stop) utility
+> > > functions, would it make sense to simply have a macro defined as:
+> > > 
+> > > #define local_icache_block_inv(addr) local_icache_range_inv(start, L1_CACHE_BYTES)
+> > > 
+> > > instead of having a separate function for invalidating a single cache line? This would
+> > > still use cache_loop() under the hood. The alternative would be to use
+> > > local_icache_range_inv(start, L1_CACHE_BYTES) directly but using the macro might be
+> > > more readable.
+> > 
+> > Yes, I think a macro would be fine.  Should we use cache_desc.block_size or
+> > L1_CACHE_BYTES?  It doesn't make much difference as L1_CACHE_BYTES is defined as
+> > 16 bytes which is the minimum block size and using that will always invalidate a
+> > whole block.  It would be good to have a comment explaining why using
+> > L1_CACHE_BYTES is enough.
+> > 
+> 
+> While working on the patch's v3, I realized I am a bit unclear here. Is the ".org"
+> macro used to set the address at which the instructions are stored in memory? If so,
+> the first two instructions should occupy the memory area 0x900 through 0x907, right?
+> Similarly, the next two instructions will occupy 0xa00-0xa07.
+> 
+> Since the two instructions are 256 bytes apart, they shouldn't be cached in the same
+> cache line, right? Maybe one cache line will have 16 bytes starting from 0x900 while
+> another cache line will have 16 bytes starting from 0xa00.
 
-Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Signed-off-by: Siddharth Menon <simeddon@gmail.com>
----
- v1->v2:
- - updated commit message to be more informative
- - minor changes to code formatting
- drivers/staging/iio/frequency/ad9832.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Yes, to invalidate the cache we will need to do:
 
-diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-index 140ee4f9c137..7d4f655f6df1 100644
---- a/drivers/staging/iio/frequency/ad9832.c
-+++ b/drivers/staging/iio/frequency/ad9832.c
-@@ -431,6 +431,13 @@ static int ad9832_probe(struct spi_device *spi)
- 	return devm_iio_device_register(&spi->dev, indio_dev);
- }
- 
-+static const struct of_device_id ad9832_of_match[] = {
-+	{ .compatible = "adi,ad9832" },
-+	{ .compatible = "adi,ad9835" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ad9832_of_match);
-+
- static const struct spi_device_id ad9832_id[] = {
- 	{"ad9832", 0},
- 	{"ad9835", 0},
-@@ -441,6 +448,7 @@ MODULE_DEVICE_TABLE(spi, ad9832_id);
- static struct spi_driver ad9832_driver = {
- 	.driver = {
- 		.name	= "ad9832",
-+		.of_match_table = ad9832_of_match,
- 	},
- 	.probe		= ad9832_probe,
- 	.id_table	= ad9832_id,
--- 
-2.48.1
+	local_icache_block_inv(0x900);
+	local_icache_block_inv(0xa00);
 
+This will then compile down to the pretty much same as, (but with checks to
+validate the caches exist first):
+
+	mtspr(0x900);
+	mtspr(0xa00);
+
+> If the above is true, I think it'll be better to simply call mtspr() for each address
+> individually.
+
+Thats right, but I figured the local_icache_block_inv function/macro would be
+more useful other than just this block.
+
+-Stafford
 
